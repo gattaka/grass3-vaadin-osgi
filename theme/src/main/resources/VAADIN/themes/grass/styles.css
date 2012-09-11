@@ -1,0 +1,216 @@
+/* Vycházím z existujícího theme Vaadin */
+@import "../reindeer/styles.css";
+
+/* ====== */
+/* Pozadí */
+/* ====== */
+.background_layout {
+	background: url("img/bgr2.png");
+	background-repeat: repeat;
+}
+
+.layout {
+	background: url("img/headPattern.png");
+	background-repeat: repeat-x;
+}
+
+/* ==== */
+/* Logo */
+/* ==== */
+.logo_image {
+	position: relative;
+	top: 19px;
+	left: 5px;
+}
+
+/* ====== */
+/* Hlášky */
+/* ====== */
+.v-link.v-link-quotes.quotes a span {
+	text-decoration: none;
+	color: white;
+}
+
+.v-link.v-link-quotes.quotes a:visited span {
+	text-decoration: none;
+	color: white;
+}
+
+.v-link.v-link-quotes.quotes a:hover span {
+	text-decoration: underline;
+	color: white;
+}
+
+.quotes {
+	font-family: Tahoma, sans-serif;
+	font-size: 11pt;
+	color: white;
+	position: relative;
+	padding: 0px;
+	height: 16px;
+	text-align: center;
+	font-style: italic;
+	top: 32px;
+}
+
+/* ==== */
+/* Menu */
+/* ==== */
+.menu_holder { /* 	position: relative; */
+	background: url("img/menu_bgr.png");
+	background-repeat: no-repeat;
+}
+
+.sections_menu_layout,.user_menu_layout {
+	position: relative;
+	top: -2px;
+	font-size: 14px;
+	font-weight: bold;
+	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
+		"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+	color: #555;
+}
+
+.first_menu_item,.menu_item {
+	text-shadow: 1px 1px 1px #ccc;
+}
+
+.first_menu_item {
+	padding-left: 0px;
+}
+
+.menu_item {
+	padding-left: 10px;
+}
+
+.menu_item.v-link a span,.first_menu_item.v-link a span {
+	text-decoration: none;
+	color: #555;
+}
+
+.menu_item.v-link a:visited span,.first_menu_item.v-link a:visited span
+	{
+	text-decoration: none;
+	color: #555;
+}
+
+.menu_item.v-link a:hover span,.first_menu_item.v-link a:hover span {
+	text-decoration: none;
+	color: #2483c4;
+}
+
+/* ============= */
+/* Kulaté okraje */
+/* ============= */
+
+/* ---- Top ---- */
+.left_top_corner_background {
+	background: url("img/corTL.png");
+	background-repeat: no-repeat;
+}
+
+.center_top_background {
+	background: url("img/bT.png");
+	background-repeat: repeat-x;
+}
+
+.right_top_corner_background {
+	background: url("img/corTR.png");
+	background-repeat: no-repeat;
+}
+
+/* ---- Middle ---- */
+.left_middle_background {
+	background: url("img/bL.png");
+	background-repeat: repeat-y;
+	padding-left: 10px;
+}
+
+.center_middle_background {
+	background-color: #ece5cc;
+}
+
+.right_middle_background {
+	background: url("img/bR.png");
+	background-repeat: repeat-y;
+	background-position: 180px 0;
+	padding-right: 10px;
+}
+
+.long_right_middle_background {
+	background: url("img/bR.png");
+	background-repeat: repeat-y;
+	background-position: 755px 0;
+	padding-right: 10px;
+}
+
+.full_right_middle_background {
+	background: url("img/bR.png");
+	background-repeat: repeat-y;
+	background-position: 970px 0;
+	padding-right: 10px;
+}
+
+/* ---- Bottom ---- */
+.left_bottom_corner_background {
+	background: url("img/corBL.png");
+	background-repeat: no-repeat;
+}
+
+.center_bottom_background {
+	background: url("img/bB.png");
+	background-repeat: repeat-x;
+}
+
+.right_bottom_corner_background {
+	background: url("img/corBR.png");
+	background-repeat: no-repeat;
+}
+
+.left_column_top_backgroud {
+	background: url("img/leftColTopBgr.png");
+	background-repeat: no-repeat;
+}
+
+.left_column_bottom_backgroud {
+	background: url("img/leftColBtmBgr.png");
+	background-repeat: no-repeat;
+}
+
+.left_column {
+	background: url("img/leftColMidBgr.png");
+	background-repeat: y-repeat;
+}
+
+.right_column_top_backgroud {
+	background: url("img/rightColTopBgr.png");
+	background-repeat: no-repeat;
+}
+
+.right_column_bottom_backgroud {
+	background: url("img/rightColBtmBgr.png");
+	background-repeat: no-repeat;
+}
+
+.right_column {
+	background: url("img/rightColMidBgr.png");
+	background-repeat: y-repeat;
+}
+
+.footer_layout {
+	background-color: #c2dfef;
+	font-size: 12px;
+	font-family: Verdana, "Verdana CE", Arial, "Arial CE",
+		"Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+	color: #555555;
+	padding: 5px 0 0px 7px;
+	text-shadow: 0px 1px 1px white;
+	border-top: 1px dashed #92AFBF;
+	border-bottom: 1px dashed #92AFBF;
+}
+
+.footer_shadow {
+	background: url("img/bgrB.png");
+	background-repeat: repeat-x;
+	height: 11px;
+}

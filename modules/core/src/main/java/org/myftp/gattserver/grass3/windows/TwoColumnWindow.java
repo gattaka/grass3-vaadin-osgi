@@ -1,0 +1,66 @@
+package org.myftp.gattserver.grass3.windows;
+
+import com.vaadin.ui.AbsoluteLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.VerticalLayout;
+
+public abstract class TwoColumnWindow extends BaseWindow {
+
+	private static final long serialVersionUID = 5064416476628186307L;
+
+	public TwoColumnWindow() {
+	}
+
+	@Override
+	protected void createWindowContent(AbsoluteLayout layout) {
+
+		// levý sloupec
+		createLeftColumn(layout);
+
+		// pravý sloupec
+		createRightColumn(layout);
+	}
+
+	private void createLeftColumn(AbsoluteLayout layout) {
+
+		VerticalLayout backgroundLayout = new ColumnBuilder() {
+
+			@Override
+			protected void createColumnContent(HorizontalLayout layout) {
+				createLeftColumnContent(layout);
+			}
+
+		}.buildColumn();
+		layout.addComponent(backgroundLayout, "left:0px; top:135px;");
+
+	}
+
+	/**
+	 * Obsah levé části
+	 * 
+	 * @param layout
+	 */
+	protected abstract void createLeftColumnContent(HorizontalLayout layout);
+
+	private void createRightColumn(AbsoluteLayout layout) {
+
+		VerticalLayout backgroundLayout = new ColumnBuilder(775,"long_right_middle_background") {
+
+			@Override
+			protected void createColumnContent(HorizontalLayout layout) {
+				createRightColumnContent(layout);
+			}
+
+		}.buildColumn();
+		layout.addComponent(backgroundLayout, "left:215px; top:135px;");
+
+	}
+
+	/**
+	 * Obsah pravé části
+	 * 
+	 * @param layout
+	 */
+	protected abstract void createRightColumnContent(HorizontalLayout layout);
+
+}

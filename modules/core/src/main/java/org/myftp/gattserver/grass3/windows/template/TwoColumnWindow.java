@@ -1,4 +1,6 @@
-package org.myftp.gattserver.grass3.windows;
+package org.myftp.gattserver.grass3.windows.template;
+
+import org.myftp.gattserver.grass3.ServiceHolder;
 
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -6,10 +8,12 @@ import com.vaadin.ui.VerticalLayout;
 
 public abstract class TwoColumnWindow extends BaseWindow {
 
+	public TwoColumnWindow(ServiceHolder serviceHolder) {
+		super(serviceHolder);
+	}
+
 	private static final long serialVersionUID = 5064416476628186307L;
 
-	public TwoColumnWindow() {
-	}
 
 	@Override
 	protected void createWindowContent(AbsoluteLayout layout) {

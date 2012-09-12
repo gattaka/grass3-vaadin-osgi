@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.myftp.gattserver.grass3.Role;
+
 public class UserDTO {
 
 	/**
@@ -46,7 +48,7 @@ public class UserDTO {
 	 */
 	private Long id;
 
-	private Set<String> roles = new HashSet<String>();;
+	private Set<Role> roles = new HashSet<Role>();
 
 	public Long getId() {
 		return id;
@@ -77,11 +79,11 @@ public class UserDTO {
 		this.password = password;
 	}
 
-	public Set<String> getRoles() {
+	public Set<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Set<String> roles) {
+	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
 

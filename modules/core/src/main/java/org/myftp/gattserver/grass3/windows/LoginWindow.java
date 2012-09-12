@@ -1,6 +1,8 @@
 package org.myftp.gattserver.grass3.windows;
 
 import org.myftp.gattserver.grass3.GrassApplication;
+import org.myftp.gattserver.grass3.ServiceHolder;
+import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Button;
@@ -16,7 +18,8 @@ public class LoginWindow extends OneColumnWindow {
 
 	public static final String NAME = "login";
 
-	public LoginWindow() {
+	public LoginWindow(ServiceHolder serviceHolder) {
+		super(serviceHolder);
 		setName(NAME);
 		setCaption("Login");
 	}

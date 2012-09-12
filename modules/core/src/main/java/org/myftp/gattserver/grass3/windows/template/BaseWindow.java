@@ -1,13 +1,19 @@
-package org.myftp.gattserver.grass3.windows;
+package org.myftp.gattserver.grass3.windows.template;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.myftp.gattserver.grass3.BindListener;
+import org.myftp.gattserver.grass3.ISection;
+import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.data.SectionFacade;
 import org.myftp.gattserver.grass3.facades.QuotesFacade;
 import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.util.URLTool;
+import org.myftp.gattserver.grass3.windows.HomeWindow;
+import org.myftp.gattserver.grass3.windows.LoginWindow;
+import org.myftp.gattserver.grass3.windows.QuotesWindow;
 
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.ThemeResource;
@@ -18,9 +24,8 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 
-public abstract class BaseWindow extends Window {
+public abstract class BaseWindow extends GrassWindow {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
@@ -28,7 +33,22 @@ public abstract class BaseWindow extends Window {
 	private SectionFacade sectionFacade = SectionFacade.getInstance();
 	private QuotesFacade quotesFacade = QuotesFacade.getInstance();
 
-	public BaseWindow() {
+	private HorizontalLayout sectionsMenuLayout = new HorizontalLayout();
+
+	public BaseWindow(ServiceHolder serviceHolder) {
+
+		serviceHolder.registerBindListener(ISection.class,
+				new BindListener<ISection>() {
+
+					public void onBind(ISection service) {
+						addSectionLink(service.getSectionName(),service.getSectionName());
+					}
+
+					public void onUnbind(ISection service) {
+						// tady by se to mělo zase celé vyčistit a znova :P
+					}
+
+				});
 
 		// Hlavní layout - nosič pozadí a rovnoměrného rozsazení elementů
 		VerticalLayout backgroundLayout = new VerticalLayout();
@@ -140,7 +160,6 @@ public abstract class BaseWindow extends Window {
 	}
 
 	private void createSectionsMenu(HorizontalLayout layout) {
-		HorizontalLayout sectionsMenuLayout = new HorizontalLayout();
 		layout.addComponent(sectionsMenuLayout);
 		layout.setComponentAlignment(sectionsMenuLayout, Alignment.MIDDLE_LEFT);
 		sectionsMenuLayout.setStyleName("sections_menu_layout");
@@ -151,12 +170,19 @@ public abstract class BaseWindow extends Window {
 		link.setStyleName("first_menu_item");
 		sectionsMenuLayout.addComponent(link);
 
-		for (SectionFacade.Section section : sectionFacade.getSections()) {
-			Label menuItem = new Label(section.getName());
-			sectionsMenuLayout.addComponent(menuItem);
-
-			menuItem.setStyleName("menu_item");
-		}
+//		for (SectionFacade.Section section : sectionFacade.getSections()) {
+//			Label menuItem = new Label(section.getName());
+//			sectionsMenuLayout.addComponent(menuItem);
+//
+//			menuItem.setStyleName("menu_item");
+//		}
+	}
+	
+	private void addSectionLink(String caption, String windowName) {
+		Link link = new Link(caption, new ExternalResource(
+				URLTool.getWindowURL(windowName)));
+		link.setStyleName("menu_item");
+		sectionsMenuLayout.addComponent(link);
 	}
 
 	private void createUserMenu(HorizontalLayout layout) {

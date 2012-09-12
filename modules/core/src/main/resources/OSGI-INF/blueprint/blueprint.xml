@@ -1,12 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
+	<!-- Vytvoř si instanci od factory pro vytváření aplikace apod. Tato factory 
+		bude zároven využívána pro agregaci služeb, protože stejně jako ty je vytvářena 
+		z blueprint iniciativy. Takto získané instance (injektované) pak bude protlačovat 
+		do nových instancí aplikace, která se musí pokaždé vytvořit nová, aby bylo 
+		možné mít více sessions (agregace je přesunuta do ServiceHolder) -->
+	<bean id="appFactory" class="org.myftp.gattserver.grass3.AppFactory">
+		<property name="serviceHolder" ref="serviceHolder" />
+	</bean>
+
+	<!-- ServiceHolder pro všechny chytané services -->
+	<bean id="serviceHolder" class="org.myftp.gattserver.grass3.ServiceHolder">
+		<property name="sectionServices" ref="sectionServices" />
+	</bean>
+
+	<!-- List s odchytnutými sekcemi -->
+	<reference-list id="sectionServices"
+		interface="org.myftp.gattserver.grass3.ISection" availability="optional">  <!-- activation="lazy" -->
+		<reference-listener bind-method="bindSection"
+			unbind-method="unbindSection" ref="serviceHolder" />
+	</reference-list>
+
 	<!-- Registrace služby implementující ApplicationFactory -->
-	<service interface="vaadin.bridge.ApplicationFactory">
+	<service interface="vaadin.bridge.ApplicationFactory" ref="appFactory">
+		<!-- Parametrem factory je URI alias, na kterém je web aplikace registrován -->
 		<service-properties>
 			<entry key="alias" value="grass3" />
 		</service-properties>
-		<bean class="org.myftp.gattserver.grass3.AppFactory" />
 	</service>
 
 </blueprint>

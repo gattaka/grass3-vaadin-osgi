@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3.windows;
+package org.myftp.gattserver.grass3.windows.template;
 
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;

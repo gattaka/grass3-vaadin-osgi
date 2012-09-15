@@ -12,4 +12,6 @@ public abstract class GrassWindow extends Window {
 
 	private static final long serialVersionUID = 8889472078008074552L;
 
+	protected abstract void buildLayout();
+	
 }

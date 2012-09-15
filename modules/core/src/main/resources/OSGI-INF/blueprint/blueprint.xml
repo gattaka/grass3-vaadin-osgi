@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-	<!-- Vytvoř si instanci od factory pro vytváření aplikace apod. Tato factory 
-		bude zároven využívána pro agregaci služeb, protože stejně jako ty je vytvářena 
-		z blueprint iniciativy. Takto získané instance (injektované) pak bude protlačovat 
-		do nových instancí aplikace, která se musí pokaždé vytvořit nová, aby bylo 
-		možné mít více sessions (agregace je přesunuta do ServiceHolder) -->
+	<!-- Vytvoř si instanci od factory pro vytváření aplikace apod. -->
 	<bean id="appFactory" class="org.myftp.gattserver.grass3.AppFactory">
-		<property name="serviceHolder" ref="serviceHolder" />
 	</bean>
 
-	<!-- ServiceHolder pro všechny chytané services -->
-	<bean id="serviceHolder" class="org.myftp.gattserver.grass3.ServiceHolder">
+	<!-- ServiceHolder - agregátor služeb -->
+	<bean id="serviceHolder" class="org.myftp.gattserver.grass3.ServiceHolder"
+		factory-method="getInstance" activation="eager">
 		<property name="sectionServices" ref="sectionServices" />
 	</bean>
 

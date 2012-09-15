@@ -25,7 +25,7 @@ public interface ISection {
 	 * 
 	 * @return nové okno sekce
 	 */
-	public GrassWindow getSectionWindowNewInstance(ServiceHolder serviceHolder);
+	public GrassWindow getSectionWindowNewInstance();
 
 	/**
 	 * Vrátí název sekce, tento text se bude zobrazovat přímo v hlavním menu, ze

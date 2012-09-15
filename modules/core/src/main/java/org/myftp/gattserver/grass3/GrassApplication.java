@@ -19,16 +19,19 @@ import com.vaadin.terminal.gwt.server.HttpServletRequestListener;
 import com.vaadin.ui.Window;
 
 /**
- * The Application's "main" class
+ * Každá instance odpovídá jedné session, proto je potřeba hlídat instance ručně
+ * a nesvěřit její vytváření Blueprintu, který by mohl instance sice vytvářet
+ * sám, ale nevhodně
  */
 @SuppressWarnings("serial")
 public class GrassApplication extends Application implements
 		HttpServletRequestListener {
 
 	/**
-	 * ThreadLocal pattern
+	 * ThreadLocal pattern TODO v OSGi nějak nefunguje
 	 */
-	private static ThreadLocal<GrassApplication> threadLocal = new ThreadLocal<GrassApplication>();
+	// private static ThreadLocal<GrassApplication> threadLocal = new
+	// ThreadLocal<GrassApplication>();
 
 	/**
 	 * Instance hlavního okna
@@ -49,19 +52,7 @@ public class GrassApplication extends Application implements
 	/**
 	 * Fasády
 	 */
-	private SecurityFacade securityFacade = SecurityFacade.getInstance(); 
-
-	/**
-	 * Byla již dokončena inicializace a je tedy možné přidávat přímo přihlášené
-	 * součásti ?
-	 */
-	private volatile boolean initialized = false;
-
-	/**
-	 * Reference na ServiceHolder, přes který se dá zaregistrovat na bind a
-	 * unbind jednotlivých services
-	 */
-	private ServiceHolder serviceHolder;
+	private SecurityFacade securityFacade = SecurityFacade.getInstance();
 
 	/**
 	 * Nahraje do aplikace všechny chráněné zdroje jako stránky apod., které
@@ -101,68 +92,86 @@ public class GrassApplication extends Application implements
 		return securityStore;
 	}
 
+	/**
+	 * Registr oken
+	 */
 	private Map<String, GrassWindow> windows = new HashMap<String, GrassWindow>();
 
-	public GrassApplication(final ServiceHolder serviceHolder) {
-		this.serviceHolder = serviceHolder;
-		serviceHolder.registerBindListener(ISection.class,
+	/**
+	 * Registruje u {@link ServiceHolder} listenery pro bind a unbind sekcí.
+	 * Stará se tak o přidání jejich instancí oken (od sekcí) do aplikace
+	 */
+	private void registerSectionBindListener() {
+		ServiceHolder.getInstance().registerBindListener(ISection.class,
 				new BindListener<ISection>() {
 
 					public void onBind(ISection service) {
 						GrassWindow window = service
-								.getSectionWindowNewInstance(serviceHolder);
-						windows.put(service.getSectionName(), window);
-						addWindow(window);
+								.getSectionWindowNewInstance();
+						// v případě duplicity se nesmí záznam přepsat, protože
+						// by se pak okno nedalo odebrat
+						if (!windows.containsKey(service.getSectionName())) {
+							windows.put(service.getSectionName(), window);
+							addWindow(window);
+						}
 					}
 
 					public void onUnbind(ISection service) {
 						GrassWindow window = windows.get(service
 								.getSectionName());
-						removeWindow(window);
+						if (window != null) {
+							removeWindow(window);
+							windows.remove(service.getSectionName());
+						}
 					}
 
 				});
 	}
 
+	/**
+	 * Default constructor
+	 */
+	public GrassApplication() {
+		registerSectionBindListener();
+	}
+
 	@Override
 	public void init() {
 
-		setInstance(this);
+		// setInstance(this);
 
-		// init okna
-		mainWindow = new HomeWindow(serviceHolder);
+		// instance oken
+		mainWindow = new HomeWindow();
 		setMainWindow(mainWindow);
 
-		addWindow(new LoginWindow(serviceHolder));
-		addWindow(new SectionWindow(serviceHolder));
-		addWindow(new QuotesWindow(serviceHolder));
-
+		addWindow(new LoginWindow());
+		addWindow(new SectionWindow());
+		addWindow(new QuotesWindow());
+		
 		// theme
 		setTheme("grass");
 
-		// hotovo, inicializace dokončena
-		initialized = true;
-
 	}
 
-	// @return the current application instance
-	public static GrassApplication getInstance() {
-		return threadLocal.get();
-	}
-
-	// Set the current application instance
-	public static void setInstance(GrassApplication application) {
-		threadLocal.set(application);
-	}
-
+	// // @return the current application instance
+	// public static GrassApplication getInstance() {
+	// return threadLocal.get();
+	// }
+	//
+	// // Set the current application instance
+	// public static void setInstance(GrassApplication application) {
+	// threadLocal.set(application);
+	// }
+	//
 	public void onRequestStart(HttpServletRequest request,
 			HttpServletResponse response) {
-		GrassApplication.setInstance(this);
+
+		// GrassApplication.setInstance(this);
 	}
 
 	public void onRequestEnd(HttpServletRequest request,
 			HttpServletResponse response) {
-		threadLocal.remove();
+		// threadLocal.remove();
 	}
 
 }

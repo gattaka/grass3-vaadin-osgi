@@ -4,15 +4,23 @@
 # -f force copy (jako u normálního cp)
 
 # Zjisti zda byl zadán cílový adresář pro deploy
-# TODO
+if [ -z $1 ] ; then 
+    echo "Nebyl zadán cílový deploy adresář"
+    exit
+fi
 
 # Vypadá to jako cesta ke Karaf deploy ? 
 # Pokud ne, zeptej se zda je to opravdu úmysl ...
-# TODO
+path=$(echo $1 | egrep -o ".*/deploy[/]?$")
+if [ -z $path ] ; then
+    echo -e "Zadaná cesta:\n$1\nnevypadá jako cesta k deploy adresáři Karaf - opravdu zkopírovat ? [^C pro zrušení; ENTER pokračovat]"
+    read
+fi
 
 # Zjisti všechny target JAR soubory, které se budou přesouvat
-target_files=$(find . -wholename *target/*.jar)
-echo $target_files
-
 # Zkopíruj do deploy adresáře
-# TODO
+echo "Kopíruji:"
+for target in $(find . -wholename *target/*.jar); do
+    echo -e "\t$target"
+    cp $2 $target $1
+done

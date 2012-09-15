@@ -9,6 +9,9 @@ public abstract class ColumnBuilder {
 	private String rightBorderStyleName = "right_middle_background";
 	private Integer columnWidth = 200;
 
+	/**
+	 * Default konstruktor
+	 */
 	public ColumnBuilder() {
 	}
 

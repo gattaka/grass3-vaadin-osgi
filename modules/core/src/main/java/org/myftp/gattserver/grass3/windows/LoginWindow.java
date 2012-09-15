@@ -1,7 +1,6 @@
 package org.myftp.gattserver.grass3.windows;
 
 import org.myftp.gattserver.grass3.GrassApplication;
-import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
 import com.vaadin.terminal.ExternalResource;
@@ -18,8 +17,7 @@ public class LoginWindow extends OneColumnWindow {
 
 	public static final String NAME = "login";
 
-	public LoginWindow(ServiceHolder serviceHolder) {
-		super(serviceHolder);
+	public LoginWindow() {
 		setName(NAME);
 		setCaption("Login");
 	}
@@ -47,14 +45,13 @@ public class LoginWindow extends OneColumnWindow {
 					// inline click listener
 					public void buttonClick(ClickEvent event) {
 
-						if (GrassApplication.getInstance().authenticate(
+						if (((GrassApplication) getApplication()).authenticate(
 								username.getValue().toString(),
 								password.getValue().toString())) {
 
 							// TODO - zatím jen takhle na main, ale měl by se
 							// "vracet" resp. "pokračovat"
-							open(new ExternalResource(GrassApplication
-									.getInstance().getMainWindow().getURL()));
+							open(new ExternalResource(getApplication().getMainWindow().getURL()));
 						} else {
 						
 							// zobraz chybu

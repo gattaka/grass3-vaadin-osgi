@@ -3,8 +3,6 @@ package org.myftp.gattserver.grass3.util;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.myftp.gattserver.grass3.GrassApplication;
-
 public class URLTool {
 
 	/**
@@ -13,24 +11,14 @@ public class URLTool {
 	 * @param name
 	 * @return
 	 */
-	public static URL getWindowURL(String name) {
+	public static URL getWindowURL(URL appURL, String name) {
 		URL url = null;
 		try {
-			url = new URL(getApplicationURL(), name + "/");
+			url = new URL(appURL, name + "/");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 		return url;
-	}
-
-	/**
-	 * Získá URL aplikace
-	 * 
-	 * @return
-	 */
-	public static URL getApplicationURL() {
-		GrassApplication application = GrassApplication.getInstance();
-		return application == null ? null : application.getURL();
 	}
 
 }

@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.myftp.gattserver.grass3.ISection;
 import org.myftp.gattserver.grass3.Role;
-import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.windows.template.GrassWindow;
 
 public class FMSection implements ISection {
@@ -13,8 +12,8 @@ public class FMSection implements ISection {
 		return FMWindow.class;
 	} 
 
-	public GrassWindow getSectionWindowNewInstance(ServiceHolder serviceHolder) {
-		return new FMWindow(serviceHolder);
+	public GrassWindow getSectionWindowNewInstance() {
+		return new FMWindow();
 	}
 
 	public String getSectionName() {

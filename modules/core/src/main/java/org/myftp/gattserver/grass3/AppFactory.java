@@ -21,16 +21,6 @@ public class AppFactory implements ApplicationFactory {
 
 	AtomicReference<LogService> logRef = new AtomicReference<LogService>(null);
 
-	private ServiceHolder serviceHolder;
-
-	public ServiceHolder getServiceHolder() {
-		return serviceHolder;
-	}
-
-	public void setServiceHolder(ServiceHolder serviceHolder) {
-		this.serviceHolder = serviceHolder;
-	}
-
 	// @Reference(dynamic = true, optional = true)
 	public void setLogService(LogService log) {
 		logRef.set(log);
@@ -54,7 +44,7 @@ public class AppFactory implements ApplicationFactory {
 	 * takto funguje. Instance aplikace odpovídá jedné session.
 	 */
 	public Application newInstance() {
-		return new GrassApplication(serviceHolder);
+		return new GrassApplication();
 	}
 
 }

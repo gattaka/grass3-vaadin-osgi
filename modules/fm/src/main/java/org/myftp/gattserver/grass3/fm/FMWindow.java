@@ -8,8 +8,7 @@ import com.vaadin.ui.Label;
 
 public class FMWindow extends OneColumnWindow {
 
-	public FMWindow(ServiceHolder serviceHolder) {
-		super(serviceHolder);
+	public FMWindow() {
 		setName("fm");
 	}
 

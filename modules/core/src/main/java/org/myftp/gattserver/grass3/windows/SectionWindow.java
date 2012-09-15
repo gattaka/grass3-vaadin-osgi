@@ -3,7 +3,6 @@ package org.myftp.gattserver.grass3.windows;
 import java.net.URL;
 import java.util.Map;
 
-import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.windows.template.TwoColumnWindow;
 
 import com.vaadin.terminal.DownloadStream;
@@ -16,8 +15,7 @@ public class SectionWindow extends TwoColumnWindow {
 
 	private Label path;
 	
-	public SectionWindow(ServiceHolder serviceHolder) {
-		super(serviceHolder);
+	public SectionWindow() {
 		setName("section");
 		setCaption("Gattserver");
 	}

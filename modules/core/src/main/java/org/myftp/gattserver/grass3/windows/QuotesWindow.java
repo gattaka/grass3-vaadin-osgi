@@ -1,6 +1,5 @@
 package org.myftp.gattserver.grass3.windows;
 
-import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.facades.QuotesFacade;
 import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
@@ -16,8 +15,7 @@ public class QuotesWindow extends OneColumnWindow {
 
 	public static final String NAME = "quotes";
 
-	public QuotesWindow(ServiceHolder serviceHolder) {
-		super(serviceHolder);
+	public QuotesWindow() {
 		setName(NAME);
 		setCaption("Gattserver - Hlášky");
 	}

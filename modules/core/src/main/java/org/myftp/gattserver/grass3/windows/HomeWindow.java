@@ -1,6 +1,5 @@
 package org.myftp.gattserver.grass3.windows;
 
-import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
 import com.vaadin.ui.HorizontalLayout;
@@ -11,8 +10,7 @@ public class HomeWindow extends OneColumnWindow {
 
 	public static final String NAME = "home";
 
-	public HomeWindow(ServiceHolder serviceHolder) {
-		super(serviceHolder);
+	public HomeWindow() {
 		setName(NAME);
 		setCaption("Gattserver");
 	}

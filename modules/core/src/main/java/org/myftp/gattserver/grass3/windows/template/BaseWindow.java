@@ -1,13 +1,14 @@
 package org.myftp.gattserver.grass3.windows.template;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.myftp.gattserver.grass3.BindListener;
 import org.myftp.gattserver.grass3.ISection;
 import org.myftp.gattserver.grass3.ServiceHolder;
-import org.myftp.gattserver.grass3.data.SectionFacade;
 import org.myftp.gattserver.grass3.facades.QuotesFacade;
 import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.util.URLTool;
@@ -15,6 +16,7 @@ import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
 
+import com.vaadin.Application;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.AbsoluteLayout;
@@ -29,26 +31,56 @@ public abstract class BaseWindow extends GrassWindow {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
+	// TODO (strukturalizace - aktuálně je to všechno nějak moc provázané)
 	// Fasády
-	private SectionFacade sectionFacade = SectionFacade.getInstance();
 	private QuotesFacade quotesFacade = QuotesFacade.getInstance();
 
+	private Map<String, Link> sections = new HashMap<String, Link>();
 	private HorizontalLayout sectionsMenuLayout = new HorizontalLayout();
 
-	public BaseWindow(ServiceHolder serviceHolder) {
+	/**
+	 * TODO - konstruktor se volá při vytvoření každého okna ... myslím, že
+	 * registrace bindListeneru je tu zbytečně opakována pro každou instanci -
+	 * možná by to šlo udělat staticky ...
+	 */
+	public BaseWindow() {
 
-		serviceHolder.registerBindListener(ISection.class,
+		ServiceHolder.getInstance().registerBindListener(ISection.class,
 				new BindListener<ISection>() {
 
 					public void onBind(ISection service) {
-						addSectionLink(service.getSectionName(),service.getSectionName());
+						if (!sections.containsKey(service.getSectionName())) {
+							Link link = createSectionLink(
+									service.getSectionName(),
+									service.getSectionName());
+							sections.put(service.getSectionName(), link);
+							sectionsMenuLayout.addComponent(link);
+						}
 					}
 
 					public void onUnbind(ISection service) {
-						// tady by se to mělo zase celé vyčistit a znova :P
+						Link link = sections.get(service.getSectionName());
+						if (link != null) {
+							sectionsMenuLayout.removeComponent(link);
+							sections.remove(service.getSectionName());
+						}
 					}
 
 				});
+	}
+
+	/**
+	 * Teprve tato metoda staví obsah okna - je jí potřeba mít takhle oddělenou,
+	 * protože během stavby využívá dat jako referenci na instanci aplikace
+	 * apod. Tyto informace jsou oknu dodány později (settery apod.), takže
+	 * kdyby tato logika byla přímo v konstruktoru, vznikne problém ve velkém
+	 * množství null pointer chyb apod.
+	 * 
+	 * Zároveň je tak možné počkat až budou zaregistrována všechny povinná okna
+	 * do aplikace a teprve poté na nich na všech zavolat build, při kterém
+	 * nebude ani problém s nacházením těchto oken v registru oken aplikace
+	 */
+	protected void buildLayout() {
 
 		// Hlavní layout - nosič pozadí a rovnoměrného rozsazení elementů
 		VerticalLayout backgroundLayout = new VerticalLayout();
@@ -67,6 +99,17 @@ public abstract class BaseWindow extends GrassWindow {
 		// vytvoření patičku, která je sesypána dolů
 		createFooter(layout);
 
+	}
+
+	@Override
+	public void setApplication(Application application) {
+		super.setApplication(application);
+
+		/**
+		 * Dokud neznáš svoji app, tak nemá cenu stavět layout - ten je na této
+		 * informaci závislý
+		 */
+		buildLayout();
 	}
 
 	private void createBody(VerticalLayout layout) {
@@ -135,7 +178,8 @@ public abstract class BaseWindow extends GrassWindow {
 		String quote = quotesDTO == null ? "" : quotesDTO.getName();
 
 		Link quotes = new Link(quote, new ExternalResource(
-				URLTool.getWindowURL(QuotesWindow.NAME)));
+				URLTool.getWindowURL(getApplication().getURL(),
+						QuotesWindow.NAME)));
 		topLayout.addComponent(quotes);
 		quotes.setStyleName("quotes");
 		quotes.setWidth("740px");
@@ -165,24 +209,24 @@ public abstract class BaseWindow extends GrassWindow {
 		sectionsMenuLayout.setStyleName("sections_menu_layout");
 
 		// Přihlašování
-		Link link = new Link("Domů", new ExternalResource(
-				URLTool.getWindowURL(HomeWindow.NAME)));
+		Link link = new Link("Domů", new ExternalResource(URLTool.getWindowURL(
+				getApplication().getURL(), HomeWindow.NAME)));
 		link.setStyleName("first_menu_item");
 		sectionsMenuLayout.addComponent(link);
 
-//		for (SectionFacade.Section section : sectionFacade.getSections()) {
-//			Label menuItem = new Label(section.getName());
-//			sectionsMenuLayout.addComponent(menuItem);
-//
-//			menuItem.setStyleName("menu_item");
-//		}
+		// for (SectionFacade.Section section : sectionFacade.getSections()) {
+		// Label menuItem = new Label(section.getName());
+		// sectionsMenuLayout.addComponent(menuItem);
+		//
+		// menuItem.setStyleName("menu_item");
+		// }
 	}
-	
-	private void addSectionLink(String caption, String windowName) {
+
+	private Link createSectionLink(String caption, String windowName) {
 		Link link = new Link(caption, new ExternalResource(
-				URLTool.getWindowURL(windowName)));
+				URLTool.getWindowURL(getApplication().getURL(), windowName)));
 		link.setStyleName("menu_item");
-		sectionsMenuLayout.addComponent(link);
+		return link;
 	}
 
 	private void createUserMenu(HorizontalLayout layout) {
@@ -196,7 +240,8 @@ public abstract class BaseWindow extends GrassWindow {
 
 		// Přihlašování
 		Link link = new Link("Přihlášení", new ExternalResource(
-				URLTool.getWindowURL(LoginWindow.NAME)));
+				URLTool.getWindowURL(getApplication().getURL(),
+						LoginWindow.NAME)));
 		link.setStyleName("menu_item");
 		userMenuLayout.addComponent(link);
 

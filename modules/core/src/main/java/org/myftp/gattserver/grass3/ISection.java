@@ -33,7 +33,15 @@ public interface ISection {
 	 * 
 	 * @return název sekce
 	 */
-	public String getSectionName();
+	public String getSectionCaption();
+
+	/**
+	 * Vrátí identifikátor sekce, podle tohoto jména se bude sekce hledat v
+	 * seznamu oken
+	 * 
+	 * @return název sekce
+	 */
+	public String getSectionIDName();
 
 	/**
 	 * Zjistí, zda má být zobrazen odkaz na tuto sekci

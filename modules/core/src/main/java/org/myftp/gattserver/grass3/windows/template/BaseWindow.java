@@ -1,12 +1,9 @@
 package org.myftp.gattserver.grass3.windows.template;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
-import org.myftp.gattserver.grass3.BindListener;
 import org.myftp.gattserver.grass3.ISection;
 import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.facades.QuotesFacade;
@@ -35,38 +32,38 @@ public abstract class BaseWindow extends GrassWindow {
 	// Fasády
 	private QuotesFacade quotesFacade = QuotesFacade.getInstance();
 
-	private Map<String, Link> sections = new HashMap<String, Link>();
 	private HorizontalLayout sectionsMenuLayout = new HorizontalLayout();
+	private Link quotes;
 
-	/**
-	 * TODO - konstruktor se volá při vytvoření každého okna ... myslím, že
-	 * registrace bindListeneru je tu zbytečně opakována pro každou instanci -
-	 * možná by to šlo udělat staticky ...
-	 */
-	public BaseWindow() {
+	@Override
+	protected void onShow() {
 
-		ServiceHolder.getInstance().registerBindListener(ISection.class,
-				new BindListener<ISection>() {
+		// update menu sekcí
+		updateMenu();
 
-					public void onBind(ISection service) {
-						if (!sections.containsKey(service.getSectionName())) {
-							Link link = createSectionLink(
-									service.getSectionName(),
-									service.getSectionName());
-							sections.put(service.getSectionName(), link);
-							sectionsMenuLayout.addComponent(link);
-						}
-					}
+		// update hlášek
+		quotes.setCaption(chooseQuote());
+	}
 
-					public void onUnbind(ISection service) {
-						Link link = sections.get(service.getSectionName());
-						if (link != null) {
-							sectionsMenuLayout.removeComponent(link);
-							sections.remove(service.getSectionName());
-						}
-					}
+	private void updateMenu() {
+		sectionsMenuLayout.removeAllComponents();
+		createHomeLink();
+		for (ISection section : ServiceHolder.getInstance()
+				.getSectionServices()) {
+			createSectionLink(section.getSectionCaption(),
+					section.getSectionIDName());
+		}
+	}
 
-				});
+	private String chooseQuote() {
+		int count = quotesFacade.getQuotesCount();
+		QuoteDTO quotesDTO = null;
+		if (count != 0) {
+			Random generator = new Random();
+			Long randomId = Math.abs(generator.nextLong()) % count + 1;
+			quotesDTO = quotesFacade.getByID(randomId);
+		}
+		return quotesDTO == null ? "" : quotesDTO.getName();
 	}
 
 	/**
@@ -167,23 +164,13 @@ public abstract class BaseWindow extends GrassWindow {
 		logoImage.setAlternateText("Gattserver");
 		logoImage.setStyleName("logo_image");
 
-		// Hlášky - TODO .. generovat znova a znova :)
-		int count = quotesFacade.getQuotesCount();
-		QuoteDTO quotesDTO = null;
-		if (count != 0) {
-			Random generator = new Random();
-			Long randomId = Math.abs(generator.nextLong()) % count + 1;
-			quotesDTO = quotesFacade.getByID(randomId);
-		}
-		String quote = quotesDTO == null ? "" : quotesDTO.getName();
-
-		Link quotes = new Link(quote, new ExternalResource(
+		// Hlášky - generují se znova a znova
+		quotes = new Link(chooseQuote(), new ExternalResource(
 				URLTool.getWindowURL(getApplication().getURL(),
 						QuotesWindow.NAME)));
-		topLayout.addComponent(quotes);
 		quotes.setStyleName("quotes");
 		quotes.setWidth("740px");
-
+		topLayout.addComponent(quotes);
 	}
 
 	private void createMenu(AbsoluteLayout layout) {
@@ -203,30 +190,27 @@ public abstract class BaseWindow extends GrassWindow {
 		createUserMenu(menuHolderLayout);
 	}
 
+	private void createHomeLink() {
+		Link link = new Link("Domů", new ExternalResource(URLTool.getWindowURL(
+				getApplication().getURL(), HomeWindow.NAME)));
+		link.setStyleName("first_menu_item");
+		sectionsMenuLayout.addComponent(link);
+	}
+
 	private void createSectionsMenu(HorizontalLayout layout) {
 		layout.addComponent(sectionsMenuLayout);
 		layout.setComponentAlignment(sectionsMenuLayout, Alignment.MIDDLE_LEFT);
 		sectionsMenuLayout.setStyleName("sections_menu_layout");
 
-		// Přihlašování
-		Link link = new Link("Domů", new ExternalResource(URLTool.getWindowURL(
-				getApplication().getURL(), HomeWindow.NAME)));
-		link.setStyleName("first_menu_item");
-		sectionsMenuLayout.addComponent(link);
-
-		// for (SectionFacade.Section section : sectionFacade.getSections()) {
-		// Label menuItem = new Label(section.getName());
-		// sectionsMenuLayout.addComponent(menuItem);
-		//
-		// menuItem.setStyleName("menu_item");
-		// }
+		// Domů
+		createHomeLink();
 	}
 
-	private Link createSectionLink(String caption, String windowName) {
+	private void createSectionLink(String caption, String windowName) {
 		Link link = new Link(caption, new ExternalResource(
 				URLTool.getWindowURL(getApplication().getURL(), windowName)));
 		link.setStyleName("menu_item");
-		return link;
+		sectionsMenuLayout.addComponent(link);
 	}
 
 	private void createUserMenu(HorizontalLayout layout) {

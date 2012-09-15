@@ -110,18 +110,18 @@ public class GrassApplication extends Application implements
 								.getSectionWindowNewInstance();
 						// v případě duplicity se nesmí záznam přepsat, protože
 						// by se pak okno nedalo odebrat
-						if (!windows.containsKey(service.getSectionName())) {
-							windows.put(service.getSectionName(), window);
+						if (!windows.containsKey(service.getSectionIDName())) {
+							windows.put(service.getSectionIDName(), window);
 							addWindow(window);
 						}
 					}
 
 					public void onUnbind(ISection service) {
 						GrassWindow window = windows.get(service
-								.getSectionName());
+								.getSectionIDName());
 						if (window != null) {
 							removeWindow(window);
-							windows.remove(service.getSectionName());
+							windows.remove(service.getSectionIDName());
 						}
 					}
 

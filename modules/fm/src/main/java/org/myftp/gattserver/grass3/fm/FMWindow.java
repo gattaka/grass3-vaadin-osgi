@@ -1,6 +1,5 @@
 package org.myftp.gattserver.grass3.fm;
 
-import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
 import com.vaadin.ui.HorizontalLayout;

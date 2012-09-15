@@ -10,18 +10,22 @@ public class FMSection implements ISection {
 
 	public Class<? extends GrassWindow> getSectionWindowClass() {
 		return FMWindow.class;
-	} 
+	}
 
 	public GrassWindow getSectionWindowNewInstance() {
 		return new FMWindow();
 	}
 
-	public String getSectionName() {
+	public boolean isVisibleForRoles(Set<Role> roles) {
+		return true;
+	}
+
+	public String getSectionCaption() {
 		return "Soubory";
 	}
 
-	public boolean isVisibleForRoles(Set<Role> roles) {
-		return true;
+	public String getSectionIDName() {
+		return "files";
 	}
 
 }

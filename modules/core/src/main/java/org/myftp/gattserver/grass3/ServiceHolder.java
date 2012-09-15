@@ -33,7 +33,7 @@ public class ServiceHolder {
 	 * místo "factory" metody factory třídu (která bude jinak ven neviditelná) a
 	 * nějak to přes to vyřešit.
 	 */
-	public static ServiceHolder getInstance() {
+	public synchronized static ServiceHolder getInstance() {
 		if (instance == null)
 			instance = new ServiceHolder();
 		return instance;
@@ -51,7 +51,8 @@ public class ServiceHolder {
 	 * Tato generická metoda typově chrání {@link ServiceHolder} před vložením
 	 * třídy jiného typu než je parametr vkládaného {@link BindListener}
 	 * listeneru - nemůže se tak stát, že bych vložil {@link Class}&lt;A&gt; a
-	 * přitom {@link BindListener}&lt;B&gt;
+	 * přitom {@link BindListener}&lt;B&gt; - tím pádem pak můžu bezpečně
+	 * přetypovat v notify metodách
 	 * </p>
 	 * <p>
 	 * Můžu tedy vložit toto:
@@ -76,7 +77,7 @@ public class ServiceHolder {
 	 * @param clazz
 	 * @param listener
 	 */
-	public <T> void registerBindListener(Class<T> clazz,
+	public synchronized <T> void registerBindListener(Class<T> clazz,
 			BindListener<T> listener) {
 		List<BindListener<?>> listeners = listenerMap.get(clazz);
 		if (listeners == null) {
@@ -84,6 +85,14 @@ public class ServiceHolder {
 			listenerMap.put(clazz, listeners);
 		}
 		listeners.add(listener);
+
+		// TODO jinak
+		if (clazz.equals(ISection.class)) {
+			// dej novému odběrateli zpětně vědět o již existujících services
+			for (ISection service : sectionServices) {
+				((BindListener<ISection>) listener).onBind(service);
+			}
+		}
 	}
 
 	/**
@@ -92,40 +101,34 @@ public class ServiceHolder {
 	private List<ISection> sectionServices = Collections
 			.synchronizedList(new ArrayList<ISection>());
 
-	public List<ISection> getSectionServices() {
+	public synchronized List<ISection> getSectionServices() {
 		return sectionServices;
 	}
 
-	public void setSectionServices(List<ISection> sectionServices) {
+	public synchronized void setSectionServices(List<ISection> sectionServices) {
 		this.sectionServices = sectionServices;
 	}
 
-	/**
-	 * Tady si můžu dovolit takhle rovnou přetypovat, protože mě chrání typová
-	 * kontrola při vkládání
-	 * 
-	 * @param section
-	 */
 	@SuppressWarnings("unchecked")
-	public void bindSection(ISection section) {
-		System.out.println("bind");
+	private void notifyBindSectionListeners(ISection section) {
 		for (BindListener<?> bindListener : listenerMap.get(ISection.class)) {
 			((BindListener<ISection>) bindListener).onBind(section);
 		}
 	}
 
-	/**
-	 * Tady si můžu dovolit takhle rovnou přetypovat, protože mě chrání typová
-	 * kontrola při vkládání
-	 * 
-	 * @param section
-	 */
 	@SuppressWarnings("unchecked")
-	public void unbindSection(ISection section) {
-		System.out.println("unbind");
+	private void notifyUnbindSectionListeners(ISection section) {
 		for (BindListener<?> bindListener : listenerMap.get(ISection.class)) {
 			((BindListener<ISection>) bindListener).onUnbind(section);
 		}
+	}
+
+	public synchronized void bindSection(ISection section) {
+		notifyBindSectionListeners(section);
+	}
+
+	public synchronized void unbindSection(ISection section) {
+		notifyUnbindSectionListeners(section);
 	}
 
 }

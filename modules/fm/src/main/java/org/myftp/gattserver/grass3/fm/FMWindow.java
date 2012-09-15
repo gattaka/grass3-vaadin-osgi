@@ -7,11 +7,13 @@ import com.vaadin.ui.Label;
 
 public class FMWindow extends OneColumnWindow {
 
-	public FMWindow() {
-		setName("fm");
-	}
-
 	private static final long serialVersionUID = -950042653154868289L;
+	
+	public static final String NAME = "fm";
+	
+	public FMWindow() {
+		setName(NAME);
+	}
 
 	@Override
 	protected void createContent(HorizontalLayout layout) { 

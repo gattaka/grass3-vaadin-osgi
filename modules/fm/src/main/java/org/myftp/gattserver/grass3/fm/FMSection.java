@@ -25,7 +25,7 @@ public class FMSection implements ISection {
 	}
 
 	public String getSectionIDName() {
-		return "files";
+		return FMWindow.NAME;
 	}
 
 }

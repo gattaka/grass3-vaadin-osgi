@@ -3,9 +3,6 @@ package org.myftp.gattserver.grass3;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.myftp.gattserver.grass3.facades.SecurityFacade;
 import org.myftp.gattserver.grass3.model.dto.UserDTO;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
@@ -15,7 +12,6 @@ import org.myftp.gattserver.grass3.windows.SectionWindow;
 import org.myftp.gattserver.grass3.windows.template.GrassWindow;
 
 import com.vaadin.Application;
-import com.vaadin.terminal.gwt.server.HttpServletRequestListener;
 import com.vaadin.ui.Window;
 
 /**
@@ -25,13 +21,7 @@ import com.vaadin.ui.Window;
  */
 @SuppressWarnings("serial")
 public class GrassApplication extends Application implements
-		HttpServletRequestListener {
-
-	/**
-	 * ThreadLocal pattern TODO v OSGi nějak nefunguje
-	 */
-	// private static ThreadLocal<GrassApplication> threadLocal = new
-	// ThreadLocal<GrassApplication>();
+		BindListener<ISection> {
 
 	/**
 	 * Instance hlavního okna
@@ -42,12 +32,6 @@ public class GrassApplication extends Application implements
 	 * Úložiště auth údajů pro aktuální session
 	 */
 	private SecurityStore securityStore = new SecurityStore();
-
-	/**
-	 * Logger TODO
-	 */
-	// private final Logger logger =
-	// LoggerFactory.getLogger(MainApplication.class);
 
 	/**
 	 * Fasády
@@ -102,43 +86,15 @@ public class GrassApplication extends Application implements
 	 * Stará se tak o přidání jejich instancí oken (od sekcí) do aplikace
 	 */
 	private void registerSectionBindListener() {
-		ServiceHolder.getInstance().registerBindListener(ISection.class,
-				new BindListener<ISection>() {
-
-					public void onBind(ISection service) {
-						GrassWindow window = service
-								.getSectionWindowNewInstance();
-						// v případě duplicity se nesmí záznam přepsat, protože
-						// by se pak okno nedalo odebrat
-						if (!windows.containsKey(service.getSectionIDName())) {
-							windows.put(service.getSectionIDName(), window);
-							addWindow(window);
-						}
-					}
-
-					public void onUnbind(ISection service) {
-						GrassWindow window = windows.get(service
-								.getSectionIDName());
-						if (window != null) {
-							removeWindow(window);
-							windows.remove(service.getSectionIDName());
-						}
-					}
-
-				});
-	}
-
-	/**
-	 * Default constructor
-	 */
-	public GrassApplication() {
-		registerSectionBindListener();
+		ServiceHolder.getInstance().registerBindListener(ISection.class, this);
 	}
 
 	@Override
 	public void init() {
 
-		// setInstance(this);
+		// Nelze volat z konstruktoru, musí se později (při přikládání nových
+		// addWindow musí existovat instance app)
+		registerSectionBindListener();
 
 		// instance oken
 		mainWindow = new HomeWindow();
@@ -147,31 +103,28 @@ public class GrassApplication extends Application implements
 		addWindow(new LoginWindow());
 		addWindow(new SectionWindow());
 		addWindow(new QuotesWindow());
-		
+
 		// theme
 		setTheme("grass");
 
 	}
 
-	// // @return the current application instance
-	// public static GrassApplication getInstance() {
-	// return threadLocal.get();
-	// }
-	//
-	// // Set the current application instance
-	// public static void setInstance(GrassApplication application) {
-	// threadLocal.set(application);
-	// }
-	//
-	public void onRequestStart(HttpServletRequest request,
-			HttpServletResponse response) {
-
-		// GrassApplication.setInstance(this);
+	public void onBind(ISection service) {
+		GrassWindow window = service.getSectionWindowNewInstance();
+		// v případě duplicity se nesmí záznam přepsat, protože
+		// by se pak okno nedalo odebrat
+		if (!windows.containsKey(service.getSectionIDName())) {
+			windows.put(service.getSectionIDName(), window);
+			addWindow(window);
+		}
 	}
 
-	public void onRequestEnd(HttpServletRequest request,
-			HttpServletResponse response) {
-		// threadLocal.remove();
+	public void onUnbind(ISection service) {
+		GrassWindow window = windows.get(service.getSectionIDName());
+		if (window != null) {
+			removeWindow(window);
+			windows.remove(service.getSectionIDName());
+		}
 	}
 
 }

@@ -2,6 +2,7 @@ package org.myftp.gattserver.grass3;
 
 import java.util.Set;
 
+import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.windows.template.GrassWindow;
 
 /**

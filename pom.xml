@@ -11,6 +11,7 @@
 	<modules>
 		<module>modules</module>
 		<module>theme</module>
+		<module>bridge</module>
 	</modules>
 
 </project>

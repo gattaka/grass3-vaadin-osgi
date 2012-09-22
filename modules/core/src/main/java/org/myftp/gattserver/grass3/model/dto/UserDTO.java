@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.myftp.gattserver.grass3.Role;
+import org.myftp.gattserver.grass3.security.Role;
 
 public class UserDTO {
 

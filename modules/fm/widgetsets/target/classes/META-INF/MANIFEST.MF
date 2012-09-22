@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1348351336451
+Build-Jdk: 1.7.0_05-icedtea
+Built-By: gatt
+Bundle-Description: Widgetsets from add-ons like mulit-upload and so
+Bundle-ManifestVersion: 2
+Bundle-Name: GRASS3 File Manager GWT Widgetsets
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-SymbolicName: org.myftp.gattserver.grass3.fm-widgetsets
+Bundle-Version: 0.0.1.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Fragment-Host: com.vaadin
+JAVA_OPT_HOME: /opt/java
+Tool: Bnd-1.50.0

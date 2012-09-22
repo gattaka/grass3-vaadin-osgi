@@ -19,8 +19,6 @@ public class AppInfo {
 	}
 
 	public static final String GRASS_NAME = "grass";
-	public static final String FM_MODULE_CONFIG_PATH = "file_manager.xml";
-
 	public static final String GRASS_VERSION = prop.getProperty("version");
 
 	private AppInfo() {

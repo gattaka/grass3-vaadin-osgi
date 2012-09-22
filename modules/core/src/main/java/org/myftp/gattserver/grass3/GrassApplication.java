@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.myftp.gattserver.grass3.facades.SecurityFacade;
 import org.myftp.gattserver.grass3.model.dto.UserDTO;
+import org.myftp.gattserver.grass3.security.SecurityStore;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
@@ -58,7 +59,8 @@ public class GrassApplication extends Application implements
 
 		UserDTO loggedUser = securityFacade.authenticate(username, password);
 		if (loggedUser != null) {
-			securityStore.setLoggedUser(loggedUser);
+			// TODO
+			// securityStore.setLoggedUser(loggedUser);
 			loadProtectedResources();
 			return true;
 		}

@@ -1,13 +1,11 @@
 package org.myftp.gattserver.grass3.windows.template;
 
 import com.vaadin.ui.AbsoluteLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 
 public abstract class TwoColumnWindow extends BaseWindow {
 
 	private static final long serialVersionUID = 5064416476628186307L;
-
 
 	@Override
 	protected void createWindowContent(AbsoluteLayout layout) {
@@ -24,7 +22,7 @@ public abstract class TwoColumnWindow extends BaseWindow {
 		VerticalLayout backgroundLayout = new ColumnBuilder() {
 
 			@Override
-			protected void createColumnContent(HorizontalLayout layout) {
+			protected void createColumnContent(VerticalLayout layout) {
 				createLeftColumnContent(layout);
 			}
 
@@ -38,14 +36,15 @@ public abstract class TwoColumnWindow extends BaseWindow {
 	 * 
 	 * @param layout
 	 */
-	protected abstract void createLeftColumnContent(HorizontalLayout layout);
+	protected abstract void createLeftColumnContent(VerticalLayout layout);
 
 	private void createRightColumn(AbsoluteLayout layout) {
 
-		VerticalLayout backgroundLayout = new ColumnBuilder(775,"long_right_middle_background") {
+		VerticalLayout backgroundLayout = new ColumnBuilder(775,
+				"long_right_middle_background") {
 
 			@Override
-			protected void createColumnContent(HorizontalLayout layout) {
+			protected void createColumnContent(VerticalLayout layout) {
 				createRightColumnContent(layout);
 			}
 
@@ -59,6 +58,6 @@ public abstract class TwoColumnWindow extends BaseWindow {
 	 * 
 	 * @param layout
 	 */
-	protected abstract void createRightColumnContent(HorizontalLayout layout);
+	protected abstract void createRightColumnContent(VerticalLayout layout);
 
 }

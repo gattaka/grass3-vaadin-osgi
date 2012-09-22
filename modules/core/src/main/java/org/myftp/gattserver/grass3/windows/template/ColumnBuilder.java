@@ -19,8 +19,8 @@ public abstract class ColumnBuilder {
 	 * Společně s šířkou sloupce je potřeba udávat i style třídu pravého okraje,
 	 * protože pozadí se bude muset posunout doprava dle této šířky :(
 	 * 
-	 * Prakticky jde jenom o dopsání do CSS řádku (pro šířku sloupce 200px):
-	 * <br><br>
+	 * Prakticky jde jenom o dopsání do CSS řádku (pro šířku sloupce 200px): <br>
+	 * <br>
 	 * <code> background-position: 180px 0;</code>
 	 * 
 	 * @param columnWidth
@@ -111,7 +111,7 @@ public abstract class ColumnBuilder {
 		leftMiddleBackground.addComponent(rightMiddleBackground);
 
 		// middle
-		HorizontalLayout centerMiddleBackground = new HorizontalLayout();
+		VerticalLayout centerMiddleBackground = new VerticalLayout();
 		centerMiddleBackground.setStyleName("center_middle_background");
 		centerMiddleBackground.setWidth(columnWidth - 20 + "px");
 		rightMiddleBackground.addComponent(centerMiddleBackground);
@@ -152,6 +152,6 @@ public abstract class ColumnBuilder {
 	 * 
 	 * @param layout
 	 */
-	protected abstract void createColumnContent(HorizontalLayout layout);
+	protected abstract void createColumnContent(VerticalLayout layout);
 
 }

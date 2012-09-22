@@ -58,6 +58,7 @@
 	<modules>
         <module>core</module>
         <module>fm</module>
+        <module>config</module>
 	</modules>
 
 </project>

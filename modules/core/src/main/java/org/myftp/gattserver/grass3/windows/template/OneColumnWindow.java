@@ -1,7 +1,6 @@
 package org.myftp.gattserver.grass3.windows.template;
 
 import com.vaadin.ui.AbsoluteLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 
 public abstract class OneColumnWindow extends BaseWindow {
@@ -15,7 +14,7 @@ public abstract class OneColumnWindow extends BaseWindow {
 				"full_right_middle_background") {
 
 			@Override
-			protected void createColumnContent(HorizontalLayout layout) {
+			protected void createColumnContent(VerticalLayout layout) {
 				createContent(layout);
 			}
 
@@ -30,6 +29,6 @@ public abstract class OneColumnWindow extends BaseWindow {
 	 * 
 	 * @param layout
 	 */
-	protected abstract void createContent(HorizontalLayout layout);
+	protected abstract void createContent(VerticalLayout layout);
 
 }

@@ -4,8 +4,8 @@ import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.VerticalLayout;
 
 public class HomeWindow extends OneColumnWindow {
 
@@ -19,7 +19,7 @@ public class HomeWindow extends OneColumnWindow {
 	}
 
 	@Override
-	protected void createContent(HorizontalLayout layout) {
+	protected void createContent(VerticalLayout layout) {
 		Button button = new Button("Update", new ClickListener() {
 			
 			private static final long serialVersionUID = 246988596924399466L;

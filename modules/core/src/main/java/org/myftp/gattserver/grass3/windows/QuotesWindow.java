@@ -6,8 +6,8 @@ import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.VerticalLayout;
 
 public class QuotesWindow extends OneColumnWindow {
 
@@ -21,7 +21,7 @@ public class QuotesWindow extends OneColumnWindow {
 	}
 
 	@Override
-	protected void createContent(HorizontalLayout layout) {
+	protected void createContent(VerticalLayout layout) {
 
 		layout.setMargin(true);
 		

@@ -6,7 +6,6 @@ import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -23,18 +22,15 @@ public class LoginWindow extends OneColumnWindow {
 	}
 
 	@Override
-	protected void createContent(HorizontalLayout layout) {
-
-		VerticalLayout loginLayout = new VerticalLayout();
-		layout.addComponent(loginLayout);
+	protected void createContent(VerticalLayout layout) {
 
 		// Username
 		final TextField username = new TextField("Uživatelské jméno");
-		loginLayout.addComponent(username);
+		layout.addComponent(username);
 
 		// Password
 		final PasswordField password = new PasswordField("Heslo");
-		loginLayout.addComponent(password);
+		layout.addComponent(password);
 
 		// Login button
 		Button loginButton = new Button("Přihlásit",
@@ -46,14 +42,15 @@ public class LoginWindow extends OneColumnWindow {
 					public void buttonClick(ClickEvent event) {
 
 						if (((GrassApplication) getApplication()).authenticate(
-								username.getValue().toString(),
-								password.getValue().toString())) {
+								username.getValue().toString(), password
+										.getValue().toString())) {
 
 							// TODO - zatím jen takhle na main, ale měl by se
 							// "vracet" resp. "pokračovat"
-							open(new ExternalResource(getApplication().getMainWindow().getURL()));
+							open(new ExternalResource(getApplication()
+									.getMainWindow().getURL()));
 						} else {
-						
+
 							// zobraz chybu
 							getWindow().showNotification(
 									new Notification("Přihlášení se nezdařilo",
@@ -61,8 +58,8 @@ public class LoginWindow extends OneColumnWindow {
 						}
 					}
 				});
-		loginLayout.addComponent(loginButton);
-		loginLayout.setMargin(true);
-		loginLayout.setSpacing(true);
+		layout.addComponent(loginButton);
+		layout.setMargin(true);
+		layout.setSpacing(true);
 	}
 }

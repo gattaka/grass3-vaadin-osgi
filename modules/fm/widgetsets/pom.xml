@@ -5,6 +5,7 @@
 	<artifactId>fm-theme</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>GRASS3 File Manager theme</name>
+	<description>OSGi Fragment</description>
 
 	<packaging>bundle</packaging>
 

@@ -1,7 +1,5 @@
 package vaadin.bridge.internal;
 
-import java.util.Dictionary;
-
 import javax.servlet.ServletException;
 
 import vaadin.bridge.ApplicationFactory;
@@ -24,7 +22,6 @@ class ApplicationFactoryTracker extends ServiceTracker {
 	public Object addingService(ServiceReference ref) {
 
 		Object aliasObj = ref.getProperty(ApplicationFactory.ALIAS_NAME);
-		Object initParamsObj = ref.getProperty(ApplicationFactory.INIT_PARAMS);
 
 		if (aliasObj instanceof String) {
 			String alias = (String) aliasObj;
@@ -37,14 +34,9 @@ class ApplicationFactoryTracker extends ServiceTracker {
 			ApplicationFactoryServlet servlet = new ApplicationFactoryServlet(
 					factory);
 
-			Dictionary<?,?> initParams = null;
-			if (initParamsObj != null && initParamsObj instanceof Dictionary) {
-				initParams = (Dictionary<?,?>) initParamsObj;
-			}
-
 			try {
-				httpService.registerServlet("/" + alias, servlet, initParams,
-						httpContext);
+				httpService.registerServlet("/" + alias, servlet,
+						factory.getInitParams(), httpContext);
 				return alias;
 			} catch (ServletException e) {
 				// TODO Auto-generated catch block

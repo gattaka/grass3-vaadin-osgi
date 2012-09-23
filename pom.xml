@@ -12,6 +12,7 @@
 		<module>modules</module>
 		<module>theme</module>
 		<module>bridge</module>
+		<module>widgetsets</module>
 	</modules>
 
 </project>

@@ -5,12 +5,9 @@
 	<artifactId>theme</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>GRASS3 Theme</name>
+	<description>OSGi Fragment</description>
 
 	<packaging>bundle</packaging>
-
-	<properties>
-		<dependency.osgi.version>4.2.0</dependency.osgi.version>
-	</properties>
 
 	<build>
 		<plugins>
@@ -28,5 +25,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	
 </project>

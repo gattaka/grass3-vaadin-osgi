@@ -1,12 +1,13 @@
 package vaadin.bridge;
 
+import java.util.Dictionary;
+
 import com.vaadin.Application;
 import com.vaadin.Application.SystemMessages;
 
 public interface ApplicationFactory {
 
 	static final String ALIAS_NAME = "alias";
-	static final String INIT_PARAMS = "init";
 
 	Application newInstance();
 
@@ -17,5 +18,7 @@ public interface ApplicationFactory {
 	 * are no Application-specific system messages.
 	 */
 	SystemMessages getSystemMessages();
+
+	Dictionary<String, String> getInitParams();
 
 }

@@ -1,0 +1,141 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.myftp.gattserver.grass3</groupId>
+	<artifactId>widgetsets</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>GRASS3 GWT Widgetsets</name>
+	<description>OSGi Fragment</description>
+
+	<packaging>bundle</packaging>
+
+	<!-- Failed to load the widgetset: 
+	/VAADIN/widgetsets/org.myftp.gattserver.grass3.gwt.UploadWidgetSet/org.myftp.gattserver.grass3.gwt.UploadWidgetSet.nocache.js?1348353667734 -->
+
+	<build>
+		<plugins>
+			<!--Obdoba theme jádra -->
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.3.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-RequiredExecutionEnvironment>JavaSE-1.6</Bundle-RequiredExecutionEnvironment>
+						<Fragment-Host>com.vaadin</Fragment-Host>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<!-- Kompilace GWT Widgetsetů je strašně pomalá a hlavně není potřeba pokaždé 
+		! Proto je excludována do zvláštního profilu, který se když se přidá nový 
+		add-on pustí zvlášť -->
+	<!-- mvn -Pgwtc clean compile -->
+	<profiles>
+		<profile>
+			<id>gwtc</id>
+
+			<properties>
+				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+				<vaadin.version>6.8.2</vaadin.version>
+				<gwt.version>2.3.0</gwt.version>
+				<gwt.plugin.version>2.2.0</gwt.plugin.version>
+			</properties>
+
+			<repositories>
+				<repository>
+					<id>vaadin-snapshots</id>
+					<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+					<releases>
+						<enabled>false</enabled>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</repository>
+				<repository>
+					<id>vaadin-addons</id>
+					<url>http://maven.vaadin.com/vaadin-addons</url>
+				</repository>
+			</repositories>
+
+			<build>
+				<plugins>
+					<!-- Compile custom GWT components or widget dependencies with the GWT 
+						compiler -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>gwt-maven-plugin</artifactId>
+						<version>${gwt.plugin.version}</version>
+						<configuration>
+							<!-- <webappDirectory>${project.build.directory}/${project.build.finalName}/VAADIN/widgetsets</webappDirectory> -->
+							<webappDirectory>src/main/resources/VAADIN/widgetsets</webappDirectory>
+							<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+							<runTarget>project-name</runTarget>
+							<hostedWebapp>${project.build.directory}/${project.build.finalName}</hostedWebapp>
+							<noServer>true</noServer>
+							<port>8080</port>
+							<compileReport>false</compileReport>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>resources</goal>
+									<goal>compile</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>com.google.gwt</groupId>
+								<artifactId>gwt-dev</artifactId>
+								<version>${gwt.version}</version>
+							</dependency>
+							<dependency>
+								<groupId>com.google.gwt</groupId>
+								<artifactId>gwt-user</artifactId>
+								<version>${gwt.version}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+					<plugin>
+						<groupId>com.vaadin</groupId>
+						<artifactId>vaadin-maven-plugin</artifactId>
+						<version>1.0.2</version>
+						<executions>
+							<execution>
+								<configuration>
+								</configuration>
+								<goals>
+									<goal>update-widgetset</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+
+			<dependencies>
+
+				<!-- Vaadin -->
+				<dependency>
+					<groupId>com.vaadin</groupId>
+					<artifactId>vaadin</artifactId>
+					<version>${vaadin.version}</version>
+				</dependency>
+
+				<!-- EasyUploads - multiupload widget -->
+				<dependency>
+					<groupId>org.vaadin.addons</groupId>
+					<artifactId>easyuploads</artifactId>
+					<version>0.5.1</version>
+				</dependency>
+
+			</dependencies>
+		</profile>
+	</profiles>
+
+</project>

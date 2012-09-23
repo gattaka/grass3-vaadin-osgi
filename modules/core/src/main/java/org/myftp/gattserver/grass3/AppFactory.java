@@ -1,5 +1,7 @@
 package org.myftp.gattserver.grass3;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.concurrent.atomic.AtomicReference;
 
 import vaadin.bridge.ApplicationFactory;
@@ -45,6 +47,13 @@ public class AppFactory implements ApplicationFactory {
 	 */
 	public Application newInstance() {
 		return new GrassApplication();
+	}
+
+	public Dictionary<String, String> getInitParams() {
+		Dictionary<String, String> initParams = new Hashtable<String, String>();
+		// Multiupload
+		initParams.put("widgetset", "org.myftp.gattserver.grass3.gwt.UploadWidgetSet");
+		return initParams;
 	}
 
 }

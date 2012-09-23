@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
-
-	<bean id="section" class="org.myftp.gattserver.grass3.fm.FMSection"/>
-    
-    <service interface="org.myftp.gattserver.grass3.ISection" ref="section" />
-
-</blueprint>

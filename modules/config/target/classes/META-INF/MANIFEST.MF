@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1348396225849
-Build-Jdk: 1.6.0_26
+Bnd-LastModified: 1348397949886
+Build-Jdk: 1.7.0_05-icedtea
 Built-By: gatt
 Bundle-ManifestVersion: 2
 Bundle-Name: GRASS3 Config

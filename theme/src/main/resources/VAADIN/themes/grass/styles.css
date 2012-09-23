@@ -214,3 +214,47 @@
 	background-repeat: repeat-x;
 	height: 11px;
 }
+
+/* ========== */
+/* Breadcrumb */
+/* ========== */
+.breadcrumb {
+	background: #F3EFDD;
+	padding: 4px 8px 5px 8px;
+	font-size: 14px;
+	font-weight: bold;
+	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
+		"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+}
+
+.v-link.v-link-breadcrumb_element.breadcrumb_element a span {
+	text-decoration: none;
+	color: #045491;
+}
+
+.v-link.v-link-breadcrumb_element.breadcrumb_element a:visited span {
+	text-decoration: none;
+	color: #045491;
+}
+
+.v-link.v-link-breadcrumb_element.breadcrumb_element a:hover span {
+	text-decoration: underline;
+	color: #2483c4;
+}
+
+.breadcrumb .v-embedded.v-embedded-image {
+	margin: 4px 8px;
+}
+
+.breadcrumb_element {
+	
+}
+
+/* ============= */
+/* Link in table */
+/* ============= */
+
+.v-table .v-selected .v-link a span {
+	color: white;
+	text-shadow: #3B5A7A 0 1px 0;
+}

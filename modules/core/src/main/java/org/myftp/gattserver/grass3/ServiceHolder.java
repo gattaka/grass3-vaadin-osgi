@@ -111,6 +111,8 @@ public class ServiceHolder {
 
 	@SuppressWarnings("unchecked")
 	private void notifyBindSectionListeners(ISection section) {
+		if (listenerMap.get(ISection.class) == null)
+			return;
 		for (BindListener<?> bindListener : listenerMap.get(ISection.class)) {
 			((BindListener<ISection>) bindListener).onBind(section);
 		}

@@ -12,7 +12,7 @@ import org.myftp.gattserver.grass3.security.Role;
 public class Configuration {
 
 	@XmlTransient
-	public static final String FM_MODULE_CONFIG_PATH = "file_manager.xml";
+	public static final String CONFIG_PATH = "file_manager.xml";
 	
 	/**
 	 * Kořenový adresář FM

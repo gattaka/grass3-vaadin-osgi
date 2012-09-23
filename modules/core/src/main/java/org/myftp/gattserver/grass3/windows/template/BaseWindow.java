@@ -6,12 +6,13 @@ import java.util.Random;
 
 import org.myftp.gattserver.grass3.ISection;
 import org.myftp.gattserver.grass3.ServiceHolder;
-import org.myftp.gattserver.grass3.facades.QuotesFacade;
-import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
+import org.myftp.gattserver.grass3.model.dao.QuoteDAO;
+import org.myftp.gattserver.grass3.model.domain.Quote;
 import org.myftp.gattserver.grass3.util.URLTool;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
+import org.myftp.gattserver.grass3.windows.err.Err500;
 
 import com.vaadin.Application;
 import com.vaadin.terminal.ExternalResource;
@@ -27,10 +28,6 @@ import com.vaadin.ui.VerticalLayout;
 public abstract class BaseWindow extends GrassWindow {
 
 	private static final long serialVersionUID = 2474374292329895766L;
-
-	// TODO (strukturalizace - aktuálně je to všechno nějak moc provázané)
-	// Fasády
-	private QuotesFacade quotesFacade = QuotesFacade.getInstance();
 
 	private HorizontalLayout sectionsMenuLayout = new HorizontalLayout();
 	private Link quotes;
@@ -56,14 +53,20 @@ public abstract class BaseWindow extends GrassWindow {
 	}
 
 	private String chooseQuote() {
-		int count = quotesFacade.getQuotesCount();
-		QuoteDTO quotesDTO = null;
+		QuoteDAO quoteDAO = new QuoteDAO();
+		Long count = quoteDAO.count();
+		if (count == null) {
+			// TODO tohle by šlo dělat nějak stručněji, ne ? 
+			open(new ExternalResource(getApplication().getWindow(Err500.NAME)
+					.getURL()));
+		}
+		Quote quotes = null;
 		if (count != 0) {
 			Random generator = new Random();
 			Long randomId = Math.abs(generator.nextLong()) % count + 1;
-			quotesDTO = quotesFacade.getByID(randomId);
+			quotes = quoteDAO.findByID(randomId);
 		}
-		return quotesDTO == null ? "" : quotesDTO.getName();
+		return quotes == null ? "~ nebyly nalezeny žádné záznamy ~" : quotes.getName();
 	}
 
 	/**

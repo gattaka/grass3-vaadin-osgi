@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.myftp.gattserver.grass3.facades.SecurityFacade;
-import org.myftp.gattserver.grass3.model.dto.UserDTO;
+import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.security.SecurityStore;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
@@ -57,7 +57,7 @@ public class GrassApplication extends Application implements
 	 */
 	public boolean authenticate(String username, String password) {
 
-		UserDTO loggedUser = securityFacade.authenticate(username, password);
+		User loggedUser = securityFacade.authenticate(username, password);
 		if (loggedUser != null) {
 			// TODO
 			// securityStore.setLoggedUser(loggedUser);

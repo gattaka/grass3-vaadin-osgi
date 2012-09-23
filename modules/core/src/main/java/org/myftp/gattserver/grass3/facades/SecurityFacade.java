@@ -4,7 +4,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import org.myftp.gattserver.grass3.model.dto.UserDTO;
+import org.myftp.gattserver.grass3.model.dao.UserDAO;
+import org.myftp.gattserver.grass3.model.domain.User;
 
 public class SecurityFacade {
 
@@ -21,11 +22,6 @@ public class SecurityFacade {
 
 	private SecurityFacade() {
 	}
-
-	/**
-	 * Fasády
-	 */
-	private UserFacade userFacade = UserFacade.getInstance();
 
 	/**
 	 * Digest
@@ -68,8 +64,8 @@ public class SecurityFacade {
 	 *            heslo, které použil
 	 * @return objekt s přihlášeným uživatelem, jinak null
 	 */
-	public UserDTO authenticate(String username, String password) {
-		List<UserDTO> loggedUser = userFacade.findUserByUsername(username);
+	public User authenticate(String username, String password) {
+		List<User> loggedUser = new UserDAO().findByName(username);
 		if (loggedUser != null
 				&& loggedUser.size() == 1
 				&& loggedUser.get(0).getPassword()

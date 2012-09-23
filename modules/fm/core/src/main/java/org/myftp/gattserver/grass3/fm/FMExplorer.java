@@ -136,7 +136,7 @@ public class FMExplorer {
 	 */
 	private Configuration loadConfiguration() throws JAXBException {
 		return new ConfigurationUtils<Configuration>(new Configuration(),
-				Configuration.FM_MODULE_CONFIG_PATH)
+				Configuration.CONFIG_PATH)
 				.loadExistingOrCreateNewConfiguration();
 	}
 

@@ -9,8 +9,10 @@ public class Err500 extends OneColumnWindow {
 
 	private static final long serialVersionUID = 3728073040878360420L;
 
+	public static final String NAME = "500";
+	
 	public Err500() {
-		setName("500");
+		setName(NAME);
 	}
 
 	@Override

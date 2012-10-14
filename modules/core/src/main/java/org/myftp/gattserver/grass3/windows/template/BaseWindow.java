@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.myftp.gattserver.grass3.ISection;
 import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.model.dao.QuoteDAO;
 import org.myftp.gattserver.grass3.model.domain.Quote;
+import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.util.URLTool;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
-import org.myftp.gattserver.grass3.windows.err.Err500;
 
 import com.vaadin.Application;
 import com.vaadin.terminal.ExternalResource;
@@ -45,7 +44,7 @@ public abstract class BaseWindow extends GrassWindow {
 	private void updateMenu() {
 		sectionsMenuLayout.removeAllComponents();
 		createHomeLink();
-		for (ISection section : ServiceHolder.getInstance()
+		for (ISectionService section : ServiceHolder.getInstance()
 				.getSectionServices()) {
 			createSectionLink(section.getSectionCaption(),
 					section.getSectionIDName());
@@ -56,9 +55,7 @@ public abstract class BaseWindow extends GrassWindow {
 		QuoteDAO quoteDAO = new QuoteDAO();
 		Long count = quoteDAO.count();
 		if (count == null) {
-			// TODO tohle by šlo dělat nějak stručněji, ne ? 
-			open(new ExternalResource(getApplication().getWindow(Err500.NAME)
-					.getURL()));
+			showError500();
 		}
 		Quote quotes = null;
 		if (count != 0) {
@@ -66,7 +63,8 @@ public abstract class BaseWindow extends GrassWindow {
 			Long randomId = Math.abs(generator.nextLong()) % count + 1;
 			quotes = quoteDAO.findByID(randomId);
 		}
-		return quotes == null ? "~ nebyly nalezeny žádné záznamy ~" : quotes.getName();
+		return quotes == null ? "~ nebyly nalezeny žádné záznamy ~" : quotes
+				.getName();
 	}
 
 	/**
@@ -227,6 +225,13 @@ public abstract class BaseWindow extends GrassWindow {
 
 		// Přihlašování
 		Link link = new Link("Přihlášení", new ExternalResource(
+				URLTool.getWindowURL(getApplication().getURL(),
+						LoginWindow.NAME)));
+		link.setStyleName("menu_item");
+		userMenuLayout.addComponent(link);
+
+		// Nastavení
+		link = new Link("Nastavení", new ExternalResource(
 				URLTool.getWindowURL(getApplication().getURL(),
 						LoginWindow.NAME)));
 		link.setStyleName("menu_item");

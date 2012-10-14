@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3.model;
+package org.myftp.gattserver.grass3.model.service;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import java.util.List;
  * @author gatt
  * 
  */
-public interface DBUnitService {
+public interface IEntityService {
 
 	public List<Class<?>> getDomainClasses();
 

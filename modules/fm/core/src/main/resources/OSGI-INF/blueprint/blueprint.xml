@@ -3,6 +3,6 @@
 
 	<bean id="section" class="org.myftp.gattserver.grass3.fm.FMSection"/>
     
-    <service interface="org.myftp.gattserver.grass3.ISection" ref="section" />
+    <service interface="org.myftp.gattserver.grass3.service.ISectionService" ref="section" />
 
 </blueprint>

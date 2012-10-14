@@ -37,17 +37,23 @@ public class QuotesWindow extends OneColumnWindow {
 	protected void createContent(VerticalLayout layout) {
 
 		layout.setMargin(true);
-		layout.setSpacing(true);
-		createQuoteList();
+		layout.setSpacing(true);		
+		table = new Table();
+		table.setSizeFull();
 		layout.addComponent(table);
-
+		
+		createQuoteList();
 		createNewQuotePanel(layout);
 
 	}
 
+	@Override
+	protected void onShow() {
+		createQuoteList();
+		super.onShow();
+	}
+
 	private void createQuoteList() {
-		table = new Table();
-		table.setSizeFull();
 
 		IndexedContainer container = new IndexedContainer();
 		container.addContainerProperty("ID", Long.class, 1L);
@@ -78,11 +84,12 @@ public class QuotesWindow extends OneColumnWindow {
 		panelLayout.setMargin(true);
 		panelBackgroudLayout.addComponent(panelLayout);
 
+		final int maxLength = 90;
 		final TextField newQuoteText = new TextField();
 		newQuoteText.setWidth("200px");
 		newQuoteText.addValidator(new StringLengthValidator(
-				"Text hlášky nesmí být prázdný a může mít maximálně 60 znaků",
-				1, 60, false));
+				"Text hlášky nesmí být prázdný a může mít maximálně " + maxLength + " znaků",
+				1, maxLength, false));
 		panelLayout.addComponent(newQuoteText);
 
 		Button createButton = new Button("Vytvořit",
@@ -113,6 +120,6 @@ public class QuotesWindow extends OneColumnWindow {
 					}
 				});
 		panelLayout.addComponent(createButton);
-
+		
 	}
 }

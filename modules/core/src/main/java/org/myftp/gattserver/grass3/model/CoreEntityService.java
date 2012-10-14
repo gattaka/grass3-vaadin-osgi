@@ -8,6 +8,7 @@ import org.myftp.gattserver.grass3.model.domain.ContentNode;
 import org.myftp.gattserver.grass3.model.domain.ContentTag;
 import org.myftp.gattserver.grass3.model.domain.Quote;
 import org.myftp.gattserver.grass3.model.domain.User;
+import org.myftp.gattserver.grass3.model.service.IEntityService;
 
 /**
  * Sdružuje třídy entit a hromadně je jako služba registruje u model bundle
@@ -15,14 +16,14 @@ import org.myftp.gattserver.grass3.model.domain.User;
  * @author gatt
  * 
  */
-public class CoreDBUnitService implements DBUnitService {
+public class CoreEntityService implements IEntityService {
 
 	/**
 	 * Mělo by být immutable
 	 */
 	List<Class<?>> domainClasses = new ArrayList<Class<?>>();
 
-	public CoreDBUnitService() {
+	public CoreEntityService() {
 		domainClasses.add(User.class);
 		domainClasses.add(ContentNode.class);
 		domainClasses.add(ContentTag.class);
@@ -33,7 +34,7 @@ public class CoreDBUnitService implements DBUnitService {
 	}
 
 	public List<Class<?>> getDomainClasses() {
-		return null;
+		return domainClasses;
 	}
 
 }

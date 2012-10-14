@@ -3,9 +3,9 @@ package org.myftp.gattserver.grass3;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.myftp.gattserver.grass3.facades.SecurityFacade;
 import org.myftp.gattserver.grass3.model.domain.User;
-import org.myftp.gattserver.grass3.security.SecurityStore;
+import org.myftp.gattserver.grass3.security.SecurityFacade;
+import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
@@ -22,17 +22,12 @@ import com.vaadin.ui.Window;
  */
 @SuppressWarnings("serial")
 public class GrassApplication extends Application implements
-		BindListener<ISection> {
+		IListenerBinding<ISectionService> {
 
 	/**
 	 * Instance hlavního okna
 	 */
 	private Window mainWindow;
-
-	/**
-	 * Úložiště auth údajů pro aktuální session
-	 */
-	private SecurityStore securityStore = new SecurityStore();
 
 	/**
 	 * Fasády
@@ -59,23 +54,12 @@ public class GrassApplication extends Application implements
 
 		User loggedUser = securityFacade.authenticate(username, password);
 		if (loggedUser != null) {
-			// TODO
-			// securityStore.setLoggedUser(loggedUser);
+			setUser(loggedUser);
 			loadProtectedResources();
 			return true;
 		}
 
 		return false;
-	}
-
-	/**
-	 * Získá aktuální instanci {@link SecurityStore} objektu, který je aplikací
-	 * využíván
-	 * 
-	 * @return instance {@link SecurityStore}
-	 */
-	public SecurityStore getSecurityStore() {
-		return securityStore;
 	}
 
 	/**
@@ -88,7 +72,7 @@ public class GrassApplication extends Application implements
 	 * Stará se tak o přidání jejich instancí oken (od sekcí) do aplikace
 	 */
 	private void registerSectionBindListener() {
-		ServiceHolder.getInstance().registerBindListener(ISection.class, this);
+		ServiceHolder.getInstance().registerBindListener(ISectionService.class, this);
 	}
 
 	@Override
@@ -111,7 +95,7 @@ public class GrassApplication extends Application implements
 
 	}
 
-	public void onBind(ISection service) {
+	public void onBind(ISectionService service) {
 		GrassWindow window = service.getSectionWindowNewInstance();
 		// v případě duplicity se nesmí záznam přepsat, protože
 		// by se pak okno nedalo odebrat
@@ -121,7 +105,7 @@ public class GrassApplication extends Application implements
 		}
 	}
 
-	public void onUnbind(ISection service) {
+	public void onUnbind(ISectionService service) {
 		GrassWindow window = windows.get(service.getSectionIDName());
 		if (window != null) {
 			removeWindow(window);

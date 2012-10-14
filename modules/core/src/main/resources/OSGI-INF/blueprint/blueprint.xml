@@ -1,21 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
+	<!-- ========== -->
+	<!-- Vaadin app -->
+	<!-- ========== -->
+
 	<!-- Vytvoř si instanci od factory pro vytváření aplikace apod. -->
-	<bean id="appFactory" class="org.myftp.gattserver.grass3.AppFactory"/>
-
-	<!-- ServiceHolder - agregátor služeb -->
-	<bean id="serviceHolder" class="org.myftp.gattserver.grass3.ServiceHolder"
-		factory-method="getInstance" activation="eager">
-		<property name="sectionServices" ref="sectionServices" />
-	</bean>
-
-	<!-- List s odchytnutými sekcemi -->
-	<reference-list id="sectionServices"
-		interface="org.myftp.gattserver.grass3.ISection" availability="optional">  <!-- activation="lazy" -->
-		<reference-listener bind-method="bindSection"
-			unbind-method="unbindSection" ref="serviceHolder" />
-	</reference-list>
+	<bean id="appFactory" class="org.myftp.gattserver.grass3.AppFactory" />
 
 	<!-- Registrace služby implementující ApplicationFactory -->
 	<service interface="vaadin.bridge.ApplicationFactory" ref="appFactory">
@@ -24,11 +15,59 @@
 			<entry key="alias" value="grass3" />
 		</service-properties>
 	</service>
-	
+
+	<!-- =========================== -->
+	<!-- Service listeners agregátor -->
+	<!-- =========================== -->
+
+	<!-- ServiceHolder - agregátor služeb -->
+	<bean id="serviceHolder" class="org.myftp.gattserver.grass3.ServiceHolder"
+		factory-method="getInstance" activation="eager">
+		<property name="sectionServices" ref="sectionServices" />
+		<property name="entityServiceListener" ref="entityServiceListener" />
+		<property name="contentServiceListener" ref="contentServiceListener" />
+	</bean>
+
+	<!-- DB entity listener -->
+	<reference id="entityServiceListener"
+		interface="org.myftp.gattserver.grass3.model.service.IEntityServiceListener" />
+
+	<!-- List s odchytnutými sekcemi -->
+	<reference-list id="sectionServices"
+		interface="org.myftp.gattserver.grass3.service.ISectionService" availability="optional">  <!-- activation="lazy" -->
+		<reference-listener bind-method="bindSection"
+			unbind-method="unbindSection" ref="serviceHolder" />
+	</reference-list>
+
+	<!-- =============== -->
+	<!-- Služba db entit -->
+	<!-- =============== -->
+
 	<!-- Vytvoř si instanci od DBUnitService pro registraci entity -->
-	<bean id="coreDBUnitService" class="org.myftp.gattserver.grass3.model.CoreDBUnitService"/>
-	
+	<bean id="coreEntityService" class="org.myftp.gattserver.grass3.model.CoreEntityService" />
+
 	<!-- Registrace služby implementující DBUnitService -->
-	<service interface="org.myftp.gattserver.grass3.model.DBUnitService" ref="coreDBUnitService"/>
+	<service interface="org.myftp.gattserver.grass3.model.service.IEntityService"
+		ref="coreEntityService" />
+
+	<!-- ======================= -->
+	<!-- Agregátor služeb obsahů -->
+	<!-- ======================= -->
+
+	<!-- Agregátor -->
+	<bean id="contentServiceListener"
+		class="org.myftp.gattserver.grass3.service.impl.BasicContentServiceListener"
+		scope="singleton">
+		<property name="services" ref="contentServices" />
+	</bean>
+
+	<!-- List s odchytnutými entitami -->
+	<reference-list id="contentServices"
+		interface="org.myftp.gattserver.grass3.service.IContentService"
+		availability="optional"/>
+
+	<!-- Registrace služby agregátoru DB definic -->
+	<service interface="org.myftp.gattserver.grass3.service.IContentServiceListener"
+		ref="contentServiceListener" />
 
 </blueprint>

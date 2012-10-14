@@ -19,6 +19,9 @@ import org.hibernate.dialect.H2Dialect;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
 import org.myftp.gattserver.grass3.config.ConfigurationUtils;
+import org.myftp.gattserver.grass3.model.config.ModelConfiguration;
+import org.myftp.gattserver.grass3.model.service.IEntityServiceListener;
+import org.myftp.gattserver.grass3.model.service.IEntityService;
 
 /**
  * Abstraktní třída DAO tříd na získávání Entit z databáze nebo přes existující
@@ -35,7 +38,7 @@ public abstract class AbstractDAO<E> {
 	 * Připojení na dynamické získávání definic objektů odtud získám vždycky
 	 * aktuálně přehled tříd, které mají být persistovány
 	 */
-	private EntityListener serviceListener;
+	public static IEntityServiceListener serviceListener;
 
 	/**
 	 * Verze "sestavení" entit. Došlo k nějaké změně ? Má se přegenerovat
@@ -152,12 +155,15 @@ public abstract class AbstractDAO<E> {
 		/**
 		 * Zde se přidávají třídy, které budou persistovány
 		 */
-		for (DBUnitService service : serviceListener.getServices()) {
-			for (Class<?> entityClass : service.getDomainClasses()) {
-				configuration.addAnnotatedClass(entityClass);
-				log("addAnnotatedClass " + entityClass.getName()
-						+ " from classloader " + entityClass.getClassLoader()
-						+ " registred");
+		List<IEntityService> services = serviceListener.getServices();
+		synchronized (services) {
+			for (IEntityService service : services) {
+				for (Class<?> entityClass : service.getDomainClasses()) {
+					configuration.addAnnotatedClass(entityClass);
+//					log("addAnnotatedClass " + entityClass.getName()
+//							+ " from classloader "
+//							+ entityClass.getClassLoader() + " registred");
+				}
 			}
 		}
 
@@ -171,7 +177,6 @@ public abstract class AbstractDAO<E> {
 
 	public AbstractDAO(Class<?> entityClass) {
 		this.entityClass = entityClass;
-		this.serviceListener = EntityListener.getInstance();
 
 		/**
 		 * při každém vytvoření se musí tohle provést aby se zaktualizovali

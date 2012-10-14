@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3.model;
+package org.myftp.gattserver.grass3.model.config;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;

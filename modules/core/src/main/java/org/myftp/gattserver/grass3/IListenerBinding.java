@@ -1,6 +1,6 @@
 package org.myftp.gattserver.grass3;
 
-public interface BindListener<E> {
+public interface IListenerBinding<E> {
 
 	public void onBind(E service);
 

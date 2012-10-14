@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3;
+package org.myftp.gattserver.grass3.service;
 
 import java.util.Set;
 
@@ -12,7 +12,7 @@ import org.myftp.gattserver.grass3.windows.template.GrassWindow;
  * @author gatt
  * 
  */
-public interface ISection {
+public interface ISectionService {
 
 	/**
 	 * Vrátí třídu okna, které poskytuje jako sekce

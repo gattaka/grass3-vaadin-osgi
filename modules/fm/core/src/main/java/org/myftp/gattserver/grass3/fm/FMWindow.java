@@ -9,11 +9,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.template.InfoNotification;
 import org.myftp.gattserver.grass3.template.WarningNotification;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
-import org.myftp.gattserver.grass3.windows.template.GrassSubWindow;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 import org.vaadin.easyuploads.MultiFileUpload;
 
@@ -292,33 +293,20 @@ public class FMWindow extends OneColumnWindow {
 
 	private void handleDeleteAction(final File file, VerticalLayout layout) {
 
-		final Window subwindow = new GrassSubWindow("Smazat");
-		subwindow.center();
-		subwindow.setWidth("220px");
-		addWindow(subwindow);
-
-		GridLayout subWindowlayout = new GridLayout(2, 2);
-		subwindow.setContent(subWindowlayout);
-		subWindowlayout.setMargin(true);
-		subWindowlayout.setSpacing(true);
-		subWindowlayout.setSizeFull();
-
 		final ReferenceHolder<Boolean> groupOperation = ReferenceHolder
 				.newBooleanHolder(isOperationTargetSelectedGroup(file));
 
-		subWindowlayout
-				.addComponent(
-						new Label(
-								groupOperation.getValue() ? "Opravdu chcete smazat vybrané soubory ?"
-										: "Opravdu chcete smazat soubor \""
-												+ file.getName() + "\" ?"), 0,
-						0, 1, 0);
+		Label subWindowLabel = new Label(
+				groupOperation.getValue() ? "Opravdu chcete smazat vybrané soubory ?"
+						: "Opravdu chcete smazat soubor \"" + file.getName()
+								+ "\" ?");
 
-		Button confirm = new Button("Ano", new Button.ClickListener() {
+		final Window subwindow = new ConfirmSubwindow(subWindowLabel) {
 
-			private static final long serialVersionUID = 8490964871266821307L;
+			private static final long serialVersionUID = 6350190755480244374L;
 
-			public void buttonClick(ClickEvent event) {
+			@Override
+			protected void onConfirm(ClickEvent event) {
 				boolean clean = true;
 
 				// skupinově nebo RMB vybraný soubor ?
@@ -341,28 +329,11 @@ public class FMWindow extends OneColumnWindow {
 					showNotification(new WarningNotification(
 							"Některé soubory se nezdařilo smazat."));
 				}
-
-				(subwindow.getParent()).removeWindow(subwindow);
 			}
-		});
 
-		subWindowlayout.addComponent(confirm, 0, 1);
-		subWindowlayout.setComponentAlignment(confirm, Alignment.MIDDLE_CENTER);
+		};
+		addWindow(subwindow);
 
-		Button close = new Button("Ne", new Button.ClickListener() {
-
-			private static final long serialVersionUID = 8490964871266821307L;
-
-			public void buttonClick(ClickEvent event) {
-				(subwindow.getParent()).removeWindow(subwindow);
-			}
-		});
-
-		subWindowlayout.addComponent(close, 1, 1);
-		subWindowlayout.setComponentAlignment(close, Alignment.MIDDLE_CENTER);
-
-		// Zaměř se na nové okno
-		subwindow.focus();
 	}
 
 	private void handleOpenAction(File file) {

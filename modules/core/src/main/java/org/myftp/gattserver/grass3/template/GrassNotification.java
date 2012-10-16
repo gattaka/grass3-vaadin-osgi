@@ -6,8 +6,8 @@ public class GrassNotification extends Notification {
 
 	private static final long serialVersionUID = -8098572674068363365L;
 
-	public GrassNotification(String arg0, int arg1) {
-		super(arg0, arg1);
+	public GrassNotification(String caption, int type) {
+		super(caption, type);
 		setDelayMsec(Notification.DELAY_FOREVER);
 	}
 

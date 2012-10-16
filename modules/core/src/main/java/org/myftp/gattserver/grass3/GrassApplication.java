@@ -10,7 +10,9 @@ import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
 import org.myftp.gattserver.grass3.windows.SectionWindow;
+import org.myftp.gattserver.grass3.windows.UserSettingsWindow;
 import org.myftp.gattserver.grass3.windows.template.GrassWindow;
+import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
 
 import com.vaadin.Application;
 import com.vaadin.ui.Window;
@@ -90,6 +92,12 @@ public class GrassApplication extends Application implements
 		addWindow(new SectionWindow());
 		addWindow(new QuotesWindow());
 
+		// TODO ... zatím napevno
+		UserSettingsWindow usw = new UserSettingsWindow();
+		usw.setName(UserSettingsWindow.NAME);
+		addWindow(usw);
+		addWindow(new SettingsWindow());
+		
 		// theme
 		setTheme("grass");
 

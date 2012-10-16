@@ -107,8 +107,6 @@ public class HomeWindow extends OneColumnWindow {
 		tagCloudLayout.addComponent(new Label("<h2>Tagy</h2>",
 				Label.CONTENT_XHTML));
 		tagCloudLayout.addComponent(tagCloud);
-		tagCloud.setSizeFull();
-		tagCloud.setSpacing(true);
 		layout.addComponent(tagCloudLayout);
 
 	}
@@ -140,6 +138,10 @@ public class HomeWindow extends OneColumnWindow {
 
 		if (contentTags == null)
 			showError500();
+		
+		tagCloud.removeAllComponents();
+		tagCloud.setSizeFull();
+		tagCloud.setSpacing(true);
 		
 		if (contentTags.isEmpty()) {
 			Label noTagsLabel = new Label("Nebyly nalezeny žádné tagy");
@@ -254,6 +256,8 @@ public class HomeWindow extends OneColumnWindow {
 		table.setContainerDataSource(container);
 		table.setColumnWidth(ColumnId.IKONA, 16);
 		table.setColumnHeader(ColumnId.IKONA, "");
+		table.setColumnHeader(ColumnId.DATUM_VYTVOŘENÍ, "DATUM VYTVOŘENÍ");
+		table.setColumnHeader(ColumnId.DATUM_ÚPRAVY, "DATUM ÚPRAVY");
 
 		// položky
 		for (ContentNode contentNode : contentList) {

@@ -233,7 +233,7 @@ public abstract class BaseWindow extends GrassWindow {
 		// Nastavení
 		link = new Link("Nastavení", new ExternalResource(
 				URLTool.getWindowURL(getApplication().getURL(),
-						LoginWindow.NAME)));
+						SettingsWindow.NAME)));
 		link.setStyleName("menu_item");
 		userMenuLayout.addComponent(link);
 

@@ -3,6 +3,9 @@ package org.myftp.gattserver.grass3.windows.template;
 import java.net.URL;
 
 import org.myftp.gattserver.grass3.GrassApplication;
+import org.myftp.gattserver.grass3.template.ErrorNotification;
+import org.myftp.gattserver.grass3.template.InfoNotification;
+import org.myftp.gattserver.grass3.template.WarningNotification;
 import org.myftp.gattserver.grass3.windows.err.Err500;
 
 import com.vaadin.Application;
@@ -38,6 +41,19 @@ public abstract class GrassWindow extends Window {
 	protected void showError500() {
 		open(new ExternalResource(getApplication().getWindow(Err500.NAME)
 				.getURL()));
+	}
+
+	@Override
+	public void showNotification(String caption) {
+		super.showNotification(new InfoNotification(caption));
+	}
+
+	public void showWarning(String caption) {
+		super.showNotification(new WarningNotification(caption));
+	}
+	
+	public void showError(String caption) {
+		super.showNotification(new ErrorNotification(caption));
 	}
 
 }

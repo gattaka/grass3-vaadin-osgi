@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3.windows.template;
+package org.myftp.gattserver.grass3.subwindows;
 
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Window;

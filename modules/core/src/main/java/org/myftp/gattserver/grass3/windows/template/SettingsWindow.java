@@ -1,9 +1,8 @@
 package org.myftp.gattserver.grass3.windows.template;
 
-import org.myftp.gattserver.grass3.util.URLTool;
-import org.myftp.gattserver.grass3.windows.UserSettingsWindow;
+import org.myftp.gattserver.grass3.ServiceHolder;
+import org.myftp.gattserver.grass3.service.ISettingsService;
 
-import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
@@ -13,12 +12,10 @@ public class SettingsWindow extends TwoColumnWindow {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
-	public static final String NAME = "settings";
-
 	private VerticalLayout leftColumnLayout;
 
 	public SettingsWindow() {
-		super.setName(NAME);
+		super.setName("settings");
 		setCaption("Gattserver");
 	}
 
@@ -30,13 +27,14 @@ public class SettingsWindow extends TwoColumnWindow {
 
 	private void createSettingsMenu() {
 
-		// TODO nahrát ze settingsService karty nastavení
-		Link link = new Link("Uživatelé", new ExternalResource(
-				URLTool.getWindowURL(getApplication().getURL(),
-						UserSettingsWindow.NAME)));
-
 		leftColumnLayout.removeAllComponents();
-		leftColumnLayout.addComponent(link);
+
+		for (ISettingsService settingsService : ServiceHolder.getInstance()
+				.getSettingsServices()) {
+			Link link = new Link(settingsService.getSectionCaption(),
+					getWindowResource(settingsService.getSettingsWindowClass()));
+			leftColumnLayout.addComponent(link);
+		}
 
 	}
 
@@ -54,5 +52,4 @@ public class SettingsWindow extends TwoColumnWindow {
 		createSettingsMenu();
 		super.onShow();
 	}
-
 }

@@ -18,7 +18,6 @@ import com.vaadin.ui.Button.ClickEvent;
 public class UserSettingsWindow extends SettingsWindow {
 
 	private static final long serialVersionUID = 2474374292329895766L;
-	public static final String NAME = "users";
 
 	private final Table userTable = new Table();
 
@@ -32,6 +31,7 @@ public class UserSettingsWindow extends SettingsWindow {
 	}
 
 	public UserSettingsWindow() {
+		setName("user-settings");
 		setCaption("Gattserver");
 	}
 

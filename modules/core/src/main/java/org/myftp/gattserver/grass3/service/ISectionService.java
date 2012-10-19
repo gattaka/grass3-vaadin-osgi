@@ -15,18 +15,18 @@ import org.myftp.gattserver.grass3.windows.template.GrassWindow;
 public interface ISectionService {
 
 	/**
-	 * Vrátí třídu okna, které poskytuje jako sekce
-	 * 
-	 * @return třída okna
-	 */
-	public Class<? extends GrassWindow> getSectionWindowClass();
-
-	/**
 	 * Vrátí novou instanci okna sekce
 	 * 
 	 * @return nové okno sekce
 	 */
 	public GrassWindow getSectionWindowNewInstance();
+	
+	/**
+	 * Vrátí třídu sekce
+	 * 
+	 * @return třída sekce
+	 */
+	public Class<? extends GrassWindow> getSectionWindowClass();
 
 	/**
 	 * Vrátí název sekce, tento text se bude zobrazovat přímo v hlavním menu, ze
@@ -35,14 +35,6 @@ public interface ISectionService {
 	 * @return název sekce
 	 */
 	public String getSectionCaption();
-
-	/**
-	 * Vrátí identifikátor sekce, podle tohoto jména se bude sekce hledat v
-	 * seznamu oken
-	 * 
-	 * @return název sekce
-	 */
-	public String getSectionIDName();
 
 	/**
 	 * Zjistí, zda má být zobrazen odkaz na tuto sekci

@@ -2,14 +2,15 @@ package org.myftp.gattserver.grass3;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.myftp.gattserver.grass3.model.AbstractDAO;
 import org.myftp.gattserver.grass3.model.service.IEntityServiceListener;
 import org.myftp.gattserver.grass3.service.IContentServiceListener;
 import org.myftp.gattserver.grass3.service.ISectionService;
+import org.myftp.gattserver.grass3.service.ISettingsService;
 
 /**
  * {@link ServiceHolder} udržuje přehled všech přihlášených modulů. Zároveň
@@ -45,6 +46,29 @@ public class ServiceHolder {
 	}
 
 	/**
+	 * Instance aplikace - reprezentující jednotlivé sessions - potřebují být
+	 * notifikovány o přidání sekce, settings apod. aby si přidali instanci okna
+	 * atd.
+	 */
+	private Set<GrassApplication> applications = new HashSet<GrassApplication>();
+
+	/**
+	 * Přidání instance aplikace, která tak bude notifikována aby si přidala
+	 * okna
+	 */
+	public void registerListenerApp(GrassApplication application) {
+		applications.add(application);
+
+		// dej jí vědět o již zaregistrovaných sekcích
+		for (ISectionService service : sectionServices)
+			application.addWindow(service.getSectionWindowNewInstance());
+		
+		// dej jí vědět o již zaregistrovaných nastaveních
+		for (ISettingsService service : settingsServices)
+			application.addWindow(service.getSettingsWindowNewInstance());
+	}
+
+	/**
 	 * DB entity listener service
 	 */
 	private IEntityServiceListener entityServiceListener;
@@ -77,62 +101,6 @@ public class ServiceHolder {
 	}
 
 	/**
-	 * Bind listenery - pro každou třídu/ifce služeb je list listenerů. TODO ...
-	 * memory leak ??? Když budou instance aplikací mizet, zmizí i jejich
-	 * BindListener ?
-	 */
-	private Map<Class<?>, List<IListenerBinding<?>>> listenerMap = new HashMap<Class<?>, List<IListenerBinding<?>>>();
-
-	/**
-	 * <p>
-	 * Tato generická metoda typově chrání {@link ServiceHolder} před vložením
-	 * třídy jiného typu než je parametr vkládaného {@link IListenerBinding}
-	 * listeneru - nemůže se tak stát, že bych vložil {@link Class}&lt;A&gt; a
-	 * přitom {@link IListenerBinding}&lt;B&gt; - tím pádem pak můžu bezpečně
-	 * přetypovat v notify metodách
-	 * </p>
-	 * <p>
-	 * Můžu tedy vložit toto:
-	 * </p>
-	 * 
-	 * <p>
-	 * <code>
-	 * registerBindListener(A.class, new BindListener&lt;A&gt;() { ... });
-	 * </code>
-	 * </p>
-	 * 
-	 * <p>
-	 * ale ne toto (compile error):
-	 * </p>
-	 * 
-	 * <p>
-	 * <code>
-	 * registerBindListener(A.class, new BindListener&lt;B&gt;() { ... });
-	 * </code>
-	 * </p>
-	 * 
-	 * @param clazz
-	 * @param listener
-	 */
-	public synchronized <T> void registerBindListener(Class<T> clazz,
-			IListenerBinding<T> listener) {
-		List<IListenerBinding<?>> listeners = listenerMap.get(clazz);
-		if (listeners == null) {
-			listeners = new ArrayList<IListenerBinding<?>>();
-			listenerMap.put(clazz, listeners);
-		}
-		listeners.add(listener);
-
-		// TODO jinak
-		if (clazz.equals(ISectionService.class)) {
-			// dej novému odběrateli zpětně vědět o již existujících services
-			for (ISectionService service : sectionServices) {
-				((IListenerBinding<ISectionService>) listener).onBind(service);
-			}
-		}
-	}
-
-	/**
 	 * Sekce
 	 */
 	private List<ISectionService> sectionServices = Collections
@@ -147,31 +115,43 @@ public class ServiceHolder {
 		this.sectionServices = sectionServices;
 	}
 
-	@SuppressWarnings("unchecked")
-	private void notifyBindSectionListeners(ISectionService section) {
-		if (listenerMap.get(ISectionService.class) == null)
-			return;
-		for (IListenerBinding<?> bindListener : listenerMap
-				.get(ISectionService.class)) {
-			((IListenerBinding<ISectionService>) bindListener).onBind(section);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private void notifyUnbindSectionListeners(ISectionService section) {
-		for (IListenerBinding<?> bindListener : listenerMap
-				.get(ISectionService.class)) {
-			((IListenerBinding<ISectionService>) bindListener)
-					.onUnbind(section);
-		}
-	}
-
 	public synchronized void bindSection(ISectionService section) {
-		notifyBindSectionListeners(section);
+		for (GrassApplication application : applications) {
+			application.addWindow(section.getSectionWindowNewInstance());
+		}
 	}
 
 	public synchronized void unbindSection(ISectionService section) {
-		notifyUnbindSectionListeners(section);
+		for (GrassApplication application : applications) {
+			application.removeWindow(section.getSectionWindowClass());
+		}
+	}
+
+	/**
+	 * Settings
+	 */
+	private List<ISettingsService> settingsServices = Collections
+			.synchronizedList(new ArrayList<ISettingsService>());
+
+	public synchronized List<ISettingsService> getSettingsServices() {
+		return settingsServices;
+	}
+
+	public synchronized void setSettingsServices(
+			List<ISettingsService> settingsServices) {
+		this.settingsServices = settingsServices;
+	}
+
+	public synchronized void bindSettings(ISettingsService section) {
+		for (GrassApplication application : applications) {
+			application.addWindow(section.getSettingsWindowNewInstance());
+		}
+	}
+
+	public synchronized void unbindSettings(ISettingsService section) {
+		for (GrassApplication application : applications) {
+			application.removeWindow(section.getSettingsWindowClass());
+		}
 	}
 
 }

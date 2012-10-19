@@ -5,13 +5,11 @@ import java.util.Map;
 
 import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.security.SecurityFacade;
-import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
-import org.myftp.gattserver.grass3.windows.SectionWindow;
-import org.myftp.gattserver.grass3.windows.UserSettingsWindow;
-import org.myftp.gattserver.grass3.windows.template.GrassWindow;
+import org.myftp.gattserver.grass3.windows.err.Err404;
+import org.myftp.gattserver.grass3.windows.err.Err500;
 import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
 
 import com.vaadin.Application;
@@ -23,8 +21,7 @@ import com.vaadin.ui.Window;
  * sám, ale nevhodně
  */
 @SuppressWarnings("serial")
-public class GrassApplication extends Application implements
-		IListenerBinding<ISectionService> {
+public class GrassApplication extends Application {
 
 	/**
 	 * Instance hlavního okna
@@ -37,11 +34,26 @@ public class GrassApplication extends Application implements
 	private SecurityFacade securityFacade = SecurityFacade.getInstance();
 
 	/**
-	 * Nahraje do aplikace všechny chráněné zdroje jako stránky apod., které
-	 * jinak podléhají přihlášení
+	 * Inicializováno ?
+	 * 
+	 * Tento flag udává, zda byla aplikace již inicializována. Inicializace
+	 * končí poté, co jsou doregistrovány všechny windows. Je to důležité
+	 * rozlišovat, protože regisrtace okna pouze prováže jeho instanci s jeho
+	 * jménem (třídy) a aplikace (GrassApplication) tak ví o jeho přítomnosti v
+	 * systému. Ještě ale není postaven jeho layout. Je to tak úmyslně protože
+	 * okna při vystavování layoutu spoléhají na to, že jsou v aplikaci
+	 * zaregistrovaná všechny ostatní povinná okna.
+	 * 
+	 * Teprve poté, co jsou okna zaregistrována, je možné je začít stavět. V
+	 * případě interních oken (Home, Login atd.) není problém toto jednoduše
+	 * rozdělit do dvou fází. V případě dynamicky registrovaných oken však není
+	 * jasné zda se může volat registrace a rovnou addWindow (Vaadin app) nebo
+	 * se addWindow musí počkat až si GrassApplication doregistruje povinná
+	 * okna. Proto je potřeba mít proměnnou, která indikuje, že je aplikace
+	 * připravena k přidávání oken pomocí addWindow a tedy jejich výstavbu
+	 * layoutů.
 	 */
-	private void loadProtectedResources() {
-	}
+	private Boolean initialized = false;
 
 	/**
 	 * Authentikační metoda pro aplikaci
@@ -64,60 +76,91 @@ public class GrassApplication extends Application implements
 		return false;
 	}
 
-	/**
-	 * Registr oken
-	 */
-	private Map<String, GrassWindow> windows = new HashMap<String, GrassWindow>();
-
-	/**
-	 * Registruje u {@link ServiceHolder} listenery pro bind a unbind sekcí.
-	 * Stará se tak o přidání jejich instancí oken (od sekcí) do aplikace
-	 */
-	private void registerSectionBindListener() {
-		ServiceHolder.getInstance().registerBindListener(ISectionService.class, this);
+	private void loadProtectedResources() {
 	}
 
 	@Override
 	public void init() {
-
-		// Nelze volat z konstruktoru, musí se později (při přikládání nových
-		// addWindow musí existovat instance app)
-		registerSectionBindListener();
-
-		// instance oken
-		mainWindow = new HomeWindow();
-		setMainWindow(mainWindow);
-
-		addWindow(new LoginWindow());
-		addWindow(new SectionWindow());
-		addWindow(new QuotesWindow());
-
-		// TODO ... zatím napevno
-		UserSettingsWindow usw = new UserSettingsWindow();
-		usw.setName(UserSettingsWindow.NAME);
-		addWindow(usw);
-		addWindow(new SettingsWindow());
+		
+		// registrace aplikace do ServiceHolderu
+		ServiceHolder.getInstance().registerListenerApp(this);
 		
 		// theme
 		setTheme("grass");
 
+		mainWindow = new HomeWindow();
+		setMainWindow(mainWindow);
+
+		addWindow(new LoginWindow());
+		addWindow(new QuotesWindow());
+		addWindow(new SettingsWindow());
+
+		// err okna
+		addWindow(new Err404());
+		addWindow(new Err500());
+
+		// Interní okna jsou registrována, může se začít stavět jejich layout
+		synchronized (initialized) {
+			initialized = true;
+			for (Window window : windows.values())
+				super.addWindow(window);
+		}
+
 	}
 
-	public void onBind(ISectionService service) {
-		GrassWindow window = service.getSectionWindowNewInstance();
-		// v případě duplicity se nesmí záznam přepsat, protože
-		// by se pak okno nedalo odebrat
-		if (!windows.containsKey(service.getSectionIDName())) {
-			windows.put(service.getSectionIDName(), window);
-			addWindow(window);
+	/**
+	 * Registr oken - je to takhle odvrtvené, protože Vaadin registruje okna dle
+	 * jejich jména - to je ale většinou známo až z instance okna, já potřebuju
+	 * vědět jak bude řazeno okno již z jeho třídy.
+	 */
+	private Map<Class<? extends Window>, Window> windows = new HashMap<Class<? extends Window>, Window>();
+
+	/**
+	 * Získá okno dle třídy
+	 */
+	public Window getWindow(Class<? extends Window> windowClass) {
+		return windows.get(windowClass);
+	}
+
+	/**
+	 * Získá okno dle jména
+	 */
+	public Window getWindow(String name) {
+		return super.getWindow(name);
+	}
+
+	/**
+	 * Zaregistruje okno do aplikace pod daným jménem
+	 */
+	public void addWindow(Window window) {
+		System.out.println("addWindow by class: " + window.getClass());
+		if (!windows.containsKey(window.getClass())) {
+			windows.put(window.getClass(), window);
+			synchronized (initialized) {
+				if (initialized)
+					super.addWindow(window);
+			}
 		}
 	}
 
-	public void onUnbind(ISectionService service) {
-		GrassWindow window = windows.get(service.getSectionIDName());
+	/**
+	 * Odregistruje okno dle třídy
+	 */
+	public void removeWindow(Class<? extends Window> windowClass) {
+		removeWindow(windows.get(windowClass));
+	}
+
+	/**
+	 * Odregistruje okno dle instance
+	 */
+	@Override
+	public void removeWindow(Window window) {
 		if (window != null) {
-			removeWindow(window);
-			windows.remove(service.getSectionIDName());
+			windows.remove(window.getClass());
+			synchronized (initialized) {
+				if (initialized)
+					super.removeWindow(window);
+			}
 		}
 	}
 

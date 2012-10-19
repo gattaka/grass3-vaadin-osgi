@@ -8,13 +8,10 @@ import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.model.dao.QuoteDAO;
 import org.myftp.gattserver.grass3.model.domain.Quote;
 import org.myftp.gattserver.grass3.service.ISectionService;
-import org.myftp.gattserver.grass3.util.URLTool;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
 
-import com.vaadin.Application;
-import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
@@ -24,7 +21,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
-public abstract class BaseWindow extends GrassWindow {
+public abstract class BaseWindow extends BackgroundWindow {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
@@ -47,7 +44,7 @@ public abstract class BaseWindow extends GrassWindow {
 		for (ISectionService section : ServiceHolder.getInstance()
 				.getSectionServices()) {
 			createSectionLink(section.getSectionCaption(),
-					section.getSectionIDName());
+					section.getSectionWindowClass());
 		}
 	}
 
@@ -67,29 +64,7 @@ public abstract class BaseWindow extends GrassWindow {
 				.getName();
 	}
 
-	/**
-	 * Teprve tato metoda staví obsah okna - je jí potřeba mít takhle oddělenou,
-	 * protože během stavby využívá dat jako referenci na instanci aplikace
-	 * apod. Tyto informace jsou oknu dodány později (settery apod.), takže
-	 * kdyby tato logika byla přímo v konstruktoru, vznikne problém ve velkém
-	 * množství null pointer chyb apod.
-	 * 
-	 * Zároveň je tak možné počkat až budou zaregistrována všechny povinná okna
-	 * do aplikace a teprve poté na nich na všech zavolat build, při kterém
-	 * nebude ani problém s nacházením těchto oken v registru oken aplikace
-	 */
-	protected void buildLayout() {
-
-		// Hlavní layout - nosič pozadí a rovnoměrného rozsazení elementů
-		VerticalLayout backgroundLayout = new VerticalLayout();
-		setContent(backgroundLayout);
-		backgroundLayout.setStyleName("background_layout");
-		backgroundLayout.setSizeFull();
-
-		VerticalLayout layout = new VerticalLayout();
-		backgroundLayout.addComponent(layout);
-		layout.setStyleName("layout");
-		layout.setSizeFull();
+	protected void buildLayout(VerticalLayout layout) {
 
 		// vytvoří tělo, které je sesypané směrem nahoru
 		createBody(layout);
@@ -97,17 +72,6 @@ public abstract class BaseWindow extends GrassWindow {
 		// vytvoření patičku, která je sesypána dolů
 		createFooter(layout);
 
-	}
-
-	@Override
-	public void setApplication(Application application) {
-		super.setApplication(application);
-
-		/**
-		 * Dokud neznáš svoji app, tak nemá cenu stavět layout - ten je na této
-		 * informaci závislý
-		 */
-		buildLayout();
 	}
 
 	private void createBody(VerticalLayout layout) {
@@ -166,9 +130,7 @@ public abstract class BaseWindow extends GrassWindow {
 		logoImage.setStyleName("logo_image");
 
 		// Hlášky - generují se znova a znova
-		quotes = new Link(chooseQuote(), new ExternalResource(
-				URLTool.getWindowURL(getApplication().getURL(),
-						QuotesWindow.NAME)));
+		quotes = new Link(chooseQuote(), getWindowResource(QuotesWindow.class));
 		quotes.setStyleName("quotes");
 		quotes.setWidth("740px");
 		topLayout.addComponent(quotes);
@@ -192,8 +154,7 @@ public abstract class BaseWindow extends GrassWindow {
 	}
 
 	private void createHomeLink() {
-		Link link = new Link("Domů", new ExternalResource(URLTool.getWindowURL(
-				getApplication().getURL(), HomeWindow.NAME)));
+		Link link = new Link("Domů", getWindowResource(HomeWindow.class));
 		link.setStyleName("first_menu_item");
 		sectionsMenuLayout.addComponent(link);
 	}
@@ -207,9 +168,9 @@ public abstract class BaseWindow extends GrassWindow {
 		createHomeLink();
 	}
 
-	private void createSectionLink(String caption, String windowName) {
-		Link link = new Link(caption, new ExternalResource(
-				URLTool.getWindowURL(getApplication().getURL(), windowName)));
+	private void createSectionLink(String caption,
+			Class<? extends GrassWindow> windowClass) {
+		Link link = new Link(caption, getWindowResource(windowClass));
 		link.setStyleName("menu_item");
 		sectionsMenuLayout.addComponent(link);
 	}
@@ -224,16 +185,12 @@ public abstract class BaseWindow extends GrassWindow {
 		options.add("Registrovat");
 
 		// Přihlašování
-		Link link = new Link("Přihlášení", new ExternalResource(
-				URLTool.getWindowURL(getApplication().getURL(),
-						LoginWindow.NAME)));
+		Link link = new Link("Přihlášení", getWindowResource(LoginWindow.class));
 		link.setStyleName("menu_item");
 		userMenuLayout.addComponent(link);
 
 		// Nastavení
-		link = new Link("Nastavení", new ExternalResource(
-				URLTool.getWindowURL(getApplication().getURL(),
-						SettingsWindow.NAME)));
+		link = new Link("Nastavení", getWindowResource(SettingsWindow.class));
 		link.setStyleName("menu_item");
 		userMenuLayout.addComponent(link);
 

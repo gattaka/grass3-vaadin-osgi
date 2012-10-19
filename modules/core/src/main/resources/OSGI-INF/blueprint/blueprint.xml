@@ -24,6 +24,7 @@
 	<bean id="serviceHolder" class="org.myftp.gattserver.grass3.ServiceHolder"
 		factory-method="getInstance" activation="eager">
 		<property name="sectionServices" ref="sectionServices" />
+		<property name="settingsServices" ref="settingsServices" />
 		<property name="entityServiceListener" ref="entityServiceListener" />
 		<property name="contentServiceListener" ref="contentServiceListener" />
 	</bean>
@@ -34,21 +35,42 @@
 
 	<!-- List s odchytnutými sekcemi -->
 	<reference-list id="sectionServices"
-		interface="org.myftp.gattserver.grass3.service.ISectionService" availability="optional">  <!-- activation="lazy" -->
+		interface="org.myftp.gattserver.grass3.service.ISectionService"
+		availability="optional">  <!-- activation="lazy" -->
 		<reference-listener bind-method="bindSection"
 			unbind-method="unbindSection" ref="serviceHolder" />
+	</reference-list>
+
+	<!-- List s odchytnutými settings -->
+	<reference-list id="settingsServices"
+		interface="org.myftp.gattserver.grass3.service.ISettingsService"
+		availability="optional">  <!-- activation="lazy" -->
+		<reference-listener bind-method="bindSettings"
+			unbind-method="unbindSettings" ref="serviceHolder" />
 	</reference-list>
 
 	<!-- =============== -->
 	<!-- Služba db entit -->
 	<!-- =============== -->
 
-	<!-- Vytvoř si instanci od DBUnitService pro registraci entity -->
-	<bean id="coreEntityService" class="org.myftp.gattserver.grass3.model.CoreEntityService" />
-
 	<!-- Registrace služby implementující DBUnitService -->
-	<service interface="org.myftp.gattserver.grass3.model.service.IEntityService"
-		ref="coreEntityService" />
+	<service interface="org.myftp.gattserver.grass3.model.service.IEntityService">
+		<bean class="org.myftp.gattserver.grass3.service.impl.CoreEntityService" />
+	</service>
+
+	<!-- =============== -->
+	<!-- Settings služby -->
+	<!-- =============== -->
+
+	<!-- Uživatelé -->
+	<service interface="org.myftp.gattserver.grass3.service.ISettingsService">
+		<bean class="org.myftp.gattserver.grass3.service.impl.UserSettingsService" />
+	</service>
+	
+	<!-- Kategorie -->
+	<service interface="org.myftp.gattserver.grass3.service.ISettingsService">
+		<bean class="org.myftp.gattserver.grass3.service.impl.CategoriesSettingsService" />
+	</service>
 
 	<!-- ======================= -->
 	<!-- Agregátor služeb obsahů -->
@@ -64,7 +86,7 @@
 	<!-- List s odchytnutými entitami -->
 	<reference-list id="contentServices"
 		interface="org.myftp.gattserver.grass3.service.IContentService"
-		availability="optional"/>
+		availability="optional" />
 
 	<!-- Registrace služby agregátoru DB definic -->
 	<service interface="org.myftp.gattserver.grass3.service.IContentServiceListener"

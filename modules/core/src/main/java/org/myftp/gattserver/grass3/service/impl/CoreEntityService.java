@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3.model;
+package org.myftp.gattserver.grass3.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;

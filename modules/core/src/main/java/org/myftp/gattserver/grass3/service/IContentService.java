@@ -1,25 +1,25 @@
 package org.myftp.gattserver.grass3.service;
 
-import java.util.Map;
-
 import org.myftp.gattserver.grass3.model.domain.Node;
 import org.myftp.gattserver.grass3.windows.template.BaseWindow;
 
 import com.vaadin.terminal.Resource;
 
-public interface IContentService extends IModuleService {
+public interface IContentService {
 
 	/**
-	 * Vytvoří novou instanci stránky, která slouží jako editor pro vytváření
-	 * nebo modifikaci daného obsahu
+	 * Vrátí instanci okna, které slouží jako editor pro vytváření nebo
+	 * modifikaci daného obsahu
 	 * 
 	 * @param node
 	 *            kategorie do/ze které je obsah ukládán/editován
-	 * @param params
-	 *            parametry (TODO ... možná pryč)
-	 * @return instance třídy stránky s editorem pro daný obsah
 	 */
-	public BaseWindow createContentEditorWindow(Node node, Map<String,String[]> params);
+	public BaseWindow getContentEditorWindow(Node node);
+
+	/**
+	 * Vrátí okna prohlížeče daného obsahu
+	 */
+	public Class<? extends BaseWindow> getContentViewerWindow();
 
 	/**
 	 * Vrátí popisek k tlačítku "vytvořit nový obsah"
@@ -37,24 +37,10 @@ public interface IContentService extends IModuleService {
 	public Resource getContentIcon();
 
 	/**
-	 * Vrátí třídu stránky, která slouží pro daný obsah jako editor
-	 * 
-	 * @return třída stránky editoru
-	 */
-	public Class<? extends BaseWindow> getContentEditorWindowClass();
-
-	/**
 	 * Vrátí identifikátor služby obsahu
 	 * 
 	 * @return identifikátor služby
 	 */
 	public String getContentID();
-
-	/**
-	 * Vrátí třídu stránky prohlížeče daného obsahu
-	 * 
-	 * @return třída stránky prohlížeče
-	 */
-	public Class<? extends BaseWindow> getContentViewerWindowClass();
 
 }

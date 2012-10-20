@@ -46,7 +46,7 @@ public class SecurityFacade {
 		return md.digest();
 	}
 
-	private String makeHashFromPasswordString(String password) {
+	public String makeHashFromPasswordString(String password) {
 		try {
 			return bytesToHex(getSHA1FromString(password));
 		} catch (NoSuchAlgorithmException e) {

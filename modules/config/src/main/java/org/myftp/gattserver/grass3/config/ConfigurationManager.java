@@ -59,7 +59,7 @@ public class ConfigurationManager {
 						dispatcherConfigurationFile,
 						DispatcherConfiguration.class);
 				if ((dispatcherConfiguration.getGrassVersion()
-						.equals(AppInfo.GRASS_VERSION))
+						.equals(AppInfo.getInstance().getGrassVersion()))
 						&& (dispatcherConfiguration.getGrassName()
 								.equals(AppInfo.GRASS_NAME))) {
 
@@ -107,7 +107,7 @@ public class ConfigurationManager {
 				log("ERR: corrupted or unmatching system version configuration dispatcher file \""
 						+ dispatcherConfigurationFilename + "\" found");
 				log("ERR: unable to continue without risk - provide valid XML or configuration dispatcher file of proper system version "
-						+ AppInfo.GRASS_VERSION);
+						+ AppInfo.getInstance().getGrassVersion());
 				throw new ConfigurationFileError();
 			} else {
 				log("WARN: missing configuration dispatcher file \""

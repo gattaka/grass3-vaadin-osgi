@@ -66,10 +66,17 @@
 	<service interface="org.myftp.gattserver.grass3.service.ISettingsService">
 		<bean class="org.myftp.gattserver.grass3.service.impl.UserSettingsService" />
 	</service>
-	
+
 	<!-- Kategorie -->
 	<service interface="org.myftp.gattserver.grass3.service.ISettingsService">
-		<bean class="org.myftp.gattserver.grass3.service.impl.CategoriesSettingsService" />
+		<bean
+			class="org.myftp.gattserver.grass3.service.impl.CategoriesSettingsService" />
+	</service>
+
+	<!-- Aplikace -->
+	<service interface="org.myftp.gattserver.grass3.service.ISettingsService">
+		<bean
+			class="org.myftp.gattserver.grass3.service.impl.ApplicationSettingsService" />
 	</service>
 
 	<!-- ======================= -->

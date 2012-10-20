@@ -11,6 +11,7 @@ import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
+import org.myftp.gattserver.grass3.windows.RegistrationWindow;
 
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.AbsoluteLayout;
@@ -181,9 +182,6 @@ public abstract class BaseWindow extends BackgroundWindow {
 		layout.setComponentAlignment(userMenuLayout, Alignment.MIDDLE_RIGHT);
 		userMenuLayout.setStyleName("user_menu_layout");
 
-		List<String> options = new ArrayList<String>(2);
-		options.add("Registrovat");
-
 		// Přihlašování
 		Link link = new Link("Přihlášení", getWindowResource(LoginWindow.class));
 		link.setStyleName("menu_item");
@@ -194,11 +192,12 @@ public abstract class BaseWindow extends BackgroundWindow {
 		link.setStyleName("menu_item");
 		userMenuLayout.addComponent(link);
 
-		for (String option : options) {
-			Label userItem = new Label(option);
-			userMenuLayout.addComponent(userItem);
-			userItem.setStyleName("menu_item");
-		}
+		// Registrovat
+		// TODO - povolit dle konfigurace
+		link = new Link("Registrace", getWindowResource(RegistrationWindow.class));
+		link.setStyleName("menu_item");
+		userMenuLayout.addComponent(link);
+
 	}
 
 	/**

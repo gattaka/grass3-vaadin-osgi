@@ -16,6 +16,7 @@ import javax.persistence.Column;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.myftp.gattserver.grass3.security.Role;
 
 @Entity
 @Table(name = "USER_ACCOUNTS", uniqueConstraints = { @UniqueConstraint(columnNames = { "name" }) })
@@ -34,7 +35,7 @@ public class User {
 	/**
 	 * Role uživatele
 	 */
-	private Set<String> roles = new HashSet<String>();
+	private Set<Role> roles = new HashSet<Role>();
 
 	/**
 	 * Datum registrace
@@ -90,11 +91,11 @@ public class User {
 	}
 
 	@ElementCollection
-	public Set<String> getRoles() {
+	public Set<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Set<String> roles) {
+	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
 

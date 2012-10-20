@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class DispatcherConfiguration {
 
 	private String configurationPath = "./grass_configurations";
-	public final String grassVersion = AppInfo.GRASS_VERSION;
+	public final String grassVersion = AppInfo.getInstance().getGrassVersion();
 	public final String grassName = AppInfo.GRASS_NAME;
 
 	public String getConfigurationPath() {

@@ -72,6 +72,7 @@ public class UserSettingsWindow extends SettingsWindow {
 							: createActivateButton(user));
 					userMenuLayout.addComponent(createSetRolesButton(user));
 					userMenuLayout.setVisible(true);
+					System.out.println("Vybrán uživatel");
 				}
 			}
 		});

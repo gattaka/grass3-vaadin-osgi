@@ -8,6 +8,7 @@ import org.myftp.gattserver.grass3.security.SecurityFacade;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
+import org.myftp.gattserver.grass3.windows.RegistrationWindow;
 import org.myftp.gattserver.grass3.windows.err.Err404;
 import org.myftp.gattserver.grass3.windows.err.Err500;
 import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
@@ -81,10 +82,10 @@ public class GrassApplication extends Application {
 
 	@Override
 	public void init() {
-		
+
 		// registrace aplikace do ServiceHolderu
 		ServiceHolder.getInstance().registerListenerApp(this);
-		
+
 		// theme
 		setTheme("grass");
 
@@ -94,6 +95,7 @@ public class GrassApplication extends Application {
 		addWindow(new LoginWindow());
 		addWindow(new QuotesWindow());
 		addWindow(new SettingsWindow());
+		addWindow(new RegistrationWindow());
 
 		// err okna
 		addWindow(new Err404());

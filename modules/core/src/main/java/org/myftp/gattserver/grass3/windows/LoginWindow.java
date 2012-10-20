@@ -6,6 +6,7 @@ import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -24,13 +25,26 @@ public class LoginWindow extends OneColumnWindow {
 	@Override
 	protected void createContent(VerticalLayout layout) {
 
+		layout.setMargin(true);
+		layout.setSpacing(true);
+
+		VerticalLayout formLayout = new VerticalLayout();
+		layout.addComponent(formLayout);
+		formLayout.addComponent(new Label(
+				"<h2>Přihlášení</h2>", Label.CONTENT_XHTML));
+
+		VerticalLayout formFieldsLayout = new VerticalLayout();
+		formLayout.addComponent(formFieldsLayout);
+		formFieldsLayout.setSizeFull();
+		formFieldsLayout.setSpacing(true);
+		
 		// Username
 		final TextField username = new TextField("Uživatelské jméno");
-		layout.addComponent(username);
+		formFieldsLayout.addComponent(username);
 
 		// Password
 		final PasswordField password = new PasswordField("Heslo");
-		layout.addComponent(password);
+		formFieldsLayout.addComponent(password);
 
 		// Login button
 		Button loginButton = new Button("Přihlásit",
@@ -58,8 +72,7 @@ public class LoginWindow extends OneColumnWindow {
 						}
 					}
 				});
-		layout.addComponent(loginButton);
-		layout.setMargin(true);
-		layout.setSpacing(true);
+		formFieldsLayout.addComponent(loginButton);
+
 	}
 }

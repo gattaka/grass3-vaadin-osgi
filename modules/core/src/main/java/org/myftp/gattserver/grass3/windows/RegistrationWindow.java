@@ -140,7 +140,7 @@ public class RegistrationWindow extends OneColumnWindow {
 						} else {
 							showInfo("Registrace proběhla úspěšně");
 							for (Field field : fields) {
-								field.setValue(null);
+								field.setValue("");
 							}
 						}
 					}

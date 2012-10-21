@@ -10,6 +10,7 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
@@ -40,23 +41,25 @@ public class UserSettingsWindow extends SettingsWindow {
 
 		layout.setMargin(true);
 		layout.setSpacing(true);
-		
-		VerticalLayout usersLayout = new VerticalLayout(); 
+
+		VerticalLayout usersLayout = new VerticalLayout();
 		layout.addComponent(usersLayout);
-		
+
 		usersLayout.addComponent(new Label("<h2>Správa uživatelů</h2>",
 				Label.CONTENT_XHTML));
 
 		usersLayout.addComponent(userTable);
 
-		final VerticalLayout userMenuLayout = new VerticalLayout();
+		final HorizontalLayout userMenuLayout = new HorizontalLayout();
 		layout.addComponent(userMenuLayout);
+		userMenuLayout.setSpacing(true);
 
 		userTable.setColumnHeader(ColumnId.POSLEDNÍ_PŘIHLÁŠENÍ,
 				"POSLEDNÍ PŘIHLÁŠENÍ");
 		userTable.setColumnHeader(ColumnId.REGISTROVÁN_OD, "REGISTROVÁN OD");
 		userTable.setSizeFull();
 		userTable.setSelectable(true);
+		userTable.setImmediate(true);
 
 		userTable.addListener(new Table.ValueChangeListener() {
 
@@ -72,7 +75,6 @@ public class UserSettingsWindow extends SettingsWindow {
 							: createActivateButton(user));
 					userMenuLayout.addComponent(createSetRolesButton(user));
 					userMenuLayout.setVisible(true);
-					System.out.println("Vybrán uživatel");
 				}
 			}
 		});
@@ -123,6 +125,10 @@ public class UserSettingsWindow extends SettingsWindow {
 				if (new UserDAO().merge(user)) {
 					showNotification("Uživatel '" + user.getName()
 							+ "' byl úspěšně aktivován");
+					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ)
+							.setValue(user.isConfirmed());
+					userTable.unselect(user);
+					userTable.select(user);
 				} else {
 					showError("Nezdařilo se uložit úpravy provedené na uživateli '"
 							+ user.getName() + "'");
@@ -145,6 +151,10 @@ public class UserSettingsWindow extends SettingsWindow {
 				if (new UserDAO().merge(user)) {
 					showNotification("Uživatel '" + user.getName()
 							+ "' byl úspěšně zablokován");
+					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ)
+							.setValue(user.isConfirmed());
+					userTable.unselect(user);
+					userTable.select(user);
 				} else {
 					showError("Nezdařilo se uložit úpravy provedené na uživateli '"
 							+ user.getName() + "'");

@@ -4,16 +4,20 @@ import java.util.List;
 
 import org.myftp.gattserver.grass3.model.dao.UserDAO;
 import org.myftp.gattserver.grass3.model.domain.User;
+import org.myftp.gattserver.grass3.security.Role;
+import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 
 public class UserSettingsWindow extends SettingsWindow {
@@ -172,11 +176,58 @@ public class UserSettingsWindow extends SettingsWindow {
 			private static final long serialVersionUID = 8422572581790539334L;
 
 			public void buttonClick(ClickEvent event) {
-				// TODO
+
+				final Window subwindow = new GrassSubWindow("Uživatelské role");
+				subwindow.center();
+				addWindow(subwindow);
+				subwindow.setWidth("220px");
+				((VerticalLayout) subwindow.getContent()).setSpacing(true);
+
+				for (final Role value : Role.values()) {
+					final CheckBox checkbox = new CheckBox(value.getRoleName());
+					checkbox.setValue(user.getRoles().contains(value));
+					checkbox.addListener(new Button.ClickListener() {
+
+						private static final long serialVersionUID = -4168795771060533842L;
+
+						public void buttonClick(ClickEvent event) {
+							if (checkbox.booleanValue()) {
+								user.getRoles().add(value);
+							} else {
+								user.getRoles().remove(value);
+							}
+						}
+
+					});
+					subwindow.addComponent(checkbox);
+				}
+				
+				Button applyBtn = new Button("Upravit oprávnění");
+				applyBtn.addListener(new Button.ClickListener() {
+
+					private static final long serialVersionUID = -6032630714904379342L;
+
+					public void buttonClick(ClickEvent event) {
+						if (new UserDAO().merge(user)) {
+							showNotification("Oprávnění uživatele '" + user.getName()
+									+ "' byly úspěšně upraven");
+							userTable.getContainerProperty(user, ColumnId.ROLE)
+									.setValue(user.getRoles());
+							userTable.unselect(user);
+							userTable.select(user);
+//							removeWindow(subwindow);
+						} else {
+							showError("Nezdařilo se uložit úpravy provedené na uživateli '"
+									+ user.getName() + "'");
+						}
+					}
+					
+				});
+				subwindow.addComponent(applyBtn);
+				subwindow.focus();
 			}
 
 		});
 		return button;
 	}
-
 }

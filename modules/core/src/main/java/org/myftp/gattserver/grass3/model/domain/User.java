@@ -1,11 +1,14 @@
 package org.myftp.gattserver.grass3.model.domain;
 
 import java.util.Date;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -25,36 +28,46 @@ public class User {
 	/**
 	 * Jméno uživatele
 	 */
+	@Column(nullable=false)
 	private String name;
 
 	/**
 	 * Heslo uživatele
 	 */
+	@Column(nullable=false)
 	private String password;
 
 	/**
 	 * Role uživatele
 	 */
-	private Set<Role> roles = new HashSet<Role>();
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Enumerated(EnumType.STRING)	
+	private Set<Role> roles = EnumSet.noneOf(Role.class);
 
 	/**
 	 * Datum registrace
 	 */
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "REGISTRATION_DATE")
 	private Date registrationDate;
 
 	/**
 	 * Datum posledního přihlášení
 	 */
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "LAST_LOGIN_DATE")
 	private Date lastLoginDate;
 
 	/**
 	 * Oblíbené obsahy
 	 */
+	@ManyToMany
 	private Set<ContentNode> favourites;
 
 	/**
 	 * Email
 	 */
+	@Column(nullable=false)
 	private String email;
 
 	/**
@@ -65,11 +78,11 @@ public class User {
 	/**
 	 * DB identifikátor
 	 */
-	private Long id;
-
 	@Id
 	@GeneratedValue(generator = "increment")
 	@GenericGenerator(name = "increment", strategy = "increment")
+	private Long id;
+
 	public Long getId() {
 		return id;
 	}
@@ -90,7 +103,6 @@ public class User {
 		this.password = password;
 	}
 
-	@ElementCollection
 	public Set<Role> getRoles() {
 		return roles;
 	}
@@ -103,8 +115,7 @@ public class User {
 		this.id = id;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "REGISTRATION_DATE")
+	
 	public Date getRegistrationDate() {
 		return registrationDate;
 	}
@@ -113,8 +124,6 @@ public class User {
 		this.registrationDate = registrationDate;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "LAST_LOGIN_DATE")
 	public Date getLastLoginDate() {
 		return lastLoginDate;
 	}
@@ -139,7 +148,6 @@ public class User {
 		this.confirmed = confirmed;
 	}
 
-	@ManyToMany
 	public Set<ContentNode> getFavourites() {
 		return favourites;
 	}

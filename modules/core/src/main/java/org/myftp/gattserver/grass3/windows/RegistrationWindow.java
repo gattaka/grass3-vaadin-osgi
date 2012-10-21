@@ -1,8 +1,9 @@
 package org.myftp.gattserver.grass3.windows;
 
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.EnumSet;
+import java.util.List;
 
 import org.myftp.gattserver.grass3.model.dao.UserDAO;
 import org.myftp.gattserver.grass3.model.domain.User;
@@ -15,6 +16,7 @@ import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Field;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
@@ -48,8 +50,12 @@ public class RegistrationWindow extends OneColumnWindow {
 		formFieldsLayout.setSizeFull();
 		formFieldsLayout.setSpacing(true);
 
+		final List<Field> fields = new ArrayList<Field>();
+
 		// Username
 		final TextField username = new TextField("Uživatelské jméno");
+		fields.add(username);
+		username.setRequired(true);
 		formFieldsLayout.addComponent(username);
 		username.addValidator(new StringLengthValidator(
 				"Délka jména musí být mezi 2 až 20 znaky", MIN_USERNAME_LENGTH,
@@ -57,15 +63,21 @@ public class RegistrationWindow extends OneColumnWindow {
 
 		// Username
 		final TextField email = new TextField("Email");
+		fields.add(email);
+		email.setRequired(true);
 		formFieldsLayout.addComponent(email);
 		email.addValidator(new EmailValidator("Email má špatný tvar"));
 
 		// Password
 		final PasswordField password = new PasswordField("Heslo");
+		fields.add(password);
+		password.setRequired(true);
 		formFieldsLayout.addComponent(password);
 
 		// Password 2
 		final PasswordField password2 = new PasswordField("Heslo znovu");
+		fields.add(password2);
+		password2.setRequired(true);
 		formFieldsLayout.addComponent(password2);
 
 		Validator passValidator = new Validator() {
@@ -102,6 +114,12 @@ public class RegistrationWindow extends OneColumnWindow {
 
 					// inline click listener
 					public void buttonClick(ClickEvent event) {
+						for (Field field : fields) {
+							if (!field.isValid()) {
+								showWarning("Ve formuláři jsou chybně vyplněné položky");
+								return;
+							}
+						}
 
 						UserDAO userDAO = new UserDAO();
 
@@ -114,14 +132,17 @@ public class RegistrationWindow extends OneColumnWindow {
 										((String) password.getValue())));
 						user.setRegistrationDate(Calendar.getInstance()
 								.getTime());
-						Set<Role> roles = new HashSet<Role>(1);
-						roles.add(Role.USER);
+						EnumSet<Role> roles = EnumSet.of(Role.USER);
 						user.setRoles(roles);
 
-						if (userDAO.save(user) == null)
+						if (userDAO.save(user) == null) {
 							showError500();
-						else
+						} else {
 							showInfo("Registrace proběhla úspěšně");
+							for (Field field : fields) {
+								field.setValue(null);
+							}
+						}
 					}
 				});
 

@@ -281,7 +281,8 @@ public abstract class AbstractDAO<E> {
 				criteria.add(criterion);
 			if (order != null)
 				criteria.addOrder(order);
-			list = (List<E>) criteria.list();
+			list = (List<E>) criteria.setResultTransformer(
+					Criteria.DISTINCT_ROOT_ENTITY).list();
 			tx.commit();
 		} catch (Exception e) {
 			e.printStackTrace();

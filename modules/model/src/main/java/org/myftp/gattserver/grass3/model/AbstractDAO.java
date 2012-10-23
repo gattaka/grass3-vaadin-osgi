@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBException;
 
 import org.h2.Driver;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -160,9 +161,9 @@ public abstract class AbstractDAO<E> {
 			for (IEntityService service : services) {
 				for (Class<?> entityClass : service.getDomainClasses()) {
 					configuration.addAnnotatedClass(entityClass);
-//					log("addAnnotatedClass " + entityClass.getName()
-//							+ " from classloader "
-//							+ entityClass.getClassLoader() + " registred");
+					// log("addAnnotatedClass " + entityClass.getName()
+					// + " from classloader "
+					// + entityClass.getClassLoader() + " registred");
 				}
 			}
 		}
@@ -195,7 +196,8 @@ public abstract class AbstractDAO<E> {
 
 	@SuppressWarnings("unchecked")
 	private List<E> findAllAndCast(Class<?> entityClass) {
-		return (List<E>) session.createCriteria(entityClass).list();
+		return (List<E>) session.createCriteria(entityClass)
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	/**
@@ -242,6 +244,7 @@ public abstract class AbstractDAO<E> {
 		try {
 			tx = session.beginTransaction();
 			entity = findByIdAndCast(entityClass, id);
+			Hibernate.initialize(entity);
 			tx.commit();
 		} catch (Exception e) {
 			e.printStackTrace();

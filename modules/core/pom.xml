@@ -41,6 +41,11 @@
 				<configuration>
 					<instructions>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Import-Package>
+							*,
+							org.hibernate.proxy,
+							javassist.util.proxy
+						</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -106,7 +111,7 @@
 			<artifactId>model</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		
+
 		<!-- Grass3 config nástroje -->
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>

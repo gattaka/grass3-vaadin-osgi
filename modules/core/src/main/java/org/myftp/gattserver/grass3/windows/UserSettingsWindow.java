@@ -2,8 +2,8 @@ package org.myftp.gattserver.grass3.windows;
 
 import java.util.List;
 
-import org.myftp.gattserver.grass3.model.dao.UserDAO;
-import org.myftp.gattserver.grass3.model.domain.User;
+import org.myftp.gattserver.grass3.facades.UserFacade;
+import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
@@ -23,6 +23,8 @@ import com.vaadin.ui.Button.ClickEvent;
 public class UserSettingsWindow extends SettingsWindow {
 
 	private static final long serialVersionUID = 2474374292329895766L;
+
+	private UserFacade userFacade = UserFacade.INSTANCE;
 
 	private final Table userTable = new Table();
 
@@ -70,7 +72,7 @@ public class UserSettingsWindow extends SettingsWindow {
 			private static final long serialVersionUID = -6605391938100454104L;
 
 			public void valueChange(ValueChangeEvent event) {
-				User user = (User) event.getProperty().getValue();
+				UserInfoDTO user = (UserInfoDTO) event.getProperty().getValue();
 				if (null == user) {
 					userMenuLayout.setVisible(false);
 				} else {
@@ -100,9 +102,9 @@ public class UserSettingsWindow extends SettingsWindow {
 		container.addContainerProperty(ColumnId.EMAIL, String.class, null);
 		userTable.setContainerDataSource(container);
 
-		List<User> users = new UserDAO().findAll();
+		List<UserInfoDTO> users = userFacade.getUserInfoFromAllUsers();
 
-		for (User user : users) {
+		for (UserInfoDTO user : users) {
 			Item item = userTable.addItem(user);
 			item.getItemProperty(ColumnId.ID).setValue(user.getId());
 			item.getItemProperty(ColumnId.JMÉNO).setValue(user.getName());
@@ -118,7 +120,7 @@ public class UserSettingsWindow extends SettingsWindow {
 		super.onShow();
 	}
 
-	private Button createActivateButton(final User user) {
+	private Button createActivateButton(final UserInfoDTO user) {
 		Button button = new Button("Aktivovat");
 		button.addListener(new Button.ClickListener() {
 
@@ -126,7 +128,7 @@ public class UserSettingsWindow extends SettingsWindow {
 
 			public void buttonClick(ClickEvent event) {
 				user.setConfirmed(true);
-				if (new UserDAO().merge(user)) {
+				if (userFacade.activateUser(user)) {
 					showNotification("Uživatel '" + user.getName()
 							+ "' byl úspěšně aktivován");
 					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ)
@@ -144,7 +146,7 @@ public class UserSettingsWindow extends SettingsWindow {
 		return button;
 	}
 
-	private Button createBanButton(final User user) {
+	private Button createBanButton(final UserInfoDTO user) {
 		Button button = new Button("Zablokovat");
 		button.addListener(new Button.ClickListener() {
 
@@ -152,7 +154,7 @@ public class UserSettingsWindow extends SettingsWindow {
 
 			public void buttonClick(ClickEvent event) {
 				user.setConfirmed(false);
-				if (new UserDAO().merge(user)) {
+				if (userFacade.banUser(user)) {
 					showNotification("Uživatel '" + user.getName()
 							+ "' byl úspěšně zablokován");
 					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ)
@@ -169,7 +171,7 @@ public class UserSettingsWindow extends SettingsWindow {
 		return button;
 	}
 
-	private Button createSetRolesButton(final User user) {
+	private Button createSetRolesButton(final UserInfoDTO user) {
 		Button button = new Button("Upravit oprávnění");
 		button.addListener(new Button.ClickListener() {
 
@@ -201,27 +203,27 @@ public class UserSettingsWindow extends SettingsWindow {
 					});
 					subwindow.addComponent(checkbox);
 				}
-				
+
 				Button applyBtn = new Button("Upravit oprávnění");
 				applyBtn.addListener(new Button.ClickListener() {
 
 					private static final long serialVersionUID = -6032630714904379342L;
 
 					public void buttonClick(ClickEvent event) {
-						if (new UserDAO().merge(user)) {
-							showNotification("Oprávnění uživatele '" + user.getName()
-									+ "' byly úspěšně upraven");
+						if (userFacade.changeUserRoles(user)) {
+							showNotification("Oprávnění uživatele '"
+									+ user.getName() + "' byly úspěšně upraven");
 							userTable.getContainerProperty(user, ColumnId.ROLE)
 									.setValue(user.getRoles());
 							userTable.unselect(user);
 							userTable.select(user);
-//							removeWindow(subwindow);
+							// removeWindow(subwindow);
 						} else {
 							showError("Nezdařilo se uložit úpravy provedené na uživateli '"
 									+ user.getName() + "'");
 						}
 					}
-					
+
 				});
 				subwindow.addComponent(applyBtn);
 				subwindow.focus();

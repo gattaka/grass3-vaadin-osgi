@@ -1,14 +1,9 @@
 package org.myftp.gattserver.grass3.windows;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.EnumSet;
 import java.util.List;
 
-import org.myftp.gattserver.grass3.model.dao.UserDAO;
-import org.myftp.gattserver.grass3.model.domain.User;
-import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.security.SecurityFacade;
+import org.myftp.gattserver.grass3.facades.UserFacade;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
 import com.vaadin.data.Validator;
@@ -23,6 +18,8 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 public class RegistrationWindow extends OneColumnWindow {
+
+	private UserFacade userFacade = UserFacade.INSTANCE;
 
 	private static final long serialVersionUID = 8276040419934174157L;
 
@@ -121,27 +118,16 @@ public class RegistrationWindow extends OneColumnWindow {
 							}
 						}
 
-						UserDAO userDAO = new UserDAO();
-
-						User user = new User();
-						user.setConfirmed(false);
-						user.setEmail((String) email.getValue());
-						user.setName((String) username.getValue());
-						user.setPassword(SecurityFacade.getInstance()
-								.makeHashFromPasswordString(
-										((String) password.getValue())));
-						user.setRegistrationDate(Calendar.getInstance()
-								.getTime());
-						EnumSet<Role> roles = EnumSet.of(Role.USER);
-						user.setRoles(roles);
-
-						if (userDAO.save(user) == null) {
-							showError500();
-						} else {
+						if (userFacade.registrateNewUser(
+								(String) email.getValue(),
+								(String) username.getValue(),
+								(String) password.getValue())) {
 							showInfo("Registrace proběhla úspěšně");
 							for (Field field : fields) {
 								field.setValue("");
 							}
+						} else {
+							showError500();
 						}
 					}
 				});

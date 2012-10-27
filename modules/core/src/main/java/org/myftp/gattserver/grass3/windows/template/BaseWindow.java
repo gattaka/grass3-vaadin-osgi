@@ -1,12 +1,7 @@
 package org.myftp.gattserver.grass3.windows.template;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import org.myftp.gattserver.grass3.ServiceHolder;
-import org.myftp.gattserver.grass3.model.dao.QuoteDAO;
-import org.myftp.gattserver.grass3.model.domain.Quote;
+import org.myftp.gattserver.grass3.facades.QuotesFacade;
 import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
@@ -25,6 +20,8 @@ import com.vaadin.ui.VerticalLayout;
 public abstract class BaseWindow extends BackgroundWindow {
 
 	private static final long serialVersionUID = 2474374292329895766L;
+
+	private QuotesFacade quotesFacade = QuotesFacade.INSTANCE;
 
 	private HorizontalLayout sectionsMenuLayout = new HorizontalLayout();
 	private Link quotes;
@@ -50,19 +47,11 @@ public abstract class BaseWindow extends BackgroundWindow {
 	}
 
 	private String chooseQuote() {
-		QuoteDAO quoteDAO = new QuoteDAO();
-		Long count = quoteDAO.count();
-		if (count == null) {
+		String quote = quotesFacade.getRandomQuote();
+		if (quote == null) {
 			showError500();
 		}
-		Quote quotes = null;
-		if (count != 0) {
-			Random generator = new Random();
-			Long randomId = Math.abs(generator.nextLong()) % count + 1;
-			quotes = quoteDAO.findByID(randomId);
-		}
-		return quotes == null ? "~ nebyly nalezeny žádné záznamy ~" : quotes
-				.getName();
+		return quote;
 	}
 
 	protected void buildLayout(VerticalLayout layout) {
@@ -194,7 +183,8 @@ public abstract class BaseWindow extends BackgroundWindow {
 
 		// Registrovat
 		// TODO - povolit dle konfigurace
-		link = new Link("Registrace", getWindowResource(RegistrationWindow.class));
+		link = new Link("Registrace",
+				getWindowResource(RegistrationWindow.class));
 		link.setStyleName("menu_item");
 		userMenuLayout.addComponent(link);
 

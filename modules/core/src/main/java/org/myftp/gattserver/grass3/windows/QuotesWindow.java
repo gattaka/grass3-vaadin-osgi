@@ -1,7 +1,7 @@
 package org.myftp.gattserver.grass3.windows;
 
-import org.myftp.gattserver.grass3.model.dao.QuoteDAO;
-import org.myftp.gattserver.grass3.model.domain.Quote;
+import org.myftp.gattserver.grass3.facades.QuotesFacade;
+import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.template.InfoNotification;
 import org.myftp.gattserver.grass3.template.WarningNotification;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
@@ -21,6 +21,8 @@ public class QuotesWindow extends OneColumnWindow {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
+	private QuotesFacade quotesFacade = QuotesFacade.INSTANCE;
+
 	public static final String NAME = "quotes";
 
 	/**
@@ -37,11 +39,11 @@ public class QuotesWindow extends OneColumnWindow {
 	protected void createContent(VerticalLayout layout) {
 
 		layout.setMargin(true);
-		layout.setSpacing(true);		
+		layout.setSpacing(true);
 		table = new Table();
 		table.setSizeFull();
 		layout.addComponent(table);
-		
+
 		createQuoteList();
 		createNewQuotePanel(layout);
 
@@ -61,7 +63,7 @@ public class QuotesWindow extends OneColumnWindow {
 
 		table.setContainerDataSource(container);
 
-		for (Quote quote : new QuoteDAO().findAll()) {
+		for (QuoteDTO quote : quotesFacade.getAllQuotes()) {
 
 			Item item = table.addItem(quote);
 			item.getItemProperty("ID").setValue(quote.getId());
@@ -88,8 +90,8 @@ public class QuotesWindow extends OneColumnWindow {
 		final TextField newQuoteText = new TextField();
 		newQuoteText.setWidth("200px");
 		newQuoteText.addValidator(new StringLengthValidator(
-				"Text hlášky nesmí být prázdný a může mít maximálně " + maxLength + " znaků",
-				1, maxLength, false));
+				"Text hlášky nesmí být prázdný a může mít maximálně "
+						+ maxLength + " znaků", 1, maxLength, false));
 		panelLayout.addComponent(newQuoteText);
 
 		Button createButton = new Button("Vytvořit",
@@ -101,11 +103,8 @@ public class QuotesWindow extends OneColumnWindow {
 						if (newQuoteText.isValid() == false)
 							return;
 
-						Quote quote = new Quote();
-						quote.setName((String) newQuoteText.getValue());
-						Long newId = (Long) new QuoteDAO().save(quote);
-
-						if (newId != null) {
+						if (quotesFacade.createNewQuote((String) newQuoteText
+								.getValue())) {
 							showNotification(new InfoNotification(
 									"Nová hláška byla úspěšně vložena."));
 							// refresh list
@@ -120,6 +119,6 @@ public class QuotesWindow extends OneColumnWindow {
 					}
 				});
 		panelLayout.addComponent(createButton);
-		
+
 	}
 }

@@ -124,7 +124,7 @@ public enum UserFacade {
 		List<User> users = dao.findAll();
 		List<UserInfoDTO> infoDTOs = new ArrayList<UserInfoDTO>();
 		for (User user : users) {
-			infoDTOs.add(mapper.mapUserToUserInfoDTO(user));
+			infoDTOs.add(mapper.map(user));
 		}
 		return infoDTOs;
 	}

@@ -1,6 +1,8 @@
 package org.myftp.gattserver.grass3.util;
 
+import org.myftp.gattserver.grass3.model.domain.Quote;
 import org.myftp.gattserver.grass3.model.domain.User;
+import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 
 /**
@@ -13,8 +15,13 @@ public enum Mapper {
 
 	INSTANCE;
 
-	public UserInfoDTO mapUserToUserInfoDTO(User user) {
-
+	/**
+	 * Převede {@link User} na {@link UserInfoDTO}
+	 * 
+	 * @param user
+	 * @return
+	 */
+	public UserInfoDTO map(User user) {
 		UserInfoDTO userInfoDTO = new UserInfoDTO();
 
 		userInfoDTO.setConfirmed(user.isConfirmed());
@@ -27,7 +34,21 @@ public enum Mapper {
 		userInfoDTO.setRoles(user.getRoles());
 
 		return userInfoDTO;
+	}
 
+	/**
+	 * Převede {@link Quote} na {@link QuoteDTO}
+	 * 
+	 * @param quote
+	 * @return
+	 */
+	public QuoteDTO map(Quote quote) {
+		QuoteDTO quoteDTO = new QuoteDTO();
+
+		quoteDTO.setId(quote.getId());
+		quoteDTO.setName(quote.getName());
+
+		return quoteDTO;
 	}
 
 }

@@ -6,18 +6,20 @@ import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
-import org.myftp.gattserver.grass3.windows.LogoutWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
 import org.myftp.gattserver.grass3.windows.RegistrationWindow;
 
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.themes.BaseTheme;
 
 public abstract class BaseWindow extends BackgroundWindow {
 
@@ -64,13 +66,19 @@ public abstract class BaseWindow extends BackgroundWindow {
 
 		} else {
 
-			Link link = new Link("Odhlášení",
-					getWindowResource(LogoutWindow.class));
-			link.setStyleName("menu_item");
-			userMenuLayout.addComponent(link);
+			Button button = new Button("Logout", new Button.ClickListener() {
+
+				private static final long serialVersionUID = 4570994816815405844L;
+
+				public void buttonClick(ClickEvent event) {
+					getApplication().close();
+				}
+			});
+			button.setStyleName(BaseTheme.BUTTON_LINK);
+			userMenuLayout.addComponent(button);
 
 			// Nastavení
-			link = new Link("Nastavení",
+			Link link = new Link("Nastavení",
 					getWindowResource(SettingsWindow.class));
 			link.setStyleName("menu_item");
 			userMenuLayout.addComponent(link);

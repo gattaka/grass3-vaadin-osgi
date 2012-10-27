@@ -9,7 +9,6 @@ import org.myftp.gattserver.grass3.security.SecurityFacade;
 import org.myftp.gattserver.grass3.util.Mapper;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
-import org.myftp.gattserver.grass3.windows.LogoutWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
 import org.myftp.gattserver.grass3.windows.RegistrationWindow;
 import org.myftp.gattserver.grass3.windows.err.Err404;
@@ -105,7 +104,6 @@ public class GrassApplication extends Application {
 		setMainWindow(mainWindow);
 
 		addWindow(new LoginWindow());
-		addWindow(new LogoutWindow());
 		addWindow(new QuotesWindow());
 		addWindow(new SettingsWindow());
 		addWindow(new RegistrationWindow());

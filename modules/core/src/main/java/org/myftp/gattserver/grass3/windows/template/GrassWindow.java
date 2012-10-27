@@ -146,7 +146,7 @@ public abstract class GrassWindow extends Window {
 	/**
 	 * Otevře okno dle jeho třídy
 	 */
-	protected void openWindow(Class<GrassWindow> windowClass) {
+	protected void openWindow(Class<? extends GrassWindow> windowClass) {
 		open(getWindowResource(windowClass));
 	}
 

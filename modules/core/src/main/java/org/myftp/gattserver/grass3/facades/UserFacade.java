@@ -41,6 +41,7 @@ public enum UserFacade {
 	INSTANCE;
 
 	private Mapper mapper = Mapper.INSTANCE;
+	private SecurityFacade securityFacade = SecurityFacade.INSTANCE;
 
 	/**
 	 * Zaregistruje nového uživatele
@@ -59,12 +60,13 @@ public enum UserFacade {
 		user.setConfirmed(false);
 		user.setEmail(email);
 		user.setName(username);
-		user.setPassword(SecurityFacade.getInstance()
-				.makeHashFromPasswordString(password));
+		user.setPassword(securityFacade.makeHashFromPasswordString(password));
 		user.setRegistrationDate(Calendar.getInstance().getTime());
 		EnumSet<Role> roles = EnumSet.of(Role.USER);
 		user.setRoles(roles);
 
+		// u save se session uzavírá sama
+		
 		if (userDAO.save(user) == null) {
 			return false;
 		} else {
@@ -83,6 +85,7 @@ public enum UserFacade {
 		UserDAO dao = new UserDAO();
 		User user = dao.findByID(userDTO.getId());
 		user.setConfirmed(true);
+		// session uzavře merge
 		return dao.merge(user);
 	}
 
@@ -97,6 +100,7 @@ public enum UserFacade {
 		UserDAO dao = new UserDAO();
 		User user = dao.findByID(userDTO.getId());
 		user.setConfirmed(false);
+		// session uzavře merge
 		return dao.merge(user);
 	}
 
@@ -111,6 +115,7 @@ public enum UserFacade {
 		UserDAO dao = new UserDAO();
 		User user = dao.findByID(userDTO.getId());
 		user.setRoles(userDTO.getRoles());
+		// session uzavře merge
 		return dao.merge(user);
 	}
 
@@ -126,6 +131,9 @@ public enum UserFacade {
 		for (User user : users) {
 			infoDTOs.add(mapper.map(user));
 		}
+		
+		dao.closeSession();
 		return infoDTOs;
 	}
+
 }

@@ -2,13 +2,11 @@ package org.myftp.gattserver.grass3.model.domain;
 
 import java.util.List;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -25,26 +23,29 @@ public class Node {
 	/**
 	 * Předek uzlu
 	 */
-	private Long parentID;
+	@ManyToOne
+	private Node parent;
 
 	/**
 	 * Potomci uzlu
 	 */
-	private List<Long> subNodeIDs;
+	@OneToMany
+	private List<Node> subNodes;
 
 	/**
 	 * Obsahy uzlu
 	 */
-	private List<Long> contentNodeIDs;
+	@OneToMany
+	private List<ContentNode> contentNodes;
 
 	/**
 	 * DB identifikátor
 	 */
-	private Long id;
-
 	@Id
 	@GeneratedValue(generator = "increment")
 	@GenericGenerator(name = "increment", strategy = "increment")
+	private Long id;
+
 	public Long getId() {
 		return id;
 	}
@@ -52,7 +53,7 @@ public class Node {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -61,35 +62,28 @@ public class Node {
 		this.name = name;
 	}
 
-	@Column(name = "parent_id")
-	public Long getParentID() {
-		return parentID;
+	public Node getParent() {
+		return parent;
 	}
 
-	public void setParentID(Long parentID) {
-		this.parentID = parentID;
+	public void setParent(Node parent) {
+		this.parent = parent;
 	}
 
-	@ElementCollection
-	@CollectionTable(name = "node_node", joinColumns = @JoinColumn(name = "parent_node_id"))
-	@Column(name = "child_node_id")
-	public List<Long> getSubNodeIDs() {
-		return subNodeIDs;
+	public List<Node> getSubNodes() {
+		return subNodes;
 	}
 
-	public void setSubNodeIDs(List<Long> subNodeIDs) {
-		this.subNodeIDs = subNodeIDs;
+	public void setSubNodes(List<Node> subNodes) {
+		this.subNodes = subNodes;
 	}
 
-	@ElementCollection
-	@CollectionTable(name = "contentnode", joinColumns = @JoinColumn(name = "parent_id"))
-	@Column(name = "id")
-	public List<Long> getContentNodeIDs() {
-		return contentNodeIDs;
+	public List<ContentNode> getContentNodes() {
+		return contentNodes;
 	}
 
-	public void setContentNodeIDs(List<Long> contentNodeIDs) {
-		this.contentNodeIDs = contentNodeIDs;
+	public void setContentNodes(List<ContentNode> contentNodes) {
+		this.contentNodes = contentNodes;
 	}
 
 }

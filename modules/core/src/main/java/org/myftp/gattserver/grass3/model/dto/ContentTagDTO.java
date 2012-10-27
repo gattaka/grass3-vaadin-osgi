@@ -18,7 +18,7 @@ public class ContentTagDTO {
 	/**
 	 * Obsahy tagu
 	 */
-	private List<Long> contentNodeIDs;
+	private List<ContentNodeDTO> contentNodes;
 
 	/**
 	 * DB identifikátor
@@ -41,12 +41,12 @@ public class ContentTagDTO {
 		this.name = name;
 	}
 
-	public List<Long> getContentNodeIDs() {
-		return contentNodeIDs;
+	public List<ContentNodeDTO> getContentNodes() {
+		return contentNodes;
 	}
 
-	public void setContentNodeIDs(List<Long> contentNodeIDs) {
-		this.contentNodeIDs = contentNodeIDs;
+	public void setContentNodes(List<ContentNodeDTO> contentNodes) {
+		this.contentNodes = contentNodes;
 	}
 
 }

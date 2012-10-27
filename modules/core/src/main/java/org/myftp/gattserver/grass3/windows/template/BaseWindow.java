@@ -2,9 +2,11 @@ package org.myftp.gattserver.grass3.windows.template;
 
 import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.facades.QuotesFacade;
+import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
+import org.myftp.gattserver.grass3.windows.LogoutWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
 import org.myftp.gattserver.grass3.windows.RegistrationWindow;
 
@@ -24,19 +26,23 @@ public abstract class BaseWindow extends BackgroundWindow {
 	private QuotesFacade quotesFacade = QuotesFacade.INSTANCE;
 
 	private HorizontalLayout sectionsMenuLayout = new HorizontalLayout();
+	private HorizontalLayout userMenuLayout = new HorizontalLayout();
 	private Link quotes;
 
 	@Override
 	protected void onShow() {
 
 		// update menu sekcí
-		updateMenu();
+		populateSectionsMenu();
+
+		// update menu uživatele
+		populateUserMenu();
 
 		// update hlášek
 		quotes.setCaption(chooseQuote());
 	}
 
-	private void updateMenu() {
+	private void populateSectionsMenu() {
 		sectionsMenuLayout.removeAllComponents();
 		createHomeLink();
 		for (ISectionService section : ServiceHolder.getInstance()
@@ -44,6 +50,38 @@ public abstract class BaseWindow extends BackgroundWindow {
 			createSectionLink(section.getSectionCaption(),
 					section.getSectionWindowClass());
 		}
+	}
+
+	private void populateUserMenu() {
+		userMenuLayout.removeAllComponents();
+
+		UserInfoDTO userInfoDTO = getApplication().getUser();
+		if (userInfoDTO == null) {
+			Link link = new Link("Přihlášení",
+					getWindowResource(LoginWindow.class));
+			link.setStyleName("menu_item");
+			userMenuLayout.addComponent(link);
+
+		} else {
+
+			Link link = new Link("Odhlášení",
+					getWindowResource(LogoutWindow.class));
+			link.setStyleName("menu_item");
+			userMenuLayout.addComponent(link);
+
+			// Nastavení
+			link = new Link("Nastavení",
+					getWindowResource(SettingsWindow.class));
+			link.setStyleName("menu_item");
+			userMenuLayout.addComponent(link);
+		}
+
+		// Registrovat
+
+		Link link = new Link("Registrace",
+				getWindowResource(RegistrationWindow.class));
+		link.setStyleName("menu_item");
+		userMenuLayout.addComponent(link);
 	}
 
 	private String chooseQuote() {
@@ -166,28 +204,9 @@ public abstract class BaseWindow extends BackgroundWindow {
 	}
 
 	private void createUserMenu(HorizontalLayout layout) {
-		HorizontalLayout userMenuLayout = new HorizontalLayout();
 		layout.addComponent(userMenuLayout);
 		layout.setComponentAlignment(userMenuLayout, Alignment.MIDDLE_RIGHT);
 		userMenuLayout.setStyleName("user_menu_layout");
-
-		// Přihlašování
-		Link link = new Link("Přihlášení", getWindowResource(LoginWindow.class));
-		link.setStyleName("menu_item");
-		userMenuLayout.addComponent(link);
-
-		// Nastavení
-		link = new Link("Nastavení", getWindowResource(SettingsWindow.class));
-		link.setStyleName("menu_item");
-		userMenuLayout.addComponent(link);
-
-		// Registrovat
-		// TODO - povolit dle konfigurace
-		link = new Link("Registrace",
-				getWindowResource(RegistrationWindow.class));
-		link.setStyleName("menu_item");
-		userMenuLayout.addComponent(link);
-
 	}
 
 	/**

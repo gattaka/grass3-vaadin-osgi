@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.myftp.gattserver.grass3.model.domain.ContentNode;
 import org.myftp.gattserver.grass3.model.domain.ContentTag;
+import org.myftp.gattserver.grass3.model.domain.Node;
 import org.myftp.gattserver.grass3.model.domain.Quote;
 import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.service.IEntityService;
@@ -28,6 +29,7 @@ public class CoreEntityService implements IEntityService {
 		domainClasses.add(ContentNode.class);
 		domainClasses.add(ContentTag.class);
 		domainClasses.add(Quote.class);
+		domainClasses.add(Node.class);
 
 		// nakonec zamkni
 		domainClasses = Collections.unmodifiableList(domainClasses);

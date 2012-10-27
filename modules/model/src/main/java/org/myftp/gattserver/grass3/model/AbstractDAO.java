@@ -190,8 +190,26 @@ public abstract class AbstractDAO<E> {
 		session = sessionFactory.openSession();
 	}
 
-	protected final void closeSession() {
-		session.close();
+	/**
+	 * <b>Důležité</b>
+	 * 
+	 * <p>
+	 * Tuto metodu je nutné za sebou na konci všech proxy volání zavolat aby se
+	 * uzavřela - volá se sama pokud dojde k pádu, ale pokud se dotaz na DB
+	 * zdařil, tak s nezavolá, protože se počítá s tím, že budou volány proxy
+	 * objekty, které potřebují aby session jejich původce zůstala otevřená
+	 * </p>
+	 * 
+	 * <p>
+	 * Dotazem na DB se v tomto případě myslí pouze select dotazy, nikoliv
+	 * ukládání a updaty. Tam se nevrací entity ve kterých by mohly být proxy,
+	 * jež by později mohly generovat select-y, takže tam je i v případě úspěchu
+	 * session automaticky uzavřena.
+	 * </p>
+	 */
+	public final void closeSession() {
+		if (session.isOpen() == false)
+			session.close();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -218,9 +236,8 @@ public abstract class AbstractDAO<E> {
 			if (tx != null) {
 				tx.rollback();
 			}
-			return null;
-		} finally {
 			closeSession();
+			return null;
 		}
 		return list;
 	}
@@ -251,9 +268,8 @@ public abstract class AbstractDAO<E> {
 			if (tx != null) {
 				tx.rollback();
 			}
-			return null;
-		} finally {
 			closeSession();
+			return null;
 		}
 		return entity;
 	}
@@ -289,9 +305,8 @@ public abstract class AbstractDAO<E> {
 			if (tx != null) {
 				tx.rollback();
 			}
-			return null;
-		} finally {
 			closeSession();
+			return null;
 		}
 		return list;
 	}

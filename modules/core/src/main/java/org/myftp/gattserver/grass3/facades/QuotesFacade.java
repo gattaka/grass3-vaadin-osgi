@@ -26,6 +26,7 @@ public enum QuotesFacade {
 	public boolean createNewQuote(String text) {
 		Quote quote = new Quote();
 		quote.setName(text);
+		// save sám uzavírá session
 		if (new QuoteDAO().save(quote) == null) {
 			return false;
 		} else {
@@ -39,11 +40,13 @@ public enum QuotesFacade {
 	 * @return
 	 */
 	public List<QuoteDTO> getAllQuotes() {
-		List<Quote> quotes = new QuoteDAO().findAll();
+		QuoteDAO dao = new QuoteDAO();
+		List<Quote> quotes = dao.findAll();
 		List<QuoteDTO> quoteDTOs = new ArrayList<QuoteDTO>();
 		for (Quote quote : quotes) {
 			quoteDTOs.add(mapper.map(quote));
 		}
+		dao.closeSession();
 		return quoteDTOs;
 	}
 
@@ -51,8 +54,8 @@ public enum QuotesFacade {
 	 * Vybere náhodně hlášku a vrátí její text
 	 */
 	public String getRandomQuote() {
-		QuoteDAO quoteDAO = new QuoteDAO();
-		Long count = quoteDAO.count();
+		QuoteDAO dao = new QuoteDAO();
+		Long count = dao.count();
 		if (count == null) {
 			return null;
 		}
@@ -60,10 +63,13 @@ public enum QuotesFacade {
 		if (count != 0) {
 			Random generator = new Random();
 			Long randomId = Math.abs(generator.nextLong()) % count + 1;
-			quote = quoteDAO.findByID(randomId);
+			quote = dao.findByID(randomId);
+			String quoteText = quote.getName();
+			dao.closeSession();
+			return quoteText;
+		} else {
+			return "~ nebyly nalezeny žádné záznamy ~";
 		}
-		return quote == null ? "~ nebyly nalezeny žádné záznamy ~" : quote
-				.getName();
 	}
 
 }

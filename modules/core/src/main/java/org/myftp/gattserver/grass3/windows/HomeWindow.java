@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.ServiceHolder;
-import org.myftp.gattserver.grass3.model.dao.ContentNodeDAO;
-import org.myftp.gattserver.grass3.model.dao.ContentTagDAO;
-import org.myftp.gattserver.grass3.model.domain.ContentNode;
-import org.myftp.gattserver.grass3.model.domain.ContentTag;
-import org.myftp.gattserver.grass3.model.domain.User;
+import org.myftp.gattserver.grass3.facades.ContentNodeFacade;
+import org.myftp.gattserver.grass3.facades.ContentTagFacade;
+import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
+import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
+import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.service.IContentService;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
@@ -30,6 +30,9 @@ import com.vaadin.ui.VerticalLayout;
 public class HomeWindow extends OneColumnWindow {
 
 	private static final long serialVersionUID = 2474374292329895766L;
+
+	private ContentNodeFacade contentNodeFacade = ContentNodeFacade.INSTANCE;
+	private ContentTagFacade contentTagFacade = ContentTagFacade.INSTANCE;
 
 	/**
 	 * Kolik položek mají menu "nedávno" maximálně zobrazit ?
@@ -122,27 +125,29 @@ public class HomeWindow extends OneColumnWindow {
 	}
 
 	private void createFavourtiesMenu() {
-		User user = (User) getApplication().getUser();
+		UserInfoDTO user = getApplication().getUser();
 		if (user == null) {
 			return;
 		}
 
-		Set<ContentNode> contentNodes = user.getFavourites();
+		List<ContentNodeDTO> contentNodes = contentNodeFacade
+				.getUserFavouritesContents(user);
 		populateTable(contentNodes, favouritesContentsTable);
 
 	}
 
 	private void createTagCloud() {
 
-		final List<ContentTag> contentTags = new ContentTagDAO().findAll();
+		final List<ContentTagDTO> contentTags = contentTagFacade
+				.getAllContentTags();
 
 		if (contentTags == null)
 			showError500();
-		
+
 		tagCloud.removeAllComponents();
 		tagCloud.setSizeFull();
 		tagCloud.setSpacing(true);
-		
+
 		if (contentTags.isEmpty()) {
 			Label noTagsLabel = new Label("Nebyly nalezeny žádné tagy");
 			tagCloud.addComponent(noTagsLabel);
@@ -155,8 +160,8 @@ public class HomeWindow extends OneColumnWindow {
 		 * Pro škálování je potřeba znát počty obsahů ze všech tagů
 		 */
 		Set<Integer> counts = new HashSet<Integer>();
-		for (ContentTag contentTag : contentTags) {
-			int size = contentTag.getContentNodeIDs().size();
+		for (ContentTagDTO contentTag : contentTags) {
+			int size = contentTag.getContentNodes().size();
 			counts.add(size);
 		}
 
@@ -172,10 +177,10 @@ public class HomeWindow extends OneColumnWindow {
 		 * 
 		 * Seřaď položky listu dle počtu asociovaných obsahů (vzestupně)
 		 */
-		Collections.sort(contentTags, new Comparator<ContentTag>() {
-			public int compare(ContentTag o1, ContentTag o2) {
-				return o1.getContentNodeIDs().size()
-						- o2.getContentNodeIDs().size();
+		Collections.sort(contentTags, new Comparator<ContentTagDTO>() {
+			public int compare(ContentTagDTO o1, ContentTagDTO o2) {
+				return o1.getContentNodes().size()
+						- o2.getContentNodes().size();
 			}
 		});
 
@@ -184,7 +189,7 @@ public class HomeWindow extends OneColumnWindow {
 		 * budu vědět kdy posunout ohodnocovací koeficient
 		 */
 		int lastSize = contentTags.isEmpty() ? 1 : contentTags.get(0)
-				.getContentNodeIDs().size();
+				.getContentNodes().size();
 		int lastFontSize = MIN_FONT_SIZE_TAG_CLOUD;
 
 		/**
@@ -194,19 +199,19 @@ public class HomeWindow extends OneColumnWindow {
 		 * vrátila velikost fontu, reps. kategorie velikosti.
 		 */
 		final HashMap<Integer, Integer> sizeTable = new HashMap<Integer, Integer>();
-		for (ContentTag contentTag : contentTags) {
+		for (ContentTagDTO contentTag : contentTags) {
 
 			/**
 			 * Spočítej jeho fontsize - pokud jsem vyšší, pak přihoď velikost
 			 * koef a ulož můj stav aby ostatní věděli, jestli mají zvyšovat,
 			 * nebo zůstat, protože mají stejnou velikost
 			 */
-			if (contentTag.getContentNodeIDs().size() > lastSize) {
-				lastSize = contentTag.getContentNodeIDs().size();
+			if (contentTag.getContentNodes().size() > lastSize) {
+				lastSize = contentTag.getContentNodes().size();
 				lastFontSize += koef;
 			}
 
-			int size = contentTag.getContentNodeIDs().size();
+			int size = contentTag.getContentNodes().size();
 			sizeTable.put(size, lastFontSize);
 		}
 
@@ -215,16 +220,16 @@ public class HomeWindow extends OneColumnWindow {
 		 * 
 		 * Seřaď položky listu dle abecedy (vzestupně)
 		 */
-		Collections.sort(contentTags, new Comparator<ContentTag>() {
-			public int compare(ContentTag o1, ContentTag o2) {
+		Collections.sort(contentTags, new Comparator<ContentTagDTO>() {
+			public int compare(ContentTagDTO o1, ContentTagDTO o2) {
 				return o1.getName().compareTo(o2.getName());
 			}
 		});
 
 		// TODO link na seznam obsahů s tímto tagem !
-		
-		for (ContentTag contentTag : contentTags) {
-			int size = sizeTable.get(contentTag.getContentNodeIDs().size());
+
+		for (ContentTagDTO contentTag : contentTags) {
+			int size = sizeTable.get(contentTag.getContentNodes().size());
 			tagCloud.addComponent(new Label("<span style='font-size:" + size
 					+ "pt'>" + contentTag.getName() + "</span>"));
 		}
@@ -232,19 +237,19 @@ public class HomeWindow extends OneColumnWindow {
 	}
 
 	private void createRecentMenus() {
-		ContentNodeDAO contentNodeDAO = new ContentNodeDAO();
 
-		List<ContentNode> recentAdded = contentNodeDAO
-				.findRecentAdd(RECENT_ITEMS_COUNT);
-		List<ContentNode> recentModified = contentNodeDAO
-				.findRecentEdit(RECENT_ITEMS_COUNT);
+		List<ContentNodeDTO> recentAdded = contentNodeFacade
+				.getRecentAdded(RECENT_ITEMS_COUNT);
+		List<ContentNodeDTO> recentModified = contentNodeFacade
+				.getRecentModified(RECENT_ITEMS_COUNT);
 
 		populateTable(recentAdded, recentAddedContentsTable);
 		populateTable(recentModified, recentModifiedContentsTable);
 
 	}
 
-	private void populateTable(Collection<ContentNode> contentList, Table table) {
+	private void populateTable(Collection<ContentNodeDTO> contentList,
+			Table table) {
 
 		IndexedContainer container = new IndexedContainer();
 		container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
@@ -260,7 +265,7 @@ public class HomeWindow extends OneColumnWindow {
 		table.setColumnHeader(ColumnId.DATUM_ÚPRAVY, "DATUM ÚPRAVY");
 
 		// položky
-		for (ContentNode contentNode : contentList) {
+		for (ContentNodeDTO contentNode : contentList) {
 
 			// jaká prohlížecí služba odpovídá tomuto obsahu
 			IContentService contentService = ServiceHolder.getInstance()

@@ -1,7 +1,6 @@
 package org.myftp.gattserver.grass3.model.dto;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * Objekt sloužící pro přepravu dat mezi fasádou a view třídami
@@ -47,14 +46,9 @@ public class ContentNodeDTO {
 	private Boolean publicated = true;
 
 	/**
-	 * Tagy
-	 */
-	private List<ContentTagDTO> contentTags;
-
-	/**
 	 * Kdo ho vytvořil
 	 */
-	private UserDTO author;
+	private UserInfoDTO author;
 
 	/**
 	 * DB identifikátor
@@ -117,28 +111,20 @@ public class ContentNodeDTO {
 		this.name = name;
 	}
 
-	public List<ContentTagDTO> getContentTags() {
-		return contentTags;
-	}
-
-	public void setContentTags(List<ContentTagDTO> contentTags) {
-		this.contentTags = contentTags;
-	}
-
-	public UserDTO getAuthor() {
-		return author;
-	}
-
-	public void setAuthor(UserDTO author) {
-		this.author = author;
-	}
-
 	public Long getParentID() {
 		return parentID;
 	}
 
 	public void setParentID(Long parentID) {
 		this.parentID = parentID;
+	}
+
+	public UserInfoDTO getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(UserInfoDTO author) {
+		this.author = author;
 	}
 
 }

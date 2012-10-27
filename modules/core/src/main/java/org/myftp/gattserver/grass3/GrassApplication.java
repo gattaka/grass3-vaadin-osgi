@@ -4,9 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.myftp.gattserver.grass3.model.domain.User;
+import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.security.SecurityFacade;
+import org.myftp.gattserver.grass3.util.Mapper;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
+import org.myftp.gattserver.grass3.windows.LogoutWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
 import org.myftp.gattserver.grass3.windows.RegistrationWindow;
 import org.myftp.gattserver.grass3.windows.err.Err404;
@@ -32,7 +35,8 @@ public class GrassApplication extends Application {
 	/**
 	 * Fasády
 	 */
-	private SecurityFacade securityFacade = SecurityFacade.getInstance();
+	private SecurityFacade securityFacade = SecurityFacade.INSTANCE;
+	private Mapper mapper = Mapper.INSTANCE;
 
 	/**
 	 * Inicializováno ?
@@ -69,7 +73,8 @@ public class GrassApplication extends Application {
 
 		User loggedUser = securityFacade.authenticate(username, password);
 		if (loggedUser != null) {
-			setUser(loggedUser);
+			UserInfoDTO infoDTO = mapper.map(loggedUser);
+			setUser(infoDTO);
 			loadProtectedResources();
 			return true;
 		}
@@ -78,6 +83,13 @@ public class GrassApplication extends Application {
 	}
 
 	private void loadProtectedResources() {
+	}
+
+	/**
+	 * Získá aktuálního přihlášeného uživatele jako {@link UserInfoDTO} objekt
+	 */
+	public UserInfoDTO getUser() {
+		return (UserInfoDTO) super.getUser();
 	}
 
 	@Override
@@ -93,6 +105,7 @@ public class GrassApplication extends Application {
 		setMainWindow(mainWindow);
 
 		addWindow(new LoginWindow());
+		addWindow(new LogoutWindow());
 		addWindow(new QuotesWindow());
 		addWindow(new SettingsWindow());
 		addWindow(new RegistrationWindow());

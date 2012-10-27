@@ -14,6 +14,9 @@ public class Quote {
 	/**
 	 * DB identifikátor
 	 */
+	@Id
+	@GeneratedValue(generator = "increment")
+	@GenericGenerator(name = "increment", strategy = "increment")
 	private Long id;
 
 	/**
@@ -21,9 +24,6 @@ public class Quote {
 	 */
 	private String name;
 
-	@Id
-	@GeneratedValue(generator = "increment")
-	@GenericGenerator(name = "increment", strategy = "increment")
 	public Long getId() {
 		return id;
 	}

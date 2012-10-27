@@ -60,9 +60,8 @@ public class UserDAO extends AbstractDAO<User> {
 			if (tx != null) {
 				tx.rollback();
 			}
-			return null;
-		} finally {
 			closeSession();
+			return null;
 		}
 		return list;
 	}

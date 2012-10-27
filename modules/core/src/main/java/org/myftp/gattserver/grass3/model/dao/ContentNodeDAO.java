@@ -21,13 +21,13 @@ public class ContentNodeDAO extends AbstractDAO<ContentNode> {
 				Order.desc(byWhat), maxResults);
 	}
 
-	public List<ContentNode> findRecentAdd(int maxResults, Long nodeId) {
+	public List<ContentNode> findRecentAdded(int maxResults, Long nodeId) {
 		return findRecentBy("creationDate", maxResults, Restrictions.and(
 				Restrictions.isNotNull("creationDate"),
 				Restrictions.eq("parentID", nodeId)));
 	}
 
-	public List<ContentNode> findRecentAdd(int maxResults) {
+	public List<ContentNode> findRecentAdded(int maxResults) {
 		return findRecentBy("creationDate", maxResults,
 				Restrictions.isNotNull("creationDate"));
 	}
@@ -37,12 +37,12 @@ public class ContentNodeDAO extends AbstractDAO<ContentNode> {
 				Restrictions.eq("author.id", userId));
 	}
 
-	public List<ContentNode> findRecentEdit(int maxResults) {
+	public List<ContentNode> findRecentEdited(int maxResults) {
 		return findRecentBy("lastModificationDate", maxResults,
 				Restrictions.isNotNull("lastModificationDate"));
 	}
 
-	public List<ContentNode> findRecentEdit(int maxResults, Long nodeId) {
+	public List<ContentNode> findRecentEdited(int maxResults, Long nodeId) {
 		return findRecentBy("lastModificationDate", maxResults,
 				Restrictions.and(
 						Restrictions.isNotNull("lastModificationDate"),

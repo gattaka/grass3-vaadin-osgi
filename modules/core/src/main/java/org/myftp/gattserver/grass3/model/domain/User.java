@@ -28,20 +28,20 @@ public class User {
 	/**
 	 * Jméno uživatele
 	 */
-	@Column(nullable=false)
+	@Column(nullable = false)
 	private String name;
 
 	/**
 	 * Heslo uživatele
 	 */
-	@Column(nullable=false)
+	@Column(nullable = false)
 	private String password;
 
 	/**
 	 * Role uživatele
 	 */
-	@ElementCollection(fetch=FetchType.EAGER)
-	@Enumerated(EnumType.STRING)	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@Enumerated(EnumType.STRING)
 	private Set<Role> roles = EnumSet.noneOf(Role.class);
 
 	/**
@@ -67,7 +67,7 @@ public class User {
 	/**
 	 * Email
 	 */
-	@Column(nullable=false)
+	@Column(nullable = false)
 	private String email;
 
 	/**
@@ -115,7 +115,6 @@ public class User {
 		this.id = id;
 	}
 
-	
 	public Date getRegistrationDate() {
 		return registrationDate;
 	}

@@ -15,7 +15,7 @@ public class ContentTagDAO extends AbstractDAO<ContentTag> {
 	/**
 	 * Získá tag dle názvu
 	 */
-	public ContentTag getContentTagByName(String name) {
+	public ContentTag findContentTagByName(String name) {
 		List<ContentTag> tags = findByRestriction(Restrictions.eq("name", name),
 				null, null);
 		if (tags == null)

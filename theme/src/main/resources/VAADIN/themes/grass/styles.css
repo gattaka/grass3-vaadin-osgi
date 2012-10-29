@@ -109,6 +109,21 @@ h2 {
 	color: #2483c4;
 }
 
+.menu_item .v-button-wrap span:hover {
+	text-decoration: none;
+	color: #2483c4;
+}
+
+.menu_item .v-button-wrap span {
+	text-decoration: none;
+	color: #555;
+	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
+		"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	text-shadow: 1px 1px 1px #ccc;
+}
+
 /* ============= */
 /* Kulaté okraje */
 /* ============= */

@@ -66,7 +66,7 @@ public abstract class BaseWindow extends BackgroundWindow {
 
 		} else {
 
-			Button button = new Button("Logout", new Button.ClickListener() {
+			Button button = new Button("Odhlásit", new Button.ClickListener() {
 
 				private static final long serialVersionUID = 4570994816815405844L;
 
@@ -75,6 +75,7 @@ public abstract class BaseWindow extends BackgroundWindow {
 				}
 			});
 			button.setStyleName(BaseTheme.BUTTON_LINK);
+			button.addStyleName("menu_item");
 			userMenuLayout.addComponent(button);
 
 			// Nastavení

@@ -122,6 +122,16 @@ h2 {
 	font-size: 14px;
 	font-weight: bold;
 	text-shadow: 1px 1px 1px #ccc;
+	padding-left: 10px;
+}
+
+.menu_item.user_status .v-button-wrap span:hover {
+	text-decoration: none;
+	color: #14A800;
+}
+
+.menu_item.user_status .v-button-wrap span {
+	color: #0D6D00;
 }
 
 /* ============= */

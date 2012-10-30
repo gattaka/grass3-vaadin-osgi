@@ -3,7 +3,9 @@ package org.myftp.gattserver.grass3.windows.template;
 import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.facades.QuotesFacade;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
+import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.service.ISectionService;
+import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
@@ -14,10 +16,12 @@ import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.BaseTheme;
 
@@ -57,14 +61,72 @@ public abstract class BaseWindow extends BackgroundWindow {
 	private void populateUserMenu() {
 		userMenuLayout.removeAllComponents();
 
-		UserInfoDTO userInfoDTO = getApplication().getUser();
+		final UserInfoDTO userInfoDTO = getApplication().getUser();
 		if (userInfoDTO == null) {
 			Link link = new Link("Přihlášení",
 					getWindowResource(LoginWindow.class));
 			link.setStyleName("menu_item");
 			userMenuLayout.addComponent(link);
 
+			// Registrovat
+			link = new Link("Registrace",
+					getWindowResource(RegistrationWindow.class));
+			link.setStyleName("menu_item");
+			userMenuLayout.addComponent(link);
+
 		} else {
+
+			Button userDetails = new Button(userInfoDTO.getName(),
+					new Button.ClickListener() {
+
+						private static final long serialVersionUID = 4570994816815405844L;
+
+						public void buttonClick(ClickEvent event) {
+							final Window subwindow = new GrassSubWindow(
+									"Detail uživatele " + userInfoDTO.getName());
+							subwindow.center();
+							addWindow(subwindow);
+							subwindow.setWidth("220px");
+							GridLayout gridLayout = new GridLayout(2, 4);
+							gridLayout.setMargin(true);
+							gridLayout.setSpacing(true);
+							subwindow.setContent(gridLayout);
+
+							// Jméno
+							gridLayout.addComponent(new Label("<h2>"
+									+ userInfoDTO.getName() + "</h2>",
+									Label.CONTENT_XHTML), 0, 0, 1, 0);
+
+							// Admin ?
+							gridLayout.addComponent(new Label("Admin"), 0, 1);
+							gridLayout.addComponent(new Label(userInfoDTO
+									.getRoles().contains(Role.ADMIN) ? "Ano"
+									: "Ne"), 1, 1);
+
+							// Friend ?
+							gridLayout.addComponent(new Label("Friend"), 0, 2);
+							gridLayout.addComponent(new Label(userInfoDTO
+									.getRoles().contains(Role.FRIEND) ? "Ano"
+									: "Ne"), 1, 2);
+
+							// Author ?
+							gridLayout.addComponent(new Label("Author"), 0, 3);
+							gridLayout.addComponent(new Label(userInfoDTO
+									.getRoles().contains(Role.AUTHOR) ? "Ano"
+									: "Ne"), 1, 3);
+
+							subwindow.focus();
+						}
+					});
+
+			userDetails.setStyleName("user_status");
+			userDetails.addStyleName("menu_item");
+			userDetails.addStyleName(BaseTheme.BUTTON_LINK);
+			userMenuLayout.addComponent(userDetails);
+
+			Label separator = new Label("|");
+			separator.setStyleName("menu_item");
+			userMenuLayout.addComponent(separator);
 
 			Button button = new Button("Odhlásit", new Button.ClickListener() {
 
@@ -85,12 +147,6 @@ public abstract class BaseWindow extends BackgroundWindow {
 			userMenuLayout.addComponent(link);
 		}
 
-		// Registrovat
-
-		Link link = new Link("Registrace",
-				getWindowResource(RegistrationWindow.class));
-		link.setStyleName("menu_item");
-		userMenuLayout.addComponent(link);
 	}
 
 	private String chooseQuote() {

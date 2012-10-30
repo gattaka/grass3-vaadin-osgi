@@ -1,14 +1,13 @@
 package org.myftp.gattserver.grass3.windows;
 
 import org.myftp.gattserver.grass3.GrassApplication;
+import org.myftp.gattserver.grass3.template.GrassLoginForm;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
 import com.vaadin.terminal.ExternalResource;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.LoginForm;
+import com.vaadin.ui.LoginForm.LoginEvent;
 import com.vaadin.ui.VerticalLayout;
 
 public class LoginWindow extends OneColumnWindow {
@@ -30,49 +29,41 @@ public class LoginWindow extends OneColumnWindow {
 
 		VerticalLayout formLayout = new VerticalLayout();
 		layout.addComponent(formLayout);
-		formLayout.addComponent(new Label(
-				"<h2>Přihlášení</h2>", Label.CONTENT_XHTML));
+		formLayout.addComponent(new Label("<h2>Přihlášení</h2>",
+				Label.CONTENT_XHTML));
 
 		VerticalLayout formFieldsLayout = new VerticalLayout();
 		formLayout.addComponent(formFieldsLayout);
 		formFieldsLayout.setSizeFull();
 		formFieldsLayout.setSpacing(true);
-		
-		// Username
-		final TextField username = new TextField("Uživatelské jméno");
-		formFieldsLayout.addComponent(username);
 
-		// Password
-		final PasswordField password = new PasswordField("Heslo");
-		formFieldsLayout.addComponent(password);
+		LoginForm loginForm = new GrassLoginForm();
+		loginForm.setUsernameCaption("Jméno");
+		loginForm.setPasswordCaption("Heslo");
+		loginForm.setLoginButtonCaption("Přihlásit");
+		loginForm.addListener(new LoginForm.LoginListener() {
 
-		// Login button
-		Button loginButton = new Button("Přihlásit",
-				new Button.ClickListener() {
+			private static final long serialVersionUID = -3342397991011184546L;
 
-					private static final long serialVersionUID = -1805861621517364082L;
+			public void onLogin(LoginEvent event) {
+				if (((GrassApplication) getApplication()).authenticate(
+						event.getLoginParameter("username"),
+						event.getLoginParameter("password"))) {
 
-					// inline click listener
-					public void buttonClick(ClickEvent event) {
+					// TODO - zatím jen takhle na main, ale měl by se
+					// "vracet" resp. "pokračovat"
+					open(new ExternalResource(getApplication().getMainWindow()
+							.getURL()));
+				} else {
 
-						if (((GrassApplication) getApplication()).authenticate(
-								username.getValue().toString(), password
-										.getValue().toString())) {
-
-							// TODO - zatím jen takhle na main, ale měl by se
-							// "vracet" resp. "pokračovat"
-							open(new ExternalResource(getApplication()
-									.getMainWindow().getURL()));
-						} else {
-
-							// zobraz chybu
-							getWindow().showNotification(
-									new Notification("Přihlášení se nezdařilo",
-											Notification.TYPE_ERROR_MESSAGE));
-						}
-					}
-				});
-		formFieldsLayout.addComponent(loginButton);
+					// zobraz chybu
+					getWindow().showNotification(
+							new Notification("Přihlášení se nezdařilo",
+									Notification.TYPE_ERROR_MESSAGE));
+				}
+			}
+		});
+		formFieldsLayout.addComponent(loginForm);
 
 	}
 }

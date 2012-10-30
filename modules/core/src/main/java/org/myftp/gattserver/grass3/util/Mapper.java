@@ -6,10 +6,12 @@ import java.util.List;
 
 import org.myftp.gattserver.grass3.model.domain.ContentNode;
 import org.myftp.gattserver.grass3.model.domain.ContentTag;
+import org.myftp.gattserver.grass3.model.domain.Node;
 import org.myftp.gattserver.grass3.model.domain.Quote;
 import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
+import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 
@@ -132,11 +134,44 @@ public enum Mapper {
 	 * @param contentTags
 	 * @return
 	 */
-	public List<ContentTagDTO> mapContentTagCollection(Collection<ContentTag> contentTags) {
+	public List<ContentTagDTO> mapContentTagCollection(
+			Collection<ContentTag> contentTags) {
 		List<ContentTagDTO> contentTagDTOs = new ArrayList<ContentTagDTO>();
 		for (ContentTag contentTag : contentTags) {
 			contentTagDTOs.add(map(contentTag));
 		}
 		return contentTagDTOs;
+	}
+
+	/**
+	 * Převede {@link Node} na {@link NodeDTO}
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public NodeDTO map(Node node) {
+		NodeDTO nodeDTO = new NodeDTO();
+
+		nodeDTO.setId(node.getId());
+		nodeDTO.setName(node.getName());
+		nodeDTO.setParentID(node.getParent() == null ? null : node.getParent()
+				.getId());
+		nodeDTO.setContentNodes(mapContentNodeCollection(node.getContentNodes()));
+
+		return nodeDTO;
+	}
+
+	/**
+	 * Převede list {@link Node} na list {@link NodeDTO}
+	 * 
+	 * @param nodes
+	 * @return
+	 */
+	public List<NodeDTO> mapNodeCollection(Collection<Node> nodes) {
+		List<NodeDTO> nodeDTOs = new ArrayList<NodeDTO>();
+		for (Node node : nodes) {
+			nodeDTOs.add(map(node));
+		}
+		return nodeDTOs;
 	}
 }

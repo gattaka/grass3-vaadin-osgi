@@ -12,7 +12,12 @@ public class NodeDAO extends AbstractDAO<Node> {
 		super(Node.class);
 	}
 
-	public List<Node> getRoots() {
-		return findByRestriction(Restrictions.isNull("parentID"), null, null);
+	public List<Node> findRoots() {
+		return findByRestriction(Restrictions.isNull("parent"), null, null);
+	}
+
+	public List<Node> findNodesByParent(Long parentId) {
+		return findByRestriction(Restrictions.eq("parent.id", parentId), null,
+				null);
 	}
 }

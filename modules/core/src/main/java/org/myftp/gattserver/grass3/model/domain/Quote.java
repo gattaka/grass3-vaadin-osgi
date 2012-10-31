@@ -24,6 +24,18 @@ public class Quote {
 	 */
 	private String name;
 
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Quote))
+			return false;
+		return ((Quote) obj).getId() == getId();
+	}
+
+	@Override
+	public int hashCode() {
+		return getId().hashCode();
+	}
+
 	public Long getId() {
 		return id;
 	}

@@ -130,8 +130,8 @@ public class HomeWindow extends OneColumnWindow {
 			return;
 		}
 
-		List<ContentNodeDTO> contentNodes = contentNodeFacade
-				.getUserFavouritesContents(user);
+		Set<ContentNodeDTO> contentNodes = contentNodeFacade
+				.getUserFavouriteContents(user);
 		populateTable(contentNodes, favouritesContentsTable);
 
 	}
@@ -238,9 +238,9 @@ public class HomeWindow extends OneColumnWindow {
 
 	private void createRecentMenus() {
 
-		List<ContentNodeDTO> recentAdded = contentNodeFacade
+		Set<ContentNodeDTO> recentAdded = contentNodeFacade
 				.getRecentAdded(RECENT_ITEMS_COUNT);
-		List<ContentNodeDTO> recentModified = contentNodeFacade
+		Set<ContentNodeDTO> recentModified = contentNodeFacade
 				.getRecentModified(RECENT_ITEMS_COUNT);
 
 		populateTable(recentAdded, recentAddedContentsTable);

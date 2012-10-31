@@ -2,7 +2,9 @@ package org.myftp.gattserver.grass3.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.myftp.gattserver.grass3.model.domain.ContentNode;
 import org.myftp.gattserver.grass3.model.domain.ContentTag;
@@ -97,14 +99,14 @@ public enum Mapper {
 	}
 
 	/**
-	 * Převede list {@link ContentNode} na list {@link ContentNodeDTO}
+	 * Převede set {@link ContentNode} na list {@link ContentNodeDTO}
 	 * 
 	 * @param contentNodes
 	 * @return
 	 */
-	public List<ContentNodeDTO> mapContentNodeCollection(
+	public Set<ContentNodeDTO> mapContentNodeCollection(
 			Collection<ContentNode> contentNodes) {
-		List<ContentNodeDTO> contentNodeDTOs = new ArrayList<ContentNodeDTO>();
+		Set<ContentNodeDTO> contentNodeDTOs = new HashSet<ContentNodeDTO>();
 		for (ContentNode contentNode : contentNodes) {
 			contentNodeDTOs.add(map(contentNode));
 		}

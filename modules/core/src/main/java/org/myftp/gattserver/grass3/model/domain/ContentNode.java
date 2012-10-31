@@ -1,7 +1,7 @@
 package org.myftp.gattserver.grass3.model.domain;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +11,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+
+import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 
 @Entity
 @Table(name = "CONTENTNODE")
@@ -56,7 +58,7 @@ public class ContentNode {
 	 * Tagy
 	 */
 	@OneToMany
-	private List<ContentTag> contentTags;
+	private Set<ContentTag> contentTags;
 
 	/**
 	 * Kdo ho vytvořil
@@ -71,6 +73,18 @@ public class ContentNode {
 	@GeneratedValue(generator = "increment")
 	@GenericGenerator(name = "increment", strategy = "increment")
 	private Long id;
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof ContentNode))
+			return false;
+		return ((ContentNode) obj).getId() == getId();
+	}
+	
+	@Override
+	public int hashCode() {
+		return getId().hashCode();
+	}
 
 	public Long getId() {
 		return id;
@@ -128,11 +142,11 @@ public class ContentNode {
 		this.name = name;
 	}
 
-	public List<ContentTag> getContentTags() {
+	public Set<ContentTag> getContentTags() {
 		return contentTags;
 	}
 
-	public void setContentTags(List<ContentTag> contentTags) {
+	public void setContentTags(Set<ContentTag> contentTags) {
 		this.contentTags = contentTags;
 	}
 

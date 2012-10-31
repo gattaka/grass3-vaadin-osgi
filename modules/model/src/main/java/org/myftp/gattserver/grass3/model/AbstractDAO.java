@@ -186,7 +186,7 @@ public abstract class AbstractDAO<E> {
 		createConnection();
 	}
 
-	protected final void openSession() {
+	protected void openSession() {
 		session = sessionFactory.openSession();
 	}
 
@@ -207,13 +207,13 @@ public abstract class AbstractDAO<E> {
 	 * session automaticky uzavřena.
 	 * </p>
 	 */
-	public final void closeSession() {
+	public void closeSession() {
 		if (session.isOpen() == false)
 			session.close();
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<E> findAllAndCast(Class<?> entityClass) {
+	protected List<E> findAllAndCast(Class<?> entityClass) {
 		return (List<E>) session.createCriteria(entityClass)
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
@@ -223,7 +223,7 @@ public abstract class AbstractDAO<E> {
 	 * 
 	 * @return list všech nalezených objektů
 	 */
-	public final List<E> findAll() {
+	public List<E> findAll() {
 		Transaction tx = null;
 		List<E> list = null;
 		openSession();
@@ -243,7 +243,7 @@ public abstract class AbstractDAO<E> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private E findByIdAndCast(Class<?> entityClass, Serializable id) {
+	protected E findByIdAndCast(Class<?> entityClass, Serializable id) {
 		return (E) session.load(entityClass, id);
 	}
 
@@ -254,7 +254,7 @@ public abstract class AbstractDAO<E> {
 	 *            identifikátor, dle kterého je možné jednoznačně objekt určit
 	 * @return hledaný objekt
 	 */
-	public final E findByID(Serializable id) {
+	public E findByID(Serializable id) {
 		Transaction tx = null;
 		E entity = null;
 		openSession();
@@ -283,7 +283,7 @@ public abstract class AbstractDAO<E> {
 	 * @return list hledaných objektů
 	 */
 	@SuppressWarnings("unchecked")
-	public final List<E> findByRestriction(Criterion criterion, Order order,
+	public List<E> findByRestriction(Criterion criterion, Order order,
 			Integer maxResults) {
 		Transaction tx = null;
 		List<E> list = null;
@@ -318,7 +318,7 @@ public abstract class AbstractDAO<E> {
 	 *            objekt, který bude uložen
 	 * @return id objekt, kterým je uložený objekt identifikován
 	 */
-	public final Object save(E entity) {
+	public Object save(E entity) {
 		Transaction tx = null;
 		Object id = null;
 		openSession();
@@ -345,7 +345,7 @@ public abstract class AbstractDAO<E> {
 	 *            list objektů, které budou uloženy
 	 * @return ids list objektů, kterými jsou uložené objekty identifikovány
 	 */
-	public final List<Object> save(List<E> entityList) {
+	public List<Object> save(List<E> entityList) {
 		List<Object> ids = new ArrayList<Object>();
 		Transaction tx = null;
 		openSession();
@@ -373,7 +373,7 @@ public abstract class AbstractDAO<E> {
 	 * @param entity
 	 *            objekt, který bude uložen
 	 */
-	public final boolean merge(E entity) {
+	public boolean merge(E entity) {
 		Transaction tx = null;
 		openSession();
 		try {
@@ -398,7 +398,7 @@ public abstract class AbstractDAO<E> {
 	 * @param entityList
 	 *            list objektů, které budou updatovány
 	 */
-	public final boolean merge(List<E> entityList) {
+	public boolean merge(List<E> entityList) {
 		Transaction tx = null;
 		openSession();
 		try {
@@ -425,7 +425,7 @@ public abstract class AbstractDAO<E> {
 	 * @param entity
 	 *            objekt, který bude smazán
 	 */
-	public final boolean delete(E entity) {
+	public boolean delete(E entity) {
 		Transaction tx = null;
 		openSession();
 		try {

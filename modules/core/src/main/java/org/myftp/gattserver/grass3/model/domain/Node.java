@@ -1,6 +1,6 @@
 package org.myftp.gattserver.grass3.model.domain;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,13 +30,13 @@ public class Node {
 	 * Potomci uzlu
 	 */
 	@OneToMany
-	private List<Node> subNodes;
+	private Set<Node> subNodes;
 
 	/**
 	 * Obsahy uzlu
 	 */
 	@OneToMany
-	private List<ContentNode> contentNodes;
+	private Set<ContentNode> contentNodes;
 
 	/**
 	 * DB identifikátor
@@ -46,6 +46,18 @@ public class Node {
 	@GenericGenerator(name = "increment", strategy = "increment")
 	private Long id;
 
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Node))
+			return false;
+		return ((Node) obj).getId() == getId();
+	}
+	
+	@Override
+	public int hashCode() {
+		return getId().hashCode();
+	}
+	
 	public Long getId() {
 		return id;
 	}
@@ -70,19 +82,19 @@ public class Node {
 		this.parent = parent;
 	}
 
-	public List<Node> getSubNodes() {
+	public Set<Node> getSubNodes() {
 		return subNodes;
 	}
 
-	public void setSubNodes(List<Node> subNodes) {
+	public void setSubNodes(Set<Node> subNodes) {
 		this.subNodes = subNodes;
 	}
 
-	public List<ContentNode> getContentNodes() {
+	public Set<ContentNode> getContentNodes() {
 		return contentNodes;
 	}
 
-	public void setContentNodes(List<ContentNode> contentNodes) {
+	public void setContentNodes(Set<ContentNode> contentNodes) {
 		this.contentNodes = contentNodes;
 	}
 

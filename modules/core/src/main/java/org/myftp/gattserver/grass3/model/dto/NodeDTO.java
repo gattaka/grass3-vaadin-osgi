@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.model.dto;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class NodeDTO {
 
@@ -17,12 +18,12 @@ public class NodeDTO {
 	/**
 	 * Potomci uzlu
 	 */
-	private List<Long> subNodeIDs;
+	private Set<Long> subNodeIDs = new HashSet<Long>();
 
 	/**
 	 * Obsahy uzlu
 	 */
-	private List<ContentNodeDTO> contentNodes;
+	private Set<ContentNodeDTO> contentNodes = new HashSet<ContentNodeDTO>();
 
 	/**
 	 * DB identifikátor
@@ -53,19 +54,19 @@ public class NodeDTO {
 		this.parentID = parentID;
 	}
 
-	public List<Long> getSubNodeIDs() {
+	public Set<Long> getSubNodeIDs() {
 		return subNodeIDs;
 	}
 
-	public void setSubNodeIDs(List<Long> subNodeIDs) {
+	public void setSubNodeIDs(Set<Long> subNodeIDs) {
 		this.subNodeIDs = subNodeIDs;
 	}
 
-	public List<ContentNodeDTO> getContentNodes() {
+	public Set<ContentNodeDTO> getContentNodes() {
 		return contentNodes;
 	}
 
-	public void setContentNodes(List<ContentNodeDTO> contentNodes) {
+	public void setContentNodes(Set<ContentNodeDTO> contentNodes) {
 		this.contentNodes = contentNodes;
 	}
 

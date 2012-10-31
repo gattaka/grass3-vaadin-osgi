@@ -4,8 +4,7 @@ import java.util.List;
 
 import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
-import org.myftp.gattserver.grass3.template.InfoNotification;
-import org.myftp.gattserver.grass3.template.WarningNotification;
+import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
 import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
 
@@ -14,6 +13,7 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.data.validator.NullValidator;
+import com.vaadin.event.Action;
 import com.vaadin.event.DataBoundTransferable;
 import com.vaadin.event.Transferable;
 import com.vaadin.event.dd.DragAndDropEvent;
@@ -36,6 +36,9 @@ import com.vaadin.ui.VerticalLayout;
 public class CategoriesSettingsWindow extends SettingsWindow {
 
 	private static final long serialVersionUID = 2474374292329895766L;
+
+	private static final Action ACTION_DELETE = new Action("Delete");
+	private static final Action[] ACTIONS = new Action[] { ACTION_DELETE };
 
 	private NodeFacade nodeFacade = NodeFacade.INSTANCE;
 
@@ -110,9 +113,9 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 			 *            VerticalDropLocation indicating where the source node
 			 *            was dropped relative to the target node
 			 */
-			private void moveNode(Object sourceItemId, Object targetItemId,
-					VerticalDropLocation location) {
-				HierarchicalContainer container = (HierarchicalContainer) tree
+			private void moveNode(final Object sourceItemId,
+					final Object targetItemId, VerticalDropLocation location) {
+				final HierarchicalContainer container = (HierarchicalContainer) tree
 						.getContainerDataSource();
 
 				// Sorting goes as
@@ -122,29 +125,112 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 				// - If dropped on the BOTTOM part of a node, we move/add it
 				// after the node
 
-				if (location == VerticalDropLocation.MIDDLE) {
-					if (container.setParent(sourceItemId, targetItemId)
-							&& container.hasChildren(targetItemId)) {
-						// move first in the container
-						container.moveAfterSibling(sourceItemId, null);
-					}
-				} else if (location == VerticalDropLocation.TOP) {
-					Object parentId = container.getParent(targetItemId);
-					if (container.setParent(sourceItemId, parentId)) {
-						// reorder only the two items, moving source above
-						// target
-						container.moveAfterSibling(sourceItemId, targetItemId);
-						container.moveAfterSibling(targetItemId, sourceItemId);
-					}
-				} else if (location == VerticalDropLocation.BOTTOM) {
-					Object parentId = container.getParent(targetItemId);
-					if (container.setParent(sourceItemId, parentId)) {
-						container.moveAfterSibling(sourceItemId, targetItemId);
-					}
+				final Object parentItemId = container.getParent(targetItemId);
+
+				final NodeDTO parent = parentItemId == null ? null
+						: (NodeDTO) parentItemId;
+				final NodeDTO source = (NodeDTO) sourceItemId;
+				final NodeDTO target = (NodeDTO) targetItemId;
+
+				switch (location) {
+				case MIDDLE:
+
+					// Přesunutí znamená rovnou přesun kategorie - v tom případě
+					// je potřeba vyhodit potvrzovací okno
+					addWindow(new ConfirmSubwindow("Opravdu přesunout '"
+							+ source.getName() + "' do '" + target.getName()
+							+ "' ?") {
+
+						private static final long serialVersionUID = 414272650677665672L;
+
+						@Override
+						protected void onConfirm(ClickEvent event) {
+							if (nodeFacade.moveNode(source, target)) {
+								if (container.setParent(sourceItemId,
+										targetItemId)
+										&& container.hasChildren(targetItemId)) {
+									// move first in the container
+									container.moveAfterSibling(sourceItemId,
+											null);
+								}
+								CategoriesSettingsWindow.this
+										.showInfo("Přesun kategorie proběhl úspěšně");
+							} else {
+								CategoriesSettingsWindow.this
+										.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
+							}
+						}
+					});
+
+					break;
+				case TOP:
+
+					// Přesunutí znamená rovnou přesun kategorie - v tom případě
+					// je potřeba vyhodit potvrzovací okno
+					addWindow(new ConfirmSubwindow("Opravdu přesunout '"
+							+ source.getName()
+							+ "' do "
+							+ (parentItemId == null ? "kořene sekce ?" : ("'"
+									+ parent.getName() + "' ?"))) {
+
+						private static final long serialVersionUID = 414272650677665672L;
+
+						@Override
+						protected void onConfirm(ClickEvent event) {
+							if (nodeFacade.moveNode(source, parent)) {
+								if (container.setParent(sourceItemId,
+										parentItemId)) {
+									// reorder only the two items, moving source
+									// above target
+									container.moveAfterSibling(sourceItemId,
+											targetItemId);
+									container.moveAfterSibling(targetItemId,
+											sourceItemId);
+								}
+								CategoriesSettingsWindow.this
+										.showInfo("Přesun kategorie proběhl úspěšně");
+							} else {
+								CategoriesSettingsWindow.this
+										.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
+							}
+						}
+					});
+
+					break;
+				case BOTTOM:
+
+					// Přesunutí znamená rovnou přesun kategorie - v tom případě
+					// je potřeba vyhodit potvrzovací okno
+
+					addWindow(new ConfirmSubwindow("Opravdu přesunout '"
+							+ source.getName()
+							+ "' do "
+							+ (parentItemId == null ? "kořene sekce ?" : ("'"
+									+ parent.getName() + "' ?"))) {
+
+						private static final long serialVersionUID = 414272650677665672L;
+
+						@Override
+						protected void onConfirm(ClickEvent event) {
+							if (nodeFacade.moveNode(source, parent)) {
+								if (container.setParent(sourceItemId,
+										parentItemId)) {
+									container.moveAfterSibling(sourceItemId,
+											targetItemId);
+								}
+								CategoriesSettingsWindow.this
+										.showInfo("Přesun kategorie proběhl úspěšně");
+							} else {
+								CategoriesSettingsWindow.this
+										.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
+							}
+						}
+					});
+
+					break;
 				}
 			}
 		});
-
 		tree.addListener(new Property.ValueChangeListener() {
 
 			private static final long serialVersionUID = 191011037696709486L;
@@ -154,14 +240,56 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 					// If something is selected from the tree, get it's 'name'
 					// and
 					// insert it into the textfield
-					selectedNode.setValue((NodeDTO) event
-							.getProperty().getValue());
+					selectedNode.setValue((NodeDTO) event.getProperty()
+							.getValue());
 					panel.setCaption(panelCaptionPrefix
 							+ selectedNode.getValue().getName());
 				} else {
 					selectedNode.setValue(null);
 					panel.setCaption(panelCaptionPrefix + "-kořen sekce-");
 				}
+			}
+		});
+		tree.addActionHandler(new Action.Handler() {
+
+			private static final long serialVersionUID = -4835306347998186964L;
+
+			public void handleAction(Action action, Object sender,
+					final Object target) {
+				if (action == ACTION_DELETE) {
+					final NodeDTO node = (NodeDTO) target;
+
+					addWindow(new ConfirmSubwindow("Opravdu smazat kategorii '"
+							+ node.getName() + "' ?") {
+
+						private static final long serialVersionUID = 9193745051559434697L;
+
+						@Override
+						protected void onConfirm(ClickEvent event) {
+
+							if (!node.getContentNodes().isEmpty()
+									|| !node.getSubNodeIDs().isEmpty()) {
+								CategoriesSettingsWindow.this
+										.showWarning("Kategorie musí být prázdná");
+							} else {
+								if (nodeFacade.deleteNode(node)) {
+									tree.removeItem(target);
+									CategoriesSettingsWindow.this
+											.showInfo("Kategorie byla úspěšně smazána");
+								} else {
+									CategoriesSettingsWindow.this
+											.showWarning("Nezdařilo se smazat vybranou kategorii");
+								}
+							}
+
+						}
+					});
+
+				}
+			}
+
+			public Action[] getActions(Object target, Object sender) {
+				return ACTIONS;
 			}
 		});
 
@@ -171,7 +299,7 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 
 	private void createNewNodePanel(VerticalLayout layout) {
 		layout.addComponent(panel);
-		
+
 		HorizontalLayout panelBackgroudLayout = new HorizontalLayout();
 		panelBackgroudLayout.setSizeFull();
 		panel.setContent(panelBackgroudLayout);
@@ -198,15 +326,13 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 
 						if (nodeFacade.createNewNode(selectedNode.getValue(),
 								newNodeName.getValue().toString())) {
-							showNotification(new InfoNotification(
-									"Nový kategorie byla úspěšně vytvořena."));
+							showInfo("Nový kategorie byla úspěšně vytvořena.");
 							// refresh dir list
 							refreshTree();
 							// clean
 							newNodeName.setValue("");
 						} else {
-							showNotification(new WarningNotification(
-									"Nezdařilo se vložit novou kategorii."));
+							showWarning("Nezdařilo se vložit novou kategorii.");
 						}
 					}
 				});

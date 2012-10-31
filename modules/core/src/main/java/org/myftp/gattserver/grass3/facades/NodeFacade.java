@@ -64,26 +64,60 @@ public enum NodeFacade {
 
 		NodeDAO dao = new NodeDAO();
 		Node node = new Node();
+		node.setName(name);
+		return dao.createNewNode(node, parent.getId());
 
+	}
+
+	/**
+	 * Přesune kategorii
+	 * 
+	 * @param node
+	 *            kategorie k přesunu
+	 * @param newParent
+	 *            nový předek, do kterého má být kategorie přesunuta, nebo
+	 *            <code>null</code> pokud má být přesunuta do kořene sekce
+	 * @return <code>true</code> pokud se přidání zdařilo, jinak
+	 *         <code>false</code>
+	 */
+	public boolean moveNode(NodeDTO node, NodeDTO newParent) {
+
+		NodeDAO dao = new NodeDAO();
+
+		// zamezí vkládání předků do potomků - projde postupně všechny předky
+		// cílové kategorie a pokud narazí na moje id, pak jsem předkem cílové
+		// kategorie, což je špatně
+		Node parent = newParent == null ? null : dao
+				.findByID(newParent.getId());
 		if (parent != null) {
-			Node parentNode = dao.findByID(parent.getId());
-
-			// pokud se kategorie měla někam vložit a cíl neexistuje, je to
-			// chyba
-			if (parentNode == null) {
-				dao.closeSession();
-				return false;
-			} else {
-				node.setParent(parentNode);
-				dao.closeSession();
+			// začínám od předka newParent - tohle je schválně, umožní mi to se
+			// pak ptát na id newParent - pokud totiž narazím na newParent id,
+			// pak je v DB cykl
+			parent = parent.getParent();
+			while (parent != null) {
+				if (parent.getId() == newParent.getId())
+					return false; // v DB je cykl
+				if (parent.getId() == node.getId())
+					return false; // vkládám do potomka
+				parent = parent.getParent();
 			}
 		}
 
-		node.setName(name);
+		return dao.moveNode(node.getId(),
+				newParent == null ? null : newParent.getId());
 
-		if (dao.save(node) == null)
-			return false;
-		else
-			return true;
+	}
+
+	/**
+	 * Smaže kategorii, pokud je prázdná
+	 * 
+	 * @param node
+	 *            kategorie ke smazání
+	 * @return <code>true</code> pokud se přidání zdařilo, jinak
+	 *         <code>false</code>
+	 */
+	public boolean deleteNode(NodeDTO node) {
+		NodeDAO dao = new NodeDAO();
+		return dao.delete(node.getId());
 	}
 }

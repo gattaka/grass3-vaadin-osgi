@@ -18,9 +18,9 @@ public enum ContentNodeFacade {
 	private Mapper mapper = Mapper.INSTANCE;
 
 	/**
-	 * Získá list oblíbených obsahů daného uživatele
+	 * Získá set oblíbených obsahů daného uživatele
 	 */
-	public List<ContentNodeDTO> getUserFavouritesContents(UserInfoDTO userInfo) {
+	public Set<ContentNodeDTO> getUserFavouriteContents(UserInfoDTO userInfo) {
 		UserDAO dao = new UserDAO();
 		User user = dao.findByID(userInfo.getId());
 		Set<ContentNode> contentNodes = user.getFavourites();
@@ -28,7 +28,7 @@ public enum ContentNodeFacade {
 		if (contentNodes == null)
 			return null;
 
-		List<ContentNodeDTO> contentNodeDTOs = mapper
+		Set<ContentNodeDTO> contentNodeDTOs = mapper
 				.mapContentNodeCollection(contentNodes);
 
 		dao.closeSession();
@@ -36,30 +36,30 @@ public enum ContentNodeFacade {
 	}
 
 	/**
-	 * Získá list naposledy přidaných obsahů
+	 * Získá set naposledy přidaných obsahů
 	 * 
 	 * @param size
 	 * @return
 	 */
-	public List<ContentNodeDTO> getRecentAdded(int maxResults) {
+	public Set<ContentNodeDTO> getRecentAdded(int maxResults) {
 		ContentNodeDAO dao = new ContentNodeDAO();
 		List<ContentNode> contentNodes = dao.findRecentAdded(maxResults);
-		List<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(contentNodes);
+		Set<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(contentNodes);
 		
 		dao.closeSession();
 		return contentNodeDTOs;
 	}
 
 	/**
-	 * Získá list naposledy upravených obsahů
+	 * Získá set naposledy upravených obsahů
 	 * 
 	 * @param size
 	 * @return
 	 */
-	public List<ContentNodeDTO> getRecentModified(int maxResults) {
+	public Set<ContentNodeDTO> getRecentModified(int maxResults) {
 		ContentNodeDAO dao = new ContentNodeDAO();
 		List<ContentNode> contentNodes = dao.findRecentEdited(maxResults);
-		List<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(contentNodes);
+		Set<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(contentNodes);
 		
 		dao.closeSession();
 		return contentNodeDTOs;

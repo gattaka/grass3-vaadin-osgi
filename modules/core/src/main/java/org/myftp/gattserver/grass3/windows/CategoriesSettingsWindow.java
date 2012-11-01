@@ -5,6 +5,7 @@ import java.util.List;
 import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
 import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
 
@@ -12,7 +13,6 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.HierarchicalContainer;
-import com.vaadin.data.validator.NullValidator;
 import com.vaadin.event.Action;
 import com.vaadin.event.DataBoundTransferable;
 import com.vaadin.event.Transferable;
@@ -22,12 +22,15 @@ import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.terminal.gwt.client.ui.dd.VerticalDropLocation;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Tree.TreeDragMode;
 import com.vaadin.ui.Tree.TreeTargetDetails;
@@ -37,8 +40,10 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
-	private static final Action ACTION_DELETE = new Action("Delete");
-	private static final Action[] ACTIONS = new Action[] { ACTION_DELETE };
+	private static final Action ACTION_DELETE = new Action("Smazat");
+	private static final Action ACTION_RENAME = new Action("Přejmenovat");
+	private static final Action[] ACTIONS = new Action[] { ACTION_DELETE,
+			ACTION_RENAME };
 
 	private NodeFacade nodeFacade = NodeFacade.INSTANCE;
 
@@ -46,7 +51,8 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 	private final ReferenceHolder<NodeDTO> selectedNode = new ReferenceHolder<NodeDTO>();
 
 	private final String panelCaptionPrefix = "Vložit novou kategorii do: ";
-	private Panel panel = new Panel();
+	private final String sectionRootCaption = "-kořen sekce-";
+	private Panel panel = new Panel(panelCaptionPrefix + sectionRootCaption);
 
 	private enum TreePropertyID {
 		NÁZEV, IKONA
@@ -246,7 +252,7 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 							+ selectedNode.getValue().getName());
 				} else {
 					selectedNode.setValue(null);
-					panel.setCaption(panelCaptionPrefix + "-kořen sekce-");
+					panel.setCaption(panelCaptionPrefix + sectionRootCaption);
 				}
 			}
 		});
@@ -256,8 +262,8 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 
 			public void handleAction(Action action, Object sender,
 					final Object target) {
+				final NodeDTO node = (NodeDTO) target;
 				if (action == ACTION_DELETE) {
-					final NodeDTO node = (NodeDTO) target;
 
 					addWindow(new ConfirmSubwindow("Opravdu smazat kategorii '"
 							+ node.getName() + "' ?") {
@@ -285,6 +291,71 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 						}
 					});
 
+				} else if (action == ACTION_RENAME) {
+					final Window subwindow = new GrassSubWindow("Přejmenovat");
+					subwindow.center();
+					addWindow(subwindow);
+
+					GridLayout subWindowlayout = new GridLayout(2, 2);
+					subwindow.setContent(subWindowlayout);
+					subWindowlayout.setMargin(true);
+					subWindowlayout.setSpacing(true);
+
+					final TextField newNameField = new TextField("Nový název:");
+					newNameField.setValue(node.getName());
+					newNameField.setRequired(true);
+					newNameField
+							.setRequiredError("Název kategorie nesmí být prázdný");
+					subWindowlayout.addComponent(newNameField, 0, 0, 1, 0);
+
+					Button confirm = new Button("Přejmenovat",
+							new Button.ClickListener() {
+
+								private static final long serialVersionUID = 8490964871266821307L;
+
+								public void buttonClick(ClickEvent event) {
+									if (newNameField.isValid() == false)
+										return;
+									if (nodeFacade.rename(node,
+											(String) newNameField.getValue())) {
+										showInfo("Kategorie byla úspěšně přejmenována");
+										tree.getItem(node)
+												.getItemProperty(
+														TreePropertyID.NÁZEV)
+												.setValue(
+														newNameField.getValue());
+										node.setName((String) newNameField
+												.getValue());
+									} else {
+										showWarning("Přejmenování se nezdařilo.");
+									}
+
+									(subwindow.getParent())
+											.removeWindow(subwindow);
+								}
+							});
+
+					subWindowlayout.addComponent(confirm, 0, 1);
+					subWindowlayout.setComponentAlignment(confirm,
+							Alignment.MIDDLE_CENTER);
+
+					Button close = new Button("Storno",
+							new Button.ClickListener() {
+
+								private static final long serialVersionUID = 8490964871266821307L;
+
+								public void buttonClick(ClickEvent event) {
+									(subwindow.getParent())
+											.removeWindow(subwindow);
+								}
+							});
+
+					subWindowlayout.addComponent(close, 1, 1);
+					subWindowlayout.setComponentAlignment(close,
+							Alignment.MIDDLE_CENTER);
+
+					// Zaměř se na nové okno
+					subwindow.focus();
 				}
 			}
 
@@ -311,8 +382,8 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 
 		final TextField newNodeName = new TextField();
 		newNodeName.setWidth("200px");
-		newNodeName.addValidator(new NullValidator(
-				"Název kategorie nesmí být prázdný", false));
+		newNodeName.setRequired(true);
+		newNodeName.setRequiredError("Název kategorie nesmí být prázdný");
 		panelLayout.addComponent(newNodeName);
 
 		Button createButton = new Button("Vytvořit",

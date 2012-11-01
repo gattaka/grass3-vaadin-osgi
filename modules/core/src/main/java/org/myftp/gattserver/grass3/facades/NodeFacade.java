@@ -120,4 +120,28 @@ public enum NodeFacade {
 		NodeDAO dao = new NodeDAO();
 		return dao.delete(node.getId());
 	}
+
+	/**
+	 * Přejmenuje kategorii
+	 * 
+	 * @param node
+	 *            kategorie k přejmenování
+	 * @param newName
+	 *            nový název
+	 * @return <code>true</code> pokud se přidání zdařilo, jinak
+	 *         <code>false</code>
+	 */
+	public boolean rename(NodeDTO node, String newName) {
+
+		NodeDAO dao = new NodeDAO();
+		Node entity = dao.findByID(node.getId());
+		dao.closeSession();
+
+		if (entity == null)
+			return false;
+
+		entity.setName(newName);
+
+		return dao.merge(entity);
+	}
 }

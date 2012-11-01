@@ -1,16 +1,22 @@
 package org.myftp.gattserver.grass3.windows.template;
 
+import java.util.List;
+
 import org.myftp.gattserver.grass3.ServiceHolder;
+import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.facades.QuotesFacade;
+import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+import org.myftp.gattserver.grass3.windows.CategoryWindow;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
 import org.myftp.gattserver.grass3.windows.RegistrationWindow;
 
+import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
@@ -30,6 +36,7 @@ public abstract class BaseWindow extends BackgroundWindow {
 	private static final long serialVersionUID = 2474374292329895766L;
 
 	private QuotesFacade quotesFacade = QuotesFacade.INSTANCE;
+	private NodeFacade nodeFacade = NodeFacade.INSTANCE;
 
 	private HorizontalLayout sectionsMenuLayout = new HorizontalLayout();
 	private HorizontalLayout userMenuLayout = new HorizontalLayout();
@@ -50,7 +57,17 @@ public abstract class BaseWindow extends BackgroundWindow {
 
 	private void populateSectionsMenu() {
 		sectionsMenuLayout.removeAllComponents();
+
+		// link na domovskou stránku
 		createHomeLink();
+		
+		// sekce článků je rozbalená rovnou jako její kořenové kategorie
+		List<NodeDTO> nodes = nodeFacade.getRootNodes(); 
+		for (NodeDTO node : nodes) {
+			createCategoryLink(node.getName());
+		}
+		
+		// externí sekce
 		for (ISectionService section : ServiceHolder.getInstance()
 				.getSectionServices()) {
 			createSectionLink(section.getSectionCaption(),
@@ -90,6 +107,7 @@ public abstract class BaseWindow extends BackgroundWindow {
 							GridLayout gridLayout = new GridLayout(2, 4);
 							gridLayout.setMargin(true);
 							gridLayout.setSpacing(true);
+							gridLayout.setSizeFull();
 							subwindow.setContent(gridLayout);
 
 							// Jméno
@@ -124,10 +142,18 @@ public abstract class BaseWindow extends BackgroundWindow {
 			userDetails.addStyleName(BaseTheme.BUTTON_LINK);
 			userMenuLayout.addComponent(userDetails);
 
+			// separator
 			Label separator = new Label("|");
 			separator.setStyleName("menu_item");
 			userMenuLayout.addComponent(separator);
 
+			// nastavení
+			Link link = new Link("Nastavení",
+					getWindowResource(SettingsWindow.class));
+			link.setStyleName("menu_item");
+			userMenuLayout.addComponent(link);
+
+			// odhlásit
 			Button button = new Button("Odhlásit", new Button.ClickListener() {
 
 				private static final long serialVersionUID = 4570994816815405844L;
@@ -140,11 +166,6 @@ public abstract class BaseWindow extends BackgroundWindow {
 			button.addStyleName("menu_item");
 			userMenuLayout.addComponent(button);
 
-			// Nastavení
-			Link link = new Link("Nastavení",
-					getWindowResource(SettingsWindow.class));
-			link.setStyleName("menu_item");
-			userMenuLayout.addComponent(link);
 		}
 
 	}
@@ -264,6 +285,14 @@ public abstract class BaseWindow extends BackgroundWindow {
 	private void createSectionLink(String caption,
 			Class<? extends GrassWindow> windowClass) {
 		Link link = new Link(caption, getWindowResource(windowClass));
+		link.setStyleName("menu_item");
+		sectionsMenuLayout.addComponent(link);
+	}
+
+	private void createCategoryLink(String caption) {
+		Link link = new Link(caption, new ExternalResource(getWindow(
+				CategoryWindow.class).getURL()
+				+ "/" + caption));
 		link.setStyleName("menu_item");
 		sectionsMenuLayout.addComponent(link);
 	}

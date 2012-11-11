@@ -14,6 +14,21 @@ public enum NodeFacade {
 	private Mapper mapper = Mapper.INSTANCE;
 
 	/**
+	 * Získá kategorii dle id
+	 */
+	public NodeDTO findNodeById(Long id) {
+		NodeDAO dao = new NodeDAO();
+
+		Node node = dao.findByID(id);
+		if (node == null)
+			return null;
+		NodeDTO nodeDTO = mapper.map(node);
+		dao.closeSession();
+
+		return nodeDTO;
+	}
+
+	/**
 	 * Získá všechny kořenové kategorie
 	 */
 	public List<NodeDTO> getRootNodes() {
@@ -65,7 +80,7 @@ public enum NodeFacade {
 		NodeDAO dao = new NodeDAO();
 		Node node = new Node();
 		node.setName(name);
-		return dao.createNewNode(node, parent.getId());
+		return dao.createNewNode(node, parent == null ? null : parent.getId());
 
 	}
 

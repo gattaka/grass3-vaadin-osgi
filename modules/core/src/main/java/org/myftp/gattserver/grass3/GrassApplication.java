@@ -7,6 +7,7 @@ import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.security.SecurityFacade;
 import org.myftp.gattserver.grass3.util.Mapper;
+import org.myftp.gattserver.grass3.windows.CategoryWindow;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
@@ -107,6 +108,7 @@ public class GrassApplication extends Application {
 		addWindow(new QuotesWindow());
 		addWindow(new SettingsWindow());
 		addWindow(new RegistrationWindow());
+		addWindow(new CategoryWindow());
 
 		// err okna
 		addWindow(new Err404());

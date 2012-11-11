@@ -60,13 +60,14 @@ public abstract class BaseWindow extends BackgroundWindow {
 
 		// link na domovskou stránku
 		createHomeLink();
-		
+
 		// sekce článků je rozbalená rovnou jako její kořenové kategorie
-		List<NodeDTO> nodes = nodeFacade.getRootNodes(); 
+		List<NodeDTO> nodes = nodeFacade.getRootNodes();
 		for (NodeDTO node : nodes) {
-			createCategoryLink(node.getName());
+			createCategoryLink(node.getName(),
+					node.getId() + "-" + node.getName());
 		}
-		
+
 		// externí sekce
 		for (ISectionService section : ServiceHolder.getInstance()
 				.getSectionServices()) {
@@ -289,10 +290,10 @@ public abstract class BaseWindow extends BackgroundWindow {
 		sectionsMenuLayout.addComponent(link);
 	}
 
-	private void createCategoryLink(String caption) {
+	private void createCategoryLink(String caption, String URL) {
 		Link link = new Link(caption, new ExternalResource(getWindow(
 				CategoryWindow.class).getURL()
-				+ "/" + caption));
+				+ URL));
 		link.setStyleName("menu_item");
 		sectionsMenuLayout.addComponent(link);
 	}

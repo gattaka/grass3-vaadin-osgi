@@ -1,13 +1,8 @@
 package org.myftp.gattserver.grass3.template;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.List;
 
-import org.apache.commons.collections.IteratorUtils;
-import org.myftp.gattserver.grass3.windows.HomeWindow;
-
-import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.Resource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Embedded;
@@ -23,6 +18,11 @@ public class Breadcrumb extends HorizontalLayout {
 	public static class BreadcrumbElement {
 		private String caption;
 		private Resource resource;
+
+		public BreadcrumbElement(String caption, Resource resource) {
+			this.resource = resource;
+			this.caption = caption;
+		}
 
 		public String getCaption() {
 			return caption;
@@ -49,7 +49,7 @@ public class Breadcrumb extends HorizontalLayout {
 		addComponent(breadcrumbLayout);
 	}
 
-	public Breadcrumb(Collection<BreadcrumbElement> breadcrumbElements) {
+	public Breadcrumb(List<BreadcrumbElement> breadcrumbElements) {
 		this();
 		initBreadcrumb(breadcrumbElements);
 	}
@@ -60,22 +60,22 @@ public class Breadcrumb extends HorizontalLayout {
 		return link;
 	}
 
-	private void initBreadcrumb(Collection<BreadcrumbElement> breadcrumbElements) {
+	private void initBreadcrumb(List<BreadcrumbElement> breadcrumbElements) {
 
 		// konstrukce breadcrumb v opačném pořadí (správném)
-		boolean first = true;
-		for (BreadcrumbElement element : breadcrumbElements) {
-			if (!first) {
+		BreadcrumbElement element = null;
+		for (int i = breadcrumbElements.size() - 1; i >= 0; i--) {
+			element = breadcrumbElements.get(i);
+			if (i != breadcrumbElements.size() - 1) {
 				Embedded separator = new Embedded();
 				separator.setSource(new ThemeResource("img/bullet.png"));
 				breadcrumbLayout.addComponent(separator);
 			}
 			breadcrumbLayout.addComponent(createBreadcrumbElementLink(element));
-			first = false;
 		}
 	}
 
-	public void resetBreadcrumb(Collection<BreadcrumbElement> breadcrumbElements) {
+	public void resetBreadcrumb(List<BreadcrumbElement> breadcrumbElements) {
 		breadcrumbLayout.removeAllComponents();
 		initBreadcrumb(breadcrumbElements);
 	}

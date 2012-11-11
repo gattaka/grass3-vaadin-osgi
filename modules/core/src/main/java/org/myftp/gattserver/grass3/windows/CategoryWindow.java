@@ -25,7 +25,7 @@ public class CategoryWindow extends OneColumnWindow {
 	@Override
 	public void handleParameters(Map<String, String[]> parameters) {
 
-		layout.removeAllComponents();
+//		layout.removeAllComponents();
 
 		super.handleParameters(parameters);
 	}

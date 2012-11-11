@@ -73,7 +73,7 @@
 		<!-- Grass3 FM widget část -->
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>
-			<artifactId>fm-widgetsets</artifactId>
+			<artifactId>widgetsets</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 

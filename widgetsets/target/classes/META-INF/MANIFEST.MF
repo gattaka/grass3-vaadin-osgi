@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1351717756784
-Build-Jdk: 1.7.0_05-icedtea
-Built-By: gatt
+Bnd-LastModified: 1352572587756
+Build-Jdk: 1.6.0_37
+Built-By: Gattaka
 Bundle-Description: OSGi Fragment
 Bundle-ManifestVersion: 2
 Bundle-Name: GRASS3 GWT Widgetsets
@@ -10,5 +10,4 @@ Bundle-SymbolicName: org.myftp.gattserver.grass3.widgetsets
 Bundle-Version: 0.0.1.SNAPSHOT
 Created-By: Apache Maven Bundle Plugin
 Fragment-Host: com.vaadin
-JAVA_OPT_HOME: /opt/java
 Tool: Bnd-1.50.0

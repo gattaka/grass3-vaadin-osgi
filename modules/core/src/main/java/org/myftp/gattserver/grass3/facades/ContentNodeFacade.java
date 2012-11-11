@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.model.dao.ContentNodeDAO;
+import org.myftp.gattserver.grass3.model.dao.NodeDAO;
 import org.myftp.gattserver.grass3.model.dao.UserDAO;
 import org.myftp.gattserver.grass3.model.domain.ContentNode;
+import org.myftp.gattserver.grass3.model.domain.Node;
 import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
+import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.util.Mapper;
 
@@ -44,8 +47,9 @@ public enum ContentNodeFacade {
 	public Set<ContentNodeDTO> getRecentAdded(int maxResults) {
 		ContentNodeDAO dao = new ContentNodeDAO();
 		List<ContentNode> contentNodes = dao.findRecentAdded(maxResults);
-		Set<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(contentNodes);
-		
+		Set<ContentNodeDTO> contentNodeDTOs = mapper
+				.mapContentNodeCollection(contentNodes);
+
 		dao.closeSession();
 		return contentNodeDTOs;
 	}
@@ -59,9 +63,30 @@ public enum ContentNodeFacade {
 	public Set<ContentNodeDTO> getRecentModified(int maxResults) {
 		ContentNodeDAO dao = new ContentNodeDAO();
 		List<ContentNode> contentNodes = dao.findRecentEdited(maxResults);
-		Set<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(contentNodes);
-		
+		Set<ContentNodeDTO> contentNodeDTOs = mapper
+				.mapContentNodeCollection(contentNodes);
+
 		dao.closeSession();
+		return contentNodeDTOs;
+	}
+
+	/**
+	 * Získá set obsahů dle kategorie
+	 */
+	public Set<ContentNodeDTO> getContentNodesByNode(NodeDTO nodeDTO) {
+
+		NodeDAO dao = new NodeDAO();
+
+		Node node = dao.findByID(nodeDTO.getId());
+		if (node == null) {
+			dao.closeSession();
+			return null;
+		}
+
+		Set<ContentNodeDTO> contentNodeDTOs = mapper
+				.mapContentNodeCollection(node.getContentNodes());
+		dao.closeSession();
+
 		return contentNodeDTOs;
 	}
 

@@ -16,7 +16,7 @@ public enum NodeFacade {
 	/**
 	 * Získá kategorii dle id
 	 */
-	public NodeDTO findNodeById(Long id) {
+	public NodeDTO getNodeById(Long id) {
 		NodeDAO dao = new NodeDAO();
 
 		Node node = dao.findByID(id);
@@ -35,8 +35,10 @@ public enum NodeFacade {
 		NodeDAO dao = new NodeDAO();
 		List<Node> rootNodes = dao.findRoots();
 
-		if (rootNodes == null)
+		if (rootNodes == null) {
+			dao.closeSession();
 			return null;
+		}
 
 		List<NodeDTO> rootNodesDTOs = mapper.mapNodeCollection(rootNodes);
 
@@ -52,8 +54,10 @@ public enum NodeFacade {
 		NodeDAO dao = new NodeDAO();
 		List<Node> childrenNodes = dao.findNodesByParent(parent.getId());
 
-		if (childrenNodes == null)
+		if (childrenNodes == null) {
+			dao.closeSession();
 			return null;
+		}
 
 		List<NodeDTO> childrenNodesDTOs = mapper
 				.mapNodeCollection(childrenNodes);

@@ -1,6 +1,5 @@
 package org.myftp.gattserver.grass3.template;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.vaadin.terminal.Resource;

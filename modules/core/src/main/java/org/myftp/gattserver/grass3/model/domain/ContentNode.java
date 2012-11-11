@@ -12,8 +12,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
-
 @Entity
 @Table(name = "CONTENTNODE")
 public class ContentNode {

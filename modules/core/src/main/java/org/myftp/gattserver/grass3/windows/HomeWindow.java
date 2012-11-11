@@ -1,6 +1,5 @@
 package org.myftp.gattserver.grass3.windows;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -8,23 +7,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.facades.ContentNodeFacade;
 import org.myftp.gattserver.grass3.facades.ContentTagFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
-import org.myftp.gattserver.grass3.service.IContentService;
+import org.myftp.gattserver.grass3.windows.template.ContentsTable;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 
 public class HomeWindow extends OneColumnWindow {
@@ -51,18 +44,9 @@ public class HomeWindow extends OneColumnWindow {
 
 	public static final String NAME = "home";
 
-	/**
-	 * Přehled sloupců tabulky obsahů
-	 */
-	private enum ColumnId {
-
-		IKONA, NÁZEV, AUTOR, DATUM_VYTVOŘENÍ, DATUM_ÚPRAVY;
-
-	}
-
-	private final Table favouritesContentsTable = new Table();
-	private final Table recentAddedContentsTable = new Table();
-	private final Table recentModifiedContentsTable = new Table();
+	private final ContentsTable favouritesContentsTable = new ContentsTable();
+	private final ContentsTable recentAddedContentsTable = new ContentsTable();
+	private final ContentsTable recentModifiedContentsTable = new ContentsTable();
 	private final HorizontalLayout tagCloud = new HorizontalLayout();
 
 	public HomeWindow() {
@@ -132,7 +116,7 @@ public class HomeWindow extends OneColumnWindow {
 
 		Set<ContentNodeDTO> contentNodes = contentNodeFacade
 				.getUserFavouriteContents(user);
-		populateTable(contentNodes, favouritesContentsTable);
+		favouritesContentsTable.populateTable(contentNodes);
 
 	}
 
@@ -243,55 +227,8 @@ public class HomeWindow extends OneColumnWindow {
 		Set<ContentNodeDTO> recentModified = contentNodeFacade
 				.getRecentModified(RECENT_ITEMS_COUNT);
 
-		populateTable(recentAdded, recentAddedContentsTable);
-		populateTable(recentModified, recentModifiedContentsTable);
-
-	}
-
-	private void populateTable(Collection<ContentNodeDTO> contentList,
-			Table table) {
-
-		IndexedContainer container = new IndexedContainer();
-		container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
-		container.addContainerProperty(ColumnId.NÁZEV, String.class, "");
-		container.addContainerProperty(ColumnId.AUTOR, String.class, "");
-		container.addContainerProperty(ColumnId.DATUM_VYTVOŘENÍ, String.class,
-				"");
-		container.addContainerProperty(ColumnId.DATUM_ÚPRAVY, String.class, "");
-		table.setContainerDataSource(container);
-		table.setColumnWidth(ColumnId.IKONA, 16);
-		table.setColumnHeader(ColumnId.IKONA, "");
-		table.setColumnHeader(ColumnId.DATUM_VYTVOŘENÍ, "DATUM VYTVOŘENÍ");
-		table.setColumnHeader(ColumnId.DATUM_ÚPRAVY, "DATUM ÚPRAVY");
-
-		// položky
-		for (ContentNodeDTO contentNode : contentList) {
-
-			// jaká prohlížecí služba odpovídá tomuto obsahu
-			IContentService contentService = ServiceHolder.getInstance()
-					.getContentServiceListener()
-					.getContentServiceByName(contentNode.getContentReaderID());
-
-			Item item = table.addItem(contentNode);
-			item.getItemProperty(ColumnId.NÁZEV)
-					.setValue(contentNode.getName());
-			item.getItemProperty(ColumnId.AUTOR).setValue(
-					contentNode.getAuthor());
-			item.getItemProperty(ColumnId.DATUM_VYTVOŘENÍ).setValue(
-					contentNode.getCreationDate());
-			item.getItemProperty(ColumnId.DATUM_ÚPRAVY).setValue(
-					contentNode.getLastModificationDate());
-
-			Embedded icon = new Embedded();
-			if (contentService == null) {
-				// TODO - stránka s err, že chybí modul
-				icon.setSource(new ThemeResource("img/tags/warning_16.png"));
-			} else {
-				icon.setSource(contentService.getContentIcon());
-			}
-			item.getItemProperty(ColumnId.IKONA).setValue(icon);
-
-		}
+		recentAddedContentsTable.populateTable(recentAdded);
+		recentModifiedContentsTable.populateTable(recentModified);
 
 	}
 

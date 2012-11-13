@@ -1,10 +1,14 @@
 package org.myftp.gattserver.grass3.windows.template;
 
+import java.net.URL;
 import java.util.Collection;
 
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
+import org.myftp.gattserver.grass3.util.ComparableLink;
+
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
@@ -22,11 +26,11 @@ public class NodesTable extends Table {
 
 	}
 
-	public void populateTable(Collection<NodeDTO> nodeList) {
+	public void populateTable(Collection<NodeDTO> nodeList, URL url) {
 
 		IndexedContainer container = new IndexedContainer();
 		container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
-		container.addContainerProperty(ColumnId.NÁZEV, String.class, "");
+		container.addContainerProperty(ColumnId.NÁZEV, ComparableLink.class, null);
 		setContainerDataSource(container);
 		setColumnWidth(ColumnId.IKONA, 16);
 		setColumnHeader(ColumnId.IKONA, "");
@@ -35,7 +39,9 @@ public class NodesTable extends Table {
 		for (NodeDTO node : nodeList) {
 
 			Item item = addItem(node);
-			item.getItemProperty(ColumnId.NÁZEV).setValue(node.getName());
+			item.getItemProperty(ColumnId.NÁZEV).setValue(
+					new ComparableLink(node.getName(), new ExternalResource(url
+							+ node.getId().toString() + "-" + node.getName())));
 
 			Embedded icon = new Embedded();
 			icon.setSource(new ThemeResource("img/tags/briefcase_16.png"));

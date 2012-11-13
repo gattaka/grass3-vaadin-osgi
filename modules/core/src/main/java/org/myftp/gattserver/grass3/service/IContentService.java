@@ -17,6 +17,12 @@ public interface IContentService {
 	public BaseWindow getContentEditorWindow(Node node);
 
 	/**
+	 * Vrátí třídu okna, které slouží jako editor pro vytváření nebo modifikaci
+	 * daného obsahu
+	 */
+	public Class<? extends BaseWindow> getContentEditorWindow();
+
+	/**
 	 * Vrátí okna prohlížeče daného obsahu
 	 */
 	public Class<? extends BaseWindow> getContentViewerWindow();

@@ -21,7 +21,7 @@ public class ContentsTable extends Table {
 	 */
 	private enum ColumnId {
 
-		IKONA, NÁZEV, AUTOR, DATUM_VYTVOŘENÍ, DATUM_ÚPRAVY;
+		IKONA, NÁZEV, AUTOR, DATUM_VYTVOŘENÍ, DATUM_ÚPRAVY; 
 
 	}
 

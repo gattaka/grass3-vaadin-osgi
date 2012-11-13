@@ -12,6 +12,7 @@ import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.template.Breadcrumb;
 import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import org.myftp.gattserver.grass3.windows.template.ContentsTable;
+import org.myftp.gattserver.grass3.windows.template.NewContentsTable;
 import org.myftp.gattserver.grass3.windows.template.NodesTable;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
@@ -29,6 +30,7 @@ public class CategoryWindow extends OneColumnWindow {
 
 	private final ContentsTable contentsTable = new ContentsTable();
 	private final NodesTable subNodesTable = new NodesTable();
+	private final NewContentsTable newContentsTable = new NewContentsTable();
 
 	public static final String NAME = "category";
 
@@ -66,6 +68,16 @@ public class CategoryWindow extends OneColumnWindow {
 		contentsTable.setWidth("100%");
 		contentsTable.setHeight("100px");
 		layout.addComponent(contentsLayout);
+
+		// Vytvořit obsahy
+		// TODO - vidí pouze role autor
+		VerticalLayout newContentsLayout = new VerticalLayout();
+		newContentsLayout.addComponent(new Label("<h2>Vytvořit nový obsah</h2>",
+				Label.CONTENT_XHTML));
+		newContentsLayout.addComponent(newContentsTable);
+		newContentsTable.setWidth("100%");
+		newContentsTable.setHeight("100px");
+		layout.addComponent(newContentsLayout);
 	}
 
 	@Override
@@ -91,6 +103,7 @@ public class CategoryWindow extends OneColumnWindow {
 		updateBreadcrumb(node);
 		updateSubNodes(node);
 		updateContent(node);
+		updateNewContent(node);
 
 		return super.handleURI(context, relativeUri);
 	}
@@ -101,7 +114,8 @@ public class CategoryWindow extends OneColumnWindow {
 		if (nodes == null)
 			showError500();
 
-		subNodesTable.populateTable(nodes);
+		subNodesTable.populateTable(nodes, getWindow(CategoryWindow.class)
+				.getURL());
 
 	}
 
@@ -113,6 +127,12 @@ public class CategoryWindow extends OneColumnWindow {
 			showError500();
 
 		contentsTable.populateTable(contentNodes);
+
+	}
+
+	private void updateNewContent(NodeDTO node) {
+
+		newContentsTable.populateTable(node, this);
 
 	}
 

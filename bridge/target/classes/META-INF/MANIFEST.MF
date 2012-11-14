@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1352572579557
+Bnd-LastModified: 1352926443275
 Build-Jdk: 1.6.0_37
 Built-By: Gattaka
 Bundle-Activator: vaadin.bridge.internal.VaadinBridgeActivator

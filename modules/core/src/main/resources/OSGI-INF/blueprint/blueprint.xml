@@ -23,10 +23,10 @@
 	<!-- ServiceHolder - agregátor služeb -->
 	<bean id="serviceHolder" class="org.myftp.gattserver.grass3.ServiceHolder"
 		factory-method="getInstance" activation="eager">
+		<property name="contentServices" ref="contentServices" />
 		<property name="sectionServices" ref="sectionServices" />
 		<property name="settingsServices" ref="settingsServices" />
 		<property name="entityServiceListener" ref="entityServiceListener" />
-		<property name="contentServiceListener" ref="contentServiceListener" />
 	</bean>
 
 	<!-- DB entity listener -->
@@ -47,6 +47,14 @@
 		availability="optional">  <!-- activation="lazy" -->
 		<reference-listener bind-method="bindSettings"
 			unbind-method="unbindSettings" ref="serviceHolder" />
+	</reference-list>
+	
+	<!-- List s odchytnutými contents -->
+	<reference-list id="contentServices"
+		interface="org.myftp.gattserver.grass3.service.IContentService"
+		availability="optional">  <!-- activation="lazy" -->
+		<reference-listener bind-method="bindContentService"
+			unbind-method="unbindContentService" ref="serviceHolder" />
 	</reference-list>
 
 	<!-- =============== -->
@@ -78,25 +86,5 @@
 		<bean
 			class="org.myftp.gattserver.grass3.service.impl.ApplicationSettingsService" />
 	</service>
-
-	<!-- ======================= -->
-	<!-- Agregátor služeb obsahů -->
-	<!-- ======================= -->
-
-	<!-- Agregátor -->
-	<bean id="contentServiceListener"
-		class="org.myftp.gattserver.grass3.service.impl.BasicContentServiceListener"
-		scope="singleton">
-		<property name="services" ref="contentServices" />
-	</bean>
-
-	<!-- List s odchytnutými entitami -->
-	<reference-list id="contentServices"
-		interface="org.myftp.gattserver.grass3.service.IContentService"
-		availability="optional" />
-
-	<!-- Registrace služby agregátoru DB definic -->
-	<service interface="org.myftp.gattserver.grass3.service.IContentServiceListener"
-		ref="contentServiceListener" />
 
 </blueprint>

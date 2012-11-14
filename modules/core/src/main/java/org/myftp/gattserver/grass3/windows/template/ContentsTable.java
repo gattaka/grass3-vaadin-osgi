@@ -21,7 +21,7 @@ public class ContentsTable extends Table {
 	 */
 	private enum ColumnId {
 
-		IKONA, NÁZEV, AUTOR, DATUM_VYTVOŘENÍ, DATUM_ÚPRAVY; 
+		IKONA, NÁZEV, AUTOR, DATUM_VYTVOŘENÍ, DATUM_ÚPRAVY;
 
 	}
 
@@ -45,7 +45,6 @@ public class ContentsTable extends Table {
 
 			// jaká prohlížecí služba odpovídá tomuto obsahu
 			IContentService contentService = ServiceHolder.getInstance()
-					.getContentServiceListener()
 					.getContentServiceByName(contentNode.getContentReaderID());
 
 			Item item = addItem(contentNode);

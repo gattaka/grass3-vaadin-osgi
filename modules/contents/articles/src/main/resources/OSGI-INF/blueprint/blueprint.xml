@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+	<!-- =============== -->
+	<!-- Služba db entit -->
+	<!-- =============== -->
+
+	<!-- Registrace služby implementující DBUnitService -->
+	<service interface="org.myftp.gattserver.grass3.model.service.IEntityService">
+		<bean class="org.myftp.gattserver.grass3.articles.service.impl.ArticlesEntityService" />
+	</service>
+
+	<!-- =============== -->
+	<!-- Content služby -->
+	<!-- =============== -->
+
+	<service interface="org.myftp.gattserver.grass3.service.IContentService">
+		<bean class="org.myftp.gattserver.grass3.articles.service.impl.ArticlesContentService" />
+	</service>
+
+</blueprint>

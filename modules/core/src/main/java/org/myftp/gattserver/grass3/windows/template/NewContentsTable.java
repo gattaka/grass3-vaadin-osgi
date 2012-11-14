@@ -38,7 +38,7 @@ public class NewContentsTable extends Table {
 
 		// jaké služby obsahů mám k dispozici ?
 		List<IContentService> contentServices = ServiceHolder.getInstance()
-				.getContentServiceListener().getServices();
+				.getContentServices();
 
 		// položky
 		for (IContentService contentService : contentServices) {
@@ -46,16 +46,17 @@ public class NewContentsTable extends Table {
 			Item item = addItem(contentService);
 			item.getItemProperty(ColumnId.NÁZEV)
 					.setValue(
-							new ComparableLink(contentService
-									.getCreateNewContentLabel(),
-									new ExternalResource(window.getWindow(
-											contentService
-													.getContentEditorWindow())
-											.getURL()
-											+ "/"
-											+ node.getId()
-											+ "-"
-											+ node.getName())));
+							new ComparableLink(
+									contentService.getCreateNewContentLabel(),
+									new ExternalResource(
+											window.getWindow(
+													contentService
+															.getContentEditorWindowClass())
+													.getURL()
+													+ "/"
+													+ node.getId()
+													+ "-"
+													+ node.getName())));
 
 			Embedded icon = new Embedded();
 			icon.setSource(contentService.getContentIcon());

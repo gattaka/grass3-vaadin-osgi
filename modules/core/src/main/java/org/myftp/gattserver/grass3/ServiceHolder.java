@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.myftp.gattserver.grass3.model.AbstractDAO;
 import org.myftp.gattserver.grass3.model.service.IEntityServiceListener;
-import org.myftp.gattserver.grass3.service.IContentServiceListener;
+import org.myftp.gattserver.grass3.service.IContentService;
 import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.service.ISettingsService;
 
@@ -62,10 +62,16 @@ public class ServiceHolder {
 		// dej jí vědět o již zaregistrovaných sekcích
 		for (ISectionService service : sectionServices)
 			application.addWindow(service.getSectionWindowNewInstance());
-		
+
 		// dej jí vědět o již zaregistrovaných nastaveních
 		for (ISettingsService service : settingsServices)
 			application.addWindow(service.getSettingsWindowNewInstance());
+
+		// dej jí vědět o již zaregistrovaných službách obsahů
+		for (IContentService service : contentServices) {
+			application.addWindow(service.getContentEditorWindowNewInstance());
+			application.addWindow(service.getContentViewerWindowNewInstance());
+		}
 	}
 
 	/**
@@ -87,17 +93,41 @@ public class ServiceHolder {
 	}
 
 	/**
-	 * ContentService listener service
+	 * Obsahy
 	 */
-	private IContentServiceListener contentServiceListener;
+	private List<IContentService> contentServices = Collections
+			.synchronizedList(new ArrayList<IContentService>());
 
-	public IContentServiceListener getContentServiceListener() {
-		return contentServiceListener;
+	public synchronized List<IContentService> getContentServices() {
+		return contentServices;
 	}
 
-	public void setContentServiceListener(
-			IContentServiceListener contentServiceListener) {
-		this.contentServiceListener = contentServiceListener;
+	public synchronized void setContentServices(
+			List<IContentService> contentServices) {
+		this.contentServices = contentServices;
+	}
+
+	public synchronized IContentService getContentServiceByName(
+			String contentReaderID) {
+		for (IContentService contentService : contentServices) {
+			if (contentService.getContentID().equals(contentReaderID))
+				return contentService;
+		}
+		return null;
+	}
+
+	public synchronized void bindContentService(IContentService contentService) {
+		for (GrassApplication application : applications) {
+			application.addWindow(contentService.getContentEditorWindowNewInstance());
+			application.addWindow(contentService.getContentViewerWindowNewInstance());
+		}
+	}
+
+	public synchronized void unbindContentService(IContentService contentService) {
+		for (GrassApplication application : applications) {
+			application.removeWindow(contentService.getContentEditorWindowNewInstance());
+			application.removeWindow(contentService.getContentViewerWindowNewInstance());
+		}
 	}
 
 	/**

@@ -44,19 +44,16 @@ public class NewContentsTable extends Table {
 		for (IContentService contentService : contentServices) {
 
 			Item item = addItem(contentService);
-			item.getItemProperty(ColumnId.NÁZEV)
-					.setValue(
-							new ComparableLink(
-									contentService.getCreateNewContentLabel(),
-									new ExternalResource(
-											window.getWindow(
-													contentService
-															.getContentEditorWindowClass())
-													.getURL()
-													+ "/"
-													+ node.getId()
-													+ "-"
-													+ node.getName())));
+			item.getItemProperty(ColumnId.NÁZEV).setValue(
+					new ComparableLink(contentService
+							.getCreateNewContentLabel(), new ExternalResource(
+							window.getWindow(
+									contentService
+											.getContentEditorWindowClass())
+									.getURL()
+									+ node.getId().toString()
+									+ "-"
+									+ node.getName())));
 
 			Embedded icon = new Embedded();
 			icon.setSource(contentService.getContentIcon());

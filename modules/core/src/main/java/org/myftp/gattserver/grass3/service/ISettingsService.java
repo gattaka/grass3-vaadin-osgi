@@ -3,7 +3,7 @@ package org.myftp.gattserver.grass3.service;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.windows.template.GrassWindow;
+import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
 
 /**
  * Objekt nastavení. Jde o objekt, který u sebe má informace potřebné k zapojení
@@ -19,14 +19,14 @@ public interface ISettingsService {
 	 * 
 	 * @return okno nastavení
 	 */
-	public GrassWindow getSettingsWindowNewInstance();
+	public SettingsWindow getSettingsWindowNewInstance();
 
 	/**
 	 * Vrátí třídu nastavení
 	 * 
 	 * @return třída nastavení
 	 */
-	public Class<? extends GrassWindow> getSettingsWindowClass();
+	public Class<? extends SettingsWindow> getSettingsWindowClass();
 
 	/**
 	 * Vrátí název okna nastavení, tento text se bude zobrazovat v menu, ze
@@ -34,7 +34,7 @@ public interface ISettingsService {
 	 * 
 	 * @return název nastavení
 	 */
-	public String getSectionCaption();
+	public String getSettingsCaption();
 
 	/**
 	 * Zjistí, zda má být zobrazen odkaz na toto nastavení

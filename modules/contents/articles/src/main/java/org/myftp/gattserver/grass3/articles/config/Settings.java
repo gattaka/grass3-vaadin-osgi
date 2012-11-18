@@ -1,28 +1,34 @@
-package org.myftp.gattserver.grass3.service.impl;
+package org.myftp.gattserver.grass3.articles.config;
 
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.service.ISettingsService;
-import org.myftp.gattserver.grass3.windows.CategoriesSettingsWindow;
 import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
 
-public class CategoriesSettingsService implements ISettingsService {
+
+public class Settings implements ISettingsService {
 
 	public SettingsWindow getSettingsWindowNewInstance() {
-		return new CategoriesSettingsWindow();
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public Class<? extends SettingsWindow> getSettingsWindowClass() {
-		return CategoriesSettingsWindow.class;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public String getSettingsCaption() {
-		return "Kategorie";
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public boolean isVisibleForRoles(Set<Role> roles) {
-		return roles.contains(Role.ADMIN);
+		// TODO Auto-generated method stub
+		return false;
 	}
+
+
 
 }

@@ -31,7 +31,7 @@ public class SettingsWindow extends TwoColumnWindow {
 
 		for (ISettingsService settingsService : ServiceHolder.getInstance()
 				.getSettingsServices()) {
-			Link link = new Link(settingsService.getSectionCaption(),
+			Link link = new Link(settingsService.getSettingsCaption(),
 					getWindowResource(settingsService.getSettingsWindowClass()));
 			leftColumnLayout.addComponent(link);
 		}

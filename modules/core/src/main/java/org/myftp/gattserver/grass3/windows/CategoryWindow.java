@@ -11,6 +11,7 @@ import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.template.Breadcrumb;
 import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
+import org.myftp.gattserver.grass3.util.CategoryUtils;
 import org.myftp.gattserver.grass3.windows.template.ContentsTable;
 import org.myftp.gattserver.grass3.windows.template.NewContentsTable;
 import org.myftp.gattserver.grass3.windows.template.NodesTable;
@@ -72,8 +73,8 @@ public class CategoryWindow extends OneColumnWindow {
 		// Vytvořit obsahy
 		// TODO - vidí pouze role autor
 		VerticalLayout newContentsLayout = new VerticalLayout();
-		newContentsLayout.addComponent(new Label("<h2>Vytvořit nový obsah</h2>",
-				Label.CONTENT_XHTML));
+		newContentsLayout.addComponent(new Label(
+				"<h2>Vytvořit nový obsah</h2>", Label.CONTENT_XHTML));
 		newContentsLayout.addComponent(newContentsTable);
 		newContentsTable.setWidth("100%");
 		newContentsTable.setHeight("100px");
@@ -86,19 +87,14 @@ public class CategoryWindow extends OneColumnWindow {
 		if (relativeUri.length() == 0)
 			showError404();
 
-		// získej ID
-		String[] parts = relativeUri.split("-");
-		if (parts.length <= 1)
+		NodeDTO node = CategoryUtils.parseURLIdentifier(relativeUri);
+		if (node == null)
 			showError404();
 
-		Long id = null;
-		try {
-			id = Long.valueOf(parts[0]);
-		} catch (NumberFormatException e) {
-			showError404();
-		}
+		node = nodeFacade.getNodeById(node.getId());
 
-		NodeDTO node = nodeFacade.getNodeById(id);
+		// TODO pokud má jiný název, přesměruj na kategorii s ID-Název správným
+		// názvem
 
 		updateBreadcrumb(node);
 		updateSubNodes(node);
@@ -151,9 +147,7 @@ public class CategoryWindow extends OneColumnWindow {
 			breadcrumbElements.add(new BreadcrumbElement(parent.getName(),
 					new ExternalResource(getWindow(CategoryWindow.class)
 							.getURL()
-							+ parent.getId().toString()
-							+ "-"
-							+ parent.getName())));
+							+ CategoryUtils.createURLIdentifier(parent))));
 
 			// pokud je můj předek null, pak je to konec a je to všechno
 			if (parent.getParentID() == null)

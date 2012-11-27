@@ -6,7 +6,7 @@
 	<!-- ========== -->
 
 	<!-- Vytvoř si instanci od factory pro vytváření aplikace apod. -->
-	<bean id="appFactory" class="org.myftp.gattserver.grass3.AppFactory" />
+	<bean id="appFactory" class="org.myftp.gattserver.grass3.bridge.AppFactory" />
 
 	<!-- Registrace služby implementující ApplicationFactory -->
 	<service interface="vaadin.bridge.ApplicationFactory" ref="appFactory">

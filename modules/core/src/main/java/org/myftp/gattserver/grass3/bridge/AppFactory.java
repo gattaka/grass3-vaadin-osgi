@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3;
+package org.myftp.gattserver.grass3.bridge;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import vaadin.bridge.ApplicationFactory;
 
+import org.myftp.gattserver.grass3.GrassApplication;
 import org.osgi.service.log.LogService;
 
 import com.vaadin.Application;

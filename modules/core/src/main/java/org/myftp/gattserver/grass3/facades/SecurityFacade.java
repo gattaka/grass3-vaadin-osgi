@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3.security;
+package org.myftp.gattserver.grass3.facades;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

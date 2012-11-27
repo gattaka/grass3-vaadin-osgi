@@ -46,6 +46,18 @@
 							org.hibernate.proxy,
 							javassist.util.proxy
 						</Import-Package>
+						<Export-Package>
+							org.myftp.gattserver.grass3,
+							org.myftp.gattserver.grass3.service,
+							org.myftp.gattserver.grass3.model.*,
+							org.myftp.gattserver.grass3.security,
+							org.myftp.gattserver.grass3.facades,
+							org.myftp.gattserver.grass3.subwindows,
+							org.myftp.gattserver.grass3.template,
+							org.myftp.gattserver.grass3.util,
+							org.myftp.gattserver.grass3.windows,
+							org.myftp.gattserver.grass3.windows.*
+						</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

@@ -3,9 +3,9 @@ package org.myftp.gattserver.grass3;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.myftp.gattserver.grass3.facades.SecurityFacade;
 import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
-import org.myftp.gattserver.grass3.security.SecurityFacade;
 import org.myftp.gattserver.grass3.util.Mapper;
 import org.myftp.gattserver.grass3.windows.CategoryWindow;
 import org.myftp.gattserver.grass3.windows.HomeWindow;

@@ -9,7 +9,6 @@ import org.myftp.gattserver.grass3.model.dao.UserDAO;
 import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.security.SecurityFacade;
 import org.myftp.gattserver.grass3.util.Mapper;
 
 /**

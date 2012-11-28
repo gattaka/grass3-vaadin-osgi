@@ -61,7 +61,7 @@ public abstract class BaseWindow extends BackgroundWindow {
 				.append("var script= document.createElement('script');")
 				.append("script.type= 'text/javascript';")
 				.append("script.src= '/VAADIN/themes/grass/js/jquery.js';")
-				.append("head.appendChild(script);alert(\"loadingScript\");");
+				.append("head.appendChild(script);");
 		executeJavaScript(loadScript.toString());
 
 		// grassJS
@@ -71,7 +71,7 @@ public abstract class BaseWindow extends BackgroundWindow {
 				.append("var script= document.createElement('script');")
 				.append("script.type= 'text/javascript';")
 				.append("script.src= '/VAADIN/themes/grass/js/grass.js';")
-				.append("head.appendChild(script);alert(\"loadingScript\");");
+				.append("head.appendChild(script);");
 		executeJavaScript(loadScript.toString());
 	}
 

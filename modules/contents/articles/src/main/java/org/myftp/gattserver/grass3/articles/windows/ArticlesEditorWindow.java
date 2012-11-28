@@ -79,7 +79,7 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 					System.out.println(articleTextArea.getValue());
 					System.out.println(articleTextArea.getValue());
 
-					executeJavaScript("$('.v-textarea').val('sss')");
+					executeJavaScript("insert('[dddd]','[xxxxx]'");
 
 				}
 			});
@@ -110,6 +110,16 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 		updateToolsMenu();
 		updateEditorTextPart();
+
+		// editor.js
+		StringBuilder loadScript = new StringBuilder();
+		loadScript
+				.append("var head= document.getElementsByTagName('head')[0];")
+				.append("var script= document.createElement('script');")
+				.append("script.type= 'text/javascript';")
+				.append("script.src= '/VAADIN/themes/grass/articles/js/editor.js';")
+				.append("head.appendChild(script);");
+		executeJavaScript(loadScript.toString());
 
 		super.onShow();
 	}

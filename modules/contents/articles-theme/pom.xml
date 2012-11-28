@@ -4,7 +4,7 @@
 	<groupId>org.myftp.gattserver.grass3</groupId>
 	<artifactId>articles-theme</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>GRASS3 Theme</name>
+	<name>GRASS3 Articles Theme</name>
 	<description>OSGi Fragment</description>
 
 	<packaging>bundle</packaging>

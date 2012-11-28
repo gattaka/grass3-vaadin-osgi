@@ -53,6 +53,26 @@ public abstract class BaseWindow extends BackgroundWindow {
 
 		// update hlášek
 		quotes.setCaption(chooseQuote());
+
+		// jQuery
+		StringBuilder loadScript = new StringBuilder();
+		loadScript
+				.append("var head= document.getElementsByTagName('head')[0];")
+				.append("var script= document.createElement('script');")
+				.append("script.type= 'text/javascript';")
+				.append("script.src= '/VAADIN/themes/grass/js/jquery.js';")
+				.append("head.appendChild(script);alert(\"loadingScript\");");
+		executeJavaScript(loadScript.toString());
+
+		// grassJS
+		loadScript = new StringBuilder();
+		loadScript
+				.append("var head= document.getElementsByTagName('head')[0];")
+				.append("var script= document.createElement('script');")
+				.append("script.type= 'text/javascript';")
+				.append("script.src= '/VAADIN/themes/grass/js/grass.js';")
+				.append("head.appendChild(script);alert(\"loadingScript\");");
+		executeJavaScript(loadScript.toString());
 	}
 
 	private void populateSectionsMenu() {

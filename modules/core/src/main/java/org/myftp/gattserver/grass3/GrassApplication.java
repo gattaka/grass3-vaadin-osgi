@@ -98,12 +98,14 @@ public class GrassApplication extends Application {
 		// registrace aplikace do ServiceHolderu
 		ServiceHolder.getInstance().registerListenerApp(this);
 
-		// theme
-		setTheme("grass");
-
+		// main window
 		mainWindow = new HomeWindow();
 		setMainWindow(mainWindow);
 
+		// theme
+		setTheme("grass");
+
+		// base windows
 		addWindow(new LoginWindow());
 		addWindow(new QuotesWindow());
 		addWindow(new SettingsWindow());

@@ -14,10 +14,12 @@ import org.myftp.gattserver.grass3.util.ReferenceHolder;
 import org.myftp.gattserver.grass3.windows.template.TwoColumnWindow;
 
 import com.vaadin.terminal.DownloadStream;
+import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
@@ -29,7 +31,8 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 	private NodeFacade nodeFacade = NodeFacade.INSTANCE;
 
 	private HorizontalLayout toolsLayout = new HorizontalLayout();
-	private final TextArea textArea = new TextArea();
+	private VerticalLayout editorTextLayout;
+	private final TextArea articleTextArea = new TextArea();
 
 	@Override
 	protected void createLeftColumnContent(VerticalLayout layout) {
@@ -39,11 +42,10 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 	@Override
 	protected void createRightColumnContent(VerticalLayout layout) {
-		layout.addComponent(new Label("<h2>Článek</h2>", Label.CONTENT_XHTML));
+		editorTextLayout = layout;
 	}
 
-	@Override
-	protected void onShow() {
+	private void updateToolsMenu() {
 
 		toolsLayout.removeAllComponents();
 
@@ -69,13 +71,45 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 				public void buttonClick(ClickEvent event) {
 
-					textArea.setValue(decorator.getValue().decorate(
-							(String) textArea.getValue()));
+					articleTextArea.setValue(decorator.getValue().decorate(
+							(String) articleTextArea.getValue()));
+
+					System.out.println(articleTextArea.getCursorPosition());
+					System.out.println(articleTextArea.getInputPrompt());
+					System.out.println(articleTextArea.getValue());
+					System.out.println(articleTextArea.getValue());
+
+					executeJavaScript("$('.v-textarea').val('sss')");
 
 				}
 			});
 			toolsLayout.addComponent(button);
 		}
+
+	}
+
+	private void updateEditorTextPart() {
+
+		editorTextLayout.addComponent(new Label("<h2>Název článku</h2>",
+				Label.CONTENT_XHTML));
+		TextField articleNameField = new TextField();
+		editorTextLayout.addComponent(articleNameField);
+
+		editorTextLayout.addComponent(new Label("<h2>Klíčová slova</h2>",
+				Label.CONTENT_XHTML));
+		TextField articleKeyWords = new TextField();
+		editorTextLayout.addComponent(articleKeyWords);
+
+		editorTextLayout.addComponent(new Label("<h2>Obsah článku</h2>",
+				Label.CONTENT_XHTML));
+		editorTextLayout.addComponent(articleTextArea);
+	}
+
+	@Override
+	protected void onShow() {
+
+		updateToolsMenu();
+		updateEditorTextPart();
 
 		super.onShow();
 	}

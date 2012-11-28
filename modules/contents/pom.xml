@@ -10,6 +10,7 @@
 
 	<modules>
         <module>articles</module>
+        <module>articles-theme</module>
 	</modules>
 
 </project>

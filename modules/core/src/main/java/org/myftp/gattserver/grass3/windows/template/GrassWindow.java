@@ -4,6 +4,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.myftp.gattserver.grass3.GrassApplication;
+import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
+import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
+import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
 import org.myftp.gattserver.grass3.template.ErrorNotification;
 import org.myftp.gattserver.grass3.template.InfoNotification;
 import org.myftp.gattserver.grass3.template.WarningNotification;
@@ -75,21 +78,24 @@ public abstract class GrassWindow extends Window {
 	 * Notifikace pomocí {@link InfoNotification}
 	 */
 	public void showInfo(String caption) {
-		super.showNotification(new InfoNotification(caption));
+		InfoSubwindow infoSubwindow = new InfoSubwindow(caption);
+		addWindow(infoSubwindow);
 	}
 
 	/**
 	 * Notifikace varování pomocí {@link WarningNotification}
 	 */
 	public void showWarning(String caption) {
-		super.showNotification(new WarningNotification(caption));
+		WarnSubwindow warnSubwindow = new WarnSubwindow(caption);
+		addWindow(warnSubwindow);
 	}
 
 	/**
 	 * Notifikace chyby pomocí {@link ErrorNotification}
 	 */
 	public void showError(String caption) {
-		super.showNotification(new ErrorNotification(caption));
+		ErrorSubwindow errorSubwindow = new ErrorSubwindow(caption);
+		addWindow(errorSubwindow);
 	}
 
 	private URL getWindowURL(URL appURL, String name) {

@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.articles.service;
 
-import com.vaadin.terminal.Resource;
+import org.myftp.gattserver.grass3.articles.editor.api.EditorButtonResources;
+import org.myftp.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
 
 /**
  * Rozhraní prvku editoru článků - pluginu
@@ -11,27 +12,17 @@ import com.vaadin.terminal.Resource;
 public interface IPluginService {
 
 	/**
-	 * Získá jméno pluginu
+	 * Získá factory pro vytváření parsovací části pluginu
+	 * 
+	 * @return
 	 */
-	public String getPluginName();
+	public IPluginFactory getPluginFactory();
 
 	/**
-	 * Získá popisek vkládacího tlačítka pluginu do editoru
+	 * Získá zdroje pro vytvoření odpovídajícího tlačítka pluginu v editoru
+	 * 
+	 * @return
 	 */
-	public String getPluginButtonCaption();
-
-	/**
-	 * Získá resource pro ikonu tlačítka pluginu do editoru
-	 */
-	public Resource getPluginButtonImageResource();
-
-	/**
-	 * Získá dekorátor vybraného textu
-	 */
-	public ISelectionDecorator getPluginSelectionDecorator();
-	
-	/**
-	 * TODO
-	 */
+	public EditorButtonResources getEditorButtonResources();
 
 }

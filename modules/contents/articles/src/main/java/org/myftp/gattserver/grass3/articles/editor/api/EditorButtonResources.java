@@ -1,5 +1,7 @@
 package org.myftp.gattserver.grass3.articles.editor.api;
 
+import com.vaadin.terminal.Resource;
+
 /**
  * Třída obsahující všechny potřebné informace pro začlenění pluginu do UI
  * nabídky elementů v editoru
@@ -8,10 +10,11 @@ package org.myftp.gattserver.grass3.articles.editor.api;
  */
 public class EditorButtonResources {
 
+	private String tagFamily;
 	private String description;
 	private String prefix;
 	private String suffix;
-	private String image;
+	private Resource imageResource;
 
 	/**
 	 * Default constructor
@@ -25,11 +28,12 @@ public class EditorButtonResources {
 	 *            koncový tag + (nepovinné) nějaké věci, které se mají vložit za
 	 *            označený text
 	 */
-	public EditorButtonResources(String description, String prefix, String suffix, String image) {
+	public EditorButtonResources(String description, String prefix,
+			String suffix, Resource imageResource) {
 		this.description = description;
 		this.prefix = prefix;
 		this.suffix = suffix;
-		this.image = image;
+		this.imageResource = imageResource;
 	}
 
 	/**
@@ -43,7 +47,7 @@ public class EditorButtonResources {
 		this.description = tag;
 		this.prefix = '[' + tag + ']';
 		this.suffix = "[/" + tag + ']';
-		this.image = "";
+		this.imageResource = null;
 	}
 
 	/**
@@ -73,12 +77,25 @@ public class EditorButtonResources {
 		return suffix;
 	}
 
-	public String getImage() {
-		return image;
+	/**
+	 * Získá název rodiny elementů, pod kterou má být seskupen plugin v editoru
+	 * 
+	 * @return název rodiny pluginů - např. LaTeX, HTML, FancyNadpisy apod.
+	 */
+	public String getTagFamily() {
+		return tagFamily;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public void setTagFamily(String tagFamily) {
+		this.tagFamily = tagFamily;
+	}
+
+	public Resource getImage() {
+		return imageResource;
+	}
+
+	public void setImage(Resource image) {
+		this.imageResource = image;
 	}
 
 	public void setDescription(String description) {

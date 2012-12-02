@@ -7,7 +7,7 @@ import com.vaadin.ui.VerticalLayout;
 public abstract class ColumnBuilder {
 
 	private String rightBorderStyleName = "right_middle_background";
-	private Integer columnWidth = 200;
+	private Integer columnWidth = 250;
 
 	/**
 	 * Default konstruktor

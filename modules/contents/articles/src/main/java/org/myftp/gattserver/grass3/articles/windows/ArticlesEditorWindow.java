@@ -1,12 +1,11 @@
 package org.myftp.gattserver.grass3.articles.windows;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.myftp.gattserver.grass3.articles.service.IPluginService;
-import org.myftp.gattserver.grass3.articles.service.ISelectionDecorator;
-import org.myftp.gattserver.grass3.articles.service.demo.DemoPluginService;
+import org.myftp.gattserver.grass3.articles.PluginServiceHolder;
+import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
+import org.myftp.gattserver.grass3.articles.editor.api.EditorButtonResources;
+import org.myftp.gattserver.grass3.articles.facade.ArticleFacade;
 import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.util.CategoryUtils;
@@ -14,14 +13,13 @@ import org.myftp.gattserver.grass3.util.ReferenceHolder;
 import org.myftp.gattserver.grass3.windows.template.TwoColumnWindow;
 
 import com.vaadin.terminal.DownloadStream;
-import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Button.ClickEvent;
 
 public class ArticlesEditorWindow extends TwoColumnWindow {
 
@@ -29,6 +27,7 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 	private NodeDTO category;
 	private NodeFacade nodeFacade = NodeFacade.INSTANCE;
+	private ArticleFacade articleFacade = ArticleFacade.INSTANCE;
 
 	private HorizontalLayout toolsLayout = new HorizontalLayout();
 	private VerticalLayout editorTextLayout;
@@ -36,13 +35,21 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 	@Override
 	protected void createLeftColumnContent(VerticalLayout layout) {
-		layout.addComponent(new Label("<h2>Nástroje</h2>", Label.CONTENT_XHTML));
-		layout.addComponent(toolsLayout);
+		layout.setSpacing(true);
+		layout.setMargin(true);
+
+		VerticalLayout toolsPartLayout = new VerticalLayout();
+		layout.addComponent(toolsPartLayout);
+		toolsPartLayout.addComponent(new Label("<h2>Nástroje</h2>",
+				Label.CONTENT_XHTML));
+		toolsPartLayout.addComponent(toolsLayout);
 	}
 
 	@Override
 	protected void createRightColumnContent(VerticalLayout layout) {
 		editorTextLayout = layout;
+		editorTextLayout.setSpacing(true);
+		editorTextLayout.setMargin(true);
 	}
 
 	private void updateToolsMenu() {
@@ -50,59 +57,84 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 		toolsLayout.removeAllComponents();
 
 		/**
-		 * DEMO seznam pluginů
-		 */
-		List<IPluginService> iPluginServices = new ArrayList<IPluginService>();
-		iPluginServices.add(new DemoPluginService());
-
-		/**
 		 * Projdi zaregistrované pluginy a vytvoř menu nástrojů
 		 */
-		final ReferenceHolder<ISelectionDecorator> decorator = new ReferenceHolder<ISelectionDecorator>();
-		for (IPluginService iPluginService : iPluginServices) {
+		for (String group : PluginServiceHolder.getInstance()
+				.getRegisteredGroups()) {
 
-			decorator.setValue(iPluginService.getPluginSelectionDecorator());
+			VerticalLayout groupLayout = new VerticalLayout();
+			if (group != null)
+				groupLayout.addComponent(new Label("<h3>" + group + "</h3>",
+						Label.CONTENT_XHTML));
+			toolsLayout.addComponent(groupLayout);
+			HorizontalLayout groupToolsLayout = new HorizontalLayout();
+			groupLayout.addComponent(groupToolsLayout);
 
-			Button button = new Button(iPluginService.getPluginButtonCaption());
-			button.setIcon(iPluginService.getPluginButtonImageResource());
-			button.addListener(new Button.ClickListener() {
+			final ReferenceHolder<EditorButtonResources> holder = new ReferenceHolder<EditorButtonResources>();
+			for (EditorButtonResources resources : PluginServiceHolder
+					.getInstance().getGroupTags(group)) {
 
-				private static final long serialVersionUID = 607422393151282918L;
+				holder.setValue(resources);
 
-				public void buttonClick(ClickEvent event) {
+				Button button = new Button(resources.getDescription());
+				button.setIcon(resources.getImage());
+				button.addListener(new Button.ClickListener() {
 
-					articleTextArea.setValue(decorator.getValue().decorate(
-							(String) articleTextArea.getValue()));
+					private static final long serialVersionUID = 607422393151282918L;
 
-					System.out.println(articleTextArea.getCursorPosition());
-					System.out.println(articleTextArea.getInputPrompt());
-					System.out.println(articleTextArea.getValue());
-					System.out.println(articleTextArea.getValue());
-
-					executeJavaScript("insert('[dddd]','[xxxxx]'");
-
-				}
-			});
-			toolsLayout.addComponent(button);
+					public void buttonClick(ClickEvent event) {
+						executeJavaScript("insert('"
+								+ holder.getValue().getPrefix() + "','"
+								+ holder.getValue().getSuffix() + "');");
+					}
+				});
+				groupToolsLayout.addComponent(button);
+			}
 		}
 
 	}
 
 	private void updateEditorTextPart() {
 
-		editorTextLayout.addComponent(new Label("<h2>Název článku</h2>",
+		editorTextLayout.removeAllComponents();
+
+		VerticalLayout articleNameLayout = new VerticalLayout();
+		editorTextLayout.addComponent(articleNameLayout);
+		articleNameLayout.addComponent(new Label("<h2>Název článku</h2>",
 				Label.CONTENT_XHTML));
 		TextField articleNameField = new TextField();
-		editorTextLayout.addComponent(articleNameField);
+		articleNameLayout.addComponent(articleNameField);
 
-		editorTextLayout.addComponent(new Label("<h2>Klíčová slova</h2>",
+		VerticalLayout articleKeywordsLayout = new VerticalLayout();
+		editorTextLayout.addComponent(articleKeywordsLayout);
+		articleKeywordsLayout.addComponent(new Label("<h2>Klíčová slova</h2>",
 				Label.CONTENT_XHTML));
 		TextField articleKeyWords = new TextField();
-		editorTextLayout.addComponent(articleKeyWords);
+		articleKeywordsLayout.addComponent(articleKeyWords);
 
-		editorTextLayout.addComponent(new Label("<h2>Obsah článku</h2>",
+		VerticalLayout articleContentLayout = new VerticalLayout();
+		editorTextLayout.addComponent(articleContentLayout);
+		articleContentLayout.addComponent(new Label("<h2>Obsah článku</h2>",
 				Label.CONTENT_XHTML));
-		editorTextLayout.addComponent(articleTextArea);
+		articleContentLayout.addComponent(articleTextArea);
+
+		// tlačítka
+		Button previewButton = new Button("Náhled");
+		previewButton.addListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 607422393151282918L;
+
+			public void buttonClick(ClickEvent event) {
+
+				ArticleDTO articleDTO = articleFacade.processPreview(String
+						.valueOf(articleTextArea.getValue()));
+
+				PreviewWindow previewWindow = new PreviewWindow(articleDTO);
+				addWindow(previewWindow);
+			}
+
+		});
+		editorTextLayout.addComponent(previewButton);
 	}
 
 	@Override
@@ -120,6 +152,8 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 				.append("script.src= '/VAADIN/themes/grass/articles/js/editor.js';")
 				.append("head.appendChild(script);");
 		executeJavaScript(loadScript.toString());
+
+		articleTextArea.setValue("");
 
 		super.onShow();
 	}

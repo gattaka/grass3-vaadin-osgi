@@ -40,7 +40,7 @@ public abstract class TwoColumnWindow extends BaseWindow {
 
 	private void createRightColumn(AbsoluteLayout layout) {
 
-		VerticalLayout backgroundLayout = new ColumnBuilder(775,
+		VerticalLayout backgroundLayout = new ColumnBuilder(725,
 				"long_right_middle_background") {
 
 			@Override
@@ -49,7 +49,7 @@ public abstract class TwoColumnWindow extends BaseWindow {
 			}
 
 		}.buildColumn();
-		layout.addComponent(backgroundLayout, "left:215px; top:135px;");
+		layout.addComponent(backgroundLayout, "left:265px; top:135px;");
 
 	}
 

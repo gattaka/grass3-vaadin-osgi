@@ -1,4 +1,4 @@
-/* Vycházím z existujícího theme Vaadin */
+/* Vych��z��m z existuj��c��ho theme Vaadin */
 @import "../reindeer/styles.css";
 
 h2 {
@@ -12,7 +12,7 @@ h2 {
 }
 
 /* ====== */
-/* Pozadí */
+/* Pozad�� */
 /* ====== */
 .background_layout {
 	background: url("img/bgr2.png");
@@ -34,7 +34,7 @@ h2 {
 }
 
 /* ====== */
-/* Hlášky */
+/* Hl����ky */
 /* ====== */
 .v-link.v-link-quotes.quotes a span {
 	text-decoration: none;
@@ -135,7 +135,7 @@ h2 {
 }
 
 /* ============= */
-/* Kulaté okraje */
+/* Kulat�� okraje */
 /* ============= */
 
 /* ---- Top ---- */
@@ -168,14 +168,14 @@ h2 {
 .right_middle_background {
 	background: url("img/bR.png");
 	background-repeat: repeat-y;
-	background-position: 180px 0;
+	background-position: 230px 0;
 	padding-right: 10px;
 }
 
 .long_right_middle_background {
 	background: url("img/bR.png");
 	background-repeat: repeat-y;
-	background-position: 755px 0;
+	background-position: 705px 0;
 	padding-right: 10px;
 }
 

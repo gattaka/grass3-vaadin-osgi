@@ -185,7 +185,7 @@ public class PluginBag {
 		log(this.getClass().getSimpleName()
 				+ ": Looking for the right ParserPlugin for tag '" + tag + "'");
 
-		IPluginFactory pluginFactory = PluginRegister.getInstance().get(tag);
+		IPluginFactory pluginFactory = PluginRegister.INSTANCE.get(tag);
 
 		if (pluginFactory != null) {
 

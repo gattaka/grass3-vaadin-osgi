@@ -1,13 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
+	<!-- ======================== -->
+	<!-- Plugin service agregátor -->
+	<!-- ======================== -->
+
+	<bean id="pluginServiceHolder" class="org.myftp.gattserver.grass3.articles.PluginServiceHolder"
+		factory-method="getInstance" activation="eager">
+		<property name="pluginServices" ref="pluginServices" />
+	</bean>
+
+	<!-- List s odchytnutými pluginy -->
+	<reference-list id="pluginServices"
+		interface="org.myftp.gattserver.grass3.articles.service.IPluginService"
+		availability="optional">  <!-- activation="lazy" -->
+		<reference-listener bind-method="bindPluginService"
+			unbind-method="unbindPluginService" ref="pluginServiceHolder" />
+	</reference-list>
+
+
 	<!-- =============== -->
 	<!-- Služba db entit -->
 	<!-- =============== -->
 
 	<!-- Registrace služby implementující DBUnitService -->
 	<service interface="org.myftp.gattserver.grass3.model.service.IEntityService">
-		<bean class="org.myftp.gattserver.grass3.articles.service.impl.ArticlesEntityService" />
+		<bean
+			class="org.myftp.gattserver.grass3.articles.service.impl.ArticlesEntityService" />
 	</service>
 
 	<!-- =============== -->
@@ -15,7 +34,18 @@
 	<!-- =============== -->
 
 	<service interface="org.myftp.gattserver.grass3.service.IContentService">
-		<bean class="org.myftp.gattserver.grass3.articles.service.impl.ArticlesContentService" />
+		<bean
+			class="org.myftp.gattserver.grass3.articles.service.impl.ArticlesContentService" />
+	</service>
+
+	<!-- ============= -->
+	<!-- Plugin služby -->
+	<!-- ============= -->
+
+	<!-- DEMO -->
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.service.demo.DemoPluginService" />
 	</service>
 
 </blueprint>

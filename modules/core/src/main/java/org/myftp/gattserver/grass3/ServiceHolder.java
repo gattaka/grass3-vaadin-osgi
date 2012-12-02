@@ -172,15 +172,15 @@ public class ServiceHolder {
 		this.settingsServices = settingsServices;
 	}
 
-	public synchronized void bindSettings(ISettingsService section) {
+	public synchronized void bindSettings(ISettingsService settingsService) {
 		for (GrassApplication application : applications) {
-			application.addWindow(section.getSettingsWindowNewInstance());
+			application.addWindow(settingsService.getSettingsWindowNewInstance());
 		}
 	}
 
-	public synchronized void unbindSettings(ISettingsService section) {
+	public synchronized void unbindSettings(ISettingsService settingsService) {
 		for (GrassApplication application : applications) {
-			application.removeWindow(section.getSettingsWindowClass());
+			application.removeWindow(settingsService.getSettingsWindowClass());
 		}
 	}
 

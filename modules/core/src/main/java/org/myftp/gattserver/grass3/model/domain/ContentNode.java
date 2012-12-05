@@ -19,12 +19,12 @@ public class ContentNode {
 	/**
 	 * ID služby, která daný obsah umí číst
 	 */
-	private String contentReaderID;
+	private String contentReaderId;
 
 	/**
 	 * ID samotného obsahu v rámci dané služby (typu obsahu)
 	 */
-	private Long contentID;
+	private Long contentId;
 
 	/**
 	 * Název obsahu
@@ -92,12 +92,12 @@ public class ContentNode {
 		this.id = id;
 	}
 
-	public String getContentReaderID() {
-		return contentReaderID;
+	public String getContentReaderId() {
+		return contentReaderId;
 	}
 
-	public void setContentReaderID(String contentReaderID) {
-		this.contentReaderID = contentReaderID;
+	public void setContentReaderId(String contentReaderId) {
+		this.contentReaderId = contentReaderId;
 	}
 
 	public Date getCreationDate() {
@@ -124,12 +124,12 @@ public class ContentNode {
 		this.publicated = publicated;
 	}
 
-	public Long getContentID() {
-		return contentID;
+	public Long getContentId() {
+		return contentId;
 	}
 
-	public void setContentID(Long contentID) {
-		this.contentID = contentID;
+	public void setContentId(Long contentId) {
+		this.contentId = contentId;
 	}
 
 	public String getName() {

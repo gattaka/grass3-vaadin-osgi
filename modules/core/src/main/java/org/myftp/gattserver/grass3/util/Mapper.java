@@ -85,8 +85,8 @@ public enum Mapper {
 		ContentNodeDTO contentNodeDTO = new ContentNodeDTO();
 
 		contentNodeDTO.setAuthor(map(contentNode.getAuthor()));
-		contentNodeDTO.setContentID(contentNode.getContentID());
-		contentNodeDTO.setContentReaderID(contentNode.getContentReaderID());
+		contentNodeDTO.setContentID(contentNode.getContentId());
+		contentNodeDTO.setContentReaderID(contentNode.getContentReaderId());
 		contentNodeDTO.setCreationDate(contentNode.getCreationDate());
 		contentNodeDTO.setId(contentNode.getId());
 		contentNodeDTO.setLastModificationDate(contentNode

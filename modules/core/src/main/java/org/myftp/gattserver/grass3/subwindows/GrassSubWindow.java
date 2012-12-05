@@ -10,6 +10,9 @@ public class GrassSubWindow extends Window {
 	public GrassSubWindow(String name) {
 		super(name);
 		addAction(new Window.CloseShortcut(this, KeyCode.ESCAPE));
+		
+		center();
+		setWidth("220px");
 	}
 
 }

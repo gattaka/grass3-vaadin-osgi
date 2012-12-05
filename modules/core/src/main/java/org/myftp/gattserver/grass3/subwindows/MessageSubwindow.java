@@ -5,8 +5,9 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Embedded;
-import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
 
 public abstract class MessageSubwindow extends GrassSubWindow {
 
@@ -29,16 +30,19 @@ public abstract class MessageSubwindow extends GrassSubWindow {
 		center();
 		setWidth("220px");
 
-		GridLayout subWindowlayout = new GridLayout(2, 2);
+		VerticalLayout subWindowlayout = new VerticalLayout();
 		setContent(subWindowlayout);
 		subWindowlayout.setMargin(true);
 		subWindowlayout.setSpacing(true);
 		subWindowlayout.setSizeFull();
 
-		subWindowlayout.addComponent(new Embedded(null, imageResource), 0, 0);
-		subWindowlayout.addComponent(new Label(labelCaption), 1, 0);
+		HorizontalLayout messageLayout = new HorizontalLayout();
+		subWindowlayout.addComponent(messageLayout);
 
-		Button proceedButton = new Button("Ano", new Button.ClickListener() {
+		messageLayout.addComponent(new Embedded(null, imageResource));
+		messageLayout.addComponent(new Label(labelCaption));
+
+		Button proceedButton = new Button("OK", new Button.ClickListener() {
 
 			private static final long serialVersionUID = 8490964871266821307L;
 
@@ -48,9 +52,9 @@ public abstract class MessageSubwindow extends GrassSubWindow {
 			}
 		});
 
-		subWindowlayout.addComponent(proceedButton, 1, 1);
+		subWindowlayout.addComponent(proceedButton);
 		subWindowlayout.setComponentAlignment(proceedButton,
-				Alignment.MIDDLE_CENTER);
+				Alignment.BOTTOM_RIGHT);
 
 		// Zaměř se na nové okno
 		focus();

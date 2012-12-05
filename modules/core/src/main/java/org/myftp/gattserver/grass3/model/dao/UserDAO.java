@@ -48,9 +48,9 @@ public class UserDAO extends AbstractDAO<User> {
 			Criteria criteria = session.createCriteria(entityClass);
 			criteria.createAlias("favourites", "content");
 			criteria.add(Restrictions.eq("content.contentID",
-					contentNode.getContentID()));
+					contentNode.getContentId()));
 			criteria.add(Restrictions.eq("content.contentReaderID",
-					contentNode.getContentReaderID()));
+					contentNode.getContentReaderId()));
 
 			list = findAndCast(criteria);
 

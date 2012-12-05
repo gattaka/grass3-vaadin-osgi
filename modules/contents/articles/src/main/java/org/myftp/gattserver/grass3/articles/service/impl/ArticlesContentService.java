@@ -10,6 +10,8 @@ import com.vaadin.terminal.ThemeResource;
 
 public class ArticlesContentService implements IContentService {
 
+	public static final String ID = "org.myftp.gattserver.grass3.articles:0.0.1";
+
 	public BaseWindow getContentEditorWindowNewInstance() {
 		return new ArticlesEditorWindow();
 	}
@@ -35,7 +37,7 @@ public class ArticlesContentService implements IContentService {
 	}
 
 	public String getContentID() {
-		return "org.myftp.gattserver.grass3.articles:0.0.1";
+		return ID;
 	}
 
 }

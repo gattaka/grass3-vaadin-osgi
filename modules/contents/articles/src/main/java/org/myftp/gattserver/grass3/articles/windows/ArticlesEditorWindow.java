@@ -8,11 +8,16 @@ import org.myftp.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import org.myftp.gattserver.grass3.articles.facade.ArticleFacade;
 import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
+import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.util.CategoryUtils;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
+import org.myftp.gattserver.grass3.windows.CategoryWindow;
 import org.myftp.gattserver.grass3.windows.template.TwoColumnWindow;
 
 import com.vaadin.terminal.DownloadStream;
+import com.vaadin.terminal.ExternalResource;
+import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
@@ -32,6 +37,8 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 	private HorizontalLayout toolsLayout = new HorizontalLayout();
 	private VerticalLayout editorTextLayout;
 	private final TextArea articleTextArea = new TextArea();
+	private final TextField articleKeywords = new TextField();
+	private final TextField articleNameField = new TextField();
 
 	@Override
 	protected void createLeftColumnContent(VerticalLayout layout) {
@@ -102,24 +109,31 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 		editorTextLayout.addComponent(articleNameLayout);
 		articleNameLayout.addComponent(new Label("<h2>Název článku</h2>",
 				Label.CONTENT_XHTML));
-		TextField articleNameField = new TextField();
 		articleNameLayout.addComponent(articleNameField);
+		articleNameField.setWidth("100%");
 
 		VerticalLayout articleKeywordsLayout = new VerticalLayout();
 		editorTextLayout.addComponent(articleKeywordsLayout);
 		articleKeywordsLayout.addComponent(new Label("<h2>Klíčová slova</h2>",
 				Label.CONTENT_XHTML));
-		TextField articleKeyWords = new TextField();
-		articleKeywordsLayout.addComponent(articleKeyWords);
+		articleKeywordsLayout.addComponent(articleKeywords);
+		articleKeywords.setWidth("100%");
 
 		VerticalLayout articleContentLayout = new VerticalLayout();
 		editorTextLayout.addComponent(articleContentLayout);
 		articleContentLayout.addComponent(new Label("<h2>Obsah článku</h2>",
 				Label.CONTENT_XHTML));
 		articleContentLayout.addComponent(articleTextArea);
+		articleTextArea.setSizeFull();
 
-		// tlačítka
+		HorizontalLayout buttonLayout = new HorizontalLayout();
+		buttonLayout.setSpacing(true);
+		buttonLayout.setMargin(true, false, false, false);
+		editorTextLayout.addComponent(buttonLayout);
+
+		// Náhled
 		Button previewButton = new Button("Náhled");
+		previewButton.setIcon(new ThemeResource("img/tags/document_16.png"));
 		previewButton.addListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 607422393151282918L;
@@ -134,7 +148,101 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 			}
 
 		});
-		editorTextLayout.addComponent(previewButton);
+		buttonLayout.addComponent(previewButton);
+
+		// Uložit
+		Button saveButton = new Button("Uložit");
+		saveButton.setIcon(new ThemeResource("img/tags/save_16.png"));
+		saveButton.addListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 607422393151282918L;
+
+			public void buttonClick(ClickEvent event) {
+
+				if (articleFacade.saveArticle(
+						String.valueOf(articleNameField.getValue()),
+						String.valueOf(articleTextArea.getValue()),
+						String.valueOf(articleKeywords.getValue()), category,
+						getApplication().getUser())) {
+					showInfo("Uložení článku se zdařilo");
+				} else {
+					showWarning("Uložení článku se nezdařilo");
+				}
+
+			}
+
+		});
+		buttonLayout.addComponent(saveButton);
+
+		// Uložit a zavřít
+		Button saveAndCloseButton = new Button("Uložit a zavřít");
+		saveAndCloseButton.setIcon(new ThemeResource("img/tags/save_16.png"));
+		saveAndCloseButton.addListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 607422393151282918L;
+
+			public void buttonClick(ClickEvent event) {
+
+				if (articleFacade.saveArticle(
+						String.valueOf(articleNameField.getValue()),
+						String.valueOf(articleTextArea.getValue()),
+						String.valueOf(articleKeywords.getValue()), category,
+						getApplication().getUser())) {
+					InfoSubwindow infoSubwindow = new InfoSubwindow(
+							"Uložení článku se zdařilo") {
+
+						private static final long serialVersionUID = -4517297931117830104L;
+
+						protected void onProceed(ClickEvent event) {
+							ArticlesEditorWindow.this
+									.open(new ExternalResource(
+											ArticlesEditorWindow.this
+													.getWindow(
+															CategoryWindow.class)
+													.getURL()
+													+ CategoryUtils
+															.createURLIdentifier(category)));
+						};
+					};
+					addWindow(infoSubwindow);
+				} else {
+					showWarning("Uložení článku se nezdařilo");
+				}
+
+			}
+
+		});
+		buttonLayout.addComponent(saveAndCloseButton);
+
+		// Zrušit
+		Button cancelButton = new Button("Zrušit");
+		cancelButton.setIcon(new ThemeResource("img/tags/delete_16.png"));
+		cancelButton.addListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 607422393151282918L;
+
+			public void buttonClick(ClickEvent event) {
+
+				ConfirmSubwindow confirmSubwindow = new ConfirmSubwindow(
+						"Opravdu si přejete zavřít editor článku ? Veškeré neuložené změny budou ztraceny.") {
+
+					private static final long serialVersionUID = -3214040983143363831L;
+
+					@Override
+					protected void onConfirm(ClickEvent event) {
+						ArticlesEditorWindow.this.open(new ExternalResource(
+								ArticlesEditorWindow.this.getWindow(
+										CategoryWindow.class).getURL()
+										+ CategoryUtils
+												.createURLIdentifier(category)));
+					}
+				};
+				addWindow(confirmSubwindow);
+
+			}
+
+		});
+		buttonLayout.addComponent(cancelButton);
 	}
 
 	@Override

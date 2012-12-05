@@ -12,6 +12,9 @@ public class PreviewWindow extends GrassSubWindow {
 
 		addComponent(new ArticleContentComponent(articleDTO));
 
+		setWidth("700px");
+		setHeight("500px");
+
 	}
 
 }

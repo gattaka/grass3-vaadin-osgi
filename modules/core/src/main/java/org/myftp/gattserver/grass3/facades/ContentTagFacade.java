@@ -51,6 +51,8 @@ public enum ContentTagFacade {
 		ContentNodeDAO contentNodeDAO = new ContentNodeDAO();
 		ContentNode contentNode = contentNodeDAO.findByID(contentNodeDTO
 				.getId());
+		Set<ContentTag> contentTags = contentNode.getContentTags();
+		contentNodeDAO.closeSession();
 
 		/**
 		 * Fáze 1:
@@ -65,6 +67,7 @@ public enum ContentTagFacade {
 
 			// existuje už takový tag ?
 			ContentTag contentTag = contentTagDAO.findContentTagByName(tag);
+			contentTagDAO.closeSession();
 
 			if (contentTag == null) {
 				// ne ? - vytvoř a přidej do něj tento obsah
@@ -103,7 +106,7 @@ public enum ContentTagFacade {
 		 * zjistit, které staré tagy se už nepoužívají a ty odhlásit !
 		 */
 		Set<ContentTag> tagsToRemove = new HashSet<ContentTag>();
-		for (ContentTag contentTag : contentNode.getContentTags()) {
+		for (ContentTag contentTag : contentTags) {
 			if (tags.contains(contentTag) == false) {
 				/**
 				 * Tento tag již není použit - odhlaš ho od daného tagu - pokud

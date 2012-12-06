@@ -8,7 +8,6 @@ import javax.xml.bind.JAXBException;
 
 import org.h2.Driver;
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -146,7 +145,7 @@ public abstract class AbstractDAO<E> {
 				"thread");
 		// configuration.setProperty("cache.provider_class",
 		// org.hibernate.cache.internaNl.NoCacheProvider.);
-		configuration.setProperty("hibernate.show_sql", "false");
+		configuration.setProperty("hibernate.show_sql", "true");
 		configuration.setProperty("hibernate.hbm2ddl.auto", "update");
 
 		// snad tohle pomůže
@@ -261,7 +260,6 @@ public abstract class AbstractDAO<E> {
 		try {
 			tx = session.beginTransaction();
 			entity = findByIdAndCast(entityClass, id);
-			Hibernate.initialize(entity);
 			tx.commit();
 		} catch (Exception e) {
 			e.printStackTrace();

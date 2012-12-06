@@ -1,7 +1,5 @@
 package org.myftp.gattserver.grass3.articles.facade;
 
-import java.util.Calendar;
-
 import org.myftp.gattserver.grass3.articles.dao.ArticleDAO;
 import org.myftp.gattserver.grass3.articles.domain.Article;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
@@ -14,11 +12,8 @@ import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractParser;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.IContext;
 import org.myftp.gattserver.grass3.articles.service.impl.ArticlesContentService;
 import org.myftp.gattserver.grass3.facades.ContentNodeFacade;
-import org.myftp.gattserver.grass3.facades.UserFacade;
 import org.myftp.gattserver.grass3.model.dao.ContentNodeDAO;
-import org.myftp.gattserver.grass3.model.dao.UserDAO;
 import org.myftp.gattserver.grass3.model.domain.ContentNode;
-import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
@@ -121,8 +116,14 @@ public enum ArticleFacade {
 				ArticlesContentService.ID, contentId, name, tags, category,
 				author);
 
-		ContentNode contentNode = new ContentNodeDAO().findByID(contentNodeDTO
+		if (contentNodeDTO == null)
+			return false;
+
+		ContentNodeDAO contentNodeDAO = new ContentNodeDAO();
+		ContentNode contentNode = contentNodeDAO.findByID(contentNodeDTO
 				.getId());
+		contentNodeDAO.closeSession();
+
 		article.setContentNode(contentNode);
 		if (articleDAO.merge(article) == false)
 			return false;

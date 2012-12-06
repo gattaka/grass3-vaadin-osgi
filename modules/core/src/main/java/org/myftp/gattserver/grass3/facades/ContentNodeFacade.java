@@ -137,32 +137,24 @@ public enum ContentNodeFacade {
 			String name, String tags, NodeDTO category, UserInfoDTO author) {
 		try {
 
-			UserDAO userDAO = new UserDAO();
-			User user = userDAO.findByID(author.getId());
-
-			NodeDAO nodeDAO = new NodeDAO();
-			Node node = nodeDAO.findByID(category.getId());
-
 			ContentNode contentNode = new ContentNode();
-			contentNode.setAuthor(user);
 			contentNode.setContentId(contentId);
 			contentNode.setContentReaderId(contentModuleId);
 			contentNode.setCreationDate(Calendar.getInstance().getTime());
 			contentNode.setName(name);
-			contentNode.setParent(node);
-			// TODO 
-			//contentNode.setPublicated(publicated)
+			// TODO
+			// contentNode.setPublicated(publicated)
 
-			Long contentNodeID = (Long) new ContentNodeDAO().save(contentNode);
-			if (contentNodeID == null)
+			// Ulož contentNode
+			if (new ContentNodeDAO().save(contentNode, category.getId(),
+					author.getId()) == false)
 				return null;
-
-			ContentNodeDTO contentNodeDTO = getByID(contentNodeID);
 
 			/**
 			 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
 			 * aktualizovat kvůli mazání tagů údaje v DB)
 			 */
+			ContentNodeDTO contentNodeDTO = getByID(contentNode.getId());
 			if (contentTagFacade.saveTags(tags == null ? "" : tags,
 					contentNodeDTO) == false)
 				return null;
@@ -221,6 +213,7 @@ public enum ContentNodeFacade {
 		ContentNodeDAO contentNodeDAO = new ContentNodeDAO();
 		ContentNode contentNode = contentNodeDAO.findByID(contentNodeDTO
 				.getId());
+		contentNodeDAO.closeSession();
 
 		contentNode.setLastModificationDate(Calendar.getInstance().getTime());
 		contentNode.setName(name);

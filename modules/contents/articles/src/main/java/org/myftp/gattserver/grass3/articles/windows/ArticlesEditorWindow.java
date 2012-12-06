@@ -189,7 +189,7 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 						String.valueOf(articleKeywords.getValue()), category,
 						getApplication().getUser())) {
 					InfoSubwindow infoSubwindow = new InfoSubwindow(
-							"Uložení článku se zdařilo") {
+							"Uložení článku proběhlo úspěšně") {
 
 						private static final long serialVersionUID = -4517297931117830104L;
 

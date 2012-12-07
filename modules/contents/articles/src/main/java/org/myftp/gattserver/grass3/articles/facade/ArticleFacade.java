@@ -98,20 +98,24 @@ public enum ArticleFacade {
 	public boolean saveArticle(String name, String text, String tags,
 			NodeDTO category, UserInfoDTO author) {
 
+		// vytvoř nový článek
 		ArticleDAO articleDAO = new ArticleDAO();
 		Article article = new Article();
 
+		// nasetuj do něj vše potřebné
 		IContext context = processArticle(text);
 		article.setOutputHTML(context.getOutput());
 		article.setPluginCSSResources(context.getCSSResources());
 		article.setPluginJSResources(context.getJSResources());
 		article.setText(text);
 
+		// ulož ho a nasetuj jeho id
 		Long contentId = (Long) articleDAO.save(article);
 		if (contentId == null)
 			return false;
 		article.setId(contentId);
 
+		// vytvoř odpovídající content node
 		ContentNodeDTO contentNodeDTO = contentNodeFacade.save(
 				ArticlesContentService.ID, contentId, name, tags, category,
 				author);
@@ -119,6 +123,7 @@ public enum ArticleFacade {
 		if (contentNodeDTO == null)
 			return false;
 
+		// ulož do článku referenci na jeho contentnode
 		ContentNodeDAO contentNodeDAO = new ContentNodeDAO();
 		ContentNode contentNode = contentNodeDAO.findByID(contentNodeDTO
 				.getId());

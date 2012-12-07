@@ -5,7 +5,7 @@ import java.util.List;
 import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.service.IContentService;
-import org.myftp.gattserver.grass3.util.CategoryUtils;
+import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.ComparableLink;
 
 import com.vaadin.data.Item;
@@ -45,17 +45,15 @@ public class NewContentsTable extends Table {
 		for (IContentService contentService : contentServices) {
 
 			Item item = addItem(contentService);
-			item.getItemProperty(ColumnId.NÁZEV)
-					.setValue(
-							new ComparableLink(
-									contentService.getCreateNewContentLabel(),
-									new ExternalResource(
-											window.getWindow(
-													contentService
-															.getContentEditorWindowClass())
-													.getURL()
-													+ CategoryUtils
-															.createURLIdentifier(node))));
+			item.getItemProperty(ColumnId.NÁZEV).setValue(
+					new ComparableLink(contentService
+							.getCreateNewContentLabel(), new ExternalResource(
+							window.getWindow(
+									contentService
+											.getContentEditorWindowClass())
+									.getURL()
+									+ URLIdentifierUtils.createURLIdentifier(
+											node.getId(), node.getName()))));
 
 			Embedded icon = new Embedded();
 			icon.setSource(contentService.getContentIcon());

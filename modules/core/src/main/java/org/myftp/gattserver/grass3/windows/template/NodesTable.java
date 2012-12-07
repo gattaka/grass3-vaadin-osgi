@@ -4,7 +4,7 @@ import java.net.URL;
 import java.util.Collection;
 
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
-import org.myftp.gattserver.grass3.util.CategoryUtils;
+import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.ComparableLink;
 
 import com.vaadin.data.Item;
@@ -43,7 +43,8 @@ public class NodesTable extends Table {
 			Item item = addItem(node);
 			item.getItemProperty(ColumnId.NÁZEV).setValue(
 					new ComparableLink(node.getName(), new ExternalResource(url
-							+ CategoryUtils.createURLIdentifier(node))));
+							+ URLIdentifierUtils.createURLIdentifier(
+									node.getId(), node.getName()))));
 
 			Embedded icon = new Embedded();
 			icon.setSource(new ThemeResource("img/tags/briefcase_16.png"));

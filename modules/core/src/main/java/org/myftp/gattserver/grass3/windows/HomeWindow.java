@@ -67,7 +67,7 @@ public class HomeWindow extends OneColumnWindow {
 					Label.CONTENT_XHTML));
 			favouritesLayout.addComponent(favouritesContentsTable);
 			favouritesContentsTable.setWidth("100%");
-			favouritesContentsTable.setHeight("60px");
+//			favouritesContentsTable.setHeight("60px");
 			layout.addComponent(favouritesLayout);
 		}
 
@@ -77,7 +77,7 @@ public class HomeWindow extends OneColumnWindow {
 				"<h2>Nedávno přidané obsahy</h2>", Label.CONTENT_XHTML));
 		recentAddedLayout.addComponent(recentAddedContentsTable);
 		recentAddedContentsTable.setWidth("100%");
-		recentAddedContentsTable.setHeight("60px");
+//		recentAddedContentsTable.setHeight("60px");
 		layout.addComponent(recentAddedLayout);
 
 		// Nedávno upravené obsahy
@@ -86,7 +86,7 @@ public class HomeWindow extends OneColumnWindow {
 				"<h2>Nedávno upravené obsahy</h2>", Label.CONTENT_XHTML));
 		recentModifiedLayout.addComponent(recentModifiedContentsTable);
 		recentModifiedContentsTable.setWidth("100%");
-		recentModifiedContentsTable.setHeight("60px");
+//		recentModifiedContentsTable.setHeight("60px");
 		layout.addComponent(recentModifiedLayout);
 
 		// Tag-cloud
@@ -116,7 +116,7 @@ public class HomeWindow extends OneColumnWindow {
 
 		Set<ContentNodeDTO> contentNodes = contentNodeFacade
 				.getUserFavouriteContents(user);
-		favouritesContentsTable.populateTable(contentNodes);
+		favouritesContentsTable.populateTable(contentNodes, this);
 
 	}
 
@@ -214,8 +214,11 @@ public class HomeWindow extends OneColumnWindow {
 
 		for (ContentTagDTO contentTag : contentTags) {
 			int size = sizeTable.get(contentTag.getContentNodes().size());
-			tagCloud.addComponent(new Label("<span style='font-size:" + size
-					+ "pt'>" + contentTag.getName() + "</span>"));
+			tagCloud.addComponent(new Label("<a href='"
+					+ getWindow(TagWindow.class).getURL()
+					+ contentTag.getName() + "' style='font-size:" + size
+					+ "pt'>" + contentTag.getName() + "</a>",
+					Label.CONTENT_XHTML));
 		}
 
 	}
@@ -227,8 +230,8 @@ public class HomeWindow extends OneColumnWindow {
 		Set<ContentNodeDTO> recentModified = contentNodeFacade
 				.getRecentModified(RECENT_ITEMS_COUNT);
 
-		recentAddedContentsTable.populateTable(recentAdded);
-		recentModifiedContentsTable.populateTable(recentModified);
+		recentAddedContentsTable.populateTable(recentAdded, this);
+		recentModifiedContentsTable.populateTable(recentModified, this);
 
 	}
 

@@ -22,7 +22,7 @@ public class ContentTag {
 	/**
 	 * Obsahy tagu
 	 */
-	@ManyToMany
+	@ManyToMany(mappedBy = "contentTags")
 	private Set<ContentNode> contentNodes;
 
 	/**
@@ -37,14 +37,14 @@ public class ContentTag {
 	public boolean equals(Object obj) {
 		if (!(obj instanceof ContentTag))
 			return false;
-		return ((ContentTag) obj).getId() == getId();
+		return ((ContentTag) obj).getName() == getName();
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return getId().hashCode();
+		return getName().hashCode();
 	}
-	
+
 	public Long getId() {
 		return id;
 	}

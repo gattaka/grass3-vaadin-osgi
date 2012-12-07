@@ -10,7 +10,7 @@ import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
-import org.myftp.gattserver.grass3.util.CategoryUtils;
+import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
 import org.myftp.gattserver.grass3.windows.CategoryWindow;
 import org.myftp.gattserver.grass3.windows.template.TwoColumnWindow;
@@ -200,8 +200,10 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 													.getWindow(
 															CategoryWindow.class)
 													.getURL()
-													+ CategoryUtils
-															.createURLIdentifier(category)));
+													+ URLIdentifierUtils
+															.createURLIdentifier(
+																	category.getId(),
+																	category.getName())));
 						};
 					};
 					addWindow(infoSubwindow);
@@ -233,8 +235,10 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 						ArticlesEditorWindow.this.open(new ExternalResource(
 								ArticlesEditorWindow.this.getWindow(
 										CategoryWindow.class).getURL()
-										+ CategoryUtils
-												.createURLIdentifier(category)));
+										+ URLIdentifierUtils
+												.createURLIdentifier(
+														category.getId(),
+														category.getName())));
 					}
 				};
 				addWindow(confirmSubwindow);
@@ -269,11 +273,12 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 	@Override
 	public DownloadStream handleURI(URL context, String relativeUri) {
 
-		category = CategoryUtils.parseURLIdentifier(relativeUri);
-		if (category == null)
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
+				.parseURLIdentifier(relativeUri);
+		if (identifier == null)
 			showError404();
 
-		category = nodeFacade.getNodeById(category.getId());
+		category = nodeFacade.getNodeById(identifier.getId());
 
 		return super.handleURI(context, relativeUri);
 	}

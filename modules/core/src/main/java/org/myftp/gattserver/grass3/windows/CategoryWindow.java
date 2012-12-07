@@ -11,7 +11,7 @@ import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.template.Breadcrumb;
 import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
-import org.myftp.gattserver.grass3.util.CategoryUtils;
+import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.windows.template.ContentsTable;
 import org.myftp.gattserver.grass3.windows.template.NewContentsTable;
 import org.myftp.gattserver.grass3.windows.template.NodesTable;
@@ -58,7 +58,7 @@ public class CategoryWindow extends OneColumnWindow {
 				Label.CONTENT_XHTML));
 		subNodesLayout.addComponent(subNodesTable);
 		subNodesTable.setWidth("100%");
-		subNodesTable.setHeight("100px");
+//		subNodesTable.setHeight("100px");
 		layout.addComponent(subNodesLayout);
 
 		// Obsahy
@@ -67,7 +67,7 @@ public class CategoryWindow extends OneColumnWindow {
 				Label.CONTENT_XHTML));
 		contentsLayout.addComponent(contentsTable);
 		contentsTable.setWidth("100%");
-		contentsTable.setHeight("100px");
+//		contentsTable.setHeight("100px");
 		layout.addComponent(contentsLayout);
 
 		// Vytvořit obsahy
@@ -77,7 +77,7 @@ public class CategoryWindow extends OneColumnWindow {
 				"<h2>Vytvořit nový obsah</h2>", Label.CONTENT_XHTML));
 		newContentsLayout.addComponent(newContentsTable);
 		newContentsTable.setWidth("100%");
-		newContentsTable.setHeight("100px");
+//		newContentsTable.setHeight("100px");
 		layout.addComponent(newContentsLayout);
 	}
 
@@ -87,11 +87,12 @@ public class CategoryWindow extends OneColumnWindow {
 		if (relativeUri.length() == 0)
 			showError404();
 
-		NodeDTO node = CategoryUtils.parseURLIdentifier(relativeUri);
-		if (node == null)
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
+				.parseURLIdentifier(relativeUri);
+		if (identifier == null)
 			showError404();
 
-		node = nodeFacade.getNodeById(node.getId());
+		NodeDTO node = nodeFacade.getNodeById(identifier.getId());
 
 		// TODO pokud má jiný název, přesměruj na kategorii s ID-Název správným
 		// názvem
@@ -122,7 +123,7 @@ public class CategoryWindow extends OneColumnWindow {
 		if (contentNodes == null)
 			showError500();
 
-		contentsTable.populateTable(contentNodes);
+		contentsTable.populateTable(contentNodes, this);
 
 	}
 
@@ -147,7 +148,8 @@ public class CategoryWindow extends OneColumnWindow {
 			breadcrumbElements.add(new BreadcrumbElement(parent.getName(),
 					new ExternalResource(getWindow(CategoryWindow.class)
 							.getURL()
-							+ CategoryUtils.createURLIdentifier(parent))));
+							+ URLIdentifierUtils.createURLIdentifier(
+									parent.getId(), parent.getName()))));
 
 			// pokud je můj předek null, pak je to konec a je to všechno
 			if (parent.getParentID() == null)

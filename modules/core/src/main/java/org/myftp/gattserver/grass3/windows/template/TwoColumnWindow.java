@@ -8,7 +8,7 @@ public abstract class TwoColumnWindow extends BaseWindow {
 	private static final long serialVersionUID = 5064416476628186307L;
 
 	@Override
-	protected void createWindowContent(AbsoluteLayout layout) {
+	protected void createWindowContent(VerticalLayout layout) {
 
 		// levý sloupec
 		createLeftColumn(layout);
@@ -17,7 +17,7 @@ public abstract class TwoColumnWindow extends BaseWindow {
 		createRightColumn(layout);
 	}
 
-	private void createLeftColumn(AbsoluteLayout layout) {
+	private void createLeftColumn(VerticalLayout layout) {
 
 		VerticalLayout backgroundLayout = new ColumnBuilder() {
 
@@ -27,7 +27,7 @@ public abstract class TwoColumnWindow extends BaseWindow {
 			}
 
 		}.buildColumn();
-		layout.addComponent(backgroundLayout, "left:0px; top:135px;");
+//		layout.addComponent(backgroundLayout, "left:0px; top:135px;");
 
 	}
 
@@ -38,7 +38,7 @@ public abstract class TwoColumnWindow extends BaseWindow {
 	 */
 	protected abstract void createLeftColumnContent(VerticalLayout layout);
 
-	private void createRightColumn(AbsoluteLayout layout) {
+	private void createRightColumn(VerticalLayout layout) {
 
 		VerticalLayout backgroundLayout = new ColumnBuilder(725,
 				"long_right_middle_background") {
@@ -49,7 +49,7 @@ public abstract class TwoColumnWindow extends BaseWindow {
 			}
 
 		}.buildColumn();
-		layout.addComponent(backgroundLayout, "left:265px; top:135px;");
+//		layout.addComponent(backgroundLayout, "left:265px; top:135px;");
 
 	}
 

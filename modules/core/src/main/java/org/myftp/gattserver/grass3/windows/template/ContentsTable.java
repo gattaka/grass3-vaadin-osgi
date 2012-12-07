@@ -5,9 +5,12 @@ import java.util.Collection;
 import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.service.IContentService;
+import org.myftp.gattserver.grass3.util.ComparableLink;
+import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
@@ -25,11 +28,13 @@ public class ContentsTable extends Table {
 
 	}
 
-	public void populateTable(Collection<ContentNodeDTO> contentList) {
+	public void populateTable(Collection<ContentNodeDTO> contentList,
+			GrassWindow window) {
 
 		IndexedContainer container = new IndexedContainer();
 		container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
-		container.addContainerProperty(ColumnId.NÁZEV, String.class, "");
+		container.addContainerProperty(ColumnId.NÁZEV, ComparableLink.class,
+				null);
 		container.addContainerProperty(ColumnId.AUTOR, String.class, "");
 		container.addContainerProperty(ColumnId.DATUM_VYTVOŘENÍ, String.class,
 				"");
@@ -47,11 +52,23 @@ public class ContentsTable extends Table {
 			IContentService contentService = ServiceHolder.getInstance()
 					.getContentServiceByName(contentNode.getContentReaderID());
 
+			Class<? extends BaseWindow> windowClass = null;
+			if (contentService == null)
+				windowClass = NoServiceWindow.class;
+			else
+				windowClass = contentService.getContentViewerWindowClass();
+
 			Item item = addItem(contentNode);
-			item.getItemProperty(ColumnId.NÁZEV)
-					.setValue(contentNode.getName());
+			item.getItemProperty(ColumnId.NÁZEV).setValue(
+					new ComparableLink(contentNode.getName(),
+							new ExternalResource(window.getWindow(windowClass)
+									.getURL()
+									+ URLIdentifierUtils.createURLIdentifier(
+											contentNode.getContentID(),
+											contentNode.getName()))));
+
 			item.getItemProperty(ColumnId.AUTOR).setValue(
-					contentNode.getAuthor());
+					contentNode.getAuthor().getName());
 			item.getItemProperty(ColumnId.DATUM_VYTVOŘENÍ).setValue(
 					contentNode.getCreationDate());
 			item.getItemProperty(ColumnId.DATUM_ÚPRAVY).setValue(
@@ -69,5 +86,4 @@ public class ContentsTable extends Table {
 		}
 
 	}
-
 }

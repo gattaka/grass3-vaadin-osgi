@@ -18,7 +18,6 @@ import org.myftp.gattserver.grass3.windows.RegistrationWindow;
 
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.ThemeResource;
-import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
@@ -211,17 +210,12 @@ public abstract class BaseWindow extends BackgroundWindow {
 
 	private void createBody(VerticalLayout layout) {
 
-		AbsoluteLayout bodyLayout = new AbsoluteLayout();
+		VerticalLayout bodyLayout = new VerticalLayout();
 		layout.addComponent(bodyLayout);
 		layout.setComponentAlignment(bodyLayout, Alignment.TOP_CENTER);
 
-		// DŮLEŽITÉ - bez tohohle bude footer užírat svým top padding skoro
-		// půlku stránky, čímž "ukousne" i existující část body-části
-		layout.setExpandRatio(bodyLayout, 1.0f);
-
 		bodyLayout.setStyleName("body_layout");
 		bodyLayout.setWidth("990px");
-		bodyLayout.setHeight("100%");
 
 		createTop(bodyLayout);
 		createMenu(bodyLayout);
@@ -232,9 +226,14 @@ public abstract class BaseWindow extends BackgroundWindow {
 	}
 
 	private void createFooter(VerticalLayout layout) {
+		
+		VerticalLayout spacingLayout = new VerticalLayout();
+		spacingLayout.setHeight("10px");
+		layout.addComponent(spacingLayout);
+		
 		HorizontalLayout footerLayout = new HorizontalLayout();
 		layout.addComponent(footerLayout);
-		// layout.setComponentAlignment(footerLayout, Alignment.BOTTOM_CENTER);
+		layout.setComponentAlignment(footerLayout, Alignment.BOTTOM_CENTER);
 
 		footerLayout.setWidth("100%");
 		footerLayout.setHeight("25px");
@@ -251,12 +250,12 @@ public abstract class BaseWindow extends BackgroundWindow {
 		footerShadow.setHeight("11px");
 	}
 
-	private void createTop(AbsoluteLayout layout) {
+	private void createTop(VerticalLayout layout) {
 
 		HorizontalLayout topLayout = new HorizontalLayout();
-		layout.addComponent(topLayout, "top: 0px; left: 0px");
+		layout.addComponent(topLayout);
 		topLayout.setWidth("990px");
-		topLayout.setHeight("94px");
+		topLayout.setHeight("81px");
 
 		// logo (image)
 		Embedded logoImage = new Embedded("", new ThemeResource("img/logo.png"));
@@ -271,11 +270,12 @@ public abstract class BaseWindow extends BackgroundWindow {
 		topLayout.addComponent(quotes);
 	}
 
-	private void createMenu(AbsoluteLayout layout) {
+	private void createMenu(VerticalLayout layout) {
 
 		// menu (centrovací element)
 		HorizontalLayout menuHolderLayout = new HorizontalLayout();
-		layout.addComponent(menuHolderLayout, "top: 81px; left: 0px");
+
+		layout.addComponent(menuHolderLayout);
 		menuHolderLayout.setStyleName("menu_holder");
 		menuHolderLayout.setWidth("990px");
 		menuHolderLayout.setHeight("41px");
@@ -330,6 +330,6 @@ public abstract class BaseWindow extends BackgroundWindow {
 	 * @param layout
 	 *            layout, do kterého se má vytvářet
 	 */
-	protected abstract void createWindowContent(AbsoluteLayout layout);
+	protected abstract void createWindowContent(VerticalLayout layout);
 
 }

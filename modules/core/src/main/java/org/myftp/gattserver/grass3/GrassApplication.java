@@ -12,8 +12,10 @@ import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginWindow;
 import org.myftp.gattserver.grass3.windows.QuotesWindow;
 import org.myftp.gattserver.grass3.windows.RegistrationWindow;
+import org.myftp.gattserver.grass3.windows.TagWindow;
 import org.myftp.gattserver.grass3.windows.err.Err404;
 import org.myftp.gattserver.grass3.windows.err.Err500;
+import org.myftp.gattserver.grass3.windows.template.NoServiceWindow;
 import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
 
 import com.vaadin.Application;
@@ -111,10 +113,12 @@ public class GrassApplication extends Application {
 		addWindow(new SettingsWindow());
 		addWindow(new RegistrationWindow());
 		addWindow(new CategoryWindow());
+		addWindow(new TagWindow());
 
 		// err okna
 		addWindow(new Err404());
 		addWindow(new Err500());
+		addWindow(new NoServiceWindow());
 
 		// Interní okna jsou registrována, může se začít stavět jejich layout
 		synchronized (initialized) {

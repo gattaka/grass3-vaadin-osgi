@@ -12,12 +12,12 @@ public abstract class BackgroundWindow extends GrassWindow {
 		VerticalLayout backgroundLayout = new VerticalLayout();
 		setContent(backgroundLayout);
 		backgroundLayout.setStyleName("background_layout");
-		backgroundLayout.setSizeFull();
+		backgroundLayout.setWidth("100%");
 
 		VerticalLayout layout = new VerticalLayout();
 		backgroundLayout.addComponent(layout);
 		layout.setStyleName("layout");
-		layout.setSizeFull();
+		layout.setWidth("100%");
 
 		buildLayout(layout);
 

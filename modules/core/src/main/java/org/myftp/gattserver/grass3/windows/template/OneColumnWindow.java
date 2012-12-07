@@ -1,6 +1,5 @@
 package org.myftp.gattserver.grass3.windows.template;
 
-import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.VerticalLayout;
 
 public abstract class OneColumnWindow extends BaseWindow {
@@ -8,8 +7,12 @@ public abstract class OneColumnWindow extends BaseWindow {
 	private static final long serialVersionUID = 5064416476628186307L;
 
 	@Override
-	protected void createWindowContent(AbsoluteLayout layout) {
+	protected void createWindowContent(VerticalLayout layout) {
 
+		VerticalLayout spacingLayout = new VerticalLayout();
+		spacingLayout.setHeight("10px");
+		layout.addComponent(spacingLayout);
+		
 		VerticalLayout backgroundLayout = new ColumnBuilder(990,
 				"full_right_middle_background") {
 
@@ -20,7 +23,7 @@ public abstract class OneColumnWindow extends BaseWindow {
 
 		}.buildColumn();
 
-		layout.addComponent(backgroundLayout, "left:0px; top:135px;");
+		layout.addComponent(backgroundLayout);
 
 	}
 

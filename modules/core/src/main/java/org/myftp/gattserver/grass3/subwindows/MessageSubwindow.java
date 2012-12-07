@@ -28,7 +28,7 @@ public abstract class MessageSubwindow extends GrassSubWindow {
 		super(caption);
 
 		center();
-		setWidth("220px");
+		setWidth("250px");
 
 		VerticalLayout subWindowlayout = new VerticalLayout();
 		setContent(subWindowlayout);
@@ -38,6 +38,9 @@ public abstract class MessageSubwindow extends GrassSubWindow {
 
 		HorizontalLayout messageLayout = new HorizontalLayout();
 		subWindowlayout.addComponent(messageLayout);
+		messageLayout.setMargin(true);
+		messageLayout.setSpacing(true);
+		messageLayout.setSizeFull();
 
 		messageLayout.addComponent(new Embedded(null, imageResource));
 		messageLayout.addComponent(new Label(labelCaption));

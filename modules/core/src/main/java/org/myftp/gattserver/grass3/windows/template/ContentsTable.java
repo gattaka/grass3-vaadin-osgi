@@ -19,6 +19,10 @@ public class ContentsTable extends Table {
 
 	private static final long serialVersionUID = -2220485504407844582L;
 
+	public ContentsTable() {
+		setHeight("250px");
+	}
+
 	/**
 	 * Přehled sloupců tabulky obsahů
 	 */

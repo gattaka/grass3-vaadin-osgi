@@ -15,7 +15,7 @@ public class Err500 extends BackgroundWindow {
 	}
 
 	@Override
-	protected void buildLayout(VerticalLayout layout) {
+	protected void buildBody(VerticalLayout layout) {
 		layout.addComponent(new Label("Došlo k chybě na straně serveru"));
 	}
 

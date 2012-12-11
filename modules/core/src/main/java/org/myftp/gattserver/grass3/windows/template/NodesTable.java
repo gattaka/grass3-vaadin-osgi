@@ -18,6 +18,10 @@ public class NodesTable extends Table {
 
 	private static final long serialVersionUID = -2220485504407844582L;
 
+	public NodesTable() {
+		setHeight("250px");
+	}
+
 	/**
 	 * Přehled sloupců tabulky obsahů
 	 */

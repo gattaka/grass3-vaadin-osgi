@@ -17,17 +17,15 @@ import org.myftp.gattserver.grass3.windows.QuotesWindow;
 import org.myftp.gattserver.grass3.windows.RegistrationWindow;
 
 import com.vaadin.terminal.ExternalResource;
-import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Embedded;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.BaseTheme;
 
 public abstract class BaseWindow extends BackgroundWindow {
@@ -198,17 +196,16 @@ public abstract class BaseWindow extends BackgroundWindow {
 		return quote;
 	}
 
-	protected void buildLayout(VerticalLayout layout) {
+	protected void buildHeader(HorizontalLayout headerLayout) {
 
-		// vytvoří tělo, které je sesypané směrem nahoru
-		createBody(layout);
-
-		// vytvoření patičku, která je sesypána dolů
-		createFooter(layout);
-
+		// Hlášky - generují se znova a znova
+		quotes = new Link(chooseQuote(), getWindowResource(QuotesWindow.class));
+		quotes.setStyleName("quotes");
+		quotes.setWidth("740px");
+		headerLayout.addComponent(quotes);
 	}
 
-	private void createBody(VerticalLayout layout) {
+	protected void buildBody(VerticalLayout layout) {
 
 		VerticalLayout bodyLayout = new VerticalLayout();
 		layout.addComponent(bodyLayout);
@@ -216,58 +213,14 @@ public abstract class BaseWindow extends BackgroundWindow {
 
 		bodyLayout.setStyleName("body_layout");
 		bodyLayout.setWidth("990px");
+		bodyLayout.setMargin(false, false, true, false);
 
-		createTop(bodyLayout);
+		// menu stránky
 		createMenu(bodyLayout);
 
 		// obsah stránky
 		createWindowContent(bodyLayout);
 
-	}
-
-	private void createFooter(VerticalLayout layout) {
-		
-		VerticalLayout spacingLayout = new VerticalLayout();
-		spacingLayout.setHeight("10px");
-		layout.addComponent(spacingLayout);
-		
-		HorizontalLayout footerLayout = new HorizontalLayout();
-		layout.addComponent(footerLayout);
-		layout.setComponentAlignment(footerLayout, Alignment.BOTTOM_CENTER);
-
-		footerLayout.setWidth("100%");
-		footerLayout.setHeight("25px");
-		footerLayout.setStyleName("footer_layout");
-
-		Label footerNote = new Label("GRASS3 Copyright Hynek Uhlíř 2012");
-		footerLayout.addComponent(footerNote);
-
-		HorizontalLayout footerShadow = new HorizontalLayout();
-		layout.addComponent(footerShadow);
-		layout.setComponentAlignment(footerShadow, Alignment.BOTTOM_CENTER);
-		footerShadow.setStyleName("footer_shadow");
-		footerShadow.setWidth("100%");
-		footerShadow.setHeight("11px");
-	}
-
-	private void createTop(VerticalLayout layout) {
-
-		HorizontalLayout topLayout = new HorizontalLayout();
-		layout.addComponent(topLayout);
-		topLayout.setWidth("990px");
-		topLayout.setHeight("81px");
-
-		// logo (image)
-		Embedded logoImage = new Embedded("", new ThemeResource("img/logo.png"));
-		topLayout.addComponent(logoImage);
-		logoImage.setAlternateText("Gattserver");
-		logoImage.setStyleName("logo_image");
-
-		// Hlášky - generují se znova a znova
-		quotes = new Link(chooseQuote(), getWindowResource(QuotesWindow.class));
-		quotes.setStyleName("quotes");
-		quotes.setWidth("740px");
-		topLayout.addComponent(quotes);
 	}
 
 	private void createMenu(VerticalLayout layout) {

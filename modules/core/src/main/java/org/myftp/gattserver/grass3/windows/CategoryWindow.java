@@ -58,7 +58,6 @@ public class CategoryWindow extends OneColumnWindow {
 				Label.CONTENT_XHTML));
 		subNodesLayout.addComponent(subNodesTable);
 		subNodesTable.setWidth("100%");
-//		subNodesTable.setHeight("100px");
 		layout.addComponent(subNodesLayout);
 
 		// Obsahy
@@ -67,7 +66,6 @@ public class CategoryWindow extends OneColumnWindow {
 				Label.CONTENT_XHTML));
 		contentsLayout.addComponent(contentsTable);
 		contentsTable.setWidth("100%");
-//		contentsTable.setHeight("100px");
 		layout.addComponent(contentsLayout);
 
 		// Vytvořit obsahy
@@ -77,7 +75,6 @@ public class CategoryWindow extends OneColumnWindow {
 				"<h2>Vytvořit nový obsah</h2>", Label.CONTENT_XHTML));
 		newContentsLayout.addComponent(newContentsTable);
 		newContentsTable.setWidth("100%");
-//		newContentsTable.setHeight("100px");
 		layout.addComponent(newContentsLayout);
 	}
 

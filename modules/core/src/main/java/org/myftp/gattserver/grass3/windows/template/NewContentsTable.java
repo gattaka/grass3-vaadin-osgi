@@ -18,6 +18,10 @@ public class NewContentsTable extends Table {
 
 	private static final long serialVersionUID = -2220485504407844582L;
 
+	public NewContentsTable() {
+		setHeight("250px");
+	}
+
 	/**
 	 * Přehled sloupců tabulky nových obsahů
 	 */

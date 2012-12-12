@@ -24,6 +24,11 @@ h2 {
 	background-repeat: repeat-x;
 }
 
+.header_shadow {
+	background: url("img/shadow.png");
+	background-repeat: repeat-x;
+}
+
 /* ==== */
 /* Logo */
 /* ==== */
@@ -238,16 +243,9 @@ h2 {
 	font-family: Verdana, "Verdana CE", Arial, "Arial CE",
 		"Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
 	color: #555555;
-	padding: 5px 0 0px 7px;
+	padding: 6px 0 0px 7px;
 	text-shadow: 0px 1px 1px white;
 	border-top: 1px dashed #92AFBF;
-	border-bottom: 1px dashed #92AFBF;
-}
-
-.footer_shadow {
-	background: url("img/bgrB.png");
-	background-repeat: repeat-x;
-	height: 11px;
 }
 
 /* ========== */

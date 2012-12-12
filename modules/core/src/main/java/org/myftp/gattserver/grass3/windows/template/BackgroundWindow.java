@@ -20,10 +20,6 @@ public abstract class BackgroundWindow extends GrassWindow {
 		mainLayout.setSizeFull(); // to ensure whole space is in use
 		setContent(mainLayout);
 
-		// header
-		VerticalLayout header = new VerticalLayout();
-		initHeader(header);
-
 		// body
 		Panel content = new Panel();
 		content.setCaption(null);
@@ -38,14 +34,22 @@ public abstract class BackgroundWindow extends GrassWindow {
 		contentLayout.setSizeUndefined();
 		contentLayout.setWidth("100%");
 		content.addComponent(contentLayout);
-		buildBody(contentLayout);
+
+		// header
+		VerticalLayout headerLayout = new VerticalLayout();
+		contentLayout.addComponent(headerLayout);
+		initHeader(headerLayout);
+
+		VerticalLayout headerShadowLayout = new VerticalLayout();
+		headerShadowLayout.addStyleName("header_shadow");
+		contentLayout.addComponent(headerShadowLayout);
+		buildBody(headerShadowLayout);
 
 		// footer
 		VerticalLayout footer = new VerticalLayout();
 		buildFooter(footer);
 
 		// parts composition
-		mainLayout.addComponent(header);
 		mainLayout.addComponent(content);
 		mainLayout.addComponent(footer);
 
@@ -91,13 +95,6 @@ public abstract class BackgroundWindow extends GrassWindow {
 
 		Label footerNote = new Label("GRASS3 Copyright Hynek Uhlíř 2012");
 		footerLayout.addComponent(footerNote);
-
-		HorizontalLayout footerShadow = new HorizontalLayout();
-		layout.addComponent(footerShadow);
-		layout.setComponentAlignment(footerShadow, Alignment.BOTTOM_CENTER);
-		footerShadow.setStyleName("footer_shadow");
-		footerShadow.setWidth("100%");
-		footerShadow.setHeight("11px");
 	}
 
 }

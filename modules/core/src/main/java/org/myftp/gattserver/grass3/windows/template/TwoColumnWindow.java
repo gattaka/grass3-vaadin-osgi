@@ -1,6 +1,6 @@
 package org.myftp.gattserver.grass3.windows.template;
 
-import com.vaadin.ui.AbsoluteLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 
 public abstract class TwoColumnWindow extends BaseWindow {
@@ -10,14 +10,25 @@ public abstract class TwoColumnWindow extends BaseWindow {
 	@Override
 	protected void createWindowContent(VerticalLayout layout) {
 
-		// levý sloupec
-		createLeftColumn(layout);
+		VerticalLayout upSpacingLayout = new VerticalLayout();
+		upSpacingLayout.setHeight("10px");
+		layout.addComponent(upSpacingLayout);
+		
+		HorizontalLayout columnsLayout = new HorizontalLayout();
+		layout.addComponent(columnsLayout);
 
+		// levý sloupec
+		createLeftColumn(columnsLayout);
+
+		VerticalLayout spacingLayout = new VerticalLayout();
+		spacingLayout.setWidth("15px");
+		columnsLayout.addComponent(spacingLayout);
+		
 		// pravý sloupec
-		createRightColumn(layout);
+		createRightColumn(columnsLayout);
 	}
 
-	private void createLeftColumn(VerticalLayout layout) {
+	private void createLeftColumn(HorizontalLayout layout) {
 
 		VerticalLayout backgroundLayout = new ColumnBuilder() {
 
@@ -27,7 +38,7 @@ public abstract class TwoColumnWindow extends BaseWindow {
 			}
 
 		}.buildColumn();
-//		layout.addComponent(backgroundLayout, "left:0px; top:135px;");
+		layout.addComponent(backgroundLayout);
 
 	}
 
@@ -38,7 +49,7 @@ public abstract class TwoColumnWindow extends BaseWindow {
 	 */
 	protected abstract void createLeftColumnContent(VerticalLayout layout);
 
-	private void createRightColumn(VerticalLayout layout) {
+	private void createRightColumn(HorizontalLayout layout) {
 
 		VerticalLayout backgroundLayout = new ColumnBuilder(725,
 				"long_right_middle_background") {
@@ -49,7 +60,7 @@ public abstract class TwoColumnWindow extends BaseWindow {
 			}
 
 		}.buildColumn();
-//		layout.addComponent(backgroundLayout, "left:265px; top:135px;");
+		layout.addComponent(backgroundLayout);
 
 	}
 

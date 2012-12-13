@@ -11,6 +11,7 @@ import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractElementTre
 import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractParser;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.IContext;
 import org.myftp.gattserver.grass3.articles.service.impl.ArticlesContentService;
+import org.myftp.gattserver.grass3.articles.util.ArticlesMapper;
 import org.myftp.gattserver.grass3.facades.ContentNodeFacade;
 import org.myftp.gattserver.grass3.model.dao.ContentNodeDAO;
 import org.myftp.gattserver.grass3.model.domain.ContentNode;
@@ -23,6 +24,7 @@ public enum ArticleFacade {
 	INSTANCE;
 
 	private ContentNodeFacade contentNodeFacade = ContentNodeFacade.INSTANCE;
+	private ArticlesMapper articlesMapper = ArticlesMapper.INSTANCE;
 
 	private IContext processArticle(String source) {
 
@@ -134,5 +136,27 @@ public enum ArticleFacade {
 			return false;
 
 		return true;
+	}
+
+	/**
+	 * Získá článek dle jeho identifikátoru
+	 * 
+	 * @param id
+	 *            identifikátor
+	 * @return DTO článku
+	 */
+	public ArticleDTO getArticleById(Long id) {
+
+		ArticleDAO dao = new ArticleDAO();
+		Article article = dao.findByID(id);
+
+		if (article == null)
+			return null;
+		
+		ArticleDTO articleDTO = articlesMapper.map(article);
+		
+		dao.closeSession();
+
+		return articleDTO;
 	}
 }

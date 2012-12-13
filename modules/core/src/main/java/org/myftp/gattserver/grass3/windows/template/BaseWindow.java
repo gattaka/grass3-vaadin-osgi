@@ -33,7 +33,7 @@ public abstract class BaseWindow extends BackgroundWindow {
 	private static final long serialVersionUID = 2474374292329895766L;
 
 	private QuotesFacade quotesFacade = QuotesFacade.INSTANCE;
-	private NodeFacade nodeFacade = NodeFacade.INSTANCE;
+	protected NodeFacade nodeFacade = NodeFacade.INSTANCE;
 
 	private HorizontalLayout sectionsMenuLayout = new HorizontalLayout();
 	private HorizontalLayout userMenuLayout = new HorizontalLayout();

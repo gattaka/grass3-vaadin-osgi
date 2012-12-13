@@ -18,24 +18,19 @@ public class ArticlesViewerWindow extends ContentViewerWindow {
 
 	private ArticleDTO article;
 	private ArticleFacade articleFacade = ArticleFacade.INSTANCE;
+	private Label articleContentLabel;
 
 	public ArticlesViewerWindow() {
 		super(ArticlesViewerWindow.class);
-	}
-
-	@Override
-	protected void createLeftColumnContent(VerticalLayout layout) {
-
-		super.createLeftColumnContent(layout);
-		layout.addComponent(new Label("Levé menu vieweru"));
-
+		setName("articles");
 	}
 
 	@Override
 	protected void createRightColumnContent(VerticalLayout layout) {
 
 		super.createRightColumnContent(layout);
-		layout.addComponent(new Label("Pravé menu vieweru"));
+		layout.addComponent(articleContentLabel = new Label("",
+				Label.CONTENT_XHTML));
 
 	}
 
@@ -48,6 +43,7 @@ public class ArticlesViewerWindow extends ContentViewerWindow {
 			showError404();
 
 		article = articleFacade.getArticleById(identifier.getId());
+		articleContentLabel.setValue(article.getOutputHTML());
 
 		return super.handleURI(context, relativeUri);
 	}

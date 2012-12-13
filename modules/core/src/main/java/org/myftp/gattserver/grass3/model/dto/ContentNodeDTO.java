@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.model.dto;
 
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Objekt sloužící pro přepravu dat mezi fasádou a view třídami
@@ -44,6 +45,11 @@ public class ContentNodeDTO {
 	 * Je obsah ve fázi příprav, nebo už má být publikován ?
 	 */
 	private Boolean publicated = true;
+
+	/**
+	 * Tagy
+	 */
+	private Set<String> contentTags;
 
 	/**
 	 * Kdo ho vytvořil
@@ -125,6 +131,14 @@ public class ContentNodeDTO {
 
 	public void setAuthor(UserInfoDTO author) {
 		this.author = author;
+	}
+
+	public Set<String> getContentTags() {
+		return contentTags;
+	}
+
+	public void setContentTags(Set<String> contentTags) {
+		this.contentTags = contentTags;
 	}
 
 }

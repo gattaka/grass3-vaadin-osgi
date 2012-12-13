@@ -42,7 +42,6 @@ public class TagWindow extends OneColumnWindow {
 		contentNodesLayout.addComponent(tagLabel = new Label());
 		contentNodesLayout.addComponent(tagContentsTable);
 		tagContentsTable.setWidth("100%");
-		tagContentsTable.setHeight("60px");
 		layout.addComponent(contentNodesLayout);
 
 	}

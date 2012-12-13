@@ -95,6 +95,12 @@ public enum Mapper {
 		contentNodeDTO.setParentID(contentNode.getParent().getId());
 		contentNodeDTO.setPublicated(contentNode.getPublicated());
 
+		Set<String> tags = new HashSet<String>();
+		for (ContentTag contentTag : contentNode.getContentTags()) {
+			tags.add(contentTag.getName());
+		}
+		contentNodeDTO.setContentTags(tags);
+
 		return contentNodeDTO;
 	}
 

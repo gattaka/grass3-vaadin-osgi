@@ -34,6 +34,7 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 	private Label contentCreationDateNameLabel;
 	private Label contentLastModificationDateLabel;
 	private HorizontalLayout tagsListLayout;
+	private HorizontalLayout operationsListLayout;
 
 	public ContentViewerWindow(Class<? extends GrassWindow> contentViewerClass) {
 		this.contentViewerClass = contentViewerClass;
@@ -50,6 +51,7 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
+		// info - přehled
 		VerticalLayout infoLayout = new VerticalLayout();
 		layout.addComponent(infoLayout);
 		infoLayout
@@ -85,6 +87,7 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 		contentCreationDateNameLabel.setSizeUndefined();
 		contentLastModificationDateLabel.setSizeUndefined();
 
+		// tagy
 		VerticalLayout tagsLayout = new VerticalLayout();
 		layout.addComponent(tagsLayout);
 		tagsLayout
@@ -93,6 +96,16 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 		tagsListLayout = new HorizontalLayout();
 		tagsLayout.addComponent(tagsListLayout);
 		tagsListLayout.setSpacing(true);
+
+		// nástrojová lišta
+		VerticalLayout operationsLayout = new VerticalLayout();
+		layout.addComponent(operationsLayout);
+		operationsLayout.addComponent(new Label("<h2>Operace s obsahem</h2>",
+				Label.CONTENT_XHTML));
+
+		operationsListLayout = new HorizontalLayout();
+		operationsLayout.addComponent(operationsListLayout);
+		operationsListLayout.setSpacing(true);
 
 	}
 
@@ -110,7 +123,12 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 		nameLayout.addComponent(contentNameLabel = new Label());
 		contentNameLabel.setContentMode(Label.CONTENT_XHTML);
 
+		// samotný obsah
+		createContent(layout);
+
 	}
+
+	protected abstract void createContent(VerticalLayout layout);
 
 	@Override
 	public DownloadStream handleURI(URL context, String relativeUri) {
@@ -187,5 +205,11 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 			tagsListLayout.addComponent(tagLink);
 		}
 
+		operationsListLayout.removeAllComponents();
+		updateOperationsList(operationsListLayout);
+
 	}
+
+	protected abstract void updateOperationsList(
+			HorizontalLayout operationsListLayout);
 }

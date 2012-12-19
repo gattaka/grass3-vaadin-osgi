@@ -6,14 +6,18 @@ import org.myftp.gattserver.grass3.articles.PluginServiceHolder;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import org.myftp.gattserver.grass3.articles.facade.ArticleFacade;
+import org.myftp.gattserver.grass3.facades.ContentTagFacade;
 import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
+import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
 import org.myftp.gattserver.grass3.windows.CategoryWindow;
 import org.myftp.gattserver.grass3.windows.template.TwoColumnWindow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.terminal.DownloadStream;
 import com.vaadin.terminal.ExternalResource;
@@ -30,15 +34,22 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 	private static final long serialVersionUID = -5148523174527532785L;
 
+	private static final Logger logger = LoggerFactory
+			.getLogger(ArticlesEditorWindow.class);
+
 	private NodeDTO category;
+	private ArticleDTO article;
 	private NodeFacade nodeFacade = NodeFacade.INSTANCE;
 	private ArticleFacade articleFacade = ArticleFacade.INSTANCE;
+	private ContentTagFacade contentTagFacade = ContentTagFacade.INSTANCE;
 
 	private HorizontalLayout toolsLayout = new HorizontalLayout();
 	private VerticalLayout editorTextLayout;
 	private final TextArea articleTextArea = new TextArea();
 	private final TextField articleKeywords = new TextField();
 	private final TextField articleNameField = new TextField();
+
+	private boolean editMode = false;
 
 	@Override
 	protected void createLeftColumnContent(VerticalLayout layout) {
@@ -159,14 +170,32 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 			public void buttonClick(ClickEvent event) {
 
-				if (articleFacade.saveArticle(
-						String.valueOf(articleNameField.getValue()),
-						String.valueOf(articleTextArea.getValue()),
-						String.valueOf(articleKeywords.getValue()), category,
-						getApplication().getUser())) {
-					showInfo("Uložení článku se zdařilo");
+				boolean success;
+				Long id = null;
+				if (editMode) {
+					success = articleFacade.modifyArticle(
+							String.valueOf(articleNameField.getValue()),
+							String.valueOf(articleTextArea.getValue()),
+							String.valueOf(articleKeywords.getValue()), article);
 				} else {
-					showWarning("Uložení článku se nezdařilo");
+					id = articleFacade.saveArticle(
+							String.valueOf(articleNameField.getValue()),
+							String.valueOf(articleTextArea.getValue()),
+							String.valueOf(articleKeywords.getValue()),
+							category, getApplication().getUser());
+					success = id != null;
+
+					// odteď budeme editovat
+					editMode = true;
+					article = articleFacade.getArticleById(id);
+				}
+
+				if (success) {
+					showInfo(editMode ? "Úprava článku proběhla úspěšně"
+							: "Uložení článku proběhlo úspěšně");
+				} else {
+					showWarning(editMode ? "Úprava článku se nezdařila"
+							: "Uložení článku se nezdařilo");
 				}
 
 			}
@@ -183,13 +212,27 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 			public void buttonClick(ClickEvent event) {
 
-				if (articleFacade.saveArticle(
-						String.valueOf(articleNameField.getValue()),
-						String.valueOf(articleTextArea.getValue()),
-						String.valueOf(articleKeywords.getValue()), category,
-						getApplication().getUser())) {
+				boolean success;
+				Long id = null;
+				if (editMode) {
+					success = articleFacade.modifyArticle(
+							String.valueOf(articleNameField.getValue()),
+							String.valueOf(articleTextArea.getValue()),
+							String.valueOf(articleKeywords.getValue()), article);
+				} else {
+					id = articleFacade.saveArticle(
+							String.valueOf(articleNameField.getValue()),
+							String.valueOf(articleTextArea.getValue()),
+							String.valueOf(articleKeywords.getValue()),
+							category, getApplication().getUser());
+					success = id != null;
+				}
+
+				final Long articleId = editMode ? article.getId() : id;
+				if (success) {
 					InfoSubwindow infoSubwindow = new InfoSubwindow(
-							"Uložení článku proběhlo úspěšně") {
+							editMode ? "Úprava článku proběhla úspěšně"
+									: "Uložení článku proběhlo úspěšně") {
 
 						private static final long serialVersionUID = -4517297931117830104L;
 
@@ -198,17 +241,19 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 									.open(new ExternalResource(
 											ArticlesEditorWindow.this
 													.getWindow(
-															CategoryWindow.class)
+															ArticlesViewerWindow.class)
 													.getURL()
 													+ URLIdentifierUtils
 															.createURLIdentifier(
-																	category.getId(),
-																	category.getName())));
+																	articleId,
+																	String.valueOf(articleNameField
+																			.getValue()))));
 						};
 					};
 					addWindow(infoSubwindow);
 				} else {
-					showWarning("Uložení článku se nezdařilo");
+					showWarning(editMode ? "Úprava článku se nezdařila"
+							: "Uložení článku se nezdařilo");
 				}
 
 			}
@@ -273,14 +318,39 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 	@Override
 	public DownloadStream handleURI(URL context, String relativeUri) {
 
-		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
-				.parseURLIdentifier(relativeUri);
-		if (identifier == null)
+		String[] parts = relativeUri.split("/");
+		if (parts.length < 2) {
+			logger.debug("Chybí operace nebo identifikátor cíle");
 			showError404();
+		}
 
-		category = nodeFacade.getNodeById(identifier.getId());
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
+				.parseURLIdentifier(parts[1]);
+		if (identifier == null) {
+			logger.debug("Nezdařilo se vytěžit URL identifikátor z řetězce: '"
+					+ parts[1] + "'");
+			showError404();
+		}
+
+		// operace ?
+		if (parts[0].equals(DefaultContentOperations.NEW.toString())) {
+			editMode = false;
+			category = nodeFacade.getNodeById(identifier.getId());
+			articleNameField.setValue("");
+			articleKeywords.setValue("");
+		} else if (parts[0].equals(DefaultContentOperations.EDIT.toString())) {
+			editMode = true;
+			article = articleFacade.getArticleById(identifier.getId());
+			articleNameField.setValue(article.getContentNode().getName());
+			articleKeywords.setValue(contentTagFacade
+					.serializeTags((String[]) article.getContentNode()
+							.getContentTags().toArray()));
+			articleTextArea.setValue(article.getText());
+		} else {
+			logger.debug("Neznámá operace: '" + parts[0] + "'");
+			showError404();
+		}
 
 		return super.handleURI(context, relativeUri);
 	}
-
 }

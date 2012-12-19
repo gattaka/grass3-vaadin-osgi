@@ -83,6 +83,44 @@ public enum ArticleFacade {
 	}
 
 	/**
+	 * Upraví článek
+	 * 
+	 * @param name
+	 *            název článku
+	 * @param text
+	 *            obsah článku
+	 * @param tags
+	 *            klíčová slova článku
+	 * @param articleDTO
+	 *            původní článek
+	 * @return {@code true} pokud se úprava zdařila, jinak {@code false}
+	 */
+	public boolean modifyArticle(String name, String text, String tags,
+			ArticleDTO articleDTO) {
+
+		// článek
+		ArticleDAO articleDAO = new ArticleDAO();
+		Article article = articleDAO.findByID(articleDTO.getId());
+
+		// nasetuj do něj vše potřebné
+		IContext context = processArticle(text);
+		article.setOutputHTML(context.getOutput());
+		article.setPluginCSSResources(context.getCSSResources());
+		article.setPluginJSResources(context.getJSResources());
+		article.setText(text);
+
+		// ulož ho
+		if (articleDAO.merge(article) == false)
+			return false;
+
+		// content node
+		if (contentNodeFacade.modify(articleDTO.getContentNode(), name, tags) == false)
+			return false;
+
+		return true;
+	}
+
+	/**
 	 * Uloží článek
 	 * 
 	 * @param name
@@ -95,9 +133,10 @@ public enum ArticleFacade {
 	 *            kategorie do kteér se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
-	 * @return {@code true} pokud vše dopadlo v pořádku, jinak {@code false}
+	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
+	 *         {@code null}
 	 */
-	public boolean saveArticle(String name, String text, String tags,
+	public Long saveArticle(String name, String text, String tags,
 			NodeDTO category, UserInfoDTO author) {
 
 		// vytvoř nový článek
@@ -114,7 +153,7 @@ public enum ArticleFacade {
 		// ulož ho a nasetuj jeho id
 		Long contentId = (Long) articleDAO.save(article);
 		if (contentId == null)
-			return false;
+			return null;
 		article.setId(contentId);
 
 		// vytvoř odpovídající content node
@@ -123,7 +162,7 @@ public enum ArticleFacade {
 				author);
 
 		if (contentNodeDTO == null)
-			return false;
+			return null;
 
 		// ulož do článku referenci na jeho contentnode
 		ContentNodeDAO contentNodeDAO = new ContentNodeDAO();
@@ -133,9 +172,9 @@ public enum ArticleFacade {
 
 		article.setContentNode(contentNode);
 		if (articleDAO.merge(article) == false)
-			return false;
+			return null;
 
-		return true;
+		return article.getId();
 	}
 
 	/**
@@ -152,11 +191,12 @@ public enum ArticleFacade {
 
 		if (article == null)
 			return null;
-		
+
 		ArticleDTO articleDTO = articlesMapper.map(article);
-		
+
 		dao.closeSession();
 
 		return articleDTO;
 	}
+
 }

@@ -37,7 +37,7 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.2</version>
 		</dependency>
-		
+
 		<!-- OSGi container support -->
 		<dependency>
 			<groupId>org.osgi</groupId>
@@ -50,6 +50,13 @@
 			<artifactId>org.osgi.core</artifactId>
 			<version>${osgi.version}</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<!-- Hibernate -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>4.0.1.Final</version>
 		</dependency>
 
 		<!-- Grass3 jádro -->

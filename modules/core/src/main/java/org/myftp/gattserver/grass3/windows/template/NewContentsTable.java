@@ -5,6 +5,7 @@ import java.util.List;
 import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.service.IContentService;
+import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.ComparableLink;
 
@@ -56,6 +57,8 @@ public class NewContentsTable extends Table {
 									contentService
 											.getContentEditorWindowClass())
 									.getURL()
+									+ DefaultContentOperations.NEW.toString()
+									+ "/"
 									+ URLIdentifierUtils.createURLIdentifier(
 											node.getId(), node.getName()))));
 

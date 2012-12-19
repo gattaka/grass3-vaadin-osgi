@@ -17,6 +17,9 @@ public enum ContentTagFacade {
 
 	private Mapper mapper = Mapper.INSTANCE;
 
+	// neměl by být tečka apod. znak, využívaný v regulárních výrazech
+	public static final String TAGS_DELIMITER = ",";
+
 	public List<ContentTagDTO> getAllContentTags() {
 		ContentTagDAO dao = new ContentTagDAO();
 
@@ -28,6 +31,28 @@ public enum ContentTagFacade {
 
 		dao.closeSession();
 		return contentTagDTOs;
+	}
+
+	public String[] parseTags(String tagNames) {
+
+		return tagNames.split("[ ]*" + TAGS_DELIMITER + "[ ]*");
+	}
+
+	public String serializeTags(String[] tags) {
+
+		StringBuilder stringBuilder = new StringBuilder();
+		boolean first = true;
+		for (String tag : tags) {
+			if (!first) {
+				// mezera pro přehlednost
+				stringBuilder.append(TAGS_DELIMITER).append(" ");
+			}
+			first = false;
+			stringBuilder.append(tag);
+		}
+
+		return stringBuilder.toString();
+
 	}
 
 	/**
@@ -43,7 +68,7 @@ public enum ContentTagFacade {
 	public boolean saveTags(String tagNames, ContentNodeDTO contentNodeDTO) {
 
 		// TODO regex ! jinak to bude dělat mezery součástí
-		String[] tagArray = tagNames.split(",");
+		String[] tagArray = parseTags(tagNames);
 
 		// tag dao
 		ContentTagDAO contentTagDAO = new ContentTagDAO();

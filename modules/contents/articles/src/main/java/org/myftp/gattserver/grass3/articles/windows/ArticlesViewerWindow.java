@@ -5,12 +5,18 @@ import java.net.URL;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.articles.facade.ArticleFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
+import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.windows.template.ContentViewerWindow;
 
 import com.vaadin.terminal.DownloadStream;
+import com.vaadin.terminal.ExternalResource;
+import com.vaadin.terminal.ThemeResource;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Button.ClickEvent;
 
 public class ArticlesViewerWindow extends ContentViewerWindow {
 
@@ -23,15 +29,6 @@ public class ArticlesViewerWindow extends ContentViewerWindow {
 	public ArticlesViewerWindow() {
 		super(ArticlesViewerWindow.class);
 		setName("articles");
-	}
-
-	@Override
-	protected void createRightColumnContent(VerticalLayout layout) {
-
-		super.createRightColumnContent(layout);
-		layout.addComponent(articleContentLabel = new Label("",
-				Label.CONTENT_XHTML));
-
 	}
 
 	@Override
@@ -53,4 +50,34 @@ public class ArticlesViewerWindow extends ContentViewerWindow {
 		return article.getContentNode();
 	}
 
+	@Override
+	protected void createContent(VerticalLayout layout) {
+		layout.addComponent(articleContentLabel = new Label("",
+				Label.CONTENT_XHTML));
+	}
+
+	@Override
+	protected void updateOperationsList(HorizontalLayout operationsListLayout) {
+
+		// Uložit
+		Button saveButton = new Button("Upravit");
+		saveButton.setIcon(new ThemeResource("img/tags/pencil_16.png"));
+		saveButton.addListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 607422393151282918L;
+
+			public void buttonClick(ClickEvent event) {
+
+				open(new ExternalResource(getWindow(ArticlesEditorWindow.class)
+						.getURL()
+						+ DefaultContentOperations.EDIT.toString()
+						+ "/"
+						+ URLIdentifierUtils.createURLIdentifier(article
+								.getId(), article.getContentNode().getName())));
+
+			}
+
+		});
+		operationsListLayout.addComponent(saveButton);
+	}
 }

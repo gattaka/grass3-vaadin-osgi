@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.articles.windows;
 
 import java.net.URL;
+import java.util.Arrays;
 
 import org.myftp.gattserver.grass3.articles.PluginServiceHolder;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
@@ -342,9 +343,10 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 			editMode = true;
 			article = articleFacade.getArticleById(identifier.getId());
 			articleNameField.setValue(article.getContentNode().getName());
-			articleKeywords.setValue(contentTagFacade
-					.serializeTags((String[]) article.getContentNode()
-							.getContentTags().toArray()));
+			Object[] tagsArray = article.getContentNode().getContentTags()
+					.toArray();
+			articleKeywords.setValue(contentTagFacade.serializeTags(Arrays
+					.copyOf(tagsArray, tagsArray.length, String[].class)));
 			articleTextArea.setValue(article.getText());
 		} else {
 			logger.debug("Neznámá operace: '" + parts[0] + "'");

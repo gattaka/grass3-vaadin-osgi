@@ -49,10 +49,11 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 	protected void createLeftColumnContent(VerticalLayout layout) {
 
 		layout.setMargin(true);
-		layout.setSpacing(true);
+//		layout.setSpacing(true);
 
 		// info - přehled
 		VerticalLayout infoLayout = new VerticalLayout();
+		infoLayout.setMargin(false, false, true, false);
 		layout.addComponent(infoLayout);
 		infoLayout
 				.addComponent(new Label("<h2>Info</h2>", Label.CONTENT_XHTML));
@@ -89,6 +90,7 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 
 		// tagy
 		VerticalLayout tagsLayout = new VerticalLayout();
+		tagsLayout.setMargin(false, false, true, false);
 		layout.addComponent(tagsLayout);
 		tagsLayout
 				.addComponent(new Label("<h2>Tagy</h2>", Label.CONTENT_XHTML));

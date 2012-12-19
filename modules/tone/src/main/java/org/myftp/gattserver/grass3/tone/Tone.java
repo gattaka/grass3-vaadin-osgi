@@ -17,14 +17,14 @@ public enum Tone {
 	
 	public static Tone[] tones = {C,Cis,D,Dis,E,F,Fis,G,Gis,A,Ais,H};
 	
-	private int cOrderNumber;
+	private int orderNumberFromC;
 	
 	private Tone(int number) {
-		this.cOrderNumber = number;
+		this.orderNumberFromC = number;
 	}
 	
-	public int getcOrderNumber() {
-		return cOrderNumber;
+	public int getOrderNumberFromC() {
+		return orderNumberFromC;
 	}
 	
 }

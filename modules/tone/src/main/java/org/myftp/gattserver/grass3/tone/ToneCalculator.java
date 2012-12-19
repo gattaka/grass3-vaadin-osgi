@@ -7,12 +7,13 @@ public class ToneCalculator {
 
 	public Set<Tone> createChord(Tone base, ChordType type) {
 		Set<Tone> chordSet = new HashSet<Tone>();
-		
+
 		for (int offset : type.getToneOffsets()) {
-			chordSet.add(Tone.tones[offset]);
+			chordSet.add(Tone.tones[(offset + base.getOrderNumberFromC())
+					% Tone.values().length]);
 		}
-		
+
 		return chordSet;
 	}
-	
+
 }

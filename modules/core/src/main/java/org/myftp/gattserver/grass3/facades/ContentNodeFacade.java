@@ -233,4 +233,23 @@ public enum ContentNodeFacade {
 
 	}
 
+	/**
+	 * Smaže obsah
+	 * 
+	 * @param contentNode
+	 *            uzel obsahu, který patří k tomuto obsahu
+	 * @return true pokud proběhla úprava úspěšně jinak false
+	 */
+	public boolean delete(ContentNodeDTO contentNodeDTO) {
+
+		// vymaž tagy
+		if (contentTagFacade.saveTags("", contentNodeDTO) == false)
+			return false;
+
+		// vymaž content node
+		ContentNodeDAO contentNodeDAO = new ContentNodeDAO();
+		return contentNodeDAO.delete(contentNodeDTO.getId());
+
+	}
+
 }

@@ -96,4 +96,29 @@ public class ContentNodeDAO extends AbstractDAO<ContentNode> {
 		}
 	}
 
+	public boolean delete(Long nodeId) {
+		Transaction tx = null;
+		openSession();
+		try {
+			tx = session.beginTransaction();
+			ContentNode contentNode = findByIdAndCast(entityClass, nodeId);
+			
+			Node node = contentNode.getParent();
+			node.getContentNodes().remove(contentNode);			
+			session.merge(node);
+			
+			session.delete(contentNode);
+			tx.commit();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (tx != null) {
+				tx.rollback();
+			}
+			return false;
+		} finally {
+			closeSession();
+		}
+	}
+
 }

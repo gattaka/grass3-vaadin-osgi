@@ -83,6 +83,28 @@ public enum ArticleFacade {
 	}
 
 	/**
+	 * Smaže článek
+	 * 
+	 * @param article
+	 *            článek ke smazání
+	 * @return {@code true} pokud se zdařilo smazat jiank {@code false}
+	 */
+	public boolean deleteArticle(ArticleDTO articleDTO) {
+
+		// smaž článek
+		ArticleDAO articleDAO = new ArticleDAO();
+		if (articleDAO.delete(articleDTO.getId()) == false)
+			return false;
+
+		// smaž jeho content node
+		ContentNodeDTO contentNodeDTO = articleDTO.getContentNode();
+		if (contentNodeFacade.delete(contentNodeDTO) == false)
+			return false;
+
+		return true;
+	}
+
+	/**
 	 * Upraví článek
 	 * 
 	 * @param name
@@ -101,6 +123,7 @@ public enum ArticleFacade {
 		// článek
 		ArticleDAO articleDAO = new ArticleDAO();
 		Article article = articleDAO.findByID(articleDTO.getId());
+		articleDAO.closeSession();
 
 		// nasetuj do něj vše potřebné
 		IContext context = processArticle(text);

@@ -104,6 +104,13 @@ public enum ContentTagFacade {
 		return true;
 	}
 
+	/**
+	 * Získej tag dle jeho jména
+	 * 
+	 * @param tagName
+	 *            jméno tagu
+	 * @return tag
+	 */
 	public ContentTagDTO getContentTagByName(String tagName) {
 
 		ContentTagDAO dao = new ContentTagDAO();

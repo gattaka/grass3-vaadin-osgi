@@ -24,10 +24,10 @@ public abstract class AbstractElementTree {
 	 */
 	public final void generate(IContext ctx) {
 		// Nejprve zapíše značky pro částečné úpravy
-		if (startPosition != null && endPosition != null)
-			ctx.print("<a class=\"quick_edit_position_link\" href=\"#\" onclick=\"quickedit(" + startPosition.getCol()
-					+ "," + startPosition.getLine() + "," + endPosition.getCol() + "," + endPosition.getLine()
-					+ ");\"><img src=\"/grass/img/tags/quickedit_16.png\"/></a>");
+//		if (startPosition != null && endPosition != null)
+//			ctx.print("<a class=\"quick_edit_position_link\" href=\"#\" onclick=\"quickedit(" + startPosition.getCol()
+//					+ "," + startPosition.getLine() + "," + endPosition.getCol() + "," + endPosition.getLine()
+//					+ ");\"><img src=\"/grass/img/tags/quickedit_16.png\"/></a>");
 
 		// Pak zavolá k provedení samotný element
 		generateElement(ctx);

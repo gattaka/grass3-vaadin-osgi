@@ -32,6 +32,7 @@ public class SubFactory extends StyleFactory {
 	public EditorButtonResources getEditorButtonResources() {
 		EditorButtonResources resources = new EditorButtonResources(TAG);
 		resources.setDescription("Sub");
+		resources.setTagFamily("Formátování");
 		return resources;
 	}
 

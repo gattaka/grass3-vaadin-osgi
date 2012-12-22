@@ -108,6 +108,7 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 
 		operationsListLayout = new CssLayout();
 		operationsLayout.addComponent(operationsListLayout);
+		operationsListLayout.addStyleName("tools_css_menu");
 
 	}
 

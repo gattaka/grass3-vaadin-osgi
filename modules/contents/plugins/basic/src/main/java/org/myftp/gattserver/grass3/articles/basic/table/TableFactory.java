@@ -4,7 +4,6 @@ import org.myftp.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
 
-
 /**
  * 
  * @author gatt
@@ -12,12 +11,12 @@ import org.myftp.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
 public class TableFactory implements IPluginFactory {
 
 	private final String withHeadTag = "HTABLE";
-	private final String withHeadImage = "/articles/basic/img/htbl_16.png";
+	private final String withHeadImage = "articles/basic/img/htbl_16.png";
 	private final String withoutHeadTag = "TABLE";
-	private final String withoutHeadImage = "/articles/basic/img/tbl_16.png";
+	private final String withoutHeadImage = "articles/basic/img/tbl_16.png";
 
 	private boolean withHead;
-	
+
 	private String tag;
 	private String image;
 
@@ -45,10 +44,8 @@ public class TableFactory implements IPluginFactory {
 		EditorButtonResources resources = new EditorButtonResources(tag);
 		resources.setImageName(image);
 		resources.setDescription("");
+		resources.setTagFamily("HTML");
 		return resources;
 	}
 
-	public String getTagFamily() {
-		return "HTML";
-	}
 }

@@ -28,11 +28,10 @@ public abstract class HeaderFactory implements IPluginFactory {
 	}
 
 	public EditorButtonResources getEditorButtonResources() {
-		return new EditorButtonResources(tagTemplate + level);
-	}
-
-	public String getTagFamily() {
-		return "Nadpisy";
+		EditorButtonResources resources = new EditorButtonResources(tagTemplate
+				+ level);
+		resources.setTagFamily("Nadpisy");
+		return resources;
 	}
 
 }

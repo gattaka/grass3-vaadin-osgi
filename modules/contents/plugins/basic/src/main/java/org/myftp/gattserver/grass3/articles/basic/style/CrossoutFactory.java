@@ -31,8 +31,9 @@ public class CrossoutFactory extends StyleFactory {
 
 	public EditorButtonResources getEditorButtonResources() {
 		EditorButtonResources resources = new EditorButtonResources(TAG);
-		resources.setImageName("/articles/basic/img/cross_16.png");
+		resources.setImageName("articles/basic/img/cross_16.png");
 		resources.setDescription("");
+		resources.setTagFamily("Formátování");
 		return resources;
 	}
 

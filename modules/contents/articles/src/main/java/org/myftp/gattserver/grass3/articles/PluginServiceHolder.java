@@ -47,11 +47,11 @@ public class PluginServiceHolder {
 		// existuje skupina ?
 		if (editorCatalog.containsKey(resources.getTagFamily())) {
 			editorCatalog.get(resources.getTagFamily()).put(
-					resources.getDescription(), resources);
+					resources.getTag(), resources);
 		} else {
 			// založ
 			Map<String, EditorButtonResources> map = new HashMap<String, EditorButtonResources>();
-			map.put(resources.getDescription(), resources);
+			map.put(resources.getTag(), resources);
 			editorCatalog.put(resources.getTagFamily(), map);
 		}
 	}
@@ -60,7 +60,7 @@ public class PluginServiceHolder {
 		if (editorCatalog.containsKey(resources.getTagFamily())) {
 			Map<String, EditorButtonResources> group = editorCatalog
 					.get(resources.getTagFamily());
-			if (group.remove(resources.getDescription()) != null
+			if (group.remove(resources.getTag()) != null
 					&& group.size() == 0)
 				editorCatalog.remove(resources.getTagFamily());
 		}

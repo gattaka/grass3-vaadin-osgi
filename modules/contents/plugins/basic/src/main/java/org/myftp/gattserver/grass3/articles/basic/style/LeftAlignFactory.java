@@ -31,8 +31,9 @@ public class LeftAlignFactory extends StyleFactory {
 
 	public EditorButtonResources getEditorButtonResources() {
 		EditorButtonResources resources = new EditorButtonResources(TAG);
-		resources.setImageName("/articles/basic/img/algnl_16.png");
+		resources.setImageName("articles/basic/img/algnl_16.png");
 		resources.setDescription("");
+		resources.setTagFamily("Formátování");
 		return resources;
 	}
 

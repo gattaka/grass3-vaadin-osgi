@@ -12,9 +12,9 @@ import org.myftp.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
 public class ListFactory implements IPluginFactory {
 
 	private final String unorderedTag = "UL";
-	private final String unorderedImage = "/articles/basic/img/ul_16.png";
+	private final String unorderedImage = "articles/basic/img/ul_16.png";
 	private final String orderedTag = "OL";
-	private final String orderedImage = "/articles/basic/img/ol_16.png";
+	private final String orderedImage = "articles/basic/img/ol_16.png";
 
 	private boolean ordered;
 	
@@ -45,10 +45,7 @@ public class ListFactory implements IPluginFactory {
 		EditorButtonResources resources = new EditorButtonResources(tag);
 		resources.setImageName(image);
 		resources.setDescription("");
+		resources.setTagFamily("HTML");
 		return resources;
-	}
-
-	public String getTagFamily() {
-		return "HTML";
 	}
 }

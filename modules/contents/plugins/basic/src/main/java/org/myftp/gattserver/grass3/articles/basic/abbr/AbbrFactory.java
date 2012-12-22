@@ -4,9 +4,6 @@ import org.myftp.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
 
-import com.vaadin.terminal.ThemeResource;
-
-
 /**
  * 
  * @author gatt
@@ -15,7 +12,7 @@ public class AbbrFactory implements IPluginFactory {
 
 	private final String tag = "ABBR";
 	private final String titleTag = "T";
-	private String image = "/articles/basic/img/abbr_16.png";
+	private String image = "articles/basic/img/abbr_16.png";
 
 	public String getTag() {
 		return tag;
@@ -30,15 +27,12 @@ public class AbbrFactory implements IPluginFactory {
 
 	public EditorButtonResources getEditorButtonResources() {
 		EditorButtonResources resources = new EditorButtonResources(tag);
-		resources.setImage(new ThemeResource(image));
+		resources.setImageName(image);
 		resources.setDescription("");
 		resources.setPrefix("[" + tag + "]");
 		resources.setSuffix("[" + titleTag + "][/" + titleTag + "][/" + tag
 				+ "]");
+		resources.setTagFamily("HTML");
 		return resources;
-	}
-
-	public String getTagFamily() {
-		return "HTML";
 	}
 }

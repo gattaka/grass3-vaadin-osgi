@@ -9,8 +9,9 @@ import com.vaadin.terminal.ThemeResource;
  * 
  * @author gatt
  */
-public class EditorButtonResources {
+public class EditorButtonResources implements Comparable<EditorButtonResources> {
 
+	private String tag;
 	private String tagFamily;
 	private String description;
 	private String prefix;
@@ -31,8 +32,9 @@ public class EditorButtonResources {
 	 * @param imageResource
 	 *            resource ikony pluginu
 	 */
-	public EditorButtonResources(String description, String prefix,
+	public EditorButtonResources(String tag, String description, String prefix,
 			String suffix, Resource imageResource) {
+		this.tag = tag;
 		this.description = description;
 		this.prefix = prefix;
 		this.suffix = suffix;
@@ -53,8 +55,9 @@ public class EditorButtonResources {
 	 * @param imageName
 	 *            název ikony pluginu (bude vzata z Theme resources)
 	 */
-	public EditorButtonResources(String description, String prefix,
+	public EditorButtonResources(String tag, String description, String prefix,
 			String suffix, String imageName) {
+		this.tag = tag;
 		this.description = description;
 		this.prefix = prefix;
 		this.suffix = suffix;
@@ -69,6 +72,7 @@ public class EditorButtonResources {
 	 * @param tag
 	 */
 	public EditorButtonResources(String tag) {
+		this.tag = tag;
 		this.description = tag;
 		this.prefix = '[' + tag + ']';
 		this.suffix = "[/" + tag + ']';
@@ -137,6 +141,31 @@ public class EditorButtonResources {
 
 	public void setSuffix(String suffix) {
 		this.suffix = suffix;
+	}
+
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+
+	public int compareTo(EditorButtonResources o) {
+		return tag.compareTo(o.getTag());
+	}
+
+	@Override
+	public int hashCode() {
+		return tag.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof EditorButtonResources) {
+			return tag.equals(((EditorButtonResources) obj).getTag());
+		} else
+			return false;
 	}
 
 }

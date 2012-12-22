@@ -1,7 +1,11 @@
 package org.myftp.gattserver.grass3.articles.windows;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.myftp.gattserver.grass3.articles.PluginServiceHolder;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
@@ -77,11 +81,31 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 		toolsLayout.removeAllComponents();
 
+		List<String> groups = new ArrayList<String>(PluginServiceHolder
+				.getInstance().getRegisteredGroups());
+		Collections.sort(groups, new Comparator<String>() {
+
+			// odolné vůči null
+			public int compare(String o1, String o2) {
+				if (o1 == null) {
+					if (o2 == null)
+						return 0; // stejné
+					else
+						return "".compareTo(o2); // první ber jako prázdný
+				} else {
+					if (o2 == null)
+						return o1.compareTo(""); // druhý ber jako prázdný
+					else
+						return o1.compareTo(o2); // ani jeden není null
+				}
+			}
+			
+		});
+
 		/**
 		 * Projdi zaregistrované pluginy a vytvoř menu nástrojů
 		 */
-		for (String group : PluginServiceHolder.getInstance()
-				.getRegisteredGroups()) {
+		for (String group : groups) {
 
 			VerticalLayout groupLayout = new VerticalLayout();
 			groupLayout.setWidth("100%");
@@ -89,28 +113,35 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 				groupLayout.addComponent(new Label("<h3>" + group + "</h3>",
 						Label.CONTENT_XHTML));
 			toolsLayout.addComponent(groupLayout);
-			
+
 			CssLayout groupToolsLayout = new CssLayout();
 			groupToolsLayout.addStyleName("tools_css_menu");
 			groupToolsLayout.setWidth("100%");
 			groupLayout.addComponent(groupToolsLayout);
 
+			List<EditorButtonResources> resourcesBundles = new ArrayList<EditorButtonResources>(
+					PluginServiceHolder.getInstance().getGroupTags(group));
+			Collections.sort(resourcesBundles);
+
 			final ReferenceHolder<EditorButtonResources> holder = new ReferenceHolder<EditorButtonResources>();
-			for (EditorButtonResources resources : PluginServiceHolder
-					.getInstance().getGroupTags(group)) {
+			for (EditorButtonResources resourceBundle : resourcesBundles) {
 
-				holder.setValue(resources);
+				holder.setValue(resourceBundle);
 
-				Button button = new Button(resources.getDescription());
-				button.setIcon(resources.getImage());
+				Button button = new Button(resourceBundle.getDescription());
+				button.setIcon(resourceBundle.getImage());
 				button.addListener(new Button.ClickListener() {
 
 					private static final long serialVersionUID = 607422393151282918L;
 
+					// potřeba, jinak se bude linkovat reference na poslední
+					// holder z vnější instance ;)
+					String prefix = holder.getValue().getPrefix();
+					String suffix = holder.getValue().getSuffix();
+
 					public void buttonClick(ClickEvent event) {
-						executeJavaScript("insert('"
-								+ holder.getValue().getPrefix() + "','"
-								+ holder.getValue().getSuffix() + "');");
+						executeJavaScript("insert('" + prefix + "','" + suffix
+								+ "');");
 					}
 				});
 				groupToolsLayout.addComponent(button);
@@ -179,6 +210,9 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 				boolean success;
 				Long id = null;
+				
+				// pokud se bude měnit
+				boolean oldMode = editMode;
 				if (editMode) {
 					success = articleFacade.modifyArticle(
 							String.valueOf(articleNameField.getValue()),
@@ -198,10 +232,10 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 				}
 
 				if (success) {
-					showInfo(editMode ? "Úprava článku proběhla úspěšně"
+					showInfo(oldMode ? "Úprava článku proběhla úspěšně"
 							: "Uložení článku proběhlo úspěšně");
 				} else {
-					showWarning(editMode ? "Úprava článku se nezdařila"
+					showWarning(oldMode ? "Úprava článku se nezdařila"
 							: "Uložení článku se nezdařilo");
 				}
 

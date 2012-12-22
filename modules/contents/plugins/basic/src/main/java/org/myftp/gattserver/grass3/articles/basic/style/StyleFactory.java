@@ -17,8 +17,4 @@ public abstract class StyleFactory implements IPluginFactory {
 	public String getTag() {
 		return tag;
 	}
-
-	public String getTagFamily() {
-		return "Formátování";
-	}
 }

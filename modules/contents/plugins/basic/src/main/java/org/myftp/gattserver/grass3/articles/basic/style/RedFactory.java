@@ -32,6 +32,7 @@ public class RedFactory extends StyleFactory {
 	public EditorButtonResources getEditorButtonResources() {
 		EditorButtonResources resources = new EditorButtonResources(TAG);
 		resources.setDescription("Červeně");
+		resources.setTagFamily("Formátování");
 		return resources;
 	}
 

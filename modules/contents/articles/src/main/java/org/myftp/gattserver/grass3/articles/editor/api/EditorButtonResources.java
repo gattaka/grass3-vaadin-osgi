@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.articles.editor.api;
 
 import com.vaadin.terminal.Resource;
+import com.vaadin.terminal.ThemeResource;
 
 /**
  * Třída obsahující všechny potřebné informace pro začlenění pluginu do UI
@@ -27,6 +28,8 @@ public class EditorButtonResources {
 	 * @param suffix
 	 *            koncový tag + (nepovinné) nějaké věci, které se mají vložit za
 	 *            označený text
+	 * @param imageResource
+	 *            resource ikony pluginu
 	 */
 	public EditorButtonResources(String description, String prefix,
 			String suffix, Resource imageResource) {
@@ -34,6 +37,28 @@ public class EditorButtonResources {
 		this.prefix = prefix;
 		this.suffix = suffix;
 		this.imageResource = imageResource;
+	}
+
+	/**
+	 * Default constructor
+	 * 
+	 * @param description
+	 *            nápis na vkládacím prvku v editoru (popisek tlačítka)
+	 * @param prefix
+	 *            počáteční tag + (nepovinné) nějaké věci, které se mají vložit
+	 *            před označený text
+	 * @param suffix
+	 *            koncový tag + (nepovinné) nějaké věci, které se mají vložit za
+	 *            označený text
+	 * @param imageName
+	 *            název ikony pluginu (bude vzata z Theme resources)
+	 */
+	public EditorButtonResources(String description, String prefix,
+			String suffix, String imageName) {
+		this.description = description;
+		this.prefix = prefix;
+		this.suffix = suffix;
+		this.imageResource = new ThemeResource(imageName);
 	}
 
 	/**
@@ -96,6 +121,10 @@ public class EditorButtonResources {
 
 	public void setImage(Resource image) {
 		this.imageResource = image;
+	}
+
+	public void setImageName(String imageName) {
+		this.imageResource = new ThemeResource(imageName);
 	}
 
 	public void setDescription(String description) {

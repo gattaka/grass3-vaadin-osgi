@@ -311,8 +311,6 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 				.append("head.appendChild(script);");
 		executeJavaScript(loadScript.toString());
 
-		articleTextArea.setValue("");
-
 		super.onShow();
 	}
 
@@ -339,6 +337,7 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 			category = nodeFacade.getNodeById(identifier.getId());
 			articleNameField.setValue("");
 			articleKeywords.setValue("");
+			articleTextArea.setValue("");
 		} else if (parts[0].equals(DefaultContentOperations.EDIT.toString())) {
 			editMode = true;
 			article = articleFacade.getArticleById(identifier.getId());

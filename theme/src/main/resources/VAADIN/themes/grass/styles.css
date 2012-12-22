@@ -290,3 +290,10 @@ h2 {
 	color: white;
 	text-shadow: #3B5A7A 0 1px 0;
 }
+
+/* ================= */
+/* CSS layout button */
+/* ================= */
+.v-csslayout.v-csslayout-tools_css_menu.tools_css_menu .v-button {
+	margin: 0 5px 5px 0;
+}

@@ -25,6 +25,7 @@ import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextArea;
@@ -44,7 +45,7 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 	private ArticleFacade articleFacade = ArticleFacade.INSTANCE;
 	private ContentTagFacade contentTagFacade = ContentTagFacade.INSTANCE;
 
-	private HorizontalLayout toolsLayout = new HorizontalLayout();
+	private VerticalLayout toolsLayout = new VerticalLayout();
 	private VerticalLayout editorTextLayout;
 	private final TextArea articleTextArea = new TextArea();
 	private final TextField articleKeywords = new TextField();
@@ -62,6 +63,7 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 		toolsPartLayout.addComponent(new Label("<h2>Nástroje</h2>",
 				Label.CONTENT_XHTML));
 		toolsPartLayout.addComponent(toolsLayout);
+		toolsLayout.setWidth("100%");
 	}
 
 	@Override
@@ -82,11 +84,15 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 				.getRegisteredGroups()) {
 
 			VerticalLayout groupLayout = new VerticalLayout();
+			groupLayout.setWidth("100%");
 			if (group != null)
 				groupLayout.addComponent(new Label("<h3>" + group + "</h3>",
 						Label.CONTENT_XHTML));
 			toolsLayout.addComponent(groupLayout);
-			HorizontalLayout groupToolsLayout = new HorizontalLayout();
+			
+			CssLayout groupToolsLayout = new CssLayout();
+			groupToolsLayout.addStyleName("tools_css_menu");
+			groupToolsLayout.setWidth("100%");
 			groupLayout.addComponent(groupToolsLayout);
 
 			final ReferenceHolder<EditorButtonResources> holder = new ReferenceHolder<EditorButtonResources>();

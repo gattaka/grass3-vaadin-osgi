@@ -19,7 +19,7 @@ import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
@@ -65,7 +65,7 @@ public class ArticlesViewerWindow extends ContentViewerWindow {
 	}
 
 	@Override
-	protected void updateOperationsList(HorizontalLayout operationsListLayout) {
+	protected void updateOperationsList(CssLayout operationsListLayout) {
 
 		// Uložit
 		Button saveButton = new Button("Upravit");

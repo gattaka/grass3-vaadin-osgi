@@ -5,29 +5,109 @@
 	<!-- Plugin služby -->
 	<!-- ============= -->
 
-	<!-- DEMO -->
 	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.AbbrPluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.CenterAlignPluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.LeftAlignPluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.RightAlignPluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.CrossoutPluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.Header1PluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.Header2PluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.Header3PluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.Header4PluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.HTablePluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.TablePluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.OListPluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.UListPluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.ImagePluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.ItalicPluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.StrongPluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.UnderlinePluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.MonospacePluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.RedPluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.SubPluginService" />
-		<bean class="org.myftp.gattserver.grass3.articles.basic.service.impl.SupPluginService" />
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.AbbrPluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.CenterAlignPluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.LeftAlignPluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.RightAlignPluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.CrossoutPluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.Header1PluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.Header2PluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.Header3PluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.Header4PluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.HTablePluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.TablePluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.OListPluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.UListPluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.ImagePluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.ItalicPluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.StrongPluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.UnderlinePluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.MonospacePluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.RedPluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.SubPluginService" />
+	</service>
+
+	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.basic.service.impl.SupPluginService" />
 	</service>
 
 </blueprint>

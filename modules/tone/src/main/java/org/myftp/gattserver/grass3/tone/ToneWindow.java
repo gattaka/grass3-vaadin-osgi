@@ -16,6 +16,10 @@ public class ToneWindow extends OneColumnWindow {
 	public static final String NAME = "tone";
 	private Label resultChordTones;
 
+	public ToneWindow() {
+		setName(NAME);
+	}
+
 	@Override
 	protected void createContent(VerticalLayout layout) {
 

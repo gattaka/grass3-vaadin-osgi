@@ -17,6 +17,7 @@ import org.myftp.gattserver.grass3.windows.template.TwoColumnWindow;
 import com.vaadin.terminal.DownloadStream;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -34,7 +35,7 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 	private Label contentCreationDateNameLabel;
 	private Label contentLastModificationDateLabel;
 	private HorizontalLayout tagsListLayout;
-	private HorizontalLayout operationsListLayout;
+	private CssLayout operationsListLayout;
 
 	public ContentViewerWindow(Class<? extends GrassWindow> contentViewerClass) {
 		this.contentViewerClass = contentViewerClass;
@@ -105,9 +106,8 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 		operationsLayout.addComponent(new Label("<h2>Operace s obsahem</h2>",
 				Label.CONTENT_XHTML));
 
-		operationsListLayout = new HorizontalLayout();
+		operationsListLayout = new CssLayout();
 		operationsLayout.addComponent(operationsListLayout);
-		operationsListLayout.setSpacing(true);
 
 	}
 
@@ -213,5 +213,5 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 	}
 
 	protected abstract void updateOperationsList(
-			HorizontalLayout operationsListLayout);
+			CssLayout operationsListLayout);
 }

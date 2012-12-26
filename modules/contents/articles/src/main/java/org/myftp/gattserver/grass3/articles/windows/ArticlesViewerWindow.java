@@ -37,6 +37,44 @@ public class ArticlesViewerWindow extends ContentViewerWindow {
 	}
 
 	@Override
+	protected void onShow() {
+		super.onShow();
+
+		// CSS resources
+		for (String css : article.getPluginCSSResources()) {
+
+			// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
+			// obejít problém se závislosí pluginů na úložišti theme apod. a
+			// přitom umožnit aby se CSS odkazovali na externí zdroje
+			if (!css.toLowerCase().startsWith("http://"))
+				css = "/VAADIN/themes/grass/" + css;
+
+			StringBuilder loadStylesheet = new StringBuilder();
+			loadStylesheet
+					.append("var head= document.getElementsByTagName('head')[0];")
+					.append("var link= document.createElement('link');")
+					.append("link.type= 'text/css';")
+					.append("link.rel= 'stylesheet';")
+					.append("link.href= '" + css + "';")
+					.append("head.appendChild(link);");
+			executeJavaScript(loadStylesheet.toString());
+		}
+
+		// JS resources
+		for (String js : article.getPluginJSResources()) {
+			StringBuilder loadScript = new StringBuilder();
+			loadScript
+					.append("var head= document.getElementsByTagName('head')[0];")
+					.append("var script= document.createElement('script');")
+					.append("script.type= 'text/javascript';")
+					.append("script.src= '" + js + "';")
+					.append("head.appendChild(script);");
+			executeJavaScript(loadScript.toString());
+		}
+
+	}
+
+	@Override
 	public DownloadStream handleURI(URL context, String relativeUri) {
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
@@ -47,10 +85,11 @@ public class ArticlesViewerWindow extends ContentViewerWindow {
 		article = articleFacade.getArticleById(identifier.getId());
 		if (article == null)
 			showError404();
-		
+
 		articleContentLabel.setValue(article.getOutputHTML());
 
 		return super.handleURI(context, relativeUri);
+
 	}
 
 	@Override
@@ -144,7 +183,7 @@ public class ArticlesViewerWindow extends ContentViewerWindow {
 							};
 							ArticlesViewerWindow.this.addWindow(warnSubwindow);
 						}
-						
+
 						// zavři původní confirm okno
 						getParent().removeWindow(this);
 

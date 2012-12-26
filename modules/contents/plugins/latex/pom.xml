@@ -5,7 +5,7 @@
 	<artifactId>articles-latex</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
-	<name>GRASS Articles editor LaTeX plugin</name>
+	<name>GRASS3 Articles editor LaTeX plugin</name>
 	<description>Podpora LaTeX obsahu do článků</description>
 
 	<properties>

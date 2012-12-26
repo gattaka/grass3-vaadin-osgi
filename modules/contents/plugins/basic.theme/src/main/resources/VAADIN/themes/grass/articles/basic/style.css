@@ -1,0 +1,25 @@
+.articles-basic-h1 {
+	font-size: 15pt;
+	padding-bottom: 4px;
+	margin-bottom: 10px;
+	border-bottom: 1px #BBB solid;
+}
+
+.articles-basic-h2 {
+	font-size: 13pt;
+	padding-bottom: 4px;
+	margin-bottom: 10px;
+}
+
+.articles-basic-h3 {
+	font-size: 11pt;
+	padding-bottom: 4px;
+	margin-bottom: 10px;
+	border-bottom: 1px #BBB solid;
+}
+
+.articles-basic-h4 {
+	font-size: 11pt;
+	padding-bottom: 4px;
+	margin-bottom: 10px;
+}

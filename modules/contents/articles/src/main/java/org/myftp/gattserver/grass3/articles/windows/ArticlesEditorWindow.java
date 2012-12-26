@@ -99,7 +99,7 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 						return o1.compareTo(o2); // ani jeden není null
 				}
 			}
-			
+
 		});
 
 		/**
@@ -174,6 +174,7 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 				Label.CONTENT_XHTML));
 		articleContentLayout.addComponent(articleTextArea);
 		articleTextArea.setSizeFull();
+		articleTextArea.setRows(30);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);
@@ -210,7 +211,7 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 				boolean success;
 				Long id = null;
-				
+
 				// pokud se bude měnit
 				boolean oldMode = editMode;
 				if (editMode) {
@@ -278,17 +279,7 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 						private static final long serialVersionUID = -4517297931117830104L;
 
 						protected void onProceed(ClickEvent event) {
-							ArticlesEditorWindow.this
-									.open(new ExternalResource(
-											ArticlesEditorWindow.this
-													.getWindow(
-															ArticlesViewerWindow.class)
-													.getURL()
-													+ URLIdentifierUtils
-															.createURLIdentifier(
-																	articleId,
-																	String.valueOf(articleNameField
-																			.getValue()))));
+							returnToArticle(articleId);
 						};
 					};
 					addWindow(infoSubwindow);
@@ -318,13 +309,13 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 					@Override
 					protected void onConfirm(ClickEvent event) {
-						ArticlesEditorWindow.this.open(new ExternalResource(
-								ArticlesEditorWindow.this.getWindow(
-										CategoryWindow.class).getURL()
-										+ URLIdentifierUtils
-												.createURLIdentifier(
-														category.getId(),
-														category.getName())));
+						// ruším úpravu existujícího článku (vracím se na
+						// článek), nebo nového (vracím se do kategorie) ?
+						if (editMode) {
+							returnToArticle();
+						} else {
+							returnToCategory();
+						}
 					}
 				};
 				addWindow(confirmSubwindow);
@@ -333,6 +324,35 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 		});
 		buttonLayout.addComponent(cancelButton);
+	}
+
+	/**
+	 * Zavolá vrácení se na článek dle daného id (nový článek, upravovaný článek...)
+	 */
+	private void returnToArticle(Long articleId) {
+		ArticlesEditorWindow.this.open(new ExternalResource(
+				ArticlesEditorWindow.this.getWindow(ArticlesViewerWindow.class)
+						.getURL()
+						+ URLIdentifierUtils.createURLIdentifier(articleId,
+								article.getContentNode().getName())));
+	}
+
+	/**
+	 * Zavolá vrácení se na upravovaný článek
+	 */
+	private void returnToArticle() {
+		returnToArticle(article.getId());
+	}
+
+	/**
+	 * zavolání vrácení se na kategorii
+	 */
+	private void returnToCategory() {
+		ArticlesEditorWindow.this.open(new ExternalResource(
+				ArticlesEditorWindow.this.getWindow(CategoryWindow.class)
+						.getURL()
+						+ URLIdentifierUtils.createURLIdentifier(
+								category.getId(), category.getName())));
 	}
 
 	@Override

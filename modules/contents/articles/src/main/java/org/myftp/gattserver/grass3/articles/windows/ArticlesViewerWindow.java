@@ -62,6 +62,13 @@ public class ArticlesViewerWindow extends ContentViewerWindow {
 
 		// JS resources
 		for (String js : article.getPluginJSResources()) {
+
+			// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
+			// obejít problém se závislosí pluginů na úložišti theme apod. a
+			// přitom umožnit aby se JS odkazovali na externí zdroje
+			if (!js.toLowerCase().startsWith("http://"))
+				js = "/VAADIN/themes/grass/" + js;
+
 			StringBuilder loadScript = new StringBuilder();
 			loadScript
 					.append("var head= document.getElementsByTagName('head')[0];")

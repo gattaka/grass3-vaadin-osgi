@@ -12,6 +12,7 @@
         <module>basic</module>
         <module>basic.theme</module>
         <module>latex</module>
+        <module>code</module>
 	</modules>
 
 </project>

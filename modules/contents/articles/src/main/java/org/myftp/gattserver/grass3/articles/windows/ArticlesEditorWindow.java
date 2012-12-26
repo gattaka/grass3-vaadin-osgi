@@ -3,6 +3,7 @@ package org.myftp.gattserver.grass3.articles.windows;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -13,8 +14,10 @@ import org.myftp.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import org.myftp.gattserver.grass3.articles.facade.ArticleFacade;
 import org.myftp.gattserver.grass3.facades.ContentTagFacade;
 import org.myftp.gattserver.grass3.facades.NodeFacade;
+import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
@@ -32,9 +35,11 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 public class ArticlesEditorWindow extends TwoColumnWindow {
 
@@ -150,9 +155,7 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 	}
 
-	private void updateEditorTextPart() {
-
-		editorTextLayout.removeAllComponents();
+	private void updateContentNamePart() {
 
 		VerticalLayout articleNameLayout = new VerticalLayout();
 		editorTextLayout.addComponent(articleNameLayout);
@@ -161,12 +164,93 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 		articleNameLayout.addComponent(articleNameField);
 		articleNameField.setWidth("100%");
 
+	}
+
+	private void updateContentKeywordsPart() {
+
 		VerticalLayout articleKeywordsLayout = new VerticalLayout();
 		editorTextLayout.addComponent(articleKeywordsLayout);
+
+		// label
 		articleKeywordsLayout.addComponent(new Label("<h2>Klíčová slova</h2>",
 				Label.CONTENT_XHTML));
-		articleKeywordsLayout.addComponent(articleKeywords);
+
+		// menu tagů + textfield tagů
+		HorizontalLayout keywordsMenuAndTextLayout = new HorizontalLayout();
+		keywordsMenuAndTextLayout.setWidth("100%");
+		keywordsMenuAndTextLayout.setSpacing(true);
+		articleKeywordsLayout.addComponent(keywordsMenuAndTextLayout);
+
+		// menu
+		keywordsMenuAndTextLayout.addComponent(new Button("Vybrat",
+				new Button.ClickListener() {
+
+					private static final long serialVersionUID = -3160636656140236427L;
+
+					public void buttonClick(ClickEvent event) {
+
+						final Window keywordsMenuSubwindow = new GrassSubWindow(
+								"Vybrat klíčová slova");
+						VerticalLayout subWindowLayout = (VerticalLayout) keywordsMenuSubwindow
+								.getContent();
+						subWindowLayout.setSpacing(true);
+						subWindowLayout.setMargin(true);
+
+						final ListSelect list = new ListSelect();
+						list.setWidth("100%");
+						list.setRows(10);
+						list.setNullSelectionAllowed(true);
+						list.setMultiSelect(true);
+						list.setImmediate(true);
+
+						for (ContentTagDTO contentTag : contentTagFacade
+								.getAllContentTags()) {
+							list.addItem(contentTag);
+							list.setItemCaption(contentTag,
+									contentTag.getName());
+						}
+
+						keywordsMenuSubwindow.addComponent(list);
+						keywordsMenuSubwindow.addComponent(new Button("Přidat",
+								new Button.ClickListener() {
+
+									private static final long serialVersionUID = -4544649471207273304L;
+
+									public void buttonClick(ClickEvent event) {
+
+										@SuppressWarnings("unchecked")
+										Collection<ContentTagDTO> values = (Collection<ContentTagDTO>) list
+												.getValue();
+										StringBuffer stringBuffer = new StringBuffer();
+										String oldValue = (String) articleKeywords
+												.getValue();
+										stringBuffer.append(oldValue);
+										for (ContentTagDTO tagDTO : values) {
+											if (stringBuffer.length() != 0)
+												stringBuffer.append(", ");
+											stringBuffer.append(tagDTO
+													.getName());
+										}
+										articleKeywords.setValue(stringBuffer
+												.toString());
+
+										removeWindow(keywordsMenuSubwindow);
+
+									}
+								}));
+
+						addWindow(keywordsMenuSubwindow);
+					}
+				}));
+
+		// textfield
+		keywordsMenuAndTextLayout.addComponent(articleKeywords);
+		keywordsMenuAndTextLayout.setExpandRatio(articleKeywords, 1);
 		articleKeywords.setWidth("100%");
+
+	}
+
+	private void updateContentTextPart() {
 
 		VerticalLayout articleContentLayout = new VerticalLayout();
 		editorTextLayout.addComponent(articleContentLayout);
@@ -175,6 +259,21 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 		articleContentLayout.addComponent(articleTextArea);
 		articleTextArea.setSizeFull();
 		articleTextArea.setRows(30);
+
+	}
+
+	private void updateEditorTextPart() {
+
+		editorTextLayout.removeAllComponents();
+
+		// název článku
+		updateContentNamePart();
+
+		// klíčová slova
+		updateContentKeywordsPart();
+
+		// text
+		updateContentTextPart();
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);
@@ -327,7 +426,8 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 	}
 
 	/**
-	 * Zavolá vrácení se na článek dle daného id (nový článek, upravovaný článek...)
+	 * Zavolá vrácení se na článek dle daného id (nový článek, upravovaný
+	 * článek...)
 	 */
 	private void returnToArticle(Long articleId) {
 		ArticlesEditorWindow.this.open(new ExternalResource(

@@ -50,7 +50,6 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 	protected void createLeftColumnContent(VerticalLayout layout) {
 
 		layout.setMargin(true);
-//		layout.setSpacing(true);
 
 		// info - přehled
 		VerticalLayout infoLayout = new VerticalLayout();
@@ -157,7 +156,7 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 		breadcrumbElements.add(new BreadcrumbElement(content.getName(),
 				new ExternalResource(getWindow(contentViewerClass).getURL()
 						+ URLIdentifierUtils.createURLIdentifier(
-								content.getId(), content.getName()))));
+								content.getContentID(), content.getName()))));
 
 		/**
 		 * kategorie

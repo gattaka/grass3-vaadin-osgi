@@ -206,8 +206,6 @@ public class HomeWindow extends OneColumnWindow {
 			}
 		});
 
-		// TODO link na seznam obsahů s tímto tagem !
-
 		for (ContentTagDTO contentTag : contentTags) {
 			int size = sizeTable.get(contentTag.getContentNodes().size());
 			Label tagLabel;

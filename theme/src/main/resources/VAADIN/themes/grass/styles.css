@@ -1,4 +1,4 @@
-/* Vych��z��m z existuj��c��ho theme Vaadin */
+/* Vychazim existujiciho theme Vaadin */
 @import "../reindeer/styles.css";
 
 h2 {
@@ -12,7 +12,7 @@ h2 {
 }
 
 /* ====== */
-/* Pozad�� */
+/* Pozadi */
 /* ====== */
 .background_layout {
 	background: url("img/bgr2.png");
@@ -39,7 +39,7 @@ h2 {
 }
 
 /* ====== */
-/* Hl����ky */
+/* Hlasky */
 /* ====== */
 .v-link.v-link-quotes.quotes a span {
 	text-decoration: none;
@@ -140,7 +140,7 @@ h2 {
 }
 
 /* ============= */
-/* Kulat�� okraje */
+/* Kulate okraje */
 /* ============= */
 
 /* ---- Top ---- */
@@ -296,4 +296,33 @@ h2 {
 /* ================= */
 .v-csslayout.v-csslayout-tools_css_menu.tools_css_menu .v-button {
 	margin: 0 5px 5px 0;
+}
+
+/* ====================== */
+/* Tagy a jejich tagcloud */
+/* ====================== */
+.v-csslayout.v-csslayout-tagcloud.tagcloud {
+	
+}
+
+.v-label.v-label-taglabel.taglabel.v-label-undef-w {
+	display: inline-block;
+	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
+		"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+	margin-right: 10px;
+	margin-bottom: 10px;
+}
+
+.v-label.v-label-taglabel.taglabel.v-label-undef-w a {
+	text-decoration: none;
+	color: #1B699F
+}
+
+.v-label.v-label-taglabel.taglabel.v-label-undef-w a:VISITED {
+	color: #1B699F
+}
+
+.v-label.v-label-taglabel.taglabel.v-label-undef-w a:HOVER {
+	color: #1B699F;
+	text-decoration: underline;
 }

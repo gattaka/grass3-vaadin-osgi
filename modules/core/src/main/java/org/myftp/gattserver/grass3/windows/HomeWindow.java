@@ -15,8 +15,7 @@ import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.windows.template.ContentsTable;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
@@ -47,7 +46,7 @@ public class HomeWindow extends OneColumnWindow {
 	private final ContentsTable favouritesContentsTable = new ContentsTable();
 	private final ContentsTable recentAddedContentsTable = new ContentsTable();
 	private final ContentsTable recentModifiedContentsTable = new ContentsTable();
-	private final HorizontalLayout tagCloud = new HorizontalLayout();
+	private final CssLayout tagCloud = new CssLayout();
 
 	public HomeWindow() {
 		setName(NAME);
@@ -67,7 +66,6 @@ public class HomeWindow extends OneColumnWindow {
 					Label.CONTENT_XHTML));
 			favouritesLayout.addComponent(favouritesContentsTable);
 			favouritesContentsTable.setWidth("100%");
-//			favouritesContentsTable.setHeight("60px");
 			layout.addComponent(favouritesLayout);
 		}
 
@@ -77,7 +75,6 @@ public class HomeWindow extends OneColumnWindow {
 				"<h2>Nedávno přidané obsahy</h2>", Label.CONTENT_XHTML));
 		recentAddedLayout.addComponent(recentAddedContentsTable);
 		recentAddedContentsTable.setWidth("100%");
-//		recentAddedContentsTable.setHeight("60px");
 		layout.addComponent(recentAddedLayout);
 
 		// Nedávno upravené obsahy
@@ -86,7 +83,6 @@ public class HomeWindow extends OneColumnWindow {
 				"<h2>Nedávno upravené obsahy</h2>", Label.CONTENT_XHTML));
 		recentModifiedLayout.addComponent(recentModifiedContentsTable);
 		recentModifiedContentsTable.setWidth("100%");
-//		recentModifiedContentsTable.setHeight("60px");
 		layout.addComponent(recentModifiedLayout);
 
 		// Tag-cloud
@@ -130,12 +126,12 @@ public class HomeWindow extends OneColumnWindow {
 
 		tagCloud.removeAllComponents();
 		tagCloud.setSizeFull();
-		tagCloud.setSpacing(true);
+		tagCloud.addStyleName("tagcloud");
+		tagCloud.setWidth("100%");
 
 		if (contentTags.isEmpty()) {
 			Label noTagsLabel = new Label("Nebyly nalezeny žádné tagy");
 			tagCloud.addComponent(noTagsLabel);
-			tagCloud.setComponentAlignment(noTagsLabel, Alignment.MIDDLE_CENTER);
 		}
 
 		/**
@@ -214,11 +210,14 @@ public class HomeWindow extends OneColumnWindow {
 
 		for (ContentTagDTO contentTag : contentTags) {
 			int size = sizeTable.get(contentTag.getContentNodes().size());
-			tagCloud.addComponent(new Label("<a href='"
+			Label tagLabel;
+			tagCloud.addComponent(tagLabel = new Label("<a href='"
 					+ getWindow(TagWindow.class).getURL()
 					+ contentTag.getName() + "' style='font-size:" + size
 					+ "pt'>" + contentTag.getName() + "</a>",
 					Label.CONTENT_XHTML));
+			tagLabel.addStyleName("taglabel");
+			tagLabel.setSizeUndefined();
 		}
 
 	}

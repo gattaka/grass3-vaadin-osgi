@@ -1,6 +1,6 @@
 package org.myftp.gattserver.grass3.articles.util;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.articles.domain.Article;
@@ -30,12 +30,12 @@ public enum ArticlesMapper {
 		articleDTO.setId(article.getId());
 		articleDTO.setOutputHTML(article.getOutputHTML());
 
-		Set<String> pluginCSSResources = new HashSet<String>();
+		Set<String> pluginCSSResources = new LinkedHashSet<String>();
 		for (String resource : article.getPluginCSSResources()) {
 			pluginCSSResources.add(resource);
 		}
 		articleDTO.setPluginCSSResources(pluginCSSResources);
-		Set<String> pluginJSResources = new HashSet<String>();
+		Set<String> pluginJSResources = new LinkedHashSet<String>();
 		for (String resource : article.getPluginJSResources()) {
 			pluginJSResources.add(resource);
 		}

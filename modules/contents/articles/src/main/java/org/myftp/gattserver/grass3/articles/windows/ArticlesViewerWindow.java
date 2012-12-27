@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.articles.windows;
 
 import java.net.URL;
+import java.util.Set;
 
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.articles.facade.ArticleFacade;
@@ -37,6 +38,25 @@ public class ArticlesViewerWindow extends ContentViewerWindow {
 	}
 
 	@Override
+	protected void submitInitJS(Set<String> initJS) {
+		super.submitInitJS(initJS);
+
+		// JS resources
+		for (String js : article.getPluginJSResources()) {
+
+			// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
+			// obejít problém se závislosí pluginů na úložišti theme apod. a
+			// přitom umožnit aby se JS odkazovali na externí zdroje
+			if (!js.toLowerCase().startsWith("http://"))
+				js = "/VAADIN/themes/grass/" + js;
+
+			initJS.add(js);
+
+		}
+
+	}
+
+	@Override
 	protected void onShow() {
 		super.onShow();
 
@@ -58,25 +78,6 @@ public class ArticlesViewerWindow extends ContentViewerWindow {
 					.append("link.href= '" + css + "';")
 					.append("head.appendChild(link);");
 			executeJavaScript(loadStylesheet.toString());
-		}
-
-		// JS resources
-		for (String js : article.getPluginJSResources()) {
-
-			// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
-			// obejít problém se závislosí pluginů na úložišti theme apod. a
-			// přitom umožnit aby se JS odkazovali na externí zdroje
-			if (!js.toLowerCase().startsWith("http://"))
-				js = "/VAADIN/themes/grass/" + js;
-
-			StringBuilder loadScript = new StringBuilder();
-			loadScript
-					.append("var head= document.getElementsByTagName('head')[0];")
-					.append("var script= document.createElement('script');")
-					.append("script.type= 'text/javascript';")
-					.append("script.src= '" + js + "';")
-					.append("head.appendChild(script);");
-			executeJavaScript(loadScript.toString());
 		}
 
 	}

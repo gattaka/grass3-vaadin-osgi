@@ -1,6 +1,8 @@
 package org.myftp.gattserver.grass3.windows.template;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.facades.NodeFacade;
@@ -39,8 +41,57 @@ public abstract class BaseWindow extends BackgroundWindow {
 	private HorizontalLayout userMenuLayout = new HorizontalLayout();
 	private Link quotes;
 
+	private Set<String> initJS = new LinkedHashSet<String>();
+
+	/**
+	 * Přihlásí skripty
+	 * 
+	 * @param initJS
+	 */
+	protected void submitInitJS(Set<String> initJS) {
+		initJS.add("/VAADIN/themes/grass/js/grass.js");
+	}
+
+	/**
+	 * Vezme všechen nahlášený JS init obsah a provede ho (kaskádově s ohledem
+	 * na závislosti)
+	 */
+	private void gatherInitJS() {
+
+		StringBuilder loadScript = new StringBuilder();
+
+		// nejprve jQuery
+		loadScript
+				.append("var head= document.getElementsByTagName('head')[0];")
+				.append("var script= document.createElement('script');")
+				.append("script.type= 'text/javascript';")
+				.append("script.src= '/VAADIN/themes/grass/js/jquery.js';")
+				.append("var callback = function() {");
+
+		// ostatní JS už lze nahrávat pomocí jQuery
+		for (String js : initJS) {
+			loadScript.append("$.getScript('" + js + "', function(){");
+		}
+		// uzavřít
+		for (int i = 0; i < initJS.size(); i++) {
+			loadScript.append("});");
+		}
+
+		// konec jQuery
+		loadScript.append("};").append("script.onreadystatechange = callback;")
+				.append("script.onload = callback;")
+				.append("head.appendChild(script);");
+
+		// fire !
+		executeJavaScript(loadScript.toString());
+
+	}
+
 	@Override
 	protected void onShow() {
+
+		submitInitJS(initJS);
+		gatherInitJS();
 
 		// update menu sekcí
 		populateSectionsMenu();
@@ -51,25 +102,6 @@ public abstract class BaseWindow extends BackgroundWindow {
 		// update hlášek
 		quotes.setCaption(chooseQuote());
 
-		// jQuery
-		StringBuilder loadScript = new StringBuilder();
-		loadScript
-				.append("var head= document.getElementsByTagName('head')[0];")
-				.append("var script= document.createElement('script');")
-				.append("script.type= 'text/javascript';")
-				.append("script.src= '/VAADIN/themes/grass/js/jquery.js';")
-				.append("head.appendChild(script);");
-		executeJavaScript(loadScript.toString());
-
-		// grassJS
-		loadScript = new StringBuilder();
-		loadScript
-				.append("var head= document.getElementsByTagName('head')[0];")
-				.append("var script= document.createElement('script');")
-				.append("script.type= 'text/javascript';")
-				.append("script.src= '/VAADIN/themes/grass/js/grass.js';")
-				.append("head.appendChild(script);");
-		executeJavaScript(loadScript.toString());
 	}
 
 	private void populateSectionsMenu() {

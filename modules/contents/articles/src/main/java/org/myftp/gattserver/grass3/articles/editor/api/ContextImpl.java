@@ -1,6 +1,6 @@
 package org.myftp.gattserver.grass3.articles.editor.api;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.articles.parser.interfaces.IContext;
@@ -24,8 +24,8 @@ public class ContextImpl implements IContext {
 	/**
 	 * Dodatečné zdroj vyžadované pluginy
 	 */
-	private Set<String> cssResources = new HashSet<String>();
-	private Set<String> jsResources = new HashSet<String>();
+	private Set<String> cssResources = new LinkedHashSet<String>();
+	private Set<String> jsResources = new LinkedHashSet<String>();
 
 	public ContextImpl() {
 		this.out = new StringBuilder();

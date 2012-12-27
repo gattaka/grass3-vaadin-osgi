@@ -13,6 +13,7 @@
         <module>basic.theme</module>
         <module>latex</module>
         <module>code</module>
+        <module>favlink</module>
 	</modules>
 
 </project>

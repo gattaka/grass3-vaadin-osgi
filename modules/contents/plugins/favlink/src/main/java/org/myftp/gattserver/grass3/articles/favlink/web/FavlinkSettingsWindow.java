@@ -1,8 +1,8 @@
-package org.myftp.gattserver.grass3.articles.latex.web;
+package org.myftp.gattserver.grass3.articles.favlink.web;
 
 import javax.xml.bind.JAXBException;
 
-import org.myftp.gattserver.grass3.articles.latex.config.LatexConfiguration;
+import org.myftp.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
 import org.myftp.gattserver.grass3.config.ConfigurationFileError;
 import org.myftp.gattserver.grass3.config.ConfigurationManager;
 import org.myftp.gattserver.grass3.config.ConfigurationUtils;
@@ -14,14 +14,14 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-public class LatexSettingsWindow extends SettingsWindow {
+public class FavlinkSettingsWindow extends SettingsWindow {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
 	private VerticalLayout settingsLayout = new VerticalLayout();
 
-	public LatexSettingsWindow() {
-		setName("latex-settings");
+	public FavlinkSettingsWindow() {
+		setName("favlink-settings");
 	}
 
 	@Override
@@ -33,10 +33,11 @@ public class LatexSettingsWindow extends SettingsWindow {
 
 	}
 
-	private LatexConfiguration loadConfiguration() {
+	private FavlinkConfiguration loadConfiguration() {
 		try {
-			return new ConfigurationUtils<LatexConfiguration>(
-					new LatexConfiguration(), LatexConfiguration.CONFIG_PATH)
+			return new ConfigurationUtils<FavlinkConfiguration>(
+					new FavlinkConfiguration(),
+					FavlinkConfiguration.CONFIG_PATH)
 					.loadExistingOrCreateNewConfiguration();
 		} catch (JAXBException e) {
 			e.printStackTrace();
@@ -45,10 +46,10 @@ public class LatexSettingsWindow extends SettingsWindow {
 		}
 	}
 
-	private void storeConfiguration(LatexConfiguration configuration) {
+	private void storeConfiguration(FavlinkConfiguration configuration) {
 		try {
 			ConfigurationManager.getInstance().storeConfiguration(
-					LatexConfiguration.CONFIG_PATH, configuration);
+					FavlinkConfiguration.CONFIG_PATH, configuration);
 		} catch (ConfigurationFileError e) {
 			e.printStackTrace();
 			showError500();
@@ -61,7 +62,7 @@ public class LatexSettingsWindow extends SettingsWindow {
 	@Override
 	protected void onShow() {
 
-		final LatexConfiguration configuration = loadConfiguration();
+		final FavlinkConfiguration configuration = loadConfiguration();
 
 		settingsLayout.removeAllComponents();
 		settingsLayout.addComponent(new Label("<h2>Nastavení</h2>",

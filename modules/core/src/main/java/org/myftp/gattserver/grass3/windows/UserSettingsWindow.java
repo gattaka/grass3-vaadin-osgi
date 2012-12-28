@@ -129,7 +129,7 @@ public class UserSettingsWindow extends SettingsWindow {
 			public void buttonClick(ClickEvent event) {
 				user.setConfirmed(true);
 				if (userFacade.activateUser(user)) {
-					showNotification("Uživatel '" + user.getName()
+					showInfo("Uživatel '" + user.getName()
 							+ "' byl úspěšně aktivován");
 					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ)
 							.setValue(user.isConfirmed());
@@ -155,7 +155,7 @@ public class UserSettingsWindow extends SettingsWindow {
 			public void buttonClick(ClickEvent event) {
 				user.setConfirmed(false);
 				if (userFacade.banUser(user)) {
-					showNotification("Uživatel '" + user.getName()
+					showInfo("Uživatel '" + user.getName()
 							+ "' byl úspěšně zablokován");
 					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ)
 							.setValue(user.isConfirmed());
@@ -211,13 +211,12 @@ public class UserSettingsWindow extends SettingsWindow {
 
 					public void buttonClick(ClickEvent event) {
 						if (userFacade.changeUserRoles(user)) {
-							showNotification("Oprávnění uživatele '"
+							showInfo("Oprávnění uživatele '"
 									+ user.getName() + "' byly úspěšně upraven");
 							userTable.getContainerProperty(user, ColumnId.ROLE)
 									.setValue(user.getRoles());
 							userTable.unselect(user);
 							userTable.select(user);
-							// removeWindow(subwindow);
 						} else {
 							showError("Nezdařilo se uložit úpravy provedené na uživateli '"
 									+ user.getName() + "'");

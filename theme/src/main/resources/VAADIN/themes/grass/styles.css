@@ -291,18 +291,22 @@ h2 {
 	text-shadow: #3B5A7A 0 1px 0;
 }
 
-/* ================= */
-/* CSS layout button */
-/* ================= */
+/* ================ */
+/* CSS layout prvky */
+/* ================ */
 .v-csslayout.v-csslayout-tools_css_menu.tools_css_menu .v-button {
 	margin: 0 5px 5px 0;
+}
+
+.v-label.v-label-msglabel.msglabel,.v-embedded.v-embedded-image.msgimg {
+	display: inline-block;
 }
 
 /* ====================== */
 /* Tagy a jejich tagcloud */
 /* ====================== */
-
-.v-label.v-label-taglabel.taglabel.v-label-undef-w, .v-link.v-link-taglabel.taglabel {
+.v-label.v-label-taglabel.taglabel.v-label-undef-w,.v-link.v-link-taglabel.taglabel
+	{
 	display: inline-block;
 	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
 		"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
@@ -310,16 +314,19 @@ h2 {
 	margin-bottom: 10px;
 }
 
-.v-label.v-label-taglabel.taglabel.v-label-undef-w a, .v-link.v-link-taglabel.taglabel a span {
+.v-label.v-label-taglabel.taglabel.v-label-undef-w a,.v-link.v-link-taglabel.taglabel a span
+	{
 	text-decoration: none;
 	color: #1B699F
 }
 
-.v-label.v-label-taglabel.taglabel.v-label-undef-w a:VISITED, .v-link.v-link-taglabel.taglabel a:VISITED {
+.v-label.v-label-taglabel.taglabel.v-label-undef-w a:VISITED,.v-link.v-link-taglabel.taglabel a:VISITED
+	{
 	color: #1B699F
 }
 
-.v-label.v-label-taglabel.taglabel.v-label-undef-w a:HOVER, .v-link.v-link-taglabel.taglabel a:HOVER {
+.v-label.v-label-taglabel.taglabel.v-label-undef-w a:HOVER,.v-link.v-link-taglabel.taglabel a:HOVER
+	{
 	color: #1B699F;
 	text-decoration: underline;
 }

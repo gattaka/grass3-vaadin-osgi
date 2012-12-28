@@ -79,7 +79,9 @@ public class ContentsTable extends Table {
 			item.getItemProperty(ColumnId.DATUM_VYTVOŘENÍ).setValue(
 					dateFormat.format(contentNode.getCreationDate()));
 			item.getItemProperty(ColumnId.DATUM_ÚPRAVY).setValue(
-					dateFormat.format(contentNode.getLastModificationDate()));
+					contentNode.getLastModificationDate() == null ? ""
+							: dateFormat.format(contentNode
+									.getLastModificationDate()));
 
 			Embedded icon = new Embedded();
 			if (contentService == null) {

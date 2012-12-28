@@ -4,6 +4,7 @@ import com.vaadin.terminal.Resource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -28,22 +29,33 @@ public abstract class MessageSubwindow extends GrassSubWindow {
 		super(caption);
 
 		center();
-//		setWidth("250px");
+		setWidth("420px");
 
 		VerticalLayout subWindowlayout = new VerticalLayout();
 		setContent(subWindowlayout);
 		subWindowlayout.setMargin(true);
 		subWindowlayout.setSpacing(true);
-//		subWindowlayout.setSizeFull();
 
-		HorizontalLayout messageLayout = new HorizontalLayout();
-		subWindowlayout.addComponent(messageLayout);
-		messageLayout.setMargin(true);
-		messageLayout.setSpacing(true);
-//		messageLayout.setSizeFull();
+		HorizontalLayout horizontalLayout = new HorizontalLayout();
+		horizontalLayout.setSpacing(true);
+		subWindowlayout.addComponent(horizontalLayout);
 
-		messageLayout.addComponent(new Embedded(null, imageResource));
-		messageLayout.addComponent(new Label(labelCaption));
+		Embedded embedded = new Embedded(null, imageResource);
+		// embedded.addStyleName("msgimg");
+		horizontalLayout.addComponent(embedded);
+		horizontalLayout.setComponentAlignment(embedded,
+				Alignment.MIDDLE_CENTER);
+
+		CssLayout messageLayout = new CssLayout();
+		horizontalLayout.addComponent(messageLayout);
+		horizontalLayout.setComponentAlignment(messageLayout,
+				Alignment.MIDDLE_CENTER);
+		messageLayout.setWidth("100%");
+
+		Label msgLabel = new Label(labelCaption);
+		msgLabel.setSizeUndefined();
+		// msgLabel.addStyleName("msglabel");
+		messageLayout.addComponent(msgLabel);
 
 		Button proceedButton = new Button("OK", new Button.ClickListener() {
 

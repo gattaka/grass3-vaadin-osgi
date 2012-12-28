@@ -89,7 +89,6 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 
 		// tagy
 		VerticalLayout tagsLayout = new VerticalLayout();
-		tagsLayout.setMargin(false, false, true, false);
 		layout.addComponent(tagsLayout);
 		tagsLayout
 				.addComponent(new Label("<h2>Tagy</h2>", Label.CONTENT_XHTML));

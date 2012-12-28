@@ -9,6 +9,7 @@ import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.facades.QuotesFacade;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
+import org.myftp.gattserver.grass3.security.ACL;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
@@ -136,10 +137,12 @@ public abstract class BaseWindow extends BackgroundWindow {
 			userMenuLayout.addComponent(link);
 
 			// Registrovat
-			link = new Link("Registrace",
-					getWindowResource(RegistrationWindow.class));
-			link.setStyleName("menu_item");
-			userMenuLayout.addComponent(link);
+			if (ACL.get(userInfoDTO).canRegistrate()) {
+				link = new Link("Registrace",
+						getWindowResource(RegistrationWindow.class));
+				link.setStyleName("menu_item");
+				userMenuLayout.addComponent(link);
+			}
 
 		} else {
 

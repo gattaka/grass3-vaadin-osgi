@@ -301,11 +301,8 @@ h2 {
 /* ====================== */
 /* Tagy a jejich tagcloud */
 /* ====================== */
-.v-csslayout.v-csslayout-tagcloud.tagcloud {
-	
-}
 
-.v-label.v-label-taglabel.taglabel.v-label-undef-w {
+.v-label.v-label-taglabel.taglabel.v-label-undef-w, .v-link.v-link-taglabel.taglabel {
 	display: inline-block;
 	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
 		"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
@@ -313,16 +310,16 @@ h2 {
 	margin-bottom: 10px;
 }
 
-.v-label.v-label-taglabel.taglabel.v-label-undef-w a {
+.v-label.v-label-taglabel.taglabel.v-label-undef-w a, .v-link.v-link-taglabel.taglabel a span {
 	text-decoration: none;
 	color: #1B699F
 }
 
-.v-label.v-label-taglabel.taglabel.v-label-undef-w a:VISITED {
+.v-label.v-label-taglabel.taglabel.v-label-undef-w a:VISITED, .v-link.v-link-taglabel.taglabel a:VISITED {
 	color: #1B699F
 }
 
-.v-label.v-label-taglabel.taglabel.v-label-undef-w a:HOVER {
+.v-label.v-label-taglabel.taglabel.v-label-undef-w a:HOVER, .v-link.v-link-taglabel.taglabel a:HOVER {
 	color: #1B699F;
 	text-decoration: underline;
 }

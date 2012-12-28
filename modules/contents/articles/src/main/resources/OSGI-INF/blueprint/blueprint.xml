@@ -5,7 +5,8 @@
 	<!-- Plugin service agregátor -->
 	<!-- ======================== -->
 
-	<bean id="pluginServiceHolder" class="org.myftp.gattserver.grass3.articles.PluginServiceHolder"
+	<bean id="pluginServiceHolder"
+		class="org.myftp.gattserver.grass3.articles.PluginServiceHolder"
 		factory-method="getInstance" activation="eager">
 		<property name="pluginServices" ref="pluginServices" />
 	</bean>
@@ -36,16 +37,6 @@
 	<service interface="org.myftp.gattserver.grass3.service.IContentService">
 		<bean
 			class="org.myftp.gattserver.grass3.articles.service.impl.ArticlesContentService" />
-	</service>
-
-	<!-- ============= -->
-	<!-- Plugin služby -->
-	<!-- ============= -->
-
-	<!-- DEMO -->
-	<service interface="org.myftp.gattserver.grass3.articles.service.IPluginService">
-		<bean
-			class="org.myftp.gattserver.grass3.articles.service.demo.DemoPluginService" />
 	</service>
 
 </blueprint>

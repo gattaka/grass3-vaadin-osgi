@@ -19,7 +19,6 @@ import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
@@ -34,7 +33,7 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 	private Label contentAuthorNameLabel;
 	private Label contentCreationDateNameLabel;
 	private Label contentLastModificationDateLabel;
-	private HorizontalLayout tagsListLayout;
+	private CssLayout tagsListLayout = new CssLayout();
 	private CssLayout operationsListLayout;
 
 	public ContentViewerWindow(Class<? extends GrassWindow> contentViewerClass) {
@@ -95,9 +94,8 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 		tagsLayout
 				.addComponent(new Label("<h2>Tagy</h2>", Label.CONTENT_XHTML));
 
-		tagsListLayout = new HorizontalLayout();
 		tagsLayout.addComponent(tagsListLayout);
-		tagsListLayout.setSpacing(true);
+		tagsListLayout.setWidth("100%");
 
 		// nástrojová lišta
 		VerticalLayout operationsLayout = new VerticalLayout();
@@ -203,7 +201,7 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 			Link tagLink = new Link(contentTag, new ExternalResource(getWindow(
 					TagWindow.class).getURL()
 					+ contentTag));
-			tagLink.addStyleName("content_tag");
+			tagLink.addStyleName("taglabel");
 			tagsListLayout.addComponent(tagLink);
 		}
 
@@ -212,6 +210,5 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 
 	}
 
-	protected abstract void updateOperationsList(
-			CssLayout operationsListLayout);
+	protected abstract void updateOperationsList(CssLayout operationsListLayout);
 }

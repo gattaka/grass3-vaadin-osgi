@@ -125,8 +125,6 @@ public class HomeWindow extends OneColumnWindow {
 			showError500();
 
 		tagCloud.removeAllComponents();
-		tagCloud.setSizeFull();
-		tagCloud.addStyleName("tagcloud");
 		tagCloud.setWidth("100%");
 
 		if (contentTags.isEmpty()) {

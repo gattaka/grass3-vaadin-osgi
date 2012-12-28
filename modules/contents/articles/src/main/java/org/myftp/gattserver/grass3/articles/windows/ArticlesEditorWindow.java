@@ -32,6 +32,7 @@ import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -59,6 +60,7 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 	private final TextArea articleTextArea = new TextArea();
 	private final TextField articleKeywords = new TextField();
 	private final TextField articleNameField = new TextField();
+	private final CheckBox publicatedCheckBox = new CheckBox();
 
 	private boolean editMode = false;
 
@@ -262,6 +264,21 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 	}
 
+	private void updateContentOptions() {
+
+		VerticalLayout articleOptionsLayout = new VerticalLayout();
+		editorTextLayout.addComponent(articleOptionsLayout);
+		articleOptionsLayout.addComponent(new Label(
+				"<h2>Nastavení článku</h2>", Label.CONTENT_XHTML));
+
+		publicatedCheckBox.setCaption("Publikovat článek");
+		publicatedCheckBox
+				.setDescription("Je-li prázdné, uvidí článek pouze jeho autor");
+		publicatedCheckBox.setImmediate(true);
+		articleOptionsLayout.addComponent(publicatedCheckBox);
+
+	}
+
 	private void updateEditorTextPart() {
 
 		editorTextLayout.removeAllComponents();
@@ -271,6 +288,9 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 		// klíčová slova
 		updateContentKeywordsPart();
+
+		// možnosti obsahu
+		updateContentOptions();
 
 		// text
 		updateContentTextPart();
@@ -317,13 +337,15 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 					success = articleFacade.modifyArticle(
 							String.valueOf(articleNameField.getValue()),
 							String.valueOf(articleTextArea.getValue()),
-							String.valueOf(articleKeywords.getValue()), article);
+							String.valueOf(articleKeywords.getValue()),
+							publicatedCheckBox.booleanValue(), article);
 				} else {
 					id = articleFacade.saveArticle(
 							String.valueOf(articleNameField.getValue()),
 							String.valueOf(articleTextArea.getValue()),
 							String.valueOf(articleKeywords.getValue()),
-							category, getApplication().getUser());
+							publicatedCheckBox.booleanValue(), category,
+							getApplication().getUser());
 					success = id != null;
 
 					// odteď budeme editovat
@@ -359,13 +381,15 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 					success = articleFacade.modifyArticle(
 							String.valueOf(articleNameField.getValue()),
 							String.valueOf(articleTextArea.getValue()),
-							String.valueOf(articleKeywords.getValue()), article);
+							String.valueOf(articleKeywords.getValue()),
+							publicatedCheckBox.booleanValue(), article);
 				} else {
 					id = articleFacade.saveArticle(
 							String.valueOf(articleNameField.getValue()),
 							String.valueOf(articleTextArea.getValue()),
 							String.valueOf(articleKeywords.getValue()),
-							category, getApplication().getUser());
+							publicatedCheckBox.booleanValue(), category,
+							getApplication().getUser());
 					success = id != null;
 				}
 
@@ -498,6 +522,7 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 			articleNameField.setValue("");
 			articleKeywords.setValue("");
 			articleTextArea.setValue("");
+			publicatedCheckBox.setValue(true);
 		} else if (parts[0].equals(DefaultContentOperations.EDIT.toString())) {
 			editMode = true;
 			article = articleFacade.getArticleById(identifier.getId());
@@ -507,6 +532,8 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 			articleKeywords.setValue(contentTagFacade.serializeTags(Arrays
 					.copyOf(tagsArray, tagsArray.length, String[].class)));
 			articleTextArea.setValue(article.getText());
+			publicatedCheckBox.setValue(article.getContentNode()
+					.getPublicated());
 		} else {
 			logger.debug("Neznámá operace: '" + parts[0] + "'");
 			showError404();

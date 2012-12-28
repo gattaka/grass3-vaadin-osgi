@@ -113,12 +113,14 @@ public enum ArticleFacade {
 	 *            obsah článku
 	 * @param tags
 	 *            klíčová slova článku
+	 * @param publicated
+	 *            je článek publikován ?
 	 * @param articleDTO
 	 *            původní článek
 	 * @return {@code true} pokud se úprava zdařila, jinak {@code false}
 	 */
 	public boolean modifyArticle(String name, String text, String tags,
-			ArticleDTO articleDTO) {
+			boolean publicated, ArticleDTO articleDTO) {
 
 		// článek
 		ArticleDAO articleDAO = new ArticleDAO();
@@ -137,7 +139,8 @@ public enum ArticleFacade {
 			return false;
 
 		// content node
-		if (contentNodeFacade.modify(articleDTO.getContentNode(), name, tags) == false)
+		if (contentNodeFacade.modify(articleDTO.getContentNode(), name, tags,
+				publicated) == false)
 			return false;
 
 		return true;
@@ -152,6 +155,8 @@ public enum ArticleFacade {
 	 *            obsah článku
 	 * @param tags
 	 *            klíčová slova článku
+	 * @param publicated
+	 *            je článek publikován ?
 	 * @param category
 	 *            kategorie do kteér se vkládá
 	 * @param author
@@ -160,7 +165,7 @@ public enum ArticleFacade {
 	 *         {@code null}
 	 */
 	public Long saveArticle(String name, String text, String tags,
-			NodeDTO category, UserInfoDTO author) {
+			boolean publicated, NodeDTO category, UserInfoDTO author) {
 
 		// vytvoř nový článek
 		ArticleDAO articleDAO = new ArticleDAO();
@@ -181,8 +186,8 @@ public enum ArticleFacade {
 
 		// vytvoř odpovídající content node
 		ContentNodeDTO contentNodeDTO = contentNodeFacade.save(
-				ArticlesContentService.ID, contentId, name, tags, category,
-				author);
+				ArticlesContentService.ID, contentId, name, tags, publicated,
+				category, author);
 
 		if (contentNodeDTO == null)
 			return null;

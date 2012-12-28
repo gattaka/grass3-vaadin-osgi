@@ -103,6 +103,8 @@ public enum ContentNodeFacade {
 	 *            id obsahu (v rámci modulu), který je ukládán
 	 * @param name
 	 *            jméno obsahu
+	 * @param publicated
+	 *            je článek publikován ?
 	 * @param category
 	 *            kategorie do kteér se vkládá
 	 * @param author
@@ -111,8 +113,10 @@ public enum ContentNodeFacade {
 	 *         nebo
 	 */
 	public ContentNodeDTO save(String contentModuleId, Long contentId,
-			String name, NodeDTO category, UserInfoDTO author) {
-		return save(contentModuleId, contentId, name, null, category, author);
+			String name, boolean publicated, NodeDTO category,
+			UserInfoDTO author) {
+		return save(contentModuleId, contentId, name, null, publicated,
+				category, author);
 	}
 
 	/**
@@ -126,6 +130,8 @@ public enum ContentNodeFacade {
 	 *            jméno obsahu
 	 * @param tags
 	 *            řetězec tagů, který se má společně s obsahem uložit
+	 * @param publicated
+	 *            je článek publikován ?
 	 * @param category
 	 *            kategorie do které se vkládá
 	 * @param author
@@ -134,7 +140,8 @@ public enum ContentNodeFacade {
 	 *         nebo
 	 */
 	public ContentNodeDTO save(String contentModuleId, Long contentId,
-			String name, String tags, NodeDTO category, UserInfoDTO author) {
+			String name, String tags, boolean publicated, NodeDTO category,
+			UserInfoDTO author) {
 		try {
 
 			ContentNode contentNode = new ContentNode();
@@ -142,8 +149,7 @@ public enum ContentNodeFacade {
 			contentNode.setContentReaderId(contentModuleId);
 			contentNode.setCreationDate(Calendar.getInstance().getTime());
 			contentNode.setName(name);
-			// TODO
-			// contentNode.setPublicated(publicated)
+			contentNode.setPublicated(publicated);
 
 			// Ulož contentNode
 			if (new ContentNodeDAO().save(contentNode, category.getId(),
@@ -194,8 +200,9 @@ public enum ContentNodeFacade {
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean modify(ContentNodeDTO contentNode, String name) {
-		return modify(contentNode, name, null);
+	public boolean modify(ContentNodeDTO contentNode, String name,
+			boolean publicated) {
+		return modify(contentNode, name, null, publicated);
 	}
 
 	/**
@@ -205,10 +212,12 @@ public enum ContentNodeFacade {
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @param tags
 	 *            řetězec tagů, který se má společně s obsahem uložit
+	 * @param publicated
+	 *            je článek publikován ?
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
 	public boolean modify(ContentNodeDTO contentNodeDTO, String name,
-			String tags) {
+			String tags, boolean publicated) {
 
 		ContentNodeDAO contentNodeDAO = new ContentNodeDAO();
 		ContentNode contentNode = contentNodeDAO.findByID(contentNodeDTO
@@ -217,6 +226,7 @@ public enum ContentNodeFacade {
 
 		contentNode.setLastModificationDate(Calendar.getInstance().getTime());
 		contentNode.setName(name);
+		contentNode.setPublicated(publicated);
 
 		// Ulož změny v contentNode
 		if (new ContentNodeDAO().merge(contentNode) == false)

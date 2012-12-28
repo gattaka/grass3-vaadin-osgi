@@ -115,11 +115,12 @@ public class LinkTree extends AbstractElementTree {
 	@Override
 	public void generateElement(IContext ctx) {
 		ctx.print("<a href=\"" + link + "\" alt=\"" + link + "\" >");
-		ctx.print("<img class=\"icon\" height=\"16\" width=\"16\" src=\""
-				+ imgURL + "\" alt=\"Favicon of " + link
+		ctx.print("<img style=\"margin: 4px 5px -4px 2px;\" height=\"16\" width=\"16\" src=\""
+				+ imgURL
+				+ "\" alt=\"Favicon of "
+				+ link
 				+ "\" title=\"Favicon of " + link + "\" />");
 		ctx.print(link);
 		ctx.print("</a>");
 	}
-
 }

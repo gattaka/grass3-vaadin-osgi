@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.windows.template;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 
 import org.myftp.gattserver.grass3.ServiceHolder;
@@ -18,6 +19,8 @@ import com.vaadin.ui.Table;
 public class ContentsTable extends Table {
 
 	private static final long serialVersionUID = -2220485504407844582L;
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
+			"d.M.yyyy HH:mm:ss");
 
 	public ContentsTable() {
 		setHeight("200px");
@@ -74,9 +77,9 @@ public class ContentsTable extends Table {
 			item.getItemProperty(ColumnId.AUTOR).setValue(
 					contentNode.getAuthor().getName());
 			item.getItemProperty(ColumnId.DATUM_VYTVOŘENÍ).setValue(
-					contentNode.getCreationDate());
+					dateFormat.format(contentNode.getCreationDate()));
 			item.getItemProperty(ColumnId.DATUM_ÚPRAVY).setValue(
-					contentNode.getLastModificationDate());
+					dateFormat.format(contentNode.getLastModificationDate()));
 
 			Embedded icon = new Embedded();
 			if (contentService == null) {

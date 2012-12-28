@@ -21,10 +21,9 @@ public class LatexFactory implements IPluginFactory {
 	}
 
 	public EditorButtonResources getEditorButtonResources() {
-		return new EditorButtonResources(tag);
+		EditorButtonResources resources = new EditorButtonResources(tag);
+		resources.setTagFamily("LaTeX");
+		return resources;
 	}
 
-	public String getTagFamily() {
-		return "LaTeX";
-	}
 }

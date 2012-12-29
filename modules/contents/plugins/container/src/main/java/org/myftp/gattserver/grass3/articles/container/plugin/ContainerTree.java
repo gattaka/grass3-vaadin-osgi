@@ -1,9 +1,9 @@
-package org.myftp.gattserver.grass.articles.container.plugin;
+package org.myftp.gattserver.grass3.articles.container.plugin;
 
 import java.util.List;
 
-import org.myftp.gattserver.grass.articles.parser.interfaces.AbstractElementTree;
-import org.myftp.gattserver.grass.articles.parser.interfaces.IContext;
+import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
+import org.myftp.gattserver.grass3.articles.parser.interfaces.IContext;
 
 
 public class ContainerTree extends AbstractElementTree {
@@ -15,9 +15,9 @@ public class ContainerTree extends AbstractElementTree {
 	}
 
 	public void generateElement(IContext ctx) {
-
-		ctx.addCSSResource("/org.myftp.gattserver.grass/org.myftp.gattserver.grass.articles.container/0.1/style.css");
-		ctx.addJSResource("/org.myftp.gattserver.grass/org.myftp.gattserver.grass.articles.container/0.1/container.js");
+		
+		ctx.addCSSResource("articles/container/style.css");
+		ctx.addJSResource("articles/container/container.js");
 
 		ctx.print("<div class=\"container_box\">");
 		ctx.print("<div class=\"container_switch\" onclick=\"toggle_container(this);\"></div>");

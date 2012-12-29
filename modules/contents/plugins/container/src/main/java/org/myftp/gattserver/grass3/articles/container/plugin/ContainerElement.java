@@ -1,15 +1,14 @@
-package org.myftp.gattserver.grass.articles.container.plugin;
+package org.myftp.gattserver.grass3.articles.container.plugin;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.myftp.gattserver.grass.articles.container.plugin.ContainerTree;
-import org.myftp.gattserver.grass.articles.lexer.Token;
-import org.myftp.gattserver.grass.articles.parser.PluginBag;
-import org.myftp.gattserver.grass.articles.parser.exceptions.ParserException;
-import org.myftp.gattserver.grass.articles.parser.interfaces.AbstractElementTree;
-import org.myftp.gattserver.grass.articles.parser.interfaces.AbstractParserPlugin;
-
+import org.myftp.gattserver.grass3.articles.container.plugin.ContainerTree;
+import org.myftp.gattserver.grass3.articles.lexer.Token;
+import org.myftp.gattserver.grass3.articles.parser.PluginBag;
+import org.myftp.gattserver.grass3.articles.parser.exceptions.ParserException;
+import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
+import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
 
 /**
  * 
@@ -68,11 +67,12 @@ public class ContainerElement extends AbstractParserPlugin {
 			pluginBag.nextToken();
 
 		List<AbstractElementTree> elist = new ArrayList<AbstractElementTree>();
-		pluginBag.getBlock(elist); 
+		pluginBag.getBlock(elist);
 
-		acceptEndTag(pluginBag); 
+		acceptEndTag(pluginBag);
 
-		// zkus načíst element za mnou - pokud je to odřádkování, tak ho ignoruj (aby to nedělalo mezery)
+		// zkus načíst element za mnou - pokud je to odřádkování, tak ho ignoruj
+		// (aby to nedělalo mezery)
 		if (pluginBag.getToken().equals(Token.EOL))
 			pluginBag.nextToken();
 

@@ -16,6 +16,7 @@
         <module>code.theme</module>
         <module>favlink</module>
         <module>container</module>
+        <module>container.theme</module>
 	</modules>
 
 </project>

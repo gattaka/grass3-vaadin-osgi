@@ -15,7 +15,7 @@ div.container_box>div.container_switch {
 	cursor: pointer;
 	border: 1px solid #AAA;
 	height: 26px;
-	background: #DEA url(/grass/img/tags/down_16.png) no-repeat 5px 5px;
+	background: #DEA url("../../img/tags/down_16.png") no-repeat 5px 5px;
 	opacity: 0.7;
 }
 
@@ -27,7 +27,7 @@ div.container_box>div.container_content>div.container_end_switch {
 	cursor: pointer;
 	border: 1px solid #AAA;
 	height: 26px;
-	background: #DEA url(/grass/img/tags/up_16.png) no-repeat 5px 5px;
+	background: #DEA url("../../img/tags/up_16.png") no-repeat 5px 5px;
 	opacity: 0.7;
 	margin-top: 10px;
 }

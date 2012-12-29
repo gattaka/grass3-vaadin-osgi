@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.myftp.gattserver.grass3.GrassApplication;
+import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
@@ -51,6 +52,13 @@ public abstract class GrassWindow extends Window {
 	public DownloadStream handleURI(URL context, String relativeUri) {
 		onShow();
 		return super.handleURI(context, relativeUri);
+	}
+
+	/**
+	 * Získá ACL
+	 */
+	protected CoreACL getUserACL() {
+		return CoreACL.get(getApplication().getUser());
 	}
 
 	/**

@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
+import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.service.IContentService;
 import org.myftp.gattserver.grass3.util.ComparableLink;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
@@ -52,8 +53,13 @@ public class ContentsTable extends Table {
 		setColumnHeader(ColumnId.DATUM_VYTVOŘENÍ, "DATUM VYTVOŘENÍ");
 		setColumnHeader(ColumnId.DATUM_ÚPRAVY, "DATUM ÚPRAVY");
 
+		CoreACL acl = window.getUserACL();
+
 		// položky
 		for (ContentNodeDTO contentNode : contentList) {
+
+			if (acl.canShowContent(contentNode) == false)
+				continue;
 
 			// jaká prohlížecí služba odpovídá tomuto obsahu
 			IContentService contentService = ServiceHolder.getInstance()

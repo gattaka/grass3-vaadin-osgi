@@ -3,15 +3,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.myftp.gattserver.grass3</groupId>
-	<artifactId>articles-favlink</artifactId>
+	<artifactId>articles-container</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<name>GRASS3 Articles container</name>
 	<packaging>bundle</packaging>
-	<name>GRASS3 Articles editor link with favicon plugin</name>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<osgi.version>4.2.0</osgi.version>
-		<osgi.core.version>4.3.0</osgi.core.version>
 	</properties>
 
 	<build>
@@ -23,16 +21,11 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Embed-Dependency>jlatexmath;inline=true</Embed-Dependency>
-						<Embed-Transitive>true</Embed-Transitive>
-						<Include-Resource>
-							{maven-resources}, {maven-dependencies},
-						</Include-Resource>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 					</instructions>
 				</configuration>
 			</plugin>
-						
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -62,32 +55,13 @@
 			</plugin>
 		</plugins>
 	</build>
-	<dependencies>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.2</version>
-		</dependency>
+	<dependencies>
 
 		<!-- GRASS ARTICLES BUNDLE -->
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>
 			<artifactId>articles</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<!-- GRASS CORE BUNDLE -->
-		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
-			<artifactId>core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<!-- Grass3 config nástroje -->
-		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
-			<artifactId>config</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
@@ -113,11 +87,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>3.0-alpha-1</version>
-		</dependency>
 	</dependencies>
 
 </project>

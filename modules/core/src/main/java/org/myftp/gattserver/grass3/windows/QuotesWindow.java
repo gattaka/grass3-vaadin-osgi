@@ -2,6 +2,7 @@ package org.myftp.gattserver.grass3.windows;
 
 import org.myftp.gattserver.grass3.facades.QuotesFacade;
 import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
+import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.template.InfoNotification;
 import org.myftp.gattserver.grass3.template.WarningNotification;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
@@ -24,6 +25,7 @@ public class QuotesWindow extends OneColumnWindow {
 	private QuotesFacade quotesFacade = QuotesFacade.INSTANCE;
 
 	public static final String NAME = "quotes";
+	private Panel newQuotesPanel;
 
 	/**
 	 * Tabulka hlášek
@@ -44,14 +46,18 @@ public class QuotesWindow extends OneColumnWindow {
 		table.setSizeFull();
 		layout.addComponent(table);
 
-		createQuoteList();
 		createNewQuotePanel(layout);
+		createQuoteList();
 
 	}
 
 	@Override
 	protected void onShow() {
 		createQuoteList();
+
+		CoreACL acl = getUserACL();
+		newQuotesPanel.setVisible(acl.canModifyQuotes());
+
 		super.onShow();
 	}
 
@@ -72,14 +78,13 @@ public class QuotesWindow extends OneColumnWindow {
 		}
 	}
 
-	// TODO - auth, tohle nemůže dělat každý uživatel !
 	private void createNewQuotePanel(VerticalLayout layout) {
-		Panel panel = new Panel("Nová hláška");
-		layout.addComponent(panel);
+		newQuotesPanel = new Panel("Nová hláška");
+		layout.addComponent(newQuotesPanel);
 
 		HorizontalLayout panelBackgroudLayout = new HorizontalLayout();
 		panelBackgroudLayout.setSizeFull();
-		panel.setContent(panelBackgroudLayout);
+		newQuotesPanel.setContent(panelBackgroudLayout);
 
 		HorizontalLayout panelLayout = new HorizontalLayout();
 		panelLayout.setSpacing(true);

@@ -9,6 +9,7 @@ import org.myftp.gattserver.grass3.facades.ContentNodeFacade;
 import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
+import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.template.Breadcrumb;
 import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
@@ -32,6 +33,7 @@ public class CategoryWindow extends OneColumnWindow {
 	private final ContentsTable contentsTable = new ContentsTable();
 	private final NodesTable subNodesTable = new NodesTable();
 	private final NewContentsTable newContentsTable = new NewContentsTable();
+	private final VerticalLayout newContentsLayout = new VerticalLayout();;
 
 	public static final String NAME = "category";
 
@@ -69,8 +71,6 @@ public class CategoryWindow extends OneColumnWindow {
 		layout.addComponent(contentsLayout);
 
 		// Vytvořit obsahy
-		// TODO - vidí pouze role autor
-		VerticalLayout newContentsLayout = new VerticalLayout();
 		newContentsLayout.addComponent(new Label(
 				"<h2>Vytvořit nový obsah</h2>", Label.CONTENT_XHTML));
 		newContentsLayout.addComponent(newContentsTable);
@@ -97,7 +97,14 @@ public class CategoryWindow extends OneColumnWindow {
 		updateBreadcrumb(node);
 		updateSubNodes(node);
 		updateContent(node);
-		updateNewContent(node);
+
+		CoreACL acl = getUserACL();
+		if (acl.canCreateContent()) {
+			newContentsLayout.setVisible(true);
+			updateNewContent(node);
+		} else {
+			newContentsLayout.setVisible(false);
+		}
 
 		return super.handleURI(context, relativeUri);
 	}

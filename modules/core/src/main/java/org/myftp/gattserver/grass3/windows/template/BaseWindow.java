@@ -9,7 +9,7 @@ import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.facades.QuotesFacade;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
-import org.myftp.gattserver.grass3.security.ACL;
+import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
@@ -119,33 +119,40 @@ public abstract class BaseWindow extends BackgroundWindow {
 		}
 
 		// externí sekce
+		CoreACL acl = getUserACL();
 		for (ISectionService section : ServiceHolder.getInstance()
 				.getSectionServices()) {
-			createSectionLink(section.getSectionCaption(),
-					section.getSectionWindowClass());
+			if (acl.canShowSection(section)) {
+				createSectionLink(section.getSectionCaption(),
+						section.getSectionWindowClass());
+			}
 		}
 	}
 
 	private void populateUserMenu() {
 		userMenuLayout.removeAllComponents();
 
-		final UserInfoDTO userInfoDTO = getApplication().getUser();
-		if (userInfoDTO == null) {
+		CoreACL acl = getUserACL();
+		
+		// Přihlášení
+		if (acl.canLogin()) {
 			Link link = new Link("Přihlášení",
 					getWindowResource(LoginWindow.class));
 			link.setStyleName("menu_item");
 			userMenuLayout.addComponent(link);
-
-			// Registrovat
-			if (ACL.get(userInfoDTO).canRegistrate()) {
-				link = new Link("Registrace",
+		}
+		
+		// Registrace
+		if (acl.canRegistrate()) {
+				Link link = new Link("Registrace",
 						getWindowResource(RegistrationWindow.class));
 				link.setStyleName("menu_item");
 				userMenuLayout.addComponent(link);
-			}
+		}
 
-		} else {
-
+		// Přehled o uživateli
+		final UserInfoDTO userInfoDTO = getApplication().getUser();
+		if (acl.canShowUserDetails(userInfoDTO)) {
 			Button userDetails = new Button(userInfoDTO.getName(),
 					new Button.ClickListener() {
 

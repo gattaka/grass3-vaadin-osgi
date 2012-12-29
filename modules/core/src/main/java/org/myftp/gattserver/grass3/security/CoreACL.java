@@ -6,6 +6,7 @@ import org.myftp.gattserver.grass3.config.ConfigurationUtils;
 import org.myftp.gattserver.grass3.config.CoreConfiguration;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
+import org.myftp.gattserver.grass3.service.ISectionService;
 
 /**
  * Access control list, bere uživatele a operaci a vyhodnocuje, zda povolit nebo
@@ -14,11 +15,11 @@ import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
  * @author gatt
  * 
  */
-public class ACL {
+public final class CoreACL {
 
 	private UserInfoDTO user;
 
-	private ACL(UserInfoDTO user) {
+	private CoreACL(UserInfoDTO user) {
 		this.user = user;
 	}
 
@@ -30,8 +31,32 @@ public class ACL {
 	 *            uživatel nebo {@code null} pokud není v systému nikdo
 	 *            přihlášen
 	 */
-	public static ACL get(UserInfoDTO user) {
-		return new ACL(user);
+	public static CoreACL get(UserInfoDTO user) {
+		return new CoreACL(user);
+	}
+
+	/**
+	 * =======================================================================
+	 * Sekce
+	 * =======================================================================
+	 */
+
+	/**
+	 * Může uživatel zobrazit danou sekci ?
+	 */
+	public boolean canShowSection(ISectionService section) {
+		
+		// záleží na viditelnosti definované sekcí
+		return section.isVisibleForRoles(user == null ? null : user.getRoles());
+	}
+
+	/**
+	 * Může uživatel upravovat "hlášky"
+	 */
+	public boolean canModifyQuotes() {
+		
+		// pokud je uživatel přihlášen a je to administrátor
+		return user != null && user.getRoles().contains(Role.ADMIN);
 	}
 
 	/**
@@ -174,6 +199,45 @@ public class ACL {
 	 * Různé
 	 * =======================================================================
 	 */
+
+	/**
+	 * Může se uživatel přihlásit ?
+	 */
+	public boolean canLogin() {
+		return user == null;
+	}
+
+	/**
+	 * Může se uživatel odhlásit ?
+	 */
+	public boolean canLogout() {
+		return user != null;
+	}
+
+	/**
+	 * Může daný uživatel zobrazit detaily o uživateli X ?
+	 */
+	public boolean canShowUserDetails(UserInfoDTO anotherUser) {
+
+		// TODO tohle je spíš otázka kódu, než oprávnění
+		// nelze zobrazit detail od žádného uživatele
+		if (anotherUser == null)
+			return false;
+
+		// host nemůže zobrazovat nic
+		if (user == null)
+			return false;
+
+		// uživatel může vidět detaily o sobě
+		if (user.getId().equals(anotherUser.getId()))
+			return true;
+
+		// administrator může vidět detaily od všech uživatelů
+		if (user.getRoles().contains(Role.ADMIN))
+			return true;
+
+		return false;
+	}
 
 	/**
 	 * Může se uživatel zaregistrovat ?

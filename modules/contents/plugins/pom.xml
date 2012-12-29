@@ -13,7 +13,9 @@
         <module>basic.theme</module>
         <module>latex</module>
         <module>code</module>
+        <module>code.theme</module>
         <module>favlink</module>
+        <module>container</module>
 	</modules>
 
 </project>

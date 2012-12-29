@@ -7,6 +7,7 @@ import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.articles.facade.ArticleFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
+import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
@@ -114,94 +115,103 @@ public class ArticlesViewerWindow extends ContentViewerWindow {
 	@Override
 	protected void updateOperationsList(CssLayout operationsListLayout) {
 
-		// Uložit
-		Button saveButton = new Button("Upravit");
-		saveButton.setIcon(new ThemeResource("img/tags/pencil_16.png"));
-		saveButton.addListener(new Button.ClickListener() {
+		CoreACL acl = getUserACL();
 
-			private static final long serialVersionUID = 607422393151282918L;
+		// Upravit
+		if (acl.canModifyContent(article.getContentNode())) {
+			Button saveButton = new Button("Upravit");
+			saveButton.setIcon(new ThemeResource("img/tags/pencil_16.png"));
+			saveButton.addListener(new Button.ClickListener() {
 
-			public void buttonClick(ClickEvent event) {
+				private static final long serialVersionUID = 607422393151282918L;
 
-				open(new ExternalResource(getWindow(ArticlesEditorWindow.class)
-						.getURL()
-						+ DefaultContentOperations.EDIT.toString()
-						+ "/"
-						+ URLIdentifierUtils.createURLIdentifier(article
-								.getId(), article.getContentNode().getName())));
+				public void buttonClick(ClickEvent event) {
 
-			}
+					open(new ExternalResource(getWindow(
+							ArticlesEditorWindow.class).getURL()
+							+ DefaultContentOperations.EDIT.toString()
+							+ "/"
+							+ URLIdentifierUtils.createURLIdentifier(article
+									.getId(), article.getContentNode()
+									.getName())));
 
-		});
-		operationsListLayout.addComponent(saveButton);
+				}
+
+			});
+			operationsListLayout.addComponent(saveButton);
+		}
 
 		// Smazat
-		Button deleteButton = new Button("Smazat");
-		deleteButton.setIcon(new ThemeResource("img/tags/delete_16.png"));
-		deleteButton.addListener(new Button.ClickListener() {
+		if (acl.canDeleteContent(article.getContentNode())) {
+			Button deleteButton = new Button("Smazat");
+			deleteButton.setIcon(new ThemeResource("img/tags/delete_16.png"));
+			deleteButton.addListener(new Button.ClickListener() {
 
-			private static final long serialVersionUID = 607422393151282918L;
+				private static final long serialVersionUID = 607422393151282918L;
 
-			public void buttonClick(ClickEvent event) {
+				public void buttonClick(ClickEvent event) {
 
-				ConfirmSubwindow confirmSubwindow = new ConfirmSubwindow(
-						"Opravdu si přejete smazat tento článek ?") {
+					ConfirmSubwindow confirmSubwindow = new ConfirmSubwindow(
+							"Opravdu si přejete smazat tento článek ?") {
 
-					private static final long serialVersionUID = -3214040983143363831L;
+						private static final long serialVersionUID = -3214040983143363831L;
 
-					@Override
-					protected void onConfirm(ClickEvent event) {
+						@Override
+						protected void onConfirm(ClickEvent event) {
 
-						NodeDTO node = nodeFacade.getNodeById(article
-								.getContentNode().getParentID());
-						final ExternalResource categoryResource = new ExternalResource(
-								ArticlesViewerWindow.this.getWindow(
-										CategoryWindow.class).getURL()
-										+ URLIdentifierUtils
-												.createURLIdentifier(
-														node.getId(),
-														node.getName()));
+							NodeDTO node = nodeFacade.getNodeById(article
+									.getContentNode().getParentID());
+							final ExternalResource categoryResource = new ExternalResource(
+									ArticlesViewerWindow.this.getWindow(
+											CategoryWindow.class).getURL()
+											+ URLIdentifierUtils
+													.createURLIdentifier(
+															node.getId(),
+															node.getName()));
 
-						// zdařilo se ? Pokud ano, otevři info okno a při
-						// potvrzení jdi na kategorii
-						if (articleFacade.deleteArticle(article)) {
-							InfoSubwindow infoSubwindow = new InfoSubwindow(
-									"Smazání článku proběhlo úspěšně.") {
-
-								private static final long serialVersionUID = -6688396549852552674L;
-
-								protected void onProceed(ClickEvent event) {
-									ArticlesViewerWindow.this
-											.open(categoryResource);
-								};
-							};
-							ArticlesViewerWindow.this.addWindow(infoSubwindow);
-						} else {
-							// Pokud ne, otevři warn okno a při
+							// zdařilo se ? Pokud ano, otevři info okno a při
 							// potvrzení jdi na kategorii
-							WarnSubwindow warnSubwindow = new WarnSubwindow(
-									"Smazání článku se nezdařilo.") {
+							if (articleFacade.deleteArticle(article)) {
+								InfoSubwindow infoSubwindow = new InfoSubwindow(
+										"Smazání článku proběhlo úspěšně.") {
 
-								private static final long serialVersionUID = -6688396549852552674L;
+									private static final long serialVersionUID = -6688396549852552674L;
 
-								protected void onProceed(ClickEvent event) {
-									ArticlesViewerWindow.this
-											.open(categoryResource);
+									protected void onProceed(ClickEvent event) {
+										ArticlesViewerWindow.this
+												.open(categoryResource);
+									};
 								};
-							};
-							ArticlesViewerWindow.this.addWindow(warnSubwindow);
+								ArticlesViewerWindow.this
+										.addWindow(infoSubwindow);
+							} else {
+								// Pokud ne, otevři warn okno a při
+								// potvrzení jdi na kategorii
+								WarnSubwindow warnSubwindow = new WarnSubwindow(
+										"Smazání článku se nezdařilo.") {
+
+									private static final long serialVersionUID = -6688396549852552674L;
+
+									protected void onProceed(ClickEvent event) {
+										ArticlesViewerWindow.this
+												.open(categoryResource);
+									};
+								};
+								ArticlesViewerWindow.this
+										.addWindow(warnSubwindow);
+							}
+
+							// zavři původní confirm okno
+							getParent().removeWindow(this);
+
 						}
+					};
+					addWindow(confirmSubwindow);
 
-						// zavři původní confirm okno
-						getParent().removeWindow(this);
+				}
 
-					}
-				};
-				addWindow(confirmSubwindow);
-
-			}
-
-		});
-		operationsListLayout.addComponent(deleteButton);
+			});
+			operationsListLayout.addComponent(deleteButton);
+		}
 	}
 }

@@ -20,7 +20,7 @@ public interface ISectionService {
 	 * @return nové okno sekce
 	 */
 	public GrassWindow getSectionWindowNewInstance();
-	
+
 	/**
 	 * Vrátí třídu sekce
 	 * 
@@ -37,10 +37,11 @@ public interface ISectionService {
 	public String getSectionCaption();
 
 	/**
-	 * Zjistí, zda má být zobrazen odkaz na tuto sekci
+	 * Zjistí, zda může uživatel s danými rolemi zobrazit tuto sekci
 	 * 
 	 * @param roles
-	 *            Role aktuální session
+	 *            Role aktuální session, v případě nepřihlášeného uživatele
+	 *            {@code null}
 	 * @return {@code true} pokud role vyhovují a je možné zobrazovat odkaz na
 	 *         tuto sekci, jinak false
 	 */

@@ -1,6 +1,8 @@
 package org.myftp.gattserver.grass3.articles.util;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.articles.domain.Article;
@@ -43,6 +45,25 @@ public enum ArticlesMapper {
 		articleDTO.setText(article.getText());
 
 		return articleDTO;
+
+	}
+
+	/**
+	 * Převede kolekci {@link Article} na kolekci {@link ArticleDTO}
+	 * 
+	 * @param articles
+	 *            vstupní kolekce entit {@link Article}
+	 * @return
+	 */
+	public List<ArticleDTO> map(List<Article> articles) {
+
+		List<ArticleDTO> articleDTOs = new ArrayList<ArticleDTO>();
+
+		for (Article article : articles) {
+			articleDTOs.add(map(article));
+		}
+
+		return articleDTOs;
 
 	}
 

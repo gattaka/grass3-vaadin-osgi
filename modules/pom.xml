@@ -15,6 +15,7 @@
         <module>model</module>
         <module>contents</module>
         <module>tone</module>
+        <module>search</module>
 	</modules>
 
 </project>

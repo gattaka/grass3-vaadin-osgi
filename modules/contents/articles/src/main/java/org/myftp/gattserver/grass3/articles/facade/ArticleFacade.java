@@ -1,5 +1,7 @@
 package org.myftp.gattserver.grass3.articles.facade;
 
+import java.util.List;
+
 import org.myftp.gattserver.grass3.articles.dao.ArticleDAO;
 import org.myftp.gattserver.grass3.articles.domain.Article;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
@@ -225,6 +227,28 @@ public enum ArticleFacade {
 		dao.closeSession();
 
 		return articleDTO;
+	}
+
+	/**
+	 * Získá všechny články (DEMO pro indexování Lucene)
+	 * 
+	 * @return
+	 */
+	@Deprecated
+	public List<ArticleDTO> getAllArticles() {
+
+		ArticleDAO dao = new ArticleDAO();
+		List<Article> articles = dao.findAll();
+
+		if (articles == null)
+			return null;
+
+		List<ArticleDTO> articleDTOs = articlesMapper.map(articles);
+
+		dao.closeSession();
+
+		return articleDTOs;
+
 	}
 
 }

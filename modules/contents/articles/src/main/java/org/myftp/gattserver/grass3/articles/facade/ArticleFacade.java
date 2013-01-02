@@ -21,7 +21,7 @@ import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 
-public enum ArticleFacade {
+public enum ArticleFacade { 
 
 	INSTANCE;
 

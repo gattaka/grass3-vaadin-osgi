@@ -1,7 +1,6 @@
 package org.myftp.gattserver.grass3.search.service;
 
 import java.util.List;
-import java.util.Set;
 
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 
@@ -30,6 +29,20 @@ public interface ISearchConnector {
 	/**
 	 * Získá pole, podle kterých lze blíže vyhledávat v obsazích
 	 */
-	public Set<Enum<?>> getSearchFields();
+	public Enum<? extends ISearchField>[] getSearchFields();
+
+	/**
+	 * Získá unikátní název, dle kterého se bude odlišovat prostor hledání. Mělo
+	 * by se jednat o první pád názvu modulu. Například "Modul článků"
+	 */
+	public String getModuleId();
+
+	/**
+	 * Získá jméno pole, které se neprohledává ale dává se do něj odkaz na
+	 * nalezený obsah. Většinou postačí vracet rovnou například "link", jde o
+	 * to, aby tento řetězec nekolidoval s žádným z názvů z {@link ISearchField}
+	 * enum
+	 */
+	public String getLinkFieldName();
 
 }

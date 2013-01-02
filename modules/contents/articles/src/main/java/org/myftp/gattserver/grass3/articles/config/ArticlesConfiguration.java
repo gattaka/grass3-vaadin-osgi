@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement
-public class Configuration {
+public class ArticlesConfiguration {
 
 	@XmlTransient
 	public static final String CONFIG_PATH = "articles_config.xml";

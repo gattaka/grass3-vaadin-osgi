@@ -2,7 +2,10 @@ package org.myftp.gattserver.grass3.search;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -11,36 +14,46 @@ import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
-import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
-import org.myftp.gattserver.grass3.articles.facade.ArticleFacade;
-import org.myftp.gattserver.grass3.search.service.SearchHit;
+import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
+import org.myftp.gattserver.grass3.search.service.ISearchConnector;
+import org.myftp.gattserver.grass3.search.service.ISearchField;
+import org.myftp.gattserver.grass3.search.service.SearchEntity;
+import org.myftp.gattserver.grass3.windows.template.GrassWindow;
+
+import com.vaadin.terminal.ExternalResource;
 
 public enum SearchFacade {
 
 	INSTANCE;
 
-	private ArticleFacade articleFacade = ArticleFacade.INSTANCE;
- 
+	public Set<String> getSearchModulesIds() {
+		ConnectorAggregator aggregator = ConnectorAggregator.getInstance();
+		return aggregator.getSearchConnectorsById().keySet();
+	}
+
 	/**
-	 * Demo funkce
+	 * Search funkce
 	 * 
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public List<SearchHit> searchArticles(String queryText) throws IOException,
+	public List<String> search(String queryText,
+			Set<Enum<? extends ISearchField>> searchFields, String moduleId,
+			UserInfoDTO user, GrassWindow grassWindow) throws IOException,
 			ParseException {
-
-		final String searchFieldName = "obsah";
-		final String contentLinkFieldName = "název";
 
 		StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);
 		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36,
@@ -53,27 +66,64 @@ public enum SearchFacade {
 		IndexWriter w = new IndexWriter(index, config);
 
 		/**
-		 * Tohle si pak bude dělat v rámci searchConnector-u modul článků sám
+		 * Hledej dle search connectoru
 		 */
-		List<ArticleDTO> articles = articleFacade.getAllArticles();
-		for (ArticleDTO article : articles) {
+		ConnectorAggregator aggregator = ConnectorAggregator.getInstance();
+		ISearchConnector connector = aggregator.getSearchConnectorsById().get(
+				moduleId);
+
+		/**
+		 * Pokud nebyly vybrány explicitně položky k prohledávání, prohledáváme
+		 * všechny
+		 */
+		if (searchFields == null || searchFields.isEmpty())
+			searchFields = new HashSet<Enum<? extends ISearchField>>(
+					Arrays.asList(connector.getSearchFields()));
+
+		/**
+		 * Získej dostupné obsahy
+		 */
+		List<SearchEntity> searchEntities = connector
+				.getAvailableSearchEntities(user);
+
+		/**
+		 * Projdi všechny dostupné obsahy
+		 */
+		for (SearchEntity searchEntity : searchEntities) {
 			Document doc = new Document();
-			doc.add(new Field("název", article.getContentNode().getName(),
-					Field.Store.YES, Index.ANALYZED));
-			doc.add(new Field("autor", article.getContentNode().getAuthor()
-					.getName(), Field.Store.YES, Index.ANALYZED));
-			doc.add(new Field("obsah", article.getOutputHTML(),
-					Field.Store.YES, Index.ANALYZED));
+
+			// sestav dokument z nabízených polí
+			for (SearchEntity.Field field : searchEntity.getFields()) {
+				doc.add(new Field(((ISearchField) field.getName())
+						.getFieldName(), field.getContent(), Field.Store.YES,
+						field.isTokenized() ? Index.ANALYZED : Index.NO));
+			}
+
+			String url = new ExternalResource(grassWindow.getWindow(
+					searchEntity.getLink().getViewerClass()).getURL()
+					+ searchEntity.getLink().getSuffix()).getURL();
+
+			// přidej link
+			doc.add(new Field(connector.getLinkFieldName(), url,
+					Field.Store.YES, Index.NO));
+
 			w.addDocument(doc);
 		}
 
+		// zavři index
 		w.close();
 
 		/**
 		 * Query
 		 */
-		Query query = new QueryParser(Version.LUCENE_36, searchFieldName,
-				analyzer).parse(queryText);
+		// BooleanQuery query = new BooleanQuery();
+		// for (Enum<? extends ISearchField> searchField : searchFields) {
+		// Query partialQuery = new TermQuery(new Term(
+		// ((ISearchField) searchField).getFieldName()));
+		// query.add(partialQuery, Occur.SHOULD);
+		// }
+		Query query = new QueryParser(Version.LUCENE_36, "Obsah", analyzer)
+				.parse(queryText);
 
 		/**
 		 * Search
@@ -86,17 +136,16 @@ public enum SearchFacade {
 		searcher.search(query, collector);
 		ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
-		List<SearchHit> hitList = new ArrayList<SearchHit>();
+		List<String> linkList = new ArrayList<String>();
 		for (int i = 0; i < hits.length; ++i) {
 			int docId = hits[i].doc;
 			Document d = searcher.doc(docId);
-			hitList.add(new SearchHit(d.get(searchFieldName), d
-					.get(contentLinkFieldName)));
+			linkList.add(d.get(connector.getLinkFieldName()));
 		}
 
 		searcher.close();
 
-		return hitList;
+		return linkList;
 
 	}
 }

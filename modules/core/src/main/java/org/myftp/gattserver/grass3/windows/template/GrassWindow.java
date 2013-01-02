@@ -106,7 +106,7 @@ public abstract class GrassWindow extends Window {
 		addWindow(errorSubwindow);
 	}
 
-	private URL getWindowURL(URL appURL, String name) {
+	public URL getWindowURL(URL appURL, String name) {
 		URL url = null;
 		try {
 			url = new URL(appURL, name + "/");
@@ -119,21 +119,21 @@ public abstract class GrassWindow extends Window {
 	/**
 	 * Získá instanci okna dle jména
 	 */
-	protected Window getWindow(String name) {
+	public Window getWindow(String name) {
 		return getApplication().getWindow(name);
 	}
 
 	/**
 	 * Získá instanci okna dle třídy
 	 */
-	protected Window getWindow(Class<? extends Window> windowClass) {
+	public Window getWindow(Class<? extends Window> windowClass) {
 		return getApplication().getWindow(windowClass);
 	}
 
 	/**
 	 * Získá resource okna dle jeho instance
 	 */
-	protected ExternalResource getWindowResource(Window window) {
+	public ExternalResource getWindowResource(Window window) {
 		if (window == null) {
 			showError500();
 			return null;
@@ -145,7 +145,7 @@ public abstract class GrassWindow extends Window {
 	/**
 	 * Získá resource okna dle jeho třídy
 	 */
-	protected ExternalResource getWindowResource(
+	public ExternalResource getWindowResource(
 			Class<? extends GrassWindow> windowClass) {
 		return getWindowResource(getWindow(windowClass));
 	}
@@ -153,7 +153,7 @@ public abstract class GrassWindow extends Window {
 	/**
 	 * Získá resource okna dle jeho jména
 	 */
-	protected ExternalResource getWindowResource(String name) {
+	public ExternalResource getWindowResource(String name) {
 		return getWindowResource(getWindow(name));
 	}
 

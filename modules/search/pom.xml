@@ -23,6 +23,11 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
+						<Embed-Dependency>lucene-analyzers;inline=true</Embed-Dependency>
+						<Embed-Transitive>true</Embed-Transitive>
+						<Include-Resource>
+							{maven-resources}, {maven-dependencies},
+						</Include-Resource>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 					</instructions>
 				</configuration>
@@ -49,19 +54,17 @@
 
 	<dependencies>
 
-		<!-- DEMO -->
-		<!-- GRASS ARTICLES BUNDLE -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.myftp.gattserver.grass3</groupId> -->
-<!-- 			<artifactId>articles</artifactId> -->
-<!-- 			<version>0.0.1-SNAPSHOT</version> -->
-<!-- 		</dependency> -->
-
-		<!-- Lucene OSGi Bundle-->
+		<!-- Lucene OSGi Bundle -->
 		<dependency>
 			<groupId>org.apache.servicemix.bundles</groupId>
 			<artifactId>org.apache.servicemix.bundles.lucene</artifactId>
 			<version>3.6.0_1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers</artifactId>
+			<version>3.5.0</version>
 		</dependency>
 
 		<!-- OSGi container support -->

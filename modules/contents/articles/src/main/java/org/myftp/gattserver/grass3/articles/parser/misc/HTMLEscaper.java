@@ -26,16 +26,16 @@ public class HTMLEscaper {
             } else if (c == '>') {
                 sb.append("&gt;");
             } else {
-                int ci = 0xffff & c;
-                if (ci < 160) // nothing special only 7 Bit
-                {
+//                int ci = 0xffff & c;
+//                if (ci < 160) // nothing special only 7 Bit
+//                {
                     sb.append(c);
-                } else {
-                    // Not 7 Bit use the unicode system
-                    sb.append("&#");
-                    sb.append(new Integer(ci).toString());
-                    sb.append(';');
-                }
+//                } else {
+//                    // Not 7 Bit use the unicode system
+//                    sb.append("&#");
+//                    sb.append(new Integer(ci).toString());
+//                    sb.append(';');
+//                }
             }
         }
 

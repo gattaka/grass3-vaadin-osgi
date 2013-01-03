@@ -3,26 +3,23 @@ package org.myftp.gattserver.grass3.search;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.cz.CzechAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
@@ -55,7 +52,8 @@ public enum SearchFacade {
 			UserInfoDTO user, GrassWindow grassWindow) throws IOException,
 			ParseException {
 
-		StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);
+		// StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);
+		CzechAnalyzer analyzer = new CzechAnalyzer(Version.LUCENE_36);
 		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36,
 				analyzer);
 
@@ -116,14 +114,15 @@ public enum SearchFacade {
 		/**
 		 * Query
 		 */
-		// BooleanQuery query = new BooleanQuery();
-		// for (Enum<? extends ISearchField> searchField : searchFields) {
-		// Query partialQuery = new TermQuery(new Term(
-		// ((ISearchField) searchField).getFieldName()));
-		// query.add(partialQuery, Occur.SHOULD);
-		// }
-		Query query = new QueryParser(Version.LUCENE_36, "Obsah", analyzer)
-				.parse(queryText);
+		List<String> queries = new ArrayList<String>();
+		List<String> fieldNames = new ArrayList<String>();
+		for (Enum<? extends ISearchField> searchField : searchFields) {
+			queries.add(queryText);
+			fieldNames.add(((ISearchField) searchField).getFieldName());
+		}
+		Query query = MultiFieldQueryParser.parse(Version.LUCENE_36,
+				queries.toArray(new String[0]),
+				fieldNames.toArray(new String[0]), analyzer);
 
 		/**
 		 * Search

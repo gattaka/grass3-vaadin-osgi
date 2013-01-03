@@ -52,15 +52,10 @@ public class SearchWindow extends OneColumnWindow {
 		searchLayout.setExpandRatio(searchField, 1);
 
 		final ComboBox moduleCombo = new ComboBox();
-		boolean first = true;
 		for (String moduleId : moduleIds) {
-			if (first) {
-				// nastav default
-				moduleCombo.setValue(moduleId);
-				first = false;
-			}
 			moduleCombo.addItem(moduleId);
 		}
+		moduleCombo.setNullSelectionAllowed(false);
 		moduleCombo.setFilteringMode(Filtering.FILTERINGMODE_OFF);
 		moduleCombo.setImmediate(true);
 		searchLayout.addComponent(moduleCombo);

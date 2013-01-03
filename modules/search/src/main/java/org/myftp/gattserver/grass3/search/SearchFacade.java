@@ -3,11 +3,11 @@ package org.myftp.gattserver.grass3.search;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.cz.CzechAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -21,6 +21,12 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
+import org.apache.lucene.search.highlight.Formatter;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
+import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
@@ -28,6 +34,7 @@ import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.search.service.ISearchConnector;
 import org.myftp.gattserver.grass3.search.service.ISearchField;
 import org.myftp.gattserver.grass3.search.service.SearchEntity;
+import org.myftp.gattserver.grass3.search.service.SearchHit;
 import org.myftp.gattserver.grass3.windows.template.GrassWindow;
 
 import com.vaadin.terminal.ExternalResource;
@@ -41,16 +48,29 @@ public enum SearchFacade {
 		return aggregator.getSearchConnectorsById().keySet();
 	}
 
+	private String getHighlightedField(Query query, Analyzer analyzer,
+			String fieldName, String fieldValue) throws IOException,
+			InvalidTokenOffsetsException {
+		Formatter formatter = new SimpleHTMLFormatter("<strong>", "</strong>");
+		QueryScorer queryScorer = new QueryScorer(query);
+		Highlighter highlighter = new Highlighter(formatter, queryScorer);
+		highlighter.setTextFragmenter(new SimpleSpanFragmenter(queryScorer,
+				Integer.MAX_VALUE));
+		highlighter.setMaxDocCharsToAnalyze(Integer.MAX_VALUE);
+		return highlighter.getBestFragment(analyzer, fieldName, fieldValue);
+	}
+
 	/**
 	 * Search funkce
 	 * 
 	 * @throws IOException
 	 * @throws ParseException
+	 * @throws InvalidTokenOffsetsException 
 	 */
-	public List<String> search(String queryText,
+	public List<SearchHit> search(String queryText,
 			Set<Enum<? extends ISearchField>> searchFields, String moduleId,
 			UserInfoDTO user, GrassWindow grassWindow) throws IOException,
-			ParseException {
+			ParseException, InvalidTokenOffsetsException {
 
 		// StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);
 		CzechAnalyzer analyzer = new CzechAnalyzer(Version.LUCENE_36);
@@ -135,16 +155,20 @@ public enum SearchFacade {
 		searcher.search(query, collector);
 		ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
-		List<String> linkList = new ArrayList<String>();
+		List<SearchHit> hitList = new ArrayList<SearchHit>();
 		for (int i = 0; i < hits.length; ++i) {
 			int docId = hits[i].doc;
 			Document d = searcher.doc(docId);
-			linkList.add(d.get(connector.getLinkFieldName()));
+			// searcher.explain(query, docId).
+			SearchHit hit = new SearchHit(getHighlightedField(query, analyzer,
+					"Obsah", d.get("Obsah")), d.get(connector
+					.getLinkFieldName()));
+			hitList.add(hit);
 		}
 
 		searcher.close();
 
-		return linkList;
+		return hitList;
 
 	}
 }

@@ -31,6 +31,12 @@ public class Article {
 	private String outputHTML;
 
 	/**
+	 * Obsah článku upravený pro vyhledávání
+	 */
+	@Column(columnDefinition = "TEXT")
+	private String searchableOutput;
+
+	/**
 	 * Meta-informace o obsahu
 	 */
 	@OneToOne
@@ -109,6 +115,14 @@ public class Article {
 
 	public void setOutputHTML(String outputHTML) {
 		this.outputHTML = outputHTML;
+	}
+
+	public String getSearchableOutput() {
+		return searchableOutput;
+	}
+
+	public void setSearchableOutput(String searchableOutput) {
+		this.searchableOutput = searchableOutput;
 	}
 
 }

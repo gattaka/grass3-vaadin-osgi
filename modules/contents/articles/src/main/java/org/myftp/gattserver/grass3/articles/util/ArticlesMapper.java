@@ -31,6 +31,7 @@ public enum ArticlesMapper {
 		articleDTO.setContentNode(mapper.map(article.getContentNode()));
 		articleDTO.setId(article.getId());
 		articleDTO.setOutputHTML(article.getOutputHTML());
+		articleDTO.setSearchableOutput(article.getSearchableOutput());
 
 		Set<String> pluginCSSResources = new LinkedHashSet<String>();
 		for (String resource : article.getPluginCSSResources()) {

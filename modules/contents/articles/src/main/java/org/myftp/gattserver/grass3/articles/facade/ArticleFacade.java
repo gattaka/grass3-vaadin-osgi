@@ -8,6 +8,7 @@ import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.articles.editor.api.ContextImpl;
 import org.myftp.gattserver.grass3.articles.lexer.Lexer;
 import org.myftp.gattserver.grass3.articles.parser.ArticleParser;
+import org.myftp.gattserver.grass3.articles.parser.HTMLTrimmer;
 import org.myftp.gattserver.grass3.articles.parser.PluginBag;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractParser;
@@ -57,6 +58,7 @@ public enum ArticleFacade {
 		articleDTO.setPluginCSSResources(context.getCSSResources());
 		articleDTO.setPluginJSResources(context.getJSResources());
 		articleDTO.setOutputHTML(context.getOutput());
+		articleDTO.setSearchableOutput(HTMLTrimmer.trim(context.getOutput()));
 
 		return articleDTO;
 
@@ -135,6 +137,7 @@ public enum ArticleFacade {
 		article.setPluginCSSResources(context.getCSSResources());
 		article.setPluginJSResources(context.getJSResources());
 		article.setText(text);
+		article.setSearchableOutput(HTMLTrimmer.trim(context.getOutput()));
 
 		// ulož ho
 		if (articleDAO.merge(article) == false)
@@ -179,6 +182,7 @@ public enum ArticleFacade {
 		article.setPluginCSSResources(context.getCSSResources());
 		article.setPluginJSResources(context.getJSResources());
 		article.setText(text);
+		article.setSearchableOutput(HTMLTrimmer.trim(context.getOutput()));
 
 		// ulož ho a nasetuj jeho id
 		Long contentId = (Long) articleDAO.save(article);

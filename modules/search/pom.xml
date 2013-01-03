@@ -23,7 +23,12 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Embed-Dependency>lucene-analyzers;inline=true</Embed-Dependency>
+						<Embed-Dependency>
+							lucene-analyzers;inline=true,
+							lucene-highlighter;inline=true,
+							lucene-memory;inline=true,
+							lucene-regex;inline=true
+						</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
 						<Include-Resource>
 							{maven-resources}, {maven-dependencies},
@@ -54,13 +59,31 @@
 
 	<dependencies>
 
-		<!-- Lucene OSGi Bundle -->
+		<!-- Lucene OSGi Bundle (core) -->
 		<dependency>
 			<groupId>org.apache.servicemix.bundles</groupId>
 			<artifactId>org.apache.servicemix.bundles.lucene</artifactId>
 			<version>3.6.0_1</version>
 		</dependency>
 
+		<!-- Lucene heighlight -->
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-highlighter</artifactId>
+			<version>3.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-memory</artifactId>
+			<version>3.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-regex</artifactId>
+			<version>3.0.3</version>
+		</dependency>
+
+		<!-- Lucene Czech analyzer -->
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers</artifactId>

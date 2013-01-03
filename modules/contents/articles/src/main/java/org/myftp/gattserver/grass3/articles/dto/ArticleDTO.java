@@ -17,6 +17,11 @@ public class ArticleDTO {
 	private String outputHTML;
 
 	/**
+	 * Obsah článku upravený pro vyhledávání
+	 */
+	private String searchableOutput;
+
+	/**
 	 * Meta-informace o obsahu
 	 */
 	private ContentNodeDTO contentNode;
@@ -89,6 +94,14 @@ public class ArticleDTO {
 
 	public void setOutputHTML(String outputHTML) {
 		this.outputHTML = outputHTML;
+	}
+
+	public String getSearchableOutput() {
+		return searchableOutput;
+	}
+
+	public void setSearchableOutput(String searchableOutput) {
+		this.searchableOutput = searchableOutput;
 	}
 
 }

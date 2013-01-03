@@ -38,7 +38,7 @@ public class ArticlesSearchConnector implements ISearchConnector {
 				searchEntity.addField(ArticleSearchField.NAME, article
 						.getContentNode().getName(), true);
 				searchEntity.addField(ArticleSearchField.CONTENT,
-						article.getOutputHTML(), true);
+						article.getSearchableOutput(), true);
 
 				searchEntities.add(searchEntity);
 

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
+import org.myftp.gattserver.grass3.search.service.SearchHit;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
 import com.vaadin.terminal.ExternalResource;
@@ -13,6 +15,7 @@ import com.vaadin.ui.AbstractSelect.Filtering;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -68,17 +71,22 @@ public class SearchWindow extends OneColumnWindow {
 
 				String searchText = (String) searchField.getValue();
 				try {
-					List<String> links = searchFacade.search(searchText, null,
-							(String) moduleCombo.getValue(), getApplication().getUser(),
-							SearchWindow.this);
+					List<SearchHit> hits = searchFacade.search(searchText,
+							null, (String) moduleCombo.getValue(),
+							getApplication().getUser(), SearchWindow.this);
 					outputLayout.removeAllComponents();
-					for (String link : links) {
+					for (SearchHit hit : hits) {
+						String link = hit.getContentLink();
 						outputLayout.addComponent(new Link(link,
 								new ExternalResource(link)));
+						outputLayout.addComponent(new Label(hit
+								.getHitFieldText(), Label.CONTENT_XHTML));
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (ParseException e) {
+					e.printStackTrace();
+				} catch (InvalidTokenOffsetsException e) {
 					e.printStackTrace();
 				}
 

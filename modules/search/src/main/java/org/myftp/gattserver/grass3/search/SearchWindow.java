@@ -47,6 +47,7 @@ public class SearchWindow extends OneColumnWindow {
 		searchLayout.setSpacing(true);
 
 		final VerticalLayout outputLayout = new VerticalLayout();
+		outputLayout.setSpacing(true);
 		layout.addComponent(outputLayout);
 
 		final TextField searchField = new TextField();
@@ -77,10 +78,13 @@ public class SearchWindow extends OneColumnWindow {
 					outputLayout.removeAllComponents();
 					for (SearchHit hit : hits) {
 						String link = hit.getContentLink();
-						outputLayout.addComponent(new Link(link,
+						VerticalLayout hitLayout = new VerticalLayout();
+						outputLayout.addComponent(hitLayout);
+						hitLayout.addComponent(new Link(link,
 								new ExternalResource(link)));
-						outputLayout.addComponent(new Label(hit
-								.getHitFieldText(), Label.CONTENT_XHTML));
+						Label highlightLabel = new Label(hit.getHitFieldText(),
+								Label.CONTENT_XHTML);
+						hitLayout.addComponent(highlightLabel);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();

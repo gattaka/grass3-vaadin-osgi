@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.cz.CzechAnalyzer;
@@ -17,6 +19,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -60,12 +63,27 @@ public enum SearchFacade {
 		return highlighter.getBestFragment(analyzer, fieldName, fieldValue);
 	}
 
+	// private String getMatchedFieldName(Explanation explanation) {
+	// final String PREFIX = "\\(MATCH\\) weight\\(";
+	// final int PREFIX_STR_LENGTH = PREFIX.length() - 3;
+	//
+	// Pattern pattern = Pattern.compile(PREFIX + "[^:]+:");
+	// Matcher matcher = pattern.matcher(explanation.toString());
+	//
+	// if (matcher.find()) {
+	// String output = matcher.group();
+	// return output.substring(PREFIX_STR_LENGTH, output.length() - 1);
+	// } else {
+	// return "";
+	// }
+	// }
+
 	/**
 	 * Search funkce
 	 * 
 	 * @throws IOException
 	 * @throws ParseException
-	 * @throws InvalidTokenOffsetsException 
+	 * @throws InvalidTokenOffsetsException
 	 */
 	public List<SearchHit> search(String queryText,
 			Set<Enum<? extends ISearchField>> searchFields, String moduleId,
@@ -159,11 +177,20 @@ public enum SearchFacade {
 		for (int i = 0; i < hits.length; ++i) {
 			int docId = hits[i].doc;
 			Document d = searcher.doc(docId);
-			// searcher.explain(query, docId).
-			SearchHit hit = new SearchHit(getHighlightedField(query, analyzer,
-					"Obsah", d.get("Obsah")), d.get(connector
-					.getLinkFieldName()));
-			hitList.add(hit);
+
+			String highlight = "";
+			String fieldName = "";
+			for (Enum<? extends ISearchField> searchField : searchFields) {
+				fieldName = ((ISearchField) searchField).getFieldName();
+				highlight = getHighlightedField(query, analyzer, fieldName,
+						d.get(fieldName));
+				// je co zvýrazňovat
+				if (highlight != null && highlight.isEmpty() == false) {
+					hitList.add(new SearchHit(highlight, fieldName, d
+							.get(connector.getLinkFieldName())));
+				}
+			}
+
 		}
 
 		searcher.close();

@@ -46,8 +46,8 @@ public class PluginServiceHolder {
 
 		// existuje skupina ?
 		if (editorCatalog.containsKey(resources.getTagFamily())) {
-			editorCatalog.get(resources.getTagFamily()).put(
-					resources.getTag(), resources);
+			editorCatalog.get(resources.getTagFamily()).put(resources.getTag(),
+					resources);
 		} else {
 			// založ
 			Map<String, EditorButtonResources> map = new HashMap<String, EditorButtonResources>();
@@ -60,8 +60,7 @@ public class PluginServiceHolder {
 		if (editorCatalog.containsKey(resources.getTagFamily())) {
 			Map<String, EditorButtonResources> group = editorCatalog
 					.get(resources.getTagFamily());
-			if (group.remove(resources.getTag()) != null
-					&& group.size() == 0)
+			if (group.remove(resources.getTag()) != null && group.size() == 0)
 				editorCatalog.remove(resources.getTagFamily());
 		}
 	}
@@ -102,6 +101,10 @@ public class PluginServiceHolder {
 	}
 
 	public synchronized void unbindPluginService(IPluginService pluginService) {
+
+		// občas sem spadne null jako plugin (hlavně při startu karafu ... ???!!!)
+		if (pluginService == null)
+			return;
 
 		// parser registr
 		PluginRegister.INSTANCE.unregisterPlugin(pluginService

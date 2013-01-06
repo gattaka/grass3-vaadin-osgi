@@ -1,14 +1,18 @@
 package org.myftp.gattserver.grass3.windows.template;
 
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 
 import org.myftp.gattserver.grass3.ServiceHolder;
+import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
+import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.service.IContentService;
 import org.myftp.gattserver.grass3.util.ComparableLink;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
+import org.myftp.gattserver.grass3.windows.CategoryWindow;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
@@ -22,6 +26,7 @@ public class ContentsTable extends Table {
 	private static final long serialVersionUID = -2220485504407844582L;
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"d.M.yyyy HH:mm:ss");
+	private NodeFacade nodeFacade = NodeFacade.INSTANCE;
 
 	public ContentsTable() {
 		setHeight("200px");
@@ -32,7 +37,7 @@ public class ContentsTable extends Table {
 	 */
 	private enum ColumnId {
 
-		IKONA, NÁZEV, AUTOR, DATUM_VYTVOŘENÍ, DATUM_ÚPRAVY;
+		IKONA, NÁZEV, KATEGORIE, AUTOR, DATUM_VYTVOŘENÍ, DATUM_ÚPRAVY;
 
 	}
 
@@ -43,6 +48,8 @@ public class ContentsTable extends Table {
 		container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
 		container.addContainerProperty(ColumnId.NÁZEV, ComparableLink.class,
 				null);
+		container.addContainerProperty(ColumnId.KATEGORIE,
+				ComparableLink.class, null);
 		container.addContainerProperty(ColumnId.AUTOR, String.class, "");
 		container.addContainerProperty(ColumnId.DATUM_VYTVOŘENÍ, String.class,
 				"");
@@ -79,7 +86,15 @@ public class ContentsTable extends Table {
 									+ URLIdentifierUtils.createURLIdentifier(
 											contentNode.getContentID(),
 											contentNode.getName()))));
-
+			NodeDTO contentParent = nodeFacade.getNodeById(contentNode
+					.getParentID());
+			URL categoryWindowUrl = window.getWindow(CategoryWindow.class).getURL();
+			item.getItemProperty(ColumnId.KATEGORIE).setValue(
+					new ComparableLink(contentParent.getName(),
+							new ExternalResource(categoryWindowUrl
+									+ URLIdentifierUtils.createURLIdentifier(
+											contentParent.getId(),
+											contentParent.getName()))));
 			item.getItemProperty(ColumnId.AUTOR).setValue(
 					contentNode.getAuthor().getName());
 			item.getItemProperty(ColumnId.DATUM_VYTVOŘENÍ).setValue(

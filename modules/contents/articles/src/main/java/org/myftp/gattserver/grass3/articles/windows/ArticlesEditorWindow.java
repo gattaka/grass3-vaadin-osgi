@@ -205,8 +205,19 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 						list.setMultiSelect(true);
 						list.setImmediate(true);
 
-						for (ContentTagDTO contentTag : contentTagFacade
-								.getAllContentTags()) {
+						List<ContentTagDTO> contentTags = contentTagFacade
+								.getAllContentTags();
+						Collections.sort(contentTags,
+								new Comparator<ContentTagDTO>() {
+
+									public int compare(ContentTagDTO o1,
+											ContentTagDTO o2) {
+										return o1.getName().compareTo(
+												o2.getName());
+									}
+								});
+
+						for (ContentTagDTO contentTag : contentTags) {
 							list.addItem(contentTag);
 							list.setItemCaption(contentTag,
 									contentTag.getName());
@@ -279,6 +290,32 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 	}
 
+	private boolean saveOrUpdateArticle() {
+
+		if (editMode) {
+			return articleFacade.modifyArticle(
+					String.valueOf(articleNameField.getValue()),
+					String.valueOf(articleTextArea.getValue()),
+					String.valueOf(articleKeywords.getValue()),
+					publicatedCheckBox.booleanValue(), article);
+		} else {
+			Long id = articleFacade.saveArticle(
+					String.valueOf(articleNameField.getValue()),
+					String.valueOf(articleTextArea.getValue()),
+					String.valueOf(articleKeywords.getValue()),
+					publicatedCheckBox.booleanValue(), category,
+					getApplication().getUser());
+
+			if (id == null)
+				return false;
+
+			// odteď budeme editovat
+			editMode = true;
+			article = articleFacade.getArticleById(id);
+			return true;
+		}
+	}
+
 	private void updateEditorTextPart() {
 
 		editorTextLayout.removeAllComponents();
@@ -328,32 +365,10 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 			public void buttonClick(ClickEvent event) {
 
-				boolean success;
-				Long id = null;
-
 				// pokud se bude měnit
 				boolean oldMode = editMode;
-				if (editMode) {
-					success = articleFacade.modifyArticle(
-							String.valueOf(articleNameField.getValue()),
-							String.valueOf(articleTextArea.getValue()),
-							String.valueOf(articleKeywords.getValue()),
-							publicatedCheckBox.booleanValue(), article);
-				} else {
-					id = articleFacade.saveArticle(
-							String.valueOf(articleNameField.getValue()),
-							String.valueOf(articleTextArea.getValue()),
-							String.valueOf(articleKeywords.getValue()),
-							publicatedCheckBox.booleanValue(), category,
-							getApplication().getUser());
-					success = id != null;
 
-					// odteď budeme editovat
-					editMode = true;
-					article = articleFacade.getArticleById(id);
-				}
-
-				if (success) {
+				if (saveOrUpdateArticle()) {
 					showInfo(oldMode ? "Úprava článku proběhla úspěšně"
 							: "Uložení článku proběhlo úspěšně");
 				} else {
@@ -375,26 +390,7 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 			public void buttonClick(ClickEvent event) {
 
-				boolean success;
-				Long id = null;
-				if (editMode) {
-					success = articleFacade.modifyArticle(
-							String.valueOf(articleNameField.getValue()),
-							String.valueOf(articleTextArea.getValue()),
-							String.valueOf(articleKeywords.getValue()),
-							publicatedCheckBox.booleanValue(), article);
-				} else {
-					id = articleFacade.saveArticle(
-							String.valueOf(articleNameField.getValue()),
-							String.valueOf(articleTextArea.getValue()),
-							String.valueOf(articleKeywords.getValue()),
-							publicatedCheckBox.booleanValue(), category,
-							getApplication().getUser());
-					success = id != null;
-				}
-
-				final Long articleId = editMode ? article.getId() : id;
-				if (success) {
+				if (saveOrUpdateArticle()) {
 					InfoSubwindow infoSubwindow = new InfoSubwindow(
 							editMode ? "Úprava článku proběhla úspěšně"
 									: "Uložení článku proběhlo úspěšně") {
@@ -402,7 +398,7 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 						private static final long serialVersionUID = -4517297931117830104L;
 
 						protected void onProceed(ClickEvent event) {
-							returnToArticle(articleId);
+							returnToArticle();
 						};
 					};
 					addWindow(infoSubwindow);
@@ -450,22 +446,14 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 	}
 
 	/**
-	 * Zavolá vrácení se na článek dle daného id (nový článek, upravovaný
-	 * článek...)
+	 * Zavolá vrácení se na článek
 	 */
-	private void returnToArticle(Long articleId) {
+	private void returnToArticle() {
 		ArticlesEditorWindow.this.open(new ExternalResource(
 				ArticlesEditorWindow.this.getWindow(ArticlesViewerWindow.class)
 						.getURL()
-						+ URLIdentifierUtils.createURLIdentifier(articleId,
-								article.getContentNode().getName())));
-	}
-
-	/**
-	 * Zavolá vrácení se na upravovaný článek
-	 */
-	private void returnToArticle() {
-		returnToArticle(article.getId());
+						+ URLIdentifierUtils.createURLIdentifier(article
+								.getId(), article.getContentNode().getName())));
 	}
 
 	/**

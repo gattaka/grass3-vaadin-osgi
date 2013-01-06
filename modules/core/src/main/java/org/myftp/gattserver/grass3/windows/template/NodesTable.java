@@ -31,7 +31,8 @@ public class NodesTable extends Table {
 
 	}
 
-	public void populateTable(Collection<NodeDTO> nodeList, URL url) {
+	public void populateTable(Collection<NodeDTO> nodeList,
+			URL categoryWindowUrl) {
 
 		IndexedContainer container = new IndexedContainer();
 		container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
@@ -46,9 +47,10 @@ public class NodesTable extends Table {
 
 			Item item = addItem(node);
 			item.getItemProperty(ColumnId.NÁZEV).setValue(
-					new ComparableLink(node.getName(), new ExternalResource(url
-							+ URLIdentifierUtils.createURLIdentifier(
-									node.getId(), node.getName()))));
+					new ComparableLink(node.getName(), new ExternalResource(
+							categoryWindowUrl
+									+ URLIdentifierUtils.createURLIdentifier(
+											node.getId(), node.getName()))));
 
 			Embedded icon = new Embedded();
 			icon.setSource(new ThemeResource("img/tags/briefcase_16.png"));

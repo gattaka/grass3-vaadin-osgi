@@ -22,6 +22,8 @@ import org.myftp.gattserver.grass3.config.ConfigurationUtils;
 import org.myftp.gattserver.grass3.model.config.ModelConfiguration;
 import org.myftp.gattserver.grass3.model.service.IEntityServiceListener;
 import org.myftp.gattserver.grass3.model.service.IEntityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstraktní třída DAO tříd na získávání Entit z databáze nebo přes existující
@@ -65,6 +67,12 @@ public abstract class AbstractDAO<E> {
 	 * Třída entity - tedy doménového objektu
 	 */
 	protected Class<?> entityClass;
+	
+	/**
+	 * Logger
+	 */
+	private static final Logger logger = LoggerFactory
+			.getLogger(AbstractDAO.class);
 
 	/**
 	 * Získá aktuální konfiguraci ze souboru konfigurace
@@ -78,9 +86,8 @@ public abstract class AbstractDAO<E> {
 				.loadExistingOrCreateNewConfiguration();
 	}
 
-	// TODO
-	private void log(String msg) {
-		System.out.println(msg);
+	protected void log(String msg) {
+		logger.info(msg);
 	}
 
 	private synchronized boolean isNewVersionOfDomainModel() {
@@ -289,8 +296,6 @@ public abstract class AbstractDAO<E> {
 		try {
 			tx = session.beginTransaction();
 			Criteria criteria = session.createCriteria(entityClass);
-			if (maxResults != null)
-				criteria.setMaxResults(maxResults);
 			if (criterion != null)
 				criteria.add(criterion);
 			if (order != null)
@@ -306,7 +311,21 @@ public abstract class AbstractDAO<E> {
 			closeSession();
 			return null;
 		}
-		return list;
+
+		/**
+		 * Tohle není úplně košér, protože to omezuje výsledky programově až
+		 * poté, co jsou všechny vybrány z DB - je to bohužel vlastnost
+		 * hibernate, která způsobuje že během outer joinu (collections apod. to
+		 * způsobí) se ponechají identické řádky. Max results tady taky nepomůže,
+		 * protože DISTINCT_ROOT_ENTITY se aplikuje až na výsledný omezený počet
+		 * řádků, což by mělo být naopak.
+		 */
+		if (maxResults != null) {
+			int limit = list.size() < maxResults ? list.size() : maxResults;
+			return list.subList(0, limit - 1);
+		} else {
+			return list;
+		}
 	}
 
 	/**

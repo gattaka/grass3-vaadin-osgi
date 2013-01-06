@@ -8,6 +8,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Hlavní konfigurační třída, poskytovaná jako služba
  * 
@@ -21,6 +24,8 @@ public class ConfigurationManager {
 	 */
 	private DispatcherConfiguration dispatcherConfiguration;
 	private final String dispatcherConfigurationFilename = "grass_dispatcher_config.xml";
+
+	private Logger logger = LoggerFactory.getLogger(ConfigurationManager.class);
 
 	/**
 	 * Soubor s cestou k konfiguracím
@@ -42,10 +47,6 @@ public class ConfigurationManager {
 		return configurationManager;
 	}
 
-	private void log(String msg) {
-		System.out.println(msg);
-	}
-	
 	/**
 	 * 
 	 * @return true pokud se zdařilo, false pokud ne
@@ -58,8 +59,8 @@ public class ConfigurationManager {
 				dispatcherConfiguration = (DispatcherConfiguration) loadConfiguration(
 						dispatcherConfigurationFile,
 						DispatcherConfiguration.class);
-				if ((dispatcherConfiguration.getGrassVersion()
-						.equals(AppInfo.getInstance().getGrassVersion()))
+				if ((dispatcherConfiguration.getGrassVersion().equals(AppInfo
+						.getInstance().getGrassVersion()))
 						&& (dispatcherConfiguration.getGrassName()
 								.equals(AppInfo.GRASS_NAME))) {
 
@@ -104,16 +105,16 @@ public class ConfigurationManager {
 			// raději nebudu nic dělat a ohlásím pád, jinak jen vyhodím varování
 			// a provedu inicializaci
 			if (dispatcherConfigurationFile.exists()) {
-				log("ERR: corrupted or unmatching system version configuration dispatcher file \""
+				logger.error("Corrupted or unmatching system version configuration dispatcher file \""
 						+ dispatcherConfigurationFilename + "\" found");
-				log("ERR: unable to continue without risk - provide valid XML or configuration dispatcher file of proper system version "
+				logger.error("unable to continue without risk - provide valid XML or configuration dispatcher file of proper system version "
 						+ AppInfo.getInstance().getGrassVersion());
 				throw new ConfigurationFileError();
 			} else {
-				log("WARN: missing configuration dispatcher file \""
+				logger.warn("Missing configuration dispatcher file \""
 						+ dispatcherConfigurationFilename + "\"");
-				log("WARN: system will continue in intialization by creating a new one with new config dir");
-				log("WARN: but this might by a sign of some problem in your installation and therefor it should not be ignored");
+				logger.warn("system will continue in intialization by creating a new one with new config dir");
+				logger.warn("but this might by a sign of some problem in your installation and therefor it should not be ignored");
 				try {
 					storeConfiguration(
 							new File(dispatcherConfigurationFilename)
@@ -121,7 +122,7 @@ public class ConfigurationManager {
 							dispatcherConfiguration = new DispatcherConfiguration());
 				} catch (JAXBException e) {
 					e.printStackTrace();
-					log("ERR: unable to create a new configuration dispatcher file \""
+					logger.error("Unable to create a new configuration dispatcher file \""
 							+ dispatcherConfigurationFilename + "\"");
 					throw new ConfigurationFileError();
 				} catch (IOException e) {
@@ -130,7 +131,7 @@ public class ConfigurationManager {
 				}
 			}
 		} else {
-			log("INFO: configuration dispatcher file \""
+			logger.info("Configuration dispatcher file \""
 					+ dispatcherConfigurationFilename + "\" found");
 		}
 

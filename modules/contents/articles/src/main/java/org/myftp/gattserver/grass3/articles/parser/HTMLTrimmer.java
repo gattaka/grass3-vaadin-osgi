@@ -1,7 +1,5 @@
 package org.myftp.gattserver.grass3.articles.parser;
 
-import java.io.UnsupportedEncodingException;
-
 /**
  * Ořezává výsledný text z parseru do tvaru, kde je jenom plain-text obsah.
  * Veškeré formátování a skripty jsou odstraněny. Hledání v takovém textu je pak

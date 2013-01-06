@@ -1,7 +1,5 @@
 package enumtest;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 public class EnumTest {
@@ -23,11 +21,8 @@ public class EnumTest {
 			return id;
 		}
 	}
-	
-	private enum Latin {
-		A;
-	}
 
+	@SuppressWarnings("unused")
 	@Test
 	public void test() {
 
@@ -42,12 +37,11 @@ public class EnumTest {
 		Enum<? extends Ifce> en7 = Greek.ALFA;
 		// en7.getId(); ERROR ????!!!
 		// en7 = Latin.A; ERROR - OK
-		
+
 		System.out.println(((Ifce) en7).getId());
-		
+
 		System.out.println(en7.getDeclaringClass());
 		System.out.println(en7.getClass());
-		
 
 	}
 

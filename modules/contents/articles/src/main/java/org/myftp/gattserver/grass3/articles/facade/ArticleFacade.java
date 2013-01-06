@@ -234,11 +234,10 @@ public enum ArticleFacade {
 	}
 
 	/**
-	 * Získá všechny články (DEMO pro indexování Lucene)
+	 * Získá všechny články
 	 * 
 	 * @return
 	 */
-	@Deprecated
 	public List<ArticleDTO> getAllArticles() {
 
 		ArticleDAO dao = new ArticleDAO();

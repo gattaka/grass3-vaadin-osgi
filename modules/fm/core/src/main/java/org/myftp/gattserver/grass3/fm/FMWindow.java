@@ -11,8 +11,6 @@ import java.util.Set;
 
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
-import org.myftp.gattserver.grass3.template.InfoNotification;
-import org.myftp.gattserver.grass3.template.WarningNotification;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
@@ -322,12 +320,10 @@ public class FMWindow extends OneColumnWindow {
 				if (clean) {
 					// refresh dir list
 					createDirList();
-					showNotification(new InfoNotification(
-							"Soubory byly úspěšně odstraněny."));
+					showInfo("Soubory byly úspěšně odstraněny.");
 				} else {
 					// něco se nepodařilo
-					showNotification(new WarningNotification(
-							"Některé soubory se nezdařilo smazat."));
+					showWarning("Některé soubory se nezdařilo smazat.");
 				}
 			}
 
@@ -363,13 +359,11 @@ public class FMWindow extends OneColumnWindow {
 				if (newNameField.isValid() == false)
 					return;
 				if (explorer.renameFile(file, (String) newNameField.getValue())) {
-					showNotification(new InfoNotification(
-							"Soubor byl úspěšně přejmenován."));
+					showInfo("Soubor byl úspěšně přejmenován.");
 					// refresh dir list
 					createDirList();
 				} else {
-					showNotification(new WarningNotification(
-							"Přejmenování se nezdařilo."));
+					showWarning("Přejmenování se nezdařilo.");
 				}
 
 				(subwindow.getParent()).removeWindow(subwindow);
@@ -395,7 +389,8 @@ public class FMWindow extends OneColumnWindow {
 		subwindow.focus();
 	}
 
-	private void createSingleFileDetails(final File file, final Window subwindow) {
+	private void createSingleFileDetails(final File file,
+			final GrassSubWindow subwindow) {
 
 		GridLayout subWindowlayout = new GridLayout(2, 8);
 		subwindow.setContent(subWindowlayout);
@@ -444,8 +439,9 @@ public class FMWindow extends OneColumnWindow {
 		// Jsou započítané všechny soubory podstromu ?
 		if (!skipList.isEmpty()) {
 			subwindow
-					.showNotification(new WarningNotification(
-							"Některé soubory nemohly být započítány do celkové velikosti."));
+					.getParent()
+					.showWarning(
+							"Některé soubory nemohly být započítány do celkové velikosti.");
 		}
 		// Velikost (binární)
 		subWindowlayout
@@ -468,7 +464,7 @@ public class FMWindow extends OneColumnWindow {
 
 	}
 
-	private void createGroupDetails(final Window subwindow) {
+	private void createGroupDetails(final GrassSubWindow subwindow) {
 
 		GridLayout subWindowlayout = new GridLayout(2, 4);
 		subwindow.setContent(subWindowlayout);
@@ -494,8 +490,9 @@ public class FMWindow extends OneColumnWindow {
 		// Jsou započítané všechny soubory podstromu ?
 		if (!skipList.isEmpty()) {
 			subwindow
-					.showNotification(new WarningNotification(
-							"Některé soubory nemohly být započítány do celkové velikosti."));
+					.getParent()
+					.showInfo(
+							"Některé soubory nemohly být započítány do celkové velikosti.");
 		}
 		// Velikost (binární)
 		subWindowlayout
@@ -519,7 +516,7 @@ public class FMWindow extends OneColumnWindow {
 	}
 
 	private void handleDetailsAction(final File file, VerticalLayout layout) {
-		final Window subwindow = new GrassSubWindow("Detail");
+		final GrassSubWindow subwindow = new GrassSubWindow("Detail");
 		subwindow.center();
 		subwindow.setWidth("470px");
 		addWindow(subwindow);
@@ -590,15 +587,13 @@ public class FMWindow extends OneColumnWindow {
 							return;
 						if (explorer.createNewDir(newDirName.getValue()
 								.toString())) {
-							showNotification(new InfoNotification(
-									"Nový adresář byl úspěšně vytvořen."));
+							showInfo("Nový adresář byl úspěšně vytvořen.");
 							// refresh dir list
 							createDirList();
 							// clean
 							newDirName.setValue("");
 						} else {
-							showNotification(new WarningNotification(
-									"Nezdařilo se vytvořit nový adresář."));
+							showWarning("Nezdařilo se vytvořit nový adresář.");
 						}
 
 					}
@@ -634,8 +629,8 @@ public class FMWindow extends OneColumnWindow {
 			protected void handleFile(File file, String fileName,
 					String mimeType, long length) {
 				if (explorer.saveFile(file, fileName) == false)
-					showNotification(new WarningNotification("Soubor '"
-							+ fileName + "' nebylo možné uložit."));
+					showWarning("Soubor '" + fileName
+							+ "' nebylo možné uložit.");
 				else {
 					// refresh
 					createDirList();
@@ -840,8 +835,7 @@ public class FMWindow extends OneColumnWindow {
 		// Bylo potřeba se vrátit do kořene, protože předložený adresář
 		// neexistuje nebo není dostupný ? Pokud ano, vyhoď varování.
 		if (explorer.isForcedToRoot()) {
-			showNotification(new WarningNotification(
-					"Požadovaný cíl nebylo možné navštívit, zobrazuji kořenový adresář"));
+			showWarning("Požadovaný cíl nebylo možné navštívit, zobrazuji kořenový adresář");
 		}
 
 		if (explorer.isPathDerivedFromFile()) {
@@ -871,5 +865,4 @@ public class FMWindow extends OneColumnWindow {
 
 		return super.handleURI(context, relativeUri);
 	}
-
 }

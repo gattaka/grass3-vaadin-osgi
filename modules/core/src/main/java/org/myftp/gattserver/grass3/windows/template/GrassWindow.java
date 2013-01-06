@@ -8,9 +8,6 @@ import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
-import org.myftp.gattserver.grass3.template.ErrorNotification;
-import org.myftp.gattserver.grass3.template.InfoNotification;
-import org.myftp.gattserver.grass3.template.WarningNotification;
 import org.myftp.gattserver.grass3.windows.err.Err404;
 import org.myftp.gattserver.grass3.windows.err.Err500;
 

@@ -4,8 +4,10 @@ import org.myftp.gattserver.grass3.articles.parser.Position;
 
 public abstract class AbstractElementTree {
 
+	@SuppressWarnings("unused")
 	private Position startPosition;
 
+	@SuppressWarnings("unused")
 	private Position endPosition;
 
 	public void setStartPosition(Position startPosition) {

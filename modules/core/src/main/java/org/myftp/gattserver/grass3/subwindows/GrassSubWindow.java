@@ -1,5 +1,7 @@
 package org.myftp.gattserver.grass3.subwindows;
 
+import org.myftp.gattserver.grass3.windows.template.GrassWindow;
+
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Window;
 
@@ -10,9 +12,14 @@ public class GrassSubWindow extends Window {
 	public GrassSubWindow(String name) {
 		super(name);
 		addAction(new Window.CloseShortcut(this, KeyCode.ESCAPE));
-		
+
 		center();
 		setWidth("220px");
+	}
+
+	@Override
+	public GrassWindow getParent() {
+		return (GrassWindow) super.getParent();
 	}
 
 }

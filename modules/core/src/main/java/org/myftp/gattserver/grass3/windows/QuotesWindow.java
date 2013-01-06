@@ -3,8 +3,6 @@ package org.myftp.gattserver.grass3.windows;
 import org.myftp.gattserver.grass3.facades.QuotesFacade;
 import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.security.CoreACL;
-import org.myftp.gattserver.grass3.template.InfoNotification;
-import org.myftp.gattserver.grass3.template.WarningNotification;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
 import com.vaadin.data.Item;
@@ -110,15 +108,13 @@ public class QuotesWindow extends OneColumnWindow {
 
 						if (quotesFacade.createNewQuote((String) newQuoteText
 								.getValue())) {
-							showNotification(new InfoNotification(
-									"Nová hláška byla úspěšně vložena."));
+							showInfo("Nová hláška byla úspěšně vložena.");
 							// refresh list
 							createQuoteList();
 							// clean
 							newQuoteText.setValue("");
 						} else {
-							showNotification(new WarningNotification(
-									"Nezdařilo se vložit novou hlášku."));
+							showWarning("Nezdařilo se vložit novou hlášku.");
 						}
 
 					}

@@ -35,7 +35,7 @@ public enum ContentTagFacade {
 
 	public String[] parseTags(String tagNames) {
 
-		return tagNames.split("[ ]*" + TAGS_DELIMITER + "[ ]*");
+		return tagNames.split("(\\s*" + TAGS_DELIMITER + "\\s*)|(^\\s+)|(\\s+$)");
 	}
 
 	public String serializeTags(String[] tags) {
@@ -67,7 +67,7 @@ public enum ContentTagFacade {
 	 */
 	public boolean saveTags(String tagNames, ContentNodeDTO contentNodeDTO) {
 
-		// TODO regex ! jinak to bude dělat mezery součástí
+		// získej čisté tagy (bez oddělovacích znaků a mezer)
 		String[] tagArray = parseTags(tagNames);
 
 		// tag dao
@@ -114,7 +114,14 @@ public enum ContentTagFacade {
 	public ContentTagDTO getContentTagByName(String tagName) {
 
 		ContentTagDAO dao = new ContentTagDAO();
+		try {
 		ContentTagDTO tag = mapper.map(dao.findContentTagByName(tagName));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		ContentTagDTO tag = mapper.map(dao.findContentTagByNameQueryVersion(tagName));
+		
 		dao.closeSession();
 
 		return tag;

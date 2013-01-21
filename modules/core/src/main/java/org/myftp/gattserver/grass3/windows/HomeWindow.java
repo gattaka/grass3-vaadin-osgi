@@ -196,11 +196,11 @@ public class HomeWindow extends OneColumnWindow {
 		/**
 		 * O(n.log(n))
 		 * 
-		 * Seřaď položky listu dle abecedy (vzestupně)
+		 * Seřaď položky listu dle abecedy (vzestupně a case insensitive)
 		 */
-		Collections.sort(contentTags, new Comparator<ContentTagDTO>() {
+		Collections.sort(contentTags,new Comparator<ContentTagDTO>() {
 			public int compare(ContentTagDTO o1, ContentTagDTO o2) {
-				return o1.getName().compareTo(o2.getName());
+				return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
 			}
 		});
 

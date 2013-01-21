@@ -9,6 +9,8 @@
 	font-size: 13pt;
 	padding-bottom: 4px;
 	margin-bottom: 10px;
+	border-bottom: 1px #BBB solid;
+	margin-left: 5px;
 }
 
 .articles-basic-h3 {
@@ -16,10 +18,28 @@
 	padding-bottom: 4px;
 	margin-bottom: 10px;
 	border-bottom: 1px #BBB solid;
+	margin-left: 10px;
 }
 
 .articles-basic-h4 {
 	font-size: 11pt;
 	padding-bottom: 4px;
 	margin-bottom: 10px;
+	margin-left: 10px;
+}
+
+.level1 {
+	
+}
+
+.level2 {
+	margin-left: 5px;
+}
+
+.level3 {
+	margin-left: 10px;
+}
+
+.level4 {
+	margin-left: 10px;
 }

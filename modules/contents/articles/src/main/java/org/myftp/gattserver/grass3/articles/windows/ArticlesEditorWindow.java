@@ -2,7 +2,6 @@ package org.myftp.gattserver.grass3.articles.windows;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -515,10 +514,8 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 			editMode = true;
 			article = articleFacade.getArticleById(identifier.getId());
 			articleNameField.setValue(article.getContentNode().getName());
-			Object[] tagsArray = article.getContentNode().getContentTags()
-					.toArray();
-			articleKeywords.setValue(contentTagFacade.serializeTags(Arrays
-					.copyOf(tagsArray, tagsArray.length, String[].class)));
+			articleKeywords.setValue(contentTagFacade.serializeTags(article
+					.getContentNode().getContentTags()));
 			articleTextArea.setValue(article.getText());
 			publicatedCheckBox.setValue(article.getContentNode()
 					.getPublicated());
@@ -529,4 +526,5 @@ public class ArticlesEditorWindow extends TwoColumnWindow {
 
 		return super.handleURI(context, relativeUri);
 	}
+
 }

@@ -38,7 +38,7 @@ public enum ContentTagFacade {
 		return tagNames.split("(\\s*" + TAGS_DELIMITER + "\\s*)|(^\\s+)|(\\s+$)");
 	}
 
-	public String serializeTags(String[] tags) {
+	public String serializeTags(Set<String> tags) {
 
 		StringBuilder stringBuilder = new StringBuilder();
 		boolean first = true;
@@ -114,14 +114,7 @@ public enum ContentTagFacade {
 	public ContentTagDTO getContentTagByName(String tagName) {
 
 		ContentTagDAO dao = new ContentTagDAO();
-		try {
 		ContentTagDTO tag = mapper.map(dao.findContentTagByName(tagName));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		ContentTagDTO tag = mapper.map(dao.findContentTagByNameQueryVersion(tagName));
-		
 		dao.closeSession();
 
 		return tag;

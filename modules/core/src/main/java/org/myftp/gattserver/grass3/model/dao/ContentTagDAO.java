@@ -32,23 +32,6 @@ public class ContentTagDAO extends AbstractDAO<ContentTag> {
 			return null;
 		return tags.get(0);
 	}
-	
-	/**
-	 * Získá tag dle názvu (query verze)
-	 * 
-	 * @param name
-	 *            jméno tagu
-	 * @return objekt tagu
-	 */
-	public ContentTag findContentTagByNameQueryVersion(String name) {
-		List<ContentTag> tags = session.getNamedQuery("findTagByName")
-			    .setParameter("name", name).list();
-		if (tags == null)
-			return null;
-		if (tags.isEmpty())
-			return null;
-		return tags.get(0);
-	}
 
 	/**
 	 * Upraví tagy dle contentNode

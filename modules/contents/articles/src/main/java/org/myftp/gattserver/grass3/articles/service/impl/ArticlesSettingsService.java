@@ -1,34 +1,28 @@
-package org.myftp.gattserver.grass3.articles.config;
+package org.myftp.gattserver.grass3.articles.service.impl;
 
 import java.util.Set;
 
+import org.myftp.gattserver.grass3.articles.windows.ArticlesSettingsWindow;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.service.ISettingsService;
 import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
 
-
-public class Settings implements ISettingsService {
+public class ArticlesSettingsService implements ISettingsService {
 
 	public SettingsWindow getSettingsWindowNewInstance() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ArticlesSettingsWindow();
 	}
 
 	public Class<? extends SettingsWindow> getSettingsWindowClass() {
-		// TODO Auto-generated method stub
-		return null;
+		return ArticlesSettingsWindow.class;
 	}
 
 	public String getSettingsCaption() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Články";
 	}
 
 	public boolean isVisibleForRoles(Set<Role> roles) {
-		// TODO Auto-generated method stub
-		return false;
+		return roles.contains(Role.ADMIN);
 	}
-
-
 
 }

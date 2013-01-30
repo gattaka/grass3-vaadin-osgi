@@ -8,22 +8,7 @@ public class ArticlesConfiguration {
 
 	@XmlTransient
 	public static final String CONFIG_PATH = "articles_config.xml";
-	
-	/**
-	 * Mají se provádět výpisy z Lexeru ?
-	 */
-	private boolean lexerDebugOutput = false;
-
-	/**
-	 * Mají se provádět výpisy z Parseru ?
-	 */
-	private boolean parserDebugOutput = false;
-
-	/**
-	 * Mají se provádět výpisy ze základního překladu ?
-	 */
-	private boolean mainDebugOutput = false;
-
+		
 	/**
 	 * Kolik je timeout pro zálohu (default 2 minuty)
 	 */
@@ -48,30 +33,6 @@ public class ArticlesConfiguration {
 
 	public void setBackupTimeout(int backupTimeout) {
 		this.backupTimeout = backupTimeout;
-	}
-
-	public boolean isMainDebugOutput() {
-		return mainDebugOutput;
-	}
-
-	public void setMainDebugOutput(boolean mainDebugOutput) {
-		this.mainDebugOutput = mainDebugOutput;
-	}
-
-	public boolean isLexerDebugOutput() {
-		return lexerDebugOutput;
-	}
-
-	public void setLexerDebugOutput(boolean lexerDebugOutput) {
-		this.lexerDebugOutput = lexerDebugOutput;
-	}
-
-	public boolean isParserDebugOutput() {
-		return parserDebugOutput;
-	}
-
-	public void setParserDebugOutput(boolean parserDebugOutput) {
-		this.parserDebugOutput = parserDebugOutput;
 	}
 
 }

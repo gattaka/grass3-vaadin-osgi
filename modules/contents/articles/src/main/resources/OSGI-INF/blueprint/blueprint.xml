@@ -38,7 +38,7 @@
 		<bean
 			class="org.myftp.gattserver.grass3.articles.service.impl.ArticlesContentService" />
 	</service>
-	
+
 	<!-- ============= -->
 	<!-- Search služba -->
 	<!-- ============= -->
@@ -46,6 +46,15 @@
 	<service interface="org.myftp.gattserver.grass3.search.service.ISearchConnector">
 		<bean
 			class="org.myftp.gattserver.grass3.articles.service.impl.ArticlesSearchConnector" />
+	</service>
+
+	<!-- =============== -->
+	<!-- Settings služby -->
+	<!-- =============== -->
+
+	<service interface="org.myftp.gattserver.grass3.service.ISettingsService">
+		<bean
+			class="org.myftp.gattserver.grass3.articles.service.impl.ArticlesSettingsService" />
 	</service>
 
 </blueprint>

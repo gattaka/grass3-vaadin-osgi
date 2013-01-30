@@ -67,7 +67,7 @@ public abstract class AbstractDAO<E> {
 	 * Třída entity - tedy doménového objektu
 	 */
 	protected Class<?> entityClass;
-	
+
 	/**
 	 * Logger
 	 */
@@ -316,9 +316,9 @@ public abstract class AbstractDAO<E> {
 		 * Tohle není úplně košér, protože to omezuje výsledky programově až
 		 * poté, co jsou všechny vybrány z DB - je to bohužel vlastnost
 		 * hibernate, která způsobuje že během outer joinu (collections apod. to
-		 * způsobí) se ponechají identické řádky. Max results tady taky nepomůže,
-		 * protože DISTINCT_ROOT_ENTITY se aplikuje až na výsledný omezený počet
-		 * řádků, což by mělo být naopak.
+		 * způsobí) se ponechají identické řádky. Max results tady taky
+		 * nepomůže, protože DISTINCT_ROOT_ENTITY se aplikuje až na výsledný
+		 * omezený počet řádků, což by mělo být naopak.
 		 */
 		if (maxResults != null) {
 			int limit = list.size() < maxResults ? list.size() : maxResults;

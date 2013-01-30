@@ -6,14 +6,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "CONTENT_TAG")
-@NamedQuery(name = "findTagByName", query = "SELECT t FROM ContentTag t WHERE t.name LIKE :name")
 public class ContentTag {
 
 	/**

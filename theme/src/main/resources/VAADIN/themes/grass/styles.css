@@ -114,7 +114,7 @@ a img.icon {
 }
 
 /* == QUOTES ================================================================ */
-.v-label.v-label-quotes.quotes {
+.v-link.v-link-quotes.quotes {
 	font-family: Tahoma, sans-serif;
 	font-size: 11pt;
 	color: white;
@@ -130,7 +130,12 @@ a img.icon {
 	top: 10px
 }
 
-.v-label.v-label-quotes.quotes a {
+.v-link.v-link-quotes.quotes a span {
+	color: white;
+	text-decoration: none;
+}
+
+.v-link.v-link-quotes.quotes a:HOVER span {
 	color: white;
 }
 
@@ -141,14 +146,14 @@ a img.icon {
 	position: relative;
 	top: 42px;
 	height: 41px;
-	padding: 11px 18px;
+	padding: 12px 10px 12px 18px;
 }
 
 .menu .user_menu {
 	float: right;
 }
 
-.menu .v-label.v-label-item.item.v-label-undef-w {
+.menu .v-link.v-link-item.item {
 	font-family: duru, sans-serif;
 	font-size: 9pt;
 	font-weight: bold;
@@ -159,31 +164,25 @@ a img.icon {
 	display: inline-block;
 }
 
-.sections_menu .v-label.v-label-item.item.v-label-undef-w {
+.menu .v-link.v-link-item.item a span {
+	text-decoration: none;
+}
+
+.menu .v-link.v-link-item.item a:HOVER span {
+	text-decoration: underline;
+	color: #2483c4;
+}
+
+.sections_menu .v-link.v-link-item.item {
 	margin-right: 10px;
 }
 
-.user_menu .v-label.v-label-item.item.v-label-undef-w {
+.user_menu .v-link.v-link-item.item {
 	margin-left: 10px;
 }
 
-#menu .loggedas {
+.menu .loggedas {
 	color: #09305b;
-}
-
-#menu a {
-	display: block;
-	text-decoration: none;
-	font-size: 14px;
-	font-weight: bold;
-	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
-		"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
-	color: #555;
-}
-
-#menu a:HOVER {
-	display: block;
-	text-decoration: underline;
 }
 
 /* == ROUND BORDERS ========================================================= */
@@ -225,7 +224,14 @@ a img.icon {
 		no-repeat top right, url("img/corBR.png") no-repeat bottom right;
 }
 
-/* == CONTENT PARTS ========================================================= */
+/* == CONTENT BLOCK ========================================================= */
+#content {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 990px;
+}
+
+/* == CONTENT WRAPPERS ====================================================== */
 #right {
 	width: 775px;
 	display: inline-block;
@@ -237,6 +243,11 @@ a img.icon {
 
 #center {
 	width: 990px;
+}
+
+/* == CONTENTS ============================================================== */
+#centercontent,#leftcontent,#rightcontent {
+	background-color: #ece5cc;
 }
 
 /* == FOOTER PART =========================================================== */
@@ -274,7 +285,6 @@ a img.icon {
 }
 
 /* ------------------------------------------------------------------------------- */
-
 h2 {
 	border-bottom: 1px solid;
 	border-color: #888;

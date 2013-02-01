@@ -1,6 +1,50 @@
 /* Vychazim existujiciho theme Vaadin */
 @import "../reindeer/styles.css";
 
+.v-embedded.v-embedded-csslayout.csslayout.v-embedded-image {
+	display: inline-block;
+}
+
+.v-label.v-label-csslayout.csslayout {
+	display: inline-block;
+}
+
+/* http://www.google.com/webfonts#UsePlace:use/Collection:Dosis|Duru+Sans|Ubuntu+Condensed|Advent+Pro|Doppio+One */
+@font-face {
+	font-family: dosis-bold;
+	src: url('fonts/Dosis-Bold.ttf');
+}
+
+@font-face {
+	font-family: dosis-med;
+	src: url('fonts/Dosis-Medium.ttf');
+}
+
+@font-face {
+	font-family: dosis-light;
+	src: url('fonts/Dosis-Light.ttf');
+}
+
+@font-face {
+	font-family: advent-bold;
+	src: url('fonts/AdventPro-Bold.ttf');
+}
+
+@font-face {
+	font-family: advent-med;
+	src: url('fonts/AdventPro-Medium.ttf');
+}
+
+@font-face {
+	font-family: advent-light;
+	src: url('fonts/AdventPro-Light.ttf');
+}
+
+@font-face {
+	font-family: doppio;
+	src: url('fonts/DoppioOne-Regular.ttf');
+}
+
 @font-face {
 	font-family: duru;
 	src: url('fonts/DuruSans-Regular.ttf');
@@ -271,99 +315,4 @@ a img.icon {
 	bottom: 0px;
 	padding: 0;
 	margin: 0;
-}
-
-/* ------------------------------------------------------------------------------- */
-
-h2 {
-	border-bottom: 1px solid;
-	border-color: #888;
-	font-size: 15pt;
-	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
-		"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
-	font-weight: normal;
-	margin-top: 0;
-}
-
-/* ========== */
-/* Breadcrumb */
-/* ========== */
-.breadcrumb {
-	background: #F3EFDD;
-	padding: 4px 8px 5px 8px;
-	font-size: 14px;
-	font-weight: bold;
-	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
-		"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
-}
-
-.v-link.v-link-breadcrumb_element.breadcrumb_element a span {
-	text-decoration: none;
-	color: #045491;
-}
-
-.v-link.v-link-breadcrumb_element.breadcrumb_element a:visited span {
-	text-decoration: none;
-	color: #045491;
-}
-
-.v-link.v-link-breadcrumb_element.breadcrumb_element a:hover span {
-	text-decoration: underline;
-	color: #2483c4;
-}
-
-.breadcrumb .v-embedded.v-embedded-image {
-	margin: 4px 8px;
-}
-
-.breadcrumb_element {
-	
-}
-
-/* ============= */
-/* Link in table */
-/* ============= */
-.v-table .v-selected .v-link a span {
-	color: white;
-	text-shadow: #3B5A7A 0 1px 0;
-}
-
-/* ================ */
-/* CSS layout prvky */
-/* ================ */
-.v-csslayout.v-csslayout-tools_css_menu.tools_css_menu .v-button {
-	margin: 0 5px 5px 0;
-}
-
-.v-label.v-label-msglabel.msglabel,.v-embedded.v-embedded-image.msgimg {
-	display: inline-block;
-}
-
-/* ====================== */
-/* Tagy a jejich tagcloud */
-/* ====================== */
-.v-label.v-label-taglabel.taglabel.v-label-undef-w,.v-link.v-link-taglabel.taglabel
-	{
-	display: inline-block;
-	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
-		"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
-	margin-right: 10px;
-	margin-bottom: 2px;
-}
-
-.v-label.v-label-taglabel.taglabel.v-label-undef-w a,.v-link.v-link-taglabel.taglabel a span
-	{
-	text-decoration: none;
-	color: #1B699F
-}
-
-.v-label.v-label-taglabel.taglabel.v-label-undef-w a:VISITED,.v-link.v-link-taglabel.taglabel a:VISITED
-	{
-	color: #1B699F
-}
-
-.v-label.v-label-taglabel.taglabel.v-label-undef-w a:HOVER,.v-link.v-link-taglabel.taglabel a:HOVER
-	{
-	color: #1B699F;
-	text-decoration: underline;
 }

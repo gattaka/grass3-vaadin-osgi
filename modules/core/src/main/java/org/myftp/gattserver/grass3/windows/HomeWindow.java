@@ -15,6 +15,7 @@ import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.windows.template.ContentsTable;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
+import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -54,8 +55,10 @@ public class HomeWindow extends OneColumnWindow {
 	}
 
 	@Override
-	protected void createContent(VerticalLayout layout) {
+	protected Component createContent() {
 
+		VerticalLayout layout = new VerticalLayout();
+		
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
@@ -92,6 +95,8 @@ public class HomeWindow extends OneColumnWindow {
 		tagCloudLayout.addComponent(tagCloud);
 		layout.addComponent(tagCloudLayout);
 
+		return layout;
+		
 	}
 
 	@Override

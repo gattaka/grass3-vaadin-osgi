@@ -17,6 +17,7 @@ import org.myftp.gattserver.grass3.windows.template.TwoColumnWindow;
 import com.vaadin.terminal.DownloadStream;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
@@ -46,7 +47,10 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 	private Breadcrumb breadcrumb;
 
 	@Override
-	protected void createLeftColumnContent(VerticalLayout layout) {
+	protected Component createLeftColumnContent() {
+
+		// TODO tohle by šlo mnohem elegantněji přepsat do customLayoutu
+		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);
 
@@ -106,10 +110,17 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 		operationsLayout.addComponent(operationsListLayout);
 		operationsListLayout.addStyleName("tools_css_menu");
 
+		return layout;
+
 	}
 
 	@Override
-	protected void createRightColumnContent(VerticalLayout layout) {
+	protected Component createRightColumnContent() {
+
+		// TODO obsahy článků potřebují tady mít právě CustomLayout aby se dalo
+		// pomocí JS roztahovat - jinak je to závislé na předpočítané pevné
+		// výšce layoutu, který si vaadin počítá v době renderu a pak nemění !
+		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);
 		layout.setSpacing(true);
@@ -124,6 +135,8 @@ public abstract class ContentViewerWindow extends TwoColumnWindow {
 
 		// samotný obsah
 		createContent(layout);
+
+		return layout;
 
 	}
 

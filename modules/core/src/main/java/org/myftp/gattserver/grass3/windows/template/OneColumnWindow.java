@@ -1,29 +1,19 @@
 package org.myftp.gattserver.grass3.windows.template;
 
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomLayout;
 
 public abstract class OneColumnWindow extends BaseWindow {
 
 	private static final long serialVersionUID = 5064416476628186307L;
 
 	@Override
-	protected void createWindowContent(VerticalLayout layout) {
+	protected void createWindowContent(CustomLayout layout) {
 
-		VerticalLayout spacingLayout = new VerticalLayout();
-		spacingLayout.setHeight("10px");
-		layout.addComponent(spacingLayout);
-		
-		VerticalLayout backgroundLayout = new ColumnBuilder(990,
-				"full_right_middle_background") {
+		CustomLayout contentLayout = createLayoutFromFile("oneColumn");
+		layout.addComponent(contentLayout, "content");
 
-			@Override
-			protected void createColumnContent(VerticalLayout layout) {
-				createContent(layout);
-			}
-
-		}.buildColumn();
-
-		layout.addComponent(backgroundLayout);
+		contentLayout.addComponent(createContent(), "content");
 
 	}
 
@@ -32,6 +22,6 @@ public abstract class OneColumnWindow extends BaseWindow {
 	 * 
 	 * @param layout
 	 */
-	protected abstract void createContent(VerticalLayout layout);
+	protected abstract Component createContent();
 
 }

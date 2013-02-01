@@ -4,6 +4,7 @@ import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.service.ISettingsService;
 
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
@@ -20,9 +21,10 @@ public class SettingsWindow extends TwoColumnWindow {
 	}
 
 	@Override
-	protected void createLeftColumnContent(VerticalLayout layout) {
-		leftColumnLayout = layout;
+	protected Component createLeftColumnContent() {
+		leftColumnLayout = new VerticalLayout();
 		leftColumnLayout.setMargin(true);
+		return leftColumnLayout;
 	}
 
 	private void createSettingsMenu() {
@@ -39,12 +41,17 @@ public class SettingsWindow extends TwoColumnWindow {
 	}
 
 	@Override
-	protected void createRightColumnContent(VerticalLayout layout) {
+	protected Component createRightColumnContent() {
+		
+		VerticalLayout layout = new VerticalLayout();
+		
 		Label label = new Label("Zvolte položku nastavení z menu");
 		layout.addComponent(label);
 		layout.setComponentAlignment(label, Alignment.MIDDLE_CENTER);
 		layout.setSpacing(true);
 		layout.setMargin(true);
+		
+		return layout;
 	}
 
 	@Override

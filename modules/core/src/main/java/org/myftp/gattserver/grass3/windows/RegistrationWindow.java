@@ -11,6 +11,7 @@ import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.PasswordField;
@@ -32,7 +33,9 @@ public class RegistrationWindow extends OneColumnWindow {
 	}
 
 	@Override
-	protected void createContent(VerticalLayout layout) {
+	protected Component createContent() {
+
+		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);
 		layout.setSpacing(true);
@@ -133,5 +136,7 @@ public class RegistrationWindow extends OneColumnWindow {
 				});
 
 		buttonLayout.addComponent(submitButton);
+
+		return layout;
 	}
 }

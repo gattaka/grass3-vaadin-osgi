@@ -1,5 +1,7 @@
 package org.myftp.gattserver.grass3.windows.template;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -14,6 +16,7 @@ import org.myftp.gattserver.grass3.windows.err.Err500;
 import com.vaadin.Application;
 import com.vaadin.terminal.DownloadStream;
 import com.vaadin.terminal.ExternalResource;
+import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Window;
 
 /**
@@ -49,6 +52,30 @@ public abstract class GrassWindow extends Window {
 	public DownloadStream handleURI(URL context, String relativeUri) {
 		onShow();
 		return super.handleURI(context, relativeUri);
+	}
+
+	/**
+	 * Vytvoří {@link CustomLayout} z layout HTML
+	 * 
+	 * @param filename
+	 *            jméno HTML souboru layoutu. Pro layout 'base.html' je jméno
+	 *            'base'
+	 * @return vytvoření {@link CustomLayout} nebo {@code null}, pokud nebyl
+	 *         layout nalezen
+	 */
+	public CustomLayout createLayoutFromFile(String filename) {
+		InputStream layoutFile = getClass().getResourceAsStream(
+				"/VAADIN/themes/grass/layouts/" + filename + ".html");
+		CustomLayout layout = null;
+		try {
+			layout = new CustomLayout(layoutFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		// CustomLayout layout = new CustomLayout(filename);
+
+		return layout;
 	}
 
 	/**

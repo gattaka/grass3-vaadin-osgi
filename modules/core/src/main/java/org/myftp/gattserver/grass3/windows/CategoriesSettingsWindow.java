@@ -24,6 +24,7 @@ import com.vaadin.terminal.ThemeResource;
 import com.vaadin.terminal.gwt.client.ui.dd.VerticalDropLocation;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -64,7 +65,9 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 	}
 
 	@Override
-	protected void createRightColumnContent(VerticalLayout layout) {
+	protected Component createRightColumnContent() {
+
+		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);
 		layout.setSpacing(true);
@@ -366,6 +369,7 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 
 		createNewNodePanel(layout);
 
+		return layout;
 	}
 
 	private void createNewNodePanel(VerticalLayout layout) {

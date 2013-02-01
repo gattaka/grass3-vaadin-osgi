@@ -20,6 +20,7 @@ import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
 import com.vaadin.terminal.DownloadStream;
 import com.vaadin.terminal.ExternalResource;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
@@ -48,7 +49,10 @@ public class CategoryWindow extends OneColumnWindow {
 	private Breadcrumb breadcrumb;
 
 	@Override
-	protected void createContent(VerticalLayout layout) {
+	protected Component createContent() {
+
+		VerticalLayout layout = new VerticalLayout();
+
 		layout.addComponent(breadcrumb = new Breadcrumb());
 
 		layout.setMargin(true);
@@ -76,6 +80,8 @@ public class CategoryWindow extends OneColumnWindow {
 		newContentsLayout.addComponent(newContentsTable);
 		newContentsTable.setWidth("100%");
 		layout.addComponent(newContentsLayout);
+
+		return layout;
 	}
 
 	@Override

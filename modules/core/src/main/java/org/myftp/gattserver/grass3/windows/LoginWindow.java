@@ -5,6 +5,7 @@ import org.myftp.gattserver.grass3.template.GrassLoginForm;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
 import com.vaadin.terminal.ExternalResource;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.LoginForm;
 import com.vaadin.ui.LoginForm.LoginEvent;
@@ -22,7 +23,9 @@ public class LoginWindow extends OneColumnWindow {
 	}
 
 	@Override
-	protected void createContent(VerticalLayout layout) {
+	protected Component createContent() {
+
+		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);
 		layout.setSpacing(true);
@@ -64,6 +67,8 @@ public class LoginWindow extends OneColumnWindow {
 			}
 		});
 		formFieldsLayout.addComponent(loginForm);
+
+		return layout;
 
 	}
 }

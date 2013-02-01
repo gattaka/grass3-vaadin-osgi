@@ -9,6 +9,7 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
@@ -36,7 +37,9 @@ public class QuotesWindow extends OneColumnWindow {
 	}
 
 	@Override
-	protected void createContent(VerticalLayout layout) {
+	protected Component createContent() {
+
+		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);
 		layout.setSpacing(true);
@@ -47,6 +50,7 @@ public class QuotesWindow extends OneColumnWindow {
 		createNewQuotePanel(layout);
 		createQuoteList();
 
+		return layout;
 	}
 
 	@Override

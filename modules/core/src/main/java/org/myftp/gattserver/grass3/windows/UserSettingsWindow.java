@@ -13,6 +13,7 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
@@ -43,7 +44,9 @@ public class UserSettingsWindow extends SettingsWindow {
 	}
 
 	@Override
-	protected void createRightColumnContent(VerticalLayout layout) {
+	protected Component createRightColumnContent() {
+
+		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);
 		layout.setSpacing(true);
@@ -84,6 +87,8 @@ public class UserSettingsWindow extends SettingsWindow {
 				}
 			}
 		});
+
+		return layout;
 
 	}
 
@@ -211,8 +216,8 @@ public class UserSettingsWindow extends SettingsWindow {
 
 					public void buttonClick(ClickEvent event) {
 						if (userFacade.changeUserRoles(user)) {
-							showInfo("Oprávnění uživatele '"
-									+ user.getName() + "' byly úspěšně upraven");
+							showInfo("Oprávnění uživatele '" + user.getName()
+									+ "' byly úspěšně upraven");
 							userTable.getContainerProperty(user, ColumnId.ROLE)
 									.setValue(user.getRoles());
 							userTable.unselect(user);

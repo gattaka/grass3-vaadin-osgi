@@ -8,6 +8,7 @@ import org.myftp.gattserver.grass3.windows.template.ContentsTable;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
 import com.vaadin.terminal.DownloadStream;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
@@ -32,7 +33,9 @@ public class TagWindow extends OneColumnWindow {
 	}
 
 	@Override
-	protected void createContent(VerticalLayout layout) {
+	protected Component createContent() {
+
+		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);
 		layout.setSpacing(true);
@@ -43,6 +46,8 @@ public class TagWindow extends OneColumnWindow {
 		contentNodesLayout.addComponent(tagContentsTable);
 		tagContentsTable.setWidth("100%");
 		layout.addComponent(contentNodesLayout);
+
+		return layout;
 
 	}
 

@@ -1,26 +1,20 @@
 package org.myftp.gattserver.grass3.windows.err;
 
-import org.myftp.gattserver.grass3.windows.template.BackgroundWindow;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import org.myftp.gattserver.grass3.windows.template.ErrorWindow;
 
-public class Err500 extends BackgroundWindow {
+public class Err500 extends ErrorWindow {
 
-	private static final long serialVersionUID = 3728073040878360420L;
+	private static final long serialVersionUID = -2679323424889989397L;
 
 	public static final String NAME = "500";
 
 	public Err500() {
-		setName(NAME);
+		super(NAME);
 	}
 
 	@Override
-	protected void buildBody(VerticalLayout layout) {
-		layout.addComponent(new Label("Došlo k chybě na straně serveru"));
-	}
-
-	@Override
-	protected void onShow() {
+	protected String getErrorText() {
+		return "Došlo k chybě na straně serveru";
 	}
 
 }

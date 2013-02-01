@@ -11,6 +11,7 @@ import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Slider;
@@ -35,11 +36,15 @@ public class ApplicationSettingsWindow extends SettingsWindow {
 	}
 
 	@Override
-	protected void createRightColumnContent(VerticalLayout layout) {
+	protected Component createRightColumnContent() {
+
+		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);
 		layout.setSpacing(true);
 		layout.addComponent(settingsLayout);
+
+		return layout;
 
 	}
 
@@ -72,7 +77,7 @@ public class ApplicationSettingsWindow extends SettingsWindow {
 	protected void onShow() {
 
 		final CoreConfiguration configuration = loadConfiguration();
-		
+
 		settingsLayout.removeAllComponents();
 		settingsLayout.addComponent(new Label("<h2>Nastavení aplikace</h2>",
 				Label.CONTENT_XHTML));

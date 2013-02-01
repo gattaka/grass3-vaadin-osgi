@@ -20,18 +20,18 @@ import org.myftp.gattserver.grass3.windows.QuotesWindow;
 import org.myftp.gattserver.grass3.windows.RegistrationWindow;
 
 import com.vaadin.terminal.ExternalResource;
-import com.vaadin.ui.Alignment;
+import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.BaseTheme;
 
-public abstract class BaseWindow extends BackgroundWindow {
+public abstract class BaseWindow extends GrassWindow {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
@@ -105,6 +105,37 @@ public abstract class BaseWindow extends BackgroundWindow {
 
 	}
 
+	@Override
+	protected void buildLayout() {
+
+		CustomLayout layout = createLayoutFromFile("base");
+		setContent(layout);
+
+		// homelink (přes logo)
+		Link homelink = new Link();
+		homelink.addStyleName("homelink");
+		homelink.setResource(getWindowResource(HomeWindow.class));
+		homelink.setIcon(new ThemeResource("img/logo.png"));
+		layout.addComponent(homelink, "homelink");
+
+		// hlášky
+		quotes = new Link();
+		quotes.setResource(getWindowResource(QuotesWindow.class));
+		quotes.setStyleName("quotes");
+		layout.addComponent(quotes, "quote");
+
+		// menu
+		layout.addComponent(userMenuLayout, "usermenu");
+		layout.addComponent(sectionsMenuLayout, "sectionsmenu");
+
+		// obsah
+		createWindowContent(layout);
+
+		// footer
+		layout.addComponent(new Label("GRASS3"), "about");
+
+	}
+
 	private void populateSectionsMenu() {
 		sectionsMenuLayout.removeAllComponents();
 
@@ -133,21 +164,21 @@ public abstract class BaseWindow extends BackgroundWindow {
 		userMenuLayout.removeAllComponents();
 
 		CoreACL acl = getUserACL();
-		
+
 		// Přihlášení
 		if (acl.canLogin()) {
 			Link link = new Link("Přihlášení",
 					getWindowResource(LoginWindow.class));
-			link.setStyleName("menu_item");
+			link.setStyleName("item");
 			userMenuLayout.addComponent(link);
 		}
-		
+
 		// Registrace
 		if (acl.canRegistrate()) {
-				Link link = new Link("Registrace",
-						getWindowResource(RegistrationWindow.class));
-				link.setStyleName("menu_item");
-				userMenuLayout.addComponent(link);
+			Link link = new Link("Registrace",
+					getWindowResource(RegistrationWindow.class));
+			link.setStyleName("item");
+			userMenuLayout.addComponent(link);
 		}
 
 		// Přehled o uživateli
@@ -204,13 +235,13 @@ public abstract class BaseWindow extends BackgroundWindow {
 
 			// separator
 			Label separator = new Label("|");
-			separator.setStyleName("menu_item");
+			separator.setStyleName("item");
 			userMenuLayout.addComponent(separator);
 
 			// nastavení
 			Link link = new Link("Nastavení",
 					getWindowResource(SettingsWindow.class));
-			link.setStyleName("menu_item");
+			link.setStyleName("item");
 			userMenuLayout.addComponent(link);
 
 			// odhlásit
@@ -223,7 +254,7 @@ public abstract class BaseWindow extends BackgroundWindow {
 				}
 			});
 			button.setStyleName(BaseTheme.BUTTON_LINK);
-			button.addStyleName("menu_item");
+			button.addStyleName("item");
 			userMenuLayout.addComponent(button);
 
 		}
@@ -239,69 +270,20 @@ public abstract class BaseWindow extends BackgroundWindow {
 	}
 
 	protected void buildHeader(HorizontalLayout headerLayout) {
-
 		// Hlášky - generují se znova a znova
-		quotes = new Link(chooseQuote(), getWindowResource(QuotesWindow.class));
-		quotes.setStyleName("quotes");
-		quotes.setWidth("740px");
-		headerLayout.addComponent(quotes);
-	}
-
-	protected void buildBody(VerticalLayout layout) {
-
-		VerticalLayout bodyLayout = new VerticalLayout();
-		layout.addComponent(bodyLayout);
-		layout.setComponentAlignment(bodyLayout, Alignment.TOP_CENTER);
-
-		bodyLayout.setStyleName("body_layout");
-		bodyLayout.setWidth("990px");
-		bodyLayout.setMargin(false, false, true, false);
-
-		// menu stránky
-		createMenu(bodyLayout);
-
-		// obsah stránky
-		createWindowContent(bodyLayout);
-
-	}
-
-	private void createMenu(VerticalLayout layout) {
-
-		// menu (centrovací element)
-		HorizontalLayout menuHolderLayout = new HorizontalLayout();
-
-		layout.addComponent(menuHolderLayout);
-		menuHolderLayout.setStyleName("menu_holder");
-		menuHolderLayout.setWidth("990px");
-		menuHolderLayout.setHeight("41px");
-		menuHolderLayout.setMargin(false, true, false, true);
-
-		// sekce menu
-		createSectionsMenu(menuHolderLayout);
-
-		// user menu
-		createUserMenu(menuHolderLayout);
+		quotes.setCaption(chooseQuote());
 	}
 
 	private void createHomeLink() {
 		Link link = new Link("Domů", getWindowResource(HomeWindow.class));
-		link.setStyleName("first_menu_item");
+		link.setStyleName("item");
 		sectionsMenuLayout.addComponent(link);
-	}
-
-	private void createSectionsMenu(HorizontalLayout layout) {
-		layout.addComponent(sectionsMenuLayout);
-		layout.setComponentAlignment(sectionsMenuLayout, Alignment.MIDDLE_LEFT);
-		sectionsMenuLayout.setStyleName("sections_menu_layout");
-
-		// Domů
-		createHomeLink();
 	}
 
 	private void createSectionLink(String caption,
 			Class<? extends GrassWindow> windowClass) {
 		Link link = new Link(caption, getWindowResource(windowClass));
-		link.setStyleName("menu_item");
+		link.setStyleName("item");
 		sectionsMenuLayout.addComponent(link);
 	}
 
@@ -309,14 +291,8 @@ public abstract class BaseWindow extends BackgroundWindow {
 		Link link = new Link(caption, new ExternalResource(getWindow(
 				CategoryWindow.class).getURL()
 				+ URL));
-		link.setStyleName("menu_item");
+		link.setStyleName("item");
 		sectionsMenuLayout.addComponent(link);
-	}
-
-	private void createUserMenu(HorizontalLayout layout) {
-		layout.addComponent(userMenuLayout);
-		layout.setComponentAlignment(userMenuLayout, Alignment.MIDDLE_RIGHT);
-		userMenuLayout.setStyleName("user_menu_layout");
 	}
 
 	/**
@@ -325,6 +301,6 @@ public abstract class BaseWindow extends BackgroundWindow {
 	 * @param layout
 	 *            layout, do kterého se má vytvářet
 	 */
-	protected abstract void createWindowContent(VerticalLayout layout);
+	protected abstract void createWindowContent(CustomLayout layout);
 
 }

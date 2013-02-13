@@ -20,7 +20,7 @@ fi
 # Zjisti všechny target JAR soubory, které se budou přesouvat
 # Zkopíruj do deploy adresáře
 echo "Kopíruji:"
-for target in $(find . -wholename *target/*.jar); do
+for target in $(find . -regex ".*target/.*\.jar" | egrep -v "^\./sandbox"); do
     echo -e "\t$target"
     cp $2 $target $1
 done

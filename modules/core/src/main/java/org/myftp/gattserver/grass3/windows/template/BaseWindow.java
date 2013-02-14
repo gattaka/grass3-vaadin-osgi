@@ -23,6 +23,7 @@ import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -38,8 +39,8 @@ public abstract class BaseWindow extends GrassWindow {
 	private QuotesFacade quotesFacade = QuotesFacade.INSTANCE;
 	protected NodeFacade nodeFacade = NodeFacade.INSTANCE;
 
-	private HorizontalLayout sectionsMenuLayout = new HorizontalLayout();
-	private HorizontalLayout userMenuLayout = new HorizontalLayout();
+	private CssLayout sectionsMenuLayout = new CssLayout();
+	private CssLayout userMenuLayout = new CssLayout();
 	private Link quotes;
 
 	private Set<String> initJS = new LinkedHashSet<String>();

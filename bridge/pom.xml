@@ -10,13 +10,13 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<osgi.version>4.2.0</osgi.version>
-		<vaadin.version>6.8.2</vaadin.version>
+		<vaadin.version>7.0.0</vaadin.version>
 		<gwt.version>2.3.0</gwt.version>
 	</properties>
 
-    <build>
-	<plugins>		
-    <plugin>
+	<build>
+		<plugins>
+			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<version>2.3.7</version>
@@ -25,9 +25,8 @@
 					<instructions>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-RequiredExecutionEnvironment>JavaSE-1.6</Bundle-RequiredExecutionEnvironment>
-						<Bundle-Activator>vaadin.bridge.internal.VaadinBridgeActivator</Bundle-Activator>
-						<Export-Package>vaadin.bridge;version=${project.version}</Export-Package>
-						<Private-Package>vaadin.bridge.internal</Private-Package>
+						<Bundle-Activator>org.vaadin7.osgi.Activator</Bundle-Activator>
+						<Export-Package>org.vaadin7.osgi, org.vaadin7.osgi.common</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -70,7 +69,23 @@
 		<!-- Vaadin -->
 		<dependency>
 			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin</artifactId>
+			<artifactId>vaadin-server</artifactId>
+			<version>${vaadin.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-client-compiled</artifactId>
+			<version>${vaadin.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-client</artifactId>
+			<version>${vaadin.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-themes</artifactId>
 			<version>${vaadin.version}</version>
 		</dependency>
 

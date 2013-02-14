@@ -1,7 +1,7 @@
 /* Vychazim existujiciho theme Vaadin */
-@import "../reindeer/styles.css";
+@import "../reindeer/legacy-styles.css";
 
-.v-embedded.v-embedded-csslayout.csslayout.v-embedded-image {
+.v-embedded .v-embedded-csslayout.csslayout.v-embedded-image {
 	display: inline-block;
 }
 
@@ -12,42 +12,42 @@
 /* http://www.google.com/webfonts#UsePlace:use/Collection:Dosis|Duru+Sans|Ubuntu+Condensed|Advent+Pro|Doppio+One */
 @font-face {
 	font-family: dosis-bold;
-	src: url('fonts/Dosis-Bold.ttf');
+	src: url("fonts/Dosis-Bold.ttf");
 }
 
 @font-face {
 	font-family: dosis-med;
-	src: url('fonts/Dosis-Medium.ttf');
+	src: url("fonts/Dosis-Medium.ttf");
 }
 
 @font-face {
 	font-family: dosis-light;
-	src: url('fonts/Dosis-Light.ttf');
+	src: url("fonts/Dosis-Light.ttf");
 }
 
 @font-face {
 	font-family: advent-bold;
-	src: url('fonts/AdventPro-Bold.ttf');
+	src: url("fonts/AdventPro-Bold.ttf");
 }
 
 @font-face {
 	font-family: advent-med;
-	src: url('fonts/AdventPro-Medium.ttf');
+	src: url("fonts/AdventPro-Medium.ttf");
 }
 
 @font-face {
 	font-family: advent-light;
-	src: url('fonts/AdventPro-Light.ttf');
+	src: url("fonts/AdventPro-Light.ttf");
 }
 
 @font-face {
 	font-family: doppio;
-	src: url('fonts/DoppioOne-Regular.ttf');
+	src: url("fonts/DoppioOne-Regular.ttf");
 }
 
 @font-face {
 	font-family: duru;
-	src: url('fonts/DuruSans-Regular.ttf');
+	src: url("fonts/DuruSans-Regular.ttf");
 }
 
 /* == DEFAULT =============================================================== */
@@ -281,6 +281,12 @@ a img.icon {
 
 #center {
 	width: 990px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#centercontent {
+	background-color: #ece5cc;
 }
 
 /* == FOOTER PART =========================================================== */

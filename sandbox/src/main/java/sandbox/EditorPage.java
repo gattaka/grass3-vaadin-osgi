@@ -1,41 +1,47 @@
 package sandbox;
 
-import sandbox.MyVaadinUI.Views;
+import sandbox.interfaces.IPageFactory;
 
-import com.vaadin.ui.Alignment;
+import com.vaadin.server.Page;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.navigator.Navigator;
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomLayout;
 
-public class EditorPage extends VerticalLayout implements View {
+public class EditorPage extends BasePage {
 
 	private static final long serialVersionUID = 502625699429764791L;
 
-	public EditorPage(final Navigator navigator) {
-		setSizeFull();
+	public static enum EditorPageFactory implements IPageFactory {
 
-		addComponent(new Label("Editor"));
+		INSTANCE;
 
-		Button button = new Button("View",
-				new Button.ClickListener() {
-					private static final long serialVersionUID = 7646166365866861567L;
+		@Override
+		public String getPageName() {
+			return "editor";
+		}
 
-					@Override
-					public void buttonClick(ClickEvent event) {
-						navigator.navigateTo(Views.VIEW.name());
-					}
-				});
-		addComponent(button);
-		setComponentAlignment(button, Alignment.MIDDLE_CENTER);
+		@Override
+		public Component createPage() {
+			return new EditorPage();
+		}
 	}
 
 	@Override
-	public void enter(ViewChangeEvent event) {
-		// TODO Auto-generated method stub
+	protected void createContent(CustomLayout layout) {
+		CustomLayout contentLayout = new CustomLayout("oneColumn");
+		layout.addComponent(contentLayout, "content");
+
+		Button button = new Button("View", new Button.ClickListener() {
+			private static final long serialVersionUID = 7646166365866861567L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				Page.getCurrent().setLocation(
+						ViewPage.ViewPageFactory.INSTANCE.getPageName());
+			}
+		});
+		contentLayout.addComponent(button, "content");
 
 	}
 

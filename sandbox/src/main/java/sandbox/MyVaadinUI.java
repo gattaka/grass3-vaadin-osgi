@@ -1,21 +1,32 @@
 package sandbox;
 
-import com.vaadin.navigator.Navigator;
+import java.util.HashMap;
+import java.util.Map;
+
+import sandbox.interfaces.IPageFactory;
+
+import com.vaadin.annotations.Theme;
+import com.vaadin.annotations.Title;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.UI;
 
 /**
  * The Application's "main" class
  */
+@Title("Gattserver")
+@Theme("grass")
 public class MyVaadinUI extends UI {
 
 	private static final long serialVersionUID = -7296936167498820319L;
 
-	Navigator navigator;
+	Map<String, IPageFactory> map = new HashMap<String, IPageFactory>();
 
-	enum Views {
-		EDITOR, VIEW
-	};
+	public MyVaadinUI() {
+		map.put(EditorPage.EditorPageFactory.INSTANCE.getPageName(),
+				EditorPage.EditorPageFactory.INSTANCE);
+		map.put(ViewPage.ViewPageFactory.INSTANCE.getPageName(),
+				ViewPage.ViewPageFactory.INSTANCE);
+	}
 
 	@Override
 	protected void init(VaadinRequest request) {
@@ -23,15 +34,12 @@ public class MyVaadinUI extends UI {
 		String path = request.getPathInfo();
 		System.out.println("Path: " + path);
 
-		// Create the navigator to control the page
-		navigator = new Navigator(this, this);
-
-		// Create and register the views
-		navigator.addView(Views.EDITOR.name(), new EditorPage(navigator));
-		navigator.addView(Views.VIEW.name(), new ViewPage(navigator));
-
-		// Navigate to the start view
-		navigator.navigateTo(Views.VIEW.name());
+		IPageFactory factory;
+		if (path.equals("/") || (factory = map.get(path.substring(1))) == null)
+			setContent(ViewPage.ViewPageFactory.INSTANCE.createPage());
+		else {
+			setContent(factory.createPage());
+		}
 
 	}
 }

@@ -1,5 +1,7 @@
 package sandbox;
 
+import sandbox.util.GrassRequest;
+
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.CssLayout;
@@ -14,8 +16,12 @@ public abstract class BasePage extends CustomLayout {
 	private CssLayout sectionsMenuLayout = new CssLayout();
 	private CssLayout userMenuLayout = new CssLayout();
 
-	public BasePage() {
+	private GrassRequest request;
+	
+	public BasePage(GrassRequest request) {
 		super("base");
+		
+		this.request = request; 
 
 		// homelink
 		Link homelink = new Link();
@@ -42,6 +48,10 @@ public abstract class BasePage extends CustomLayout {
 
 	protected abstract void createContent(CustomLayout layout);
 
+	protected GrassRequest getRequest() {
+		return request;
+	}
+	
 	private void createSectionsMenu(CustomLayout layout) {
 		layout.addComponent(sectionsMenuLayout, "sectionsmenu");
 

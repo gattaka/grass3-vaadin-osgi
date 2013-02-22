@@ -1,16 +1,19 @@
 package sandbox;
 
-import sandbox.interfaces.IPageFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.vaadin.server.Page;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
+import sandbox.interfaces.IPageFactory;
+import sandbox.util.GrassRequest;
+
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomLayout;
+import com.vaadin.ui.Label;
 
 public class EditorPage extends BasePage {
 
 	private static final long serialVersionUID = 502625699429764791L;
+	private static Logger logger = LoggerFactory.getLogger(EditorPage.class);
 
 	public static enum EditorPageFactory implements IPageFactory {
 
@@ -22,9 +25,13 @@ public class EditorPage extends BasePage {
 		}
 
 		@Override
-		public Component createPage() {
-			return new EditorPage();
+		public Component createPage(GrassRequest request) {
+			return new EditorPage(request);
 		}
+	}
+
+	public EditorPage(GrassRequest request) {
+		super(request);
 	}
 
 	@Override
@@ -32,17 +39,10 @@ public class EditorPage extends BasePage {
 		CustomLayout contentLayout = new CustomLayout("oneColumn");
 		layout.addComponent(contentLayout, "content");
 
-		Button button = new Button("View", new Button.ClickListener() {
-			private static final long serialVersionUID = 7646166365866861567L;
+		String article = getRequest().getAnalyzer().getPathToken(1);
+		logger.info("Článek: [" + article + "]");
 
-			@Override
-			public void buttonClick(ClickEvent event) {
-				Page.getCurrent().setLocation(
-						ViewPage.ViewPageFactory.INSTANCE.getPageName());
-			}
-		});
-		contentLayout.addComponent(button, "content");
+		contentLayout.addComponent(new Label(article), "content");
 
 	}
-
 }

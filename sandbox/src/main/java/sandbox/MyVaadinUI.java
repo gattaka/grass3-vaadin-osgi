@@ -1,9 +1,15 @@
 package sandbox;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import sandbox.EditorPage.EditorPageFactory;
+import sandbox.HomePage.HomePageFactory;
+import sandbox.ViewPage.ViewPageFactory;
 import sandbox.interfaces.IPageFactory;
+import sandbox.util.GrassRequest;
+import sandbox.util.PageFactoriesMap;
+import sandbox.util.URLPathAnalyzer;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
@@ -18,28 +24,27 @@ import com.vaadin.ui.UI;
 public class MyVaadinUI extends UI {
 
 	private static final long serialVersionUID = -7296936167498820319L;
+	private static Logger logger = LoggerFactory.getLogger(MyVaadinUI.class);
 
-	Map<String, IPageFactory> map = new HashMap<String, IPageFactory>();
+	PageFactoriesMap factoriesMap = new PageFactoriesMap(
+			HomePageFactory.INSTANCE);
 
 	public MyVaadinUI() {
-		map.put(EditorPage.EditorPageFactory.INSTANCE.getPageName(),
-				EditorPage.EditorPageFactory.INSTANCE);
-		map.put(ViewPage.ViewPageFactory.INSTANCE.getPageName(),
-				ViewPage.ViewPageFactory.INSTANCE);
+		factoriesMap.put(EditorPageFactory.INSTANCE);
+		factoriesMap.put(ViewPageFactory.INSTANCE);
 	}
 
 	@Override
 	protected void init(VaadinRequest request) {
 
 		String path = request.getPathInfo();
-		System.out.println("Path: " + path);
+		logger.info("Path: [" + path + "]");
 
-		IPageFactory factory;
-		if (path.equals("/") || (factory = map.get(path.substring(1))) == null)
-			setContent(ViewPage.ViewPageFactory.INSTANCE.createPage());
-		else {
-			setContent(factory.createPage());
-		}
+		GrassRequest grassRequest = new GrassRequest(request);
+		URLPathAnalyzer analyzer = grassRequest.getAnalyzer();
+
+		IPageFactory factory = factoriesMap.get(analyzer.getPathToken(0));
+		setContent(factory.createPage(grassRequest));
 
 	}
 }

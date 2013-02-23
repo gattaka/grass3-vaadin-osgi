@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.myftp.gattserver.grass3.GrassApplication;
+import org.myftp.gattserver.grass3.GrassUI;
 import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
@@ -94,8 +94,8 @@ public abstract class GrassWindow extends Window {
 	 */
 	protected abstract void onShow();
 
-	public GrassApplication getApplication() {
-		return (GrassApplication) super.getApplication();
+	public GrassUI getApplication() {
+		return (GrassUI) super.getApplication();
 	}
 
 	protected void showError500() {

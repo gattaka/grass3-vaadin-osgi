@@ -2,6 +2,9 @@ package org.myftp.gattserver.grass3.windows;
 
 import org.myftp.gattserver.grass3.GrassUI;
 import org.myftp.gattserver.grass3.template.GrassLoginForm;
+import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.windows.template.BasePage;
+import org.myftp.gattserver.grass3.windows.template.IPageFactory;
 import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
 
 import com.vaadin.terminal.ExternalResource;
@@ -11,15 +14,23 @@ import com.vaadin.ui.LoginForm;
 import com.vaadin.ui.LoginForm.LoginEvent;
 import com.vaadin.ui.VerticalLayout;
 
-public class LoginWindow extends OneColumnWindow {
+public class LoginPage extends BasePage {
 
 	private static final long serialVersionUID = 8276040419934174157L;
 
-	public static final String NAME = "login";
+	public static enum LoginPageFactory implements IPageFactory {
 
-	public LoginWindow() {
-		setName(NAME);
-		setCaption("Login");
+		INSTANCE;
+
+		@Override
+		public String getPageName() {
+			return "login";
+		}
+
+		@Override
+		public Component createPage(GrassRequest request) {
+			return new LoginPage(request);
+		}
 	}
 
 	@Override

@@ -46,23 +46,6 @@
 
 	<dependencies>
 
-		<!-- Spring -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>3.2.1.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>3.2.1.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>3.2.1.RELEASE</version>
-		</dependency>
-
 		<!-- Vaadin 7 -->
 		<dependency>
 			<groupId>com.vaadin</groupId>
@@ -136,13 +119,6 @@
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>
 			<artifactId>config</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<!-- Grass3 theme -->
-		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
-			<artifactId>theme</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 

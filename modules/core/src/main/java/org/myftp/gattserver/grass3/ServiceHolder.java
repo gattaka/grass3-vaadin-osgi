@@ -50,13 +50,13 @@ public class ServiceHolder {
 	 * notifikovány o přidání sekce, settings apod. aby si přidali instanci okna
 	 * atd.
 	 */
-	private Set<GrassApplication> applications = new HashSet<GrassApplication>();
+	private Set<GrassUI> applications = new HashSet<GrassUI>();
 
 	/**
 	 * Přidání instance aplikace, která tak bude notifikována aby si přidala
 	 * okna
 	 */
-	public void registerListenerApp(GrassApplication application) {
+	public void registerListenerApp(GrassUI application) {
 		applications.add(application);
 
 		// dej jí vědět o již zaregistrovaných sekcích
@@ -117,14 +117,14 @@ public class ServiceHolder {
 	}
 
 	public synchronized void bindContentService(IContentService contentService) {
-		for (GrassApplication application : applications) {
+		for (GrassUI application : applications) {
 			application.addWindow(contentService.getContentEditorWindowNewInstance());
 			application.addWindow(contentService.getContentViewerWindowNewInstance());
 		}
 	}
 
 	public synchronized void unbindContentService(IContentService contentService) {
-		for (GrassApplication application : applications) {
+		for (GrassUI application : applications) {
 			application.removeWindow(contentService.getContentEditorWindowNewInstance());
 			application.removeWindow(contentService.getContentViewerWindowNewInstance());
 		}
@@ -146,13 +146,13 @@ public class ServiceHolder {
 	}
 
 	public synchronized void bindSection(ISectionService section) {
-		for (GrassApplication application : applications) {
+		for (GrassUI application : applications) {
 			application.addWindow(section.getSectionWindowNewInstance());
 		}
 	}
 
 	public synchronized void unbindSection(ISectionService section) {
-		for (GrassApplication application : applications) {
+		for (GrassUI application : applications) {
 			application.removeWindow(section.getSectionWindowClass());
 		}
 	}
@@ -173,13 +173,13 @@ public class ServiceHolder {
 	}
 
 	public synchronized void bindSettings(ISettingsService settingsService) {
-		for (GrassApplication application : applications) {
+		for (GrassUI application : applications) {
 			application.addWindow(settingsService.getSettingsWindowNewInstance());
 		}
 	}
 
 	public synchronized void unbindSettings(ISettingsService settingsService) {
-		for (GrassApplication application : applications) {
+		for (GrassUI application : applications) {
 			application.removeWindow(settingsService.getSettingsWindowClass());
 		}
 	}

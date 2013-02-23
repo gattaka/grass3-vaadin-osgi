@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import vaadin.bridge.ApplicationFactory;
 
-import org.myftp.gattserver.grass3.GrassApplication;
+import org.myftp.gattserver.grass3.GrassUI;
 import org.osgi.service.log.LogService;
 
 import com.vaadin.Application;
@@ -34,7 +34,7 @@ public class AppFactory implements ApplicationFactory {
 	}
 
 	public String getApplicationCSSClassName() {
-		return GrassApplication.class.getSimpleName();
+		return GrassUI.class.getSimpleName();
 	}
 
 	public SystemMessages getSystemMessages() {
@@ -47,7 +47,7 @@ public class AppFactory implements ApplicationFactory {
 	 * takto funguje. Instance aplikace odpovídá jedné session.
 	 */
 	public Application newInstance() {
-		return new GrassApplication();
+		return new GrassUI();
 	}
 
 	public Dictionary<String, String> getInitParams() {

@@ -7,8 +7,10 @@ import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.Mapper;
 import org.myftp.gattserver.grass3.util.PageFactoriesMap;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
-import org.myftp.gattserver.grass3.windows.HomePage.HomePageFactory;
-import org.myftp.gattserver.grass3.windows.template.IPageFactory;
+import org.myftp.gattserver.grass3.windows.CategoryPage;
+import org.myftp.gattserver.grass3.windows.HomePage;
+import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
+import org.myftp.gattserver.grass3.windows.template.SettingsPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,11 +26,15 @@ public class GrassUI extends UI {
 	private static final long serialVersionUID = -785347532002801786L;
 	private static Logger logger = LoggerFactory.getLogger(GrassUI.class);
 
-	PageFactoriesMap factoriesMap = new PageFactoriesMap(
-			HomePageFactory.INSTANCE);
+	/**
+	 * TODO - tohle by se mělo nějak zaregistrovat samo přes spring
+	 */
+	private PageFactoriesMap factoriesMap = new PageFactoriesMap(
+			HomePage.FACTORY);
 
 	public GrassUI() {
-		// factoriesMap.put(ViewPageFactory.INSTANCE);
+		factoriesMap.put(CategoryPage.FACTORY);
+		factoriesMap.put(SettingsPage.FACTORY);
 	}
 
 	/**
@@ -40,7 +46,7 @@ public class GrassUI extends UI {
 	/**
 	 * Auth
 	 */
-	private UserInfoDTO user;
+	private UserInfoDTO user = null;
 
 	/**
 	 * Authentikační metoda pro aplikaci
@@ -51,7 +57,7 @@ public class GrassUI extends UI {
 	 *            heslo, které použil
 	 * @return true pokud se přihlášení zdařilo, jinak false
 	 */
-	public boolean authenticate(String username, String password) {
+	public boolean login(String username, String password) {
 
 		User loggedUser = securityFacade.authenticate(username, password);
 		if (loggedUser != null) {
@@ -60,6 +66,13 @@ public class GrassUI extends UI {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Odhlášení
+	 */
+	public void logout() {
+		this.user = null;
 	}
 
 	/**
@@ -78,7 +91,7 @@ public class GrassUI extends UI {
 		GrassRequest grassRequest = new GrassRequest(request);
 		URLPathAnalyzer analyzer = grassRequest.getAnalyzer();
 
-		IPageFactory factory = factoriesMap.get(analyzer.getPathToken(0));
+		PageFactory factory = factoriesMap.get(analyzer.getPathToken(0));
 		setContent(factory.createPage(grassRequest));
 
 	}

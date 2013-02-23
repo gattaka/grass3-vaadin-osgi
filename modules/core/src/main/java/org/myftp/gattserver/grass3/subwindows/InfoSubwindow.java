@@ -1,6 +1,6 @@
 package org.myftp.gattserver.grass3.subwindows;
 
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.server.ThemeResource;
 
 public class InfoSubwindow extends MessageSubwindow {
 

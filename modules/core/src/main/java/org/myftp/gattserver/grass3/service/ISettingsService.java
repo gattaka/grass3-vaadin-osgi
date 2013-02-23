@@ -3,7 +3,7 @@ package org.myftp.gattserver.grass3.service;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
+import org.myftp.gattserver.grass3.windows.ifces.SettingsPageFactory;
 
 /**
  * Objekt nastavení. Jde o objekt, který u sebe má informace potřebné k zapojení
@@ -15,18 +15,11 @@ import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
 public interface ISettingsService {
 
 	/**
-	 * Vrátí novou instanci okna nastavení
+	 * Vrátí factory pro vytváření stránky nastavení
 	 * 
-	 * @return okno nastavení
+	 * @return factory stránky nastavení
 	 */
-	public SettingsWindow getSettingsWindowNewInstance();
-
-	/**
-	 * Vrátí třídu nastavení
-	 * 
-	 * @return třída nastavení
-	 */
-	public Class<? extends SettingsWindow> getSettingsWindowClass();
+	public SettingsPageFactory getSettingsPageFactory();
 
 	/**
 	 * Vrátí název okna nastavení, tento text se bude zobrazovat v menu, ze

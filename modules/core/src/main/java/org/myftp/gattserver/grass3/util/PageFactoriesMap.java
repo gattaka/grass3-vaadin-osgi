@@ -2,14 +2,14 @@ package org.myftp.gattserver.grass3.util;
 
 import java.util.HashMap;
 
-import org.myftp.gattserver.grass3.windows.template.IPageFactory;
+import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 
-public class PageFactoriesMap extends HashMap<String, IPageFactory> {
+public class PageFactoriesMap extends HashMap<String, PageFactory> {
 
 	private static final long serialVersionUID = 2552200530580643096L;
-	private IPageFactory homepageFactory;
+	private PageFactory homepageFactory;
 
-	public PageFactoriesMap(IPageFactory homepageFactory) {
+	public PageFactoriesMap(PageFactory homepageFactory) {
 		this.homepageFactory = homepageFactory;
 	}
 
@@ -18,8 +18,8 @@ public class PageFactoriesMap extends HashMap<String, IPageFactory> {
 	 * nalezena factory pro daný klíč, je vrácena factory homepage
 	 */
 	@Override
-	public IPageFactory get(Object key) {
-		IPageFactory factory = super.get(key);
+	public PageFactory get(Object key) {
+		PageFactory factory = super.get(key);
 		return factory == null ? homepageFactory : factory;
 	}
 
@@ -27,7 +27,7 @@ public class PageFactoriesMap extends HashMap<String, IPageFactory> {
 	 * Základní vkládácí metoda - zaregistruje factory pod jménem stránky,
 	 * kterou factory vytváří
 	 */
-	public IPageFactory put(IPageFactory factory) {
+	public PageFactory put(PageFactory factory) {
 		return super.put(factory.getPageName(), factory);
 	}
 
@@ -35,7 +35,7 @@ public class PageFactoriesMap extends HashMap<String, IPageFactory> {
 	 * Původní put metoda - má prakticky jediné použití a tím je tvorba aliasů
 	 */
 	@Override
-	public IPageFactory put(String pageName, IPageFactory factory) {
+	public PageFactory put(String pageName, PageFactory factory) {
 		return super.put(pageName, factory);
 	}
 

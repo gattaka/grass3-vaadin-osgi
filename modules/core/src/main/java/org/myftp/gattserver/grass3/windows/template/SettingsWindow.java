@@ -9,7 +9,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
-public class SettingsWindow extends TwoColumnWindow {
+public class SettingsWindow extends TwoColumnPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 

@@ -3,7 +3,7 @@ package org.myftp.gattserver.grass3.windows;
 import org.myftp.gattserver.grass3.facades.QuotesFacade;
 import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.security.CoreACL;
-import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
+import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
@@ -17,7 +17,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
-public class QuotesWindow extends OneColumnWindow {
+public class QuotesWindow extends OneColumnPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 

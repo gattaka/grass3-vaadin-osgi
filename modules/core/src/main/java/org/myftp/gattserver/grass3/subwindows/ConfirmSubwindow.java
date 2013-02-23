@@ -53,7 +53,7 @@ public abstract class ConfirmSubwindow extends GrassSubWindow {
 
 			public void buttonClick(ClickEvent event) {
 				onConfirm(event);
-				getParent().removeWindow(ConfirmSubwindow.this);
+				close();
 			}
 		});
 
@@ -66,7 +66,7 @@ public abstract class ConfirmSubwindow extends GrassSubWindow {
 
 			public void buttonClick(ClickEvent event) {
 				onClose(event);
-				getParent().removeWindow(ConfirmSubwindow.this);
+				close();
 			}
 		});
 

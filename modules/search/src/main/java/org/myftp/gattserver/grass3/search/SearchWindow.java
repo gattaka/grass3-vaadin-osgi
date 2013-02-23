@@ -7,7 +7,7 @@ import java.util.Set;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.myftp.gattserver.grass3.search.service.SearchHit;
-import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
+import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
@@ -23,7 +23,7 @@ import com.vaadin.ui.Link;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-public class SearchWindow extends OneColumnWindow {
+public class SearchWindow extends OneColumnPage {
 
 	private static final long serialVersionUID = -7063551976547889914L;
 

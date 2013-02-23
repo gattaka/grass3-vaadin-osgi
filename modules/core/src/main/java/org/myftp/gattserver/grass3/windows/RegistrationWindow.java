@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.myftp.gattserver.grass3.facades.UserFacade;
-import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
+import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
 
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.EmailValidator;
@@ -18,7 +18,7 @@ import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-public class RegistrationWindow extends OneColumnWindow {
+public class RegistrationWindow extends OneColumnPage {
 
 	private UserFacade userFacade = UserFacade.INSTANCE;
 

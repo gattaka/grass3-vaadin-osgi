@@ -3,7 +3,7 @@ package org.myftp.gattserver.grass3.windows.template;
 import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.service.ISettingsService;
 import org.myftp.gattserver.grass3.util.GrassRequest;
-import org.myftp.gattserver.grass3.windows.HomePage;
+import org.myftp.gattserver.grass3.windows.ifces.SettingsPageFactory;
 
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
@@ -11,45 +11,34 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
-public class SettingsPage extends TwoColumnWindow {
+public class SettingsPage extends TwoColumnPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
-	public static enum SettingsPageFactory implements IPageFactory {
-
-		INSTANCE;
-
+	public static final SettingsPageFactory FACTORY = new SettingsPageFactory("settings") {
 		@Override
-		public String getPageName() {
-			return "settings";
-		}
-
-		@Override
-		public Component createPage(GrassRequest request) {
+		public SettingsPage createSettingsPage(GrassRequest request) {
 			return new SettingsPage(request);
 		}
+	};
+	
+	public SettingsPage(GrassRequest request) {
+		super(request);
 	}
-
-	private VerticalLayout leftColumnLayout;
 
 	@Override
 	protected Component createLeftColumnContent() {
-		leftColumnLayout = new VerticalLayout();
+		VerticalLayout leftColumnLayout = new VerticalLayout();
 		leftColumnLayout.setMargin(true);
-		return leftColumnLayout;
-	}
 
-	private void createSettingsMenu() {
-
-		leftColumnLayout.removeAllComponents();
-
-		for (ISettingsService settingsService : ServiceHolder.getInstance()
+		for (ISettingsService settingsService : ServiceHolder
 				.getSettingsServices()) {
 			Link link = new Link(settingsService.getSettingsCaption(),
-					getWindowResource(settingsService.getSettingsWindowClass()));
+					getPageResource(settingsService.getSettingsPageFactory()));
 			leftColumnLayout.addComponent(link);
 		}
 
+		return leftColumnLayout;
 	}
 
 	@Override
@@ -66,9 +55,4 @@ public class SettingsPage extends TwoColumnWindow {
 		return layout;
 	}
 
-	@Override
-	protected void onShow() {
-		createSettingsMenu();
-		super.onShow();
-	}
 }

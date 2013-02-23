@@ -1,6 +1,6 @@
 package org.myftp.gattserver.grass3.subwindows;
 
-import com.vaadin.terminal.Resource;
+import com.vaadin.server.Resource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -63,7 +63,7 @@ public abstract class MessageSubwindow extends GrassSubWindow {
 
 			public void buttonClick(ClickEvent event) {
 				onProceed(event);
-				getParent().removeWindow(MessageSubwindow.this);
+				close();
 			}
 		});
 

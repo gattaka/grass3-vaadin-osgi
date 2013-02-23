@@ -12,7 +12,7 @@ import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.windows.CategoryWindow;
 import org.myftp.gattserver.grass3.windows.TagWindow;
-import org.myftp.gattserver.grass3.windows.template.TwoColumnWindow;
+import org.myftp.gattserver.grass3.windows.template.TwoColumnPage;
 
 import com.vaadin.terminal.DownloadStream;
 import com.vaadin.terminal.ExternalResource;
@@ -24,7 +24,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
-public abstract class ContentViewerWindow extends TwoColumnWindow {
+public abstract class ContentViewerWindow extends TwoColumnPage {
 
 	private static final long serialVersionUID = 5078280973817331002L;
 

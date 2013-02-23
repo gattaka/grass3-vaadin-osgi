@@ -3,7 +3,7 @@ package org.myftp.gattserver.grass3.service;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.windows.template.GrassWindow;
+import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 
 /**
  * Objekt sekce. Jde o objekt, který u sebe má informace potřebné k zapojení
@@ -15,18 +15,11 @@ import org.myftp.gattserver.grass3.windows.template.GrassWindow;
 public interface ISectionService {
 
 	/**
-	 * Vrátí novou instanci okna sekce
+	 * Vrátí factory pro vytváření stránky
 	 * 
-	 * @return nové okno sekce
+	 * @return factory stránky
 	 */
-	public GrassWindow getSectionWindowNewInstance();
-
-	/**
-	 * Vrátí třídu sekce
-	 * 
-	 * @return třída sekce
-	 */
-	public Class<? extends GrassWindow> getSectionWindowClass();
+	public PageFactory getSectionPageFactory();
 
 	/**
 	 * Vrátí název sekce, tento text se bude zobrazovat přímo v hlavním menu, ze

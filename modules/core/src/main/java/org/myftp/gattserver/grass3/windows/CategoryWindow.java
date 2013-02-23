@@ -16,7 +16,7 @@ import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.windows.template.ContentsTable;
 import org.myftp.gattserver.grass3.windows.template.NewContentsTable;
 import org.myftp.gattserver.grass3.windows.template.NodesTable;
-import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
+import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
 
 import com.vaadin.terminal.DownloadStream;
 import com.vaadin.terminal.ExternalResource;
@@ -24,7 +24,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-public class CategoryWindow extends OneColumnWindow {
+public class CategoryWindow extends OneColumnPage {
 
 	private static final long serialVersionUID = -499585200973560016L;
 

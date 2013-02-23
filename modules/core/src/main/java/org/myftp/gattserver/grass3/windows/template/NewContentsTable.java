@@ -11,7 +11,6 @@ import org.myftp.gattserver.grass3.util.ComparableLink;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
 
@@ -32,7 +31,7 @@ public class NewContentsTable extends Table {
 
 	}
 
-	public void populateTable(NodeDTO node, GrassWindow window) {
+	public void populateTable(NodeDTO node, GrassPage page) {
 
 		IndexedContainer container = new IndexedContainer();
 		container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
@@ -43,7 +42,7 @@ public class NewContentsTable extends Table {
 		setColumnHeader(ColumnId.IKONA, "");
 
 		// jaké služby obsahů mám k dispozici ?
-		List<IContentService> contentServices = ServiceHolder.getInstance()
+		List<IContentService> contentServices = ServiceHolder
 				.getContentServices();
 
 		// položky
@@ -52,15 +51,11 @@ public class NewContentsTable extends Table {
 			Item item = addItem(contentService);
 			item.getItemProperty(ColumnId.NÁZEV).setValue(
 					new ComparableLink(contentService
-							.getCreateNewContentLabel(), new ExternalResource(
-							window.getWindow(
-									contentService
-											.getContentEditorWindowClass())
-									.getURL()
-									+ DefaultContentOperations.NEW.toString()
-									+ "/"
-									+ URLIdentifierUtils.createURLIdentifier(
-											node.getId(), node.getName()))));
+							.getCreateNewContentLabel(), page.getPageResource(
+							contentService.getContentEditorPageFactory(),
+							DefaultContentOperations.NEW.toString(),
+							URLIdentifierUtils.createURLIdentifier(
+									node.getId(), node.getName()))));
 
 			Embedded icon = new Embedded();
 			icon.setSource(contentService.getContentIcon());

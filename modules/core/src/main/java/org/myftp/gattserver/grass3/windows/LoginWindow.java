@@ -2,7 +2,7 @@ package org.myftp.gattserver.grass3.windows;
 
 import org.myftp.gattserver.grass3.GrassUI;
 import org.myftp.gattserver.grass3.template.GrassLoginForm;
-import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
+import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
 
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Component;
@@ -11,7 +11,7 @@ import com.vaadin.ui.LoginForm;
 import com.vaadin.ui.LoginForm.LoginEvent;
 import com.vaadin.ui.VerticalLayout;
 
-public class LoginWindow extends OneColumnWindow {
+public class LoginWindow extends OneColumnPage {
 
 	private static final long serialVersionUID = 8276040419934174157L;
 

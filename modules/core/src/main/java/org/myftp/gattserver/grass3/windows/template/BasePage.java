@@ -2,7 +2,6 @@ package org.myftp.gattserver.grass3.windows.template;
 
 import java.util.List;
 
-import org.myftp.gattserver.grass3.GrassUI;
 import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.facades.QuotesFacade;
@@ -13,29 +12,24 @@ import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.util.GrassRequest;
-import org.myftp.gattserver.grass3.windows.CategoryWindow;
+import org.myftp.gattserver.grass3.windows.CategoryPage.CategoryPageFactory;
 import org.myftp.gattserver.grass3.windows.HomePage.HomePageFactory;
-import org.myftp.gattserver.grass3.windows.HomeWindow;
 import org.myftp.gattserver.grass3.windows.LoginPage.LoginPageFactory;
-import org.myftp.gattserver.grass3.windows.LoginWindow;
 import org.myftp.gattserver.grass3.windows.QuotesPage.QuotesPageFactory;
-import org.myftp.gattserver.grass3.windows.QuotesWindow;
 import org.myftp.gattserver.grass3.windows.RegistrationPage.RegistrationPageFactory;
-import org.myftp.gattserver.grass3.windows.RegistrationWindow;
+import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 import org.myftp.gattserver.grass3.windows.template.SettingsPage.SettingsPageFactory;
 
-import com.vaadin.server.ExternalResource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.BaseTheme;
 
 public abstract class BasePage extends GrassPage {
@@ -74,7 +68,7 @@ public abstract class BasePage extends GrassPage {
 		createUserMenu(this);
 
 		// obsah
-		createWindowContent(this);
+		createContent(this);
 
 		// footer
 		addComponent(new Label("GRASS3"), "about");
@@ -103,11 +97,10 @@ public abstract class BasePage extends GrassPage {
 
 		// externí sekce
 		CoreACL acl = getUserACL();
-		for (ISectionService section : ServiceHolder.getInstance()
-				.getSectionServices()) {
+		for (ISectionService section : ServiceHolder.getSectionServices()) {
 			if (acl.canShowSection(section)) {
 				createSectionLink(section.getSectionCaption(),
-						section.getSectionWindowClass());
+						section.getSectionPageFactory());
 			}
 		}
 
@@ -145,7 +138,7 @@ public abstract class BasePage extends GrassPage {
 		}
 
 		// Přehled o uživateli
-		final UserInfoDTO userInfoDTO = ((GrassUI) getUI()).getUser();
+		final UserInfoDTO userInfoDTO = getGrassUI().getUser();
 		if (acl.canShowUserDetails(userInfoDTO)) {
 			Button userDetails = new Button(userInfoDTO.getName(),
 					new Button.ClickListener() {
@@ -213,7 +206,7 @@ public abstract class BasePage extends GrassPage {
 				private static final long serialVersionUID = 4570994816815405844L;
 
 				public void buttonClick(ClickEvent event) {
-					getApplication().close();
+					getGrassUI().logout();
 				}
 			});
 			button.setStyleName(BaseTheme.BUTTON_LINK);
@@ -240,32 +233,22 @@ public abstract class BasePage extends GrassPage {
 	}
 
 	private void createHomeLink() {
-		Link link = new Link("Domů", getWindowResource(HomeWindow.class));
+		Link link = new Link("Domů", getPageResource(HomePageFactory.INSTANCE));
 		link.setStyleName("item");
 		sectionsMenuLayout.addComponent(link);
 	}
 
-	private void createSectionLink(String caption,
-			Class<? extends GrassWindow> windowClass) {
-		Link link = new Link(caption, getWindowResource(windowClass));
+	private void createSectionLink(String caption, PageFactory pageFactory) {
+		Link link = new Link(caption, getPageResource(pageFactory));
 		link.setStyleName("item");
 		sectionsMenuLayout.addComponent(link);
 	}
 
 	private void createCategoryLink(String caption, String URL) {
-		Link link = new Link(caption, new ExternalResource(getWindow(
-				CategoryWindow.class).getURL()
-				+ URL));
+		Link link = new Link(caption, getPageResource(
+				CategoryPageFactory.INSTANCE, URL));
 		link.setStyleName("item");
 		sectionsMenuLayout.addComponent(link);
 	}
-
-	/**
-	 * Vytvoří obsah okna - tedy všechno to, co je mezi menu a footerem
-	 * 
-	 * @param layout
-	 *            layout, do kterého se má vytvářet
-	 */
-	protected abstract void createWindowContent(CustomLayout layout);
 
 }

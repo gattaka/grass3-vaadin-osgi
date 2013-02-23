@@ -1,16 +1,15 @@
 package org.myftp.gattserver.grass3.windows.template;
 
-import java.net.URL;
 import java.util.Collection;
 
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
-import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.ComparableLink;
+import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
+import org.myftp.gattserver.grass3.windows.CategoryPage;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.terminal.ExternalResource;
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
 
@@ -31,8 +30,7 @@ public class NodesTable extends Table {
 
 	}
 
-	public void populateTable(Collection<NodeDTO> nodeList,
-			URL categoryWindowUrl) {
+	public void populateTable(Collection<NodeDTO> nodeList, GrassPage page) {
 
 		IndexedContainer container = new IndexedContainer();
 		container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
@@ -47,10 +45,10 @@ public class NodesTable extends Table {
 
 			Item item = addItem(node);
 			item.getItemProperty(ColumnId.NÁZEV).setValue(
-					new ComparableLink(node.getName(), new ExternalResource(
-							categoryWindowUrl
-									+ URLIdentifierUtils.createURLIdentifier(
-											node.getId(), node.getName()))));
+					new ComparableLink(node.getName(), page.getPageResource(
+							CategoryPage.FACTORY, URLIdentifierUtils
+									.createURLIdentifier(node.getId(),
+											node.getName()))));
 
 			Embedded icon = new Embedded();
 			icon.setSource(new ThemeResource("img/tags/briefcase_16.png"));

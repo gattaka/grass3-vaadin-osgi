@@ -1,6 +1,6 @@
 package org.myftp.gattserver.grass3.util;
 
-import com.vaadin.terminal.ExternalResource;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.ui.Link;
 
 /**

@@ -6,8 +6,11 @@ import org.myftp.gattserver.grass3.config.ConfigurationFileError;
 import org.myftp.gattserver.grass3.config.ConfigurationManager;
 import org.myftp.gattserver.grass3.config.ConfigurationUtils;
 import org.myftp.gattserver.grass3.config.CoreConfiguration;
-import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
+import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.windows.ifces.SettingsPageFactory;
+import org.myftp.gattserver.grass3.windows.template.SettingsPage;
 
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
@@ -21,19 +24,24 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 
-public class ApplicationSettingsWindow extends SettingsWindow {
+public class ApplicationSettingsPage extends SettingsPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
+	public static final SettingsPageFactory FACTORY = new SettingsPageFactory(
+			"application-settings") {
+		@Override
+		public SettingsPage createSettingsPage(GrassRequest request) {
+			return new ApplicationSettingsPage(request);
+		}
+	};
+
+	public ApplicationSettingsPage(GrassRequest request) {
+		super(request);
+	}
+
 	private static final Double MIN_SESSION_TIMEOUT = 5.0;
 	private static final Double MAX_SESSION_TIMEOUT = 60.0;
-
-	private VerticalLayout settingsLayout = new VerticalLayout();
-
-	public ApplicationSettingsWindow() {
-		setName("application-settings");
-		setCaption("Gattserver");
-	}
 
 	@Override
 	protected Component createRightColumnContent() {
@@ -42,45 +50,15 @@ public class ApplicationSettingsWindow extends SettingsWindow {
 
 		layout.setMargin(true);
 		layout.setSpacing(true);
+
+		VerticalLayout settingsLayout = new VerticalLayout();
 		layout.addComponent(settingsLayout);
-
-		return layout;
-
-	}
-
-	private CoreConfiguration loadConfiguration() {
-		try {
-			return new ConfigurationUtils<CoreConfiguration>(
-					new CoreConfiguration(), CoreConfiguration.CONFIG_PATH)
-					.loadExistingOrCreateNewConfiguration();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			showError500();
-			return null;
-		}
-	}
-
-	private void storeConfiguration(CoreConfiguration configuration) {
-		try {
-			ConfigurationManager.getInstance().storeConfiguration(
-					CoreConfiguration.CONFIG_PATH, configuration);
-		} catch (ConfigurationFileError e) {
-			e.printStackTrace();
-			showError500();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			showError500();
-		}
-	}
-
-	@Override
-	protected void onShow() {
 
 		final CoreConfiguration configuration = loadConfiguration();
 
 		settingsLayout.removeAllComponents();
 		settingsLayout.addComponent(new Label("<h2>Nastavení aplikace</h2>",
-				Label.CONTENT_XHTML));
+				ContentMode.HTML));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
@@ -121,13 +99,13 @@ public class ApplicationSettingsWindow extends SettingsWindow {
 			e.printStackTrace();
 		}
 		slider.setImmediate(true);
-		slider.addListener(new ValueChangeListener() {
+		slider.addValueChangeListener(new ValueChangeListener() {
 
 			private static final long serialVersionUID = 2805427800313140023L;
 
 			public void valueChange(ValueChangeEvent event) {
 				Double value = (Double) event.getProperty().getValue();
-				valueLabel.setValue(value);
+				valueLabel.setValue(String.valueOf(value));
 				configuration.setSessionTimeout(value);
 			}
 		});
@@ -143,20 +121,19 @@ public class ApplicationSettingsWindow extends SettingsWindow {
 		/**
 		 * Povolení registrací
 		 */
-
 		final CheckBox allowRegistrationsBox = new CheckBox(
 				"Povolit registrace");
 		allowRegistrationsBox.setValue(configuration.isRegistrations());
-		allowRegistrationsBox.addListener(new Button.ClickListener() {
+		allowRegistrationsBox.addValueChangeListener(new ValueChangeListener() {
 
 			private static final long serialVersionUID = -4168795771060533842L;
 
-			public void buttonClick(ClickEvent event) {
-				configuration.setRegistrations(allowRegistrationsBox
-						.booleanValue());
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				configuration.setRegistrations(allowRegistrationsBox.getValue());
 			}
-
 		});
+
 		settingsFieldsLayout.addComponent(allowRegistrationsBox);
 
 		/**
@@ -174,6 +151,32 @@ public class ApplicationSettingsWindow extends SettingsWindow {
 
 		settingsFieldsLayout.addComponent(saveButton);
 
-		super.onShow();
+		return layout;
+
+	}
+
+	private CoreConfiguration loadConfiguration() {
+		try {
+			return new ConfigurationUtils<CoreConfiguration>(
+					new CoreConfiguration(), CoreConfiguration.CONFIG_PATH)
+					.loadExistingOrCreateNewConfiguration();
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			showError500();
+			return null;
+		}
+	}
+
+	private void storeConfiguration(CoreConfiguration configuration) {
+		try {
+			ConfigurationManager.getInstance().storeConfiguration(
+					CoreConfiguration.CONFIG_PATH, configuration);
+		} catch (ConfigurationFileError e) {
+			e.printStackTrace();
+			showError500();
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			showError500();
+		}
 	}
 }

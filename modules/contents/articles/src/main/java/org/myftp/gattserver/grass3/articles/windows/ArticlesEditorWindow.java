@@ -22,7 +22,7 @@ import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
 import org.myftp.gattserver.grass3.windows.CategoryWindow;
-import org.myftp.gattserver.grass3.windows.template.TwoColumnWindow;
+import org.myftp.gattserver.grass3.windows.template.TwoColumnPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public class ArticlesEditorWindow extends TwoColumnWindow {
+public class ArticlesEditorWindow extends TwoColumnPage {
 
 	private static final long serialVersionUID = -5148523174527532785L;
 

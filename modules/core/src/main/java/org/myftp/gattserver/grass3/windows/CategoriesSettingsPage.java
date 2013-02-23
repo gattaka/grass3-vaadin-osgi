@@ -6,8 +6,10 @@ import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
-import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
+import org.myftp.gattserver.grass3.windows.ifces.SettingsPageFactory;
+import org.myftp.gattserver.grass3.windows.template.SettingsPage;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
@@ -20,8 +22,9 @@ import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
-import com.vaadin.terminal.ThemeResource;
-import com.vaadin.terminal.gwt.client.ui.dd.VerticalDropLocation;
+import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.dd.VerticalDropLocation;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -37,9 +40,21 @@ import com.vaadin.ui.Tree.TreeDragMode;
 import com.vaadin.ui.Tree.TreeTargetDetails;
 import com.vaadin.ui.VerticalLayout;
 
-public class CategoriesSettingsWindow extends SettingsWindow {
+public class CategoriesSettingsPage extends SettingsPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
+
+	public static final SettingsPageFactory FACTORY = new SettingsPageFactory(
+			"categories") {
+		@Override
+		public SettingsPage createSettingsPage(GrassRequest request) {
+			return new CategoriesSettingsPage(request);
+		}
+	};
+
+	public CategoriesSettingsPage(GrassRequest request) {
+		super(request);
+	}
 
 	private static final Action ACTION_DELETE = new Action("Smazat");
 	private static final Action ACTION_RENAME = new Action("Přejmenovat");
@@ -59,11 +74,6 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 		NÁZEV, IKONA
 	}
 
-	public CategoriesSettingsWindow() {
-		setName("categories-settings");
-		setCaption("Gattserver");
-	}
-
 	@Override
 	protected Component createRightColumnContent() {
 
@@ -76,7 +86,7 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 		layout.addComponent(usersLayout);
 
 		usersLayout.addComponent(new Label("<h2>Správa kategorií</h2>",
-				Label.CONTENT_XHTML));
+				ContentMode.HTML));
 
 		usersLayout.addComponent(tree);
 		tree.setImmediate(true);
@@ -146,64 +156,68 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 
 					// Přesunutí znamená rovnou přesun kategorie - v tom případě
 					// je potřeba vyhodit potvrzovací okno
-					addWindow(new ConfirmSubwindow("Opravdu přesunout '"
-							+ source.getName() + "' do '" + target.getName()
-							+ "' ?") {
+					getUI().addWindow(
+							new ConfirmSubwindow("Opravdu přesunout '"
+									+ source.getName() + "' do '"
+									+ target.getName() + "' ?") {
 
-						private static final long serialVersionUID = 414272650677665672L;
+								private static final long serialVersionUID = 414272650677665672L;
 
-						@Override
-						protected void onConfirm(ClickEvent event) {
-							if (nodeFacade.moveNode(source, target)) {
-								if (container.setParent(sourceItemId,
-										targetItemId)
-										&& container.hasChildren(targetItemId)) {
-									// move first in the container
-									container.moveAfterSibling(sourceItemId,
-											null);
+								@Override
+								protected void onConfirm(ClickEvent event) {
+									if (nodeFacade.moveNode(source, target)) {
+										if (container.setParent(sourceItemId,
+												targetItemId)
+												&& container
+														.hasChildren(targetItemId)) {
+											// move first in the container
+											container.moveAfterSibling(
+													sourceItemId, null);
+										}
+										CategoriesSettingsPage.this
+												.showInfo("Přesun kategorie proběhl úspěšně");
+									} else {
+										CategoriesSettingsPage.this
+												.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
+									}
 								}
-								CategoriesSettingsWindow.this
-										.showInfo("Přesun kategorie proběhl úspěšně");
-							} else {
-								CategoriesSettingsWindow.this
-										.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
-							}
-						}
-					});
+							});
 
 					break;
 				case TOP:
 
 					// Přesunutí znamená rovnou přesun kategorie - v tom případě
 					// je potřeba vyhodit potvrzovací okno
-					addWindow(new ConfirmSubwindow("Opravdu přesunout '"
-							+ source.getName()
-							+ "' do "
-							+ (parentItemId == null ? "kořene sekce ?" : ("'"
-									+ parent.getName() + "' ?"))) {
+					getUI().addWindow(
+							new ConfirmSubwindow("Opravdu přesunout '"
+									+ source.getName()
+									+ "' do "
+									+ (parentItemId == null ? "kořene sekce ?"
+											: ("'" + parent.getName() + "' ?"))) {
 
-						private static final long serialVersionUID = 414272650677665672L;
+								private static final long serialVersionUID = 414272650677665672L;
 
-						@Override
-						protected void onConfirm(ClickEvent event) {
-							if (nodeFacade.moveNode(source, parent)) {
-								if (container.setParent(sourceItemId,
-										parentItemId)) {
-									// reorder only the two items, moving source
-									// above target
-									container.moveAfterSibling(sourceItemId,
-											targetItemId);
-									container.moveAfterSibling(targetItemId,
-											sourceItemId);
+								@Override
+								protected void onConfirm(ClickEvent event) {
+									if (nodeFacade.moveNode(source, parent)) {
+										if (container.setParent(sourceItemId,
+												parentItemId)) {
+											// reorder only the two items,
+											// moving source
+											// above target
+											container.moveAfterSibling(
+													sourceItemId, targetItemId);
+											container.moveAfterSibling(
+													targetItemId, sourceItemId);
+										}
+										CategoriesSettingsPage.this
+												.showInfo("Přesun kategorie proběhl úspěšně");
+									} else {
+										CategoriesSettingsPage.this
+												.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
+									}
 								}
-								CategoriesSettingsWindow.this
-										.showInfo("Přesun kategorie proběhl úspěšně");
-							} else {
-								CategoriesSettingsWindow.this
-										.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
-							}
-						}
-					});
+							});
 
 					break;
 				case BOTTOM:
@@ -211,36 +225,37 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 					// Přesunutí znamená rovnou přesun kategorie - v tom případě
 					// je potřeba vyhodit potvrzovací okno
 
-					addWindow(new ConfirmSubwindow("Opravdu přesunout '"
-							+ source.getName()
-							+ "' do "
-							+ (parentItemId == null ? "kořene sekce ?" : ("'"
-									+ parent.getName() + "' ?"))) {
+					getUI().addWindow(
+							new ConfirmSubwindow("Opravdu přesunout '"
+									+ source.getName()
+									+ "' do "
+									+ (parentItemId == null ? "kořene sekce ?"
+											: ("'" + parent.getName() + "' ?"))) {
 
-						private static final long serialVersionUID = 414272650677665672L;
+								private static final long serialVersionUID = 414272650677665672L;
 
-						@Override
-						protected void onConfirm(ClickEvent event) {
-							if (nodeFacade.moveNode(source, parent)) {
-								if (container.setParent(sourceItemId,
-										parentItemId)) {
-									container.moveAfterSibling(sourceItemId,
-											targetItemId);
+								@Override
+								protected void onConfirm(ClickEvent event) {
+									if (nodeFacade.moveNode(source, parent)) {
+										if (container.setParent(sourceItemId,
+												parentItemId)) {
+											container.moveAfterSibling(
+													sourceItemId, targetItemId);
+										}
+										CategoriesSettingsPage.this
+												.showInfo("Přesun kategorie proběhl úspěšně");
+									} else {
+										CategoriesSettingsPage.this
+												.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
+									}
 								}
-								CategoriesSettingsWindow.this
-										.showInfo("Přesun kategorie proběhl úspěšně");
-							} else {
-								CategoriesSettingsWindow.this
-										.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
-							}
-						}
-					});
+							});
 
 					break;
 				}
 			}
 		});
-		tree.addListener(new Property.ValueChangeListener() {
+		tree.addValueChangeListener(new Property.ValueChangeListener() {
 
 			private static final long serialVersionUID = 191011037696709486L;
 
@@ -268,36 +283,37 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 				final NodeDTO node = (NodeDTO) target;
 				if (action == ACTION_DELETE) {
 
-					addWindow(new ConfirmSubwindow("Opravdu smazat kategorii '"
-							+ node.getName() + "' ?") {
+					getUI().addWindow(
+							new ConfirmSubwindow("Opravdu smazat kategorii '"
+									+ node.getName() + "' ?") {
 
-						private static final long serialVersionUID = 9193745051559434697L;
+								private static final long serialVersionUID = 9193745051559434697L;
 
-						@Override
-						protected void onConfirm(ClickEvent event) {
+								@Override
+								protected void onConfirm(ClickEvent event) {
 
-							if (!node.getContentNodes().isEmpty()
-									|| !node.getSubNodeIDs().isEmpty()) {
-								CategoriesSettingsWindow.this
-										.showWarning("Kategorie musí být prázdná");
-							} else {
-								if (nodeFacade.deleteNode(node)) {
-									tree.removeItem(target);
-									CategoriesSettingsWindow.this
-											.showInfo("Kategorie byla úspěšně smazána");
-								} else {
-									CategoriesSettingsWindow.this
-											.showWarning("Nezdařilo se smazat vybranou kategorii");
+									if (!node.getContentNodes().isEmpty()
+											|| !node.getSubNodeIDs().isEmpty()) {
+										CategoriesSettingsPage.this
+												.showWarning("Kategorie musí být prázdná");
+									} else {
+										if (nodeFacade.deleteNode(node)) {
+											tree.removeItem(target);
+											CategoriesSettingsPage.this
+													.showInfo("Kategorie byla úspěšně smazána");
+										} else {
+											CategoriesSettingsPage.this
+													.showWarning("Nezdařilo se smazat vybranou kategorii");
+										}
+									}
+
 								}
-							}
-
-						}
-					});
+							});
 
 				} else if (action == ACTION_RENAME) {
 					final Window subwindow = new GrassSubWindow("Přejmenovat");
 					subwindow.center();
-					addWindow(subwindow);
+					getUI().addWindow(subwindow);
 
 					GridLayout subWindowlayout = new GridLayout(2, 2);
 					subwindow.setContent(subWindowlayout);
@@ -326,15 +342,15 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 												.getItemProperty(
 														TreePropertyID.NÁZEV)
 												.setValue(
-														newNameField.getValue());
+														newNameField
+																.getValue());
 										node.setName((String) newNameField
 												.getValue());
 									} else {
 										showWarning("Přejmenování se nezdařilo.");
 									}
 
-									(subwindow.getParent())
-											.removeWindow(subwindow);
+									subwindow.close();
 								}
 							});
 
@@ -348,8 +364,7 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 								private static final long serialVersionUID = 8490964871266821307L;
 
 								public void buttonClick(ClickEvent event) {
-									(subwindow.getParent())
-											.removeWindow(subwindow);
+									subwindow.close();
 								}
 							});
 
@@ -367,6 +382,8 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 			}
 		});
 
+		refreshTree();
+		
 		createNewNodePanel(layout);
 
 		return layout;
@@ -419,12 +436,6 @@ public class CategoriesSettingsWindow extends SettingsWindow {
 		tree.setContainerDataSource(getCategoriesContainer());
 		tree.setItemCaptionPropertyId(TreePropertyID.NÁZEV);
 		tree.setItemIconPropertyId(TreePropertyID.IKONA);
-	}
-
-	@Override
-	protected void onShow() {
-		refreshTree();
-		super.onShow();
 	}
 
 	private HierarchicalContainer getCategoriesContainer() {

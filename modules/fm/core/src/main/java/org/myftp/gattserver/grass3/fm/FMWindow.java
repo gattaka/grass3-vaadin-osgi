@@ -13,7 +13,7 @@ import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
 import org.myftp.gattserver.grass3.windows.HomeWindow;
-import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
+import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
 import org.vaadin.easyuploads.MultiFileUpload;
 
 import com.vaadin.data.Item;
@@ -40,7 +40,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public class FMWindow extends OneColumnWindow {
+public class FMWindow extends OneColumnPage {
 
 	private static final long serialVersionUID = -950042653154868289L;
 

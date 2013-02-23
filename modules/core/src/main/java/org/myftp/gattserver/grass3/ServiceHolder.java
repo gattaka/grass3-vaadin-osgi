@@ -1,10 +1,7 @@
 package org.myftp.gattserver.grass3;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.myftp.gattserver.grass3.model.AbstractDAO;
 import org.myftp.gattserver.grass3.model.service.IEntityServiceListener;
@@ -22,57 +19,9 @@ import org.myftp.gattserver.grass3.service.ISettingsService;
  */
 public class ServiceHolder {
 
-	/**
-	 * Musí být singleton, aby bylo možné jednoduše volat jeho instanci
-	 * odkudkoliv z programu, zatímco vytvoření instance bude mít na starost
-	 * Blueprint
-	 */
-	private static ServiceHolder instance;
-
+	// static class
 	private ServiceHolder() {
 	};
-
-	/**
-	 * TODO Tady mám trochu pochybnosti, jestli by to nešlo napsat lépe.
-	 * Aktuální implementace spoléhá na to, že tuto metodu zavolá jako první
-	 * Blueprint kontejner. V případě, že by to dělalo problémy mě napadá udělat
-	 * místo "factory" metody factory třídu (která bude jinak ven neviditelná) a
-	 * nějak to přes to vyřešit.
-	 */
-	public synchronized static ServiceHolder getInstance() {
-		if (instance == null)
-			instance = new ServiceHolder();
-		return instance;
-	}
-
-	/**
-	 * Instance aplikace - reprezentující jednotlivé sessions - potřebují být
-	 * notifikovány o přidání sekce, settings apod. aby si přidali instanci okna
-	 * atd.
-	 */
-	private Set<GrassUI> applications = new HashSet<GrassUI>();
-
-	/**
-	 * Přidání instance aplikace, která tak bude notifikována aby si přidala
-	 * okna
-	 */
-	public void registerListenerApp(GrassUI application) {
-		applications.add(application);
-
-		// dej jí vědět o již zaregistrovaných sekcích
-		for (ISectionService service : sectionServices)
-			application.addWindow(service.getSectionWindowNewInstance());
-
-		// dej jí vědět o již zaregistrovaných nastaveních
-		for (ISettingsService service : settingsServices)
-			application.addWindow(service.getSettingsWindowNewInstance());
-
-		// dej jí vědět o již zaregistrovaných službách obsahů
-		for (IContentService service : contentServices) {
-			application.addWindow(service.getContentEditorWindowNewInstance());
-			application.addWindow(service.getContentViewerWindowNewInstance());
-		}
-	}
 
 	/**
 	 * DB entity listener service
@@ -95,20 +44,17 @@ public class ServiceHolder {
 	/**
 	 * Obsahy
 	 */
-	private List<IContentService> contentServices = Collections
-			.synchronizedList(new ArrayList<IContentService>());
+	private static List<IContentService> contentServices = new ArrayList<IContentService>();
 
-	public synchronized List<IContentService> getContentServices() {
+	public static boolean addContentService(IContentService contentService) {
+		return contentServices.add(contentService);
+	}
+
+	public static List<IContentService> getContentServices() {
 		return contentServices;
 	}
 
-	public synchronized void setContentServices(
-			List<IContentService> contentServices) {
-		this.contentServices = contentServices;
-	}
-
-	public synchronized IContentService getContentServiceByName(
-			String contentReaderID) {
+	public static IContentService getContentServiceByName(String contentReaderID) {
 		for (IContentService contentService : contentServices) {
 			if (contentService.getContentID().equals(contentReaderID))
 				return contentService;
@@ -116,72 +62,30 @@ public class ServiceHolder {
 		return null;
 	}
 
-	public synchronized void bindContentService(IContentService contentService) {
-		for (GrassUI application : applications) {
-			application.addWindow(contentService.getContentEditorWindowNewInstance());
-			application.addWindow(contentService.getContentViewerWindowNewInstance());
-		}
-	}
-
-	public synchronized void unbindContentService(IContentService contentService) {
-		for (GrassUI application : applications) {
-			application.removeWindow(contentService.getContentEditorWindowNewInstance());
-			application.removeWindow(contentService.getContentViewerWindowNewInstance());
-		}
-	}
-
 	/**
 	 * Sekce
 	 */
-	private List<ISectionService> sectionServices = Collections
-			.synchronizedList(new ArrayList<ISectionService>());
+	private static List<ISectionService> sectionServices = new ArrayList<ISectionService>();
 
-	public synchronized List<ISectionService> getSectionServices() {
+	public static boolean addSectionServices(ISectionService sectionService) {
+		return sectionServices.add(sectionService);
+	}
+
+	public static List<ISectionService> getSectionServices() {
 		return sectionServices;
-	}
-
-	public synchronized void setSectionServices(
-			List<ISectionService> sectionServices) {
-		this.sectionServices = sectionServices;
-	}
-
-	public synchronized void bindSection(ISectionService section) {
-		for (GrassUI application : applications) {
-			application.addWindow(section.getSectionWindowNewInstance());
-		}
-	}
-
-	public synchronized void unbindSection(ISectionService section) {
-		for (GrassUI application : applications) {
-			application.removeWindow(section.getSectionWindowClass());
-		}
 	}
 
 	/**
 	 * Settings
 	 */
-	private List<ISettingsService> settingsServices = Collections
-			.synchronizedList(new ArrayList<ISettingsService>());
+	private static List<ISettingsService> settingsServices = new ArrayList<ISettingsService>();
 
-	public synchronized List<ISettingsService> getSettingsServices() {
+	public static boolean addSettingsService(ISettingsService settingsService) {
+		return settingsServices.add(settingsService);
+	}
+
+	public static List<ISettingsService> getSettingsServices() {
 		return settingsServices;
-	}
-
-	public synchronized void setSettingsServices(
-			List<ISettingsService> settingsServices) {
-		this.settingsServices = settingsServices;
-	}
-
-	public synchronized void bindSettings(ISettingsService settingsService) {
-		for (GrassUI application : applications) {
-			application.addWindow(settingsService.getSettingsWindowNewInstance());
-		}
-	}
-
-	public synchronized void unbindSettings(ISettingsService settingsService) {
-		for (GrassUI application : applications) {
-			application.removeWindow(settingsService.getSettingsWindowClass());
-		}
 	}
 
 }

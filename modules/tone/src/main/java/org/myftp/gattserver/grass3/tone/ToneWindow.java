@@ -1,6 +1,6 @@
 package org.myftp.gattserver.grass3.tone;
 
-import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
+import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.AbstractSelect.Filtering;
@@ -9,7 +9,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.data.Property;
 
-public class ToneWindow extends OneColumnWindow {
+public class ToneWindow extends OneColumnPage {
 
 	private static final long serialVersionUID = -950042653154868289L;
 

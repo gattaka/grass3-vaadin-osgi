@@ -4,9 +4,9 @@ import org.myftp.gattserver.grass3.facades.QuotesFacade;
 import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 import org.myftp.gattserver.grass3.windows.template.BasePage;
-import org.myftp.gattserver.grass3.windows.template.IPageFactory;
-import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
+import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
@@ -26,7 +26,7 @@ public class QuotesPage extends BasePage {
 
 	private QuotesFacade quotesFacade = QuotesFacade.INSTANCE;
 
-	public static enum QuotesPageFactory implements IPageFactory {
+	public static enum QuotesPageFactory implements PageFactory {
 
 		INSTANCE;
 

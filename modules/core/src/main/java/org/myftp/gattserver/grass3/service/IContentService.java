@@ -1,32 +1,21 @@
 package org.myftp.gattserver.grass3.service;
 
-import org.myftp.gattserver.grass3.windows.template.BaseWindow;
+import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 
-import com.vaadin.terminal.Resource;
+import com.vaadin.server.Resource;
 
 public interface IContentService {
 
 	/**
-	 * Vrátí instanci okna, které slouží jako editor pro vytváření nebo
+	 * Vrátí instanci stránky, která slouží jako editor pro vytváření nebo
 	 * modifikaci daného obsahu
 	 */
-	public BaseWindow getContentEditorWindowNewInstance();
+	public PageFactory getContentEditorPageFactory();
 
 	/**
-	 * Vrátí instanci okna, které slouží jako prohlížeč obsahu
+	 * Vrátí instanci stránky, která slouží jako prohlížeč obsahu
 	 */
-	public BaseWindow getContentViewerWindowNewInstance();
-
-	/**
-	 * Vrátí třídu okna, které slouží jako editor pro vytváření nebo modifikaci
-	 * daného obsahu
-	 */
-	public Class<? extends BaseWindow> getContentEditorWindowClass();
-
-	/**
-	 * Vrátí okna prohlížeče daného obsahu
-	 */
-	public Class<? extends BaseWindow> getContentViewerWindowClass();
+	public PageFactory getContentViewerPageFactory();
 
 	/**
 	 * Vrátí popisek k tlačítku "vytvořit nový obsah"

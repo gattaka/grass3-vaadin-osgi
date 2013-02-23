@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.myftp.gattserver.grass3.facades.UserFacade;
 import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 import org.myftp.gattserver.grass3.windows.template.BasePage;
-import org.myftp.gattserver.grass3.windows.template.IPageFactory;
-import org.myftp.gattserver.grass3.windows.template.OneColumnWindow;
+import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
 
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.EmailValidator;
@@ -27,7 +27,7 @@ public class RegistrationPage extends BasePage {
 
 	private static final long serialVersionUID = 8276040419934174157L;
 
-	public static enum RegistrationPageFactory implements IPageFactory {
+	public static enum RegistrationPageFactory implements PageFactory {
 
 		INSTANCE;
 

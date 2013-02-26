@@ -6,12 +6,14 @@ import java.util.List;
 import org.myftp.gattserver.grass3.facades.UserFacade;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
-import org.myftp.gattserver.grass3.windows.template.BasePage;
+import org.myftp.gattserver.grass3.windows.template.GrassPage;
 import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
 
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
@@ -21,30 +23,26 @@ import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-public class RegistrationPage extends BasePage {
+public class RegistrationPage extends OneColumnPage {
 
 	private UserFacade userFacade = UserFacade.INSTANCE;
 
 	private static final long serialVersionUID = 8276040419934174157L;
 
-	public static enum RegistrationPageFactory implements PageFactory {
-
-		INSTANCE;
-
+	public static final PageFactory FACTORY = new PageFactory("registration") {
 		@Override
-		public String getPageName() {
-			return "registration";
-		}
-
-		@Override
-		public Component createPage(GrassRequest request) {
+		public GrassPage createPage(GrassRequest request) {
 			return new RegistrationPage(request);
 		}
+	};
+
+	public RegistrationPage(GrassRequest request) {
+		super(request);
+		// TODO Auto-generated constructor stub
 	}
-	
+
 	private static final int MIN_USERNAME_LENGTH = 2;
 	private static final int MAX_USERNAME_LENGTH = 20;
-
 
 	@Override
 	protected Component createContent() {
@@ -57,14 +55,14 @@ public class RegistrationPage extends BasePage {
 		VerticalLayout formLayout = new VerticalLayout();
 		layout.addComponent(formLayout);
 		formLayout.addComponent(new Label(
-				"<h2>Registrace nového uživatele</h2>", Label.CONTENT_XHTML));
+				"<h2>Registrace nového uživatele</h2>", ContentMode.HTML));
 
 		VerticalLayout formFieldsLayout = new VerticalLayout();
 		formLayout.addComponent(formFieldsLayout);
 		formFieldsLayout.setSizeFull();
 		formFieldsLayout.setSpacing(true);
 
-		final List<Field> fields = new ArrayList<Field>();
+		final List<Field<String>> fields = new ArrayList<Field<String>>();
 
 		// Username
 		final TextField username = new TextField("Uživatelské jméno");
@@ -105,11 +103,6 @@ public class RegistrationPage extends BasePage {
 					throw new InvalidValueException("Hesla se musí shodovat");
 			}
 
-			public boolean isValid(Object value) {
-				String passwordValue = (String) password.getValue();
-				String password2Value = (String) password2.getValue();
-				return passwordValue.equals(password2Value);
-			}
 		};
 
 		password.addValidator(passValidator);
@@ -118,7 +111,7 @@ public class RegistrationPage extends BasePage {
 		VerticalLayout buttonLayout = new VerticalLayout();
 		formLayout.addComponent(buttonLayout);
 		buttonLayout.setSpacing(true);
-		buttonLayout.setMargin(true, false, false, false);
+		buttonLayout.setMargin(new MarginInfo(true, false, false, false));
 
 		// Login button
 		Button submitButton = new Button("Registrovat",
@@ -128,7 +121,7 @@ public class RegistrationPage extends BasePage {
 
 					// inline click listener
 					public void buttonClick(ClickEvent event) {
-						for (Field field : fields) {
+						for (Field<?> field : fields) {
 							if (!field.isValid()) {
 								showWarning("Ve formuláři jsou chybně vyplněné položky");
 								return;
@@ -140,7 +133,7 @@ public class RegistrationPage extends BasePage {
 								(String) username.getValue(),
 								(String) password.getValue())) {
 							showInfo("Registrace proběhla úspěšně");
-							for (Field field : fields) {
+							for (Field<String> field : fields) {
 								field.setValue("");
 							}
 						} else {

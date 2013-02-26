@@ -5,7 +5,7 @@ import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
-import org.myftp.gattserver.grass3.windows.template.BasePage;
+import org.myftp.gattserver.grass3.windows.template.GrassPage;
 import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
 
 import com.vaadin.data.Item;
@@ -20,33 +20,27 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
-public class QuotesPage extends BasePage {
+public class QuotesPage extends OneColumnPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
 	private QuotesFacade quotesFacade = QuotesFacade.INSTANCE;
 
-	public static enum QuotesPageFactory implements PageFactory {
-
-		INSTANCE;
-
+	public static final PageFactory FACTORY = new PageFactory("quotes") {
 		@Override
-		public String getPageName() {
-			return "quotes";
-		}
-
-		@Override
-		public Component createPage(GrassRequest request) {
+		public GrassPage createPage(GrassRequest request) {
 			return new QuotesPage(request);
 		}
+	};
+
+	public QuotesPage(GrassRequest request) {
+		super(request);
 	}
-	
-	private Panel newQuotesPanel;
 
 	/**
-	 * Tabulka hlášek
+	 * Seznam hlášek
 	 */
-	private Table table;
+	private Table table = new Table();
 
 	@Override
 	protected Component createContent() {
@@ -55,27 +49,22 @@ public class QuotesPage extends BasePage {
 
 		layout.setMargin(true);
 		layout.setSpacing(true);
-		table = new Table();
-		table.setSizeFull();
-		layout.addComponent(table);
 
+		createQuoteList(layout);
 		createNewQuotePanel(layout);
-		createQuoteList();
 
 		return layout;
 	}
 
-	@Override
-	protected void onShow() {
-		createQuoteList();
+	private void createQuoteList(VerticalLayout layout) {
 
-		CoreACL acl = getUserACL();
-		newQuotesPanel.setVisible(acl.canModifyQuotes());
+		table.setSizeFull();
+		layout.addComponent(table);
 
-		super.onShow();
+		populateQuotesTable();
 	}
 
-	private void createQuoteList() {
+	private void populateQuotesTable() {
 
 		IndexedContainer container = new IndexedContainer();
 		container.addContainerProperty("ID", Long.class, 1L);
@@ -84,17 +73,20 @@ public class QuotesPage extends BasePage {
 		table.setContainerDataSource(container);
 
 		for (QuoteDTO quote : quotesFacade.getAllQuotes()) {
-
 			Item item = table.addItem(quote);
 			item.getItemProperty("ID").setValue(quote.getId());
 			item.getItemProperty("Obsah").setValue(quote.getName());
-
 		}
+
 	}
 
 	private void createNewQuotePanel(VerticalLayout layout) {
-		newQuotesPanel = new Panel("Nová hláška");
+
+		Panel newQuotesPanel = new Panel("Nová hláška");
 		layout.addComponent(newQuotesPanel);
+
+		CoreACL acl = getUserACL();
+		newQuotesPanel.setVisible(acl.canModifyQuotes());
 
 		HorizontalLayout panelBackgroudLayout = new HorizontalLayout();
 		panelBackgroudLayout.setSizeFull();
@@ -126,7 +118,7 @@ public class QuotesPage extends BasePage {
 								.getValue())) {
 							showInfo("Nová hláška byla úspěšně vložena.");
 							// refresh list
-							createQuoteList();
+							populateQuotesTable();
 							// clean
 							newQuoteText.setValue("");
 						} else {

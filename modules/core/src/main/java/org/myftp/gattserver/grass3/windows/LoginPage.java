@@ -2,54 +2,42 @@ package org.myftp.gattserver.grass3.windows;
 
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
-import org.myftp.gattserver.grass3.windows.template.BasePage;
+import org.myftp.gattserver.grass3.windows.template.GrassPage;
+import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-public class LoginPage extends BasePage {
+public class LoginPage extends OneColumnPage {
 
 	private static final long serialVersionUID = 8276040419934174157L;
 
-	public static enum LoginPageFactory implements PageFactory {
-
-		INSTANCE;
-
+	public static final PageFactory FACTORY = new PageFactory("login") {
 		@Override
-		public String getPageName() {
-			return "login";
-		}
-
-		@Override
-		public Component createPage(GrassRequest request) {
+		public GrassPage createPage(GrassRequest request) {
 			return new LoginPage(request);
 		}
-	}
+	};
 
 	public LoginPage(GrassRequest request) {
 		super(request);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	protected void createContent(CustomLayout layout) {
+	protected Component createContent() {
 
-		CustomLayout contentLayout = new CustomLayout("oneColumn");
-		layout.addComponent(contentLayout, "content");
+		VerticalLayout layout = new VerticalLayout();
 
-		VerticalLayout pagelayout = new VerticalLayout();
-
-		pagelayout.setMargin(true);
-		pagelayout.setSpacing(true);
+		layout.setMargin(true);
+		layout.setSpacing(true);
 
 		VerticalLayout formLayout = new VerticalLayout();
-		pagelayout.addComponent(formLayout);
+		layout.addComponent(formLayout);
 		formLayout.addComponent(new Label("<h2>Přihlášení</h2>",
 				ContentMode.HTML));
 
@@ -83,7 +71,7 @@ public class LoginPage extends BasePage {
 					}
 				}));
 
-		contentLayout.addComponent(pagelayout, "content");
+		return layout;
 
 	}
 }

@@ -12,15 +12,13 @@ import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.util.GrassRequest;
-import org.myftp.gattserver.grass3.windows.CategoryPage.CategoryPageFactory;
-import org.myftp.gattserver.grass3.windows.HomePage.HomePageFactory;
-import org.myftp.gattserver.grass3.windows.LoginPage.LoginPageFactory;
-import org.myftp.gattserver.grass3.windows.QuotesPage.QuotesPageFactory;
-import org.myftp.gattserver.grass3.windows.RegistrationPage.RegistrationPageFactory;
+import org.myftp.gattserver.grass3.windows.CategoryPage;
+import org.myftp.gattserver.grass3.windows.HomePage;
+import org.myftp.gattserver.grass3.windows.LoginPage;
+import org.myftp.gattserver.grass3.windows.QuotesPage;
+import org.myftp.gattserver.grass3.windows.RegistrationPage;
 import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
-import org.myftp.gattserver.grass3.windows.template.SettingsPage.SettingsPageFactory;
 
-import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -45,36 +43,31 @@ public abstract class BasePage extends GrassPage {
 	private GrassRequest request;
 
 	public BasePage(GrassRequest request) {
-		super("base");
-
 		this.request = request;
+	}
 
-		// homelink (přes logo)
-		Link homelink = new Link();
-		homelink.addStyleName("homelink");
-		homelink.setResource(getPageResource(HomePageFactory.INSTANCE));
-		homelink.setIcon(new ThemeResource("img/logo.png"));
-		addComponent(homelink, "homelink");
+	@Override
+	protected void createQuotes(CustomLayout layout) {
 
 		// hlášky
 		Link quotes = new Link();
-		quotes.setResource(getPageResource(QuotesPageFactory.INSTANCE));
+		quotes.setResource(getPageResource(QuotesPage.FACTORY));
 		quotes.setStyleName("quotes");
 		quotes.setCaption(chooseQuote());
-		addComponent(quotes, "quote");
 
-		// menu
-		createSectionsMenu(this);
-		createUserMenu(this);
-
-		// obsah
-		createContent(this);
-
-		// footer
-		addComponent(new Label("GRASS3"), "about");
+		layout.addComponent(quotes, "quotes");
 	}
 
-	protected abstract void createContent(CustomLayout layout);
+	@Override
+	protected void createMenu(CustomLayout layout) {
+
+		CustomLayout menu = new CustomLayout("menu");
+		layout.addComponent(menu, "menu");
+
+		// menu
+		createSectionsMenu(menu);
+		createUserMenu(menu);
+	}
 
 	protected GrassRequest getRequest() {
 		return request;
@@ -124,7 +117,7 @@ public abstract class BasePage extends GrassPage {
 		// Přihlášení
 		if (acl.canLogin()) {
 			Link link = new Link("Přihlášení",
-					getPageResource(LoginPageFactory.INSTANCE));
+					getPageResource(LoginPage.FACTORY));
 			link.setStyleName("item");
 			userMenuLayout.addComponent(link);
 		}
@@ -132,7 +125,7 @@ public abstract class BasePage extends GrassPage {
 		// Registrace
 		if (acl.canRegistrate()) {
 			Link link = new Link("Registrace",
-					getPageResource(RegistrationPageFactory.INSTANCE));
+					getPageResource(RegistrationPage.FACTORY));
 			link.setStyleName("item");
 			userMenuLayout.addComponent(link);
 		}
@@ -196,7 +189,7 @@ public abstract class BasePage extends GrassPage {
 
 			// nastavení
 			Link link = new Link("Nastavení",
-					getPageResource(SettingsPageFactory.INSTANCE));
+					getPageResource(SettingsPage.FACTORY));
 			link.setStyleName("item");
 			userMenuLayout.addComponent(link);
 
@@ -233,7 +226,7 @@ public abstract class BasePage extends GrassPage {
 	}
 
 	private void createHomeLink() {
-		Link link = new Link("Domů", getPageResource(HomePageFactory.INSTANCE));
+		Link link = new Link("Domů", getPageResource(HomePage.FACTORY));
 		link.setStyleName("item");
 		sectionsMenuLayout.addComponent(link);
 	}
@@ -245,8 +238,8 @@ public abstract class BasePage extends GrassPage {
 	}
 
 	private void createCategoryLink(String caption, String URL) {
-		Link link = new Link(caption, getPageResource(
-				CategoryPageFactory.INSTANCE, URL));
+		Link link = new Link(caption,
+				getPageResource(CategoryPage.FACTORY, URL));
 		link.setStyleName("item");
 		sectionsMenuLayout.addComponent(link);
 	}

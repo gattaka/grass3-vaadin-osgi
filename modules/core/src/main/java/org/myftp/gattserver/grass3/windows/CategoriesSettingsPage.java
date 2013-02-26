@@ -1,9 +1,11 @@
 package org.myftp.gattserver.grass3.windows;
 
 import java.util.List;
+import java.util.Set;
 
 import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
+import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.util.GrassRequest;
@@ -46,9 +48,20 @@ public class CategoriesSettingsPage extends SettingsPage {
 
 	public static final SettingsPageFactory FACTORY = new SettingsPageFactory(
 			"categories") {
+
 		@Override
 		public SettingsPage createSettingsPage(GrassRequest request) {
 			return new CategoriesSettingsPage(request);
+		}
+
+		@Override
+		public String getSettingsCaption() {
+			return "Kategorie";
+		}
+
+		@Override
+		public boolean isVisibleForRoles(Set<Role> roles) {
+			return roles.contains(Role.ADMIN);
 		}
 	};
 
@@ -342,8 +355,7 @@ public class CategoriesSettingsPage extends SettingsPage {
 												.getItemProperty(
 														TreePropertyID.NÁZEV)
 												.setValue(
-														newNameField
-																.getValue());
+														newNameField.getValue());
 										node.setName((String) newNameField
 												.getValue());
 									} else {
@@ -383,7 +395,7 @@ public class CategoriesSettingsPage extends SettingsPage {
 		});
 
 		refreshTree();
-		
+
 		createNewNodePanel(layout);
 
 		return layout;

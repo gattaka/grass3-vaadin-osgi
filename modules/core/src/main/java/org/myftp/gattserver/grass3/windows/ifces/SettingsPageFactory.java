@@ -1,5 +1,8 @@
 package org.myftp.gattserver.grass3.windows.ifces;
 
+import java.util.Set;
+
+import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.windows.template.GrassPage;
 import org.myftp.gattserver.grass3.windows.template.SettingsPage;
@@ -16,5 +19,9 @@ public abstract class SettingsPageFactory extends PageFactory {
 	}
 
 	public abstract SettingsPage createSettingsPage(GrassRequest request);
+
+	public abstract String getSettingsCaption();
+
+	public abstract boolean isVisibleForRoles(Set<Role> roles);
 
 }

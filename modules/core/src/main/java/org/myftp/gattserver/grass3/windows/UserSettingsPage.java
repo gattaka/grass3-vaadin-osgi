@@ -1,17 +1,23 @@
 package org.myftp.gattserver.grass3.windows;
 
 import java.util.List;
+import java.util.Set;
 
 import org.myftp.gattserver.grass3.facades.UserFacade;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
-import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
+import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.windows.ifces.SettingsPageFactory;
+import org.myftp.gattserver.grass3.windows.template.SettingsPage;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
@@ -19,13 +25,35 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
 
-public class UserSettingsWindow extends SettingsWindow {
+public class UserSettingsPage extends SettingsPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
 	private UserFacade userFacade = UserFacade.INSTANCE;
+
+	public static final SettingsPageFactory FACTORY = new SettingsPageFactory(
+			"users") {
+
+		@Override
+		public SettingsPage createSettingsPage(GrassRequest request) {
+			return new UserSettingsPage(request);
+		}
+
+		@Override
+		public String getSettingsCaption() {
+			return "Uživatelé";
+		}
+
+		@Override
+		public boolean isVisibleForRoles(Set<Role> roles) {
+			return roles.contains(Role.ADMIN);
+		}
+	};
+
+	public UserSettingsPage(GrassRequest request) {
+		super(request);
+	}
 
 	private final Table userTable = new Table();
 
@@ -36,11 +64,6 @@ public class UserSettingsWindow extends SettingsWindow {
 
 		ID, JMÉNO, ROLE, REGISTROVÁN_OD, POSLEDNÍ_PŘIHLÁŠENÍ, AKTIVNÍ, EMAIL
 
-	}
-
-	public UserSettingsWindow() {
-		setName("user-settings");
-		setCaption("Gattserver");
 	}
 
 	@Override
@@ -55,7 +78,7 @@ public class UserSettingsWindow extends SettingsWindow {
 		layout.addComponent(usersLayout);
 
 		usersLayout.addComponent(new Label("<h2>Správa uživatelů</h2>",
-				Label.CONTENT_XHTML));
+				ContentMode.HTML));
 
 		usersLayout.addComponent(userTable);
 
@@ -70,7 +93,7 @@ public class UserSettingsWindow extends SettingsWindow {
 		userTable.setSelectable(true);
 		userTable.setImmediate(true);
 
-		userTable.addListener(new Table.ValueChangeListener() {
+		userTable.addValueChangeListener(new Table.ValueChangeListener() {
 
 			private static final long serialVersionUID = -6605391938100454104L;
 
@@ -87,13 +110,6 @@ public class UserSettingsWindow extends SettingsWindow {
 				}
 			}
 		});
-
-		return layout;
-
-	}
-
-	@Override
-	protected void onShow() {
 
 		IndexedContainer container = new IndexedContainer();
 		container.addContainerProperty(ColumnId.ID, String.class, null);
@@ -122,12 +138,13 @@ public class UserSettingsWindow extends SettingsWindow {
 			item.getItemProperty(ColumnId.EMAIL).setValue(user.getEmail());
 		}
 
-		super.onShow();
+		return layout;
+
 	}
 
 	private Button createActivateButton(final UserInfoDTO user) {
 		Button button = new Button("Aktivovat");
-		button.addListener(new Button.ClickListener() {
+		button.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = -6499299273236613312L;
 
@@ -153,7 +170,7 @@ public class UserSettingsWindow extends SettingsWindow {
 
 	private Button createBanButton(final UserInfoDTO user) {
 		Button button = new Button("Zablokovat");
-		button.addListener(new Button.ClickListener() {
+		button.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 6949925629334741559L;
 
@@ -178,7 +195,7 @@ public class UserSettingsWindow extends SettingsWindow {
 
 	private Button createSetRolesButton(final UserInfoDTO user) {
 		Button button = new Button("Upravit oprávnění");
-		button.addListener(new Button.ClickListener() {
+		button.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 8422572581790539334L;
 
@@ -186,31 +203,33 @@ public class UserSettingsWindow extends SettingsWindow {
 
 				final Window subwindow = new GrassSubWindow("Uživatelské role");
 				subwindow.center();
-				addWindow(subwindow);
+				getUI().addWindow(subwindow);
 				subwindow.setWidth("220px");
-				((VerticalLayout) subwindow.getContent()).setSpacing(true);
+				VerticalLayout subwindowLayout = ((VerticalLayout) subwindow
+						.getContent());
+				subwindowLayout.setSpacing(true);
 
 				for (final Role value : Role.values()) {
 					final CheckBox checkbox = new CheckBox(value.getRoleName());
 					checkbox.setValue(user.getRoles().contains(value));
-					checkbox.addListener(new Button.ClickListener() {
+					checkbox.addValueChangeListener(new ValueChangeListener() {
 
 						private static final long serialVersionUID = -4168795771060533842L;
 
-						public void buttonClick(ClickEvent event) {
-							if (checkbox.booleanValue()) {
+						@Override
+						public void valueChange(ValueChangeEvent event) {
+							if (checkbox.getValue()) {
 								user.getRoles().add(value);
 							} else {
 								user.getRoles().remove(value);
 							}
 						}
-
 					});
-					subwindow.addComponent(checkbox);
+					subwindowLayout.addComponent(checkbox);
 				}
 
 				Button applyBtn = new Button("Upravit oprávnění");
-				applyBtn.addListener(new Button.ClickListener() {
+				applyBtn.addClickListener(new Button.ClickListener() {
 
 					private static final long serialVersionUID = -6032630714904379342L;
 
@@ -229,7 +248,7 @@ public class UserSettingsWindow extends SettingsWindow {
 					}
 
 				});
-				subwindow.addComponent(applyBtn);
+				subwindowLayout.addComponent(applyBtn);
 				subwindow.focus();
 			}
 

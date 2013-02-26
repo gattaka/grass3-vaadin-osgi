@@ -1,11 +1,14 @@
 package org.myftp.gattserver.grass3.windows;
 
+import java.util.Set;
+
 import javax.xml.bind.JAXBException;
 
 import org.myftp.gattserver.grass3.config.ConfigurationFileError;
 import org.myftp.gattserver.grass3.config.ConfigurationManager;
 import org.myftp.gattserver.grass3.config.ConfigurationUtils;
 import org.myftp.gattserver.grass3.config.CoreConfiguration;
+import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.windows.ifces.SettingsPageFactory;
 import org.myftp.gattserver.grass3.windows.template.SettingsPage;
@@ -30,9 +33,20 @@ public class ApplicationSettingsPage extends SettingsPage {
 
 	public static final SettingsPageFactory FACTORY = new SettingsPageFactory(
 			"application-settings") {
+
 		@Override
 		public SettingsPage createSettingsPage(GrassRequest request) {
 			return new ApplicationSettingsPage(request);
+		}
+
+		@Override
+		public String getSettingsCaption() {
+			return "Aplikace";
+		}
+
+		@Override
+		public boolean isVisibleForRoles(Set<Role> roles) {
+			return roles.contains(Role.ADMIN);
 		}
 	};
 

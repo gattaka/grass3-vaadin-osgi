@@ -1,6 +1,5 @@
 package org.myftp.gattserver.grass3.windows.template;
 
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 
@@ -12,14 +11,12 @@ import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.service.IContentService;
 import org.myftp.gattserver.grass3.util.ComparableLink;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
-import org.myftp.gattserver.grass3.windows.CategoryWindow;
-import org.myftp.gattserver.grass3.windows.ifces.IPageFactory;
-import org.myftp.gattserver.grass3.windows.template.NoServicePage.NoServicePageFactory;
+import org.myftp.gattserver.grass3.windows.CategoryPage;
+import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.terminal.ExternalResource;
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
 
@@ -71,31 +68,28 @@ public class ContentsTable extends Table {
 				continue;
 
 			// jaká prohlížecí služba odpovídá tomuto obsahu
-			IContentService contentService = ServiceHolder.getInstance()
+			IContentService contentService = ServiceHolder
 					.getContentServiceByName(contentNode.getContentReaderID());
 
-			IPageFactory pageFactory = null;
+			PageFactory pageFactory = null;
 			if (contentService == null)
-				pageFactory = NoServicePageFactory.INSTANCE;
+				pageFactory = NoServicePage.FACTORY;
 			else
-				pageFactory = contentService.getContentViewerWindowClass();
+				pageFactory = contentService.getContentViewerPageFactory();
 
 			Item item = addItem(contentNode);
 			item.getItemProperty(ColumnId.NÁZEV).setValue(
-					new ComparableLink(contentNode.getName(),
-							page.getPageResource(pageFactory, relativeURL)
-							new ExternalResource(page.getWindow(pageFactory)
-									.getURL()
-									+ URLIdentifierUtils.createURLIdentifier(
+					new ComparableLink(contentNode.getName(), page
+							.getPageResource(pageFactory, URLIdentifierUtils
+									.createURLIdentifier(
 											contentNode.getContentID(),
 											contentNode.getName()))));
 			NodeDTO contentParent = nodeFacade.getNodeById(contentNode
 					.getParentID());
-			URL categoryWindowUrl = page.getWindow(CategoryWindow.class).getURL();
 			item.getItemProperty(ColumnId.KATEGORIE).setValue(
-					new ComparableLink(contentParent.getName(),
-							new ExternalResource(categoryWindowUrl
-									+ URLIdentifierUtils.createURLIdentifier(
+					new ComparableLink(contentParent.getName(), page
+							.getPageResource(CategoryPage.FACTORY,
+									URLIdentifierUtils.createURLIdentifier(
 											contentParent.getId(),
 											contentParent.getName()))));
 			item.getItemProperty(ColumnId.AUTOR).setValue(

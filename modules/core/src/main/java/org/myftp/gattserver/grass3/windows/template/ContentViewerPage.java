@@ -1,6 +1,5 @@
 package org.myftp.gattserver.grass3.windows.template;
 
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,13 +8,15 @@ import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.template.Breadcrumb;
 import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
+import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
-import org.myftp.gattserver.grass3.windows.CategoryWindow;
-import org.myftp.gattserver.grass3.windows.TagWindow;
+import org.myftp.gattserver.grass3.windows.CategoryPage;
+import org.myftp.gattserver.grass3.windows.TagPage;
+import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 import org.myftp.gattserver.grass3.windows.template.TwoColumnPage;
 
-import com.vaadin.terminal.DownloadStream;
-import com.vaadin.terminal.ExternalResource;
+import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
@@ -24,12 +25,11 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
-public abstract class ContentViewerWindow extends TwoColumnPage {
+public abstract class ContentViewerPage extends TwoColumnPage {
 
 	private static final long serialVersionUID = 5078280973817331002L;
 
 	private ContentNodeDTO content;
-	private Class<? extends GrassWindow> contentViewerClass;
 	private Label contentNameLabel;
 	private Label contentAuthorNameLabel;
 	private Label contentCreationDateNameLabel;
@@ -37,14 +37,41 @@ public abstract class ContentViewerWindow extends TwoColumnPage {
 	private CssLayout tagsListLayout = new CssLayout();
 	private CssLayout operationsListLayout;
 
-	public ContentViewerWindow(Class<? extends GrassWindow> contentViewerClass) {
-		this.contentViewerClass = contentViewerClass;
-	}
+	private PageFactory pageFactory;
 
 	/**
 	 * Breadcrumb
 	 */
 	private Breadcrumb breadcrumb;
+
+	public ContentViewerPage(GrassRequest request, PageFactory pageFactory) {
+		super(request);
+		this.pageFactory = pageFactory;
+
+		content = getContentNodeDTO();
+		updateBreadcrumb(content);
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("d.M.yyyy HH:mm:ss");
+
+		contentNameLabel.setValue("<h2>" + content.getName() + "</h2>");
+		contentAuthorNameLabel.setValue(content.getAuthor().getName());
+		contentCreationDateNameLabel.setValue(dateFormat.format(content
+				.getCreationDate()));
+		contentLastModificationDateLabel.setValue(content
+				.getLastModificationDate() == null ? "<em>-neupraveno-</em>"
+				: dateFormat.format(content.getLastModificationDate()));
+
+		tagsListLayout.removeAllComponents();
+		for (String contentTag : content.getContentTags()) {
+			Link tagLink = new Link(contentTag, getPageResource(
+					TagPage.FACTORY, contentTag));
+			tagLink.addStyleName("taglabel");
+			tagsListLayout.addComponent(tagLink);
+		}
+
+		operationsListLayout.removeAllComponents();
+		updateOperationsList(operationsListLayout);
+	}
 
 	@Override
 	protected Component createLeftColumnContent() {
@@ -56,10 +83,9 @@ public abstract class ContentViewerWindow extends TwoColumnPage {
 
 		// info - přehled
 		VerticalLayout infoLayout = new VerticalLayout();
-		infoLayout.setMargin(false, false, true, false);
+		infoLayout.setMargin(new MarginInfo(false, false, true, false));
 		layout.addComponent(infoLayout);
-		infoLayout
-				.addComponent(new Label("<h2>Info</h2>", Label.CONTENT_XHTML));
+		infoLayout.addComponent(new Label("<h2>Info</h2>", ContentMode.HTML));
 
 		GridLayout gridLayout = new GridLayout(2, 3);
 		infoLayout.addComponent(gridLayout);
@@ -67,14 +93,14 @@ public abstract class ContentViewerWindow extends TwoColumnPage {
 		gridLayout.setSpacing(true);
 
 		gridLayout.addComponent(new Label("<strong>Autor:</strong>",
-				Label.CONTENT_XHTML), 0, 0);
+				ContentMode.HTML), 0, 0);
 		gridLayout.addComponent(contentAuthorNameLabel = new Label(), 1, 0);
 		gridLayout.addComponent(new Label("<strong>Vytvořeno:</strong>",
-				Label.CONTENT_XHTML), 0, 1);
+				ContentMode.HTML), 0, 1);
 		gridLayout.addComponent(contentCreationDateNameLabel = new Label(), 1,
 				1);
 		gridLayout.addComponent(new Label("<strong>Upraveno:</strong>",
-				Label.CONTENT_XHTML), 0, 2);
+				ContentMode.HTML), 0, 2);
 		gridLayout.addComponent(contentLastModificationDateLabel = new Label(),
 				1, 2);
 
@@ -85,7 +111,7 @@ public abstract class ContentViewerWindow extends TwoColumnPage {
 		gridLayout.setComponentAlignment(contentLastModificationDateLabel,
 				Alignment.TOP_RIGHT);
 
-		contentLastModificationDateLabel.setContentMode(Label.CONTENT_XHTML);
+		contentLastModificationDateLabel.setContentMode(ContentMode.HTML);
 
 		contentAuthorNameLabel.setSizeUndefined();
 		contentCreationDateNameLabel.setSizeUndefined();
@@ -94,8 +120,7 @@ public abstract class ContentViewerWindow extends TwoColumnPage {
 		// tagy
 		VerticalLayout tagsLayout = new VerticalLayout();
 		layout.addComponent(tagsLayout);
-		tagsLayout
-				.addComponent(new Label("<h2>Tagy</h2>", Label.CONTENT_XHTML));
+		tagsLayout.addComponent(new Label("<h2>Tagy</h2>", ContentMode.HTML));
 
 		tagsLayout.addComponent(tagsListLayout);
 		tagsListLayout.setWidth("100%");
@@ -104,7 +129,7 @@ public abstract class ContentViewerWindow extends TwoColumnPage {
 		VerticalLayout operationsLayout = new VerticalLayout();
 		layout.addComponent(operationsLayout);
 		operationsLayout.addComponent(new Label("<h2>Operace s obsahem</h2>",
-				Label.CONTENT_XHTML));
+				ContentMode.HTML));
 
 		operationsListLayout = new CssLayout();
 		operationsLayout.addComponent(operationsListLayout);
@@ -131,7 +156,7 @@ public abstract class ContentViewerWindow extends TwoColumnPage {
 		VerticalLayout nameLayout = new VerticalLayout();
 		layout.addComponent(nameLayout);
 		nameLayout.addComponent(contentNameLabel = new Label());
-		contentNameLabel.setContentMode(Label.CONTENT_XHTML);
+		contentNameLabel.setContentMode(ContentMode.HTML);
 
 		// samotný obsah
 		createContent(layout);
@@ -141,16 +166,6 @@ public abstract class ContentViewerWindow extends TwoColumnPage {
 	}
 
 	protected abstract void createContent(VerticalLayout layout);
-
-	@Override
-	public DownloadStream handleURI(URL context, String relativeUri) {
-
-		content = getContentNodeDTO();
-
-		updateBreadcrumb(content);
-
-		return super.handleURI(context, relativeUri);
-	}
 
 	protected abstract ContentNodeDTO getContentNodeDTO();
 
@@ -164,8 +179,9 @@ public abstract class ContentViewerWindow extends TwoColumnPage {
 		 * obsah
 		 */
 		breadcrumbElements.add(new BreadcrumbElement(content.getName(),
-				new ExternalResource(getWindow(contentViewerClass).getURL()
-						+ URLIdentifierUtils.createURLIdentifier(
+				getPageResource(
+						pageFactory,
+						URLIdentifierUtils.createURLIdentifier(
 								content.getContentID(), content.getName()))));
 
 		/**
@@ -179,9 +195,9 @@ public abstract class ContentViewerWindow extends TwoColumnPage {
 				showError404();
 
 			breadcrumbElements.add(new BreadcrumbElement(parent.getName(),
-					new ExternalResource(getWindow(CategoryWindow.class)
-							.getURL()
-							+ URLIdentifierUtils.createURLIdentifier(
+					getPageResource(
+							CategoryPage.FACTORY,
+							URLIdentifierUtils.createURLIdentifier(
 									parent.getId(), parent.getName()))));
 
 			// pokud je můj předek null, pak je to konec a je to všechno
@@ -192,34 +208,6 @@ public abstract class ContentViewerWindow extends TwoColumnPage {
 		}
 
 		breadcrumb.resetBreadcrumb(breadcrumbElements);
-	}
-
-	@Override
-	protected void onShow() {
-		super.onShow();
-
-		SimpleDateFormat dateFormat = new SimpleDateFormat("d.M.yyyy HH:mm:ss");
-
-		contentNameLabel.setValue("<h2>" + content.getName() + "</h2>");
-		contentAuthorNameLabel.setValue(content.getAuthor().getName());
-		contentCreationDateNameLabel.setValue(dateFormat.format(content
-				.getCreationDate()));
-		contentLastModificationDateLabel.setValue(content
-				.getLastModificationDate() == null ? "<em>-neupraveno-</em>"
-				: dateFormat.format(content.getLastModificationDate()));
-
-		tagsListLayout.removeAllComponents();
-		for (String contentTag : content.getContentTags()) {
-			Link tagLink = new Link(contentTag, new ExternalResource(getWindow(
-					TagWindow.class).getURL()
-					+ contentTag));
-			tagLink.addStyleName("taglabel");
-			tagsListLayout.addComponent(tagLink);
-		}
-
-		operationsListLayout.removeAllComponents();
-		updateOperationsList(operationsListLayout);
-
 	}
 
 	protected abstract void updateOperationsList(CssLayout operationsListLayout);

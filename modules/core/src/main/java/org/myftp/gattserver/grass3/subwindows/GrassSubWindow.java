@@ -1,7 +1,5 @@
 package org.myftp.gattserver.grass3.subwindows;
 
-import org.myftp.gattserver.grass3.windows.template.GrassWindow;
-
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Window;
 
@@ -16,10 +14,4 @@ public class GrassSubWindow extends Window {
 		center();
 		setWidth("220px");
 	}
-
-	@Override
-	public GrassWindow getParent() {
-		return (GrassWindow) super.getParent();
-	}
-
 }

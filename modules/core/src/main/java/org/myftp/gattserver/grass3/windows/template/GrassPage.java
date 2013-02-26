@@ -5,20 +5,57 @@ import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
+import org.myftp.gattserver.grass3.windows.HomePage;
 import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Page;
-import com.vaadin.server.Resource;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.CustomLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Link;
 
 public abstract class GrassPage extends CustomLayout {
 
 	private static final long serialVersionUID = 604170960797872356L;
 
-	public GrassPage(String template) {
-		super(template);
+	public GrassPage() {
+		super("grass");
+
+		// homelink (přes logo)
+		Link homelink = new Link();
+		homelink.addStyleName("homelink");
+		homelink.setResource(getPageResource(HomePage.FACTORY));
+		homelink.setIcon(new ThemeResource("img/logo.png"));
+		addComponent(homelink, "homelink");
+
+		// hlášky
+		createQuotes(this);
+
+		// menu
+		createMenu(this);
+
+		// obsah
+		createContent(this);
+
+		// footer
+		addComponent(new Label("GRASS3"), "about");
 	}
+
+	/**
+	 * Získá hlášky
+	 */
+	protected abstract void createQuotes(CustomLayout layout);
+
+	/**
+	 * Získá menu
+	 */
+	protected abstract void createMenu(CustomLayout layout);
+
+	/**
+	 * Získá obsah
+	 */
+	protected abstract void createContent(CustomLayout layout);
 
 	/**
 	 * Získá URL stránky

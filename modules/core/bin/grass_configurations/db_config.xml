@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<modelConfiguration>
+    <password></password>
+    <URL>jdbc:h2:grass3H2DB</URL>
+    <username>sa</username>
+</modelConfiguration>

@@ -10,6 +10,7 @@ import org.myftp.gattserver.grass3.model.domain.Node;
 import org.myftp.gattserver.grass3.model.domain.Quote;
 import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.service.IEntityService;
+import org.myftp.gattserver.grass3.model.service.impl.BasicEntityServiceListener;
 
 /**
  * Sdružuje třídy entit a hromadně je jako služba registruje u model bundle
@@ -19,12 +20,17 @@ import org.myftp.gattserver.grass3.model.service.IEntityService;
  */
 public class CoreEntityService implements IEntityService {
 
+	// TODO spring
+	static {
+		BasicEntityServiceListener.bind(new CoreEntityService());
+	}
+	
 	/**
 	 * Mělo by být immutable
 	 */
 	List<Class<?>> domainClasses = new ArrayList<Class<?>>();
 
-	public CoreEntityService() {
+	private CoreEntityService() {
 		domainClasses.add(User.class);
 		domainClasses.add(ContentNode.class);
 		domainClasses.add(ContentTag.class);

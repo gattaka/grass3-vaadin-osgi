@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.template.Breadcrumb;
@@ -12,7 +13,6 @@ import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.windows.CategoryPage;
 import org.myftp.gattserver.grass3.windows.TagPage;
-import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 import org.myftp.gattserver.grass3.windows.template.TwoColumnPage;
 
 import com.vaadin.shared.ui.MarginInfo;
@@ -187,6 +187,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		/**
 		 * kategorie
 		 */
+		NodeFacade nodeFacade = NodeFacade.INSTANCE;
 		NodeDTO parent = nodeFacade.getNodeById(content.getParentID());
 		while (true) {
 

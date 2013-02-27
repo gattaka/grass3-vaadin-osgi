@@ -3,10 +3,10 @@ package org.myftp.gattserver.grass3.windows;
 import org.myftp.gattserver.grass3.facades.ContentTagFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.util.GrassRequest;
-import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 import org.myftp.gattserver.grass3.windows.template.BasePage;
 import org.myftp.gattserver.grass3.windows.template.ContentsTable;
 import org.myftp.gattserver.grass3.windows.template.GrassPage;
+import org.myftp.gattserver.grass3.windows.template.PageFactory;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.CustomLayout;

@@ -1,7 +1,6 @@
 package org.myftp.gattserver.grass3.windows.template;
 
 import org.myftp.gattserver.grass3.util.GrassRequest;
-import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;

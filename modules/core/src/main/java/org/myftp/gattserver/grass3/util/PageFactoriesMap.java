@@ -2,14 +2,14 @@ package org.myftp.gattserver.grass3.util;
 
 import java.util.HashMap;
 
-import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
+import org.myftp.gattserver.grass3.windows.template.PageFactory;
 
 public class PageFactoriesMap extends HashMap<String, PageFactory> {
 
 	private static final long serialVersionUID = 2552200530580643096L;
 	private PageFactory homepageFactory;
 
-	public PageFactoriesMap(PageFactory homepageFactory) {
+	public void setHomepageFactory(PageFactory homepageFactory) {
 		this.homepageFactory = homepageFactory;
 	}
 

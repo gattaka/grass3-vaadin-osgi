@@ -3,7 +3,7 @@ package org.myftp.gattserver.grass3.service;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.windows.ifces.SettingsPageFactory;
+import org.myftp.gattserver.grass3.windows.template.SettingsPageFactory;
 
 /**
  * Objekt nastavení. Jde o objekt, který u sebe má informace potřebné k zapojení

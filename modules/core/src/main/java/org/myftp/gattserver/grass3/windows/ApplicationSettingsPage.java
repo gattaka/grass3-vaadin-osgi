@@ -10,8 +10,7 @@ import org.myftp.gattserver.grass3.config.ConfigurationUtils;
 import org.myftp.gattserver.grass3.config.CoreConfiguration;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.util.GrassRequest;
-import org.myftp.gattserver.grass3.windows.ifces.SettingsPageFactory;
-import org.myftp.gattserver.grass3.windows.template.SettingsPage;
+import org.myftp.gattserver.grass3.windows.template.SettingsPageFactory;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;

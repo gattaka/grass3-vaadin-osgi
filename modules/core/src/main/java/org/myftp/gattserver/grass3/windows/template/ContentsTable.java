@@ -12,7 +12,6 @@ import org.myftp.gattserver.grass3.service.IContentService;
 import org.myftp.gattserver.grass3.util.ComparableLink;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.windows.CategoryPage;
-import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;

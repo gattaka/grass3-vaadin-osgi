@@ -1,16 +1,15 @@
 package org.myftp.gattserver.grass3;
 
+import java.util.Map;
+
 import org.myftp.gattserver.grass3.facades.SecurityFacade;
 import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.Mapper;
-import org.myftp.gattserver.grass3.util.PageFactoriesMap;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
-import org.myftp.gattserver.grass3.windows.CategoryPage;
 import org.myftp.gattserver.grass3.windows.HomePage;
-import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
-import org.myftp.gattserver.grass3.windows.template.SettingsPage;
+import org.myftp.gattserver.grass3.windows.template.PageFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,26 +26,25 @@ public class GrassUI extends UI {
 	private static Logger logger = LoggerFactory.getLogger(GrassUI.class);
 
 	/**
-	 * TODO - tohle by se mělo nějak zaregistrovat samo přes spring
-	 */
-	private PageFactoriesMap factoriesMap = new PageFactoriesMap(
-			HomePage.FACTORY);
-
-	public GrassUI() {
-		factoriesMap.put(CategoryPage.FACTORY);
-		factoriesMap.put(SettingsPage.FACTORY);
-	}
-
-	/**
 	 * Fasády
 	 */
 	private SecurityFacade securityFacade = SecurityFacade.INSTANCE;
 	private Mapper mapper = Mapper.INSTANCE;
 
 	/**
+	 * Mapa stránek
+	 */
+	private Map<String, PageFactory> factoriesMap = PageFactory
+			.getRegistredFactories();
+
+	/**
 	 * Auth
 	 */
 	private UserInfoDTO user = null;
+
+	public GrassUI() {
+		PageFactory.setHomepageFactory(HomePage.FACTORY);
+	}
 
 	/**
 	 * Authentikační metoda pro aplikaci

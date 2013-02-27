@@ -10,8 +10,7 @@ import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
-import org.myftp.gattserver.grass3.windows.ifces.SettingsPageFactory;
-import org.myftp.gattserver.grass3.windows.template.SettingsPage;
+import org.myftp.gattserver.grass3.windows.template.SettingsPageFactory;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;

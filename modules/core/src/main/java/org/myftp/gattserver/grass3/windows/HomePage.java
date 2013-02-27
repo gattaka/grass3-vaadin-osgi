@@ -13,10 +13,10 @@ import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.util.GrassRequest;
-import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 import org.myftp.gattserver.grass3.windows.template.BasePage;
 import org.myftp.gattserver.grass3.windows.template.ContentsTable;
 import org.myftp.gattserver.grass3.windows.template.GrassPage;
+import org.myftp.gattserver.grass3.windows.template.PageFactory;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.CssLayout;
@@ -38,8 +38,7 @@ public class HomePage extends BasePage {
 	/**
 	 * Fasády
 	 */
-	private ContentNodeFacade contentNodeFacade = ContentNodeFacade.INSTANCE;
-	private ContentTagFacade contentTagFacade = ContentTagFacade.INSTANCE;
+	private ContentNodeFacade contentNodeFacade;
 
 	/**
 	 * Kolik položek mají menu "nedávno" maximálně zobrazit ?
@@ -105,6 +104,7 @@ public class HomePage extends BasePage {
 		tagCloudLayout.addComponent(tagCloud);
 		pagelayout.addComponent(tagCloudLayout);
 
+		ContentTagFacade contentTagFacade = ContentTagFacade.INSTANCE;
 		final List<ContentTagDTO> contentTags = contentTagFacade
 				.getAllContentTags();
 
@@ -210,6 +210,7 @@ public class HomePage extends BasePage {
 		ContentsTable recentAddedContentsTable = new ContentsTable();
 		ContentsTable recentModifiedContentsTable = new ContentsTable();
 
+		contentNodeFacade = ContentNodeFacade.INSTANCE;
 		Set<ContentNodeDTO> recentAdded = contentNodeFacade
 				.getRecentAdded(RECENT_ITEMS_COUNT);
 		Set<ContentNodeDTO> recentModified = contentNodeFacade

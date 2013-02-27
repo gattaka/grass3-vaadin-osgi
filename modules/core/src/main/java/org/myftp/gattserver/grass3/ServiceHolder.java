@@ -3,8 +3,6 @@ package org.myftp.gattserver.grass3;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.myftp.gattserver.grass3.model.AbstractDAO;
-import org.myftp.gattserver.grass3.model.service.IEntityServiceListener;
 import org.myftp.gattserver.grass3.service.IContentService;
 import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.service.ISettingsService;
@@ -22,24 +20,6 @@ public class ServiceHolder {
 	// static class
 	private ServiceHolder() {
 	};
-
-	/**
-	 * DB entity listener service
-	 */
-	private IEntityServiceListener entityServiceListener;
-
-	public IEntityServiceListener getEntityServiceListener() {
-		return entityServiceListener;
-	}
-
-	public void setEntityServiceListener(IEntityServiceListener entityListener) {
-		this.entityServiceListener = entityListener;
-
-		// TODO .. tohle není úplně košér, ale jinak se mi to nedaří provázat
-		AbstractDAO.serviceListener = entityListener;
-		System.out.println("EntityListener version: "
-				+ entityListener.getVersion());
-	}
 
 	/**
 	 * Obsahy

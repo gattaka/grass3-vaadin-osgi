@@ -6,7 +6,6 @@ import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
 import org.myftp.gattserver.grass3.windows.HomePage;
-import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Page;
@@ -14,6 +13,7 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
+import com.vaadin.ui.UI;
 
 public abstract class GrassPage extends CustomLayout {
 
@@ -109,7 +109,7 @@ public abstract class GrassPage extends CustomLayout {
 	 * Získá aktuální UI jako {@link GrassUI}
 	 */
 	public GrassUI getGrassUI() {
-		return (GrassUI) getUI();
+		return (GrassUI) UI.getCurrent();
 	}
 
 	/**
@@ -124,7 +124,7 @@ public abstract class GrassPage extends CustomLayout {
 	 */
 	public void showInfo(String caption) {
 		InfoSubwindow infoSubwindow = new InfoSubwindow(caption);
-		getUI().addWindow(infoSubwindow);
+		getGrassUI().addWindow(infoSubwindow);
 	}
 
 	/**
@@ -132,7 +132,7 @@ public abstract class GrassPage extends CustomLayout {
 	 */
 	public void showWarning(String caption) {
 		WarnSubwindow warnSubwindow = new WarnSubwindow(caption);
-		getUI().addWindow(warnSubwindow);
+		getGrassUI().addWindow(warnSubwindow);
 	}
 
 	/**
@@ -140,7 +140,7 @@ public abstract class GrassPage extends CustomLayout {
 	 */
 	public void showError(String caption) {
 		ErrorSubwindow errorSubwindow = new ErrorSubwindow(caption);
-		getUI().addWindow(errorSubwindow);
+		getGrassUI().addWindow(errorSubwindow);
 	}
 
 	/**

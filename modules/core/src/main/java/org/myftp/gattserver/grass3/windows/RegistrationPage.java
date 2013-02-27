@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.myftp.gattserver.grass3.facades.UserFacade;
 import org.myftp.gattserver.grass3.util.GrassRequest;
-import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 import org.myftp.gattserver.grass3.windows.template.GrassPage;
 import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
+import org.myftp.gattserver.grass3.windows.template.PageFactory;
 
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.EmailValidator;

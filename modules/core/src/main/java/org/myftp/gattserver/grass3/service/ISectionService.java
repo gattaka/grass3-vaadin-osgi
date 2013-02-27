@@ -3,7 +3,7 @@ package org.myftp.gattserver.grass3.service;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
+import org.myftp.gattserver.grass3.windows.template.PageFactory;
 
 /**
  * Objekt sekce. Jde o objekt, který u sebe má informace potřebné k zapojení

@@ -20,8 +20,8 @@ import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
 import org.myftp.gattserver.grass3.config.ConfigurationUtils;
 import org.myftp.gattserver.grass3.model.config.ModelConfiguration;
-import org.myftp.gattserver.grass3.model.service.IEntityServiceListener;
 import org.myftp.gattserver.grass3.model.service.IEntityService;
+import org.myftp.gattserver.grass3.model.service.impl.BasicEntityServiceListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,18 +35,6 @@ import org.slf4j.LoggerFactory;
  *            Entity class
  */
 public abstract class AbstractDAO<E> {
-
-	/**
-	 * Připojení na dynamické získávání definic objektů odtud získám vždycky
-	 * aktuálně přehled tříd, které mají být persistovány
-	 */
-	public static IEntityServiceListener serviceListener;
-
-	/**
-	 * Verze "sestavení" entit. Došlo k nějaké změně ? Má se přegenerovat
-	 * SessionFactory ?
-	 */
-	private Long version = 0L;
 
 	/**
 	 * Hibernate {@link Configuration}
@@ -90,15 +78,6 @@ public abstract class AbstractDAO<E> {
 		logger.info(msg);
 	}
 
-	private synchronized boolean isNewVersionOfDomainModel() {
-		if (serviceListener.getVersion() == version)
-			return false;
-		else {
-			version++;
-			return true;
-		}
-	}
-
 	/**
 	 * Tato metoda by měla být volána při každém vytváření jakéhokoliv DAO -
 	 * získá pro něj informace od Hibernatu pro připojení a práci se session a
@@ -109,13 +88,6 @@ public abstract class AbstractDAO<E> {
 	 * určitě to musím udělat při každém zaregistrování nové třídy
 	 */
 	private void createConnection() {
-
-		/**
-		 * Pokud nebyly nahlášeny ani odhlášeny žádné třídy, tak neměň staré
-		 * hodnoty ať ušetříš čas vytváření SessionFactory apod.
-		 */
-		if (!isNewVersionOfDomainModel())
-			return;
 
 		/**
 		 * Získej konfigurace
@@ -162,7 +134,8 @@ public abstract class AbstractDAO<E> {
 		/**
 		 * Zde se přidávají třídy, které budou persistovány
 		 */
-		List<IEntityService> services = serviceListener.getServices();
+		List<IEntityService> services = BasicEntityServiceListener
+				.getServices();
 		synchronized (services) {
 			for (IEntityService service : services) {
 				for (Class<?> entityClass : service.getDomainClasses()) {
@@ -322,7 +295,7 @@ public abstract class AbstractDAO<E> {
 		 */
 		if (maxResults != null) {
 			int limit = list.size() < maxResults ? list.size() : maxResults;
-			return list.subList(0, limit - 1);
+			return list.subList(0, limit > 0 ? limit - 1 : 0);
 		} else {
 			return list;
 		}

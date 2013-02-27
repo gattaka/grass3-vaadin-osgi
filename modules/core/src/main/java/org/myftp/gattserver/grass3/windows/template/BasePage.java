@@ -17,7 +17,7 @@ import org.myftp.gattserver.grass3.windows.HomePage;
 import org.myftp.gattserver.grass3.windows.LoginPage;
 import org.myftp.gattserver.grass3.windows.QuotesPage;
 import org.myftp.gattserver.grass3.windows.RegistrationPage;
-import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
+import org.myftp.gattserver.grass3.windows.SettingsPage;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
@@ -34,11 +34,8 @@ public abstract class BasePage extends GrassPage {
 
 	private static final long serialVersionUID = 502625699429764791L;
 
-	private QuotesFacade quotesFacade = QuotesFacade.INSTANCE;
-	protected NodeFacade nodeFacade = NodeFacade.INSTANCE;
-
-	private CssLayout sectionsMenuLayout = new CssLayout();
-	private CssLayout userMenuLayout = new CssLayout();
+	private CssLayout sectionsMenuLayout;
+	private CssLayout userMenuLayout;
 
 	private GrassRequest request;
 
@@ -74,6 +71,7 @@ public abstract class BasePage extends GrassPage {
 	}
 
 	private void createSectionsMenu(CustomLayout layout) {
+		sectionsMenuLayout = new CssLayout();
 		layout.addComponent(sectionsMenuLayout, "sectionsmenu");
 
 		sectionsMenuLayout.removeAllComponents();
@@ -82,6 +80,7 @@ public abstract class BasePage extends GrassPage {
 		createHomeLink();
 
 		// sekce článků je rozbalená rovnou jako její kořenové kategorie
+		NodeFacade nodeFacade = NodeFacade.INSTANCE;
 		List<NodeDTO> nodes = nodeFacade.getRootNodes();
 		for (NodeDTO node : nodes) {
 			createCategoryLink(node.getName(),
@@ -108,6 +107,7 @@ public abstract class BasePage extends GrassPage {
 	}
 
 	private void createUserMenu(CustomLayout layout) {
+		userMenuLayout = new CssLayout();
 		layout.addComponent(userMenuLayout, "usermenu");
 
 		userMenuLayout.removeAllComponents();
@@ -218,6 +218,7 @@ public abstract class BasePage extends GrassPage {
 	}
 
 	private String chooseQuote() {
+		QuotesFacade quotesFacade = QuotesFacade.INSTANCE;
 		String quote = quotesFacade.getRandomQuote();
 		if (quote == null) {
 			showError500();

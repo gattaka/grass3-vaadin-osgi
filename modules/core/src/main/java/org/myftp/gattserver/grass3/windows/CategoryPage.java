@@ -13,12 +13,12 @@ import org.myftp.gattserver.grass3.template.Breadcrumb;
 import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
-import org.myftp.gattserver.grass3.windows.ifces.PageFactory;
 import org.myftp.gattserver.grass3.windows.template.ContentsTable;
 import org.myftp.gattserver.grass3.windows.template.GrassPage;
 import org.myftp.gattserver.grass3.windows.template.NewContentsTable;
 import org.myftp.gattserver.grass3.windows.template.NodesTable;
 import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
+import org.myftp.gattserver.grass3.windows.template.PageFactory;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;

@@ -3,6 +3,8 @@ package org.myftp.gattserver.grass3.windows.template;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
@@ -24,7 +26,9 @@ public class ContentsTable extends Table {
 	private static final long serialVersionUID = -2220485504407844582L;
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"d.M.yyyy HH:mm:ss");
-	private NodeFacade nodeFacade = NodeFacade.INSTANCE;
+	
+	@Resource(name="nodeFacade")
+	private NodeFacade nodeFacade;
 
 	public ContentsTable() {
 		setHeight("200px");

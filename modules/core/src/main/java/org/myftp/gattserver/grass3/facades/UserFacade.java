@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.model.dao.UserDAO;
 import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
@@ -35,12 +37,13 @@ import org.myftp.gattserver.grass3.util.Mapper;
  * @author gatt
  * 
  */
-public enum UserFacade {
+public class UserFacade {
 
-	INSTANCE;
-
-	private Mapper mapper = Mapper.INSTANCE;
-	private SecurityFacade securityFacade = SecurityFacade.INSTANCE;
+	@Resource(name = "mapper")
+	private Mapper mapper;
+	
+	@Resource(name = "securityFacade")
+	private SecurityFacade securityFacade;
 
 	/**
 	 * Zaregistruje nového uživatele

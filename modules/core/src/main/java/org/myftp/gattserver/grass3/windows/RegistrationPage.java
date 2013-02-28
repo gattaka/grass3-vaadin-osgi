@@ -3,6 +3,8 @@ package org.myftp.gattserver.grass3.windows;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.facades.UserFacade;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.windows.template.GrassPage;
@@ -25,7 +27,8 @@ import com.vaadin.ui.VerticalLayout;
 
 public class RegistrationPage extends OneColumnPage {
 
-	private UserFacade userFacade = UserFacade.INSTANCE;
+	@Resource(name = "userFacade")
+	private UserFacade userFacade;
 
 	private static final long serialVersionUID = 8276040419934174157L;
 

@@ -6,11 +6,16 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.junit.Test;
+import org.myftp.gattserver.grass3.test.BaseSpringTest;
 
-public class ContentTagFacadeTest {
+public class ContentTagFacadeTest extends
+		BaseSpringTest {
 
-	private ContentTagFacade contentTagFacade = ContentTagFacade.INSTANCE;
+	@Resource(name = "contentTagFacade")
+	private ContentTagFacade contentTagFacade;
 	private String delimiter = ContentTagFacade.TAGS_DELIMITER;
 
 	private Set<String> parseTags(String tagNames) {

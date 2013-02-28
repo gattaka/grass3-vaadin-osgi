@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.facades.ContentNodeFacade;
 import org.myftp.gattserver.grass3.facades.ContentTagFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
@@ -38,7 +40,11 @@ public class HomePage extends BasePage {
 	/**
 	 * Fasády
 	 */
+	@Resource(name = "contentNodeFacade")
 	private ContentNodeFacade contentNodeFacade;
+
+	@Resource(name = "contentTagFacade")
+	private ContentTagFacade contentTagFacade;
 
 	/**
 	 * Kolik položek mají menu "nedávno" maximálně zobrazit ?
@@ -104,7 +110,6 @@ public class HomePage extends BasePage {
 		tagCloudLayout.addComponent(tagCloud);
 		pagelayout.addComponent(tagCloudLayout);
 
-		ContentTagFacade contentTagFacade = ContentTagFacade.INSTANCE;
 		final List<ContentTagDTO> contentTags = contentTagFacade
 				.getAllContentTags();
 
@@ -210,7 +215,6 @@ public class HomePage extends BasePage {
 		ContentsTable recentAddedContentsTable = new ContentsTable();
 		ContentsTable recentModifiedContentsTable = new ContentsTable();
 
-		contentNodeFacade = ContentNodeFacade.INSTANCE;
 		Set<ContentNodeDTO> recentAdded = contentNodeFacade
 				.getRecentAdded(RECENT_ITEMS_COUNT);
 		Set<ContentNodeDTO> recentModified = contentNodeFacade

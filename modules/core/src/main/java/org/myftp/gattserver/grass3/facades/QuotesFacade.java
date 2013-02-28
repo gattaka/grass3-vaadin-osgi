@@ -4,16 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.model.dao.QuoteDAO;
 import org.myftp.gattserver.grass3.model.domain.Quote;
 import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.util.Mapper;
 
-public enum QuotesFacade {
+public class QuotesFacade {
 
-	INSTANCE;
-
-	private Mapper mapper = Mapper.INSTANCE;
+	@Resource(name = "mapper")
+	private Mapper mapper;
 
 	/**
 	 * Vytvoří a uloží novou hlášku dle textu

@@ -63,6 +63,14 @@
 			<version>3.2.1.RELEASE</version>
 		</dependency>
 
+		<!-- Spring test -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>3.2.1.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- Vaadin 7 -->
 		<dependency>
 			<groupId>com.vaadin</groupId>
@@ -119,11 +127,11 @@
 		</dependency>
 
 		<!-- EasyUploads - multiupload widget -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.vaadin.addons</groupId> -->
-<!-- 			<artifactId>easyuploads</artifactId> -->
-<!-- 			<version>0.5.1</version> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.vaadin.addons</groupId> -->
+		<!-- <artifactId>easyuploads</artifactId> -->
+		<!-- <version>0.5.1</version> -->
+		<!-- </dependency> -->
 
 		<!-- Grass3 DB bundle -->
 		<dependency>

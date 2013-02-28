@@ -2,6 +2,8 @@ package org.myftp.gattserver.grass3;
 
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.facades.SecurityFacade;
 import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
@@ -28,8 +30,11 @@ public class GrassUI extends UI {
 	/**
 	 * Fasády
 	 */
-	private SecurityFacade securityFacade = SecurityFacade.INSTANCE;
-	private Mapper mapper = Mapper.INSTANCE;
+	@Resource(name = "securityFacade")
+	private SecurityFacade securityFacade;
+
+	@Resource(name = "mapper")
+	private Mapper mapper;
 
 	/**
 	 * Mapa stránek

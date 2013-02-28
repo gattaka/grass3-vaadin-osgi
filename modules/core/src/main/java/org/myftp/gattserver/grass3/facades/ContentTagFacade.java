@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.model.dao.ContentTagDAO;
 import org.myftp.gattserver.grass3.model.domain.ContentNode;
 import org.myftp.gattserver.grass3.model.domain.ContentTag;
@@ -11,11 +13,10 @@ import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.util.Mapper;
 
-public enum ContentTagFacade {
-
-	INSTANCE;
-
-	private Mapper mapper = Mapper.INSTANCE;
+public class ContentTagFacade {
+	
+	@Resource(name = "mapper")
+	private Mapper mapper;
 
 	// neměl by být tečka apod. znak, využívaný v regulárních výrazech
 	public static final String TAGS_DELIMITER = ",";

@@ -8,7 +8,7 @@ public class ErrorSubwindow extends MessageSubwindow {
 
 	public ErrorSubwindow(String labelCaption) {
 		super("Problém", labelCaption,
-				new ThemeResource("img/tags/stop_16.png"));
+				new ThemeResource("img/tags/delete_16.png"));
 	}
 
 }

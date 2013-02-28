@@ -7,9 +7,7 @@ import java.util.List;
 import org.myftp.gattserver.grass3.model.dao.UserDAO;
 import org.myftp.gattserver.grass3.model.domain.User;
 
-public enum SecurityFacade {
-
-	INSTANCE;
+public class SecurityFacade {
 
 	/**
 	 * Digest

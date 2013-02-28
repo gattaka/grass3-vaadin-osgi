@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.model.dao.ContentNodeDAO;
 import org.myftp.gattserver.grass3.model.dao.NodeDAO;
 import org.myftp.gattserver.grass3.model.dao.UserDAO;
@@ -15,13 +17,13 @@ import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.util.Mapper;
 
-public enum ContentNodeFacade {
+public class ContentNodeFacade {
 
-	INSTANCE;
+	@Resource(name = "mapper")
+	private Mapper mapper;
 
-	private Mapper mapper = Mapper.INSTANCE;
-
-	private ContentTagFacade contentTagFacade = ContentTagFacade.INSTANCE;
+	@Resource(name = "contentTagFacade")
+	private ContentTagFacade contentTagFacade;
 
 	/**
 	 * Získá set oblíbených obsahů daného uživatele

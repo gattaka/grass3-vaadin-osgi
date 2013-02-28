@@ -2,16 +2,17 @@ package org.myftp.gattserver.grass3.facades;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.model.dao.NodeDAO;
 import org.myftp.gattserver.grass3.model.domain.Node;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.util.Mapper;
 
-public enum NodeFacade {
+public class NodeFacade {
 
-	INSTANCE;
-
-	private Mapper mapper = Mapper.INSTANCE;
+	@Resource(name = "mapper")
+	private Mapper mapper;
 
 	/**
 	 * Získá kategorii dle id

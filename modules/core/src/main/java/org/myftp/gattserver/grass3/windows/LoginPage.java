@@ -10,6 +10,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
@@ -47,7 +48,7 @@ public class LoginPage extends OneColumnPage {
 		formFieldsLayout.setSpacing(true);
 
 		final TextField nameField = new TextField("Jméno");
-		final TextField passField = new TextField("Heslo");
+		final PasswordField passField = new PasswordField("Heslo");
 		formFieldsLayout.addComponent(nameField);
 		formFieldsLayout.addComponent(passField);
 		formFieldsLayout.addComponent(new Button("Přihlásit",

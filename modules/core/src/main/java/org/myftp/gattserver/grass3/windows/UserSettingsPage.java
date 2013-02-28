@@ -3,6 +3,8 @@ package org.myftp.gattserver.grass3.windows;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.facades.UserFacade;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.security.Role;
@@ -29,8 +31,6 @@ public class UserSettingsPage extends SettingsPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
-	private UserFacade userFacade = UserFacade.INSTANCE;
-
 	public static final SettingsPageFactory FACTORY = new SettingsPageFactory(
 			"users") {
 
@@ -53,6 +53,9 @@ public class UserSettingsPage extends SettingsPage {
 	public UserSettingsPage(GrassRequest request) {
 		super(request);
 	}
+	
+	@Resource(name="userFacade")
+	private UserFacade userFacade;
 
 	private final Table userTable = new Table();
 

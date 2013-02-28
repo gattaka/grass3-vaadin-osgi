@@ -72,7 +72,8 @@ public abstract class MessageSubwindow extends GrassSubWindow {
 				Alignment.BOTTOM_RIGHT);
 
 		// Zaměř se na nové okno
-		focus();
+		// Window must be attached to parent before calling bringToFront method.
+		// focus(); // od V7 to nejde
 
 	}
 

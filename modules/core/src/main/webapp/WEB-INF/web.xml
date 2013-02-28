@@ -6,11 +6,11 @@
 
 	<display-name>Vaadin Web Application</display-name>
 
+	<!-- To make web application aware of the Spring context loader -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:app-context.xml</param-value>
+		<param-value>classpath:spring/app-context.xml</param-value>
 	</context-param>
-
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
@@ -26,8 +26,8 @@
 		<servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
 		<init-param>
 			<description>Vaadin UI to display</description>
-			<param-name>UI</param-name>
-			<param-value>org.myftp.gattserver.grass3.GrassUI</param-value>
+			<param-name>UIProvider</param-name>
+			<param-value>org.myftp.gattserver.grass3.GrassUIProvider</param-value>
 		</init-param>
 		<init-param>
 			<description>Application widgetset</description>

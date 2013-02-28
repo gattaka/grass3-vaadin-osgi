@@ -1,5 +1,7 @@
 package org.myftp.gattserver.grass3.windows;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.facades.ContentTagFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.util.GrassRequest;
@@ -27,8 +29,9 @@ public class TagPage extends BasePage {
 	public TagPage(GrassRequest request) {
 		super(request);
 	}
-
-	private ContentTagFacade contentTagFacade = ContentTagFacade.INSTANCE;
+	
+	@Resource(name = "contentTagFacade")
+	private ContentTagFacade contentTagFacade;
 
 	private final ContentsTable tagContentsTable = new ContentsTable();
 

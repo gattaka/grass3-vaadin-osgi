@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
@@ -28,6 +30,9 @@ import com.vaadin.ui.VerticalLayout;
 public abstract class ContentViewerPage extends TwoColumnPage {
 
 	private static final long serialVersionUID = 5078280973817331002L;
+
+	@Resource(name="nodeFacade")
+	NodeFacade nodeFacade;
 
 	private ContentNodeDTO content;
 	private Label contentNameLabel;
@@ -187,7 +192,6 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		/**
 		 * kategorie
 		 */
-		NodeFacade nodeFacade = NodeFacade.INSTANCE;
 		NodeDTO parent = nodeFacade.getNodeById(content.getParentID());
 		while (true) {
 

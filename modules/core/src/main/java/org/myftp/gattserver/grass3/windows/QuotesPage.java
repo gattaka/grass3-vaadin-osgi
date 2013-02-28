@@ -1,5 +1,7 @@
 package org.myftp.gattserver.grass3.windows;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.facades.QuotesFacade;
 import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.security.CoreACL;
@@ -23,6 +25,9 @@ import com.vaadin.ui.Button.ClickEvent;
 public class QuotesPage extends OneColumnPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
+
+	@Resource(name = "quotesFacade")
+	QuotesFacade quotesFacade;
 
 	public static final PageFactory FACTORY = new PageFactory("quotes") {
 		@Override
@@ -71,7 +76,6 @@ public class QuotesPage extends OneColumnPage {
 
 		table.setContainerDataSource(container);
 
-		QuotesFacade quotesFacade = QuotesFacade.INSTANCE;
 		for (QuoteDTO quote : quotesFacade.getAllQuotes()) {
 			Item item = table.addItem(quote);
 			item.getItemProperty("ID").setValue(quote.getId());
@@ -114,7 +118,6 @@ public class QuotesPage extends OneColumnPage {
 						if (newQuoteText.isValid() == false)
 							return;
 
-						QuotesFacade quotesFacade = QuotesFacade.INSTANCE;
 						if (quotesFacade.createNewQuote((String) newQuoteText
 								.getValue())) {
 							showInfo("Nová hláška byla úspěšně vložena.");

@@ -3,6 +3,8 @@ package org.myftp.gattserver.grass3.windows;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.security.Role;
@@ -44,6 +46,9 @@ import com.vaadin.ui.VerticalLayout;
 public class CategoriesSettingsPage extends SettingsPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
+	
+	@Resource(name = "nodeFacade")
+	private NodeFacade nodeFacade;
 
 	public static final SettingsPageFactory FACTORY = new SettingsPageFactory(
 			"categories") {
@@ -72,8 +77,6 @@ public class CategoriesSettingsPage extends SettingsPage {
 	private static final Action ACTION_RENAME = new Action("Přejmenovat");
 	private static final Action[] ACTIONS = new Action[] { ACTION_DELETE,
 			ACTION_RENAME };
-
-	private NodeFacade nodeFacade = NodeFacade.INSTANCE;
 
 	private final Tree tree = new Tree();
 	private final ReferenceHolder<NodeDTO> selectedNode = new ReferenceHolder<NodeDTO>();

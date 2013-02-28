@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<context:annotation-config />
+	<context:component-scan base-package="org.myftp.gattserver.grass3" />
+
+	<!-- UI -->
+	<bean id="grassUI" class="org.myftp.gattserver.grass3.GrassUI"></bean>
+
+	<!-- Fasády -->
+	<bean id="contentNodeFacade" class="org.myftp.gattserver.grass3.facades.ContentNodeFacade"></bean>
+	<bean id="contentTagFacade" class="org.myftp.gattserver.grass3.facades.ContentTagFacade"></bean>
+	<bean id="nodeFacade" class="org.myftp.gattserver.grass3.facades.NodeFacade"></bean>
+	<bean id="quotesFacade" class="org.myftp.gattserver.grass3.facades.QuotesFacade"></bean>
+	<bean id="securityFacade" class="org.myftp.gattserver.grass3.facades.SecurityFacade"></bean>
+	<bean id="userFacade" class="org.myftp.gattserver.grass3.facades.UserFacade"></bean>
+
+	<!-- Mapper -->
+	<bean id="mapper" class="org.myftp.gattserver.grass3.util.Mapper"></bean>
+
+
+</beans>

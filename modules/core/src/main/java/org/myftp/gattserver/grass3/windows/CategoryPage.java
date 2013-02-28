@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.facades.ContentNodeFacade;
 import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
@@ -29,8 +31,11 @@ public class CategoryPage extends OneColumnPage {
 
 	private static final long serialVersionUID = -499585200973560016L;
 
-	private NodeFacade nodeFacade = NodeFacade.INSTANCE;
-	private ContentNodeFacade contentNodeFacade = ContentNodeFacade.INSTANCE;
+	@Resource(name = "nodeFacade")
+	private NodeFacade nodeFacade;
+	
+	@Resource(name = "contentNodeFacade")
+	private ContentNodeFacade contentNodeFacade;
 
 	public static final PageFactory FACTORY = new PageFactory("category") {
 		@Override

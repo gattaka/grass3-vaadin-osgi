@@ -35,9 +35,7 @@ import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
  * @author gatt
  * 
  */
-public enum Mapper {
-
-	INSTANCE;
+public class Mapper {
 
 	/**
 	 * Převede {@link User} na {@link UserInfoDTO}

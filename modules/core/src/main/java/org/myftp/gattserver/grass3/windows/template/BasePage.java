@@ -2,6 +2,8 @@ package org.myftp.gattserver.grass3.windows.template;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.ServiceHolder;
 import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.facades.QuotesFacade;
@@ -33,6 +35,12 @@ import com.vaadin.ui.themes.BaseTheme;
 public abstract class BasePage extends GrassPage {
 
 	private static final long serialVersionUID = 502625699429764791L;
+
+	@Resource(name="nodeFacade")
+	NodeFacade nodeFacade;
+	
+	@Resource(name="quotesFacade")
+	QuotesFacade quotesFacade;
 
 	private CssLayout sectionsMenuLayout;
 	private CssLayout userMenuLayout;
@@ -80,7 +88,6 @@ public abstract class BasePage extends GrassPage {
 		createHomeLink();
 
 		// sekce článků je rozbalená rovnou jako její kořenové kategorie
-		NodeFacade nodeFacade = NodeFacade.INSTANCE;
 		List<NodeDTO> nodes = nodeFacade.getRootNodes();
 		for (NodeDTO node : nodes) {
 			createCategoryLink(node.getName(),
@@ -201,7 +208,6 @@ public abstract class BasePage extends GrassPage {
 	}
 
 	private String chooseQuote() {
-		QuotesFacade quotesFacade = QuotesFacade.INSTANCE;
 		String quote = quotesFacade.getRandomQuote();
 		if (quote == null) {
 			showError500();

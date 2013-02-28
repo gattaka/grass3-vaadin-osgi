@@ -49,10 +49,10 @@ public abstract class BasePage extends GrassPage {
 		// hlášky
 		Link quotes = new Link();
 		quotes.setResource(getPageResource(QuotesPage.FACTORY));
-		quotes.setStyleName("quotes");
+		quotes.setStyleName("quote");
 		quotes.setCaption(chooseQuote());
 
-		layout.addComponent(quotes, "quotes");
+		layout.addComponent(quotes, "quote");
 	}
 
 	@Override
@@ -94,15 +94,6 @@ public abstract class BasePage extends GrassPage {
 				createSectionLink(section.getSectionCaption(),
 						section.getSectionPageFactory());
 			}
-		}
-
-		String[] strings = { "Domů", "Sekce", "Delší název sekce", "Něco",
-				"Něco dalšího", "Poslední" };
-		for (int i = 0; i < strings.length; i++) {
-			Label item = new Label(strings[i]);
-			item.addStyleName("item");
-			item.setSizeUndefined();
-			sectionsMenuLayout.addComponent(item);
 		}
 	}
 
@@ -206,14 +197,6 @@ public abstract class BasePage extends GrassPage {
 			button.addStyleName("item");
 			userMenuLayout.addComponent(button);
 
-		}
-
-		String[] strings = { "Uživatel", "Nastavení", "Odhlásit" };
-		for (int i = 0; i < strings.length; i++) {
-			Label item = new Label(strings[i]);
-			item.addStyleName("item");
-			item.setSizeUndefined();
-			userMenuLayout.addComponent(item);
 		}
 	}
 

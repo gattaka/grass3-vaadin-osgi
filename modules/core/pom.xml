@@ -139,13 +139,6 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
-		<!-- Grass3 theme -->
-		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
-			<artifactId>theme</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
 	</dependencies>
 
 	<build>

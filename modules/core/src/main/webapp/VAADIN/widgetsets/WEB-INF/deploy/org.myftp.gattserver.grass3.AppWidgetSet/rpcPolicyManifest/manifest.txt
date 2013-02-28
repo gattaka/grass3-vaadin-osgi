@@ -1,2 +1,0 @@
-# Module org.myftp.gattserver.grass3.AppWidgetSet
-# RPC service class, partial path of RPC policy file

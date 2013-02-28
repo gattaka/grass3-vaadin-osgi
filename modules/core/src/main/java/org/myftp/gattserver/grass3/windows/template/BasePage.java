@@ -15,7 +15,6 @@ import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.windows.CategoryPage;
-import org.myftp.gattserver.grass3.windows.HomePage;
 import org.myftp.gattserver.grass3.windows.LoginPage;
 import org.myftp.gattserver.grass3.windows.QuotesPage;
 import org.myftp.gattserver.grass3.windows.RegistrationPage;
@@ -41,6 +40,9 @@ public abstract class BasePage extends GrassPage {
 	
 	@Resource(name="quotesFacade")
 	QuotesFacade quotesFacade;
+	
+	@Resource(name="homePageFactory")
+	PageFactory homePageFactory;
 
 	private CssLayout sectionsMenuLayout;
 	private CssLayout userMenuLayout;
@@ -216,7 +218,7 @@ public abstract class BasePage extends GrassPage {
 	}
 
 	private void createHomeLink() {
-		Link link = new Link("Domů", getPageResource(HomePage.FACTORY));
+		Link link = new Link("Domů", getPageResource(homePageFactory));
 		link.setStyleName("item");
 		sectionsMenuLayout.addComponent(link);
 	}

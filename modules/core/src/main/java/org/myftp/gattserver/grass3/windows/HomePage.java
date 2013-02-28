@@ -17,8 +17,6 @@ import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.windows.template.BasePage;
 import org.myftp.gattserver.grass3.windows.template.ContentsTable;
-import org.myftp.gattserver.grass3.windows.template.GrassPage;
-import org.myftp.gattserver.grass3.windows.template.PageFactory;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.CssLayout;
@@ -29,13 +27,6 @@ import com.vaadin.ui.VerticalLayout;
 public class HomePage extends BasePage {
 
 	private static final long serialVersionUID = 5355366043081283263L;
-
-	public static final PageFactory FACTORY = new PageFactory("home") {
-		@Override
-		public GrassPage createPage(GrassRequest request) {
-			return new HomePage(request);
-		}
-	};
 
 	/**
 	 * Fasády

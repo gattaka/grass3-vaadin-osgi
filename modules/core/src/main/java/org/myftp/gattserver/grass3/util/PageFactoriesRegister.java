@@ -1,0 +1,53 @@
+package org.myftp.gattserver.grass3.util;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.myftp.gattserver.grass3.windows.template.PageFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component(value = "pageFactoriesRegister")
+public class PageFactoriesRegister {
+
+	/**
+	 * Domovská stránka
+	 */
+	@Resource(name = "homePageFactory")
+	private PageFactory homePageFactory;
+
+	/**
+	 * Hlavní mapa stránek
+	 */
+	private Map<String, PageFactory> factories = new HashMap<String, PageFactory>();
+
+	@Autowired
+	public PageFactoriesRegister(List<PageFactory> pageFactories) {
+		for (PageFactory factory : pageFactories)
+			factories.put(factory.getPageName(), factory);
+	}
+
+	public void setHomepageFactory(PageFactory homepageFactory) {
+		this.homePageFactory = homepageFactory;
+	}
+
+	/**
+	 * Dělá prakticky to samé jako původní get, až na to, že pakliže není
+	 * nalezena factory pro daný klíč, je vrácena factory homepage
+	 */
+	public PageFactory get(String key) {
+		PageFactory factory = factories.get(key);
+		return factory == null ? homePageFactory : factory;
+	}
+
+	/**
+	 * Původní put metoda - má prakticky jediné použití a tím je tvorba aliasů
+	 */
+	public PageFactory putAlias(String pageName, PageFactory factory) {
+		return factories.put(pageName, factory);
+	}
+
+}

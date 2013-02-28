@@ -1,7 +1,5 @@
 package org.myftp.gattserver.grass3;
 
-import java.util.Map;
-
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.facades.SecurityFacade;
@@ -9,8 +7,8 @@ import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.Mapper;
+import org.myftp.gattserver.grass3.util.PageFactoriesRegister;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
-import org.myftp.gattserver.grass3.windows.HomePage;
 import org.myftp.gattserver.grass3.windows.template.PageFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,23 +31,22 @@ public class GrassUI extends UI {
 	@Resource(name = "securityFacade")
 	private SecurityFacade securityFacade;
 
+	/**
+	 * Mapper
+	 */
 	@Resource(name = "mapper")
 	private Mapper mapper;
 
 	/**
 	 * Mapa stránek
 	 */
-	private Map<String, PageFactory> factoriesMap = PageFactory
-			.getRegistredFactories();
+	@Resource(name = "pageFactoriesRegister")
+	private PageFactoriesRegister pageFactoriesRegister;
 
 	/**
 	 * Auth
 	 */
 	private UserInfoDTO user = null;
-
-	public GrassUI() {
-		PageFactory.setHomepageFactory(HomePage.FACTORY);
-	}
 
 	/**
 	 * Authentikační metoda pro aplikaci
@@ -94,7 +91,8 @@ public class GrassUI extends UI {
 		GrassRequest grassRequest = new GrassRequest(request);
 		URLPathAnalyzer analyzer = grassRequest.getAnalyzer();
 
-		PageFactory factory = factoriesMap.get(analyzer.getPathToken(0));
+		PageFactory factory = pageFactoriesRegister.get(analyzer
+				.getPathToken(0));
 		setContent(factory.createPage(grassRequest));
 
 	}

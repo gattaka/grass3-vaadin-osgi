@@ -23,7 +23,7 @@ public class GrassUIProvider extends UIProvider {
 
 	@Override
 	public UI createInstance(UICreateEvent event) {
-		logger.info("Creating new instance (by Spring) of GrassUI");
+		logger.info("Creating new instance (by Spring) of '" + beanName + "'");
 		return (UI) SpringApplicationContext.getApplicationContext().getBean(
 				beanName);
 	}
@@ -31,7 +31,7 @@ public class GrassUIProvider extends UIProvider {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Class<? extends UI> getUIClass(UIClassSelectionEvent event) {
-		logger.info("Returning class (by Spring) of GrassUI");
+		logger.info("Returning class (by Spring) of '" + beanName + "'");
 		return (Class<? extends UI>) SpringApplicationContext
 				.getApplicationContext().getType(beanName);
 	}

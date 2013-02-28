@@ -1,20 +1,24 @@
 package org.myftp.gattserver.grass3.windows.template;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.myftp.gattserver.grass3.util.GrassRequest;
-import org.myftp.gattserver.grass3.util.PageFactoriesMap;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-public abstract class PageFactory {
+public abstract class PageFactory implements ApplicationContextAware {
 
 	private String pageName;
 
-	private static PageFactoriesMap factories = new PageFactoriesMap();
+	protected ApplicationContext applicationContext;
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		this.applicationContext = applicationContext;
+	}
 
 	public PageFactory(String pageName) {
 		this.pageName = pageName;
-		factories.put(this);
 	}
 
 	public String getPageName() {
@@ -23,11 +27,4 @@ public abstract class PageFactory {
 
 	public abstract GrassPage createPage(GrassRequest request);
 
-	public static void setHomepageFactory(PageFactory homepageFactory) {
-		factories.setHomepageFactory(homepageFactory);
-	}
-
-	public static Map<String, PageFactory> getRegistredFactories() {
-		return Collections.unmodifiableMap(factories);
-	}
 }

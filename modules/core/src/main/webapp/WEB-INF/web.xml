@@ -22,12 +22,11 @@
 	</context-param>
 
 	<servlet>
-		<servlet-name>Vaadin Application Servlet</servlet-name>
-		<servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
+		<servlet-name>Vaadin Application</servlet-name>
+		<servlet-class>org.myftp.gattserver.grass3.SpringVaadinServlet</servlet-class>
 		<init-param>
-			<description>Vaadin UI to display</description>
-			<param-name>UIProvider</param-name>
-			<param-value>org.myftp.gattserver.grass3.GrassUIProvider</param-value>
+			<param-name>beanName</param-name>
+			<param-value>grassUI</param-value>
 		</init-param>
 		<init-param>
 			<description>Application widgetset</description>
@@ -37,7 +36,7 @@
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>Vaadin Application Servlet</servlet-name>
+		<servlet-name>Vaadin Application</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 

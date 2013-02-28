@@ -1,11 +1,12 @@
 package org.myftp.gattserver.grass3.windows.template;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.GrassUI;
 import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
-import org.myftp.gattserver.grass3.windows.HomePage;
 
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Page;
@@ -19,13 +20,16 @@ public abstract class GrassPage extends CustomLayout {
 
 	private static final long serialVersionUID = 604170960797872356L;
 
+	@Resource(name="homePageFactory")
+	PageFactory homePageFactory;
+	
 	public GrassPage() {
 		super("grass");
 
 		// homelink (přes logo)
 		Link homelink = new Link();
 		homelink.addStyleName("homelink");
-		homelink.setResource(getPageResource(HomePage.FACTORY));
+		homelink.setResource(getPageResource(homePageFactory));
 		homelink.setIcon(new ThemeResource("img/logo.png"));
 		addComponent(homelink, "homelink");
 

@@ -12,31 +12,39 @@ import org.myftp.gattserver.grass3.model.domain.ContentTag;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.util.Mapper;
+import org.springframework.stereotype.Component;
 
+@Component("contentTagFacade")
 public class ContentTagFacade {
-	
+
 	@Resource(name = "mapper")
 	private Mapper mapper;
+
+	@Resource(name = "contentTagDAO")
+	private ContentTagDAO contentTagDAO;
 
 	// neměl by být tečka apod. znak, využívaný v regulárních výrazech
 	public static final String TAGS_DELIMITER = ",";
 
+	private ContentTagFacade() {
+	}
+	
 	public List<ContentTagDTO> getAllContentTags() {
-		ContentTagDAO dao = new ContentTagDAO();
 
-		List<ContentTag> contentTags = dao.findAll();
+		List<ContentTag> contentTags = contentTagDAO.findAll();
 		if (contentTags == null)
 			return null;
 		List<ContentTagDTO> contentTagDTOs = mapper
 				.mapContentTagCollection(contentTags);
 
-		dao.closeSession();
+		contentTagDAO.closeSession();
 		return contentTagDTOs;
 	}
 
 	public String[] parseTags(String tagNames) {
 
-		return tagNames.split("(\\s*" + TAGS_DELIMITER + "\\s*)|(^\\s+)|(\\s+$)");
+		return tagNames.split("(\\s*" + TAGS_DELIMITER
+				+ "\\s*)|(^\\s+)|(\\s+$)");
 	}
 
 	public String serializeTags(Set<String> tags) {
@@ -70,9 +78,6 @@ public class ContentTagFacade {
 
 		// získej čisté tagy (bez oddělovacích znaků a mezer)
 		String[] tagArray = parseTags(tagNames);
-
-		// tag dao
-		ContentTagDAO contentTagDAO = new ContentTagDAO();
 
 		// tagy, které které jsou použity/vytvořeny
 		Set<ContentTag> tags = new HashSet<ContentTag>();
@@ -114,9 +119,9 @@ public class ContentTagFacade {
 	 */
 	public ContentTagDTO getContentTagByName(String tagName) {
 
-		ContentTagDAO dao = new ContentTagDAO();
-		ContentTagDTO tag = mapper.map(dao.findContentTagByName(tagName));
-		dao.closeSession();
+		ContentTagDTO tag = mapper.map(contentTagDAO
+				.findContentTagByName(tagName));
+		contentTagDAO.closeSession();
 
 		return tag;
 	}

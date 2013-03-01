@@ -9,10 +9,12 @@ import org.hibernate.criterion.Restrictions;
 import org.myftp.gattserver.grass3.model.AbstractDAO;
 import org.myftp.gattserver.grass3.model.domain.ContentNode;
 import org.myftp.gattserver.grass3.model.domain.ContentTag;
+import org.springframework.stereotype.Component;
 
+@Component("contentTagDAO")
 public class ContentTagDAO extends AbstractDAO<ContentTag> {
 
-	public ContentTagDAO() {
+	private ContentTagDAO() {
 		super(ContentTag.class);
 	}
 

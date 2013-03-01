@@ -6,10 +6,12 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.myftp.gattserver.grass3.model.AbstractDAO;
 import org.myftp.gattserver.grass3.model.domain.Node;
+import org.springframework.stereotype.Component;
 
+@Component("nodeDAO")
 public class NodeDAO extends AbstractDAO<Node> {
 
-	public NodeDAO() {
+	private NodeDAO() {
 		super(Node.class);
 	}
 

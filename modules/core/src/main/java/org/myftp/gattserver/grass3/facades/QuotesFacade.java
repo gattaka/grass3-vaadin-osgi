@@ -10,12 +10,20 @@ import org.myftp.gattserver.grass3.model.dao.QuoteDAO;
 import org.myftp.gattserver.grass3.model.domain.Quote;
 import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.util.Mapper;
+import org.springframework.stereotype.Component;
 
+@Component("quotesFacade")
 public class QuotesFacade {
 
 	@Resource(name = "mapper")
 	private Mapper mapper;
 
+	@Resource(name = "quoteDAO")
+	private QuoteDAO quoteDAO;
+	
+	private QuotesFacade() {
+	}
+	
 	/**
 	 * Vytvoří a uloží novou hlášku dle textu
 	 * 
@@ -28,7 +36,7 @@ public class QuotesFacade {
 		Quote quote = new Quote();
 		quote.setName(text);
 		// save sám uzavírá session
-		if (new QuoteDAO().save(quote) == null) {
+		if (quoteDAO.save(quote) == null) {
 			return false;
 		} else {
 			return true;
@@ -41,13 +49,12 @@ public class QuotesFacade {
 	 * @return
 	 */
 	public List<QuoteDTO> getAllQuotes() {
-		QuoteDAO dao = new QuoteDAO();
-		List<Quote> quotes = dao.findAll();
+		List<Quote> quotes = quoteDAO.findAll();
 		List<QuoteDTO> quoteDTOs = new ArrayList<QuoteDTO>();
 		for (Quote quote : quotes) {
 			quoteDTOs.add(mapper.map(quote));
 		}
-		dao.closeSession();
+		quoteDAO.closeSession();
 		return quoteDTOs;
 	}
 
@@ -55,8 +62,7 @@ public class QuotesFacade {
 	 * Vybere náhodně hlášku a vrátí její text
 	 */
 	public String getRandomQuote() {
-		QuoteDAO dao = new QuoteDAO();
-		Long count = dao.count();
+		Long count = quoteDAO.count();
 		if (count == null) {
 			return null;
 		}
@@ -64,9 +70,9 @@ public class QuotesFacade {
 		if (count != 0) {
 			Random generator = new Random();
 			Long randomId = Math.abs(generator.nextLong()) % count + 1;
-			quote = dao.findByID(randomId);
+			quote = quoteDAO.findByID(randomId);
 			String quoteText = quote.getName();
-			dao.closeSession();
+			quoteDAO.closeSession();
 			return quoteText;
 		} else {
 			return "~ nebyly nalezeny žádné záznamy ~";

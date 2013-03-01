@@ -8,23 +8,30 @@ import org.myftp.gattserver.grass3.model.dao.NodeDAO;
 import org.myftp.gattserver.grass3.model.domain.Node;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.util.Mapper;
+import org.springframework.stereotype.Component;
 
+@Component("nodeFacade")
 public class NodeFacade {
 
 	@Resource(name = "mapper")
 	private Mapper mapper;
 
+	@Resource(name = "nodeDAO")
+	private NodeDAO nodeDAO;
+
+	private NodeFacade() {
+	}
+	
 	/**
 	 * Získá kategorii dle id
 	 */
 	public NodeDTO getNodeById(Long id) {
-		NodeDAO dao = new NodeDAO();
 
-		Node node = dao.findByID(id);
+		Node node = nodeDAO.findByID(id);
 		if (node == null)
 			return null;
 		NodeDTO nodeDTO = mapper.map(node);
-		dao.closeSession();
+		nodeDAO.closeSession();
 
 		return nodeDTO;
 	}
@@ -33,17 +40,17 @@ public class NodeFacade {
 	 * Získá všechny kořenové kategorie
 	 */
 	public List<NodeDTO> getRootNodes() {
-		NodeDAO dao = new NodeDAO();
-		List<Node> rootNodes = dao.findRoots();
+
+		List<Node> rootNodes = nodeDAO.findRoots();
 
 		if (rootNodes == null) {
-			dao.closeSession();
+			nodeDAO.closeSession();
 			return null;
 		}
 
 		List<NodeDTO> rootNodesDTOs = mapper.mapNodeCollection(rootNodes);
 
-		dao.closeSession();
+		nodeDAO.closeSession();
 		return rootNodesDTOs;
 	}
 
@@ -52,18 +59,17 @@ public class NodeFacade {
 	 */
 	public List<NodeDTO> getNodesByParentNode(NodeDTO parent) {
 
-		NodeDAO dao = new NodeDAO();
-		List<Node> childrenNodes = dao.findNodesByParent(parent.getId());
+		List<Node> childrenNodes = nodeDAO.findNodesByParent(parent.getId());
 
 		if (childrenNodes == null) {
-			dao.closeSession();
+			nodeDAO.closeSession();
 			return null;
 		}
 
 		List<NodeDTO> childrenNodesDTOs = mapper
 				.mapNodeCollection(childrenNodes);
 
-		dao.closeSession();
+		nodeDAO.closeSession();
 		return childrenNodesDTOs;
 
 	}
@@ -82,10 +88,10 @@ public class NodeFacade {
 	 */
 	public boolean createNewNode(NodeDTO parent, String name) {
 
-		NodeDAO dao = new NodeDAO();
 		Node node = new Node();
 		node.setName(name);
-		return dao.createNewNode(node, parent == null ? null : parent.getId());
+		return nodeDAO.createNewNode(node,
+				parent == null ? null : parent.getId());
 
 	}
 
@@ -102,13 +108,11 @@ public class NodeFacade {
 	 */
 	public boolean moveNode(NodeDTO node, NodeDTO newParent) {
 
-		NodeDAO dao = new NodeDAO();
-
 		// zamezí vkládání předků do potomků - projde postupně všechny předky
 		// cílové kategorie a pokud narazí na moje id, pak jsem předkem cílové
 		// kategorie, což je špatně
-		Node parent = newParent == null ? null : dao
-				.findByID(newParent.getId());
+		Node parent = newParent == null ? null : nodeDAO.findByID(newParent
+				.getId());
 		if (parent != null) {
 			// začínám od předka newParent - tohle je schválně, umožní mi to se
 			// pak ptát na id newParent - pokud totiž narazím na newParent id,
@@ -123,8 +127,8 @@ public class NodeFacade {
 			}
 		}
 
-		return dao.moveNode(node.getId(),
-				newParent == null ? null : newParent.getId());
+		return nodeDAO.moveNode(node.getId(), newParent == null ? null
+				: newParent.getId());
 
 	}
 
@@ -137,8 +141,7 @@ public class NodeFacade {
 	 *         <code>false</code>
 	 */
 	public boolean deleteNode(NodeDTO node) {
-		NodeDAO dao = new NodeDAO();
-		return dao.delete(node.getId());
+		return nodeDAO.delete(node.getId());
 	}
 
 	/**
@@ -153,15 +156,14 @@ public class NodeFacade {
 	 */
 	public boolean rename(NodeDTO node, String newName) {
 
-		NodeDAO dao = new NodeDAO();
-		Node entity = dao.findByID(node.getId());
-		dao.closeSession();
+		Node entity = nodeDAO.findByID(node.getId());
+		nodeDAO.closeSession();
 
 		if (entity == null)
 			return false;
 
 		entity.setName(newName);
 
-		return dao.merge(entity);
+		return nodeDAO.merge(entity);
 	}
 }

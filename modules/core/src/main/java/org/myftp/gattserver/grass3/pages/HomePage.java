@@ -16,7 +16,8 @@ import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
 import org.myftp.gattserver.grass3.pages.template.BasePage;
-import org.myftp.gattserver.grass3.pages.template.ContentsTable;
+import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory;
+import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory.ContentsTable;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -44,6 +45,9 @@ public class HomePage extends BasePage {
 
 	@Resource(name = "tagPageFactory")
 	private PageFactory tagPageFactory;
+
+	@Resource(name = "contentsTableFactory")
+	private ContentsTableFactory contentsTableFactory;
 
 	/**
 	 * Kolik položek mají menu "nedávno" maximálně zobrazit ?
@@ -81,7 +85,8 @@ public class HomePage extends BasePage {
 			VerticalLayout favouritesLayout = new VerticalLayout();
 			favouritesLayout.addComponent(new Label("<h2>Oblíbené obsahy</h2>",
 					ContentMode.HTML));
-			ContentsTable favouritesContentsTable = new ContentsTable();
+			ContentsTable favouritesContentsTable = contentsTableFactory
+					.createContentsTable();
 			favouritesLayout.addComponent(favouritesContentsTable);
 			favouritesContentsTable.setWidth("100%");
 			pagelayout.addComponent(favouritesLayout);
@@ -211,8 +216,10 @@ public class HomePage extends BasePage {
 
 	private void createRecentMenus(VerticalLayout pagelayout) {
 
-		ContentsTable recentAddedContentsTable = new ContentsTable();
-		ContentsTable recentModifiedContentsTable = new ContentsTable();
+		ContentsTable recentAddedContentsTable = contentsTableFactory
+				.createContentsTable();
+		ContentsTable recentModifiedContentsTable = contentsTableFactory
+				.createContentsTable();
 
 		Set<ContentNodeDTO> recentAdded = contentNodeFacade
 				.getRecentAdded(RECENT_ITEMS_COUNT);

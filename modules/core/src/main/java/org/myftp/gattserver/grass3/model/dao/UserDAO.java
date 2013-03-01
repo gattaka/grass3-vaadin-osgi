@@ -9,10 +9,12 @@ import org.hibernate.criterion.SimpleExpression;
 import org.myftp.gattserver.grass3.model.AbstractDAO;
 import org.myftp.gattserver.grass3.model.domain.ContentNode;
 import org.myftp.gattserver.grass3.model.domain.User;
+import org.springframework.stereotype.Component;
 
+@Component("userDAO")
 public class UserDAO extends AbstractDAO<User> {
 
-	public UserDAO() {
+	private UserDAO() {
 		super(User.class);
 	}
 

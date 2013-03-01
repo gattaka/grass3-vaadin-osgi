@@ -4,10 +4,12 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.myftp.gattserver.grass3.model.AbstractDAO;
 import org.myftp.gattserver.grass3.model.domain.Quote;
+import org.springframework.stereotype.Component;
 
+@Component("quoteDAO")
 public class QuoteDAO extends AbstractDAO<Quote> {
 
-	public QuoteDAO() {
+	private QuoteDAO() {
 		super(Quote.class);
 	}
 

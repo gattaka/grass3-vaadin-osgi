@@ -9,16 +9,4 @@
 	<context:annotation-config />
 	<context:component-scan base-package="org.myftp.gattserver.grass3" />
 
-	<!-- Fasády -->
-	<bean id="contentNodeFacade" class="org.myftp.gattserver.grass3.facades.ContentNodeFacade"></bean>
-	<bean id="contentTagFacade" class="org.myftp.gattserver.grass3.facades.ContentTagFacade"></bean>
-	<bean id="nodeFacade" class="org.myftp.gattserver.grass3.facades.NodeFacade"></bean>
-	<bean id="quotesFacade" class="org.myftp.gattserver.grass3.facades.QuotesFacade"></bean>
-	<bean id="securityFacade" class="org.myftp.gattserver.grass3.facades.SecurityFacade"></bean>
-	<bean id="userFacade" class="org.myftp.gattserver.grass3.facades.UserFacade"></bean>
-
-	<!-- Mapper -->
-	<bean id="mapper" class="org.myftp.gattserver.grass3.util.Mapper"></bean>
-
-
 </beans>

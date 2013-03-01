@@ -16,7 +16,9 @@ import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.util.Mapper;
+import org.springframework.stereotype.Component;
 
+@Component("contentNodeFacade")
 public class ContentNodeFacade {
 
 	@Resource(name = "mapper")
@@ -25,12 +27,23 @@ public class ContentNodeFacade {
 	@Resource(name = "contentTagFacade")
 	private ContentTagFacade contentTagFacade;
 
+	@Resource(name = "userDAO")
+	private UserDAO userDAO;
+
+	@Resource(name = "contentNodeDAO")
+	private ContentNodeDAO contentNodeDAO;
+
+	@Resource(name = "nodeDAO")
+	private NodeDAO nodeDAO;
+
+	private ContentNodeFacade() {
+	}
+
 	/**
 	 * Získá set oblíbených obsahů daného uživatele
 	 */
 	public Set<ContentNodeDTO> getUserFavouriteContents(UserInfoDTO userInfo) {
-		UserDAO dao = new UserDAO();
-		User user = dao.findByID(userInfo.getId());
+		User user = userDAO.findByID(userInfo.getId());
 		Set<ContentNode> contentNodes = user.getFavourites();
 
 		if (contentNodes == null)
@@ -39,7 +52,7 @@ public class ContentNodeFacade {
 		Set<ContentNodeDTO> contentNodeDTOs = mapper
 				.mapContentNodeCollection(contentNodes);
 
-		dao.closeSession();
+		userDAO.closeSession();
 		return contentNodeDTOs;
 	}
 
@@ -50,12 +63,12 @@ public class ContentNodeFacade {
 	 * @return
 	 */
 	public Set<ContentNodeDTO> getRecentAdded(int maxResults) {
-		ContentNodeDAO dao = new ContentNodeDAO();
-		List<ContentNode> contentNodes = dao.findRecentAdded(maxResults);
+		List<ContentNode> contentNodes = contentNodeDAO
+				.findRecentAdded(maxResults);
 		Set<ContentNodeDTO> contentNodeDTOs = mapper
 				.mapContentNodeCollection(contentNodes);
 
-		dao.closeSession();
+		contentNodeDAO.closeSession();
 		return contentNodeDTOs;
 	}
 
@@ -66,12 +79,12 @@ public class ContentNodeFacade {
 	 * @return
 	 */
 	public Set<ContentNodeDTO> getRecentModified(int maxResults) {
-		ContentNodeDAO dao = new ContentNodeDAO();
-		List<ContentNode> contentNodes = dao.findRecentEdited(maxResults);
+		List<ContentNode> contentNodes = contentNodeDAO
+				.findRecentEdited(maxResults);
 		Set<ContentNodeDTO> contentNodeDTOs = mapper
 				.mapContentNodeCollection(contentNodes);
 
-		dao.closeSession();
+		contentNodeDAO.closeSession();
 		return contentNodeDTOs;
 	}
 
@@ -80,17 +93,15 @@ public class ContentNodeFacade {
 	 */
 	public Set<ContentNodeDTO> getContentNodesByNode(NodeDTO nodeDTO) {
 
-		NodeDAO dao = new NodeDAO();
-
-		Node node = dao.findByID(nodeDTO.getId());
+		Node node = nodeDAO.findByID(nodeDTO.getId());
 		if (node == null) {
-			dao.closeSession();
+			nodeDAO.closeSession();
 			return null;
 		}
 
 		Set<ContentNodeDTO> contentNodeDTOs = mapper
 				.mapContentNodeCollection(node.getContentNodes());
-		dao.closeSession();
+		nodeDAO.closeSession();
 
 		return contentNodeDTOs;
 	}
@@ -154,7 +165,7 @@ public class ContentNodeFacade {
 			contentNode.setPublicated(publicated);
 
 			// Ulož contentNode
-			if (new ContentNodeDAO().save(contentNode, category.getId(),
+			if (contentNodeDAO.save(contentNode, category.getId(),
 					author.getId()) == false)
 				return null;
 
@@ -185,11 +196,10 @@ public class ContentNodeFacade {
 	 */
 	public ContentNodeDTO getByID(Long id) {
 
-		ContentNodeDAO dao = new ContentNodeDAO();
-		ContentNode contentNode = dao.findByID(id);
+		ContentNode contentNode = contentNodeDAO.findByID(id);
 
 		ContentNodeDTO contentNodeDTO = mapper.map(contentNode);
-		dao.closeSession();
+		contentNodeDAO.closeSession();
 
 		return contentNodeDTO;
 
@@ -221,7 +231,6 @@ public class ContentNodeFacade {
 	public boolean modify(ContentNodeDTO contentNodeDTO, String name,
 			String tags, boolean publicated) {
 
-		ContentNodeDAO contentNodeDAO = new ContentNodeDAO();
 		ContentNode contentNode = contentNodeDAO.findByID(contentNodeDTO
 				.getId());
 		contentNodeDAO.closeSession();
@@ -231,7 +240,7 @@ public class ContentNodeFacade {
 		contentNode.setPublicated(publicated);
 
 		// Ulož změny v contentNode
-		if (new ContentNodeDAO().merge(contentNode) == false)
+		if (contentNodeDAO.merge(contentNode) == false)
 			return false;
 
 		/**
@@ -259,7 +268,6 @@ public class ContentNodeFacade {
 			return false;
 
 		// vymaž content node
-		ContentNodeDAO contentNodeDAO = new ContentNodeDAO();
 		return contentNodeDAO.delete(contentNodeDTO.getId());
 
 	}

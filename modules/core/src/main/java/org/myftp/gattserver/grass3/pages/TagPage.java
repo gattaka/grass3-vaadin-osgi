@@ -5,7 +5,8 @@ import javax.annotation.Resource;
 import org.myftp.gattserver.grass3.facades.ContentTagFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.pages.template.BasePage;
-import org.myftp.gattserver.grass3.pages.template.ContentsTable;
+import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory;
+import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory.ContentsTable;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -21,19 +22,23 @@ public class TagPage extends BasePage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
-	public TagPage(GrassRequest request) {
-		super(request);
-	}
-
 	@Resource(name = "contentTagFacade")
 	private ContentTagFacade contentTagFacade;
 
-	private final ContentsTable tagContentsTable = new ContentsTable();
+	@Resource(name = "contentsTableFactory")
+	private ContentsTableFactory contentsTableFactory;
+
+	private final ContentsTable tagContentsTable = contentsTableFactory
+			.createContentsTable();
 
 	private ContentTagDTO tag;
 	private Label tagLabel;
 	private String tagLabelPrefix = "<h2>Obsahy označené tagem: ";
 	private String tagLabelSuffix = "</h2>";
+
+	public TagPage(GrassRequest request) {
+		super(request);
+	}
 
 	@Override
 	protected void createContent(CustomLayout layout) {

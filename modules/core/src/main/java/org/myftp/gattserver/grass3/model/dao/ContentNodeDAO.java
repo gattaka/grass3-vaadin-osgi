@@ -10,10 +10,12 @@ import org.myftp.gattserver.grass3.model.AbstractDAO;
 import org.myftp.gattserver.grass3.model.domain.ContentNode;
 import org.myftp.gattserver.grass3.model.domain.Node;
 import org.myftp.gattserver.grass3.model.domain.User;
+import org.springframework.stereotype.Component;
 
+@Component("contentNodeDAO")
 public class ContentNodeDAO extends AbstractDAO<ContentNode> {
 
-	public ContentNodeDAO() {
+	private ContentNodeDAO() {
 		super(ContentNode.class);
 	}
 

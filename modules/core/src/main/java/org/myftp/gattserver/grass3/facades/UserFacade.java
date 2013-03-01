@@ -12,6 +12,7 @@ import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.util.Mapper;
+import org.springframework.stereotype.Component;
 
 /**
  * 
@@ -37,6 +38,7 @@ import org.myftp.gattserver.grass3.util.Mapper;
  * @author gatt
  * 
  */
+@Component("userFacade")
 public class UserFacade {
 
 	@Resource(name = "mapper")
@@ -45,6 +47,12 @@ public class UserFacade {
 	@Resource(name = "securityFacade")
 	private SecurityFacade securityFacade;
 
+	@Resource(name = "userDAO")
+	private UserDAO userDAO;
+	
+	private UserFacade() {
+	}
+	
 	/**
 	 * Zaregistruje nového uživatele
 	 * 
@@ -56,7 +64,6 @@ public class UserFacade {
 	 */
 	public boolean registrateNewUser(String email, String username,
 			String password) {
-		UserDAO userDAO = new UserDAO();
 
 		User user = new User();
 		user.setConfirmed(false);
@@ -84,11 +91,10 @@ public class UserFacade {
 	 *         <code>false</code>
 	 */
 	public boolean activateUser(UserInfoDTO userDTO) {
-		UserDAO dao = new UserDAO();
-		User user = dao.findByID(userDTO.getId());
+		User user = userDAO.findByID(userDTO.getId());
 		user.setConfirmed(true);
 		// session uzavře merge
-		return dao.merge(user);
+		return userDAO.merge(user);
 	}
 
 	/**
@@ -99,11 +105,10 @@ public class UserFacade {
 	 *         <code>false</code>
 	 */
 	public boolean banUser(UserInfoDTO userDTO) {
-		UserDAO dao = new UserDAO();
-		User user = dao.findByID(userDTO.getId());
+		User user = userDAO.findByID(userDTO.getId());
 		user.setConfirmed(false);
 		// session uzavře merge
-		return dao.merge(user);
+		return userDAO.merge(user);
 	}
 
 	/**
@@ -114,11 +119,10 @@ public class UserFacade {
 	 *         <code>false</code>
 	 */
 	public boolean changeUserRoles(UserInfoDTO userDTO) {
-		UserDAO dao = new UserDAO();
-		User user = dao.findByID(userDTO.getId());
+		User user = userDAO.findByID(userDTO.getId());
 		user.setRoles(userDTO.getRoles());
 		// session uzavře merge
-		return dao.merge(user);
+		return userDAO.merge(user);
 	}
 
 	/**
@@ -127,14 +131,13 @@ public class UserFacade {
 	 * @return list uživatelů
 	 */
 	public List<UserInfoDTO> getUserInfoFromAllUsers() {
-		UserDAO dao = new UserDAO();
-		List<User> users = dao.findAll();
+		List<User> users = userDAO.findAll();
 		List<UserInfoDTO> infoDTOs = new ArrayList<UserInfoDTO>();
 		for (User user : users) {
 			infoDTOs.add(mapper.map(user));
 		}
 		
-		dao.closeSession();
+		userDAO.closeSession();
 		return infoDTOs;
 	}
 

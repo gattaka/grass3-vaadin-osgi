@@ -16,6 +16,7 @@ import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
+import org.springframework.stereotype.Component;
 
 /**
  * <b>Mapper pro různé typy.</b>
@@ -35,6 +36,7 @@ import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
  * @author gatt
  * 
  */
+@Component("mapper")
 public class Mapper {
 
 	/**

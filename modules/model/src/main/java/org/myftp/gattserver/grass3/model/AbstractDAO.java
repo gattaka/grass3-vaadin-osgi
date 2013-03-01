@@ -4,26 +4,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
+import javax.annotation.Resource;
 
-import org.h2.Driver;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.SimpleExpression;
-import org.hibernate.dialect.H2Dialect;
-import org.hibernate.service.ServiceRegistry;
-import org.hibernate.service.ServiceRegistryBuilder;
-import org.myftp.gattserver.grass3.config.ConfigurationUtils;
-import org.myftp.gattserver.grass3.model.config.ModelConfiguration;
-import org.myftp.gattserver.grass3.model.service.IEntityService;
-import org.myftp.gattserver.grass3.model.service.impl.BasicEntityServiceListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Abstraktní třída DAO tříd na získávání Entit z databáze nebo přes existující
@@ -37,19 +28,10 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractDAO<E> {
 
 	/**
-	 * Hibernate {@link Configuration}
+	 * SessionFactoryBuilder
 	 */
-	private static Configuration configuration;
-
-	/**
-	 * Hibernate {@link SessionFactory}
-	 */
-	private static SessionFactory sessionFactory;
-
-	/**
-	 * Aktuálně používaná {@link Session}
-	 */
-	protected Session session;
+	@Resource(name = "entityServicesAggregator")
+	private EntityServicesAggregator entityServicesAggregator;
 
 	/**
 	 * Třída entity - tedy doménového objektu
@@ -59,114 +41,24 @@ public abstract class AbstractDAO<E> {
 	/**
 	 * Logger
 	 */
-	private static final Logger logger = LoggerFactory
-			.getLogger(AbstractDAO.class);
+	private Logger logger;
 
 	/**
-	 * Získá aktuální konfiguraci ze souboru konfigurace
-	 * 
-	 * @return soubor konfigurace FM
-	 * @throws JAXBException
+	 * Aktuálně používaná {@link Session}
 	 */
-	private ModelConfiguration loadConfiguration() throws JAXBException {
-		return new ConfigurationUtils<ModelConfiguration>(
-				new ModelConfiguration(), ModelConfiguration.CONFIG_PATH)
-				.loadExistingOrCreateNewConfiguration();
-	}
+	protected Session session;
 
 	protected void log(String msg) {
 		logger.info(msg);
 	}
 
-	/**
-	 * Tato metoda by měla být volána při každém vytváření jakéhokoliv DAO -
-	 * získá pro něj informace od Hibernatu pro připojení a práci se session a
-	 * zařídí zavedení mappingu do Dozer
-	 * 
-	 * Je jasné, že když začnu pracovat s DB, tak potřebuji, abych měl aktuální
-	 * nastavení ... to sice nemusím ověřovat při každém vytvoření DAO, ale
-	 * určitě to musím udělat při každém zaregistrování nové třídy
-	 */
-	private void createConnection() {
-
-		/**
-		 * Získej konfigurace
-		 */
-		ModelConfiguration modelConfiguration = null;
-		try {
-			modelConfiguration = loadConfiguration();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
-
-		/**
-		 * Budeš updatovat hodnoty, pokud už jsou nějaké staré hodonoty, tak je
-		 * nejdříve uzavři - například sessionFactory se musí zavolat close()
-		 */
-		if (sessionFactory != null && sessionFactory.isClosed() == false)
-			sessionFactory.close();
-
-		configuration = new Configuration();
-
-		configuration.setProperty("hibernate.connection.driver_class",
-				Driver.class.getName());
-		configuration.setProperty("hibernate.connection.url",
-				modelConfiguration.getURL());
-		configuration.setProperty("hibernate.connection.username",
-				modelConfiguration.getUsername());
-		configuration.setProperty("hibernate.connection.password",
-				modelConfiguration.getPassword());
-		configuration.setProperty("hibernate.connection.pool_size", "1");
-		configuration.setProperty("hibernate.dialect",
-				H2Dialect.class.getName());
-		configuration.setProperty("hibernate.current_session_context_class",
-				"thread");
-		// configuration.setProperty("cache.provider_class",
-		// org.hibernate.cache.internaNl.NoCacheProvider.);
-		configuration.setProperty("hibernate.show_sql", "true");
-		configuration.setProperty("hibernate.hbm2ddl.auto", "update");
-
-		// snad tohle pomůže
-		// UPDATE: v čem ?
-		// configuration.setProperty("hibernate.generate_statistics", "false");
-
-		/**
-		 * Zde se přidávají třídy, které budou persistovány
-		 */
-		List<IEntityService> services = BasicEntityServiceListener
-				.getServices();
-		synchronized (services) {
-			for (IEntityService service : services) {
-				for (Class<?> entityClass : service.getDomainClasses()) {
-					configuration.addAnnotatedClass(entityClass);
-					// log("addAnnotatedClass " + entityClass.getName()
-					// + " from classloader "
-					// + entityClass.getClassLoader() + " registred");
-				}
-			}
-		}
-
-		ServiceRegistryBuilder serviceRegistryBuilder = new ServiceRegistryBuilder();
-		serviceRegistryBuilder.applySettings(configuration.getProperties());
-		ServiceRegistry serviceRegistry = serviceRegistryBuilder
-				.buildServiceRegistry();
-		sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-
-	}
-
 	public AbstractDAO(Class<?> entityClass) {
 		this.entityClass = entityClass;
-
-		/**
-		 * při každém vytvoření se musí tohle provést aby se zaktualizovali
-		 * údaje
-		 */
-		createConnection();
+		logger = LoggerFactory.getLogger(entityClass);
 	}
 
 	protected void openSession() {
-		session = sessionFactory.openSession();
+		session = entityServicesAggregator.getSessionFactory().openSession();
 	}
 
 	/**
@@ -175,7 +67,7 @@ public abstract class AbstractDAO<E> {
 	 * <p>
 	 * Tuto metodu je nutné za sebou na konci všech proxy volání zavolat aby se
 	 * uzavřela - volá se sama pokud dojde k pádu, ale pokud se dotaz na DB
-	 * zdařil, tak s nezavolá, protože se počítá s tím, že budou volány proxy
+	 * zdařil, tak se nezavolá, protože se počítá s tím, že budou volány proxy
 	 * objekty, které potřebují aby session jejich původce zůstala otevřená
 	 * </p>
 	 * 

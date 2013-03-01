@@ -16,7 +16,7 @@ public class Constructed {
 	@Resource(name = "itemA")
 	private ItemA item;
 
-	public Constructed(Integer i) {
+	private Constructed(Integer i) {
 		this.integer = i;
 		// chyba - objekt ještě nebyl vytvořen
 		// System.out.println(item.getName());

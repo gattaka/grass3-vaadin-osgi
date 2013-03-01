@@ -11,7 +11,8 @@ import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
-import org.myftp.gattserver.grass3.pages.template.ContentsTable;
+import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory;
+import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory.ContentsTable;
 import org.myftp.gattserver.grass3.pages.template.NewContentsTable;
 import org.myftp.gattserver.grass3.pages.template.NodesTable;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
@@ -42,6 +43,9 @@ public class CategoryPage extends OneColumnPage {
 	@Resource(name = "categoryPageFactory")
 	private PageFactory categoryPageFactory;
 
+	@Resource(name = "contentsTableFactory")
+	private ContentsTableFactory contentsTableFactory;
+	
 	public CategoryPage(GrassRequest request) {
 		super(request);
 	}
@@ -135,7 +139,7 @@ public class CategoryPage extends OneColumnPage {
 	private void createContent(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout contentsLayout = new VerticalLayout();
-		ContentsTable contentsTable = new ContentsTable();
+		ContentsTable contentsTable = contentsTableFactory.createContentsTable();
 
 		Set<ContentNodeDTO> contentNodes = contentNodeFacade
 				.getContentNodesByNode(node);

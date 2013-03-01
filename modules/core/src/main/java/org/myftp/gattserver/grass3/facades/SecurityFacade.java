@@ -4,16 +4,26 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.model.dao.UserDAO;
 import org.myftp.gattserver.grass3.model.domain.User;
+import org.springframework.stereotype.Component;
 
+@Component("securityFacade")
 public class SecurityFacade {
 
+	@Resource(name = "userDAO")
+	private UserDAO userDAO;
+	
 	/**
 	 * Digest
 	 */
 	private static MessageDigest md;
 
+	private SecurityFacade() {
+	}
+	
 	private String bytesToHex(byte[] b) {
 		char hexDigit[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 				'a', 'b', 'c', 'd', 'e', 'f' };
@@ -51,7 +61,7 @@ public class SecurityFacade {
 	 * @return objekt s přihlášeným uživatelem, jinak null
 	 */
 	public User authenticate(String username, String password) {
-		List<User> loggedUser = new UserDAO().findByName(username);
+		List<User> loggedUser = userDAO.findByName(username);
 		if (loggedUser != null
 				&& loggedUser.size() == 1
 				&& loggedUser.get(0).getPassword()

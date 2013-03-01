@@ -9,9 +9,6 @@
 	<context:annotation-config />
 	<context:component-scan base-package="org.myftp.gattserver.grass3" />
 
-	<!-- UI -->
-	<bean id="grassUI" class="org.myftp.gattserver.grass3.GrassUI"></bean>
-
 	<!-- Fasády -->
 	<bean id="contentNodeFacade" class="org.myftp.gattserver.grass3.facades.ContentNodeFacade"></bean>
 	<bean id="contentTagFacade" class="org.myftp.gattserver.grass3.facades.ContentTagFacade"></bean>

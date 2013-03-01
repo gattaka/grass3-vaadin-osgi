@@ -6,7 +6,7 @@ import org.myftp.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
 import org.myftp.gattserver.grass3.config.ConfigurationFileError;
 import org.myftp.gattserver.grass3.config.ConfigurationManager;
 import org.myftp.gattserver.grass3.config.ConfigurationUtils;
-import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
+import org.myftp.gattserver.grass3.pages.template.SettingsWindow;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;

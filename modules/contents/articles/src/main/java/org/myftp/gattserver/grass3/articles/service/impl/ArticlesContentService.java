@@ -2,8 +2,8 @@ package org.myftp.gattserver.grass3.articles.service.impl;
 
 import org.myftp.gattserver.grass3.articles.windows.ArticlesEditorWindow;
 import org.myftp.gattserver.grass3.articles.windows.ArticlesViewerWindow;
+import org.myftp.gattserver.grass3.pages.template.BaseWindow;
 import org.myftp.gattserver.grass3.service.IContentService;
-import org.myftp.gattserver.grass3.windows.template.BaseWindow;
 
 import com.vaadin.terminal.Resource;
 import com.vaadin.terminal.ThemeResource;

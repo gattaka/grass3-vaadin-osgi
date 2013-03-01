@@ -31,11 +31,11 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
+import org.myftp.gattserver.grass3.pages.template.GrassWindow;
 import org.myftp.gattserver.grass3.search.service.ISearchConnector;
 import org.myftp.gattserver.grass3.search.service.ISearchField;
 import org.myftp.gattserver.grass3.search.service.SearchEntity;
 import org.myftp.gattserver.grass3.search.service.SearchHit;
-import org.myftp.gattserver.grass3.windows.template.GrassWindow;
 
 import com.vaadin.terminal.ExternalResource;
 

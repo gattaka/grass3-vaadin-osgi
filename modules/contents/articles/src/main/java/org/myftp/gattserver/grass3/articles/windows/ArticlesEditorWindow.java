@@ -15,14 +15,14 @@ import org.myftp.gattserver.grass3.facades.ContentTagFacade;
 import org.myftp.gattserver.grass3.facades.NodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
+import org.myftp.gattserver.grass3.pages.CategoryWindow;
+import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
-import org.myftp.gattserver.grass3.windows.CategoryWindow;
-import org.myftp.gattserver.grass3.windows.template.TwoColumnPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

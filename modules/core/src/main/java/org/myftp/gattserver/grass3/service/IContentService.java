@@ -1,6 +1,6 @@
 package org.myftp.gattserver.grass3.service;
 
-import org.myftp.gattserver.grass3.windows.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
 
 import com.vaadin.server.Resource;
 

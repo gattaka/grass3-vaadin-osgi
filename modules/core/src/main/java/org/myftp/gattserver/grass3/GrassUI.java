@@ -5,13 +5,15 @@ import javax.annotation.Resource;
 import org.myftp.gattserver.grass3.facades.SecurityFacade;
 import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
+import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.Mapper;
 import org.myftp.gattserver.grass3.util.PageFactoriesRegister;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
-import org.myftp.gattserver.grass3.windows.template.PageFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
@@ -20,6 +22,8 @@ import com.vaadin.ui.UI;
 
 @Title("Gattserver")
 @Theme("grass")
+@Scope("prototype")
+@Component("grassUI")
 public class GrassUI extends UI {
 
 	private static final long serialVersionUID = -785347532002801786L;

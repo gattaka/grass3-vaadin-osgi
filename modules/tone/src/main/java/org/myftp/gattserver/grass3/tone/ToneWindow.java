@@ -1,6 +1,6 @@
 package org.myftp.gattserver.grass3.tone;
 
-import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
+import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.AbstractSelect.Filtering;

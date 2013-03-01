@@ -2,9 +2,9 @@ package org.myftp.gattserver.grass3.tone;
 
 import java.util.Set;
 
+import org.myftp.gattserver.grass3.pages.template.GrassWindow;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.service.ISectionService;
-import org.myftp.gattserver.grass3.windows.template.GrassWindow;
 
 public class ToneSection implements ISectionService {
 

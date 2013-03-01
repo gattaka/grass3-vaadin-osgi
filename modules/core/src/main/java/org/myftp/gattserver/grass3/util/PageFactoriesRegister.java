@@ -6,7 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.windows.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

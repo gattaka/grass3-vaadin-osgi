@@ -9,11 +9,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.myftp.gattserver.grass3.pages.HomeWindow;
+import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
-import org.myftp.gattserver.grass3.windows.HomeWindow;
-import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
 import org.vaadin.easyuploads.MultiFileUpload;
 
 import com.vaadin.data.Item;

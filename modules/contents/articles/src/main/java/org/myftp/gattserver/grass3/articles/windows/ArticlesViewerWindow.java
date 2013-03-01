@@ -7,14 +7,14 @@ import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.articles.facade.ArticleFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
+import org.myftp.gattserver.grass3.pages.CategoryWindow;
+import org.myftp.gattserver.grass3.pages.template.ContentViewerWindow;
 import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
-import org.myftp.gattserver.grass3.windows.CategoryWindow;
-import org.myftp.gattserver.grass3.windows.template.ContentViewerWindow;
 
 import com.vaadin.terminal.DownloadStream;
 import com.vaadin.terminal.ExternalResource;

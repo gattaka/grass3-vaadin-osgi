@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.myftp.gattserver.grass3.windows.template.GrassWindow;
+import org.myftp.gattserver.grass3.pages.template.GrassWindow;
 
 public class SearchEntity {
 

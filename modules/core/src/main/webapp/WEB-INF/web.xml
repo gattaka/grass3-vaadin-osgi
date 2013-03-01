@@ -23,7 +23,7 @@
 
 	<servlet>
 		<servlet-name>Vaadin Application</servlet-name>
-		<servlet-class>org.myftp.gattserver.grass3.SpringVaadinServlet</servlet-class>
+		<servlet-class>ru.xpoft.vaadin.SpringVaadinServlet</servlet-class>
 		<init-param>
 			<param-name>beanName</param-name>
 			<param-value>grassUI</param-value>

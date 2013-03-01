@@ -11,8 +11,8 @@ import org.myftp.gattserver.grass3.config.ConfigurationFileError;
 import org.myftp.gattserver.grass3.config.ConfigurationManager;
 import org.myftp.gattserver.grass3.config.ConfigurationUtils;
 import org.myftp.gattserver.grass3.facades.ContentTagFacade;
+import org.myftp.gattserver.grass3.pages.template.SettingsWindow;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
-import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
 
 import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.ui.Alignment;

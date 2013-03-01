@@ -6,8 +6,8 @@ import java.util.Set;
 
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
+import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 import org.myftp.gattserver.grass3.search.service.SearchHit;
-import org.myftp.gattserver.grass3.windows.template.OneColumnPage;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;

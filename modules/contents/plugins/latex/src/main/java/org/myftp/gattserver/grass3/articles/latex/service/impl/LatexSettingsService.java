@@ -3,9 +3,9 @@ package org.myftp.gattserver.grass3.articles.latex.service.impl;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.articles.latex.web.LatexSettingsWindow;
+import org.myftp.gattserver.grass3.pages.template.SettingsWindow;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.service.ISettingsService;
-import org.myftp.gattserver.grass3.windows.template.SettingsWindow;
 
 public class LatexSettingsService implements ISettingsService {
 

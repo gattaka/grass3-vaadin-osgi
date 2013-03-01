@@ -17,6 +17,8 @@ import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.windows.template.BasePage;
 import org.myftp.gattserver.grass3.windows.template.ContentsTable;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.CssLayout;
@@ -24,6 +26,8 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
+@Component("homepage")
+@Scope("prototype")
 public class HomePage extends BasePage {
 
 	private static final long serialVersionUID = 5355366043081283263L;

@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.windows.template;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.GrassUI;
@@ -25,7 +26,11 @@ public abstract class GrassPage extends CustomLayout {
 	
 	public GrassPage() {
 		super("grass");
-
+	}
+	
+	@SuppressWarnings("unused")
+	@PostConstruct
+	private void init() {
 		// homelink (přes logo)
 		Link homelink = new Link();
 		homelink.addStyleName("homelink");

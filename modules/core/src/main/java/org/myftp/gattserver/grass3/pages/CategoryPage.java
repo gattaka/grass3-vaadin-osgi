@@ -14,7 +14,8 @@ import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory.ContentsTable;
 import org.myftp.gattserver.grass3.pages.template.NewContentsTable;
-import org.myftp.gattserver.grass3.pages.template.NodesTable;
+import org.myftp.gattserver.grass3.pages.template.NodesTableFactory;
+import org.myftp.gattserver.grass3.pages.template.NodesTableFactory.NodesTable;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.template.Breadcrumb;
@@ -45,7 +46,10 @@ public class CategoryPage extends OneColumnPage {
 
 	@Resource(name = "contentsTableFactory")
 	private ContentsTableFactory contentsTableFactory;
-	
+
+	@Resource(name = "nodesTableFactory")
+	private NodesTableFactory nodesTableFactory;
+
 	public CategoryPage(GrassRequest request) {
 		super(request);
 	}
@@ -121,7 +125,7 @@ public class CategoryPage extends OneColumnPage {
 	private void createSubnodesTable(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout subNodesLayout = new VerticalLayout();
-		NodesTable subNodesTable = new NodesTable();
+		NodesTable subNodesTable = nodesTableFactory.createNodesTable();
 
 		subNodesLayout.addComponent(new Label("<h2>Podkategorie</h2>",
 				ContentMode.HTML));
@@ -139,7 +143,8 @@ public class CategoryPage extends OneColumnPage {
 	private void createContent(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout contentsLayout = new VerticalLayout();
-		ContentsTable contentsTable = contentsTableFactory.createContentsTable();
+		ContentsTable contentsTable = contentsTableFactory
+				.createContentsTable();
 
 		Set<ContentNodeDTO> contentNodes = contentNodeFacade
 				.getContentNodesByNode(node);

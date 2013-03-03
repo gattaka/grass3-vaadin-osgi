@@ -28,9 +28,6 @@ public class TagPage extends BasePage {
 	@Resource(name = "contentsTableFactory")
 	private ContentsTableFactory contentsTableFactory;
 
-	private final ContentsTable tagContentsTable = contentsTableFactory
-			.createContentsTable();
-
 	private ContentTagDTO tag;
 	private Label tagLabel;
 	private String tagLabelPrefix = "<h2>Obsahy označené tagem: ";
@@ -42,6 +39,9 @@ public class TagPage extends BasePage {
 
 	@Override
 	protected void createContent(CustomLayout layout) {
+
+		ContentsTable tagContentsTable = contentsTableFactory
+				.createContentsTable();
 
 		tag = contentTagFacade.getContentTagByName(getRequest().getAnalyzer()
 				.getPathToken(1));

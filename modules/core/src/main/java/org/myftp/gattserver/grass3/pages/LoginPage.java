@@ -1,5 +1,8 @@
 package org.myftp.gattserver.grass3.pages;
 
+import javax.annotation.Resource;
+
+import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
@@ -19,6 +22,9 @@ public class LoginPage extends OneColumnPage {
 
 	private static final long serialVersionUID = 8276040419934174157L;
 
+	@Resource(name = "homePageFactory")
+	private PageFactory homePageFactory;
+	
 	public LoginPage(GrassRequest request) {
 		super(request);
 	}
@@ -54,13 +60,8 @@ public class LoginPage extends OneColumnPage {
 					public void buttonClick(ClickEvent event) {
 						if (getGrassUI().login(nameField.getValue(),
 								passField.getValue())) {
-
-							// TODO - zatím jen takhle na main, ale měl by se
-							// "vracet" resp. "pokračovat"
-							redirect("/");
+							redirect(getPageURL(homePageFactory));
 						} else {
-
-							// zobraz chybu
 							showError("Přihlášení se nezdařilo");
 						}
 					}

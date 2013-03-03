@@ -27,6 +27,7 @@ public abstract class GrassPage extends CustomLayout {
 	
 	public GrassPage() {
 		super("grass");
+		addStyleName("grass_layout");
 	}
 	
 	@SuppressWarnings("unused")

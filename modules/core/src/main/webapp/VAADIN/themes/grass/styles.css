@@ -6,6 +6,12 @@
 	src: url('fonts/DuruSans-Regular.ttf');
 }
 
+.grass_layout {
+	overflow: auto;
+	min-height: 100%;
+	position: relative;
+}
+
 /* == DEFAULT =============================================================== */
 
 /* Default clean */
@@ -55,15 +61,16 @@ a img.icon {
 /* == PAGE HOLDERS ========================================================== */
 #holder {
 	background-position: bottom right;
-/* 	min-height: 100%; */
-	height: 100% !important;
-/* 	height: 100%; */
-	margin-bottom: -35px;
+	/* 	min-height: 100%; */
+	/* 	height: 100% !important; */
+	/* 	height: 100%; */
+	/* 	margin-bottom: -40px; */
+	margin-bottom: 100px;
 }
 
-#push {
-	height: 160px;
-}
+/* #push { */
+/* 	height: 160px; */
+/* } */
 
 /* == HEADER ================================================================ */
 #top>h1 {
@@ -203,7 +210,8 @@ a img.icon {
 	top: 1px;
 }
 
-.v-button.v-widget.user_status.v-button-user_status.link.v-button-link .v-button-caption{
+.v-button.v-widget.user_status.v-button-user_status.link.v-button-link .v-button-caption
+	{
 	color: #070;
 }
 
@@ -257,10 +265,13 @@ a img.icon {
 #right {
 	width: 775px;
 	display: inline-block;
+	margin-left: 10px;
 }
 
 #left {
 	width: 200px;
+	display: inline-block;
+	vertical-align: top;
 }
 
 #center {
@@ -278,11 +289,17 @@ a img.icon {
 	width: auto;
 }
 
+#bottom_holder {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+
 #bottom {
 	clear: both;
 	background-color: #c2dfef;
 	padding: 5px;
-	bottom: 11px;
+	/* 	bottom: 11px; */
 	font-size: 12px;
 	font-family: Verdana, "Verdana CE", Arial, "Arial CE",
 		"Lucida Grande CE", lucida, "Helvetica CE", sans-serif;

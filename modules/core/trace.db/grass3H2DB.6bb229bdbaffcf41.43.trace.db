@@ -1,0 +1,39 @@
+03-03 13:12:03 jdbc: 
+/**/Connection conn43 = DriverManager.getConnection("jdbc:h2:tcp://localhost/grass3H2DB;TRACE_LEVEL_FIlE=3", "SA", "");
+03-03 13:12:03 jdbc: 
+/**/conn43.getAutoCommit();
+03-03 13:12:03 jdbc: 
+/**/conn43.setAutoCommit(false);
+03-03 13:12:03 jdbc: SESSION_SET_AUTOCOMMIT 0
+03-03 13:12:03 jdbc: 
+/**/conn43.getAutoCommit();
+03-03 13:12:03 jdbc: 
+/**/PreparedStatement prep410 = conn43.prepareStatement("select this_.id as id4_1_, this_.name as name4_1_, this_.parent_id as parent3_4_1_, node2_.id as id4_0_, node2_.name as name4_0_, node2_.parent_id as parent3_4_0_ from NODE this_ left outer join NODE node2_ on this_.parent_id=node2_.id where this_.parent_id=?");
+03-03 13:12:03 jdbc: SESSION_PREPARE_READ_PARAMS 0
+03-03 13:12:03 jdbc: 
+/**/prep410.setLong(1, 5L);
+03-03 13:12:03 jdbc: 
+/**/ResultSet rs411 = prep410.executeQuery();
+03-03 13:12:03 jdbc: COMMAND_EXECUTE_QUERY 0
+03-03 13:12:03 jdbc: RESULT_CLOSE 1
+03-03 13:12:03 jdbc: 
+/**/rs411.next();
+03-03 13:12:03 jdbc: 
+/**/rs411.close();
+03-03 13:12:03 jdbc: 
+/**/prep410.getMaxRows();
+03-03 13:12:03 jdbc: 
+/**/prep410.getQueryTimeout();
+03-03 13:12:03 jdbc: 
+/**/conn43.getQueryTimeout();
+03-03 13:12:03 jdbc: SESSION_PREPARE_READ_PARAMS 2
+03-03 13:12:03 jdbc: COMMAND_EXECUTE_QUERY 2
+03-03 13:12:03 jdbc: RESULT_CLOSE 3
+03-03 13:12:03 jdbc: 
+/**/prep410.close();
+03-03 13:12:03 jdbc: COMMAND_CLOSE 0
+03-03 13:12:03 jdbc: 
+/**/conn43.commit();
+03-03 13:12:03 jdbc: SESSION_PREPARE_READ_PARAMS 4
+03-03 13:12:03 jdbc: COMMAND_EXECUTE_UPDATE 4
+03-03 13:12:07 jdbc: SESSION_CLOSE 0

@@ -1,6 +1,8 @@
 package org.myftp.gattserver.grass3.security;
 
-public enum Role {
+import org.springframework.security.core.GrantedAuthority;
+
+public enum Role implements GrantedAuthority {
 
 	ADMIN("Admin"), USER("Uživatel"), FRIEND("Host"), AUTHOR("Autor");
 
@@ -12,5 +14,10 @@ public enum Role {
 
 	public String getRoleName() {
 		return roleName;
+	}
+
+	@Override
+	public String getAuthority() {
+		return toString();
 	}
 }

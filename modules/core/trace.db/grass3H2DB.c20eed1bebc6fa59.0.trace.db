@@ -1,0 +1,3071 @@
+03-03 12:13:20 jdbc: 
+/**/Connection conn0 = DriverManager.getConnection("jdbc:h2:tcp://localhost/grass3H2DB;TRACE_LEVEL_FIlE=3", "SA", "");
+03-03 12:13:20 jdbc: 
+/**/conn0.getAutoCommit();
+03-03 12:13:20 jdbc: 
+/**/conn0.setAutoCommit(false);
+03-03 12:13:20 jdbc: SESSION_SET_AUTOCOMMIT 0
+03-03 12:13:20 jdbc: 
+/**/DatabaseMetaData dbMeta0 = conn0.getMetaData();
+03-03 12:13:20 jdbc: 
+/**/dbMeta0.supportsResultSetType(1004);
+03-03 12:13:20 jdbc: 
+/**/dbMeta0.supportsBatchUpdates();
+03-03 12:13:20 jdbc: 
+/**/dbMeta0.dataDefinitionCausesTransactionCommit();
+03-03 12:13:20 jdbc: 
+/**/dbMeta0.dataDefinitionIgnoredInTransactions();
+03-03 12:13:20 jdbc: 
+/**/dbMeta0.supportsGetGeneratedKeys();
+03-03 12:13:20 jdbc: 
+/**/dbMeta0.getSQLKeywords();
+03-03 12:13:20 jdbc: 
+/**/dbMeta0.getSQLStateType();
+03-03 12:13:20 jdbc: 
+/**/dbMeta0.locatorsUpdateCopy();
+03-03 12:13:20 jdbc: 
+/**/dbMeta0.getTypeInfo();
+03-03 12:13:20 jdbc: 
+/**/PreparedStatement prep0 = conn0.prepareStatement("SELECT TYPE_NAME, DATA_TYPE, PRECISION, PREFIX LITERAL_PREFIX, SUFFIX LITERAL_SUFFIX, PARAMS CREATE_PARAMS, NULLABLE, CASE_SENSITIVE, SEARCHABLE, FALSE UNSIGNED_ATTRIBUTE, FALSE FIXED_PREC_SCALE, AUTO_INCREMENT, TYPE_NAME LOCAL_TYPE_NAME, MINIMUM_SCALE, MAXIMUM_SCALE, DATA_TYPE SQL_DATA_TYPE, ZERO() SQL_DATETIME_SUB, RADIX NUM_PREC_RADIX FROM INFORMATION_SCHEMA.TYPE_INFO ORDER BY DATA_TYPE, POS");
+03-03 12:13:20 jdbc: SESSION_PREPARE_READ_PARAMS 0
+03-03 12:13:20 jdbc: 
+/**/ResultSet rs0 = prep0.executeQuery();
+03-03 12:13:20 jdbc: COMMAND_EXECUTE_QUERY 0
+03-03 12:13:20 jdbc: RESULT_CLOSE 1
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("TYPE_NAME");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("DATA_TYPE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("CREATE_PARAMS");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("UNSIGNED_ATTRIBUTE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getInt("PRECISION");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MINIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("MAXIMUM_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("FIXED_PREC_SCALE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_PREFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getString("LITERAL_SUFFIX");
+03-03 12:13:20 jdbc: 
+/**/rs0.getBoolean("CASE_SENSITIVE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("SEARCHABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.getShort("NULLABLE");
+03-03 12:13:20 jdbc: 
+/**/rs0.next();
+03-03 12:13:20 jdbc: 
+/**/rs0.close();
+03-03 12:13:20 jdbc: 
+/**/prep0.close();
+03-03 12:13:20 jdbc: COMMAND_CLOSE 0
+03-03 12:13:20 jdbc: 
+/**/conn0.getCatalog();
+03-03 12:13:20 jdbc: SESSION_PREPARE_READ_PARAMS 2
+03-03 12:13:20 jdbc: COMMAND_EXECUTE_QUERY 2
+03-03 12:13:20 jdbc: RESULT_CLOSE 3
+03-03 12:13:20 jdbc: COMMAND_CLOSE 2
+03-03 12:13:20 jdbc: 
+/**/DatabaseMetaData dbMeta1 = conn0.getMetaData();
+03-03 12:13:20 jdbc: 
+/**/dbMeta1.getJDBCMajorVersion();
+03-03 12:13:20 jdbc: 
+/**/dbMeta1.getJDBCMajorVersion();
+03-03 12:13:21 jdbc: 
+/**/conn0.getAutoCommit();
+03-03 12:13:21 jdbc: 
+/**/conn0.getAutoCommit();
+03-03 12:13:21 jdbc: 
+/**/conn0.commit();
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 4
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_UPDATE 4
+03-03 12:13:21 jdbc: 
+/**/conn0.setAutoCommit(true);
+03-03 12:13:21 jdbc: 
+/**/conn0.commit();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_UPDATE 4
+03-03 12:13:21 jdbc: SESSION_SET_AUTOCOMMIT 1
+03-03 12:13:21 jdbc: 
+/**/DatabaseMetaData dbMeta2 = conn0.getMetaData();
+03-03 12:13:21 jdbc: 
+/**/Statement stat0 = conn0.createStatement();
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs1 = stat0.executeQuery("select sequence_name from information_schema.sequences");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 5
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 5
+03-03 12:13:21 jdbc: RESULT_CLOSE 6
+03-03 12:13:21 jdbc: COMMAND_CLOSE 5
+03-03 12:13:21 jdbc: 
+/**/rs1.next();
+03-03 12:13:21 jdbc: 
+/**/rs1.close();
+03-03 12:13:21 jdbc: 
+/**/stat0.close();
+03-03 12:13:21 jdbc: 
+/**/Statement stat1 = conn0.createStatement();
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.storesUpperCaseIdentifiers();
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getTables(null, null, "CONTENTNODE", new String[]{"TABLE", "VIEW"});
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep1 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, TABLE_TYPE, REMARKS, TYPE_NAME TYPE_CAT, TYPE_NAME TYPE_SCHEM, TYPE_NAME, TYPE_NAME SELF_REFERENCING_COL_NAME, TYPE_NAME REF_GENERATION, SQL FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND (TABLE_TYPE IN(?, ?)) ORDER BY TABLE_TYPE, TABLE_SCHEMA, TABLE_NAME");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 7
+03-03 12:13:21 jdbc: 
+/**/prep1.setString(1, "%");
+03-03 12:13:21 jdbc: 
+/**/prep1.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep1.setString(3, "%");
+03-03 12:13:21 jdbc: 
+/**/prep1.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep1.setString(5, "CONTENTNODE");
+03-03 12:13:21 jdbc: 
+/**/prep1.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep1.setString(7, "TABLE");
+03-03 12:13:21 jdbc: 
+/**/prep1.setString(8, "VIEW");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs2 = prep1.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 7
+03-03 12:13:21 jdbc: RESULT_CLOSE 8
+03-03 12:13:21 jdbc: 
+/**/rs2.next();
+03-03 12:13:21 jdbc: 
+/**/rs2.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs2.getString("TABLE_CAT");
+03-03 12:13:21 jdbc: 
+/**/rs2.getString("TABLE_SCHEM");
+03-03 12:13:21 jdbc: 
+/**/rs2.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getColumns("GRASS3H2DB", "PUBLIC", "CONTENTNODE", "%");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep2 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, COLUMN_NAME, DATA_TYPE, TYPE_NAME, CHARACTER_MAXIMUM_LENGTH COLUMN_SIZE, CHARACTER_MAXIMUM_LENGTH BUFFER_LENGTH, NUMERIC_SCALE DECIMAL_DIGITS, NUMERIC_PRECISION_RADIX NUM_PREC_RADIX, NULLABLE, REMARKS, COLUMN_DEFAULT COLUMN_DEF, DATA_TYPE SQL_DATA_TYPE, ZERO() SQL_DATETIME_SUB, CHARACTER_OCTET_LENGTH CHAR_OCTET_LENGTH, ORDINAL_POSITION, IS_NULLABLE IS_NULLABLE, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATALOG, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_SCHEMA, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_TABLE, SOURCE_DATA_TYPE, CASE WHEN SEQUENCE_NAME IS NULL THEN CAST(? AS VARCHAR) ELSE CAST(? AS VARCHAR) END IS_AUTOINCREMENT, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATLOG FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND COLUMN_NAME LIKE ? ESCAPE ? ORDER BY TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 9
+03-03 12:13:21 jdbc: 
+/**/prep2.setString(1, "NO");
+03-03 12:13:21 jdbc: 
+/**/prep2.setString(2, "YES");
+03-03 12:13:21 jdbc: 
+/**/prep2.setString(3, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep2.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep2.setString(5, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep2.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep2.setString(7, "CONTENTNODE");
+03-03 12:13:21 jdbc: 
+/**/prep2.setString(8, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep2.setString(9, "%");
+03-03 12:13:21 jdbc: 
+/**/prep2.setString(10, "\\");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs3 = prep2.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 9
+03-03 12:13:21 jdbc: RESULT_CLOSE 10
+03-03 12:13:21 jdbc: 
+/**/rs3.next();
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.next();
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.next();
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.next();
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.next();
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.next();
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.next();
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.next();
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.next();
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs3.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs3.next();
+03-03 12:13:21 jdbc: 
+/**/rs3.close();
+03-03 12:13:21 jdbc: 
+/**/prep2.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 9
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getImportedKeys("GRASS3H2DB", "PUBLIC", "CONTENTNODE");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep3 = conn0.prepareStatement("SELECT PKTABLE_CATALOG PKTABLE_CAT, PKTABLE_SCHEMA PKTABLE_SCHEM, PKTABLE_NAME PKTABLE_NAME, PKCOLUMN_NAME, FKTABLE_CATALOG FKTABLE_CAT, FKTABLE_SCHEMA FKTABLE_SCHEM, FKTABLE_NAME, FKCOLUMN_NAME, ORDINAL_POSITION KEY_SEQ, UPDATE_RULE, DELETE_RULE, FK_NAME, PK_NAME, DEFERRABILITY FROM INFORMATION_SCHEMA.CROSS_REFERENCES WHERE FKTABLE_CATALOG LIKE ? ESCAPE ? AND FKTABLE_SCHEMA LIKE ? ESCAPE ? AND FKTABLE_NAME = ? ORDER BY PKTABLE_CAT, PKTABLE_SCHEM, PKTABLE_NAME, FK_NAME, KEY_SEQ");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 11
+03-03 12:13:21 jdbc: 
+/**/prep3.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep3.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep3.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep3.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep3.setString(5, "CONTENTNODE");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs4 = prep3.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 11
+03-03 12:13:21 jdbc: RESULT_CLOSE 12
+03-03 12:13:21 jdbc: 
+/**/rs4.next();
+03-03 12:13:21 jdbc: 
+/**/rs4.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs4.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs4.getString("PKTABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs4.getString("FKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs4.getString("PKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs4.next();
+03-03 12:13:21 jdbc: 
+/**/rs4.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs4.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs4.getString("PKTABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs4.getString("FKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs4.getString("PKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs4.next();
+03-03 12:13:21 jdbc: 
+/**/rs4.close();
+03-03 12:13:21 jdbc: 
+/**/prep3.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 11
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getIndexInfo("GRASS3H2DB", "PUBLIC", "CONTENTNODE", false, true);
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep4 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, NON_UNIQUE, TABLE_CATALOG INDEX_QUALIFIER, INDEX_NAME, INDEX_TYPE TYPE, ORDINAL_POSITION, COLUMN_NAME, ASC_OR_DESC, CARDINALITY, PAGES, FILTER_CONDITION, SORT_TYPE FROM INFORMATION_SCHEMA.INDEXES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND (TRUE) AND TABLE_NAME = ? ORDER BY NON_UNIQUE, TYPE, TABLE_SCHEM, INDEX_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 13
+03-03 12:13:21 jdbc: 
+/**/prep4.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep4.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep4.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep4.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep4.setString(5, "CONTENTNODE");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs5 = prep4.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 13
+03-03 12:13:21 jdbc: RESULT_CLOSE 14
+03-03 12:13:21 jdbc: 
+/**/rs5.next();
+03-03 12:13:21 jdbc: 
+/**/rs5.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs5.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs5.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs5.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs5.next();
+03-03 12:13:21 jdbc: 
+/**/rs5.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs5.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs5.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs5.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs5.next();
+03-03 12:13:21 jdbc: 
+/**/rs5.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs5.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs5.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs5.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs5.next();
+03-03 12:13:21 jdbc: 
+/**/rs5.close();
+03-03 12:13:21 jdbc: 
+/**/prep4.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 13
+03-03 12:13:21 jdbc: 
+/**/rs2.close();
+03-03 12:13:21 jdbc: 
+/**/prep1.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 7
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.storesUpperCaseIdentifiers();
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getTables(null, null, "CONTENTNODE_CONTENT_TAG", new String[]{"TABLE", "VIEW"});
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep5 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, TABLE_TYPE, REMARKS, TYPE_NAME TYPE_CAT, TYPE_NAME TYPE_SCHEM, TYPE_NAME, TYPE_NAME SELF_REFERENCING_COL_NAME, TYPE_NAME REF_GENERATION, SQL FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND (TABLE_TYPE IN(?, ?)) ORDER BY TABLE_TYPE, TABLE_SCHEMA, TABLE_NAME");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 15
+03-03 12:13:21 jdbc: 
+/**/prep5.setString(1, "%");
+03-03 12:13:21 jdbc: 
+/**/prep5.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep5.setString(3, "%");
+03-03 12:13:21 jdbc: 
+/**/prep5.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep5.setString(5, "CONTENTNODE_CONTENT_TAG");
+03-03 12:13:21 jdbc: 
+/**/prep5.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep5.setString(7, "TABLE");
+03-03 12:13:21 jdbc: 
+/**/prep5.setString(8, "VIEW");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs6 = prep5.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 15
+03-03 12:13:21 jdbc: RESULT_CLOSE 16
+03-03 12:13:21 jdbc: 
+/**/rs6.next();
+03-03 12:13:21 jdbc: 
+/**/rs6.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs6.getString("TABLE_CAT");
+03-03 12:13:21 jdbc: 
+/**/rs6.getString("TABLE_SCHEM");
+03-03 12:13:21 jdbc: 
+/**/rs6.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getColumns("GRASS3H2DB", "PUBLIC", "CONTENTNODE_CONTENT_TAG", "%");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep6 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, COLUMN_NAME, DATA_TYPE, TYPE_NAME, CHARACTER_MAXIMUM_LENGTH COLUMN_SIZE, CHARACTER_MAXIMUM_LENGTH BUFFER_LENGTH, NUMERIC_SCALE DECIMAL_DIGITS, NUMERIC_PRECISION_RADIX NUM_PREC_RADIX, NULLABLE, REMARKS, COLUMN_DEFAULT COLUMN_DEF, DATA_TYPE SQL_DATA_TYPE, ZERO() SQL_DATETIME_SUB, CHARACTER_OCTET_LENGTH CHAR_OCTET_LENGTH, ORDINAL_POSITION, IS_NULLABLE IS_NULLABLE, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATALOG, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_SCHEMA, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_TABLE, SOURCE_DATA_TYPE, CASE WHEN SEQUENCE_NAME IS NULL THEN CAST(? AS VARCHAR) ELSE CAST(? AS VARCHAR) END IS_AUTOINCREMENT, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATLOG FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND COLUMN_NAME LIKE ? ESCAPE ? ORDER BY TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 17
+03-03 12:13:21 jdbc: 
+/**/prep6.setString(1, "NO");
+03-03 12:13:21 jdbc: 
+/**/prep6.setString(2, "YES");
+03-03 12:13:21 jdbc: 
+/**/prep6.setString(3, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep6.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep6.setString(5, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep6.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep6.setString(7, "CONTENTNODE_CONTENT_TAG");
+03-03 12:13:21 jdbc: 
+/**/prep6.setString(8, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep6.setString(9, "%");
+03-03 12:13:21 jdbc: 
+/**/prep6.setString(10, "\\");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs7 = prep6.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 17
+03-03 12:13:21 jdbc: RESULT_CLOSE 18
+03-03 12:13:21 jdbc: 
+/**/rs7.next();
+03-03 12:13:21 jdbc: 
+/**/rs7.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs7.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs7.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs7.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs7.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs7.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs7.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs7.next();
+03-03 12:13:21 jdbc: 
+/**/rs7.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs7.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs7.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs7.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs7.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs7.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs7.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs7.next();
+03-03 12:13:21 jdbc: 
+/**/rs7.close();
+03-03 12:13:21 jdbc: 
+/**/prep6.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 17
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getImportedKeys("GRASS3H2DB", "PUBLIC", "CONTENTNODE_CONTENT_TAG");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep7 = conn0.prepareStatement("SELECT PKTABLE_CATALOG PKTABLE_CAT, PKTABLE_SCHEMA PKTABLE_SCHEM, PKTABLE_NAME PKTABLE_NAME, PKCOLUMN_NAME, FKTABLE_CATALOG FKTABLE_CAT, FKTABLE_SCHEMA FKTABLE_SCHEM, FKTABLE_NAME, FKCOLUMN_NAME, ORDINAL_POSITION KEY_SEQ, UPDATE_RULE, DELETE_RULE, FK_NAME, PK_NAME, DEFERRABILITY FROM INFORMATION_SCHEMA.CROSS_REFERENCES WHERE FKTABLE_CATALOG LIKE ? ESCAPE ? AND FKTABLE_SCHEMA LIKE ? ESCAPE ? AND FKTABLE_NAME = ? ORDER BY PKTABLE_CAT, PKTABLE_SCHEM, PKTABLE_NAME, FK_NAME, KEY_SEQ");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 19
+03-03 12:13:21 jdbc: 
+/**/prep7.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep7.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep7.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep7.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep7.setString(5, "CONTENTNODE_CONTENT_TAG");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs8 = prep7.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 19
+03-03 12:13:21 jdbc: RESULT_CLOSE 20
+03-03 12:13:21 jdbc: 
+/**/rs8.next();
+03-03 12:13:21 jdbc: 
+/**/rs8.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs8.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs8.getString("PKTABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs8.getString("FKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs8.getString("PKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs8.next();
+03-03 12:13:21 jdbc: 
+/**/rs8.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs8.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs8.getString("PKTABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs8.getString("FKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs8.getString("PKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs8.next();
+03-03 12:13:21 jdbc: 
+/**/rs8.close();
+03-03 12:13:21 jdbc: 
+/**/prep7.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 19
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getIndexInfo("GRASS3H2DB", "PUBLIC", "CONTENTNODE_CONTENT_TAG", false, true);
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep8 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, NON_UNIQUE, TABLE_CATALOG INDEX_QUALIFIER, INDEX_NAME, INDEX_TYPE TYPE, ORDINAL_POSITION, COLUMN_NAME, ASC_OR_DESC, CARDINALITY, PAGES, FILTER_CONDITION, SORT_TYPE FROM INFORMATION_SCHEMA.INDEXES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND (TRUE) AND TABLE_NAME = ? ORDER BY NON_UNIQUE, TYPE, TABLE_SCHEM, INDEX_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 21
+03-03 12:13:21 jdbc: 
+/**/prep8.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep8.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep8.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep8.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep8.setString(5, "CONTENTNODE_CONTENT_TAG");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs9 = prep8.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 21
+03-03 12:13:21 jdbc: RESULT_CLOSE 22
+03-03 12:13:21 jdbc: 
+/**/rs9.next();
+03-03 12:13:21 jdbc: 
+/**/rs9.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs9.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs9.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs9.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs9.next();
+03-03 12:13:21 jdbc: 
+/**/rs9.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs9.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs9.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs9.next();
+03-03 12:13:21 jdbc: 
+/**/rs9.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs9.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs9.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs9.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs9.next();
+03-03 12:13:21 jdbc: 
+/**/rs9.close();
+03-03 12:13:21 jdbc: 
+/**/prep8.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 21
+03-03 12:13:21 jdbc: 
+/**/rs6.close();
+03-03 12:13:21 jdbc: 
+/**/prep5.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 15
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.storesUpperCaseIdentifiers();
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getTables(null, null, "CONTENT_TAG", new String[]{"TABLE", "VIEW"});
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep9 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, TABLE_TYPE, REMARKS, TYPE_NAME TYPE_CAT, TYPE_NAME TYPE_SCHEM, TYPE_NAME, TYPE_NAME SELF_REFERENCING_COL_NAME, TYPE_NAME REF_GENERATION, SQL FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND (TABLE_TYPE IN(?, ?)) ORDER BY TABLE_TYPE, TABLE_SCHEMA, TABLE_NAME");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 23
+03-03 12:13:21 jdbc: 
+/**/prep9.setString(1, "%");
+03-03 12:13:21 jdbc: 
+/**/prep9.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep9.setString(3, "%");
+03-03 12:13:21 jdbc: 
+/**/prep9.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep9.setString(5, "CONTENT_TAG");
+03-03 12:13:21 jdbc: 
+/**/prep9.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep9.setString(7, "TABLE");
+03-03 12:13:21 jdbc: 
+/**/prep9.setString(8, "VIEW");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs10 = prep9.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 23
+03-03 12:13:21 jdbc: RESULT_CLOSE 24
+03-03 12:13:21 jdbc: 
+/**/rs10.next();
+03-03 12:13:21 jdbc: 
+/**/rs10.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs10.getString("TABLE_CAT");
+03-03 12:13:21 jdbc: 
+/**/rs10.getString("TABLE_SCHEM");
+03-03 12:13:21 jdbc: 
+/**/rs10.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getColumns("GRASS3H2DB", "PUBLIC", "CONTENT_TAG", "%");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep10 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, COLUMN_NAME, DATA_TYPE, TYPE_NAME, CHARACTER_MAXIMUM_LENGTH COLUMN_SIZE, CHARACTER_MAXIMUM_LENGTH BUFFER_LENGTH, NUMERIC_SCALE DECIMAL_DIGITS, NUMERIC_PRECISION_RADIX NUM_PREC_RADIX, NULLABLE, REMARKS, COLUMN_DEFAULT COLUMN_DEF, DATA_TYPE SQL_DATA_TYPE, ZERO() SQL_DATETIME_SUB, CHARACTER_OCTET_LENGTH CHAR_OCTET_LENGTH, ORDINAL_POSITION, IS_NULLABLE IS_NULLABLE, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATALOG, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_SCHEMA, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_TABLE, SOURCE_DATA_TYPE, CASE WHEN SEQUENCE_NAME IS NULL THEN CAST(? AS VARCHAR) ELSE CAST(? AS VARCHAR) END IS_AUTOINCREMENT, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATLOG FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND COLUMN_NAME LIKE ? ESCAPE ? ORDER BY TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 25
+03-03 12:13:21 jdbc: 
+/**/prep10.setString(1, "NO");
+03-03 12:13:21 jdbc: 
+/**/prep10.setString(2, "YES");
+03-03 12:13:21 jdbc: 
+/**/prep10.setString(3, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep10.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep10.setString(5, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep10.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep10.setString(7, "CONTENT_TAG");
+03-03 12:13:21 jdbc: 
+/**/prep10.setString(8, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep10.setString(9, "%");
+03-03 12:13:21 jdbc: 
+/**/prep10.setString(10, "\\");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs11 = prep10.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 25
+03-03 12:13:21 jdbc: RESULT_CLOSE 26
+03-03 12:13:21 jdbc: 
+/**/rs11.next();
+03-03 12:13:21 jdbc: 
+/**/rs11.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs11.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs11.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs11.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs11.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs11.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs11.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs11.next();
+03-03 12:13:21 jdbc: 
+/**/rs11.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs11.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs11.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs11.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs11.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs11.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs11.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs11.next();
+03-03 12:13:21 jdbc: 
+/**/rs11.close();
+03-03 12:13:21 jdbc: 
+/**/prep10.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 25
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getImportedKeys("GRASS3H2DB", "PUBLIC", "CONTENT_TAG");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep11 = conn0.prepareStatement("SELECT PKTABLE_CATALOG PKTABLE_CAT, PKTABLE_SCHEMA PKTABLE_SCHEM, PKTABLE_NAME PKTABLE_NAME, PKCOLUMN_NAME, FKTABLE_CATALOG FKTABLE_CAT, FKTABLE_SCHEMA FKTABLE_SCHEM, FKTABLE_NAME, FKCOLUMN_NAME, ORDINAL_POSITION KEY_SEQ, UPDATE_RULE, DELETE_RULE, FK_NAME, PK_NAME, DEFERRABILITY FROM INFORMATION_SCHEMA.CROSS_REFERENCES WHERE FKTABLE_CATALOG LIKE ? ESCAPE ? AND FKTABLE_SCHEMA LIKE ? ESCAPE ? AND FKTABLE_NAME = ? ORDER BY PKTABLE_CAT, PKTABLE_SCHEM, PKTABLE_NAME, FK_NAME, KEY_SEQ");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 27
+03-03 12:13:21 jdbc: 
+/**/prep11.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep11.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep11.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep11.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep11.setString(5, "CONTENT_TAG");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs12 = prep11.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 27
+03-03 12:13:21 jdbc: RESULT_CLOSE 28
+03-03 12:13:21 jdbc: 
+/**/rs12.next();
+03-03 12:13:21 jdbc: 
+/**/rs12.close();
+03-03 12:13:21 jdbc: 
+/**/prep11.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 27
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getIndexInfo("GRASS3H2DB", "PUBLIC", "CONTENT_TAG", false, true);
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep12 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, NON_UNIQUE, TABLE_CATALOG INDEX_QUALIFIER, INDEX_NAME, INDEX_TYPE TYPE, ORDINAL_POSITION, COLUMN_NAME, ASC_OR_DESC, CARDINALITY, PAGES, FILTER_CONDITION, SORT_TYPE FROM INFORMATION_SCHEMA.INDEXES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND (TRUE) AND TABLE_NAME = ? ORDER BY NON_UNIQUE, TYPE, TABLE_SCHEM, INDEX_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 29
+03-03 12:13:21 jdbc: 
+/**/prep12.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep12.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep12.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep12.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep12.setString(5, "CONTENT_TAG");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs13 = prep12.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 29
+03-03 12:13:21 jdbc: RESULT_CLOSE 30
+03-03 12:13:21 jdbc: 
+/**/rs13.next();
+03-03 12:13:21 jdbc: 
+/**/rs13.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs13.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs13.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs13.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs13.next();
+03-03 12:13:21 jdbc: 
+/**/rs13.close();
+03-03 12:13:21 jdbc: 
+/**/prep12.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 29
+03-03 12:13:21 jdbc: 
+/**/rs10.close();
+03-03 12:13:21 jdbc: 
+/**/prep9.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 23
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.storesUpperCaseIdentifiers();
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getTables(null, null, "NODE", new String[]{"TABLE", "VIEW"});
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep13 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, TABLE_TYPE, REMARKS, TYPE_NAME TYPE_CAT, TYPE_NAME TYPE_SCHEM, TYPE_NAME, TYPE_NAME SELF_REFERENCING_COL_NAME, TYPE_NAME REF_GENERATION, SQL FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND (TABLE_TYPE IN(?, ?)) ORDER BY TABLE_TYPE, TABLE_SCHEMA, TABLE_NAME");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 31
+03-03 12:13:21 jdbc: 
+/**/prep13.setString(1, "%");
+03-03 12:13:21 jdbc: 
+/**/prep13.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep13.setString(3, "%");
+03-03 12:13:21 jdbc: 
+/**/prep13.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep13.setString(5, "NODE");
+03-03 12:13:21 jdbc: 
+/**/prep13.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep13.setString(7, "TABLE");
+03-03 12:13:21 jdbc: 
+/**/prep13.setString(8, "VIEW");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs14 = prep13.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 31
+03-03 12:13:21 jdbc: RESULT_CLOSE 32
+03-03 12:13:21 jdbc: 
+/**/rs14.next();
+03-03 12:13:21 jdbc: 
+/**/rs14.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs14.getString("TABLE_CAT");
+03-03 12:13:21 jdbc: 
+/**/rs14.getString("TABLE_SCHEM");
+03-03 12:13:21 jdbc: 
+/**/rs14.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getColumns("GRASS3H2DB", "PUBLIC", "NODE", "%");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep14 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, COLUMN_NAME, DATA_TYPE, TYPE_NAME, CHARACTER_MAXIMUM_LENGTH COLUMN_SIZE, CHARACTER_MAXIMUM_LENGTH BUFFER_LENGTH, NUMERIC_SCALE DECIMAL_DIGITS, NUMERIC_PRECISION_RADIX NUM_PREC_RADIX, NULLABLE, REMARKS, COLUMN_DEFAULT COLUMN_DEF, DATA_TYPE SQL_DATA_TYPE, ZERO() SQL_DATETIME_SUB, CHARACTER_OCTET_LENGTH CHAR_OCTET_LENGTH, ORDINAL_POSITION, IS_NULLABLE IS_NULLABLE, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATALOG, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_SCHEMA, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_TABLE, SOURCE_DATA_TYPE, CASE WHEN SEQUENCE_NAME IS NULL THEN CAST(? AS VARCHAR) ELSE CAST(? AS VARCHAR) END IS_AUTOINCREMENT, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATLOG FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND COLUMN_NAME LIKE ? ESCAPE ? ORDER BY TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 33
+03-03 12:13:21 jdbc: 
+/**/prep14.setString(1, "NO");
+03-03 12:13:21 jdbc: 
+/**/prep14.setString(2, "YES");
+03-03 12:13:21 jdbc: 
+/**/prep14.setString(3, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep14.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep14.setString(5, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep14.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep14.setString(7, "NODE");
+03-03 12:13:21 jdbc: 
+/**/prep14.setString(8, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep14.setString(9, "%");
+03-03 12:13:21 jdbc: 
+/**/prep14.setString(10, "\\");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs15 = prep14.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 33
+03-03 12:13:21 jdbc: RESULT_CLOSE 34
+03-03 12:13:21 jdbc: 
+/**/rs15.next();
+03-03 12:13:21 jdbc: 
+/**/rs15.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs15.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs15.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs15.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs15.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs15.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs15.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs15.next();
+03-03 12:13:21 jdbc: 
+/**/rs15.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs15.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs15.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs15.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs15.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs15.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs15.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs15.next();
+03-03 12:13:21 jdbc: 
+/**/rs15.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs15.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs15.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs15.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs15.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs15.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs15.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs15.next();
+03-03 12:13:21 jdbc: 
+/**/rs15.close();
+03-03 12:13:21 jdbc: 
+/**/prep14.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 33
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getImportedKeys("GRASS3H2DB", "PUBLIC", "NODE");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep15 = conn0.prepareStatement("SELECT PKTABLE_CATALOG PKTABLE_CAT, PKTABLE_SCHEMA PKTABLE_SCHEM, PKTABLE_NAME PKTABLE_NAME, PKCOLUMN_NAME, FKTABLE_CATALOG FKTABLE_CAT, FKTABLE_SCHEMA FKTABLE_SCHEM, FKTABLE_NAME, FKCOLUMN_NAME, ORDINAL_POSITION KEY_SEQ, UPDATE_RULE, DELETE_RULE, FK_NAME, PK_NAME, DEFERRABILITY FROM INFORMATION_SCHEMA.CROSS_REFERENCES WHERE FKTABLE_CATALOG LIKE ? ESCAPE ? AND FKTABLE_SCHEMA LIKE ? ESCAPE ? AND FKTABLE_NAME = ? ORDER BY PKTABLE_CAT, PKTABLE_SCHEM, PKTABLE_NAME, FK_NAME, KEY_SEQ");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 35
+03-03 12:13:21 jdbc: 
+/**/prep15.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep15.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep15.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep15.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep15.setString(5, "NODE");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs16 = prep15.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 35
+03-03 12:13:21 jdbc: RESULT_CLOSE 36
+03-03 12:13:21 jdbc: 
+/**/rs16.next();
+03-03 12:13:21 jdbc: 
+/**/rs16.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs16.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs16.getString("PKTABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs16.getString("FKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs16.getString("PKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs16.next();
+03-03 12:13:21 jdbc: 
+/**/rs16.close();
+03-03 12:13:21 jdbc: 
+/**/prep15.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 35
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getIndexInfo("GRASS3H2DB", "PUBLIC", "NODE", false, true);
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep16 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, NON_UNIQUE, TABLE_CATALOG INDEX_QUALIFIER, INDEX_NAME, INDEX_TYPE TYPE, ORDINAL_POSITION, COLUMN_NAME, ASC_OR_DESC, CARDINALITY, PAGES, FILTER_CONDITION, SORT_TYPE FROM INFORMATION_SCHEMA.INDEXES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND (TRUE) AND TABLE_NAME = ? ORDER BY NON_UNIQUE, TYPE, TABLE_SCHEM, INDEX_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 37
+03-03 12:13:21 jdbc: 
+/**/prep16.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep16.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep16.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep16.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep16.setString(5, "NODE");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs17 = prep16.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 37
+03-03 12:13:21 jdbc: RESULT_CLOSE 38
+03-03 12:13:21 jdbc: 
+/**/rs17.next();
+03-03 12:13:21 jdbc: 
+/**/rs17.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs17.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs17.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs17.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs17.next();
+03-03 12:13:21 jdbc: 
+/**/rs17.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs17.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs17.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs17.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs17.next();
+03-03 12:13:21 jdbc: 
+/**/rs17.close();
+03-03 12:13:21 jdbc: 
+/**/prep16.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 37
+03-03 12:13:21 jdbc: 
+/**/rs14.close();
+03-03 12:13:21 jdbc: 
+/**/prep13.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 31
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.storesUpperCaseIdentifiers();
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getTables(null, null, "NODE_CONTENTNODE", new String[]{"TABLE", "VIEW"});
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep17 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, TABLE_TYPE, REMARKS, TYPE_NAME TYPE_CAT, TYPE_NAME TYPE_SCHEM, TYPE_NAME, TYPE_NAME SELF_REFERENCING_COL_NAME, TYPE_NAME REF_GENERATION, SQL FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND (TABLE_TYPE IN(?, ?)) ORDER BY TABLE_TYPE, TABLE_SCHEMA, TABLE_NAME");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 39
+03-03 12:13:21 jdbc: 
+/**/prep17.setString(1, "%");
+03-03 12:13:21 jdbc: 
+/**/prep17.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep17.setString(3, "%");
+03-03 12:13:21 jdbc: 
+/**/prep17.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep17.setString(5, "NODE_CONTENTNODE");
+03-03 12:13:21 jdbc: 
+/**/prep17.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep17.setString(7, "TABLE");
+03-03 12:13:21 jdbc: 
+/**/prep17.setString(8, "VIEW");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs18 = prep17.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 39
+03-03 12:13:21 jdbc: RESULT_CLOSE 40
+03-03 12:13:21 jdbc: 
+/**/rs18.next();
+03-03 12:13:21 jdbc: 
+/**/rs18.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs18.getString("TABLE_CAT");
+03-03 12:13:21 jdbc: 
+/**/rs18.getString("TABLE_SCHEM");
+03-03 12:13:21 jdbc: 
+/**/rs18.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getColumns("GRASS3H2DB", "PUBLIC", "NODE_CONTENTNODE", "%");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep18 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, COLUMN_NAME, DATA_TYPE, TYPE_NAME, CHARACTER_MAXIMUM_LENGTH COLUMN_SIZE, CHARACTER_MAXIMUM_LENGTH BUFFER_LENGTH, NUMERIC_SCALE DECIMAL_DIGITS, NUMERIC_PRECISION_RADIX NUM_PREC_RADIX, NULLABLE, REMARKS, COLUMN_DEFAULT COLUMN_DEF, DATA_TYPE SQL_DATA_TYPE, ZERO() SQL_DATETIME_SUB, CHARACTER_OCTET_LENGTH CHAR_OCTET_LENGTH, ORDINAL_POSITION, IS_NULLABLE IS_NULLABLE, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATALOG, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_SCHEMA, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_TABLE, SOURCE_DATA_TYPE, CASE WHEN SEQUENCE_NAME IS NULL THEN CAST(? AS VARCHAR) ELSE CAST(? AS VARCHAR) END IS_AUTOINCREMENT, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATLOG FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND COLUMN_NAME LIKE ? ESCAPE ? ORDER BY TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 41
+03-03 12:13:21 jdbc: 
+/**/prep18.setString(1, "NO");
+03-03 12:13:21 jdbc: 
+/**/prep18.setString(2, "YES");
+03-03 12:13:21 jdbc: 
+/**/prep18.setString(3, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep18.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep18.setString(5, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep18.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep18.setString(7, "NODE_CONTENTNODE");
+03-03 12:13:21 jdbc: 
+/**/prep18.setString(8, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep18.setString(9, "%");
+03-03 12:13:21 jdbc: 
+/**/prep18.setString(10, "\\");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs19 = prep18.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 41
+03-03 12:13:21 jdbc: RESULT_CLOSE 42
+03-03 12:13:21 jdbc: 
+/**/rs19.next();
+03-03 12:13:21 jdbc: 
+/**/rs19.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs19.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs19.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs19.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs19.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs19.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs19.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs19.next();
+03-03 12:13:21 jdbc: 
+/**/rs19.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs19.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs19.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs19.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs19.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs19.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs19.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs19.next();
+03-03 12:13:21 jdbc: 
+/**/rs19.close();
+03-03 12:13:21 jdbc: 
+/**/prep18.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 41
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getImportedKeys("GRASS3H2DB", "PUBLIC", "NODE_CONTENTNODE");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep19 = conn0.prepareStatement("SELECT PKTABLE_CATALOG PKTABLE_CAT, PKTABLE_SCHEMA PKTABLE_SCHEM, PKTABLE_NAME PKTABLE_NAME, PKCOLUMN_NAME, FKTABLE_CATALOG FKTABLE_CAT, FKTABLE_SCHEMA FKTABLE_SCHEM, FKTABLE_NAME, FKCOLUMN_NAME, ORDINAL_POSITION KEY_SEQ, UPDATE_RULE, DELETE_RULE, FK_NAME, PK_NAME, DEFERRABILITY FROM INFORMATION_SCHEMA.CROSS_REFERENCES WHERE FKTABLE_CATALOG LIKE ? ESCAPE ? AND FKTABLE_SCHEMA LIKE ? ESCAPE ? AND FKTABLE_NAME = ? ORDER BY PKTABLE_CAT, PKTABLE_SCHEM, PKTABLE_NAME, FK_NAME, KEY_SEQ");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 43
+03-03 12:13:21 jdbc: 
+/**/prep19.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep19.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep19.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep19.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep19.setString(5, "NODE_CONTENTNODE");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs20 = prep19.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 43
+03-03 12:13:21 jdbc: RESULT_CLOSE 44
+03-03 12:13:21 jdbc: 
+/**/rs20.next();
+03-03 12:13:21 jdbc: 
+/**/rs20.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs20.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs20.getString("PKTABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs20.getString("FKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs20.getString("PKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs20.next();
+03-03 12:13:21 jdbc: 
+/**/rs20.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs20.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs20.getString("PKTABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs20.getString("FKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs20.getString("PKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs20.next();
+03-03 12:13:21 jdbc: 
+/**/rs20.close();
+03-03 12:13:21 jdbc: 
+/**/prep19.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 43
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getIndexInfo("GRASS3H2DB", "PUBLIC", "NODE_CONTENTNODE", false, true);
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep20 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, NON_UNIQUE, TABLE_CATALOG INDEX_QUALIFIER, INDEX_NAME, INDEX_TYPE TYPE, ORDINAL_POSITION, COLUMN_NAME, ASC_OR_DESC, CARDINALITY, PAGES, FILTER_CONDITION, SORT_TYPE FROM INFORMATION_SCHEMA.INDEXES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND (TRUE) AND TABLE_NAME = ? ORDER BY NON_UNIQUE, TYPE, TABLE_SCHEM, INDEX_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 45
+03-03 12:13:21 jdbc: 
+/**/prep20.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep20.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep20.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep20.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep20.setString(5, "NODE_CONTENTNODE");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs21 = prep20.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 45
+03-03 12:13:21 jdbc: RESULT_CLOSE 46
+03-03 12:13:21 jdbc: 
+/**/rs21.next();
+03-03 12:13:21 jdbc: 
+/**/rs21.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs21.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs21.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs21.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs21.next();
+03-03 12:13:21 jdbc: 
+/**/rs21.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs21.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs21.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs21.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs21.next();
+03-03 12:13:21 jdbc: 
+/**/rs21.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs21.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs21.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs21.next();
+03-03 12:13:21 jdbc: 
+/**/rs21.close();
+03-03 12:13:21 jdbc: 
+/**/prep20.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 45
+03-03 12:13:21 jdbc: 
+/**/rs18.close();
+03-03 12:13:21 jdbc: 
+/**/prep17.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 39
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.storesUpperCaseIdentifiers();
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getTables(null, null, "NODE_NODE", new String[]{"TABLE", "VIEW"});
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep21 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, TABLE_TYPE, REMARKS, TYPE_NAME TYPE_CAT, TYPE_NAME TYPE_SCHEM, TYPE_NAME, TYPE_NAME SELF_REFERENCING_COL_NAME, TYPE_NAME REF_GENERATION, SQL FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND (TABLE_TYPE IN(?, ?)) ORDER BY TABLE_TYPE, TABLE_SCHEMA, TABLE_NAME");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 47
+03-03 12:13:21 jdbc: 
+/**/prep21.setString(1, "%");
+03-03 12:13:21 jdbc: 
+/**/prep21.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep21.setString(3, "%");
+03-03 12:13:21 jdbc: 
+/**/prep21.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep21.setString(5, "NODE_NODE");
+03-03 12:13:21 jdbc: 
+/**/prep21.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep21.setString(7, "TABLE");
+03-03 12:13:21 jdbc: 
+/**/prep21.setString(8, "VIEW");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs22 = prep21.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 47
+03-03 12:13:21 jdbc: RESULT_CLOSE 48
+03-03 12:13:21 jdbc: 
+/**/rs22.next();
+03-03 12:13:21 jdbc: 
+/**/rs22.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs22.getString("TABLE_CAT");
+03-03 12:13:21 jdbc: 
+/**/rs22.getString("TABLE_SCHEM");
+03-03 12:13:21 jdbc: 
+/**/rs22.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getColumns("GRASS3H2DB", "PUBLIC", "NODE_NODE", "%");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep22 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, COLUMN_NAME, DATA_TYPE, TYPE_NAME, CHARACTER_MAXIMUM_LENGTH COLUMN_SIZE, CHARACTER_MAXIMUM_LENGTH BUFFER_LENGTH, NUMERIC_SCALE DECIMAL_DIGITS, NUMERIC_PRECISION_RADIX NUM_PREC_RADIX, NULLABLE, REMARKS, COLUMN_DEFAULT COLUMN_DEF, DATA_TYPE SQL_DATA_TYPE, ZERO() SQL_DATETIME_SUB, CHARACTER_OCTET_LENGTH CHAR_OCTET_LENGTH, ORDINAL_POSITION, IS_NULLABLE IS_NULLABLE, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATALOG, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_SCHEMA, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_TABLE, SOURCE_DATA_TYPE, CASE WHEN SEQUENCE_NAME IS NULL THEN CAST(? AS VARCHAR) ELSE CAST(? AS VARCHAR) END IS_AUTOINCREMENT, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATLOG FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND COLUMN_NAME LIKE ? ESCAPE ? ORDER BY TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 49
+03-03 12:13:21 jdbc: 
+/**/prep22.setString(1, "NO");
+03-03 12:13:21 jdbc: 
+/**/prep22.setString(2, "YES");
+03-03 12:13:21 jdbc: 
+/**/prep22.setString(3, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep22.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep22.setString(5, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep22.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep22.setString(7, "NODE_NODE");
+03-03 12:13:21 jdbc: 
+/**/prep22.setString(8, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep22.setString(9, "%");
+03-03 12:13:21 jdbc: 
+/**/prep22.setString(10, "\\");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs23 = prep22.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 49
+03-03 12:13:21 jdbc: RESULT_CLOSE 50
+03-03 12:13:21 jdbc: 
+/**/rs23.next();
+03-03 12:13:21 jdbc: 
+/**/rs23.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs23.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs23.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs23.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs23.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs23.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs23.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs23.next();
+03-03 12:13:21 jdbc: 
+/**/rs23.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs23.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs23.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs23.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs23.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs23.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs23.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs23.next();
+03-03 12:13:21 jdbc: 
+/**/rs23.close();
+03-03 12:13:21 jdbc: 
+/**/prep22.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 49
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getImportedKeys("GRASS3H2DB", "PUBLIC", "NODE_NODE");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep23 = conn0.prepareStatement("SELECT PKTABLE_CATALOG PKTABLE_CAT, PKTABLE_SCHEMA PKTABLE_SCHEM, PKTABLE_NAME PKTABLE_NAME, PKCOLUMN_NAME, FKTABLE_CATALOG FKTABLE_CAT, FKTABLE_SCHEMA FKTABLE_SCHEM, FKTABLE_NAME, FKCOLUMN_NAME, ORDINAL_POSITION KEY_SEQ, UPDATE_RULE, DELETE_RULE, FK_NAME, PK_NAME, DEFERRABILITY FROM INFORMATION_SCHEMA.CROSS_REFERENCES WHERE FKTABLE_CATALOG LIKE ? ESCAPE ? AND FKTABLE_SCHEMA LIKE ? ESCAPE ? AND FKTABLE_NAME = ? ORDER BY PKTABLE_CAT, PKTABLE_SCHEM, PKTABLE_NAME, FK_NAME, KEY_SEQ");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 51
+03-03 12:13:21 jdbc: 
+/**/prep23.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep23.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep23.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep23.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep23.setString(5, "NODE_NODE");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs24 = prep23.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 51
+03-03 12:13:21 jdbc: RESULT_CLOSE 52
+03-03 12:13:21 jdbc: 
+/**/rs24.next();
+03-03 12:13:21 jdbc: 
+/**/rs24.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs24.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs24.getString("PKTABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs24.getString("FKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs24.getString("PKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs24.next();
+03-03 12:13:21 jdbc: 
+/**/rs24.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs24.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs24.getString("PKTABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs24.getString("FKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs24.getString("PKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs24.next();
+03-03 12:13:21 jdbc: 
+/**/rs24.close();
+03-03 12:13:21 jdbc: 
+/**/prep23.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 51
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getIndexInfo("GRASS3H2DB", "PUBLIC", "NODE_NODE", false, true);
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep24 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, NON_UNIQUE, TABLE_CATALOG INDEX_QUALIFIER, INDEX_NAME, INDEX_TYPE TYPE, ORDINAL_POSITION, COLUMN_NAME, ASC_OR_DESC, CARDINALITY, PAGES, FILTER_CONDITION, SORT_TYPE FROM INFORMATION_SCHEMA.INDEXES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND (TRUE) AND TABLE_NAME = ? ORDER BY NON_UNIQUE, TYPE, TABLE_SCHEM, INDEX_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 53
+03-03 12:13:21 jdbc: 
+/**/prep24.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep24.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep24.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep24.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep24.setString(5, "NODE_NODE");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs25 = prep24.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 53
+03-03 12:13:21 jdbc: RESULT_CLOSE 54
+03-03 12:13:21 jdbc: 
+/**/rs25.next();
+03-03 12:13:21 jdbc: 
+/**/rs25.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs25.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs25.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs25.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs25.next();
+03-03 12:13:21 jdbc: 
+/**/rs25.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs25.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs25.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs25.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs25.next();
+03-03 12:13:21 jdbc: 
+/**/rs25.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs25.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs25.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs25.next();
+03-03 12:13:21 jdbc: 
+/**/rs25.close();
+03-03 12:13:21 jdbc: 
+/**/prep24.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 53
+03-03 12:13:21 jdbc: 
+/**/rs22.close();
+03-03 12:13:21 jdbc: 
+/**/prep21.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 47
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.storesUpperCaseIdentifiers();
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getTables(null, null, "QUOTE", new String[]{"TABLE", "VIEW"});
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep25 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, TABLE_TYPE, REMARKS, TYPE_NAME TYPE_CAT, TYPE_NAME TYPE_SCHEM, TYPE_NAME, TYPE_NAME SELF_REFERENCING_COL_NAME, TYPE_NAME REF_GENERATION, SQL FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND (TABLE_TYPE IN(?, ?)) ORDER BY TABLE_TYPE, TABLE_SCHEMA, TABLE_NAME");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 55
+03-03 12:13:21 jdbc: 
+/**/prep25.setString(1, "%");
+03-03 12:13:21 jdbc: 
+/**/prep25.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep25.setString(3, "%");
+03-03 12:13:21 jdbc: 
+/**/prep25.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep25.setString(5, "QUOTE");
+03-03 12:13:21 jdbc: 
+/**/prep25.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep25.setString(7, "TABLE");
+03-03 12:13:21 jdbc: 
+/**/prep25.setString(8, "VIEW");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs26 = prep25.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 55
+03-03 12:13:21 jdbc: RESULT_CLOSE 56
+03-03 12:13:21 jdbc: 
+/**/rs26.next();
+03-03 12:13:21 jdbc: 
+/**/rs26.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs26.getString("TABLE_CAT");
+03-03 12:13:21 jdbc: 
+/**/rs26.getString("TABLE_SCHEM");
+03-03 12:13:21 jdbc: 
+/**/rs26.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getColumns("GRASS3H2DB", "PUBLIC", "QUOTE", "%");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep26 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, COLUMN_NAME, DATA_TYPE, TYPE_NAME, CHARACTER_MAXIMUM_LENGTH COLUMN_SIZE, CHARACTER_MAXIMUM_LENGTH BUFFER_LENGTH, NUMERIC_SCALE DECIMAL_DIGITS, NUMERIC_PRECISION_RADIX NUM_PREC_RADIX, NULLABLE, REMARKS, COLUMN_DEFAULT COLUMN_DEF, DATA_TYPE SQL_DATA_TYPE, ZERO() SQL_DATETIME_SUB, CHARACTER_OCTET_LENGTH CHAR_OCTET_LENGTH, ORDINAL_POSITION, IS_NULLABLE IS_NULLABLE, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATALOG, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_SCHEMA, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_TABLE, SOURCE_DATA_TYPE, CASE WHEN SEQUENCE_NAME IS NULL THEN CAST(? AS VARCHAR) ELSE CAST(? AS VARCHAR) END IS_AUTOINCREMENT, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATLOG FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND COLUMN_NAME LIKE ? ESCAPE ? ORDER BY TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 57
+03-03 12:13:21 jdbc: 
+/**/prep26.setString(1, "NO");
+03-03 12:13:21 jdbc: 
+/**/prep26.setString(2, "YES");
+03-03 12:13:21 jdbc: 
+/**/prep26.setString(3, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep26.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep26.setString(5, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep26.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep26.setString(7, "QUOTE");
+03-03 12:13:21 jdbc: 
+/**/prep26.setString(8, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep26.setString(9, "%");
+03-03 12:13:21 jdbc: 
+/**/prep26.setString(10, "\\");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs27 = prep26.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 57
+03-03 12:13:21 jdbc: RESULT_CLOSE 58
+03-03 12:13:21 jdbc: 
+/**/rs27.next();
+03-03 12:13:21 jdbc: 
+/**/rs27.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs27.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs27.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs27.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs27.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs27.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs27.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs27.next();
+03-03 12:13:21 jdbc: 
+/**/rs27.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs27.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs27.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs27.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs27.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs27.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs27.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs27.next();
+03-03 12:13:21 jdbc: 
+/**/rs27.close();
+03-03 12:13:21 jdbc: 
+/**/prep26.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 57
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getImportedKeys("GRASS3H2DB", "PUBLIC", "QUOTE");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep27 = conn0.prepareStatement("SELECT PKTABLE_CATALOG PKTABLE_CAT, PKTABLE_SCHEMA PKTABLE_SCHEM, PKTABLE_NAME PKTABLE_NAME, PKCOLUMN_NAME, FKTABLE_CATALOG FKTABLE_CAT, FKTABLE_SCHEMA FKTABLE_SCHEM, FKTABLE_NAME, FKCOLUMN_NAME, ORDINAL_POSITION KEY_SEQ, UPDATE_RULE, DELETE_RULE, FK_NAME, PK_NAME, DEFERRABILITY FROM INFORMATION_SCHEMA.CROSS_REFERENCES WHERE FKTABLE_CATALOG LIKE ? ESCAPE ? AND FKTABLE_SCHEMA LIKE ? ESCAPE ? AND FKTABLE_NAME = ? ORDER BY PKTABLE_CAT, PKTABLE_SCHEM, PKTABLE_NAME, FK_NAME, KEY_SEQ");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 59
+03-03 12:13:21 jdbc: 
+/**/prep27.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep27.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep27.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep27.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep27.setString(5, "QUOTE");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs28 = prep27.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 59
+03-03 12:13:21 jdbc: RESULT_CLOSE 60
+03-03 12:13:21 jdbc: 
+/**/rs28.next();
+03-03 12:13:21 jdbc: 
+/**/rs28.close();
+03-03 12:13:21 jdbc: 
+/**/prep27.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 59
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getIndexInfo("GRASS3H2DB", "PUBLIC", "QUOTE", false, true);
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep28 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, NON_UNIQUE, TABLE_CATALOG INDEX_QUALIFIER, INDEX_NAME, INDEX_TYPE TYPE, ORDINAL_POSITION, COLUMN_NAME, ASC_OR_DESC, CARDINALITY, PAGES, FILTER_CONDITION, SORT_TYPE FROM INFORMATION_SCHEMA.INDEXES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND (TRUE) AND TABLE_NAME = ? ORDER BY NON_UNIQUE, TYPE, TABLE_SCHEM, INDEX_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 61
+03-03 12:13:21 jdbc: 
+/**/prep28.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep28.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep28.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep28.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep28.setString(5, "QUOTE");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs29 = prep28.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 61
+03-03 12:13:21 jdbc: RESULT_CLOSE 62
+03-03 12:13:21 jdbc: 
+/**/rs29.next();
+03-03 12:13:21 jdbc: 
+/**/rs29.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs29.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs29.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs29.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs29.next();
+03-03 12:13:21 jdbc: 
+/**/rs29.close();
+03-03 12:13:21 jdbc: 
+/**/prep28.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 61
+03-03 12:13:21 jdbc: 
+/**/rs26.close();
+03-03 12:13:21 jdbc: 
+/**/prep25.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 55
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.storesUpperCaseIdentifiers();
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getTables(null, null, "USER_ACCOUNTS", new String[]{"TABLE", "VIEW"});
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep29 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, TABLE_TYPE, REMARKS, TYPE_NAME TYPE_CAT, TYPE_NAME TYPE_SCHEM, TYPE_NAME, TYPE_NAME SELF_REFERENCING_COL_NAME, TYPE_NAME REF_GENERATION, SQL FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND (TABLE_TYPE IN(?, ?)) ORDER BY TABLE_TYPE, TABLE_SCHEMA, TABLE_NAME");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 63
+03-03 12:13:21 jdbc: 
+/**/prep29.setString(1, "%");
+03-03 12:13:21 jdbc: 
+/**/prep29.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep29.setString(3, "%");
+03-03 12:13:21 jdbc: 
+/**/prep29.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep29.setString(5, "USER_ACCOUNTS");
+03-03 12:13:21 jdbc: 
+/**/prep29.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep29.setString(7, "TABLE");
+03-03 12:13:21 jdbc: 
+/**/prep29.setString(8, "VIEW");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs30 = prep29.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 63
+03-03 12:13:21 jdbc: RESULT_CLOSE 64
+03-03 12:13:21 jdbc: 
+/**/rs30.next();
+03-03 12:13:21 jdbc: 
+/**/rs30.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs30.getString("TABLE_CAT");
+03-03 12:13:21 jdbc: 
+/**/rs30.getString("TABLE_SCHEM");
+03-03 12:13:21 jdbc: 
+/**/rs30.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getColumns("GRASS3H2DB", "PUBLIC", "USER_ACCOUNTS", "%");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep30 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, COLUMN_NAME, DATA_TYPE, TYPE_NAME, CHARACTER_MAXIMUM_LENGTH COLUMN_SIZE, CHARACTER_MAXIMUM_LENGTH BUFFER_LENGTH, NUMERIC_SCALE DECIMAL_DIGITS, NUMERIC_PRECISION_RADIX NUM_PREC_RADIX, NULLABLE, REMARKS, COLUMN_DEFAULT COLUMN_DEF, DATA_TYPE SQL_DATA_TYPE, ZERO() SQL_DATETIME_SUB, CHARACTER_OCTET_LENGTH CHAR_OCTET_LENGTH, ORDINAL_POSITION, IS_NULLABLE IS_NULLABLE, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATALOG, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_SCHEMA, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_TABLE, SOURCE_DATA_TYPE, CASE WHEN SEQUENCE_NAME IS NULL THEN CAST(? AS VARCHAR) ELSE CAST(? AS VARCHAR) END IS_AUTOINCREMENT, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATLOG FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND COLUMN_NAME LIKE ? ESCAPE ? ORDER BY TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 65
+03-03 12:13:21 jdbc: 
+/**/prep30.setString(1, "NO");
+03-03 12:13:21 jdbc: 
+/**/prep30.setString(2, "YES");
+03-03 12:13:21 jdbc: 
+/**/prep30.setString(3, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep30.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep30.setString(5, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep30.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep30.setString(7, "USER_ACCOUNTS");
+03-03 12:13:21 jdbc: 
+/**/prep30.setString(8, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep30.setString(9, "%");
+03-03 12:13:21 jdbc: 
+/**/prep30.setString(10, "\\");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs31 = prep30.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 65
+03-03 12:13:21 jdbc: RESULT_CLOSE 66
+03-03 12:13:21 jdbc: 
+/**/rs31.next();
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.next();
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.next();
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.next();
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.next();
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.next();
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.next();
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs31.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs31.next();
+03-03 12:13:21 jdbc: 
+/**/rs31.close();
+03-03 12:13:21 jdbc: 
+/**/prep30.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 65
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getImportedKeys("GRASS3H2DB", "PUBLIC", "USER_ACCOUNTS");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep31 = conn0.prepareStatement("SELECT PKTABLE_CATALOG PKTABLE_CAT, PKTABLE_SCHEMA PKTABLE_SCHEM, PKTABLE_NAME PKTABLE_NAME, PKCOLUMN_NAME, FKTABLE_CATALOG FKTABLE_CAT, FKTABLE_SCHEMA FKTABLE_SCHEM, FKTABLE_NAME, FKCOLUMN_NAME, ORDINAL_POSITION KEY_SEQ, UPDATE_RULE, DELETE_RULE, FK_NAME, PK_NAME, DEFERRABILITY FROM INFORMATION_SCHEMA.CROSS_REFERENCES WHERE FKTABLE_CATALOG LIKE ? ESCAPE ? AND FKTABLE_SCHEMA LIKE ? ESCAPE ? AND FKTABLE_NAME = ? ORDER BY PKTABLE_CAT, PKTABLE_SCHEM, PKTABLE_NAME, FK_NAME, KEY_SEQ");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 67
+03-03 12:13:21 jdbc: 
+/**/prep31.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep31.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep31.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep31.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep31.setString(5, "USER_ACCOUNTS");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs32 = prep31.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 67
+03-03 12:13:21 jdbc: RESULT_CLOSE 68
+03-03 12:13:21 jdbc: 
+/**/rs32.next();
+03-03 12:13:21 jdbc: 
+/**/rs32.close();
+03-03 12:13:21 jdbc: 
+/**/prep31.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 67
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getIndexInfo("GRASS3H2DB", "PUBLIC", "USER_ACCOUNTS", false, true);
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep32 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, NON_UNIQUE, TABLE_CATALOG INDEX_QUALIFIER, INDEX_NAME, INDEX_TYPE TYPE, ORDINAL_POSITION, COLUMN_NAME, ASC_OR_DESC, CARDINALITY, PAGES, FILTER_CONDITION, SORT_TYPE FROM INFORMATION_SCHEMA.INDEXES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND (TRUE) AND TABLE_NAME = ? ORDER BY NON_UNIQUE, TYPE, TABLE_SCHEM, INDEX_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 69
+03-03 12:13:21 jdbc: 
+/**/prep32.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep32.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep32.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep32.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep32.setString(5, "USER_ACCOUNTS");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs33 = prep32.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 69
+03-03 12:13:21 jdbc: RESULT_CLOSE 70
+03-03 12:13:21 jdbc: 
+/**/rs33.next();
+03-03 12:13:21 jdbc: 
+/**/rs33.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs33.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs33.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs33.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs33.next();
+03-03 12:13:21 jdbc: 
+/**/rs33.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs33.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs33.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs33.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs33.next();
+03-03 12:13:21 jdbc: 
+/**/rs33.close();
+03-03 12:13:21 jdbc: 
+/**/prep32.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 69
+03-03 12:13:21 jdbc: 
+/**/rs30.close();
+03-03 12:13:21 jdbc: 
+/**/prep29.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 63
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.storesUpperCaseIdentifiers();
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getTables(null, null, "USER_ACCOUNTS_CONTENTNODE", new String[]{"TABLE", "VIEW"});
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep33 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, TABLE_TYPE, REMARKS, TYPE_NAME TYPE_CAT, TYPE_NAME TYPE_SCHEM, TYPE_NAME, TYPE_NAME SELF_REFERENCING_COL_NAME, TYPE_NAME REF_GENERATION, SQL FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND (TABLE_TYPE IN(?, ?)) ORDER BY TABLE_TYPE, TABLE_SCHEMA, TABLE_NAME");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 71
+03-03 12:13:21 jdbc: 
+/**/prep33.setString(1, "%");
+03-03 12:13:21 jdbc: 
+/**/prep33.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep33.setString(3, "%");
+03-03 12:13:21 jdbc: 
+/**/prep33.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep33.setString(5, "USER_ACCOUNTS_CONTENTNODE");
+03-03 12:13:21 jdbc: 
+/**/prep33.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep33.setString(7, "TABLE");
+03-03 12:13:21 jdbc: 
+/**/prep33.setString(8, "VIEW");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs34 = prep33.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 71
+03-03 12:13:21 jdbc: RESULT_CLOSE 72
+03-03 12:13:21 jdbc: 
+/**/rs34.next();
+03-03 12:13:21 jdbc: 
+/**/rs34.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs34.getString("TABLE_CAT");
+03-03 12:13:21 jdbc: 
+/**/rs34.getString("TABLE_SCHEM");
+03-03 12:13:21 jdbc: 
+/**/rs34.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getColumns("GRASS3H2DB", "PUBLIC", "USER_ACCOUNTS_CONTENTNODE", "%");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep34 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, COLUMN_NAME, DATA_TYPE, TYPE_NAME, CHARACTER_MAXIMUM_LENGTH COLUMN_SIZE, CHARACTER_MAXIMUM_LENGTH BUFFER_LENGTH, NUMERIC_SCALE DECIMAL_DIGITS, NUMERIC_PRECISION_RADIX NUM_PREC_RADIX, NULLABLE, REMARKS, COLUMN_DEFAULT COLUMN_DEF, DATA_TYPE SQL_DATA_TYPE, ZERO() SQL_DATETIME_SUB, CHARACTER_OCTET_LENGTH CHAR_OCTET_LENGTH, ORDINAL_POSITION, IS_NULLABLE IS_NULLABLE, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATALOG, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_SCHEMA, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_TABLE, SOURCE_DATA_TYPE, CASE WHEN SEQUENCE_NAME IS NULL THEN CAST(? AS VARCHAR) ELSE CAST(? AS VARCHAR) END IS_AUTOINCREMENT, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATLOG FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND COLUMN_NAME LIKE ? ESCAPE ? ORDER BY TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 73
+03-03 12:13:21 jdbc: 
+/**/prep34.setString(1, "NO");
+03-03 12:13:21 jdbc: 
+/**/prep34.setString(2, "YES");
+03-03 12:13:21 jdbc: 
+/**/prep34.setString(3, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep34.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep34.setString(5, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep34.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep34.setString(7, "USER_ACCOUNTS_CONTENTNODE");
+03-03 12:13:21 jdbc: 
+/**/prep34.setString(8, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep34.setString(9, "%");
+03-03 12:13:21 jdbc: 
+/**/prep34.setString(10, "\\");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs35 = prep34.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 73
+03-03 12:13:21 jdbc: RESULT_CLOSE 74
+03-03 12:13:21 jdbc: 
+/**/rs35.next();
+03-03 12:13:21 jdbc: 
+/**/rs35.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs35.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs35.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs35.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs35.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs35.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs35.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs35.next();
+03-03 12:13:21 jdbc: 
+/**/rs35.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs35.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs35.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs35.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs35.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs35.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs35.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs35.next();
+03-03 12:13:21 jdbc: 
+/**/rs35.close();
+03-03 12:13:21 jdbc: 
+/**/prep34.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 73
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getImportedKeys("GRASS3H2DB", "PUBLIC", "USER_ACCOUNTS_CONTENTNODE");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep35 = conn0.prepareStatement("SELECT PKTABLE_CATALOG PKTABLE_CAT, PKTABLE_SCHEMA PKTABLE_SCHEM, PKTABLE_NAME PKTABLE_NAME, PKCOLUMN_NAME, FKTABLE_CATALOG FKTABLE_CAT, FKTABLE_SCHEMA FKTABLE_SCHEM, FKTABLE_NAME, FKCOLUMN_NAME, ORDINAL_POSITION KEY_SEQ, UPDATE_RULE, DELETE_RULE, FK_NAME, PK_NAME, DEFERRABILITY FROM INFORMATION_SCHEMA.CROSS_REFERENCES WHERE FKTABLE_CATALOG LIKE ? ESCAPE ? AND FKTABLE_SCHEMA LIKE ? ESCAPE ? AND FKTABLE_NAME = ? ORDER BY PKTABLE_CAT, PKTABLE_SCHEM, PKTABLE_NAME, FK_NAME, KEY_SEQ");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 75
+03-03 12:13:21 jdbc: 
+/**/prep35.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep35.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep35.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep35.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep35.setString(5, "USER_ACCOUNTS_CONTENTNODE");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs36 = prep35.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 75
+03-03 12:13:21 jdbc: RESULT_CLOSE 76
+03-03 12:13:21 jdbc: 
+/**/rs36.next();
+03-03 12:13:21 jdbc: 
+/**/rs36.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs36.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs36.getString("PKTABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs36.getString("FKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs36.getString("PKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs36.next();
+03-03 12:13:21 jdbc: 
+/**/rs36.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs36.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs36.getString("PKTABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs36.getString("FKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs36.getString("PKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs36.next();
+03-03 12:13:21 jdbc: 
+/**/rs36.close();
+03-03 12:13:21 jdbc: 
+/**/prep35.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 75
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getIndexInfo("GRASS3H2DB", "PUBLIC", "USER_ACCOUNTS_CONTENTNODE", false, true);
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep36 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, NON_UNIQUE, TABLE_CATALOG INDEX_QUALIFIER, INDEX_NAME, INDEX_TYPE TYPE, ORDINAL_POSITION, COLUMN_NAME, ASC_OR_DESC, CARDINALITY, PAGES, FILTER_CONDITION, SORT_TYPE FROM INFORMATION_SCHEMA.INDEXES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND (TRUE) AND TABLE_NAME = ? ORDER BY NON_UNIQUE, TYPE, TABLE_SCHEM, INDEX_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 77
+03-03 12:13:21 jdbc: 
+/**/prep36.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep36.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep36.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep36.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep36.setString(5, "USER_ACCOUNTS_CONTENTNODE");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs37 = prep36.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 77
+03-03 12:13:21 jdbc: RESULT_CLOSE 78
+03-03 12:13:21 jdbc: 
+/**/rs37.next();
+03-03 12:13:21 jdbc: 
+/**/rs37.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs37.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs37.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs37.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs37.next();
+03-03 12:13:21 jdbc: 
+/**/rs37.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs37.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs37.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs37.next();
+03-03 12:13:21 jdbc: 
+/**/rs37.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs37.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs37.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs37.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs37.next();
+03-03 12:13:21 jdbc: 
+/**/rs37.close();
+03-03 12:13:21 jdbc: 
+/**/prep36.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 77
+03-03 12:13:21 jdbc: 
+/**/rs34.close();
+03-03 12:13:21 jdbc: 
+/**/prep33.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 71
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.storesUpperCaseIdentifiers();
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getTables(null, null, "USER_ROLES", new String[]{"TABLE", "VIEW"});
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep37 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, TABLE_TYPE, REMARKS, TYPE_NAME TYPE_CAT, TYPE_NAME TYPE_SCHEM, TYPE_NAME, TYPE_NAME SELF_REFERENCING_COL_NAME, TYPE_NAME REF_GENERATION, SQL FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND (TABLE_TYPE IN(?, ?)) ORDER BY TABLE_TYPE, TABLE_SCHEMA, TABLE_NAME");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 79
+03-03 12:13:21 jdbc: 
+/**/prep37.setString(1, "%");
+03-03 12:13:21 jdbc: 
+/**/prep37.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep37.setString(3, "%");
+03-03 12:13:21 jdbc: 
+/**/prep37.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep37.setString(5, "USER_ROLES");
+03-03 12:13:21 jdbc: 
+/**/prep37.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep37.setString(7, "TABLE");
+03-03 12:13:21 jdbc: 
+/**/prep37.setString(8, "VIEW");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs38 = prep37.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 79
+03-03 12:13:21 jdbc: RESULT_CLOSE 80
+03-03 12:13:21 jdbc: 
+/**/rs38.next();
+03-03 12:13:21 jdbc: 
+/**/rs38.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs38.getString("TABLE_CAT");
+03-03 12:13:21 jdbc: 
+/**/rs38.getString("TABLE_SCHEM");
+03-03 12:13:21 jdbc: 
+/**/rs38.getString("TABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getColumns("GRASS3H2DB", "PUBLIC", "USER_ROLES", "%");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep38 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, COLUMN_NAME, DATA_TYPE, TYPE_NAME, CHARACTER_MAXIMUM_LENGTH COLUMN_SIZE, CHARACTER_MAXIMUM_LENGTH BUFFER_LENGTH, NUMERIC_SCALE DECIMAL_DIGITS, NUMERIC_PRECISION_RADIX NUM_PREC_RADIX, NULLABLE, REMARKS, COLUMN_DEFAULT COLUMN_DEF, DATA_TYPE SQL_DATA_TYPE, ZERO() SQL_DATETIME_SUB, CHARACTER_OCTET_LENGTH CHAR_OCTET_LENGTH, ORDINAL_POSITION, IS_NULLABLE IS_NULLABLE, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATALOG, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_SCHEMA, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_TABLE, SOURCE_DATA_TYPE, CASE WHEN SEQUENCE_NAME IS NULL THEN CAST(? AS VARCHAR) ELSE CAST(? AS VARCHAR) END IS_AUTOINCREMENT, CAST(SOURCE_DATA_TYPE AS VARCHAR) SCOPE_CATLOG FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND TABLE_NAME LIKE ? ESCAPE ? AND COLUMN_NAME LIKE ? ESCAPE ? ORDER BY TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 81
+03-03 12:13:21 jdbc: 
+/**/prep38.setString(1, "NO");
+03-03 12:13:21 jdbc: 
+/**/prep38.setString(2, "YES");
+03-03 12:13:21 jdbc: 
+/**/prep38.setString(3, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep38.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep38.setString(5, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep38.setString(6, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep38.setString(7, "USER_ROLES");
+03-03 12:13:21 jdbc: 
+/**/prep38.setString(8, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep38.setString(9, "%");
+03-03 12:13:21 jdbc: 
+/**/prep38.setString(10, "\\");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs39 = prep38.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 81
+03-03 12:13:21 jdbc: RESULT_CLOSE 82
+03-03 12:13:21 jdbc: 
+/**/rs39.next();
+03-03 12:13:21 jdbc: 
+/**/rs39.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs39.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs39.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs39.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs39.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs39.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs39.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs39.next();
+03-03 12:13:21 jdbc: 
+/**/rs39.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs39.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs39.getInt("COLUMN_SIZE");
+03-03 12:13:21 jdbc: 
+/**/rs39.getInt("DECIMAL_DIGITS");
+03-03 12:13:21 jdbc: 
+/**/rs39.getString("IS_NULLABLE");
+03-03 12:13:21 jdbc: 
+/**/rs39.getInt("DATA_TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs39.getString("TYPE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs39.next();
+03-03 12:13:21 jdbc: 
+/**/rs39.close();
+03-03 12:13:21 jdbc: 
+/**/prep38.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 81
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getImportedKeys("GRASS3H2DB", "PUBLIC", "USER_ROLES");
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep39 = conn0.prepareStatement("SELECT PKTABLE_CATALOG PKTABLE_CAT, PKTABLE_SCHEMA PKTABLE_SCHEM, PKTABLE_NAME PKTABLE_NAME, PKCOLUMN_NAME, FKTABLE_CATALOG FKTABLE_CAT, FKTABLE_SCHEMA FKTABLE_SCHEM, FKTABLE_NAME, FKCOLUMN_NAME, ORDINAL_POSITION KEY_SEQ, UPDATE_RULE, DELETE_RULE, FK_NAME, PK_NAME, DEFERRABILITY FROM INFORMATION_SCHEMA.CROSS_REFERENCES WHERE FKTABLE_CATALOG LIKE ? ESCAPE ? AND FKTABLE_SCHEMA LIKE ? ESCAPE ? AND FKTABLE_NAME = ? ORDER BY PKTABLE_CAT, PKTABLE_SCHEM, PKTABLE_NAME, FK_NAME, KEY_SEQ");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 83
+03-03 12:13:21 jdbc: 
+/**/prep39.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep39.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep39.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep39.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep39.setString(5, "USER_ROLES");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs40 = prep39.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 83
+03-03 12:13:21 jdbc: RESULT_CLOSE 84
+03-03 12:13:21 jdbc: 
+/**/rs40.next();
+03-03 12:13:21 jdbc: 
+/**/rs40.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs40.getString("FK_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs40.getString("PKTABLE_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs40.getString("FKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs40.getString("PKCOLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs40.next();
+03-03 12:13:21 jdbc: 
+/**/rs40.close();
+03-03 12:13:21 jdbc: 
+/**/prep39.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 83
+03-03 12:13:21 jdbc: 
+/**/dbMeta2.getIndexInfo("GRASS3H2DB", "PUBLIC", "USER_ROLES", false, true);
+03-03 12:13:21 jdbc: 
+/**/PreparedStatement prep40 = conn0.prepareStatement("SELECT TABLE_CATALOG TABLE_CAT, TABLE_SCHEMA TABLE_SCHEM, TABLE_NAME, NON_UNIQUE, TABLE_CATALOG INDEX_QUALIFIER, INDEX_NAME, INDEX_TYPE TYPE, ORDINAL_POSITION, COLUMN_NAME, ASC_OR_DESC, CARDINALITY, PAGES, FILTER_CONDITION, SORT_TYPE FROM INFORMATION_SCHEMA.INDEXES WHERE TABLE_CATALOG LIKE ? ESCAPE ? AND TABLE_SCHEMA LIKE ? ESCAPE ? AND (TRUE) AND TABLE_NAME = ? ORDER BY NON_UNIQUE, TYPE, TABLE_SCHEM, INDEX_NAME, ORDINAL_POSITION");
+03-03 12:13:21 jdbc: SESSION_PREPARE_READ_PARAMS 85
+03-03 12:13:21 jdbc: 
+/**/prep40.setString(1, "GRASS3H2DB");
+03-03 12:13:21 jdbc: 
+/**/prep40.setString(2, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep40.setString(3, "PUBLIC");
+03-03 12:13:21 jdbc: 
+/**/prep40.setString(4, "\\");
+03-03 12:13:21 jdbc: 
+/**/prep40.setString(5, "USER_ROLES");
+03-03 12:13:21 jdbc: 
+/**/ResultSet rs41 = prep40.executeQuery();
+03-03 12:13:21 jdbc: COMMAND_EXECUTE_QUERY 85
+03-03 12:13:21 jdbc: RESULT_CLOSE 86
+03-03 12:13:21 jdbc: 
+/**/rs41.next();
+03-03 12:13:21 jdbc: 
+/**/rs41.getShort("TYPE");
+03-03 12:13:21 jdbc: 
+/**/rs41.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs41.getString("INDEX_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs41.getString("COLUMN_NAME");
+03-03 12:13:21 jdbc: 
+/**/rs41.next();
+03-03 12:13:21 jdbc: 
+/**/rs41.close();
+03-03 12:13:21 jdbc: 
+/**/prep40.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 85
+03-03 12:13:21 jdbc: 
+/**/rs38.close();
+03-03 12:13:21 jdbc: 
+/**/prep37.close();
+03-03 12:13:21 jdbc: COMMAND_CLOSE 79
+03-03 12:13:21 jdbc: 
+/**/stat1.close();
+03-03 12:13:21 jdbc: 
+/**/conn0.getWarnings();
+03-03 12:13:21 jdbc: 
+/**/conn0.clearWarnings();
+03-03 12:13:21 jdbc: 
+/**/conn0.setAutoCommit(false);
+03-03 12:13:21 jdbc: SESSION_SET_AUTOCOMMIT 0
+03-03 12:13:40 jdbc: 
+/**/conn0.getAutoCommit();
+03-03 12:13:40 jdbc: 
+/**/conn0.getAutoCommit();
+03-03 12:13:40 jdbc: 
+/**/PreparedStatement prep41 = conn0.prepareStatement("select count(*) as y0_ from Quote this_");
+03-03 12:13:40 jdbc: SESSION_PREPARE_READ_PARAMS 87
+03-03 12:13:40 jdbc: 
+/**/ResultSet rs42 = prep41.executeQuery();
+03-03 12:13:40 jdbc: COMMAND_EXECUTE_QUERY 87
+03-03 12:13:40 jdbc: RESULT_CLOSE 88
+03-03 12:13:40 jdbc: 
+/**/rs42.next();
+03-03 12:13:40 jdbc: 
+/**/rs42.getLong("y0_");
+03-03 12:13:40 jdbc: 
+/**/rs42.wasNull();
+03-03 12:13:40 jdbc: 
+/**/rs42.next();
+03-03 12:13:40 jdbc: 
+/**/rs42.close();
+03-03 12:13:40 jdbc: 
+/**/prep41.getMaxRows();
+03-03 12:13:40 jdbc: 
+/**/prep41.getQueryTimeout();
+03-03 12:13:40 jdbc: 
+/**/conn0.getQueryTimeout();
+03-03 12:13:40 jdbc: SESSION_PREPARE_READ_PARAMS 89
+03-03 12:13:40 jdbc: COMMAND_EXECUTE_QUERY 89
+03-03 12:13:40 jdbc: RESULT_CLOSE 90
+03-03 12:13:40 jdbc: 
+/**/prep41.close();
+03-03 12:13:40 jdbc: COMMAND_CLOSE 87
+03-03 12:13:40 jdbc: 
+/**/conn0.commit();
+03-03 12:13:40 jdbc: SESSION_PREPARE 91
+03-03 12:13:40 jdbc: COMMAND_EXECUTE_UPDATE 91

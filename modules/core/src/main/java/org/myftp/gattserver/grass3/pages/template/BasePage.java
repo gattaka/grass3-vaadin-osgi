@@ -22,6 +22,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.Window;
@@ -55,8 +56,8 @@ public abstract class BasePage extends GrassPage {
 	@Resource(name = "settingsPageFactory")
 	private PageFactory settingsPageFactory;
 
-	private CssLayout sectionsMenuLayout;
-	private CssLayout userMenuLayout;
+	private HorizontalLayout sectionsMenuLayout;
+	private HorizontalLayout userMenuLayout;
 
 	private GrassRequest request;
 
@@ -92,7 +93,7 @@ public abstract class BasePage extends GrassPage {
 	}
 
 	private void createSectionsMenu(CustomLayout layout) {
-		sectionsMenuLayout = new CssLayout();
+		sectionsMenuLayout = new HorizontalLayout();
 		layout.addComponent(sectionsMenuLayout, "sectionsmenu");
 
 		sectionsMenuLayout.removeAllComponents();
@@ -118,7 +119,7 @@ public abstract class BasePage extends GrassPage {
 	}
 
 	private void createUserMenu(CustomLayout layout) {
-		userMenuLayout = new CssLayout();
+		userMenuLayout = new HorizontalLayout();
 		layout.addComponent(userMenuLayout, "usermenu");
 
 		userMenuLayout.removeAllComponents();
@@ -189,7 +190,6 @@ public abstract class BasePage extends GrassPage {
 					});
 
 			userDetails.setStyleName("user_status");
-			userDetails.addStyleName("menu_item");
 			userDetails.addStyleName(BaseTheme.BUTTON_LINK);
 			userMenuLayout.addComponent(userDetails);
 

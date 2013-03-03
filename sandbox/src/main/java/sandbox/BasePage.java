@@ -4,10 +4,13 @@ import sandbox.util.GrassRequest;
 
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
+import com.vaadin.ui.themes.BaseTheme;
 
 public abstract class BasePage extends CustomLayout {
 
@@ -68,6 +71,10 @@ public abstract class BasePage extends CustomLayout {
 	private void createUserMenu(CustomLayout layout) {
 		layout.addComponent(userMenuLayout, "usermenu");
 
+		Button btn = new Button("Btn1");
+		btn.setStyleName(BaseTheme.BUTTON_LINK);
+		userMenuLayout.addComponent(btn);
+		
 		String[] strings = { "Uživatel", "Nastavení", "Odhlásit" };
 		for (int i = 0; i < strings.length; i++) {
 			Label item = new Label(strings[i]);
@@ -75,6 +82,10 @@ public abstract class BasePage extends CustomLayout {
 			item.setSizeUndefined();
 			userMenuLayout.addComponent(item);
 		}
+		
+		Button btn2 = new Button("Btn2");
+		btn.setStyleName(BaseTheme.BUTTON_LINK);
+		userMenuLayout.addComponent(btn2);
 	}
 
 }

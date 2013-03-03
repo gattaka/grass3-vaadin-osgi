@@ -1,0 +1,929 @@
+03-03 12:08:43 jdbc: 
+/**/Connection conn87 = DriverManager.getConnection("jdbc:h2:tcp://localhost/grass3H2DB;TRACE_LEVEL_FIlE=3", "SA", "");
+03-03 12:08:43 jdbc: 
+/**/conn87.getAutoCommit();
+03-03 12:08:43 jdbc: 
+/**/conn87.setAutoCommit(false);
+03-03 12:08:43 jdbc: SESSION_SET_AUTOCOMMIT 0
+03-03 12:08:43 jdbc: 
+/**/conn87.getAutoCommit();
+03-03 12:08:43 jdbc: 
+/**/conn87.commit();
+03-03 12:08:43 jdbc: SESSION_PREPARE_READ_PARAMS 0
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_UPDATE 0
+03-03 12:08:43 jdbc: 
+/**/PreparedStatement prep1007 = conn87.prepareStatement("select node0_.id as id4_1_, node0_.name as name4_1_, node0_.parent_id as parent3_4_1_, node1_.id as id4_0_, node1_.name as name4_0_, node1_.parent_id as parent3_4_0_ from NODE node0_ left outer join NODE node1_ on node0_.parent_id=node1_.id where node0_.id=?");
+03-03 12:08:43 jdbc: SESSION_PREPARE_READ_PARAMS 1
+03-03 12:08:43 jdbc: 
+/**/prep1007.setLong(1, 16L);
+03-03 12:08:43 jdbc: 
+/**/ResultSet rs1008 = prep1007.executeQuery();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 1
+03-03 12:08:43 jdbc: RESULT_CLOSE 2
+03-03 12:08:43 jdbc: 
+/**/rs1008.next();
+03-03 12:08:43 jdbc: 
+/**/rs1008.getLong("id4_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1008.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1008.getString("name4_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1008.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1008.getLong("parent3_4_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1008.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1008.getString("name4_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1008.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1008.getLong("parent3_4_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1008.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1008.next();
+03-03 12:08:43 jdbc: 
+/**/rs1008.close();
+03-03 12:08:43 jdbc: 
+/**/prep1007.getMaxRows();
+03-03 12:08:43 jdbc: 
+/**/prep1007.getQueryTimeout();
+03-03 12:08:43 jdbc: 
+/**/conn87.getQueryTimeout();
+03-03 12:08:43 jdbc: SESSION_PREPARE_READ_PARAMS 3
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 3
+03-03 12:08:43 jdbc: RESULT_CLOSE 4
+03-03 12:08:43 jdbc: 
+/**/prep1007.close();
+03-03 12:08:43 jdbc: COMMAND_CLOSE 1
+03-03 12:08:43 jdbc: 
+/**/PreparedStatement prep1008 = conn87.prepareStatement("select node0_.id as id4_1_, node0_.name as name4_1_, node0_.parent_id as parent3_4_1_, node1_.id as id4_0_, node1_.name as name4_0_, node1_.parent_id as parent3_4_0_ from NODE node0_ left outer join NODE node1_ on node0_.parent_id=node1_.id where node0_.id=?");
+03-03 12:08:43 jdbc: SESSION_PREPARE_READ_PARAMS 5
+03-03 12:08:43 jdbc: 
+/**/prep1008.setLong(1, 2L);
+03-03 12:08:43 jdbc: 
+/**/ResultSet rs1009 = prep1008.executeQuery();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 5
+03-03 12:08:43 jdbc: RESULT_CLOSE 6
+03-03 12:08:43 jdbc: 
+/**/rs1009.next();
+03-03 12:08:43 jdbc: 
+/**/rs1009.getLong("id4_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1009.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1009.getString("name4_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1009.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1009.getLong("parent3_4_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1009.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1009.getString("name4_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1009.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1009.getLong("parent3_4_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1009.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1009.next();
+03-03 12:08:43 jdbc: 
+/**/rs1009.close();
+03-03 12:08:43 jdbc: 
+/**/prep1008.getMaxRows();
+03-03 12:08:43 jdbc: 
+/**/prep1008.getQueryTimeout();
+03-03 12:08:43 jdbc: 
+/**/conn87.getQueryTimeout();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 3
+03-03 12:08:43 jdbc: RESULT_CLOSE 7
+03-03 12:08:43 jdbc: 
+/**/prep1008.close();
+03-03 12:08:43 jdbc: COMMAND_CLOSE 5
+03-03 12:08:43 jdbc: 
+/**/PreparedStatement prep1009 = conn87.prepareStatement("select contentnod0_.NODE_id as NODE1_4_4_, contentnod0_.contentNodes_id as contentN2_4_, contentnod1_.id as id1_0_, contentnod1_.author_id as author8_1_0_, contentnod1_.contentId as contentId1_0_, contentnod1_.contentReaderId as contentR3_1_0_, contentnod1_.creationDate as creation4_1_0_, contentnod1_.lastModificationDate as lastModi5_1_0_, contentnod1_.name as name1_0_, contentnod1_.parent_id as parent9_1_0_, contentnod1_.publicated as publicated1_0_, user2_.id as id0_1_, user2_.confirmed as confirmed0_1_, user2_.email as email0_1_, user2_.LAST_LOGIN_DATE as LAST4_0_1_, user2_.name as name0_1_, user2_.password as password0_1_, user2_.REGISTRATION_DATE as REGISTRA7_0_1_, node3_.id as id4_2_, node3_.name as name4_2_, node3_.parent_id as parent3_4_2_, node4_.id as id4_3_, node4_.name as name4_3_, node4_.parent_id as parent3_4_3_ from NODE_CONTENTNODE contentnod0_ inner join CONTENTNODE contentnod1_ on contentnod0_.contentNodes_id=contentnod1_.id left outer join USER_ACCOUNTS user2_ on contentnod1_.author_id=user2_.id left outer join NODE node3_ on contentnod1_.parent_id=node3_.id left outer join NODE node4_ on node3_.parent_id=node4_.id where contentnod0_.NODE_id=?");
+03-03 12:08:43 jdbc: SESSION_PREPARE_READ_PARAMS 8
+03-03 12:08:43 jdbc: 
+/**/prep1009.setLong(1, 16L);
+03-03 12:08:43 jdbc: 
+/**/ResultSet rs1010 = prep1009.executeQuery();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 8
+03-03 12:08:43 jdbc: RESULT_CLOSE 9
+03-03 12:08:43 jdbc: 
+/**/rs1010.next();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id0_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id4_2_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id4_3_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("author8_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("contentId1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getString("contentR3_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getTimestamp("creation4_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getTimestamp("lastModi5_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getString("name1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("parent9_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getBoolean("publicated1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getBoolean("confirmed0_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getString("email0_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getTimestamp("LAST4_0_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.getString("name0_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getString("password0_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getTimestamp("REGISTRA7_0_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("NODE1_4_4_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("contentN2_4_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.next();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id0_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id4_2_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id4_3_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("author8_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("contentId1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getString("contentR3_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getTimestamp("creation4_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getTimestamp("lastModi5_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getString("name1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("parent9_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getBoolean("publicated1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("NODE1_4_4_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("contentN2_4_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.next();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id0_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id4_2_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id4_3_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("author8_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("contentId1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getString("contentR3_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getTimestamp("creation4_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getTimestamp("lastModi5_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getString("name1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("parent9_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getBoolean("publicated1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("NODE1_4_4_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("contentN2_4_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.next();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id0_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id4_2_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id4_3_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("author8_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("contentId1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getString("contentR3_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getTimestamp("creation4_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getTimestamp("lastModi5_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getString("name1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("parent9_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getBoolean("publicated1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("NODE1_4_4_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("contentN2_4_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.next();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id0_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id4_2_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id4_3_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("author8_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("contentId1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getString("contentR3_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getTimestamp("creation4_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getTimestamp("lastModi5_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getString("name1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("parent9_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getBoolean("publicated1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("NODE1_4_4_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("contentN2_4_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.next();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id0_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id4_2_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("id4_3_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("author8_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("contentId1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getString("contentR3_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getTimestamp("creation4_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getTimestamp("lastModi5_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getString("name1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("parent9_1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getBoolean("publicated1_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("NODE1_4_4_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.getLong("contentN2_4_");
+03-03 12:08:43 jdbc: 
+/**/rs1010.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1010.next();
+03-03 12:08:43 jdbc: 
+/**/rs1010.close();
+03-03 12:08:43 jdbc: 
+/**/prep1009.getMaxRows();
+03-03 12:08:43 jdbc: 
+/**/prep1009.getQueryTimeout();
+03-03 12:08:43 jdbc: 
+/**/conn87.getQueryTimeout();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 3
+03-03 12:08:43 jdbc: RESULT_CLOSE 10
+03-03 12:08:43 jdbc: 
+/**/prep1009.close();
+03-03 12:08:43 jdbc: COMMAND_CLOSE 8
+03-03 12:08:43 jdbc: 
+/**/PreparedStatement prep1010 = conn87.prepareStatement("select roles0_.User_id as User1_0_0_, roles0_.roles as roles0_ from User_roles roles0_ where roles0_.User_id=?");
+03-03 12:08:43 jdbc: SESSION_PREPARE_READ_PARAMS 11
+03-03 12:08:43 jdbc: 
+/**/prep1010.setLong(1, 1L);
+03-03 12:08:43 jdbc: 
+/**/ResultSet rs1011 = prep1010.executeQuery();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 11
+03-03 12:08:43 jdbc: RESULT_CLOSE 12
+03-03 12:08:43 jdbc: 
+/**/rs1011.next();
+03-03 12:08:43 jdbc: 
+/**/rs1011.getLong("User1_0_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1011.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1011.getObject("roles0_");
+03-03 12:08:43 jdbc: 
+/**/rs1011.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1011.next();
+03-03 12:08:43 jdbc: 
+/**/rs1011.getLong("User1_0_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1011.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1011.getObject("roles0_");
+03-03 12:08:43 jdbc: 
+/**/rs1011.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1011.next();
+03-03 12:08:43 jdbc: 
+/**/rs1011.getLong("User1_0_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1011.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1011.getObject("roles0_");
+03-03 12:08:43 jdbc: 
+/**/rs1011.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1011.next();
+03-03 12:08:43 jdbc: 
+/**/rs1011.getLong("User1_0_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1011.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1011.getObject("roles0_");
+03-03 12:08:43 jdbc: 
+/**/rs1011.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1011.next();
+03-03 12:08:43 jdbc: 
+/**/rs1011.getLong("User1_0_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1011.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1011.getObject("roles0_");
+03-03 12:08:43 jdbc: 
+/**/rs1011.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1011.next();
+03-03 12:08:43 jdbc: 
+/**/rs1011.close();
+03-03 12:08:43 jdbc: 
+/**/prep1010.getMaxRows();
+03-03 12:08:43 jdbc: 
+/**/prep1010.getQueryTimeout();
+03-03 12:08:43 jdbc: 
+/**/conn87.getQueryTimeout();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 3
+03-03 12:08:43 jdbc: RESULT_CLOSE 13
+03-03 12:08:43 jdbc: 
+/**/prep1010.close();
+03-03 12:08:43 jdbc: COMMAND_CLOSE 11
+03-03 12:08:43 jdbc: 
+/**/PreparedStatement prep1011 = conn87.prepareStatement("select contenttag0_.contentNodes_id as contentN1_1_1_, contenttag0_.contentTags_id as contentT2_1_, contenttag1_.id as id2_0_, contenttag1_.name as name2_0_ from CONTENTNODE_CONTENT_TAG contenttag0_ inner join CONTENT_TAG contenttag1_ on contenttag0_.contentTags_id=contenttag1_.id where contenttag0_.contentNodes_id=?");
+03-03 12:08:43 jdbc: SESSION_PREPARE_READ_PARAMS 14
+03-03 12:08:43 jdbc: 
+/**/prep1011.setLong(1, 68L);
+03-03 12:08:43 jdbc: 
+/**/ResultSet rs1012 = prep1011.executeQuery();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 14
+03-03 12:08:43 jdbc: RESULT_CLOSE 15
+03-03 12:08:43 jdbc: 
+/**/rs1012.next();
+03-03 12:08:43 jdbc: 
+/**/rs1012.getLong("id2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1012.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1012.getString("name2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1012.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1012.getLong("contentN1_1_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1012.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1012.getLong("contentT2_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1012.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1012.next();
+03-03 12:08:43 jdbc: 
+/**/rs1012.getLong("id2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1012.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1012.getString("name2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1012.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1012.getLong("contentN1_1_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1012.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1012.getLong("contentT2_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1012.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1012.next();
+03-03 12:08:43 jdbc: 
+/**/rs1012.close();
+03-03 12:08:43 jdbc: 
+/**/prep1011.getMaxRows();
+03-03 12:08:43 jdbc: 
+/**/prep1011.getQueryTimeout();
+03-03 12:08:43 jdbc: 
+/**/conn87.getQueryTimeout();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 3
+03-03 12:08:43 jdbc: RESULT_CLOSE 16
+03-03 12:08:43 jdbc: 
+/**/prep1011.close();
+03-03 12:08:43 jdbc: COMMAND_CLOSE 14
+03-03 12:08:43 jdbc: 
+/**/PreparedStatement prep1012 = conn87.prepareStatement("select contenttag0_.contentNodes_id as contentN1_1_1_, contenttag0_.contentTags_id as contentT2_1_, contenttag1_.id as id2_0_, contenttag1_.name as name2_0_ from CONTENTNODE_CONTENT_TAG contenttag0_ inner join CONTENT_TAG contenttag1_ on contenttag0_.contentTags_id=contenttag1_.id where contenttag0_.contentNodes_id=?");
+03-03 12:08:43 jdbc: SESSION_PREPARE_READ_PARAMS 17
+03-03 12:08:43 jdbc: 
+/**/prep1012.setLong(1, 55L);
+03-03 12:08:43 jdbc: 
+/**/ResultSet rs1013 = prep1012.executeQuery();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 17
+03-03 12:08:43 jdbc: RESULT_CLOSE 18
+03-03 12:08:43 jdbc: 
+/**/rs1013.next();
+03-03 12:08:43 jdbc: 
+/**/rs1013.getLong("id2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1013.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1013.getLong("contentN1_1_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1013.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1013.getLong("contentT2_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1013.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1013.next();
+03-03 12:08:43 jdbc: 
+/**/rs1013.getLong("id2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1013.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1013.getString("name2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1013.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1013.getLong("contentN1_1_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1013.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1013.getLong("contentT2_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1013.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1013.next();
+03-03 12:08:43 jdbc: 
+/**/rs1013.close();
+03-03 12:08:43 jdbc: 
+/**/prep1012.getMaxRows();
+03-03 12:08:43 jdbc: 
+/**/prep1012.getQueryTimeout();
+03-03 12:08:43 jdbc: 
+/**/conn87.getQueryTimeout();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 3
+03-03 12:08:43 jdbc: RESULT_CLOSE 19
+03-03 12:08:43 jdbc: 
+/**/prep1012.close();
+03-03 12:08:43 jdbc: COMMAND_CLOSE 17
+03-03 12:08:43 jdbc: 
+/**/PreparedStatement prep1013 = conn87.prepareStatement("select contenttag0_.contentNodes_id as contentN1_1_1_, contenttag0_.contentTags_id as contentT2_1_, contenttag1_.id as id2_0_, contenttag1_.name as name2_0_ from CONTENTNODE_CONTENT_TAG contenttag0_ inner join CONTENT_TAG contenttag1_ on contenttag0_.contentTags_id=contenttag1_.id where contenttag0_.contentNodes_id=?");
+03-03 12:08:43 jdbc: SESSION_PREPARE_READ_PARAMS 20
+03-03 12:08:43 jdbc: 
+/**/prep1013.setLong(1, 54L);
+03-03 12:08:43 jdbc: 
+/**/ResultSet rs1014 = prep1013.executeQuery();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 20
+03-03 12:08:43 jdbc: RESULT_CLOSE 21
+03-03 12:08:43 jdbc: 
+/**/rs1014.next();
+03-03 12:08:43 jdbc: 
+/**/rs1014.getLong("id2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1014.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1014.getString("name2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1014.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1014.getLong("contentN1_1_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1014.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1014.getLong("contentT2_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1014.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1014.next();
+03-03 12:08:43 jdbc: 
+/**/rs1014.getLong("id2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1014.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1014.getString("name2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1014.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1014.getLong("contentN1_1_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1014.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1014.getLong("contentT2_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1014.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1014.next();
+03-03 12:08:43 jdbc: 
+/**/rs1014.getLong("id2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1014.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1014.getString("name2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1014.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1014.getLong("contentN1_1_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1014.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1014.getLong("contentT2_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1014.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1014.next();
+03-03 12:08:43 jdbc: 
+/**/rs1014.getLong("id2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1014.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1014.getLong("contentN1_1_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1014.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1014.getLong("contentT2_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1014.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1014.next();
+03-03 12:08:43 jdbc: 
+/**/rs1014.close();
+03-03 12:08:43 jdbc: 
+/**/prep1013.getMaxRows();
+03-03 12:08:43 jdbc: 
+/**/prep1013.getQueryTimeout();
+03-03 12:08:43 jdbc: 
+/**/conn87.getQueryTimeout();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 3
+03-03 12:08:43 jdbc: RESULT_CLOSE 22
+03-03 12:08:43 jdbc: 
+/**/prep1013.close();
+03-03 12:08:43 jdbc: COMMAND_CLOSE 20
+03-03 12:08:43 jdbc: 
+/**/PreparedStatement prep1014 = conn87.prepareStatement("select contenttag0_.contentNodes_id as contentN1_1_1_, contenttag0_.contentTags_id as contentT2_1_, contenttag1_.id as id2_0_, contenttag1_.name as name2_0_ from CONTENTNODE_CONTENT_TAG contenttag0_ inner join CONTENT_TAG contenttag1_ on contenttag0_.contentTags_id=contenttag1_.id where contenttag0_.contentNodes_id=?");
+03-03 12:08:43 jdbc: SESSION_PREPARE_READ_PARAMS 23
+03-03 12:08:43 jdbc: 
+/**/prep1014.setLong(1, 53L);
+03-03 12:08:43 jdbc: 
+/**/ResultSet rs1015 = prep1014.executeQuery();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 23
+03-03 12:08:43 jdbc: RESULT_CLOSE 24
+03-03 12:08:43 jdbc: 
+/**/rs1015.next();
+03-03 12:08:43 jdbc: 
+/**/rs1015.getLong("id2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1015.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1015.getString("name2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1015.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1015.getLong("contentN1_1_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1015.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1015.getLong("contentT2_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1015.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1015.next();
+03-03 12:08:43 jdbc: 
+/**/rs1015.getLong("id2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1015.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1015.getLong("contentN1_1_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1015.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1015.getLong("contentT2_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1015.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1015.next();
+03-03 12:08:43 jdbc: 
+/**/rs1015.close();
+03-03 12:08:43 jdbc: 
+/**/prep1014.getMaxRows();
+03-03 12:08:43 jdbc: 
+/**/prep1014.getQueryTimeout();
+03-03 12:08:43 jdbc: 
+/**/conn87.getQueryTimeout();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 3
+03-03 12:08:43 jdbc: RESULT_CLOSE 25
+03-03 12:08:43 jdbc: 
+/**/prep1014.close();
+03-03 12:08:43 jdbc: COMMAND_CLOSE 23
+03-03 12:08:43 jdbc: 
+/**/PreparedStatement prep1015 = conn87.prepareStatement("select contenttag0_.contentNodes_id as contentN1_1_1_, contenttag0_.contentTags_id as contentT2_1_, contenttag1_.id as id2_0_, contenttag1_.name as name2_0_ from CONTENTNODE_CONTENT_TAG contenttag0_ inner join CONTENT_TAG contenttag1_ on contenttag0_.contentTags_id=contenttag1_.id where contenttag0_.contentNodes_id=?");
+03-03 12:08:43 jdbc: SESSION_PREPARE_READ_PARAMS 26
+03-03 12:08:43 jdbc: 
+/**/prep1015.setLong(1, 67L);
+03-03 12:08:43 jdbc: 
+/**/ResultSet rs1016 = prep1015.executeQuery();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 26
+03-03 12:08:43 jdbc: RESULT_CLOSE 27
+03-03 12:08:43 jdbc: 
+/**/rs1016.next();
+03-03 12:08:43 jdbc: 
+/**/rs1016.getLong("id2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1016.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1016.getLong("contentN1_1_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1016.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1016.getLong("contentT2_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1016.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1016.next();
+03-03 12:08:43 jdbc: 
+/**/rs1016.getLong("id2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1016.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1016.getLong("contentN1_1_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1016.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1016.getLong("contentT2_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1016.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1016.next();
+03-03 12:08:43 jdbc: 
+/**/rs1016.close();
+03-03 12:08:43 jdbc: 
+/**/prep1015.getMaxRows();
+03-03 12:08:43 jdbc: 
+/**/prep1015.getQueryTimeout();
+03-03 12:08:43 jdbc: 
+/**/conn87.getQueryTimeout();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 3
+03-03 12:08:43 jdbc: RESULT_CLOSE 28
+03-03 12:08:43 jdbc: 
+/**/prep1015.close();
+03-03 12:08:43 jdbc: COMMAND_CLOSE 26
+03-03 12:08:43 jdbc: 
+/**/PreparedStatement prep1016 = conn87.prepareStatement("select contenttag0_.contentNodes_id as contentN1_1_1_, contenttag0_.contentTags_id as contentT2_1_, contenttag1_.id as id2_0_, contenttag1_.name as name2_0_ from CONTENTNODE_CONTENT_TAG contenttag0_ inner join CONTENT_TAG contenttag1_ on contenttag0_.contentTags_id=contenttag1_.id where contenttag0_.contentNodes_id=?");
+03-03 12:08:43 jdbc: SESSION_PREPARE_READ_PARAMS 29
+03-03 12:08:43 jdbc: 
+/**/prep1016.setLong(1, 52L);
+03-03 12:08:43 jdbc: 
+/**/ResultSet rs1017 = prep1016.executeQuery();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 29
+03-03 12:08:43 jdbc: RESULT_CLOSE 30
+03-03 12:08:43 jdbc: 
+/**/rs1017.next();
+03-03 12:08:43 jdbc: 
+/**/rs1017.getLong("id2_0_");
+03-03 12:08:43 jdbc: 
+/**/rs1017.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1017.getLong("contentN1_1_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1017.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1017.getLong("contentT2_1_");
+03-03 12:08:43 jdbc: 
+/**/rs1017.wasNull();
+03-03 12:08:43 jdbc: 
+/**/rs1017.next();
+03-03 12:08:43 jdbc: 
+/**/rs1017.close();
+03-03 12:08:43 jdbc: 
+/**/prep1016.getMaxRows();
+03-03 12:08:43 jdbc: 
+/**/prep1016.getQueryTimeout();
+03-03 12:08:43 jdbc: 
+/**/conn87.getQueryTimeout();
+03-03 12:08:43 jdbc: COMMAND_EXECUTE_QUERY 3
+03-03 12:08:43 jdbc: RESULT_CLOSE 31
+03-03 12:08:43 jdbc: 
+/**/prep1016.close();
+03-03 12:08:43 jdbc: COMMAND_CLOSE 29
+03-03 12:08:43 jdbc: SESSION_CLOSE 0

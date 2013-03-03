@@ -2,17 +2,15 @@ package org.myftp.gattserver.grass3;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.facades.SecurityFacade;
-import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
 import org.myftp.gattserver.grass3.util.GrassRequest;
-import org.myftp.gattserver.grass3.util.Mapper;
 import org.myftp.gattserver.grass3.util.PageFactoriesRegister;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.annotations.Theme;
@@ -30,60 +28,27 @@ public class GrassUI extends UI {
 	private static Logger logger = LoggerFactory.getLogger(GrassUI.class);
 
 	/**
-	 * Fasády
-	 */
-	@Resource(name = "securityFacade")
-	private SecurityFacade securityFacade;
-
-	/**
-	 * Mapper
-	 */
-	@Resource(name = "mapper")
-	private Mapper mapper;
-
-	/**
 	 * Mapa stránek
 	 */
 	@Resource(name = "pageFactoriesRegister")
 	private PageFactoriesRegister pageFactoriesRegister;
 
-	/**
-	 * Auth
-	 */
-	private UserInfoDTO user = null;
-
-	/**
-	 * Authentikační metoda pro aplikaci
-	 * 
-	 * @param username
-	 *            jméno uživatele, který se přihlašuje
-	 * @param password
-	 *            heslo, které použil
-	 * @return true pokud se přihlášení zdařilo, jinak false
-	 */
-	public boolean login(String username, String password) {
-
-		User loggedUser = securityFacade.authenticate(username, password);
-		if (loggedUser != null) {
-			user = mapper.map(loggedUser);
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Odhlášení
-	 */
-	public void logout() {
-		this.user = null;
-	}
+	@Resource(name = "securityFacade")
+	private SecurityFacade securityFacade;
 
 	/**
 	 * Získá aktuálního přihlášeného uživatele jako {@link UserInfoDTO} objekt
 	 */
 	public UserInfoDTO getUser() {
-		return user;
+		return securityFacade.getCurrentUser();
+	}
+
+	public boolean login(String username, String password) {
+		return securityFacade.login(username, password);
+	}
+
+	public void logout() {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -100,5 +65,4 @@ public class GrassUI extends UI {
 		setContent(factory.createPage(grassRequest));
 
 	}
-
 }

@@ -1,10 +1,13 @@
 package org.myftp.gattserver.grass3.model.dto;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.security.Role;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Objekt sloužící pro přepravu dat mezi fasádou a view třídami. Obsahuje pouze
@@ -15,7 +18,9 @@ import org.myftp.gattserver.grass3.security.Role;
  * @author gatt
  * 
  */
-public class UserInfoDTO {
+public class UserInfoDTO implements UserDetails {
+
+	private static final long serialVersionUID = -3792334399923911589L;
 
 	/**
 	 * Jméno uživatele
@@ -69,10 +74,6 @@ public class UserInfoDTO {
 		this.name = name;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -119,6 +120,41 @@ public class UserInfoDTO {
 
 	public void setConfirmed(boolean confirmed) {
 		this.confirmed = confirmed;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return false;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return this.isConfirmed();
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public String getUsername() {
+		return this.getName();
+	}
+
+	@Override
+	public String getPassword() {
+		return password;
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return this.getRoles();
 	}
 
 }

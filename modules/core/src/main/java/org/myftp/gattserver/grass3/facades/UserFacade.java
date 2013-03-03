@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.myftp.gattserver.grass3.GrassPasswordEncoder;
 import org.myftp.gattserver.grass3.model.dao.UserDAO;
 import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
@@ -43,16 +44,37 @@ public class UserFacade {
 
 	@Resource(name = "mapper")
 	private Mapper mapper;
-	
-	@Resource(name = "securityFacade")
-	private SecurityFacade securityFacade;
+
+	@Resource(name = "grassPasswordEncoder")
+	private GrassPasswordEncoder encoder;
 
 	@Resource(name = "userDAO")
 	private UserDAO userDAO;
-	
+
 	private UserFacade() {
 	}
-	
+
+	/**
+	 * Zkusí najít uživatele dle jména a hesla
+	 * 
+	 * @param username
+	 * @param password
+	 * @return
+	 */
+	public UserInfoDTO getUserByLogin(String username, String password) {
+		List<User> loggedUser = userDAO.findByName(username);
+		if (loggedUser != null
+				&& loggedUser.size() == 1
+				&& loggedUser.get(0).getPassword()
+						.equals(encoder.encodePassword(password))) {
+
+			User user = loggedUser.get(0);
+			if (user != null)
+				return mapper.map(user);
+		}
+		return null;
+	}
+
 	/**
 	 * Zaregistruje nového uživatele
 	 * 
@@ -69,13 +91,13 @@ public class UserFacade {
 		user.setConfirmed(false);
 		user.setEmail(email);
 		user.setName(username);
-		user.setPassword(securityFacade.makeHashFromPasswordString(password));
+		user.setPassword(encoder.encodePassword(password));
 		user.setRegistrationDate(Calendar.getInstance().getTime());
 		EnumSet<Role> roles = EnumSet.of(Role.USER);
 		user.setRoles(roles);
 
 		// u save se session uzavírá sama
-		
+
 		if (userDAO.save(user) == null) {
 			return false;
 		} else {
@@ -136,9 +158,25 @@ public class UserFacade {
 		for (User user : users) {
 			infoDTOs.add(mapper.map(user));
 		}
-		
+
 		userDAO.closeSession();
 		return infoDTOs;
+	}
+
+	/**
+	 * Vrátí uživatele dle jména
+	 * 
+	 * @param username
+	 * @return
+	 */
+	public UserInfoDTO getUser(String username) {
+		List<User> loggedUser = userDAO.findByName(username);
+		if (loggedUser != null && loggedUser.size() == 1) {
+			User user = loggedUser.get(0);
+			if (user != null)
+				return mapper.map(user);
+		}
+		return null;
 	}
 
 }

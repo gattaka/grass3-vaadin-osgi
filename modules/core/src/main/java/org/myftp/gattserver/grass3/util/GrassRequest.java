@@ -13,10 +13,16 @@ public class GrassRequest {
 
 	private VaadinRequest vaadinRequest;
 	private URLPathAnalyzer analyzer;
+	private String contextRoot;
 
 	public GrassRequest(VaadinRequest vaadinRequest) {
 		this.vaadinRequest = vaadinRequest;
 		this.analyzer = new URLPathAnalyzer(vaadinRequest.getPathInfo());
+		this.contextRoot = vaadinRequest.getContextPath();
+	}
+
+	public String getContextRoot() {
+		return contextRoot;
 	}
 
 	public VaadinRequest getVaadinRequest() {

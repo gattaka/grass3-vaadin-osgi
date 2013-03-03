@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.myftp.gattserver.grass3.service.IContentService;
 import org.myftp.gattserver.grass3.service.ISectionService;
-import org.myftp.gattserver.grass3.service.ISettingsService;
 
 /**
  * {@link ServiceHolder} udržuje přehled všech přihlášených modulů. Zároveň
@@ -53,19 +52,6 @@ public class ServiceHolder {
 
 	public static List<ISectionService> getSectionServices() {
 		return sectionServices;
-	}
-
-	/**
-	 * Settings
-	 */
-	private static List<ISettingsService> settingsServices = new ArrayList<ISettingsService>();
-
-	public static boolean addSettingsService(ISettingsService settingsService) {
-		return settingsServices.add(settingsService);
-	}
-
-	public static List<ISettingsService> getSettingsServices() {
-		return settingsServices;
 	}
 
 }

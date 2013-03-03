@@ -1,9 +1,11 @@
 package org.myftp.gattserver.grass3.pages;
 
-import org.myftp.gattserver.grass3.ServiceHolder;
+import java.util.List;
+
+import org.myftp.gattserver.grass3.pages.factories.template.AbstractSettingsPageFactory;
 import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
-import org.myftp.gattserver.grass3.service.ISettingsService;
 import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 
 import com.vaadin.ui.Alignment;
@@ -18,6 +20,9 @@ public class SettingsPage extends TwoColumnPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
+	@Autowired
+	public List<AbstractSettingsPageFactory> settingsPageFactories;
+
 	public SettingsPage(GrassRequest request) {
 		super(request);
 	}
@@ -27,10 +32,9 @@ public class SettingsPage extends TwoColumnPage {
 		VerticalLayout leftColumnLayout = new VerticalLayout();
 		leftColumnLayout.setMargin(true);
 
-		for (ISettingsService settingsService : ServiceHolder
-				.getSettingsServices()) {
-			Link link = new Link(settingsService.getSettingsCaption(),
-					getPageResource(settingsService.getSettingsPageFactory()));
+		for (AbstractSettingsPageFactory settingsPageFactory : settingsPageFactories) {
+			Link link = new Link(settingsPageFactory.getSettingsCaption(),
+					getPageResource(settingsPageFactory));
 			leftColumnLayout.addComponent(link);
 		}
 

@@ -10,7 +10,6 @@ import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.annotations.Theme;
@@ -55,6 +54,8 @@ public class GrassUI extends UI {
 	public void init(VaadinRequest request) {
 
 		String path = request.getPathInfo();
+		String contextPath = request.getContextPath();
+		logger.info("Context Path: [" + contextPath + "]");
 		logger.info("Path: [" + path + "]");
 
 		GrassRequest grassRequest = new GrassRequest(request);

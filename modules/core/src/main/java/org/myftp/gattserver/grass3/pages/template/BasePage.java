@@ -58,10 +58,8 @@ public abstract class BasePage extends GrassPage {
 	private HorizontalLayout sectionsMenuLayout;
 	private HorizontalLayout userMenuLayout;
 
-	private GrassRequest request;
-
 	public BasePage(GrassRequest request) {
-		this.request = request;
+		super(request);
 	}
 
 	@Override
@@ -85,10 +83,6 @@ public abstract class BasePage extends GrassPage {
 		// menu
 		createSectionsMenu(menu);
 		createUserMenu(menu);
-	}
-
-	protected GrassRequest getRequest() {
-		return request;
 	}
 
 	private void createSectionsMenu(CustomLayout layout) {

@@ -9,6 +9,7 @@ import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
+import org.myftp.gattserver.grass3.util.GrassRequest;
 
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Page;
@@ -22,14 +23,21 @@ public abstract class GrassPage extends CustomLayout {
 
 	private static final long serialVersionUID = 604170960797872356L;
 
-	@Resource(name="homePageFactory")
+	@Resource(name = "homePageFactory")
 	private PageFactory homePageFactory;
-	
-	public GrassPage() {
+
+	private GrassRequest request;
+
+	public GrassPage(GrassRequest request) {
 		super("grass");
+		this.request = request;
 		addStyleName("grass_layout");
 	}
-	
+
+	protected GrassRequest getRequest() {
+		return request;
+	}
+
 	@SuppressWarnings("unused")
 	@PostConstruct
 	private void init() {
@@ -72,7 +80,7 @@ public abstract class GrassPage extends CustomLayout {
 	 * Získá URL stránky
 	 */
 	public String getPageURL(PageFactory pageFactory) {
-		return "/" + pageFactory.getPageName();
+		return request.getContextRoot() + "/" + pageFactory.getPageName();
 	}
 
 	/**
@@ -167,5 +175,5 @@ public abstract class GrassPage extends CustomLayout {
 	public void showError404() {
 		// TODO
 	}
-	
+
 }

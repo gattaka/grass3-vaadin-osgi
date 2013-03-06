@@ -1,0 +1,130 @@
+03-06 19:22:45 jdbc: 
+/**/Connection conn86 = DriverManager.getConnection("jdbc:h2:tcp://localhost/grass3H2DB;TRACE_LEVEL_FIlE=3", "SA", "");
+03-06 19:22:45 jdbc: 
+/**/conn86.getAutoCommit();
+03-06 19:22:45 jdbc: 
+/**/conn86.setAutoCommit(false);
+03-06 19:22:45 jdbc: SESSION_SET_AUTOCOMMIT 0
+03-06 19:22:45 jdbc: 
+/**/conn86.getAutoCommit();
+03-06 19:22:45 jdbc: 
+/**/PreparedStatement prep378 = conn86.prepareStatement("select this_.id as id0_0_, this_.confirmed as confirmed0_0_, this_.email as email0_0_, this_.LAST_LOGIN_DATE as LAST4_0_0_, this_.name as name0_0_, this_.password as password0_0_, this_.REGISTRATION_DATE as REGISTRA7_0_0_, roles2_.User_id as User1_0_2_, roles2_.roles as roles2_ from USER_ACCOUNTS this_ left outer join User_roles roles2_ on this_.id=roles2_.User_id where this_.name=?");
+03-06 19:22:45 jdbc: SESSION_PREPARE_READ_PARAMS 0
+03-06 19:22:45 jdbc: 
+/**/prep378.setString(1, "gatt");
+03-06 19:22:45 jdbc: 
+/**/ResultSet rs377 = prep378.executeQuery();
+03-06 19:22:45 jdbc: COMMAND_EXECUTE_QUERY 0
+03-06 19:22:45 jdbc: RESULT_CLOSE 1
+03-06 19:22:45 jdbc: 
+/**/rs377.next();
+03-06 19:22:45 jdbc: 
+/**/rs377.getLong("id0_0_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.getBoolean("confirmed0_0_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.getString("email0_0_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.getTimestamp("LAST4_0_0_");
+03-06 19:22:45 jdbc: 
+/**/rs377.getString("name0_0_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.getString("password0_0_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.getTimestamp("REGISTRA7_0_0_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.getLong("User1_0_2_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.getObject("roles2_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.next();
+03-06 19:22:45 jdbc: 
+/**/rs377.getLong("id0_0_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.getLong("User1_0_2_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.getObject("roles2_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.next();
+03-06 19:22:45 jdbc: 
+/**/rs377.getLong("id0_0_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.getLong("User1_0_2_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.getObject("roles2_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.next();
+03-06 19:22:45 jdbc: 
+/**/rs377.getLong("id0_0_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.getLong("User1_0_2_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.getObject("roles2_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.next();
+03-06 19:22:45 jdbc: 
+/**/rs377.getLong("id0_0_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.getLong("User1_0_2_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.getObject("roles2_");
+03-06 19:22:45 jdbc: 
+/**/rs377.wasNull();
+03-06 19:22:45 jdbc: 
+/**/rs377.next();
+03-06 19:22:45 jdbc: 
+/**/rs377.close();
+03-06 19:22:45 jdbc: 
+/**/prep378.getMaxRows();
+03-06 19:22:45 jdbc: 
+/**/prep378.getQueryTimeout();
+03-06 19:22:45 jdbc: 
+/**/conn86.getQueryTimeout();
+03-06 19:22:45 jdbc: SESSION_PREPARE_READ_PARAMS 2
+03-06 19:22:45 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 19:22:45 jdbc: RESULT_CLOSE 3
+03-06 19:22:45 jdbc: 
+/**/prep378.close();
+03-06 19:22:45 jdbc: COMMAND_CLOSE 0
+03-06 19:22:45 jdbc: 
+/**/conn86.commit();
+03-06 19:22:45 jdbc: SESSION_PREPARE_READ_PARAMS 4
+03-06 19:22:45 jdbc: COMMAND_EXECUTE_UPDATE 4

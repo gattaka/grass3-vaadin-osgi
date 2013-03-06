@@ -1,0 +1,137 @@
+03-06 19:22:15 jdbc: 
+/**/Connection conn78 = DriverManager.getConnection("jdbc:h2:tcp://localhost/grass3H2DB;TRACE_LEVEL_FIlE=3", "SA", "");
+03-06 19:22:15 jdbc: 
+/**/conn78.getAutoCommit();
+03-06 19:22:15 jdbc: 
+/**/conn78.setAutoCommit(false);
+03-06 19:22:15 jdbc: SESSION_SET_AUTOCOMMIT 0
+03-06 19:22:15 jdbc: 
+/**/conn78.getAutoCommit();
+03-06 19:22:15 jdbc: 
+/**/PreparedStatement prep359 = conn78.prepareStatement("select user0_.id as id0_0_, user0_.confirmed as confirmed0_0_, user0_.email as email0_0_, user0_.LAST_LOGIN_DATE as LAST4_0_0_, user0_.name as name0_0_, user0_.password as password0_0_, user0_.REGISTRATION_DATE as REGISTRA7_0_0_ from USER_ACCOUNTS user0_ where user0_.id=?");
+03-06 19:22:15 jdbc: SESSION_PREPARE_READ_PARAMS 0
+03-06 19:22:15 jdbc: 
+/**/prep359.setLong(1, 1L);
+03-06 19:22:15 jdbc: 
+/**/ResultSet rs360 = prep359.executeQuery();
+03-06 19:22:15 jdbc: COMMAND_EXECUTE_QUERY 0
+03-06 19:22:15 jdbc: RESULT_CLOSE 1
+03-06 19:22:15 jdbc: 
+/**/rs360.next();
+03-06 19:22:15 jdbc: 
+/**/rs360.getBoolean("confirmed0_0_");
+03-06 19:22:15 jdbc: 
+/**/rs360.wasNull();
+03-06 19:22:15 jdbc: 
+/**/rs360.getString("email0_0_");
+03-06 19:22:15 jdbc: 
+/**/rs360.wasNull();
+03-06 19:22:15 jdbc: 
+/**/rs360.getTimestamp("LAST4_0_0_");
+03-06 19:22:15 jdbc: 
+/**/rs360.getString("name0_0_");
+03-06 19:22:15 jdbc: 
+/**/rs360.wasNull();
+03-06 19:22:15 jdbc: 
+/**/rs360.getString("password0_0_");
+03-06 19:22:15 jdbc: 
+/**/rs360.wasNull();
+03-06 19:22:15 jdbc: 
+/**/rs360.getTimestamp("REGISTRA7_0_0_");
+03-06 19:22:15 jdbc: 
+/**/rs360.wasNull();
+03-06 19:22:15 jdbc: 
+/**/rs360.next();
+03-06 19:22:15 jdbc: 
+/**/rs360.close();
+03-06 19:22:15 jdbc: 
+/**/prep359.getMaxRows();
+03-06 19:22:15 jdbc: 
+/**/prep359.getQueryTimeout();
+03-06 19:22:15 jdbc: 
+/**/conn78.getQueryTimeout();
+03-06 19:22:15 jdbc: SESSION_PREPARE_READ_PARAMS 2
+03-06 19:22:15 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 19:22:15 jdbc: RESULT_CLOSE 3
+03-06 19:22:15 jdbc: 
+/**/prep359.close();
+03-06 19:22:15 jdbc: COMMAND_CLOSE 0
+03-06 19:22:15 jdbc: 
+/**/PreparedStatement prep360 = conn78.prepareStatement("select roles0_.User_id as User1_0_0_, roles0_.roles as roles0_ from User_roles roles0_ where roles0_.User_id=?");
+03-06 19:22:15 jdbc: SESSION_PREPARE_READ_PARAMS 4
+03-06 19:22:15 jdbc: 
+/**/prep360.setLong(1, 1L);
+03-06 19:22:15 jdbc: 
+/**/ResultSet rs361 = prep360.executeQuery();
+03-06 19:22:15 jdbc: COMMAND_EXECUTE_QUERY 4
+03-06 19:22:15 jdbc: RESULT_CLOSE 5
+03-06 19:22:15 jdbc: 
+/**/rs361.next();
+03-06 19:22:15 jdbc: 
+/**/rs361.getLong("User1_0_0_");
+03-06 19:22:15 jdbc: 
+/**/rs361.wasNull();
+03-06 19:22:15 jdbc: 
+/**/rs361.getObject("roles0_");
+03-06 19:22:15 jdbc: 
+/**/rs361.wasNull();
+03-06 19:22:15 jdbc: 
+/**/rs361.next();
+03-06 19:22:15 jdbc: 
+/**/rs361.getLong("User1_0_0_");
+03-06 19:22:15 jdbc: 
+/**/rs361.wasNull();
+03-06 19:22:15 jdbc: 
+/**/rs361.getObject("roles0_");
+03-06 19:22:15 jdbc: 
+/**/rs361.wasNull();
+03-06 19:22:15 jdbc: 
+/**/rs361.next();
+03-06 19:22:15 jdbc: 
+/**/rs361.getLong("User1_0_0_");
+03-06 19:22:15 jdbc: 
+/**/rs361.wasNull();
+03-06 19:22:15 jdbc: 
+/**/rs361.getObject("roles0_");
+03-06 19:22:15 jdbc: 
+/**/rs361.wasNull();
+03-06 19:22:15 jdbc: 
+/**/rs361.next();
+03-06 19:22:15 jdbc: 
+/**/rs361.getLong("User1_0_0_");
+03-06 19:22:15 jdbc: 
+/**/rs361.wasNull();
+03-06 19:22:15 jdbc: 
+/**/rs361.getObject("roles0_");
+03-06 19:22:15 jdbc: 
+/**/rs361.wasNull();
+03-06 19:22:15 jdbc: 
+/**/rs361.next();
+03-06 19:22:15 jdbc: 
+/**/rs361.getLong("User1_0_0_");
+03-06 19:22:15 jdbc: 
+/**/rs361.wasNull();
+03-06 19:22:15 jdbc: 
+/**/rs361.getObject("roles0_");
+03-06 19:22:15 jdbc: 
+/**/rs361.wasNull();
+03-06 19:22:15 jdbc: 
+/**/rs361.next();
+03-06 19:22:15 jdbc: 
+/**/rs361.close();
+03-06 19:22:15 jdbc: 
+/**/prep360.getMaxRows();
+03-06 19:22:15 jdbc: 
+/**/prep360.getQueryTimeout();
+03-06 19:22:15 jdbc: 
+/**/conn78.getQueryTimeout();
+03-06 19:22:15 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 19:22:15 jdbc: RESULT_CLOSE 6
+03-06 19:22:15 jdbc: 
+/**/prep360.close();
+03-06 19:22:15 jdbc: COMMAND_CLOSE 4
+03-06 19:22:15 jdbc: 
+/**/conn78.commit();
+03-06 19:22:15 jdbc: SESSION_PREPARE_READ_PARAMS 7
+03-06 19:22:15 jdbc: COMMAND_EXECUTE_UPDATE 7
+03-06 19:22:36 jdbc: SESSION_CLOSE 0

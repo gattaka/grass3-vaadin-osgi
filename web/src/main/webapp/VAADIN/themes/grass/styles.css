@@ -6,7 +6,7 @@
 	src: url('fonts/DuruSans-Regular.ttf');
 }
 
-.grass_layout {
+.grasspage {
 	overflow: auto;
 	min-height: 100%;
 	position: relative;

@@ -61,9 +61,14 @@ public class GrassUI extends UI {
 		GrassRequest grassRequest = new GrassRequest(request);
 		URLPathAnalyzer analyzer = grassRequest.getAnalyzer();
 
+		// pokud nebyla cesta prázná, pak proveď posuv
+		if (analyzer.getPathToken(0) != null)
+			analyzer.shift();
+
 		PageFactory factory = pageFactoriesRegister.get(analyzer
 				.getPathToken(0));
 		setContent(factory.createPage(grassRequest));
+
 
 	}
 }

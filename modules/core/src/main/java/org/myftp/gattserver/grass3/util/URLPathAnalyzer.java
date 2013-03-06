@@ -8,6 +8,8 @@ public class URLPathAnalyzer {
 	private List<String> tokens = new ArrayList<String>();
 	private StringBuffer buffer = new StringBuffer();
 
+	private int currentIndex;
+
 	/**
 	 * aplikuje oddělení částí - lomítko, nebo konec textu
 	 */
@@ -45,6 +47,28 @@ public class URLPathAnalyzer {
 	 */
 	public String getPathToken(int index) {
 		return tokens.size() >= index + 1 ? tokens.get(index) : null;
+	}
+
+	/**
+	 * Získá token z aktuální pozice
+	 */
+	public String getCurrentPathToken() {
+		return getPathToken(currentIndex);
+	}
+
+	/**
+	 * Postupně jak se parsuje path, je aktuální jiná část, tento index označuje
+	 * kterou část cesty by si měla stránky přednostně parsovat - například
+	 * stránka na adrese settings/app bude v rootu (UI) naparsována na úrovni 0
+	 * ("settings") a přesměrována na settings stránku - tam už je ale podstatná
+	 * část s "app" a proto je v UI analyzer posunut na index 1, který bude na
+	 * "app" token odkazovat rovnou.
+	 * 
+	 * @return novou pozici indexu
+	 */
+	public int shift() {
+		currentIndex++;
+		return currentIndex;
 	}
 
 	public boolean startsWith(String prefix) {

@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.subwindows;
 
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 public class GrassSubWindow extends Window {
@@ -9,6 +10,9 @@ public class GrassSubWindow extends Window {
 
 	public GrassSubWindow(String name) {
 		super(name);
+
+		setContent(new VerticalLayout());
+
 		addAction(new Window.CloseShortcut(this, KeyCode.ESCAPE));
 
 		center();

@@ -2,9 +2,14 @@ package org.myftp.gattserver.grass3.pages;
 
 import java.util.List;
 
-import org.myftp.gattserver.grass3.pages.factories.template.AbstractSettingsPageFactory;
+import javax.annotation.Resource;
+
+import org.myftp.gattserver.grass3.pages.factories.SettingsPageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.SettingsTabFactory;
 import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
 import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.util.SettingsTabFactoriesRegister;
+import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 
@@ -21,7 +26,13 @@ public class SettingsPage extends TwoColumnPage {
 	private static final long serialVersionUID = 2474374292329895766L;
 
 	@Autowired
-	public List<AbstractSettingsPageFactory> settingsPageFactories;
+	private List<SettingsTabFactory> settingsTabFactories;
+
+	@Resource(name = "settingsPageFactory")
+	private SettingsPageFactory settingsPageFactory;
+
+	@Resource(name = "settingsTabFactoriesRegister")
+	private SettingsTabFactoriesRegister settingsTabFactoriesRegister;
 
 	public SettingsPage(GrassRequest request) {
 		super(request);
@@ -32,9 +43,10 @@ public class SettingsPage extends TwoColumnPage {
 		VerticalLayout leftColumnLayout = new VerticalLayout();
 		leftColumnLayout.setMargin(true);
 
-		for (AbstractSettingsPageFactory settingsPageFactory : settingsPageFactories) {
-			Link link = new Link(settingsPageFactory.getSettingsCaption(),
-					getPageResource(settingsPageFactory));
+		for (SettingsTabFactory settingsTabFactory : settingsTabFactories) {
+			Link link = new Link(settingsTabFactory.getSettingsCaption(),
+					getPageResource(settingsPageFactory,
+							settingsTabFactory.getSettingsURL()));
 			leftColumnLayout.addComponent(link);
 		}
 
@@ -43,6 +55,14 @@ public class SettingsPage extends TwoColumnPage {
 
 	@Override
 	protected Component createRightColumnContent() {
+
+		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
+		String settingsTabName = analyzer.getCurrentPathToken();
+		SettingsTabFactory settingsTabFactory = settingsTabFactoriesRegister
+				.getFactory(settingsTabName);
+
+		if (settingsTabFactory != null)
+			return settingsTabFactory.createPage(getRequest());
 
 		VerticalLayout layout = new VerticalLayout();
 

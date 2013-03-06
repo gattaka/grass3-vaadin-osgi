@@ -1,0 +1,43 @@
+03-06 17:01:57 jdbc: 
+/**/Connection conn0 = DriverManager.getConnection("jdbc:h2:tcp://localhost/grass3H2DB;TRACE_LEVEL_FIlE=3", "SA", "");
+03-06 17:01:57 jdbc: 
+/**/conn0.getAutoCommit();
+03-06 17:01:57 jdbc: 
+/**/conn0.setAutoCommit(false);
+03-06 17:01:57 jdbc: SESSION_SET_AUTOCOMMIT 0
+03-06 17:01:57 jdbc: 
+/**/conn0.getAutoCommit();
+03-06 17:01:57 jdbc: 
+/**/PreparedStatement prep0 = conn0.prepareStatement("select count(*) as y0_ from Quote this_");
+03-06 17:01:57 jdbc: SESSION_PREPARE_READ_PARAMS 0
+03-06 17:01:57 jdbc: 
+/**/ResultSet rs0 = prep0.executeQuery();
+03-06 17:01:57 jdbc: COMMAND_EXECUTE_QUERY 0
+03-06 17:01:57 jdbc: RESULT_CLOSE 1
+03-06 17:01:57 jdbc: 
+/**/rs0.next();
+03-06 17:01:57 jdbc: 
+/**/rs0.getLong("y0_");
+03-06 17:01:57 jdbc: 
+/**/rs0.wasNull();
+03-06 17:01:57 jdbc: 
+/**/rs0.next();
+03-06 17:01:57 jdbc: 
+/**/rs0.close();
+03-06 17:01:57 jdbc: 
+/**/prep0.getMaxRows();
+03-06 17:01:57 jdbc: 
+/**/prep0.getQueryTimeout();
+03-06 17:01:57 jdbc: 
+/**/conn0.getQueryTimeout();
+03-06 17:01:57 jdbc: SESSION_PREPARE_READ_PARAMS 2
+03-06 17:01:57 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 17:01:57 jdbc: RESULT_CLOSE 3
+03-06 17:01:57 jdbc: 
+/**/prep0.close();
+03-06 17:01:57 jdbc: COMMAND_CLOSE 0
+03-06 17:01:57 jdbc: 
+/**/conn0.commit();
+03-06 17:01:57 jdbc: SESSION_PREPARE_READ_PARAMS 4
+03-06 17:01:57 jdbc: COMMAND_EXECUTE_UPDATE 4
+03-06 17:02:03 jdbc: SESSION_CLOSE 0

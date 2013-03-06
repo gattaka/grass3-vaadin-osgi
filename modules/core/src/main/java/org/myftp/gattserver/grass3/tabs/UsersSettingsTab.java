@@ -198,7 +198,6 @@ public class UsersSettingsTab extends SettingsTab {
 				subwindow.setWidth("220px");
 				VerticalLayout subwindowLayout = ((VerticalLayout) subwindow
 						.getContent());
-				subwindowLayout.setSpacing(true);
 
 				for (final Role value : Role.values()) {
 					final CheckBox checkbox = new CheckBox(value.getRoleName());

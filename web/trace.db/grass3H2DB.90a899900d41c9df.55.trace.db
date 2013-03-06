@@ -1,0 +1,44 @@
+03-06 20:01:04 jdbc: 
+/**/Connection conn55 = DriverManager.getConnection("jdbc:h2:tcp://localhost/grass3H2DB;TRACE_LEVEL_FIlE=3", "SA", "");
+03-06 20:01:04 jdbc: 
+/**/conn55.getAutoCommit();
+03-06 20:01:04 jdbc: 
+/**/conn55.setAutoCommit(false);
+03-06 20:01:04 jdbc: SESSION_SET_AUTOCOMMIT 0
+03-06 20:01:04 jdbc: 
+/**/conn55.getAutoCommit();
+03-06 20:01:04 jdbc: 
+/**/conn55.commit();
+03-06 20:01:04 jdbc: SESSION_PREPARE_READ_PARAMS 0
+03-06 20:01:04 jdbc: COMMAND_EXECUTE_UPDATE 0
+03-06 20:01:04 jdbc: 
+/**/PreparedStatement prep753 = conn55.prepareStatement("select quote0_.id as id3_0_, quote0_.name as name3_0_ from Quote quote0_ where quote0_.id=?");
+03-06 20:01:04 jdbc: SESSION_PREPARE_READ_PARAMS 1
+03-06 20:01:04 jdbc: 
+/**/prep753.setLong(1, 174L);
+03-06 20:01:04 jdbc: 
+/**/ResultSet rs754 = prep753.executeQuery();
+03-06 20:01:04 jdbc: COMMAND_EXECUTE_QUERY 1
+03-06 20:01:04 jdbc: RESULT_CLOSE 2
+03-06 20:01:04 jdbc: 
+/**/rs754.next();
+03-06 20:01:04 jdbc: 
+/**/rs754.getString("name3_0_");
+03-06 20:01:04 jdbc: 
+/**/rs754.wasNull();
+03-06 20:01:04 jdbc: 
+/**/rs754.next();
+03-06 20:01:04 jdbc: 
+/**/rs754.close();
+03-06 20:01:04 jdbc: 
+/**/prep753.getMaxRows();
+03-06 20:01:04 jdbc: 
+/**/prep753.getQueryTimeout();
+03-06 20:01:04 jdbc: 
+/**/conn55.getQueryTimeout();
+03-06 20:01:04 jdbc: SESSION_PREPARE_READ_PARAMS 3
+03-06 20:01:04 jdbc: COMMAND_EXECUTE_QUERY 3
+03-06 20:01:04 jdbc: RESULT_CLOSE 4
+03-06 20:01:04 jdbc: 
+/**/prep753.close();
+03-06 20:01:04 jdbc: COMMAND_CLOSE 1

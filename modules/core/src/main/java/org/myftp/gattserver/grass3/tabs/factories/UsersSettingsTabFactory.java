@@ -14,11 +14,6 @@ public class UsersSettingsTabFactory extends SettingsTabFactory {
 	}
 
 	@Override
-	public String getSettingsCaption() {
-		return "Uživatelé";
-	}
-
-	@Override
 	public boolean isVisibleForRoles(Set<Role> roles) {
 		return roles.contains(Role.ADMIN);
 	}

@@ -1,0 +1,2144 @@
+03-06 20:04:39 jdbc: 
+/**/Connection conn91 = DriverManager.getConnection("jdbc:h2:tcp://localhost/grass3H2DB;TRACE_LEVEL_FIlE=3", "SA", "");
+03-06 20:04:39 jdbc: java.lang.Exception: Open Stack Trace
+	at org.h2.util.CloseWatcher.register(CloseWatcher.java:93)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:120)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:92)
+	at org.h2.Driver.connect(Driver.java:72)
+	at java.sql.DriverManager.getConnection(DriverManager.java:579)
+	at java.sql.DriverManager.getConnection(DriverManager.java:190)
+	at org.hibernate.service.jdbc.connections.internal.DriverManagerConnectionProviderImpl.getConnection(DriverManagerConnectionProviderImpl.java:173)
+	at org.hibernate.internal.AbstractSessionImpl$NonContextualJdbcConnectionAccess.obtainConnection(AbstractSessionImpl.java:276)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.obtainConnection(LogicalConnectionImpl.java:297)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.getConnection(LogicalConnectionImpl.java:169)
+	at org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction.doBegin(JdbcTransaction.java:67)
+	at org.hibernate.engine.transaction.spi.AbstractTransactionImpl.begin(AbstractTransactionImpl.java:160)
+	at org.hibernate.internal.SessionImpl.beginTransaction(SessionImpl.java:1263)
+	at org.myftp.gattserver.grass3.model.AbstractDAO.findByID(AbstractDAO.java:133)
+	at org.myftp.gattserver.grass3.facades.QuotesFacade.getRandomQuote(QuotesFacade.java:73)
+	at org.myftp.gattserver.grass3.pages.template.BasePage.chooseQuote(BasePage.java:217)
+	at org.myftp.gattserver.grass3.pages.template.BasePage.createQuotes(BasePage.java:72)
+	at org.myftp.gattserver.grass3.pages.template.GrassPage.init(GrassPage.java:37)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:344)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:295)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:130)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1479)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:524)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:461)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:314)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1129)
+	at org.myftp.gattserver.grass3.pages.factories.template.PageFactory.createPage(PageFactory.java:43)
+	at org.myftp.gattserver.grass3.GrassUI.init(GrassUI.java:70)
+	at com.vaadin.ui.UI.doInit(UI.java:523)
+	at com.vaadin.server.AbstractCommunicationManager.getBrowserDetailsUI(AbstractCommunicationManager.java:2457)
+	at com.vaadin.server.AbstractCommunicationManager.handleBrowserDetailsRequest(AbstractCommunicationManager.java:2352)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:325)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:201)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:848)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:669)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1448)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:330)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:118)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:84)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:103)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:54)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:45)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.www.BasicAuthenticationFilter.doFilter(BasicAuthenticationFilter.java:150)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:183)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:87)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:192)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:160)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:346)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:259)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1419)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:455)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:557)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1075)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:384)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1009)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:368)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:488)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:932)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:994)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:640)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.AsyncHttpConnection.handle(AsyncHttpConnection.java:82)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint.handle(SelectChannelEndPoint.java:628)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint$1.run(SelectChannelEndPoint.java:52)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:722)
+
+org.h2.message.DbException: The connection was not closed by the application and is garbage collected [90018-168]
+	at org.h2.message.DbException.get(DbException.java:169)
+	at org.h2.message.DbException.get(DbException.java:146)
+	at org.h2.message.DbException.get(DbException.java:135)
+	at org.h2.jdbc.JdbcConnection.closeOld(JdbcConnection.java:172)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:119)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:92)
+	at org.h2.Driver.connect(Driver.java:72)
+	at java.sql.DriverManager.getConnection(DriverManager.java:579)
+	at java.sql.DriverManager.getConnection(DriverManager.java:190)
+	at org.hibernate.service.jdbc.connections.internal.DriverManagerConnectionProviderImpl.getConnection(DriverManagerConnectionProviderImpl.java:173)
+	at org.hibernate.internal.AbstractSessionImpl$NonContextualJdbcConnectionAccess.obtainConnection(AbstractSessionImpl.java:276)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.obtainConnection(LogicalConnectionImpl.java:297)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.getConnection(LogicalConnectionImpl.java:169)
+	at org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction.doBegin(JdbcTransaction.java:67)
+	at org.hibernate.engine.transaction.spi.AbstractTransactionImpl.begin(AbstractTransactionImpl.java:160)
+	at org.hibernate.internal.SessionImpl.beginTransaction(SessionImpl.java:1263)
+	at org.myftp.gattserver.grass3.model.AbstractDAO.findByRestriction(AbstractDAO.java:162)
+	at org.myftp.gattserver.grass3.model.dao.NodeDAO.findNodesByParent(NodeDAO.java:23)
+	at org.myftp.gattserver.grass3.facades.NodeFacade.getNodesByParentNode(NodeFacade.java:62)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.populateContainer(CategoriesSettingsTab.java:465)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.populateContainer(CategoriesSettingsTab.java:467)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.populateContainer(CategoriesSettingsTab.java:467)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.getCategoriesContainer(CategoriesSettingsTab.java:450)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.refreshTree(CategoriesSettingsTab.java:432)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.createContent(CategoriesSettingsTab.java:381)
+	at org.myftp.gattserver.grass3.pages.factories.template.SettingsTab.init(SettingsTab.java:21)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:344)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:295)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:130)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1479)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:524)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:461)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:314)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1129)
+	at org.myftp.gattserver.grass3.pages.factories.template.SettingsTabFactory.createPage(SettingsTabFactory.java:53)
+	at org.myftp.gattserver.grass3.pages.SettingsPage.createRightColumnContent(SettingsPage.java:65)
+	at org.myftp.gattserver.grass3.pages.template.TwoColumnPage.createContent(TwoColumnPage.java:23)
+	at org.myftp.gattserver.grass3.pages.template.GrassPage.init(GrassPage.java:43)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:344)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:295)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:130)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1479)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:524)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:461)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:314)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1129)
+	at org.myftp.gattserver.grass3.pages.factories.template.PageFactory.createPage(PageFactory.java:43)
+	at org.myftp.gattserver.grass3.GrassUI.init(GrassUI.java:70)
+	at com.vaadin.ui.UI.doInit(UI.java:523)
+	at com.vaadin.server.AbstractCommunicationManager.getBrowserDetailsUI(AbstractCommunicationManager.java:2457)
+	at com.vaadin.server.AbstractCommunicationManager.handleBrowserDetailsRequest(AbstractCommunicationManager.java:2352)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:325)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:201)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:848)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:669)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1448)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:330)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:118)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:84)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:103)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:54)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:45)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.www.BasicAuthenticationFilter.doFilter(BasicAuthenticationFilter.java:150)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:183)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:87)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:192)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:160)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:346)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:259)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1419)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:455)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:557)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1075)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:384)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1009)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:368)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:488)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:932)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:994)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:640)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.AsyncHttpConnection.handle(AsyncHttpConnection.java:82)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint.handle(SelectChannelEndPoint.java:628)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint$1.run(SelectChannelEndPoint.java:52)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:722)
+Caused by: org.h2.jdbc.JdbcSQLException: The connection was not closed by the application and is garbage collected [90018-168]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:329)
+	... 119 more
+03-06 20:04:39 jdbc: java.lang.Exception: Open Stack Trace
+	at org.h2.util.CloseWatcher.register(CloseWatcher.java:93)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:120)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:92)
+	at org.h2.Driver.connect(Driver.java:72)
+	at java.sql.DriverManager.getConnection(DriverManager.java:579)
+	at java.sql.DriverManager.getConnection(DriverManager.java:190)
+	at org.hibernate.service.jdbc.connections.internal.DriverManagerConnectionProviderImpl.getConnection(DriverManagerConnectionProviderImpl.java:173)
+	at org.hibernate.internal.AbstractSessionImpl$NonContextualJdbcConnectionAccess.obtainConnection(AbstractSessionImpl.java:276)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.obtainConnection(LogicalConnectionImpl.java:297)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.getConnection(LogicalConnectionImpl.java:169)
+	at org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction.doBegin(JdbcTransaction.java:67)
+	at org.hibernate.engine.transaction.spi.AbstractTransactionImpl.begin(AbstractTransactionImpl.java:160)
+	at org.hibernate.internal.SessionImpl.beginTransaction(SessionImpl.java:1263)
+	at org.myftp.gattserver.grass3.model.AbstractDAO.findByRestriction(AbstractDAO.java:162)
+	at org.myftp.gattserver.grass3.model.dao.NodeDAO.findRoots(NodeDAO.java:19)
+	at org.myftp.gattserver.grass3.facades.NodeFacade.getRootNodes(NodeFacade.java:44)
+	at org.myftp.gattserver.grass3.pages.template.BasePage.createSectionsMenu(BasePage.java:98)
+	at org.myftp.gattserver.grass3.pages.template.BasePage.createMenu(BasePage.java:84)
+	at org.myftp.gattserver.grass3.pages.template.GrassPage.init(GrassPage.java:40)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:344)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:295)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:130)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1479)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:524)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:461)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:314)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1129)
+	at org.myftp.gattserver.grass3.pages.factories.template.PageFactory.createPage(PageFactory.java:43)
+	at org.myftp.gattserver.grass3.GrassUI.init(GrassUI.java:70)
+	at com.vaadin.ui.UI.doInit(UI.java:523)
+	at com.vaadin.server.AbstractCommunicationManager.getBrowserDetailsUI(AbstractCommunicationManager.java:2457)
+	at com.vaadin.server.AbstractCommunicationManager.handleBrowserDetailsRequest(AbstractCommunicationManager.java:2352)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:325)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:201)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:848)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:669)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1448)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:330)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:118)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:84)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:103)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:54)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:45)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.www.BasicAuthenticationFilter.doFilter(BasicAuthenticationFilter.java:150)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:183)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:87)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:192)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:160)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:346)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:259)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1419)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:455)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:557)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1075)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:384)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1009)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:368)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:488)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:932)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:994)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:640)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.AsyncHttpConnection.handle(AsyncHttpConnection.java:82)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint.handle(SelectChannelEndPoint.java:628)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint$1.run(SelectChannelEndPoint.java:52)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:722)
+
+org.h2.message.DbException: The connection was not closed by the application and is garbage collected [90018-168]
+	at org.h2.message.DbException.get(DbException.java:169)
+	at org.h2.message.DbException.get(DbException.java:146)
+	at org.h2.message.DbException.get(DbException.java:135)
+	at org.h2.jdbc.JdbcConnection.closeOld(JdbcConnection.java:172)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:119)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:92)
+	at org.h2.Driver.connect(Driver.java:72)
+	at java.sql.DriverManager.getConnection(DriverManager.java:579)
+	at java.sql.DriverManager.getConnection(DriverManager.java:190)
+	at org.hibernate.service.jdbc.connections.internal.DriverManagerConnectionProviderImpl.getConnection(DriverManagerConnectionProviderImpl.java:173)
+	at org.hibernate.internal.AbstractSessionImpl$NonContextualJdbcConnectionAccess.obtainConnection(AbstractSessionImpl.java:276)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.obtainConnection(LogicalConnectionImpl.java:297)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.getConnection(LogicalConnectionImpl.java:169)
+	at org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction.doBegin(JdbcTransaction.java:67)
+	at org.hibernate.engine.transaction.spi.AbstractTransactionImpl.begin(AbstractTransactionImpl.java:160)
+	at org.hibernate.internal.SessionImpl.beginTransaction(SessionImpl.java:1263)
+	at org.myftp.gattserver.grass3.model.AbstractDAO.findByRestriction(AbstractDAO.java:162)
+	at org.myftp.gattserver.grass3.model.dao.NodeDAO.findNodesByParent(NodeDAO.java:23)
+	at org.myftp.gattserver.grass3.facades.NodeFacade.getNodesByParentNode(NodeFacade.java:62)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.populateContainer(CategoriesSettingsTab.java:465)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.populateContainer(CategoriesSettingsTab.java:467)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.populateContainer(CategoriesSettingsTab.java:467)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.getCategoriesContainer(CategoriesSettingsTab.java:450)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.refreshTree(CategoriesSettingsTab.java:432)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.createContent(CategoriesSettingsTab.java:381)
+	at org.myftp.gattserver.grass3.pages.factories.template.SettingsTab.init(SettingsTab.java:21)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:344)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:295)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:130)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1479)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:524)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:461)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:314)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1129)
+	at org.myftp.gattserver.grass3.pages.factories.template.SettingsTabFactory.createPage(SettingsTabFactory.java:53)
+	at org.myftp.gattserver.grass3.pages.SettingsPage.createRightColumnContent(SettingsPage.java:65)
+	at org.myftp.gattserver.grass3.pages.template.TwoColumnPage.createContent(TwoColumnPage.java:23)
+	at org.myftp.gattserver.grass3.pages.template.GrassPage.init(GrassPage.java:43)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:344)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:295)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:130)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1479)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:524)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:461)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:314)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1129)
+	at org.myftp.gattserver.grass3.pages.factories.template.PageFactory.createPage(PageFactory.java:43)
+	at org.myftp.gattserver.grass3.GrassUI.init(GrassUI.java:70)
+	at com.vaadin.ui.UI.doInit(UI.java:523)
+	at com.vaadin.server.AbstractCommunicationManager.getBrowserDetailsUI(AbstractCommunicationManager.java:2457)
+	at com.vaadin.server.AbstractCommunicationManager.handleBrowserDetailsRequest(AbstractCommunicationManager.java:2352)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:325)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:201)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:848)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:669)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1448)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:330)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:118)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:84)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:103)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:54)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:45)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.www.BasicAuthenticationFilter.doFilter(BasicAuthenticationFilter.java:150)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:183)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:87)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:192)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:160)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:346)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:259)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1419)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:455)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:557)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1075)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:384)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1009)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:368)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:488)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:932)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:994)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:640)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.AsyncHttpConnection.handle(AsyncHttpConnection.java:82)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint.handle(SelectChannelEndPoint.java:628)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint$1.run(SelectChannelEndPoint.java:52)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:722)
+Caused by: org.h2.jdbc.JdbcSQLException: The connection was not closed by the application and is garbage collected [90018-168]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:329)
+	... 119 more
+03-06 20:04:39 jdbc: java.lang.Exception: Open Stack Trace
+	at org.h2.util.CloseWatcher.register(CloseWatcher.java:93)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:120)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:92)
+	at org.h2.Driver.connect(Driver.java:72)
+	at java.sql.DriverManager.getConnection(DriverManager.java:579)
+	at java.sql.DriverManager.getConnection(DriverManager.java:190)
+	at org.hibernate.service.jdbc.connections.internal.DriverManagerConnectionProviderImpl.getConnection(DriverManagerConnectionProviderImpl.java:173)
+	at org.hibernate.internal.AbstractSessionImpl$NonContextualJdbcConnectionAccess.obtainConnection(AbstractSessionImpl.java:276)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.obtainConnection(LogicalConnectionImpl.java:297)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.getConnection(LogicalConnectionImpl.java:169)
+	at org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction.doBegin(JdbcTransaction.java:67)
+	at org.hibernate.engine.transaction.spi.AbstractTransactionImpl.begin(AbstractTransactionImpl.java:160)
+	at org.hibernate.internal.SessionImpl.beginTransaction(SessionImpl.java:1263)
+	at org.myftp.gattserver.grass3.model.dao.QuoteDAO.count(QuoteDAO.java:26)
+	at org.myftp.gattserver.grass3.facades.QuotesFacade.getRandomQuote(QuotesFacade.java:65)
+	at org.myftp.gattserver.grass3.pages.template.BasePage.chooseQuote(BasePage.java:217)
+	at org.myftp.gattserver.grass3.pages.template.BasePage.createQuotes(BasePage.java:72)
+	at org.myftp.gattserver.grass3.pages.template.GrassPage.init(GrassPage.java:37)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:344)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:295)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:130)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1479)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:524)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:461)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:314)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1129)
+	at org.myftp.gattserver.grass3.pages.factories.template.PageFactory.createPage(PageFactory.java:43)
+	at org.myftp.gattserver.grass3.GrassUI.init(GrassUI.java:70)
+	at com.vaadin.ui.UI.doInit(UI.java:523)
+	at com.vaadin.server.AbstractCommunicationManager.getBrowserDetailsUI(AbstractCommunicationManager.java:2457)
+	at com.vaadin.server.AbstractCommunicationManager.handleBrowserDetailsRequest(AbstractCommunicationManager.java:2352)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:325)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:201)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:848)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:669)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1448)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:330)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:118)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:84)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:103)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:54)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:45)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.www.BasicAuthenticationFilter.doFilter(BasicAuthenticationFilter.java:150)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:183)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:87)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:192)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:160)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:346)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:259)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1419)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:455)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:557)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1075)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:384)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1009)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:368)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:488)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:932)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:994)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:640)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.AsyncHttpConnection.handle(AsyncHttpConnection.java:82)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint.handle(SelectChannelEndPoint.java:628)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint$1.run(SelectChannelEndPoint.java:52)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:722)
+
+org.h2.message.DbException: The connection was not closed by the application and is garbage collected [90018-168]
+	at org.h2.message.DbException.get(DbException.java:169)
+	at org.h2.message.DbException.get(DbException.java:146)
+	at org.h2.message.DbException.get(DbException.java:135)
+	at org.h2.jdbc.JdbcConnection.closeOld(JdbcConnection.java:172)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:119)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:92)
+	at org.h2.Driver.connect(Driver.java:72)
+	at java.sql.DriverManager.getConnection(DriverManager.java:579)
+	at java.sql.DriverManager.getConnection(DriverManager.java:190)
+	at org.hibernate.service.jdbc.connections.internal.DriverManagerConnectionProviderImpl.getConnection(DriverManagerConnectionProviderImpl.java:173)
+	at org.hibernate.internal.AbstractSessionImpl$NonContextualJdbcConnectionAccess.obtainConnection(AbstractSessionImpl.java:276)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.obtainConnection(LogicalConnectionImpl.java:297)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.getConnection(LogicalConnectionImpl.java:169)
+	at org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction.doBegin(JdbcTransaction.java:67)
+	at org.hibernate.engine.transaction.spi.AbstractTransactionImpl.begin(AbstractTransactionImpl.java:160)
+	at org.hibernate.internal.SessionImpl.beginTransaction(SessionImpl.java:1263)
+	at org.myftp.gattserver.grass3.model.AbstractDAO.findByRestriction(AbstractDAO.java:162)
+	at org.myftp.gattserver.grass3.model.dao.NodeDAO.findNodesByParent(NodeDAO.java:23)
+	at org.myftp.gattserver.grass3.facades.NodeFacade.getNodesByParentNode(NodeFacade.java:62)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.populateContainer(CategoriesSettingsTab.java:465)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.populateContainer(CategoriesSettingsTab.java:467)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.populateContainer(CategoriesSettingsTab.java:467)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.getCategoriesContainer(CategoriesSettingsTab.java:450)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.refreshTree(CategoriesSettingsTab.java:432)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.createContent(CategoriesSettingsTab.java:381)
+	at org.myftp.gattserver.grass3.pages.factories.template.SettingsTab.init(SettingsTab.java:21)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:344)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:295)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:130)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1479)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:524)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:461)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:314)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1129)
+	at org.myftp.gattserver.grass3.pages.factories.template.SettingsTabFactory.createPage(SettingsTabFactory.java:53)
+	at org.myftp.gattserver.grass3.pages.SettingsPage.createRightColumnContent(SettingsPage.java:65)
+	at org.myftp.gattserver.grass3.pages.template.TwoColumnPage.createContent(TwoColumnPage.java:23)
+	at org.myftp.gattserver.grass3.pages.template.GrassPage.init(GrassPage.java:43)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:344)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:295)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:130)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1479)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:524)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:461)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:314)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1129)
+	at org.myftp.gattserver.grass3.pages.factories.template.PageFactory.createPage(PageFactory.java:43)
+	at org.myftp.gattserver.grass3.GrassUI.init(GrassUI.java:70)
+	at com.vaadin.ui.UI.doInit(UI.java:523)
+	at com.vaadin.server.AbstractCommunicationManager.getBrowserDetailsUI(AbstractCommunicationManager.java:2457)
+	at com.vaadin.server.AbstractCommunicationManager.handleBrowserDetailsRequest(AbstractCommunicationManager.java:2352)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:325)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:201)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:848)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:669)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1448)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:330)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:118)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:84)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:103)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:54)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:45)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.www.BasicAuthenticationFilter.doFilter(BasicAuthenticationFilter.java:150)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:183)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:87)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:192)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:160)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:346)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:259)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1419)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:455)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:557)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1075)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:384)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1009)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:368)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:488)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:932)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:994)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:640)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.AsyncHttpConnection.handle(AsyncHttpConnection.java:82)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint.handle(SelectChannelEndPoint.java:628)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint$1.run(SelectChannelEndPoint.java:52)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:722)
+Caused by: org.h2.jdbc.JdbcSQLException: The connection was not closed by the application and is garbage collected [90018-168]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:329)
+	... 119 more
+03-06 20:04:39 jdbc: java.lang.Exception: Open Stack Trace
+	at org.h2.util.CloseWatcher.register(CloseWatcher.java:93)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:120)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:92)
+	at org.h2.Driver.connect(Driver.java:72)
+	at java.sql.DriverManager.getConnection(DriverManager.java:579)
+	at java.sql.DriverManager.getConnection(DriverManager.java:190)
+	at org.hibernate.service.jdbc.connections.internal.DriverManagerConnectionProviderImpl.getConnection(DriverManagerConnectionProviderImpl.java:173)
+	at org.hibernate.internal.AbstractSessionImpl$NonContextualJdbcConnectionAccess.obtainConnection(AbstractSessionImpl.java:276)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.obtainConnection(LogicalConnectionImpl.java:297)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.getConnection(LogicalConnectionImpl.java:169)
+	at org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction.doBegin(JdbcTransaction.java:67)
+	at org.hibernate.engine.transaction.spi.AbstractTransactionImpl.begin(AbstractTransactionImpl.java:160)
+	at org.hibernate.internal.SessionImpl.beginTransaction(SessionImpl.java:1263)
+	at org.myftp.gattserver.grass3.model.AbstractDAO.findByRestriction(AbstractDAO.java:162)
+	at org.myftp.gattserver.grass3.model.dao.NodeDAO.findRoots(NodeDAO.java:19)
+	at org.myftp.gattserver.grass3.facades.NodeFacade.getRootNodes(NodeFacade.java:44)
+	at org.myftp.gattserver.grass3.pages.template.BasePage.createSectionsMenu(BasePage.java:98)
+	at org.myftp.gattserver.grass3.pages.template.BasePage.createMenu(BasePage.java:84)
+	at org.myftp.gattserver.grass3.pages.template.GrassPage.init(GrassPage.java:40)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:344)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:295)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:130)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1479)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:524)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:461)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:314)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1129)
+	at org.myftp.gattserver.grass3.pages.factories.template.PageFactory.createPage(PageFactory.java:43)
+	at org.myftp.gattserver.grass3.GrassUI.init(GrassUI.java:70)
+	at com.vaadin.ui.UI.doInit(UI.java:523)
+	at com.vaadin.server.AbstractCommunicationManager.getBrowserDetailsUI(AbstractCommunicationManager.java:2457)
+	at com.vaadin.server.AbstractCommunicationManager.handleBrowserDetailsRequest(AbstractCommunicationManager.java:2352)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:325)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:201)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:848)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:669)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1448)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:330)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:118)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:84)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:103)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:54)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:45)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.www.BasicAuthenticationFilter.doFilter(BasicAuthenticationFilter.java:150)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:183)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:87)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:192)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:160)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:346)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:259)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1419)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:455)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:557)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1075)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:384)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1009)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:368)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:488)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:932)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:994)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:640)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.AsyncHttpConnection.handle(AsyncHttpConnection.java:82)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint.handle(SelectChannelEndPoint.java:628)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint$1.run(SelectChannelEndPoint.java:52)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:722)
+
+org.h2.message.DbException: The connection was not closed by the application and is garbage collected [90018-168]
+	at org.h2.message.DbException.get(DbException.java:169)
+	at org.h2.message.DbException.get(DbException.java:146)
+	at org.h2.message.DbException.get(DbException.java:135)
+	at org.h2.jdbc.JdbcConnection.closeOld(JdbcConnection.java:172)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:119)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:92)
+	at org.h2.Driver.connect(Driver.java:72)
+	at java.sql.DriverManager.getConnection(DriverManager.java:579)
+	at java.sql.DriverManager.getConnection(DriverManager.java:190)
+	at org.hibernate.service.jdbc.connections.internal.DriverManagerConnectionProviderImpl.getConnection(DriverManagerConnectionProviderImpl.java:173)
+	at org.hibernate.internal.AbstractSessionImpl$NonContextualJdbcConnectionAccess.obtainConnection(AbstractSessionImpl.java:276)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.obtainConnection(LogicalConnectionImpl.java:297)
+	at org.hibernate.engine.jdbc.internal.LogicalConnectionImpl.getConnection(LogicalConnectionImpl.java:169)
+	at org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction.doBegin(JdbcTransaction.java:67)
+	at org.hibernate.engine.transaction.spi.AbstractTransactionImpl.begin(AbstractTransactionImpl.java:160)
+	at org.hibernate.internal.SessionImpl.beginTransaction(SessionImpl.java:1263)
+	at org.myftp.gattserver.grass3.model.AbstractDAO.findByRestriction(AbstractDAO.java:162)
+	at org.myftp.gattserver.grass3.model.dao.NodeDAO.findNodesByParent(NodeDAO.java:23)
+	at org.myftp.gattserver.grass3.facades.NodeFacade.getNodesByParentNode(NodeFacade.java:62)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.populateContainer(CategoriesSettingsTab.java:465)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.populateContainer(CategoriesSettingsTab.java:467)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.populateContainer(CategoriesSettingsTab.java:467)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.getCategoriesContainer(CategoriesSettingsTab.java:450)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.refreshTree(CategoriesSettingsTab.java:432)
+	at org.myftp.gattserver.grass3.tabs.CategoriesSettingsTab.createContent(CategoriesSettingsTab.java:381)
+	at org.myftp.gattserver.grass3.pages.factories.template.SettingsTab.init(SettingsTab.java:21)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:344)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:295)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:130)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1479)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:524)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:461)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:314)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1129)
+	at org.myftp.gattserver.grass3.pages.factories.template.SettingsTabFactory.createPage(SettingsTabFactory.java:53)
+	at org.myftp.gattserver.grass3.pages.SettingsPage.createRightColumnContent(SettingsPage.java:65)
+	at org.myftp.gattserver.grass3.pages.template.TwoColumnPage.createContent(TwoColumnPage.java:23)
+	at org.myftp.gattserver.grass3.pages.template.GrassPage.init(GrassPage.java:43)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:344)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:295)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:130)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:399)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1479)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:524)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:461)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:314)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1129)
+	at org.myftp.gattserver.grass3.pages.factories.template.PageFactory.createPage(PageFactory.java:43)
+	at org.myftp.gattserver.grass3.GrassUI.init(GrassUI.java:70)
+	at com.vaadin.ui.UI.doInit(UI.java:523)
+	at com.vaadin.server.AbstractCommunicationManager.getBrowserDetailsUI(AbstractCommunicationManager.java:2457)
+	at com.vaadin.server.AbstractCommunicationManager.handleBrowserDetailsRequest(AbstractCommunicationManager.java:2352)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:325)
+	at com.vaadin.server.VaadinServlet.service(VaadinServlet.java:201)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:848)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:669)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1448)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:330)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:118)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:84)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:103)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:113)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:54)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:45)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.www.BasicAuthenticationFilter.doFilter(BasicAuthenticationFilter.java:150)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:183)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:87)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:192)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:160)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:346)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:259)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1419)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:455)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:557)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1075)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:384)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1009)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:368)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:488)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:932)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:994)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:640)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.AsyncHttpConnection.handle(AsyncHttpConnection.java:82)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint.handle(SelectChannelEndPoint.java:628)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint$1.run(SelectChannelEndPoint.java:52)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:722)
+Caused by: org.h2.jdbc.JdbcSQLException: The connection was not closed by the application and is garbage collected [90018-168]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:329)
+	... 119 more
+03-06 20:04:39 jdbc: 
+/**/conn91.getAutoCommit();
+03-06 20:04:39 jdbc: 
+/**/conn91.setAutoCommit(false);
+03-06 20:04:39 jdbc: SESSION_SET_AUTOCOMMIT 0
+03-06 20:04:39 jdbc: 
+/**/conn91.getAutoCommit();
+03-06 20:04:39 jdbc: 
+/**/PreparedStatement prep1136 = conn91.prepareStatement("select this_.id as id4_1_, this_.name as name4_1_, this_.parent_id as parent3_4_1_, node2_.id as id4_0_, node2_.name as name4_0_, node2_.parent_id as parent3_4_0_ from NODE this_ left outer join NODE node2_ on this_.parent_id=node2_.id where this_.parent_id=?");
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 0
+03-06 20:04:39 jdbc: 
+/**/prep1136.setLong(1, 3L);
+03-06 20:04:39 jdbc: 
+/**/ResultSet rs1137 = prep1136.executeQuery();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 0
+03-06 20:04:39 jdbc: RESULT_CLOSE 1
+03-06 20:04:39 jdbc: 
+/**/rs1137.next();
+03-06 20:04:39 jdbc: 
+/**/rs1137.getLong("id4_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1137.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1137.getLong("id4_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1137.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1137.getString("name4_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1137.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1137.getLong("parent3_4_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1137.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1137.getString("name4_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1137.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1137.getLong("parent3_4_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1137.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1137.next();
+03-06 20:04:39 jdbc: 
+/**/rs1137.getLong("id4_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1137.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1137.getLong("id4_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1137.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1137.getString("name4_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1137.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1137.getLong("parent3_4_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1137.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1137.next();
+03-06 20:04:39 jdbc: 
+/**/rs1137.getLong("id4_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1137.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1137.getLong("id4_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1137.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1137.getString("name4_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1137.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1137.getLong("parent3_4_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1137.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1137.next();
+03-06 20:04:39 jdbc: 
+/**/rs1137.close();
+03-06 20:04:39 jdbc: 
+/**/prep1136.getMaxRows();
+03-06 20:04:39 jdbc: 
+/**/prep1136.getQueryTimeout();
+03-06 20:04:39 jdbc: 
+/**/conn91.getQueryTimeout();
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 2
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 20:04:39 jdbc: RESULT_CLOSE 3
+03-06 20:04:39 jdbc: 
+/**/prep1136.close();
+03-06 20:04:39 jdbc: COMMAND_CLOSE 0
+03-06 20:04:39 jdbc: 
+/**/PreparedStatement prep1137 = conn91.prepareStatement("select node0_.id as id4_1_, node0_.name as name4_1_, node0_.parent_id as parent3_4_1_, node1_.id as id4_0_, node1_.name as name4_0_, node1_.parent_id as parent3_4_0_ from NODE node0_ left outer join NODE node1_ on node0_.parent_id=node1_.id where node0_.id=?");
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 4
+03-06 20:04:39 jdbc: 
+/**/prep1137.setLong(1, 2L);
+03-06 20:04:39 jdbc: 
+/**/ResultSet rs1138 = prep1137.executeQuery();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 4
+03-06 20:04:39 jdbc: RESULT_CLOSE 5
+03-06 20:04:39 jdbc: 
+/**/rs1138.next();
+03-06 20:04:39 jdbc: 
+/**/rs1138.getLong("id4_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1138.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1138.getString("name4_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1138.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1138.getLong("parent3_4_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1138.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1138.getString("name4_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1138.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1138.getLong("parent3_4_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1138.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1138.next();
+03-06 20:04:39 jdbc: 
+/**/rs1138.close();
+03-06 20:04:39 jdbc: 
+/**/prep1137.getMaxRows();
+03-06 20:04:39 jdbc: 
+/**/prep1137.getQueryTimeout();
+03-06 20:04:39 jdbc: 
+/**/conn91.getQueryTimeout();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 20:04:39 jdbc: RESULT_CLOSE 6
+03-06 20:04:39 jdbc: 
+/**/prep1137.close();
+03-06 20:04:39 jdbc: COMMAND_CLOSE 4
+03-06 20:04:39 jdbc: 
+/**/conn91.commit();
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 7
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_UPDATE 7
+03-06 20:04:39 jdbc: 
+/**/PreparedStatement prep1138 = conn91.prepareStatement("select contentnod0_.NODE_id as NODE1_4_4_, contentnod0_.contentNodes_id as contentN2_4_, contentnod1_.id as id1_0_, contentnod1_.author_id as author8_1_0_, contentnod1_.contentId as contentId1_0_, contentnod1_.contentReaderId as contentR3_1_0_, contentnod1_.creationDate as creation4_1_0_, contentnod1_.lastModificationDate as lastModi5_1_0_, contentnod1_.name as name1_0_, contentnod1_.parent_id as parent9_1_0_, contentnod1_.publicated as publicated1_0_, user2_.id as id0_1_, user2_.confirmed as confirmed0_1_, user2_.email as email0_1_, user2_.LAST_LOGIN_DATE as LAST4_0_1_, user2_.name as name0_1_, user2_.password as password0_1_, user2_.REGISTRATION_DATE as REGISTRA7_0_1_, node3_.id as id4_2_, node3_.name as name4_2_, node3_.parent_id as parent3_4_2_, node4_.id as id4_3_, node4_.name as name4_3_, node4_.parent_id as parent3_4_3_ from NODE_CONTENTNODE contentnod0_ inner join CONTENTNODE contentnod1_ on contentnod0_.contentNodes_id=contentnod1_.id left outer join USER_ACCOUNTS user2_ on contentnod1_.author_id=user2_.id left outer join NODE node3_ on contentnod1_.parent_id=node3_.id left outer join NODE node4_ on node3_.parent_id=node4_.id where contentnod0_.NODE_id=?");
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 8
+03-06 20:04:39 jdbc: 
+/**/prep1138.setLong(1, 4L);
+03-06 20:04:39 jdbc: 
+/**/ResultSet rs1139 = prep1138.executeQuery();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 8
+03-06 20:04:39 jdbc: RESULT_CLOSE 9
+03-06 20:04:39 jdbc: 
+/**/rs1139.next();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getLong("id1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getLong("id0_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getLong("id4_2_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getLong("id4_3_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getLong("author8_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getLong("contentId1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getString("contentR3_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getTimestamp("creation4_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getTimestamp("lastModi5_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getString("name1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getLong("parent9_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getBoolean("publicated1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getBoolean("confirmed0_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getString("email0_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getTimestamp("LAST4_0_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.getString("name0_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getString("password0_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getTimestamp("REGISTRA7_0_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getLong("NODE1_4_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.getLong("contentN2_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1139.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1139.next();
+03-06 20:04:39 jdbc: 
+/**/rs1139.close();
+03-06 20:04:39 jdbc: 
+/**/prep1138.getMaxRows();
+03-06 20:04:39 jdbc: 
+/**/prep1138.getQueryTimeout();
+03-06 20:04:39 jdbc: 
+/**/conn91.getQueryTimeout();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 20:04:39 jdbc: RESULT_CLOSE 10
+03-06 20:04:39 jdbc: 
+/**/prep1138.close();
+03-06 20:04:39 jdbc: COMMAND_CLOSE 8
+03-06 20:04:39 jdbc: 
+/**/PreparedStatement prep1139 = conn91.prepareStatement("select roles0_.User_id as User1_0_0_, roles0_.roles as roles0_ from User_roles roles0_ where roles0_.User_id=?");
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 11
+03-06 20:04:39 jdbc: 
+/**/prep1139.setLong(1, 1L);
+03-06 20:04:39 jdbc: 
+/**/ResultSet rs1140 = prep1139.executeQuery();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 11
+03-06 20:04:39 jdbc: RESULT_CLOSE 12
+03-06 20:04:39 jdbc: 
+/**/rs1140.next();
+03-06 20:04:39 jdbc: 
+/**/rs1140.getLong("User1_0_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1140.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1140.getObject("roles0_");
+03-06 20:04:39 jdbc: 
+/**/rs1140.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1140.next();
+03-06 20:04:39 jdbc: 
+/**/rs1140.getLong("User1_0_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1140.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1140.getObject("roles0_");
+03-06 20:04:39 jdbc: 
+/**/rs1140.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1140.next();
+03-06 20:04:39 jdbc: 
+/**/rs1140.getLong("User1_0_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1140.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1140.getObject("roles0_");
+03-06 20:04:39 jdbc: 
+/**/rs1140.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1140.next();
+03-06 20:04:39 jdbc: 
+/**/rs1140.getLong("User1_0_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1140.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1140.getObject("roles0_");
+03-06 20:04:39 jdbc: 
+/**/rs1140.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1140.next();
+03-06 20:04:39 jdbc: 
+/**/rs1140.getLong("User1_0_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1140.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1140.getObject("roles0_");
+03-06 20:04:39 jdbc: 
+/**/rs1140.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1140.next();
+03-06 20:04:39 jdbc: 
+/**/rs1140.close();
+03-06 20:04:39 jdbc: 
+/**/prep1139.getMaxRows();
+03-06 20:04:39 jdbc: 
+/**/prep1139.getQueryTimeout();
+03-06 20:04:39 jdbc: 
+/**/conn91.getQueryTimeout();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 20:04:39 jdbc: RESULT_CLOSE 13
+03-06 20:04:39 jdbc: 
+/**/prep1139.close();
+03-06 20:04:39 jdbc: COMMAND_CLOSE 11
+03-06 20:04:39 jdbc: 
+/**/PreparedStatement prep1140 = conn91.prepareStatement("select contenttag0_.contentNodes_id as contentN1_1_1_, contenttag0_.contentTags_id as contentT2_1_, contenttag1_.id as id2_0_, contenttag1_.name as name2_0_ from CONTENTNODE_CONTENT_TAG contenttag0_ inner join CONTENT_TAG contenttag1_ on contenttag0_.contentTags_id=contenttag1_.id where contenttag0_.contentNodes_id=?");
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 14
+03-06 20:04:39 jdbc: 
+/**/prep1140.setLong(1, 66L);
+03-06 20:04:39 jdbc: 
+/**/ResultSet rs1141 = prep1140.executeQuery();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 14
+03-06 20:04:39 jdbc: RESULT_CLOSE 15
+03-06 20:04:39 jdbc: 
+/**/rs1141.next();
+03-06 20:04:39 jdbc: 
+/**/rs1141.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1141.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1141.getString("name2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1141.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1141.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1141.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1141.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1141.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1141.next();
+03-06 20:04:39 jdbc: 
+/**/rs1141.close();
+03-06 20:04:39 jdbc: 
+/**/prep1140.getMaxRows();
+03-06 20:04:39 jdbc: 
+/**/prep1140.getQueryTimeout();
+03-06 20:04:39 jdbc: 
+/**/conn91.getQueryTimeout();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 20:04:39 jdbc: RESULT_CLOSE 16
+03-06 20:04:39 jdbc: 
+/**/prep1140.close();
+03-06 20:04:39 jdbc: COMMAND_CLOSE 14
+03-06 20:04:39 jdbc: 
+/**/PreparedStatement prep1141 = conn91.prepareStatement("select contentnod0_.NODE_id as NODE1_4_4_, contentnod0_.contentNodes_id as contentN2_4_, contentnod1_.id as id1_0_, contentnod1_.author_id as author8_1_0_, contentnod1_.contentId as contentId1_0_, contentnod1_.contentReaderId as contentR3_1_0_, contentnod1_.creationDate as creation4_1_0_, contentnod1_.lastModificationDate as lastModi5_1_0_, contentnod1_.name as name1_0_, contentnod1_.parent_id as parent9_1_0_, contentnod1_.publicated as publicated1_0_, user2_.id as id0_1_, user2_.confirmed as confirmed0_1_, user2_.email as email0_1_, user2_.LAST_LOGIN_DATE as LAST4_0_1_, user2_.name as name0_1_, user2_.password as password0_1_, user2_.REGISTRATION_DATE as REGISTRA7_0_1_, node3_.id as id4_2_, node3_.name as name4_2_, node3_.parent_id as parent3_4_2_, node4_.id as id4_3_, node4_.name as name4_3_, node4_.parent_id as parent3_4_3_ from NODE_CONTENTNODE contentnod0_ inner join CONTENTNODE contentnod1_ on contentnod0_.contentNodes_id=contentnod1_.id left outer join USER_ACCOUNTS user2_ on contentnod1_.author_id=user2_.id left outer join NODE node3_ on contentnod1_.parent_id=node3_.id left outer join NODE node4_ on node3_.parent_id=node4_.id where contentnod0_.NODE_id=?");
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 17
+03-06 20:04:39 jdbc: 
+/**/prep1141.setLong(1, 15L);
+03-06 20:04:39 jdbc: 
+/**/ResultSet rs1142 = prep1141.executeQuery();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 17
+03-06 20:04:39 jdbc: RESULT_CLOSE 18
+03-06 20:04:39 jdbc: 
+/**/rs1142.next();
+03-06 20:04:39 jdbc: 
+/**/rs1142.getLong("id1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1142.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1142.getLong("id0_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1142.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1142.getLong("id4_2_");
+03-06 20:04:39 jdbc: 
+/**/rs1142.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1142.getLong("id4_3_");
+03-06 20:04:39 jdbc: 
+/**/rs1142.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1142.getLong("author8_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1142.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1142.getLong("contentId1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1142.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1142.getString("contentR3_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1142.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1142.getTimestamp("creation4_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1142.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1142.getTimestamp("lastModi5_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1142.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1142.getString("name1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1142.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1142.getLong("parent9_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1142.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1142.getBoolean("publicated1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1142.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1142.getLong("NODE1_4_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1142.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1142.getLong("contentN2_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1142.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1142.next();
+03-06 20:04:39 jdbc: 
+/**/rs1142.close();
+03-06 20:04:39 jdbc: 
+/**/prep1141.getMaxRows();
+03-06 20:04:39 jdbc: 
+/**/prep1141.getQueryTimeout();
+03-06 20:04:39 jdbc: 
+/**/conn91.getQueryTimeout();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 20:04:39 jdbc: RESULT_CLOSE 19
+03-06 20:04:39 jdbc: 
+/**/prep1141.close();
+03-06 20:04:39 jdbc: COMMAND_CLOSE 17
+03-06 20:04:39 jdbc: 
+/**/PreparedStatement prep1142 = conn91.prepareStatement("select contenttag0_.contentNodes_id as contentN1_1_1_, contenttag0_.contentTags_id as contentT2_1_, contenttag1_.id as id2_0_, contenttag1_.name as name2_0_ from CONTENTNODE_CONTENT_TAG contenttag0_ inner join CONTENT_TAG contenttag1_ on contenttag0_.contentTags_id=contenttag1_.id where contenttag0_.contentNodes_id=?");
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 20
+03-06 20:04:39 jdbc: 
+/**/prep1142.setLong(1, 51L);
+03-06 20:04:39 jdbc: 
+/**/ResultSet rs1143 = prep1142.executeQuery();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 20
+03-06 20:04:39 jdbc: RESULT_CLOSE 21
+03-06 20:04:39 jdbc: 
+/**/rs1143.next();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getString("name2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.next();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getString("name2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.next();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getString("name2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.next();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getString("name2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1143.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1143.next();
+03-06 20:04:39 jdbc: 
+/**/rs1143.close();
+03-06 20:04:39 jdbc: 
+/**/prep1142.getMaxRows();
+03-06 20:04:39 jdbc: 
+/**/prep1142.getQueryTimeout();
+03-06 20:04:39 jdbc: 
+/**/conn91.getQueryTimeout();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 20:04:39 jdbc: RESULT_CLOSE 22
+03-06 20:04:39 jdbc: 
+/**/prep1142.close();
+03-06 20:04:39 jdbc: COMMAND_CLOSE 20
+03-06 20:04:39 jdbc: 
+/**/PreparedStatement prep1143 = conn91.prepareStatement("select contentnod0_.NODE_id as NODE1_4_4_, contentnod0_.contentNodes_id as contentN2_4_, contentnod1_.id as id1_0_, contentnod1_.author_id as author8_1_0_, contentnod1_.contentId as contentId1_0_, contentnod1_.contentReaderId as contentR3_1_0_, contentnod1_.creationDate as creation4_1_0_, contentnod1_.lastModificationDate as lastModi5_1_0_, contentnod1_.name as name1_0_, contentnod1_.parent_id as parent9_1_0_, contentnod1_.publicated as publicated1_0_, user2_.id as id0_1_, user2_.confirmed as confirmed0_1_, user2_.email as email0_1_, user2_.LAST_LOGIN_DATE as LAST4_0_1_, user2_.name as name0_1_, user2_.password as password0_1_, user2_.REGISTRATION_DATE as REGISTRA7_0_1_, node3_.id as id4_2_, node3_.name as name4_2_, node3_.parent_id as parent3_4_2_, node4_.id as id4_3_, node4_.name as name4_3_, node4_.parent_id as parent3_4_3_ from NODE_CONTENTNODE contentnod0_ inner join CONTENTNODE contentnod1_ on contentnod0_.contentNodes_id=contentnod1_.id left outer join USER_ACCOUNTS user2_ on contentnod1_.author_id=user2_.id left outer join NODE node3_ on contentnod1_.parent_id=node3_.id left outer join NODE node4_ on node3_.parent_id=node4_.id where contentnod0_.NODE_id=?");
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 23
+03-06 20:04:39 jdbc: 
+/**/prep1143.setLong(1, 16L);
+03-06 20:04:39 jdbc: 
+/**/ResultSet rs1144 = prep1143.executeQuery();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 23
+03-06 20:04:39 jdbc: RESULT_CLOSE 24
+03-06 20:04:39 jdbc: 
+/**/rs1144.next();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id0_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id4_2_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id4_3_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("author8_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("contentId1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getString("contentR3_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getTimestamp("creation4_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getTimestamp("lastModi5_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getString("name1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("parent9_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getBoolean("publicated1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("NODE1_4_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("contentN2_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.next();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id0_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id4_2_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id4_3_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("author8_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("contentId1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getString("contentR3_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getTimestamp("creation4_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getTimestamp("lastModi5_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getString("name1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("parent9_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getBoolean("publicated1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("NODE1_4_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("contentN2_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.next();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id0_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id4_2_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id4_3_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("author8_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("contentId1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getString("contentR3_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getTimestamp("creation4_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getTimestamp("lastModi5_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getString("name1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("parent9_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getBoolean("publicated1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("NODE1_4_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("contentN2_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.next();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id0_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id4_2_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id4_3_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("author8_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("contentId1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getString("contentR3_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getTimestamp("creation4_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getTimestamp("lastModi5_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getString("name1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("parent9_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getBoolean("publicated1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("NODE1_4_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("contentN2_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.next();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id0_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id4_2_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id4_3_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("author8_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("contentId1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getString("contentR3_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getTimestamp("creation4_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getTimestamp("lastModi5_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getString("name1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("parent9_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getBoolean("publicated1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("NODE1_4_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("contentN2_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.next();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id0_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id4_2_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("id4_3_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("author8_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("contentId1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getString("contentR3_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getTimestamp("creation4_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getTimestamp("lastModi5_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getString("name1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("parent9_1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getBoolean("publicated1_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("NODE1_4_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.getLong("contentN2_4_");
+03-06 20:04:39 jdbc: 
+/**/rs1144.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1144.next();
+03-06 20:04:39 jdbc: 
+/**/rs1144.close();
+03-06 20:04:39 jdbc: 
+/**/prep1143.getMaxRows();
+03-06 20:04:39 jdbc: 
+/**/prep1143.getQueryTimeout();
+03-06 20:04:39 jdbc: 
+/**/conn91.getQueryTimeout();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 20:04:39 jdbc: RESULT_CLOSE 25
+03-06 20:04:39 jdbc: 
+/**/prep1143.close();
+03-06 20:04:39 jdbc: COMMAND_CLOSE 23
+03-06 20:04:39 jdbc: 
+/**/PreparedStatement prep1144 = conn91.prepareStatement("select contenttag0_.contentNodes_id as contentN1_1_1_, contenttag0_.contentTags_id as contentT2_1_, contenttag1_.id as id2_0_, contenttag1_.name as name2_0_ from CONTENTNODE_CONTENT_TAG contenttag0_ inner join CONTENT_TAG contenttag1_ on contenttag0_.contentTags_id=contenttag1_.id where contenttag0_.contentNodes_id=?");
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 26
+03-06 20:04:39 jdbc: 
+/**/prep1144.setLong(1, 68L);
+03-06 20:04:39 jdbc: 
+/**/ResultSet rs1145 = prep1144.executeQuery();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 26
+03-06 20:04:39 jdbc: RESULT_CLOSE 27
+03-06 20:04:39 jdbc: 
+/**/rs1145.next();
+03-06 20:04:39 jdbc: 
+/**/rs1145.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1145.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1145.getString("name2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1145.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1145.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1145.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1145.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1145.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1145.next();
+03-06 20:04:39 jdbc: 
+/**/rs1145.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1145.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1145.getString("name2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1145.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1145.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1145.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1145.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1145.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1145.next();
+03-06 20:04:39 jdbc: 
+/**/rs1145.close();
+03-06 20:04:39 jdbc: 
+/**/prep1144.getMaxRows();
+03-06 20:04:39 jdbc: 
+/**/prep1144.getQueryTimeout();
+03-06 20:04:39 jdbc: 
+/**/conn91.getQueryTimeout();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 20:04:39 jdbc: RESULT_CLOSE 28
+03-06 20:04:39 jdbc: 
+/**/prep1144.close();
+03-06 20:04:39 jdbc: COMMAND_CLOSE 26
+03-06 20:04:39 jdbc: 
+/**/PreparedStatement prep1145 = conn91.prepareStatement("select contenttag0_.contentNodes_id as contentN1_1_1_, contenttag0_.contentTags_id as contentT2_1_, contenttag1_.id as id2_0_, contenttag1_.name as name2_0_ from CONTENTNODE_CONTENT_TAG contenttag0_ inner join CONTENT_TAG contenttag1_ on contenttag0_.contentTags_id=contenttag1_.id where contenttag0_.contentNodes_id=?");
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 29
+03-06 20:04:39 jdbc: 
+/**/prep1145.setLong(1, 55L);
+03-06 20:04:39 jdbc: 
+/**/ResultSet rs1146 = prep1145.executeQuery();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 29
+03-06 20:04:39 jdbc: RESULT_CLOSE 30
+03-06 20:04:39 jdbc: 
+/**/rs1146.next();
+03-06 20:04:39 jdbc: 
+/**/rs1146.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1146.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1146.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1146.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1146.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1146.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1146.next();
+03-06 20:04:39 jdbc: 
+/**/rs1146.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1146.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1146.getString("name2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1146.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1146.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1146.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1146.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1146.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1146.next();
+03-06 20:04:39 jdbc: 
+/**/rs1146.close();
+03-06 20:04:39 jdbc: 
+/**/prep1145.getMaxRows();
+03-06 20:04:39 jdbc: 
+/**/prep1145.getQueryTimeout();
+03-06 20:04:39 jdbc: 
+/**/conn91.getQueryTimeout();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 20:04:39 jdbc: RESULT_CLOSE 31
+03-06 20:04:39 jdbc: 
+/**/prep1145.close();
+03-06 20:04:39 jdbc: COMMAND_CLOSE 29
+03-06 20:04:39 jdbc: 
+/**/PreparedStatement prep1146 = conn91.prepareStatement("select contenttag0_.contentNodes_id as contentN1_1_1_, contenttag0_.contentTags_id as contentT2_1_, contenttag1_.id as id2_0_, contenttag1_.name as name2_0_ from CONTENTNODE_CONTENT_TAG contenttag0_ inner join CONTENT_TAG contenttag1_ on contenttag0_.contentTags_id=contenttag1_.id where contenttag0_.contentNodes_id=?");
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 32
+03-06 20:04:39 jdbc: 
+/**/prep1146.setLong(1, 54L);
+03-06 20:04:39 jdbc: 
+/**/ResultSet rs1147 = prep1146.executeQuery();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 32
+03-06 20:04:39 jdbc: RESULT_CLOSE 33
+03-06 20:04:39 jdbc: 
+/**/rs1147.next();
+03-06 20:04:39 jdbc: 
+/**/rs1147.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1147.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1147.getString("name2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1147.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1147.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1147.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1147.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1147.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1147.next();
+03-06 20:04:39 jdbc: 
+/**/rs1147.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1147.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1147.getString("name2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1147.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1147.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1147.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1147.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1147.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1147.next();
+03-06 20:04:39 jdbc: 
+/**/rs1147.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1147.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1147.getString("name2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1147.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1147.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1147.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1147.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1147.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1147.next();
+03-06 20:04:39 jdbc: 
+/**/rs1147.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1147.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1147.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1147.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1147.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1147.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1147.next();
+03-06 20:04:39 jdbc: 
+/**/rs1147.close();
+03-06 20:04:39 jdbc: 
+/**/prep1146.getMaxRows();
+03-06 20:04:39 jdbc: 
+/**/prep1146.getQueryTimeout();
+03-06 20:04:39 jdbc: 
+/**/conn91.getQueryTimeout();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 20:04:39 jdbc: RESULT_CLOSE 34
+03-06 20:04:39 jdbc: 
+/**/prep1146.close();
+03-06 20:04:39 jdbc: COMMAND_CLOSE 32
+03-06 20:04:39 jdbc: 
+/**/PreparedStatement prep1147 = conn91.prepareStatement("select contenttag0_.contentNodes_id as contentN1_1_1_, contenttag0_.contentTags_id as contentT2_1_, contenttag1_.id as id2_0_, contenttag1_.name as name2_0_ from CONTENTNODE_CONTENT_TAG contenttag0_ inner join CONTENT_TAG contenttag1_ on contenttag0_.contentTags_id=contenttag1_.id where contenttag0_.contentNodes_id=?");
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 35
+03-06 20:04:39 jdbc: 
+/**/prep1147.setLong(1, 53L);
+03-06 20:04:39 jdbc: 
+/**/ResultSet rs1148 = prep1147.executeQuery();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 35
+03-06 20:04:39 jdbc: RESULT_CLOSE 36
+03-06 20:04:39 jdbc: 
+/**/rs1148.next();
+03-06 20:04:39 jdbc: 
+/**/rs1148.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1148.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1148.getString("name2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1148.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1148.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1148.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1148.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1148.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1148.next();
+03-06 20:04:39 jdbc: 
+/**/rs1148.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1148.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1148.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1148.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1148.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1148.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1148.next();
+03-06 20:04:39 jdbc: 
+/**/rs1148.close();
+03-06 20:04:39 jdbc: 
+/**/prep1147.getMaxRows();
+03-06 20:04:39 jdbc: 
+/**/prep1147.getQueryTimeout();
+03-06 20:04:39 jdbc: 
+/**/conn91.getQueryTimeout();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 20:04:39 jdbc: RESULT_CLOSE 37
+03-06 20:04:39 jdbc: 
+/**/prep1147.close();
+03-06 20:04:39 jdbc: COMMAND_CLOSE 35
+03-06 20:04:39 jdbc: 
+/**/PreparedStatement prep1148 = conn91.prepareStatement("select contenttag0_.contentNodes_id as contentN1_1_1_, contenttag0_.contentTags_id as contentT2_1_, contenttag1_.id as id2_0_, contenttag1_.name as name2_0_ from CONTENTNODE_CONTENT_TAG contenttag0_ inner join CONTENT_TAG contenttag1_ on contenttag0_.contentTags_id=contenttag1_.id where contenttag0_.contentNodes_id=?");
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 38
+03-06 20:04:39 jdbc: 
+/**/prep1148.setLong(1, 67L);
+03-06 20:04:39 jdbc: 
+/**/ResultSet rs1149 = prep1148.executeQuery();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 38
+03-06 20:04:39 jdbc: RESULT_CLOSE 39
+03-06 20:04:39 jdbc: 
+/**/rs1149.next();
+03-06 20:04:39 jdbc: 
+/**/rs1149.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1149.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1149.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1149.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1149.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1149.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1149.next();
+03-06 20:04:39 jdbc: 
+/**/rs1149.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1149.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1149.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1149.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1149.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1149.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1149.next();
+03-06 20:04:39 jdbc: 
+/**/rs1149.close();
+03-06 20:04:39 jdbc: 
+/**/prep1148.getMaxRows();
+03-06 20:04:39 jdbc: 
+/**/prep1148.getQueryTimeout();
+03-06 20:04:39 jdbc: 
+/**/conn91.getQueryTimeout();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 20:04:39 jdbc: RESULT_CLOSE 40
+03-06 20:04:39 jdbc: 
+/**/prep1148.close();
+03-06 20:04:39 jdbc: COMMAND_CLOSE 38
+03-06 20:04:39 jdbc: 
+/**/PreparedStatement prep1149 = conn91.prepareStatement("select contenttag0_.contentNodes_id as contentN1_1_1_, contenttag0_.contentTags_id as contentT2_1_, contenttag1_.id as id2_0_, contenttag1_.name as name2_0_ from CONTENTNODE_CONTENT_TAG contenttag0_ inner join CONTENT_TAG contenttag1_ on contenttag0_.contentTags_id=contenttag1_.id where contenttag0_.contentNodes_id=?");
+03-06 20:04:39 jdbc: SESSION_PREPARE_READ_PARAMS 41
+03-06 20:04:39 jdbc: 
+/**/prep1149.setLong(1, 52L);
+03-06 20:04:39 jdbc: 
+/**/ResultSet rs1150 = prep1149.executeQuery();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 41
+03-06 20:04:39 jdbc: RESULT_CLOSE 42
+03-06 20:04:39 jdbc: 
+/**/rs1150.next();
+03-06 20:04:39 jdbc: 
+/**/rs1150.getLong("id2_0_");
+03-06 20:04:39 jdbc: 
+/**/rs1150.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1150.getLong("contentN1_1_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1150.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1150.getLong("contentT2_1_");
+03-06 20:04:39 jdbc: 
+/**/rs1150.wasNull();
+03-06 20:04:39 jdbc: 
+/**/rs1150.next();
+03-06 20:04:39 jdbc: 
+/**/rs1150.close();
+03-06 20:04:39 jdbc: 
+/**/prep1149.getMaxRows();
+03-06 20:04:39 jdbc: 
+/**/prep1149.getQueryTimeout();
+03-06 20:04:39 jdbc: 
+/**/conn91.getQueryTimeout();
+03-06 20:04:39 jdbc: COMMAND_EXECUTE_QUERY 2
+03-06 20:04:39 jdbc: RESULT_CLOSE 43
+03-06 20:04:39 jdbc: 
+/**/prep1149.close();
+03-06 20:04:39 jdbc: COMMAND_CLOSE 41

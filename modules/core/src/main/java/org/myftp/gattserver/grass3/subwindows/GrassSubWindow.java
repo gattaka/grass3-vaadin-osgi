@@ -11,7 +11,11 @@ public class GrassSubWindow extends Window {
 	public GrassSubWindow(String name) {
 		super(name);
 
-		setContent(new VerticalLayout());
+		VerticalLayout layout = new VerticalLayout();
+		setContent(layout);
+		
+		layout.setSpacing(true);
+		layout.setMargin(true);
 
 		addAction(new Window.CloseShortcut(this, KeyCode.ESCAPE));
 

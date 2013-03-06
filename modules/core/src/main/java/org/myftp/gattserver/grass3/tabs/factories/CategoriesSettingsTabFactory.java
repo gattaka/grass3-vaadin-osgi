@@ -14,11 +14,6 @@ public class CategoriesSettingsTabFactory extends SettingsTabFactory {
 	}
 
 	@Override
-	public String getSettingsCaption() {
-		return "Kategorie";
-	}
-
-	@Override
 	public boolean isVisibleForRoles(Set<Role> roles) {
 		return roles.contains(Role.ADMIN);
 	}

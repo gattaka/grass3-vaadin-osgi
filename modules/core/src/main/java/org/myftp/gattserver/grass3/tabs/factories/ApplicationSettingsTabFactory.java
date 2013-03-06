@@ -14,11 +14,6 @@ public class ApplicationSettingsTabFactory extends SettingsTabFactory {
 	}
 
 	@Override
-	public String getSettingsCaption() {
-		return "Aplikace";
-	}
-
-	@Override
 	public boolean isVisibleForRoles(Set<Role> roles) {
 		return roles.contains(Role.ADMIN);
 	}

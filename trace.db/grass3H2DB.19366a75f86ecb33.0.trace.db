@@ -1,6 +1,0 @@
-03-03 10:48:25 jdbc: 
-/**/Connection conn3 = DriverManager.getConnection("jdbc:h2:tcp://localhost/grass3H2DB;TRACE_LEVEL_FIlE=3", "SA", "");
-03-03 10:48:25 jdbc: 
-/**/conn3.close();
-03-03 10:48:25 jdbc: SESSION_UNDO_LOG_POS 0
-03-03 10:48:25 jdbc: SESSION_CLOSE 0

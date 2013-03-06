@@ -1,3 +1,4 @@
 /deploy.sh
 /.settings
 /.project
+/trace.db

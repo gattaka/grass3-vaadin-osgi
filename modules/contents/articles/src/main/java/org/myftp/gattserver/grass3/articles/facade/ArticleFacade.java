@@ -2,6 +2,8 @@ package org.myftp.gattserver.grass3.articles.facade;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.articles.dao.ArticleDAO;
 import org.myftp.gattserver.grass3.articles.domain.Article;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
@@ -21,19 +23,36 @@ import org.myftp.gattserver.grass3.model.domain.ContentNode;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
-public enum ArticleFacade { 
+@Component("articleFacade")
+public class ArticleFacade implements ApplicationContextAware {
 
-	INSTANCE;
+	@Resource(name = "contentNodeFacade")
+	private ContentNodeFacade contentNodeFacade;
 
-	private ContentNodeFacade contentNodeFacade = ContentNodeFacade.INSTANCE;
-	private ArticlesMapper articlesMapper = ArticlesMapper.INSTANCE;
+	@Resource(name = "articlesMapper")
+	private ArticlesMapper articlesMapper;
+
+	@Resource(name = "contentNodeDAO")
+	private ContentNodeDAO contentNodeDAO;
+
+	private ApplicationContext applicationContext;
+
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		this.applicationContext = applicationContext;
+	}
 
 	private IContext processArticle(String source) {
 
 		Lexer lexer = new Lexer(source);
 		AbstractParser parser = new ArticleParser();
-		PluginBag pluginBag = new PluginBag(lexer, null);
+		PluginBag pluginBag = (PluginBag) applicationContext.getBean(
+				"pluginBag", lexer, null);
 
 		// výstup
 		AbstractElementTree tree = parser.parse(pluginBag);
@@ -199,7 +218,6 @@ public enum ArticleFacade {
 			return null;
 
 		// ulož do článku referenci na jeho contentnode
-		ContentNodeDAO contentNodeDAO = new ContentNodeDAO();
 		ContentNode contentNode = contentNodeDAO.findByID(contentNodeDTO
 				.getId());
 		contentNodeDAO.closeSession();

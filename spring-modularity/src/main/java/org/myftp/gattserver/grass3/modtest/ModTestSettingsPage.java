@@ -1,7 +1,7 @@
 package org.myftp.gattserver.grass3.modtest;
 
 import org.myftp.gattserver.grass3.pages.SettingsPage;
-import org.myftp.gattserver.grass3.pages.factories.template.SettingsTab;
+import org.myftp.gattserver.grass3.tabs.template.SettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 

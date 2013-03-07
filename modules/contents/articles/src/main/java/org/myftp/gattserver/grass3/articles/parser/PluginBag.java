@@ -5,6 +5,8 @@ import static org.myftp.gattserver.grass3.articles.lexer.Token.*;
 import java.util.List;
 import java.util.Stack;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.articles.lexer.Lexer;
 import org.myftp.gattserver.grass3.articles.lexer.Token;
 import org.myftp.gattserver.grass3.articles.parser.elements.BreaklineTree;
@@ -18,6 +20,8 @@ import org.myftp.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
 import org.myftp.gattserver.grass3.articles.parser.misc.HTMLEscaper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  * Propojovací třída pluginů a jejich parserů - zajišťuje, že když si Parser
@@ -33,10 +37,15 @@ import org.slf4j.LoggerFactory;
  * 
  * @author gatt
  */
+@Component("pluginBag")
+@Scope("prototype")
 public class PluginBag {
 
 	private Token token;
 	private Lexer lexer;
+
+	@Resource(name = "pluginRegister")
+	private PluginRegister pluginRegister;
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -185,7 +194,7 @@ public class PluginBag {
 		log(this.getClass().getSimpleName()
 				+ ": Looking for the right ParserPlugin for tag '" + tag + "'");
 
-		IPluginFactory pluginFactory = PluginRegister.INSTANCE.get(tag);
+		IPluginFactory pluginFactory = pluginRegister.get(tag);
 
 		if (pluginFactory != null) {
 

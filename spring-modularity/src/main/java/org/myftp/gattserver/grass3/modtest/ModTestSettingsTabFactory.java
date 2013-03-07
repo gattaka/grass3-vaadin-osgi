@@ -1,6 +1,6 @@
 package org.myftp.gattserver.grass3.modtest;
 
-import org.myftp.gattserver.grass3.pages.factories.template.SettingsTabFactory;
+import org.myftp.gattserver.grass3.tabs.factories.template.SettingsTabFactory;
 import org.springframework.stereotype.Component;
 
 @Component("modTestSettingsTabFactory")

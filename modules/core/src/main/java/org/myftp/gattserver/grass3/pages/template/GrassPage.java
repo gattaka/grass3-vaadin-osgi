@@ -1,5 +1,8 @@
 package org.myftp.gattserver.grass3.pages.template;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
@@ -8,6 +11,7 @@ import org.myftp.gattserver.grass3.util.GrassRequest;
 
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.CustomLayout;
+import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 
@@ -18,6 +22,8 @@ public abstract class GrassPage extends GrassLayout {
 	@Resource(name = "homePageFactory")
 	private PageFactory homePageFactory;
 
+	private Set<String> initJS = new LinkedHashSet<String>();
+
 	public GrassPage(GrassRequest request) {
 		super("grass", request);
 		addStyleName("grasspage");
@@ -26,6 +32,9 @@ public abstract class GrassPage extends GrassLayout {
 	@SuppressWarnings("unused")
 	@PostConstruct
 	private void init() {
+		
+		gatherInitJS();
+		
 		// homelink (přes logo)
 		Link homelink = new Link();
 		homelink.addStyleName("homelink");
@@ -44,6 +53,50 @@ public abstract class GrassPage extends GrassLayout {
 
 		// footer
 		addComponent(new Label("GRASS3"), "about");
+	}
+
+	/**
+	 * Přihlásí skripty
+	 * 
+	 * @param initJS
+	 */
+	protected void submitInitJS(Set<String> initJS) {
+		initJS.add("/VAADIN/themes/grass/js/grass.js");
+	}
+
+	/**
+	 * Vezme všechen nahlášený JS init obsah a provede ho (kaskádově s ohledem
+	 * na závislosti)
+	 */
+	private void gatherInitJS() {
+
+		StringBuilder loadScript = new StringBuilder();
+
+		// nejprve jQuery
+		loadScript
+				.append("var head= document.getElementsByTagName('head')[0];")
+				.append("var script= document.createElement('script');")
+				.append("script.type= 'text/javascript';")
+				.append("script.src= '/VAADIN/themes/grass/js/jquery.js';")
+				.append("var callback = function() {");
+
+		// ostatní JS už lze nahrávat pomocí jQuery
+		for (String js : initJS) {
+			loadScript.append("$.getScript('" + js + "', function(){");
+		}
+		// uzavřít
+		for (int i = 0; i < initJS.size(); i++) {
+			loadScript.append("});");
+		}
+
+		// konec jQuery
+		loadScript.append("};").append("script.onreadystatechange = callback;")
+				.append("script.onload = callback;")
+				.append("head.appendChild(script);");
+
+		// fire !
+		JavaScript.getCurrent().execute(loadScript.toString());
+
 	}
 
 	/**

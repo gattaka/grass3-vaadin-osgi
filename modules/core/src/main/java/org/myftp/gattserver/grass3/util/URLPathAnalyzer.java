@@ -53,7 +53,14 @@ public class URLPathAnalyzer {
 	 * Získá token z aktuální pozice
 	 */
 	public String getCurrentPathToken() {
-		return getPathToken(currentIndex);
+		return getCurrentPathToken(0);
+	}
+
+	/**
+	 * Získá token z aktuální pozice + offset
+	 */
+	public String getCurrentPathToken(int offset) {
+		return getPathToken(currentIndex + offset);
 	}
 
 	/**
@@ -68,6 +75,10 @@ public class URLPathAnalyzer {
 	 */
 	public int shift() {
 		currentIndex++;
+		return currentIndex;
+	}
+
+	public int getCurrentPathIndex() {
 		return currentIndex;
 	}
 

@@ -58,6 +58,9 @@ public class URLIdentifierUtils {
 	 */
 	public static URLIdentifier parseURLIdentifier(String identifier) {
 
+		if (identifier == null)
+			return null;
+
 		// získej ID
 		String[] parts = identifier.split("-");
 		if (parts.length <= 1)

@@ -30,15 +30,15 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 	private static final long serialVersionUID = 5078280973817331002L;
 
-	@Resource(name="nodeFacade")
+	@Resource(name = "nodeFacade")
 	private NodeFacade nodeFacade;
 
 	@Resource(name = "categoryPageFactory")
 	private PageFactory categoryPageFactory;
-	
+
 	@Resource(name = "tagPageFactory")
 	private PageFactory tagPageFactory;
-	
+
 	private ContentNodeDTO content;
 	private Label contentNameLabel;
 	private Label contentAuthorNameLabel;
@@ -47,16 +47,13 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	private CssLayout tagsListLayout = new CssLayout();
 	private CssLayout operationsListLayout;
 
-	private PageFactory pageFactory;
-
 	/**
 	 * Breadcrumb
 	 */
 	private Breadcrumb breadcrumb;
 
-	public ContentViewerPage(GrassRequest request, PageFactory pageFactory) {
+	public ContentViewerPage(GrassRequest request) {
 		super(request);
-		this.pageFactory = pageFactory;
 
 		content = getContentNodeDTO();
 		updateBreadcrumb(content);
@@ -73,8 +70,8 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		tagsListLayout.removeAllComponents();
 		for (String contentTag : content.getContentTags()) {
-			Link tagLink = new Link(contentTag, getPageResource(
-					tagPageFactory, contentTag));
+			Link tagLink = new Link(contentTag, getPageResource(tagPageFactory,
+					contentTag));
 			tagLink.addStyleName("taglabel");
 			tagsListLayout.addComponent(tagLink);
 		}
@@ -179,6 +176,8 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 	protected abstract ContentNodeDTO getContentNodeDTO();
 
+	protected abstract PageFactory getContentViewerPageFactory();
+
 	private void updateBreadcrumb(ContentNodeDTO content) {
 
 		// pokud zjistím, že cesta neodpovídá, vyhodím 302 (přesměrování) na
@@ -190,7 +189,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		 */
 		breadcrumbElements.add(new BreadcrumbElement(content.getName(),
 				getPageResource(
-						pageFactory,
+						getContentViewerPageFactory(),
 						URLIdentifierUtils.createURLIdentifier(
 								content.getContentID(), content.getName()))));
 

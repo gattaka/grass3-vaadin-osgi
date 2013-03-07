@@ -5,14 +5,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * 
  * @author gatt
  */
-public enum PluginRegister {
-
-	INSTANCE;
+@Component("pluginRegister")
+public class PluginRegister {
 
 	private Map<String, IPluginFactory> plugins = new HashMap<String, IPluginFactory>();
 

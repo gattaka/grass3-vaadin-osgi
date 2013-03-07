@@ -3,19 +3,27 @@ package org.myftp.gattserver.grass3.articles.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.articles.facade.ArticleFacade;
-import org.myftp.gattserver.grass3.articles.windows.ArticlesViewerWindow;
+import org.myftp.gattserver.grass3.articles.pages.factories.ArticlesViewerPageFactory;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.search.service.ISearchConnector;
 import org.myftp.gattserver.grass3.search.service.ISearchField;
 import org.myftp.gattserver.grass3.search.service.SearchEntity;
 import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
+import org.springframework.stereotype.Component;
 
+@Component("articlesSearchConnector")
 public class ArticlesSearchConnector implements ISearchConnector {
 
-	private ArticleFacade articleFacade = ArticleFacade.INSTANCE;
+	@Resource(name = "articleFacade")
+	private ArticleFacade articleFacade;
+
+	@Resource(name = "articlesViewerPageFactory")
+	private ArticlesViewerPageFactory articlesViewerPageFactory;
 
 	public List<SearchEntity> getAvailableSearchEntities(UserInfoDTO user) {
 
@@ -33,7 +41,7 @@ public class ArticlesSearchConnector implements ISearchConnector {
 						.getContentNode().getName());
 
 				SearchEntity searchEntity = new SearchEntity(
-						ArticlesViewerWindow.class, suffix);
+						articlesViewerPageFactory, suffix);
 
 				searchEntity.addField(ArticleSearchField.NAME, article
 						.getContentNode().getName(), true);

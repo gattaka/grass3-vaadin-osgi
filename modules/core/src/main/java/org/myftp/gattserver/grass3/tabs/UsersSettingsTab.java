@@ -7,9 +7,9 @@ import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.facades.UserFacade;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
-import org.myftp.gattserver.grass3.pages.factories.template.SettingsTab;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+import org.myftp.gattserver.grass3.tabs.template.SettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 

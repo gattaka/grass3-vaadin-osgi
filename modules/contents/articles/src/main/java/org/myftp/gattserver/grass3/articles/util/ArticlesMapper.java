@@ -5,18 +5,21 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.articles.domain.Article;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.util.Mapper;
+import org.springframework.stereotype.Component;
 
-public enum ArticlesMapper {
-
-	INSTANCE;
+@Component("articlesMapper")
+public class ArticlesMapper {
 
 	/**
 	 * Core mapper
 	 */
-	private Mapper mapper = Mapper.INSTANCE;
+	@Resource(name = "mapper")
+	private Mapper mapper;
 
 	/**
 	 * Převede {@link Article} na {@link ArticleDTO}

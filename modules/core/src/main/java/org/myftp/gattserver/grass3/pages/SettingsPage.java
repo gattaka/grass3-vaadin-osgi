@@ -5,8 +5,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.pages.factories.SettingsPageFactory;
-import org.myftp.gattserver.grass3.pages.factories.template.SettingsTabFactory;
 import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
+import org.myftp.gattserver.grass3.tabs.factories.template.SettingsTabFactory;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.SettingsTabFactoriesRegister;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;

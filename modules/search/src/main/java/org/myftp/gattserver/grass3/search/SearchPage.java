@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
@@ -35,7 +37,8 @@ public class SearchPage extends OneColumnPage {
 
 	public static final String NAME = "search";
 
-	private SearchFacade searchFacade = SearchFacade.INSTANCE;
+	@Resource(name = "searchFacade")
+	private SearchFacade searchFacade;
 
 	private final VerticalLayout outputLayout = new VerticalLayout();
 	private final TextField searchField = new TextField();

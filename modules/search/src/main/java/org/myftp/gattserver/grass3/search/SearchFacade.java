@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.cz.CzechAnalyzer;
 import org.apache.lucene.document.Document;
@@ -36,14 +38,19 @@ import org.myftp.gattserver.grass3.search.service.ISearchConnector;
 import org.myftp.gattserver.grass3.search.service.ISearchField;
 import org.myftp.gattserver.grass3.search.service.SearchEntity;
 import org.myftp.gattserver.grass3.search.service.SearchHit;
+import org.springframework.stereotype.Component;
 
-public enum SearchFacade {
+@Component("searchFacade")
+public class SearchFacade {
 
-	INSTANCE;
+	@Resource(name = "connectorAggregator")
+	ConnectorAggregator connectorAggregator;
+
+	private SearchFacade() {
+	}
 
 	public Set<String> getSearchModulesIds() {
-		ConnectorAggregator aggregator = ConnectorAggregator.getInstance();
-		return aggregator.getSearchConnectorsById().keySet();
+		return connectorAggregator.getSearchConnectorsById().keySet();
 	}
 
 	private String getHighlightedField(Query query, Analyzer analyzer,
@@ -99,9 +106,8 @@ public enum SearchFacade {
 		/**
 		 * Hledej dle search connectoru
 		 */
-		ConnectorAggregator aggregator = ConnectorAggregator.getInstance();
-		ISearchConnector connector = aggregator.getSearchConnectorsById().get(
-				moduleId);
+		ISearchConnector connector = connectorAggregator
+				.getSearchConnectorsById().get(moduleId);
 
 		/**
 		 * Pokud nebyly vybrány explicitně položky k prohledávání, prohledáváme

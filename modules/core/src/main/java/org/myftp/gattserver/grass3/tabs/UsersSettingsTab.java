@@ -206,7 +206,6 @@ public class UsersSettingsTab extends SettingsTab {
 
 						private static final long serialVersionUID = -4168795771060533842L;
 
-						@Override
 						public void valueChange(ValueChangeEvent event) {
 							if (checkbox.getValue()) {
 								user.getRoles().add(value);

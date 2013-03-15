@@ -7,6 +7,7 @@ import java.util.List;
 import org.myftp.gattserver.grass3.articles.domain.Article;
 import org.myftp.gattserver.grass3.articles.domain.TempArticle;
 import org.myftp.gattserver.grass3.model.service.IEntityService;
+import org.springframework.stereotype.Component;
 
 /**
  * Sdružuje třídy entit a hromadně je jako služba registruje u model bundle
@@ -14,6 +15,7 @@ import org.myftp.gattserver.grass3.model.service.IEntityService;
  * @author gatt
  * 
  */
+@Component("articlesEntityService")
 public class ArticlesEntityService implements IEntityService {
 
 	/**

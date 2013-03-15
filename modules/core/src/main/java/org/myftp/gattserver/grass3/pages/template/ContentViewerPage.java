@@ -50,23 +50,26 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	/**
 	 * Breadcrumb
 	 */
-	private Breadcrumb breadcrumb;
+	private Breadcrumb breadcrumb = new Breadcrumb();
 
 	public ContentViewerPage(GrassRequest request) {
 		super(request);
+	}
+
+	protected void init() {
 
 		content = getContentNodeDTO();
 		updateBreadcrumb(content);
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("d.M.yyyy HH:mm:ss");
 
-		contentNameLabel.setValue("<h2>" + content.getName() + "</h2>");
-		contentAuthorNameLabel.setValue(content.getAuthor().getName());
-		contentCreationDateNameLabel.setValue(dateFormat.format(content
+		contentNameLabel = new Label("<h2>" + content.getName() + "</h2>");
+		contentAuthorNameLabel = new Label(content.getAuthor().getName());
+		contentCreationDateNameLabel = new Label(dateFormat.format(content
 				.getCreationDate()));
-		contentLastModificationDateLabel.setValue(content
-				.getLastModificationDate() == null ? "<em>-neupraveno-</em>"
-				: dateFormat.format(content.getLastModificationDate()));
+		contentLastModificationDateLabel = new Label(
+				content.getLastModificationDate() == null ? "<em>-neupraveno-</em>"
+						: dateFormat.format(content.getLastModificationDate()));
 
 		tagsListLayout.removeAllComponents();
 		for (String contentTag : content.getContentTags()) {
@@ -76,8 +79,10 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 			tagsListLayout.addComponent(tagLink);
 		}
 
-		operationsListLayout.removeAllComponents();
+		operationsListLayout = new CssLayout();
 		updateOperationsList(operationsListLayout);
+
+		super.init();
 	}
 
 	@Override
@@ -101,15 +106,13 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		gridLayout.addComponent(new Label("<strong>Autor:</strong>",
 				ContentMode.HTML), 0, 0);
-		gridLayout.addComponent(contentAuthorNameLabel = new Label(), 1, 0);
+		gridLayout.addComponent(contentAuthorNameLabel, 1, 0);
 		gridLayout.addComponent(new Label("<strong>Vytvořeno:</strong>",
 				ContentMode.HTML), 0, 1);
-		gridLayout.addComponent(contentCreationDateNameLabel = new Label(), 1,
-				1);
+		gridLayout.addComponent(contentCreationDateNameLabel, 1, 1);
 		gridLayout.addComponent(new Label("<strong>Upraveno:</strong>",
 				ContentMode.HTML), 0, 2);
-		gridLayout.addComponent(contentLastModificationDateLabel = new Label(),
-				1, 2);
+		gridLayout.addComponent(contentLastModificationDateLabel, 1, 2);
 
 		gridLayout.setComponentAlignment(contentAuthorNameLabel,
 				Alignment.TOP_RIGHT);
@@ -138,7 +141,6 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		operationsLayout.addComponent(new Label("<h2>Operace s obsahem</h2>",
 				ContentMode.HTML));
 
-		operationsListLayout = new CssLayout();
 		operationsLayout.addComponent(operationsListLayout);
 		operationsListLayout.addStyleName("tools_css_menu");
 
@@ -157,12 +159,12 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
-		layout.addComponent(breadcrumb = new Breadcrumb());
+		layout.addComponent(breadcrumb);
 
 		// Název obsahu
 		VerticalLayout nameLayout = new VerticalLayout();
 		layout.addComponent(nameLayout);
-		nameLayout.addComponent(contentNameLabel = new Label());
+		nameLayout.addComponent(contentNameLabel);
 		contentNameLabel.setContentMode(ContentMode.HTML);
 
 		// samotný obsah

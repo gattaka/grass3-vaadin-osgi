@@ -55,6 +55,9 @@ public abstract class BasePage extends GrassPage {
 	@Resource(name = "settingsPageFactory")
 	private PageFactory settingsPageFactory;
 
+	@Resource(name = "serviceHolder")
+	private ServiceHolder serviceHolder;
+
 	private HorizontalLayout sectionsMenuLayout;
 	private HorizontalLayout userMenuLayout;
 
@@ -103,7 +106,7 @@ public abstract class BasePage extends GrassPage {
 
 		// externí sekce
 		CoreACL acl = getUserACL();
-		for (ISectionService section : ServiceHolder.getSectionServices()) {
+		for (ISectionService section : serviceHolder.getSectionServices()) {
 			if (acl.canShowSection(section)) {
 				createSectionLink(section.getSectionCaption(),
 						section.getSectionPageFactory());

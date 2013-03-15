@@ -3,8 +3,12 @@ package org.myftp.gattserver.grass3;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.myftp.gattserver.grass3.service.IContentService;
 import org.myftp.gattserver.grass3.service.ISectionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * {@link ServiceHolder} udržuje přehled všech přihlášených modulů. Zároveň
@@ -14,26 +18,40 @@ import org.myftp.gattserver.grass3.service.ISectionService;
  * @author gatt
  * 
  */
+@Component("serviceHolder")
 public class ServiceHolder {
 
-	// static class
 	private ServiceHolder() {
 	};
 
 	/**
-	 * Obsahy
+	 * Ošetření null kolekcí
 	 */
-	private static List<IContentService> contentServices = new ArrayList<IContentService>();
+	@SuppressWarnings("unused")
+	@PostConstruct
+	private void init() {
 
-	public static boolean addContentService(IContentService contentService) {
-		return contentServices.add(contentService);
+		if (contentServices == null)
+			contentServices = new ArrayList<IContentService>();
+
+		if (sectionServices == null) {
+			sectionServices = new ArrayList<ISectionService>();
+		}
 	}
 
-	public static List<IContentService> getContentServices() {
+	/**
+	 * Obsahy
+	 */
+	@Autowired(required = false)
+	private List<IContentService> contentServices;
+
+	public List<IContentService> getContentServices() {
 		return contentServices;
 	}
 
-	public static IContentService getContentServiceByName(String contentReaderID) {
+	public IContentService getContentServiceByName(String contentReaderID) {
+		if (contentServices == null)
+			return null;
 		for (IContentService contentService : contentServices) {
 			if (contentService.getContentID().equals(contentReaderID))
 				return contentService;
@@ -44,13 +62,10 @@ public class ServiceHolder {
 	/**
 	 * Sekce
 	 */
-	private static List<ISectionService> sectionServices = new ArrayList<ISectionService>();
+	@Autowired(required = false)
+	private List<ISectionService> sectionServices;
 
-	public static boolean addSectionServices(ISectionService sectionService) {
-		return sectionServices.add(sectionService);
-	}
-
-	public static List<ISectionService> getSectionServices() {
+	public List<ISectionService> getSectionServices() {
 		return sectionServices;
 	}
 

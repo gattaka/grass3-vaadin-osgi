@@ -122,37 +122,30 @@ public class UserInfoDTO implements UserDetails {
 		this.confirmed = confirmed;
 	}
 
-	@Override
 	public boolean isEnabled() {
 		return true;
 	}
 
-	@Override
 	public boolean isCredentialsNonExpired() {
 		return false;
 	}
 
-	@Override
 	public boolean isAccountNonLocked() {
 		return this.isConfirmed();
 	}
 
-	@Override
 	public boolean isAccountNonExpired() {
 		return true;
 	}
 
-	@Override
 	public String getUsername() {
 		return this.getName();
 	}
 
-	@Override
 	public String getPassword() {
 		return password;
 	}
 
-	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return this.getRoles();
 	}

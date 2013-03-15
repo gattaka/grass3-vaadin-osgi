@@ -12,8 +12,9 @@ import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory;
+import org.myftp.gattserver.grass3.pages.template.NewContentsTableFactory;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory.ContentsTable;
-import org.myftp.gattserver.grass3.pages.template.NewContentsTable;
+import org.myftp.gattserver.grass3.pages.template.NewContentsTableFactory.NewContentsTable;
 import org.myftp.gattserver.grass3.pages.template.NodesTableFactory;
 import org.myftp.gattserver.grass3.pages.template.NodesTableFactory.NodesTable;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
@@ -46,6 +47,9 @@ public class CategoryPage extends OneColumnPage {
 
 	@Resource(name = "contentsTableFactory")
 	private ContentsTableFactory contentsTableFactory;
+
+	@Resource(name = "newContentsTableFactory")
+	private NewContentsTableFactory newContentsTableFactory;
 
 	@Resource(name = "nodesTableFactory")
 	private NodesTableFactory nodesTableFactory;
@@ -164,7 +168,8 @@ public class CategoryPage extends OneColumnPage {
 	private void createNewContentMenu(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout newContentsLayout = new VerticalLayout();
-		NewContentsTable newContentsTable = new NewContentsTable();
+		NewContentsTable newContentsTable = newContentsTableFactory
+				.createNewContentsTable();
 
 		newContentsLayout.addComponent(new Label(
 				"<h2>Vytvořit nový obsah</h2>", ContentMode.HTML));

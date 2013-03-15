@@ -31,13 +31,11 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
-import org.myftp.gattserver.grass3.pages.template.GrassWindow;
+import org.myftp.gattserver.grass3.pages.template.GrassPage;
 import org.myftp.gattserver.grass3.search.service.ISearchConnector;
 import org.myftp.gattserver.grass3.search.service.ISearchField;
 import org.myftp.gattserver.grass3.search.service.SearchEntity;
 import org.myftp.gattserver.grass3.search.service.SearchHit;
-
-import com.vaadin.terminal.ExternalResource;
 
 public enum SearchFacade {
 
@@ -84,7 +82,7 @@ public enum SearchFacade {
 	 */
 	public List<SearchHit> search(String queryText,
 			Set<Enum<? extends ISearchField>> searchFields, String moduleId,
-			UserInfoDTO user, GrassWindow grassWindow) throws IOException,
+			UserInfoDTO user, GrassPage callingPage) throws IOException,
 			ParseException, InvalidTokenOffsetsException {
 
 		// StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);
@@ -132,9 +130,9 @@ public enum SearchFacade {
 						field.isTokenized() ? Index.ANALYZED : Index.NO));
 			}
 
-			String url = new ExternalResource(grassWindow.getWindow(
-					searchEntity.getLink().getViewerClass()).getURL()
-					+ searchEntity.getLink().getSuffix()).getURL();
+			String url = callingPage
+					.getPageURL(searchEntity.getLink().getViewerPageFactory(),
+							searchEntity.getLink().getSuffix());
 
 			// přidej link
 			doc.add(new Field(connector.getLinkFieldName(), url,

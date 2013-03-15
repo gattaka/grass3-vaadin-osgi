@@ -1,7 +1,8 @@
 package org.myftp.gattserver.grass3.articles.editor.api;
 
-import com.vaadin.terminal.Resource;
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.server.Resource;
+import com.vaadin.server.ThemeResource;
+
 
 /**
  * Třída obsahující všechny potřebné informace pro začlenění pluginu do UI

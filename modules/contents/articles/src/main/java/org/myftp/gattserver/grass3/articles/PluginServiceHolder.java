@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.articles.editor.api.EditorButtonResources;
@@ -20,9 +21,19 @@ public class PluginServiceHolder {
 	@Resource(name = "pluginRegister")
 	private PluginRegister pluginRegister;
 
-	@Autowired
-	private PluginServiceHolder(List<IPluginService> services) {
+	@Autowired(required = false)
+	private List<IPluginService> services;
 
+	private PluginServiceHolder() {
+	};
+
+	@PostConstruct
+	@SuppressWarnings("unused")
+	private void init() {
+
+		if (services == null)
+			return;
+		
 		for (IPluginService service : services) {
 			// přidej do registru pro parser
 			pluginRegister.registerPlugin(service.getPluginFactory());
@@ -30,8 +41,7 @@ public class PluginServiceHolder {
 			// Editor button bundle přidej dle skupiny pluginů do tools nabídky
 			addButtonToGroup(service.getEditorButtonResources());
 		}
-
-	};
+	}
 
 	/**
 	 * Pluginy dle skupin

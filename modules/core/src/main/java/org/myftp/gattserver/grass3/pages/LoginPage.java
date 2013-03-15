@@ -56,7 +56,6 @@ public class LoginPage extends OneColumnPage {
 
 					private static final long serialVersionUID = 256710217389298911L;
 
-					@Override
 					public void buttonClick(ClickEvent event) {
 						if (getGrassUI().login(nameField.getValue(),
 								passField.getValue())) {

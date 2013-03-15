@@ -34,14 +34,18 @@ public class ContentsTableFactory {
 	@Resource(name = "noServicePageFactory")
 	private PageFactory noServicePageFactory;
 
+	@Resource(name = "serviceHolder")
+	private ServiceHolder serviceHolder;
+
 	public ContentsTable createContentsTable() {
-		
+
 		ContentsTable table = new ContentsTable();
-		
+
 		table.categoryPageFactory = categoryPageFactory;
 		table.nodeFacade = nodeFacade;
 		table.noServicePageFactory = noServicePageFactory;
-		
+		table.serviceHolder = serviceHolder;
+
 		return table;
 	}
 
@@ -54,6 +58,7 @@ public class ContentsTableFactory {
 		private NodeFacade nodeFacade;
 		private PageFactory categoryPageFactory;
 		private PageFactory noServicePageFactory;
+		private ServiceHolder serviceHolder;
 
 		private ContentsTable() {
 			setHeight("200px");
@@ -98,7 +103,7 @@ public class ContentsTableFactory {
 					continue;
 
 				// jaká prohlížecí služba odpovídá tomuto obsahu
-				IContentService contentService = ServiceHolder
+				IContentService contentService = serviceHolder
 						.getContentServiceByName(contentNode
 								.getContentReaderID());
 

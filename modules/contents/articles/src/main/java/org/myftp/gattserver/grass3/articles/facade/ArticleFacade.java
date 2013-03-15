@@ -40,6 +40,9 @@ public class ArticleFacade implements ApplicationContextAware {
 	@Resource(name = "contentNodeDAO")
 	private ContentNodeDAO contentNodeDAO;
 
+	@Resource(name = "articleDAO")
+	private ArticleDAO articleDAO;
+
 	private ApplicationContext applicationContext;
 
 	public void setApplicationContext(ApplicationContext applicationContext)
@@ -115,7 +118,6 @@ public class ArticleFacade implements ApplicationContextAware {
 	public boolean deleteArticle(ArticleDTO articleDTO) {
 
 		// smaž článek
-		ArticleDAO articleDAO = new ArticleDAO();
 		if (articleDAO.delete(articleDTO.getId()) == false)
 			return false;
 
@@ -146,7 +148,6 @@ public class ArticleFacade implements ApplicationContextAware {
 			boolean publicated, ArticleDTO articleDTO) {
 
 		// článek
-		ArticleDAO articleDAO = new ArticleDAO();
 		Article article = articleDAO.findByID(articleDTO.getId());
 		articleDAO.closeSession();
 
@@ -192,7 +193,6 @@ public class ArticleFacade implements ApplicationContextAware {
 			boolean publicated, NodeDTO category, UserInfoDTO author) {
 
 		// vytvoř nový článek
-		ArticleDAO articleDAO = new ArticleDAO();
 		Article article = new Article();
 
 		// nasetuj do něj vše potřebné
@@ -238,15 +238,14 @@ public class ArticleFacade implements ApplicationContextAware {
 	 */
 	public ArticleDTO getArticleById(Long id) {
 
-		ArticleDAO dao = new ArticleDAO();
-		Article article = dao.findByID(id);
+		Article article = articleDAO.findByID(id);
 
 		if (article == null)
 			return null;
 
 		ArticleDTO articleDTO = articlesMapper.map(article);
 
-		dao.closeSession();
+		articleDAO.closeSession();
 
 		return articleDTO;
 	}
@@ -258,15 +257,14 @@ public class ArticleFacade implements ApplicationContextAware {
 	 */
 	public List<ArticleDTO> getAllArticles() {
 
-		ArticleDAO dao = new ArticleDAO();
-		List<Article> articles = dao.findAll();
+		List<Article> articles = articleDAO.findAll();
 
 		if (articles == null)
 			return null;
 
 		List<ArticleDTO> articleDTOs = articlesMapper.map(articles);
 
-		dao.closeSession();
+		articleDAO.closeSession();
 
 		return articleDTOs;
 

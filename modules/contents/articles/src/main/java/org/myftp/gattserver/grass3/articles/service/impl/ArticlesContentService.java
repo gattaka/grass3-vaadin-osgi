@@ -6,7 +6,7 @@ import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
 import org.myftp.gattserver.grass3.service.IContentService;
 import org.springframework.stereotype.Component;
 
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.server.ThemeResource;
 
 @Component("articlesContentService")
 public class ArticlesContentService implements IContentService {

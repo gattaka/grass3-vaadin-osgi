@@ -29,9 +29,8 @@ public abstract class GrassPage extends GrassLayout {
 		addStyleName("grasspage");
 	}
 
-	@SuppressWarnings("unused")
 	@PostConstruct
-	private void init() {
+	protected void init() {
 		
 		gatherInitJS();
 		

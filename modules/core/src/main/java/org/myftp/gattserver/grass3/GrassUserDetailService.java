@@ -15,7 +15,6 @@ public class GrassUserDetailService implements UserDetailsService {
 	@Resource(name = "userFacade")
 	private UserFacade userFacade;
 
-	@Override
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
 

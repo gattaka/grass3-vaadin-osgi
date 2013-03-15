@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component("tempArticleDAO")
 public class TempArticleDAO extends AbstractDAO<TempArticle> {
 
-	public TempArticleDAO() {
+	private TempArticleDAO() {
 		super(TempArticle.class);
 	}
 

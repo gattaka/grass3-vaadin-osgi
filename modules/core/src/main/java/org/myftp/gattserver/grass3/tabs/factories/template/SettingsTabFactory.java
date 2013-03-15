@@ -17,7 +17,6 @@ public abstract class SettingsTabFactory implements ApplicationContextAware {
 
 	protected ApplicationContext applicationContext;
 
-	@Override
 	public void setApplicationContext(ApplicationContext applicationContext)
 			throws BeansException {
 		this.applicationContext = applicationContext;

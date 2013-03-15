@@ -23,8 +23,8 @@ import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.springframework.context.annotation.Scope;
 
+import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
@@ -51,11 +51,12 @@ public class ArticlesViewerPage extends ContentViewerPage {
 	private ArticlesEditorPageFactory articlesEditorPageFactory;
 
 	private ArticleDTO article;
-	private Label articleContentLabel;
 
 	public ArticlesViewerPage(GrassRequest request) {
 		super(request);
+	}
 
+	protected void init() {
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
 				.parseURLIdentifier(analyzer.getCurrentPathToken());
@@ -65,8 +66,6 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		article = articleFacade.getArticleById(identifier.getId());
 		if (article == null)
 			showError404();
-
-		articleContentLabel.setValue(article.getOutputHTML());
 
 		// CSS resources
 		for (String css : article.getPluginCSSResources()) {
@@ -87,6 +86,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 					.append("head.appendChild(link);");
 			JavaScript.getCurrent().execute(loadStylesheet.toString());
 		}
+
+		super.init();
 	}
 
 	@Override
@@ -115,8 +116,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 	@Override
 	protected void createContent(VerticalLayout layout) {
-		layout.addComponent(articleContentLabel = new Label("",
-				ContentMode.HTML));
+		layout.addComponent(new Label(article.getOutputHTML(), ContentMode.HTML));
 	}
 
 	@Override

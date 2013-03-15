@@ -6,41 +6,16 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>GRASS3 Search engine</name>
 
-	<packaging>bundle</packaging>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<osgi.version>4.2.0</osgi.version>
-		<vaadin.version>6.8.2</vaadin.version>
+		<vaadin.version>7.0.0</vaadin.version>
 	</properties>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>2.3.7</version>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Embed-Dependency>
-							lucene-analyzers;inline=true,
-							lucene-highlighter;inline=true,
-							lucene-memory;inline=true,
-							lucene-regex;inline=true
-						</Embed-Dependency>
-						<Embed-Transitive>true</Embed-Transitive>
-						<Include-Resource>
-							{maven-resources}, {maven-dependencies},
-						</Include-Resource>
-						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-					</instructions>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
 	<repositories>
+		<repository>
+			<id>vaadin-addons</id>
+			<url>http://maven.vaadin.com/vaadin-addons</url>
+		</repository>
 		<repository>
 			<id>vaadin-snapshots</id>
 			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
@@ -51,19 +26,104 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-		<repository>
-			<id>vaadin-addons</id>
-			<url>http://maven.vaadin.com/vaadin-addons</url>
-		</repository>
 	</repositories>
 
 	<dependencies>
 
-		<!-- Lucene OSGi Bundle (core) -->
+		<!-- Grass3 jádro -->
 		<dependency>
-			<groupId>org.apache.servicemix.bundles</groupId>
-			<artifactId>org.apache.servicemix.bundles.lucene</artifactId>
-			<version>3.6.0_1</version>
+			<groupId>org.myftp.gattserver.grass3</groupId>
+			<artifactId>core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>3.2.1.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>3.2.1.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>3.2.1.RELEASE</version>
+		</dependency>
+
+		<!-- Spring security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>3.1.2.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>3.1.2.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>3.1.2.RELEASE</version>
+		</dependency>
+
+		<!-- Spring test -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>3.2.1.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Vaadin 7 -->
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-server</artifactId>
+			<version>${vaadin.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-client-compiled</artifactId>
+			<version>${vaadin.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-client</artifactId>
+			<version>${vaadin.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-themes</artifactId>
+			<version>${vaadin.version}</version>
+		</dependency>
+
+		<!-- JUnit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+		</dependency>
+
+		<!-- Logback -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>0.9.24</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.6.1</version>
 		</dependency>
 
 		<!-- Lucene heighlight -->
@@ -90,41 +150,27 @@
 			<version>3.5.0</version>
 		</dependency>
 
-		<!-- OSGi container support -->
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.compendium</artifactId>
-			<version>${osgi.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-			<version>${osgi.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- Vaadin -->
-		<dependency>
-			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin</artifactId>
-			<version>${vaadin.version}</version>
-		</dependency>
-
-		<!-- Grass3 jádro -->
-		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
-			<artifactId>core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<!-- JUNIT DEPENDENCY FOR TESTING -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
-			<scope>test</scope>
-		</dependency>
-
 	</dependencies>
+
+	<!-- je potřeba, aby závislosti byly na server nahrány společně s tímto 
+		jarem, protože ale můžou být konfliktní nechávám je vyexportovat do lib adresáře 
+		a z něj pak vyberu jen ty potřebné -->
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

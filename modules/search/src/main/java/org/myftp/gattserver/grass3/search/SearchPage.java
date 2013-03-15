@@ -8,22 +8,28 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 import org.myftp.gattserver.grass3.search.service.SearchHit;
+import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.springframework.context.annotation.Scope;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
-import com.vaadin.terminal.ExternalResource;
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.server.ExternalResource;
+import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.combobox.FilteringMode;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.AbstractSelect.Filtering;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-public class SearchWindow extends OneColumnPage {
+@org.springframework.stereotype.Component("searchPage")
+@Scope("prototype")
+public class SearchPage extends OneColumnPage {
 
 	private static final long serialVersionUID = -7063551976547889914L;
 
@@ -31,13 +37,12 @@ public class SearchWindow extends OneColumnPage {
 
 	private SearchFacade searchFacade = SearchFacade.INSTANCE;
 
-	private VerticalLayout layout;
 	private final VerticalLayout outputLayout = new VerticalLayout();
 	private final TextField searchField = new TextField();
 	private final ComboBox moduleCombo = new ComboBox();
 
-	public SearchWindow() {
-		setName(NAME);
+	public SearchPage(GrassRequest request) {
+		super(request);
 	}
 
 	private void searchAndPrintHits() {
@@ -45,8 +50,8 @@ public class SearchWindow extends OneColumnPage {
 		String searchText = (String) searchField.getValue();
 		try {
 			List<SearchHit> hits = searchFacade.search(searchText, null,
-					(String) moduleCombo.getValue(),
-					getApplication().getUser(), SearchWindow.this);
+					(String) moduleCombo.getValue(), getGrassUI().getUser(),
+					this);
 			outputLayout.removeAllComponents();
 
 			if (hits.size() == 0) {
@@ -60,7 +65,7 @@ public class SearchWindow extends OneColumnPage {
 					hitLayout.addComponent(new Link(link, new ExternalResource(
 							link)));
 					Label highlightLabel = new Label(hit.getHitFieldText(),
-							Label.CONTENT_XHTML);
+							ContentMode.HTML);
 					hitLayout.addComponent(highlightLabel);
 				}
 			}
@@ -75,10 +80,19 @@ public class SearchWindow extends OneColumnPage {
 	}
 
 	@Override
-	protected void onShow() {
-		super.onShow();
+	protected Component createContent() {
 
-		layout.removeAllComponents();
+		VerticalLayout layout = new VerticalLayout();
+
+		layout.setMargin(true);
+		layout.setSpacing(true);
+
+		init(layout);
+
+		return layout;
+	}
+
+	private void init(VerticalLayout layout) {
 
 		Set<String> moduleIds = searchFacade.getSearchModulesIds();
 		if (moduleIds == null || moduleIds.isEmpty()) {
@@ -118,7 +132,7 @@ public class SearchWindow extends OneColumnPage {
 		}
 		moduleCombo.setNullSelectionAllowed(false);
 		moduleCombo.setValue(moduleIds.iterator().next());
-		moduleCombo.setFilteringMode(Filtering.FILTERINGMODE_OFF);
+		moduleCombo.setFilteringMode(FilteringMode.CONTAINS);
 		moduleCombo.setImmediate(true);
 		searchLayout.addComponent(moduleCombo);
 
@@ -144,15 +158,6 @@ public class SearchWindow extends OneColumnPage {
 
 		// zaměř se na textové pole
 		searchField.focus();
-
-	}
-
-	@Override
-	protected void createContent(VerticalLayout layout) {
-
-		layout.setMargin(true);
-		layout.setSpacing(true);
-		this.layout = layout;
 
 	}
 

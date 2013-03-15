@@ -11,7 +11,6 @@ public class FactoryTest extends BaseSpringTest implements
 
 	private ApplicationContext context;
 
-	@Override
 	public void setApplicationContext(ApplicationContext applicationContext)
 			throws BeansException {
 		this.context = applicationContext;

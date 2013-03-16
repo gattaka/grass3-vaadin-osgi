@@ -4,31 +4,12 @@
 	<groupId>org.myftp.gattserver.grass3</groupId>
 	<artifactId>articles-basic</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>bundle</packaging>
 	<name>GRASS3 Articles editor basic plugins set</name>
 	<description>Základní sada pluginů pro editor článků systému GRASS</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<osgi.version>4.2.0</osgi.version>
-		<osgi.core.version>4.3.0</osgi.core.version>
 	</properties>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>2.3.7</version>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-					</instructions>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 	<dependencies>
 
@@ -39,18 +20,11 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
-		<!-- OSGi container support -->
+		<!-- Spring -->
 		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.compendium</artifactId>
-			<version>${osgi.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-			<version>${osgi.version}</version>
-			<scope>provided</scope>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>3.2.1.RELEASE</version>
 		</dependency>
 
 		<!-- JUNIT DEPENDENCY FOR TESTING -->

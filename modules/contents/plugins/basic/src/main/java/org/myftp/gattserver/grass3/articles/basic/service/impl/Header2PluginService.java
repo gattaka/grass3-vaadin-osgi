@@ -4,7 +4,9 @@ import org.myftp.gattserver.grass3.articles.basic.headers.Header2Factory;
 import org.myftp.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
 import org.myftp.gattserver.grass3.articles.service.IPluginService;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Header2PluginService implements IPluginService {
 
 	private Header2Factory factory = new Header2Factory();

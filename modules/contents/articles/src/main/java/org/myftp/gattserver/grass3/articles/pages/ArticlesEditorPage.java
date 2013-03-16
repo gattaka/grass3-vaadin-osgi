@@ -87,6 +87,10 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 	public ArticlesEditorPage(GrassRequest request) {
 		super(request);
+	}
+
+	@Override
+	protected void init() {
 
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		String operationToken = analyzer.getCurrentPathToken();
@@ -127,6 +131,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			showError404();
 		}
 
+		super.init();
 	}
 
 	@Override

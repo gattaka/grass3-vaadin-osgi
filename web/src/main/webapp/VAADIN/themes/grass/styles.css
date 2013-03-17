@@ -283,6 +283,30 @@ a img.icon {
 	background-color: #ece5cc;
 }
 
+.left_content_view {
+	margin: 18px;
+}
+
+.content_info div {
+	margin-bottom: 5px;
+}
+
+.content_info {
+	margin-bottom: 10px;
+}
+
+.content_tags {
+	margin-bottom: 10px;
+}
+
+.content_operations div:first-child {
+	margin-top: 0px;
+}
+
+.content_operations div {
+	margin-top: 5px;
+}
+
 /* == FOOTER PART =========================================================== */
 #bottomshadow,#bottom {
 	overflow: hidden;
@@ -334,6 +358,10 @@ h2 {
 	margin-top: 0;
 }
 
+#left h2 {
+	font-size: 11pt;
+}
+
 /* ========== */
 /* Breadcrumb */
 /* ========== */
@@ -380,10 +408,6 @@ h2 {
 /* ================ */
 /* CSS layout prvky */
 /* ================ */
-.v-csslayout.v-csslayout-tools_css_menu.tools_css_menu .v-button {
-	margin: 0 5px 5px 0;
-}
-
 .v-label.v-label-msglabel.msglabel,.v-embedded.v-embedded-image.msgimg {
 	display: inline-block;
 }

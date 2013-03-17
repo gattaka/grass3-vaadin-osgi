@@ -21,6 +21,7 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
@@ -88,61 +89,18 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	@Override
 	protected Component createLeftColumnContent() {
 
-		// TODO tohle by šlo mnohem elegantněji přepsat do customLayoutu
-		VerticalLayout layout = new VerticalLayout();
-
-		layout.setMargin(true);
+		CustomLayout layout = new CustomLayout("contentView");
 
 		// info - přehled
-		VerticalLayout infoLayout = new VerticalLayout();
-		infoLayout.setMargin(new MarginInfo(false, false, true, false));
-		layout.addComponent(infoLayout);
-		infoLayout.addComponent(new Label("<h2>Info</h2>", ContentMode.HTML));
-
-		GridLayout gridLayout = new GridLayout(2, 3);
-		infoLayout.addComponent(gridLayout);
-
-		gridLayout.setSpacing(true);
-
-		gridLayout.addComponent(new Label("<strong>Autor:</strong>",
-				ContentMode.HTML), 0, 0);
-		gridLayout.addComponent(contentAuthorNameLabel, 1, 0);
-		gridLayout.addComponent(new Label("<strong>Vytvořeno:</strong>",
-				ContentMode.HTML), 0, 1);
-		gridLayout.addComponent(contentCreationDateNameLabel, 1, 1);
-		gridLayout.addComponent(new Label("<strong>Upraveno:</strong>",
-				ContentMode.HTML), 0, 2);
-		gridLayout.addComponent(contentLastModificationDateLabel, 1, 2);
-
-		gridLayout.setComponentAlignment(contentAuthorNameLabel,
-				Alignment.TOP_RIGHT);
-		gridLayout.setComponentAlignment(contentCreationDateNameLabel,
-				Alignment.TOP_RIGHT);
-		gridLayout.setComponentAlignment(contentLastModificationDateLabel,
-				Alignment.TOP_RIGHT);
-
-		contentLastModificationDateLabel.setContentMode(ContentMode.HTML);
-
-		contentAuthorNameLabel.setSizeUndefined();
-		contentCreationDateNameLabel.setSizeUndefined();
-		contentLastModificationDateLabel.setSizeUndefined();
+		layout.addComponent(contentAuthorNameLabel, "author");
+		layout.addComponent(contentCreationDateNameLabel, "createDate");
+		layout.addComponent(contentLastModificationDateLabel, "modifyDate");
 
 		// tagy
-		VerticalLayout tagsLayout = new VerticalLayout();
-		layout.addComponent(tagsLayout);
-		tagsLayout.addComponent(new Label("<h2>Tagy</h2>", ContentMode.HTML));
-
-		tagsLayout.addComponent(tagsListLayout);
-		tagsListLayout.setWidth("100%");
+		layout.addComponent(tagsListLayout, "tags");
 
 		// nástrojová lišta
-		VerticalLayout operationsLayout = new VerticalLayout();
-		layout.addComponent(operationsLayout);
-		operationsLayout.addComponent(new Label("<h2>Operace s obsahem</h2>",
-				ContentMode.HTML));
-
-		operationsLayout.addComponent(operationsListLayout);
-		operationsListLayout.addStyleName("tools_css_menu");
+		layout.addComponent(operationsListLayout, "operations");
 
 		return layout;
 

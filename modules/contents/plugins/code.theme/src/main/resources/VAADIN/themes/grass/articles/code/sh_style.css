@@ -200,7 +200,7 @@ pre.sh_sourceCode .sh_attribute {
 	line-height: 18px;
 	float: left;
 	text-align: right;
-	font-weight: bold;
+	font-weight: normal;
 }
 
 .numbertable td {
@@ -215,8 +215,8 @@ pre.sh_sourceCode .sh_attribute {
 	font-family: Courier, "Courier New";
 	line-height: 18px;
 	font-weight: normal;
-	background: url(/VAADIN/themes/grass/articles/code/img/zebra.png) repeat;
-	/* 	bez tohohle se nebude pozadí protahovat společně s textem při scrollu do stran */
+	background: url(img/zebra.png) repeat;
+	/* 	bez tohohle 	se nebude pozadí protahovat společně s textem při scrollu do stran */
 	overflow-x: auto;
 }
 

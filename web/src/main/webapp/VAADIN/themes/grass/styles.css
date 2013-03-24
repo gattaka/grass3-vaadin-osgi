@@ -408,6 +408,10 @@ h2 {
 /* ================ */
 /* CSS layout prvky */
 /* ================ */
+.v-csslayout.v-csslayout-tools_css_menu.tools_css_menu .v-button {
+	margin: 0 5px 5px 0;
+}
+
 .v-label.v-label-msglabel.msglabel,.v-embedded.v-embedded-image.msgimg {
 	display: inline-block;
 }

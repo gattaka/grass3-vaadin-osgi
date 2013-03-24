@@ -4,7 +4,9 @@ import org.myftp.gattserver.grass3.articles.code.CodeFactory;
 import org.myftp.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
 import org.myftp.gattserver.grass3.articles.service.IPluginService;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CSSCodePluginService implements IPluginService {
 
 	private CodeFactory factory = new CodeFactory("CSS","sh_css");

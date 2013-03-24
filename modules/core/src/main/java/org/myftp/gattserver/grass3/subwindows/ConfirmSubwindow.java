@@ -74,7 +74,7 @@ public abstract class ConfirmSubwindow extends GrassSubWindow {
 		subWindowlayout.setComponentAlignment(close, Alignment.MIDDLE_CENTER);
 
 		// Zaměř se na nové okno
-		focus();
+		// focus();
 
 	}
 

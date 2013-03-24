@@ -74,7 +74,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			// obejít problém se závislosí pluginů na úložišti theme apod. a
 			// přitom umožnit aby se CSS odkazovali na externí zdroje
 			if (!css.toLowerCase().startsWith("http://"))
-				css = "/VAADIN/themes/grass/" + css;
+				css = getRequest().getContextRoot() + "/VAADIN/themes/grass/"
+						+ css;
 
 			StringBuilder loadStylesheet = new StringBuilder();
 			loadStylesheet
@@ -101,7 +102,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			// obejít problém se závislosí pluginů na úložišti theme apod. a
 			// přitom umožnit aby se JS odkazovali na externí zdroje
 			if (!js.toLowerCase().startsWith("http://"))
-				js = "/VAADIN/themes/grass/" + js;
+				js = getRequest().getContextRoot() + "/VAADIN/themes/grass/"
+						+ js;
 
 			initJS.add(js);
 

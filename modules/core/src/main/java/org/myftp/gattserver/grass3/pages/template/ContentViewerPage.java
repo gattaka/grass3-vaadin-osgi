@@ -16,13 +16,10 @@ import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
@@ -65,12 +62,17 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("d.M.yyyy HH:mm:ss");
 
 		contentNameLabel = new Label("<h2>" + content.getName() + "</h2>");
+		contentNameLabel.setContentMode(ContentMode.HTML);
+
 		contentAuthorNameLabel = new Label(content.getAuthor().getName());
+
 		contentCreationDateNameLabel = new Label(dateFormat.format(content
 				.getCreationDate()));
+
 		contentLastModificationDateLabel = new Label(
 				content.getLastModificationDate() == null ? "<em>-neupraveno-</em>"
 						: dateFormat.format(content.getLastModificationDate()));
+		contentLastModificationDateLabel.setContentMode(ContentMode.HTML);
 
 		tagsListLayout.removeAllComponents();
 		for (String contentTag : content.getContentTags()) {
@@ -123,7 +125,6 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		VerticalLayout nameLayout = new VerticalLayout();
 		layout.addComponent(nameLayout);
 		nameLayout.addComponent(contentNameLabel);
-		contentNameLabel.setContentMode(ContentMode.HTML);
 
 		// samotný obsah
 		createContent(layout);

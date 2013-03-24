@@ -235,7 +235,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				.append("var head= document.getElementsByTagName('head')[0];")
 				.append("var script= document.createElement('script');")
 				.append("script.type= 'text/javascript';")
-				.append("script.src= '/VAADIN/themes/grass/articles/js/editor.js';")
+				.append("script.src= '").append(getRequest().getContextRoot())
+				.append("/VAADIN/themes/grass/articles/js/editor.js';")
 				.append("head.appendChild(script);");
 		JavaScript.getCurrent().execute(loadScript.toString());
 

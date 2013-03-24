@@ -31,9 +31,9 @@ public abstract class GrassPage extends GrassLayout {
 
 	@PostConstruct
 	protected void init() {
-		
+
 		gatherInitJS();
-		
+
 		// homelink (přes logo)
 		Link homelink = new Link();
 		homelink.addStyleName("homelink");
@@ -60,7 +60,8 @@ public abstract class GrassPage extends GrassLayout {
 	 * @param initJS
 	 */
 	protected void submitInitJS(Set<String> initJS) {
-		initJS.add("/VAADIN/themes/grass/js/grass.js");
+		initJS.add(getRequest().getContextRoot()
+				+ "/VAADIN/themes/grass/js/grass.js");
 	}
 
 	/**
@@ -76,7 +77,8 @@ public abstract class GrassPage extends GrassLayout {
 				.append("var head= document.getElementsByTagName('head')[0];")
 				.append("var script= document.createElement('script');")
 				.append("script.type= 'text/javascript';")
-				.append("script.src= '/VAADIN/themes/grass/js/jquery.js';")
+				.append("script.src= '").append(getRequest().getContextRoot())
+				.append("/VAADIN/themes/grass/js/jquery.js';")
 				.append("var callback = function() {");
 
 		// ostatní JS už lze nahrávat pomocí jQuery

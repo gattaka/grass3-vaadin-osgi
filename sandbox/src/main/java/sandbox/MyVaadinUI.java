@@ -1,5 +1,11 @@
 package sandbox;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +19,10 @@ import sandbox.util.URLPathAnalyzer;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
+import com.vaadin.server.RequestHandler;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinResponse;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
 
 /**
@@ -45,6 +54,38 @@ public class MyVaadinUI extends UI {
 
 		IPageFactory factory = factoriesMap.get(analyzer.getPathToken(0));
 		setContent(factory.createPage(grassRequest));
+
+		VaadinSession.getCurrent().addRequestHandler(new RequestHandler() {
+
+			private static final long serialVersionUID = 7154339775034959876L;
+
+			@Override
+			public boolean handleRequest(VaadinSession session,
+					VaadinRequest request, VaadinResponse response)
+					throws IOException {
+
+				if ("/vaadin-sandbox/image".equals(request.getPathInfo())) {
+
+					File file = new File(
+							"/home/gatt/Downloads/user_male_portrait.png");
+					InputStream in = new BufferedInputStream(
+							new FileInputStream(file));
+
+					byte[] buffer = new byte[1024];
+
+					int bytesRead = in.read(buffer);
+					while (bytesRead > -1) {
+						response.getOutputStream().write(buffer, 0, bytesRead);
+						bytesRead = in.read(buffer);
+					}
+
+					response.setContentType("image/png png");
+
+					return true; // We wrote a response
+				} else
+					return false; // No response was written
+			}
+		});
 
 	}
 }

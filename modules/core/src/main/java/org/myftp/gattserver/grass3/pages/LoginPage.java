@@ -4,16 +4,15 @@ import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
+import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.LoginForm;
+import com.vaadin.ui.LoginForm.LoginEvent;
 import com.vaadin.ui.VerticalLayout;
 
 @org.springframework.stereotype.Component("loginPage")
@@ -24,7 +23,7 @@ public class LoginPage extends OneColumnPage {
 
 	@Resource(name = "homePageFactory")
 	private PageFactory homePageFactory;
-	
+
 	public LoginPage(GrassRequest request) {
 		super(request);
 	}
@@ -42,29 +41,71 @@ public class LoginPage extends OneColumnPage {
 		formLayout.addComponent(new Label("<h2>Přihlášení</h2>",
 				ContentMode.HTML));
 
-		VerticalLayout formFieldsLayout = new VerticalLayout();
-		formLayout.addComponent(formFieldsLayout);
-		formFieldsLayout.setSizeFull();
-		formFieldsLayout.setSpacing(true);
+		LoginForm loginForm = new LoginForm() {
 
-		final TextField nameField = new TextField("Jméno");
-		final PasswordField passField = new PasswordField("Heslo");
-		formFieldsLayout.addComponent(nameField);
-		formFieldsLayout.addComponent(passField);
-		formFieldsLayout.addComponent(new Button("Přihlásit",
-				new Button.ClickListener() {
+			private static final long serialVersionUID = -4417127436560572717L;
 
-					private static final long serialVersionUID = 256710217389298911L;
+			@Override
+			public String getLoginHTML() {
+				String html = new String(super.getLoginHTML());
 
-					public void buttonClick(ClickEvent event) {
-						if (getGrassUI().login(nameField.getValue(),
-								passField.getValue())) {
+				// most browsers: do not use javascript to submit the form
+				html = html
+						.replace(
+								"<form id='loginf' target='logintarget' onkeypress=\"submitOnEnter(event)\"",
+								"<form id='loginf' target='logintarget'");
+
+				// chrome: the form.action attribute cannot be set using
+				// javascript - make it static
+				String winPath = getRequest().getVaadinRequest().getPathInfo();
+				html = html.replace("<form id='loginf'",
+						"<form id='loginf' action='" + winPath
+								+ "/loginHandler'");
+
+				// chrome: the iframe.src attribute must not be blank
+				html = html.replace("<iframe name='logintarget'",
+						"<iframe name='logintarget' src='#'");
+
+				// most browsers: use a "real" <input type=submit> element
+				int buttonStartIdx = html.indexOf("<div><div onclick=");
+				int buttonEndIdx = html.lastIndexOf("</form>") - 1;
+				html = html.replace(
+						html.substring(buttonStartIdx, buttonEndIdx),
+						"<input type='submit' value='"
+								+ getLoginButtonCaption() + "'");
+
+				return html;
+			}
+		};
+		loginForm.setUsernameCaption("Jméno");
+		loginForm.setPasswordCaption("Heslo");
+		loginForm.setLoginButtonCaption("Přihlásit");
+		loginForm.addListener(new LoginForm.LoginListener() {
+
+			private static final long serialVersionUID = -3342397991011184546L;
+
+			public void onLogin(final LoginEvent event) {
+				if (getGrassUI().login(event.getLoginParameter("username"),
+						event.getLoginParameter("password"))) {
+
+					InfoSubwindow infoSubwindow = new InfoSubwindow(
+							"Přihlášení proběhlo úspěšně") {
+						protected void onProceed(
+								com.vaadin.ui.Button.ClickEvent event) {
 							redirect(getPageURL(homePageFactory));
-						} else {
-							showError("Přihlášení se nezdařilo");
-						}
-					}
-				}));
+						};
+					};
+					getGrassUI().addWindow(infoSubwindow);
+
+				} else {
+					showError("Přihlášení se nezdařilo");
+				}
+
+			}
+		});
+
+		formLayout.addComponent(loginForm);
+		formLayout.setSpacing(true);
 
 		return layout;
 

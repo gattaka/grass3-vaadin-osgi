@@ -46,10 +46,6 @@ public class GrassUI extends UI {
 		return securityFacade.login(username, password);
 	}
 
-	public void logout() {
-		// TODO Auto-generated method stub
-	}
-
 	@Override
 	public void init(VaadinRequest request) {
 

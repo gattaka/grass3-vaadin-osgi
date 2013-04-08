@@ -16,6 +16,7 @@ import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 
+import com.vaadin.server.ExternalResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -114,9 +115,7 @@ public abstract class BasePage extends GrassPage {
 		}
 	}
 
-	private void createUserMenu(CustomLayout layout) {
-		userMenuLayout = new HorizontalLayout();
-		layout.addComponent(userMenuLayout, "usermenu");
+	protected void buildUserMenu() {
 
 		userMenuLayout.removeAllComponents();
 
@@ -201,19 +200,22 @@ public abstract class BasePage extends GrassPage {
 			userMenuLayout.addComponent(link);
 
 			// odhlásit
-			Button button = new Button("Odhlásit", new Button.ClickListener() {
-
-				private static final long serialVersionUID = 4570994816815405844L;
-
-				public void buttonClick(ClickEvent event) {
-					getGrassUI().logout();
-				}
-			});
-			button.setStyleName(BaseTheme.BUTTON_LINK);
-			button.addStyleName("item");
-			userMenuLayout.addComponent(button);
+			Link logoutLink = new Link("Odhlásit", new ExternalResource(
+					"j_spring_security_logout"));
+			logoutLink.setStyleName(BaseTheme.BUTTON_LINK);
+			logoutLink.addStyleName("item");
+			userMenuLayout.addComponent(logoutLink);
 
 		}
+
+	}
+
+	private void createUserMenu(CustomLayout layout) {
+		userMenuLayout = new HorizontalLayout();
+		layout.addComponent(userMenuLayout, "usermenu");
+
+		buildUserMenu();
+		
 	}
 
 	private String chooseQuote() {

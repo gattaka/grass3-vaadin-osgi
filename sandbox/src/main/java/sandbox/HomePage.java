@@ -4,10 +4,16 @@ import sandbox.ViewPage.ViewPageFactory;
 import sandbox.interfaces.IPageFactory;
 import sandbox.util.GrassRequest;
 
+import com.vaadin.data.util.ObjectProperty;
+import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomLayout;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.LoginForm;
+import com.vaadin.ui.LoginForm.LoginEvent;
+import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -61,7 +67,6 @@ public class HomePage extends BasePage {
 		verticalLayout.addComponent(field);
 
 		contentLayout.addComponent(verticalLayout, "content");
-
 	}
 
 }

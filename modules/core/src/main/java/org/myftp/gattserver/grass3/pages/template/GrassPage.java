@@ -32,6 +32,7 @@ public abstract class GrassPage extends GrassLayout {
 	@PostConstruct
 	protected void init() {
 
+		submitInitJS(initJS);
 		gatherInitJS();
 
 		// homelink (přes logo)

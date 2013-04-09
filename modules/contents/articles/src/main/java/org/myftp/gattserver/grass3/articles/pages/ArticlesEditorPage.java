@@ -376,8 +376,9 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 			public void buttonClick(ClickEvent event) {
 
-				ArticleDTO articleDTO = articleFacade.processPreview(String
-						.valueOf(articleTextArea.getValue()));
+				ArticleDTO articleDTO = articleFacade.processPreview(
+						String.valueOf(articleTextArea.getValue()),
+						getRequest().getContextRoot());
 
 				PreviewWindow previewWindow = new PreviewWindow(articleDTO);
 				getUI().addWindow(previewWindow);
@@ -484,17 +485,17 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private boolean saveOrUpdateArticle() {
 
 		if (editMode) {
-			return articleFacade.modifyArticle(
-					String.valueOf(articleNameField.getValue()),
-					String.valueOf(articleTextArea.getValue()),
+			return articleFacade.modifyArticle(String.valueOf(articleNameField
+					.getValue()), String.valueOf(articleTextArea.getValue()),
 					String.valueOf(articleKeywords.getValue()),
-					publicatedCheckBox.getValue(), article);
+					publicatedCheckBox.getValue(), article, getRequest()
+							.getContextRoot());
 		} else {
 			Long id = articleFacade.saveArticle(String.valueOf(articleNameField
 					.getValue()), String.valueOf(articleTextArea.getValue()),
 					String.valueOf(articleKeywords.getValue()),
 					publicatedCheckBox.getValue(), category, getGrassUI()
-							.getUser());
+							.getUser(), getRequest().getContextRoot());
 
 			if (id == null)
 				return false;

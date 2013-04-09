@@ -287,7 +287,8 @@ public class ArticlesSettingsTab extends SettingsTab {
 						.getContentNode().getContentTags());
 				articleFacade.modifyArticle(article.getContentNode().getName(),
 						article.getText(), tags, article.getContentNode()
-								.getPublicated(), article);
+								.getPublicated(), article, getRequest()
+								.getContextRoot());
 
 				synchronized (getUI()) {
 					current++;

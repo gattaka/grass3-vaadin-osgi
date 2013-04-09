@@ -25,17 +25,15 @@ public class LinkTree extends AbstractElementTree {
 	private String link;
 	private final static String defaultFavicon = "/img/tags/label_16.png"; // default
 	private String imgURL = null;
+	private String contextRoot;
 
-	public LinkTree(String link) {
+	public LinkTree(String link, String contextRoot) {
 		this.link = link;
-		setLink(link);
+		this.contextRoot = contextRoot;
+		setLink();
 	}
 
-	public String getLink() {
-		return link;
-	}
-
-	public final void setLink(String link) {
+	private void setLink() {
 		String favicon = faviconImg();
 		// pokud favicon nebylo možné získat, pak vlož výchozí
 		if (favicon != null) {
@@ -100,7 +98,8 @@ public class LinkTree extends AbstractElementTree {
 			}
 
 			// 3) vrat URL na cache
-			return FavlinkConfiguration.IMAGE_PATH_ALIAS + "/" + domain;
+			return contextRoot + FavlinkConfiguration.IMAGE_PATH_ALIAS + "/"
+					+ domain;
 
 		} catch (MalformedURLException e) {
 			e.printStackTrace();

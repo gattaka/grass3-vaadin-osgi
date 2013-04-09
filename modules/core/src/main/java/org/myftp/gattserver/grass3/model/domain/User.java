@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.model.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.Set;
@@ -23,7 +24,9 @@ import org.myftp.gattserver.grass3.security.Role;
 
 @Entity
 @Table(name = "USER_ACCOUNTS", uniqueConstraints = { @UniqueConstraint(columnNames = { "name" }) })
-public class User {
+public class User implements Serializable {
+
+	private static final long serialVersionUID = 1370519912799856102L;
 
 	/**
 	 * Jméno uživatele

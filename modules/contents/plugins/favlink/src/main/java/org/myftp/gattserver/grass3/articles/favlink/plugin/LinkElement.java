@@ -51,7 +51,7 @@ public class LinkElement extends AbstractParserPlugin {
 		// END_TAG byl zpracován
 		pluginBag.nextToken();
 
-		return new LinkTree(link.toString());
+		return new LinkTree(link.toString(), pluginBag.getContextRoot());
 	}
 
 	@Override

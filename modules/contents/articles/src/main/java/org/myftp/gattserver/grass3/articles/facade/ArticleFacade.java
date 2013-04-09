@@ -50,12 +50,15 @@ public class ArticleFacade implements ApplicationContextAware {
 		this.applicationContext = applicationContext;
 	}
 
-	private IContext processArticle(String source) {
+	private IContext processArticle(String source, String contextRoot) {
+
+		if (contextRoot == null)
+			throw new IllegalArgumentException("ContextRoot nemůže být null");
 
 		Lexer lexer = new Lexer(source);
 		AbstractParser parser = new ArticleParser();
 		PluginBag pluginBag = (PluginBag) applicationContext.getBean(
-				"pluginBag", lexer, null);
+				"pluginBag", lexer, contextRoot);
 
 		// výstup
 		AbstractElementTree tree = parser.parse(pluginBag);
@@ -72,9 +75,9 @@ public class ArticleFacade implements ApplicationContextAware {
 	 *            vstupní text článku
 	 * @return výstupní DTO článku, pokud se překlad zdařil, jinak {@code null}
 	 */
-	public ArticleDTO processPreview(String text) {
+	public ArticleDTO processPreview(String text, String contextRoot) {
 
-		IContext context = processArticle(text);
+		IContext context = processArticle(text, contextRoot);
 
 		ArticleDTO articleDTO = new ArticleDTO();
 		articleDTO.setPluginCSSResources(context.getCSSResources());
@@ -145,14 +148,14 @@ public class ArticleFacade implements ApplicationContextAware {
 	 * @return {@code true} pokud se úprava zdařila, jinak {@code false}
 	 */
 	public boolean modifyArticle(String name, String text, String tags,
-			boolean publicated, ArticleDTO articleDTO) {
+			boolean publicated, ArticleDTO articleDTO, String contextRoot) {
 
 		// článek
 		Article article = articleDAO.findByID(articleDTO.getId());
 		articleDAO.closeSession();
 
 		// nasetuj do něj vše potřebné
-		IContext context = processArticle(text);
+		IContext context = processArticle(text, contextRoot);
 		article.setOutputHTML(context.getOutput());
 		article.setPluginCSSResources(context.getCSSResources());
 		article.setPluginJSResources(context.getJSResources());
@@ -190,13 +193,14 @@ public class ArticleFacade implements ApplicationContextAware {
 	 *         {@code null}
 	 */
 	public Long saveArticle(String name, String text, String tags,
-			boolean publicated, NodeDTO category, UserInfoDTO author) {
+			boolean publicated, NodeDTO category, UserInfoDTO author,
+			String contextRoot) {
 
 		// vytvoř nový článek
 		Article article = new Article();
 
 		// nasetuj do něj vše potřebné
-		IContext context = processArticle(text);
+		IContext context = processArticle(text, contextRoot);
 		article.setOutputHTML(context.getOutput());
 		article.setPluginCSSResources(context.getCSSResources());
 		article.setPluginJSResources(context.getJSResources());

@@ -33,7 +33,13 @@ public class FavlinkSettingsTab extends SettingsTab {
 
 		final FavlinkConfiguration configuration = loadConfiguration();
 
+		VerticalLayout layout = new VerticalLayout();
+
+		layout.setMargin(true);
+		layout.setSpacing(true);
+
 		VerticalLayout settingsLayout = new VerticalLayout();
+		layout.addComponent(settingsLayout);
 
 		settingsLayout.removeAllComponents();
 		settingsLayout.addComponent(new Label("<h2>Nastavení</h2>",
@@ -69,7 +75,7 @@ public class FavlinkSettingsTab extends SettingsTab {
 
 		settingsFieldsLayout.addComponent(saveButton);
 
-		return settingsFieldsLayout;
+		return layout;
 
 	}
 

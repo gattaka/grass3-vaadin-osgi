@@ -131,7 +131,8 @@ public class LatexElement extends AbstractParserPlugin {
 			}
 
 		String filePath = outputPath + "/" + formulaHash + ".png";
-		String path = LatexConfiguration.IMAGE_PATH_ALIAS + "/" + formulaHash + ".png";
+		String path = LatexConfiguration.IMAGE_PATH_ALIAS + "/" + formulaHash
+				+ ".png";
 
 		/**
 		 * Pokud existuje soubor, který má stejný hash, pak se nezdržuj renderem
@@ -169,7 +170,7 @@ public class LatexElement extends AbstractParserPlugin {
 
 		// position 1, position 2, link odkazu, text odkazu (optional), ikona
 		// (optional), default ikona
-		return new LatexTree(path, formula);
+		return new LatexTree(pluginBag.getContextRoot() + path, formula);
 	}
 
 	@Override

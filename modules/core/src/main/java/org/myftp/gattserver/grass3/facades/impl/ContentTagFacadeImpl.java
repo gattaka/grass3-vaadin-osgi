@@ -27,13 +27,13 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 	// neměl by být tečka apod. znak, využívaný v regulárních výrazech
 	public static final String TAGS_DELIMITER = ",";
 
-	public List<ContentTagDTO> getAllContentTags() {
+	public List<ContentTagDTO> getContentTagsForOverview() {
 
 		List<ContentTag> contentTags = contentTagDAO.findAll();
 		if (contentTags == null)
 			return null;
 		List<ContentTagDTO> contentTagDTOs = mapper
-				.mapContentTagCollection(contentTags);
+				.mapContentTagCollectionForOverview(contentTags);
 
 		contentTagDAO.closeSession();
 		return contentTagDTOs;
@@ -117,7 +117,7 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 	 */
 	public ContentTagDTO getContentTagByName(String tagName) {
 
-		ContentTagDTO tag = mapper.map(contentTagDAO
+		ContentTagDTO tag = mapper.mapContentTagForOverview(contentTagDAO
 				.findContentTagByName(tagName));
 		contentTagDAO.closeSession();
 

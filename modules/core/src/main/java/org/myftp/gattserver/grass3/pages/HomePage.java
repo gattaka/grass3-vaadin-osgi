@@ -19,6 +19,9 @@ import org.myftp.gattserver.grass3.pages.template.BasePage;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory.ContentsTable;
 import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.perf4j.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +36,8 @@ import com.vaadin.ui.VerticalLayout;
 public class HomePage extends BasePage {
 
 	private static final long serialVersionUID = 5355366043081283263L;
+
+	Logger logger = LoggerFactory.getLogger(StopWatch.DEFAULT_LOGGER_NAME);
 
 	/**
 	 * Fasády
@@ -99,7 +104,11 @@ public class HomePage extends BasePage {
 		createRecentMenus(pagelayout);
 
 		// Tag-cloud
+		StopWatch stopWatch = new StopWatch("HomePage#createTagCloud");
 		createTagCloud(pagelayout);
+		String log = stopWatch.stop();
+		System.out.println(log);
+		logger.info(log);
 
 		contentLayout.addComponent(pagelayout, "content");
 
@@ -115,7 +124,7 @@ public class HomePage extends BasePage {
 		pagelayout.addComponent(tagCloudLayout);
 
 		final List<ContentTagDTO> contentTags = contentTagFacade
-				.getAllContentTags();
+				.getContentTagsForOverview();
 
 		if (contentTags == null)
 			showError500();
@@ -135,8 +144,7 @@ public class HomePage extends BasePage {
 		 */
 		Set<Integer> counts = new HashSet<Integer>();
 		for (ContentTagDTO contentTag : contentTags) {
-			int size = contentTag.getContentNodes().size();
-			counts.add(size);
+			counts.add(contentTag.getContentSize());
 		}
 
 		/**
@@ -153,8 +161,7 @@ public class HomePage extends BasePage {
 		 */
 		Collections.sort(contentTags, new Comparator<ContentTagDTO>() {
 			public int compare(ContentTagDTO o1, ContentTagDTO o2) {
-				return o1.getContentNodes().size()
-						- o2.getContentNodes().size();
+				return o1.getContentSize() - o2.getContentSize();
 			}
 		});
 
@@ -163,7 +170,7 @@ public class HomePage extends BasePage {
 		 * budu vědět kdy posunout ohodnocovací koeficient
 		 */
 		int lastSize = contentTags.isEmpty() ? 1 : contentTags.get(0)
-				.getContentNodes().size();
+				.getContentSize();
 		int lastFontSize = MIN_FONT_SIZE_TAG_CLOUD;
 
 		/**
@@ -180,12 +187,12 @@ public class HomePage extends BasePage {
 			 * koef a ulož můj stav aby ostatní věděli, jestli mají zvyšovat,
 			 * nebo zůstat, protože mají stejnou velikost
 			 */
-			if (contentTag.getContentNodes().size() > lastSize) {
-				lastSize = contentTag.getContentNodes().size();
+			if (contentTag.getContentSize() > lastSize) {
+				lastSize = contentTag.getContentSize();
 				lastFontSize += koef;
 			}
 
-			int size = contentTag.getContentNodes().size();
+			int size = contentTag.getContentSize();
 			sizeTable.put(size, lastFontSize);
 		}
 
@@ -202,7 +209,7 @@ public class HomePage extends BasePage {
 		});
 
 		for (ContentTagDTO contentTag : contentTags) {
-			int size = sizeTable.get(contentTag.getContentNodes().size());
+			int size = sizeTable.get(contentTag.getContentSize());
 			Label tagLabel;
 			tagCloud.addComponent(tagLabel = new Label("<a href='"
 					+ getPageURL(tagPageFactory, contentTag.getName())
@@ -222,9 +229,9 @@ public class HomePage extends BasePage {
 				.createContentsTable();
 
 		Set<ContentNodeDTO> recentAdded = contentNodeFacade
-				.getRecentAdded(RECENT_ITEMS_COUNT);
+				.getRecentAddedForOverview(RECENT_ITEMS_COUNT);
 		Set<ContentNodeDTO> recentModified = contentNodeFacade
-				.getRecentModified(RECENT_ITEMS_COUNT);
+				.getRecentModifiedForOverview(RECENT_ITEMS_COUNT);
 
 		VerticalLayout recentAddedLayout = new VerticalLayout();
 		recentAddedLayout.addComponent(new Label(

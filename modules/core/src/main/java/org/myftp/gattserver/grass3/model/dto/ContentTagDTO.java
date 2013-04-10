@@ -21,6 +21,11 @@ public class ContentTagDTO {
 	private Set<ContentNodeDTO> contentNodes;
 
 	/**
+	 * Počet obsahů k tagu
+	 */
+	private int contentSize;
+
+	/**
 	 * DB identifikátor
 	 */
 	private Long id;
@@ -47,6 +52,14 @@ public class ContentTagDTO {
 
 	public void setContentNodes(Set<ContentNodeDTO> contentNodes) {
 		this.contentNodes = contentNodes;
+	}
+
+	public int getContentSize() {
+		return contentSize;
+	}
+
+	public void setContentSize(int contentSize) {
+		this.contentSize = contentSize;
 	}
 
 }

@@ -81,7 +81,7 @@ public class Mapper {
 	 * @param contentNode
 	 * @return
 	 */
-	public ContentNodeDTO map(ContentNode contentNode) {
+	public ContentNodeDTO mapContentNodeForOverview(ContentNode contentNode) {
 		ContentNodeDTO contentNodeDTO = new ContentNodeDTO();
 
 		contentNodeDTO.setAuthor(map(contentNode.getAuthor()));
@@ -94,6 +94,12 @@ public class Mapper {
 		contentNodeDTO.setName(contentNode.getName());
 		contentNodeDTO.setParentID(contentNode.getParent().getId());
 		contentNodeDTO.setPublicated(contentNode.getPublicated());
+
+		return contentNodeDTO;
+	}
+
+	public ContentNodeDTO map(ContentNode contentNode) {
+		ContentNodeDTO contentNodeDTO = mapContentNodeForOverview(contentNode);
 
 		Set<String> tags = new HashSet<String>();
 		for (ContentTag contentTag : contentNode.getContentTags()) {
@@ -119,13 +125,32 @@ public class Mapper {
 		return contentNodeDTOs;
 	}
 
+	public Set<ContentNodeDTO> mapContentNodeCollectionForOverview(
+			Collection<ContentNode> contentNodes) {
+		Set<ContentNodeDTO> contentNodeDTOs = new HashSet<ContentNodeDTO>();
+		for (ContentNode contentNode : contentNodes) {
+			contentNodeDTOs.add(mapContentNodeForOverview(contentNode));
+		}
+		return contentNodeDTOs;
+	}
+
 	/**
 	 * Převede {@link ContentTag} na {@link ContentTagDTO}
 	 * 
 	 * @param contentTag
 	 * @return
 	 */
-	public ContentTagDTO map(ContentTag contentTag) {
+	public ContentTagDTO mapContentTagForOverview(ContentTag contentTag) {
+		ContentTagDTO contentTagDTO = new ContentTagDTO();
+
+		contentTagDTO.setId(contentTag.getId());
+		contentTagDTO.setName(contentTag.getName());
+		contentTagDTO.setContentSize(contentTag.getContentNodes().size());
+
+		return contentTagDTO;
+	}
+
+	public ContentTagDTO mapContentTag(ContentTag contentTag) {
 		ContentTagDTO contentTagDTO = new ContentTagDTO();
 
 		contentTagDTO.setId(contentTag.getId());
@@ -146,7 +171,22 @@ public class Mapper {
 			Collection<ContentTag> contentTags) {
 		List<ContentTagDTO> contentTagDTOs = new ArrayList<ContentTagDTO>();
 		for (ContentTag contentTag : contentTags) {
-			contentTagDTOs.add(map(contentTag));
+			contentTagDTOs.add(mapContentTag(contentTag));
+		}
+		return contentTagDTOs;
+	}
+
+	/**
+	 * Převede list {@link ContentTag} na list {@link ContentTagDTO}
+	 * 
+	 * @param contentTags
+	 * @return
+	 */
+	public List<ContentTagDTO> mapContentTagCollectionForOverview(
+			Collection<ContentTag> contentTags) {
+		List<ContentTagDTO> contentTagDTOs = new ArrayList<ContentTagDTO>();
+		for (ContentTag contentTag : contentTags) {
+			contentTagDTOs.add(mapContentTagForOverview(contentTag));
 		}
 		return contentTagDTOs;
 	}

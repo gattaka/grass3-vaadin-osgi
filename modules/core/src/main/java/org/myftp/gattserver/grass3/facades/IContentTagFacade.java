@@ -9,7 +9,7 @@ import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 
 public interface IContentTagFacade {
 
-	public List<ContentTagDTO> getAllContentTags();
+	public List<ContentTagDTO> getContentTagsForOverview();
 
 	public String[] parseTags(String tagNames);
 

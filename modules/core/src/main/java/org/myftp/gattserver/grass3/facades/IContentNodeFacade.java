@@ -19,7 +19,7 @@ public interface IContentNodeFacade {
 	 * @param size
 	 * @return
 	 */
-	public Set<ContentNodeDTO> getRecentAdded(int maxResults);
+	public Set<ContentNodeDTO> getRecentAddedForOverview(int maxResults);
 
 	/**
 	 * Získá set naposledy upravených obsahů
@@ -27,7 +27,7 @@ public interface IContentNodeFacade {
 	 * @param size
 	 * @return
 	 */
-	public Set<ContentNodeDTO> getRecentModified(int maxResults);
+	public Set<ContentNodeDTO> getRecentModifiedForOverview(int maxResults);
 
 	/**
 	 * Získá set obsahů dle kategorie

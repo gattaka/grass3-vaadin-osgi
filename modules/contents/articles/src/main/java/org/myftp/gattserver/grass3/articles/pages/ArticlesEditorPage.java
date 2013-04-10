@@ -282,7 +282,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 						list.setImmediate(true);
 
 						List<ContentTagDTO> contentTags = contentTagFacade
-								.getAllContentTags();
+								.getContentTagsForOverview();
 						Collections.sort(contentTags,
 								new Comparator<ContentTagDTO>() {
 

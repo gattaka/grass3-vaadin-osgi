@@ -4,11 +4,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.pages.factories.SettingsPageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
-import org.myftp.gattserver.grass3.tabs.factories.template.SettingsTabFactory;
+import org.myftp.gattserver.grass3.tabs.factories.template.ISettingsTabFactory;
 import org.myftp.gattserver.grass3.util.GrassRequest;
-import org.myftp.gattserver.grass3.util.SettingsTabFactoriesRegister;
+import org.myftp.gattserver.grass3.util.ISettingsTabFactoriesRegister;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -26,13 +26,13 @@ public class SettingsPage extends TwoColumnPage {
 	private static final long serialVersionUID = 2474374292329895766L;
 
 	@Autowired
-	private List<SettingsTabFactory> settingsTabFactories;
+	private List<ISettingsTabFactory> settingsTabFactories;
 
 	@Resource(name = "settingsPageFactory")
-	private SettingsPageFactory settingsPageFactory;
+	private IPageFactory settingsPageFactory;
 
 	@Resource(name = "settingsTabFactoriesRegister")
-	private SettingsTabFactoriesRegister settingsTabFactoriesRegister;
+	private ISettingsTabFactoriesRegister settingsTabFactoriesRegister;
 
 	public SettingsPage(GrassRequest request) {
 		super(request);
@@ -43,7 +43,7 @@ public class SettingsPage extends TwoColumnPage {
 		VerticalLayout leftColumnLayout = new VerticalLayout();
 		leftColumnLayout.setMargin(true);
 
-		for (SettingsTabFactory settingsTabFactory : settingsTabFactories) {
+		for (ISettingsTabFactory settingsTabFactory : settingsTabFactories) {
 			Link link = new Link(settingsTabFactory.getSettingsCaption(),
 					getPageResource(settingsPageFactory,
 							settingsTabFactory.getSettingsURL()));
@@ -58,7 +58,7 @@ public class SettingsPage extends TwoColumnPage {
 
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		String settingsTabName = analyzer.getCurrentPathToken();
-		SettingsTabFactory settingsTabFactory = settingsTabFactoriesRegister
+		ISettingsTabFactory settingsTabFactory = settingsTabFactoriesRegister
 				.getFactory(settingsTabName);
 
 		if (settingsTabFactory != null)

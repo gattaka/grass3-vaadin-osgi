@@ -2,7 +2,7 @@ package org.myftp.gattserver.grass3.pages;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.facades.QuotesFacade;
+import org.myftp.gattserver.grass3.facades.IQuotesFacade;
 import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 import org.myftp.gattserver.grass3.security.CoreACL;
@@ -28,7 +28,7 @@ public class QuotesPage extends OneColumnPage {
 	private static final long serialVersionUID = 2474374292329895766L;
 
 	@Resource(name = "quotesFacade")
-	QuotesFacade quotesFacade;
+	IQuotesFacade quotesFacade;
 
 	public QuotesPage(GrassRequest request) {
 		super(request);

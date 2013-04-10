@@ -7,13 +7,13 @@ import javax.xml.bind.JAXBException;
 
 import org.myftp.gattserver.grass3.articles.config.ArticlesConfiguration;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
-import org.myftp.gattserver.grass3.articles.facade.ArticleFacade;
+import org.myftp.gattserver.grass3.articles.facade.IArticleFacade;
 import org.myftp.gattserver.grass3.config.ConfigurationFileError;
 import org.myftp.gattserver.grass3.config.ConfigurationManager;
 import org.myftp.gattserver.grass3.config.ConfigurationUtils;
-import org.myftp.gattserver.grass3.facades.ContentTagFacade;
+import org.myftp.gattserver.grass3.facades.IContentTagFacade;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
-import org.myftp.gattserver.grass3.tabs.template.SettingsTab;
+import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
@@ -31,15 +31,15 @@ import com.vaadin.ui.Window;
 
 @org.springframework.stereotype.Component("articlesSettingsTab")
 @Scope("prototype")
-public class ArticlesSettingsTab extends SettingsTab {
+public class ArticlesSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
 	@Resource(name = "articleFacade")
-	private ArticleFacade articleFacade;
+	private IArticleFacade articleFacade;
 
 	@Resource(name = "contentTagFacade")
-	private ContentTagFacade contentTagFacade;
+	private IContentTagFacade contentTagFacade;
 
 	private Window progressSubWindow;
 	private ProgressThread progressThread;

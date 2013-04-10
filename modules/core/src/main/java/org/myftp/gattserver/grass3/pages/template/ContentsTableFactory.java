@@ -5,11 +5,11 @@ import java.util.Collection;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.ServiceHolder;
-import org.myftp.gattserver.grass3.facades.NodeFacade;
+import org.myftp.gattserver.grass3.IServiceHolder;
+import org.myftp.gattserver.grass3.facades.INodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
-import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.service.IContentService;
 import org.myftp.gattserver.grass3.util.ComparableLink;
@@ -26,16 +26,16 @@ import com.vaadin.ui.Table;
 public class ContentsTableFactory {
 
 	@Resource(name = "nodeFacade")
-	private NodeFacade nodeFacade;
+	private INodeFacade nodeFacade;
 
 	@Resource(name = "categoryPageFactory")
-	private PageFactory categoryPageFactory;
+	private IPageFactory categoryPageFactory;
 
 	@Resource(name = "noServicePageFactory")
-	private PageFactory noServicePageFactory;
+	private IPageFactory noServicePageFactory;
 
 	@Resource(name = "serviceHolder")
-	private ServiceHolder serviceHolder;
+	private IServiceHolder serviceHolder;
 
 	public ContentsTable createContentsTable() {
 
@@ -55,10 +55,10 @@ public class ContentsTableFactory {
 		private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"d.M.yyyy HH:mm:ss");
 
-		private NodeFacade nodeFacade;
-		private PageFactory categoryPageFactory;
-		private PageFactory noServicePageFactory;
-		private ServiceHolder serviceHolder;
+		private INodeFacade nodeFacade;
+		private IPageFactory categoryPageFactory;
+		private IPageFactory noServicePageFactory;
+		private IServiceHolder serviceHolder;
 
 		private ContentsTable() {
 			setHeight("200px");
@@ -74,7 +74,7 @@ public class ContentsTableFactory {
 		}
 
 		public void populateTable(Collection<ContentNodeDTO> contentList,
-				GrassPage page) {
+				AbstractGrassPage page) {
 
 			IndexedContainer container = new IndexedContainer();
 			container
@@ -107,7 +107,7 @@ public class ContentsTableFactory {
 						.getContentServiceByName(contentNode
 								.getContentReaderID());
 
-				PageFactory pageFactory = null;
+				IPageFactory pageFactory = null;
 				if (contentService == null)
 					pageFactory = noServicePageFactory;
 				else

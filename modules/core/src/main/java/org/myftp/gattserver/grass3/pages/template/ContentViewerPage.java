@@ -6,10 +6,10 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.facades.NodeFacade;
+import org.myftp.gattserver.grass3.facades.INodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
-import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
 import org.myftp.gattserver.grass3.template.Breadcrumb;
 import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
@@ -29,13 +29,13 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	private static final long serialVersionUID = 5078280973817331002L;
 
 	@Resource(name = "nodeFacade")
-	private NodeFacade nodeFacade;
+	private INodeFacade nodeFacade;
 
 	@Resource(name = "categoryPageFactory")
-	private PageFactory categoryPageFactory;
+	private IPageFactory categoryPageFactory;
 
 	@Resource(name = "tagPageFactory")
-	private PageFactory tagPageFactory;
+	private IPageFactory tagPageFactory;
 
 	private ContentNodeDTO content;
 	private Label contentNameLabel;
@@ -137,7 +137,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 	protected abstract ContentNodeDTO getContentNodeDTO();
 
-	protected abstract PageFactory getContentViewerPageFactory();
+	protected abstract IPageFactory getContentViewerPageFactory();
 
 	private void updateBreadcrumb(ContentNodeDTO content) {
 

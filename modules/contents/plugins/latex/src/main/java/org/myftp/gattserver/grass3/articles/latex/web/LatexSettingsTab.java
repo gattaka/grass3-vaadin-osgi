@@ -6,7 +6,7 @@ import org.myftp.gattserver.grass3.articles.latex.config.LatexConfiguration;
 import org.myftp.gattserver.grass3.config.ConfigurationFileError;
 import org.myftp.gattserver.grass3.config.ConfigurationManager;
 import org.myftp.gattserver.grass3.config.ConfigurationUtils;
-import org.myftp.gattserver.grass3.tabs.template.SettingsTab;
+import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
@@ -20,7 +20,7 @@ import com.vaadin.ui.Button.ClickEvent;
 
 @org.springframework.stereotype.Component("latexSettingsTab")
 @Scope("prototype")
-public class LatexSettingsTab extends SettingsTab {
+public class LatexSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = -3310643769376755875L;
 

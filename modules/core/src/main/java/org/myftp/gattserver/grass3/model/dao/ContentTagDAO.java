@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component("contentTagDAO")
 public class ContentTagDAO extends AbstractDAO<ContentTag> {
 
-	private ContentTagDAO() {
+	public ContentTagDAO() {
 		super(ContentTag.class);
 	}
 

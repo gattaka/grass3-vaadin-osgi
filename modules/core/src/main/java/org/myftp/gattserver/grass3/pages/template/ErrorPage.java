@@ -5,7 +5,7 @@ import org.myftp.gattserver.grass3.util.GrassRequest;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 
-public abstract class ErrorPage extends GrassPage {
+public abstract class ErrorPage extends AbstractGrassPage {
 
 	public ErrorPage(GrassRequest request) {
 		super(request);

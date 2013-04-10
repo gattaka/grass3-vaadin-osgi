@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component("articleDAO")
 public class ArticleDAO extends AbstractDAO<Article> {
 
-	private ArticleDAO() {
+	public ArticleDAO() {
 		super(Article.class);
 	}
 	

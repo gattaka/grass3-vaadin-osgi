@@ -6,11 +6,11 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.facades.ContentNodeFacade;
-import org.myftp.gattserver.grass3.facades.NodeFacade;
+import org.myftp.gattserver.grass3.facades.IContentNodeFacade;
+import org.myftp.gattserver.grass3.facades.INodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
-import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory;
 import org.myftp.gattserver.grass3.pages.template.NewContentsTableFactory;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory.ContentsTable;
@@ -37,13 +37,13 @@ public class CategoryPage extends OneColumnPage {
 	private static final long serialVersionUID = -499585200973560016L;
 
 	@Resource(name = "nodeFacade")
-	private NodeFacade nodeFacade;
+	private INodeFacade nodeFacade;
 
 	@Resource(name = "contentNodeFacade")
-	private ContentNodeFacade contentNodeFacade;
+	private IContentNodeFacade contentNodeFacade;
 
 	@Resource(name = "categoryPageFactory")
-	private PageFactory categoryPageFactory;
+	private IPageFactory categoryPageFactory;
 
 	@Resource(name = "contentsTableFactory")
 	private ContentsTableFactory contentsTableFactory;

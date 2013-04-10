@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component("nodeDAO")
 public class NodeDAO extends AbstractDAO<Node> {
 
-	private NodeDAO() {
+	public NodeDAO() {
 		super(Node.class);
 	}
 

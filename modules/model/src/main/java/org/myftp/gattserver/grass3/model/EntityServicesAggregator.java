@@ -2,6 +2,7 @@ package org.myftp.gattserver.grass3.model;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 
 import org.h2.Driver;
@@ -30,14 +31,18 @@ public class EntityServicesAggregator {
 	 * Hibernate {@link SessionFactory}
 	 */
 	private SessionFactory sessionFactory;
-	
+
 	/**
 	 * Logger
 	 */
-	private Logger logger = LoggerFactory.getLogger(EntityServicesAggregator.class);
+	private Logger logger = LoggerFactory
+			.getLogger(EntityServicesAggregator.class);
 
 	@Autowired
-	public EntityServicesAggregator(List<IEntityService> services) {
+	private List<IEntityService> services;
+
+	@PostConstruct
+	private void init() {
 
 		/**
 		 * Získej konfigurace
@@ -81,9 +86,9 @@ public class EntityServicesAggregator {
 						+ " registred");
 			}
 		}
-		
+
 		/**
-		 * Vytvoří SessionFactory na základě konfigurace 
+		 * Vytvoří SessionFactory na základě konfigurace
 		 */
 		ServiceRegistryBuilder serviceRegistryBuilder = new ServiceRegistryBuilder();
 		serviceRegistryBuilder.applySettings(configuration.getProperties());
@@ -104,7 +109,7 @@ public class EntityServicesAggregator {
 				new ModelConfiguration(), ModelConfiguration.CONFIG_PATH)
 				.loadExistingOrCreateNewConfiguration();
 	}
-	
+
 	public SessionFactory getSessionFactory() {
 		return sessionFactory;
 	}

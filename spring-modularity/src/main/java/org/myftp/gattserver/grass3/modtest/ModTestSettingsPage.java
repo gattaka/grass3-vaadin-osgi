@@ -1,7 +1,7 @@
 package org.myftp.gattserver.grass3.modtest;
 
 import org.myftp.gattserver.grass3.pages.SettingsPage;
-import org.myftp.gattserver.grass3.tabs.template.SettingsTab;
+import org.myftp.gattserver.grass3.tabs.template.ISettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
@@ -10,7 +10,7 @@ import com.vaadin.ui.Label;
 
 @org.springframework.stereotype.Component("modTestSettingsTab")
 @Scope("prototype")
-public class ModTestSettingsPage extends SettingsTab {
+public class ModTestSettingsPage extends ISettingsTab {
 
 	private static final long serialVersionUID = -3310643769376755875L;
 

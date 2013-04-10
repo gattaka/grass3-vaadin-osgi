@@ -5,7 +5,7 @@ import java.util.Collection;
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
-import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.util.ComparableLink;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ import com.vaadin.ui.Table;
 public class NodesTableFactory {
 
 	@Resource(name = "categoryPageFactory")
-	private PageFactory categoryPageFactory;
+	private IPageFactory categoryPageFactory;
 
 	public NodesTable createNodesTable() {
 
@@ -33,7 +33,7 @@ public class NodesTableFactory {
 
 		private static final long serialVersionUID = -2220485504407844582L;
 
-		private PageFactory categoryPageFactory;
+		private IPageFactory categoryPageFactory;
 
 		public NodesTable() {
 			setHeight("200px");
@@ -48,7 +48,7 @@ public class NodesTableFactory {
 
 		}
 
-		public void populateTable(Collection<NodeDTO> nodeList, GrassPage page) {
+		public void populateTable(Collection<NodeDTO> nodeList, AbstractGrassPage page) {
 
 			IndexedContainer container = new IndexedContainer();
 			container

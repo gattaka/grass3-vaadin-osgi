@@ -4,11 +4,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.facades.NodeFacade;
+import org.myftp.gattserver.grass3.facades.INodeFacade;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
-import org.myftp.gattserver.grass3.tabs.template.SettingsTab;
+import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
 import org.springframework.context.annotation.Scope;
@@ -44,12 +44,12 @@ import com.vaadin.ui.Window;
 
 @org.springframework.stereotype.Component("categoriesSettingsTab")
 @Scope("prototype")
-public class CategoriesSettingsTab extends SettingsTab {
+public class CategoriesSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 	
 	@Resource(name = "nodeFacade")
-	private NodeFacade nodeFacade;
+	private INodeFacade nodeFacade;
 
 	public CategoriesSettingsTab(GrassRequest request) {
 		super(request);

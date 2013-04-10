@@ -5,13 +5,11 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
-import org.myftp.gattserver.grass3.articles.facade.ArticleFacade;
-import org.myftp.gattserver.grass3.articles.pages.factories.ArticlesEditorPageFactory;
-import org.myftp.gattserver.grass3.articles.pages.factories.ArticlesViewerPageFactory;
-import org.myftp.gattserver.grass3.facades.NodeFacade;
+import org.myftp.gattserver.grass3.articles.facade.IArticleFacade;
+import org.myftp.gattserver.grass3.facades.INodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
-import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.ContentViewerPage;
 import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
@@ -39,16 +37,16 @@ public class ArticlesViewerPage extends ContentViewerPage {
 	private static final long serialVersionUID = 5078280973817331002L;
 
 	@Resource(name = "articleFacade")
-	private ArticleFacade articleFacade;
+	private IArticleFacade articleFacade;
 
 	@Resource(name = "nodeFacade")
-	private NodeFacade nodeFacade;
+	private INodeFacade nodeFacade;
 
 	@Resource(name = "articlesViewerPageFactory")
-	private ArticlesViewerPageFactory articlesViewerPageFactory;
+	private IPageFactory articlesViewerPageFactory;
 
 	@Resource(name = "articlesEditorPageFactory")
-	private ArticlesEditorPageFactory articlesEditorPageFactory;
+	private IPageFactory articlesEditorPageFactory;
 
 	private ArticleDTO article;
 
@@ -220,7 +218,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 	}
 
 	@Override
-	protected PageFactory getContentViewerPageFactory() {
+	protected IPageFactory getContentViewerPageFactory() {
 		return articlesViewerPageFactory;
 	}
 }

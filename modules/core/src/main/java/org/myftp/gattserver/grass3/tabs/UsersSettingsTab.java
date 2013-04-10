@@ -5,11 +5,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.facades.UserFacade;
+import org.myftp.gattserver.grass3.facades.IUserFacade;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
-import org.myftp.gattserver.grass3.tabs.template.SettingsTab;
+import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
@@ -30,14 +30,14 @@ import com.vaadin.ui.Window;
 
 @org.springframework.stereotype.Component("usersSettingsTab")
 @Scope("prototype")
-public class UsersSettingsTab extends SettingsTab {
+public class UsersSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"d.M.yyyy HH:mm:ss");
 
 	@Resource(name = "userFacade")
-	private UserFacade userFacade;
+	private IUserFacade userFacade;
 
 	private final Table userTable = new Table();
 

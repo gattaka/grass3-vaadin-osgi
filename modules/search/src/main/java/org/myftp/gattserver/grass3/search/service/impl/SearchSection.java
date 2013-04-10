@@ -4,8 +4,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
-import org.myftp.gattserver.grass3.search.SearchPageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.service.ISectionService;
 import org.springframework.stereotype.Component;
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class SearchSection implements ISectionService {
 
 	@Resource(name = "searchPageFactory")
-	private SearchPageFactory searchPageFactory;
+	private IPageFactory searchPageFactory;
 
 	public boolean isVisibleForRoles(Set<Role> roles) {
 		return true;
@@ -24,7 +23,7 @@ public class SearchSection implements ISectionService {
 		return "Vyhledávání";
 	}
 
-	public PageFactory getSectionPageFactory() {
+	public IPageFactory getSectionPageFactory() {
 		return searchPageFactory;
 	}
 

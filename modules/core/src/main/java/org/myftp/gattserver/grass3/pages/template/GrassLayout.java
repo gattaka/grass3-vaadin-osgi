@@ -1,7 +1,7 @@
 package org.myftp.gattserver.grass3.pages.template;
 
 import org.myftp.gattserver.grass3.GrassUI;
-import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
@@ -31,14 +31,14 @@ public abstract class GrassLayout extends CustomLayout {
 	/**
 	 * Získá URL stránky
 	 */
-	public String getPageURL(PageFactory pageFactory) {
+	public String getPageURL(IPageFactory pageFactory) {
 		return request.getContextRoot() + "/" + pageFactory.getPageName();
 	}
 
 	/**
 	 * Získá URL stránky + relativní URL
 	 */
-	public String getPageURL(PageFactory pageFactory, String... relativeURLs) {
+	public String getPageURL(IPageFactory pageFactory, String... relativeURLs) {
 		if (relativeURLs.length == 1) {
 			return getPageURL(pageFactory) + "/" + relativeURLs[0];
 		} else {
@@ -57,14 +57,14 @@ public abstract class GrassLayout extends CustomLayout {
 	/**
 	 * Získá resource dle stránky
 	 */
-	public ExternalResource getPageResource(PageFactory pageFactory) {
+	public ExternalResource getPageResource(IPageFactory pageFactory) {
 		return new ExternalResource(getPageURL(pageFactory));
 	}
 
 	/**
 	 * Získá resource dle stránky + relativní URL
 	 */
-	public ExternalResource getPageResource(PageFactory pageFactory,
+	public ExternalResource getPageResource(IPageFactory pageFactory,
 			String... relativeURLs) {
 		return new ExternalResource(getPageURL(pageFactory, relativeURLs));
 	}

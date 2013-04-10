@@ -6,7 +6,7 @@ import org.myftp.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
 import org.myftp.gattserver.grass3.config.ConfigurationFileError;
 import org.myftp.gattserver.grass3.config.ConfigurationManager;
 import org.myftp.gattserver.grass3.config.ConfigurationUtils;
-import org.myftp.gattserver.grass3.tabs.template.SettingsTab;
+import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
@@ -20,7 +20,7 @@ import com.vaadin.ui.Button.ClickEvent;
 
 @org.springframework.stereotype.Component("favlinkSettingsTab")
 @Scope("prototype")
-public class FavlinkSettingsTab extends SettingsTab {
+public class FavlinkSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = -3310643769376755875L;
 

@@ -2,7 +2,7 @@ package org.myftp.gattserver.grass3;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.facades.UserFacade;
+import org.myftp.gattserver.grass3.facades.IUserFacade;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class GrassUserDetailService implements UserDetailsService {
 
 	@Resource(name = "userFacade")
-	private UserFacade userFacade;
+	private IUserFacade userFacade;
 
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {

@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.ServiceHolder;
+import org.myftp.gattserver.grass3.IServiceHolder;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.service.IContentService;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
@@ -21,7 +21,7 @@ import com.vaadin.ui.Table;
 public class NewContentsTableFactory {
 
 	@Resource(name = "serviceHolder")
-	private ServiceHolder serviceHolder;
+	private IServiceHolder serviceHolder;
 
 	public NewContentsTable createNewContentsTable() {
 
@@ -34,7 +34,7 @@ public class NewContentsTableFactory {
 
 		private static final long serialVersionUID = -2220485504407844582L;
 
-		private ServiceHolder serviceHolder;
+		private IServiceHolder serviceHolder;
 
 		public NewContentsTable() {
 			setHeight("200px");
@@ -49,7 +49,7 @@ public class NewContentsTableFactory {
 
 		}
 
-		public void populateTable(NodeDTO node, GrassPage page) {
+		public void populateTable(NodeDTO node, AbstractGrassPage page) {
 
 			IndexedContainer container = new IndexedContainer();
 			container

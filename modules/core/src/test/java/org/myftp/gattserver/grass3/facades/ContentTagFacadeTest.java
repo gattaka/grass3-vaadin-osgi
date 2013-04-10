@@ -9,14 +9,14 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.junit.Test;
+import org.myftp.gattserver.grass3.facades.impl.ContentTagFacadeImpl;
 import org.myftp.gattserver.grass3.test.BaseSpringTest;
 
-public class ContentTagFacadeTest extends
-		BaseSpringTest {
+public class ContentTagFacadeTest extends BaseSpringTest {
 
 	@Resource(name = "contentTagFacade")
-	private ContentTagFacade contentTagFacade;
-	private String delimiter = ContentTagFacade.TAGS_DELIMITER;
+	private IContentTagFacade contentTagFacade;
+	private String delimiter = ContentTagFacadeImpl.TAGS_DELIMITER;
 
 	private Set<String> parseTags(String tagNames) {
 		String[] tags = contentTagFacade.parseTags(tagNames);

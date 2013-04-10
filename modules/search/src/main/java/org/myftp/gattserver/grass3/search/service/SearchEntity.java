@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 
 public class SearchEntity {
 
@@ -37,15 +37,15 @@ public class SearchEntity {
 
 	public static class Link {
 
-		private PageFactory viewerPageFactory;
+		private IPageFactory viewerPageFactory;
 		private String suffix;
 
-		public Link(PageFactory viewerPageFactory, String suffix) {
+		public Link(IPageFactory viewerPageFactory, String suffix) {
 			this.viewerPageFactory = viewerPageFactory;
 			this.suffix = suffix;
 		}
 
-		public PageFactory getViewerPageFactory() {
+		public IPageFactory getViewerPageFactory() {
 			return viewerPageFactory;
 		}
 
@@ -65,7 +65,7 @@ public class SearchEntity {
 	 */
 	private Link link;
 
-	public SearchEntity(PageFactory viewerPageFactory, String suffix) {
+	public SearchEntity(IPageFactory viewerPageFactory, String suffix) {
 		Link link = new Link(viewerPageFactory, suffix);
 		this.link = link;
 	}

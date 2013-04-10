@@ -33,7 +33,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
-import org.myftp.gattserver.grass3.pages.template.GrassPage;
+import org.myftp.gattserver.grass3.pages.template.GrassLayout;
 import org.myftp.gattserver.grass3.search.service.ISearchConnector;
 import org.myftp.gattserver.grass3.search.service.ISearchField;
 import org.myftp.gattserver.grass3.search.service.SearchEntity;
@@ -44,10 +44,7 @@ import org.springframework.stereotype.Component;
 public class SearchFacade {
 
 	@Resource(name = "connectorAggregator")
-	ConnectorAggregator connectorAggregator;
-
-	private SearchFacade() {
-	}
+	IConnectorAggregator connectorAggregator;
 
 	public Set<String> getSearchModulesIds() {
 		return connectorAggregator.getSearchConnectorsById().keySet();
@@ -89,7 +86,7 @@ public class SearchFacade {
 	 */
 	public List<SearchHit> search(String queryText,
 			Set<Enum<? extends ISearchField>> searchFields, String moduleId,
-			UserInfoDTO user, GrassPage callingPage) throws IOException,
+			UserInfoDTO user, GrassLayout callingPage) throws IOException,
 			ParseException, InvalidTokenOffsetsException {
 
 		// StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);

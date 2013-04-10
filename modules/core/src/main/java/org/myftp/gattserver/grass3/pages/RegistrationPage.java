@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.facades.UserFacade;
+import org.myftp.gattserver.grass3.facades.IUserFacade;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
@@ -29,7 +29,7 @@ import com.vaadin.ui.VerticalLayout;
 public class RegistrationPage extends OneColumnPage {
 
 	@Resource(name = "userFacade")
-	private UserFacade userFacade;
+	private IUserFacade userFacade;
 
 	private static final long serialVersionUID = 8276040419934174157L;
 

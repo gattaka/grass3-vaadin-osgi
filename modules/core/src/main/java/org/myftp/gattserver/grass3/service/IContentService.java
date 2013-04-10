@@ -1,6 +1,6 @@
 package org.myftp.gattserver.grass3.service;
 
-import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 
 import com.vaadin.server.Resource;
 
@@ -10,12 +10,12 @@ public interface IContentService {
 	 * Vrátí instanci stránky, která slouží jako editor pro vytváření nebo
 	 * modifikaci daného obsahu
 	 */
-	public PageFactory getContentEditorPageFactory();
+	public IPageFactory getContentEditorPageFactory();
 
 	/**
 	 * Vrátí instanci stránky, která slouží jako prohlížeč obsahu
 	 */
-	public PageFactory getContentViewerPageFactory();
+	public IPageFactory getContentViewerPageFactory();
 
 	/**
 	 * Vrátí popisek k tlačítku "vytvořit nový obsah"

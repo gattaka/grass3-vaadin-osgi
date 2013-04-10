@@ -1,8 +1,6 @@
 package org.myftp.gattserver.grass3.articles.service.impl;
 
-import org.myftp.gattserver.grass3.articles.pages.factories.ArticlesEditorPageFactory;
-import org.myftp.gattserver.grass3.articles.pages.factories.ArticlesViewerPageFactory;
-import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.service.IContentService;
 import org.springframework.stereotype.Component;
 
@@ -14,10 +12,10 @@ public class ArticlesContentService implements IContentService {
 	public static final String ID = "org.myftp.gattserver.grass3.articles:0.0.1";
 
 	@javax.annotation.Resource(name = "articlesViewerPageFactory")
-	private ArticlesViewerPageFactory articlesViewerPageFactory;
+	private IPageFactory articlesViewerPageFactory;
 
 	@javax.annotation.Resource(name = "articlesEditorPageFactory")
-	private ArticlesEditorPageFactory articlesEditorPageFactory;
+	private IPageFactory articlesEditorPageFactory;
 
 	public String getCreateNewContentLabel() {
 		return "Vytvořit nový článek";
@@ -32,11 +30,11 @@ public class ArticlesContentService implements IContentService {
 		return ID;
 	}
 
-	public PageFactory getContentEditorPageFactory() {
+	public IPageFactory getContentEditorPageFactory() {
 		return articlesEditorPageFactory;
 	}
 
-	public PageFactory getContentViewerPageFactory() {
+	public IPageFactory getContentViewerPageFactory() {
 		return articlesViewerPageFactory;
 	}
 

@@ -4,12 +4,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.ServiceHolder;
-import org.myftp.gattserver.grass3.facades.NodeFacade;
-import org.myftp.gattserver.grass3.facades.QuotesFacade;
+import org.myftp.gattserver.grass3.IServiceHolder;
+import org.myftp.gattserver.grass3.facades.INodeFacade;
+import org.myftp.gattserver.grass3.facades.IQuotesFacade;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
-import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.service.ISectionService;
@@ -28,36 +28,36 @@ import com.vaadin.ui.Link;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.BaseTheme;
 
-public abstract class BasePage extends GrassPage {
+public abstract class BasePage extends AbstractGrassPage {
 
 	private static final long serialVersionUID = 502625699429764791L;
 
 	@Resource(name = "nodeFacade")
-	private NodeFacade nodeFacade;
+	private INodeFacade nodeFacade;
 
 	@Resource(name = "quotesFacade")
-	private QuotesFacade quotesFacade;
+	private IQuotesFacade quotesFacade;
 
 	@Resource(name = "homePageFactory")
-	private PageFactory homePageFactory;
+	private IPageFactory homePageFactory;
 
 	@Resource(name = "categoryPageFactory")
-	private PageFactory categoryPageFactory;
+	private IPageFactory categoryPageFactory;
 
 	@Resource(name = "quotesPageFactory")
-	private PageFactory quotesPageFactory;
+	private IPageFactory quotesPageFactory;
 
 	@Resource(name = "loginPageFactory")
-	private PageFactory loginPageFactory;
+	private IPageFactory loginPageFactory;
 
 	@Resource(name = "registrationPageFactory")
-	private PageFactory registrationPageFactory;
+	private IPageFactory registrationPageFactory;
 
 	@Resource(name = "settingsPageFactory")
-	private PageFactory settingsPageFactory;
+	private IPageFactory settingsPageFactory;
 
 	@Resource(name = "serviceHolder")
-	private ServiceHolder serviceHolder;
+	private IServiceHolder serviceHolder;
 
 	private HorizontalLayout sectionsMenuLayout;
 	private HorizontalLayout userMenuLayout;
@@ -215,7 +215,7 @@ public abstract class BasePage extends GrassPage {
 		layout.addComponent(userMenuLayout, "usermenu");
 
 		buildUserMenu();
-		
+
 	}
 
 	private String chooseQuote() {
@@ -232,7 +232,7 @@ public abstract class BasePage extends GrassPage {
 		sectionsMenuLayout.addComponent(link);
 	}
 
-	private void createSectionLink(String caption, PageFactory pageFactory) {
+	private void createSectionLink(String caption, IPageFactory pageFactory) {
 		Link link = new Link(caption, getPageResource(pageFactory));
 		link.setStyleName("item");
 		sectionsMenuLayout.addComponent(link);

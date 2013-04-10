@@ -16,6 +16,27 @@
 		</encoder>
 	</appender>
 
+	<appender name="fileAppender" class="ch.qos.logback.core.FileAppender">
+		<File>perfStats.log</File>
+		<!-- <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder"> -->
+		<!-- <layout class="org.perf4j.logback.StatisticsCsvLayout" /> -->
+		<!-- </encoder> -->
+		<encoder>
+			<pattern>%m%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- The Perf4J logger. Note that org.perf4j.TimingLogger is the value of 
+		the org.perf4j.StopWatch.DEFAULT_LOGGER_NAME constant. Also, note that additivity 
+		is set to false, which is usually what is desired - this means that timing 
+		statements will only be sent to this logger and NOT to upstream loggers. -->
+	<logger name="org.perf4j.TimingLogger" additivity="false">
+		<level value="INFO" />
+		<!-- <appender-ref ref="CoalescingStatistics" /> -->
+		<appender-ref ref="fileAppender" />
+	</logger>
+
 	<root level="INFO">
 		<appender-ref ref="stdout" />
 	</root>

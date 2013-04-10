@@ -2,7 +2,7 @@ package org.myftp.gattserver.grass3.pages;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.util.GrassRequest;
@@ -22,7 +22,7 @@ public class LoginPage extends OneColumnPage {
 	private static final long serialVersionUID = 8276040419934174157L;
 
 	@Resource(name = "homePageFactory")
-	private PageFactory homePageFactory;
+	private IPageFactory homePageFactory;
 
 	public LoginPage(GrassRequest request) {
 		super(request);

@@ -3,11 +3,11 @@ package org.myftp.gattserver.grass3.tabs.factories;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.tabs.factories.template.SettingsTabFactory;
+import org.myftp.gattserver.grass3.tabs.factories.template.AbstractSettingsTabFactory;
 import org.springframework.stereotype.Component;
 
 @Component("usersSettingsTabFactory")
-public class UsersSettingsTabFactory extends SettingsTabFactory {
+public class UsersSettingsTabFactory extends AbstractSettingsTabFactory {
 
 	public UsersSettingsTabFactory() {
 		super("Uživatelé", "users", "usersSettingsTab");

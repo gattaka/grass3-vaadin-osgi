@@ -8,16 +8,15 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.articles.PluginServiceHolder;
+import org.myftp.gattserver.grass3.articles.IPluginServiceHolder;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.articles.editor.api.EditorButtonResources;
-import org.myftp.gattserver.grass3.articles.facade.ArticleFacade;
-import org.myftp.gattserver.grass3.articles.pages.factories.ArticlesViewerPageFactory;
-import org.myftp.gattserver.grass3.facades.ContentTagFacade;
-import org.myftp.gattserver.grass3.facades.NodeFacade;
+import org.myftp.gattserver.grass3.articles.facade.IArticleFacade;
+import org.myftp.gattserver.grass3.facades.IContentTagFacade;
+import org.myftp.gattserver.grass3.facades.INodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
-import org.myftp.gattserver.grass3.pages.factories.CategoryPageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
@@ -58,22 +57,22 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			.getLogger(ArticlesEditorPage.class);
 
 	@Resource(name = "nodeFacade")
-	private NodeFacade nodeFacade;
+	private INodeFacade nodeFacade;
 
 	@Resource(name = "articleFacade")
-	private ArticleFacade articleFacade;
+	private IArticleFacade articleFacade;
 
 	@Resource(name = "contentTagFacade")
-	private ContentTagFacade contentTagFacade;
+	private IContentTagFacade contentTagFacade;
 
 	@Resource(name = "pluginServiceHolder")
-	private PluginServiceHolder pluginServiceHolder;
+	private IPluginServiceHolder pluginServiceHolder;
 
 	@Resource(name = "categoryPageFactory")
-	private CategoryPageFactory categoryPageFactory;
+	private IPageFactory categoryPageFactory;
 
 	@Resource(name = "articlesViewerPageFactory")
-	private ArticlesViewerPageFactory articlesViewerPageFactory;
+	private IPageFactory articlesViewerPageFactory;
 
 	private NodeDTO category;
 	private ArticleDTO article;

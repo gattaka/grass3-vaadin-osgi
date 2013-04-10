@@ -18,8 +18,8 @@ public class FactoryTest extends BaseSpringTest implements
 
 	@Test
 	public void testContruction() {
-		Constructed constructed = (Constructed) context.getBean("constructed",
-				new Integer(785));
+		Constructed constructed = (Constructed) context.getBean("constructed");
+		constructed.setInteger(new Integer(785));
 		constructed.printInteger();
 	}
 

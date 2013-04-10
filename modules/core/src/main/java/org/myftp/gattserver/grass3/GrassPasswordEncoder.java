@@ -22,8 +22,9 @@ public class GrassPasswordEncoder extends ShaPasswordEncoder {
 		SALT = salt;
 	}
 
-	public String encodePassword(String rawPass) {
-		return super.encodePassword(rawPass, SALT);
+	@Override
+	public String encodePassword(String rawPass, Object salt) {
+		return super.encodePassword(rawPass, salt == null ? SALT : salt);
 	}
 
 }

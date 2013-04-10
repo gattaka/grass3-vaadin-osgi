@@ -9,12 +9,12 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.facades.ContentNodeFacade;
-import org.myftp.gattserver.grass3.facades.ContentTagFacade;
+import org.myftp.gattserver.grass3.facades.IContentNodeFacade;
+import org.myftp.gattserver.grass3.facades.IContentTagFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
-import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.BasePage;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory.ContentsTable;
@@ -38,13 +38,13 @@ public class HomePage extends BasePage {
 	 * Fasády
 	 */
 	@Resource(name = "contentNodeFacade")
-	private ContentNodeFacade contentNodeFacade;
+	private IContentNodeFacade contentNodeFacade;
 
 	@Resource(name = "contentTagFacade")
-	private ContentTagFacade contentTagFacade;
+	private IContentTagFacade contentTagFacade;
 
 	@Resource(name = "tagPageFactory")
-	private PageFactory tagPageFactory;
+	private IPageFactory tagPageFactory;
 
 	@Resource(name = "contentsTableFactory")
 	private ContentsTableFactory contentsTableFactory;

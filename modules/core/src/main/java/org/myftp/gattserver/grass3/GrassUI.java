@@ -4,11 +4,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.myftp.gattserver.grass3.facades.ISecurityFacade;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
-import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.util.GrassRequest;
-import org.myftp.gattserver.grass3.util.GrassRequestHandler;
-import org.myftp.gattserver.grass3.util.PageFactoriesRegister;
+import org.myftp.gattserver.grass3.util.IGrassRequestHandler;
+import org.myftp.gattserver.grass3.util.IPageFactoriesRegister;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +36,13 @@ public class GrassUI extends UI {
 	 * Mapa stránek
 	 */
 	@Resource(name = "pageFactoriesRegister")
-	private PageFactoriesRegister pageFactoriesRegister;
+	private IPageFactoriesRegister pageFactoriesRegister;
 
 	@Resource(name = "securityFacade")
-	private SecurityFacade securityFacade;
+	private ISecurityFacade securityFacade;
 
 	@Autowired
-	private List<GrassRequestHandler> grassRequestHandlers;
+	private List<IGrassRequestHandler> grassRequestHandlers;
 
 	/**
 	 * Získá aktuálního přihlášeného uživatele jako {@link UserInfoDTO} objekt
@@ -56,7 +57,7 @@ public class GrassUI extends UI {
 
 	public void init(VaadinRequest request) {
 
-		for (GrassRequestHandler handler : grassRequestHandlers) {
+		for (IGrassRequestHandler handler : grassRequestHandlers) {
 			VaadinSession.getCurrent().addRequestHandler(handler);
 		}
 
@@ -72,7 +73,7 @@ public class GrassUI extends UI {
 		if (analyzer.getPathToken(0) != null)
 			analyzer.shift();
 
-		PageFactory factory = pageFactoriesRegister.get(analyzer
+		IPageFactory factory = pageFactoriesRegister.get(analyzer
 				.getPathToken(0));
 		setContent(factory.createPage(grassRequest));
 

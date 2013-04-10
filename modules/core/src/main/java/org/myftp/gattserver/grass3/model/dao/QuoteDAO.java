@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component("quoteDAO")
 public class QuoteDAO extends AbstractDAO<Quote> {
 
-	private QuoteDAO() {
+	public QuoteDAO() {
 		super(Quote.class);
 	}
 

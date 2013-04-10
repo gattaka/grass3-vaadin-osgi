@@ -6,7 +6,7 @@ import org.myftp.gattserver.grass3.config.ConfigurationFileError;
 import org.myftp.gattserver.grass3.config.ConfigurationManager;
 import org.myftp.gattserver.grass3.config.ConfigurationUtils;
 import org.myftp.gattserver.grass3.config.CoreConfiguration;
-import org.myftp.gattserver.grass3.tabs.template.SettingsTab;
+import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
@@ -26,7 +26,7 @@ import com.vaadin.ui.VerticalLayout;
 
 @org.springframework.stereotype.Component("applicationSettingsTab")
 @Scope("prototype")
-public class ApplicationSettingsTab extends SettingsTab {
+public class ApplicationSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 

@@ -11,11 +11,11 @@ import javax.xml.bind.JAXBException;
 import org.myftp.gattserver.grass3.articles.latex.config.LatexConfiguration;
 import org.myftp.gattserver.grass3.articles.parser.exceptions.ParserException;
 import org.myftp.gattserver.grass3.config.ConfigurationUtils;
-import org.myftp.gattserver.grass3.util.GrassRequestHandler;
+import org.myftp.gattserver.grass3.util.impl.AbstractGrassRequestHandler;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LatexImageRequestHandler extends GrassRequestHandler {
+public class LatexImageRequestHandler extends AbstractGrassRequestHandler {
 
 	private static final long serialVersionUID = 7154339775034959876L;
 

@@ -2,7 +2,7 @@ package org.myftp.gattserver.grass3.service;
 
 import java.util.Set;
 
-import org.myftp.gattserver.grass3.pages.factories.template.PageFactory;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.security.Role;
 
 /**
@@ -19,7 +19,7 @@ public interface ISectionService {
 	 * 
 	 * @return factory stránky
 	 */
-	public PageFactory getSectionPageFactory();
+	public IPageFactory getSectionPageFactory();
 
 	/**
 	 * Vrátí název sekce, tento text se bude zobrazovat přímo v hlavním menu, ze

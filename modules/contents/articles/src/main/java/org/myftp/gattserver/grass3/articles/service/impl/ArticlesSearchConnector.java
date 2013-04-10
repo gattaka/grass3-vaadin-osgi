@@ -6,9 +6,9 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
-import org.myftp.gattserver.grass3.articles.facade.ArticleFacade;
-import org.myftp.gattserver.grass3.articles.pages.factories.ArticlesViewerPageFactory;
+import org.myftp.gattserver.grass3.articles.facade.IArticleFacade;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
+import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.search.service.ISearchConnector;
 import org.myftp.gattserver.grass3.search.service.ISearchField;
 import org.myftp.gattserver.grass3.search.service.SearchEntity;
@@ -20,10 +20,10 @@ import org.springframework.stereotype.Component;
 public class ArticlesSearchConnector implements ISearchConnector {
 
 	@Resource(name = "articleFacade")
-	private ArticleFacade articleFacade;
+	private IArticleFacade articleFacade;
 
 	@Resource(name = "articlesViewerPageFactory")
-	private ArticlesViewerPageFactory articlesViewerPageFactory;
+	private IPageFactory articlesViewerPageFactory;
 
 	public List<SearchEntity> getAvailableSearchEntities(UserInfoDTO user) {
 

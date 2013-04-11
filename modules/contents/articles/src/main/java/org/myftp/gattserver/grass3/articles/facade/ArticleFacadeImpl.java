@@ -12,6 +12,7 @@ import org.myftp.gattserver.grass3.articles.lexer.Lexer;
 import org.myftp.gattserver.grass3.articles.parser.ArticleParser;
 import org.myftp.gattserver.grass3.articles.parser.HTMLTrimmer;
 import org.myftp.gattserver.grass3.articles.parser.PluginBag;
+import org.myftp.gattserver.grass3.articles.parser.PluginRegister;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractParser;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.IContext;
@@ -23,15 +24,11 @@ import org.myftp.gattserver.grass3.model.domain.ContentNode;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 @Component("articleFacade")
-public class ArticleFacadeImpl implements IArticleFacade,
-		ApplicationContextAware {
-
+public class ArticleFacadeImpl implements IArticleFacade {
+	
 	@Resource(name = "contentNodeFacade")
 	private IContentNodeFacade contentNodeFacade;
 
@@ -44,12 +41,8 @@ public class ArticleFacadeImpl implements IArticleFacade,
 	@Resource(name = "articleDAO")
 	private ArticleDAO articleDAO;
 
-	private ApplicationContext applicationContext;
-
-	public void setApplicationContext(ApplicationContext applicationContext)
-			throws BeansException {
-		this.applicationContext = applicationContext;
-	}
+	@Resource(name = "pluginRegister")
+	private PluginRegister pluginRegister;
 
 	private IContext processArticle(String source, String contextRoot) {
 
@@ -58,8 +51,7 @@ public class ArticleFacadeImpl implements IArticleFacade,
 
 		Lexer lexer = new Lexer(source);
 		AbstractParser parser = new ArticleParser();
-		PluginBag pluginBag = (PluginBag) applicationContext.getBean(
-				"pluginBag", lexer, contextRoot);
+		PluginBag pluginBag = new PluginBag(lexer, contextRoot, pluginRegister);
 
 		// výstup
 		AbstractElementTree tree = parser.parse(pluginBag);

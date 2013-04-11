@@ -37,14 +37,10 @@ import org.springframework.stereotype.Component;
  * 
  * @author gatt
  */
-@Component("pluginBag")
-@Scope("prototype")
 public class PluginBag {
 
 	private Token token;
 	private Lexer lexer;
-
-	@Resource(name = "pluginRegister")
 	private PluginRegister pluginRegister;
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -109,9 +105,11 @@ public class PluginBag {
 				.canHoldBreakline();
 	}
 
-	public PluginBag(Lexer lexer, String contextRoot) {
+	public PluginBag(Lexer lexer, String contextRoot,
+			PluginRegister pluginRegister) {
 		this.lexer = lexer;
 		this.contextRoot = contextRoot;
+		this.pluginRegister = pluginRegister;
 		this.activePlugins = new Stack<StackElement>();
 	}
 

@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.myftp.gattserver.grass3.articles.editor.api.ContextImpl;
 import org.myftp.gattserver.grass3.articles.lexer.Lexer;
 import org.myftp.gattserver.grass3.articles.parser.PluginBag;
+import org.myftp.gattserver.grass3.articles.parser.PluginRegister;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.IContext;
 import org.myftp.gattserver.grass3.articles.basic.abbr.AbbrElement;
@@ -15,7 +16,7 @@ public class AbbrTest {
 
 	private PluginBag getBagWithText(String text) {
 		Lexer lexer = new Lexer(text);
-		PluginBag pluginBag = new PluginBag(lexer, "contextRoot");
+		PluginBag pluginBag = new PluginBag(lexer, "contextRoot", new PluginRegister());
 		pluginBag.nextToken(); // musí se inicializovat
 		return pluginBag;
 	}

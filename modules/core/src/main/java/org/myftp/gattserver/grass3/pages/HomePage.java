@@ -101,12 +101,16 @@ public class HomePage extends BasePage {
 		}
 
 		// Nedávno přidané a upravené obsahy
+		StopWatch stopWatch = new StopWatch("HomePage#createRecentMenus");
 		createRecentMenus(pagelayout);
+		String log = stopWatch.stop();
+		System.out.println(log);
+		logger.info(log);
 
 		// Tag-cloud
-		StopWatch stopWatch = new StopWatch("HomePage#createTagCloud");
+		stopWatch = new StopWatch("HomePage#createTagCloud");
 		createTagCloud(pagelayout);
-		String log = stopWatch.stop();
+		log = stopWatch.stop();
 		System.out.println(log);
 		logger.info(log);
 

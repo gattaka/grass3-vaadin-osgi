@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.model.dao;
 
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +34,21 @@ public class ContentTagDAO extends AbstractDAO<ContentTag> {
 		if (tags.isEmpty())
 			return null;
 		return tags.get(0);
+	}
+
+	public Integer getCountOfTagContents(Long tagId) {
+
+		Object result = session
+				.createSQLQuery(
+						"select count(CONTENTNODES_ID) from CONTENTNODE_CONTENT_TAG where CONTENTTAGS_ID='"
+								+ tagId + "'").uniqueResult();
+		if (result != null) {
+			BigInteger res = (BigInteger) result;
+			closeSession();
+			return res.intValue();
+		} else
+			return 0;
+
 	}
 
 	/**

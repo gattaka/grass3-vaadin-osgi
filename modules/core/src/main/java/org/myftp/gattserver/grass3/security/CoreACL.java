@@ -45,7 +45,7 @@ public final class CoreACL {
 	 * Může uživatel zobrazit danou sekci ?
 	 */
 	public boolean canShowSection(ISectionService section) {
-		
+
 		// záleží na viditelnosti definované sekcí
 		return section.isVisibleForRoles(user == null ? null : user.getRoles());
 	}
@@ -54,7 +54,7 @@ public final class CoreACL {
 	 * Může uživatel upravovat "hlášky"
 	 */
 	public boolean canModifyQuotes() {
-		
+
 		// pokud je uživatel přihlášen a je to administrátor
 		return user != null && user.getRoles().contains(Role.ADMIN);
 	}
@@ -73,7 +73,7 @@ public final class CoreACL {
 		if (user == null) {
 
 			// pokud je obsah publikován, můžeš zobrazit
-			if (content.getPublicated())
+			if (content.isPublicated())
 				return true;
 
 		} else {
@@ -262,6 +262,35 @@ public final class CoreACL {
 		}
 		// jinak false
 		return false;
+	}
+
+	/**
+	 * Může zobrazit stránku s nastavením ?
+	 */
+	public boolean canShowSettings() {
+		// uživatel musí být přihlášen aby mohl aspoň nějaké nastavení zobrazit
+		return user != null;
+	}
+
+	/**
+	 * Může zobrazit stránku s nastavením aplikace ?
+	 */
+	public boolean canShowApplicationSettings() {
+		return user.getRoles().contains(Role.ADMIN);
+	}
+
+	/**
+	 * Může zobrazit stránku s nastavením kategorií ?
+	 */
+	public boolean canShowCategoriesSettings() {
+		return user.getRoles().contains(Role.ADMIN);
+	}
+
+	/**
+	 * Může zobrazit stránku s nastavením uživatelů ?
+	 */
+	public boolean canShowUserSettings() {
+		return user.getRoles().contains(Role.ADMIN);
 	}
 
 }

@@ -12,6 +12,7 @@ import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.ContentViewerPage;
 import org.myftp.gattserver.grass3.security.CoreACL;
+import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
@@ -58,12 +59,25 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
 				.parseURLIdentifier(analyzer.getCurrentPathToken());
-		if (identifier == null)
+		if (identifier == null) {
 			showError404();
+			return;
+		}
 
 		article = articleFacade.getArticleById(identifier.getId());
-		if (article == null)
+		if (article == null) {
 			showError404();
+			return;
+		}
+
+		if (article.getContentNode().isPublicated()
+				|| article.getContentNode().getAuthor()
+						.equals(getGrassUI().getUser())
+				|| getGrassUI().getUser().getRoles().contains(Role.ADMIN)) {
+		} else {
+			showError403();
+			return;
+		}
 
 		// CSS resources
 		for (String css : article.getPluginCSSResources()) {

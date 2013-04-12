@@ -36,7 +36,7 @@ public class TagPage extends BasePage {
 	public TagPage(GrassRequest request) {
 		super(request);
 	}
-
+	
 	@Override
 	protected void createContent(CustomLayout layout) {
 

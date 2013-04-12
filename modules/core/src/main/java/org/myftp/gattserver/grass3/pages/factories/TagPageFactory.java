@@ -10,4 +10,8 @@ public class TagPageFactory extends AbstractPageFactory {
 		super("tag", "tagPage");
 	}
 
+	@Override
+	protected boolean isAuthorized() {
+		return true;
+	}
 }

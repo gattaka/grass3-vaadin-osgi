@@ -10,4 +10,8 @@ public class NoServicePageFactory extends AbstractPageFactory {
 		super("noservice", "noServicePage");
 	}
 
+	@Override
+	protected boolean isAuthorized() {
+		return true;
+	}
 }

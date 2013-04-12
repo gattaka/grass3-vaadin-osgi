@@ -9,5 +9,10 @@ public class CategoryPageFactory extends AbstractPageFactory {
 	public CategoryPageFactory() {
 		super("category", "categoryPage");
 	}
+	
+	@Override
+	protected boolean isAuthorized() {
+		return true;
+	}
 
 }

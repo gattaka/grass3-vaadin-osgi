@@ -54,7 +54,7 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 	public CategoriesSettingsTab(GrassRequest request) {
 		super(request);
 	}
-
+	
 	private static final Action ACTION_DELETE = new Action("Smazat");
 	private static final Action ACTION_RENAME = new Action("Přejmenovat");
 	private static final Action[] ACTIONS = new Action[] { ACTION_DELETE,

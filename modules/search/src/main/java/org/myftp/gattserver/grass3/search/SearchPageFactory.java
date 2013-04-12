@@ -9,5 +9,10 @@ public class SearchPageFactory extends AbstractPageFactory {
 	public SearchPageFactory() {
 		super("search", "searchPage");
 	}
+	
+	@Override
+	protected boolean isAuthorized() {
+		return true;
+	}
 
 }

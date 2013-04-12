@@ -93,7 +93,7 @@ public class ContentNodeDTO {
 		this.lastModificationDate = lastModificationDate;
 	}
 
-	public Boolean getPublicated() {
+	public Boolean isPublicated() {
 		return publicated;
 	}
 

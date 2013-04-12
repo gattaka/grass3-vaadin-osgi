@@ -33,7 +33,7 @@ public class QuotesPage extends OneColumnPage {
 	public QuotesPage(GrassRequest request) {
 		super(request);
 	}
-
+	
 	/**
 	 * Seznam hlášek
 	 */

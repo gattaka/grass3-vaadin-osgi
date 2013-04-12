@@ -287,7 +287,7 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 						.getContentNode().getContentTags());
 				articleFacade.modifyArticle(article.getContentNode().getName(),
 						article.getText(), tags, article.getContentNode()
-								.getPublicated(), article, getRequest()
+								.isPublicated(), article, getRequest()
 								.getContextRoot());
 
 				synchronized (getUI()) {

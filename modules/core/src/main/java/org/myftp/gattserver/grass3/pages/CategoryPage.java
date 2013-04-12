@@ -61,18 +61,20 @@ public class CategoryPage extends OneColumnPage {
 	@Override
 	protected Component createContent() {
 
+		VerticalLayout layout = new VerticalLayout();
+
 		String categoryName = getRequest().getAnalyzer().getPathToken(1);
 		if (categoryName == null)
 			showError404();
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
 				.parseURLIdentifier(categoryName);
-		if (identifier == null)
+		if (identifier == null) {
 			showError404();
+			return layout;
+		}
 
 		NodeDTO node = nodeFacade.getNodeById(identifier.getId());
-
-		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);
 		layout.setSpacing(true);

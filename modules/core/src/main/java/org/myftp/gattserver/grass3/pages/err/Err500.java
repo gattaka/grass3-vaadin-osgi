@@ -2,7 +2,10 @@ package org.myftp.gattserver.grass3.pages.err;
 
 import org.myftp.gattserver.grass3.pages.template.ErrorPage;
 import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.springframework.context.annotation.Scope;
 
+@org.springframework.stereotype.Component("err500")
+@Scope("prototype")
 public class Err500 extends ErrorPage {
 
 	public Err500(GrassRequest request) {

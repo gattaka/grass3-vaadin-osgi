@@ -10,4 +10,8 @@ public class RegistrationPageFactory extends AbstractPageFactory {
 		super("registration", "registrationPage");
 	}
 
+	@Override
+	protected boolean isAuthorized() {
+		return getUserACL().canRegistrate();
+	}
 }

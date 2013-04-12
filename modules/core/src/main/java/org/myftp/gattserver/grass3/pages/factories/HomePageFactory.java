@@ -10,4 +10,9 @@ public class HomePageFactory extends AbstractPageFactory {
 		super("home", "homepage");
 	}
 
+	@Override
+	protected boolean isAuthorized() {
+		return true;
+	}
+	
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -34,7 +35,7 @@ public class ContentNode {
 	/**
 	 * nadřazený uzel (kategorie ve které obsah je)
 	 */
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Node parent;
 
 	/**
@@ -61,7 +62,7 @@ public class ContentNode {
 	/**
 	 * Kdo ho vytvořil
 	 */
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	private User author;
 
 	/**
@@ -78,7 +79,7 @@ public class ContentNode {
 			return false;
 		return ((ContentNode) obj).getId() == getId();
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return getId().hashCode();

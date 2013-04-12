@@ -37,7 +37,7 @@ public class SettingsPage extends TwoColumnPage {
 	public SettingsPage(GrassRequest request) {
 		super(request);
 	}
-
+	
 	@Override
 	protected Component createLeftColumnContent() {
 		VerticalLayout leftColumnLayout = new VerticalLayout();

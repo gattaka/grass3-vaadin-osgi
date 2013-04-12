@@ -72,7 +72,7 @@ public class HomePage extends BasePage {
 	public HomePage(GrassRequest request) {
 		super(request);
 	}
-
+	
 	@Override
 	protected void createContent(CustomLayout layout) {
 

@@ -9,5 +9,9 @@ public class ArticlesViewerPageFactory extends AbstractPageFactory {
 	public ArticlesViewerPageFactory() {
 		super("articles", "articlesViewerPage");
 	}
-
+	
+	@Override
+	protected boolean isAuthorized() {
+		return true;
+	}
 }

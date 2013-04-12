@@ -7,11 +7,11 @@ import com.vaadin.ui.Label;
 
 public abstract class ErrorPage extends AbstractGrassPage {
 
+	private static final long serialVersionUID = 3728073040878360420L;
+
 	public ErrorPage(GrassRequest request) {
 		super(request);
 	}
-
-	private static final long serialVersionUID = 3728073040878360420L;
 
 	@Override
 	protected void createQuotes(CustomLayout layout) {

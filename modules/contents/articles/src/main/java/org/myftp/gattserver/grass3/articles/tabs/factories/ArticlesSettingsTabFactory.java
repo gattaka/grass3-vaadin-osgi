@@ -1,7 +1,5 @@
 package org.myftp.gattserver.grass3.articles.tabs.factories;
 
-import java.util.Set;
-
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.tabs.factories.template.AbstractSettingsTabFactory;
 import org.springframework.stereotype.Component;
@@ -14,8 +12,7 @@ public class ArticlesSettingsTabFactory extends AbstractSettingsTabFactory {
 	}
 
 	@Override
-	public boolean isVisibleForRoles(Set<Role> roles) {
-		return roles.contains(Role.ADMIN);
+	protected boolean isAuthorized() {
+		return getUser().getRoles().contains(Role.ADMIN);
 	}
-
 }

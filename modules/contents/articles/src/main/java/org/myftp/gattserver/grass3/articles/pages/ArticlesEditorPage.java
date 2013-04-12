@@ -18,6 +18,7 @@ import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
+import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
@@ -123,14 +124,23 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			articleKeywords.setValue(contentTagFacade.serializeTags(article
 					.getContentNode().getContentTags()));
 			articleTextArea.setValue(article.getText());
-			publicatedCheckBox.setValue(article.getContentNode()
-					.getPublicated());
+			publicatedCheckBox
+					.setValue(article.getContentNode().isPublicated());
 		} else {
 			logger.debug("Neznámá operace: '" + operationToken + "'");
 			showError404();
 		}
 
-		super.init();
+		if ((article != null && article.getContentNode().getAuthor()
+				.equals(getGrassUI().getUser()))
+				|| getGrassUI().getUser().getRoles().contains(Role.ADMIN)) {
+			super.init();
+		} else {
+			// nemá oprávnění upravovat tento článek
+			showError403();
+			return;
+		}
+
 	}
 
 	@Override

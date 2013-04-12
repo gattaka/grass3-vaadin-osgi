@@ -36,6 +36,13 @@ public abstract class GrassLayout extends CustomLayout {
 	}
 
 	/**
+	 * Získá URL stránky
+	 */
+	public String getPageURL(String suffix) {
+		return request.getContextRoot() + "/" + suffix;
+	}
+
+	/**
 	 * Získá URL stránky + relativní URL
 	 */
 	public String getPageURL(IPageFactory pageFactory, String... relativeURLs) {
@@ -118,14 +125,21 @@ public abstract class GrassLayout extends CustomLayout {
 	 * Vyhodí chybu
 	 */
 	public void showError500() {
-		// TODO
+		redirect(getPageURL("err500"));
 	}
 
 	/**
 	 * Vyhodí chybu
 	 */
 	public void showError404() {
-		// TODO
+		redirect(getPageURL("err404"));
+	}
+
+	/**
+	 * Vyhodí chybu
+	 */
+	public void showError403() {
+		redirect(getPageURL("err403"));
 	}
 
 }

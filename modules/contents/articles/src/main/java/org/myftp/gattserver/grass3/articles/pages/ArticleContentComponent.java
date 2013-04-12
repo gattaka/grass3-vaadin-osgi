@@ -2,6 +2,7 @@ package org.myftp.gattserver.grass3.articles.pages;
 
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -16,7 +17,7 @@ public class ArticleContentComponent extends CustomComponent {
 		setCompositionRoot(layout);
 
 		layout.addComponent(new Label(articleDTO.getOutputHTML(),
-				com.vaadin.ui.Label.CONTENT_XHTML));
+				ContentMode.HTML));
 
 	}
 }

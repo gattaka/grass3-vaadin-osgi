@@ -33,13 +33,13 @@ public class RegistrationPage extends OneColumnPage {
 
 	private static final long serialVersionUID = 8276040419934174157L;
 
+	private static final int MIN_USERNAME_LENGTH = 2;
+	private static final int MAX_USERNAME_LENGTH = 20;
+
 	public RegistrationPage(GrassRequest request) {
 		super(request);
 		// TODO Auto-generated constructor stub
 	}
-
-	private static final int MIN_USERNAME_LENGTH = 2;
-	private static final int MAX_USERNAME_LENGTH = 20;
 
 	@Override
 	protected Component createContent() {

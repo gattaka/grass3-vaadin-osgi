@@ -18,7 +18,7 @@ public class NoServicePage extends OneColumnPage {
 	public NoServicePage(GrassRequest request) {
 		super(request);
 	}
-
+	
 	@Override
 	protected Component createContent() {
 

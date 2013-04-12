@@ -9,5 +9,10 @@ public class LoginPageFactory extends AbstractPageFactory {
 	public LoginPageFactory() {
 		super("login", "loginPage");
 	}
+	
+	@Override
+	protected boolean isAuthorized() {
+		return getUserACL().canLogin();
+	}
 
 }

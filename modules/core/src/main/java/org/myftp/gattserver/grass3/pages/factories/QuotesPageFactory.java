@@ -10,4 +10,8 @@ public class QuotesPageFactory extends AbstractPageFactory {
 		super("quotes", "quotesPage");
 	}
 
+	@Override
+	protected boolean isAuthorized() {
+		return true;
+	}
 }

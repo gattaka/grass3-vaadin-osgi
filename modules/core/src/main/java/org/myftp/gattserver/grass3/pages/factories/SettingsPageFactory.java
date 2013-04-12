@@ -10,4 +10,8 @@ public class SettingsPageFactory extends AbstractPageFactory {
 		super("settings", "settingsPage");
 	}
 
+	@Override
+	protected boolean isAuthorized() {
+		return getUserACL().canShowSettings();
+	}
 }

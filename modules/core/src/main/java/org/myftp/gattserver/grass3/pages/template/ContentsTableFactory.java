@@ -120,8 +120,7 @@ public class ContentsTableFactory {
 										URLIdentifierUtils.createURLIdentifier(
 												contentNode.getContentID(),
 												contentNode.getName()))));
-				NodeDTO contentParent = nodeFacade.getNodeById(contentNode
-						.getParentID());
+				NodeDTO contentParent = contentNode.getParent();
 				item.getItemProperty(ColumnId.KATEGORIE).setValue(
 						new ComparableLink(contentParent.getName(), page
 								.getPageResource(categoryPageFactory,

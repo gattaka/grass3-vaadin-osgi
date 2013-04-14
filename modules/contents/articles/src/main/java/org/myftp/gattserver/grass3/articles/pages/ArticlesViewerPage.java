@@ -181,8 +181,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 						@Override
 						protected void onConfirm(ClickEvent event) {
 
-							NodeDTO node = nodeFacade.getNodeById(article
-									.getContentNode().getParentID());
+							NodeDTO node = article.getContentNode().getParent();
 
 							final String category = getPageURL(
 									articlesViewerPageFactory,

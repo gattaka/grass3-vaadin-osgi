@@ -157,7 +157,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		/**
 		 * kategorie
 		 */
-		NodeDTO parent = nodeFacade.getNodeById(content.getParentID());
+		NodeDTO parent = content.getParent();
 		while (true) {
 
 			// nejprve zkus zjistit, zda předek existuje

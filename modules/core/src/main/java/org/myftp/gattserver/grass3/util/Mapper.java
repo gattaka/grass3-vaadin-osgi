@@ -98,7 +98,12 @@ public class Mapper {
 		contentNodeDTO.setLastModificationDate(contentNode
 				.getLastModificationDate());
 		contentNodeDTO.setName(contentNode.getName());
-		contentNodeDTO.setParentID(contentNode.getParent().getId());
+
+		NodeDTO nodeDTO = new NodeDTO();
+		nodeDTO.setId(contentNode.getParent().getId());
+		nodeDTO.setName(contentNode.getParent().getName());
+		contentNodeDTO.setParent(nodeDTO);
+
 		contentNodeDTO.setPublicated(contentNode.getPublicated());
 
 		return contentNodeDTO;

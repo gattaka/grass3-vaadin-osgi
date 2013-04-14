@@ -29,7 +29,7 @@ public class ContentNodeDTO {
 	/**
 	 * nadřazený uzel (kategorie ve které obsah je)
 	 */
-	private Long parentID;
+	private NodeDTO parent;
 
 	/**
 	 * Kdy byl obsah vytvořen
@@ -117,12 +117,12 @@ public class ContentNodeDTO {
 		this.name = name;
 	}
 
-	public Long getParentID() {
-		return parentID;
+	public NodeDTO getParent() {
+		return parent;
 	}
 
-	public void setParentID(Long parentID) {
-		this.parentID = parentID;
+	public void setParent(NodeDTO parent) {
+		this.parent = parent;
 	}
 
 	public UserInfoDTO getAuthor() {

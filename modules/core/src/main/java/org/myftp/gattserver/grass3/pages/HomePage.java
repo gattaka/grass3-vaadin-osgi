@@ -57,7 +57,7 @@ public class HomePage extends BasePage {
 	/**
 	 * Kolik položek mají menu "nedávno" maximálně zobrazit ?
 	 */
-	private static int RECENT_ITEMS_COUNT = 10;
+	private static int RECENT_ITEMS_COUNT = 5;
 
 	/**
 	 * Kolik je nejmenší font pro tagcloud ?
@@ -254,6 +254,11 @@ public class HomePage extends BasePage {
 
 		recentAddedContentsTable.populateTable(recentAdded, this);
 		recentModifiedContentsTable.populateTable(recentModified, this);
+		
+		recentAddedContentsTable.setSortContainerPropertyId(ContentsTableFactory.ColumnId.DATUM_VYTVOŘENÍ);
+		recentAddedContentsTable.setSortAscending(false);
+		recentModifiedContentsTable.setSortContainerPropertyId(ContentsTableFactory.ColumnId.DATUM_ÚPRAVY);
+		recentModifiedContentsTable.setSortAscending(false);
 
 	}
 

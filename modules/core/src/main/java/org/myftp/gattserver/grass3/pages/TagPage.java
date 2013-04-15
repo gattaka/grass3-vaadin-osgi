@@ -36,7 +36,7 @@ public class TagPage extends BasePage {
 	public TagPage(GrassRequest request) {
 		super(request);
 	}
-	
+
 	@Override
 	protected void createContent(CustomLayout layout) {
 
@@ -46,8 +46,10 @@ public class TagPage extends BasePage {
 		tag = contentTagFacade.getContentTagByName(getRequest().getAnalyzer()
 				.getPathToken(1));
 
-		if (tag == null)
+		if (tag == null) {
 			showError404();
+			return;
+		}
 
 		CustomLayout contentLayout = new CustomLayout("oneColumn");
 		layout.addComponent(contentLayout, "content");

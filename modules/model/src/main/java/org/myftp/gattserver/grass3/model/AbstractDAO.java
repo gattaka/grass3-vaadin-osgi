@@ -14,7 +14,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.SimpleExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Abstraktní třída DAO tříd na získávání Entit z databáze nebo přes existující
@@ -59,6 +58,7 @@ public abstract class AbstractDAO<E> {
 
 	protected void openSession() {
 		session = entityServicesAggregator.getSessionFactory().openSession();
+//		session = entityServicesAggregator.getSessionFactory().getCurrentSession();
 	}
 
 	/**
@@ -186,8 +186,8 @@ public abstract class AbstractDAO<E> {
 		 * omezený počet řádků, což by mělo být naopak.
 		 */
 		if (maxResults != null) {
-			int limit = list.size() < maxResults ? list.size() : maxResults;
-			return list.subList(0, limit > 0 ? limit - 1 : 0);
+			int limit = list.size() <= maxResults ? list.size() : maxResults;
+			return list.subList(0, limit > 0 ? limit : 1);
 		} else {
 			return list;
 		}

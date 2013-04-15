@@ -48,20 +48,23 @@ public class Mapper {
 	/**
 	 * Převede {@link User} na {@link UserInfoDTO}
 	 * 
-	 * @param user
+	 * @param e
 	 * @return
 	 */
-	public UserInfoDTO map(User user) {
+	public UserInfoDTO map(User e) {
+		if (e == null)
+			return null;
+		
 		UserInfoDTO userInfoDTO = new UserInfoDTO();
 
-		userInfoDTO.setConfirmed(user.isConfirmed());
-		userInfoDTO.setEmail(user.getEmail());
-		userInfoDTO.setId(user.getId());
-		userInfoDTO.setLastLoginDate(user.getLastLoginDate());
-		userInfoDTO.setName(user.getName());
-		userInfoDTO.setPassword(user.getPassword());
-		userInfoDTO.setRegistrationDate(user.getRegistrationDate());
-		userInfoDTO.setRoles(user.getRoles());
+		userInfoDTO.setConfirmed(e.isConfirmed());
+		userInfoDTO.setEmail(e.getEmail());
+		userInfoDTO.setId(e.getId());
+		userInfoDTO.setLastLoginDate(e.getLastLoginDate());
+		userInfoDTO.setName(e.getName());
+		userInfoDTO.setPassword(e.getPassword());
+		userInfoDTO.setRegistrationDate(e.getRegistrationDate());
+		userInfoDTO.setRoles(e.getRoles());
 
 		return userInfoDTO;
 	}
@@ -69,14 +72,17 @@ public class Mapper {
 	/**
 	 * Převede {@link Quote} na {@link QuoteDTO}
 	 * 
-	 * @param quote
+	 * @param e
 	 * @return
 	 */
-	public QuoteDTO map(Quote quote) {
+	public QuoteDTO map(Quote e) {
+		if (e == null)
+			return null;
+		
 		QuoteDTO quoteDTO = new QuoteDTO();
 
-		quoteDTO.setId(quote.getId());
-		quoteDTO.setName(quote.getName());
+		quoteDTO.setId(e.getId());
+		quoteDTO.setName(e.getName());
 
 		return quoteDTO;
 	}
@@ -84,36 +90,42 @@ public class Mapper {
 	/**
 	 * Převede {@link ContentNode} na {@link ContentNodeDTO}
 	 * 
-	 * @param contentNode
+	 * @param e
 	 * @return
 	 */
-	public ContentNodeDTO mapContentNodeForOverview(ContentNode contentNode) {
+	public ContentNodeDTO mapContentNodeForOverview(ContentNode e) {
+		if (e == null)
+			return null;
+		
 		ContentNodeDTO contentNodeDTO = new ContentNodeDTO();
 
-		contentNodeDTO.setAuthor(map(contentNode.getAuthor()));
-		contentNodeDTO.setContentID(contentNode.getContentId());
-		contentNodeDTO.setContentReaderID(contentNode.getContentReaderId());
-		contentNodeDTO.setCreationDate(contentNode.getCreationDate());
-		contentNodeDTO.setId(contentNode.getId());
-		contentNodeDTO.setLastModificationDate(contentNode
+		contentNodeDTO.setAuthor(map(e.getAuthor()));
+		contentNodeDTO.setContentID(e.getContentId());
+		contentNodeDTO.setContentReaderID(e.getContentReaderId());
+		contentNodeDTO.setCreationDate(e.getCreationDate());
+		contentNodeDTO.setId(e.getId());
+		contentNodeDTO.setLastModificationDate(e
 				.getLastModificationDate());
-		contentNodeDTO.setName(contentNode.getName());
+		contentNodeDTO.setName(e.getName());
 
 		NodeDTO nodeDTO = new NodeDTO();
-		nodeDTO.setId(contentNode.getParent().getId());
-		nodeDTO.setName(contentNode.getParent().getName());
+		nodeDTO.setId(e.getParent().getId());
+		nodeDTO.setName(e.getParent().getName());
 		contentNodeDTO.setParent(nodeDTO);
 
-		contentNodeDTO.setPublicated(contentNode.getPublicated());
+		contentNodeDTO.setPublicated(e.getPublicated());
 
 		return contentNodeDTO;
 	}
 
-	public ContentNodeDTO map(ContentNode contentNode) {
-		ContentNodeDTO contentNodeDTO = mapContentNodeForOverview(contentNode);
+	public ContentNodeDTO map(ContentNode e) {
+		if (e == null)
+			return null;
+		
+		ContentNodeDTO contentNodeDTO = mapContentNodeForOverview(e);
 
 		Set<String> tags = new HashSet<String>();
-		for (ContentTag contentTag : contentNode.getContentTags()) {
+		for (ContentTag contentTag : e.getContentTags()) {
 			tags.add(contentTag.getName());
 		}
 		contentNodeDTO.setContentTags(tags);
@@ -148,27 +160,33 @@ public class Mapper {
 	/**
 	 * Převede {@link ContentTag} na {@link ContentTagDTO}
 	 * 
-	 * @param contentTag
+	 * @param e
 	 * @return
 	 */
-	public ContentTagDTO mapContentTagForOverview(ContentTag contentTag) {
+	public ContentTagDTO mapContentTagForOverview(ContentTag e) {
+		if (e == null)
+			return null;
+		
 		ContentTagDTO contentTagDTO = new ContentTagDTO();
 
-		contentTagDTO.setId(contentTag.getId());
-		contentTagDTO.setName(contentTag.getName());
+		contentTagDTO.setId(e.getId());
+		contentTagDTO.setName(e.getName());
 		// contentTagDTO.setContentSize(contentTag.getContentNodes().size());
 		contentTagDTO.setContentSize(contentTagDAO
-				.getCountOfTagContents(contentTag.getId()));
+				.getCountOfTagContents(e.getId()));
 
 		return contentTagDTO;
 	}
 
-	public ContentTagDTO mapContentTag(ContentTag contentTag) {
+	public ContentTagDTO mapContentTag(ContentTag e) {
+		if (e == null)
+			return null;
+		
 		ContentTagDTO contentTagDTO = new ContentTagDTO();
 
-		contentTagDTO.setId(contentTag.getId());
-		contentTagDTO.setName(contentTag.getName());
-		contentTagDTO.setContentNodes(mapContentNodeCollection(contentTag
+		contentTagDTO.setId(e.getId());
+		contentTagDTO.setName(e.getName());
+		contentTagDTO.setContentNodes(mapContentNodeCollection(e
 				.getContentNodes()));
 
 		return contentTagDTO;
@@ -207,17 +225,20 @@ public class Mapper {
 	/**
 	 * Převede {@link Node} na {@link NodeDTO}
 	 * 
-	 * @param node
+	 * @param e
 	 * @return
 	 */
-	public NodeDTO map(Node node) {
+	public NodeDTO map(Node e) {
+		if (e == null)
+			return null;
+		
 		NodeDTO nodeDTO = new NodeDTO();
 
-		nodeDTO.setId(node.getId());
-		nodeDTO.setName(node.getName());
-		nodeDTO.setParentID(node.getParent() == null ? null : node.getParent()
+		nodeDTO.setId(e.getId());
+		nodeDTO.setName(e.getName());
+		nodeDTO.setParentID(e.getParent() == null ? null : e.getParent()
 				.getId());
-		nodeDTO.setContentNodes(mapContentNodeCollection(node.getContentNodes()));
+		nodeDTO.setContentNodes(mapContentNodeCollection(e.getContentNodes()));
 
 		return nodeDTO;
 	}

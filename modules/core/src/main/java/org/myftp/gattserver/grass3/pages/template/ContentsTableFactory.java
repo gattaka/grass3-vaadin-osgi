@@ -6,13 +6,13 @@ import java.util.Collection;
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.IServiceHolder;
-import org.myftp.gattserver.grass3.facades.INodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.service.IContentService;
 import org.myftp.gattserver.grass3.util.ComparableLink;
+import org.myftp.gattserver.grass3.util.ComparableStringDate;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.springframework.stereotype.Component;
 
@@ -24,9 +24,6 @@ import com.vaadin.ui.Table;
 
 @Component("contentsTableFactory")
 public class ContentsTableFactory {
-
-	@Resource(name = "nodeFacade")
-	private INodeFacade nodeFacade;
 
 	@Resource(name = "categoryPageFactory")
 	private IPageFactory categoryPageFactory;
@@ -42,35 +39,31 @@ public class ContentsTableFactory {
 		ContentsTable table = new ContentsTable();
 
 		table.categoryPageFactory = categoryPageFactory;
-		table.nodeFacade = nodeFacade;
 		table.noServicePageFactory = noServicePageFactory;
 		table.serviceHolder = serviceHolder;
 
 		return table;
 	}
 
+	/**
+	 * Přehled sloupců tabulky obsahů
+	 */
+	public static enum ColumnId {
+
+		IKONA, NÁZEV, KATEGORIE, AUTOR, DATUM_VYTVOŘENÍ, DATUM_ÚPRAVY;
+
+	}
+
 	public static class ContentsTable extends Table {
 
 		private static final long serialVersionUID = -2220485504407844582L;
-		private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"d.M.yyyy HH:mm:ss");
 
-		private INodeFacade nodeFacade;
 		private IPageFactory categoryPageFactory;
 		private IPageFactory noServicePageFactory;
 		private IServiceHolder serviceHolder;
 
 		private ContentsTable() {
-			setHeight("200px");
-		}
-
-		/**
-		 * Přehled sloupců tabulky obsahů
-		 */
-		private enum ColumnId {
-
-			IKONA, NÁZEV, KATEGORIE, AUTOR, DATUM_VYTVOŘENÍ, DATUM_ÚPRAVY;
-
+			setHeight("160px");
 		}
 
 		public void populateTable(Collection<ContentNodeDTO> contentList,
@@ -85,9 +78,9 @@ public class ContentsTableFactory {
 					ComparableLink.class, null);
 			container.addContainerProperty(ColumnId.AUTOR, String.class, "");
 			container.addContainerProperty(ColumnId.DATUM_VYTVOŘENÍ,
-					String.class, "");
-			container.addContainerProperty(ColumnId.DATUM_ÚPRAVY, String.class,
-					"");
+					ComparableStringDate.class, "");
+			container.addContainerProperty(ColumnId.DATUM_ÚPRAVY,
+					ComparableStringDate.class, "");
 			setContainerDataSource(container);
 			setColumnWidth(ColumnId.IKONA, 16);
 			setColumnHeader(ColumnId.IKONA, "");
@@ -129,11 +122,13 @@ public class ContentsTableFactory {
 												contentParent.getName()))));
 				item.getItemProperty(ColumnId.AUTOR).setValue(
 						contentNode.getAuthor().getName());
-				item.getItemProperty(ColumnId.DATUM_VYTVOŘENÍ).setValue(
-						dateFormat.format(contentNode.getCreationDate()));
+				item.getItemProperty(ColumnId.DATUM_VYTVOŘENÍ)
+						.setValue(
+								new ComparableStringDate(contentNode
+										.getCreationDate()));
 				item.getItemProperty(ColumnId.DATUM_ÚPRAVY).setValue(
 						contentNode.getLastModificationDate() == null ? ""
-								: dateFormat.format(contentNode
+								: new ComparableStringDate(contentNode
 										.getLastModificationDate()));
 
 				Embedded icon = new Embedded();

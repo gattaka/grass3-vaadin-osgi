@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.myftp.gattserver.grass3.model.AbstractDAO;
 import org.myftp.gattserver.grass3.model.domain.ContentNode;
@@ -23,7 +22,7 @@ public class ContentNodeDAO extends AbstractDAO<ContentNode> {
 			Criterion restriction) {
 		return findByRestriction(
 				Restrictions.and(Restrictions.isNotNull(byWhat), restriction),
-				Order.desc(byWhat), maxResults);
+				null, maxResults);
 	}
 
 	public List<ContentNode> findRecentAdded(int maxResults, Long nodeId) {

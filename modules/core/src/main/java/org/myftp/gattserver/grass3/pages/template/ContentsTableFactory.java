@@ -1,6 +1,5 @@
 package org.myftp.gattserver.grass3.pages.template;
 
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 
 import javax.annotation.Resource;
@@ -9,7 +8,7 @@ import org.myftp.gattserver.grass3.IServiceHolder;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
-import org.myftp.gattserver.grass3.security.CoreACL;
+import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.service.IContentService;
 import org.myftp.gattserver.grass3.util.ComparableLink;
 import org.myftp.gattserver.grass3.util.ComparableStringDate;
@@ -24,6 +23,9 @@ import com.vaadin.ui.Table;
 
 @Component("contentsTableFactory")
 public class ContentsTableFactory {
+
+	@Resource(name = "coreACL")
+	private ICoreACL coreACL;
 
 	@Resource(name = "categoryPageFactory")
 	private IPageFactory categoryPageFactory;
@@ -41,6 +43,7 @@ public class ContentsTableFactory {
 		table.categoryPageFactory = categoryPageFactory;
 		table.noServicePageFactory = noServicePageFactory;
 		table.serviceHolder = serviceHolder;
+		table.coreACL = coreACL;
 
 		return table;
 	}
@@ -58,6 +61,7 @@ public class ContentsTableFactory {
 
 		private static final long serialVersionUID = -2220485504407844582L;
 
+		private ICoreACL coreACL;
 		private IPageFactory categoryPageFactory;
 		private IPageFactory noServicePageFactory;
 		private IServiceHolder serviceHolder;
@@ -87,12 +91,10 @@ public class ContentsTableFactory {
 			setColumnHeader(ColumnId.DATUM_VYTVOŘENÍ, "DATUM VYTVOŘENÍ");
 			setColumnHeader(ColumnId.DATUM_ÚPRAVY, "DATUM ÚPRAVY");
 
-			CoreACL acl = page.getUserACL();
-
 			// položky
 			for (ContentNodeDTO contentNode : contentList) {
 
-				if (acl.canShowContent(contentNode) == false)
+				if (coreACL.canShowContent(contentNode, page.getUser()) == false)
 					continue;
 
 				// jaká prohlížecí služba odpovídá tomuto obsahu
@@ -127,9 +129,8 @@ public class ContentsTableFactory {
 								new ComparableStringDate(contentNode
 										.getCreationDate()));
 				item.getItemProperty(ColumnId.DATUM_ÚPRAVY).setValue(
-						contentNode.getLastModificationDate() == null ? ""
-								: new ComparableStringDate(contentNode
-										.getLastModificationDate()));
+						new ComparableStringDate(contentNode
+								.getLastModificationDate()));
 
 				Embedded icon = new Embedded();
 				if (contentService == null) {

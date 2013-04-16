@@ -13,6 +13,8 @@ import java.util.Set;
  */
 public class UserDTO extends UserInfoDTO {
 
+	private static final long serialVersionUID = -5604641536015981637L;
+
 	/**
 	 * Oblíbené obsahy
 	 */

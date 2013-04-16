@@ -10,7 +10,7 @@ import org.myftp.gattserver.grass3.facades.IQuotesFacade;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
-import org.myftp.gattserver.grass3.security.CoreACL;
+import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
@@ -31,6 +31,9 @@ import com.vaadin.ui.themes.BaseTheme;
 public abstract class BasePage extends AbstractGrassPage {
 
 	private static final long serialVersionUID = 502625699429764791L;
+
+	@Resource(name = "coreACL")
+	private ICoreACL coreACL;
 
 	@Resource(name = "nodeFacade")
 	private INodeFacade nodeFacade;
@@ -106,9 +109,8 @@ public abstract class BasePage extends AbstractGrassPage {
 		}
 
 		// externí sekce
-		CoreACL acl = getUserACL();
 		for (ISectionService section : serviceHolder.getSectionServices()) {
-			if (acl.canShowSection(section)) {
+			if (coreACL.canShowSection(section, getUser())) {
 				createSectionLink(section.getSectionCaption(),
 						section.getSectionPageFactory());
 			}
@@ -119,10 +121,8 @@ public abstract class BasePage extends AbstractGrassPage {
 
 		userMenuLayout.removeAllComponents();
 
-		CoreACL acl = getUserACL();
-
 		// Přihlášení
-		if (acl.canLogin()) {
+		if (coreACL.canLogin(getUser())) {
 			Link link = new Link("Přihlášení",
 					getPageResource(loginPageFactory));
 			link.setStyleName("item");
@@ -130,7 +130,7 @@ public abstract class BasePage extends AbstractGrassPage {
 		}
 
 		// Registrace
-		if (acl.canRegistrate()) {
+		if (coreACL.canRegistrate(getUser())) {
 			Link link = new Link("Registrace",
 					getPageResource(registrationPageFactory));
 			link.setStyleName("item");
@@ -139,7 +139,7 @@ public abstract class BasePage extends AbstractGrassPage {
 
 		// Přehled o uživateli
 		final UserInfoDTO userInfoDTO = getGrassUI().getUser();
-		if (acl.canShowUserDetails(userInfoDTO)) {
+		if (coreACL.canShowUserDetails(userInfoDTO, getUser())) {
 			Button userDetails = new Button(userInfoDTO.getName(),
 					new Button.ClickListener() {
 

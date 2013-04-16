@@ -12,12 +12,15 @@ import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.search.service.ISearchConnector;
 import org.myftp.gattserver.grass3.search.service.ISearchField;
 import org.myftp.gattserver.grass3.search.service.SearchEntity;
-import org.myftp.gattserver.grass3.security.CoreACL;
+import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.springframework.stereotype.Component;
 
 @Component("articlesSearchConnector")
 public class ArticlesSearchConnector implements ISearchConnector {
+
+	@Resource(name = "coreACL")
+	private ICoreACL coreACL;
 
 	@Resource(name = "articleFacade")
 	private IArticleFacade articleFacade;
@@ -27,14 +30,12 @@ public class ArticlesSearchConnector implements ISearchConnector {
 
 	public List<SearchEntity> getAvailableSearchEntities(UserInfoDTO user) {
 
-		CoreACL acl = CoreACL.get(user);
-
 		List<SearchEntity> searchEntities = new ArrayList<SearchEntity>();
 
 		List<ArticleDTO> articles = articleFacade.getAllArticles();
 		for (ArticleDTO article : articles) {
 
-			if (acl.canShowContent(article.getContentNode())) {
+			if (coreACL.canShowContent(article.getContentNode(), user)) {
 
 				String suffix = URLIdentifierUtils.createURLIdentifier(article
 						.getContentNode().getContentID(), article

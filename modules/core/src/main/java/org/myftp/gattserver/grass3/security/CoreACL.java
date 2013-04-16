@@ -1,12 +1,15 @@
 package org.myftp.gattserver.grass3.security;
 
+import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
 import org.myftp.gattserver.grass3.config.ConfigurationUtils;
 import org.myftp.gattserver.grass3.config.CoreConfiguration;
+import org.myftp.gattserver.grass3.facades.IUserFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.service.ISectionService;
+import org.springframework.stereotype.Component;
 
 /**
  * Access control list, bere uživatele a operaci a vyhodnocuje, zda povolit nebo
@@ -15,25 +18,11 @@ import org.myftp.gattserver.grass3.service.ISectionService;
  * @author gatt
  * 
  */
-public final class CoreACL {
+@Component("coreACL")
+public final class CoreACL implements ICoreACL {
 
-	private UserInfoDTO user;
-
-	private CoreACL(UserInfoDTO user) {
-		this.user = user;
-	}
-
-	/**
-	 * ACL musí pracovat s nějakým uživatelem, proto je praktičtější ho předat
-	 * rovnou v konstruktoru než aby se předával do každé metody jako parametr
-	 * 
-	 * @param user
-	 *            uživatel nebo {@code null} pokud není v systému nikdo
-	 *            přihlášen
-	 */
-	public static CoreACL get(UserInfoDTO user) {
-		return new CoreACL(user);
-	}
+	@Resource(name = "userFacade")
+	IUserFacade userFacade;
 
 	/**
 	 * =======================================================================
@@ -44,7 +33,7 @@ public final class CoreACL {
 	/**
 	 * Může uživatel zobrazit danou sekci ?
 	 */
-	public boolean canShowSection(ISectionService section) {
+	public boolean canShowSection(ISectionService section, UserInfoDTO user) {
 
 		// záleží na viditelnosti definované sekcí
 		return section.isVisibleForRoles(user == null ? null : user.getRoles());
@@ -53,7 +42,7 @@ public final class CoreACL {
 	/**
 	 * Může uživatel upravovat "hlášky"
 	 */
-	public boolean canModifyQuotes() {
+	public boolean canModifyQuotes(UserInfoDTO user) {
 
 		// pokud je uživatel přihlášen a je to administrátor
 		return user != null && user.getRoles().contains(Role.ADMIN);
@@ -68,7 +57,7 @@ public final class CoreACL {
 	/**
 	 * Může uživatel zobrazit daný obsah ?
 	 */
-	public boolean canShowContent(ContentNodeDTO content) {
+	public boolean canShowContent(ContentNodeDTO content, UserInfoDTO user) {
 
 		if (user == null) {
 
@@ -94,7 +83,7 @@ public final class CoreACL {
 	/**
 	 * Může uživatel vytvářet obsah ?
 	 */
-	public boolean canCreateContent() {
+	public boolean canCreateContent(UserInfoDTO user) {
 
 		if (user == null) {
 
@@ -116,7 +105,7 @@ public final class CoreACL {
 	/**
 	 * Může uživatel upravit daný obsah ?
 	 */
-	public boolean canModifyContent(ContentNodeDTO content) {
+	public boolean canModifyContent(ContentNodeDTO content, UserInfoDTO user) {
 
 		if (user == null) {
 
@@ -141,8 +130,8 @@ public final class CoreACL {
 	/**
 	 * Může uživatel smazat daný obsah ?
 	 */
-	public boolean canDeleteContent(ContentNodeDTO content) {
-		return canModifyContent(content);
+	public boolean canDeleteContent(ContentNodeDTO content, UserInfoDTO user) {
+		return canModifyContent(content, user);
 	}
 
 	/**
@@ -154,7 +143,7 @@ public final class CoreACL {
 	/**
 	 * Může uživatel založit kategorii ?
 	 */
-	public boolean canCreateCategory() {
+	public boolean canCreateCategory(UserInfoDTO user) {
 
 		if (user == null) {
 
@@ -176,22 +165,22 @@ public final class CoreACL {
 	/**
 	 * Může uživatel upravit kategorii ?
 	 */
-	public boolean canModifyCategory() {
-		return canCreateCategory();
+	public boolean canModifyCategory(UserInfoDTO user) {
+		return canCreateCategory(user);
 	}
 
 	/**
 	 * Může uživatel přesunout kategorii ?
 	 */
-	public boolean canMoveCategory() {
-		return canModifyCategory();
+	public boolean canMoveCategory(UserInfoDTO user) {
+		return canModifyCategory(user);
 	}
 
 	/**
 	 * Může uživatel smazat kategorii ?
 	 */
-	public boolean canDeleteCategory() {
-		return canModifyCategory();
+	public boolean canDeleteCategory(UserInfoDTO user) {
+		return canModifyCategory(user);
 	}
 
 	/**
@@ -203,21 +192,21 @@ public final class CoreACL {
 	/**
 	 * Může se uživatel přihlásit ?
 	 */
-	public boolean canLogin() {
+	public boolean canLogin(UserInfoDTO user) {
 		return user == null;
 	}
 
 	/**
 	 * Může se uživatel odhlásit ?
 	 */
-	public boolean canLogout() {
+	public boolean canLogout(UserInfoDTO user) {
 		return user != null;
 	}
 
 	/**
 	 * Může daný uživatel zobrazit detaily o uživateli X ?
 	 */
-	public boolean canShowUserDetails(UserInfoDTO anotherUser) {
+	public boolean canShowUserDetails(UserInfoDTO anotherUser, UserInfoDTO user) {
 
 		// TODO tohle je spíš otázka kódu, než oprávnění
 		// nelze zobrazit detail od žádného uživatele
@@ -242,7 +231,7 @@ public final class CoreACL {
 	/**
 	 * Může se uživatel zaregistrovat ?
 	 */
-	public boolean canRegistrate() {
+	public boolean canRegistrate(UserInfoDTO user) {
 
 		if (user == null) {
 
@@ -267,7 +256,7 @@ public final class CoreACL {
 	/**
 	 * Může zobrazit stránku s nastavením ?
 	 */
-	public boolean canShowSettings() {
+	public boolean canShowSettings(UserInfoDTO user) {
 		// uživatel musí být přihlášen aby mohl aspoň nějaké nastavení zobrazit
 		return user != null;
 	}
@@ -275,22 +264,41 @@ public final class CoreACL {
 	/**
 	 * Může zobrazit stránku s nastavením aplikace ?
 	 */
-	public boolean canShowApplicationSettings() {
+	public boolean canShowApplicationSettings(UserInfoDTO user) {
 		return user.getRoles().contains(Role.ADMIN);
 	}
 
 	/**
 	 * Může zobrazit stránku s nastavením kategorií ?
 	 */
-	public boolean canShowCategoriesSettings() {
+	public boolean canShowCategoriesSettings(UserInfoDTO user) {
 		return user.getRoles().contains(Role.ADMIN);
 	}
 
 	/**
 	 * Může zobrazit stránku s nastavením uživatelů ?
 	 */
-	public boolean canShowUserSettings() {
+	public boolean canShowUserSettings(UserInfoDTO user) {
 		return user.getRoles().contains(Role.ADMIN);
+	}
+
+	/**
+	 * Může přidat obsah do svých oblíbených ?
+	 */
+	public boolean canAddContentToFavourites(ContentNodeDTO contentNodeDTO,
+			UserInfoDTO user) {
+		// uživatel musí být přihlášen a obsah nesmí být v jeho oblíbených
+		return user != null
+				&& userFacade.hasInFavourites(contentNodeDTO, user) == false;
+	}
+
+	/**
+	 * Může odebrat obsah ze svých oblíbených ?
+	 */
+	public boolean canRemoveContentFromFavourites(
+			ContentNodeDTO contentNodeDTO, UserInfoDTO user) {
+		return user != null
+				&& userFacade.hasInFavourites(contentNodeDTO, user) == true;
 	}
 
 }

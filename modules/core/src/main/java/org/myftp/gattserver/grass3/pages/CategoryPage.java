@@ -18,7 +18,7 @@ import org.myftp.gattserver.grass3.pages.template.NewContentsTableFactory.NewCon
 import org.myftp.gattserver.grass3.pages.template.NodesTableFactory;
 import org.myftp.gattserver.grass3.pages.template.NodesTableFactory.NodesTable;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
-import org.myftp.gattserver.grass3.security.CoreACL;
+import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.template.Breadcrumb;
 import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import org.myftp.gattserver.grass3.util.GrassRequest;
@@ -35,6 +35,9 @@ import com.vaadin.ui.VerticalLayout;
 public class CategoryPage extends OneColumnPage {
 
 	private static final long serialVersionUID = -499585200973560016L;
+
+	@Resource(name = "coreACL")
+	private ICoreACL coreACL;
 
 	@Resource(name = "nodeFacade")
 	private INodeFacade nodeFacade;
@@ -178,8 +181,7 @@ public class CategoryPage extends OneColumnPage {
 		newContentsLayout.addComponent(newContentsTable);
 		newContentsTable.setWidth("100%");
 
-		CoreACL acl = getUserACL();
-		if (acl.canCreateContent()) {
+		if (coreACL.canCreateContent(getUser())) {
 			newContentsLayout.setVisible(true);
 			newContentsTable.populateTable(node, this);
 		} else {

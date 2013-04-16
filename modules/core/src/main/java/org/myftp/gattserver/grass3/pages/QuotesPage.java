@@ -5,7 +5,7 @@ import javax.annotation.Resource;
 import org.myftp.gattserver.grass3.facades.IQuotesFacade;
 import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
-import org.myftp.gattserver.grass3.security.CoreACL;
+import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
@@ -27,13 +27,16 @@ public class QuotesPage extends OneColumnPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
+	@Resource(name = "coreACL")
+	private ICoreACL coreACL;
+
 	@Resource(name = "quotesFacade")
 	IQuotesFacade quotesFacade;
 
 	public QuotesPage(GrassRequest request) {
 		super(request);
 	}
-	
+
 	/**
 	 * Seznam hlášek
 	 */
@@ -83,8 +86,7 @@ public class QuotesPage extends OneColumnPage {
 		Panel newQuotesPanel = new Panel("Nová hláška");
 		layout.addComponent(newQuotesPanel);
 
-		CoreACL acl = getUserACL();
-		newQuotesPanel.setVisible(acl.canModifyQuotes());
+		newQuotesPanel.setVisible(coreACL.canModifyQuotes(getUser()));
 
 		HorizontalLayout panelBackgroudLayout = new HorizontalLayout();
 		panelBackgroudLayout.setSizeFull();

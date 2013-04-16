@@ -58,7 +58,6 @@ public abstract class AbstractDAO<E> {
 
 	protected void openSession() {
 		session = entityServicesAggregator.getSessionFactory().openSession();
-//		session = entityServicesAggregator.getSessionFactory().getCurrentSession();
 	}
 
 	/**

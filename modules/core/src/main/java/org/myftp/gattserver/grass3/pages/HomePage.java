@@ -72,7 +72,7 @@ public class HomePage extends BasePage {
 	public HomePage(GrassRequest request) {
 		super(request);
 	}
-	
+
 	@Override
 	protected void createContent(CustomLayout layout) {
 
@@ -254,10 +254,12 @@ public class HomePage extends BasePage {
 
 		recentAddedContentsTable.populateTable(recentAdded, this);
 		recentModifiedContentsTable.populateTable(recentModified, this);
-		
-		recentAddedContentsTable.setSortContainerPropertyId(ContentsTableFactory.ColumnId.DATUM_VYTVOŘENÍ);
+
+		recentAddedContentsTable
+				.setSortContainerPropertyId(ContentsTableFactory.ColumnId.DATUM_VYTVOŘENÍ);
 		recentAddedContentsTable.setSortAscending(false);
-		recentModifiedContentsTable.setSortContainerPropertyId(ContentsTableFactory.ColumnId.DATUM_ÚPRAVY);
+		recentModifiedContentsTable
+				.setSortContainerPropertyId(ContentsTableFactory.ColumnId.DATUM_ÚPRAVY);
 		recentModifiedContentsTable.setSortAscending(false);
 
 	}

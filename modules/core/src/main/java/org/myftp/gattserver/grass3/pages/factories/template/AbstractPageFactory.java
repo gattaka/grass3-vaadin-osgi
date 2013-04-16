@@ -6,7 +6,6 @@ import org.myftp.gattserver.grass3.facades.ISecurityFacade;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.pages.template.GrassLayout;
 import org.myftp.gattserver.grass3.pages.template.IGrassPage;
-import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -46,13 +45,6 @@ public abstract class AbstractPageFactory implements IPageFactory,
 	 */
 	protected UserInfoDTO getUser() {
 		return securityFacade.getCurrentUser();
-	}
-	
-	/**
-	 * Získá ACL
-	 */
-	public CoreACL getUserACL() {
-		return CoreACL.get(getUser());
 	}
 	
 	public String getPageName() {

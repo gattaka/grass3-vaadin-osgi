@@ -2,6 +2,7 @@ package org.myftp.gattserver.grass3.facades;
 
 import java.util.List;
 
+import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 
 /**
@@ -92,5 +93,23 @@ public interface IUserFacade {
 	 * @return
 	 */
 	public UserInfoDTO getUser(String username);
+
+	/**
+	 * Zjistí zda daný obsah je v oblíbených daného uživatele
+	 */
+	public boolean hasInFavourites(ContentNodeDTO contentNodeDTO,
+			UserInfoDTO user);
+
+	/**
+	 * Přidá obsah do oblíbených uživatele
+	 */
+	public boolean addContentToFavourites(ContentNodeDTO contentNodeDTO,
+			UserInfoDTO user);
+
+	/**
+	 * Odebere obsah z oblíbených uživatele
+	 */
+	public boolean removeContentFromFavourites(ContentNodeDTO contentNode,
+			UserInfoDTO user);
 
 }

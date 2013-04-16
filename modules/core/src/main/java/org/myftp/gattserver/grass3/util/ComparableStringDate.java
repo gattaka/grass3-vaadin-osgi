@@ -22,7 +22,7 @@ public class ComparableStringDate implements Comparable<ComparableStringDate> {
 
 	public ComparableStringDate(Date date) {
 		this.date = date;
-		this.stringDate = dateFormat.format(date);
+		this.stringDate = date == null ? "" : dateFormat.format(date);
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class ComparableStringDate implements Comparable<ComparableStringDate> {
 	}
 
 	public int compareTo(ComparableStringDate o) {
-		return this.getDate().compareTo(o.getDate());
+		return date == null ? -1 : this.getDate().compareTo(o.getDate());
 	}
 
 }

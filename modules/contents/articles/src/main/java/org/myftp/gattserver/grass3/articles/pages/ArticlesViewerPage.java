@@ -7,11 +7,12 @@ import javax.annotation.Resource;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.articles.facade.IArticleFacade;
 import org.myftp.gattserver.grass3.facades.INodeFacade;
+import org.myftp.gattserver.grass3.facades.IUserFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.ContentViewerPage;
-import org.myftp.gattserver.grass3.security.CoreACL;
+import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
@@ -37,8 +38,14 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 	private static final long serialVersionUID = 5078280973817331002L;
 
+	@Resource(name = "coreACL")
+	private ICoreACL coreACL;
+
 	@Resource(name = "articleFacade")
 	private IArticleFacade articleFacade;
+
+	@Resource(name = "userFacade")
+	private IUserFacade userFacade;
 
 	@Resource(name = "nodeFacade")
 	private INodeFacade nodeFacade;
@@ -136,14 +143,14 @@ public class ArticlesViewerPage extends ContentViewerPage {
 	@Override
 	protected void updateOperationsList(CssLayout operationsListLayout) {
 
-		CoreACL acl = getUserACL();
-
 		// Upravit
-		if (acl.canModifyContent(article.getContentNode())) {
-			Button saveButton = new Button("Upravit");
-			saveButton.setIcon((com.vaadin.server.Resource) new ThemeResource(
-					"img/tags/pencil_16.png"));
-			saveButton.addClickListener(new Button.ClickListener() {
+		if (coreACL.canModifyContent(article.getContentNode(), getUser())) {
+			Button modifyButton = new Button(null);
+			modifyButton.setDescription("Upravit");
+			modifyButton
+					.setIcon((com.vaadin.server.Resource) new ThemeResource(
+							"img/tags/pencil_16.png"));
+			modifyButton.addClickListener(new Button.ClickListener() {
 
 				private static final long serialVersionUID = 607422393151282918L;
 
@@ -158,12 +165,13 @@ public class ArticlesViewerPage extends ContentViewerPage {
 				}
 
 			});
-			operationsListLayout.addComponent(saveButton);
+			operationsListLayout.addComponent(modifyButton);
 		}
 
 		// Smazat
-		if (acl.canDeleteContent(article.getContentNode())) {
-			Button deleteButton = new Button("Smazat");
+		if (coreACL.canDeleteContent(article.getContentNode(), getUser())) {
+			Button deleteButton = new Button(null);
+			deleteButton.setDescription("Smazat");
 			deleteButton
 					.setIcon((com.vaadin.server.Resource) new ThemeResource(
 							"img/tags/delete_16.png"));
@@ -228,6 +236,78 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			});
 			operationsListLayout.addComponent(deleteButton);
 		}
+
+		// Deklarace tlačítek oblíbených
+		final Button removeFromFavouritesButton = new Button(null);
+		final Button addToFavouritesButton = new Button(null);
+
+		// Přidat do oblíbených
+		addToFavouritesButton.setDescription("Přidat do oblíbených");
+		addToFavouritesButton
+				.setIcon((com.vaadin.server.Resource) new ThemeResource(
+						"img/tags/heart_16.png"));
+		addToFavouritesButton.addClickListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = -4003115363728232801L;
+
+			public void buttonClick(ClickEvent event) {
+
+				// zdařilo se ? Pokud ano, otevři info okno
+				if (userFacade.addContentToFavourites(article.getContentNode(),
+						getUser())) {
+					InfoSubwindow infoSubwindow = new InfoSubwindow(
+							"Vložení do oblíbených proběhlo úspěšně.");
+					getUI().addWindow(infoSubwindow);
+					addToFavouritesButton.setVisible(false);
+					removeFromFavouritesButton.setVisible(true);
+				} else {
+					// Pokud ne, otevři warn okno
+					WarnSubwindow warnSubwindow = new WarnSubwindow(
+							"Vložení do oblíbených se nezdařilo.");
+					getUI().addWindow(warnSubwindow);
+				}
+
+			}
+		});
+
+		// Odebrat z oblíbených
+		removeFromFavouritesButton.setDescription("Odebrat z oblíbených");
+		removeFromFavouritesButton
+				.setIcon((com.vaadin.server.Resource) new ThemeResource(
+						"img/tags/broken_heart_16.png"));
+		removeFromFavouritesButton.addClickListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 4826586588570179321L;
+
+			public void buttonClick(ClickEvent event) {
+
+				// zdařilo se ? Pokud ano, otevři info okno
+				if (userFacade.removeContentFromFavourites(
+						article.getContentNode(), getUser())) {
+					InfoSubwindow infoSubwindow = new InfoSubwindow(
+							"Odebrání z oblíbených proběhlo úspěšně.");
+					getUI().addWindow(infoSubwindow);
+					removeFromFavouritesButton.setVisible(false);
+					addToFavouritesButton.setVisible(true);
+				} else {
+					// Pokud ne, otevři warn okno
+					WarnSubwindow warnSubwindow = new WarnSubwindow(
+							"Odebrání z oblíbených se nezdařilo.");
+					getUI().addWindow(warnSubwindow);
+				}
+
+			}
+		});
+
+		// Oblíbené
+		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(
+				article.getContentNode(), getUser()));
+		removeFromFavouritesButton.setVisible(coreACL
+				.canRemoveContentFromFavourites(article.getContentNode(),
+						getUser()));
+
+		operationsListLayout.addComponent(addToFavouritesButton);
+		operationsListLayout.addComponent(removeFromFavouritesButton);
 	}
 
 	@Override

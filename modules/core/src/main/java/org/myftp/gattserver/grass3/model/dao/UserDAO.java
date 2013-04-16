@@ -41,7 +41,7 @@ public class UserDAO extends AbstractDAO<User> {
 	 * 
 	 * @return DTO hledaného objektu
 	 */
-	public final List<User> findByFavouriteContent(ContentNode contentNode) {
+	public boolean hasContentInFavourites(Long nodeId, Long userId) {
 		Transaction tx = null;
 		List<User> list = null;
 		openSession();
@@ -49,11 +49,8 @@ public class UserDAO extends AbstractDAO<User> {
 			tx = session.beginTransaction();
 			Criteria criteria = session.createCriteria(entityClass);
 			criteria.createAlias("favourites", "content");
-			criteria.add(Restrictions.eq("content.contentID",
-					contentNode.getContentId()));
-			criteria.add(Restrictions.eq("content.contentReaderID",
-					contentNode.getContentReaderId()));
-
+			criteria.add(Restrictions.eq("content.id", nodeId));
+			criteria.add(Restrictions.eq("id", userId));
 			list = findAndCast(criteria);
 
 			tx.commit();
@@ -63,8 +60,77 @@ public class UserDAO extends AbstractDAO<User> {
 				tx.rollback();
 			}
 			closeSession();
-			return null;
+			return false;
 		}
-		return list;
+		return list.size() != 0;
 	}
+
+	public boolean addContentToFavourites(Long nodeId, Long userId) {
+		Transaction tx = null;
+		openSession();
+		try {
+			tx = session.beginTransaction();
+
+			User user = (User) session.load(User.class, userId);
+			if (user == null) {
+				tx.rollback();
+				return false;
+			}
+
+			ContentNode node = (ContentNode) session.load(ContentNode.class,
+					nodeId);
+			if (node == null) {
+				tx.rollback();
+				return false;
+			}
+
+			user.getFavourites().add(node);
+			session.merge(user);
+
+			tx.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (tx != null) {
+				tx.rollback();
+			}
+			closeSession();
+			return false;
+		}
+		return true;
+	}
+
+	public boolean removeContentFromFavourites(Long nodeId, Long userId) {
+		Transaction tx = null;
+		openSession();
+		try {
+			tx = session.beginTransaction();
+
+			User user = (User) session.load(User.class, userId);
+			if (user == null) {
+				tx.rollback();
+				return false;
+			}
+
+			ContentNode node = (ContentNode) session.load(ContentNode.class,
+					nodeId);
+			if (node == null) {
+				tx.rollback();
+				return false;
+			}
+
+			user.getFavourites().remove(node);
+			session.merge(user);
+
+			tx.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (tx != null) {
+				tx.rollback();
+			}
+			closeSession();
+			return false;
+		}
+		return true;
+	}
+
 }

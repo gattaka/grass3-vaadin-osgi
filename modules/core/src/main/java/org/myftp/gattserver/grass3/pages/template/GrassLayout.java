@@ -1,8 +1,8 @@
 package org.myftp.gattserver.grass3.pages.template;
 
 import org.myftp.gattserver.grass3.GrassUI;
+import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
-import org.myftp.gattserver.grass3.security.CoreACL;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
@@ -77,10 +77,10 @@ public abstract class GrassLayout extends CustomLayout {
 	}
 
 	/**
-	 * Získá ACL
+	 * Získá uživatele
 	 */
-	public CoreACL getUserACL() {
-		return CoreACL.get(getGrassUI().getUser());
+	public UserInfoDTO getUser() {
+		return getGrassUI().getUser();
 	}
 
 	/**

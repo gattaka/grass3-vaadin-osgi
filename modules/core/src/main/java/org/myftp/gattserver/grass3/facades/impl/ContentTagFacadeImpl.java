@@ -117,7 +117,7 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 	 */
 	public ContentTagDTO getContentTagByName(String tagName) {
 
-		ContentTagDTO tag = mapper.mapContentTagForOverview(contentTagDAO
+		ContentTagDTO tag = mapper.mapContentTag(contentTagDAO
 				.findContentTagByName(tagName));
 		contentTagDAO.closeSession();
 

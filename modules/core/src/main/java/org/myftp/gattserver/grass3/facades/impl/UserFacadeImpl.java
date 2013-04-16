@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import org.myftp.gattserver.grass3.facades.IUserFacade;
 import org.myftp.gattserver.grass3.model.dao.UserDAO;
 import org.myftp.gattserver.grass3.model.domain.User;
+import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.util.Mapper;
@@ -177,4 +178,30 @@ public class UserFacadeImpl implements IUserFacade {
 		return null;
 	}
 
+	/**
+	 * Zjistí zda daný obsah je v oblíbených daného uživatele
+	 */
+	public boolean hasInFavourites(ContentNodeDTO contentNodeDTO,
+			UserInfoDTO user) {
+		return userDAO.hasContentInFavourites(contentNodeDTO.getId(),
+				user.getId());
+	}
+
+	/**
+	 * Přidá obsah do oblíbených uživatele
+	 */
+	public boolean addContentToFavourites(ContentNodeDTO contentNodeDTO,
+			UserInfoDTO user) {
+		return userDAO.addContentToFavourites(contentNodeDTO.getId(),
+				user.getId());
+	}
+
+	/**
+	 * Odebere obsah z oblíbených uživatele
+	 */
+	public boolean removeContentFromFavourites(ContentNodeDTO contentNodeDTO,
+			UserInfoDTO user) {
+		return userDAO.removeContentFromFavourites(contentNodeDTO.getId(),
+				user.getId());
+	}
 }

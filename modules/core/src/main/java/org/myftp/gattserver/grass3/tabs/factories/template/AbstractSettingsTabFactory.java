@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 import org.myftp.gattserver.grass3.facades.ISecurityFacade;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.pages.template.GrassLayout;
-import org.myftp.gattserver.grass3.security.CoreACL;
+import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.tabs.template.ISettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
@@ -24,6 +24,9 @@ public abstract class AbstractSettingsTabFactory implements
 
 	protected ApplicationContext applicationContext;
 
+	@Resource(name = "coreACL")
+	private ICoreACL coreACL;
+	
 	@Resource(name = "securityFacade")
 	private ISecurityFacade securityFacade;
 
@@ -57,13 +60,6 @@ public abstract class AbstractSettingsTabFactory implements
 	 */
 	protected UserInfoDTO getUser() {
 		return securityFacade.getCurrentUser();
-	}
-
-	/**
-	 * Získá ACL
-	 */
-	public CoreACL getUserACL() {
-		return CoreACL.get(getUser());
 	}
 
 	public String getSettingsCaption() {

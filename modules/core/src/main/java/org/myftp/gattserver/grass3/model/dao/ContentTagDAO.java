@@ -1,6 +1,5 @@
 package org.myftp.gattserver.grass3.model.dao;
 
-import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,18 +35,30 @@ public class ContentTagDAO extends AbstractDAO<ContentTag> {
 		return tags.get(0);
 	}
 
-	public Integer getCountOfTagContents(Long tagId) {
+	public boolean countContentNodes() {
 
-		Object result = session
-				.createSQLQuery(
-						"select count(CONTENTNODES_ID) from CONTENTNODE_CONTENT_TAG where CONTENTTAGS_ID='"
-								+ tagId + "'").uniqueResult();
-		if (result != null) {
-			BigInteger res = (BigInteger) result;
+		List<ContentTag> tags = findAll();
+
+		Transaction tx = null;
+		openSession();
+		try {
+			tx = session.beginTransaction();
+
+			for (ContentTag tag : tags) {
+				tag.setContentNodesCount(tag.getContentNodes().size());
+				session.merge(tag);
+			}
+
+			tx.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (tx != null) {
+				tx.rollback();
+			}
 			closeSession();
-			return res.intValue();
-		} else
-			return 0;
+			return false;
+		}
+		return true;
 
 	}
 
@@ -91,6 +102,7 @@ public class ContentTagDAO extends AbstractDAO<ContentTag> {
 				}
 
 				// ulož změnu
+				oldTag.setContentNodesCount(oldTag.getContentNodes().size());
 				oldTag = (ContentTag) session.merge(oldTag);
 				if (oldTag == null) {
 					tx.rollback();
@@ -117,6 +129,7 @@ public class ContentTagDAO extends AbstractDAO<ContentTag> {
 
 				// je nový ? Pak ho ulož a zkontroluj, že dostal id
 				if (tag.getId() == null) {
+					tag.setContentNodesCount(tag.getContentNodes().size());
 					tag.setId((Long) session.save(tag));
 
 					if (tag.getId() == null) {
@@ -125,6 +138,7 @@ public class ContentTagDAO extends AbstractDAO<ContentTag> {
 						return false;
 					}
 				} else {
+					tag.setContentNodesCount(tag.getContentNodes().size());
 					tag = (ContentTag) session.merge(tag);
 					if (tag == null) {
 						tx.rollback();

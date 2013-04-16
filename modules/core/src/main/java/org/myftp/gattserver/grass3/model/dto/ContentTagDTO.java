@@ -23,7 +23,7 @@ public class ContentTagDTO {
 	/**
 	 * Počet obsahů k tagu
 	 */
-	private int contentSize;
+	private int contentNodesCount;
 
 	/**
 	 * DB identifikátor
@@ -54,12 +54,12 @@ public class ContentTagDTO {
 		this.contentNodes = contentNodes;
 	}
 
-	public int getContentSize() {
-		return contentSize;
+	public int getContentNodesCount() {
+		return contentNodesCount;
 	}
 
-	public void setContentSize(int contentSize) {
-		this.contentSize = contentSize;
+	public void setContentNodesCount(int contentNodesCount) {
+		this.contentNodesCount = contentNodesCount;
 	}
 
 }

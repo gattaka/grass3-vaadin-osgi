@@ -1,6 +1,9 @@
 /* Vychazim existujiciho theme Vaadin */
 @import "../reindeer/legacy-styles.css";
-@import url(http://fonts.googleapis.com/css?family=Voces|Inder|PT+Sans|Ubuntu|PT+Sans+Caption|Oxygen|Varela|Signika);
+
+@import
+	url(http://fonts.googleapis.com/css?family=Voces|Inder|PT+Sans|Ubuntu|PT+Sans+Caption|Oxygen|Varela|Signika)
+	;
 
 /*
 font-family: 'Voces', cursive;
@@ -12,8 +15,6 @@ font-family: 'Oxygen', sans-serif;
 font-family: 'Varela', sans-serif;
 font-family: 'Signika', sans-serif;
 */
-
-
 @font-face {
 	font-family: duru;
 	src: url('fonts/DuruSans-Regular.ttf');
@@ -318,6 +319,14 @@ a img.icon {
 
 .content_operations div {
 	margin-top: 5px;
+}
+
+.content_operations .v-button-wrap {
+	padding: 4px 8px 0 5px;
+}
+
+.content_operations .v-button.v-widget {
+	margin-right: 5px;
 }
 
 /* == FOOTER PART =========================================================== */

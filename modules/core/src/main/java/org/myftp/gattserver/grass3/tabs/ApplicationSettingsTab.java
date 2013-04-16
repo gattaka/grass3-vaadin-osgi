@@ -1,11 +1,15 @@
 package org.myftp.gattserver.grass3.tabs;
 
+import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
 import org.myftp.gattserver.grass3.config.ConfigurationFileError;
 import org.myftp.gattserver.grass3.config.ConfigurationManager;
 import org.myftp.gattserver.grass3.config.ConfigurationUtils;
 import org.myftp.gattserver.grass3.config.CoreConfiguration;
+import org.myftp.gattserver.grass3.model.dao.ContentTagDAO;
+import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
+import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
@@ -28,6 +32,9 @@ import com.vaadin.ui.VerticalLayout;
 @Scope("prototype")
 public class ApplicationSettingsTab extends AbstractSettingsTab {
 
+	@Resource(name="contentTagDAO")
+	private ContentTagDAO contentTagDAO; 
+	
 	private static final long serialVersionUID = 2474374292329895766L;
 
 	private static final Double MIN_SESSION_TIMEOUT = 5.0;
@@ -132,7 +139,6 @@ public class ApplicationSettingsTab extends AbstractSettingsTab {
 		/**
 		 * Save tlačítko
 		 */
-
 		Button saveButton = new Button("Uložit", new Button.ClickListener() {
 
 			private static final long serialVersionUID = 8490964871266821307L;
@@ -141,9 +147,29 @@ public class ApplicationSettingsTab extends AbstractSettingsTab {
 				storeConfiguration(configuration);
 			}
 		});
-
 		settingsFieldsLayout.addComponent(saveButton);
 
+		/**
+		 * Reset tagů
+		 */
+		Button contentTagsCountsResetBtn = new Button("Přepočítat údaje ContentTagů", new Button.ClickListener() {
+
+			private static final long serialVersionUID = 8490964871266821307L;
+
+			public void buttonClick(ClickEvent event) {
+				if (contentTagDAO.countContentNodes()) {
+					InfoSubwindow infoSubwindow = new InfoSubwindow(
+							"Reset počtů obsahů tagů se zdařil");
+					getUI().addWindow(infoSubwindow);
+				} else {
+					WarnSubwindow warnSubwindow = new WarnSubwindow(
+							"Reset počtů obsahů tagů se nezdařil");
+					getUI().addWindow(warnSubwindow);
+				}
+			}
+		});
+		settingsFieldsLayout.addComponent(contentTagsCountsResetBtn);
+		
 		return layout;
 
 	}

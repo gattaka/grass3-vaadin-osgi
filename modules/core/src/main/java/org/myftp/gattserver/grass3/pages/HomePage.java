@@ -148,7 +148,7 @@ public class HomePage extends BasePage {
 		 */
 		Set<Integer> counts = new HashSet<Integer>();
 		for (ContentTagDTO contentTag : contentTags) {
-			counts.add(contentTag.getContentSize());
+			counts.add(contentTag.getContentNodesCount());
 		}
 
 		/**
@@ -165,7 +165,7 @@ public class HomePage extends BasePage {
 		 */
 		Collections.sort(contentTags, new Comparator<ContentTagDTO>() {
 			public int compare(ContentTagDTO o1, ContentTagDTO o2) {
-				return o1.getContentSize() - o2.getContentSize();
+				return o1.getContentNodesCount() - o2.getContentNodesCount();
 			}
 		});
 
@@ -174,7 +174,7 @@ public class HomePage extends BasePage {
 		 * budu vědět kdy posunout ohodnocovací koeficient
 		 */
 		int lastSize = contentTags.isEmpty() ? 1 : contentTags.get(0)
-				.getContentSize();
+				.getContentNodesCount();
 		int lastFontSize = MIN_FONT_SIZE_TAG_CLOUD;
 
 		/**
@@ -191,12 +191,12 @@ public class HomePage extends BasePage {
 			 * koef a ulož můj stav aby ostatní věděli, jestli mají zvyšovat,
 			 * nebo zůstat, protože mají stejnou velikost
 			 */
-			if (contentTag.getContentSize() > lastSize) {
-				lastSize = contentTag.getContentSize();
+			if (contentTag.getContentNodesCount() > lastSize) {
+				lastSize = contentTag.getContentNodesCount();
 				lastFontSize += koef;
 			}
 
-			int size = contentTag.getContentSize();
+			int size = contentTag.getContentNodesCount();
 			sizeTable.put(size, lastFontSize);
 		}
 
@@ -213,7 +213,7 @@ public class HomePage extends BasePage {
 		});
 
 		for (ContentTagDTO contentTag : contentTags) {
-			int size = sizeTable.get(contentTag.getContentSize());
+			int size = sizeTable.get(contentTag.getContentNodesCount());
 			Label tagLabel;
 			tagCloud.addComponent(tagLabel = new Label("<a href='"
 					+ getPageURL(tagPageFactory, contentTag.getName())

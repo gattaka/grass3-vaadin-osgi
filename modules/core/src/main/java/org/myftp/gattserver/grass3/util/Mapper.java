@@ -54,7 +54,7 @@ public class Mapper {
 	public UserInfoDTO map(User e) {
 		if (e == null)
 			return null;
-		
+
 		UserInfoDTO userInfoDTO = new UserInfoDTO();
 
 		userInfoDTO.setConfirmed(e.isConfirmed());
@@ -78,7 +78,7 @@ public class Mapper {
 	public QuoteDTO map(Quote e) {
 		if (e == null)
 			return null;
-		
+
 		QuoteDTO quoteDTO = new QuoteDTO();
 
 		quoteDTO.setId(e.getId());
@@ -96,7 +96,7 @@ public class Mapper {
 	public ContentNodeDTO mapContentNodeForOverview(ContentNode e) {
 		if (e == null)
 			return null;
-		
+
 		ContentNodeDTO contentNodeDTO = new ContentNodeDTO();
 
 		contentNodeDTO.setAuthor(map(e.getAuthor()));
@@ -104,8 +104,7 @@ public class Mapper {
 		contentNodeDTO.setContentReaderID(e.getContentReaderId());
 		contentNodeDTO.setCreationDate(e.getCreationDate());
 		contentNodeDTO.setId(e.getId());
-		contentNodeDTO.setLastModificationDate(e
-				.getLastModificationDate());
+		contentNodeDTO.setLastModificationDate(e.getLastModificationDate());
 		contentNodeDTO.setName(e.getName());
 
 		NodeDTO nodeDTO = new NodeDTO();
@@ -121,7 +120,7 @@ public class Mapper {
 	public ContentNodeDTO map(ContentNode e) {
 		if (e == null)
 			return null;
-		
+
 		ContentNodeDTO contentNodeDTO = mapContentNodeForOverview(e);
 
 		Set<String> tags = new HashSet<String>();
@@ -166,14 +165,12 @@ public class Mapper {
 	public ContentTagDTO mapContentTagForOverview(ContentTag e) {
 		if (e == null)
 			return null;
-		
+
 		ContentTagDTO contentTagDTO = new ContentTagDTO();
 
 		contentTagDTO.setId(e.getId());
 		contentTagDTO.setName(e.getName());
-		// contentTagDTO.setContentSize(contentTag.getContentNodes().size());
-		contentTagDTO.setContentSize(contentTagDAO
-				.getCountOfTagContents(e.getId()));
+		contentTagDTO.setContentNodesCount(e.getContentNodesCount());
 
 		return contentTagDTO;
 	}
@@ -181,7 +178,7 @@ public class Mapper {
 	public ContentTagDTO mapContentTag(ContentTag e) {
 		if (e == null)
 			return null;
-		
+
 		ContentTagDTO contentTagDTO = new ContentTagDTO();
 
 		contentTagDTO.setId(e.getId());
@@ -231,7 +228,7 @@ public class Mapper {
 	public NodeDTO map(Node e) {
 		if (e == null)
 			return null;
-		
+
 		NodeDTO nodeDTO = new NodeDTO();
 
 		nodeDTO.setId(e.getId());

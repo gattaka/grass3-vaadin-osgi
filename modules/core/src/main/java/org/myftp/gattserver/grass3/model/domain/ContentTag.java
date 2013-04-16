@@ -6,8 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.NamedNativeQueries;
-import javax.persistence.NamedNativeQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -26,6 +24,12 @@ public class ContentTag {
 	 */
 	@ManyToMany(mappedBy = "contentTags")
 	private Set<ContentNode> contentNodes;
+
+	/**
+	 * Počet obsahů přiřazených k tomuto tagu (aplikace je pak mnohem rychlejší
+	 * když se to nemusí počítat)
+	 */
+	private Integer contentNodesCount;
 
 	/**
 	 * DB identifikátor
@@ -69,6 +73,14 @@ public class ContentTag {
 
 	public void setContentNodes(Set<ContentNode> contentNodes) {
 		this.contentNodes = contentNodes;
+	}
+
+	public Integer getContentNodesCount() {
+		return contentNodesCount;
+	}
+
+	public void setContentNodesCount(Integer contentNodesCount) {
+		this.contentNodesCount = contentNodesCount;
 	}
 
 }

@@ -2,8 +2,6 @@ package org.myftp.gattserver.grass3.facades.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.facades.IQuotesFacade;
@@ -60,18 +58,9 @@ public class QuotesFacadeImpl implements IQuotesFacade {
 	 * Vybere náhodně hlášku a vrátí její text
 	 */
 	public String getRandomQuote() {
-		Long count = quoteDAO.count();
-		if (count == null) {
-			return null;
-		}
-		Quote quote = null;
-		if (count != 0) {
-			Random generator = new Random();
-			Long randomId = Math.abs(generator.nextLong()) % count + 1;
-			quote = quoteDAO.findByID(randomId);
-			String quoteText = quote.getName();
-			quoteDAO.closeSession();
-			return quoteText;
+		Quote quote = quoteDAO.chooseRandomQuote();
+		if (quote != null) {
+			return quote.getName();
 		} else {
 			return "~ nebyly nalezeny žádné záznamy ~";
 		}

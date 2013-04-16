@@ -241,6 +241,24 @@ public class Mapper {
 	}
 
 	/**
+	 * Převede {@link Node} na {@link NodeDTO}
+	 * 
+	 * @param e
+	 * @return
+	 */
+	public NodeDTO mapNodeForLink(Node e) {
+		if (e == null)
+			return null;
+
+		NodeDTO nodeDTO = new NodeDTO();
+
+		nodeDTO.setId(e.getId());
+		nodeDTO.setName(e.getName());
+
+		return nodeDTO;
+	}
+	
+	/**
 	 * Převede list {@link Node} na list {@link NodeDTO}
 	 * 
 	 * @param nodes
@@ -250,6 +268,20 @@ public class Mapper {
 		List<NodeDTO> nodeDTOs = new ArrayList<NodeDTO>();
 		for (Node node : nodes) {
 			nodeDTOs.add(map(node));
+		}
+		return nodeDTOs;
+	}
+	
+	/**
+	 * Převede list {@link Node} na list {@link NodeDTO}
+	 * 
+	 * @param nodes
+	 * @return
+	 */
+	public List<NodeDTO> mapNodeCollectionForLinks(Collection<Node> nodes) {
+		List<NodeDTO> nodeDTOs = new ArrayList<NodeDTO>();
+		for (Node node : nodes) {
+			nodeDTOs.add(mapNodeForLink(node));
 		}
 		return nodeDTOs;
 	}

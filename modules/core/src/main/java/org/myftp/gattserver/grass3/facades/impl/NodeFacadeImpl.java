@@ -46,7 +46,8 @@ public class NodeFacadeImpl implements INodeFacade {
 			return null;
 		}
 
-		List<NodeDTO> rootNodesDTOs = mapper.mapNodeCollection(rootNodes);
+		List<NodeDTO> rootNodesDTOs = mapper
+				.mapNodeCollectionForLinks(rootNodes);
 
 		nodeDAO.closeSession();
 		return rootNodesDTOs;

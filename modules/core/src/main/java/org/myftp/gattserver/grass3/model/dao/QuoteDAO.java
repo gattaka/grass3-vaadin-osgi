@@ -1,5 +1,7 @@
 package org.myftp.gattserver.grass3.model.dao;
 
+import java.util.Random;
+
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.myftp.gattserver.grass3.model.AbstractDAO;
@@ -37,5 +39,33 @@ public class QuoteDAO extends AbstractDAO<Quote> {
 			closeSession();
 		}
 		return result == null ? 0 : result;
+	}
+
+	public Quote chooseRandomQuote() {
+		Quote result = null;
+		Transaction tx = null;
+		openSession();
+		try {
+			tx = session.beginTransaction();
+
+			Long count = (Long) session.createCriteria(Quote.class)
+					.setProjection(Projections.rowCount()).uniqueResult();
+
+			if (count != 0) {
+				Random generator = new Random();
+				Long randomId = Math.abs(generator.nextLong()) % count + 1;
+				result = (Quote) session.load(Quote.class, randomId);
+			}
+			tx.commit();
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (tx != null) {
+				tx.rollback();
+			}
+			return null;
+		} finally {
+			closeSession();
+		}
 	}
 }

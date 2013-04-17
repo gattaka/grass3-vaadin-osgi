@@ -65,7 +65,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		List<ContentNode> contentNodes = contentNodeDAO
 				.findRecentAdded(maxResults);
 		Set<ContentNodeDTO> contentNodeDTOs = mapper
-				.mapContentNodeCollectionForOverview(contentNodes);
+				.mapContentNodesForRecentsOverview(contentNodes);
 
 		contentNodeDAO.closeSession();
 		return contentNodeDTOs;
@@ -81,7 +81,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		List<ContentNode> contentNodes = contentNodeDAO
 				.findRecentEdited(maxResults);
 		Set<ContentNodeDTO> contentNodeDTOs = mapper
-				.mapContentNodeCollectionForOverview(contentNodes);
+				.mapContentNodesForRecentsOverview(contentNodes);
 
 		contentNodeDAO.closeSession();
 		return contentNodeDTOs;

@@ -111,7 +111,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		// operace ?
 		if (operationToken.equals(DefaultContentOperations.NEW.toString())) {
 			editMode = false;
-			category = nodeFacade.getNodeById(identifier.getId());
+			category = nodeFacade.getNodeByIdForOverview(identifier.getId());
 			articleNameField.setValue("");
 			articleKeywords.setValue("");
 			articleTextArea.setValue("");

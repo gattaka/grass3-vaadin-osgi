@@ -9,7 +9,13 @@ public interface INodeFacade {
 	/**
 	 * Získá kategorii dle id
 	 */
-	public NodeDTO getNodeById(Long id);
+	public NodeDTO getNodeByIdForOverview(Long id);
+
+	/**
+	 * Získá kategorii dle id a namapuje jí, aby se dala použít v detailu
+	 * kategorie
+	 */
+	public NodeDTO getNodeByIdForDetail(Long id);
 
 	/**
 	 * Získá všechny kořenové kategorie

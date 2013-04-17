@@ -36,6 +36,11 @@ public class ContentsTableFactory {
 	@Resource(name = "serviceHolder")
 	private IServiceHolder serviceHolder;
 
+	/**
+	 * Vytvoří {@link ContentsTable}, včetně sloupce s odkazem na kategorii
+	 * obsahu - pakliže není žádoucí kategorii zobrazovat, je možné použít
+	 * parametrizovaný konstruktor
+	 */
 	public ContentsTable createContentsTable() {
 
 		ContentsTable table = new ContentsTable();
@@ -44,7 +49,14 @@ public class ContentsTableFactory {
 		table.noServicePageFactory = noServicePageFactory;
 		table.serviceHolder = serviceHolder;
 		table.coreACL = coreACL;
+		table.categoryColumn = true;
 
+		return table;
+	}
+
+	public ContentsTable createContentsTableWithoutCategoryColumn() {
+		ContentsTable table = createContentsTable();
+		table.categoryColumn = false;
 		return table;
 	}
 
@@ -65,6 +77,7 @@ public class ContentsTableFactory {
 		private IPageFactory categoryPageFactory;
 		private IPageFactory noServicePageFactory;
 		private IServiceHolder serviceHolder;
+		private boolean categoryColumn;
 
 		private ContentsTable() {
 			setHeight("160px");
@@ -78,8 +91,10 @@ public class ContentsTableFactory {
 					.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
 			container.addContainerProperty(ColumnId.NÁZEV,
 					ComparableLink.class, null);
-			container.addContainerProperty(ColumnId.KATEGORIE,
-					ComparableLink.class, null);
+			if (categoryColumn) {
+				container.addContainerProperty(ColumnId.KATEGORIE,
+						ComparableLink.class, null);
+			}
 			container.addContainerProperty(ColumnId.AUTOR, String.class, "");
 			container.addContainerProperty(ColumnId.DATUM_VYTVOŘENÍ,
 					ComparableStringDate.class, "");
@@ -115,13 +130,21 @@ public class ContentsTableFactory {
 										URLIdentifierUtils.createURLIdentifier(
 												contentNode.getContentID(),
 												contentNode.getName()))));
-				NodeDTO contentParent = contentNode.getParent();
-				item.getItemProperty(ColumnId.KATEGORIE).setValue(
-						new ComparableLink(contentParent.getName(), page
-								.getPageResource(categoryPageFactory,
-										URLIdentifierUtils.createURLIdentifier(
-												contentParent.getId(),
-												contentParent.getName()))));
+				if (categoryColumn) {
+					NodeDTO contentParent = contentNode.getParent();
+					item.getItemProperty(ColumnId.KATEGORIE)
+							.setValue(
+									new ComparableLink(
+											contentParent.getName(),
+											page.getPageResource(
+													categoryPageFactory,
+													URLIdentifierUtils
+															.createURLIdentifier(
+																	contentParent
+																			.getId(),
+																	contentParent
+																			.getName()))));
+				}
 				item.getItemProperty(ColumnId.AUTOR).setValue(
 						contentNode.getAuthor().getName());
 				item.getItemProperty(ColumnId.DATUM_VYTVOŘENÍ)

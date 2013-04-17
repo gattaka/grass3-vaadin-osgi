@@ -23,12 +23,27 @@ public class NodeFacadeImpl implements INodeFacade {
 	/**
 	 * Získá kategorii dle id
 	 */
-	public NodeDTO getNodeById(Long id) {
+	public NodeDTO getNodeByIdForOverview(Long id) {
 
 		Node node = nodeDAO.findByID(id);
 		if (node == null)
 			return null;
-		NodeDTO nodeDTO = mapper.map(node);
+		NodeDTO nodeDTO = mapper.mapNodeForOverview(node);
+		nodeDAO.closeSession();
+
+		return nodeDTO;
+	}
+
+	/**
+	 * Získá kategorii dle id a namapuje jí, aby se dala použít v detailu
+	 * kategorie
+	 */
+	public NodeDTO getNodeByIdForDetail(Long id) {
+
+		Node node = nodeDAO.findByID(id);
+		if (node == null)
+			return null;
+		NodeDTO nodeDTO = mapper.mapNodeForDetailPage(node);
 		nodeDAO.closeSession();
 
 		return nodeDTO;
@@ -46,8 +61,7 @@ public class NodeFacadeImpl implements INodeFacade {
 			return null;
 		}
 
-		List<NodeDTO> rootNodesDTOs = mapper
-				.mapNodeCollectionForLinks(rootNodes);
+		List<NodeDTO> rootNodesDTOs = mapper.mapNodesForOverview(rootNodes);
 
 		nodeDAO.closeSession();
 		return rootNodesDTOs;
@@ -66,7 +80,7 @@ public class NodeFacadeImpl implements INodeFacade {
 		}
 
 		List<NodeDTO> childrenNodesDTOs = mapper
-				.mapNodeCollection(childrenNodes);
+				.mapNodesForOverview(childrenNodes);
 
 		nodeDAO.closeSession();
 		return childrenNodesDTOs;

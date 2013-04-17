@@ -290,7 +290,7 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 								protected void onConfirm(ClickEvent event) {
 
 									if (!node.getContentNodes().isEmpty()
-											|| !node.getSubNodeIDs().isEmpty()) {
+											|| !node.getSubNodes().isEmpty()) {
 										CategoriesSettingsTab.this
 												.showWarning("Kategorie musí být prázdná");
 									} else {

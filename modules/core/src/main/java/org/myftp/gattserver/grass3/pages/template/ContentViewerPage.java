@@ -171,10 +171,10 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 									parent.getId(), parent.getName()))));
 
 			// pokud je můj předek null, pak je to konec a je to všechno
-			if (parent.getParentID() == null)
+			if (parent.getParent() == null)
 				break;
 
-			parent = nodeFacade.getNodeById(parent.getParentID());
+			parent = parent.getParent();
 		}
 
 		breadcrumb.resetBreadcrumb(breadcrumbElements);

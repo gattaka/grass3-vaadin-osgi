@@ -77,7 +77,7 @@ public class CategoryPage extends OneColumnPage {
 			return layout;
 		}
 
-		NodeDTO node = nodeFacade.getNodeById(identifier.getId());
+		NodeDTO node = nodeFacade.getNodeByIdForDetail(identifier.getId());
 
 		layout.setMargin(true);
 		layout.setSpacing(true);
@@ -122,10 +122,10 @@ public class CategoryPage extends OneColumnPage {
 									parent.getId(), parent.getName()))));
 
 			// pokud je můj předek null, pak je to konec a je to všechno
-			if (parent.getParentID() == null)
+			if (parent.getParent() == null)
 				break;
 
-			parent = nodeFacade.getNodeById(parent.getParentID());
+			parent = parent.getParent();
 		}
 
 		breadcrumb.resetBreadcrumb(breadcrumbElements);
@@ -142,7 +142,7 @@ public class CategoryPage extends OneColumnPage {
 		layout.addComponent(subNodesLayout);
 		subNodesTable.setWidth("100%");
 
-		List<NodeDTO> nodes = nodeFacade.getNodesByParentNode(node);
+		List<NodeDTO> nodes = node.getSubNodes();
 		if (nodes == null)
 			showError500();
 
@@ -153,10 +153,9 @@ public class CategoryPage extends OneColumnPage {
 
 		VerticalLayout contentsLayout = new VerticalLayout();
 		ContentsTable contentsTable = contentsTableFactory
-				.createContentsTable();
+				.createContentsTableWithoutCategoryColumn();
 
-		Set<ContentNodeDTO> contentNodes = contentNodeFacade
-				.getContentNodesByNode(node);
+		Set<ContentNodeDTO> contentNodes = node.getContentNodes();
 		if (contentNodes == null)
 			showError500();
 

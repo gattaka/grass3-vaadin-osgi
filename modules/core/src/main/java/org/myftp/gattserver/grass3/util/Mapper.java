@@ -88,7 +88,38 @@ public class Mapper {
 	}
 
 	/**
-	 * Převede {@link ContentNode} na {@link ContentNodeDTO}
+	 * Převede {@link ContentNode} na {@link ContentNodeDTO}, používá se pro
+	 * homePage recents přehledy, tam je totiž vyžadováno i mapování kategorie
+	 * 
+	 * @param e
+	 * @return
+	 */
+	public ContentNodeDTO mapContentNodeForRecentsOverview(ContentNode e) {
+		if (e == null)
+			return null;
+
+		ContentNodeDTO contentNodeDTO = new ContentNodeDTO();
+
+		contentNodeDTO.setAuthor(map(e.getAuthor()));
+		contentNodeDTO.setContentID(e.getContentId());
+		contentNodeDTO.setContentReaderID(e.getContentReaderId());
+		contentNodeDTO.setCreationDate(e.getCreationDate());
+		contentNodeDTO.setId(e.getId());
+		contentNodeDTO.setLastModificationDate(e.getLastModificationDate());
+		contentNodeDTO.setName(e.getName());
+		contentNodeDTO.setPublicated(e.getPublicated());
+
+		NodeDTO nodeDTO = new NodeDTO();
+		nodeDTO.setId(e.getParent().getId());
+		nodeDTO.setName(e.getParent().getName());
+		contentNodeDTO.setParent(nodeDTO);
+
+		return contentNodeDTO;
+	}
+
+	/**
+	 * Převede {@link ContentNode} na {@link ContentNodeDTO}, používá se pro
+	 * přehled v kategoriích, kde není potřeba mapovat kategorii contentNode
 	 * 
 	 * @param e
 	 * @return
@@ -106,12 +137,6 @@ public class Mapper {
 		contentNodeDTO.setId(e.getId());
 		contentNodeDTO.setLastModificationDate(e.getLastModificationDate());
 		contentNodeDTO.setName(e.getName());
-
-		NodeDTO nodeDTO = new NodeDTO();
-		nodeDTO.setId(e.getParent().getId());
-		nodeDTO.setName(e.getParent().getName());
-		contentNodeDTO.setParent(nodeDTO);
-
 		contentNodeDTO.setPublicated(e.getPublicated());
 
 		return contentNodeDTO;
@@ -121,7 +146,7 @@ public class Mapper {
 		if (e == null)
 			return null;
 
-		ContentNodeDTO contentNodeDTO = mapContentNodeForOverview(e);
+		ContentNodeDTO contentNodeDTO = mapContentNodeForRecentsOverview(e);
 
 		Set<String> tags = new HashSet<String>();
 		for (ContentTag contentTag : e.getContentTags()) {
@@ -147,11 +172,20 @@ public class Mapper {
 		return contentNodeDTOs;
 	}
 
-	public Set<ContentNodeDTO> mapContentNodeCollectionForOverview(
+	public Set<ContentNodeDTO> mapContentNodesForOverview(
 			Collection<ContentNode> contentNodes) {
 		Set<ContentNodeDTO> contentNodeDTOs = new HashSet<ContentNodeDTO>();
 		for (ContentNode contentNode : contentNodes) {
 			contentNodeDTOs.add(mapContentNodeForOverview(contentNode));
+		}
+		return contentNodeDTOs;
+	}
+
+	public Set<ContentNodeDTO> mapContentNodesForRecentsOverview(
+			Collection<ContentNode> contentNodes) {
+		Set<ContentNodeDTO> contentNodeDTOs = new HashSet<ContentNodeDTO>();
+		for (ContentNode contentNode : contentNodes) {
+			contentNodeDTOs.add(mapContentNodeForRecentsOverview(contentNode));
 		}
 		return contentNodeDTOs;
 	}
@@ -225,7 +259,7 @@ public class Mapper {
 	 * @param e
 	 * @return
 	 */
-	public NodeDTO map(Node e) {
+	public NodeDTO mapNodeForDetailPage(Node e) {
 		if (e == null)
 			return null;
 
@@ -233,20 +267,34 @@ public class Mapper {
 
 		nodeDTO.setId(e.getId());
 		nodeDTO.setName(e.getName());
-		nodeDTO.setParentID(e.getParent() == null ? null : e.getParent()
-				.getId());
-		nodeDTO.setContentNodes(mapContentNodeCollection(e.getContentNodes()));
+		nodeDTO.setParent(mapNodeForBreadcrumb(e.getParent()));
+		nodeDTO.setContentNodes(mapContentNodesForOverview(e.getContentNodes()));
+		nodeDTO.setSubNodes(mapNodesForOverview(e.getSubNodes()));
 
 		return nodeDTO;
 	}
 
 	/**
-	 * Převede {@link Node} na {@link NodeDTO}
-	 * 
-	 * @param e
-	 * @return
+	 * Pro breadcrumb je potřeba id, název, ale navíc i rekurzivně to samé pro
+	 * parenta
 	 */
-	public NodeDTO mapNodeForLink(Node e) {
+	private NodeDTO mapNodeForBreadcrumb(Node e) {
+		if (e == null)
+			return null;
+
+		NodeDTO nodeDTO = new NodeDTO();
+
+		nodeDTO.setId(e.getId());
+		nodeDTO.setName(e.getName());
+		nodeDTO.setParent(mapNodeForBreadcrumb(e.getParent()));
+
+		return nodeDTO;
+	}
+
+	/**
+	 * Pro overview je potřeba akorát id + název
+	 */
+	public NodeDTO mapNodeForOverview(Node e) {
 		if (e == null)
 			return null;
 
@@ -257,31 +305,17 @@ public class Mapper {
 
 		return nodeDTO;
 	}
-	
+
 	/**
 	 * Převede list {@link Node} na list {@link NodeDTO}
 	 * 
 	 * @param nodes
 	 * @return
 	 */
-	public List<NodeDTO> mapNodeCollection(Collection<Node> nodes) {
+	public List<NodeDTO> mapNodesForOverview(Collection<Node> nodes) {
 		List<NodeDTO> nodeDTOs = new ArrayList<NodeDTO>();
 		for (Node node : nodes) {
-			nodeDTOs.add(map(node));
-		}
-		return nodeDTOs;
-	}
-	
-	/**
-	 * Převede list {@link Node} na list {@link NodeDTO}
-	 * 
-	 * @param nodes
-	 * @return
-	 */
-	public List<NodeDTO> mapNodeCollectionForLinks(Collection<Node> nodes) {
-		List<NodeDTO> nodeDTOs = new ArrayList<NodeDTO>();
-		for (Node node : nodes) {
-			nodeDTOs.add(mapNodeForLink(node));
+			nodeDTOs.add(mapNodeForOverview(node));
 		}
 		return nodeDTOs;
 	}

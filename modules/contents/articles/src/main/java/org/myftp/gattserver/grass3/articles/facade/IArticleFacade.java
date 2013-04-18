@@ -75,7 +75,7 @@ public interface IArticleFacade {
 	 * @param publicated
 	 *            je článek publikován ?
 	 * @param category
-	 *            kategorie do kteér se vkládá
+	 *            kategorie do které se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
 	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
@@ -92,13 +92,25 @@ public interface IArticleFacade {
 	 *            identifikátor
 	 * @return DTO článku
 	 */
-	public ArticleDTO getArticleById(Long id);
+	public ArticleDTO getArticleForDetail(Long id);
 
 	/**
-	 * Získá všechny články
+	 * Získá všechny články pro přegenerování
+	 */
+	public List<ArticleDTO> getAllArticlesForReprocess();
+
+	/**
+	 * Získá všechny články pro přehled
 	 * 
 	 * @return
 	 */
-	public List<ArticleDTO> getAllArticles();
+	public List<ArticleDTO> getAllArticlesForOverview();
+
+	/**
+	 * Získá všechny články a namapuje je pro použití při vyhledávání
+	 * 
+	 * @return
+	 */
+	public List<ArticleDTO> getAllArticlesForSearch();
 
 }

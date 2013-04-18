@@ -71,7 +71,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			return;
 		}
 
-		article = articleFacade.getArticleById(identifier.getId());
+		article = articleFacade.getArticleForDetail(identifier.getId());
 		if (article == null) {
 			showError404();
 			return;

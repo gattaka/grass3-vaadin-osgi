@@ -141,8 +141,8 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 		/**
 		 * Reprocess tlačítko
 		 */
-		settingsLayout.addComponent(new Label("<h2>Přegenerování obsahů</h2>",
-				ContentMode.HTML));
+		settingsLayout.addComponent(new Label(
+				"</br><h2>Přegenerování obsahů</h2>", ContentMode.HTML));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout reprocessLayout = new VerticalLayout();
@@ -230,6 +230,7 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 			processWindowLayout.setSizeFull();
 
 			progressbar = new ProgressIndicator();
+			progressbar.setPollingInterval(100);
 			progressbar.setIndeterminate(false);
 			progressbar.setEnabled(false);
 			processWindowLayout.addComponent(progressbar);
@@ -277,7 +278,8 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 		@Override
 		public void run() {
 
-			List<ArticleDTO> articles = articleFacade.getAllArticles();
+			List<ArticleDTO> articles = articleFacade
+					.getAllArticlesForReprocess();
 			total = articles.size();
 			current = 0;
 
@@ -292,7 +294,8 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 
 				synchronized (getUI()) {
 					current++;
-					currentName = article.getContentNode().getName();
+					currentName = "(" + current + "/" + total + ") "
+							+ article.getContentNode().getName();
 					prosessed(); // aktualizuj stav progressbaru
 				}
 			}

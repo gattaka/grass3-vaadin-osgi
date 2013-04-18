@@ -32,7 +32,7 @@ public class ArticlesSearchConnector implements ISearchConnector {
 
 		List<SearchEntity> searchEntities = new ArrayList<SearchEntity>();
 
-		List<ArticleDTO> articles = articleFacade.getAllArticles();
+		List<ArticleDTO> articles = articleFacade.getAllArticlesForSearch();
 		for (ArticleDTO article : articles) {
 
 			if (coreACL.canShowContent(article.getContentNode(), user)) {

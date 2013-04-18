@@ -159,11 +159,11 @@ public class ApplicationSettingsTab extends AbstractSettingsTab {
 			public void buttonClick(ClickEvent event) {
 				if (contentTagDAO.countContentNodes()) {
 					InfoSubwindow infoSubwindow = new InfoSubwindow(
-							"Reset počtů obsahů tagů se zdařil");
+							"Počty obsahů tagů byly úspěšně přepočítány");
 					getUI().addWindow(infoSubwindow);
 				} else {
 					WarnSubwindow warnSubwindow = new WarnSubwindow(
-							"Reset počtů obsahů tagů se nezdařil");
+							"Nezdařilo se přepočítat počty obsahů tagů");
 					getUI().addWindow(warnSubwindow);
 				}
 			}

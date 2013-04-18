@@ -119,7 +119,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		} else if (operationToken.equals(DefaultContentOperations.EDIT
 				.toString())) {
 			editMode = true;
-			article = articleFacade.getArticleById(identifier.getId());
+			article = articleFacade.getArticleForDetail(identifier.getId());
 			articleNameField.setValue(article.getContentNode().getName());
 			articleKeywords.setValue(contentTagFacade.serializeTags(article
 					.getContentNode().getContentTags()));
@@ -511,7 +511,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 			// odteď budeme editovat
 			editMode = true;
-			article = articleFacade.getArticleById(id);
+			article = articleFacade.getArticleForDetail(id);
 			return true;
 		}
 	}

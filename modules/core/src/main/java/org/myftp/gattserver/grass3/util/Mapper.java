@@ -141,6 +141,39 @@ public class Mapper {
 
 		return contentNodeDTO;
 	}
+	
+	/**
+	 * Převede {@link ContentNode} na {@link ContentNodeDTO}, používá se pro
+	 * detail obsahu, kde je potřeba rekurzivní mapování parentů do breadcrumb
+	 * 
+	 * @param e
+	 * @return
+	 */
+	public ContentNodeDTO mapContentNodeForDetail(ContentNode e) {
+		if (e == null)
+			return null;
+
+		ContentNodeDTO contentNodeDTO = new ContentNodeDTO();
+
+		contentNodeDTO.setAuthor(map(e.getAuthor()));
+		contentNodeDTO.setContentID(e.getContentId());
+		contentNodeDTO.setContentReaderID(e.getContentReaderId());
+		contentNodeDTO.setCreationDate(e.getCreationDate());
+		contentNodeDTO.setId(e.getId());
+		contentNodeDTO.setLastModificationDate(e.getLastModificationDate());
+		contentNodeDTO.setName(e.getName());
+		contentNodeDTO.setPublicated(e.getPublicated());
+		
+		Set<String> tags = new HashSet<String>();
+		for (ContentTag contentTag : e.getContentTags()) {
+			tags.add(contentTag.getName());
+		}
+		contentNodeDTO.setContentTags(tags);
+		
+		contentNodeDTO.setParent(mapNodeForBreadcrumb(e.getParent()));
+
+		return contentNodeDTO;
+	}
 
 	public ContentNodeDTO map(ContentNode e) {
 		if (e == null)

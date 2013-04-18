@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 
 @Component("articleFacade")
 public class ArticleFacadeImpl implements IArticleFacade {
-	
+
 	@Resource(name = "contentNodeFacade")
 	private IContentNodeFacade contentNodeFacade;
 
@@ -227,44 +227,61 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	}
 
 	/**
-	 * Získá článek dle jeho identifikátoru
+	 * Získá článek dle jeho identifikátoru pro jeho celé zobrazení
 	 * 
 	 * @param id
 	 *            identifikátor
 	 * @return DTO článku
 	 */
-	public ArticleDTO getArticleById(Long id) {
-
+	public ArticleDTO getArticleForDetail(Long id) {
 		Article article = articleDAO.findByID(id);
-
 		if (article == null)
 			return null;
-
-		ArticleDTO articleDTO = articlesMapper.map(article);
-
+		ArticleDTO articleDTO = articlesMapper.mapArticleForDetail(article);
 		articleDAO.closeSession();
-
 		return articleDTO;
 	}
 
 	/**
-	 * Získá všechny články
+	 * Získá všechny články pro přegenerování
+	 */
+	public List<ArticleDTO> getAllArticlesForReprocess() {
+		List<Article> articles = articleDAO.findAll();
+		if (articles == null)
+			return null;
+		List<ArticleDTO> articleDTOs = articlesMapper.mapArticlesForReprocess(articles);
+		articleDAO.closeSession();
+		return articleDTOs;
+	}
+	
+	/**
+	 * Získá všechny články pro přehled
 	 * 
 	 * @return
 	 */
-	public List<ArticleDTO> getAllArticles() {
-
+	public List<ArticleDTO> getAllArticlesForOverview() {
 		List<Article> articles = articleDAO.findAll();
-
 		if (articles == null)
 			return null;
-
-		List<ArticleDTO> articleDTOs = articlesMapper.map(articles);
-
+		List<ArticleDTO> articleDTOs = articlesMapper
+				.mapArticlesForOverview(articles);
 		articleDAO.closeSession();
-
 		return articleDTOs;
+	}
 
+	/**
+	 * Získá všechny články a namapuje je pro použití při vyhledávání
+	 * 
+	 * @return
+	 */
+	public List<ArticleDTO> getAllArticlesForSearch() {
+		List<Article> articles = articleDAO.findAll();
+		if (articles == null)
+			return null;
+		List<ArticleDTO> articleDTOs = articlesMapper
+				.mapArticlesForSearch(articles);
+		articleDAO.closeSession();
+		return articleDTOs;
 	}
 
 }

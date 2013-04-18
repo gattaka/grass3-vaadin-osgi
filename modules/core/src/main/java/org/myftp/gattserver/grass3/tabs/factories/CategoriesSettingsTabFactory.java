@@ -16,8 +16,7 @@ public class CategoriesSettingsTabFactory extends AbstractSettingsTabFactory {
 		super("Kategorie", "categories", "categoriesSettingsTab");
 	}
 
-	@Override
-	protected boolean isAuthorized() {
+	public boolean isAuthorized() {
 		return coreACL.canShowCategoriesSettings(getUser());
 	}
 

@@ -1,9 +1,13 @@
 package org.myftp.gattserver.grass3.facades.impl;
 
+import java.util.Calendar;
+
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.facades.ISecurityFacade;
 import org.myftp.gattserver.grass3.facades.IUserFacade;
+import org.myftp.gattserver.grass3.model.dao.UserDAO;
+import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +21,9 @@ public class SecurityFacadeImpl implements ISecurityFacade {
 
 	@Resource(name = "userFacade")
 	private IUserFacade userFacade;
+	
+	@Resource(name = "userDAO")
+	private UserDAO userDAO;
 
 	public boolean login(String username, String password) {
 		UserInfoDTO loggedUser = userFacade.getUserByLogin(username, password);
@@ -28,6 +35,12 @@ public class SecurityFacadeImpl implements ISecurityFacade {
 				loggedUser.getAuthorities());
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
+		
+		// zapiš údaj o posledním přihlášení
+		User user = userDAO.findByID(loggedUser.getId());
+		user.setLastLoginDate(Calendar.getInstance().getTime());
+		userDAO.merge(user);
+		
 		return true;
 	}
 

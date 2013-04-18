@@ -13,7 +13,7 @@ public interface IContentTagFacade {
 
 	public String[] parseTags(String tagNames);
 
-	public String serializeTags(Set<String> tags);
+	public String serializeTags(Set<ContentTagDTO> tags);
 
 	/**
 	 * Bere řetězec tagů, parsuje je a ukládá do nich (nebo vytvoří nové)
@@ -34,6 +34,6 @@ public interface IContentTagFacade {
 	 *            jméno tagu
 	 * @return tag
 	 */
-	public ContentTagDTO getContentTagByName(String tagName);
+	public ContentTagDTO getContentTagById(Long id);
 
 }

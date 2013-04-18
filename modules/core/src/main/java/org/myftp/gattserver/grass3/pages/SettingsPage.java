@@ -34,10 +34,31 @@ public class SettingsPage extends TwoColumnPage {
 	@Resource(name = "settingsTabFactoriesRegister")
 	private ISettingsTabFactoriesRegister settingsTabFactoriesRegister;
 
+	private ISettingsTabFactory settingsTabFactory = null;
+
 	public SettingsPage(GrassRequest request) {
 		super(request);
 	}
-	
+
+	@Override
+	protected void init() {
+		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
+		String settingsTabName = analyzer.getCurrentPathToken();
+		ISettingsTabFactory settingsTabFactory = settingsTabFactoriesRegister
+				.getFactory(settingsTabName);
+
+		if (settingsTabFactory != null) {
+			if (settingsTabFactory.isAuthorized() == false) {
+				showError403();
+				return;
+			} else {
+				this.settingsTabFactory = settingsTabFactory;
+			}
+		}
+		
+		super.init();
+	}
+
 	@Override
 	protected Component createLeftColumnContent() {
 		VerticalLayout leftColumnLayout = new VerticalLayout();
@@ -56,14 +77,11 @@ public class SettingsPage extends TwoColumnPage {
 	@Override
 	protected Component createRightColumnContent() {
 
-		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
-		String settingsTabName = analyzer.getCurrentPathToken();
-		ISettingsTabFactory settingsTabFactory = settingsTabFactoriesRegister
-				.getFactory(settingsTabName);
-
+		// pokud není pageFactory prázdná, pak se zobrazuje konkrétní nastavení
 		if (settingsTabFactory != null)
 			return settingsTabFactory.createPage(getRequest());
 
+		// jinak zobraz info o nabídce
 		VerticalLayout layout = new VerticalLayout();
 
 		Label label = new Label("Zvolte položku nastavení z menu");

@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.facades.impl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,11 +33,11 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 		List<ContentTag> contentTags = contentTagDAO.findAll();
 		if (contentTags == null)
 			return null;
-		List<ContentTagDTO> contentTagDTOs = mapper
+		Set<ContentTagDTO> contentTagDTOs = mapper
 				.mapContentTagCollectionForOverview(contentTags);
 
 		contentTagDAO.closeSession();
-		return contentTagDTOs;
+		return new ArrayList<ContentTagDTO>(contentTagDTOs);
 	}
 
 	public String[] parseTags(String tagNames) {
@@ -45,17 +46,17 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 				+ "\\s*)|(^\\s+)|(\\s+$)");
 	}
 
-	public String serializeTags(Set<String> tags) {
+	public String serializeTags(Set<ContentTagDTO> tags) {
 
 		StringBuilder stringBuilder = new StringBuilder();
 		boolean first = true;
-		for (String tag : tags) {
+		for (ContentTagDTO tag : tags) {
 			if (!first) {
 				// mezera pro přehlednost
 				stringBuilder.append(TAGS_DELIMITER).append(" ");
 			}
 			first = false;
-			stringBuilder.append(tag);
+			stringBuilder.append(tag.getName());
 		}
 
 		return stringBuilder.toString();
@@ -109,16 +110,14 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 	}
 
 	/**
-	 * Získej tag dle jeho jména
+	 * Získej tag dle jeho id
 	 * 
-	 * @param tagName
-	 *            jméno tagu
+	 * @param id
 	 * @return tag
 	 */
-	public ContentTagDTO getContentTagByName(String tagName) {
+	public ContentTagDTO getContentTagById(Long id) {
 
-		ContentTagDTO tag = mapper.mapContentTag(contentTagDAO
-				.findContentTagByName(tagName));
+		ContentTagDTO tag = mapper.mapContentTag(contentTagDAO.findByID(id));
 		contentTagDAO.closeSession();
 
 		return tag;

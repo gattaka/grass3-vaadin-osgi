@@ -16,8 +16,7 @@ public class UsersSettingsTabFactory extends AbstractSettingsTabFactory {
 		super("Uživatelé", "users", "usersSettingsTab");
 	}
 
-	@Override
-	protected boolean isAuthorized() {
+	public boolean isAuthorized() {
 		return coreACL.canShowUserSettings(getUser());
 	}
 

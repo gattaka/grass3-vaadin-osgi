@@ -11,8 +11,7 @@ public class LatexSettingsTabFactory extends AbstractSettingsTabFactory {
 		super("LaTeX", "latex", "latexSettingsTab");
 	}
 
-	@Override
-	protected boolean isAuthorized() {
+	public boolean isAuthorized() {
 		return getUser().getRoles().contains(Role.ADMIN);
 	}
 }

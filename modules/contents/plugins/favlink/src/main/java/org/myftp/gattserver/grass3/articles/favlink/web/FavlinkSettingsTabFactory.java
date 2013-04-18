@@ -11,8 +11,7 @@ public class FavlinkSettingsTabFactory extends AbstractSettingsTabFactory {
 		super("Favlink", "favlink", "favlinkSettingsTab");
 	}
 
-	@Override
-	protected boolean isAuthorized() {
+	public boolean isAuthorized() {
 		return getUser().getRoles().contains(Role.ADMIN);
 	}
 }

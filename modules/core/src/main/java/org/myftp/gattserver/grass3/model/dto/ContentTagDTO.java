@@ -30,6 +30,13 @@ public class ContentTagDTO {
 	 */
 	private Long id;
 
+	public ContentTagDTO() {
+	}
+
+	public ContentTagDTO(String name) {
+		this.name = name;
+	}
+
 	public Long getId() {
 		return id;
 	}

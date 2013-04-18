@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.facades.INodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
+import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
@@ -75,9 +76,10 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		contentLastModificationDateLabel.setContentMode(ContentMode.HTML);
 
 		tagsListLayout.removeAllComponents();
-		for (String contentTag : content.getContentTags()) {
-			Link tagLink = new Link(contentTag, getPageResource(tagPageFactory,
-					contentTag));
+		for (ContentTagDTO contentTag : content.getContentTags()) {
+			Link tagLink = new Link(contentTag.getName(), getPageResource(
+					tagPageFactory, URLIdentifierUtils.createURLIdentifier(
+							contentTag.getId(), contentTag.getName())));
 			tagLink.addStyleName("taglabel");
 			tagsListLayout.addComponent(tagLink);
 		}

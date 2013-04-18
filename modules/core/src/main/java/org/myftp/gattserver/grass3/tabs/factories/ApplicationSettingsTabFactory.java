@@ -16,8 +16,7 @@ public class ApplicationSettingsTabFactory extends AbstractSettingsTabFactory {
 		super("Aplikace", "app", "applicationSettingsTab");
 	}
 
-	@Override
-	protected boolean isAuthorized() {
+	public boolean isAuthorized() {
 		return coreACL.canShowApplicationSettings(getUser());
 	}
 

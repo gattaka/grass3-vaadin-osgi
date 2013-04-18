@@ -1,14 +1,11 @@
 package org.myftp.gattserver.grass3.tabs.factories.template;
 
-import java.util.Set;
-
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.facades.ISecurityFacade;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.pages.template.GrassLayout;
 import org.myftp.gattserver.grass3.security.ICoreACL;
-import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.tabs.template.ISettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.beans.BeansException;
@@ -26,7 +23,7 @@ public abstract class AbstractSettingsTabFactory implements
 
 	@Resource(name = "coreACL")
 	private ICoreACL coreACL;
-	
+
 	@Resource(name = "securityFacade")
 	private ISecurityFacade securityFacade;
 
@@ -70,15 +67,9 @@ public abstract class AbstractSettingsTabFactory implements
 		return tabURL;
 	}
 
-	protected abstract boolean isAuthorized();
-
 	public GrassLayout createPage(GrassRequest request) {
-		return ((ISettingsTab) applicationContext.getBean(
-				isAuthorized() ? beanName : "err403", request)).getContent();
-	}
-
-	public boolean isVisibleForRoles(Set<Role> roles) {
-		return roles.contains(Role.USER);
+		return ((ISettingsTab) applicationContext.getBean(beanName, request))
+				.getContent();
 	}
 
 }

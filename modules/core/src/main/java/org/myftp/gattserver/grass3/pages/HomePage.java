@@ -19,6 +19,7 @@ import org.myftp.gattserver.grass3.pages.template.BasePage;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory.ContentsTable;
 import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.perf4j.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -216,7 +217,10 @@ public class HomePage extends BasePage {
 			int size = sizeTable.get(contentTag.getContentNodesCount());
 			Label tagLabel;
 			tagCloud.addComponent(tagLabel = new Label("<a href='"
-					+ getPageURL(tagPageFactory, contentTag.getName())
+					+ getPageURL(
+							tagPageFactory,
+							URLIdentifierUtils.createURLIdentifier(
+									contentTag.getId(), contentTag.getName()))
 					+ "' style='font-size:" + size + "pt'>"
 					+ contentTag.getName() + "</a>", ContentMode.HTML));
 			tagLabel.addStyleName("taglabel");

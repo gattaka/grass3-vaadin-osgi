@@ -8,6 +8,7 @@ import org.myftp.gattserver.grass3.pages.template.BasePage;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory.ContentsTable;
 import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -43,8 +44,18 @@ public class TagPage extends BasePage {
 		ContentsTable tagContentsTable = contentsTableFactory
 				.createContentsTable();
 
-		tag = contentTagFacade.getContentTagByName(getRequest().getAnalyzer()
-				.getPathToken(1));
+		String tagName = getRequest().getAnalyzer().getPathToken(1);
+		if (tagName == null)
+			showError404();
+
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
+				.parseURLIdentifier(tagName);
+		if (identifier == null) {
+			showError404();
+			return;
+		}
+
+		tag = contentTagFacade.getContentTagById(identifier.getId());
 
 		if (tag == null) {
 			showError404();

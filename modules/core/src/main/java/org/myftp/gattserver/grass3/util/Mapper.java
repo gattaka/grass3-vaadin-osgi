@@ -141,7 +141,7 @@ public class Mapper {
 
 		return contentNodeDTO;
 	}
-	
+
 	/**
 	 * Převede {@link ContentNode} na {@link ContentNodeDTO}, používá se pro
 	 * detail obsahu, kde je potřeba rekurzivní mapování parentů do breadcrumb
@@ -163,13 +163,8 @@ public class Mapper {
 		contentNodeDTO.setLastModificationDate(e.getLastModificationDate());
 		contentNodeDTO.setName(e.getName());
 		contentNodeDTO.setPublicated(e.getPublicated());
-		
-		Set<String> tags = new HashSet<String>();
-		for (ContentTag contentTag : e.getContentTags()) {
-			tags.add(contentTag.getName());
-		}
-		contentNodeDTO.setContentTags(tags);
-		
+		contentNodeDTO.setContentTags(mapContentTagCollectionForOverview(e
+				.getContentTags()));
 		contentNodeDTO.setParent(mapNodeForBreadcrumb(e.getParent()));
 
 		return contentNodeDTO;
@@ -180,12 +175,8 @@ public class Mapper {
 			return null;
 
 		ContentNodeDTO contentNodeDTO = mapContentNodeForRecentsOverview(e);
-
-		Set<String> tags = new HashSet<String>();
-		for (ContentTag contentTag : e.getContentTags()) {
-			tags.add(contentTag.getName());
-		}
-		contentNodeDTO.setContentTags(tags);
+		contentNodeDTO.setContentTags(mapContentTagCollectionForOverview(e
+				.getContentTags()));
 
 		return contentNodeDTO;
 	}
@@ -277,9 +268,9 @@ public class Mapper {
 	 * @param contentTags
 	 * @return
 	 */
-	public List<ContentTagDTO> mapContentTagCollectionForOverview(
+	public Set<ContentTagDTO> mapContentTagCollectionForOverview(
 			Collection<ContentTag> contentTags) {
-		List<ContentTagDTO> contentTagDTOs = new ArrayList<ContentTagDTO>();
+		Set<ContentTagDTO> contentTagDTOs = new HashSet<ContentTagDTO>();
 		for (ContentTag contentTag : contentTags) {
 			contentTagDTOs.add(mapContentTagForOverview(contentTag));
 		}

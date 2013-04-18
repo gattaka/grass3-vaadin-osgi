@@ -49,7 +49,7 @@ public class ContentNodeDTO {
 	/**
 	 * Tagy
 	 */
-	private Set<String> contentTags;
+	private Set<ContentTagDTO> contentTags;
 
 	/**
 	 * Kdo ho vytvořil
@@ -133,11 +133,11 @@ public class ContentNodeDTO {
 		this.author = author;
 	}
 
-	public Set<String> getContentTags() {
+	public Set<ContentTagDTO> getContentTags() {
 		return contentTags;
 	}
 
-	public void setContentTags(Set<String> contentTags) {
+	public void setContentTags(Set<ContentTagDTO> contentTags) {
 		this.contentTags = contentTags;
 	}
 

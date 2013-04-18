@@ -10,5 +10,7 @@ public interface ISettingsTabFactory {
 	public String getSettingsURL();
 
 	public GrassLayout createPage(GrassRequest request);
+	
+	public boolean isAuthorized();
 
 }

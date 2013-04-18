@@ -2,7 +2,6 @@ package org.myftp.gattserver.grass3.facades;
 
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,6 +9,7 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.myftp.gattserver.grass3.facades.impl.ContentTagFacadeImpl;
+import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.test.BaseSpringTest;
 
 public class ContentTagFacadeTest extends BaseSpringTest {
@@ -91,8 +91,12 @@ public class ContentTagFacadeTest extends BaseSpringTest {
 	public void serializeTags() {
 
 		String[] tags = { "tag1", "tag2", "last tag" };
-		String tagNames = contentTagFacade.serializeTags(new HashSet<String>(
-				Arrays.asList(tags)));
+		Set<ContentTagDTO> tagSet = new HashSet<ContentTagDTO>();
+		for (String tag : tags) {
+			tagSet.add(new ContentTagDTO(tag));
+		}
+		String tagNames = contentTagFacade
+				.serializeTags(new HashSet<ContentTagDTO>(tagSet));
 		Set<String> tagsBack = parseTags(tagNames);
 		for (String tag : tags) {
 			assertTrue(tagsBack.contains(tag));

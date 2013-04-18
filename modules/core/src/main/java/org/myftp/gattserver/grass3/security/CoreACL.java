@@ -59,13 +59,12 @@ public final class CoreACL implements ICoreACL {
 	 */
 	public boolean canShowContent(ContentNodeDTO content, UserInfoDTO user) {
 
-		if (user == null) {
+		// pokud je obsah publikován, můžeš zobrazit
+		if (content.isPublicated())
+			return true;
 
-			// pokud je obsah publikován, můžeš zobrazit
-			if (content.isPublicated())
-				return true;
-
-		} else {
+		// pokud není 
+		if (user != null) {
 
 			// pokud je admin, může zobrazit kterýkoliv obsah
 			if (user.getRoles().contains(Role.ADMIN))

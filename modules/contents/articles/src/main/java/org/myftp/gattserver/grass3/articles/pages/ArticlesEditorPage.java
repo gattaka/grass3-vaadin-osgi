@@ -131,7 +131,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			showError404();
 		}
 
-		if ((article != null && article.getContentNode().getAuthor()
+		if ((article == null || article.getContentNode().getAuthor()
 				.equals(getGrassUI().getUser()))
 				|| getGrassUI().getUser().getRoles().contains(Role.ADMIN)) {
 			super.init();

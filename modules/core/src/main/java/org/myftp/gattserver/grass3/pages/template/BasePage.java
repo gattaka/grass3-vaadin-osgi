@@ -201,7 +201,7 @@ public abstract class BasePage extends AbstractGrassPage {
 
 			// odhlásit
 			Link logoutLink = new Link("Odhlásit", new ExternalResource(
-					"j_spring_security_logout"));
+					getPageURL("j_spring_security_logout")));
 			logoutLink.setStyleName(BaseTheme.BUTTON_LINK);
 			logoutLink.addStyleName("item");
 			userMenuLayout.addComponent(logoutLink);

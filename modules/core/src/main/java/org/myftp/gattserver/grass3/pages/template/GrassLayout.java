@@ -29,21 +29,21 @@ public abstract class GrassLayout extends CustomLayout {
 	}
 
 	/**
-	 * Získá URL stránky
+	 * Získá URL stránky. Kořen webu + suffix dle pageFactory
 	 */
 	public String getPageURL(IPageFactory pageFactory) {
 		return request.getContextRoot() + "/" + pageFactory.getPageName();
 	}
 
 	/**
-	 * Získá URL stránky
+	 * Získá URL stránky. Kořen webu + suffix
 	 */
 	public String getPageURL(String suffix) {
 		return request.getContextRoot() + "/" + suffix;
 	}
 
 	/**
-	 * Získá URL stránky + relativní URL
+	 * Získá URL stránky. Kořen webu + suffix dle pageFactory + relativní URL
 	 */
 	public String getPageURL(IPageFactory pageFactory, String... relativeURLs) {
 		if (relativeURLs.length == 1) {

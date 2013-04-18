@@ -43,7 +43,7 @@ public class ContentTag {
 	public boolean equals(Object obj) {
 		if (!(obj instanceof ContentTag))
 			return false;
-		return ((ContentTag) obj).getName() == getName();
+		return ((ContentTag) obj).getName().equals(getName());
 	}
 
 	@Override

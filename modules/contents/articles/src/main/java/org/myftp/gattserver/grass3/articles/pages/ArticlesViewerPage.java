@@ -53,6 +53,9 @@ public class ArticlesViewerPage extends ContentViewerPage {
 	@Resource(name = "articlesViewerPageFactory")
 	private IPageFactory articlesViewerPageFactory;
 
+	@Resource(name = "categoryPageFactory")
+	private IPageFactory categoryPageFactory;
+
 	@Resource(name = "articlesEditorPageFactory")
 	private IPageFactory articlesEditorPageFactory;
 
@@ -192,7 +195,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 							NodeDTO node = article.getContentNode().getParent();
 
 							final String category = getPageURL(
-									articlesViewerPageFactory,
+									categoryPageFactory,
 									URLIdentifierUtils.createURLIdentifier(
 											node.getId(), node.getName()));
 

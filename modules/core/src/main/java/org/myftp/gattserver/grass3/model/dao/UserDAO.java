@@ -5,7 +5,6 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.SimpleExpression;
 import org.myftp.gattserver.grass3.model.AbstractDAO;
 import org.myftp.gattserver.grass3.model.domain.ContentNode;
 import org.myftp.gattserver.grass3.model.domain.User;
@@ -30,16 +29,12 @@ public class UserDAO extends AbstractDAO<User> {
 
 	@SuppressWarnings("unchecked")
 	private List<User> findAndCast(Criteria criteria) {
-		return (List<User>) criteria.list();
+		return (List<User>) criteria.setResultTransformer(
+				Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 
 	/**
-	 * Získá objekt dle jeho zadaných pravidel
-	 * 
-	 * @param expression
-	 *            {@link SimpleExpression} výraz dle kterého se bude hledat
-	 * 
-	 * @return DTO hledaného objektu
+	 * Má daný uživatel obsah v oblíbených ?
 	 */
 	public boolean hasContentInFavourites(Long nodeId, Long userId) {
 		Transaction tx = null;
@@ -63,6 +58,32 @@ public class UserDAO extends AbstractDAO<User> {
 			return false;
 		}
 		return list.size() != 0;
+	}
+
+	/**
+	 * Má někdo daný obsah v oblíbených ? Pokud ano, vrať tyto uživatele.
+	 */
+	public List<User> findByFavouriteContent(Long nodeId) {
+		Transaction tx = null;
+		List<User> list = null;
+		openSession();
+		try {
+			tx = session.beginTransaction();
+			Criteria criteria = session.createCriteria(entityClass);
+			criteria.createAlias("favourites", "content");
+			criteria.add(Restrictions.eq("content.id", nodeId));
+			list = findAndCast(criteria);
+
+			tx.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (tx != null) {
+				tx.rollback();
+			}
+			closeSession();
+			return null;
+		}
+		return list;
 	}
 
 	public boolean addContentToFavourites(Long nodeId, Long userId) {

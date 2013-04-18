@@ -262,6 +262,17 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 */
 	public boolean delete(ContentNodeDTO contentNodeDTO) {
 
+		// vymaž z oblíbených
+		List<User> users = userDAO.findByFavouriteContent(contentNodeDTO
+				.getId());
+		if (users == null)
+			return false;
+		for (User user : users) {
+			if (userDAO.removeContentFromFavourites(contentNodeDTO.getId(),
+					user.getId()) == false)
+				return false;
+		}
+
 		// vymaž tagy
 		if (contentTagFacade.saveTags("", contentNodeDTO) == false)
 			return false;
@@ -270,5 +281,4 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		return contentNodeDAO.delete(contentNodeDTO.getId());
 
 	}
-
 }

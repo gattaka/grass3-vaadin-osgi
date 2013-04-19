@@ -98,7 +98,7 @@ public abstract class GrassLayout extends CustomLayout {
 	}
 
 	/**
-	 * Notifikace pomocí {@link InfoNotification}
+	 * Notifikace pomocí {@link InfoSubwindow}
 	 */
 	public void showInfo(String caption) {
 		InfoSubwindow infoSubwindow = new InfoSubwindow(caption);
@@ -106,7 +106,7 @@ public abstract class GrassLayout extends CustomLayout {
 	}
 
 	/**
-	 * Notifikace varování pomocí {@link WarningNotification}
+	 * Notifikace varování pomocí {@link WarnSubwindow}
 	 */
 	public void showWarning(String caption) {
 		WarnSubwindow warnSubwindow = new WarnSubwindow(caption);
@@ -114,7 +114,7 @@ public abstract class GrassLayout extends CustomLayout {
 	}
 
 	/**
-	 * Notifikace chyby pomocí {@link ErrorNotification}
+	 * Notifikace chyby pomocí {@link ErrorSubwindow}
 	 */
 	public void showError(String caption) {
 		ErrorSubwindow errorSubwindow = new ErrorSubwindow(caption);

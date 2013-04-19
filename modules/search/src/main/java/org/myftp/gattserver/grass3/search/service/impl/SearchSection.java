@@ -16,6 +16,7 @@ public class SearchSection implements ISectionService {
 	private IPageFactory searchPageFactory;
 
 	public boolean isVisibleForRoles(Set<Role> roles) {
+		// odkaz na sekci vyhledávání je viditelný všem rolím
 		return true;
 	}
 

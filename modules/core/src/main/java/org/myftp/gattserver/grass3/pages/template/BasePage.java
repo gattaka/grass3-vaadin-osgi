@@ -151,6 +151,7 @@ public abstract class BasePage extends AbstractGrassPage {
 							subwindow.center();
 							getUI().addWindow(subwindow);
 							subwindow.setWidth("220px");
+							subwindow.setHeight("260px");
 							GridLayout gridLayout = new GridLayout(2, 4);
 							gridLayout.setMargin(true);
 							gridLayout.setSpacing(true);

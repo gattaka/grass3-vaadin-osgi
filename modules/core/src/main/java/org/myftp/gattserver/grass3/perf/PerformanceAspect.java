@@ -25,11 +25,11 @@ public class PerformanceAspect {
 			Object result = joinPoint.proceed();
 			return result;
 		} catch (IllegalArgumentException e) {
-			System.out.println(methodName + " throw an exception");
+			logger.info(methodName + " throw an exception");
 			throw e;
 		} finally {
 			String log = stopWatch.stop();
-			System.out.println(log);
+//			System.out.println(log);
 			logger.info(log);
 		}
 	}

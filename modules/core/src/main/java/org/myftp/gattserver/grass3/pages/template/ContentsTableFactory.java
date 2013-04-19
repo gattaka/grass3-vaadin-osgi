@@ -97,9 +97,9 @@ public class ContentsTableFactory {
 			}
 			container.addContainerProperty(ColumnId.AUTOR, String.class, "");
 			container.addContainerProperty(ColumnId.DATUM_VYTVOŘENÍ,
-					ComparableStringDate.class, "");
+					ComparableStringDate.class, new ComparableStringDate(null));
 			container.addContainerProperty(ColumnId.DATUM_ÚPRAVY,
-					ComparableStringDate.class, "");
+					ComparableStringDate.class, new ComparableStringDate(null));
 			setContainerDataSource(container);
 			setColumnWidth(ColumnId.IKONA, 16);
 			setColumnHeader(ColumnId.IKONA, "");

@@ -135,10 +135,17 @@ public class FMPage extends OneColumnPage {
 	@Override
 	protected void init() {
 
+		StringBuilder builder = new StringBuilder();
+		String pathPart;
+		while ((pathPart = getRequest().getAnalyzer().getCurrentPathToken()) != null) {
+			getRequest().getAnalyzer().shift();
+			builder.append(pathPart);
+			builder.append("/");
+		}
+
 		// kontrolu validnosti adresáře je potřeba provést už v init
 		try {
-			explorer = new FMExplorer(getRequest().getAnalyzer()
-					.getCurrentPathToken());
+			explorer = new FMExplorer(builder.toString());
 		} catch (IOException e) {
 			showError500();
 			return;
@@ -775,7 +782,7 @@ public class FMPage extends OneColumnPage {
 		container.addContainerProperty(ColumnId.NÁZEV, String.class, null);
 		container.addContainerProperty(ColumnId.VELIKOST, String.class, "");
 		container.addContainerProperty(ColumnId.DATUM,
-				ComparableStringDate.class, "");
+				ComparableStringDate.class, new ComparableStringDate(null));
 		container.addContainerProperty(ColumnId.OPRÁVNĚNÍ, String.class, "");
 		filestable.setContainerDataSource(container);
 		filestable.setColumnWidth(ColumnId.IKONA, 16);
@@ -812,7 +819,6 @@ public class FMPage extends OneColumnPage {
 			icon.setSource(new ThemeResource("img/tags/folder_16.png"));
 			item.getItemProperty(ColumnId.IKONA).setValue(icon);
 			item.getItemProperty(ColumnId.NÁZEV).setValue("..");
-
 		}
 
 		// Adresáře

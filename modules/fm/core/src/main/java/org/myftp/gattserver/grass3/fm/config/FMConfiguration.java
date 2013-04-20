@@ -37,11 +37,6 @@ public class FMConfiguration {
 	 */
 	private Set<Role> roles = new HashSet<Role>();
 
-	/**
-	 * Jaké znaky mám zakázané v nových adresářích ?
-	 */
-	private String invalidDirCharacters = "?*~^";
-
 	private String tmpDir = "tmpUpload";
 
 	public FMConfiguration() {
@@ -82,14 +77,6 @@ public class FMConfiguration {
 
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
-	}
-
-	public String getInvalidDirCharacters() {
-		return invalidDirCharacters;
-	}
-
-	public void setInvalidDirCharacters(String invalidDirCharacters) {
-		this.invalidDirCharacters = invalidDirCharacters;
 	}
 
 	public String getTmpDir() {

@@ -28,12 +28,11 @@ import org.vaadin.easyuploads.MultiFileUpload;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Validator;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.Action;
 import com.vaadin.event.ItemClickEvent;
+import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
-import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -181,19 +180,6 @@ public class FMPage extends OneColumnPage {
 		}
 
 		super.init();
-	}
-
-	private class DirNameValidator implements Validator {
-
-		private static final long serialVersionUID = -1239174257195947577L;
-
-		public void validate(Object value) throws InvalidValueException {
-			if (explorer.validateNewDirName(value.toString()) == false)
-				throw new InvalidValueException(
-						"Název adresáře nesmí obsahovat znaky \""
-								+ explorer.getInvalidNewDirCharacters() + "\"");
-		}
-
 	}
 
 	private void initBreadcrumb(VerticalLayout layout) {
@@ -439,7 +425,6 @@ public class FMPage extends OneColumnPage {
 
 		final TextField newNameField = new TextField("Nový název:");
 		newNameField.setValue(file.getName());
-		newNameField.addValidator(new DirNameValidator());
 		subWindowlayout.addComponent(newNameField, 0, 0, 1, 0);
 
 		Button confirm = new Button("Přejmenovat", new Button.ClickListener() {
@@ -634,7 +619,22 @@ public class FMPage extends OneColumnPage {
 	}
 
 	private void handleDownloadFile(final File file) {
-		Page.getCurrent().open(new FileResource(file), file.getName(), false);
+		GrassSubWindow dlWindow = new GrassSubWindow("Stáhnout "
+				+ file.getName()) {
+
+			private static final long serialVersionUID = 926172618599746150L;
+
+			{
+				Button button = new Button("Stáhnout");
+				this.addComponent(button);
+				FileDownloader downloader = new FileDownloader(
+						new FileResource(file));
+				downloader.extend(button);
+			}
+
+		};
+		getGrassUI().addWindow(dlWindow);
+		// Page.getCurrent().open(, file.getName(), false);
 	}
 
 	@Override
@@ -683,7 +683,6 @@ public class FMPage extends OneColumnPage {
 
 		final TextField newDirName = new TextField();
 		newDirName.setWidth("200px");
-		newDirName.addValidator(new DirNameValidator());
 		panelLayout.addComponent(newDirName);
 
 		Button createButton = new Button("Vytvořit",

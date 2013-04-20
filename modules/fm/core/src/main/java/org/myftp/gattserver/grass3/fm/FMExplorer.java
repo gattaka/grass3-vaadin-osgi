@@ -15,7 +15,7 @@ public class FMExplorer {
 	// *URL - cesta k souboru/adresáři; nezávislá na platformě
 	// *Path - cesta k souboru/adresáři; závislá na platformě (viz. separator)
 	// *File - objekt java.io.File obsahující cestu k souboru/adresáři
-
+	
 	/**
 	 * Absolutní cesta od systémového kořene ke kořeni FM, jako {@link File}
 	 * objekt
@@ -386,26 +386,6 @@ public class FMExplorer {
 			e.printStackTrace();
 			return FileProcessState.SYSTEM_ERROR;
 		}
-	}
-
-	/**
-	 * Zvaliduje název nového adresáře
-	 * 
-	 * @param name
-	 *            jméno
-	 * @return true pokud je validní jinak false
-	 */
-	public boolean validateNewDirName(String name) {
-		String invalidChars = configuration.getInvalidDirCharacters();
-		for (int i = 0; i < invalidChars.length(); i++)
-			for (int j = 0; j < name.length(); j++)
-				if (name.charAt(j) == invalidChars.charAt(i))
-					return false;
-		return true;
-	}
-
-	public String getInvalidNewDirCharacters() {
-		return configuration.getInvalidDirCharacters();
 	}
 
 	/**

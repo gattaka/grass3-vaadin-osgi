@@ -8,6 +8,8 @@ import java.io.InputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import sandbox.EditorPage.EditorPageFactory;
 import sandbox.HomePage.HomePageFactory;
@@ -30,6 +32,8 @@ import com.vaadin.ui.UI;
  */
 @Title("Gattserver")
 @Theme("grass")
+@Scope("prototype")
+@Component("grassUI")
 public class MyVaadinUI extends UI {
 
 	private static final long serialVersionUID = -7296936167498820319L;

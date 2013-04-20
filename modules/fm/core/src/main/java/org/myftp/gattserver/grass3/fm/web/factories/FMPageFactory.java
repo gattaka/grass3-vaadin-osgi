@@ -13,11 +13,11 @@ public class FMPageFactory extends AbstractPageFactory {
 
 	@Override
 	protected boolean isAuthorized() {
-//		if (getUser() == null)
-//			return false;
-//		return getUser().getRoles().contains(Role.ADMIN)
-//				|| getUser().getRoles().contains(Role.FRIEND);
-		return true;
+		if (getUser() == null)
+			return false;
+		return getUser().getRoles().contains(Role.ADMIN)
+				|| getUser().getRoles().contains(Role.FRIEND);
+//		return true;
 	}
 
 }

@@ -7,7 +7,7 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -36,8 +36,8 @@ public class HWItem {
 	/**
 	 * Typ - klasifikace hw
 	 */
-	@ManyToOne
-	private HWItemType type;
+	@ManyToMany
+	private Set<HWItemType> types;
 
 	/**
 	 * Datum zakoupení (získání)
@@ -87,12 +87,12 @@ public class HWItem {
 		this.name = name;
 	}
 
-	public HWItemType getType() {
-		return type;
+	public Set<HWItemType> getTypes() {
+		return types;
 	}
 
-	public void setType(HWItemType type) {
-		this.type = type;
+	public void setTypes(Set<HWItemType> types) {
+		this.types = types;
 	}
 
 	public Date getPurchaseDate() {

@@ -8,7 +8,7 @@ import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
+import com.vaadin.ui.TabSheet;
 
 @org.springframework.stereotype.Component("hwPage")
 @Scope("prototype")
@@ -31,7 +31,15 @@ public class HWPage extends OneColumnPage {
 
 	@Override
 	protected Component createContent() {
-		return new Label("funguje");
+		TabSheet tabSheet = new TabSheet();
+
+		// String[] labels = {"Přehled","Typy zařízení", "Zařízení",
+		// "Servisní historie"};
+
+		tabSheet.addTab(new OverviewTab(hwFacade), "Přehled");
+		tabSheet.addTab(new HWTypesTab(), "Typy zařízení");
+
+		return tabSheet;
 	}
 
 }

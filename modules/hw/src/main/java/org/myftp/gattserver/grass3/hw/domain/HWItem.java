@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -25,7 +26,7 @@ public class HWItem {
 	@Id
 	@GeneratedValue(generator = "increment")
 	@GenericGenerator(name = "increment", strategy = "increment")
-	private long id;
+	private Long id;
 
 	/**
 	 * Název
@@ -35,6 +36,7 @@ public class HWItem {
 	/**
 	 * Typ - klasifikace hw
 	 */
+	@ManyToOne
 	private HWItemType type;
 
 	/**
@@ -50,7 +52,7 @@ public class HWItem {
 	/**
 	 * Cena
 	 */
-	private int price;
+	private Integer price;
 
 	/**
 	 * Stav hw - funkční, rozbitý, poruchový, bližší popis
@@ -69,11 +71,11 @@ public class HWItem {
 	@OneToMany
 	private Set<HWItem> parts;
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -109,11 +111,11 @@ public class HWItem {
 		this.destructionDate = destructionDate;
 	}
 
-	public int getPrice() {
+	public Integer getPrice() {
 		return price;
 	}
 
-	public void setPrice(int price) {
+	public void setPrice(Integer price) {
 		this.price = price;
 	}
 

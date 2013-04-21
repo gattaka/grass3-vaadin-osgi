@@ -21,7 +21,7 @@ public class ServiceNote {
 	@Id
 	@GeneratedValue(generator = "increment")
 	@GenericGenerator(name = "increment", strategy = "increment")
-	private long id;
+	private Long id;
 
 	/**
 	 * Popis změny
@@ -29,11 +29,11 @@ public class ServiceNote {
 	@Column(columnDefinition = "TEXT")
 	private String description;
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

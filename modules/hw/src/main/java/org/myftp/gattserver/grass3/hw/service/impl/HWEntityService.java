@@ -25,9 +25,9 @@ public class HWEntityService implements IEntityService {
 	List<Class<?>> domainClasses = new ArrayList<Class<?>>();
 
 	public HWEntityService() {
-		domainClasses.add(HWItem.class);
 		domainClasses.add(HWItemType.class);
 		domainClasses.add(ServiceNote.class);
+		domainClasses.add(HWItem.class);
 
 		// nakonec zamkni
 		domainClasses = Collections.unmodifiableList(domainClasses);

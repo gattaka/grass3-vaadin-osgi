@@ -26,7 +26,7 @@ public class HWSection implements ISectionService {
 	}
 
 	public String getSectionCaption() {
-		return "HW evidence";
+		return "Evidence HW";
 	}
 
 }

@@ -26,9 +26,14 @@ import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.springframework.context.annotation.Scope;
 
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Button.ClickEvent;
 
 @org.springframework.stereotype.Component("categoryPage")
 @Scope("prototype")
@@ -56,6 +61,9 @@ public class CategoryPage extends OneColumnPage {
 
 	@Resource(name = "nodesTableFactory")
 	private NodesTableFactory nodesTableFactory;
+
+	// Přehled podkategorií
+	private NodesTable subNodesTable;
 
 	public CategoryPage(GrassRequest request) {
 		super(request);
@@ -91,6 +99,11 @@ public class CategoryPage extends OneColumnPage {
 		// Podkategorie
 		createSubnodesTable(layout, node);
 
+		// Vytvořit novou kategorii
+		if (coreACL.canCreateCategory(getUser())) {
+			createNewNodePanel(layout, node);
+		}
+
 		// Obsahy
 		createContent(layout, node);
 
@@ -98,6 +111,51 @@ public class CategoryPage extends OneColumnPage {
 		createNewContentMenu(layout, node);
 
 		return layout;
+	}
+
+	private void createNewNodePanel(VerticalLayout layout, final NodeDTO node) {
+
+		Panel panel = new Panel("Vytvořit novou kategorii");
+		layout.addComponent(panel);
+
+		HorizontalLayout panelBackgroudLayout = new HorizontalLayout();
+		panelBackgroudLayout.setSizeFull();
+		panel.setContent(panelBackgroudLayout);
+
+		HorizontalLayout panelLayout = new HorizontalLayout();
+		panelLayout.setSpacing(true);
+		panelLayout.setMargin(true);
+		panelBackgroudLayout.addComponent(panelLayout);
+
+		final TextField newNodeName = new TextField();
+		// newNodeName.setWidth("200px");
+		newNodeName.setRequired(true);
+		newNodeName.setRequiredError("Název kategorie nesmí být prázdný");
+		panelLayout.addComponent(newNodeName);
+
+		Button createButton = new Button("Vytvořit",
+				new Button.ClickListener() {
+
+					private static final long serialVersionUID = -4315617904120991885L;
+
+					public void buttonClick(ClickEvent event) {
+						if (newNodeName.isValid() == false)
+							return;
+
+						if (nodeFacade.createNewNode(node, newNodeName
+								.getValue().toString())) {
+							showInfo("Nový kategorie byla úspěšně vytvořena.");
+							// refresh
+							populateSubnodesTable(node);
+							// clean
+							newNodeName.setValue("");
+						} else {
+							showWarning("Nezdařilo se vložit novou kategorii.");
+						}
+					}
+				});
+		panelLayout.addComponent(createButton);
+
 	}
 
 	private void createBreadcrumb(VerticalLayout layout, NodeDTO node) {
@@ -134,7 +192,7 @@ public class CategoryPage extends OneColumnPage {
 	private void createSubnodesTable(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout subNodesLayout = new VerticalLayout();
-		NodesTable subNodesTable = nodesTableFactory.createNodesTable();
+		subNodesTable = nodesTableFactory.createNodesTable();
 
 		subNodesLayout.addComponent(new Label("<h2>Podkategorie</h2>",
 				ContentMode.HTML));
@@ -143,9 +201,21 @@ public class CategoryPage extends OneColumnPage {
 		subNodesTable.setWidth("100%");
 
 		List<NodeDTO> nodes = node.getSubNodes();
-		if (nodes == null)
+		if (nodes == null) {
 			showError500();
+			return;
+		}
 
+		subNodesTable.populateTable(nodes, this);
+	}
+
+	private void populateSubnodesTable(NodeDTO node) {
+
+		List<NodeDTO> nodes = nodeFacade.getNodesByParentNode(node);
+		if (nodes == null) {
+			showError500();
+			return;
+		}
 		subNodesTable.populateTable(nodes, this);
 	}
 

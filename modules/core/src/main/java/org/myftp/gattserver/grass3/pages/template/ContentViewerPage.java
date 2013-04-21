@@ -17,10 +17,13 @@ import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 
+import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
+import com.vaadin.ui.Embedded;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
@@ -99,6 +102,18 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		layout.addComponent(contentAuthorNameLabel, "author");
 		layout.addComponent(contentCreationDateNameLabel, "createDate");
 		layout.addComponent(contentLastModificationDateLabel, "modifyDate");
+
+		if (content.isPublicated() == false) {
+			HorizontalLayout publicatedLayout = new HorizontalLayout();
+			publicatedLayout.setSpacing(true);
+			publicatedLayout.setMargin(false);
+			publicatedLayout.addStyleName("not-publicated-info");
+			publicatedLayout.addComponent(new Embedded(null, new ThemeResource(
+					"img/tags/info_16.png")));
+			publicatedLayout.addComponent(new Label(
+					"<strong>Nepublikováno</strong>", ContentMode.HTML));
+			layout.addComponent(publicatedLayout, "pubinfo");
+		}
 
 		// tagy
 		layout.addComponent(tagsListLayout, "tags");

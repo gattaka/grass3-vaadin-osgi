@@ -329,6 +329,17 @@ a img.icon {
 	margin-right: 5px;
 }
 
+.v-horizontallayout.v-layout.v-horizontal.v-widget.not-publicated-info.v-horizontallayout-not-publicated-info
+	{
+	margin-bottom: 0;
+	margin-top: 4px;
+	border: 1px rgb(112, 175, 233) solid;
+	padding: 12px 5px 0 5px;
+	width: 100%;
+	text-align: center;
+	background-color: rgb(213, 235, 255);
+}
+
 /* == FOOTER PART =========================================================== */
 #bottomshadow,#bottom {
 	overflow: hidden;

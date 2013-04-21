@@ -81,9 +81,9 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		}
 
 		if (article.getContentNode().isPublicated()
-				|| article.getContentNode().getAuthor()
-						.equals(getGrassUI().getUser())
-				|| getGrassUI().getUser().getRoles().contains(Role.ADMIN)) {
+				|| (getUser() != null && (article.getContentNode().getAuthor()
+						.equals(getUser()) || getUser().getRoles().contains(
+						Role.ADMIN)))) {
 		} else {
 			showError403();
 			return;

@@ -406,6 +406,9 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 			public void buttonClick(ClickEvent event) {
 
+				if (validateForm() == false)
+					return;
+
 				// pokud se bude měnit
 				boolean oldMode = editMode;
 
@@ -432,6 +435,9 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			private static final long serialVersionUID = 607422393151282918L;
 
 			public void buttonClick(ClickEvent event) {
+
+				if (validateForm() == false)
+					return;
 
 				if (saveOrUpdateArticle()) {
 					InfoSubwindow infoSubwindow = new InfoSubwindow(
@@ -489,6 +495,17 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		buttonLayout.addComponent(cancelButton);
 
 		return editorTextLayout;
+	}
+
+	private boolean validateForm() {
+
+		String name = articleNameField.getValue();
+
+		if (name == null || name.isEmpty()) {
+			showWarning("Název článku nemůže být prázdný");
+		}
+
+		return false;
 	}
 
 	private boolean saveOrUpdateArticle() {

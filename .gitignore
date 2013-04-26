@@ -2,3 +2,4 @@
 /.settings
 /.project
 /trace.db
+/modules/core/perfStats.log

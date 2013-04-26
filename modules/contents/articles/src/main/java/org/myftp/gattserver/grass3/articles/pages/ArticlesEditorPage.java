@@ -406,7 +406,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 			public void buttonClick(ClickEvent event) {
 
-				if (validateForm() == false)
+				if (isFormValid() == false)
 					return;
 
 				// pokud se bude měnit
@@ -436,7 +436,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 			public void buttonClick(ClickEvent event) {
 
-				if (validateForm() == false)
+				if (isFormValid() == false)
 					return;
 
 				if (saveOrUpdateArticle()) {
@@ -497,15 +497,16 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		return editorTextLayout;
 	}
 
-	private boolean validateForm() {
+	private boolean isFormValid() {
 
 		String name = articleNameField.getValue();
 
 		if (name == null || name.isEmpty()) {
 			showWarning("Název článku nemůže být prázdný");
+			return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	private boolean saveOrUpdateArticle() {

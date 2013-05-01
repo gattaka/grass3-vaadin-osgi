@@ -15,7 +15,8 @@ import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 
-public abstract class AbstractGrassPage extends GrassLayout implements IGrassPage {
+public abstract class AbstractGrassPage extends GrassLayout implements
+		IGrassPage {
 
 	private static final long serialVersionUID = 604170960797872356L;
 
@@ -53,6 +54,7 @@ public abstract class AbstractGrassPage extends GrassLayout implements IGrassPag
 
 		// footer
 		addComponent(new Label("GRASS3"), "about");
+		
 	}
 
 	/**
@@ -115,7 +117,7 @@ public abstract class AbstractGrassPage extends GrassLayout implements IGrassPag
 	 * Získá obsah
 	 */
 	protected abstract void createContent(CustomLayout layout);
-	
+
 	public GrassLayout getContent() {
 		return this;
 	}

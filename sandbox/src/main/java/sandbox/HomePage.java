@@ -1,20 +1,19 @@
 package sandbox;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
 import sandbox.ViewPage.ViewPageFactory;
 import sandbox.interfaces.IPageFactory;
 import sandbox.util.GrassRequest;
 
-import com.vaadin.data.util.ObjectProperty;
-import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomLayout;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.LoginForm;
-import com.vaadin.ui.LoginForm.LoginEvent;
-import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.CustomLayout;
+import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
@@ -65,6 +64,42 @@ public class HomePage extends BasePage {
 
 		verticalLayout.addComponent(button);
 		verticalLayout.addComponent(field);
+
+		JQueryAccordion accordion;
+		try {
+			accordion = new JQueryAccordion("Tlačítka 1", "Tlačítka 2",
+					"Tlačítka 3");
+			verticalLayout.addComponent(accordion);
+
+			CssLayout buttonsLayout0 = new CssLayout();
+			buttonsLayout0.addComponent(new Button("Btn1"));
+			buttonsLayout0.addComponent(new Button("Tlačítko 2"));
+			buttonsLayout0.addComponent(new Button("Něco 3"));
+			buttonsLayout0.addComponent(new Button("Btn 4"));
+			accordion.setElement(buttonsLayout0, 0);
+
+			CssLayout buttonsLayout1 = new CssLayout();
+			buttonsLayout1.addComponent(new Button("Btn1"));
+			buttonsLayout1.addComponent(new Button("Tlačítko 2"));
+			buttonsLayout1.addComponent(new Button("Tlačítko 2"));
+			buttonsLayout1.addComponent(new Button("Něco 3"));
+			buttonsLayout1.addComponent(new Button("Tlačítko 2"));
+			buttonsLayout1.addComponent(new Button("Btn 4"));
+			accordion.setElement(buttonsLayout1, 1);
+
+			CssLayout buttonsLayout2 = new CssLayout();
+			buttonsLayout2.addComponent(new Button("Btn1"));
+			buttonsLayout2.addComponent(new Button("Btn 4"));
+			buttonsLayout2.addComponent(new Button("Btn11"));
+			buttonsLayout2.addComponent(new Button("Btn15dX"));
+			accordion.setElement(buttonsLayout2, 2);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		JavaScript
+				.eval("$( \"#accordion\" ).accordion({ event: \"mouseover\" });");
 
 		contentLayout.addComponent(verticalLayout, "content");
 	}

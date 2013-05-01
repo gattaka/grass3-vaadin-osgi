@@ -12,7 +12,7 @@ import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractParserPlug
  */
 public class UnderlineFactory extends StyleFactory {
 
-	public final static String TAG = "U";
+	public final static String TAG = "UND";
 
 	public UnderlineFactory() {
 		super(TAG);

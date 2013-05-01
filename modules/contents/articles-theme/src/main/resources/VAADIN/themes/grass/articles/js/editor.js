@@ -13,7 +13,7 @@ function insert(prefix, suffix) {
 		if (selection) {
 
 			// MSIE
-			if ($.browser.msie) { // ie
+			if (navigator.userAgent.match(/msie/i)) { // ie
 				// co je to range -
 				// http://www.quirksmode.org/dom/range_intro.html
 				// převede výběr na range
@@ -68,7 +68,7 @@ function insert(prefix, suffix) {
 			// Když se provede na konci textarea několik odřádkování a pak se
 			// vloží tag, tak se ty prázdné řádky vloží až za ním a tag jakoby
 			// "propadne nahoru" na poslední text (i mezeru)
-			if ($.browser.webkit) {
+			if (navigator.userAgent.match(/webkit/i)) {
 				var c = '\n';
 				var afterInsertLen = afterInsert.length;
 				if (afterInsertLen > 0) {

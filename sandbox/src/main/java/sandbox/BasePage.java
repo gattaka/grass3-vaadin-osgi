@@ -7,7 +7,7 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.themes.BaseTheme;
@@ -20,11 +20,44 @@ public abstract class BasePage extends CustomLayout {
 	private CssLayout userMenuLayout = new CssLayout();
 
 	private GrassRequest request;
-	
+
+	private void gatherInitJS() {
+
+		// nejprve jQuery
+		StringBuilder loadScript = new StringBuilder();
+		loadScript
+				.append("var head= document.getElementsByTagName('head')[0];")
+				.append("var script= document.createElement('script');")
+				.append("script.type= 'text/javascript';")
+				.append("script.src= '")
+				.append("http://localhost:8080/VAADIN/themes/grass/js/jquery.js';")
+				.append("var callback = function() {")
+				.append("$.getScript('http://localhost:8080/VAADIN/themes/grass/js/jquery-ui.js', function(){")
+				.append("});").append("};")
+				.append("script.onreadystatechange = callback;")
+				.append("script.onload = callback;")
+				.append("head.appendChild(script);");
+		JavaScript.getCurrent().execute(loadScript.toString());
+
+		// CSS pro jQuery-ui
+		StringBuilder loadStylesheet = new StringBuilder();
+		loadStylesheet
+				.append("var head= document.getElementsByTagName('head')[0];")
+				.append("var link= document.createElement('link');")
+				.append("link.type= 'text/css';")
+				.append("link.rel= 'stylesheet';")
+				.append("link.href= 'http://localhost:8080/VAADIN/themes/grass/js/humanity/jquery-ui.css';")
+				.append("head.appendChild(link);");
+		JavaScript.getCurrent().execute(loadStylesheet.toString());
+
+	}
+
 	public BasePage(GrassRequest request) {
 		super("base");
-		
-		this.request = request; 
+
+		gatherInitJS();
+
+		this.request = request;
 
 		// homelink
 		Link homelink = new Link();
@@ -54,7 +87,7 @@ public abstract class BasePage extends CustomLayout {
 	protected GrassRequest getRequest() {
 		return request;
 	}
-	
+
 	private void createSectionsMenu(CustomLayout layout) {
 		layout.addComponent(sectionsMenuLayout, "sectionsmenu");
 
@@ -74,7 +107,7 @@ public abstract class BasePage extends CustomLayout {
 		Button btn = new Button("Btn1");
 		btn.setStyleName(BaseTheme.BUTTON_LINK);
 		userMenuLayout.addComponent(btn);
-		
+
 		String[] strings = { "Uživatel", "Nastavení", "Odhlásit" };
 		for (int i = 0; i < strings.length; i++) {
 			Label item = new Label(strings[i]);
@@ -82,7 +115,7 @@ public abstract class BasePage extends CustomLayout {
 			item.setSizeUndefined();
 			userMenuLayout.addComponent(item);
 		}
-		
+
 		Button btn2 = new Button("Btn2");
 		btn.setStyleName(BaseTheme.BUTTON_LINK);
 		userMenuLayout.addComponent(btn2);

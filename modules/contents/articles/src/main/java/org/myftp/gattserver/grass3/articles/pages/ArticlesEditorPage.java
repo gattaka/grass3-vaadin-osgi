@@ -87,6 +87,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 	public ArticlesEditorPage(GrassRequest request) {
 		super(request);
+		JavaScript
+				.eval("window.onbeforeunload = function() { return \"Opravdu si přejete ukončit editor a odejít - rozpracovaná data nejsou uložena ?\" };");
 	}
 
 	@Override
@@ -538,6 +540,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	 * Zavolá vrácení se na článek
 	 */
 	private void returnToArticle() {
+		JavaScript.eval("window.onbeforeunload = null;");
 		redirect(getPageURL(articlesViewerPageFactory,
 				URLIdentifierUtils.createURLIdentifier(article.getId(), article
 						.getContentNode().getName())));
@@ -547,6 +550,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	 * zavolání vrácení se na kategorii
 	 */
 	private void returnToCategory() {
+		JavaScript.eval("window.onbeforeunload = null;");
 		redirect(getPageURL(categoryPageFactory,
 				URLIdentifierUtils.createURLIdentifier(category.getId(),
 						category.getName())));

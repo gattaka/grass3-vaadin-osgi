@@ -1,6 +1,5 @@
 package sandbox;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import sandbox.ViewPage.ViewPageFactory;
@@ -8,12 +7,14 @@ import sandbox.interfaces.IPageFactory;
 import sandbox.util.GrassRequest;
 
 import com.vaadin.server.Page;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.JavaScript;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
@@ -98,8 +99,14 @@ public class HomePage extends BasePage {
 			e.printStackTrace();
 		}
 
+		addComponent(new JQueryComponent());
+
 		JavaScript
 				.eval("$( \"#accordion\" ).accordion({ event: \"mouseover\" });");
+
+		// addComponent(new Label(
+		// "<script>$( \"#accordion\" ).accordion({ event: \"mouseover\" });</script>",
+		// ContentMode.HTML));
 
 		contentLayout.addComponent(verticalLayout, "content");
 	}

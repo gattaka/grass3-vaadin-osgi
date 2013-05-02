@@ -24,20 +24,20 @@ public abstract class BasePage extends CustomLayout {
 	private void gatherInitJS() {
 
 		// nejprve jQuery
-		StringBuilder loadScript = new StringBuilder();
-		loadScript
-				.append("var head= document.getElementsByTagName('head')[0];")
-				.append("var script= document.createElement('script');")
-				.append("script.type= 'text/javascript';")
-				.append("script.src= '")
-				.append("http://localhost:8080/VAADIN/themes/grass/js/jquery.js';")
-				.append("var callback = function() {")
-				.append("$.getScript('http://localhost:8080/VAADIN/themes/grass/js/jquery-ui.js', function(){")
-				.append("});").append("};")
-				.append("script.onreadystatechange = callback;")
-				.append("script.onload = callback;")
-				.append("head.appendChild(script);");
-		JavaScript.getCurrent().execute(loadScript.toString());
+		// StringBuilder loadScript = new StringBuilder();
+		// loadScript
+		// .append("var head= document.getElementsByTagName('head')[0];")
+		// .append("var script= document.createElement('script');")
+		// .append("script.type= 'text/javascript';")
+		// .append("script.src= '")
+		// .append("http://localhost:8080/VAADIN/themes/grass/js/jquery.js';")
+		// .append("var callback = function() {")
+		// .append("$.getScript('http://localhost:8080/VAADIN/themes/grass/js/jquery-ui.js', function(){")
+		// .append("});").append("};")
+		// .append("script.onreadystatechange = callback;")
+		// .append("script.onload = callback;")
+		// .append("head.appendChild(script);");
+		// JavaScript.getCurrent().execute(loadScript.toString());
 
 		// CSS pro jQuery-ui
 		StringBuilder loadStylesheet = new StringBuilder();
@@ -46,7 +46,7 @@ public abstract class BasePage extends CustomLayout {
 				.append("var link= document.createElement('link');")
 				.append("link.type= 'text/css';")
 				.append("link.rel= 'stylesheet';")
-				.append("link.href= 'http://localhost:8080/VAADIN/themes/grass/js/humanity/jquery-ui.css';")
+				.append("link.href= 'http://localhost:8080/vaadin-sandbox/VAADIN/themes/grass/humanity/jquery-ui.css';")
 				.append("head.appendChild(link);");
 		JavaScript.getCurrent().execute(loadStylesheet.toString());
 

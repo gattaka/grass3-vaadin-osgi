@@ -6,10 +6,14 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.myftp.gattserver.grass3.js.GrassJSBootstrapComponent;
+import org.myftp.gattserver.grass3.js.JQueryBootstrapComponent;
+import org.myftp.gattserver.grass3.js.JQueryUIBootstrapComponent;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 
 import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.AbstractJavaScriptComponent;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
@@ -33,6 +37,11 @@ public abstract class AbstractGrassPage extends GrassLayout implements
 	@PostConstruct
 	protected void init() {
 
+		// nejprve nahraj potřebné knihovny
+		addComponent(new JQueryBootstrapComponent());
+//		addComponent(new JQueryUIBootstrapComponent()); // tahle by se nemusela nahrávat vždy
+//		addComponent(new GrassJSBootstrapComponent());
+	
 		submitInitJS(initJS);
 		gatherInitJS();
 
@@ -54,7 +63,7 @@ public abstract class AbstractGrassPage extends GrassLayout implements
 
 		// footer
 		addComponent(new Label("GRASS3"), "about");
-		
+
 	}
 
 	/**
@@ -63,8 +72,8 @@ public abstract class AbstractGrassPage extends GrassLayout implements
 	 * @param initJS
 	 */
 	protected void submitInitJS(Set<String> initJS) {
-		initJS.add(getRequest().getContextRoot()
-				+ "/VAADIN/themes/grass/js/grass.js");
+		// initJS.add(getRequest().getContextRoot()
+		// + "/VAADIN/themes/grass/js/grass.js");
 	}
 
 	/**
@@ -76,27 +85,28 @@ public abstract class AbstractGrassPage extends GrassLayout implements
 		StringBuilder loadScript = new StringBuilder();
 
 		// nejprve jQuery
-		loadScript
-				.append("var head= document.getElementsByTagName('head')[0];")
-				.append("var script= document.createElement('script');")
-				.append("script.type= 'text/javascript';")
-				.append("script.src= '").append(getRequest().getContextRoot())
-				.append("/VAADIN/themes/grass/js/jquery.js';")
-				.append("var callback = function() {");
+		// loadScript
+		// .append("var head= document.getElementsByTagName('head')[0];")
+		// .append("var script= document.createElement('script');")
+		// .append("script.type= 'text/javascript';")
+		// .append("script.src= '").append(getRequest().getContextRoot())
+		// .append("/VAADIN/themes/grass/js/jquery.js';")
+		// .append("var callback = function() {");
 
 		// ostatní JS už lze nahrávat pomocí jQuery
 		for (String js : initJS) {
-			loadScript.append("$.getScript('" + js + "', function(){");
-		}
-		// uzavřít
-		for (int i = 0; i < initJS.size(); i++) {
-			loadScript.append("});");
+			loadScript.append("$.getScript('" + js + "', function(){});");
 		}
 
-		// konec jQuery
-		loadScript.append("};").append("script.onreadystatechange = callback;")
-				.append("script.onload = callback;")
-				.append("head.appendChild(script);");
+		// // uzavřít
+		// for (int i = 0; i < initJS.size(); i++) {
+		// loadScript.append("});");
+		// }
+		//
+		// // konec jQuery
+		// loadScript.append("};").append("script.onreadystatechange = callback;")
+		// .append("script.onload = callback;")
+		// .append("head.appendChild(script);");
 
 		// fire !
 		JavaScript.getCurrent().execute(loadScript.toString());

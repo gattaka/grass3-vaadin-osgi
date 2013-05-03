@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.pages.template;
 
 import org.myftp.gattserver.grass3.GrassUI;
+import org.myftp.gattserver.grass3.js.JQueryBootstrapComponent;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
@@ -19,6 +20,12 @@ public abstract class GrassLayout extends CustomLayout {
 	private static final long serialVersionUID = 604170960797872356L;
 
 	private GrassRequest request;
+
+	/**
+	 * Byl již nahrán jQuery skript ? Je nahráván lazy, aby se urychlilo
+	 * nahrávání stránek
+	 */
+	private boolean jQueryPresent = false;
 
 	public GrassLayout(String layoutName, GrassRequest request) {
 		super(layoutName);
@@ -48,28 +55,24 @@ public abstract class GrassLayout extends CustomLayout {
 	}
 
 	/**
-	 * Nahraje JS skript - pokud se jedná o soubor, musí být v uvozovkách
-	 * 
-	 * @param link
-	 */
-	public void execJS(String script) {
-		JavaScript.eval("$.getScript(" + script + ", function(){})");
-	}
-
-	/**
 	 * Nahraje více JS skriptů, synchronně za sebou (mohou se tedy navzájem na
 	 * sebe odkazovat a bude zaručeno, že 1. skript bude celý nahrán před 2.
 	 * skriptem, který využívá jeho funkcí)
 	 * 
 	 * @param links
 	 */
-	public void execJSBatch(String... scripts) {
+	public void loadJS(String... scripts) {
+		if (jQueryPresent == false) {
+			addComponent(new JQueryBootstrapComponent());
+			jQueryPresent = true;
+		}
 		StringBuilder builder = new StringBuilder();
 		buildJSBatch(builder, 0, scripts);
 		JavaScript.eval(builder.toString());
 	}
 
-	static void buildJSBatch(StringBuilder builder, int index, String... scripts) {
+	static void buildJSBatch(StringBuilder builder, int index,
+			String... scripts) {
 		if (index >= scripts.length)
 			return;
 		builder.append("$.getScript(").append(scripts[index])

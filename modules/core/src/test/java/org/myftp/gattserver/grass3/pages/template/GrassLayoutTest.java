@@ -20,5 +20,20 @@ public class GrassLayoutTest {
 				result);
 
 	}
+	
+	@Test
+	public void testLoadJSBatch2() {
+
+		String[] links = new String[] { "\"exmpl.js\"" };
+
+		StringBuilder builder = new StringBuilder();
+		GrassLayout.buildJSBatch(builder, 0, links);
+
+		String result = builder.toString();
+		assertEquals(
+				"$.getScript(\"exmpl.js\", function(){});",
+				result);
+
+	}
 
 }

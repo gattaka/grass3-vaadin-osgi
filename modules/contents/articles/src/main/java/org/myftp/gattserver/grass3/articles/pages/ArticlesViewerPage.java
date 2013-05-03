@@ -107,7 +107,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			if (!js.toLowerCase().startsWith("http://"))
 				js = getRequest().getContextRoot() + "/VAADIN/themes/grass/"
 						+ js;
-			execJS("\"" + js + "\"");
+			loadJS("\"" + js + "\"");
 		}
 
 		super.init();

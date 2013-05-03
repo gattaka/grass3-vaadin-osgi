@@ -3,7 +3,6 @@ package org.myftp.gattserver.grass3.pages.template;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.js.JQueryBootstrapComponent;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 
@@ -26,16 +25,6 @@ public abstract class AbstractGrassPage extends GrassLayout implements
 	}
 
 	@PostConstruct
-	private void bootstrapPage() {
-
-		// zaveď JQuery knihovnu - takto bude přítomná ještě předtím, než se
-		// vygenerují komponenty (je synchronizováno s callbackam nahrání
-		// knihovny)
-		addComponent(new JQueryBootstrapComponent());
-
-		init();
-	}
-
 	protected void init() {
 
 		// homelink (přes logo)

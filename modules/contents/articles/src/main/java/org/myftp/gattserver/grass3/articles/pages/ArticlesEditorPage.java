@@ -224,7 +224,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		// jQueryUI JS + jQueryUI Accordion render start
 		String jQuerUIScript = getRequest().getContextRoot()
 				+ "/VAADIN/themes/grass/js/jquery-ui.js";
-		execJSBatch(
+		loadJS(
 				"\"" + jQuerUIScript + "\"",
 				"$( \"#accordion\" ).accordion({ event: \"click\", heightStyle: \"content\" })",
 				"$(\".ui-accordion-content\").css(\"padding\",\"1em 1em\")");
@@ -240,15 +240,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		editorTextLayout.setMargin(true);
 
 		// editor.js
-		StringBuilder loadScript = new StringBuilder();
-		loadScript
-				.append("var head= document.getElementsByTagName('head')[0];")
-				.append("var script= document.createElement('script');")
-				.append("script.type= 'text/javascript';")
-				.append("script.src= '").append(getRequest().getContextRoot())
-				.append("/VAADIN/themes/grass/articles/js/editor.js';")
-				.append("head.appendChild(script);");
-		JavaScript.getCurrent().execute(loadScript.toString());
+		loadJS("\"" + getRequest().getContextRoot()
+				+ "/VAADIN/themes/grass/articles/js/editor.js" + "\"");
 
 		VerticalLayout articleNameLayout = new VerticalLayout();
 		editorTextLayout.addComponent(articleNameLayout);

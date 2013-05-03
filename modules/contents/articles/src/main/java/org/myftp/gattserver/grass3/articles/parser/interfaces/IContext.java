@@ -29,6 +29,11 @@ public interface IContext {
 	public void setHeaderLevel(int level);
 
 	/**
+	 * Získá identifikátor nadpisu dle pořadí (na upravování obsahu po částech)
+	 */
+	public int getNextHeaderIdentifier();
+
+	/**
 	 * Vyresetuje úroveň nadpisu
 	 */
 	public void resetHeaderLevel();
@@ -44,25 +49,27 @@ public interface IContext {
 	 * Zaregistruje CSS zdroj, který je potřeba aby systém přidal při
 	 * zobrazování článku s tímto pluginem
 	 * 
-	 * @param url místo na které se má odkázat 
+	 * @param url
+	 *            místo na které se má odkázat
 	 */
 	public void addCSSResource(String url);
-	
+
 	/**
-	 * Zaregistruje JS zdroj, který je potřeba aby systém přidal při
-	 * zobrazování článku s tímto pluginem
+	 * Zaregistruje JS zdroj, který je potřeba aby systém přidal při zobrazování
+	 * článku s tímto pluginem
 	 * 
-	 * @param url místo na které se má odkázat 
+	 * @param url
+	 *            místo na které se má odkázat
 	 */
 	public void addJSResource(String url);
-		
+
 	/**
 	 * Získá CSS zdroje, potřebné pro korektní zobrazení tohoto článku
 	 * 
 	 * @return místa zdrojů
 	 */
 	public Set<String> getCSSResources();
-	
+
 	/**
 	 * Získá JS zdroje, potřebné pro korektní zobrazení tohoto článku
 	 * 

@@ -20,6 +20,11 @@ public class ContextImpl implements IContext {
 	 * úroveň text z pohledu nadpisů 0 .. nenastaveno - výchozí
 	 */
 	private int textLevel = 0;
+	
+	/**
+	 * Pořadové číslo nadpisu - aby se dal obsah upravovat po částech
+	 */
+	private int headerIdentifier = 0;
 
 	/**
 	 * Dodatečné zdroj vyžadované pluginy
@@ -70,6 +75,10 @@ public class ContextImpl implements IContext {
 		return (this.textLevel != 0) ? (out.toString() + "</div>") : out.toString();
 	}
 
+	public int getNextHeaderIdentifier() {
+		return headerIdentifier++;
+	}
+	
 	public void resetHeaderLevel() {
 
 		// pokud byla úroveň opravdu změněná,

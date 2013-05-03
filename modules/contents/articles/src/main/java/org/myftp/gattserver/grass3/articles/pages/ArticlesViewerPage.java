@@ -291,6 +291,25 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 		operationsListLayout.addComponent(addToFavouritesButton);
 		operationsListLayout.addComponent(removeFromFavouritesButton);
+
+		// Rychlé úpravy
+		if (coreACL.canModifyContent(article.getContentNode(), getUser())) {
+			String url = getPageURL(articlesEditorPageFactory,
+					DefaultContentOperations.EDIT.toString(),
+					URLIdentifierUtils.createURLIdentifier(article.getId(),
+							article.getContentNode().getName()));
+			String script = "$(\".articles-basic-h-id\").each("
+					+ "function(index){"
+					+ "$(this).attr(\"href\",\""
+					+ url
+					+ "/\" + $(this).attr(\"href\"));"
+					+ "$(this).html(\"<img alt=\\\" class=\\\"v-icon\\\" src=\\\""
+					+ getRequest().getContextRoot()
+					+ "/VAADIN/themes/grass/img/tags/pencil_16.png\\\"/>&nbsp\");"
+					+ "}" + ")";
+			loadJS(script);
+		}
+
 	}
 
 	@Override

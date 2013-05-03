@@ -27,6 +27,8 @@ public class HeaderTree extends AbstractElementTree {
 	public void generateElement(IContext ctx) {
 		ctx.resetHeaderLevel();
 		ctx.print("<div class=\"articles-basic-h" + level + "\">");
+		ctx.print("<a class=\"articles-basic-h-id\" href=\""
+				+ ctx.getNextHeaderIdentifier() + "\"></a>");
 		for (AbstractElementTree headerText : headerContent)
 			headerText.generate(ctx);
 		ctx.print("</div>");

@@ -1,6 +1,8 @@
 package org.myftp.gattserver.grass3.articles.pages;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,6 +15,7 @@ import org.myftp.gattserver.grass3.articles.IPluginServiceHolder;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import org.myftp.gattserver.grass3.articles.facade.IArticleFacade;
+import org.myftp.gattserver.grass3.articles.parser.PartsFinder;
 import org.myftp.gattserver.grass3.facades.IContentTagFacade;
 import org.myftp.gattserver.grass3.facades.INodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
@@ -86,6 +89,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private final CheckBox publicatedCheckBox = new CheckBox();
 
 	private boolean editMode = false;
+	private PartsFinder.Result parts = null;
 
 	public ArticlesEditorPage(GrassRequest request) {
 		super(request);
@@ -99,6 +103,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		String operationToken = analyzer.getCurrentPathToken();
 		String identifierToken = analyzer.getCurrentPathToken(1);
+		String partNumberToken = analyzer.getCurrentPathToken(2);
 		if (operationToken == null || identifierToken == null) {
 			logger.debug("Chybí operace nebo identifikátor cíle");
 			showError404();
@@ -120,19 +125,42 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			articleKeywords.setValue("");
 			articleTextArea.setValue("");
 			publicatedCheckBox.setValue(true);
+
 		} else if (operationToken.equals(DefaultContentOperations.EDIT
 				.toString())) {
+
 			editMode = true;
 			article = articleFacade.getArticleForDetail(identifier.getId());
 			articleNameField.setValue(article.getContentNode().getName());
 			articleKeywords.setValue(contentTagFacade.serializeTags(article
 					.getContentNode().getContentTags()));
-			articleTextArea.setValue(article.getText());
 			publicatedCheckBox
 					.setValue(article.getContentNode().isPublicated());
+
+			int partNumber;
+			if (partNumberToken != null
+					&& (partNumber = Integer.valueOf(partNumberToken)) >= 0) {
+
+				try {
+					parts = PartsFinder.findParts(new ByteArrayInputStream(
+							article.getText().getBytes("UTF-8")), partNumber);
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+					showError500();
+					return;
+				} catch (IOException e) {
+					e.printStackTrace();
+					showError500();
+					return;
+				}
+				articleTextArea.setValue(parts.getTargetPart());
+			} else {
+				articleTextArea.setValue(article.getText());
+			}
 		} else {
 			logger.debug("Neznámá operace: '" + operationToken + "'");
 			showError404();
+			return;
 		}
 
 		if ((article == null || article.getContentNode().getAuthor()
@@ -224,8 +252,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		// jQueryUI JS + jQueryUI Accordion render start
 		String jQuerUIScript = getRequest().getContextRoot()
 				+ "/VAADIN/themes/grass/js/jquery-ui.js";
-		loadJS(
-				"\"" + jQuerUIScript + "\"",
+		loadJS("\"" + jQuerUIScript + "\"",
 				"$( \"#accordion\" ).accordion({ event: \"click\", heightStyle: \"content\" })",
 				"$(\".ui-accordion-content\").css(\"padding\",\"1em 1em\")");
 
@@ -379,8 +406,18 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 			public void buttonClick(ClickEvent event) {
 
-				ArticleDTO articleDTO = articleFacade.processPreview(
-						String.valueOf(articleTextArea.getValue()),
+				String text = null;
+				if (parts != null) {
+					StringBuilder builder = new StringBuilder();
+					builder.append(parts.getPrePart());
+					builder.append(String.valueOf(articleTextArea.getValue()));
+					builder.append(parts.getPostPart());
+					text = builder.toString();
+				} else {
+					text = String.valueOf(articleTextArea.getValue());
+				}
+
+				ArticleDTO articleDTO = articleFacade.processPreview(text,
 						getRequest().getContextRoot());
 
 				PreviewWindow previewWindow = new PreviewWindow(articleDTO);
@@ -506,11 +543,22 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private boolean saveOrUpdateArticle() {
 
 		if (editMode) {
+
+			String text = null;
+			if (parts != null) {
+				StringBuilder builder = new StringBuilder();
+				builder.append(parts.getPrePart());
+				builder.append(String.valueOf(articleTextArea.getValue()));
+				builder.append(parts.getPostPart());
+				text = builder.toString();
+			} else {
+				text = String.valueOf(articleTextArea.getValue());
+			}
+
 			return articleFacade.modifyArticle(String.valueOf(articleNameField
-					.getValue()), String.valueOf(articleTextArea.getValue()),
-					String.valueOf(articleKeywords.getValue()),
-					publicatedCheckBox.getValue(), article, getRequest()
-							.getContextRoot());
+					.getValue()), text, String.valueOf(articleKeywords
+					.getValue()), publicatedCheckBox.getValue(), article,
+					getRequest().getContextRoot());
 		} else {
 			Long id = articleFacade.saveArticle(String.valueOf(articleNameField
 					.getValue()), String.valueOf(articleTextArea.getValue()),

@@ -11,6 +11,7 @@ import org.myftp.gattserver.grass3.util.GrassRequest;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Page;
 import com.vaadin.ui.CustomLayout;
+import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.UI;
 
 public abstract class GrassLayout extends CustomLayout {
@@ -26,6 +27,55 @@ public abstract class GrassLayout extends CustomLayout {
 
 	protected GrassRequest getRequest() {
 		return request;
+	}
+
+	/**
+	 * Nahraje CSS
+	 * 
+	 * @param link
+	 *            odkaz k css souboru - relativní, absolutní (http://...)
+	 */
+	public void loadCSS(String link) {
+		StringBuilder loadStylesheet = new StringBuilder();
+		loadStylesheet
+				.append("var head= document.getElementsByTagName('head')[0];")
+				.append("var link= document.createElement('link');")
+				.append("link.type= 'text/css';")
+				.append("link.rel= 'stylesheet';")
+				.append("link.href= '" + link + "';")
+				.append("head.appendChild(link);");
+		JavaScript.eval(loadStylesheet.toString());
+	}
+
+	/**
+	 * Nahraje JS skript - pokud se jedná o soubor, musí být v uvozovkách
+	 * 
+	 * @param link
+	 */
+	public void execJS(String script) {
+		JavaScript.eval("$.getScript(" + script + ", function(){})");
+	}
+
+	/**
+	 * Nahraje více JS skriptů, synchronně za sebou (mohou se tedy navzájem na
+	 * sebe odkazovat a bude zaručeno, že 1. skript bude celý nahrán před 2.
+	 * skriptem, který využívá jeho funkcí)
+	 * 
+	 * @param links
+	 */
+	public void execJSBatch(String... scripts) {
+		StringBuilder builder = new StringBuilder();
+		buildJSBatch(builder, 0, scripts);
+		JavaScript.eval(builder.toString());
+	}
+
+	static void buildJSBatch(StringBuilder builder, int index, String... scripts) {
+		if (index >= scripts.length)
+			return;
+		builder.append("$.getScript(").append(scripts[index])
+				.append(", function(){");
+		buildJSBatch(builder, index + 1, scripts);
+		builder.append("});");
 	}
 
 	/**

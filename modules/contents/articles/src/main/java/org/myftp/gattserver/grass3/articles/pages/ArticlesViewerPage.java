@@ -1,7 +1,5 @@
 package org.myftp.gattserver.grass3.articles.pages;
 
-import java.util.Set;
-
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
@@ -28,7 +26,6 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
@@ -98,24 +95,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			if (!css.toLowerCase().startsWith("http://"))
 				css = getRequest().getContextRoot() + "/VAADIN/themes/grass/"
 						+ css;
-
-			StringBuilder loadStylesheet = new StringBuilder();
-			loadStylesheet
-					.append("var head= document.getElementsByTagName('head')[0];")
-					.append("var link= document.createElement('link');")
-					.append("link.type= 'text/css';")
-					.append("link.rel= 'stylesheet';")
-					.append("link.href= '" + css + "';")
-					.append("head.appendChild(link);");
-			JavaScript.getCurrent().execute(loadStylesheet.toString());
+			loadCSS(css);
 		}
-
-		super.init();
-	}
-
-	@Override
-	protected void submitInitJS(Set<String> initJS) {
-		super.submitInitJS(initJS);
 
 		// JS resources
 		for (String js : article.getPluginJSResources()) {
@@ -126,11 +107,10 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			if (!js.toLowerCase().startsWith("http://"))
 				js = getRequest().getContextRoot() + "/VAADIN/themes/grass/"
 						+ js;
-
-			initJS.add(js);
-
+			execJS("\"" + js + "\"");
 		}
 
+		super.init();
 	}
 
 	@Override

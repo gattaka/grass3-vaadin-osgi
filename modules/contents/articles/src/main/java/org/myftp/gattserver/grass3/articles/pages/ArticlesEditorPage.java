@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -16,9 +15,6 @@ import org.myftp.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import org.myftp.gattserver.grass3.articles.facade.IArticleFacade;
 import org.myftp.gattserver.grass3.facades.IContentTagFacade;
 import org.myftp.gattserver.grass3.facades.INodeFacade;
-import org.myftp.gattserver.grass3.js.GrassJSBootstrapComponent;
-import org.myftp.gattserver.grass3.js.JQueryBootstrapComponent;
-import org.myftp.gattserver.grass3.js.JQueryUIBootstrapComponent;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
@@ -98,28 +94,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	}
 
 	@Override
-	protected void submitInitJS(Set<String> initJS) {
-		super.submitInitJS(initJS);
-
-		// jQueryUI JS
-		initJS.add(getRequest().getContextRoot()
-				+ "/VAADIN/themes/grass/js/jquery-ui.js");
-
-		// jQueryUI CSS
-		StringBuilder loadStylesheet = new StringBuilder();
-		loadStylesheet
-				.append("var head= document.getElementsByTagName('head')[0];")
-				.append("var link= document.createElement('link');")
-				.append("link.type= 'text/css';")
-				.append("link.rel= 'stylesheet';").append("link.href= '")
-				.append(getRequest().getContextRoot())
-				.append("/VAADIN/themes/grass/js/humanity/jquery-ui.css';")
-				.append("head.appendChild(link);");
-		JavaScript.getCurrent().execute(loadStylesheet.toString());
-
-	}
-
-	@Override
 	protected void init() {
 
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
@@ -176,20 +150,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	@Override
 	protected Component createLeftColumnContent() {
 
-		// VerticalLayout layout = new VerticalLayout();
-		//
-		// layout.setSpacing(true);
-		// layout.setMargin(true);
-		//
-		// VerticalLayout toolsPartLayout = new VerticalLayout();
-		// layout.addComponent(toolsPartLayout);
-		// toolsPartLayout.addComponent(new Label("<h2>Nástroje</h2>",
-		// ContentMode.HTML));
-		//
-		// VerticalLayout toolsLayout = new VerticalLayout();
-		// toolsPartLayout.addComponent(toolsLayout);
-		// toolsLayout.setWidth("100%");
-
 		List<String> groups = new ArrayList<String>(
 				pluginServiceHolder.getRegisteredGroups());
 		Collections.sort(groups, new Comparator<String>() {
@@ -208,7 +168,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 						return o1.compareTo(o2); // ani jeden není null
 				}
 			}
-
 		});
 
 		/**
@@ -223,18 +182,9 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		}
 		for (String group : groups) {
 
-			// VerticalLayout groupLayout = new VerticalLayout();
-			// groupLayout.setWidth("100%");
-			// if (group != null)
-			// groupLayout.addComponent(new Label("<h3>" + group + "</h3>",
-			// ContentMode.HTML));
-			// toolsLayout.addComponent(groupLayout);
-			// toolsLayout.addComponent(accordion);
-
 			CssLayout groupToolsLayout = new CssLayout();
 			groupToolsLayout.addStyleName("tools_css_menu");
 			groupToolsLayout.setWidth("100%");
-			// groupLayout.addComponent(groupToolsLayout);
 			accordion.setNextElement(groupToolsLayout);
 
 			List<EditorButtonResources> resourcesBundles = new ArrayList<EditorButtonResources>(
@@ -267,11 +217,17 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			}
 		}
 
-		// jQueryUI Accordion render start
-		JavaScript
-				.eval("$( \"#accordion\" ).accordion({ event: \"click\", heightStyle: \"content\" });");
-		JavaScript
-				.eval("$(\".ui-accordion-content\").css(\"padding\",\"1em 1em\");");
+		// jQueryUI CSS
+		loadCSS(getRequest().getContextRoot()
+				+ "/VAADIN/themes/grass/js/humanity/jquery-ui.css");
+
+		// jQueryUI JS + jQueryUI Accordion render start
+		String jQuerUIScript = getRequest().getContextRoot()
+				+ "/VAADIN/themes/grass/js/jquery-ui.js";
+		execJSBatch(
+				"\"" + jQuerUIScript + "\"",
+				"$( \"#accordion\" ).accordion({ event: \"click\", heightStyle: \"content\" })",
+				"$(\".ui-accordion-content\").css(\"padding\",\"1em 1em\")");
 
 		return accordion;
 	}

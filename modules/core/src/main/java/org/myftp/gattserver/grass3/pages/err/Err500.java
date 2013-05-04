@@ -4,6 +4,9 @@ import org.myftp.gattserver.grass3.pages.template.ErrorPage;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
+import com.vaadin.server.Resource;
+import com.vaadin.server.ThemeResource;
+
 @org.springframework.stereotype.Component("err500")
 @Scope("prototype")
 public class Err500 extends ErrorPage {
@@ -17,6 +20,11 @@ public class Err500 extends ErrorPage {
 	@Override
 	protected String getErrorText() {
 		return "500 - Došlo k chybě na straně serveru";
+	}
+	
+	@Override
+	protected Resource getErrorImage() {
+		return new ThemeResource("img/500.png");
 	}
 
 }

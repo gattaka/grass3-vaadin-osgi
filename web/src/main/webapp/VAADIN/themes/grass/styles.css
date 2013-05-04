@@ -31,6 +31,11 @@ font-family: 'Signika', sans-serif;
 	position: relative;
 }
 
+.error-label {
+	font-family: Arial;
+	font-size: 20px;
+}
+
 /* == DEFAULT =============================================================== */
 
 /* Default clean */
@@ -341,7 +346,8 @@ a img.icon {
 	border: 1px rgb(112, 175, 233) solid;
 	padding: 12px 5px 0 5px;
 	width: 100%;
-	height: 42px; text-align : center;
+	height: 42px;
+	text-align: center;
 	background-color: rgb(213, 235, 255);
 	text-align: center;
 }

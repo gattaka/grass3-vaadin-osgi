@@ -6,7 +6,11 @@ import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.facades.ISecurityFacade;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
+import org.myftp.gattserver.grass3.pages.err.Err403Page;
+import org.myftp.gattserver.grass3.pages.err.Err404Page;
+import org.myftp.gattserver.grass3.pages.err.Err500Page;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
+import org.myftp.gattserver.grass3.pages.template.GrassLayout;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.IGrassRequestHandler;
 import org.myftp.gattserver.grass3.util.IPageFactoriesRegister;
@@ -40,6 +44,15 @@ public class GrassUI extends UI {
 
 	@Resource(name = "securityFacade")
 	private ISecurityFacade securityFacade;
+
+	@Resource(name = "err403Factory")
+	private IPageFactory err403Factory;
+
+	@Resource(name = "err404Factory")
+	private IPageFactory err404Factory;
+
+	@Resource(name = "err500Factory")
+	private IPageFactory err500Factory;
 
 	@Autowired
 	private List<IGrassRequestHandler> grassRequestHandlers;
@@ -75,7 +88,23 @@ public class GrassUI extends UI {
 
 		IPageFactory factory = pageFactoriesRegister.get(analyzer
 				.getPathToken(0));
-		setContent(factory.createPage(grassRequest));
+
+		GrassLayout buildedPage = factory.createPage(grassRequest);
+
+		switch (grassRequest.getPageState()) {
+		case CLEAN:
+			setContent(buildedPage);
+			break;
+		case E403:
+			setContent(err403Factory.createPage(grassRequest));
+			break;
+		case E404:
+			setContent(err404Factory.createPage(grassRequest));
+			break;
+		case E500:
+			setContent(err500Factory.createPage(grassRequest));
+			break;
+		}
 
 	}
 }

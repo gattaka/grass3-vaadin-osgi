@@ -21,12 +21,6 @@ public abstract class GrassLayout extends CustomLayout {
 
 	private GrassRequest request;
 
-	/**
-	 * Byl již nahrán jQuery skript ? Je nahráván lazy, aby se urychlilo
-	 * nahrávání stránek
-	 */
-	private boolean jQueryPresent = false;
-
 	public GrassLayout(String layoutName, GrassRequest request) {
 		super(layoutName);
 		this.request = request;
@@ -62,9 +56,9 @@ public abstract class GrassLayout extends CustomLayout {
 	 * @param links
 	 */
 	public void loadJS(String... scripts) {
-		if (jQueryPresent == false) {
+		if (request.isjQueryPresent() == false) {
 			addComponent(new JQueryBootstrapComponent());
-			jQueryPresent = true;
+			request.setjQueryPresent(true);
 		}
 		StringBuilder builder = new StringBuilder();
 		buildJSBatch(builder, 0, scripts);
@@ -178,21 +172,21 @@ public abstract class GrassLayout extends CustomLayout {
 	 * Vyhodí chybu
 	 */
 	public void showError500() {
-		redirect(getPageURL("err500"));
+		request.setError500();
 	}
 
 	/**
 	 * Vyhodí chybu
 	 */
 	public void showError404() {
-		redirect(getPageURL("err404"));
+		request.setError404();
 	}
 
 	/**
 	 * Vyhodí chybu
 	 */
 	public void showError403() {
-		redirect(getPageURL("err403"));
+		request.setError403();
 	}
 
 }

@@ -1,5 +1,7 @@
 package org.myftp.gattserver.grass3.util;
 
+import org.myftp.gattserver.grass3.PageState;
+
 import com.vaadin.server.VaadinRequest;
 
 /**
@@ -14,6 +16,17 @@ public class GrassRequest {
 	private VaadinRequest vaadinRequest;
 	private URLPathAnalyzer analyzer;
 	private String contextRoot;
+
+	/**
+	 * Byl již nahrán jQuery skript ? Je nahráván lazy, aby se urychlilo
+	 * nahrávání stránek
+	 */
+	private boolean jQueryPresent = false;
+
+	/**
+	 * Stav stránky
+	 */
+	private PageState pageState = PageState.CLEAN;
 
 	public GrassRequest(VaadinRequest vaadinRequest) {
 		this.vaadinRequest = vaadinRequest;
@@ -31,6 +44,49 @@ public class GrassRequest {
 
 	public URLPathAnalyzer getAnalyzer() {
 		return analyzer;
+	}
+
+	public boolean isjQueryPresent() {
+		return jQueryPresent;
+	}
+
+	public void setjQueryPresent(boolean jQueryPresent) {
+		this.jQueryPresent = jQueryPresent;
+	}
+
+	public PageState getPageState() {
+		return pageState;
+	}
+
+	/**
+	 * Nastavuje stav stránky - lze nastavit pouze pokud je čistá, pokud je už u
+	 * stránky vedena nějaká chyba, další chyby jí nepřepisují, protože mohou
+	 * být důsledky první chyby
+	 */
+	private void setPageState(PageState newState) {
+		if (pageState == PageState.CLEAN)
+			pageState = newState;
+	}
+
+	/**
+	 * Vyhodí chybu
+	 */
+	public void setError500() {
+		setPageState(PageState.E500);
+	}
+
+	/**
+	 * Vyhodí chybu
+	 */
+	public void setError404() {
+		setPageState(PageState.E404);
+	}
+
+	/**
+	 * Vyhodí chybu
+	 */
+	public void setError403() {
+		setPageState(PageState.E403);
 	}
 
 }

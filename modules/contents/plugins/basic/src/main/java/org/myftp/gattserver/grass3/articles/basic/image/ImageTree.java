@@ -13,7 +13,7 @@ public class ImageTree extends AbstractElementTree {
 
 	@Override
 	public void generateElement(IContext ctx) {
-		ctx.print("<img src=\"" + link + "\" alt=\"" + link + "\" />");
+		ctx.print("<img class=\"articles-basic-img\" src=\"" + link + "\" alt=\"" + link + "\" />");
 	}
 
 }

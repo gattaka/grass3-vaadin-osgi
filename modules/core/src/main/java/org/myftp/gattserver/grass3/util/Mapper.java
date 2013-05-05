@@ -189,6 +189,9 @@ public class Mapper {
 	 */
 	public Set<ContentNodeDTO> mapContentNodeCollection(
 			Collection<ContentNode> contentNodes) {
+		if (contentNodes == null)
+			return null;
+
 		Set<ContentNodeDTO> contentNodeDTOs = new HashSet<ContentNodeDTO>();
 		for (ContentNode contentNode : contentNodes) {
 			contentNodeDTOs.add(map(contentNode));
@@ -198,6 +201,9 @@ public class Mapper {
 
 	public Set<ContentNodeDTO> mapContentNodesForOverview(
 			Collection<ContentNode> contentNodes) {
+		if (contentNodes == null)
+			return null;
+
 		Set<ContentNodeDTO> contentNodeDTOs = new HashSet<ContentNodeDTO>();
 		for (ContentNode contentNode : contentNodes) {
 			contentNodeDTOs.add(mapContentNodeForOverview(contentNode));
@@ -207,6 +213,9 @@ public class Mapper {
 
 	public Set<ContentNodeDTO> mapContentNodesForRecentsOverview(
 			Collection<ContentNode> contentNodes) {
+		if (contentNodes == null)
+			return null;
+
 		Set<ContentNodeDTO> contentNodeDTOs = new HashSet<ContentNodeDTO>();
 		for (ContentNode contentNode : contentNodes) {
 			contentNodeDTOs.add(mapContentNodeForRecentsOverview(contentNode));
@@ -255,6 +264,9 @@ public class Mapper {
 	 */
 	public List<ContentTagDTO> mapContentTagCollection(
 			Collection<ContentTag> contentTags) {
+		if (contentTags == null)
+			return null;
+
 		List<ContentTagDTO> contentTagDTOs = new ArrayList<ContentTagDTO>();
 		for (ContentTag contentTag : contentTags) {
 			contentTagDTOs.add(mapContentTag(contentTag));
@@ -270,6 +282,9 @@ public class Mapper {
 	 */
 	public Set<ContentTagDTO> mapContentTagCollectionForOverview(
 			Collection<ContentTag> contentTags) {
+		if (contentTags == null)
+			return null;
+
 		Set<ContentTagDTO> contentTagDTOs = new HashSet<ContentTagDTO>();
 		for (ContentTag contentTag : contentTags) {
 			contentTagDTOs.add(mapContentTagForOverview(contentTag));
@@ -337,6 +352,9 @@ public class Mapper {
 	 * @return
 	 */
 	public List<NodeDTO> mapNodesForOverview(Collection<Node> nodes) {
+		if (nodes == null)
+			return null;
+
 		List<NodeDTO> nodeDTOs = new ArrayList<NodeDTO>();
 		for (Node node : nodes) {
 			nodeDTOs.add(mapNodeForOverview(node));

@@ -45,4 +45,22 @@ public class HWFacade implements IHWFacade {
 		return hwMapper.mapServiceNotes(hwItemTypes);
 	}
 
+	@Override
+	public boolean saveHWType(String value) {
+		HWItemType type = new HWItemType();
+		type.setName(value);
+		return hwItemTypeDAO.save(type) != null;
+	}
+
+	@Override
+	public boolean saveHWItem(HWItemDTO hwItemDTO) {
+		HWItem item = new HWItem();
+		item.setName(hwItemDTO.getName());
+		item.setPurchaseDate(hwItemDTO.getPurchaseDate());
+		item.setDestructionDate(hwItemDTO.getDestructionDate());
+		item.setPrice(hwItemDTO.getPrice());
+		item.setState(hwItemDTO.getState());
+		return hwItemDAO.save(item) != null;
+	}
+
 }

@@ -43,7 +43,7 @@ public class HWPage extends OneColumnPage {
 		// "Servisní historie"};
 
 		tabSheet.addTab(new OverviewTab(hwFacade), "Přehled");
-		tabSheet.addTab(new HWTypesTab(), "Typy zařízení");
+		tabSheet.addTab(new HWTypesTab(hwFacade), "Typy zařízení");
 
 		return layout;
 	}

@@ -3,6 +3,16 @@
 	<name>web</name>
 	<comment></comment>
 	<projects>
+		<project>articles</project>
+		<project>articles-basic</project>
+		<project>articles-theme</project>
+		<project>search</project>
+		<project>fm-core</project>
+		<project>articles-latex</project>
+		<project>hw</project>
+		<project>articles-favlink</project>
+		<project>articles-code</project>
+		<project>articles-code-theme</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

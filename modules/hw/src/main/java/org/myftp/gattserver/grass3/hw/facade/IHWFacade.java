@@ -14,4 +14,8 @@ public interface IHWFacade {
 
 	public List<ServiceNoteDTO> getAllServiceNotes();
 
+	public boolean saveHWType(String name);
+
+	public boolean saveHWItem(HWItemDTO hwItemDTO);
+
 }

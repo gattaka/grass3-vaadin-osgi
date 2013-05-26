@@ -1,14 +1,13 @@
 package org.myftp.gattserver.grass3.articles.config;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import org.myftp.gattserver.grass3.config.AbstractConfiguration;
 
-@XmlRootElement
-public class ArticlesConfiguration {
+public class ArticlesConfiguration extends AbstractConfiguration {
 
-	@XmlTransient
-	public static final String CONFIG_PATH = "articles_config.xml";
-		
+	public ArticlesConfiguration() {
+		super("org.myftp.gattserver.grass3.articles");
+	}
+
 	/**
 	 * Kolik je timeout pro zálohu (default 2 minuty)
 	 */

@@ -1,10 +1,9 @@
 package org.myftp.gattserver.grass3.security;
 
 import javax.annotation.Resource;
-import javax.xml.bind.JAXBException;
 
-import org.myftp.gattserver.grass3.config.ConfigurationUtils;
 import org.myftp.gattserver.grass3.config.CoreConfiguration;
+import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.facades.IUserFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
@@ -23,6 +22,9 @@ public final class CoreACL implements ICoreACL {
 
 	@Resource(name = "userFacade")
 	IUserFacade userFacade;
+
+	@Resource(name = "configurationService")
+	IConfigurationService configurationService;
 
 	/**
 	 * =======================================================================
@@ -63,7 +65,7 @@ public final class CoreACL implements ICoreACL {
 		if (content.isPublicated())
 			return true;
 
-		// pokud není 
+		// pokud není
 		if (user != null) {
 
 			// pokud je admin, může zobrazit kterýkoliv obsah
@@ -235,17 +237,10 @@ public final class CoreACL implements ICoreACL {
 		if (user == null) {
 
 			// jenom host se může registrovat
-			try {
-				CoreConfiguration configuration = new ConfigurationUtils<CoreConfiguration>(
-						new CoreConfiguration(), CoreConfiguration.CONFIG_PATH)
-						.loadExistingOrCreateNewConfiguration();
+			CoreConfiguration configuration = new CoreConfiguration();
+			configurationService.loadConfiguration(configuration);
 
-				return configuration.isRegistrations();
-
-			} catch (JAXBException e) {
-				e.printStackTrace();
-				return false;
-			}
+			return configuration.isRegistrations();
 
 		}
 		// jinak false

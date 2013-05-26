@@ -1,12 +1,9 @@
 package org.myftp.gattserver.grass3.tabs;
 
 import javax.annotation.Resource;
-import javax.xml.bind.JAXBException;
 
-import org.myftp.gattserver.grass3.config.ConfigurationFileError;
-import org.myftp.gattserver.grass3.config.ConfigurationManager;
-import org.myftp.gattserver.grass3.config.ConfigurationUtils;
 import org.myftp.gattserver.grass3.config.CoreConfiguration;
+import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.model.dao.ContentTagDAO;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
@@ -32,14 +29,17 @@ import com.vaadin.ui.VerticalLayout;
 @Scope("prototype")
 public class ApplicationSettingsTab extends AbstractSettingsTab {
 
-	@Resource(name="contentTagDAO")
-	private ContentTagDAO contentTagDAO; 
-	
+	@Resource(name = "contentTagDAO")
+	private ContentTagDAO contentTagDAO;
+
+	@Resource(name = "configurationService")
+	IConfigurationService configurationService;
+
 	private static final long serialVersionUID = 2474374292329895766L;
 
 	private static final Double MIN_SESSION_TIMEOUT = 5.0;
 	private static final Double MAX_SESSION_TIMEOUT = 60.0;
-	
+
 	public ApplicationSettingsTab(GrassRequest request) {
 		super(request);
 	}
@@ -152,51 +152,37 @@ public class ApplicationSettingsTab extends AbstractSettingsTab {
 		/**
 		 * Reset tagů
 		 */
-		Button contentTagsCountsResetBtn = new Button("Přepočítat údaje ContentTagů", new Button.ClickListener() {
+		Button contentTagsCountsResetBtn = new Button(
+				"Přepočítat údaje ContentTagů", new Button.ClickListener() {
 
-			private static final long serialVersionUID = 8490964871266821307L;
+					private static final long serialVersionUID = 8490964871266821307L;
 
-			public void buttonClick(ClickEvent event) {
-				if (contentTagDAO.countContentNodes()) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow(
-							"Počty obsahů tagů byly úspěšně přepočítány");
-					getUI().addWindow(infoSubwindow);
-				} else {
-					WarnSubwindow warnSubwindow = new WarnSubwindow(
-							"Nezdařilo se přepočítat počty obsahů tagů");
-					getUI().addWindow(warnSubwindow);
-				}
-			}
-		});
+					public void buttonClick(ClickEvent event) {
+						if (contentTagDAO.countContentNodes()) {
+							InfoSubwindow infoSubwindow = new InfoSubwindow(
+									"Počty obsahů tagů byly úspěšně přepočítány");
+							getUI().addWindow(infoSubwindow);
+						} else {
+							WarnSubwindow warnSubwindow = new WarnSubwindow(
+									"Nezdařilo se přepočítat počty obsahů tagů");
+							getUI().addWindow(warnSubwindow);
+						}
+					}
+				});
 		settingsFieldsLayout.addComponent(contentTagsCountsResetBtn);
-		
+
 		return layout;
 
 	}
 
 	private CoreConfiguration loadConfiguration() {
-		try {
-			return new ConfigurationUtils<CoreConfiguration>(
-					new CoreConfiguration(), CoreConfiguration.CONFIG_PATH)
-					.loadExistingOrCreateNewConfiguration();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			showError500();
-			return null;
-		}
+		CoreConfiguration configuration = new CoreConfiguration();
+		configurationService.loadConfiguration(configuration);
+		return configuration;
 	}
 
 	private void storeConfiguration(CoreConfiguration configuration) {
-		try {
-			ConfigurationManager.getInstance().storeConfiguration(
-					CoreConfiguration.CONFIG_PATH, configuration);
-		} catch (ConfigurationFileError e) {
-			e.printStackTrace();
-			showError500();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			showError500();
-		}
+		configurationService.saveConfiguration(configuration);
 	}
 
 }

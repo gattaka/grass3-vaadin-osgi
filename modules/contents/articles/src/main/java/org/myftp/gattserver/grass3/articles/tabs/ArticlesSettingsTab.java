@@ -3,14 +3,11 @@ package org.myftp.gattserver.grass3.articles.tabs;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.xml.bind.JAXBException;
 
 import org.myftp.gattserver.grass3.articles.config.ArticlesConfiguration;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.articles.facade.IArticleFacade;
-import org.myftp.gattserver.grass3.config.ConfigurationFileError;
-import org.myftp.gattserver.grass3.config.ConfigurationManager;
-import org.myftp.gattserver.grass3.config.ConfigurationUtils;
+import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.facades.IContentTagFacade;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
@@ -40,6 +37,9 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 
 	@Resource(name = "contentTagFacade")
 	private IContentTagFacade contentTagFacade;
+
+	@Resource(name = "configurationService")
+	private IConfigurationService configurationService;
 
 	private Window progressSubWindow;
 	private ProgressThread progressThread;
@@ -183,29 +183,13 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 	}
 
 	private ArticlesConfiguration loadConfiguration() {
-		try {
-			return new ConfigurationUtils<ArticlesConfiguration>(
-					new ArticlesConfiguration(),
-					ArticlesConfiguration.CONFIG_PATH)
-					.loadExistingOrCreateNewConfiguration();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			showError500();
-			return null;
-		}
+		ArticlesConfiguration configuration = new ArticlesConfiguration();
+		configurationService.loadConfiguration(configuration);
+		return configuration;
 	}
 
 	private void storeConfiguration(ArticlesConfiguration configuration) {
-		try {
-			ConfigurationManager.getInstance().storeConfiguration(
-					ArticlesConfiguration.CONFIG_PATH, configuration);
-		} catch (ConfigurationFileError e) {
-			e.printStackTrace();
-			showError500();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			showError500();
-		}
+		configurationService.saveConfiguration(configuration);
 	}
 
 	public class ProgressSubWindow extends Window {

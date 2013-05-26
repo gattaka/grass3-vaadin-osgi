@@ -1,15 +1,13 @@
 package org.myftp.gattserver.grass3.articles.latex.config;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import org.myftp.gattserver.grass3.config.AbstractConfiguration;
 
-@XmlRootElement
-public class LatexConfiguration {
+public class LatexConfiguration extends AbstractConfiguration {
 
-	@XmlTransient
-	public static final String CONFIG_PATH = "latex_editor_plugin.xml";
-	
-	@XmlTransient
+	public LatexConfiguration() {
+		super("org.myftp.gattserver.grass3.articles.latex");
+	}
+
 	public static final String IMAGE_PATH_ALIAS = "/articles-latex-plugin";
 
 	private String outputPath = "latex/output";

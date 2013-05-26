@@ -4,16 +4,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.SimpleExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Abstraktní třída DAO tříd na získávání Entit z databáze nebo přes existující
@@ -26,11 +26,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractDAO<E> {
 
-	/**
-	 * SessionFactoryBuilder
-	 */
-	@Resource(name = "entityServicesAggregator")
-	private EntityServicesAggregator entityServicesAggregator;
+	@Autowired
+	SessionFactory sessionFactory;
 
 	/**
 	 * Třída entity - tedy doménového objektu
@@ -57,7 +54,7 @@ public abstract class AbstractDAO<E> {
 	}
 
 	protected void openSession() {
-		session = entityServicesAggregator.getSessionFactory().openSession();
+		session = sessionFactory.openSession();
 	}
 
 	/**

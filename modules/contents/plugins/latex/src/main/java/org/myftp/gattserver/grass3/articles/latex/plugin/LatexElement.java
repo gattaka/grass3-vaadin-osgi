@@ -12,16 +12,15 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
-import javax.xml.bind.JAXBException;
 
+import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.articles.latex.config.LatexConfiguration;
 import org.myftp.gattserver.grass3.articles.lexer.Token;
 import org.myftp.gattserver.grass3.articles.parser.PluginBag;
 import org.myftp.gattserver.grass3.articles.parser.exceptions.ParserException;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
-import org.myftp.gattserver.grass3.config.ConfigurationManager;
-import org.myftp.gattserver.grass3.config.ConfigurationUtils;
+import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
@@ -60,21 +59,12 @@ public class LatexElement extends AbstractParserPlugin {
 	 * Zjistí dle aktuální konfigurace výstupní adresář
 	 */
 	private String getOutputPath() {
-		ConfigurationManager configurationManager = ConfigurationManager
-				.getInstance();
-		if (configurationManager == null)
-			throw new ParserException();
-		else {
-			try {
-				return new ConfigurationUtils<LatexConfiguration>(
-						new LatexConfiguration(),
-						LatexConfiguration.CONFIG_PATH)
-						.loadExistingOrCreateNewConfiguration().getOutputPath();
-			} catch (JAXBException e) {
-				e.printStackTrace();
-				throw new ParserException();
-			}
-		}
+		IConfigurationService configurationService = (IConfigurationService) SpringContextHelper
+				.getBean("configurationService");
+
+		LatexConfiguration configuration = new LatexConfiguration();
+		configurationService.loadConfiguration(configuration);
+		return configuration.getOutputPath();
 	}
 
 	@Override

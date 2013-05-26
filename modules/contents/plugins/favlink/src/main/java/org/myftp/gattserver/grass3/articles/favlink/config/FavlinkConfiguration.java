@@ -1,15 +1,13 @@
 package org.myftp.gattserver.grass3.articles.favlink.config;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import org.myftp.gattserver.grass3.config.AbstractConfiguration;
 
-@XmlRootElement
-public class FavlinkConfiguration {
+public class FavlinkConfiguration extends AbstractConfiguration {
 
-	@XmlTransient
-	public static final String CONFIG_PATH = "favicon_link_editor_plugin.xml";
+	public FavlinkConfiguration() {
+		super("org.myftp.gattserver.grass3.articles.favlink");
+	}
 
-	@XmlTransient
 	public static final String IMAGE_PATH_ALIAS = "/articles-favlink-plugin";
 
 	private String outputPath = "favlink/cache";

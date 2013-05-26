@@ -1,11 +1,8 @@
 package org.myftp.gattserver.grass3.articles.favlink.web;
 
-import javax.xml.bind.JAXBException;
-
+import javax.annotation.Resource;
 import org.myftp.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
-import org.myftp.gattserver.grass3.config.ConfigurationFileError;
-import org.myftp.gattserver.grass3.config.ConfigurationManager;
-import org.myftp.gattserver.grass3.config.ConfigurationUtils;
+import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
@@ -23,6 +20,9 @@ import com.vaadin.ui.Button.ClickEvent;
 public class FavlinkSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = -3310643769376755875L;
+
+	@Resource(name = "configurationService")
+	IConfigurationService configurationService;
 
 	public FavlinkSettingsTab(GrassRequest request) {
 		super(request);
@@ -80,29 +80,13 @@ public class FavlinkSettingsTab extends AbstractSettingsTab {
 	}
 
 	private FavlinkConfiguration loadConfiguration() {
-		try {
-			return new ConfigurationUtils<FavlinkConfiguration>(
-					new FavlinkConfiguration(),
-					FavlinkConfiguration.CONFIG_PATH)
-					.loadExistingOrCreateNewConfiguration();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			showError500();
-			return null;
-		}
+		FavlinkConfiguration configuration = new FavlinkConfiguration();
+		configurationService.loadConfiguration(configuration);
+		return configuration;
 	}
 
 	private void storeConfiguration(FavlinkConfiguration configuration) {
-		try {
-			ConfigurationManager.getInstance().storeConfiguration(
-					FavlinkConfiguration.CONFIG_PATH, configuration);
-		} catch (ConfigurationFileError e) {
-			e.printStackTrace();
-			showError500();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			showError500();
-		}
+		configurationService.saveConfiguration(configuration);
 	}
 
 }

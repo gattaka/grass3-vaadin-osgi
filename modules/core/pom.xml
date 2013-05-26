@@ -180,7 +180,7 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>1.6.1</version>
 		</dependency>
-		
+
 		<!-- Multi-upload -->
 		<dependency>
 			<groupId>org.vaadin.addon</groupId>
@@ -192,13 +192,6 @@
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>
 			<artifactId>model</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<!-- Grass3 config nástroje -->
-		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
-			<artifactId>config</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 

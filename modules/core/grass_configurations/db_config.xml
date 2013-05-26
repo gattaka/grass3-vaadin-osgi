@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<modelConfiguration>
-    <password>nalia88</password>
-    <URL>jdbc:h2:tcp://localhost/grass3H2DB;TRACE_LEVEL_FIlE=3</URL>
-    <!--<URL>jdbc:h2:tcp://192.168.0.100/grass3H2DB</URL>-->
-    <username>sa</username>
-</modelConfiguration>

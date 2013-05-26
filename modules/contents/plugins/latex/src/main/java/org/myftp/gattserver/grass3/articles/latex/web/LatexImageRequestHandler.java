@@ -6,11 +6,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import javax.xml.bind.JAXBException;
-
+import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.articles.latex.config.LatexConfiguration;
-import org.myftp.gattserver.grass3.articles.parser.exceptions.ParserException;
-import org.myftp.gattserver.grass3.config.ConfigurationUtils;
+import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.util.impl.AbstractGrassRequestHandler;
 import org.springframework.stereotype.Component;
 
@@ -27,14 +25,12 @@ public class LatexImageRequestHandler extends AbstractGrassRequestHandler {
 	 * Zjistí dle aktuální konfigurace výstupní adresář
 	 */
 	private String getOutputPath() {
-		try {
-			return new ConfigurationUtils<LatexConfiguration>(
-					new LatexConfiguration(), LatexConfiguration.CONFIG_PATH)
-					.loadExistingOrCreateNewConfiguration().getOutputPath();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			throw new ParserException();
-		}
+		IConfigurationService configurationService = (IConfigurationService) SpringContextHelper
+				.getBean("configurationService");
+
+		LatexConfiguration configuration = new LatexConfiguration();
+		configurationService.loadConfiguration(configuration);
+		return configuration.getOutputPath();
 	}
 
 	@Override

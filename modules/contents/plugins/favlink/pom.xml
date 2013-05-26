@@ -33,13 +33,6 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
-		<!-- Grass3 config nástroje -->
-		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
-			<artifactId>config</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>

@@ -3,20 +3,13 @@ package org.myftp.gattserver.grass3.fm.config;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
+import org.myftp.gattserver.grass3.config.AbstractConfiguration;
 import org.myftp.gattserver.grass3.security.Role;
 
-@XmlRootElement
-public class FMConfiguration {
+public class FMConfiguration extends AbstractConfiguration {
 
-	@XmlTransient
-	public static final String CONFIG_PATH = "file_manager.xml";
-	
-	@XmlTransient
 	public static final String FM_PATH = "/fm-files";
-	
+
 	/**
 	 * Kořenový adresář FM
 	 */
@@ -40,6 +33,7 @@ public class FMConfiguration {
 	private String tmpDir = "tmpUpload";
 
 	public FMConfiguration() {
+		super("org.myftp.gattserver.grass3.fm");
 		roles.add(Role.ADMIN);
 		roles.add(Role.FRIEND);
 	}

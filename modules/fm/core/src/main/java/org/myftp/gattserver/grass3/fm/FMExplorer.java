@@ -6,7 +6,8 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
-import org.myftp.gattserver.grass3.config.ConfigurationUtils;
+import org.myftp.gattserver.grass3.SpringContextHelper;
+import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.fm.config.FMConfiguration;
 
 public class FMExplorer {
@@ -15,7 +16,7 @@ public class FMExplorer {
 	// *URL - cesta k souboru/adresáři; nezávislá na platformě
 	// *Path - cesta k souboru/adresáři; závislá na platformě (viz. separator)
 	// *File - objekt java.io.File obsahující cestu k souboru/adresáři
-	
+
 	/**
 	 * Absolutní cesta od systémového kořene ke kořeni FM, jako {@link File}
 	 * objekt
@@ -168,9 +169,11 @@ public class FMExplorer {
 	 * @throws JAXBException
 	 */
 	private FMConfiguration loadConfiguration() throws JAXBException {
-		return new ConfigurationUtils<FMConfiguration>(new FMConfiguration(),
-				FMConfiguration.CONFIG_PATH)
-				.loadExistingOrCreateNewConfiguration();
+		IConfigurationService configurationService = (IConfigurationService) SpringContextHelper
+				.getBean("configurationService");
+		FMConfiguration configuration = new FMConfiguration();
+		configurationService.loadConfiguration(configuration);
+		return configuration;
 	}
 
 	/**

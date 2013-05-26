@@ -3,3 +3,5 @@
 /.project
 /.settings
 /bin
+/grass_dispatcher_config.xml
+/grass.log

@@ -18,6 +18,11 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
+	<!-- Aby se dalo injektovat odkukoliv -->
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+
 	<!-- Spring security login form submit listener -->
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>

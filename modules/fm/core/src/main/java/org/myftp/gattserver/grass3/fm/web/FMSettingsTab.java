@@ -1,10 +1,7 @@
 package org.myftp.gattserver.grass3.fm.web;
 
-import javax.xml.bind.JAXBException;
-
-import org.myftp.gattserver.grass3.config.ConfigurationFileError;
-import org.myftp.gattserver.grass3.config.ConfigurationManager;
-import org.myftp.gattserver.grass3.config.ConfigurationUtils;
+import javax.annotation.Resource;
+import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.fm.config.FMConfiguration;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
@@ -23,6 +20,9 @@ import com.vaadin.ui.Button.ClickEvent;
 public class FMSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = -3310643769376755875L;
+
+	@Resource(name = "configurationService")
+	IConfigurationService configurationService;
 
 	public FMSettingsTab(GrassRequest request) {
 		super(request);
@@ -79,28 +79,13 @@ public class FMSettingsTab extends AbstractSettingsTab {
 	}
 
 	private FMConfiguration loadConfiguration() {
-		try {
-			return new ConfigurationUtils<FMConfiguration>(
-					new FMConfiguration(), FMConfiguration.CONFIG_PATH)
-					.loadExistingOrCreateNewConfiguration();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			showError500();
-			return null;
-		}
+		FMConfiguration configuration = new FMConfiguration();
+		configurationService.loadConfiguration(configuration);
+		return configuration;
 	}
 
 	private void storeConfiguration(FMConfiguration configuration) {
-		try {
-			ConfigurationManager.getInstance().storeConfiguration(
-					FMConfiguration.CONFIG_PATH, configuration);
-		} catch (ConfigurationFileError e) {
-			e.printStackTrace();
-			showError500();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			showError500();
-		}
+		configurationService.saveConfiguration(configuration);
 	}
 
 }

@@ -1,11 +1,9 @@
 package org.myftp.gattserver.grass3.articles.latex.web;
 
-import javax.xml.bind.JAXBException;
+import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.articles.latex.config.LatexConfiguration;
-import org.myftp.gattserver.grass3.config.ConfigurationFileError;
-import org.myftp.gattserver.grass3.config.ConfigurationManager;
-import org.myftp.gattserver.grass3.config.ConfigurationUtils;
+import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
@@ -23,6 +21,9 @@ import com.vaadin.ui.Button.ClickEvent;
 public class LatexSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = -3310643769376755875L;
+
+	@Resource(name = "configurationService")
+	IConfigurationService configurationService;
 
 	public LatexSettingsTab(GrassRequest request) {
 		super(request);
@@ -80,28 +81,13 @@ public class LatexSettingsTab extends AbstractSettingsTab {
 	}
 
 	private LatexConfiguration loadConfiguration() {
-		try {
-			return new ConfigurationUtils<LatexConfiguration>(
-					new LatexConfiguration(), LatexConfiguration.CONFIG_PATH)
-					.loadExistingOrCreateNewConfiguration();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			showError500();
-			return null;
-		}
+		LatexConfiguration configuration = new LatexConfiguration();
+		configurationService.loadConfiguration(configuration);
+		return configuration;
 	}
 
 	private void storeConfiguration(LatexConfiguration configuration) {
-		try {
-			ConfigurationManager.getInstance().storeConfiguration(
-					LatexConfiguration.CONFIG_PATH, configuration);
-		} catch (ConfigurationFileError e) {
-			e.printStackTrace();
-			showError500();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			showError500();
-		}
+		configurationService.saveConfiguration(configuration);
 	}
 
 }

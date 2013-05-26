@@ -9,9 +9,48 @@
         http://www.springframework.org/schema/aop
         http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="false" />
+		<property name="locations">
+			<list>
+				<value>classpath:properties/grass.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- org.apache.tomcat.jdbc.pool.DataSource musí vidět na driver - protože 
+		je to ale volané z Tomcat classloaderu musí se dodat přímo do serveru, viz. 
+		http://stackoverflow.com/questions/13161747/jdbc-apache-tomcat-pooling-jar -->
+	<bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">
+		<property name="driverClassName" value="${hibernate.connection.driver_class}" />
+		<property name="url" value="${hibernate.connection.url}" />
+		<property name="username" value="${hibernate.connection.username}" />
+		<property name="password" value="${hibernate.connection.password}" />
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="packagesToScan">
+			<list>
+				<value>org.myftp.gattserver.grass3</value>
+			</list>
+		</property>
+		<property name="dataSource" ref="dataSource" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.connection.pool_size">${hibernate.connection.pool_size}</prop>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}
+				</prop>
+			</props>
+		</property>
+	</bean>
+
+
 	<context:annotation-config />
 	<context:component-scan base-package="org.myftp.gattserver.grass3" />
-
 	<aop:aspectj-autoproxy />
 
 </beans>

@@ -5,15 +5,13 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.xml.bind.JAXBException;
-
+import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.articles.parser.exceptions.ParserException;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.IContext;
-import org.myftp.gattserver.grass3.config.ConfigurationManager;
-import org.myftp.gattserver.grass3.config.ConfigurationUtils;
 import org.myftp.gattserver.grass3.articles.favlink.Downloader;
 import org.myftp.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
+import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,21 +45,13 @@ public class LinkTree extends AbstractElementTree {
 	 * Zjistí dle aktuální konfigurace výstupní adresář
 	 */
 	private String getCachePath() {
-		ConfigurationManager configurationManager = ConfigurationManager
-				.getInstance();
-		if (configurationManager == null)
-			throw new ParserException();
-		else {
-			try {
-				return new ConfigurationUtils<FavlinkConfiguration>(
-						new FavlinkConfiguration(),
-						FavlinkConfiguration.CONFIG_PATH)
-						.loadExistingOrCreateNewConfiguration().getOutputPath();
-			} catch (JAXBException e) {
-				e.printStackTrace();
-				throw new ParserException();
-			}
-		}
+
+		IConfigurationService configurationService = (IConfigurationService) SpringContextHelper
+				.getBean("configurationService");
+
+		FavlinkConfiguration configuration = new FavlinkConfiguration();
+		configurationService.loadConfiguration(configuration);
+		return configuration.getOutputPath();
 	}
 
 	private String faviconImg() {

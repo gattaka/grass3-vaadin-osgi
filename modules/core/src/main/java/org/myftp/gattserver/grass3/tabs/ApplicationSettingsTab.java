@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.config.CoreConfiguration;
 import org.myftp.gattserver.grass3.config.IConfigurationService;
-import org.myftp.gattserver.grass3.model.dao.ContentTagDAO;
+import org.myftp.gattserver.grass3.facades.IContentTagFacade;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
@@ -29,8 +29,8 @@ import com.vaadin.ui.VerticalLayout;
 @Scope("prototype")
 public class ApplicationSettingsTab extends AbstractSettingsTab {
 
-	@Resource(name = "contentTagDAO")
-	private ContentTagDAO contentTagDAO;
+	@Resource(name = "contentTagFacade")
+	private IContentTagFacade contentTagFacade;
 
 	@Resource(name = "configurationService")
 	IConfigurationService configurationService;
@@ -158,7 +158,7 @@ public class ApplicationSettingsTab extends AbstractSettingsTab {
 					private static final long serialVersionUID = 8490964871266821307L;
 
 					public void buttonClick(ClickEvent event) {
-						if (contentTagDAO.countContentNodes()) {
+						if (contentTagFacade.countContentNodes()) {
 							InfoSubwindow infoSubwindow = new InfoSubwindow(
 									"Počty obsahů tagů byly úspěšně přepočítány");
 							getUI().addWindow(infoSubwindow);

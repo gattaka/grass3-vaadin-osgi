@@ -6,9 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
-import org.myftp.gattserver.grass3.model.dao.ContentTagDAO;
 import org.myftp.gattserver.grass3.model.domain.ContentNode;
 import org.myftp.gattserver.grass3.model.domain.ContentTag;
 import org.myftp.gattserver.grass3.model.domain.Node;
@@ -41,9 +38,6 @@ import org.springframework.stereotype.Component;
  */
 @Component("mapper")
 public class Mapper {
-
-	@Resource(name = "contentTagDAO")
-	private ContentTagDAO contentTagDAO;
 
 	/**
 	 * Převede {@link User} na {@link UserInfoDTO}

@@ -112,4 +112,10 @@ public interface IUserFacade {
 	public boolean removeContentFromFavourites(ContentNodeDTO contentNode,
 			UserInfoDTO user);
 
+	/**
+	 * Odebere obsah z oblíbených všech uživatelů
+	 */
+	public boolean removeContentFromAllUsersFavourites(
+			ContentNodeDTO contentNode);
+
 }

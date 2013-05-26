@@ -2,23 +2,28 @@ package org.myftp.gattserver.grass3.facades.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.facades.IQuotesFacade;
-import org.myftp.gattserver.grass3.model.dao.QuoteDAO;
+import org.myftp.gattserver.grass3.model.dao.QuoteRepository;
 import org.myftp.gattserver.grass3.model.domain.Quote;
 import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.util.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Component("quotesFacade")
 public class QuotesFacadeImpl implements IQuotesFacade {
 
 	@Resource(name = "mapper")
 	private Mapper mapper;
 
-	@Resource(name = "quoteDAO")
-	private QuoteDAO quoteDAO;
+	@Autowired
+	private QuoteRepository quoteRepository;
 
 	/**
 	 * Vytvoří a uloží novou hlášku dle textu
@@ -31,12 +36,7 @@ public class QuotesFacadeImpl implements IQuotesFacade {
 	public boolean createNewQuote(String text) {
 		Quote quote = new Quote();
 		quote.setName(text);
-		// save sám uzavírá session
-		if (quoteDAO.save(quote) == null) {
-			return false;
-		} else {
-			return true;
-		}
+		return quoteRepository.save(quote) != null;
 	}
 
 	/**
@@ -45,12 +45,11 @@ public class QuotesFacadeImpl implements IQuotesFacade {
 	 * @return
 	 */
 	public List<QuoteDTO> getAllQuotes() {
-		List<Quote> quotes = quoteDAO.findAll();
+		List<Quote> quotes = quoteRepository.findAll();
 		List<QuoteDTO> quoteDTOs = new ArrayList<QuoteDTO>();
 		for (Quote quote : quotes) {
 			quoteDTOs.add(mapper.map(quote));
 		}
-		quoteDAO.closeSession();
 		return quoteDTOs;
 	}
 
@@ -58,12 +57,15 @@ public class QuotesFacadeImpl implements IQuotesFacade {
 	 * Vybere náhodně hlášku a vrátí její text
 	 */
 	public String getRandomQuote() {
-		Quote quote = quoteDAO.chooseRandomQuote();
-		if (quote != null) {
-			return quote.getName();
-		} else {
+		long count = quoteRepository.count();
+		if (count == 0)
 			return "~ nebyly nalezeny žádné záznamy ~";
-		}
+
+		Random generator = new Random();
+		Long randomId = Math.abs(generator.nextLong()) % count + 1;
+
+		Quote quote = quoteRepository.findOne(randomId);
+		return quote.getName();
 	}
 
 }

@@ -5,32 +5,32 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.facades.INodeFacade;
-import org.myftp.gattserver.grass3.model.dao.NodeDAO;
+import org.myftp.gattserver.grass3.model.dao.NodeRepository;
 import org.myftp.gattserver.grass3.model.domain.Node;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.util.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Component("nodeFacade")
 public class NodeFacadeImpl implements INodeFacade {
 
 	@Resource(name = "mapper")
 	private Mapper mapper;
 
-	@Resource(name = "nodeDAO")
-	private NodeDAO nodeDAO;
+	@Autowired
+	private NodeRepository nodeRepository;
 
 	/**
 	 * Získá kategorii dle id
 	 */
 	public NodeDTO getNodeByIdForOverview(Long id) {
-
-		Node node = nodeDAO.findByID(id);
+		Node node = nodeRepository.findOne(id);
 		if (node == null)
 			return null;
 		NodeDTO nodeDTO = mapper.mapNodeForOverview(node);
-		nodeDAO.closeSession();
-
 		return nodeDTO;
 	}
 
@@ -39,13 +39,10 @@ public class NodeFacadeImpl implements INodeFacade {
 	 * kategorie
 	 */
 	public NodeDTO getNodeByIdForDetail(Long id) {
-
-		Node node = nodeDAO.findByID(id);
+		Node node = nodeRepository.findOne(id);
 		if (node == null)
 			return null;
 		NodeDTO nodeDTO = mapper.mapNodeForDetailPage(node);
-		nodeDAO.closeSession();
-
 		return nodeDTO;
 	}
 
@@ -53,17 +50,11 @@ public class NodeFacadeImpl implements INodeFacade {
 	 * Získá všechny kořenové kategorie
 	 */
 	public List<NodeDTO> getRootNodes() {
-
-		List<Node> rootNodes = nodeDAO.findRoots();
-
+		List<Node> rootNodes = nodeRepository.findByParentIsNull();
 		if (rootNodes == null) {
-			nodeDAO.closeSession();
 			return null;
 		}
-
 		List<NodeDTO> rootNodesDTOs = mapper.mapNodesForOverview(rootNodes);
-
-		nodeDAO.closeSession();
 		return rootNodesDTOs;
 	}
 
@@ -71,20 +62,16 @@ public class NodeFacadeImpl implements INodeFacade {
 	 * Získá kategorie, které jsou jako potomci dané kategorie
 	 */
 	public List<NodeDTO> getNodesByParentNode(NodeDTO parent) {
-
-		List<Node> childrenNodes = nodeDAO.findNodesByParent(parent.getId());
+		List<Node> childrenNodes = nodeRepository
+				.findByParentId(parent.getId());
 
 		if (childrenNodes == null) {
-			nodeDAO.closeSession();
 			return null;
 		}
 
 		List<NodeDTO> childrenNodesDTOs = mapper
 				.mapNodesForOverview(childrenNodes);
-
-		nodeDAO.closeSession();
 		return childrenNodesDTOs;
-
 	}
 
 	/**
@@ -103,9 +90,24 @@ public class NodeFacadeImpl implements INodeFacade {
 
 		Node node = new Node();
 		node.setName(name);
-		return nodeDAO.createNewNode(node,
-				parent == null ? null : parent.getId());
+		node = nodeRepository.save(node);
+		if (node == null)
+			return false;
 
+		if (parent != null) {
+			Node parentEntity = nodeRepository.findOne(parent.getId());
+			parentEntity.getSubNodes().add(node);
+			parentEntity = nodeRepository.save(parentEntity);
+			if (parentEntity == null)
+				return false;
+
+			node.setParent(parentEntity);
+			node = nodeRepository.save(node);
+			if (node == null)
+				return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -124,8 +126,8 @@ public class NodeFacadeImpl implements INodeFacade {
 		// zamezí vkládání předků do potomků - projde postupně všechny předky
 		// cílové kategorie a pokud narazí na moje id, pak jsem předkem cílové
 		// kategorie, což je špatně
-		Node parent = newParent == null ? null : nodeDAO.findByID(newParent
-				.getId());
+		Node parent = newParent == null ? null : nodeRepository
+				.findOne(newParent.getId());
 		if (parent != null) {
 			// začínám od předka newParent - tohle je schválně, umožní mi to se
 			// pak ptát na id newParent - pokud totiž narazím na newParent id,
@@ -140,9 +142,32 @@ public class NodeFacadeImpl implements INodeFacade {
 			}
 		}
 
-		return nodeDAO.moveNode(node.getId(), newParent == null ? null
-				: newParent.getId());
+		Node nodeEntity = nodeRepository.findOne(node.getId());
 
+		if (nodeEntity.getParent() != null) {
+			nodeEntity.getParent().getSubNodes().remove(nodeEntity);
+			Node oldParentEntity = nodeRepository.save(nodeEntity.getParent());
+			if (oldParentEntity == null)
+				return false;
+		}
+
+		if (newParent != null) {
+			Node newParentEntity = nodeRepository.findOne(newParent.getId());
+			newParentEntity.getSubNodes().add(nodeEntity);
+			newParentEntity = nodeRepository.save(newParentEntity);
+			if (newParentEntity == null)
+				return false;
+
+			nodeEntity.setParent(newParentEntity);
+		} else {
+			nodeEntity.setParent(null);
+		}
+
+		nodeEntity = nodeRepository.save(nodeEntity);
+		if (nodeEntity == null)
+			return false;
+
+		return true;
 	}
 
 	/**
@@ -154,7 +179,16 @@ public class NodeFacadeImpl implements INodeFacade {
 	 *         <code>false</code>
 	 */
 	public boolean deleteNode(NodeDTO node) {
-		return nodeDAO.delete(node.getId());
+
+		Node nodeEntity = nodeRepository.findOne(node.getId());
+		Node parent = nodeEntity.getParent();
+		parent.getSubNodes().remove(nodeEntity);
+		parent = nodeRepository.save(parent);
+		if (parent == null)
+			return false;
+
+		nodeRepository.delete(node.getId());
+		return true;
 	}
 
 	/**
@@ -169,14 +203,13 @@ public class NodeFacadeImpl implements INodeFacade {
 	 */
 	public boolean rename(NodeDTO node, String newName) {
 
-		Node entity = nodeDAO.findByID(node.getId());
-		nodeDAO.closeSession();
+		Node entity = nodeRepository.findOne(node.getId());
 
 		if (entity == null)
 			return false;
 
 		entity.setName(newName);
 
-		return nodeDAO.merge(entity);
+		return nodeRepository.save(entity) != null;
 	}
 }

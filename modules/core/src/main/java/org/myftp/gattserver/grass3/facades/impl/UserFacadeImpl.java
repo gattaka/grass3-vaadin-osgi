@@ -8,39 +8,19 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.facades.IUserFacade;
-import org.myftp.gattserver.grass3.model.dao.UserDAO;
+import org.myftp.gattserver.grass3.model.dao.ContentNodeRepository;
+import org.myftp.gattserver.grass3.model.dao.UserRepository;
 import org.myftp.gattserver.grass3.model.domain.User;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.util.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * 
- * Fasáda na které je funkcionalita pro view aplikace. Má několik funkcí:
- * 
- * <ol>
- * <li>přebírá funkcionalitu kolem přípravy dat k zobrazení ve view ze samotných
- * view tříd a ty se tak starají pouze o využití těchto dat, nikoliv jejich
- * předzpracování</li>
- * <li>odděluje view od vazby na DAO třídy a tím model vrstvu</li>
- * <li>připravuje data do DTO tříd, takže nedochází k "propadnutí" proxy objektů
- * (například) od hibernate, čímž je opět lépe oddělena view vrstva od vrstvy
- * modelu</li>
- * </ol>
- * 
- * <p>
- * Fasády komunikují s view pomocí parametrů metod a DTO objektů, při jejich
- * vydávání je zřejmé, že data v DTO odpovídají DB entitě. Při jejich přijímání
- * (DTO je předáno fasádě) není ovšem dáno, že fasády využije vše z DTO. To se
- * řídí okolnostmi. Mezi DTO a entitou není přesný vztah 1:1.
- * </p>
- * 
- * @author gatt
- * 
- */
+@Transactional
 @Component("userFacade")
 public class UserFacadeImpl implements IUserFacade {
 
@@ -50,8 +30,11 @@ public class UserFacadeImpl implements IUserFacade {
 	@Resource(name = "grassPasswordEncoder")
 	private PasswordEncoder encoder;
 
-	@Resource(name = "userDAO")
-	private UserDAO userDAO;
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private ContentNodeRepository contentNodeRepository;
 
 	/**
 	 * Zkusí najít uživatele dle jména a hesla
@@ -61,7 +44,7 @@ public class UserFacadeImpl implements IUserFacade {
 	 * @return
 	 */
 	public UserInfoDTO getUserByLogin(String username, String password) {
-		List<User> loggedUser = userDAO.findByName(username);
+		List<User> loggedUser = userRepository.findByName(username);
 		if (loggedUser != null
 				&& loggedUser.size() == 1
 				&& loggedUser.get(0).getPassword()
@@ -95,13 +78,7 @@ public class UserFacadeImpl implements IUserFacade {
 		EnumSet<Role> roles = EnumSet.of(Role.USER);
 		user.setRoles(roles);
 
-		// u save se session uzavírá sama
-
-		if (userDAO.save(user) == null) {
-			return false;
-		} else {
-			return true;
-		}
+		return userRepository.save(user) != null;
 	}
 
 	/**
@@ -112,10 +89,9 @@ public class UserFacadeImpl implements IUserFacade {
 	 *         <code>false</code>
 	 */
 	public boolean activateUser(UserInfoDTO userDTO) {
-		User user = userDAO.findByID(userDTO.getId());
+		User user = userRepository.findOne(userDTO.getId());
 		user.setConfirmed(true);
-		// session uzavře merge
-		return userDAO.merge(user);
+		return userRepository.save(user) != null;
 	}
 
 	/**
@@ -126,10 +102,9 @@ public class UserFacadeImpl implements IUserFacade {
 	 *         <code>false</code>
 	 */
 	public boolean banUser(UserInfoDTO userDTO) {
-		User user = userDAO.findByID(userDTO.getId());
+		User user = userRepository.findOne(userDTO.getId());
 		user.setConfirmed(false);
-		// session uzavře merge
-		return userDAO.merge(user);
+		return userRepository.save(user) != null;
 	}
 
 	/**
@@ -140,10 +115,9 @@ public class UserFacadeImpl implements IUserFacade {
 	 *         <code>false</code>
 	 */
 	public boolean changeUserRoles(UserInfoDTO userDTO) {
-		User user = userDAO.findByID(userDTO.getId());
+		User user = userRepository.findOne(userDTO.getId());
 		user.setRoles(userDTO.getRoles());
-		// session uzavře merge
-		return userDAO.merge(user);
+		return userRepository.save(user) != null;
 	}
 
 	/**
@@ -152,13 +126,11 @@ public class UserFacadeImpl implements IUserFacade {
 	 * @return list uživatelů
 	 */
 	public List<UserInfoDTO> getUserInfoFromAllUsers() {
-		List<User> users = userDAO.findAll();
+		List<User> users = userRepository.findAll();
 		List<UserInfoDTO> infoDTOs = new ArrayList<UserInfoDTO>();
 		for (User user : users) {
 			infoDTOs.add(mapper.map(user));
 		}
-
-		userDAO.closeSession();
 		return infoDTOs;
 	}
 
@@ -169,7 +141,7 @@ public class UserFacadeImpl implements IUserFacade {
 	 * @return
 	 */
 	public UserInfoDTO getUser(String username) {
-		List<User> loggedUser = userDAO.findByName(username);
+		List<User> loggedUser = userRepository.findByName(username);
 		if (loggedUser != null && loggedUser.size() == 1) {
 			User user = loggedUser.get(0);
 			if (user != null)
@@ -183,8 +155,8 @@ public class UserFacadeImpl implements IUserFacade {
 	 */
 	public boolean hasInFavourites(ContentNodeDTO contentNodeDTO,
 			UserInfoDTO user) {
-		return userDAO.hasContentInFavourites(contentNodeDTO.getId(),
-				user.getId());
+		return userRepository.findByIdAndFavouritesId(user.getId(),
+				contentNodeDTO.getId()) != null;
 	}
 
 	/**
@@ -192,8 +164,20 @@ public class UserFacadeImpl implements IUserFacade {
 	 */
 	public boolean addContentToFavourites(ContentNodeDTO contentNodeDTO,
 			UserInfoDTO user) {
-		return userDAO.addContentToFavourites(contentNodeDTO.getId(),
-				user.getId());
+
+		User userEntity = userRepository.findOne(user.getId());
+		userEntity.getFavourites().add(
+				contentNodeRepository.findOne(contentNodeDTO.getId()));
+
+		return userRepository.save(userEntity) != null;
+	}
+
+	private boolean removeContentFromFavourites(User user,
+			ContentNodeDTO contentNode) {
+		user.getFavourites().remove(
+				contentNodeRepository.findOne(contentNode.getId()));
+
+		return userRepository.save(user) != null;
 	}
 
 	/**
@@ -201,7 +185,24 @@ public class UserFacadeImpl implements IUserFacade {
 	 */
 	public boolean removeContentFromFavourites(ContentNodeDTO contentNodeDTO,
 			UserInfoDTO user) {
-		return userDAO.removeContentFromFavourites(contentNodeDTO.getId(),
-				user.getId());
+		User userEntity = userRepository.findOne(user.getId());
+		return removeContentFromFavourites(userEntity, contentNodeDTO);
+	}
+
+	/**
+	 * Odebere obsah z oblíbených všech uživatelů
+	 */
+	public boolean removeContentFromAllUsersFavourites(
+			ContentNodeDTO contentNode) {
+
+		// vymaž z oblíbených
+		List<User> users = userRepository.findByFavouritesId(contentNode
+				.getId());
+		if (users == null)
+			return false;
+		for (User user : users)
+			removeContentFromFavourites(user, contentNode);
+
+		return true;
 	}
 }

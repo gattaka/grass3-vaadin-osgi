@@ -22,7 +22,9 @@ import org.myftp.gattserver.grass3.util.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Component("contentNodeFacade")
 public class ContentNodeFacadeImpl implements IContentNodeFacade {
 

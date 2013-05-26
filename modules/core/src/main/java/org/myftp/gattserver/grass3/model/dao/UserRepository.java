@@ -9,7 +9,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	public List<User> findByName(String name);
 
-	public List<User> findByNameAndPass(String name, String passwordHash);
+	public List<User> findByNameAndPassword(String name, String passwordHash);
 
 	public User findByIdAndFavouritesId(Long userId, Long contentNodeId);
 

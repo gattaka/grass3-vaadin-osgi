@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.articles.dao.ArticleDAO;
+import org.myftp.gattserver.grass3.articles.dao.ArticleRepository;
 import org.myftp.gattserver.grass3.articles.domain.Article;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.articles.editor.api.ContextImpl;
@@ -19,13 +19,16 @@ import org.myftp.gattserver.grass3.articles.parser.interfaces.IContext;
 import org.myftp.gattserver.grass3.articles.service.impl.ArticlesContentService;
 import org.myftp.gattserver.grass3.articles.util.ArticlesMapper;
 import org.myftp.gattserver.grass3.facades.IContentNodeFacade;
-import org.myftp.gattserver.grass3.model.dao.ContentNodeDAO;
+import org.myftp.gattserver.grass3.model.dao.ContentNodeRepository;
 import org.myftp.gattserver.grass3.model.domain.ContentNode;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Component("articleFacade")
 public class ArticleFacadeImpl implements IArticleFacade {
 
@@ -35,11 +38,11 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	@Resource(name = "articlesMapper")
 	private ArticlesMapper articlesMapper;
 
-	@Resource(name = "contentNodeDAO")
-	private ContentNodeDAO contentNodeDAO;
+	@Autowired
+	private ContentNodeRepository contentNodeRepository;
 
-	@Resource(name = "articleDAO")
-	private ArticleDAO articleDAO;
+	@Autowired
+	private ArticleRepository articleRepository;
 
 	@Resource(name = "pluginRegister")
 	private PluginRegister pluginRegister;
@@ -114,8 +117,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	public boolean deleteArticle(ArticleDTO articleDTO) {
 
 		// smaž článek
-		if (articleDAO.delete(articleDTO.getId()) == false)
-			return false;
+		articleRepository.delete(articleDTO.getId());
 
 		// smaž jeho content node
 		ContentNodeDTO contentNodeDTO = articleDTO.getContentNode();
@@ -144,8 +146,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 			boolean publicated, ArticleDTO articleDTO, String contextRoot) {
 
 		// článek
-		Article article = articleDAO.findByID(articleDTO.getId());
-		articleDAO.closeSession();
+		Article article = articleRepository.findOne(articleDTO.getId());
 
 		// nasetuj do něj vše potřebné
 		IContext context = processArticle(text, contextRoot);
@@ -156,7 +157,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 		article.setSearchableOutput(HTMLTrimmer.trim(context.getOutput()));
 
 		// ulož ho
-		if (articleDAO.merge(article) == false)
+		if (articleRepository.save(article) == null)
 			return false;
 
 		// content node
@@ -201,26 +202,24 @@ public class ArticleFacadeImpl implements IArticleFacade {
 		article.setSearchableOutput(HTMLTrimmer.trim(context.getOutput()));
 
 		// ulož ho a nasetuj jeho id
-		Long contentId = (Long) articleDAO.save(article);
-		if (contentId == null)
+		article = articleRepository.save(article);
+		if (article == null)
 			return null;
-		article.setId(contentId);
 
 		// vytvoř odpovídající content node
 		ContentNodeDTO contentNodeDTO = contentNodeFacade.save(
-				ArticlesContentService.ID, contentId, name, tags, publicated,
-				category, author);
+				ArticlesContentService.ID, article.getId(), name, tags,
+				publicated, category, author);
 
 		if (contentNodeDTO == null)
 			return null;
 
 		// ulož do článku referenci na jeho contentnode
-		ContentNode contentNode = contentNodeDAO.findByID(contentNodeDTO
+		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO
 				.getId());
-		contentNodeDAO.closeSession();
 
 		article.setContentNode(contentNode);
-		if (articleDAO.merge(article) == false)
+		if (articleRepository.save(article) == null)
 			return null;
 
 		return article.getId();
@@ -234,11 +233,10 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 * @return DTO článku
 	 */
 	public ArticleDTO getArticleForDetail(Long id) {
-		Article article = articleDAO.findByID(id);
+		Article article = articleRepository.findOne(id);
 		if (article == null)
 			return null;
 		ArticleDTO articleDTO = articlesMapper.mapArticleForDetail(article);
-		articleDAO.closeSession();
 		return articleDTO;
 	}
 
@@ -246,26 +244,25 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 * Získá všechny články pro přegenerování
 	 */
 	public List<ArticleDTO> getAllArticlesForReprocess() {
-		List<Article> articles = articleDAO.findAll();
+		List<Article> articles = articleRepository.findAll();
 		if (articles == null)
 			return null;
-		List<ArticleDTO> articleDTOs = articlesMapper.mapArticlesForReprocess(articles);
-		articleDAO.closeSession();
+		List<ArticleDTO> articleDTOs = articlesMapper
+				.mapArticlesForReprocess(articles);
 		return articleDTOs;
 	}
-	
+
 	/**
 	 * Získá všechny články pro přehled
 	 * 
 	 * @return
 	 */
 	public List<ArticleDTO> getAllArticlesForOverview() {
-		List<Article> articles = articleDAO.findAll();
+		List<Article> articles = articleRepository.findAll();
 		if (articles == null)
 			return null;
 		List<ArticleDTO> articleDTOs = articlesMapper
 				.mapArticlesForOverview(articles);
-		articleDAO.closeSession();
 		return articleDTOs;
 	}
 
@@ -275,12 +272,11 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 * @return
 	 */
 	public List<ArticleDTO> getAllArticlesForSearch() {
-		List<Article> articles = articleDAO.findAll();
+		List<Article> articles = articleRepository.findAll();
 		if (articles == null)
 			return null;
 		List<ArticleDTO> articleDTOs = articlesMapper
 				.mapArticlesForSearch(articles);
-		articleDAO.closeSession();
 		return articleDTOs;
 	}
 

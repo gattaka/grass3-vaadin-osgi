@@ -6,7 +6,9 @@ import org.myftp.gattserver.grass3.model.dao.ConfigurationItemRepository;
 import org.myftp.gattserver.grass3.model.domain.ConfigurationItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Component("configurationService")
 public class ConfigurationService implements IConfigurationService {
 

@@ -73,15 +73,6 @@ public abstract class AbstractConfiguration {
 		return items;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T> T itemValueOf(String itemValue, Class<T> type)
-			throws Exception {
-
-		Method getMethod = type.getDeclaredMethod("valueOf", String.class);
-		return (T) getMethod.invoke(String.class, itemValue);
-
-	}
-
 	public void populateConfigurationFromMap(List<ConfigurationItem> items) {
 
 		Class<? extends AbstractConfiguration> type = this.getClass();
@@ -93,11 +84,13 @@ public abstract class AbstractConfiguration {
 				continue;
 
 			for (ConfigurationItem item : items) {
-				if (field.getName().equals(item.getName())) {
+				int subindex = (getPrefix().length() + 1) >= item.getName()
+						.length() ? 0 : getPrefix().length() + 1;
+				if (field.getName().equals(item.getName().substring(subindex))) {
 
 					try {
-						Object[] args = { itemValueOf(item.getValue(),
-								field.getType()) };
+						Object[] args = { StringDeserializer.deserialize(
+								item.getValue(), field.getType()) };
 
 						Class<?>[] params = { field.getType() };
 						Method setMethod = null;

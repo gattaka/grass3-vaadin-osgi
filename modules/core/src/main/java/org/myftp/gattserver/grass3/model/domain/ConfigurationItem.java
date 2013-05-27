@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.model.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -15,6 +16,8 @@ public class ConfigurationItem {
 
 	@Id
 	private String name;
+	
+	@Column(columnDefinition = "CLOB")
 	private String value;
 
 	public ConfigurationItem() {

@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.config;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -59,7 +60,8 @@ public abstract class AbstractConfiguration {
 						getMethod = type.getDeclaredMethod(
 								createIsMethodName(field.getName()), params);
 					}
-					value = "" + getMethod.invoke(this, args);
+					value = StringSerializer.serialize((Serializable) getMethod
+							.invoke(this, args));
 					items.add(new ConfigurationItem(createConfigName(field
 							.getName()), value));
 				} catch (Exception e) {
@@ -89,7 +91,7 @@ public abstract class AbstractConfiguration {
 				if (field.getName().equals(item.getName().substring(subindex))) {
 
 					try {
-						Object[] args = { StringDeserializer.deserialize(
+						Object[] args = { StringSerializer.deserialize(
 								item.getValue(), field.getType()) };
 
 						Class<?>[] params = { field.getType() };

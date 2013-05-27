@@ -24,7 +24,6 @@ public class ServiceHolderImpl implements IServiceHolder {
 	/**
 	 * Ošetření null kolekcí
 	 */
-	@SuppressWarnings("unused")
 	@PostConstruct
 	private void init() {
 

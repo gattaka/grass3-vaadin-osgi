@@ -27,6 +27,9 @@
         <dependent-module archiveName="fm-core-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/fm-core/fm-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="hw-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/hw/hw">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="search-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/search/search">
             <dependency-type>uses</dependency-type>
         </dependent-module>

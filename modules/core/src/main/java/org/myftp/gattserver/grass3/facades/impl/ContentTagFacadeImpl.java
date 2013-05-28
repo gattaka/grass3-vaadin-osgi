@@ -112,24 +112,26 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 		// získej tagy, které se už nepoužívají a na nich proveď odebrání
 		// ContentNode a případně smazání
 		Set<ContentTag> tagsToDelete = new HashSet<ContentTag>();
-		for (ContentTag oldTag : contentNode.getContentTags()) {
-			if (tags.contains(oldTag))
-				continue;
+		if (contentNode.getContentTags() != null) {
+			for (ContentTag oldTag : contentNode.getContentTags()) {
+				if (tags.contains(oldTag))
+					continue;
 
-			if (oldTag.getContentNodes().remove(contentNode) == false) {
-				// TODO ... pokud nebyl node v tagu, pak je někde chyba a
-				// měl by se aspon vyhodit warning
-			}
+				if (oldTag.getContentNodes().remove(contentNode) == false) {
+					// TODO ... pokud nebyl node v tagu, pak je někde chyba a
+					// měl by se aspon vyhodit warning
+				}
 
-			// ulož změnu
-			oldTag.setContentNodesCount(oldTag.getContentNodes().size());
-			oldTag = contentTagRepository.save(oldTag);
-			if (oldTag == null)
-				return false;
+				// ulož změnu
+				oldTag.setContentNodesCount(oldTag.getContentNodes().size());
+				oldTag = contentTagRepository.save(oldTag);
+				if (oldTag == null)
+					return false;
 
-			// pokud je tag prázdný (nemá nodes) pak se může smazat
-			if (oldTag.getContentNodes().isEmpty()) {
-				tagsToDelete.add(oldTag);
+				// pokud je tag prázdný (nemá nodes) pak se může smazat
+				if (oldTag.getContentNodes().isEmpty()) {
+					tagsToDelete.add(oldTag);
+				}
 			}
 		}
 
@@ -138,7 +140,7 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 		// do všech tagů přidej odkaz na node
 		// tagy ulož nebo na nich proveď merge
 		// zároveň je rovnou přidej do node
-		contentNode.getContentTags().clear();
+		contentNode.setContentTags(new HashSet<ContentTag>());
 		for (ContentTag tag : tags) {
 			if (tag.getContentNodes() == null)
 				tag.setContentNodes(new HashSet<ContentNode>());

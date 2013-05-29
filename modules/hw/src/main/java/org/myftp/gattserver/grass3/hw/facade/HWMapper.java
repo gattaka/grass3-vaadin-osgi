@@ -65,7 +65,7 @@ public class HWMapper {
 		dto.setDestructionDate(e.getDestructionDate());
 		dto.setId(e.getId());
 		dto.setName(e.getName());
-		dto.setParts(mapHWItems(e.getParts()));
+		dto.setUsage(e.getUsage());
 		dto.setPrice(e.getPrice());
 		dto.setPurchaseDate(e.getPurchaseDate());
 		dto.setServiceNotes(mapServiceNotes(e.getServiceNotes()));

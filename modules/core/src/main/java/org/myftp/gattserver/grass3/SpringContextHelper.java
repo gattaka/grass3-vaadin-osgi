@@ -3,7 +3,6 @@ package org.myftp.gattserver.grass3;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -38,12 +37,8 @@ public class SpringContextHelper {
 		return ContextHolder.getContext().getBean(beanRef);
 	}
 
-	public static void inject(Object object) {
-
-		AutowireCapableBeanFactory beanFactory = ContextHolder.getContext()
-				.getAutowireCapableBeanFactory();
-		beanFactory.autowireBeanProperties(object,
-				AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, false);
+	public static <T> T getBean(final Class<T> type) {
+		return ContextHolder.getContext().getBean(type);
 	}
 
 }

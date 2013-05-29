@@ -3,6 +3,9 @@ package org.myftp.gattserver.grass3.hw.dto;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  * HW Objekt
  */
@@ -16,6 +19,8 @@ public class HWItemDTO {
 	/**
 	 * Název
 	 */
+	@NotNull
+	@Size(min = 1)
 	private String name;
 
 	/**
@@ -41,7 +46,8 @@ public class HWItemDTO {
 	/**
 	 * Stav hw - funkční, rozbitý, poruchový, bližší popis
 	 */
-	private String state;
+	@NotNull
+	private HWItemState state;
 
 	/**
 	 * Poznámky ke stavu hw - opravy apod.
@@ -51,7 +57,7 @@ public class HWItemDTO {
 	/**
 	 * Součásti
 	 */
-	private List<HWItemDTO> parts;
+	private String usage;
 
 	public Long getId() {
 		return id;
@@ -101,11 +107,11 @@ public class HWItemDTO {
 		this.price = price;
 	}
 
-	public String getState() {
+	public HWItemState getState() {
 		return state;
 	}
 
-	public void setState(String state) {
+	public void setState(HWItemState state) {
 		this.state = state;
 	}
 
@@ -117,12 +123,12 @@ public class HWItemDTO {
 		this.serviceNotes = serviceNotes;
 	}
 
-	public List<HWItemDTO> getParts() {
-		return parts;
+	public String getUsage() {
+		return usage;
 	}
 
-	public void setParts(List<HWItemDTO> parts) {
-		this.parts = parts;
+	public void setUsage(String usage) {
+		this.usage = usage;
 	}
 
 }

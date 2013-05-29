@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.myftp.gattserver.grass3.hw.dto.HWItemState;
 
 /**
  * HW Objekt
@@ -57,7 +58,7 @@ public class HWItem {
 	/**
 	 * Stav hw - funkční, rozbitý, poruchový, bližší popis
 	 */
-	private String state;
+	private HWItemState state;
 
 	/**
 	 * Poznámky ke stavu hw - opravy apod.
@@ -66,10 +67,9 @@ public class HWItem {
 	private List<ServiceNote> serviceNotes;
 
 	/**
-	 * Součásti
+	 * Součást celku
 	 */
-	@OneToMany
-	private Set<HWItem> parts;
+	private String usage;
 
 	public Long getId() {
 		return id;
@@ -119,11 +119,11 @@ public class HWItem {
 		this.price = price;
 	}
 
-	public String getState() {
+	public HWItemState getState() {
 		return state;
 	}
 
-	public void setState(String state) {
+	public void setState(HWItemState state) {
 		this.state = state;
 	}
 
@@ -135,12 +135,12 @@ public class HWItem {
 		this.serviceNotes = serviceNotes;
 	}
 
-	public Set<HWItem> getParts() {
-		return parts;
+	public String getUsage() {
+		return usage;
 	}
 
-	public void setParts(Set<HWItem> parts) {
-		this.parts = parts;
+	public void setUsage(String usage) {
+		this.usage = usage;
 	}
 
 }

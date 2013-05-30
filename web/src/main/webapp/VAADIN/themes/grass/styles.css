@@ -36,6 +36,19 @@ font-family: 'Signika', sans-serif;
 	font-size: 20px;
 }
 
+.v-button .v-icon {
+	padding-bottom: 1px;
+}
+
+.v-panel-content-hw-panel {
+	white-space: pre-wrap;
+	padding: 5px;
+}
+
+.hw-panel .v-label.v-has-width {
+	white-space: pre-wrap;
+}
+
 /* == DEFAULT =============================================================== */
 
 /* Default clean */

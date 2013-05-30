@@ -42,7 +42,7 @@ public class HWPage extends OneColumnPage {
 		// String[] labels = {"Přehled","Typy zařízení", "Zařízení",
 		// "Servisní historie"};
 
-		tabSheet.addTab(new OverviewTab(hwFacade), "Přehled");
+		tabSheet.addTab(new HWItemsTab(hwFacade), "Přehled");
 		tabSheet.addTab(new HWTypesTab(hwFacade), "Typy zařízení");
 
 		return layout;

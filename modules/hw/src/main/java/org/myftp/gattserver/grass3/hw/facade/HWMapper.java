@@ -42,7 +42,10 @@ public class HWMapper {
 
 		ServiceNoteDTO dto = new ServiceNoteDTO();
 		dto.setId(e.getId());
+		dto.setDate(e.getDate());
 		dto.setDescription(e.getDescription());
+		dto.setState(e.getState());
+		dto.setUsage(e.getUsage());
 		return dto;
 	}
 

@@ -18,4 +18,9 @@ public interface IHWFacade {
 
 	public boolean saveHWItem(HWItemDTO hwItemDTO);
 
+	public boolean deleteHWItem(HWItemDTO hwItem);
+
+	public boolean addServiceNote(ServiceNoteDTO serviceNoteDTO,
+			HWItemDTO hwItem);
+
 }

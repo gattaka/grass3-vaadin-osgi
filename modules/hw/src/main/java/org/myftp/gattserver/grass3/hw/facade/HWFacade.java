@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.hw.facade;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -69,4 +70,38 @@ public class HWFacade implements IHWFacade {
 		return hwItemRepository.save(item) != null;
 	}
 
+	@Override
+	public boolean deleteHWItem(HWItemDTO hwItem) {
+
+		HWItem item = hwItemRepository.findOne(hwItem.getId());
+		for (ServiceNote note : item.getServiceNotes()) {
+			serviceNoteRepository.delete(note);
+		}
+		hwItemRepository.delete(item.getId());
+
+		return true;
+	}
+
+	@Override
+	public boolean addServiceNote(ServiceNoteDTO serviceNoteDTO,
+			HWItemDTO hwItem) {
+
+		HWItem item = hwItemRepository.findOne(hwItem.getId());
+		ServiceNote serviceNote = new ServiceNote();
+		serviceNote.setDate(serviceNoteDTO.getDate());
+		serviceNote.setDescription(serviceNoteDTO.getDescription());
+		serviceNote.setState(serviceNoteDTO.getState());
+		serviceNote.setUsage(serviceNoteDTO.getUsage());
+		serviceNoteRepository.save(serviceNote);
+
+		if (item.getServiceNotes() == null)
+			item.setServiceNotes(new ArrayList<ServiceNote>());
+		item.getServiceNotes().add(serviceNote);
+		item.setState(serviceNote.getState());
+		item.setUsage(serviceNote.getUsage());
+
+		hwItemRepository.save(item);
+
+		return true;
+	}
 }

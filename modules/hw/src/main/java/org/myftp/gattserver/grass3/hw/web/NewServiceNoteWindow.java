@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemState;
+import org.myftp.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
 
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
@@ -12,64 +13,48 @@ import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
 
-public abstract class NewHWItemWindow extends Window {
+public abstract class NewServiceNoteWindow extends Window {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	private IHWFacade hwFacade;
 
-	public NewHWItemWindow(final Button newType) {
-		super("Založení nové položky HW");
+	public NewServiceNoteWindow(final Button btn, final HWItemDTO hwItem) {
+		super("Nový servisní záznam");
 
 		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
-		final HWItemDTO hwItemDTO = new HWItemDTO();
-		hwItemDTO.setName("");
-		hwItemDTO.setPrice(0);
-		hwItemDTO.setUsage("");
-		final BeanFieldGroup<HWItemDTO> fieldGroup = new BeanFieldGroup<HWItemDTO>(
-				HWItemDTO.class);
-		fieldGroup.setItemDataSource(hwItemDTO);
+		setWidth("320px");
 
-		VerticalLayout layout = new VerticalLayout();
-		layout.setMargin(true);
-		layout.setSpacing(true);
+		final ServiceNoteDTO serviceNoteDTO = new ServiceNoteDTO();
+		serviceNoteDTO.setDescription("");
+		serviceNoteDTO.setUsage(hwItem.getUsage() == null ? "" : hwItem
+				.getUsage());
+		serviceNoteDTO.setState(hwItem.getState());
+		final BeanFieldGroup<ServiceNoteDTO> fieldGroup = new BeanFieldGroup<ServiceNoteDTO>(
+				ServiceNoteDTO.class);
+		fieldGroup.setItemDataSource(serviceNoteDTO);
 
 		GridLayout winLayout = new GridLayout(2, 4);
-		layout.addComponent(winLayout);
+		setContent(winLayout);
 		winLayout.setSpacing(true);
+		winLayout.setMargin(true);
+		winLayout.setWidth("100%");
 
-		TextField nameField = new TextField("Název");
-		nameField.setImmediate(true);
-		// nameField.setSizeFull();
-		fieldGroup.bind(nameField, "name");
-		winLayout.addComponent(nameField, 0, 0);
-
-		DateField purchaseDateField = new DateField("Získáno");
-		fieldGroup.bind(purchaseDateField, "purchaseDate");
-		purchaseDateField.setSizeFull();
-		winLayout.addComponent(purchaseDateField, 0, 1);
-
-		DateField destructionDateField = new DateField("Odepsáno");
-		fieldGroup.bind(destructionDateField, "destructionDate");
-		destructionDateField.setSizeFull();
-		winLayout.addComponent(destructionDateField, 0, 2);
-
-		TextField priceField = new TextField("Cena");
-		fieldGroup.bind(priceField, "price");
-		priceField.setSizeFull();
-		winLayout.addComponent(priceField, 1, 0);
+		DateField eventDateField = new DateField("Datum");
+		fieldGroup.bind(eventDateField, "date");
+		winLayout.addComponent(eventDateField, 0, 0);
 
 		ComboBox stateComboBox = new ComboBox("Stav");
 		stateComboBox.setNullSelectionAllowed(false);
@@ -79,15 +64,21 @@ public abstract class NewHWItemWindow extends Window {
 						HWItemState.class, Arrays.asList(HWItemState.values())));
 		stateComboBox.setItemCaptionPropertyId("name");
 		fieldGroup.bind(stateComboBox, "state");
-		winLayout.addComponent(stateComboBox, 1, 1);
+		winLayout.addComponent(stateComboBox, 1, 0);
 
 		TextField usageField = new TextField("Je součástí");
 		fieldGroup.bind(usageField, "usage");
 		usageField.setSizeFull();
-		winLayout.addComponent(usageField, 1, 2);
+		winLayout.addComponent(usageField, 0, 1, 1, 1);
+
+		TextArea descriptionField = new TextArea("Popis");
+		descriptionField.setImmediate(true);
+		fieldGroup.bind(descriptionField, "description");
+		descriptionField.setWidth("100%");
+		winLayout.addComponent(descriptionField, 0, 2, 1, 2);
 
 		Button createBtn;
-		layout.addComponent(createBtn = new Button("Založit",
+		winLayout.addComponent(createBtn = new Button("Zapsat",
 				new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;
@@ -97,7 +88,7 @@ public abstract class NewHWItemWindow extends Window {
 
 						try {
 							fieldGroup.commit();
-							if (hwFacade.saveHWItem(hwItemDTO)) {
+							if (hwFacade.addServiceNote(serviceNoteDTO, hwItem)) {
 								onSuccess();
 							} else {
 								UI.getCurrent()
@@ -105,7 +96,7 @@ public abstract class NewHWItemWindow extends Window {
 												new Window(
 														"Chyba",
 														new Label(
-																"Nezdařilo se vytvořit novou položku hardware")));
+																"Nezdařilo se zapsat nový servisní záznam")));
 							}
 							close();
 						} catch (FieldGroup.CommitException e) {
@@ -116,10 +107,8 @@ public abstract class NewHWItemWindow extends Window {
 
 					}
 
-				}));
-		layout.setComponentAlignment(createBtn, Alignment.BOTTOM_RIGHT);
-
-		setContent(layout);
+				}), 1, 3);
+		winLayout.setComponentAlignment(createBtn, Alignment.BOTTOM_RIGHT);
 
 		addCloseListener(new CloseListener() {
 
@@ -127,7 +116,7 @@ public abstract class NewHWItemWindow extends Window {
 
 			@Override
 			public void windowClose(CloseEvent e) {
-				newType.setEnabled(true);
+				btn.setEnabled(true);
 			}
 
 		});

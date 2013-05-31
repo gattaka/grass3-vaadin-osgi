@@ -76,6 +76,7 @@ public class HWMapper {
 		dto.setServiceNotes(mapServiceNotes(e.getServiceNotes()));
 		dto.setState(e.getState());
 		dto.setTypes(mapHWItemTypes(e.getTypes()));
+		dto.setWarrantyYears(e.getWarrantyYears());
 		return dto;
 	}
 

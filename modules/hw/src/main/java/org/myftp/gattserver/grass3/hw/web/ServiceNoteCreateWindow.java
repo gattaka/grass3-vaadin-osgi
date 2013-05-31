@@ -79,6 +79,7 @@ public abstract class ServiceNoteCreateWindow extends GrassSubWindow {
 		descriptionField.setImmediate(true);
 		fieldGroup.bind(descriptionField, "description");
 		descriptionField.setWidth("100%");
+		descriptionField.setHeight("120px");
 		winLayout.addComponent(descriptionField, 0, 2, 1, 2);
 
 		Button createBtn;

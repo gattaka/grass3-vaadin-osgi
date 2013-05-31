@@ -44,6 +44,7 @@ public abstract class HWItemCreateWindow extends GrassSubWindow {
 		hwItemDTO.setName("");
 		hwItemDTO.setPrice(0);
 		hwItemDTO.setUsage("");
+		hwItemDTO.setWarrantyYears(0);
 		final BeanFieldGroup<HWItemDTO> fieldGroup = new BeanFieldGroup<HWItemDTO>(
 				HWItemDTO.class);
 		fieldGroup.setItemDataSource(hwItemDTO);
@@ -52,7 +53,7 @@ public abstract class HWItemCreateWindow extends GrassSubWindow {
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
-		GridLayout winLayout = new GridLayout(2, 4);
+		GridLayout winLayout = new GridLayout(2, 5);
 		layout.addComponent(winLayout);
 		winLayout.setWidth("400px");
 		winLayout.setSpacing(true);
@@ -94,6 +95,11 @@ public abstract class HWItemCreateWindow extends GrassSubWindow {
 		usageField.setSizeFull();
 		winLayout.addComponent(usageField, 1, 2);
 
+		TextField warrantyYearsField = new TextField("Záruka");
+		fieldGroup.bind(warrantyYearsField, "warrantyYears");
+		warrantyYearsField.setSizeFull();
+		winLayout.addComponent(warrantyYearsField, 0, 3);
+
 		Set<HWItemTypeDTO> types = hwFacade.getAllHWTypes();
 
 		BeanItemContainer<HWItemTypeDTO> typeSelectContainer = new BeanItemContainer<HWItemTypeDTO>(
@@ -107,7 +113,7 @@ public abstract class HWItemCreateWindow extends GrassSubWindow {
 		typeSelect.setImmediate(true);
 		typeSelect.setItemCaptionPropertyId("name");
 		fieldGroup.bind(typeSelect, "types");
-		winLayout.addComponent(typeSelect, 0, 3, 1, 3);
+		winLayout.addComponent(typeSelect, 0, 4, 1, 4);
 
 		Button createBtn;
 		layout.addComponent(createBtn = new Button("Založit",

@@ -69,11 +69,14 @@ public class HWFacade implements IHWFacade {
 		item.setDestructionDate(hwItemDTO.getDestructionDate());
 		item.setPrice(hwItemDTO.getPrice());
 		item.setState(hwItemDTO.getState());
-		if (hwItemDTO.getTypes().size() > 0)
+		item.setUsage(hwItemDTO.getUsage());
+		item.setWarrantyYears(hwItemDTO.getWarrantyYears());
+		if (hwItemDTO.getTypes() != null) {
 			item.setTypes(new HashSet<HWItemType>());
-		for (HWItemTypeDTO typeDTO : hwItemDTO.getTypes()) {
-			HWItemType type = hwItemTypeRepository.findOne(typeDTO.getId());
-			item.getTypes().add(type);
+			for (HWItemTypeDTO typeDTO : hwItemDTO.getTypes()) {
+				HWItemType type = hwItemTypeRepository.findOne(typeDTO.getId());
+				item.getTypes().add(type);
+			}
 		}
 		return hwItemRepository.save(item) != null;
 	}

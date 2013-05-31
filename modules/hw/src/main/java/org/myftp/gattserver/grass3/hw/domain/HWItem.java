@@ -71,6 +71,19 @@ public class HWItem {
 	 */
 	private String usage;
 
+	/**
+	 * Počet let záruky
+	 */
+	private Integer warrantyYears;
+
+	public Integer getWarrantyYears() {
+		return warrantyYears;
+	}
+
+	public void setWarrantyYears(Integer warrantyYears) {
+		this.warrantyYears = warrantyYears;
+	}
+
 	public Long getId() {
 		return id;
 	}

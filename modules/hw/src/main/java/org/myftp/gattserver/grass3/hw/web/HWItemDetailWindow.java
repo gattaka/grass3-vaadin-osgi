@@ -1,6 +1,8 @@
 package org.myftp.gattserver.grass3.hw.web;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
@@ -25,7 +27,10 @@ public class HWItemDetailWindow extends GrassSubWindow {
 	private static final String DEFAULT_NOTE_LABEL_VALUE = "- Zvolte servisní záznam -";
 	private static final int MAX_DESCRIPTION_PREVIEW_LENGTH = 20;
 
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
+			"dd.MM.yyyy");
+	private static NumberFormat priceFormatter = NumberFormat
+			.getInstance(new Locale("cs"));
 
 	private class ShiftedLabel extends Label {
 		private static final long serialVersionUID = 318954634723598021L;
@@ -41,9 +46,32 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		return description.substring(0, MAX_DESCRIPTION_PREVIEW_LENGTH) + "...";
 	}
 
+	private String createPriceString(Integer price) {
+		if (price == null)
+			return "-";
+		return priceFormatter.format(price) + ",- Kč";
+	}
+
+	private String createWarrantyYearsString(Integer warrantyYears) {
+		if (warrantyYears == null)
+			return "-";
+		switch (warrantyYears) {
+		case 0:
+			return "-";
+		case 1:
+			return warrantyYears + " rok";
+		case 2:
+		case 3:
+		case 4:
+			return warrantyYears + " roky";
+		default:
+			return warrantyYears + " let";
+		}
+	}
+
 	public HWItemDetailWindow(final Component triggerComponent,
 			final HWItemDTO hwItem) {
-		super("Detail pro '" + hwItem.getName() + "'");
+		super(hwItem.getName());
 
 		setWidth("830px");
 		setHeight("630px");
@@ -59,14 +87,15 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		/**
 		 * Info pole - první sloupec
 		 */
-		winLayout.addComponent(new Label("<strong>Název</strong>",
+		winLayout.addComponent(new Label("<strong>Stav</strong>",
 				ContentMode.HTML), 0, 0);
-		winLayout.addComponent(new ShiftedLabel(hwItem.getName()), 0, 1);
+		winLayout.addComponent(new ShiftedLabel(hwItem.getState().getName()),
+				0, 1);
 
 		winLayout.addComponent(new Label("<strong>Cena</strong>",
 				ContentMode.HTML), 0, 2);
-		winLayout.addComponent(new ShiftedLabel(hwItem.getPrice().toString()),
-				0, 3);
+		winLayout.addComponent(
+				new ShiftedLabel(createPriceString(hwItem.getPrice())), 0, 3);
 
 		winLayout.addComponent(new Label("<strong>Získáno</strong>",
 				ContentMode.HTML), 0, 4);
@@ -83,10 +112,10 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		/**
 		 * Info pole - druhý sloupec
 		 */
-		winLayout.addComponent(new Label("<strong>Stav</strong>",
+		winLayout.addComponent(new Label("<strong>Záruka</strong>",
 				ContentMode.HTML), 1, 0);
-		winLayout.addComponent(new ShiftedLabel(hwItem.getState().getName()),
-				1, 1);
+		winLayout.addComponent(new ShiftedLabel(
+				createWarrantyYearsString(hwItem.getWarrantyYears())), 1, 1);
 
 		winLayout.addComponent(new Label("<strong>Je součástí</strong>",
 				ContentMode.HTML), 1, 2);

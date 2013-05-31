@@ -112,4 +112,20 @@ public class HWFacade implements IHWFacade {
 
 		return true;
 	}
+
+	@Override
+	public boolean deleteHWItemType(HWItemTypeDTO hwItemType) {
+
+		HWItemType itemType = hwItemTypeRepository.findOne(hwItemType.getId());
+
+		List<HWItem> items = hwItemRepository.findByTypesId(itemType.getId());
+		for (HWItem item : items) {
+			item.getTypes().remove(itemType);
+			hwItemRepository.save(item);
+		}
+
+		hwItemTypeRepository.delete(itemType);
+
+		return true;
+	}
 }

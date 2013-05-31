@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import org.myftp.gattserver.grass3.hw.dto.ServiceNoteDTO;
+import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -12,14 +13,13 @@ import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.Window;
 
-public class HWItemDetailWindow extends Window {
+public class HWItemDetailWindow extends GrassSubWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 	private static final String DEFAULT_NOTE_LABEL_VALUE = "- Zvolte servisní záznam -";
@@ -41,11 +41,14 @@ public class HWItemDetailWindow extends Window {
 		return description.substring(0, MAX_DESCRIPTION_PREVIEW_LENGTH) + "...";
 	}
 
-	public HWItemDetailWindow(final Button btn, final HWItemDTO hwItem) {
+	public HWItemDetailWindow(final Component triggerComponent,
+			final HWItemDTO hwItem) {
 		super("Detail pro '" + hwItem.getName() + "'");
 
 		setWidth("830px");
 		setHeight("630px");
+
+		triggerComponent.setEnabled(false);
 
 		GridLayout winLayout = new GridLayout(3, 9);
 		setContent(winLayout);
@@ -98,7 +101,7 @@ public class HWItemDetailWindow extends Window {
 			builder.append(", ");
 		}
 		String types = builder.length() > 1 ? builder.substring(0,
-				builder.length() - 1) : "-";
+				builder.length() - 2) : "-";
 		winLayout.addComponent(new ShiftedLabel(types), 1, 5);
 
 		final Label serviceNoteDescription = new Label(DEFAULT_NOTE_LABEL_VALUE);
@@ -169,7 +172,8 @@ public class HWItemDetailWindow extends Window {
 
 			@Override
 			public void windowClose(CloseEvent e) {
-				btn.setEnabled(true);
+				if (triggerComponent != null)
+					triggerComponent.setEnabled(true);
 			}
 
 		});

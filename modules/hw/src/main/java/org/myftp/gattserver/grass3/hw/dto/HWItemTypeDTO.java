@@ -1,5 +1,8 @@
 package org.myftp.gattserver.grass3.hw.dto;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  * Typ hw
  */
@@ -13,6 +16,8 @@ public class HWItemTypeDTO {
 	/**
 	 * Název
 	 */
+	@NotNull
+	@Size(min = 1)
 	private String name;
 
 	public Long getId() {

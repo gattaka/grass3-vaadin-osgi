@@ -284,6 +284,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				ContentMode.HTML));
 
 		// menu tagů + textfield tagů
+		// http://marc.virtuallypreinstalled.com/TokenField/ !!!
 		HorizontalLayout keywordsMenuAndTextLayout = new HorizontalLayout();
 		keywordsMenuAndTextLayout.setWidth("100%");
 		keywordsMenuAndTextLayout.setSpacing(true);

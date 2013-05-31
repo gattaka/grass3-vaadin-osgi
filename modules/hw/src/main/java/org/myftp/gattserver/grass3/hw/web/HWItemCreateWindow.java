@@ -1,7 +1,6 @@
 package org.myftp.gattserver.grass3.hw.web;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.SpringContextHelper;
@@ -9,37 +8,37 @@ import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemState;
 import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
+import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
+import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
 
-public abstract class NewHWItemWindow extends Window {
+public abstract class HWItemCreateWindow extends GrassSubWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	private IHWFacade hwFacade;
 
-	public NewHWItemWindow(final Button newType) {
+	public HWItemCreateWindow(final Component triggerComponent) {
 		super("Založení nové položky HW");
 
 		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
+
+		triggerComponent.setEnabled(false);
 
 		final HWItemDTO hwItemDTO = new HWItemDTO();
 		hwItemDTO.setName("");
@@ -126,10 +125,8 @@ public abstract class NewHWItemWindow extends Window {
 							} else {
 								UI.getCurrent()
 										.addWindow(
-												new Window(
-														"Chyba",
-														new Label(
-																"Nezdařilo se vytvořit novou položku hardware")));
+												new ErrorSubwindow(
+														"Nezdařilo se vytvořit novou položku hardware"));
 							}
 							close();
 						} catch (FieldGroup.CommitException e) {
@@ -151,7 +148,7 @@ public abstract class NewHWItemWindow extends Window {
 
 			@Override
 			public void windowClose(CloseEvent e) {
-				newType.setEnabled(true);
+				triggerComponent.setEnabled(true);
 			}
 
 		});

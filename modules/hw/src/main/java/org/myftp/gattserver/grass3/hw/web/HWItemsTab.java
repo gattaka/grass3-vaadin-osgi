@@ -13,6 +13,7 @@ import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.converter.StringToDateConverter;
+import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -27,12 +28,93 @@ public class HWItemsTab extends VerticalLayout {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
+	private final Table table = new Table();
 	private BeanContainer<Long, HWItemDTO> container;
 	private IHWFacade hwFacade;
+
+	// BUG ? Při disable na tabu a opětovném enabled zůstane table disabled
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		table.setEnabled(enabled);
+	}
 
 	private void populateContainer() {
 		container.removeAllItems();
 		container.addAll(hwFacade.getAllHWItems());
+	}
+
+	private void addWindow(Window win) {
+		UI.getCurrent().addWindow(win);
+	}
+
+	private void openNewItemWindow() {
+		addWindow(new HWItemCreateWindow(HWItemsTab.this) {
+
+			private static final long serialVersionUID = -1397391593801030584L;
+
+			@Override
+			protected void onSuccess() {
+				populateContainer();
+			}
+		});
+	}
+
+	private void openAddNoteWindow() {
+		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table
+				.getContainerDataSource();
+		BeanItem<?> item = cont.getItem(table.getValue());
+		HWItemDTO hwItem = (HWItemDTO) item.getBean();
+
+		addWindow(new ServiceNoteCreateWindow(HWItemsTab.this, hwItem) {
+
+			private static final long serialVersionUID = -5582822648042555576L;
+
+			@Override
+			protected void onSuccess() {
+				populateContainer();
+			}
+		});
+
+	}
+
+	private void openDetailWindow() {
+		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table
+				.getContainerDataSource();
+		BeanItem<?> item = cont.getItem(table.getValue());
+		if (item == null)
+			return;
+		final HWItemDTO hwItem = (HWItemDTO) item.getBean();
+		addWindow(new HWItemDetailWindow(HWItemsTab.this, hwItem));
+	}
+
+	private void openDeleteWindow() {
+		HWItemsTab.this.setEnabled(false);
+		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table
+				.getContainerDataSource();
+		BeanItem<?> item = cont.getItem(table.getValue());
+		final HWItemDTO hwItem = (HWItemDTO) item.getBean();
+		addWindow(new ConfirmSubwindow("Opravdu smazat '" + hwItem.getName()
+				+ "' (budou smazány i servisní záznamy) ?") {
+
+			private static final long serialVersionUID = -422763987707688597L;
+
+			@Override
+			protected void onConfirm(ClickEvent event) {
+				if (hwFacade.deleteHWItem(hwItem)) {
+					populateContainer();
+				} else {
+					UI.getCurrent().addWindow(
+							new Window("Chyba", new Label(
+									"Nezdařilo se smazat vybranou položku")));
+				}
+			}
+
+			@Override
+			protected void onClose(CloseEvent e) {
+				HWItemsTab.this.setEnabled(true);
+			}
+		});
 	}
 
 	public HWItemsTab(final IHWFacade hwFacade) {
@@ -41,12 +123,14 @@ public class HWItemsTab extends VerticalLayout {
 		setSpacing(true);
 		setMargin(true);
 
+		final Button newTypeBtn = new Button("Založit novou položku HW");
 		final Button deleteBtn = new Button("Smazat");
 		final Button detailsBtn = new Button("Detail");
 		final Button newNoteBtn = new Button("Přidat záznam");
 		deleteBtn.setEnabled(false);
 		detailsBtn.setEnabled(false);
 		newNoteBtn.setEnabled(false);
+		newTypeBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
 		deleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
 		detailsBtn.setIcon(new ThemeResource("img/tags/clipboard_16.png"));
 		newNoteBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
@@ -54,7 +138,6 @@ public class HWItemsTab extends VerticalLayout {
 		/**
 		 * Tabulka HW
 		 */
-		final Table table = new Table();
 		table.setSelectable(true);
 		table.setImmediate(true);
 		container = new BeanContainer<Long, HWItemDTO>(HWItemDTO.class);
@@ -85,6 +168,16 @@ public class HWItemsTab extends VerticalLayout {
 				"usage", "purchaseDate", "destructionDate" });
 		table.setWidth("100%");
 
+		table.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+			private static final long serialVersionUID = 2068314108919135281L;
+
+			public void itemClick(ItemClickEvent event) {
+				if (event.isDoubleClick()) {
+					openDetailWindow();
+				}
+			}
+		});
+
 		table.addValueChangeListener(new ValueChangeListener() {
 
 			private static final long serialVersionUID = -8943196289027284739L;
@@ -107,28 +200,12 @@ public class HWItemsTab extends VerticalLayout {
 		/**
 		 * Založení nové položky HW
 		 */
-		final Button newTypeBtn = new Button("Založit novou položku HW");
-		newTypeBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
 		newTypeBtn.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 6492892850247493645L;
 
 			public void buttonClick(ClickEvent event) {
-
-				newTypeBtn.setEnabled(false);
-
-				NewHWItemWindow win = new NewHWItemWindow(newTypeBtn) {
-
-					private static final long serialVersionUID = -1397391593801030584L;
-
-					@Override
-					protected void onSuccess() {
-						populateContainer();
-					}
-				};
-
-				UI.getCurrent().addWindow(win);
-				win.center();
+				openNewItemWindow();
 			}
 
 		});
@@ -142,27 +219,7 @@ public class HWItemsTab extends VerticalLayout {
 			private static final long serialVersionUID = 8876001665427003203L;
 
 			public void buttonClick(ClickEvent event) {
-
-				newNoteBtn.setEnabled(false);
-
-				BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table
-						.getContainerDataSource();
-				BeanItem<?> item = cont.getItem(table.getValue());
-				HWItemDTO hwItem = (HWItemDTO) item.getBean();
-
-				NewServiceNoteWindow win = new NewServiceNoteWindow(newNoteBtn,
-						hwItem) {
-
-					private static final long serialVersionUID = -5582822648042555576L;
-
-					@Override
-					protected void onSuccess() {
-						populateContainer();
-					}
-				};
-
-				UI.getCurrent().addWindow(win);
-				win.center();
+				openAddNoteWindow();
 			}
 
 		});
@@ -177,12 +234,7 @@ public class HWItemsTab extends VerticalLayout {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table
-						.getContainerDataSource();
-				BeanItem<?> item = cont.getItem(table.getValue());
-				final HWItemDTO hwItem = (HWItemDTO) item.getBean();
-				UI.getCurrent().addWindow(
-						new HWItemDetailWindow(detailsBtn, hwItem));
+				openDetailWindow();
 			}
 		});
 		buttonLayout.addComponent(detailsBtn);
@@ -196,31 +248,7 @@ public class HWItemsTab extends VerticalLayout {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table
-						.getContainerDataSource();
-				BeanItem<?> item = cont.getItem(table.getValue());
-				final HWItemDTO hwItem = (HWItemDTO) item.getBean();
-				UI.getCurrent().addWindow(
-						new ConfirmSubwindow("Opravdu smazat '"
-								+ hwItem.getName()
-								+ "' (budou smazány i servisní záznamy) ?") {
-
-							private static final long serialVersionUID = -422763987707688597L;
-
-							@Override
-							protected void onConfirm(ClickEvent event) {
-								if (hwFacade.deleteHWItem(hwItem)) {
-									populateContainer();
-								} else {
-									UI.getCurrent()
-											.addWindow(
-													new Window(
-															"Chyba",
-															new Label(
-																	"Nezdařilo se smazat vybranou položku")));
-								}
-							}
-						});
+				openDeleteWindow();
 			}
 		});
 		buttonLayout.addComponent(deleteBtn);

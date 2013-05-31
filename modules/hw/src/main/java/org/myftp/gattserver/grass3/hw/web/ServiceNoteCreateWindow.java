@@ -7,6 +7,8 @@ import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemState;
 import org.myftp.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
+import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
+import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -15,27 +17,29 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.Window;
 
-public abstract class NewServiceNoteWindow extends Window {
+public abstract class ServiceNoteCreateWindow extends GrassSubWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	private IHWFacade hwFacade;
 
-	public NewServiceNoteWindow(final Button btn, final HWItemDTO hwItem) {
+	public ServiceNoteCreateWindow(final Component triggerComponent,
+			final HWItemDTO hwItem) {
 		super("Nový servisní záznam");
 
 		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
 		setWidth("320px");
+
+		triggerComponent.setEnabled(false);
 
 		final ServiceNoteDTO serviceNoteDTO = new ServiceNoteDTO();
 		serviceNoteDTO.setDescription("");
@@ -93,10 +97,8 @@ public abstract class NewServiceNoteWindow extends Window {
 							} else {
 								UI.getCurrent()
 										.addWindow(
-												new Window(
-														"Chyba",
-														new Label(
-																"Nezdařilo se zapsat nový servisní záznam")));
+												new ErrorSubwindow(
+														"Nezdařilo se zapsat nový servisní záznam"));
 							}
 							close();
 						} catch (FieldGroup.CommitException e) {
@@ -116,7 +118,7 @@ public abstract class NewServiceNoteWindow extends Window {
 
 			@Override
 			public void windowClose(CloseEvent e) {
-				btn.setEnabled(true);
+				triggerComponent.setEnabled(true);
 			}
 
 		});

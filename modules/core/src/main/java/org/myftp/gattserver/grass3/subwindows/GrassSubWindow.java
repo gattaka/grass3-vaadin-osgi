@@ -10,21 +10,41 @@ public class GrassSubWindow extends Window {
 	private static final long serialVersionUID = -9184044674542039306L;
 
 	private VerticalLayout layout = new VerticalLayout();
-	
+
 	public GrassSubWindow(String name) {
 		super(name);
 
 		setContent(layout);
-		
+
 		layout.setSpacing(true);
 		layout.setMargin(true);
 
 		addAction(new Window.CloseShortcut(this, KeyCode.ESCAPE));
 
 		center();
-		setWidth("220px");
+
+		addAttachListener(new AttachListener() {
+			private static final long serialVersionUID = -2969249056636674086L;
+
+			@Override
+			public void attach(AttachEvent event) {
+				focus();
+			}
+		});
+		
+		addCloseListener(new CloseListener() {
+			private static final long serialVersionUID = 3077228408502890498L;
+
+			@Override
+			public void windowClose(CloseEvent e) {
+				onClose(e);
+			}
+		});
 	}
-	
+
+	protected void onClose(CloseEvent e) {
+	};
+
 	protected void addComponent(Component component) {
 		layout.addComponent(component);
 	}

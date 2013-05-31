@@ -65,7 +65,6 @@ public abstract class ConfirmSubwindow extends GrassSubWindow {
 			private static final long serialVersionUID = 8490964871266821307L;
 
 			public void buttonClick(ClickEvent event) {
-				onClose(event);
 				close();
 			}
 		});
@@ -73,16 +72,8 @@ public abstract class ConfirmSubwindow extends GrassSubWindow {
 		subWindowlayout.addComponent(close, 1, 1);
 		subWindowlayout.setComponentAlignment(close, Alignment.MIDDLE_CENTER);
 
-		// Zaměř se na nové okno
-		// focus();
-
 	}
 
 	protected abstract void onConfirm(ClickEvent event);
-
-	// default je prostě, že se nic nestane, takže ho nenutím jako abstraktní
-	// metodu potomkovi k implementaci
-	protected void onClose(ClickEvent event) {
-	}
 
 }

@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.hw.facade;
 
 import java.util.List;
+import java.util.Set;
 
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
@@ -8,7 +9,7 @@ import org.myftp.gattserver.grass3.hw.dto.ServiceNoteDTO;
 
 public interface IHWFacade {
 
-	public List<HWItemTypeDTO> getAllHWTypes();
+	public Set<HWItemTypeDTO> getAllHWTypes();
 
 	public List<HWItemDTO> getAllHWItems();
 

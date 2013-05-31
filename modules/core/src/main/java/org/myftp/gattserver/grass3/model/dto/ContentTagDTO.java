@@ -8,7 +8,7 @@ import java.util.Set;
  * @author gatt
  * 
  */
-public class ContentTagDTO {
+public class ContentTagDTO implements Comparable<ContentTagDTO> {
 
 	/**
 	 * Název tagu
@@ -67,6 +67,11 @@ public class ContentTagDTO {
 
 	public void setContentNodesCount(int contentNodesCount) {
 		this.contentNodesCount = contentNodesCount;
+	}
+
+	@Override
+	public int compareTo(ContentTagDTO o) {
+		return getName().compareTo(o.getName());
 	}
 
 }

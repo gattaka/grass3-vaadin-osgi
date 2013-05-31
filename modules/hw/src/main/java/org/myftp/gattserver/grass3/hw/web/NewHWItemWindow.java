@@ -1,14 +1,20 @@
 package org.myftp.gattserver.grass3.hw.web;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemState;
+import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
 
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
+import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -18,6 +24,7 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -48,11 +55,12 @@ public abstract class NewHWItemWindow extends Window {
 
 		GridLayout winLayout = new GridLayout(2, 4);
 		layout.addComponent(winLayout);
+		winLayout.setWidth("400px");
 		winLayout.setSpacing(true);
 
 		TextField nameField = new TextField("Název");
 		nameField.setImmediate(true);
-		// nameField.setSizeFull();
+		nameField.setWidth("100%");
 		fieldGroup.bind(nameField, "name");
 		winLayout.addComponent(nameField, 0, 0);
 
@@ -72,6 +80,7 @@ public abstract class NewHWItemWindow extends Window {
 		winLayout.addComponent(priceField, 1, 0);
 
 		ComboBox stateComboBox = new ComboBox("Stav");
+		stateComboBox.setWidth("100%");
 		stateComboBox.setNullSelectionAllowed(false);
 		stateComboBox.setImmediate(true);
 		stateComboBox
@@ -85,6 +94,21 @@ public abstract class NewHWItemWindow extends Window {
 		fieldGroup.bind(usageField, "usage");
 		usageField.setSizeFull();
 		winLayout.addComponent(usageField, 1, 2);
+
+		Set<HWItemTypeDTO> types = hwFacade.getAllHWTypes();
+
+		BeanItemContainer<HWItemTypeDTO> typeSelectContainer = new BeanItemContainer<HWItemTypeDTO>(
+				HWItemTypeDTO.class, types);
+		final TwinColSelect typeSelect = new TwinColSelect("Typy",
+				typeSelectContainer);
+		typeSelect.setWidth("100%");
+		typeSelect.setRows(7);
+		typeSelect.setNullSelectionAllowed(true);
+		typeSelect.setMultiSelect(true);
+		typeSelect.setImmediate(true);
+		typeSelect.setItemCaptionPropertyId("name");
+		fieldGroup.bind(typeSelect, "types");
+		winLayout.addComponent(typeSelect, 0, 3, 1, 3);
 
 		Button createBtn;
 		layout.addComponent(createBtn = new Button("Založit",

@@ -2,6 +2,7 @@ package org.myftp.gattserver.grass3.hw.dto;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -26,7 +27,7 @@ public class HWItemDTO {
 	/**
 	 * Typ - klasifikace hw
 	 */
-	private List<HWItemTypeDTO> types;
+	private Set<HWItemTypeDTO> types;
 
 	/**
 	 * Datum zakoupení (získání)
@@ -75,11 +76,11 @@ public class HWItemDTO {
 		this.name = name;
 	}
 
-	public List<HWItemTypeDTO> getTypes() {
+	public Set<HWItemTypeDTO> getTypes() {
 		return types;
 	}
 
-	public void setTypes(List<HWItemTypeDTO> types) {
+	public void setTypes(Set<HWItemTypeDTO> types) {
 		this.types = types;
 	}
 

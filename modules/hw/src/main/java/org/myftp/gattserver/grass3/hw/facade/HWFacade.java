@@ -1,7 +1,9 @@
 package org.myftp.gattserver.grass3.hw.facade;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -35,7 +37,7 @@ public class HWFacade implements IHWFacade {
 	private HWMapper hwMapper;
 
 	@Override
-	public List<HWItemTypeDTO> getAllHWTypes() {
+	public Set<HWItemTypeDTO> getAllHWTypes() {
 		List<HWItemType> hwItemTypes = hwItemTypeRepository.findAll();
 		return hwMapper.mapHWItemTypes(hwItemTypes);
 	}
@@ -67,6 +69,12 @@ public class HWFacade implements IHWFacade {
 		item.setDestructionDate(hwItemDTO.getDestructionDate());
 		item.setPrice(hwItemDTO.getPrice());
 		item.setState(hwItemDTO.getState());
+		if (hwItemDTO.getTypes().size() > 0)
+			item.setTypes(new HashSet<HWItemType>());
+		for (HWItemTypeDTO typeDTO : hwItemDTO.getTypes()) {
+			HWItemType type = hwItemTypeRepository.findOne(typeDTO.getId());
+			item.getTypes().add(type);
+		}
 		return hwItemRepository.save(item) != null;
 	}
 

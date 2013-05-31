@@ -2,7 +2,9 @@ package org.myftp.gattserver.grass3.hw.facade;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.myftp.gattserver.grass3.hw.domain.HWItem;
 import org.myftp.gattserver.grass3.hw.domain.HWItemType;
@@ -25,11 +27,11 @@ public class HWMapper {
 		return dto;
 	}
 
-	public List<HWItemTypeDTO> mapHWItemTypes(Collection<HWItemType> list) {
+	public Set<HWItemTypeDTO> mapHWItemTypes(Collection<HWItemType> list) {
 		if (list == null)
 			return null;
 
-		List<HWItemTypeDTO> dtos = new ArrayList<HWItemTypeDTO>();
+		Set<HWItemTypeDTO> dtos = new HashSet<HWItemTypeDTO>();
 		for (HWItemType e : list) {
 			dtos.add(mapHWItemType(e));
 		}

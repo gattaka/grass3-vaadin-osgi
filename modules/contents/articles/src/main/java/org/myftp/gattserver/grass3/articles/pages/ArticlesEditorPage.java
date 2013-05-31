@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -24,8 +23,8 @@ import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
-import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
+import org.myftp.gattserver.grass3.subwindows.KeywordsMenuSubwindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.JQueryAccordion;
@@ -36,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 
+import com.vaadin.data.Item;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -47,7 +47,6 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -298,70 +297,32 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 					public void buttonClick(ClickEvent event) {
 
-						final Window keywordsMenuSubwindow = new GrassSubWindow(
-								"Vybrat klíčová slova");
-						VerticalLayout subWindowLayout = (VerticalLayout) keywordsMenuSubwindow
-								.getContent();
-						subWindowLayout.setSpacing(true);
-						subWindowLayout.setMargin(true);
-
-						final ListSelect list = new ListSelect();
-						list.setWidth("100%");
-						list.setRows(10);
-						list.setNullSelectionAllowed(true);
-						list.setMultiSelect(true);
-						list.setImmediate(true);
-
 						List<ContentTagDTO> contentTags = contentTagFacade
 								.getContentTagsForOverview();
-						Collections.sort(contentTags,
-								new Comparator<ContentTagDTO>() {
 
-									public int compare(ContentTagDTO o1,
-											ContentTagDTO o2) {
-										return o1.getName().compareTo(
-												o2.getName());
-									}
-								});
+						Collections.sort(contentTags);
 
-						for (ContentTagDTO contentTag : contentTags) {
-							list.addItem(contentTag);
-							list.setItemCaption(contentTag,
-									contentTag.getName());
-						}
+						final Window keywordsMenuSubwindow = new KeywordsMenuSubwindow<ContentTagDTO>(
+								"Vybrat klíčová slova", contentTags, "name") {
 
-						VerticalLayout subwindowLayout = (VerticalLayout) keywordsMenuSubwindow
-								.getContent();
+							private static final long serialVersionUID = -3784340019006188379L;
 
-						subwindowLayout.addComponent(list);
-						subwindowLayout.addComponent(new Button("Přidat",
-								new Button.ClickListener() {
+							@Override
+							protected void onDoubleClick(Item item) {
 
-									private static final long serialVersionUID = -4544649471207273304L;
+								StringBuffer stringBuffer = new StringBuffer();
+								String oldValue = (String) articleKeywords
+										.getValue();
+								stringBuffer.append(oldValue);
+								if (stringBuffer.length() != 0)
+									stringBuffer.append(", ");
+								stringBuffer.append(item
+										.getItemProperty("name"));
+								articleKeywords.setValue(stringBuffer
+										.toString());
 
-									public void buttonClick(ClickEvent event) {
-
-										@SuppressWarnings("unchecked")
-										Collection<ContentTagDTO> values = (Collection<ContentTagDTO>) list
-												.getValue();
-										StringBuffer stringBuffer = new StringBuffer();
-										String oldValue = (String) articleKeywords
-												.getValue();
-										stringBuffer.append(oldValue);
-										for (ContentTagDTO tagDTO : values) {
-											if (stringBuffer.length() != 0)
-												stringBuffer.append(", ");
-											stringBuffer.append(tagDTO
-													.getName());
-										}
-										articleKeywords.setValue(stringBuffer
-												.toString());
-
-										getUI().removeWindow(
-												keywordsMenuSubwindow);
-
-									}
-								}));
+							}
+						};
 
 						getUI().addWindow(keywordsMenuSubwindow);
 					}

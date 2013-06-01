@@ -60,7 +60,7 @@ public class HWTypesTab extends VerticalLayout {
 
 							private static final long serialVersionUID = -422763987707688597L;
 
-							@Override
+							@Override 
 							protected void onConfirm(ClickEvent event) {
 								if (hwFacade.deleteHWItemType(hwItemType)) {
 									populateContainer();

@@ -26,4 +26,6 @@ public interface IHWFacade {
 
 	public boolean deleteHWItemType(HWItemTypeDTO hwItemType);
 
+	public HWItemDTO getHWItem(Long fixItemId);
+
 }

@@ -63,7 +63,11 @@ public class HWFacade implements IHWFacade {
 
 	@Override
 	public boolean saveHWItem(HWItemDTO hwItemDTO) {
-		HWItem item = new HWItem();
+		HWItem item;
+		if (hwItemDTO.getId() == null)
+			item = new HWItem();
+		else
+			item = hwItemRepository.findOne(hwItemDTO.getId());
 		item.setName(hwItemDTO.getName());
 		item.setPurchaseDate(hwItemDTO.getPurchaseDate());
 		item.setDestructionDate(hwItemDTO.getDestructionDate());
@@ -130,5 +134,10 @@ public class HWFacade implements IHWFacade {
 		hwItemTypeRepository.delete(itemType);
 
 		return true;
+	}
+
+	@Override
+	public HWItemDTO getHWItem(Long fixItemId) {
+		return hwMapper.mapHWItem(hwItemRepository.findOne(fixItemId));
 	}
 }

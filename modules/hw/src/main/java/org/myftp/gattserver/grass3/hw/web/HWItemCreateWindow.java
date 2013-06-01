@@ -33,18 +33,33 @@ public abstract class HWItemCreateWindow extends GrassSubWindow {
 
 	private IHWFacade hwFacade;
 
-	public HWItemCreateWindow(final Component triggerComponent) {
-		super("Založení nové položky HW");
+	/**
+	 * @param triggerComponent
+	 *            volající komponenta (ta, která má být po dobu zobrazení okna
+	 *            zablokována)
+	 * @param fixItemId
+	 *            opravuji údaje existující položky, nebo vytvářím novou (
+	 *            {@code null}) ?
+	 */
+	public HWItemCreateWindow(final Component triggerComponent, final Long fixItemId) {
+		super(fixItemId == null ? "Založení nové položky HW"
+				: "Oprava údajů existující položky HW");
 
 		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
 		triggerComponent.setEnabled(false);
 
-		final HWItemDTO hwItemDTO = new HWItemDTO();
-		hwItemDTO.setName("");
-		hwItemDTO.setPrice(0);
-		hwItemDTO.setUsage("");
-		hwItemDTO.setWarrantyYears(0);
+		HWItemDTO hwItemDTO;
+		if (fixItemId != null) {
+			hwItemDTO = hwFacade.getHWItem(fixItemId);
+		} else {
+			hwItemDTO = new HWItemDTO();
+			hwItemDTO.setName("");
+			hwItemDTO.setPrice(0);
+			hwItemDTO.setUsage("");
+			hwItemDTO.setWarrantyYears(0);
+		}
+
 		final BeanFieldGroup<HWItemDTO> fieldGroup = new BeanFieldGroup<HWItemDTO>(
 				HWItemDTO.class);
 		fieldGroup.setItemDataSource(hwItemDTO);
@@ -116,7 +131,8 @@ public abstract class HWItemCreateWindow extends GrassSubWindow {
 		winLayout.addComponent(typeSelect, 0, 4, 1, 4);
 
 		Button createBtn;
-		layout.addComponent(createBtn = new Button("Založit",
+		layout.addComponent(createBtn = new Button(
+				fixItemId == null ? "Založit" : "Opravit údaje",
 				new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;
@@ -126,13 +142,15 @@ public abstract class HWItemCreateWindow extends GrassSubWindow {
 
 						try {
 							fieldGroup.commit();
-							if (hwFacade.saveHWItem(hwItemDTO)) {
+							if (hwFacade.saveHWItem(fieldGroup
+									.getItemDataSource().getBean())) {
 								onSuccess();
 							} else {
 								UI.getCurrent()
 										.addWindow(
 												new ErrorSubwindow(
-														"Nezdařilo se vytvořit novou položku hardware"));
+														fixItemId == null ? "Nezdařilo se vytvořit novou položku hardware"
+																: "Nezdařilo se upravit údaje"));
 							}
 							close();
 						} catch (FieldGroup.CommitException e) {

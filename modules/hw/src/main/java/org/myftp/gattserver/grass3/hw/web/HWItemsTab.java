@@ -48,8 +48,15 @@ public class HWItemsTab extends VerticalLayout {
 		UI.getCurrent().addWindow(win);
 	}
 
-	private void openNewItemWindow() {
-		addWindow(new HWItemCreateWindow(HWItemsTab.this) {
+	private void openNewItemWindow(boolean fix) {
+		HWItemDTO hwItem = null;
+		if (fix) {
+			BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table
+					.getContainerDataSource();
+			BeanItem<?> item = cont.getItem(table.getValue());
+			hwItem = (HWItemDTO) item.getBean();
+		}
+		addWindow(new HWItemCreateWindow(HWItemsTab.this, hwItem.getId()) {
 
 			private static final long serialVersionUID = -1397391593801030584L;
 
@@ -124,16 +131,18 @@ public class HWItemsTab extends VerticalLayout {
 		setMargin(true);
 
 		final Button newTypeBtn = new Button("Založit novou položku HW");
-		final Button deleteBtn = new Button("Smazat");
-		final Button detailsBtn = new Button("Detail");
 		final Button newNoteBtn = new Button("Přidat záznam");
+		final Button detailsBtn = new Button("Detail");
+		final Button fixBtn = new Button("Opravit údaje");
+		final Button deleteBtn = new Button("Smazat");
 		deleteBtn.setEnabled(false);
 		detailsBtn.setEnabled(false);
 		newNoteBtn.setEnabled(false);
 		newTypeBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
-		deleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
-		detailsBtn.setIcon(new ThemeResource("img/tags/clipboard_16.png"));
 		newNoteBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
+		detailsBtn.setIcon(new ThemeResource("img/tags/clipboard_16.png"));
+		fixBtn.setIcon(new ThemeResource("img/tags/quickedit_16.png"));
+		deleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
 
 		/**
 		 * Tabulka HW
@@ -188,6 +197,7 @@ public class HWItemsTab extends VerticalLayout {
 				deleteBtn.setEnabled(enabled);
 				detailsBtn.setEnabled(enabled);
 				newNoteBtn.setEnabled(enabled);
+				fixBtn.setEnabled(enabled);
 			}
 		});
 
@@ -205,7 +215,7 @@ public class HWItemsTab extends VerticalLayout {
 			private static final long serialVersionUID = 6492892850247493645L;
 
 			public void buttonClick(ClickEvent event) {
-				openNewItemWindow();
+				openNewItemWindow(false);
 			}
 
 		});
@@ -238,6 +248,20 @@ public class HWItemsTab extends VerticalLayout {
 			}
 		});
 		buttonLayout.addComponent(detailsBtn);
+
+		/**
+		 * Oprava údajů existující položky HW
+		 */
+		fixBtn.addClickListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 6492892850247493645L;
+
+			public void buttonClick(ClickEvent event) {
+				openNewItemWindow(true);
+			}
+
+		});
+		buttonLayout.addComponent(fixBtn);
 
 		/**
 		 * Smazání položky HW

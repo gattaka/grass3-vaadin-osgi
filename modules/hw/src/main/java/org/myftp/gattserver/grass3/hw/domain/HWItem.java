@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -67,14 +68,23 @@ public class HWItem {
 	private List<ServiceNote> serviceNotes;
 
 	/**
-	 * Součást celku
-	 */
-	private String usage;
-
-	/**
 	 * Počet let záruky
 	 */
 	private Integer warrantyYears;
+
+	/**
+	 * Součást celku
+	 */
+	@ManyToOne
+	private HWItem usedIn;
+
+	public HWItem getUsedIn() {
+		return usedIn;
+	}
+
+	public void setUsedIn(HWItem usedIn) {
+		this.usedIn = usedIn;
+	}
 
 	public Integer getWarrantyYears() {
 		return warrantyYears;
@@ -146,14 +156,6 @@ public class HWItem {
 
 	public void setServiceNotes(List<ServiceNote> serviceNotes) {
 		this.serviceNotes = serviceNotes;
-	}
-
-	public String getUsage() {
-		return usage;
-	}
-
-	public void setUsage(String usage) {
-		this.usage = usage;
 	}
 
 }

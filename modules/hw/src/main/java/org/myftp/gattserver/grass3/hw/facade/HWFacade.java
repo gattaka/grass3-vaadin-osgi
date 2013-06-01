@@ -73,7 +73,11 @@ public class HWFacade implements IHWFacade {
 		item.setDestructionDate(hwItemDTO.getDestructionDate());
 		item.setPrice(hwItemDTO.getPrice());
 		item.setState(hwItemDTO.getState());
-		item.setUsage(hwItemDTO.getUsage());
+		if (hwItemDTO.getUsedIn() != null) {
+			HWItem usedIn = hwItemRepository.findOne(hwItemDTO.getUsedIn()
+					.getId());
+			item.setUsedIn(usedIn);
+		}
 		item.setWarrantyYears(hwItemDTO.getWarrantyYears());
 		if (hwItemDTO.getTypes() != null) {
 			item.setTypes(new HashSet<HWItemType>());
@@ -92,6 +96,15 @@ public class HWFacade implements IHWFacade {
 		for (ServiceNote note : item.getServiceNotes()) {
 			serviceNoteRepository.delete(note);
 		}
+		
+		item.setServiceNotes(null);
+		hwItemRepository.save(item);
+
+		for (HWItem targetItem : hwItemRepository.findByUsedInId(item.getId())) {
+			targetItem.setUsedIn(null);
+			hwItemRepository.save(targetItem);
+		}
+
 		hwItemRepository.delete(item.getId());
 
 		return true;
@@ -106,14 +119,21 @@ public class HWFacade implements IHWFacade {
 		serviceNote.setDate(serviceNoteDTO.getDate());
 		serviceNote.setDescription(serviceNoteDTO.getDescription());
 		serviceNote.setState(serviceNoteDTO.getState());
-		serviceNote.setUsage(serviceNoteDTO.getUsage());
+		serviceNote.setUsage(serviceNoteDTO.getUsedIn() == null ? ""
+				: serviceNoteDTO.getUsedIn().getName());
 		serviceNoteRepository.save(serviceNote);
 
 		if (item.getServiceNotes() == null)
 			item.setServiceNotes(new ArrayList<ServiceNote>());
 		item.getServiceNotes().add(serviceNote);
 		item.setState(serviceNote.getState());
-		item.setUsage(serviceNote.getUsage());
+
+		if (serviceNoteDTO.getUsedIn() != null) {
+			HWItem targetItem = hwItemRepository.findOne(serviceNoteDTO
+					.getUsedIn().getId());
+			item.setUsedIn(targetItem);
+		} else
+			item.setUsedIn(null);
 
 		hwItemRepository.save(item);
 
@@ -137,7 +157,20 @@ public class HWFacade implements IHWFacade {
 	}
 
 	@Override
-	public HWItemDTO getHWItem(Long fixItemId) {
-		return hwMapper.mapHWItem(hwItemRepository.findOne(fixItemId));
+	public HWItemDTO getHWItem(Long itemId) {
+		return hwMapper.mapHWItem(hwItemRepository.findOne(itemId));
+	}
+
+	@Override
+	public List<HWItemDTO> getAllParts(Long usedInItemId) {
+		return hwMapper.mapHWItems(hwItemRepository
+				.findByUsedInId(usedInItemId));
+	}
+
+	@Override
+	public List<HWItemDTO> getHWItemsAvailableForPart(HWItemDTO item) {
+		List<HWItemDTO> items = getAllHWItems();
+		items.remove(item);
+		return items;
 	}
 }

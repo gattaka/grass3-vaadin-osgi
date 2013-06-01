@@ -1,25 +1,23 @@
 package org.myftp.gattserver.grass3.hw.web;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
+import org.myftp.gattserver.grass3.util.GrassStringToDateConverter;
+import org.myftp.gattserver.grass3.util.GrassStringToMoneyConverter;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.converter.StringToDateConverter;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Table.Align;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -56,7 +54,8 @@ public class HWItemsTab extends VerticalLayout {
 			BeanItem<?> item = cont.getItem(table.getValue());
 			hwItem = (HWItemDTO) item.getBean();
 		}
-		addWindow(new HWItemCreateWindow(HWItemsTab.this, hwItem.getId()) {
+		addWindow(new HWItemCreateWindow(HWItemsTab.this, hwItem == null ? null
+				: hwItem.getId()) {
 
 			private static final long serialVersionUID = -1397391593801030584L;
 
@@ -102,7 +101,7 @@ public class HWItemsTab extends VerticalLayout {
 		BeanItem<?> item = cont.getItem(table.getValue());
 		final HWItemDTO hwItem = (HWItemDTO) item.getBean();
 		addWindow(new ConfirmSubwindow("Opravdu smazat '" + hwItem.getName()
-				+ "' (budou smazány i servisní záznamy) ?") {
+				+ "' (budou smazány i servisní záznamy a údaje u součástí) ?") {
 
 			private static final long serialVersionUID = -422763987707688597L;
 
@@ -112,8 +111,8 @@ public class HWItemsTab extends VerticalLayout {
 					populateContainer();
 				} else {
 					UI.getCurrent().addWindow(
-							new Window("Chyba", new Label(
-									"Nezdařilo se smazat vybranou položku")));
+							new ErrorSubwindow(
+									"Nezdařilo se smazat vybranou položku"));
 				}
 			}
 
@@ -135,9 +134,10 @@ public class HWItemsTab extends VerticalLayout {
 		final Button detailsBtn = new Button("Detail");
 		final Button fixBtn = new Button("Opravit údaje");
 		final Button deleteBtn = new Button("Smazat");
-		deleteBtn.setEnabled(false);
-		detailsBtn.setEnabled(false);
 		newNoteBtn.setEnabled(false);
+		detailsBtn.setEnabled(false);
+		fixBtn.setEnabled(false);
+		deleteBtn.setEnabled(false);
 		newTypeBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
 		newNoteBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
 		detailsBtn.setIcon(new ThemeResource("img/tags/clipboard_16.png"));
@@ -154,27 +154,25 @@ public class HWItemsTab extends VerticalLayout {
 		populateContainer();
 		table.setContainerDataSource(container);
 
-		StringToDateConverter dateConverter = new StringToDateConverter() {
-			private static final long serialVersionUID = -2914696445291603483L;
-
-			@Override
-			protected DateFormat getFormat(Locale locale) {
-				return new SimpleDateFormat("dd.MM.yyyy");
-			}
-		};
-
-		table.setConverter("purchaseDate", dateConverter);
-		table.setConverter("destructionDate", dateConverter);
+		table.setConverter("purchaseDate",
+				GrassStringToDateConverter.getInstance());
+		table.setConverter("destructionDate",
+				GrassStringToDateConverter.getInstance());
 		table.setConverter("state", new StringToHWItemStateConverter());
+		table.setConverter("price", GrassStringToMoneyConverter.getInstance());
+		table.setConverter("usedIn", new StringToHWItemConverter());
 
 		table.setColumnHeader("name", "Název");
 		table.setColumnHeader("purchaseDate", "Získáno");
 		table.setColumnHeader("destructionDate", "Odepsáno");
 		table.setColumnHeader("price", "Cena");
 		table.setColumnHeader("state", "Stav");
-		table.setColumnHeader("usage", "Je součástí");
+		table.setColumnHeader("usedIn", "Je součástí");
+
+		table.setColumnAlignment("price", Align.RIGHT);
+
 		table.setVisibleColumns(new String[] { "name", "state", "price",
-				"usage", "purchaseDate", "destructionDate" });
+				"usedIn", "purchaseDate", "destructionDate" });
 		table.setWidth("100%");
 
 		table.addItemClickListener(new ItemClickEvent.ItemClickListener() {

@@ -56,14 +56,22 @@ public class HWItemDTO {
 	private List<ServiceNoteDTO> serviceNotes;
 
 	/**
-	 * Součásti
-	 */
-	private String usage;
-
-	/**
 	 * Počet let záruky
 	 */
 	private Integer warrantyYears;
+
+	/**
+	 * Součást celku
+	 */
+	private HWItemDTO usedIn;
+
+	public HWItemDTO getUsedIn() {
+		return usedIn;
+	}
+
+	public void setUsedIn(HWItemDTO usedIn) {
+		this.usedIn = usedIn;
+	}
 
 	public Integer getWarrantyYears() {
 		return warrantyYears;
@@ -137,12 +145,16 @@ public class HWItemDTO {
 		this.serviceNotes = serviceNotes;
 	}
 
-	public String getUsage() {
-		return usage;
+	@Override
+	public int hashCode() {
+		return id == null ? 0 : id.hashCode();
 	}
 
-	public void setUsage(String usage) {
-		this.usage = usage;
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof HWItemDTO) {
+			return (((HWItemDTO) obj).getId().equals(id));
+		} else
+			return false;
 	}
-
 }

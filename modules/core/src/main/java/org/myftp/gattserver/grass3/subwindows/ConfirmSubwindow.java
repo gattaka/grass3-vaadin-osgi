@@ -37,7 +37,7 @@ public abstract class ConfirmSubwindow extends GrassSubWindow {
 		super("Potvrzení operace");
 
 		center();
-		setWidth("220px");
+		setWidth("350px");
 
 		GridLayout subWindowlayout = new GridLayout(2, 2);
 		setContent(subWindowlayout);

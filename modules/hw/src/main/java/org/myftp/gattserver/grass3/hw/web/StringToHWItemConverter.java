@@ -2,29 +2,29 @@ package org.myftp.gattserver.grass3.hw.web;
 
 import java.util.Locale;
 
-import org.myftp.gattserver.grass3.hw.dto.HWItemState;
+import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 
 import com.vaadin.data.util.converter.Converter;
 
-public class StringToHWItemStateConverter implements
-		Converter<String, HWItemState> {
+public class StringToHWItemConverter implements Converter<String, HWItemDTO> {
+
 	private static final long serialVersionUID = 5485483888763389456L;
 
 	@Override
-	public HWItemState convertToModel(String value, Locale locale)
+	public HWItemDTO convertToModel(String value, Locale locale)
 			throws com.vaadin.data.util.converter.Converter.ConversionException {
-		return HWItemState.valueOf(value);
+		return null;
 	}
 
 	@Override
-	public String convertToPresentation(HWItemState value, Locale locale)
+	public String convertToPresentation(HWItemDTO value, Locale locale)
 			throws com.vaadin.data.util.converter.Converter.ConversionException {
-		return value.getName();
+		return value == null ? "" : value.getName();
 	}
 
 	@Override
-	public Class<HWItemState> getModelType() {
-		return HWItemState.class;
+	public Class<HWItemDTO> getModelType() {
+		return HWItemDTO.class;
 	}
 
 	@Override

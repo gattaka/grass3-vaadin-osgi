@@ -41,7 +41,8 @@ public abstract class HWItemCreateWindow extends GrassSubWindow {
 	 *            opravuji údaje existující položky, nebo vytvářím novou (
 	 *            {@code null}) ?
 	 */
-	public HWItemCreateWindow(final Component triggerComponent, final Long fixItemId) {
+	public HWItemCreateWindow(final Component triggerComponent,
+			final Long fixItemId) {
 		super(fixItemId == null ? "Založení nové položky HW"
 				: "Oprava údajů existující položky HW");
 
@@ -56,7 +57,6 @@ public abstract class HWItemCreateWindow extends GrassSubWindow {
 			hwItemDTO = new HWItemDTO();
 			hwItemDTO.setName("");
 			hwItemDTO.setPrice(0);
-			hwItemDTO.setUsage("");
 			hwItemDTO.setWarrantyYears(0);
 		}
 
@@ -68,7 +68,7 @@ public abstract class HWItemCreateWindow extends GrassSubWindow {
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
-		GridLayout winLayout = new GridLayout(2, 5);
+		GridLayout winLayout = new GridLayout(2, 4);
 		layout.addComponent(winLayout);
 		winLayout.setWidth("400px");
 		winLayout.setSpacing(true);
@@ -105,15 +105,10 @@ public abstract class HWItemCreateWindow extends GrassSubWindow {
 		fieldGroup.bind(stateComboBox, "state");
 		winLayout.addComponent(stateComboBox, 1, 1);
 
-		TextField usageField = new TextField("Je součástí");
-		fieldGroup.bind(usageField, "usage");
-		usageField.setSizeFull();
-		winLayout.addComponent(usageField, 1, 2);
-
 		TextField warrantyYearsField = new TextField("Záruka");
 		fieldGroup.bind(warrantyYearsField, "warrantyYears");
 		warrantyYearsField.setSizeFull();
-		winLayout.addComponent(warrantyYearsField, 0, 3);
+		winLayout.addComponent(warrantyYearsField, 1, 2);
 
 		Set<HWItemTypeDTO> types = hwFacade.getAllHWTypes();
 
@@ -128,7 +123,7 @@ public abstract class HWItemCreateWindow extends GrassSubWindow {
 		typeSelect.setImmediate(true);
 		typeSelect.setItemCaptionPropertyId("name");
 		fieldGroup.bind(typeSelect, "types");
-		winLayout.addComponent(typeSelect, 0, 4, 1, 4);
+		winLayout.addComponent(typeSelect, 0, 3, 1, 3);
 
 		Button createBtn;
 		layout.addComponent(createBtn = new Button(

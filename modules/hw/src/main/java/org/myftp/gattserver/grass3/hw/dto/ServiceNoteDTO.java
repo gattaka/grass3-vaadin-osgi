@@ -36,7 +36,15 @@ public class ServiceNoteDTO {
 	/**
 	 * Součásti
 	 */
-	private String usage;
+	private HWItemDTO usedIn;
+
+	public HWItemDTO getUsedIn() {
+		return usedIn;
+	}
+
+	public void setUsedIn(HWItemDTO usedIn) {
+		this.usedIn = usedIn;
+	}
 
 	public Long getId() {
 		return id;
@@ -68,14 +76,6 @@ public class ServiceNoteDTO {
 
 	public void setState(HWItemState state) {
 		this.state = state;
-	}
-
-	public String getUsage() {
-		return usage;
-	}
-
-	public void setUsage(String usage) {
-		this.usage = usage;
 	}
 
 }

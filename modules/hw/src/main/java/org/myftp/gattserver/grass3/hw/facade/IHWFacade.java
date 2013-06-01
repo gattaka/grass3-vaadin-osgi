@@ -12,6 +12,8 @@ public interface IHWFacade {
 	public Set<HWItemTypeDTO> getAllHWTypes();
 
 	public List<HWItemDTO> getAllHWItems();
+	
+	public List<HWItemDTO> getHWItemsAvailableForPart(HWItemDTO item);
 
 	public List<ServiceNoteDTO> getAllServiceNotes();
 
@@ -26,6 +28,8 @@ public interface IHWFacade {
 
 	public boolean deleteHWItemType(HWItemTypeDTO hwItemType);
 
-	public HWItemDTO getHWItem(Long fixItemId);
+	public HWItemDTO getHWItem(Long itemId);
+
+	public List<HWItemDTO> getAllParts(Long usedInItemId);
 
 }

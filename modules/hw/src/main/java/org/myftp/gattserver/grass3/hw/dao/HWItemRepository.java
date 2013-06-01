@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface HWItemRepository extends JpaRepository<HWItem, Long> {
 
 	public List<HWItem> findByTypesId(Long id);
+
+	public List<HWItem> findByUsedInId(Long id);
 }

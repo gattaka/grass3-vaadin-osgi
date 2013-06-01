@@ -22,7 +22,6 @@ import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
 public abstract class ServiceNoteCreateWindow extends GrassSubWindow {
@@ -43,8 +42,6 @@ public abstract class ServiceNoteCreateWindow extends GrassSubWindow {
 
 		final ServiceNoteDTO serviceNoteDTO = new ServiceNoteDTO();
 		serviceNoteDTO.setDescription("");
-		serviceNoteDTO.setUsage(hwItem.getUsage() == null ? "" : hwItem
-				.getUsage());
 		serviceNoteDTO.setState(hwItem.getState());
 		final BeanFieldGroup<ServiceNoteDTO> fieldGroup = new BeanFieldGroup<ServiceNoteDTO>(
 				ServiceNoteDTO.class);
@@ -70,10 +67,16 @@ public abstract class ServiceNoteCreateWindow extends GrassSubWindow {
 		fieldGroup.bind(stateComboBox, "state");
 		winLayout.addComponent(stateComboBox, 1, 0);
 
-		TextField usageField = new TextField("Je součástí");
-		fieldGroup.bind(usageField, "usage");
-		usageField.setSizeFull();
-		winLayout.addComponent(usageField, 0, 1, 1, 1);
+		ComboBox usedInCombo = new ComboBox("Je součástí");
+		fieldGroup.bind(usedInCombo, "usedIn");
+		usedInCombo.setSizeFull();
+		usedInCombo.setNullSelectionAllowed(true);
+		usedInCombo.setImmediate(true);
+		usedInCombo.setContainerDataSource(new BeanItemContainer<HWItemDTO>(
+				HWItemDTO.class, hwFacade.getHWItemsAvailableForPart(hwItem)));
+		usedInCombo.setItemCaptionPropertyId("name");
+		usedInCombo.setValue(hwItem.getUsedIn());
+		winLayout.addComponent(usedInCombo, 0, 1, 1, 1);
 
 		TextArea descriptionField = new TextArea("Popis");
 		descriptionField.setImmediate(true);

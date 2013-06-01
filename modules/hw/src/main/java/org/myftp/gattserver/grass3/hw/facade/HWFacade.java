@@ -96,7 +96,7 @@ public class HWFacade implements IHWFacade {
 		for (ServiceNote note : item.getServiceNotes()) {
 			serviceNoteRepository.delete(note);
 		}
-		
+
 		item.setServiceNotes(null);
 		hwItemRepository.save(item);
 
@@ -110,11 +110,42 @@ public class HWFacade implements IHWFacade {
 		return true;
 	}
 
+	/**
+	 * Vygeneruje {@link ServiceNote} o přidání/odebrání HW, uloží a přidá k
+	 * cílovému HW
+	 * 
+	 * @param triggerItem
+	 *            HW který je přidán/odebrán
+	 * @param triggerNote
+	 *            {@link ServiceNote}, který událost spustil
+	 * @param added
+	 *            {@code true} pokud byl HW přidán
+	 */
+	private void saveHWPartMoveServiceNote(HWItem triggerItem,
+			ServiceNote triggerNote, boolean added) {
+		HWItem targetItem = hwItemRepository.findOne(triggerItem.getUsedIn()
+				.getId());
+		ServiceNote removeNote = new ServiceNote();
+		removeNote.setDate(triggerNote.getDate());
+
+		StringBuilder builder = new StringBuilder();
+		builder.append(added ? "Byl přidán:" : "Byl odebrán:").append("\n")
+				.append(triggerItem.getName()).append("\n\n").append("Důvod:")
+				.append("\n").append(triggerNote.getDescription());
+		removeNote.setDescription(builder.toString());
+		removeNote.setState(targetItem.getState());
+		removeNote.setUsage(targetItem.getUsedIn() == null ? "" : targetItem
+				.getUsedIn().getName());
+		ServiceNote note = serviceNoteRepository.save(removeNote);
+		targetItem.getServiceNotes().add(note);
+		hwItemRepository.save(targetItem);
+	}
+
 	@Override
 	public boolean addServiceNote(ServiceNoteDTO serviceNoteDTO,
-			HWItemDTO hwItem) {
+			HWItemDTO hwItemDTO) {
 
-		HWItem item = hwItemRepository.findOne(hwItem.getId());
+		HWItem item = hwItemRepository.findOne(hwItemDTO.getId());
 		ServiceNote serviceNote = new ServiceNote();
 		serviceNote.setDate(serviceNoteDTO.getDate());
 		serviceNote.setDescription(serviceNoteDTO.getDescription());
@@ -128,12 +159,39 @@ public class HWFacade implements IHWFacade {
 		item.getServiceNotes().add(serviceNote);
 		item.setState(serviceNote.getState());
 
+		HWItem oldTarget = item.getUsedIn();
+
+		// HW je někde součástí
 		if (serviceNoteDTO.getUsedIn() != null) {
+
+			// cílový HW, kde je nyní HW součástí
 			HWItem targetItem = hwItemRepository.findOne(serviceNoteDTO
 					.getUsedIn().getId());
-			item.setUsedIn(targetItem);
-		} else
-			item.setUsedIn(null);
+
+			// předtím nebyl nikde součástí
+			if (oldTarget == null) {
+				item.setUsedIn(targetItem);
+				saveHWPartMoveServiceNote(item, serviceNote, true);
+			} else if (oldTarget.getId() != serviceNoteDTO.getUsedIn().getId()) {
+				// již předtím byl součástí, ale nyní je jinde
+				saveHWPartMoveServiceNote(item, serviceNote, false);
+				item.setUsedIn(targetItem);
+				saveHWPartMoveServiceNote(item, serviceNote, true);
+			} else {
+				// nic se nezměnilo - HW je stále součástí stejného HW
+			}
+
+		} else { // HW není nikde součástí
+
+			// už předtím nebyl nikde součástí
+			if (oldTarget == null) {
+				// nic se nezměnilo - HW stále není nikde evidován jako součást
+			} else {
+				// předtím někde byl
+				saveHWPartMoveServiceNote(item, serviceNote, false);
+				item.setUsedIn(null);
+			}
+		}
 
 		hwItemRepository.save(item);
 

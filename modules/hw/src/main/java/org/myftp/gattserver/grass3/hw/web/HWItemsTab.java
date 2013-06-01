@@ -160,19 +160,19 @@ public class HWItemsTab extends VerticalLayout {
 				GrassStringToDateConverter.getInstance());
 		table.setConverter("state", new StringToHWItemStateConverter());
 		table.setConverter("price", GrassStringToMoneyConverter.getInstance());
-		table.setConverter("usedIn", new StringToHWItemConverter());
+//		table.setConverter("usedIn", new StringToHWItemConverter());
 
 		table.setColumnHeader("name", "Název");
 		table.setColumnHeader("purchaseDate", "Získáno");
 		table.setColumnHeader("destructionDate", "Odepsáno");
 		table.setColumnHeader("price", "Cena");
 		table.setColumnHeader("state", "Stav");
-		table.setColumnHeader("usedIn", "Je součástí");
+//		table.setColumnHeader("usedIn", "Je součástí");
 
 		table.setColumnAlignment("price", Align.RIGHT);
 
 		table.setVisibleColumns(new String[] { "name", "state", "price",
-				"usedIn", "purchaseDate", "destructionDate" });
+				/*"usedIn",*/ "purchaseDate", "destructionDate" });
 		table.setWidth("100%");
 
 		table.addItemClickListener(new ItemClickEvent.ItemClickListener() {

@@ -6,7 +6,7 @@ import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
-import org.myftp.gattserver.grass3.util.ComparableLink;
+import org.myftp.gattserver.grass3.ui.util.ComparableLink;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.springframework.stereotype.Component;
 

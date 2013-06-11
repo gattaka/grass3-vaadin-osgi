@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.hw.facade;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -12,7 +13,7 @@ public interface IHWFacade {
 	public Set<HWItemTypeDTO> getAllHWTypes();
 
 	public List<HWItemDTO> getAllHWItems();
-	
+
 	public List<HWItemDTO> getHWItemsAvailableForPart(HWItemDTO item);
 
 	public List<ServiceNoteDTO> getAllServiceNotes();
@@ -31,5 +32,9 @@ public interface IHWFacade {
 	public HWItemDTO getHWItem(Long itemId);
 
 	public List<HWItemDTO> getAllParts(Long usedInItemId);
+
+	public boolean saveFile(File file, String fileName, HWItemDTO hwItem);
+
+	public List<File> getFilesFromHW(HWItemDTO hwItem);
 
 }

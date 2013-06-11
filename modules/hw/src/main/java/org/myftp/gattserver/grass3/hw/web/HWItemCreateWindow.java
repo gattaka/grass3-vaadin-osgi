@@ -32,7 +32,7 @@ public abstract class HWItemCreateWindow extends GrassSubWindow {
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	private IHWFacade hwFacade;
-
+	
 	/**
 	 * @param triggerComponent
 	 *            volající komponenta (ta, která má být po dobu zobrazení okna

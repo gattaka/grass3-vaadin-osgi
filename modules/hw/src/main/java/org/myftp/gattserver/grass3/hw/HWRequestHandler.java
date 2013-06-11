@@ -1,18 +1,16 @@
-package org.myftp.gattserver.grass3.fm;
+package org.myftp.gattserver.grass3.hw;
 
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.config.IConfigurationService;
-import org.myftp.gattserver.grass3.fm.config.FMConfiguration;
+import org.myftp.gattserver.grass3.hw.config.HWConfiguration;
 import org.myftp.gattserver.grass3.ui.util.AbstractFileRequestHandler;
 
-// TODO připraveno na stahování/otevírání souborů
-
-public class FMRequestHandler extends AbstractFileRequestHandler {
+public class HWRequestHandler extends AbstractFileRequestHandler {
 
 	private static final long serialVersionUID = 7154339775034959876L;
 
-	public FMRequestHandler() {
-		super(FMConfiguration.FM_PATH);
+	public HWRequestHandler() {
+		super(HWConfiguration.FM_PATH);
 	}
 
 	/**
@@ -22,7 +20,7 @@ public class FMRequestHandler extends AbstractFileRequestHandler {
 	protected String getRootDir() {
 		IConfigurationService configurationService = (IConfigurationService) SpringContextHelper
 				.getBean("configurationService");
-		FMConfiguration configuration = new FMConfiguration();
+		HWConfiguration configuration = new HWConfiguration();
 		configurationService.loadConfiguration(configuration);
 		return configuration.getRootDir();
 	}

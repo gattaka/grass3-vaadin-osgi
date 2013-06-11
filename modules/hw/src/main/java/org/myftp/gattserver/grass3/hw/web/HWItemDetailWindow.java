@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.hw.web;
 
+import java.io.File;
 import java.util.List;
 
 import org.myftp.gattserver.grass3.SpringContextHelper;
@@ -8,8 +9,10 @@ import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import org.myftp.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
-import org.myftp.gattserver.grass3.util.GrassStringToDateConverter;
-import org.myftp.gattserver.grass3.util.GrassStringToMoneyConverter;
+import org.myftp.gattserver.grass3.ui.util.GrassStringToDateConverter;
+import org.myftp.gattserver.grass3.ui.util.GrassStringToMoneyConverter;
+import org.myftp.gattserver.grass3.util.CZSuffixCreator;
+import org.vaadin.easyuploads.MultiFileUpload;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -34,6 +37,8 @@ public class HWItemDetailWindow extends GrassSubWindow {
 	private static final long serialVersionUID = -6773027334692911384L;
 	private static final String DEFAULT_NOTE_LABEL_VALUE = "- Zvolte servisní záznam -";
 
+	private IHWFacade hwFacade;
+
 	private Label createShiftedLabel(String caption) {
 		Label label = new Label(caption, ContentMode.HTML);
 		label.addStyleName("shiftlabel");
@@ -47,25 +52,15 @@ public class HWItemDetailWindow extends GrassSubWindow {
 	}
 
 	private String createWarrantyYearsString(Integer warrantyYears) {
-		if (warrantyYears == null)
-			return "-";
-		switch (warrantyYears) {
-		case 0:
-			return "-";
-		case 1:
-			return warrantyYears + " rok";
-		case 2:
-		case 3:
-		case 4:
-			return warrantyYears + " roky";
-		default:
-			return warrantyYears + " let";
-		}
+		return new CZSuffixCreator("rok", "roky", "let")
+				.createStringWithSuffix(warrantyYears);
 	}
 
 	public HWItemDetailWindow(final Component triggerComponent,
 			final HWItemDTO hwItem) {
 		super(hwItem.getName());
+
+		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
 		setWidth("830px");
 		// setHeight("630px");
@@ -154,7 +149,6 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		/**
 		 * Součásti
 		 */
-		IHWFacade hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 		layout.addComponent(new Label("<strong>Součásti</strong>",
 				ContentMode.HTML));
 		List<HWItemDTO> parts = hwFacade.getAllParts(hwItem.getId());
@@ -178,6 +172,38 @@ public class HWItemDetailWindow extends GrassSubWindow {
 			layout.addComponent(partDetailBtn);
 		}
 
+		Table filestable = new Table();
+		List<File> files = hwFacade.getFilesFromHW(hwItem);
+
+		BeanContainer<String, File> container = new BeanContainer<String, File>(
+				File.class);
+		container.setBeanIdProperty("name");
+		container.addAll(files);
+		filestable.setContainerDataSource(container);
+
+		MultiFileUpload multiFileUpload = new MultiFileUpload() {
+
+			private static final long serialVersionUID = -6217699369125272543L;
+
+			@Override
+			protected String getAreaText() {
+				return "<small>VLOŽ<br/>SOUBORY</small>";
+			}
+
+			@Override
+			protected void handleFile(File file, String fileName,
+					String mimeType, long length) {
+				if (hwFacade.saveFile(file, fileName, hwItem)) {
+
+				}
+			}
+		};
+		// multiFileUpload.setRootDirectory(explorer.getTmpDirFile()
+		// .getAbsolutePath());
+		multiFileUpload.setUploadButtonCaption("Vybrat soubory");
+		multiFileUpload.setSizeFull();
+		layout.addComponent(multiFileUpload);
+
 		/**
 		 * Spodní část
 		 */
@@ -194,12 +220,12 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		table.setSelectable(true);
 		table.setImmediate(true);
 
-		BeanContainer<Long, ServiceNoteDTO> container = new BeanContainer<Long, ServiceNoteDTO>(
+		BeanContainer<Long, ServiceNoteDTO> filesContainer = new BeanContainer<Long, ServiceNoteDTO>(
 				ServiceNoteDTO.class);
-		container.setBeanIdProperty("id");
-		container.addAll(hwItem.getServiceNotes());
+		filesContainer.setBeanIdProperty("id");
+		filesContainer.addAll(hwItem.getServiceNotes());
 
-		table.setContainerDataSource(container);
+		table.setContainerDataSource(filesContainer);
 		table.setConverter("date", GrassStringToDateConverter.getInstance());
 		table.setConverter("state", new StringToHWItemStateConverter());
 		table.setConverter("usedIn", new StringToHWItemConverter());

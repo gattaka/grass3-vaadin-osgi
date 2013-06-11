@@ -4,8 +4,8 @@ import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
-import org.myftp.gattserver.grass3.util.GrassStringToDateConverter;
-import org.myftp.gattserver.grass3.util.GrassStringToMoneyConverter;
+import org.myftp.gattserver.grass3.ui.util.GrassStringToDateConverter;
+import org.myftp.gattserver.grass3.ui.util.GrassStringToMoneyConverter;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -156,23 +156,24 @@ public class HWItemsTab extends VerticalLayout {
 
 		table.setConverter("purchaseDate",
 				GrassStringToDateConverter.getInstance());
-		table.setConverter("destructionDate",
-				GrassStringToDateConverter.getInstance());
 		table.setConverter("state", new StringToHWItemStateConverter());
 		table.setConverter("price", GrassStringToMoneyConverter.getInstance());
-//		table.setConverter("usedIn", new StringToHWItemConverter());
+		table.setConverter("usedIn", new StringToHWItemConverter());
 
 		table.setColumnHeader("name", "Název");
 		table.setColumnHeader("purchaseDate", "Získáno");
-		table.setColumnHeader("destructionDate", "Odepsáno");
 		table.setColumnHeader("price", "Cena");
 		table.setColumnHeader("state", "Stav");
-//		table.setColumnHeader("usedIn", "Je součástí");
+		table.setColumnHeader("usedIn", "Je součástí");
 
 		table.setColumnAlignment("price", Align.RIGHT);
 
-		table.setVisibleColumns(new String[] { "name", "state", "price",
-				/*"usedIn",*/ "purchaseDate", "destructionDate" });
+		table.setVisibleColumns(new String[] { "name", "state", "usedIn",
+				"price", "purchaseDate" });
+		table.setColumnWidth("name", 380);
+		table.setColumnWidth("usedIn", 180);
+		table.setSortAscending(true);
+		table.setSortContainerPropertyId("name");
 		table.setWidth("100%");
 
 		table.addItemClickListener(new ItemClickEvent.ItemClickListener() {

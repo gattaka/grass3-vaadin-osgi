@@ -8,8 +8,8 @@ import org.myftp.gattserver.grass3.IServiceHolder;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.service.IContentService;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
+import org.myftp.gattserver.grass3.ui.util.ComparableLink;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
-import org.myftp.gattserver.grass3.util.ComparableLink;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.data.Item;

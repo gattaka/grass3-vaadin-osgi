@@ -1,12 +1,17 @@
 package org.myftp.gattserver.grass3.hw.facade;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.myftp.gattserver.grass3.SpringContextHelper;
+import org.myftp.gattserver.grass3.config.IConfigurationService;
+import org.myftp.gattserver.grass3.hw.config.HWConfiguration;
 import org.myftp.gattserver.grass3.hw.dao.HWItemRepository;
 import org.myftp.gattserver.grass3.hw.dao.HWItemTypeRepository;
 import org.myftp.gattserver.grass3.hw.dao.ServiceNoteRepository;
@@ -230,5 +235,24 @@ public class HWFacade implements IHWFacade {
 		List<HWItemDTO> items = getAllHWItems();
 		items.remove(item);
 		return items;
+	}
+
+	@Override
+	public boolean saveFile(File file, String fileName, HWItemDTO hwItem) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public List<File> getFilesFromHW(HWItemDTO hwItem) {
+		IConfigurationService configurationService = (IConfigurationService) SpringContextHelper
+				.getBean("configurationService");
+		HWConfiguration configuration = new HWConfiguration();
+		configurationService.loadConfiguration(configuration);
+
+		File hwDir = new File(configuration.getRootDir(), hwItem.getId()
+				.toString());
+
+		return Arrays.asList(hwDir.listFiles());
 	}
 }

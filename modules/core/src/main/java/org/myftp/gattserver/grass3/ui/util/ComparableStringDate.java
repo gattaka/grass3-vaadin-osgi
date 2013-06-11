@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3.util;
+package org.myftp.gattserver.grass3.ui.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

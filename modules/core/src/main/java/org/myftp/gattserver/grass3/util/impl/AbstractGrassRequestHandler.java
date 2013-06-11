@@ -26,7 +26,9 @@ public abstract class AbstractGrassRequestHandler implements
 		this.mountPoint = mountPoint;
 	}
 
-	protected abstract String getMimeType(String fileName);
+	protected String getMimeType(String fileName) {
+		return null;
+	}
 
 	protected abstract InputStream getResourceStream(String fileName)
 			throws FileNotFoundException;
@@ -53,7 +55,9 @@ public abstract class AbstractGrassRequestHandler implements
 				bytesRead = in.read(buffer);
 			}
 
-			response.setContentType(getMimeType(fileName));
+			String mime = getMimeType(fileName);
+			if (mime != null)
+				response.setContentType(mime);
 
 			return true; // We wrote a response
 		} else

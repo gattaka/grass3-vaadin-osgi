@@ -10,8 +10,7 @@
 
 	<modules>
 		<module>modules</module>
-		<module>theme</module>
-		<module>widgetsets</module>
+		<module>web</module>
 	</modules>
 
 </project>

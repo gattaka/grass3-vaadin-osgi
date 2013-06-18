@@ -9,13 +9,12 @@
 	<packaging>pom</packaging>
 
 	<modules>
-        <module>core</module>
-        <module>fm</module>
-        <module>config</module>
-        <module>model</module>
-        <module>contents</module>
-        <module>tone</module>
-        <module>search</module>
+		<module>contents</module>
+		<module>core</module>
+		<module>fm</module>
+		<module>hw</module>
+		<module>medic</module>
+		<module>search</module>
 	</modules>
 
 </project>

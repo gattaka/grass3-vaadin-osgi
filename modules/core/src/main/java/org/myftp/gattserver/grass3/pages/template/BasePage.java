@@ -16,17 +16,17 @@ import org.myftp.gattserver.grass3.service.ISectionService;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.util.GrassRequest;
 
-import com.vaadin.server.ExternalResource;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.MenuBar.Command;
+import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.BaseTheme;
 
 public abstract class BasePage extends AbstractGrassPage {
 
@@ -62,9 +62,6 @@ public abstract class BasePage extends AbstractGrassPage {
 	@Resource(name = "serviceHolder")
 	private IServiceHolder serviceHolder;
 
-	private HorizontalLayout sectionsMenuLayout;
-	private HorizontalLayout userMenuLayout;
-
 	public BasePage(GrassRequest request) {
 		super(request);
 	}
@@ -84,68 +81,73 @@ public abstract class BasePage extends AbstractGrassPage {
 	@Override
 	protected void createMenu(CustomLayout layout) {
 
-		CustomLayout menu = new CustomLayout("menu");
+		// CustomLayout menu = new CustomLayout("menu");
+		HorizontalLayout menu = new HorizontalLayout();
+		menu.setWidth("970px");
+		menu.setHeight("70px");
+		menu.addStyleName("menu");
+		menu.setMargin(false);
+		menu.setSpacing(false);
+
 		layout.addComponent(menu, "menu");
 
-		// menu
-		createSectionsMenu(menu);
-		createUserMenu(menu);
-	}
+		MenuBar sectionsMenu = new MenuBar();
+		MenuBar userMenu = new MenuBar();
 
-	private void createSectionsMenu(CustomLayout layout) {
-		sectionsMenuLayout = new HorizontalLayout();
-		layout.addComponent(sectionsMenuLayout, "sectionsmenu");
+		menu.addComponent(sectionsMenu);
+		menu.addComponent(userMenu);
 
-		sectionsMenuLayout.removeAllComponents();
+		sectionsMenu.setWidth("100%");
+		menu.setExpandRatio(sectionsMenu, 1);
+
+		/**
+		 * Sections menu
+		 */
 
 		// link na domovskou stránku
-		createHomeLink();
+		createPageMenuItem(sectionsMenu, "Domů", homePageFactory);
 
 		// sekce článků je rozbalená rovnou jako její kořenové kategorie
 		List<NodeDTO> nodes = nodeFacade.getRootNodes();
 		for (NodeDTO node : nodes) {
-			createCategoryLink(node.getName(),
+			createCategoryPageMenuItem(sectionsMenu, node.getName(),
 					node.getId() + "-" + node.getName());
 		}
+
+		MenuItem appsMenu = sectionsMenu.addItem("Aplikace", null);
 
 		// externí sekce
 		for (ISectionService section : serviceHolder.getSectionServices()) {
 			if (coreACL.canShowSection(section, getUser())) {
-				createSectionLink(section.getSectionCaption(),
+				createPageMenuItem(appsMenu, section.getSectionCaption(),
 						section.getSectionPageFactory());
 			}
 		}
-	}
 
-	protected void buildUserMenu() {
-
-		userMenuLayout.removeAllComponents();
+		/**
+		 * User menu
+		 */
 
 		// Přihlášení
 		if (coreACL.canLogin(getUser())) {
-			Link link = new Link("Přihlášení",
-					getPageResource(loginPageFactory));
-			link.setStyleName("item");
-			userMenuLayout.addComponent(link);
+			createPageMenuItem(userMenu, "Přihlášení", loginPageFactory);
 		}
 
 		// Registrace
 		if (coreACL.canRegistrate(getUser())) {
-			Link link = new Link("Registrace",
-					getPageResource(registrationPageFactory));
-			link.setStyleName("item");
-			userMenuLayout.addComponent(link);
+			createPageMenuItem(userMenu, "Registrace", registrationPageFactory);
 		}
 
 		// Přehled o uživateli
 		final UserInfoDTO userInfoDTO = getGrassUI().getUser();
 		if (coreACL.canShowUserDetails(userInfoDTO, getUser())) {
-			Button userDetails = new Button(userInfoDTO.getName(),
-					new Button.ClickListener() {
-
+			MenuItem userDetails = userMenu.addItem(userInfoDTO.getName(),
+					new Command() {
 						private static final long serialVersionUID = 4570994816815405844L;
 
-						public void buttonClick(ClickEvent event) {
+						@Override
+						public void menuSelected(MenuItem selectedItem) {
+
 							final Window subwindow = new GrassSubWindow(
 									"Detail uživatele " + userInfoDTO.getName());
 							subwindow.center();
@@ -186,36 +188,24 @@ public abstract class BasePage extends AbstractGrassPage {
 					});
 
 			userDetails.setStyleName("user_status");
-			userDetails.addStyleName(BaseTheme.BUTTON_LINK);
-			userMenuLayout.addComponent(userDetails);
 
 			// separator
-			Label separator = new Label("|");
-			separator.setStyleName("item");
-			userMenuLayout.addComponent(separator);
+			MenuItem separator = userMenu.addItem("|", null);
+			separator.setEnabled(false);
 
 			// nastavení
-			Link link = new Link("Nastavení",
-					getPageResource(settingsPageFactory));
-			link.setStyleName("item");
-			userMenuLayout.addComponent(link);
+			createPageMenuItem(userMenu, "Nastavení", settingsPageFactory);
 
 			// odhlásit
-			Link logoutLink = new Link("Odhlásit", new ExternalResource(
-					getPageURL("j_spring_security_logout")));
-			logoutLink.setStyleName(BaseTheme.BUTTON_LINK);
-			logoutLink.addStyleName("item");
-			userMenuLayout.addComponent(logoutLink);
+			userMenu.addItem("Odhlásit", new Command() {
+				private static final long serialVersionUID = 5161534666150825952L;
 
+				@Override
+				public void menuSelected(MenuItem selectedItem) {
+					redirect(getPageURL("j_spring_security_logout"));
+				}
+			});
 		}
-
-	}
-
-	private void createUserMenu(CustomLayout layout) {
-		userMenuLayout = new HorizontalLayout();
-		layout.addComponent(userMenuLayout, "usermenu");
-
-		buildUserMenu();
 
 	}
 
@@ -227,22 +217,41 @@ public abstract class BasePage extends AbstractGrassPage {
 		return quote;
 	}
 
-	private void createHomeLink() {
-		Link link = new Link("Domů", getPageResource(homePageFactory));
-		link.setStyleName("item");
-		sectionsMenuLayout.addComponent(link);
+	private MenuItem createCategoryPageMenuItem(MenuBar bar, String name,
+			String url) {
+		return bar.addItem(name, createCategoryCommand(url));
 	}
 
-	private void createSectionLink(String caption, IPageFactory pageFactory) {
-		Link link = new Link(caption, getPageResource(pageFactory));
-		link.setStyleName("item");
-		sectionsMenuLayout.addComponent(link);
+	private MenuItem createPageMenuItem(MenuBar bar, String name,
+			IPageFactory factory) {
+		return bar.addItem(name, createCommand(factory));
 	}
 
-	private void createCategoryLink(String caption, String URL) {
-		Link link = new Link(caption, getPageResource(categoryPageFactory, URL));
-		link.setStyleName("item");
-		sectionsMenuLayout.addComponent(link);
+	private MenuItem createPageMenuItem(MenuItem item, String name,
+			IPageFactory factory) {
+		return item.addItem(name, createCommand(factory));
+	}
+
+	private Command createCommand(final IPageFactory factory) {
+		return new Command() {
+			private static final long serialVersionUID = 4072974580734348622L;
+
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				redirect(getPageURL(factory));
+			}
+		};
+	}
+
+	private Command createCategoryCommand(final String url) {
+		return new Command() {
+			private static final long serialVersionUID = 5148518087273073333L;
+
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				redirect(getPageURL(categoryPageFactory, url));
+			}
+		};
 	}
 
 }

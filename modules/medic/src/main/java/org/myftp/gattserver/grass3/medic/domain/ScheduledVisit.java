@@ -17,13 +17,13 @@ public class ScheduledVisit {
 	private Long id;
 
 	/**
-	 * Místo, kam se dostavit
+	 * MÃ­sto, kam se dostavit
 	 */
 	@ManyToOne
 	private MedicalInstitution institution;
 
 	/**
-	 * Záznam - návštìva, ze které vzešlo toto datum návštìvy
+	 * ZÃ¡znam - nÃ¡vÅ¡tÄ›va, ze kterÃ© vzeÅ¡lo toto datum nÃ¡vÅ¡tÄ›vy
 	 */
 	@OneToOne
 	private MedicalRecord record;

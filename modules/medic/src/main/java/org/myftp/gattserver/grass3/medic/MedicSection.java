@@ -26,7 +26,7 @@ public class MedicSection implements ISectionService {
 	}
 
 	public String getSectionCaption() {
-		return "Zdravotní zápisník";
+		return "ZdravotnÃ­ zÃ¡pisnÃ­k";
 	}
 
 }

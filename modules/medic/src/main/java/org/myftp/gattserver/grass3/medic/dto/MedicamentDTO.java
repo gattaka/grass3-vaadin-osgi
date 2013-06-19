@@ -7,13 +7,13 @@ public class MedicamentDTO {
 	private Long id;
 
 	/**
-	 * N·zev lÈku
+	 * N√°zev l√©ku
 	 */
 	@NotNull
 	private String name;
 
 	/**
-	 * Sn·öenlivost
+	 * Sn√°≈°enlivost
 	 */
 	private String tolerance;
 

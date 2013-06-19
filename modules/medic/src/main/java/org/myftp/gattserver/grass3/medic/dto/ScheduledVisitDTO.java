@@ -9,13 +9,13 @@ public class ScheduledVisitDTO {
 	private Long id;
 
 	/**
-	 * Místo, kam se dostavit
+	 * MÃ­sto, kam se dostavit
 	 */
 	@NotNull
 	private MedicalInstitutionDTO institution;
 
 	/**
-	 * Záznam - návštìva, ze které vzešlo toto datum návštìvy
+	 * ZÃ¡znam - nÃ¡vÅ¡tÄ›va, ze kterÃ© vzeÅ¡lo toto datum nÃ¡vÅ¡tÄ›vy
 	 */
 	private MedicalRecordDTO record;
 

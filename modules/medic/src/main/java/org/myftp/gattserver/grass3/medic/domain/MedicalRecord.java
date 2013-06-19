@@ -19,13 +19,13 @@ public class MedicalRecord {
 	private Long id;
 
 	/**
-	 * Místo ošetøení
+	 * MÃ­sto oÅ¡etÅ™enÃ­
 	 */
 	@ManyToOne
 	private MedicalInstitution institution;
 
 	/**
-	 * Lékaø - ošetøující
+	 * LÃ©kaÅ™ - oÅ¡etÅ™ujÃ­cÃ­
 	 */
 	private String doctor;
 
@@ -35,13 +35,13 @@ public class MedicalRecord {
 	private Date date;
 
 	/**
-	 * Záznam o vyšetøení
+	 * ZÃ¡znam o vyÅ¡etÅ™enÃ­
 	 */
 	@Column(columnDefinition = "TEXT")
 	private String record;
 
 	/**
-	 * Napsané léky
+	 * NapsanÃ© lÃ©ky
 	 */
 	@ManyToMany
 	private List<Medicament> medicaments;

@@ -8,9 +8,10 @@ import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
 import com.vaadin.ui.Component;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 
-@org.springframework.stereotype.Component("hwPage")
+@org.springframework.stereotype.Component("medicPage")
 @Scope("prototype")
 public class MedicPage extends OneColumnPage {
 
@@ -34,6 +35,12 @@ public class MedicPage extends OneColumnPage {
 		layout.setSpacing(true);
 		layout.setMargin(true);
 
+		TabSheet tabSheet = new TabSheet();
+		layout.addComponent(tabSheet);
+		
+		tabSheet.addTab(new MedicOverviewTab(), "Přehled");
+		tabSheet.addTab(new MedicalInstitutionsTab(medicFacade), "Instituce");
+		
 		return layout;
 	}
 

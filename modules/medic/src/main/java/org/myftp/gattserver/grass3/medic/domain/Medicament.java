@@ -14,12 +14,12 @@ public class Medicament {
 	private Long id;
 
 	/**
-	 * N·zev lÈku
+	 * N√°zev l√©ku
 	 */
 	private String name;
 
 	/**
-	 * Sn·öenlivost
+	 * Sn√°≈°enlivost
 	 */
 	@Column(columnDefinition = "TEXT")
 	private String tolerance;

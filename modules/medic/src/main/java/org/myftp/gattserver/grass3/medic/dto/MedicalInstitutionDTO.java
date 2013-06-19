@@ -7,7 +7,7 @@ public class MedicalInstitutionDTO {
 	private Long id;
 
 	/**
-	 * JmÈno institutu
+	 * Jm√©no institutu
 	 */
 	@NotNull
 	private String name;
@@ -19,13 +19,13 @@ public class MedicalInstitutionDTO {
 	private String address;
 
 	/**
-	 * OtevÌracÌ hodiny
+	 * Otev√≠rac√≠ hodiny
 	 */
 	@NotNull
 	private String hours;
 
 	/**
-	 * WebovÈ str·nky
+	 * Webov√© str√°nky
 	 */
 	private String web;
 

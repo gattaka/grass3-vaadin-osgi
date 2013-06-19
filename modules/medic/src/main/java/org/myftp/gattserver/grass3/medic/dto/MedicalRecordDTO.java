@@ -10,13 +10,13 @@ public class MedicalRecordDTO {
 	private Long id;
 
 	/**
-	 * Místo ošetøení
+	 * MÃ­sto oÅ¡etÅ™enÃ­
 	 */
 	@NotNull
 	private MedicalInstitutionDTO institution;
 
 	/**
-	 * Lékaø - ošetøující
+	 * LÃ©kaÅ™ - oÅ¡etÅ™ujÃ­cÃ­
 	 */
 	private String doctor;
 
@@ -27,13 +27,13 @@ public class MedicalRecordDTO {
 	private Date date;
 
 	/**
-	 * Záznam o vyšetøení
+	 * ZÃ¡znam o vyÅ¡etÅ™enÃ­
 	 */
 	@NotNull
 	private String record;
 
 	/**
-	 * Napsané léky
+	 * NapsanÃ© lÃ©ky
 	 */
 	private List<MedicamentDTO> medicaments;
 

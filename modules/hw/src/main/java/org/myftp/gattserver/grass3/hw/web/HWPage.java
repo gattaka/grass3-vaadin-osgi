@@ -26,7 +26,6 @@ public class HWPage extends OneColumnPage {
 
 	@Override
 	protected void init() {
-
 		super.init();
 	}
 
@@ -39,9 +38,6 @@ public class HWPage extends OneColumnPage {
 		TabSheet tabSheet = new TabSheet();
 		layout.addComponent(tabSheet);
 		
-		// String[] labels = {"Přehled","Typy zařízení", "Zařízení",
-		// "Servisní historie"};
-
 		tabSheet.addTab(new HWItemsTab(hwFacade), "Přehled");
 		tabSheet.addTab(new HWTypesTab(hwFacade), "Typy zařízení");
 

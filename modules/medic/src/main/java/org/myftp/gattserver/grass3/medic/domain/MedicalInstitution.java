@@ -17,7 +17,7 @@ public class MedicalInstitution {
 	private Long id;
 
 	/**
-	 * Jméno institutu
+	 * JmÃ©no institutu
 	 */
 	private String name;
 
@@ -27,12 +27,12 @@ public class MedicalInstitution {
 	private String address;
 
 	/**
-	 * Otevírací hodiny
+	 * OtevÃ­racÃ­ hodiny
 	 */
 	private String hours;
 
 	/**
-	 * Webové stránky
+	 * WebovÃ© strÃ¡nky
 	 */
 	private String web;
 

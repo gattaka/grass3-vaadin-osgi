@@ -253,6 +253,9 @@ public class HWFacade implements IHWFacade {
 		File hwDir = new File(configuration.getRootDir(), hwItem.getId()
 				.toString());
 
+		if (hwDir.exists() == false)
+			return new ArrayList<File>();
+
 		return Arrays.asList(hwDir.listFiles());
 	}
 }

@@ -146,7 +146,7 @@ a img.icon {
 	color: black;
 	margin-left: auto;
 	margin-right: auto;
-/* 	margin-bottom: 43px; */
+	/* 	margin-bottom: 43px; */
 	margin-bottom: 15px;
 	margin-top: 0;
 	/** podstatné !!! jinak se budou odstupy od okrajů u menu měnit jakmile se zobrazí scrollbar **/
@@ -201,6 +201,20 @@ a img.icon {
 
 .menu {
 	margin: 0 10px;
+}
+
+.menu .v-menubar .v-menubar-menuitem-selected {
+	background-image: url(img/vertical-sprites.png);
+	background-position: left -751px;
+}
+
+.v-menubar-submenu .v-menubar-menuitem-selected
+	{
+	background: rgb(159, 136, 77) repeat-x;
+	background-image: url(img/vertical-sprites.png);
+	background-position: left -731px;
+	color: #fff;
+	text-shadow: 0 1px 0 rgb(122, 102, 59);
 }
 
 /* == ROUND BORDERS ========================================================= */

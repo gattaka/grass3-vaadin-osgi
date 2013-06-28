@@ -78,8 +78,36 @@ public class HWItem {
 	@ManyToOne
 	private HWItem usedIn;
 
+	/**
+	 * Dokumenty
+	 */
+	@ManyToMany
+	private Set<HWItemFile> documents;
+
+	/**
+	 * Fotografie
+	 */
+	@ManyToMany
+	private Set<HWItemFile> images;
+
 	public HWItem getUsedIn() {
 		return usedIn;
+	}
+
+	public Set<HWItemFile> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(Set<HWItemFile> documents) {
+		this.documents = documents;
+	}
+
+	public Set<HWItemFile> getImages() {
+		return images;
+	}
+
+	public void setImages(Set<HWItemFile> images) {
+		this.images = images;
 	}
 
 	public void setUsedIn(HWItem usedIn) {

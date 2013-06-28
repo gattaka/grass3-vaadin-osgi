@@ -18,7 +18,7 @@ public class HWSection implements ISectionService {
 	public boolean isVisibleForRoles(Set<Role> roles) {
 		if (roles == null)
 			return false;
-		return roles.contains(Role.ADMIN) ;
+		return roles.contains(Role.ADMIN);
 	}
 
 	public IPageFactory getSectionPageFactory() {

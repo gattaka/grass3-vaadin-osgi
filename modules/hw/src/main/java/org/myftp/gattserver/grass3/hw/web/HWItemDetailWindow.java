@@ -1,10 +1,11 @@
 package org.myftp.gattserver.grass3.hw.web;
 
-import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
+import org.myftp.gattserver.grass3.hw.dto.HWItemFileDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import org.myftp.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
@@ -12,12 +13,13 @@ import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.ui.util.GrassStringToDateConverter;
 import org.myftp.gattserver.grass3.ui.util.GrassStringToMoneyConverter;
 import org.myftp.gattserver.grass3.util.CZSuffixCreator;
-import org.vaadin.easyuploads.MultiFileUpload;
+import org.myftp.gattserver.grass3.util.StringPreviewCreator;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
@@ -56,6 +58,75 @@ public class HWItemDetailWindow extends GrassSubWindow {
 				.createStringWithSuffix(warrantyYears);
 	}
 
+	private void createFilesList(final GridLayout filesLayout,
+			final HWItemDTO hwItem, final boolean document) {
+
+		VerticalLayout targetLayout = new VerticalLayout();
+		targetLayout.addComponent(new Label("<strong>"
+				+ (document ? "Dokumenty" : "Fotografie") + "</strong>",
+				ContentMode.HTML));
+
+		Set<HWItemFileDTO> files = document ? hwItem.getDocuments() : hwItem
+				.getImages();
+
+		if (files.isEmpty()) {
+			targetLayout.addComponent(createShiftedLabel("-"));
+		} else {
+			for (HWItemFileDTO fileDTO : files) {
+				Button docDetailBtn = new Button(fileDTO.getDescription());
+				docDetailBtn.setStyleName(BaseTheme.BUTTON_LINK);
+				docDetailBtn.addStyleName("shiftlabel");
+				docDetailBtn.addClickListener(new Button.ClickListener() {
+
+					private static final long serialVersionUID = 4983897852548880141L;
+
+					@Override
+					public void buttonClick(ClickEvent event) {
+						UI.getCurrent().addWindow(
+								new HWItemFileCreateWindow(hwItem, document) {
+
+									private static final long serialVersionUID = -7010801549731161045L;
+
+									@Override
+									protected void onSuccess() {
+									
+									}
+								});
+					}
+				});
+				targetLayout.addComponent(docDetailBtn);
+			}
+		}
+		
+		Button newDocBtn = new Button("Přidat");
+		newDocBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
+		newDocBtn.addClickListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 4983897852548880141L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				UI.getCurrent().addWindow(
+						new HWItemFileCreateWindow(hwItem, document) {
+
+							private static final long serialVersionUID = -7010801549731161045L;
+
+							@Override
+							protected void onSuccess() {
+								HWItemDTO freshItem = hwFacade
+										.getHWItem(hwItem.getId());
+								createFilesList(filesLayout, freshItem,
+										document);
+							}
+						});
+			}
+		});
+		targetLayout.addComponent(newDocBtn);
+		
+		filesLayout.removeComponent(document ? 0 : 1, 0);
+		filesLayout.addComponent(targetLayout, document ? 0 : 1, 0);
+	}
+
 	public HWItemDetailWindow(final Component triggerComponent,
 			final HWItemDTO hwItem) {
 		super(hwItem.getName());
@@ -73,6 +144,9 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		layout.setMargin(true);
 
 		GridLayout winLayout = new GridLayout(3, 8);
+		winLayout.setColumnExpandRatio(0, 1);
+		winLayout.setColumnExpandRatio(1, 2);
+		winLayout.setColumnExpandRatio(2, 4);
 		layout.addComponent(winLayout);
 		winLayout.setSpacing(true);
 		winLayout.setWidth("100%");
@@ -90,50 +164,27 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		winLayout.addComponent(
 				createShiftedLabel(createPriceString(hwItem.getPrice())), 0, 3);
 
-		winLayout.addComponent(new Label("<strong>Získáno</strong>",
+		winLayout.addComponent(new Label("<strong>Záruka</strong>",
 				ContentMode.HTML), 0, 4);
-		String purchDate = hwItem.getPurchaseDate() == null ? "-"
-				: GrassStringToDateConverter.format(hwItem.getPurchaseDate());
-		winLayout.addComponent(createShiftedLabel(purchDate), 0, 5);
-
-		winLayout.addComponent(new Label("<strong>Odepsáno</strong>",
-				ContentMode.HTML), 0, 6);
-		String destrDate = hwItem.getDestructionDate() == null ? "-"
-				: GrassStringToDateConverter
-						.format(hwItem.getDestructionDate());
-		winLayout.addComponent(createShiftedLabel(destrDate), 0, 7);
+		winLayout.addComponent(
+				createShiftedLabel(createWarrantyYearsString(hwItem
+						.getWarrantyYears())), 0, 5);
 
 		/**
 		 * Info pole - druhý sloupec
 		 */
-		winLayout.addComponent(new Label("<strong>Záruka</strong>",
+		winLayout.addComponent(new Label("<strong>Získáno</strong>",
 				ContentMode.HTML), 1, 0);
-		winLayout.addComponent(
-				createShiftedLabel(createWarrantyYearsString(hwItem
-						.getWarrantyYears())), 1, 1);
+		String purchDate = hwItem.getPurchaseDate() == null ? "-"
+				: GrassStringToDateConverter.format(hwItem.getPurchaseDate());
+		winLayout.addComponent(createShiftedLabel(purchDate), 1, 1);
 
-		winLayout.addComponent(new Label("<strong>Je součástí</strong>",
+		winLayout.addComponent(new Label("<strong>Odepsáno</strong>",
 				ContentMode.HTML), 1, 2);
-		if (hwItem.getUsedIn() == null) {
-			winLayout.addComponent(createShiftedLabel("-"), 1, 3);
-		} else {
-			Button usedInBtn = new Button(hwItem.getUsedIn().getName());
-			usedInBtn.setStyleName(BaseTheme.BUTTON_LINK);
-			usedInBtn.addStyleName("shiftlabel");
-			usedInBtn.addClickListener(new Button.ClickListener() {
-
-				private static final long serialVersionUID = 4983897852548880141L;
-
-				@Override
-				public void buttonClick(ClickEvent event) {
-					close();
-					UI.getCurrent().addWindow(
-							new HWItemDetailWindow(triggerComponent, hwItem
-									.getUsedIn()));
-				}
-			});
-			winLayout.addComponent(usedInBtn, 1, 3);
-		}
+		String destrDate = hwItem.getDestructionDate() == null ? "-"
+				: GrassStringToDateConverter
+						.format(hwItem.getDestructionDate());
+		winLayout.addComponent(createShiftedLabel(destrDate), 1, 3);
 
 		winLayout.addComponent(new Label("<strong>Typ</strong>",
 				ContentMode.HTML), 1, 4);
@@ -149,13 +200,42 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		/**
 		 * Součásti
 		 */
-		layout.addComponent(new Label("<strong>Součásti</strong>",
-				ContentMode.HTML));
+		winLayout.addComponent(new Label("<strong>Je součástí</strong>",
+				ContentMode.HTML), 2, 0);
+		if (hwItem.getUsedIn() == null) {
+			winLayout.addComponent(createShiftedLabel("-"), 2, 1);
+		} else {
+			Button usedInBtn = new Button(StringPreviewCreator.createPreview(
+					hwItem.getUsedIn().getName(), 60));
+			usedInBtn.setDescription(hwItem.getUsedIn().getName());
+			usedInBtn.setStyleName(BaseTheme.BUTTON_LINK);
+			usedInBtn.addStyleName("shiftlabel");
+			usedInBtn.addClickListener(new Button.ClickListener() {
+
+				private static final long serialVersionUID = 4983897852548880141L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					close();
+					UI.getCurrent().addWindow(
+							new HWItemDetailWindow(triggerComponent, hwItem
+									.getUsedIn()));
+				}
+			});
+			winLayout.addComponent(usedInBtn, 2, 1);
+		}
+
+		winLayout.addComponent(new Label("<strong>Součásti</strong>",
+				ContentMode.HTML), 2, 2);
+		VerticalLayout partsLayout = new VerticalLayout();
+		winLayout.addComponent(partsLayout, 2, 3, 2, 7);
 		List<HWItemDTO> parts = hwFacade.getAllParts(hwItem.getId());
 		if (parts.isEmpty())
-			layout.addComponent(createShiftedLabel("-"));
+			partsLayout.addComponent(createShiftedLabel("-"));
 		for (final HWItemDTO part : parts) {
-			Button partDetailBtn = new Button(part.getName());
+			Button partDetailBtn = new Button(
+					StringPreviewCreator.createPreview(part.getName(), 60));
+			partDetailBtn.setDescription(part.getName());
 			partDetailBtn.setStyleName(BaseTheme.BUTTON_LINK);
 			partDetailBtn.addStyleName("shiftlabel");
 			partDetailBtn.addClickListener(new Button.ClickListener() {
@@ -169,40 +249,22 @@ public class HWItemDetailWindow extends GrassSubWindow {
 							new HWItemDetailWindow(triggerComponent, part));
 				}
 			});
-			layout.addComponent(partDetailBtn);
+			partsLayout.addComponent(partDetailBtn);
 		}
 
-		Table filestable = new Table();
-		List<File> files = hwFacade.getFilesFromHW(hwItem);
+		/**
+		 * Střední část - dokumenty
+		 */
+		GridLayout filesLayout = new GridLayout(2, 1);
+		layout.addComponent(filesLayout);
+		filesLayout.setWidth("100%");
+		filesLayout.setSpacing(true);
 
-		BeanContainer<String, File> container = new BeanContainer<String, File>(
-				File.class);
-		container.setBeanIdProperty("name");
-		container.addAll(files);
-		filestable.setContainerDataSource(container);
+		// dokumenty
+		createFilesList(filesLayout, hwItem, true);
 
-		MultiFileUpload multiFileUpload = new MultiFileUpload() {
-
-			private static final long serialVersionUID = -6217699369125272543L;
-
-			@Override
-			protected String getAreaText() {
-				return "<small>VLOŽ<br/>SOUBORY</small>";
-			}
-
-			@Override
-			protected void handleFile(File file, String fileName,
-					String mimeType, long length) {
-				if (hwFacade.saveFile(file, fileName, hwItem)) {
-
-				}
-			}
-		};
-		// multiFileUpload.setRootDirectory(explorer.getTmpDirFile()
-		// .getAbsolutePath());
-		multiFileUpload.setUploadButtonCaption("Vybrat soubory");
-		multiFileUpload.setSizeFull();
-		layout.addComponent(multiFileUpload);
+		// fotografie
+		createFilesList(filesLayout, hwItem, false);
 
 		/**
 		 * Spodní část

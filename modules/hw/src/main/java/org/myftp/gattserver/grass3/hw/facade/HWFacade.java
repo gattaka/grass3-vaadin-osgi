@@ -1,24 +1,22 @@
 package org.myftp.gattserver.grass3.hw.facade;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.myftp.gattserver.grass3.SpringContextHelper;
-import org.myftp.gattserver.grass3.config.IConfigurationService;
-import org.myftp.gattserver.grass3.hw.config.HWConfiguration;
+import org.myftp.gattserver.grass3.hw.dao.HWItemFileRepository;
 import org.myftp.gattserver.grass3.hw.dao.HWItemRepository;
 import org.myftp.gattserver.grass3.hw.dao.HWItemTypeRepository;
 import org.myftp.gattserver.grass3.hw.dao.ServiceNoteRepository;
 import org.myftp.gattserver.grass3.hw.domain.HWItem;
+import org.myftp.gattserver.grass3.hw.domain.HWItemFile;
 import org.myftp.gattserver.grass3.hw.domain.HWItemType;
 import org.myftp.gattserver.grass3.hw.domain.ServiceNote;
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
+import org.myftp.gattserver.grass3.hw.dto.HWItemFileDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import org.myftp.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +35,9 @@ public class HWFacade implements IHWFacade {
 
 	@Autowired
 	private ServiceNoteRepository serviceNoteRepository;
+
+	@Autowired
+	private HWItemFileRepository hwItemFileRepository;
 
 	@Resource(name = "hwMapper")
 	private HWMapper hwMapper;
@@ -147,6 +148,31 @@ public class HWFacade implements IHWFacade {
 	}
 
 	@Override
+	public boolean addHWItemFile(HWItemFileDTO hwItemFileDTO,
+			HWItemDTO hwItemDTO, boolean document) {
+
+		HWItem item = hwItemRepository.findOne(hwItemDTO.getId());
+		HWItemFile hwItemFile = new HWItemFile();
+		hwItemFile.setDescription(hwItemFileDTO.getDescription());
+		hwItemFile.setLink(hwItemFileDTO.getLink());
+		hwItemFileRepository.save(hwItemFile);
+
+		if (document) {
+			if (item.getDocuments() == null)
+				item.setDocuments(new HashSet<HWItemFile>());
+			item.getDocuments().add(hwItemFile);
+		} else {
+			if (item.getImages() == null)
+				item.setImages(new HashSet<HWItemFile>());
+			item.getImages().add(hwItemFile);
+		}
+
+		hwItemRepository.save(item);
+
+		return true;
+	}
+
+	@Override
 	public boolean addServiceNote(ServiceNoteDTO serviceNoteDTO,
 			HWItemDTO hwItemDTO) {
 
@@ -237,25 +263,4 @@ public class HWFacade implements IHWFacade {
 		return items;
 	}
 
-	@Override
-	public boolean saveFile(File file, String fileName, HWItemDTO hwItem) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public List<File> getFilesFromHW(HWItemDTO hwItem) {
-		IConfigurationService configurationService = (IConfigurationService) SpringContextHelper
-				.getBean("configurationService");
-		HWConfiguration configuration = new HWConfiguration();
-		configurationService.loadConfiguration(configuration);
-
-		File hwDir = new File(configuration.getRootDir(), hwItem.getId()
-				.toString());
-
-		if (hwDir.exists() == false)
-			return new ArrayList<File>();
-
-		return Arrays.asList(hwDir.listFiles());
-	}
 }

@@ -19,13 +19,17 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.server.ExternalResource;
+import com.vaadin.server.FileDownloader;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Embedded;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
@@ -76,28 +80,17 @@ public class HWItemDetailWindow extends GrassSubWindow {
 				Button docDetailBtn = new Button(fileDTO.getDescription());
 				docDetailBtn.setStyleName(BaseTheme.BUTTON_LINK);
 				docDetailBtn.addStyleName("shiftlabel");
-				docDetailBtn.addClickListener(new Button.ClickListener() {
-
-					private static final long serialVersionUID = 4983897852548880141L;
-
-					@Override
-					public void buttonClick(ClickEvent event) {
-						UI.getCurrent().addWindow(
-								new HWItemFileCreateWindow(hwItem, document) {
-
-									private static final long serialVersionUID = -7010801549731161045L;
-
-									@Override
-									protected void onSuccess() {
-									
-									}
-								});
-					}
-				});
+				FileDownloader downloader = new FileDownloader(
+						new ExternalResource(fileDTO.getLink()));
+				downloader.extend(docDetailBtn);
 				targetLayout.addComponent(docDetailBtn);
 			}
 		}
-		
+
+		Label separator = new Label("");
+		separator.setHeight("10px");
+		targetLayout.addComponent(separator);
+
 		Button newDocBtn = new Button("Přidat");
 		newDocBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
 		newDocBtn.addClickListener(new Button.ClickListener() {
@@ -113,8 +106,8 @@ public class HWItemDetailWindow extends GrassSubWindow {
 
 							@Override
 							protected void onSuccess() {
-								HWItemDTO freshItem = hwFacade
-										.getHWItem(hwItem.getId());
+								HWItemDTO freshItem = hwFacade.getHWItem(hwItem
+										.getId());
 								createFilesList(filesLayout, freshItem,
 										document);
 							}
@@ -122,7 +115,7 @@ public class HWItemDetailWindow extends GrassSubWindow {
 			}
 		});
 		targetLayout.addComponent(newDocBtn);
-		
+
 		filesLayout.removeComponent(document ? 0 : 1, 0);
 		filesLayout.addComponent(targetLayout, document ? 0 : 1, 0);
 	}
@@ -133,8 +126,8 @@ public class HWItemDetailWindow extends GrassSubWindow {
 
 		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
-		setWidth("830px");
-		// setHeight("630px");
+		setWidth("850px");
+		setHeight("780px");
 
 		triggerComponent.setEnabled(false);
 
@@ -143,51 +136,16 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		layout.setSpacing(true);
 		layout.setMargin(true);
 
-		GridLayout winLayout = new GridLayout(3, 8);
-		winLayout.setColumnExpandRatio(0, 1);
-		winLayout.setColumnExpandRatio(1, 2);
-		winLayout.setColumnExpandRatio(2, 4);
+		GridLayout winLayout = new GridLayout(4, 10);
 		layout.addComponent(winLayout);
+		layout.setExpandRatio(winLayout, 1);
 		winLayout.setSpacing(true);
-		winLayout.setWidth("100%");
 
 		/**
-		 * Info pole - první sloupec
+		 * Typy
 		 */
-		winLayout.addComponent(new Label("<strong>Stav</strong>",
-				ContentMode.HTML), 0, 0);
-		winLayout.addComponent(createShiftedLabel(hwItem.getState().getName()),
-				0, 1);
-
-		winLayout.addComponent(new Label("<strong>Cena</strong>",
-				ContentMode.HTML), 0, 2);
-		winLayout.addComponent(
-				createShiftedLabel(createPriceString(hwItem.getPrice())), 0, 3);
-
-		winLayout.addComponent(new Label("<strong>Záruka</strong>",
-				ContentMode.HTML), 0, 4);
-		winLayout.addComponent(
-				createShiftedLabel(createWarrantyYearsString(hwItem
-						.getWarrantyYears())), 0, 5);
-
-		/**
-		 * Info pole - druhý sloupec
-		 */
-		winLayout.addComponent(new Label("<strong>Získáno</strong>",
-				ContentMode.HTML), 1, 0);
-		String purchDate = hwItem.getPurchaseDate() == null ? "-"
-				: GrassStringToDateConverter.format(hwItem.getPurchaseDate());
-		winLayout.addComponent(createShiftedLabel(purchDate), 1, 1);
-
-		winLayout.addComponent(new Label("<strong>Odepsáno</strong>",
-				ContentMode.HTML), 1, 2);
-		String destrDate = hwItem.getDestructionDate() == null ? "-"
-				: GrassStringToDateConverter
-						.format(hwItem.getDestructionDate());
-		winLayout.addComponent(createShiftedLabel(destrDate), 1, 3);
-
 		winLayout.addComponent(new Label("<strong>Typ</strong>",
-				ContentMode.HTML), 1, 4);
+				ContentMode.HTML), 1, 0, 3, 0);
 		StringBuilder builder = new StringBuilder();
 		for (HWItemTypeDTO type : hwItem.getTypes()) {
 			builder.append(type.getName());
@@ -195,15 +153,61 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		}
 		String types = builder.length() > 1 ? builder.substring(0,
 				builder.length() - 2) : "-";
-		winLayout.addComponent(createShiftedLabel(types), 1, 5);
+		winLayout.addComponent(createShiftedLabel(types), 1, 1, 3, 1);
+
+		/**
+		 * Foto
+		 */
+		Image embedded = new Image(null, new ExternalResource(
+				"http://i.cdn.nrholding.net/4471585/800/600/"));
+		winLayout.addComponent(embedded, 0, 0, 0, 8);
+		embedded.setWidth("200px");
+
+		/**
+		 * Info pole - první sloupec
+		 */
+		winLayout.addComponent(new Label("<strong>Stav</strong>",
+				ContentMode.HTML), 1, 2);
+		winLayout.getComponent(1, 2).setWidth("70px");
+		winLayout.addComponent(createShiftedLabel(hwItem.getState().getName()),
+				1, 3);
+
+		winLayout.addComponent(new Label("<strong>Cena</strong>",
+				ContentMode.HTML), 1, 4);
+		winLayout.addComponent(
+				createShiftedLabel(createPriceString(hwItem.getPrice())), 1, 5);
+
+		winLayout.addComponent(new Label("<strong>Záruka</strong>",
+				ContentMode.HTML), 1, 6);
+		winLayout.addComponent(
+				createShiftedLabel(createWarrantyYearsString(hwItem
+						.getWarrantyYears())), 1, 7);
+
+		/**
+		 * Info pole - druhý sloupec
+		 */
+		winLayout.addComponent(new Label("<strong>Získáno</strong>",
+				ContentMode.HTML), 2, 2);
+		winLayout.getComponent(2, 2).setWidth("80px");
+		String purchDate = hwItem.getPurchaseDate() == null ? "-"
+				: GrassStringToDateConverter.format(hwItem.getPurchaseDate());
+		winLayout.addComponent(createShiftedLabel(purchDate), 2, 3);
+
+		winLayout.addComponent(new Label("<strong>Odepsáno</strong>",
+				ContentMode.HTML), 2, 4);
+		String destrDate = hwItem.getDestructionDate() == null ? "-"
+				: GrassStringToDateConverter
+						.format(hwItem.getDestructionDate());
+		winLayout.addComponent(createShiftedLabel(destrDate), 2, 5);
 
 		/**
 		 * Součásti
 		 */
 		winLayout.addComponent(new Label("<strong>Je součástí</strong>",
-				ContentMode.HTML), 2, 0);
+				ContentMode.HTML), 3, 2);
+		winLayout.getComponent(3, 2).setWidth("100px");
 		if (hwItem.getUsedIn() == null) {
-			winLayout.addComponent(createShiftedLabel("-"), 2, 1);
+			winLayout.addComponent(createShiftedLabel("-"), 3, 3);
 		} else {
 			Button usedInBtn = new Button(StringPreviewCreator.createPreview(
 					hwItem.getUsedIn().getName(), 60));
@@ -222,13 +226,13 @@ public class HWItemDetailWindow extends GrassSubWindow {
 									.getUsedIn()));
 				}
 			});
-			winLayout.addComponent(usedInBtn, 2, 1);
+			winLayout.addComponent(usedInBtn, 3, 3);
 		}
 
 		winLayout.addComponent(new Label("<strong>Součásti</strong>",
-				ContentMode.HTML), 2, 2);
+				ContentMode.HTML), 3, 4);
 		VerticalLayout partsLayout = new VerticalLayout();
-		winLayout.addComponent(partsLayout, 2, 3, 2, 7);
+		winLayout.addComponent(partsLayout, 3, 5, 3, 9);
 		List<HWItemDTO> parts = hwFacade.getAllParts(hwItem.getId());
 		if (parts.isEmpty())
 			partsLayout.addComponent(createShiftedLabel("-"));
@@ -297,6 +301,7 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		table.setColumnHeader("usedIn", "Je součástí");
 		table.setVisibleColumns(new String[] { "date", "state", "usedIn" });
 		table.setWidth("450px");
+		table.setHeight("200px");
 
 		table.setSortContainerPropertyId("date");
 		table.setSortAscending(false);
@@ -309,7 +314,7 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		final Label serviceNoteDescription = new Label(DEFAULT_NOTE_LABEL_VALUE);
 		Panel panel = new Panel(serviceNoteDescription);
 		panel.setStyleName("hw-panel");
-		panel.setHeight("100%");
+		panel.setHeight("200px");
 		panel.setWidth("100%");
 		horizontalLayout.addComponent(panel);
 		horizontalLayout.setExpandRatio(panel, 1);

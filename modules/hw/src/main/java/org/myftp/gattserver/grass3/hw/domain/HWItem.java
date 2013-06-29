@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -81,12 +82,14 @@ public class HWItem {
 	/**
 	 * Dokumenty
 	 */
+	@JoinTable(name="HW_ITEM_DOCUMENTS")
 	@ManyToMany
 	private Set<HWItemFile> documents;
 
 	/**
 	 * Fotografie
 	 */
+	@JoinTable(name="HW_ITEM_IMAGES")
 	@ManyToMany
 	private Set<HWItemFile> images;
 

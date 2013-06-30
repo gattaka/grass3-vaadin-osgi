@@ -123,12 +123,7 @@ public class FMExplorer {
 		/**
 		 * Začni nahráním konfigurace
 		 */
-		try {
-			configuration = loadConfiguration();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			throw new IOException();
-		}
+		configuration = loadConfiguration();
 		loadRootDirFromConfiguration(configuration);
 		loadUploadDirFromConfiguration(configuration);
 
@@ -168,7 +163,7 @@ public class FMExplorer {
 	 * @return soubor konfigurace FM
 	 * @throws JAXBException
 	 */
-	private FMConfiguration loadConfiguration() throws JAXBException {
+	private FMConfiguration loadConfiguration() {
 		IConfigurationService configurationService = (IConfigurationService) SpringContextHelper
 				.getBean("configurationService");
 		FMConfiguration configuration = new FMConfiguration();

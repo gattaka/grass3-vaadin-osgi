@@ -210,6 +210,29 @@
 			<version>7.0.0</version>
 		</dependency>
 
+		<!-- Token fields -->
+		<dependency>
+			<groupId>org.vaadin.addons</groupId>
+			<artifactId>tokenfield</artifactId>
+			<version>7.0.1</version>
+		</dependency>
+
+		<!-- Image rescaling -->
+		<dependency>
+			<groupId>org.vaadin.addons</groupId>
+			<artifactId>imagescaler</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+
+		<!-- Image filtering -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.vaadin.addons</groupId> -->
+		<!-- <artifactId>imagefilter</artifactId> -->
+		<!-- <version>0.5.3</version> -->
+		<!-- </dependency> -->
+
+
+
 	</dependencies>
 
 	<build>

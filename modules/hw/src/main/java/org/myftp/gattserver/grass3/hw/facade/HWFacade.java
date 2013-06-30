@@ -1,12 +1,19 @@
 package org.myftp.gattserver.grass3.hw.facade;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.xml.bind.JAXBException;
 
+import org.myftp.gattserver.grass3.config.IConfigurationService;
+import org.myftp.gattserver.grass3.hw.HWConfiguration;
 import org.myftp.gattserver.grass3.hw.dao.HWItemFileRepository;
 import org.myftp.gattserver.grass3.hw.dao.HWItemRepository;
 import org.myftp.gattserver.grass3.hw.dao.HWItemTypeRepository;
@@ -39,8 +46,23 @@ public class HWFacade implements IHWFacade {
 	@Autowired
 	private HWItemFileRepository hwItemFileRepository;
 
+	@Resource(name = "configurationService")
+	private IConfigurationService configurationService;
+
 	@Resource(name = "hwMapper")
 	private HWMapper hwMapper;
+
+	/**
+	 * Získá aktuální konfiguraci ze souboru konfigurace
+	 * 
+	 * @return soubor konfigurace FM
+	 * @throws JAXBException
+	 */
+	private HWConfiguration loadConfiguration() {
+		HWConfiguration configuration = new HWConfiguration();
+		configurationService.loadConfiguration(configuration);
+		return configuration;
+	}
 
 	@Override
 	public Set<HWItemTypeDTO> getAllHWTypes() {
@@ -263,4 +285,69 @@ public class HWFacade implements IHWFacade {
 		return items;
 	}
 
+	@Override
+	public String getUploadDir(HWItemDTO item) {
+		HWConfiguration configuration;
+		configuration = loadConfiguration();
+		File file = new File(configuration.getRootDir(), item.getId()
+				.toString());
+		if (file.exists() == false)
+			if (file.mkdirs() == false)
+				return null;
+		return file.getAbsolutePath();
+	}
+
+	@Override
+	public boolean saveFile(File file, String fileName, HWItemDTO item) {
+		return file.renameTo(new File(getUploadDir(item), fileName));
+	}
+
+	@Override
+	public File getHWItemImageFile(HWItemDTO itemDTO) {
+		HWConfiguration configuration;
+		configuration = loadConfiguration();
+		File hwItemDir = new File(configuration.getRootDir(), itemDTO.getId()
+				.toString());
+
+		if (hwItemDir.exists() == false || hwItemDir.isDirectory() == false)
+			return null;
+
+		// ikona HW je nějaký obrázek s názvem "icon"
+		for (File hwItemFile : hwItemDir.listFiles()) {
+			if (hwItemFile.getName().matches("icon\\.[^\\.]*"))
+				return hwItemFile;
+		}
+
+		return null;
+	}
+
+	@Override
+	public String getTmpDir() {
+		HWConfiguration configuration;
+		configuration = loadConfiguration();
+		File file = new File(configuration.getTmpDir());
+		if (file.exists() == false)
+			if (file.mkdirs() == false)
+				return null;
+		return file.getAbsolutePath();
+	}
+
+	@Override
+	public boolean deleteHWItemImageFile(HWItemDTO hwItem) {
+		File image = getHWItemImageFile(hwItem);
+		if (image == null)
+			return true;
+
+		return image.delete();
+	}
+
+	@Override
+	public OutputStream createHWItemImageOutputStream(String filename,
+			HWItemDTO hwItem) throws FileNotFoundException {
+		String[] parts = filename.split("\\.");
+		String extension = parts.length >= 1 ? parts[parts.length - 1] : "";
+
+		File file = new File(getUploadDir(hwItem), "icon." + extension);
+		return new FileOutputStream(file);
+	}
 }

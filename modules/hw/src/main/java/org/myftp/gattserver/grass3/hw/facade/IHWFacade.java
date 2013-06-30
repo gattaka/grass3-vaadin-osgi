@@ -1,5 +1,8 @@
 package org.myftp.gattserver.grass3.hw.facade;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -27,12 +30,26 @@ public interface IHWFacade {
 	public boolean addServiceNote(ServiceNoteDTO serviceNoteDTO,
 			HWItemDTO hwItem);
 
-	public boolean addHWItemFile(HWItemFileDTO hwItemFileDTO, HWItemDTO hwItemDTO, boolean document);
+	public boolean addHWItemFile(HWItemFileDTO hwItemFileDTO,
+			HWItemDTO hwItemDTO, boolean document);
 
 	public boolean deleteHWItemType(HWItemTypeDTO hwItemType);
 
 	public HWItemDTO getHWItem(Long itemId);
 
 	public List<HWItemDTO> getAllParts(Long usedInItemId);
+
+	public String getUploadDir(HWItemDTO item);
+
+	public boolean saveFile(File file, String fileName, HWItemDTO item);
+
+	public String getTmpDir();
+
+	public File getHWItemImageFile(HWItemDTO itemDTO);
+
+	public boolean deleteHWItemImageFile(HWItemDTO hwItem);
+
+	public OutputStream createHWItemImageOutputStream(String filename,
+			HWItemDTO hwItem) throws FileNotFoundException;
 
 }

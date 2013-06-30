@@ -286,7 +286,7 @@ public class HWFacade implements IHWFacade {
 	}
 
 	@Override
-	public String getUploadDir(HWItemDTO item) {
+	public String getHWItemUploadDir(HWItemDTO item) {
 		HWConfiguration configuration;
 		configuration = loadConfiguration();
 		File file = new File(configuration.getRootDir(), item.getId()
@@ -297,13 +297,53 @@ public class HWFacade implements IHWFacade {
 		return file.getAbsolutePath();
 	}
 
-	@Override
-	public boolean saveFile(File file, String fileName, HWItemDTO item) {
-		return file.renameTo(new File(getUploadDir(item), fileName));
+	private String getHWItemSubUploadDir(HWItemDTO item, String dirname) {
+		String dir = getHWItemUploadDir(item);
+		if (dir == null)
+			return null;
+
+		File file = new File(dir, dirname);
+		if (file.exists() == false)
+			if (file.mkdirs() == false)
+				return null;
+		return file.getAbsolutePath();
 	}
 
 	@Override
-	public File getHWItemImageFile(HWItemDTO itemDTO) {
+	public String getHWItemImagesUploadDir(HWItemDTO item) {
+		return getHWItemSubUploadDir(item, "images");
+	}
+
+	@Override
+	public String getHWItemDocumentsUploadDir(HWItemDTO item) {
+		return getHWItemSubUploadDir(item, "documents");
+	}
+
+	@Override
+	public boolean saveImagesFile(File file, String fileName, HWItemDTO item) {
+		return file
+				.renameTo(new File(getHWItemImagesUploadDir(item), fileName));
+	}
+
+	@Override
+	public boolean saveDocumentsFile(File file, String fileName, HWItemDTO item) {
+		return file.renameTo(new File(getHWItemDocumentsUploadDir(item),
+				fileName));
+	}
+
+	@Override
+	public File[] getHWItemImagesFiles(HWItemDTO itemDTO) {
+		File hwItemImagesDir = new File(getHWItemImagesUploadDir(itemDTO));
+
+		if (hwItemImagesDir.exists() == false
+				|| hwItemImagesDir.isDirectory() == false)
+			return null;
+
+		return hwItemImagesDir.listFiles();
+	}
+
+	@Override
+	public File getHWItemIconFile(HWItemDTO itemDTO) {
 		HWConfiguration configuration;
 		configuration = loadConfiguration();
 		File hwItemDir = new File(configuration.getRootDir(), itemDTO.getId()
@@ -312,9 +352,10 @@ public class HWFacade implements IHWFacade {
 		if (hwItemDir.exists() == false || hwItemDir.isDirectory() == false)
 			return null;
 
-		// ikona HW je nějaký obrázek s názvem "icon"
+		// ikona HW je nějaký obrázek s názvem "icon-###.@@@",
+		// kde ### je hash a @@@ je přípona
 		for (File hwItemFile : hwItemDir.listFiles()) {
-			if (hwItemFile.getName().matches("icon\\.[^\\.]*"))
+			if (hwItemFile.getName().matches("icon-[^\\.]*\\.[^\\.]*"))
 				return hwItemFile;
 		}
 
@@ -333,8 +374,8 @@ public class HWFacade implements IHWFacade {
 	}
 
 	@Override
-	public boolean deleteHWItemImageFile(HWItemDTO hwItem) {
-		File image = getHWItemImageFile(hwItem);
+	public boolean deleteHWItemIconFile(HWItemDTO hwItem) {
+		File image = getHWItemIconFile(hwItem);
 		if (image == null)
 			return true;
 
@@ -342,12 +383,21 @@ public class HWFacade implements IHWFacade {
 	}
 
 	@Override
-	public OutputStream createHWItemImageOutputStream(String filename,
+	public OutputStream createHWItemIconOutputStream(String filename,
 			HWItemDTO hwItem) throws FileNotFoundException {
 		String[] parts = filename.split("\\.");
 		String extension = parts.length >= 1 ? parts[parts.length - 1] : "";
 
-		File file = new File(getUploadDir(hwItem), "icon." + extension);
+		long time = System.currentTimeMillis();
+		int uniqueHash = (String.valueOf(time) + hwItem.getName()).hashCode();
+
+		File file = new File(getHWItemUploadDir(hwItem), "icon-" + uniqueHash
+				+ "." + extension);
 		return new FileOutputStream(file);
+	}
+
+	@Override
+	public boolean deleteHWItemFile(HWItemDTO hwItem, File file) {
+		return file.delete();
 	}
 }

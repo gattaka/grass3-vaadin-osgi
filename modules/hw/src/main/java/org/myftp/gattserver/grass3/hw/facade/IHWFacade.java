@@ -39,17 +39,27 @@ public interface IHWFacade {
 
 	public List<HWItemDTO> getAllParts(Long usedInItemId);
 
-	public String getUploadDir(HWItemDTO item);
+	public String getHWItemUploadDir(HWItemDTO item);
 
-	public boolean saveFile(File file, String fileName, HWItemDTO item);
+	public boolean saveImagesFile(File file, String fileName, HWItemDTO item);
 
 	public String getTmpDir();
 
-	public File getHWItemImageFile(HWItemDTO itemDTO);
+	public File getHWItemIconFile(HWItemDTO itemDTO);
 
-	public boolean deleteHWItemImageFile(HWItemDTO hwItem);
+	public boolean deleteHWItemIconFile(HWItemDTO hwItem);
 
-	public OutputStream createHWItemImageOutputStream(String filename,
+	public OutputStream createHWItemIconOutputStream(String filename,
 			HWItemDTO hwItem) throws FileNotFoundException;
+
+	public String getHWItemImagesUploadDir(HWItemDTO item);
+
+	public String getHWItemDocumentsUploadDir(HWItemDTO item);
+
+	boolean saveDocumentsFile(File file, String fileName, HWItemDTO item);
+
+	public File[] getHWItemImagesFiles(HWItemDTO itemDTO);
+
+	public boolean deleteHWItemFile(HWItemDTO hwItem, File file);
 
 }

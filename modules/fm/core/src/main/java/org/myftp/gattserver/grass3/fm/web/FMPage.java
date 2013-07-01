@@ -22,6 +22,7 @@ import org.myftp.gattserver.grass3.template.Breadcrumb;
 import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import org.myftp.gattserver.grass3.ui.util.ComparableStringDate;
 import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.util.HumanBytesSizeCreator;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
 import org.springframework.context.annotation.Scope;
 import org.vaadin.easyuploads.MultiFileUpload;
@@ -518,7 +519,7 @@ public class FMPage extends OneColumnPage {
 		subWindowlayout.addComponent(new Label("Velikost:"), 0, 5);
 		List<File> skipList = new ArrayList<File>();
 		long size = explorer.getDeepDirSize(file, skipList);
-		String humanSize = FMExplorer.humanReadableByteCount(size, true);
+		String humanSize = HumanBytesSizeCreator.format(size, true);
 		subWindowlayout.addComponent(new Label(humanSize), 1, 5);
 
 		// Jsou započítané všechny soubory podstromu ?
@@ -529,10 +530,8 @@ public class FMPage extends OneColumnPage {
 									"Některé soubory nemohly být započítány do celkové velikosti."));
 		}
 		// Velikost (binární)
-		subWindowlayout
-				.addComponent(
-						new Label(FMExplorer
-								.humanReadableByteCount(size, false)), 1, 6);
+		subWindowlayout.addComponent(
+				new Label(HumanBytesSizeCreator.format(size, false)), 1, 6);
 
 		// OK button
 		Button close = new Button("OK", new Button.ClickListener() {
@@ -569,7 +568,7 @@ public class FMPage extends OneColumnPage {
 		for (File file : markedFiles) {
 			size += explorer.getDeepDirSize(file, skipList);
 		}
-		String humanSize = FMExplorer.humanReadableByteCount(size, true);
+		String humanSize = HumanBytesSizeCreator.format(size, true);
 		subWindowlayout.addComponent(new Label(humanSize), 1, 1);
 
 		// Jsou započítané všechny soubory podstromu ?
@@ -580,10 +579,8 @@ public class FMPage extends OneColumnPage {
 									"Některé soubory nemohly být započítány do celkové velikosti."));
 		}
 		// Velikost (binární)
-		subWindowlayout
-				.addComponent(
-						new Label(FMExplorer
-								.humanReadableByteCount(size, false)), 1, 2);
+		subWindowlayout.addComponent(
+				new Label(HumanBytesSizeCreator.format(size, false)), 1, 2);
 
 		// OK button
 		Button close = new Button("OK", new Button.ClickListener() {
@@ -845,7 +842,7 @@ public class FMPage extends OneColumnPage {
 
 			item.getItemProperty(ColumnId.NÁZEV).setValue(file.getName());
 			item.getItemProperty(ColumnId.VELIKOST).setValue(
-					FMExplorer.humanReadableByteCount(file.length(), true));
+					HumanBytesSizeCreator.format(file.length(), true));
 			item.getItemProperty(ColumnId.DATUM).setValue(
 					new ComparableStringDate(new Date(file.lastModified())));
 			item.getItemProperty(ColumnId.OPRÁVNĚNÍ).setValue(

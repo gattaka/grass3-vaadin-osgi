@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -79,38 +78,8 @@ public class HWItem {
 	@ManyToOne
 	private HWItem usedIn;
 
-	/**
-	 * Dokumenty
-	 */
-	@JoinTable(name="HW_ITEM_DOCUMENTS")
-	@ManyToMany
-	private Set<HWItemFile> documents;
-
-	/**
-	 * Fotografie
-	 */
-	@JoinTable(name="HW_ITEM_IMAGES")
-	@ManyToMany
-	private Set<HWItemFile> images;
-
 	public HWItem getUsedIn() {
 		return usedIn;
-	}
-
-	public Set<HWItemFile> getDocuments() {
-		return documents;
-	}
-
-	public void setDocuments(Set<HWItemFile> documents) {
-		this.documents = documents;
-	}
-
-	public Set<HWItemFile> getImages() {
-		return images;
-	}
-
-	public void setImages(Set<HWItemFile> images) {
-		this.images = images;
 	}
 
 	public void setUsedIn(HWItem usedIn) {

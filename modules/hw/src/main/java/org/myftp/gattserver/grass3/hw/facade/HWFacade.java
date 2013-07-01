@@ -14,16 +14,13 @@ import javax.xml.bind.JAXBException;
 
 import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.hw.HWConfiguration;
-import org.myftp.gattserver.grass3.hw.dao.HWItemFileRepository;
 import org.myftp.gattserver.grass3.hw.dao.HWItemRepository;
 import org.myftp.gattserver.grass3.hw.dao.HWItemTypeRepository;
 import org.myftp.gattserver.grass3.hw.dao.ServiceNoteRepository;
 import org.myftp.gattserver.grass3.hw.domain.HWItem;
-import org.myftp.gattserver.grass3.hw.domain.HWItemFile;
 import org.myftp.gattserver.grass3.hw.domain.HWItemType;
 import org.myftp.gattserver.grass3.hw.domain.ServiceNote;
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
-import org.myftp.gattserver.grass3.hw.dto.HWItemFileDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import org.myftp.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +39,6 @@ public class HWFacade implements IHWFacade {
 
 	@Autowired
 	private ServiceNoteRepository serviceNoteRepository;
-
-	@Autowired
-	private HWItemFileRepository hwItemFileRepository;
 
 	@Resource(name = "configurationService")
 	private IConfigurationService configurationService;
@@ -167,31 +161,6 @@ public class HWFacade implements IHWFacade {
 		ServiceNote note = serviceNoteRepository.save(removeNote);
 		targetItem.getServiceNotes().add(note);
 		hwItemRepository.save(targetItem);
-	}
-
-	@Override
-	public boolean addHWItemFile(HWItemFileDTO hwItemFileDTO,
-			HWItemDTO hwItemDTO, boolean document) {
-
-		HWItem item = hwItemRepository.findOne(hwItemDTO.getId());
-		HWItemFile hwItemFile = new HWItemFile();
-		hwItemFile.setDescription(hwItemFileDTO.getDescription());
-		hwItemFile.setLink(hwItemFileDTO.getLink());
-		hwItemFileRepository.save(hwItemFile);
-
-		if (document) {
-			if (item.getDocuments() == null)
-				item.setDocuments(new HashSet<HWItemFile>());
-			item.getDocuments().add(hwItemFile);
-		} else {
-			if (item.getImages() == null)
-				item.setImages(new HashSet<HWItemFile>());
-			item.getImages().add(hwItemFile);
-		}
-
-		hwItemRepository.save(item);
-
-		return true;
 	}
 
 	@Override
@@ -340,6 +309,17 @@ public class HWFacade implements IHWFacade {
 			return null;
 
 		return hwItemImagesDir.listFiles();
+	}
+
+	@Override
+	public File[] getHWItemDocumentsFiles(HWItemDTO itemDTO) {
+		File hwItemDocumentsDir = new File(getHWItemDocumentsUploadDir(itemDTO));
+
+		if (hwItemDocumentsDir.exists() == false
+				|| hwItemDocumentsDir.isDirectory() == false)
+			return null;
+
+		return hwItemDocumentsDir.listFiles();
 	}
 
 	@Override

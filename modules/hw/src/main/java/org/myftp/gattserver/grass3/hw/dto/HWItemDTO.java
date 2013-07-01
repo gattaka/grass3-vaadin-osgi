@@ -65,32 +65,6 @@ public class HWItemDTO {
 	 */
 	private HWItemDTO usedIn;
 
-	/**
-	 * Dokumenty
-	 */
-	private Set<HWItemFileDTO> documents;
-
-	/**
-	 * Fotografie
-	 */
-	private Set<HWItemFileDTO> images;
-
-	public Set<HWItemFileDTO> getDocuments() {
-		return documents;
-	}
-
-	public void setDocuments(Set<HWItemFileDTO> documents) {
-		this.documents = documents;
-	}
-
-	public Set<HWItemFileDTO> getImages() {
-		return images;
-	}
-
-	public void setImages(Set<HWItemFileDTO> images) {
-		this.images = images;
-	}
-
 	public HWItemDTO getUsedIn() {
 		return usedIn;
 	}

@@ -201,7 +201,7 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
 		setWidth("850px");
-		setHeight("780px");
+		// setHeight("780px");
 
 		triggerComponent.setEnabled(false);
 
@@ -261,7 +261,6 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		winLayout.addComponent(new Label("<strong>Přílohy</strong>",
 				ContentMode.HTML), 1, 5);
 		Button imagesBtn = new Button("Fotografie");
-		imagesBtn.setDescription(hwItem.getUsedIn().getName());
 		imagesBtn.setStyleName(BaseTheme.BUTTON_LINK);
 		imagesBtn.addStyleName("shiftlabel");
 		imagesBtn.addClickListener(new Button.ClickListener() {
@@ -274,6 +273,20 @@ public class HWItemDetailWindow extends GrassSubWindow {
 			}
 		});
 		winLayout.addComponent(imagesBtn, 1, 6);
+
+		Button documentsBtn = new Button("Dokumenty");
+		documentsBtn.setStyleName(BaseTheme.BUTTON_LINK);
+		documentsBtn.addStyleName("shiftlabel");
+		documentsBtn.addClickListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 4983897852548880141L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				UI.getCurrent().addWindow(new HWItemDocumentsWindow(hwItem));
+			}
+		});
+		winLayout.addComponent(documentsBtn, 1, 7);
 
 		/**
 		 * Info pole - druhý sloupec

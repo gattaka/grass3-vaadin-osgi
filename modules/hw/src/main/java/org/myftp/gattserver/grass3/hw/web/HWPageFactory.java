@@ -13,9 +13,9 @@ public class HWPageFactory extends AbstractPageFactory {
 
 	@Override
 	protected boolean isAuthorized() {
-//		if (getUser() == null)
-//			return false;
-//		return getUser().getRoles().contains(Role.ADMIN);
-		 return true;
+		if (getUser() == null)
+			return false;
+		return getUser().getRoles().contains(Role.ADMIN);
+		// return true;
 	}
 }

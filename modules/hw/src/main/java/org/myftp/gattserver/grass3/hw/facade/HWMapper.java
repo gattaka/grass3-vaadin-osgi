@@ -7,39 +7,15 @@ import java.util.List;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.hw.domain.HWItem;
-import org.myftp.gattserver.grass3.hw.domain.HWItemFile;
 import org.myftp.gattserver.grass3.hw.domain.HWItemType;
 import org.myftp.gattserver.grass3.hw.domain.ServiceNote;
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
-import org.myftp.gattserver.grass3.hw.dto.HWItemFileDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import org.myftp.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import org.springframework.stereotype.Component;
 
 @Component("hwMapper")
 public class HWMapper {
-
-	public HWItemFileDTO mapHWItemFile(HWItemFile e) {
-		if (e == null)
-			return null;
-
-		HWItemFileDTO dto = new HWItemFileDTO();
-		dto.setId(e.getId());
-		dto.setDescription(e.getDescription());
-		dto.setLink(e.getLink());
-		return dto;
-	}
-
-	public Set<HWItemFileDTO> mapHWItemFiles(Collection<HWItemFile> list) {
-		if (list == null)
-			return null;
-
-		Set<HWItemFileDTO> dtos = new HashSet<HWItemFileDTO>();
-		for (HWItemFile e : list) {
-			dtos.add(mapHWItemFile(e));
-		}
-		return dtos;
-	}
 
 	public HWItemTypeDTO mapHWItemType(HWItemType e) {
 		if (e == null)
@@ -103,8 +79,6 @@ public class HWMapper {
 		dto.setState(e.getState());
 		dto.setTypes(mapHWItemTypes(e.getTypes()));
 		dto.setWarrantyYears(e.getWarrantyYears());
-		dto.setDocuments(mapHWItemFiles(e.getDocuments()));
-		dto.setImages(mapHWItemFiles(e.getImages()));
 		return dto;
 	}
 

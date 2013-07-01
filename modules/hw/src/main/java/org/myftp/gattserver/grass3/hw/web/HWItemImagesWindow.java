@@ -19,6 +19,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -28,24 +29,33 @@ public class HWItemImagesWindow extends GrassSubWindow {
 
 	private IHWFacade hwFacade;
 
-	final private HorizontalLayout uploadWrapperLayout = new HorizontalLayout();
+	final GridLayout listLayout = new GridLayout();
 
 	public HWItemImagesWindow(final HWItemDTO hwItem) {
 		super(hwItem.getName());
 
 		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
-		setWidth("850px");
-		setHeight("780px");
+		setWidth("900px");
+		// setHeight("780px");
 
-		final GridLayout layout = new GridLayout();
-		layout.setColumns(4);
+		VerticalLayout layout = new VerticalLayout();
 		setContent(layout);
 		layout.setSpacing(true);
 		layout.setMargin(true);
 
-		uploadWrapperLayout.setWidth("200px");
-		uploadWrapperLayout.setHeight("100%");
+		HorizontalLayout uploadWrapperLayout = new HorizontalLayout();
+		uploadWrapperLayout.setWidth("100%");
+		uploadWrapperLayout.setHeight("80px");
+		layout.addComponent(uploadWrapperLayout);
+
+		Panel panel = new Panel(listLayout);
+		panel.setWidth("100%");
+		panel.setHeight("700px");
+		layout.addComponent(panel);
+		listLayout.setColumns(4);
+		listLayout.setSpacing(true);
+		listLayout.setMargin(true);
 
 		MultiFileUpload upload = new MultiFileUpload() {
 			private static final long serialVersionUID = 7352892558261131844L;
@@ -56,9 +66,8 @@ public class HWItemImagesWindow extends GrassSubWindow {
 				hwFacade.saveImagesFile(file, fileName, hwItem);
 
 				// refresh listu
-				layout.removeAllComponents();
-				layout.addComponent(uploadWrapperLayout);
-				createImagesList(layout, hwItem);
+				listLayout.removeAllComponents();
+				createImagesList(hwItem);
 			}
 		};
 		upload.setUploadButtonCaption("Vložit fotografie");
@@ -68,21 +77,18 @@ public class HWItemImagesWindow extends GrassSubWindow {
 		uploadWrapperLayout.setComponentAlignment(upload,
 				Alignment.MIDDLE_CENTER);
 
-		layout.addComponent(uploadWrapperLayout);
-
-		createImagesList(layout, hwItem);
+		createImagesList(hwItem);
 
 		center();
 
 	}
 
-	private void createImagesList(final GridLayout layout,
-			final HWItemDTO hwItem) {
+	private void createImagesList(final HWItemDTO hwItem) {
 
 		for (final File file : hwFacade.getHWItemImagesFiles(hwItem)) {
 
 			VerticalLayout imageLayout = new VerticalLayout();
-			layout.addComponent(imageLayout);
+			listLayout.addComponent(imageLayout);
 			imageLayout.setSpacing(true);
 
 			Resource resource = new FileResource(file);
@@ -124,10 +130,9 @@ public class HWItemImagesWindow extends GrassSubWindow {
 															hwItem, file);
 
 													// refresh listu
-													layout.removeAllComponents();
-													layout.addComponent(uploadWrapperLayout);
-													createImagesList(layout,
-															hwItem);
+													listLayout
+															.removeAllComponents();
+													createImagesList(hwItem);
 												}
 											});
 						}

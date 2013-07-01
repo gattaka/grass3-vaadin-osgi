@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
-import org.myftp.gattserver.grass3.hw.dto.HWItemFileDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import org.myftp.gattserver.grass3.hw.dto.ServiceNoteDTO;
 
@@ -29,9 +28,6 @@ public interface IHWFacade {
 
 	public boolean addServiceNote(ServiceNoteDTO serviceNoteDTO,
 			HWItemDTO hwItem);
-
-	public boolean addHWItemFile(HWItemFileDTO hwItemFileDTO,
-			HWItemDTO hwItemDTO, boolean document);
 
 	public boolean deleteHWItemType(HWItemTypeDTO hwItemType);
 
@@ -61,5 +57,7 @@ public interface IHWFacade {
 	public File[] getHWItemImagesFiles(HWItemDTO itemDTO);
 
 	public boolean deleteHWItemFile(HWItemDTO hwItem, File file);
+
+	public File[] getHWItemDocumentsFiles(HWItemDTO itemDTO);
 
 }

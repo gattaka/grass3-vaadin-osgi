@@ -61,21 +61,22 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 		// tagy, které které jsou použity/vytvořeny
 		Set<ContentTag> tags = new HashSet<ContentTag>();
 
-		for (String tag : tagsDTOs) {
+		if (tagsDTOs != null)
+			for (String tag : tagsDTOs) {
 
-			// existuje už takový tag ?
-			ContentTag contentTag = contentTagRepository.findByName(tag);
+				// existuje už takový tag ?
+				ContentTag contentTag = contentTagRepository.findByName(tag);
 
-			if (contentTag == null) {
-				// ne ? - vytvoř
-				contentTag = new ContentTag();
-				contentTag.setName(tag);
+				if (contentTag == null) {
+					// ne ? - vytvoř
+					contentTag = new ContentTag();
+					contentTag.setName(tag);
+				}
+
+				// přidej ho do seznamu
+				tags.add(contentTag);
+
 			}
-
-			// přidej ho do seznamu
-			tags.add(contentTag);
-
-		}
 
 		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO
 				.getId());

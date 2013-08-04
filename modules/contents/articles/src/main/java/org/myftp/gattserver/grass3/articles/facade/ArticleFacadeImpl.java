@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.articles.facade;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -142,8 +143,9 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 *            původní článek
 	 * @return {@code true} pokud se úprava zdařila, jinak {@code false}
 	 */
-	public boolean modifyArticle(String name, String text, String tags,
-			boolean publicated, ArticleDTO articleDTO, String contextRoot) {
+	public boolean modifyArticle(String name, String text,
+			Collection<String> tags, boolean publicated, ArticleDTO articleDTO,
+			String contextRoot) {
 
 		// článek
 		Article article = articleRepository.findOne(articleDTO.getId());
@@ -186,7 +188,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
 	 *         {@code null}
 	 */
-	public Long saveArticle(String name, String text, String tags,
+	public Long saveArticle(String name, String text, Collection<String> tags,
 			boolean publicated, NodeDTO category, UserInfoDTO author,
 			String contextRoot) {
 

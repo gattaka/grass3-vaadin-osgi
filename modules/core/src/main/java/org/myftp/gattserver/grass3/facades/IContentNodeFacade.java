@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.facades;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
@@ -78,8 +79,8 @@ public interface IContentNodeFacade {
 	 *         nebo
 	 */
 	public ContentNodeDTO save(String contentModuleId, Long contentId,
-			String name, String tags, boolean publicated, NodeDTO category,
-			UserInfoDTO author);
+			String name, Collection<String> tags, boolean publicated,
+			NodeDTO category, UserInfoDTO author);
 
 	/**
 	 * Získá contentNodeDTO dle jeho id
@@ -112,7 +113,7 @@ public interface IContentNodeFacade {
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
 	public boolean modify(ContentNodeDTO contentNodeDTO, String name,
-			String tags, boolean publicated);
+			Collection<String> tags, boolean publicated);
 
 	/**
 	 * Smaže obsah

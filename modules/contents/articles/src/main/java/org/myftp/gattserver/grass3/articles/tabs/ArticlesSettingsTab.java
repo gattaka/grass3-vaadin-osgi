@@ -1,6 +1,9 @@
 package org.myftp.gattserver.grass3.articles.tabs;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -9,6 +12,7 @@ import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.articles.facade.IArticleFacade;
 import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.facades.IContentTagFacade;
+import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.util.GrassRequest;
@@ -269,8 +273,13 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 
 			for (ArticleDTO article : articles) {
 
-				String tags = contentTagFacade.serializeTags(article
-						.getContentNode().getContentTags());
+				Collection<ContentTagDTO> tagsDTOs = article.getContentNode()
+						.getContentTags();
+
+				Set<String> tags = new HashSet<String>();
+				for (ContentTagDTO tag : tagsDTOs)
+					tags.add(tag.getName());
+
 				articleFacade.modifyArticle(article.getContentNode().getName(),
 						article.getText(), tags, article.getContentNode()
 								.isPublicated(), article, getRequest()

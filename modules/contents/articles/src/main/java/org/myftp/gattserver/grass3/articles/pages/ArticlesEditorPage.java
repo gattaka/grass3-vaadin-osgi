@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -24,7 +25,6 @@ import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
-import org.myftp.gattserver.grass3.subwindows.KeywordsMenuSubwindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.ui.util.JQueryAccordion;
 import org.myftp.gattserver.grass3.util.GrassRequest;
@@ -34,10 +34,12 @@ import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
+import org.vaadin.tokenfield.TokenField;
 
-import com.vaadin.data.Item;
+import com.vaadin.data.util.BeanContainer;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -50,7 +52,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 
 @org.springframework.stereotype.Component("articlesEditorPage")
 @Scope("prototype")
@@ -83,7 +84,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private ArticleDTO article;
 
 	private final TextArea articleTextArea = new TextArea();
-	private final TextField articleKeywords = new TextField();
+	private final TokenField articleKeywords = new TokenField();
 	private final TextField articleNameField = new TextField();
 	private final CheckBox publicatedCheckBox = new CheckBox();
 
@@ -121,7 +122,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			editMode = false;
 			category = nodeFacade.getNodeByIdForOverview(identifier.getId());
 			articleNameField.setValue("");
-			articleKeywords.setValue("");
 			articleTextArea.setValue("");
 			publicatedCheckBox.setValue(true);
 
@@ -131,8 +131,12 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			editMode = true;
 			article = articleFacade.getArticleForDetail(identifier.getId());
 			articleNameField.setValue(article.getContentNode().getName());
-			articleKeywords.setValue(contentTagFacade.serializeTags(article
-					.getContentNode().getContentTags()));
+
+			for (ContentTagDTO tagDTO : article.getContentNode()
+					.getContentTags()) {
+				articleKeywords.addToken(tagDTO.getName());
+			}
+
 			publicatedCheckBox
 					.setValue(article.getContentNode().isPublicated());
 
@@ -284,55 +288,28 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				ContentMode.HTML));
 
 		// menu tagů + textfield tagů
-		// http://marc.virtuallypreinstalled.com/TokenField/ !!!
+		// http://marc.virtuallypreinstalled.com/TokenField/
 		HorizontalLayout keywordsMenuAndTextLayout = new HorizontalLayout();
 		keywordsMenuAndTextLayout.setWidth("100%");
 		keywordsMenuAndTextLayout.setSpacing(true);
 		articleKeywordsLayout.addComponent(keywordsMenuAndTextLayout);
 
-		// menu
-		keywordsMenuAndTextLayout.addComponent(new Button("Vybrat",
-				new Button.ClickListener() {
-
-					private static final long serialVersionUID = -3160636656140236427L;
-
-					public void buttonClick(ClickEvent event) {
-
-						List<ContentTagDTO> contentTags = contentTagFacade
-								.getContentTagsForOverview();
-
-						Collections.sort(contentTags);
-
-						final Window keywordsMenuSubwindow = new KeywordsMenuSubwindow<ContentTagDTO>(
-								"Vybrat klíčová slova", contentTags, "name") {
-
-							private static final long serialVersionUID = -3784340019006188379L;
-
-							@Override
-							protected void onDoubleClick(Item item) {
-
-								StringBuffer stringBuffer = new StringBuffer();
-								String oldValue = (String) articleKeywords
-										.getValue();
-								stringBuffer.append(oldValue);
-								if (stringBuffer.length() != 0)
-									stringBuffer.append(", ");
-								stringBuffer.append(item
-										.getItemProperty("name"));
-								articleKeywords.setValue(stringBuffer
-										.toString());
-
-							}
-						};
-
-						getUI().addWindow(keywordsMenuSubwindow);
-					}
-				}));
-
-		// textfield
 		keywordsMenuAndTextLayout.addComponent(articleKeywords);
-		keywordsMenuAndTextLayout.setExpandRatio(articleKeywords, 1);
-		articleKeywords.setWidth("100%");
+
+		List<ContentTagDTO> contentTags = contentTagFacade
+				.getContentTagsForOverview();
+		BeanContainer<String, ContentTagDTO> tokens = new BeanContainer<String, ContentTagDTO>(
+				ContentTagDTO.class);
+		tokens.setBeanIdProperty("name");
+		tokens.addAll(contentTags);
+
+		articleKeywords.setStyleName(TokenField.STYLE_TOKENFIELD);
+		articleKeywords.setContainerDataSource(tokens);
+		articleKeywords.setFilteringMode(FilteringMode.CONTAINS); // suggest
+		articleKeywords.setTokenCaptionPropertyId("name");
+		articleKeywords.setInputPrompt("klíčové slovo");
+		articleKeywords.setRememberNewTokens(false);
+		articleKeywords.isEnabled();
 
 		VerticalLayout articleContentLayout = new VerticalLayout();
 		editorTextLayout.addComponent(articleContentLayout);
@@ -518,13 +495,14 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			}
 
 			return articleFacade.modifyArticle(String.valueOf(articleNameField
-					.getValue()), text, String.valueOf(articleKeywords
-					.getValue()), publicatedCheckBox.getValue(), article,
-					getRequest().getContextRoot());
+					.getValue()), text,
+					(Collection<String>) articleKeywords.getValue(),
+					publicatedCheckBox.getValue(), article, getRequest()
+							.getContextRoot());
 		} else {
 			Long id = articleFacade.saveArticle(String.valueOf(articleNameField
 					.getValue()), String.valueOf(articleTextArea.getValue()),
-					String.valueOf(articleKeywords.getValue()),
+					(Collection<String>) articleKeywords.getValue(),
 					publicatedCheckBox.getValue(), category, getGrassUI()
 							.getUser(), getRequest().getContextRoot());
 

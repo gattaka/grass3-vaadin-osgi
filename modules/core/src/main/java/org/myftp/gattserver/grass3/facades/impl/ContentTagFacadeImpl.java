@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.facades.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,50 +45,23 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 		return new ArrayList<ContentTagDTO>(contentTagDTOs);
 	}
 
-	public String[] parseTags(String tagNames) {
-		return tagNames.split("(\\s*" + TAGS_DELIMITER
-				+ "\\s*)|(^\\s+)|(\\s+$)");
-	}
-
-	public String serializeTags(Set<ContentTagDTO> tags) {
-
-		StringBuilder stringBuilder = new StringBuilder();
-		boolean first = true;
-		for (ContentTagDTO tag : tags) {
-			if (!first) {
-				// mezera pro přehlednost
-				stringBuilder.append(TAGS_DELIMITER).append(" ");
-			}
-			first = false;
-			stringBuilder.append(tag.getName());
-		}
-
-		return stringBuilder.toString();
-
-	}
-
 	/**
 	 * Bere řetězec tagů, parsuje je a ukládá do nich (nebo vytvoří nové)
 	 * referenci na tento obsah - <b>mění {@link ContentNode} entitu v DB</b>
 	 * 
-	 * @param tagNames
-	 *            řetězec tagů oddělených mezerami
+	 * @param tagsDTOs
+	 *            tagy
 	 * @param contentNodeDTO
 	 *            obsah, který je oanotován těmito tagy
 	 * @return množina tagů, jako objektů, odpovídající těm ze vstupního řetězce
 	 */
-	public boolean saveTags(String tagNames, ContentNodeDTO contentNodeDTO) {
-
-		// získej čisté tagy (bez oddělovacích znaků a mezer)
-		String[] tagArray = parseTags(tagNames);
+	public boolean saveTags(Collection<String> tagsDTOs,
+			ContentNodeDTO contentNodeDTO) {
 
 		// tagy, které které jsou použity/vytvořeny
 		Set<ContentTag> tags = new HashSet<ContentTag>();
 
-		for (String tag : tagArray) {
-
-			if (tag.isEmpty())
-				continue;
+		for (String tag : tagsDTOs) {
 
 			// existuje už takový tag ?
 			ContentTag contentTag = contentTagRepository.findByName(tag);

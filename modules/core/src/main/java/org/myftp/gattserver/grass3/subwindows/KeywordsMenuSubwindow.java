@@ -7,6 +7,7 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.VerticalLayout;
 
+@Deprecated
 public abstract class KeywordsMenuSubwindow<T> extends GrassSubWindow {
 
 	private static final long serialVersionUID = 4548327306216857107L;

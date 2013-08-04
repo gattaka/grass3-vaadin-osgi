@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.facades.impl;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -152,8 +153,8 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *         nebo
 	 */
 	public ContentNodeDTO save(String contentModuleId, Long contentId,
-			String name, String tags, boolean publicated, NodeDTO category,
-			UserInfoDTO author) {
+			String name, Collection<String> tags, boolean publicated,
+			NodeDTO category, UserInfoDTO author) {
 		try {
 
 			ContentNode contentNode = new ContentNode();
@@ -188,8 +189,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 			 * aktualizovat kvůli mazání tagů údaje v DB)
 			 */
 			ContentNodeDTO contentNodeDTO = getByID(contentNode.getId());
-			if (contentTagFacade.saveTags(tags == null ? "" : tags,
-					contentNodeDTO) == false)
+			if (contentTagFacade.saveTags(tags, contentNodeDTO) == false)
 				return null;
 
 			return contentNodeDTO;
@@ -238,7 +238,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
 	public boolean modify(ContentNodeDTO contentNodeDTO, String name,
-			String tags, boolean publicated) {
+			Collection<String> tags, boolean publicated) {
 
 		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO
 				.getId());
@@ -255,7 +255,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
 		 * aktualizovat kvůli mazání tagů údaje v DB)
 		 */
-		if (contentTagFacade.saveTags(tags == null ? "" : tags, contentNodeDTO) == false)
+		if (contentTagFacade.saveTags(tags, contentNodeDTO) == false)
 			return false;
 
 		return true;
@@ -275,7 +275,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 			return false;
 
 		// vymaž tagy
-		if (contentTagFacade.saveTags("", contentNodeDTO) == false)
+		if (contentTagFacade.saveTags(null, contentNodeDTO) == false)
 			return false;
 
 		// vymaž content node

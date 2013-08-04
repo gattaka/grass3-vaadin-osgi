@@ -6,15 +6,22 @@
                     http://www.springframework.org/schema/security 
                     http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
+	<!-- http://www.baeldung.com/spring-security-remember-me -->
+
 	<http auto-config="true" use-expressions="true">
 		<intercept-url pattern="/**" access="permitAll" />
 		<form-login login-page="/login" default-target-url="/"
 			authentication-failure-url="/loginfailed" />
 		<logout logout-success-url="/home" />
+
+		<!-- token-validity-seconds 2 weeks (default) -->
+		<remember-me key="grass3-d1b3395b306b568d2fd977109c08540b" />
 	</http>
 
 	<authentication-manager>
-		<authentication-provider user-service-ref="grassUserDetailService" />
+		<authentication-provider user-service-ref="grassUserDetailService">
+			<password-encoder ref="grassPasswordEncoder" />
+		</authentication-provider>
 	</authentication-manager>
 
 </beans:beans>

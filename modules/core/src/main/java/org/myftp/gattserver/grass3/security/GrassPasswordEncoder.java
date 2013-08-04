@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3;
+package org.myftp.gattserver.grass3.security;
 
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Component;

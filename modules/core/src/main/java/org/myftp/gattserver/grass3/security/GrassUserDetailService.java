@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3;
+package org.myftp.gattserver.grass3.security;
 
 import javax.annotation.Resource;
 

@@ -40,22 +40,22 @@ public class LoginPage extends OneColumnPage {
 
 		formLayout
 				.addComponent(new Label(
-						"<form name='f' action='j_spring_security_check' method='POST'>"
+						"<form name='f' autocomplete='on' action='j_spring_security_check' method='POST'>"
 								+ "<table>"
 								+ "<tr>"
-								+ "<td>User:</td>"
+								+ "<td>Jméno:</td>"
 								+ "<td><input type='text' name='j_username' value=''></td>"
 								+ "</tr>"
 								+ "<tr>"
-								+ "<td>Password:</td>"
+								+ "<td>Heslo:</td>"
 								+ "<td><input type='password' name='j_password' /></td>"
 								+ "</tr>"
 								+ "<tr>"
-								+ "<td>Remember Me:</td>"
+								+ "<td>Zapamatovat:</td>"
 								+ "<td><input type='checkbox' name='_spring_security_remember_me' /></td>"
 								+ "</tr>"
 								+ "<tr>"
-								+ "<td><input name='submit' type='submit' value='submit' /></td>"
+								+ "<td><input name='submit' type='submit' value='Přihlásit' /></td>"
 								+ "</tr>" + "</table>" + "</form>",
 						ContentMode.HTML));
 

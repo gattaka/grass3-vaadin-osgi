@@ -1,9 +1,6 @@
 package org.myftp.gattserver.grass3.pg.dto;
 
-import java.util.Set;
-
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
-import org.myftp.gattserver.grass3.pg.domain.PhotoDescription;
 
 public class PhotogalleryDTO {
 
@@ -11,11 +8,6 @@ public class PhotogalleryDTO {
 	 * Meta-informace o obsahu
 	 */
 	private ContentNodeDTO contentNode;
-
-	/**
-	 * Popisky fotek
-	 */
-	private Set<PhotoDescription> photoDescriptions;
 
 	/**
 	 * Relativní cesta (od kořene fotogalerie) k adresáři s fotografiemi
@@ -41,14 +33,6 @@ public class PhotogalleryDTO {
 
 	public void setContentNode(ContentNodeDTO contentNode) {
 		this.contentNode = contentNode;
-	}
-
-	public Set<PhotoDescription> getPhotoDescriptions() {
-		return photoDescriptions;
-	}
-
-	public void setPhotoDescriptions(Set<PhotoDescription> photoDescriptions) {
-		this.photoDescriptions = photoDescriptions;
 	}
 
 	public String getPhotogalleryPath() {

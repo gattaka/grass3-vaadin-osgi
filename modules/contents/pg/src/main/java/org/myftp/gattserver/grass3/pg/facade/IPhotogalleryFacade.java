@@ -50,9 +50,9 @@ public interface IPhotogalleryFacade {
 	 * @return identifikátor galerie pokud vše dopadlo v pořádku, jinak
 	 *         {@code null}
 	 */
-	public Long savePhotogallery(String name, Collection<String> tags,
-			boolean publicated, NodeDTO category, UserInfoDTO author,
-			String contextRoot);
+	public Long savePhotogallery(String name, String photogalleryPath,
+			Collection<String> tags, boolean publicated, NodeDTO category,
+			UserInfoDTO author, String contextRoot);
 
 	/**
 	 * Získá galerii dle jeho identifikátoru
@@ -62,11 +62,6 @@ public interface IPhotogalleryFacade {
 	 * @return DTO galerie
 	 */
 	public PhotogalleryDTO getPhotogalleryForDetail(Long id);
-
-	/**
-	 * Získá všechny galerie pro přegenerování
-	 */
-	public List<PhotogalleryDTO> getAllPhotogalleriesForReprocess();
 
 	/**
 	 * Získá všechny galerie pro přehled

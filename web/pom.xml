@@ -68,10 +68,17 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		
-		<!-- evidence hw -->
+		<!-- medic -->
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>
 			<artifactId>medic</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<!-- fotogalerie -->
+		<dependency>
+			<groupId>org.myftp.gattserver.grass3</groupId>
+			<artifactId>pg</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 

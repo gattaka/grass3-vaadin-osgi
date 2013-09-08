@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.pg.facade;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,6 +42,8 @@ public interface IPhotogalleryFacade {
 	 *            název galerie
 	 * @param tags
 	 *            klíčová slova galerie
+	 * @param galleryDir
+	 *            adresář se soubory fotogalerie
 	 * @param publicated
 	 *            je galerie publikována ?
 	 * @param category
@@ -50,8 +53,8 @@ public interface IPhotogalleryFacade {
 	 * @return identifikátor galerie pokud vše dopadlo v pořádku, jinak
 	 *         {@code null}
 	 */
-	public Long savePhotogallery(String name, String photogalleryPath,
-			Collection<String> tags, boolean publicated, NodeDTO category,
+	public Long savePhotogallery(String name, Collection<String> tags,
+			File galleryDir, boolean publicated, NodeDTO category,
 			UserInfoDTO author, String contextRoot);
 
 	/**
@@ -65,16 +68,17 @@ public interface IPhotogalleryFacade {
 
 	/**
 	 * Získá všechny galerie pro přehled
-	 * 
-	 * @return
 	 */
 	public List<PhotogalleryDTO> getAllPhotogalleriesForOverview();
 
 	/**
 	 * Získá všechny galerie a namapuje je pro použití při vyhledávání
-	 * 
-	 * @return
 	 */
 	public List<PhotogalleryDTO> getAllPhotogalleriesForSearch();
+
+	/**
+	 * Vytvoří nový adresář pro fotogalerii
+	 */
+	public File createGalleryDir();
 
 }

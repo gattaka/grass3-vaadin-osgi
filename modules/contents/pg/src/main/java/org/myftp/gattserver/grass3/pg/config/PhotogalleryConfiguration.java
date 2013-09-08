@@ -4,10 +4,7 @@ import org.myftp.gattserver.grass3.config.AbstractConfiguration;
 
 public class PhotogalleryConfiguration extends AbstractConfiguration {
 
-	/**
-	 * Kořenový adresář FM
-	 */
-	private String rootDir = "files";
+	private String rootDir = "rootDir";
 
 	public PhotogalleryConfiguration() {
 		super("org.myftp.gattserver.grass3.pg");

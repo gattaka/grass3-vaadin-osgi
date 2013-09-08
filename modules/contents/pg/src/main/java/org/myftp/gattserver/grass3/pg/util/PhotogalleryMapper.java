@@ -10,7 +10,7 @@ import org.myftp.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import org.myftp.gattserver.grass3.util.Mapper;
 import org.springframework.stereotype.Component;
 
-@Component("photogalleriesMapper")
+@Component("photogalleryMapper")
 public class PhotogalleryMapper {
 
 	/**

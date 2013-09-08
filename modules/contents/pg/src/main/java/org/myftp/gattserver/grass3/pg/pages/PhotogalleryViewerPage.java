@@ -22,11 +22,9 @@ import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.springframework.context.annotation.Scope;
 
 import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 @org.springframework.stereotype.Component("photogalleryViewerPage")
@@ -97,8 +95,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	@Override
 	protected void createContent(VerticalLayout layout) {
-		layout.addComponent(new Label(photogallery.getOutputHTML(),
-				ContentMode.HTML));
+		// TODO
 	}
 
 	@Override
@@ -160,7 +157,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 							// zdařilo se ? Pokud ano, otevři info okno a při
 							// potvrzení jdi na kategorii
-							if (photogalleryFacade.deletePhotogallery(photogallery)) {
+							if (photogalleryFacade
+									.deletePhotogallery(photogallery)) {
 								InfoSubwindow infoSubwindow = new InfoSubwindow(
 										"Smazání galerie proběhlo úspěšně.") {
 

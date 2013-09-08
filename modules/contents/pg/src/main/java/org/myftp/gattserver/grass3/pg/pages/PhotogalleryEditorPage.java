@@ -1,12 +1,7 @@
 package org.myftp.gattserver.grass3.pg.pages;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+import java.io.File;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -16,43 +11,49 @@ import org.myftp.gattserver.grass3.facades.INodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
-import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
+import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
+import org.myftp.gattserver.grass3.pg.dto.PhotoFileDTO;
 import org.myftp.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import org.myftp.gattserver.grass3.pg.facade.IPhotogalleryFacade;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
-import org.myftp.gattserver.grass3.ui.util.JQueryAccordion;
 import org.myftp.gattserver.grass3.util.GrassRequest;
-import org.myftp.gattserver.grass3.util.ReferenceHolder;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
+import org.vaadin.easyuploads.MultiFileUpload;
 import org.vaadin.tokenfield.TokenField;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanContainer;
+import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.server.FileResource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.Embedded;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.TextArea;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 @org.springframework.stereotype.Component("photogalleryEditorPage")
 @Scope("prototype")
-public class PhotogalleryEditorPage extends TwoColumnPage {
+public class PhotogalleryEditorPage extends OneColumnPage {
 
 	private static final long serialVersionUID = -5148523174527532785L;
 
@@ -62,8 +63,8 @@ public class PhotogalleryEditorPage extends TwoColumnPage {
 	@Resource(name = "nodeFacade")
 	private INodeFacade nodeFacade;
 
-	@Resource(name = "articleFacade")
-	private IPhotogalleryFacade articleFacade;
+	@Resource(name = "photogalleryFacade")
+	private IPhotogalleryFacade photogalleryFacade;
 
 	@Resource(name = "contentTagFacade")
 	private IContentTagFacade contentTagFacade;
@@ -77,10 +78,11 @@ public class PhotogalleryEditorPage extends TwoColumnPage {
 	private NodeDTO category;
 	private PhotogalleryDTO photogallery;
 
-	private final TextArea articleTextArea = new TextArea();
-	private final TokenField articleKeywords = new TokenField();
-	private final TextField articleNameField = new TextField();
+	private final TokenField photogalleryKeywords = new TokenField();
+	private final TextField photogalleryNameField = new TextField();
 	private final CheckBox publicatedCheckBox = new CheckBox();
+
+	private File galleryDir;
 
 	private boolean editMode = false;
 
@@ -96,7 +98,6 @@ public class PhotogalleryEditorPage extends TwoColumnPage {
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		String operationToken = analyzer.getCurrentPathToken();
 		String identifierToken = analyzer.getCurrentPathToken(1);
-		String partNumberToken = analyzer.getCurrentPathToken(2);
 		if (operationToken == null || identifierToken == null) {
 			logger.debug("Chybí operace nebo identifikátor cíle");
 			showError404();
@@ -114,45 +115,26 @@ public class PhotogalleryEditorPage extends TwoColumnPage {
 		if (operationToken.equals(DefaultContentOperations.NEW.toString())) {
 			editMode = false;
 			category = nodeFacade.getNodeByIdForOverview(identifier.getId());
-			articleNameField.setValue("");
-			articleTextArea.setValue("");
+			photogalleryNameField.setValue("");
 			publicatedCheckBox.setValue(true);
 
 		} else if (operationToken.equals(DefaultContentOperations.EDIT
 				.toString())) {
 
 			editMode = true;
-			photogallery = articleFacade.getArticleForDetail(identifier.getId());
-			articleNameField.setValue(photogallery.getContentNode().getName());
+			photogallery = photogalleryFacade
+					.getPhotogalleryForDetail(identifier.getId());
+			photogalleryNameField.setValue(photogallery.getContentNode()
+					.getName());
 
 			for (ContentTagDTO tagDTO : photogallery.getContentNode()
 					.getContentTags()) {
-				articleKeywords.addToken(tagDTO.getName());
+				photogalleryKeywords.addToken(tagDTO.getName());
 			}
 
-			publicatedCheckBox
-					.setValue(photogallery.getContentNode().isPublicated());
+			publicatedCheckBox.setValue(photogallery.getContentNode()
+					.isPublicated());
 
-			int partNumber;
-			if (partNumberToken != null
-					&& (partNumber = Integer.valueOf(partNumberToken)) >= 0) {
-
-				try {
-					parts = PartsFinder.findParts(new ByteArrayInputStream(
-							photogallery.getText().getBytes("UTF-8")), partNumber);
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-					showError500();
-					return;
-				} catch (IOException e) {
-					e.printStackTrace();
-					showError500();
-					return;
-				}
-				articleTextArea.setValue(parts.getTargetPart());
-			} else {
-				articleTextArea.setValue(photogallery.getText());
-			}
 		} else {
 			logger.debug("Neznámá operace: '" + operationToken + "'");
 			showError404();
@@ -164,7 +146,7 @@ public class PhotogalleryEditorPage extends TwoColumnPage {
 				|| getGrassUI().getUser().getRoles().contains(Role.ADMIN)) {
 			super.init();
 		} else {
-			// nemá oprávnění upravovat tento článek
+			// nemá oprávnění upravovat tento obsah
 			showError403();
 			return;
 		}
@@ -172,112 +154,27 @@ public class PhotogalleryEditorPage extends TwoColumnPage {
 	}
 
 	@Override
-	protected Component createLeftColumnContent() {
+	protected Component createContent() {
 
-		List<String> groups = new ArrayList<String>(
-				pluginServiceHolder.getRegisteredGroups());
-		Collections.sort(groups, new Comparator<String>() {
-
-			// odolné vůči null
-			public int compare(String o1, String o2) {
-				if (o1 == null) {
-					if (o2 == null)
-						return 0; // stejné
-					else
-						return "".compareTo(o2); // první ber jako prázdný
-				} else {
-					if (o2 == null)
-						return o1.compareTo(""); // druhý ber jako prázdný
-					else
-						return o1.compareTo(o2); // ani jeden není null
-				}
-			}
-		});
-
-		/**
-		 * Projdi zaregistrované pluginy a vytvoř menu nástrojů
-		 */
-		JQueryAccordion accordion = null;
-		try {
-			accordion = new JQueryAccordion(groups);
-		} catch (IOException e) {
-			// nemělo by se stát
-			e.printStackTrace();
-		}
-		for (String group : groups) {
-
-			CssLayout groupToolsLayout = new CssLayout();
-			groupToolsLayout.addStyleName("tools_css_menu");
-			groupToolsLayout.setWidth("100%");
-			accordion.setNextElement(groupToolsLayout);
-
-			List<EditorButtonResources> resourcesBundles = new ArrayList<EditorButtonResources>(
-					pluginServiceHolder.getGroupTags(group));
-			Collections.sort(resourcesBundles);
-
-			final ReferenceHolder<EditorButtonResources> holder = new ReferenceHolder<EditorButtonResources>();
-			for (EditorButtonResources resourceBundle : resourcesBundles) {
-
-				holder.setValue(resourceBundle);
-
-				Button button = new Button(resourceBundle.getDescription());
-				button.setIcon((com.vaadin.server.Resource) resourceBundle
-						.getImage());
-				button.addClickListener(new Button.ClickListener() {
-
-					private static final long serialVersionUID = 607422393151282918L;
-
-					// potřeba, jinak se bude linkovat reference na poslední
-					// holder z vnější instance ;)
-					String prefix = holder.getValue().getPrefix();
-					String suffix = holder.getValue().getSuffix();
-
-					public void buttonClick(ClickEvent event) {
-						JavaScript.getCurrent().execute(
-								"insert('" + prefix + "','" + suffix + "');");
-					}
-				});
-				groupToolsLayout.addComponent(button);
-			}
-		}
-
-		// jQueryUI CSS
-		loadCSS(getRequest().getContextRoot()
-				+ "/VAADIN/themes/grass/js/humanity/jquery-ui.css");
-
-		// jQueryUI JS + jQueryUI Accordion render start
-		String jQuerUIScript = getRequest().getContextRoot()
-				+ "/VAADIN/themes/grass/js/jquery-ui.js";
-		loadJS("\"" + jQuerUIScript + "\"",
-				"$( \"#accordion\" ).accordion({ event: \"click\", heightStyle: \"content\" })",
-				"$(\".ui-accordion-content\").css(\"padding\",\"1em 1em\")");
-
-		return accordion;
-	}
-
-	@Override
-	protected Component createRightColumnContent() {
+		final File dir = photogalleryFacade.createGalleryDir();
+		galleryDir = dir;
 
 		VerticalLayout editorTextLayout = new VerticalLayout();
 		editorTextLayout.setSpacing(true);
 		editorTextLayout.setMargin(true);
 
-		// editor.js
-		loadJS("\"" + getRequest().getContextRoot()
-				+ "/VAADIN/themes/grass/articles/js/editor.js" + "\"");
-
-		VerticalLayout articleNameLayout = new VerticalLayout();
-		editorTextLayout.addComponent(articleNameLayout);
-		articleNameLayout.addComponent(new Label("<h2>Název článku</h2>",
+		VerticalLayout nameLayout = new VerticalLayout();
+		editorTextLayout.addComponent(nameLayout);
+		nameLayout.addComponent(new Label("<h2>Název galerie</h2>",
 				ContentMode.HTML));
-		articleNameLayout.addComponent(articleNameField);
-		articleNameField.setWidth("100%");
+		nameLayout.addComponent(photogalleryNameField);
+		photogalleryNameField.setWidth("100%");
 
-		VerticalLayout articleKeywordsLayout = new VerticalLayout();
-		editorTextLayout.addComponent(articleKeywordsLayout);
+		VerticalLayout keywordsLayout = new VerticalLayout();
+		editorTextLayout.addComponent(keywordsLayout);
 
 		// label
-		articleKeywordsLayout.addComponent(new Label("<h2>Klíčová slova</h2>",
+		keywordsLayout.addComponent(new Label("<h2>Klíčová slova</h2>",
 				ContentMode.HTML));
 
 		// menu tagů + textfield tagů
@@ -285,9 +182,9 @@ public class PhotogalleryEditorPage extends TwoColumnPage {
 		HorizontalLayout keywordsMenuAndTextLayout = new HorizontalLayout();
 		keywordsMenuAndTextLayout.setWidth("100%");
 		keywordsMenuAndTextLayout.setSpacing(true);
-		articleKeywordsLayout.addComponent(keywordsMenuAndTextLayout);
+		keywordsLayout.addComponent(keywordsMenuAndTextLayout);
 
-		keywordsMenuAndTextLayout.addComponent(articleKeywords);
+		keywordsMenuAndTextLayout.addComponent(photogalleryKeywords);
 
 		List<ContentTagDTO> contentTags = contentTagFacade
 				.getContentTagsForOverview();
@@ -296,68 +193,151 @@ public class PhotogalleryEditorPage extends TwoColumnPage {
 		tokens.setBeanIdProperty("name");
 		tokens.addAll(contentTags);
 
-		articleKeywords.setStyleName(TokenField.STYLE_TOKENFIELD);
-		articleKeywords.setContainerDataSource(tokens);
-		articleKeywords.setFilteringMode(FilteringMode.CONTAINS); // suggest
-		articleKeywords.setTokenCaptionPropertyId("name");
-		articleKeywords.setInputPrompt("klíčové slovo");
-		articleKeywords.setRememberNewTokens(false);
-		articleKeywords.isEnabled();
+		photogalleryKeywords.setStyleName(TokenField.STYLE_TOKENFIELD);
+		photogalleryKeywords.setContainerDataSource(tokens);
+		photogalleryKeywords.setFilteringMode(FilteringMode.CONTAINS); // suggest
+		photogalleryKeywords.setTokenCaptionPropertyId("name");
+		photogalleryKeywords.setInputPrompt("klíčové slovo");
+		photogalleryKeywords.setRememberNewTokens(false);
+		photogalleryKeywords.isEnabled();
 
-		VerticalLayout articleContentLayout = new VerticalLayout();
-		editorTextLayout.addComponent(articleContentLayout);
-		articleContentLayout.addComponent(new Label("<h2>Obsah článku</h2>",
+		VerticalLayout contentLayout = new VerticalLayout();
+		contentLayout.setSpacing(true);
+		editorTextLayout.addComponent(contentLayout);
+		contentLayout.addComponent(new Label("<h2>Položky</h2>",
 				ContentMode.HTML));
-		articleContentLayout.addComponent(articleTextArea);
-		articleTextArea.setSizeFull();
-		articleTextArea.setRows(30);
 
-		VerticalLayout articleOptionsLayout = new VerticalLayout();
-		editorTextLayout.addComponent(articleOptionsLayout);
-		articleOptionsLayout.addComponent(new Label(
-				"<h2>Nastavení článku</h2>", ContentMode.HTML));
+		final GridLayout gridLayout = new GridLayout(3, 2);
+		gridLayout.setSpacing(true);
+		gridLayout.setColumnExpandRatio(2, 1);
+		gridLayout.setWidth("100%");
+		contentLayout.addComponent(gridLayout);
 
-		publicatedCheckBox.setCaption("Publikovat článek");
+		final Embedded image = new Embedded();
+		image.setWidth("300px");
+		image.setImmediate(true);
+
+		final Label previewLabel = new Label("<center>Náhled</center>",
+				ContentMode.HTML);
+		previewLabel.setHeight("300px");
+		previewLabel.setWidth("300px");
+		previewLabel.addStyleName("bordered");
+		gridLayout.addComponent(previewLabel, 0, 0, 1, 0);
+
+		final VerticalLayout imageWrapper = new VerticalLayout();
+		imageWrapper.setWidth("300px");
+		imageWrapper.addComponent(image);
+		imageWrapper.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
+		// gridLayout.addComponent(imageWrapper, 0, 0, 1, 0);
+
+		final Table table = new Table(null, new BeanItemContainer<>(
+				PhotoFileDTO.class));
+		table.setSelectable(true);
+		// table.setMultiSelect(true);
+		table.setSizeFull();
+		table.setImmediate(true);
+		table.setColumnHeader("name", "Název");
+		table.setVisibleColumns(new String[] { "name" });
+
+		final Button renameBtn = new Button("Přejmenovat",
+				new Button.ClickListener() {
+					private static final long serialVersionUID = -4816423459867256516L;
+
+					@Override
+					public void buttonClick(ClickEvent event) {
+						// TODO Auto-generated method stub
+
+					}
+				});
+		renameBtn.setEnabled(false);
+		gridLayout.addComponent(renameBtn, 0, 1);
+		gridLayout.setComponentAlignment(renameBtn, Alignment.MIDDLE_CENTER);
+
+		final Button removeBtn = new Button("Odstranit",
+				new Button.ClickListener() {
+					private static final long serialVersionUID = -4816423459867256516L;
+
+					@Override
+					public void buttonClick(ClickEvent event) {
+						Object value = table.getValue();
+						PhotoFileDTO photoFileDTO = (PhotoFileDTO) value;
+						photoFileDTO.getTmpFile().delete();
+						table.removeItem(photoFileDTO);
+					}
+				});
+		removeBtn.setEnabled(false);
+		gridLayout.addComponent(removeBtn, 1, 1);
+		gridLayout.setComponentAlignment(removeBtn, Alignment.MIDDLE_CENTER);
+
+		table.addValueChangeListener(new Property.ValueChangeListener() {
+			private static final long serialVersionUID = -7300482828441860086L;
+
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				PhotoFileDTO photoFileDTO = (PhotoFileDTO) event.getProperty()
+						.getValue();
+
+				if (photoFileDTO == null) {
+					gridLayout.removeComponent(imageWrapper);
+					gridLayout.addComponent(previewLabel, 0, 0, 1, 0);
+					renameBtn.setEnabled(false);
+					removeBtn.setEnabled(false);
+				} else {
+					if (imageWrapper.getParent() == null) {
+						gridLayout.removeComponent(previewLabel);
+						gridLayout.addComponent(imageWrapper, 0, 0, 1, 0);
+					}
+					renameBtn.setEnabled(true);
+					removeBtn.setEnabled(true);
+					image.setSource(new FileResource(photoFileDTO.getTmpFile()));
+				}
+			}
+		});
+		gridLayout.addComponent(table, 2, 0, 2, 1);
+
+		VerticalLayout uploadWrapper = new VerticalLayout();
+		uploadWrapper.setSpacing(true);
+		uploadWrapper.setWidth("100%");
+		uploadWrapper.setMargin(true);
+		uploadWrapper.addStyleName("bordered");
+		contentLayout.addComponent(uploadWrapper);
+
+		MultiFileUpload multiUpload = new MultiFileUpload() {
+			private static final long serialVersionUID = -5223991901495532219L;
+
+			@Override
+			protected void handleFile(File file, String fileName,
+					String mimeType, long length) {
+
+				File movedFile = new File(dir, fileName);
+				if (file.renameTo(movedFile)) {
+					PhotoFileDTO item = new PhotoFileDTO();
+					item.setName(fileName);
+					item.setTmpFile(movedFile);
+					table.addItem(item);
+				}
+			}
+		};
+		multiUpload.setUploadButtonCaption("Nahrát fotografie");
+		uploadWrapper.addComponent(multiUpload);
+		uploadWrapper.setComponentAlignment(multiUpload,
+				Alignment.MIDDLE_CENTER);
+
+		VerticalLayout contentOptionsLayout = new VerticalLayout();
+		editorTextLayout.addComponent(contentOptionsLayout);
+		contentOptionsLayout.addComponent(new Label("<h2>Nastavení</h2>",
+				ContentMode.HTML));
+
+		publicatedCheckBox.setCaption("Publikovat galerii");
 		publicatedCheckBox
-				.setDescription("Je-li prázdné, uvidí článek pouze jeho autor");
+				.setDescription("Je-li prázdné, uvidí galerii pouze její autor");
 		publicatedCheckBox.setImmediate(true);
-		articleOptionsLayout.addComponent(publicatedCheckBox);
+		contentOptionsLayout.addComponent(publicatedCheckBox);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);
 		buttonLayout.setMargin(new MarginInfo(true, false, false, false));
 		editorTextLayout.addComponent(buttonLayout);
-
-		// Náhled
-		Button previewButton = new Button("Náhled");
-		previewButton.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/document_16.png"));
-		previewButton.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 607422393151282918L;
-
-			public void buttonClick(ClickEvent event) {
-
-				String text = null;
-				if (parts != null) {
-					StringBuilder builder = new StringBuilder();
-					builder.append(parts.getPrePart());
-					builder.append(String.valueOf(articleTextArea.getValue()));
-					builder.append(parts.getPostPart());
-					text = builder.toString();
-				} else {
-					text = String.valueOf(articleTextArea.getValue());
-				}
-
-				ArticleDTO articleDTO = articleFacade.processPreview(text,
-						getRequest().getContextRoot());
-
-				PreviewWindow previewWindow = new PreviewWindow(articleDTO);
-				getUI().addWindow(previewWindow);
-			}
-
-		});
-		buttonLayout.addComponent(previewButton);
 
 		// Uložit
 		Button saveButton = new Button("Uložit");
@@ -375,12 +355,12 @@ public class PhotogalleryEditorPage extends TwoColumnPage {
 				// pokud se bude měnit
 				boolean oldMode = editMode;
 
-				if (saveOrUpdateArticle()) {
-					showInfo(oldMode ? "Úprava článku proběhla úspěšně"
-							: "Uložení článku proběhlo úspěšně");
+				if (saveOrUpdatePhotogallery()) {
+					showInfo(oldMode ? "Úprava galerie proběhla úspěšně"
+							: "Uložení galerie proběhlo úspěšně");
 				} else {
-					showWarning(oldMode ? "Úprava článku se nezdařila"
-							: "Uložení článku se nezdařilo");
+					showWarning(oldMode ? "Úprava galerie se nezdařila"
+							: "Uložení galerie se nezdařilo");
 				}
 
 			}
@@ -402,21 +382,21 @@ public class PhotogalleryEditorPage extends TwoColumnPage {
 				if (isFormValid() == false)
 					return;
 
-				if (saveOrUpdateArticle()) {
+				if (saveOrUpdatePhotogallery()) {
 					InfoSubwindow infoSubwindow = new InfoSubwindow(
-							editMode ? "Úprava článku proběhla úspěšně"
-									: "Uložení článku proběhlo úspěšně") {
+							editMode ? "Úprava galerie proběhla úspěšně"
+									: "Uložení galerie proběhlo úspěšně") {
 
 						private static final long serialVersionUID = -4517297931117830104L;
 
 						protected void onProceed(ClickEvent event) {
-							returnToArticle();
+							returnToPhotogallery();
 						};
 					};
 					getUI().addWindow(infoSubwindow);
 				} else {
-					showWarning(editMode ? "Úprava článku se nezdařila"
-							: "Uložení článku se nezdařilo");
+					showWarning(editMode ? "Úprava galerie se nezdařila"
+							: "Uložení galerie se nezdařilo");
 				}
 
 			}
@@ -435,16 +415,16 @@ public class PhotogalleryEditorPage extends TwoColumnPage {
 			public void buttonClick(ClickEvent event) {
 
 				ConfirmSubwindow confirmSubwindow = new ConfirmSubwindow(
-						"Opravdu si přejete zavřít editor článku ? Veškeré neuložené změny budou ztraceny.") {
+						"Opravdu si přejete zavřít editor galerie ? Veškeré neuložené změny budou ztraceny.") {
 
 					private static final long serialVersionUID = -3214040983143363831L;
 
 					@Override
 					protected void onConfirm(ClickEvent event) {
-						// ruším úpravu existujícího článku (vracím se na
-						// článek), nebo nového (vracím se do kategorie) ?
+						// ruším úpravu existující galerie (vracím se na
+						// galerii), nebo nové (vracím se do kategorie) ?
 						if (editMode) {
-							returnToArticle();
+							returnToPhotogallery();
 						} else {
 							returnToCategory();
 						}
@@ -462,61 +442,50 @@ public class PhotogalleryEditorPage extends TwoColumnPage {
 
 	private boolean isFormValid() {
 
-		String name = articleNameField.getValue();
+		String name = photogalleryNameField.getValue();
 
 		if (name == null || name.isEmpty()) {
-			showWarning("Název článku nemůže být prázdný");
+			showWarning("Název galerie nemůže být prázdný");
 			return false;
 		}
 
 		return true;
 	}
 
-	private boolean saveOrUpdateArticle() {
+	private boolean saveOrUpdatePhotogallery() {
 
 		if (editMode) {
 
-			String text = null;
-			if (parts != null) {
-				StringBuilder builder = new StringBuilder();
-				builder.append(parts.getPrePart());
-				builder.append(String.valueOf(articleTextArea.getValue()));
-				builder.append(parts.getPostPart());
-				text = builder.toString();
-			} else {
-				text = String.valueOf(articleTextArea.getValue());
-			}
-
-			return articleFacade.modifyArticle(String.valueOf(articleNameField
-					.getValue()), text,
-					(Collection<String>) articleKeywords.getValue(),
+			return photogalleryFacade.modifyPhotogallery(String
+					.valueOf(photogalleryNameField.getValue()),
+					(Collection<String>) photogalleryKeywords.getValue(),
 					publicatedCheckBox.getValue(), photogallery, getRequest()
 							.getContextRoot());
 		} else {
-			Long id = articleFacade.saveArticle(String.valueOf(articleNameField
-					.getValue()), String.valueOf(articleTextArea.getValue()),
-					(Collection<String>) articleKeywords.getValue(),
-					publicatedCheckBox.getValue(), category, getGrassUI()
-							.getUser(), getRequest().getContextRoot());
+			Long id = photogalleryFacade.savePhotogallery(
+					String.valueOf(photogalleryNameField.getValue()),
+					(Collection<String>) photogalleryKeywords.getValue(),
+					galleryDir, publicatedCheckBox.getValue(), category,
+					getGrassUI().getUser(), getRequest().getContextRoot());
 
 			if (id == null)
 				return false;
 
 			// odteď budeme editovat
 			editMode = true;
-			photogallery = articleFacade.getArticleForDetail(id);
+			photogallery = photogalleryFacade.getPhotogalleryForDetail(id);
 			return true;
 		}
 	}
 
 	/**
-	 * Zavolá vrácení se na článek
+	 * Zavolá vrácení se na galerii
 	 */
-	private void returnToArticle() {
+	private void returnToPhotogallery() {
 		JavaScript.eval("window.onbeforeunload = null;");
 		redirect(getPageURL(photogalleryViewerPageFactory,
-				URLIdentifierUtils.createURLIdentifier(photogallery.getId(), photogallery
-						.getContentNode().getName())));
+				URLIdentifierUtils.createURLIdentifier(photogallery.getId(),
+						photogallery.getContentNode().getName())));
 	}
 
 	/**

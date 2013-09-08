@@ -6,8 +6,18 @@ public class PhotogalleryConfiguration extends AbstractConfiguration {
 
 	private String rootDir = "rootDir";
 
+	private String miniaturesDir = "foto_mini";
+
 	public PhotogalleryConfiguration() {
 		super("org.myftp.gattserver.grass3.pg");
+	}
+
+	public String getMiniaturesDir() {
+		return miniaturesDir;
+	}
+
+	public void setMiniaturesDir(String miniaturesDir) {
+		this.miniaturesDir = miniaturesDir;
 	}
 
 	public String getRootDir() {

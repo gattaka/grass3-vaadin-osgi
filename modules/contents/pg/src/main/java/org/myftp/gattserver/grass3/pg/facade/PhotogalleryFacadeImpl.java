@@ -111,8 +111,12 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		// nasetuj do ní vše potřebné
 		photogallery.setPhotogalleryPath(galleryDir.getName());
 
+		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
+		configurationService.loadConfiguration(configuration);
+		String miniaturesDir = configuration.getMiniaturesDir();
+
 		// vytvoř miniatury
-		File miniFile = new File(galleryDir, "foto_mini");
+		File miniFile = new File(galleryDir, miniaturesDir);
 		if (miniFile.mkdir() == false)
 			return null;
 

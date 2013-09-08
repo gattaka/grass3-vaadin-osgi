@@ -1,13 +1,17 @@
 package org.myftp.gattserver.grass3.pg.pages;
 
+import java.io.File;
+
 import javax.annotation.Resource;
 
+import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.facades.INodeFacade;
 import org.myftp.gattserver.grass3.facades.IUserFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.ContentViewerPage;
+import org.myftp.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import org.myftp.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import org.myftp.gattserver.grass3.pg.facade.IPhotogalleryFacade;
 import org.myftp.gattserver.grass3.security.ICoreACL;
@@ -21,10 +25,13 @@ import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.springframework.context.annotation.Scope;
 
+import com.vaadin.server.FileResource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.Embedded;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.VerticalLayout;
 
 @org.springframework.stereotype.Component("photogalleryViewerPage")
@@ -44,6 +51,9 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	@Resource(name = "nodeFacade")
 	private INodeFacade nodeFacade;
+
+	@Resource
+	private IConfigurationService configurationService;
 
 	@Resource(name = "photogalleryViewerPageFactory")
 	private IPageFactory photogalleryViewerPageFactory;
@@ -95,7 +105,39 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	@Override
 	protected void createContent(VerticalLayout layout) {
-		// TODO
+
+		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
+		configurationService.loadConfiguration(configuration);
+
+		File galleryDir = new File(configuration.getRootDir(),
+				photogallery.getPhotogalleryPath());
+
+		File miniaturesDirFile = new File(galleryDir,
+				configuration.getMiniaturesDir());
+
+		if (miniaturesDirFile.exists() == false) {
+			showError404();
+			return;
+		}
+
+		File[] miniatures = miniaturesDirFile.listFiles();
+
+		// 150px je nejdelší rozměr náhledu + 2x 5px margin
+		int finalwidth = 150 + 10;
+		int galleryWidth = 700;
+		int cols = galleryWidth / finalwidth;
+		int rows = (int) Math.ceil(miniatures.length * 1.0 / cols);
+
+		GridLayout gridLayout = new GridLayout(cols, rows);
+		gridLayout.setSpacing(true);
+		layout.addComponent(gridLayout);
+
+		for (int i = 0; i < miniatures.length; i++) {
+			Embedded embedded = new Embedded(null, new FileResource(
+					miniatures[i]));
+			gridLayout.addComponent(embedded, i % cols, i / cols);
+		}
+
 	}
 
 	@Override

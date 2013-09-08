@@ -26,6 +26,7 @@ public class PhotogalleryMapper {
 		PhotogalleryDTO photogalleryDTO = new PhotogalleryDTO();
 
 		photogalleryDTO.setId(photogallery.getId());
+		photogalleryDTO.setPhotogalleryPath(photogallery.getPhotogalleryPath());
 
 		photogalleryDTO.setContentNode(mapper
 				.mapContentNodeForDetail(photogallery.getContentNode()));

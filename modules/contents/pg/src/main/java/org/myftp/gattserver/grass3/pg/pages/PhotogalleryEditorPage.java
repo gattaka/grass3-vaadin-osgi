@@ -1,6 +1,8 @@
 package org.myftp.gattserver.grass3.pg.pages;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -12,7 +14,6 @@ import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
-import org.myftp.gattserver.grass3.pg.dto.PhotoFileDTO;
 import org.myftp.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import org.myftp.gattserver.grass3.pg.facade.IPhotogalleryFacade;
 import org.myftp.gattserver.grass3.security.Role;
@@ -156,7 +157,9 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	@Override
 	protected Component createContent() {
 
-		final File dir = photogalleryFacade.createGalleryDir();
+		final File dir = editMode ? photogalleryFacade
+				.getGalleryDir(photogallery) : photogalleryFacade
+				.createGalleryDir();
 		galleryDir = dir;
 
 		VerticalLayout editorTextLayout = new VerticalLayout();
@@ -230,10 +233,25 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		imageWrapper.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
 		// gridLayout.addComponent(imageWrapper, 0, 0, 1, 0);
 
-		final Table table = new Table(null, new BeanItemContainer<>(
-				PhotoFileDTO.class));
+		final Table table = new Table();
+		if (editMode) {
+
+			BeanItemContainer<File> container = new BeanItemContainer<>(
+					File.class, Arrays.asList(galleryDir
+							.listFiles(new FileFilter() {
+
+								@Override
+								public boolean accept(File pathname) {
+									return pathname.isDirectory() == false;
+								}
+							})));
+
+			table.setContainerDataSource(container);
+		} else {
+			table.setContainerDataSource(new BeanItemContainer<>(File.class));
+		}
+
 		table.setSelectable(true);
-		// table.setMultiSelect(true);
 		table.setSizeFull();
 		table.setImmediate(true);
 		table.setColumnHeader("name", "Název");
@@ -246,7 +264,6 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 					@Override
 					public void buttonClick(ClickEvent event) {
 						// TODO Auto-generated method stub
-
 					}
 				});
 		renameBtn.setEnabled(false);
@@ -260,9 +277,13 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 					@Override
 					public void buttonClick(ClickEvent event) {
 						Object value = table.getValue();
-						PhotoFileDTO photoFileDTO = (PhotoFileDTO) value;
-						photoFileDTO.getTmpFile().delete();
-						table.removeItem(photoFileDTO);
+						File file = (File) value;
+						
+						if (editMode)
+							photogalleryFacade.tryDeleteMiniature(file, photogallery);
+						
+						file.delete();
+						table.removeItem(file);
 					}
 				});
 		removeBtn.setEnabled(false);
@@ -274,10 +295,9 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 			@Override
 			public void valueChange(ValueChangeEvent event) {
-				PhotoFileDTO photoFileDTO = (PhotoFileDTO) event.getProperty()
-						.getValue();
+				File file = (File) event.getProperty().getValue();
 
-				if (photoFileDTO == null) {
+				if (file == null) {
 					gridLayout.removeComponent(imageWrapper);
 					gridLayout.addComponent(previewLabel, 0, 0, 1, 0);
 					renameBtn.setEnabled(false);
@@ -289,7 +309,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 					}
 					renameBtn.setEnabled(true);
 					removeBtn.setEnabled(true);
-					image.setSource(new FileResource(photoFileDTO.getTmpFile()));
+					image.setSource(new FileResource(file));
 				}
 			}
 		});
@@ -311,10 +331,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 				File movedFile = new File(dir, fileName);
 				if (file.renameTo(movedFile)) {
-					PhotoFileDTO item = new PhotoFileDTO();
-					item.setName(fileName);
-					item.setTmpFile(movedFile);
-					table.addItem(item);
+					table.addItem(movedFile);
 				}
 			}
 		};

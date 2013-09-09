@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
+import org.myftp.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import org.myftp.gattserver.grass3.pg.dto.PhotogalleryDTO;
 
 public interface IPhotogalleryFacade {
@@ -80,5 +81,29 @@ public interface IPhotogalleryFacade {
 	 * Vytvoří nový adresář pro fotogalerii
 	 */
 	public File createGalleryDir();
+
+	/**
+	 * Získá objekt konfigurace
+	 */
+	public PhotogalleryConfiguration getConfiguration();
+
+	/**
+	 * Získá adresář galerie
+	 * 
+	 * @param photogallery
+	 *            objekt galerie
+	 * @return adresář
+	 */
+	public File getGalleryDir(PhotogalleryDTO photogallery);
+
+	/**
+	 * Pokusí se smazat miniaturu od předaného souboru
+	 * 
+	 * @param file
+	 *            soubor fotografie
+	 * @param photogalleryDTO
+	 *            objekt galerie
+	 */
+	public void tryDeleteMiniature(File file, PhotogalleryDTO photogalleryDTO);
 
 }

@@ -45,11 +45,54 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 	private PhotoGalleryRepository photogalleryRepository;
 
 	@Override
+	public PhotogalleryConfiguration getConfiguration() {
+		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
+		configurationService.loadConfiguration(configuration);
+		return configuration;
+	}
+
+	@Override
 	public boolean deletePhotogallery(PhotogalleryDTO photogallery) {
 		photogalleryRepository.delete(photogallery.getId());
 		ContentNodeDTO contentNodeDTO = photogallery.getContentNode();
 		if (contentNodeFacade.delete(contentNodeDTO) == false)
 			return false;
+		return true;
+	}
+
+	/**
+	 * Vytoří nové miniatury
+	 */
+	private boolean processMiniatures(Photogallery photogallery) {
+
+		PhotogalleryConfiguration configuration = getConfiguration();
+		String miniaturesDir = configuration.getMiniaturesDir();
+		File galleryDir = getGalleryDir(photogallery);
+
+		File miniDirFile = new File(galleryDir, miniaturesDir);
+		if (miniDirFile.exists() == false) {
+			if (miniDirFile.mkdir() == false)
+				return false;
+		}
+
+		for (File file : galleryDir.listFiles()) {
+
+			// soubor miniatury
+			File miniFile = new File(miniDirFile, file.getName());
+
+			// pokud bych miniaturizoval adresář nebo miniatura existuje přeskoč
+			if (file.isDirectory() || miniFile.exists())
+				continue;
+
+			// vytvoř miniaturu
+			try {
+				ImageUtils.resizeImageFile(file, miniFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
 		return true;
 	}
 
@@ -61,8 +104,8 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		Photogallery photogallery = photogalleryRepository
 				.findOne(photogalleryDTO.getId());
 
-		// nasetuj do něj vše potřebné
-		photogallery.setPhotogalleryPath(photogalleryDTO.getPhotogalleryPath());
+		// vytvoř miniatury
+		processMiniatures(photogallery);
 
 		// ulož ho
 		if (photogalleryRepository.save(photogallery) == null)
@@ -79,8 +122,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 	@Override
 	public File createGalleryDir() {
 
-		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
-		configurationService.loadConfiguration(configuration);
+		PhotogalleryConfiguration configuration = getConfiguration();
 		String dirRoot = configuration.getRootDir();
 		File dirRootFile = new File(dirRoot);
 
@@ -111,26 +153,8 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		// nasetuj do ní vše potřebné
 		photogallery.setPhotogalleryPath(galleryDir.getName());
 
-		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
-		configurationService.loadConfiguration(configuration);
-		String miniaturesDir = configuration.getMiniaturesDir();
-
 		// vytvoř miniatury
-		File miniFile = new File(galleryDir, miniaturesDir);
-		if (miniFile.mkdir() == false)
-			return null;
-
-		for (File file : galleryDir.listFiles()) {
-			if (file.isDirectory())
-				continue;
-			try {
-				ImageUtils.resizeImageFile(file,
-						new File(miniFile, file.getName()));
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
+		processMiniatures(photogallery);
 
 		// ulož ho a nasetuj jeho id
 		photogallery = photogalleryRepository.save(photogallery);
@@ -180,6 +204,30 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 	public List<PhotogalleryDTO> getAllPhotogalleriesForSearch() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public File getGalleryDir(PhotogalleryDTO photogallery) {
+		return new File(getConfiguration().getRootDir(),
+				photogallery.getPhotogalleryPath());
+	}
+
+	private File getGalleryDir(Photogallery photogallery) {
+		return new File(getConfiguration().getRootDir(),
+				photogallery.getPhotogalleryPath());
+	}
+
+	@Override
+	public void tryDeleteMiniature(File file, PhotogalleryDTO photogalleryDTO) {
+
+		PhotogalleryConfiguration configuration = getConfiguration();
+		String miniaturesDir = configuration.getMiniaturesDir();
+		File galleryDir = getGalleryDir(photogalleryDTO);
+		File miniDirFile = new File(galleryDir, miniaturesDir);
+
+		File miniFile = new File(miniDirFile, file.getName());
+		if (miniFile.exists())
+			miniFile.delete();
 	}
 
 }

@@ -17,6 +17,7 @@ import org.myftp.gattserver.grass3.pg.facade.IPhotogalleryFacade;
 import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
@@ -24,15 +25,22 @@ import org.myftp.gattserver.grass3.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.springframework.context.annotation.Scope;
+import org.vaadin.jouni.animator.AnimatorProxy;
+import org.vaadin.jouni.animator.shared.AnimType;
 
+import com.vaadin.event.MouseEvents;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 @org.springframework.stereotype.Component("photogalleryViewerPage")
 @Scope("prototype")
@@ -65,6 +73,12 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	private IPageFactory photogalleryEditorPageFactory;
 
 	private PhotogalleryDTO photogallery;
+
+	private int galleryGridRowOffset = 0;
+	private final int galleryGridCols = 4;
+	private final int galleryGridRows = 4;
+
+	private GridLayout galleryGridLayout;
 
 	public PhotogalleryViewerPage(GrassRequest request) {
 		super(request);
@@ -120,24 +134,114 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			return;
 		}
 
-		File[] miniatures = miniaturesDirFile.listFiles();
+		final File[] miniatures = miniaturesDirFile.listFiles();
 
-		// 150px je nejdelší rozměr náhledu + 2x 5px margin
-		int finalwidth = 150 + 10;
-		int galleryWidth = 700;
-		int cols = galleryWidth / finalwidth;
-		int rows = (int) Math.ceil(miniatures.length * 1.0 / cols);
+		HorizontalLayout galleryLayout = new HorizontalLayout();
+		galleryLayout.setSpacing(true);
 
-		GridLayout gridLayout = new GridLayout(cols, rows);
-		gridLayout.setSpacing(true);
-		layout.addComponent(gridLayout);
+		final AnimatorProxy animatorProxy = new AnimatorProxy();
 
-		for (int i = 0; i < miniatures.length; i++) {
-			Embedded embedded = new Embedded(null, new FileResource(
-					miniatures[i]));
-			gridLayout.addComponent(embedded, i % cols, i / cols);
+		galleryGridLayout = new GridLayout(galleryGridCols, galleryGridRows);
+		galleryGridLayout.setSpacing(true);
+		galleryGridLayout.setWidth("700px");
+		galleryGridLayout.setHeight("700px");
+
+		populateGrid(miniatures);
+		animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN)
+				.setDuration(200).setDelay(200);
+
+		final int rowsSum = (int) Math.ceil(miniatures.length * 1f
+				/ galleryGridCols);
+
+		// tlačítko nahoru a dolů
+		final Button downBtn = new Button();
+		downBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
+				"img/tags/down_16.png"));
+
+		final Button upBtn = new Button();
+		upBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
+				"img/tags/up_16.png"));
+
+		upBtn.addClickListener(new Button.ClickListener() {
+			private static final long serialVersionUID = -6985989532144363433L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				galleryGridRowOffset--;
+				populateGrid(miniatures);
+				animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN)
+						.setDuration(200).setDelay(200);
+				upBtn.setEnabled(checkDownOffsetAvailability());
+				downBtn.setEnabled(checkDownOffsetAvailability(rowsSum));
+			}
+		});
+		layout.addComponent(upBtn);
+		layout.setComponentAlignment(upBtn, Alignment.MIDDLE_CENTER);
+		upBtn.setEnabled(checkDownOffsetAvailability());
+
+		layout.addComponent(galleryLayout);
+		galleryLayout.addComponent(galleryGridLayout);
+		galleryLayout.setComponentAlignment(galleryGridLayout,
+				Alignment.MIDDLE_CENTER);
+
+		galleryLayout.addComponent(animatorProxy);
+
+		downBtn.addClickListener(new Button.ClickListener() {
+			private static final long serialVersionUID = -6985989532144363433L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				galleryGridRowOffset++;
+				populateGrid(miniatures);
+				animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN)
+						.setDuration(200).setDelay(200);
+				upBtn.setEnabled(true);
+				downBtn.setEnabled(checkDownOffsetAvailability(rowsSum));
+			}
+		});
+		layout.addComponent(downBtn);
+		layout.setComponentAlignment(downBtn, Alignment.MIDDLE_CENTER);
+		downBtn.setEnabled(checkDownOffsetAvailability(rowsSum));
+	}
+
+	private boolean checkDownOffsetAvailability() {
+		return galleryGridRowOffset != 0;
+	}
+
+	private boolean checkDownOffsetAvailability(int rowsSum) {
+		return rowsSum > galleryGridRows + galleryGridRowOffset;
+	}
+
+	private void populateGrid(final File[] miniatures) {
+
+		galleryGridLayout.removeAllComponents();
+
+		int start = galleryGridRowOffset * galleryGridCols;
+		int limit = Math.min(miniatures.length, galleryGridCols
+				* galleryGridRows + start);
+		for (int i = start; i < limit; i++) {
+
+			int gridIndex = i - start;
+
+			final File miniature = miniatures[i];
+			Embedded embedded = new Embedded(null, new FileResource(miniature));
+			galleryGridLayout.addComponent(embedded, gridIndex
+					% galleryGridCols, gridIndex / galleryGridCols);
+			galleryGridLayout.setComponentAlignment(embedded,
+					Alignment.MIDDLE_CENTER);
+
+			embedded.addClickListener(new MouseEvents.ClickListener() {
+				private static final long serialVersionUID = -6354607057332715984L;
+
+				@Override
+				public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
+
+					File imageFile = new File(miniature.getParentFile()
+							.getParentFile(), miniature.getName());
+					UI.getCurrent().addWindow(new ImageDetailWindow(imageFile));
+				}
+			});
 		}
-
 	}
 
 	@Override

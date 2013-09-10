@@ -37,6 +37,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -72,9 +73,23 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	private PhotogalleryDTO photogallery;
 
+	private int rowsSum = 0;
+	private int imageSum = 0;
 	private int galleryGridRowOffset = 0;
 	private final int galleryGridCols = 4;
-	private final int galleryGridRows = 4;
+	private final int galleryGridRows = 3;
+
+	private final Label rowStatusLabel = new Label();
+
+	private final Button upRowBtn = new Button("Řádek nahoru");
+	private final Button downRowBtn = new Button("Řádek dolů");
+	private final Button upPageBtn = new Button("Stránka nahoru");
+	private final Button downPageBtn = new Button("Stránka dolů");
+	private final Button startPageBtn = new Button("Na začátek");
+	private final Button endPageBtn = new Button("Na konec");
+
+	private final String ROWS_STATUS_PREFIX = "Zobrazeny řádky: ";
+	private final String IMAGE_SUM_PREFIX = " | Celkový počet fotek: ";
 
 	private GridLayout galleryGridLayout;
 
@@ -115,6 +130,13 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		return photogallery.getContentNode();
 	}
 
+	private void configureBtnLayout(HorizontalLayout btnLayout) {
+		btnLayout.setSpacing(true);
+		// btnLayout.addStyleName("bordered");
+		btnLayout.setWidth("100%");
+		// btnLayout.setMargin(true);
+	}
+
 	@Override
 	protected void createContent(VerticalLayout layout) {
 
@@ -133,81 +155,198 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		}
 
 		final File[] miniatures = miniaturesDirFile.listFiles();
+		imageSum = miniatures.length;
+		rowsSum = (int) Math.ceil(miniatures.length * 1f / galleryGridCols);
 
-		HorizontalLayout galleryLayout = new HorizontalLayout();
+		VerticalLayout galleryLayout = new VerticalLayout();
 		galleryLayout.setSpacing(true);
+		galleryLayout.addStyleName("bordered");
 
 		final AnimatorProxy animatorProxy = new AnimatorProxy();
 
 		galleryGridLayout = new GridLayout(galleryGridCols, galleryGridRows);
 		galleryGridLayout.setSpacing(true);
+		galleryGridLayout.setMargin(true);
 		galleryGridLayout.setWidth("700px");
-//		galleryGridLayout.setHeight("700px");
+		galleryGridLayout.setHeight("500px");
+		// for (int i=0; i < galleryGridLayout.getRows(); i++) {
+		// galleryGridLayout.setRowExpandRatio(rowIndex, ratio)
+		// }
 
-		populateGrid(miniatures);
-		animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN)
-				.setDuration(200).setDelay(200);
+		// Horní layout tlačítek
+		HorizontalLayout topBtnsLayout = new HorizontalLayout();
+		configureBtnLayout(topBtnsLayout);
+		layout.addComponent(topBtnsLayout);
 
-		final int rowsSum = (int) Math.ceil(miniatures.length * 1f
-				/ galleryGridCols);
+		layout.addComponent(galleryLayout);
 
-		// tlačítko nahoru a dolů
-		final Button downBtn = new Button();
-		downBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
+		// Spodní layout tlačítek
+		HorizontalLayout bottomBtnsLayout = new HorizontalLayout();
+		configureBtnLayout(bottomBtnsLayout);
+		layout.addComponent(bottomBtnsLayout);
+
+		// ikony tlačítek
+		upRowBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
+				"img/tags/up_16.png"));
+		downRowBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
+				"img/tags/down_16.png"));
+		upPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
+				"img/tags/up_16.png"));
+		downPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
+				"img/tags/down_16.png"));
+		startPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
+				"img/tags/up_16.png"));
+		endPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
 				"img/tags/down_16.png"));
 
-		final Button upBtn = new Button();
-		upBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/up_16.png"));
-
-		upBtn.addClickListener(new Button.ClickListener() {
+		// listenery horních tlačítek
+		upRowBtn.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = -6985989532144363433L;
 
 			@Override
 			public void buttonClick(ClickEvent event) {
 				galleryGridRowOffset--;
-				populateGrid(miniatures);
-				animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN)
-						.setDuration(200).setDelay(200);
-				upBtn.setEnabled(checkDownOffsetAvailability());
-				downBtn.setEnabled(checkDownOffsetAvailability(rowsSum));
 			}
 		});
-		layout.addComponent(upBtn);
-		layout.setComponentAlignment(upBtn, Alignment.MIDDLE_CENTER);
-		upBtn.setEnabled(checkDownOffsetAvailability());
+		topBtnsLayout.addComponent(upRowBtn);
+		topBtnsLayout.setComponentAlignment(upRowBtn, Alignment.MIDDLE_CENTER);
 
-		layout.addComponent(galleryLayout);
+		upPageBtn.addClickListener(new Button.ClickListener() {
+			private static final long serialVersionUID = -6985989532144363433L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				if (galleryGridRowOffset > galleryGridRows) {
+					galleryGridRowOffset -= galleryGridRows;
+				} else {
+					galleryGridRowOffset = 0;
+				}
+			}
+		});
+		topBtnsLayout.addComponent(upPageBtn);
+		topBtnsLayout.setComponentAlignment(upPageBtn, Alignment.MIDDLE_CENTER);
+
+		startPageBtn.addClickListener(new Button.ClickListener() {
+			private static final long serialVersionUID = -6985989532144363433L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				galleryGridRowOffset = 0;
+			}
+		});
+		topBtnsLayout.addComponent(startPageBtn);
+		topBtnsLayout.setComponentAlignment(startPageBtn,
+				Alignment.MIDDLE_CENTER);
+
+		// galerie
 		galleryLayout.addComponent(galleryGridLayout);
 		galleryLayout.setComponentAlignment(galleryGridLayout,
 				Alignment.MIDDLE_CENTER);
-
 		galleryLayout.addComponent(animatorProxy);
 
-		downBtn.addClickListener(new Button.ClickListener() {
+		// listenery spodních tlačítek
+		downRowBtn.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = -6985989532144363433L;
 
 			@Override
 			public void buttonClick(ClickEvent event) {
 				galleryGridRowOffset++;
-				populateGrid(miniatures);
-				animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN)
-						.setDuration(200).setDelay(200);
-				upBtn.setEnabled(true);
-				downBtn.setEnabled(checkDownOffsetAvailability(rowsSum));
 			}
 		});
-		layout.addComponent(downBtn);
-		layout.setComponentAlignment(downBtn, Alignment.MIDDLE_CENTER);
-		downBtn.setEnabled(checkDownOffsetAvailability(rowsSum));
+		bottomBtnsLayout.addComponent(downRowBtn);
+		bottomBtnsLayout.setComponentAlignment(downRowBtn,
+				Alignment.MIDDLE_CENTER);
+
+		downPageBtn.addClickListener(new Button.ClickListener() {
+			private static final long serialVersionUID = -6985989532144363433L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				// kolik řádků zbývá do konce ?
+				int dif = rowsSum - (galleryGridRows + galleryGridRowOffset);
+				if (dif > galleryGridRows) {
+					galleryGridRowOffset += galleryGridRows;
+				} else {
+					galleryGridRowOffset += dif;
+				}
+			}
+		});
+		bottomBtnsLayout.addComponent(downPageBtn);
+		bottomBtnsLayout.setComponentAlignment(downPageBtn,
+				Alignment.MIDDLE_CENTER);
+
+		endPageBtn.addClickListener(new Button.ClickListener() {
+			private static final long serialVersionUID = -6985989532144363433L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				int dif = rowsSum - (galleryGridRows + galleryGridRowOffset);
+				galleryGridRowOffset += dif;
+			}
+		});
+		bottomBtnsLayout.addComponent(endPageBtn);
+		bottomBtnsLayout.setComponentAlignment(endPageBtn,
+				Alignment.MIDDLE_CENTER);
+
+		// status labels
+		HorizontalLayout statusLabelWrapper = new HorizontalLayout();
+		statusLabelWrapper.setMargin(true);
+		statusLabelWrapper.addComponent(rowStatusLabel);
+		statusLabelWrapper.setComponentAlignment(rowStatusLabel,
+				Alignment.BOTTOM_RIGHT);
+		statusLabelWrapper.setWidth("100%");
+		statusLabelWrapper.addStyleName("bordered");
+		layout.addComponent(statusLabelWrapper);
+
+		// společný listener pro všechna tlačítka
+		Button.ClickListener btnCommonListener = new Button.ClickListener() {
+			private static final long serialVersionUID = -79498882279825509L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				populateGrid(miniatures);
+				refreshStatusLabel();
+				animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN)
+						.setDuration(200).setDelay(200);
+				checkOffsetBtnsAvailability();
+			}
+		};
+
+		upRowBtn.addClickListener(btnCommonListener);
+		upPageBtn.addClickListener(btnCommonListener);
+		startPageBtn.addClickListener(btnCommonListener);
+		downRowBtn.addClickListener(btnCommonListener);
+		downPageBtn.addClickListener(btnCommonListener);
+		endPageBtn.addClickListener(btnCommonListener);
+
+		refreshStatusLabel();
+		populateGrid(miniatures);
+		animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN)
+				.setDuration(200).setDelay(200);
+		checkOffsetBtnsAvailability();
 	}
 
-	private boolean checkDownOffsetAvailability() {
-		return galleryGridRowOffset != 0;
+	private void refreshStatusLabel() {
+		rowStatusLabel
+				.setValue(ROWS_STATUS_PREFIX
+						+ galleryGridRowOffset
+						+ "-"
+						+ ((rowsSum > galleryGridRows ? galleryGridRows
+								: rowsSum) + galleryGridRowOffset) + "/"
+						+ rowsSum + IMAGE_SUM_PREFIX + imageSum);
 	}
 
-	private boolean checkDownOffsetAvailability(int rowsSum) {
-		return rowsSum > galleryGridRows + galleryGridRowOffset;
+	private void checkOffsetBtnsAvailability() {
+		boolean upBtnsAvailFlag = galleryGridRowOffset > 0;
+		upRowBtn.setEnabled(upBtnsAvailFlag);
+		upPageBtn.setEnabled(upBtnsAvailFlag);
+		startPageBtn.setEnabled(upBtnsAvailFlag);
+
+		boolean downBtnsAvailFlag = rowsSum > galleryGridRows
+				+ galleryGridRowOffset;
+		downRowBtn.setEnabled(downBtnsAvailFlag);
+		downPageBtn.setEnabled(downBtnsAvailFlag);
+		endPageBtn.setEnabled(downBtnsAvailFlag);
 	}
 
 	private void populateGrid(final File[] miniatures) {
@@ -219,6 +358,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 				* galleryGridRows + start);
 		for (int i = start; i < limit; i++) {
 
+			final int index = i;
 			int gridIndex = i - start;
 
 			final File miniature = miniatures[i];
@@ -233,10 +373,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 				@Override
 				public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
-
-					File imageFile = new File(miniature.getParentFile()
-							.getParentFile(), miniature.getName());
-					UI.getCurrent().addWindow(new ImageDetailWindow(imageFile));
+					UI.getCurrent().addWindow(
+							new ImageDetailWindow(miniatures, index));
 				}
 			});
 		}

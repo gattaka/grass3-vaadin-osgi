@@ -17,7 +17,6 @@ import org.myftp.gattserver.grass3.pg.facade.IPhotogalleryFacade;
 import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
-import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
@@ -40,7 +39,6 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 
 @org.springframework.stereotype.Component("photogalleryViewerPage")
 @Scope("prototype")
@@ -144,7 +142,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		galleryGridLayout = new GridLayout(galleryGridCols, galleryGridRows);
 		galleryGridLayout.setSpacing(true);
 		galleryGridLayout.setWidth("700px");
-		galleryGridLayout.setHeight("700px");
+//		galleryGridLayout.setHeight("700px");
 
 		populateGrid(miniatures);
 		animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN)

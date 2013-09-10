@@ -106,4 +106,9 @@ public interface IPhotogalleryFacade {
 	 */
 	public void tryDeleteMiniature(File file, PhotogalleryDTO photogalleryDTO);
 
+	/**
+	 * Uloží konfiguraci
+	 */
+	public void storeConfiguration(PhotogalleryConfiguration configuration);
+
 }

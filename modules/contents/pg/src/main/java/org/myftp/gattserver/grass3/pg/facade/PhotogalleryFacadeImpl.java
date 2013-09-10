@@ -52,7 +52,28 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 	}
 
 	@Override
+	public void storeConfiguration(PhotogalleryConfiguration configuration) {
+		configurationService.saveConfiguration(configuration);
+	}
+
+	private boolean deleteFileRecursively(File file) {
+		File[] subfiles = file.listFiles();
+		if (subfiles != null) {
+			for (File subFile : subfiles) {
+				if (deleteFileRecursively(subFile) == false)
+					return false;
+			}
+		}
+		return file.delete();
+	}
+
+	@Override
 	public boolean deletePhotogallery(PhotogalleryDTO photogallery) {
+
+		File galleryDir = getGalleryDir(photogallery);
+		if (deleteFileRecursively(galleryDir) == false)
+			return false;
+
 		photogalleryRepository.delete(photogallery.getId());
 		ContentNodeDTO contentNodeDTO = photogallery.getContentNode();
 		if (contentNodeFacade.delete(contentNodeDTO) == false)

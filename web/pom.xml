@@ -1,14 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.myftp.gattserver.grass3</groupId>
 	<artifactId>web</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>WAR wrapper</name>
-
+	<name>GRASS3 WAR wrapper</name>
 	<packaging>war</packaging>
 
+	<parent>
+		<groupId>org.myftp.gattserver.grass3</groupId>
+		<artifactId>grass3</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
 	<dependencies>
+
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>
 			<artifactId>core</artifactId>
@@ -67,14 +71,14 @@
 			<artifactId>hw</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		
+
 		<!-- medic -->
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>
 			<artifactId>medic</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		
+
 		<!-- fotogalerie -->
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>

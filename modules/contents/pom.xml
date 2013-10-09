@@ -10,7 +10,7 @@
 
 	<modules>
         <module>articles</module>
-        <module>articles-theme</module>
+        <module>pg</module>
         <module>plugins</module>
 	</modules>
 

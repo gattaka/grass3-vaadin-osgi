@@ -2,19 +2,30 @@ package org.myftp.gattserver.grass3.medic.domain;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 
+@Entity
+@Table(name = "MEDICAL_VISIT")
 public class ScheduledVisit {
 
 	@Id
 	@GeneratedValue(generator = "increment")
 	@GenericGenerator(name = "increment", strategy = "increment")
 	private Long id;
+
+	/**
+	 * Účel návštěvy
+	 */
+	@NotNull
+	private String purpose;
 
 	/**
 	 * Místo, kam se dostavit
@@ -32,6 +43,27 @@ public class ScheduledVisit {
 	 * Datum kontroly
 	 */
 	private Date date;
+
+	/**
+	 * Perioda v měsících
+	 */
+	private int period;
+
+	public String getPurpose() {
+		return purpose;
+	}
+
+	public void setPurpose(String purpose) {
+		this.purpose = purpose;
+	}
+
+	public int getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(int period) {
+		this.period = period;
+	}
 
 	public Long getId() {
 		return id;

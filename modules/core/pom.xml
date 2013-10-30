@@ -246,7 +246,7 @@
 		<!-- </dependency> -->
 
 	</dependencies>
-	
+
 	<build>
 
 		<plugins>
@@ -377,6 +377,5 @@
 			</build>
 		</profile>
 	</profiles>
-	
 
 </project>

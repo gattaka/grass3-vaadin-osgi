@@ -1,7 +1,7 @@
 package org.myftp.gattserver.grass3.medic.web;
 
 import org.myftp.gattserver.grass3.SpringContextHelper;
-import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
+import org.myftp.gattserver.grass3.medic.dto.MedicamentDTO;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
@@ -19,57 +19,45 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
-public abstract class MedicalInstitutionCreateWindow extends GrassSubWindow {
+public abstract class MedicamentCreateWindow extends GrassSubWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	private IMedicFacade medicalFacade;
 
-	public MedicalInstitutionCreateWindow(final Component triggerComponent) {
-		super("Založení nové instituce");
+	public MedicamentCreateWindow(final Component triggerComponent) {
+		super("Založení nového medikamentu");
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
 
 		triggerComponent.setEnabled(false);
 
-		GridLayout winLayout = new GridLayout(2, 6);
+		GridLayout winLayout = new GridLayout(2, 4);
 		winLayout.setMargin(true);
 		winLayout.setSpacing(true);
 
 		winLayout.setWidth("300px");
 
-		final MedicalInstitutionDTO medicalInstitutionDTO = new MedicalInstitutionDTO();
-		medicalInstitutionDTO.setName("");
-		medicalInstitutionDTO.setAddress("");
-		medicalInstitutionDTO.setHours("");
-		medicalInstitutionDTO.setWeb("");
-		final BeanFieldGroup<MedicalInstitutionDTO> fieldGroup = new BeanFieldGroup<MedicalInstitutionDTO>(
-				MedicalInstitutionDTO.class);
-		fieldGroup.setItemDataSource(medicalInstitutionDTO);
+		final MedicamentDTO medicamentDTO = new MedicamentDTO();
+		medicamentDTO.setName("");
+		medicamentDTO.setTolerance("V pořádku");
+		final BeanFieldGroup<MedicamentDTO> fieldGroup = new BeanFieldGroup<MedicamentDTO>(
+				MedicamentDTO.class);
+		fieldGroup.setItemDataSource(medicamentDTO);
 
 		final TextField nameField = new TextField("Název");
 		winLayout.addComponent(nameField, 0, 0, 1, 0);
 		nameField.setWidth("100%");
 		fieldGroup.bind(nameField, "name");
 
-		final TextField addressField = new TextField("Adresa");
-		winLayout.addComponent(addressField, 0, 1, 1, 1);
-		addressField.setWidth("100%");
-		fieldGroup.bind(addressField, "address");
-
-		final TextField webField = new TextField("Webové stránky");
-		winLayout.addComponent(webField, 0, 2, 1, 2);
-		webField.setWidth("100%");
-		fieldGroup.bind(webField, "web");
-
-		final TextArea hoursField = new TextArea("Otevírací hodiny");
-		winLayout.addComponent(hoursField, 0, 3, 1, 3);
-		hoursField.setWidth("100%");
-		fieldGroup.bind(hoursField, "hours");
+		final TextArea toleranceField = new TextArea("Reakce, nežádoucí účinky");
+		winLayout.addComponent(toleranceField, 0, 1, 1, 1);
+		toleranceField.setWidth("100%");
+		fieldGroup.bind(toleranceField, "tolerance");
 
 		Label separator = new Label("");
 		separator.setHeight("10px");
-		winLayout.addComponent(separator, 0, 4);
+		winLayout.addComponent(separator, 0, 2);
 
 		Button saveBtn;
 		winLayout.addComponent(saveBtn = new Button("Založit",
@@ -82,7 +70,7 @@ public abstract class MedicalInstitutionCreateWindow extends GrassSubWindow {
 						try {
 							fieldGroup.commit();
 							if (medicalFacade
-									.saveMedicalInstitution(medicalInstitutionDTO) == false) {
+									.saveMedicament(medicamentDTO) == false) {
 								UI.getCurrent()
 										.addWindow(
 												new ErrorSubwindow(
@@ -97,7 +85,7 @@ public abstract class MedicalInstitutionCreateWindow extends GrassSubWindow {
 									Notification.Type.TRAY_NOTIFICATION);
 						}
 					}
-				}), 1, 5);
+				}), 1, 3);
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
 
 		setContent(winLayout);

@@ -15,6 +15,7 @@ public class MedicamentDTO {
 	/**
 	 * Snášenlivost
 	 */
+	@NotNull
 	private String tolerance;
 
 	public Long getId() {

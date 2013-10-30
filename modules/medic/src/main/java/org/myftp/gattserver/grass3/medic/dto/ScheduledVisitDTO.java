@@ -9,6 +9,12 @@ public class ScheduledVisitDTO {
 	private Long id;
 
 	/**
+	 * Účel návštěvy
+	 */
+	@NotNull
+	private String purpose;
+
+	/**
 	 * Místo, kam se dostavit
 	 */
 	@NotNull
@@ -24,6 +30,27 @@ public class ScheduledVisitDTO {
 	 */
 	@NotNull
 	private Date date;
+
+	/**
+	 * Perioda v měsících
+	 */
+	private int period;
+
+	public int getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(int period) {
+		this.period = period;
+	}
+	
+	public String getPurpose() {
+		return purpose;
+	}
+
+	public void setPurpose(String purpose) {
+		this.purpose = purpose;
+	}
 
 	public Long getId() {
 		return id;

@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.medic.dto;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -83,6 +84,12 @@ public class MedicalRecordDTO {
 
 	public void setMedicaments(List<MedicamentDTO> medicaments) {
 		this.medicaments = medicaments;
+	}
+
+	@Override
+	public String toString() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+		return dateFormat.format(date) + " " + doctor;
 	}
 
 }

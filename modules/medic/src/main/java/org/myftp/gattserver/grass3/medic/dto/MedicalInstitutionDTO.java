@@ -69,4 +69,9 @@ public class MedicalInstitutionDTO {
 		this.web = web;
 	}
 
+	@Override
+	public String toString() {
+		return name;
+	}
+
 }

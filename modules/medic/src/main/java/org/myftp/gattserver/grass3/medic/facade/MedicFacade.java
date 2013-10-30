@@ -10,6 +10,7 @@ import org.myftp.gattserver.grass3.medic.dao.MedicamentRepository;
 import org.myftp.gattserver.grass3.medic.dao.ScheduledVisitRepository;
 import org.myftp.gattserver.grass3.medic.domain.MedicalInstitution;
 import org.myftp.gattserver.grass3.medic.domain.Medicament;
+import org.myftp.gattserver.grass3.medic.domain.ScheduledVisit;
 import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import org.myftp.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import org.myftp.gattserver.grass3.medic.dto.MedicamentDTO;
@@ -29,7 +30,7 @@ public class MedicFacade implements IMedicFacade {
 	private ScheduledVisitRepository scheduledVisitRepository;
 
 	@Autowired
-	private MedicalRecordRepository medicalRecordRepository;
+	private MedicalRecordRepository recordRepository;
 
 	@Autowired
 	private MedicamentRepository medicamentRepository;
@@ -75,21 +76,33 @@ public class MedicFacade implements IMedicFacade {
 
 	@Override
 	public boolean saveScheduledVisit(ScheduledVisitDTO dto) {
-		// TODO Auto-generated method stub
-		return false;
+		ScheduledVisit visit = new ScheduledVisit();
+		visit.setDate(dto.getDate());
+		visit.setPeriod(dto.getPeriod());
+		visit.setPurpose(dto.getPurpose());
+
+		if (dto.getRecord() != null) {
+			visit.setRecord(recordRepository.findOne(dto.getRecord().getId()));
+		}
+
+		if (dto.getInstitution() != null) {
+			visit.setInstitution(institutionRepository.findOne(dto
+					.getInstitution().getId()));
+		}
+
+		return scheduledVisitRepository.save(visit) != null;
 	}
 
 	// Záznamy
 
 	@Override
 	public void deleteMedicalRecord(MedicalRecordDTO dto) {
-		// TODO Auto-generated method stub
-
+		scheduledVisitRepository.delete(dto.getId());
 	}
 
 	@Override
 	public List<MedicalRecordDTO> getAllMedicalRecords() {
-		return medicMapper.mapMedicalRecords(medicalRecordRepository.findAll());
+		return medicMapper.mapMedicalRecords(recordRepository.findAll());
 	}
 
 	@Override

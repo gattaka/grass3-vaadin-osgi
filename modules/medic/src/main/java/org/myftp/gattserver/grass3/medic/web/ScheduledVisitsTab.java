@@ -51,11 +51,10 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table
 				.getContainerDataSource();
 		BeanItem<?> item = cont.getItem(table.getValue());
-		final ScheduledVisitDTO visit = (ScheduledVisitDTO) item
-				.getBean();
+		final ScheduledVisitDTO visit = (ScheduledVisitDTO) item.getBean();
 		UI.getCurrent().addWindow(
-				new ConfirmSubwindow("Opravdu smazat '"
-						+ visit.getPurpose() + "' ?") {
+				new ConfirmSubwindow("Opravdu smazat '" + visit.getPurpose()
+						+ "' ?") {
 
 					private static final long serialVersionUID = -422763987707688597L;
 
@@ -108,13 +107,15 @@ public class ScheduledVisitsTab extends VerticalLayout {
 
 		// TODO řazení dle promeškání, data + barva
 
+		table.setColumnHeader("state", "Stav");
 		table.setColumnHeader("purpose", "Účel");
 		table.setColumnHeader("date", "Datum");
 		table.setColumnHeader("period", "Pravidelnost");
 		table.setWidth("100%");
 		table.setSelectable(true);
 		table.setImmediate(true);
-		table.setVisibleColumns(new String[] { "purpose", "date", "period" });
+		table.setVisibleColumns(new String[] { "state", "purpose", "date",
+				"period" });
 		table.addValueChangeListener(new ValueChangeListener() {
 
 			private static final long serialVersionUID = -8943196289027284739L;

@@ -3,6 +3,7 @@ package org.myftp.gattserver.grass3.medic.dto;
 import java.util.Date;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class ScheduledVisitDTO {
 
@@ -12,6 +13,7 @@ public class ScheduledVisitDTO {
 	 * Účel návštěvy
 	 */
 	@NotNull
+	@Size(min = 1)
 	private String purpose;
 
 	/**
@@ -26,6 +28,11 @@ public class ScheduledVisitDTO {
 	private MedicalRecordDTO record;
 
 	/**
+	 * Stav
+	 */
+	private ScheduledVisitState state;
+
+	/**
 	 * Datum kontroly
 	 */
 	@NotNull
@@ -36,6 +43,14 @@ public class ScheduledVisitDTO {
 	 */
 	private int period;
 
+	public ScheduledVisitState getState() {
+		return state;
+	}
+
+	public void setState(ScheduledVisitState state) {
+		this.state = state;
+	}
+
 	public int getPeriod() {
 		return period;
 	}
@@ -43,7 +58,7 @@ public class ScheduledVisitDTO {
 	public void setPeriod(int period) {
 		this.period = period;
 	}
-	
+
 	public String getPurpose() {
 		return purpose;
 	}

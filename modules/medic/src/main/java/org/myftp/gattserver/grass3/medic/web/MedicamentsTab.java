@@ -35,7 +35,7 @@ public class MedicamentsTab extends VerticalLayout {
 	}
 
 	private void openCreateWindow() {
-		Window win = new MedicalInstitutionCreateWindow(MedicamentsTab.this) {
+		Window win = new MedicamentCreateWindow(MedicamentsTab.this) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override

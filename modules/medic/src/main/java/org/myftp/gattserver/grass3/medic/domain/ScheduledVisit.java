@@ -11,7 +11,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitState;
 
 @Entity
 @Table(name = "MEDICAL_VISIT")
@@ -41,9 +40,9 @@ public class ScheduledVisit {
 	private MedicalRecord record;
 
 	/**
-	 * Stav
+	 * Objednán ? Nebo je ještě potřeba se objednat ?
 	 */
-	private ScheduledVisitState state;
+	private boolean planned;
 
 	/**
 	 * Datum kontroly
@@ -55,12 +54,12 @@ public class ScheduledVisit {
 	 */
 	private int period;
 
-	public ScheduledVisitState getState() {
-		return state;
+	public boolean isPlanned() {
+		return planned;
 	}
 
-	public void setState(ScheduledVisitState state) {
-		this.state = state;
+	public void setPlanned(boolean planned) {
+		this.planned = planned;
 	}
 
 	public String getPurpose() {

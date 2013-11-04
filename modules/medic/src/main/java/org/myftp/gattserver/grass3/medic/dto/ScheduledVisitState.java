@@ -3,7 +3,7 @@ package org.myftp.gattserver.grass3.medic.dto;
 /**
  * Stavy plánované návštěvy
  */
-public enum ScheduledVisitState {
+public enum ScheduledVisitState implements Comparable<ScheduledVisitState> {
 
 	/**
 	 * Objednána
@@ -11,14 +11,14 @@ public enum ScheduledVisitState {
 	PLANNED("Objednán"),
 
 	/**
-	 * Zmeškána - přeobjednat
-	 */
-	MISSED("Zmeškáno"),
-
-	/**
 	 * Plánovaná k objednání
 	 */
-	TO_BE_ORGANIZED("K objednání");
+	TO_BE_PLANNED("K objednání"),
+
+	/**
+	 * Zmeškána - přeobjednat
+	 */
+	MISSED("Zmeškáno");
 
 	private String localized;
 
@@ -30,5 +30,4 @@ public enum ScheduledVisitState {
 	public String toString() {
 		return localized;
 	}
-
 }

@@ -1,10 +1,14 @@
 package org.myftp.gattserver.grass3.medic.dto;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class MedicalRecordDTO {
 
@@ -19,6 +23,8 @@ public class MedicalRecordDTO {
 	/**
 	 * Lékař - ošetřující
 	 */
+	@NotNull
+	@Size(min = 1)
 	private String doctor;
 
 	/**
@@ -31,12 +37,13 @@ public class MedicalRecordDTO {
 	 * Záznam o vyšetření
 	 */
 	@NotNull
+	@Size(min = 1)
 	private String record;
 
 	/**
 	 * Napsané léky
 	 */
-	private List<MedicamentDTO> medicaments;
+	private Set<MedicamentDTO> medicaments = new HashSet<>();
 
 	public Long getId() {
 		return id;
@@ -78,11 +85,11 @@ public class MedicalRecordDTO {
 		this.record = record;
 	}
 
-	public List<MedicamentDTO> getMedicaments() {
+	public Set<MedicamentDTO> getMedicaments() {
 		return medicaments;
 	}
 
-	public void setMedicaments(List<MedicamentDTO> medicaments) {
+	public void setMedicaments(Set<MedicamentDTO> medicaments) {
 		this.medicaments = medicaments;
 	}
 

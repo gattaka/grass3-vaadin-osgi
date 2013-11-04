@@ -1,6 +1,8 @@
 package org.myftp.gattserver.grass3.medic.facade;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -9,12 +11,14 @@ import org.myftp.gattserver.grass3.medic.dao.MedicalRecordRepository;
 import org.myftp.gattserver.grass3.medic.dao.MedicamentRepository;
 import org.myftp.gattserver.grass3.medic.dao.ScheduledVisitRepository;
 import org.myftp.gattserver.grass3.medic.domain.MedicalInstitution;
+import org.myftp.gattserver.grass3.medic.domain.MedicalRecord;
 import org.myftp.gattserver.grass3.medic.domain.Medicament;
 import org.myftp.gattserver.grass3.medic.domain.ScheduledVisit;
 import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import org.myftp.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import org.myftp.gattserver.grass3.medic.dto.MedicamentDTO;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitDTO;
+import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,17 +73,24 @@ public class MedicFacade implements IMedicFacade {
 	}
 
 	@Override
-	public List<ScheduledVisitDTO> getAllScheduledVisits() {
+	public List<ScheduledVisitDTO> getAllScheduledVisits(boolean planned) {
 		return medicMapper.mapScheduledVisits(scheduledVisitRepository
-				.findAll());
+				.findByPlanned(planned));
 	}
 
 	@Override
 	public boolean saveScheduledVisit(ScheduledVisitDTO dto) {
 		ScheduledVisit visit = new ScheduledVisit();
+		visit.setId(dto.getId());
 		visit.setDate(dto.getDate());
 		visit.setPeriod(dto.getPeriod());
 		visit.setPurpose(dto.getPurpose());
+
+		// pouze pokud jde o save nikoliv o update
+		if (visit.getId() == null) {
+			// save nemůže mít stav MISSED
+			visit.setPlanned(dto.getState().equals(ScheduledVisitState.PLANNED));
+		}
 
 		if (dto.getRecord() != null) {
 			visit.setRecord(recordRepository.findOne(dto.getRecord().getId()));
@@ -107,8 +118,24 @@ public class MedicFacade implements IMedicFacade {
 
 	@Override
 	public boolean saveMedicalRecord(MedicalRecordDTO dto) {
-		// TODO Auto-generated method stub
-		return false;
+		MedicalRecord record = new MedicalRecord();
+		record.setDate(dto.getDate());
+		record.setDoctor(dto.getDoctor());
+		record.setRecord(dto.getRecord());
+
+		if (dto.getInstitution() != null) {
+			record.setInstitution(institutionRepository.findOne(dto
+					.getInstitution().getId()));
+		}
+
+		List<Medicament> medicaments = new ArrayList<>();
+		for (MedicamentDTO m : dto.getMedicaments()) {
+			Medicament medicament = medicamentRepository.findOne(m.getId());
+			medicaments.add(medicament);
+		}
+		record.setMedicaments(medicaments);
+
+		return recordRepository.save(record) != null;
 	}
 
 	// Medikamenty
@@ -119,7 +146,7 @@ public class MedicFacade implements IMedicFacade {
 	}
 
 	@Override
-	public List<MedicamentDTO> getAllMedicaments() {
+	public Set<MedicamentDTO> getAllMedicaments() {
 		return medicMapper.mapMedicaments(medicamentRepository.findAll());
 	}
 

@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.medic.facade;
 
 import java.util.List;
+import java.util.Set;
 
 import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import org.myftp.gattserver.grass3.medic.dto.MedicalRecordDTO;
@@ -21,7 +22,7 @@ public interface IMedicFacade {
 
 	void deleteScheduledVisit(ScheduledVisitDTO dto);
 
-	List<ScheduledVisitDTO> getAllScheduledVisits();
+	List<ScheduledVisitDTO> getAllScheduledVisits(boolean planned);
 
 	boolean saveScheduledVisit(ScheduledVisitDTO dto);
 
@@ -37,7 +38,7 @@ public interface IMedicFacade {
 
 	void deleteMedicament(MedicamentDTO dto);
 
-	List<MedicamentDTO> getAllMedicaments();
+	Set<MedicamentDTO> getAllMedicaments();
 
 	boolean saveMedicament(MedicamentDTO dto);
 

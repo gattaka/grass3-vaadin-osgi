@@ -1,7 +1,10 @@
 package org.myftp.gattserver.grass3.medic.facade;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.myftp.gattserver.grass3.medic.domain.MedicalInstitution;
 import org.myftp.gattserver.grass3.medic.domain.MedicalRecord;
@@ -11,6 +14,7 @@ import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import org.myftp.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import org.myftp.gattserver.grass3.medic.dto.MedicamentDTO;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitDTO;
+import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitState;
 import org.springframework.stereotype.Component;
 
 @Component("medicMapper")
@@ -52,6 +56,14 @@ public class MedicMapper {
 		dto.setPeriod(e.getPeriod());
 		dto.setPurpose(e.getPurpose());
 		dto.setRecord(mapMedicalRecord(e.getRecord()));
+		dto.setPlanned(e.isPlanned());
+
+		if (Calendar.getInstance().getTime().compareTo(dto.getDate()) > 0) {
+			dto.setState(ScheduledVisitState.MISSED);
+		} else {
+			dto.setState(e.isPlanned() ? ScheduledVisitState.PLANNED : ScheduledVisitState.TO_BE_PLANNED);
+		}
+
 		return dto;
 	}
 
@@ -104,16 +116,16 @@ public class MedicMapper {
 		return dto;
 	}
 
-	public List<MedicamentDTO> mapMedicaments(List<Medicament> e) {
+	public Set<MedicamentDTO> mapMedicaments(List<Medicament> e) {
 		if (e == null)
 			return null;
 
-		List<MedicamentDTO> list = new ArrayList<MedicamentDTO>();
+		Set<MedicamentDTO> set = new HashSet<MedicamentDTO>();
 		for (Medicament i : e) {
-			list.add(mapMedicament(i));
+			set.add(mapMedicament(i));
 		}
 
-		return list;
+		return set;
 	}
 
 }

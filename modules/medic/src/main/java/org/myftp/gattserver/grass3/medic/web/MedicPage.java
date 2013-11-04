@@ -40,7 +40,7 @@ public class MedicPage extends OneColumnPage {
 
 		tabSheet.addTab(new ScheduledVisitsTab(medicFacade),
 				"Plánované návštěvy");
-		tabSheet.addTab(new MedicOverviewTab(), "Záznamy");
+		tabSheet.addTab(new MedicalRecordsTab(medicFacade), "Záznamy");
 		tabSheet.addTab(new MedicalInstitutionsTab(medicFacade), "Instituce");
 		tabSheet.addTab(new MedicamentsTab(medicFacade), "Medikamenty");
 

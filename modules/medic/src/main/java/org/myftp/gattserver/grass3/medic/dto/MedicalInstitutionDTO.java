@@ -74,4 +74,21 @@ public class MedicalInstitutionDTO {
 		return name;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof MedicalInstitutionDTO) {
+			MedicalInstitutionDTO dto = (MedicalInstitutionDTO) obj;
+			if (dto.getName() == null)
+				return name == null;
+			else
+				return dto.getName().equals(name);
+		}
+		return false; 
+	}
+
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+
 }

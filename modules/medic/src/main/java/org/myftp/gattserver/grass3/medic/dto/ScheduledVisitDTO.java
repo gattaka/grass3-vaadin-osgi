@@ -28,9 +28,14 @@ public class ScheduledVisitDTO {
 	private MedicalRecordDTO record;
 
 	/**
-	 * Stav
+	 * Stav - čiště kvůli UI
 	 */
 	private ScheduledVisitState state;
+
+	/**
+	 * Objednán ?
+	 */
+	private boolean planned;
 
 	/**
 	 * Datum kontroly
@@ -42,6 +47,14 @@ public class ScheduledVisitDTO {
 	 * Perioda v měsících
 	 */
 	private int period;
+
+	public boolean isPlanned() {
+		return planned;
+	}
+
+	public void setPlanned(boolean planned) {
+		this.planned = planned;
+	}
 
 	public ScheduledVisitState getState() {
 		return state;

@@ -173,15 +173,15 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		plannedTable.setColumnHeader("state", "Stav");
 		plannedTable.setColumnHeader("purpose", "Účel");
 		plannedTable.setColumnHeader("date", "Datum");
-		plannedTable.setColumnHeader("period", "Pravidelnost");
+		plannedTable.setColumnHeader("institution", "Instituce");
 		plannedTable.setColumnHeader("icon", "");
 		plannedTable.setColumnWidth("icon", 16);
 		plannedTable.setWidth("100%");
 		plannedTable.setHeight("250px");
 		plannedTable.setSelectable(true);
 		plannedTable.setImmediate(true);
-		plannedTable
-				.setVisibleColumns(new String[] { "icon", "date", "purpose" });
+		plannedTable.setVisibleColumns(new String[] { "icon", "date",
+				"purpose", "institution" });
 		plannedTable.setConverter("date",
 				GrassStringToDateConverter.getInstance());
 		plannedTable.addValueChangeListener(new ValueChangeListener() {
@@ -302,6 +302,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		toBePlannedTable.setColumnHeader("purpose", "Účel");
 		toBePlannedTable.setColumnHeader("date", "Datum");
 		toBePlannedTable.setColumnHeader("period", "Pravidelnost");
+		toBePlannedTable.setColumnHeader("institution", "Instituce");
 		toBePlannedTable.setColumnHeader("icon", "");
 		toBePlannedTable.setColumnWidth("icon", 16);
 		toBePlannedTable.setWidth("100%");
@@ -309,9 +310,9 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		toBePlannedTable.setSelectable(true);
 		toBePlannedTable.setImmediate(true);
 		toBePlannedTable.setVisibleColumns(new String[] { "icon", "date",
-				"purpose" });
+				"period", "purpose", "institution" });
 		toBePlannedTable.setConverter("date",
-				GrassStringToDateConverter.getInstance());
+				StringToMonthDateConverter.getInstance());
 		toBePlannedTable.addValueChangeListener(new ValueChangeListener() {
 
 			private static final long serialVersionUID = -8943196289027284739L;
@@ -353,7 +354,8 @@ public class ScheduledVisitsTab extends VerticalLayout {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				// TODO zadat datum - objednání se vytvoří samo
+				// TODO zadat datum - objednání se vytvoří samo a plánování se smaže
+				// TODO pravidelné se nesmažou, ale posunou se o periodu
 			}
 		});
 		buttonLayout.addComponent(planBtn);

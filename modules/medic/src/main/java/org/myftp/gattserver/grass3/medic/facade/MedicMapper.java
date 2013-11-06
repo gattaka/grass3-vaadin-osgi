@@ -9,10 +9,12 @@ import java.util.Set;
 import org.myftp.gattserver.grass3.medic.domain.MedicalInstitution;
 import org.myftp.gattserver.grass3.medic.domain.MedicalRecord;
 import org.myftp.gattserver.grass3.medic.domain.Medicament;
+import org.myftp.gattserver.grass3.medic.domain.Physician;
 import org.myftp.gattserver.grass3.medic.domain.ScheduledVisit;
 import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import org.myftp.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import org.myftp.gattserver.grass3.medic.dto.MedicamentDTO;
+import org.myftp.gattserver.grass3.medic.dto.PhysicianDTO;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitState;
 import org.springframework.stereotype.Component;
@@ -61,7 +63,8 @@ public class MedicMapper {
 		if (Calendar.getInstance().getTime().compareTo(dto.getDate()) > 0) {
 			dto.setState(ScheduledVisitState.MISSED);
 		} else {
-			dto.setState(e.isPlanned() ? ScheduledVisitState.PLANNED : ScheduledVisitState.TO_BE_PLANNED);
+			dto.setState(e.isPlanned() ? ScheduledVisitState.PLANNED
+					: ScheduledVisitState.TO_BE_PLANNED);
 		}
 
 		return dto;
@@ -88,7 +91,7 @@ public class MedicMapper {
 		dto.setDate(e.getDate());
 		dto.setInstitution(mapMedicalInstitution(e.getInstitution()));
 		dto.setRecord(e.getRecord());
-		dto.setDoctor(e.getDoctor());
+		dto.setPhysician(mapPhysician(e.getPhysician()));
 		dto.setMedicaments(mapMedicaments(e.getMedicaments()));
 		return dto;
 	}
@@ -123,6 +126,28 @@ public class MedicMapper {
 		Set<MedicamentDTO> set = new HashSet<MedicamentDTO>();
 		for (Medicament i : e) {
 			set.add(mapMedicament(i));
+		}
+
+		return set;
+	}
+
+	public PhysicianDTO mapPhysician(Physician e) {
+		if (e == null)
+			return null;
+
+		PhysicianDTO dto = new PhysicianDTO();
+		dto.setId(e.getId());
+		dto.setName(e.getName());
+		return dto;
+	}
+
+	public Set<PhysicianDTO> mapPhysicians(List<Physician> e) {
+		if (e == null)
+			return null;
+
+		Set<PhysicianDTO> set = new HashSet<PhysicianDTO>();
+		for (Physician i : e) {
+			set.add(mapPhysician(i));
 		}
 
 		return set;

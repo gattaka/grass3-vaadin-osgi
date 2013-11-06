@@ -9,14 +9,17 @@ import javax.annotation.Resource;
 import org.myftp.gattserver.grass3.medic.dao.MedicalInstitutionRepository;
 import org.myftp.gattserver.grass3.medic.dao.MedicalRecordRepository;
 import org.myftp.gattserver.grass3.medic.dao.MedicamentRepository;
+import org.myftp.gattserver.grass3.medic.dao.PhysicianRepository;
 import org.myftp.gattserver.grass3.medic.dao.ScheduledVisitRepository;
 import org.myftp.gattserver.grass3.medic.domain.MedicalInstitution;
 import org.myftp.gattserver.grass3.medic.domain.MedicalRecord;
 import org.myftp.gattserver.grass3.medic.domain.Medicament;
+import org.myftp.gattserver.grass3.medic.domain.Physician;
 import org.myftp.gattserver.grass3.medic.domain.ScheduledVisit;
 import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import org.myftp.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import org.myftp.gattserver.grass3.medic.dto.MedicamentDTO;
+import org.myftp.gattserver.grass3.medic.dto.PhysicianDTO;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +42,9 @@ public class MedicFacade implements IMedicFacade {
 	@Autowired
 	private MedicamentRepository medicamentRepository;
 
+	@Autowired
+	private PhysicianRepository physicianRepository;
+
 	@Resource(name = "medicMapper")
 	private MedicMapper medicMapper;
 
@@ -57,12 +63,13 @@ public class MedicFacade implements IMedicFacade {
 
 	@Override
 	public boolean saveMedicalInstitution(MedicalInstitutionDTO dto) {
-		MedicalInstitution entity = new MedicalInstitution();
-		entity.setAddress(dto.getAddress());
-		entity.setHours(dto.getHours());
-		entity.setName(dto.getName());
-		entity.setWeb(dto.getWeb());
-		return institutionRepository.save(entity) != null;
+		MedicalInstitution institution = new MedicalInstitution();
+		institution.setId(dto.getId());
+		institution.setAddress(dto.getAddress());
+		institution.setHours(dto.getHours());
+		institution.setName(dto.getName());
+		institution.setWeb(dto.getWeb());
+		return institutionRepository.save(institution) != null;
 	}
 
 	// Návštěvy
@@ -119,9 +126,14 @@ public class MedicFacade implements IMedicFacade {
 	@Override
 	public boolean saveMedicalRecord(MedicalRecordDTO dto) {
 		MedicalRecord record = new MedicalRecord();
+		record.setId(dto.getId());
 		record.setDate(dto.getDate());
-		record.setDoctor(dto.getDoctor());
 		record.setRecord(dto.getRecord());
+
+		if (dto.getPhysician() != null) {
+			record.setPhysician(physicianRepository.findOne(dto.getPhysician()
+					.getId()));
+		}
 
 		if (dto.getInstitution() != null) {
 			record.setInstitution(institutionRepository.findOne(dto
@@ -153,8 +165,29 @@ public class MedicFacade implements IMedicFacade {
 	@Override
 	public boolean saveMedicament(MedicamentDTO dto) {
 		Medicament medicament = new Medicament();
+		medicament.setId(dto.getId());
 		medicament.setName(dto.getName());
 		medicament.setTolerance(dto.getTolerance());
 		return medicamentRepository.save(medicament) != null;
+	}
+
+	// Doktoři
+
+	@Override
+	public void deletePhysician(PhysicianDTO dto) {
+		physicianRepository.delete(dto.getId());
+	}
+
+	@Override
+	public Set<PhysicianDTO> getAllPhysicians() {
+		return medicMapper.mapPhysicians(physicianRepository.findAll());
+	}
+
+	@Override
+	public boolean savePhysician(PhysicianDTO dto) {
+		Physician physician = new Physician();
+		physician.setId(dto.getId());
+		physician.setName(dto.getName());
+		return physicianRepository.save(physician) != null;
 	}
 }

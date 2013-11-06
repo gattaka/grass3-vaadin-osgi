@@ -33,7 +33,8 @@ public class MedicalRecord {
 	/**
 	 * Lékař - ošetřující
 	 */
-	private String doctor;
+	@ManyToOne
+	private Physician physician;
 
 	/**
 	 * Kdy se to stalo
@@ -69,12 +70,12 @@ public class MedicalRecord {
 		this.institution = institution;
 	}
 
-	public String getDoctor() {
-		return doctor;
+	public Physician getPhysician() {
+		return physician;
 	}
 
-	public void setDoctor(String doctor) {
-		this.doctor = doctor;
+	public void setPhysician(Physician physician) {
+		this.physician = physician;
 	}
 
 	public Date getDate() {

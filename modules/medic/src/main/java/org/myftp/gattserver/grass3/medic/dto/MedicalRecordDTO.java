@@ -22,8 +22,7 @@ public class MedicalRecordDTO {
 	 * Lékař - ošetřující
 	 */
 	@NotNull
-	@Size(min = 1)
-	private String doctor;
+	private PhysicianDTO physician;
 
 	/**
 	 * Kdy se to stalo
@@ -59,12 +58,12 @@ public class MedicalRecordDTO {
 		this.institution = institution;
 	}
 
-	public String getDoctor() {
-		return doctor;
+	public PhysicianDTO getPhysician() {
+		return physician;
 	}
 
-	public void setDoctor(String doctor) {
-		this.doctor = doctor;
+	public void setPhysician(PhysicianDTO physician) {
+		this.physician = physician;
 	}
 
 	public Date getDate() {
@@ -94,7 +93,7 @@ public class MedicalRecordDTO {
 	@Override
 	public String toString() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-		return dateFormat.format(date) + " " + doctor;
+		return dateFormat.format(date) + " " + physician.getName();
 	}
 
 }

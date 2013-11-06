@@ -21,6 +21,8 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -354,9 +356,40 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				// TODO zadat datum - objednání se vytvoří samo a plánování se
-				// smaže
-				// TODO pravidelné se nesmažou, ale posunou se o periodu
+				final ScheduledVisitDTO toBePlannedVisitDTO = (ScheduledVisitDTO) toBePlannedTable
+						.getValue();
+				Window win = new ScheduledVisitsCreateWindow(
+						ScheduledVisitsTab.this, true, toBePlannedVisitDTO) {
+					private static final long serialVersionUID = -7566950396535469316L;
+
+					@Override
+					protected void onSuccess() {
+						populateContainer(true);
+
+						if (toBePlannedVisitDTO.getPeriod() > 0) {
+							// posuň plánování a ulož úpravu
+							Calendar calendar = Calendar.getInstance();
+							calendar.setTime(toBePlannedVisitDTO.getDate());
+							calendar.add(Calendar.MONTH,
+									toBePlannedVisitDTO.getPeriod());
+							toBePlannedVisitDTO.setDate(calendar.getTime());
+							if (medicFacade
+									.saveScheduledVisit(toBePlannedVisitDTO) == false) {
+								Notification
+										.show("Nezdařilo se naplánovat příští objednání",
+												Type.WARNING_MESSAGE);
+							}
+						} else {
+							// nemá pravidelnost - návštěva byla objednána,
+							// plánování návštěvy lze smazat
+							medicFacade
+									.deleteScheduledVisit(toBePlannedVisitDTO);
+						}
+
+						populateContainer(false);
+					}
+				};
+				UI.getCurrent().addWindow(win);
 			}
 		});
 		buttonLayout.addComponent(planBtn);

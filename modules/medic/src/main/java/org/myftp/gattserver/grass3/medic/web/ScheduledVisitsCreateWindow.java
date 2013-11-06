@@ -35,6 +35,11 @@ public abstract class ScheduledVisitsCreateWindow extends GrassSubWindow {
 
 	public ScheduledVisitsCreateWindow(final Component triggerComponent,
 			boolean planned) {
+		this(triggerComponent, planned, null);
+	}
+
+	public ScheduledVisitsCreateWindow(final Component triggerComponent,
+			boolean planned, ScheduledVisitDTO visitDTO) {
 		super(planned ? "Založení nové plánované návštěvy"
 				: "Naplánování objednání");
 
@@ -134,6 +139,13 @@ public abstract class ScheduledVisitsCreateWindow extends GrassSubWindow {
 					}
 				}), 1, 5);
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
+
+		// vyplňuji objednání na základě plánovaného objednání
+		if (visitDTO != null && planned) {
+			purposeField.setValue(visitDTO.getPurpose());
+			recordsComboBox.setValue(visitDTO.getRecord());
+			institutionComboBox.setValue(visitDTO.getInstitution());
+		}
 
 		setContent(winLayout);
 

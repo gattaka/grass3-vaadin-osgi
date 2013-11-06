@@ -3,23 +3,16 @@ package org.myftp.gattserver.grass3.medic.dto;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class MedicamentDTO {
+public class PhysicianDTO {
 
 	private Long id;
 
 	/**
-	 * Název léku
+	 * Jméno
 	 */
 	@NotNull
 	@Size(min = 1)
 	private String name = "";
-
-	/**
-	 * Snášenlivost
-	 */
-	@NotNull
-	@Size(min = 1)
-	private String tolerance = "V pořádku";
 
 	public Long getId() {
 		return id;
@@ -37,12 +30,26 @@ public class MedicamentDTO {
 		this.name = name;
 	}
 
-	public String getTolerance() {
-		return tolerance;
+	@Override
+	public String toString() {
+		return name;
 	}
 
-	public void setTolerance(String tolerance) {
-		this.tolerance = tolerance;
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof PhysicianDTO) {
+			PhysicianDTO dto = (PhysicianDTO) obj;
+			if (dto.getName() == null)
+				return name == null;
+			else
+				return dto.getName().equals(name);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return name.hashCode();
 	}
 
 }

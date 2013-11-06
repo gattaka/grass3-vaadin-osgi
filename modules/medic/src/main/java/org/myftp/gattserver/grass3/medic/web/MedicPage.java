@@ -44,6 +44,7 @@ public class MedicPage extends OneColumnPage {
 		tabSheet.addTab(new MedicalRecordsTab(medicFacade), "Záznamy");
 		tabSheet.addTab(new MedicalInstitutionsTab(medicFacade), "Instituce");
 		tabSheet.addTab(new MedicamentsTab(medicFacade), "Medikamenty");
+		tabSheet.addTab(new PhysiciansTab(medicFacade), "Doktoři");
 
 		tabSheet.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
 

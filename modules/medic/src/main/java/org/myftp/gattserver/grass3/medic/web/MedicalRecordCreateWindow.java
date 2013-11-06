@@ -2,11 +2,13 @@ package org.myftp.gattserver.grass3.medic.web;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import org.myftp.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import org.myftp.gattserver.grass3.medic.dto.MedicamentDTO;
+import org.myftp.gattserver.grass3.medic.dto.PhysicianDTO;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
@@ -26,7 +28,6 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.UI;
 
@@ -55,7 +56,6 @@ public abstract class MedicalRecordCreateWindow extends GrassSubWindow {
 		winLayout.setWidth("400px");
 
 		final MedicalRecordDTO medicalRecordDTO = new MedicalRecordDTO();
-		medicalRecordDTO.setDoctor("");
 		medicalRecordDTO.setRecord("");
 
 		if (scheduledVisitDTO != null) {
@@ -67,10 +67,15 @@ public abstract class MedicalRecordCreateWindow extends GrassSubWindow {
 				MedicalRecordDTO.class);
 		fieldGroup.setItemDataSource(medicalRecordDTO);
 
-		final TextField nameField = new TextField("Ošetřující lékař");
-		winLayout.addComponent(nameField, 0, 0, 1, 0);
-		nameField.setWidth("100%");
-		fieldGroup.bind(nameField, "doctor");
+		Set<PhysicianDTO> physicians = medicalFacade.getAllPhysicians();
+		BeanItemContainer<PhysicianDTO> physiciansContainer = new BeanItemContainer<>(
+				PhysicianDTO.class, physicians);
+		final ComboBox physicianComboBox = new ComboBox("Ošetřující lékař",
+				physiciansContainer);
+		winLayout.addComponent(physicianComboBox, 0, 0, 1, 0);
+		physicianComboBox.setWidth("100%");
+		physicianComboBox.setNullSelectionAllowed(false);
+		fieldGroup.bind(physicianComboBox, "physician");
 
 		final DateField dateField = new DateField("Datum návštěvy");
 		dateField.setDateFormat("d. MMMMM yyyy, HH:mm");
@@ -91,10 +96,10 @@ public abstract class MedicalRecordCreateWindow extends GrassSubWindow {
 		institutionComboBox.setNullSelectionAllowed(false);
 		fieldGroup.bind(institutionComboBox, "institution");
 
-		final TextArea hoursField = new TextArea("Záznam");
-		winLayout.addComponent(hoursField, 0, 3, 1, 3);
-		hoursField.setWidth("100%");
-		fieldGroup.bind(hoursField, "record");
+		final TextArea recordField = new TextArea("Záznam");
+		winLayout.addComponent(recordField, 0, 3, 1, 3);
+		recordField.setWidth("100%");
+		fieldGroup.bind(recordField, "record");
 
 		BeanItemContainer<MedicamentDTO> medicamentsContainer = new BeanItemContainer<MedicamentDTO>(
 				MedicamentDTO.class, medicalFacade.getAllMedicaments());

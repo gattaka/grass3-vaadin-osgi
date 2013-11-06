@@ -6,9 +6,18 @@ import java.util.Set;
 import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import org.myftp.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import org.myftp.gattserver.grass3.medic.dto.MedicamentDTO;
+import org.myftp.gattserver.grass3.medic.dto.PhysicianDTO;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 
 public interface IMedicFacade {
+
+	// Instituce
+
+	void deletePhysician(PhysicianDTO dto);
+
+	Set<PhysicianDTO> getAllPhysicians();
+
+	boolean savePhysician(PhysicianDTO dto);
 
 	// Instituce
 

@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.medic.web;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
@@ -69,13 +70,17 @@ public abstract class ScheduledVisitsCreateWindow extends GrassSubWindow {
 		}
 
 		final DateField dateField = new DateField("Datum návštěvy");
-		dateField.setDateFormat("dd.MM.yyyy HH:mm");
+		dateField.setLocale(Locale.forLanguageTag("CS"));
 		if (planned) {
 			dateField.setResolution(Resolution.MINUTE);
+			dateField.setDateFormat("d. MMMMM yyyy, HH:mm");
+			winLayout.addComponent(dateField, 0, 1, 1, 1);
 		} else {
 			dateField.setResolution(Resolution.MONTH);
+			dateField.setDateFormat("MMMMM yyyy");
+			winLayout.addComponent(dateField, 1, 1);
 		}
-		winLayout.addComponent(dateField, 1, 1);
+
 		dateField.setWidth("100%");
 		dateField.setImmediate(true);
 		fieldGroup.bind(dateField, "date");

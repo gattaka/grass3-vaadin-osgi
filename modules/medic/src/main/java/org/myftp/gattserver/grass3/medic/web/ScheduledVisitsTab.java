@@ -2,12 +2,14 @@ package org.myftp.gattserver.grass3.medic.web;
 
 import java.util.Calendar;
 
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitState;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
-import org.myftp.gattserver.grass3.ui.util.GrassStringToDateConverter;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -25,7 +27,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 
-public class ScheduledVisitsTab extends VerticalLayout {
+public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
@@ -182,8 +184,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		plannedTable.setImmediate(true);
 		plannedTable.setVisibleColumns(new String[] { "icon", "date",
 				"purpose", "institution" });
-		plannedTable.setConverter("date",
-				GrassStringToDateConverter.getInstance());
+		plannedTable.setConverter("date", new StringToFullDateConverter());
 		plannedTable.addValueChangeListener(new ValueChangeListener() {
 
 			private static final long serialVersionUID = -8943196289027284739L;
@@ -311,8 +312,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		toBePlannedTable.setImmediate(true);
 		toBePlannedTable.setVisibleColumns(new String[] { "icon", "date",
 				"period", "purpose", "institution" });
-		toBePlannedTable.setConverter("date",
-				StringToMonthDateConverter.getInstance());
+		toBePlannedTable.setConverter("date", new StringToMonthDateConverter());
 		toBePlannedTable.addValueChangeListener(new ValueChangeListener() {
 
 			private static final long serialVersionUID = -8943196289027284739L;
@@ -354,7 +354,8 @@ public class ScheduledVisitsTab extends VerticalLayout {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				// TODO zadat datum - objednání se vytvoří samo a plánování se smaže
+				// TODO zadat datum - objednání se vytvoří samo a plánování se
+				// smaže
 				// TODO pravidelné se nesmažou, ale posunou se o periodu
 			}
 		});
@@ -386,11 +387,23 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		setSpacing(true);
 		setMargin(true);
 
+		DateTimeFormatter formatter = DateTimeFormat
+				.forPattern("d. MMMMM yyyy");
+		addComponent(new Label("<strong>Dnes je: </strong>"
+				+ LocalDate.now().toString(formatter), ContentMode.HTML));
+
+		addComponent(new Label("<hr/>", ContentMode.HTML));
+
 		createPlannedTable();
 
 		addComponent(new Label("<hr/>", ContentMode.HTML));
 
 		createToBePlannedTable();
 
+	}
+
+	@Override
+	public void select() {
+		// tady nic není potřeba
 	}
 }

@@ -13,8 +13,8 @@ import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.subwindows.ImageDetailSubwindow;
-import org.myftp.gattserver.grass3.ui.util.GrassStringToDateConverter;
-import org.myftp.gattserver.grass3.ui.util.GrassStringToMoneyConverter;
+import org.myftp.gattserver.grass3.ui.util.StringToDateConverter;
+import org.myftp.gattserver.grass3.ui.util.StringToMoneyConverter;
 import org.myftp.gattserver.grass3.util.CZSuffixCreator;
 import org.myftp.gattserver.grass3.util.StringPreviewCreator;
 import org.vaadin.tokenfield.TokenField;
@@ -64,7 +64,7 @@ public class HWItemDetailWindow extends GrassSubWindow {
 	private String createPriceString(Integer price) {
 		if (price == null)
 			return "-";
-		return GrassStringToMoneyConverter.format(price);
+		return new StringToMoneyConverter().format(price);
 	}
 
 	private String createWarrantyYearsString(Integer warrantyYears) {
@@ -295,14 +295,15 @@ public class HWItemDetailWindow extends GrassSubWindow {
 				ContentMode.HTML), 2, 1);
 		winLayout.getComponent(2, 1).setWidth("80px");
 		String purchDate = hwItem.getPurchaseDate() == null ? "-"
-				: GrassStringToDateConverter.format(hwItem.getPurchaseDate());
+				: new StringToDateConverter().getFormat().format(
+						hwItem.getPurchaseDate());
 		winLayout.addComponent(createShiftedLabel(purchDate), 2, 2);
 
 		winLayout.addComponent(new Label("<strong>Odepsáno</strong>",
 				ContentMode.HTML), 2, 3);
 		String destrDate = hwItem.getDestructionDate() == null ? "-"
-				: GrassStringToDateConverter
-						.format(hwItem.getDestructionDate());
+				: new StringToDateConverter().getFormat().format(
+						hwItem.getDestructionDate());
 		winLayout.addComponent(createShiftedLabel(destrDate), 2, 4);
 
 		winLayout.addComponent(new Label("<strong>Záruka</strong>",
@@ -389,7 +390,7 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		filesContainer.addAll(hwItem.getServiceNotes());
 
 		table.setContainerDataSource(filesContainer);
-		table.setConverter("date", GrassStringToDateConverter.getInstance());
+		table.setConverter("date", new StringToDateConverter());
 		table.setConverter("state", new StringToHWItemStateConverter());
 		table.setConverter("usedIn", new StringToHWItemConverter());
 

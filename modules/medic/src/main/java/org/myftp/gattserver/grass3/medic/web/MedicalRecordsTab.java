@@ -4,6 +4,7 @@ import org.myftp.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
+import org.myftp.gattserver.grass3.ui.util.StringToDateConverter;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -18,7 +19,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 
-public class MedicalRecordsTab extends VerticalLayout {
+public class MedicalRecordsTab extends VerticalLayout implements ISelectable {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
@@ -82,6 +83,7 @@ public class MedicalRecordsTab extends VerticalLayout {
 	private void populateContainer() {
 		container.removeAllItems();
 		container.addAll(medicFacade.getAllMedicalRecords());
+		table.sort(new Object[] { "date" }, new boolean[] { false });
 	}
 
 	public MedicalRecordsTab(final IMedicFacade medicFacade) {
@@ -103,16 +105,18 @@ public class MedicalRecordsTab extends VerticalLayout {
 		container = new BeanContainer<Long, MedicalRecordDTO>(
 				MedicalRecordDTO.class);
 		container.setBeanIdProperty("id");
-		populateContainer();
 		table.setContainerDataSource(container);
 
 		table.setColumnHeader("date", "Datum");
+		table.setColumnHeader("institution", "Instituce");
 		table.setColumnHeader("doctor", "Ošetřující lékař");
 		table.setColumnHeader("record", "Záznam"); // TODO náhled
 		table.setWidth("100%");
+		table.setConverter("date", new StringToDateConverter("d. MMMMM yyyy"));
 		table.setSelectable(true);
 		table.setImmediate(true);
-		table.setVisibleColumns(new String[] { "date", "doctor", "record" });
+		table.setVisibleColumns(new String[] { "date", "institution", "doctor",
+				"record" });
 		table.addValueChangeListener(new ValueChangeListener() {
 
 			private static final long serialVersionUID = -8943196289027284739L;
@@ -158,6 +162,12 @@ public class MedicalRecordsTab extends VerticalLayout {
 		});
 		buttonLayout.addComponent(deleteBtn);
 
+		populateContainer();
+	}
+
+	@Override
+	public void select() {
+		populateContainer();
 	}
 
 }

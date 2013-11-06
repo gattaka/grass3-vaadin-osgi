@@ -64,6 +64,13 @@
 			<version>4.3.1.Final</version>
 		</dependency>
 
+		<!-- JodaTime (thread-safe data formátování apod.) -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.3</version>
+		</dependency>
+
 		<!-- perf4j -->
 		<dependency>
 			<groupId>org.perf4j</groupId>

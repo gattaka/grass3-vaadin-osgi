@@ -18,7 +18,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 
-public class MedicamentsTab extends VerticalLayout {
+public class MedicamentsTab extends VerticalLayout implements ISelectable {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
@@ -155,6 +155,11 @@ public class MedicamentsTab extends VerticalLayout {
 		});
 		buttonLayout.addComponent(deleteBtn);
 
+	}
+
+	@Override
+	public void select() {
+		// tady nic není potřeba
 	}
 
 }

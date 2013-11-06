@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Scope;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 
 @org.springframework.stereotype.Component("medicPage")
 @Scope("prototype")
@@ -43,6 +44,20 @@ public class MedicPage extends OneColumnPage {
 		tabSheet.addTab(new MedicalRecordsTab(medicFacade), "Záznamy");
 		tabSheet.addTab(new MedicalInstitutionsTab(medicFacade), "Instituce");
 		tabSheet.addTab(new MedicamentsTab(medicFacade), "Medikamenty");
+
+		tabSheet.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
+
+			private static final long serialVersionUID = 6943259268778916110L;
+
+			@Override
+			public void selectedTabChange(SelectedTabChangeEvent event) {
+				TabSheet tabSheet = (TabSheet) event.getComponent();
+				Component component = tabSheet.getSelectedTab();
+				if (component != null && component instanceof ISelectable) {
+					((ISelectable) component).select();
+				}
+			}
+		});
 
 		return layout;
 	}

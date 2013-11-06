@@ -4,6 +4,7 @@ import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
+import org.myftp.gattserver.grass3.ui.util.StringToPreviewConverter;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -18,7 +19,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public class MedicalInstitutionsTab extends VerticalLayout {
+public class MedicalInstitutionsTab extends VerticalLayout implements ISelectable{
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
@@ -113,6 +114,7 @@ public class MedicalInstitutionsTab extends VerticalLayout {
 		table.setWidth("100%");
 		table.setSelectable(true);
 		table.setImmediate(true);
+		table.setConverter("web", new StringToPreviewConverter(50));
 		table.setVisibleColumns(new String[] { "name", "address", "web" });
 		table.addValueChangeListener(new ValueChangeListener() {
 
@@ -159,5 +161,10 @@ public class MedicalInstitutionsTab extends VerticalLayout {
 		});
 		buttonLayout.addComponent(deleteBtn);
 
+	}
+
+	@Override
+	public void select() {
+		// tady nic není potřeba
 	}
 }

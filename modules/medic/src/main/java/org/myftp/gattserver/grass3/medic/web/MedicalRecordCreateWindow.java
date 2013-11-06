@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.medic.web;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
@@ -72,7 +73,8 @@ public abstract class MedicalRecordCreateWindow extends GrassSubWindow {
 		fieldGroup.bind(nameField, "doctor");
 
 		final DateField dateField = new DateField("Datum návštěvy");
-		dateField.setDateFormat("dd.MM.yyyy HH:mm");
+		dateField.setDateFormat("d. MMMMM yyyy, HH:mm");
+		dateField.setLocale(Locale.forLanguageTag("CS"));
 		dateField.setResolution(Resolution.MINUTE);
 		winLayout.addComponent(dateField, 0, 1, 1, 1);
 		dateField.setWidth("100%");

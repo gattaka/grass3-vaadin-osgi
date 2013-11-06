@@ -4,8 +4,8 @@ import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
-import org.myftp.gattserver.grass3.ui.util.GrassStringToDateConverter;
-import org.myftp.gattserver.grass3.ui.util.GrassStringToMoneyConverter;
+import org.myftp.gattserver.grass3.ui.util.StringToDateConverter;
+import org.myftp.gattserver.grass3.ui.util.StringToMoneyConverter;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -155,9 +155,9 @@ public class HWItemsTab extends VerticalLayout {
 		table.setContainerDataSource(container);
 
 		table.setConverter("purchaseDate",
-				GrassStringToDateConverter.getInstance());
+				new StringToDateConverter());
 		table.setConverter("state", new StringToHWItemStateConverter());
-		table.setConverter("price", GrassStringToMoneyConverter.getInstance());
+		table.setConverter("price", new StringToMoneyConverter());
 		table.setConverter("usedIn", new StringToHWItemConverter());
 
 		table.setColumnHeader("name", "Název");

@@ -65,7 +65,8 @@ public abstract class MedicamentCreateWindow extends GrassSubWindow {
 		winLayout.addComponent(separator, 0, 2);
 
 		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button("Založit",
+		winLayout.addComponent(saveBtn = new Button(
+				modifiedMedicamentDTO == null ? "Založit" : "Upravit",
 				new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;

@@ -31,6 +31,7 @@ public class MedicMapper {
 		dto.setName(e.getName());
 		dto.setAddress(e.getAddress());
 		dto.setWeb(e.getWeb());
+		dto.setHours(e.getHours());
 		return dto;
 	}
 

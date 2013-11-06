@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.medic.dto;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class MedicalInstitutionDTO {
 
@@ -10,24 +11,27 @@ public class MedicalInstitutionDTO {
 	 * Jméno institutu
 	 */
 	@NotNull
-	private String name;
+	@Size(min = 1)
+	private String name = "";
 
 	/**
 	 * Adresa
 	 */
 	@NotNull
-	private String address;
+	@Size(min = 1)
+	private String address = "";
 
 	/**
 	 * Otevírací hodiny
 	 */
 	@NotNull
-	private String hours;
+	@Size(min = 1)
+	private String hours = "";
 
 	/**
 	 * Webové stránky
 	 */
-	private String web;
+	private String web = "";
 
 	public Long getId() {
 		return id;
@@ -83,7 +87,7 @@ public class MedicalInstitutionDTO {
 			else
 				return dto.getName().equals(name);
 		}
-		return false; 
+		return false;
 	}
 
 	@Override

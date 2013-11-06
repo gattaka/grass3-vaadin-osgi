@@ -26,7 +26,13 @@ public abstract class MedicalInstitutionCreateWindow extends GrassSubWindow {
 	private IMedicFacade medicalFacade;
 
 	public MedicalInstitutionCreateWindow(final Component triggerComponent) {
-		super("Založení nové instituce");
+		this(triggerComponent, null);
+	}
+
+	public MedicalInstitutionCreateWindow(final Component triggerComponent,
+			MedicalInstitutionDTO modifiedMedicalInstitutionDTO) {
+		super(modifiedMedicalInstitutionDTO == null ? "Založení nové instituce"
+				: "Úprava instituce");
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
 
@@ -38,11 +44,8 @@ public abstract class MedicalInstitutionCreateWindow extends GrassSubWindow {
 
 		winLayout.setWidth("300px");
 
-		final MedicalInstitutionDTO medicalInstitutionDTO = new MedicalInstitutionDTO();
-		medicalInstitutionDTO.setName("");
-		medicalInstitutionDTO.setAddress("");
-		medicalInstitutionDTO.setHours("");
-		medicalInstitutionDTO.setWeb("");
+		final MedicalInstitutionDTO medicalInstitutionDTO = modifiedMedicalInstitutionDTO == null ? new MedicalInstitutionDTO()
+				: modifiedMedicalInstitutionDTO;
 		final BeanFieldGroup<MedicalInstitutionDTO> fieldGroup = new BeanFieldGroup<MedicalInstitutionDTO>(
 				MedicalInstitutionDTO.class);
 		fieldGroup.setItemDataSource(medicalInstitutionDTO);
@@ -72,7 +75,8 @@ public abstract class MedicalInstitutionCreateWindow extends GrassSubWindow {
 		winLayout.addComponent(separator, 0, 4);
 
 		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button("Založit",
+		winLayout.addComponent(saveBtn = new Button(
+				modifiedMedicalInstitutionDTO == null ? "Založit" : "Upravit",
 				new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;

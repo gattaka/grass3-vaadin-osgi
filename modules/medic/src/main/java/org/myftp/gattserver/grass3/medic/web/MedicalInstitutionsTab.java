@@ -8,8 +8,7 @@ import org.myftp.gattserver.grass3.ui.util.StringToPreviewConverter;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.data.util.BeanContainer;
-import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -19,14 +18,15 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public class MedicalInstitutionsTab extends VerticalLayout implements ISelectable{
+public class MedicalInstitutionsTab extends VerticalLayout implements
+		ISelectable {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
 	private IMedicFacade medicFacade;
 
 	final Table table = new Table();
-	private BeanContainer<Long, MedicalInstitutionDTO> container;
+	private BeanItemContainer<MedicalInstitutionDTO> container;
 
 	// BUG ? Při disable na tabu a opětovném enabled zůstane table disabled
 	@Override
@@ -35,9 +35,9 @@ public class MedicalInstitutionsTab extends VerticalLayout implements ISelectabl
 		table.setEnabled(enabled);
 	}
 
-	private void openCreateWindow() {
+	private void openCreateWindow(MedicalInstitutionDTO institution) {
 		Window win = new MedicalInstitutionCreateWindow(
-				MedicalInstitutionsTab.this) {
+				MedicalInstitutionsTab.this, institution) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -48,13 +48,8 @@ public class MedicalInstitutionsTab extends VerticalLayout implements ISelectabl
 		UI.getCurrent().addWindow(win);
 	}
 
-	private void openDeleteWindow() {
+	private void openDeleteWindow(final MedicalInstitutionDTO institution) {
 		MedicalInstitutionsTab.this.setEnabled(false);
-		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table
-				.getContainerDataSource();
-		BeanItem<?> item = cont.getItem(table.getValue());
-		final MedicalInstitutionDTO institution = (MedicalInstitutionDTO) item
-				.getBean();
 		UI.getCurrent().addWindow(
 				new ConfirmSubwindow("Opravdu smazat '" + institution.getName()
 						+ "' ?") {
@@ -93,18 +88,21 @@ public class MedicalInstitutionsTab extends VerticalLayout implements ISelectabl
 		setSpacing(true);
 		setMargin(true);
 
-		final Button newTypeBtn = new Button("Založit novou instituci");
+		final Button newInstitutionBtn = new Button("Založit novou instituci");
+		final Button modifyInstitutionBtn = new Button("Upravit instituci");
 		final Button deleteBtn = new Button("Smazat");
 		deleteBtn.setEnabled(false);
-		newTypeBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
+		modifyInstitutionBtn.setEnabled(false);
+		newInstitutionBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
+		modifyInstitutionBtn
+				.setIcon(new ThemeResource("img/tags/pencil_16.png"));
 		deleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
 
 		/**
 		 * Přehled
 		 */
-		container = new BeanContainer<Long, MedicalInstitutionDTO>(
+		container = new BeanItemContainer<MedicalInstitutionDTO>(
 				MedicalInstitutionDTO.class);
-		container.setBeanIdProperty("id");
 		populateContainer();
 		table.setContainerDataSource(container);
 
@@ -124,6 +122,7 @@ public class MedicalInstitutionsTab extends VerticalLayout implements ISelectabl
 			public void valueChange(ValueChangeEvent event) {
 				boolean enabled = table.getValue() != null;
 				deleteBtn.setEnabled(enabled);
+				modifyInstitutionBtn.setEnabled(enabled);
 			}
 		});
 
@@ -136,16 +135,31 @@ public class MedicalInstitutionsTab extends VerticalLayout implements ISelectabl
 		/**
 		 * Založení nové instituce
 		 */
-		newTypeBtn.addClickListener(new Button.ClickListener() {
+		newInstitutionBtn.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 6492892850247493645L;
 
 			public void buttonClick(ClickEvent event) {
-				openCreateWindow();
+				openCreateWindow(table.getValue() != null ? (MedicalInstitutionDTO) table
+						.getValue() : null);
 			}
 
 		});
-		buttonLayout.addComponent(newTypeBtn);
+		buttonLayout.addComponent(newInstitutionBtn);
+
+		/**
+		 * Úprava doktora
+		 */
+		modifyInstitutionBtn.addClickListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 6492892850247493645L;
+
+			public void buttonClick(ClickEvent event) {
+				openCreateWindow((MedicalInstitutionDTO) table.getValue());
+			}
+
+		});
+		buttonLayout.addComponent(modifyInstitutionBtn);
 
 		/**
 		 * Smazání instituce
@@ -156,7 +170,7 @@ public class MedicalInstitutionsTab extends VerticalLayout implements ISelectabl
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				openDeleteWindow();
+				openDeleteWindow((MedicalInstitutionDTO) table.getValue());
 			}
 		});
 		buttonLayout.addComponent(deleteBtn);

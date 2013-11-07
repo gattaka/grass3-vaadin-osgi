@@ -160,7 +160,7 @@ public class MedicalInstitutionsTab extends VerticalLayout implements
 
 		});
 		buttonLayout.addComponent(modifyInstitutionBtn);
-
+		
 		/**
 		 * Smazání instituce
 		 */

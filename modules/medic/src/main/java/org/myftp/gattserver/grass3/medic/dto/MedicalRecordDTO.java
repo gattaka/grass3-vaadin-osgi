@@ -35,7 +35,7 @@ public class MedicalRecordDTO {
 	 */
 	@NotNull
 	@Size(min = 1)
-	private String record;
+	private String record = "";
 
 	/**
 	 * Napsané léky

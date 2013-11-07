@@ -42,7 +42,7 @@ public abstract class MedicalInstitutionCreateWindow extends GrassSubWindow {
 		winLayout.setMargin(true);
 		winLayout.setSpacing(true);
 
-		winLayout.setWidth("300px");
+		winLayout.setWidth("500px");
 
 		final MedicalInstitutionDTO medicalInstitutionDTO = modifiedMedicalInstitutionDTO == null ? new MedicalInstitutionDTO()
 				: modifiedMedicalInstitutionDTO;
@@ -68,6 +68,7 @@ public abstract class MedicalInstitutionCreateWindow extends GrassSubWindow {
 		final TextArea hoursField = new TextArea("Otevírací hodiny");
 		winLayout.addComponent(hoursField, 0, 3, 1, 3);
 		hoursField.setWidth("100%");
+		hoursField.setHeight("200px");
 		fieldGroup.bind(hoursField, "hours");
 
 		Label separator = new Label("");

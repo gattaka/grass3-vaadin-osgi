@@ -13,7 +13,6 @@ import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -51,9 +50,10 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		toBePlannedTable.setEnabled(enabled);
 	}
 
-	private void openCreateWindow(final boolean planned) {
+	private void openCreateWindow(final boolean planned,
+			ScheduledVisitDTO scheduledVisitDTO) {
 		Window win = new ScheduledVisitsCreateWindow(ScheduledVisitsTab.this,
-				planned) {
+				planned, scheduledVisitDTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -64,8 +64,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		UI.getCurrent().addWindow(win);
 	}
 
-	private void openCompletedWindow(final ScheduledVisitDTO scheduledVisitDTO,
-			final boolean planned) {
+	private void openCompletedWindow(final ScheduledVisitDTO scheduledVisitDTO) {
 		Window win = new MedicalRecordCreateWindow(ScheduledVisitsTab.this,
 				scheduledVisitDTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
@@ -79,15 +78,15 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 							new ErrorSubwindow(
 									"Nezdařilo se smazat vybranou položku"));
 				}
-				populateContainer(planned);
+				populateContainer(true);
 			}
 		};
 		UI.getCurrent().addWindow(win);
 	}
 
-	private void openDeleteWindow(BeanItem<?> item, final boolean planned) {
+	private void openDeleteWindow(final ScheduledVisitDTO visit,
+			final boolean planned) {
 		ScheduledVisitsTab.this.setEnabled(false);
-		final ScheduledVisitDTO visit = (ScheduledVisitDTO) item.getBean();
 		UI.getCurrent().addWindow(
 				new ConfirmSubwindow("Opravdu smazat '" + visit.getPurpose()
 						+ "' ?") {
@@ -130,13 +129,16 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 	private void createPlannedTable() {
 
 		final Button newTypeBtn = new Button("Naplánovat návštěvu");
+		final Button modifyBtn = new Button("Upravit");
 		final Button deleteBtn = new Button("Smazat");
 		final Button completedBtn = new Button("Absolvováno");
 		deleteBtn.setEnabled(false);
 		completedBtn.setEnabled(false);
+		modifyBtn.setEnabled(false);
 		newTypeBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
 		deleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
 		completedBtn.setIcon(new ThemeResource("img/tags/right_16.png"));
+		modifyBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
 
 		/**
 		 * Přehled
@@ -196,6 +198,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 				boolean enabled = plannedTable.getValue() != null;
 				deleteBtn.setEnabled(enabled);
 				completedBtn.setEnabled(enabled);
+				modifyBtn.setEnabled(enabled);
 			}
 		});
 
@@ -213,7 +216,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 			private static final long serialVersionUID = 6492892850247493645L;
 
 			public void buttonClick(ClickEvent event) {
-				openCreateWindow(true);
+				openCreateWindow(true, null);
 			}
 
 		});
@@ -228,12 +231,26 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				openCompletedWindow(
-						(ScheduledVisitDTO) plannedTable.getValue(), true);
+				openCompletedWindow((ScheduledVisitDTO) plannedTable.getValue());
 			}
 		});
 		buttonLayout.addComponent(completedBtn);
 
+		/**
+		 * Úprava návštěvy
+		 */
+		modifyBtn.addClickListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 6492892850247493645L;
+
+			public void buttonClick(ClickEvent event) {
+				openCreateWindow(true,
+						(ScheduledVisitDTO) plannedTable.getValue());
+			}
+
+		});
+		buttonLayout.addComponent(modifyBtn);
+		
 		/**
 		 * Smazání návštěvy
 		 */
@@ -243,8 +260,8 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				openDeleteWindow(
-						plannedContainer.getItem(plannedTable.getValue()), true);
+				openDeleteWindow((ScheduledVisitDTO) plannedTable.getValue(),
+						true);
 			}
 		});
 		buttonLayout.addComponent(deleteBtn);
@@ -254,14 +271,17 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 
 	private void createToBePlannedTable() {
 
-		final Button newTypeBtn = new Button("Naplánovat objednání");
+		final Button newBtn = new Button("Naplánovat objednání");
 		final Button deleteBtn = new Button("Smazat");
+		final Button modifyBtn = new Button("Upravit");
 		final Button planBtn = new Button("Objednáno");
 		deleteBtn.setEnabled(false);
 		planBtn.setEnabled(false);
-		newTypeBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
+		modifyBtn.setEnabled(false);
+		newBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
 		deleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
 		planBtn.setIcon(new ThemeResource("img/tags/calendar_16.png"));
+		modifyBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
 
 		/**
 		 * Přehled
@@ -324,6 +344,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 				boolean enabled = toBePlannedTable.getValue() != null;
 				deleteBtn.setEnabled(enabled);
 				planBtn.setEnabled(enabled);
+				modifyBtn.setEnabled(enabled);
 			}
 		});
 
@@ -336,16 +357,16 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		/**
 		 * Naplánovat objednání
 		 */
-		newTypeBtn.addClickListener(new Button.ClickListener() {
+		newBtn.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 6492892850247493645L;
 
 			public void buttonClick(ClickEvent event) {
-				openCreateWindow(false);
+				openCreateWindow(false, null);
 			}
 
 		});
-		buttonLayout.addComponent(newTypeBtn);
+		buttonLayout.addComponent(newBtn);
 
 		/**
 		 * Objednat návštěvy
@@ -395,6 +416,21 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		buttonLayout.addComponent(planBtn);
 
 		/**
+		 * Úprava naplánování
+		 */
+		modifyBtn.addClickListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 6492892850247493645L;
+
+			public void buttonClick(ClickEvent event) {
+				openCreateWindow(false,
+						(ScheduledVisitDTO) toBePlannedTable.getValue());
+			}
+
+		});
+		buttonLayout.addComponent(modifyBtn);
+
+		/**
 		 * Smazání naplánování
 		 */
 		deleteBtn.addClickListener(new Button.ClickListener() {
@@ -403,8 +439,8 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				openDeleteWindow(toBePlannedContainer.getItem(toBePlannedTable
-						.getValue()), false);
+				openDeleteWindow(
+						(ScheduledVisitDTO) toBePlannedTable.getValue(), false);
 			}
 		});
 		buttonLayout.addComponent(deleteBtn);

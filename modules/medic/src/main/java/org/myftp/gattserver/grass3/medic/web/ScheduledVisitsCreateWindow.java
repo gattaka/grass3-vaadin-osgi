@@ -40,8 +40,10 @@ public abstract class ScheduledVisitsCreateWindow extends GrassSubWindow {
 
 	public ScheduledVisitsCreateWindow(final Component triggerComponent,
 			boolean planned, ScheduledVisitDTO visitDTO) {
-		super(planned ? "Založení nové plánované návštěvy"
-				: "Naplánování objednání");
+		super(planned ? (visitDTO == null ? "Založení nové plánované návštěvy"
+				: "Úprava plánované návštěvy")
+				: (visitDTO == null ? "Naplánování objednání"
+						: "Úprava naplánování objednání"));
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
 
@@ -52,11 +54,14 @@ public abstract class ScheduledVisitsCreateWindow extends GrassSubWindow {
 		winLayout.setMargin(true);
 		winLayout.setSpacing(true);
 
-		final ScheduledVisitDTO scheduledVisitDTO = new ScheduledVisitDTO();
-		scheduledVisitDTO.setPurpose("");
-		scheduledVisitDTO.setPlanned(planned);
-		scheduledVisitDTO.setState(planned ? ScheduledVisitState.PLANNED
-				: ScheduledVisitState.TO_BE_PLANNED);
+		final ScheduledVisitDTO scheduledVisitDTO = visitDTO == null ? new ScheduledVisitDTO()
+				: visitDTO;
+		if (visitDTO == null) {
+			scheduledVisitDTO.setPurpose("");
+			scheduledVisitDTO.setPlanned(planned);
+			scheduledVisitDTO.setState(planned ? ScheduledVisitState.PLANNED
+					: ScheduledVisitState.TO_BE_PLANNED);
+		}
 		final BeanFieldGroup<ScheduledVisitDTO> fieldGroup = new BeanFieldGroup<ScheduledVisitDTO>(
 				ScheduledVisitDTO.class);
 		fieldGroup.setItemDataSource(scheduledVisitDTO);
@@ -112,7 +117,8 @@ public abstract class ScheduledVisitsCreateWindow extends GrassSubWindow {
 		winLayout.addComponent(separator, 0, 4);
 
 		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button("Založit",
+		winLayout.addComponent(saveBtn = new Button(
+				visitDTO == null ? "Založit" : "Upravit",
 				new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;

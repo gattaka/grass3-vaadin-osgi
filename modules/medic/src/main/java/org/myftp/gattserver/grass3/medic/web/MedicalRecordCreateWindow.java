@@ -38,12 +38,22 @@ public abstract class MedicalRecordCreateWindow extends GrassSubWindow {
 	private IMedicFacade medicalFacade;
 
 	public MedicalRecordCreateWindow(final Component triggerComponent) {
-		this(triggerComponent, null);
+		this(triggerComponent, null, null);
 	}
 
 	public MedicalRecordCreateWindow(final Component triggerComponent,
 			ScheduledVisitDTO scheduledVisitDTO) {
-		super("Založení nového záznamu");
+		this(triggerComponent, scheduledVisitDTO, null);
+	}
+
+	public MedicalRecordCreateWindow(final Component triggerComponent,
+			MedicalRecordDTO recordDTO) {
+		this(triggerComponent, null, recordDTO);
+	}
+
+	private MedicalRecordCreateWindow(final Component triggerComponent,
+			ScheduledVisitDTO scheduledVisitDTO, MedicalRecordDTO recordDTO) {
+		super(recordDTO == null ? "Založení nového záznamu" : "Úprava záznamu");
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
 
@@ -55,8 +65,8 @@ public abstract class MedicalRecordCreateWindow extends GrassSubWindow {
 
 		winLayout.setWidth("400px");
 
-		final MedicalRecordDTO medicalRecordDTO = new MedicalRecordDTO();
-		medicalRecordDTO.setRecord("");
+		final MedicalRecordDTO medicalRecordDTO = recordDTO == null ? new MedicalRecordDTO()
+				: recordDTO;
 
 		if (scheduledVisitDTO != null) {
 			medicalRecordDTO.setDate(scheduledVisitDTO.getDate());
@@ -75,6 +85,7 @@ public abstract class MedicalRecordCreateWindow extends GrassSubWindow {
 		winLayout.addComponent(physicianComboBox, 0, 0, 1, 0);
 		physicianComboBox.setWidth("100%");
 		physicianComboBox.setNullSelectionAllowed(false);
+		physicianComboBox.setImmediate(true);
 		fieldGroup.bind(physicianComboBox, "physician");
 
 		final DateField dateField = new DateField("Datum návštěvy");
@@ -83,6 +94,7 @@ public abstract class MedicalRecordCreateWindow extends GrassSubWindow {
 		dateField.setResolution(Resolution.MINUTE);
 		winLayout.addComponent(dateField, 0, 1, 1, 1);
 		dateField.setWidth("100%");
+		dateField.setImmediate(true);
 		fieldGroup.bind(dateField, "date");
 
 		List<MedicalInstitutionDTO> institutions = medicalFacade
@@ -94,11 +106,13 @@ public abstract class MedicalRecordCreateWindow extends GrassSubWindow {
 		winLayout.addComponent(institutionComboBox, 0, 2, 1, 2);
 		institutionComboBox.setWidth("100%");
 		institutionComboBox.setNullSelectionAllowed(false);
+		institutionComboBox.setImmediate(true);
 		fieldGroup.bind(institutionComboBox, "institution");
 
 		final TextArea recordField = new TextArea("Záznam");
 		winLayout.addComponent(recordField, 0, 3, 1, 3);
 		recordField.setWidth("100%");
+		recordField.setImmediate(true);
 		fieldGroup.bind(recordField, "record");
 
 		BeanItemContainer<MedicamentDTO> medicamentsContainer = new BeanItemContainer<MedicamentDTO>(
@@ -119,7 +133,8 @@ public abstract class MedicalRecordCreateWindow extends GrassSubWindow {
 		winLayout.addComponent(separator, 0, 5);
 
 		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button("Založit",
+		winLayout.addComponent(saveBtn = new Button(
+				recordDTO == null ? "Založit" : "Upravit",
 				new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;
@@ -133,7 +148,7 @@ public abstract class MedicalRecordCreateWindow extends GrassSubWindow {
 								UI.getCurrent()
 										.addWindow(
 												new ErrorSubwindow(
-														"Nezdařilo se vytvořit nový záznam"));
+														"Nezdařilo se uložit nový záznam"));
 							} else {
 								onSuccess();
 							}

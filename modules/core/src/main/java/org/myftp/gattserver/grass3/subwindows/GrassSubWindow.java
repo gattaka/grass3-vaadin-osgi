@@ -11,8 +11,14 @@ public class GrassSubWindow extends Window {
 
 	private VerticalLayout layout = new VerticalLayout();
 
-	public GrassSubWindow(String name) {
+	protected Component[] triggerComponents;
+
+	public GrassSubWindow(String name, Component... triggerComponents) {
 		super(name);
+
+		this.triggerComponents = triggerComponents;
+		for (Component component : triggerComponents)
+			component.setEnabled(false);
 
 		setContent(layout);
 
@@ -31,7 +37,7 @@ public class GrassSubWindow extends Window {
 				focus();
 			}
 		});
-		
+
 		addCloseListener(new CloseListener() {
 			private static final long serialVersionUID = 3077228408502890498L;
 
@@ -43,6 +49,8 @@ public class GrassSubWindow extends Window {
 	}
 
 	protected void onClose(CloseEvent e) {
+		for (Component component : triggerComponents)
+			component.setEnabled(true);
 	};
 
 	protected void addComponent(Component component) {

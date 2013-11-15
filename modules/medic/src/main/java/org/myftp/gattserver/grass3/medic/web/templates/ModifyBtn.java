@@ -7,14 +7,14 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
-public abstract class DetailBtn<T> extends TableSelectedItemBtn<T> {
+public abstract class ModifyBtn<T> extends TableSelectedItemBtn<T> {
 
 	private static final long serialVersionUID = -5924239277930098183L;
 
-	public DetailBtn(String caption, final Table table,
+	public ModifyBtn(String caption, final Table table,
 			Component... triggerComponents) {
 		super(caption, table, triggerComponents);
-		setIcon(new ThemeResource("img/tags/info_16.png"));
+		setIcon(new ThemeResource("img/tags/pencil_16.png"));
 	}
 
 	@Override
@@ -26,13 +26,13 @@ public abstract class DetailBtn<T> extends TableSelectedItemBtn<T> {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				Window win = getDetailWindow(getSelectedValue(table),
+				Window win = getModifyWindow(getSelectedValue(table),
 						triggerComponents);
 				UI.getCurrent().addWindow(win);
 			}
 		};
 	}
 
-	protected abstract Window getDetailWindow(T selectedValue,
+	protected abstract Window getModifyWindow(T selectedValue,
 			Component... triggerComponents);
 }

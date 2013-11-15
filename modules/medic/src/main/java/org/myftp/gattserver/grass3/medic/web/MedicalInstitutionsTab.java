@@ -2,13 +2,11 @@ package org.myftp.gattserver.grass3.medic.web;
 
 import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
+import org.myftp.gattserver.grass3.medic.web.templates.DeleteBtn;
 import org.myftp.gattserver.grass3.medic.web.templates.DetailBtn;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
-import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
+import org.myftp.gattserver.grass3.medic.web.templates.ModifyBtn;
 import org.myftp.gattserver.grass3.ui.util.StringToPreviewConverter;
 
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Button;
@@ -50,34 +48,6 @@ public class MedicalInstitutionsTab extends VerticalLayout implements
 		UI.getCurrent().addWindow(win);
 	}
 
-	private void openDeleteWindow(final MedicalInstitutionDTO institution) {
-		MedicalInstitutionsTab.this.setEnabled(false);
-		UI.getCurrent().addWindow(
-				new ConfirmSubwindow("Opravdu smazat '" + institution.getName()
-						+ "' ?") {
-
-					private static final long serialVersionUID = -422763987707688597L;
-
-					@Override
-					protected void onConfirm(ClickEvent event) {
-						try {
-							medicFacade.deleteMedicalInstitution(institution);
-							populateContainer();
-						} catch (Exception e) {
-							UI.getCurrent()
-									.addWindow(
-											new ErrorSubwindow(
-													"Nezdařilo se smazat vybranou položku"));
-						}
-					}
-
-					@Override
-					protected void onClose(CloseEvent e) {
-						MedicalInstitutionsTab.this.setEnabled(true);
-					}
-				});
-	}
-
 	private void populateContainer() {
 		container.removeAllItems();
 		container.addAll(medicFacade.getAllMedicalInstitutions());
@@ -91,26 +61,52 @@ public class MedicalInstitutionsTab extends VerticalLayout implements
 		setMargin(true);
 
 		final Button detailBtn = new DetailBtn<MedicalInstitutionDTO>("Detail",
-				table) {
+				table, MedicalInstitutionsTab.this) {
 			private static final long serialVersionUID = -8949928545479455240L;
 
 			@Override
-			protected Window getDetailWindow(Component triggerComponent,
-					MedicalInstitutionDTO selectedValue) {
-				return new MedicalInstitutionDetailWindow(triggerComponent,
-						selectedValue.getId());
+			protected Window getDetailWindow(
+					MedicalInstitutionDTO selectedValue,
+					Component... triggerComponent) {
+				return new MedicalInstitutionDetailWindow(
+						selectedValue.getId(), triggerComponent);
+			}
+		};
+
+		final Button modifyInstitutionBtn = new ModifyBtn<MedicalInstitutionDTO>(
+				"Upravit instituci", table, MedicalInstitutionsTab.this) {
+			private static final long serialVersionUID = -8949928545479455240L;
+
+			@Override
+			protected Window getModifyWindow(
+					MedicalInstitutionDTO selectedValue,
+					Component... triggerComponent) {
+				return new MedicalInstitutionCreateWindow(
+						MedicalInstitutionsTab.this, selectedValue) {
+					private static final long serialVersionUID = -7566950396535469316L;
+
+					@Override
+					protected void onSuccess() {
+						populateContainer();
+					}
+				};
+			}
+		};
+
+		final Button deleteBtn = new DeleteBtn<MedicalInstitutionDTO>("Smazat",
+				table, MedicalInstitutionsTab.this) {
+
+			private static final long serialVersionUID = 1900185891293966049L;
+
+			@Override
+			protected void onConfirm(MedicalInstitutionDTO selectedValue) {
+				medicFacade.deleteMedicalInstitution(selectedValue);
+				populateContainer();
 			}
 		};
 
 		final Button newInstitutionBtn = new Button("Založit novou instituci");
-		final Button modifyInstitutionBtn = new Button("Upravit instituci");
-		final Button deleteBtn = new Button("Smazat");
-		deleteBtn.setEnabled(false);
-		modifyInstitutionBtn.setEnabled(false);
 		newInstitutionBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
-		modifyInstitutionBtn
-				.setIcon(new ThemeResource("img/tags/pencil_16.png"));
-		deleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
 
 		/**
 		 * Přehled
@@ -128,19 +124,6 @@ public class MedicalInstitutionsTab extends VerticalLayout implements
 		table.setImmediate(true);
 		table.setConverter("web", new StringToPreviewConverter(50));
 		table.setVisibleColumns(new String[] { "name", "address", "web" });
-		table.addValueChangeListener(new ValueChangeListener() {
-
-			private static final long serialVersionUID = -8943196289027284739L;
-
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				boolean enabled = table.getValue() != null;
-				deleteBtn.setEnabled(enabled);
-				detailBtn.setEnabled(enabled);
-				modifyInstitutionBtn.setEnabled(enabled);
-			}
-		});
-
 		addComponent(table);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
@@ -170,29 +153,11 @@ public class MedicalInstitutionsTab extends VerticalLayout implements
 		/**
 		 * Úprava doktora
 		 */
-		modifyInstitutionBtn.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 6492892850247493645L;
-
-			public void buttonClick(ClickEvent event) {
-				openCreateWindow((MedicalInstitutionDTO) table.getValue());
-			}
-
-		});
 		buttonLayout.addComponent(modifyInstitutionBtn);
 
 		/**
 		 * Smazání instituce
 		 */
-		deleteBtn.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 4983897852548880141L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				openDeleteWindow((MedicalInstitutionDTO) table.getValue());
-			}
-		});
 		buttonLayout.addComponent(deleteBtn);
 
 	}

@@ -17,8 +17,8 @@ public class MedicalInstitutionDetailWindow extends AbstractDetailSubWindow {
 
 	private IMedicFacade medicalFacade;
 
-	public MedicalInstitutionDetailWindow(final Component triggerComponent,
-			Long id) {
+	public MedicalInstitutionDetailWindow(Long id,
+			final Component... triggerComponent) {
 		super("Detail instituce", triggerComponent);
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);

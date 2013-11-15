@@ -1,18 +1,19 @@
 package org.myftp.gattserver.grass3.medic.web.templates;
 
+import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-public abstract class AbstractDetailSubWindow extends
-		AbstractTriggerComponentSubWindow {
+public abstract class AbstractDetailSubWindow extends GrassSubWindow {
 
 	private static final long serialVersionUID = -4989848867002620787L;
 
 	protected VerticalLayout layout;
 
-	public AbstractDetailSubWindow(String name, Component triggerComponent) {
+	public AbstractDetailSubWindow(String name, Component... triggerComponent) {
 		super(name, triggerComponent);
 
 		layout = new VerticalLayout();

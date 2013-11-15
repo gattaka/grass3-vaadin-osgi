@@ -3,7 +3,7 @@ package org.myftp.gattserver.grass3.medic.dto;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class PhysicianDTO {
+public class PhysicianDTO implements Identifiable{
 
 	private Long id;
 

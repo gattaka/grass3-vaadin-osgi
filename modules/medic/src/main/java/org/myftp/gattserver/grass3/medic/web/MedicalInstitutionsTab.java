@@ -2,6 +2,7 @@ package org.myftp.gattserver.grass3.medic.web;
 
 import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
+import org.myftp.gattserver.grass3.medic.web.templates.DetailBtn;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.ui.util.StringToPreviewConverter;
@@ -12,6 +13,7 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
@@ -88,6 +90,18 @@ public class MedicalInstitutionsTab extends VerticalLayout implements
 		setSpacing(true);
 		setMargin(true);
 
+		final Button detailBtn = new DetailBtn<MedicalInstitutionDTO>("Detail",
+				table) {
+			private static final long serialVersionUID = -8949928545479455240L;
+
+			@Override
+			protected Window getDetailWindow(Component triggerComponent,
+					MedicalInstitutionDTO selectedValue) {
+				return new MedicalInstitutionDetailWindow(triggerComponent,
+						selectedValue.getId());
+			}
+		};
+
 		final Button newInstitutionBtn = new Button("Založit novou instituci");
 		final Button modifyInstitutionBtn = new Button("Upravit instituci");
 		final Button deleteBtn = new Button("Smazat");
@@ -122,6 +136,7 @@ public class MedicalInstitutionsTab extends VerticalLayout implements
 			public void valueChange(ValueChangeEvent event) {
 				boolean enabled = table.getValue() != null;
 				deleteBtn.setEnabled(enabled);
+				detailBtn.setEnabled(enabled);
 				modifyInstitutionBtn.setEnabled(enabled);
 			}
 		});
@@ -148,6 +163,11 @@ public class MedicalInstitutionsTab extends VerticalLayout implements
 		buttonLayout.addComponent(newInstitutionBtn);
 
 		/**
+		 * Detail instituce
+		 */
+		buttonLayout.addComponent(detailBtn);
+
+		/**
 		 * Úprava doktora
 		 */
 		modifyInstitutionBtn.addClickListener(new Button.ClickListener() {
@@ -160,7 +180,7 @@ public class MedicalInstitutionsTab extends VerticalLayout implements
 
 		});
 		buttonLayout.addComponent(modifyInstitutionBtn);
-		
+
 		/**
 		 * Smazání instituce
 		 */

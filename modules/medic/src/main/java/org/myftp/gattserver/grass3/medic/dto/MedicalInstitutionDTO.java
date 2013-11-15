@@ -3,7 +3,7 @@ package org.myftp.gattserver.grass3.medic.dto;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class MedicalInstitutionDTO {
+public class MedicalInstitutionDTO implements Identifiable {
 
 	private Long id;
 
@@ -82,17 +82,17 @@ public class MedicalInstitutionDTO {
 	public boolean equals(Object obj) {
 		if (obj instanceof MedicalInstitutionDTO) {
 			MedicalInstitutionDTO dto = (MedicalInstitutionDTO) obj;
-			if (dto.getName() == null)
-				return name == null;
+			if (dto.getId() == null)
+				return id == null;
 			else
-				return dto.getName().equals(name);
+				return dto.getId().equals(id);
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return name.hashCode();
+		return id.hashCode();
 	}
 
 }

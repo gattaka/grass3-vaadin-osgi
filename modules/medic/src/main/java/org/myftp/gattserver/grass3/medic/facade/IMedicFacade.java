@@ -11,14 +11,14 @@ import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 
 public interface IMedicFacade {
 
-	// Instituce
+	// Doktoři
 
 	void deletePhysician(PhysicianDTO dto);
 
 	Set<PhysicianDTO> getAllPhysicians();
 
 	boolean savePhysician(PhysicianDTO dto);
-
+	
 	// Instituce
 
 	void deleteMedicalInstitution(MedicalInstitutionDTO dto);
@@ -26,6 +26,8 @@ public interface IMedicFacade {
 	List<MedicalInstitutionDTO> getAllMedicalInstitutions();
 
 	boolean saveMedicalInstitution(MedicalInstitutionDTO dto);
+	
+	MedicalInstitutionDTO getMedicalInstitutionById(Long id);
 
 	// Návštěvy
 
@@ -34,6 +36,9 @@ public interface IMedicFacade {
 	List<ScheduledVisitDTO> getAllScheduledVisits(boolean planned);
 
 	boolean saveScheduledVisit(ScheduledVisitDTO dto);
+
+	ScheduledVisitDTO createPlannedScheduledVisitFromToBePlanned(
+			ScheduledVisitDTO dto);
 
 	// Záznamy
 

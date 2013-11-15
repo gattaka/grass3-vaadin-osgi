@@ -72,6 +72,12 @@ public class MedicFacade implements IMedicFacade {
 		return institutionRepository.save(institution) != null;
 	}
 
+	@Override
+	public MedicalInstitutionDTO getMedicalInstitutionById(Long id) {
+		return medicMapper.mapMedicalInstitution(institutionRepository
+				.findOne(id));
+	}
+
 	// Návštěvy
 
 	@Override
@@ -86,12 +92,24 @@ public class MedicFacade implements IMedicFacade {
 	}
 
 	@Override
+	public ScheduledVisitDTO createPlannedScheduledVisitFromToBePlanned(
+			ScheduledVisitDTO dto) {
+		ScheduledVisitDTO newDTO = new ScheduledVisitDTO();
+		newDTO.setInstitution(dto.getInstitution());
+		newDTO.setState(ScheduledVisitState.PLANNED);
+		newDTO.setPurpose(dto.getPurpose());
+		newDTO.setRecord(dto.getRecord());
+		return newDTO;
+	}
+
+	@Override
 	public boolean saveScheduledVisit(ScheduledVisitDTO dto) {
 		ScheduledVisit visit = new ScheduledVisit();
 		visit.setId(dto.getId());
 		visit.setDate(dto.getDate());
 		visit.setPeriod(dto.getPeriod());
 		visit.setPurpose(dto.getPurpose());
+		visit.setPlanned(dto.isPlanned());
 
 		// pouze pokud jde o save nikoliv o update
 		if (visit.getId() == null) {

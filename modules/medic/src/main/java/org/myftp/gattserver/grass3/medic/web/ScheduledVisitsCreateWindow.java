@@ -33,17 +33,59 @@ public abstract class ScheduledVisitsCreateWindow extends GrassSubWindow {
 
 	private IMedicFacade medicalFacade;
 
-	public ScheduledVisitsCreateWindow(final Component triggerComponent,
-			boolean planned) {
-		this(triggerComponent, planned, null);
+	private static final String PLANNED_CREATION_TITLE = "Založení nové plánované návštěvy";
+	private static final String TO_BE_PLANNED_CREATION_TITLE = "Naplánování objednání";
+	private static final String PLANNED_EDIT_TITLE = "Úprava plánované návštěvy";
+	private static final String TO_BE_PLANNED_EDIT_TITLE = "Úprava naplánování objednání";
+	private static final String CREATE_BTN_CAPTION = "Založit";
+	private static final String EDIT_BTN_CAPTION = "Upravit";
+
+	enum Operation {
+		TO_BE_PLANNED, PLANNED, PLANNED_FROM_TO_BE_PLANNED
 	}
 
 	public ScheduledVisitsCreateWindow(final Component triggerComponent,
-			boolean planned, ScheduledVisitDTO visitDTO) {
-		super(planned ? (visitDTO == null ? "Založení nové plánované návštěvy"
-				: "Úprava plánované návštěvy")
-				: (visitDTO == null ? "Naplánování objednání"
-						: "Úprava naplánování objednání"));
+			Operation operation) {
+		this(triggerComponent, operation, null);
+	}
+
+	private static String getTitleByOperation(Operation operation,
+			ScheduledVisitDTO visitDTO) {
+		switch (operation) {
+		case PLANNED:
+			return visitDTO == null ? PLANNED_CREATION_TITLE
+					: PLANNED_EDIT_TITLE;
+		case PLANNED_FROM_TO_BE_PLANNED:
+			return PLANNED_CREATION_TITLE;
+		case TO_BE_PLANNED:
+			return visitDTO == null ? TO_BE_PLANNED_CREATION_TITLE
+					: TO_BE_PLANNED_EDIT_TITLE;
+		default:
+			// assert !
+			return null;
+		}
+	}
+
+	private static String getSubmitBtnCaptionByOperation(Operation operation,
+			ScheduledVisitDTO visitDTO) {
+		switch (operation) {
+		case PLANNED:
+		case TO_BE_PLANNED:
+			return visitDTO == null ? CREATE_BTN_CAPTION : EDIT_BTN_CAPTION;
+		case PLANNED_FROM_TO_BE_PLANNED:
+			return CREATE_BTN_CAPTION;
+		default:
+			// assert !
+			return null;
+		}
+	}
+
+	public ScheduledVisitsCreateWindow(final Component triggerComponent,
+			Operation operation, ScheduledVisitDTO visitDTO) {
+		super(getTitleByOperation(operation, visitDTO));
+
+		boolean planned = operation.equals(Operation.PLANNED)
+				|| operation.equals(Operation.PLANNED_FROM_TO_BE_PLANNED);
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
 
@@ -62,6 +104,7 @@ public abstract class ScheduledVisitsCreateWindow extends GrassSubWindow {
 			scheduledVisitDTO.setState(planned ? ScheduledVisitState.PLANNED
 					: ScheduledVisitState.TO_BE_PLANNED);
 		}
+
 		final BeanFieldGroup<ScheduledVisitDTO> fieldGroup = new BeanFieldGroup<ScheduledVisitDTO>(
 				ScheduledVisitDTO.class);
 		fieldGroup.setItemDataSource(scheduledVisitDTO);
@@ -118,7 +161,7 @@ public abstract class ScheduledVisitsCreateWindow extends GrassSubWindow {
 
 		Button saveBtn;
 		winLayout.addComponent(saveBtn = new Button(
-				visitDTO == null ? "Založit" : "Upravit",
+				getSubmitBtnCaptionByOperation(operation, visitDTO),
 				new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;

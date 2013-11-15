@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class ScheduledVisitDTO {
+public class ScheduledVisitDTO implements Identifiable{
 
 	private Long id;
 
@@ -110,6 +110,23 @@ public class ScheduledVisitDTO {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ScheduledVisitDTO) {
+			ScheduledVisitDTO dto = (ScheduledVisitDTO) obj;
+			if (dto.getId() == null)
+				return id == null;
+			else
+				return dto.getId().equals(id);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return id == null ? 0 : id.hashCode();
 	}
 
 }

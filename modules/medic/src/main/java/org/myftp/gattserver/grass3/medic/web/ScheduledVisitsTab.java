@@ -8,6 +8,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitState;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
+import org.myftp.gattserver.grass3.medic.web.ScheduledVisitsCreateWindow.Operation;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 
@@ -53,7 +54,8 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 	private void openCreateWindow(final boolean planned,
 			ScheduledVisitDTO scheduledVisitDTO) {
 		Window win = new ScheduledVisitsCreateWindow(ScheduledVisitsTab.this,
-				planned, scheduledVisitDTO) {
+				planned ? Operation.PLANNED : Operation.TO_BE_PLANNED,
+				scheduledVisitDTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -250,7 +252,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 
 		});
 		buttonLayout.addComponent(modifyBtn);
-		
+
 		/**
 		 * Smazání návštěvy
 		 */
@@ -379,13 +381,16 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 			public void buttonClick(ClickEvent event) {
 				final ScheduledVisitDTO toBePlannedVisitDTO = (ScheduledVisitDTO) toBePlannedTable
 						.getValue();
+
+				ScheduledVisitDTO newDto = medicFacade
+						.createPlannedScheduledVisitFromToBePlanned(toBePlannedVisitDTO);
 				Window win = new ScheduledVisitsCreateWindow(
-						ScheduledVisitsTab.this, true, toBePlannedVisitDTO) {
+						ScheduledVisitsTab.this,
+						Operation.PLANNED_FROM_TO_BE_PLANNED, newDto) {
 					private static final long serialVersionUID = -7566950396535469316L;
 
 					@Override
 					protected void onSuccess() {
-						populateContainer(true);
 
 						if (toBePlannedVisitDTO.getPeriod() > 0) {
 							// posuň plánování a ulož úpravu
@@ -394,6 +399,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 							calendar.add(Calendar.MONTH,
 									toBePlannedVisitDTO.getPeriod());
 							toBePlannedVisitDTO.setDate(calendar.getTime());
+
 							if (medicFacade
 									.saveScheduledVisit(toBePlannedVisitDTO) == false) {
 								Notification
@@ -407,6 +413,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 									.deleteScheduledVisit(toBePlannedVisitDTO);
 						}
 
+						populateContainer(true);
 						populateContainer(false);
 					}
 				};

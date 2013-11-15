@@ -8,7 +8,7 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class MedicalRecordDTO {
+public class MedicalRecordDTO implements Identifiable{
 
 	private Long id;
 
@@ -94,6 +94,23 @@ public class MedicalRecordDTO {
 	public String toString() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 		return dateFormat.format(date) + " " + physician.getName();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof MedicalRecordDTO) {
+			MedicalRecordDTO dto = (MedicalRecordDTO) obj;
+			if (dto.getId() == null)
+				return id == null;
+			else
+				return dto.getId().equals(id);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
 	}
 
 }

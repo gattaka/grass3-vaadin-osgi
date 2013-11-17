@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3.medic.web.templates;
+package org.myftp.gattserver.grass3.template;
 
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 

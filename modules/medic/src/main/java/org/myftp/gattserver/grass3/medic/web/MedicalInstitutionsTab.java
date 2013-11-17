@@ -3,23 +3,15 @@ package org.myftp.gattserver.grass3.medic.web;
 import java.util.Collection;
 
 import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
-import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
-import org.myftp.gattserver.grass3.medic.web.templates.TableOperationsTab;
 import org.myftp.gattserver.grass3.ui.util.StringToPreviewConverter;
-import org.myftp.gattserver.grass3.util.SpringInjector;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
 
-public class MedicalInstitutionsTab extends
-		TableOperationsTab<MedicalInstitutionDTO> {
+public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionDTO> {
 
 	private static final long serialVersionUID = -5013459007975657195L;
-
-	@Autowired
-	private IMedicFacade medicFacade;
 
 	@Override
 	protected Collection<MedicalInstitutionDTO> getTableItems() {
@@ -59,12 +51,6 @@ public class MedicalInstitutionsTab extends
 	@Override
 	protected void deleteEntity(MedicalInstitutionDTO dto) {
 		medicFacade.deleteMedicalInstitution(dto);
-	}
-
-	@Override
-	protected void init() {
-		medicFacade = SpringInjector.getContext().getBean(IMedicFacade.class);
-		super.init();
 	}
 
 	public MedicalInstitutionsTab() {

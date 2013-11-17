@@ -3,7 +3,7 @@ package org.myftp.gattserver.grass3.medic.web;
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
-import org.myftp.gattserver.grass3.medic.web.templates.AbstractDetailSubWindow;
+import org.myftp.gattserver.grass3.template.AbstractDetailSubWindow;
 
 import com.vaadin.server.ExternalResource;
 import com.vaadin.shared.ui.label.ContentMode;

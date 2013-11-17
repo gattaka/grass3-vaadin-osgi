@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3.medic.web.templates;
+package org.myftp.gattserver.grass3.template;
 
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Button;

@@ -8,6 +8,8 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.myftp.gattserver.grass3.model.dto.Identifiable;
+
 public class MedicalRecordDTO implements Identifiable{
 
 	private Long id;

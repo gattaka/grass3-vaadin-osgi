@@ -1,15 +1,19 @@
 package org.myftp.gattserver.grass3.medic.web;
 
-import org.myftp.gattserver.grass3.SpringContextHelper;
-import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
-import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
-import org.myftp.gattserver.grass3.medic.web.templates.AbstractDetailSubWindow;
+import java.text.SimpleDateFormat;
 
-import com.vaadin.server.ExternalResource;
+import org.myftp.gattserver.grass3.SpringContextHelper;
+import org.myftp.gattserver.grass3.medic.dto.MedicalRecordDTO;
+import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
+import org.myftp.gattserver.grass3.template.AbstractDetailSubWindow;
+
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Link;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.themes.BaseTheme;
 
 public class MedicalRecordDetailWindow extends AbstractDetailSubWindow {
 
@@ -17,26 +21,39 @@ public class MedicalRecordDetailWindow extends AbstractDetailSubWindow {
 
 	private IMedicFacade medicalFacade;
 
-	public MedicalRecordDetailWindow(final Component triggerComponent,
-			Long id) {
-		super("Detail instituce", triggerComponent);
+	public MedicalRecordDetailWindow(Long id,
+			final Component... triggerComponent) {
+		super("Detail záznamu", triggerComponent);
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
 
-		final MedicalInstitutionDTO medicalInstitutionDTO = medicalFacade
-				.getMedicalInstitutionById(id);
+		final MedicalRecordDTO medicalRecordDTO = medicalFacade
+				.getMedicalRecordById(id);
 
-		addDetailLine("Název", medicalInstitutionDTO.getName());
+		SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"d. MMMMM yyyy, H:mm");
+		addDetailLine("Datum", dateFormat.format(medicalRecordDTO.getDate()));
 
-		Link link = new Link(medicalInstitutionDTO.getWeb(),
-				new ExternalResource(medicalInstitutionDTO.getWeb()));
-		link.setTargetName("_blank");
-		addDetailLine("Web", link);
+		final Button button = new Button(medicalRecordDTO.getInstitution()
+				.getName());
+		button.addClickListener(new Button.ClickListener() {
+			private static final long serialVersionUID = 4609212946079293192L;
 
-		addDetailLine("Adresa", medicalInstitutionDTO.getAddress());
+			@Override
+			public void buttonClick(ClickEvent event) {
+				UI.getCurrent().addWindow(
+						new MedicalInstitutionDetailWindow(medicalRecordDTO
+								.getInstitution().getId(), button));
+			}
+		});
+		button.setStyleName(BaseTheme.BUTTON_LINK);
+		addDetailLine("Instituce", button);
+
+		addDetailLine("Ošetřující lékař", medicalRecordDTO.getPhysician()
+				.getName());
 
 		Label label;
-		label = addDetailLine("Hodiny", medicalInstitutionDTO.getHours());
+		label = addDetailLine("Záznam", medicalRecordDTO.getRecord());
 		label.setContentMode(ContentMode.PREFORMATTED);
 
 		setContent(layout);

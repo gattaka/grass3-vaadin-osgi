@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3.medic.web.templates;
+package org.myftp.gattserver.grass3.template;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;

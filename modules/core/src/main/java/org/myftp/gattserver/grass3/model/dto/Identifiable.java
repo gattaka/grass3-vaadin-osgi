@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3.medic.dto;
+package org.myftp.gattserver.grass3.model.dto;
 
 public interface Identifiable {
 

@@ -1,9 +1,8 @@
-package org.myftp.gattserver.grass3.medic.web.templates;
+package org.myftp.gattserver.grass3.template;
 
 import java.util.Collection;
 
-import org.myftp.gattserver.grass3.medic.dto.Identifiable;
-import org.myftp.gattserver.grass3.medic.web.ISelectable;
+import org.myftp.gattserver.grass3.model.dto.Identifiable;
 
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Button;
@@ -27,8 +26,8 @@ public abstract class TableOperationsTab<T extends Identifiable> extends
 
 	private static final long serialVersionUID = 6844434642906509277L;
 
-	private final Table table = new Table();
-	private BeanItemContainer<T> container;
+	protected final Table table = new Table();
+	protected BeanItemContainer<T> container;
 
 	/**
 	 * Získá entity pro tabulku

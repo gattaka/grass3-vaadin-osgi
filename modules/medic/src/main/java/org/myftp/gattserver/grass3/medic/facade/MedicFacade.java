@@ -31,13 +31,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class MedicFacade implements IMedicFacade {
 
 	@Autowired
-	private MedicalInstitutionRepository institutionRepository;
+	private MedicalInstitutionRepository medicalInstitutionRepository;
 
 	@Autowired
 	private ScheduledVisitRepository scheduledVisitRepository;
 
 	@Autowired
-	private MedicalRecordRepository recordRepository;
+	private MedicalRecordRepository medicalRecordRepository;
 
 	@Autowired
 	private MedicamentRepository medicamentRepository;
@@ -52,12 +52,12 @@ public class MedicFacade implements IMedicFacade {
 
 	@Override
 	public void deleteMedicalInstitution(MedicalInstitutionDTO institution) {
-		institutionRepository.delete(institution.getId());
+		medicalInstitutionRepository.delete(institution.getId());
 	}
 
 	@Override
 	public List<MedicalInstitutionDTO> getAllMedicalInstitutions() {
-		return medicMapper.mapMedicalInstitutions(institutionRepository
+		return medicMapper.mapMedicalInstitutions(medicalInstitutionRepository
 				.findAll());
 	}
 
@@ -69,12 +69,12 @@ public class MedicFacade implements IMedicFacade {
 		institution.setHours(dto.getHours());
 		institution.setName(dto.getName());
 		institution.setWeb(dto.getWeb());
-		return institutionRepository.save(institution) != null;
+		return medicalInstitutionRepository.save(institution) != null;
 	}
 
 	@Override
 	public MedicalInstitutionDTO getMedicalInstitutionById(Long id) {
-		return medicMapper.mapMedicalInstitution(institutionRepository
+		return medicMapper.mapMedicalInstitution(medicalInstitutionRepository
 				.findOne(id));
 	}
 
@@ -118,15 +118,22 @@ public class MedicFacade implements IMedicFacade {
 		}
 
 		if (dto.getRecord() != null) {
-			visit.setRecord(recordRepository.findOne(dto.getRecord().getId()));
+			visit.setRecord(medicalRecordRepository.findOne(dto.getRecord()
+					.getId()));
 		}
 
 		if (dto.getInstitution() != null) {
-			visit.setInstitution(institutionRepository.findOne(dto
+			visit.setInstitution(medicalInstitutionRepository.findOne(dto
 					.getInstitution().getId()));
 		}
 
 		return scheduledVisitRepository.save(visit) != null;
+	}
+
+	@Override
+	public ScheduledVisitDTO getScheduledVisitById(Long id) {
+		return medicMapper.mapScheduledVisit(scheduledVisitRepository
+				.findOne(id));
 	}
 
 	// Záznamy
@@ -138,7 +145,7 @@ public class MedicFacade implements IMedicFacade {
 
 	@Override
 	public List<MedicalRecordDTO> getAllMedicalRecords() {
-		return medicMapper.mapMedicalRecords(recordRepository.findAll());
+		return medicMapper.mapMedicalRecords(medicalRecordRepository.findAll());
 	}
 
 	@Override
@@ -154,7 +161,7 @@ public class MedicFacade implements IMedicFacade {
 		}
 
 		if (dto.getInstitution() != null) {
-			record.setInstitution(institutionRepository.findOne(dto
+			record.setInstitution(medicalInstitutionRepository.findOne(dto
 					.getInstitution().getId()));
 		}
 
@@ -165,7 +172,13 @@ public class MedicFacade implements IMedicFacade {
 		}
 		record.setMedicaments(medicaments);
 
-		return recordRepository.save(record) != null;
+		return medicalRecordRepository.save(record) != null;
+	}
+
+	@Override
+	public MedicalRecordDTO getMedicalRecordById(Long id) {
+		return medicMapper
+				.mapMedicalRecord(medicalRecordRepository.findOne(id));
 	}
 
 	// Medikamenty
@@ -189,6 +202,11 @@ public class MedicFacade implements IMedicFacade {
 		return medicamentRepository.save(medicament) != null;
 	}
 
+	@Override
+	public MedicamentDTO getMedicamentById(Long id) {
+		return medicMapper.mapMedicament(medicamentRepository.findOne(id));
+	}
+
 	// Doktoři
 
 	@Override
@@ -207,5 +225,10 @@ public class MedicFacade implements IMedicFacade {
 		physician.setId(dto.getId());
 		physician.setName(dto.getName());
 		return physicianRepository.save(physician) != null;
+	}
+
+	@Override
+	public PhysicianDTO getPhysicianById(Long id) {
+		return medicMapper.mapPhysician(physicianRepository.findOne(id));
 	}
 }

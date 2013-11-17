@@ -18,7 +18,9 @@ public interface IMedicFacade {
 	Set<PhysicianDTO> getAllPhysicians();
 
 	boolean savePhysician(PhysicianDTO dto);
-	
+
+	PhysicianDTO getPhysicianById(Long id);
+
 	// Instituce
 
 	void deleteMedicalInstitution(MedicalInstitutionDTO dto);
@@ -26,7 +28,7 @@ public interface IMedicFacade {
 	List<MedicalInstitutionDTO> getAllMedicalInstitutions();
 
 	boolean saveMedicalInstitution(MedicalInstitutionDTO dto);
-	
+
 	MedicalInstitutionDTO getMedicalInstitutionById(Long id);
 
 	// Návštěvy
@@ -40,6 +42,8 @@ public interface IMedicFacade {
 	ScheduledVisitDTO createPlannedScheduledVisitFromToBePlanned(
 			ScheduledVisitDTO dto);
 
+	ScheduledVisitDTO getScheduledVisitById(Long id);
+
 	// Záznamy
 
 	void deleteMedicalRecord(MedicalRecordDTO dto);
@@ -48,6 +52,8 @@ public interface IMedicFacade {
 
 	boolean saveMedicalRecord(MedicalRecordDTO dto);
 
+	MedicalRecordDTO getMedicalRecordById(Long id);
+
 	// Medikamenty
 
 	void deleteMedicament(MedicamentDTO dto);
@@ -55,5 +61,7 @@ public interface IMedicFacade {
 	Set<MedicamentDTO> getAllMedicaments();
 
 	boolean saveMedicament(MedicamentDTO dto);
+
+	MedicamentDTO getMedicamentById(Long id);
 
 }

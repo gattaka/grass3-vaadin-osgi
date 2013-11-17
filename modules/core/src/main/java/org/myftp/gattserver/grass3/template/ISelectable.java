@@ -1,4 +1,4 @@
-package org.myftp.gattserver.grass3.medic.web;
+package org.myftp.gattserver.grass3.template;
 
 public interface ISelectable {
 

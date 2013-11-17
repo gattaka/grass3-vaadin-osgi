@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.myftp.gattserver.grass3.model.dto.Identifiable;
+
 public class ScheduledVisitDTO implements Identifiable{
 
 	private Long id;

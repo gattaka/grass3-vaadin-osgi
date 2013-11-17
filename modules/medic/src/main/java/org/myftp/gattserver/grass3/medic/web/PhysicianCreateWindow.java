@@ -24,18 +24,16 @@ public abstract class PhysicianCreateWindow extends GrassSubWindow {
 
 	private IMedicFacade medicalFacade;
 
-	public PhysicianCreateWindow(final Component triggerComponent) {
-		this(triggerComponent, null);
+	public PhysicianCreateWindow(final Component... triggerComponent) {
+		this(null, triggerComponent);
 	}
 
-	public PhysicianCreateWindow(final Component triggerComponent,
-			PhysicianDTO modifiedPhysicianDTO) {
+	public PhysicianCreateWindow(PhysicianDTO modifiedPhysicianDTO,
+			final Component... triggerComponent) {
 		super(modifiedPhysicianDTO == null ? "Přidání doktora"
-				: "Úprava doktora");
+				: "Úprava doktora", triggerComponent);
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
-
-		triggerComponent.setEnabled(false);
 
 		GridLayout winLayout = new GridLayout(2, 3);
 		winLayout.setMargin(true);
@@ -52,6 +50,7 @@ public abstract class PhysicianCreateWindow extends GrassSubWindow {
 		final TextField nameField = new TextField("Jméno");
 		winLayout.addComponent(nameField, 0, 0, 1, 0);
 		nameField.setWidth("100%");
+		nameField.setImmediate(true);
 		fieldGroup.bind(nameField, "name");
 
 		Label separator = new Label("");
@@ -59,7 +58,8 @@ public abstract class PhysicianCreateWindow extends GrassSubWindow {
 		winLayout.addComponent(separator, 0, 1);
 
 		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button(modifiedPhysicianDTO == null ? "Přidat" : "Upravit",
+		winLayout.addComponent(saveBtn = new Button(
+				modifiedPhysicianDTO == null ? "Přidat" : "Upravit",
 				new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;
@@ -87,18 +87,6 @@ public abstract class PhysicianCreateWindow extends GrassSubWindow {
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
 
 		setContent(winLayout);
-
-		addCloseListener(new CloseListener() {
-
-			private static final long serialVersionUID = 1435044338717794371L;
-
-			@Override
-			public void windowClose(CloseEvent e) {
-				triggerComponent.setEnabled(true);
-			}
-
-		});
-
 	}
 
 	protected abstract void onSuccess();

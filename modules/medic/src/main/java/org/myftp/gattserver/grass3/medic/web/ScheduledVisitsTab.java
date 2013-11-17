@@ -5,14 +5,15 @@ import java.util.Calendar;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitState;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
 import org.myftp.gattserver.grass3.medic.web.ScheduledVisitsCreateWindow.Operation;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
+import org.myftp.gattserver.grass3.template.DetailBtn;
 import org.myftp.gattserver.grass3.template.ISelectable;
-import org.springframework.context.annotation.Scope;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -20,6 +21,7 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -31,8 +33,6 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 
-@org.springframework.stereotype.Component()
-@Scope("prototype")
 public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 
 	private static final long serialVersionUID = -5013459007975657195L;
@@ -146,6 +146,18 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		completedBtn.setIcon(new ThemeResource("img/tags/right_16.png"));
 		modifyBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
 
+		final Button detailBtn = new DetailBtn<ScheduledVisitDTO>("Detail",
+				plannedTable, ScheduledVisitsTab.this) {
+			private static final long serialVersionUID = -8815751115945625539L;
+
+			@Override
+			protected Window getDetailWindow(ScheduledVisitDTO selectedValue,
+					Component... triggerComponents) {
+				return new SchuduledVisitDetailWindow(selectedValue.getId(),
+						triggerComponents);
+			}
+		};
+
 		/**
 		 * Přehled
 		 */
@@ -229,6 +241,11 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		buttonLayout.addComponent(newTypeBtn);
 
 		/**
+		 * Detail
+		 */
+		buttonLayout.addComponent(detailBtn);
+
+		/**
 		 * Absolvování návštěvy
 		 */
 		completedBtn.addClickListener(new Button.ClickListener() {
@@ -288,6 +305,18 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		deleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
 		planBtn.setIcon(new ThemeResource("img/tags/calendar_16.png"));
 		modifyBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
+
+		final Button detailBtn = new DetailBtn<ScheduledVisitDTO>("Detail",
+				toBePlannedTable, ScheduledVisitsTab.this) {
+			private static final long serialVersionUID = -8815751115945625539L;
+
+			@Override
+			protected Window getDetailWindow(ScheduledVisitDTO selectedValue,
+					Component... triggerComponents) {
+				return new SchuduledVisitDetailWindow(selectedValue.getId(),
+						triggerComponents);
+			}
+		};
 
 		/**
 		 * Přehled
@@ -375,6 +404,11 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		buttonLayout.addComponent(newBtn);
 
 		/**
+		 * Detail
+		 */
+		buttonLayout.addComponent(detailBtn);
+
+		/**
 		 * Objednat návštěvy
 		 */
 		planBtn.addClickListener(new Button.ClickListener() {
@@ -460,9 +494,9 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 
 	}
 
-	public ScheduledVisitsTab(final IMedicFacade medicFacade) {
+	public ScheduledVisitsTab() {
 
-		this.medicFacade = medicFacade;
+		medicFacade = SpringContextHelper.getBean(IMedicFacade.class);
 
 		setSpacing(true);
 		setMargin(true);

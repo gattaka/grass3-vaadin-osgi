@@ -25,18 +25,16 @@ public abstract class MedicamentCreateWindow extends GrassSubWindow {
 
 	private IMedicFacade medicalFacade;
 
-	public MedicamentCreateWindow(final Component triggerComponent) {
-		this(triggerComponent, null);
+	public MedicamentCreateWindow(final Component... triggerComponent) {
+		this(null, triggerComponent);
 	}
 
-	public MedicamentCreateWindow(final Component triggerComponent,
-			MedicamentDTO modifiedMedicamentDTO) {
+	public MedicamentCreateWindow(MedicamentDTO modifiedMedicamentDTO,
+			final Component... triggerComponent) {
 		super(modifiedMedicamentDTO == null ? "Založení nového medikamentu"
-				: "Úprava medikamentu");
+				: "Úprava medikamentu", triggerComponent);
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
-
-		triggerComponent.setEnabled(false);
 
 		GridLayout winLayout = new GridLayout(2, 4);
 		winLayout.setMargin(true);
@@ -94,17 +92,6 @@ public abstract class MedicamentCreateWindow extends GrassSubWindow {
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
 
 		setContent(winLayout);
-
-		addCloseListener(new CloseListener() {
-
-			private static final long serialVersionUID = 1435044338717794371L;
-
-			@Override
-			public void windowClose(CloseEvent e) {
-				triggerComponent.setEnabled(true);
-			}
-
-		});
 
 	}
 

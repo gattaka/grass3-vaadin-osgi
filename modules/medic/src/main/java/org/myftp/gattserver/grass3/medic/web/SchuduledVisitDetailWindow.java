@@ -58,9 +58,8 @@ public class SchuduledVisitDetailWindow extends AbstractDetailSubWindow {
 				@Override
 				public void buttonClick(ClickEvent event) {
 					UI.getCurrent().addWindow(
-							new MedicalInstitutionDetailWindow(
-									scheduledVisitDTO.getInstitution().getId(),
-									recordButton));
+							new MedicalRecordDetailWindow(scheduledVisitDTO
+									.getRecord().getId(), recordButton));
 				}
 			});
 			recordButton.setStyleName(BaseTheme.BUTTON_LINK);

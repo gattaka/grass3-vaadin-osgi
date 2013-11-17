@@ -3,7 +3,6 @@ package org.myftp.gattserver.grass3.medic.web;
 import java.util.Collection;
 
 import org.myftp.gattserver.grass3.medic.dto.MedicalRecordDTO;
-import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
 import org.myftp.gattserver.grass3.ui.util.StringToDateConverter;
 import org.myftp.gattserver.grass3.ui.util.StringToPreviewConverter;
 
@@ -21,7 +20,7 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 		table.sort(new Object[] { "date" }, new boolean[] { false });
 	}
 
-	public MedicalRecordsTab(final IMedicFacade medicFacade) {
+	public MedicalRecordsTab() {
 		super(MedicalRecordDTO.class);
 	}
 

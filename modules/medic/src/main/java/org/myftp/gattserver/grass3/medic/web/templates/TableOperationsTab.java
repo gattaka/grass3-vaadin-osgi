@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import org.myftp.gattserver.grass3.medic.dto.Identifiable;
 import org.myftp.gattserver.grass3.medic.web.ISelectable;
-import org.myftp.gattserver.grass3.ui.util.StringToPreviewConverter;
 
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Button;
@@ -59,8 +58,9 @@ public abstract class TableOperationsTab<T extends Identifiable> extends
 	protected abstract void deleteEntity(T dto);
 
 	/**
-	 * Vytvoří okno pro úpravu entity
+	 * Upraví tabulku (jmenuje sloupce apod.)
 	 */
+	protected abstract void customizeTable(Table table);
 
 	public TableOperationsTab(Class<T> clazz) {
 
@@ -75,15 +75,7 @@ public abstract class TableOperationsTab<T extends Identifiable> extends
 		container = new BeanItemContainer<T>(clazz);
 		populateContainer();
 		table.setContainerDataSource(container);
-
-		table.setColumnHeader("name", "Název");
-		table.setColumnHeader("address", "Adresa");
-		table.setColumnHeader("web", "Stránky");
-		table.setWidth("100%");
-		table.setSelectable(true);
-		table.setImmediate(true);
-		table.setConverter("web", new StringToPreviewConverter(50));
-		table.setVisibleColumns(new String[] { "name", "address", "web" });
+		customizeTable(table);
 		addComponent(table);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();

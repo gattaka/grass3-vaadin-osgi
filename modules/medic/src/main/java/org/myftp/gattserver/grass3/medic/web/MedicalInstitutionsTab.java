@@ -5,10 +5,12 @@ import java.util.Collection;
 import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
 import org.myftp.gattserver.grass3.medic.web.templates.TableOperationsTab;
+import org.myftp.gattserver.grass3.ui.util.StringToPreviewConverter;
 import org.myftp.gattserver.grass3.util.SpringInjector;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
 
 public class MedicalInstitutionsTab extends
@@ -61,12 +63,23 @@ public class MedicalInstitutionsTab extends
 
 	@Override
 	protected void init() {
-		// SpringInjector.inject(this);
 		medicFacade = SpringInjector.getContext().getBean(IMedicFacade.class);
 		super.init();
 	}
 
 	public MedicalInstitutionsTab() {
 		super(MedicalInstitutionDTO.class);
+	}
+
+	@Override
+	protected void customizeTable(Table table) {
+		table.setColumnHeader("name", "Název");
+		table.setColumnHeader("address", "Adresa");
+		table.setColumnHeader("web", "Stránky");
+		table.setWidth("100%");
+		table.setSelectable(true);
+		table.setImmediate(true);
+		table.setConverter("web", new StringToPreviewConverter(50));
+		table.setVisibleColumns(new String[] { "name", "address", "web" });
 	}
 }

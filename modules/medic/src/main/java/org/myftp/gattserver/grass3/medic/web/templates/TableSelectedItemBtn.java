@@ -6,16 +6,13 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 
-public abstract class TableSelectedItemBtn<T> extends GrassBtn {
+public abstract class TableSelectedItemBtn<T> extends Button {
 
 	private static final long serialVersionUID = -5924239277930098183L;
 
-	private Table table;
-	
 	public TableSelectedItemBtn(String caption, final Table table,
 			Component... triggerComponents) {
-		super(caption, triggerComponents);
-		this.table = table;
+		setCaption(caption);
 		setEnabled(false);
 		table.addValueChangeListener(new ValueChangeListener() {
 
@@ -27,6 +24,7 @@ public abstract class TableSelectedItemBtn<T> extends GrassBtn {
 				TableSelectedItemBtn.this.setEnabled(enabled);
 			}
 		});
+		addClickListener(getClickListener(table, triggerComponents));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -34,11 +32,6 @@ public abstract class TableSelectedItemBtn<T> extends GrassBtn {
 		return (T) table.getValue();
 	}
 
-	@Override
-	protected ClickListener getClickListener(Component... triggerComponents) {
-		return getClickListener(table, triggerComponents);
-	}
-	
 	protected abstract Button.ClickListener getClickListener(Table table,
 			Component... triggerComponents);
 }

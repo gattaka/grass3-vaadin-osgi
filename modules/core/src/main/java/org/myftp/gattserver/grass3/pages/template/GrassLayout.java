@@ -8,6 +8,9 @@ import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
 import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Page;
@@ -15,11 +18,23 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.UI;
 
-public abstract class GrassLayout extends CustomLayout {
+public abstract class GrassLayout extends CustomLayout implements
+		ApplicationContextAware {
 
 	private static final long serialVersionUID = 604170960797872356L;
 
 	private GrassRequest request;
+	private ApplicationContext applicationContext;
+
+	public ApplicationContext getApplicationContext() {
+		return applicationContext;
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		this.applicationContext = applicationContext;
+	}
 
 	public GrassLayout(String layoutName, GrassRequest request) {
 		super(layoutName);

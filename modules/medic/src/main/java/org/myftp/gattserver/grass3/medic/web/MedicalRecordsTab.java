@@ -6,6 +6,7 @@ import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.ui.util.StringToDateConverter;
 import org.myftp.gattserver.grass3.ui.util.StringToPreviewConverter;
+import org.springframework.context.annotation.Scope;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -19,6 +20,8 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 
+@org.springframework.stereotype.Component()
+@Scope("prototype")
 public class MedicalRecordsTab extends VerticalLayout implements ISelectable {
 
 	private static final long serialVersionUID = -5013459007975657195L;

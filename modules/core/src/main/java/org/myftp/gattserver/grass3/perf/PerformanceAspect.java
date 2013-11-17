@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class PerformanceAspect {
 
 	Logger logger = LoggerFactory.getLogger(StopWatch.DEFAULT_LOGGER_NAME);

@@ -52,11 +52,13 @@ public abstract class MedicalInstitutionCreateWindow extends GrassSubWindow {
 		final TextField nameField = new TextField("Název");
 		winLayout.addComponent(nameField, 0, 0, 1, 0);
 		nameField.setWidth("100%");
+		nameField.setImmediate(true);
 		fieldGroup.bind(nameField, "name");
 
 		final TextField addressField = new TextField("Adresa");
 		winLayout.addComponent(addressField, 0, 1, 1, 1);
 		addressField.setWidth("100%");
+		addressField.setImmediate(true);
 		fieldGroup.bind(addressField, "address");
 
 		final TextField webField = new TextField("Webové stránky");
@@ -68,6 +70,7 @@ public abstract class MedicalInstitutionCreateWindow extends GrassSubWindow {
 		winLayout.addComponent(hoursField, 0, 3, 1, 3);
 		hoursField.setWidth("100%");
 		hoursField.setHeight("200px");
+		hoursField.setImmediate(true);
 		fieldGroup.bind(hoursField, "hours");
 
 		Label separator = new Label("");

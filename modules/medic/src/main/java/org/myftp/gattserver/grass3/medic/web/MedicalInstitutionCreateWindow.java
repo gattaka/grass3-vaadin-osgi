@@ -25,18 +25,17 @@ public abstract class MedicalInstitutionCreateWindow extends GrassSubWindow {
 
 	private IMedicFacade medicalFacade;
 
-	public MedicalInstitutionCreateWindow(final Component triggerComponent) {
-		this(triggerComponent, null);
+	public MedicalInstitutionCreateWindow(final Component... triggerComponent) {
+		this(null, triggerComponent);
 	}
 
-	public MedicalInstitutionCreateWindow(final Component triggerComponent,
-			MedicalInstitutionDTO modifiedMedicalInstitutionDTO) {
+	public MedicalInstitutionCreateWindow(
+			MedicalInstitutionDTO modifiedMedicalInstitutionDTO,
+			final Component... triggerComponent) {
 		super(modifiedMedicalInstitutionDTO == null ? "Založení nové instituce"
-				: "Úprava instituce");
+				: "Úprava instituce", triggerComponent);
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
-
-		triggerComponent.setEnabled(false);
 
 		GridLayout winLayout = new GridLayout(2, 6);
 		winLayout.setMargin(true);
@@ -106,18 +105,6 @@ public abstract class MedicalInstitutionCreateWindow extends GrassSubWindow {
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
 
 		setContent(winLayout);
-
-		addCloseListener(new CloseListener() {
-
-			private static final long serialVersionUID = 1435044338717794371L;
-
-			@Override
-			public void windowClose(CloseEvent e) {
-				triggerComponent.setEnabled(true);
-			}
-
-		});
-
 	}
 
 	protected abstract void onSuccess();

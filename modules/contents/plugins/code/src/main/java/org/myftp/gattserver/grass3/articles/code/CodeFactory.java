@@ -15,6 +15,8 @@ public class CodeFactory implements IPluginFactory {
 	private String description;
 	private String image;
 
+	private HighlightEngine highlightEngine = HighlightEngine.SHJS;
+
 	public CodeFactory(String tag, String style) {
 		this(tag, style, tag, "");
 	}
@@ -32,7 +34,15 @@ public class CodeFactory implements IPluginFactory {
 	}
 
 	public AbstractParserPlugin getPluginParser() {
-		return new CodeElement(tag, style, description);
+		return new CodeElement(tag, style, description, highlightEngine);
+	}
+
+	public HighlightEngine getHighlightEngine() {
+		return highlightEngine;
+	}
+
+	public void setHighlightEngine(HighlightEngine highlightEngine) {
+		this.highlightEngine = highlightEngine;
 	}
 
 	public EditorButtonResources getEditorButtonResources() {

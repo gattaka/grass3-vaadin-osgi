@@ -99,16 +99,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		}
 
 		// JS resources
-		for (String js : article.getPluginJSResources()) {
-
-			// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
-			// obejít problém se závislosí pluginů na úložišti theme apod. a
-			// přitom umožnit aby se JS odkazovali na externí zdroje
-			if (!js.toLowerCase().startsWith("http://"))
-				js = getRequest().getContextRoot() + "/VAADIN/themes/grass/"
-						+ js;
-			loadJS("\"" + js + "\"");
-		}
+		String[] arr = new String[article.getPluginJSResources().size()];
+		loadJS(article.getPluginJSResources().toArray(arr));
 
 		super.init();
 	}

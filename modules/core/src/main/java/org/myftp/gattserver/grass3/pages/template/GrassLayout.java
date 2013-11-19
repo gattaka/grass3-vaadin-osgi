@@ -80,12 +80,20 @@ public abstract class GrassLayout extends CustomLayout implements
 		JavaScript.eval(builder.toString());
 	}
 
-	static void buildJSBatch(StringBuilder builder, int index,
+	private void buildJSBatch(StringBuilder builder, int index,
 			String... scripts) {
 		if (index >= scripts.length)
 			return;
-		builder.append("$.getScript(").append(scripts[index])
-				.append(", function(){");
+
+		String js = scripts[index];
+		// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
+		// obejít problém se závislosí pluginů na úložišti theme apod. a
+		// přitom umožnit aby se JS odkazovali na externí zdroje
+		if (!js.toLowerCase().startsWith("http://"))
+			js = "\"" + getRequest().getContextRoot() + "/VAADIN/themes/grass/"
+					+ js + "\"";
+
+		builder.append("$.getScript(").append(js).append(", function(){");
 		buildJSBatch(builder, index + 1, scripts);
 		builder.append("});");
 	}

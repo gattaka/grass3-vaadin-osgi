@@ -7,7 +7,6 @@ import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractElementTre
 import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
 import org.myftp.gattserver.grass3.articles.parser.misc.HTMLEscaper;
 
-
 /**
  * 
  * @author gatt
@@ -17,15 +16,19 @@ public class CodeElement extends AbstractParserPlugin {
 	private String tag;
 	private String description;
 
+	private HighlightEngine highlightEngine;
+
 	/**
 	 * Jaký styl určuje jazky, který zvýrazním
 	 */
 	private String style;
 
-	public CodeElement(String tag, String style, String description) {
+	public CodeElement(String tag, String style, String description,
+			HighlightEngine highlightEngine) {
 		this.tag = tag;
 		this.style = style;
 		this.description = description;
+		this.highlightEngine = highlightEngine;
 	}
 
 	public AbstractElementTree parse(PluginBag pluginBag) {
@@ -56,21 +59,25 @@ public class CodeElement extends AbstractParserPlugin {
 		int lines = 1;
 		while (true) {
 			currentToken = pluginBag.getToken();
-			if ((currentToken == Token.END_TAG && pluginBag.getEndTag().equals(tag)) || currentToken == Token.EOF)
+			if ((currentToken == Token.END_TAG && pluginBag.getEndTag().equals(
+					tag))
+					|| currentToken == Token.EOF)
 				break;
 			/**
 			 * Pokud načteš TEXT, tak přidej jeho obsah, pokud pak načtečeš EOL,
 			 * tak nepřidávej prázdný řádek, ledaže by jsi načetl EOL EOL - pak
 			 * je to prázdný řádek
-			 */ 
-			if (currentToken == Token.TEXT || currentToken == Token.END_TAG || currentToken == Token.START_TAG)
+			 */
+			if (currentToken == Token.TEXT || currentToken == Token.END_TAG
+					|| currentToken == Token.START_TAG)
 				code.append(HTMLEscaper.stringToHTMLString(pluginBag.getCode()));
 			else if (currentToken == Token.EOL) {
 				// prázdné řádky je potřeba prokládat mezerou, kterou si JS záhy
 				// uzavře do <p></p> elementů - bez této mezery by <p></p>
 				// element neudělal odřádkování nutné a zmizeli by tak prázdné
 				// řádky - po stránce korektnosti zpětného čtení z webu je vše v
-				// pořádku, protože <p></p> přebytečnou mezeru záhy zase vynechá ...
+				// pořádku, protože <p></p> přebytečnou mezeru záhy zase vynechá
+				// ...
 				if (lastToken == currentToken)
 					code.append(" ");
 				code.append('\n');
@@ -99,7 +106,8 @@ public class CodeElement extends AbstractParserPlugin {
 
 		// position 1, position 2, link odkazu, text odkazu (optional), ikona
 		// (optional), default ikona
-		return new CodeTree(code.toString(), style, lines, description);
+		return new CodeTree(code.toString(), style, lines, description,
+				highlightEngine);
 	}
 
 	public boolean canHoldBreakline() {

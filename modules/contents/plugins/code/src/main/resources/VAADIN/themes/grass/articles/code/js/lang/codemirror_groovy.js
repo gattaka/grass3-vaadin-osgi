@@ -210,8 +210,6 @@ CodeMirror.defineMode("groovy", function(config) {
 
 CodeMirror.defineMIME("text/x-groovy", "groovy");
 
-alert("runinng");
-
 /*
  * Není to zrovna hezké řešení, ale je to jediné "slušné" jak obejít fakt, že
  * není možné zjistit, kdy Vaadin nahrál pomocí svého+GWT JS všechen obsah a je
@@ -225,7 +223,6 @@ var codemirror_timer = setInterval(function() {
 		for (var i = 0; i < elements.length; i++) {
 			CodeMirror.fromTextArea(elements[i], {
 				lineNumbers : true,				
-				theme : "ambiance",
 				mode : "text/x-groovy",
 				readOnly: true
 			});

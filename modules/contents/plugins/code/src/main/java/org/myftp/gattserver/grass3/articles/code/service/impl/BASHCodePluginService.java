@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BASHCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("BASH","sh_sh","BASH","bash.gif");
+	private CodeFactory factory = new CodeFactory("BASH","BASH","bash.gif","codemirror_shell");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

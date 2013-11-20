@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class SQLCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("SQL","sh_sql");
+	private CodeFactory factory = new CodeFactory("SQL", "SQL", "",
+			"codemirror_sql");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

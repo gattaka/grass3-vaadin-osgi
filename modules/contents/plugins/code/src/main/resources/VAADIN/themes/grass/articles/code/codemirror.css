@@ -2,7 +2,7 @@
 .CodeMirror {
 	/* Set height, width, borders, and global font properties here */
 	font-family: monospace;
-	height: 300px;
+	/*height: 300px;*/
 }
 
 .CodeMirror-scroll {
@@ -193,7 +193,8 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 }
 
 .CodeMirror-activeline-background {
-	background: #e8f2ff;
+	/*background: #e8f2ff;*/
+	background: rgba(248, 240, 214, 0.27);
 }
 
 /* STOP */

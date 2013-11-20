@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LatexCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("LATEX","sh_latex","LaTeX","");
+	private CodeFactory factory = new CodeFactory("LATEX","LaTeX","","codemirror_latex");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

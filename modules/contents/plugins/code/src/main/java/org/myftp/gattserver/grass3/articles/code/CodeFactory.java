@@ -11,22 +11,18 @@ import org.myftp.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
 public class CodeFactory implements IPluginFactory {
 
 	private String tag;
-	private String style;
 	private String description;
 	private String image;
+	private String style;
+	private String[] libs;
 
-	private HighlightEngine highlightEngine = HighlightEngine.SHJS;
-
-	public CodeFactory(String tag, String style) {
-		this(tag, style, tag, "");
-	}
-
-	public CodeFactory(String tag, String style, String description,
-			String image) {
-		this.style = style;
+	public CodeFactory(String tag, String description, String image,
+			String style, String... libs) {
 		this.tag = tag;
 		this.description = description;
 		this.image = image;
+		this.style = style;
+		this.libs = libs;
 	}
 
 	public String getTag() {
@@ -34,15 +30,7 @@ public class CodeFactory implements IPluginFactory {
 	}
 
 	public AbstractParserPlugin getPluginParser() {
-		return new CodeElement(tag, style, description, highlightEngine);
-	}
-
-	public HighlightEngine getHighlightEngine() {
-		return highlightEngine;
-	}
-
-	public void setHighlightEngine(HighlightEngine highlightEngine) {
-		this.highlightEngine = highlightEngine;
+		return new CodeElement(tag, description, style, libs);
 	}
 
 	public EditorButtonResources getEditorButtonResources() {

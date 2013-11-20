@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CPPCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("CPP","sh_cpp","C++","");
+	private CodeFactory factory = new CodeFactory("CPP","C++","","codemirror_cpp","clike.js");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

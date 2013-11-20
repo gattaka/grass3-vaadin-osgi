@@ -210,22 +210,5 @@ CodeMirror.defineMode("groovy", function(config) {
 
 CodeMirror.defineMIME("text/x-groovy", "groovy");
 
-/*
- * Není to zrovna hezké řešení, ale je to jediné "slušné" jak obejít fakt, že
- * není možné zjistit, kdy Vaadin nahrál pomocí svého+GWT JS všechen obsah a je
- * na něj možné aplikovat můj JS - časovač běží dokud nenarazí na první element,
- * který je <pre> a má třídu codemirror_<něco> ... to by mělo být dostatnečně adresné
- * pro určení elementu code
- */
-//var codemirror_groovy_timer = setInterval(function() {
-//	var elements = document.getElementsByName("codemirror_groovy");
-//	if (elements.length > 0) {
-//		for (var i = 0; i < elements.length; i++) {
-//			codeMirrorConfig.mode = "text/x-groovy";
-//			CodeMirror.fromTextArea(elements[i], codeMirrorConfig);
-//		}
-//		clearInterval(codemirror_groovy_timer);
-//	}
-//}, 100);
-
+//GRASS code plugin starter
 startIntervalForPlugin("text/x-groovy","codemirror_groovy");

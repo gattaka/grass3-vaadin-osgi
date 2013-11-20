@@ -5939,7 +5939,8 @@ function startIntervalForPlugin(mime, style) {
 		var elements = document.getElementsByName(style);
 		if (elements.length > 0) {
 			for (var i = 0; i < elements.length; i++) {
-				codeMirrorConfig.mode = mime;
+				if (mime != null)
+					codeMirrorConfig.mode = mime;
 				CodeMirror.fromTextArea(elements[i], codeMirrorConfig);
 			}
 			clearInterval(timer);

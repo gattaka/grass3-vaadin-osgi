@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ScalaCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("SCALA","sh_scala","Scala", "scala.gif");
+	private CodeFactory factory = new CodeFactory("SCALA", "Scala",
+			"scala.gif", "codemirror_scala", "clike.js");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

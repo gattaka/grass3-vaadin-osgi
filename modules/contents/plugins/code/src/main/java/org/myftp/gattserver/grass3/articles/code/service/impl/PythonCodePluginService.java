@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PythonCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("PYTHON","sh_python","Python","python.png");
+	private CodeFactory factory = new CodeFactory("PYTHON","Python","python.png","codemirror_python");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

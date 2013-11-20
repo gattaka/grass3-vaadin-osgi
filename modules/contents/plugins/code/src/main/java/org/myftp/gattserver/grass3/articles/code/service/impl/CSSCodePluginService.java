@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CSSCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("CSS","sh_css");
+	private CodeFactory factory = new CodeFactory("CSS", "CSS", "",
+			"codemirror_css");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

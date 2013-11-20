@@ -15,20 +15,15 @@ public class CodeElement extends AbstractParserPlugin {
 
 	private String tag;
 	private String description;
-
-	private HighlightEngine highlightEngine;
-
-	/**
-	 * Jaký styl určuje jazky, který zvýrazním
-	 */
 	private String style;
+	private String[] libs;
 
-	public CodeElement(String tag, String style, String description,
-			HighlightEngine highlightEngine) {
+	public CodeElement(String tag, String description, String style,
+			String... libs) {
 		this.tag = tag;
-		this.style = style;
 		this.description = description;
-		this.highlightEngine = highlightEngine;
+		this.style = style;
+		this.libs = libs;
 	}
 
 	public AbstractElementTree parse(PluginBag pluginBag) {
@@ -56,7 +51,6 @@ public class CodeElement extends AbstractParserPlugin {
 		 */
 		Token lastToken = null;
 		Token currentToken = null;
-		int lines = 1;
 		while (true) {
 			currentToken = pluginBag.getToken();
 			if ((currentToken == Token.END_TAG && pluginBag.getEndTag().equals(
@@ -81,7 +75,6 @@ public class CodeElement extends AbstractParserPlugin {
 				if (lastToken == currentToken)
 					code.append(" ");
 				code.append('\n');
-				lines++;
 			}
 			pluginBag.nextToken();
 			lastToken = currentToken;
@@ -106,8 +99,7 @@ public class CodeElement extends AbstractParserPlugin {
 
 		// position 1, position 2, link odkazu, text odkazu (optional), ikona
 		// (optional), default ikona
-		return new CodeTree(code.toString(), style, lines, description,
-				highlightEngine);
+		return new CodeTree(code.toString(), description, style, libs);
 	}
 
 	public boolean canHoldBreakline() {

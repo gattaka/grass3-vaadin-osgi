@@ -344,22 +344,5 @@ CodeMirror.defineMIME("application/xml", "xml");
 if (!CodeMirror.mimeModes.hasOwnProperty("text/html"))
   CodeMirror.defineMIME("text/html", {name: "xml", htmlMode: true});
 
-/*
- * Není to zrovna hezké řešení, ale je to jediné "slušné" jak obejít fakt, že
- * není možné zjistit, kdy Vaadin nahrál pomocí svého+GWT JS všechen obsah a je
- * na něj možné aplikovat můj JS - časovač běží dokud nenarazí na první element,
- * který je <pre> a má třídu codemirror_<něco> ... to by mělo být dostatnečně adresné
- * pro určení elementu code
- */
-//var codemirror_xml_timer = setInterval(function() {
-//	var elements = document.getElementsByName("codemirror_xml");
-//	if (elements.length > 0) {
-//		for (var i = 0; i < elements.length; i++) {
-//			codeMirrorConfig.mode = "text/html";
-//			CodeMirror.fromTextArea(elements[i], codeMirrorConfig);
-//		}
-//		clearInterval(codemirror_xml_timer);
-//	}
-//}, 100);
-
+// GRASS code plugin starter
 startIntervalForPlugin("text/html","codemirror_xml");

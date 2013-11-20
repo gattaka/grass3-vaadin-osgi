@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RubyCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("RUBY","sh_ruby","Ruby","ruby.png");
+	private CodeFactory factory = new CodeFactory("RUBY","Ruby","ruby.png","codemirror_ruby");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

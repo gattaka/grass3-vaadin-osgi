@@ -217,16 +217,15 @@ CodeMirror.defineMIME("text/x-groovy", "groovy");
  * který je <pre> a má třídu codemirror_<něco> ... to by mělo být dostatnečně adresné
  * pro určení elementu code
  */
-var codemirror_timer = setInterval(function() {
-	var elements = document.getElementsByName("codemirror_groovy");
-	if (elements.length > 0) {
-		for (var i = 0; i < elements.length; i++) {
-			CodeMirror.fromTextArea(elements[i], {
-				lineNumbers : true,				
-				mode : "text/x-groovy",
-				readOnly: true
-			});
-		}
-		clearInterval(codemirror_timer);
-	}
-}, 100);
+//var codemirror_groovy_timer = setInterval(function() {
+//	var elements = document.getElementsByName("codemirror_groovy");
+//	if (elements.length > 0) {
+//		for (var i = 0; i < elements.length; i++) {
+//			codeMirrorConfig.mode = "text/x-groovy";
+//			CodeMirror.fromTextArea(elements[i], codeMirrorConfig);
+//		}
+//		clearInterval(codemirror_groovy_timer);
+//	}
+//}, 100);
+
+startIntervalForPlugin("text/x-groovy","codemirror_groovy");

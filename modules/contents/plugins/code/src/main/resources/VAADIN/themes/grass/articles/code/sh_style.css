@@ -180,17 +180,6 @@ pre.sh_sourceCode .sh_attribute {
 
 /** ZBYTEK **/
 
-/* Má za úkol držet text aby nevytekl a aby neroztáhl řádky dolů,
- ale jenom do strany - kdyby se tak totiž nestalo, tak by se
- porušila synchronizace se externí číslovací tabulkou, která je
- vykreslována nezávisle na této (aby šel jednoduše kopírovat obsah bez
- čísle řádků) */
-.barier {
-	margin: 0;
-	padding: 0;
-	overflow-x: auto;
-}
-
 .numbertable {
 	border-spacing: 0;
 	font-size: 14px;
@@ -220,21 +209,8 @@ pre.sh_sourceCode .sh_attribute {
 	overflow-x: auto;
 }
 
-.lang_description {
-	font-size: 8pt;
-	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial, "Arial CE", "Lucida Grande CE",
-		lucida, "Helvetica CE", sans-serif;
-	font-weight: bold;
-	font-style: italic;
-	display: block;
-}
 
 pre.sh_sourceCode {
 	margin: 0;
 	padding: 0 10px;
-}
-
-#code_koncovka {
-	text-align: center;
-	clear: both;
 }

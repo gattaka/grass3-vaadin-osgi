@@ -26,6 +26,9 @@ public class CodeTree extends AbstractElementTree {
 		String element = "";
 		String name = "";
 
+		// společné styly
+		ctx.addCSSResource("articles/code/code_style.css");
+		
 		switch (highlightEngine) {
 		case SHJS:
 			ctx.addCSSResource("articles/code/sh_style.css");
@@ -35,6 +38,10 @@ public class CodeTree extends AbstractElementTree {
 		case CODEMIRROR:
 			ctx.addCSSResource("articles/code/codemirror.css");
 			ctx.addJSResource("articles/code/js/codemirror.js");
+			ctx.addJSResource("articles/code/js/matchbrackets.js");
+			ctx.addJSResource("articles/code/js/xml-fold.js");
+			ctx.addJSResource("articles/code/js/matchtags.js");
+			ctx.addJSResource("articles/code/js/active-line.js");
 			element = "textarea";
 			name = "name=\"" + style + "\"";
 			break;

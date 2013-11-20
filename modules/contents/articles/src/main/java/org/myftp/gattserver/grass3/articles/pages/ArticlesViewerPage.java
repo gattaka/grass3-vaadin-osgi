@@ -10,6 +10,7 @@ import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.ContentViewerPage;
+import org.myftp.gattserver.grass3.pages.template.JScriptItem;
 import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
@@ -99,8 +100,13 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		}
 
 		// JS resources
-		String[] arr = new String[article.getPluginJSResources().size()];
-		loadJS(article.getPluginJSResources().toArray(arr));
+		int jsResourcesSize = article.getPluginJSResources().size();
+		JScriptItem[] arr = new JScriptItem[jsResourcesSize];
+		int i = 0;
+		for (String resource : article.getPluginJSResources()) {
+			arr[i++] = new JScriptItem(resource);
+		}
+		loadJS(arr);
 
 		super.init();
 	}
@@ -299,7 +305,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 					+ getRequest().getContextRoot()
 					+ "/VAADIN/themes/grass/img/tags/pencil_16.png\\\"/>&nbsp\");"
 					+ "}" + ")";
-			loadJS(script);
+			loadJS(new JScriptItem(script, true));
 		}
 
 	}

@@ -70,7 +70,7 @@ public abstract class GrassLayout extends CustomLayout implements
 	 * 
 	 * @param links
 	 */
-	public void loadJS(String... scripts) {
+	public void loadJS(JScriptItem... scripts) {
 		if (request.isjQueryPresent() == false) {
 			addComponent(new JQueryBootstrapComponent());
 			request.setjQueryPresent(true);
@@ -81,19 +81,22 @@ public abstract class GrassLayout extends CustomLayout implements
 	}
 
 	private void buildJSBatch(StringBuilder builder, int index,
-			String... scripts) {
+			JScriptItem... scripts) {
 		if (index >= scripts.length)
 			return;
 
-		String js = scripts[index];
-		// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
-		// obejít problém se závislosí pluginů na úložišti theme apod. a
-		// přitom umožnit aby se JS odkazovali na externí zdroje
-		if (!js.toLowerCase().startsWith("http://"))
-			js = "\"" + getRequest().getContextRoot() + "/VAADIN/themes/grass/"
-					+ js + "\"";
+		JScriptItem js = scripts[index];
+		String chunk = js.getScript();
+		if (js.isPlain() == false) {
+			// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
+			// obejít problém se závislosí pluginů na úložišti theme apod. a
+			// přitom umožnit aby se JS odkazovali na externí zdroje
+			if (!chunk.toLowerCase().startsWith("http://"))
+				chunk = "\"" + getRequest().getContextRoot()
+						+ "/VAADIN/themes/grass/" + chunk + "\"";
+		}
 
-		builder.append("$.getScript(").append(js).append(", function(){");
+		builder.append("$.getScript(").append(chunk).append(", function(){");
 		buildJSBatch(builder, index + 1, scripts);
 		builder.append("});");
 	}

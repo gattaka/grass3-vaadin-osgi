@@ -21,6 +21,7 @@ import org.myftp.gattserver.grass3.facades.INodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
+import org.myftp.gattserver.grass3.pages.template.JScriptItem;
 import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
@@ -253,11 +254,14 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				+ "/VAADIN/themes/grass/js/humanity/jquery-ui.css");
 
 		// jQueryUI JS + jQueryUI Accordion render start
-		String jQuerUIScript = getRequest().getContextRoot()
-				+ "/VAADIN/themes/grass/js/jquery-ui.js";
-		loadJS("\"" + jQuerUIScript + "\"",
-				"$( \"#accordion\" ).accordion({ event: \"click\", heightStyle: \"content\" })",
-				"$(\".ui-accordion-content\").css(\"padding\",\"1em 1em\")");
+		loadJS(new JScriptItem[] {
+				new JScriptItem("js/jquery-ui.js"),
+				new JScriptItem(
+						"$( \"#accordion\" ).accordion({ event: \"click\", heightStyle: \"content\" })",
+						true),
+				new JScriptItem(
+						"$(\".ui-accordion-content\").css(\"padding\",\"1em 1em\")",
+						true) });
 
 		return accordion;
 	}
@@ -270,8 +274,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		editorTextLayout.setMargin(true);
 
 		// editor.js
-		loadJS("\"" + getRequest().getContextRoot()
-				+ "/VAADIN/themes/grass/articles/js/editor.js" + "\"");
+		loadJS(new JScriptItem("articles/js/editor.js"));
 
 		VerticalLayout articleNameLayout = new VerticalLayout();
 		editorTextLayout.addComponent(articleNameLayout);
@@ -495,10 +498,9 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			}
 
 			return articleFacade.modifyArticle(String.valueOf(articleNameField
-					.getValue()), text,
-					(Collection<String>) articleKeywords.getValue(),
-					publicatedCheckBox.getValue(), article, getRequest()
-							.getContextRoot());
+					.getValue()), text, (Collection<String>) articleKeywords
+					.getValue(), publicatedCheckBox.getValue(), article,
+					getRequest().getContextRoot());
 		} else {
 			Long id = articleFacade.saveArticle(String.valueOf(articleNameField
 					.getValue()), String.valueOf(articleTextArea.getValue()),

@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.articles.domain.Article;
+import org.myftp.gattserver.grass3.articles.domain.ArticleJSResource;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.util.Mapper;
 import org.springframework.stereotype.Component;
@@ -37,12 +38,12 @@ public class ArticlesMapper {
 		}
 		articleDTO.setPluginCSSResources(pluginCSSResources);
 		Set<String> pluginJSResources = new LinkedHashSet<String>();
-		for (String resource : article.getPluginJSResources()) {
-			pluginJSResources.add(resource);
+		for (ArticleJSResource resource : article.getPluginJSResources()) {
+			pluginJSResources.add(resource.getName());
 		}
 		articleDTO.setPluginJSResources(pluginJSResources);
 		articleDTO.setText(article.getText());
-		
+
 		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article
 				.getContentNode()));
 		return articleDTO;

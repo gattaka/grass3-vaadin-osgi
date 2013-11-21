@@ -34,7 +34,7 @@ public class CodeTree extends AbstractElementTree {
 
 		for (String lib : libs)
 			ctx.addJSResource("articles/code/js/lang/" + lib);
-		ctx.addJSResource("articles/code/js/lang/" + style + ".js");
+		ctx.addJSResource("articles/code/js/lang/" + style + ".js"); 
 		
 		ctx.print("<span class=\"lang_description\">" + description + "</span>");
 		ctx.print("<div class=\"barier\"><div class=\"numberedtext\">");

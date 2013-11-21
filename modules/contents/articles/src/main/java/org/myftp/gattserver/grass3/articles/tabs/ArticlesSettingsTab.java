@@ -285,12 +285,12 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 								.isPublicated(), article, getRequest()
 								.getContextRoot());
 
-				synchronized (getUI()) {
-					current++;
-					currentName = "(" + current + "/" + total + ") "
-							+ article.getContentNode().getName();
-					prosessed(); // aktualizuj stav progressbaru
-				}
+				// synchronized (getUI()) {
+				current++;
+				currentName = "(" + current + "/" + total + ") "
+						+ article.getContentNode().getName();
+				prosessed(); // aktualizuj stav progressbaru
+				// }
 			}
 		}
 

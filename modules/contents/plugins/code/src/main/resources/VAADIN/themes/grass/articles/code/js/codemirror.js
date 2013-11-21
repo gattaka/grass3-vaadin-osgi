@@ -5939,8 +5939,10 @@ function startIntervalForPlugin(mime, style) {
 		var elements = document.getElementsByName(style);
 		if (elements.length > 0) {
 			for (var i = 0; i < elements.length; i++) {
-				if (mime != null)
+				if (mime != null) {
 					codeMirrorConfig.mode = mime;
+				}
+//				alert("CodeMirror.modes.clike == undefined ? " + (CodeMirror.modes.clike == undefined));
 				CodeMirror.fromTextArea(elements[i], codeMirrorConfig);
 			}
 			clearInterval(timer);

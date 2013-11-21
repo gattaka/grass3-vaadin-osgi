@@ -1,17 +1,23 @@
 package org.myftp.gattserver.grass3.articles.domain;
 
 import java.util.Set;
+import java.util.SortedSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 import org.myftp.gattserver.grass3.model.domain.ContentNode;
 
 @Entity
@@ -53,10 +59,9 @@ public class Article {
 	/**
 	 * Dodatečné JS resources, které je potřeba nahrát (od pluginů)
 	 */
-	@ElementCollection
-	@CollectionTable(name = "ARTICLE_JS_RESOURCES")
-	@Column(name = "pluginJSResources")
-	private Set<String> pluginJSResources;
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@Sort(type = SortType.COMPARATOR, comparator = ArticleJSResourceComparator.class)
+	private SortedSet<ArticleJSResource> pluginJSResources;
 
 	/**
 	 * DB identifikátor
@@ -89,11 +94,12 @@ public class Article {
 		this.pluginCSSResources = pluginCSSResources;
 	}
 
-	public Set<String> getPluginJSResources() {
+	public SortedSet<ArticleJSResource> getPluginJSResources() {
 		return pluginJSResources;
 	}
 
-	public void setPluginJSResources(Set<String> pluginJSResources) {
+	public void setPluginJSResources(
+			SortedSet<ArticleJSResource> pluginJSResources) {
 		this.pluginJSResources = pluginJSResources;
 	}
 

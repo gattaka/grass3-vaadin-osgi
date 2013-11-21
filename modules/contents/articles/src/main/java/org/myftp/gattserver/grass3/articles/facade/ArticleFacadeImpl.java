@@ -2,11 +2,15 @@ package org.myftp.gattserver.grass3.articles.facade;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.articles.dao.ArticleRepository;
 import org.myftp.gattserver.grass3.articles.domain.Article;
+import org.myftp.gattserver.grass3.articles.domain.ArticleJSResource;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
 import org.myftp.gattserver.grass3.articles.editor.api.ContextImpl;
 import org.myftp.gattserver.grass3.articles.lexer.Lexer;
@@ -154,7 +158,10 @@ public class ArticleFacadeImpl implements IArticleFacade {
 		IContext context = processArticle(text, contextRoot);
 		article.setOutputHTML(context.getOutput());
 		article.setPluginCSSResources(context.getCSSResources());
-		article.setPluginJSResources(context.getJSResources());
+
+		article.setPluginJSResources(createJSResourcesSet(context
+				.getJSResources()));
+
 		article.setText(text);
 		article.setSearchableOutput(HTMLTrimmer.trim(context.getOutput()));
 
@@ -168,6 +175,19 @@ public class ArticleFacadeImpl implements IArticleFacade {
 			return false;
 
 		return true;
+	}
+
+	private SortedSet<ArticleJSResource> createJSResourcesSet(
+			Set<String> scripts) {
+		int order = 0;
+		SortedSet<ArticleJSResource> set = new TreeSet<>();
+		for (String string : scripts) {
+			ArticleJSResource resource = new ArticleJSResource();
+			resource.setName(string);
+			resource.setExecutionOrder(order++);
+			set.add(resource);
+		}
+		return set;
 	}
 
 	/**
@@ -199,7 +219,8 @@ public class ArticleFacadeImpl implements IArticleFacade {
 		IContext context = processArticle(text, contextRoot);
 		article.setOutputHTML(context.getOutput());
 		article.setPluginCSSResources(context.getCSSResources());
-		article.setPluginJSResources(context.getJSResources());
+		article.setPluginJSResources(createJSResourcesSet(context
+				.getJSResources()));
 		article.setText(text);
 		article.setSearchableOutput(HTMLTrimmer.trim(context.getOutput()));
 

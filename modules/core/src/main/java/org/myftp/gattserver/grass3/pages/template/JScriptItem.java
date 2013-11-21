@@ -37,4 +37,9 @@ public class JScriptItem {
 		return plain;
 	}
 
+	@Override
+	public String toString() {
+		return script + " (" + (plain ? "plain" : "file") + ")";
+	}
+
 }

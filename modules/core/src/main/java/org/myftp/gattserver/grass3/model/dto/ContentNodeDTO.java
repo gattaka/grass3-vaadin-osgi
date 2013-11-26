@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.model.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
@@ -9,7 +10,9 @@ import java.util.Set;
  * @author gatt
  * 
  */
-public class ContentNodeDTO {
+public class ContentNodeDTO implements Serializable{
+
+	private static final long serialVersionUID = 723375154665160018L;
 
 	/**
 	 * ID služby, která daný obsah umí číst

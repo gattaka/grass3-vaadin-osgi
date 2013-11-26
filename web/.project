@@ -3,16 +3,6 @@
 	<name>web</name>
 	<comment></comment>
 	<projects>
-		<project>articles</project>
-		<project>articles-basic</project>
-		<project>articles-theme</project>
-		<project>search</project>
-		<project>fm-core</project>
-		<project>articles-latex</project>
-		<project>hw</project>
-		<project>articles-favlink</project>
-		<project>articles-code</project>
-		<project>articles-code-theme</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -31,12 +21,12 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.eclipse.wst.validation.validationbuilder</name>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<name>org.eclipse.wst.validation.validationbuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>

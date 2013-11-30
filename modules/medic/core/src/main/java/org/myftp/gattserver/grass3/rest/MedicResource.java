@@ -2,7 +2,7 @@ package org.myftp.gattserver.grass3.rest;
 
 import java.util.List;
 
-import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitDTO;
+import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +22,8 @@ public class MedicResource {
 
 	@RequestMapping(value = "visit")
 	@ResponseBody
-	public List<ScheduledVisitDTO> getQuote() {
-		return medicFacade.getAllScheduledVisits(true);
+	public List<MedicalInstitutionDTO> getInstitutions() {
+		return medicFacade.getAllMedicalInstitutions();
 	}
 
 	public MedicResource() {

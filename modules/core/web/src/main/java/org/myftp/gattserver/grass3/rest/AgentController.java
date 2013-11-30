@@ -17,10 +17,10 @@ public class AgentController {
 	@Autowired
 	private IQuotesFacade iQuotesFacade;
 
-	@RequestMapping("test")
+	@RequestMapping("ping")
 	@ResponseBody
-	public String getTest() {
-		return "test 2";
+	public String getPing() {
+		return "ok";
 	}
 
 	@RequestMapping(value = "quote", produces = "text/plain;charset=UTF-8")

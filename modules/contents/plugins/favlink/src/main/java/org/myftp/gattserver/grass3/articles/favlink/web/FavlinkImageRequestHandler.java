@@ -9,7 +9,7 @@ import java.io.InputStream;
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
 import org.myftp.gattserver.grass3.config.IConfigurationService;
-import org.myftp.gattserver.grass3.util.impl.AbstractGrassRequestHandler;
+import org.myftp.gattserver.grass3.ui.util.impl.AbstractGrassRequestHandler;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -39,8 +39,7 @@ public class FavlinkImageRequestHandler extends AbstractGrassRequestHandler {
 	}
 
 	@Override
-	protected InputStream getResourceStream(String fileName)
-			throws FileNotFoundException {
+	protected InputStream getResourceStream(String fileName) throws FileNotFoundException {
 		File file = new File(getOutputPath() + "/" + fileName);
 		return new BufferedInputStream(new FileInputStream(file));
 	}

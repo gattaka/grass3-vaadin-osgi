@@ -29,17 +29,17 @@
 			<version>1.7.2</version>
 		</dependency>
 
-		<!-- GRASS ARTICLES BUNDLE -->
+		<!-- GRASS Articles -->
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>
 			<artifactId>articles</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
-		<!-- GRASS CORE BUNDLE -->
+		<!-- GRASS Core web -->
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>core-web</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 

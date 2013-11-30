@@ -5,9 +5,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.myftp.gattserver.grass3.model.util.Mapper;
 import org.myftp.gattserver.grass3.pg.domain.Photogallery;
 import org.myftp.gattserver.grass3.pg.dto.PhotogalleryDTO;
-import org.myftp.gattserver.grass3.util.Mapper;
 import org.springframework.stereotype.Component;
 
 @Component("photogalleryMapper")

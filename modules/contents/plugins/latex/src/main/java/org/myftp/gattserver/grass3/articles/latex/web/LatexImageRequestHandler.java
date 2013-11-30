@@ -9,7 +9,7 @@ import java.io.InputStream;
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.articles.latex.config.LatexConfiguration;
 import org.myftp.gattserver.grass3.config.IConfigurationService;
-import org.myftp.gattserver.grass3.util.impl.AbstractGrassRequestHandler;
+import org.myftp.gattserver.grass3.ui.util.impl.AbstractGrassRequestHandler;
 import org.springframework.stereotype.Component;
 
 @Component

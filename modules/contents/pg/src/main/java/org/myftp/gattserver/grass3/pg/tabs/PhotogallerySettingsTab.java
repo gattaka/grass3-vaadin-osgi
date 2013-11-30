@@ -6,7 +6,7 @@ import org.myftp.gattserver.grass3.facades.IContentTagFacade;
 import org.myftp.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import org.myftp.gattserver.grass3.pg.facade.IPhotogalleryFacade;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
-import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
 import com.vaadin.data.validator.StringLengthValidator;
@@ -45,12 +45,10 @@ public class PhotogallerySettingsTab extends AbstractSettingsTab {
 		VerticalLayout settingsLayout = new VerticalLayout();
 		layout.addComponent(settingsLayout);
 
-		final PhotogalleryConfiguration configuration = photogalleryFacade
-				.getConfiguration();
+		final PhotogalleryConfiguration configuration = photogalleryFacade.getConfiguration();
 
 		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new Label("<h2>Nastavení</h2>",
-				ContentMode.HTML));
+		settingsLayout.addComponent(new Label("<h2>Nastavení</h2>", ContentMode.HTML));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
@@ -61,22 +59,17 @@ public class PhotogallerySettingsTab extends AbstractSettingsTab {
 		/**
 		 * Název adresářů miniatur
 		 */
-		final TextField miniaturesDirField = new TextField(
-				"Název adresářů miniatur");
-		miniaturesDirField.setValue(String.valueOf(configuration
-				.getMiniaturesDir()));
-		miniaturesDirField.addValidator(new StringLengthValidator(
-				"Nesmí být prázdné", 1, 1024, false));
+		final TextField miniaturesDirField = new TextField("Název adresářů miniatur");
+		miniaturesDirField.setValue(String.valueOf(configuration.getMiniaturesDir()));
+		miniaturesDirField.addValidator(new StringLengthValidator("Nesmí být prázdné", 1, 1024, false));
 		settingsFieldsLayout.addComponent(miniaturesDirField);
 
 		/**
 		 * Kořenový adresář fotogalerií
 		 */
-		final TextField rootDirField = new TextField(
-				"Kořenový adresář fotogalerií");
+		final TextField rootDirField = new TextField("Kořenový adresář fotogalerií");
 		rootDirField.setValue(String.valueOf(configuration.getRootDir()));
-		rootDirField.addValidator(new StringLengthValidator(
-				"Nesmí být prázdné", 1, 1024, false));
+		rootDirField.addValidator(new StringLengthValidator("Nesmí být prázdné", 1, 1024, false));
 		settingsFieldsLayout.addComponent(rootDirField);
 
 		/**

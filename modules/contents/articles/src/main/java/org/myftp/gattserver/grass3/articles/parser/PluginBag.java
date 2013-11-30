@@ -5,8 +5,6 @@ import static org.myftp.gattserver.grass3.articles.lexer.Token.*;
 import java.util.List;
 import java.util.Stack;
 
-import javax.annotation.Resource;
-
 import org.myftp.gattserver.grass3.articles.lexer.Lexer;
 import org.myftp.gattserver.grass3.articles.lexer.Token;
 import org.myftp.gattserver.grass3.articles.parser.elements.BreaklineTree;
@@ -20,8 +18,6 @@ import org.myftp.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
 import org.myftp.gattserver.grass3.articles.parser.misc.HTMLEscaper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 /**
  * Propojovací třída pluginů a jejich parserů - zajišťuje, že když si Parser
@@ -101,12 +97,10 @@ public class PluginBag {
 	public boolean canHoldBreakline() {
 		// pokud to teď řídí nějaký plugin, tak vrať jeho rozhodnutí,
 		// jinak pokud jsme pod základním Parserem, tak tam se může všechno
-		return activePlugins.empty() ? true : activePlugins.peek().parserPlugin
-				.canHoldBreakline();
+		return activePlugins.empty() ? true : activePlugins.peek().parserPlugin.canHoldBreakline();
 	}
 
-	public PluginBag(Lexer lexer, String contextRoot,
-			PluginRegister pluginRegister) {
+	public PluginBag(Lexer lexer, String contextRoot, PluginRegister pluginRegister) {
 		this.lexer = lexer;
 		this.contextRoot = contextRoot;
 		this.pluginRegister = pluginRegister;
@@ -189,8 +183,7 @@ public class PluginBag {
 
 		String tag = getStartTag();
 
-		log(this.getClass().getSimpleName()
-				+ ": Looking for the right ParserPlugin for tag '" + tag + "'");
+		log(this.getClass().getSimpleName() + ": Looking for the right ParserPlugin for tag '" + tag + "'");
 
 		IPluginFactory pluginFactory = pluginRegister.get(tag);
 
@@ -204,11 +197,9 @@ public class PluginBag {
 					// vstupuješ do dalšího patra parsovacího stromu
 					// => nastav si, že tento plugin je právě u prohledávání
 					activePlugins.push(new StackElement(parserPlugin, tag));
-					log(this.getClass().getSimpleName() + ": "
-							+ parserPlugin.getClass().getCanonicalName()
+					log(this.getClass().getSimpleName() + ": " + parserPlugin.getClass().getCanonicalName()
 							+ " was pushed in stack and launched");
-					log(this.getClass().getSimpleName() + ": activePlugins: "
-							+ activePlugins.size());
+					log(this.getClass().getSimpleName() + ": activePlugins: " + activePlugins.size());
 
 					Position beginPosition = getPosition();
 
@@ -220,33 +211,26 @@ public class PluginBag {
 					elementTree.setEndPosition(endPosition);
 
 					parserPlugin = activePlugins.pop().getParserPlugin();
-					log(this.getClass().getSimpleName() + ": "
-							+ parserPlugin.getClass().getCanonicalName()
+					log(this.getClass().getSimpleName() + ": " + parserPlugin.getClass().getCanonicalName()
 							+ " terminates (clean) and was poped from stack");
-					log(this.getClass().getSimpleName() + ": activePlugins: "
-							+ activePlugins.size());
+					log(this.getClass().getSimpleName() + ": activePlugins: " + activePlugins.size());
 
 					return elementTree;
 
 				} catch (ParserException pe) {
 					// Plugin běží, ale něco se mu nelíbí a tak vyhodil výjimku
 					parserPlugin = activePlugins.pop().getParserPlugin();
-					log(this.getClass().getSimpleName()
-							+ ": "
-							+ parserPlugin.getClass().getCanonicalName()
+					log(this.getClass().getSimpleName() + ": " + parserPlugin.getClass().getCanonicalName()
 							+ " terminates (parse error) and was poped from stack");
-					log(this.getClass().getSimpleName() + ": activePlugins: "
-							+ activePlugins.size());
+					log(this.getClass().getSimpleName() + ": activePlugins: " + activePlugins.size());
 					return new ParserError(tag);
 				}
 			} catch (Exception ex) {
 				// V pluginu došlo k chybě
 				parserPlugin = activePlugins.pop().getParserPlugin();
-				log(this.getClass().getSimpleName() + ": "
-						+ parserPlugin.getClass().getCanonicalName()
+				log(this.getClass().getSimpleName() + ": " + parserPlugin.getClass().getCanonicalName()
 						+ " terminates (plugin error) and was poped from stack");
-				log(this.getClass().getSimpleName() + ": activePlugins: "
-						+ activePlugins.size());
+				log(this.getClass().getSimpleName() + ": activePlugins: " + activePlugins.size());
 				logger.error("Plugin error", ex);
 				return new PluginError(tag);
 			}
@@ -350,8 +334,8 @@ public class PluginBag {
 			return getBreakline();
 		case EOF:
 		default:
-			log("Čekal jsem: " + START_TAG + ", " + END_TAG + ", " + TEXT
-					+ " nebo " + EOL + ", ne " + getToken() + "%n");
+			log("Čekal jsem: " + START_TAG + ", " + END_TAG + ", " + TEXT + " nebo " + EOL + ", ne " + getToken()
+					+ "%n");
 			throw new ParserException();
 		}
 	}

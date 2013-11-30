@@ -23,17 +23,10 @@
 
 	<dependencies>
 
-		<!-- GRASS ARTICLES BUNDLE -->
+		<!-- GRASS Articles -->
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>
 			<artifactId>articles</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<!-- GRASS CORE BUNDLE -->
-		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
-			<artifactId>core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 

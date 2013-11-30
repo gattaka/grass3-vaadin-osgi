@@ -28,7 +28,7 @@ import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.ui.util.JQueryAccordion;
-import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
@@ -60,8 +60,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 	private static final long serialVersionUID = -5148523174527532785L;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(ArticlesEditorPage.class);
+	private static final Logger logger = LoggerFactory.getLogger(ArticlesEditorPage.class);
 
 	@Resource(name = "nodeFacade")
 	private INodeFacade nodeFacade;
@@ -110,11 +109,9 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			showError404();
 		}
 
-		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
-				.parseURLIdentifier(identifierToken);
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(identifierToken);
 		if (identifier == null) {
-			logger.debug("Nezdařilo se vytěžit URL identifikátor z řetězce: '"
-					+ identifierToken + "'");
+			logger.debug("Nezdařilo se vytěžit URL identifikátor z řetězce: '" + identifierToken + "'");
 			showError404();
 		}
 
@@ -126,28 +123,24 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			articleTextArea.setValue("");
 			publicatedCheckBox.setValue(true);
 
-		} else if (operationToken.equals(DefaultContentOperations.EDIT
-				.toString())) {
+		} else if (operationToken.equals(DefaultContentOperations.EDIT.toString())) {
 
 			editMode = true;
 			article = articleFacade.getArticleForDetail(identifier.getId());
 			articleNameField.setValue(article.getContentNode().getName());
 
-			for (ContentTagDTO tagDTO : article.getContentNode()
-					.getContentTags()) {
+			for (ContentTagDTO tagDTO : article.getContentNode().getContentTags()) {
 				articleKeywords.addToken(tagDTO.getName());
 			}
 
-			publicatedCheckBox
-					.setValue(article.getContentNode().isPublicated());
+			publicatedCheckBox.setValue(article.getContentNode().isPublicated());
 
 			int partNumber;
-			if (partNumberToken != null
-					&& (partNumber = Integer.valueOf(partNumberToken)) >= 0) {
+			if (partNumberToken != null && (partNumber = Integer.valueOf(partNumberToken)) >= 0) {
 
 				try {
-					parts = PartsFinder.findParts(new ByteArrayInputStream(
-							article.getText().getBytes("UTF-8")), partNumber);
+					parts = PartsFinder.findParts(new ByteArrayInputStream(article.getText().getBytes("UTF-8")),
+							partNumber);
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 					showError500();
@@ -167,8 +160,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			return;
 		}
 
-		if ((article == null || article.getContentNode().getAuthor()
-				.equals(getGrassUI().getUser()))
+		if ((article == null || article.getContentNode().getAuthor().equals(getGrassUI().getUser()))
 				|| getGrassUI().getUser().getRoles().contains(Role.ADMIN)) {
 			super.init();
 		} else {
@@ -182,8 +174,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	@Override
 	protected Component createLeftColumnContent() {
 
-		List<String> groups = new ArrayList<String>(
-				pluginServiceHolder.getRegisteredGroups());
+		List<String> groups = new ArrayList<String>(pluginServiceHolder.getRegisteredGroups());
 		Collections.sort(groups, new Comparator<String>() {
 
 			// odolné vůči null
@@ -229,8 +220,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				holder.setValue(resourceBundle);
 
 				Button button = new Button(resourceBundle.getDescription());
-				button.setIcon((com.vaadin.server.Resource) resourceBundle
-						.getImage());
+				button.setIcon((com.vaadin.server.Resource) resourceBundle.getImage());
 				button.addClickListener(new Button.ClickListener() {
 
 					private static final long serialVersionUID = 607422393151282918L;
@@ -241,8 +231,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 					String suffix = holder.getValue().getSuffix();
 
 					public void buttonClick(ClickEvent event) {
-						JavaScript.getCurrent().execute(
-								"insert('" + prefix + "','" + suffix + "');");
+						JavaScript.getCurrent().execute("insert('" + prefix + "','" + suffix + "');");
 					}
 				});
 				groupToolsLayout.addComponent(button);
@@ -250,18 +239,12 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		}
 
 		// jQueryUI CSS
-		loadCSS(getRequest().getContextRoot()
-				+ "/VAADIN/themes/grass/js/humanity/jquery-ui.css");
+		loadCSS(getRequest().getContextRoot() + "/VAADIN/themes/grass/js/humanity/jquery-ui.css");
 
 		// jQueryUI JS + jQueryUI Accordion render start
-		loadJS(new JScriptItem[] {
-				new JScriptItem("js/jquery-ui.js"),
-				new JScriptItem(
-						"$( \"#accordion\" ).accordion({ event: \"click\", heightStyle: \"content\" })",
-						true),
-				new JScriptItem(
-						"$(\".ui-accordion-content\").css(\"padding\",\"1em 1em\")",
-						true) });
+		loadJS(new JScriptItem[] { new JScriptItem("js/jquery-ui.js"),
+				new JScriptItem("$( \"#accordion\" ).accordion({ event: \"click\", heightStyle: \"content\" })", true),
+				new JScriptItem("$(\".ui-accordion-content\").css(\"padding\",\"1em 1em\")", true) });
 
 		return accordion;
 	}
@@ -278,8 +261,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		VerticalLayout articleNameLayout = new VerticalLayout();
 		editorTextLayout.addComponent(articleNameLayout);
-		articleNameLayout.addComponent(new Label("<h2>Název článku</h2>",
-				ContentMode.HTML));
+		articleNameLayout.addComponent(new Label("<h2>Název článku</h2>", ContentMode.HTML));
 		articleNameLayout.addComponent(articleNameField);
 		articleNameField.setWidth("100%");
 
@@ -287,8 +269,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		editorTextLayout.addComponent(articleKeywordsLayout);
 
 		// label
-		articleKeywordsLayout.addComponent(new Label("<h2>Klíčová slova</h2>",
-				ContentMode.HTML));
+		articleKeywordsLayout.addComponent(new Label("<h2>Klíčová slova</h2>", ContentMode.HTML));
 
 		// menu tagů + textfield tagů
 		// http://marc.virtuallypreinstalled.com/TokenField/
@@ -299,10 +280,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		keywordsMenuAndTextLayout.addComponent(articleKeywords);
 
-		List<ContentTagDTO> contentTags = contentTagFacade
-				.getContentTagsForOverview();
-		BeanContainer<String, ContentTagDTO> tokens = new BeanContainer<String, ContentTagDTO>(
-				ContentTagDTO.class);
+		List<ContentTagDTO> contentTags = contentTagFacade.getContentTagsForOverview();
+		BeanContainer<String, ContentTagDTO> tokens = new BeanContainer<String, ContentTagDTO>(ContentTagDTO.class);
 		tokens.setBeanIdProperty("name");
 		tokens.addAll(contentTags);
 
@@ -316,20 +295,17 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		VerticalLayout articleContentLayout = new VerticalLayout();
 		editorTextLayout.addComponent(articleContentLayout);
-		articleContentLayout.addComponent(new Label("<h2>Obsah článku</h2>",
-				ContentMode.HTML));
+		articleContentLayout.addComponent(new Label("<h2>Obsah článku</h2>", ContentMode.HTML));
 		articleContentLayout.addComponent(articleTextArea);
 		articleTextArea.setSizeFull();
 		articleTextArea.setRows(30);
 
 		VerticalLayout articleOptionsLayout = new VerticalLayout();
 		editorTextLayout.addComponent(articleOptionsLayout);
-		articleOptionsLayout.addComponent(new Label(
-				"<h2>Nastavení článku</h2>", ContentMode.HTML));
+		articleOptionsLayout.addComponent(new Label("<h2>Nastavení článku</h2>", ContentMode.HTML));
 
 		publicatedCheckBox.setCaption("Publikovat článek");
-		publicatedCheckBox
-				.setDescription("Je-li prázdné, uvidí článek pouze jeho autor");
+		publicatedCheckBox.setDescription("Je-li prázdné, uvidí článek pouze jeho autor");
 		publicatedCheckBox.setImmediate(true);
 		articleOptionsLayout.addComponent(publicatedCheckBox);
 
@@ -340,8 +316,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		// Náhled
 		Button previewButton = new Button("Náhled");
-		previewButton.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/document_16.png"));
+		previewButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/document_16.png"));
 		previewButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 607422393151282918L;
@@ -359,8 +334,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 					text = String.valueOf(articleTextArea.getValue());
 				}
 
-				ArticleDTO articleDTO = articleFacade.processPreview(text,
-						getRequest().getContextRoot());
+				ArticleDTO articleDTO = articleFacade.processPreview(text, getRequest().getContextRoot());
 
 				PreviewWindow previewWindow = new PreviewWindow(articleDTO);
 				getUI().addWindow(previewWindow);
@@ -371,8 +345,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		// Uložit
 		Button saveButton = new Button("Uložit");
-		saveButton.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/save_16.png"));
+		saveButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/save_16.png"));
 		saveButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 607422393151282918L;
@@ -386,11 +359,9 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				boolean oldMode = editMode;
 
 				if (saveOrUpdateArticle()) {
-					showInfo(oldMode ? "Úprava článku proběhla úspěšně"
-							: "Uložení článku proběhlo úspěšně");
+					showInfo(oldMode ? "Úprava článku proběhla úspěšně" : "Uložení článku proběhlo úspěšně");
 				} else {
-					showWarning(oldMode ? "Úprava článku se nezdařila"
-							: "Uložení článku se nezdařilo");
+					showWarning(oldMode ? "Úprava článku se nezdařila" : "Uložení článku se nezdařilo");
 				}
 
 			}
@@ -400,9 +371,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		// Uložit a zavřít
 		Button saveAndCloseButton = new Button("Uložit a zavřít");
-		saveAndCloseButton
-				.setIcon((com.vaadin.server.Resource) new ThemeResource(
-						"img/tags/save_16.png"));
+		saveAndCloseButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/save_16.png"));
 		saveAndCloseButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 607422393151282918L;
@@ -413,9 +382,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 					return;
 
 				if (saveOrUpdateArticle()) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow(
-							editMode ? "Úprava článku proběhla úspěšně"
-									: "Uložení článku proběhlo úspěšně") {
+					InfoSubwindow infoSubwindow = new InfoSubwindow(editMode ? "Úprava článku proběhla úspěšně"
+							: "Uložení článku proběhlo úspěšně") {
 
 						private static final long serialVersionUID = -4517297931117830104L;
 
@@ -425,8 +393,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 					};
 					getUI().addWindow(infoSubwindow);
 				} else {
-					showWarning(editMode ? "Úprava článku se nezdařila"
-							: "Uložení článku se nezdařilo");
+					showWarning(editMode ? "Úprava článku se nezdařila" : "Uložení článku se nezdařilo");
 				}
 
 			}
@@ -436,8 +403,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		// Zrušit
 		Button cancelButton = new Button("Zrušit");
-		cancelButton.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/delete_16.png"));
+		cancelButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/delete_16.png"));
 		cancelButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 607422393151282918L;
@@ -482,6 +448,11 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
+	private Collection<String> getArticlesKeywords() {
+		return (Collection<String>) articleKeywords.getValue();
+	}
+
 	private boolean saveOrUpdateArticle() {
 
 		if (editMode) {
@@ -497,16 +468,12 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				text = String.valueOf(articleTextArea.getValue());
 			}
 
-			return articleFacade.modifyArticle(String.valueOf(articleNameField
-					.getValue()), text, (Collection<String>) articleKeywords
-					.getValue(), publicatedCheckBox.getValue(), article,
-					getRequest().getContextRoot());
+			return articleFacade.modifyArticle(String.valueOf(articleNameField.getValue()), text,
+					getArticlesKeywords(), publicatedCheckBox.getValue(), article, getRequest().getContextRoot());
 		} else {
-			Long id = articleFacade.saveArticle(String.valueOf(articleNameField
-					.getValue()), String.valueOf(articleTextArea.getValue()),
-					(Collection<String>) articleKeywords.getValue(),
-					publicatedCheckBox.getValue(), category, getGrassUI()
-							.getUser(), getRequest().getContextRoot());
+			Long id = articleFacade.saveArticle(String.valueOf(articleNameField.getValue()),
+					String.valueOf(articleTextArea.getValue()), getArticlesKeywords(), publicatedCheckBox.getValue(),
+					category, getGrassUI().getUser(), getRequest().getContextRoot());
 
 			if (id == null)
 				return false;
@@ -524,8 +491,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private void returnToArticle() {
 		JavaScript.eval("window.onbeforeunload = null;");
 		redirect(getPageURL(articlesViewerPageFactory,
-				URLIdentifierUtils.createURLIdentifier(article.getId(), article
-						.getContentNode().getName())));
+				URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName())));
 	}
 
 	/**
@@ -534,8 +500,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private void returnToCategory() {
 		JavaScript.eval("window.onbeforeunload = null;");
 		redirect(getPageURL(categoryPageFactory,
-				URLIdentifierUtils.createURLIdentifier(category.getId(),
-						category.getName())));
+				URLIdentifierUtils.createURLIdentifier(category.getId(), category.getName())));
 	}
 
 }

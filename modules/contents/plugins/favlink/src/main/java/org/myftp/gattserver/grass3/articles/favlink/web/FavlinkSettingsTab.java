@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 import org.myftp.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
 import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
-import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
 import com.vaadin.shared.ui.label.ContentMode;
@@ -42,8 +42,7 @@ public class FavlinkSettingsTab extends AbstractSettingsTab {
 		layout.addComponent(settingsLayout);
 
 		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new Label("<h2>Nastavení</h2>",
-				ContentMode.HTML));
+		settingsLayout.addComponent(new Label("<h2>Nastavení</h2>", ContentMode.HTML));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
@@ -54,8 +53,7 @@ public class FavlinkSettingsTab extends AbstractSettingsTab {
 		/**
 		 * Výstupní cesta
 		 */
-		final TextField outputPathField = new TextField(
-				"Nastavení výstupní cesty");
+		final TextField outputPathField = new TextField("Nastavení výstupní cesty");
 		outputPathField.setValue(configuration.getOutputPath());
 		settingsFieldsLayout.addComponent(outputPathField);
 

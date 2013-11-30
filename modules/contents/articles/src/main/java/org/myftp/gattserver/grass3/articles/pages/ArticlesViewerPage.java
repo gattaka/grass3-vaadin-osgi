@@ -17,7 +17,7 @@ import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
-import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.springframework.context.annotation.Scope;
@@ -65,8 +65,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 	protected void init() {
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
-		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
-				.parseURLIdentifier(analyzer.getCurrentPathToken());
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(analyzer
+				.getCurrentPathToken());
 		if (identifier == null) {
 			showError404();
 			return;
@@ -79,9 +79,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		}
 
 		if (article.getContentNode().isPublicated()
-				|| (getUser() != null && (article.getContentNode().getAuthor()
-						.equals(getUser()) || getUser().getRoles().contains(
-						Role.ADMIN)))) {
+				|| (getUser() != null && (article.getContentNode().getAuthor().equals(getUser()) || getUser()
+						.getRoles().contains(Role.ADMIN)))) {
 		} else {
 			showError403();
 			return;
@@ -94,8 +93,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			// obejít problém se závislosí pluginů na úložišti theme apod. a
 			// přitom umožnit aby se CSS odkazovali na externí zdroje
 			if (!css.toLowerCase().startsWith("http://"))
-				css = getRequest().getContextRoot() + "/VAADIN/themes/grass/"
-						+ css;
+				css = getRequest().getContextRoot() + "/VAADIN/themes/grass/" + css;
 			loadCSS(css);
 		}
 
@@ -128,20 +126,15 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		if (coreACL.canModifyContent(article.getContentNode(), getUser())) {
 			Button modifyButton = new Button(null);
 			modifyButton.setDescription("Upravit");
-			modifyButton
-					.setIcon((com.vaadin.server.Resource) new ThemeResource(
-							"img/tags/pencil_16.png"));
+			modifyButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/pencil_16.png"));
 			modifyButton.addClickListener(new Button.ClickListener() {
 
 				private static final long serialVersionUID = 607422393151282918L;
 
 				public void buttonClick(ClickEvent event) {
 
-					redirect(getPageURL(articlesEditorPageFactory,
-							DefaultContentOperations.EDIT.toString(),
-							URLIdentifierUtils.createURLIdentifier(article
-									.getId(), article.getContentNode()
-									.getName())));
+					redirect(getPageURL(articlesEditorPageFactory, DefaultContentOperations.EDIT.toString(),
+							URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName())));
 
 				}
 
@@ -153,17 +146,14 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		if (coreACL.canDeleteContent(article.getContentNode(), getUser())) {
 			Button deleteButton = new Button(null);
 			deleteButton.setDescription("Smazat");
-			deleteButton
-					.setIcon((com.vaadin.server.Resource) new ThemeResource(
-							"img/tags/delete_16.png"));
+			deleteButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/delete_16.png"));
 			deleteButton.addClickListener(new Button.ClickListener() {
 
 				private static final long serialVersionUID = 607422393151282918L;
 
 				public void buttonClick(ClickEvent event) {
 
-					ConfirmSubwindow confirmSubwindow = new ConfirmSubwindow(
-							"Opravdu si přejete smazat tento článek ?") {
+					ConfirmSubwindow confirmSubwindow = new ConfirmSubwindow("Opravdu si přejete smazat tento článek ?") {
 
 						private static final long serialVersionUID = -3214040983143363831L;
 
@@ -172,16 +162,13 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 							NodeDTO node = article.getContentNode().getParent();
 
-							final String category = getPageURL(
-									categoryPageFactory,
-									URLIdentifierUtils.createURLIdentifier(
-											node.getId(), node.getName()));
+							final String category = getPageURL(categoryPageFactory,
+									URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()));
 
 							// zdařilo se ? Pokud ano, otevři info okno a při
 							// potvrzení jdi na kategorii
 							if (articleFacade.deleteArticle(article)) {
-								InfoSubwindow infoSubwindow = new InfoSubwindow(
-										"Smazání článku proběhlo úspěšně.") {
+								InfoSubwindow infoSubwindow = new InfoSubwindow("Smazání článku proběhlo úspěšně.") {
 
 									private static final long serialVersionUID = -6688396549852552674L;
 
@@ -193,8 +180,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 							} else {
 								// Pokud ne, otevři warn okno a při
 								// potvrzení jdi na kategorii
-								WarnSubwindow warnSubwindow = new WarnSubwindow(
-										"Smazání článku se nezdařilo.") {
+								WarnSubwindow warnSubwindow = new WarnSubwindow("Smazání článku se nezdařilo.") {
 
 									private static final long serialVersionUID = -6688396549852552674L;
 
@@ -224,9 +210,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 		// Přidat do oblíbených
 		addToFavouritesButton.setDescription("Přidat do oblíbených");
-		addToFavouritesButton
-				.setIcon((com.vaadin.server.Resource) new ThemeResource(
-						"img/tags/heart_16.png"));
+		addToFavouritesButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/heart_16.png"));
 		addToFavouritesButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = -4003115363728232801L;
@@ -234,17 +218,14 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			public void buttonClick(ClickEvent event) {
 
 				// zdařilo se ? Pokud ano, otevři info okno
-				if (userFacade.addContentToFavourites(article.getContentNode(),
-						getUser())) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow(
-							"Vložení do oblíbených proběhlo úspěšně.");
+				if (userFacade.addContentToFavourites(article.getContentNode(), getUser())) {
+					InfoSubwindow infoSubwindow = new InfoSubwindow("Vložení do oblíbených proběhlo úspěšně.");
 					getUI().addWindow(infoSubwindow);
 					addToFavouritesButton.setVisible(false);
 					removeFromFavouritesButton.setVisible(true);
 				} else {
 					// Pokud ne, otevři warn okno
-					WarnSubwindow warnSubwindow = new WarnSubwindow(
-							"Vložení do oblíbených se nezdařilo.");
+					WarnSubwindow warnSubwindow = new WarnSubwindow("Vložení do oblíbených se nezdařilo.");
 					getUI().addWindow(warnSubwindow);
 				}
 
@@ -253,9 +234,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 		// Odebrat z oblíbených
 		removeFromFavouritesButton.setDescription("Odebrat z oblíbených");
-		removeFromFavouritesButton
-				.setIcon((com.vaadin.server.Resource) new ThemeResource(
-						"img/tags/broken_heart_16.png"));
+		removeFromFavouritesButton.setIcon((com.vaadin.server.Resource) new ThemeResource(
+				"img/tags/broken_heart_16.png"));
 		removeFromFavouritesButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 4826586588570179321L;
@@ -263,17 +243,14 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			public void buttonClick(ClickEvent event) {
 
 				// zdařilo se ? Pokud ano, otevři info okno
-				if (userFacade.removeContentFromFavourites(
-						article.getContentNode(), getUser())) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow(
-							"Odebrání z oblíbených proběhlo úspěšně.");
+				if (userFacade.removeContentFromFavourites(article.getContentNode(), getUser())) {
+					InfoSubwindow infoSubwindow = new InfoSubwindow("Odebrání z oblíbených proběhlo úspěšně.");
 					getUI().addWindow(infoSubwindow);
 					removeFromFavouritesButton.setVisible(false);
 					addToFavouritesButton.setVisible(true);
 				} else {
 					// Pokud ne, otevři warn okno
-					WarnSubwindow warnSubwindow = new WarnSubwindow(
-							"Odebrání z oblíbených se nezdařilo.");
+					WarnSubwindow warnSubwindow = new WarnSubwindow("Odebrání z oblíbených se nezdařilo.");
 					getUI().addWindow(warnSubwindow);
 				}
 
@@ -281,29 +258,20 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		});
 
 		// Oblíbené
-		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(
-				article.getContentNode(), getUser()));
-		removeFromFavouritesButton.setVisible(coreACL
-				.canRemoveContentFromFavourites(article.getContentNode(),
-						getUser()));
+		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(article.getContentNode(), getUser()));
+		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(article.getContentNode(),
+				getUser()));
 
 		operationsListLayout.addComponent(addToFavouritesButton);
 		operationsListLayout.addComponent(removeFromFavouritesButton);
 
 		// Rychlé úpravy
 		if (coreACL.canModifyContent(article.getContentNode(), getUser())) {
-			String url = getPageURL(articlesEditorPageFactory,
-					DefaultContentOperations.EDIT.toString(),
-					URLIdentifierUtils.createURLIdentifier(article.getId(),
-							article.getContentNode().getName()));
-			String script = "$(\".articles-basic-h-id\").each("
-					+ "function(index){"
-					+ "$(this).attr(\"href\",\""
-					+ url
-					+ "/\" + $(this).attr(\"href\"));"
-					+ "$(this).html(\"<img alt=\\\" class=\\\"v-icon\\\" src=\\\""
-					+ getRequest().getContextRoot()
-					+ "/VAADIN/themes/grass/img/tags/pencil_16.png\\\"/>&nbsp\");"
+			String url = getPageURL(articlesEditorPageFactory, DefaultContentOperations.EDIT.toString(),
+					URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName()));
+			String script = "$(\".articles-basic-h-id\").each(" + "function(index){" + "$(this).attr(\"href\",\"" + url
+					+ "/\" + $(this).attr(\"href\"));" + "$(this).html(\"<img alt=\\\" class=\\\"v-icon\\\" src=\\\""
+					+ getRequest().getContextRoot() + "/VAADIN/themes/grass/img/tags/pencil_16.png\\\"/>&nbsp\");"
 					+ "}" + ")";
 			loadJS(new JScriptItem(script, true));
 		}

@@ -15,7 +15,7 @@ import org.myftp.gattserver.grass3.facades.IContentTagFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
-import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
 import com.vaadin.data.validator.AbstractStringValidator;

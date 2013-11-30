@@ -23,6 +23,12 @@ public class TicaTest {
 
 	@Test
 	public void test() {
+		return;
+	}
+
+	public void tica() {
+
+		// TODO applikovat detekci do FM
 
 		InputStream is = null;
 

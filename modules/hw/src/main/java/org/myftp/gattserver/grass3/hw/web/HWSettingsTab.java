@@ -1,10 +1,11 @@
 package org.myftp.gattserver.grass3.hw.web;
 
 import javax.annotation.Resource;
+
 import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.hw.HWConfiguration;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
-import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
 import com.vaadin.shared.ui.label.ContentMode;

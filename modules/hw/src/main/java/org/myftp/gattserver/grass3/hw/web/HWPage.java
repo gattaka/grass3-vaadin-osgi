@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
-import org.myftp.gattserver.grass3.util.GrassRequest;
+import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
 
 import com.vaadin.ui.Component;
@@ -37,7 +37,7 @@ public class HWPage extends OneColumnPage {
 
 		TabSheet tabSheet = new TabSheet();
 		layout.addComponent(tabSheet);
-		
+
 		tabSheet.addTab(new HWItemsTab(hwFacade), "Přehled");
 		tabSheet.addTab(new HWTypesTab(hwFacade), "Typy zařízení");
 

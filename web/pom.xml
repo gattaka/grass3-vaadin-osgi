@@ -15,7 +15,7 @@
 
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>core-web</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
@@ -75,7 +75,7 @@
 		<!-- medic -->
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>
-			<artifactId>medic</artifactId>
+			<artifactId>medic-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 

@@ -28,7 +28,6 @@ public class PluginServiceHolderImpl implements IPluginServiceHolder {
 	};
 
 	@PostConstruct
-	@SuppressWarnings("unused")
 	private void init() {
 
 		if (services == null)

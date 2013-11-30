@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 import org.myftp.gattserver.grass3.articles.domain.Article;
 import org.myftp.gattserver.grass3.articles.domain.ArticleJSResource;
 import org.myftp.gattserver.grass3.articles.dto.ArticleDTO;
-import org.myftp.gattserver.grass3.util.Mapper;
+import org.myftp.gattserver.grass3.model.util.Mapper;
 import org.springframework.stereotype.Component;
 
 @Component("articlesMapper")
@@ -44,8 +44,7 @@ public class ArticlesMapper {
 		articleDTO.setPluginJSResources(pluginJSResources);
 		articleDTO.setText(article.getText());
 
-		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article
-				.getContentNode()));
+		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article.getContentNode()));
 		return articleDTO;
 	}
 
@@ -54,8 +53,7 @@ public class ArticlesMapper {
 	 */
 	public ArticleDTO mapArticleForSearch(Article article) {
 		ArticleDTO articleDTO = new ArticleDTO();
-		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article
-				.getContentNode()));
+		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article.getContentNode()));
 		articleDTO.setId(article.getId());
 		articleDTO.setSearchableOutput(article.getSearchableOutput());
 		return articleDTO;
@@ -69,8 +67,7 @@ public class ArticlesMapper {
 	 */
 	public ArticleDTO mapArticleForOverview(Article article) {
 		ArticleDTO articleDTO = new ArticleDTO();
-		articleDTO.setContentNode(mapper.mapContentNodeForOverview(article
-				.getContentNode()));
+		articleDTO.setContentNode(mapper.mapContentNodeForOverview(article.getContentNode()));
 		articleDTO.setId(article.getId());
 		return articleDTO;
 	}

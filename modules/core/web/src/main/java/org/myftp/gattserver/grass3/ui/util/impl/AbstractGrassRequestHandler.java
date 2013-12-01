@@ -10,8 +10,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinResponse;
 import com.vaadin.server.VaadinSession;
 
-public abstract class AbstractGrassRequestHandler implements
-		IGrassRequestHandler {
+public abstract class AbstractGrassRequestHandler implements IGrassRequestHandler {
 
 	private static final long serialVersionUID = 7154339775034959876L;
 
@@ -30,22 +29,26 @@ public abstract class AbstractGrassRequestHandler implements
 		return null;
 	}
 
-	protected abstract InputStream getResourceStream(String fileName)
-			throws FileNotFoundException;
+	protected abstract InputStream getResourceStream(String fileName) throws FileNotFoundException;
 
-	public boolean handleRequest(VaadinSession session, VaadinRequest request,
-			VaadinResponse response) throws IOException {
+	public boolean handleRequest(VaadinSession session, VaadinRequest request, VaadinResponse response)
+			throws IOException {
 
 		String path = request.getPathInfo();
 
 		// adresa musí začínat mountpointem
 		// adresa musí být delší než mountpoint + '/'
-		if (path.startsWith(mountPoint)
-				&& path.length() > (mountPoint.length() + 1)) {
+		if (path.startsWith(mountPoint) && path.length() > (mountPoint.length() + 1)) {
 
 			String fileName = path.substring(mountPoint.length() + 1);
 
-			InputStream in = getResourceStream(fileName);
+			InputStream in = null;
+			try {
+				in = getResourceStream(fileName);
+			} catch (FileNotFoundException e) {
+				response.sendError(404, "Content not found");
+				return true;
+			}
 
 			byte[] buffer = new byte[1024];
 

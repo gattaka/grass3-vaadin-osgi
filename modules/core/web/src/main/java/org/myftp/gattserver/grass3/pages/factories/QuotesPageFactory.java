@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 @Component("quotesPageFactory")
 public class QuotesPageFactory extends AbstractPageFactory {
 
+	private static final long serialVersionUID = 130456003400328236L;
+
 	public QuotesPageFactory() {
 		super("quotes", "quotesPage");
 	}

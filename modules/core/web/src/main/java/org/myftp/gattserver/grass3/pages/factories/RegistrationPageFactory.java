@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 @Component("registrationPageFactory")
 public class RegistrationPageFactory extends AbstractPageFactory {
 
+	private static final long serialVersionUID = 3789569117229850461L;
+
 	@Resource(name = "coreACL")
 	private ICoreACL coreACL;
 

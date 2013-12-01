@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component(value = "homePageFactory")
 public class HomePageFactory extends AbstractPageFactory {
+	private static final long serialVersionUID = 1836925840118204442L;
 
 	public HomePageFactory() {
 		super("home", "homepage");
@@ -14,5 +15,5 @@ public class HomePageFactory extends AbstractPageFactory {
 	protected boolean isAuthorized() {
 		return true;
 	}
-	
+
 }

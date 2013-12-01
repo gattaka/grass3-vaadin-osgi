@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 @Component(value = "noServicePageFactory")
 public class NoServicePageFactory extends AbstractPageFactory {
 
+	private static final long serialVersionUID = -8393895002312736988L;
+
 	public NoServicePageFactory() {
 		super("noservice", "noServicePage");
 	}

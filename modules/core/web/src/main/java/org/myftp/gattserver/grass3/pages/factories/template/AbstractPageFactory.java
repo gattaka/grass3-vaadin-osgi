@@ -11,8 +11,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-public abstract class AbstractPageFactory implements IPageFactory,
-		ApplicationContextAware {
+public abstract class AbstractPageFactory implements IPageFactory, ApplicationContextAware {
+	private static final long serialVersionUID = 3988625640870100368L;
 
 	private String pageName;
 	private String beanName;
@@ -21,9 +21,8 @@ public abstract class AbstractPageFactory implements IPageFactory,
 
 	@Resource(name = "securityFacade")
 	private ISecurityFacade securityFacade;
-	
-	public void setApplicationContext(ApplicationContext applicationContext)
-			throws BeansException {
+
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
 	}
 
@@ -46,7 +45,7 @@ public abstract class AbstractPageFactory implements IPageFactory,
 	protected UserInfoDTO getUser() {
 		return securityFacade.getCurrentUser();
 	}
-	
+
 	public String getPageName() {
 		return pageName;
 	}
@@ -54,8 +53,7 @@ public abstract class AbstractPageFactory implements IPageFactory,
 	protected abstract boolean isAuthorized();
 
 	public GrassLayout createPage(GrassRequest request) {
-		return ((IGrassPage) applicationContext.getBean(
-				isAuthorized() ? beanName : "err403", request)).getContent();
+		return ((IGrassPage) applicationContext.getBean(isAuthorized() ? beanName : "err403", request)).getContent();
 	}
 
 }

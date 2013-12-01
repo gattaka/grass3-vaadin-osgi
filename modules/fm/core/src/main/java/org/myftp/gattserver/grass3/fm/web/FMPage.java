@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.fm.FMExplorer;
 import org.myftp.gattserver.grass3.fm.FMExplorer.FileProcessState;
+import org.myftp.gattserver.grass3.fm.config.FMConfiguration;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
@@ -32,12 +33,14 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.Action;
 import com.vaadin.event.ItemClickEvent;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Link;
 import com.vaadin.ui.Table.Align;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Embedded;
@@ -111,22 +114,19 @@ public class FMPage extends OneColumnPage {
 	/**
 	 * Akce pro skupinu
 	 */
-	private static final Action[] ACTIONS_GROUP = new Action[] { ACTION_MOVE,
-			ACTION_DELETE, ACTION_ZIP, ACTION_DETAILS };
+	private static final Action[] ACTIONS_GROUP = new Action[] { ACTION_MOVE, ACTION_DELETE, ACTION_ZIP, ACTION_DETAILS };
 
 	/**
 	 * Akce pro jednotlivce (adresář)
 	 */
-	private static final Action[] ACTIONS_DIR = new Action[] { ACTION_OPEN,
-			ACTION_RENAME, ACTION_MOVE, ACTION_DELETE, ACTION_ZIP,
-			ACTION_DETAILS };
+	private static final Action[] ACTIONS_DIR = new Action[] { ACTION_OPEN, ACTION_RENAME, ACTION_MOVE, ACTION_DELETE,
+			ACTION_ZIP, ACTION_DETAILS };
 
 	/**
 	 * Akce pro jednotlivce (soubor)
 	 */
-	private static final Action[] ACTIONS_FILE = new Action[] { ACTION_OPEN,
-			ACTION_RENAME, ACTION_MOVE, ACTION_DELETE, ACTION_ZIP,
-			ACTION_DOWNLOAD, ACTION_DETAILS };
+	private static final Action[] ACTIONS_FILE = new Action[] { ACTION_OPEN, ACTION_RENAME, ACTION_MOVE, ACTION_DELETE,
+			ACTION_ZIP, ACTION_DOWNLOAD, ACTION_DETAILS };
 
 	public FMPage(GrassRequest request) {
 		super(request);
@@ -197,16 +197,14 @@ public class FMPage extends OneColumnPage {
 			do {
 
 				String filePathFromRoot = explorer.fileURLFromRoot(next);
-				breadcrumbElements.add(new BreadcrumbElement(next.getPath()
-						.equals(rootPath) ? "/" : next.getName(),
+				breadcrumbElements.add(new BreadcrumbElement(next.getPath().equals(rootPath) ? "/" : next.getName(),
 						getPageResource(fmPageFactory, filePathFromRoot)));
 
 				next = next.getParentFile();
 
 				// pokud je můj předek null nebo jsem mimo povolený rozsah, pak
 				// je to konec a je to všechno
-			} while (next != null
-					&& next.getPath().length() >= rootPath.length());
+			} while (next != null && next.getPath().length() >= rootPath.length());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -251,12 +249,10 @@ public class FMPage extends OneColumnPage {
 					case 2:
 					case 3:
 					case 4:
-						statusLabel.setValue("Vybrány " + markedFiles.size()
-								+ " soubory ");
+						statusLabel.setValue("Vybrány " + markedFiles.size() + " soubory ");
 						break;
 					default:
-						statusLabel.setValue("Vybráno " + markedFiles.size()
-								+ " souborů");
+						statusLabel.setValue("Vybráno " + markedFiles.size() + " souborů");
 					}
 				}
 				/**
@@ -296,8 +292,7 @@ public class FMPage extends OneColumnPage {
 				// Akce pro skupinu se nabízí v případě, že:
 				// - RMB kliká na soubor z vybrané skupiny
 				// - skupina obsahuje více souborů
-				if (markedFiles != null && markedFiles.size() > 1
-						&& markedFiles.contains(targetFile)) {
+				if (markedFiles != null && markedFiles.size() > 1 && markedFiles.contains(targetFile)) {
 					return ACTIONS_GROUP;
 				} else {
 					if (targetFile.isDirectory())
@@ -353,8 +348,7 @@ public class FMPage extends OneColumnPage {
 	 * soubor (false)
 	 */
 	private boolean isOperationTargetSelectedGroup(File file) {
-		return (markedFiles != null && markedFiles.size() > 1 && markedFiles
-				.contains(file));
+		return (markedFiles != null && markedFiles.size() > 1 && markedFiles.contains(file));
 	}
 
 	private void handleDeleteAction(final File file, VerticalLayout layout) {
@@ -362,10 +356,8 @@ public class FMPage extends OneColumnPage {
 		final ReferenceHolder<Boolean> groupOperation = ReferenceHolder
 				.newBooleanHolder(isOperationTargetSelectedGroup(file));
 
-		Label subWindowLabel = new Label(
-				groupOperation.getValue() ? "Opravdu chcete smazat vybrané soubory ?"
-						: "Opravdu chcete smazat soubor \"" + file.getName()
-								+ "\" ?");
+		Label subWindowLabel = new Label(groupOperation.getValue() ? "Opravdu chcete smazat vybrané soubory ?"
+				: "Opravdu chcete smazat soubor \"" + file.getName() + "\" ?");
 
 		final Window subwindow = new ConfirmSubwindow(subWindowLabel) {
 
@@ -406,8 +398,7 @@ public class FMPage extends OneColumnPage {
 
 	private void handleOpenAction(File file) {
 		try {
-			redirect(getPageURL(fmPageFactory, explorer.fileURLFromRoot(file)
-					.toString()));
+			redirect(getPageURL(fmPageFactory, explorer.fileURLFromRoot(file).toString()));
 		} catch (IOException e) {
 			e.printStackTrace();
 			showWarning("Soubor se nepodařilo otevřít");
@@ -435,8 +426,7 @@ public class FMPage extends OneColumnPage {
 			public void buttonClick(ClickEvent event) {
 				if (newNameField.isValid() == false)
 					return;
-				switch (explorer.renameFile(file,
-						(String) newNameField.getValue())) {
+				switch (explorer.renameFile(file, (String) newNameField.getValue())) {
 				case SUCCESS:
 					showInfo("Soubor byl úspěšně přejmenován.");
 					// refresh dir list
@@ -475,8 +465,7 @@ public class FMPage extends OneColumnPage {
 		subwindow.focus();
 	}
 
-	private void createSingleFileDetails(final File file,
-			final GrassSubWindow subwindow) {
+	private void createSingleFileDetails(final File file, final GrassSubWindow subwindow) {
 
 		GridLayout subWindowlayout = new GridLayout(2, 8);
 		subwindow.setContent(subWindowlayout);
@@ -497,23 +486,19 @@ public class FMPage extends OneColumnPage {
 
 		// Datum
 		subWindowlayout.addComponent(new Label("Datum úpravy:"), 0, 1);
-		subWindowlayout.addComponent(
-				new Label(String.valueOf(new Date(file.lastModified()))), 1, 1);
+		subWindowlayout.addComponent(new Label(String.valueOf(new Date(file.lastModified()))), 1, 1);
 
 		// Čtení
 		subWindowlayout.addComponent(new Label("Čtení:"), 0, 2);
-		subWindowlayout.addComponent(new Label(file.canRead() ? "Ano" : "Ne"),
-				1, 2);
+		subWindowlayout.addComponent(new Label(file.canRead() ? "Ano" : "Ne"), 1, 2);
 
 		// Zápis
 		subWindowlayout.addComponent(new Label("Zápis:"), 0, 3);
-		subWindowlayout.addComponent(new Label(file.canWrite() ? "Ano" : "Ne"),
-				1, 3);
+		subWindowlayout.addComponent(new Label(file.canWrite() ? "Ano" : "Ne"), 1, 3);
 
 		// Spouštění
 		subWindowlayout.addComponent(new Label("Spouštění:"), 0, 4);
-		subWindowlayout.addComponent(
-				new Label(file.canExecute() ? "Ano" : "Ne"), 1, 4);
+		subWindowlayout.addComponent(new Label(file.canExecute() ? "Ano" : "Ne"), 1, 4);
 
 		// Velikost
 		subWindowlayout.addComponent(new Label("Velikost:"), 0, 5);
@@ -524,14 +509,10 @@ public class FMPage extends OneColumnPage {
 
 		// Jsou započítané všechny soubory podstromu ?
 		if (!skipList.isEmpty()) {
-			getGrassUI()
-					.addWindow(
-							new WarnSubwindow(
-									"Některé soubory nemohly být započítány do celkové velikosti."));
+			getGrassUI().addWindow(new WarnSubwindow("Některé soubory nemohly být započítány do celkové velikosti."));
 		}
 		// Velikost (binární)
-		subWindowlayout.addComponent(
-				new Label(HumanBytesSizeCreator.format(size, false)), 1, 6);
+		subWindowlayout.addComponent(new Label(HumanBytesSizeCreator.format(size, false)), 1, 6);
 
 		// OK button
 		Button close = new Button("OK", new Button.ClickListener() {
@@ -558,8 +539,7 @@ public class FMPage extends OneColumnPage {
 
 		// Počet
 		subWindowlayout.addComponent(new Label("Počet souborů:"), 0, 0);
-		subWindowlayout.addComponent(
-				new Label(String.valueOf(markedFiles.size())), 1, 0);
+		subWindowlayout.addComponent(new Label(String.valueOf(markedFiles.size())), 1, 0);
 
 		// Velikost
 		subWindowlayout.addComponent(new Label("Velikost:"), 0, 1);
@@ -573,14 +553,10 @@ public class FMPage extends OneColumnPage {
 
 		// Jsou započítané všechny soubory podstromu ?
 		if (!skipList.isEmpty()) {
-			getGrassUI()
-					.addWindow(
-							new InfoSubwindow(
-									"Některé soubory nemohly být započítány do celkové velikosti."));
+			getGrassUI().addWindow(new InfoSubwindow("Některé soubory nemohly být započítány do celkové velikosti."));
 		}
 		// Velikost (binární)
-		subWindowlayout.addComponent(
-				new Label(HumanBytesSizeCreator.format(size, false)), 1, 2);
+		subWindowlayout.addComponent(new Label(HumanBytesSizeCreator.format(size, false)), 1, 2);
 
 		// OK button
 		Button close = new Button("OK", new Button.ClickListener() {
@@ -616,17 +592,29 @@ public class FMPage extends OneColumnPage {
 	}
 
 	private void handleDownloadFile(final File file) {
-		GrassSubWindow dlWindow = new GrassSubWindow("Stáhnout "
-				+ file.getName()) {
+		GrassSubWindow dlWindow = new GrassSubWindow("Stáhnout " + file.getName()) {
 
 			private static final long serialVersionUID = 926172618599746150L;
 
 			{
+				HorizontalLayout horizontalLayout = new HorizontalLayout();
+				horizontalLayout.setSpacing(true);
+				this.addComponent(horizontalLayout);
+
 				Button button = new Button("Stáhnout");
-				this.addComponent(button);
-				FileDownloader downloader = new FileDownloader(
-						new FileResource(file));
+				horizontalLayout.addComponent(button);
+				horizontalLayout.setComponentAlignment(button, Alignment.MIDDLE_CENTER);
+				FileDownloader downloader = new FileDownloader(new FileResource(file));
 				downloader.extend(button);
+				try {
+					String url = getRequest().getContextRoot() + FMConfiguration.FM_PATH + "/"
+							+ explorer.fileURLFromRoot(explorer.getRequestedFile()) + file.getName();
+					Label link;
+					horizontalLayout.addComponent(link = new Label(url));
+					horizontalLayout.setComponentAlignment(link, Alignment.MIDDLE_CENTER);
+				} catch (Exception e) {
+					throw new AssertionError();
+				}
 			}
 
 		};
@@ -682,35 +670,33 @@ public class FMPage extends OneColumnPage {
 		newDirName.setWidth("200px");
 		panelLayout.addComponent(newDirName);
 
-		Button createButton = new Button("Vytvořit",
-				new Button.ClickListener() {
+		Button createButton = new Button("Vytvořit", new Button.ClickListener() {
 
-					private static final long serialVersionUID = -4315617904120991885L;
+			private static final long serialVersionUID = -4315617904120991885L;
 
-					public void buttonClick(ClickEvent event) {
-						if (newDirName.isValid() == false)
-							return;
-						switch (explorer.createNewDir(newDirName.getValue()
-								.toString())) {
-						case SUCCESS:
-							showInfo("Nový adresář byl úspěšně vytvořen.");
-							// refresh dir list
-							createDirList();
-							// clean
-							newDirName.setValue("");
-							break;
-						case ALREADY_EXISTS:
-							showWarning("Nezdařilo se vytvořit nový adresář - adresář s tímto jménem již existuje.");
-							break;
-						case NOT_VALID:
-							showWarning("Nezdařilo se vytvořit nový adresář - cílové umístění adresáře se nachází mimo povolený rozsah souborů k prohlížení.");
-							break;
-						default:
-							showWarning("Nezdařilo se vytvořit nový adresář - došlo k systémové chybě.");
-						}
+			public void buttonClick(ClickEvent event) {
+				if (newDirName.isValid() == false)
+					return;
+				switch (explorer.createNewDir(newDirName.getValue().toString())) {
+				case SUCCESS:
+					showInfo("Nový adresář byl úspěšně vytvořen.");
+					// refresh dir list
+					createDirList();
+					// clean
+					newDirName.setValue("");
+					break;
+				case ALREADY_EXISTS:
+					showWarning("Nezdařilo se vytvořit nový adresář - adresář s tímto jménem již existuje.");
+					break;
+				case NOT_VALID:
+					showWarning("Nezdařilo se vytvořit nový adresář - cílové umístění adresáře se nachází mimo povolený rozsah souborů k prohlížení.");
+					break;
+				default:
+					showWarning("Nezdařilo se vytvořit nový adresář - došlo k systémové chybě.");
+				}
 
-					}
-				});
+			}
+		});
 		panelLayout.addComponent(createButton);
 
 	}
@@ -739,17 +725,14 @@ public class FMPage extends OneColumnPage {
 			}
 
 			@Override
-			protected void handleFile(File file, String fileName,
-					String mimeType, long length) {
+			protected void handleFile(File file, String fileName, String mimeType, long length) {
 				switch (explorer.saveFile(file, fileName)) {
 				case SUCCESS:
 					// refresh
 					createDirList();
 					break;
 				case ALREADY_EXISTS:
-					showWarning("Soubor '"
-							+ fileName
-							+ "' nebylo možné uložit - soubor s tímto názvem již existuje.");
+					showWarning("Soubor '" + fileName + "' nebylo možné uložit - soubor s tímto názvem již existuje.");
 					break;
 				case NOT_VALID:
 					showWarning("Soubor '"
@@ -757,14 +740,11 @@ public class FMPage extends OneColumnPage {
 							+ "' nebylo možné uložit - cílové umístění souboru se nachází mimo povolený rozsah souborů k prohlížení.");
 					break;
 				default:
-					showWarning("Soubor '"
-							+ fileName
-							+ "' nebylo možné uložit - došlo k systémové chybě.");
+					showWarning("Soubor '" + fileName + "' nebylo možné uložit - došlo k systémové chybě.");
 				}
 			}
 		};
-		multiFileUpload.setRootDirectory(explorer.getTmpDirFile()
-				.getAbsolutePath());
+		multiFileUpload.setRootDirectory(explorer.getTmpDirFile().getAbsolutePath());
 		multiFileUpload.setUploadButtonCaption("Vybrat soubory");
 		multiFileUpload.setSizeFull();
 		panelLayout.addComponent(multiFileUpload);
@@ -777,8 +757,7 @@ public class FMPage extends OneColumnPage {
 		container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
 		container.addContainerProperty(ColumnId.NÁZEV, String.class, null);
 		container.addContainerProperty(ColumnId.VELIKOST, String.class, "");
-		container.addContainerProperty(ColumnId.DATUM,
-				ComparableStringDate.class, new ComparableStringDate(null));
+		container.addContainerProperty(ColumnId.DATUM, ComparableStringDate.class, new ComparableStringDate(null));
 		container.addContainerProperty(ColumnId.OPRÁVNĚNÍ, String.class, "");
 		filestable.setContainerDataSource(container);
 		filestable.setColumnWidth(ColumnId.IKONA, 16);
@@ -806,8 +785,7 @@ public class FMPage extends OneColumnPage {
 		}
 
 		// Předek - pouze pokud nejsem v kořeni
-		if (!explorer.getRequestedFile().getPath()
-				.equals(explorer.getRootFile().getPath())) {
+		if (!explorer.getRequestedFile().getPath().equals(explorer.getRootFile().getPath())) {
 			File parent = explorer.getRequestedFile().getParentFile();
 
 			Item item = filestable.addItem(parent);
@@ -825,12 +803,9 @@ public class FMPage extends OneColumnPage {
 			item.getItemProperty(ColumnId.IKONA).setValue(icon);
 
 			item.getItemProperty(ColumnId.NÁZEV).setValue(file.getName());
-			item.getItemProperty(ColumnId.DATUM).setValue(
-					new ComparableStringDate(new Date(file.lastModified())));
+			item.getItemProperty(ColumnId.DATUM).setValue(new ComparableStringDate(new Date(file.lastModified())));
 			item.getItemProperty(ColumnId.OPRÁVNĚNÍ).setValue(
-					(file.canExecute() ? "x" : "-")
-							+ (file.canRead() ? "r" : "-")
-							+ (file.canWrite() ? "w" : "-"));
+					(file.canExecute() ? "x" : "-") + (file.canRead() ? "r" : "-") + (file.canWrite() ? "w" : "-"));
 		}
 
 		// Soubory
@@ -841,19 +816,14 @@ public class FMPage extends OneColumnPage {
 			item.getItemProperty(ColumnId.IKONA).setValue(icon);
 
 			item.getItemProperty(ColumnId.NÁZEV).setValue(file.getName());
-			item.getItemProperty(ColumnId.VELIKOST).setValue(
-					HumanBytesSizeCreator.format(file.length(), true));
-			item.getItemProperty(ColumnId.DATUM).setValue(
-					new ComparableStringDate(new Date(file.lastModified())));
+			item.getItemProperty(ColumnId.VELIKOST).setValue(HumanBytesSizeCreator.format(file.length(), true));
+			item.getItemProperty(ColumnId.DATUM).setValue(new ComparableStringDate(new Date(file.lastModified())));
 			item.getItemProperty(ColumnId.OPRÁVNĚNÍ).setValue(
-					(file.canExecute() ? "x" : "-")
-							+ (file.canRead() ? "r" : "-")
-							+ (file.canWrite() ? "w" : "-"));
+					(file.canExecute() ? "x" : "-") + (file.canRead() ? "r" : "-") + (file.canWrite() ? "w" : "-"));
 		}
 
 		// Status label static value
-		satusLabelStaticValue = "Zobrazeno " + directories.size()
-				+ " adresářů, " + innerFiles.size() + " souborů";
+		satusLabelStaticValue = "Zobrazeno " + directories.size() + " adresářů, " + innerFiles.size() + " souborů";
 		statusLabel.setValue(satusLabelStaticValue);
 
 		filestable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
@@ -864,8 +834,7 @@ public class FMPage extends OneColumnPage {
 					File file = (File) event.getItemId();
 					if (file.isDirectory()) {
 						try {
-							redirect(getPageURL(fmPageFactory, explorer
-									.fileURLFromRoot(file).toString()));
+							redirect(getPageURL(fmPageFactory, explorer.fileURLFromRoot(file).toString()));
 						} catch (IOException e) {
 							e.printStackTrace();
 							showWarning("Nezdařilo se otevřít soubor");
@@ -893,10 +862,8 @@ public class FMPage extends OneColumnPage {
 	public static String shortText(final String longText, int limit) {
 		String shortText = longText;
 		if (longText.length() > limit) {
-			shortText = longText.substring(0, limit / 2 - 1)
-					+ "..."
-					+ longText.substring(longText.length() - 1
-							- (limit / 2 - 2));
+			shortText = longText.substring(0, limit / 2 - 1) + "..."
+					+ longText.substring(longText.length() - 1 - (limit / 2 - 2));
 		}
 		return shortText;
 	}

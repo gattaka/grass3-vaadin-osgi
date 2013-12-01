@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.medic.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -29,6 +30,7 @@ public class MedicalInstitution {
 	/**
 	 * Otevírací hodiny
 	 */
+	@Column(columnDefinition = "TEXT")
 	private String hours;
 
 	/**

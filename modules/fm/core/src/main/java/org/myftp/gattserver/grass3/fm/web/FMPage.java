@@ -609,8 +609,8 @@ public class FMPage extends OneColumnPage {
 				try {
 					String url = getRequest().getContextRoot() + FMConfiguration.FM_PATH + "/"
 							+ explorer.fileURLFromRoot(explorer.getRequestedFile()) + file.getName();
-					Label link;
-					horizontalLayout.addComponent(link = new Label(url));
+					Link link;
+					horizontalLayout.addComponent(link = new Link(url, new ExternalResource(url)));
 					horizontalLayout.setComponentAlignment(link, Alignment.MIDDLE_CENTER);
 				} catch (Exception e) {
 					throw new AssertionError();

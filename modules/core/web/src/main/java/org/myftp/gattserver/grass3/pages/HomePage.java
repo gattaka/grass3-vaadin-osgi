@@ -89,15 +89,12 @@ public class HomePage extends BasePage {
 		UserInfoDTO user = getGrassUI().getUser();
 		if (user != null) {
 			VerticalLayout favouritesLayout = new VerticalLayout();
-			favouritesLayout.addComponent(new Label("<h2>Oblíbené obsahy</h2>",
-					ContentMode.HTML));
-			ContentsTable favouritesContentsTable = contentsTableFactory
-					.createContentsTable();
+			favouritesLayout.addComponent(new Label("<h2>Oblíbené obsahy</h2>", ContentMode.HTML));
+			ContentsTable favouritesContentsTable = contentsTableFactory.createContentsTable();
 			favouritesLayout.addComponent(favouritesContentsTable);
 			favouritesContentsTable.setWidth("100%");
 			pagelayout.addComponent(favouritesLayout);
-			Set<ContentNodeDTO> contentNodes = contentNodeFacade
-					.getUserFavouriteContents(user);
+			Set<ContentNodeDTO> contentNodes = contentNodeFacade.getUserFavouriteContents(user);
 			favouritesContentsTable.populateTable(contentNodes, this);
 		}
 
@@ -122,14 +119,12 @@ public class HomePage extends BasePage {
 	private void createTagCloud(VerticalLayout pagelayout) {
 
 		VerticalLayout tagCloudLayout = new VerticalLayout();
-		tagCloudLayout
-				.addComponent(new Label("<h2>Tagy</h2>", ContentMode.HTML));
+		tagCloudLayout.addComponent(new Label("<h2>Tagy</h2>", ContentMode.HTML));
 		CssLayout tagCloud = new CssLayout();
 		tagCloudLayout.addComponent(tagCloud);
 		pagelayout.addComponent(tagCloudLayout);
 
-		final List<ContentTagDTO> contentTags = contentTagFacade
-				.getContentTagsForOverview();
+		final List<ContentTagDTO> contentTags = contentTagFacade.getContentTagsForOverview();
 
 		if (contentTags == null)
 			showError500();
@@ -156,8 +151,10 @@ public class HomePage extends BasePage {
 		 * Přepočet na vypočtení jednotky převodu
 		 */
 		double scale = MAX_FONT_SIZE_TAG_CLOUD - MIN_FONT_SIZE_TAG_CLOUD;
-		final int koef = (int) Math.floor(scale
-				/ (counts.size() == 1 ? 1 : (counts.size() - 1)));
+		int koef = (int) Math.floor(scale / (counts.size() == 1 ? 1 : (counts.size() - 1)));
+
+		if (koef == 0)
+			koef = 1;
 
 		/**
 		 * O(n.log(n))
@@ -174,8 +171,7 @@ public class HomePage extends BasePage {
 		 * Údaj o poslední příčce a velikosti, která jí odpovídala - dle toho
 		 * budu vědět kdy posunout ohodnocovací koeficient
 		 */
-		int lastSize = contentTags.isEmpty() ? 1 : contentTags.get(0)
-				.getContentNodesCount();
+		int lastSize = contentTags.isEmpty() ? 1 : contentTags.get(0).getContentNodesCount();
 		int lastFontSize = MIN_FONT_SIZE_TAG_CLOUD;
 
 		/**
@@ -208,8 +204,7 @@ public class HomePage extends BasePage {
 		 */
 		Collections.sort(contentTags, new Comparator<ContentTagDTO>() {
 			public int compare(ContentTagDTO o1, ContentTagDTO o2) {
-				return o1.getName().toLowerCase()
-						.compareTo(o2.getName().toLowerCase());
+				return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
 			}
 		});
 
@@ -217,12 +212,9 @@ public class HomePage extends BasePage {
 			int size = sizeTable.get(contentTag.getContentNodesCount());
 			Label tagLabel;
 			tagCloud.addComponent(tagLabel = new Label("<a href='"
-					+ getPageURL(
-							tagPageFactory,
-							URLIdentifierUtils.createURLIdentifier(
-									contentTag.getId(), contentTag.getName()))
-					+ "' style='font-size:" + size + "pt'>"
-					+ contentTag.getName() + "</a>", ContentMode.HTML));
+					+ getPageURL(tagPageFactory,
+							URLIdentifierUtils.createURLIdentifier(contentTag.getId(), contentTag.getName()))
+					+ "' style='font-size:" + size + "pt'>" + contentTag.getName() + "</a>", ContentMode.HTML));
 			tagLabel.addStyleName("taglabel");
 			tagLabel.setSizeUndefined();
 		}
@@ -231,27 +223,21 @@ public class HomePage extends BasePage {
 
 	private void createRecentMenus(VerticalLayout pagelayout) {
 
-		ContentsTable recentAddedContentsTable = contentsTableFactory
-				.createContentsTable();
-		ContentsTable recentModifiedContentsTable = contentsTableFactory
-				.createContentsTable();
+		ContentsTable recentAddedContentsTable = contentsTableFactory.createContentsTable();
+		ContentsTable recentModifiedContentsTable = contentsTableFactory.createContentsTable();
 
-		Set<ContentNodeDTO> recentAdded = contentNodeFacade
-				.getRecentAddedForOverview(RECENT_ITEMS_COUNT);
-		Set<ContentNodeDTO> recentModified = contentNodeFacade
-				.getRecentModifiedForOverview(RECENT_ITEMS_COUNT);
+		Set<ContentNodeDTO> recentAdded = contentNodeFacade.getRecentAddedForOverview(RECENT_ITEMS_COUNT);
+		Set<ContentNodeDTO> recentModified = contentNodeFacade.getRecentModifiedForOverview(RECENT_ITEMS_COUNT);
 
 		VerticalLayout recentAddedLayout = new VerticalLayout();
-		recentAddedLayout.addComponent(new Label(
-				"<h2>Nedávno přidané obsahy</h2>", ContentMode.HTML));
+		recentAddedLayout.addComponent(new Label("<h2>Nedávno přidané obsahy</h2>", ContentMode.HTML));
 		recentAddedLayout.addComponent(recentAddedContentsTable);
 		recentAddedContentsTable.setWidth("100%");
 		pagelayout.addComponent(recentAddedLayout);
 
 		// Nedávno upravené obsahy
 		VerticalLayout recentModifiedLayout = new VerticalLayout();
-		recentModifiedLayout.addComponent(new Label(
-				"<h2>Nedávno upravené obsahy</h2>", ContentMode.HTML));
+		recentModifiedLayout.addComponent(new Label("<h2>Nedávno upravené obsahy</h2>", ContentMode.HTML));
 		recentModifiedLayout.addComponent(recentModifiedContentsTable);
 		recentModifiedContentsTable.setWidth("100%");
 		pagelayout.addComponent(recentModifiedLayout);
@@ -259,11 +245,9 @@ public class HomePage extends BasePage {
 		recentAddedContentsTable.populateTable(recentAdded, this);
 		recentModifiedContentsTable.populateTable(recentModified, this);
 
-		recentAddedContentsTable
-				.setSortContainerPropertyId(ContentsTableFactory.ColumnId.DATUM_VYTVOŘENÍ);
+		recentAddedContentsTable.setSortContainerPropertyId(ContentsTableFactory.ColumnId.DATUM_VYTVOŘENÍ);
 		recentAddedContentsTable.setSortAscending(false);
-		recentModifiedContentsTable
-				.setSortContainerPropertyId(ContentsTableFactory.ColumnId.DATUM_ÚPRAVY);
+		recentModifiedContentsTable.setSortContainerPropertyId(ContentsTableFactory.ColumnId.DATUM_ÚPRAVY);
 		recentModifiedContentsTable.setSortAscending(false);
 
 	}

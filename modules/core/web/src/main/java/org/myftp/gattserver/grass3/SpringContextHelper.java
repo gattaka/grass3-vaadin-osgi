@@ -33,6 +33,10 @@ public class SpringContextHelper {
 		}
 	}
 
+	public static ApplicationContext getContext() {
+		return ContextHolder.getContext();
+	}
+	
 	public static Object getBean(final String beanRef) {
 		return ContextHolder.getContext().getBean(beanRef);
 	}

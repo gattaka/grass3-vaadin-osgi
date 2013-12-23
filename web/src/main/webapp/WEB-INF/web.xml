@@ -43,7 +43,7 @@
 	<!-- Vaadin servlet (spring-vaadin bridge) -->
 	<servlet>
 		<servlet-name>Vaadin Application</servlet-name>
-		<servlet-class>ru.xpoft.vaadin.SpringVaadinServlet</servlet-class>
+		<servlet-class>org.myftp.gattserver.grass3.GrassVaadinServlet</servlet-class>
 		<init-param>
 			<param-name>beanName</param-name>
 			<param-value>grassUI</param-value>

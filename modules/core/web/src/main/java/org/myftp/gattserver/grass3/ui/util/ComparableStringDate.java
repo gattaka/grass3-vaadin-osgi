@@ -14,8 +14,7 @@ import java.util.Date;
  */
 public class ComparableStringDate implements Comparable<ComparableStringDate> {
 
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
-			"d.M.yyyy HH:mm:ss");
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("d.M.yyyy HH:mm:ss");
 
 	private Date date;
 	private String stringDate;
@@ -35,7 +34,11 @@ public class ComparableStringDate implements Comparable<ComparableStringDate> {
 	}
 
 	public int compareTo(ComparableStringDate o) {
-		return date == null ? -1 : this.getDate().compareTo(o.getDate());
+		if (date == null) {
+			return o.getDate() == null ? 0 : -1;
+		} else {
+			return o.getDate() == null ? 1 : date.compareTo(o.getDate());
+		}
 	}
 
 }

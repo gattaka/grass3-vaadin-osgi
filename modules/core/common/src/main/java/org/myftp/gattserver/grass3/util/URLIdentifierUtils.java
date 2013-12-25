@@ -1,5 +1,9 @@
 package org.myftp.gattserver.grass3.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+
 public class URLIdentifierUtils {
 
 	public static class URLIdentifier {
@@ -44,7 +48,17 @@ public class URLIdentifierUtils {
 	 * @return URL identifikátor kategorie
 	 */
 	public static String createURLIdentifier(Long id, String name) {
-		return String.valueOf(id) + "-" + name;
+		try {
+			String identifier = URLEncoder.encode(String.valueOf(id) + "-" + name, "UTF-8");
+			// Tomcat má dfault nastavené ignorovat adresy ve kterých je %2F
+			// https://www.assembla.com/spaces/liftweb/wiki/Tomcat/print
+			// http://forum.spring.io/forum/spring-projects/web/97212-url-encoded-in-pathvariable-value-causes-problems
+			return identifier.replaceAll("%2F","%252F");
+		} catch (UnsupportedEncodingException e) {
+			// UTF-8 missing - vážně ?
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
@@ -73,10 +87,14 @@ public class URLIdentifierUtils {
 			return null;
 		}
 
-		URLIdentifier urlIdentifier = new URLIdentifier(id, parts[1]);
-
-		return urlIdentifier;
-
+		try {
+			String name = URLDecoder.decode(parts[1], "UTF-8");
+			URLIdentifier urlIdentifier = new URLIdentifier(id, name);
+			return urlIdentifier;
+		} catch (UnsupportedEncodingException e) {
+			// UTF-8 missing - vážně ?
+			e.printStackTrace();
+			return null;
+		}
 	}
-
 }

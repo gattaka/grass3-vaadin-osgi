@@ -40,6 +40,11 @@ public class HWItemsTab extends VerticalLayout {
 	private void populateContainer() {
 		container.removeAllItems();
 		container.addAll(hwFacade.getAllHWItems());
+		sortTable();
+	}
+
+	private void sortTable() {
+		table.sort(new Object[] { "name" }, new boolean[] { true });
 	}
 
 	private void addWindow(Window win) {
@@ -49,13 +54,11 @@ public class HWItemsTab extends VerticalLayout {
 	private void openNewItemWindow(boolean fix) {
 		HWItemDTO hwItem = null;
 		if (fix) {
-			BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table
-					.getContainerDataSource();
+			BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table.getContainerDataSource();
 			BeanItem<?> item = cont.getItem(table.getValue());
 			hwItem = (HWItemDTO) item.getBean();
 		}
-		addWindow(new HWItemCreateWindow(HWItemsTab.this, hwItem == null ? null
-				: hwItem.getId()) {
+		addWindow(new HWItemCreateWindow(HWItemsTab.this, hwItem == null ? null : hwItem.getId()) {
 
 			private static final long serialVersionUID = -1397391593801030584L;
 
@@ -67,8 +70,7 @@ public class HWItemsTab extends VerticalLayout {
 	}
 
 	private void openAddNoteWindow() {
-		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table
-				.getContainerDataSource();
+		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table.getContainerDataSource();
 		BeanItem<?> item = cont.getItem(table.getValue());
 		HWItemDTO hwItem = (HWItemDTO) item.getBean();
 
@@ -85,8 +87,7 @@ public class HWItemsTab extends VerticalLayout {
 	}
 
 	private void openDetailWindow() {
-		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table
-				.getContainerDataSource();
+		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table.getContainerDataSource();
 		BeanItem<?> item = cont.getItem(table.getValue());
 		if (item == null)
 			return;
@@ -96,8 +97,7 @@ public class HWItemsTab extends VerticalLayout {
 
 	private void openDeleteWindow() {
 		HWItemsTab.this.setEnabled(false);
-		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table
-				.getContainerDataSource();
+		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table.getContainerDataSource();
 		BeanItem<?> item = cont.getItem(table.getValue());
 		final HWItemDTO hwItem = (HWItemDTO) item.getBean();
 		addWindow(new ConfirmSubwindow("Opravdu smazat '" + hwItem.getName()
@@ -110,9 +110,7 @@ public class HWItemsTab extends VerticalLayout {
 				if (hwFacade.deleteHWItem(hwItem)) {
 					populateContainer();
 				} else {
-					UI.getCurrent().addWindow(
-							new ErrorSubwindow(
-									"Nezdařilo se smazat vybranou položku"));
+					UI.getCurrent().addWindow(new ErrorSubwindow("Nezdařilo se smazat vybranou položku"));
 				}
 			}
 
@@ -154,8 +152,7 @@ public class HWItemsTab extends VerticalLayout {
 		populateContainer();
 		table.setContainerDataSource(container);
 
-		table.setConverter("purchaseDate",
-				new StringToDateConverter());
+		table.setConverter("purchaseDate", new StringToDateConverter());
 		table.setConverter("state", new StringToHWItemStateConverter());
 		table.setConverter("price", new StringToMoneyConverter());
 		table.setConverter("usedIn", new StringToHWItemConverter());
@@ -168,13 +165,12 @@ public class HWItemsTab extends VerticalLayout {
 
 		table.setColumnAlignment("price", Align.RIGHT);
 
-		table.setVisibleColumns(new String[] { "name", "state", "usedIn",
-				"price", "purchaseDate" });
+		table.setVisibleColumns(new String[] { "name", "state", "usedIn", "price", "purchaseDate" });
 		table.setColumnWidth("name", 380);
 		table.setColumnWidth("usedIn", 180);
-		table.setSortAscending(true);
-		table.setSortContainerPropertyId("name");
 		table.setWidth("100%");
+		
+		sortTable();
 
 		table.addItemClickListener(new ItemClickEvent.ItemClickListener() {
 			private static final long serialVersionUID = 2068314108919135281L;

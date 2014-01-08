@@ -12,13 +12,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("configurationService")
 public class ConfigurationService implements IConfigurationService {
 
+	private static final long serialVersionUID = -2565316748839842203L;
+
 	@Autowired
 	private ConfigurationItemRepository configurationItemRepository;
 
 	public void loadConfiguration(AbstractConfiguration configuration) {
 
-		List<ConfigurationItem> configurationItems = configurationItemRepository
-				.findByNameStartingWith(configuration.getPrefix());
+		List<ConfigurationItem> configurationItems = configurationItemRepository.findByNameStartingWith(configuration
+				.getPrefix());
 
 		configuration.populateConfigurationFromMap(configurationItems);
 	}
@@ -26,8 +28,7 @@ public class ConfigurationService implements IConfigurationService {
 	public boolean saveConfiguration(AbstractConfiguration configuration) {
 		List<ConfigurationItem> items = configuration.getConfigurationItems();
 		for (ConfigurationItem item : items) {
-			ConfigurationItem loadedItem = configurationItemRepository
-					.findOne(item.getName());
+			ConfigurationItem loadedItem = configurationItemRepository.findOne(item.getName());
 			if (loadedItem == null) {
 				configurationItemRepository.save(item);
 			} else {

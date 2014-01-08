@@ -1,13 +1,15 @@
 package org.myftp.gattserver.grass3.grocery.dto;
 
-public class ShopDTO {
+import org.myftp.gattserver.grass3.model.dto.Identifiable;
+
+public class ShopDTO implements Identifiable {
 
 	private Long id;
 
 	/**
 	 * Název obchodu
 	 */
-	private String name;
+	private String name = "";
 
 	public Long getId() {
 		return id;

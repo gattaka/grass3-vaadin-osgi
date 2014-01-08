@@ -4,7 +4,9 @@ import java.util.Date;
 
 import javax.persistence.ManyToOne;
 
-public class PurchaseDTO {
+import org.myftp.gattserver.grass3.model.dto.Identifiable;
+
+public class PurchaseDTO implements Identifiable{
 
 	private Long id;
 

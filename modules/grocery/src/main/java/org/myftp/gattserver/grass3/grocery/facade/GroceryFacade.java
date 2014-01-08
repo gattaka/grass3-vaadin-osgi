@@ -90,6 +90,7 @@ public class GroceryFacade implements IGroceryFacade {
 	@Override
 	public boolean saveShop(ShopDTO dto) {
 		Shop shop = new Shop();
+		shop.setId(dto.getId());
 		shop.setName(dto.getName());
 		return shopRepository.save(shop) != null;
 	}

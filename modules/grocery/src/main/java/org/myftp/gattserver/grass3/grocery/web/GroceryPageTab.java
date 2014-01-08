@@ -10,7 +10,7 @@ public abstract class GroceryPageTab<T extends Identifiable> extends
 
 	private static final long serialVersionUID = 2057957439013190170L;
 
-	protected IGroceryFacade medicFacade;
+	protected IGroceryFacade groceryFacade;
 
 	public GroceryPageTab(Class<T> clazz) {
 		super(clazz);
@@ -18,7 +18,7 @@ public abstract class GroceryPageTab<T extends Identifiable> extends
 
 	@Override
 	protected void init() {
-		medicFacade = SpringContextHelper.getBean(IGroceryFacade.class);
+		groceryFacade = SpringContextHelper.getBean(IGroceryFacade.class);
 		super.init();
 	}
 }

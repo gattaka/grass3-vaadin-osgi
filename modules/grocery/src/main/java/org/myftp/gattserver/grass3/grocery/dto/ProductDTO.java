@@ -1,6 +1,8 @@
 package org.myftp.gattserver.grass3.grocery.dto;
 
-public class ProductDTO {
+import org.myftp.gattserver.grass3.model.dto.Identifiable;
+
+public class ProductDTO implements Identifiable {
 
 	private Long id;
 

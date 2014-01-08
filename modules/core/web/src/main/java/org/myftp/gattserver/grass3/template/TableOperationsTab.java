@@ -21,8 +21,7 @@ import com.vaadin.ui.Window;
  *            třída zobrazované entity
  * 
  */
-public abstract class TableOperationsTab<T extends Identifiable> extends
-		VerticalLayout implements ISelectable {
+public abstract class TableOperationsTab<T extends Identifiable> extends VerticalLayout implements ISelectable {
 
 	private static final long serialVersionUID = 6844434642906509277L;
 
@@ -42,14 +41,12 @@ public abstract class TableOperationsTab<T extends Identifiable> extends
 	/**
 	 * Vytvoří okno pro detail entity
 	 */
-	protected abstract Window createDetailWindow(Long id,
-			Component... triggerComponent);
+	protected abstract Window createDetailWindow(Long id, Component... triggerComponent);
 
 	/**
 	 * Vytvoří okno pro úpravu entity
 	 */
-	protected abstract Window createModifyWindow(T dto,
-			Component... triggerComponent);
+	protected abstract Window createModifyWindow(T dto, Component... triggerComponent);
 
 	/**
 	 * Smaže vybranou entitu
@@ -90,31 +87,25 @@ public abstract class TableOperationsTab<T extends Identifiable> extends
 			}
 		};
 
-		final Button detailBtn = new DetailBtn<T>("Detail", table,
-				TableOperationsTab.this) {
+		final Button detailBtn = new DetailBtn<T>("Detail", table, TableOperationsTab.this) {
 			private static final long serialVersionUID = -8949928545479455240L;
 
 			@Override
-			protected Window getDetailWindow(T selectedValue,
-					Component... triggerComponent) {
-				return createDetailWindow(selectedValue.getId(),
-						triggerComponent);
+			protected Window getDetailWindow(T selectedValue, Component... triggerComponent) {
+				return createDetailWindow(selectedValue.getId(), triggerComponent);
 			}
 		};
 
-		final Button modifyInstitutionBtn = new ModifyBtn<T>("Upravit", table,
-				TableOperationsTab.this) {
+		final Button modifyBtn = new ModifyBtn<T>("Upravit", table, TableOperationsTab.this) {
 			private static final long serialVersionUID = -8949928545479455240L;
 
 			@Override
-			protected Window getModifyWindow(T selectedValue,
-					Component... triggerComponent) {
+			protected Window getModifyWindow(T selectedValue, Component... triggerComponent) {
 				return createModifyWindow(selectedValue, triggerComponent);
 			}
 		};
 
-		final Button deleteBtn = new DeleteBtn<T>("Smazat", table,
-				TableOperationsTab.this) {
+		final Button deleteBtn = new DeleteBtn<T>("Smazat", table, TableOperationsTab.this) {
 
 			private static final long serialVersionUID = 1900185891293966049L;
 
@@ -125,26 +116,16 @@ public abstract class TableOperationsTab<T extends Identifiable> extends
 			}
 		};
 
-		/**
-		 * Založení nové instituce
-		 */
+		placeButtons(buttonLayout, createBtn, detailBtn, modifyBtn, deleteBtn);
+
+	}
+
+	protected void placeButtons(HorizontalLayout buttonLayout, Button createBtn, Button detailBtn, Button modifyBtn,
+			Button deleteBtn) {
 		buttonLayout.addComponent(createBtn);
-
-		/**
-		 * Detail instituce
-		 */
 		buttonLayout.addComponent(detailBtn);
-
-		/**
-		 * Úprava doktora
-		 */
-		buttonLayout.addComponent(modifyInstitutionBtn);
-
-		/**
-		 * Smazání instituce
-		 */
+		buttonLayout.addComponent(modifyBtn);
 		buttonLayout.addComponent(deleteBtn);
-
 	}
 
 	protected void init() {

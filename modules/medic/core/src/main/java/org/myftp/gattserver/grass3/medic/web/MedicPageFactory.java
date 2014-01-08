@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 @Component("medicPageFactory")
 public class MedicPageFactory extends AbstractPageFactory {
 
+	private static final long serialVersionUID = 8984837128014801897L;
+
 	public MedicPageFactory() {
 		super("medic", "medicPage");
 	}

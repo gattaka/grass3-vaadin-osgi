@@ -78,6 +78,13 @@
 			<artifactId>medic-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		
+		<!-- grocery -->
+		<dependency>
+			<groupId>org.myftp.gattserver.grass3</groupId>
+			<artifactId>grocery-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
 		<!-- fotogalerie -->
 		<dependency>

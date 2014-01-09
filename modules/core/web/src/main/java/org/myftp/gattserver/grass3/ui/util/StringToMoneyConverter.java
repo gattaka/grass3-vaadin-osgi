@@ -8,10 +8,13 @@ import com.vaadin.data.util.converter.StringToNumberConverter;
 public class StringToMoneyConverter extends StringToNumberConverter {
 	private static final long serialVersionUID = -2914696445291603483L;
 
-	private NumberFormat priceFormat = NumberFormat
-			.getCurrencyInstance(new Locale("cs", "CZ"));
+	private NumberFormat priceFormat = NumberFormat.getCurrencyInstance(new Locale("cs", "CZ"));
 
 	public String format(int price) {
+		return priceFormat.format(price);
+	}
+
+	public String format(double price) {
 		return priceFormat.format(price);
 	}
 

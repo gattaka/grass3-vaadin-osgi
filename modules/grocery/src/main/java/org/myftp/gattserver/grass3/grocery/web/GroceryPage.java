@@ -41,8 +41,8 @@ public class GroceryPage extends OneColumnPage {
 		layout.addComponent(tabSheet);
 
 		tabSheet.addTab(new ShopsTab(), "Obchody");
-		// tabSheet.addTab(new MedicalRecordsTab(), "Záznamy");
-		// tabSheet.addTab(new MedicalInstitutionsTab(), "Instituce");
+		tabSheet.addTab(new ProductTab(), "Produkty");
+		tabSheet.addTab(new PurchaseTab(), "Nákupy");
 
 		tabSheet.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
 

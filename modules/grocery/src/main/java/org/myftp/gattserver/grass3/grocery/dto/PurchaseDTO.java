@@ -2,40 +2,43 @@ package org.myftp.gattserver.grass3.grocery.dto;
 
 import java.util.Date;
 
-import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 import org.myftp.gattserver.grass3.model.dto.Identifiable;
 
-public class PurchaseDTO implements Identifiable{
+public class PurchaseDTO implements Identifiable {
 
 	private Long id;
 
 	/**
 	 * Kdy
 	 */
+	@NotNull
 	private Date date;
 
 	/**
 	 * Kde
 	 */
-	@ManyToOne
+	@NotNull
 	private ShopDTO shop;
 
 	/**
 	 * Co
 	 */
-	@ManyToOne
+	@NotNull
 	private ProductDTO product;
 
 	/**
 	 * Za kolik jednotka
 	 */
-	private Double cost;
+	@NotNull
+	private Double cost = 0.0;
 
 	/**
 	 * Množství
 	 */
-	private Double quantity;
+	@NotNull
+	private Double quantity = 0.0;
 
 	public Double getQuantity() {
 		return quantity;

@@ -48,6 +48,7 @@ public class GroceryFacade implements IGroceryFacade {
 	@Override
 	public boolean saveProduct(ProductDTO dto) {
 		Product product = new Product();
+		product.setId(dto.getId());
 		product.setName(dto.getName());
 		return productRepository.save(product) != null;
 	}
@@ -67,6 +68,7 @@ public class GroceryFacade implements IGroceryFacade {
 	@Override
 	public boolean savePurchase(PurchaseDTO dto) {
 		Purchase purchase = new Purchase();
+		purchase.setId(dto.getId());
 		purchase.setCost(dto.getCost());
 		purchase.setDate(dto.getDate());
 		purchase.setQuantity(dto.getQuantity());

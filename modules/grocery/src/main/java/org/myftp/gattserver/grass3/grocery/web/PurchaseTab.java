@@ -3,7 +3,8 @@ package org.myftp.gattserver.grass3.grocery.web;
 import java.util.Collection;
 
 import org.myftp.gattserver.grass3.grocery.dto.PurchaseDTO;
-import org.myftp.gattserver.grass3.ui.util.StringToDoubleConverter;
+import org.myftp.gattserver.grass3.ui.util.StringToDateConverter;
+import org.myftp.gattserver.grass3.ui.util.StringToFixedSizeDoubleConverter;
 import org.myftp.gattserver.grass3.ui.util.StringToMoneyConverter;
 
 import com.vaadin.data.util.BeanItem;
@@ -12,6 +13,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Table.Align;
 
 public class PurchaseTab extends GroceryPageTab<PurchaseDTO> {
 
@@ -88,8 +90,13 @@ public class PurchaseTab extends GroceryPageTab<PurchaseDTO> {
 		table.setColumnHeader("cost", "Cena za kus");
 		table.setColumnHeader("quantity", "Množství");
 		table.setColumnHeader("costSum", "Cena");
+		table.setConverter("date", new StringToDateConverter());
 		table.setConverter("cost", new StringToMoneyConverter());
-		table.setConverter("quantity", new StringToDoubleConverter());
+		table.setConverter("quantity", new StringToFixedSizeDoubleConverter());
+		table.setColumnAlignment("cost", Align.RIGHT);
+		table.setColumnAlignment("quantity", Align.RIGHT);
+		table.setColumnAlignment("costSum", Align.RIGHT);
+
 		table.setWidth("100%");
 		table.setSelectable(true);
 		table.setImmediate(true);

@@ -10,6 +10,7 @@ import org.myftp.gattserver.grass3.grocery.dto.ShopDTO;
 import org.myftp.gattserver.grass3.grocery.facade.IGroceryFacade;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+import org.myftp.gattserver.grass3.ui.util.DateToStringConverter;
 import org.myftp.gattserver.grass3.ui.util.StringToDoubleConverter;
 
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
@@ -58,7 +59,7 @@ public abstract class PurchaseCreateWindow extends GrassSubWindow {
 		dateField.setLocale(Locale.forLanguageTag("CS"));
 		winLayout.addComponent(dateField, 0, 0);
 		dateField.setWidth("110px");
-		// dateField.setWidth("100%");
+		dateField.setConverter(new DateToStringConverter());
 		dateField.setImmediate(true);
 
 		final TextField costField = new TextField("Cena za kus");

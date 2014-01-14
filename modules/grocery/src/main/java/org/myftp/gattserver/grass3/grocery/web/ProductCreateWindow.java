@@ -8,6 +8,8 @@ import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.event.FieldEvents;
+import com.vaadin.event.FieldEvents.FocusEvent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Alignment;
@@ -78,6 +80,15 @@ public abstract class ProductCreateWindow extends GrassSubWindow {
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
 
 		setContent(winLayout);
+		
+		addFocusListener(new FieldEvents.FocusListener() {
+			private static final long serialVersionUID = -5983342141625196725L;
+
+			@Override
+			public void focus(FocusEvent event) {
+				nameField.focus();
+			}
+		});
 	}
 
 	protected abstract void onSuccess();

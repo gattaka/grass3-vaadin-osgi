@@ -3,15 +3,18 @@ package org.myftp.gattserver.grass3.grocery.web;
 import java.util.Collection;
 
 import org.myftp.gattserver.grass3.grocery.dto.PurchaseDTO;
+import org.myftp.gattserver.grass3.template.TableSelectedItemBtn;
 import org.myftp.gattserver.grass3.ui.util.StringToDateConverter;
 import org.myftp.gattserver.grass3.ui.util.StringToFixedSizeDoubleConverter;
 import org.myftp.gattserver.grass3.ui.util.StringToMoneyConverter;
 
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Table.Align;
 
@@ -44,6 +47,31 @@ public class PurchaseTab extends GroceryPageTab<PurchaseDTO> {
 	protected void placeButtons(HorizontalLayout buttonLayout, Button createBtn, Button detailBtn, Button modifyBtn,
 			Button deleteBtn) {
 		buttonLayout.addComponent(createBtn);
+		buttonLayout.addComponent(new TableSelectedItemBtn<PurchaseDTO>("Pokračovat", table) {
+			private static final long serialVersionUID = 5668486295786220721L;
+
+			@Override
+			protected ClickListener getClickListener(final Table table, final Component... triggerComponents) {
+				setIcon(new ThemeResource("img/tags/plus_16.png")); // side-effect
+				return new Button.ClickListener() {
+					private static final long serialVersionUID = 4070242729318498324L;
+
+					@Override
+					public void buttonClick(ClickEvent event) {
+						Window win = new PurchaseCreateWindow(PurchaseCreateWindow.Mode.CONTINUE, (PurchaseDTO) table
+								.getValue(), triggerComponents) {
+							private static final long serialVersionUID = -7566950396535469316L;
+
+							@Override
+							protected void onSuccess() {
+								populateContainer();
+							}
+						};
+						UI.getCurrent().addWindow(win);
+					}
+				};
+			};
+		});
 		buttonLayout.addComponent(modifyBtn);
 		buttonLayout.addComponent(deleteBtn);
 	}
@@ -55,7 +83,7 @@ public class PurchaseTab extends GroceryPageTab<PurchaseDTO> {
 
 	@Override
 	protected Window createModifyWindow(PurchaseDTO dto, Component... triggerComponent) {
-		return new PurchaseCreateWindow(dto, triggerComponent) {
+		return new PurchaseCreateWindow(PurchaseCreateWindow.Mode.EDIT, dto, triggerComponent) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override

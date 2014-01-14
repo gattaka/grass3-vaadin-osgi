@@ -11,7 +11,6 @@ import org.myftp.gattserver.grass3.grocery.dto.ShopDTO;
 import org.myftp.gattserver.grass3.grocery.facade.IGroceryFacade;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
-import org.myftp.gattserver.grass3.ui.util.DateToStringConverter;
 import org.myftp.gattserver.grass3.ui.util.StringToDoubleConverter;
 
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
@@ -24,7 +23,6 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -35,12 +33,22 @@ public abstract class PurchaseCreateWindow extends GrassSubWindow {
 
 	private IGroceryFacade groceryFacade;
 
-	public PurchaseCreateWindow(final Component... triggerComponent) {
-		this(null, triggerComponent);
+	public static enum Mode {
+		ADD("Přidání nákupu"), EDIT("Úprava nákupu"), CONTINUE("Pokračování nákupu");
+
+		String title;
+
+		Mode(String title) {
+			this.title = title;
+		}
 	}
 
-	public PurchaseCreateWindow(PurchaseDTO modifiedPurchaseDTO, final Component... triggerComponent) {
-		super(modifiedPurchaseDTO == null ? "Přidání nákupu" : "Úprava nákupu", triggerComponent);
+	public PurchaseCreateWindow(final Component... triggerComponent) {
+		this(Mode.ADD, null, triggerComponent);
+	}
+
+	public PurchaseCreateWindow(Mode mode, PurchaseDTO originPurchaseDTO, final Component... triggerComponent) {
+		super(mode.title, triggerComponent);
 
 		groceryFacade = SpringContextHelper.getBean(IGroceryFacade.class);
 
@@ -50,7 +58,12 @@ public abstract class PurchaseCreateWindow extends GrassSubWindow {
 
 		// winLayout.setWidth("300px");
 
-		final PurchaseDTO purchaseDTO = modifiedPurchaseDTO == null ? new PurchaseDTO() : modifiedPurchaseDTO;
+		final PurchaseDTO purchaseDTO = mode == Mode.EDIT ? originPurchaseDTO : new PurchaseDTO();
+		if (mode == Mode.CONTINUE) {
+			purchaseDTO.setShop(originPurchaseDTO.getShop());
+			purchaseDTO.setDate(originPurchaseDTO.getDate());
+		}
+		
 		final BeanFieldGroup<PurchaseDTO> fieldGroup = new BeanFieldGroup<PurchaseDTO>(PurchaseDTO.class);
 		fieldGroup.setItemDataSource(purchaseDTO);
 
@@ -80,7 +93,7 @@ public abstract class PurchaseCreateWindow extends GrassSubWindow {
 		productComboBox.setImmediate(true);
 		fieldGroup.bind(productComboBox, "product");
 
-		final TextField costField = new TextField("Cena za kus");
+		final TextField costField = new TextField("Cena za jednotku");
 		fieldGroup.bind(costField, "cost");
 		winLayout.addComponent(costField, 1, 1);
 		costField.setWidth("100px");
@@ -94,7 +107,21 @@ public abstract class PurchaseCreateWindow extends GrassSubWindow {
 		quantityField.setImmediate(true);
 		quantityField.setConverter(new StringToDoubleConverter());
 
-		if (modifiedPurchaseDTO == null) {
+		Button saveBtn;
+		winLayout.addComponent(saveBtn = new Button(mode == Mode.EDIT ? "Upravit" : "Přidat",
+				new Button.ClickListener() {
+
+					private static final long serialVersionUID = -8435971966889831628L;
+
+					@Override
+					public void buttonClick(ClickEvent event) {
+						if (save(fieldGroup))
+							close();
+					}
+				}), 3, 0);
+		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
+
+		if (mode != Mode.EDIT) {
 			Button saveAndContinueBtn;
 			winLayout.addComponent(saveAndContinueBtn = new Button("Přidat a pokračovat", new Button.ClickListener() {
 
@@ -108,27 +135,14 @@ public abstract class PurchaseCreateWindow extends GrassSubWindow {
 						PurchaseDTO newDTO = new PurchaseDTO();
 						newDTO.setDate(date);
 						newDTO.setShop(shop);
+						newDTO.setQuantity(1.0);
 						fieldGroup.setItemDataSource(newDTO);
 						productComboBox.focus();
 					}
 				}
-			}), 3, 0);
+			}), 3, 1);
 			winLayout.setComponentAlignment(saveAndContinueBtn, Alignment.BOTTOM_RIGHT);
 		}
-
-		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button(modifiedPurchaseDTO == null ? "Přidat" : "Upravit",
-				new Button.ClickListener() {
-
-					private static final long serialVersionUID = -8435971966889831628L;
-
-					@Override
-					public void buttonClick(ClickEvent event) {
-						if (save(fieldGroup))
-							close();
-					}
-				}), 3, 1);
-		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
 
 		setContent(winLayout);
 	}

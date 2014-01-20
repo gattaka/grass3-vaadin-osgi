@@ -12,9 +12,13 @@ public class StringToMoneyConverter extends StringToNumberConverter {
 	private NumberFormat priceFormat;
 
 	public StringToMoneyConverter() {
+		this(2, 2);
+	}
+
+	public StringToMoneyConverter(int minFractionDigits, int maxFractionDigits) {
 		priceFormat = NumberFormat.getCurrencyInstance(new Locale("cs", "CZ"));
-		((DecimalFormat) priceFormat).setMaximumFractionDigits(2);
-		((DecimalFormat) priceFormat).setMinimumFractionDigits(2);
+		((DecimalFormat) priceFormat).setMaximumFractionDigits(maxFractionDigits);
+		((DecimalFormat) priceFormat).setMinimumFractionDigits(minFractionDigits);
 	}
 
 	public String format(int price) {

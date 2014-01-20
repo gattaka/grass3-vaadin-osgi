@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.grocery.web;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -56,14 +57,16 @@ public abstract class PurchaseCreateWindow extends GrassSubWindow {
 		winLayout.setMargin(true);
 		winLayout.setSpacing(true);
 
-		// winLayout.setWidth("300px");
-
 		final PurchaseDTO purchaseDTO = mode == Mode.EDIT ? originPurchaseDTO : new PurchaseDTO();
+		if (mode != Mode.EDIT) {
+			purchaseDTO.setQuantity(1.0);
+			purchaseDTO.setDate(Calendar.getInstance().getTime());
+		}
 		if (mode == Mode.CONTINUE) {
 			purchaseDTO.setShop(originPurchaseDTO.getShop());
 			purchaseDTO.setDate(originPurchaseDTO.getDate());
 		}
-		
+
 		final BeanFieldGroup<PurchaseDTO> fieldGroup = new BeanFieldGroup<PurchaseDTO>(PurchaseDTO.class);
 		fieldGroup.setItemDataSource(purchaseDTO);
 

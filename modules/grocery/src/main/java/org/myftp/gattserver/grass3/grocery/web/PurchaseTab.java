@@ -120,7 +120,6 @@ public class PurchaseTab extends GroceryPageTab<PurchaseDTO> {
 		table.setColumnHeader("costSum", "Cena");
 		table.setConverter("date", new StringToDateConverter("d.M.yyyy"));
 		table.setConverter("cost", new StringToMoneyConverter());
-		table.setConverter("costSum", new StringToMoneyConverter());
 		table.setConverter("quantity", new StringToFixedSizeDoubleConverter(0, 3));
 		table.setColumnAlignment("cost", Align.RIGHT);
 		table.setColumnAlignment("quantity", Align.RIGHT);

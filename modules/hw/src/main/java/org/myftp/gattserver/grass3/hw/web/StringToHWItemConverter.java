@@ -11,13 +11,13 @@ public class StringToHWItemConverter implements Converter<String, HWItemDTO> {
 	private static final long serialVersionUID = 5485483888763389456L;
 
 	@Override
-	public HWItemDTO convertToModel(String value, Locale locale)
+	public HWItemDTO convertToModel(String value, Class<? extends HWItemDTO> targetType, Locale locale)
 			throws com.vaadin.data.util.converter.Converter.ConversionException {
 		return null;
 	}
 
 	@Override
-	public String convertToPresentation(HWItemDTO value, Locale locale)
+	public String convertToPresentation(HWItemDTO value, Class<? extends String> targetType, Locale locale)
 			throws com.vaadin.data.util.converter.Converter.ConversionException {
 		return value == null ? "" : value.getName();
 	}

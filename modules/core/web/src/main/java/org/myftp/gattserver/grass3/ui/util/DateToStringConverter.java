@@ -22,13 +22,13 @@ public class DateToStringConverter implements Converter<Date, String> {
 	}
 
 	@Override
-	public String convertToModel(Date value, Locale locale)
+	public String convertToModel(Date value, Class<? extends String> targetType, Locale locale)
 			throws com.vaadin.data.util.converter.Converter.ConversionException {
 		return value == null ? null : getFormat().format(value);
 	}
 
 	@Override
-	public Date convertToPresentation(String value, Locale locale)
+	public Date convertToPresentation(String value, Class<? extends Date> targetType, Locale locale)
 			throws com.vaadin.data.util.converter.Converter.ConversionException {
 		try {
 			return value == null ? null : getFormat().parse(value);
@@ -51,4 +51,5 @@ public class DateToStringConverter implements Converter<Date, String> {
 	public Class<Date> getPresentationType() {
 		return Date.class;
 	}
+
 }

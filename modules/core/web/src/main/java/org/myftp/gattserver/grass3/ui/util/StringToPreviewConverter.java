@@ -17,13 +17,13 @@ public class StringToPreviewConverter implements Converter<String, String> {
 	}
 
 	@Override
-	public String convertToModel(String value, Locale locale)
+	public String convertToModel(String value, Class<? extends String> targetType, Locale locale)
 			throws com.vaadin.data.util.converter.Converter.ConversionException {
 		return value;
 	}
 
 	@Override
-	public String convertToPresentation(String value, Locale locale)
+	public String convertToPresentation(String value, Class<? extends String> targetType, Locale locale)
 			throws com.vaadin.data.util.converter.Converter.ConversionException {
 		return StringPreviewCreator.createPreview(value, previewLength);
 	}

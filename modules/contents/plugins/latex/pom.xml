@@ -11,23 +11,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<build>
-		<plugins>
-			<!-- Konfigurováno dle parent POMu -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
 	<dependencies>
-
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.2</version>
-		</dependency>
 
 		<!-- GRASS Articles -->
 		<dependency>
@@ -41,27 +25,6 @@
 			<groupId>org.myftp.gattserver.grass3</groupId>
 			<artifactId>core-web</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<!-- Spring -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>3.2.1.RELEASE</version>
-		</dependency>
-
-		<!-- JUNIT DEPENDENCY FOR TESTING -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>3.0-alpha-1</version>
 		</dependency>
 
 		<!-- http://forge.scilab.org/index.php/p/jlatexmath/doc/ -->

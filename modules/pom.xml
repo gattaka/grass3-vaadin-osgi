@@ -12,6 +12,7 @@
 		<module>contents</module>
 		<module>core</module>
 		<module>fm</module>
+		<module>grocery</module>
 		<module>hw</module>
 		<module>medic</module>
 		<module>search</module>

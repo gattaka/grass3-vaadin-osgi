@@ -17,7 +17,7 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 	@Override
 	public void populateContainer() {
 		super.populateContainer();
-		table.sort(new Object[] { "date" }, new boolean[] { false });
+		((Table) table).sort(new Object[] { "date" }, new boolean[] { false });
 	}
 
 	public MedicalRecordsTab() {
@@ -52,8 +52,7 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 	}
 
 	@Override
-	protected Window createModifyWindow(MedicalRecordDTO dto,
-			Component... triggerComponent) {
+	protected Window createModifyWindow(MedicalRecordDTO dto, Component... triggerComponent) {
 		return new MedicalRecordCreateWindow(MedicalRecordsTab.this, dto) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
@@ -80,8 +79,7 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 		table.setConverter("record", new StringToPreviewConverter(50));
 		table.setSelectable(true);
 		table.setImmediate(true);
-		table.setVisibleColumns(new String[] { "date", "institution",
-				"physician", "record" });
+		table.setVisibleColumns(new String[] { "date", "institution", "physician", "record" });
 	}
 
 }

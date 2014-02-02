@@ -1,22 +1,27 @@
 package org.myftp.gattserver.grass3.grocery.web;
 
 import java.util.Collection;
+import java.util.Locale;
 
 import org.myftp.gattserver.grass3.grocery.dto.PurchaseDTO;
 import org.myftp.gattserver.grass3.template.TableSelectedItemBtn;
 import org.myftp.gattserver.grass3.ui.util.StringToDateConverter;
 import org.myftp.gattserver.grass3.ui.util.StringToFixedSizeDoubleConverter;
 import org.myftp.gattserver.grass3.ui.util.StringToMoneyConverter;
+import org.tepi.filtertable.FilterDecorator;
+import org.tepi.filtertable.FilterTable;
+import org.tepi.filtertable.numberfilter.NumberFilterPopupConfig;
 
-import com.vaadin.data.util.BeanItem;
+import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.datefield.Resolution;
+import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomTable.Align;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Table.Align;
 
 public class PurchaseTab extends GroceryPageTab<PurchaseDTO> {
 
@@ -51,7 +56,7 @@ public class PurchaseTab extends GroceryPageTab<PurchaseDTO> {
 			private static final long serialVersionUID = 5668486295786220721L;
 
 			@Override
-			protected ClickListener getClickListener(final Table table, final Component... triggerComponents) {
+			protected ClickListener getClickListener(final AbstractSelect table, final Component... triggerComponents) {
 				setIcon(new ThemeResource("img/tags/plus_16.png")); // side-effect
 				return new Button.ClickListener() {
 					private static final long serialVersionUID = 4070242729318498324L;
@@ -99,18 +104,10 @@ public class PurchaseTab extends GroceryPageTab<PurchaseDTO> {
 	}
 
 	@Override
-	protected void customizeTable(Table table) {
+	protected AbstractSelect createTable() {
+		FilterTable table = new FilterTable();
 
-		table.addGeneratedColumn("costSum", new Table.ColumnGenerator() {
-			private static final long serialVersionUID = -1984983998391825571L;
-
-			@Override
-			public Object generateCell(Table source, Object itemId, Object columnId) {
-				@SuppressWarnings("unchecked")
-				PurchaseDTO purchaseDTO = ((BeanItem<PurchaseDTO>) source.getItem(itemId)).getBean();
-				return new StringToMoneyConverter().format(purchaseDTO.getCost() * purchaseDTO.getQuantity());
-			}
-		});
+		table.setContainerDataSource(createContainer());
 
 		table.setColumnHeader("date", "Datum");
 		table.setColumnHeader("shop", "Obchod");
@@ -120,14 +117,103 @@ public class PurchaseTab extends GroceryPageTab<PurchaseDTO> {
 		table.setColumnHeader("costSum", "Cena");
 		table.setConverter("date", new StringToDateConverter("d.M.yyyy"));
 		table.setConverter("cost", new StringToMoneyConverter());
+		table.setConverter("costSum", new StringToMoneyConverter());
 		table.setConverter("quantity", new StringToFixedSizeDoubleConverter(0, 3));
 		table.setColumnAlignment("cost", Align.RIGHT);
 		table.setColumnAlignment("quantity", Align.RIGHT);
 		table.setColumnAlignment("costSum", Align.RIGHT);
+		table.setSortContainerPropertyId("costSum");
 
 		table.setWidth("100%");
 		table.setSelectable(true);
 		table.setImmediate(true);
 		table.setVisibleColumns(new Object[] { "date", "shop", "product", "cost", "quantity", "costSum" });
+
+		table.setFilterBarVisible(true);
+		table.setFilterDecorator(new FilterDecorator() {
+			private static final long serialVersionUID = 234978256739631357L;
+
+			@Override
+			public boolean usePopupForNumericProperty(Object propertyId) {
+				return false;
+			}
+
+			@Override
+			public boolean isTextFilterImmediate(Object propertyId) {
+				return true;
+			}
+
+			@Override
+			public String getToCaption() {
+				return "Do";
+			}
+
+			@Override
+			public int getTextChangeTimeout(Object propertyId) {
+				return 0;
+			}
+
+			@Override
+			public String getSetCaption() {
+				return "Filtrovat";
+			}
+
+			@Override
+			public NumberFilterPopupConfig getNumberFilterPopupConfig() {
+				return null;
+			}
+
+			@Override
+			public Locale getLocale() {
+				return new Locale("cs");
+			}
+
+			@Override
+			public String getFromCaption() {
+				return "Od";
+			}
+
+			@Override
+			public Resource getEnumFilterIcon(Object propertyId, Object value) {
+				return null;
+			}
+
+			@Override
+			public String getEnumFilterDisplayName(Object propertyId, Object value) {
+				return null;
+			}
+
+			@Override
+			public String getDateFormatPattern(Object propertyId) {
+				return "d.M.yyyy";
+			}
+
+			@Override
+			public Resolution getDateFieldResolution(Object propertyId) {
+				return Resolution.DAY;
+			}
+
+			@Override
+			public String getClearCaption() {
+				return "Vymazat";
+			}
+
+			@Override
+			public Resource getBooleanFilterIcon(Object propertyId, boolean value) {
+				return null;
+			}
+
+			@Override
+			public String getBooleanFilterDisplayName(Object propertyId, boolean value) {
+				return null;
+			}
+
+			@Override
+			public String getAllItemsVisibleString() {
+				return null;
+			}
+		});
+
+		return table;
 	}
 }

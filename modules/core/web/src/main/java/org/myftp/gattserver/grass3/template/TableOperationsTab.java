@@ -4,7 +4,9 @@ import java.util.Collection;
 
 import org.myftp.gattserver.grass3.model.dto.Identifiable;
 
+import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
@@ -25,8 +27,9 @@ public abstract class TableOperationsTab<T extends Identifiable> extends Vertica
 
 	private static final long serialVersionUID = 6844434642906509277L;
 
-	protected final Table table = new Table();
-	protected BeanItemContainer<T> container;
+	protected AbstractSelect table;
+	protected Container container;
+	protected Class<T> clazz;
 
 	/**
 	 * Získá entity pro tabulku
@@ -54,11 +57,29 @@ public abstract class TableOperationsTab<T extends Identifiable> extends Vertica
 	protected abstract void deleteEntity(T dto);
 
 	/**
-	 * Upraví tabulku (jmenuje sloupce apod.)
+	 * Upraví tabulku (jmenuje sloupce apod.) - voláno pouze pokud je použit
+	 * defaultní Table - viz metoda createTable
 	 */
-	protected abstract void customizeTable(Table table);
+	protected void customizeTable(Table table) {
+	}
+
+	protected Container createContainer() {
+		BeanItemContainer<T> container = new BeanItemContainer<>(clazz);
+		container.addAll(getTableItems());
+		this.container = container;
+		return container;
+	}
+
+	protected AbstractSelect createTable() {
+		Table table = new Table();
+		table.setContainerDataSource(createContainer());
+		customizeTable(table);
+		return table;
+	}
 
 	public TableOperationsTab(Class<T> clazz) {
+		
+		this.clazz = clazz;
 
 		setSpacing(true);
 		setMargin(true);
@@ -68,11 +89,7 @@ public abstract class TableOperationsTab<T extends Identifiable> extends Vertica
 		/**
 		 * Přehled
 		 */
-		container = new BeanItemContainer<T>(clazz);
-		populateContainer();
-		table.setContainerDataSource(container);
-		customizeTable(table);
-		addComponent(table);
+		addComponent(table = createTable());
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);
@@ -142,8 +159,7 @@ public abstract class TableOperationsTab<T extends Identifiable> extends Vertica
 	 * Naplní tabulku položkami
 	 */
 	public void populateContainer() {
-		container.removeAllItems();
-		container.addAll(getTableItems());
+		table.setContainerDataSource(createContainer());
 	}
 
 	@Override

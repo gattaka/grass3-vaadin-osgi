@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.grocery.facade;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.myftp.gattserver.grass3.grocery.domain.Product;
@@ -65,7 +66,7 @@ public class GroceryMapper {
 		PurchaseDTO dto = new PurchaseDTO();
 		dto.setId(e.getId());
 		dto.setCost(e.getCost());
-		dto.setDate(e.getDate());
+		dto.setDate(new Date(e.getDate().getTime()));
 		dto.setProduct(mapProduct(e.getProduct()));
 		dto.setQuantity(e.getQuantity());
 		dto.setShop(mapShop(e.getShop()));

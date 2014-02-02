@@ -88,4 +88,7 @@ public class PurchaseDTO implements Identifiable {
 		this.cost = cost;
 	}
 
+	public Double getCostSum() {
+		return getCost() * getQuantity();
+	}
 }

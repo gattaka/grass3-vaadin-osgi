@@ -10,6 +10,10 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
+	<properties>
+		<widgetset.target>${basedir}/../../../web/src/main/webapp/VAADIN/widgetsets</widgetset.target>
+	</properties>
+
 	<dependencies>
 
 		<!-- Core common -->
@@ -39,6 +43,13 @@
 			<groupId>ru.xpoft.vaadin</groupId>
 			<artifactId>spring-vaadin-integration</artifactId>
 			<version>1.6.6</version>
+		</dependency>
+
+		<!-- Filter table -->
+		<dependency>
+			<groupId>org.vaadin.addons</groupId>
+			<artifactId>filteringtable</artifactId>
+			<version>0.9.4.v7</version>
 		</dependency>
 
 		<!-- Multi-upload -->
@@ -175,7 +186,7 @@
 						<configuration>
 							<filesets>
 								<fileset>
-									<directory>${basedir}/../../web/src/main/webapp/VAADIN/widgetsets</directory>
+									<directory>${widgetset.target}</directory>
 								</fileset>
 							</filesets>
 						</configuration>
@@ -189,10 +200,8 @@
 							<!-- <runTarget>mobilemail</runTarget> -->
 							<!-- We are doing "inplace" but into subdir VAADIN/widgetsets. This 
 								way compatible with Vaadin eclipse plugin. -->
-							<webappDirectory>${basedir}/../../../web/src/main/webapp/VAADIN/widgetsets
-							</webappDirectory>
-							<hostedWebapp>${basedir}/../../../web/src/main/webapp/VAADIN/widgetsets
-							</hostedWebapp>
+							<webappDirectory>${widgetset.target}</webappDirectory>
+							<hostedWebapp>${widgetset.target}</hostedWebapp>
 							<noServer>true</noServer>
 							<!-- Remove draftCompile when project is ready -->
 							<draftCompile>false</draftCompile>

@@ -2,15 +2,15 @@ package org.myftp.gattserver.grass3.template;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Table;
 
 public abstract class TableSelectedItemBtn<T> extends Button {
 
 	private static final long serialVersionUID = -5924239277930098183L;
 
-	public TableSelectedItemBtn(String caption, final Table table,
+	public TableSelectedItemBtn(String caption, final AbstractSelect table,
 			Component... triggerComponents) {
 		setCaption(caption);
 		setEnabled(false);
@@ -28,10 +28,10 @@ public abstract class TableSelectedItemBtn<T> extends Button {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected T getSelectedValue(Table table) {
+	protected T getSelectedValue(AbstractSelect table) {
 		return (T) table.getValue();
 	}
 
-	protected abstract Button.ClickListener getClickListener(Table table,
+	protected abstract Button.ClickListener getClickListener(AbstractSelect table,
 			Component... triggerComponents);
 }

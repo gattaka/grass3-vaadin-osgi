@@ -13,7 +13,7 @@
 		<!-- <vaadin.version>7.0.0</vaadin.version> -->
 		<vaadin.version>7.1.10</vaadin.version>
 		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
-		<org.springframework.version>3.2.1.RELEASE</org.springframework.version>
+		<org.springframework.version>3.2.1.RELEASE</org.springframework.version>		
 	</properties>
 
 	<modules>

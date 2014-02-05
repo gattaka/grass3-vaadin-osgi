@@ -3,11 +3,13 @@ package org.myftp.gattserver.grass3.grocery.web;
 import java.util.Collection;
 
 import org.myftp.gattserver.grass3.grocery.dto.ProductDTO;
+import org.myftp.gattserver.grass3.ui.util.GrassFilterDecorator;
+import org.tepi.filtertable.FilterTable;
 
+import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
 
 public class ProductTab extends GroceryPageTab<ProductDTO> {
@@ -66,12 +68,21 @@ public class ProductTab extends GroceryPageTab<ProductDTO> {
 	}
 
 	@Override
-	protected void customizeTable(Table table) {
+	protected AbstractSelect createTable() {
+
+		FilterTable table = new FilterTable();
+		table.setContainerDataSource(createContainer());
+
 		table.setColumnHeader("name", "Název");
 		table.setWidth("100%");
 		table.setSelectable(true);
 		table.setImmediate(true);
 		table.setVisibleColumns(new Object[] { "name" });
+		
+		table.setFilterBarVisible(true);
+		table.setFilterDecorator(new GrassFilterDecorator());
+
+		return table;
 	}
 
 }

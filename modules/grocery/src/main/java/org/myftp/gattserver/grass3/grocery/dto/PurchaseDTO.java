@@ -68,12 +68,20 @@ public class PurchaseDTO implements Identifiable {
 		return shop;
 	}
 
+	public String getShopName() {
+		return shop == null ? "" : shop.getName();
+	}
+
 	public void setShop(ShopDTO shop) {
 		this.shop = shop;
 	}
 
 	public ProductDTO getProduct() {
 		return product;
+	}
+
+	public String getProductName() {
+		return product == null ? "" : product.getName();
 	}
 
 	public void setProduct(ProductDTO product) {

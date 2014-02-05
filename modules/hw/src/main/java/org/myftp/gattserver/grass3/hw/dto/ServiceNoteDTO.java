@@ -42,6 +42,12 @@ public class ServiceNoteDTO {
 		return usedIn;
 	}
 
+	public String getUsedInName() {
+		if (usedIn != null)
+			return usedIn.getName();
+		return "";
+	}
+
 	public void setUsedIn(HWItemDTO usedIn) {
 		this.usedIn = usedIn;
 	}

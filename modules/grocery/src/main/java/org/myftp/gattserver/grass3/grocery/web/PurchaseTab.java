@@ -1,7 +1,6 @@
 package org.myftp.gattserver.grass3.grocery.web;
 
 import java.util.Collection;
-import java.util.Locale;
 
 import org.myftp.gattserver.grass3.grocery.dto.PurchaseDTO;
 import org.myftp.gattserver.grass3.template.TableSelectedItemBtn;
@@ -10,11 +9,8 @@ import org.myftp.gattserver.grass3.ui.util.StringToDateConverter;
 import org.myftp.gattserver.grass3.ui.util.StringToFixedSizeDoubleConverter;
 import org.myftp.gattserver.grass3.ui.util.StringToMoneyConverter;
 import org.tepi.filtertable.FilterTable;
-import org.tepi.filtertable.numberfilter.NumberFilterPopupConfig;
 
-import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -110,8 +106,8 @@ public class PurchaseTab extends GroceryPageTab<PurchaseDTO> {
 		table.setContainerDataSource(createContainer());
 
 		table.setColumnHeader("date", "Datum");
-		table.setColumnHeader("shop", "Obchod");
-		table.setColumnHeader("product", "Produkt");
+		table.setColumnHeader("shopName", "Obchod");
+		table.setColumnHeader("productName", "Produkt");
 		table.setColumnHeader("cost", "Cena za kus");
 		table.setColumnHeader("quantity", "Množství");
 		table.setColumnHeader("costSum", "Cena");
@@ -127,7 +123,11 @@ public class PurchaseTab extends GroceryPageTab<PurchaseDTO> {
 		table.setWidth("100%");
 		table.setSelectable(true);
 		table.setImmediate(true);
-		table.setVisibleColumns(new Object[] { "date", "shop", "product", "cost", "quantity", "costSum" });
+		table.setColumnWidth("productName", 300);
+		table.setColumnWidth("cost", 80);
+		table.setColumnWidth("quantity", 80);
+		table.setColumnWidth("costSum", 80);
+		table.setVisibleColumns(new Object[] { "date", "shopName", "productName", "cost", "quantity", "costSum" });
 
 		table.setFilterBarVisible(true);
 		table.setFilterDecorator(new GrassFilterDecorator());

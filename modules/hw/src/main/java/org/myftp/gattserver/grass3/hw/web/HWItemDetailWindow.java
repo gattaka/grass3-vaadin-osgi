@@ -391,13 +391,11 @@ public class HWItemDetailWindow extends GrassSubWindow {
 
 		table.setContainerDataSource(filesContainer);
 		table.setConverter("date", new StringToDateConverter());
-		table.setConverter("state", new StringToHWItemStateConverter());
-		table.setConverter("usedIn", new StringToHWItemConverter());
 
 		table.setColumnHeader("date", "Datum");
 		table.setColumnHeader("state", "Stav");
-		table.setColumnHeader("usedIn", "Je součástí");
-		table.setVisibleColumns(new String[] { "date", "state", "usedIn" });
+		table.setColumnHeader("usedInName", "Je součástí");
+		table.setVisibleColumns(new Object[] { "date", "state", "usedInName" });
 		table.setWidth("450px");
 		table.setHeight("200px");
 

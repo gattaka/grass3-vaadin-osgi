@@ -4,8 +4,10 @@ import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
+import org.myftp.gattserver.grass3.ui.util.GrassFilterDecorator;
 import org.myftp.gattserver.grass3.ui.util.StringToDateConverter;
 import org.myftp.gattserver.grass3.ui.util.StringToMoneyConverter;
+import org.tepi.filtertable.FilterTable;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -15,9 +17,8 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CustomTable.Align;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.Table.Align;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -26,7 +27,7 @@ public class HWItemsTab extends VerticalLayout {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
-	private final Table table = new Table();
+	private final FilterTable table = new FilterTable();
 	private BeanContainer<Long, HWItemDTO> container;
 	private IHWFacade hwFacade;
 
@@ -153,23 +154,24 @@ public class HWItemsTab extends VerticalLayout {
 		table.setContainerDataSource(container);
 
 		table.setConverter("purchaseDate", new StringToDateConverter());
-		table.setConverter("state", new StringToHWItemStateConverter());
 		table.setConverter("price", new StringToMoneyConverter());
-		table.setConverter("usedIn", new StringToHWItemConverter());
 
 		table.setColumnHeader("name", "Název");
 		table.setColumnHeader("purchaseDate", "Získáno");
 		table.setColumnHeader("price", "Cena");
 		table.setColumnHeader("state", "Stav");
-		table.setColumnHeader("usedIn", "Je součástí");
+		table.setColumnHeader("usedInName", "Je součástí");
 
 		table.setColumnAlignment("price", Align.RIGHT);
 
-		table.setVisibleColumns(new String[] { "name", "state", "usedIn", "price", "purchaseDate" });
+		table.setVisibleColumns(new Object[] { "name", "state", "usedInName", "price", "purchaseDate" });
 		table.setColumnWidth("name", 380);
-		table.setColumnWidth("usedIn", 180);
+		table.setColumnWidth("usedInName", 180);
 		table.setWidth("100%");
-		
+
+		table.setFilterBarVisible(true);
+		table.setFilterDecorator(new GrassFilterDecorator());
+
 		sortTable();
 
 		table.addItemClickListener(new ItemClickEvent.ItemClickListener() {

@@ -152,7 +152,7 @@ public class FMExplorer {
 		File tmpFile = new File(tmpDir);
 		if (!tmpFile.exists())
 			if (tmpFile.mkdirs())
-				throw new IOException();
+				throw new IOException("Unable to create tmp directory for uploads");
 
 		tmpDirFile = tmpFile.getCanonicalFile();
 	}

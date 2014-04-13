@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>articles-templates</artifactId>
+	<name>GRASS3 Articles editor templates plugins set</name>
+	<description>Šablonovací sada pluginů pro editor článků systému GRASS</description>
+
+	<parent>
+		<groupId>org.myftp.gattserver.grass3</groupId>
+		<artifactId>grass3</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<dependencies>
+
+		<!-- GRASS ARTICLES BUNDLE -->
+		<dependency>
+			<groupId>org.myftp.gattserver.grass3</groupId>
+			<artifactId>articles</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<!-- GRASS ARTICLES BASIC BUNDLE -->
+		<dependency>
+			<groupId>org.myftp.gattserver.grass3</groupId>
+			<artifactId>articles-basic</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<!-- GRASS ARTICLES FAVLINK BUNDLE -->
+		<dependency>
+			<groupId>org.myftp.gattserver.grass3</groupId>
+			<artifactId>articles-favlink</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+	</dependencies>
+
+</project>

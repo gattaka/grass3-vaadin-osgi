@@ -34,8 +34,8 @@ public class LinkElement extends AbstractParserPlugin {
 		StringBuilder link = new StringBuilder();
 
 		// zpracovat text - musím zahazovat anotace pozic, střetly by se
-		while ((pluginBag.getToken() != Token.END_TAG || !pluginBag.getEndTag()
-				.equals(tag)) && pluginBag.getToken() != Token.EOF) {
+		while ((pluginBag.getToken() != Token.END_TAG || !pluginBag.getEndTag().equals(tag))
+				&& pluginBag.getToken() != Token.EOF) {
 			link.append(pluginBag.getText());
 			pluginBag.nextToken();
 		}

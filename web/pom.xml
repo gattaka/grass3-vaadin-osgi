@@ -58,6 +58,13 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
+		<!-- šablonovací pluginy pro články -->
+		<dependency>
+			<groupId>org.myftp.gattserver.grass3</groupId>
+			<artifactId>articles-templates</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
 		<!-- file manager -->
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>
@@ -78,7 +85,7 @@
 			<artifactId>medic-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		
+
 		<!-- grocery -->
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>

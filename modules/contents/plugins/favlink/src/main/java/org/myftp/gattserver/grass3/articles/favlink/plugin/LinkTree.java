@@ -17,8 +17,7 @@ import org.slf4j.LoggerFactory;
 
 public class LinkTree extends AbstractElementTree {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(LinkTree.class);
+	private static final Logger logger = LoggerFactory.getLogger(LinkTree.class);
 
 	private String link;
 	private final static String defaultFavicon = "/img/tags/label_16.png"; // default
@@ -26,7 +25,7 @@ public class LinkTree extends AbstractElementTree {
 	private String contextRoot;
 
 	public LinkTree(String link, String contextRoot) {
-		this.link = link;
+		this.link = link.trim();
 		this.contextRoot = contextRoot;
 		setLink();
 	}
@@ -88,8 +87,7 @@ public class LinkTree extends AbstractElementTree {
 			}
 
 			// 3) vrat URL na cache
-			return contextRoot + FavlinkConfiguration.IMAGE_PATH_ALIAS + "/"
-					+ domain;
+			return contextRoot + FavlinkConfiguration.IMAGE_PATH_ALIAS + "/" + domain;
 
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -104,11 +102,8 @@ public class LinkTree extends AbstractElementTree {
 	@Override
 	public void generateElement(IContext ctx) {
 		ctx.print("<a href=\"" + link + "\" alt=\"" + link + "\" >");
-		ctx.print("<img style=\"margin: 4px 5px -4px 2px;\" height=\"16\" width=\"16\" src=\""
-				+ imgURL
-				+ "\" alt=\"Favicon of "
-				+ link
-				+ "\" title=\"Favicon of " + link + "\" />");
+		ctx.print("<img style=\"margin: 4px 5px -4px 2px;\" height=\"16\" width=\"16\" src=\"" + imgURL
+				+ "\" alt=\"Favicon of " + link + "\" title=\"Favicon of " + link + "\" />");
 		ctx.print(link);
 		ctx.print("</a>");
 	}

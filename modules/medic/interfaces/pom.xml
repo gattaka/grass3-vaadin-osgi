@@ -16,6 +16,7 @@
 			<groupId>org.myftp.gattserver.grass3</groupId>
 			<artifactId>core-common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+			<type>jar</type>
 		</dependency>
 	</dependencies>
 

@@ -1,7 +1,6 @@
 package org.myftp.gattserver.grass3.medic.util;
 
 import java.util.Calendar;
-
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 
 public class MedicUtil {

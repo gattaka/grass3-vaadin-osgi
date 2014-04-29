@@ -15,6 +15,7 @@
         <module>container.theme</module>
         <module>favlink</module>
         <module>latex</module>
+		<module>templates</module>
 	</modules>
 
 </project>

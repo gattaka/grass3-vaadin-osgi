@@ -37,10 +37,11 @@ public interface IMedicFacade {
 
 	List<ScheduledVisitDTO> getAllScheduledVisits(boolean planned);
 
+	List<ScheduledVisitDTO> getAllScheduledVisits();
+
 	boolean saveScheduledVisit(ScheduledVisitDTO dto);
 
-	ScheduledVisitDTO createPlannedScheduledVisitFromToBePlanned(
-			ScheduledVisitDTO dto);
+	ScheduledVisitDTO createPlannedScheduledVisitFromToBePlanned(ScheduledVisitDTO dto);
 
 	ScheduledVisitDTO getScheduledVisitById(Long id);
 

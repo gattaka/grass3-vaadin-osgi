@@ -9,6 +9,7 @@ import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitState;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
+import org.myftp.gattserver.grass3.medic.util.MedicUtil;
 import org.myftp.gattserver.grass3.medic.web.ScheduledVisitsCreateWindow.Operation;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
@@ -55,11 +56,9 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		toBePlannedTable.setEnabled(enabled);
 	}
 
-	private void openCreateWindow(final boolean planned,
-			ScheduledVisitDTO scheduledVisitDTO) {
-		Window win = new ScheduledVisitsCreateWindow(ScheduledVisitsTab.this,
-				planned ? Operation.PLANNED : Operation.TO_BE_PLANNED,
-				scheduledVisitDTO) {
+	private void openCreateWindow(final boolean planned, ScheduledVisitDTO scheduledVisitDTO) {
+		Window win = new ScheduledVisitsCreateWindow(ScheduledVisitsTab.this, planned ? Operation.PLANNED
+				: Operation.TO_BE_PLANNED, scheduledVisitDTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -71,8 +70,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 	}
 
 	private void openCompletedWindow(final ScheduledVisitDTO scheduledVisitDTO) {
-		Window win = new MedicalRecordCreateWindow(ScheduledVisitsTab.this,
-				scheduledVisitDTO) {
+		Window win = new MedicalRecordCreateWindow(ScheduledVisitsTab.this, scheduledVisitDTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -80,9 +78,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 				try {
 					medicFacade.deleteScheduledVisit(scheduledVisitDTO);
 				} catch (Exception e) {
-					UI.getCurrent().addWindow(
-							new ErrorSubwindow(
-									"Nezdařilo se smazat vybranou položku"));
+					UI.getCurrent().addWindow(new ErrorSubwindow("Nezdařilo se smazat vybranou položku"));
 				}
 				populateContainer(true);
 			}
@@ -90,46 +86,38 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		UI.getCurrent().addWindow(win);
 	}
 
-	private void openDeleteWindow(final ScheduledVisitDTO visit,
-			final boolean planned) {
+	private void openDeleteWindow(final ScheduledVisitDTO visit, final boolean planned) {
 		ScheduledVisitsTab.this.setEnabled(false);
-		UI.getCurrent().addWindow(
-				new ConfirmSubwindow("Opravdu smazat '" + visit.getPurpose()
-						+ "' ?") {
+		UI.getCurrent().addWindow(new ConfirmSubwindow("Opravdu smazat '" + visit.getPurpose() + "' ?") {
 
-					private static final long serialVersionUID = -422763987707688597L;
+			private static final long serialVersionUID = -422763987707688597L;
 
-					@Override
-					protected void onConfirm(ClickEvent event) {
-						try {
-							medicFacade.deleteScheduledVisit(visit);
-							populateContainer(planned);
-						} catch (Exception e) {
-							UI.getCurrent()
-									.addWindow(
-											new ErrorSubwindow(
-													"Nezdařilo se smazat vybranou položku"));
-						}
-					}
+			@Override
+			protected void onConfirm(ClickEvent event) {
+				try {
+					medicFacade.deleteScheduledVisit(visit);
+					populateContainer(planned);
+				} catch (Exception e) {
+					UI.getCurrent().addWindow(new ErrorSubwindow("Nezdařilo se smazat vybranou položku"));
+				}
+			}
 
-					@Override
-					protected void onClose(CloseEvent e) {
-						ScheduledVisitsTab.this.setEnabled(true);
-					}
-				});
+			@Override
+			protected void onClose(CloseEvent e) {
+				ScheduledVisitsTab.this.setEnabled(true);
+			}
+		});
 	}
 
 	private void populateContainer(boolean planned) {
 
-		BeanItemContainer<ScheduledVisitDTO> container = planned ? plannedContainer
-				: toBePlannedContainer;
+		BeanItemContainer<ScheduledVisitDTO> container = planned ? plannedContainer : toBePlannedContainer;
 		Table table = planned ? plannedTable : toBePlannedTable;
 
 		container.removeAllItems();
 		container.addAll(medicFacade.getAllScheduledVisits(planned));
 		table.select(null);
-		table.sort(new Object[] { "state", "date" }, new boolean[] { false,
-				true });
+		table.sort(new Object[] { "state", "date" }, new boolean[] { false, true });
 	}
 
 	private void createPlannedTable() {
@@ -146,15 +134,12 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		completedBtn.setIcon(new ThemeResource("img/tags/right_16.png"));
 		modifyBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
 
-		final Button detailBtn = new DetailBtn<ScheduledVisitDTO>("Detail",
-				plannedTable, ScheduledVisitsTab.this) {
+		final Button detailBtn = new DetailBtn<ScheduledVisitDTO>("Detail", plannedTable, ScheduledVisitsTab.this) {
 			private static final long serialVersionUID = -8815751115945625539L;
 
 			@Override
-			protected Window getDetailWindow(ScheduledVisitDTO selectedValue,
-					Component... triggerComponents) {
-				return new SchuduledVisitDetailWindow(selectedValue.getId(),
-						triggerComponents);
+			protected Window getDetailWindow(ScheduledVisitDTO selectedValue, Component... triggerComponents) {
+				return new SchuduledVisitDetailWindow(selectedValue.getId(), triggerComponents);
 			}
 		};
 
@@ -169,8 +154,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 			private static final long serialVersionUID = -5729717573733167822L;
 
 			@Override
-			public Object generateCell(Table source, Object itemId,
-					Object columnId) {
+			public Object generateCell(Table source, Object itemId, Object columnId) {
 				ScheduledVisitDTO dto = (ScheduledVisitDTO) itemId;
 				if (dto.getState().equals(ScheduledVisitState.MISSED)) {
 					Embedded icon = new Embedded();
@@ -178,15 +162,9 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 					icon.setDescription("Zmeškáno !");
 					return icon;
 				} else {
-					int plannedMonth = Calendar.getInstance().get(
-							Calendar.MONTH);
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(dto.getDate());
-					int currentMonth = cal.get(Calendar.MONTH);
-					if (plannedMonth == currentMonth) {
+					if (MedicUtil.isVisitPending(dto)) {
 						Embedded icon = new Embedded();
-						icon.setSource(new ThemeResource(
-								"img/tags/clock_16.png"));
+						icon.setSource(new ThemeResource("img/tags/clock_16.png"));
 						icon.setDescription("Již tento měsíc");
 						return icon;
 					}
@@ -204,8 +182,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		plannedTable.setHeight("250px");
 		plannedTable.setSelectable(true);
 		plannedTable.setImmediate(true);
-		plannedTable.setVisibleColumns(new String[] { "icon", "date",
-				"purpose", "institution" });
+		plannedTable.setVisibleColumns("icon", "date", "purpose", "institution");
 		plannedTable.setConverter("date", new StringToFullDateConverter());
 		plannedTable.addValueChangeListener(new ValueChangeListener() {
 
@@ -267,8 +244,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 			private static final long serialVersionUID = 6492892850247493645L;
 
 			public void buttonClick(ClickEvent event) {
-				openCreateWindow(true,
-						(ScheduledVisitDTO) plannedTable.getValue());
+				openCreateWindow(true, (ScheduledVisitDTO) plannedTable.getValue());
 			}
 
 		});
@@ -283,8 +259,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				openDeleteWindow((ScheduledVisitDTO) plannedTable.getValue(),
-						true);
+				openDeleteWindow((ScheduledVisitDTO) plannedTable.getValue(), true);
 			}
 		});
 		buttonLayout.addComponent(deleteBtn);
@@ -306,15 +281,12 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		planBtn.setIcon(new ThemeResource("img/tags/calendar_16.png"));
 		modifyBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
 
-		final Button detailBtn = new DetailBtn<ScheduledVisitDTO>("Detail",
-				toBePlannedTable, ScheduledVisitsTab.this) {
+		final Button detailBtn = new DetailBtn<ScheduledVisitDTO>("Detail", toBePlannedTable, ScheduledVisitsTab.this) {
 			private static final long serialVersionUID = -8815751115945625539L;
 
 			@Override
-			protected Window getDetailWindow(ScheduledVisitDTO selectedValue,
-					Component... triggerComponents) {
-				return new SchuduledVisitDetailWindow(selectedValue.getId(),
-						triggerComponents);
+			protected Window getDetailWindow(ScheduledVisitDTO selectedValue, Component... triggerComponents) {
+				return new SchuduledVisitDetailWindow(selectedValue.getId(), triggerComponents);
 			}
 		};
 
@@ -325,37 +297,32 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		addComponent(toBePlannedTableLabel);
 
 		toBePlannedTable.setContainerDataSource(toBePlannedContainer);
-		toBePlannedTable.addGeneratedColumn("icon",
-				new Table.ColumnGenerator() {
-					private static final long serialVersionUID = -5729717573733167822L;
+		toBePlannedTable.addGeneratedColumn("icon", new Table.ColumnGenerator() {
+			private static final long serialVersionUID = -5729717573733167822L;
 
-					@Override
-					public Object generateCell(Table source, Object itemId,
-							Object columnId) {
-						ScheduledVisitDTO dto = (ScheduledVisitDTO) itemId;
-						if (dto.getState().equals(ScheduledVisitState.MISSED)) {
-							Embedded icon = new Embedded();
-							icon.setSource(new ThemeResource(
-									"img/tags/warning_16.png"));
-							icon.setDescription("Zmeškáno !");
-							return icon;
-						} else {
-							int plannedMonth = Calendar.getInstance().get(
-									Calendar.MONTH);
-							Calendar cal = Calendar.getInstance();
-							cal.setTime(dto.getDate());
-							int currentMonth = cal.get(Calendar.MONTH);
-							if (plannedMonth == currentMonth) {
-								Embedded icon = new Embedded();
-								icon.setSource(new ThemeResource(
-										"img/tags/clock_16.png"));
-								icon.setDescription("Již tento měsíc");
-								return icon;
-							}
-						}
-						return null;
+			@Override
+			public Object generateCell(Table source, Object itemId, Object columnId) {
+				ScheduledVisitDTO dto = (ScheduledVisitDTO) itemId;
+				if (dto.getState().equals(ScheduledVisitState.MISSED)) {
+					Embedded icon = new Embedded();
+					icon.setSource(new ThemeResource("img/tags/warning_16.png"));
+					icon.setDescription("Zmeškáno !");
+					return icon;
+				} else {
+					int plannedMonth = Calendar.getInstance().get(Calendar.MONTH);
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(dto.getDate());
+					int currentMonth = cal.get(Calendar.MONTH);
+					if (plannedMonth == currentMonth) {
+						Embedded icon = new Embedded();
+						icon.setSource(new ThemeResource("img/tags/clock_16.png"));
+						icon.setDescription("Již tento měsíc");
+						return icon;
 					}
-				});
+				}
+				return null;
+			}
+		});
 		toBePlannedTable.setColumnHeader("state", "Stav");
 		toBePlannedTable.setColumnHeader("purpose", "Účel");
 		toBePlannedTable.setColumnHeader("date", "Datum");
@@ -367,8 +334,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		toBePlannedTable.setHeight("250px");
 		toBePlannedTable.setSelectable(true);
 		toBePlannedTable.setImmediate(true);
-		toBePlannedTable.setVisibleColumns(new String[] { "icon", "date",
-				"period", "purpose", "institution" });
+		toBePlannedTable.setVisibleColumns("icon", "date", "period", "purpose", "institution");
 		toBePlannedTable.setConverter("date", new StringToMonthDateConverter());
 		toBePlannedTable.addValueChangeListener(new ValueChangeListener() {
 
@@ -417,13 +383,10 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				final ScheduledVisitDTO toBePlannedVisitDTO = (ScheduledVisitDTO) toBePlannedTable
-						.getValue();
+				final ScheduledVisitDTO toBePlannedVisitDTO = (ScheduledVisitDTO) toBePlannedTable.getValue();
 
-				ScheduledVisitDTO newDto = medicFacade
-						.createPlannedScheduledVisitFromToBePlanned(toBePlannedVisitDTO);
-				Window win = new ScheduledVisitsCreateWindow(
-						ScheduledVisitsTab.this,
+				ScheduledVisitDTO newDto = medicFacade.createPlannedScheduledVisitFromToBePlanned(toBePlannedVisitDTO);
+				Window win = new ScheduledVisitsCreateWindow(ScheduledVisitsTab.this,
 						Operation.PLANNED_FROM_TO_BE_PLANNED, newDto) {
 					private static final long serialVersionUID = -7566950396535469316L;
 
@@ -434,21 +397,16 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 							// posuň plánování a ulož úpravu
 							Calendar calendar = Calendar.getInstance();
 							calendar.setTime(toBePlannedVisitDTO.getDate());
-							calendar.add(Calendar.MONTH,
-									toBePlannedVisitDTO.getPeriod());
+							calendar.add(Calendar.MONTH, toBePlannedVisitDTO.getPeriod());
 							toBePlannedVisitDTO.setDate(calendar.getTime());
 
-							if (medicFacade
-									.saveScheduledVisit(toBePlannedVisitDTO) == false) {
-								Notification
-										.show("Nezdařilo se naplánovat příští objednání",
-												Type.WARNING_MESSAGE);
+							if (medicFacade.saveScheduledVisit(toBePlannedVisitDTO) == false) {
+								Notification.show("Nezdařilo se naplánovat příští objednání", Type.WARNING_MESSAGE);
 							}
 						} else {
 							// nemá pravidelnost - návštěva byla objednána,
 							// plánování návštěvy lze smazat
-							medicFacade
-									.deleteScheduledVisit(toBePlannedVisitDTO);
+							medicFacade.deleteScheduledVisit(toBePlannedVisitDTO);
 						}
 
 						populateContainer(true);
@@ -468,8 +426,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 			private static final long serialVersionUID = 6492892850247493645L;
 
 			public void buttonClick(ClickEvent event) {
-				openCreateWindow(false,
-						(ScheduledVisitDTO) toBePlannedTable.getValue());
+				openCreateWindow(false, (ScheduledVisitDTO) toBePlannedTable.getValue());
 			}
 
 		});
@@ -484,8 +441,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				openDeleteWindow(
-						(ScheduledVisitDTO) toBePlannedTable.getValue(), false);
+				openDeleteWindow((ScheduledVisitDTO) toBePlannedTable.getValue(), false);
 			}
 		});
 		buttonLayout.addComponent(deleteBtn);
@@ -501,10 +457,8 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		setSpacing(true);
 		setMargin(true);
 
-		DateTimeFormatter formatter = DateTimeFormat
-				.forPattern("d. MMMMM yyyy");
-		addComponent(new Label("<strong>Dnes je: </strong>"
-				+ LocalDate.now().toString(formatter), ContentMode.HTML));
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("d. MMMMM yyyy");
+		addComponent(new Label("<strong>Dnes je: </strong>" + LocalDate.now().toString(formatter), ContentMode.HTML));
 
 		addComponent(new Label("<hr/>", ContentMode.HTML));
 

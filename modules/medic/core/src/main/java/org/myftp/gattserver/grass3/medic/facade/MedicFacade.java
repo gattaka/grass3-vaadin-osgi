@@ -90,6 +90,12 @@ public class MedicFacade implements IMedicFacade {
 		return medicMapper.mapScheduledVisits(scheduledVisitRepository
 				.findByPlanned(planned));
 	}
+	
+	@Override
+	public List<ScheduledVisitDTO> getAllScheduledVisits() {
+		return medicMapper.mapScheduledVisits(scheduledVisitRepository
+				.findAll());
+	}
 
 	@Override
 	public ScheduledVisitDTO createPlannedScheduledVisitFromToBePlanned(
@@ -231,4 +237,5 @@ public class MedicFacade implements IMedicFacade {
 	public PhysicianDTO getPhysicianById(Long id) {
 		return medicMapper.mapPhysician(physicianRepository.findOne(id));
 	}
+
 }

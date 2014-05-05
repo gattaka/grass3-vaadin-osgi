@@ -382,16 +382,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 					return;
 
 				if (saveOrUpdateArticle()) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow(editMode ? "Úprava článku proběhla úspěšně"
-							: "Uložení článku proběhlo úspěšně") {
-
-						private static final long serialVersionUID = -4517297931117830104L;
-
-						protected void onProceed(ClickEvent event) {
-							returnToArticle();
-						};
-					};
-					getUI().addWindow(infoSubwindow);
+					// Tady nemá cena dávat infowindow
+					returnToArticle();
 				} else {
 					showWarning(editMode ? "Úprava článku se nezdařila" : "Uložení článku se nezdařilo");
 				}

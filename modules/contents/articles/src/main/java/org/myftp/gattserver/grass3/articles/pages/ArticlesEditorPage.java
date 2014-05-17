@@ -25,11 +25,9 @@ import org.myftp.gattserver.grass3.pages.template.JScriptItem;
 import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
-import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.ui.util.JQueryAccordion;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
-import org.myftp.gattserver.grass3.util.ReferenceHolder;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.slf4j.Logger;
@@ -214,27 +212,28 @@ public class ArticlesEditorPage extends TwoColumnPage {
 					pluginServiceHolder.getGroupTags(group));
 			Collections.sort(resourcesBundles);
 
-			final ReferenceHolder<EditorButtonResources> holder = new ReferenceHolder<EditorButtonResources>();
 			for (EditorButtonResources resourceBundle : resourcesBundles) {
 
-				holder.setValue(resourceBundle);
+				String prefix = resourceBundle.getPrefix();
+				String suffix = resourceBundle.getSuffix();
 
-				Button button = new Button(resourceBundle.getDescription());
-				button.setIcon((com.vaadin.server.Resource) resourceBundle.getImage());
-				button.addClickListener(new Button.ClickListener() {
+				StringBuilder builder = new StringBuilder();
 
-					private static final long serialVersionUID = 607422393151282918L;
+				builder.append("<div onClick=\"insert('" + prefix + "','" + suffix
+						+ "');\" tabindex=\"0\" role=\"button\" class=\"v-button v-widget\">");
+				builder.append("<span class=\"v-button-wrap\">");
+				if (resourceBundle.getImage() != null) {
+					builder.append("<img src=\"" + getRequest().getContextRoot() + "/VAADIN/themes/grass/"
+							+ resourceBundle.getImage().toString() + "\"/> ");
+				}
+				builder.append("<span class=\"v-button-caption\" style=\"vertical-align: super;\">"
+						+ resourceBundle.getDescription() + "</span>");
+				builder.append("</span>");
+				builder.append("</div>");
+				Label btnLabel = new Label(builder.toString(), ContentMode.HTML);
+				btnLabel.setWidth(null);
+				groupToolsLayout.addComponent(btnLabel);
 
-					// potřeba, jinak se bude linkovat reference na poslední
-					// holder z vnější instance ;)
-					String prefix = holder.getValue().getPrefix();
-					String suffix = holder.getValue().getSuffix();
-
-					public void buttonClick(ClickEvent event) {
-						JavaScript.getCurrent().execute("insert('" + prefix + "','" + suffix + "');");
-					}
-				});
-				groupToolsLayout.addComponent(button);
 			}
 		}
 

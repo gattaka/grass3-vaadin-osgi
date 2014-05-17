@@ -7,14 +7,16 @@ import org.springframework.stereotype.Component;
 @Component("articlesEditorPageFactory")
 public class ArticlesEditorPageFactory extends AbstractPageFactory {
 
+	private static final long serialVersionUID = 9120334766218647141L;
+
 	public ArticlesEditorPageFactory() {
 		super("articles-editor", "articlesEditorPage");
 	}
 
 	@Override
 	protected boolean isAuthorized() {
-		return getUser().getRoles().contains(Role.ADMIN)
-				|| getUser().getRoles().contains(Role.AUTHOR);
+		return getUser() != null
+				&& (getUser().getRoles().contains(Role.ADMIN) || getUser().getRoles().contains(Role.AUTHOR));
 	}
 
 }

@@ -58,8 +58,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 	private static final long serialVersionUID = -5148523174527532785L;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(PhotogalleryEditorPage.class);
+	private static final Logger logger = LoggerFactory.getLogger(PhotogalleryEditorPage.class);
 
 	@Resource(name = "nodeFacade")
 	private INodeFacade nodeFacade;
@@ -104,11 +103,9 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			showError404();
 		}
 
-		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
-				.parseURLIdentifier(identifierToken);
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(identifierToken);
 		if (identifier == null) {
-			logger.debug("Nezdařilo se vytěžit URL identifikátor z řetězce: '"
-					+ identifierToken + "'");
+			logger.debug("Nezdařilo se vytěžit URL identifikátor z řetězce: '" + identifierToken + "'");
 			showError404();
 		}
 
@@ -119,22 +116,17 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			photogalleryNameField.setValue("");
 			publicatedCheckBox.setValue(true);
 
-		} else if (operationToken.equals(DefaultContentOperations.EDIT
-				.toString())) {
+		} else if (operationToken.equals(DefaultContentOperations.EDIT.toString())) {
 
 			editMode = true;
-			photogallery = photogalleryFacade
-					.getPhotogalleryForDetail(identifier.getId());
-			photogalleryNameField.setValue(photogallery.getContentNode()
-					.getName());
+			photogallery = photogalleryFacade.getPhotogalleryForDetail(identifier.getId());
+			photogalleryNameField.setValue(photogallery.getContentNode().getName());
 
-			for (ContentTagDTO tagDTO : photogallery.getContentNode()
-					.getContentTags()) {
+			for (ContentTagDTO tagDTO : photogallery.getContentNode().getContentTags()) {
 				photogalleryKeywords.addToken(tagDTO.getName());
 			}
 
-			publicatedCheckBox.setValue(photogallery.getContentNode()
-					.isPublicated());
+			publicatedCheckBox.setValue(photogallery.getContentNode().isPublicated());
 
 		} else {
 			logger.debug("Neznámá operace: '" + operationToken + "'");
@@ -142,8 +134,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			return;
 		}
 
-		if ((photogallery == null || photogallery.getContentNode().getAuthor()
-				.equals(getGrassUI().getUser()))
+		if ((photogallery == null || photogallery.getContentNode().getAuthor().equals(getGrassUI().getUser()))
 				|| getGrassUI().getUser().getRoles().contains(Role.ADMIN)) {
 			super.init();
 		} else {
@@ -157,8 +148,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	@Override
 	protected Component createContent() {
 
-		final File dir = editMode ? photogalleryFacade
-				.getGalleryDir(photogallery) : photogalleryFacade
+		final File dir = editMode ? photogalleryFacade.getGalleryDir(photogallery) : photogalleryFacade
 				.createGalleryDir();
 		galleryDir = dir;
 
@@ -168,8 +158,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		VerticalLayout nameLayout = new VerticalLayout();
 		editorTextLayout.addComponent(nameLayout);
-		nameLayout.addComponent(new Label("<h2>Název galerie</h2>",
-				ContentMode.HTML));
+		nameLayout.addComponent(new Label("<h2>Název galerie</h2>", ContentMode.HTML));
 		nameLayout.addComponent(photogalleryNameField);
 		photogalleryNameField.setWidth("100%");
 
@@ -177,8 +166,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		editorTextLayout.addComponent(keywordsLayout);
 
 		// label
-		keywordsLayout.addComponent(new Label("<h2>Klíčová slova</h2>",
-				ContentMode.HTML));
+		keywordsLayout.addComponent(new Label("<h2>Klíčová slova</h2>", ContentMode.HTML));
 
 		// menu tagů + textfield tagů
 		// http://marc.virtuallypreinstalled.com/TokenField/
@@ -189,10 +177,8 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		keywordsMenuAndTextLayout.addComponent(photogalleryKeywords);
 
-		List<ContentTagDTO> contentTags = contentTagFacade
-				.getContentTagsForOverview();
-		BeanContainer<String, ContentTagDTO> tokens = new BeanContainer<String, ContentTagDTO>(
-				ContentTagDTO.class);
+		List<ContentTagDTO> contentTags = contentTagFacade.getContentTagsForOverview();
+		BeanContainer<String, ContentTagDTO> tokens = new BeanContainer<String, ContentTagDTO>(ContentTagDTO.class);
 		tokens.setBeanIdProperty("name");
 		tokens.addAll(contentTags);
 
@@ -207,8 +193,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		VerticalLayout contentLayout = new VerticalLayout();
 		contentLayout.setSpacing(true);
 		editorTextLayout.addComponent(contentLayout);
-		contentLayout.addComponent(new Label("<h2>Položky</h2>",
-				ContentMode.HTML));
+		contentLayout.addComponent(new Label("<h2>Položky</h2>", ContentMode.HTML));
 
 		final GridLayout gridLayout = new GridLayout(3, 2);
 		gridLayout.setSpacing(true);
@@ -220,8 +205,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		image.setWidth("300px");
 		image.setImmediate(true);
 
-		final Label previewLabel = new Label("<center>Náhled</center>",
-				ContentMode.HTML);
+		final Label previewLabel = new Label("<center>Náhled</center>", ContentMode.HTML);
 		previewLabel.setHeight("300px");
 		previewLabel.setWidth("300px");
 		previewLabel.addStyleName("bordered");
@@ -236,15 +220,14 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		final Table table = new Table();
 		if (editMode) {
 
-			BeanItemContainer<File> container = new BeanItemContainer<>(
-					File.class, Arrays.asList(galleryDir
-							.listFiles(new FileFilter() {
+			BeanItemContainer<File> container = new BeanItemContainer<>(File.class, Arrays.asList(galleryDir
+					.listFiles(new FileFilter() {
 
-								@Override
-								public boolean accept(File pathname) {
-									return pathname.isDirectory() == false;
-								}
-							})));
+						@Override
+						public boolean accept(File pathname) {
+							return pathname.isDirectory() == false;
+						}
+					})));
 
 			table.setContainerDataSource(container);
 		} else {
@@ -257,35 +240,33 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		table.setColumnHeader("name", "Název");
 		table.setVisibleColumns(new String[] { "name" });
 
-		final Button renameBtn = new Button("Přejmenovat",
-				new Button.ClickListener() {
-					private static final long serialVersionUID = -4816423459867256516L;
+		final Button renameBtn = new Button("Přejmenovat", new Button.ClickListener() {
+			private static final long serialVersionUID = -4816423459867256516L;
 
-					@Override
-					public void buttonClick(ClickEvent event) {
-						// TODO Auto-generated method stub
-					}
-				});
+			@Override
+			public void buttonClick(ClickEvent event) {
+				// TODO Auto-generated method stub
+			}
+		});
 		renameBtn.setEnabled(false);
 		gridLayout.addComponent(renameBtn, 0, 1);
 		gridLayout.setComponentAlignment(renameBtn, Alignment.MIDDLE_CENTER);
 
-		final Button removeBtn = new Button("Odstranit",
-				new Button.ClickListener() {
-					private static final long serialVersionUID = -4816423459867256516L;
+		final Button removeBtn = new Button("Odstranit", new Button.ClickListener() {
+			private static final long serialVersionUID = -4816423459867256516L;
 
-					@Override
-					public void buttonClick(ClickEvent event) {
-						Object value = table.getValue();
-						File file = (File) value;
-						
-						if (editMode)
-							photogalleryFacade.tryDeleteMiniature(file, photogallery);
-						
-						file.delete();
-						table.removeItem(file);
-					}
-				});
+			@Override
+			public void buttonClick(ClickEvent event) {
+				Object value = table.getValue();
+				File file = (File) value;
+
+				if (editMode)
+					photogalleryFacade.tryDeleteMiniature(file, photogallery);
+
+				file.delete();
+				table.removeItem(file);
+			}
+		});
 		removeBtn.setEnabled(false);
 		gridLayout.addComponent(removeBtn, 1, 1);
 		gridLayout.setComponentAlignment(removeBtn, Alignment.MIDDLE_CENTER);
@@ -326,8 +307,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			private static final long serialVersionUID = -5223991901495532219L;
 
 			@Override
-			protected void handleFile(File file, String fileName,
-					String mimeType, long length) {
+			protected void handleFile(File file, String fileName, String mimeType, long length) {
 
 				File movedFile = new File(dir, fileName);
 				if (file.renameTo(movedFile)) {
@@ -337,17 +317,14 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		};
 		multiUpload.setUploadButtonCaption("Nahrát fotografie");
 		uploadWrapper.addComponent(multiUpload);
-		uploadWrapper.setComponentAlignment(multiUpload,
-				Alignment.MIDDLE_CENTER);
+		uploadWrapper.setComponentAlignment(multiUpload, Alignment.MIDDLE_CENTER);
 
 		VerticalLayout contentOptionsLayout = new VerticalLayout();
 		editorTextLayout.addComponent(contentOptionsLayout);
-		contentOptionsLayout.addComponent(new Label("<h2>Nastavení</h2>",
-				ContentMode.HTML));
+		contentOptionsLayout.addComponent(new Label("<h2>Nastavení</h2>", ContentMode.HTML));
 
 		publicatedCheckBox.setCaption("Publikovat galerii");
-		publicatedCheckBox
-				.setDescription("Je-li prázdné, uvidí galerii pouze její autor");
+		publicatedCheckBox.setDescription("Je-li prázdné, uvidí galerii pouze její autor");
 		publicatedCheckBox.setImmediate(true);
 		contentOptionsLayout.addComponent(publicatedCheckBox);
 
@@ -358,8 +335,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		// Uložit
 		Button saveButton = new Button("Uložit");
-		saveButton.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/save_16.png"));
+		saveButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/save_16.png"));
 		saveButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 607422393151282918L;
@@ -373,11 +349,9 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 				boolean oldMode = editMode;
 
 				if (saveOrUpdatePhotogallery()) {
-					showInfo(oldMode ? "Úprava galerie proběhla úspěšně"
-							: "Uložení galerie proběhlo úspěšně");
+					showInfo(oldMode ? "Úprava galerie proběhla úspěšně" : "Uložení galerie proběhlo úspěšně");
 				} else {
-					showWarning(oldMode ? "Úprava galerie se nezdařila"
-							: "Uložení galerie se nezdařilo");
+					showWarning(oldMode ? "Úprava galerie se nezdařila" : "Uložení galerie se nezdařilo");
 				}
 
 			}
@@ -387,9 +361,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		// Uložit a zavřít
 		Button saveAndCloseButton = new Button("Uložit a zavřít");
-		saveAndCloseButton
-				.setIcon((com.vaadin.server.Resource) new ThemeResource(
-						"img/tags/save_16.png"));
+		saveAndCloseButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/save_16.png"));
 		saveAndCloseButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 607422393151282918L;
@@ -400,20 +372,9 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 					return;
 
 				if (saveOrUpdatePhotogallery()) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow(
-							editMode ? "Úprava galerie proběhla úspěšně"
-									: "Uložení galerie proběhlo úspěšně") {
-
-						private static final long serialVersionUID = -4517297931117830104L;
-
-						protected void onProceed(ClickEvent event) {
-							returnToPhotogallery();
-						};
-					};
-					getUI().addWindow(infoSubwindow);
+					returnToPhotogallery();
 				} else {
-					showWarning(editMode ? "Úprava galerie se nezdařila"
-							: "Uložení galerie se nezdařilo");
+					showWarning(editMode ? "Úprava galerie se nezdařila" : "Uložení galerie se nezdařilo");
 				}
 
 			}
@@ -423,8 +384,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		// Zrušit
 		Button cancelButton = new Button("Zrušit");
-		cancelButton.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/delete_16.png"));
+		cancelButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/delete_16.png"));
 		cancelButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 607422393151282918L;
@@ -473,17 +433,13 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		if (editMode) {
 
-			return photogalleryFacade.modifyPhotogallery(String
-					.valueOf(photogalleryNameField.getValue()),
-					(Collection<String>) photogalleryKeywords.getValue(),
-					publicatedCheckBox.getValue(), photogallery, getRequest()
-							.getContextRoot());
+			return photogalleryFacade.modifyPhotogallery(String.valueOf(photogalleryNameField.getValue()),
+					(Collection<String>) photogalleryKeywords.getValue(), publicatedCheckBox.getValue(), photogallery,
+					getRequest().getContextRoot());
 		} else {
-			Long id = photogalleryFacade.savePhotogallery(
-					String.valueOf(photogalleryNameField.getValue()),
-					(Collection<String>) photogalleryKeywords.getValue(),
-					galleryDir, publicatedCheckBox.getValue(), category,
-					getGrassUI().getUser(), getRequest().getContextRoot());
+			Long id = photogalleryFacade.savePhotogallery(String.valueOf(photogalleryNameField.getValue()),
+					(Collection<String>) photogalleryKeywords.getValue(), galleryDir, publicatedCheckBox.getValue(),
+					category, getGrassUI().getUser(), getRequest().getContextRoot());
 
 			if (id == null)
 				return false;
@@ -501,8 +457,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	private void returnToPhotogallery() {
 		JavaScript.eval("window.onbeforeunload = null;");
 		redirect(getPageURL(photogalleryViewerPageFactory,
-				URLIdentifierUtils.createURLIdentifier(photogallery.getId(),
-						photogallery.getContentNode().getName())));
+				URLIdentifierUtils.createURLIdentifier(photogallery.getId(), photogallery.getContentNode().getName())));
 	}
 
 	/**
@@ -511,8 +466,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	private void returnToCategory() {
 		JavaScript.eval("window.onbeforeunload = null;");
 		redirect(getPageURL(categoryPageFactory,
-				URLIdentifierUtils.createURLIdentifier(category.getId(),
-						category.getName())));
+				URLIdentifierUtils.createURLIdentifier(category.getId(), category.getName())));
 	}
 
 }

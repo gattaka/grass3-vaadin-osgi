@@ -37,8 +37,8 @@ public abstract class ConfirmSubWindow extends GrassSubWindow {
 	public ConfirmSubWindow(Label label, Component... triggerComponents) {
 		super("Potvrzení operace", triggerComponents);
 
-		center();
 		setWidth("350px");
+		setHeight("200px");
 
 		GridLayout subWindowlayout = new GridLayout(2, 2);
 		setContent(subWindowlayout);

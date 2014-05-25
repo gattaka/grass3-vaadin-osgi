@@ -211,7 +211,9 @@ public class HomePage extends BasePage {
 		for (ContentTagDTO contentTag : contentTags) {
 			int size = sizeTable.get(contentTag.getContentNodesCount());
 			Label tagLabel;
-			tagCloud.addComponent(tagLabel = new Label("<a href='"
+			tagCloud.addComponent(tagLabel = new Label("<a title='"
+					+ contentTag.getContentNodesCount()
+					+ "'href='"
 					+ getPageURL(tagPageFactory,
 							URLIdentifierUtils.createURLIdentifier(contentTag.getId(), contentTag.getName()))
 					+ "' style='font-size:" + size + "pt'>" + contentTag.getName() + "</a>", ContentMode.HTML));

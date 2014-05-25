@@ -6,7 +6,6 @@ import org.myftp.gattserver.grass3.articles.basic.style.StyleTree;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
 import org.myftp.gattserver.grass3.articles.parser.interfaces.IContext;
 
-
 public class GreenTree extends StyleTree {
 
 	public GreenTree(List<AbstractElementTree> elist) {
@@ -15,7 +14,7 @@ public class GreenTree extends StyleTree {
 
 	@Override
 	public void generateStartTag(IContext ctx) {
-		ctx.print("<span style='color: red'>");
+		ctx.print("<span style='color: green'>");
 	}
 
 	@Override

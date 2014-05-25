@@ -15,7 +15,7 @@ import org.myftp.gattserver.grass3.fm.FMExplorer.FileProcessState;
 import org.myftp.gattserver.grass3.fm.config.FMConfiguration;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
@@ -359,7 +359,7 @@ public class FMPage extends OneColumnPage {
 		Label subWindowLabel = new Label(groupOperation.getValue() ? "Opravdu chcete smazat vybrané soubory ?"
 				: "Opravdu chcete smazat soubor \"" + file.getName() + "\" ?");
 
-		final Window subwindow = new ConfirmSubwindow(subWindowLabel) {
+		final Window subwindow = new ConfirmSubWindow(subWindowLabel) {
 
 			private static final long serialVersionUID = 6350190755480244374L;
 

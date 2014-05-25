@@ -13,7 +13,7 @@ import org.myftp.gattserver.grass3.pages.template.ContentViewerPage;
 import org.myftp.gattserver.grass3.pages.template.JScriptItem;
 import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
@@ -153,7 +153,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 				public void buttonClick(ClickEvent event) {
 
-					ConfirmSubwindow confirmSubwindow = new ConfirmSubwindow("Opravdu si přejete smazat tento článek ?") {
+					ConfirmSubWindow confirmSubwindow = new ConfirmSubWindow("Opravdu si přejete smazat tento článek ?") {
 
 						private static final long serialVersionUID = -3214040983143363831L;
 

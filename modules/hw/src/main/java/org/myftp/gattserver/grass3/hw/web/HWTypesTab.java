@@ -2,7 +2,7 @@ package org.myftp.gattserver.grass3.hw.web;
 
 import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -47,36 +47,29 @@ public class HWTypesTab extends VerticalLayout {
 
 	private void openDeleteWindow() {
 		HWTypesTab.this.setEnabled(false);
-		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table
-				.getContainerDataSource();
+		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table.getContainerDataSource();
 		BeanItem<?> item = cont.getItem(table.getValue());
 		final HWItemTypeDTO hwItemType = (HWItemTypeDTO) item.getBean();
-		UI.getCurrent()
-				.addWindow(
-						new ConfirmSubwindow(
-								"Opravdu smazat '"
-										+ hwItemType.getName()
-										+ "' (typ bude odebrán od všech označených položek HW) ?") {
+		UI.getCurrent().addWindow(
+				new ConfirmSubWindow("Opravdu smazat '" + hwItemType.getName()
+						+ "' (typ bude odebrán od všech označených položek HW) ?") {
 
-							private static final long serialVersionUID = -422763987707688597L;
+					private static final long serialVersionUID = -422763987707688597L;
 
-							@Override 
-							protected void onConfirm(ClickEvent event) {
-								if (hwFacade.deleteHWItemType(hwItemType)) {
-									populateContainer();
-								} else {
-									UI.getCurrent()
-											.addWindow(
-													new ErrorSubwindow(
-															"Nezdařilo se smazat vybranou položku"));
-								}
-							}
+					@Override
+					protected void onConfirm(ClickEvent event) {
+						if (hwFacade.deleteHWItemType(hwItemType)) {
+							populateContainer();
+						} else {
+							UI.getCurrent().addWindow(new ErrorSubwindow("Nezdařilo se smazat vybranou položku"));
+						}
+					}
 
-							@Override
-							protected void onClose(CloseEvent e) {
-								HWTypesTab.this.setEnabled(true);
-							}
-						});
+					@Override
+					protected void onClose(CloseEvent e) {
+						HWTypesTab.this.setEnabled(true);
+					}
+				});
 	}
 
 	private void populateContainer() {

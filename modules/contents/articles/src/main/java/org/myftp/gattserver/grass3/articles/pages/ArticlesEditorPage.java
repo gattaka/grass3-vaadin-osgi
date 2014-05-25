@@ -24,7 +24,7 @@ import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.JScriptItem;
 import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.ui.util.JQueryAccordion;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
@@ -401,7 +401,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 			public void buttonClick(ClickEvent event) {
 
-				ConfirmSubwindow confirmSubwindow = new ConfirmSubwindow(
+				ConfirmSubWindow confirmSubwindow = new ConfirmSubWindow(
 						"Opravdu si přejete zavřít editor článku ? Veškeré neuložené změny budou ztraceny.") {
 
 					private static final long serialVersionUID = -3214040983143363831L;

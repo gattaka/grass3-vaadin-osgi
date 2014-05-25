@@ -10,7 +10,7 @@ import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import org.myftp.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.subwindows.ImageDetailSubwindow;
 import org.myftp.gattserver.grass3.ui.util.StringToDateConverter;
@@ -68,8 +68,7 @@ public class HWItemDetailWindow extends GrassSubWindow {
 	}
 
 	private String createWarrantyYearsString(Integer warrantyYears) {
-		return new CZSuffixCreator("rok", "roky", "let")
-				.createStringWithSuffix(warrantyYears);
+		return new CZSuffixCreator("rok", "roky", "let").createStringWithSuffix(warrantyYears);
 	}
 
 	/**
@@ -99,43 +98,34 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		btnLayout.setSpacing(true);
 
-		Button hwItemImageDetailBtn = new Button("Detail",
-				new Button.ClickListener() {
-					private static final long serialVersionUID = 3574387596782957413L;
+		Button hwItemImageDetailBtn = new Button("Detail", new Button.ClickListener() {
+			private static final long serialVersionUID = 3574387596782957413L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				UI.getCurrent().addWindow(new ImageDetailSubwindow(hwItem.getName(), icon));
+			}
+		});
+
+		Button hwItemImageDeleteBtn = new Button("Smazat", new Button.ClickListener() {
+			private static final long serialVersionUID = 3574387596782957413L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				UI.getCurrent().addWindow(new ConfirmSubWindow("Opravdu smazat foto HW položky ?") {
+					private static final long serialVersionUID = -1901927025986494370L;
 
 					@Override
-					public void buttonClick(ClickEvent event) {
-						UI.getCurrent()
-								.addWindow(
-										new ImageDetailSubwindow(hwItem
-												.getName(), icon));
+					protected void onConfirm(ClickEvent event) {
+						hwFacade.deleteHWItemIconFile(hwItem);
+						createHWItemImageUpload(hwItem);
 					}
 				});
+			}
+		});
 
-		Button hwItemImageDeleteBtn = new Button("Smazat",
-				new Button.ClickListener() {
-					private static final long serialVersionUID = 3574387596782957413L;
-
-					@Override
-					public void buttonClick(ClickEvent event) {
-						UI.getCurrent().addWindow(
-								new ConfirmSubwindow(
-										"Opravdu smazat foto HW položky ?") {
-									private static final long serialVersionUID = -1901927025986494370L;
-
-									@Override
-									protected void onConfirm(ClickEvent event) {
-										hwFacade.deleteHWItemIconFile(hwItem);
-										createHWItemImageUpload(hwItem);
-									}
-								});
-					}
-				});
-
-		hwItemImageDetailBtn
-				.setIcon(new ThemeResource("img/tags/search_16.png"));
-		hwItemImageDeleteBtn
-				.setIcon(new ThemeResource("img/tags/delete_16.png"));
+		hwItemImageDetailBtn.setIcon(new ThemeResource("img/tags/search_16.png"));
+		hwItemImageDeleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
 
 		btnLayout.addComponent(hwItemImageDetailBtn);
 		btnLayout.addComponent(hwItemImageDeleteBtn);
@@ -155,8 +145,7 @@ public class HWItemDetailWindow extends GrassSubWindow {
 			@Override
 			public OutputStream receiveUpload(String filename, String mimeType) {
 				try {
-					return hwFacade.createHWItemIconOutputStream(filename,
-							hwItem);
+					return hwFacade.createHWItemIconOutputStream(filename, hwItem);
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 					return null;
@@ -179,13 +168,11 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		uploadWrapperLayout.setWidth("200px");
 		uploadWrapperLayout.setHeight("200px");
 		uploadWrapperLayout.addComponent(upload);
-		uploadWrapperLayout.setComponentAlignment(upload,
-				Alignment.MIDDLE_CENTER);
+		uploadWrapperLayout.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
 
 		hwImageLayout.removeAllComponents();
 		hwImageLayout.addComponent(uploadWrapperLayout);
-		hwImageLayout.setComponentAlignment(uploadWrapperLayout,
-				Alignment.MIDDLE_CENTER);
+		hwImageLayout.setComponentAlignment(uploadWrapperLayout, Alignment.MIDDLE_CENTER);
 	}
 
 	private void createHWImageOrUpload(final HWItemDTO hwItem) {
@@ -194,8 +181,7 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		}
 	}
 
-	public HWItemDetailWindow(final Component triggerComponent,
-			final HWItemDTO hwItem) {
+	public HWItemDetailWindow(final Component triggerComponent, final HWItemDTO hwItem) {
 		super(hwItem.getName());
 
 		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
@@ -247,19 +233,14 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		/**
 		 * Info pole - první sloupec
 		 */
-		winLayout.addComponent(new Label("<strong>Stav</strong>",
-				ContentMode.HTML), 1, 1);
+		winLayout.addComponent(new Label("<strong>Stav</strong>", ContentMode.HTML), 1, 1);
 		winLayout.getComponent(1, 1).setWidth("80px");
-		winLayout.addComponent(createShiftedLabel(hwItem.getState().getName()),
-				1, 2);
+		winLayout.addComponent(createShiftedLabel(hwItem.getState().getName()), 1, 2);
 
-		winLayout.addComponent(new Label("<strong>Cena</strong>",
-				ContentMode.HTML), 1, 3);
-		winLayout.addComponent(
-				createShiftedLabel(createPriceString(hwItem.getPrice())), 1, 4);
+		winLayout.addComponent(new Label("<strong>Cena</strong>", ContentMode.HTML), 1, 3);
+		winLayout.addComponent(createShiftedLabel(createPriceString(hwItem.getPrice())), 1, 4);
 
-		winLayout.addComponent(new Label("<strong>Přílohy</strong>",
-				ContentMode.HTML), 1, 5);
+		winLayout.addComponent(new Label("<strong>Přílohy</strong>", ContentMode.HTML), 1, 5);
 		Button imagesBtn = new Button("Fotografie");
 		imagesBtn.setStyleName(BaseTheme.BUTTON_LINK);
 		imagesBtn.addStyleName("shiftlabel");
@@ -291,38 +272,29 @@ public class HWItemDetailWindow extends GrassSubWindow {
 		/**
 		 * Info pole - druhý sloupec
 		 */
-		winLayout.addComponent(new Label("<strong>Získáno</strong>",
-				ContentMode.HTML), 2, 1);
+		winLayout.addComponent(new Label("<strong>Získáno</strong>", ContentMode.HTML), 2, 1);
 		winLayout.getComponent(2, 1).setWidth("80px");
-		String purchDate = hwItem.getPurchaseDate() == null ? "-"
-				: new StringToDateConverter().getFormat().format(
-						hwItem.getPurchaseDate());
+		String purchDate = hwItem.getPurchaseDate() == null ? "-" : new StringToDateConverter().getFormat().format(
+				hwItem.getPurchaseDate());
 		winLayout.addComponent(createShiftedLabel(purchDate), 2, 2);
 
-		winLayout.addComponent(new Label("<strong>Odepsáno</strong>",
-				ContentMode.HTML), 2, 3);
-		String destrDate = hwItem.getDestructionDate() == null ? "-"
-				: new StringToDateConverter().getFormat().format(
-						hwItem.getDestructionDate());
+		winLayout.addComponent(new Label("<strong>Odepsáno</strong>", ContentMode.HTML), 2, 3);
+		String destrDate = hwItem.getDestructionDate() == null ? "-" : new StringToDateConverter().getFormat().format(
+				hwItem.getDestructionDate());
 		winLayout.addComponent(createShiftedLabel(destrDate), 2, 4);
 
-		winLayout.addComponent(new Label("<strong>Záruka</strong>",
-				ContentMode.HTML), 2, 5);
-		winLayout.addComponent(
-				createShiftedLabel(createWarrantyYearsString(hwItem
-						.getWarrantyYears())), 2, 6);
+		winLayout.addComponent(new Label("<strong>Záruka</strong>", ContentMode.HTML), 2, 5);
+		winLayout.addComponent(createShiftedLabel(createWarrantyYearsString(hwItem.getWarrantyYears())), 2, 6);
 
 		/**
 		 * Součásti
 		 */
-		winLayout.addComponent(new Label("<strong>Je součástí</strong>",
-				ContentMode.HTML), 3, 1);
+		winLayout.addComponent(new Label("<strong>Je součástí</strong>", ContentMode.HTML), 3, 1);
 		winLayout.getComponent(3, 1).setWidth("100px");
 		if (hwItem.getUsedIn() == null) {
 			winLayout.addComponent(createShiftedLabel("-"), 3, 2);
 		} else {
-			Button usedInBtn = new Button(StringPreviewCreator.createPreview(
-					hwItem.getUsedIn().getName(), 60));
+			Button usedInBtn = new Button(StringPreviewCreator.createPreview(hwItem.getUsedIn().getName(), 60));
 			usedInBtn.setDescription(hwItem.getUsedIn().getName());
 			usedInBtn.setStyleName(BaseTheme.BUTTON_LINK);
 			usedInBtn.addStyleName("shiftlabel");
@@ -333,24 +305,20 @@ public class HWItemDetailWindow extends GrassSubWindow {
 				@Override
 				public void buttonClick(ClickEvent event) {
 					close();
-					UI.getCurrent().addWindow(
-							new HWItemDetailWindow(triggerComponent, hwItem
-									.getUsedIn()));
+					UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, hwItem.getUsedIn()));
 				}
 			});
 			winLayout.addComponent(usedInBtn, 3, 2);
 		}
 
-		winLayout.addComponent(new Label("<strong>Součásti</strong>",
-				ContentMode.HTML), 3, 3);
+		winLayout.addComponent(new Label("<strong>Součásti</strong>", ContentMode.HTML), 3, 3);
 		VerticalLayout partsLayout = new VerticalLayout();
 		winLayout.addComponent(partsLayout, 3, 4, 3, 8);
 		List<HWItemDTO> parts = hwFacade.getAllParts(hwItem.getId());
 		if (parts.isEmpty())
 			partsLayout.addComponent(createShiftedLabel("-"));
 		for (final HWItemDTO part : parts) {
-			Button partDetailBtn = new Button(
-					StringPreviewCreator.createPreview(part.getName(), 60));
+			Button partDetailBtn = new Button(StringPreviewCreator.createPreview(part.getName(), 60));
 			partDetailBtn.setDescription(part.getName());
 			partDetailBtn.setStyleName(BaseTheme.BUTTON_LINK);
 			partDetailBtn.addStyleName("shiftlabel");
@@ -361,8 +329,7 @@ public class HWItemDetailWindow extends GrassSubWindow {
 				@Override
 				public void buttonClick(ClickEvent event) {
 					close();
-					UI.getCurrent().addWindow(
-							new HWItemDetailWindow(triggerComponent, part));
+					UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, part));
 				}
 			});
 			partsLayout.addComponent(partDetailBtn);
@@ -422,13 +389,10 @@ public class HWItemDetailWindow extends GrassSubWindow {
 			@Override
 			public void valueChange(ValueChangeEvent event) {
 				if (table.getValue() != null) {
-					BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table
-							.getContainerDataSource();
+					BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table.getContainerDataSource();
 					BeanItem<?> item = cont.getItem(table.getValue());
-					ServiceNoteDTO serviceNoteDTO = (ServiceNoteDTO) item
-							.getBean();
-					serviceNoteDescription.setValue((String) serviceNoteDTO
-							.getDescription());
+					ServiceNoteDTO serviceNoteDTO = (ServiceNoteDTO) item.getBean();
+					serviceNoteDescription.setValue((String) serviceNoteDTO.getDescription());
 				} else {
 					serviceNoteDescription.setValue(DEFAULT_NOTE_LABEL_VALUE);
 				}

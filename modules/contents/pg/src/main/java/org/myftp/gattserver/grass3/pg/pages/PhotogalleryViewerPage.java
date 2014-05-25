@@ -16,7 +16,7 @@ import org.myftp.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import org.myftp.gattserver.grass3.pg.facade.IPhotogalleryFacade;
 import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
@@ -99,24 +99,22 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	protected void init() {
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
-		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
-				.parseURLIdentifier(analyzer.getCurrentPathToken());
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(analyzer
+				.getCurrentPathToken());
 		if (identifier == null) {
 			showError404();
 			return;
 		}
 
-		photogallery = photogalleryFacade.getPhotogalleryForDetail(identifier
-				.getId());
+		photogallery = photogalleryFacade.getPhotogalleryForDetail(identifier.getId());
 		if (photogallery == null) {
 			showError404();
 			return;
 		}
 
 		if (photogallery.getContentNode().isPublicated()
-				|| (getUser() != null && (photogallery.getContentNode()
-						.getAuthor().equals(getUser()) || getUser().getRoles()
-						.contains(Role.ADMIN)))) {
+				|| (getUser() != null && (photogallery.getContentNode().getAuthor().equals(getUser()) || getUser()
+						.getRoles().contains(Role.ADMIN)))) {
 		} else {
 			showError403();
 			return;
@@ -143,11 +141,9 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
 		configurationService.loadConfiguration(configuration);
 
-		File galleryDir = new File(configuration.getRootDir(),
-				photogallery.getPhotogalleryPath());
+		File galleryDir = new File(configuration.getRootDir(), photogallery.getPhotogalleryPath());
 
-		File miniaturesDirFile = new File(galleryDir,
-				configuration.getMiniaturesDir());
+		File miniaturesDirFile = new File(galleryDir, configuration.getMiniaturesDir());
 
 		if (miniaturesDirFile.exists() == false) {
 			showError404();
@@ -186,18 +182,12 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		layout.addComponent(bottomBtnsLayout);
 
 		// ikony tlačítek
-		upRowBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/up_16.png"));
-		downRowBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/down_16.png"));
-		upPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/up_16.png"));
-		downPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/down_16.png"));
-		startPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/up_16.png"));
-		endPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/down_16.png"));
+		upRowBtn.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/up_16.png"));
+		downRowBtn.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/down_16.png"));
+		upPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/up_16.png"));
+		downPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/down_16.png"));
+		startPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/up_16.png"));
+		endPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/down_16.png"));
 
 		// listenery horních tlačítek
 		upRowBtn.addClickListener(new Button.ClickListener() {
@@ -235,13 +225,11 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			}
 		});
 		topBtnsLayout.addComponent(startPageBtn);
-		topBtnsLayout.setComponentAlignment(startPageBtn,
-				Alignment.MIDDLE_CENTER);
+		topBtnsLayout.setComponentAlignment(startPageBtn, Alignment.MIDDLE_CENTER);
 
 		// galerie
 		galleryLayout.addComponent(galleryGridLayout);
-		galleryLayout.setComponentAlignment(galleryGridLayout,
-				Alignment.MIDDLE_CENTER);
+		galleryLayout.setComponentAlignment(galleryGridLayout, Alignment.MIDDLE_CENTER);
 		galleryLayout.addComponent(animatorProxy);
 
 		// listenery spodních tlačítek
@@ -254,8 +242,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			}
 		});
 		bottomBtnsLayout.addComponent(downRowBtn);
-		bottomBtnsLayout.setComponentAlignment(downRowBtn,
-				Alignment.MIDDLE_CENTER);
+		bottomBtnsLayout.setComponentAlignment(downRowBtn, Alignment.MIDDLE_CENTER);
 
 		downPageBtn.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = -6985989532144363433L;
@@ -272,8 +259,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			}
 		});
 		bottomBtnsLayout.addComponent(downPageBtn);
-		bottomBtnsLayout.setComponentAlignment(downPageBtn,
-				Alignment.MIDDLE_CENTER);
+		bottomBtnsLayout.setComponentAlignment(downPageBtn, Alignment.MIDDLE_CENTER);
 
 		endPageBtn.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = -6985989532144363433L;
@@ -285,15 +271,13 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			}
 		});
 		bottomBtnsLayout.addComponent(endPageBtn);
-		bottomBtnsLayout.setComponentAlignment(endPageBtn,
-				Alignment.MIDDLE_CENTER);
+		bottomBtnsLayout.setComponentAlignment(endPageBtn, Alignment.MIDDLE_CENTER);
 
 		// status labels
 		HorizontalLayout statusLabelWrapper = new HorizontalLayout();
 		statusLabelWrapper.setMargin(true);
 		statusLabelWrapper.addComponent(rowStatusLabel);
-		statusLabelWrapper.setComponentAlignment(rowStatusLabel,
-				Alignment.BOTTOM_RIGHT);
+		statusLabelWrapper.setComponentAlignment(rowStatusLabel, Alignment.BOTTOM_RIGHT);
 		statusLabelWrapper.setWidth("100%");
 		statusLabelWrapper.addStyleName("bordered");
 		layout.addComponent(statusLabelWrapper);
@@ -306,8 +290,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			public void buttonClick(ClickEvent event) {
 				populateGrid(miniatures);
 				refreshStatusLabel();
-				animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN)
-						.setDuration(200).setDelay(200);
+				animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN).setDuration(200).setDelay(200);
 				checkOffsetBtnsAvailability();
 			}
 		};
@@ -321,19 +304,14 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 		refreshStatusLabel();
 		populateGrid(miniatures);
-		animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN)
-				.setDuration(200).setDelay(200);
+		animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN).setDuration(200).setDelay(200);
 		checkOffsetBtnsAvailability();
 	}
 
 	private void refreshStatusLabel() {
-		rowStatusLabel
-				.setValue(ROWS_STATUS_PREFIX
-						+ galleryGridRowOffset
-						+ "-"
-						+ ((rowsSum > galleryGridRows ? galleryGridRows
-								: rowsSum) + galleryGridRowOffset) + "/"
-						+ rowsSum + IMAGE_SUM_PREFIX + imageSum);
+		rowStatusLabel.setValue(ROWS_STATUS_PREFIX + galleryGridRowOffset + "-"
+				+ ((rowsSum > galleryGridRows ? galleryGridRows : rowsSum) + galleryGridRowOffset) + "/" + rowsSum
+				+ IMAGE_SUM_PREFIX + imageSum);
 	}
 
 	private void checkOffsetBtnsAvailability() {
@@ -342,8 +320,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		upPageBtn.setEnabled(upBtnsAvailFlag);
 		startPageBtn.setEnabled(upBtnsAvailFlag);
 
-		boolean downBtnsAvailFlag = rowsSum > galleryGridRows
-				+ galleryGridRowOffset;
+		boolean downBtnsAvailFlag = rowsSum > galleryGridRows + galleryGridRowOffset;
 		downRowBtn.setEnabled(downBtnsAvailFlag);
 		downPageBtn.setEnabled(downBtnsAvailFlag);
 		endPageBtn.setEnabled(downBtnsAvailFlag);
@@ -354,8 +331,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		galleryGridLayout.removeAllComponents();
 
 		int start = galleryGridRowOffset * galleryGridCols;
-		int limit = Math.min(miniatures.length, galleryGridCols
-				* galleryGridRows + start);
+		int limit = Math.min(miniatures.length, galleryGridCols * galleryGridRows + start);
 		for (int i = start; i < limit; i++) {
 
 			final int index = i;
@@ -363,18 +339,15 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 			final File miniature = miniatures[i];
 			Embedded embedded = new Embedded(null, new FileResource(miniature));
-			galleryGridLayout.addComponent(embedded, gridIndex
-					% galleryGridCols, gridIndex / galleryGridCols);
-			galleryGridLayout.setComponentAlignment(embedded,
-					Alignment.MIDDLE_CENTER);
+			galleryGridLayout.addComponent(embedded, gridIndex % galleryGridCols, gridIndex / galleryGridCols);
+			galleryGridLayout.setComponentAlignment(embedded, Alignment.MIDDLE_CENTER);
 
 			embedded.addClickListener(new MouseEvents.ClickListener() {
 				private static final long serialVersionUID = -6354607057332715984L;
 
 				@Override
 				public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
-					UI.getCurrent().addWindow(
-							new ImageDetailWindow(miniatures, index));
+					UI.getCurrent().addWindow(new ImageDetailWindow(miniatures, index));
 				}
 			});
 		}
@@ -387,19 +360,15 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		if (coreACL.canModifyContent(photogallery.getContentNode(), getUser())) {
 			Button modifyButton = new Button(null);
 			modifyButton.setDescription("Upravit");
-			modifyButton
-					.setIcon((com.vaadin.server.Resource) new ThemeResource(
-							"img/tags/pencil_16.png"));
+			modifyButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/pencil_16.png"));
 			modifyButton.addClickListener(new Button.ClickListener() {
 
 				private static final long serialVersionUID = 607422393151282918L;
 
 				public void buttonClick(ClickEvent event) {
 
-					redirect(getPageURL(photogalleryEditorPageFactory,
-							DefaultContentOperations.EDIT.toString(),
-							URLIdentifierUtils.createURLIdentifier(photogallery
-									.getId(), photogallery.getContentNode()
+					redirect(getPageURL(photogalleryEditorPageFactory, DefaultContentOperations.EDIT.toString(),
+							URLIdentifierUtils.createURLIdentifier(photogallery.getId(), photogallery.getContentNode()
 									.getName())));
 
 				}
@@ -412,37 +381,29 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		if (coreACL.canDeleteContent(photogallery.getContentNode(), getUser())) {
 			Button deleteButton = new Button(null);
 			deleteButton.setDescription("Smazat");
-			deleteButton
-					.setIcon((com.vaadin.server.Resource) new ThemeResource(
-							"img/tags/delete_16.png"));
+			deleteButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/delete_16.png"));
 			deleteButton.addClickListener(new Button.ClickListener() {
 
 				private static final long serialVersionUID = 607422393151282918L;
 
 				public void buttonClick(ClickEvent event) {
 
-					ConfirmSubwindow confirmSubwindow = new ConfirmSubwindow(
-							"Opravdu si přejete smazat tuto galerii ?") {
+					ConfirmSubWindow confirmSubwindow = new ConfirmSubWindow("Opravdu si přejete smazat tuto galerii ?") {
 
 						private static final long serialVersionUID = -3214040983143363831L;
 
 						@Override
 						protected void onConfirm(ClickEvent event) {
 
-							NodeDTO node = photogallery.getContentNode()
-									.getParent();
+							NodeDTO node = photogallery.getContentNode().getParent();
 
-							final String category = getPageURL(
-									categoryPageFactory,
-									URLIdentifierUtils.createURLIdentifier(
-											node.getId(), node.getName()));
+							final String category = getPageURL(categoryPageFactory,
+									URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()));
 
 							// zdařilo se ? Pokud ano, otevři info okno a při
 							// potvrzení jdi na kategorii
-							if (photogalleryFacade
-									.deletePhotogallery(photogallery)) {
-								InfoSubwindow infoSubwindow = new InfoSubwindow(
-										"Smazání galerie proběhlo úspěšně.") {
+							if (photogalleryFacade.deletePhotogallery(photogallery)) {
+								InfoSubwindow infoSubwindow = new InfoSubwindow("Smazání galerie proběhlo úspěšně.") {
 
 									private static final long serialVersionUID = -6688396549852552674L;
 
@@ -454,8 +415,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 							} else {
 								// Pokud ne, otevři warn okno a při
 								// potvrzení jdi na kategorii
-								WarnSubwindow warnSubwindow = new WarnSubwindow(
-										"Smazání galerie se nezdařilo.") {
+								WarnSubwindow warnSubwindow = new WarnSubwindow("Smazání galerie se nezdařilo.") {
 
 									private static final long serialVersionUID = -6688396549852552674L;
 
@@ -485,9 +445,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 		// Přidat do oblíbených
 		addToFavouritesButton.setDescription("Přidat do oblíbených");
-		addToFavouritesButton
-				.setIcon((com.vaadin.server.Resource) new ThemeResource(
-						"img/tags/heart_16.png"));
+		addToFavouritesButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/heart_16.png"));
 		addToFavouritesButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = -4003115363728232801L;
@@ -495,17 +453,14 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			public void buttonClick(ClickEvent event) {
 
 				// zdařilo se ? Pokud ano, otevři info okno
-				if (userFacade.addContentToFavourites(
-						photogallery.getContentNode(), getUser())) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow(
-							"Vložení do oblíbených proběhlo úspěšně.");
+				if (userFacade.addContentToFavourites(photogallery.getContentNode(), getUser())) {
+					InfoSubwindow infoSubwindow = new InfoSubwindow("Vložení do oblíbených proběhlo úspěšně.");
 					getUI().addWindow(infoSubwindow);
 					addToFavouritesButton.setVisible(false);
 					removeFromFavouritesButton.setVisible(true);
 				} else {
 					// Pokud ne, otevři warn okno
-					WarnSubwindow warnSubwindow = new WarnSubwindow(
-							"Vložení do oblíbených se nezdařilo.");
+					WarnSubwindow warnSubwindow = new WarnSubwindow("Vložení do oblíbených se nezdařilo.");
 					getUI().addWindow(warnSubwindow);
 				}
 
@@ -514,9 +469,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 		// Odebrat z oblíbených
 		removeFromFavouritesButton.setDescription("Odebrat z oblíbených");
-		removeFromFavouritesButton
-				.setIcon((com.vaadin.server.Resource) new ThemeResource(
-						"img/tags/broken_heart_16.png"));
+		removeFromFavouritesButton.setIcon((com.vaadin.server.Resource) new ThemeResource(
+				"img/tags/broken_heart_16.png"));
 		removeFromFavouritesButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 4826586588570179321L;
@@ -524,17 +478,14 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			public void buttonClick(ClickEvent event) {
 
 				// zdařilo se ? Pokud ano, otevři info okno
-				if (userFacade.removeContentFromFavourites(
-						photogallery.getContentNode(), getUser())) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow(
-							"Odebrání z oblíbených proběhlo úspěšně.");
+				if (userFacade.removeContentFromFavourites(photogallery.getContentNode(), getUser())) {
+					InfoSubwindow infoSubwindow = new InfoSubwindow("Odebrání z oblíbených proběhlo úspěšně.");
 					getUI().addWindow(infoSubwindow);
 					removeFromFavouritesButton.setVisible(false);
 					addToFavouritesButton.setVisible(true);
 				} else {
 					// Pokud ne, otevři warn okno
-					WarnSubwindow warnSubwindow = new WarnSubwindow(
-							"Odebrání z oblíbených se nezdařilo.");
+					WarnSubwindow warnSubwindow = new WarnSubwindow("Odebrání z oblíbených se nezdařilo.");
 					getUI().addWindow(warnSubwindow);
 				}
 
@@ -542,11 +493,9 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		});
 
 		// Oblíbené
-		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(
-				photogallery.getContentNode(), getUser()));
-		removeFromFavouritesButton.setVisible(coreACL
-				.canRemoveContentFromFavourites(photogallery.getContentNode(),
-						getUser()));
+		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(photogallery.getContentNode(), getUser()));
+		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(photogallery.getContentNode(),
+				getUser()));
 
 		operationsListLayout.addComponent(addToFavouritesButton);
 		operationsListLayout.addComponent(removeFromFavouritesButton);

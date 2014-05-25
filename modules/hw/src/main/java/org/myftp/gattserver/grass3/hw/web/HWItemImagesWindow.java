@@ -5,7 +5,7 @@ import java.io.File;
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.subwindows.ImageDetailSubwindow;
 import org.vaadin.easyuploads.MultiFileUpload;
@@ -61,8 +61,7 @@ public class HWItemImagesWindow extends GrassSubWindow {
 			private static final long serialVersionUID = 7352892558261131844L;
 
 			@Override
-			protected void handleFile(File file, String fileName,
-					String mimeType, long length) {
+			protected void handleFile(File file, String fileName, String mimeType, long length) {
 				hwFacade.saveImagesFile(file, fileName, hwItem);
 
 				// refresh listu
@@ -74,8 +73,7 @@ public class HWItemImagesWindow extends GrassSubWindow {
 		upload.setSizeUndefined();
 		uploadWrapperLayout.addStyleName("bordered");
 		uploadWrapperLayout.addComponent(upload);
-		uploadWrapperLayout.setComponentAlignment(upload,
-				Alignment.MIDDLE_CENTER);
+		uploadWrapperLayout.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
 
 		createImagesList(hwItem);
 
@@ -99,56 +97,43 @@ public class HWItemImagesWindow extends GrassSubWindow {
 			HorizontalLayout btnLayout = new HorizontalLayout();
 			btnLayout.setSpacing(true);
 
-			Button hwItemImageDetailBtn = new Button("Detail",
-					new Button.ClickListener() {
-						private static final long serialVersionUID = 3574387596782957413L;
+			Button hwItemImageDetailBtn = new Button("Detail", new Button.ClickListener() {
+				private static final long serialVersionUID = 3574387596782957413L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					UI.getCurrent().addWindow(new ImageDetailSubwindow(hwItem.getName(), file));
+				}
+			});
+
+			Button hwItemImageDeleteBtn = new Button("Smazat", new Button.ClickListener() {
+				private static final long serialVersionUID = 3574387596782957413L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					UI.getCurrent().addWindow(new ConfirmSubWindow("Opravdu smazat foto HW položky ?") {
+						private static final long serialVersionUID = -1901927025986494370L;
 
 						@Override
-						public void buttonClick(ClickEvent event) {
-							UI.getCurrent().addWindow(
-									new ImageDetailSubwindow(hwItem.getName(),
-											file));
+						protected void onConfirm(ClickEvent event) {
+							hwFacade.deleteHWItemFile(hwItem, file);
+
+							// refresh listu
+							listLayout.removeAllComponents();
+							createImagesList(hwItem);
 						}
 					});
+				}
+			});
 
-			Button hwItemImageDeleteBtn = new Button("Smazat",
-					new Button.ClickListener() {
-						private static final long serialVersionUID = 3574387596782957413L;
-
-						@Override
-						public void buttonClick(ClickEvent event) {
-							UI.getCurrent()
-									.addWindow(
-											new ConfirmSubwindow(
-													"Opravdu smazat foto HW položky ?") {
-												private static final long serialVersionUID = -1901927025986494370L;
-
-												@Override
-												protected void onConfirm(
-														ClickEvent event) {
-													hwFacade.deleteHWItemFile(
-															hwItem, file);
-
-													// refresh listu
-													listLayout
-															.removeAllComponents();
-													createImagesList(hwItem);
-												}
-											});
-						}
-					});
-
-			hwItemImageDetailBtn.setIcon(new ThemeResource(
-					"img/tags/search_16.png"));
-			hwItemImageDeleteBtn.setIcon(new ThemeResource(
-					"img/tags/delete_16.png"));
+			hwItemImageDetailBtn.setIcon(new ThemeResource("img/tags/search_16.png"));
+			hwItemImageDeleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
 
 			btnLayout.addComponent(hwItemImageDetailBtn);
 			btnLayout.addComponent(hwItemImageDeleteBtn);
 
 			imageLayout.addComponent(btnLayout);
-			imageLayout.setComponentAlignment(btnLayout,
-					Alignment.BOTTOM_CENTER);
+			imageLayout.setComponentAlignment(btnLayout, Alignment.BOTTOM_CENTER);
 
 		}
 

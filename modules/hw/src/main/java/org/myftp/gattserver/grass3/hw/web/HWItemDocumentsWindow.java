@@ -5,7 +5,7 @@ import java.io.File;
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
 import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
 import org.myftp.gattserver.grass3.util.HumanBytesSizeCreator;
 import org.myftp.gattserver.grass3.util.StringPreviewCreator;
@@ -59,8 +59,7 @@ public class HWItemDocumentsWindow extends GrassSubWindow {
 			private static final long serialVersionUID = 7352892558261131844L;
 
 			@Override
-			protected void handleFile(File file, String fileName,
-					String mimeType, long length) {
+			protected void handleFile(File file, String fileName, String mimeType, long length) {
 				hwFacade.saveDocumentsFile(file, fileName, hwItem);
 
 				// refresh listu
@@ -72,8 +71,7 @@ public class HWItemDocumentsWindow extends GrassSubWindow {
 		upload.setSizeUndefined();
 		uploadWrapperLayout.addStyleName("bordered");
 		uploadWrapperLayout.addComponent(upload);
-		uploadWrapperLayout.setComponentAlignment(upload,
-				Alignment.MIDDLE_CENTER);
+		uploadWrapperLayout.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
 
 		createDocumentsList(hwItem);
 
@@ -91,63 +89,49 @@ public class HWItemDocumentsWindow extends GrassSubWindow {
 			documentLayout.setWidth("100%");
 
 			Button hwItemDocumentDownloadBtn = new Button("Stáhnout");
-			FileDownloader downloader = new FileDownloader(new FileResource(
-					file));
+			FileDownloader downloader = new FileDownloader(new FileResource(file));
 			downloader.extend(hwItemDocumentDownloadBtn);
 
-			Button hwItemDocumentDeleteBtn = new Button("Smazat",
-					new Button.ClickListener() {
-						private static final long serialVersionUID = 3574387596782957413L;
+			Button hwItemDocumentDeleteBtn = new Button("Smazat", new Button.ClickListener() {
+				private static final long serialVersionUID = 3574387596782957413L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					UI.getCurrent().addWindow(new ConfirmSubWindow("Opravdu smazat '" + file.getName() + "' ?") {
+						private static final long serialVersionUID = -1901927025986494370L;
 
 						@Override
-						public void buttonClick(ClickEvent event) {
-							UI.getCurrent().addWindow(
-									new ConfirmSubwindow("Opravdu smazat '"
-											+ file.getName() + "' ?") {
-										private static final long serialVersionUID = -1901927025986494370L;
+						protected void onConfirm(ClickEvent event) {
+							hwFacade.deleteHWItemFile(hwItem, file);
 
-										@Override
-										protected void onConfirm(
-												ClickEvent event) {
-											hwFacade.deleteHWItemFile(hwItem,
-													file);
-
-											// refresh listu
-											listLayout.removeAllComponents();
-											createDocumentsList(hwItem);
-										}
-									});
+							// refresh listu
+							listLayout.removeAllComponents();
+							createDocumentsList(hwItem);
 						}
 					});
+				}
+			});
 
-			hwItemDocumentDownloadBtn.setIcon(new ThemeResource(
-					"img/tags/down_16.png"));
-			hwItemDocumentDeleteBtn.setIcon(new ThemeResource(
-					"img/tags/delete_16.png"));
+			hwItemDocumentDownloadBtn.setIcon(new ThemeResource("img/tags/down_16.png"));
+			hwItemDocumentDeleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
 
-			Label nameLabel = new Label(StringPreviewCreator.createPreview(
-					file.getName(), 60));
+			Label nameLabel = new Label(StringPreviewCreator.createPreview(file.getName(), 60));
 			// nameLabel.setWidth("280px");
 			nameLabel.setDescription(file.getName());
 			documentLayout.addComponent(nameLabel);
 			documentLayout.setExpandRatio(nameLabel, 1);
-			documentLayout.setComponentAlignment(nameLabel,
-					Alignment.MIDDLE_LEFT);
+			documentLayout.setComponentAlignment(nameLabel, Alignment.MIDDLE_LEFT);
 
-			Label sizelabel = new Label(HumanBytesSizeCreator.format(
-					file.length(), true));
+			Label sizelabel = new Label(HumanBytesSizeCreator.format(file.length(), true));
 			sizelabel.setDescription(file.length() + "B");
 			sizelabel.setSizeUndefined();
 			documentLayout.addComponent(sizelabel);
-			documentLayout.setComponentAlignment(sizelabel,
-					Alignment.MIDDLE_RIGHT);
+			documentLayout.setComponentAlignment(sizelabel, Alignment.MIDDLE_RIGHT);
 
 			documentLayout.addComponent(hwItemDocumentDownloadBtn);
 			documentLayout.addComponent(hwItemDocumentDeleteBtn);
-			documentLayout.setComponentAlignment(hwItemDocumentDeleteBtn,
-					Alignment.MIDDLE_RIGHT);
-			documentLayout.setComponentAlignment(hwItemDocumentDeleteBtn,
-					Alignment.MIDDLE_RIGHT);
+			documentLayout.setComponentAlignment(hwItemDocumentDeleteBtn, Alignment.MIDDLE_RIGHT);
+			documentLayout.setComponentAlignment(hwItemDocumentDeleteBtn, Alignment.MIDDLE_RIGHT);
 
 		}
 

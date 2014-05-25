@@ -13,7 +13,7 @@ import org.myftp.gattserver.grass3.articles.facade.IArticleFacade;
 import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.facades.IContentTagFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.springframework.context.annotation.Scope;
@@ -161,7 +161,7 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 
 			public void buttonClick(ClickEvent event) {
 
-				ConfirmSubwindow confirmSubwindow = new ConfirmSubwindow(
+				ConfirmSubWindow confirmSubwindow = new ConfirmSubWindow(
 						"Přegenerování všech článků může zabrat delší čas a dojde během něj zřejmě k mnoha drobným změnám - opravdu přegenerovat ?") {
 
 					private static final long serialVersionUID = -1214461419119865670L;

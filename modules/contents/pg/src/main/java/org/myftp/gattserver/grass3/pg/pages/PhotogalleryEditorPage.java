@@ -17,7 +17,7 @@ import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 import org.myftp.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import org.myftp.gattserver.grass3.pg.facade.IPhotogalleryFacade;
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
 import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
@@ -391,7 +391,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 			public void buttonClick(ClickEvent event) {
 
-				ConfirmSubwindow confirmSubwindow = new ConfirmSubwindow(
+				ConfirmSubWindow confirmSubwindow = new ConfirmSubWindow(
 						"Opravdu si přejete zavřít editor galerie ? Veškeré neuložené změny budou ztraceny.") {
 
 					private static final long serialVersionUID = -3214040983143363831L;

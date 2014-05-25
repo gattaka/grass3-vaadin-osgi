@@ -11,7 +11,7 @@ import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitState;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
 import org.myftp.gattserver.grass3.medic.util.MedicUtil;
 import org.myftp.gattserver.grass3.medic.web.ScheduledVisitsCreateWindow.Operation;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 import org.myftp.gattserver.grass3.template.DetailBtn;
 import org.myftp.gattserver.grass3.template.ISelectable;
@@ -88,7 +88,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 
 	private void openDeleteWindow(final ScheduledVisitDTO visit, final boolean planned) {
 		ScheduledVisitsTab.this.setEnabled(false);
-		UI.getCurrent().addWindow(new ConfirmSubwindow("Opravdu smazat '" + visit.getPurpose() + "' ?") {
+		UI.getCurrent().addWindow(new ConfirmSubWindow("Opravdu smazat '" + visit.getPurpose() + "' ?") {
 
 			private static final long serialVersionUID = -422763987707688597L;
 

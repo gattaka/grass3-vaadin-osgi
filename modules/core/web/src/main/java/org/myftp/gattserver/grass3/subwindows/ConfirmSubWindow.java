@@ -2,19 +2,20 @@ package org.myftp.gattserver.grass3.subwindows;
 
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 
-public abstract class ConfirmSubwindow extends GrassSubWindow {
+public abstract class ConfirmSubWindow extends GrassSubWindow {
 
 	private static final long serialVersionUID = 4123506060675738841L;
 
 	/**
 	 * Nejobecnější dotaz na potvrzení operace
 	 */
-	public ConfirmSubwindow() {
-		this("Opravdu si přejete provést tuto operaci ?");
+	public ConfirmSubWindow(Component... triggerComponents) {
+		this("Opravdu si přejete provést tuto operaci ?", triggerComponents);
 	}
 
 	/**
@@ -23,8 +24,8 @@ public abstract class ConfirmSubwindow extends GrassSubWindow {
 	 * @param labelCaption
 	 *            text popisku okna
 	 */
-	public ConfirmSubwindow(String labelCaption) {
-		this(new Label(labelCaption));
+	public ConfirmSubWindow(String labelCaption, Component... triggerComponents) {
+		this(new Label(labelCaption), triggerComponents);
 	}
 
 	/**
@@ -33,8 +34,8 @@ public abstract class ConfirmSubwindow extends GrassSubWindow {
 	 * @param label
 	 *            popisek okna
 	 */
-	public ConfirmSubwindow(Label label) {
-		super("Potvrzení operace");
+	public ConfirmSubWindow(Label label, Component... triggerComponents) {
+		super("Potvrzení operace", triggerComponents);
 
 		center();
 		setWidth("350px");

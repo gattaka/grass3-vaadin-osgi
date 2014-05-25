@@ -83,6 +83,7 @@ public class ContentsTableFactory {
 			setHeight("160px");
 		}
 
+		@SuppressWarnings("unchecked")
 		public void populateTable(Collection<ContentNodeDTO> contentList, AbstractGrassPage page) {
 
 			IndexedContainer container = new IndexedContainer();

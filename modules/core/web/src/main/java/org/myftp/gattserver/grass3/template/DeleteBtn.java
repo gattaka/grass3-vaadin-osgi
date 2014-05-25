@@ -1,5 +1,6 @@
 package org.myftp.gattserver.grass3.template;
 
+import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
 
 import com.vaadin.server.ThemeResource;

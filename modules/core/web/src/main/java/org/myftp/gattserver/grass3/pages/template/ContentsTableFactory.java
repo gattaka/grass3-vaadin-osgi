@@ -83,23 +83,19 @@ public class ContentsTableFactory {
 			setHeight("160px");
 		}
 
-		public void populateTable(Collection<ContentNodeDTO> contentList,
-				AbstractGrassPage page) {
+		public void populateTable(Collection<ContentNodeDTO> contentList, AbstractGrassPage page) {
 
 			IndexedContainer container = new IndexedContainer();
-			container
-					.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
-			container.addContainerProperty(ColumnId.NÁZEV,
-					ComparableLink.class, null);
+			container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
+			container.addContainerProperty(ColumnId.NÁZEV, ComparableLink.class, null);
 			if (categoryColumn) {
-				container.addContainerProperty(ColumnId.KATEGORIE,
-						ComparableLink.class, null);
+				container.addContainerProperty(ColumnId.KATEGORIE, ComparableLink.class, null);
 			}
 			container.addContainerProperty(ColumnId.AUTOR, String.class, "");
-			container.addContainerProperty(ColumnId.DATUM_VYTVOŘENÍ,
-					ComparableStringDate.class, new ComparableStringDate(null));
-			container.addContainerProperty(ColumnId.DATUM_ÚPRAVY,
-					ComparableStringDate.class, new ComparableStringDate(null));
+			container.addContainerProperty(ColumnId.DATUM_VYTVOŘENÍ, ComparableStringDate.class,
+					new ComparableStringDate(null));
+			container.addContainerProperty(ColumnId.DATUM_ÚPRAVY, ComparableStringDate.class, new ComparableStringDate(
+					null));
 			setContainerDataSource(container);
 			setColumnWidth(ColumnId.IKONA, 16);
 			setColumnHeader(ColumnId.IKONA, "");
@@ -114,8 +110,7 @@ public class ContentsTableFactory {
 
 				// jaká prohlížecí služba odpovídá tomuto obsahu
 				IContentService contentService = serviceHolder
-						.getContentServiceByName(contentNode
-								.getContentReaderID());
+						.getContentServiceByName(contentNode.getContentReaderID());
 
 				IPageFactory pageFactory = null;
 				if (contentService == null)
@@ -125,35 +120,23 @@ public class ContentsTableFactory {
 
 				Item item = addItem(contentNode);
 				item.getItemProperty(ColumnId.NÁZEV).setValue(
-						new ComparableLink(contentNode.getName(), page
-								.getPageResource(pageFactory,
-										URLIdentifierUtils.createURLIdentifier(
-												contentNode.getContentID(),
-												contentNode.getName()))));
+						new ComparableLink(contentNode.getName(), page.getPageResource(
+								pageFactory,
+								URLIdentifierUtils.createURLIdentifier(contentNode.getContentID(),
+										contentNode.getName()))));
 				if (categoryColumn) {
 					NodeDTO contentParent = contentNode.getParent();
-					item.getItemProperty(ColumnId.KATEGORIE)
-							.setValue(
-									new ComparableLink(
-											contentParent.getName(),
-											page.getPageResource(
-													categoryPageFactory,
-													URLIdentifierUtils
-															.createURLIdentifier(
-																	contentParent
-																			.getId(),
-																	contentParent
-																			.getName()))));
+					item.getItemProperty(ColumnId.KATEGORIE).setValue(
+							new ComparableLink(contentParent.getName(), page.getPageResource(
+									categoryPageFactory,
+									URLIdentifierUtils.createURLIdentifier(contentParent.getId(),
+											contentParent.getName()))));
 				}
-				item.getItemProperty(ColumnId.AUTOR).setValue(
-						contentNode.getAuthor().getName());
-				item.getItemProperty(ColumnId.DATUM_VYTVOŘENÍ)
-						.setValue(
-								new ComparableStringDate(contentNode
-										.getCreationDate()));
+				item.getItemProperty(ColumnId.AUTOR).setValue(contentNode.getAuthor().getName());
+				item.getItemProperty(ColumnId.DATUM_VYTVOŘENÍ).setValue(
+						new ComparableStringDate(contentNode.getCreationDate()));
 				item.getItemProperty(ColumnId.DATUM_ÚPRAVY).setValue(
-						new ComparableStringDate(contentNode
-								.getLastModificationDate()));
+						new ComparableStringDate(contentNode.getLastModificationDate()));
 
 				Embedded icon = new Embedded();
 				if (contentService == null) {
@@ -165,6 +148,9 @@ public class ContentsTableFactory {
 				item.getItemProperty(ColumnId.IKONA).setValue(icon);
 
 			}
+
+			// výchozí řazení je dle datumu vytvoření (od nejmladšího)
+			container.sort(new Object[] { ColumnId.DATUM_VYTVOŘENÍ }, new boolean[] { false });
 
 		}
 	}

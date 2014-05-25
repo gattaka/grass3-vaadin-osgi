@@ -83,9 +83,14 @@ public class ContentsTableFactory {
 			setHeight("160px");
 		}
 
+		/**
+		 * @return kolik opravdu ACL umožnilo zobrazit položek
+		 */
 		@SuppressWarnings("unchecked")
-		public void populateTable(Collection<ContentNodeDTO> contentList, AbstractGrassPage page) {
+		public int populateTable(Collection<ContentNodeDTO> contentList, AbstractGrassPage page) {
 
+			int displayed = 0;
+			
 			IndexedContainer container = new IndexedContainer();
 			container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
 			container.addContainerProperty(ColumnId.NÁZEV, ComparableLink.class, null);
@@ -108,6 +113,8 @@ public class ContentsTableFactory {
 
 				if (coreACL.canShowContent(contentNode, page.getUser()) == false)
 					continue;
+				
+				displayed++;
 
 				// jaká prohlížecí služba odpovídá tomuto obsahu
 				IContentService contentService = serviceHolder
@@ -153,6 +160,7 @@ public class ContentsTableFactory {
 			// výchozí řazení je dle datumu vytvoření (od nejmladšího)
 			container.sort(new Object[] { ColumnId.DATUM_VYTVOŘENÍ }, new boolean[] { false });
 
+			return displayed;
 		}
 	}
 

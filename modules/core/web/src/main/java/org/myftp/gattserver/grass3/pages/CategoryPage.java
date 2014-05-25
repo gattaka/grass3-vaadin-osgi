@@ -203,6 +203,20 @@ public class CategoryPage extends OneColumnPage {
 		subNodesLayout.setComponentAlignment(noSubNodesLabel, Alignment.MIDDLE_CENTER);
 		noSubNodesLabel.setVisible(nodes.size() == 0);
 
+		int min = 50;
+		int element = 25;
+		int max = 200;
+		int header = 25;
+
+		int size = nodes.size() * element;
+
+		if (size < min)
+			size = min;
+		if (size > max)
+			size = max;
+		size += header;
+		subNodesTable.setHeight(size + "px");
+		
 		// Vytvořit novou kategorii
 		if (coreACL.canCreateCategory(getUser())) {
 			createNewNodePanel(layout, node);
@@ -233,7 +247,19 @@ public class CategoryPage extends OneColumnPage {
 		contentsTable.setWidth("100%");
 		layout.addComponent(contentsLayout);
 
-		contentsTable.populateTable(contentNodes, this);
+		int min = 50;
+		int element = 25;
+		int max = 400;
+		int header = 25;
+
+		int size = contentsTable.populateTable(contentNodes, this) * element;
+
+		if (size < min)
+			size = min;
+		if (size > max)
+			size = max;
+		size += header;
+		contentsTable.setHeight(size + "px");
 
 		// Vytvořit obsahy
 		createNewContentMenu(layout, node);
@@ -248,6 +274,7 @@ public class CategoryPage extends OneColumnPage {
 		newContentsLayout.addComponent(new Label("<h2>Vytvořit nový obsah</h2>", ContentMode.HTML));
 		newContentsLayout.addComponent(newContentsTable);
 		newContentsTable.setWidth("100%");
+		newContentsTable.setHeight("100px");
 
 		if (coreACL.canCreateContent(getUser())) {
 			newContentsLayout.setVisible(true);

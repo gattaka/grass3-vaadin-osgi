@@ -26,6 +26,7 @@ import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.springframework.context.annotation.Scope;
 
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
@@ -64,6 +65,7 @@ public class CategoryPage extends OneColumnPage {
 
 	// Přehled podkategorií
 	private NodesTable subNodesTable;
+	private Label noSubNodesLabel = new Label("Nebyly nalezeny žádné podkategorie");
 
 	public CategoryPage(GrassRequest request) {
 		super(request);
@@ -78,8 +80,7 @@ public class CategoryPage extends OneColumnPage {
 		if (categoryName == null)
 			showError404();
 
-		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
-				.parseURLIdentifier(categoryName);
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(categoryName);
 		if (identifier == null) {
 			showError404();
 			return layout;
@@ -97,18 +98,10 @@ public class CategoryPage extends OneColumnPage {
 		createBreadcrumb(layout, node);
 
 		// Podkategorie
-		createSubnodesTable(layout, node);
-
-		// Vytvořit novou kategorii
-		if (coreACL.canCreateCategory(getUser())) {
-			createNewNodePanel(layout, node);
-		}
+		createSubnodesPart(layout, node);
 
 		// Obsahy
-		createContent(layout, node);
-
-		// Vytvořit obsahy
-		createNewContentMenu(layout, node);
+		createContentsPart(layout, node);
 
 		return layout;
 	}
@@ -133,27 +126,27 @@ public class CategoryPage extends OneColumnPage {
 		newNodeName.setRequiredError("Název kategorie nesmí být prázdný");
 		panelLayout.addComponent(newNodeName);
 
-		Button createButton = new Button("Vytvořit",
-				new Button.ClickListener() {
+		Button createButton = new Button("Vytvořit", new Button.ClickListener() {
 
-					private static final long serialVersionUID = -4315617904120991885L;
+			private static final long serialVersionUID = -4315617904120991885L;
 
-					public void buttonClick(ClickEvent event) {
-						if (newNodeName.isValid() == false)
-							return;
+			public void buttonClick(ClickEvent event) {
+				if (newNodeName.isValid() == false)
+					return;
 
-						if (nodeFacade.createNewNode(node, newNodeName
-								.getValue().toString())) {
-							showInfo("Nový kategorie byla úspěšně vytvořena.");
-							// refresh
-							populateSubnodesTable(node);
-							// clean
-							newNodeName.setValue("");
-						} else {
-							showWarning("Nezdařilo se vložit novou kategorii.");
-						}
-					}
-				});
+				if (nodeFacade.createNewNode(node, newNodeName.getValue().toString())) {
+					showInfo("Nový kategorie byla úspěšně vytvořena.");
+					// refresh
+					populateSubnodesTable(node);
+					subNodesTable.setVisible(true);
+					noSubNodesLabel.setVisible(false);
+					// clean
+					newNodeName.setValue("");
+				} else {
+					showWarning("Nezdařilo se vložit novou kategorii.");
+				}
+			}
+		});
 		panelLayout.addComponent(createButton);
 
 	}
@@ -173,11 +166,8 @@ public class CategoryPage extends OneColumnPage {
 			if (parent == null)
 				showError404();
 
-			breadcrumbElements.add(new BreadcrumbElement(parent.getName(),
-					getPageResource(
-							categoryPageFactory,
-							URLIdentifierUtils.createURLIdentifier(
-									parent.getId(), parent.getName()))));
+			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageResource(categoryPageFactory,
+					URLIdentifierUtils.createURLIdentifier(parent.getId(), parent.getName()))));
 
 			// pokud je můj předek null, pak je to konec a je to všechno
 			if (parent.getParent() == null)
@@ -189,16 +179,12 @@ public class CategoryPage extends OneColumnPage {
 		breadcrumb.resetBreadcrumb(breadcrumbElements);
 	}
 
-	private void createSubnodesTable(VerticalLayout layout, NodeDTO node) {
+	private void createSubnodesPart(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout subNodesLayout = new VerticalLayout();
 		subNodesTable = nodesTableFactory.createNodesTable();
 
-		subNodesLayout.addComponent(new Label("<h2>Podkategorie</h2>",
-				ContentMode.HTML));
-		subNodesLayout.addComponent(subNodesTable);
-		layout.addComponent(subNodesLayout);
-		subNodesTable.setWidth("100%");
+		subNodesLayout.addComponent(new Label("<h2>Podkategorie</h2>", ContentMode.HTML));
 
 		List<NodeDTO> nodes = node.getSubNodes();
 		if (nodes == null) {
@@ -206,7 +192,21 @@ public class CategoryPage extends OneColumnPage {
 			return;
 		}
 
+		subNodesLayout.addComponent(subNodesTable);
+		layout.addComponent(subNodesLayout);
+		subNodesTable.setWidth("100%");
+		subNodesTable.setVisible(nodes.size() != 0);
 		subNodesTable.populateTable(nodes, this);
+
+		noSubNodesLabel.setWidth(null);
+		subNodesLayout.addComponent(noSubNodesLabel);
+		subNodesLayout.setComponentAlignment(noSubNodesLabel, Alignment.MIDDLE_CENTER);
+		noSubNodesLabel.setVisible(nodes.size() == 0);
+
+		// Vytvořit novou kategorii
+		if (coreACL.canCreateCategory(getUser())) {
+			createNewNodePanel(layout, node);
+		}
 	}
 
 	private void populateSubnodesTable(NodeDTO node) {
@@ -219,34 +219,33 @@ public class CategoryPage extends OneColumnPage {
 		subNodesTable.populateTable(nodes, this);
 	}
 
-	private void createContent(VerticalLayout layout, NodeDTO node) {
+	private void createContentsPart(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout contentsLayout = new VerticalLayout();
-		ContentsTable contentsTable = contentsTableFactory
-				.createContentsTableWithoutCategoryColumn();
+		ContentsTable contentsTable = contentsTableFactory.createContentsTableWithoutCategoryColumn();
 
 		Set<ContentNodeDTO> contentNodes = node.getContentNodes();
 		if (contentNodes == null)
 			showError500();
 
-		contentsLayout.addComponent(new Label("<h2>Obsahy</h2>",
-				ContentMode.HTML));
+		contentsLayout.addComponent(new Label("<h2>Obsahy</h2>", ContentMode.HTML));
 		contentsLayout.addComponent(contentsTable);
 		contentsTable.setWidth("100%");
 		layout.addComponent(contentsLayout);
 
 		contentsTable.populateTable(contentNodes, this);
 
+		// Vytvořit obsahy
+		createNewContentMenu(layout, node);
+
 	}
 
 	private void createNewContentMenu(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout newContentsLayout = new VerticalLayout();
-		NewContentsTable newContentsTable = newContentsTableFactory
-				.createNewContentsTable();
+		NewContentsTable newContentsTable = newContentsTableFactory.createNewContentsTable();
 
-		newContentsLayout.addComponent(new Label(
-				"<h2>Vytvořit nový obsah</h2>", ContentMode.HTML));
+		newContentsLayout.addComponent(new Label("<h2>Vytvořit nový obsah</h2>", ContentMode.HTML));
 		newContentsLayout.addComponent(newContentsTable);
 		newContentsTable.setWidth("100%");
 

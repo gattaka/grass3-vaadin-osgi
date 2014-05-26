@@ -25,7 +25,7 @@ public class SourcesFactory implements IPluginFactory {
 
 	public EditorButtonResources getEditorButtonResources() {
 		EditorButtonResources resources = new EditorButtonResources(tag);
-		resources.setDescription("");
+		resources.setDescription("Zdroje"); 
 		resources.setPrefix("[" + tag + "]");
 		resources.setSuffix("[/" + tag + "]");
 		resources.setTagFamily("Šablony");

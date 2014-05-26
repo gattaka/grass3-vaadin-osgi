@@ -11,7 +11,6 @@ import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.myftp.gattserver.grass3.ui.util.ISettingsTabFactoriesRegister;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
@@ -19,8 +18,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
-@org.springframework.stereotype.Component("settingsPage")
-@Scope("prototype")
 public class SettingsPage extends TwoColumnPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
@@ -79,7 +76,7 @@ public class SettingsPage extends TwoColumnPage {
 
 		// pokud není pageFactory prázdná, pak se zobrazuje konkrétní nastavení
 		if (settingsTabFactory != null)
-			return settingsTabFactory.createPage(getRequest());
+			return settingsTabFactory.createTabIfAuthorized(getRequest());
 
 		// jinak zobraz info o nabídce
 		VerticalLayout layout = new VerticalLayout();

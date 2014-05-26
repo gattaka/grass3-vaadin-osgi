@@ -9,6 +9,6 @@ public interface IPageFactory extends Serializable {
 
 	public String getPageName();
 
-	public GrassLayout createPage(GrassRequest request);
+	public GrassLayout createPageIfAuthorized(GrassRequest request);
 
 }

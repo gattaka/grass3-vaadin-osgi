@@ -14,8 +14,9 @@ import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
 import org.myftp.gattserver.grass3.security.ICoreACL;
-import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
-import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ContentMoveWindow;
+import org.myftp.gattserver.grass3.subwindows.InfoWindow;
+import org.myftp.gattserver.grass3.subwindows.WarnWindow;
 import org.myftp.gattserver.grass3.template.Breadcrumb;
 import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
@@ -31,6 +32,7 @@ import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
@@ -46,7 +48,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 	@Resource(name = "userFacade")
 	private IUserFacade userFacade;
-	
+
 	@Resource(name = "categoryPageFactory")
 	private IPageFactory categoryPageFactory;
 
@@ -58,19 +60,22 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	private Label contentAuthorNameLabel;
 	private Label contentCreationDateNameLabel;
 	private Label contentLastModificationDateLabel;
-	private CssLayout tagsListLayout = new CssLayout();
+	private CssLayout tagsListLayout;
 	private CssLayout operationsListLayout;
 
 	/**
 	 * Breadcrumb
 	 */
-	private Breadcrumb breadcrumb = new Breadcrumb();
+	private Breadcrumb breadcrumb;
 
 	public ContentViewerPage(GrassRequest request) {
 		super(request);
 	}
 
 	protected void init() {
+
+		tagsListLayout = new CssLayout();
+		breadcrumb = new Breadcrumb();
 
 		content = getContentNodeDTO();
 		updateBreadcrumb(content);
@@ -149,13 +154,13 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 				// zdařilo se ? Pokud ano, otevři info okno
 				if (userFacade.addContentToFavourites(content, getUser())) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow("Vložení do oblíbených proběhlo úspěšně.");
+					InfoWindow infoSubwindow = new InfoWindow("Vložení do oblíbených proběhlo úspěšně.");
 					getUI().addWindow(infoSubwindow);
 					addToFavouritesButton.setVisible(false);
 					removeFromFavouritesButton.setVisible(true);
 				} else {
 					// Pokud ne, otevři warn okno
-					WarnSubwindow warnSubwindow = new WarnSubwindow("Vložení do oblíbených se nezdařilo.");
+					WarnWindow warnSubwindow = new WarnWindow("Vložení do oblíbených se nezdařilo.");
 					getUI().addWindow(warnSubwindow);
 				}
 
@@ -174,13 +179,13 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 				// zdařilo se ? Pokud ano, otevři info okno
 				if (userFacade.removeContentFromFavourites(content, getUser())) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow("Odebrání z oblíbených proběhlo úspěšně.");
+					InfoWindow infoSubwindow = new InfoWindow("Odebrání z oblíbených proběhlo úspěšně.");
 					getUI().addWindow(infoSubwindow);
 					removeFromFavouritesButton.setVisible(false);
 					addToFavouritesButton.setVisible(true);
 				} else {
 					// Pokud ne, otevři warn okno
-					WarnSubwindow warnSubwindow = new WarnSubwindow("Odebrání z oblíbených se nezdařilo.");
+					WarnWindow warnSubwindow = new WarnWindow("Odebrání z oblíbených se nezdařilo.");
 					getUI().addWindow(warnSubwindow);
 				}
 
@@ -189,14 +194,33 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		// Oblíbené
 		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(content, getUser()));
-		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(content,
-				getUser()));
+		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(content, getUser()));
 
 		operationsListLayout.addComponent(addToFavouritesButton);
 		operationsListLayout.addComponent(removeFromFavouritesButton);
-		
+
 		// Změna kategorie
-		// TODO
+		if (coreACL.canModifyContent(content, getUser())) {
+			Button moveButton = new Button(null);
+			moveButton.setDescription("Přesunout");
+			moveButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/move_16.png"));
+			moveButton.addClickListener(new Button.ClickListener() {
+				private static final long serialVersionUID = 607422393151282918L;
+
+				public void buttonClick(ClickEvent event) {
+					UI.getCurrent().addWindow(new ContentMoveWindow(content) {
+						private static final long serialVersionUID = 3748723613020816248L;
+
+						@Override
+						protected void onMove() {
+							redirect(getPageURL(getContentViewerPageFactory(),
+									URLIdentifierUtils.createURLIdentifier(content.getContentID(), content.getName())));
+						}
+					});
+				}
+			});
+			operationsListLayout.addComponent(moveButton);
+		}
 	}
 
 	@Override

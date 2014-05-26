@@ -7,7 +7,6 @@ import org.myftp.gattserver.grass3.model.dto.QuoteDTO;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
-import org.springframework.context.annotation.Scope;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
@@ -21,8 +20,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
-@org.springframework.stereotype.Component("quotesPage")
-@Scope("prototype")
 public class QuotesPage extends OneColumnPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;

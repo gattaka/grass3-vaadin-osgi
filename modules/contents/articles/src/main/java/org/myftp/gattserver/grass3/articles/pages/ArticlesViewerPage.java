@@ -13,14 +13,13 @@ import org.myftp.gattserver.grass3.pages.template.ContentViewerPage;
 import org.myftp.gattserver.grass3.pages.template.JScriptItem;
 import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
-import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
-import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
+import org.myftp.gattserver.grass3.subwindows.InfoWindow;
+import org.myftp.gattserver.grass3.subwindows.WarnWindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
-import org.springframework.context.annotation.Scope;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button.ClickEvent;
@@ -28,8 +27,6 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-@org.springframework.stereotype.Component("articlesViewerPage")
-@Scope("prototype")
 public class ArticlesViewerPage extends ContentViewerPage {
 
 	private static final long serialVersionUID = 5078280973817331002L;
@@ -140,7 +137,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 	@Override
 	protected void onDeleteOperation() {
-		ConfirmSubWindow confirmSubwindow = new ConfirmSubWindow("Opravdu si přejete smazat tento článek ?") {
+		ConfirmWindow confirmSubwindow = new ConfirmWindow("Opravdu si přejete smazat tento článek ?") {
 
 			private static final long serialVersionUID = -3214040983143363831L;
 
@@ -155,7 +152,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 				// zdařilo se ? Pokud ano, otevři info okno a při
 				// potvrzení jdi na kategorii
 				if (articleFacade.deleteArticle(article)) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow("Smazání článku proběhlo úspěšně.") {
+					InfoWindow infoSubwindow = new InfoWindow("Smazání článku proběhlo úspěšně.") {
 
 						private static final long serialVersionUID = -6688396549852552674L;
 
@@ -167,7 +164,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 				} else {
 					// Pokud ne, otevři warn okno a při
 					// potvrzení jdi na kategorii
-					WarnSubwindow warnSubwindow = new WarnSubwindow("Smazání článku se nezdařilo.") {
+					WarnWindow warnSubwindow = new WarnWindow("Smazání článku se nezdařilo.") {
 
 						private static final long serialVersionUID = -6688396549852552674L;
 

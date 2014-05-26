@@ -57,8 +57,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		if (contentNodes == null)
 			return null;
 
-		Set<ContentNodeDTO> contentNodeDTOs = mapper
-				.mapContentNodeCollection(contentNodes);
+		Set<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(contentNodes);
 
 		return contentNodeDTOs;
 	}
@@ -70,11 +69,9 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 * @return
 	 */
 	public Set<ContentNodeDTO> getRecentAddedForOverview(int maxResults) {
-		List<ContentNode> contentNodes = contentNodeRepository
-				.findByCreationDateNotNullOrderByCreationDateDesc(
-						new PageRequest(0, maxResults)).getContent();
-		Set<ContentNodeDTO> contentNodeDTOs = mapper
-				.mapContentNodesForRecentsOverview(contentNodes);
+		List<ContentNode> contentNodes = contentNodeRepository.findByCreationDateNotNullOrderByCreationDateDesc(
+				new PageRequest(0, maxResults)).getContent();
+		Set<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodesForRecentsOverview(contentNodes);
 		return contentNodeDTOs;
 	}
 
@@ -86,10 +83,9 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 */
 	public Set<ContentNodeDTO> getRecentModifiedForOverview(int maxResults) {
 		List<ContentNode> contentNodes = contentNodeRepository
-				.findByLastModificationDateNotNullOrderByLastModificationDateDesc(
-						new PageRequest(0, maxResults)).getContent();
-		Set<ContentNodeDTO> contentNodeDTOs = mapper
-				.mapContentNodesForRecentsOverview(contentNodes);
+				.findByLastModificationDateNotNullOrderByLastModificationDateDesc(new PageRequest(0, maxResults))
+				.getContent();
+		Set<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodesForRecentsOverview(contentNodes);
 		return contentNodeDTOs;
 	}
 
@@ -101,8 +97,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		if (node == null)
 			return null;
 
-		Set<ContentNodeDTO> contentNodeDTOs = mapper
-				.mapContentNodeCollection(node.getContentNodes());
+		Set<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(node.getContentNodes());
 		return contentNodeDTOs;
 	}
 
@@ -125,11 +120,9 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
 	 *         nebo
 	 */
-	public ContentNodeDTO save(String contentModuleId, Long contentId,
-			String name, boolean publicated, NodeDTO category,
-			UserInfoDTO author) {
-		return save(contentModuleId, contentId, name, null, publicated,
-				category, author);
+	public ContentNodeDTO save(String contentModuleId, Long contentId, String name, boolean publicated,
+			NodeDTO category, UserInfoDTO author) {
+		return save(contentModuleId, contentId, name, null, publicated, category, author);
 	}
 
 	/**
@@ -152,9 +145,8 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
 	 *         nebo
 	 */
-	public ContentNodeDTO save(String contentModuleId, Long contentId,
-			String name, Collection<String> tags, boolean publicated,
-			NodeDTO category, UserInfoDTO author) {
+	public ContentNodeDTO save(String contentModuleId, Long contentId, String name, Collection<String> tags,
+			boolean publicated, NodeDTO category, UserInfoDTO author) {
 		try {
 
 			ContentNode contentNode = new ContentNode();
@@ -221,8 +213,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean modify(ContentNodeDTO contentNode, String name,
-			boolean publicated) {
+	public boolean modify(ContentNodeDTO contentNode, String name, boolean publicated) {
 		return modify(contentNode, name, null, publicated);
 	}
 
@@ -237,11 +228,9 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *            je článek publikován ?
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean modify(ContentNodeDTO contentNodeDTO, String name,
-			Collection<String> tags, boolean publicated) {
+	public boolean modify(ContentNodeDTO contentNodeDTO, String name, Collection<String> tags, boolean publicated) {
 
-		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO
-				.getId());
+		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO.getId());
 
 		contentNode.setLastModificationDate(Calendar.getInstance().getTime());
 		contentNode.setName(name);
@@ -279,8 +268,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 			return false;
 
 		// vymaž content node
-		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO
-				.getId());
+		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO.getId());
 
 		Node node = contentNode.getParent();
 		node.getContentNodes().remove(contentNode);
@@ -291,5 +279,14 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		contentNodeRepository.delete(contentNode);
 		return true;
 
+	}
+
+	@Override
+	public void moveContent(NodeDTO nodeDTO, ContentNodeDTO contentNodeDTO) {
+		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO.getId());
+		Node newNode = nodeRepository.findOne(nodeDTO.getId());
+
+		contentNode.setParent(newNode);
+		contentNodeRepository.save(contentNode);
 	}
 }

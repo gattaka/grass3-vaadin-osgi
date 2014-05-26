@@ -1,6 +1,5 @@
 package org.myftp.gattserver.grass3.pages.template;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
@@ -11,8 +10,7 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 
-public abstract class AbstractGrassPage extends GrassLayout implements
-		IGrassPage {
+public abstract class AbstractGrassPage extends GrassLayout implements IGrassPage {
 
 	private static final long serialVersionUID = 604170960797872356L;
 
@@ -22,9 +20,10 @@ public abstract class AbstractGrassPage extends GrassLayout implements
 	public AbstractGrassPage(GrassRequest request) {
 		super("grass", request);
 		addStyleName("grasspage");
+
+		init();
 	}
 
-	@PostConstruct
 	protected void init() {
 
 		// homelink (přes logo)

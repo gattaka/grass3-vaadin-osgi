@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+import org.myftp.gattserver.grass3.subwindows.GrassWindow;
 import org.vaadin.tepi.imageviewer.ImageViewer;
 
 import com.vaadin.server.FileResource;
@@ -12,7 +12,7 @@ import com.vaadin.server.Resource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.VerticalLayout;
 
-public class ImageDetailWindow extends GrassSubWindow {
+public class ImageDetailWindow extends GrassWindow {
 
 	private static final long serialVersionUID = 4928404864735034779L;
 

@@ -15,17 +15,16 @@ import org.myftp.gattserver.grass3.fm.FMExplorer.FileProcessState;
 import org.myftp.gattserver.grass3.fm.config.FMConfiguration;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
-import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
-import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
-import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
+import org.myftp.gattserver.grass3.subwindows.GrassWindow;
+import org.myftp.gattserver.grass3.subwindows.InfoWindow;
+import org.myftp.gattserver.grass3.subwindows.WarnWindow;
 import org.myftp.gattserver.grass3.template.Breadcrumb;
 import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import org.myftp.gattserver.grass3.ui.util.ComparableStringDate;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.HumanBytesSizeCreator;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
-import org.springframework.context.annotation.Scope;
 import org.vaadin.easyuploads.MultiFileUpload;
 
 import com.vaadin.data.Item;
@@ -53,8 +52,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-@org.springframework.stereotype.Component("fmPage")
-@Scope("prototype")
 public class FMPage extends OneColumnPage {
 
 	private static final long serialVersionUID = -950042653154868289L;
@@ -359,7 +356,7 @@ public class FMPage extends OneColumnPage {
 		Label subWindowLabel = new Label(groupOperation.getValue() ? "Opravdu chcete smazat vybrané soubory ?"
 				: "Opravdu chcete smazat soubor \"" + file.getName() + "\" ?");
 
-		final Window subwindow = new ConfirmSubWindow(subWindowLabel) {
+		final Window subwindow = new ConfirmWindow(subWindowLabel) {
 
 			private static final long serialVersionUID = 6350190755480244374L;
 
@@ -406,7 +403,7 @@ public class FMPage extends OneColumnPage {
 	}
 
 	private void handleRenameAction(final File file, VerticalLayout layout) {
-		final Window subwindow = new GrassSubWindow("Přejmenovat");
+		final Window subwindow = new GrassWindow("Přejmenovat");
 		subwindow.center();
 		getGrassUI().addWindow(subwindow);
 
@@ -465,7 +462,7 @@ public class FMPage extends OneColumnPage {
 		subwindow.focus();
 	}
 
-	private void createSingleFileDetails(final File file, final GrassSubWindow subwindow) {
+	private void createSingleFileDetails(final File file, final GrassWindow subwindow) {
 
 		GridLayout subWindowlayout = new GridLayout(2, 8);
 		subwindow.setContent(subWindowlayout);
@@ -509,7 +506,7 @@ public class FMPage extends OneColumnPage {
 
 		// Jsou započítané všechny soubory podstromu ?
 		if (!skipList.isEmpty()) {
-			getGrassUI().addWindow(new WarnSubwindow("Některé soubory nemohly být započítány do celkové velikosti."));
+			getGrassUI().addWindow(new WarnWindow("Některé soubory nemohly být započítány do celkové velikosti."));
 		}
 		// Velikost (binární)
 		subWindowlayout.addComponent(new Label(HumanBytesSizeCreator.format(size, false)), 1, 6);
@@ -529,7 +526,7 @@ public class FMPage extends OneColumnPage {
 
 	}
 
-	private void createGroupDetails(final GrassSubWindow subwindow) {
+	private void createGroupDetails(final GrassWindow subwindow) {
 
 		GridLayout subWindowlayout = new GridLayout(2, 4);
 		subwindow.setContent(subWindowlayout);
@@ -553,7 +550,7 @@ public class FMPage extends OneColumnPage {
 
 		// Jsou započítané všechny soubory podstromu ?
 		if (!skipList.isEmpty()) {
-			getGrassUI().addWindow(new InfoSubwindow("Některé soubory nemohly být započítány do celkové velikosti."));
+			getGrassUI().addWindow(new InfoWindow("Některé soubory nemohly být započítány do celkové velikosti."));
 		}
 		// Velikost (binární)
 		subWindowlayout.addComponent(new Label(HumanBytesSizeCreator.format(size, false)), 1, 2);
@@ -574,7 +571,7 @@ public class FMPage extends OneColumnPage {
 	}
 
 	private void handleDetailsAction(final File file, VerticalLayout layout) {
-		final GrassSubWindow subwindow = new GrassSubWindow("Detail");
+		final GrassWindow subwindow = new GrassWindow("Detail");
 		subwindow.center();
 		subwindow.setWidth("470px");
 		subwindow.setHeight("300px");
@@ -592,7 +589,7 @@ public class FMPage extends OneColumnPage {
 	}
 
 	private void handleDownloadFile(final File file) {
-		GrassSubWindow dlWindow = new GrassSubWindow("Stáhnout " + file.getName()) {
+		GrassWindow dlWindow = new GrassWindow("Stáhnout " + file.getName()) {
 
 			private static final long serialVersionUID = 926172618599746150L;
 

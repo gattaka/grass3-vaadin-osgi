@@ -6,12 +6,11 @@ import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.facades.INodeFacade;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
-import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
+import org.myftp.gattserver.grass3.subwindows.GrassWindow;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
-import org.springframework.context.annotation.Scope;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
@@ -42,8 +41,6 @@ import com.vaadin.ui.Tree.TreeTargetDetails;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-@org.springframework.stereotype.Component("categoriesSettingsTab")
-@Scope("prototype")
 public class CategoriesSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = 2474374292329895766L;
@@ -147,7 +144,7 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 					// Přesunutí znamená rovnou přesun kategorie - v tom případě
 					// je potřeba vyhodit potvrzovací okno
 					getUI().addWindow(
-							new ConfirmSubWindow("Opravdu přesunout '" + source.getName() + "' do '" + target.getName()
+							new ConfirmWindow("Opravdu přesunout '" + source.getName() + "' do '" + target.getName()
 									+ "' ?") {
 
 								private static final long serialVersionUID = 414272650677665672L;
@@ -174,7 +171,7 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 					// Přesunutí znamená rovnou přesun kategorie - v tom případě
 					// je potřeba vyhodit potvrzovací okno
 					getUI().addWindow(
-							new ConfirmSubWindow("Opravdu přesunout '" + source.getName() + "' do "
+							new ConfirmWindow("Opravdu přesunout '" + source.getName() + "' do "
 									+ (parentItemId == null ? "kořene sekce ?" : ("'" + parent.getName() + "' ?"))) {
 
 								private static final long serialVersionUID = 414272650677665672L;
@@ -204,7 +201,7 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 					// je potřeba vyhodit potvrzovací okno
 
 					getUI().addWindow(
-							new ConfirmSubWindow("Opravdu přesunout '" + source.getName() + "' do "
+							new ConfirmWindow("Opravdu přesunout '" + source.getName() + "' do "
 									+ (parentItemId == null ? "kořene sekce ?" : ("'" + parent.getName() + "' ?"))) {
 
 								private static final long serialVersionUID = 414272650677665672L;
@@ -252,7 +249,7 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 				final NodeDTO node = (NodeDTO) target;
 				if (action == ACTION_DELETE) {
 
-					getUI().addWindow(new ConfirmSubWindow("Opravdu smazat kategorii '" + node.getName() + "' ?") {
+					getUI().addWindow(new ConfirmWindow("Opravdu smazat kategorii '" + node.getName() + "' ?") {
 
 						private static final long serialVersionUID = 9193745051559434697L;
 
@@ -274,7 +271,7 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 					});
 
 				} else if (action == ACTION_RENAME) {
-					final Window subwindow = new GrassSubWindow("Přejmenovat");
+					final Window subwindow = new GrassWindow("Přejmenovat");
 					subwindow.center();
 					getUI().addWindow(subwindow);
 

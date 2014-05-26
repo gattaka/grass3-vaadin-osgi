@@ -11,11 +11,8 @@ import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory.ContentsT
 import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Embedded;
@@ -23,8 +20,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-@Component("tagPage")
-@Scope("prototype")
 public class TagPage extends BasePage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
@@ -40,8 +35,8 @@ public class TagPage extends BasePage {
 
 	private ContentTagDTO tag;
 	private Label tagLabel;
-	private String tagLabelPrefix = "<h2>Obsahy označené tagem: ";
-	private String tagLabelSuffix = "</h2>";
+	private String tagLabelPrefix;
+	private String tagLabelSuffix;
 
 	public TagPage(GrassRequest request) {
 		super(request);
@@ -50,15 +45,16 @@ public class TagPage extends BasePage {
 	@Override
 	protected void createContent(CustomLayout layout) {
 
-		ContentsTable tagContentsTable = contentsTableFactory
-				.createContentsTable();
+		tagLabelPrefix = "<h2>Obsahy označené tagem: ";
+		tagLabelSuffix = "</h2>";
+		
+		ContentsTable tagContentsTable = contentsTableFactory.createContentsTable();
 
 		String tagName = getRequest().getAnalyzer().getPathToken(1);
 		if (tagName == null)
 			showError404();
 
-		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
-				.parseURLIdentifier(tagName);
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(tagName);
 		if (identifier == null) {
 			showError404();
 			return;
@@ -95,8 +91,7 @@ public class TagPage extends BasePage {
 			publicatedLayout.setSpacing(true);
 			publicatedLayout.setMargin(false);
 			publicatedLayout.addStyleName("not-publicated-info");
-			publicatedLayout.addComponent(new Embedded(null, new ThemeResource(
-					"img/tags/info_16.png")));
+			publicatedLayout.addComponent(new Embedded(null, new ThemeResource("img/tags/info_16.png")));
 
 			StringBuilder builder = new StringBuilder();
 			builder.append("<strong>");
@@ -115,8 +110,7 @@ public class TagPage extends BasePage {
 				break;
 			}
 			builder.append("</strong>");
-			publicatedLayout.addComponent(new Label(builder.toString(),
-					ContentMode.HTML));
+			publicatedLayout.addComponent(new Label(builder.toString(), ContentMode.HTML));
 			contentNodesLayout.addComponent(publicatedLayout);
 		}
 

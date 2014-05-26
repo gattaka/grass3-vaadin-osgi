@@ -6,15 +6,12 @@ import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 import org.myftp.gattserver.grass3.template.ISelectable;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
-import org.springframework.context.annotation.Scope;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 
-@org.springframework.stereotype.Component("medicPage")
-@Scope("prototype")
 public class MedicPage extends OneColumnPage {
 
 	private static final long serialVersionUID = -950042653154868289L;

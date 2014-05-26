@@ -11,7 +11,6 @@ import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 import org.myftp.gattserver.grass3.search.service.SearchHit;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
-import org.springframework.context.annotation.Scope;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
@@ -29,8 +28,6 @@ import com.vaadin.ui.Link;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-@org.springframework.stereotype.Component("searchPage")
-@Scope("prototype")
 public class SearchPage extends OneColumnPage {
 
 	private static final long serialVersionUID = -7063551976547889914L;
@@ -52,23 +49,19 @@ public class SearchPage extends OneColumnPage {
 
 		String searchText = (String) searchField.getValue();
 		try {
-			List<SearchHit> hits = searchFacade.search(searchText, null,
-					(String) moduleCombo.getValue(), getGrassUI().getUser(),
-					this);
+			List<SearchHit> hits = searchFacade.search(searchText, null, (String) moduleCombo.getValue(), getGrassUI()
+					.getUser(), this);
 			outputLayout.removeAllComponents();
 
 			if (hits.size() == 0) {
-				outputLayout.addComponent(new Label("Na dotaz '" + searchText
-						+ "' nebyly nalezeny žádné záznamy."));
+				outputLayout.addComponent(new Label("Na dotaz '" + searchText + "' nebyly nalezeny žádné záznamy."));
 			} else {
 				for (SearchHit hit : hits) {
 					String link = hit.getContentLink();
 					VerticalLayout hitLayout = new VerticalLayout();
 					outputLayout.addComponent(hitLayout);
-					hitLayout.addComponent(new Link(link, new ExternalResource(
-							link)));
-					Label highlightLabel = new Label(hit.getHitFieldText(),
-							ContentMode.HTML);
+					hitLayout.addComponent(new Link(link, new ExternalResource(link)));
+					Label highlightLabel = new Label(hit.getHitFieldText(), ContentMode.HTML);
 					hitLayout.addComponent(highlightLabel);
 				}
 			}
@@ -99,8 +92,7 @@ public class SearchPage extends OneColumnPage {
 
 		Set<String> moduleIds = searchFacade.getSearchModulesIds();
 		if (moduleIds == null || moduleIds.isEmpty()) {
-			layout.addComponent(new Label(
-					"Nebyly nalezeny žádné moduly, ve kterých by se dalo vyhledávat."));
+			layout.addComponent(new Label("Nebyly nalezeny žádné moduly, ve kterých by se dalo vyhledávat."));
 			return;
 		}
 
@@ -148,8 +140,7 @@ public class SearchPage extends OneColumnPage {
 		searchField.setValue("");
 
 		// při od-enterování by se mělo provést vyhledání
-		searchField.addShortcutListener(new ShortcutListener("Shortcut Name",
-				ShortcutAction.KeyCode.ENTER, null) {
+		searchField.addShortcutListener(new ShortcutListener("Shortcut Name", ShortcutAction.KeyCode.ENTER, null) {
 
 			private static final long serialVersionUID = 4399065369299557562L;
 

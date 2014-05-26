@@ -2,13 +2,10 @@ package org.myftp.gattserver.grass3.pages.err;
 
 import org.myftp.gattserver.grass3.pages.template.ErrorPage;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
-import org.springframework.context.annotation.Scope;
 
 import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
 
-@org.springframework.stereotype.Component("err403")
-@Scope("prototype")
 public class Err403Page extends ErrorPage {
 
 	public Err403Page(GrassRequest request) {

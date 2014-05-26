@@ -1,16 +1,14 @@
 package org.myftp.gattserver.grass3.pages.template;
 
 import org.myftp.gattserver.grass3.GrassUI;
+import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.js.JQueryBootstrapComponent;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
-import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
-import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
-import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ErrorWindow;
+import org.myftp.gattserver.grass3.subwindows.InfoWindow;
+import org.myftp.gattserver.grass3.subwindows.WarnWindow;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Page;
@@ -18,27 +16,16 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.UI;
 
-public abstract class GrassLayout extends CustomLayout implements
-		ApplicationContextAware {
+public abstract class GrassLayout extends CustomLayout {
 
 	private static final long serialVersionUID = 604170960797872356L;
 
 	private GrassRequest request;
-	private ApplicationContext applicationContext;
-
-	public ApplicationContext getApplicationContext() {
-		return applicationContext;
-	}
-
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext)
-			throws BeansException {
-		this.applicationContext = applicationContext;
-	}
 
 	public GrassLayout(String layoutName, GrassRequest request) {
 		super(layoutName);
 		this.request = request;
+		SpringContextHelper.inject(this);
 	}
 
 	protected GrassRequest getRequest() {
@@ -53,12 +40,9 @@ public abstract class GrassLayout extends CustomLayout implements
 	 */
 	public void loadCSS(String link) {
 		StringBuilder loadStylesheet = new StringBuilder();
-		loadStylesheet
-				.append("var head= document.getElementsByTagName('head')[0];")
-				.append("var link= document.createElement('link');")
-				.append("link.type= 'text/css';")
-				.append("link.rel= 'stylesheet';")
-				.append("link.href= '" + link + "';")
+		loadStylesheet.append("var head= document.getElementsByTagName('head')[0];")
+				.append("var link= document.createElement('link');").append("link.type= 'text/css';")
+				.append("link.rel= 'stylesheet';").append("link.href= '" + link + "';")
 				.append("head.appendChild(link);");
 		JavaScript.eval(loadStylesheet.toString());
 	}
@@ -79,24 +63,24 @@ public abstract class GrassLayout extends CustomLayout implements
 		buildJSBatch(builder, 0, scripts);
 		JavaScript.eval(builder.toString());
 	}
-	
-	
-//	public void loadJS(JScriptItem... scripts) {
-//		StringBuilder builder = new StringBuilder();
-//		buildJSBatch(builder, 0, scripts);
-//
-//		StringBuilder jQueryBuilder = new StringBuilder();
-//		jQueryBuilder
-//				.append("if (true) {var head= document.getElementsByTagName('head')[0]; "
-//						+ "var script= document.createElement('script'); " + "script.type= 'text/javascript'; "
-//						+ "script.src= './VAADIN/themes/grass/js/jquery.js'; "
-//						+ "script.onreadystatechange= function () {" + "if (this.readyState == 'complete') { alert($);")
-//				.append(builder).append("}};" + "head.appendChild(script); }");
-//		JavaScript.eval(jQueryBuilder.toString());
-//	}
 
-	private void buildJSBatch(StringBuilder builder, int index,
-			JScriptItem... scripts) {
+	// public void loadJS(JScriptItem... scripts) {
+	// StringBuilder builder = new StringBuilder();
+	// buildJSBatch(builder, 0, scripts);
+	//
+	// StringBuilder jQueryBuilder = new StringBuilder();
+	// jQueryBuilder
+	// .append("if (true) {var head= document.getElementsByTagName('head')[0]; "
+	// + "var script= document.createElement('script'); " +
+	// "script.type= 'text/javascript'; "
+	// + "script.src= './VAADIN/themes/grass/js/jquery.js'; "
+	// + "script.onreadystatechange= function () {" +
+	// "if (this.readyState == 'complete') { alert($);")
+	// .append(builder).append("}};" + "head.appendChild(script); }");
+	// JavaScript.eval(jQueryBuilder.toString());
+	// }
+
+	private void buildJSBatch(StringBuilder builder, int index, JScriptItem... scripts) {
 		if (index >= scripts.length)
 			return;
 
@@ -107,8 +91,7 @@ public abstract class GrassLayout extends CustomLayout implements
 			// obejít problém se závislosí pluginů na úložišti theme apod. a
 			// přitom umožnit aby se JS odkazovali na externí zdroje
 			if (!chunk.toLowerCase().startsWith("http://"))
-				chunk = "\"" + getRequest().getContextRoot()
-						+ "/VAADIN/themes/grass/" + chunk + "\"";
+				chunk = "\"" + getRequest().getContextRoot() + "/VAADIN/themes/grass/" + chunk + "\"";
 		}
 
 		builder.append("$.getScript(").append(chunk).append(", function(){");
@@ -159,8 +142,7 @@ public abstract class GrassLayout extends CustomLayout implements
 	/**
 	 * Získá resource dle stránky + relativní URL
 	 */
-	public ExternalResource getPageResource(IPageFactory pageFactory,
-			String... relativeURLs) {
+	public ExternalResource getPageResource(IPageFactory pageFactory, String... relativeURLs) {
 		return new ExternalResource(getPageURL(pageFactory, relativeURLs));
 	}
 
@@ -186,26 +168,26 @@ public abstract class GrassLayout extends CustomLayout implements
 	}
 
 	/**
-	 * Notifikace pomocí {@link InfoSubwindow}
+	 * Notifikace pomocí {@link InfoWindow}
 	 */
 	public void showInfo(String caption) {
-		InfoSubwindow infoSubwindow = new InfoSubwindow(caption);
+		InfoWindow infoSubwindow = new InfoWindow(caption);
 		getGrassUI().addWindow(infoSubwindow);
 	}
 
 	/**
-	 * Notifikace varování pomocí {@link WarnSubwindow}
+	 * Notifikace varování pomocí {@link WarnWindow}
 	 */
 	public void showWarning(String caption) {
-		WarnSubwindow warnSubwindow = new WarnSubwindow(caption);
+		WarnWindow warnSubwindow = new WarnWindow(caption);
 		getGrassUI().addWindow(warnSubwindow);
 	}
 
 	/**
-	 * Notifikace chyby pomocí {@link ErrorSubwindow}
+	 * Notifikace chyby pomocí {@link ErrorWindow}
 	 */
 	public void showError(String caption) {
-		ErrorSubwindow errorSubwindow = new ErrorSubwindow(caption);
+		ErrorWindow errorSubwindow = new ErrorWindow(caption);
 		getGrassUI().addWindow(errorSubwindow);
 	}
 

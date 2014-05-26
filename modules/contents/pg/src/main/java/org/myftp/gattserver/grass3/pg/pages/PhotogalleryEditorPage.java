@@ -17,15 +17,13 @@ import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 import org.myftp.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import org.myftp.gattserver.grass3.pg.facade.IPhotogalleryFacade;
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
-import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
 import org.vaadin.easyuploads.MultiFileUpload;
 import org.vaadin.tokenfield.TokenField;
 
@@ -52,8 +50,6 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-@org.springframework.stereotype.Component("photogalleryEditorPage")
-@Scope("prototype")
 public class PhotogalleryEditorPage extends OneColumnPage {
 
 	private static final long serialVersionUID = -5148523174527532785L;
@@ -391,7 +387,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 			public void buttonClick(ClickEvent event) {
 
-				ConfirmSubWindow confirmSubwindow = new ConfirmSubWindow(
+				ConfirmWindow confirmSubwindow = new ConfirmWindow(
 						"Opravdu si přejete zavřít editor galerie ? Veškeré neuložené změny budou ztraceny.") {
 
 					private static final long serialVersionUID = -3214040983143363831L;

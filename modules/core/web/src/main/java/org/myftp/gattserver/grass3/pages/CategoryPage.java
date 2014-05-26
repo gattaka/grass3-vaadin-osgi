@@ -23,7 +23,6 @@ import org.myftp.gattserver.grass3.template.Breadcrumb;
 import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
-import org.springframework.context.annotation.Scope;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
@@ -36,8 +35,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
-@org.springframework.stereotype.Component("categoryPage")
-@Scope("prototype")
 public class CategoryPage extends OneColumnPage {
 
 	private static final long serialVersionUID = -499585200973560016L;
@@ -65,12 +62,18 @@ public class CategoryPage extends OneColumnPage {
 
 	// Přehled podkategorií
 	private NodesTable subNodesTable;
-	private Label noSubNodesLabel = new Label("Nebyly nalezeny žádné podkategorie");
+	private Label noSubNodesLabel;
 
 	public CategoryPage(GrassRequest request) {
 		super(request);
 	}
 
+	@Override
+	protected void init() {
+		noSubNodesLabel = new Label("Nebyly nalezeny žádné podkategorie");
+		super.init();
+	}
+	
 	@Override
 	protected Component createContent() {
 

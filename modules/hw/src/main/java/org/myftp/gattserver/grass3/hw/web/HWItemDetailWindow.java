@@ -10,9 +10,9 @@ import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import org.myftp.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
-import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
-import org.myftp.gattserver.grass3.subwindows.ImageDetailSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
+import org.myftp.gattserver.grass3.subwindows.GrassWindow;
+import org.myftp.gattserver.grass3.subwindows.ImageDetailWindow;
 import org.myftp.gattserver.grass3.ui.util.StringToDateConverter;
 import org.myftp.gattserver.grass3.ui.util.StringToMoneyConverter;
 import org.myftp.gattserver.grass3.util.CZSuffixCreator;
@@ -45,7 +45,7 @@ import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.BaseTheme;
 
-public class HWItemDetailWindow extends GrassSubWindow {
+public class HWItemDetailWindow extends GrassWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 	private static final String DEFAULT_NOTE_LABEL_VALUE = "- Zvolte servisní záznam -";
@@ -103,7 +103,7 @@ public class HWItemDetailWindow extends GrassSubWindow {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				UI.getCurrent().addWindow(new ImageDetailSubwindow(hwItem.getName(), icon));
+				UI.getCurrent().addWindow(new ImageDetailWindow(hwItem.getName(), icon));
 			}
 		});
 
@@ -112,7 +112,7 @@ public class HWItemDetailWindow extends GrassSubWindow {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				UI.getCurrent().addWindow(new ConfirmSubWindow("Opravdu smazat foto HW položky ?") {
+				UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto HW položky ?") {
 					private static final long serialVersionUID = -1901927025986494370L;
 
 					@Override

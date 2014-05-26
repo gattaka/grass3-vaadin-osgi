@@ -11,8 +11,8 @@ import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitState;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
 import org.myftp.gattserver.grass3.medic.util.MedicUtil;
 import org.myftp.gattserver.grass3.medic.web.ScheduledVisitsCreateWindow.Operation;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
-import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
+import org.myftp.gattserver.grass3.subwindows.ErrorWindow;
 import org.myftp.gattserver.grass3.template.DetailBtn;
 import org.myftp.gattserver.grass3.template.ISelectable;
 
@@ -78,7 +78,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 				try {
 					medicFacade.deleteScheduledVisit(scheduledVisitDTO);
 				} catch (Exception e) {
-					UI.getCurrent().addWindow(new ErrorSubwindow("Nezdařilo se smazat vybranou položku"));
+					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
 				}
 				populateContainer(true);
 			}
@@ -88,7 +88,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 
 	private void openDeleteWindow(final ScheduledVisitDTO visit, final boolean planned) {
 		ScheduledVisitsTab.this.setEnabled(false);
-		UI.getCurrent().addWindow(new ConfirmSubWindow("Opravdu smazat '" + visit.getPurpose() + "' ?") {
+		UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat '" + visit.getPurpose() + "' ?") {
 
 			private static final long serialVersionUID = -422763987707688597L;
 
@@ -98,7 +98,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 					medicFacade.deleteScheduledVisit(visit);
 					populateContainer(planned);
 				} catch (Exception e) {
-					UI.getCurrent().addWindow(new ErrorSubwindow("Nezdařilo se smazat vybranou položku"));
+					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
 				}
 			}
 

@@ -5,8 +5,8 @@ import java.io.File;
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
-import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
+import org.myftp.gattserver.grass3.subwindows.GrassWindow;
 import org.myftp.gattserver.grass3.util.HumanBytesSizeCreator;
 import org.myftp.gattserver.grass3.util.StringPreviewCreator;
 import org.vaadin.easyuploads.MultiFileUpload;
@@ -23,7 +23,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-public class HWItemDocumentsWindow extends GrassSubWindow {
+public class HWItemDocumentsWindow extends GrassWindow {
 
 	private static final long serialVersionUID = 8587632602779343179L;
 
@@ -97,7 +97,7 @@ public class HWItemDocumentsWindow extends GrassSubWindow {
 
 				@Override
 				public void buttonClick(ClickEvent event) {
-					UI.getCurrent().addWindow(new ConfirmSubWindow("Opravdu smazat '" + file.getName() + "' ?") {
+					UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat '" + file.getName() + "' ?") {
 						private static final long serialVersionUID = -1901927025986494370L;
 
 						@Override

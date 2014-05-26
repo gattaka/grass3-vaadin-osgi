@@ -8,10 +8,9 @@ import javax.annotation.Resource;
 import org.myftp.gattserver.grass3.facades.IUserFacade;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+import org.myftp.gattserver.grass3.subwindows.GrassWindow;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
-import org.springframework.context.annotation.Scope;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -28,8 +27,6 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-@org.springframework.stereotype.Component("usersSettingsTab")
-@Scope("prototype")
 public class UsersSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = 2474374292329895766L;
@@ -192,7 +189,7 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 
 			public void buttonClick(ClickEvent event) {
 
-				final Window subwindow = new GrassSubWindow("Uživatelské role");
+				final Window subwindow = new GrassWindow("Uživatelské role");
 				subwindow.center();
 				getUI().addWindow(subwindow);
 				subwindow.setWidth("220px");

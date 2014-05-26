@@ -16,14 +16,13 @@ import org.myftp.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import org.myftp.gattserver.grass3.pg.facade.IPhotogalleryFacade;
 import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
-import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
-import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
+import org.myftp.gattserver.grass3.subwindows.InfoWindow;
+import org.myftp.gattserver.grass3.subwindows.WarnWindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
-import org.springframework.context.annotation.Scope;
 import org.vaadin.jouni.animator.AnimatorProxy;
 import org.vaadin.jouni.animator.shared.AnimType;
 
@@ -33,7 +32,6 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -41,8 +39,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-@org.springframework.stereotype.Component("photogalleryViewerPage")
-@Scope("prototype")
 public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	private static final long serialVersionUID = 5078280973817331002L;
@@ -360,7 +356,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	@Override
 	protected void onDeleteOperation() {
-		ConfirmSubWindow confirmSubwindow = new ConfirmSubWindow("Opravdu si přejete smazat tuto galerii ?") {
+		ConfirmWindow confirmSubwindow = new ConfirmWindow("Opravdu si přejete smazat tuto galerii ?") {
 
 			private static final long serialVersionUID = -3214040983143363831L;
 
@@ -375,7 +371,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 				// zdařilo se ? Pokud ano, otevři info okno a při
 				// potvrzení jdi na kategorii
 				if (photogalleryFacade.deletePhotogallery(photogallery)) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow("Smazání galerie proběhlo úspěšně.") {
+					InfoWindow infoSubwindow = new InfoWindow("Smazání galerie proběhlo úspěšně.") {
 
 						private static final long serialVersionUID = -6688396549852552674L;
 
@@ -387,7 +383,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 				} else {
 					// Pokud ne, otevři warn okno a při
 					// potvrzení jdi na kategorii
-					WarnSubwindow warnSubwindow = new WarnSubwindow("Smazání galerie se nezdařilo.") {
+					WarnWindow warnSubwindow = new WarnWindow("Smazání galerie se nezdařilo.") {
 
 						private static final long serialVersionUID = -6688396549852552674L;
 

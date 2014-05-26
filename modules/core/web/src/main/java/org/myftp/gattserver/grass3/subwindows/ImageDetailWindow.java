@@ -10,14 +10,14 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.VerticalLayout;
 
-public class ImageDetailSubwindow extends GrassSubWindow {
+public class ImageDetailWindow extends GrassWindow {
 
 	private static final long serialVersionUID = 4123506060675738841L;
 
 	private static final int WINDOWPADDING = 45;
 	private static final int WINDOWHEADER_HEIGHT = 50;
 
-	public ImageDetailSubwindow(String description, File file) {
+	public ImageDetailWindow(String description, File file) {
 		super(description);
 
 		// TODO kliknutím se otevře plná velikost v novém tabu

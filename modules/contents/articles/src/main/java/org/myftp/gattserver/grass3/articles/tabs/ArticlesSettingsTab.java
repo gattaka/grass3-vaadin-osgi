@@ -13,10 +13,9 @@ import org.myftp.gattserver.grass3.articles.facade.IArticleFacade;
 import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.facades.IContentTagFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
-import org.springframework.context.annotation.Scope;
 
 import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -30,8 +29,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-@org.springframework.stereotype.Component("articlesSettingsTab")
-@Scope("prototype")
 public class ArticlesSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = 2474374292329895766L;
@@ -161,7 +158,7 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 
 			public void buttonClick(ClickEvent event) {
 
-				ConfirmSubWindow confirmSubwindow = new ConfirmSubWindow(
+				ConfirmWindow confirmSubwindow = new ConfirmWindow(
 						"Přegenerování všech článků může zabrat delší čas a dojde během něj zřejmě k mnoha drobným změnám - opravdu přegenerovat ?") {
 
 					private static final long serialVersionUID = -1214461419119865670L;

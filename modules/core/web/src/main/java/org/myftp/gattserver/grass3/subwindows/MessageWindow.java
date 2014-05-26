@@ -10,7 +10,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-public abstract class MessageSubwindow extends GrassSubWindow {
+public abstract class MessageWindow extends GrassWindow {
 
 	private static final long serialVersionUID = 4123506060675738841L;
 
@@ -24,7 +24,7 @@ public abstract class MessageSubwindow extends GrassSubWindow {
 	 * @param imageResource
 	 *            resource ikony okna
 	 */
-	public MessageSubwindow(String caption, String labelCaption,
+	public MessageWindow(String caption, String labelCaption,
 			Resource imageResource) {
 		super(caption);
 

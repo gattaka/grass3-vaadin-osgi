@@ -2,11 +2,11 @@ package org.myftp.gattserver.grass3.subwindows;
 
 import com.vaadin.server.ThemeResource;
 
-public class InfoSubwindow extends MessageSubwindow {
+public class InfoWindow extends MessageWindow {
 
 	private static final long serialVersionUID = -4793025663820815400L;
 
-	public InfoSubwindow(String labelCaption) {
+	public InfoWindow(String labelCaption) {
 		super("Info", labelCaption, new ThemeResource("img/tags/info_16.png"));
 	}
 

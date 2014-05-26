@@ -2,8 +2,8 @@ package org.myftp.gattserver.grass3.hw.web;
 
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
-import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
+import org.myftp.gattserver.grass3.subwindows.ErrorWindow;
 import org.myftp.gattserver.grass3.ui.util.GrassFilterDecorator;
 import org.myftp.gattserver.grass3.ui.util.StringToDateConverter;
 import org.myftp.gattserver.grass3.ui.util.StringToMoneyConverter;
@@ -101,7 +101,7 @@ public class HWItemsTab extends VerticalLayout {
 		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table.getContainerDataSource();
 		BeanItem<?> item = cont.getItem(table.getValue());
 		final HWItemDTO hwItem = (HWItemDTO) item.getBean();
-		addWindow(new ConfirmSubWindow("Opravdu smazat '" + hwItem.getName()
+		addWindow(new ConfirmWindow("Opravdu smazat '" + hwItem.getName()
 				+ "' (budou smazány i servisní záznamy a údaje u součástí) ?") {
 
 			private static final long serialVersionUID = -422763987707688597L;
@@ -111,7 +111,7 @@ public class HWItemsTab extends VerticalLayout {
 				if (hwFacade.deleteHWItem(hwItem)) {
 					populateContainer();
 				} else {
-					UI.getCurrent().addWindow(new ErrorSubwindow("Nezdařilo se smazat vybranou položku"));
+					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
 				}
 			}
 

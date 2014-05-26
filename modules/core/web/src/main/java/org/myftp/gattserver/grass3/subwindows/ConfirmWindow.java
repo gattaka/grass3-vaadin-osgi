@@ -7,14 +7,14 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 
-public abstract class ConfirmSubWindow extends GrassSubWindow {
+public abstract class ConfirmWindow extends GrassWindow {
 
 	private static final long serialVersionUID = 4123506060675738841L;
 
 	/**
 	 * Nejobecnější dotaz na potvrzení operace
 	 */
-	public ConfirmSubWindow(Component... triggerComponents) {
+	public ConfirmWindow(Component... triggerComponents) {
 		this("Opravdu si přejete provést tuto operaci ?", triggerComponents);
 	}
 
@@ -24,7 +24,7 @@ public abstract class ConfirmSubWindow extends GrassSubWindow {
 	 * @param labelCaption
 	 *            text popisku okna
 	 */
-	public ConfirmSubWindow(String labelCaption, Component... triggerComponents) {
+	public ConfirmWindow(String labelCaption, Component... triggerComponents) {
 		this(new Label(labelCaption), triggerComponents);
 	}
 
@@ -34,7 +34,7 @@ public abstract class ConfirmSubWindow extends GrassSubWindow {
 	 * @param label
 	 *            popisek okna
 	 */
-	public ConfirmSubWindow(Label label, Component... triggerComponents) {
+	public ConfirmWindow(Label label, Component... triggerComponents) {
 		super("Potvrzení operace", triggerComponents);
 
 		setWidth("350px");

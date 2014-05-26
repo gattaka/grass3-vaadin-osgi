@@ -9,8 +9,8 @@ import org.myftp.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import org.myftp.gattserver.grass3.medic.dto.ScheduledVisitState;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
-import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
-import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+import org.myftp.gattserver.grass3.subwindows.ErrorWindow;
+import org.myftp.gattserver.grass3.subwindows.GrassWindow;
 
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
@@ -27,7 +27,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
-public abstract class ScheduledVisitsCreateWindow extends GrassSubWindow {
+public abstract class ScheduledVisitsCreateWindow extends GrassWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -174,7 +174,7 @@ public abstract class ScheduledVisitsCreateWindow extends GrassSubWindow {
 									.saveScheduledVisit(scheduledVisitDTO) == false) {
 								UI.getCurrent()
 										.addWindow(
-												new ErrorSubwindow(
+												new ErrorWindow(
 														"Nezdařilo se vytvořit nový záznam"));
 							} else {
 								onSuccess();

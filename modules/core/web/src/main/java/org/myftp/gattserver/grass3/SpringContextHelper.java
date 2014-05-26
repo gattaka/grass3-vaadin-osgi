@@ -3,6 +3,7 @@ package org.myftp.gattserver.grass3;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -20,12 +21,10 @@ public class SpringContextHelper {
 					if (applicationContext == null) {
 						ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
 								.currentRequestAttributes();
-						HttpServletRequest request = requestAttributes
-								.getRequest();
+						HttpServletRequest request = requestAttributes.getRequest();
 						HttpSession session = request.getSession(false);
-						applicationContext = WebApplicationContextUtils
-								.getRequiredWebApplicationContext(session
-										.getServletContext());
+						applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(session
+								.getServletContext());
 					}
 				}
 			}
@@ -36,13 +35,18 @@ public class SpringContextHelper {
 	public static ApplicationContext getContext() {
 		return ContextHolder.getContext();
 	}
-	
+
 	public static Object getBean(final String beanRef) {
-		return ContextHolder.getContext().getBean(beanRef);
+		return getContext().getBean(beanRef);
 	}
 
 	public static <T> T getBean(final Class<T> type) {
-		return ContextHolder.getContext().getBean(type);
+		return getContext().getBean(type);
+	}
+
+	public static void inject(Object target) {
+		getContext().getAutowireCapableBeanFactory().autowireBeanProperties(target,
+				AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, false);
 	}
 
 }

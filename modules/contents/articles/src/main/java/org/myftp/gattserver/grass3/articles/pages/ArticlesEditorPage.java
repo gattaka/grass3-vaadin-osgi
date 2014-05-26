@@ -24,7 +24,7 @@ import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.JScriptItem;
 import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
 import org.myftp.gattserver.grass3.security.Role;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
 import org.myftp.gattserver.grass3.ui.util.JQueryAccordion;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
@@ -32,7 +32,6 @@ import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
 import org.vaadin.tokenfield.TokenField;
 
 import com.vaadin.data.util.BeanContainer;
@@ -52,8 +51,6 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-@org.springframework.stereotype.Component("articlesEditorPage")
-@Scope("prototype")
 public class ArticlesEditorPage extends TwoColumnPage {
 
 	private static final long serialVersionUID = -5148523174527532785L;
@@ -401,7 +398,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 			public void buttonClick(ClickEvent event) {
 
-				ConfirmSubWindow confirmSubwindow = new ConfirmSubWindow(
+				ConfirmWindow confirmSubwindow = new ConfirmWindow(
 						"Opravdu si přejete zavřít editor článku ? Veškeré neuložené změny budou ztraceny.") {
 
 					private static final long serialVersionUID = -3214040983143363831L;

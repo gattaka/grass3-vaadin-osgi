@@ -13,7 +13,7 @@ import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.service.ISectionService;
-import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+import org.myftp.gattserver.grass3.subwindows.GrassWindow;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 
 import com.vaadin.shared.ui.label.ContentMode;
@@ -147,7 +147,7 @@ public abstract class BasePage extends AbstractGrassPage {
 						@Override
 						public void menuSelected(MenuItem selectedItem) {
 
-							final Window subwindow = new GrassSubWindow(
+							final Window subwindow = new GrassWindow(
 									"Detail uživatele " + userInfoDTO.getName());
 							subwindow.center();
 							getUI().addWindow(subwindow);

@@ -3,8 +3,8 @@ package org.myftp.gattserver.grass3.hw.web;
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
-import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
-import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+import org.myftp.gattserver.grass3.subwindows.ErrorWindow;
+import org.myftp.gattserver.grass3.subwindows.GrassWindow;
 
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
@@ -16,7 +16,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-public abstract class HWItemTypeCreateWindow extends GrassSubWindow {
+public abstract class HWItemTypeCreateWindow extends GrassWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -55,7 +55,7 @@ public abstract class HWItemTypeCreateWindow extends GrassSubWindow {
 							if (hwFacade.saveHWType(nameField.getValue()) == false) {
 								UI.getCurrent()
 										.addWindow(
-												new ErrorSubwindow(
+												new ErrorWindow(
 														"Nezdařilo se vytvořit nový typ hardware"));
 							} else {
 								onSuccess();

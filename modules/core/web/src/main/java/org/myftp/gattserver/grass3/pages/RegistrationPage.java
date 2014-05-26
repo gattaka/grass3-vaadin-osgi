@@ -8,7 +8,6 @@ import javax.annotation.Resource;
 import org.myftp.gattserver.grass3.facades.IUserFacade;
 import org.myftp.gattserver.grass3.pages.template.OneColumnPage;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
-import org.springframework.context.annotation.Scope;
 
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.EmailValidator;
@@ -24,8 +23,6 @@ import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-@org.springframework.stereotype.Component("registrationPage")
-@Scope("prototype")
 public class RegistrationPage extends OneColumnPage {
 
 	@Resource(name = "userFacade")

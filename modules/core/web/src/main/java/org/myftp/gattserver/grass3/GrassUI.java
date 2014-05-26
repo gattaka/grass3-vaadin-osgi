@@ -11,8 +11,6 @@ import org.myftp.gattserver.grass3.ui.util.IPageFactoriesRegister;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
@@ -21,8 +19,6 @@ import com.vaadin.ui.UI;
 
 @Title("Gattserver")
 @Theme("grass")
-@Scope("prototype")
-@Component("grassUI")
 public class GrassUI extends UI {
 
 	private static final long serialVersionUID = -785347532002801786L;
@@ -45,6 +41,10 @@ public class GrassUI extends UI {
 
 	@Resource(name = "err500Factory")
 	private IPageFactory err500Factory;
+
+	public GrassUI() {
+		SpringContextHelper.inject(this);
+	}
 
 	/**
 	 * Získá aktuálního přihlášeného uživatele jako {@link UserInfoDTO} objekt
@@ -73,20 +73,20 @@ public class GrassUI extends UI {
 
 		IPageFactory factory = pageFactoriesRegister.get(analyzer.getPathToken(0));
 
-		GrassLayout buildedPage = factory.createPage(grassRequest);
+		GrassLayout buildedPage = factory.createPageIfAuthorized(grassRequest);
 
 		switch (grassRequest.getPageState()) {
 		case CLEAN:
 			setContent(buildedPage);
 			break;
 		case E403:
-			setContent(err403Factory.createPage(grassRequest));
+			setContent(err403Factory.createPageIfAuthorized(grassRequest));
 			break;
 		case E404:
-			setContent(err404Factory.createPage(grassRequest));
+			setContent(err404Factory.createPageIfAuthorized(grassRequest));
 			break;
 		case E500:
-			setContent(err500Factory.createPage(grassRequest));
+			setContent(err500Factory.createPageIfAuthorized(grassRequest));
 			break;
 		}
 

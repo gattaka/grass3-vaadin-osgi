@@ -54,9 +54,8 @@ public interface IContentNodeFacade {
 	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
 	 *         nebo
 	 */
-	public ContentNodeDTO save(String contentModuleId, Long contentId,
-			String name, boolean publicated, NodeDTO category,
-			UserInfoDTO author);
+	public ContentNodeDTO save(String contentModuleId, Long contentId, String name, boolean publicated,
+			NodeDTO category, UserInfoDTO author);
 
 	/**
 	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node
@@ -78,9 +77,8 @@ public interface IContentNodeFacade {
 	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
 	 *         nebo
 	 */
-	public ContentNodeDTO save(String contentModuleId, Long contentId,
-			String name, Collection<String> tags, boolean publicated,
-			NodeDTO category, UserInfoDTO author);
+	public ContentNodeDTO save(String contentModuleId, Long contentId, String name, Collection<String> tags,
+			boolean publicated, NodeDTO category, UserInfoDTO author);
 
 	/**
 	 * Získá contentNodeDTO dle jeho id
@@ -98,8 +96,7 @@ public interface IContentNodeFacade {
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean modify(ContentNodeDTO contentNode, String name,
-			boolean publicated);
+	public boolean modify(ContentNodeDTO contentNode, String name, boolean publicated);
 
 	/**
 	 * Upraví obsah a uloží ho do DB
@@ -112,8 +109,7 @@ public interface IContentNodeFacade {
 	 *            je článek publikován ?
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean modify(ContentNodeDTO contentNodeDTO, String name,
-			Collection<String> tags, boolean publicated);
+	public boolean modify(ContentNodeDTO contentNodeDTO, String name, Collection<String> tags, boolean publicated);
 
 	/**
 	 * Smaže obsah
@@ -123,5 +119,16 @@ public interface IContentNodeFacade {
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
 	public boolean delete(ContentNodeDTO contentNodeDTO);
+
+	/**
+	 * Přesune obsah mezi kategoriemi
+	 * 
+	 * @param nodeDTO
+	 *            cílová kategorie
+	 * 
+	 * @param contentNodeDTO
+	 *            obsah
+	 */
+	public void moveContent(NodeDTO nodeDTO, ContentNodeDTO contentNodeDTO);
 
 }

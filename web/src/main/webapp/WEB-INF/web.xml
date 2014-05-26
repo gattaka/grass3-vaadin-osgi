@@ -45,9 +45,11 @@
 		<servlet-name>Vaadin Application</servlet-name>
 		<servlet-class>org.myftp.gattserver.grass3.GrassVaadinServlet</servlet-class>
 		<init-param>
-			<param-name>beanName</param-name>
-			<param-value>grassUI</param-value>
+			<description>Vaadin UI</description>
+			<param-name>UIProvider</param-name>
+			<param-value>org.myftp.gattserver.grass3.GrassUIProvider</param-value>
 		</init-param>
+
 		<init-param>
 			<description>Application widgetset</description>
 			<param-name>widgetset</param-name>

@@ -3,8 +3,8 @@ package org.myftp.gattserver.grass3.medic.web;
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import org.myftp.gattserver.grass3.medic.facade.IMedicFacade;
-import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
-import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+import org.myftp.gattserver.grass3.subwindows.ErrorWindow;
+import org.myftp.gattserver.grass3.subwindows.GrassWindow;
 
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
@@ -19,7 +19,7 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
-public abstract class MedicalInstitutionCreateWindow extends GrassSubWindow {
+public abstract class MedicalInstitutionCreateWindow extends GrassWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -92,7 +92,7 @@ public abstract class MedicalInstitutionCreateWindow extends GrassSubWindow {
 									.saveMedicalInstitution(medicalInstitutionDTO) == false) {
 								UI.getCurrent()
 										.addWindow(
-												new ErrorSubwindow(
+												new ErrorWindow(
 														"Nezdařilo se vytvořit nový záznam"));
 							} else {
 								onSuccess();

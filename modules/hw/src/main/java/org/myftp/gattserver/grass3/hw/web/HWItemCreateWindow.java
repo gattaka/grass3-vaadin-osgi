@@ -8,8 +8,8 @@ import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemState;
 import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
-import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
-import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+import org.myftp.gattserver.grass3.subwindows.ErrorWindow;
+import org.myftp.gattserver.grass3.subwindows.GrassWindow;
 
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -27,7 +27,7 @@ import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-public abstract class HWItemCreateWindow extends GrassSubWindow {
+public abstract class HWItemCreateWindow extends GrassWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -143,7 +143,7 @@ public abstract class HWItemCreateWindow extends GrassSubWindow {
 							} else {
 								UI.getCurrent()
 										.addWindow(
-												new ErrorSubwindow(
+												new ErrorWindow(
 														fixItemId == null ? "Nezdařilo se vytvořit novou položku hardware"
 																: "Nezdařilo se upravit údaje"));
 							}

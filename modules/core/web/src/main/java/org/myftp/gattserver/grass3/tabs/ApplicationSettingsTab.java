@@ -5,11 +5,10 @@ import javax.annotation.Resource;
 import org.myftp.gattserver.grass3.config.CoreConfiguration;
 import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.facades.IContentTagFacade;
-import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
-import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
+import org.myftp.gattserver.grass3.subwindows.InfoWindow;
+import org.myftp.gattserver.grass3.subwindows.WarnWindow;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
-import org.springframework.context.annotation.Scope;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -25,8 +24,6 @@ import com.vaadin.ui.Slider;
 import com.vaadin.ui.Slider.ValueOutOfBoundsException;
 import com.vaadin.ui.VerticalLayout;
 
-@org.springframework.stereotype.Component("applicationSettingsTab")
-@Scope("prototype")
 public class ApplicationSettingsTab extends AbstractSettingsTab {
 
 	@Resource(name = "contentTagFacade")
@@ -159,11 +156,11 @@ public class ApplicationSettingsTab extends AbstractSettingsTab {
 
 					public void buttonClick(ClickEvent event) {
 						if (contentTagFacade.countContentNodes()) {
-							InfoSubwindow infoSubwindow = new InfoSubwindow(
+							InfoWindow infoSubwindow = new InfoWindow(
 									"Počty obsahů tagů byly úspěšně přepočítány");
 							getUI().addWindow(infoSubwindow);
 						} else {
-							WarnSubwindow warnSubwindow = new WarnSubwindow(
+							WarnWindow warnSubwindow = new WarnWindow(
 									"Nezdařilo se přepočítat počty obsahů tagů");
 							getUI().addWindow(warnSubwindow);
 						}

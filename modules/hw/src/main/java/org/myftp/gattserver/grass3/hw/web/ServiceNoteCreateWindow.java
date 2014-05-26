@@ -7,8 +7,8 @@ import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.dto.HWItemState;
 import org.myftp.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
-import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
-import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+import org.myftp.gattserver.grass3.subwindows.ErrorWindow;
+import org.myftp.gattserver.grass3.subwindows.GrassWindow;
 
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -24,7 +24,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 
-public abstract class ServiceNoteCreateWindow extends GrassSubWindow {
+public abstract class ServiceNoteCreateWindow extends GrassWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -101,7 +101,7 @@ public abstract class ServiceNoteCreateWindow extends GrassSubWindow {
 							} else {
 								UI.getCurrent()
 										.addWindow(
-												new ErrorSubwindow(
+												new ErrorWindow(
 														"Nezdařilo se zapsat nový servisní záznam"));
 							}
 							close();

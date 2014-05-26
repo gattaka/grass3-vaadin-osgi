@@ -1,11 +1,13 @@
 package org.myftp.gattserver.grass3.subwindows;
 
+import org.myftp.gattserver.grass3.SpringContextHelper;
+
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public class GrassSubWindow extends Window {
+public class GrassWindow extends Window {
 
 	private static final long serialVersionUID = -9184044674542039306L;
 
@@ -13,8 +15,9 @@ public class GrassSubWindow extends Window {
 
 	protected Component[] triggerComponents;
 
-	public GrassSubWindow(String name, Component... triggerComponents) {
+	public GrassWindow(String name, Component... triggerComponents) {
 		super(name);
+		SpringContextHelper.inject(this);
 
 		this.triggerComponents = triggerComponents;
 		for (Component component : triggerComponents)

@@ -1,7 +1,7 @@
 package org.myftp.gattserver.grass3.template;
 
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
-import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
+import org.myftp.gattserver.grass3.subwindows.ErrorWindow;
 
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.AbstractSelect;
@@ -28,7 +28,7 @@ public abstract class DeleteBtn<T> extends TableSelectedItemBtn<T> {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				final T selectedValue = getSelectedValue(table);
-				Window win = new ConfirmSubWindow(getConfirmMessage(selectedValue), triggerComponents) {
+				Window win = new ConfirmWindow(getConfirmMessage(selectedValue), triggerComponents) {
 
 					private static final long serialVersionUID = -422763987707688597L;
 
@@ -47,7 +47,7 @@ public abstract class DeleteBtn<T> extends TableSelectedItemBtn<T> {
 	}
 
 	protected void onError() {
-		UI.getCurrent().addWindow(new ErrorSubwindow("Nezdařilo se smazat vybranou položku"));
+		UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
 	}
 
 	protected String getConfirmMessage(T item) {

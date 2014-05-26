@@ -13,10 +13,9 @@ import org.springframework.context.ApplicationContext;
 import com.vaadin.server.ServiceException;
 import com.vaadin.server.SessionInitEvent;
 import com.vaadin.server.SessionInitListener;
+import com.vaadin.server.VaadinServlet;
 
-import ru.xpoft.vaadin.SpringVaadinServlet;
-
-public class GrassVaadinServlet extends SpringVaadinServlet {
+public class GrassVaadinServlet extends VaadinServlet {
 
 	private static final long serialVersionUID = -5411796850116104693L;
 

@@ -5,7 +5,6 @@ import org.myftp.gattserver.grass3.config.IConfigurationService;
 import org.myftp.gattserver.grass3.fm.config.FMConfiguration;
 import org.myftp.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
-import org.springframework.context.annotation.Scope;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
@@ -15,8 +14,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
-@org.springframework.stereotype.Component("fmSettingsTab")
-@Scope("prototype")
 public class FMSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = -3310643769376755875L;

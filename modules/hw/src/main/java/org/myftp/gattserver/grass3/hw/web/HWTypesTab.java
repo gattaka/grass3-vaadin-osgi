@@ -2,8 +2,8 @@ package org.myftp.gattserver.grass3.hw.web;
 
 import org.myftp.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
-import org.myftp.gattserver.grass3.subwindows.ConfirmSubWindow;
-import org.myftp.gattserver.grass3.subwindows.ErrorSubwindow;
+import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
+import org.myftp.gattserver.grass3.subwindows.ErrorWindow;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -51,7 +51,7 @@ public class HWTypesTab extends VerticalLayout {
 		BeanItem<?> item = cont.getItem(table.getValue());
 		final HWItemTypeDTO hwItemType = (HWItemTypeDTO) item.getBean();
 		UI.getCurrent().addWindow(
-				new ConfirmSubWindow("Opravdu smazat '" + hwItemType.getName()
+				new ConfirmWindow("Opravdu smazat '" + hwItemType.getName()
 						+ "' (typ bude odebrán od všech označených položek HW) ?") {
 
 					private static final long serialVersionUID = -422763987707688597L;
@@ -61,7 +61,7 @@ public class HWTypesTab extends VerticalLayout {
 						if (hwFacade.deleteHWItemType(hwItemType)) {
 							populateContainer();
 						} else {
-							UI.getCurrent().addWindow(new ErrorSubwindow("Nezdařilo se smazat vybranou položku"));
+							UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
 						}
 					}
 

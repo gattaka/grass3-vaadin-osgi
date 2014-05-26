@@ -1,13 +1,13 @@
 package org.myftp.gattserver.grass3.template;
 
-import org.myftp.gattserver.grass3.subwindows.GrassSubWindow;
+import org.myftp.gattserver.grass3.subwindows.GrassWindow;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-public abstract class AbstractDetailSubWindow extends GrassSubWindow {
+public abstract class AbstractDetailSubWindow extends GrassWindow {
 
 	private static final long serialVersionUID = -4989848867002620787L;
 

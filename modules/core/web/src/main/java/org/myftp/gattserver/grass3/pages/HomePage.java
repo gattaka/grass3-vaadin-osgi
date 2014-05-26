@@ -23,8 +23,6 @@ import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.perf4j.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.CssLayout;
@@ -32,13 +30,11 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-@Component("homepage")
-@Scope("prototype")
 public class HomePage extends BasePage {
 
 	private static final long serialVersionUID = 5355366043081283263L;
 
-	Logger logger = LoggerFactory.getLogger(StopWatch.DEFAULT_LOGGER_NAME);
+	private static Logger logger = LoggerFactory.getLogger(StopWatch.DEFAULT_LOGGER_NAME);
 
 	/**
 	 * Fasády

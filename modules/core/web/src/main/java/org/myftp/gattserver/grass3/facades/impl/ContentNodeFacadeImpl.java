@@ -285,8 +285,15 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	public void moveContent(NodeDTO nodeDTO, ContentNodeDTO contentNodeDTO) {
 		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO.getId());
 		Node newNode = nodeRepository.findOne(nodeDTO.getId());
+		Node oldNode = nodeRepository.findOne(contentNode.getParent().getId());
 
 		contentNode.setParent(newNode);
 		contentNodeRepository.save(contentNode);
+
+		newNode.getContentNodes().add(contentNode);
+		nodeRepository.save(newNode);
+
+		oldNode.getContentNodes().remove(contentNode);
+		nodeRepository.save(oldNode);
 	}
 }

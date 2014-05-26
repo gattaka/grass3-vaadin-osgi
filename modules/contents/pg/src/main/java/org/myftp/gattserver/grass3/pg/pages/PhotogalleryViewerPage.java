@@ -354,156 +354,61 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	}
 
 	@Override
-	protected void updateOperationsList(CssLayout operationsListLayout) {
-
-		// Upravit
-		if (coreACL.canModifyContent(photogallery.getContentNode(), getUser())) {
-			Button modifyButton = new Button(null);
-			modifyButton.setDescription("Upravit");
-			modifyButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/pencil_16.png"));
-			modifyButton.addClickListener(new Button.ClickListener() {
-
-				private static final long serialVersionUID = 607422393151282918L;
-
-				public void buttonClick(ClickEvent event) {
-
-					redirect(getPageURL(photogalleryEditorPageFactory, DefaultContentOperations.EDIT.toString(),
-							URLIdentifierUtils.createURLIdentifier(photogallery.getId(), photogallery.getContentNode()
-									.getName())));
-
-				}
-
-			});
-			operationsListLayout.addComponent(modifyButton);
-		}
-
-		// Smazat
-		if (coreACL.canDeleteContent(photogallery.getContentNode(), getUser())) {
-			Button deleteButton = new Button(null);
-			deleteButton.setDescription("Smazat");
-			deleteButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/delete_16.png"));
-			deleteButton.addClickListener(new Button.ClickListener() {
-
-				private static final long serialVersionUID = 607422393151282918L;
-
-				public void buttonClick(ClickEvent event) {
-
-					ConfirmSubWindow confirmSubwindow = new ConfirmSubWindow("Opravdu si přejete smazat tuto galerii ?") {
-
-						private static final long serialVersionUID = -3214040983143363831L;
-
-						@Override
-						protected void onConfirm(ClickEvent event) {
-
-							NodeDTO node = photogallery.getContentNode().getParent();
-
-							final String category = getPageURL(categoryPageFactory,
-									URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()));
-
-							// zdařilo se ? Pokud ano, otevři info okno a při
-							// potvrzení jdi na kategorii
-							if (photogalleryFacade.deletePhotogallery(photogallery)) {
-								InfoSubwindow infoSubwindow = new InfoSubwindow("Smazání galerie proběhlo úspěšně.") {
-
-									private static final long serialVersionUID = -6688396549852552674L;
-
-									protected void onProceed(ClickEvent event) {
-										redirect(category);
-									};
-								};
-								getUI().addWindow(infoSubwindow);
-							} else {
-								// Pokud ne, otevři warn okno a při
-								// potvrzení jdi na kategorii
-								WarnSubwindow warnSubwindow = new WarnSubwindow("Smazání galerie se nezdařilo.") {
-
-									private static final long serialVersionUID = -6688396549852552674L;
-
-									protected void onProceed(ClickEvent event) {
-										redirect(category);
-									};
-								};
-								getUI().addWindow(warnSubwindow);
-							}
-
-							// zavři původní confirm okno
-							getUI().removeWindow(this);
-
-						}
-					};
-					getUI().addWindow(confirmSubwindow);
-
-				}
-
-			});
-			operationsListLayout.addComponent(deleteButton);
-		}
-
-		// Deklarace tlačítek oblíbených
-		final Button removeFromFavouritesButton = new Button(null);
-		final Button addToFavouritesButton = new Button(null);
-
-		// Přidat do oblíbených
-		addToFavouritesButton.setDescription("Přidat do oblíbených");
-		addToFavouritesButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/heart_16.png"));
-		addToFavouritesButton.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = -4003115363728232801L;
-
-			public void buttonClick(ClickEvent event) {
-
-				// zdařilo se ? Pokud ano, otevři info okno
-				if (userFacade.addContentToFavourites(photogallery.getContentNode(), getUser())) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow("Vložení do oblíbených proběhlo úspěšně.");
-					getUI().addWindow(infoSubwindow);
-					addToFavouritesButton.setVisible(false);
-					removeFromFavouritesButton.setVisible(true);
-				} else {
-					// Pokud ne, otevři warn okno
-					WarnSubwindow warnSubwindow = new WarnSubwindow("Vložení do oblíbených se nezdařilo.");
-					getUI().addWindow(warnSubwindow);
-				}
-
-			}
-		});
-
-		// Odebrat z oblíbených
-		removeFromFavouritesButton.setDescription("Odebrat z oblíbených");
-		removeFromFavouritesButton.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/broken_heart_16.png"));
-		removeFromFavouritesButton.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 4826586588570179321L;
-
-			public void buttonClick(ClickEvent event) {
-
-				// zdařilo se ? Pokud ano, otevři info okno
-				if (userFacade.removeContentFromFavourites(photogallery.getContentNode(), getUser())) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow("Odebrání z oblíbených proběhlo úspěšně.");
-					getUI().addWindow(infoSubwindow);
-					removeFromFavouritesButton.setVisible(false);
-					addToFavouritesButton.setVisible(true);
-				} else {
-					// Pokud ne, otevři warn okno
-					WarnSubwindow warnSubwindow = new WarnSubwindow("Odebrání z oblíbených se nezdařilo.");
-					getUI().addWindow(warnSubwindow);
-				}
-
-			}
-		});
-
-		// Oblíbené
-		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(photogallery.getContentNode(), getUser()));
-		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(photogallery.getContentNode(),
-				getUser()));
-
-		operationsListLayout.addComponent(addToFavouritesButton);
-		operationsListLayout.addComponent(removeFromFavouritesButton);
-
+	protected IPageFactory getContentViewerPageFactory() {
+		return photogalleryViewerPageFactory;
 	}
 
 	@Override
-	protected IPageFactory getContentViewerPageFactory() {
-		return photogalleryViewerPageFactory;
+	protected void onDeleteOperation() {
+		ConfirmSubWindow confirmSubwindow = new ConfirmSubWindow("Opravdu si přejete smazat tuto galerii ?") {
+
+			private static final long serialVersionUID = -3214040983143363831L;
+
+			@Override
+			protected void onConfirm(ClickEvent event) {
+
+				NodeDTO node = photogallery.getContentNode().getParent();
+
+				final String category = getPageURL(categoryPageFactory,
+						URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()));
+
+				// zdařilo se ? Pokud ano, otevři info okno a při
+				// potvrzení jdi na kategorii
+				if (photogalleryFacade.deletePhotogallery(photogallery)) {
+					InfoSubwindow infoSubwindow = new InfoSubwindow("Smazání galerie proběhlo úspěšně.") {
+
+						private static final long serialVersionUID = -6688396549852552674L;
+
+						protected void onProceed(ClickEvent event) {
+							redirect(category);
+						};
+					};
+					getUI().addWindow(infoSubwindow);
+				} else {
+					// Pokud ne, otevři warn okno a při
+					// potvrzení jdi na kategorii
+					WarnSubwindow warnSubwindow = new WarnSubwindow("Smazání galerie se nezdařilo.") {
+
+						private static final long serialVersionUID = -6688396549852552674L;
+
+						protected void onProceed(ClickEvent event) {
+							redirect(category);
+						};
+					};
+					getUI().addWindow(warnSubwindow);
+				}
+
+				// zavři původní confirm okno
+				getUI().removeWindow(this);
+
+			}
+		};
+		getUI().addWindow(confirmSubwindow);
+	}
+
+	@Override
+	protected void onEditOperation() {
+		redirect(getPageURL(photogalleryEditorPageFactory, DefaultContentOperations.EDIT.toString(),
+				URLIdentifierUtils.createURLIdentifier(photogallery.getId(), photogallery.getContentNode().getName())));
 	}
 }

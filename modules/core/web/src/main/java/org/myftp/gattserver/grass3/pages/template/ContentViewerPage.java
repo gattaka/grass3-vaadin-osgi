@@ -7,11 +7,15 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.myftp.gattserver.grass3.facades.INodeFacade;
+import org.myftp.gattserver.grass3.facades.IUserFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.TwoColumnPage;
+import org.myftp.gattserver.grass3.security.ICoreACL;
+import org.myftp.gattserver.grass3.subwindows.InfoSubwindow;
+import org.myftp.gattserver.grass3.subwindows.WarnSubwindow;
 import org.myftp.gattserver.grass3.template.Breadcrumb;
 import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
@@ -19,6 +23,7 @@ import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
@@ -27,6 +32,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Button.ClickEvent;
 
 public abstract class ContentViewerPage extends TwoColumnPage {
 
@@ -35,6 +41,12 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	@Resource(name = "nodeFacade")
 	private INodeFacade nodeFacade;
 
+	@Resource(name = "coreACL")
+	private ICoreACL coreACL;
+
+	@Resource(name = "userFacade")
+	private IUserFacade userFacade;
+	
 	@Resource(name = "categoryPageFactory")
 	private IPageFactory categoryPageFactory;
 
@@ -65,32 +77,126 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("d.M.yyyy HH:mm:ss");
 
-		contentNameLabel = new Label("<h2>" + content.getName() + "</h2>");
-		contentNameLabel.setContentMode(ContentMode.HTML);
+		contentNameLabel = new Label("<h2>" + content.getName() + "</h2>", ContentMode.HTML);
 
 		contentAuthorNameLabel = new Label(content.getAuthor().getName());
 
-		contentCreationDateNameLabel = new Label(dateFormat.format(content
-				.getCreationDate()));
+		contentCreationDateNameLabel = new Label(dateFormat.format(content.getCreationDate()));
 
 		contentLastModificationDateLabel = new Label(
-				content.getLastModificationDate() == null ? "<em>-neupraveno-</em>"
-						: dateFormat.format(content.getLastModificationDate()));
+				content.getLastModificationDate() == null ? "<em>-neupraveno-</em>" : dateFormat.format(content
+						.getLastModificationDate()));
 		contentLastModificationDateLabel.setContentMode(ContentMode.HTML);
 
 		tagsListLayout.removeAllComponents();
 		for (ContentTagDTO contentTag : content.getContentTags()) {
-			Link tagLink = new Link(contentTag.getName(), getPageResource(
-					tagPageFactory, URLIdentifierUtils.createURLIdentifier(
-							contentTag.getId(), contentTag.getName())));
+			Link tagLink = new Link(contentTag.getName(), getPageResource(tagPageFactory,
+					URLIdentifierUtils.createURLIdentifier(contentTag.getId(), contentTag.getName())));
 			tagLink.addStyleName("taglabel");
 			tagsListLayout.addComponent(tagLink);
 		}
 
 		operationsListLayout = new CssLayout();
-		updateOperationsList(operationsListLayout);
+		createContentOperations(operationsListLayout);
 
 		super.init();
+	}
+
+	protected void createContentOperations(CssLayout operationsListLayout) {
+
+		// Upravit
+		if (coreACL.canModifyContent(content, getUser())) {
+			Button modifyButton = new Button(null);
+			modifyButton.setDescription("Upravit");
+			modifyButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/pencil_16.png"));
+			modifyButton.addClickListener(new Button.ClickListener() {
+				private static final long serialVersionUID = 607422393151282918L;
+
+				public void buttonClick(ClickEvent event) {
+					onEditOperation();
+				}
+			});
+			operationsListLayout.addComponent(modifyButton);
+		}
+
+		// Smazat
+		if (coreACL.canDeleteContent(content, getUser())) {
+			Button deleteButton = new Button(null);
+			deleteButton.setDescription("Smazat");
+			deleteButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/delete_16.png"));
+			deleteButton.addClickListener(new Button.ClickListener() {
+				private static final long serialVersionUID = 607422393151282918L;
+
+				public void buttonClick(ClickEvent event) {
+					onDeleteOperation();
+				}
+			});
+			operationsListLayout.addComponent(deleteButton);
+		}
+
+		// Deklarace tlačítek oblíbených
+		final Button removeFromFavouritesButton = new Button(null);
+		final Button addToFavouritesButton = new Button(null);
+
+		// Přidat do oblíbených
+		addToFavouritesButton.setDescription("Přidat do oblíbených");
+		addToFavouritesButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/heart_16.png"));
+		addToFavouritesButton.addClickListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = -4003115363728232801L;
+
+			public void buttonClick(ClickEvent event) {
+
+				// zdařilo se ? Pokud ano, otevři info okno
+				if (userFacade.addContentToFavourites(content, getUser())) {
+					InfoSubwindow infoSubwindow = new InfoSubwindow("Vložení do oblíbených proběhlo úspěšně.");
+					getUI().addWindow(infoSubwindow);
+					addToFavouritesButton.setVisible(false);
+					removeFromFavouritesButton.setVisible(true);
+				} else {
+					// Pokud ne, otevři warn okno
+					WarnSubwindow warnSubwindow = new WarnSubwindow("Vložení do oblíbených se nezdařilo.");
+					getUI().addWindow(warnSubwindow);
+				}
+
+			}
+		});
+
+		// Odebrat z oblíbených
+		removeFromFavouritesButton.setDescription("Odebrat z oblíbených");
+		removeFromFavouritesButton.setIcon((com.vaadin.server.Resource) new ThemeResource(
+				"img/tags/broken_heart_16.png"));
+		removeFromFavouritesButton.addClickListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 4826586588570179321L;
+
+			public void buttonClick(ClickEvent event) {
+
+				// zdařilo se ? Pokud ano, otevři info okno
+				if (userFacade.removeContentFromFavourites(content, getUser())) {
+					InfoSubwindow infoSubwindow = new InfoSubwindow("Odebrání z oblíbených proběhlo úspěšně.");
+					getUI().addWindow(infoSubwindow);
+					removeFromFavouritesButton.setVisible(false);
+					addToFavouritesButton.setVisible(true);
+				} else {
+					// Pokud ne, otevři warn okno
+					WarnSubwindow warnSubwindow = new WarnSubwindow("Odebrání z oblíbených se nezdařilo.");
+					getUI().addWindow(warnSubwindow);
+				}
+
+			}
+		});
+
+		// Oblíbené
+		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(content, getUser()));
+		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(content,
+				getUser()));
+
+		operationsListLayout.addComponent(addToFavouritesButton);
+		operationsListLayout.addComponent(removeFromFavouritesButton);
+		
+		// Změna kategorie
+		// TODO
 	}
 
 	@Override
@@ -108,10 +214,8 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 			publicatedLayout.setSpacing(true);
 			publicatedLayout.setMargin(false);
 			publicatedLayout.addStyleName("not-publicated-info");
-			publicatedLayout.addComponent(new Embedded(null, new ThemeResource(
-					"img/tags/info_16.png")));
-			publicatedLayout.addComponent(new Label(
-					"<strong>Nepublikováno</strong>", ContentMode.HTML));
+			publicatedLayout.addComponent(new Embedded(null, new ThemeResource("img/tags/info_16.png")));
+			publicatedLayout.addComponent(new Label("<strong>Nepublikováno</strong>", ContentMode.HTML));
 			layout.addComponent(publicatedLayout, "pubinfo");
 		}
 
@@ -165,11 +269,8 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		/**
 		 * obsah
 		 */
-		breadcrumbElements.add(new BreadcrumbElement(content.getName(),
-				getPageResource(
-						getContentViewerPageFactory(),
-						URLIdentifierUtils.createURLIdentifier(
-								content.getContentID(), content.getName()))));
+		breadcrumbElements.add(new BreadcrumbElement(content.getName(), getPageResource(getContentViewerPageFactory(),
+				URLIdentifierUtils.createURLIdentifier(content.getContentID(), content.getName()))));
 
 		/**
 		 * kategorie
@@ -181,11 +282,8 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 			if (parent == null)
 				showError404();
 
-			breadcrumbElements.add(new BreadcrumbElement(parent.getName(),
-					getPageResource(
-							categoryPageFactory,
-							URLIdentifierUtils.createURLIdentifier(
-									parent.getId(), parent.getName()))));
+			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageResource(categoryPageFactory,
+					URLIdentifierUtils.createURLIdentifier(parent.getId(), parent.getName()))));
 
 			// pokud je můj předek null, pak je to konec a je to všechno
 			if (parent.getParent() == null)
@@ -197,5 +295,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		breadcrumb.resetBreadcrumb(breadcrumbElements);
 	}
 
-	protected abstract void updateOperationsList(CssLayout operationsListLayout);
+	protected abstract void onDeleteOperation();
+
+	protected abstract void onEditOperation();
 }

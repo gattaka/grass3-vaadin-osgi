@@ -22,9 +22,7 @@ import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.springframework.context.annotation.Scope;
 
-import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
@@ -120,150 +118,13 @@ public class ArticlesViewerPage extends ContentViewerPage {
 	}
 
 	@Override
-	protected void updateOperationsList(CssLayout operationsListLayout) {
+	protected IPageFactory getContentViewerPageFactory() {
+		return articlesViewerPageFactory;
+	}
 
-		// Upravit
-		if (coreACL.canModifyContent(article.getContentNode(), getUser())) {
-			Button modifyButton = new Button(null);
-			modifyButton.setDescription("Upravit");
-			modifyButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/pencil_16.png"));
-			modifyButton.addClickListener(new Button.ClickListener() {
-
-				private static final long serialVersionUID = 607422393151282918L;
-
-				public void buttonClick(ClickEvent event) {
-
-					redirect(getPageURL(articlesEditorPageFactory, DefaultContentOperations.EDIT.toString(),
-							URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName())));
-
-				}
-
-			});
-			operationsListLayout.addComponent(modifyButton);
-		}
-
-		// Smazat
-		if (coreACL.canDeleteContent(article.getContentNode(), getUser())) {
-			Button deleteButton = new Button(null);
-			deleteButton.setDescription("Smazat");
-			deleteButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/delete_16.png"));
-			deleteButton.addClickListener(new Button.ClickListener() {
-
-				private static final long serialVersionUID = 607422393151282918L;
-
-				public void buttonClick(ClickEvent event) {
-
-					ConfirmSubWindow confirmSubwindow = new ConfirmSubWindow("Opravdu si přejete smazat tento článek ?") {
-
-						private static final long serialVersionUID = -3214040983143363831L;
-
-						@Override
-						protected void onConfirm(ClickEvent event) {
-
-							NodeDTO node = article.getContentNode().getParent();
-
-							final String category = getPageURL(categoryPageFactory,
-									URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()));
-
-							// zdařilo se ? Pokud ano, otevři info okno a při
-							// potvrzení jdi na kategorii
-							if (articleFacade.deleteArticle(article)) {
-								InfoSubwindow infoSubwindow = new InfoSubwindow("Smazání článku proběhlo úspěšně.") {
-
-									private static final long serialVersionUID = -6688396549852552674L;
-
-									protected void onProceed(ClickEvent event) {
-										redirect(category);
-									};
-								};
-								getUI().addWindow(infoSubwindow);
-							} else {
-								// Pokud ne, otevři warn okno a při
-								// potvrzení jdi na kategorii
-								WarnSubwindow warnSubwindow = new WarnSubwindow("Smazání článku se nezdařilo.") {
-
-									private static final long serialVersionUID = -6688396549852552674L;
-
-									protected void onProceed(ClickEvent event) {
-										redirect(category);
-									};
-								};
-								getUI().addWindow(warnSubwindow);
-							}
-
-							// zavři původní confirm okno
-							getUI().removeWindow(this);
-
-						}
-					};
-					getUI().addWindow(confirmSubwindow);
-
-				}
-
-			});
-			operationsListLayout.addComponent(deleteButton);
-		}
-
-		// Deklarace tlačítek oblíbených
-		final Button removeFromFavouritesButton = new Button(null);
-		final Button addToFavouritesButton = new Button(null);
-
-		// Přidat do oblíbených
-		addToFavouritesButton.setDescription("Přidat do oblíbených");
-		addToFavouritesButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/heart_16.png"));
-		addToFavouritesButton.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = -4003115363728232801L;
-
-			public void buttonClick(ClickEvent event) {
-
-				// zdařilo se ? Pokud ano, otevři info okno
-				if (userFacade.addContentToFavourites(article.getContentNode(), getUser())) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow("Vložení do oblíbených proběhlo úspěšně.");
-					getUI().addWindow(infoSubwindow);
-					addToFavouritesButton.setVisible(false);
-					removeFromFavouritesButton.setVisible(true);
-				} else {
-					// Pokud ne, otevři warn okno
-					WarnSubwindow warnSubwindow = new WarnSubwindow("Vložení do oblíbených se nezdařilo.");
-					getUI().addWindow(warnSubwindow);
-				}
-
-			}
-		});
-
-		// Odebrat z oblíbených
-		removeFromFavouritesButton.setDescription("Odebrat z oblíbených");
-		removeFromFavouritesButton.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/broken_heart_16.png"));
-		removeFromFavouritesButton.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 4826586588570179321L;
-
-			public void buttonClick(ClickEvent event) {
-
-				// zdařilo se ? Pokud ano, otevři info okno
-				if (userFacade.removeContentFromFavourites(article.getContentNode(), getUser())) {
-					InfoSubwindow infoSubwindow = new InfoSubwindow("Odebrání z oblíbených proběhlo úspěšně.");
-					getUI().addWindow(infoSubwindow);
-					removeFromFavouritesButton.setVisible(false);
-					addToFavouritesButton.setVisible(true);
-				} else {
-					// Pokud ne, otevři warn okno
-					WarnSubwindow warnSubwindow = new WarnSubwindow("Odebrání z oblíbených se nezdařilo.");
-					getUI().addWindow(warnSubwindow);
-				}
-
-			}
-		});
-
-		// Oblíbené
-		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(article.getContentNode(), getUser()));
-		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(article.getContentNode(),
-				getUser()));
-
-		operationsListLayout.addComponent(addToFavouritesButton);
-		operationsListLayout.addComponent(removeFromFavouritesButton);
+	@Override
+	protected void createContentOperations(CssLayout operationsListLayout) {
+		super.createContentOperations(operationsListLayout);
 
 		// Rychlé úpravy
 		if (coreACL.canModifyContent(article.getContentNode(), getUser())) {
@@ -275,11 +136,60 @@ public class ArticlesViewerPage extends ContentViewerPage {
 					+ "}" + ")";
 			loadJS(new JScriptItem(script, true));
 		}
+	}
+
+	@Override
+	protected void onDeleteOperation() {
+		ConfirmSubWindow confirmSubwindow = new ConfirmSubWindow("Opravdu si přejete smazat tento článek ?") {
+
+			private static final long serialVersionUID = -3214040983143363831L;
+
+			@Override
+			protected void onConfirm(ClickEvent event) {
+
+				NodeDTO node = article.getContentNode().getParent();
+
+				final String category = getPageURL(categoryPageFactory,
+						URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()));
+
+				// zdařilo se ? Pokud ano, otevři info okno a při
+				// potvrzení jdi na kategorii
+				if (articleFacade.deleteArticle(article)) {
+					InfoSubwindow infoSubwindow = new InfoSubwindow("Smazání článku proběhlo úspěšně.") {
+
+						private static final long serialVersionUID = -6688396549852552674L;
+
+						protected void onProceed(ClickEvent event) {
+							redirect(category);
+						};
+					};
+					getUI().addWindow(infoSubwindow);
+				} else {
+					// Pokud ne, otevři warn okno a při
+					// potvrzení jdi na kategorii
+					WarnSubwindow warnSubwindow = new WarnSubwindow("Smazání článku se nezdařilo.") {
+
+						private static final long serialVersionUID = -6688396549852552674L;
+
+						protected void onProceed(ClickEvent event) {
+							redirect(category);
+						};
+					};
+					getUI().addWindow(warnSubwindow);
+				}
+
+				// zavři původní confirm okno
+				getUI().removeWindow(this);
+
+			}
+		};
+		getUI().addWindow(confirmSubwindow);
 
 	}
 
 	@Override
-	protected IPageFactory getContentViewerPageFactory() {
-		return articlesViewerPageFactory;
+	protected void onEditOperation() {
+		redirect(getPageURL(articlesEditorPageFactory, DefaultContentOperations.EDIT.toString(),
+				URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName())));
 	}
 }

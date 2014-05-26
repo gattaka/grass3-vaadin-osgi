@@ -2,8 +2,6 @@ package org.myftp.gattserver.grass3.subwindows;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.myftp.gattserver.grass3.facades.IContentNodeFacade;
 import org.myftp.gattserver.grass3.facades.INodeFacade;
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
@@ -13,11 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.Tree;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
 public abstract class ContentMoveWindow extends GrassWindow {
@@ -40,8 +40,16 @@ public abstract class ContentMoveWindow extends GrassWindow {
 	public ContentMoveWindow(final ContentNodeDTO contentNodeDTO) {
 		super("Přesunout obsah");
 
+		VerticalLayout layout = (VerticalLayout) getContent();
+
+		setWidth("500px");
+
+		Panel panel = new Panel();
+		layout.addComponent(panel);
+		panel.setHeight("300px");
+
 		tree = new Tree();
-		addComponent(tree);
+		panel.setContent(tree);
 		tree.setImmediate(true);
 		tree.addValueChangeListener(new Property.ValueChangeListener() {
 			private static final long serialVersionUID = 191011037696709486L;
@@ -61,13 +69,15 @@ public abstract class ContentMoveWindow extends GrassWindow {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				@SuppressWarnings("unchecked")
-				NodeDTO nodeDTO = ((BeanItem<NodeDTO>) tree.getItem(tree.getValue())).getBean();
+				NodeDTO nodeDTO = (NodeDTO) tree.getValue();
 				contentNodeFacade.moveContent(nodeDTO, contentNodeDTO);
 				close();
 				onMove();
 			}
 		});
+
+		layout.addComponent(moveBtn);
+		layout.setComponentAlignment(moveBtn, Alignment.MIDDLE_RIGHT);
 
 	}
 
@@ -102,7 +112,7 @@ public abstract class ContentMoveWindow extends GrassWindow {
 				populateContainer(container, childrenNodes, node);
 		}
 	}
-	
-	protected abstract void onMove(); 
+
+	protected abstract void onMove();
 
 }

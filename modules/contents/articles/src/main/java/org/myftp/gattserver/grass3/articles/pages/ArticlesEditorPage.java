@@ -78,13 +78,13 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private NodeDTO category;
 	private ArticleDTO article;
 
-	private final TextArea articleTextArea = new TextArea();
-	private final TokenField articleKeywords = new TokenField();
-	private final TextField articleNameField = new TextField();
-	private final CheckBox publicatedCheckBox = new CheckBox();
+	private TextArea articleTextArea;
+	private TokenField articleKeywords;
+	private TextField articleNameField;
+	private CheckBox publicatedCheckBox;
 
-	private boolean editMode = false;
-	private PartsFinder.Result parts = null;
+	private boolean editMode;
+	private PartsFinder.Result parts;
 
 	public ArticlesEditorPage(GrassRequest request) {
 		super(request);
@@ -94,6 +94,14 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 	@Override
 	protected void init() {
+
+		articleTextArea = new TextArea();
+		articleKeywords = new TokenField();
+		articleNameField = new TextField();
+		publicatedCheckBox = new CheckBox();
+
+		editMode = false;
+		parts = null;
 
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		String operationToken = analyzer.getCurrentPathToken();

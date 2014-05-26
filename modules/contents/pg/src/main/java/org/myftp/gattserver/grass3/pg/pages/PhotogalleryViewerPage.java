@@ -69,23 +69,23 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	private PhotogalleryDTO photogallery;
 
-	private int rowsSum = 0;
-	private int imageSum = 0;
-	private int galleryGridRowOffset = 0;
-	private final int galleryGridCols = 4;
-	private final int galleryGridRows = 3;
+	private int rowsSum;
+	private int imageSum;
+	private int galleryGridRowOffset;
+	private int galleryGridCols;
+	private int galleryGridRows;
 
-	private final Label rowStatusLabel = new Label();
+	private Label rowStatusLabel;
 
-	private final Button upRowBtn = new Button("Řádek nahoru");
-	private final Button downRowBtn = new Button("Řádek dolů");
-	private final Button upPageBtn = new Button("Stránka nahoru");
-	private final Button downPageBtn = new Button("Stránka dolů");
-	private final Button startPageBtn = new Button("Na začátek");
-	private final Button endPageBtn = new Button("Na konec");
+	private Button upRowBtn;
+	private Button downRowBtn;
+	private Button upPageBtn;
+	private Button downPageBtn;
+	private Button startPageBtn;
+	private Button endPageBtn;
 
-	private final String ROWS_STATUS_PREFIX = "Zobrazeny řádky: ";
-	private final String IMAGE_SUM_PREFIX = " | Celkový počet fotek: ";
+	private String ROWS_STATUS_PREFIX;
+	private String IMAGE_SUM_PREFIX;
 
 	private GridLayout galleryGridLayout;
 
@@ -94,6 +94,25 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	}
 
 	protected void init() {
+
+		rowsSum = 0;
+		imageSum = 0;
+		galleryGridRowOffset = 0;
+		galleryGridCols = 4;
+		galleryGridRows = 3;
+
+		rowStatusLabel = new Label();
+
+		upRowBtn = new Button("Řádek nahoru");
+		downRowBtn = new Button("Řádek dolů");
+		upPageBtn = new Button("Stránka nahoru");
+		downPageBtn = new Button("Stránka dolů");
+		startPageBtn = new Button("Na začátek");
+		endPageBtn = new Button("Na konec");
+
+		ROWS_STATUS_PREFIX = "Zobrazeny řádky: ";
+		IMAGE_SUM_PREFIX = " | Celkový počet fotek: ";
+
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(analyzer
 				.getCurrentPathToken());

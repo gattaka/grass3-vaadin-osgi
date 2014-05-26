@@ -75,19 +75,19 @@ public class FMPage extends OneColumnPage {
 	private MultiFileUpload multiFileUpload;
 
 	/**
-	 * Status label, vybrané soubory apod.
-	 */
-	private Label statusLabel = new Label();
-
-	/**
 	 * Hodnota status labelu, když nejsou vybraná žádná pole
 	 */
 	private String satusLabelStaticValue;
 
 	/**
+	 * Status label, vybrané soubory apod.
+	 */
+	private Label statusLabel;
+
+	/**
 	 * Breadcrumb
 	 */
-	private Breadcrumb breadcrumb = new Breadcrumb();
+	private Breadcrumb breadcrumb;
 
 	/**
 	 * Přehled sloupců tabulky souborů
@@ -131,6 +131,9 @@ public class FMPage extends OneColumnPage {
 
 	@Override
 	protected void init() {
+
+		statusLabel = new Label();
+		breadcrumb = new Breadcrumb();
 
 		StringBuilder builder = new StringBuilder();
 		String pathPart;

@@ -45,6 +45,17 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
+	private static final Action ACTION_DELETE = new Action("Smazat");
+	private static final Action ACTION_RENAME = new Action("Přejmenovat");
+	private static final Action[] ACTIONS = new Action[] { ACTION_DELETE, ACTION_RENAME };
+
+	private Tree tree;
+	private ReferenceHolder<NodeDTO> selectedNode;
+
+	private String panelCaptionPrefix;
+	private String sectionRootCaption;
+	private Panel panel;
+
 	@Resource(name = "nodeFacade")
 	private INodeFacade nodeFacade;
 
@@ -52,23 +63,19 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 		super(request);
 	}
 
-	private static final Action ACTION_DELETE = new Action("Smazat");
-	private static final Action ACTION_RENAME = new Action("Přejmenovat");
-	private static final Action[] ACTIONS = new Action[] { ACTION_DELETE, ACTION_RENAME };
-
-	private final Tree tree = new Tree();
-	private final ReferenceHolder<NodeDTO> selectedNode = new ReferenceHolder<NodeDTO>();
-
-	private final String panelCaptionPrefix = "Vložit novou kategorii do: ";
-	private final String sectionRootCaption = "-kořen sekce-";
-	private Panel panel = new Panel(panelCaptionPrefix + sectionRootCaption);
-
 	private enum TreePropertyID {
 		NÁZEV, IKONA
 	}
 
 	@Override
 	protected Component createContent() {
+
+		tree = new Tree();
+		selectedNode = new ReferenceHolder<NodeDTO>();
+
+		panelCaptionPrefix = "Vložit novou kategorii do: ";
+		sectionRootCaption = "-kořen sekce-";
+		panel = new Panel(panelCaptionPrefix + sectionRootCaption);
 
 		VerticalLayout layout = new VerticalLayout();
 

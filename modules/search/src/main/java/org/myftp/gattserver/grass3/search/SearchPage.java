@@ -37,12 +37,22 @@ public class SearchPage extends OneColumnPage {
 	@Resource(name = "searchFacade")
 	private SearchFacade searchFacade;
 
-	private final VerticalLayout outputLayout = new VerticalLayout();
-	private final TextField searchField = new TextField();
-	private final ComboBox moduleCombo = new ComboBox();
+	private VerticalLayout outputLayout;
+	private TextField searchField;
+	private ComboBox moduleCombo;
 
 	public SearchPage(GrassRequest request) {
 		super(request);
+	}
+
+	@Override
+	protected void init() {
+
+		outputLayout = new VerticalLayout();
+		searchField = new TextField();
+		moduleCombo = new ComboBox();
+
+		super.init();
 	}
 
 	private void searchAndPrintHits() {

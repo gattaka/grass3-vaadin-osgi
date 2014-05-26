@@ -30,13 +30,12 @@ import com.vaadin.ui.Window;
 public class UsersSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = 2474374292329895766L;
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
-			"d.M.yyyy HH:mm:ss");
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("d.M.yyyy HH:mm:ss");
 
 	@Resource(name = "userFacade")
 	private IUserFacade userFacade;
 
-	private final Table userTable = new Table();
+	private Table userTable;
 
 	public UsersSettingsTab(GrassRequest request) {
 		super(request);
@@ -54,6 +53,8 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 	@Override
 	protected Component createContent() {
 
+		userTable = new Table();
+
 		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);
@@ -62,8 +63,7 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 		VerticalLayout usersLayout = new VerticalLayout();
 		layout.addComponent(usersLayout);
 
-		usersLayout.addComponent(new Label("<h2>Správa uživatelů</h2>",
-				ContentMode.HTML));
+		usersLayout.addComponent(new Label("<h2>Správa uživatelů</h2>", ContentMode.HTML));
 
 		usersLayout.addComponent(userTable);
 
@@ -71,8 +71,7 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 		layout.addComponent(userMenuLayout);
 		userMenuLayout.setSpacing(true);
 
-		userTable.setColumnHeader(ColumnId.POSLEDNÍ_PŘIHLÁŠENÍ,
-				"POSLEDNÍ PŘIHLÁŠENÍ");
+		userTable.setColumnHeader(ColumnId.POSLEDNÍ_PŘIHLÁŠENÍ, "POSLEDNÍ PŘIHLÁŠENÍ");
 		userTable.setColumnHeader(ColumnId.REGISTROVÁN_OD, "REGISTROVÁN OD");
 		userTable.setSizeFull();
 		userTable.setSelectable(true);
@@ -88,8 +87,7 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 					userMenuLayout.setVisible(false);
 				} else {
 					userMenuLayout.removeAllComponents();
-					userMenuLayout.addComponent(user.isConfirmed() ? createBanButton(user)
-							: createActivateButton(user));
+					userMenuLayout.addComponent(user.isConfirmed() ? createBanButton(user) : createActivateButton(user));
 					userMenuLayout.addComponent(createSetRolesButton(user));
 					userMenuLayout.setVisible(true);
 				}
@@ -100,10 +98,8 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 		container.addContainerProperty(ColumnId.ID, Long.class, null);
 		container.addContainerProperty(ColumnId.JMÉNO, String.class, null);
 		container.addContainerProperty(ColumnId.ROLE, String.class, null);
-		container.addContainerProperty(ColumnId.REGISTROVÁN_OD, String.class,
-				null);
-		container.addContainerProperty(ColumnId.POSLEDNÍ_PŘIHLÁŠENÍ,
-				String.class, null);
+		container.addContainerProperty(ColumnId.REGISTROVÁN_OD, String.class, null);
+		container.addContainerProperty(ColumnId.POSLEDNÍ_PŘIHLÁŠENÍ, String.class, null);
 		container.addContainerProperty(ColumnId.AKTIVNÍ, String.class, null);
 		container.addContainerProperty(ColumnId.EMAIL, String.class, null);
 		userTable.setContainerDataSource(container);
@@ -114,15 +110,11 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 			Item item = userTable.addItem(user);
 			item.getItemProperty(ColumnId.ID).setValue(user.getId());
 			item.getItemProperty(ColumnId.JMÉNO).setValue(user.getName());
-			item.getItemProperty(ColumnId.ROLE).setValue(
-					user.getRoles().toString());
-			item.getItemProperty(ColumnId.REGISTROVÁN_OD).setValue(
-					dateFormat.format(user.getRegistrationDate()));
+			item.getItemProperty(ColumnId.ROLE).setValue(user.getRoles().toString());
+			item.getItemProperty(ColumnId.REGISTROVÁN_OD).setValue(dateFormat.format(user.getRegistrationDate()));
 			item.getItemProperty(ColumnId.POSLEDNÍ_PŘIHLÁŠENÍ).setValue(
-					user.getLastLoginDate() == null ? "" : dateFormat
-							.format(user.getLastLoginDate()));
-			item.getItemProperty(ColumnId.AKTIVNÍ).setValue(
-					String.valueOf(user.isConfirmed()));
+					user.getLastLoginDate() == null ? "" : dateFormat.format(user.getLastLoginDate()));
+			item.getItemProperty(ColumnId.AKTIVNÍ).setValue(String.valueOf(user.isConfirmed()));
 			item.getItemProperty(ColumnId.EMAIL).setValue(user.getEmail());
 		}
 
@@ -139,15 +131,12 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 			public void buttonClick(ClickEvent event) {
 				user.setConfirmed(true);
 				if (userFacade.activateUser(user)) {
-					showInfo("Uživatel '" + user.getName()
-							+ "' byl úspěšně aktivován");
-					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ)
-							.setValue(String.valueOf(user.isConfirmed()));
+					showInfo("Uživatel '" + user.getName() + "' byl úspěšně aktivován");
+					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ).setValue(String.valueOf(user.isConfirmed()));
 					userTable.unselect(user);
 					userTable.select(user);
 				} else {
-					showError("Nezdařilo se uložit úpravy provedené na uživateli '"
-							+ user.getName() + "'");
+					showError("Nezdařilo se uložit úpravy provedené na uživateli '" + user.getName() + "'");
 				}
 
 			}
@@ -165,15 +154,12 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 			public void buttonClick(ClickEvent event) {
 				user.setConfirmed(false);
 				if (userFacade.banUser(user)) {
-					showInfo("Uživatel '" + user.getName()
-							+ "' byl úspěšně zablokován");
-					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ)
-							.setValue(String.valueOf(user.isConfirmed()));
+					showInfo("Uživatel '" + user.getName() + "' byl úspěšně zablokován");
+					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ).setValue(String.valueOf(user.isConfirmed()));
 					userTable.unselect(user);
 					userTable.select(user);
 				} else {
-					showError("Nezdařilo se uložit úpravy provedené na uživateli '"
-							+ user.getName() + "'");
+					showError("Nezdařilo se uložit úpravy provedené na uživateli '" + user.getName() + "'");
 				}
 			}
 
@@ -193,8 +179,7 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 				subwindow.center();
 				getUI().addWindow(subwindow);
 				subwindow.setWidth("220px");
-				VerticalLayout subwindowLayout = ((VerticalLayout) subwindow
-						.getContent());
+				VerticalLayout subwindowLayout = ((VerticalLayout) subwindow.getContent());
 
 				for (final Role value : Role.values()) {
 					final CheckBox checkbox = new CheckBox(value.getRoleName());
@@ -221,15 +206,12 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 
 					public void buttonClick(ClickEvent event) {
 						if (userFacade.changeUserRoles(user)) {
-							showInfo("Oprávnění uživatele '" + user.getName()
-									+ "' byly úspěšně upraven");
-							userTable.getContainerProperty(user, ColumnId.ROLE)
-									.setValue(user.getRoles().toString());
+							showInfo("Oprávnění uživatele '" + user.getName() + "' byly úspěšně upraven");
+							userTable.getContainerProperty(user, ColumnId.ROLE).setValue(user.getRoles().toString());
 							userTable.unselect(user);
 							userTable.select(user);
 						} else {
-							showError("Nezdařilo se uložit úpravy provedené na uživateli '"
-									+ user.getName() + "'");
+							showError("Nezdařilo se uložit úpravy provedené na uživateli '" + user.getName() + "'");
 						}
 					}
 

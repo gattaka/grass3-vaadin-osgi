@@ -73,7 +73,7 @@ public class CategoryPage extends OneColumnPage {
 		noSubNodesLabel = new Label("Nebyly nalezeny žádné podkategorie");
 		super.init();
 	}
-	
+
 	@Override
 	protected Component createContent() {
 
@@ -189,21 +189,32 @@ public class CategoryPage extends OneColumnPage {
 
 		subNodesLayout.addComponent(new Label("<h2>Podkategorie</h2>", ContentMode.HTML));
 
-		List<NodeDTO> nodes = node.getSubNodes();
-		if (nodes == null) {
-			showError500();
-			return;
-		}
+		populateSubnodesTable(node);
 
 		subNodesLayout.addComponent(subNodesTable);
 		layout.addComponent(subNodesLayout);
 		subNodesTable.setWidth("100%");
-		subNodesTable.setVisible(nodes.size() != 0);
-		subNodesTable.populateTable(nodes, this);
 
 		noSubNodesLabel.setWidth(null);
 		subNodesLayout.addComponent(noSubNodesLabel);
 		subNodesLayout.setComponentAlignment(noSubNodesLabel, Alignment.MIDDLE_CENTER);
+
+		// Vytvořit novou kategorii
+		if (coreACL.canCreateCategory(getUser())) {
+			createNewNodePanel(layout, node);
+		}
+	}
+
+	private void populateSubnodesTable(NodeDTO node) {
+
+		List<NodeDTO> nodes = nodeFacade.getNodesByParentNode(node);
+		if (nodes == null) {
+			showError500();
+			return;
+		}
+		subNodesTable.populateTable(nodes, this);
+
+		subNodesTable.setVisible(nodes.size() != 0);
 		noSubNodesLabel.setVisible(nodes.size() == 0);
 
 		int min = 50;
@@ -219,21 +230,6 @@ public class CategoryPage extends OneColumnPage {
 			size = max;
 		size += header;
 		subNodesTable.setHeight(size + "px");
-		
-		// Vytvořit novou kategorii
-		if (coreACL.canCreateCategory(getUser())) {
-			createNewNodePanel(layout, node);
-		}
-	}
-
-	private void populateSubnodesTable(NodeDTO node) {
-
-		List<NodeDTO> nodes = nodeFacade.getNodesByParentNode(node);
-		if (nodes == null) {
-			showError500();
-			return;
-		}
-		subNodesTable.populateTable(nodes, this);
 	}
 
 	private void createContentsPart(VerticalLayout layout, NodeDTO node) {

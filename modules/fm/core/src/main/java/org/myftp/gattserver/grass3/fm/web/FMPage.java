@@ -21,11 +21,11 @@ import org.myftp.gattserver.grass3.subwindows.InfoWindow;
 import org.myftp.gattserver.grass3.subwindows.WarnWindow;
 import org.myftp.gattserver.grass3.template.Breadcrumb;
 import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
+import org.myftp.gattserver.grass3.template.MultiUpload;
 import org.myftp.gattserver.grass3.ui.util.ComparableStringDate;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.HumanBytesSizeCreator;
 import org.myftp.gattserver.grass3.util.ReferenceHolder;
-import org.vaadin.easyuploads.MultiFileUpload;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -39,15 +39,15 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Link;
-import com.vaadin.ui.Table.Align;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Link;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Table.Align;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -68,11 +68,6 @@ public class FMPage extends OneColumnPage {
 	 * Filestable
 	 */
 	private Table filestable;
-
-	/**
-	 * Upload
-	 */
-	private MultiFileUpload multiFileUpload;
 
 	/**
 	 * Hodnota status labelu, když nejsou vybraná žádná pole
@@ -715,17 +710,10 @@ public class FMPage extends OneColumnPage {
 		panelLayout.setMargin(true);
 		panelBackgroudLayout.addComponent(panelLayout);
 
-		multiFileUpload = new MultiFileUpload() {
+		MultiUpload multiFileUpload = new MultiUpload() {
+			private static final long serialVersionUID = -415832652157894459L;
 
-			private static final long serialVersionUID = -6217699369125272543L;
-
-			@Override
-			protected String getAreaText() {
-				return "<small>VLOŽ<br/>SOUBORY</small>";
-			}
-
-			@Override
-			protected void handleFile(File file, String fileName, String mimeType, long length) {
+			public void handleFile(File file, String fileName, String mime, long size) {
 				switch (explorer.saveFile(file, fileName)) {
 				case SUCCESS:
 					// refresh
@@ -743,9 +731,45 @@ public class FMPage extends OneColumnPage {
 					showWarning("Soubor '" + fileName + "' nebylo možné uložit - došlo k systémové chybě.");
 				}
 			}
+
 		};
-		multiFileUpload.setRootDirectory(explorer.getTmpDirFile().getAbsolutePath());
-		multiFileUpload.setUploadButtonCaption("Vybrat soubory");
+
+		// multiFileUpload = new MultiFileUpload() {
+		//
+		// private static final long serialVersionUID = -6217699369125272543L;
+		//
+		// @Override
+		// protected String getAreaText() {
+		// return "<small>VLOŽ<br/>SOUBORY</small>";
+		// }
+		//
+		// @Override
+		// protected void handleFile(File file, String fileName, String
+		// mimeType, long length) {
+		// switch (explorer.saveFile(file, fileName)) {
+		// case SUCCESS:
+		// // refresh
+		// createDirList();
+		// break;
+		// case ALREADY_EXISTS:
+		// showWarning("Soubor '" + fileName +
+		// "' nebylo možné uložit - soubor s tímto názvem již existuje.");
+		// break;
+		// case NOT_VALID:
+		// showWarning("Soubor '"
+		// + fileName
+		// +
+		// "' nebylo možné uložit - cílové umístění souboru se nachází mimo povolený rozsah souborů k prohlížení.");
+		// break;
+		// default:
+		// showWarning("Soubor '" + fileName +
+		// "' nebylo možné uložit - došlo k systémové chybě.");
+		// }
+		// }
+		// };
+		// multiFileUpload.setRootDirectory(explorer.getTmpDirFile().getAbsolutePath());
+		// multiFileUpload.setUploadButtonCaption("Vybrat soubory");
+
 		multiFileUpload.setSizeFull();
 		panelLayout.addComponent(multiFileUpload);
 

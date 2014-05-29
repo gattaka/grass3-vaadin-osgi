@@ -27,7 +27,7 @@
 	<!-- <set-configuration-property name="devModeRedirectEnabled" value="true" 
 		/> -->
 
-	<inherits name="org.vaadin.easyuploads.Widgetset" />
+	
 
 	<inherits name="org.vaadin.tokenfield.TokenfieldWidgetset" />
 
@@ -40,4 +40,6 @@
     <inherits name="org.vaadin.hene.popupbutton.widgetset.PopupbuttonWidgetset" />
 
     <inherits name="org.tepi.filtertable.gwt.FilterTableWidgetset" />
+
+    <inherits name="com.wcs.wcslib.vaadin.widget.multifileupload.MultiFileUploadWidgetSet" />
 </module>

@@ -19,12 +19,12 @@ import org.myftp.gattserver.grass3.pg.facade.IPhotogalleryFacade;
 import org.myftp.gattserver.grass3.security.Role;
 import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
 import org.myftp.gattserver.grass3.template.DefaultContentOperations;
+import org.myftp.gattserver.grass3.template.MultiUpload;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.myftp.gattserver.grass3.util.URLPathAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vaadin.easyuploads.MultiFileUpload;
 import org.vaadin.tokenfield.TokenField;
 
 import com.vaadin.data.Property;
@@ -234,7 +234,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		table.setSizeFull();
 		table.setImmediate(true);
 		table.setColumnHeader("name", "Název");
-		table.setVisibleColumns(new String[] { "name" });
+		table.setVisibleColumns(new Object[] { "name" });
 
 		final Button renameBtn = new Button("Přejmenovat", new Button.ClickListener() {
 			private static final long serialVersionUID = -4816423459867256516L;
@@ -299,7 +299,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		uploadWrapper.addStyleName("bordered");
 		contentLayout.addComponent(uploadWrapper);
 
-		MultiFileUpload multiUpload = new MultiFileUpload() {
+		final MultiUpload multiUpload = new MultiUpload() {
 			private static final long serialVersionUID = -5223991901495532219L;
 
 			@Override
@@ -311,7 +311,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 				}
 			}
 		};
-		multiUpload.setUploadButtonCaption("Nahrát fotografie");
+		multiUpload.setCaption("Nahrát fotografie");
 		uploadWrapper.addComponent(multiUpload);
 		uploadWrapper.setComponentAlignment(multiUpload, Alignment.MIDDLE_CENTER);
 
@@ -425,6 +425,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	private boolean saveOrUpdatePhotogallery() {
 
 		if (editMode) {

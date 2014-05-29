@@ -6,11 +6,11 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
-public abstract class CreateBtn extends Button {
+public abstract class CreateTableButton extends Button {
 
 	private static final long serialVersionUID = -5924239277930098183L;
 
-	public CreateBtn(String caption, Component... triggerComponents) {
+	public CreateTableButton(String caption, Component... triggerComponents) {
 		setIcon(new ThemeResource("img/tags/plus_16.png"));
 		setCaption(caption);
 		addClickListener(getClickListener(triggerComponents));

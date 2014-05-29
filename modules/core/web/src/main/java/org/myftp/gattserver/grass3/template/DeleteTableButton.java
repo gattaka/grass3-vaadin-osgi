@@ -10,11 +10,11 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
-public abstract class DeleteBtn<T> extends TableSelectedItemBtn<T> {
+public abstract class DeleteTableButton<T> extends TableSelectedItemBtn<T> {
 
 	private static final long serialVersionUID = -5924239277930098183L;
 
-	public DeleteBtn(String caption, final AbstractSelect table, Component... triggerComponents) {
+	public DeleteTableButton(String caption, final AbstractSelect table, Component... triggerComponents) {
 		super(caption, table, triggerComponents);
 		setIcon(new ThemeResource("img/tags/delete_16.png"));
 	}
@@ -35,7 +35,7 @@ public abstract class DeleteBtn<T> extends TableSelectedItemBtn<T> {
 					@Override
 					protected void onConfirm(ClickEvent event) {
 						try {
-							DeleteBtn.this.onConfirm(selectedValue);
+							DeleteTableButton.this.onConfirm(selectedValue);
 						} catch (Exception e) {
 							onError();
 						}

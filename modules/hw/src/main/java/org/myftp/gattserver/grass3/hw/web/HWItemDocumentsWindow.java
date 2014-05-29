@@ -7,9 +7,9 @@ import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
 import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
 import org.myftp.gattserver.grass3.subwindows.GrassWindow;
+import org.myftp.gattserver.grass3.template.MultiUpload;
 import org.myftp.gattserver.grass3.util.HumanBytesSizeCreator;
 import org.myftp.gattserver.grass3.util.StringPreviewCreator;
-import org.vaadin.easyuploads.MultiFileUpload;
 
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
@@ -55,23 +55,24 @@ public class HWItemDocumentsWindow extends GrassWindow {
 		listLayout.setSpacing(true);
 		listLayout.setMargin(true);
 
-		MultiFileUpload upload = new MultiFileUpload() {
-			private static final long serialVersionUID = 7352892558261131844L;
+		final MultiUpload multiFileUpload = new MultiUpload() {
+			private static final long serialVersionUID = 8500364606014524121L;
 
 			@Override
-			protected void handleFile(File file, String fileName, String mimeType, long length) {
+			public void handleFile(File file, String fileName, String mime, long size) {
 				hwFacade.saveDocumentsFile(file, fileName, hwItem);
 
 				// refresh listu
 				listLayout.removeAllComponents();
 				createDocumentsList(hwItem);
 			}
+
 		};
-		upload.setUploadButtonCaption("Vložit dokumenty");
-		upload.setSizeUndefined();
+		multiFileUpload.setCaption("Vložit dokumenty");
+		multiFileUpload.setSizeUndefined();
 		uploadWrapperLayout.addStyleName("bordered");
-		uploadWrapperLayout.addComponent(upload);
-		uploadWrapperLayout.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
+		uploadWrapperLayout.addComponent(multiFileUpload);
+		uploadWrapperLayout.setComponentAlignment(multiFileUpload, Alignment.MIDDLE_CENTER);
 
 		createDocumentsList(hwItem);
 

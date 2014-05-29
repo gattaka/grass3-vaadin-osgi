@@ -4,9 +4,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import com.vaadin.data.util.converter.StringToNumberConverter;
+import com.vaadin.data.util.converter.StringToDoubleConverter;
 
-public class StringToMoneyConverter extends StringToNumberConverter {
+public class StringToMoneyConverter extends StringToDoubleConverter {
 	private static final long serialVersionUID = -2914696445291603483L;
 
 	private NumberFormat priceFormat;

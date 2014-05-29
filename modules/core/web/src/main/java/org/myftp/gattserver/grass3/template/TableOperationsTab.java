@@ -95,7 +95,7 @@ public abstract class TableOperationsTab<T extends Identifiable> extends Vertica
 		buttonLayout.setSpacing(true);
 		addComponent(buttonLayout);
 
-		final Button createBtn = new CreateBtn("Založit") {
+		final Button createBtn = new CreateTableButton("Založit") {
 			private static final long serialVersionUID = -6624403751552838924L;
 
 			@Override
@@ -104,7 +104,7 @@ public abstract class TableOperationsTab<T extends Identifiable> extends Vertica
 			}
 		};
 
-		final Button detailBtn = new DetailBtn<T>("Detail", table, TableOperationsTab.this) {
+		final Button detailBtn = new DetailTableButton<T>("Detail", table, TableOperationsTab.this) {
 			private static final long serialVersionUID = -8949928545479455240L;
 
 			@Override
@@ -113,7 +113,7 @@ public abstract class TableOperationsTab<T extends Identifiable> extends Vertica
 			}
 		};
 
-		final Button modifyBtn = new ModifyBtn<T>("Upravit", table, TableOperationsTab.this) {
+		final Button modifyBtn = new ModifyTableButton<T>("Upravit", table, TableOperationsTab.this) {
 			private static final long serialVersionUID = -8949928545479455240L;
 
 			@Override
@@ -122,7 +122,7 @@ public abstract class TableOperationsTab<T extends Identifiable> extends Vertica
 			}
 		};
 
-		final Button deleteBtn = new DeleteBtn<T>("Smazat", table, TableOperationsTab.this) {
+		final Button deleteBtn = new DeleteTableButton<T>("Smazat", table, TableOperationsTab.this) {
 
 			private static final long serialVersionUID = 1900185891293966049L;
 

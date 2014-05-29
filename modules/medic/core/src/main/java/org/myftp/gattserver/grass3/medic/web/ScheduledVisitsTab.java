@@ -13,7 +13,7 @@ import org.myftp.gattserver.grass3.medic.util.MedicUtil;
 import org.myftp.gattserver.grass3.medic.web.ScheduledVisitsCreateWindow.Operation;
 import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorWindow;
-import org.myftp.gattserver.grass3.template.DetailBtn;
+import org.myftp.gattserver.grass3.template.DetailTableButton;
 import org.myftp.gattserver.grass3.template.ISelectable;
 
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -134,7 +134,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		completedBtn.setIcon(new ThemeResource("img/tags/right_16.png"));
 		modifyBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
 
-		final Button detailBtn = new DetailBtn<ScheduledVisitDTO>("Detail", plannedTable, ScheduledVisitsTab.this) {
+		final Button detailBtn = new DetailTableButton<ScheduledVisitDTO>("Detail", plannedTable, ScheduledVisitsTab.this) {
 			private static final long serialVersionUID = -8815751115945625539L;
 
 			@Override
@@ -281,7 +281,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		planBtn.setIcon(new ThemeResource("img/tags/calendar_16.png"));
 		modifyBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
 
-		final Button detailBtn = new DetailBtn<ScheduledVisitDTO>("Detail", toBePlannedTable, ScheduledVisitsTab.this) {
+		final Button detailBtn = new DetailTableButton<ScheduledVisitDTO>("Detail", toBePlannedTable, ScheduledVisitsTab.this) {
 			private static final long serialVersionUID = -8815751115945625539L;
 
 			@Override

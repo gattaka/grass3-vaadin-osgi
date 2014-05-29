@@ -31,22 +31,22 @@ public class GrassVaadinServlet extends VaadinServlet {
 		// https://vaadin.com/old-forum/-/message_boards/view_message/3535024
 		// https://vaadin.com/forum#!/thread/3072331
 		// https://vaadin.com/book/vaadin7/-/page/advanced.requesthandler.html
-		getService().addSessionInitListener(new SessionInitListener() {
-			private static final long serialVersionUID = 4788831427663294496L;
-
-			@Override
-			public void sessionInit(SessionInitEvent event) throws ServiceException {
-
-				ApplicationContext context = SpringContextHelper.getContext();
-				if (context != null) {
-					Collection<IGrassRequestHandler> grassRequestHandlers = context.getBeansOfType(
-							IGrassRequestHandler.class).values();
-					for (IGrassRequestHandler requestHandler : grassRequestHandlers) {
-						event.getSession().addRequestHandler(requestHandler);
-					}
-				}
-			}
-		});
+//		getService().addSessionInitListener(new SessionInitListener() {
+//			private static final long serialVersionUID = 4788831427663294496L;
+//
+//			@Override
+//			public void sessionInit(SessionInitEvent event) throws ServiceException {
+//
+//				ApplicationContext context = SpringContextHelper.getContext();
+//				if (context != null) {
+//					Collection<IGrassRequestHandler> grassRequestHandlers = context.getBeansOfType(
+//							IGrassRequestHandler.class).values();
+//					for (IGrassRequestHandler requestHandler : grassRequestHandlers) {
+//						event.getSession().addRequestHandler(requestHandler);
+//					}
+//				}
+//			}
+//		});
 
 		super.service(request, response);
 	}

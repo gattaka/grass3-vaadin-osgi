@@ -17,7 +17,10 @@ import org.myftp.gattserver.grass3.security.ICoreACL;
 import org.myftp.gattserver.grass3.subwindows.ContentMoveWindow;
 import org.myftp.gattserver.grass3.subwindows.InfoWindow;
 import org.myftp.gattserver.grass3.subwindows.WarnWindow;
+import org.myftp.gattserver.grass3.template.AbstractButton;
 import org.myftp.gattserver.grass3.template.Breadcrumb;
+import org.myftp.gattserver.grass3.template.DeleteButton;
+import org.myftp.gattserver.grass3.template.ModifyButton;
 import org.myftp.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
@@ -34,7 +37,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Button.ClickEvent;
 
 public abstract class ContentViewerPage extends TwoColumnPage {
 
@@ -62,6 +64,9 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	private Label contentLastModificationDateLabel;
 	private CssLayout tagsListLayout;
 	private CssLayout operationsListLayout;
+
+	private Button removeFromFavouritesButton;
+	private Button addToFavouritesButton;
 
 	/**
 	 * Breadcrumb
@@ -111,72 +116,34 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		// Upravit
 		if (coreACL.canModifyContent(content, getUser())) {
-			Button modifyButton = new Button(null);
-			modifyButton.setDescription("Upravit");
-			modifyButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/pencil_16.png"));
-			modifyButton.addClickListener(new Button.ClickListener() {
-				private static final long serialVersionUID = 607422393151282918L;
+			operationsListLayout.addComponent(new ModifyButton() {
+				private static final long serialVersionUID = -491587087265983699L;
 
-				public void buttonClick(ClickEvent event) {
+				@Override
+				public void onClick(ClickEvent event) {
 					onEditOperation();
 				}
 			});
-			operationsListLayout.addComponent(modifyButton);
 		}
 
 		// Smazat
 		if (coreACL.canDeleteContent(content, getUser())) {
-			Button deleteButton = new Button(null);
-			deleteButton.setDescription("Smazat");
-			deleteButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/delete_16.png"));
-			deleteButton.addClickListener(new Button.ClickListener() {
-				private static final long serialVersionUID = 607422393151282918L;
+			operationsListLayout.addComponent(new DeleteButton() {
+				private static final long serialVersionUID = -4293982845547453908L;
 
-				public void buttonClick(ClickEvent event) {
+				@Override
+				public void onClick(ClickEvent event) {
 					onDeleteOperation();
 				}
 			});
-			operationsListLayout.addComponent(deleteButton);
 		}
 
-		// Deklarace tlačítek oblíbených
-		final Button removeFromFavouritesButton = new Button(null);
-		final Button addToFavouritesButton = new Button(null);
+		// Oblíbené
+		addToFavouritesButton = new AbstractButton("Odebrat z oblíbených", "img/tags/broken_heart_16.png") {
+			private static final long serialVersionUID = 2867032632695180826L;
 
-		// Přidat do oblíbených
-		addToFavouritesButton.setDescription("Přidat do oblíbených");
-		addToFavouritesButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/heart_16.png"));
-		addToFavouritesButton.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = -4003115363728232801L;
-
-			public void buttonClick(ClickEvent event) {
-
-				// zdařilo se ? Pokud ano, otevři info okno
-				if (userFacade.addContentToFavourites(content, getUser())) {
-					InfoWindow infoSubwindow = new InfoWindow("Vložení do oblíbených proběhlo úspěšně.");
-					getUI().addWindow(infoSubwindow);
-					addToFavouritesButton.setVisible(false);
-					removeFromFavouritesButton.setVisible(true);
-				} else {
-					// Pokud ne, otevři warn okno
-					WarnWindow warnSubwindow = new WarnWindow("Vložení do oblíbených se nezdařilo.");
-					getUI().addWindow(warnSubwindow);
-				}
-
-			}
-		});
-
-		// Odebrat z oblíbených
-		removeFromFavouritesButton.setDescription("Odebrat z oblíbených");
-		removeFromFavouritesButton.setIcon((com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/broken_heart_16.png"));
-		removeFromFavouritesButton.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 4826586588570179321L;
-
-			public void buttonClick(ClickEvent event) {
-
+			@Override
+			public void onClick(ClickEvent event) {
 				// zdařilo se ? Pokud ano, otevři info okno
 				if (userFacade.removeContentFromFavourites(content, getUser())) {
 					InfoWindow infoSubwindow = new InfoWindow("Odebrání z oblíbených proběhlo úspěšně.");
@@ -188,11 +155,28 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 					WarnWindow warnSubwindow = new WarnWindow("Odebrání z oblíbených se nezdařilo.");
 					getUI().addWindow(warnSubwindow);
 				}
-
 			}
-		});
+		};
+		
+		removeFromFavouritesButton = new AbstractButton("Přidat do oblíbených", "img/tags/heart_16.png") {
+			private static final long serialVersionUID = 2867032632695180826L;
 
-		// Oblíbené
+			@Override
+			public void onClick(ClickEvent event) {
+				// zdařilo se ? Pokud ano, otevři info okno
+				if (userFacade.addContentToFavourites(content, getUser())) {
+					InfoWindow infoSubwindow = new InfoWindow("Vložení do oblíbených proběhlo úspěšně.");
+					getUI().addWindow(infoSubwindow);
+					addToFavouritesButton.setVisible(false);
+					removeFromFavouritesButton.setVisible(true);
+				} else {
+					// Pokud ne, otevři warn okno
+					WarnWindow warnSubwindow = new WarnWindow("Vložení do oblíbených se nezdařilo.");
+					getUI().addWindow(warnSubwindow);
+				}
+			}
+		};
+
 		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(content, getUser()));
 		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(content, getUser()));
 
@@ -201,13 +185,11 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		// Změna kategorie
 		if (coreACL.canModifyContent(content, getUser())) {
-			Button moveButton = new Button(null);
-			moveButton.setDescription("Přesunout");
-			moveButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/move_16.png"));
-			moveButton.addClickListener(new Button.ClickListener() {
-				private static final long serialVersionUID = 607422393151282918L;
+			operationsListLayout.addComponent(new AbstractButton("Přesunout", "img/tags/move_16.png") {
+				private static final long serialVersionUID = 4009430146436270013L;
 
-				public void buttonClick(ClickEvent event) {
+				@Override
+				public void onClick(ClickEvent event) {
 					UI.getCurrent().addWindow(new ContentMoveWindow(content) {
 						private static final long serialVersionUID = 3748723613020816248L;
 
@@ -219,7 +201,6 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 					});
 				}
 			});
-			operationsListLayout.addComponent(moveButton);
 		}
 	}
 

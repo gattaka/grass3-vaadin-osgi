@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.tika.io.IOUtils;
 
@@ -19,7 +21,7 @@ public abstract class MultiUpload extends CssLayout {
 	protected MultiFileUpload multiFileUpload;
 	protected UploadStateWindow stateWindow;
 
-	protected abstract void handleFile(File file, String fileName, String mimeType, long length);
+	protected abstract void handleFile(InputStream in, String fileName, String mimeType, long length);
 
 	protected void onFail(String fileName, String mime, long size) {
 	}
@@ -34,20 +36,12 @@ public abstract class MultiUpload extends CssLayout {
 	}
 
 	public MultiUpload(boolean multiple) {
-		UploadStateWindow stateWindow = new UploadStateWindow();
-		MultiFileUpload multiFileUpload = new MultiFileUpload(new UploadFinishedHandler() {
+		stateWindow = new UploadStateWindow();
+		multiFileUpload = new MultiFileUpload(new UploadFinishedHandler() {
 
 			@Override
 			public void handleFile(InputStream in, String fileName, String mime, long size) {
-				File tempFile;
-				try {
-					tempFile = File.createTempFile("tmp_upload_" + System.currentTimeMillis(), ".tmp");
-					FileOutputStream out = new FileOutputStream(tempFile);
-					IOUtils.copy(in, out);
-					MultiUpload.this.handleFile(tempFile, fileName, mime, size);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				MultiUpload.this.handleFile(in, fileName, mime, size);
 			}
 
 		}, stateWindow, multiple);

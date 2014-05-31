@@ -2,6 +2,7 @@ package org.myftp.gattserver.grass3.hw.facade;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Set;
@@ -26,8 +27,7 @@ public interface IHWFacade {
 
 	public boolean deleteHWItem(HWItemDTO hwItem);
 
-	public boolean addServiceNote(ServiceNoteDTO serviceNoteDTO,
-			HWItemDTO hwItem);
+	public boolean addServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItem);
 
 	public boolean deleteHWItemType(HWItemTypeDTO hwItemType);
 
@@ -37,7 +37,7 @@ public interface IHWFacade {
 
 	public String getHWItemUploadDir(HWItemDTO item);
 
-	public boolean saveImagesFile(File file, String fileName, HWItemDTO item);
+	public boolean saveImagesFile(InputStream in, String fileName, HWItemDTO item);
 
 	public String getTmpDir();
 
@@ -45,14 +45,13 @@ public interface IHWFacade {
 
 	public boolean deleteHWItemIconFile(HWItemDTO hwItem);
 
-	public OutputStream createHWItemIconOutputStream(String filename,
-			HWItemDTO hwItem) throws FileNotFoundException;
+	public OutputStream createHWItemIconOutputStream(String filename, HWItemDTO hwItem) throws FileNotFoundException;
 
 	public String getHWItemImagesUploadDir(HWItemDTO item);
 
 	public String getHWItemDocumentsUploadDir(HWItemDTO item);
 
-	boolean saveDocumentsFile(File file, String fileName, HWItemDTO item);
+	boolean saveDocumentsFile(InputStream in, String fileName, HWItemDTO item);
 
 	public File[] getHWItemImagesFiles(HWItemDTO itemDTO);
 

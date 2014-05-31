@@ -2,6 +2,13 @@ package org.myftp.gattserver.grass3.pg.pages;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -74,13 +81,15 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	private NodeDTO category;
 	private PhotogalleryDTO photogallery;
 
-	private final TokenField photogalleryKeywords = new TokenField();
-	private final TextField photogalleryNameField = new TextField();
-	private final CheckBox publicatedCheckBox = new CheckBox();
+	private TokenField photogalleryKeywords;
+	private TextField photogalleryNameField;
+	private CheckBox publicatedCheckBox;
 
 	private File galleryDir;
 
-	private boolean editMode = false;
+	private boolean editMode;
+
+	private List<Path> newFiles;
 
 	public PhotogalleryEditorPage(GrassRequest request) {
 		super(request);
@@ -90,6 +99,12 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 	@Override
 	protected void init() {
+
+		newFiles = new ArrayList<>();
+		
+		photogalleryKeywords = new TokenField();
+		photogalleryNameField = new TextField();
+		publicatedCheckBox = new CheckBox();
 
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		String operationToken = analyzer.getCurrentPathToken();
@@ -303,11 +318,14 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			private static final long serialVersionUID = -5223991901495532219L;
 
 			@Override
-			protected void handleFile(File file, String fileName, String mimeType, long length) {
-
-				File movedFile = new File(dir, fileName);
-				if (file.renameTo(movedFile)) {
-					table.addItem(movedFile);
+			protected void handleFile(InputStream in, String fileName, String mimeType, long length) {
+				Path path = Paths.get(dir.getPath(), fileName);
+				try {
+					Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
+					newFiles.add(path);
+					table.addItem(path.toFile());
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		};
@@ -345,6 +363,8 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 				boolean oldMode = editMode;
 
 				if (saveOrUpdatePhotogallery()) {
+					newFiles.clear(); // soubory byly uloženy a nepodléhají
+										// podmíněnému smazání
 					showInfo(oldMode ? "Úprava galerie proběhla úspěšně" : "Uložení galerie proběhlo úspěšně");
 				} else {
 					showWarning(oldMode ? "Úprava galerie se nezdařila" : "Uložení galerie se nezdařilo");
@@ -368,6 +388,8 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 					return;
 
 				if (saveOrUpdatePhotogallery()) {
+					newFiles.clear(); // soubory byly uloženy a nepodléhají
+										// podmíněnému smazání
 					returnToPhotogallery();
 				} else {
 					showWarning(editMode ? "Úprava galerie se nezdařila" : "Uložení galerie se nezdařilo");
@@ -427,9 +449,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 	@SuppressWarnings("unchecked")
 	private boolean saveOrUpdatePhotogallery() {
-
 		if (editMode) {
-
 			return photogalleryFacade.modifyPhotogallery(String.valueOf(photogalleryNameField.getValue()),
 					(Collection<String>) photogalleryKeywords.getValue(), publicatedCheckBox.getValue(), photogallery,
 					getRequest().getContextRoot());
@@ -464,6 +484,18 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		JavaScript.eval("window.onbeforeunload = null;");
 		redirect(getPageURL(categoryPageFactory,
 				URLIdentifierUtils.createURLIdentifier(category.getId(), category.getName())));
+	}
+
+	@Override
+	public void detach() {
+		super.detach();
+		for (Path file : newFiles) {
+			try {
+				Files.delete(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

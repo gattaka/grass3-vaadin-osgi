@@ -2,6 +2,10 @@ package org.myftp.gattserver.grass3.fm;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -129,8 +133,7 @@ public class FMExplorer {
 
 	}
 
-	private void loadRootDirFromConfiguration(FMConfiguration configuration)
-			throws IOException {
+	private void loadRootDirFromConfiguration(FMConfiguration configuration) throws IOException {
 
 		String rootDir = configuration.getRootDir();
 
@@ -143,8 +146,7 @@ public class FMExplorer {
 		this.rootFile = rootFile.getCanonicalFile();
 	}
 
-	private void loadUploadDirFromConfiguration(FMConfiguration configuration)
-			throws IOException {
+	private void loadUploadDirFromConfiguration(FMConfiguration configuration) throws IOException {
 
 		String tmpDir = configuration.getTmpDir();
 
@@ -252,36 +254,16 @@ public class FMExplorer {
 	 *            jeho název
 	 * @return true pokud se podařilo, jinak false
 	 */
-	public FileProcessState saveFile(File tmpFile, String filename) {
+	public FileProcessState saveFile(InputStream in, String filename) {
 
-		if (tmpFile.exists() == false)
-			return FileProcessState.MISSING;
-
-		File destFile = new File(requestedFile, filename);
+		Path path = Paths.get(requestedFile.getPath(), filename);
 		try {
-			destFile = destFile.getCanonicalFile();
-			if (destFile.exists()) {
-				return FileProcessState.ALREADY_EXISTS;
-			}
-			if (isValid(destFile) == false) {
-				return FileProcessState.NOT_VALID;
-			}
+			Files.copy(in, path);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return FileProcessState.SYSTEM_ERROR;
 		}
-
-		try {
-			if (tmpFile.renameTo(destFile) == false) {
-				return FileProcessState.SYSTEM_ERROR;
-			} else {
-				return FileProcessState.SUCCESS;
-			}
-		} catch (SecurityException e) {
-			e.printStackTrace();
-			return FileProcessState.SYSTEM_ERROR;
-		}
-
+		return FileProcessState.SUCCESS;
 	}
 
 	/**

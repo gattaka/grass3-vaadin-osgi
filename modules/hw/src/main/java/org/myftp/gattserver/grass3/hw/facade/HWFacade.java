@@ -3,7 +3,13 @@ package org.myftp.gattserver.grass3.hw.facade;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -96,8 +102,7 @@ public class HWFacade implements IHWFacade {
 		item.setPrice(hwItemDTO.getPrice());
 		item.setState(hwItemDTO.getState());
 		if (hwItemDTO.getUsedIn() != null) {
-			HWItem usedIn = hwItemRepository.findOne(hwItemDTO.getUsedIn()
-					.getId());
+			HWItem usedIn = hwItemRepository.findOne(hwItemDTO.getUsedIn().getId());
 			item.setUsedIn(usedIn);
 		}
 		item.setWarrantyYears(hwItemDTO.getWarrantyYears());
@@ -143,37 +148,31 @@ public class HWFacade implements IHWFacade {
 	 * @param added
 	 *            {@code true} pokud byl HW přidán
 	 */
-	private void saveHWPartMoveServiceNote(HWItem triggerItem,
-			ServiceNote triggerNote, boolean added) {
-		HWItem targetItem = hwItemRepository.findOne(triggerItem.getUsedIn()
-				.getId());
+	private void saveHWPartMoveServiceNote(HWItem triggerItem, ServiceNote triggerNote, boolean added) {
+		HWItem targetItem = hwItemRepository.findOne(triggerItem.getUsedIn().getId());
 		ServiceNote removeNote = new ServiceNote();
 		removeNote.setDate(triggerNote.getDate());
 
 		StringBuilder builder = new StringBuilder();
-		builder.append(added ? "Byl přidán:" : "Byl odebrán:").append("\n")
-				.append(triggerItem.getName()).append("\n\n").append("Důvod:")
-				.append("\n").append(triggerNote.getDescription());
+		builder.append(added ? "Byl přidán:" : "Byl odebrán:").append("\n").append(triggerItem.getName())
+				.append("\n\n").append("Důvod:").append("\n").append(triggerNote.getDescription());
 		removeNote.setDescription(builder.toString());
 		removeNote.setState(targetItem.getState());
-		removeNote.setUsage(targetItem.getUsedIn() == null ? "" : targetItem
-				.getUsedIn().getName());
+		removeNote.setUsage(targetItem.getUsedIn() == null ? "" : targetItem.getUsedIn().getName());
 		ServiceNote note = serviceNoteRepository.save(removeNote);
 		targetItem.getServiceNotes().add(note);
 		hwItemRepository.save(targetItem);
 	}
 
 	@Override
-	public boolean addServiceNote(ServiceNoteDTO serviceNoteDTO,
-			HWItemDTO hwItemDTO) {
+	public boolean addServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItemDTO) {
 
 		HWItem item = hwItemRepository.findOne(hwItemDTO.getId());
 		ServiceNote serviceNote = new ServiceNote();
 		serviceNote.setDate(serviceNoteDTO.getDate());
 		serviceNote.setDescription(serviceNoteDTO.getDescription());
 		serviceNote.setState(serviceNoteDTO.getState());
-		serviceNote.setUsage(serviceNoteDTO.getUsedIn() == null ? ""
-				: serviceNoteDTO.getUsedIn().getName());
+		serviceNote.setUsage(serviceNoteDTO.getUsedIn() == null ? "" : serviceNoteDTO.getUsedIn().getName());
 		serviceNoteRepository.save(serviceNote);
 
 		if (item.getServiceNotes() == null)
@@ -187,8 +186,7 @@ public class HWFacade implements IHWFacade {
 		if (serviceNoteDTO.getUsedIn() != null) {
 
 			// cílový HW, kde je nyní HW součástí
-			HWItem targetItem = hwItemRepository.findOne(serviceNoteDTO
-					.getUsedIn().getId());
+			HWItem targetItem = hwItemRepository.findOne(serviceNoteDTO.getUsedIn().getId());
 
 			// předtím nebyl nikde součástí
 			if (oldTarget == null) {
@@ -243,8 +241,7 @@ public class HWFacade implements IHWFacade {
 
 	@Override
 	public List<HWItemDTO> getAllParts(Long usedInItemId) {
-		return hwMapper.mapHWItems(hwItemRepository
-				.findByUsedInId(usedInItemId));
+		return hwMapper.mapHWItems(hwItemRepository.findByUsedInId(usedInItemId));
 	}
 
 	@Override
@@ -258,8 +255,7 @@ public class HWFacade implements IHWFacade {
 	public String getHWItemUploadDir(HWItemDTO item) {
 		HWConfiguration configuration;
 		configuration = loadConfiguration();
-		File file = new File(configuration.getRootDir(), item.getId()
-				.toString());
+		File file = new File(configuration.getRootDir(), item.getId().toString());
 		if (file.exists() == false)
 			if (file.mkdirs() == false)
 				return null;
@@ -289,23 +285,34 @@ public class HWFacade implements IHWFacade {
 	}
 
 	@Override
-	public boolean saveImagesFile(File file, String fileName, HWItemDTO item) {
-		return file
-				.renameTo(new File(getHWItemImagesUploadDir(item), fileName));
+	public boolean saveImagesFile(InputStream in, String fileName, HWItemDTO item) {
+		Path path = Paths.get(getHWItemImagesUploadDir(item), fileName);
+		try {
+			Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 	@Override
-	public boolean saveDocumentsFile(File file, String fileName, HWItemDTO item) {
-		return file.renameTo(new File(getHWItemDocumentsUploadDir(item),
-				fileName));
+	public boolean saveDocumentsFile(InputStream in, String fileName, HWItemDTO item) {
+		Path path = Paths.get(getHWItemDocumentsUploadDir(item), fileName);
+		try {
+			Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 	@Override
 	public File[] getHWItemImagesFiles(HWItemDTO itemDTO) {
 		File hwItemImagesDir = new File(getHWItemImagesUploadDir(itemDTO));
 
-		if (hwItemImagesDir.exists() == false
-				|| hwItemImagesDir.isDirectory() == false)
+		if (hwItemImagesDir.exists() == false || hwItemImagesDir.isDirectory() == false)
 			return null;
 
 		return hwItemImagesDir.listFiles();
@@ -315,8 +322,7 @@ public class HWFacade implements IHWFacade {
 	public File[] getHWItemDocumentsFiles(HWItemDTO itemDTO) {
 		File hwItemDocumentsDir = new File(getHWItemDocumentsUploadDir(itemDTO));
 
-		if (hwItemDocumentsDir.exists() == false
-				|| hwItemDocumentsDir.isDirectory() == false)
+		if (hwItemDocumentsDir.exists() == false || hwItemDocumentsDir.isDirectory() == false)
 			return null;
 
 		return hwItemDocumentsDir.listFiles();
@@ -326,8 +332,7 @@ public class HWFacade implements IHWFacade {
 	public File getHWItemIconFile(HWItemDTO itemDTO) {
 		HWConfiguration configuration;
 		configuration = loadConfiguration();
-		File hwItemDir = new File(configuration.getRootDir(), itemDTO.getId()
-				.toString());
+		File hwItemDir = new File(configuration.getRootDir(), itemDTO.getId().toString());
 
 		if (hwItemDir.exists() == false || hwItemDir.isDirectory() == false)
 			return null;
@@ -363,16 +368,14 @@ public class HWFacade implements IHWFacade {
 	}
 
 	@Override
-	public OutputStream createHWItemIconOutputStream(String filename,
-			HWItemDTO hwItem) throws FileNotFoundException {
+	public OutputStream createHWItemIconOutputStream(String filename, HWItemDTO hwItem) throws FileNotFoundException {
 		String[] parts = filename.split("\\.");
 		String extension = parts.length >= 1 ? parts[parts.length - 1] : "";
 
 		long time = System.currentTimeMillis();
 		int uniqueHash = (String.valueOf(time) + hwItem.getName()).hashCode();
 
-		File file = new File(getHWItemUploadDir(hwItem), "icon-" + uniqueHash
-				+ "." + extension);
+		File file = new File(getHWItemUploadDir(hwItem), "icon-" + uniqueHash + "." + extension);
 		return new FileOutputStream(file);
 	}
 

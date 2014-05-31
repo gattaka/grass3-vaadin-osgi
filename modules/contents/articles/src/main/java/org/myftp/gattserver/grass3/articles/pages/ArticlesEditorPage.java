@@ -35,6 +35,9 @@ import org.slf4j.LoggerFactory;
 import org.vaadin.tokenfield.TokenField;
 
 import com.vaadin.data.util.BeanContainer;
+import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.event.ShortcutAction.ModifierKey;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.combobox.FilteringMode;
@@ -355,7 +358,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			private static final long serialVersionUID = 607422393151282918L;
 
 			public void buttonClick(ClickEvent event) {
-
 				if (isFormValid() == false)
 					return;
 
@@ -367,11 +369,11 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				} else {
 					showWarning(oldMode ? "Úprava článku se nezdařila" : "Uložení článku se nezdařilo");
 				}
-
 			}
 
 		});
 		buttonLayout.addComponent(saveButton);
+		saveButton.setClickShortcut(KeyCode.S, ModifierKey.CTRL);
 
 		// Uložit a zavřít
 		Button saveAndCloseButton = new Button("Uložit a zavřít");

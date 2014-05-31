@@ -1,6 +1,12 @@
 package org.myftp.gattserver.grass3.hw.web;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
@@ -59,8 +65,9 @@ public class HWItemDocumentsWindow extends GrassWindow {
 			private static final long serialVersionUID = 8500364606014524121L;
 
 			@Override
-			public void handleFile(File file, String fileName, String mime, long size) {
-				hwFacade.saveDocumentsFile(file, fileName, hwItem);
+			public void handleFile(InputStream in, String fileName, String mime, long size) {
+
+				hwFacade.saveDocumentsFile(in, fileName, hwItem);
 
 				// refresh listu
 				listLayout.removeAllComponents();

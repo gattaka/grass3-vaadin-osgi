@@ -2,6 +2,7 @@ package org.myftp.gattserver.grass3.fm.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -713,8 +714,8 @@ public class FMPage extends OneColumnPage {
 		MultiUpload multiFileUpload = new MultiUpload() {
 			private static final long serialVersionUID = -415832652157894459L;
 
-			public void handleFile(File file, String fileName, String mime, long size) {
-				switch (explorer.saveFile(file, fileName)) {
+			public void handleFile(InputStream in, String fileName, String mime, long size) {
+				switch (explorer.saveFile(in, fileName)) {
 				case SUCCESS:
 					// refresh
 					createDirList();

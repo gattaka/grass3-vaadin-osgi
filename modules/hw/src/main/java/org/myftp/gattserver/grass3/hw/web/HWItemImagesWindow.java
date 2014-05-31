@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.hw.web;
 
 import java.io.File;
+import java.io.InputStream;
 
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
@@ -61,8 +62,8 @@ public class HWItemImagesWindow extends GrassWindow {
 			private static final long serialVersionUID = -3899558855555370125L;
 
 			@Override
-			protected void handleFile(File file, String fileName, String mimeType, long length) {
-				hwFacade.saveImagesFile(file, fileName, hwItem);
+			protected void handleFile(InputStream in, String fileName, String mimeType, long length) {
+				hwFacade.saveImagesFile(in, fileName, hwItem);
 
 				// refresh listu
 				listLayout.removeAllComponents();

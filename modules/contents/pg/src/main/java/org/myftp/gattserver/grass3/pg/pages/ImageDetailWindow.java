@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.myftp.gattserver.grass3.subwindows.GrassWindow;
 import org.vaadin.tepi.imageviewer.ImageViewer;
+import org.vaadin.tepi.imageviewer.ImageViewer.ImageSelectedEvent;
+import org.vaadin.tepi.imageviewer.ImageViewer.ImageSelectionListener;
 
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Resource;
@@ -26,30 +28,38 @@ public class ImageDetailWindow extends GrassWindow {
 
 		for (File mini : miniatures) {
 
-			File image = new File(mini.getParentFile().getParentFile(),
-					mini.getName());
+			File image = new File(mini.getParentFile().getParentFile(), mini.getName());
 
 			Resource resource = new FileResource(image);
 			list.add(resource);
 		}
 
-		ImageViewer imageViewer = new ImageViewer(list);
+		ImageViewer imageViewer = new ImageViewer();
+		imageViewer.setImages(list);
 		imageViewer.setWidth("1460px");
 		imageViewer.setHeight("710px");
 		imageViewer.setImmediate(true);
-		imageViewer.setCenterImageIndex(index-1);
-//		imageViewer.setCenterImageRelativeWidth(0.99f);
+		imageViewer.setCenterImageIndex(index - 1);
+		// imageViewer.setCenterImageRelativeWidth(0.99f);
 		imageViewer.setCenterImageRelativeWidth(0.7f);
 		imageViewer.setSideImageRelativeWidth(0.5f);
 		imageViewer.setSideImageCount(3);
 		imageViewer.setAnimationDuration(300);
 		imageViewer.focus();
 		addComponent(imageViewer);
-		((VerticalLayout) getContent()).setComponentAlignment(imageViewer,
-				Alignment.MIDDLE_CENTER);
+		((VerticalLayout) getContent()).setComponentAlignment(imageViewer, Alignment.MIDDLE_CENTER);
+
+		imageViewer.addListener(new ImageSelectionListener() {
+
+			@Override
+			public void imageSelected(ImageSelectedEvent e) {
+				int length = miniatures.length;
+				int selectedIndex = (e.getSelectedImageIndex() + 1) % length;
+				ImageDetailWindow.this.setCaption(miniatures[selectedIndex].getName());
+			}
+		});
 
 		center();
 
 	}
-
 }

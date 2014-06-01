@@ -19,13 +19,17 @@ public class ImageUtils {
 		return file.getName().substring(dot + 1);
 	}
 
-	public static boolean resizeImageFile(File inputFile, File destinationFile)
+	public static boolean isSmallerThenMaxArea(File inputFile, int maxArea) throws IOException {
+		BufferedImage image = ImageIO.read(inputFile);
+		return image.getHeight() * image.getWidth() < maxArea;
+	}
+
+	public static boolean resizeImageFile(File inputFile, File destinationFile, int maxWidth, int maxHeight)
 			throws IOException {
 
 		BufferedImage image = ImageIO.read(inputFile);
 
-		ResampleOp resampleOp = new ResampleOp(
-				DimensionConstrain.createMaxDimension(150, 150));
+		ResampleOp resampleOp = new ResampleOp(DimensionConstrain.createMaxDimension(maxWidth, maxHeight));
 		resampleOp.setFilter(ResampleFilters.getLanczos3Filter());
 		image = resampleOp.filter(image, null);
 

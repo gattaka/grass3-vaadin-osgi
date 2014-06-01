@@ -101,7 +101,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	protected void init() {
 
 		newFiles = new ArrayList<>();
-		
+
 		photogalleryKeywords = new TokenField();
 		photogalleryNameField = new TextField();
 		publicatedCheckBox = new CheckBox();
@@ -271,8 +271,10 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 				Object value = table.getValue();
 				File file = (File) value;
 
-				if (editMode)
-					photogalleryFacade.tryDeleteMiniature(file, photogallery);
+				if (editMode) {
+					photogalleryFacade.tryDeleteMiniatureImage(file, photogallery);
+					photogalleryFacade.tryDeleteSlideshowImage(file, photogallery);
+				}
 
 				file.delete();
 				table.removeItem(file);

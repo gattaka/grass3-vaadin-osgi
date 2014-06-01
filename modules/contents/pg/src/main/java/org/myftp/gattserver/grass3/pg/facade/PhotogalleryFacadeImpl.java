@@ -84,7 +84,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 	/**
 	 * Vytoří nové miniatury
 	 */
-	private boolean processMiniatures(Photogallery photogallery) {
+	private boolean processMiniatureImages(Photogallery photogallery) {
 
 		PhotogalleryConfiguration configuration = getConfiguration();
 		String miniaturesDir = configuration.getMiniaturesDir();
@@ -107,7 +107,42 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 
 			// vytvoř miniaturu
 			try {
-				ImageUtils.resizeImageFile(file, miniFile);
+				ImageUtils.resizeImageFile(file, miniFile, 150, 150);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Vytoří nové slideshow verze souborů
+	 */
+	private boolean processSlideshowImages(Photogallery photogallery) {
+
+		PhotogalleryConfiguration configuration = getConfiguration();
+		String slideshowDir = configuration.getSlideshowDir();
+		File galleryDir = getGalleryDir(photogallery);
+
+		File slideshowDirFile = new File(galleryDir, slideshowDir);
+		if (slideshowDirFile.exists() == false) {
+			if (slideshowDirFile.mkdir() == false)
+				return false;
+		}
+
+		for (File file : galleryDir.listFiles()) {
+
+			// soubor slideshow
+			File slideshowFile = new File(slideshowDirFile, file.getName());
+
+			if (file.isDirectory() || slideshowFile.exists())
+				continue;
+
+			// vytvoř slideshow verzi
+			try {
+				ImageUtils.resizeImageFile(file, slideshowFile, 900, 700);
 			} catch (IOException e) {
 				e.printStackTrace();
 				return false;
@@ -118,23 +153,23 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 	}
 
 	@Override
-	public boolean modifyPhotogallery(String name, Collection<String> tags,
-			boolean publicated, PhotogalleryDTO photogalleryDTO,
-			String contextRoot) {
+	public boolean modifyPhotogallery(String name, Collection<String> tags, boolean publicated,
+			PhotogalleryDTO photogalleryDTO, String contextRoot) {
 
-		Photogallery photogallery = photogalleryRepository
-				.findOne(photogalleryDTO.getId());
+		Photogallery photogallery = photogalleryRepository.findOne(photogalleryDTO.getId());
 
 		// vytvoř miniatury
-		processMiniatures(photogallery);
+		processMiniatureImages(photogallery);
+
+		// vytvoř detaily
+		processSlideshowImages(photogallery);
 
 		// ulož ho
 		if (photogalleryRepository.save(photogallery) == null)
 			return false;
 
 		// content node
-		if (contentNodeFacade.modify(photogalleryDTO.getContentNode(), name,
-				tags, publicated) == false)
+		if (contentNodeFacade.modify(photogalleryDTO.getContentNode(), name, tags, publicated) == false)
 			return false;
 
 		return true;
@@ -150,8 +185,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		long systime = System.currentTimeMillis();
 
 		for (int i = 0; i < 10000; i++) {
-			File tmpDirFile = new File(dirRootFile, String.valueOf(systime)
-					+ "_" + i);
+			File tmpDirFile = new File(dirRootFile, String.valueOf(systime) + "_" + i);
 			if (tmpDirFile.mkdirs()) {
 				// zdařilo se - vracím jméno tmp adresáře
 				return tmpDirFile;
@@ -164,9 +198,8 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 	}
 
 	@Override
-	public Long savePhotogallery(String name, Collection<String> tags,
-			File galleryDir, boolean publicated, NodeDTO category,
-			UserInfoDTO author, String contextRoot) {
+	public Long savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
+			NodeDTO category, UserInfoDTO author, String contextRoot) {
 
 		// vytvoř novou galerii
 		Photogallery photogallery = new Photogallery();
@@ -175,7 +208,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		photogallery.setPhotogalleryPath(galleryDir.getName());
 
 		// vytvoř miniatury
-		processMiniatures(photogallery);
+		processMiniatureImages(photogallery);
 
 		// ulož ho a nasetuj jeho id
 		photogallery = photogalleryRepository.save(photogallery);
@@ -183,16 +216,14 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 			return null;
 
 		// vytvoř odpovídající content node
-		ContentNodeDTO contentNodeDTO = contentNodeFacade.save(
-				PhotogalleryContentService.ID, photogallery.getId(), name,
-				tags, publicated, category, author);
+		ContentNodeDTO contentNodeDTO = contentNodeFacade.save(PhotogalleryContentService.ID, photogallery.getId(),
+				name, tags, publicated, category, author);
 
 		if (contentNodeDTO == null)
 			return null;
 
 		// ulož do galrie referenci na její contentnode
-		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO
-				.getId());
+		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO.getId());
 
 		photogallery.setContentNode(contentNode);
 		if (photogalleryRepository.save(photogallery) == null)
@@ -206,8 +237,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		Photogallery photogallery = photogalleryRepository.findOne(id);
 		if (photogallery == null)
 			return null;
-		PhotogalleryDTO photogalleryDTO = photogalleriesMapper
-				.mapPhotogalleryForDetail(photogallery);
+		PhotogalleryDTO photogalleryDTO = photogalleriesMapper.mapPhotogalleryForDetail(photogallery);
 		return photogalleryDTO;
 	}
 
@@ -216,8 +246,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		List<Photogallery> photogalleries = photogalleryRepository.findAll();
 		if (photogalleries == null)
 			return null;
-		List<PhotogalleryDTO> photogalleryDTOs = photogalleriesMapper
-				.mapPhotogalleriesForOverview(photogalleries);
+		List<PhotogalleryDTO> photogalleryDTOs = photogalleriesMapper.mapPhotogalleriesForOverview(photogalleries);
 		return photogalleryDTOs;
 	}
 
@@ -229,17 +258,15 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 
 	@Override
 	public File getGalleryDir(PhotogalleryDTO photogallery) {
-		return new File(getConfiguration().getRootDir(),
-				photogallery.getPhotogalleryPath());
+		return new File(getConfiguration().getRootDir(), photogallery.getPhotogalleryPath());
 	}
 
 	private File getGalleryDir(Photogallery photogallery) {
-		return new File(getConfiguration().getRootDir(),
-				photogallery.getPhotogalleryPath());
+		return new File(getConfiguration().getRootDir(), photogallery.getPhotogalleryPath());
 	}
 
 	@Override
-	public void tryDeleteMiniature(File file, PhotogalleryDTO photogalleryDTO) {
+	public void tryDeleteMiniatureImage(File file, PhotogalleryDTO photogalleryDTO) {
 
 		PhotogalleryConfiguration configuration = getConfiguration();
 		String miniaturesDir = configuration.getMiniaturesDir();
@@ -249,6 +276,19 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		File miniFile = new File(miniDirFile, file.getName());
 		if (miniFile.exists())
 			miniFile.delete();
+	}
+	
+	@Override
+	public void tryDeleteSlideshowImage(File file, PhotogalleryDTO photogalleryDTO) {
+
+		PhotogalleryConfiguration configuration = getConfiguration();
+		String slideshowDir = configuration.getSlideshowDir();
+		File galleryDir = getGalleryDir(photogalleryDTO);
+		File slideshowDirFile = new File(galleryDir, slideshowDir);
+
+		File slideshowFile = new File(slideshowDirFile, file.getName());
+		if (slideshowFile.exists())
+			slideshowFile.delete();
 	}
 
 }

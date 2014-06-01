@@ -104,11 +104,21 @@ public interface IPhotogalleryFacade {
 	 * @param photogalleryDTO
 	 *            objekt galerie
 	 */
-	public void tryDeleteMiniature(File file, PhotogalleryDTO photogalleryDTO);
+	public void tryDeleteMiniatureImage(File file, PhotogalleryDTO photogalleryDTO);
 
 	/**
 	 * Uloží konfiguraci
 	 */
 	public void storeConfiguration(PhotogalleryConfiguration configuration);
+
+	/**
+	 * Pokusí se smazat slideshow verzi od předaného souboru
+	 * 
+	 * @param file
+	 *            soubor fotografie
+	 * @param photogalleryDTO
+	 *            objekt galerie
+	 */
+	public void tryDeleteSlideshowImage(File file, PhotogalleryDTO photogalleryDTO);
 
 }

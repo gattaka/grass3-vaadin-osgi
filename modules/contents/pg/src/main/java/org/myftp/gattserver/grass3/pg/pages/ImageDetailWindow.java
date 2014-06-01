@@ -18,7 +18,7 @@ public class ImageDetailWindow extends GrassWindow {
 
 	private static final long serialVersionUID = 4928404864735034779L;
 
-	public ImageDetailWindow(final File[] miniatures, final int index) {
+	public ImageDetailWindow(final File[] miniatures, final int index, File slideshowDir) {
 		super(miniatures[index].getName());
 
 		setWidth("1500px");
@@ -28,7 +28,9 @@ public class ImageDetailWindow extends GrassWindow {
 
 		for (File mini : miniatures) {
 
-			File image = new File(mini.getParentFile().getParentFile(), mini.getName());
+			File image = new File(slideshowDir, mini.getName());
+			if (image.exists() == false)
+				image = new File(slideshowDir.getParent(), mini.getName());
 
 			Resource resource = new FileResource(image);
 			list.add(resource);

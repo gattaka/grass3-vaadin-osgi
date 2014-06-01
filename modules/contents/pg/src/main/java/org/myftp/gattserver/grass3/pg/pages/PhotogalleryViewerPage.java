@@ -89,6 +89,10 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	private GridLayout galleryGridLayout;
 
+	private File galleryDir;
+	private File miniaturesDirFile;
+	private File slideshowDirFile;
+
 	public PhotogalleryViewerPage(GrassRequest request) {
 		super(request);
 	}
@@ -156,9 +160,9 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
 		configurationService.loadConfiguration(configuration);
 
-		File galleryDir = new File(configuration.getRootDir(), photogallery.getPhotogalleryPath());
-
-		File miniaturesDirFile = new File(galleryDir, configuration.getMiniaturesDir());
+		galleryDir = new File(configuration.getRootDir(), photogallery.getPhotogalleryPath());
+		miniaturesDirFile = new File(galleryDir, configuration.getMiniaturesDir());
+		slideshowDirFile = new File(galleryDir, configuration.getSlideshowDir());
 
 		if (miniaturesDirFile.exists() == false) {
 			showError404();
@@ -362,7 +366,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 				@Override
 				public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
-					UI.getCurrent().addWindow(new ImageDetailWindow(miniatures, index));
+					UI.getCurrent().addWindow(new ImageDetailWindow(miniatures, index, slideshowDirFile));
 				}
 			});
 		}

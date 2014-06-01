@@ -86,6 +86,13 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
+		<!-- system monitor -->
+		<dependency>
+			<groupId>org.myftp.gattserver.grass3</groupId>
+			<artifactId>monitor-web</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
 		<!-- fotogalerie -->
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>

@@ -27,11 +27,20 @@ public class SourcesTree extends AbstractElementTree {
 		// zapiš nadpis
 		new HeaderTree(headerList, 1).generateElement(ctx);
 
-		int number = 1;
+		ctx.print("<ol style=\"padding-left: 25px; margin-top: 0px;\" >");
 		for (String source : sources) {
-			ctx.print("[" + (number++) + "] ");
-			new LinkTree(source, contextRoot).generateElement(ctx);
-			ctx.print("<br/>");
+			ctx.print("<li>");
+			String[] chunks = source.split("\\s+");
+			for (int i = 0; i < chunks.length; i++) {
+				if (i != chunks.length - 1) {
+					ctx.print(chunks[i]);
+					ctx.print(" ");
+				} else {
+					new LinkTree(chunks[chunks.length - 1], contextRoot).generateElement(ctx);
+				}
+			}
+			ctx.print("</li>");
 		}
+		ctx.print("</ol>");
 	}
 }

@@ -1,29 +1,44 @@
 package org.myftp.gattserver.grass3.monitor.processor;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class Console {
 
-	public static void main(String[] args) throws IOException {
+	public static String executeCommand(String... commandAndArguments) {
 
-		// String cmd = "ssh gattaka@gattserver.myfp.org";
-		String cmd = "cmd";
+		File dummyInput = null;
+		try {
+			dummyInput = File.createTempFile(String.valueOf(System.currentTimeMillis()), "GRASS-CONSOLE-DUMMY-INPUT");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return "ERORR during creation of dummy input file";
+		}
 
-		Process process = new ProcessBuilder(cmd).start();
-		InputStream is = process.getInputStream();
-		InputStreamReader isr = new InputStreamReader(is);
-		BufferedReader br = new BufferedReader(isr);
-		String line;
+		try {
+			ProcessBuilder pb = new ProcessBuilder(commandAndArguments);
 
-		System.out.printf("Output of running %s is:", cmd);
+			pb.redirectInput(dummyInput);
 
-		while ((line = br.readLine()) != null) {
-			System.out.println(line);
+			Process process = pb.start();
+			InputStream is = process.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader br = new BufferedReader(isr);
+			String line;
+
+			StringBuilder builder = new StringBuilder();
+			while ((line = br.readLine()) != null) {
+				builder.append(line);
+			}
+			return builder.toString();
+		} catch (IOException e) {
+			return "ERROR occurred during command execution: " + e.getMessage();
+		} finally {
+			dummyInput.delete();
 		}
 
 	}
-
 }

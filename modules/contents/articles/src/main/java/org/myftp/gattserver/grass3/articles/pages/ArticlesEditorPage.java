@@ -37,7 +37,6 @@ import org.vaadin.tokenfield.TokenField;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutAction.ModifierKey;
-import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.combobox.FilteringMode;

@@ -210,6 +210,9 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		// vytvoř miniatury
 		processMiniatureImages(photogallery);
 
+		// vytvoř detaily
+		processSlideshowImages(photogallery);
+
 		// ulož ho a nasetuj jeho id
 		photogallery = photogalleryRepository.save(photogallery);
 		if (photogallery == null)
@@ -277,7 +280,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		if (miniFile.exists())
 			miniFile.delete();
 	}
-	
+
 	@Override
 	public void tryDeleteSlideshowImage(File file, PhotogalleryDTO photogalleryDTO) {
 

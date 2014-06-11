@@ -139,7 +139,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		}
 
 		// Oblíbené
-		addToFavouritesButton = new AbstractButton("Odebrat z oblíbených", "img/tags/broken_heart_16.png") {
+		removeFromFavouritesButton = new AbstractButton("Odebrat z oblíbených", "img/tags/broken_heart_16.png") {
 			private static final long serialVersionUID = 2867032632695180826L;
 
 			@Override
@@ -157,8 +157,8 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 				}
 			}
 		};
-		
-		removeFromFavouritesButton = new AbstractButton("Přidat do oblíbených", "img/tags/heart_16.png") {
+
+		addToFavouritesButton = new AbstractButton("Přidat do oblíbených", "img/tags/heart_16.png") {
 			private static final long serialVersionUID = 2867032632695180826L;
 
 			@Override

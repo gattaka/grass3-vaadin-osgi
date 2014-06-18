@@ -157,8 +157,7 @@ public class Mapper {
 		contentNodeDTO.setLastModificationDate(e.getLastModificationDate());
 		contentNodeDTO.setName(e.getName());
 		contentNodeDTO.setPublicated(e.getPublicated());
-		contentNodeDTO.setContentTags(mapContentTagCollectionForOverview(e
-				.getContentTags()));
+		contentNodeDTO.setContentTags(mapContentTagCollectionForOverview(e.getContentTags()));
 		contentNodeDTO.setParent(mapNodeForBreadcrumb(e.getParent()));
 
 		return contentNodeDTO;
@@ -169,8 +168,7 @@ public class Mapper {
 			return null;
 
 		ContentNodeDTO contentNodeDTO = mapContentNodeForRecentsOverview(e);
-		contentNodeDTO.setContentTags(mapContentTagCollectionForOverview(e
-				.getContentTags()));
+		contentNodeDTO.setContentTags(mapContentTagCollectionForOverview(e.getContentTags()));
 
 		return contentNodeDTO;
 	}
@@ -181,36 +179,33 @@ public class Mapper {
 	 * @param contentNodes
 	 * @return
 	 */
-	public Set<ContentNodeDTO> mapContentNodeCollection(
-			Collection<ContentNode> contentNodes) {
+	public List<ContentNodeDTO> mapContentNodeCollection(Collection<ContentNode> contentNodes) {
 		if (contentNodes == null)
 			return null;
 
-		Set<ContentNodeDTO> contentNodeDTOs = new HashSet<ContentNodeDTO>();
+		List<ContentNodeDTO> contentNodeDTOs = new ArrayList<ContentNodeDTO>();
 		for (ContentNode contentNode : contentNodes) {
 			contentNodeDTOs.add(map(contentNode));
 		}
 		return contentNodeDTOs;
 	}
 
-	public Set<ContentNodeDTO> mapContentNodesForOverview(
-			Collection<ContentNode> contentNodes) {
+	public List<ContentNodeDTO> mapContentNodesForOverview(Collection<ContentNode> contentNodes) {
 		if (contentNodes == null)
 			return null;
 
-		Set<ContentNodeDTO> contentNodeDTOs = new HashSet<ContentNodeDTO>();
+		List<ContentNodeDTO> contentNodeDTOs = new ArrayList<ContentNodeDTO>();
 		for (ContentNode contentNode : contentNodes) {
 			contentNodeDTOs.add(mapContentNodeForOverview(contentNode));
 		}
 		return contentNodeDTOs;
 	}
 
-	public Set<ContentNodeDTO> mapContentNodesForRecentsOverview(
-			Collection<ContentNode> contentNodes) {
+	public List<ContentNodeDTO> mapContentNodesForRecentsOverview(Collection<ContentNode> contentNodes) {
 		if (contentNodes == null)
 			return null;
 
-		Set<ContentNodeDTO> contentNodeDTOs = new HashSet<ContentNodeDTO>();
+		List<ContentNodeDTO> contentNodeDTOs = new ArrayList<ContentNodeDTO>();
 		for (ContentNode contentNode : contentNodes) {
 			contentNodeDTOs.add(mapContentNodeForRecentsOverview(contentNode));
 		}
@@ -244,8 +239,7 @@ public class Mapper {
 
 		contentTagDTO.setId(e.getId());
 		contentTagDTO.setName(e.getName());
-		contentTagDTO.setContentNodes(mapContentNodeCollection(e
-				.getContentNodes()));
+		contentTagDTO.setContentNodes(mapContentNodeCollection(e.getContentNodes()));
 
 		return contentTagDTO;
 	}
@@ -256,8 +250,7 @@ public class Mapper {
 	 * @param contentTags
 	 * @return
 	 */
-	public List<ContentTagDTO> mapContentTagCollection(
-			Collection<ContentTag> contentTags) {
+	public List<ContentTagDTO> mapContentTagCollection(Collection<ContentTag> contentTags) {
 		if (contentTags == null)
 			return null;
 
@@ -274,8 +267,7 @@ public class Mapper {
 	 * @param contentTags
 	 * @return
 	 */
-	public Set<ContentTagDTO> mapContentTagCollectionForOverview(
-			Collection<ContentTag> contentTags) {
+	public Set<ContentTagDTO> mapContentTagCollectionForOverview(Collection<ContentTag> contentTags) {
 		if (contentTags == null)
 			return null;
 

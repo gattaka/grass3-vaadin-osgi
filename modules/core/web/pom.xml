@@ -87,6 +87,13 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- Lazy Query Container -->
+		<dependency>
+			<groupId>org.vaadin.addons.lazyquerycontainer</groupId>
+			<artifactId>vaadin-lazyquerycontainer</artifactId>
+			<version>2.1.15</version>
+		</dependency>
+
 		<!-- Core common -->
 		<dependency>
 			<groupId>org.myftp.gattserver.grass3</groupId>

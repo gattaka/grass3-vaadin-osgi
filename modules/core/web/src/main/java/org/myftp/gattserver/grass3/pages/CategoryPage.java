@@ -237,7 +237,7 @@ public class CategoryPage extends OneColumnPage {
 		VerticalLayout contentsLayout = new VerticalLayout();
 		ContentsTable contentsTable = contentsTableFactory.createContentsTableWithoutCategoryColumn();
 
-		Set<ContentNodeDTO> contentNodes = node.getContentNodes();
+		List<ContentNodeDTO> contentNodes = node.getContentNodes();
 		if (contentNodes == null)
 			showError500();
 

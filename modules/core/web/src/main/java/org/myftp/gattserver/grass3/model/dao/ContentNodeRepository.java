@@ -9,12 +9,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ContentNodeRepository extends JpaRepository<ContentNode, Long> {
 
-	public Page<ContentNode> findByCreationDateNotNullOrderByCreationDateDesc(
-			Pageable pageable);
+	public Page<ContentNode> findByCreationDateNotNullOrderByCreationDateDesc(Pageable pageable);
 
-	public Page<ContentNode> findByLastModificationDateNotNullOrderByLastModificationDateDesc(
-			Pageable pageable);
-	
+	public Page<ContentNode> findByLastModificationDateNotNullOrderByLastModificationDateDesc(Pageable pageable);
+
 	public List<ContentNode> findByAuthorId(Long userId);
 
 }

@@ -1,6 +1,6 @@
 package org.myftp.gattserver.grass3.model.dto;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Objekt sloužící pro přepravu dat mezi fasádou a view třídami
@@ -18,7 +18,7 @@ public class ContentTagDTO implements Comparable<ContentTagDTO> {
 	/**
 	 * Obsahy tagu
 	 */
-	private Set<ContentNodeDTO> contentNodes;
+	private List<ContentNodeDTO> contentNodes;
 
 	/**
 	 * Počet obsahů k tagu
@@ -53,11 +53,11 @@ public class ContentTagDTO implements Comparable<ContentTagDTO> {
 		this.name = name;
 	}
 
-	public Set<ContentNodeDTO> getContentNodes() {
+	public List<ContentNodeDTO> getContentNodes() {
 		return contentNodes;
 	}
 
-	public void setContentNodes(Set<ContentNodeDTO> contentNodes) {
+	public void setContentNodes(List<ContentNodeDTO> contentNodes) {
 		this.contentNodes = contentNodes;
 	}
 

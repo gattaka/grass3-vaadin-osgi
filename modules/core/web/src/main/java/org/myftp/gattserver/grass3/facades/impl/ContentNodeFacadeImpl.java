@@ -22,6 +22,7 @@ import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.model.util.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,14 +51,14 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	/**
 	 * Získá set oblíbených obsahů daného uživatele
 	 */
-	public Set<ContentNodeDTO> getUserFavouriteContents(UserInfoDTO userInfo) {
+	public List<ContentNodeDTO> getUserFavouriteContents(UserInfoDTO userInfo) {
 		User user = userRepository.findOne(userInfo.getId());
 		Set<ContentNode> contentNodes = user.getFavourites();
 
 		if (contentNodes == null)
 			return null;
 
-		Set<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(contentNodes);
+		List<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(contentNodes);
 
 		return contentNodeDTOs;
 	}
@@ -68,10 +69,10 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 * @param size
 	 * @return
 	 */
-	public Set<ContentNodeDTO> getRecentAddedForOverview(int maxResults) {
+	public List<ContentNodeDTO> getRecentAddedForOverview(int maxResults) {
 		List<ContentNode> contentNodes = contentNodeRepository.findByCreationDateNotNullOrderByCreationDateDesc(
 				new PageRequest(0, maxResults)).getContent();
-		Set<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodesForRecentsOverview(contentNodes);
+		List<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodesForRecentsOverview(contentNodes);
 		return contentNodeDTOs;
 	}
 
@@ -81,23 +82,23 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 * @param size
 	 * @return
 	 */
-	public Set<ContentNodeDTO> getRecentModifiedForOverview(int maxResults) {
+	public List<ContentNodeDTO> getRecentModifiedForOverview(int maxResults) {
 		List<ContentNode> contentNodes = contentNodeRepository
 				.findByLastModificationDateNotNullOrderByLastModificationDateDesc(new PageRequest(0, maxResults))
 				.getContent();
-		Set<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodesForRecentsOverview(contentNodes);
+		List<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodesForRecentsOverview(contentNodes);
 		return contentNodeDTOs;
 	}
 
 	/**
 	 * Získá set obsahů dle kategorie
 	 */
-	public Set<ContentNodeDTO> getContentNodesByNode(NodeDTO nodeDTO) {
+	public List<ContentNodeDTO> getContentNodesByNode(NodeDTO nodeDTO) {
 		Node node = nodeRepository.findOne(nodeDTO.getId());
 		if (node == null)
 			return null;
 
-		Set<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(node.getContentNodes());
+		List<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(node.getContentNodes());
 		return contentNodeDTOs;
 	}
 
@@ -295,5 +296,22 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 
 		oldNode.getContentNodes().remove(contentNode);
 		nodeRepository.save(oldNode);
+	}
+
+	@Override
+	public int getContentsCount() {
+		return (int) contentNodeRepository.count();
+	}
+
+	@Override
+	public List<ContentNodeDTO> getRecentAddedForOverview(int pageIndex, int count) {
+		return mapper.mapContentNodesForRecentsOverview(contentNodeRepository.findAll(
+				new PageRequest(pageIndex, count, Sort.Direction.DESC, "creationDate")).getContent());
+	}
+
+	@Override
+	public List<ContentNodeDTO> getRecentModifiedForOverview(int pageIndex, int count) {
+		return mapper.mapContentNodesForRecentsOverview(contentNodeRepository.findAll(
+				new PageRequest(pageIndex, count, Sort.Direction.DESC, "lastModificationDate")).getContent());
 	}
 }

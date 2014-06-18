@@ -25,7 +25,7 @@ public class NodeDTO {
 	/**
 	 * Obsahy uzlu
 	 */
-	private Set<ContentNodeDTO> contentNodes = new HashSet<ContentNodeDTO>();
+	private List<ContentNodeDTO> contentNodes = new ArrayList<ContentNodeDTO>();
 
 	/**
 	 * DB identifikátor
@@ -64,11 +64,11 @@ public class NodeDTO {
 		this.subNodes = subNodes;
 	}
 
-	public Set<ContentNodeDTO> getContentNodes() {
+	public List<ContentNodeDTO> getContentNodes() {
 		return contentNodes;
 	}
 
-	public void setContentNodes(Set<ContentNodeDTO> contentNodes) {
+	public void setContentNodes(List<ContentNodeDTO> contentNodes) {
 		this.contentNodes = contentNodes;
 	}
 

@@ -1,7 +1,7 @@
 package org.myftp.gattserver.grass3.facades;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 import org.myftp.gattserver.grass3.model.dto.ContentNodeDTO;
 import org.myftp.gattserver.grass3.model.dto.NodeDTO;
@@ -12,7 +12,7 @@ public interface IContentNodeFacade {
 	/**
 	 * Získá set oblíbených obsahů daného uživatele
 	 */
-	public Set<ContentNodeDTO> getUserFavouriteContents(UserInfoDTO userInfo);
+	public List<ContentNodeDTO> getUserFavouriteContents(UserInfoDTO userInfo);
 
 	/**
 	 * Získá set naposledy přidaných obsahů
@@ -20,7 +20,7 @@ public interface IContentNodeFacade {
 	 * @param size
 	 * @return
 	 */
-	public Set<ContentNodeDTO> getRecentAddedForOverview(int maxResults);
+	public List<ContentNodeDTO> getRecentAddedForOverview(int maxResults);
 
 	/**
 	 * Získá set naposledy upravených obsahů
@@ -28,12 +28,12 @@ public interface IContentNodeFacade {
 	 * @param size
 	 * @return
 	 */
-	public Set<ContentNodeDTO> getRecentModifiedForOverview(int maxResults);
+	public List<ContentNodeDTO> getRecentModifiedForOverview(int maxResults);
 
 	/**
 	 * Získá set obsahů dle kategorie
 	 */
-	public Set<ContentNodeDTO> getContentNodesByNode(NodeDTO nodeDTO);
+	public List<ContentNodeDTO> getContentNodesByNode(NodeDTO nodeDTO);
 
 	/**
 	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node -
@@ -130,5 +130,26 @@ public interface IContentNodeFacade {
 	 *            obsah
 	 */
 	public void moveContent(NodeDTO nodeDTO, ContentNodeDTO contentNodeDTO);
+
+	/**
+	 * Získá počet všech obsahů (pro LazyQueryContainer)
+	 */
+	public int getContentsCount();
+
+	/**
+	 * Získá stránku nedávno přidaných obsahů (pro LazyQueryContainer)
+	 * 
+	 * @param pageIndex
+	 * @param count
+	 */
+	public List<ContentNodeDTO> getRecentAddedForOverview(int pageIndex, int count);
+
+	/**
+	 * Získá stránku nedávno upravených obsahů (pro LazyQueryContainer)
+	 * 
+	 * @param pageIndex
+	 * @param count
+	 */
+	public List<ContentNodeDTO> getRecentModifiedForOverview(int pageIndex, int count);
 
 }

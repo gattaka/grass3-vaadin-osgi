@@ -16,13 +16,18 @@ import org.myftp.gattserver.grass3.model.dto.ContentTagDTO;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.BasePage;
+import org.myftp.gattserver.grass3.pages.template.ContentsLazyTable;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory;
+import org.myftp.gattserver.grass3.pages.template.LazyContentsQuery;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory.ContentsTable;
+import org.myftp.gattserver.grass3.pages.template.RecentAddedContentsQuery;
+import org.myftp.gattserver.grass3.pages.template.RecentModifiedContentsQuery;
 import org.myftp.gattserver.grass3.ui.util.GrassRequest;
 import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
 import org.perf4j.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.CssLayout;
@@ -50,11 +55,6 @@ public class HomePage extends BasePage {
 
 	@Resource(name = "contentsTableFactory")
 	private ContentsTableFactory contentsTableFactory;
-
-	/**
-	 * Kolik položek mají menu "nedávno" maximálně zobrazit ?
-	 */
-	private static int RECENT_ITEMS_COUNT = 5;
 
 	/**
 	 * Kolik je nejmenší font pro tagcloud ?
@@ -90,7 +90,7 @@ public class HomePage extends BasePage {
 			favouritesLayout.addComponent(favouritesContentsTable);
 			favouritesContentsTable.setWidth("100%");
 			pagelayout.addComponent(favouritesLayout);
-			Set<ContentNodeDTO> contentNodes = contentNodeFacade.getUserFavouriteContents(user);
+			List<ContentNodeDTO> contentNodes = contentNodeFacade.getUserFavouriteContents(user);
 			favouritesContentsTable.populateTable(contentNodes, this);
 		}
 
@@ -221,32 +221,42 @@ public class HomePage extends BasePage {
 
 	private void createRecentMenus(VerticalLayout pagelayout) {
 
-		ContentsTable recentAddedContentsTable = contentsTableFactory.createContentsTable();
-		ContentsTable recentModifiedContentsTable = contentsTableFactory.createContentsTable();
+		ContentsLazyTable recentAddedContentsTable = new ContentsLazyTable() {
+			private static final long serialVersionUID = -2628924290654351639L;
 
-		Set<ContentNodeDTO> recentAdded = contentNodeFacade.getRecentAddedForOverview(RECENT_ITEMS_COUNT);
-		Set<ContentNodeDTO> recentModified = contentNodeFacade.getRecentModifiedForOverview(RECENT_ITEMS_COUNT);
+			@Override
+			protected BeanQueryFactory<?> createBeanQuery() {
+				return new BeanQueryFactory<RecentAddedContentsQuery>(RecentAddedContentsQuery.class);
+			}
+		};
+
+		ContentsLazyTable recentModifiedContentsTable = new ContentsLazyTable() {
+			private static final long serialVersionUID = -2628924290654351639L;
+
+			@Override
+			protected BeanQueryFactory<?> createBeanQuery() {
+				return new BeanQueryFactory<RecentModifiedContentsQuery>(RecentModifiedContentsQuery.class);
+			}
+		};
 
 		VerticalLayout recentAddedLayout = new VerticalLayout();
 		recentAddedLayout.addComponent(new Label("<h2>Nedávno přidané obsahy</h2>", ContentMode.HTML));
 		recentAddedLayout.addComponent(recentAddedContentsTable);
 		recentAddedContentsTable.setWidth("100%");
+		recentAddedContentsTable.setHeight("200px");
 		pagelayout.addComponent(recentAddedLayout);
+
+		recentAddedContentsTable.populate(this);
 
 		// Nedávno upravené obsahy
 		VerticalLayout recentModifiedLayout = new VerticalLayout();
 		recentModifiedLayout.addComponent(new Label("<h2>Nedávno upravené obsahy</h2>", ContentMode.HTML));
 		recentModifiedLayout.addComponent(recentModifiedContentsTable);
 		recentModifiedContentsTable.setWidth("100%");
+		recentModifiedContentsTable.setHeight("200px");
 		pagelayout.addComponent(recentModifiedLayout);
 
-		recentAddedContentsTable.populateTable(recentAdded, this);
-		recentModifiedContentsTable.populateTable(recentModified, this);
-
-		recentAddedContentsTable.setSortContainerPropertyId(ContentsTableFactory.ColumnId.DATUM_VYTVOŘENÍ);
-		recentAddedContentsTable.setSortAscending(false);
-		recentModifiedContentsTable.setSortContainerPropertyId(ContentsTableFactory.ColumnId.DATUM_ÚPRAVY);
-		recentModifiedContentsTable.setSortAscending(false);
+		recentModifiedContentsTable.populate(this);
 
 	}
 

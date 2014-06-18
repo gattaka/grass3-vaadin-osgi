@@ -14,7 +14,8 @@ import java.util.Date;
  */
 public class ComparableStringDate implements Comparable<ComparableStringDate> {
 
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("d.M.yyyy HH:mm:ss");
+	public static final String format = "d.M.yyyy HH:mm:ss";
+	public static final SimpleDateFormat dateFormat = new SimpleDateFormat(format);
 
 	private Date date;
 	private String stringDate;

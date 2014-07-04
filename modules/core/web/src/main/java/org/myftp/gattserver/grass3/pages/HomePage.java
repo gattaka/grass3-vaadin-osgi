@@ -18,7 +18,6 @@ import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
 import org.myftp.gattserver.grass3.pages.template.BasePage;
 import org.myftp.gattserver.grass3.pages.template.ContentsLazyTable;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory;
-import org.myftp.gattserver.grass3.pages.template.LazyContentsQuery;
 import org.myftp.gattserver.grass3.pages.template.ContentsTableFactory.ContentsTable;
 import org.myftp.gattserver.grass3.pages.template.RecentAddedContentsQuery;
 import org.myftp.gattserver.grass3.pages.template.RecentModifiedContentsQuery;

@@ -62,15 +62,13 @@ public class NodeFacadeImpl implements INodeFacade {
 	 * Získá kategorie, které jsou jako potomci dané kategorie
 	 */
 	public List<NodeDTO> getNodesByParentNode(NodeDTO parent) {
-		List<Node> childrenNodes = nodeRepository
-				.findByParentId(parent.getId());
+		List<Node> childrenNodes = nodeRepository.findByParentId(parent.getId());
 
 		if (childrenNodes == null) {
 			return null;
 		}
 
-		List<NodeDTO> childrenNodesDTOs = mapper
-				.mapNodesForOverview(childrenNodes);
+		List<NodeDTO> childrenNodesDTOs = mapper.mapNodesForOverview(childrenNodes);
 		return childrenNodesDTOs;
 	}
 
@@ -126,8 +124,7 @@ public class NodeFacadeImpl implements INodeFacade {
 		// zamezí vkládání předků do potomků - projde postupně všechny předky
 		// cílové kategorie a pokud narazí na moje id, pak jsem předkem cílové
 		// kategorie, což je špatně
-		Node parent = newParent == null ? null : nodeRepository
-				.findOne(newParent.getId());
+		Node parent = newParent == null ? null : nodeRepository.findOne(newParent.getId());
 		if (parent != null) {
 			// začínám od předka newParent - tohle je schválně, umožní mi to se
 			// pak ptát na id newParent - pokud totiž narazím na newParent id,
@@ -182,10 +179,10 @@ public class NodeFacadeImpl implements INodeFacade {
 
 		Node nodeEntity = nodeRepository.findOne(node.getId());
 		Node parent = nodeEntity.getParent();
-		parent.getSubNodes().remove(nodeEntity);
-		parent = nodeRepository.save(parent);
-		if (parent == null)
-			return false;
+		if (parent != null) {
+			parent.getSubNodes().remove(nodeEntity);
+			parent = nodeRepository.save(parent);
+		}
 
 		nodeRepository.delete(node.getId());
 		return true;

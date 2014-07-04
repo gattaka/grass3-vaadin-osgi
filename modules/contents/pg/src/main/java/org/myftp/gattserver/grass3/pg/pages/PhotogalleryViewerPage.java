@@ -330,7 +330,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	private void refreshStatusLabel() {
 		rowStatusLabel.setValue(ROWS_STATUS_PREFIX + galleryGridRowOffset + "-"
 				+ ((rowsSum > galleryGridRows ? galleryGridRows : rowsSum) + galleryGridRowOffset) + "/" + rowsSum
-				+ IMAGE_SUM_PREFIX + imageSum);
+				+ IMAGE_SUM_PREFIX + imageSum + " -- ID: " + photogallery.getPhotogalleryPath());
 	}
 
 	private void checkOffsetBtnsAvailability() {

@@ -180,7 +180,7 @@ public abstract class BasePage extends AbstractGrassPage {
 			createMenuComponent(menu, separator);
 
 			// nastavení
-			createMenuComponent(menu, userDetailsButton);
+			createMenuComponent(menu, new Link("Nastavení", getPageResource(settingsPageFactory)));
 
 			// odhlásit
 			Button logOffButton = new Button("Odhlásit", new Button.ClickListener() {

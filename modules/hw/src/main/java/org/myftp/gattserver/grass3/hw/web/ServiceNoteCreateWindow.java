@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.hw.web;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 import org.myftp.gattserver.grass3.SpringContextHelper;
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
@@ -30,8 +31,7 @@ public abstract class ServiceNoteCreateWindow extends GrassWindow {
 
 	private IHWFacade hwFacade;
 
-	public ServiceNoteCreateWindow(final Component triggerComponent,
-			final HWItemDTO hwItem) {
+	public ServiceNoteCreateWindow(final Component triggerComponent, final HWItemDTO hwItem) {
 		super("Nový servisní záznam");
 
 		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
@@ -43,8 +43,7 @@ public abstract class ServiceNoteCreateWindow extends GrassWindow {
 		final ServiceNoteDTO serviceNoteDTO = new ServiceNoteDTO();
 		serviceNoteDTO.setDescription("");
 		serviceNoteDTO.setState(hwItem.getState());
-		final BeanFieldGroup<ServiceNoteDTO> fieldGroup = new BeanFieldGroup<ServiceNoteDTO>(
-				ServiceNoteDTO.class);
+		final BeanFieldGroup<ServiceNoteDTO> fieldGroup = new BeanFieldGroup<ServiceNoteDTO>(ServiceNoteDTO.class);
 		fieldGroup.setItemDataSource(serviceNoteDTO);
 
 		GridLayout winLayout = new GridLayout(2, 4);
@@ -54,15 +53,16 @@ public abstract class ServiceNoteCreateWindow extends GrassWindow {
 		winLayout.setWidth("100%");
 
 		DateField eventDateField = new DateField("Datum");
+		eventDateField.setDateFormat("dd.MM.yyyy");
+		eventDateField.setLocale(Locale.forLanguageTag("CS")); 
 		fieldGroup.bind(eventDateField, "date");
 		winLayout.addComponent(eventDateField, 0, 0);
 
 		ComboBox stateComboBox = new ComboBox("Stav");
 		stateComboBox.setNullSelectionAllowed(false);
 		stateComboBox.setImmediate(true);
-		stateComboBox
-				.setContainerDataSource(new BeanItemContainer<HWItemState>(
-						HWItemState.class, Arrays.asList(HWItemState.values())));
+		stateComboBox.setContainerDataSource(new BeanItemContainer<HWItemState>(HWItemState.class, Arrays
+				.asList(HWItemState.values())));
 		stateComboBox.setItemCaptionPropertyId("name");
 		fieldGroup.bind(stateComboBox, "state");
 		winLayout.addComponent(stateComboBox, 1, 0);
@@ -72,8 +72,8 @@ public abstract class ServiceNoteCreateWindow extends GrassWindow {
 		usedInCombo.setSizeFull();
 		usedInCombo.setNullSelectionAllowed(true);
 		usedInCombo.setImmediate(true);
-		usedInCombo.setContainerDataSource(new BeanItemContainer<HWItemDTO>(
-				HWItemDTO.class, hwFacade.getHWItemsAvailableForPart(hwItem)));
+		usedInCombo.setContainerDataSource(new BeanItemContainer<HWItemDTO>(HWItemDTO.class, hwFacade
+				.getHWItemsAvailableForPart(hwItem)));
 		usedInCombo.setItemCaptionPropertyId("name");
 		usedInCombo.setValue(hwItem.getUsedIn());
 		winLayout.addComponent(usedInCombo, 0, 1, 1, 1);
@@ -86,34 +86,29 @@ public abstract class ServiceNoteCreateWindow extends GrassWindow {
 		winLayout.addComponent(descriptionField, 0, 2, 1, 2);
 
 		Button createBtn;
-		winLayout.addComponent(createBtn = new Button("Zapsat",
-				new Button.ClickListener() {
+		winLayout.addComponent(createBtn = new Button("Zapsat", new Button.ClickListener() {
 
-					private static final long serialVersionUID = -8435971966889831628L;
+			private static final long serialVersionUID = -8435971966889831628L;
 
-					@Override
-					public void buttonClick(ClickEvent event) {
+			@Override
+			public void buttonClick(ClickEvent event) {
 
-						try {
-							fieldGroup.commit();
-							if (hwFacade.addServiceNote(serviceNoteDTO, hwItem)) {
-								onSuccess();
-							} else {
-								UI.getCurrent()
-										.addWindow(
-												new ErrorWindow(
-														"Nezdařilo se zapsat nový servisní záznam"));
-							}
-							close();
-						} catch (FieldGroup.CommitException e) {
-							Notification.show("   Chybná vstupní data\n\n   "
-									+ e.getCause().getMessage(),
-									Notification.Type.TRAY_NOTIFICATION);
-						}
-
+				try {
+					fieldGroup.commit();
+					if (hwFacade.addServiceNote(serviceNoteDTO, hwItem)) {
+						onSuccess();
+					} else {
+						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se zapsat nový servisní záznam"));
 					}
+					close();
+				} catch (FieldGroup.CommitException e) {
+					Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
+							Notification.Type.TRAY_NOTIFICATION);
+				}
 
-				}), 1, 3);
+			}
+
+		}), 1, 3);
 		winLayout.setComponentAlignment(createBtn, Alignment.BOTTOM_RIGHT);
 
 		addCloseListener(new CloseListener() {

@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.hw.web;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Set;
 
 import org.myftp.gattserver.grass3.SpringContextHelper;
@@ -32,7 +33,7 @@ public abstract class HWItemCreateWindow extends GrassWindow {
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	private IHWFacade hwFacade;
-	
+
 	/**
 	 * @param triggerComponent
 	 *            volající komponenta (ta, která má být po dobu zobrazení okna
@@ -41,10 +42,8 @@ public abstract class HWItemCreateWindow extends GrassWindow {
 	 *            opravuji údaje existující položky, nebo vytvářím novou (
 	 *            {@code null}) ?
 	 */
-	public HWItemCreateWindow(final Component triggerComponent,
-			final Long fixItemId) {
-		super(fixItemId == null ? "Založení nové položky HW"
-				: "Oprava údajů existující položky HW");
+	public HWItemCreateWindow(final Component triggerComponent, final Long fixItemId) {
+		super(fixItemId == null ? "Založení nové položky HW" : "Oprava údajů existující položky HW");
 
 		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
@@ -60,8 +59,7 @@ public abstract class HWItemCreateWindow extends GrassWindow {
 			hwItemDTO.setWarrantyYears(0);
 		}
 
-		final BeanFieldGroup<HWItemDTO> fieldGroup = new BeanFieldGroup<HWItemDTO>(
-				HWItemDTO.class);
+		final BeanFieldGroup<HWItemDTO> fieldGroup = new BeanFieldGroup<HWItemDTO>(HWItemDTO.class);
 		fieldGroup.setItemDataSource(hwItemDTO);
 
 		VerticalLayout layout = new VerticalLayout();
@@ -80,11 +78,15 @@ public abstract class HWItemCreateWindow extends GrassWindow {
 		winLayout.addComponent(nameField, 0, 0);
 
 		DateField purchaseDateField = new DateField("Získáno");
+		purchaseDateField.setDateFormat("dd.MM.yyyy");
+		purchaseDateField.setLocale(Locale.forLanguageTag("CS"));
 		fieldGroup.bind(purchaseDateField, "purchaseDate");
 		purchaseDateField.setSizeFull();
 		winLayout.addComponent(purchaseDateField, 0, 1);
 
 		DateField destructionDateField = new DateField("Odepsáno");
+		destructionDateField.setDateFormat("dd.MM.yyyy");
+		destructionDateField.setLocale(Locale.forLanguageTag("CS"));
 		fieldGroup.bind(destructionDateField, "destructionDate");
 		destructionDateField.setSizeFull();
 		winLayout.addComponent(destructionDateField, 0, 2);
@@ -98,9 +100,8 @@ public abstract class HWItemCreateWindow extends GrassWindow {
 		stateComboBox.setWidth("100%");
 		stateComboBox.setNullSelectionAllowed(false);
 		stateComboBox.setImmediate(true);
-		stateComboBox
-				.setContainerDataSource(new BeanItemContainer<HWItemState>(
-						HWItemState.class, Arrays.asList(HWItemState.values())));
+		stateComboBox.setContainerDataSource(new BeanItemContainer<HWItemState>(HWItemState.class, Arrays
+				.asList(HWItemState.values())));
 		stateComboBox.setItemCaptionPropertyId("name");
 		fieldGroup.bind(stateComboBox, "state");
 		winLayout.addComponent(stateComboBox, 1, 1);
@@ -114,8 +115,7 @@ public abstract class HWItemCreateWindow extends GrassWindow {
 
 		BeanItemContainer<HWItemTypeDTO> typeSelectContainer = new BeanItemContainer<HWItemTypeDTO>(
 				HWItemTypeDTO.class, types);
-		final TwinColSelect typeSelect = new TwinColSelect("Typy",
-				typeSelectContainer);
+		final TwinColSelect typeSelect = new TwinColSelect("Typy", typeSelectContainer);
 		typeSelect.setWidth("100%");
 		typeSelect.setRows(7);
 		typeSelect.setNullSelectionAllowed(true);
@@ -126,8 +126,7 @@ public abstract class HWItemCreateWindow extends GrassWindow {
 		winLayout.addComponent(typeSelect, 0, 3, 1, 3);
 
 		Button createBtn;
-		layout.addComponent(createBtn = new Button(
-				fixItemId == null ? "Založit" : "Opravit údaje",
+		layout.addComponent(createBtn = new Button(fixItemId == null ? "Založit" : "Opravit údaje",
 				new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;
@@ -137,20 +136,17 @@ public abstract class HWItemCreateWindow extends GrassWindow {
 
 						try {
 							fieldGroup.commit();
-							if (hwFacade.saveHWItem(fieldGroup
-									.getItemDataSource().getBean())) {
+							if (hwFacade.saveHWItem(fieldGroup.getItemDataSource().getBean())) {
 								onSuccess();
 							} else {
-								UI.getCurrent()
-										.addWindow(
-												new ErrorWindow(
-														fixItemId == null ? "Nezdařilo se vytvořit novou položku hardware"
-																: "Nezdařilo se upravit údaje"));
+								UI.getCurrent().addWindow(
+										new ErrorWindow(
+												fixItemId == null ? "Nezdařilo se vytvořit novou položku hardware"
+														: "Nezdařilo se upravit údaje"));
 							}
 							close();
 						} catch (FieldGroup.CommitException e) {
-							Notification.show("   Chybná vstupní data\n\n   "
-									+ e.getCause().getMessage(),
+							Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
 									Notification.Type.TRAY_NOTIFICATION);
 						}
 

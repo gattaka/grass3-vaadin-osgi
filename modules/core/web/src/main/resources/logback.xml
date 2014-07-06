@@ -37,6 +37,10 @@
 		<appender-ref ref="fileAppender" />
 	</logger>
 
+	<logger name="org.hibernate.type.descriptor.sql.BasicBinder">
+		<level value="trace" />
+	</logger>
+
 	<root level="INFO">
 		<appender-ref ref="stdout" />
 	</root>

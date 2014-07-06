@@ -59,4 +59,8 @@ public interface IHWFacade {
 
 	public File[] getHWItemDocumentsFiles(HWItemDTO itemDTO);
 
+	void modifyServiceNote(ServiceNoteDTO serviceNoteDTO);
+
+	public void deleteServiceNote(ServiceNoteDTO bean, HWItemDTO hwItem);
+
 }

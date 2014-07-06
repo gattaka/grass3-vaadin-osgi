@@ -31,8 +31,15 @@ public abstract class ServiceNoteCreateWindow extends GrassWindow {
 
 	private IHWFacade hwFacade;
 
+	private ServiceNoteDTO serviceNoteDTO;
+
 	public ServiceNoteCreateWindow(final Component triggerComponent, final HWItemDTO hwItem) {
-		super("Nový servisní záznam");
+		this(triggerComponent, hwItem, null);
+	}
+
+	public ServiceNoteCreateWindow(final Component triggerComponent, final HWItemDTO hwItem,
+			final ServiceNoteDTO fixNote) {
+		super(fixNote == null ? "Nový servisní záznam" : "Oprava existujícího servisního záznamu");
 
 		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
@@ -40,9 +47,14 @@ public abstract class ServiceNoteCreateWindow extends GrassWindow {
 
 		triggerComponent.setEnabled(false);
 
-		final ServiceNoteDTO serviceNoteDTO = new ServiceNoteDTO();
-		serviceNoteDTO.setDescription("");
-		serviceNoteDTO.setState(hwItem.getState());
+		if (fixNote != null) {
+			serviceNoteDTO = fixNote;
+		} else {
+			serviceNoteDTO = new ServiceNoteDTO();
+			serviceNoteDTO.setDescription("");
+			serviceNoteDTO.setState(hwItem.getState());
+		}
+
 		final BeanFieldGroup<ServiceNoteDTO> fieldGroup = new BeanFieldGroup<ServiceNoteDTO>(ServiceNoteDTO.class);
 		fieldGroup.setItemDataSource(serviceNoteDTO);
 
@@ -54,7 +66,7 @@ public abstract class ServiceNoteCreateWindow extends GrassWindow {
 
 		DateField eventDateField = new DateField("Datum");
 		eventDateField.setDateFormat("dd.MM.yyyy");
-		eventDateField.setLocale(Locale.forLanguageTag("CS")); 
+		eventDateField.setLocale(Locale.forLanguageTag("CS"));
 		fieldGroup.bind(eventDateField, "date");
 		winLayout.addComponent(eventDateField, 0, 0);
 
@@ -86,29 +98,36 @@ public abstract class ServiceNoteCreateWindow extends GrassWindow {
 		winLayout.addComponent(descriptionField, 0, 2, 1, 2);
 
 		Button createBtn;
-		winLayout.addComponent(createBtn = new Button("Zapsat", new Button.ClickListener() {
+		winLayout.addComponent(createBtn = new Button(fixNote == null ? "Zapsat" : "Upravit",
+				new Button.ClickListener() {
 
-			private static final long serialVersionUID = -8435971966889831628L;
+					private static final long serialVersionUID = -8435971966889831628L;
 
-			@Override
-			public void buttonClick(ClickEvent event) {
+					@Override
+					public void buttonClick(ClickEvent event) {
 
-				try {
-					fieldGroup.commit();
-					if (hwFacade.addServiceNote(serviceNoteDTO, hwItem)) {
-						onSuccess();
-					} else {
-						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se zapsat nový servisní záznam"));
+						try {
+							fieldGroup.commit();
+							if (fixNote == null) {
+								if (hwFacade.addServiceNote(serviceNoteDTO, hwItem)) {
+									onSuccess(serviceNoteDTO);
+								} else {
+									UI.getCurrent().addWindow(
+											new ErrorWindow("Nezdařilo se zapsat nový servisní záznam"));
+								}
+							} else {
+								hwFacade.modifyServiceNote(serviceNoteDTO);
+								onSuccess(serviceNoteDTO);
+							}
+							close();
+						} catch (FieldGroup.CommitException e) {
+							Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
+									Notification.Type.TRAY_NOTIFICATION);
+						}
+
 					}
-					close();
-				} catch (FieldGroup.CommitException e) {
-					Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
-							Notification.Type.TRAY_NOTIFICATION);
-				}
 
-			}
-
-		}), 1, 3);
+				}), 1, 3);
 		winLayout.setComponentAlignment(createBtn, Alignment.BOTTOM_RIGHT);
 
 		addCloseListener(new CloseListener() {
@@ -124,6 +143,6 @@ public abstract class ServiceNoteCreateWindow extends GrassWindow {
 
 	}
 
-	protected abstract void onSuccess();
+	protected abstract void onSuccess(ServiceNoteDTO noteDTO);
 
 }

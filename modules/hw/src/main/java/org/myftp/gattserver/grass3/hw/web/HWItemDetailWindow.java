@@ -55,6 +55,10 @@ public class HWItemDetailWindow extends GrassWindow {
 	private GridLayout winLayout;
 	private VerticalLayout hwImageLayout;
 
+	private Button newNoteBtn;
+	private Button fixNoteBtn;
+	private Button deleteNoteBtn;
+
 	private Label createShiftedLabel(String caption) {
 		Label label = new Label(caption, ContentMode.HTML);
 		label.addStyleName("shiftlabel");
@@ -90,7 +94,6 @@ public class HWItemDetailWindow extends GrassWindow {
 		Image hwItemImage = new Image(null, resource);
 
 		hwItemImage.setWidth("200px");
-		// hwItemImage.setHeight("200px");
 
 		hwImageLayout.addComponent(hwItemImage);
 		hwImageLayout.setComponentAlignment(hwItemImage, Alignment.TOP_CENTER);
@@ -351,12 +354,12 @@ public class HWItemDetailWindow extends GrassWindow {
 		table.setSelectable(true);
 		table.setImmediate(true);
 
-		BeanContainer<Long, ServiceNoteDTO> filesContainer = new BeanContainer<Long, ServiceNoteDTO>(
+		final BeanContainer<Long, ServiceNoteDTO> notesContainer = new BeanContainer<Long, ServiceNoteDTO>(
 				ServiceNoteDTO.class);
-		filesContainer.setBeanIdProperty("id");
-		filesContainer.addAll(hwItem.getServiceNotes());
+		notesContainer.setBeanIdProperty("id");
+		notesContainer.addAll(hwItem.getServiceNotes());
 
-		table.setContainerDataSource(filesContainer);
+		table.setContainerDataSource(notesContainer);
 		table.setConverter("date", new StringToDateConverter());
 
 		table.setColumnHeader("date", "Datum");
@@ -396,9 +399,106 @@ public class HWItemDetailWindow extends GrassWindow {
 				} else {
 					serviceNoteDescription.setValue(DEFAULT_NOTE_LABEL_VALUE);
 				}
-
+				fixNoteBtn.setEnabled(table.getValue() != null);
+				deleteNoteBtn.setEnabled(table.getValue() != null);
 			}
 		});
+
+		HorizontalLayout notesOperationsLayout = new HorizontalLayout();
+		notesOperationsLayout.setSpacing(true);
+		layout.addComponent(notesOperationsLayout);
+
+		/**
+		 * Založení nového servisního záznamu
+		 */
+		newNoteBtn = new Button("Přidat záznam");
+		newNoteBtn.setImmediate(true);
+		newNoteBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
+		newNoteBtn.addClickListener(new Button.ClickListener() {
+			private static final long serialVersionUID = 8876001665427003203L;
+
+			public void buttonClick(ClickEvent event) {
+				UI.getCurrent().addWindow(new ServiceNoteCreateWindow(newNoteBtn, hwItem) {
+
+					private static final long serialVersionUID = -5582822648042555576L;
+
+					@Override
+					protected void onSuccess(ServiceNoteDTO noteDTO) {
+						notesContainer.addItem(noteDTO.getId(), noteDTO);
+						table.sort();
+						table.select(noteDTO.getId());
+						table.setCurrentPageFirstItemId(noteDTO.getId());
+					}
+				});
+			}
+		});
+		notesOperationsLayout.addComponent(newNoteBtn);
+
+		/**
+		 * Úprava záznamu
+		 */
+		fixNoteBtn = new Button("Opravit záznam");
+		fixNoteBtn.setEnabled(false);
+		fixNoteBtn.setImmediate(true);
+		fixNoteBtn.setIcon(new ThemeResource("img/tags/quickedit_16.png"));
+		fixNoteBtn.addClickListener(new Button.ClickListener() {
+			private static final long serialVersionUID = 8876001665427003203L;
+
+			public void buttonClick(ClickEvent event) {
+				Object id = table.getValue();
+				@SuppressWarnings("unchecked")
+				BeanItem<ServiceNoteDTO> item = (BeanItem<ServiceNoteDTO>) table.getItem(id);
+
+				UI.getCurrent().addWindow(new ServiceNoteCreateWindow(newNoteBtn, hwItem, item.getBean()) {
+
+					private static final long serialVersionUID = -5582822648042555576L;
+
+					@Override
+					protected void onSuccess(ServiceNoteDTO noteDTO) {
+						table.removeItem(noteDTO.getId());
+						notesContainer.addItem(noteDTO.getId(), noteDTO);
+						table.sort();
+						table.select(noteDTO.getId());
+						table.setCurrentPageFirstItemId(noteDTO.getId());
+					}
+				});
+			}
+		});
+		notesOperationsLayout.addComponent(fixNoteBtn);
+
+		/**
+		 * Smazání záznamu
+		 */
+		deleteNoteBtn = new Button("Smazat záznam");
+		deleteNoteBtn.setEnabled(false);
+		deleteNoteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
+		deleteNoteBtn.addClickListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 4983897852548880141L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				Object id = table.getValue();
+				@SuppressWarnings("unchecked")
+				BeanItem<ServiceNoteDTO> item = (BeanItem<ServiceNoteDTO>) table.getItem(id);
+				UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat vybraný servisní záznam?") {
+
+					private static final long serialVersionUID = -422763987707688597L;
+
+					@Override
+					protected void onConfirm(ClickEvent event) {
+						hwFacade.deleteServiceNote(item.getBean(), hwItem);
+						table.removeItem(item.getBean().getId());
+					}
+
+					@Override
+					protected void onClose(CloseEvent e) {
+						deleteNoteBtn.setEnabled(true);
+					}
+				});
+			}
+		});
+		notesOperationsLayout.addComponent(deleteNoteBtn);
 
 		addCloseListener(new CloseListener() {
 

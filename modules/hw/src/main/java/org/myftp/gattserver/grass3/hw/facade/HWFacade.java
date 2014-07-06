@@ -165,6 +165,25 @@ public class HWFacade implements IHWFacade {
 	}
 
 	@Override
+	public void modifyServiceNote(ServiceNoteDTO serviceNoteDTO) {
+		ServiceNote serviceNote = serviceNoteRepository.findOne(serviceNoteDTO.getId());
+		serviceNote.setDate(serviceNoteDTO.getDate());
+		serviceNote.setDescription(serviceNoteDTO.getDescription());
+		serviceNote.setState(serviceNoteDTO.getState());
+		serviceNote.setUsage(serviceNoteDTO.getUsedIn() == null ? "" : serviceNoteDTO.getUsedIn().getName());
+		serviceNoteRepository.save(serviceNote);
+	}
+
+	@Override
+	public void deleteServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItemDTO) {
+		HWItem item = hwItemRepository.findOne(hwItemDTO.getId());
+		ServiceNote serviceNote = serviceNoteRepository.findOne(serviceNoteDTO.getId());
+		item.getServiceNotes().remove(serviceNote);
+		hwItemRepository.save(item);
+		serviceNoteRepository.delete(serviceNote);
+	}
+
+	@Override
 	public boolean addServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItemDTO) {
 
 		HWItem item = hwItemRepository.findOne(hwItemDTO.getId());
@@ -173,7 +192,8 @@ public class HWFacade implements IHWFacade {
 		serviceNote.setDescription(serviceNoteDTO.getDescription());
 		serviceNote.setState(serviceNoteDTO.getState());
 		serviceNote.setUsage(serviceNoteDTO.getUsedIn() == null ? "" : serviceNoteDTO.getUsedIn().getName());
-		serviceNoteRepository.save(serviceNote);
+		serviceNote = serviceNoteRepository.save(serviceNote);
+		serviceNoteDTO.setId(serviceNote.getId());
 
 		if (item.getServiceNotes() == null)
 			item.setServiceNotes(new ArrayList<ServiceNote>());

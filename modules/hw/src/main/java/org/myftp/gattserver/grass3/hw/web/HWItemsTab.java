@@ -1,6 +1,7 @@
 package org.myftp.gattserver.grass3.hw.web;
 
 import org.myftp.gattserver.grass3.hw.dto.HWItemDTO;
+import org.myftp.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import org.myftp.gattserver.grass3.hw.facade.IHWFacade;
 import org.myftp.gattserver.grass3.subwindows.ConfirmWindow;
 import org.myftp.gattserver.grass3.subwindows.ErrorWindow;
@@ -80,8 +81,8 @@ public class HWItemsTab extends VerticalLayout {
 			private static final long serialVersionUID = -5582822648042555576L;
 
 			@Override
-			protected void onSuccess() {
-				populateContainer();
+			protected void onSuccess(ServiceNoteDTO noteDTO) {
+				populateContainer(); // změna stavu
 			}
 		});
 

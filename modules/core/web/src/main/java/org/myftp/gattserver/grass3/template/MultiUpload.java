@@ -1,13 +1,6 @@
 package org.myftp.gattserver.grass3.template;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import org.apache.tika.io.IOUtils;
 
 import com.vaadin.ui.CssLayout;
 import com.wcs.wcslib.vaadin.widget.multifileupload.ui.MultiFileUpload;
@@ -28,7 +21,7 @@ public abstract class MultiUpload extends CssLayout {
 
 	@Override
 	public void setCaption(String caption) {
-		multiFileUpload.setCaption(caption);
+		multiFileUpload.setUploadButtonCaptions(caption, caption);
 	}
 
 	public MultiUpload() {
@@ -45,6 +38,7 @@ public abstract class MultiUpload extends CssLayout {
 			}
 
 		}, stateWindow, multiple);
+		multiFileUpload.setWidth(null);
 		addComponent(multiFileUpload);
 	}
 

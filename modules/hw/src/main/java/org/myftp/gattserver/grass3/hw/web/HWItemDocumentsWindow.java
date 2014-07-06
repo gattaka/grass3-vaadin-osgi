@@ -42,7 +42,8 @@ public class HWItemDocumentsWindow extends GrassWindow {
 
 		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
-		setWidth("600px");
+		setWidth(null);
+		// setHeight("780px");
 
 		VerticalLayout layout = new VerticalLayout();
 		setContent(layout);
@@ -51,7 +52,7 @@ public class HWItemDocumentsWindow extends GrassWindow {
 
 		HorizontalLayout uploadWrapperLayout = new HorizontalLayout();
 		uploadWrapperLayout.setWidth("100%");
-		uploadWrapperLayout.setHeight("80px");
+		uploadWrapperLayout.setMargin(true);
 		layout.addComponent(uploadWrapperLayout);
 
 		Panel panel = new Panel(listLayout);

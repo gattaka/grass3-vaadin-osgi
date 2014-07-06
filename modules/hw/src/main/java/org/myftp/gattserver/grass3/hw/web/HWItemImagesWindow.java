@@ -37,7 +37,7 @@ public class HWItemImagesWindow extends GrassWindow {
 
 		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
-		setWidth("900px");
+		setWidth(null);
 		// setHeight("780px");
 
 		VerticalLayout layout = new VerticalLayout();
@@ -47,16 +47,8 @@ public class HWItemImagesWindow extends GrassWindow {
 
 		HorizontalLayout uploadWrapperLayout = new HorizontalLayout();
 		uploadWrapperLayout.setWidth("100%");
-		uploadWrapperLayout.setHeight("80px");
+		uploadWrapperLayout.setMargin(true);
 		layout.addComponent(uploadWrapperLayout);
-
-		Panel panel = new Panel(listLayout);
-		panel.setWidth("100%");
-		panel.setHeight("700px");
-		layout.addComponent(panel);
-		listLayout.setColumns(4);
-		listLayout.setSpacing(true);
-		listLayout.setMargin(true);
 
 		MultiUpload multiFileUpload = new MultiUpload() {
 			private static final long serialVersionUID = -3899558855555370125L;
@@ -76,6 +68,14 @@ public class HWItemImagesWindow extends GrassWindow {
 		uploadWrapperLayout.addStyleName("bordered");
 		uploadWrapperLayout.addComponent(multiFileUpload);
 		uploadWrapperLayout.setComponentAlignment(multiFileUpload, Alignment.MIDDLE_CENTER);
+
+		Panel panel = new Panel(listLayout);
+		panel.setWidth(null);
+		panel.setHeight("500px");
+		layout.addComponent(panel);
+		listLayout.setColumns(4);
+		listLayout.setSpacing(true);
+		listLayout.setMargin(true);
 
 		createImagesList(hwItem);
 

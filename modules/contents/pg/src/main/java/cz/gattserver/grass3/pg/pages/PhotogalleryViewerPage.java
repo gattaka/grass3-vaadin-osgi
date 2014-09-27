@@ -8,6 +8,7 @@ import org.vaadin.jouni.animator.AnimatorProxy;
 import org.vaadin.jouni.animator.shared.AnimType;
 
 import com.vaadin.event.MouseEvents;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
@@ -17,6 +18,7 @@ import com.vaadin.ui.Embedded;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Link;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -184,7 +186,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		galleryGridLayout.setSpacing(true);
 		galleryGridLayout.setMargin(true);
 		galleryGridLayout.setWidth("700px");
-		galleryGridLayout.setHeight("500px");
+		galleryGridLayout.setHeight("550px");
 		// for (int i=0; i < galleryGridLayout.getRows(); i++) {
 		// galleryGridLayout.setRowExpandRatio(rowIndex, ratio)
 		// }
@@ -357,10 +359,25 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			final int index = i;
 			int gridIndex = i - start;
 
+			VerticalLayout itemLayout = new VerticalLayout();
+			itemLayout.setSpacing(true);
+
+			// Image
 			final File miniature = miniatures[i];
 			Embedded embedded = new Embedded(null, new FileResource(miniature));
-			galleryGridLayout.addComponent(embedded, gridIndex % galleryGridCols, gridIndex / galleryGridCols);
-			galleryGridLayout.setComponentAlignment(embedded, Alignment.MIDDLE_CENTER);
+			itemLayout.addComponent(embedded);
+			itemLayout.setComponentAlignment(embedded, Alignment.MIDDLE_CENTER);
+
+			// HD link
+			String url = getRequest().getContextRoot() + PhotogalleryConfiguration.PHOTOGALLERY_PATH + "/"
+					+ photogallery.getPhotogalleryPath() + "/" + miniature.getName();
+			Link link = new Link("Plné rozlišení", new ExternalResource(url));
+			link.setTargetName("_blank");
+			itemLayout.addComponent(link);
+			itemLayout.setComponentAlignment(link, Alignment.MIDDLE_CENTER);
+
+			galleryGridLayout.addComponent(itemLayout, gridIndex % galleryGridCols, gridIndex / galleryGridCols);
+			galleryGridLayout.setComponentAlignment(itemLayout, Alignment.MIDDLE_CENTER);
 
 			embedded.addClickListener(new MouseEvents.ClickListener() {
 				private static final long serialVersionUID = -6354607057332715984L;

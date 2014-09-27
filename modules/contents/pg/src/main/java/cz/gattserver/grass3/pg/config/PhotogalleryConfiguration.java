@@ -8,6 +8,8 @@ import cz.gattserver.grass3.config.AbstractConfiguration;
  */
 public class PhotogalleryConfiguration extends AbstractConfiguration {
 
+	public static final String PHOTOGALLERY_PATH = "/photogallery-files";
+	
 	private String rootDir = "rootDir";
 
 	private String miniaturesDir = "foto_mini";

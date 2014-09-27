@@ -22,14 +22,16 @@ public class ApplicationErrorHandler implements ErrorHandler {
 	public void error(Throwable throwable) {
 		final String log = new SystemException("Chyba", "V aplikaci došlo k neočekávané chybě", throwable).toString();
 		logger.error(log);
-		UI.getCurrent().addWindow(new ExceptionWindow() {
-			private static final long serialVersionUID = 1910421782322339390L;
+		UI ui = UI.getCurrent();
+		if (ui != null)
+			ui.addWindow(new ExceptionWindow() {
+				private static final long serialVersionUID = 1910421782322339390L;
 
-			@Override
-			protected String getStackTrace() {
-				return log;
-			}
-		});
+				@Override
+				protected String getStackTrace() {
+					return log;
+				}
+			});
 	}
 
 }

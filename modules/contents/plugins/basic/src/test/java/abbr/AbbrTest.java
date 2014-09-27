@@ -3,13 +3,14 @@ package abbr;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.myftp.gattserver.grass3.articles.editor.api.ContextImpl;
-import org.myftp.gattserver.grass3.articles.lexer.Lexer;
-import org.myftp.gattserver.grass3.articles.parser.PluginBag;
-import org.myftp.gattserver.grass3.articles.parser.PluginRegister;
-import org.myftp.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import org.myftp.gattserver.grass3.articles.parser.interfaces.IContext;
-import org.myftp.gattserver.grass3.articles.basic.abbr.AbbrElement;
+
+import cz.gattserver.grass3.articles.basic.abbr.AbbrElement;
+import cz.gattserver.grass3.articles.editor.api.ContextImpl;
+import cz.gattserver.grass3.articles.lexer.Lexer;
+import cz.gattserver.grass3.articles.parser.PluginBag;
+import cz.gattserver.grass3.articles.parser.PluginRegister;
+import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
+import cz.gattserver.grass3.articles.parser.interfaces.IContext;
 
 
 public class AbbrTest {

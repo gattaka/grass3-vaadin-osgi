@@ -6,7 +6,7 @@
 	<description>Podpora LaTeX obsahu do článků</description>
 
 	<parent>
-		<groupId>org.myftp.gattserver.grass3</groupId>
+		<groupId>cz.gattserver.grass3</groupId>
 		<artifactId>grass3</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
@@ -15,14 +15,14 @@
 
 		<!-- GRASS Articles -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- GRASS Core web -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>core-web</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>

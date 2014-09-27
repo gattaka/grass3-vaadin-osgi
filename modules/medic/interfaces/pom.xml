@@ -5,7 +5,7 @@
 	<name>GRASS3 Medic common</name>
 
 	<parent>
-		<groupId>org.myftp.gattserver.grass3</groupId>
+		<groupId>cz.gattserver.grass3</groupId>
 		<artifactId>grass3</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
@@ -13,7 +13,7 @@
 	<dependencies>
 		<!-- Core common -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>core-common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<type>jar</type>

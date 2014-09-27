@@ -6,7 +6,7 @@
 	<packaging>war</packaging>
 
 	<parent>
-		<groupId>org.myftp.gattserver.grass3</groupId>
+		<groupId>cz.gattserver.grass3</groupId>
 		<artifactId>grass3</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
@@ -14,7 +14,7 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>core-web</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -25,84 +25,84 @@
 
 		<!-- články -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- základní pluginy pro články -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles-basic</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- code pluginy pro články -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles-code</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- favicok link pluginy pro články -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles-favlink</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- latex pluginy pro články -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles-latex</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- šablonovací pluginy pro články -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles-templates</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- file manager -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>fm-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- evidence hw -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>hw</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- medic -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>medic-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- system monitor -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>monitor-web</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- fotogalerie -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>pg</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- vyhledávání -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>search</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>

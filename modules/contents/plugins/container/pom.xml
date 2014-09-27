@@ -6,7 +6,7 @@
 	<name>GRASS3 Articles container</name>
 
 	<parent>
-		<groupId>org.myftp.gattserver.grass3</groupId>
+		<groupId>cz.gattserver.grass3</groupId>
 		<artifactId>grass3</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
@@ -15,7 +15,7 @@
 
 		<!-- GRASS ARTICLES BUNDLE -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>

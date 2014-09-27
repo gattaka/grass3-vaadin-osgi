@@ -5,7 +5,7 @@
 	<name>GRASS3 Articles editor code plugin theme</name>
 
 	<parent>
-		<groupId>org.myftp.gattserver.grass3</groupId>
+		<groupId>cz.gattserver.grass3</groupId>
 		<artifactId>grass3</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>

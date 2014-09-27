@@ -3,7 +3,8 @@ package test;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.myftp.gattserver.grass3.util.URLIdentifierUtils;
+
+import cz.gattserver.grass3.util.URLIdentifierUtils;
 
 public class URLIdentifierTest {
 

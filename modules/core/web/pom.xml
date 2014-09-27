@@ -5,7 +5,7 @@
 	<name>GRASS3 Core web</name>
 
 	<parent>
-		<groupId>org.myftp.gattserver.grass3</groupId>
+		<groupId>cz.gattserver.grass3</groupId>
 		<artifactId>grass3</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
@@ -96,7 +96,7 @@
 
 		<!-- Core common -->
 		<dependency>
-			<groupId>org.myftp.gattserver.grass3</groupId>
+			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>core-common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>

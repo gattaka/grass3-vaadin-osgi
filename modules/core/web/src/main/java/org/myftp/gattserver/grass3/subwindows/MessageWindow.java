@@ -8,7 +8,6 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
 
 public abstract class MessageWindow extends GrassWindow {
 
@@ -24,38 +23,32 @@ public abstract class MessageWindow extends GrassWindow {
 	 * @param imageResource
 	 *            resource ikony okna
 	 */
-	public MessageWindow(String caption, String labelCaption,
-			Resource imageResource) {
+	public MessageWindow(String caption, String labelCaption, Resource imageResource) {
 		super(caption);
 
 		center();
 		setWidth("420px");
 
-		VerticalLayout subWindowlayout = new VerticalLayout();
-		setContent(subWindowlayout);
-		subWindowlayout.setMargin(true);
-		subWindowlayout.setSpacing(true);
-
 		HorizontalLayout horizontalLayout = new HorizontalLayout();
 		horizontalLayout.setSpacing(true);
-		subWindowlayout.addComponent(horizontalLayout);
+		addComponent(horizontalLayout);
 
 		Embedded embedded = new Embedded(null, imageResource);
 		// embedded.addStyleName("msgimg");
 		horizontalLayout.addComponent(embedded);
-		horizontalLayout.setComponentAlignment(embedded,
-				Alignment.MIDDLE_CENTER);
+		horizontalLayout.setComponentAlignment(embedded, Alignment.MIDDLE_CENTER);
 
 		CssLayout messageLayout = new CssLayout();
 		horizontalLayout.addComponent(messageLayout);
-		horizontalLayout.setComponentAlignment(messageLayout,
-				Alignment.MIDDLE_CENTER);
+		horizontalLayout.setComponentAlignment(messageLayout, Alignment.MIDDLE_CENTER);
 		messageLayout.setWidth("100%");
 
 		Label msgLabel = new Label(labelCaption);
 		msgLabel.setSizeUndefined();
 		// msgLabel.addStyleName("msglabel");
 		messageLayout.addComponent(msgLabel);
+
+		createDetails();
 
 		Button proceedButton = new Button("OK", new Button.ClickListener() {
 
@@ -67,15 +60,17 @@ public abstract class MessageWindow extends GrassWindow {
 			}
 		});
 
-		subWindowlayout.addComponent(proceedButton);
-		subWindowlayout.setComponentAlignment(proceedButton,
-				Alignment.BOTTOM_RIGHT);
+		addComponent(proceedButton);
+		setComponentAlignment(proceedButton, Alignment.BOTTOM_RIGHT);
 
 		// Zaměř se na nové okno
 		// Window must be attached to parent before calling bringToFront method.
 		// focus(); // od V7 to nejde
 
 	}
+
+	protected void createDetails() {
+	};
 
 	protected void onProceed(ClickEvent event) {
 	}

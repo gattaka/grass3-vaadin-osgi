@@ -2,6 +2,7 @@ package org.myftp.gattserver.grass3;
 
 import javax.annotation.Resource;
 
+import org.myftp.gattserver.grass3.exception.ApplicationErrorHandler;
 import org.myftp.gattserver.grass3.facades.ISecurityFacade;
 import org.myftp.gattserver.grass3.model.dto.UserInfoDTO;
 import org.myftp.gattserver.grass3.pages.factories.template.IPageFactory;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
 
 @Title("Gattserver")
@@ -59,6 +61,8 @@ public class GrassUI extends UI {
 
 	public void init(VaadinRequest request) {
 
+		VaadinSession.getCurrent().setErrorHandler(new ApplicationErrorHandler());
+		
 		String path = request.getPathInfo();
 		String contextPath = request.getContextPath();
 		logger.info("Context Path: [" + contextPath + "]");

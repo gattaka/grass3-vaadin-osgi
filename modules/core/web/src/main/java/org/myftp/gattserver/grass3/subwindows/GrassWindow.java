@@ -3,6 +3,7 @@ package org.myftp.gattserver.grass3.subwindows;
 import org.myftp.gattserver.grass3.SpringContextHelper;
 
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -58,5 +59,9 @@ public class GrassWindow extends Window {
 
 	protected void addComponent(Component component) {
 		layout.addComponent(component);
+	}
+
+	protected void setComponentAlignment(Component component, Alignment alignment) {
+		layout.setComponentAlignment(component, alignment);
 	}
 }

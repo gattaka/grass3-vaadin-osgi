@@ -1,9 +1,10 @@
 package cz.gattserver.grass3.facades;
 
 import java.util.List;
+import java.util.Set;
 
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.security.Role;
 
 /**
  * 
@@ -49,8 +50,7 @@ public interface IUserFacade {
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean registrateNewUser(String email, String username,
-			String password);
+	public boolean registrateNewUser(String email, String username, String password);
 
 	/**
 	 * Aktivuje uživatele
@@ -59,7 +59,7 @@ public interface IUserFacade {
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean activateUser(UserInfoDTO userDTO);
+	public boolean activateUser(Long user);
 
 	/**
 	 * Zablokuje uživatele
@@ -68,7 +68,7 @@ public interface IUserFacade {
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean banUser(UserInfoDTO userDTO);
+	public boolean banUser(Long user);
 
 	/**
 	 * Upraví role uživatele
@@ -77,7 +77,7 @@ public interface IUserFacade {
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean changeUserRoles(UserInfoDTO userDTO);
+	public boolean changeUserRoles(Long user, Set<Role> roles);
 
 	/**
 	 * Vrátí všechny uživatele
@@ -97,25 +97,21 @@ public interface IUserFacade {
 	/**
 	 * Zjistí zda daný obsah je v oblíbených daného uživatele
 	 */
-	public boolean hasInFavourites(ContentNodeDTO contentNodeDTO,
-			UserInfoDTO user);
+	public boolean hasInFavourites(Long content, Long user);
 
 	/**
 	 * Přidá obsah do oblíbených uživatele
 	 */
-	public boolean addContentToFavourites(ContentNodeDTO contentNodeDTO,
-			UserInfoDTO user);
+	public boolean addContentToFavourites(Long content, Long user);
 
 	/**
 	 * Odebere obsah z oblíbených uživatele
 	 */
-	public boolean removeContentFromFavourites(ContentNodeDTO contentNode,
-			UserInfoDTO user);
+	public boolean removeContentFromFavourites(Long content, Long user);
 
 	/**
 	 * Odebere obsah z oblíbených všech uživatelů
 	 */
-	public boolean removeContentFromAllUsersFavourites(
-			ContentNodeDTO contentNode);
+	public boolean removeContentFromAllUsersFavourites(Long content);
 
 }

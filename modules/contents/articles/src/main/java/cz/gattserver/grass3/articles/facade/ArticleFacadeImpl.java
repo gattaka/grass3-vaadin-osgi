@@ -107,8 +107,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 *            uživatel, který článek vytvořil
 	 * @return {@code true} pokud vše dopadlo v pořádku, jinak {@code false}
 	 */
-	public boolean saveTemp(String name, String text, String tags,
-			NodeDTO category, UserInfoDTO author) {
+	public boolean saveTemp(String name, String text, String tags, NodeDTO category, UserInfoDTO author) {
 		// TODO
 		return true;
 	}
@@ -127,7 +126,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 
 		// smaž jeho content node
 		ContentNodeDTO contentNodeDTO = articleDTO.getContentNode();
-		if (contentNodeFacade.delete(contentNodeDTO) == false)
+		if (contentNodeFacade.delete(contentNodeDTO.getId()) == false)
 			return false;
 
 		return true;
@@ -148,9 +147,8 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 *            původní článek
 	 * @return {@code true} pokud se úprava zdařila, jinak {@code false}
 	 */
-	public boolean modifyArticle(String name, String text,
-			Collection<String> tags, boolean publicated, ArticleDTO articleDTO,
-			String contextRoot) {
+	public boolean modifyArticle(String name, String text, Collection<String> tags, boolean publicated,
+			ArticleDTO articleDTO, String contextRoot) {
 
 		// článek
 		Article article = articleRepository.findOne(articleDTO.getId());
@@ -160,8 +158,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 		article.setOutputHTML(context.getOutput());
 		article.setPluginCSSResources(context.getCSSResources());
 
-		article.setPluginJSResources(createJSResourcesSet(context
-				.getJSResources()));
+		article.setPluginJSResources(createJSResourcesSet(context.getJSResources()));
 
 		article.setText(text);
 		article.setSearchableOutput(HTMLTrimmer.trim(context.getOutput()));
@@ -171,15 +168,13 @@ public class ArticleFacadeImpl implements IArticleFacade {
 			return false;
 
 		// content node
-		if (contentNodeFacade.modify(articleDTO.getContentNode(), name, tags,
-				publicated) == false)
+		if (contentNodeFacade.modify(articleDTO.getContentNode().getId(), name, tags, publicated) == false)
 			return false;
 
 		return true;
 	}
 
-	private SortedSet<ArticleJSResource> createJSResourcesSet(
-			Set<String> scripts) {
+	private SortedSet<ArticleJSResource> createJSResourcesSet(Set<String> scripts) {
 		int order = 0;
 		SortedSet<ArticleJSResource> set = new TreeSet<>();
 		for (String string : scripts) {
@@ -209,9 +204,8 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
 	 *         {@code null}
 	 */
-	public Long saveArticle(String name, String text, Collection<String> tags,
-			boolean publicated, NodeDTO category, UserInfoDTO author,
-			String contextRoot) {
+	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, NodeDTO category,
+			UserInfoDTO author, String contextRoot) {
 
 		// vytvoř nový článek
 		Article article = new Article();
@@ -220,8 +214,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 		IContext context = processArticle(text, contextRoot);
 		article.setOutputHTML(context.getOutput());
 		article.setPluginCSSResources(context.getCSSResources());
-		article.setPluginJSResources(createJSResourcesSet(context
-				.getJSResources()));
+		article.setPluginJSResources(createJSResourcesSet(context.getJSResources()));
 		article.setText(text);
 		article.setSearchableOutput(HTMLTrimmer.trim(context.getOutput()));
 
@@ -231,17 +224,13 @@ public class ArticleFacadeImpl implements IArticleFacade {
 			return null;
 
 		// vytvoř odpovídající content node
-		ContentNodeDTO contentNodeDTO = contentNodeFacade.save(
-				ArticlesContentService.ID, article.getId(), name, tags,
-				publicated, category, author);
+		ContentNode contentNode = contentNodeFacade.save(ArticlesContentService.ID, article.getId(), name, tags,
+				publicated, category.getId(), author.getId());
 
-		if (contentNodeDTO == null)
+		if (contentNode == null)
 			return null;
 
 		// ulož do článku referenci na jeho contentnode
-		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO
-				.getId());
-
 		article.setContentNode(contentNode);
 		if (articleRepository.save(article) == null)
 			return null;
@@ -271,8 +260,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 		List<Article> articles = articleRepository.findAll();
 		if (articles == null)
 			return null;
-		List<ArticleDTO> articleDTOs = articlesMapper
-				.mapArticlesForReprocess(articles);
+		List<ArticleDTO> articleDTOs = articlesMapper.mapArticlesForReprocess(articles);
 		return articleDTOs;
 	}
 
@@ -285,8 +273,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 		List<Article> articles = articleRepository.findAll();
 		if (articles == null)
 			return null;
-		List<ArticleDTO> articleDTOs = articlesMapper
-				.mapArticlesForOverview(articles);
+		List<ArticleDTO> articleDTOs = articlesMapper.mapArticlesForOverview(articles);
 		return articleDTOs;
 	}
 
@@ -299,8 +286,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 		List<Article> articles = articleRepository.findAll();
 		if (articles == null)
 			return null;
-		List<ArticleDTO> articleDTOs = articlesMapper
-				.mapArticlesForSearch(articles);
+		List<ArticleDTO> articleDTOs = articlesMapper.mapArticlesForSearch(articles);
 		return articleDTOs;
 	}
 

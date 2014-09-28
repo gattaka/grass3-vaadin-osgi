@@ -280,20 +280,16 @@ public final class CoreACL implements ICoreACL {
 	/**
 	 * Může přidat obsah do svých oblíbených ?
 	 */
-	public boolean canAddContentToFavourites(ContentNodeDTO contentNodeDTO,
-			UserInfoDTO user) {
+	public boolean canAddContentToFavourites(ContentNodeDTO contentNodeDTO, UserInfoDTO user) {
 		// uživatel musí být přihlášen a obsah nesmí být v jeho oblíbených
-		return user != null
-				&& userFacade.hasInFavourites(contentNodeDTO, user) == false;
+		return user != null && userFacade.hasInFavourites(contentNodeDTO.getId(), user.getId()) == false;
 	}
 
 	/**
 	 * Může odebrat obsah ze svých oblíbených ?
 	 */
-	public boolean canRemoveContentFromFavourites(
-			ContentNodeDTO contentNodeDTO, UserInfoDTO user) {
-		return user != null
-				&& userFacade.hasInFavourites(contentNodeDTO, user) == true;
+	public boolean canRemoveContentFromFavourites(ContentNodeDTO contentNodeDTO, UserInfoDTO user) {
+		return user != null && userFacade.hasInFavourites(contentNodeDTO.getId(), user.getId()) == true;
 	}
 
 }

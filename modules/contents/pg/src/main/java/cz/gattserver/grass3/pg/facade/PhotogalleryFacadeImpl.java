@@ -3,6 +3,7 @@ package cz.gattserver.grass3.pg.facade;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -77,7 +78,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 
 		photogalleryRepository.delete(photogallery.getId());
 		ContentNodeDTO contentNodeDTO = photogallery.getContentNode();
-		if (contentNodeFacade.delete(contentNodeDTO) == false)
+		if (contentNodeFacade.delete(contentNodeDTO.getId()) == false)
 			return false;
 		return true;
 	}
@@ -155,7 +156,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 
 	@Override
 	public boolean modifyPhotogallery(String name, Collection<String> tags, boolean publicated,
-			PhotogalleryDTO photogalleryDTO, String contextRoot) {
+			PhotogalleryDTO photogalleryDTO, String contextRoot, Date date) {
 
 		Photogallery photogallery = photogalleryRepository.findOne(photogalleryDTO.getId());
 
@@ -170,7 +171,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 			return false;
 
 		// content node
-		if (contentNodeFacade.modify(photogalleryDTO.getContentNode(), name, tags, publicated) == false)
+		if (contentNodeFacade.modify(photogalleryDTO.getContentNode().getId(), name, tags, publicated, date) == false)
 			return false;
 
 		return true;
@@ -200,7 +201,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 
 	@Override
 	public Long savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
-			NodeDTO category, UserInfoDTO author, String contextRoot) {
+			NodeDTO category, UserInfoDTO author, String contextRoot, Date date) {
 
 		// vytvoř novou galerii
 		Photogallery photogallery = new Photogallery();
@@ -220,15 +221,13 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 			return null;
 
 		// vytvoř odpovídající content node
-		ContentNodeDTO contentNodeDTO = contentNodeFacade.save(PhotogalleryContentService.ID, photogallery.getId(),
-				name, tags, publicated, category, author);
+		ContentNode contentNode = contentNodeFacade.save(PhotogalleryContentService.ID, photogallery.getId(), name,
+				tags, publicated, category.getId(), author.getId(), date);
 
-		if (contentNodeDTO == null)
+		if (contentNode == null)
 			return null;
 
-		// ulož do galrie referenci na její contentnode
-		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO.getId());
-
+		// ulož do galerie referenci na její contentnode
 		photogallery.setContentNode(contentNode);
 		if (photogalleryRepository.save(photogallery) == null)
 			return null;

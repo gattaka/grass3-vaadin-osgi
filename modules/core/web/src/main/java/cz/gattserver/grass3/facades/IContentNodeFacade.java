@@ -1,18 +1,18 @@
 package cz.gattserver.grass3.facades;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
+import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
 
 public interface IContentNodeFacade {
 
 	/**
 	 * Získá set oblíbených obsahů daného uživatele
 	 */
-	public List<ContentNodeDTO> getUserFavouriteContents(UserInfoDTO userInfo);
+	public List<ContentNodeDTO> getUserFavouriteContents(Long user);
 
 	/**
 	 * Získá set naposledy přidaných obsahů
@@ -33,15 +33,15 @@ public interface IContentNodeFacade {
 	/**
 	 * Získá set obsahů dle kategorie
 	 */
-	public List<ContentNodeDTO> getContentNodesByNode(NodeDTO nodeDTO);
+	public List<ContentNodeDTO> getContentNodesByNode(Long node);
 
 	/**
 	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node -
 	 * zkrácená verze metody pro obsah, jež nemá tagy
 	 * 
-	 * @param contentModuleId
+	 * @param contentModule
 	 *            identifikátor modulu obsahů
-	 * @param contentId
+	 * @param contentNode
 	 *            id obsahu (v rámci modulu), který je ukládán
 	 * @param name
 	 *            jméno obsahu
@@ -54,15 +54,15 @@ public interface IContentNodeFacade {
 	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
 	 *         nebo
 	 */
-	public ContentNodeDTO save(String contentModuleId, Long contentId, String name, boolean publicated,
-			NodeDTO category, UserInfoDTO author);
+	public ContentNode save(String contentModule, Long contentNode, String name, boolean publicated, Long category,
+			Long author);
 
 	/**
 	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node
 	 * 
-	 * @param contentModuleId
+	 * @param contentModule
 	 *            identifikátor modulu obsahů
-	 * @param contentId
+	 * @param contentNode
 	 *            id obsahu (v rámci modulu), který je ukládán
 	 * @param name
 	 *            jméno obsahu
@@ -77,8 +77,11 @@ public interface IContentNodeFacade {
 	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
 	 *         nebo
 	 */
-	public ContentNodeDTO save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, NodeDTO category, UserInfoDTO author);
+	public ContentNode save(String contentModule, Long contentNode, String name, Collection<String> tags,
+			boolean publicated, Long category, Long author);
+
+	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
+			boolean publicated, Long category, Long author, Date date);
 
 	/**
 	 * Získá contentNodeDTO dle jeho id
@@ -96,7 +99,7 @@ public interface IContentNodeFacade {
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean modify(ContentNodeDTO contentNode, String name, boolean publicated);
+	public boolean modify(Long contentNode, String name, boolean publicated);
 
 	/**
 	 * Upraví obsah a uloží ho do DB
@@ -109,7 +112,9 @@ public interface IContentNodeFacade {
 	 *            je článek publikován ?
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean modify(ContentNodeDTO contentNodeDTO, String name, Collection<String> tags, boolean publicated);
+	public boolean modify(Long contentNode, String name, Collection<String> tags, boolean publicated);
+
+	public boolean modify(Long contentId, String name, Collection<String> tags, boolean publicated, Date creationDate);
 
 	/**
 	 * Smaže obsah
@@ -118,7 +123,7 @@ public interface IContentNodeFacade {
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean delete(ContentNodeDTO contentNodeDTO);
+	public boolean delete(Long contentNode);
 
 	/**
 	 * Přesune obsah mezi kategoriemi
@@ -129,7 +134,7 @@ public interface IContentNodeFacade {
 	 * @param contentNodeDTO
 	 *            obsah
 	 */
-	public void moveContent(NodeDTO nodeDTO, ContentNodeDTO contentNodeDTO);
+	public void moveContent(Long node, Long contentNode);
 
 	/**
 	 * Získá počet všech obsahů (pro LazyQueryContainer)

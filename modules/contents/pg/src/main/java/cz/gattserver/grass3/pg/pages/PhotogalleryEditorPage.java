@@ -33,6 +33,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -84,6 +85,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 	private TokenField photogalleryKeywords;
 	private TextField photogalleryNameField;
+	private DateField photogalleryDateField;
 	private CheckBox publicatedCheckBox;
 
 	private File galleryDir;
@@ -105,6 +107,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		photogalleryKeywords = new TokenField();
 		photogalleryNameField = new TextField();
+		photogalleryDateField = new DateField();
 		publicatedCheckBox = new CheckBox();
 
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
@@ -139,6 +142,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			}
 
 			publicatedCheckBox.setValue(photogallery.getContentNode().isPublicated());
+			photogalleryDateField.setValue(photogallery.getContentNode().getCreationDate());
 
 		} else {
 			logger.debug("Neznámá operace: '" + operationToken + "'");
@@ -337,6 +341,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		uploadWrapper.setComponentAlignment(multiUpload, Alignment.MIDDLE_CENTER);
 
 		VerticalLayout contentOptionsLayout = new VerticalLayout();
+		contentOptionsLayout.setSpacing(true);
 		editorTextLayout.addComponent(contentOptionsLayout);
 		contentOptionsLayout.addComponent(new Label("<h2>Nastavení</h2>", ContentMode.HTML));
 
@@ -344,6 +349,9 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		publicatedCheckBox.setDescription("Je-li prázdné, uvidí galerii pouze její autor");
 		publicatedCheckBox.setImmediate(true);
 		contentOptionsLayout.addComponent(publicatedCheckBox);
+
+		photogalleryDateField.setCaption("Přepsat datum vytvoření galerie");
+		contentOptionsLayout.addComponent(photogalleryDateField);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);
@@ -455,11 +463,11 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		if (editMode) {
 			return photogalleryFacade.modifyPhotogallery(String.valueOf(photogalleryNameField.getValue()),
 					(Collection<String>) photogalleryKeywords.getValue(), publicatedCheckBox.getValue(), photogallery,
-					getRequest().getContextRoot());
+					getRequest().getContextRoot(), photogalleryDateField.getValue());
 		} else {
 			Long id = photogalleryFacade.savePhotogallery(String.valueOf(photogalleryNameField.getValue()),
 					(Collection<String>) photogalleryKeywords.getValue(), galleryDir, publicatedCheckBox.getValue(),
-					category, getGrassUI().getUser(), getRequest().getContextRoot());
+					category, getGrassUI().getUser(), getRequest().getContextRoot(), photogalleryDateField.getValue());
 
 			if (id == null)
 				return false;

@@ -130,7 +130,7 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 
 			public void buttonClick(ClickEvent event) {
 				user.setConfirmed(true);
-				if (userFacade.activateUser(user)) {
+				if (userFacade.activateUser(user.getId())) {
 					showInfo("Uživatel '" + user.getName() + "' byl úspěšně aktivován");
 					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ).setValue(String.valueOf(user.isConfirmed()));
 					userTable.unselect(user);
@@ -153,7 +153,7 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 
 			public void buttonClick(ClickEvent event) {
 				user.setConfirmed(false);
-				if (userFacade.banUser(user)) {
+				if (userFacade.banUser(user.getId())) {
 					showInfo("Uživatel '" + user.getName() + "' byl úspěšně zablokován");
 					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ).setValue(String.valueOf(user.isConfirmed()));
 					userTable.unselect(user);
@@ -205,7 +205,7 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 					private static final long serialVersionUID = -6032630714904379342L;
 
 					public void buttonClick(ClickEvent event) {
-						if (userFacade.changeUserRoles(user)) {
+						if (userFacade.changeUserRoles(user.getId(), user.getRoles())) {
 							showInfo("Oprávnění uživatele '" + user.getName() + "' byly úspěšně upraven");
 							userTable.getContainerProperty(user, ColumnId.ROLE).setValue(user.getRoles().toString());
 							userTable.unselect(user);

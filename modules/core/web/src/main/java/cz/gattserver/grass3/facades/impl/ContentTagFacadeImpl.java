@@ -57,7 +57,7 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 	 * @return množina tagů, jako objektů, odpovídající těm ze vstupního řetězce
 	 */
 	public boolean saveTags(Collection<String> tagsDTOs,
-			ContentNodeDTO contentNodeDTO) {
+			Long contentId) {
 
 		// tagy, které které jsou použity/vytvořeny
 		Set<ContentTag> tags = new HashSet<ContentTag>();
@@ -79,8 +79,7 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 
 			}
 
-		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO
-				.getId());
+		ContentNode contentNode = contentNodeRepository.findOne(contentId);
 		if (contentNode == null)
 			return false;
 

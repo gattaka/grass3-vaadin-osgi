@@ -2,6 +2,7 @@ package cz.gattserver.grass3.pg.facade;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import cz.gattserver.grass3.model.dto.NodeDTO;
@@ -31,10 +32,11 @@ public interface IPhotogalleryFacade {
 	 *            je galerie publikována ?
 	 * @param photogallery
 	 *            původní galerie
+	 * @param date
 	 * @return {@code true} pokud se úprava zdařila, jinak {@code false}
 	 */
-	public boolean modifyPhotogallery(String name, Collection<String> tags,
-			boolean publicated, PhotogalleryDTO photogallery, String contextRoot);
+	public boolean modifyPhotogallery(String name, Collection<String> tags, boolean publicated,
+			PhotogalleryDTO photogallery, String contextRoot, Date date);
 
 	/**
 	 * Uloží galerii
@@ -51,12 +53,12 @@ public interface IPhotogalleryFacade {
 	 *            kategorie do které se vkládá
 	 * @param author
 	 *            uživatel, který galerii vytvořil
+	 * @param date
 	 * @return identifikátor galerie pokud vše dopadlo v pořádku, jinak
 	 *         {@code null}
 	 */
-	public Long savePhotogallery(String name, Collection<String> tags,
-			File galleryDir, boolean publicated, NodeDTO category,
-			UserInfoDTO author, String contextRoot);
+	public Long savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
+			NodeDTO category, UserInfoDTO author, String contextRoot, Date date);
 
 	/**
 	 * Získá galerii dle jeho identifikátoru

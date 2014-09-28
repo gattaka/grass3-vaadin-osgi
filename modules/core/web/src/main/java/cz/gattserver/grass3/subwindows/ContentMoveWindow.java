@@ -71,7 +71,7 @@ public abstract class ContentMoveWindow extends GrassWindow {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				NodeDTO nodeDTO = (NodeDTO) tree.getValue();
-				contentNodeFacade.moveContent(nodeDTO, contentNodeDTO);
+				contentNodeFacade.moveContent(nodeDTO.getId(), contentNodeDTO.getId());
 				close();
 				onMove();
 			}

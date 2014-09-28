@@ -145,7 +145,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 			@Override
 			public void onClick(ClickEvent event) {
 				// zdařilo se ? Pokud ano, otevři info okno
-				if (userFacade.removeContentFromFavourites(content, getUser())) {
+				if (userFacade.removeContentFromFavourites(content.getId(), getUser().getId())) {
 					InfoWindow infoSubwindow = new InfoWindow("Odebrání z oblíbených proběhlo úspěšně.");
 					getUI().addWindow(infoSubwindow);
 					removeFromFavouritesButton.setVisible(false);
@@ -164,7 +164,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 			@Override
 			public void onClick(ClickEvent event) {
 				// zdařilo se ? Pokud ano, otevři info okno
-				if (userFacade.addContentToFavourites(content, getUser())) {
+				if (userFacade.addContentToFavourites(content.getId(), getUser().getId())) {
 					InfoWindow infoSubwindow = new InfoWindow("Vložení do oblíbených proběhlo úspěšně.");
 					getUI().addWindow(infoSubwindow);
 					addToFavouritesButton.setVisible(false);

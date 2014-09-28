@@ -90,7 +90,7 @@ public class HomePage extends BasePage {
 			favouritesLayout.addComponent(favouritesContentsTable);
 			favouritesContentsTable.setWidth("100%");
 			pagelayout.addComponent(favouritesLayout);
-			List<ContentNodeDTO> contentNodes = contentNodeFacade.getUserFavouriteContents(user);
+			List<ContentNodeDTO> contentNodes = contentNodeFacade.getUserFavouriteContents(user.getId());
 			favouritesContentsTable.populateTable(contentNodes, this);
 		}
 

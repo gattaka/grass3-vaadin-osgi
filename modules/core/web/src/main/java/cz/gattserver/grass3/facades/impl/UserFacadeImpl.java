@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -16,7 +17,6 @@ import cz.gattserver.grass3.facades.IUserFacade;
 import cz.gattserver.grass3.model.dao.ContentNodeRepository;
 import cz.gattserver.grass3.model.dao.UserRepository;
 import cz.gattserver.grass3.model.domain.User;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.model.util.Mapper;
 import cz.gattserver.grass3.security.Role;
@@ -46,10 +46,8 @@ public class UserFacadeImpl implements IUserFacade {
 	 */
 	public UserInfoDTO getUserByLogin(String username, String password) {
 		List<User> loggedUser = userRepository.findByName(username);
-		if (loggedUser != null
-				&& loggedUser.size() == 1
-				&& loggedUser.get(0).getPassword()
-						.equals(encoder.encodePassword(password, null))) {
+		if (loggedUser != null && loggedUser.size() == 1
+				&& loggedUser.get(0).getPassword().equals(encoder.encodePassword(password, null))) {
 
 			User user = loggedUser.get(0);
 			if (user != null)
@@ -67,8 +65,7 @@ public class UserFacadeImpl implements IUserFacade {
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean registrateNewUser(String email, String username,
-			String password) {
+	public boolean registrateNewUser(String email, String username, String password) {
 
 		User user = new User();
 		user.setConfirmed(false);
@@ -89,10 +86,10 @@ public class UserFacadeImpl implements IUserFacade {
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean activateUser(UserInfoDTO userDTO) {
-		User user = userRepository.findOne(userDTO.getId());
-		user.setConfirmed(true);
-		return userRepository.save(user) != null;
+	public boolean activateUser(Long user) {
+		User u = userRepository.findOne(user);
+		u.setConfirmed(true);
+		return userRepository.save(u) != null;
 	}
 
 	/**
@@ -102,10 +99,10 @@ public class UserFacadeImpl implements IUserFacade {
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean banUser(UserInfoDTO userDTO) {
-		User user = userRepository.findOne(userDTO.getId());
-		user.setConfirmed(false);
-		return userRepository.save(user) != null;
+	public boolean banUser(Long user) {
+		User u = userRepository.findOne(user);
+		u.setConfirmed(false);
+		return userRepository.save(u) != null;
 	}
 
 	/**
@@ -115,10 +112,10 @@ public class UserFacadeImpl implements IUserFacade {
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean changeUserRoles(UserInfoDTO userDTO) {
-		User user = userRepository.findOne(userDTO.getId());
-		user.setRoles(userDTO.getRoles());
-		return userRepository.save(user) != null;
+	public boolean changeUserRoles(Long user, Set<Role> roles) {
+		User u = userRepository.findOne(user);
+		u.setRoles(roles);
+		return userRepository.save(u) != null;
 	}
 
 	/**
@@ -154,29 +151,23 @@ public class UserFacadeImpl implements IUserFacade {
 	/**
 	 * Zjistí zda daný obsah je v oblíbených daného uživatele
 	 */
-	public boolean hasInFavourites(ContentNodeDTO contentNodeDTO,
-			UserInfoDTO user) {
-		return userRepository.findByIdAndFavouritesId(user.getId(),
-				contentNodeDTO.getId()) != null;
+	public boolean hasInFavourites(Long content, Long user) {
+		return userRepository.findByIdAndFavouritesId(user, content) != null;
 	}
 
 	/**
 	 * Přidá obsah do oblíbených uživatele
 	 */
-	public boolean addContentToFavourites(ContentNodeDTO contentNodeDTO,
-			UserInfoDTO user) {
+	public boolean addContentToFavourites(Long contentId, Long user) {
 
-		User userEntity = userRepository.findOne(user.getId());
-		userEntity.getFavourites().add(
-				contentNodeRepository.findOne(contentNodeDTO.getId()));
+		User userEntity = userRepository.findOne(user);
+		userEntity.getFavourites().add(contentNodeRepository.findOne(contentId));
 
 		return userRepository.save(userEntity) != null;
 	}
 
-	private boolean removeContentFromFavourites(User user,
-			ContentNodeDTO contentNode) {
-		user.getFavourites().remove(
-				contentNodeRepository.findOne(contentNode.getId()));
+	private boolean removeContentFromFavourites(User user, Long contentId) {
+		user.getFavourites().remove(contentNodeRepository.findOne(contentId));
 
 		return userRepository.save(user) != null;
 	}
@@ -184,25 +175,22 @@ public class UserFacadeImpl implements IUserFacade {
 	/**
 	 * Odebere obsah z oblíbených uživatele
 	 */
-	public boolean removeContentFromFavourites(ContentNodeDTO contentNodeDTO,
-			UserInfoDTO user) {
-		User userEntity = userRepository.findOne(user.getId());
-		return removeContentFromFavourites(userEntity, contentNodeDTO);
+	public boolean removeContentFromFavourites(Long contentId, Long user) {
+		User userEntity = userRepository.findOne(user);
+		return removeContentFromFavourites(userEntity, contentId);
 	}
 
 	/**
 	 * Odebere obsah z oblíbených všech uživatelů
 	 */
-	public boolean removeContentFromAllUsersFavourites(
-			ContentNodeDTO contentNode) {
+	public boolean removeContentFromAllUsersFavourites(Long contentId) {
 
 		// vymaž z oblíbených
-		List<User> users = userRepository.findByFavouritesId(contentNode
-				.getId());
+		List<User> users = userRepository.findByFavouritesId(contentId);
 		if (users == null)
 			return false;
 		for (User user : users)
-			removeContentFromFavourites(user, contentNode);
+			removeContentFromFavourites(user, contentId);
 
 		return true;
 	}

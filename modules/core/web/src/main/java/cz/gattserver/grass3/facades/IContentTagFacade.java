@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 
 import cz.gattserver.grass3.model.domain.ContentNode;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 
 public interface IContentTagFacade {
@@ -17,12 +16,11 @@ public interface IContentTagFacade {
 	 * 
 	 * @param tags
 	 *            řetězec tagů oddělených mezerami
-	 * @param contentNodeDTO
+	 * @param contentId
 	 *            obsah, který je oanotován těmito tagy
 	 * @return množina tagů, jako objektů, odpovídající těm ze vstupního řetězce
 	 */
-	public boolean saveTags(Collection<String> tags,
-			ContentNodeDTO contentNodeDTO);
+	public boolean saveTags(Collection<String> tags, Long contentId);
 
 	/**
 	 * Získej tag dle jeho jména

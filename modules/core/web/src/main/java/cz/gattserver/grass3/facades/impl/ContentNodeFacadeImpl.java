@@ -2,6 +2,7 @@ package cz.gattserver.grass3.facades.impl;
 
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -23,8 +24,6 @@ import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.model.util.Mapper;
 
 @Transactional
@@ -52,9 +51,11 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	/**
 	 * Získá set oblíbených obsahů daného uživatele
 	 */
-	public List<ContentNodeDTO> getUserFavouriteContents(UserInfoDTO userInfo) {
-		User user = userRepository.findOne(userInfo.getId());
-		Set<ContentNode> contentNodes = user.getFavourites();
+	public List<ContentNodeDTO> getUserFavouriteContents(Long user) {
+		User u = userRepository.findOne(user);
+		if (u == null)
+			return null;
+		Set<ContentNode> contentNodes = u.getFavourites();
 
 		if (contentNodes == null)
 			return null;
@@ -94,12 +95,12 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	/**
 	 * Získá set obsahů dle kategorie
 	 */
-	public List<ContentNodeDTO> getContentNodesByNode(NodeDTO nodeDTO) {
-		Node node = nodeRepository.findOne(nodeDTO.getId());
-		if (node == null)
+	public List<ContentNodeDTO> getContentNodesByNode(Long node) {
+		Node n = nodeRepository.findOne(node);
+		if (n == null)
 			return null;
 
-		List<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(node.getContentNodes());
+		List<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(n.getContentNodes());
 		return contentNodeDTOs;
 	}
 
@@ -119,12 +120,16 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *            kategorie do kteér se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
-	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
-	 *         nebo
+	 * @return instanci {@link ContentNode}, který byl k obsahu vytvořen, nebo
 	 */
-	public ContentNodeDTO save(String contentModuleId, Long contentId, String name, boolean publicated,
-			NodeDTO category, UserInfoDTO author) {
+	public ContentNode save(String contentModuleId, Long contentId, String name, boolean publicated, Long category,
+			Long author) {
 		return save(contentModuleId, contentId, name, null, publicated, category, author);
+	}
+
+	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
+			boolean publicated, Long category, Long author) {
+		return save(contentModuleId, contentId, name, tags, publicated, category, author, null);
 	}
 
 	/**
@@ -147,30 +152,30 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
 	 *         nebo
 	 */
-	public ContentNodeDTO save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, NodeDTO category, UserInfoDTO author) {
+	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
+			boolean publicated, Long category, Long author, Date date) {
 		try {
 
 			ContentNode contentNode = new ContentNode();
 			contentNode.setContentId(contentId);
 			contentNode.setContentReaderId(contentModuleId);
-			contentNode.setCreationDate(Calendar.getInstance().getTime());
+			contentNode.setCreationDate(date == null ? Calendar.getInstance().getTime() : date);
 			contentNode.setName(name);
 			contentNode.setPublicated(publicated);
 
 			// Ulož contentNode
-			Node parent = nodeRepository.findOne(category.getId());
+			Node parent = nodeRepository.findOne(category);
 			if (parent == null)
 				return null;
 			contentNode.setParent(parent);
 
-			User user = userRepository.findOne(author.getId());
+			User user = userRepository.findOne(author);
 			if (user == null)
 				return null;
 			contentNode.setAuthor(user);
 
-			ContentNode node = contentNodeRepository.save(contentNode);
-			if (node == null)
+			contentNode = contentNodeRepository.save(contentNode);
+			if (contentNode == null)
 				return null;
 
 			parent.getContentNodes().add(contentNode);
@@ -182,11 +187,10 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 			 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
 			 * aktualizovat kvůli mazání tagů údaje v DB)
 			 */
-			ContentNodeDTO contentNodeDTO = getByID(contentNode.getId());
-			if (contentTagFacade.saveTags(tags, contentNodeDTO) == false)
+			if (contentTagFacade.saveTags(tags, contentId) == false)
 				return null;
 
-			return contentNodeDTO;
+			return contentNode;
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -215,14 +219,14 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean modify(ContentNodeDTO contentNode, String name, boolean publicated) {
+	public boolean modify(Long contentNode, String name, boolean publicated) {
 		return modify(contentNode, name, null, publicated);
 	}
 
 	/**
 	 * Upraví obsah a uloží ho do DB
 	 * 
-	 * @param contentNode
+	 * @param contentId
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @param tags
 	 *            řetězec tagů, který se má společně s obsahem uložit
@@ -230,13 +234,19 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *            je článek publikován ?
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean modify(ContentNodeDTO contentNodeDTO, String name, Collection<String> tags, boolean publicated) {
+	public boolean modify(Long contentId, String name, Collection<String> tags, boolean publicated) {
+		return modify(contentId, name, tags, publicated, null);
+	}
 
-		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO.getId());
+	public boolean modify(Long contentId, String name, Collection<String> tags, boolean publicated, Date creationDate) {
+		ContentNode contentNode = contentNodeRepository.findOne(contentId);
 
 		contentNode.setLastModificationDate(Calendar.getInstance().getTime());
 		contentNode.setName(name);
 		contentNode.setPublicated(publicated);
+
+		if (creationDate != null)
+			contentNode.setCreationDate(creationDate);
 
 		// Ulož změny v contentNode
 		if (contentNodeRepository.save(contentNode) == null)
@@ -246,11 +256,10 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
 		 * aktualizovat kvůli mazání tagů údaje v DB)
 		 */
-		if (contentTagFacade.saveTags(tags, contentNodeDTO) == false)
+		if (contentTagFacade.saveTags(tags, contentId) == false)
 			return false;
 
 		return true;
-
 	}
 
 	/**
@@ -260,17 +269,17 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean delete(ContentNodeDTO contentNodeDTO) {
+	public boolean delete(Long contentId) {
 
-		if (userFacade.removeContentFromAllUsersFavourites(contentNodeDTO) == false)
+		if (userFacade.removeContentFromAllUsersFavourites(contentId) == false)
 			return false;
 
 		// vymaž tagy
-		if (contentTagFacade.saveTags(null, contentNodeDTO) == false)
+		if (contentTagFacade.saveTags(null, contentId) == false)
 			return false;
 
 		// vymaž content node
-		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO.getId());
+		ContentNode contentNode = contentNodeRepository.findOne(contentId);
 
 		Node node = contentNode.getParent();
 		node.getContentNodes().remove(contentNode);
@@ -284,9 +293,9 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	}
 
 	@Override
-	public void moveContent(NodeDTO nodeDTO, ContentNodeDTO contentNodeDTO) {
-		ContentNode contentNode = contentNodeRepository.findOne(contentNodeDTO.getId());
-		Node newNode = nodeRepository.findOne(nodeDTO.getId());
+	public void moveContent(Long node, Long contentId) {
+		ContentNode contentNode = contentNodeRepository.findOne(contentId);
+		Node newNode = nodeRepository.findOne(node);
 		Node oldNode = nodeRepository.findOne(contentNode.getParent().getId());
 
 		contentNode.setParent(newNode);

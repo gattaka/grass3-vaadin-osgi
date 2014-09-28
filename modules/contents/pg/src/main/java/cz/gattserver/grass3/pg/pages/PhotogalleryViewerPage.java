@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.pg.pages;
 
 import java.io.File;
+import java.util.Arrays;
 
 import javax.annotation.Resource;
 
@@ -173,6 +174,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		}
 
 		final File[] miniatures = miniaturesDirFile.listFiles();
+		Arrays.sort(miniatures);
+
 		imageSum = miniatures.length;
 		rowsSum = (int) Math.ceil(miniatures.length * 1f / galleryGridCols);
 

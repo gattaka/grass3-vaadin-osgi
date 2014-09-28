@@ -214,6 +214,7 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 			processWindowLayout.setSpacing(true);
 			processWindowLayout.setSizeFull();
 
+			// TODO použít nové z balíku cz.gattserver.grass3.ui.progress
 			progressbar = new ProgressIndicator();
 			progressbar.setPollingInterval(100);
 			progressbar.setIndeterminate(false);

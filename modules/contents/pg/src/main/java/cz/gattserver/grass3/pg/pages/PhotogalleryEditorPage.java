@@ -15,8 +15,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import net.engio.mbassy.listener.Handler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.tokenfield.TokenField;
 
 import com.vaadin.data.Property;
@@ -41,8 +44,10 @@ import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.events.IEventBus;
 import cz.gattserver.grass3.facades.IContentTagFacade;
 import cz.gattserver.grass3.facades.INodeFacade;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
@@ -50,11 +55,16 @@ import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
+import cz.gattserver.grass3.pg.events.PGProcessProgressEvent;
+import cz.gattserver.grass3.pg.events.PGProcessResultEvent;
+import cz.gattserver.grass3.pg.events.PGProcessStartEvent;
 import cz.gattserver.grass3.pg.facade.IPhotogalleryFacade;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.subwindows.ConfirmWindow;
 import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.template.MultiUpload;
+import cz.gattserver.grass3.ui.progress.BaseProgressBar;
+import cz.gattserver.grass3.ui.progress.ProgressWindow;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.grass3.util.URLIdentifierUtils;
 import cz.gattserver.grass3.util.URLPathAnalyzer;
@@ -80,6 +90,12 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	@Resource(name = "photogalleryViewerPageFactory")
 	private IPageFactory photogalleryViewerPageFactory;
 
+	@Autowired
+	private IEventBus eventBus;
+
+	private UI ui = UI.getCurrent();
+	private ProgressWindow progressIndicatorWindow;
+
 	private NodeDTO category;
 	private PhotogalleryDTO photogallery;
 
@@ -93,6 +109,8 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	private boolean editMode;
 
 	private List<Path> newFiles;
+
+	private boolean stayInEditor = false;
 
 	public PhotogalleryEditorPage(GrassRequest request) {
 		super(request);
@@ -370,16 +388,8 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 				if (isFormValid() == false)
 					return;
 
-				// pokud se bude měnit
-				boolean oldMode = editMode;
-
-				if (saveOrUpdatePhotogallery()) {
-					newFiles.clear(); // soubory byly uloženy a nepodléhají
-										// podmíněnému smazání
-					showInfo(oldMode ? "Úprava galerie proběhla úspěšně" : "Uložení galerie proběhlo úspěšně");
-				} else {
-					showWarning(oldMode ? "Úprava galerie se nezdařila" : "Uložení galerie se nezdařilo");
-				}
+				stayInEditor = true;
+				saveOrUpdatePhotogallery();
 
 			}
 
@@ -394,18 +404,11 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			private static final long serialVersionUID = 607422393151282918L;
 
 			public void buttonClick(ClickEvent event) {
-
 				if (isFormValid() == false)
 					return;
 
-				if (saveOrUpdatePhotogallery()) {
-					newFiles.clear(); // soubory byly uloženy a nepodléhají
-										// podmíněnému smazání
-					returnToPhotogallery();
-				} else {
-					showWarning(editMode ? "Úprava galerie se nezdařila" : "Uložení galerie se nezdařilo");
-				}
-
+				stayInEditor = false;
+				saveOrUpdatePhotogallery();
 			}
 
 		});
@@ -459,23 +462,20 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean saveOrUpdatePhotogallery() {
+	private void saveOrUpdatePhotogallery() {
+
+		System.out.println("saveOrUpdatePhotogallery thread: " + Thread.currentThread().getId());
+
+		eventBus.subscribe(PhotogalleryEditorPage.this);
+		ui.setPollInterval(200);
 		if (editMode) {
-			return photogalleryFacade.modifyPhotogallery(String.valueOf(photogalleryNameField.getValue()),
+			photogalleryFacade.modifyPhotogallery(String.valueOf(photogalleryNameField.getValue()),
 					(Collection<String>) photogalleryKeywords.getValue(), publicatedCheckBox.getValue(), photogallery,
 					getRequest().getContextRoot(), photogalleryDateField.getValue());
 		} else {
-			Long id = photogalleryFacade.savePhotogallery(String.valueOf(photogalleryNameField.getValue()),
+			photogalleryFacade.savePhotogallery(String.valueOf(photogalleryNameField.getValue()),
 					(Collection<String>) photogalleryKeywords.getValue(), galleryDir, publicatedCheckBox.getValue(),
 					category, getGrassUI().getUser(), getRequest().getContextRoot(), photogalleryDateField.getValue());
-
-			if (id == null)
-				return false;
-
-			// odteď budeme editovat
-			editMode = true;
-			photogallery = photogalleryFacade.getPhotogalleryForDetail(id);
-			return true;
 		}
 	}
 
@@ -509,4 +509,60 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		}
 	}
 
+	@Handler
+	protected void onProcessStart(final PGProcessStartEvent event) {
+		ui.access(new Runnable() {
+			@Override
+			public void run() {
+				BaseProgressBar progressBar = new BaseProgressBar(event.getCountOfStepsToDo());
+				progressBar.setIndeterminate(false);
+				progressBar.setValue(0f);
+				progressIndicatorWindow = new ProgressWindow(progressBar);
+				ui.addWindow(progressIndicatorWindow);
+			}
+		});
+	}
+
+	@Handler
+	protected void onProcessProgress(PGProcessProgressEvent event) {
+		ui.access(new Runnable() {
+			@Override
+			public void run() {
+				progressIndicatorWindow.indicateProgress(event.getStepDescription());
+			}
+		});
+	}
+
+	@Handler
+	protected void onProcessResult(final PGProcessResultEvent event) {
+		ui.access(new Runnable() {
+			@Override
+			public void run() {
+
+				// ui.setPollInterval(-1);
+				if (progressIndicatorWindow != null)
+					progressIndicatorWindow.closeOnDone();
+
+				Long id = event.getGalleryId();
+				if (event.isSuccess() && (id != null || editMode)) {
+					if (editMode == false)
+						photogallery = photogalleryFacade.getPhotogalleryForDetail(id);
+
+					// soubory byly uloženy a nepodléhají
+					// podmíněnému smazání
+					newFiles.clear();
+					if (stayInEditor == false)
+						returnToPhotogallery();
+
+					showInfo(editMode ? "Úprava galerie proběhla úspěšně" : "Uložení galerie proběhlo úspěšně");
+				} else {
+					showWarning(editMode ? "Úprava galerie se nezdařila" : "Uložení galerie se nezdařilo");
+				}
+
+				// odteď budeme editovat
+				editMode = true;
+			}
+		});
+		eventBus.unsubscribe(PhotogalleryEditorPage.this);
+	}
 }

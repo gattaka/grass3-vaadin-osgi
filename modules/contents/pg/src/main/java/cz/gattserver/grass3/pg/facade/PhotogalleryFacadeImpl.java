@@ -9,10 +9,12 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import cz.gattserver.grass3.config.IConfigurationService;
+import cz.gattserver.grass3.events.IEventBus;
 import cz.gattserver.grass3.facades.IContentNodeFacade;
 import cz.gattserver.grass3.model.dao.ContentNodeRepository;
 import cz.gattserver.grass3.model.domain.ContentNode;
@@ -23,6 +25,9 @@ import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.pg.dao.PhotoGalleryRepository;
 import cz.gattserver.grass3.pg.domain.Photogallery;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
+import cz.gattserver.grass3.pg.events.PGProcessProgressEvent;
+import cz.gattserver.grass3.pg.events.PGProcessResultEvent;
+import cz.gattserver.grass3.pg.events.PGProcessStartEvent;
 import cz.gattserver.grass3.pg.service.impl.PhotogalleryContentService;
 import cz.gattserver.grass3.pg.util.ImageUtils;
 import cz.gattserver.grass3.pg.util.PhotogalleryMapper;
@@ -45,6 +50,9 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 
 	@Autowired
 	private PhotoGalleryRepository photogalleryRepository;
+
+	@Autowired
+	private IEventBus eventBus;
 
 	@Override
 	public PhotogalleryConfiguration getConfiguration() {
@@ -92,6 +100,9 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		String miniaturesDir = configuration.getMiniaturesDir();
 		File galleryDir = getGalleryDir(photogallery);
 
+		int total = galleryDir.listFiles().length;
+		int progress = 1;
+
 		File miniDirFile = new File(galleryDir, miniaturesDir);
 		if (miniDirFile.exists() == false) {
 			if (miniDirFile.mkdir() == false)
@@ -104,7 +115,13 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 			File miniFile = new File(miniDirFile, file.getName());
 
 			// pokud bych miniaturizoval adresář nebo miniatura existuje přeskoč
-			if (file.isDirectory() || miniFile.exists())
+			if (file.isDirectory())
+				continue;
+
+			eventBus.publish(new PGProcessProgressEvent("Zpracování miniatur " + progress + "/" + total));
+			progress++;
+
+			if (miniFile.exists())
 				continue;
 
 			// vytvoř miniaturu
@@ -128,6 +145,9 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		String slideshowDir = configuration.getSlideshowDir();
 		File galleryDir = getGalleryDir(photogallery);
 
+		int total = galleryDir.listFiles().length;
+		int progress = 1;
+
 		File slideshowDirFile = new File(galleryDir, slideshowDir);
 		if (slideshowDirFile.exists() == false) {
 			if (slideshowDirFile.mkdir() == false)
@@ -139,7 +159,13 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 			// soubor slideshow
 			File slideshowFile = new File(slideshowDirFile, file.getName());
 
-			if (file.isDirectory() || slideshowFile.exists())
+			if (file.isDirectory())
+				continue;
+
+			eventBus.publish(new PGProcessProgressEvent("Zpracování slideshow " + progress + "/" + total));
+			progress++;
+
+			if (slideshowFile.exists())
 				continue;
 
 			// vytvoř slideshow verzi
@@ -155,8 +181,14 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 	}
 
 	@Override
-	public boolean modifyPhotogallery(String name, Collection<String> tags, boolean publicated,
+	@Async
+	public void modifyPhotogallery(String name, Collection<String> tags, boolean publicated,
 			PhotogalleryDTO photogalleryDTO, String contextRoot, Date date) {
+
+		System.out.println("modifyPhotogallery thread: " + Thread.currentThread().getId());
+
+		// Počet kroků = miniatury + detaily + uložení
+		eventBus.publish(new PGProcessStartEvent(2 * getGalleryDir(photogalleryDTO).listFiles().length + 1));
 
 		Photogallery photogallery = photogalleryRepository.findOne(photogalleryDTO.getId());
 
@@ -167,14 +199,18 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		processSlideshowImages(photogallery);
 
 		// ulož ho
-		if (photogalleryRepository.save(photogallery) == null)
-			return false;
+		if (photogalleryRepository.save(photogallery) == null) {
+			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+			return;
+		}
 
 		// content node
-		if (contentNodeFacade.modify(photogalleryDTO.getContentNode().getId(), name, tags, publicated, date) == false)
-			return false;
+		if (contentNodeFacade.modify(photogalleryDTO.getContentNode().getId(), name, tags, publicated, date) == false) {
+			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+			return;
+		}
 
-		return true;
+		eventBus.publish(new PGProcessResultEvent());
 	}
 
 	@Override
@@ -200,8 +236,14 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 	}
 
 	@Override
-	public Long savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
+	@Async
+	public void savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
 			NodeDTO category, UserInfoDTO author, String contextRoot, Date date) {
+
+		System.out.println("savePhotogallery thread: " + Thread.currentThread().getId());
+
+		// Počet kroků = miniatury + detaily + uložení
+		eventBus.publish(new PGProcessStartEvent(2 * galleryDir.listFiles().length + 1));
 
 		// vytvoř novou galerii
 		Photogallery photogallery = new Photogallery();
@@ -217,22 +259,29 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 
 		// ulož ho a nasetuj jeho id
 		photogallery = photogalleryRepository.save(photogallery);
-		if (photogallery == null)
-			return null;
+		if (photogallery == null) {
+			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+			return;
+		}
 
 		// vytvoř odpovídající content node
+		eventBus.publish(new PGProcessProgressEvent("Uložení obsahu galerie"));
 		ContentNode contentNode = contentNodeFacade.save(PhotogalleryContentService.ID, photogallery.getId(), name,
 				tags, publicated, category.getId(), author.getId(), date);
 
-		if (contentNode == null)
-			return null;
+		if (contentNode == null) {
+			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+			return;
+		}
 
 		// ulož do galerie referenci na její contentnode
 		photogallery.setContentNode(contentNode);
-		if (photogalleryRepository.save(photogallery) == null)
-			return null;
+		if (photogalleryRepository.save(photogallery) == null) {
+			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+			return;
+		}
 
-		return photogallery.getId();
+		eventBus.publish(new PGProcessResultEvent(photogallery.getId()));
 	}
 
 	@Override

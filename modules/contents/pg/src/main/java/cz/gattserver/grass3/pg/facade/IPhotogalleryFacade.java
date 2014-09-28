@@ -35,7 +35,7 @@ public interface IPhotogalleryFacade {
 	 * @param date
 	 * @return {@code true} pokud se úprava zdařila, jinak {@code false}
 	 */
-	public boolean modifyPhotogallery(String name, Collection<String> tags, boolean publicated,
+	public void modifyPhotogallery(String name, Collection<String> tags, boolean publicated,
 			PhotogalleryDTO photogallery, String contextRoot, Date date);
 
 	/**
@@ -57,7 +57,7 @@ public interface IPhotogalleryFacade {
 	 * @return identifikátor galerie pokud vše dopadlo v pořádku, jinak
 	 *         {@code null}
 	 */
-	public Long savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
+	public void savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
 			NodeDTO category, UserInfoDTO author, String contextRoot, Date date);
 
 	/**

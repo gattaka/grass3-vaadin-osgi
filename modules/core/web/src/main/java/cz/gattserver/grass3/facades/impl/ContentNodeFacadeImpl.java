@@ -154,48 +154,37 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 */
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
 			boolean publicated, Long category, Long author, Date date) {
-		try {
 
-			ContentNode contentNode = new ContentNode();
-			contentNode.setContentId(contentId);
-			contentNode.setContentReaderId(contentModuleId);
-			contentNode.setCreationDate(date == null ? Calendar.getInstance().getTime() : date);
-			contentNode.setName(name);
-			contentNode.setPublicated(publicated);
+		ContentNode contentNode = new ContentNode();
+		contentNode.setContentId(contentId);
+		contentNode.setContentReaderId(contentModuleId);
+		contentNode.setCreationDate(date == null ? Calendar.getInstance().getTime() : date);
+		contentNode.setName(name);
+		contentNode.setPublicated(publicated);
 
-			// Ulož contentNode
-			Node parent = nodeRepository.findOne(category);
-			if (parent == null)
-				return null;
-			contentNode.setParent(parent);
+		// Ulož contentNode
+		Node parent = nodeRepository.findOne(category);
+		contentNode.setParent(parent);
 
-			User user = userRepository.findOne(author);
-			if (user == null)
-				return null;
-			contentNode.setAuthor(user);
+		User user = userRepository.findOne(author);
+		contentNode.setAuthor(user);
 
-			contentNode = contentNodeRepository.save(contentNode);
-			if (contentNode == null)
-				return null;
+		contentNode = contentNodeRepository.save(contentNode);
 
-			parent.getContentNodes().add(contentNode);
-			parent = nodeRepository.save(parent);
-			if (parent == null)
-				return null;
+		parent.getContentNodes().add(contentNode);
+		parent = nodeRepository.save(parent);
 
-			/**
-			 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
-			 * aktualizovat kvůli mazání tagů údaje v DB)
-			 */
-			if (contentTagFacade.saveTags(tags, contentId) == false)
-				return null;
-
-			return contentNode;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+		if (true) {
+			throw new RuntimeException("TEST TRANSAKCE");
 		}
+
+		/**
+		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
+		 * aktualizovat kvůli mazání tagů údaje v DB)
+		 */
+		contentTagFacade.saveTags(tags, contentId);
+
+		return contentNode;
 
 	}
 
@@ -249,15 +238,13 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 			contentNode.setCreationDate(creationDate);
 
 		// Ulož změny v contentNode
-		if (contentNodeRepository.save(contentNode) == null)
-			return false;
+		contentNodeRepository.save(contentNode);
 
 		/**
 		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
 		 * aktualizovat kvůli mazání tagů údaje v DB)
 		 */
-		if (contentTagFacade.saveTags(tags, contentId) == false)
-			return false;
+		contentTagFacade.saveTags(tags, contentId);
 
 		return true;
 	}
@@ -271,12 +258,10 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 */
 	public boolean delete(Long contentId) {
 
-		if (userFacade.removeContentFromAllUsersFavourites(contentId) == false)
-			return false;
+		userFacade.removeContentFromAllUsersFavourites(contentId);
 
 		// vymaž tagy
-		if (contentTagFacade.saveTags(null, contentId) == false)
-			return false;
+		contentTagFacade.saveTags(null, contentId);
 
 		// vymaž content node
 		ContentNode contentNode = contentNodeRepository.findOne(contentId);
@@ -284,12 +269,9 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		Node node = contentNode.getParent();
 		node.getContentNodes().remove(contentNode);
 		node = nodeRepository.save(node);
-		if (node == null)
-			return false;
 
 		contentNodeRepository.delete(contentNode);
 		return true;
-
 	}
 
 	@Override

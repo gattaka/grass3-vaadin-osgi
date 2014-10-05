@@ -10,6 +10,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.articles.dto.ArticleDTO;
 import cz.gattserver.grass3.articles.facade.IArticleFacade;
+import cz.gattserver.grass3.facades.IContentNodeFacade;
 import cz.gattserver.grass3.facades.INodeFacade;
 import cz.gattserver.grass3.facades.IUserFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
@@ -43,11 +44,17 @@ public class ArticlesViewerPage extends ContentViewerPage {
 	@Resource(name = "nodeFacade")
 	private INodeFacade nodeFacade;
 
+	@Resource(name = "contentNodeFacade")
+	private IContentNodeFacade contentNodeFacade;
+
 	@Resource(name = "articlesViewerPageFactory")
 	private IPageFactory articlesViewerPageFactory;
 
 	@Resource(name = "categoryPageFactory")
 	private IPageFactory categoryPageFactory;
+
+	@Resource(name = "homePageFactory")
+	private IPageFactory homePageFactory;
 
 	@Resource(name = "articlesEditorPageFactory")
 	private IPageFactory articlesEditorPageFactory;
@@ -71,6 +78,13 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		if (article == null) {
 			showError404();
 			return;
+		}
+
+		// RESCUE -- tohle by se normálně stát nemělo, ale umožňuje to aspoň
+		// vyřešit stav, ve kterém existuje takovýto nezobrazitelný obsah
+		if (article.getContentNode() == null) {
+			articleFacade.deleteArticle(article);
+			redirect(getPageURL(homePageFactory.getPageName()));
 		}
 
 		if (article.getContentNode().isPublicated()

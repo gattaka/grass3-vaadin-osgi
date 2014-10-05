@@ -126,8 +126,10 @@ public class ArticleFacadeImpl implements IArticleFacade {
 
 		// smaž jeho content node
 		ContentNodeDTO contentNodeDTO = articleDTO.getContentNode();
-		if (contentNodeFacade.delete(contentNodeDTO.getId()) == false)
-			return false;
+		if (contentNodeDTO != null) {
+			if (contentNodeFacade.delete(contentNodeDTO.getId()) == false)
+				return false;
+		}
 
 		return true;
 	}
@@ -220,20 +222,14 @@ public class ArticleFacadeImpl implements IArticleFacade {
 
 		// ulož ho a nasetuj jeho id
 		article = articleRepository.save(article);
-		if (article == null)
-			return null;
-
+		
 		// vytvoř odpovídající content node
 		ContentNode contentNode = contentNodeFacade.save(ArticlesContentService.ID, article.getId(), name, tags,
 				publicated, category.getId(), author.getId());
 
-		if (contentNode == null)
-			return null;
-
 		// ulož do článku referenci na jeho contentnode
 		article.setContentNode(contentNode);
-		if (articleRepository.save(article) == null)
-			return null;
+		articleRepository.save(article);
 
 		return article.getId();
 	}

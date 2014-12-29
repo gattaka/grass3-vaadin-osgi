@@ -174,15 +174,11 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		parent.getContentNodes().add(contentNode);
 		parent = nodeRepository.save(parent);
 
-		if (true) {
-			throw new RuntimeException("TEST TRANSAKCE");
-		}
-
 		/**
 		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
 		 * aktualizovat kvůli mazání tagů údaje v DB)
 		 */
-		contentTagFacade.saveTags(tags, contentId);
+		contentTagFacade.saveTags(tags, contentNode);
 
 		return contentNode;
 
@@ -191,12 +187,12 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	/**
 	 * Získá contentNodeDTO dle jeho id
 	 * 
-	 * @param id
+	 * @param contentNodeId
 	 *            identifikátor obsahu
 	 * @return obsah
 	 */
-	public ContentNodeDTO getByID(Long id) {
-		ContentNode contentNode = contentNodeRepository.findOne(id);
+	public ContentNodeDTO getByID(Long contentNodeId) {
+		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
 		ContentNodeDTO contentNodeDTO = mapper.map(contentNode);
 		return contentNodeDTO;
 	}
@@ -204,18 +200,18 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	/**
 	 * Upraví obsah a uloží ho do DB - verze metody pro obsah bez tagů
 	 * 
-	 * @param contentNode
+	 * @param contentNodeId
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean modify(Long contentNode, String name, boolean publicated) {
-		return modify(contentNode, name, null, publicated);
+	public boolean modify(Long contentNodeId, String name, boolean publicated) {
+		return modify(contentNodeId, name, null, publicated);
 	}
 
 	/**
 	 * Upraví obsah a uloží ho do DB
 	 * 
-	 * @param contentId
+	 * @param contentNodeId
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @param tags
 	 *            řetězec tagů, který se má společně s obsahem uložit
@@ -223,12 +219,12 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *            je článek publikován ?
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean modify(Long contentId, String name, Collection<String> tags, boolean publicated) {
-		return modify(contentId, name, tags, publicated, null);
+	public boolean modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated) {
+		return modify(contentNodeId, name, tags, publicated, null);
 	}
 
-	public boolean modify(Long contentId, String name, Collection<String> tags, boolean publicated, Date creationDate) {
-		ContentNode contentNode = contentNodeRepository.findOne(contentId);
+	public boolean modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated, Date creationDate) {
+		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
 
 		contentNode.setLastModificationDate(Calendar.getInstance().getTime());
 		contentNode.setName(name);
@@ -244,7 +240,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
 		 * aktualizovat kvůli mazání tagů údaje v DB)
 		 */
-		contentTagFacade.saveTags(tags, contentId);
+		contentTagFacade.saveTags(tags, contentNodeId);
 
 		return true;
 	}
@@ -256,15 +252,15 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean delete(Long contentId) {
+	public boolean delete(Long contentNodeId) {
 
-		userFacade.removeContentFromAllUsersFavourites(contentId);
+		userFacade.removeContentFromAllUsersFavourites(contentNodeId);
 
 		// vymaž tagy
-		contentTagFacade.saveTags(null, contentId);
+		contentTagFacade.saveTags(null, contentNodeId);
 
 		// vymaž content node
-		ContentNode contentNode = contentNodeRepository.findOne(contentId);
+		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
 
 		Node node = contentNode.getParent();
 		node.getContentNodes().remove(contentNode);
@@ -275,8 +271,8 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	}
 
 	@Override
-	public void moveContent(Long node, Long contentId) {
-		ContentNode contentNode = contentNodeRepository.findOne(contentId);
+	public void moveContent(Long node, Long contentNodeId) {
+		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
 		Node newNode = nodeRepository.findOne(node);
 		Node oldNode = nodeRepository.findOne(contentNode.getParent().getId());
 

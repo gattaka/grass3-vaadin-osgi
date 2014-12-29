@@ -17,7 +17,6 @@ import cz.gattserver.grass3.model.dao.ContentNodeRepository;
 import cz.gattserver.grass3.model.dao.ContentTagRepository;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.model.util.Mapper;
 
@@ -41,9 +40,12 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 		List<ContentTag> contentTags = contentTagRepository.findAll();
 		if (contentTags == null)
 			return null;
-		Set<ContentTagDTO> contentTagDTOs = mapper
-				.mapContentTagCollectionForOverview(contentTags);
+		Set<ContentTagDTO> contentTagDTOs = mapper.mapContentTagCollectionForOverview(contentTags);
 		return new ArrayList<ContentTagDTO>(contentTagDTOs);
+	}
+
+	public void saveTags(Collection<String> tagsDTOs, Long contentNodeId) {
+		saveTags(tagsDTOs, contentNodeRepository.findOne(contentNodeId));
 	}
 
 	/**
@@ -56,8 +58,7 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 	 *            obsah, který je oanotován těmito tagy
 	 * @return množina tagů, jako objektů, odpovídající těm ze vstupního řetězce
 	 */
-	public boolean saveTags(Collection<String> tagsDTOs,
-			Long contentId) {
+	public void saveTags(Collection<String> tagsDTOs, ContentNode contentNode) {
 
 		// tagy, které které jsou použity/vytvořeny
 		Set<ContentTag> tags = new HashSet<ContentTag>();
@@ -79,10 +80,6 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 
 			}
 
-		ContentNode contentNode = contentNodeRepository.findOne(contentId);
-		if (contentNode == null)
-			return false;
-
 		// Fáze #1
 		// získej tagy, které se už nepoužívají a na nich proveď odebrání
 		// ContentNode a případně smazání
@@ -100,8 +97,6 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 				// ulož změnu
 				oldTag.setContentNodesCount(oldTag.getContentNodes().size());
 				oldTag = contentTagRepository.save(oldTag);
-				if (oldTag == null)
-					return false;
 
 				// pokud je tag prázdný (nemá nodes) pak se může smazat
 				if (oldTag.getContentNodes().isEmpty()) {
@@ -125,14 +120,10 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 			if (tag.getId() == null) {
 				tag.setContentNodesCount(tag.getContentNodes().size());
 				tag = contentTagRepository.save(tag);
-				if (tag == null)
-					return false;
 
 			} else {
 				tag.setContentNodesCount(tag.getContentNodes().size());
 				tag = contentTagRepository.save(tag);
-				if (tag == null)
-					return false;
 			}
 
 			// přidej tag k node
@@ -142,16 +133,12 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 
 		// merge contentNode
 		contentNode = contentNodeRepository.save(contentNode);
-		if (contentNode == null)
-			return false;
 
 		// Fáze #3
 		// smaž nepoužívané tagy
 		for (ContentTag tagToDelete : tagsToDelete) {
 			contentTagRepository.delete(tagToDelete);
 		}
-
-		return true;
 	}
 
 	/**
@@ -161,8 +148,7 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 	 * @return tag
 	 */
 	public ContentTagDTO getContentTagById(Long id) {
-		ContentTagDTO tag = mapper.mapContentTag(contentTagRepository
-				.findOne(id));
+		ContentTagDTO tag = mapper.mapContentTag(contentTagRepository.findOne(id));
 		return tag;
 	}
 

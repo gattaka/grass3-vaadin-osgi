@@ -16,11 +16,13 @@ public interface IContentTagFacade {
 	 * 
 	 * @param tags
 	 *            řetězec tagů oddělených mezerami
-	 * @param contentId
+	 * @param contentNodeId
 	 *            obsah, který je oanotován těmito tagy
 	 * @return množina tagů, jako objektů, odpovídající těm ze vstupního řetězce
 	 */
-	public boolean saveTags(Collection<String> tags, Long contentId);
+	public void saveTags(Collection<String> tags, Long contentNodeId);
+
+	public void saveTags(Collection<String> tags, ContentNode contentNode);
 
 	/**
 	 * Získej tag dle jeho jména
@@ -29,7 +31,7 @@ public interface IContentTagFacade {
 	 *            jméno tagu
 	 * @return tag
 	 */
-	public ContentTagDTO getContentTagById(Long id);
+	public ContentTagDTO getContentTagById(Long contentNodeId);
 
 	public boolean countContentNodes();
 

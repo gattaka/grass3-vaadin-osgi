@@ -1,10 +1,12 @@
 /deploy.sh
-/.settings
-/.project
+*.settings
+*.project
 /trace.db
+/modules/core/common/src/main/java/cz/gattserver/grass3/util/ServerMailCredentials.java
 /modules/core/perfStats.log
 /grass3H2DB.trace.db
 /grass3H2DB.trace.db.old
 /modules/core/grass3H2DB.h2.db
 /grass3H2DB.lock.db
 /grass3H2DB.h2.db
+ServerMailCredentials

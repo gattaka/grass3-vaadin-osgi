@@ -9,8 +9,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vaadin.sass.internal.util.StringUtil;
 
 /**
  * 
@@ -18,10 +24,8 @@ import org.slf4j.LoggerFactory;
  */
 public class Downloader {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(Downloader.class);
+	private static final Logger logger = LoggerFactory.getLogger(Downloader.class);
 
-	private static String engineAddress = "http://g.etfv.co/";
 	private String address;
 
 	public Downloader(String address) {
@@ -55,9 +59,45 @@ public class Downloader {
 		return null;
 	}
 
-	public void download(File targetFile) throws IOException {
+	private String findFaviconFileAddress() {
+		Document doc;
+		try {
 
-		InputStream stream = getResponseReader(engineAddress + address);
+			// http://en.wikipedia.org/wiki/Favicon
+
+			// need http protocol
+			String httpPrefix = "http://";
+			String addressToGET = address;
+			if (address.startsWith(httpPrefix) == false) {
+				addressToGET = httpPrefix + address;
+			}
+
+			// bez agenta to často hodí 403 Forbidden, protože si myslí, že jsem asi bot ... (což vlastně jsem)
+			doc = Jsoup.connect(addressToGET).userAgent("Mozilla").get();
+
+			String ico;
+
+			// link
+			Element element = doc.head().select("link[href~=.*\\.(ico|png)]").first();
+			ico = element.attr("href");
+			if (StringUtils.isNotBlank(ico))
+				return ico;
+
+			// meta + content
+			element = doc.head().select("meta[itemprop=image]").first();
+			ico = element.attr("content");
+			if (StringUtils.isNotBlank(ico))
+				return ico;
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public void download(File targetFile) throws IOException {
+		InputStream stream = getResponseReader(findFaviconFileAddress());
 		OutputStream out = new FileOutputStream(targetFile);
 		byte buf[] = new byte[1024];
 		int len;

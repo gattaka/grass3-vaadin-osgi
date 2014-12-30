@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -41,17 +42,37 @@ public class Downloader {
 			url = new URL(address);
 			URLConnection uc = url.openConnection();
 			if (uc != null) {
-				logger.info("Favicon URL: " + uc.getURL());
-				uc.connect();
-				logger.info("Favicon connected URL: " + uc.getURL());
-				InputStream is = uc.getInputStream();
-				logger.info("Favicon redirected URL: " + uc.getURL());
-				if (is != null) {
-					logger.info("Engine: InputStream obtained");
-				} else {
-					logger.info("Engine: InputStream is null !");
+				if (uc instanceof HttpURLConnection) {
+					// HttpURLConnection
+					HttpURLConnection hc = (HttpURLConnection) uc;
+					hc.setInstanceFollowRedirects(true);
+
+					// bez agenta to často hodí 403 Forbidden, protože si myslí, že jsem asi bot ... (což vlastně jsem)
+					hc.setRequestProperty("User-Agent", "Mozilla");
+					logger.info("Favicon URL: " + uc.getURL());
+					hc.connect();
+
+					// Zjisti, zda bude potřeba manuální redirect (URLConnection to umí samo, dokud se nepřechází mezi
+					// HTTP a HTTPS, pak to nechává na manuální obsluze)
+					int responseCode = hc.getResponseCode();
+					if (responseCode == 301 || responseCode == 302 || responseCode == 303) {
+						String location = hc.getHeaderField("Location");
+						hc = (HttpURLConnection) (new URL(location).openConnection());
+						hc.setInstanceFollowRedirects(false);
+						hc.setRequestProperty("User-Agent", "Mozilla");
+						hc.connect();
+					}
+
+					logger.info("Favicon connected URL: " + hc.getURL());
+					InputStream is = hc.getInputStream();
+					logger.info("Favicon redirected URL: " + hc.getURL());
+					if (is != null) {
+						logger.info("Engine: InputStream obtained");
+					} else {
+						logger.info("Engine: InputStream is null !");
+					}
+					return is;
 				}
-				return is;
 			} else {
 				logger.info("Engine: URL connection failed !");
 			}
@@ -61,6 +82,30 @@ public class Downloader {
 			logger.error(ex.toString());
 		}
 		return null;
+	}
+
+	private static String createFullFaviconAddress(String faviconAddress, String baseURI) {
+
+		// je potřeba z Jsoup doc.baseUri(), protože to může být i vložená stránka a tam se baseURI liší od počátečního
+		// url.getHost() hlavní stránky
+
+		logger.info("Favicon address found on page, address: " + faviconAddress);
+		if (faviconAddress.startsWith(HTTP_PREFIX) || faviconAddress.startsWith(HTTPS_PREFIX)) {
+			// absolutní cesta pro favicon
+			logger.info("Trying download favicon from: " + faviconAddress);
+			return faviconAddress;
+		} else if (faviconAddress.startsWith("//")) {
+			// absolutní cesta pro favicon, která míst 'http://' začíná jenom '//'
+			// tahle to má například stackoverflow
+			String faviconFullAddress = HTTP_PREFIX_SHORT + faviconAddress;
+			logger.info("Trying download favicon from: " + faviconFullAddress);
+			return faviconFullAddress;
+		} else {
+			// relativní cesta pro favicon
+			String faviconFullAddress = baseURI + "/" + faviconAddress;
+			logger.info("Trying download favicon from: " + faviconFullAddress);
+			return faviconFullAddress;
+		}
 	}
 
 	private static String findFaviconAddressOnPage(String address) {
@@ -79,7 +124,7 @@ public class Downloader {
 			if (element != null) {
 				ico = element.attr("href");
 				if (StringUtils.isNotBlank(ico))
-					return ico;
+					return createFullFaviconAddress(ico, doc.baseUri());
 			}
 
 			// meta + content
@@ -87,7 +132,7 @@ public class Downloader {
 			if (element != null) {
 				ico = element.attr("content");
 				if (StringUtils.isNotBlank(ico))
-					return ico;
+					return createFullFaviconAddress(ico, doc.baseUri());
 			}
 
 		} catch (IOException e) {
@@ -114,23 +159,7 @@ public class Downloader {
 			}
 
 		} else {
-			logger.info("Favicon address found on page, address: " + faviconAddress);
-			if (faviconAddress.startsWith(HTTP_PREFIX) || faviconAddress.startsWith(HTTPS_PREFIX)) {
-				// absolutní cesta pro favicon
-				logger.info("Trying download favicon from: " + faviconAddress);
-				stream = getResponseReader(faviconAddress);
-			} else if (faviconAddress.startsWith("//")) {
-				// absolutní cesta pro favicon, která míst 'http://' začíná jenom '//'
-				// tahle to má například stackoverflow
-				String faviconFullAddress = HTTP_PREFIX_SHORT + faviconAddress;
-				logger.info("Trying download favicon from: " + faviconFullAddress);
-				stream = getResponseReader(faviconFullAddress);
-			} else {
-				// relativní cesta pro favicon
-				String faviconFullAddress = address + "/" + faviconAddress;
-				logger.info("Trying download favicon from: " + faviconFullAddress);
-				stream = getResponseReader(faviconFullAddress);
-			}
+			stream = getResponseReader(faviconAddress);
 		}
 
 		if (stream != null) {
@@ -142,6 +171,11 @@ public class Downloader {
 			out.close();
 			stream.close();
 		}
+
+		// zdařilo se?
+		if (targetFile.length() == 0)
+			targetFile.delete();
+
 		logger.info("Done");
 	}
 }

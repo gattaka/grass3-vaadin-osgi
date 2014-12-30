@@ -119,8 +119,16 @@ public class Downloader {
 
 			String ico;
 
-			// link
-			Element element = doc.head().select("link[href~=.*\\.(ico|png)]").first();
+			// link ICO (upřednostňuj)
+			Element element = doc.head().select("link[href~=.*\\.ico]").first();
+			if (element != null) {
+				ico = element.attr("href");
+				if (StringUtils.isNotBlank(ico))
+					return createFullFaviconAddress(ico, doc.baseUri());
+			}
+
+			// link PNG
+			element = doc.head().select("link[href~=.*\\.png]").first();
 			if (element != null) {
 				ico = element.attr("href");
 				if (StringUtils.isNotBlank(ico))
@@ -142,38 +150,52 @@ public class Downloader {
 		return null;
 	}
 
-	public static void download(File targetFile, URL url) throws IOException {
-		String address = HTTP_PREFIX + url.getHost();
-		String faviconAddress = findFaviconAddressOnPage(address);
-
-		InputStream stream;
-
-		if (StringUtils.isBlank(faviconAddress)) {
-			logger.info("Favicon address NOT found on page, trying root locations");
-			// root + /favicon.ico
-			stream = getResponseReader(address + "/" + FAVICON_ICO);
-
-			// root + /favicon.png
-			if (stream == null) {
-				stream = getResponseReader(address + "/" + FAVICON_PNG);
-			}
-
-		} else {
-			stream = getResponseReader(faviconAddress);
-		}
-
+	private static int tryDownloadFavicon(File targetFile, String address) throws IOException {
+		if (StringUtils.isBlank(address))
+			return 0;
+		InputStream stream = getResponseReader(address);
+		int size = 0;
 		if (stream != null) {
 			OutputStream out = new FileOutputStream(targetFile);
 			byte buf[] = new byte[1024];
 			int len;
-			while ((len = stream.read(buf)) > 0)
+			while ((len = stream.read(buf)) > 0) {
 				out.write(buf, 0, len);
+				size += len;
+			}
 			out.close();
 			stream.close();
+			return size;
+		}
+		return 0;
+	}
+
+	public static void download(File targetFile, URL url) throws IOException {
+		String address = HTTP_PREFIX + url.getHost();
+
+		int downloadSize = 0;
+
+		// root + /favicon.ico
+		if (downloadSize == 0) {
+			logger.info("Trying favicon.ico");
+			downloadSize = tryDownloadFavicon(targetFile, address + "/" + FAVICON_ICO);
+		}
+
+		// root + /favicon.png
+		if (downloadSize == 0) {
+			logger.info("Trying favicon.png");
+			downloadSize = tryDownloadFavicon(targetFile, address + "/" + FAVICON_PNG);
+		}
+
+		// page info
+		if (downloadSize == 0) {
+			logger.info("Trying page locations");
+			String faviconAddress = findFaviconAddressOnPage(address);
+			downloadSize = tryDownloadFavicon(targetFile, faviconAddress);
 		}
 
 		// zdařilo se?
-		if (targetFile.length() == 0)
+		if (downloadSize == 0)
 			targetFile.delete();
 
 		logger.info("Done");

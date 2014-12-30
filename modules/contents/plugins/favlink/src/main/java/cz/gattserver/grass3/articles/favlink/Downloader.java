@@ -16,8 +16,6 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.sass.internal.util.StringUtil;
-
 /**
  * 
  * @author gatt
@@ -25,23 +23,29 @@ import com.vaadin.sass.internal.util.StringUtil;
 public class Downloader {
 
 	private static final Logger logger = LoggerFactory.getLogger(Downloader.class);
+	private static String HTTP_PREFIX_SHORT = "http:";
+	private static String HTTP_PREFIX = "http://";
+	private static String HTTPS_PREFIX = "https://";
+	private static String FAVICON_ICO = "favicon.ico";
+	private static String FAVICON_PNG = "favicon.png";
 
-	private String address;
-
-	public Downloader(String address) {
-		this.address = address;
-		logger.info("Downloader: address " + address);
+	private Downloader() {
 	}
 
-	private InputStream getResponseReader(String address) {
+	private static InputStream getResponseReader(String address) {
 		URL url = null;
 		try {
+			// musí se odstranit, protože například právě pro VAADIN je tento lokální krok příčinou, proč se vrátí
+			// DOCUMENT response s neplatnou session, namísto adresovaného souboru favicony
+			address = address.replace("/./", "/");
 			url = new URL(address);
-			logger.info("Engine: URL set");
 			URLConnection uc = url.openConnection();
 			if (uc != null) {
-				logger.info("Engine: URL connection made");
+				logger.info("Favicon URL: " + uc.getURL());
+				uc.connect();
+				logger.info("Favicon connected URL: " + uc.getURL());
 				InputStream is = uc.getInputStream();
+				logger.info("Favicon redirected URL: " + uc.getURL());
 				if (is != null) {
 					logger.info("Engine: InputStream obtained");
 				} else {
@@ -59,35 +63,32 @@ public class Downloader {
 		return null;
 	}
 
-	private String findFaviconFileAddress() {
+	private static String findFaviconAddressOnPage(String address) {
 		Document doc;
 		try {
 
 			// http://en.wikipedia.org/wiki/Favicon
-
 			// need http protocol
-			String httpPrefix = "http://";
-			String addressToGET = address;
-			if (address.startsWith(httpPrefix) == false) {
-				addressToGET = httpPrefix + address;
-			}
-
 			// bez agenta to často hodí 403 Forbidden, protože si myslí, že jsem asi bot ... (což vlastně jsem)
-			doc = Jsoup.connect(addressToGET).userAgent("Mozilla").get();
+			doc = Jsoup.connect(address).userAgent("Mozilla").get();
 
 			String ico;
 
 			// link
 			Element element = doc.head().select("link[href~=.*\\.(ico|png)]").first();
-			ico = element.attr("href");
-			if (StringUtils.isNotBlank(ico))
-				return ico;
+			if (element != null) {
+				ico = element.attr("href");
+				if (StringUtils.isNotBlank(ico))
+					return ico;
+			}
 
 			// meta + content
 			element = doc.head().select("meta[itemprop=image]").first();
-			ico = element.attr("content");
-			if (StringUtils.isNotBlank(ico))
-				return ico;
+			if (element != null) {
+				ico = element.attr("content");
+				if (StringUtils.isNotBlank(ico))
+					return ico;
+			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -96,16 +97,51 @@ public class Downloader {
 		return null;
 	}
 
-	public void download(File targetFile) throws IOException {
-		InputStream stream = getResponseReader(findFaviconFileAddress());
-		OutputStream out = new FileOutputStream(targetFile);
-		byte buf[] = new byte[1024];
-		int len;
-		while ((len = stream.read(buf)) > 0)
-			out.write(buf, 0, len);
-		out.close();
-		stream.close();
+	public static void download(File targetFile, URL url) throws IOException {
+		String address = HTTP_PREFIX + url.getHost();
+		String faviconAddress = findFaviconAddressOnPage(address);
+
+		InputStream stream;
+
+		if (StringUtils.isBlank(faviconAddress)) {
+			logger.info("Favicon address NOT found on page, trying root locations");
+			// root + /favicon.ico
+			stream = getResponseReader(address + "/" + FAVICON_ICO);
+
+			// root + /favicon.png
+			if (stream == null) {
+				stream = getResponseReader(address + "/" + FAVICON_PNG);
+			}
+
+		} else {
+			logger.info("Favicon address found on page, address: " + faviconAddress);
+			if (faviconAddress.startsWith(HTTP_PREFIX) || faviconAddress.startsWith(HTTPS_PREFIX)) {
+				// absolutní cesta pro favicon
+				logger.info("Trying download favicon from: " + faviconAddress);
+				stream = getResponseReader(faviconAddress);
+			} else if (faviconAddress.startsWith("//")) {
+				// absolutní cesta pro favicon, která míst 'http://' začíná jenom '//'
+				// tahle to má například stackoverflow
+				String faviconFullAddress = HTTP_PREFIX_SHORT + faviconAddress;
+				logger.info("Trying download favicon from: " + faviconFullAddress);
+				stream = getResponseReader(faviconFullAddress);
+			} else {
+				// relativní cesta pro favicon
+				String faviconFullAddress = address + "/" + faviconAddress;
+				logger.info("Trying download favicon from: " + faviconFullAddress);
+				stream = getResponseReader(faviconFullAddress);
+			}
+		}
+
+		if (stream != null) {
+			OutputStream out = new FileOutputStream(targetFile);
+			byte buf[] = new byte[1024];
+			int len;
+			while ((len = stream.read(buf)) > 0)
+				out.write(buf, 0, len);
+			out.close();
+			stream.close();
+		}
 		logger.info("Done");
 	}
-
 }

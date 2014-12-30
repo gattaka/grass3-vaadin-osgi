@@ -83,8 +83,7 @@ public class LinkTree extends AbstractElementTree {
 
 			// pokud neexistuje, pak jej stáhni
 			if (!file.exists()) {
-				Downloader d = new Downloader(link);
-				d.download(file);
+				Downloader.download(file, url);
 			}
 
 			// 3) vrat URL na cache

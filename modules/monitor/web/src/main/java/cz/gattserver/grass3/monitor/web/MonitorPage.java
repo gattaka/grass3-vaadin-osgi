@@ -3,10 +3,12 @@ package cz.gattserver.grass3.monitor.web;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.monitor.facade.IMonitorFacade;
+import cz.gattserver.grass3.monitor.processor.ConsoleOutputTO;
+import cz.gattserver.grass3.monitor.web.label.FAILMonitorItem;
+import cz.gattserver.grass3.monitor.web.label.MonitorItemFactory;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
@@ -29,21 +31,20 @@ public class MonitorPage extends OneColumnPage {
 	@Override
 	protected Component createContent() {
 		VerticalLayout layout = new VerticalLayout();
-		layout.setSpacing(true);
+		layout.setSpacing(false);
 		layout.setMargin(true);
 
-		Label uptimeLabel = new Label(monitorFacade.getUptime());
-		layout.addComponent(uptimeLabel);
+		layout.addComponent(MonitorItemFactory.createMonitorItem(monitorFacade.getUptime()));
 		
-		if (monitorFacade.isBackupDiskMounted()) {
-			Label backupDiskStateLabel = new Label(monitorFacade.getBackupDiskSizeInfo());
-			layout.addComponent(backupDiskStateLabel);
-			
-			Label lastBackupLabel = new Label(monitorFacade.getLastTimeOfBackup());
-			layout.addComponent(lastBackupLabel);
-		} else {
-			Label noBackupDiskMountedLabel = new Label("Backup disk není připojen");
-			layout.addComponent(noBackupDiskMountedLabel);
+		ConsoleOutputTO mouted = monitorFacade.getBackupDiskMounted();
+		if (monitorFacade.getBackupDiskMounted().isError() == false) {
+			if (Boolean.parseBoolean(mouted.getOutput())) {
+				layout.addComponent(MonitorItemFactory.createMonitorItem(monitorFacade.getBackupDiskSizeInfo()));
+
+				layout.addComponent(MonitorItemFactory.createMonitorItem(monitorFacade.getLastTimeOfBackup()));
+			} else {
+				layout.addComponent(new FAILMonitorItem("Backup disk není připojen"));
+			}
 		}
 
 		return layout;

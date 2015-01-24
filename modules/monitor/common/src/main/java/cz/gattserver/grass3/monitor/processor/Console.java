@@ -8,14 +8,13 @@ import java.io.InputStreamReader;
 
 public class Console {
 
-	public static String executeCommand(String... commandAndArguments) {
+	public static ConsoleOutputTO executeCommand(String... commandAndArguments) {
 
 		File dummyInput = null;
 		try {
 			dummyInput = File.createTempFile(String.valueOf(System.currentTimeMillis()), "GRASS-CONSOLE-DUMMY-INPUT");
 		} catch (IOException e1) {
-			e1.printStackTrace();
-			return "ERORR during creation of dummy input file";
+			return new ConsoleOutputTO("Error during creation of dummy input file (Console)", true);
 		}
 
 		try {
@@ -33,9 +32,9 @@ public class Console {
 			while ((line = br.readLine()) != null) {
 				builder.append(line);
 			}
-			return builder.toString();
+			return new ConsoleOutputTO(builder.toString());
 		} catch (IOException e) {
-			return "ERROR occurred during command execution: " + e.getMessage();
+			return new ConsoleOutputTO("ERROR occurred during command execution: " + e.getMessage(), true);
 		} finally {
 			dummyInput.delete();
 		}

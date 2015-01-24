@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import cz.gattserver.grass3.config.IConfigurationService;
 import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
 import cz.gattserver.grass3.monitor.processor.Console;
+import cz.gattserver.grass3.monitor.processor.ConsoleOutputTO;
 
 @Transactional
 @Component("monitorFacade")
@@ -28,28 +29,28 @@ public class MonitorFacade implements IMonitorFacade {
 		configurationService.saveConfiguration(configuration);
 	}
 
-	private String runScript(String script) {
+	private ConsoleOutputTO runScript(String script) {
 		String scriptsDir = getConfiguration().getScriptsDir();
 		return Console.executeCommand(scriptsDir + "/" + script + ".sh");
 	}
 
 	@Override
-	public String getUptime() {
+	public ConsoleOutputTO getUptime() {
 		return Console.executeCommand("uptime");
 	}
 
 	@Override
-	public boolean isBackupDiskMounted() {
-		return Boolean.valueOf(runScript("isBackupDiskMounted"));
+	public ConsoleOutputTO getBackupDiskMounted() {
+		return runScript("isBackupDiskMounted");
 	}
 
 	@Override
-	public String getLastTimeOfBackup() {
+	public ConsoleOutputTO getLastTimeOfBackup() {
 		return runScript("getLastTimeOfBackup");
 	}
 
 	@Override
-	public String getBackupDiskSizeInfo() {
+	public ConsoleOutputTO getBackupDiskSizeInfo() {
 		return runScript("getBackupDiskSizeInfo");
 	}
 

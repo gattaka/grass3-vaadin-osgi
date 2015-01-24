@@ -1,16 +1,17 @@
 package cz.gattserver.grass3.monitor.facade;
 
 import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
+import cz.gattserver.grass3.monitor.processor.ConsoleOutputTO;
 
 public interface IMonitorFacade {
 
-	public String getUptime();
+	public ConsoleOutputTO getUptime();
 
-	public boolean isBackupDiskMounted();
+	public ConsoleOutputTO getBackupDiskMounted();
 
-	public String getLastTimeOfBackup();
+	public ConsoleOutputTO getLastTimeOfBackup();
 
-	public String getBackupDiskSizeInfo();
+	public ConsoleOutputTO getBackupDiskSizeInfo();
 
 	MonitorConfiguration getConfiguration();
 

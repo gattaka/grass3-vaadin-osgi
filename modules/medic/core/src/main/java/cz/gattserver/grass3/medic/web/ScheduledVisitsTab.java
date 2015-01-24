@@ -135,7 +135,8 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		completedBtn.setIcon(new ThemeResource("img/tags/right_16.png"));
 		modifyBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
 
-		final Button detailBtn = new DetailTableButton<ScheduledVisitDTO>("Detail", plannedTable, ScheduledVisitsTab.this) {
+		final Button detailBtn = new DetailTableButton<ScheduledVisitDTO>("Detail", plannedTable,
+				ScheduledVisitsTab.this) {
 			private static final long serialVersionUID = -8815751115945625539L;
 
 			@Override
@@ -282,7 +283,8 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		planBtn.setIcon(new ThemeResource("img/tags/calendar_16.png"));
 		modifyBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
 
-		final Button detailBtn = new DetailTableButton<ScheduledVisitDTO>("Detail", toBePlannedTable, ScheduledVisitsTab.this) {
+		final Button detailBtn = new DetailTableButton<ScheduledVisitDTO>("Detail", toBePlannedTable,
+				ScheduledVisitsTab.this) {
 			private static final long serialVersionUID = -8815751115945625539L;
 
 			@Override
@@ -310,11 +312,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 					icon.setDescription("Zmeškáno !");
 					return icon;
 				} else {
-					int plannedMonth = Calendar.getInstance().get(Calendar.MONTH);
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(dto.getDate());
-					int currentMonth = cal.get(Calendar.MONTH);
-					if (plannedMonth == currentMonth) {
+					if (MedicUtil.isVisitPending(dto)) {
 						Embedded icon = new Embedded();
 						icon.setSource(new ThemeResource("img/tags/clock_16.png"));
 						icon.setDescription("Již tento měsíc");

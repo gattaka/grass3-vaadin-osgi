@@ -19,6 +19,8 @@ public class ServerMail {
 	public static void sendEmail(String toEmail, String subject, String body) {
 		try {
 
+			body += "\n\n--\nZasláno systémem GRASS3";
+
 			final String fromEmail = ServerMailCredentials.FROM_EMAIL;
 			final String password = ServerMailCredentials.PASSWORD;
 
@@ -48,8 +50,8 @@ public class ServerMail {
 				Message message = new MimeMessage(session);
 				message.setFrom(new InternetAddress(fromEmail));
 				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-				message.setSubject("Testing Subject");
-				message.setText("Test Mail");
+				message.setSubject(subject);
+				message.setText(body);
 
 				System.out.println("Sending");
 				Transport.send(message);

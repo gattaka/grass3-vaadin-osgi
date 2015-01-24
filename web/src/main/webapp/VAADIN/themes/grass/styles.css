@@ -23,6 +23,9 @@ font-family: 'Signika', sans-serif;
 .v-textarea.v-widget.v-has-width {
 	font-family: monospace;
 	font-size: 12px;
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
 }
 
 .grasspage {

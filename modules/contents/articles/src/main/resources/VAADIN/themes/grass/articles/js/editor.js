@@ -119,3 +119,19 @@ function insert(prefix, suffix) {
 		// logError("textarea is null");
 	}
 }
+
+function registerTabListener() {
+	var textarea = $('.v-textarea')[0];
+	// aby se na to opakovaně nepřidávaly další a další listenery (pak se vkládá
+	// více a více tabů)
+	if (textarea.tabFixedFlag == undefined) {
+		textarea.addEventListener('keydown', function(e) {
+			var keyCode = e.keyCode || e.which;
+			if (keyCode == 9) {
+				e.preventDefault();
+				insert("\t", "");
+			}
+		}, false);
+		textarea.tabFixedFlag = "fixed";
+	}
+}

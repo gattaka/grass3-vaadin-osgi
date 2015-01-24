@@ -16,9 +16,12 @@ import org.slf4j.LoggerFactory;
 import org.vaadin.tokenfield.TokenField;
 
 import com.vaadin.data.util.BeanContainer;
+import com.vaadin.event.FieldEvents.FocusEvent;
+import com.vaadin.event.FieldEvents.FocusListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutAction.ModifierKey;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.server.ClientConnector.AttachEvent;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -102,6 +105,16 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		articleKeywords = new TokenField();
 		articleNameField = new TextField();
 		publicatedCheckBox = new CheckBox();
+
+		articleTextArea.addFocusListener(new FocusListener() {
+			private static final long serialVersionUID = -1481395375265209522L;
+
+			@Override
+			public void focus(FocusEvent event) {
+				JavaScript.eval("registerTabListener()");
+			}
+
+		});
 
 		editMode = false;
 		parts = null;

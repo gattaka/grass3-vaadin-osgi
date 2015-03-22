@@ -16,7 +16,9 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 	@Override
 	public void populateContainer() {
 		super.populateContainer();
-		((Table) table).sort(new Object[] { "date" }, new boolean[] { false });
+		Table table = (Table) this.table;
+		table.sort(new Object[] { "date" }, new boolean[] { false });
+		setTableColumns(table);
 	}
 
 	public MedicalRecordsTab() {
@@ -67,18 +69,22 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 		medicFacade.deleteMedicalRecord(dto);
 	}
 
-	@Override
-	protected void customizeTable(Table table) {
+	private void setTableColumns(Table table) {
+		table.setVisibleColumns(new Object[] { "date", "institution", "physician", "record" });
 		table.setColumnHeader("date", "Datum");
 		table.setColumnHeader("institution", "Instituce");
 		table.setColumnHeader("physician", "Ošetřující lékař");
 		table.setColumnHeader("record", "Záznam");
+	}
+
+	@Override
+	protected void customizeTable(Table table) {
 		table.setWidth("100%");
 		table.setConverter("date", new StringToDateConverter("d. MMMMM yyyy"));
 		table.setConverter("record", new StringToPreviewConverter(50));
 		table.setSelectable(true);
 		table.setImmediate(true);
-		table.setVisibleColumns(new String[] { "date", "institution", "physician", "record" });
+		setTableColumns(table);
 	}
 
 }

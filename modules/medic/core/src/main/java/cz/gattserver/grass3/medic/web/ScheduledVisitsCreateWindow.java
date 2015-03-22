@@ -44,30 +44,25 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 		TO_BE_PLANNED, PLANNED, PLANNED_FROM_TO_BE_PLANNED
 	}
 
-	public ScheduledVisitsCreateWindow(final Component triggerComponent,
-			Operation operation) {
-		this(triggerComponent, operation, null);
+	public ScheduledVisitsCreateWindow(Operation operation) {
+		this(operation, null);
 	}
 
-	private static String getTitleByOperation(Operation operation,
-			ScheduledVisitDTO visitDTO) {
+	private static String getTitleByOperation(Operation operation, ScheduledVisitDTO visitDTO) {
 		switch (operation) {
 		case PLANNED:
-			return visitDTO == null ? PLANNED_CREATION_TITLE
-					: PLANNED_EDIT_TITLE;
+			return visitDTO == null ? PLANNED_CREATION_TITLE : PLANNED_EDIT_TITLE;
 		case PLANNED_FROM_TO_BE_PLANNED:
 			return PLANNED_CREATION_TITLE;
 		case TO_BE_PLANNED:
-			return visitDTO == null ? TO_BE_PLANNED_CREATION_TITLE
-					: TO_BE_PLANNED_EDIT_TITLE;
+			return visitDTO == null ? TO_BE_PLANNED_CREATION_TITLE : TO_BE_PLANNED_EDIT_TITLE;
 		default:
 			// assert !
 			return null;
 		}
 	}
 
-	private static String getSubmitBtnCaptionByOperation(Operation operation,
-			ScheduledVisitDTO visitDTO) {
+	private static String getSubmitBtnCaptionByOperation(Operation operation, ScheduledVisitDTO visitDTO) {
 		switch (operation) {
 		case PLANNED:
 		case TO_BE_PLANNED:
@@ -80,29 +75,23 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 		}
 	}
 
-	public ScheduledVisitsCreateWindow(final Component triggerComponent,
-			Operation operation, ScheduledVisitDTO visitDTO) {
+	public ScheduledVisitsCreateWindow(Operation operation, ScheduledVisitDTO visitDTO) {
 		super(getTitleByOperation(operation, visitDTO));
 
-		boolean planned = operation.equals(Operation.PLANNED)
-				|| operation.equals(Operation.PLANNED_FROM_TO_BE_PLANNED);
+		boolean planned = operation.equals(Operation.PLANNED) || operation.equals(Operation.PLANNED_FROM_TO_BE_PLANNED);
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
-
-		triggerComponent.setEnabled(false);
 
 		GridLayout winLayout = new GridLayout(2, 6);
 		winLayout.setWidth("350px");
 		winLayout.setMargin(true);
 		winLayout.setSpacing(true);
 
-		final ScheduledVisitDTO scheduledVisitDTO = visitDTO == null ? new ScheduledVisitDTO()
-				: visitDTO;
+		final ScheduledVisitDTO scheduledVisitDTO = visitDTO == null ? new ScheduledVisitDTO() : visitDTO;
 		if (visitDTO == null) {
 			scheduledVisitDTO.setPurpose("");
 			scheduledVisitDTO.setPlanned(planned);
-			scheduledVisitDTO.setState(planned ? ScheduledVisitState.PLANNED
-					: ScheduledVisitState.TO_BE_PLANNED);
+			scheduledVisitDTO.setState(planned ? ScheduledVisitState.PLANNED : ScheduledVisitState.TO_BE_PLANNED);
 		}
 
 		final BeanFieldGroup<ScheduledVisitDTO> fieldGroup = new BeanFieldGroup<ScheduledVisitDTO>(
@@ -139,16 +128,13 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 		fieldGroup.bind(dateField, "date");
 
 		List<MedicalRecordDTO> records = medicalFacade.getAllMedicalRecords();
-		final ComboBox recordsComboBox = new ComboBox("Navazuje na kontrolu",
-				records);
+		final ComboBox recordsComboBox = new ComboBox("Navazuje na kontrolu", records);
 		winLayout.addComponent(recordsComboBox, 0, 2, 1, 2);
 		recordsComboBox.setWidth("100%");
 		fieldGroup.bind(recordsComboBox, "record");
 
-		List<MedicalInstitutionDTO> institutions = medicalFacade
-				.getAllMedicalInstitutions();
-		final ComboBox institutionComboBox = new ComboBox("Instituce",
-				institutions);
+		List<MedicalInstitutionDTO> institutions = medicalFacade.getAllMedicalInstitutions();
+		final ComboBox institutionComboBox = new ComboBox("Instituce", institutions);
 		winLayout.addComponent(institutionComboBox, 0, 3, 1, 3);
 		institutionComboBox.setWidth("100%");
 		institutionComboBox.setNullSelectionAllowed(false);
@@ -160,8 +146,7 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 		winLayout.addComponent(separator, 0, 4);
 
 		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button(
-				getSubmitBtnCaptionByOperation(operation, visitDTO),
+		winLayout.addComponent(saveBtn = new Button(getSubmitBtnCaptionByOperation(operation, visitDTO),
 				new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;
@@ -170,19 +155,14 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 					public void buttonClick(ClickEvent event) {
 						try {
 							fieldGroup.commit();
-							if (medicalFacade
-									.saveScheduledVisit(scheduledVisitDTO) == false) {
-								UI.getCurrent()
-										.addWindow(
-												new ErrorWindow(
-														"Nezdařilo se vytvořit nový záznam"));
+							if (medicalFacade.saveScheduledVisit(scheduledVisitDTO) == false) {
+								UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
 							} else {
 								onSuccess();
 							}
 							close();
 						} catch (CommitException e) {
-							Notification.show("   Chybná vstupní data\n\n   "
-									+ e.getCause().getMessage(),
+							Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
 									Notification.Type.TRAY_NOTIFICATION);
 						}
 					}
@@ -197,17 +177,6 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 		}
 
 		setContent(winLayout);
-
-		addCloseListener(new CloseListener() {
-
-			private static final long serialVersionUID = 1435044338717794371L;
-
-			@Override
-			public void windowClose(CloseEvent e) {
-				triggerComponent.setEnabled(true);
-			}
-
-		});
 
 	}
 

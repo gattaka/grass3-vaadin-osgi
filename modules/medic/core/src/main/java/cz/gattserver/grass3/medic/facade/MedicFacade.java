@@ -58,8 +58,7 @@ public class MedicFacade implements IMedicFacade {
 
 	@Override
 	public List<MedicalInstitutionDTO> getAllMedicalInstitutions() {
-		return medicMapper.mapMedicalInstitutions(medicalInstitutionRepository
-				.findAll());
+		return medicMapper.mapMedicalInstitutions(medicalInstitutionRepository.findAll());
 	}
 
 	@Override
@@ -75,8 +74,7 @@ public class MedicFacade implements IMedicFacade {
 
 	@Override
 	public MedicalInstitutionDTO getMedicalInstitutionById(Long id) {
-		return medicMapper.mapMedicalInstitution(medicalInstitutionRepository
-				.findOne(id));
+		return medicMapper.mapMedicalInstitution(medicalInstitutionRepository.findOne(id));
 	}
 
 	// Návštěvy
@@ -88,19 +86,16 @@ public class MedicFacade implements IMedicFacade {
 
 	@Override
 	public List<ScheduledVisitDTO> getAllScheduledVisits(boolean planned) {
-		return medicMapper.mapScheduledVisits(scheduledVisitRepository
-				.findByPlanned(planned));
-	}
-	
-	@Override
-	public List<ScheduledVisitDTO> getAllScheduledVisits() {
-		return medicMapper.mapScheduledVisits(scheduledVisitRepository
-				.findAll());
+		return medicMapper.mapScheduledVisits(scheduledVisitRepository.findByPlanned(planned));
 	}
 
 	@Override
-	public ScheduledVisitDTO createPlannedScheduledVisitFromToBePlanned(
-			ScheduledVisitDTO dto) {
+	public List<ScheduledVisitDTO> getAllScheduledVisits() {
+		return medicMapper.mapScheduledVisits(scheduledVisitRepository.findAll());
+	}
+
+	@Override
+	public ScheduledVisitDTO createPlannedScheduledVisitFromToBePlanned(ScheduledVisitDTO dto) {
 		ScheduledVisitDTO newDTO = new ScheduledVisitDTO();
 		newDTO.setInstitution(dto.getInstitution());
 		newDTO.setState(ScheduledVisitState.PLANNED);
@@ -125,13 +120,11 @@ public class MedicFacade implements IMedicFacade {
 		}
 
 		if (dto.getRecord() != null) {
-			visit.setRecord(medicalRecordRepository.findOne(dto.getRecord()
-					.getId()));
+			visit.setRecord(medicalRecordRepository.findOne(dto.getRecord().getId()));
 		}
 
 		if (dto.getInstitution() != null) {
-			visit.setInstitution(medicalInstitutionRepository.findOne(dto
-					.getInstitution().getId()));
+			visit.setInstitution(medicalInstitutionRepository.findOne(dto.getInstitution().getId()));
 		}
 
 		return scheduledVisitRepository.save(visit) != null;
@@ -139,8 +132,7 @@ public class MedicFacade implements IMedicFacade {
 
 	@Override
 	public ScheduledVisitDTO getScheduledVisitById(Long id) {
-		return medicMapper.mapScheduledVisit(scheduledVisitRepository
-				.findOne(id));
+		return medicMapper.mapScheduledVisit(scheduledVisitRepository.findOne(id));
 	}
 
 	// Záznamy
@@ -152,7 +144,7 @@ public class MedicFacade implements IMedicFacade {
 
 	@Override
 	public List<MedicalRecordDTO> getAllMedicalRecords() {
-		return medicMapper.mapMedicalRecords(medicalRecordRepository.findAll());
+		return medicMapper.mapMedicalRecords(medicalRecordRepository.findOrderByDateDesc());
 	}
 
 	@Override
@@ -163,13 +155,11 @@ public class MedicFacade implements IMedicFacade {
 		record.setRecord(dto.getRecord());
 
 		if (dto.getPhysician() != null) {
-			record.setPhysician(physicianRepository.findOne(dto.getPhysician()
-					.getId()));
+			record.setPhysician(physicianRepository.findOne(dto.getPhysician().getId()));
 		}
 
 		if (dto.getInstitution() != null) {
-			record.setInstitution(medicalInstitutionRepository.findOne(dto
-					.getInstitution().getId()));
+			record.setInstitution(medicalInstitutionRepository.findOne(dto.getInstitution().getId()));
 		}
 
 		List<Medicament> medicaments = new ArrayList<>();
@@ -184,8 +174,7 @@ public class MedicFacade implements IMedicFacade {
 
 	@Override
 	public MedicalRecordDTO getMedicalRecordById(Long id) {
-		return medicMapper
-				.mapMedicalRecord(medicalRecordRepository.findOne(id));
+		return medicMapper.mapMedicalRecord(medicalRecordRepository.findOne(id));
 	}
 
 	// Medikamenty

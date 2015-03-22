@@ -57,8 +57,8 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 	}
 
 	private void openCreateWindow(final boolean planned, ScheduledVisitDTO scheduledVisitDTO) {
-		Window win = new ScheduledVisitsCreateWindow(ScheduledVisitsTab.this, planned ? Operation.PLANNED
-				: Operation.TO_BE_PLANNED, scheduledVisitDTO) {
+		Window win = new ScheduledVisitsCreateWindow(planned ? Operation.PLANNED : Operation.TO_BE_PLANNED,
+				scheduledVisitDTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -383,8 +383,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 				final ScheduledVisitDTO toBePlannedVisitDTO = (ScheduledVisitDTO) toBePlannedTable.getValue();
 
 				ScheduledVisitDTO newDto = medicFacade.createPlannedScheduledVisitFromToBePlanned(toBePlannedVisitDTO);
-				Window win = new ScheduledVisitsCreateWindow(ScheduledVisitsTab.this,
-						Operation.PLANNED_FROM_TO_BE_PLANNED, newDto) {
+				Window win = new ScheduledVisitsCreateWindow(Operation.PLANNED_FROM_TO_BE_PLANNED, newDto) {
 					private static final long serialVersionUID = -7566950396535469316L;
 
 					@Override

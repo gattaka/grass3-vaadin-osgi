@@ -2,8 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
@@ -34,6 +33,10 @@
 		<property name="url" value="${hibernate.connection.url}" />
 		<property name="username" value="${hibernate.connection.username}" />
 		<property name="password" value="${hibernate.connection.password}" />
+		<property name="validationQuery" value="SELECT 1" />
+		<property name="validationInterval" value="5000" />
+		<property name="testOnBorrow" value="true" />
+		<property name="testWhileIdle" value="true" />
 	</bean>
 
 	<bean id="jpaVendorAdapter"

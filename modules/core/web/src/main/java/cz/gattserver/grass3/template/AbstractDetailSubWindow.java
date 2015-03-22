@@ -5,16 +5,16 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.subwindows.GrassWindow;
+import cz.gattserver.web.common.window.WebWindow;
 
-public abstract class AbstractDetailSubWindow extends GrassWindow {
+public abstract class AbstractDetailSubWindow extends WebWindow {
 
 	private static final long serialVersionUID = -4989848867002620787L;
 
 	protected VerticalLayout layout;
 
-	public AbstractDetailSubWindow(String name, Component... triggerComponent) {
-		super(name, triggerComponent);
+	public AbstractDetailSubWindow(String name) {
+		super(name);
 
 		layout = new VerticalLayout();
 		layout.setMargin(true);

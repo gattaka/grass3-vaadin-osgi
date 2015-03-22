@@ -23,9 +23,9 @@ import com.vaadin.ui.Window;
 import cz.gattserver.grass3.facades.IUserFacade;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.security.Role;
-import cz.gattserver.grass3.subwindows.GrassWindow;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.window.WebWindow;
 
 public class UsersSettingsTab extends AbstractSettingsTab {
 
@@ -175,7 +175,7 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 
 			public void buttonClick(ClickEvent event) {
 
-				final Window subwindow = new GrassWindow("Uživatelské role");
+				final Window subwindow = new WebWindow("Uživatelské role");
 				subwindow.center();
 				getUI().addWindow(subwindow);
 				subwindow.setWidth("220px");

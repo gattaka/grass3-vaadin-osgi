@@ -6,7 +6,6 @@ import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
@@ -15,8 +14,8 @@ import com.vaadin.ui.Window;
 import cz.gattserver.grass3.model.dto.Identifiable;
 
 /**
- * Template všech tabů, kde je v tabulce zobrazován přehled entit a dole jsou
- * tlačítka operací Vytvořit/Detail/Upravit/Smazat
+ * Template všech tabů, kde je v tabulce zobrazován přehled entit a dole jsou tlačítka operací
+ * Vytvořit/Detail/Upravit/Smazat
  * 
  * @author Hynek
  * @param <T>
@@ -39,17 +38,17 @@ public abstract class TableOperationsTab<T extends Identifiable> extends Vertica
 	/**
 	 * Vytvoří okno pro založení entity
 	 */
-	protected abstract Window createCreateWindow(Component... triggerComponent);
+	protected abstract Window createCreateWindow();
 
 	/**
 	 * Vytvoří okno pro detail entity
 	 */
-	protected abstract Window createDetailWindow(Long id, Component... triggerComponent);
+	protected abstract Window createDetailWindow(Long id);
 
 	/**
 	 * Vytvoří okno pro úpravu entity
 	 */
-	protected abstract Window createModifyWindow(T dto, Component... triggerComponent);
+	protected abstract Window createModifyWindow(T dto);
 
 	/**
 	 * Smaže vybranou entitu
@@ -57,8 +56,7 @@ public abstract class TableOperationsTab<T extends Identifiable> extends Vertica
 	protected abstract void deleteEntity(T dto);
 
 	/**
-	 * Upraví tabulku (jmenuje sloupce apod.) - voláno pouze pokud je použit
-	 * defaultní Table - viz metoda createTable
+	 * Upraví tabulku (jmenuje sloupce apod.) - voláno pouze pokud je použit defaultní Table - viz metoda createTable
 	 */
 	protected void customizeTable(Table table) {
 	}
@@ -78,7 +76,7 @@ public abstract class TableOperationsTab<T extends Identifiable> extends Vertica
 	}
 
 	public TableOperationsTab(Class<T> clazz) {
-		
+
 		this.clazz = clazz;
 
 		setSpacing(true);
@@ -99,30 +97,30 @@ public abstract class TableOperationsTab<T extends Identifiable> extends Vertica
 			private static final long serialVersionUID = -6624403751552838924L;
 
 			@Override
-			protected Window getCreateWindow(Component... triggerComponents) {
-				return createCreateWindow(triggerComponents);
+			protected Window getCreateWindow() {
+				return createCreateWindow();
 			}
 		};
 
-		final Button detailBtn = new DetailTableButton<T>("Detail", table, TableOperationsTab.this) {
+		final Button detailBtn = new DetailTableButton<T>("Detail", table) {
 			private static final long serialVersionUID = -8949928545479455240L;
 
 			@Override
-			protected Window getDetailWindow(T selectedValue, Component... triggerComponent) {
-				return createDetailWindow(selectedValue.getId(), triggerComponent);
+			protected Window getDetailWindow(T selectedValue) {
+				return createDetailWindow(selectedValue.getId());
 			}
 		};
 
-		final Button modifyBtn = new ModifyTableButton<T>("Upravit", table, TableOperationsTab.this) {
+		final Button modifyBtn = new ModifyTableButton<T>("Upravit", table) {
 			private static final long serialVersionUID = -8949928545479455240L;
 
 			@Override
-			protected Window getModifyWindow(T selectedValue, Component... triggerComponent) {
-				return createModifyWindow(selectedValue, triggerComponent);
+			protected Window getModifyWindow(T selectedValue) {
+				return createModifyWindow(selectedValue);
 			}
 		};
 
-		final Button deleteBtn = new DeleteTableButton<T>("Smazat", table, TableOperationsTab.this) {
+		final Button deleteBtn = new DeleteTableButton<T>("Smazat", table) {
 
 			private static final long serialVersionUID = 1900185891293966049L;
 

@@ -21,7 +21,6 @@ import com.vaadin.event.FieldEvents.FocusListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutAction.ModifierKey;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.server.ClientConnector.AttachEvent;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -50,12 +49,12 @@ import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.pages.template.JScriptItem;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.security.Role;
-import cz.gattserver.grass3.subwindows.ConfirmWindow;
 import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.grass3.ui.util.JQueryAccordion;
-import cz.gattserver.grass3.util.URLIdentifierUtils;
-import cz.gattserver.grass3.util.URLPathAnalyzer;
+import cz.gattserver.web.common.URLIdentifierUtils;
+import cz.gattserver.web.common.URLPathAnalyzer;
+import cz.gattserver.web.common.window.ConfirmWindow;
 
 public class ArticlesEditorPage extends TwoColumnPage {
 

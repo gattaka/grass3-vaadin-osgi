@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import com.vaadin.data.util.converter.Converter;
 
-import cz.gattserver.grass3.util.StringPreviewCreator;
+import cz.gattserver.web.common.util.StringPreviewCreator;
 
 public class StringToPreviewConverter implements Converter<String, String> {
 

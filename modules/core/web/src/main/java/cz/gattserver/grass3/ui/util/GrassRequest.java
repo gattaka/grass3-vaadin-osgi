@@ -3,7 +3,7 @@ package cz.gattserver.grass3.ui.util;
 import com.vaadin.server.VaadinRequest;
 
 import cz.gattserver.grass3.PageState;
-import cz.gattserver.grass3.util.URLPathAnalyzer;
+import cz.gattserver.web.common.URLPathAnalyzer;
 
 /**
  * Třída poskytující veškeré informace o requestu od Vaadinu, upravené tak, aby

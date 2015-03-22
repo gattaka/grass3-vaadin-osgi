@@ -33,9 +33,6 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 	@Autowired
 	private ContentNodeRepository contentNodeRepository;
 
-	// neměl by být tečka apod. znak, využívaný v regulárních výrazech
-	public static final String TAGS_DELIMITER = ",";
-
 	public List<ContentTagDTO> getContentTagsForOverview() {
 		List<ContentTag> contentTags = contentTagRepository.findAll();
 		if (contentTags == null)
@@ -116,6 +113,7 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 				tag.setContentNodes(new HashSet<ContentNode>());
 			tag.getContentNodes().add(contentNode);
 
+			// TODO else stejná jako if ????
 			// je nový ? Pak ho ulož a zkontroluj, že dostal id
 			if (tag.getId() == null) {
 				tag.setContentNodesCount(tag.getContentNodes().size());

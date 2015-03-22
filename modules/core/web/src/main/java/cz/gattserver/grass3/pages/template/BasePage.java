@@ -28,8 +28,8 @@ import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.security.ICoreACL;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.service.ISectionService;
-import cz.gattserver.grass3.subwindows.GrassWindow;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.window.WebWindow;
 
 public abstract class BasePage extends AbstractGrassPage {
 
@@ -138,7 +138,7 @@ public abstract class BasePage extends AbstractGrassPage {
 
 				@Override
 				public void buttonClick(ClickEvent event) {
-					final Window subwindow = new GrassWindow("Detail uživatele " + userInfoDTO.getName());
+					final Window subwindow = new WebWindow("Detail uživatele " + userInfoDTO.getName());
 					subwindow.center();
 					getUI().addWindow(subwindow);
 					subwindow.setWidth("220px");

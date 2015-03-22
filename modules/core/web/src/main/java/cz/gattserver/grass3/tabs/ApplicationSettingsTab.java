@@ -19,10 +19,10 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.config.CoreConfiguration;
 import cz.gattserver.grass3.config.IConfigurationService;
 import cz.gattserver.grass3.facades.IContentTagFacade;
-import cz.gattserver.grass3.subwindows.InfoWindow;
-import cz.gattserver.grass3.subwindows.WarnWindow;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.window.InfoWindow;
+import cz.gattserver.web.common.window.WarnWindow;
 
 public class ApplicationSettingsTab extends AbstractSettingsTab {
 

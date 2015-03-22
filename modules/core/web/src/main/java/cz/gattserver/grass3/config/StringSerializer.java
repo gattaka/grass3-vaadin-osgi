@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import cz.gattserver.grass3.util.Base64Coder;
+import cz.gattserver.web.common.util.Base64Coder;
 
 public class StringSerializer {
 

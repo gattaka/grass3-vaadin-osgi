@@ -2,7 +2,6 @@ package cz.gattserver.grass3.medic.web;
 
 import java.util.Collection;
 
-import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
 
@@ -22,8 +21,8 @@ public class MedicamentsTab extends MedicPageTab<MedicamentDTO> {
 	}
 
 	@Override
-	protected Window createCreateWindow(Component... triggerComponent) {
-		return new MedicamentCreateWindow(triggerComponent) {
+	protected Window createCreateWindow() {
+		return new MedicamentCreateWindow() {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -34,14 +33,13 @@ public class MedicamentsTab extends MedicPageTab<MedicamentDTO> {
 	}
 
 	@Override
-	protected Window createDetailWindow(Long id, Component... triggerComponent) {
-		return new MedicamentDetailWindow(id, triggerComponent);
+	protected Window createDetailWindow(Long id) {
+		return new MedicamentDetailWindow(id);
 	}
 
 	@Override
-	protected Window createModifyWindow(MedicamentDTO dto,
-			Component... triggerComponent) {
-		return new MedicamentCreateWindow(dto, triggerComponent) {
+	protected Window createModifyWindow(MedicamentDTO dto) {
+		return new MedicamentCreateWindow(dto) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override

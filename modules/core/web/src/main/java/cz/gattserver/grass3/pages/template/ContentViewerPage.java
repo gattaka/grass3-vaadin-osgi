@@ -28,15 +28,15 @@ import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.security.ICoreACL;
 import cz.gattserver.grass3.subwindows.ContentMoveWindow;
-import cz.gattserver.grass3.subwindows.InfoWindow;
-import cz.gattserver.grass3.subwindows.WarnWindow;
 import cz.gattserver.grass3.template.AbstractButton;
 import cz.gattserver.grass3.template.Breadcrumb;
 import cz.gattserver.grass3.template.DeleteButton;
 import cz.gattserver.grass3.template.ModifyButton;
 import cz.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.grass3.util.URLIdentifierUtils;
+import cz.gattserver.web.common.URLIdentifierUtils;
+import cz.gattserver.web.common.window.InfoWindow;
+import cz.gattserver.web.common.window.WarnWindow;
 
 public abstract class ContentViewerPage extends TwoColumnPage {
 

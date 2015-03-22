@@ -15,8 +15,8 @@ import com.vaadin.ui.Window;
 
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.facade.IHWFacade;
-import cz.gattserver.grass3.subwindows.ConfirmWindow;
-import cz.gattserver.grass3.subwindows.ErrorWindow;
+import cz.gattserver.web.common.window.ConfirmWindow;
+import cz.gattserver.web.common.window.ErrorWindow;
 
 public class HWTypesTab extends VerticalLayout {
 
@@ -66,8 +66,9 @@ public class HWTypesTab extends VerticalLayout {
 					}
 
 					@Override
-					protected void onClose(CloseEvent e) {
+					public void close() {
 						HWTypesTab.this.setEnabled(true);
+						super.close();
 					}
 				});
 	}
@@ -103,7 +104,7 @@ public class HWTypesTab extends VerticalLayout {
 		table.setWidth("100%");
 		table.setSelectable(true);
 		table.setImmediate(true);
-		table.setVisibleColumns(new String[] { "name" });
+		table.setVisibleColumns(new Object[] { "name" });
 		table.addValueChangeListener(new ValueChangeListener() {
 
 			private static final long serialVersionUID = -8943196289027284739L;

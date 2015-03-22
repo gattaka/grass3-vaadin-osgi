@@ -41,17 +41,17 @@ import cz.gattserver.grass3.fm.FMExplorer.FileProcessState;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
-import cz.gattserver.grass3.subwindows.ConfirmWindow;
-import cz.gattserver.grass3.subwindows.GrassWindow;
-import cz.gattserver.grass3.subwindows.InfoWindow;
-import cz.gattserver.grass3.subwindows.WarnWindow;
 import cz.gattserver.grass3.template.Breadcrumb;
 import cz.gattserver.grass3.template.MultiUpload;
 import cz.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.util.ComparableStringDate;
 import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.grass3.util.HumanBytesSizeCreator;
-import cz.gattserver.grass3.util.ReferenceHolder;
+import cz.gattserver.web.common.util.HumanBytesSizeCreator;
+import cz.gattserver.web.common.util.ReferenceHolder;
+import cz.gattserver.web.common.window.ConfirmWindow;
+import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.window.InfoWindow;
+import cz.gattserver.web.common.window.WarnWindow;
 
 public class FMPage extends OneColumnPage {
 
@@ -402,7 +402,7 @@ public class FMPage extends OneColumnPage {
 	}
 
 	private void handleRenameAction(final File file, VerticalLayout layout) {
-		final Window subwindow = new GrassWindow("Přejmenovat");
+		final Window subwindow = new WebWindow("Přejmenovat");
 		subwindow.center();
 		getGrassUI().addWindow(subwindow);
 
@@ -461,7 +461,7 @@ public class FMPage extends OneColumnPage {
 		subwindow.focus();
 	}
 
-	private void createSingleFileDetails(final File file, final GrassWindow subwindow) {
+	private void createSingleFileDetails(final File file, final WebWindow subwindow) {
 
 		GridLayout subWindowlayout = new GridLayout(2, 8);
 		subwindow.setContent(subWindowlayout);
@@ -525,7 +525,7 @@ public class FMPage extends OneColumnPage {
 
 	}
 
-	private void createGroupDetails(final GrassWindow subwindow) {
+	private void createGroupDetails(final WebWindow subwindow) {
 
 		GridLayout subWindowlayout = new GridLayout(2, 4);
 		subwindow.setContent(subWindowlayout);
@@ -570,7 +570,7 @@ public class FMPage extends OneColumnPage {
 	}
 
 	private void handleDetailsAction(final File file, VerticalLayout layout) {
-		final GrassWindow subwindow = new GrassWindow("Detail");
+		final WebWindow subwindow = new WebWindow("Detail");
 		subwindow.center();
 		subwindow.setWidth("470px");
 		subwindow.setHeight("300px");
@@ -588,7 +588,7 @@ public class FMPage extends OneColumnPage {
 	}
 
 	private void handleDownloadFile(final File file) {
-		GrassWindow dlWindow = new GrassWindow("Stáhnout " + file.getName()) {
+		WebWindow dlWindow = new WebWindow("Stáhnout " + file.getName()) {
 
 			private static final long serialVersionUID = 926172618599746150L;
 

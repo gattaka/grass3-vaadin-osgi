@@ -19,11 +19,11 @@ import com.vaadin.ui.Window;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.IHWFacade;
-import cz.gattserver.grass3.subwindows.ConfirmWindow;
-import cz.gattserver.grass3.subwindows.ErrorWindow;
 import cz.gattserver.grass3.ui.util.GrassFilterDecorator;
 import cz.gattserver.grass3.ui.util.StringToDateConverter;
 import cz.gattserver.grass3.ui.util.StringToMoneyConverter;
+import cz.gattserver.web.common.window.ConfirmWindow;
+import cz.gattserver.web.common.window.ErrorWindow;
 
 public class HWItemsTab extends VerticalLayout {
 
@@ -118,8 +118,9 @@ public class HWItemsTab extends VerticalLayout {
 			}
 
 			@Override
-			protected void onClose(CloseEvent e) {
+			public void close() {
 				HWItemsTab.this.setEnabled(true);
+				super.close();
 			}
 		});
 	}

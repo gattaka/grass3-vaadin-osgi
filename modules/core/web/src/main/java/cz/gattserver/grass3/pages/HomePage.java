@@ -33,7 +33,7 @@ import cz.gattserver.grass3.pages.template.RecentAddedContentsQuery;
 import cz.gattserver.grass3.pages.template.RecentModifiedContentsQuery;
 import cz.gattserver.grass3.pages.template.ContentsTableFactory.ContentsTable;
 import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.grass3.util.URLIdentifierUtils;
+import cz.gattserver.web.common.URLIdentifierUtils;
 
 public class HomePage extends BasePage {
 

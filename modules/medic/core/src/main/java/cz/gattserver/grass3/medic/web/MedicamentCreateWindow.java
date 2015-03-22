@@ -5,7 +5,6 @@ import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
@@ -16,23 +15,23 @@ import com.vaadin.ui.UI;
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.medic.dto.MedicamentDTO;
 import cz.gattserver.grass3.medic.facade.IMedicFacade;
-import cz.gattserver.grass3.subwindows.ErrorWindow;
-import cz.gattserver.grass3.subwindows.GrassWindow;
+import cz.gattserver.web.common.window.ErrorWindow;
+import cz.gattserver.web.common.window.WebWindow;
 
-public abstract class MedicamentCreateWindow extends GrassWindow {
+public abstract class MedicamentCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	private IMedicFacade medicalFacade;
 
-	public MedicamentCreateWindow(final Component... triggerComponent) {
-		this(null, triggerComponent);
+	public MedicamentCreateWindow() {
+		this(null);
 	}
 
-	public MedicamentCreateWindow(MedicamentDTO modifiedMedicamentDTO,
-			final Component... triggerComponent) {
+	public MedicamentCreateWindow(MedicamentDTO modifiedMedicamentDTO
+			) {
 		super(modifiedMedicamentDTO == null ? "Založení nového medikamentu"
-				: "Úprava medikamentu", triggerComponent);
+				: "Úprava medikamentu");
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
 

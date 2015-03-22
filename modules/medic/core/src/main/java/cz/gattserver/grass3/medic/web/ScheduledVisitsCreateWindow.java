@@ -24,10 +24,10 @@ import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitState;
 import cz.gattserver.grass3.medic.facade.IMedicFacade;
-import cz.gattserver.grass3.subwindows.ErrorWindow;
-import cz.gattserver.grass3.subwindows.GrassWindow;
+import cz.gattserver.web.common.window.ErrorWindow;
+import cz.gattserver.web.common.window.WebWindow;
 
-public abstract class ScheduledVisitsCreateWindow extends GrassWindow {
+public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 

@@ -17,7 +17,7 @@ import cz.gattserver.grass3.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.tabs.factories.template.ISettingsTabFactory;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.grass3.ui.util.ISettingsTabFactoriesRegister;
-import cz.gattserver.grass3.util.URLPathAnalyzer;
+import cz.gattserver.web.common.URLPathAnalyzer;
 
 public class SettingsPage extends TwoColumnPage {
 

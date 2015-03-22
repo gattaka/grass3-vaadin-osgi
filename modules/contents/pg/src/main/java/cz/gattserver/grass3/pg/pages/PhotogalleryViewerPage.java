@@ -35,13 +35,13 @@ import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import cz.gattserver.grass3.pg.facade.IPhotogalleryFacade;
 import cz.gattserver.grass3.security.ICoreACL;
 import cz.gattserver.grass3.security.Role;
-import cz.gattserver.grass3.subwindows.ConfirmWindow;
-import cz.gattserver.grass3.subwindows.InfoWindow;
-import cz.gattserver.grass3.subwindows.WarnWindow;
 import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.grass3.util.URLIdentifierUtils;
-import cz.gattserver.grass3.util.URLPathAnalyzer;
+import cz.gattserver.web.common.URLIdentifierUtils;
+import cz.gattserver.web.common.URLPathAnalyzer;
+import cz.gattserver.web.common.window.ConfirmWindow;
+import cz.gattserver.web.common.window.InfoWindow;
+import cz.gattserver.web.common.window.WarnWindow;
 
 public class PhotogalleryViewerPage extends ContentViewerPage {
 

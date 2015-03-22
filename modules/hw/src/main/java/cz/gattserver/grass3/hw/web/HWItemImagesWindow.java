@@ -19,12 +19,12 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.facade.IHWFacade;
-import cz.gattserver.grass3.subwindows.ConfirmWindow;
-import cz.gattserver.grass3.subwindows.GrassWindow;
-import cz.gattserver.grass3.subwindows.ImageDetailWindow;
 import cz.gattserver.grass3.template.MultiUpload;
+import cz.gattserver.web.common.window.ConfirmWindow;
+import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.window.ImageDetailWindow;
 
-public class HWItemImagesWindow extends GrassWindow {
+public class HWItemImagesWindow extends WebWindow {
 
 	private static final long serialVersionUID = 8587632602779343179L;
 

@@ -20,7 +20,7 @@ import cz.gattserver.grass3.security.ICoreACL;
 import cz.gattserver.grass3.service.IContentService;
 import cz.gattserver.grass3.ui.util.ComparableLink;
 import cz.gattserver.grass3.ui.util.ComparableStringDate;
-import cz.gattserver.grass3.util.URLIdentifierUtils;
+import cz.gattserver.web.common.URLIdentifierUtils;
 
 @Component("contentsTableFactory")
 public class ContentsTableFactory {

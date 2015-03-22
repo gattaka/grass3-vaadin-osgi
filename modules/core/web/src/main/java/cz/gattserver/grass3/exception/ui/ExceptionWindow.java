@@ -4,7 +4,7 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.subwindows.MessageWindow;
+import cz.gattserver.web.common.window.MessageWindow;
 
 public abstract class ExceptionWindow extends MessageWindow {
 

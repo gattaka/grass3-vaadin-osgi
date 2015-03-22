@@ -3,24 +3,23 @@ package cz.gattserver.grass3.template;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
-import cz.gattserver.grass3.subwindows.ConfirmWindow;
-import cz.gattserver.grass3.subwindows.ErrorWindow;
+import cz.gattserver.web.common.window.ConfirmWindow;
+import cz.gattserver.web.common.window.ErrorWindow;
 
 public abstract class DeleteTableButton<T> extends TableSelectedItemBtn<T> {
 
 	private static final long serialVersionUID = -5924239277930098183L;
 
-	public DeleteTableButton(String caption, final AbstractSelect table, Component... triggerComponents) {
-		super(caption, table, triggerComponents);
+	public DeleteTableButton(String caption, final AbstractSelect table) {
+		super(caption, table);
 		setIcon(new ThemeResource("img/tags/delete_16.png"));
 	}
 
 	@Override
-	protected ClickListener getClickListener(final AbstractSelect table, final Component... triggerComponents) {
+	protected ClickListener getClickListener(final AbstractSelect table) {
 		return new Button.ClickListener() {
 
 			private static final long serialVersionUID = 4983897852548880141L;
@@ -28,7 +27,7 @@ public abstract class DeleteTableButton<T> extends TableSelectedItemBtn<T> {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				final T selectedValue = getSelectedValue(table);
-				Window win = new ConfirmWindow(getConfirmMessage(selectedValue), triggerComponents) {
+				Window win = new ConfirmWindow(getConfirmMessage(selectedValue)) {
 
 					private static final long serialVersionUID = -422763987707688597L;
 

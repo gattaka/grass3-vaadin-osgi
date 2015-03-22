@@ -1,7 +1,5 @@
 package cz.gattserver.grass3.medic.web;
 
-import com.vaadin.ui.Component;
-
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.medic.dto.PhysicianDTO;
 import cz.gattserver.grass3.medic.facade.IMedicFacade;
@@ -13,8 +11,8 @@ public class PhysicianDetailWindow extends AbstractDetailSubWindow {
 
 	private IMedicFacade medicalFacade;
 
-	public PhysicianDetailWindow(Long id, final Component... triggerComponent) {
-		super("Detail instituce", triggerComponent);
+	public PhysicianDetailWindow(Long id) {
+		super("Detail instituce");
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
 

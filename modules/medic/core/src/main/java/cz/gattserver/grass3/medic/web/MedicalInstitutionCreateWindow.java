@@ -5,7 +5,6 @@ import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
@@ -16,24 +15,21 @@ import com.vaadin.ui.UI;
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import cz.gattserver.grass3.medic.facade.IMedicFacade;
-import cz.gattserver.grass3.subwindows.ErrorWindow;
-import cz.gattserver.grass3.subwindows.GrassWindow;
+import cz.gattserver.web.common.window.ErrorWindow;
+import cz.gattserver.web.common.window.WebWindow;
 
-public abstract class MedicalInstitutionCreateWindow extends GrassWindow {
+public abstract class MedicalInstitutionCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	private IMedicFacade medicalFacade;
 
-	public MedicalInstitutionCreateWindow(final Component... triggerComponent) {
-		this(null, triggerComponent);
+	public MedicalInstitutionCreateWindow() {
+		this(null);
 	}
 
-	public MedicalInstitutionCreateWindow(
-			MedicalInstitutionDTO modifiedMedicalInstitutionDTO,
-			final Component... triggerComponent) {
-		super(modifiedMedicalInstitutionDTO == null ? "Založení nové instituce"
-				: "Úprava instituce", triggerComponent);
+	public MedicalInstitutionCreateWindow(MedicalInstitutionDTO modifiedMedicalInstitutionDTO) {
+		super(modifiedMedicalInstitutionDTO == null ? "Založení nové instituce" : "Úprava instituce");
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
 
@@ -78,8 +74,7 @@ public abstract class MedicalInstitutionCreateWindow extends GrassWindow {
 		winLayout.addComponent(separator, 0, 4);
 
 		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button(
-				modifiedMedicalInstitutionDTO == null ? "Založit" : "Upravit",
+		winLayout.addComponent(saveBtn = new Button(modifiedMedicalInstitutionDTO == null ? "Založit" : "Upravit",
 				new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;
@@ -88,19 +83,14 @@ public abstract class MedicalInstitutionCreateWindow extends GrassWindow {
 					public void buttonClick(ClickEvent event) {
 						try {
 							fieldGroup.commit();
-							if (medicalFacade
-									.saveMedicalInstitution(medicalInstitutionDTO) == false) {
-								UI.getCurrent()
-										.addWindow(
-												new ErrorWindow(
-														"Nezdařilo se vytvořit nový záznam"));
+							if (medicalFacade.saveMedicalInstitution(medicalInstitutionDTO) == false) {
+								UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
 							} else {
 								onSuccess();
 							}
 							close();
 						} catch (CommitException e) {
-							Notification.show("   Chybná vstupní data\n\n   "
-									+ e.getCause().getMessage(),
+							Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
 									Notification.Type.TRAY_NOTIFICATION);
 						}
 					}

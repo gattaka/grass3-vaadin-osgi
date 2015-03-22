@@ -25,10 +25,10 @@ import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.HWItemState;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.facade.IHWFacade;
-import cz.gattserver.grass3.subwindows.ErrorWindow;
-import cz.gattserver.grass3.subwindows.GrassWindow;
+import cz.gattserver.web.common.window.ErrorWindow;
+import cz.gattserver.web.common.window.WebWindow;
 
-public abstract class HWItemCreateWindow extends GrassWindow {
+public abstract class HWItemCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 

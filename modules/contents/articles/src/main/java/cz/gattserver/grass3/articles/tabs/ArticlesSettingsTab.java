@@ -25,9 +25,9 @@ import cz.gattserver.grass3.articles.facade.IArticleFacade;
 import cz.gattserver.grass3.config.IConfigurationService;
 import cz.gattserver.grass3.facades.IContentTagFacade;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
-import cz.gattserver.grass3.subwindows.ConfirmWindow;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.window.ConfirmWindow;
 
 public class ArticlesSettingsTab extends AbstractSettingsTab {
 

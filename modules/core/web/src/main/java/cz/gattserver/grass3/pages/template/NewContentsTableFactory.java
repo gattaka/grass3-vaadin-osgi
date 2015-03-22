@@ -16,7 +16,7 @@ import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.service.IContentService;
 import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.ui.util.ComparableLink;
-import cz.gattserver.grass3.util.URLIdentifierUtils;
+import cz.gattserver.web.common.URLIdentifierUtils;
 
 @Component("newContentsTableFactory")
 public class NewContentsTableFactory {

@@ -35,11 +35,11 @@ import com.vaadin.ui.Window;
 
 import cz.gattserver.grass3.facades.INodeFacade;
 import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.subwindows.ConfirmWindow;
-import cz.gattserver.grass3.subwindows.GrassWindow;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.grass3.util.ReferenceHolder;
+import cz.gattserver.web.common.util.ReferenceHolder;
+import cz.gattserver.web.common.window.ConfirmWindow;
+import cz.gattserver.web.common.window.WebWindow;
 
 public class CategoriesSettingsTab extends AbstractSettingsTab {
 
@@ -278,7 +278,7 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 					});
 
 				} else if (action == ACTION_RENAME) {
-					final Window subwindow = new GrassWindow("Přejmenovat");
+					final Window subwindow = new WebWindow("Přejmenovat");
 					subwindow.center();
 					getUI().addWindow(subwindow);
 

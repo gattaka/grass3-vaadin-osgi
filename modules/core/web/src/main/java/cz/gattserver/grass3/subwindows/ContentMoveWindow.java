@@ -20,8 +20,9 @@ import cz.gattserver.grass3.facades.IContentNodeFacade;
 import cz.gattserver.grass3.facades.INodeFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.web.common.window.WebWindow;
 
-public abstract class ContentMoveWindow extends GrassWindow {
+public abstract class ContentMoveWindow extends WebWindow {
 
 	private static final long serialVersionUID = -2550619983411515006L;
 

@@ -11,10 +11,10 @@ import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.js.JQueryBootstrapComponent;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
-import cz.gattserver.grass3.subwindows.ErrorWindow;
-import cz.gattserver.grass3.subwindows.InfoWindow;
-import cz.gattserver.grass3.subwindows.WarnWindow;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.window.ErrorWindow;
+import cz.gattserver.web.common.window.InfoWindow;
+import cz.gattserver.web.common.window.WarnWindow;
 
 public abstract class GrassLayout extends CustomLayout {
 

@@ -15,7 +15,7 @@ import cz.gattserver.grass3.search.service.ISearchConnector;
 import cz.gattserver.grass3.search.service.ISearchField;
 import cz.gattserver.grass3.search.service.SearchEntity;
 import cz.gattserver.grass3.security.ICoreACL;
-import cz.gattserver.grass3.util.URLIdentifierUtils;
+import cz.gattserver.web.common.URLIdentifierUtils;
 
 @Component("articlesSearchConnector")
 public class ArticlesSearchConnector implements ISearchConnector {

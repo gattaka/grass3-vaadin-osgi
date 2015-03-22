@@ -1,9 +1,9 @@
 package cz.gattserver.grass3.articles.pages;
 
 import cz.gattserver.grass3.articles.dto.ArticleDTO;
-import cz.gattserver.grass3.subwindows.GrassWindow;
+import cz.gattserver.web.common.window.WebWindow;
 
-public class PreviewWindow extends GrassWindow {
+public class PreviewWindow extends WebWindow {
 
 	private static final long serialVersionUID = 3575905789676981884L;
 

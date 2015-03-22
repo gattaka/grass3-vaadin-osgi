@@ -18,7 +18,7 @@ import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.pages.template.GrassLayout;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.grass3.ui.util.IPageFactoriesRegister;
-import cz.gattserver.grass3.util.URLPathAnalyzer;
+import cz.gattserver.web.common.URLPathAnalyzer;
 
 @Title("Gattserver")
 @Theme("grass")

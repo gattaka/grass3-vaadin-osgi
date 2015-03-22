@@ -13,9 +13,9 @@ import com.vaadin.server.Resource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.subwindows.GrassWindow;
+import cz.gattserver.web.common.window.WebWindow;
 
-public class ImageDetailWindow extends GrassWindow {
+public class ImageDetailWindow extends WebWindow {
 
 	private static final long serialVersionUID = 4928404864735034779L;
 

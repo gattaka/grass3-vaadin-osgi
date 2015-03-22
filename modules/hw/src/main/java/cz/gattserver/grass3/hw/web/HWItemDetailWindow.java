@@ -38,15 +38,15 @@ import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.IHWFacade;
-import cz.gattserver.grass3.subwindows.ConfirmWindow;
-import cz.gattserver.grass3.subwindows.GrassWindow;
-import cz.gattserver.grass3.subwindows.ImageDetailWindow;
 import cz.gattserver.grass3.ui.util.StringToDateConverter;
 import cz.gattserver.grass3.ui.util.StringToMoneyConverter;
-import cz.gattserver.grass3.util.CZSuffixCreator;
-import cz.gattserver.grass3.util.StringPreviewCreator;
+import cz.gattserver.web.common.util.CZSuffixCreator;
+import cz.gattserver.web.common.util.StringPreviewCreator;
+import cz.gattserver.web.common.window.ConfirmWindow;
+import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.window.ImageDetailWindow;
 
-public class HWItemDetailWindow extends GrassWindow {
+public class HWItemDetailWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 	private static final String DEFAULT_NOTE_LABEL_VALUE = "- Zvolte servisní záznam -";
@@ -493,8 +493,9 @@ public class HWItemDetailWindow extends GrassWindow {
 					}
 
 					@Override
-					protected void onClose(CloseEvent e) {
+					public void close() {
 						deleteNoteBtn.setEnabled(true);
+						super.close();
 					}
 				});
 			}

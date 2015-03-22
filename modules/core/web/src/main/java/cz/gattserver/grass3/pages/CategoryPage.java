@@ -33,7 +33,7 @@ import cz.gattserver.grass3.security.ICoreACL;
 import cz.gattserver.grass3.template.Breadcrumb;
 import cz.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.grass3.util.URLIdentifierUtils;
+import cz.gattserver.web.common.URLIdentifierUtils;
 
 public class CategoryPage extends OneColumnPage {
 

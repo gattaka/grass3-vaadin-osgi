@@ -1,9 +1,7 @@
 package cz.gattserver.grass3.model.dto;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class NodeDTO {
 

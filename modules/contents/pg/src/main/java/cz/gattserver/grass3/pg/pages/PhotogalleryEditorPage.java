@@ -60,14 +60,14 @@ import cz.gattserver.grass3.pg.events.PGProcessResultEvent;
 import cz.gattserver.grass3.pg.events.PGProcessStartEvent;
 import cz.gattserver.grass3.pg.facade.IPhotogalleryFacade;
 import cz.gattserver.grass3.security.Role;
-import cz.gattserver.grass3.subwindows.ConfirmWindow;
 import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.template.MultiUpload;
 import cz.gattserver.grass3.ui.progress.BaseProgressBar;
 import cz.gattserver.grass3.ui.progress.ProgressWindow;
 import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.grass3.util.URLIdentifierUtils;
-import cz.gattserver.grass3.util.URLPathAnalyzer;
+import cz.gattserver.web.common.URLIdentifierUtils;
+import cz.gattserver.web.common.URLPathAnalyzer;
+import cz.gattserver.web.common.window.ConfirmWindow;
 
 public class PhotogalleryEditorPage extends OneColumnPage {
 

@@ -4,14 +4,12 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
 
 public abstract class TableSelectedItemBtn<T> extends Button {
 
 	private static final long serialVersionUID = -5924239277930098183L;
 
-	public TableSelectedItemBtn(String caption, final AbstractSelect table,
-			Component... triggerComponents) {
+	public TableSelectedItemBtn(String caption, final AbstractSelect table) {
 		setCaption(caption);
 		setEnabled(false);
 		table.addValueChangeListener(new ValueChangeListener() {
@@ -24,7 +22,7 @@ public abstract class TableSelectedItemBtn<T> extends Button {
 				TableSelectedItemBtn.this.setEnabled(enabled);
 			}
 		});
-		addClickListener(getClickListener(table, triggerComponents));
+		addClickListener(getClickListener(table));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -32,6 +30,5 @@ public abstract class TableSelectedItemBtn<T> extends Button {
 		return (T) table.getValue();
 	}
 
-	protected abstract Button.ClickListener getClickListener(AbstractSelect table,
-			Component... triggerComponents);
+	protected abstract Button.ClickListener getClickListener(AbstractSelect table);
 }

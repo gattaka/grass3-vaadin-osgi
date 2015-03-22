@@ -15,7 +15,7 @@ import com.vaadin.ui.Table;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.ui.util.ComparableLink;
-import cz.gattserver.grass3.util.URLIdentifierUtils;
+import cz.gattserver.web.common.URLIdentifierUtils;
 
 @Component("nodesTableFactory")
 public class NodesTableFactory {

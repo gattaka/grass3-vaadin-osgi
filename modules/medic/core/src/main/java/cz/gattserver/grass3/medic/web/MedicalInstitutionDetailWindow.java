@@ -2,7 +2,6 @@ package cz.gattserver.grass3.medic.web;
 
 import com.vaadin.server.ExternalResource;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 
@@ -17,19 +16,16 @@ public class MedicalInstitutionDetailWindow extends AbstractDetailSubWindow {
 
 	private IMedicFacade medicalFacade;
 
-	public MedicalInstitutionDetailWindow(Long id,
-			final Component... triggerComponent) {
-		super("Detail instituce", triggerComponent);
+	public MedicalInstitutionDetailWindow(Long id) {
+		super("Detail instituce");
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
 
-		final MedicalInstitutionDTO medicalInstitutionDTO = medicalFacade
-				.getMedicalInstitutionById(id);
+		final MedicalInstitutionDTO medicalInstitutionDTO = medicalFacade.getMedicalInstitutionById(id);
 
 		addDetailLine("Název", medicalInstitutionDTO.getName());
 
-		Link link = new Link(medicalInstitutionDTO.getWeb(),
-				new ExternalResource(medicalInstitutionDTO.getWeb()));
+		Link link = new Link(medicalInstitutionDTO.getWeb(), new ExternalResource(medicalInstitutionDTO.getWeb()));
 		link.setTargetName("_blank");
 		addDetailLine("Web", link);
 

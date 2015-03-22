@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Button.ClickEvent;
@@ -21,9 +20,8 @@ public class MedicalRecordDetailWindow extends AbstractDetailSubWindow {
 
 	private IMedicFacade medicalFacade;
 
-	public MedicalRecordDetailWindow(Long id,
-			final Component... triggerComponent) {
-		super("Detail záznamu", triggerComponent);
+	public MedicalRecordDetailWindow(Long id) {
+		super("Detail záznamu");
 
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
 
@@ -43,7 +41,7 @@ public class MedicalRecordDetailWindow extends AbstractDetailSubWindow {
 			public void buttonClick(ClickEvent event) {
 				UI.getCurrent().addWindow(
 						new MedicalInstitutionDetailWindow(medicalRecordDTO
-								.getInstitution().getId(), button));
+								.getInstitution().getId()));
 			}
 		});
 		button.setStyleName(BaseTheme.BUTTON_LINK);

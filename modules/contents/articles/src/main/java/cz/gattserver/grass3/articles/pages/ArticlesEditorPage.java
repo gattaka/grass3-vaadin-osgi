@@ -90,6 +90,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 	private boolean editMode;
 	private PartsFinder.Result parts;
+	private FocusListener articleTextAreaFocusListener;
 
 	public ArticlesEditorPage(GrassRequest request) {
 		super(request);
@@ -105,12 +106,15 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		articleNameField = new TextField();
 		publicatedCheckBox = new CheckBox();
 
-		articleTextArea.addFocusListener(new FocusListener() {
+		// zavádění listener pro JS listener akcí jako je vepsání tabulátoru
+		articleTextArea.addFocusListener(articleTextAreaFocusListener = new FocusListener() {
 			private static final long serialVersionUID = -1481395375265209522L;
 
 			@Override
 			public void focus(FocusEvent event) {
 				JavaScript.eval("registerTabListener()");
+				// musí se odebrat, jinak budou problikávat vkládání přes tlačítka
+				articleTextArea.removeFocusListener(articleTextAreaFocusListener);
 			}
 
 		});
@@ -511,6 +515,13 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		JavaScript.eval("window.onbeforeunload = null;");
 		redirect(getPageURL(categoryPageFactory,
 				URLIdentifierUtils.createURLIdentifier(category.getId(), category.getName())));
+	}
+
+	@Override
+	public void attach() {
+		super.attach();
+		// aby se zaregistroval JS listener
+		articleTextArea.focus();
 	}
 
 }

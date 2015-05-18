@@ -13,14 +13,11 @@ public class PhysicianDetailWindow extends AbstractDetailSubWindow {
 
 	public PhysicianDetailWindow(Long id) {
 		super("Detail instituce");
-
 		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
 
 		final PhysicianDTO physicianDTO = medicalFacade.getPhysicianById(id);
-
 		addDetailLine("Jméno", physicianDTO.getName());
-
 		setContent(layout);
-
 	}
+
 }

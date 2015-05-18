@@ -23,8 +23,7 @@ public class PhotogalleryContentService implements IContentService {
 	}
 
 	public com.vaadin.server.Resource getContentIcon() {
-		return (com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/img_16.png");
+		return (com.vaadin.server.Resource) new ThemeResource("img/tags/img_16.png");
 	}
 
 	public String getContentID() {

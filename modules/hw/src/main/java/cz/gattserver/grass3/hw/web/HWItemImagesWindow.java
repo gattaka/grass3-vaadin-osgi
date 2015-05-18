@@ -80,7 +80,6 @@ public class HWItemImagesWindow extends WebWindow {
 		createImagesList(hwItem);
 
 		center();
-
 	}
 
 	private void createImagesList(final HWItemDTO hwItem) {
@@ -136,8 +135,7 @@ public class HWItemImagesWindow extends WebWindow {
 
 			imageLayout.addComponent(btnLayout);
 			imageLayout.setComponentAlignment(btnLayout, Alignment.BOTTOM_CENTER);
-
 		}
-
 	}
+
 }

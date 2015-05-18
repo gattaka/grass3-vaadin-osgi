@@ -37,8 +37,7 @@ public class HWItemImagesWindow extends WebWindow {
 
 		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
-		setWidth(null);
-		// setHeight("780px");
+		setWidth("882px");
 
 		VerticalLayout layout = new VerticalLayout();
 		setContent(layout);

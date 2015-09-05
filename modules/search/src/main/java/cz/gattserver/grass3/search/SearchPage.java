@@ -83,9 +83,8 @@ public class SearchPage extends OneColumnPage {
 		} catch (InvalidTokenOffsetsException e) {
 			e.printStackTrace();
 		}
-
 	}
-
+	
 	@Override
 	protected Component createContent() {
 

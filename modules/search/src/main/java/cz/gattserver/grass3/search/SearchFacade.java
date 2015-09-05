@@ -51,14 +51,12 @@ public class SearchFacade {
 		return connectorAggregator.getSearchConnectorsById().keySet();
 	}
 
-	private String getHighlightedField(Query query, Analyzer analyzer,
-			String fieldName, String fieldValue) throws IOException,
-			InvalidTokenOffsetsException {
+	private String getHighlightedField(Query query, Analyzer analyzer, String fieldName, String fieldValue)
+			throws IOException, InvalidTokenOffsetsException {
 		Formatter formatter = new SimpleHTMLFormatter("<strong>", "</strong>");
 		QueryScorer queryScorer = new QueryScorer(query);
 		Highlighter highlighter = new Highlighter(formatter, queryScorer);
-		highlighter.setTextFragmenter(new SimpleSpanFragmenter(queryScorer,
-				Integer.MAX_VALUE));
+		highlighter.setTextFragmenter(new SimpleSpanFragmenter(queryScorer, Integer.MAX_VALUE));
 		highlighter.setMaxDocCharsToAnalyze(Integer.MAX_VALUE);
 		return highlighter.getBestFragment(analyzer, fieldName, fieldValue);
 	}
@@ -85,15 +83,12 @@ public class SearchFacade {
 	 * @throws ParseException
 	 * @throws InvalidTokenOffsetsException
 	 */
-	public List<SearchHit> search(String queryText,
-			Set<Enum<? extends ISearchField>> searchFields, String moduleId,
-			UserInfoDTO user, GrassLayout callingPage) throws IOException,
-			ParseException, InvalidTokenOffsetsException {
+	public List<SearchHit> search(String queryText, Set<Enum<? extends ISearchField>> searchFields, String moduleId,
+			UserInfoDTO user, GrassLayout callingPage) throws IOException, ParseException, InvalidTokenOffsetsException {
 
 		// StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);
 		CzechAnalyzer analyzer = new CzechAnalyzer(Version.LUCENE_36);
-		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36,
-				analyzer);
+		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36, analyzer);
 
 		/**
 		 * Tady by šlo asi rozšiřovat i existující index (z disku/DB)
@@ -104,22 +99,18 @@ public class SearchFacade {
 		/**
 		 * Hledej dle search connectoru
 		 */
-		ISearchConnector connector = connectorAggregator
-				.getSearchConnectorsById().get(moduleId);
+		ISearchConnector connector = connectorAggregator.getSearchConnectorsById().get(moduleId);
 
 		/**
-		 * Pokud nebyly vybrány explicitně položky k prohledávání, prohledáváme
-		 * všechny
+		 * Pokud nebyly vybrány explicitně položky k prohledávání, prohledáváme všechny
 		 */
 		if (searchFields == null || searchFields.isEmpty())
-			searchFields = new HashSet<Enum<? extends ISearchField>>(
-					Arrays.asList(connector.getSearchFields()));
+			searchFields = new HashSet<Enum<? extends ISearchField>>(Arrays.asList(connector.getSearchFields()));
 
 		/**
 		 * Získej dostupné obsahy
 		 */
-		List<SearchEntity> searchEntities = connector
-				.getAvailableSearchEntities(user);
+		List<SearchEntity> searchEntities = connector.getAvailableSearchEntities(user);
 
 		/**
 		 * Projdi všechny dostupné obsahy
@@ -129,18 +120,15 @@ public class SearchFacade {
 
 			// sestav dokument z nabízených polí
 			for (SearchEntity.Field field : searchEntity.getFields()) {
-				doc.add(new Field(((ISearchField) field.getName())
-						.getFieldName(), field.getContent(), Field.Store.YES,
+				doc.add(new Field(((ISearchField) field.getName()).getFieldName(), field.getContent(), Field.Store.YES,
 						field.isTokenized() ? Index.ANALYZED : Index.NO));
 			}
 
-			String url = callingPage
-					.getPageURL(searchEntity.getLink().getViewerPageFactory(),
-							searchEntity.getLink().getSuffix());
+			String url = callingPage.getPageURL(searchEntity.getLink().getViewerPageFactory(), searchEntity.getLink()
+					.getSuffix());
 
 			// přidej link
-			doc.add(new Field(connector.getLinkFieldName(), url,
-					Field.Store.YES, Index.NO));
+			doc.add(new Field(connector.getLinkFieldName(), url, Field.Store.YES, Index.NO));
 
 			w.addDocument(doc);
 		}
@@ -157,8 +145,7 @@ public class SearchFacade {
 			queries.add(queryText);
 			fieldNames.add(((ISearchField) searchField).getFieldName());
 		}
-		Query query = MultiFieldQueryParser.parse(Version.LUCENE_36,
-				queries.toArray(new String[0]),
+		Query query = MultiFieldQueryParser.parse(Version.LUCENE_36, queries.toArray(new String[0]),
 				fieldNames.toArray(new String[0]), analyzer);
 
 		/**
@@ -167,8 +154,7 @@ public class SearchFacade {
 		int hitsPerPage = 100;
 		IndexReader reader = IndexReader.open(index);
 		IndexSearcher searcher = new IndexSearcher(reader);
-		TopScoreDocCollector collector = TopScoreDocCollector.create(
-				hitsPerPage, true);
+		TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
 		searcher.search(query, collector);
 		ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
@@ -181,12 +167,10 @@ public class SearchFacade {
 			String fieldName = "";
 			for (Enum<? extends ISearchField> searchField : searchFields) {
 				fieldName = ((ISearchField) searchField).getFieldName();
-				highlight = getHighlightedField(query, analyzer, fieldName,
-						d.get(fieldName));
+				highlight = getHighlightedField(query, analyzer, fieldName, d.get(fieldName));
 				// je co zvýrazňovat
 				if (highlight != null && highlight.isEmpty() == false) {
-					hitList.add(new SearchHit(highlight, fieldName, d
-							.get(connector.getLinkFieldName())));
+					hitList.add(new SearchHit(highlight, fieldName, d.get(connector.getLinkFieldName())));
 				}
 			}
 

@@ -1,8 +1,7 @@
 package cz.gattserver.grass3.util;
 
 /**
- * Primitivní typy jako (B/b)oolean se nedají předávat do anonymních tříd,
- * protože (většinou) nemůžou být final
+ * Primitivní typy jako (B/b)oolean se nedají předávat do anonymních tříd, protože (většinou) nemůžou být final
  */
 public final class ReferenceHolder<T> {
 

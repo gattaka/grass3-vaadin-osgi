@@ -173,7 +173,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		slideshowDirFile = new File(galleryDir, configuration.getSlideshowDir());
 
 		// pokud je galerie porušená, pak nic nevypisuj
-		if (miniaturesDirFile.exists() == false || previewsDirFile.exists() == false) {
+		if (miniaturesDirFile.exists() == false) {
 			layout.addComponent(new Label("Chyba: Galerie je porušená -- kontaktujte administrátora"));
 			return;
 		}

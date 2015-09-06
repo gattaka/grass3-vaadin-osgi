@@ -12,6 +12,7 @@ import com.vaadin.event.MouseEvents;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -42,6 +43,7 @@ import cz.gattserver.web.common.URLPathAnalyzer;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.InfoWindow;
 import cz.gattserver.web.common.window.WarnWindow;
+import cz.gattserver.web.common.window.WebWindow;
 
 public class PhotogalleryViewerPage extends ContentViewerPage {
 
@@ -95,6 +97,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	private File galleryDir;
 	private File miniaturesDirFile;
+	private File previewsDirFile;
 	private File slideshowDirFile;
 
 	public PhotogalleryViewerPage(GrassRequest request) {
@@ -166,18 +169,23 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 		galleryDir = new File(configuration.getRootDir(), photogallery.getPhotogalleryPath());
 		miniaturesDirFile = new File(galleryDir, configuration.getMiniaturesDir());
+		previewsDirFile = new File(galleryDir, configuration.getPreviewsDir());
 		slideshowDirFile = new File(galleryDir, configuration.getSlideshowDir());
 
-		if (miniaturesDirFile.exists() == false) {
-			showError404();
+		// pokud je galerie porušená, pak nic nevypisuj
+		if (miniaturesDirFile.exists() == false || previewsDirFile.exists() == false) {
+			layout.addComponent(new Label("Chyba: Galerie je porušená -- kontaktujte administrátora"));
 			return;
 		}
 
 		final File[] miniatures = miniaturesDirFile.listFiles();
 		Arrays.sort(miniatures);
 
-		imageSum = miniatures.length;
-		rowsSum = (int) Math.ceil(miniatures.length * 1f / galleryGridCols);
+		final File[] previews = previewsDirFile.listFiles();
+		Arrays.sort(previews);
+
+		imageSum = miniatures.length + previews.length;
+		rowsSum = (int) Math.ceil((miniatures.length + previews.length) * 1f / galleryGridCols);
 
 		VerticalLayout galleryLayout = new VerticalLayout();
 		galleryLayout.setSpacing(true);
@@ -313,7 +321,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				populateGrid(miniatures);
+				populateGrid(miniatures, previews);
 				refreshStatusLabel();
 				animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN).setDuration(200).setDelay(200);
 				checkOffsetBtnsAvailability();
@@ -328,7 +336,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		endPageBtn.addClickListener(btnCommonListener);
 
 		refreshStatusLabel();
-		populateGrid(miniatures);
+		populateGrid(miniatures, previews);
 		animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN).setDuration(200).setDelay(200);
 		checkOffsetBtnsAvailability();
 	}
@@ -351,30 +359,38 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		endPageBtn.setEnabled(downBtnsAvailFlag);
 	}
 
-	private void populateGrid(final File[] miniatures) {
+	private void populateGrid(final File[] miniatures, final File[] previews) {
 
 		galleryGridLayout.removeAllComponents();
 
 		int start = galleryGridRowOffset * galleryGridCols;
-		int limit = Math.min(miniatures.length, galleryGridCols * galleryGridRows + start);
+		int limit = Math.min(miniatures.length + previews.length, galleryGridCols * galleryGridRows + start);
 		for (int i = start; i < limit; i++) {
 
+			// vypisuji fotky nebo už videa?
+			boolean videos = i >= miniatures.length;
+			int videoIndex = i - miniatures.length;
 			final int index = i;
+
 			int gridIndex = i - start;
 
 			VerticalLayout itemLayout = new VerticalLayout();
 			itemLayout.setSpacing(true);
 
 			// Image
-			final File miniature = miniatures[i];
+			final File miniature = videos ? previews[videoIndex] : miniatures[i];
 			Embedded embedded = new Embedded(null, new FileResource(miniature));
 			itemLayout.addComponent(embedded);
 			itemLayout.setComponentAlignment(embedded, Alignment.MIDDLE_CENTER);
 
 			// HD link
-			String url = getRequest().getContextRoot() + PhotogalleryConfiguration.PHOTOGALLERY_PATH + "/"
+			String tmpUrl = getRequest().getContextRoot() + PhotogalleryConfiguration.PHOTOGALLERY_PATH + "/"
 					+ photogallery.getPhotogalleryPath() + "/" + miniature.getName();
-			Link link = new Link("Plné rozlišení", new ExternalResource(url));
+
+			// odeber ".png"
+			final String url = videos ? tmpUrl.substring(0, tmpUrl.length() - 4) : tmpUrl;
+
+			Link link = new Link(videos ? "Stáhnout video" : "Plné rozlišení", new ExternalResource(url));
 			link.setTargetName("_blank");
 			itemLayout.addComponent(link);
 			itemLayout.setComponentAlignment(link, Alignment.MIDDLE_CENTER);
@@ -387,7 +403,40 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 				@Override
 				public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
-					UI.getCurrent().addWindow(new ImageDetailWindow(miniatures, index, slideshowDirFile));
+					if (videos) {
+						UI.getCurrent().addWindow(
+								new WebWindow(miniature.getName().substring(0, miniature.getName().length() - 4)) {
+									private static final long serialVersionUID = 5027839567542107630L;
+
+									{
+										// String videoString =
+										// "<video controls=\"controls\" width=\"800\" height=\"600\" name=\"Video Name\" src=\""
+										// + url + "\"></video>";
+
+										String videoString = "<video id=\"video\" width=\"800\" height=\"600\" preload controls>"
+												+ "<source src=\""
+												+ url
+												+ "\" type='video/mp4; codecs=\"avc1.42E01E, mp4a.40.2\"' />"
+												// +"<source src=\"HTML5Sample_Ogg.ogv\" type='video/ogg; codecs=\"theora, vorbis\"' />"
+												// +"<source src=\"HTML5Sample_WebM.webm\" type='video/webm; codecs=\"vp8, vorbis\"' />"
+												// +"<object type=\"application/x-shockwave-flash\" data=\"http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf\" width=\"800\" height=\"600\">"
+												// +"<param name=\"movie\" value=\"http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf\" />"
+												// +"<param name=\"allowFullScreen\" value=\"true\" />"
+												// +"<param name=\"wmode\" value=\"transparent\" />"
+												// +"<param name=\"flashvars\" value='config={\"clip\":{\"url\":\"HTML5Sample_flv.flv\",\"autoPlay\":false,\"autoBuffering\":true}}' />"
+												// +"</object>"
+												+ "</video>";
+
+										Label video = new Label(videoString, ContentMode.HTML);
+
+										video.setWidth("800px");
+										video.setHeight("600px");
+										addComponent(video);
+									}
+								});
+					} else {
+						UI.getCurrent().addWindow(new ImageDetailWindow(miniatures, index, slideshowDirFile));
+					}
 				}
 			});
 		}
@@ -414,7 +463,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 				// zdařilo se ? Pokud ano, otevři info okno a při
 				// potvrzení jdi na kategorii
-				if (photogalleryFacade.deletePhotogallery(photogallery)) {
+				try {
+					photogalleryFacade.deletePhotogallery(photogallery);
 					InfoWindow infoSubwindow = new InfoWindow("Smazání galerie proběhlo úspěšně.") {
 
 						private static final long serialVersionUID = -6688396549852552674L;
@@ -424,7 +474,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 						};
 					};
 					getUI().addWindow(infoSubwindow);
-				} else {
+				} catch (Exception e) {
 					// Pokud ne, otevři warn okno a při
 					// potvrzení jdi na kategorii
 					WarnWindow warnSubwindow = new WarnWindow("Smazání galerie se nezdařilo.") {

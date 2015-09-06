@@ -19,8 +19,7 @@ public interface IArticleFacade {
 	public ArticleDTO processPreview(String text, String contextRoot);
 
 	/**
-	 * Uloží rozpracovaný článek - nepřekládá ho, jenom uloží obsah polí v
-	 * editoru
+	 * Uloží rozpracovaný článek - nepřekládá ho, jenom uloží obsah polí v editoru
 	 * 
 	 * @param name
 	 *            název článku
@@ -34,8 +33,7 @@ public interface IArticleFacade {
 	 *            uživatel, který článek vytvořil
 	 * @return {@code true} pokud vše dopadlo v pořádku, jinak {@code false}
 	 */
-	public boolean saveTemp(String name, String text, String tags,
-			NodeDTO category, UserInfoDTO author);
+	public void saveTemp(String name, String text, String tags, NodeDTO category, UserInfoDTO author);
 
 	/**
 	 * Smaže článek
@@ -44,7 +42,7 @@ public interface IArticleFacade {
 	 *            článek ke smazání
 	 * @return {@code true} pokud se zdařilo smazat jiank {@code false}
 	 */
-	public boolean deleteArticle(ArticleDTO articleDTO);
+	public void deleteArticle(ArticleDTO articleDTO);
 
 	/**
 	 * Upraví článek
@@ -61,8 +59,7 @@ public interface IArticleFacade {
 	 *            původní článek
 	 * @return {@code true} pokud se úprava zdařila, jinak {@code false}
 	 */
-	public boolean modifyArticle(String name, String text,
-			Collection<String> tags, boolean publicated,
+	public void modifyArticle(String name, String text, Collection<String> tags, boolean publicated,
 			ArticleDTO articleDTO, String contextRoot);
 
 	/**
@@ -80,12 +77,10 @@ public interface IArticleFacade {
 	 *            kategorie do které se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
-	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
-	 *         {@code null}
+	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak {@code null}
 	 */
-	public Long saveArticle(String name, String text,
-			Collection<String> tags, boolean publicated,
-			NodeDTO category, UserInfoDTO author, String contextRoot);
+	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, NodeDTO category,
+			UserInfoDTO author, String contextRoot);
 
 	/**
 	 * Získá článek dle jeho identifikátoru

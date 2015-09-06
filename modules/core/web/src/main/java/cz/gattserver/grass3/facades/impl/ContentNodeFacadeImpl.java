@@ -105,8 +105,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	}
 
 	/**
-	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node -
-	 * zkrácená verze metody pro obsah, jež nemá tagy
+	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node - zkrácená verze metody pro obsah, jež nemá tagy
 	 * 
 	 * @param contentModuleId
 	 *            identifikátor modulu obsahů
@@ -149,8 +148,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *            kategorie do které se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
-	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
-	 *         nebo
+	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen, nebo
 	 */
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
 			boolean publicated, Long category, Long author, Date date) {
@@ -175,8 +173,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		parent = nodeRepository.save(parent);
 
 		/**
-		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
-		 * aktualizovat kvůli mazání tagů údaje v DB)
+		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam aktualizovat kvůli mazání tagů údaje v DB)
 		 */
 		contentTagFacade.saveTags(tags, contentNode);
 
@@ -204,8 +201,8 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean modify(Long contentNodeId, String name, boolean publicated) {
-		return modify(contentNodeId, name, null, publicated);
+	public void modify(Long contentNodeId, String name, boolean publicated) {
+		modify(contentNodeId, name, null, publicated);
 	}
 
 	/**
@@ -217,13 +214,12 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *            řetězec tagů, který se má společně s obsahem uložit
 	 * @param publicated
 	 *            je článek publikován ?
-	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated) {
-		return modify(contentNodeId, name, tags, publicated, null);
+	public void modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated) {
+		modify(contentNodeId, name, tags, publicated, null);
 	}
 
-	public boolean modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated, Date creationDate) {
+	public void modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated, Date creationDate) {
 		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
 
 		contentNode.setLastModificationDate(Calendar.getInstance().getTime());
@@ -237,12 +233,9 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		contentNodeRepository.save(contentNode);
 
 		/**
-		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
-		 * aktualizovat kvůli mazání tagů údaje v DB)
+		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam aktualizovat kvůli mazání tagů údaje v DB)
 		 */
 		contentTagFacade.saveTags(tags, contentNodeId);
-
-		return true;
 	}
 
 	/**
@@ -252,8 +245,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean delete(Long contentNodeId) {
-
+	public void delete(Long contentNodeId) {
 		userFacade.removeContentFromAllUsersFavourites(contentNodeId);
 
 		// vymaž tagy
@@ -267,7 +259,6 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		node = nodeRepository.save(node);
 
 		contentNodeRepository.delete(contentNode);
-		return true;
 	}
 
 	@Override

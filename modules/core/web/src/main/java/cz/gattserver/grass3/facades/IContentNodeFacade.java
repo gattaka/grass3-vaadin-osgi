@@ -36,8 +36,7 @@ public interface IContentNodeFacade {
 	public List<ContentNodeDTO> getContentNodesByNode(Long node);
 
 	/**
-	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node -
-	 * zkrácená verze metody pro obsah, jež nemá tagy
+	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node - zkrácená verze metody pro obsah, jež nemá tagy
 	 * 
 	 * @param contentModule
 	 *            identifikátor modulu obsahů
@@ -51,8 +50,7 @@ public interface IContentNodeFacade {
 	 *            kategorie do kteér se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
-	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
-	 *         nebo
+	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen, nebo
 	 */
 	public ContentNode save(String contentModule, Long contentNode, String name, boolean publicated, Long category,
 			Long author);
@@ -74,8 +72,7 @@ public interface IContentNodeFacade {
 	 *            kategorie do které se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
-	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
-	 *         nebo
+	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen, nebo
 	 */
 	public ContentNode save(String contentModule, Long contentNode, String name, Collection<String> tags,
 			boolean publicated, Long category, Long author);
@@ -97,9 +94,8 @@ public interface IContentNodeFacade {
 	 * 
 	 * @param contentNode
 	 *            uzel obsahu, který patří k tomuto obsahu
-	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean modify(Long contentNode, String name, boolean publicated);
+	public void modify(Long contentNode, String name, boolean publicated);
 
 	/**
 	 * Upraví obsah a uloží ho do DB
@@ -110,20 +106,18 @@ public interface IContentNodeFacade {
 	 *            řetězec tagů, který se má společně s obsahem uložit
 	 * @param publicated
 	 *            je článek publikován ?
-	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean modify(Long contentNode, String name, Collection<String> tags, boolean publicated);
+	public void modify(Long contentNode, String name, Collection<String> tags, boolean publicated);
 
-	public boolean modify(Long contentId, String name, Collection<String> tags, boolean publicated, Date creationDate);
+	public void modify(Long contentId, String name, Collection<String> tags, boolean publicated, Date creationDate);
 
 	/**
 	 * Smaže obsah
 	 * 
 	 * @param contentNode
 	 *            uzel obsahu, který patří k tomuto obsahu
-	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
-	public boolean delete(Long contentNode);
+	public void delete(Long contentNode);
 
 	/**
 	 * Přesune obsah mezi kategoriemi

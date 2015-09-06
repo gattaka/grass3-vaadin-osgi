@@ -62,11 +62,9 @@ public class UserFacadeImpl implements IUserFacade {
 	 * @param email
 	 * @param username
 	 * @param password
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
+	 * @return <code>true</code> pokud se přidání zdařilo, jinak <code>false</code>
 	 */
-	public boolean registrateNewUser(String email, String username, String password) {
-
+	public void registrateNewUser(String email, String username, String password) {
 		User user = new User();
 		user.setConfirmed(false);
 		user.setEmail(email);
@@ -75,47 +73,43 @@ public class UserFacadeImpl implements IUserFacade {
 		user.setRegistrationDate(Calendar.getInstance().getTime());
 		EnumSet<Role> roles = EnumSet.of(Role.USER);
 		user.setRoles(roles);
-
-		return userRepository.save(user) != null;
+		userRepository.save(user);
 	}
 
 	/**
 	 * Aktivuje uživatele
 	 * 
 	 * @param user
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
+	 * @return <code>true</code> pokud se přidání zdařilo, jinak <code>false</code>
 	 */
-	public boolean activateUser(Long user) {
+	public void activateUser(Long user) {
 		User u = userRepository.findOne(user);
 		u.setConfirmed(true);
-		return userRepository.save(u) != null;
+		userRepository.save(u);
 	}
 
 	/**
 	 * Zablokuje uživatele
 	 * 
 	 * @param user
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
+	 * @return <code>true</code> pokud se přidání zdařilo, jinak <code>false</code>
 	 */
-	public boolean banUser(Long user) {
+	public void banUser(Long user) {
 		User u = userRepository.findOne(user);
 		u.setConfirmed(false);
-		return userRepository.save(u) != null;
+		userRepository.save(u);
 	}
 
 	/**
 	 * Upraví role uživatele
 	 * 
 	 * @param user
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
+	 * @return <code>true</code> pokud se přidání zdařilo, jinak <code>false</code>
 	 */
-	public boolean changeUserRoles(Long user, Set<Role> roles) {
+	public void changeUserRoles(Long user, Set<Role> roles) {
 		User u = userRepository.findOne(user);
 		u.setRoles(roles);
-		return userRepository.save(u) != null;
+		userRepository.save(u);
 	}
 
 	/**
@@ -158,40 +152,34 @@ public class UserFacadeImpl implements IUserFacade {
 	/**
 	 * Přidá obsah do oblíbených uživatele
 	 */
-	public boolean addContentToFavourites(Long contentId, Long user) {
-
+	public void addContentToFavourites(Long contentId, Long user) {
 		User userEntity = userRepository.findOne(user);
 		userEntity.getFavourites().add(contentNodeRepository.findOne(contentId));
-
-		return userRepository.save(userEntity) != null;
+		userRepository.save(userEntity);
 	}
 
-	private boolean removeContentFromFavourites(User user, Long contentId) {
+	private void removeContentFromFavourites(User user, Long contentId) {
 		user.getFavourites().remove(contentNodeRepository.findOne(contentId));
-
-		return userRepository.save(user) != null;
+		userRepository.save(user);
 	}
 
 	/**
 	 * Odebere obsah z oblíbených uživatele
 	 */
-	public boolean removeContentFromFavourites(Long contentId, Long user) {
+	public void removeContentFromFavourites(Long contentId, Long user) {
 		User userEntity = userRepository.findOne(user);
-		return removeContentFromFavourites(userEntity, contentId);
+		removeContentFromFavourites(userEntity, contentId);
 	}
 
 	/**
 	 * Odebere obsah z oblíbených všech uživatelů
 	 */
-	public boolean removeContentFromAllUsersFavourites(Long contentId) {
-
+	public void removeContentFromAllUsersFavourites(Long contentId) {
 		// vymaž z oblíbených
 		List<User> users = userRepository.findByFavouritesId(contentId);
-		if (users == null)
-			return false;
-		for (User user : users)
-			removeContentFromFavourites(user, contentId);
-
-		return true;
+		if (users != null) {
+			for (User user : users)
+				removeContentFromFavourites(user, contentId);
+		}
 	}
 }

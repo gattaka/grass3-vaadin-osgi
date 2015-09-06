@@ -92,8 +92,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	}
 
 	/**
-	 * Uloží rozpracovaný článek - nepřekládá ho, jenom uloží obsah polí v
-	 * editoru
+	 * Uloží rozpracovaný článek - nepřekládá ho, jenom uloží obsah polí v editoru
 	 * 
 	 * @param name
 	 *            název článku
@@ -107,9 +106,8 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 *            uživatel, který článek vytvořil
 	 * @return {@code true} pokud vše dopadlo v pořádku, jinak {@code false}
 	 */
-	public boolean saveTemp(String name, String text, String tags, NodeDTO category, UserInfoDTO author) {
+	public void saveTemp(String name, String text, String tags, NodeDTO category, UserInfoDTO author) {
 		// TODO
-		return true;
 	}
 
 	/**
@@ -119,7 +117,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 *            článek ke smazání
 	 * @return {@code true} pokud se zdařilo smazat jiank {@code false}
 	 */
-	public boolean deleteArticle(ArticleDTO articleDTO) {
+	public void deleteArticle(ArticleDTO articleDTO) {
 
 		// smaž článek
 		articleRepository.delete(articleDTO.getId());
@@ -127,11 +125,8 @@ public class ArticleFacadeImpl implements IArticleFacade {
 		// smaž jeho content node
 		ContentNodeDTO contentNodeDTO = articleDTO.getContentNode();
 		if (contentNodeDTO != null) {
-			if (contentNodeFacade.delete(contentNodeDTO.getId()) == false)
-				return false;
+			contentNodeFacade.delete(contentNodeDTO.getId());
 		}
-
-		return true;
 	}
 
 	/**
@@ -149,7 +144,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 *            původní článek
 	 * @return {@code true} pokud se úprava zdařila, jinak {@code false}
 	 */
-	public boolean modifyArticle(String name, String text, Collection<String> tags, boolean publicated,
+	public void modifyArticle(String name, String text, Collection<String> tags, boolean publicated,
 			ArticleDTO articleDTO, String contextRoot) {
 
 		// článek
@@ -166,14 +161,10 @@ public class ArticleFacadeImpl implements IArticleFacade {
 		article.setSearchableOutput(HTMLTrimmer.trim(context.getOutput()));
 
 		// ulož ho
-		if (articleRepository.save(article) == null)
-			return false;
+		articleRepository.save(article);
 
 		// content node
-		if (contentNodeFacade.modify(articleDTO.getContentNode().getId(), name, tags, publicated) == false)
-			return false;
-
-		return true;
+		contentNodeFacade.modify(articleDTO.getContentNode().getId(), name, tags, publicated);
 	}
 
 	private SortedSet<ArticleJSResource> createJSResourcesSet(Set<String> scripts) {
@@ -203,8 +194,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 *            kategorie do kteér se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
-	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
-	 *         {@code null}
+	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak {@code null}
 	 */
 	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, NodeDTO category,
 			UserInfoDTO author, String contextRoot) {
@@ -222,7 +212,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 
 		// ulož ho a nasetuj jeho id
 		article = articleRepository.save(article);
-		
+
 		// vytvoř odpovídající content node
 		ContentNode contentNode = contentNodeFacade.save(ArticlesContentService.ID, article.getId(), name, tags,
 				publicated, category.getId(), author.getId());

@@ -9,10 +9,12 @@ import cz.gattserver.grass3.config.AbstractConfiguration;
 public class PhotogalleryConfiguration extends AbstractConfiguration {
 
 	public static final String PHOTOGALLERY_PATH = "/photogallery-files";
-	
+
 	private String rootDir = "rootDir";
 
 	private String miniaturesDir = "foto_mini";
+
+	private String previewsDir = "video_preview";
 
 	private String slideshowDir = "foto_slideshow";
 
@@ -42,6 +44,14 @@ public class PhotogalleryConfiguration extends AbstractConfiguration {
 
 	public void setRootDir(String rootDir) {
 		this.rootDir = rootDir;
+	}
+
+	public String getPreviewsDir() {
+		return previewsDir;
+	}
+
+	public void setPreviewsDir(String previewDir) {
+		this.previewsDir = previewDir;
 	}
 
 }

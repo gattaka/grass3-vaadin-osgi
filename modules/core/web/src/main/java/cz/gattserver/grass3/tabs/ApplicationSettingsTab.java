@@ -55,8 +55,7 @@ public class ApplicationSettingsTab extends AbstractSettingsTab {
 		final CoreConfiguration configuration = loadConfiguration();
 
 		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new Label("<h2>Nastavení aplikace</h2>",
-				ContentMode.HTML));
+		settingsLayout.addComponent(new Label("<h2>Nastavení aplikace</h2>", ContentMode.HTML));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
@@ -111,16 +110,14 @@ public class ApplicationSettingsTab extends AbstractSettingsTab {
 		sessionTimeoutLayout.addComponent(slider);
 		sessionTimeoutLayout.setExpandRatio(slider, 1);
 		sessionTimeoutLayout.addComponent(valueLabel);
-		sessionTimeoutLayout.setComponentAlignment(valueLabel,
-				Alignment.BOTTOM_LEFT);
+		sessionTimeoutLayout.setComponentAlignment(valueLabel, Alignment.BOTTOM_LEFT);
 
 		settingsFieldsLayout.addComponent(sessionTimeoutLayout);
 
 		/**
 		 * Povolení registrací
 		 */
-		final CheckBox allowRegistrationsBox = new CheckBox(
-				"Povolit registrace");
+		final CheckBox allowRegistrationsBox = new CheckBox("Povolit registrace");
 		allowRegistrationsBox.setValue(configuration.isRegistrations());
 		allowRegistrationsBox.addValueChangeListener(new ValueChangeListener() {
 
@@ -149,23 +146,21 @@ public class ApplicationSettingsTab extends AbstractSettingsTab {
 		/**
 		 * Reset tagů
 		 */
-		Button contentTagsCountsResetBtn = new Button(
-				"Přepočítat údaje ContentTagů", new Button.ClickListener() {
+		Button contentTagsCountsResetBtn = new Button("Přepočítat údaje ContentTagů", new Button.ClickListener() {
 
-					private static final long serialVersionUID = 8490964871266821307L;
+			private static final long serialVersionUID = 8490964871266821307L;
 
-					public void buttonClick(ClickEvent event) {
-						if (contentTagFacade.countContentNodes()) {
-							InfoWindow infoSubwindow = new InfoWindow(
-									"Počty obsahů tagů byly úspěšně přepočítány");
-							getUI().addWindow(infoSubwindow);
-						} else {
-							WarnWindow warnSubwindow = new WarnWindow(
-									"Nezdařilo se přepočítat počty obsahů tagů");
-							getUI().addWindow(warnSubwindow);
-						}
-					}
-				});
+			public void buttonClick(ClickEvent event) {
+				try {
+					contentTagFacade.countContentNodes();
+					InfoWindow infoSubwindow = new InfoWindow("Počty obsahů tagů byly úspěšně přepočítány");
+					getUI().addWindow(infoSubwindow);
+				} catch (Exception e) {
+					WarnWindow warnSubwindow = new WarnWindow("Nezdařilo se přepočítat počty obsahů tagů");
+					getUI().addWindow(warnSubwindow);
+				}
+			}
+		});
 		settingsFieldsLayout.addComponent(contentTagsCountsResetBtn);
 
 		return layout;

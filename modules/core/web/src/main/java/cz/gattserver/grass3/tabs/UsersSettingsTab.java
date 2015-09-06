@@ -130,12 +130,13 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 
 			public void buttonClick(ClickEvent event) {
 				user.setConfirmed(true);
-				if (userFacade.activateUser(user.getId())) {
+				try {
+					userFacade.activateUser(user.getId());
 					showInfo("Uživatel '" + user.getName() + "' byl úspěšně aktivován");
 					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ).setValue(String.valueOf(user.isConfirmed()));
 					userTable.unselect(user);
 					userTable.select(user);
-				} else {
+				} catch (Exception e) {
 					showError("Nezdařilo se uložit úpravy provedené na uživateli '" + user.getName() + "'");
 				}
 
@@ -153,12 +154,13 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 
 			public void buttonClick(ClickEvent event) {
 				user.setConfirmed(false);
-				if (userFacade.banUser(user.getId())) {
+				try {
+					userFacade.banUser(user.getId());
 					showInfo("Uživatel '" + user.getName() + "' byl úspěšně zablokován");
 					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ).setValue(String.valueOf(user.isConfirmed()));
 					userTable.unselect(user);
 					userTable.select(user);
-				} else {
+				} catch (Exception e) {
 					showError("Nezdařilo se uložit úpravy provedené na uživateli '" + user.getName() + "'");
 				}
 			}
@@ -205,12 +207,13 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 					private static final long serialVersionUID = -6032630714904379342L;
 
 					public void buttonClick(ClickEvent event) {
-						if (userFacade.changeUserRoles(user.getId(), user.getRoles())) {
+						try {
+							userFacade.changeUserRoles(user.getId(), user.getRoles());
 							showInfo("Oprávnění uživatele '" + user.getName() + "' byly úspěšně upraven");
 							userTable.getContainerProperty(user, ColumnId.ROLE).setValue(user.getRoles().toString());
 							userTable.unselect(user);
 							userTable.select(user);
-						} else {
+						} catch (Exception e) {
 							showError("Nezdařilo se uložit úpravy provedené na uživateli '" + user.getName() + "'");
 						}
 					}

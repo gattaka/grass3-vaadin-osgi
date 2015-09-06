@@ -46,8 +46,8 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 	}
 
 	/**
-	 * Bere řetězec tagů, parsuje je a ukládá do nich (nebo vytvoří nové)
-	 * referenci na tento obsah - <b>mění {@link ContentNode} entitu v DB</b>
+	 * Bere řetězec tagů, parsuje je a ukládá do nich (nebo vytvoří nové) referenci na tento obsah - <b>mění
+	 * {@link ContentNode} entitu v DB</b>
 	 * 
 	 * @param tagsDTOs
 	 *            tagy
@@ -150,13 +150,10 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 		return tag;
 	}
 
-	public boolean countContentNodes() {
+	public void countContentNodes() {
 		for (ContentTag tag : contentTagRepository.findAll()) {
 			tag.setContentNodesCount(tag.getContentNodes().size());
-			if (contentTagRepository.save(tag) == null)
-				return false;
+			contentTagRepository.save(tag);
 		}
-		return true;
 	}
-
 }

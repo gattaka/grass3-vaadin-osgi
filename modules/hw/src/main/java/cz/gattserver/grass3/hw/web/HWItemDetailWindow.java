@@ -43,8 +43,8 @@ import cz.gattserver.grass3.ui.util.StringToMoneyConverter;
 import cz.gattserver.web.common.util.CZSuffixCreator;
 import cz.gattserver.web.common.util.StringPreviewCreator;
 import cz.gattserver.web.common.window.ConfirmWindow;
-import cz.gattserver.web.common.window.WebWindow;
 import cz.gattserver.web.common.window.ImageDetailWindow;
+import cz.gattserver.web.common.window.WebWindow;
 
 public class HWItemDetailWindow extends WebWindow {
 

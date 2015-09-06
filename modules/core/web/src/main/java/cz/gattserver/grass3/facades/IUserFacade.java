@@ -50,7 +50,7 @@ public interface IUserFacade {
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean registrateNewUser(String email, String username, String password);
+	public void registrateNewUser(String email, String username, String password);
 
 	/**
 	 * Aktivuje uživatele
@@ -59,7 +59,7 @@ public interface IUserFacade {
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean activateUser(Long user);
+	public void activateUser(Long user);
 
 	/**
 	 * Zablokuje uživatele
@@ -68,7 +68,7 @@ public interface IUserFacade {
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean banUser(Long user);
+	public void banUser(Long user);
 
 	/**
 	 * Upraví role uživatele
@@ -77,7 +77,7 @@ public interface IUserFacade {
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean changeUserRoles(Long user, Set<Role> roles);
+	public void changeUserRoles(Long user, Set<Role> roles);
 
 	/**
 	 * Vrátí všechny uživatele
@@ -102,16 +102,16 @@ public interface IUserFacade {
 	/**
 	 * Přidá obsah do oblíbených uživatele
 	 */
-	public boolean addContentToFavourites(Long content, Long user);
+	public void addContentToFavourites(Long content, Long user);
 
 	/**
 	 * Odebere obsah z oblíbených uživatele
 	 */
-	public boolean removeContentFromFavourites(Long content, Long user);
+	public void removeContentFromFavourites(Long content, Long user);
 
 	/**
 	 * Odebere obsah z oblíbených všech uživatelů
 	 */
-	public boolean removeContentFromAllUsersFavourites(Long content);
+	public void removeContentFromAllUsersFavourites(Long content);
 
 }

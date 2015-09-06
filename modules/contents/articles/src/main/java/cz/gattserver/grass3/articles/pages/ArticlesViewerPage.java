@@ -165,7 +165,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 				// zdařilo se ? Pokud ano, otevři info okno a při
 				// potvrzení jdi na kategorii
-				if (articleFacade.deleteArticle(article)) {
+				try {
+					articleFacade.deleteArticle(article);
 					InfoWindow infoSubwindow = new InfoWindow("Smazání článku proběhlo úspěšně.") {
 
 						private static final long serialVersionUID = -6688396549852552674L;
@@ -175,7 +176,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 						};
 					};
 					getUI().addWindow(infoSubwindow);
-				} else {
+				} catch (Exception e) {
 					// Pokud ne, otevři warn okno a při
 					// potvrzení jdi na kategorii
 					WarnWindow warnSubwindow = new WarnWindow("Smazání článku se nezdařilo.") {

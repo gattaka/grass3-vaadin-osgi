@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.pg.facade;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -7,7 +8,11 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.FrameGrabber.Exception;
+import org.bytedeco.javacv.Java2DFrameConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -66,29 +71,25 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		configurationService.saveConfiguration(configuration);
 	}
 
-	private boolean deleteFileRecursively(File file) {
+	private void deleteFileRecursively(File file) {
 		File[] subfiles = file.listFiles();
 		if (subfiles != null) {
 			for (File subFile : subfiles) {
-				if (deleteFileRecursively(subFile) == false)
-					return false;
+				deleteFileRecursively(subFile);
 			}
 		}
-		return file.delete();
+		if (file.delete() == false)
+			throw new IllegalStateException("Nelze smazat soubor \'" + file.getAbsolutePath() + "\'");
 	}
 
 	@Override
-	public boolean deletePhotogallery(PhotogalleryDTO photogallery) {
-
+	public void deletePhotogallery(PhotogalleryDTO photogallery) {
 		File galleryDir = getGalleryDir(photogallery);
-		if (deleteFileRecursively(galleryDir) == false)
-			return false;
+		deleteFileRecursively(galleryDir);
 
 		photogalleryRepository.delete(photogallery.getId());
 		ContentNodeDTO contentNodeDTO = photogallery.getContentNode();
-		if (contentNodeFacade.delete(contentNodeDTO.getId()) == false)
-			return false;
-		return true;
+		contentNodeFacade.delete(contentNodeDTO.getId());
 	}
 
 	/**
@@ -98,6 +99,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 
 		PhotogalleryConfiguration configuration = getConfiguration();
 		String miniaturesDir = configuration.getMiniaturesDir();
+		String previewsDir = configuration.getPreviewsDir();
 		File galleryDir = getGalleryDir(photogallery);
 
 		int total = galleryDir.listFiles().length;
@@ -109,10 +111,21 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 				return false;
 		}
 
+		File prevDirFile = new File(galleryDir, previewsDir);
+		if (prevDirFile.exists() == false) {
+			if (prevDirFile.mkdir() == false)
+				return false;
+		}
+
 		for (File file : galleryDir.listFiles()) {
 
 			// soubor miniatury
-			File miniFile = new File(miniDirFile, file.getName());
+			File outputFile;
+			if (file.getName().toLowerCase().endsWith(".mov")) {
+				outputFile = new File(prevDirFile, file.getName() + ".png");
+			} else {
+				outputFile = new File(miniDirFile, file.getName());
+			}
 
 			// pokud bych miniaturizoval adresář nebo miniatura existuje přeskoč
 			if (file.isDirectory())
@@ -121,15 +134,36 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 			eventBus.publish(new PGProcessProgressEvent("Zpracování miniatur " + progress + "/" + total));
 			progress++;
 
-			if (miniFile.exists())
+			if (outputFile.exists())
 				continue;
 
 			// vytvoř miniaturu
-			try {
-				ImageUtils.resizeImageFile(file, miniFile, 150, 150);
-			} catch (IOException e) {
-				e.printStackTrace();
-				return false;
+			if (file.getName().toLowerCase().endsWith(".mov")) {
+				FFmpegFrameGrabber g = new FFmpegFrameGrabber(file);
+				try {
+					// grab
+					g.start();
+//					g.setFrameNumber(g.getLengthInFrames());
+					Java2DFrameConverter converter = new Java2DFrameConverter();
+					BufferedImage img = converter.convert(g.grab());
+
+					// zmenšení
+					img = ImageUtils.resizeBufferedImage(img, outputFile, 150, 150);
+					ImageIO.write(img, "png", outputFile);
+
+					g.stop();
+				} catch (Exception | IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				try {
+					ImageUtils.resizeAndRotateImageFile(file, outputFile, 150, 150);
+				} catch (java.lang.Exception e) {
+					e.printStackTrace();
+					if (outputFile.exists())
+						outputFile.delete();
+					continue;
+				}
 			}
 		}
 
@@ -157,7 +191,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		for (File file : galleryDir.listFiles()) {
 
 			// soubor slideshow
-			File slideshowFile = new File(slideshowDirFile, file.getName());
+			File outputFile = new File(slideshowDirFile, file.getName());
 
 			if (file.isDirectory())
 				continue;
@@ -165,15 +199,21 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 			eventBus.publish(new PGProcessProgressEvent("Zpracování slideshow " + progress + "/" + total));
 			progress++;
 
-			if (slideshowFile.exists())
+			if (file.getName().toLowerCase().endsWith(".mov")) {
+				continue;
+			}
+
+			if (outputFile.exists())
 				continue;
 
 			// vytvoř slideshow verzi
 			try {
-				ImageUtils.resizeImageFile(file, slideshowFile, 900, 700);
-			} catch (IOException e) {
+				ImageUtils.resizeAndRotateImageFile(file, outputFile, 900, 700);
+			} catch (java.lang.Exception e) {
 				e.printStackTrace();
-				return false;
+				if (outputFile.exists())
+					outputFile.delete();
+				continue;
 			}
 		}
 
@@ -185,27 +225,30 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 	public void modifyPhotogallery(String name, Collection<String> tags, boolean publicated,
 			PhotogalleryDTO photogalleryDTO, String contextRoot, Date date) {
 
-		System.out.println("modifyPhotogallery thread: " + Thread.currentThread().getId());
+		try {
+			System.out.println("modifyPhotogallery thread: " + Thread.currentThread().getId());
 
-		// Počet kroků = miniatury + detaily + uložení
-		eventBus.publish(new PGProcessStartEvent(2 * getGalleryDir(photogalleryDTO).listFiles().length + 1));
+			// Počet kroků = miniatury + detaily + uložení
+			eventBus.publish(new PGProcessStartEvent(2 * getGalleryDir(photogalleryDTO).listFiles().length + 1));
 
-		Photogallery photogallery = photogalleryRepository.findOne(photogalleryDTO.getId());
+			Photogallery photogallery = photogalleryRepository.findOne(photogalleryDTO.getId());
 
-		// vytvoř miniatury
-		processMiniatureImages(photogallery);
+			// vytvoř miniatury
+			processMiniatureImages(photogallery);
 
-		// vytvoř detaily
-		processSlideshowImages(photogallery);
+			// vytvoř detaily
+			processSlideshowImages(photogallery);
 
-		// ulož ho
-		if (photogalleryRepository.save(photogallery) == null) {
-			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
-			return;
-		}
+			// ulož ho
+			if (photogalleryRepository.save(photogallery) == null) {
+				eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+				return;
+			}
 
-		// content node
-		if (contentNodeFacade.modify(photogalleryDTO.getContentNode().getId(), name, tags, publicated, date) == false) {
+			contentNodeFacade.modify(photogalleryDTO.getContentNode().getId(), name, tags, publicated, date);
+
+		} catch (java.lang.Exception e) {
+			// content node
 			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
 			return;
 		}

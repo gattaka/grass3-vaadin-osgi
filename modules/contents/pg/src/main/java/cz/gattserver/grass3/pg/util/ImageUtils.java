@@ -3,7 +3,6 @@ package cz.gattserver.grass3.pg.util;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -95,14 +94,17 @@ public class ImageUtils {
 		return t;
 	}
 
-	public static boolean resizeImageFile(File inputFile, File destinationFile, int maxWidth, int maxHeight)
-			throws IOException {
-
-		BufferedImage image = ImageIO.read(inputFile);
-
+	public static BufferedImage resizeBufferedImage(BufferedImage image, File destinationFile, int maxWidth,
+			int maxHeight) {
 		ResampleOp resampleOp = new ResampleOp(DimensionConstrain.createMaxDimension(maxWidth, maxHeight));
 		resampleOp.setFilter(ResampleFilters.getLanczos3Filter());
-		image = resampleOp.filter(image, null);
+		return resampleOp.filter(image, null);
+	}
+
+	public static boolean resizeAndRotateImageFile(File inputFile, File destinationFile, int maxWidth, int maxHeight)
+			throws IOException {
+
+		BufferedImage image = resizeBufferedImage(ImageIO.read(inputFile), destinationFile, maxWidth, maxHeight);
 
 		int orientation = readImageOrientation(inputFile);
 		if (orientation != 1) {

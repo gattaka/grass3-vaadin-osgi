@@ -19,7 +19,7 @@ public interface IPhotogalleryFacade {
 	 *            galerie ke smazání
 	 * @return {@code true} pokud se zdařilo smazat jinak {@code false}
 	 */
-	public boolean deletePhotogallery(PhotogalleryDTO photogallery);
+	public void deletePhotogallery(PhotogalleryDTO photogallery);
 
 	/**
 	 * Upraví galerii

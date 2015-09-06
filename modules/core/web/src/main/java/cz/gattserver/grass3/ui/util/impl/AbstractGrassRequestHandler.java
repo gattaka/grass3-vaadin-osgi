@@ -18,8 +18,8 @@ public abstract class AbstractGrassRequestHandler implements IGrassRequestHandle
 
 	/**
 	 * @param mountPoint
-	 *            místo do kterého bude přimountován tento servlet - musí
-	 *            začínat zpětným lomítkem - například "/soubory"
+	 *            místo do kterého bude přimountován tento servlet - musí začínat zpětným lomítkem - například
+	 *            "/soubory"
 	 */
 	public AbstractGrassRequestHandler(String mountPoint) {
 		this.mountPoint = mountPoint;
@@ -50,21 +50,29 @@ public abstract class AbstractGrassRequestHandler implements IGrassRequestHandle
 				return true;
 			}
 
-			byte[] buffer = new byte[1024];
+			try {
+				byte[] buffer = new byte[1024];
 
-			int bytesRead = in.read(buffer);
-			while (bytesRead > -1) {
-				response.getOutputStream().write(buffer, 0, bytesRead);
-				bytesRead = in.read(buffer);
+				int bytesRead = in.read(buffer);
+				while (bytesRead > -1) {
+					response.getOutputStream().write(buffer, 0, bytesRead);
+					bytesRead = in.read(buffer);
+				}
+
+				String mime = getMimeType(fileName);
+				if (mime != null)
+					response.setContentType(mime);
+			} catch (Exception e) {
+				// může se stát, že se zavře u klienta socket, pak je potřeba zavřít stream
+				System.out.println("Socket on client failed -- closing stream");
+				in.close();
+				return false;
 			}
-
-			String mime = getMimeType(fileName);
-			if (mime != null)
-				response.setContentType(mime);
-
+			in.close();
 			return true; // We wrote a response
-		} else
+		} else {
 			return false; // No response was written
+		}
 	}
 
 }

@@ -48,8 +48,7 @@ public class RegistrationPage extends OneColumnPage {
 
 		VerticalLayout formLayout = new VerticalLayout();
 		layout.addComponent(formLayout);
-		formLayout.addComponent(new Label(
-				"<h2>Registrace nového uživatele</h2>", ContentMode.HTML));
+		formLayout.addComponent(new Label("<h2>Registrace nového uživatele</h2>", ContentMode.HTML));
 
 		VerticalLayout formFieldsLayout = new VerticalLayout();
 		formLayout.addComponent(formFieldsLayout);
@@ -63,8 +62,7 @@ public class RegistrationPage extends OneColumnPage {
 		fields.add(username);
 		username.setRequired(true);
 		formFieldsLayout.addComponent(username);
-		username.addValidator(new StringLengthValidator(
-				"Délka jména musí být mezi 2 až 20 znaky", MIN_USERNAME_LENGTH,
+		username.addValidator(new StringLengthValidator("Délka jména musí být mezi 2 až 20 znaky", MIN_USERNAME_LENGTH,
 				MAX_USERNAME_LENGTH, false));
 
 		// Username
@@ -108,33 +106,31 @@ public class RegistrationPage extends OneColumnPage {
 		buttonLayout.setMargin(new MarginInfo(true, false, false, false));
 
 		// Login button
-		Button submitButton = new Button("Registrovat",
-				new Button.ClickListener() {
+		Button submitButton = new Button("Registrovat", new Button.ClickListener() {
 
-					private static final long serialVersionUID = -1805861621517364082L;
+			private static final long serialVersionUID = -1805861621517364082L;
 
-					// inline click listener
-					public void buttonClick(ClickEvent event) {
-						for (Field<?> field : fields) {
-							if (!field.isValid()) {
-								showWarning("Ve formuláři jsou chybně vyplněné položky");
-								return;
-							}
-						}
-
-						if (userFacade.registrateNewUser(
-								(String) email.getValue(),
-								(String) username.getValue(),
-								(String) password.getValue())) {
-							showInfo("Registrace proběhla úspěšně");
-							for (Field<String> field : fields) {
-								field.setValue("");
-							}
-						} else {
-							showError500();
-						}
+			// inline click listener
+			public void buttonClick(ClickEvent event) {
+				for (Field<?> field : fields) {
+					if (!field.isValid()) {
+						showWarning("Ve formuláři jsou chybně vyplněné položky");
+						return;
 					}
-				});
+				}
+
+				try {
+					userFacade.registrateNewUser((String) email.getValue(), (String) username.getValue(),
+							(String) password.getValue());
+					showInfo("Registrace proběhla úspěšně");
+					for (Field<String> field : fields) {
+						field.setValue("");
+					}
+				} catch (Exception e) {
+					showError500();
+				}
+			}
+		});
 
 		buttonLayout.addComponent(submitButton);
 

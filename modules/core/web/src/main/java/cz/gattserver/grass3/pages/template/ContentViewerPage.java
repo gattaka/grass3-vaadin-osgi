@@ -145,12 +145,13 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 			@Override
 			public void onClick(ClickEvent event) {
 				// zdařilo se ? Pokud ano, otevři info okno
-				if (userFacade.removeContentFromFavourites(content.getId(), getUser().getId())) {
+				try {
+					userFacade.removeContentFromFavourites(content.getId(), getUser().getId());
 					InfoWindow infoSubwindow = new InfoWindow("Odebrání z oblíbených proběhlo úspěšně.");
 					getUI().addWindow(infoSubwindow);
 					removeFromFavouritesButton.setVisible(false);
 					addToFavouritesButton.setVisible(true);
-				} else {
+				} catch (Exception e) {
 					// Pokud ne, otevři warn okno
 					WarnWindow warnSubwindow = new WarnWindow("Odebrání z oblíbených se nezdařilo.");
 					getUI().addWindow(warnSubwindow);
@@ -164,12 +165,13 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 			@Override
 			public void onClick(ClickEvent event) {
 				// zdařilo se ? Pokud ano, otevři info okno
-				if (userFacade.addContentToFavourites(content.getId(), getUser().getId())) {
+				try {
+					userFacade.addContentToFavourites(content.getId(), getUser().getId());
 					InfoWindow infoSubwindow = new InfoWindow("Vložení do oblíbených proběhlo úspěšně.");
 					getUI().addWindow(infoSubwindow);
 					addToFavouritesButton.setVisible(false);
 					removeFromFavouritesButton.setVisible(true);
-				} else {
+				} catch (Exception e) {
 					// Pokud ne, otevři warn okno
 					WarnWindow warnSubwindow = new WarnWindow("Vložení do oblíbených se nezdařilo.");
 					getUI().addWindow(warnSubwindow);

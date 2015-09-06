@@ -33,6 +33,6 @@ public interface IContentTagFacade {
 	 */
 	public ContentTagDTO getContentTagById(Long contentNodeId);
 
-	public boolean countContentNodes();
+	public void countContentNodes();
 
 }

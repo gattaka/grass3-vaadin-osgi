@@ -468,35 +468,38 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	}
 
 	private boolean saveOrUpdateArticle() {
+		try {
+			if (editMode) {
 
-		if (editMode) {
+				String text = null;
+				if (parts != null) {
+					StringBuilder builder = new StringBuilder();
+					builder.append(parts.getPrePart());
+					builder.append(String.valueOf(articleTextArea.getValue()));
+					builder.append(parts.getPostPart());
+					text = builder.toString();
+				} else {
+					text = String.valueOf(articleTextArea.getValue());
+				}
 
-			String text = null;
-			if (parts != null) {
-				StringBuilder builder = new StringBuilder();
-				builder.append(parts.getPrePart());
-				builder.append(String.valueOf(articleTextArea.getValue()));
-				builder.append(parts.getPostPart());
-				text = builder.toString();
+				articleFacade.modifyArticle(String.valueOf(articleNameField.getValue()), text, getArticlesKeywords(),
+						publicatedCheckBox.getValue(), article, getRequest().getContextRoot());
 			} else {
-				text = String.valueOf(articleTextArea.getValue());
+				Long id = articleFacade.saveArticle(String.valueOf(articleNameField.getValue()),
+						String.valueOf(articleTextArea.getValue()), getArticlesKeywords(),
+						publicatedCheckBox.getValue(), category, getGrassUI().getUser(), getRequest().getContextRoot());
+
+				if (id == null)
+					return false;
+
+				// odteď budeme editovat
+				editMode = true;
+				article = articleFacade.getArticleForDetail(id);
 			}
-
-			return articleFacade.modifyArticle(String.valueOf(articleNameField.getValue()), text,
-					getArticlesKeywords(), publicatedCheckBox.getValue(), article, getRequest().getContextRoot());
-		} else {
-			Long id = articleFacade.saveArticle(String.valueOf(articleNameField.getValue()),
-					String.valueOf(articleTextArea.getValue()), getArticlesKeywords(), publicatedCheckBox.getValue(),
-					category, getGrassUI().getUser(), getRequest().getContextRoot());
-
-			if (id == null)
-				return false;
-
-			// odteď budeme editovat
-			editMode = true;
-			article = articleFacade.getArticleForDetail(id);
-			return true;
+		} catch (Exception e) {
+			return false;
 		}
+		return true;
 	}
 
 	/**

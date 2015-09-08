@@ -10,7 +10,15 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
+	<repositories>
+		<repository>
+			<id>xuggle repo</id>
+			<url>http://xuggle.googlecode.com/svn/trunk/repo/share/java/</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
+
 
 		<!-- Grass3 jádro -->
 		<dependency>
@@ -42,9 +50,9 @@
 
 		<!-- Video sample extractor -->
 		<dependency>
-			<groupId>org.bytedeco</groupId>
-			<artifactId>javacv</artifactId>
-			<version>1.0</version>
+			<groupId>xuggle</groupId>
+			<artifactId>xuggle-xuggler</artifactId>
+			<version>5.4</version>
 		</dependency>
 
 	</dependencies>

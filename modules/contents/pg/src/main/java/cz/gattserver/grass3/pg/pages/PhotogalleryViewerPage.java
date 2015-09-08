@@ -174,7 +174,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 		// pokud je galerie porušená, pak nic nevypisuj
 		if (miniaturesDirFile.exists() == false || previewsDirFile.exists() == false) {
-			layout.addComponent(new Label("Chyba: Galerie je porušená -- kontaktujte administrátora"));
+			layout.addComponent(new Label("Chyba: Galerie je porušená -- kontaktujte administrátora (ID: "
+					+ photogallery.getPhotogalleryPath() + ")"));
 			return;
 		}
 

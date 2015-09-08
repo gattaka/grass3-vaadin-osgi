@@ -2,7 +2,6 @@ package cz.gattserver.grass3.pg.facade;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -10,9 +9,8 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.FrameGrabber.Exception;
-import org.bytedeco.javacv.Java2DFrameConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -34,12 +32,15 @@ import cz.gattserver.grass3.pg.events.PGProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.PGProcessResultEvent;
 import cz.gattserver.grass3.pg.events.PGProcessStartEvent;
 import cz.gattserver.grass3.pg.service.impl.PhotogalleryContentService;
+import cz.gattserver.grass3.pg.util.DecodeAndCaptureFrames;
 import cz.gattserver.grass3.pg.util.ImageUtils;
 import cz.gattserver.grass3.pg.util.PhotogalleryMapper;
 
 @Transactional
 @Component("photogalleryFacade")
 public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
+
+	private static Logger logger = LoggerFactory.getLogger(PhotogalleryFacadeImpl.class);
 
 	@Resource(name = "contentNodeFacade")
 	private IContentNodeFacade contentNodeFacade;
@@ -139,21 +140,18 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 
 			// vytvoř miniaturu
 			if (file.getName().toLowerCase().endsWith(".mov")) {
-				FFmpegFrameGrabber g = new FFmpegFrameGrabber(file);
+				logger.info("MOV found");
 				try {
-					// grab
-					g.start();
-//					g.setFrameNumber(g.getLengthInFrames());
-					Java2DFrameConverter converter = new Java2DFrameConverter();
-					BufferedImage img = converter.convert(g.grab());
+					logger.info("MOV processing prepared");
+					BufferedImage image = new DecodeAndCaptureFrames().decodeAndCaptureFrames(file.getAbsolutePath());
+					logger.info("MOV processing started");
+					image = ImageUtils.resizeBufferedImage(image, 150, 150);
+					ImageIO.write(image, "png", outputFile);
 
-					// zmenšení
-					img = ImageUtils.resizeBufferedImage(img, outputFile, 150, 150);
-					ImageIO.write(img, "png", outputFile);
-
-					g.stop();
-				} catch (Exception | IOException e) {
+					logger.info("MOV processing finished");
+				} catch (Exception e) {
 					e.printStackTrace();
+					logger.error("MOV processing failed", e);
 				}
 			} else {
 				try {
@@ -226,7 +224,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 			PhotogalleryDTO photogalleryDTO, String contextRoot, Date date) {
 
 		try {
-			System.out.println("modifyPhotogallery thread: " + Thread.currentThread().getId());
+			logger.info("modifyPhotogallery thread: " + Thread.currentThread().getId());
 
 			// Počet kroků = miniatury + detaily + uložení
 			eventBus.publish(new PGProcessStartEvent(2 * getGalleryDir(photogalleryDTO).listFiles().length + 1));
@@ -250,6 +248,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		} catch (java.lang.Exception e) {
 			// content node
 			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+			logger.error("Nezdařilo se uložit galerii", e);
 			return;
 		}
 

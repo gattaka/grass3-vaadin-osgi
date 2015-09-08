@@ -94,7 +94,7 @@ public class ImageUtils {
 		return t;
 	}
 
-	public static BufferedImage resizeBufferedImage(BufferedImage image, File destinationFile, int maxWidth,
+	public static BufferedImage resizeBufferedImage(BufferedImage image, int maxWidth,
 			int maxHeight) {
 		ResampleOp resampleOp = new ResampleOp(DimensionConstrain.createMaxDimension(maxWidth, maxHeight));
 		resampleOp.setFilter(ResampleFilters.getLanczos3Filter());
@@ -104,7 +104,7 @@ public class ImageUtils {
 	public static boolean resizeAndRotateImageFile(File inputFile, File destinationFile, int maxWidth, int maxHeight)
 			throws IOException {
 
-		BufferedImage image = resizeBufferedImage(ImageIO.read(inputFile), destinationFile, maxWidth, maxHeight);
+		BufferedImage image = resizeBufferedImage(ImageIO.read(inputFile), maxWidth, maxHeight);
 
 		int orientation = readImageOrientation(inputFile);
 		if (orientation != 1) {

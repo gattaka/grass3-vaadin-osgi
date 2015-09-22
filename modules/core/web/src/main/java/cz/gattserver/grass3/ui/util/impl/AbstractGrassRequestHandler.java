@@ -1,5 +1,8 @@
 package cz.gattserver.grass3.ui.util.impl;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +32,7 @@ public abstract class AbstractGrassRequestHandler implements IGrassRequestHandle
 		return null;
 	}
 
-	protected abstract InputStream getResourceStream(String fileName) throws FileNotFoundException;
+	protected abstract File getFile(String fileName) throws FileNotFoundException;
 
 	public boolean handleRequest(VaadinSession session, VaadinRequest request, VaadinResponse response)
 			throws IOException {
@@ -44,8 +47,10 @@ public abstract class AbstractGrassRequestHandler implements IGrassRequestHandle
 
 			InputStream in = null;
 			try {
-				in = getResourceStream(fileName);
-			} catch (FileNotFoundException e) {
+				File file = getFile(fileName);
+				response.setHeader("Content-Length", String.valueOf(file.length()));
+				in = new BufferedInputStream(new FileInputStream(file));
+			} catch (Exception e) {
 				response.sendError(404, "Content not found");
 				return true;
 			}

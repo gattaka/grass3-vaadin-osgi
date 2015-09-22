@@ -39,14 +39,10 @@ public class ImageUtils {
 		try {
 			metadata = ImageMetadataReader.readMetadata(imageFile);
 			Collection<ExifIFD0Directory> directories = metadata.getDirectoriesOfType(ExifIFD0Directory.class);
-			try {
-				if (directories.isEmpty() == false) {
-					orientation = directories.iterator().next().getInt(ExifIFD0Directory.TAG_ORIENTATION);
-				}
-			} catch (MetadataException me) {
+			if (directories.isEmpty() == false) {
+				orientation = directories.iterator().next().getInt(ExifIFD0Directory.TAG_ORIENTATION);
 			}
-		} catch (ImageProcessingException | IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 		}
 
 		return orientation;
@@ -94,8 +90,7 @@ public class ImageUtils {
 		return t;
 	}
 
-	public static BufferedImage resizeBufferedImage(BufferedImage image, int maxWidth,
-			int maxHeight) {
+	public static BufferedImage resizeBufferedImage(BufferedImage image, int maxWidth, int maxHeight) {
 		ResampleOp resampleOp = new ResampleOp(DimensionConstrain.createMaxDimension(maxWidth, maxHeight));
 		resampleOp.setFilter(ResampleFilters.getLanczos3Filter());
 		return resampleOp.filter(image, null);

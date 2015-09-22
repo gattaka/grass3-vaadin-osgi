@@ -1,10 +1,7 @@
 package cz.gattserver.grass3.ui.util;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 import cz.gattserver.grass3.ui.util.impl.AbstractGrassRequestHandler;
 
@@ -22,10 +19,8 @@ public abstract class AbstractFileRequestHandler extends AbstractGrassRequestHan
 	protected abstract String getRootDir();
 
 	@Override
-	protected InputStream getResourceStream(String fileName)
-			throws FileNotFoundException {
-		File file = new File(getRootDir() + "/" + fileName);
-		return new BufferedInputStream(new FileInputStream(file));
+	protected File getFile(String fileName) throws FileNotFoundException {
+		return new File(getRootDir() + "/" + fileName);
 	}
 
 }

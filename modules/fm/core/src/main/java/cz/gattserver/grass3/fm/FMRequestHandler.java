@@ -26,11 +26,10 @@ public class FMRequestHandler extends AbstractGrassRequestHandler {
 	}
 
 	@Override
-	protected InputStream getResourceStream(String fileName) throws FileNotFoundException {
+	protected File getFile(String fileName) throws FileNotFoundException {
 		FMConfiguration configuration = new FMConfiguration();
 		configurationService.loadConfiguration(configuration);
-		File file = new File(configuration.getRootDir() + "/" + fileName);
-		return new BufferedInputStream(new FileInputStream(file));
+		return new File(configuration.getRootDir() + "/" + fileName);
 	}
 
 }

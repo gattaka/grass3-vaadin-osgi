@@ -1,10 +1,7 @@
 package cz.gattserver.grass3.pg;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,11 +23,10 @@ public class PhotogalleryRequestHandler extends AbstractGrassRequestHandler {
 	}
 
 	@Override
-	protected InputStream getResourceStream(String fileName) throws FileNotFoundException {
+	protected File getFile(String fileName) throws FileNotFoundException {
 		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
 		configurationService.loadConfiguration(configuration);
-		File file = new File(configuration.getRootDir() + "/" + fileName);
-		return new BufferedInputStream(new FileInputStream(file));
+		return new File(configuration.getRootDir() + "/" + fileName);
 	}
 
 }

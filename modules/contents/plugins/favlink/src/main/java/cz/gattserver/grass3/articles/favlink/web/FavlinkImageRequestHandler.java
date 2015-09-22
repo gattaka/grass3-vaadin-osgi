@@ -1,10 +1,7 @@
 package cz.gattserver.grass3.articles.favlink.web;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 import org.springframework.stereotype.Component;
 
@@ -40,9 +37,8 @@ public class FavlinkImageRequestHandler extends AbstractGrassRequestHandler {
 	}
 
 	@Override
-	protected InputStream getResourceStream(String fileName) throws FileNotFoundException {
-		File file = new File(getOutputPath() + "/" + fileName);
-		return new BufferedInputStream(new FileInputStream(file));
+	protected File getFile(String fileName) throws FileNotFoundException {
+		return new File(getOutputPath() + "/" + fileName);
 	}
 
 }

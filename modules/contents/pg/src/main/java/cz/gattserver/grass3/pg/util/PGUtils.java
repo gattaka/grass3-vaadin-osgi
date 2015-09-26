@@ -11,15 +11,13 @@ import java.util.Collection;
 import javax.imageio.ImageIO;
 
 import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.mortennobel.imagescaling.DimensionConstrain;
 import com.mortennobel.imagescaling.ResampleFilters;
 import com.mortennobel.imagescaling.ResampleOp;
 
-public class ImageUtils {
+public class PGUtils {
 
 	private static String getExtension(File file) {
 		int dot = file.getName().lastIndexOf(".");
@@ -115,4 +113,16 @@ public class ImageUtils {
 		ImageIO.write(image, getExtension(inputFile), destinationFile);
 		return true;
 	}
+
+	public static boolean isImage(String file) {
+		String fileToExt = file.toLowerCase();
+		return fileToExt.endsWith(".jpg") || fileToExt.endsWith(".jpeg") || fileToExt.endsWith(".gif")
+				|| fileToExt.endsWith(".png") || fileToExt.endsWith(".bmp");
+	}
+
+	public static boolean isVideo(String file) {
+		String fileToExt = file.toLowerCase();
+		return fileToExt.endsWith(".mp4") || fileToExt.endsWith(".ogg") || fileToExt.endsWith(".webm");
+	}
+
 }

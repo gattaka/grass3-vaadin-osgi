@@ -410,23 +410,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 									private static final long serialVersionUID = 5027839567542107630L;
 
 									{
-										// String videoString =
-										// "<video controls=\"controls\" width=\"800\" height=\"600\" name=\"Video Name\" src=\""
-										// + url + "\"></video>";
-
 										String videoString = "<video id=\"video\" width=\"800\" height=\"600\" preload controls>"
-												+ "<source src=\""
-												+ url
-												+ "\" type='video/mp4; codecs=\"avc1.42E01E, mp4a.40.2\"' />"
-												// +"<source src=\"HTML5Sample_Ogg.ogv\" type='video/ogg; codecs=\"theora, vorbis\"' />"
-												// +"<source src=\"HTML5Sample_WebM.webm\" type='video/webm; codecs=\"vp8, vorbis\"' />"
-												// +"<object type=\"application/x-shockwave-flash\" data=\"http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf\" width=\"800\" height=\"600\">"
-												// +"<param name=\"movie\" value=\"http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf\" />"
-												// +"<param name=\"allowFullScreen\" value=\"true\" />"
-												// +"<param name=\"wmode\" value=\"transparent\" />"
-												// +"<param name=\"flashvars\" value='config={\"clip\":{\"url\":\"HTML5Sample_flv.flv\",\"autoPlay\":false,\"autoBuffering\":true}}' />"
-												// +"</object>"
-												+ "</video>";
+												+ "<source src=\"" + url + "\" type=\"video/mp4\">" + "</video>";
 
 										Label video = new Label(videoString, ContentMode.HTML);
 

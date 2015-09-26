@@ -33,7 +33,7 @@ import cz.gattserver.grass3.pg.events.PGProcessResultEvent;
 import cz.gattserver.grass3.pg.events.PGProcessStartEvent;
 import cz.gattserver.grass3.pg.service.impl.PhotogalleryContentService;
 import cz.gattserver.grass3.pg.util.DecodeAndCaptureFrames;
-import cz.gattserver.grass3.pg.util.ImageUtils;
+import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.pg.util.PhotogalleryMapper;
 
 @Transactional
@@ -120,17 +120,24 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 
 		for (File file : galleryDir.listFiles()) {
 
+			// pokud bych miniaturizoval adresář nebo miniatura existuje přeskoč
+			if (file.isDirectory())
+				continue;
+
+			boolean videoExt = PGUtils.isVideo(file.getName());
+			boolean imageExt = PGUtils.isImage(file.getName());
+
+			if ((videoExt | imageExt) == false) {
+				continue;
+			}
+
 			// soubor miniatury
 			File outputFile;
-			if (file.getName().toLowerCase().endsWith(".mov")) {
+			if (videoExt) {
 				outputFile = new File(prevDirFile, file.getName() + ".png");
 			} else {
 				outputFile = new File(miniDirFile, file.getName());
 			}
-
-			// pokud bych miniaturizoval adresář nebo miniatura existuje přeskoč
-			if (file.isDirectory())
-				continue;
 
 			eventBus.publish(new PGProcessProgressEvent("Zpracování miniatur " + progress + "/" + total));
 			progress++;
@@ -139,23 +146,23 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 				continue;
 
 			// vytvoř miniaturu
-			if (file.getName().toLowerCase().endsWith(".mov")) {
-				logger.info("MOV found");
+			if (videoExt) {
+				logger.info("Video found");
 				try {
-					logger.info("MOV processing prepared");
+					logger.info("Video processing prepared");
 					BufferedImage image = new DecodeAndCaptureFrames().decodeAndCaptureFrames(file.getAbsolutePath());
-					logger.info("MOV processing started");
-					image = ImageUtils.resizeBufferedImage(image, 150, 150);
+					logger.info("Video processing started");
+					image = PGUtils.resizeBufferedImage(image, 150, 150);
 					ImageIO.write(image, "png", outputFile);
 
-					logger.info("MOV processing finished");
+					logger.info("Video processing finished");
 				} catch (Exception e) {
 					e.printStackTrace();
-					logger.error("MOV processing failed", e);
+					logger.error("Video processing failed", e);
 				}
 			} else {
 				try {
-					ImageUtils.resizeAndRotateImageFile(file, outputFile, 150, 150);
+					PGUtils.resizeAndRotateImageFile(file, outputFile, 150, 150);
 				} catch (java.lang.Exception e) {
 					e.printStackTrace();
 					if (outputFile.exists())
@@ -188,16 +195,19 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 
 		for (File file : galleryDir.listFiles()) {
 
-			// soubor slideshow
-			File outputFile = new File(slideshowDirFile, file.getName());
-
 			if (file.isDirectory())
 				continue;
+
+			if (PGUtils.isImage(file.getName()) == false)
+				continue;
+
+			// soubor slideshow
+			File outputFile = new File(slideshowDirFile, file.getName());
 
 			eventBus.publish(new PGProcessProgressEvent("Zpracování slideshow " + progress + "/" + total));
 			progress++;
 
-			if (file.getName().toLowerCase().endsWith(".mov")) {
+			if (PGUtils.isVideo(file.getName())) {
 				continue;
 			}
 
@@ -206,7 +216,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 
 			// vytvoř slideshow verzi
 			try {
-				ImageUtils.resizeAndRotateImageFile(file, outputFile, 900, 700);
+				PGUtils.resizeAndRotateImageFile(file, outputFile, 900, 700);
 			} catch (java.lang.Exception e) {
 				e.printStackTrace();
 				if (outputFile.exists())

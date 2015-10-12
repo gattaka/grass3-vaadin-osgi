@@ -32,11 +32,6 @@ public class FavlinkImageRequestHandler extends AbstractGrassRequestHandler {
 	}
 
 	@Override
-	protected String getMimeType(String fileName) {
-		return "image/png png";
-	}
-
-	@Override
 	protected File getFile(String fileName) throws FileNotFoundException {
 		return new File(getOutputPath() + "/" + fileName);
 	}

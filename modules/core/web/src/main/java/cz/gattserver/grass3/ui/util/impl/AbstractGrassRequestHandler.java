@@ -2,8 +2,10 @@ package cz.gattserver.grass3.ui.util.impl;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.net.URLDecoder;
@@ -14,6 +16,12 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.sax.BodyContentHandler;
+import org.xml.sax.SAXException;
 
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinResponse;
@@ -40,8 +48,24 @@ public abstract class AbstractGrassRequestHandler implements IGrassRequestHandle
 		this.mountPoint = mountPoint;
 	}
 
-	protected String getMimeType(String fileName) {
-		return null;
+	protected String getMimeType(File file) {
+		InputStream stream = null;
+		try {
+			stream = new FileInputStream(file);
+			AutoDetectParser parser = new AutoDetectParser();
+			BodyContentHandler handler = new BodyContentHandler();
+			Metadata metadata = new Metadata();
+			parser.parse(stream, handler, metadata);
+			return handler.toString();
+		} catch (Exception e) {
+			return null;
+		} finally {
+			try {
+				stream.close();
+			} catch (IOException e) {
+				// není moc, co dělat...
+			}
+		}
 	}
 
 	protected abstract File getFile(String fileName) throws FileNotFoundException;
@@ -188,7 +212,7 @@ public abstract class AbstractGrassRequestHandler implements IGrassRequestHandle
 		// Prepare and initialize response --------------------------------------------------------
 
 		// Get content type by file name and set default GZIP support and content disposition.
-		String contentType = getMimeType(fileName);
+		String contentType = getMimeType(file);
 		boolean acceptsGzip = false;
 		String disposition = "inline";
 

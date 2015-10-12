@@ -123,4 +123,15 @@ public interface IPhotogalleryFacade {
 	 */
 	public void tryDeleteSlideshowImage(File file, PhotogalleryDTO photogalleryDTO);
 
+	
+	/**
+	 * Pokusí se smazat preview verzi od předaného videa
+	 * 
+	 * @param file
+	 *            soubor videa
+	 * @param photogalleryDTO
+	 *            objekt galerie
+	 */
+	void tryDeletePreviewImage(File file, PhotogalleryDTO photogalleryDTO);
+
 }

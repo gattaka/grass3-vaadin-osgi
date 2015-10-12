@@ -59,6 +59,7 @@ import cz.gattserver.grass3.pg.events.PGProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.PGProcessResultEvent;
 import cz.gattserver.grass3.pg.events.PGProcessStartEvent;
 import cz.gattserver.grass3.pg.facade.IPhotogalleryFacade;
+import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.template.MultiUpload;
@@ -247,6 +248,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		final VerticalLayout imageWrapper = new VerticalLayout();
 		imageWrapper.setWidth("300px");
+		imageWrapper.setHeight("300px");
 		imageWrapper.addComponent(image);
 		imageWrapper.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
 		// gridLayout.addComponent(imageWrapper, 0, 0, 1, 0);
@@ -274,18 +276,6 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		table.setColumnHeader("name", "Název");
 		table.setVisibleColumns(new Object[] { "name" });
 
-		final Button renameBtn = new Button("Přejmenovat", new Button.ClickListener() {
-			private static final long serialVersionUID = -4816423459867256516L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				// TODO Auto-generated method stub
-			}
-		});
-		renameBtn.setEnabled(false);
-		gridLayout.addComponent(renameBtn, 0, 1);
-		gridLayout.setComponentAlignment(renameBtn, Alignment.MIDDLE_CENTER);
-
 		final Button removeBtn = new Button("Odstranit", new Button.ClickListener() {
 			private static final long serialVersionUID = -4816423459867256516L;
 
@@ -295,8 +285,15 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 				File file = (File) value;
 
 				if (editMode) {
-					photogalleryFacade.tryDeleteMiniatureImage(file, photogallery);
-					photogalleryFacade.tryDeleteSlideshowImage(file, photogallery);
+					if (PGUtils.isImage(file.getName())) {
+						photogalleryFacade.tryDeleteMiniatureImage(file, photogallery);
+						photogalleryFacade.tryDeleteSlideshowImage(file, photogallery);
+					}
+
+					if (PGUtils.isVideo(file.getName())) {
+						photogalleryFacade.tryDeletePreviewImage(file, photogallery);
+					}
+
 				}
 
 				file.delete();
@@ -317,16 +314,16 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 				if (file == null) {
 					gridLayout.removeComponent(imageWrapper);
 					gridLayout.addComponent(previewLabel, 0, 0, 1, 0);
-					renameBtn.setEnabled(false);
 					removeBtn.setEnabled(false);
 				} else {
-					if (imageWrapper.getParent() == null) {
-						gridLayout.removeComponent(previewLabel);
-						gridLayout.addComponent(imageWrapper, 0, 0, 1, 0);
+					if (PGUtils.isImage(file.getName())) {
+						if (imageWrapper.getParent() == null) {
+							gridLayout.removeComponent(previewLabel);
+							gridLayout.addComponent(imageWrapper, 0, 0, 1, 0);
+						}
+						image.setSource(new FileResource(file));
 					}
-					renameBtn.setEnabled(true);
 					removeBtn.setEnabled(true);
-					image.setSource(new FileResource(file));
 				}
 			}
 		});
@@ -354,7 +351,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 				}
 			}
 		};
-		multiUpload.setCaption("Nahrát fotografie");
+		multiUpload.setCaption("Nahrát obsah");
 		uploadWrapper.addComponent(multiUpload);
 		uploadWrapper.setComponentAlignment(multiUpload, Alignment.MIDDLE_CENTER);
 

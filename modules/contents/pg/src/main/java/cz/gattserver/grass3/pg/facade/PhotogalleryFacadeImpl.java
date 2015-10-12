@@ -383,6 +383,20 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 	}
 
 	@Override
+	public void tryDeletePreviewImage(File file, PhotogalleryDTO photogalleryDTO) {
+
+		PhotogalleryConfiguration configuration = getConfiguration();
+		String previewDir = configuration.getPreviewsDir();
+		File galleryDir = getGalleryDir(photogalleryDTO);
+		File previewDirFile = new File(galleryDir, previewDir);
+
+		File previewFile = new File(previewDirFile, file.getName());
+		if (previewFile.exists())
+			previewFile.delete();
+		
+	}
+	
+	@Override
 	public void tryDeleteSlideshowImage(File file, PhotogalleryDTO photogalleryDTO) {
 
 		PhotogalleryConfiguration configuration = getConfiguration();

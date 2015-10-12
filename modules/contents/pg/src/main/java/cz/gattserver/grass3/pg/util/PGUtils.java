@@ -122,7 +122,7 @@ public class PGUtils {
 
 	public static boolean isVideo(String file) {
 		String fileToExt = file.toLowerCase();
-		return fileToExt.endsWith(".mp4") || fileToExt.endsWith(".ogg") || fileToExt.endsWith(".webm");
+		return fileToExt.endsWith(".mp4") || fileToExt.endsWith(".ogg") || fileToExt.endsWith(".webm") || fileToExt.endsWith(".mov");
 	}
 
 }

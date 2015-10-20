@@ -22,9 +22,6 @@ public class ImageDetailWindow extends WebWindow {
 	public ImageDetailWindow(final File[] miniatures, final int index, File slideshowDir) {
 		super(miniatures[index].getName());
 
-		setWidth("1500px");
-		setHeight("800px");
-
 		List<Resource> list = new ArrayList<>();
 
 		for (File mini : miniatures) {
@@ -61,6 +58,9 @@ public class ImageDetailWindow extends WebWindow {
 				ImageDetailWindow.this.setCaption(miniatures[selectedIndex].getName());
 			}
 		});
+
+		setWidth("1500px");
+		setHeight("800px");
 
 		center();
 

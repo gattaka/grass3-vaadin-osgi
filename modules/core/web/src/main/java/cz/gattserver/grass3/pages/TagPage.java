@@ -50,7 +50,7 @@ public class TagPage extends BasePage {
 		
 		ContentsTable tagContentsTable = contentsTableFactory.createContentsTable();
 
-		String tagName = getRequest().getAnalyzer().getPathToken(1);
+		String tagName = getRequest().getAnalyzer().getNextPathToken();
 		if (tagName == null)
 			showError404();
 

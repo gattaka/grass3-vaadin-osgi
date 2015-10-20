@@ -63,7 +63,7 @@ public class GrassUI extends UI {
 	public void init(VaadinRequest request) {
 
 		VaadinSession.getCurrent().setErrorHandler(new ApplicationErrorHandler());
-		
+
 		String path = request.getPathInfo();
 		String contextPath = request.getContextPath();
 		logger.info("Context Path: [" + contextPath + "]");
@@ -73,10 +73,8 @@ public class GrassUI extends UI {
 		URLPathAnalyzer analyzer = grassRequest.getAnalyzer();
 
 		// pokud nebyla cesta prázná, pak proveď posuv
-		if (analyzer.getPathToken(0) != null)
-			analyzer.shift();
-
-		IPageFactory factory = pageFactoriesRegister.get(analyzer.getPathToken(0));
+		String token = analyzer.getNextPathToken();
+		IPageFactory factory = pageFactoriesRegister.get(token);
 
 		GrassLayout buildedPage = factory.createPageIfAuthorized(grassRequest);
 

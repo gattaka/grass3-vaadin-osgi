@@ -34,6 +34,7 @@ import cz.gattserver.grass3.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import cz.gattserver.grass3.pg.facade.IPhotogalleryFacade;
+import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.security.ICoreACL;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.template.DefaultContentOperations;
@@ -81,6 +82,11 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	private int galleryGridCols;
 	private int galleryGridRows;
 
+	/**
+	 * Položka z fotogalerie, která byla dle URL vybrána (nepovinné)
+	 */
+	private String pgSelectedVideoItemId;
+
 	private Label rowStatusLabel;
 
 	private Button upRowBtn;
@@ -125,8 +131,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		IMAGE_SUM_PREFIX = " | Celkový počet fotek: ";
 
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
-		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(analyzer
-				.getCurrentPathToken());
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
+				.parseURLIdentifier(analyzer.getNextPathToken());
 		if (identifier == null) {
 			showError404();
 			return;
@@ -146,6 +152,22 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			return;
 		}
 
+		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
+		configurationService.loadConfiguration(configuration);
+
+		galleryDir = new File(configuration.getRootDir(), photogallery.getPhotogalleryPath());
+		miniaturesDirFile = new File(galleryDir, configuration.getMiniaturesDir());
+		previewsDirFile = new File(galleryDir, configuration.getPreviewsDir());
+		slideshowDirFile = new File(galleryDir, configuration.getSlideshowDir());
+
+		pgSelectedVideoItemId = analyzer.getNextPathToken();
+		if (pgSelectedVideoItemId != null) {
+			if (new File(galleryDir, pgSelectedVideoItemId).exists() == false) {
+				showError404();
+				return;
+			}
+		}
+
 		super.init();
 	}
 
@@ -163,14 +185,6 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	@Override
 	protected void createContent(VerticalLayout layout) {
-
-		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
-		configurationService.loadConfiguration(configuration);
-
-		galleryDir = new File(configuration.getRootDir(), photogallery.getPhotogalleryPath());
-		miniaturesDirFile = new File(galleryDir, configuration.getMiniaturesDir());
-		previewsDirFile = new File(galleryDir, configuration.getPreviewsDir());
-		slideshowDirFile = new File(galleryDir, configuration.getSlideshowDir());
 
 		// pokud je galerie porušená, pak nic nevypisuj
 		if (miniaturesDirFile.exists() == false || previewsDirFile.exists() == false) {
@@ -199,9 +213,6 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		galleryGridLayout.setMargin(true);
 		galleryGridLayout.setWidth("700px");
 		galleryGridLayout.setHeight("550px");
-		// for (int i=0; i < galleryGridLayout.getRows(); i++) {
-		// galleryGridLayout.setRowExpandRatio(rowIndex, ratio)
-		// }
 
 		// Horní layout tlačítek
 		HorizontalLayout topBtnsLayout = new HorizontalLayout();
@@ -340,6 +351,12 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		populateGrid(miniatures, previews);
 		animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN).setDuration(200).setDelay(200);
 		checkOffsetBtnsAvailability();
+
+		if (pgSelectedVideoItemId != null) {
+			if (PGUtils.isVideo(pgSelectedVideoItemId)) {
+				showVideo(pgSelectedVideoItemId, getItemURL(pgSelectedVideoItemId));
+			} 
+		}
 	}
 
 	private void refreshStatusLabel() {
@@ -358,6 +375,32 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		downRowBtn.setEnabled(downBtnsAvailFlag);
 		downPageBtn.setEnabled(downBtnsAvailFlag);
 		endPageBtn.setEnabled(downBtnsAvailFlag);
+	}
+
+	private void showVideo(String videoName, String videoURL) {
+		UI.getCurrent().addWindow(new WebWindow(videoName) {
+			private static final long serialVersionUID = 5027839567542107630L;
+
+			{
+				String videoString = "<video id=\"video\" width=\"800\" height=\"600\" preload controls>"
+						+ "<source src=\"" + videoURL + "\" type=\"video/mp4\">" + "</video>";
+
+				Label video = new Label(videoString, ContentMode.HTML);
+
+				video.setWidth("800px");
+				video.setHeight("600px");
+				addComponent(video);
+			}
+		});
+	}
+
+	private void showImage(File[] miniatures, int index) {
+		UI.getCurrent().addWindow(new ImageDetailWindow(miniatures, index, slideshowDirFile));
+	}
+
+	private String getItemURL(String itemId) {
+		return getRequest().getContextRoot() + PhotogalleryConfiguration.PHOTOGALLERY_PATH + "/"
+				+ photogallery.getPhotogalleryPath() + "/" + itemId;
 	}
 
 	private void populateGrid(final File[] miniatures, final File[] previews) {
@@ -384,12 +427,11 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			itemLayout.addComponent(embedded);
 			itemLayout.setComponentAlignment(embedded, Alignment.MIDDLE_CENTER);
 
-			// HD link
-			String tmpUrl = getRequest().getContextRoot() + PhotogalleryConfiguration.PHOTOGALLERY_PATH + "/"
-					+ photogallery.getPhotogalleryPath() + "/" + miniature.getName();
+			String itemId = videos ? miniature.getName().substring(0, miniature.getName().length() - 4) : miniature
+					.getName();
 
 			// odeber ".png"
-			final String url = videos ? tmpUrl.substring(0, tmpUrl.length() - 4) : tmpUrl;
+			final String url = getItemURL(itemId);
 
 			Link link = new Link(videos ? "Stáhnout video" : "Plné rozlišení", new ExternalResource(url));
 			link.setTargetName("_blank");
@@ -405,23 +447,9 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 				@Override
 				public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
 					if (videos) {
-						UI.getCurrent().addWindow(
-								new WebWindow(miniature.getName().substring(0, miniature.getName().length() - 4)) {
-									private static final long serialVersionUID = 5027839567542107630L;
-
-									{
-										String videoString = "<video id=\"video\" width=\"800\" height=\"600\" preload controls>"
-												+ "<source src=\"" + url + "\" type=\"video/mp4\">" + "</video>";
-
-										Label video = new Label(videoString, ContentMode.HTML);
-
-										video.setWidth("800px");
-										video.setHeight("600px");
-										addComponent(video);
-									}
-								});
+						showVideo(itemId, url);
 					} else {
-						UI.getCurrent().addWindow(new ImageDetailWindow(miniatures, index, slideshowDirFile));
+						showImage(miniatures, index);
 					}
 				}
 			});

@@ -79,7 +79,7 @@ public class CategoryPage extends OneColumnPage {
 
 		VerticalLayout layout = new VerticalLayout();
 
-		String categoryName = getRequest().getAnalyzer().getPathToken(1);
+		String categoryName = getRequest().getAnalyzer().getNextPathToken();
 		if (categoryName == null)
 			showError404();
 

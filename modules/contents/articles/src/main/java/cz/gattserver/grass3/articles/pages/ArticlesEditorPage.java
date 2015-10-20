@@ -123,9 +123,9 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		parts = null;
 
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
-		String operationToken = analyzer.getCurrentPathToken();
-		String identifierToken = analyzer.getCurrentPathToken(1);
-		String partNumberToken = analyzer.getCurrentPathToken(2);
+		String operationToken = analyzer.getNextPathToken();
+		String identifierToken = analyzer.getNextPathToken();
+		String partNumberToken = analyzer.getNextPathToken();
 		if (operationToken == null || identifierToken == null) {
 			logger.debug("Chybí operace nebo identifikátor cíle");
 			showError404();

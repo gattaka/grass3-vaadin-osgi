@@ -130,8 +130,8 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		publicatedCheckBox = new CheckBox();
 
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
-		String operationToken = analyzer.getCurrentPathToken();
-		String identifierToken = analyzer.getCurrentPathToken(1);
+		String operationToken = analyzer.getNextPathToken();
+		String identifierToken = analyzer.getNextPathToken();
 		if (operationToken == null || identifierToken == null) {
 			logger.debug("Chybí operace nebo identifikátor cíle");
 			showError404();

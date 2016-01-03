@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +17,8 @@ public interface IHWFacade {
 	public Set<HWItemTypeDTO> getAllHWTypes();
 
 	public List<HWItemDTO> getAllHWItems();
+
+	public List<HWItemDTO> getHWItemsByTypes(Collection<String> types);
 
 	public List<HWItemDTO> getHWItemsAvailableForPart(HWItemDTO item);
 

@@ -2,7 +2,7 @@ package cz.gattserver.grass3.hw.facade;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -32,7 +32,7 @@ public class HWMapper {
 		if (list == null)
 			return null;
 
-		Set<HWItemTypeDTO> dtos = new HashSet<HWItemTypeDTO>();
+		Set<HWItemTypeDTO> dtos = new LinkedHashSet<HWItemTypeDTO>();
 		for (HWItemType e : list) {
 			dtos.add(mapHWItemType(e));
 		}
@@ -77,6 +77,7 @@ public class HWMapper {
 		dto.setPrice(e.getPrice());
 		dto.setPurchaseDate(e.getPurchaseDate());
 		dto.setServiceNotes(mapServiceNotes(e.getServiceNotes()));
+		dto.setSupervizedFor(e.getSupervizedFor());
 		dto.setState(e.getState());
 		dto.setTypes(mapHWItemTypes(e.getTypes()));
 		dto.setWarrantyYears(e.getWarrantyYears());

@@ -245,6 +245,9 @@ public class HWItemDetailWindow extends WebWindow {
 		winLayout.addComponent(createShiftedLabel(createPriceString(hwItem.getPrice())), 1, 4);
 
 		winLayout.addComponent(new Label("<strong>Přílohy</strong>", ContentMode.HTML), 1, 5);
+		VerticalLayout prilohyLayout = new VerticalLayout();
+		winLayout.addComponent(prilohyLayout, 1, 6);
+
 		Button imagesBtn = new Button("Fotografie");
 		imagesBtn.setStyleName(BaseTheme.BUTTON_LINK);
 		imagesBtn.addStyleName("shiftlabel");
@@ -257,7 +260,7 @@ public class HWItemDetailWindow extends WebWindow {
 				UI.getCurrent().addWindow(new HWItemImagesWindow(hwItem));
 			}
 		});
-		winLayout.addComponent(imagesBtn, 1, 6);
+		prilohyLayout.addComponent(imagesBtn);
 
 		Button documentsBtn = new Button("Dokumenty");
 		documentsBtn.setStyleName(BaseTheme.BUTTON_LINK);
@@ -271,7 +274,7 @@ public class HWItemDetailWindow extends WebWindow {
 				UI.getCurrent().addWindow(new HWItemDocumentsWindow(hwItem));
 			}
 		});
-		winLayout.addComponent(documentsBtn, 1, 7);
+		prilohyLayout.addComponent(documentsBtn);
 
 		/**
 		 * Info pole - druhý sloupec
@@ -291,12 +294,16 @@ public class HWItemDetailWindow extends WebWindow {
 		winLayout.addComponent(createShiftedLabel(createWarrantyYearsString(hwItem.getWarrantyYears())), 2, 6);
 
 		/**
-		 * Součásti
+		 * Info pole - třetí sloupec
 		 */
-		winLayout.addComponent(new Label("<strong>Je součástí</strong>", ContentMode.HTML), 3, 1);
+		winLayout.addComponent(new Label("<strong>Spravováno pro</strong>", ContentMode.HTML), 3, 1);
 		winLayout.getComponent(3, 1).setWidth("100px");
+		winLayout.addComponent(createShiftedLabel(hwItem.getSupervizedFor() == null ? "-" : hwItem.getSupervizedFor()),
+				3, 2);
+
+		winLayout.addComponent(new Label("<strong>Je součástí</strong>", ContentMode.HTML), 3, 3);
 		if (hwItem.getUsedIn() == null) {
-			winLayout.addComponent(createShiftedLabel("-"), 3, 2);
+			winLayout.addComponent(createShiftedLabel("-"), 3, 4);
 		} else {
 			Button usedInBtn = new Button(StringPreviewCreator.createPreview(hwItem.getUsedIn().getName(), 60));
 			usedInBtn.setDescription(hwItem.getUsedIn().getName());
@@ -312,12 +319,12 @@ public class HWItemDetailWindow extends WebWindow {
 					UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, hwItem.getUsedIn()));
 				}
 			});
-			winLayout.addComponent(usedInBtn, 3, 2);
+			winLayout.addComponent(usedInBtn, 3, 4);
 		}
 
-		winLayout.addComponent(new Label("<strong>Součásti</strong>", ContentMode.HTML), 3, 3);
+		winLayout.addComponent(new Label("<strong>Součásti</strong>", ContentMode.HTML), 3, 5);
 		VerticalLayout partsLayout = new VerticalLayout();
-		winLayout.addComponent(partsLayout, 3, 4, 3, 8);
+		winLayout.addComponent(partsLayout, 3, 6, 3, 8);
 		List<HWItemDTO> parts = hwFacade.getAllParts(hwItem.getId());
 		if (parts.isEmpty())
 			partsLayout.addComponent(createShiftedLabel("-"));

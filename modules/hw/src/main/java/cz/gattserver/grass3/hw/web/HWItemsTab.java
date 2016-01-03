@@ -1,6 +1,10 @@
 package cz.gattserver.grass3.hw.web;
 
+import java.util.Collection;
+import java.util.Set;
+
 import org.tepi.filtertable.FilterTable;
+import org.vaadin.tokenfield.TokenField;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -8,15 +12,18 @@ import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CustomTable.Align;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
+import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.IHWFacade;
 import cz.gattserver.grass3.ui.util.GrassFilterDecorator;
@@ -32,6 +39,7 @@ public class HWItemsTab extends VerticalLayout {
 	private final FilterTable table = new FilterTable();
 	private BeanContainer<Long, HWItemDTO> container;
 	private IHWFacade hwFacade;
+	private TokenField hwTypesFilter;
 
 	// BUG ? Při disable na tabu a opětovném enabled zůstane table disabled
 	@Override
@@ -42,7 +50,13 @@ public class HWItemsTab extends VerticalLayout {
 
 	private void populateContainer() {
 		container.removeAllItems();
-		container.addAll(hwFacade.getAllHWItems());
+		@SuppressWarnings("unchecked")
+		Collection<String> collection = (Collection<String>) hwTypesFilter.getValue();
+		if (collection == null || collection.isEmpty()) {
+			container.addAll(hwFacade.getAllHWItems());
+		} else {
+			container.addAll(hwFacade.getHWItemsByTypes(collection));
+		}
 		sortTable();
 	}
 
@@ -131,7 +145,8 @@ public class HWItemsTab extends VerticalLayout {
 		setSpacing(true);
 		setMargin(true);
 
-		final Button newTypeBtn = new Button("Založit novou položku HW");
+		// final Button filterByTypeBtn = new Button("Filtrovat dle typu");
+		final Button newHWBtn = new Button("Založit novou položku HW");
 		final Button newNoteBtn = new Button("Přidat záznam");
 		final Button detailsBtn = new Button("Detail");
 		final Button fixBtn = new Button("Opravit údaje");
@@ -140,11 +155,45 @@ public class HWItemsTab extends VerticalLayout {
 		detailsBtn.setEnabled(false);
 		fixBtn.setEnabled(false);
 		deleteBtn.setEnabled(false);
-		newTypeBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
+		newHWBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
 		newNoteBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
 		detailsBtn.setIcon(new ThemeResource("img/tags/clipboard_16.png"));
 		fixBtn.setIcon(new ThemeResource("img/tags/quickedit_16.png"));
 		deleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
+
+		/**
+		 * Filtr na typy HW
+		 */
+		// menu tagů + textfield tagů
+		// http://marc.virtuallypreinstalled.com/TokenField/
+		hwTypesFilter = new TokenField();
+		HorizontalLayout hwTypesFilterLayout = new HorizontalLayout();
+		hwTypesFilterLayout.setSpacing(true);
+		addComponent(hwTypesFilterLayout);
+
+		hwTypesFilterLayout.addComponent(hwTypesFilter);
+
+		Set<HWItemTypeDTO> hwTypes = hwFacade.getAllHWTypes();
+		BeanContainer<String, HWItemTypeDTO> tokens = new BeanContainer<String, HWItemTypeDTO>(HWItemTypeDTO.class);
+		tokens.setBeanIdProperty("name");
+		tokens.addAll(hwTypes);
+
+		hwTypesFilter.setStyleName(TokenField.STYLE_TOKENFIELD);
+		hwTypesFilter.setContainerDataSource(tokens);
+		hwTypesFilter.setNewTokensAllowed(false);
+		hwTypesFilter.setFilteringMode(FilteringMode.CONTAINS); // suggest
+		hwTypesFilter.setTokenCaptionPropertyId("name");
+		hwTypesFilter.setInputPrompt("Filtrovat dle typu hw");
+		hwTypesFilter.isEnabled();
+
+		hwTypesFilter.addValueChangeListener(new ValueChangeListener() {
+			private static final long serialVersionUID = -3648782288654270789L;
+
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				populateContainer();
+			}
+		});
 
 		/**
 		 * Tabulka HW
@@ -210,7 +259,7 @@ public class HWItemsTab extends VerticalLayout {
 		/**
 		 * Založení nové položky HW
 		 */
-		newTypeBtn.addClickListener(new Button.ClickListener() {
+		newHWBtn.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 6492892850247493645L;
 
@@ -219,7 +268,7 @@ public class HWItemsTab extends VerticalLayout {
 			}
 
 		});
-		buttonLayout.addComponent(newTypeBtn);
+		buttonLayout.addComponent(newHWBtn);
 
 		/**
 		 * Založení nového servisního záznamu

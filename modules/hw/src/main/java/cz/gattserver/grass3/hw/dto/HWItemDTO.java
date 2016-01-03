@@ -65,6 +65,19 @@ public class HWItemDTO {
 	 */
 	private HWItemDTO usedIn;
 
+	/**
+	 * Ve správě (spravuju tohle zařízení někomu?)
+	 */
+	private String supervizedFor;
+
+	public String getSupervizedFor() {
+		return supervizedFor;
+	}
+
+	public void setSupervizedFor(String supervizedFor) {
+		this.supervizedFor = supervizedFor;
+	}
+	
 	public HWItemDTO getUsedIn() {
 		return usedIn;
 	}

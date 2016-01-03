@@ -79,6 +79,19 @@ public class HWItem {
 	@ManyToOne
 	private HWItem usedIn;
 
+	/**
+	 * Ve správě (spravuju tohle zařízení někomu?)
+	 */
+	private String supervizedFor;
+
+	public String getSupervizedFor() {
+		return supervizedFor;
+	}
+
+	public void setSupervizedFor(String supervizedFor) {
+		this.supervizedFor = supervizedFor;
+	}
+
 	public HWItem getUsedIn() {
 		return usedIn;
 	}

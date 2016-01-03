@@ -36,11 +36,9 @@ public abstract class HWItemCreateWindow extends WebWindow {
 
 	/**
 	 * @param triggerComponent
-	 *            volající komponenta (ta, která má být po dobu zobrazení okna
-	 *            zablokována)
+	 *            volající komponenta (ta, která má být po dobu zobrazení okna zablokována)
 	 * @param fixItemId
-	 *            opravuji údaje existující položky, nebo vytvářím novou (
-	 *            {@code null}) ?
+	 *            opravuji údaje existující položky, nebo vytvářím novou ( {@code null}) ?
 	 */
 	public HWItemCreateWindow(final Component triggerComponent, final Long fixItemId) {
 		super(fixItemId == null ? "Založení nové položky HW" : "Oprava údajů existující položky HW");
@@ -66,7 +64,7 @@ public abstract class HWItemCreateWindow extends WebWindow {
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
-		GridLayout winLayout = new GridLayout(2, 4);
+		GridLayout winLayout = new GridLayout(2, 5);
 		layout.addComponent(winLayout);
 		winLayout.setWidth("400px");
 		winLayout.setSpacing(true);
@@ -106,10 +104,17 @@ public abstract class HWItemCreateWindow extends WebWindow {
 		fieldGroup.bind(stateComboBox, "state");
 		winLayout.addComponent(stateComboBox, 1, 1);
 
-		TextField warrantyYearsField = new TextField("Záruka");
+		TextField warrantyYearsField = new TextField("Záruka (roky)");
 		fieldGroup.bind(warrantyYearsField, "warrantyYears");
 		warrantyYearsField.setSizeFull();
 		winLayout.addComponent(warrantyYearsField, 1, 2);
+
+		TextField supervizedForField = new TextField("Spravováno pro");
+		supervizedForField.setImmediate(true);
+		supervizedForField.setWidth("100%");
+		supervizedForField.setNullRepresentation("");
+		fieldGroup.bind(supervizedForField, "supervizedFor");
+		winLayout.addComponent(supervizedForField, 0, 3, 1, 3);
 
 		Set<HWItemTypeDTO> types = hwFacade.getAllHWTypes();
 
@@ -123,7 +128,7 @@ public abstract class HWItemCreateWindow extends WebWindow {
 		typeSelect.setImmediate(true);
 		typeSelect.setItemCaptionPropertyId("name");
 		fieldGroup.bind(typeSelect, "types");
-		winLayout.addComponent(typeSelect, 0, 3, 1, 3);
+		winLayout.addComponent(typeSelect, 0, 4, 1, 4);
 
 		Button createBtn;
 		layout.addComponent(createBtn = new Button(fixItemId == null ? "Založit" : "Opravit údaje",

@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -67,13 +68,19 @@ public class HWFacade implements IHWFacade {
 
 	@Override
 	public Set<HWItemTypeDTO> getAllHWTypes() {
-		List<HWItemType> hwItemTypes = hwItemTypeRepository.findAll();
+		List<HWItemType> hwItemTypes = hwItemTypeRepository.findListOrderByName();
 		return hwMapper.mapHWItemTypes(hwItemTypes);
 	}
 
 	@Override
 	public List<HWItemDTO> getAllHWItems() {
 		List<HWItem> hwItemTypes = hwItemRepository.findAll();
+		return hwMapper.mapHWItems(hwItemTypes);
+	}
+
+	@Override
+	public List<HWItemDTO> getHWItemsByTypes(Collection<String> types) {
+		List<HWItem> hwItemTypes = hwItemRepository.getHWItemsByTypes(types);
 		return hwMapper.mapHWItems(hwItemTypes);
 	}
 
@@ -102,6 +109,7 @@ public class HWFacade implements IHWFacade {
 		item.setDestructionDate(hwItemDTO.getDestructionDate());
 		item.setPrice(hwItemDTO.getPrice());
 		item.setState(hwItemDTO.getState());
+		item.setSupervizedFor(hwItemDTO.getSupervizedFor());
 		if (hwItemDTO.getUsedIn() != null) {
 			HWItem usedIn = hwItemRepository.findOne(hwItemDTO.getUsedIn().getId());
 			item.setUsedIn(usedIn);
@@ -139,8 +147,7 @@ public class HWFacade implements IHWFacade {
 	}
 
 	/**
-	 * Vygeneruje {@link ServiceNote} o přidání/odebrání HW, uloží a přidá k
-	 * cílovému HW
+	 * Vygeneruje {@link ServiceNote} o přidání/odebrání HW, uloží a přidá k cílovému HW
 	 * 
 	 * @param triggerItem
 	 *            HW který je přidán/odebrán

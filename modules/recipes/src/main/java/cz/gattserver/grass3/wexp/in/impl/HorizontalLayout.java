@@ -1,22 +1,22 @@
-package cz.gattserver.grass3.recipes.web.in.impl;
+package cz.gattserver.grass3.wexp.in.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.gattserver.grass3.recipes.web.in.Component;
-import cz.gattserver.grass3.recipes.web.out.IHeightElement;
-import cz.gattserver.grass3.recipes.web.out.IWidthElement;
-import cz.gattserver.grass3.recipes.web.out.WebElement;
-import cz.gattserver.grass3.recipes.web.out.impl.DivElement;
+import cz.gattserver.grass3.wexp.in.Component;
+import cz.gattserver.grass3.wexp.out.IHeightElement;
+import cz.gattserver.grass3.wexp.out.IWidthElement;
+import cz.gattserver.grass3.wexp.out.WebElement;
+import cz.gattserver.grass3.wexp.out.impl.DivElement;
 
-public class VerticalLayout extends Component implements IHeightElement, IWidthElement {
+public class HorizontalLayout extends Component implements IHeightElement, IWidthElement {
 
 	protected List<Component> children;
 
 	private String width;
 	private String height;
 
-	public VerticalLayout addChild(Component... childList) {
+	public HorizontalLayout addChild(Component... childList) {
 		if (children == null)
 			children = new ArrayList<Component>();
 		for (Component child : childList)
@@ -27,13 +27,14 @@ public class VerticalLayout extends Component implements IHeightElement, IWidthE
 	@Override
 	public WebElement construct() {
 		DivElement div = new DivElement();
-		div.setClass("grass-vertical-layout");
+		div.setClass("grass-horizontal-layout");
 		if (width != null)
 			div.setStyle("width", width);
 		if (height != null)
 			div.setStyle("height", height);
 		for (Component child : children) {
 			DivElement subDiv = new DivElement();
+			subDiv.setStyle("float", "left");
 			subDiv.addChild(child.constructWithStyles());
 			div.addChild(subDiv);
 		}

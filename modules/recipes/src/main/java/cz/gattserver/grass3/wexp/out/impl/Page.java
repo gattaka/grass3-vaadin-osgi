@@ -1,10 +1,11 @@
-package cz.gattserver.grass3.recipes.web.out.impl;
+package cz.gattserver.grass3.wexp.out.impl;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import cz.gattserver.grass3.recipes.web.out.WebElement;
+
+import cz.gattserver.grass3.wexp.out.WebElement;
 
 public class Page {
 

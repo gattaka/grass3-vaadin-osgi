@@ -1,10 +1,10 @@
-package cz.gattserver.grass3.recipes.web.in;
+package cz.gattserver.grass3.wexp.in;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.gattserver.grass3.recipes.web.out.TagElement;
-import cz.gattserver.grass3.recipes.web.out.WebElement;
+import cz.gattserver.grass3.wexp.out.TagElement;
+import cz.gattserver.grass3.wexp.out.WebElement;
 
 public abstract class Component {
 

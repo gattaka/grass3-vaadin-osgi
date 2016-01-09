@@ -64,7 +64,7 @@
 	<!-- Simple servlet pro recetpy  -->
 	<servlet>
 		<servlet-name>recepty</servlet-name>
-		<servlet-class>cz.gattserver.grass3.recipes.servlet.RecipesServlet</servlet-class>
+		<servlet-class>cz.gattserver.grass3.wexp.servlet.WexpServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>

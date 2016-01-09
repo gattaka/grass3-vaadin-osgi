@@ -1,7 +1,7 @@
-package cz.gattserver.grass3.recipes.web.out.impl;
+package cz.gattserver.grass3.wexp.out.impl;
 
 
-import cz.gattserver.grass3.recipes.web.out.TagElement;
+import cz.gattserver.grass3.wexp.out.TagElement;
 
 public class HtmlElement extends TagElement {
 

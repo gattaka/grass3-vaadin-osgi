@@ -1,11 +1,12 @@
-package cz.gattserver.grass3.recipes.web.out;
+package cz.gattserver.grass3.wexp.out;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class TagElement extends WebElement {
 
@@ -14,18 +15,26 @@ public abstract class TagElement extends WebElement {
 
 	protected abstract String getTagName();
 
-	protected List<WebElement> children;
+	protected Set<WebElement> children;
 
 	protected Map<String, String> attributes;
 	protected Map<String, String> styles;
-	protected List<String> classes;
+	protected Set<String> classes;
 
 	public TagElement addChild(WebElement... childList) {
 		if (children == null)
-			children = new ArrayList<WebElement>();
-		for (WebElement child : childList)
+			children = new LinkedHashSet<WebElement>();
+		for (WebElement child : childList) {
 			children.add(child);
+			// TODO kontrola, zda už tam je?
+		}
 		return this;
+	}
+
+	public boolean hasChild(WebElement child) {
+		if (children == null)
+			return false;
+		return children.contains(child);
 	}
 
 	public TagElement setStyle(String name, String value) {
@@ -35,11 +44,23 @@ public abstract class TagElement extends WebElement {
 		return this;
 	}
 
+	public String getStyle(String name, String value) {
+		if (styles == null)
+			return null;
+		return styles.get(name);
+	}
+
 	public TagElement setClass(String name) {
 		if (classes == null)
-			classes = new ArrayList<String>();
+			classes = new HashSet<String>();
 		classes.add(name);
 		return this;
+	}
+
+	public boolean hasClass(String name) {
+		if (classes == null)
+			return false;
+		return classes.contains(name);
 	}
 
 	public TagElement setAttribute(String name, String value) {
@@ -47,6 +68,12 @@ public abstract class TagElement extends WebElement {
 			attributes = new HashMap<String, String>();
 		attributes.put(name, value);
 		return this;
+	}
+
+	public String getAttribute(String name) {
+		if (attributes == null)
+			return null;
+		return attributes.get(name);
 	}
 
 	public String getOpenTag() {

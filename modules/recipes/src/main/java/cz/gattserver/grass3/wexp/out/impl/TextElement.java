@@ -1,9 +1,9 @@
-package cz.gattserver.grass3.recipes.web.out.impl;
+package cz.gattserver.grass3.wexp.out.impl;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-import cz.gattserver.grass3.recipes.web.out.WebElement;
+import cz.gattserver.grass3.wexp.out.WebElement;
 
 public class TextElement extends WebElement {
 

@@ -1,9 +1,9 @@
-package cz.gattserver.grass3.recipes.web.in.impl;
+package cz.gattserver.grass3.wexp.in.impl;
 
-import cz.gattserver.grass3.recipes.web.in.Component;
-import cz.gattserver.grass3.recipes.web.out.WebElement;
-import cz.gattserver.grass3.recipes.web.out.impl.DivElement;
-import cz.gattserver.grass3.recipes.web.out.impl.TextElement;
+import cz.gattserver.grass3.wexp.in.Component;
+import cz.gattserver.grass3.wexp.out.WebElement;
+import cz.gattserver.grass3.wexp.out.impl.DivElement;
+import cz.gattserver.grass3.wexp.out.impl.TextElement;
 
 public class Label extends Component {
 

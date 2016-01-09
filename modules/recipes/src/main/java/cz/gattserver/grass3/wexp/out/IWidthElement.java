@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.recipes.web.out;
+package cz.gattserver.grass3.wexp.out;
 
 public interface IWidthElement {
 

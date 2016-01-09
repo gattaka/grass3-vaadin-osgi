@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.recipes.web.in.impl;
+package cz.gattserver.grass3.wexp.in.impl;
 
 import java.util.HashMap;
 import java.util.Map;

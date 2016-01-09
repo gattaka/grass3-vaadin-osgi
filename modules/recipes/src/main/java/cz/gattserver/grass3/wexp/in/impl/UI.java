@@ -1,12 +1,12 @@
-package cz.gattserver.grass3.recipes.web.in.impl;
+package cz.gattserver.grass3.wexp.in.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import cz.gattserver.grass3.recipes.web.in.Component;
-import cz.gattserver.grass3.recipes.web.out.impl.Page;
-import cz.gattserver.grass3.recipes.web.out.impl.StyleElement;
-import cz.gattserver.grass3.recipes.web.out.impl.TextElement;
+import cz.gattserver.grass3.wexp.in.Component;
+import cz.gattserver.grass3.wexp.out.impl.Page;
+import cz.gattserver.grass3.wexp.out.impl.StyleElement;
+import cz.gattserver.grass3.wexp.out.impl.TextElement;
 
 public class UI {
 

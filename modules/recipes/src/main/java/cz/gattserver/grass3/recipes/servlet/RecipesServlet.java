@@ -1,10 +1,7 @@
 package cz.gattserver.grass3.recipes.servlet;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.recipes.facades.IRecipeFacade;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
+import cz.gattserver.grass3.recipes.web.in.impl.CSSRule;
+import cz.gattserver.grass3.recipes.web.in.impl.HorizontalLayout;
+import cz.gattserver.grass3.recipes.web.in.impl.Label;
+import cz.gattserver.grass3.recipes.web.in.impl.UI;
+import cz.gattserver.grass3.recipes.web.in.impl.VerticalLayout;
 
 public class RecipesServlet extends HttpServlet {
 	private static final long serialVersionUID = 7172666112080085629L;
@@ -31,23 +33,40 @@ public class RecipesServlet extends HttpServlet {
 		}
 
 		final OutputStream out = resp.getOutputStream();
-		// Set the response type
-		final PrintWriter outWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, "UTF-8")));
 
-		outWriter.print("<html>");
-		outWriter.print("<body style='font-family: sans-serif;'>");
-		outWriter.print("<script>alert('test');</script>");
-		outWriter.print("<h1 style='font-size: 40px;'>Recepty</h1>");
-		outWriter.print("<div style='font-size: 30px;'>");
+		UI ui = new UI();
+
+		// body CSS
+		CSSRule bodyCSS = new CSSRule("body");
+		bodyCSS.setStyle("font-family", "sans-serif");
+		bodyCSS.setStyle("font-size", "25px");
+		ui.setClass(bodyCSS);
+
+		// recepty-header CSS
+		CSSRule receptyHeaderCSS = new CSSRule(".recepty-header.grass-label");
+		receptyHeaderCSS.setStyle("font-size", "35px");
+		receptyHeaderCSS.setStyle("margin-bottom", "15px");
+		ui.setClass(receptyHeaderCSS);
+
+		VerticalLayout layout = new VerticalLayout();
+		ui.setContent(layout);
+		Label receptyLabel = new Label("Recepty");
+		receptyLabel.setClass("recepty-header");
+		layout.addChild(receptyLabel);
+
 		for (RecipeDTO r : facade.getRecipes()) {
-			outWriter.print("<span>" + r.getDescription() + "</span>");
+			layout.addChild(new Label(r.getDescription()));
 		}
-		outWriter.print("</div>");
-		outWriter.print("</body>");
-		outWriter.print("</html>");
 
-		outWriter.flush();
-		outWriter.close();
+		HorizontalLayout hor = new HorizontalLayout();
+		hor.addChild(new Label("one"));
+		hor.addChild(new Label("two"));
+		layout.addChild(hor);
+
+		layout.setWidth("800px");
+
+		ui.construct().write(out);
+		out.flush();
+		out.close();
 	}
-
 }

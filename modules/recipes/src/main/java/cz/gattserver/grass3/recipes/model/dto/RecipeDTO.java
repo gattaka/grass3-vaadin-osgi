@@ -3,6 +3,11 @@ package cz.gattserver.grass3.recipes.model.dto;
 public class RecipeDTO {
 
 	/**
+	 * Název receptu
+	 */
+	private String name;
+
+	/**
 	 * Popis receptu
 	 */
 	private String description;
@@ -26,6 +31,14 @@ public class RecipeDTO {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

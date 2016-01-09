@@ -13,6 +13,11 @@ import org.hibernate.annotations.GenericGenerator;
 public class Recipe {
 
 	/**
+	 * Název receptu
+	 */
+	private String name;
+
+	/**
 	 * Popis receptu
 	 */
 	@Column(columnDefinition = "TEXT")
@@ -52,6 +57,14 @@ public class Recipe {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

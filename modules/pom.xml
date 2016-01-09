@@ -16,6 +16,7 @@
 		<module>medic</module>
 		<module>monitor</module>
 		<module>search</module>
+		<module>recipes</module>
 	</modules>
 
 </project>

@@ -41,6 +41,7 @@ public class Mapper {
 		RecipeDTO recipeDTO = new RecipeDTO();
 
 		recipeDTO.setId(e.getId());
+		recipeDTO.setName(e.getName());
 		recipeDTO.setDescription(e.getDescription());
 
 		return recipeDTO;

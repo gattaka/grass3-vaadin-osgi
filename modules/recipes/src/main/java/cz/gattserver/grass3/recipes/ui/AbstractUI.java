@@ -1,7 +1,5 @@
 package cz.gattserver.grass3.recipes.ui;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cz.gattserver.grass3.SpringContextHelper;
@@ -10,7 +8,7 @@ import cz.gattserver.grass3.wexp.in.impl.UI;
 import cz.gattserver.grass3.wexp.in.impl.VerticalLayout;
 import cz.gattserver.grass3.wexp.servlet.WexpServlet;
 
-public class AbstractUI extends UI {
+public abstract class AbstractUI extends UI {
 
 	private static final long serialVersionUID = 4763865418322609840L;
 
@@ -24,11 +22,7 @@ public class AbstractUI extends UI {
 		SpringContextHelper.inject(this);
 
 		// html CSS
-		HttpServletRequest req = WexpServlet.getCurrentHttpServletRequest();
-		String uri = req.getRequestURI().toString();
-		String path = req.getPathInfo();
-		String prefix = path == null ? uri : uri.substring(0, uri.length() - path.length());
-		setCSSFile(prefix + WexpServlet.WEXP_RESOURCE_PATH + "/css/recepty-styles.css");
+		setCSSFile(WexpServlet.getPathPrefix() + WexpServlet.WEXP_RESOURCE_PATH + "/css/recepty-styles.css");
 
 		setContent(layout);
 

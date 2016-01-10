@@ -1,5 +1,8 @@
 package cz.gattserver.grass3.recipes.ui;
 
+
+import javax.servlet.http.HttpServletRequest;
+
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
 import cz.gattserver.grass3.wexp.DispatchAction;
 import cz.gattserver.grass3.wexp.in.impl.Label;
@@ -22,7 +25,7 @@ public class ListUI extends AbstractUI {
 				private static final long serialVersionUID = 5853456653676352799L;
 
 				@Override
-				public UI dispatch() {
+				public UI dispatch(HttpServletRequest req) {
 					return new DetailUI(r, ListUI.this);
 				}
 			}));
@@ -34,7 +37,7 @@ public class ListUI extends AbstractUI {
 			private static final long serialVersionUID = -2550135641464964288L;
 
 			@Override
-			public UI dispatch() {
+			public UI dispatch(HttpServletRequest req) {
 				return mainUI;
 			}
 		}));

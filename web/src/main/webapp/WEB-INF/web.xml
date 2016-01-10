@@ -65,7 +65,10 @@
 	<servlet>
 		<servlet-name>recepty</servlet-name>
 		<servlet-class>cz.gattserver.grass3.wexp.servlet.WexpServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
+		<init-param>
+            <param-name>mainui</param-name>
+            <param-value>cz.gattserver.grass3.recipes.ui.MainUI</param-value>
+        </init-param>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>recepty</servlet-name>

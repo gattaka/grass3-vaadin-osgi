@@ -1,27 +1,21 @@
 package cz.gattserver.grass3.recipes.ui;
 
-import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
 import cz.gattserver.grass3.wexp.DispatchAction;
 import cz.gattserver.grass3.wexp.in.impl.Label;
 import cz.gattserver.grass3.wexp.in.impl.Link;
 import cz.gattserver.grass3.wexp.in.impl.UI;
-import cz.gattserver.grass3.wexp.in.impl.VerticalLayout;
 
-public class DetailUI extends AbstractUI {
+public class CreateUI extends AbstractUI {
 
-	private static final long serialVersionUID = -5896855010267149591L;
+	private static final long serialVersionUID = 3785137433928397710L;
 
-	public DetailUI(RecipeDTO r, UI mainUI) {
+	public CreateUI(UI mainUI) {
 
-		VerticalLayout layout = new VerticalLayout();
-		setContent(layout);
-
-		Label nameLabel = new Label(r.getName().toLowerCase());
+		Label nameLabel = new Label("přidat recept");
 		nameLabel.setCSSClass("recepty-centered-header");
 		layout.addChild(nameLabel);
 
-		Label descLabel = new Label(r.getDescription());
-		layout.addChild(descLabel);
+		// TODO
 
 		Link backLink;
 		layout.addChild(backLink = new Link("zpět", new DispatchAction() {
@@ -34,7 +28,5 @@ public class DetailUI extends AbstractUI {
 		}));
 		backLink.setCSSClass("menu-item");
 		backLink.setCSSClass("back-item");
-
 	}
-
 }

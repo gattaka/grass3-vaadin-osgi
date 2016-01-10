@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,7 +28,7 @@ public class Dispatcher {
 	private Dispatcher() {
 	}
 
-	private Map<UUID, DispatchAction> actionMap = new HashMap<UUID, DispatchAction>();
+	private Map<Integer, DispatchAction> actionMap = new HashMap<Integer, DispatchAction>();
 	private UI mainUI;
 
 	public void setMainUI(UI mainUI) {
@@ -37,10 +36,11 @@ public class Dispatcher {
 	}
 
 	// TODO ... jednu akci můžu použít i dvakrát -- měl bych kontrolovat, kdy se která zavolá
-	public UUID addActionAndCreateUUID(DispatchAction action) {
-		UUID uuid = UUID.randomUUID();
-		actionMap.put(uuid, action);
-		return uuid;
+	public Integer addActionAndCreateUUID(DispatchAction action) {
+		Integer hash = action.hashCode();
+		actionMap.put(hash, action);
+		System.out.println("actionMap size: " + actionMap.size());
+		return hash;
 	}
 
 	public UI getMainUI() {
@@ -50,10 +50,11 @@ public class Dispatcher {
 	public void write(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		OutputStream out = resp.getOutputStream();
 
-		String actionUUID = req.getParameter(ACTION_PARAM_NAME);
+		String actionHash = req.getParameter(ACTION_PARAM_NAME);
 
-		if (actionUUID != null) {
-			DispatchAction action = actionMap.get(UUID.fromString(actionUUID));
+		if (actionHash != null) {
+			Integer hash = Integer.parseInt(actionHash);
+			DispatchAction action = actionMap.get(hash);
 			if (action == null) {
 				// TODO 404
 			} else {

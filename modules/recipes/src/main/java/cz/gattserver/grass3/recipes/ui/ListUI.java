@@ -5,23 +5,29 @@ import cz.gattserver.grass3.wexp.DispatchAction;
 import cz.gattserver.grass3.wexp.in.impl.Label;
 import cz.gattserver.grass3.wexp.in.impl.Link;
 import cz.gattserver.grass3.wexp.in.impl.UI;
-import cz.gattserver.grass3.wexp.in.impl.VerticalLayout;
 
-public class DetailUI extends AbstractUI {
+public class ListUI extends AbstractUI {
 
-	private static final long serialVersionUID = -5896855010267149591L;
+	private static final long serialVersionUID = 334621516108779566L;
 
-	public DetailUI(RecipeDTO r, UI mainUI) {
+	public ListUI(UI mainUI) {
 
-		VerticalLayout layout = new VerticalLayout();
-		setContent(layout);
-
-		Label nameLabel = new Label(r.getName().toLowerCase());
+		Label nameLabel = new Label("přehled receptů");
 		nameLabel.setCSSClass("recepty-centered-header");
 		layout.addChild(nameLabel);
 
-		Label descLabel = new Label(r.getDescription());
-		layout.addChild(descLabel);
+		for (RecipeDTO r : facade.getRecipes()) {
+			Link menuItem;
+			layout.addChild(menuItem = new Link(r.getName().toLowerCase(), new DispatchAction() {
+				private static final long serialVersionUID = 5853456653676352799L;
+
+				@Override
+				public UI dispatch() {
+					return new DetailUI(r, ListUI.this);
+				}
+			}));
+			menuItem.setCSSClass("menu-item");
+		}
 
 		Link backLink;
 		layout.addChild(backLink = new Link("zpět", new DispatchAction() {

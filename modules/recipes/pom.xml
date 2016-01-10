@@ -26,6 +26,13 @@
 			<version>1.2</version>
 		</dependency>
 
+		<!-- Wexp -->
+		<dependency>
+			<groupId>cz.gattserver</groupId>
+			<artifactId>wexp</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
 	</dependencies>
 
 </project>

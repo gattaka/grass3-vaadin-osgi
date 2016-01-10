@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.recipes.ui;
 
-
 import javax.servlet.http.HttpServletRequest;
 
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
@@ -41,7 +40,6 @@ public class ListUI extends AbstractUI {
 				return mainUI;
 			}
 		}));
-		backLink.setCSSClass("menu-item");
 		backLink.setCSSClass("back-item");
 
 	}

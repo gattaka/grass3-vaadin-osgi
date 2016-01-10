@@ -16,4 +16,9 @@ public interface IRecipeFacade {
 	 */
 	public RecipeDTO getRecipeById(Long id);
 
+	/**
+	 * Založí nový recept
+	 */
+	public boolean createNewRecipe(String name, String desc);
+
 }

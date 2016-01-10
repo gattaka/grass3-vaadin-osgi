@@ -16,20 +16,26 @@ body {
 
 .menu-item.wexp-link {
 	text-align: center;
-	font-size: 40px;
+	font-size: 30px;
+	padding: 2px 2px 7px 2px;
+	border: 2px solid orange;
+	line-height: 30px;
+	margin: 5px;
+	background: #FFEFB6;
+	font-variant: small-caps;
 }
 
-.menu-item.wexp-link a {
+.back-item.wexp-link a, .menu-item.wexp-link a, .back-item.wexp-link a:visited,
+	.menu-item.wexp-link a:visited {
 	text-decoration: none;
+	color: #6B5000;
 }
 
-.menu-item.wexp-link {
-	font-variant: small-caps;
-}
-
-.back-item {
+.back-item.wexp-link {
 	margin-top: 20px;
+	font-size: 30px;
 	font-variant: small-caps;
+	text-align: center;
 }
 
 .recepty-centered-header.wexp-label {

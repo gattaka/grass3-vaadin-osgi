@@ -50,10 +50,9 @@ public class CreateUI extends AbstractUI {
 				String nameValue = req.getParameter(nameInput.getName());
 				String descValue = req.getParameter(descArea.getName());
 
-				System.out.println(nameValue);
-				System.out.println(descValue);
+				boolean result = facade.createNewRecipe(nameValue, descValue);
 
-				return new CreateUI(mainUI, true);
+				return new CreateUI(mainUI, result);
 			}
 		});
 		layout.addChild(form);
@@ -72,7 +71,6 @@ public class CreateUI extends AbstractUI {
 				return mainUI;
 			}
 		}));
-		backLink.setCSSClass("menu-item");
 		backLink.setCSSClass("back-item");
 	}
 }

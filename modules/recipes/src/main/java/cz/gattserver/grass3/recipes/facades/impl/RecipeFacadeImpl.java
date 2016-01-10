@@ -39,4 +39,11 @@ public class RecipeFacadeImpl implements IRecipeFacade {
 		RecipeDTO recipeDTO = mapper.mapRecipe(recipe);
 		return recipeDTO;
 	}
+
+	public boolean createNewRecipe(String name, String desc) {
+		Recipe recipe = new Recipe();
+		recipe.setName(name);
+		recipe.setDescription(desc);
+		return recipeRepository.save(recipe) != null;
+	}
 }

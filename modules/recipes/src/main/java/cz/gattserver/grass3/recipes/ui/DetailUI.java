@@ -35,7 +35,6 @@ public class DetailUI extends AbstractUI {
 				return mainUI;
 			}
 		}));
-		backLink.setCSSClass("menu-item");
 		backLink.setCSSClass("back-item");
 
 	}

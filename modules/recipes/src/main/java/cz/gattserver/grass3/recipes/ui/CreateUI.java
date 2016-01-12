@@ -2,6 +2,7 @@ package cz.gattserver.grass3.recipes.ui;
 
 import javax.servlet.http.HttpServletRequest;
 
+import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
 import cz.gattserver.grass3.wexp.DispatchAction;
 import cz.gattserver.grass3.wexp.in.impl.Form;
 import cz.gattserver.grass3.wexp.in.impl.Label;
@@ -15,18 +16,26 @@ public class CreateUI extends AbstractUI {
 
 	private static final long serialVersionUID = 3785137433928397710L;
 
-	public CreateUI(UI mainUI) {
-		this(mainUI, null);
+	public CreateUI(UI mainUI, UI prevUI) {
+		this(mainUI, prevUI, null, null);
 	}
 
-	public CreateUI(UI mainUI, Boolean formResult) {
+	public CreateUI(UI mainUI, UI prevUI, Long editId) {
+		this(mainUI, prevUI, editId, null);
+	}
 
-		Label headerLabel = new Label("přidat recept");
+	public CreateUI(UI mainUI, UI prevUI, boolean formResult) {
+		this(mainUI, prevUI, null, formResult);
+	}
+
+	private CreateUI(UI mainUI, UI prevUI, Long editId, Boolean formResult) {
+
+		Label headerLabel = new Label(editId == null ? "přidat recept" : "upravit recept");
 		headerLabel.setCSSClass("recepty-centered-header");
 		layout.addChild(headerLabel);
 
 		if (formResult != null) {
-			Label resultLabel = new Label(formResult == true ? "Vložení dopadlo úspěšně" : "Vložení se nezdařilo");
+			Label resultLabel = new Label(formResult == true ? "Uložení dopadlo úspěšně" : "Uložení se nezdařilo");
 			layout.addChild(resultLabel);
 		}
 
@@ -39,6 +48,12 @@ public class CreateUI extends AbstractUI {
 		descArea.setWidth("100%");
 		descArea.setHeight("200px");
 
+		if (editId != null) {
+			RecipeDTO dto = facade.getRecipeById(editId);
+			nameInput.setValue(dto.getName());
+			descArea.setValue(facade.breaklineToEol(dto.getDescription()));
+		}
+
 		SubmitButton button = new SubmitButton("Uložit");
 
 		Form form = new Form(new DispatchAction() {
@@ -50,9 +65,13 @@ public class CreateUI extends AbstractUI {
 				String nameValue = req.getParameter(nameInput.getName());
 				String descValue = req.getParameter(descArea.getName());
 
-				boolean result = facade.createNewRecipe(nameValue, descValue);
+				boolean result = facade.saveRecipe(nameValue, descValue, editId);
 
-				return new CreateUI(mainUI, result);
+				if (editId != null && result) {
+					return new DetailUI(mainUI, new ListUI(mainUI, mainUI), editId);
+				} else {
+					return new CreateUI(mainUI, prevUI, result);
+				}
 			}
 		});
 		layout.addChild(form);
@@ -68,7 +87,7 @@ public class CreateUI extends AbstractUI {
 
 			@Override
 			public UI dispatch(HttpServletRequest req) {
-				return mainUI;
+				return prevUI;
 			}
 		}));
 		backLink.setCSSClass("back-item");

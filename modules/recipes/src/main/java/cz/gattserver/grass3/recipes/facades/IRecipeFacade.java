@@ -19,6 +19,16 @@ public interface IRecipeFacade {
 	/**
 	 * Založí nový recept
 	 */
-	public boolean createNewRecipe(String name, String desc);
+	public boolean saveRecipe(String name, String desc, Long id);
+
+	/**
+	 * Převede každý "< br/ >" nebo "< br >" v textu na EOL znak 
+	 */
+	public String breaklineToEol(String text);
+
+	/**
+	 * Převede každý EOL znak v textu na "< br/ >" 
+	 */
+	public String eolToBreakline(String text);
 
 }

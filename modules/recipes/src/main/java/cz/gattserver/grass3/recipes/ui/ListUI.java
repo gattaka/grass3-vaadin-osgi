@@ -12,7 +12,7 @@ public class ListUI extends AbstractUI {
 
 	private static final long serialVersionUID = 334621516108779566L;
 
-	public ListUI(UI mainUI) {
+	public ListUI(UI mainUI, UI prevUI) {
 
 		Label nameLabel = new Label("přehled receptů");
 		nameLabel.setCSSClass("recepty-centered-header");
@@ -25,7 +25,7 @@ public class ListUI extends AbstractUI {
 
 				@Override
 				public UI dispatch(HttpServletRequest req) {
-					return new DetailUI(r, ListUI.this);
+					return new DetailUI(mainUI, ListUI.this, r.getId());
 				}
 			}));
 			menuItem.setCSSClass("menu-item");

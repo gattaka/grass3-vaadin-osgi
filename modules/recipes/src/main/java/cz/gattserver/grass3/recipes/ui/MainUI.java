@@ -23,7 +23,7 @@ public class MainUI extends AbstractUI {
 
 			@Override
 			public UI dispatch(HttpServletRequest req) {
-				return new ListUI(MainUI.this);
+				return new ListUI(MainUI.this, MainUI.this);
 			}
 		}));
 		listLink.setCSSClass("menu-item");
@@ -34,7 +34,7 @@ public class MainUI extends AbstractUI {
 
 			@Override
 			public UI dispatch(HttpServletRequest req) {
-				return new CreateUI(MainUI.this);
+				return new CreateUI(MainUI.this, MainUI.this);
 			}
 		}));
 		createLink.setCSSClass("menu-item");

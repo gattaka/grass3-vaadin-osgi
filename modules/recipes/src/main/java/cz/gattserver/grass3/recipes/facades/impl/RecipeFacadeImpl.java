@@ -40,10 +40,21 @@ public class RecipeFacadeImpl implements IRecipeFacade {
 		return recipeDTO;
 	}
 
-	public boolean createNewRecipe(String name, String desc) {
+	public boolean saveRecipe(String name, String desc, Long id) {
 		Recipe recipe = new Recipe();
+		recipe.setId(id);
 		recipe.setName(name);
-		recipe.setDescription(desc);
+		recipe.setDescription(eolToBreakline(desc));
 		return recipeRepository.save(recipe) != null;
+	}
+
+	public String breaklineToEol(String text) {
+		String result = text.replace("<br/>","" + '\n').replace("<br>","" + '\n');
+		return result;
+	}
+	
+	public String eolToBreakline(String text) {
+		String result = text.replace("" + '\n', "<br/>");
+		return result;
 	}
 }

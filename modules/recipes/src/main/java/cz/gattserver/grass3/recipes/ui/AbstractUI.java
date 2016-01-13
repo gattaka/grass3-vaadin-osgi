@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.recipes.facades.IRecipeFacade;
+import cz.gattserver.grass3.wexp.Request;
 import cz.gattserver.grass3.wexp.in.impl.UI;
 import cz.gattserver.grass3.wexp.in.impl.VerticalLayout;
-import cz.gattserver.grass3.wexp.servlet.WexpServlet;
 
 public abstract class AbstractUI extends UI {
 
@@ -22,7 +22,7 @@ public abstract class AbstractUI extends UI {
 		SpringContextHelper.inject(this);
 
 		// html CSS
-		setCSSFile(WexpServlet.getPathPrefix() + WexpServlet.WEXP_RESOURCE_PATH + "/css/recepty-styles.css");
+		setCSSFile(Request.createResourcePath("css", "recepty-styles.css"));
 
 		setContent(layout);
 

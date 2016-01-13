@@ -19,7 +19,7 @@ public interface IRecipeFacade {
 	/**
 	 * Založí nový recept
 	 */
-	public boolean saveRecipe(String name, String desc, Long id);
+	public Long saveRecipe(String name, String desc, Long id);
 
 	/**
 	 * Převede každý "< br/ >" nebo "< br >" v textu na EOL znak 

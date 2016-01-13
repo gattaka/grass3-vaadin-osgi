@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
 import cz.gattserver.grass3.wexp.DispatchAction;
+import cz.gattserver.grass3.wexp.Request;
 import cz.gattserver.grass3.wexp.in.impl.HorizontalLayout;
 import cz.gattserver.grass3.wexp.in.impl.Label;
 import cz.gattserver.grass3.wexp.in.impl.Link;
@@ -14,7 +15,13 @@ public class DetailUI extends AbstractUI {
 
 	private static final long serialVersionUID = -5896855010267149591L;
 
-	public DetailUI(UI mainUI, UI prevUI, Long id) {
+	public static final String PATH = "detail";
+
+	public DetailUI(String id) {
+		this(Long.parseLong(id));
+	}
+
+	public DetailUI(Long id) {
 
 		VerticalLayout layout = new VerticalLayout();
 		setContent(layout);
@@ -32,14 +39,7 @@ public class DetailUI extends AbstractUI {
 		layout.addChild(horizontalLayout);
 
 		Link backLink;
-		horizontalLayout.addChild(backLink = new Link("zpět", new DispatchAction() {
-			private static final long serialVersionUID = -2550135641464964288L;
-
-			@Override
-			public UI dispatch(HttpServletRequest req) {
-				return prevUI;
-			}
-		}));
+		horizontalLayout.addChild(backLink = new Link("zpět", Request.createPath(ListUI.PATH)));
 		backLink.setCSSClass("back-item");
 
 		Link editLink;
@@ -48,7 +48,7 @@ public class DetailUI extends AbstractUI {
 
 			@Override
 			public UI dispatch(HttpServletRequest req) {
-				return new CreateUI(mainUI, DetailUI.this, r.getId());
+				return new CreateUI(DetailUI.this, r.getId());
 			}
 		}));
 		editLink.setCSSClass("back-item");

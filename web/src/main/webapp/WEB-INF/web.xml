@@ -66,8 +66,8 @@
 		<servlet-name>recepty</servlet-name>
 		<servlet-class>cz.gattserver.grass3.wexp.servlet.WexpServlet</servlet-class>
 		<init-param>
-            <param-name>mainui</param-name>
-            <param-value>cz.gattserver.grass3.recipes.ui.MainUI</param-value>
+            <param-name>webapp</param-name>
+            <param-value>cz.gattserver.grass3.recipes.ui.RecipesWebApp</param-value>
         </init-param>
 	</servlet>
 	<servlet-mapping>

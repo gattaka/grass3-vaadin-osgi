@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
 import cz.gattserver.grass3.wexp.DispatchAction;
+import cz.gattserver.grass3.wexp.Request;
 import cz.gattserver.grass3.wexp.in.impl.Form;
 import cz.gattserver.grass3.wexp.in.impl.Label;
 import cz.gattserver.grass3.wexp.in.impl.Link;
@@ -16,19 +17,25 @@ public class CreateUI extends AbstractUI {
 
 	private static final long serialVersionUID = 3785137433928397710L;
 
-	public CreateUI(UI mainUI, UI prevUI) {
-		this(mainUI, prevUI, null, null);
+	public static final String PATH = "create";
+
+	public CreateUI() {
+		this(null, null, null);
 	}
 
-	public CreateUI(UI mainUI, UI prevUI, Long editId) {
-		this(mainUI, prevUI, editId, null);
+	public CreateUI(UI prevUI) {
+		this(prevUI, null, null);
 	}
 
-	public CreateUI(UI mainUI, UI prevUI, boolean formResult) {
-		this(mainUI, prevUI, null, formResult);
+	public CreateUI(UI prevUI, Long editId) {
+		this(prevUI, editId, null);
 	}
 
-	private CreateUI(UI mainUI, UI prevUI, Long editId, Boolean formResult) {
+	public CreateUI(UI prevUI, boolean formResult) {
+		this(prevUI, null, formResult);
+	}
+
+	private CreateUI(UI prevUI, Long editId, Boolean formResult) {
 
 		Label headerLabel = new Label(editId == null ? "přidat recept" : "upravit recept");
 		headerLabel.setCSSClass("recepty-centered-header");
@@ -65,12 +72,12 @@ public class CreateUI extends AbstractUI {
 				String nameValue = req.getParameter(nameInput.getName());
 				String descValue = req.getParameter(descArea.getName());
 
-				boolean result = facade.saveRecipe(nameValue, descValue, editId);
+				Long id = facade.saveRecipe(nameValue, descValue, editId);
 
-				if (editId != null && result) {
-					return new DetailUI(mainUI, new ListUI(mainUI, mainUI), editId);
+				if (editId != null && id != null) {
+					return new DetailUI(id);
 				} else {
-					return new CreateUI(mainUI, prevUI, result);
+					return new CreateUI(prevUI, id != null);
 				}
 			}
 		});
@@ -82,14 +89,19 @@ public class CreateUI extends AbstractUI {
 		form.addChild(button);
 
 		Link backLink;
-		layout.addChild(backLink = new Link("zpět", new DispatchAction() {
-			private static final long serialVersionUID = -2550135641464964288L;
+		if (prevUI == null) {
+			backLink = new Link("zpět", Request.createPath());
+		} else {
+			backLink = new Link("zpět", new DispatchAction() {
+				private static final long serialVersionUID = -2550135641464964288L;
 
-			@Override
-			public UI dispatch(HttpServletRequest req) {
-				return prevUI;
-			}
-		}));
+				@Override
+				public UI dispatch(HttpServletRequest req) {
+					return prevUI;
+				}
+			});
+		}
+		layout.addChild(backLink);
 		backLink.setCSSClass("back-item");
 	}
 }

@@ -9,29 +9,24 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.cz.CzechAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Field.Index;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.queryParser.MultiFieldQueryParser;
-import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopScoreDocCollector;
-import org.apache.lucene.search.highlight.Formatter;
-import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
-import org.apache.lucene.search.highlight.QueryScorer;
-import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
-import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
-import org.apache.lucene.util.Version;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
@@ -51,31 +46,6 @@ public class SearchFacade {
 		return connectorAggregator.getSearchConnectorsById().keySet();
 	}
 
-	private String getHighlightedField(Query query, Analyzer analyzer, String fieldName, String fieldValue)
-			throws IOException, InvalidTokenOffsetsException {
-		Formatter formatter = new SimpleHTMLFormatter("<strong>", "</strong>");
-		QueryScorer queryScorer = new QueryScorer(query);
-		Highlighter highlighter = new Highlighter(formatter, queryScorer);
-		highlighter.setTextFragmenter(new SimpleSpanFragmenter(queryScorer, Integer.MAX_VALUE));
-		highlighter.setMaxDocCharsToAnalyze(Integer.MAX_VALUE);
-		return highlighter.getBestFragment(analyzer, fieldName, fieldValue);
-	}
-
-	// private String getMatchedFieldName(Explanation explanation) {
-	// final String PREFIX = "\\(MATCH\\) weight\\(";
-	// final int PREFIX_STR_LENGTH = PREFIX.length() - 3;
-	//
-	// Pattern pattern = Pattern.compile(PREFIX + "[^:]+:");
-	// Matcher matcher = pattern.matcher(explanation.toString());
-	//
-	// if (matcher.find()) {
-	// String output = matcher.group();
-	// return output.substring(PREFIX_STR_LENGTH, output.length() - 1);
-	// } else {
-	// return "";
-	// }
-	// }
-
 	/**
 	 * Search funkce
 	 * 
@@ -84,11 +54,10 @@ public class SearchFacade {
 	 * @throws InvalidTokenOffsetsException
 	 */
 	public List<SearchHit> search(String queryText, Set<Enum<? extends ISearchField>> searchFields, String moduleId,
-			UserInfoDTO user, GrassLayout callingPage) throws IOException, ParseException, InvalidTokenOffsetsException {
+			UserInfoDTO user, GrassLayout callingPage) throws IOException, InvalidTokenOffsetsException, ParseException {
 
-		// StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);
-		CzechAnalyzer analyzer = new CzechAnalyzer(Version.LUCENE_36);
-		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36, analyzer);
+		StandardAnalyzer analyzer = new StandardAnalyzer();
+		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
 		/**
 		 * Tady by šlo asi rozšiřovat i existující index (z disku/DB)
@@ -120,15 +89,13 @@ public class SearchFacade {
 
 			// sestav dokument z nabízených polí
 			for (SearchEntity.Field field : searchEntity.getFields()) {
-				doc.add(new Field(((ISearchField) field.getName()).getFieldName(), field.getContent(), Field.Store.YES,
-						field.isTokenized() ? Index.ANALYZED : Index.NO));
+				doc.add(new TextField(field.getName().name(), field.getContent(), Field.Store.YES));
 			}
 
+			// přidej link
 			String url = callingPage.getPageURL(searchEntity.getLink().getViewerPageFactory(), searchEntity.getLink()
 					.getSuffix());
-
-			// přidej link
-			doc.add(new Field(connector.getLinkFieldName(), url, Field.Store.YES, Index.NO));
+			doc.add(new StringField(connector.getLinkFieldName(), url, Field.Store.YES));
 
 			w.addDocument(doc);
 		}
@@ -143,40 +110,26 @@ public class SearchFacade {
 		List<String> fieldNames = new ArrayList<String>();
 		for (Enum<? extends ISearchField> searchField : searchFields) {
 			queries.add(queryText);
-			fieldNames.add(((ISearchField) searchField).getFieldName());
+			fieldNames.add(searchField.name());
 		}
-		Query query = MultiFieldQueryParser.parse(Version.LUCENE_36, queries.toArray(new String[0]),
-				fieldNames.toArray(new String[0]), analyzer);
-
-		/**
-		 * Search
-		 */
-		int hitsPerPage = 100;
-		IndexReader reader = IndexReader.open(index);
-		IndexSearcher searcher = new IndexSearcher(reader);
-		TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
-		searcher.search(query, collector);
-		ScoreDoc[] hits = collector.topDocs().scoreDocs;
+		Query query = new MultiFieldQueryParser(fieldNames.toArray(new String[fieldNames.size()]), analyzer)
+				.parse(queryText);
 
 		List<SearchHit> hitList = new ArrayList<SearchHit>();
+
+		IndexReader reader = DirectoryReader.open(index);
+		IndexSearcher searcher = new IndexSearcher(reader);
+		TopDocs docs = searcher.search(query, Integer.MAX_VALUE);
+		ScoreDoc[] hits = docs.scoreDocs;
+
+		System.out.println("Found " + hits.length + " hits.");
 		for (int i = 0; i < hits.length; ++i) {
 			int docId = hits[i].doc;
 			Document d = searcher.doc(docId);
-
-			String highlight = "";
-			String fieldName = "";
-			for (Enum<? extends ISearchField> searchField : searchFields) {
-				fieldName = ((ISearchField) searchField).getFieldName();
-				highlight = getHighlightedField(query, analyzer, fieldName, d.get(fieldName));
-				// je co zvýrazňovat
-				if (highlight != null && highlight.isEmpty() == false) {
-					hitList.add(new SearchHit(highlight, fieldName, d.get(connector.getLinkFieldName())));
-				}
-			}
-
+			hitList.add(new SearchHit("test", "best", d.get(connector.getLinkFieldName())));
 		}
 
-		searcher.close();
+		reader.close();
 
 		return hitList;
 

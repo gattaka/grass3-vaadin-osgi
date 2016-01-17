@@ -33,8 +33,14 @@ public class HWTypesTab extends VerticalLayout {
 		table.setEnabled(enabled);
 	}
 
-	private void openNewTypeWindow() {
-		Window win = new HWItemTypeCreateWindow(HWTypesTab.this) {
+	private void openNewTypeWindow(boolean fix) {
+		HWItemTypeDTO hwItemTypeDTO = null;
+		if (fix) {
+			BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table.getContainerDataSource();
+			BeanItem<?> item = cont.getItem(table.getValue());
+			hwItemTypeDTO = (HWItemTypeDTO) item.getBean();
+		}
+		Window win = new HWItemTypeCreateWindow(HWTypesTab.this, hwItemTypeDTO == null ? null : hwItemTypeDTO.getId()) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -86,9 +92,12 @@ public class HWTypesTab extends VerticalLayout {
 		setMargin(true);
 
 		final Button newTypeBtn = new Button("Založit nový typ");
+		final Button fixBtn = new Button("Upravit");
 		final Button deleteBtn = new Button("Smazat");
+		fixBtn.setEnabled(false);
 		deleteBtn.setEnabled(false);
 		newTypeBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
+		fixBtn.setIcon(new ThemeResource("img/tags/quickedit_16.png"));
 		deleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
 
 		/**
@@ -113,6 +122,7 @@ public class HWTypesTab extends VerticalLayout {
 			public void valueChange(ValueChangeEvent event) {
 				boolean enabled = table.getValue() != null;
 				deleteBtn.setEnabled(enabled);
+				fixBtn.setEnabled(enabled);
 			}
 		});
 
@@ -130,14 +140,28 @@ public class HWTypesTab extends VerticalLayout {
 			private static final long serialVersionUID = 6492892850247493645L;
 
 			public void buttonClick(ClickEvent event) {
-				openNewTypeWindow();
+				openNewTypeWindow(false);
 			}
 
 		});
 		buttonLayout.addComponent(newTypeBtn);
 
 		/**
-		 * Smazání položky HW
+		 * Úprava typu
+		 */
+		fixBtn.addClickListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 6492892850247493645L;
+
+			public void buttonClick(ClickEvent event) {
+				openNewTypeWindow(true);
+			}
+
+		});
+		buttonLayout.addComponent(fixBtn);
+
+		/**
+		 * Smazání typu
 		 */
 		deleteBtn.addClickListener(new Button.ClickListener() {
 

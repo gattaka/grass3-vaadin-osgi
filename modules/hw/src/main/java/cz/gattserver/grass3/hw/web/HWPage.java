@@ -40,5 +40,4 @@ public class HWPage extends OneColumnPage {
 
 		return layout;
 	}
-
 }

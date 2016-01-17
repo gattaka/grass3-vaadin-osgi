@@ -15,6 +15,8 @@ import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 public interface IHWFacade {
 
 	public Set<HWItemTypeDTO> getAllHWTypes();
+	
+	public HWItemTypeDTO getHWItemType(Long fixTypeId);
 
 	public List<HWItemDTO> getAllHWItems();
 
@@ -24,7 +26,7 @@ public interface IHWFacade {
 
 	public List<ServiceNoteDTO> getAllServiceNotes();
 
-	public boolean saveHWType(String name);
+	public boolean saveHWType(HWItemTypeDTO hwItemTypeDTO);
 
 	public boolean saveHWItem(HWItemDTO hwItemDTO);
 
@@ -65,5 +67,7 @@ public interface IHWFacade {
 	void modifyServiceNote(ServiceNoteDTO serviceNoteDTO);
 
 	public void deleteServiceNote(ServiceNoteDTO bean, HWItemDTO hwItem);
+
+	
 
 }

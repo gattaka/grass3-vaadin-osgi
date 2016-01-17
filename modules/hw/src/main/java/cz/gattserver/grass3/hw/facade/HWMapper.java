@@ -28,6 +28,16 @@ public class HWMapper {
 		return dto;
 	}
 
+	public HWItemType mapHWItem(HWItemTypeDTO dto) {
+		if (dto == null)
+			return null;
+
+		HWItemType e = new HWItemType();
+		e.setId(dto.getId());
+		e.setName(dto.getName());
+		return e;
+	}
+	
 	public Set<HWItemTypeDTO> mapHWItemTypes(Collection<HWItemType> list) {
 		if (list == null)
 			return null;

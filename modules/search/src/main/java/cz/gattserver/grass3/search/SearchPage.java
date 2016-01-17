@@ -1,13 +1,9 @@
 package cz.gattserver.grass3.search;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
-
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
@@ -76,15 +72,12 @@ public class SearchPage extends OneColumnPage {
 					hitLayout.addComponent(highlightLabel);
 				}
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} catch (InvalidTokenOffsetsException e) {
-			e.printStackTrace();
+			outputLayout.addComponent(new Label("Při vyhledávání došlo k chybě."));
 		}
 	}
-	
+
 	@Override
 	protected Component createContent() {
 

@@ -91,9 +91,8 @@ public class HWFacade implements IHWFacade {
 	}
 
 	@Override
-	public boolean saveHWType(String value) {
-		HWItemType type = new HWItemType();
-		type.setName(value);
+	public boolean saveHWType(HWItemTypeDTO hwItemTypeDTO) {
+		HWItemType type = hwMapper.mapHWItem(hwItemTypeDTO);
 		return hwItemTypeRepository.save(type) != null;
 	}
 
@@ -410,5 +409,10 @@ public class HWFacade implements IHWFacade {
 	@Override
 	public boolean deleteHWItemFile(HWItemDTO hwItem, File file) {
 		return file.delete();
+	}
+
+	@Override
+	public HWItemTypeDTO getHWItemType(Long fixTypeId) {
+		return hwMapper.mapHWItemType(hwItemTypeRepository.findOne(fixTypeId));
 	}
 }

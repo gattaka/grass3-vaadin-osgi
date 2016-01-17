@@ -131,33 +131,29 @@ public abstract class HWItemCreateWindow extends WebWindow {
 		winLayout.addComponent(typeSelect, 0, 4, 1, 4);
 
 		Button createBtn;
-		layout.addComponent(createBtn = new Button(fixItemId == null ? "Založit" : "Opravit údaje",
-				new Button.ClickListener() {
+		layout.addComponent(createBtn = new Button("Uložit", new Button.ClickListener() {
 
-					private static final long serialVersionUID = -8435971966889831628L;
+			private static final long serialVersionUID = -8435971966889831628L;
 
-					@Override
-					public void buttonClick(ClickEvent event) {
+			@Override
+			public void buttonClick(ClickEvent event) {
 
-						try {
-							fieldGroup.commit();
-							if (hwFacade.saveHWItem(fieldGroup.getItemDataSource().getBean())) {
-								onSuccess();
-							} else {
-								UI.getCurrent().addWindow(
-										new ErrorWindow(
-												fixItemId == null ? "Nezdařilo se vytvořit novou položku hardware"
-														: "Nezdařilo se upravit údaje"));
-							}
-							close();
-						} catch (FieldGroup.CommitException e) {
-							Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
-									Notification.Type.TRAY_NOTIFICATION);
-						}
-
+				try {
+					fieldGroup.commit();
+					if (hwFacade.saveHWItem(fieldGroup.getItemDataSource().getBean())) {
+						onSuccess();
+					} else {
+						UI.getCurrent().addWindow(new ErrorWindow("Uložení se nezdařilo"));
 					}
+					close();
+				} catch (FieldGroup.CommitException e) {
+					Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
+							Notification.Type.TRAY_NOTIFICATION);
+				}
 
-				}));
+			}
+
+		}));
 		layout.setComponentAlignment(createBtn, Alignment.BOTTOM_RIGHT);
 
 		setContent(layout);

@@ -22,7 +22,7 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 
 	private IHWFacade hwFacade;
 
-	public HWItemTypeCreateWindow(final Component triggerComponent) {
+	public HWItemTypeCreateWindow(final Component triggerComponent, final Long fixTypeId) {
 		super("Založení nového typu HW");
 
 		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
@@ -33,41 +33,41 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 		winLayout.setMargin(true);
 		winLayout.setSpacing(true);
 
-		HWItemTypeDTO hwItemTypeDTO = new HWItemTypeDTO();
-		hwItemTypeDTO.setName("");
-		final BeanFieldGroup<HWItemTypeDTO> fieldGroup = new BeanFieldGroup<HWItemTypeDTO>(
-				HWItemTypeDTO.class);
+		HWItemTypeDTO hwItemTypeDTO;
+		if (fixTypeId != null) {
+			hwItemTypeDTO = hwFacade.getHWItemType(fixTypeId);
+		} else {
+			hwItemTypeDTO = new HWItemTypeDTO();
+			hwItemTypeDTO.setName("");
+		}
+
+		final BeanFieldGroup<HWItemTypeDTO> fieldGroup = new BeanFieldGroup<HWItemTypeDTO>(HWItemTypeDTO.class);
 		fieldGroup.setItemDataSource(hwItemTypeDTO);
 
 		final TextField nameField = new TextField();
 		winLayout.addComponent(nameField);
 		fieldGroup.bind(nameField, "name");
 
-		winLayout.addComponent(new Button("Založit",
-				new Button.ClickListener() {
+		winLayout.addComponent(new Button("Uložit", new Button.ClickListener() {
 
-					private static final long serialVersionUID = -8435971966889831628L;
+			private static final long serialVersionUID = -8435971966889831628L;
 
-					@Override
-					public void buttonClick(ClickEvent event) {
-						try {
-							fieldGroup.commit();
-							if (hwFacade.saveHWType(nameField.getValue()) == false) {
-								UI.getCurrent()
-										.addWindow(
-												new ErrorWindow(
-														"Nezdařilo se vytvořit nový typ hardware"));
-							} else {
-								onSuccess();
-							}
-							close();
-						} catch (CommitException e) {
-							Notification.show("   Chybná vstupní data\n\n   "
-									+ e.getCause().getMessage(),
-									Notification.Type.TRAY_NOTIFICATION);
-						}
+			@Override
+			public void buttonClick(ClickEvent event) {
+				try {
+					fieldGroup.commit();
+					if (hwFacade.saveHWType(hwItemTypeDTO) == false) {
+						UI.getCurrent().addWindow(new ErrorWindow("Uložení se nezdařilo"));
+					} else {
+						onSuccess();
 					}
-				}));
+					close();
+				} catch (CommitException e) {
+					Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
+							Notification.Type.TRAY_NOTIFICATION);
+				}
+			}
+		}));
 
 		setContent(winLayout);
 

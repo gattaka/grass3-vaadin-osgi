@@ -21,7 +21,6 @@ public class ConnectorAggregatorImpl implements IConnectorAggregator {
 	private Map<String, ISearchConnector> searchConnectorsById = new HashMap<String, ISearchConnector>();
 
 	@PostConstruct
-	@SuppressWarnings("unused")
 	private void init() {
 		if (searchConnectors == null)
 			searchConnectors = new ArrayList<ISearchConnector>();

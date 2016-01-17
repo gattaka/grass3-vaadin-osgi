@@ -64,7 +64,7 @@ public class HomePage extends BasePage {
 	/**
 	 * Kolik je největší font pro tagcloud ?
 	 */
-	private static int MAX_FONT_SIZE_TAG_CLOUD = 20;
+	private static int MAX_FONT_SIZE_TAG_CLOUD = 22;
 
 	public HomePage(GrassRequest request) {
 		super(request);
@@ -164,8 +164,8 @@ public class HomePage extends BasePage {
 		});
 
 		/**
-		 * Údaj o poslední příčce a velikosti, která jí odpovídala - dle toho
-		 * budu vědět kdy posunout ohodnocovací koeficient
+		 * Údaj o poslední příčce a velikosti, která jí odpovídala - dle toho budu vědět kdy posunout ohodnocovací
+		 * koeficient
 		 */
 		int lastSize = contentTags.isEmpty() ? 1 : contentTags.get(0).getContentNodesCount();
 		int lastFontSize = MIN_FONT_SIZE_TAG_CLOUD;
@@ -173,20 +173,20 @@ public class HomePage extends BasePage {
 		/**
 		 * O(n)
 		 * 
-		 * Potřebuju aby bylo možné nějak zavolat svůj počet obsahů a zpátky se
-		 * vrátila velikost fontu, reps. kategorie velikosti.
+		 * Potřebuju aby bylo možné nějak zavolat svůj počet obsahů a zpátky se vrátila velikost fontu, reps. kategorie
+		 * velikosti.
 		 */
 		final HashMap<Integer, Integer> sizeTable = new HashMap<Integer, Integer>();
 		for (ContentTagDTO contentTag : contentTags) {
 
 			/**
-			 * Spočítej jeho fontsize - pokud jsem vyšší, pak přihoď velikost
-			 * koef a ulož můj stav aby ostatní věděli, jestli mají zvyšovat,
-			 * nebo zůstat, protože mají stejnou velikost
+			 * Spočítej jeho fontsize - pokud jsem vyšší, pak přihoď velikost koef a ulož můj stav aby ostatní věděli,
+			 * jestli mají zvyšovat, nebo zůstat, protože mají stejnou velikost
 			 */
 			if (contentTag.getContentNodesCount() > lastSize) {
 				lastSize = contentTag.getContentNodesCount();
-				lastFontSize += koef;
+				if (lastFontSize + koef <= MAX_FONT_SIZE_TAG_CLOUD)
+					lastFontSize += koef;
 			}
 
 			int size = contentTag.getContentNodesCount();
@@ -204,18 +204,21 @@ public class HomePage extends BasePage {
 			}
 		});
 
+		StringBuilder sb = new StringBuilder();
 		for (ContentTagDTO contentTag : contentTags) {
 			int size = sizeTable.get(contentTag.getContentNodesCount());
-			Label tagLabel;
-			tagCloud.addComponent(tagLabel = new Label("<a title='"
+			sb.append("<a title='"
 					+ contentTag.getContentNodesCount()
 					+ "'href='"
 					+ getPageURL(tagPageFactory,
 							URLIdentifierUtils.createURLIdentifier(contentTag.getId(), contentTag.getName()))
-					+ "' style='font-size:" + size + "pt'>" + contentTag.getName() + "</a>", ContentMode.HTML));
-			tagLabel.addStyleName("taglabel");
-			tagLabel.setSizeUndefined();
+					+ "' style='font-size:" + size + "pt'>" + contentTag.getName() + "</a> ");
 		}
+
+		Label tagLabel;
+		tagCloud.addComponent(tagLabel = new Label(sb.toString(), ContentMode.HTML));
+		tagLabel.addStyleName("taglabel");
+		tagLabel.setSizeFull();
 
 	}
 

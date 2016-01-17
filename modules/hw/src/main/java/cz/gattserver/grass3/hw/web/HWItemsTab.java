@@ -146,9 +146,9 @@ public class HWItemsTab extends VerticalLayout {
 
 		// final Button filterByTypeBtn = new Button("Filtrovat dle typu");
 		final Button newHWBtn = new Button("Založit novou položku HW");
-		final Button newNoteBtn = new Button("Přidat záznam");
+		final Button newNoteBtn = new Button("Přidat servisní záznam");
 		final Button detailsBtn = new Button("Detail");
-		final Button fixBtn = new Button("Opravit údaje");
+		final Button fixBtn = new Button("Upravit");
 		final Button deleteBtn = new Button("Smazat");
 		newNoteBtn.setEnabled(false);
 		detailsBtn.setEnabled(false);

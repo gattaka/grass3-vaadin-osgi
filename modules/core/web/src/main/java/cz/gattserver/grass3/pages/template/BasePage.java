@@ -12,10 +12,7 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
-import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.MenuBar.Command;
-import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.themes.Reindeer;
 import com.vaadin.ui.Window;
 
@@ -223,40 +220,6 @@ public abstract class BasePage extends AbstractGrassPage {
 			showError500();
 		}
 		return quote;
-	}
-
-	private MenuItem createCategoryPageMenuItem(MenuBar bar, String name, String url) {
-		return bar.addItem(name, createCategoryCommand(url));
-	}
-
-	private MenuItem createPageMenuItem(MenuBar bar, String name, IPageFactory factory) {
-		return bar.addItem(name, createCommand(factory));
-	}
-
-	private MenuItem createPageMenuItem(MenuItem item, String name, IPageFactory factory) {
-		return item.addItem(name, createCommand(factory));
-	}
-
-	private Command createCommand(final IPageFactory factory) {
-		return new Command() {
-			private static final long serialVersionUID = 4072974580734348622L;
-
-			@Override
-			public void menuSelected(MenuItem selectedItem) {
-				redirect(getPageURL(factory));
-			}
-		};
-	}
-
-	private Command createCategoryCommand(final String url) {
-		return new Command() {
-			private static final long serialVersionUID = 5148518087273073333L;
-
-			@Override
-			public void menuSelected(MenuItem selectedItem) {
-				redirect(getPageURL(categoryPageFactory, url));
-			}
-		};
 	}
 
 }

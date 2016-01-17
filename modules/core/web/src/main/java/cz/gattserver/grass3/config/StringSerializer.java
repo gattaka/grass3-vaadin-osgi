@@ -17,6 +17,7 @@ public class StringSerializer {
 		byte[] data = Base64Coder.decode(s);
 		ByteArrayInputStream bais = new ByteArrayInputStream(data);
 		ObjectInputStream in = new ObjectInputStream(bais);
+		@SuppressWarnings("unchecked")
 		T result = (T) in.readObject();
 		in.close();
 		return result;

@@ -564,26 +564,36 @@ h2 {
 /* ====================== */
 /* Tagy a jejich tagcloud */
 /* ====================== */
-.v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a {
+.v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a,
+	.v-link.v-link-taglabel.taglabel {
 	display: inline-block;
 	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
 		"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+}
+
+.v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a {
 	margin-right: 3px;
 	margin-bottom: 0px;
 }
 
-.v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a {
+.v-link.v-link-taglabel.taglabel {
+	margin-right: 10px;
+	margin-bottom: 2px;
+}
+
+.v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a,
+	.v-link.v-link-taglabel.taglabel a span {
 	text-decoration: none;
 	color: #1B699F
 }
 
-.v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a:VISITED
-	{
+.v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a:VISITED,
+	.v-link.v-link-taglabel.taglabel a:VISITED {
 	color: #1B699F
 }
 
-.v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a:HOVER
-	{
+.v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a:HOVER,
+	.v-link.v-link-taglabel.taglabel a:HOVER {
 	color: #1B699F;
 	text-decoration: underline;
 }

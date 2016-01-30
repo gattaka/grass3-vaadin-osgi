@@ -23,6 +23,9 @@ public abstract class AbstractUI extends UI {
 
 		// html CSS
 		setCSSFile(Request.createResourcePath("css", "recepty-styles.css"));
+		
+		// html favicon
+		setFavicon(Request.createResourcePath("img", "favicon.ico"));
 
 		setContent(layout);
 

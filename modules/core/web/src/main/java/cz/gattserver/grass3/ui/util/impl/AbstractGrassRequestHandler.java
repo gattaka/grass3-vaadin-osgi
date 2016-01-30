@@ -17,11 +17,9 @@ import java.util.zip.GZIPOutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.BodyContentHandler;
-import org.xml.sax.SAXException;
 
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinResponse;

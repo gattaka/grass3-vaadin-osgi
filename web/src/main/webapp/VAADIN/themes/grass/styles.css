@@ -565,7 +565,7 @@ h2 {
 /* Tagy a jejich tagcloud */
 /* ====================== */
 .v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a,
-	.v-link.v-link-taglabel.taglabel {
+	.v-link.v-link-taglabel.taglabel, .v-label.v-widget.v-has-width span.tag-letter {
 	display: inline-block;
 	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
 		"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
@@ -574,6 +574,7 @@ h2 {
 .v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a {
 	margin-right: 3px;
 	margin-bottom: 0px;
+	margin-top: 2px;
 }
 
 .v-link.v-link-taglabel.taglabel {
@@ -596,6 +597,11 @@ h2 {
 	.v-link.v-link-taglabel.taglabel a:HOVER {
 	color: #1B699F;
 	text-decoration: underline;
+}
+
+span.tag-letter {
+    font-weight: bold;
+    margin: 4px 0px;
 }
 
 /* ============== */

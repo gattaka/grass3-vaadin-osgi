@@ -116,8 +116,6 @@ public class HomePage extends BasePage {
 
 		VerticalLayout tagCloudLayout = new VerticalLayout();
 		tagCloudLayout.addComponent(new Label("<h2>Tagy</h2>", ContentMode.HTML));
-		CssLayout tagCloud = new CssLayout();
-		tagCloudLayout.addComponent(tagCloud);
 		pagelayout.addComponent(tagCloudLayout);
 
 		final List<ContentTagDTO> contentTags = contentTagFacade.getContentTagsForOverview();
@@ -125,12 +123,9 @@ public class HomePage extends BasePage {
 		if (contentTags == null)
 			showError500();
 
-		tagCloud.removeAllComponents();
-		tagCloud.setWidth("100%");
-
 		if (contentTags.isEmpty()) {
 			Label noTagsLabel = new Label("Nebyly nalezeny žádné tagy");
-			tagCloud.addComponent(noTagsLabel);
+			tagCloudLayout.addComponent(noTagsLabel);
 		}
 
 		/**
@@ -204,8 +199,21 @@ public class HomePage extends BasePage {
 			}
 		});
 
-		StringBuilder sb = new StringBuilder();
+		char oldChar = 0;
+		StringBuilder sb = null;
 		for (ContentTagDTO contentTag : contentTags) {
+
+			char currChar = contentTag.getName().toUpperCase().charAt(0);
+			if (currChar != oldChar) {
+				if (oldChar != 0) {
+					createTags(sb, tagCloudLayout);
+				}
+				tagCloudLayout.addComponent(new Label("<span class=\"tag-letter\">" + currChar + "</span>",
+						ContentMode.HTML));
+				sb = new StringBuilder();
+				oldChar = currChar;
+			}
+
 			int size = sizeTable.get(contentTag.getContentNodesCount());
 			sb.append("<a title='"
 					+ contentTag.getContentNodesCount()
@@ -214,12 +222,17 @@ public class HomePage extends BasePage {
 							URLIdentifierUtils.createURLIdentifier(contentTag.getId(), contentTag.getName()))
 					+ "' style='font-size:" + size + "pt'>" + contentTag.getName() + "</a> ");
 		}
+		createTags(sb, tagCloudLayout);
+	}
 
+	private void createTags(StringBuilder sb, VerticalLayout tagCloudLayout) {
 		Label tagLabel;
+		CssLayout tagCloud = new CssLayout();
+		tagCloudLayout.addComponent(tagCloud);
+		tagCloud.setWidth("100%");
 		tagCloud.addComponent(tagLabel = new Label(sb.toString(), ContentMode.HTML));
 		tagLabel.addStyleName("taglabel");
 		tagLabel.setSizeFull();
-
 	}
 
 	private void createRecentMenus(VerticalLayout pagelayout) {

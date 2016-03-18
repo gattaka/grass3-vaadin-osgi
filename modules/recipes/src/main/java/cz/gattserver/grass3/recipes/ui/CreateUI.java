@@ -74,11 +74,7 @@ public class CreateUI extends AbstractUI {
 
 				Long id = facade.saveRecipe(nameValue, descValue, editId);
 
-				if (editId != null && id != null) {
-					return new DetailUI(id);
-				} else {
-					return new CreateUI(prevUI, id != null);
-				}
+				return new DetailUI(id);
 			}
 		});
 		layout.addChild(form);

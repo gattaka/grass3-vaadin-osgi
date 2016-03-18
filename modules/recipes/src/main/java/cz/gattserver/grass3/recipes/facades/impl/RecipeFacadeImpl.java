@@ -25,7 +25,7 @@ public class RecipeFacadeImpl implements IRecipeFacade {
 	private RecipeRepository recipeRepository;
 
 	public List<RecipeDTO> getRecipes() {
-		List<Recipe> recipes = recipeRepository.findAll();
+		List<Recipe> recipes = recipeRepository.findAllSortByName();
 		if (recipes == null)
 			return null;
 		List<RecipeDTO> recipeDTOs = mapper.mapRecipes(recipes);

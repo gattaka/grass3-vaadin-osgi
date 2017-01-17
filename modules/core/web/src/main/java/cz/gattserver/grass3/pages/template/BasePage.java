@@ -121,9 +121,9 @@ public abstract class BasePage extends AbstractGrassPage {
 		}
 
 		// Registrace
-		if (coreACL.canRegistrate(getUser())) {
-			createMenuComponent(menu, new Link("Registrace", getPageResource(registrationPageFactory)));
-		}
+		// if (coreACL.canRegistrate(getUser())) {
+		// createMenuComponent(menu, new Link("Registrace", getPageResource(registrationPageFactory)));
+		// }
 
 		// Přehled o uživateli
 		final UserInfoDTO userInfoDTO = getGrassUI().getUser();

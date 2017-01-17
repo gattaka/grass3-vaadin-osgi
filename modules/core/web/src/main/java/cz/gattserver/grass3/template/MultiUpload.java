@@ -39,6 +39,7 @@ public abstract class MultiUpload extends CssLayout {
 
 		}, stateWindow, multiple);
 		multiFileUpload.setWidth(null);
+		multiFileUpload.setUploadButtonCaptions("Vybrat soubor", "Vybrat soubory");
 		addComponent(multiFileUpload);
 	}
 

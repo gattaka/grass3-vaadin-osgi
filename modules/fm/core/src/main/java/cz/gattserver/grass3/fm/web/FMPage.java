@@ -226,9 +226,8 @@ public class FMPage extends OneColumnPage {
 			private static final long serialVersionUID = -6605391938100454104L;
 
 			/**
-			 * Můžu si dovolit potlačit varování přetypování na Set s parametrem
-			 * File, protože vím, že v těch values jsou jenom File - uživatel
-			 * tohle nemůže ovlivnit
+			 * Můžu si dovolit potlačit varování přetypování na Set s parametrem File, protože vím, že v těch values
+			 * jsou jenom File - uživatel tohle nemůže ovlivnit
 			 */
 			@SuppressWarnings("unchecked")
 			public void valueChange(ValueChangeEvent event) {
@@ -252,8 +251,8 @@ public class FMPage extends OneColumnPage {
 					}
 				}
 				/**
-				 * Je potřeba, aby se přegenerovaly context Menu - viditelnost
-				 * položek je totiž závislá na selected souborech
+				 * Je potřeba, aby se přegenerovaly context Menu - viditelnost položek je totiž závislá na selected
+				 * souborech
 				 */
 				// TODO - tohle je dočasný workaround, kterým se trigne
 				// getActions z handleru - jedině tak se projeví vlastnost v
@@ -269,10 +268,26 @@ public class FMPage extends OneColumnPage {
 
 		});
 
-		createContextMenu(layout);
-	}
+		filestable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+			private static final long serialVersionUID = 2068314108919135281L;
 
-	private void createContextMenu(final VerticalLayout layout) {
+			public void itemClick(ItemClickEvent event) {
+				if (event.isDoubleClick()) {
+					File file = (File) event.getItemId();
+					if (file.isDirectory()) {
+						try {
+							redirect(getPageURL(fmPageFactory, explorer.fileURLFromRoot(file).toString()));
+						} catch (IOException e) {
+							e.printStackTrace();
+							showWarning("Nezdařilo se otevřít soubor");
+						}
+					} else {
+						handleDownloadFile(file);
+					}
+				}
+			}
+		});
+
 		filestable.addActionHandler(new Action.Handler() {
 
 			private static final long serialVersionUID = -1204234416330259274L;
@@ -299,8 +314,7 @@ public class FMPage extends OneColumnPage {
 			}
 
 			/**
-			 * Je bezpečné zde potlačit warning protože se do filestable dávají
-			 * jenom items typu File
+			 * Je bezpečné zde potlačit warning protože se do filestable dávají jenom items typu File
 			 */
 			@SuppressWarnings("unchecked")
 			private Set<File> getValues() {
@@ -311,8 +325,7 @@ public class FMPage extends OneColumnPage {
 				File targetFile = (File) target;
 
 				/**
-				 * Pokud RMB neklikl na položku již v označených položkách, zruš
-				 * označení položek a vyber jenom tuto
+				 * Pokud RMB neklikl na položku již v označených položkách, zruš označení položek a vyber jenom tuto
 				 */
 				Set<File> selected = getValues();
 				if (!selected.contains(targetFile)) {
@@ -338,9 +351,8 @@ public class FMPage extends OneColumnPage {
 	}
 
 	/**
-	 * Pokud jsou nějaké soubory označeny a je v nich i ten, který byl cíle RMB,
-	 * pak to ber jako skupinovou operaci. Tato funkce v zásadě rozhoduje o tom,
-	 * zda mám brát jako "target" operace selected skupinu (true) nebo vybraný
+	 * Pokud jsou nějaké soubory označeny a je v nich i ten, který byl cíle RMB, pak to ber jako skupinovou operaci.
+	 * Tato funkce v zásadě rozhoduje o tom, zda mám brát jako "target" operace selected skupinu (true) nebo vybraný
 	 * soubor (false)
 	 */
 	private boolean isOperationTargetSelectedGroup(File file) {
@@ -664,6 +676,7 @@ public class FMPage extends OneColumnPage {
 
 		final TextField newDirName = new TextField();
 		newDirName.setWidth("200px");
+		newDirName.setRequired(true);
 		panelLayout.addComponent(newDirName);
 
 		Button createButton = new Button("Vytvořit", new Button.ClickListener() {
@@ -732,7 +745,6 @@ public class FMPage extends OneColumnPage {
 					showWarning("Soubor '" + fileName + "' nebylo možné uložit - došlo k systémové chybě.");
 				}
 			}
-
 		};
 
 		// multiFileUpload = new MultiFileUpload() {
@@ -850,26 +862,6 @@ public class FMPage extends OneColumnPage {
 		// Status label static value
 		satusLabelStaticValue = "Zobrazeno " + directories.size() + " adresářů, " + innerFiles.size() + " souborů";
 		statusLabel.setValue(satusLabelStaticValue);
-
-		filestable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
-			private static final long serialVersionUID = 2068314108919135281L;
-
-			public void itemClick(ItemClickEvent event) {
-				if (event.isDoubleClick()) {
-					File file = (File) event.getItemId();
-					if (file.isDirectory()) {
-						try {
-							redirect(getPageURL(fmPageFactory, explorer.fileURLFromRoot(file).toString()));
-						} catch (IOException e) {
-							e.printStackTrace();
-							showWarning("Nezdařilo se otevřít soubor");
-						}
-					} else {
-						handleDownloadFile(file);
-					}
-				}
-			}
-		});
 
 	}
 

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import com.vaadin.ui.CssLayout;
 import com.wcs.wcslib.vaadin.widget.multifileupload.ui.MultiFileUpload;
 import com.wcs.wcslib.vaadin.widget.multifileupload.ui.UploadFinishedHandler;
+import com.wcs.wcslib.vaadin.widget.multifileupload.ui.UploadStartedHandler;
 import com.wcs.wcslib.vaadin.widget.multifileupload.ui.UploadStateWindow;
 
 public abstract class MultiUpload extends CssLayout {
@@ -16,7 +17,7 @@ public abstract class MultiUpload extends CssLayout {
 
 	protected abstract void handleFile(InputStream in, String fileName, String mimeType, long length);
 
-	protected void onFail(String fileName, String mime, long size) {
+	protected void onStart() {
 	}
 
 	@Override
@@ -30,7 +31,15 @@ public abstract class MultiUpload extends CssLayout {
 
 	public MultiUpload(boolean multiple) {
 		stateWindow = new UploadStateWindow();
-		multiFileUpload = new MultiFileUpload(new UploadFinishedHandler() {
+		multiFileUpload = new MultiFileUpload(new UploadStartedHandler() {
+
+			@Override
+			public void handleUploadStarted() {
+				onStart();
+			}
+			
+		}, new UploadFinishedHandler() {
+			private static final long serialVersionUID = -5820944267375820939L;
 
 			@Override
 			public void handleFile(InputStream in, String fileName, String mime, long size) {

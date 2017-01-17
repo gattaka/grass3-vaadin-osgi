@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 
 import net.engio.mbassy.listener.Handler;
 
+import org.atmosphere.cpr.AtmosphereResourceEventListenerAdapter.OnClose;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,7 @@ import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
 import cz.gattserver.web.common.window.ConfirmWindow;
+import cz.gattserver.web.common.window.WarnWindow;
 
 public class PhotogalleryEditorPage extends OneColumnPage {
 
@@ -112,6 +114,10 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	private List<Path> newFiles;
 
 	private boolean stayInEditor = false;
+
+	private boolean warnWindowDeployed = false;
+	private Label existingFiles;
+	private WarnWindow warnWindow;
 
 	public PhotogalleryEditorPage(GrassRequest request) {
 		super(request);
@@ -343,13 +349,34 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			protected void handleFile(InputStream in, String fileName, String mimeType, long length) {
 				Path path = Paths.get(dir.getPath(), fileName);
 				try {
-					Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
+					Files.copy(in, path);
 					newFiles.add(path);
 					table.addItem(path.toFile());
+				} catch (FileAlreadyExistsException f) {
+					if (warnWindowDeployed == false) {
+						existingFiles = new Label("", ContentMode.HTML);
+						warnWindow = new WarnWindow("Následující soubory již existují:") {
+							private static final long serialVersionUID = 3428203680996794639L;
+
+							protected void createDetails() {
+								addComponent(existingFiles);
+							};
+
+							public void close() {
+								existingFiles.setValue("");
+								warnWindowDeployed = false;
+								super.close();
+							};
+						};
+						UI.getCurrent().addWindow(warnWindow);
+						warnWindowDeployed = true;
+					}
+					existingFiles.setValue(existingFiles.getValue() + fileName + "<br/>");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
+
 		};
 		multiUpload.setCaption("Nahrát obsah");
 		uploadWrapper.addComponent(multiUpload);

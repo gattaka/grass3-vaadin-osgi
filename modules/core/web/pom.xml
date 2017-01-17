@@ -141,7 +141,7 @@
 		<dependency>
 			<groupId>com.wcs.wcslib</groupId>
 			<artifactId>wcslib-vaadin-widget-multifileupload</artifactId>
-			<version>1.8</version>
+			<version>1.11</version>
 		</dependency>
 
 		<!-- Apache Tica pro detekci typů souborů -->

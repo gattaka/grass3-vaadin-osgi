@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Link;
@@ -45,6 +46,7 @@ public class Breadcrumb extends HorizontalLayout {
 		setSizeFull();
 
 		breadcrumbLayout = new HorizontalLayout();
+		breadcrumbLayout.setHeight("20px");
 		addComponent(breadcrumbLayout);
 	}
 
@@ -70,7 +72,8 @@ public class Breadcrumb extends HorizontalLayout {
 				separator.setSource(new ThemeResource("img/bullet.png"));
 				breadcrumbLayout.addComponent(separator);
 			}
-			breadcrumbLayout.addComponent(createBreadcrumbElementLink(element));
+			Link link = createBreadcrumbElementLink(element);
+			breadcrumbLayout.addComponent(link);
 		}
 	}
 

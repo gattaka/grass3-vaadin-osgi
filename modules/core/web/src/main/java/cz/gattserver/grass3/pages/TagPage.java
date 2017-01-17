@@ -116,6 +116,7 @@ public class TagPage extends BasePage {
 
 		contentNodesLayout.addComponent(tagContentsTable);
 		tagContentsTable.setWidth("100%");
+		tagContentsTable.setHeight("300px");
 
 		pagelayout.addComponent(contentNodesLayout);
 

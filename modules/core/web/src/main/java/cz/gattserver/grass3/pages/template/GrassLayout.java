@@ -4,7 +4,9 @@ import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Page;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.JavaScript;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.Notification.Type;
 
 import cz.gattserver.grass3.GrassUI;
 import cz.gattserver.grass3.SpringContextHelper;
@@ -48,9 +50,8 @@ public abstract class GrassLayout extends CustomLayout {
 	}
 
 	/**
-	 * Nahraje více JS skriptů, synchronně za sebou (mohou se tedy navzájem na
-	 * sebe odkazovat a bude zaručeno, že 1. skript bude celý nahrán před 2.
-	 * skriptem, který využívá jeho funkcí)
+	 * Nahraje více JS skriptů, synchronně za sebou (mohou se tedy navzájem na sebe odkazovat a bude zaručeno, že 1.
+	 * skript bude celý nahrán před 2. skriptem, který využívá jeho funkcí)
 	 * 
 	 * @param links
 	 */
@@ -165,6 +166,13 @@ public abstract class GrassLayout extends CustomLayout {
 	 */
 	public void redirect(String uri) {
 		Page.getCurrent().setLocation(uri);
+	}
+
+	/**
+	 * Notifikace pomocí {@link Notification}
+	 */
+	public void showSilentInfo(String caption) {
+		Notification.show(caption, Type.TRAY_NOTIFICATION);
 	}
 
 	/**

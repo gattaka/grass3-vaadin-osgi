@@ -381,7 +381,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				boolean oldMode = editMode;
 
 				if (saveOrUpdateArticle()) {
-					showInfo(oldMode ? "Úprava článku proběhla úspěšně" : "Uložení článku proběhlo úspěšně");
+					showSilentInfo(oldMode ? "Úprava článku proběhla úspěšně" : "Uložení článku proběhlo úspěšně");
 				} else {
 					showWarning(oldMode ? "Úprava článku se nezdařila" : "Uložení článku se nezdařilo");
 				}

@@ -12,6 +12,7 @@ public abstract class AbstractButton extends Button {
 	
 	public AbstractButton(String caption, String themeImageName) {
 		setDescription(caption);
+		setCaption(caption);
 		setIcon((Resource) new ThemeResource(themeImageName));
 		addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = 607422393151282918L;

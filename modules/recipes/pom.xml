@@ -3,6 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>recipes</artifactId>
 	<name>GRASS3 Recipes</name>
+	<version>1.0.0</version>
 
 	<parent>
 		<groupId>cz.gattserver.grass3</groupId>
@@ -15,30 +16,9 @@
 		<!-- Grass3 jádro -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>core-common</artifactId>
+			<artifactId>core-web</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-
-		<!-- JSTL pro JSP -->
-		<dependency>
-			<groupId>jstl</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.2</version>
-		</dependency>
-
-		<!-- Wexp -->
-		<dependency>
-			<groupId>cz.gattserver</groupId>
-			<artifactId>wexp</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.apache.wicket</groupId> -->
-<!-- 			<artifactId>wicket-core</artifactId> -->
-<!-- 			<version>7.1.0</version> -->
-<!-- 		</dependency> -->
 
 	</dependencies>
 

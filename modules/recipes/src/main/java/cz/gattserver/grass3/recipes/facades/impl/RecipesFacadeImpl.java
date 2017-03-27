@@ -8,15 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import cz.gattserver.grass3.recipes.facades.IRecipeFacade;
+import cz.gattserver.grass3.recipes.facades.IRecipesFacade;
 import cz.gattserver.grass3.recipes.model.dao.RecipeRepository;
 import cz.gattserver.grass3.recipes.model.domain.Recipe;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
+import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
 import cz.gattserver.grass3.recipes.util.Mapper;
 
 @Transactional
 @Component("recipeFacade")
-public class RecipeFacadeImpl implements IRecipeFacade {
+public class RecipesFacadeImpl implements IRecipesFacade {
 
 	@Resource(name = "recipeMapper")
 	private Mapper mapper;
@@ -24,11 +25,11 @@ public class RecipeFacadeImpl implements IRecipeFacade {
 	@Autowired
 	private RecipeRepository recipeRepository;
 
-	public List<RecipeDTO> getRecipes() {
+	public List<RecipeOverviewDTO> getRecipes() {
 		List<Recipe> recipes = recipeRepository.findAllSortByName();
 		if (recipes == null)
 			return null;
-		List<RecipeDTO> recipeDTOs = mapper.mapRecipes(recipes);
+		List<RecipeOverviewDTO> recipeDTOs = mapper.mapRecipes(recipes);
 		return recipeDTOs;
 	}
 
@@ -40,6 +41,10 @@ public class RecipeFacadeImpl implements IRecipeFacade {
 		return recipeDTO;
 	}
 
+	public Long saveRecipe(String name, String desc) {
+		return saveRecipe(name, desc, null);
+	}
+
 	public Long saveRecipe(String name, String desc, Long id) {
 		Recipe recipe = new Recipe();
 		recipe.setId(id);
@@ -49,10 +54,10 @@ public class RecipeFacadeImpl implements IRecipeFacade {
 	}
 
 	public String breaklineToEol(String text) {
-		String result = text.replace("<br/>","" + '\n').replace("<br>","" + '\n');
+		String result = text.replace("<br/>", "" + '\n').replace("<br>", "" + '\n');
 		return result;
 	}
-	
+
 	public String eolToBreakline(String text) {
 		String result = text.replace("" + '\n', "<br/>");
 		return result;

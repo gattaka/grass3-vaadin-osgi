@@ -8,18 +8,21 @@ import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.recipes.model.domain.Recipe;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
+import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
 
 /**
  * <b>Mapper pro různé typy.</b>
  * 
  * <p>
- * Je potřeba aby byl volán na objektech s aktivními proxy objekty. To znamená, že před tímto mapperem nedošlo k
- * uzavření session, ve které byl původní objekt pořízen.
+ * Je potřeba aby byl volán na objektech s aktivními proxy objekty. To znamená,
+ * že před tímto mapperem nedošlo k uzavření session, ve které byl původní
+ * objekt pořízen.
  * </p>
  * 
  * <p>
- * Mapper využívá proxy objekty umístěné v atributech předávaných entit. Během mapování tak může docházet k dotazům na
- * DB, které produkují tyto proxy objekty a které se bez původní session mapovaného objektu neobejdou.
+ * Mapper využívá proxy objekty umístěné v atributech předávaných entit. Během
+ * mapování tak může docházet k dotazům na DB, které produkují tyto proxy
+ * objekty a které se bez původní session mapovaného objektu neobejdou.
  * </p>
  * 
  * @author gatt
@@ -53,13 +56,13 @@ public class Mapper {
 	 * @param recipes
 	 * @return
 	 */
-	public List<RecipeDTO> mapRecipes(Collection<Recipe> recipes) {
+	public List<RecipeOverviewDTO> mapRecipes(Collection<Recipe> recipes) {
 		if (recipes == null)
 			return null;
 
-		List<RecipeDTO> recipeDTOs = new ArrayList<RecipeDTO>();
+		List<RecipeOverviewDTO> recipeDTOs = new ArrayList<RecipeOverviewDTO>();
 		for (Recipe recipe : recipes) {
-			recipeDTOs.add(mapRecipe(recipe));
+			recipeDTOs.add(new RecipeOverviewDTO(recipe.getId(), recipe.getName()));
 		}
 		return recipeDTOs;
 	}

@@ -93,6 +93,13 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
+		<!-- recipes -->
+		<dependency>
+			<groupId>cz.gattserver.grass3</groupId>
+			<artifactId>recipes</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 		<!-- fotogalerie -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
@@ -104,13 +111,6 @@
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>search</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		
-		<!-- recepty -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>recipes</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 

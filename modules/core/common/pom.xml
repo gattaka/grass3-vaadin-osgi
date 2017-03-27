@@ -3,6 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>core-common</artifactId>
 	<name>GRASS3 Core common</name>
+	<version>1.0.0</version>
 
 	<parent>
 		<groupId>cz.gattserver.grass3</groupId>

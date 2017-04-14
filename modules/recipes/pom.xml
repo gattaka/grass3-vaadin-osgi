@@ -3,12 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>recipes</artifactId>
 	<name>GRASS3 Recipes</name>
-	<version>1.0.0</version>
 
 	<parent>
 		<groupId>cz.gattserver.grass3</groupId>
 		<artifactId>grass3-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 
 	<dependencies>
@@ -17,7 +16,7 @@
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>core-web</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 
 	</dependencies>

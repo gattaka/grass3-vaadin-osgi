@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cz.gattserver.grass3</groupId>
 	<artifactId>fm</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>GRASS3 File Manager</name>
 
 	<packaging>pom</packaging>
 
-    <modules>
-        <module>core</module>
-    </modules>
+	<modules>
+		<module>core</module>
+	</modules>
 
 </project>

@@ -1,17 +1,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>cz.gattserver.grass3</groupId>
 	<artifactId>monitor</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>GRASS3 System monitor</name>
-	
-	<packaging>pom</packaging>
+	<name>GRASS3 System monitor web</name>
 
-	<modules>
-		<module>agent</module>
-		<module>web</module>
-		<module>common</module>
-	</modules>
+	<parent>
+		<groupId>cz.gattserver.grass3</groupId>
+		<artifactId>grass3-parent</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<dependencies>
+
+		<!-- Grass3 jádro -->
+		<dependency>
+			<groupId>cz.gattserver.grass3</groupId>
+			<artifactId>core-web</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+	</dependencies>
 
 </project>

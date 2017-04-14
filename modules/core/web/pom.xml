@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>cz.gattserver.grass3</groupId>
 		<artifactId>grass3-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 
 	<properties>
@@ -98,14 +98,14 @@
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>core-common</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 
 		<!-- Web app common -->
 		<dependency>
 			<groupId>cz.gattserver</groupId>
 			<artifactId>web-common</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
+			<version>1.0.1</version>
 		</dependency>
 
 		<!-- Apache commons -->

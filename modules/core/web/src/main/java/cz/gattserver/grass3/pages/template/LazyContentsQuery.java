@@ -9,9 +9,9 @@ import org.vaadin.addons.lazyquerycontainer.QueryDefinition;
 
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.facades.IContentNodeFacade;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
+import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 
-public abstract class LazyContentsQuery extends AbstractBeanQuery<ContentNodeDTO> {
+public abstract class LazyContentsQuery extends AbstractBeanQuery<ContentNodeOverviewDTO> {
 
 	@Autowired
 	protected IContentNodeFacade contentNodeFacade;
@@ -23,8 +23,8 @@ public abstract class LazyContentsQuery extends AbstractBeanQuery<ContentNodeDTO
 	}
 
 	@Override
-	protected ContentNodeDTO constructBean() {
-		return new ContentNodeDTO();
+	protected ContentNodeOverviewDTO constructBean() {
+		return new ContentNodeOverviewDTO();
 	}
 
 	@Override
@@ -33,18 +33,18 @@ public abstract class LazyContentsQuery extends AbstractBeanQuery<ContentNodeDTO
 	}
 
 	@Override
-	protected List<ContentNodeDTO> loadBeans(int startIndex, int count) {
+	protected List<ContentNodeOverviewDTO> loadBeans(int startIndex, int count) {
 		return getBeans(startIndex / count, count);
 	}
 
 	@Override
-	protected void saveBeans(List<ContentNodeDTO> addedBeans, List<ContentNodeDTO> modifiedBeans,
-			List<ContentNodeDTO> removedBeans) {
+	protected void saveBeans(List<ContentNodeOverviewDTO> addedBeans, List<ContentNodeOverviewDTO> modifiedBeans,
+			List<ContentNodeOverviewDTO> removedBeans) {
 		// not implemented
 	}
 
 	protected abstract int getSize();
 
-	protected abstract List<ContentNodeDTO> getBeans(int page, int count);
+	protected abstract List<ContentNodeOverviewDTO> getBeans(int page, int count);
 
 }

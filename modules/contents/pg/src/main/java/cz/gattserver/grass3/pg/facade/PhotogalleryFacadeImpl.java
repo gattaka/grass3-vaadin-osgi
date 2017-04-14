@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import cz.gattserver.grass3.config.IConfigurationService;
 import cz.gattserver.grass3.events.IEventBus;
 import cz.gattserver.grass3.facades.IContentNodeFacade;
-import cz.gattserver.grass3.model.dao.ContentNodeRepository;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
@@ -50,9 +49,6 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 
 	@Resource
 	private IConfigurationService configurationService;
-
-	@Autowired
-	private ContentNodeRepository contentNodeRepository;
 
 	@Autowired
 	private PhotoGalleryRepository photogalleryRepository;
@@ -346,15 +342,6 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 	}
 
 	@Override
-	public List<PhotogalleryDTO> getAllPhotogalleriesForOverview() {
-		List<Photogallery> photogalleries = photogalleryRepository.findAll();
-		if (photogalleries == null)
-			return null;
-		List<PhotogalleryDTO> photogalleryDTOs = photogalleriesMapper.mapPhotogalleriesForOverview(photogalleries);
-		return photogalleryDTOs;
-	}
-
-	@Override
 	public List<PhotogalleryDTO> getAllPhotogalleriesForSearch() {
 		// TODO Auto-generated method stub
 		return null;
@@ -393,9 +380,9 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		File previewFile = new File(previewDirFile, file.getName());
 		if (previewFile.exists())
 			previewFile.delete();
-		
+
 	}
-	
+
 	@Override
 	public void tryDeleteSlideshowImage(File file, PhotogalleryDTO photogalleryDTO) {
 

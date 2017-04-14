@@ -8,6 +8,7 @@ import cz.gattserver.grass3.config.CoreConfiguration;
 import cz.gattserver.grass3.config.IConfigurationService;
 import cz.gattserver.grass3.facades.IUserFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
+import cz.gattserver.grass3.model.dto.IAuthorizable;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.service.ISectionService;
 
@@ -60,7 +61,7 @@ public final class CoreACL implements ICoreACL {
 	/**
 	 * Může uživatel zobrazit daný obsah ?
 	 */
-	public boolean canShowContent(ContentNodeDTO content, UserInfoDTO user) {
+	public boolean canShowContent(IAuthorizable content, UserInfoDTO user) {
 
 		// pokud je obsah publikován, můžeš zobrazit
 		if (content.isPublicated())
@@ -101,13 +102,12 @@ public final class CoreACL implements ICoreACL {
 		}
 
 		return false;
-
 	}
 
 	/**
 	 * Může uživatel upravit daný obsah ?
 	 */
-	public boolean canModifyContent(ContentNodeDTO content, UserInfoDTO user) {
+	public boolean canModifyContent(IAuthorizable content, UserInfoDTO user) {
 
 		if (user == null) {
 
@@ -132,7 +132,7 @@ public final class CoreACL implements ICoreACL {
 	/**
 	 * Může uživatel smazat daný obsah ?
 	 */
-	public boolean canDeleteContent(ContentNodeDTO content, UserInfoDTO user) {
+	public boolean canDeleteContent(IAuthorizable content, UserInfoDTO user) {
 		return canModifyContent(content, user);
 	}
 

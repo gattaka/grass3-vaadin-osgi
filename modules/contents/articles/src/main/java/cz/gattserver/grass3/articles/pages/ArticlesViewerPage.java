@@ -14,7 +14,7 @@ import cz.gattserver.grass3.facades.IContentNodeFacade;
 import cz.gattserver.grass3.facades.INodeFacade;
 import cz.gattserver.grass3.facades.IUserFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.pages.template.JScriptItem;
@@ -67,8 +67,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 	protected void init() {
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
-		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(analyzer
-				.getCurrentPathToken());
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
+				.parseURLIdentifier(analyzer.getCurrentPathToken());
 		if (identifier == null) {
 			showError404();
 			return;
@@ -88,8 +88,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		}
 
 		if (article.getContentNode().isPublicated()
-				|| (getUser() != null && (article.getContentNode().getAuthor().equals(getUser()) || getUser()
-						.getRoles().contains(Role.ADMIN)))) {
+				|| (getUser() != null && (article.getContentNode().getAuthor().equals(getUser())
+						|| getUser().getRoles().contains(Role.ADMIN)))) {
 		} else {
 			showError403();
 			return;
@@ -143,8 +143,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 					URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName()));
 			String script = "$(\".articles-basic-h-id\").each(" + "function(index){" + "$(this).attr(\"href\",\"" + url
 					+ "/\" + $(this).attr(\"href\"));" + "$(this).html(\"<img alt=\\\" class=\\\"v-icon\\\" src=\\\""
-					+ getRequest().getContextRoot() + "/VAADIN/themes/grass/img/tags/pencil_16.png\\\"/>&nbsp\");"
-					+ "}" + ")";
+					+ getRequest().getContextRoot() + "/VAADIN/themes/grass/img/tags/pencil_16.png\\\"/>&nbsp\");" + "}"
+					+ ")";
 			loadJS(new JScriptItem(script, true));
 		}
 	}
@@ -158,7 +158,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			@Override
 			protected void onConfirm(ClickEvent event) {
 
-				NodeDTO node = article.getContentNode().getParent();
+				NodeBreadcrumbDTO node = article.getContentNode().getParent();
 
 				final String category = getPageURL(categoryPageFactory,
 						URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()));

@@ -13,8 +13,8 @@ import com.vaadin.ui.Table;
 
 import cz.gattserver.grass3.IServiceHolder;
 import cz.gattserver.grass3.SpringContextHelper;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
+import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.security.ICoreACL;
 import cz.gattserver.grass3.service.IContentService;
@@ -53,10 +53,10 @@ public abstract class ContentsLazyTable extends Table {
 		serviceHolder = (IServiceHolder) SpringContextHelper.getBean("serviceHolder");
 	}
 
-	protected ContentNodeDTO getValueFromId(Object itemId) {
+	protected ContentNodeOverviewDTO getValueFromId(Object itemId) {
 		Item item = getItem(itemId);
 		@SuppressWarnings("unchecked")
-		ContentNodeDTO contentNode = ((BeanItem<ContentNodeDTO>) item).getBean();
+		ContentNodeOverviewDTO contentNode = ((BeanItem<ContentNodeOverviewDTO>) item).getBean();
 		return contentNode;
 	}
 
@@ -86,7 +86,7 @@ public abstract class ContentsLazyTable extends Table {
 
 			@Override
 			public Object generateCell(Table source, Object itemId, Object columnId) {
-				ContentNodeDTO contentNode = getValueFromId(itemId);
+				ContentNodeOverviewDTO contentNode = getValueFromId(itemId);
 
 				// jaká prohlížecí služba odpovídá tomuto obsahu
 				IContentService contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
@@ -108,7 +108,7 @@ public abstract class ContentsLazyTable extends Table {
 
 			@Override
 			public Object generateCell(Table source, Object itemId, Object columnId) {
-				ContentNodeDTO contentNode = getValueFromId(itemId);
+				ContentNodeOverviewDTO contentNode = getValueFromId(itemId);
 
 				// jaká prohlížecí služba odpovídá tomuto obsahu
 				IContentService contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
@@ -129,8 +129,8 @@ public abstract class ContentsLazyTable extends Table {
 
 			@Override
 			public Object generateCell(Table source, Object itemId, Object columnId) {
-				ContentNodeDTO contentNode = getValueFromId(itemId);
-				NodeDTO contentParent = contentNode.getParent();
+				ContentNodeOverviewDTO contentNode = getValueFromId(itemId);
+				NodeOverviewDTO contentParent = contentNode.getParent();
 				return new ComparableLink(contentParent.getName(), page.getPageResource(categoryPageFactory,
 						URLIdentifierUtils.createURLIdentifier(contentParent.getId(), contentParent.getName())));
 			}
@@ -141,8 +141,8 @@ public abstract class ContentsLazyTable extends Table {
 
 			@Override
 			public Object generateCell(Table source, Object itemId, Object columnId) {
-				ContentNodeDTO contentNode = getValueFromId(itemId);
-				return contentNode.getAuthor().getName();
+				ContentNodeOverviewDTO contentNode = getValueFromId(itemId);
+				return contentNode.getAuthor();
 			}
 		});
 

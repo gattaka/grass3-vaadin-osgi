@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.security;
 
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
+import cz.gattserver.grass3.model.dto.IAuthorizable;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.service.ISectionService;
 
@@ -31,7 +32,7 @@ public interface ICoreACL {
 	/**
 	 * Může uživatel zobrazit daný obsah ?
 	 */
-	public boolean canShowContent(ContentNodeDTO content, UserInfoDTO user);
+	public boolean canShowContent(IAuthorizable content, UserInfoDTO user);
 
 	/**
 	 * Může uživatel vytvářet obsah ?
@@ -41,12 +42,12 @@ public interface ICoreACL {
 	/**
 	 * Může uživatel upravit daný obsah ?
 	 */
-	public boolean canModifyContent(ContentNodeDTO content, UserInfoDTO user);
+	public boolean canModifyContent(IAuthorizable content, UserInfoDTO user);
 
 	/**
 	 * Může uživatel smazat daný obsah ?
 	 */
-	public boolean canDeleteContent(ContentNodeDTO content, UserInfoDTO user);
+	public boolean canDeleteContent(IAuthorizable content, UserInfoDTO user);
 
 	/**
 	 * =======================================================================
@@ -123,13 +124,11 @@ public interface ICoreACL {
 	/**
 	 * Může přidat obsah do svých oblíbených ?
 	 */
-	public boolean canAddContentToFavourites(ContentNodeDTO contentNodeDTO,
-			UserInfoDTO user);
+	public boolean canAddContentToFavourites(ContentNodeDTO contentNodeDTO, UserInfoDTO user);
 
 	/**
 	 * Může odebrat obsah ze svých oblíbených ?
 	 */
-	public boolean canRemoveContentFromFavourites(ContentNodeDTO contentNode,
-			UserInfoDTO user);
+	public boolean canRemoveContentFromFavourites(ContentNodeDTO contentNode, UserInfoDTO user);
 
 }

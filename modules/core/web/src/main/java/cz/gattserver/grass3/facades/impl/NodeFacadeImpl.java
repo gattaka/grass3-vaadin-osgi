@@ -43,7 +43,7 @@ public class NodeFacadeImpl implements INodeFacade {
 		Node node = nodeRepository.findOne(id);
 		if (node == null)
 			return null;
-		NodeDTO nodeDTO = mapper.mapNodeForDetailPage(node);
+		NodeDTO nodeDTO = mapper.mapNodeForDetail(node);
 		return nodeDTO;
 	}
 

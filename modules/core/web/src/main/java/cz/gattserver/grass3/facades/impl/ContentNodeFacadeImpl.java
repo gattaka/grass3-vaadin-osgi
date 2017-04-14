@@ -24,6 +24,7 @@ import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
+import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 import cz.gattserver.grass3.model.util.Mapper;
 
 @Transactional
@@ -51,7 +52,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	/**
 	 * Získá set oblíbených obsahů daného uživatele
 	 */
-	public List<ContentNodeDTO> getUserFavouriteContents(Long user) {
+	public List<ContentNodeOverviewDTO> getUserFavouriteContents(Long user) {
 		User u = userRepository.findOne(user);
 		if (u == null)
 			return null;
@@ -60,7 +61,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		if (contentNodes == null)
 			return null;
 
-		List<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(contentNodes);
+		List<ContentNodeOverviewDTO> contentNodeDTOs = mapper.mapContentNodeOverviewCollection(contentNodes);
 
 		return contentNodeDTOs;
 	}
@@ -71,10 +72,10 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 * @param size
 	 * @return
 	 */
-	public List<ContentNodeDTO> getRecentAddedForOverview(int maxResults) {
-		List<ContentNode> contentNodes = contentNodeRepository.findByCreationDateNotNullOrderByCreationDateDesc(
-				new PageRequest(0, maxResults)).getContent();
-		List<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodesForRecentsOverview(contentNodes);
+	public List<ContentNodeOverviewDTO> getRecentAddedForOverview(int maxResults) {
+		List<ContentNode> contentNodes = contentNodeRepository
+				.findByCreationDateNotNullOrderByCreationDateDesc(new PageRequest(0, maxResults)).getContent();
+		List<ContentNodeOverviewDTO> contentNodeDTOs = mapper.mapContentNodeOverviewCollection(contentNodes);
 		return contentNodeDTOs;
 	}
 
@@ -84,28 +85,17 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 * @param size
 	 * @return
 	 */
-	public List<ContentNodeDTO> getRecentModifiedForOverview(int maxResults) {
+	public List<ContentNodeOverviewDTO> getRecentModifiedForOverview(int maxResults) {
 		List<ContentNode> contentNodes = contentNodeRepository
 				.findByLastModificationDateNotNullOrderByLastModificationDateDesc(new PageRequest(0, maxResults))
 				.getContent();
-		List<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodesForRecentsOverview(contentNodes);
+		List<ContentNodeOverviewDTO> contentNodeDTOs = mapper.mapContentNodeOverviewCollection(contentNodes);
 		return contentNodeDTOs;
 	}
 
 	/**
-	 * Získá set obsahů dle kategorie
-	 */
-	public List<ContentNodeDTO> getContentNodesByNode(Long node) {
-		Node n = nodeRepository.findOne(node);
-		if (n == null)
-			return null;
-
-		List<ContentNodeDTO> contentNodeDTOs = mapper.mapContentNodeCollection(n.getContentNodes());
-		return contentNodeDTOs;
-	}
-
-	/**
-	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node - zkrácená verze metody pro obsah, jež nemá tagy
+	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node -
+	 * zkrácená verze metody pro obsah, jež nemá tagy
 	 * 
 	 * @param contentModuleId
 	 *            identifikátor modulu obsahů
@@ -148,7 +138,8 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *            kategorie do které se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
-	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen, nebo
+	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
+	 *         nebo
 	 */
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
 			boolean publicated, Long category, Long author, Date date) {
@@ -173,7 +164,8 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		parent = nodeRepository.save(parent);
 
 		/**
-		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam aktualizovat kvůli mazání tagů údaje v DB)
+		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
+		 * aktualizovat kvůli mazání tagů údaje v DB)
 		 */
 		contentTagFacade.saveTags(tags, contentNode);
 
@@ -190,7 +182,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 */
 	public ContentNodeDTO getByID(Long contentNodeId) {
 		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
-		ContentNodeDTO contentNodeDTO = mapper.map(contentNode);
+		ContentNodeDTO contentNodeDTO = mapper.mapContentNodeForDetail(contentNode);
 		return contentNodeDTO;
 	}
 
@@ -219,7 +211,8 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		modify(contentNodeId, name, tags, publicated, null);
 	}
 
-	public void modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated, Date creationDate) {
+	public void modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated,
+			Date creationDate) {
 		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
 
 		contentNode.setLastModificationDate(Calendar.getInstance().getTime());
@@ -233,7 +226,8 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		contentNodeRepository.save(contentNode);
 
 		/**
-		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam aktualizovat kvůli mazání tagů údaje v DB)
+		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
+		 * aktualizovat kvůli mazání tagů údaje v DB)
 		 */
 		contentTagFacade.saveTags(tags, contentNodeId);
 	}
@@ -283,14 +277,15 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	}
 
 	@Override
-	public List<ContentNodeDTO> getRecentAddedForOverview(int pageIndex, int count) {
-		return mapper.mapContentNodesForRecentsOverview(contentNodeRepository.findAll(
-				new PageRequest(pageIndex, count, Sort.Direction.DESC, "creationDate")).getContent());
+	public List<ContentNodeOverviewDTO> getRecentAddedForOverview(int pageIndex, int count) {
+		return mapper.mapContentNodeOverviewCollection(contentNodeRepository
+				.findAll(new PageRequest(pageIndex, count, Sort.Direction.DESC, "creationDate")).getContent());
 	}
 
 	@Override
-	public List<ContentNodeDTO> getRecentModifiedForOverview(int pageIndex, int count) {
-		return mapper.mapContentNodesForRecentsOverview(contentNodeRepository.findAll(
-				new PageRequest(pageIndex, count, Sort.Direction.DESC, "lastModificationDate")).getContent());
+	public List<ContentNodeOverviewDTO> getRecentModifiedForOverview(int pageIndex, int count) {
+		return mapper.mapContentNodeOverviewCollection(contentNodeRepository
+				.findAll(new PageRequest(pageIndex, count, Sort.Direction.DESC, "lastModificationDate")).getContent());
 	}
+
 }

@@ -14,8 +14,11 @@ import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.domain.Quote;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
+import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
+import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.model.dto.QuoteDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 
@@ -83,17 +86,16 @@ public class Mapper {
 	}
 
 	/**
-	 * Převede {@link ContentNode} na {@link ContentNodeDTO}, používá se pro
-	 * homePage recents přehledy, tam je totiž vyžadováno i mapování kategorie
+	 * Převede {@link ContentNode} na {@link ContentNodeOverviewDTO}
 	 * 
 	 * @param e
 	 * @return
 	 */
-	public ContentNodeDTO mapContentNodeForRecentsOverview(ContentNode e) {
+	public ContentNodeOverviewDTO mapContentNodeOverview(ContentNode e) {
 		if (e == null)
 			return null;
 
-		ContentNodeDTO contentNodeDTO = new ContentNodeDTO();
+		ContentNodeOverviewDTO contentNodeDTO = new ContentNodeOverviewDTO();
 
 		contentNodeDTO.setAuthor(map(e.getAuthor()));
 		contentNodeDTO.setContentID(e.getContentId());
@@ -104,35 +106,10 @@ public class Mapper {
 		contentNodeDTO.setName(e.getName());
 		contentNodeDTO.setPublicated(e.getPublicated());
 
-		NodeDTO nodeDTO = new NodeDTO();
+		NodeOverviewDTO nodeDTO = new NodeOverviewDTO();
 		nodeDTO.setId(e.getParent().getId());
 		nodeDTO.setName(e.getParent().getName());
 		contentNodeDTO.setParent(nodeDTO);
-
-		return contentNodeDTO;
-	}
-
-	/**
-	 * Převede {@link ContentNode} na {@link ContentNodeDTO}, používá se pro
-	 * přehled v kategoriích, kde není potřeba mapovat kategorii contentNode
-	 * 
-	 * @param e
-	 * @return
-	 */
-	public ContentNodeDTO mapContentNodeForOverview(ContentNode e) {
-		if (e == null)
-			return null;
-
-		ContentNodeDTO contentNodeDTO = new ContentNodeDTO();
-
-		contentNodeDTO.setAuthor(map(e.getAuthor()));
-		contentNodeDTO.setContentID(e.getContentId());
-		contentNodeDTO.setContentReaderID(e.getContentReaderId());
-		contentNodeDTO.setCreationDate(e.getCreationDate());
-		contentNodeDTO.setId(e.getId());
-		contentNodeDTO.setLastModificationDate(e.getLastModificationDate());
-		contentNodeDTO.setName(e.getName());
-		contentNodeDTO.setPublicated(e.getPublicated());
 
 		return contentNodeDTO;
 	}
@@ -164,51 +141,19 @@ public class Mapper {
 		return contentNodeDTO;
 	}
 
-	public ContentNodeDTO map(ContentNode e) {
-		if (e == null)
-			return null;
-
-		ContentNodeDTO contentNodeDTO = mapContentNodeForRecentsOverview(e);
-		contentNodeDTO.setContentTags(mapContentTagCollectionForOverview(e.getContentTags()));
-
-		return contentNodeDTO;
-	}
-
 	/**
 	 * Převede set {@link ContentNode} na list {@link ContentNodeDTO}
 	 * 
 	 * @param contentNodes
 	 * @return
 	 */
-	public List<ContentNodeDTO> mapContentNodeCollection(Collection<ContentNode> contentNodes) {
+	public List<ContentNodeOverviewDTO> mapContentNodeOverviewCollection(Collection<ContentNode> contentNodes) {
 		if (contentNodes == null)
 			return null;
 
-		List<ContentNodeDTO> contentNodeDTOs = new ArrayList<ContentNodeDTO>();
+		List<ContentNodeOverviewDTO> contentNodeDTOs = new ArrayList<ContentNodeOverviewDTO>();
 		for (ContentNode contentNode : contentNodes) {
-			contentNodeDTOs.add(map(contentNode));
-		}
-		return contentNodeDTOs;
-	}
-
-	public List<ContentNodeDTO> mapContentNodesForOverview(Collection<ContentNode> contentNodes) {
-		if (contentNodes == null)
-			return null;
-
-		List<ContentNodeDTO> contentNodeDTOs = new ArrayList<ContentNodeDTO>();
-		for (ContentNode contentNode : contentNodes) {
-			contentNodeDTOs.add(mapContentNodeForOverview(contentNode));
-		}
-		return contentNodeDTOs;
-	}
-
-	public List<ContentNodeDTO> mapContentNodesForRecentsOverview(Collection<ContentNode> contentNodes) {
-		if (contentNodes == null)
-			return null;
-
-		List<ContentNodeDTO> contentNodeDTOs = new ArrayList<ContentNodeDTO>();
-		for (ContentNode contentNode : contentNodes) {
-			contentNodeDTOs.add(mapContentNodeForRecentsOverview(contentNode));
+			contentNodeDTOs.add(mapContentNodeOverview(contentNode));
 		}
 		return contentNodeDTOs;
 	}
@@ -240,7 +185,7 @@ public class Mapper {
 
 		contentTagDTO.setId(e.getId());
 		contentTagDTO.setName(e.getName());
-		contentTagDTO.setContentNodes(mapContentNodeCollection(e.getContentNodes()));
+		contentTagDTO.setContentNodes(mapContentNodeOverviewCollection(e.getContentNodes()));
 
 		return contentTagDTO;
 	}
@@ -285,7 +230,7 @@ public class Mapper {
 	 * @param e
 	 * @return
 	 */
-	public NodeDTO mapNodeForDetailPage(Node e) {
+	public NodeDTO mapNodeForDetail(Node e) {
 		if (e == null)
 			return null;
 
@@ -294,7 +239,7 @@ public class Mapper {
 		nodeDTO.setId(e.getId());
 		nodeDTO.setName(e.getName());
 		nodeDTO.setParent(mapNodeForBreadcrumb(e.getParent()));
-		nodeDTO.setContentNodes(mapContentNodesForOverview(e.getContentNodes()));
+		nodeDTO.setContentNodes(mapContentNodeOverviewCollection(e.getContentNodes()));
 		nodeDTO.setSubNodes(mapNodesForOverview(e.getSubNodes()));
 
 		return nodeDTO;
@@ -304,11 +249,11 @@ public class Mapper {
 	 * Pro breadcrumb je potřeba id, název, ale navíc i rekurzivně to samé pro
 	 * parenta
 	 */
-	private NodeDTO mapNodeForBreadcrumb(Node e) {
+	private NodeBreadcrumbDTO mapNodeForBreadcrumb(Node e) {
 		if (e == null)
 			return null;
 
-		NodeDTO nodeDTO = new NodeDTO();
+		NodeBreadcrumbDTO nodeDTO = new NodeBreadcrumbDTO();
 
 		nodeDTO.setId(e.getId());
 		nodeDTO.setName(e.getName());

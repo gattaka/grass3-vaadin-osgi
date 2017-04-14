@@ -70,11 +70,6 @@ public interface IPhotogalleryFacade {
 	public PhotogalleryDTO getPhotogalleryForDetail(Long id);
 
 	/**
-	 * Získá všechny galerie pro přehled
-	 */
-	public List<PhotogalleryDTO> getAllPhotogalleriesForOverview();
-
-	/**
 	 * Získá všechny galerie a namapuje je pro použití při vyhledávání
 	 */
 	public List<PhotogalleryDTO> getAllPhotogalleriesForSearch();
@@ -123,7 +118,6 @@ public interface IPhotogalleryFacade {
 	 */
 	public void tryDeleteSlideshowImage(File file, PhotogalleryDTO photogalleryDTO);
 
-	
 	/**
 	 * Pokusí se smazat preview verzi od předaného videa
 	 * 

@@ -11,6 +11,11 @@ import java.util.List;
 public class ContentTagDTO implements Comparable<ContentTagDTO> {
 
 	/**
+	 * DB identifikátor
+	 */
+	private Long id;
+
+	/**
 	 * Název tagu
 	 */
 	private String name;
@@ -18,17 +23,12 @@ public class ContentTagDTO implements Comparable<ContentTagDTO> {
 	/**
 	 * Obsahy tagu
 	 */
-	private List<ContentNodeDTO> contentNodes;
+	private List<ContentNodeOverviewDTO> contentNodes;
 
 	/**
 	 * Počet obsahů k tagu
 	 */
 	private int contentNodesCount;
-
-	/**
-	 * DB identifikátor
-	 */
-	private Long id;
 
 	public ContentTagDTO() {
 	}
@@ -53,11 +53,11 @@ public class ContentTagDTO implements Comparable<ContentTagDTO> {
 		this.name = name;
 	}
 
-	public List<ContentNodeDTO> getContentNodes() {
+	public List<ContentNodeOverviewDTO> getContentNodes() {
 		return contentNodes;
 	}
 
-	public void setContentNodes(List<ContentNodeDTO> contentNodes) {
+	public void setContentNodes(List<ContentNodeOverviewDTO> contentNodes) {
 		this.contentNodes = contentNodes;
 	}
 

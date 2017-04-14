@@ -28,7 +28,7 @@ import cz.gattserver.grass3.config.IConfigurationService;
 import cz.gattserver.grass3.facades.INodeFacade;
 import cz.gattserver.grass3.facades.IUserFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
@@ -145,8 +145,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		}
 
 		if (photogallery.getContentNode().isPublicated()
-				|| (getUser() != null && (photogallery.getContentNode().getAuthor().equals(getUser()) || getUser()
-						.getRoles().contains(Role.ADMIN)))) {
+				|| (getUser() != null && (photogallery.getContentNode().getAuthor().equals(getUser())
+						|| getUser().getRoles().contains(Role.ADMIN)))) {
 		} else {
 			showError403();
 			return;
@@ -355,7 +355,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		if (pgSelectedVideoItemId != null) {
 			if (PGUtils.isVideo(pgSelectedVideoItemId)) {
 				showVideo(pgSelectedVideoItemId, getItemURL(pgSelectedVideoItemId));
-			} 
+			}
 		}
 	}
 
@@ -427,8 +427,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			itemLayout.addComponent(embedded);
 			itemLayout.setComponentAlignment(embedded, Alignment.MIDDLE_CENTER);
 
-			String itemId = videos ? miniature.getName().substring(0, miniature.getName().length() - 4) : miniature
-					.getName();
+			String itemId = videos ? miniature.getName().substring(0, miniature.getName().length() - 4)
+					: miniature.getName();
 
 			// odeber ".png"
 			final String url = getItemURL(itemId);
@@ -470,7 +470,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			@Override
 			protected void onConfirm(ClickEvent event) {
 
-				NodeDTO node = photogallery.getContentNode().getParent();
+				NodeBreadcrumbDTO node = photogallery.getContentNode().getParent();
 
 				final String category = getPageURL(categoryPageFactory,
 						URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()));

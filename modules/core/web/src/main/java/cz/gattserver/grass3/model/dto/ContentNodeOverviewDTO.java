@@ -2,15 +2,14 @@ package cz.gattserver.grass3.model.dto;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
 
 /**
- * Objekt sloužící pro přepravu dat mezi fasádou a view třídami
+ * Objekt sloužící pro přepravu dat mezi fasádou a view třídami, overview
  * 
  * @author gatt
  * 
  */
-public class ContentNodeDTO implements Serializable, IAuthorizable {
+public class ContentNodeOverviewDTO implements Serializable, IAuthorizable {
 
 	private static final long serialVersionUID = 723375154665160018L;
 
@@ -32,7 +31,7 @@ public class ContentNodeDTO implements Serializable, IAuthorizable {
 	/**
 	 * nadřazený uzel (kategorie ve které obsah je)
 	 */
-	private NodeBreadcrumbDTO parent;
+	private NodeOverviewDTO parent;
 
 	/**
 	 * Kdy byl obsah vytvořen
@@ -48,11 +47,6 @@ public class ContentNodeDTO implements Serializable, IAuthorizable {
 	 * Je obsah ve fázi příprav, nebo už má být publikován ?
 	 */
 	private Boolean publicated = true;
-
-	/**
-	 * Tagy
-	 */
-	private Set<ContentTagDTO> contentTags;
 
 	/**
 	 * Kdo ho vytvořil
@@ -120,11 +114,11 @@ public class ContentNodeDTO implements Serializable, IAuthorizable {
 		this.name = name;
 	}
 
-	public NodeBreadcrumbDTO getParent() {
+	public NodeOverviewDTO getParent() {
 		return parent;
 	}
 
-	public void setParent(NodeBreadcrumbDTO parent) {
+	public void setParent(NodeOverviewDTO parent) {
 		this.parent = parent;
 	}
 
@@ -134,14 +128,6 @@ public class ContentNodeDTO implements Serializable, IAuthorizable {
 
 	public void setAuthor(UserInfoDTO author) {
 		this.author = author;
-	}
-
-	public Set<ContentTagDTO> getContentTags() {
-		return contentTags;
-	}
-
-	public void setContentTags(Set<ContentTagDTO> contentTags) {
-		this.contentTags = contentTags;
 	}
 
 }

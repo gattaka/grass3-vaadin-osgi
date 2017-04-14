@@ -13,8 +13,8 @@ import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
 
 import cz.gattserver.grass3.IServiceHolder;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
+import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.security.ICoreACL;
 import cz.gattserver.grass3.service.IContentService;
@@ -88,10 +88,10 @@ public class ContentsTableFactory {
 		 * @return kolik opravdu ACL umožnilo zobrazit položek
 		 */
 		@SuppressWarnings("unchecked")
-		public int populateTable(Collection<ContentNodeDTO> contentList, AbstractGrassPage page) {
+		public int populateTable(Collection<ContentNodeOverviewDTO> contentList, AbstractGrassPage page) {
 
 			int displayed = 0;
-			
+
 			IndexedContainer container = new IndexedContainer();
 			container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
 			container.addContainerProperty(ColumnId.NÁZEV, ComparableLink.class, null);
@@ -101,8 +101,8 @@ public class ContentsTableFactory {
 			container.addContainerProperty(ColumnId.AUTOR, String.class, "");
 			container.addContainerProperty(ColumnId.DATUM_VYTVOŘENÍ, ComparableStringDate.class,
 					new ComparableStringDate(null));
-			container.addContainerProperty(ColumnId.DATUM_ÚPRAVY, ComparableStringDate.class, new ComparableStringDate(
-					null));
+			container.addContainerProperty(ColumnId.DATUM_ÚPRAVY, ComparableStringDate.class,
+					new ComparableStringDate(null));
 			setContainerDataSource(container);
 			setColumnWidth(ColumnId.IKONA, 16);
 			setColumnHeader(ColumnId.IKONA, "");
@@ -110,11 +110,11 @@ public class ContentsTableFactory {
 			setColumnHeader(ColumnId.DATUM_ÚPRAVY, "DATUM ÚPRAVY");
 
 			// položky
-			for (ContentNodeDTO contentNode : contentList) {
+			for (ContentNodeOverviewDTO contentNode : contentList) {
 
 				if (coreACL.canShowContent(contentNode, page.getUser()) == false)
 					continue;
-				
+
 				displayed++;
 
 				// jaká prohlížecí služba odpovídá tomuto obsahu
@@ -129,23 +129,20 @@ public class ContentsTableFactory {
 
 				Item item = addItem(contentNode);
 				item.getItemProperty(ColumnId.NÁZEV).setValue(
-						new ComparableLink(contentNode.getName(), page.getPageResource(
-								pageFactory,
-								URLIdentifierUtils.createURLIdentifier(contentNode.getContentID(),
-										contentNode.getName()))));
+						new ComparableLink(contentNode.getName(), page.getPageResource(pageFactory, URLIdentifierUtils
+								.createURLIdentifier(contentNode.getContentID(), contentNode.getName()))));
 				if (categoryColumn) {
-					NodeDTO contentParent = contentNode.getParent();
-					item.getItemProperty(ColumnId.KATEGORIE).setValue(
-							new ComparableLink(contentParent.getName(), page.getPageResource(
-									categoryPageFactory,
-									URLIdentifierUtils.createURLIdentifier(contentParent.getId(),
-											contentParent.getName()))));
+					NodeOverviewDTO contentParent = contentNode.getParent();
+					item.getItemProperty(ColumnId.KATEGORIE)
+							.setValue(new ComparableLink(contentParent.getName(),
+									page.getPageResource(categoryPageFactory, URLIdentifierUtils
+											.createURLIdentifier(contentParent.getId(), contentParent.getName()))));
 				}
 				item.getItemProperty(ColumnId.AUTOR).setValue(contentNode.getAuthor().getName());
-				item.getItemProperty(ColumnId.DATUM_VYTVOŘENÍ).setValue(
-						new ComparableStringDate(contentNode.getCreationDate()));
-				item.getItemProperty(ColumnId.DATUM_ÚPRAVY).setValue(
-						new ComparableStringDate(contentNode.getLastModificationDate()));
+				item.getItemProperty(ColumnId.DATUM_VYTVOŘENÍ)
+						.setValue(new ComparableStringDate(contentNode.getCreationDate()));
+				item.getItemProperty(ColumnId.DATUM_ÚPRAVY)
+						.setValue(new ComparableStringDate(contentNode.getLastModificationDate()));
 
 				Embedded icon = new Embedded();
 				if (contentService == null) {

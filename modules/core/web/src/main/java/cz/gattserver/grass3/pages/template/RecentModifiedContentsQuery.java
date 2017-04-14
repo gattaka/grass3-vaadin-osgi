@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.vaadin.addons.lazyquerycontainer.QueryDefinition;
 
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
+import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 
 public class RecentModifiedContentsQuery extends LazyContentsQuery {
 
@@ -21,7 +21,7 @@ public class RecentModifiedContentsQuery extends LazyContentsQuery {
 	}
 
 	@Override
-	protected List<ContentNodeDTO> getBeans(int page, int count) {
+	protected List<ContentNodeOverviewDTO> getBeans(int page, int count) {
 		return new ArrayList<>(contentNodeFacade.getRecentModifiedForOverview(page, count));
 	}
 

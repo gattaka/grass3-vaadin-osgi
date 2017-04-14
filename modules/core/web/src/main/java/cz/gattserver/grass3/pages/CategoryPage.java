@@ -2,7 +2,6 @@ package cz.gattserver.grass3.pages;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -19,7 +18,8 @@ import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.facades.IContentNodeFacade;
 import cz.gattserver.grass3.facades.INodeFacade;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
+import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
+import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.pages.template.ContentsTableFactory;
@@ -154,7 +154,7 @@ public class CategoryPage extends OneColumnPage {
 
 	}
 
-	private void createBreadcrumb(VerticalLayout layout, NodeDTO node) {
+	private void createBreadcrumb(VerticalLayout layout, NodeBreadcrumbDTO node) {
 
 		Breadcrumb breadcrumb = new Breadcrumb();
 		layout.addComponent(breadcrumb);
@@ -162,7 +162,7 @@ public class CategoryPage extends OneColumnPage {
 		// pokud zjistím, že cesta neodpovídá, vyhodím 302 (přesměrování) na
 		// aktuální polohu cílové kategorie
 		List<BreadcrumbElement> breadcrumbElements = new ArrayList<BreadcrumbElement>();
-		NodeDTO parent = node;
+		NodeBreadcrumbDTO parent = node;
 		while (true) {
 
 			// nejprve zkus zjistit, zda předek existuje
@@ -237,7 +237,7 @@ public class CategoryPage extends OneColumnPage {
 		VerticalLayout contentsLayout = new VerticalLayout();
 		ContentsTable contentsTable = contentsTableFactory.createContentsTableWithoutCategoryColumn();
 
-		List<ContentNodeDTO> contentNodes = node.getContentNodes();
+		List<ContentNodeOverviewDTO> contentNodes = node.getContentNodes();
 		if (contentNodes == null)
 			showError500();
 

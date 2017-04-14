@@ -92,7 +92,8 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	}
 
 	/**
-	 * Uloží rozpracovaný článek - nepřekládá ho, jenom uloží obsah polí v editoru
+	 * Uloží rozpracovaný článek - nepřekládá ho, jenom uloží obsah polí v
+	 * editoru
 	 * 
 	 * @param name
 	 *            název článku
@@ -194,7 +195,8 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 *            kategorie do kteér se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
-	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak {@code null}
+	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
+	 *         {@code null}
 	 */
 	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, NodeDTO category,
 			UserInfoDTO author, String contextRoot) {
@@ -247,19 +249,6 @@ public class ArticleFacadeImpl implements IArticleFacade {
 		if (articles == null)
 			return null;
 		List<ArticleDTO> articleDTOs = articlesMapper.mapArticlesForReprocess(articles);
-		return articleDTOs;
-	}
-
-	/**
-	 * Získá všechny články pro přehled
-	 * 
-	 * @return
-	 */
-	public List<ArticleDTO> getAllArticlesForOverview() {
-		List<Article> articles = articleRepository.findAll();
-		if (articles == null)
-			return null;
-		List<ArticleDTO> articleDTOs = articlesMapper.mapArticlesForOverview(articles);
 		return articleDTOs;
 	}
 

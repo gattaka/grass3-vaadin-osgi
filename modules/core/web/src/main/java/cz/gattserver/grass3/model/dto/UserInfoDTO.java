@@ -151,4 +151,9 @@ public class UserInfoDTO implements UserDetails {
 		return this.getRoles();
 	}
 
+	@Override
+	public String toString() {
+		return name;
+	}
+
 }

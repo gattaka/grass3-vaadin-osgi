@@ -19,7 +19,8 @@ public interface IArticleFacade {
 	public ArticleDTO processPreview(String text, String contextRoot);
 
 	/**
-	 * Uloží rozpracovaný článek - nepřekládá ho, jenom uloží obsah polí v editoru
+	 * Uloží rozpracovaný článek - nepřekládá ho, jenom uloží obsah polí v
+	 * editoru
 	 * 
 	 * @param name
 	 *            název článku
@@ -77,7 +78,8 @@ public interface IArticleFacade {
 	 *            kategorie do které se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
-	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak {@code null}
+	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
+	 *         {@code null}
 	 */
 	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, NodeDTO category,
 			UserInfoDTO author, String contextRoot);
@@ -95,13 +97,6 @@ public interface IArticleFacade {
 	 * Získá všechny články pro přegenerování
 	 */
 	public List<ArticleDTO> getAllArticlesForReprocess();
-
-	/**
-	 * Získá všechny články pro přehled
-	 * 
-	 * @return
-	 */
-	public List<ArticleDTO> getAllArticlesForOverview();
 
 	/**
 	 * Získá všechny články a namapuje je pro použití při vyhledávání

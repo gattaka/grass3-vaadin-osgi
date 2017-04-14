@@ -61,34 +61,6 @@ public class ArticlesMapper {
 	}
 
 	/**
-	 * Převede {@link Article} na {@link ArticleDTO} určený pro přehled
-	 * 
-	 * @param article
-	 * @return
-	 */
-	public ArticleDTO mapArticleForOverview(Article article) {
-		ArticleDTO articleDTO = new ArticleDTO();
-		articleDTO.setContentNode(mapper.mapContentNodeForOverview(article.getContentNode()));
-		articleDTO.setId(article.getId());
-		return articleDTO;
-	}
-
-	/**
-	 * Převede kolekci {@link Article} na kolekci {@link ArticleDTO}
-	 * 
-	 * @param articles
-	 *            vstupní kolekce entit {@link Article}
-	 * @return
-	 */
-	public List<ArticleDTO> mapArticlesForOverview(List<Article> articles) {
-		List<ArticleDTO> articleDTOs = new ArrayList<ArticleDTO>();
-		for (Article article : articles) {
-			articleDTOs.add(mapArticleForOverview(article));
-		}
-		return articleDTOs;
-	}
-
-	/**
 	 * Převede kolekci {@link Article} na kolekci {@link ArticleDTO} pro
 	 * přegenerování článku
 	 * 

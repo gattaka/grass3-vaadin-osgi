@@ -11,7 +11,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.facades.IContentTagFacade;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
+import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.pages.template.BasePage;
 import cz.gattserver.grass3.pages.template.ContentsTableFactory;
@@ -47,7 +47,7 @@ public class TagPage extends BasePage {
 
 		tagLabelPrefix = "<h2>Obsahy označené tagem: ";
 		tagLabelSuffix = "</h2>";
-		
+
 		ContentsTable tagContentsTable = contentsTableFactory.createContentsTable();
 
 		String tagName = getRequest().getAnalyzer().getNextPathToken();
@@ -81,7 +81,7 @@ public class TagPage extends BasePage {
 		contentNodesLayout.addComponent(tagLabel = new Label());
 
 		int nonPublicatedContents = 0;
-		for (ContentNodeDTO content : tag.getContentNodes()) {
+		for (ContentNodeOverviewDTO content : tag.getContentNodes()) {
 			if (coreACL.canShowContent(content, getUser()) == false)
 				nonPublicatedContents++;
 		}

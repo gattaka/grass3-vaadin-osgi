@@ -6,13 +6,14 @@ import java.util.List;
 
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
+import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 
 public interface IContentNodeFacade {
 
 	/**
 	 * Získá set oblíbených obsahů daného uživatele
 	 */
-	public List<ContentNodeDTO> getUserFavouriteContents(Long user);
+	public List<ContentNodeOverviewDTO> getUserFavouriteContents(Long user);
 
 	/**
 	 * Získá set naposledy přidaných obsahů
@@ -20,7 +21,7 @@ public interface IContentNodeFacade {
 	 * @param size
 	 * @return
 	 */
-	public List<ContentNodeDTO> getRecentAddedForOverview(int maxResults);
+	public List<ContentNodeOverviewDTO> getRecentAddedForOverview(int maxResults);
 
 	/**
 	 * Získá set naposledy upravených obsahů
@@ -28,15 +29,11 @@ public interface IContentNodeFacade {
 	 * @param size
 	 * @return
 	 */
-	public List<ContentNodeDTO> getRecentModifiedForOverview(int maxResults);
+	public List<ContentNodeOverviewDTO> getRecentModifiedForOverview(int maxResults);
 
 	/**
-	 * Získá set obsahů dle kategorie
-	 */
-	public List<ContentNodeDTO> getContentNodesByNode(Long node);
-
-	/**
-	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node - zkrácená verze metody pro obsah, jež nemá tagy
+	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node -
+	 * zkrácená verze metody pro obsah, jež nemá tagy
 	 * 
 	 * @param contentModule
 	 *            identifikátor modulu obsahů
@@ -50,7 +47,8 @@ public interface IContentNodeFacade {
 	 *            kategorie do kteér se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
-	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen, nebo
+	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
+	 *         nebo
 	 */
 	public ContentNode save(String contentModule, Long contentNode, String name, boolean publicated, Long category,
 			Long author);
@@ -72,7 +70,8 @@ public interface IContentNodeFacade {
 	 *            kategorie do které se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
-	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen, nebo
+	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
+	 *         nebo
 	 */
 	public ContentNode save(String contentModule, Long contentNode, String name, Collection<String> tags,
 			boolean publicated, Long category, Long author);
@@ -141,7 +140,7 @@ public interface IContentNodeFacade {
 	 * @param pageIndex
 	 * @param count
 	 */
-	public List<ContentNodeDTO> getRecentAddedForOverview(int pageIndex, int count);
+	public List<ContentNodeOverviewDTO> getRecentAddedForOverview(int pageIndex, int count);
 
 	/**
 	 * Získá stránku nedávno upravených obsahů (pro LazyQueryContainer)
@@ -149,6 +148,6 @@ public interface IContentNodeFacade {
 	 * @param pageIndex
 	 * @param count
 	 */
-	public List<ContentNodeDTO> getRecentModifiedForOverview(int pageIndex, int count);
+	public List<ContentNodeOverviewDTO> getRecentModifiedForOverview(int pageIndex, int count);
 
 }

@@ -22,7 +22,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.facades.IContentNodeFacade;
 import cz.gattserver.grass3.facades.IContentTagFacade;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
+import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
@@ -90,7 +90,7 @@ public class HomePage extends BasePage {
 			favouritesLayout.addComponent(favouritesContentsTable);
 			favouritesContentsTable.setWidth("100%");
 			pagelayout.addComponent(favouritesLayout);
-			List<ContentNodeDTO> contentNodes = contentNodeFacade.getUserFavouriteContents(user.getId());
+			List<ContentNodeOverviewDTO> contentNodes = contentNodeFacade.getUserFavouriteContents(user.getId());
 			favouritesContentsTable.populateTable(contentNodes, this);
 		}
 
@@ -159,8 +159,8 @@ public class HomePage extends BasePage {
 		});
 
 		/**
-		 * Údaj o poslední příčce a velikosti, která jí odpovídala - dle toho budu vědět kdy posunout ohodnocovací
-		 * koeficient
+		 * Údaj o poslední příčce a velikosti, která jí odpovídala - dle toho
+		 * budu vědět kdy posunout ohodnocovací koeficient
 		 */
 		int lastSize = contentTags.isEmpty() ? 1 : contentTags.get(0).getContentNodesCount();
 		int lastFontSize = MIN_FONT_SIZE_TAG_CLOUD;
@@ -168,15 +168,16 @@ public class HomePage extends BasePage {
 		/**
 		 * O(n)
 		 * 
-		 * Potřebuju aby bylo možné nějak zavolat svůj počet obsahů a zpátky se vrátila velikost fontu, reps. kategorie
-		 * velikosti.
+		 * Potřebuju aby bylo možné nějak zavolat svůj počet obsahů a zpátky se
+		 * vrátila velikost fontu, reps. kategorie velikosti.
 		 */
 		final HashMap<Integer, Integer> sizeTable = new HashMap<Integer, Integer>();
 		for (ContentTagDTO contentTag : contentTags) {
 
 			/**
-			 * Spočítej jeho fontsize - pokud jsem vyšší, pak přihoď velikost koef a ulož můj stav aby ostatní věděli,
-			 * jestli mají zvyšovat, nebo zůstat, protože mají stejnou velikost
+			 * Spočítej jeho fontsize - pokud jsem vyšší, pak přihoď velikost
+			 * koef a ulož můj stav aby ostatní věděli, jestli mají zvyšovat,
+			 * nebo zůstat, protože mají stejnou velikost
 			 */
 			if (contentTag.getContentNodesCount() > lastSize) {
 				lastSize = contentTag.getContentNodesCount();
@@ -208,16 +209,14 @@ public class HomePage extends BasePage {
 				if (oldChar != 0) {
 					createTags(sb, tagCloudLayout);
 				}
-				tagCloudLayout.addComponent(new Label("<span class=\"tag-letter\">" + currChar + "</span>",
-						ContentMode.HTML));
+				tagCloudLayout.addComponent(
+						new Label("<span class=\"tag-letter\">" + currChar + "</span>", ContentMode.HTML));
 				sb = new StringBuilder();
 				oldChar = currChar;
 			}
 
 			int size = sizeTable.get(contentTag.getContentNodesCount());
-			sb.append("<a title='"
-					+ contentTag.getContentNodesCount()
-					+ "'href='"
+			sb.append("<a title='" + contentTag.getContentNodesCount() + "'href='"
 					+ getPageURL(tagPageFactory,
 							URLIdentifierUtils.createURLIdentifier(contentTag.getId(), contentTag.getName()))
 					+ "' style='font-size:" + size + "pt'>" + contentTag.getName() + "</a> ");

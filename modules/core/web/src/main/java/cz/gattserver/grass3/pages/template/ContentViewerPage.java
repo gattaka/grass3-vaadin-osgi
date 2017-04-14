@@ -23,7 +23,7 @@ import cz.gattserver.grass3.facades.INodeFacade;
 import cz.gattserver.grass3.facades.IUserFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
-import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.security.ICoreACL;
@@ -93,9 +93,8 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		contentCreationDateNameLabel = new Label(dateFormat.format(content.getCreationDate()));
 
-		contentLastModificationDateLabel = new Label(
-				content.getLastModificationDate() == null ? "<em>-neupraveno-</em>" : dateFormat.format(content
-						.getLastModificationDate()));
+		contentLastModificationDateLabel = new Label(content.getLastModificationDate() == null ? "<em>-neupraveno-</em>"
+				: dateFormat.format(content.getLastModificationDate()));
 		contentLastModificationDateLabel.setContentMode(ContentMode.HTML);
 
 		tagsListLayout.removeAllComponents();
@@ -282,7 +281,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		/**
 		 * kategorie
 		 */
-		NodeDTO parent = content.getParent();
+		NodeBreadcrumbDTO parent = content.getParent();
 		while (true) {
 
 			// nejprve zkus zjistit, zda předek existuje

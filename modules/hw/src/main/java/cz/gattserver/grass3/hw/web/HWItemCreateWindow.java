@@ -1,8 +1,11 @@
 package cz.gattserver.grass3.hw.web;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -20,7 +23,6 @@ import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.HWItemState;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
@@ -32,18 +34,19 @@ public abstract class HWItemCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
+	@Autowired
 	private IHWFacade hwFacade;
 
 	/**
 	 * @param triggerComponent
-	 *            volající komponenta (ta, která má být po dobu zobrazení okna zablokována)
+	 *            volající komponenta (ta, která má být po dobu zobrazení okna
+	 *            zablokována)
 	 * @param fixItemId
-	 *            opravuji údaje existující položky, nebo vytvářím novou ( {@code null}) ?
+	 *            opravuji údaje existující položky, nebo vytvářím novou (
+	 *            {@code null}) ?
 	 */
 	public HWItemCreateWindow(final Component triggerComponent, final Long fixItemId) {
 		super(fixItemId == null ? "Založení nové položky HW" : "Oprava údajů existující položky HW");
-
-		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
 		triggerComponent.setEnabled(false);
 
@@ -53,7 +56,7 @@ public abstract class HWItemCreateWindow extends WebWindow {
 		} else {
 			hwItemDTO = new HWItemDTO();
 			hwItemDTO.setName("");
-			hwItemDTO.setPrice(0);
+			hwItemDTO.setPrice(new BigDecimal(0));
 			hwItemDTO.setWarrantyYears(0);
 		}
 
@@ -98,8 +101,8 @@ public abstract class HWItemCreateWindow extends WebWindow {
 		stateComboBox.setWidth("100%");
 		stateComboBox.setNullSelectionAllowed(false);
 		stateComboBox.setImmediate(true);
-		stateComboBox.setContainerDataSource(new BeanItemContainer<HWItemState>(HWItemState.class, Arrays
-				.asList(HWItemState.values())));
+		stateComboBox.setContainerDataSource(
+				new BeanItemContainer<HWItemState>(HWItemState.class, Arrays.asList(HWItemState.values())));
 		stateComboBox.setItemCaptionPropertyId("name");
 		fieldGroup.bind(stateComboBox, "state");
 		winLayout.addComponent(stateComboBox, 1, 1);
@@ -118,8 +121,8 @@ public abstract class HWItemCreateWindow extends WebWindow {
 
 		Set<HWItemTypeDTO> types = hwFacade.getAllHWTypes();
 
-		BeanItemContainer<HWItemTypeDTO> typeSelectContainer = new BeanItemContainer<HWItemTypeDTO>(
-				HWItemTypeDTO.class, types);
+		BeanItemContainer<HWItemTypeDTO> typeSelectContainer = new BeanItemContainer<HWItemTypeDTO>(HWItemTypeDTO.class,
+				types);
 		final TwinColSelect typeSelect = new TwinColSelect("Typy", typeSelectContainer);
 		typeSelect.setWidth("100%");
 		typeSelect.setRows(7);

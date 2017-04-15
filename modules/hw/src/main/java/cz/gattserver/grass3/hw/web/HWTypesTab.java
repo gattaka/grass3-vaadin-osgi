@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.hw.web;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.BeanContainer;
@@ -15,6 +17,7 @@ import com.vaadin.ui.Window;
 
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.facade.IHWFacade;
+import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 
@@ -22,7 +25,9 @@ public class HWTypesTab extends VerticalLayout {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
+	@Autowired
 	private IHWFacade hwFacade;
+
 	final Table table = new Table();
 	private BeanContainer<Long, HWItemTypeDTO> container;
 
@@ -56,27 +61,26 @@ public class HWTypesTab extends VerticalLayout {
 		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table.getContainerDataSource();
 		BeanItem<?> item = cont.getItem(table.getValue());
 		final HWItemTypeDTO hwItemType = (HWItemTypeDTO) item.getBean();
-		UI.getCurrent().addWindow(
-				new ConfirmWindow("Opravdu smazat '" + hwItemType.getName()
-						+ "' (typ bude odebrán od všech označených položek HW) ?") {
+		UI.getCurrent().addWindow(new ConfirmWindow(
+				"Opravdu smazat '" + hwItemType.getName() + "' (typ bude odebrán od všech označených položek HW) ?") {
 
-					private static final long serialVersionUID = -422763987707688597L;
+			private static final long serialVersionUID = -422763987707688597L;
 
-					@Override
-					protected void onConfirm(ClickEvent event) {
-						if (hwFacade.deleteHWItemType(hwItemType)) {
-							populateContainer();
-						} else {
-							UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
-						}
-					}
+			@Override
+			protected void onConfirm(ClickEvent event) {
+				if (hwFacade.deleteHWItemType(hwItemType)) {
+					populateContainer();
+				} else {
+					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
+				}
+			}
 
-					@Override
-					public void close() {
-						HWTypesTab.this.setEnabled(true);
-						super.close();
-					}
-				});
+			@Override
+			public void close() {
+				HWTypesTab.this.setEnabled(true);
+				super.close();
+			}
+		});
 	}
 
 	private void populateContainer() {
@@ -84,9 +88,8 @@ public class HWTypesTab extends VerticalLayout {
 		container.addAll(hwFacade.getAllHWTypes());
 	}
 
-	public HWTypesTab(final IHWFacade hwFacade) {
-
-		this.hwFacade = hwFacade;
+	public HWTypesTab() {
+		SpringContextHelper.inject(this);
 
 		setSpacing(true);
 		setMargin(true);

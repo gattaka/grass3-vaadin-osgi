@@ -3,6 +3,8 @@ package cz.gattserver.grass3.hw.web;
 import java.io.File;
 import java.io.InputStream;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
@@ -16,7 +18,6 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.facade.IHWFacade;
 import cz.gattserver.grass3.template.MultiUpload;
@@ -28,14 +29,13 @@ public class HWItemImagesWindow extends WebWindow {
 
 	private static final long serialVersionUID = 8587632602779343179L;
 
+	@Autowired
 	private IHWFacade hwFacade;
 
 	final GridLayout listLayout = new GridLayout();
 
 	public HWItemImagesWindow(final HWItemDTO hwItem) {
 		super(hwItem.getName());
-
-		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
 		setWidth("882px");
 

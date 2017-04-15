@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.hw.dto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class HWItemDTO {
 	/**
 	 * Cena
 	 */
-	private Integer price;
+	private BigDecimal price;
 
 	/**
 	 * Stav hw - funkční, rozbitý, poruchový, bližší popis
@@ -140,11 +141,11 @@ public class HWItemDTO {
 		this.destructionDate = destructionDate;
 	}
 
-	public Integer getPrice() {
+	public BigDecimal getPrice() {
 		return price;
 	}
 
-	public void setPrice(Integer price) {
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 

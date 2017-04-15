@@ -12,6 +12,7 @@ import cz.gattserver.grass3.hw.domain.HWItem;
 import cz.gattserver.grass3.hw.domain.HWItemType;
 import cz.gattserver.grass3.hw.domain.ServiceNote;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
+import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 
@@ -37,7 +38,7 @@ public class HWMapper {
 		e.setName(dto.getName());
 		return e;
 	}
-	
+
 	public Set<HWItemTypeDTO> mapHWItemTypes(Collection<HWItemType> list) {
 		if (list == null)
 			return null;
@@ -94,13 +95,27 @@ public class HWMapper {
 		return dto;
 	}
 
-	public List<HWItemDTO> mapHWItems(Collection<HWItem> list) {
+	public HWItemOverviewDTO mapHWItemOverview(HWItem e) {
+		if (e == null)
+			return null;
+
+		HWItemOverviewDTO dto = new HWItemOverviewDTO();
+		dto.setId(e.getId());
+		dto.setName(e.getName());
+		dto.setUsedIn(mapHWItem(e.getUsedIn()));
+		dto.setPrice(e.getPrice());
+		dto.setPurchaseDate(e.getPurchaseDate());
+		dto.setState(e.getState());
+		return dto;
+	}
+
+	public List<HWItemOverviewDTO> mapHWItems(Collection<HWItem> list) {
 		if (list == null)
 			return null;
 
-		List<HWItemDTO> dtos = new ArrayList<HWItemDTO>();
+		List<HWItemOverviewDTO> dtos = new ArrayList<HWItemOverviewDTO>();
 		for (HWItem e : list) {
-			dtos.add(mapHWItem(e));
+			dtos.add(mapHWItemOverview(e));
 		}
 		return dtos;
 	}

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import cz.gattserver.grass3.hw.domain.HWItem;
 
-public interface HWItemRepository extends JpaRepository<HWItem, Long> {
+public interface HWItemRepository extends JpaRepository<HWItem, Long>, HWItemRepositoryCustom {
 
 	public List<HWItem> findByTypesId(Long id);
 

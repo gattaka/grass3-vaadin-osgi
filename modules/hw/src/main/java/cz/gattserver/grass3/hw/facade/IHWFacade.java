@@ -8,66 +8,77 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.domain.Pageable;
+
+import com.querydsl.core.types.OrderSpecifier;
+
+import cz.gattserver.grass3.hw.dto.HWFilterDTO;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
+import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 
 public interface IHWFacade {
 
-	public Set<HWItemTypeDTO> getAllHWTypes();
-	
-	public HWItemTypeDTO getHWItemType(Long fixTypeId);
+	Set<HWItemTypeDTO> getAllHWTypes();
 
-	public List<HWItemDTO> getAllHWItems();
+	HWItemTypeDTO getHWItemType(Long fixTypeId);
 
-	public List<HWItemDTO> getHWItemsByTypes(Collection<String> types);
+	List<HWItemOverviewDTO> getAllHWItems();
 
-	public List<HWItemDTO> getHWItemsAvailableForPart(HWItemDTO item);
+	List<HWItemOverviewDTO> getHWItemsByTypes(Collection<String> types);
 
-	public List<ServiceNoteDTO> getAllServiceNotes();
+	List<HWItemOverviewDTO> getHWItemsAvailableForPart(HWItemDTO item);
 
-	public boolean saveHWType(HWItemTypeDTO hwItemTypeDTO);
+	List<ServiceNoteDTO> getAllServiceNotes();
 
-	public boolean saveHWItem(HWItemDTO hwItemDTO);
+	boolean saveHWType(HWItemTypeDTO hwItemTypeDTO);
 
-	public boolean deleteHWItem(HWItemDTO hwItem);
+	boolean saveHWItem(HWItemDTO hwItemDTO);
 
-	public boolean addServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItem);
+	boolean deleteHWItem(HWItemDTO hwItem);
 
-	public boolean deleteHWItemType(HWItemTypeDTO hwItemType);
+	boolean addServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItem);
 
-	public HWItemDTO getHWItem(Long itemId);
+	boolean deleteHWItemType(HWItemTypeDTO hwItemType);
 
-	public List<HWItemDTO> getAllParts(Long usedInItemId);
+	HWItemDTO getHWItem(Long itemId);
 
-	public String getHWItemUploadDir(HWItemDTO item);
+	List<HWItemOverviewDTO> getAllParts(Long usedInItemId);
 
-	public boolean saveImagesFile(InputStream in, String fileName, HWItemDTO item);
+	String getHWItemUploadDir(HWItemDTO item);
 
-	public String getTmpDir();
+	boolean saveImagesFile(InputStream in, String fileName, HWItemDTO item);
 
-	public File getHWItemIconFile(HWItemDTO itemDTO);
+	String getTmpDir();
 
-	public boolean deleteHWItemIconFile(HWItemDTO hwItem);
+	File getHWItemIconFile(HWItemDTO itemDTO);
 
-	public OutputStream createHWItemIconOutputStream(String filename, HWItemDTO hwItem) throws FileNotFoundException;
+	boolean deleteHWItemIconFile(HWItemDTO hwItem);
 
-	public String getHWItemImagesUploadDir(HWItemDTO item);
+	OutputStream createHWItemIconOutputStream(String filename, HWItemDTO hwItem) throws FileNotFoundException;
 
-	public String getHWItemDocumentsUploadDir(HWItemDTO item);
+	String getHWItemImagesUploadDir(HWItemDTO item);
+
+	String getHWItemDocumentsUploadDir(HWItemDTO item);
 
 	boolean saveDocumentsFile(InputStream in, String fileName, HWItemDTO item);
 
-	public File[] getHWItemImagesFiles(HWItemDTO itemDTO);
+	File[] getHWItemImagesFiles(HWItemDTO itemDTO);
 
-	public boolean deleteHWItemFile(HWItemDTO hwItem, File file);
+	boolean deleteHWItemFile(HWItemDTO hwItem, File file);
 
-	public File[] getHWItemDocumentsFiles(HWItemDTO itemDTO);
+	File[] getHWItemDocumentsFiles(HWItemDTO itemDTO);
 
 	void modifyServiceNote(ServiceNoteDTO serviceNoteDTO);
 
-	public void deleteServiceNote(ServiceNoteDTO bean, HWItemDTO hwItem);
+	void deleteServiceNote(ServiceNoteDTO bean, HWItemDTO hwItem);
 
-	
+	/**
+	 * Zjistí počet HW položek dle filtru
+	 */
+	long countHWItems(HWFilterDTO filter);
+
+	List<HWItemOverviewDTO> getHWItems(HWFilterDTO filter, Pageable pageable, OrderSpecifier<?>[] order);
 
 }

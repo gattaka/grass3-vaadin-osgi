@@ -3,6 +3,8 @@ package cz.gattserver.grass3.hw.web;
 import java.util.Arrays;
 import java.util.Locale;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItemContainer;
@@ -17,8 +19,8 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
+import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.HWItemState;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.IHWFacade;
@@ -29,6 +31,7 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
+	@Autowired
 	private IHWFacade hwFacade;
 
 	private ServiceNoteDTO serviceNoteDTO;
@@ -40,8 +43,6 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 	public ServiceNoteCreateWindow(final Component triggerComponent, final HWItemDTO hwItem,
 			final ServiceNoteDTO fixNote) {
 		super(fixNote == null ? "Nový servisní záznam" : "Oprava existujícího servisního záznamu");
-
-		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
 		setWidth("320px");
 
@@ -73,8 +74,8 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 		ComboBox stateComboBox = new ComboBox("Stav");
 		stateComboBox.setNullSelectionAllowed(false);
 		stateComboBox.setImmediate(true);
-		stateComboBox.setContainerDataSource(new BeanItemContainer<HWItemState>(HWItemState.class, Arrays
-				.asList(HWItemState.values())));
+		stateComboBox.setContainerDataSource(
+				new BeanItemContainer<HWItemState>(HWItemState.class, Arrays.asList(HWItemState.values())));
 		stateComboBox.setItemCaptionPropertyId("name");
 		fieldGroup.bind(stateComboBox, "state");
 		winLayout.addComponent(stateComboBox, 1, 0);
@@ -84,8 +85,8 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 		usedInCombo.setSizeFull();
 		usedInCombo.setNullSelectionAllowed(true);
 		usedInCombo.setImmediate(true);
-		usedInCombo.setContainerDataSource(new BeanItemContainer<HWItemDTO>(HWItemDTO.class, hwFacade
-				.getHWItemsAvailableForPart(hwItem)));
+		usedInCombo.setContainerDataSource(new BeanItemContainer<HWItemOverviewDTO>(HWItemOverviewDTO.class,
+				hwFacade.getHWItemsAvailableForPart(hwItem)));
 		usedInCombo.setItemCaptionPropertyId("name");
 		usedInCombo.setValue(hwItem.getUsedIn());
 		winLayout.addComponent(usedInCombo, 0, 1, 1, 1);
@@ -98,8 +99,8 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 		winLayout.addComponent(descriptionField, 0, 2, 1, 2);
 
 		Button createBtn;
-		winLayout.addComponent(createBtn = new Button(fixNote == null ? "Zapsat" : "Upravit",
-				new Button.ClickListener() {
+		winLayout.addComponent(
+				createBtn = new Button(fixNote == null ? "Zapsat" : "Upravit", new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;
 
@@ -112,8 +113,8 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 								if (hwFacade.addServiceNote(serviceNoteDTO, hwItem)) {
 									onSuccess(serviceNoteDTO);
 								} else {
-									UI.getCurrent().addWindow(
-											new ErrorWindow("Nezdařilo se zapsat nový servisní záznam"));
+									UI.getCurrent()
+											.addWindow(new ErrorWindow("Nezdařilo se zapsat nový servisní záznam"));
 								}
 							} else {
 								hwFacade.modifyServiceNote(serviceNoteDTO);

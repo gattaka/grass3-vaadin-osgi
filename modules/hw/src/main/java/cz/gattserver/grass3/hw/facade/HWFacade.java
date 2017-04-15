@@ -20,8 +20,11 @@ import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.querydsl.core.types.OrderSpecifier;
 
 import cz.gattserver.grass3.config.IConfigurationService;
 import cz.gattserver.grass3.hw.HWConfiguration;
@@ -31,7 +34,9 @@ import cz.gattserver.grass3.hw.dao.ServiceNoteRepository;
 import cz.gattserver.grass3.hw.domain.HWItem;
 import cz.gattserver.grass3.hw.domain.HWItemType;
 import cz.gattserver.grass3.hw.domain.ServiceNote;
+import cz.gattserver.grass3.hw.dto.HWFilterDTO;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
+import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 
@@ -73,13 +78,13 @@ public class HWFacade implements IHWFacade {
 	}
 
 	@Override
-	public List<HWItemDTO> getAllHWItems() {
+	public List<HWItemOverviewDTO> getAllHWItems() {
 		List<HWItem> hwItemTypes = hwItemRepository.findAll();
 		return hwMapper.mapHWItems(hwItemTypes);
 	}
 
 	@Override
-	public List<HWItemDTO> getHWItemsByTypes(Collection<String> types) {
+	public List<HWItemOverviewDTO> getHWItemsByTypes(Collection<String> types) {
 		List<HWItem> hwItemTypes = hwItemRepository.getHWItemsByTypes(types);
 		return hwMapper.mapHWItems(hwItemTypes);
 	}
@@ -146,7 +151,8 @@ public class HWFacade implements IHWFacade {
 	}
 
 	/**
-	 * Vygeneruje {@link ServiceNote} o přidání/odebrání HW, uloží a přidá k cílovému HW
+	 * Vygeneruje {@link ServiceNote} o přidání/odebrání HW, uloží a přidá k
+	 * cílovému HW
 	 * 
 	 * @param triggerItem
 	 *            HW který je přidán/odebrán
@@ -161,8 +167,8 @@ public class HWFacade implements IHWFacade {
 		removeNote.setDate(triggerNote.getDate());
 
 		StringBuilder builder = new StringBuilder();
-		builder.append(added ? "Byl přidán:" : "Byl odebrán:").append("\n").append(triggerItem.getName())
-				.append("\n\n").append("Důvod:").append("\n").append(triggerNote.getDescription());
+		builder.append(added ? "Byl přidán:" : "Byl odebrán:").append("\n").append(triggerItem.getName()).append("\n\n")
+				.append("Důvod:").append("\n").append(triggerNote.getDescription());
 		removeNote.setDescription(builder.toString());
 		removeNote.setState(targetItem.getState());
 		removeNote.setUsage(targetItem.getUsedIn() == null ? "" : targetItem.getUsedIn().getName());
@@ -267,13 +273,13 @@ public class HWFacade implements IHWFacade {
 	}
 
 	@Override
-	public List<HWItemDTO> getAllParts(Long usedInItemId) {
+	public List<HWItemOverviewDTO> getAllParts(Long usedInItemId) {
 		return hwMapper.mapHWItems(hwItemRepository.findByUsedInId(usedInItemId));
 	}
 
 	@Override
-	public List<HWItemDTO> getHWItemsAvailableForPart(HWItemDTO item) {
-		List<HWItemDTO> items = getAllHWItems();
+	public List<HWItemOverviewDTO> getHWItemsAvailableForPart(HWItemDTO item) {
+		List<HWItemOverviewDTO> items = getAllHWItems();
 		items.remove(item);
 		return items;
 	}
@@ -414,5 +420,15 @@ public class HWFacade implements IHWFacade {
 	@Override
 	public HWItemTypeDTO getHWItemType(Long fixTypeId) {
 		return hwMapper.mapHWItemType(hwItemTypeRepository.findOne(fixTypeId));
+	}
+
+	@Override
+	public long countHWItems(HWFilterDTO filter) {
+		return hwItemRepository.countHWItems(filter);
+	}
+
+	@Override
+	public List<HWItemOverviewDTO> getHWItems(HWFilterDTO filter, Pageable pageable, OrderSpecifier<?>[] order) {
+		return hwMapper.mapHWItems(hwItemRepository.getHWItems(filter, pageable, order));
 	}
 }

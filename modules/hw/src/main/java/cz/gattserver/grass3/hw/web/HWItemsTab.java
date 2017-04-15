@@ -1,9 +1,16 @@
 package cz.gattserver.grass3.hw.web;
 
+import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.tepi.filtertable.FilterTable;
+import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
+import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
 import org.vaadin.tokenfield.TokenField;
 
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -21,13 +28,16 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
+import cz.gattserver.grass3.hw.dto.HWFilterDTO;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
+import cz.gattserver.grass3.hw.dto.HWItemState;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.IHWFacade;
 import cz.gattserver.grass3.ui.util.GrassFilterDecorator;
 import cz.gattserver.grass3.ui.util.StringToDateConverter;
 import cz.gattserver.grass3.ui.util.StringToMoneyConverter;
+import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 
@@ -35,10 +45,14 @@ public class HWItemsTab extends VerticalLayout {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
-	private final FilterTable table = new FilterTable();
-	private BeanContainer<Long, HWItemDTO> container;
+	@Autowired
 	private IHWFacade hwFacade;
+
+	private final FilterTable table = new FilterTable();
+	private LazyQueryContainer container;
 	private TokenField hwTypesFilter;
+
+	private HWFilterDTO filterDTO;
 
 	// BUG ? Při disable na tabu a opětovném enabled zůstane table disabled
 	@Override
@@ -48,15 +62,10 @@ public class HWItemsTab extends VerticalLayout {
 	}
 
 	private void populateContainer() {
-		container.removeAllItems();
 		@SuppressWarnings("unchecked")
 		Collection<String> collection = (Collection<String>) hwTypesFilter.getValue();
-		if (collection == null || collection.isEmpty()) {
-			container.addAll(hwFacade.getAllHWItems());
-		} else {
-			container.addAll(hwFacade.getHWItemsByTypes(collection));
-		}
-		sortTable();
+		filterDTO.setTypes(collection);
+		container.refresh();
 	}
 
 	private void sortTable() {
@@ -116,8 +125,8 @@ public class HWItemsTab extends VerticalLayout {
 		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table.getContainerDataSource();
 		BeanItem<?> item = cont.getItem(table.getValue());
 		final HWItemDTO hwItem = (HWItemDTO) item.getBean();
-		addWindow(new ConfirmWindow("Opravdu smazat '" + hwItem.getName()
-				+ "' (budou smazány i servisní záznamy a údaje u součástí) ?") {
+		addWindow(new ConfirmWindow(
+				"Opravdu smazat '" + hwItem.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?") {
 
 			private static final long serialVersionUID = -422763987707688597L;
 
@@ -138,8 +147,10 @@ public class HWItemsTab extends VerticalLayout {
 		});
 	}
 
-	public HWItemsTab(final IHWFacade hwFacade) {
-		this.hwFacade = hwFacade;
+	public HWItemsTab() {
+		SpringContextHelper.inject(this);
+
+		filterDTO = new HWFilterDTO();
 
 		setSpacing(true);
 		setMargin(true);
@@ -199,9 +210,17 @@ public class HWItemsTab extends VerticalLayout {
 		 */
 		table.setSelectable(true);
 		table.setImmediate(true);
-		container = new BeanContainer<Long, HWItemDTO>(HWItemDTO.class);
-		container.setBeanIdProperty("id");
-		populateContainer();
+		BeanQueryFactory<HWQuery> factory = new BeanQueryFactory<HWQuery>(HWQuery.class);
+		Map<String, Object> conf = new HashMap<>();
+		conf.put(HWQuery.FILTER_KEY, filterDTO);
+		factory.setQueryConfiguration(conf);
+		container = new LazyQueryContainer(factory, "id", 100, false);
+		container.addContainerProperty("name", String.class, "");
+		container.addContainerProperty("purchaseDate", Date.class, null);
+		container.addContainerProperty("price", BigDecimal.class, null);
+		container.addContainerProperty("state", HWItemState.class, null);
+		container.addContainerProperty("usedInName", String.class, "");
+
 		table.setContainerDataSource(container);
 
 		table.setConverter("purchaseDate", new StringToDateConverter());
@@ -221,7 +240,12 @@ public class HWItemsTab extends VerticalLayout {
 		table.setWidth("100%");
 
 		table.setFilterBarVisible(true);
-		table.setFilterDecorator(new GrassFilterDecorator());
+		table.setFilterDecorator(new GrassFilterDecorator() {
+			@Override
+			public boolean isTextFilterImmediate(Object propertyId) {
+				return false;
+			}
+		});
 
 		sortTable();
 
@@ -265,7 +289,6 @@ public class HWItemsTab extends VerticalLayout {
 			public void buttonClick(ClickEvent event) {
 				openNewItemWindow(false);
 			}
-
 		});
 		buttonLayout.addComponent(newHWBtn);
 
@@ -307,7 +330,6 @@ public class HWItemsTab extends VerticalLayout {
 			public void buttonClick(ClickEvent event) {
 				openNewItemWindow(true);
 			}
-
 		});
 		buttonLayout.addComponent(fixBtn);
 

@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.hw.web;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.ui.Button;
@@ -10,7 +12,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.facade.IHWFacade;
 import cz.gattserver.web.common.window.ErrorWindow;
@@ -20,12 +21,11 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
+	@Autowired
 	private IHWFacade hwFacade;
 
 	public HWItemTypeCreateWindow(final Component triggerComponent, final Long fixTypeId) {
 		super("Založení nového typu HW");
-
-		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
 
 		triggerComponent.setEnabled(false);
 

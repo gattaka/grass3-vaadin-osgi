@@ -4,9 +4,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import com.vaadin.data.util.converter.StringToDoubleConverter;
+import com.vaadin.data.util.converter.StringToBigDecimalConverter;
 
-public class StringToMoneyConverter extends StringToDoubleConverter {
+public class StringToMoneyConverter extends StringToBigDecimalConverter {
 	private static final long serialVersionUID = -2914696445291603483L;
 
 	private NumberFormat priceFormat;
@@ -19,14 +19,6 @@ public class StringToMoneyConverter extends StringToDoubleConverter {
 		priceFormat = NumberFormat.getCurrencyInstance(new Locale("cs", "CZ"));
 		((DecimalFormat) priceFormat).setMaximumFractionDigits(maxFractionDigits);
 		((DecimalFormat) priceFormat).setMinimumFractionDigits(minFractionDigits);
-	}
-
-	public String format(int price) {
-		return priceFormat.format(price);
-	}
-
-	public String format(double price) {
-		return priceFormat.format(price);
 	}
 
 	@Override

@@ -3,8 +3,10 @@ package cz.gattserver.grass3.hw.web;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.tokenfield.TokenField;
 
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -33,13 +35,13 @@ import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.BaseTheme;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
+import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.IHWFacade;
 import cz.gattserver.grass3.ui.util.StringToDateConverter;
-import cz.gattserver.grass3.ui.util.StringToMoneyConverter;
+import cz.gattserver.grass3.util.MoneyFormatter;
 import cz.gattserver.web.common.util.CZSuffixCreator;
 import cz.gattserver.web.common.util.StringPreviewCreator;
 import cz.gattserver.web.common.window.ConfirmWindow;
@@ -51,6 +53,7 @@ public class HWItemDetailWindow extends WebWindow {
 	private static final long serialVersionUID = -6773027334692911384L;
 	private static final String DEFAULT_NOTE_LABEL_VALUE = "- Zvolte servisní záznam -";
 
+	@Autowired
 	private IHWFacade hwFacade;
 
 	private GridLayout winLayout;
@@ -66,10 +69,10 @@ public class HWItemDetailWindow extends WebWindow {
 		return label;
 	}
 
-	private String createPriceString(Integer price) {
+	private String createPriceString(BigDecimal price) {
 		if (price == null)
 			return "-";
-		return new StringToMoneyConverter().format(price);
+		return MoneyFormatter.format(price);
 	}
 
 	private String createWarrantyYearsString(Integer warrantyYears) {
@@ -188,8 +191,6 @@ public class HWItemDetailWindow extends WebWindow {
 	public HWItemDetailWindow(final Component triggerComponent, final HWItemDTO hwItem) {
 		super(hwItem.getName());
 
-		hwFacade = SpringContextHelper.getBean(IHWFacade.class);
-
 		setWidth("850px");
 		// setHeight("780px");
 
@@ -281,13 +282,13 @@ public class HWItemDetailWindow extends WebWindow {
 		 */
 		winLayout.addComponent(new Label("<strong>Získáno</strong>", ContentMode.HTML), 2, 1);
 		winLayout.getComponent(2, 1).setWidth("80px");
-		String purchDate = hwItem.getPurchaseDate() == null ? "-" : new StringToDateConverter().getFormat().format(
-				hwItem.getPurchaseDate());
+		String purchDate = hwItem.getPurchaseDate() == null ? "-"
+				: new StringToDateConverter().getFormat().format(hwItem.getPurchaseDate());
 		winLayout.addComponent(createShiftedLabel(purchDate), 2, 2);
 
 		winLayout.addComponent(new Label("<strong>Odepsáno</strong>", ContentMode.HTML), 2, 3);
-		String destrDate = hwItem.getDestructionDate() == null ? "-" : new StringToDateConverter().getFormat().format(
-				hwItem.getDestructionDate());
+		String destrDate = hwItem.getDestructionDate() == null ? "-"
+				: new StringToDateConverter().getFormat().format(hwItem.getDestructionDate());
 		winLayout.addComponent(createShiftedLabel(destrDate), 2, 4);
 
 		winLayout.addComponent(new Label("<strong>Záruka</strong>", ContentMode.HTML), 2, 5);
@@ -325,10 +326,10 @@ public class HWItemDetailWindow extends WebWindow {
 		winLayout.addComponent(new Label("<strong>Součásti</strong>", ContentMode.HTML), 3, 5);
 		VerticalLayout partsLayout = new VerticalLayout();
 		winLayout.addComponent(partsLayout, 3, 6, 3, 8);
-		List<HWItemDTO> parts = hwFacade.getAllParts(hwItem.getId());
+		List<HWItemOverviewDTO> parts = hwFacade.getAllParts(hwItem.getId());
 		if (parts.isEmpty())
 			partsLayout.addComponent(createShiftedLabel("-"));
-		for (final HWItemDTO part : parts) {
+		for (final HWItemOverviewDTO part : parts) {
 			Button partDetailBtn = new Button(StringPreviewCreator.createPreview(part.getName(), 60));
 			partDetailBtn.setDescription(part.getName());
 			partDetailBtn.setStyleName(BaseTheme.BUTTON_LINK);
@@ -340,7 +341,8 @@ public class HWItemDetailWindow extends WebWindow {
 				@Override
 				public void buttonClick(ClickEvent event) {
 					close();
-					UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, part));
+					HWItemDTO detailTO = hwFacade.getHWItem(part.getId());
+					UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, detailTO));
 				}
 			});
 			partsLayout.addComponent(partDetailBtn);

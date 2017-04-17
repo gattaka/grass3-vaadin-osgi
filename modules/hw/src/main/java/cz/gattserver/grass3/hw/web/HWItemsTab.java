@@ -8,19 +8,22 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.tepi.filtertable.FilterTable;
+import org.tepi.filtertable.FilterGenerator;
+import org.tepi.filtertable.paged.PagedFilterTable;
 import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
 import org.vaadin.tokenfield.TokenField;
 
+import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.BeanContainer;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.combobox.FilteringMode;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Field;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CustomTable.Align;
 import com.vaadin.ui.HorizontalLayout;
@@ -48,7 +51,7 @@ public class HWItemsTab extends VerticalLayout {
 	@Autowired
 	private IHWFacade hwFacade;
 
-	private final FilterTable table = new FilterTable();
+	private final PagedFilterTable<LazyQueryContainer> table = new PagedFilterTable<>();
 	private LazyQueryContainer container;
 	private TokenField hwTypesFilter;
 
@@ -79,9 +82,8 @@ public class HWItemsTab extends VerticalLayout {
 	private void openNewItemWindow(boolean fix) {
 		HWItemDTO hwItem = null;
 		if (fix) {
-			BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table.getContainerDataSource();
-			BeanItem<?> item = cont.getItem(table.getValue());
-			hwItem = (HWItemDTO) item.getBean();
+			Long id = (Long) table.getValue();
+			hwItem = hwFacade.getHWItem(id);
 		}
 		addWindow(new HWItemCreateWindow(HWItemsTab.this, hwItem == null ? null : hwItem.getId()) {
 
@@ -95,9 +97,8 @@ public class HWItemsTab extends VerticalLayout {
 	}
 
 	private void openAddNoteWindow() {
-		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table.getContainerDataSource();
-		BeanItem<?> item = cont.getItem(table.getValue());
-		HWItemDTO hwItem = (HWItemDTO) item.getBean();
+		Long id = (Long) table.getValue();
+		HWItemDTO hwItem = hwFacade.getHWItem(id);
 
 		addWindow(new ServiceNoteCreateWindow(HWItemsTab.this, hwItem) {
 
@@ -112,19 +113,17 @@ public class HWItemsTab extends VerticalLayout {
 	}
 
 	private void openDetailWindow() {
-		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table.getContainerDataSource();
-		BeanItem<?> item = cont.getItem(table.getValue());
-		if (item == null)
+		Long id = (Long) table.getValue();
+		HWItemDTO hwItem = hwFacade.getHWItem(id);
+		if (hwItem == null)
 			return;
-		final HWItemDTO hwItem = (HWItemDTO) item.getBean();
 		addWindow(new HWItemDetailWindow(HWItemsTab.this, hwItem));
 	}
 
 	private void openDeleteWindow() {
 		HWItemsTab.this.setEnabled(false);
-		BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table.getContainerDataSource();
-		BeanItem<?> item = cont.getItem(table.getValue());
-		final HWItemDTO hwItem = (HWItemDTO) item.getBean();
+		Long id = (Long) table.getValue();
+		HWItemDTO hwItem = hwFacade.getHWItem(id);
 		addWindow(new ConfirmWindow(
 				"Opravdu smazat '" + hwItem.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?") {
 
@@ -241,9 +240,80 @@ public class HWItemsTab extends VerticalLayout {
 
 		table.setFilterBarVisible(true);
 		table.setFilterDecorator(new GrassFilterDecorator() {
+			private static final long serialVersionUID = -6862621820503893204L;
+
 			@Override
 			public boolean isTextFilterImmediate(Object propertyId) {
 				return false;
+			}
+		});
+		table.setFilterGenerator(new FilterGenerator() {
+
+			@Override
+			public AbstractField<?> getCustomFilterComponent(Object propertyId) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Filter generateFilter(Object propertyId, Field<?> originatingField) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Filter generateFilter(Object propertyId, Object value) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public void filterRemoved(Object propertyId) {
+				switch ((String) propertyId) {
+				case "name":
+					filterDTO.setName(null);
+					break;
+				case "purchaseDate":
+					filterDTO.setPurchaseDateFrom(null);
+					break;
+				case "price":
+					filterDTO.setPrice(null);
+					break;
+				case "state":
+					filterDTO.setState(null);
+					break;
+				case "usedInName":
+					filterDTO.setUsedIn(null);
+					break;
+				}
+				container.refresh();
+			}
+
+			@Override
+			public Filter filterGeneratorFailed(Exception reason, Object propertyId, Object value) {
+				return null;
+			}
+
+			@Override
+			public void filterAdded(Object propertyId, Class<? extends Filter> filterType, Object value) {
+				switch ((String) propertyId) {
+				case "name":
+					filterDTO.setName((String) value);
+					break;
+				case "purchaseDate":
+					filterDTO.setPurchaseDateFrom((Date) value);
+					break;
+				case "price":
+					filterDTO.setPrice((BigDecimal) value);
+					break;
+				case "state":
+					filterDTO.setState((HWItemState) value);
+					break;
+				case "usedInName":
+					filterDTO.setUsedIn((String) value);
+					break;
+				}
+				container.refresh();
 			}
 		});
 

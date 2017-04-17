@@ -11,8 +11,9 @@
 	</parent>
 
 	<properties>
-		<vaadin.version>7.2.1</vaadin.version>
+		<vaadin.version>7.7.8</vaadin.version>
 		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
+		<vaadin.widgetset.mode>local</vaadin.widgetset.mode>
 		<widgetset.target>${basedir}/../../../web/src/main/webapp/VAADIN/widgetsets</widgetset.target>
 	</properties>
 
@@ -105,7 +106,7 @@
 		<dependency>
 			<groupId>cz.gattserver</groupId>
 			<artifactId>web-common</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.0</version>
 		</dependency>
 
 		<!-- Jackson JSON Mapper -->
@@ -127,7 +128,7 @@
 		<dependency>
 			<groupId>org.vaadin.addons</groupId>
 			<artifactId>filteringtable</artifactId>
-			<version>0.9.9.v7</version>
+			<version>0.9.15.v7</version>
 		</dependency>
 
 		<!-- Multi-upload -->
@@ -241,21 +242,13 @@
 							<hostedWebapp>${widgetset.target}
 							</hostedWebapp>
 							<noServer>true</noServer>
-							<!-- Remove draftCompile when project is ready -->
 							<draftCompile>false</draftCompile>
-							<compileReport>true</compileReport>
+							<compileReport>false</compileReport>
 							<style>OBF</style>
 							<strict>true</strict>
-							<runTarget>http://localhost:8080/</runTarget>
 						</configuration>
 						<executions>
 							<execution>
-								<phase>compile</phase>
-								<configuration>
-									<!-- if you don't specify any modules, the plugin will find them -->
-									<!-- <modules> <module>com.vaadin.demo.mobilemail.gwt.ColorPickerWidgetSet</module> 
-										</modules> -->
-								</configuration>
 								<goals>
 									<goal>resources</goal>
 									<goal>update-widgetset</goal>

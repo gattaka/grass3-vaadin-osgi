@@ -418,17 +418,10 @@ public class PredicateBuilder {
 		if ((from != null) && to != null) {
 			booleanBuilder.and(path.between(DateUtil.resetTime(from), DateUtil.resetTimeToMidnight(to)));
 		} else if (from != null) {
-			booleanBuilder.and(path.between(DateUtil.resetTime(from), DateUtil.resetTimeToMidnight(from)));
+			booleanBuilder.and(path.gt(DateUtil.resetTime(from)));
 		} else if (to != null) {
-			booleanBuilder.and(path.between(DateUtil.resetTime(to), DateUtil.resetTimeToMidnight(to)));
+			booleanBuilder.and(path.lt(DateUtil.resetTime(to)));
 		}
-		/*
-		 * else if (from != null) {
-		 * booleanBuilder.and(path.between(DateUtil.resetTime(from),
-		 * DateUtil.resetTimeToMidnight(from))); } else if (to != null) {
-		 * booleanBuilder.and(path.between(DateUtil.resetTime(to),
-		 * DateUtil.resetTimeToMidnight(to))); }
-		 */
 		return this;
 	}
 

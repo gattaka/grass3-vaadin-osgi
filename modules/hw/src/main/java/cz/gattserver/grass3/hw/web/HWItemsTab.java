@@ -9,7 +9,8 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tepi.filtertable.FilterGenerator;
-import org.tepi.filtertable.paged.PagedFilterTable;
+import org.tepi.filtertable.FilterTable;
+import org.tepi.filtertable.datefilter.DateInterval;
 import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
 import org.vaadin.tokenfield.TokenField;
@@ -51,7 +52,7 @@ public class HWItemsTab extends VerticalLayout {
 	@Autowired
 	private IHWFacade hwFacade;
 
-	private final PagedFilterTable<LazyQueryContainer> table = new PagedFilterTable<>();
+	private final FilterTable table = new FilterTable();
 	private LazyQueryContainer container;
 	private TokenField hwTypesFilter;
 
@@ -248,60 +249,21 @@ public class HWItemsTab extends VerticalLayout {
 			}
 		});
 		table.setFilterGenerator(new FilterGenerator() {
+			private static final long serialVersionUID = 8801368960933927218L;
 
 			@Override
 			public AbstractField<?> getCustomFilterComponent(Object propertyId) {
-				// TODO Auto-generated method stub
 				return null;
 			}
 
-			@Override
-			public Filter generateFilter(Object propertyId, Field<?> originatingField) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public Filter generateFilter(Object propertyId, Object value) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public void filterRemoved(Object propertyId) {
-				switch ((String) propertyId) {
-				case "name":
-					filterDTO.setName(null);
-					break;
-				case "purchaseDate":
-					filterDTO.setPurchaseDateFrom(null);
-					break;
-				case "price":
-					filterDTO.setPrice(null);
-					break;
-				case "state":
-					filterDTO.setState(null);
-					break;
-				case "usedInName":
-					filterDTO.setUsedIn(null);
-					break;
-				}
-				container.refresh();
-			}
-
-			@Override
-			public Filter filterGeneratorFailed(Exception reason, Object propertyId, Object value) {
-				return null;
-			}
-
-			@Override
-			public void filterAdded(Object propertyId, Class<? extends Filter> filterType, Object value) {
+			private void updateFilter(Object propertyId, Object value) {
 				switch ((String) propertyId) {
 				case "name":
 					filterDTO.setName((String) value);
 					break;
 				case "purchaseDate":
-					filterDTO.setPurchaseDateFrom((Date) value);
+					filterDTO.setPurchaseDateFrom(value == null ? null : ((DateInterval) value).getFrom());
+					filterDTO.setPurchaseDateTo(value == null ? null : ((DateInterval) value).getTo());
 					break;
 				case "price":
 					filterDTO.setPrice((BigDecimal) value);
@@ -314,6 +276,31 @@ public class HWItemsTab extends VerticalLayout {
 					break;
 				}
 				container.refresh();
+			}
+
+			@Override
+			public Filter generateFilter(Object propertyId, Field<?> originatingField) {
+				return null;
+			}
+
+			@Override
+			public Filter generateFilter(Object propertyId, Object value) {
+				return null;
+			}
+
+			@Override
+			public void filterRemoved(Object propertyId) {
+				updateFilter(propertyId, null);
+			}
+
+			@Override
+			public Filter filterGeneratorFailed(Exception reason, Object propertyId, Object value) {
+				return null;
+			}
+
+			@Override
+			public void filterAdded(Object propertyId, Class<? extends Filter> filterType, Object value) {
+				updateFilter(propertyId, value);
 			}
 		});
 

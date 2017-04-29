@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -67,6 +68,7 @@ public class HWItem {
 	 * Poznámky ke stavu hw - opravy apod.
 	 */
 	@OneToMany
+	@OrderBy("date desc, id desc")
 	private List<ServiceNote> serviceNotes;
 
 	/**

@@ -90,12 +90,6 @@ public class HWFacade implements IHWFacade {
 	}
 
 	@Override
-	public List<ServiceNoteDTO> getAllServiceNotes() {
-		List<ServiceNote> hwItemTypes = serviceNoteRepository.findAll();
-		return hwMapper.mapServiceNotes(hwItemTypes);
-	}
-
-	@Override
 	public boolean saveHWType(HWItemTypeDTO hwItemTypeDTO) {
 		HWItemType type = hwMapper.mapHWItem(hwItemTypeDTO);
 		return hwItemTypeRepository.save(type) != null;

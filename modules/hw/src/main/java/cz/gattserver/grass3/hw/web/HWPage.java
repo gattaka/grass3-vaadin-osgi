@@ -1,14 +1,9 @@
 package cz.gattserver.grass3.hw.web;
 
-import javax.annotation.Resource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 

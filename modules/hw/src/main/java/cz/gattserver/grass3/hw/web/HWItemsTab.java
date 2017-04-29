@@ -115,10 +115,9 @@ public class HWItemsTab extends VerticalLayout {
 
 	private void openDetailWindow() {
 		Long id = (Long) table.getValue();
-		HWItemDTO hwItem = hwFacade.getHWItem(id);
-		if (hwItem == null)
+		if (id == null)
 			return;
-		addWindow(new HWItemDetailWindow(HWItemsTab.this, hwItem));
+		addWindow(new HWItemDetailWindow(HWItemsTab.this, id));
 	}
 
 	private void openDeleteWindow() {

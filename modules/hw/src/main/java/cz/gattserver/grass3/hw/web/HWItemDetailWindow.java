@@ -2,7 +2,7 @@ package cz.gattserver.grass3.hw.web;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.OutputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -13,6 +13,7 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
@@ -26,12 +27,12 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload;
-import com.vaadin.ui.Upload.SucceededEvent;
-import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.BaseTheme;
 
@@ -40,9 +41,12 @@ import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.IHWFacade;
+import cz.gattserver.grass3.template.MultiUpload;
 import cz.gattserver.grass3.ui.util.StringToDateConverter;
 import cz.gattserver.grass3.util.MoneyFormatter;
+import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.util.CZSuffixCreator;
+import cz.gattserver.web.common.util.HumanBytesSizeCreator;
 import cz.gattserver.web.common.util.StringPreviewCreator;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ImageDetailWindow;
@@ -62,6 +66,8 @@ public class HWItemDetailWindow extends WebWindow {
 	private Button newNoteBtn;
 	private Button fixNoteBtn;
 	private Button deleteNoteBtn;
+
+	private final Component triggerComponent;
 
 	private Label createShiftedLabel(String caption) {
 		Label label = new Label(caption, ContentMode.HTML);
@@ -105,34 +111,23 @@ public class HWItemDetailWindow extends WebWindow {
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		btnLayout.setSpacing(true);
 
-		Button hwItemImageDetailBtn = new Button("Detail", new Button.ClickListener() {
-			private static final long serialVersionUID = 3574387596782957413L;
+		Button hwItemImageDetailBtn = new Button("Detail",
+				e -> UI.getCurrent().addWindow(new ImageDetailWindow(hwItem.getName(), icon)));
 
-			@Override
-			public void buttonClick(ClickEvent event) {
-				UI.getCurrent().addWindow(new ImageDetailWindow(hwItem.getName(), icon));
-			}
+		Button hwItemImageDeleteBtn = new Button("Smazat", e -> {
+			UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto HW položky ?") {
+				private static final long serialVersionUID = -1901927025986494370L;
+
+				@Override
+				protected void onConfirm(ClickEvent event) {
+					hwFacade.deleteHWItemIconFile(hwItem);
+					createHWItemImageUpload(hwItem);
+				}
+			});
 		});
 
-		Button hwItemImageDeleteBtn = new Button("Smazat", new Button.ClickListener() {
-			private static final long serialVersionUID = 3574387596782957413L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto HW položky ?") {
-					private static final long serialVersionUID = -1901927025986494370L;
-
-					@Override
-					protected void onConfirm(ClickEvent event) {
-						hwFacade.deleteHWItemIconFile(hwItem);
-						createHWItemImageUpload(hwItem);
-					}
-				});
-			}
-		});
-
-		hwItemImageDetailBtn.setIcon(new ThemeResource("img/tags/search_16.png"));
-		hwItemImageDeleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
+		hwItemImageDetailBtn.setIcon(new ThemeResource(ImageIcons.SEARCH_16_ICON));
+		hwItemImageDeleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
 
 		btnLayout.addComponent(hwItemImageDetailBtn);
 		btnLayout.addComponent(hwItemImageDeleteBtn);
@@ -146,27 +141,15 @@ public class HWItemDetailWindow extends WebWindow {
 	 * Vytváří form pro vložení ikony HW
 	 */
 	private void createHWItemImageUpload(final HWItemDTO hwItem) {
-		Upload upload = new Upload(null, new Upload.Receiver() {
-			private static final long serialVersionUID = 3405904713188904034L;
-
-			@Override
-			public OutputStream receiveUpload(String filename, String mimeType) {
-				try {
-					return hwFacade.createHWItemIconOutputStream(filename, hwItem);
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-					return null;
-				}
+		Upload upload = new Upload(null, (String filename, String mimeType) -> {
+			try {
+				return hwFacade.createHWItemIconOutputStream(filename, hwItem);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return null;
 			}
 		});
-		upload.addSucceededListener(new SucceededListener() {
-			private static final long serialVersionUID = 8510503781150063264L;
-
-			@Override
-			public void uploadSucceeded(SucceededEvent event) {
-				tryCreateHWImage(hwItem);
-			}
-		});
+		upload.addSucceededListener(e -> tryCreateHWImage(hwItem));
 		upload.setImmediate(true);
 		upload.setButtonCaption("Vložit foto");
 
@@ -188,23 +171,24 @@ public class HWItemDetailWindow extends WebWindow {
 		}
 	}
 
-	public HWItemDetailWindow(final Component triggerComponent, final HWItemDTO hwItem) {
-		super(hwItem.getName());
+	private Layout createWrapperLayout(HWItemDTO hwItem) {
+		VerticalLayout wrapperLayout = new VerticalLayout();
+		wrapperLayout.setMargin(new MarginInfo(false, true, true, true));
+		wrapperLayout.setSpacing(true);
 
-		setWidth("850px");
-		// setHeight("780px");
+		Label name = new Label("<h3>" + hwItem.getName() + "</h3>", ContentMode.HTML);
+		wrapperLayout.addComponent(name);
 
-		triggerComponent.setEnabled(false);
+		return wrapperLayout;
+	}
 
-		VerticalLayout layout = new VerticalLayout();
-		setContent(layout);
-		layout.setSpacing(true);
-		layout.setMargin(true);
+	private Layout createItemDetailsLayout(HWItemDTO hwItem) {
 
-		HorizontalLayout topLayout = new HorizontalLayout();
-		topLayout.setSpacing(true);
-		layout.addComponent(topLayout);
-		layout.setExpandRatio(topLayout, 1);
+		Layout wrapperLayout = createWrapperLayout(hwItem);
+
+		HorizontalLayout itemLayout = new HorizontalLayout();
+		itemLayout.setSpacing(true);
+		wrapperLayout.addComponent(itemLayout);
 
 		/**
 		 * Foto
@@ -212,14 +196,14 @@ public class HWItemDetailWindow extends WebWindow {
 		hwImageLayout = new VerticalLayout();
 		hwImageLayout.setWidth("200px");
 		hwImageLayout.setSpacing(true);
-		topLayout.addComponent(hwImageLayout);
+		itemLayout.addComponent(hwImageLayout);
 		createHWImageOrUpload(hwItem);
 
 		/**
 		 * Grid
 		 */
-		winLayout = new GridLayout(4, 10);
-		topLayout.addComponent(winLayout);
+		winLayout = new GridLayout(5, 10);
+		itemLayout.addComponent(winLayout);
 		winLayout.setSpacing(true);
 
 		/**
@@ -235,72 +219,31 @@ public class HWItemDetailWindow extends WebWindow {
 		}
 		winLayout.addComponent(typesLayout, 1, 0, 3, 0);
 
-		/**
-		 * Info pole - první sloupec
-		 */
 		winLayout.addComponent(new Label("<strong>Stav</strong>", ContentMode.HTML), 1, 1);
 		winLayout.getComponent(1, 1).setWidth("80px");
 		winLayout.addComponent(createShiftedLabel(hwItem.getState().getName()), 1, 2);
 
-		winLayout.addComponent(new Label("<strong>Cena</strong>", ContentMode.HTML), 1, 3);
-		winLayout.addComponent(createShiftedLabel(createPriceString(hwItem.getPrice())), 1, 4);
-
-		winLayout.addComponent(new Label("<strong>Přílohy</strong>", ContentMode.HTML), 1, 5);
-		VerticalLayout prilohyLayout = new VerticalLayout();
-		winLayout.addComponent(prilohyLayout, 1, 6);
-
-		Button imagesBtn = new Button("Fotografie");
-		imagesBtn.setStyleName(BaseTheme.BUTTON_LINK);
-		imagesBtn.addStyleName("shiftlabel");
-		imagesBtn.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 4983897852548880141L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				UI.getCurrent().addWindow(new HWItemImagesWindow(hwItem));
-			}
-		});
-		prilohyLayout.addComponent(imagesBtn);
-
-		Button documentsBtn = new Button("Dokumenty");
-		documentsBtn.setStyleName(BaseTheme.BUTTON_LINK);
-		documentsBtn.addStyleName("shiftlabel");
-		documentsBtn.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 4983897852548880141L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				UI.getCurrent().addWindow(new HWItemDocumentsWindow(hwItem));
-			}
-		});
-		prilohyLayout.addComponent(documentsBtn);
-
-		/**
-		 * Info pole - druhý sloupec
-		 */
 		winLayout.addComponent(new Label("<strong>Získáno</strong>", ContentMode.HTML), 2, 1);
 		winLayout.getComponent(2, 1).setWidth("80px");
 		String purchDate = hwItem.getPurchaseDate() == null ? "-"
 				: new StringToDateConverter().getFormat().format(hwItem.getPurchaseDate());
 		winLayout.addComponent(createShiftedLabel(purchDate), 2, 2);
 
-		winLayout.addComponent(new Label("<strong>Odepsáno</strong>", ContentMode.HTML), 2, 3);
-		String destrDate = hwItem.getDestructionDate() == null ? "-"
-				: new StringToDateConverter().getFormat().format(hwItem.getDestructionDate());
-		winLayout.addComponent(createShiftedLabel(destrDate), 2, 4);
-
-		winLayout.addComponent(new Label("<strong>Záruka</strong>", ContentMode.HTML), 2, 5);
-		winLayout.addComponent(createShiftedLabel(createWarrantyYearsString(hwItem.getWarrantyYears())), 2, 6);
-
-		/**
-		 * Info pole - třetí sloupec
-		 */
 		winLayout.addComponent(new Label("<strong>Spravováno pro</strong>", ContentMode.HTML), 3, 1);
 		winLayout.getComponent(3, 1).setWidth("100px");
 		winLayout.addComponent(createShiftedLabel(hwItem.getSupervizedFor() == null ? "-" : hwItem.getSupervizedFor()),
 				3, 2);
+
+		winLayout.addComponent(new Label("<strong>Záruka</strong>", ContentMode.HTML), 4, 1);
+		winLayout.addComponent(createShiftedLabel(createWarrantyYearsString(hwItem.getWarrantyYears())), 4, 2);
+
+		winLayout.addComponent(new Label("<strong>Cena</strong>", ContentMode.HTML), 1, 3);
+		winLayout.addComponent(createShiftedLabel(createPriceString(hwItem.getPrice())), 1, 4);
+
+		winLayout.addComponent(new Label("<strong>Odepsáno</strong>", ContentMode.HTML), 2, 3);
+		String destrDate = hwItem.getDestructionDate() == null ? "-"
+				: new StringToDateConverter().getFormat().format(hwItem.getDestructionDate());
+		winLayout.addComponent(createShiftedLabel(destrDate), 2, 4);
 
 		winLayout.addComponent(new Label("<strong>Je součástí</strong>", ContentMode.HTML), 3, 3);
 		if (hwItem.getUsedIn() == null) {
@@ -310,52 +253,37 @@ public class HWItemDetailWindow extends WebWindow {
 			usedInBtn.setDescription(hwItem.getUsedIn().getName());
 			usedInBtn.setStyleName(BaseTheme.BUTTON_LINK);
 			usedInBtn.addStyleName("shiftlabel");
-			usedInBtn.addClickListener(new Button.ClickListener() {
-
-				private static final long serialVersionUID = 4983897852548880141L;
-
-				@Override
-				public void buttonClick(ClickEvent event) {
-					close();
-					UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, hwItem.getUsedIn()));
-				}
+			usedInBtn.addClickListener(e -> {
+				close();
+				UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, hwItem.getUsedIn().getId()));
 			});
 			winLayout.addComponent(usedInBtn, 3, 4);
 		}
 
-		winLayout.addComponent(new Label("<strong>Součásti</strong>", ContentMode.HTML), 3, 5);
-		VerticalLayout partsLayout = new VerticalLayout();
-		winLayout.addComponent(partsLayout, 3, 6, 3, 8);
 		List<HWItemOverviewDTO> parts = hwFacade.getAllParts(hwItem.getId());
-		if (parts.isEmpty())
-			partsLayout.addComponent(createShiftedLabel("-"));
-		for (final HWItemOverviewDTO part : parts) {
-			Button partDetailBtn = new Button(StringPreviewCreator.createPreview(part.getName(), 60));
-			partDetailBtn.setDescription(part.getName());
-			partDetailBtn.setStyleName(BaseTheme.BUTTON_LINK);
-			partDetailBtn.addStyleName("shiftlabel");
-			partDetailBtn.addClickListener(new Button.ClickListener() {
+		if (!parts.isEmpty()) {
+			Label name = new Label("<h3>Součásti</h3>", ContentMode.HTML);
+			wrapperLayout.addComponent(name);
 
-				private static final long serialVersionUID = 4983897852548880141L;
-
-				@Override
-				public void buttonClick(ClickEvent event) {
+			for (final HWItemOverviewDTO part : parts) {
+				Button partDetailBtn = new Button(StringPreviewCreator.createPreview(part.getName(), 60));
+				partDetailBtn.setDescription(part.getName());
+				partDetailBtn.setStyleName(BaseTheme.BUTTON_LINK);
+				partDetailBtn.addStyleName("shiftlabel");
+				partDetailBtn.addClickListener(e -> {
 					close();
 					HWItemDTO detailTO = hwFacade.getHWItem(part.getId());
-					UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, detailTO));
-				}
-			});
-			partsLayout.addComponent(partDetailBtn);
+					UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, detailTO.getId()));
+				});
+				wrapperLayout.addComponent(partDetailBtn);
+			}
 		}
 
-		/**
-		 * Spodní část
-		 */
-		HorizontalLayout horizontalLayout = new HorizontalLayout();
-		layout.addComponent(horizontalLayout);
-		horizontalLayout.setWidth("100%");
-		horizontalLayout.setSpacing(true);
-		horizontalLayout.setMargin(new MarginInfo(true, false, false, false));
+		return wrapperLayout;
+	}
+
+	private Layout createServiceNotesTab(final HWItemDTO hwItem) {
+		Layout wrapperLayout = createWrapperLayout(hwItem);
 
 		/**
 		 * Tabulka záznamů
@@ -375,14 +303,16 @@ public class HWItemDetailWindow extends WebWindow {
 		table.setColumnHeader("date", "Datum");
 		table.setColumnHeader("state", "Stav");
 		table.setColumnHeader("usedInName", "Je součástí");
-		table.setVisibleColumns(new Object[] { "date", "state", "usedInName" });
-		table.setWidth("450px");
+		table.setColumnHeader("description", "Obsah");
+		table.setColumnWidth("description", 200);
+		table.setVisibleColumns(new Object[] { "date", "state", "usedInName", "description" });
+		table.setWidth("100%");
 		table.setHeight("200px");
 
 		table.setSortContainerPropertyId("date");
 		table.setSortAscending(false);
 
-		horizontalLayout.addComponent(table);
+		wrapperLayout.addComponent(table);
 
 		/**
 		 * Detail záznamu
@@ -392,8 +322,7 @@ public class HWItemDetailWindow extends WebWindow {
 		panel.setStyleName("hw-panel");
 		panel.setHeight("200px");
 		panel.setWidth("100%");
-		horizontalLayout.addComponent(panel);
-		horizontalLayout.setExpandRatio(panel, 1);
+		wrapperLayout.addComponent(panel);
 
 		table.addValueChangeListener(new ValueChangeListener() {
 
@@ -416,14 +345,14 @@ public class HWItemDetailWindow extends WebWindow {
 
 		HorizontalLayout notesOperationsLayout = new HorizontalLayout();
 		notesOperationsLayout.setSpacing(true);
-		layout.addComponent(notesOperationsLayout);
+		wrapperLayout.addComponent(notesOperationsLayout);
 
 		/**
 		 * Založení nového servisního záznamu
 		 */
 		newNoteBtn = new Button("Přidat záznam");
 		newNoteBtn.setImmediate(true);
-		newNoteBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
+		newNoteBtn.setIcon(new ThemeResource(ImageIcons.PENCIL_16_ICON));
 		newNoteBtn.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = 8876001665427003203L;
 
@@ -450,7 +379,7 @@ public class HWItemDetailWindow extends WebWindow {
 		fixNoteBtn = new Button("Opravit záznam");
 		fixNoteBtn.setEnabled(false);
 		fixNoteBtn.setImmediate(true);
-		fixNoteBtn.setIcon(new ThemeResource("img/tags/quickedit_16.png"));
+		fixNoteBtn.setIcon(new ThemeResource(ImageIcons.QUICKEDIT_16_ICON));
 		fixNoteBtn.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = 8876001665427003203L;
 
@@ -481,7 +410,7 @@ public class HWItemDetailWindow extends WebWindow {
 		 */
 		deleteNoteBtn = new Button("Smazat záznam");
 		deleteNoteBtn.setEnabled(false);
-		deleteNoteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
+		deleteNoteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
 		deleteNoteBtn.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 4983897852548880141L;
@@ -511,19 +440,212 @@ public class HWItemDetailWindow extends WebWindow {
 		});
 		notesOperationsLayout.addComponent(deleteNoteBtn);
 
-		addCloseListener(new CloseListener() {
+		return wrapperLayout;
+	}
 
-			private static final long serialVersionUID = 1435044338717794371L;
+	private Layout createPhotosTab(final HWItemDTO hwItem) {
+		Layout wrapperLayout = createWrapperLayout(hwItem);
+
+		GridLayout listLayout = new GridLayout();
+		listLayout.setColumns(4);
+		listLayout.setSpacing(true);
+		listLayout.setMargin(true);
+
+		Panel panel = new Panel(listLayout);
+		panel.setWidth("100%");
+		panel.setHeight("400px");
+		wrapperLayout.addComponent(panel);
+
+		createImagesList(hwItem, listLayout);
+
+		HorizontalLayout uploadWrapperLayout = new HorizontalLayout();
+		uploadWrapperLayout.setWidth("100%");
+		uploadWrapperLayout.setMargin(true);
+		wrapperLayout.addComponent(uploadWrapperLayout);
+
+		MultiUpload multiFileUpload = new MultiUpload() {
+			private static final long serialVersionUID = -3899558855555370125L;
 
 			@Override
-			public void windowClose(CloseEvent e) {
-				if (triggerComponent != null)
-					triggerComponent.setEnabled(true);
+			protected void handleFile(InputStream in, String fileName, String mimeType, long length) {
+				hwFacade.saveImagesFile(in, fileName, hwItem);
+
+				// refresh listu
+				listLayout.removeAllComponents();
+				createImagesList(hwItem, listLayout);
+			}
+		};
+
+		multiFileUpload.setCaption("Vložit fotografie");
+		multiFileUpload.setSizeUndefined();
+		uploadWrapperLayout.addStyleName("bordered");
+		uploadWrapperLayout.addComponent(multiFileUpload);
+		uploadWrapperLayout.setComponentAlignment(multiFileUpload, Alignment.MIDDLE_CENTER);
+
+		return wrapperLayout;
+	}
+
+	private void createImagesList(final HWItemDTO hwItem, GridLayout listLayout) {
+
+		for (final File file : hwFacade.getHWItemImagesFiles(hwItem)) {
+
+			VerticalLayout imageLayout = new VerticalLayout();
+			listLayout.addComponent(imageLayout);
+			imageLayout.setSpacing(true);
+
+			Resource resource = new FileResource(file);
+			Image img = new Image(null, resource);
+			img.setWidth("200px");
+			imageLayout.addComponent(img);
+
+			HorizontalLayout btnLayout = new HorizontalLayout();
+			btnLayout.setSpacing(true);
+
+			Button hwItemImageDetailBtn = new Button("Detail",
+					e -> UI.getCurrent().addWindow(new ImageDetailWindow(hwItem.getName(), file)));
+
+			Button hwItemImageDeleteBtn = new Button("Smazat",
+					e -> UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto HW položky ?") {
+						private static final long serialVersionUID = -1901927025986494370L;
+
+						@Override
+						protected void onConfirm(ClickEvent event) {
+							hwFacade.deleteHWItemFile(hwItem, file);
+
+							// refresh listu
+							listLayout.removeAllComponents();
+							createImagesList(hwItem, listLayout);
+						}
+					}));
+
+			hwItemImageDetailBtn.setIcon(new ThemeResource("img/tags/search_16.png"));
+			hwItemImageDeleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
+
+			btnLayout.addComponent(hwItemImageDetailBtn);
+			btnLayout.addComponent(hwItemImageDeleteBtn);
+
+			imageLayout.addComponent(btnLayout);
+			imageLayout.setComponentAlignment(btnLayout, Alignment.BOTTOM_CENTER);
+		}
+	}
+
+	private Layout createDocsTab(final HWItemDTO hwItem) {
+		Layout wrapperLayout = createWrapperLayout(hwItem);
+
+		VerticalLayout listLayout = new VerticalLayout();
+		listLayout.setSpacing(true);
+		listLayout.setMargin(true);
+
+		Panel panel = new Panel(listLayout);
+		panel.setWidth("100%");
+		panel.setHeight("400px");
+		wrapperLayout.addComponent(panel);
+
+		createDocumentsList(hwItem, listLayout);
+
+		HorizontalLayout uploadWrapperLayout = new HorizontalLayout();
+		uploadWrapperLayout.setWidth("100%");
+		uploadWrapperLayout.setMargin(true);
+		wrapperLayout.addComponent(uploadWrapperLayout);
+
+		final MultiUpload multiFileUpload = new MultiUpload() {
+			private static final long serialVersionUID = 8500364606014524121L;
+
+			@Override
+			public void handleFile(InputStream in, String fileName, String mime, long size) {
+
+				hwFacade.saveDocumentsFile(in, fileName, hwItem);
+
+				// refresh listu
+				listLayout.removeAllComponents();
+				createDocumentsList(hwItem, listLayout);
 			}
 
+		};
+		multiFileUpload.setCaption("Vložit dokumenty");
+		multiFileUpload.setSizeUndefined();
+		uploadWrapperLayout.addStyleName("bordered");
+		uploadWrapperLayout.addComponent(multiFileUpload);
+		uploadWrapperLayout.setComponentAlignment(multiFileUpload, Alignment.MIDDLE_CENTER);
+
+		return wrapperLayout;
+
+	}
+
+	private void createDocumentsList(final HWItemDTO hwItem, VerticalLayout listLayout) {
+
+		for (final File file : hwFacade.getHWItemDocumentsFiles(hwItem)) {
+
+			HorizontalLayout documentLayout = new HorizontalLayout();
+			listLayout.addComponent(documentLayout);
+			documentLayout.setSpacing(true);
+			documentLayout.setWidth("100%");
+
+			Button hwItemDocumentDownloadBtn = new Button("Stáhnout");
+			FileDownloader downloader = new FileDownloader(new FileResource(file));
+			downloader.extend(hwItemDocumentDownloadBtn);
+
+			Button hwItemDocumentDeleteBtn = new Button("Smazat",
+					e -> UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat '" + file.getName() + "' ?") {
+						private static final long serialVersionUID = -1901927025986494370L;
+
+						@Override
+						protected void onConfirm(ClickEvent event) {
+							hwFacade.deleteHWItemFile(hwItem, file);
+
+							// refresh listu
+							listLayout.removeAllComponents();
+							createDocumentsList(hwItem, listLayout);
+						}
+					}));
+
+			hwItemDocumentDownloadBtn.setIcon(new ThemeResource("img/tags/down_16.png"));
+			hwItemDocumentDeleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
+
+			Label nameLabel = new Label(StringPreviewCreator.createPreview(file.getName(), 60));
+			// nameLabel.setWidth("280px");
+			nameLabel.setDescription(file.getName());
+			documentLayout.addComponent(nameLabel);
+			documentLayout.setExpandRatio(nameLabel, 1);
+			documentLayout.setComponentAlignment(nameLabel, Alignment.MIDDLE_LEFT);
+
+			Label sizelabel = new Label(HumanBytesSizeCreator.format(file.length(), true));
+			sizelabel.setDescription(file.length() + "B");
+			sizelabel.setSizeUndefined();
+			documentLayout.addComponent(sizelabel);
+			documentLayout.setComponentAlignment(sizelabel, Alignment.MIDDLE_RIGHT);
+
+			documentLayout.addComponent(hwItemDocumentDownloadBtn);
+			documentLayout.addComponent(hwItemDocumentDeleteBtn);
+			documentLayout.setComponentAlignment(hwItemDocumentDeleteBtn, Alignment.MIDDLE_RIGHT);
+			documentLayout.setComponentAlignment(hwItemDocumentDeleteBtn, Alignment.MIDDLE_RIGHT);
+		}
+
+	}
+
+	public HWItemDetailWindow(Component triggerComponent, final Long hwItemId) {
+		super("Detail HW");
+		HWItemDTO hwItem = hwFacade.getHWItem(hwItemId);
+
+		this.triggerComponent = triggerComponent;
+		setWidth("850px");
+		// setHeight("780px");
+
+		TabSheet sheet = new TabSheet();
+		sheet.addTab(createItemDetailsLayout(hwItem), "Info", new ThemeResource(ImageIcons.GEAR2_16_ICON));
+		sheet.addTab(createServiceNotesTab(hwItem), "Záznamy", new ThemeResource(ImageIcons.CLIPBOARD_16_ICON));
+		sheet.addTab(createPhotosTab(hwItem), "Fotografie", new ThemeResource(ImageIcons.IMG_16_ICON));
+		sheet.addTab(createDocsTab(hwItem), "Dokumentace", new ThemeResource(ImageIcons.DOCUMENT_16_ICON));
+
+		setContent(sheet);
+
+		triggerComponent.setEnabled(false);
+
+		addCloseListener(e -> {
+			if (triggerComponent != null)
+				triggerComponent.setEnabled(true);
 		});
 
 		center();
-
 	}
 }

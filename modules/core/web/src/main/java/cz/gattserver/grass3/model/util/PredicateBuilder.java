@@ -318,14 +318,14 @@ public class PredicateBuilder {
 	 */
 	public PredicateBuilder like(StringExpression path, String value) {
 		if (isNotBlank(value) && "*".equals(value) == false) {
-			booleanBuilder.and(path.like(prepareForLike(value)));
+			booleanBuilder.and(path.likeIgnoreCase(prepareForLike(value)));
 		}
 		return this;
 	}
 
 	public PredicateBuilder notLike(StringExpression path, String value) {
 		if (isNotBlank(value)) {
-			booleanBuilder.andNot(path.like(prepareForLike(value)));
+			booleanBuilder.andNot(path.likeIgnoreCase(prepareForLike(value)));
 		}
 		return this;
 	}

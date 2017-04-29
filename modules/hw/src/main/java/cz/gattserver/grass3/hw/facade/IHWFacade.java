@@ -30,8 +30,6 @@ public interface IHWFacade {
 
 	List<HWItemOverviewDTO> getHWItemsAvailableForPart(HWItemDTO item);
 
-	List<ServiceNoteDTO> getAllServiceNotes();
-
 	boolean saveHWType(HWItemTypeDTO hwItemTypeDTO);
 
 	boolean saveHWItem(HWItemDTO hwItemDTO);

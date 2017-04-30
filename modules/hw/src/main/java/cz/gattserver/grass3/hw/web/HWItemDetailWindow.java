@@ -51,7 +51,6 @@ import cz.gattserver.grass3.util.MoneyFormatter;
 import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.util.CZSuffixCreator;
 import cz.gattserver.web.common.util.HumanBytesSizeCreator;
-import cz.gattserver.web.common.util.StringPreviewCreator;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.ImageDetailWindow;
@@ -246,9 +245,6 @@ public class HWItemDetailWindow extends WebWindow {
 		winLayout.addComponent(createShiftedLabel(hwItem.getSupervizedFor() == null ? "-" : hwItem.getSupervizedFor()),
 				3, 2);
 
-		winLayout.addComponent(new Label("<strong>Záruka</strong>", ContentMode.HTML), 4, 1);
-		winLayout.addComponent(createShiftedLabel(createWarrantyYearsString(hwItem.getWarrantyYears())), 4, 2);
-
 		winLayout.addComponent(new Label("<strong>Cena</strong>", ContentMode.HTML), 1, 3);
 		winLayout.addComponent(createShiftedLabel(createPriceString(hwItem.getPrice())), 1, 4);
 
@@ -257,11 +253,14 @@ public class HWItemDetailWindow extends WebWindow {
 				: new StringToDateConverter().getFormat().format(hwItem.getDestructionDate());
 		winLayout.addComponent(createShiftedLabel(destrDate), 2, 4);
 
-		winLayout.addComponent(new Label("<strong>Je součástí</strong>", ContentMode.HTML), 3, 3);
+		winLayout.addComponent(new Label("<strong>Záruka</strong>", ContentMode.HTML), 3, 3);
+		winLayout.addComponent(createShiftedLabel(createWarrantyYearsString(hwItem.getWarrantyYears())), 3, 4);
+
+		winLayout.addComponent(new Label("<strong>Je součástí</strong>", ContentMode.HTML), 1, 5);
 		if (hwItem.getUsedIn() == null) {
-			winLayout.addComponent(createShiftedLabel("-"), 3, 4);
+			winLayout.addComponent(createShiftedLabel("-"), 1, 6, 4, 6);
 		} else {
-			Button usedInBtn = new Button(StringPreviewCreator.createPreview(hwItem.getUsedIn().getName(), 60));
+			Button usedInBtn = new Button(hwItem.getUsedIn().getName());
 			usedInBtn.setDescription(hwItem.getUsedIn().getName());
 			usedInBtn.setStyleName(BaseTheme.BUTTON_LINK);
 			usedInBtn.addStyleName("shiftlabel");
@@ -269,34 +268,32 @@ public class HWItemDetailWindow extends WebWindow {
 				close();
 				UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, hwItem.getUsedIn().getId()));
 			});
-			winLayout.addComponent(usedInBtn, 3, 4);
+			winLayout.addComponent(usedInBtn, 1, 6, 4, 6);
 		}
 
 		List<HWItemOverviewDTO> parts = hwFacade.getAllParts(hwItem.getId());
-		if (!parts.isEmpty()) {
-			Label name = new Label("<h3>Součásti</h3>", ContentMode.HTML);
-			wrapperLayout.addComponent(name);
+		Label name = new Label("<h3>Součásti</h3>", ContentMode.HTML);
+		wrapperLayout.addComponent(name);
 
-			VerticalLayout partsLayout = new VerticalLayout();
-			partsLayout.setSpacing(true);
-			partsLayout.setMargin(true);
-			Panel partsPanel = new Panel(partsLayout);
-			partsPanel.setSizeFull();
-			wrapperLayout.addComponent(partsPanel);
-			wrapperLayout.setExpandRatio(partsPanel, 1);
+		VerticalLayout partsLayout = new VerticalLayout();
+		partsLayout.setSpacing(true);
+		partsLayout.setMargin(true);
+		Panel partsPanel = new Panel(partsLayout);
+		partsPanel.setSizeFull();
+		wrapperLayout.addComponent(partsPanel);
+		wrapperLayout.setExpandRatio(partsPanel, 1);
 
-			for (final HWItemOverviewDTO part : parts) {
-				Button partDetailBtn = new Button(StringPreviewCreator.createPreview(part.getName(), 60));
-				partDetailBtn.setDescription(part.getName());
-				partDetailBtn.setStyleName(BaseTheme.BUTTON_LINK);
-				partDetailBtn.addStyleName("shiftlabel");
-				partDetailBtn.addClickListener(e -> {
-					close();
-					HWItemDTO detailTO = hwFacade.getHWItem(part.getId());
-					UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, detailTO.getId()));
-				});
-				partsLayout.addComponent(partDetailBtn);
-			}
+		for (final HWItemOverviewDTO part : parts) {
+			Button partDetailBtn = new Button(part.getName());
+			partDetailBtn.setDescription(part.getName());
+			partDetailBtn.setStyleName(BaseTheme.BUTTON_LINK);
+			partDetailBtn.addStyleName("shiftlabel");
+			partDetailBtn.addClickListener(e -> {
+				close();
+				HWItemDTO detailTO = hwFacade.getHWItem(part.getId());
+				UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, detailTO.getId()));
+			});
+			partsLayout.addComponent(partDetailBtn);
 		}
 
 		HorizontalLayout operationsLayout = new HorizontalLayout();
@@ -355,6 +352,10 @@ public class HWItemDetailWindow extends WebWindow {
 		return wrapperLayout;
 	}
 
+	private void sortServiceNotes(Table table) {
+		table.sort(new Object[] { "date", "id" }, new boolean[] { false, false });
+	}
+
 	private Layout createServiceNotesTab() {
 		VerticalLayout wrapperLayout = createWrapperLayout(hwItem);
 
@@ -382,8 +383,7 @@ public class HWItemDetailWindow extends WebWindow {
 		table.setWidth("100%");
 		table.setHeight("200px");
 
-		table.setSortContainerPropertyId("date");
-		table.setSortAscending(false);
+		sortServiceNotes(table);
 
 		wrapperLayout.addComponent(table);
 
@@ -439,7 +439,7 @@ public class HWItemDetailWindow extends WebWindow {
 					@Override
 					protected void onSuccess(ServiceNoteDTO noteDTO) {
 						notesContainer.addItem(noteDTO.getId(), noteDTO);
-						table.sort();
+						sortServiceNotes(table);
 						table.select(noteDTO.getId());
 						table.setCurrentPageFirstItemId(noteDTO.getId());
 					}
@@ -471,7 +471,7 @@ public class HWItemDetailWindow extends WebWindow {
 					protected void onSuccess(ServiceNoteDTO noteDTO) {
 						table.removeItem(noteDTO.getId());
 						notesContainer.addItem(noteDTO.getId(), noteDTO);
-						table.sort();
+						sortServiceNotes(table);
 						table.select(noteDTO.getId());
 						table.setCurrentPageFirstItemId(noteDTO.getId());
 					}
@@ -519,7 +519,7 @@ public class HWItemDetailWindow extends WebWindow {
 	}
 
 	private Layout createPhotosTab() {
-		Layout wrapperLayout = createWrapperLayout(hwItem);
+		VerticalLayout wrapperLayout = createWrapperLayout(hwItem);
 
 		GridLayout listLayout = new GridLayout();
 		listLayout.setColumns(4);
@@ -527,9 +527,9 @@ public class HWItemDetailWindow extends WebWindow {
 		listLayout.setMargin(true);
 
 		Panel panel = new Panel(listLayout);
-		panel.setWidth("100%");
-		panel.setHeight("500px");
+		panel.setSizeFull();
 		wrapperLayout.addComponent(panel);
+		wrapperLayout.setExpandRatio(panel, 1);
 
 		createImagesList(listLayout);
 
@@ -605,12 +605,12 @@ public class HWItemDetailWindow extends WebWindow {
 	}
 
 	private Layout createDocsTab() {
-		Layout wrapperLayout = createWrapperLayout(hwItem);
+		VerticalLayout wrapperLayout = createWrapperLayout(hwItem);
 
 		final Table table = new Table();
-		table.setWidth("100%");
-		table.setHeight("500px");
+		table.setSizeFull();
 		wrapperLayout.addComponent(table);
+		wrapperLayout.setExpandRatio(table, 1);
 
 		createDocumentsList(table);
 
@@ -723,7 +723,7 @@ public class HWItemDetailWindow extends WebWindow {
 		this.triggerComponent = triggerComponent;
 
 		setWidth("900px");
-		setHeight("800px");
+		setHeight("700px");
 
 		TabSheet sheet = new TabSheet();
 		sheet.setSizeFull();

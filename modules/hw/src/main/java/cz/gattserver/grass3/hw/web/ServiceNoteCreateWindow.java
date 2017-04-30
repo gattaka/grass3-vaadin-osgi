@@ -131,16 +131,7 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 				}), 1, 3);
 		winLayout.setComponentAlignment(createBtn, Alignment.BOTTOM_RIGHT);
 
-		addCloseListener(new CloseListener() {
-
-			private static final long serialVersionUID = 1435044338717794371L;
-
-			@Override
-			public void windowClose(CloseEvent e) {
-				triggerComponent.setEnabled(true);
-			}
-
-		});
+		addCloseListener(e -> triggerComponent.setEnabled(true));
 
 	}
 

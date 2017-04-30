@@ -16,10 +16,7 @@ import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
 import org.vaadin.tokenfield.TokenField;
 
 import com.vaadin.data.Container.Filter;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.BeanContainer;
-import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.ui.AbstractField;
@@ -42,6 +39,7 @@ import cz.gattserver.grass3.ui.util.GrassFilterDecorator;
 import cz.gattserver.grass3.ui.util.StringToDateConverter;
 import cz.gattserver.grass3.ui.util.StringToMoneyConverter;
 import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 
@@ -117,7 +115,14 @@ public class HWItemsTab extends VerticalLayout {
 		Long id = (Long) table.getValue();
 		if (id == null)
 			return;
-		addWindow(new HWItemDetailWindow(HWItemsTab.this, id));
+		addWindow(new HWItemDetailWindow(HWItemsTab.this, id) {
+			private static final long serialVersionUID = -8711057204738112594L;
+
+			@Override
+			protected void refreshTable() {
+				populateContainer();
+			}
+		});
 	}
 
 	private void openDeleteWindow() {
@@ -164,11 +169,11 @@ public class HWItemsTab extends VerticalLayout {
 		detailsBtn.setEnabled(false);
 		fixBtn.setEnabled(false);
 		deleteBtn.setEnabled(false);
-		newHWBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
-		newNoteBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
-		detailsBtn.setIcon(new ThemeResource("img/tags/clipboard_16.png"));
-		fixBtn.setIcon(new ThemeResource("img/tags/quickedit_16.png"));
-		deleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
+		newHWBtn.setIcon(new ThemeResource(ImageIcons.PLUS_16_ICON));
+		newNoteBtn.setIcon(new ThemeResource(ImageIcons.PENCIL_16_ICON));
+		detailsBtn.setIcon(new ThemeResource(ImageIcons.CLIPBOARD_16_ICON));
+		fixBtn.setIcon(new ThemeResource(ImageIcons.QUICKEDIT_16_ICON));
+		deleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
 
 		/**
 		 * Filtr na typy HW
@@ -195,14 +200,7 @@ public class HWItemsTab extends VerticalLayout {
 		hwTypesFilter.setInputPrompt("Filtrovat dle typu hw");
 		hwTypesFilter.isEnabled();
 
-		hwTypesFilter.addValueChangeListener(new ValueChangeListener() {
-			private static final long serialVersionUID = -3648782288654270789L;
-
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				populateContainer();
-			}
-		});
+		hwTypesFilter.addValueChangeListener(e -> populateContainer());
 
 		/**
 		 * Tabulka HW
@@ -305,28 +303,18 @@ public class HWItemsTab extends VerticalLayout {
 
 		sortTable();
 
-		table.addItemClickListener(new ItemClickEvent.ItemClickListener() {
-			private static final long serialVersionUID = 2068314108919135281L;
-
-			public void itemClick(ItemClickEvent event) {
-				if (event.isDoubleClick()) {
-					openDetailWindow();
-				}
+		table.addItemClickListener(event -> {
+			if (event.isDoubleClick()) {
+				openDetailWindow();
 			}
 		});
 
-		table.addValueChangeListener(new ValueChangeListener() {
-
-			private static final long serialVersionUID = -8943196289027284739L;
-
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				boolean enabled = table.getValue() != null;
-				deleteBtn.setEnabled(enabled);
-				detailsBtn.setEnabled(enabled);
-				newNoteBtn.setEnabled(enabled);
-				fixBtn.setEnabled(enabled);
-			}
+		table.addValueChangeListener(e -> {
+			boolean enabled = table.getValue() != null;
+			deleteBtn.setEnabled(enabled);
+			detailsBtn.setEnabled(enabled);
+			newNoteBtn.setEnabled(enabled);
+			fixBtn.setEnabled(enabled);
 		});
 
 		addComponent(table);
@@ -338,69 +326,31 @@ public class HWItemsTab extends VerticalLayout {
 		/**
 		 * Založení nové položky HW
 		 */
-		newHWBtn.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 6492892850247493645L;
-
-			public void buttonClick(ClickEvent event) {
-				openNewItemWindow(false);
-			}
-		});
+		newHWBtn.addClickListener(e -> openNewItemWindow(false));
 		buttonLayout.addComponent(newHWBtn);
 
 		/**
 		 * Založení nového servisního záznamu
 		 */
-		newNoteBtn.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 8876001665427003203L;
-
-			public void buttonClick(ClickEvent event) {
-				openAddNoteWindow();
-			}
-
-		});
+		newNoteBtn.addClickListener(e -> openAddNoteWindow());
 		buttonLayout.addComponent(newNoteBtn);
 
 		/**
 		 * Zobrazení detailů položky HW
 		 */
-		detailsBtn.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 4983897852548880141L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				openDetailWindow();
-			}
-		});
+		detailsBtn.addClickListener(e -> openDetailWindow());
 		buttonLayout.addComponent(detailsBtn);
 
 		/**
 		 * Oprava údajů existující položky HW
 		 */
-		fixBtn.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 6492892850247493645L;
-
-			public void buttonClick(ClickEvent event) {
-				openNewItemWindow(true);
-			}
-		});
+		fixBtn.addClickListener(e -> openNewItemWindow(true));
 		buttonLayout.addComponent(fixBtn);
 
 		/**
 		 * Smazání položky HW
 		 */
-		deleteBtn.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 4983897852548880141L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				openDeleteWindow();
-			}
-		});
+		deleteBtn.addClickListener(e -> openDeleteWindow());
 		buttonLayout.addComponent(deleteBtn);
 
 	}

@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Resource;
@@ -49,6 +53,7 @@ import cz.gattserver.web.common.util.CZSuffixCreator;
 import cz.gattserver.web.common.util.HumanBytesSizeCreator;
 import cz.gattserver.web.common.util.StringPreviewCreator;
 import cz.gattserver.web.common.window.ConfirmWindow;
+import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.ImageDetailWindow;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -67,7 +72,9 @@ public class HWItemDetailWindow extends WebWindow {
 	private Button fixNoteBtn;
 	private Button deleteNoteBtn;
 
-	private final Component triggerComponent;
+	private HWItemDTO hwItem;
+	private FileDownloader downloader;
+	private Component triggerComponent;
 
 	private Label createShiftedLabel(String caption) {
 		Label label = new Label(caption, ContentMode.HTML);
@@ -84,6 +91,9 @@ public class HWItemDetailWindow extends WebWindow {
 	private String createWarrantyYearsString(Integer warrantyYears) {
 		return new CZSuffixCreator("rok", "roky", "let").createStringWithSuffix(warrantyYears);
 	}
+
+	protected void refreshTable() {
+	};
 
 	/**
 	 * Pokusí se získat ikonu HW
@@ -171,10 +181,11 @@ public class HWItemDetailWindow extends WebWindow {
 		}
 	}
 
-	private Layout createWrapperLayout(HWItemDTO hwItem) {
+	private VerticalLayout createWrapperLayout(HWItemDTO hwItem) {
 		VerticalLayout wrapperLayout = new VerticalLayout();
 		wrapperLayout.setMargin(new MarginInfo(false, true, true, true));
 		wrapperLayout.setSpacing(true);
+		wrapperLayout.setSizeFull();
 
 		Label name = new Label("<h3>" + hwItem.getName() + "</h3>", ContentMode.HTML);
 		wrapperLayout.addComponent(name);
@@ -184,7 +195,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 	private Layout createItemDetailsLayout(HWItemDTO hwItem) {
 
-		Layout wrapperLayout = createWrapperLayout(hwItem);
+		VerticalLayout wrapperLayout = createWrapperLayout(hwItem);
 
 		HorizontalLayout itemLayout = new HorizontalLayout();
 		itemLayout.setSpacing(true);
@@ -195,6 +206,7 @@ public class HWItemDetailWindow extends WebWindow {
 		 */
 		hwImageLayout = new VerticalLayout();
 		hwImageLayout.setWidth("200px");
+		hwImageLayout.setHeight("200px");
 		hwImageLayout.setSpacing(true);
 		itemLayout.addComponent(hwImageLayout);
 		createHWImageOrUpload(hwItem);
@@ -265,6 +277,14 @@ public class HWItemDetailWindow extends WebWindow {
 			Label name = new Label("<h3>Součásti</h3>", ContentMode.HTML);
 			wrapperLayout.addComponent(name);
 
+			VerticalLayout partsLayout = new VerticalLayout();
+			partsLayout.setSpacing(true);
+			partsLayout.setMargin(true);
+			Panel partsPanel = new Panel(partsLayout);
+			partsPanel.setSizeFull();
+			wrapperLayout.addComponent(partsPanel);
+			wrapperLayout.setExpandRatio(partsPanel, 1);
+
 			for (final HWItemOverviewDTO part : parts) {
 				Button partDetailBtn = new Button(StringPreviewCreator.createPreview(part.getName(), 60));
 				partDetailBtn.setDescription(part.getName());
@@ -275,15 +295,68 @@ public class HWItemDetailWindow extends WebWindow {
 					HWItemDTO detailTO = hwFacade.getHWItem(part.getId());
 					UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, detailTO.getId()));
 				});
-				wrapperLayout.addComponent(partDetailBtn);
+				partsLayout.addComponent(partDetailBtn);
 			}
 		}
+
+		HorizontalLayout operationsLayout = new HorizontalLayout();
+		operationsLayout.setSpacing(true);
+		wrapperLayout.addComponent(operationsLayout);
+
+		final Button fixBtn = new Button("Upravit", new ThemeResource(ImageIcons.QUICKEDIT_16_ICON));
+		final Button deleteBtn = new Button("Smazat", new ThemeResource(ImageIcons.DELETE_16_ICON));
+
+		/**
+		 * Oprava údajů existující položky HW
+		 */
+		fixBtn.addClickListener(e -> {
+			UI.getCurrent().addWindow(new HWItemCreateWindow(HWItemDetailWindow.this, hwItem.getId()) {
+
+				private static final long serialVersionUID = -1397391593801030584L;
+
+				@Override
+				protected void onSuccess() {
+					refreshTable();
+				}
+			});
+		});
+		operationsLayout.addComponent(fixBtn);
+
+		/**
+		 * Smazání položky HW
+		 */
+		deleteBtn.addClickListener(e -> {
+			deleteBtn.setEnabled(false);
+			UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat '" + hwItem.getName()
+					+ "' (budou smazány i servisní záznamy a údaje u součástí) ?") {
+
+				private static final long serialVersionUID = -422763987707688597L;
+
+				@Override
+				protected void onConfirm(ClickEvent event) {
+					if (hwFacade.deleteHWItem(hwItem)) {
+						refreshTable();
+						HWItemDetailWindow.this.close();
+					} else {
+						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
+					}
+				}
+
+				@Override
+				public void close() {
+					deleteBtn.setEnabled(true);
+					super.close();
+				}
+
+			});
+		});
+		operationsLayout.addComponent(deleteBtn);
 
 		return wrapperLayout;
 	}
 
-	private Layout createServiceNotesTab(final HWItemDTO hwItem) {
-		Layout wrapperLayout = createWrapperLayout(hwItem);
+	private Layout createServiceNotesTab() {
+		VerticalLayout wrapperLayout = createWrapperLayout(hwItem);
 
 		/**
 		 * Tabulka záznamů
@@ -318,11 +391,13 @@ public class HWItemDetailWindow extends WebWindow {
 		 * Detail záznamu
 		 */
 		final Label serviceNoteDescription = new Label(DEFAULT_NOTE_LABEL_VALUE);
-		Panel panel = new Panel(serviceNoteDescription);
-		panel.setStyleName("hw-panel");
-		panel.setHeight("200px");
-		panel.setWidth("100%");
-		wrapperLayout.addComponent(panel);
+		serviceNoteDescription.setWidth("100%");
+		serviceNoteDescription.setHeight(null);
+		Panel serviceNoteDetailPanel = new Panel(serviceNoteDescription);
+		serviceNoteDetailPanel.setStyleName("hw-panel");
+		serviceNoteDetailPanel.setSizeFull();
+		wrapperLayout.addComponent(serviceNoteDetailPanel);
+		wrapperLayout.setExpandRatio(serviceNoteDetailPanel, 1);
 
 		table.addValueChangeListener(new ValueChangeListener() {
 
@@ -343,9 +418,9 @@ public class HWItemDetailWindow extends WebWindow {
 			}
 		});
 
-		HorizontalLayout notesOperationsLayout = new HorizontalLayout();
-		notesOperationsLayout.setSpacing(true);
-		wrapperLayout.addComponent(notesOperationsLayout);
+		HorizontalLayout operationsLayout = new HorizontalLayout();
+		operationsLayout.setSpacing(true);
+		wrapperLayout.addComponent(operationsLayout);
 
 		/**
 		 * Založení nového servisního záznamu
@@ -371,7 +446,7 @@ public class HWItemDetailWindow extends WebWindow {
 				});
 			}
 		});
-		notesOperationsLayout.addComponent(newNoteBtn);
+		operationsLayout.addComponent(newNoteBtn);
 
 		/**
 		 * Úprava záznamu
@@ -403,7 +478,7 @@ public class HWItemDetailWindow extends WebWindow {
 				});
 			}
 		});
-		notesOperationsLayout.addComponent(fixNoteBtn);
+		operationsLayout.addComponent(fixNoteBtn);
 
 		/**
 		 * Smazání záznamu
@@ -438,12 +513,12 @@ public class HWItemDetailWindow extends WebWindow {
 				});
 			}
 		});
-		notesOperationsLayout.addComponent(deleteNoteBtn);
+		operationsLayout.addComponent(deleteNoteBtn);
 
 		return wrapperLayout;
 	}
 
-	private Layout createPhotosTab(final HWItemDTO hwItem) {
+	private Layout createPhotosTab() {
 		Layout wrapperLayout = createWrapperLayout(hwItem);
 
 		GridLayout listLayout = new GridLayout();
@@ -453,10 +528,10 @@ public class HWItemDetailWindow extends WebWindow {
 
 		Panel panel = new Panel(listLayout);
 		panel.setWidth("100%");
-		panel.setHeight("400px");
+		panel.setHeight("500px");
 		wrapperLayout.addComponent(panel);
 
-		createImagesList(hwItem, listLayout);
+		createImagesList(listLayout);
 
 		HorizontalLayout uploadWrapperLayout = new HorizontalLayout();
 		uploadWrapperLayout.setWidth("100%");
@@ -472,7 +547,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 				// refresh listu
 				listLayout.removeAllComponents();
-				createImagesList(hwItem, listLayout);
+				createImagesList(listLayout);
 			}
 		};
 
@@ -485,7 +560,7 @@ public class HWItemDetailWindow extends WebWindow {
 		return wrapperLayout;
 	}
 
-	private void createImagesList(final HWItemDTO hwItem, GridLayout listLayout) {
+	private void createImagesList(GridLayout listLayout) {
 
 		for (final File file : hwFacade.getHWItemImagesFiles(hwItem)) {
 
@@ -514,7 +589,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 							// refresh listu
 							listLayout.removeAllComponents();
-							createImagesList(hwItem, listLayout);
+							createImagesList(listLayout);
 						}
 					}));
 
@@ -529,19 +604,15 @@ public class HWItemDetailWindow extends WebWindow {
 		}
 	}
 
-	private Layout createDocsTab(final HWItemDTO hwItem) {
+	private Layout createDocsTab() {
 		Layout wrapperLayout = createWrapperLayout(hwItem);
 
-		VerticalLayout listLayout = new VerticalLayout();
-		listLayout.setSpacing(true);
-		listLayout.setMargin(true);
+		final Table table = new Table();
+		table.setWidth("100%");
+		table.setHeight("500px");
+		wrapperLayout.addComponent(table);
 
-		Panel panel = new Panel(listLayout);
-		panel.setWidth("100%");
-		panel.setHeight("400px");
-		wrapperLayout.addComponent(panel);
-
-		createDocumentsList(hwItem, listLayout);
+		createDocumentsList(table);
 
 		HorizontalLayout uploadWrapperLayout = new HorizontalLayout();
 		uploadWrapperLayout.setWidth("100%");
@@ -557,8 +628,8 @@ public class HWItemDetailWindow extends WebWindow {
 				hwFacade.saveDocumentsFile(in, fileName, hwItem);
 
 				// refresh listu
-				listLayout.removeAllComponents();
-				createDocumentsList(hwItem, listLayout);
+				table.removeAllItems();
+				createDocumentsList(table);
 			}
 
 		};
@@ -566,76 +637,100 @@ public class HWItemDetailWindow extends WebWindow {
 		multiFileUpload.setSizeUndefined();
 		uploadWrapperLayout.addStyleName("bordered");
 		uploadWrapperLayout.addComponent(multiFileUpload);
-		uploadWrapperLayout.setComponentAlignment(multiFileUpload, Alignment.MIDDLE_CENTER);
+
+		final Button hwItemDocumentDownloadBtn = new Button("Stáhnout", new ThemeResource(ImageIcons.DOWN_16_ICON));
+		uploadWrapperLayout.addComponent(hwItemDocumentDownloadBtn);
+		hwItemDocumentDownloadBtn.setEnabled(false);
+
+		final Button hwItemDocumentDeleteBtn = new Button("Smazat", e -> {
+			File file = (File) table.getValue();
+			if (file == null)
+				return;
+
+			UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat '" + file.getName() + "' ?") {
+				private static final long serialVersionUID = -1901927025986494370L;
+
+				@Override
+				protected void onConfirm(ClickEvent event) {
+					hwFacade.deleteHWItemFile(hwItem, file);
+
+					// refresh listu
+					table.removeAllItems();
+					createDocumentsList(table);
+				}
+			});
+		});
+		hwItemDocumentDeleteBtn.setEnabled(false);
+		hwItemDocumentDeleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
+		uploadWrapperLayout.addComponent(hwItemDocumentDeleteBtn);
+
+		table.addValueChangeListener(new ValueChangeListener() {
+
+			private static final long serialVersionUID = -8943196289027284739L;
+
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				if (downloader != null) {
+					downloader.remove();
+					downloader = null;
+				}
+				if (table.getValue() != null) {
+					File file = (File) table.getValue();
+					hwItemDocumentDeleteBtn.setEnabled(true);
+					hwItemDocumentDownloadBtn.setEnabled(true);
+					downloader = new FileDownloader(new FileResource(file));
+					downloader.extend(hwItemDocumentDownloadBtn);
+				} else {
+					hwItemDocumentDownloadBtn.setEnabled(false);
+					hwItemDocumentDeleteBtn.setEnabled(false);
+				}
+			}
+		});
 
 		return wrapperLayout;
-
 	}
 
-	private void createDocumentsList(final HWItemDTO hwItem, VerticalLayout listLayout) {
+	private void createDocumentsList(Table table) {
 
-		for (final File file : hwFacade.getHWItemDocumentsFiles(hwItem)) {
+		final BeanItemContainer<File> cont = new BeanItemContainer<File>(File.class);
+		cont.addAll(Arrays.asList(hwFacade.getHWItemDocumentsFiles(hwItem)));
+		table.setContainerDataSource(cont);
 
-			HorizontalLayout documentLayout = new HorizontalLayout();
-			listLayout.addComponent(documentLayout);
-			documentLayout.setSpacing(true);
-			documentLayout.setWidth("100%");
-
-			Button hwItemDocumentDownloadBtn = new Button("Stáhnout");
-			FileDownloader downloader = new FileDownloader(new FileResource(file));
-			downloader.extend(hwItemDocumentDownloadBtn);
-
-			Button hwItemDocumentDeleteBtn = new Button("Smazat",
-					e -> UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat '" + file.getName() + "' ?") {
-						private static final long serialVersionUID = -1901927025986494370L;
-
-						@Override
-						protected void onConfirm(ClickEvent event) {
-							hwFacade.deleteHWItemFile(hwItem, file);
-
-							// refresh listu
-							listLayout.removeAllComponents();
-							createDocumentsList(hwItem, listLayout);
-						}
-					}));
-
-			hwItemDocumentDownloadBtn.setIcon(new ThemeResource("img/tags/down_16.png"));
-			hwItemDocumentDeleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
-
-			Label nameLabel = new Label(StringPreviewCreator.createPreview(file.getName(), 60));
-			// nameLabel.setWidth("280px");
-			nameLabel.setDescription(file.getName());
-			documentLayout.addComponent(nameLabel);
-			documentLayout.setExpandRatio(nameLabel, 1);
-			documentLayout.setComponentAlignment(nameLabel, Alignment.MIDDLE_LEFT);
-
+		table.addGeneratedColumn("fileSize", (Table source, Object itemId, Object columnId) -> {
+			File file = (File) itemId;
 			Label sizelabel = new Label(HumanBytesSizeCreator.format(file.length(), true));
 			sizelabel.setDescription(file.length() + "B");
 			sizelabel.setSizeUndefined();
-			documentLayout.addComponent(sizelabel);
-			documentLayout.setComponentAlignment(sizelabel, Alignment.MIDDLE_RIGHT);
+			return sizelabel;
+		});
 
-			documentLayout.addComponent(hwItemDocumentDownloadBtn);
-			documentLayout.addComponent(hwItemDocumentDeleteBtn);
-			documentLayout.setComponentAlignment(hwItemDocumentDeleteBtn, Alignment.MIDDLE_RIGHT);
-			documentLayout.setComponentAlignment(hwItemDocumentDeleteBtn, Alignment.MIDDLE_RIGHT);
-		}
+		table.addGeneratedColumn("datum", (Table source, Object itemId, Object columnId) -> {
+			File file = (File) itemId;
+			SimpleDateFormat sdf = new SimpleDateFormat("d.MM.yyyy");
+			Label label = new Label(sdf.format(new Date(file.lastModified())));
+			return label;
+		});
 
+		table.setVisibleColumns("name", "datum", "fileSize");
+		table.setColumnHeader("name", "Název");
+		table.setColumnHeader("datum", "Datum");
+		table.setColumnHeader("fileSize", "Velikost");
 	}
 
 	public HWItemDetailWindow(Component triggerComponent, final Long hwItemId) {
 		super("Detail HW");
-		HWItemDTO hwItem = hwFacade.getHWItem(hwItemId);
-
+		this.hwItem = hwFacade.getHWItem(hwItemId);
 		this.triggerComponent = triggerComponent;
-		setWidth("850px");
-		// setHeight("780px");
+
+		setWidth("900px");
+		setHeight("800px");
 
 		TabSheet sheet = new TabSheet();
+		sheet.setSizeFull();
 		sheet.addTab(createItemDetailsLayout(hwItem), "Info", new ThemeResource(ImageIcons.GEAR2_16_ICON));
-		sheet.addTab(createServiceNotesTab(hwItem), "Záznamy", new ThemeResource(ImageIcons.CLIPBOARD_16_ICON));
-		sheet.addTab(createPhotosTab(hwItem), "Fotografie", new ThemeResource(ImageIcons.IMG_16_ICON));
-		sheet.addTab(createDocsTab(hwItem), "Dokumentace", new ThemeResource(ImageIcons.DOCUMENT_16_ICON));
+		sheet.addTab(createServiceNotesTab(), "Záznamy", new ThemeResource(ImageIcons.CLIPBOARD_16_ICON));
+		sheet.addTab(createPhotosTab(), "Fotografie", new ThemeResource(ImageIcons.IMG_16_ICON));
+		sheet.addTab(createDocsTab(), "Dokumentace", new ThemeResource(ImageIcons.DOCUMENT_16_ICON));
 
 		setContent(sheet);
 

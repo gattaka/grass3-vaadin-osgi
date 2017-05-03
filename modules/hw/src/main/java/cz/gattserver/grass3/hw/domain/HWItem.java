@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -41,7 +42,7 @@ public class HWItem {
 	/**
 	 * Typ - klasifikace hw
 	 */
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
 	private Set<HWItemType> types;
 
 	/**
@@ -67,7 +68,7 @@ public class HWItem {
 	/**
 	 * Poznámky ke stavu hw - opravy apod.
 	 */
-	@OneToMany
+	@OneToMany(fetch = FetchType.LAZY)
 	@OrderBy("date desc, id desc")
 	private List<ServiceNote> serviceNotes;
 
@@ -79,11 +80,11 @@ public class HWItem {
 	/**
 	 * Součást celku
 	 */
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private HWItem usedIn;
 
 	/**
-	 * Ve správě (spravuju tohle zařízení někomu?)
+	 * Spravováno pro (spravuju tohle zařízení někomu?)
 	 */
 	private String supervizedFor;
 

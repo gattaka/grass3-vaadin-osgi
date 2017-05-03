@@ -206,17 +206,19 @@ public class HWItemsTab extends VerticalLayout {
 		 * Tabulka HW
 		 */
 		table.setSelectable(true);
+		table.setSortEnabled(true);
 		table.setImmediate(true);
 		BeanQueryFactory<HWQuery> factory = new BeanQueryFactory<HWQuery>(HWQuery.class);
 		Map<String, Object> conf = new HashMap<>();
 		conf.put(HWQuery.FILTER_KEY, filterDTO);
 		factory.setQueryConfiguration(conf);
-		container = new LazyQueryContainer(factory, "id", 100, false);
-		container.addContainerProperty("name", String.class, "");
-		container.addContainerProperty("purchaseDate", Date.class, null);
-		container.addContainerProperty("price", BigDecimal.class, null);
-		container.addContainerProperty("state", HWItemState.class, null);
-		container.addContainerProperty("usedInName", String.class, "");
+		container = new LazyQueryContainer(factory, "id", HWQuery.PAGE_SIZE, false);
+		container.addContainerProperty("name", String.class, "", false, true);
+		container.addContainerProperty("state", HWItemState.class, null, false, true);
+		container.addContainerProperty("usedInName", String.class, "", false, true);
+		container.addContainerProperty("supervizedFor", String.class, "", false, true);
+		container.addContainerProperty("price", BigDecimal.class, null, false, true);
+		container.addContainerProperty("purchaseDate", Date.class, null, false, true);
 
 		table.setContainerDataSource(container);
 
@@ -228,11 +230,13 @@ public class HWItemsTab extends VerticalLayout {
 		table.setColumnHeader("price", "Cena");
 		table.setColumnHeader("state", "Stav");
 		table.setColumnHeader("usedInName", "Je součástí");
+		table.setColumnHeader("supervizedFor", "Spravováno pro");
 
 		table.setColumnAlignment("price", Align.RIGHT);
 
-		table.setVisibleColumns(new Object[] { "name", "state", "usedInName", "price", "purchaseDate" });
-		table.setColumnWidth("name", 380);
+		table.setVisibleColumns(
+				new Object[] { "name", "state", "usedInName", "supervizedFor", "price", "purchaseDate" });
+		table.setColumnWidth("name", 300);
 		table.setColumnWidth("usedInName", 180);
 		table.setWidth("100%");
 
@@ -258,18 +262,21 @@ public class HWItemsTab extends VerticalLayout {
 				case "name":
 					filterDTO.setName((String) value);
 					break;
-				case "purchaseDate":
-					filterDTO.setPurchaseDateFrom(value == null ? null : ((DateInterval) value).getFrom());
-					filterDTO.setPurchaseDateTo(value == null ? null : ((DateInterval) value).getTo());
-					break;
-				case "price":
-					filterDTO.setPrice((BigDecimal) value);
-					break;
 				case "state":
 					filterDTO.setState((HWItemState) value);
 					break;
 				case "usedInName":
 					filterDTO.setUsedIn((String) value);
+					break;
+				case "supervizedFor":
+					filterDTO.setSupervizedFor((String) value);
+					break;
+				case "price":
+					filterDTO.setPrice((BigDecimal) value);
+					break;
+				case "purchaseDate":
+					filterDTO.setPurchaseDateFrom(value == null ? null : ((DateInterval) value).getFrom());
+					filterDTO.setPurchaseDateTo(value == null ? null : ((DateInterval) value).getTo());
 					break;
 				}
 				container.refresh();

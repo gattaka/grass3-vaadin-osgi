@@ -34,6 +34,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload;
@@ -71,8 +72,10 @@ public class HWItemDetailWindow extends WebWindow {
 	private Button fixNoteBtn;
 	private Button deleteNoteBtn;
 
+	private TabSheet sheet;
 	private HWItemDTO hwItem;
 	private FileDownloader downloader;
+	private Long hwItemId;
 	private Component triggerComponent;
 
 	private Label createShiftedLabel(String caption) {
@@ -314,6 +317,8 @@ public class HWItemDetailWindow extends WebWindow {
 				@Override
 				protected void onSuccess() {
 					refreshTable();
+					createFirstTab();
+					sheet.setSelectedTab(0);
 				}
 			});
 		});
@@ -438,6 +443,8 @@ public class HWItemDetailWindow extends WebWindow {
 
 					@Override
 					protected void onSuccess(ServiceNoteDTO noteDTO) {
+						refreshTable();
+						createFirstTab();
 						notesContainer.addItem(noteDTO.getId(), noteDTO);
 						sortServiceNotes(table);
 						table.select(noteDTO.getId());
@@ -719,19 +726,18 @@ public class HWItemDetailWindow extends WebWindow {
 
 	public HWItemDetailWindow(Component triggerComponent, final Long hwItemId) {
 		super("Detail HW");
-		this.hwItem = hwFacade.getHWItem(hwItemId);
+		this.hwItemId = hwItemId;
 		this.triggerComponent = triggerComponent;
 
 		setWidth("900px");
 		setHeight("700px");
 
-		TabSheet sheet = new TabSheet();
+		sheet = new TabSheet();
 		sheet.setSizeFull();
-		sheet.addTab(createItemDetailsLayout(hwItem), "Info", new ThemeResource(ImageIcons.GEAR2_16_ICON));
+		createFirstTab();
 		sheet.addTab(createServiceNotesTab(), "Záznamy", new ThemeResource(ImageIcons.CLIPBOARD_16_ICON));
 		sheet.addTab(createPhotosTab(), "Fotografie", new ThemeResource(ImageIcons.IMG_16_ICON));
 		sheet.addTab(createDocsTab(), "Dokumentace", new ThemeResource(ImageIcons.DOCUMENT_16_ICON));
-
 		setContent(sheet);
 
 		triggerComponent.setEnabled(false);
@@ -742,5 +748,13 @@ public class HWItemDetailWindow extends WebWindow {
 		});
 
 		center();
+	}
+
+	private void createFirstTab() {
+		this.hwItem = hwFacade.getHWItem(hwItemId);
+		Tab tab = sheet.getTab(0);
+		if (tab != null)
+			sheet.removeTab(tab);
+		sheet.addTab(createItemDetailsLayout(hwItem), "Info", new ThemeResource(ImageIcons.GEAR2_16_ICON), 0);
 	}
 }

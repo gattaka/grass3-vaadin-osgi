@@ -36,10 +36,14 @@ public class ServiceNoteDTO {
 	/**
 	 * Součásti
 	 */
-	private HWItemDTO usedIn;
+	private HWItemOverviewDTO usedIn;
 
-	public HWItemDTO getUsedIn() {
+	public HWItemOverviewDTO getUsedIn() {
 		return usedIn;
+	}
+
+	public void setUsedIn(HWItemOverviewDTO usedIn) {
+		this.usedIn = usedIn;
 	}
 
 	public String getUsedInName() {
@@ -47,11 +51,7 @@ public class ServiceNoteDTO {
 			return usedIn.getName();
 		return "";
 	}
-
-	public void setUsedIn(HWItemDTO usedIn) {
-		this.usedIn = usedIn;
-	}
-
+	
 	public Long getId() {
 		return id;
 	}

@@ -64,10 +64,10 @@ public class HWItemDTO {
 	/**
 	 * Součást celku
 	 */
-	private HWItemDTO usedIn;
+	private HWItemOverviewDTO usedIn;
 
 	/**
-	 * Ve správě (spravuju tohle zařízení někomu?)
+	 * Spravováno pro (spravuju tohle zařízení někomu?)
 	 */
 	private String supervizedFor;
 
@@ -78,8 +78,8 @@ public class HWItemDTO {
 	public void setSupervizedFor(String supervizedFor) {
 		this.supervizedFor = supervizedFor;
 	}
-	
-	public HWItemDTO getUsedIn() {
+
+	public HWItemOverviewDTO getUsedIn() {
 		return usedIn;
 	}
 
@@ -89,7 +89,7 @@ public class HWItemDTO {
 		return "";
 	}
 
-	public void setUsedIn(HWItemDTO usedIn) {
+	public void setUsedIn(HWItemOverviewDTO usedIn) {
 		this.usedIn = usedIn;
 	}
 

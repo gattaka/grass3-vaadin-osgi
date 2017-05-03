@@ -36,7 +36,20 @@ public class HWItemOverviewDTO {
 	/**
 	 * Součást celku
 	 */
-	private HWItemDTO usedIn;
+	private HWItemOverviewDTO usedIn;
+
+	/**
+	 * Spravováno pro (spravuju tohle zařízení někomu?)
+	 */
+	private String supervizedFor;
+
+	public String getSupervizedFor() {
+		return supervizedFor;
+	}
+
+	public void setSupervizedFor(String supervizedFor) {
+		this.supervizedFor = supervizedFor;
+	}
 
 	public Long getId() {
 		return id;
@@ -91,11 +104,15 @@ public class HWItemOverviewDTO {
 			return false;
 	}
 
-	public HWItemDTO getUsedIn() {
+	public String getUsedInName() {
+		return usedIn == null ? "" : usedIn.getName();
+	}
+
+	public HWItemOverviewDTO getUsedIn() {
 		return usedIn;
 	}
 
-	public void setUsedIn(HWItemDTO usedIn) {
+	public void setUsedIn(HWItemOverviewDTO usedIn) { 
 		this.usedIn = usedIn;
 	}
 

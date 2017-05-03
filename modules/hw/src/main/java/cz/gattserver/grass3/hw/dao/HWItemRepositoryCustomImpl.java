@@ -33,6 +33,7 @@ public class HWItemRepositoryCustomImpl implements HWItemRepositoryCustom {
 		builder.like(h.name, filter.getName());
 		builder.eq(h.state, filter.getState());
 		builder.like(h.usedIn.name, filter.getUsedIn());
+		builder.like(h.supervizedFor, filter.getSupervizedFor());
 		builder.eq(h.price, filter.getPrice());
 		builder.between(h.purchaseDate, filter.getPurchaseDateFrom(), filter.getPurchaseDateTo());
 		if (filter.getTypes() != null)
@@ -56,7 +57,7 @@ public class HWItemRepositoryCustomImpl implements HWItemRepositoryCustom {
 		JPAQuery<HWItem> query = new JPAQuery<>(entityManager);
 		QuerydslUtil.applyPagination(pageable, query);
 		QHWItem h = QHWItem.hWItem;
-		return query.from(h).where(createPredicateHWItems(filter)).fetch();
+		return query.from(h).where(createPredicateHWItems(filter)).orderBy(order).fetch();
 	}
 
 }

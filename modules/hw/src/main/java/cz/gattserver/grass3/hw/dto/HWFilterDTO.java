@@ -7,12 +7,21 @@ import java.util.Date;
 public class HWFilterDTO {
 
 	private String name;
-	private Date purchaseDateFrom;
-	private Date purchaseDateTo;
-	private BigDecimal price;
 	private HWItemState state;
 	private String usedIn;
+	private String supervizedFor;
+	private BigDecimal price;
+	private Date purchaseDateFrom;
+	private Date purchaseDateTo;
 	private Collection<String> types;
+
+	public String getSupervizedFor() {
+		return supervizedFor;
+	}
+
+	public void setSupervizedFor(String supervizedFor) {
+		this.supervizedFor = supervizedFor;
+	}
 
 	public String getName() {
 		return name;

@@ -19,6 +19,8 @@ import cz.gattserver.grass3.model.util.QuerydslUtil;
 public class HWQuery extends AbstractBeanQuery<HWItemOverviewDTO> {
 
 	public static final String FILTER_KEY = "FILTER_KEY";
+	
+	public static final Integer PAGE_SIZE = 100;
 
 	@Autowired
 	protected IHWFacade hwFacade;
@@ -45,7 +47,7 @@ public class HWQuery extends AbstractBeanQuery<HWItemOverviewDTO> {
 	@Override
 	protected List<HWItemOverviewDTO> loadBeans(int startIndex, int count) {
 		OrderSpecifier<String>[] specifiers = QuerydslUtil.transformOrdering(getSortPropertyIds(), getSortStates());
-		return hwFacade.getHWItems(filter, new PageRequest(startIndex / count, count), specifiers);
+		return hwFacade.getHWItems(filter, new PageRequest(startIndex / PAGE_SIZE, PAGE_SIZE), specifiers);
 	}
 
 	@Override
@@ -53,4 +55,5 @@ public class HWQuery extends AbstractBeanQuery<HWItemOverviewDTO> {
 			List<HWItemOverviewDTO> removedBeans) {
 		// not implemented
 	}
+	
 }

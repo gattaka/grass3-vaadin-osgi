@@ -56,12 +56,14 @@ public interface IArticleFacade {
 	 *            klíčová slova článku
 	 * @param publicated
 	 *            je článek publikován ?
-	 * @param articleDTO
-	 *            původní článek
+	 * @param articleId
+	 *            id původního článku
+	 * @param contentNodeId
+	 *            id contentNode původního článku
 	 * @return {@code true} pokud se úprava zdařila, jinak {@code false}
 	 */
-	public void modifyArticle(String name, String text, Collection<String> tags, boolean publicated,
-			ArticleDTO articleDTO, String contextRoot);
+	public void modifyArticle(String name, String text, Collection<String> tags, boolean publicated, Long articleId,
+			Long contentNodeId, String contextRoot);
 
 	/**
 	 * Uloží článek
@@ -94,9 +96,11 @@ public interface IArticleFacade {
 	public ArticleDTO getArticleForDetail(Long id);
 
 	/**
-	 * Získá všechny články pro přegenerování
+	 * Spustí přegenerování
+	 * 
+	 * @param contextRoot
 	 */
-	public List<ArticleDTO> getAllArticlesForReprocess();
+	public void reprocessAllArticles(String contextRoot);
 
 	/**
 	 * Získá všechny články a namapuje je pro použití při vyhledávání

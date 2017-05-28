@@ -6,39 +6,38 @@ import cz.gattserver.grass3.articles.parser.interfaces.IContext;
 public class CodeTree extends AbstractElementTree {
 
 	private String code;
-	private String style;
 	private String description;
+	private String lib;
+	private String mode;
 
-	private String[] libs;
-
-	public CodeTree(String code, String description, String style,
-			String... libs) {
+	public CodeTree(String code, String description, String lib, String mode) {
 		this.code = code;
 		this.description = description;
-		this.style = style;
-		this.libs = libs;
+		this.lib = lib;
+		this.mode = mode;
 	}
 
 	public void generateElement(IContext ctx) {
 
 		// CSS resources
 		ctx.addCSSResource("articles/code/code_style.css");
-		ctx.addCSSResource("articles/code/codemirror.css");
+		ctx.addCSSResource("articles/code/lib/codemirror.css");
 
 		// JS resources
-		ctx.addJSResource("articles/code/js/codemirror.js");
-		ctx.addJSResource("articles/code/js/matchbrackets.js");
-		ctx.addJSResource("articles/code/js/xml-fold.js");
-		ctx.addJSResource("articles/code/js/matchtags.js");
-		ctx.addJSResource("articles/code/js/active-line.js");
+		ctx.addJSResource("articles/code/lib/codemirror.js");
+		ctx.addJSResource("articles/code/addon/edit/matchbrackets.js");
+		ctx.addJSResource("articles/code/addon/fold/xml-fold.js");
+		ctx.addJSResource("articles/code/addon/edit/matchtags.js");
+		ctx.addJSResource("articles/code/addon/selection/active-line.js");
 
-		for (String lib : libs)
-			ctx.addJSResource("articles/code/js/lang/" + lib);
-		ctx.addJSResource("articles/code/js/lang/" + style + ".js"); 
+		if (lib != null)
+			ctx.addJSResource("articles/code/mode/" + lib + "/" + lib + ".js");
 		
+		ctx.addJSResource("articles/code/lib/codemirror_scan.js");
+
 		ctx.print("<span class=\"lang_description\">" + description + "</span>");
 		ctx.print("<div class=\"barier\"><div class=\"numberedtext\">");
-		ctx.print("<textarea name=\"" + style + "\">" + code + "</textarea>");
+		ctx.print("<textarea name=\"codemirror_" + (mode == null ? "" : mode) + "\">" + code + "</textarea>");
 		ctx.print("</div></div><div id=\"code_koncovka\"></div>");
 	}
 

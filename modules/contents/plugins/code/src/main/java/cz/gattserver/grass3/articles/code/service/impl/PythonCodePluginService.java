@@ -10,7 +10,7 @@ import cz.gattserver.grass3.articles.service.IPluginService;
 @Component
 public class PythonCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("PYTHON","Python","python.png","codemirror_python");
+	private CodeFactory factory = new CodeFactory("PYTHON", "Python", "python.png", "python", "python");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

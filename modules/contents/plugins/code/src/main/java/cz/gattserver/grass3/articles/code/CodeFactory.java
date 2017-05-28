@@ -13,16 +13,15 @@ public class CodeFactory implements IPluginFactory {
 	private String tag;
 	private String description;
 	private String image;
-	private String style;
-	private String[] libs;
+	private String lib;
+	private String mode;
 
-	public CodeFactory(String tag, String description, String image,
-			String style, String... libs) {
+	public CodeFactory(String tag, String description, String image, String lib, String mode) {
 		this.tag = tag;
 		this.description = description;
 		this.image = image;
-		this.style = style;
-		this.libs = libs;
+		this.lib = lib;
+		this.mode = mode;
 	}
 
 	public String getTag() {
@@ -30,7 +29,7 @@ public class CodeFactory implements IPluginFactory {
 	}
 
 	public AbstractParserPlugin getPluginParser() {
-		return new CodeElement(tag, description, style, libs);
+		return new CodeElement(tag, description, lib, mode);
 	}
 
 	public EditorButtonResources getEditorButtonResources() {

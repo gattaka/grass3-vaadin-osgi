@@ -10,7 +10,7 @@ import cz.gattserver.grass3.articles.service.IPluginService;
 @Component
 public class RubyCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("RUBY","Ruby","ruby.png","codemirror_ruby");
+	private CodeFactory factory = new CodeFactory("RUBY", "Ruby", "ruby.png", "ruby", "ruby");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

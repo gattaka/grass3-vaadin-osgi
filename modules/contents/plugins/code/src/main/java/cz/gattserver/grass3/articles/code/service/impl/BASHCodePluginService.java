@@ -10,7 +10,7 @@ import cz.gattserver.grass3.articles.service.IPluginService;
 @Component
 public class BASHCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("BASH","BASH","bash.gif","codemirror_shell");
+	private CodeFactory factory = new CodeFactory("BASH", "BASH", "bash.gif", "shell", "shell");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

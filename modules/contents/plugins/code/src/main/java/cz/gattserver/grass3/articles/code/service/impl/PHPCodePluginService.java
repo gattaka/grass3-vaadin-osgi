@@ -10,7 +10,7 @@ import cz.gattserver.grass3.articles.service.IPluginService;
 @Component
 public class PHPCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("PHP","PHP","php.png","codemirror_php");
+	private CodeFactory factory = new CodeFactory("PHP", "PHP", "php.png", "php", "php");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

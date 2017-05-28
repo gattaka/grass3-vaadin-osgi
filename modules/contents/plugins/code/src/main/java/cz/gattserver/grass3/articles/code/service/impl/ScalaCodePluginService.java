@@ -10,8 +10,7 @@ import cz.gattserver.grass3.articles.service.IPluginService;
 @Component
 public class ScalaCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("SCALA", "Scala",
-			"scala.gif", "codemirror_scala", "clike.js");
+	private CodeFactory factory = new CodeFactory("SCALA", "Scala", "scala.gif", "clike", "scala");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

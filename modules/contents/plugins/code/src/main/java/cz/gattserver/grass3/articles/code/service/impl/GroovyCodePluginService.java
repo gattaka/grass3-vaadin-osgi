@@ -10,8 +10,7 @@ import cz.gattserver.grass3.articles.service.IPluginService;
 @Component
 public class GroovyCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("GROOVY", "Groovy",
-			"groovy.jpeg", "codemirror_groovy");
+	private CodeFactory factory = new CodeFactory("GROOVY", "Groovy", "groovy.jpeg", "groovy", "groovy");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

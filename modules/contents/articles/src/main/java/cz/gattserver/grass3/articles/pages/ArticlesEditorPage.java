@@ -94,8 +94,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 	public ArticlesEditorPage(GrassRequest request) {
 		super(request);
-		JavaScript
-				.eval("window.onbeforeunload = function() { return \"Opravdu si přejete ukončit editor a odejít - rozpracovaná data nejsou uložena ?\" };");
+		JavaScript.eval(
+				"window.onbeforeunload = function() { return \"Opravdu si přejete ukončit editor a odejít - rozpracovaná data nejsou uložena ?\" };");
 	}
 
 	@Override
@@ -113,7 +113,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			@Override
 			public void focus(FocusEvent event) {
 				JavaScript.eval("registerTabListener()");
-				// musí se odebrat, jinak budou problikávat vkládání přes tlačítka
+				// musí se odebrat, jinak budou problikávat vkládání přes
+				// tlačítka
 				articleTextArea.removeFocusListener(articleTextAreaFocusListener);
 			}
 
@@ -483,7 +484,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				}
 
 				articleFacade.modifyArticle(String.valueOf(articleNameField.getValue()), text, getArticlesKeywords(),
-						publicatedCheckBox.getValue(), article, getRequest().getContextRoot());
+						publicatedCheckBox.getValue(), article.getId(), article.getContentNode().getId(),
+						getRequest().getContextRoot());
 			} else {
 				Long id = articleFacade.saveArticle(String.valueOf(articleNameField.getValue()),
 						String.valueOf(articleTextArea.getValue()), getArticlesKeywords(),

@@ -10,8 +10,7 @@ import cz.gattserver.grass3.articles.service.IPluginService;
 @Component
 public class XMLCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("XML", "HTML/XML", "",
-			"codemirror_xml");
+	private CodeFactory factory = new CodeFactory("XML", "HTML/XML", "", "xml", "xml");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

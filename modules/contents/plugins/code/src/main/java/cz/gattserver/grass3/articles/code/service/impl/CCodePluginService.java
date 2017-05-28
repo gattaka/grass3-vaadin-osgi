@@ -10,7 +10,7 @@ import cz.gattserver.grass3.articles.service.IPluginService;
 @Component
 public class CCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("C","C","","codemirror_c","clike.js");
+	private CodeFactory factory = new CodeFactory("C", "C", "", "clike", "c");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

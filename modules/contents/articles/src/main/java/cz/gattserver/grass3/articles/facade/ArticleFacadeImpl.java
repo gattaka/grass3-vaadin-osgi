@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.articles.facade;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -9,6 +10,7 @@ import java.util.TreeSet;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,9 @@ import cz.gattserver.grass3.articles.domain.Article;
 import cz.gattserver.grass3.articles.domain.ArticleJSResource;
 import cz.gattserver.grass3.articles.dto.ArticleDTO;
 import cz.gattserver.grass3.articles.editor.api.ContextImpl;
+import cz.gattserver.grass3.articles.events.ArticlesProcessProgressEvent;
+import cz.gattserver.grass3.articles.events.ArticlesProcessResultEvent;
+import cz.gattserver.grass3.articles.events.ArticlesProcessStartEvent;
 import cz.gattserver.grass3.articles.lexer.Lexer;
 import cz.gattserver.grass3.articles.parser.ArticleParser;
 import cz.gattserver.grass3.articles.parser.HTMLTrimmer;
@@ -27,16 +32,22 @@ import cz.gattserver.grass3.articles.parser.interfaces.AbstractParser;
 import cz.gattserver.grass3.articles.parser.interfaces.IContext;
 import cz.gattserver.grass3.articles.service.impl.ArticlesContentService;
 import cz.gattserver.grass3.articles.util.ArticlesMapper;
+import cz.gattserver.grass3.events.IEventBus;
 import cz.gattserver.grass3.facades.IContentNodeFacade;
 import cz.gattserver.grass3.model.dao.ContentNodeRepository;
 import cz.gattserver.grass3.model.domain.ContentNode;
+import cz.gattserver.grass3.model.domain.ContentTag;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
+import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 
 @Transactional
 @Component("articleFacade")
 public class ArticleFacadeImpl implements IArticleFacade {
+
+	@Autowired
+	private IEventBus eventBus;
 
 	@Resource(name = "contentNodeFacade")
 	private IContentNodeFacade contentNodeFacade;
@@ -145,11 +156,11 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 *            původní článek
 	 * @return {@code true} pokud se úprava zdařila, jinak {@code false}
 	 */
-	public void modifyArticle(String name, String text, Collection<String> tags, boolean publicated,
-			ArticleDTO articleDTO, String contextRoot) {
+	public void modifyArticle(String name, String text, Collection<String> tags, boolean publicated, Long articleId,
+			Long contentNodeId, String contextRoot) {
 
 		// článek
-		Article article = articleRepository.findOne(articleDTO.getId());
+		Article article = articleRepository.findOne(articleId);
 
 		// nasetuj do něj vše potřebné
 		IContext context = processArticle(text, contextRoot);
@@ -165,7 +176,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 		articleRepository.save(article);
 
 		// content node
-		contentNodeFacade.modify(articleDTO.getContentNode().getId(), name, tags, publicated);
+		contentNodeFacade.modify(contentNodeId, name, tags, publicated);
 	}
 
 	private SortedSet<ArticleJSResource> createJSResourcesSet(Set<String> scripts) {
@@ -242,14 +253,36 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	}
 
 	/**
-	 * Získá všechny články pro přegenerování
+	 * Spustí přegenerování
 	 */
-	public List<ArticleDTO> getAllArticlesForReprocess() {
+	@Async
+	public void reprocessAllArticles(String contextRoot) {
+
 		List<Article> articles = articleRepository.findAll();
-		if (articles == null)
-			return null;
-		List<ArticleDTO> articleDTOs = articlesMapper.mapArticlesForReprocess(articles);
-		return articleDTOs;
+		int total = articles.size();
+
+		// Počet kroků = miniatury + detaily + uložení
+		eventBus.publish(new ArticlesProcessStartEvent(total));
+
+		int current = 0;
+		for (Article article : articles) {
+
+			Collection<ContentTag> tagsDTOs = article.getContentNode().getContentTags();
+
+			Set<String> tags = new HashSet<String>();
+			for (ContentTag tag : tagsDTOs)
+				tags.add(tag.getName());
+
+			modifyArticle(article.getContentNode().getName(), article.getText(), tags,
+					article.getContentNode().getPublicated(), article.getId(), article.getContentNode().getId(),
+					contextRoot);
+
+			eventBus.publish(new ArticlesProcessProgressEvent(
+					"(" + current + "/" + total + ") " + article.getContentNode().getName()));
+			current++;
+		}
+
+		eventBus.publish(new ArticlesProcessResultEvent());
 	}
 
 	/**

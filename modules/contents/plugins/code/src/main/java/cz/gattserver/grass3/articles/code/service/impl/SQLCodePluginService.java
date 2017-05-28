@@ -10,8 +10,7 @@ import cz.gattserver.grass3.articles.service.IPluginService;
 @Component
 public class SQLCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("SQL", "SQL", "",
-			"codemirror_sql");
+	private CodeFactory factory = new CodeFactory("SQL", "SQL", "", "sql", "sql");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

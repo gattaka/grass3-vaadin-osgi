@@ -1,33 +1,33 @@
 package cz.gattserver.grass3.articles.tabs;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.ProgressIndicator;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 
 import cz.gattserver.grass3.articles.config.ArticlesConfiguration;
-import cz.gattserver.grass3.articles.dto.ArticleDTO;
+import cz.gattserver.grass3.articles.events.ArticlesProcessProgressEvent;
+import cz.gattserver.grass3.articles.events.ArticlesProcessResultEvent;
+import cz.gattserver.grass3.articles.events.ArticlesProcessStartEvent;
 import cz.gattserver.grass3.articles.facade.IArticleFacade;
 import cz.gattserver.grass3.config.IConfigurationService;
+import cz.gattserver.grass3.events.IEventBus;
 import cz.gattserver.grass3.facades.IContentTagFacade;
-import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
+import cz.gattserver.grass3.ui.progress.BaseProgressBar;
+import cz.gattserver.grass3.ui.progress.ProgressWindow;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.window.ConfirmWindow;
+import net.engio.mbassy.listener.Handler;
 
 public class ArticlesSettingsTab extends AbstractSettingsTab {
 
@@ -42,10 +42,12 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 	@Resource(name = "configurationService")
 	private IConfigurationService configurationService;
 
-	private Window progressSubWindow;
-	private ProgressThread progressThread;
-	private ProgressIndicator progressbar;
-	private Label progressItemLabel;
+	@Autowired
+	private IEventBus eventBus;
+
+	private UI ui = UI.getCurrent();
+	private ProgressWindow progressIndicatorWindow;
+
 	private Button reprocessButton;
 
 	public ArticlesSettingsTab(GrassRequest request) {
@@ -56,8 +58,7 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 	 * Validátor pro validaci kladný celých čísel (celá čísla větší než nula)
 	 * 
 	 */
-	private static class PositiveIntegerValidator extends
-			AbstractStringValidator {
+	private static class PositiveIntegerValidator extends AbstractStringValidator {
 
 		private static final long serialVersionUID = 6306586184856533108L;
 
@@ -91,8 +92,7 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 		final ArticlesConfiguration configuration = loadConfiguration();
 
 		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new Label("<h2>Nastavení</h2>",
-				ContentMode.HTML));
+		settingsLayout.addComponent(new Label("<h2>Nastavení</h2>", ContentMode.HTML));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
@@ -104,8 +104,7 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 		 * Délka tabulátoru ve znacích
 		 */
 		final TextField tabLengthField = new TextField("Délka tabulátoru");
-		tabLengthField.addValidator(new PositiveIntegerValidator(
-				"Délka tabulátoru musí být celé číslo"));
+		tabLengthField.addValidator(new PositiveIntegerValidator("Délka tabulátoru musí být celé číslo"));
 		tabLengthField.setValue(String.valueOf(configuration.getTabLength()));
 		settingsFieldsLayout.addComponent(tabLengthField);
 
@@ -113,10 +112,8 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 		 * Prodleva mezi průběžnými zálohami článku
 		 */
 		final TextField backupTimeout = new TextField("Prodleva mezi zálohami");
-		backupTimeout.addValidator(new PositiveIntegerValidator(
-				"Prodleva mezi zálohami musí být celé číslo"));
-		backupTimeout
-				.setValue(String.valueOf(configuration.getBackupTimeout()));
+		backupTimeout.addValidator(new PositiveIntegerValidator("Prodleva mezi zálohami musí být celé číslo"));
+		backupTimeout.setValue(String.valueOf(configuration.getBackupTimeout()));
 		settingsFieldsLayout.addComponent(backupTimeout);
 
 		/**
@@ -130,10 +127,8 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 
 				if (tabLengthField.isValid() && backupTimeout.isValid())
 
-					configuration.setTabLength(Integer.parseInt(tabLengthField
-							.getValue()));
-				configuration.setBackupTimeout(Integer.parseInt(backupTimeout
-						.getValue()));
+					configuration.setTabLength(Integer.parseInt(tabLengthField.getValue()));
+				configuration.setBackupTimeout(Integer.parseInt(backupTimeout.getValue()));
 				storeConfiguration(configuration);
 			}
 		});
@@ -142,8 +137,7 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 		/**
 		 * Reprocess tlačítko
 		 */
-		settingsLayout.addComponent(new Label(
-				"</br><h2>Přegenerování obsahů</h2>", ContentMode.HTML));
+		settingsLayout.addComponent(new Label("</br><h2>Přegenerování obsahů</h2>", ContentMode.HTML));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout reprocessLayout = new VerticalLayout();
@@ -165,10 +159,9 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 
 					@Override
 					protected void onConfirm(ClickEvent event) {
-
-						progressSubWindow = new ProgressSubWindow();
-						getUI().addWindow(progressSubWindow);
-
+						eventBus.subscribe(ArticlesSettingsTab.this);
+						ui.setPollInterval(200);
+						articleFacade.reprocessAllArticles(getRequest().getContextRoot());
 					}
 				};
 				confirmSubwindow.setWidth("460px");
@@ -193,116 +186,48 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 		configurationService.saveConfiguration(configuration);
 	}
 
-	public class ProgressSubWindow extends Window {
-
-		private static final long serialVersionUID = 2717898756701926156L;
-
-		public ProgressSubWindow() {
-			super("Průběh operace");
-
-			setWidth("300px");
-			setHeight("170px");
-			center();
-
-			// okno se nesmí dát zavřít
-			setReadOnly(true);
-
-			VerticalLayout processWindowLayout = new VerticalLayout();
-			setContent(processWindowLayout);
-
-			processWindowLayout.setMargin(true);
-			processWindowLayout.setSpacing(true);
-			processWindowLayout.setSizeFull();
-
-			// TODO použít nové z balíku cz.gattserver.grass3.ui.progress
-			progressbar = new ProgressIndicator();
-			progressbar.setPollingInterval(100);
-			progressbar.setIndeterminate(false);
-			progressbar.setEnabled(false);
-			processWindowLayout.addComponent(progressbar);
-			processWindowLayout.setComponentAlignment(progressbar,
-					Alignment.MIDDLE_CENTER);
-
-			progressItemLabel = new Label("");
-			processWindowLayout.addComponent(progressItemLabel);
-			processWindowLayout.setComponentAlignment(progressItemLabel,
-					Alignment.MIDDLE_CENTER);
-
-			// aby to nešlo pustit dvakrát vedle sebe
-			reprocessButton.setEnabled(false);
-
-			progressThread = new ProgressThread();
-			progressThread.start();
-			progressbar.setEnabled(true);
-			progressbar.setValue(0f);
-
-		}
-
-	}
-
-	/**
-	 * Je volán vláknem aby se aktualizoval stav progressbaru
-	 */
-	public void prosessed() {
-		float progress = progressThread.getProgress();
-		String progressItemName = progressThread.getCurrentName();
-		progressbar.setValue(progress);
-		progressItemLabel.setValue(progressItemName);
-		if (progress == 1) {
-			progressbar.setEnabled(false);
-			reprocessButton.setEnabled(true);
-			getUI().removeWindow(progressSubWindow);
-		}
-	}
-
-	public class ProgressThread extends Thread {
-
-		private int total;
-		private int current;
-		private String currentName;
-
-		@Override
-		public void run() {
-
-			List<ArticleDTO> articles = articleFacade
-					.getAllArticlesForReprocess();
-			total = articles.size();
-			current = 0;
-
-			for (ArticleDTO article : articles) {
-
-				Collection<ContentTagDTO> tagsDTOs = article.getContentNode()
-						.getContentTags();
-
-				Set<String> tags = new HashSet<String>();
-				for (ContentTagDTO tag : tagsDTOs)
-					tags.add(tag.getName());
-
-				articleFacade.modifyArticle(article.getContentNode().getName(),
-						article.getText(), tags, article.getContentNode()
-								.isPublicated(), article, getRequest()
-								.getContextRoot());
-
-				// synchronized (getUI()) {
-				current++;
-				currentName = "(" + current + "/" + total + ") "
-						+ article.getContentNode().getName();
-				prosessed(); // aktualizuj stav progressbaru
-				// }
+	@Handler
+	protected void onProcessStart(final ArticlesProcessStartEvent event) {
+		ui.access(new Runnable() {
+			@Override
+			public void run() {
+				BaseProgressBar progressBar = new BaseProgressBar(event.getCountOfStepsToDo());
+				progressBar.setIndeterminate(false);
+				progressBar.setValue(0f);
+				progressIndicatorWindow = new ProgressWindow(progressBar);
+				ui.addWindow(progressIndicatorWindow);
 			}
-		}
+		});
+	}
 
-		/**
-		 * @return procentuální stav hotové práce
-		 */
-		public float getProgress() {
-			return (float) current / total;
-		}
+	@Handler
+	protected void onProcessProgress(ArticlesProcessProgressEvent event) {
+		ui.access(new Runnable() {
+			@Override
+			public void run() {
+				progressIndicatorWindow.indicateProgress(event.getStepDescription());
+			}
+		});
+	}
 
-		public String getCurrentName() {
-			return currentName;
-		}
+	@Handler
+	protected void onProcessResult(final ArticlesProcessResultEvent event) {
+		ui.access(new Runnable() {
+			@Override
+			public void run() {
+				// ui.setPollInterval(-1);
+				if (progressIndicatorWindow != null)
+					progressIndicatorWindow.closeOnDone();
+				reprocessButton.setEnabled(true);
 
+				if (event.isSuccess()) {
+					showInfo("Přegenerování článků proběhlo úspěšně");
+				} else {
+					showWarning("Přegenerování článků se nezdařilo");
+				}
+			}
+		});
+		eventBus.unsubscribe(ArticlesSettingsTab.this);
 	}
 
 }

@@ -10,7 +10,7 @@ import cz.gattserver.grass3.articles.service.IPluginService;
 @Component
 public class LatexCodePluginService implements IPluginService {
 
-	private CodeFactory factory = new CodeFactory("LATEX","LaTeX","","codemirror_latex");
+	private CodeFactory factory = new CodeFactory("LATEX", "LaTeX", "", "stex", "latex");
 
 	public IPluginFactory getPluginFactory() {
 		return factory;

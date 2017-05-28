@@ -15,15 +15,14 @@ public class CodeElement extends AbstractParserPlugin {
 
 	private String tag;
 	private String description;
-	private String style;
-	private String[] libs;
+	private String lib;
+	private String mode;
 
-	public CodeElement(String tag, String description, String style,
-			String... libs) {
+	public CodeElement(String tag, String description, String lib, String mode) {
 		this.tag = tag;
 		this.description = description;
-		this.style = style;
-		this.libs = libs;
+		this.lib = lib;
+		this.mode = mode;
 	}
 
 	public AbstractElementTree parse(PluginBag pluginBag) {
@@ -53,17 +52,14 @@ public class CodeElement extends AbstractParserPlugin {
 		Token currentToken = null;
 		while (true) {
 			currentToken = pluginBag.getToken();
-			if ((currentToken == Token.END_TAG && pluginBag.getEndTag().equals(
-					tag))
-					|| currentToken == Token.EOF)
+			if ((currentToken == Token.END_TAG && pluginBag.getEndTag().equals(tag)) || currentToken == Token.EOF)
 				break;
 			/**
 			 * Pokud načteš TEXT, tak přidej jeho obsah, pokud pak načtečeš EOL,
 			 * tak nepřidávej prázdný řádek, ledaže by jsi načetl EOL EOL - pak
 			 * je to prázdný řádek
 			 */
-			if (currentToken == Token.TEXT || currentToken == Token.END_TAG
-					|| currentToken == Token.START_TAG)
+			if (currentToken == Token.TEXT || currentToken == Token.END_TAG || currentToken == Token.START_TAG)
 				code.append(HTMLEscaper.stringToHTMLString(pluginBag.getCode()));
 			else if (currentToken == Token.EOL) {
 				// prázdné řádky je potřeba prokládat mezerou, kterou si JS záhy
@@ -99,7 +95,7 @@ public class CodeElement extends AbstractParserPlugin {
 
 		// position 1, position 2, link odkazu, text odkazu (optional), ikona
 		// (optional), default ikona
-		return new CodeTree(code.toString(), description, style, libs);
+		return new CodeTree(code.toString(), description, lib, mode);
 	}
 
 	public boolean canHoldBreakline() {

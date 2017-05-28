@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -35,9 +34,12 @@ public class Downloader {
 
 	private static InputStream getResponseReader(String address) {
 		URL url = null;
+		InputStream is = null;
 		try {
-			// musí se odstranit, protože například právě pro VAADIN je tento lokální krok příčinou, proč se vrátí
-			// DOCUMENT response s neplatnou session, namísto adresovaného souboru favicony
+			// musí se odstranit, protože například právě pro VAADIN je tento
+			// lokální krok příčinou, proč se vrátí
+			// DOCUMENT response s neplatnou session, namísto adresovaného
+			// souboru favicony
 			address = address.replace("/./", "/");
 			url = new URL(address);
 			URLConnection uc = url.openConnection();
@@ -47,12 +49,16 @@ public class Downloader {
 					HttpURLConnection hc = (HttpURLConnection) uc;
 					hc.setInstanceFollowRedirects(true);
 
-					// bez agenta to často hodí 403 Forbidden, protože si myslí, že jsem asi bot ... (což vlastně jsem)
+					// bez agenta to často hodí 403 Forbidden, protože si myslí,
+					// že jsem asi bot ... (což vlastně jsem)
 					hc.setRequestProperty("User-Agent", "Mozilla");
 					logger.info("Favicon URL: " + uc.getURL());
+					hc.setConnectTimeout(1000);
+					hc.setReadTimeout(1000);
 					hc.connect();
 
-					// Zjisti, zda bude potřeba manuální redirect (URLConnection to umí samo, dokud se nepřechází mezi
+					// Zjisti, zda bude potřeba manuální redirect (URLConnection
+					// to umí samo, dokud se nepřechází mezi
 					// HTTP a HTTPS, pak to nechává na manuální obsluze)
 					int responseCode = hc.getResponseCode();
 					if (responseCode == 301 || responseCode == 302 || responseCode == 303) {
@@ -64,7 +70,7 @@ public class Downloader {
 					}
 
 					logger.info("Favicon connected URL: " + hc.getURL());
-					InputStream is = hc.getInputStream();
+					is = hc.getInputStream();
 					logger.info("Favicon redirected URL: " + hc.getURL());
 					if (is != null) {
 						logger.info("Engine: InputStream obtained");
@@ -76,17 +82,23 @@ public class Downloader {
 			} else {
 				logger.info("Engine: URL connection failed !");
 			}
-		} catch (MalformedURLException ex) {
+		} catch (Exception ex) {
 			logger.error(ex.toString());
-		} catch (IOException ex) {
-			logger.error(ex.toString());
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					// hm...
+				}
+			}
 		}
 		return null;
 	}
 
 	private static String createFullFaviconAddress(String faviconAddress, String baseURI) {
 
-		// je potřeba z Jsoup doc.baseUri(), protože to může být i vložená stránka a tam se baseURI liší od počátečního
+		// je potřeba z Jsoup doc.baseUri(), protože to může být i vložená
+		// stránka a tam se baseURI liší od počátečního
 		// url.getHost() hlavní stránky
 
 		logger.info("Favicon address found on page, address: " + faviconAddress);
@@ -95,7 +107,8 @@ public class Downloader {
 			logger.info("Trying download favicon from: " + faviconAddress);
 			return faviconAddress;
 		} else if (faviconAddress.startsWith("//")) {
-			// absolutní cesta pro favicon, která míst 'http://' začíná jenom '//'
+			// absolutní cesta pro favicon, která míst 'http://' začíná jenom
+			// '//'
 			// tahle to má například stackoverflow
 			String faviconFullAddress = HTTP_PREFIX_SHORT + faviconAddress;
 			logger.info("Trying download favicon from: " + faviconFullAddress);
@@ -114,7 +127,8 @@ public class Downloader {
 
 			// http://en.wikipedia.org/wiki/Favicon
 			// need http protocol
-			// bez agenta to často hodí 403 Forbidden, protože si myslí, že jsem asi bot ... (což vlastně jsem)
+			// bez agenta to často hodí 403 Forbidden, protože si myslí, že jsem
+			// asi bot ... (což vlastně jsem)
 			doc = Jsoup.connect(address).userAgent("Mozilla").get();
 
 			String ico;

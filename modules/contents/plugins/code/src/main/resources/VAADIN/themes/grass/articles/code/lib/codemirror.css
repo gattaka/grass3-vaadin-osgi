@@ -290,7 +290,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 }
 
 .CodeMirror-activeline-background {
-	background: #e8f2ff;
+	background: hsla(214, 100%, 98%, 1);
 }
 
 /* STOP */

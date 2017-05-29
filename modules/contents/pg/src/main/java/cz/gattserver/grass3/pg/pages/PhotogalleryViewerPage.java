@@ -79,8 +79,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	private int rowsSum;
 	private int imageSum;
 	private int galleryGridRowOffset;
-	private int galleryGridCols;
-	private int galleryGridRows;
+	private static final int GALLERY_GRID_COLS = 4;
+	private static final int GALLERY_GRID_ROWS = 3;
 
 	/**
 	 * Položka z fotogalerie, která byla dle URL vybrána (nepovinné)
@@ -96,8 +96,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	private Button startPageBtn;
 	private Button endPageBtn;
 
-	private String ROWS_STATUS_PREFIX;
-	private String IMAGE_SUM_PREFIX;
+	private static final String ROWS_STATUS_PREFIX = "Zobrazeny řádky: ";
+	private static final String IMAGE_SUM_PREFIX = " | Celkový počet fotek: ";
 
 	private GridLayout galleryGridLayout;
 
@@ -105,6 +105,10 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	private File miniaturesDirFile;
 	private File previewsDirFile;
 	private File slideshowDirFile;
+
+	private AnimatorProxy animatorProxy;
+	private File[] miniatures;
+	private File[] previews;
 
 	public PhotogalleryViewerPage(GrassRequest request) {
 		super(request);
@@ -115,8 +119,6 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		rowsSum = 0;
 		imageSum = 0;
 		galleryGridRowOffset = 0;
-		galleryGridCols = 4;
-		galleryGridRows = 3;
 
 		rowStatusLabel = new Label();
 
@@ -126,9 +128,6 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		downPageBtn = new Button("Stránka dolů");
 		startPageBtn = new Button("Na začátek");
 		endPageBtn = new Button("Na konec");
-
-		ROWS_STATUS_PREFIX = "Zobrazeny řádky: ";
-		IMAGE_SUM_PREFIX = " | Celkový počet fotek: ";
 
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
@@ -193,22 +192,22 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			return;
 		}
 
-		final File[] miniatures = miniaturesDirFile.listFiles();
+		miniatures = miniaturesDirFile.listFiles();
 		Arrays.sort(miniatures);
 
-		final File[] previews = previewsDirFile.listFiles();
+		previews = previewsDirFile.listFiles();
 		Arrays.sort(previews);
 
 		imageSum = miniatures.length + previews.length;
-		rowsSum = (int) Math.ceil((miniatures.length + previews.length) * 1f / galleryGridCols);
+		rowsSum = (int) Math.ceil((miniatures.length + previews.length) * 1f / GALLERY_GRID_COLS);
 
 		VerticalLayout galleryLayout = new VerticalLayout();
 		galleryLayout.setSpacing(true);
 		galleryLayout.addStyleName("bordered");
 
-		final AnimatorProxy animatorProxy = new AnimatorProxy();
+		animatorProxy = new AnimatorProxy();
 
-		galleryGridLayout = new GridLayout(galleryGridCols, galleryGridRows);
+		galleryGridLayout = new GridLayout(GALLERY_GRID_COLS, GALLERY_GRID_ROWS);
 		galleryGridLayout.setSpacing(true);
 		galleryGridLayout.setMargin(true);
 		galleryGridLayout.setWidth("700px");
@@ -251,8 +250,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				if (galleryGridRowOffset > galleryGridRows) {
-					galleryGridRowOffset -= galleryGridRows;
+				if (galleryGridRowOffset > GALLERY_GRID_ROWS) {
+					galleryGridRowOffset -= GALLERY_GRID_ROWS;
 				} else {
 					galleryGridRowOffset = 0;
 				}
@@ -295,9 +294,9 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				// kolik řádků zbývá do konce ?
-				int dif = rowsSum - (galleryGridRows + galleryGridRowOffset);
-				if (dif > galleryGridRows) {
-					galleryGridRowOffset += galleryGridRows;
+				int dif = rowsSum - (GALLERY_GRID_ROWS + galleryGridRowOffset);
+				if (dif > GALLERY_GRID_ROWS) {
+					galleryGridRowOffset += GALLERY_GRID_ROWS;
 				} else {
 					galleryGridRowOffset += dif;
 				}
@@ -311,7 +310,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				int dif = rowsSum - (galleryGridRows + galleryGridRowOffset);
+				int dif = rowsSum - (GALLERY_GRID_ROWS + galleryGridRowOffset);
 				galleryGridRowOffset += dif;
 			}
 		});
@@ -333,10 +332,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				populateGrid(miniatures, previews);
-				refreshStatusLabel();
-				animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN).setDuration(200).setDelay(200);
-				checkOffsetBtnsAvailability();
+				shiftGrid();
 			}
 		};
 
@@ -359,9 +355,16 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		}
 	}
 
+	private void shiftGrid() {
+		populateGrid(miniatures, previews);
+		refreshStatusLabel();
+		animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN).setDuration(200).setDelay(200);
+		checkOffsetBtnsAvailability();
+	}
+
 	private void refreshStatusLabel() {
 		rowStatusLabel.setValue(ROWS_STATUS_PREFIX + galleryGridRowOffset + "-"
-				+ ((rowsSum > galleryGridRows ? galleryGridRows : rowsSum) + galleryGridRowOffset) + "/" + rowsSum
+				+ ((rowsSum > GALLERY_GRID_ROWS ? GALLERY_GRID_ROWS : rowsSum) + galleryGridRowOffset) + "/" + rowsSum
 				+ IMAGE_SUM_PREFIX + imageSum + " -- ID: " + photogallery.getPhotogalleryPath());
 	}
 
@@ -371,7 +374,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		upPageBtn.setEnabled(upBtnsAvailFlag);
 		startPageBtn.setEnabled(upBtnsAvailFlag);
 
-		boolean downBtnsAvailFlag = rowsSum > galleryGridRows + galleryGridRowOffset;
+		boolean downBtnsAvailFlag = rowsSum > GALLERY_GRID_ROWS + galleryGridRowOffset;
 		downRowBtn.setEnabled(downBtnsAvailFlag);
 		downPageBtn.setEnabled(downBtnsAvailFlag);
 		endPageBtn.setEnabled(downBtnsAvailFlag);
@@ -395,7 +398,22 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	}
 
 	private void showImage(File[] miniatures, int index) {
-		UI.getCurrent().addWindow(new ImageDetailWindow(miniatures, index, slideshowDirFile));
+		UI.getCurrent().addWindow(new ImageDetailWindow(miniatures, index, slideshowDirFile) {
+			private static final long serialVersionUID = 5403584860186673877L;
+
+			@Override
+			protected void changeImage(int index) {
+				super.changeImage(index);
+
+				if (index > (galleryGridRowOffset + GALLERY_GRID_ROWS) * GALLERY_GRID_COLS - 1) {
+					galleryGridRowOffset++;
+					shiftGrid();
+				} else if (index < galleryGridRowOffset * GALLERY_GRID_COLS) {
+					galleryGridRowOffset--;
+					shiftGrid();
+				}
+			}
+		});
 	}
 
 	private String getItemURL(String itemId) {
@@ -407,8 +425,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 		galleryGridLayout.removeAllComponents();
 
-		int start = galleryGridRowOffset * galleryGridCols;
-		int limit = Math.min(miniatures.length + previews.length, galleryGridCols * galleryGridRows + start);
+		int start = galleryGridRowOffset * GALLERY_GRID_COLS;
+		int limit = Math.min(miniatures.length + previews.length, GALLERY_GRID_COLS * GALLERY_GRID_ROWS + start);
 		for (int i = start; i < limit; i++) {
 
 			// vypisuji fotky nebo už videa?
@@ -438,7 +456,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			itemLayout.addComponent(link);
 			itemLayout.setComponentAlignment(link, Alignment.MIDDLE_CENTER);
 
-			galleryGridLayout.addComponent(itemLayout, gridIndex % galleryGridCols, gridIndex / galleryGridCols);
+			galleryGridLayout.addComponent(itemLayout, gridIndex % GALLERY_GRID_COLS, gridIndex / GALLERY_GRID_COLS);
 			galleryGridLayout.setComponentAlignment(itemLayout, Alignment.MIDDLE_CENTER);
 
 			embedded.addClickListener(new MouseEvents.ClickListener() {

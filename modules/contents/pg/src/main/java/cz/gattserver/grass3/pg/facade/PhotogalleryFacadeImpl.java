@@ -212,7 +212,10 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 
 			// vytvoř slideshow verzi
 			try {
-				PGUtils.resizeAndRotateImageFile(file, outputFile, 900, 700);
+				BufferedImage image = ImageIO.read(file);
+				if (image.getWidth() > 900 || image.getHeight() > 700) {
+					PGUtils.resizeAndRotateImageFile(file, outputFile, 900, 700);
+				}
 			} catch (java.lang.Exception e) {
 				e.printStackTrace();
 				if (outputFile.exists())

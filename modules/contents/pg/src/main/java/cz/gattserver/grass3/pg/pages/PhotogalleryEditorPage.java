@@ -17,7 +17,6 @@ import javax.annotation.Resource;
 
 import net.engio.mbassy.listener.Handler;
 
-import org.atmosphere.cpr.AtmosphereResourceEventListenerAdapter.OnClose;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

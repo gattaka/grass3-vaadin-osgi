@@ -85,28 +85,28 @@ public class NodeFacadeImpl implements INodeFacade {
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean createNewNode(NodeDTO parent, String name) {
+	public Long createNewNode(NodeDTO parent, String name) {
 
 		Node node = new Node();
 		node.setName(name);
 		node = nodeRepository.save(node);
 		if (node == null)
-			return false;
+			return null;
 
 		if (parent != null) {
 			Node parentEntity = nodeRepository.findOne(parent.getId());
 			parentEntity.getSubNodes().add(node);
 			parentEntity = nodeRepository.save(parentEntity);
 			if (parentEntity == null)
-				return false;
+				return null;
 
 			node.setParent(parentEntity);
 			node = nodeRepository.save(node);
 			if (node == null)
-				return false;
+				return null;
 		}
 
-		return true;
+		return node.getId();
 	}
 
 	/**

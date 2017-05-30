@@ -105,20 +105,20 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *            jméno obsahu
 	 * @param publicated
 	 *            je článek publikován ?
-	 * @param category
-	 *            kategorie do kteér se vkládá
+	 * @param node
+	 *            kategorie do které se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
 	 * @return instanci {@link ContentNode}, který byl k obsahu vytvořen, nebo
 	 */
-	public ContentNode save(String contentModuleId, Long contentId, String name, boolean publicated, Long category,
+	public ContentNode save(String contentModuleId, Long contentId, String name, boolean publicated, Long node,
 			Long author) {
-		return save(contentModuleId, contentId, name, null, publicated, category, author);
+		return save(contentModuleId, contentId, name, null, publicated, node, author);
 	}
 
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, Long category, Long author) {
-		return save(contentModuleId, contentId, name, tags, publicated, category, author, null);
+			boolean publicated, Long node, Long author) {
+		return save(contentModuleId, contentId, name, tags, publicated, node, author, null);
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *            řetězec tagů, který se má společně s obsahem uložit
 	 * @param publicated
 	 *            je článek publikován ?
-	 * @param category
+	 * @param nodeId
 	 *            kategorie do které se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
@@ -142,7 +142,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	 *         nebo
 	 */
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, Long category, Long author, Date date) {
+			boolean publicated, Long nodeId, Long author, Date date) {
 
 		ContentNode contentNode = new ContentNode();
 		contentNode.setContentId(contentId);
@@ -152,7 +152,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		contentNode.setPublicated(publicated);
 
 		// Ulož contentNode
-		Node parent = nodeRepository.findOne(category);
+		Node parent = nodeRepository.findOne(nodeId);
 		contentNode.setParent(parent);
 
 		User user = userRepository.findOne(author);

@@ -58,22 +58,22 @@ public interface ICoreACL {
 	/**
 	 * Může uživatel založit kategorii ?
 	 */
-	public boolean canCreateCategory(UserInfoDTO user);
+	public boolean canCreateNode(UserInfoDTO user);
 
 	/**
 	 * Může uživatel upravit kategorii ?
 	 */
-	public boolean canModifyCategory(UserInfoDTO user);
+	public boolean canModifyNode(UserInfoDTO user);
 
 	/**
 	 * Může uživatel přesunout kategorii ?
 	 */
-	public boolean canMoveCategory(UserInfoDTO user);
+	public boolean canMoveNode(UserInfoDTO user);
 
 	/**
 	 * Může uživatel smazat kategorii ?
 	 */
-	public boolean canDeleteCategory(UserInfoDTO user);
+	public boolean canDeleteNode(UserInfoDTO user);
 
 	/**
 	 * =======================================================================

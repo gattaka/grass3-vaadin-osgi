@@ -35,7 +35,7 @@ import cz.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
 
-public class CategoryPage extends OneColumnPage {
+public class NodePage extends OneColumnPage {
 
 	private static final long serialVersionUID = -499585200973560016L;
 
@@ -48,8 +48,8 @@ public class CategoryPage extends OneColumnPage {
 	@Resource(name = "contentNodeFacade")
 	private IContentNodeFacade contentNodeFacade;
 
-	@Resource(name = "categoryPageFactory")
-	private IPageFactory categoryPageFactory;
+	@Resource(name = "nodePageFactory")
+	private IPageFactory nodePageFactory;
 
 	@Resource(name = "contentsTableFactory")
 	private ContentsTableFactory contentsTableFactory;
@@ -64,7 +64,7 @@ public class CategoryPage extends OneColumnPage {
 	private NodesTable subNodesTable;
 	private Label noSubNodesLabel;
 
-	public CategoryPage(GrassRequest request) {
+	public NodePage(GrassRequest request) {
 		super(request);
 	}
 
@@ -79,11 +79,11 @@ public class CategoryPage extends OneColumnPage {
 
 		VerticalLayout layout = new VerticalLayout();
 
-		String categoryName = getRequest().getAnalyzer().getNextPathToken();
-		if (categoryName == null)
+		String nodeName = getRequest().getAnalyzer().getNextPathToken();
+		if (nodeName == null)
 			showError404();
 
-		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(categoryName);
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(nodeName);
 		if (identifier == null) {
 			showError404();
 			return layout;
@@ -123,28 +123,32 @@ public class CategoryPage extends OneColumnPage {
 		panelLayout.setMargin(true);
 		panelBackgroudLayout.addComponent(panelLayout);
 
-		final TextField newNodeName = new TextField();
+		final TextField newNodeNameField = new TextField();
 		// newNodeName.setWidth("200px");
-		newNodeName.setRequired(true);
-		newNodeName.setRequiredError("Název kategorie nesmí být prázdný");
-		panelLayout.addComponent(newNodeName);
+		newNodeNameField.setRequired(true);
+		newNodeNameField.setRequiredError("Název kategorie nesmí být prázdný");
+		panelLayout.addComponent(newNodeNameField);
 
 		Button createButton = new Button("Vytvořit", new Button.ClickListener() {
 
 			private static final long serialVersionUID = -4315617904120991885L;
 
 			public void buttonClick(ClickEvent event) {
-				if (newNodeName.isValid() == false)
+				if (newNodeNameField.isValid() == false)
 					return;
 
-				if (nodeFacade.createNewNode(node, newNodeName.getValue().toString())) {
+				String newNodeName = newNodeNameField.getValue();
+				Long newNodeId = nodeFacade.createNewNode(node, newNodeName);
+				if (newNodeId != null) {
 					showInfo("Nový kategorie byla úspěšně vytvořena.");
 					// refresh
 					populateSubnodesTable(node);
 					subNodesTable.setVisible(true);
 					noSubNodesLabel.setVisible(false);
+					redirect(getPageURL(nodePageFactory,
+							URLIdentifierUtils.createURLIdentifier(newNodeId, newNodeName)));
 					// clean
-					newNodeName.setValue("");
+					newNodeNameField.setValue("");
 				} else {
 					showWarning("Nezdařilo se vložit novou kategorii.");
 				}
@@ -169,7 +173,7 @@ public class CategoryPage extends OneColumnPage {
 			if (parent == null)
 				showError404();
 
-			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageResource(categoryPageFactory,
+			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageResource(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(parent.getId(), parent.getName()))));
 
 			// pokud je můj předek null, pak je to konec a je to všechno
@@ -200,7 +204,7 @@ public class CategoryPage extends OneColumnPage {
 		subNodesLayout.setComponentAlignment(noSubNodesLabel, Alignment.MIDDLE_CENTER);
 
 		// Vytvořit novou kategorii
-		if (coreACL.canCreateCategory(getUser())) {
+		if (coreACL.canCreateNode(getUser())) {
 			createNewNodePanel(layout, node);
 		}
 	}
@@ -235,7 +239,7 @@ public class CategoryPage extends OneColumnPage {
 	private void createContentsPart(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout contentsLayout = new VerticalLayout();
-		ContentsTable contentsTable = contentsTableFactory.createContentsTableWithoutCategoryColumn();
+		ContentsTable contentsTable = contentsTableFactory.createContentsTableWithoutNodeColumn();
 
 		List<ContentNodeOverviewDTO> contentNodes = node.getContentNodes();
 		if (contentNodes == null)

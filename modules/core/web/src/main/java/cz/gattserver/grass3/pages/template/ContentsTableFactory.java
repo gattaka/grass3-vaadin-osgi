@@ -28,8 +28,8 @@ public class ContentsTableFactory {
 	@Resource(name = "coreACL")
 	private ICoreACL coreACL;
 
-	@Resource(name = "categoryPageFactory")
-	private IPageFactory categoryPageFactory;
+	@Resource(name = "nodePageFactory")
+	private IPageFactory nodePageFactory;
 
 	@Resource(name = "noServicePageFactory")
 	private IPageFactory noServicePageFactory;
@@ -46,18 +46,18 @@ public class ContentsTableFactory {
 
 		ContentsTable table = new ContentsTable();
 
-		table.categoryPageFactory = categoryPageFactory;
+		table.nodePageFactory = nodePageFactory;
 		table.noServicePageFactory = noServicePageFactory;
 		table.serviceHolder = serviceHolder;
 		table.coreACL = coreACL;
-		table.categoryColumn = true;
+		table.nodeColumn = true;
 
 		return table;
 	}
 
-	public ContentsTable createContentsTableWithoutCategoryColumn() {
+	public ContentsTable createContentsTableWithoutNodeColumn() {
 		ContentsTable table = createContentsTable();
-		table.categoryColumn = false;
+		table.nodeColumn = false;
 		return table;
 	}
 
@@ -75,10 +75,10 @@ public class ContentsTableFactory {
 		private static final long serialVersionUID = -2220485504407844582L;
 
 		private ICoreACL coreACL;
-		private IPageFactory categoryPageFactory;
+		private IPageFactory nodePageFactory;
 		private IPageFactory noServicePageFactory;
 		private IServiceHolder serviceHolder;
-		private boolean categoryColumn;
+		private boolean nodeColumn;
 
 		private ContentsTable() {
 			setHeight("160px");
@@ -95,7 +95,7 @@ public class ContentsTableFactory {
 			IndexedContainer container = new IndexedContainer();
 			container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
 			container.addContainerProperty(ColumnId.NÁZEV, ComparableLink.class, null);
-			if (categoryColumn) {
+			if (nodeColumn) {
 				container.addContainerProperty(ColumnId.KATEGORIE, ComparableLink.class, null);
 			}
 			container.addContainerProperty(ColumnId.AUTOR, String.class, "");
@@ -131,11 +131,11 @@ public class ContentsTableFactory {
 				item.getItemProperty(ColumnId.NÁZEV).setValue(
 						new ComparableLink(contentNode.getName(), page.getPageResource(pageFactory, URLIdentifierUtils
 								.createURLIdentifier(contentNode.getContentID(), contentNode.getName()))));
-				if (categoryColumn) {
+				if (nodeColumn) {
 					NodeOverviewDTO contentParent = contentNode.getParent();
 					item.getItemProperty(ColumnId.KATEGORIE)
 							.setValue(new ComparableLink(contentParent.getName(),
-									page.getPageResource(categoryPageFactory, URLIdentifierUtils
+									page.getPageResource(nodePageFactory, URLIdentifierUtils
 											.createURLIdentifier(contentParent.getId(), contentParent.getName()))));
 				}
 				item.getItemProperty(ColumnId.AUTOR).setValue(contentNode.getAuthor().getName());

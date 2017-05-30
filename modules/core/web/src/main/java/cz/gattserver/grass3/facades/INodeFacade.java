@@ -21,7 +21,7 @@ public interface INodeFacade {
 	 * Získá všechny kořenové kategorie
 	 */
 	public List<NodeDTO> getRootNodes();
-	
+
 	/**
 	 * Získá kategorie, které jsou jako potomci dané kategorie
 	 */
@@ -36,10 +36,9 @@ public interface INodeFacade {
 	 *            sekce, je tento argument <code>null</code>
 	 * @param name
 	 *            jméno nové kategorie
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
+	 * @return id kategorie pokud se přidání zdařilo, jinak <code>null</code>
 	 */
-	public boolean createNewNode(NodeDTO parent, String name);
+	public Long createNewNode(NodeDTO parent, String name);
 
 	/**
 	 * Přesune kategorii

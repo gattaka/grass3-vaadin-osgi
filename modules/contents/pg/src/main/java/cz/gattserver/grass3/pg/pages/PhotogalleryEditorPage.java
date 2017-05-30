@@ -86,8 +86,8 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	@Resource(name = "contentTagFacade")
 	private IContentTagFacade contentTagFacade;
 
-	@Resource(name = "categoryPageFactory")
-	private IPageFactory categoryPageFactory;
+	@Resource(name = "nodePageFactory")
+	private IPageFactory nodePageFactory;
 
 	@Resource(name = "photogalleryViewerPageFactory")
 	private IPageFactory photogalleryViewerPageFactory;
@@ -98,7 +98,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	private UI ui = UI.getCurrent();
 	private ProgressWindow progressIndicatorWindow;
 
-	private NodeDTO category;
+	private NodeDTO node;
 	private PhotogalleryDTO photogallery;
 
 	private TokenField photogalleryKeywords;
@@ -151,7 +151,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		// operace ?
 		if (operationToken.equals(DefaultContentOperations.NEW.toString())) {
 			editMode = false;
-			category = nodeFacade.getNodeByIdForOverview(identifier.getId());
+			node = nodeFacade.getNodeByIdForOverview(identifier.getId());
 			photogalleryNameField.setValue("");
 			publicatedCheckBox.setValue(true);
 
@@ -458,7 +458,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 						if (editMode) {
 							returnToPhotogallery();
 						} else {
-							returnToCategory();
+							returnToNode();
 						}
 					}
 				};
@@ -498,7 +498,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		} else {
 			photogalleryFacade.savePhotogallery(String.valueOf(photogalleryNameField.getValue()),
 					(Collection<String>) photogalleryKeywords.getValue(), galleryDir, publicatedCheckBox.getValue(),
-					category, getGrassUI().getUser(), getRequest().getContextRoot(), photogalleryDateField.getValue());
+					node, getGrassUI().getUser(), getRequest().getContextRoot(), photogalleryDateField.getValue());
 		}
 	}
 
@@ -514,10 +514,10 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	/**
 	 * zavolání vrácení se na kategorii
 	 */
-	private void returnToCategory() {
+	private void returnToNode() {
 		JavaScript.eval("window.onbeforeunload = null;");
-		redirect(getPageURL(categoryPageFactory,
-				URLIdentifierUtils.createURLIdentifier(category.getId(), category.getName())));
+		redirect(getPageURL(nodePageFactory,
+				URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName())));
 	}
 
 	@Override

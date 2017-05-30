@@ -289,7 +289,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 	@Override
 	@Async
 	public void savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
-			NodeDTO category, UserInfoDTO author, String contextRoot, Date date) {
+			NodeDTO node, UserInfoDTO author, String contextRoot, Date date) {
 
 		System.out.println("savePhotogallery thread: " + Thread.currentThread().getId());
 
@@ -318,7 +318,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		// vytvoř odpovídající content node
 		eventBus.publish(new PGProcessProgressEvent("Uložení obsahu galerie"));
 		ContentNode contentNode = contentNodeFacade.save(PhotogalleryContentService.ID, photogallery.getId(), name,
-				tags, publicated, category.getId(), author.getId(), date);
+				tags, publicated, node.getId(), author.getId(), date);
 
 		if (contentNode == null) {
 			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));

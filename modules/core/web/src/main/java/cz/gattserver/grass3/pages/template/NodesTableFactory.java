@@ -20,13 +20,13 @@ import cz.gattserver.web.common.URLIdentifierUtils;
 @Component("nodesTableFactory")
 public class NodesTableFactory {
 
-	@Resource(name = "categoryPageFactory")
-	private IPageFactory categoryPageFactory;
+	@Resource(name = "nodePageFactory")
+	private IPageFactory nodePageFactory;
 
 	public NodesTable createNodesTable() {
 
 		NodesTable table = new NodesTable();
-		table.categoryPageFactory = categoryPageFactory;
+		table.nodePageFactory = nodePageFactory;
 		return table;
 	}
 
@@ -34,7 +34,7 @@ public class NodesTableFactory {
 
 		private static final long serialVersionUID = -2220485504407844582L;
 
-		private IPageFactory categoryPageFactory;
+		private IPageFactory nodePageFactory;
 
 		public NodesTable() {
 			setHeight("200px");
@@ -52,10 +52,8 @@ public class NodesTableFactory {
 		public void populateTable(Collection<NodeDTO> nodeList, AbstractGrassPage page) {
 
 			IndexedContainer container = new IndexedContainer();
-			container
-					.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
-			container.addContainerProperty(ColumnId.NÁZEV,
-					ComparableLink.class, null);
+			container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
+			container.addContainerProperty(ColumnId.NÁZEV, ComparableLink.class, null);
 			setContainerDataSource(container);
 			setColumnWidth(ColumnId.IKONA, 16);
 			setColumnHeader(ColumnId.IKONA, "");
@@ -65,15 +63,8 @@ public class NodesTableFactory {
 
 				Item item = addItem(node);
 				item.getItemProperty(ColumnId.NÁZEV)
-						.setValue(
-								new ComparableLink(
-										node.getName(),
-										page.getPageResource(
-												categoryPageFactory,
-												URLIdentifierUtils
-														.createURLIdentifier(
-																node.getId(),
-																node.getName()))));
+						.setValue(new ComparableLink(node.getName(), page.getPageResource(nodePageFactory,
+								URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()))));
 
 				Embedded icon = new Embedded();
 				icon.setSource(new ThemeResource("img/tags/briefcase_16.png"));

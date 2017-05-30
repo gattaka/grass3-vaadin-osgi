@@ -49,7 +49,7 @@ public interface IPhotogalleryFacade {
 	 *            adresář se soubory fotogalerie
 	 * @param publicated
 	 *            je galerie publikována ?
-	 * @param category
+	 * @param node
 	 *            kategorie do které se vkládá
 	 * @param author
 	 *            uživatel, který galerii vytvořil
@@ -58,7 +58,7 @@ public interface IPhotogalleryFacade {
 	 *         {@code null}
 	 */
 	public void savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
-			NodeDTO category, UserInfoDTO author, String contextRoot, Date date);
+			NodeDTO node, UserInfoDTO author, String contextRoot, Date date);
 
 	/**
 	 * Získá galerii dle jeho identifikátoru

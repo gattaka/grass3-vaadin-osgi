@@ -34,11 +34,9 @@ import cz.gattserver.grass3.articles.service.impl.ArticlesContentService;
 import cz.gattserver.grass3.articles.util.ArticlesMapper;
 import cz.gattserver.grass3.events.IEventBus;
 import cz.gattserver.grass3.facades.IContentNodeFacade;
-import cz.gattserver.grass3.model.dao.ContentNodeRepository;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 
@@ -54,9 +52,6 @@ public class ArticleFacadeImpl implements IArticleFacade {
 
 	@Resource(name = "articlesMapper")
 	private ArticlesMapper articlesMapper;
-
-	@Autowired
-	private ContentNodeRepository contentNodeRepository;
 
 	@Autowired
 	private ArticleRepository articleRepository;
@@ -112,13 +107,13 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 *            obsah článku
 	 * @param tags
 	 *            klíčová slova článku
-	 * @param category
+	 * @param node
 	 *            kategorie do kteér se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
 	 * @return {@code true} pokud vše dopadlo v pořádku, jinak {@code false}
 	 */
-	public void saveTemp(String name, String text, String tags, NodeDTO category, UserInfoDTO author) {
+	public void saveTemp(String name, String text, String tags, NodeDTO node, UserInfoDTO author) {
 		// TODO
 	}
 
@@ -202,14 +197,14 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 *            klíčová slova článku
 	 * @param publicated
 	 *            je článek publikován ?
-	 * @param category
-	 *            kategorie do kteér se vkládá
+	 * @param node
+	 *            kategorie do které se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
 	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
 	 *         {@code null}
 	 */
-	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, NodeDTO category,
+	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, NodeDTO node,
 			UserInfoDTO author, String contextRoot) {
 
 		// vytvoř nový článek
@@ -228,7 +223,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 
 		// vytvoř odpovídající content node
 		ContentNode contentNode = contentNodeFacade.save(ArticlesContentService.ID, article.getId(), name, tags,
-				publicated, category.getId(), author.getId());
+				publicated, node.getId(), author.getId());
 
 		// ulož do článku referenci na jeho contentnode
 		article.setContentNode(contentNode);

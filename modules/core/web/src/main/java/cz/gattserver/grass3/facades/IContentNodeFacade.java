@@ -43,14 +43,14 @@ public interface IContentNodeFacade {
 	 *            jméno obsahu
 	 * @param publicated
 	 *            je článek publikován ?
-	 * @param category
+	 * @param node
 	 *            kategorie do kteér se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
 	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
 	 *         nebo
 	 */
-	public ContentNode save(String contentModule, Long contentNode, String name, boolean publicated, Long category,
+	public ContentNode save(String contentModule, Long contentNode, String name, boolean publicated, Long node,
 			Long author);
 
 	/**
@@ -66,7 +66,7 @@ public interface IContentNodeFacade {
 	 *            řetězec tagů, který se má společně s obsahem uložit
 	 * @param publicated
 	 *            je článek publikován ?
-	 * @param category
+	 * @param nodeId
 	 *            kategorie do které se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
@@ -74,10 +74,10 @@ public interface IContentNodeFacade {
 	 *         nebo
 	 */
 	public ContentNode save(String contentModule, Long contentNode, String name, Collection<String> tags,
-			boolean publicated, Long category, Long author);
+			boolean publicated, Long nodeId, Long author);
 
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, Long category, Long author, Date date);
+			boolean publicated, Long nodeId, Long author, Date date);
 
 	/**
 	 * Získá contentNodeDTO dle jeho id

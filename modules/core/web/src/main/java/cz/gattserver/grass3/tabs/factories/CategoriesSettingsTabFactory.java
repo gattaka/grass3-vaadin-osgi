@@ -5,7 +5,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.security.ICoreACL;
-import cz.gattserver.grass3.tabs.CategoriesSettingsTab;
+import cz.gattserver.grass3.tabs.NodesSettingsTab;
 import cz.gattserver.grass3.tabs.factories.template.AbstractSettingsTabFactory;
 import cz.gattserver.grass3.tabs.template.ISettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
@@ -26,7 +26,7 @@ public class CategoriesSettingsTabFactory extends AbstractSettingsTabFactory {
 
 	@Override
 	protected ISettingsTab createTab(GrassRequest request) {
-		return new CategoriesSettingsTab(request);
+		return new NodesSettingsTab(request);
 	}
 
 }

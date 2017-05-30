@@ -44,8 +44,8 @@ public abstract class BasePage extends AbstractGrassPage {
 	@Resource(name = "homePageFactory")
 	private IPageFactory homePageFactory;
 
-	@Resource(name = "categoryPageFactory")
-	private IPageFactory categoryPageFactory;
+	@Resource(name = "nodePageFactory")
+	private IPageFactory nodePageFactory;
 
 	@Resource(name = "quotesPageFactory")
 	private IPageFactory quotesPageFactory;
@@ -96,7 +96,7 @@ public abstract class BasePage extends AbstractGrassPage {
 		List<NodeDTO> nodes = nodeFacade.getRootNodes();
 		for (NodeDTO node : nodes) {
 			createMenuComponent(menu,
-					new Link(node.getName(), getPageResource(categoryPageFactory, node.getId() + "-" + node.getName())));
+					new Link(node.getName(), getPageResource(nodePageFactory, node.getId() + "-" + node.getName())));
 		}
 
 		// externí sekce

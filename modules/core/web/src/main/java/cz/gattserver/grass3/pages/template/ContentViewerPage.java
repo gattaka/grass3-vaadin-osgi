@@ -51,8 +51,8 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	@Resource(name = "userFacade")
 	private IUserFacade userFacade;
 
-	@Resource(name = "categoryPageFactory")
-	private IPageFactory categoryPageFactory;
+	@Resource(name = "nodePageFactory")
+	private IPageFactory nodePageFactory;
 
 	@Resource(name = "tagPageFactory")
 	private IPageFactory tagPageFactory;
@@ -288,7 +288,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 			if (parent == null)
 				showError404();
 
-			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageResource(categoryPageFactory,
+			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageResource(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(parent.getId(), parent.getName()))));
 
 			// pokud je můj předek null, pak je to konec a je to všechno

@@ -68,8 +68,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	@Resource(name = "photogalleryViewerPageFactory")
 	private IPageFactory photogalleryViewerPageFactory;
 
-	@Resource(name = "categoryPageFactory")
-	private IPageFactory categoryPageFactory;
+	@Resource(name = "nodePageFactory")
+	private IPageFactory nodePageFactory;
 
 	@Resource(name = "photogalleryEditorPageFactory")
 	private IPageFactory photogalleryEditorPageFactory;
@@ -488,10 +488,10 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			@Override
 			protected void onConfirm(ClickEvent event) {
 
-				NodeBreadcrumbDTO node = photogallery.getContentNode().getParent();
+				NodeBreadcrumbDTO nodeDTO = photogallery.getContentNode().getParent();
 
-				final String category = getPageURL(categoryPageFactory,
-						URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()));
+				final String nodeURL = getPageURL(nodePageFactory,
+						URLIdentifierUtils.createURLIdentifier(nodeDTO.getId(), nodeDTO.getName()));
 
 				// zdařilo se ? Pokud ano, otevři info okno a při
 				// potvrzení jdi na kategorii
@@ -502,7 +502,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 						private static final long serialVersionUID = -6688396549852552674L;
 
 						protected void onProceed(ClickEvent event) {
-							redirect(category);
+							redirect(nodeURL);
 						};
 					};
 					getUI().addWindow(infoSubwindow);
@@ -514,7 +514,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 						private static final long serialVersionUID = -6688396549852552674L;
 
 						protected void onProceed(ClickEvent event) {
-							redirect(category);
+							redirect(nodeURL);
 						};
 					};
 					getUI().addWindow(warnSubwindow);

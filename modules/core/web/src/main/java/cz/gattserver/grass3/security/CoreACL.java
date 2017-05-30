@@ -145,7 +145,7 @@ public final class CoreACL implements ICoreACL {
 	/**
 	 * Může uživatel založit kategorii ?
 	 */
-	public boolean canCreateCategory(UserInfoDTO user) {
+	public boolean canCreateNode(UserInfoDTO user) {
 
 		if (user == null) {
 
@@ -167,22 +167,22 @@ public final class CoreACL implements ICoreACL {
 	/**
 	 * Může uživatel upravit kategorii ?
 	 */
-	public boolean canModifyCategory(UserInfoDTO user) {
-		return canCreateCategory(user);
+	public boolean canModifyNode(UserInfoDTO user) {
+		return canCreateNode(user);
 	}
 
 	/**
 	 * Může uživatel přesunout kategorii ?
 	 */
-	public boolean canMoveCategory(UserInfoDTO user) {
-		return canModifyCategory(user);
+	public boolean canMoveNode(UserInfoDTO user) {
+		return canModifyNode(user);
 	}
 
 	/**
 	 * Může uživatel smazat kategorii ?
 	 */
-	public boolean canDeleteCategory(UserInfoDTO user) {
-		return canModifyCategory(user);
+	public boolean canDeleteNode(UserInfoDTO user) {
+		return canModifyNode(user);
 	}
 
 	/**

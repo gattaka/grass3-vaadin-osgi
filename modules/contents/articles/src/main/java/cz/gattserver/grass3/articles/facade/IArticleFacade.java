@@ -28,13 +28,13 @@ public interface IArticleFacade {
 	 *            obsah článku
 	 * @param tags
 	 *            klíčová slova článku
-	 * @param category
+	 * @param node
 	 *            kategorie do kteér se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
 	 * @return {@code true} pokud vše dopadlo v pořádku, jinak {@code false}
 	 */
-	public void saveTemp(String name, String text, String tags, NodeDTO category, UserInfoDTO author);
+	public void saveTemp(String name, String text, String tags, NodeDTO node, UserInfoDTO author);
 
 	/**
 	 * Smaže článek
@@ -76,14 +76,14 @@ public interface IArticleFacade {
 	 *            klíčová slova článku
 	 * @param publicated
 	 *            je článek publikován ?
-	 * @param category
+	 * @param node
 	 *            kategorie do které se vkládá
 	 * @param author
 	 *            uživatel, který článek vytvořil
 	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
 	 *         {@code null}
 	 */
-	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, NodeDTO category,
+	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, NodeDTO node,
 			UserInfoDTO author, String contextRoot);
 
 	/**

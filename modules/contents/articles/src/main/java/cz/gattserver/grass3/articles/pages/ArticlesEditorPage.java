@@ -74,13 +74,13 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	@Resource(name = "pluginServiceHolder")
 	private IPluginServiceHolder pluginServiceHolder;
 
-	@Resource(name = "categoryPageFactory")
-	private IPageFactory categoryPageFactory;
+	@Resource(name = "nodePageFactory")
+	private IPageFactory nodePageFactory;
 
 	@Resource(name = "articlesViewerPageFactory")
 	private IPageFactory articlesViewerPageFactory;
 
-	private NodeDTO category;
+	private NodeDTO node;
 	private ArticleDTO article;
 
 	private TextArea articleTextArea;
@@ -141,7 +141,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		// operace ?
 		if (operationToken.equals(DefaultContentOperations.NEW.toString())) {
 			editMode = false;
-			category = nodeFacade.getNodeByIdForOverview(identifier.getId());
+			node = nodeFacade.getNodeByIdForOverview(identifier.getId());
 			articleNameField.setValue("");
 			articleTextArea.setValue("");
 			publicatedCheckBox.setValue(true);
@@ -437,7 +437,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 						if (editMode) {
 							returnToArticle();
 						} else {
-							returnToCategory();
+							returnToNode();
 						}
 					}
 				};
@@ -489,7 +489,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			} else {
 				Long id = articleFacade.saveArticle(String.valueOf(articleNameField.getValue()),
 						String.valueOf(articleTextArea.getValue()), getArticlesKeywords(),
-						publicatedCheckBox.getValue(), category, getGrassUI().getUser(), getRequest().getContextRoot());
+						publicatedCheckBox.getValue(), node, getGrassUI().getUser(), getRequest().getContextRoot());
 
 				if (id == null)
 					return false;
@@ -516,10 +516,9 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	/**
 	 * zavolání vrácení se na kategorii
 	 */
-	private void returnToCategory() {
+	private void returnToNode() {
 		JavaScript.eval("window.onbeforeunload = null;");
-		redirect(getPageURL(categoryPageFactory,
-				URLIdentifierUtils.createURLIdentifier(category.getId(), category.getName())));
+		redirect(getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName())));
 	}
 
 	@Override

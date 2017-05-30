@@ -30,8 +30,8 @@ public abstract class ContentsLazyTable extends Table {
 	// @Resource(name = "coreACL")
 	private ICoreACL coreACL;
 
-	// @Resource(name = "categoryPageFactory")
-	private IPageFactory categoryPageFactory;
+	// @Resource(name = "nodePageFactory")
+	private IPageFactory nodePageFactory;
 
 	// @Resource(name = "noServicePageFactory")
 	private IPageFactory noServicePageFactory;
@@ -42,13 +42,13 @@ public abstract class ContentsLazyTable extends Table {
 	private static final String iconBind = "icon";
 	private static final String nameBind = "name";
 	private static final String authorBind = "author";
-	private static final String categoryBind = "category";
+	private static final String nodeBind = "node";
 	private static final String creationDateBind = "creationDate";
 	private static final String lastModificationDateBind = "lastModificationDate";
 
 	public ContentsLazyTable() {
 		coreACL = (ICoreACL) SpringContextHelper.getBean("coreACL");
-		categoryPageFactory = (IPageFactory) SpringContextHelper.getBean("categoryPageFactory");
+		nodePageFactory = (IPageFactory) SpringContextHelper.getBean("nodePageFactory");
 		noServicePageFactory = (IPageFactory) SpringContextHelper.getBean("noServicePageFactory");
 		serviceHolder = (IServiceHolder) SpringContextHelper.getBean("serviceHolder");
 	}
@@ -124,14 +124,14 @@ public abstract class ContentsLazyTable extends Table {
 			}
 		});
 
-		addGeneratedColumn(categoryBind, new ColumnGenerator() {
+		addGeneratedColumn(nodeBind, new ColumnGenerator() {
 			private static final long serialVersionUID = 3828166566373209533L;
 
 			@Override
 			public Object generateCell(Table source, Object itemId, Object columnId) {
 				ContentNodeOverviewDTO contentNode = getValueFromId(itemId);
 				NodeOverviewDTO contentParent = contentNode.getParent();
-				return new ComparableLink(contentParent.getName(), page.getPageResource(categoryPageFactory,
+				return new ComparableLink(contentParent.getName(), page.getPageResource(nodePageFactory,
 						URLIdentifierUtils.createURLIdentifier(contentParent.getId(), contentParent.getName())));
 			}
 		});
@@ -146,7 +146,7 @@ public abstract class ContentsLazyTable extends Table {
 			}
 		});
 
-		setVisibleColumns(new Object[] { iconBind, nameBind, categoryBind, authorBind, creationDateBind,
+		setVisibleColumns(new Object[] { iconBind, nameBind, nodeBind, authorBind, creationDateBind,
 				lastModificationDateBind });
 
 		setColumnWidth(iconBind, 16);
@@ -156,7 +156,7 @@ public abstract class ContentsLazyTable extends Table {
 
 		setColumnHeader(iconBind, "");
 		setColumnHeader(nameBind, "Název");
-		setColumnHeader(categoryBind, "Kategorie");
+		setColumnHeader(nodeBind, "Kategorie");
 		setColumnHeader(authorBind, "Autor");
 		setColumnHeader(creationDateBind, "Datum vytvoření");
 		setColumnHeader(lastModificationDateBind, "Datum úpravy");

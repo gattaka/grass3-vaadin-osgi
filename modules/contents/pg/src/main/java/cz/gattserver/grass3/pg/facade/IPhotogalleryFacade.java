@@ -9,6 +9,7 @@ import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
+import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
 
 public interface IPhotogalleryFacade {
 
@@ -75,6 +76,11 @@ public interface IPhotogalleryFacade {
 	public List<PhotogalleryDTO> getAllPhotogalleriesForSearch();
 
 	/**
+	 * Získá všechny galerie a namapuje je pro použití REST
+	 */
+	public List<PhotogalleryRESTOverviewDTO> getAllPhotogalleriesForREST();
+
+	/**
 	 * Vytvoří nový adresář pro fotogalerii
 	 */
 	public File createGalleryDir();
@@ -127,5 +133,7 @@ public interface IPhotogalleryFacade {
 	 *            objekt galerie
 	 */
 	void tryDeletePreviewImage(File file, PhotogalleryDTO photogalleryDTO);
+
+	public File getPhotoForREST(Long id, String fileName);
 
 }

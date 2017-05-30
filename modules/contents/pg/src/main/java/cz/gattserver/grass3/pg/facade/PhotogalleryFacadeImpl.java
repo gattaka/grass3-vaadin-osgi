@@ -27,6 +27,7 @@ import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.pg.dao.PhotoGalleryRepository;
 import cz.gattserver.grass3.pg.domain.Photogallery;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
+import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
 import cz.gattserver.grass3.pg.events.PGProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.PGProcessResultEvent;
 import cz.gattserver.grass3.pg.events.PGProcessStartEvent;
@@ -397,6 +398,21 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		File slideshowFile = new File(slideshowDirFile, file.getName());
 		if (slideshowFile.exists())
 			slideshowFile.delete();
+	}
+
+	@Override
+	public List<PhotogalleryRESTOverviewDTO> getAllPhotogalleriesForREST() {
+		return photogalleriesMapper.mapPhotogalleryForRESTOverviewCollection(photogalleryRepository.findAll());
+	}
+
+	@Override
+	public File getPhotoForREST(Long id, String fileName) {
+		Photogallery pg = photogalleryRepository.findOne(id);
+		PhotogalleryConfiguration configuration = getConfiguration();
+		File file = new File(configuration.getRootDir() + "/" + pg.getPhotogalleryPath() + "/" + fileName);
+		if (file.exists())
+			return file;
+		return null;
 	}
 
 }

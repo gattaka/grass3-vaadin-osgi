@@ -102,13 +102,20 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	private GridLayout galleryGridLayout;
 
 	private File galleryDir;
-	private File miniaturesDirFile;
-	private File previewsDirFile;
+	private File photoMiniaturesDirFile;
+	private File videoPreviewsDirFile;
 	private File slideshowDirFile;
 
 	private AnimatorProxy animatorProxy;
-	private File[] miniatures;
-	private File[] previews;
+	
+	/**
+	 * Miniatury fotek
+	 */
+	private File[] photoMiniatures;
+	/**
+	 * Náhledy videí
+	 */
+	private File[] videoPreviews;
 
 	public PhotogalleryViewerPage(GrassRequest request) {
 		super(request);
@@ -155,8 +162,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		configurationService.loadConfiguration(configuration);
 
 		galleryDir = new File(configuration.getRootDir(), photogallery.getPhotogalleryPath());
-		miniaturesDirFile = new File(galleryDir, configuration.getMiniaturesDir());
-		previewsDirFile = new File(galleryDir, configuration.getPreviewsDir());
+		photoMiniaturesDirFile = new File(galleryDir, configuration.getMiniaturesDir());
+		videoPreviewsDirFile = new File(galleryDir, configuration.getPreviewsDir());
 		slideshowDirFile = new File(galleryDir, configuration.getSlideshowDir());
 
 		pgSelectedVideoItemId = analyzer.getNextPathToken();
@@ -186,20 +193,20 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	protected void createContent(VerticalLayout layout) {
 
 		// pokud je galerie porušená, pak nic nevypisuj
-		if (miniaturesDirFile.exists() == false || previewsDirFile.exists() == false) {
+		if (photoMiniaturesDirFile.exists() == false || videoPreviewsDirFile.exists() == false) {
 			layout.addComponent(new Label("Chyba: Galerie je porušená -- kontaktujte administrátora (ID: "
 					+ photogallery.getPhotogalleryPath() + ")"));
 			return;
 		}
 
-		miniatures = miniaturesDirFile.listFiles();
-		Arrays.sort(miniatures);
+		photoMiniatures = photoMiniaturesDirFile.listFiles();
+		Arrays.sort(photoMiniatures);
 
-		previews = previewsDirFile.listFiles();
-		Arrays.sort(previews);
+		videoPreviews = videoPreviewsDirFile.listFiles();
+		Arrays.sort(videoPreviews);
 
-		imageSum = miniatures.length + previews.length;
-		rowsSum = (int) Math.ceil((miniatures.length + previews.length) * 1f / GALLERY_GRID_COLS);
+		imageSum = photoMiniatures.length + videoPreviews.length;
+		rowsSum = (int) Math.ceil((photoMiniatures.length + videoPreviews.length) * 1f / GALLERY_GRID_COLS);
 
 		VerticalLayout galleryLayout = new VerticalLayout();
 		galleryLayout.setSpacing(true);
@@ -344,7 +351,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		endPageBtn.addClickListener(btnCommonListener);
 
 		refreshStatusLabel();
-		populateGrid(miniatures, previews);
+		populateGrid(photoMiniatures, videoPreviews);
 		animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN).setDuration(200).setDelay(200);
 		checkOffsetBtnsAvailability();
 
@@ -356,7 +363,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	}
 
 	private void shiftGrid() {
-		populateGrid(miniatures, previews);
+		populateGrid(photoMiniatures, videoPreviews);
 		refreshStatusLabel();
 		animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN).setDuration(200).setDelay(200);
 		checkOffsetBtnsAvailability();

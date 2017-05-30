@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.subwindows;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import cz.gattserver.grass3.facades.IContentNodeFacade;
 import cz.gattserver.grass3.facades.INodeFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
+import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -35,6 +37,8 @@ public abstract class ContentMoveWindow extends WebWindow {
 	private Button moveBtn;
 	private Tree tree;
 
+	private HashMap<Long, NodeDTO> cache;
+
 	private enum TreePropertyID {
 		NÁZEV, IKONA
 	}
@@ -42,6 +46,7 @@ public abstract class ContentMoveWindow extends WebWindow {
 	public ContentMoveWindow(final ContentNodeDTO contentNodeDTO) {
 		super("Přesunout obsah");
 
+		cache = new HashMap<>();
 		VerticalLayout layout = (VerticalLayout) getContent();
 
 		setWidth("500px");
@@ -81,6 +86,13 @@ public abstract class ContentMoveWindow extends WebWindow {
 		layout.addComponent(moveBtn);
 		layout.setComponentAlignment(moveBtn, Alignment.MIDDLE_RIGHT);
 
+		NodeBreadcrumbDTO to = contentNodeDTO.getParent();
+		tree.select(cache.get(to.getId()));
+		while (to != null) {
+			tree.expandItem(cache.get(to.getId()));
+			to = to.getParent();
+		}
+
 	}
 
 	private HierarchicalContainer getCategoriesContainer() {
@@ -90,8 +102,8 @@ public abstract class ContentMoveWindow extends WebWindow {
 		// Create containerproperty for name
 		container.addContainerProperty(TreePropertyID.NÁZEV, String.class, null);
 		// Create containerproperty for icon
-		container.addContainerProperty(TreePropertyID.IKONA, ThemeResource.class, new ThemeResource(
-				"../runo/icons/16/folder.png"));
+		container.addContainerProperty(TreePropertyID.IKONA, ThemeResource.class,
+				new ThemeResource("../runo/icons/16/folder.png"));
 
 		List<NodeDTO> rootNodes = nodeFacade.getRootNodes();
 		populateContainer(container, rootNodes, null);
@@ -103,15 +115,19 @@ public abstract class ContentMoveWindow extends WebWindow {
 	private void populateContainer(HierarchicalContainer container, List<NodeDTO> nodes, NodeDTO parent) {
 
 		for (NodeDTO node : nodes) {
+			cache.put(node.getId(), node);
 			Item item = container.addItem(node);
 			item.getItemProperty(TreePropertyID.NÁZEV).setValue(node.getName());
-			container.setChildrenAllowed(node, true);
 			if (parent != null)
 				container.setParent(node, parent);
 
 			List<NodeDTO> childrenNodes = nodeFacade.getNodesByParentNode(node);
-			if (childrenNodes != null)
+			if (childrenNodes != null && !childrenNodes.isEmpty()) {
+				container.setChildrenAllowed(node, true);
 				populateContainer(container, childrenNodes, node);
+			} else {
+				container.setChildrenAllowed(node, false);
+			}
 		}
 	}
 

@@ -150,56 +150,54 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 
 					// Přesunutí znamená rovnou přesun kategorie - v tom případě
 					// je potřeba vyhodit potvrzovací okno
-					getUI().addWindow(
-							new ConfirmWindow("Opravdu přesunout '" + source.getName() + "' do '" + target.getName()
-									+ "' ?") {
+					getUI().addWindow(new ConfirmWindow(
+							"Opravdu přesunout '" + source.getName() + "' do '" + target.getName() + "' ?") {
 
-								private static final long serialVersionUID = 414272650677665672L;
+						private static final long serialVersionUID = 414272650677665672L;
 
-								@Override
-								protected void onConfirm(ClickEvent event) {
-									if (nodeFacade.moveNode(source, target)) {
-										if (container.setParent(sourceItemId, targetItemId)
-												&& container.hasChildren(targetItemId)) {
-											// move first in the container
-											container.moveAfterSibling(sourceItemId, null);
-										}
-										CategoriesSettingsTab.this.showInfo("Přesun kategorie proběhl úspěšně");
-									} else {
-										CategoriesSettingsTab.this
-												.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
-									}
+						@Override
+						protected void onConfirm(ClickEvent event) {
+							if (nodeFacade.moveNode(source, target)) {
+								if (container.setParent(sourceItemId, targetItemId)
+										&& container.hasChildren(targetItemId)) {
+									// move first in the container
+									container.moveAfterSibling(sourceItemId, null);
 								}
-							});
+								CategoriesSettingsTab.this.showInfo("Přesun kategorie proběhl úspěšně");
+							} else {
+								CategoriesSettingsTab.this
+										.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
+							}
+						}
+					});
 
 					break;
 				case TOP:
 
 					// Přesunutí znamená rovnou přesun kategorie - v tom případě
 					// je potřeba vyhodit potvrzovací okno
-					getUI().addWindow(
-							new ConfirmWindow("Opravdu přesunout '" + source.getName() + "' do "
-									+ (parentItemId == null ? "kořene sekce ?" : ("'" + parent.getName() + "' ?"))) {
+					getUI().addWindow(new ConfirmWindow("Opravdu přesunout '" + source.getName() + "' do "
+							+ (parentItemId == null ? "kořene sekce ?" : ("'" + parent.getName() + "' ?"))) {
 
-								private static final long serialVersionUID = 414272650677665672L;
+						private static final long serialVersionUID = 414272650677665672L;
 
-								@Override
-								protected void onConfirm(ClickEvent event) {
-									if (nodeFacade.moveNode(source, parent)) {
-										if (container.setParent(sourceItemId, parentItemId)) {
-											// reorder only the two items,
-											// moving source
-											// above target
-											container.moveAfterSibling(sourceItemId, targetItemId);
-											container.moveAfterSibling(targetItemId, sourceItemId);
-										}
-										CategoriesSettingsTab.this.showInfo("Přesun kategorie proběhl úspěšně");
-									} else {
-										CategoriesSettingsTab.this
-												.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
-									}
+						@Override
+						protected void onConfirm(ClickEvent event) {
+							if (nodeFacade.moveNode(source, parent)) {
+								if (container.setParent(sourceItemId, parentItemId)) {
+									// reorder only the two items,
+									// moving source
+									// above target
+									container.moveAfterSibling(sourceItemId, targetItemId);
+									container.moveAfterSibling(targetItemId, sourceItemId);
 								}
-							});
+								CategoriesSettingsTab.this.showInfo("Přesun kategorie proběhl úspěšně");
+							} else {
+								CategoriesSettingsTab.this
+										.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
+							}
+						}
+					});
 
 					break;
 				case BOTTOM:
@@ -207,25 +205,24 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 					// Přesunutí znamená rovnou přesun kategorie - v tom případě
 					// je potřeba vyhodit potvrzovací okno
 
-					getUI().addWindow(
-							new ConfirmWindow("Opravdu přesunout '" + source.getName() + "' do "
-									+ (parentItemId == null ? "kořene sekce ?" : ("'" + parent.getName() + "' ?"))) {
+					getUI().addWindow(new ConfirmWindow("Opravdu přesunout '" + source.getName() + "' do "
+							+ (parentItemId == null ? "kořene sekce ?" : ("'" + parent.getName() + "' ?"))) {
 
-								private static final long serialVersionUID = 414272650677665672L;
+						private static final long serialVersionUID = 414272650677665672L;
 
-								@Override
-								protected void onConfirm(ClickEvent event) {
-									if (nodeFacade.moveNode(source, parent)) {
-										if (container.setParent(sourceItemId, parentItemId)) {
-											container.moveAfterSibling(sourceItemId, targetItemId);
-										}
-										CategoriesSettingsTab.this.showInfo("Přesun kategorie proběhl úspěšně");
-									} else {
-										CategoriesSettingsTab.this
-												.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
-									}
+						@Override
+						protected void onConfirm(ClickEvent event) {
+							if (nodeFacade.moveNode(source, parent)) {
+								if (container.setParent(sourceItemId, parentItemId)) {
+									container.moveAfterSibling(sourceItemId, targetItemId);
 								}
-							});
+								CategoriesSettingsTab.this.showInfo("Přesun kategorie proběhl úspěšně");
+							} else {
+								CategoriesSettingsTab.this
+										.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
+							}
+						}
+					});
 
 					break;
 				}
@@ -297,6 +294,7 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 
 						private static final long serialVersionUID = 8490964871266821307L;
 
+						@SuppressWarnings("unchecked")
 						public void buttonClick(ClickEvent event) {
 							if (newNameField.isValid() == false)
 								return;
@@ -399,8 +397,8 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 		// Create containerproperty for name
 		container.addContainerProperty(TreePropertyID.NÁZEV, String.class, null);
 		// Create containerproperty for icon
-		container.addContainerProperty(TreePropertyID.IKONA, ThemeResource.class, new ThemeResource(
-				"../runo/icons/16/folder.png"));
+		container.addContainerProperty(TreePropertyID.IKONA, ThemeResource.class,
+				new ThemeResource("../runo/icons/16/folder.png"));
 
 		List<NodeDTO> rootNodes = nodeFacade.getRootNodes();
 		populateContainer(container, rootNodes, null);
@@ -408,6 +406,7 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 		return container;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void populateContainer(HierarchicalContainer container, List<NodeDTO> nodes, NodeDTO parent) {
 
 		for (NodeDTO node : nodes) {
@@ -418,8 +417,12 @@ public class CategoriesSettingsTab extends AbstractSettingsTab {
 				container.setParent(node, parent);
 
 			List<NodeDTO> childrenNodes = nodeFacade.getNodesByParentNode(node);
-			if (childrenNodes != null)
+			if (childrenNodes != null && !childrenNodes.isEmpty()) {
+				container.setChildrenAllowed(node, true);
 				populateContainer(container, childrenNodes, node);
+			} else {
+				container.setChildrenAllowed(node, false);
+			}
 		}
 	}
 }

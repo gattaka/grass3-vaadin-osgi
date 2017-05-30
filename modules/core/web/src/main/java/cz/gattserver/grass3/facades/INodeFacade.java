@@ -21,7 +21,7 @@ public interface INodeFacade {
 	 * Získá všechny kořenové kategorie
 	 */
 	public List<NodeDTO> getRootNodes();
-
+	
 	/**
 	 * Získá kategorie, které jsou jako potomci dané kategorie
 	 */

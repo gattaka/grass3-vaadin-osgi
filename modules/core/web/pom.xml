@@ -152,30 +152,11 @@
 			<version>7.0.1</version>
 		</dependency>
 
-		<!-- Image rescaling -->
-		<dependency>
-			<groupId>org.vaadin.addons</groupId>
-			<artifactId>imagescaler</artifactId>
-			<version>2.0.0</version>
-		</dependency>
-
 		<!-- Fading atd. - animator -->
 		<dependency>
 			<groupId>org.vaadin.addons</groupId>
 			<artifactId>animator</artifactId>
 			<version>1.7.3</version>
-		</dependency>
-
-		<!-- ImageViewer -->
-		<dependency>
-			<groupId>org.vaadin.addons</groupId>
-			<artifactId>imageviewer</artifactId>
-			<version>0.5.1.v7</version>
-		</dependency>
-		<dependency>
-			<groupId>org.vaadin.addons</groupId>
-			<artifactId>imageviewer.gwt</artifactId>
-			<version>0.5.1.v7</version>
 		</dependency>
 
 		<!-- eventBus -->

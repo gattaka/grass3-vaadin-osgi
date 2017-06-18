@@ -26,11 +26,9 @@ import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.pages.template.ContentsLazyTable;
-import cz.gattserver.grass3.pages.template.FavouriteContentsQuery;
-import cz.gattserver.grass3.pages.template.NewContentsTableFactory;
-import cz.gattserver.grass3.pages.template.NewContentsTableFactory.NewContentsTable;
-import cz.gattserver.grass3.pages.template.NodesTableFactory;
-import cz.gattserver.grass3.pages.template.NodesTableFactory.NodesTable;
+import cz.gattserver.grass3.pages.template.NewContentNodeTable;
+import cz.gattserver.grass3.pages.template.NodeContentsQuery;
+import cz.gattserver.grass3.pages.template.NodesTable;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.security.ICoreACL;
 import cz.gattserver.grass3.template.Breadcrumb;
@@ -53,12 +51,6 @@ public class NodePage extends OneColumnPage {
 
 	@Resource(name = "nodePageFactory")
 	private IPageFactory nodePageFactory;
-
-	@Resource(name = "newContentsTableFactory")
-	private NewContentsTableFactory newContentsTableFactory;
-
-	@Resource(name = "nodesTableFactory")
-	private NodesTableFactory nodesTableFactory;
 
 	// Přehled podkategorií
 	private NodesTable subNodesTable;
@@ -189,7 +181,7 @@ public class NodePage extends OneColumnPage {
 	private void createSubnodesPart(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout subNodesLayout = new VerticalLayout();
-		subNodesTable = nodesTableFactory.createNodesTable();
+		subNodesTable = new NodesTable(NodePage.this);
 
 		subNodesLayout.addComponent(new Label("<h2>Podkategorie</h2>", ContentMode.HTML));
 
@@ -216,24 +208,9 @@ public class NodePage extends OneColumnPage {
 			showError500();
 			return;
 		}
-		subNodesTable.populateTable(nodes, this);
-
+		subNodesTable.populateTable(nodes);
 		subNodesTable.setVisible(nodes.size() != 0);
 		noSubNodesLabel.setVisible(nodes.size() == 0);
-
-		int min = 50;
-		int element = 25;
-		int max = 200;
-		int header = 25;
-
-		int size = nodes.size() * element;
-
-		if (size < min)
-			size = min;
-		if (size > max)
-			size = max;
-		size += header;
-		subNodesTable.setHeight(size + "px");
 	}
 
 	private void createContentsPart(VerticalLayout layout, NodeDTO node) {
@@ -244,10 +221,9 @@ public class NodePage extends OneColumnPage {
 
 			@Override
 			protected BeanQueryFactory<?> createBeanQuery() {
-				BeanQueryFactory<?> queryFactory = new BeanQueryFactory<FavouriteContentsQuery>(
-						FavouriteContentsQuery.class);
+				BeanQueryFactory<?> queryFactory = new BeanQueryFactory<NodeContentsQuery>(NodeContentsQuery.class);
 				Map<String, Object> queryConfiguration = new HashMap<>();
-				queryConfiguration.put(FavouriteContentsQuery.KEY, node.getId());
+				queryConfiguration.put(NodeContentsQuery.KEY, node.getId());
 				queryFactory.setQueryConfiguration(queryConfiguration);
 				return queryFactory;
 			}
@@ -259,41 +235,20 @@ public class NodePage extends OneColumnPage {
 		contentsTable.setWidth("100%");
 		layout.addComponent(contentsLayout);
 
-		int min = 50;
-		int element = 25;
-		int max = 400;
-		int header = 25;
-
-		int size = contentsTable.getContainerDataSource().getItemIds().size() * element;
-
-		if (size < min)
-			size = min;
-		if (size > max)
-			size = max;
-		size += header;
-		contentsTable.setHeight(size + "px");
-
 		// Vytvořit obsahy
 		createNewContentMenu(layout, node);
 
 	}
 
 	private void createNewContentMenu(VerticalLayout layout, NodeDTO node) {
-
 		VerticalLayout newContentsLayout = new VerticalLayout();
-		NewContentsTable newContentsTable = newContentsTableFactory.createNewContentsTable();
+		NewContentNodeTable newContentsTable = new NewContentNodeTable(NodePage.this, node);
 
 		newContentsLayout.addComponent(new Label("<h2>Vytvořit nový obsah</h2>", ContentMode.HTML));
 		newContentsLayout.addComponent(newContentsTable);
 		newContentsTable.setWidth("100%");
 		newContentsTable.setHeight("100px");
-
-		if (coreACL.canCreateContent(getUser())) {
-			newContentsLayout.setVisible(true);
-			newContentsTable.populateTable(node, this);
-		} else {
-			newContentsLayout.setVisible(false);
-		}
+		newContentsLayout.setVisible(coreACL.canCreateContent(getUser()));
 
 		layout.addComponent(newContentsLayout);
 	}

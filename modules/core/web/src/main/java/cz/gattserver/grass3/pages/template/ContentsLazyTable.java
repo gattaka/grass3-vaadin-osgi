@@ -144,6 +144,20 @@ public abstract class ContentsLazyTable extends Table {
 		setColumnHeader(creationDateBind, "Datum vytvoření");
 		setColumnHeader(lastModificationDateBind, "Datum úpravy");
 
+		int min = 50;
+		int element = 25;
+		int max = 400;
+		int header = 25;
+
+		int size = container.getItemIds().size() * element;
+
+		if (size < min)
+			size = min;
+		if (size > max)
+			size = max;
+		size += header;
+		setHeight(size + "px");
+
 	}
 
 	protected abstract BeanQueryFactory<?> createBeanQuery();

@@ -98,6 +98,21 @@ public class HomePage extends BasePage {
 			favouritesContentsTable.populate(HomePage.this);
 			favouritesLayout.addComponent(favouritesContentsTable);
 			favouritesContentsTable.setWidth("100%");
+
+			int min = 50;
+			int element = 25;
+			int max = 200;
+			int header = 25;
+
+			int size = favouritesContentsTable.getContainerDataSource().getItemIds().size() * element;
+
+			if (size < min)
+				size = min;
+			if (size > max)
+				size = max;
+			size += header;
+			favouritesContentsTable.setHeight(size + "px");
+
 			pagelayout.addComponent(favouritesLayout);
 		}
 

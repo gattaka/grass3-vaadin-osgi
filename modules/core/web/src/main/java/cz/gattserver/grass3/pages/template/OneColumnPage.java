@@ -15,12 +15,9 @@ public abstract class OneColumnPage extends BasePage {
 
 	@Override
 	protected void createContent(CustomLayout layout) {
-
 		CustomLayout contentLayout = new CustomLayout("oneColumn");
 		layout.addComponent(contentLayout, "content");
-
 		contentLayout.addComponent(createContent(), "content");
-
 	}
 
 	/**

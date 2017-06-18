@@ -36,23 +36,20 @@ public class ArticlesSearchConnector implements ISearchConnector {
 		List<ArticleDTO> articles = articleFacade.getAllArticlesForSearch();
 		for (ArticleDTO article : articles) {
 
-			if (coreACL.canShowContent(article.getContentNode(), user)) {
+			// TODO
+			// if (coreACL.canShowContent(article.getContentNode(), user)) {
 
-				String suffix = URLIdentifierUtils.createURLIdentifier(article
-						.getContentNode().getContentID(), article
-						.getContentNode().getName());
+			String suffix = URLIdentifierUtils.createURLIdentifier(article.getContentNode().getContentID(),
+					article.getContentNode().getName());
 
-				SearchEntity searchEntity = new SearchEntity(
-						articlesViewerPageFactory, suffix);
+			SearchEntity searchEntity = new SearchEntity(articlesViewerPageFactory, suffix);
 
-				searchEntity.addField(ArticleSearchField.NAME, article
-						.getContentNode().getName(), true);
-				searchEntity.addField(ArticleSearchField.CONTENT,
-						article.getSearchableOutput(), true);
+			searchEntity.addField(ArticleSearchField.NAME, article.getContentNode().getName(), true);
+			searchEntity.addField(ArticleSearchField.CONTENT, article.getSearchableOutput(), true);
 
-				searchEntities.add(searchEntity);
+			searchEntities.add(searchEntity);
 
-			}
+			// }
 		}
 
 		return searchEntities;

@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import cz.gattserver.grass3.facades.IContentNodeFacade;
 import cz.gattserver.grass3.facades.IContentTagFacade;
+import cz.gattserver.grass3.facades.ISecurityFacade;
 import cz.gattserver.grass3.facades.IUserFacade;
 import cz.gattserver.grass3.model.dao.ContentNodeRepository;
 import cz.gattserver.grass3.model.dao.NodeRepository;
@@ -25,7 +27,9 @@ import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
+import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.model.util.Mapper;
+import cz.gattserver.grass3.security.Role;
 
 @Transactional
 @Component("contentNodeFacade")
@@ -33,6 +37,9 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 
 	@Resource(name = "mapper")
 	private Mapper mapper;
+
+	@Resource(name = "securityFacade")
+	private ISecurityFacade securityFacade;
 
 	@Resource(name = "contentTagFacade")
 	private IContentTagFacade contentTagFacade;
@@ -52,7 +59,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 	/**
 	 * Získá set oblíbených obsahů daného uživatele
 	 */
-	public List<ContentNodeOverviewDTO> getUserFavouriteContents(Long user) {
+	public List<ContentNodeOverviewDTO> getUserFavourite(Long user) {
 		User u = userRepository.findOne(user);
 		if (u == null)
 			return null;
@@ -271,21 +278,95 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 		nodeRepository.save(oldNode);
 	}
 
-	@Override
-	public int getContentsCount() {
-		return (int) contentNodeRepository.count();
+	/**
+	 * Všechny obsahy
+	 */
+
+	private Page<ContentNode> innerByUserAccess(PageRequest pr) {
+		UserInfoDTO user = securityFacade.getCurrentUser();
+		return contentNodeRepository.findByUserAccess(user.getUsername(), user.getRoles().contains(Role.ADMIN), pr);
 	}
 
 	@Override
-	public List<ContentNodeOverviewDTO> getRecentAddedForOverview(int pageIndex, int count) {
-		return mapper.mapContentNodeOverviewCollection(contentNodeRepository
-				.findAll(new PageRequest(pageIndex, count, Sort.Direction.DESC, "creationDate")).getContent());
+	public int getCount() {
+		return (int) innerByUserAccess(new PageRequest(1, 1)).getTotalElements();
 	}
 
 	@Override
-	public List<ContentNodeOverviewDTO> getRecentModifiedForOverview(int pageIndex, int count) {
-		return mapper.mapContentNodeOverviewCollection(contentNodeRepository
-				.findAll(new PageRequest(pageIndex, count, Sort.Direction.DESC, "lastModificationDate")).getContent());
+	public List<ContentNodeOverviewDTO> getRecentAdded(int pageIndex, int count) {
+		return mapper.mapContentNodeOverviewCollection(
+				innerByUserAccess(new PageRequest(pageIndex, count, Sort.Direction.DESC, "creationDate")).getContent());
+	}
+
+	@Override
+	public List<ContentNodeOverviewDTO> getRecentModified(int pageIndex, int count) {
+		return mapper.mapContentNodeOverviewCollection(
+				innerByUserAccess(new PageRequest(pageIndex, count, Sort.Direction.DESC, "lastModificationDate"))
+						.getContent());
+	}
+
+	/**
+	 * Dle tagu
+	 */
+
+	private Page<ContentNode> innerByTagAndUserAccess(Long tagId, PageRequest pr) {
+		UserInfoDTO user = securityFacade.getCurrentUser();
+		return contentNodeRepository.findByTagAndUserAccess(tagId, user.getUsername(),
+				user.getRoles().contains(Role.ADMIN), pr);
+	}
+
+	@Override
+	public int getCountByTag(Long tagId) {
+		return (int) innerByTagAndUserAccess(tagId, new PageRequest(1, 1)).getTotalElements();
+	}
+
+	@Override
+	public List<ContentNodeOverviewDTO> getByTag(Long tagId, int pageIndex, int count) {
+		return mapper.mapContentNodeOverviewCollection(
+				innerByTagAndUserAccess(tagId, new PageRequest(pageIndex, count, Sort.Direction.DESC, "creationDate"))
+						.getContent());
+	}
+
+	/**
+	 * Dle oblíbených uživatele
+	 */
+
+	private Page<ContentNode> innerByUserFavouritesAndUserAccess(Long userId, PageRequest pr) {
+		UserInfoDTO user = securityFacade.getCurrentUser();
+		return contentNodeRepository.findByUserFavouritesAndUserAccess(userId, user.getUsername(),
+				user.getRoles().contains(Role.ADMIN), pr);
+	}
+
+	@Override
+	public int getUserFavouriteCount(Long userId) {
+		return (int) innerByUserFavouritesAndUserAccess(userId, new PageRequest(1, 1)).getTotalElements();
+	}
+
+	@Override
+	public List<ContentNodeOverviewDTO> getUserFavourite(Long userId, int pageIndex, int count) {
+		return mapper.mapContentNodeOverviewCollection(
+				innerByUserFavouritesAndUserAccess(userId, new PageRequest(pageIndex, count)).getContent());
+	}
+
+	/**
+	 * Dle kategorie
+	 */
+
+	private Page<ContentNode> innerByNodeAndUserAccess(Long nodeId, PageRequest pr) {
+		UserInfoDTO user = securityFacade.getCurrentUser();
+		return contentNodeRepository.findByNodeAndUserAccess(nodeId, user.getUsername(),
+				user.getRoles().contains(Role.ADMIN), pr);
+	}
+
+	@Override
+	public int getCountByNode(Long nodeId) {
+		return (int) innerByNodeAndUserAccess(nodeId, new PageRequest(1, 1)).getTotalElements();
+	}
+
+	@Override
+	public List<ContentNodeOverviewDTO> getByNode(Long nodeId, int pageIndex, int count) {
+		return mapper.mapContentNodeOverviewCollection(
+				innerByNodeAndUserAccess(nodeId, new PageRequest(pageIndex, count)).getContent());
 	}
 
 }

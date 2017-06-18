@@ -1,34 +1,37 @@
 package cz.gattserver.grass3.pages;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
+
+import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.facades.IContentNodeFacade;
 import cz.gattserver.grass3.facades.INodeFacade;
-import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
-import cz.gattserver.grass3.pages.template.ContentsTableFactory;
+import cz.gattserver.grass3.pages.template.ContentsLazyTable;
+import cz.gattserver.grass3.pages.template.FavouriteContentsQuery;
 import cz.gattserver.grass3.pages.template.NewContentsTableFactory;
-import cz.gattserver.grass3.pages.template.NodesTableFactory;
-import cz.gattserver.grass3.pages.template.OneColumnPage;
-import cz.gattserver.grass3.pages.template.ContentsTableFactory.ContentsTable;
 import cz.gattserver.grass3.pages.template.NewContentsTableFactory.NewContentsTable;
+import cz.gattserver.grass3.pages.template.NodesTableFactory;
 import cz.gattserver.grass3.pages.template.NodesTableFactory.NodesTable;
+import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.security.ICoreACL;
 import cz.gattserver.grass3.template.Breadcrumb;
 import cz.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
@@ -50,9 +53,6 @@ public class NodePage extends OneColumnPage {
 
 	@Resource(name = "nodePageFactory")
 	private IPageFactory nodePageFactory;
-
-	@Resource(name = "contentsTableFactory")
-	private ContentsTableFactory contentsTableFactory;
 
 	@Resource(name = "newContentsTableFactory")
 	private NewContentsTableFactory newContentsTableFactory;
@@ -239,11 +239,20 @@ public class NodePage extends OneColumnPage {
 	private void createContentsPart(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout contentsLayout = new VerticalLayout();
-		ContentsTable contentsTable = contentsTableFactory.createContentsTableWithoutNodeColumn();
+		ContentsLazyTable contentsTable = new ContentsLazyTable() {
+			private static final long serialVersionUID = -2628924290654351639L;
 
-		List<ContentNodeOverviewDTO> contentNodes = node.getContentNodes();
-		if (contentNodes == null)
-			showError500();
+			@Override
+			protected BeanQueryFactory<?> createBeanQuery() {
+				BeanQueryFactory<?> queryFactory = new BeanQueryFactory<FavouriteContentsQuery>(
+						FavouriteContentsQuery.class);
+				Map<String, Object> queryConfiguration = new HashMap<>();
+				queryConfiguration.put(FavouriteContentsQuery.KEY, node.getId());
+				queryFactory.setQueryConfiguration(queryConfiguration);
+				return queryFactory;
+			}
+		};
+		contentsTable.populate(NodePage.this);
 
 		contentsLayout.addComponent(new Label("<h2>Obsahy</h2>", ContentMode.HTML));
 		contentsLayout.addComponent(contentsTable);
@@ -255,7 +264,7 @@ public class NodePage extends OneColumnPage {
 		int max = 400;
 		int header = 25;
 
-		int size = contentsTable.populateTable(contentNodes, this) * element;
+		int size = contentsTable.getContainerDataSource().getItemIds().size() * element;
 
 		if (size < min)
 			size = min;

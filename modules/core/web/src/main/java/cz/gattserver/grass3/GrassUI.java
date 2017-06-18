@@ -56,10 +56,6 @@ public class GrassUI extends UI {
 		return securityFacade.getCurrentUser();
 	}
 
-	public boolean login(String username, String password) {
-		return securityFacade.login(username, password);
-	}
-
 	public void init(VaadinRequest request) {
 
 		VaadinSession.getCurrent().setErrorHandler(new ApplicationErrorHandler());

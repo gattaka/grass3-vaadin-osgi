@@ -17,12 +17,12 @@ public class RecentAddedContentsQuery extends LazyContentsQuery {
 
 	@Override
 	protected int getSize() {
-		return contentNodeFacade.getContentsCount();
+		return contentNodeFacade.getCount();
 	}
 
 	@Override
 	protected List<ContentNodeOverviewDTO> getBeans(int page, int count) {
-		return new ArrayList<>(contentNodeFacade.getRecentAddedForOverview(page, count));
+		return new ArrayList<>(contentNodeFacade.getRecentAdded(page, count));
 	}
 
 }

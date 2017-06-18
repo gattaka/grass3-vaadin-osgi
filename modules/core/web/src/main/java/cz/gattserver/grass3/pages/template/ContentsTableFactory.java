@@ -112,8 +112,8 @@ public class ContentsTableFactory {
 			// položky
 			for (ContentNodeOverviewDTO contentNode : contentList) {
 
-				if (coreACL.canShowContent(contentNode, page.getUser()) == false)
-					continue;
+//				if (coreACL.canShowContent(contentNode, page.getUser()) == false)
+//					continue;
 
 				displayed++;
 

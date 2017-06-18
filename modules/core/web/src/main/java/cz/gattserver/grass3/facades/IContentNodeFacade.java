@@ -13,7 +13,7 @@ public interface IContentNodeFacade {
 	/**
 	 * Získá set oblíbených obsahů daného uživatele
 	 */
-	public List<ContentNodeOverviewDTO> getUserFavouriteContents(Long user);
+	public List<ContentNodeOverviewDTO> getUserFavourite(Long user);
 
 	/**
 	 * Získá set naposledy přidaných obsahů
@@ -132,7 +132,7 @@ public interface IContentNodeFacade {
 	/**
 	 * Získá počet všech obsahů (pro LazyQueryContainer)
 	 */
-	public int getContentsCount();
+	public int getCount();
 
 	/**
 	 * Získá stránku nedávno přidaných obsahů (pro LazyQueryContainer)
@@ -140,7 +140,7 @@ public interface IContentNodeFacade {
 	 * @param pageIndex
 	 * @param count
 	 */
-	public List<ContentNodeOverviewDTO> getRecentAddedForOverview(int pageIndex, int count);
+	public List<ContentNodeOverviewDTO> getRecentAdded(int pageIndex, int count);
 
 	/**
 	 * Získá stránku nedávno upravených obsahů (pro LazyQueryContainer)
@@ -148,6 +148,60 @@ public interface IContentNodeFacade {
 	 * @param pageIndex
 	 * @param count
 	 */
-	public List<ContentNodeOverviewDTO> getRecentModifiedForOverview(int pageIndex, int count);
+	public List<ContentNodeOverviewDTO> getRecentModified(int pageIndex, int count);
+
+	/**
+	 * Získá počet obsahů dle tagu (pro LazyQueryContainer)
+	 * 
+	 * @param tagId
+	 * @return
+	 */
+	public int getCountByTag(Long tagId);
+
+	/**
+	 * Získá stránku obsahů dle tagu (pro LazyQueryContainer)
+	 * 
+	 * @param tagId
+	 * @param pageIndex
+	 * @param count
+	 * @return
+	 */
+	public List<ContentNodeOverviewDTO> getByTag(Long tagId, int pageIndex, int count);
+
+	/**
+	 * Získá počet oblíbených obsahů dle uživatele (pro LazyQueryContainer)
+	 * 
+	 * @param tagId
+	 * @return
+	 */
+	public int getUserFavouriteCount(Long userId);
+
+	/**
+	 * Získá stránku oblíbených obsahů dle uživatele (pro LazyQueryContainer)
+	 * 
+	 * @param userId
+	 * @param page
+	 * @param count
+	 * @return
+	 */
+	public List<ContentNodeOverviewDTO> getUserFavourite(Long userId, int page, int count);
+
+	/**
+	 * Získá počet obsahů dle kategorie (pro LazyQueryContainer)
+	 * 
+	 * @param nodeId
+	 * @return
+	 */
+	public int getCountByNode(Long nodeId);
+
+	/**
+	 * Získá stránku obsahů dle kategorie (pro LazyQueryContainer)
+	 * 
+	 * @param nodeId
+	 * @param page
+	 * @param count
+	 * @return
+	 */
+	public List<ContentNodeOverviewDTO> getByNode(Long nodeId, int page, int count);
 
 }

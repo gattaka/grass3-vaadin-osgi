@@ -56,7 +56,7 @@ public class ContentNode {
 	/**
 	 * Tagy
 	 */
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
 	private Set<ContentTag> contentTags;
 
 	/**

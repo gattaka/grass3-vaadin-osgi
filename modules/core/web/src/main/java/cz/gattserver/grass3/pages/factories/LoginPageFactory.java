@@ -24,7 +24,8 @@ public class LoginPageFactory extends AbstractPageFactory {
 
 	@Override
 	protected boolean isAuthorized() {
-		return coreACL.canLogin(getUser());
+		// lze pouze není-li přihlášen
+		return !coreACL.isLoggedIn(getUser());
 	}
 
 	@Override

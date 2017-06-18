@@ -15,6 +15,14 @@ import org.hibernate.annotations.GenericGenerator;
 public class ContentTag {
 
 	/**
+	 * DB identifikátor
+	 */
+	@Id
+	@GeneratedValue(generator = "increment")
+	@GenericGenerator(name = "increment", strategy = "increment")
+	private Long id;
+
+	/**
 	 * Název tagu
 	 */
 	private String name;
@@ -30,14 +38,6 @@ public class ContentTag {
 	 * když se to nemusí počítat)
 	 */
 	private Integer contentNodesCount;
-
-	/**
-	 * DB identifikátor
-	 */
-	@Id
-	@GeneratedValue(generator = "increment")
-	@GenericGenerator(name = "increment", strategy = "increment")
-	private Long id;
 
 	@Override
 	public boolean equals(Object obj) {

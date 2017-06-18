@@ -21,11 +21,6 @@ public class ContentTagDTO implements Comparable<ContentTagDTO> {
 	private String name;
 
 	/**
-	 * Obsahy tagu
-	 */
-	private List<ContentNodeOverviewDTO> contentNodes;
-
-	/**
 	 * Počet obsahů k tagu
 	 */
 	private int contentNodesCount;
@@ -51,14 +46,6 @@ public class ContentTagDTO implements Comparable<ContentTagDTO> {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public List<ContentNodeOverviewDTO> getContentNodes() {
-		return contentNodes;
-	}
-
-	public void setContentNodes(List<ContentNodeOverviewDTO> contentNodes) {
-		this.contentNodes = contentNodes;
 	}
 
 	public int getContentNodesCount() {

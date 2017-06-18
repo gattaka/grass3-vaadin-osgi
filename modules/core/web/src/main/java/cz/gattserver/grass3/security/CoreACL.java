@@ -38,18 +38,14 @@ public final class CoreACL implements ICoreACL {
 	 * Může uživatel zobrazit danou sekci ?
 	 */
 	public boolean canShowSection(ISectionService section, UserInfoDTO user) {
-
-		// záleží na viditelnosti definované sekcí
-		return section.isVisibleForRoles(user == null ? null : user.getRoles());
+		return section.isVisibleForRoles(user.getRoles());
 	}
 
 	/**
 	 * Může uživatel upravovat "hlášky"
 	 */
 	public boolean canModifyQuotes(UserInfoDTO user) {
-
-		// pokud je uživatel přihlášen a je to administrátor
-		return user != null && user.getRoles().contains(Role.ADMIN);
+		return isLoggedIn(user) && user.getRoles().contains(Role.ADMIN);
 	}
 
 	/**
@@ -61,46 +57,17 @@ public final class CoreACL implements ICoreACL {
 	/**
 	 * Může uživatel zobrazit daný obsah ?
 	 */
-	public boolean canShowContent(IAuthorizable content, UserInfoDTO user) {
-
-		// pokud je obsah publikován, můžeš zobrazit
-		if (content.isPublicated())
-			return true;
-
-		// pokud není
-		if (user != null) {
-
-			// pokud je admin, může zobrazit kterýkoliv obsah
-			if (user.getRoles().contains(Role.ADMIN))
-				return true;
-
-			// pokud jsi autor, můžeš zobrazit svůj obsah
-			if (content.getAuthor().getId().equals(user.getId()))
-				return true;
-		}
-
-		// jinak false
-		return false;
-	}
+	// řešeno jako DB dotaz
 
 	/**
 	 * Může uživatel vytvářet obsah ?
 	 */
 	public boolean canCreateContent(UserInfoDTO user) {
-
-		if (user == null) {
-
-			// host nemůže zakládat obsah
-			return false;
-
-		} else {
-
+		if (isLoggedIn(user)) {
 			// pokud má uživatel oprávnění AUTHOR, pak může
 			if (user.getRoles().contains(Role.AUTHOR))
 				return true;
-
 		}
-
 		return false;
 	}
 
@@ -108,14 +75,7 @@ public final class CoreACL implements ICoreACL {
 	 * Může uživatel upravit daný obsah ?
 	 */
 	public boolean canModifyContent(IAuthorizable content, UserInfoDTO user) {
-
-		if (user == null) {
-
-			// host nemůže upravovat obsah
-			return false;
-
-		} else {
-
+		if (isLoggedIn(user)) {
 			// pokud je admin, může upravit kterýkoliv obsah
 			if (user.getRoles().contains(Role.ADMIN))
 				return true;
@@ -124,8 +84,6 @@ public final class CoreACL implements ICoreACL {
 			if (content.getAuthor().getId().equals(user.getId()))
 				return true;
 		}
-
-		// jinak false
 		return false;
 	}
 
@@ -146,20 +104,11 @@ public final class CoreACL implements ICoreACL {
 	 * Může uživatel založit kategorii ?
 	 */
 	public boolean canCreateNode(UserInfoDTO user) {
-
-		if (user == null) {
-
-			// host nemůže
-			return false;
-
-		} else {
-
+		if (isLoggedIn(user)) {
 			// pokud je admin, můžeš
 			if (user.getRoles().contains(Role.ADMIN))
 				return true;
-
 		}
-
 		// jinak false
 		return false;
 	}
@@ -192,31 +141,19 @@ public final class CoreACL implements ICoreACL {
 	 */
 
 	/**
-	 * Může se uživatel přihlásit ?
+	 * Je uživatel přihlášen?
 	 */
-	public boolean canLogin(UserInfoDTO user) {
-		return user == null;
-	}
-
-	/**
-	 * Může se uživatel odhlásit ?
-	 */
-	public boolean canLogout(UserInfoDTO user) {
-		return user != null;
+	@Override
+	public boolean isLoggedIn(UserInfoDTO user) {
+		return user.getId() != null;
 	}
 
 	/**
 	 * Může daný uživatel zobrazit detaily o uživateli X ?
 	 */
 	public boolean canShowUserDetails(UserInfoDTO anotherUser, UserInfoDTO user) {
-
-		// TODO tohle je spíš otázka kódu, než oprávnění
 		// nelze zobrazit detail od žádného uživatele
-		if (anotherUser == null)
-			return false;
-
-		// host nemůže zobrazovat nic
-		if (user == null)
+		if (user.getId() == null || anotherUser == null)
 			return false;
 
 		// uživatel může vidět detaily o sobě
@@ -234,15 +171,11 @@ public final class CoreACL implements ICoreACL {
 	 * Může se uživatel zaregistrovat ?
 	 */
 	public boolean canRegistrate(UserInfoDTO user) {
-
-		if (user == null) {
-
+		if (!isLoggedIn(user)) {
 			// jenom host se může registrovat
 			CoreConfiguration configuration = new CoreConfiguration();
 			configurationService.loadConfiguration(configuration);
-
 			return configuration.isRegistrations();
-
 		}
 		// jinak false
 		return false;
@@ -252,8 +185,7 @@ public final class CoreACL implements ICoreACL {
 	 * Může zobrazit stránku s nastavením ?
 	 */
 	public boolean canShowSettings(UserInfoDTO user) {
-		// uživatel musí být přihlášen aby mohl aspoň nějaké nastavení zobrazit
-		return user != null;
+		return isLoggedIn(user);
 	}
 
 	/**
@@ -281,15 +213,14 @@ public final class CoreACL implements ICoreACL {
 	 * Může přidat obsah do svých oblíbených ?
 	 */
 	public boolean canAddContentToFavourites(ContentNodeDTO contentNodeDTO, UserInfoDTO user) {
-		// uživatel musí být přihlášen a obsah nesmí být v jeho oblíbených
-		return user != null && userFacade.hasInFavourites(contentNodeDTO.getId(), user.getId()) == false;
+		return isLoggedIn(user) && userFacade.hasInFavourites(contentNodeDTO.getId(), user.getId()) == false;
 	}
 
 	/**
 	 * Může odebrat obsah ze svých oblíbených ?
 	 */
 	public boolean canRemoveContentFromFavourites(ContentNodeDTO contentNodeDTO, UserInfoDTO user) {
-		return user != null && userFacade.hasInFavourites(contentNodeDTO.getId(), user.getId()) == true;
+		return isLoggedIn(user) && userFacade.hasInFavourites(contentNodeDTO.getId(), user.getId()) == true;
 	}
 
 }

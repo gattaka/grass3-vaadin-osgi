@@ -34,8 +34,7 @@ public class SecurityFacadeImpl implements ISecurityFacade {
 		if (loggedUser == null || loggedUser.isConfirmed() == false)
 			return false;
 
-		Authentication authentication = new UsernamePasswordAuthenticationToken(
-				loggedUser, loggedUser.getPassword(),
+		Authentication authentication = new UsernamePasswordAuthenticationToken(loggedUser, loggedUser.getPassword(),
 				loggedUser.getAuthorities());
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -44,22 +43,20 @@ public class SecurityFacadeImpl implements ISecurityFacade {
 		User user = userRepository.findOne(loggedUser.getId());
 		user.setLastLoginDate(Calendar.getInstance().getTime());
 		userRepository.save(user);
-
 		return true;
 	}
 
 	public UserInfoDTO getCurrentUser() {
-
-		Object principal = SecurityContextHolder.getContext()
-				.getAuthentication().getPrincipal();
-		if (principal instanceof UserInfoDTO)
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (principal instanceof UserInfoDTO) {
 			return (UserInfoDTO) principal;
-		else
-			return null;
+		} else {
+			UserInfoDTO anonUser = new UserInfoDTO();
+			return anonUser;
+		}
 	}
 
-	public Authentication authenticate(Authentication authentication)
-			throws AuthenticationException {
+	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
 		if (!(authentication.getPrincipal() instanceof String)
 				|| (!(authentication.getCredentials() instanceof String)))

@@ -32,7 +32,7 @@ public interface ICoreACL {
 	/**
 	 * Může uživatel zobrazit daný obsah ?
 	 */
-	public boolean canShowContent(IAuthorizable content, UserInfoDTO user);
+	// řešeno jako DB dotaz
 
 	/**
 	 * Může uživatel vytvářet obsah ?
@@ -82,14 +82,9 @@ public interface ICoreACL {
 	 */
 
 	/**
-	 * Může se uživatel přihlásit ?
+	 * Je uživatel přihlášen?
 	 */
-	public boolean canLogin(UserInfoDTO user);
-
-	/**
-	 * Může se uživatel odhlásit ?
-	 */
-	public boolean canLogout(UserInfoDTO user);
+	public boolean isLoggedIn(UserInfoDTO user);
 
 	/**
 	 * Může daný uživatel zobrazit detaily o uživateli X ?

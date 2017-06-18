@@ -18,7 +18,7 @@
 		<remember-me key="grass3-d1b3395b306b568d2fd977109c08540b" />
 	</http>
 
-	<authentication-manager>
+	<authentication-manager alias="authenticationManager">
 		<authentication-provider user-service-ref="grassUserDetailService">
 			<password-encoder ref="grassPasswordEncoder" />
 		</authentication-provider>

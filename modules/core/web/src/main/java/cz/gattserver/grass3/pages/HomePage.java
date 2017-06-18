@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -22,16 +23,14 @@ import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.facades.IContentNodeFacade;
 import cz.gattserver.grass3.facades.IContentTagFacade;
-import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.pages.template.BasePage;
 import cz.gattserver.grass3.pages.template.ContentsLazyTable;
-import cz.gattserver.grass3.pages.template.ContentsTableFactory;
+import cz.gattserver.grass3.pages.template.FavouriteContentsQuery;
 import cz.gattserver.grass3.pages.template.RecentAddedContentsQuery;
 import cz.gattserver.grass3.pages.template.RecentModifiedContentsQuery;
-import cz.gattserver.grass3.pages.template.ContentsTableFactory.ContentsTable;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
 
@@ -52,9 +51,6 @@ public class HomePage extends BasePage {
 
 	@Resource(name = "tagPageFactory")
 	private IPageFactory tagPageFactory;
-
-	@Resource(name = "contentsTableFactory")
-	private ContentsTableFactory contentsTableFactory;
 
 	/**
 	 * Kolik je nejmenší font pro tagcloud ?
@@ -83,15 +79,26 @@ public class HomePage extends BasePage {
 
 		// Oblíbené
 		UserInfoDTO user = getGrassUI().getUser();
-		if (user != null) {
+		if (coreACL.isLoggedIn(user)) {
 			VerticalLayout favouritesLayout = new VerticalLayout();
 			favouritesLayout.addComponent(new Label("<h2>Oblíbené obsahy</h2>", ContentMode.HTML));
-			ContentsTable favouritesContentsTable = contentsTableFactory.createContentsTable();
+			ContentsLazyTable favouritesContentsTable = new ContentsLazyTable() {
+				private static final long serialVersionUID = -2628924290654351639L;
+
+				@Override
+				protected BeanQueryFactory<?> createBeanQuery() {
+					BeanQueryFactory<?> queryFactory = new BeanQueryFactory<FavouriteContentsQuery>(
+							FavouriteContentsQuery.class);
+					Map<String, Object> queryConfiguration = new HashMap<>();
+					queryConfiguration.put(FavouriteContentsQuery.KEY, user.getId());
+					queryFactory.setQueryConfiguration(queryConfiguration);
+					return queryFactory;
+				}
+			};
+			favouritesContentsTable.populate(HomePage.this);
 			favouritesLayout.addComponent(favouritesContentsTable);
 			favouritesContentsTable.setWidth("100%");
 			pagelayout.addComponent(favouritesLayout);
-			List<ContentNodeOverviewDTO> contentNodes = contentNodeFacade.getUserFavouriteContents(user.getId());
-			favouritesContentsTable.populateTable(contentNodes, this);
 		}
 
 		// Nedávno přidané a upravené obsahy
@@ -244,6 +251,7 @@ public class HomePage extends BasePage {
 				return new BeanQueryFactory<RecentAddedContentsQuery>(RecentAddedContentsQuery.class);
 			}
 		};
+		recentAddedContentsTable.populate(this);
 
 		ContentsLazyTable recentModifiedContentsTable = new ContentsLazyTable() {
 			private static final long serialVersionUID = -2628924290654351639L;
@@ -253,6 +261,7 @@ public class HomePage extends BasePage {
 				return new BeanQueryFactory<RecentModifiedContentsQuery>(RecentModifiedContentsQuery.class);
 			}
 		};
+		recentModifiedContentsTable.populate(this);
 
 		VerticalLayout recentAddedLayout = new VerticalLayout();
 		recentAddedLayout.addComponent(new Label("<h2>Nedávno přidané obsahy</h2>", ContentMode.HTML));
@@ -261,8 +270,6 @@ public class HomePage extends BasePage {
 		recentAddedContentsTable.setHeight("200px");
 		pagelayout.addComponent(recentAddedLayout);
 
-		recentAddedContentsTable.populate(this);
-
 		// Nedávno upravené obsahy
 		VerticalLayout recentModifiedLayout = new VerticalLayout();
 		recentModifiedLayout.addComponent(new Label("<h2>Nedávno upravené obsahy</h2>", ContentMode.HTML));
@@ -270,8 +277,6 @@ public class HomePage extends BasePage {
 		recentModifiedContentsTable.setWidth("100%");
 		recentModifiedContentsTable.setHeight("200px");
 		pagelayout.addComponent(recentModifiedLayout);
-
-		recentModifiedContentsTable.populate(this);
 
 	}
 

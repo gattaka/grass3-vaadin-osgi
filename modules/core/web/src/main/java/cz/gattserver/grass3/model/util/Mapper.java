@@ -185,7 +185,7 @@ public class Mapper {
 
 		contentTagDTO.setId(e.getId());
 		contentTagDTO.setName(e.getName());
-		contentTagDTO.setContentNodes(mapContentNodeOverviewCollection(e.getContentNodes()));
+		// contentTagDTO.setContentNodes(mapContentNodeOverviewCollection(e.getContentNodes()));
 
 		return contentTagDTO;
 	}
@@ -239,7 +239,7 @@ public class Mapper {
 		nodeDTO.setId(e.getId());
 		nodeDTO.setName(e.getName());
 		nodeDTO.setParent(mapNodeForBreadcrumb(e.getParent()));
-		nodeDTO.setContentNodes(mapContentNodeOverviewCollection(e.getContentNodes()));
+		// nodeDTO.setContentNodes(mapContentNodeOverviewCollection(e.getContentNodes()));
 		nodeDTO.setSubNodes(mapNodesForOverview(e.getSubNodes()));
 
 		return nodeDTO;

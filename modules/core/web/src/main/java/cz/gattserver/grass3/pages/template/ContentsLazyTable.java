@@ -16,7 +16,6 @@ import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
-import cz.gattserver.grass3.security.ICoreACL;
 import cz.gattserver.grass3.service.IContentService;
 import cz.gattserver.grass3.ui.util.ComparableLink;
 import cz.gattserver.grass3.ui.util.ComparableStringDate;
@@ -26,9 +25,6 @@ import cz.gattserver.web.common.URLIdentifierUtils;
 public abstract class ContentsLazyTable extends Table {
 
 	private static final long serialVersionUID = -5648982639686386190L;
-
-	// @Resource(name = "coreACL")
-	private ICoreACL coreACL;
 
 	// @Resource(name = "nodePageFactory")
 	private IPageFactory nodePageFactory;
@@ -47,7 +43,6 @@ public abstract class ContentsLazyTable extends Table {
 	private static final String lastModificationDateBind = "lastModificationDate";
 
 	public ContentsLazyTable() {
-		coreACL = (ICoreACL) SpringContextHelper.getBean("coreACL");
 		nodePageFactory = (IPageFactory) SpringContextHelper.getBean("nodePageFactory");
 		noServicePageFactory = (IPageFactory) SpringContextHelper.getBean("noServicePageFactory");
 		serviceHolder = (IServiceHolder) SpringContextHelper.getBean("serviceHolder");
@@ -67,20 +62,6 @@ public abstract class ContentsLazyTable extends Table {
 		container.addContainerProperty(creationDateBind, Date.class, null, true, false);
 		container.addContainerProperty(lastModificationDateBind, Date.class, null, true, false);
 
-		container.addContainerFilter(new Filter() {
-			private static final long serialVersionUID = -1064778743246773319L;
-
-			@Override
-			public boolean passesFilter(Object itemId, Item item) throws UnsupportedOperationException {
-				return coreACL.canShowContent(getValueFromId(itemId), page.getUser());
-			}
-
-			@Override
-			public boolean appliesToProperty(Object propertyId) {
-				return true;
-			}
-		});
-
 		addGeneratedColumn(iconBind, new ColumnGenerator() {
 			private static final long serialVersionUID = 1546758854069400666L;
 
@@ -89,7 +70,8 @@ public abstract class ContentsLazyTable extends Table {
 				ContentNodeOverviewDTO contentNode = getValueFromId(itemId);
 
 				// jaká prohlížecí služba odpovídá tomuto obsahu
-				IContentService contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
+				IContentService contentService = serviceHolder
+						.getContentServiceByName(contentNode.getContentReaderID());
 
 				Embedded icon = new Embedded();
 				if (contentService == null) {
@@ -111,7 +93,8 @@ public abstract class ContentsLazyTable extends Table {
 				ContentNodeOverviewDTO contentNode = getValueFromId(itemId);
 
 				// jaká prohlížecí služba odpovídá tomuto obsahu
-				IContentService contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
+				IContentService contentService = serviceHolder
+						.getContentServiceByName(contentNode.getContentReaderID());
 
 				IPageFactory pageFactory = null;
 				if (contentService == null)
@@ -146,8 +129,8 @@ public abstract class ContentsLazyTable extends Table {
 			}
 		});
 
-		setVisibleColumns(new Object[] { iconBind, nameBind, nodeBind, authorBind, creationDateBind,
-				lastModificationDateBind });
+		setVisibleColumns(
+				new Object[] { iconBind, nameBind, nodeBind, authorBind, creationDateBind, lastModificationDateBind });
 
 		setColumnWidth(iconBind, 16);
 

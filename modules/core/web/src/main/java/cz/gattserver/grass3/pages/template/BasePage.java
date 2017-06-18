@@ -33,34 +33,34 @@ public abstract class BasePage extends AbstractGrassPage {
 	private static final long serialVersionUID = 502625699429764791L;
 
 	@Resource(name = "coreACL")
-	private ICoreACL coreACL;
+	protected ICoreACL coreACL;
 
 	@Resource(name = "nodeFacade")
-	private INodeFacade nodeFacade;
+	protected INodeFacade nodeFacade;
 
 	@Resource(name = "quotesFacade")
-	private IQuotesFacade quotesFacade;
+	protected IQuotesFacade quotesFacade;
 
 	@Resource(name = "homePageFactory")
-	private IPageFactory homePageFactory;
+	protected IPageFactory homePageFactory;
 
 	@Resource(name = "nodePageFactory")
-	private IPageFactory nodePageFactory;
+	protected IPageFactory nodePageFactory;
 
 	@Resource(name = "quotesPageFactory")
-	private IPageFactory quotesPageFactory;
+	protected IPageFactory quotesPageFactory;
 
 	@Resource(name = "loginPageFactory")
-	private IPageFactory loginPageFactory;
+	protected IPageFactory loginPageFactory;
 
 	@Resource(name = "registrationPageFactory")
-	private IPageFactory registrationPageFactory;
+	protected IPageFactory registrationPageFactory;
 
 	@Resource(name = "settingsPageFactory")
-	private IPageFactory settingsPageFactory;
+	protected IPageFactory settingsPageFactory;
 
 	@Resource(name = "serviceHolder")
-	private IServiceHolder serviceHolder;
+	protected IServiceHolder serviceHolder;
 
 	public BasePage(GrassRequest request) {
 		super(request);
@@ -116,7 +116,7 @@ public abstract class BasePage extends AbstractGrassPage {
 		 */
 
 		// Přihlášení
-		if (coreACL.canLogin(getUser())) {
+		if (!coreACL.isLoggedIn(getUser())) {
 			createMenuComponent(menu, new Link("Přihlášení", getPageResource(loginPageFactory)));
 		}
 

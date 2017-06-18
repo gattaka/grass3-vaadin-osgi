@@ -3,10 +3,7 @@ package cz.gattserver.grass3.rest;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.Principal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cz.gattserver.grass3.facades.ISecurityFacade;
+import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
 import cz.gattserver.grass3.pg.facade.IPhotogalleryFacade;
@@ -36,18 +34,13 @@ public class PhotogalleryResource {
 	@Resource(name = "securityFacade")
 	private ISecurityFacade securityFacade;
 
-	// $ curl -u gatt:tigris http://localhost:8180/web/ws/pg/log
 	@RequestMapping("/log")
-	public @ResponseBody String log(Principal principal) {
-		if (principal != null) {
-			String userId = principal.getName();
-			return userId;
-		} else {
-			return "unauth";
-		}
+	public @ResponseBody String log() {
+		UserInfoDTO user = securityFacade.getCurrentUser();
+		return user.getName() == null ? "unauth" : user.getName();
 	}
 
-	// curl -i -X POST -d login=gatt -d password=tigris
+	// curl -i -X POST -d login=jmeno -d password=heslo
 	// http://localhost:8180/web/ws/pg/login
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public ResponseEntity<String> login(@RequestParam("login") String username,
@@ -60,8 +53,9 @@ public class PhotogalleryResource {
 	}
 
 	@RequestMapping("/list")
-	public @ResponseBody List<PhotogalleryRESTOverviewDTO> list(Principal principal) {
-		return photogalleryFacade.getAllPhotogalleriesForREST();
+	public @ResponseBody List<PhotogalleryRESTOverviewDTO> list() {
+		UserInfoDTO user = securityFacade.getCurrentUser();
+		return photogalleryFacade.getAllPhotogalleriesForREST(user.getId());
 	}
 
 	@RequestMapping("/gallery")

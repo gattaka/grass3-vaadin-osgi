@@ -401,8 +401,9 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 	}
 
 	@Override
-	public List<PhotogalleryRESTOverviewDTO> getAllPhotogalleriesForREST() {
-		return photogalleriesMapper.mapPhotogalleryForRESTOverviewCollection(photogalleryRepository.findAll());
+	public List<PhotogalleryRESTOverviewDTO> getAllPhotogalleriesForREST(Long userId) {
+		return photogalleriesMapper
+				.mapPhotogalleryForRESTOverviewCollection(photogalleryRepository.findByUserAccess(userId));
 	}
 
 	@Override

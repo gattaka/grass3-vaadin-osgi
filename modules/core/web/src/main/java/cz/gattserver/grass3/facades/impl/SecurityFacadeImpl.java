@@ -5,10 +5,8 @@ import java.util.Calendar;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,22 +54,4 @@ public class SecurityFacadeImpl implements ISecurityFacade {
 		}
 	}
 
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-
-		if (!(authentication.getPrincipal() instanceof String)
-				|| (!(authentication.getCredentials() instanceof String)))
-			throw new AuthenticationException("Authentication failed") {
-				private static final long serialVersionUID = 1622317305057326834L;
-			};
-
-		String username = (String) authentication.getPrincipal();
-		String password = (String) authentication.getCredentials();
-
-		UserInfoDTO loggedUser = userFacade.getUserByLogin(username, password);
-		if (loggedUser == null)
-			throw new BadCredentialsException("Bad credentials");
-
-		authentication.setAuthenticated(true);
-		return authentication;
-	}
 }

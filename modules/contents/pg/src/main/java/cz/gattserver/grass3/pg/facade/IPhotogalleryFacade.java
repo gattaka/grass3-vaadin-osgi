@@ -78,7 +78,7 @@ public interface IPhotogalleryFacade {
 	/**
 	 * Získá všechny galerie a namapuje je pro použití REST
 	 */
-	public List<PhotogalleryRESTOverviewDTO> getAllPhotogalleriesForREST();
+	public List<PhotogalleryRESTOverviewDTO> getAllPhotogalleriesForREST(Long userId);
 
 	/**
 	 * Vytvoří nový adresář pro fotogalerii

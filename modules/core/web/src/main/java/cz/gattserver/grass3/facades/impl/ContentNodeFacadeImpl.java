@@ -284,7 +284,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 
 	private Page<ContentNode> innerByUserAccess(PageRequest pr) {
 		UserInfoDTO user = securityFacade.getCurrentUser();
-		return contentNodeRepository.findByUserAccess(user.getUsername(), user.getRoles().contains(Role.ADMIN), pr);
+		return contentNodeRepository.findByUserAccess(user.getId(), user.getRoles().contains(Role.ADMIN), pr);
 	}
 
 	@Override
@@ -311,8 +311,8 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 
 	private Page<ContentNode> innerByTagAndUserAccess(Long tagId, PageRequest pr) {
 		UserInfoDTO user = securityFacade.getCurrentUser();
-		return contentNodeRepository.findByTagAndUserAccess(tagId, user.getUsername(),
-				user.getRoles().contains(Role.ADMIN), pr);
+		return contentNodeRepository.findByTagAndUserAccess(tagId, user.getId(), user.getRoles().contains(Role.ADMIN),
+				pr);
 	}
 
 	@Override
@@ -333,7 +333,7 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 
 	private Page<ContentNode> innerByUserFavouritesAndUserAccess(Long userId, PageRequest pr) {
 		UserInfoDTO user = securityFacade.getCurrentUser();
-		return contentNodeRepository.findByUserFavouritesAndUserAccess(userId, user.getUsername(),
+		return contentNodeRepository.findByUserFavouritesAndUserAccess(userId, user.getId(),
 				user.getRoles().contains(Role.ADMIN), pr);
 	}
 
@@ -354,8 +354,8 @@ public class ContentNodeFacadeImpl implements IContentNodeFacade {
 
 	private Page<ContentNode> innerByNodeAndUserAccess(Long nodeId, PageRequest pr) {
 		UserInfoDTO user = securityFacade.getCurrentUser();
-		return contentNodeRepository.findByNodeAndUserAccess(nodeId, user.getUsername(),
-				user.getRoles().contains(Role.ADMIN), pr);
+		return contentNodeRepository.findByNodeAndUserAccess(nodeId, user.getId(), user.getRoles().contains(Role.ADMIN),
+				pr);
 	}
 
 	@Override

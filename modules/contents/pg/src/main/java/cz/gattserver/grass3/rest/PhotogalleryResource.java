@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.rest;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,9 +21,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import cz.gattserver.grass3.facades.ISecurityFacade;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
-import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
+import cz.gattserver.grass3.pg.dto.PhotogalleryRESTDTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
 import cz.gattserver.grass3.pg.facade.IPhotogalleryFacade;
+import cz.gattserver.grass3.pg.facade.UnauthorizedAccessException;
 
 @Controller
 @RequestMapping("/pg")
@@ -46,35 +48,64 @@ public class PhotogalleryResource {
 	public ResponseEntity<String> login(@RequestParam("login") String username,
 			@RequestParam("password") String password) {
 		if (securityFacade.login(username, password)) {
-			return new ResponseEntity<String>(HttpStatus.OK);
+			return new ResponseEntity<>(HttpStatus.OK);
 		} else {
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
+	// http://localhost:8180/web/ws/pg/list
 	@RequestMapping("/list")
 	public @ResponseBody List<PhotogalleryRESTOverviewDTO> list() {
 		UserInfoDTO user = securityFacade.getCurrentUser();
 		return photogalleryFacade.getAllPhotogalleriesForREST(user.getId());
 	}
 
+	// http://localhost:8180/web/ws/pg/gallery?id=364
 	@RequestMapping("/gallery")
-	public @ResponseBody PhotogalleryDTO gallery(@RequestParam(value = "id", required = true) Long id) {
-		return photogalleryFacade.getPhotogalleryForDetail(id);
+	public ResponseEntity<PhotogalleryRESTDTO> gallery(@RequestParam(value = "id", required = true) Long id) {
+		PhotogalleryRESTDTO gallery;
+		try {
+			gallery = photogalleryFacade.getPhotogalleryForREST(id);
+		} catch (UnauthorizedAccessException e) {
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		if (gallery == null)
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(gallery, HttpStatus.OK);
 	}
 
+	private void innerPhoto(Long id, String fileName, boolean mini, HttpServletResponse response) {
+		try {
+			File file = photogalleryFacade.getPhotoForREST(id, fileName, mini);
+			if (file == null) {
+				response.setStatus(HttpStatus.NOT_FOUND.value());
+				return;
+			}
+			InputStream is = new FileInputStream(file);
+			IOUtils.copy(is, response.getOutputStream());
+			response.flushBuffer();
+		} catch (UnauthorizedAccessException e) {
+			response.setStatus(HttpStatus.FORBIDDEN.value());
+		} catch (IOException ex) {
+			System.err.println("IOError writing file to output stream");
+			ex.printStackTrace();
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+		}
+	}
+
+	// http://localhost:8180/web/ws/pg/photo?id=364&fileName=shocked_kittens_cr.jpg
 	@RequestMapping("/photo")
 	public void photo(@RequestParam(value = "id", required = true) Long id, String fileName,
 			HttpServletResponse response) {
-		try {
-			// get your file as InputStream
-			InputStream is = new FileInputStream(photogalleryFacade.getPhotoForREST(id, fileName));
-			// copy it to response's OutputStream
-			IOUtils.copy(is, response.getOutputStream());
-			response.flushBuffer();
-		} catch (IOException ex) {
-			throw new RuntimeException("IOError writing file to output stream");
-		}
+		innerPhoto(id, fileName, false, response);
+	}
+
+	// http://localhost:8180/web/ws/pg/mini?id=364&fileName=shocked_kittens_cr.jpg
+	@RequestMapping("/mini")
+	public void mini(@RequestParam(value = "id", required = true) Long id, String fileName,
+			HttpServletResponse response) {
+		innerPhoto(id, fileName, true, response);
 	}
 
 }

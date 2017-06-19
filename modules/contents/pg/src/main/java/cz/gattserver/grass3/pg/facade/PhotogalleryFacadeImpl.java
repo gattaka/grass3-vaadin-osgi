@@ -4,7 +4,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import cz.gattserver.grass3.config.IConfigurationService;
 import cz.gattserver.grass3.events.IEventBus;
 import cz.gattserver.grass3.facades.IContentNodeFacade;
+import cz.gattserver.grass3.facades.ISecurityFacade;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
@@ -27,6 +30,7 @@ import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.pg.dao.PhotoGalleryRepository;
 import cz.gattserver.grass3.pg.domain.Photogallery;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
+import cz.gattserver.grass3.pg.dto.PhotogalleryRESTDTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
 import cz.gattserver.grass3.pg.events.PGProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.PGProcessResultEvent;
@@ -35,6 +39,7 @@ import cz.gattserver.grass3.pg.service.impl.PhotogalleryContentService;
 import cz.gattserver.grass3.pg.util.DecodeAndCaptureFrames;
 import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.pg.util.PhotogalleryMapper;
+import cz.gattserver.grass3.security.Role;
 
 @Transactional
 @Component("photogalleryFacade")
@@ -47,6 +52,9 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 
 	@Resource(name = "photogalleryMapper")
 	private PhotogalleryMapper photogalleriesMapper;
+
+	@Resource(name = "securityFacade")
+	private ISecurityFacade securityFacade;
 
 	@Resource
 	private IConfigurationService configurationService;
@@ -407,13 +415,55 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 	}
 
 	@Override
-	public File getPhotoForREST(Long id, String fileName) {
-		Photogallery pg = photogalleryRepository.findOne(id);
-		PhotogalleryConfiguration configuration = getConfiguration();
-		File file = new File(configuration.getRootDir() + "/" + pg.getPhotogalleryPath() + "/" + fileName);
-		if (file.exists())
-			return file;
-		return null;
+	public PhotogalleryRESTDTO getPhotogalleryForREST(Long id) throws UnauthorizedAccessException {
+		Photogallery gallery = photogalleryRepository.findOne(id);
+		if (gallery == null)
+			return null;
+
+		UserInfoDTO user = securityFacade.getCurrentUser();
+		if (gallery.getContentNode().getPublicated() || user.getRoles().contains(Role.ADMIN)
+				|| gallery.getContentNode().getAuthor().getId().equals(user.getId())) {
+
+			PhotogalleryConfiguration configuration = getConfiguration();
+			File file = new File(configuration.getRootDir() + "/" + gallery.getPhotogalleryPath());
+			Set<String> files = new HashSet<>();
+			if (file.exists()) {
+				for (File f : file.listFiles()) {
+					if (f.isFile())
+						files.add(f.getName());
+				}
+			} else {
+				return null;
+			}
+
+			PhotogalleryRESTDTO photogalleryDTO = new PhotogalleryRESTDTO(gallery.getId(),
+					gallery.getContentNode().getName(), gallery.getContentNode().getCreationDate(),
+					gallery.getContentNode().getLastModificationDate(), gallery.getContentNode().getAuthor().getName(),
+					files);
+			return photogalleryDTO;
+		}
+
+		throw new UnauthorizedAccessException();
+	}
+
+	@Override
+	public File getPhotoForREST(Long id, String fileName, boolean mini) throws UnauthorizedAccessException {
+		Photogallery gallery = photogalleryRepository.findOne(id);
+		if (gallery == null)
+			return null;
+
+		UserInfoDTO user = securityFacade.getCurrentUser();
+		if (gallery.getContentNode().getPublicated() || user.getRoles().contains(Role.ADMIN)
+				|| gallery.getContentNode().getAuthor().getId().equals(user.getId())) {
+			PhotogalleryConfiguration configuration = getConfiguration();
+			File file = new File(configuration.getRootDir() + "/" + gallery.getPhotogalleryPath() + "/"
+					+ (mini ? configuration.getMiniaturesDir() + "/" : "") + fileName);
+			if (file.exists())
+				return file;
+			return null;
+		}
+
+		throw new UnauthorizedAccessException();
 	}
 
 }

@@ -9,6 +9,7 @@ import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
+import cz.gattserver.grass3.pg.dto.PhotogalleryRESTDTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
 
 public interface IPhotogalleryFacade {
@@ -76,11 +77,6 @@ public interface IPhotogalleryFacade {
 	public List<PhotogalleryDTO> getAllPhotogalleriesForSearch();
 
 	/**
-	 * Získá všechny galerie a namapuje je pro použití REST
-	 */
-	public List<PhotogalleryRESTOverviewDTO> getAllPhotogalleriesForREST(Long userId);
-
-	/**
 	 * Vytvoří nový adresář pro fotogalerii
 	 */
 	public File createGalleryDir();
@@ -134,6 +130,31 @@ public interface IPhotogalleryFacade {
 	 */
 	void tryDeletePreviewImage(File file, PhotogalleryDTO photogalleryDTO);
 
-	public File getPhotoForREST(Long id, String fileName);
+	/**
+	 * Získá všechny galerie a namapuje je pro použití REST
+	 */
+	public List<PhotogalleryRESTOverviewDTO> getAllPhotogalleriesForREST(Long userId);
+
+	/**
+	 * Získá detail fotogalerie pro REST
+	 * 
+	 * @param id
+	 *            idetifikátor galerie
+	 * @return
+	 */
+	public PhotogalleryRESTDTO getPhotogalleryForREST(Long id) throws UnauthorizedAccessException;
+
+	/**
+	 * Získá fotografii dle galerie pro REST
+	 * 
+	 * @param id
+	 *            idetifikátor galerie
+	 * @param fileName
+	 *            jméno fotografie
+	 * @param mini
+	 *            jde miniaturu nebo plnou velikost?
+	 * @return
+	 */
+	public File getPhotoForREST(Long id, String fileName, boolean mini) throws UnauthorizedAccessException;
 
 }

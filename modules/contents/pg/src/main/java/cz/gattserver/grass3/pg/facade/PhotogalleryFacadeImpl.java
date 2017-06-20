@@ -457,7 +457,7 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 				|| gallery.getContentNode().getAuthor().getId().equals(user.getId())) {
 			PhotogalleryConfiguration configuration = getConfiguration();
 			File file = new File(configuration.getRootDir() + "/" + gallery.getPhotogalleryPath() + "/"
-					+ (mini ? configuration.getMiniaturesDir() + "/" : "") + fileName);
+					+ (mini ? configuration.getMiniaturesDir() : configuration.getSlideshowDir()) + "/" + fileName);
 			if (file.exists())
 				return file;
 			return null;

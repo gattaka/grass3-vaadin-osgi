@@ -56,9 +56,9 @@ public class PhotogalleryResource {
 
 	// http://localhost:8180/web/ws/pg/list
 	@RequestMapping("/list")
-	public @ResponseBody List<PhotogalleryRESTOverviewDTO> list() {
+	public ResponseEntity<List<PhotogalleryRESTOverviewDTO>> list() {
 		UserInfoDTO user = securityFacade.getCurrentUser();
-		return photogalleryFacade.getAllPhotogalleriesForREST(user.getId());
+		return new ResponseEntity<>(photogalleryFacade.getAllPhotogalleriesForREST(user.getId()), HttpStatus.OK);
 	}
 
 	// http://localhost:8180/web/ws/pg/gallery?id=364
@@ -84,6 +84,7 @@ public class PhotogalleryResource {
 			}
 			InputStream is = new FileInputStream(file);
 			IOUtils.copy(is, response.getOutputStream());
+			response.setStatus(HttpStatus.OK.value());
 			response.flushBuffer();
 		} catch (UnauthorizedAccessException e) {
 			response.setStatus(HttpStatus.FORBIDDEN.value());

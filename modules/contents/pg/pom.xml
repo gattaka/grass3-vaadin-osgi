@@ -19,7 +19,6 @@
 
 	<dependencies>
 
-
 		<!-- Grass3 jádro -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>

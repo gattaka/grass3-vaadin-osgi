@@ -458,8 +458,17 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 			PhotogalleryConfiguration configuration = getConfiguration();
 			File file = new File(configuration.getRootDir() + "/" + gallery.getPhotogalleryPath() + "/"
 					+ (mini ? configuration.getMiniaturesDir() : configuration.getSlideshowDir()) + "/" + fileName);
-			if (file.exists())
+			if (file.exists()) {
 				return file;
+			} else {
+				if (!mini) {
+					// pokud jsem nenašel slideshow, je to tak malý obrázek, že
+					// postačí originální velikost a nemá vytvořený slideshow
+					file = new File(configuration.getRootDir() + "/" + gallery.getPhotogalleryPath() + "/" + fileName);
+					if (file.exists())
+						return file;
+				}
+			}
 			return null;
 		}
 

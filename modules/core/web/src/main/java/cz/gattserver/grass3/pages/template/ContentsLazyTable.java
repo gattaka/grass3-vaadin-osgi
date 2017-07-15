@@ -21,6 +21,7 @@ import cz.gattserver.grass3.ui.util.ComparableLink;
 import cz.gattserver.grass3.ui.util.ComparableStringDate;
 import cz.gattserver.grass3.ui.util.StringToDateConverter;
 import cz.gattserver.web.common.URLIdentifierUtils;
+import cz.gattserver.web.common.ui.ImageIcons;
 
 public abstract class ContentsLazyTable extends Table {
 
@@ -76,7 +77,7 @@ public abstract class ContentsLazyTable extends Table {
 				Embedded icon = new Embedded();
 				if (contentService == null) {
 					// TODO - stránka s err, že chybí modul
-					icon.setSource(new ThemeResource("img/tags/warning_16.png"));
+					icon.setSource(new ThemeResource(ImageIcons.WARNING_16_ICON));
 				} else {
 					icon.setSource(contentService.getContentIcon());
 				}

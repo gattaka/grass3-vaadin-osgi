@@ -41,6 +41,7 @@ import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
+import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.InfoWindow;
 import cz.gattserver.web.common.window.WarnWindow;
@@ -107,7 +108,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	private File slideshowDirFile;
 
 	private AnimatorProxy animatorProxy;
-	
+
 	/**
 	 * Miniatury fotek
 	 */
@@ -233,12 +234,12 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		layout.addComponent(bottomBtnsLayout);
 
 		// ikony tlačítek
-		upRowBtn.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/up_16.png"));
-		downRowBtn.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/down_16.png"));
-		upPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/up_16.png"));
-		downPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/down_16.png"));
-		startPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/up_16.png"));
-		endPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/down_16.png"));
+		upRowBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.UP_16_ICON));
+		downRowBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.DOWN_16_ICON));
+		upPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.UP_16_ICON));
+		downPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.DOWN_16_ICON));
+		startPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.UP_16_ICON));
+		endPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.DOWN_16_ICON));
 
 		// listenery horních tlačítek
 		upRowBtn.addClickListener(new Button.ClickListener() {

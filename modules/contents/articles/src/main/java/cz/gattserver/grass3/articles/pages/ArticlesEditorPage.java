@@ -54,6 +54,7 @@ import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.grass3.ui.util.JQueryAccordion;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
+import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.ConfirmWindow;
 
 public class ArticlesEditorPage extends TwoColumnPage {
@@ -340,7 +341,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		// Náhled
 		Button previewButton = new Button("Náhled");
-		previewButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/document_16.png"));
+		previewButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.DOCUMENT_16_ICON));
 		previewButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 607422393151282918L;
@@ -369,7 +370,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		// Uložit
 		Button saveButton = new Button("Uložit");
-		saveButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/save_16.png"));
+		saveButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.SAVE_16_ICON));
 		saveButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 607422393151282918L;
@@ -394,7 +395,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		// Uložit a zavřít
 		Button saveAndCloseButton = new Button("Uložit a zavřít");
-		saveAndCloseButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/save_16.png"));
+		saveAndCloseButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.SAVE_16_ICON));
 		saveAndCloseButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 607422393151282918L;
@@ -418,7 +419,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		// Zrušit
 		Button cancelButton = new Button("Zrušit");
-		cancelButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/delete_16.png"));
+		cancelButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.DELETE_16_ICON));
 		cancelButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 607422393151282918L;

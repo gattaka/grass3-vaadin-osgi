@@ -24,6 +24,7 @@ import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
+import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.InfoWindow;
 import cz.gattserver.web.common.window.WarnWindow;
@@ -143,8 +144,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 					URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName()));
 			String script = "$(\".articles-basic-h-id\").each(" + "function(index){" + "$(this).attr(\"href\",\"" + url
 					+ "/\" + $(this).attr(\"href\"));" + "$(this).html(\"<img alt=\\\" class=\\\"v-icon\\\" src=\\\""
-					+ getRequest().getContextRoot() + "/VAADIN/themes/grass/img/tags/pencil_16.png\\\"/>&nbsp\");" + "}"
-					+ ")";
+					+ getRequest().getContextRoot() + "/VAADIN/themes/grass/" + ImageIcons.PENCIL_16_ICON
+					+ "\\\"/>&nbsp\");" + "}" + ")";
 			loadJS(new JScriptItem(script, true));
 		}
 	}

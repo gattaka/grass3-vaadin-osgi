@@ -18,6 +18,7 @@ import com.vaadin.ui.Window;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.facade.IHWFacade;
 import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 
@@ -99,9 +100,9 @@ public class HWTypesTab extends VerticalLayout {
 		final Button deleteBtn = new Button("Smazat");
 		fixBtn.setEnabled(false);
 		deleteBtn.setEnabled(false);
-		newTypeBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
-		fixBtn.setIcon(new ThemeResource("img/tags/quickedit_16.png"));
-		deleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
+		newTypeBtn.setIcon(new ThemeResource(ImageIcons.PLUS_16_ICON));
+		fixBtn.setIcon(new ThemeResource(ImageIcons.QUICKEDIT_16_ICON));
+		deleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
 
 		/**
 		 * Přehled typů

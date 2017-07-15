@@ -12,6 +12,7 @@ import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.ui.util.ComparableLink;
 import cz.gattserver.grass3.util.URLIdentifierUtils;
+import cz.gattserver.web.common.ui.ImageIcons;
 
 public class NodesTable extends Table {
 
@@ -43,7 +44,7 @@ public class NodesTable extends Table {
 			@Override
 			public Object generateCell(Table source, Object itemId, Object columnId) {
 				Embedded icon = new Embedded();
-				icon.setSource(new ThemeResource("img/tags/briefcase_16.png"));
+				icon.setSource(new ThemeResource(ImageIcons.BRIEFCASE_16_ICON));
 				return icon;
 			}
 		});

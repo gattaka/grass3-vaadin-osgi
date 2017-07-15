@@ -4,6 +4,7 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.MessageWindow;
 
 public abstract class ExceptionWindow extends MessageWindow {
@@ -13,7 +14,7 @@ public abstract class ExceptionWindow extends MessageWindow {
 	VerticalLayout innerLayout;
 
 	public ExceptionWindow() {
-		super("Chyba", "Neočekávaná systémová chyba", new ThemeResource("img/tags/delete_16.png"));
+		super("Chyba", "Neočekávaná systémová chyba", new ThemeResource(ImageIcons.DELETE_16_ICON));
 	}
 
 	protected abstract String getStackTrace();

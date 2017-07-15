@@ -11,7 +11,7 @@ public class StringToDateConverter extends
 	private String dateFormat;
 
 	public StringToDateConverter() {
-		dateFormat = "d.MM.yyyy";
+		dateFormat = "d.M.yyyy";
 	}
 
 	public StringToDateConverter(String format) {

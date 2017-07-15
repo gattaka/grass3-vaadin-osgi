@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +29,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Embedded;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
@@ -233,14 +236,15 @@ public class HWItemDetailWindow extends WebWindow {
 		}
 		winLayout.addComponent(typesLayout, 1, 0, 3, 0);
 
+		DateFormat sdf = new StringToDateConverter().getFormat();
+
 		winLayout.addComponent(new Label("<strong>Stav</strong>", ContentMode.HTML), 1, 1);
 		winLayout.getComponent(1, 1).setWidth("80px");
 		winLayout.addComponent(createShiftedLabel(hwItem.getState().getName()), 1, 2);
 
 		winLayout.addComponent(new Label("<strong>Získáno</strong>", ContentMode.HTML), 2, 1);
 		winLayout.getComponent(2, 1).setWidth("80px");
-		String purchDate = hwItem.getPurchaseDate() == null ? "-"
-				: new StringToDateConverter().getFormat().format(hwItem.getPurchaseDate());
+		String purchDate = hwItem.getPurchaseDate() == null ? "-" : sdf.format(hwItem.getPurchaseDate());
 		winLayout.addComponent(createShiftedLabel(purchDate), 2, 2);
 
 		winLayout.addComponent(new Label("<strong>Spravováno pro</strong>", ContentMode.HTML), 3, 1);
@@ -257,7 +261,23 @@ public class HWItemDetailWindow extends WebWindow {
 		winLayout.addComponent(createShiftedLabel(destrDate), 2, 4);
 
 		winLayout.addComponent(new Label("<strong>Záruka</strong>", ContentMode.HTML), 3, 3);
-		winLayout.addComponent(createShiftedLabel(createWarrantyYearsString(hwItem.getWarrantyYears())), 3, 4);
+		HorizontalLayout zarukaLayout = new HorizontalLayout();
+		zarukaLayout.setSpacing(true);
+		String zarukaContent = createWarrantyYearsString(hwItem.getWarrantyYears());
+		if (hwItem.getWarrantyYears() != null && hwItem.getWarrantyYears() > 0 && hwItem.getPurchaseDate() != null) {
+			Calendar endDate = Calendar.getInstance();
+			endDate.setTime(hwItem.getPurchaseDate());
+			endDate.add(Calendar.YEAR, hwItem.getWarrantyYears());
+			boolean isInWarranty = endDate.after(Calendar.getInstance());
+			Embedded emb = new Embedded(null,
+					new ThemeResource(isInWarranty ? ImageIcons.TICK_16_ICON : ImageIcons.DELETE_16_ICON));
+			zarukaLayout.addComponent(emb);
+			zarukaContent += " (do " + sdf.format(endDate.getTime()) + ")";
+			zarukaLayout.addComponent(new Label(zarukaContent));
+		} else {
+			zarukaLayout.addComponent(createShiftedLabel(zarukaContent));
+		}
+		winLayout.addComponent(zarukaLayout, 3, 4);
 
 		winLayout.addComponent(new Label("<strong>Je součástí</strong>", ContentMode.HTML), 1, 5);
 		if (hwItem.getUsedIn() == null) {
@@ -600,8 +620,8 @@ public class HWItemDetailWindow extends WebWindow {
 						}
 					}));
 
-			hwItemImageDetailBtn.setIcon(new ThemeResource("img/tags/search_16.png"));
-			hwItemImageDeleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
+			hwItemImageDetailBtn.setIcon(new ThemeResource(ImageIcons.SEARCH_16_ICON));
+			hwItemImageDeleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
 
 			btnLayout.addComponent(hwItemImageDetailBtn);
 			btnLayout.addComponent(hwItemImageDeleteBtn);

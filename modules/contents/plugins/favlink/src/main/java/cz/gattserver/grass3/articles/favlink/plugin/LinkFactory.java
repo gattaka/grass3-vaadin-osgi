@@ -3,6 +3,7 @@ package cz.gattserver.grass3.articles.favlink.plugin;
 import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
 import cz.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
+import cz.gattserver.web.common.ui.ImageIcons;
 
 /**
  * 
@@ -23,7 +24,7 @@ public class LinkFactory implements IPluginFactory {
 	public EditorButtonResources getEditorButtonResources() {
 		EditorButtonResources resources = new EditorButtonResources(tag);
 		resources
-				.setImageName("img/tags/globe_16.png");
+				.setImageName(ImageIcons.GLOBE_16_ICON);
 		resources.setDescription("Link");
 		resources.setTagFamily("HTML");
 		return resources;

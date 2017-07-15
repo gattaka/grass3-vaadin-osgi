@@ -31,6 +31,7 @@ import cz.gattserver.grass3.medic.util.MedicUtil;
 import cz.gattserver.grass3.medic.web.ScheduledVisitsCreateWindow.Operation;
 import cz.gattserver.grass3.template.DetailTableButton;
 import cz.gattserver.grass3.template.ISelectable;
+import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 
@@ -130,10 +131,10 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		deleteBtn.setEnabled(false);
 		completedBtn.setEnabled(false);
 		modifyBtn.setEnabled(false);
-		newTypeBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
-		deleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
-		completedBtn.setIcon(new ThemeResource("img/tags/right_16.png"));
-		modifyBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
+		newTypeBtn.setIcon(new ThemeResource(ImageIcons.PLUS_16_ICON));
+		deleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
+		completedBtn.setIcon(new ThemeResource(ImageIcons.RIGHT_16_ICON));
+		modifyBtn.setIcon(new ThemeResource(ImageIcons.PENCIL_16_ICON));
 
 		final Button detailBtn = new DetailTableButton<ScheduledVisitDTO>("Detail", plannedTable) {
 			private static final long serialVersionUID = -8815751115945625539L;
@@ -159,13 +160,13 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 				ScheduledVisitDTO dto = (ScheduledVisitDTO) itemId;
 				if (dto.getState().equals(ScheduledVisitState.MISSED)) {
 					Embedded icon = new Embedded();
-					icon.setSource(new ThemeResource("img/tags/warning_16.png"));
+					icon.setSource(new ThemeResource(ImageIcons.WARNING_16_ICON));
 					icon.setDescription("Zmeškáno !");
 					return icon;
 				} else {
 					if (MedicUtil.isVisitPending(dto)) {
 						Embedded icon = new Embedded();
-						icon.setSource(new ThemeResource("img/tags/clock_16.png"));
+						icon.setSource(new ThemeResource(ImageIcons.CLOCK_16_ICON));
 						icon.setDescription("Již tento měsíc");
 						return icon;
 					}
@@ -277,10 +278,10 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 		deleteBtn.setEnabled(false);
 		planBtn.setEnabled(false);
 		modifyBtn.setEnabled(false);
-		newBtn.setIcon(new ThemeResource("img/tags/plus_16.png"));
-		deleteBtn.setIcon(new ThemeResource("img/tags/delete_16.png"));
-		planBtn.setIcon(new ThemeResource("img/tags/calendar_16.png"));
-		modifyBtn.setIcon(new ThemeResource("img/tags/pencil_16.png"));
+		newBtn.setIcon(new ThemeResource(ImageIcons.PLUS_16_ICON));
+		deleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
+		planBtn.setIcon(new ThemeResource(ImageIcons.CALENDAR_16_ICON));
+		modifyBtn.setIcon(new ThemeResource(ImageIcons.PENCIL_16_ICON));
 
 		final Button detailBtn = new DetailTableButton<ScheduledVisitDTO>("Detail", toBePlannedTable) {
 			private static final long serialVersionUID = -8815751115945625539L;
@@ -306,13 +307,13 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 				ScheduledVisitDTO dto = (ScheduledVisitDTO) itemId;
 				if (dto.getState().equals(ScheduledVisitState.MISSED)) {
 					Embedded icon = new Embedded();
-					icon.setSource(new ThemeResource("img/tags/warning_16.png"));
+					icon.setSource(new ThemeResource(ImageIcons.WARNING_16_ICON));
 					icon.setDescription("Zmeškáno !");
 					return icon;
 				} else {
 					if (MedicUtil.isVisitPending(dto)) {
 						Embedded icon = new Embedded();
-						icon.setSource(new ThemeResource("img/tags/clock_16.png"));
+						icon.setSource(new ThemeResource(ImageIcons.CLOCK_16_ICON));
 						icon.setDescription("Již tento měsíc");
 						return icon;
 					}

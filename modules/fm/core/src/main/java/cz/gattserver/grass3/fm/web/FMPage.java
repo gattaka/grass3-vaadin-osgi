@@ -46,6 +46,7 @@ import cz.gattserver.grass3.template.MultiUpload;
 import cz.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.util.ComparableStringDate;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.util.HumanBytesSizeCreator;
 import cz.gattserver.web.common.util.ReferenceHolder;
 import cz.gattserver.web.common.window.ConfirmWindow;
@@ -107,7 +108,8 @@ public class FMPage extends OneColumnPage {
 	/**
 	 * Akce pro skupinu
 	 */
-	private static final Action[] ACTIONS_GROUP = new Action[] { ACTION_MOVE, ACTION_DELETE, ACTION_ZIP, ACTION_DETAILS };
+	private static final Action[] ACTIONS_GROUP = new Action[] { ACTION_MOVE, ACTION_DELETE, ACTION_ZIP,
+			ACTION_DETAILS };
 
 	/**
 	 * Akce pro jednotlivce (adresář)
@@ -226,8 +228,9 @@ public class FMPage extends OneColumnPage {
 			private static final long serialVersionUID = -6605391938100454104L;
 
 			/**
-			 * Můžu si dovolit potlačit varování přetypování na Set s parametrem File, protože vím, že v těch values
-			 * jsou jenom File - uživatel tohle nemůže ovlivnit
+			 * Můžu si dovolit potlačit varování přetypování na Set s parametrem
+			 * File, protože vím, že v těch values jsou jenom File - uživatel
+			 * tohle nemůže ovlivnit
 			 */
 			@SuppressWarnings("unchecked")
 			public void valueChange(ValueChangeEvent event) {
@@ -251,8 +254,8 @@ public class FMPage extends OneColumnPage {
 					}
 				}
 				/**
-				 * Je potřeba, aby se přegenerovaly context Menu - viditelnost položek je totiž závislá na selected
-				 * souborech
+				 * Je potřeba, aby se přegenerovaly context Menu - viditelnost
+				 * položek je totiž závislá na selected souborech
 				 */
 				// TODO - tohle je dočasný workaround, kterým se trigne
 				// getActions z handleru - jedině tak se projeví vlastnost v
@@ -314,7 +317,8 @@ public class FMPage extends OneColumnPage {
 			}
 
 			/**
-			 * Je bezpečné zde potlačit warning protože se do filestable dávají jenom items typu File
+			 * Je bezpečné zde potlačit warning protože se do filestable dávají
+			 * jenom items typu File
 			 */
 			@SuppressWarnings("unchecked")
 			private Set<File> getValues() {
@@ -325,7 +329,8 @@ public class FMPage extends OneColumnPage {
 				File targetFile = (File) target;
 
 				/**
-				 * Pokud RMB neklikl na položku již v označených položkách, zruš označení položek a vyber jenom tuto
+				 * Pokud RMB neklikl na položku již v označených položkách, zruš
+				 * označení položek a vyber jenom tuto
 				 */
 				Set<File> selected = getValues();
 				if (!selected.contains(targetFile)) {
@@ -351,8 +356,9 @@ public class FMPage extends OneColumnPage {
 	}
 
 	/**
-	 * Pokud jsou nějaké soubory označeny a je v nich i ten, který byl cíle RMB, pak to ber jako skupinovou operaci.
-	 * Tato funkce v zásadě rozhoduje o tom, zda mám brát jako "target" operace selected skupinu (true) nebo vybraný
+	 * Pokud jsou nějaké soubory označeny a je v nich i ten, který byl cíle RMB,
+	 * pak to ber jako skupinovou operaci. Tato funkce v zásadě rozhoduje o tom,
+	 * zda mám brát jako "target" operace selected skupinu (true) nebo vybraný
 	 * soubor (false)
 	 */
 	private boolean isOperationTargetSelectedGroup(File file) {
@@ -444,7 +450,8 @@ public class FMPage extends OneColumnPage {
 					showWarning("Přejmenování se nezdařilo - soubor s tímto názvem již existuje.");
 					break;
 				case NOT_VALID:
-					showWarning("Přejmenování se nezdařilo - cílové umístění souboru se nachází mimo povolený rozsah souborů k prohlížení.");
+					showWarning(
+							"Přejmenování se nezdařilo - cílové umístění souboru se nachází mimo povolený rozsah souborů k prohlížení.");
 					break;
 				default:
 					showWarning("Přejmenování se nezdařilo - došlo k systémové chybě.");
@@ -484,9 +491,9 @@ public class FMPage extends OneColumnPage {
 		// ikona
 		Embedded icon = new Embedded();
 		if (file.isDirectory())
-			icon.setSource(new ThemeResource("img/tags/folder_16.png"));
+			icon.setSource(new ThemeResource(ImageIcons.FOLDER_16_ICON));
 		else
-			icon.setSource(new ThemeResource("img/tags/present_16.png"));
+			icon.setSource(new ThemeResource(ImageIcons.PRESENT_16_ICON));
 		subWindowlayout.addComponent(icon, 0, 0);
 
 		// název
@@ -698,7 +705,8 @@ public class FMPage extends OneColumnPage {
 					showWarning("Nezdařilo se vytvořit nový adresář - adresář s tímto jménem již existuje.");
 					break;
 				case NOT_VALID:
-					showWarning("Nezdařilo se vytvořit nový adresář - cílové umístění adresáře se nachází mimo povolený rozsah souborů k prohlížení.");
+					showWarning(
+							"Nezdařilo se vytvořit nový adresář - cílové umístění adresáře se nachází mimo povolený rozsah souborů k prohlížení.");
 					break;
 				default:
 					showWarning("Nezdařilo se vytvořit nový adresář - došlo k systémové chybě.");
@@ -737,8 +745,7 @@ public class FMPage extends OneColumnPage {
 					showWarning("Soubor '" + fileName + "' nebylo možné uložit - soubor s tímto názvem již existuje.");
 					break;
 				case NOT_VALID:
-					showWarning("Soubor '"
-							+ fileName
+					showWarning("Soubor '" + fileName
 							+ "' nebylo možné uložit - cílové umístění souboru se nachází mimo povolený rozsah souborů k prohlížení.");
 					break;
 				default:
@@ -772,7 +779,8 @@ public class FMPage extends OneColumnPage {
 		// showWarning("Soubor '"
 		// + fileName
 		// +
-		// "' nebylo možné uložit - cílové umístění souboru se nachází mimo povolený rozsah souborů k prohlížení.");
+		// "' nebylo možné uložit - cílové umístění souboru se nachází mimo
+		// povolený rozsah souborů k prohlížení.");
 		// break;
 		// default:
 		// showWarning("Soubor '" + fileName +
@@ -827,7 +835,7 @@ public class FMPage extends OneColumnPage {
 
 			Item item = filestable.addItem(parent);
 			Embedded icon = new Embedded();
-			icon.setSource(new ThemeResource("img/tags/folder_16.png"));
+			icon.setSource(new ThemeResource(ImageIcons.FOLDER_16_ICON));
 			item.getItemProperty(ColumnId.IKONA).setValue(icon);
 			item.getItemProperty(ColumnId.NÁZEV).setValue("..");
 		}
@@ -836,7 +844,7 @@ public class FMPage extends OneColumnPage {
 		for (File file : directories) {
 			Item item = filestable.addItem(file);
 			Embedded icon = new Embedded();
-			icon.setSource(new ThemeResource("img/tags/folder_16.png"));
+			icon.setSource(new ThemeResource(ImageIcons.FOLDER_16_ICON));
 			item.getItemProperty(ColumnId.IKONA).setValue(icon);
 
 			item.getItemProperty(ColumnId.NÁZEV).setValue(file.getName());
@@ -849,7 +857,7 @@ public class FMPage extends OneColumnPage {
 		for (File file : innerFiles) {
 			Item item = filestable.addItem(file);
 			Embedded icon = new Embedded();
-			icon.setSource(new ThemeResource("img/tags/present_16.png"));
+			icon.setSource(new ThemeResource(ImageIcons.PRESENT_16_ICON));
 			item.getItemProperty(ColumnId.IKONA).setValue(icon);
 
 			item.getItemProperty(ColumnId.NÁZEV).setValue(file.getName());

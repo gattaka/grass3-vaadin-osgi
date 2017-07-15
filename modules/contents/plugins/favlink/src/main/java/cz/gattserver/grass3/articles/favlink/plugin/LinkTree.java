@@ -15,13 +15,14 @@ import cz.gattserver.grass3.articles.parser.exceptions.ParserException;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
 import cz.gattserver.grass3.articles.parser.interfaces.IContext;
 import cz.gattserver.grass3.config.IConfigurationService;
+import cz.gattserver.web.common.ui.ImageIcons;
 
 public class LinkTree extends AbstractElementTree {
 
 	private static final Logger logger = LoggerFactory.getLogger(LinkTree.class);
 
 	private String link;
-	private final static String defaultFavicon = "/img/tags/label_16.png"; // default
+	private final static String defaultFavicon = "/" + ImageIcons.LABEL_16_ICON; // default
 	private String imgURL = null;
 	private String contextRoot;
 

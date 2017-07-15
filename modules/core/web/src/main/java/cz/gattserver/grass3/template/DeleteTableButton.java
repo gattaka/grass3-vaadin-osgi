@@ -6,6 +6,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
+import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 
@@ -15,7 +16,7 @@ public abstract class DeleteTableButton<T> extends TableSelectedItemBtn<T> {
 
 	public DeleteTableButton(String caption, final AbstractSelect table) {
 		super(caption, table);
-		setIcon(new ThemeResource("img/tags/delete_16.png"));
+		setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
 	}
 
 	@Override

@@ -6,13 +6,15 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
+import cz.gattserver.web.common.ui.ImageIcons;
+
 public abstract class ModifyTableButton<T> extends TableSelectedItemBtn<T> {
 
 	private static final long serialVersionUID = -5924239277930098183L;
 
 	public ModifyTableButton(String caption, final AbstractSelect table) {
 		super(caption, table);
-		setIcon(new ThemeResource("img/tags/pencil_16.png"));
+		setIcon(new ThemeResource(ImageIcons.PENCIL_16_ICON));
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import com.vaadin.server.ThemeResource;
 
 import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.service.IContentService;
+import cz.gattserver.web.common.ui.ImageIcons;
 
 @Component("articlesContentService")
 public class ArticlesContentService implements IContentService {
@@ -23,8 +24,7 @@ public class ArticlesContentService implements IContentService {
 	}
 
 	public com.vaadin.server.Resource getContentIcon() {
-		return (com.vaadin.server.Resource) new ThemeResource(
-				"img/tags/document_16.png");
+		return (com.vaadin.server.Resource) new ThemeResource(ImageIcons.DOCUMENT_16_ICON);
 	}
 
 	public String getContentID() {

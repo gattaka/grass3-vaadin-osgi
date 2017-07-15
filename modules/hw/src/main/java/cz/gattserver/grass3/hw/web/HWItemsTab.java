@@ -231,6 +231,7 @@ public class HWItemsTab extends VerticalLayout {
 		table.setColumnHeader("state", "Stav");
 		table.setColumnHeader("usedInName", "Je součástí");
 		table.setColumnHeader("supervizedFor", "Spravováno pro");
+		table.setColumnAlignment("purchaseDate", Align.RIGHT);
 
 		table.setColumnAlignment("price", Align.RIGHT);
 
@@ -260,16 +261,16 @@ public class HWItemsTab extends VerticalLayout {
 			private void updateFilter(Object propertyId, Object value) {
 				switch ((String) propertyId) {
 				case "name":
-					filterDTO.setName((String) value);
+					filterDTO.setName(value == null ? null : "*" + ((String) value) + "*");
 					break;
 				case "state":
 					filterDTO.setState((HWItemState) value);
 					break;
 				case "usedInName":
-					filterDTO.setUsedIn((String) value);
+					filterDTO.setUsedIn(value == null ? null : "*" + ((String) value) + "*");
 					break;
 				case "supervizedFor":
-					filterDTO.setSupervizedFor((String) value);
+					filterDTO.setSupervizedFor(value == null ? null : "*" + ((String) value) + "*");
 					break;
 				case "price":
 					filterDTO.setPrice((BigDecimal) value);

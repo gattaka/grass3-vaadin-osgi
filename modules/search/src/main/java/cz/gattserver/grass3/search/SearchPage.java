@@ -24,6 +24,7 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.search.service.SearchHit;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.ui.ImageIcons;
 
 public class SearchPage extends OneColumnPage {
 
@@ -56,8 +57,8 @@ public class SearchPage extends OneColumnPage {
 
 		String searchText = (String) searchField.getValue();
 		try {
-			List<SearchHit> hits = searchFacade.search(searchText, null, (String) moduleCombo.getValue(), getGrassUI()
-					.getUser(), this);
+			List<SearchHit> hits = searchFacade.search(searchText, null, (String) moduleCombo.getValue(),
+					getGrassUI().getUser(), this);
 			outputLayout.removeAllComponents();
 
 			if (hits.size() == 0) {
@@ -120,7 +121,7 @@ public class SearchPage extends OneColumnPage {
 			}
 		});
 		searchLayout.addComponent(searchButton);
-		searchButton.setIcon(new ThemeResource("img/tags/search_16.png"));
+		searchButton.setIcon(new ThemeResource(ImageIcons.SEARCH_16_ICON));
 
 		/**
 		 * 2.) Rozbalovací seznam

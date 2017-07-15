@@ -35,6 +35,7 @@ import cz.gattserver.grass3.template.ModifyButton;
 import cz.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
+import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.InfoWindow;
 import cz.gattserver.web.common.window.WarnWindow;
 
@@ -138,7 +139,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		}
 
 		// Oblíbené
-		removeFromFavouritesButton = new AbstractButton("Odebrat z oblíbených", "img/tags/broken_heart_16.png") {
+		removeFromFavouritesButton = new AbstractButton("Odebrat z oblíbených", ImageIcons.BROKEN_HEART_16_ICON) {
 			private static final long serialVersionUID = 2867032632695180826L;
 
 			@Override
@@ -158,7 +159,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 			}
 		};
 
-		addToFavouritesButton = new AbstractButton("Přidat do oblíbených", "img/tags/heart_16.png") {
+		addToFavouritesButton = new AbstractButton("Přidat do oblíbených", ImageIcons.HEART_16_ICON) {
 			private static final long serialVersionUID = 2867032632695180826L;
 
 			@Override
@@ -186,7 +187,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		// Změna kategorie
 		if (coreACL.canModifyContent(content, getUser())) {
-			operationsListLayout.addComponent(new AbstractButton("Přesunout", "img/tags/move_16.png") {
+			operationsListLayout.addComponent(new AbstractButton("Přesunout", ImageIcons.MOVE_16_ICON) {
 				private static final long serialVersionUID = 4009430146436270013L;
 
 				@Override
@@ -220,7 +221,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 			publicatedLayout.setSpacing(true);
 			publicatedLayout.setMargin(false);
 			publicatedLayout.addStyleName("not-publicated-info");
-			publicatedLayout.addComponent(new Embedded(null, new ThemeResource("img/tags/info_16.png")));
+			publicatedLayout.addComponent(new Embedded(null, new ThemeResource(ImageIcons.INFO_16_ICON)));
 			publicatedLayout.addComponent(new Label("<strong>Nepublikováno</strong>", ContentMode.HTML));
 			layout.addComponent(publicatedLayout, "pubinfo");
 		}

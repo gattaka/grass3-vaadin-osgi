@@ -68,6 +68,7 @@ import cz.gattserver.grass3.ui.progress.ProgressWindow;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
+import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.WarnWindow;
 
@@ -120,8 +121,8 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 	public PhotogalleryEditorPage(GrassRequest request) {
 		super(request);
-		JavaScript
-				.eval("window.onbeforeunload = function() { return \"Opravdu si přejete ukončit editor a odejít - rozpracovaná data nejsou uložena ?\" };");
+		JavaScript.eval(
+				"window.onbeforeunload = function() { return \"Opravdu si přejete ukončit editor a odejít - rozpracovaná data nejsou uložena ?\" };");
 	}
 
 	@Override
@@ -188,8 +189,8 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	@Override
 	protected Component createContent() {
 
-		final File dir = editMode ? photogalleryFacade.getGalleryDir(photogallery) : photogalleryFacade
-				.createGalleryDir();
+		final File dir = editMode ? photogalleryFacade.getGalleryDir(photogallery)
+				: photogalleryFacade.createGalleryDir();
 		galleryDir = dir;
 
 		VerticalLayout editorTextLayout = new VerticalLayout();
@@ -261,8 +262,8 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		final Table table = new Table();
 		if (editMode) {
 
-			BeanItemContainer<File> container = new BeanItemContainer<>(File.class, Arrays.asList(galleryDir
-					.listFiles(new FileFilter() {
+			BeanItemContainer<File> container = new BeanItemContainer<>(File.class,
+					Arrays.asList(galleryDir.listFiles(new FileFilter() {
 
 						@Override
 						public boolean accept(File pathname) {
@@ -401,7 +402,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		// Uložit
 		Button saveButton = new Button("Uložit");
-		saveButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/save_16.png"));
+		saveButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.SAVE_16_ICON));
 		saveButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 607422393151282918L;
@@ -421,7 +422,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		// Uložit a zavřít
 		Button saveAndCloseButton = new Button("Uložit a zavřít");
-		saveAndCloseButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/save_16.png"));
+		saveAndCloseButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.SAVE_16_ICON));
 		saveAndCloseButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 607422393151282918L;
@@ -439,7 +440,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		// Zrušit
 		Button cancelButton = new Button("Zrušit");
-		cancelButton.setIcon((com.vaadin.server.Resource) new ThemeResource("img/tags/delete_16.png"));
+		cancelButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.DELETE_16_ICON));
 		cancelButton.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 607422393151282918L;
@@ -516,8 +517,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	 */
 	private void returnToNode() {
 		JavaScript.eval("window.onbeforeunload = null;");
-		redirect(getPageURL(nodePageFactory,
-				URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName())));
+		redirect(getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName())));
 	}
 
 	@Override

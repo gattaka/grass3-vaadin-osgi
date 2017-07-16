@@ -2,11 +2,18 @@ package cz.gattserver.grass3.pg.facade;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
@@ -35,6 +42,9 @@ import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
 import cz.gattserver.grass3.pg.events.PGProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.PGProcessResultEvent;
 import cz.gattserver.grass3.pg.events.PGProcessStartEvent;
+import cz.gattserver.grass3.pg.events.PGZipProcessProgressEvent;
+import cz.gattserver.grass3.pg.events.PGZipProcessResultEvent;
+import cz.gattserver.grass3.pg.events.PGZipProcessStartEvent;
 import cz.gattserver.grass3.pg.service.impl.PhotogalleryContentService;
 import cz.gattserver.grass3.pg.util.DecodeAndCaptureFrames;
 import cz.gattserver.grass3.pg.util.PGUtils;
@@ -473,6 +483,67 @@ public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
 		}
 
 		throw new UnauthorizedAccessException();
+	}
+
+	@Async
+	@Override
+	public void zipGallery(File galleryDir) {
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
+		ZipOutputStream zipOut = null;
+		try {
+			logger.info("zipPhotogallery thread: " + Thread.currentThread().getId());
+
+			// Počet kroků
+			long total = Files.list(Paths.get(galleryDir.getAbsolutePath())).count();
+			int progress = 1;
+			eventBus.publish(new PGZipProcessStartEvent((int) total + 1));
+
+			File tmpFile = File.createTempFile("grassPGTmpFile_" + new Date().getTime() + "_" + galleryDir.getName(),
+					null);
+
+			fos = new FileOutputStream(tmpFile);
+			zipOut = new ZipOutputStream(fos);
+			for (File fileToZip : galleryDir.listFiles()) {
+				if (!fileToZip.isDirectory()) {
+					eventBus.publish(new PGZipProcessProgressEvent(
+							"Přidávám '" + fileToZip.getName() + "' do ZIPu " + progress + "/" + total));
+					progress++;
+					fis = new FileInputStream(fileToZip);
+					ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+					zipOut.putNextEntry(zipEntry);
+
+					byte[] bytes = new byte[1024];
+					int length;
+					while ((length = fis.read(bytes)) >= 0) {
+						zipOut.write(bytes, 0, length);
+					}
+					fis.close();
+					fis = null;
+				}
+			}
+			zipOut.close();
+			zipOut = null;
+			fos.close();
+			fos = null;
+
+			eventBus.publish(new PGZipProcessResultEvent(tmpFile));
+
+		} catch (Exception e) {
+			eventBus.publish(new PGZipProcessResultEvent(false, "Nezdařilo se vytvořit ZIP galerie"));
+			logger.error("Nezdařilo se vytvořit ZIP galerie", e);
+			try {
+				if (fis != null)
+					fis.close();
+				if (fos != null)
+					fos.close();
+				if (zipOut != null)
+					zipOut.close();
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
+			return;
+		}
 	}
 
 }

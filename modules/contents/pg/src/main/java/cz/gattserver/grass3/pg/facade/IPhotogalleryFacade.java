@@ -157,4 +157,11 @@ public interface IPhotogalleryFacade {
 	 */
 	public File getPhotoForREST(Long id, String fileName, boolean mini) throws UnauthorizedAccessException;
 
+	/**
+	 * Zazipuje galerii
+	 * 
+	 * @param galleryDir
+	 */
+	public void zipGallery(File galleryDir);
+
 }

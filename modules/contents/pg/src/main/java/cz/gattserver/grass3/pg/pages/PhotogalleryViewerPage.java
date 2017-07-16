@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.jouni.animator.AnimatorProxy;
 import org.vaadin.jouni.animator.shared.AnimType;
 
@@ -23,8 +24,10 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 import cz.gattserver.grass3.config.IConfigurationService;
+import cz.gattserver.grass3.events.IEventBus;
 import cz.gattserver.grass3.facades.INodeFacade;
 import cz.gattserver.grass3.facades.IUserFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
@@ -33,11 +36,16 @@ import cz.gattserver.grass3.pages.factories.template.IPageFactory;
 import cz.gattserver.grass3.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
+import cz.gattserver.grass3.pg.events.PGZipProcessProgressEvent;
+import cz.gattserver.grass3.pg.events.PGZipProcessResultEvent;
+import cz.gattserver.grass3.pg.events.PGZipProcessStartEvent;
 import cz.gattserver.grass3.pg.facade.IPhotogalleryFacade;
 import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.security.ICoreACL;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.template.DefaultContentOperations;
+import cz.gattserver.grass3.ui.progress.BaseProgressBar;
+import cz.gattserver.grass3.ui.progress.ProgressWindow;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
@@ -46,6 +54,7 @@ import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.InfoWindow;
 import cz.gattserver.web.common.window.WarnWindow;
 import cz.gattserver.web.common.window.WebWindow;
+import net.engio.mbassy.listener.Handler;
 
 public class PhotogalleryViewerPage extends ContentViewerPage {
 
@@ -74,6 +83,12 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	@Resource(name = "photogalleryEditorPageFactory")
 	private IPageFactory photogalleryEditorPageFactory;
+
+	@Autowired
+	private IEventBus eventBus;
+
+	private UI ui = UI.getCurrent();
+	private ProgressWindow progressIndicatorWindow;
 
 	private PhotogalleryDTO photogallery;
 
@@ -234,12 +249,12 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		layout.addComponent(bottomBtnsLayout);
 
 		// ikony tlačítek
-		upRowBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.UP_16_ICON));
-		downRowBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.DOWN_16_ICON));
-		upPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.UP_16_ICON));
-		downPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.DOWN_16_ICON));
-		startPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.UP_16_ICON));
-		endPageBtn.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.DOWN_16_ICON));
+		upRowBtn.setIcon(new ThemeResource(ImageIcons.UP_16_ICON));
+		downRowBtn.setIcon(new ThemeResource(ImageIcons.DOWN_16_ICON));
+		upPageBtn.setIcon(new ThemeResource(ImageIcons.UP_16_ICON));
+		downPageBtn.setIcon(new ThemeResource(ImageIcons.DOWN_16_ICON));
+		startPageBtn.setIcon(new ThemeResource(ImageIcons.UP_16_ICON));
+		endPageBtn.setIcon(new ThemeResource(ImageIcons.DOWN_16_ICON));
 
 		// listenery horních tlačítek
 		upRowBtn.addClickListener(new Button.ClickListener() {
@@ -325,14 +340,29 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		bottomBtnsLayout.addComponent(endPageBtn);
 		bottomBtnsLayout.setComponentAlignment(endPageBtn, Alignment.MIDDLE_CENTER);
 
-		// status labels
+		// status labels + download
 		HorizontalLayout statusLabelWrapper = new HorizontalLayout();
 		statusLabelWrapper.setMargin(true);
 		statusLabelWrapper.addComponent(rowStatusLabel);
-		statusLabelWrapper.setComponentAlignment(rowStatusLabel, Alignment.BOTTOM_RIGHT);
+		statusLabelWrapper.setComponentAlignment(rowStatusLabel, Alignment.MIDDLE_CENTER);
 		statusLabelWrapper.setWidth("100%");
 		statusLabelWrapper.addStyleName("bordered");
+		statusLabelWrapper.setExpandRatio(rowStatusLabel, 1);
 		layout.addComponent(statusLabelWrapper);
+
+		Button downloadZip = new Button("Zabalit galerii jako ZIP", new Button.ClickListener() {
+			private static final long serialVersionUID = 803737402448795959L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				System.out.println("zipPhotogallery thread: " + Thread.currentThread().getId());
+				eventBus.subscribe(PhotogalleryViewerPage.this);
+				ui.setPollInterval(200);
+				photogalleryFacade.zipGallery(galleryDir);
+			}
+		});
+		statusLabelWrapper.addComponent(downloadZip);
+		downloadZip.setIcon(new ThemeResource(ImageIcons.PRESENT_16_ICON));
 
 		// společný listener pro všechna tlačítka
 		Button.ClickListener btnCommonListener = new Button.ClickListener() {
@@ -361,6 +391,79 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 				showVideo(pgSelectedVideoItemId, getItemURL(pgSelectedVideoItemId));
 			}
 		}
+	}
+
+	@Handler
+	protected void onProcessStart(final PGZipProcessStartEvent event) {
+		ui.access(new Runnable() {
+			@Override
+			public void run() {
+				BaseProgressBar progressBar = new BaseProgressBar(event.getCountOfStepsToDo());
+				progressBar.setIndeterminate(false);
+				progressBar.setValue(0f);
+				progressIndicatorWindow = new ProgressWindow(progressBar);
+				ui.addWindow(progressIndicatorWindow);
+			}
+		});
+	}
+
+	@Handler
+	protected void onProcessProgress(PGZipProcessProgressEvent event) {
+		ui.access(new Runnable() {
+			@Override
+			public void run() {
+				progressIndicatorWindow.indicateProgress(event.getStepDescription());
+			}
+		});
+	}
+
+	@Handler
+	protected void onProcessResult(final PGZipProcessResultEvent event) {
+		ui.access(new Runnable() {
+			@Override
+			public void run() {
+
+				// ui.setPollInterval(-1);
+				if (progressIndicatorWindow != null)
+					progressIndicatorWindow.closeOnDone();
+
+				if (event.isSuccess()) {
+					ui.addWindow(new Window("Stáhnout") {
+						private static final long serialVersionUID = -3146957611784022710L;
+
+						{
+							Link link = new Link("Stáhnout ZIP souboru", new FileResource(event.getZipFile()) {
+								private static final long serialVersionUID = -8702951153271074955L;
+
+								@Override
+								public String getFilename() {
+									return photogallery.getPhotogalleryPath() + ".zip";
+								}
+							});
+							link.setTargetName("_blank");
+							VerticalLayout layout = new VerticalLayout();
+							layout.setSpacing(true);
+							layout.setMargin(true);
+							setContent(layout);
+							layout.addComponent(link);
+							layout.setComponentAlignment(link, Alignment.MIDDLE_CENTER);
+							setModal(true);
+							center();
+						}
+
+						@Override
+						public void close() {
+							super.close();
+							event.getZipFile().delete();
+						}
+					});
+
+				} else {
+					showWarning(event.getResultDetails());
+				}
+			}
+		});
+		eventBus.unsubscribe(PhotogalleryViewerPage.this);
 	}
 
 	private void shiftGrid() {
@@ -514,6 +617,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 						};
 					};
 					getUI().addWindow(infoSubwindow);
+
 				} catch (Exception e) {
 					// Pokud ne, otevři warn okno a při
 					// potvrzení jdi na kategorii

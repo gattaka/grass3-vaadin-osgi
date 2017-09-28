@@ -13,7 +13,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.hw.dto.HWFilterDTO;
 import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
-import cz.gattserver.grass3.hw.facade.IHWFacade;
+import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
 
 public class HWQuery extends AbstractBeanQuery<HWItemOverviewDTO> {
@@ -23,7 +23,7 @@ public class HWQuery extends AbstractBeanQuery<HWItemOverviewDTO> {
 	public static final Integer PAGE_SIZE = 100;
 
 	@Autowired
-	protected IHWFacade hwFacade;
+	protected HWFacade hwFacade;
 
 	private HWFilterDTO filter;
 

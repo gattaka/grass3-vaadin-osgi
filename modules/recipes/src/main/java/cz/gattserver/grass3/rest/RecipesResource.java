@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import cz.gattserver.grass3.recipes.facades.IRecipesFacade;
+import cz.gattserver.grass3.recipes.facades.RecipesFacade;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
 import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
 
@@ -17,7 +17,7 @@ import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
 public class RecipesResource {
 
 	@Autowired
-	private IRecipesFacade recipesFacade;
+	private RecipesFacade recipesFacade;
 
 	@RequestMapping("/list")
 	public @ResponseBody List<RecipeOverviewDTO> list() {

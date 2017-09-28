@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
-import cz.gattserver.grass3.config.IConfigurationService;
+import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.ui.util.impl.AbstractGrassRequestHandler;
 
 @Component
@@ -23,7 +23,7 @@ public class FavlinkImageRequestHandler extends AbstractGrassRequestHandler {
 	 * Zjistí dle aktuální konfigurace výstupní adresář
 	 */
 	private String getOutputPath() {
-		IConfigurationService configurationService = (IConfigurationService) SpringContextHelper
+		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper
 				.getBean("configurationService");
 
 		FavlinkConfiguration configuration = new FavlinkConfiguration();

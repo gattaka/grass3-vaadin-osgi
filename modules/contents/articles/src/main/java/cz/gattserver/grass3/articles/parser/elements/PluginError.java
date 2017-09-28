@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.articles.parser.elements;
 
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 public class PluginError extends AbstractElementTree {
 
@@ -14,7 +14,7 @@ public class PluginError extends AbstractElementTree {
     }
 
 	@Override
-	protected void generateElement(IContext ctx) {
+	protected void generateElement(Context ctx) {
 		ctx.println(text);
 	}
 }

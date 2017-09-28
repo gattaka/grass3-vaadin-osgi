@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -16,15 +18,15 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.Reindeer;
 import com.vaadin.ui.Window;
 
-import cz.gattserver.grass3.IServiceHolder;
-import cz.gattserver.grass3.facades.INodeFacade;
-import cz.gattserver.grass3.facades.IQuotesFacade;
+import cz.gattserver.grass3.ServiceHolder;
+import cz.gattserver.grass3.facades.NodeFacade;
+import cz.gattserver.grass3.facades.QuotesFacade;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
-import cz.gattserver.grass3.security.ICoreACL;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.security.Role;
-import cz.gattserver.grass3.service.ISectionService;
+import cz.gattserver.grass3.service.SectionService;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -32,35 +34,35 @@ public abstract class BasePage extends AbstractGrassPage {
 
 	private static final long serialVersionUID = 502625699429764791L;
 
-	@Resource(name = "coreACL")
-	protected ICoreACL coreACL;
+	@Autowired
+	protected CoreACL coreACL;
 
-	@Resource(name = "nodeFacade")
-	protected INodeFacade nodeFacade;
+	@Autowired
+	protected NodeFacade nodeFacade;
 
-	@Resource(name = "quotesFacade")
-	protected IQuotesFacade quotesFacade;
+	@Autowired
+	protected QuotesFacade quotesFacade;
 
 	@Resource(name = "homePageFactory")
-	protected IPageFactory homePageFactory;
+	protected PageFactory homePageFactory;
 
 	@Resource(name = "nodePageFactory")
-	protected IPageFactory nodePageFactory;
+	protected PageFactory nodePageFactory;
 
 	@Resource(name = "quotesPageFactory")
-	protected IPageFactory quotesPageFactory;
+	protected PageFactory quotesPageFactory;
 
 	@Resource(name = "loginPageFactory")
-	protected IPageFactory loginPageFactory;
+	protected PageFactory loginPageFactory;
 
 	@Resource(name = "registrationPageFactory")
-	protected IPageFactory registrationPageFactory;
+	protected PageFactory registrationPageFactory;
 
 	@Resource(name = "settingsPageFactory")
-	protected IPageFactory settingsPageFactory;
+	protected PageFactory settingsPageFactory;
 
-	@Resource(name = "serviceHolder")
-	protected IServiceHolder serviceHolder;
+	@Autowired
+	protected ServiceHolder serviceHolder;
 
 	public BasePage(GrassRequest request) {
 		super(request);
@@ -100,7 +102,7 @@ public abstract class BasePage extends AbstractGrassPage {
 		}
 
 		// externí sekce
-		for (ISectionService section : serviceHolder.getSectionServices()) {
+		for (SectionService section : serviceHolder.getSectionServices()) {
 			if (coreACL.canShowSection(section, getUser())) {
 				createMenuComponent(menu,
 						new Link(section.getSectionCaption(), getPageResource(section.getSectionPageFactory())));
@@ -122,7 +124,8 @@ public abstract class BasePage extends AbstractGrassPage {
 
 		// Registrace
 		// if (coreACL.canRegistrate(getUser())) {
-		// createMenuComponent(menu, new Link("Registrace", getPageResource(registrationPageFactory)));
+		// createMenuComponent(menu, new Link("Registrace",
+		// getPageResource(registrationPageFactory)));
 		// }
 
 		// Přehled o uživateli
@@ -147,13 +150,13 @@ public abstract class BasePage extends AbstractGrassPage {
 					subwindow.setContent(gridLayout);
 
 					// Jméno
-					gridLayout.addComponent(new Label("<h2>" + userInfoDTO.getName() + "</h2>", ContentMode.HTML), 0,
-							0, 1, 0);
+					gridLayout.addComponent(new Label("<h2>" + userInfoDTO.getName() + "</h2>", ContentMode.HTML), 0, 0,
+							1, 0);
 
 					// Admin ?
 					gridLayout.addComponent(new Label("Admin"), 0, 1);
-					gridLayout
-							.addComponent(new Label(userInfoDTO.getRoles().contains(Role.ADMIN) ? "Ano" : "Ne"), 1, 1);
+					gridLayout.addComponent(new Label(userInfoDTO.getRoles().contains(Role.ADMIN) ? "Ano" : "Ne"), 1,
+							1);
 
 					// Friend ?
 					gridLayout.addComponent(new Label("Friend"), 0, 2);

@@ -5,7 +5,7 @@ import com.vaadin.ui.Component;
 import cz.gattserver.grass3.pages.template.GrassLayout;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
-public abstract class AbstractSettingsTab extends GrassLayout implements ISettingsTab {
+public abstract class AbstractSettingsTab extends GrassLayout implements SettingsTab {
 
 	private static final long serialVersionUID = 1135599178354473520L;
 

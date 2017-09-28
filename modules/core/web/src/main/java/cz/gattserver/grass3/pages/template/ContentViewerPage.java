@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
@@ -19,14 +21,13 @@ import com.vaadin.ui.Link;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.facades.INodeFacade;
-import cz.gattserver.grass3.facades.IUserFacade;
+import cz.gattserver.grass3.facades.UserFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
-import cz.gattserver.grass3.security.ICoreACL;
+import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.subwindows.ContentMoveWindow;
 import cz.gattserver.grass3.template.AbstractButton;
 import cz.gattserver.grass3.template.Breadcrumb;
@@ -43,20 +44,17 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 	private static final long serialVersionUID = 5078280973817331002L;
 
-	@Resource(name = "nodeFacade")
-	private INodeFacade nodeFacade;
+	@Autowired
+	private CoreACL coreACL;
 
-	@Resource(name = "coreACL")
-	private ICoreACL coreACL;
-
-	@Resource(name = "userFacade")
-	private IUserFacade userFacade;
+	@Autowired
+	private UserFacade userFacade;
 
 	@Resource(name = "nodePageFactory")
-	private IPageFactory nodePageFactory;
+	private PageFactory nodePageFactory;
 
 	@Resource(name = "tagPageFactory")
-	private IPageFactory tagPageFactory;
+	private PageFactory tagPageFactory;
 
 	private ContentNodeDTO content;
 	private Label contentNameLabel;
@@ -265,7 +263,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 	protected abstract ContentNodeDTO getContentNodeDTO();
 
-	protected abstract IPageFactory getContentViewerPageFactory();
+	protected abstract PageFactory getContentViewerPageFactory();
 
 	private void updateBreadcrumb(ContentNodeDTO content) {
 

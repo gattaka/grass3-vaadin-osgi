@@ -4,20 +4,20 @@ import org.springframework.stereotype.Component;
 
 import com.vaadin.server.ThemeResource;
 
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
-import cz.gattserver.grass3.service.IContentService;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.service.ContentService;
 import cz.gattserver.web.common.ui.ImageIcons;
 
 @Component("photogalleryContentService")
-public class PhotogalleryContentService implements IContentService {
+public class PhotogalleryContentService implements ContentService {
 
 	public static final String ID = "cz.gattserver.grass3.pg:0.0.1";
 
 	@javax.annotation.Resource(name = "photogalleryViewerPageFactory")
-	private IPageFactory photogalleryViewerPageFactory;
+	private PageFactory photogalleryViewerPageFactory;
 
 	@javax.annotation.Resource(name = "photogalleryEditorPageFactory")
-	private IPageFactory photogalleryEditorPageFactory;
+	private PageFactory photogalleryEditorPageFactory;
 
 	public String getCreateNewContentLabel() {
 		return "Vytvořit novou galerii";
@@ -31,11 +31,11 @@ public class PhotogalleryContentService implements IContentService {
 		return ID;
 	}
 
-	public IPageFactory getContentEditorPageFactory() {
+	public PageFactory getContentEditorPageFactory() {
 		return photogalleryEditorPageFactory;
 	}
 
-	public IPageFactory getContentViewerPageFactory() {
+	public PageFactory getContentViewerPageFactory() {
 		return photogalleryViewerPageFactory;
 	}
 

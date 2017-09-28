@@ -6,15 +6,15 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.security.Role;
-import cz.gattserver.grass3.service.ISectionService;
+import cz.gattserver.grass3.service.SectionService;
 
 @Component("searchSection")
-public class SearchSection implements ISectionService {
+public class SearchSection implements SectionService {
 
 	@Resource(name = "searchPageFactory")
-	private IPageFactory searchPageFactory;
+	private PageFactory searchPageFactory;
 
 	public boolean isVisibleForRoles(Set<Role> roles) {
 		// odkaz na sekci vyhledávání je viditelný všem rolím
@@ -25,7 +25,7 @@ public class SearchSection implements ISectionService {
 		return "Vyhledávání";
 	}
 
-	public IPageFactory getSectionPageFactory() {
+	public PageFactory getSectionPageFactory() {
 		return searchPageFactory;
 	}
 

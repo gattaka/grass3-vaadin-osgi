@@ -3,7 +3,7 @@ package cz.gattserver.grass3.tabs;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -20,7 +20,7 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-import cz.gattserver.grass3.facades.IUserFacade;
+import cz.gattserver.grass3.facades.UserFacade;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
@@ -32,8 +32,8 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 	private static final long serialVersionUID = 2474374292329895766L;
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("d.M.yyyy HH:mm:ss");
 
-	@Resource(name = "userFacade")
-	private IUserFacade userFacade;
+	@Autowired
+	private UserFacade userFacade;
 
 	private Table userTable;
 
@@ -87,7 +87,8 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 					userMenuLayout.setVisible(false);
 				} else {
 					userMenuLayout.removeAllComponents();
-					userMenuLayout.addComponent(user.isConfirmed() ? createBanButton(user) : createActivateButton(user));
+					userMenuLayout
+							.addComponent(user.isConfirmed() ? createBanButton(user) : createActivateButton(user));
 					userMenuLayout.addComponent(createSetRolesButton(user));
 					userMenuLayout.setVisible(true);
 				}
@@ -112,8 +113,8 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 			item.getItemProperty(ColumnId.JMÉNO).setValue(user.getName());
 			item.getItemProperty(ColumnId.ROLE).setValue(user.getRoles().toString());
 			item.getItemProperty(ColumnId.REGISTROVÁN_OD).setValue(dateFormat.format(user.getRegistrationDate()));
-			item.getItemProperty(ColumnId.POSLEDNÍ_PŘIHLÁŠENÍ).setValue(
-					user.getLastLoginDate() == null ? "" : dateFormat.format(user.getLastLoginDate()));
+			item.getItemProperty(ColumnId.POSLEDNÍ_PŘIHLÁŠENÍ)
+					.setValue(user.getLastLoginDate() == null ? "" : dateFormat.format(user.getLastLoginDate()));
 			item.getItemProperty(ColumnId.AKTIVNÍ).setValue(String.valueOf(user.isConfirmed()));
 			item.getItemProperty(ColumnId.EMAIL).setValue(user.getEmail());
 		}

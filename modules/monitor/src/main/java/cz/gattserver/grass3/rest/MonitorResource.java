@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import cz.gattserver.grass3.monitor.facade.IMonitorFacade;
+import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 
 @Controller
 @RequestMapping("/system-monitor")
@@ -16,7 +16,7 @@ public class MonitorResource {
 	private static Logger logger = LoggerFactory.getLogger(MonitorResource.class);
 
 	@Autowired
-	private IMonitorFacade monitorFacade;
+	private MonitorFacade monitorFacade;
 
 	@RequestMapping(value = "online", headers = "Accept=application/json")
 	@ResponseBody

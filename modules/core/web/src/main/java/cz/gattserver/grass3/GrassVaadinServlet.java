@@ -14,7 +14,7 @@ import com.vaadin.server.SessionInitEvent;
 import com.vaadin.server.SessionInitListener;
 import com.vaadin.server.VaadinServlet;
 
-import cz.gattserver.grass3.ui.util.IGrassRequestHandler;
+import cz.gattserver.grass3.ui.util.GrassRequestHandler;
 
 public class GrassVaadinServlet extends VaadinServlet {
 
@@ -40,9 +40,9 @@ public class GrassVaadinServlet extends VaadinServlet {
 
 				ApplicationContext context = SpringContextHelper.getContext();
 				if (context != null) {
-					Collection<IGrassRequestHandler> grassRequestHandlers = context.getBeansOfType(
-							IGrassRequestHandler.class).values();
-					for (IGrassRequestHandler requestHandler : grassRequestHandlers) {
+					Collection<GrassRequestHandler> grassRequestHandlers = context.getBeansOfType(
+							GrassRequestHandler.class).values();
+					for (GrassRequestHandler requestHandler : grassRequestHandlers) {
 						event.getSession().addRequestHandler(requestHandler);
 					}
 				}

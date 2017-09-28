@@ -4,20 +4,20 @@ import org.springframework.stereotype.Component;
 
 import com.vaadin.server.ThemeResource;
 
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
-import cz.gattserver.grass3.service.IContentService;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.service.ContentService;
 import cz.gattserver.web.common.ui.ImageIcons;
 
 @Component("articlesContentService")
-public class ArticlesContentService implements IContentService {
+public class ArticlesContentService implements ContentService {
 
 	public static final String ID = "cz.gattserver.grass3.articles:0.0.1";
 
 	@javax.annotation.Resource(name = "articlesViewerPageFactory")
-	private IPageFactory articlesViewerPageFactory;
+	private PageFactory articlesViewerPageFactory;
 
 	@javax.annotation.Resource(name = "articlesEditorPageFactory")
-	private IPageFactory articlesEditorPageFactory;
+	private PageFactory articlesEditorPageFactory;
 
 	public String getCreateNewContentLabel() {
 		return "Vytvořit nový článek";
@@ -31,11 +31,11 @@ public class ArticlesContentService implements IContentService {
 		return ID;
 	}
 
-	public IPageFactory getContentEditorPageFactory() {
+	public PageFactory getContentEditorPageFactory() {
 		return articlesEditorPageFactory;
 	}
 
-	public IPageFactory getContentViewerPageFactory() {
+	public PageFactory getContentViewerPageFactory() {
 		return articlesViewerPageFactory;
 	}
 

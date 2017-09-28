@@ -2,13 +2,11 @@ package cz.gattserver.grass3.recipes.facades.impl;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import cz.gattserver.grass3.recipes.facades.IRecipesFacade;
+import cz.gattserver.grass3.recipes.facades.RecipesFacade;
 import cz.gattserver.grass3.recipes.model.dao.RecipeRepository;
 import cz.gattserver.grass3.recipes.model.domain.Recipe;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
@@ -16,10 +14,10 @@ import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
 import cz.gattserver.grass3.recipes.util.Mapper;
 
 @Transactional
-@Component("recipeFacade")
-public class RecipesFacadeImpl implements IRecipesFacade {
+@Component
+public class RecipesFacadeImpl implements RecipesFacade {
 
-	@Resource(name = "recipeMapper")
+	@Autowired
 	private Mapper mapper;
 
 	@Autowired

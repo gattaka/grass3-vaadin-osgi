@@ -12,7 +12,7 @@ import cz.gattserver.grass3.GrassUI;
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.js.JQueryBootstrapComponent;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.InfoWindow;
@@ -103,7 +103,7 @@ public abstract class GrassLayout extends CustomLayout {
 	/**
 	 * Získá URL stránky. Kořen webu + suffix dle pageFactory
 	 */
-	public String getPageURL(IPageFactory pageFactory) {
+	public String getPageURL(PageFactory pageFactory) {
 		return request.getContextRoot() + "/" + pageFactory.getPageName();
 	}
 
@@ -117,7 +117,7 @@ public abstract class GrassLayout extends CustomLayout {
 	/**
 	 * Získá URL stránky. Kořen webu + suffix dle pageFactory + relativní URL
 	 */
-	public String getPageURL(IPageFactory pageFactory, String... relativeURLs) {
+	public String getPageURL(PageFactory pageFactory, String... relativeURLs) {
 		if (relativeURLs.length == 1) {
 			return getPageURL(pageFactory) + "/" + relativeURLs[0];
 		} else {
@@ -136,14 +136,14 @@ public abstract class GrassLayout extends CustomLayout {
 	/**
 	 * Získá resource dle stránky
 	 */
-	public ExternalResource getPageResource(IPageFactory pageFactory) {
+	public ExternalResource getPageResource(PageFactory pageFactory) {
 		return new ExternalResource(getPageURL(pageFactory));
 	}
 
 	/**
 	 * Získá resource dle stránky + relativní URL
 	 */
-	public ExternalResource getPageResource(IPageFactory pageFactory, String... relativeURLs) {
+	public ExternalResource getPageResource(PageFactory pageFactory, String... relativeURLs) {
 		return new ExternalResource(getPageURL(pageFactory, relativeURLs));
 	}
 

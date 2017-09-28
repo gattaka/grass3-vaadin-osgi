@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.articles.basic.image;
 
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 public class ImageTree extends AbstractElementTree {
 
@@ -12,7 +12,7 @@ public class ImageTree extends AbstractElementTree {
 	}
 
 	@Override
-	public void generateElement(IContext ctx) {
+	public void generateElement(Context ctx) {
 		ctx.print("<a target=\"_blank\" href=\"" + link + "\"><img class=\"articles-basic-img\" src=\"" + link + "\" alt=\"" + link
 				+ "\" /></a>");
 	}

@@ -11,12 +11,12 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
 
-import cz.gattserver.grass3.IServiceHolder;
+import cz.gattserver.grass3.ServiceHolder;
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
-import cz.gattserver.grass3.service.IContentService;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.service.ContentService;
 import cz.gattserver.grass3.ui.util.ComparableLink;
 import cz.gattserver.grass3.ui.util.ComparableStringDate;
 import cz.gattserver.grass3.ui.util.StringToDateConverter;
@@ -28,13 +28,13 @@ public abstract class ContentsLazyTable extends Table {
 	private static final long serialVersionUID = -5648982639686386190L;
 
 	// @Resource(name = "nodePageFactory")
-	private IPageFactory nodePageFactory;
+	private PageFactory nodePageFactory;
 
 	// @Resource(name = "noServicePageFactory")
-	private IPageFactory noServicePageFactory;
+	private PageFactory noServicePageFactory;
 
 	// @Resource(name = "serviceHolder")
-	private IServiceHolder serviceHolder;
+	private ServiceHolder serviceHolder;
 
 	private static final String iconBind = "icon";
 	private static final String nameBind = "name";
@@ -44,9 +44,9 @@ public abstract class ContentsLazyTable extends Table {
 	private static final String lastModificationDateBind = "lastModificationDate";
 
 	public ContentsLazyTable() {
-		nodePageFactory = (IPageFactory) SpringContextHelper.getBean("nodePageFactory");
-		noServicePageFactory = (IPageFactory) SpringContextHelper.getBean("noServicePageFactory");
-		serviceHolder = (IServiceHolder) SpringContextHelper.getBean("serviceHolder");
+		nodePageFactory = (PageFactory) SpringContextHelper.getBean("nodePageFactory");
+		noServicePageFactory = (PageFactory) SpringContextHelper.getBean("noServicePageFactory");
+		serviceHolder = (ServiceHolder) SpringContextHelper.getBean("serviceHolder");
 	}
 
 	protected ContentNodeOverviewDTO getValueFromId(Object itemId) {
@@ -71,7 +71,7 @@ public abstract class ContentsLazyTable extends Table {
 				ContentNodeOverviewDTO contentNode = getValueFromId(itemId);
 
 				// jaká prohlížecí služba odpovídá tomuto obsahu
-				IContentService contentService = serviceHolder
+				ContentService contentService = serviceHolder
 						.getContentServiceByName(contentNode.getContentReaderID());
 
 				Embedded icon = new Embedded();
@@ -94,10 +94,10 @@ public abstract class ContentsLazyTable extends Table {
 				ContentNodeOverviewDTO contentNode = getValueFromId(itemId);
 
 				// jaká prohlížecí služba odpovídá tomuto obsahu
-				IContentService contentService = serviceHolder
+				ContentService contentService = serviceHolder
 						.getContentServiceByName(contentNode.getContentReaderID());
 
-				IPageFactory pageFactory = null;
+				PageFactory pageFactory = null;
 				if (contentService == null)
 					pageFactory = noServicePageFactory;
 				else

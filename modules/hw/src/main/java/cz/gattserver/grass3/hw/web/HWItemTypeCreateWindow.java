@@ -13,7 +13,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
-import cz.gattserver.grass3.hw.facade.IHWFacade;
+import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -22,7 +22,7 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	@Autowired
-	private IHWFacade hwFacade;
+	private HWFacade hwFacade;
 
 	public HWItemTypeCreateWindow(final Component triggerComponent, final Long fixTypeId) {
 		super("Založení nového typu HW");

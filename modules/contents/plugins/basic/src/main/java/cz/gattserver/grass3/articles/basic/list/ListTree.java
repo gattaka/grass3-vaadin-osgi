@@ -3,7 +3,7 @@ package cz.gattserver.grass3.articles.basic.list;
 import java.util.List;
 
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 
 public class ListTree extends AbstractElementTree {
@@ -17,7 +17,7 @@ public class ListTree extends AbstractElementTree {
 	}
 
 	@Override
-	public void generateElement(IContext ctx) {
+	public void generateElement(Context ctx) {
 		ctx.print(ordered ? "<ol>" : "<ul>");
 		/**
 		 * Každá položka listu se může skládat z více parserových elementů

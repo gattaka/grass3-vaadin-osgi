@@ -7,10 +7,10 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
 
-import cz.gattserver.grass3.IServiceHolder;
+import cz.gattserver.grass3.ServiceHolder;
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.service.IContentService;
+import cz.gattserver.grass3.service.ContentService;
 import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.ui.util.ComparableLink;
 import cz.gattserver.grass3.util.URLIdentifierUtils;
@@ -24,7 +24,7 @@ public class NewContentNodeTable extends Table {
 
 	public NewContentNodeTable(AbstractGrassPage page, final NodeDTO node) {
 		// inject na Table nefunguje kvůli něčemu v předkovi
-		final IServiceHolder serviceHolder = (IServiceHolder) SpringContextHelper.getBean("serviceHolder");
+		final ServiceHolder serviceHolder = (ServiceHolder) SpringContextHelper.getBean("serviceHolder");
 
 		setHeight("200px");
 
@@ -33,7 +33,7 @@ public class NewContentNodeTable extends Table {
 
 			@Override
 			public Object generateCell(Table source, Object itemId, Object columnId) {
-				IContentService contentService = (IContentService) itemId;
+				ContentService contentService = (ContentService) itemId;
 				return new ComparableLink(contentService.getCreateNewContentLabel(),
 						page.getPageResource(contentService.getContentEditorPageFactory(),
 								DefaultContentOperations.NEW.toString(),
@@ -46,7 +46,7 @@ public class NewContentNodeTable extends Table {
 
 			@Override
 			public Object generateCell(Table source, Object itemId, Object columnId) {
-				IContentService contentService = (IContentService) itemId;
+				ContentService contentService = (ContentService) itemId;
 				Embedded icon = new Embedded();
 				icon.setSource(contentService.getContentIcon());
 				return icon;
@@ -54,9 +54,9 @@ public class NewContentNodeTable extends Table {
 		});
 
 		// jaké služby obsahů mám k dispozici ?
-		List<IContentService> contentServices = serviceHolder.getContentServices();
+		List<ContentService> contentServices = serviceHolder.getContentServices();
 
-		BeanItemContainer<IContentService> cont = new BeanItemContainer<>(IContentService.class, contentServices);
+		BeanItemContainer<ContentService> cont = new BeanItemContainer<>(ContentService.class, contentServices);
 		setContainerDataSource(cont);
 
 		setVisibleColumns(ICON_COLUMN, LINK_COLUMN);

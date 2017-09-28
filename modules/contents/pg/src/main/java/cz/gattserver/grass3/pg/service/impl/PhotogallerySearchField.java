@@ -1,8 +1,8 @@
 package cz.gattserver.grass3.pg.service.impl;
 
-import cz.gattserver.grass3.search.service.ISearchField;
+import cz.gattserver.grass3.search.service.SearchField;
 
-public enum PhotogallerySearchField implements ISearchField {
+public enum PhotogallerySearchField implements SearchField {
 
 	NAME("Název"), CONTENT("Obsah");
 

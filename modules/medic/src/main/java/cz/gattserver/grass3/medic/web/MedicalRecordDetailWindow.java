@@ -11,19 +11,19 @@ import com.vaadin.ui.themes.BaseTheme;
 
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
-import cz.gattserver.grass3.medic.facade.IMedicFacade;
+import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.template.AbstractDetailSubWindow;
 
 public class MedicalRecordDetailWindow extends AbstractDetailSubWindow {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 
-	private IMedicFacade medicalFacade;
+	private MedicFacade medicalFacade;
 
 	public MedicalRecordDetailWindow(Long id) {
 		super("Detail záznamu");
 
-		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
+		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
 
 		final MedicalRecordDTO medicalRecordDTO = medicalFacade
 				.getMedicalRecordById(id);

@@ -2,14 +2,14 @@ package cz.gattserver.grass3.articles.favlink.plugin;
 
 import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
-import cz.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
+import cz.gattserver.grass3.articles.parser.interfaces.PluginFactory;
 import cz.gattserver.web.common.ui.ImageIcons;
 
 /**
  * 
  * @author gatt
  */
-public class LinkFactory implements IPluginFactory {
+public class LinkFactory implements PluginFactory {
 
 	private final String tag = "A";
 

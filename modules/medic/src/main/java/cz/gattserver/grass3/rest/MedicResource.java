@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
-import cz.gattserver.grass3.medic.facade.IMedicFacade;
+import cz.gattserver.grass3.medic.facade.MedicFacade;
 
 @Controller
 @RequestMapping("/medic")
@@ -19,7 +19,7 @@ public class MedicResource {
 	private static Logger logger = LoggerFactory.getLogger(MedicResource.class);
 
 	@Autowired
-	private IMedicFacade medicFacade;
+	private MedicFacade medicFacade;
 
 	@RequestMapping(value = "visit", headers = "Accept=application/json")
 	@ResponseBody

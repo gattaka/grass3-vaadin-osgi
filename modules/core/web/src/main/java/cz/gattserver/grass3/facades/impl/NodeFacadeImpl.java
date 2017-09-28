@@ -2,24 +2,22 @@ package cz.gattserver.grass3.facades.impl;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import cz.gattserver.grass3.facades.INodeFacade;
+import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dao.NodeRepository;
 import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.model.util.Mapper;
+import cz.gattserver.grass3.model.util.CoreMapper;
 
 @Transactional
-@Component("nodeFacade")
-public class NodeFacadeImpl implements INodeFacade {
+@Component
+public class NodeFacadeImpl implements NodeFacade {
 
-	@Resource(name = "mapper")
-	private Mapper mapper;
+	@Autowired
+	private CoreMapper mapper;
 
 	@Autowired
 	private NodeRepository nodeRepository;

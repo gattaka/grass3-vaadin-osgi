@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
@@ -12,12 +13,12 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
 
 import cz.gattserver.grass3.exception.ApplicationErrorHandler;
-import cz.gattserver.grass3.facades.ISecurityFacade;
+import cz.gattserver.grass3.facades.SecurityFacade;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.GrassLayout;
 import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.grass3.ui.util.IPageFactoriesRegister;
+import cz.gattserver.grass3.ui.util.PageFactoriesRegister;
 import cz.gattserver.web.common.URLPathAnalyzer;
 
 @Title("Gattserver")
@@ -30,20 +31,20 @@ public class GrassUI extends UI {
 	/**
 	 * Mapa stránek
 	 */
-	@Resource(name = "pageFactoriesRegister")
-	private IPageFactoriesRegister pageFactoriesRegister;
+	@Autowired
+	private PageFactoriesRegister pageFactoriesRegister;
 
-	@Resource(name = "securityFacade")
-	private ISecurityFacade securityFacade;
+	@Autowired
+	private SecurityFacade securityFacade;
 
 	@Resource(name = "err403Factory")
-	private IPageFactory err403Factory;
+	private PageFactory err403Factory;
 
 	@Resource(name = "err404Factory")
-	private IPageFactory err404Factory;
+	private PageFactory err404Factory;
 
 	@Resource(name = "err500Factory")
-	private IPageFactory err500Factory;
+	private PageFactory err500Factory;
 
 	public GrassUI() {
 		SpringContextHelper.inject(this);
@@ -70,7 +71,7 @@ public class GrassUI extends UI {
 
 		// pokud nebyla cesta prázná, pak proveď posuv
 		String token = analyzer.getNextPathToken();
-		IPageFactory factory = pageFactoriesRegister.get(token);
+		PageFactory factory = pageFactoriesRegister.get(token);
 
 		GrassLayout buildedPage = factory.createPageIfAuthorized(grassRequest);
 

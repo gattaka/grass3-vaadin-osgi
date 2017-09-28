@@ -3,13 +3,13 @@ package cz.gattserver.grass3.articles.container.plugin;
 import cz.gattserver.grass3.articles.container.plugin.ContainerElement;
 import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
-import cz.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
+import cz.gattserver.grass3.articles.parser.interfaces.PluginFactory;
 
 /**
  * 
  * @author gatt
  */
-public class ContainerFactory implements IPluginFactory {
+public class ContainerFactory implements PluginFactory {
 
 	private final String tag = "CONT";
 

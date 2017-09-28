@@ -1,21 +1,21 @@
 package cz.gattserver.grass3.pages.factories.template;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import cz.gattserver.grass3.facades.ISecurityFacade;
+import cz.gattserver.grass3.facades.SecurityFacade;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pages.err.Err403Page;
 import cz.gattserver.grass3.pages.template.GrassLayout;
-import cz.gattserver.grass3.pages.template.IGrassPage;
+import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
-public abstract class AbstractPageFactory implements IPageFactory {
+public abstract class AbstractPageFactory implements PageFactory {
 	private static final long serialVersionUID = 3988625640870100368L;
 
 	private String pageName;
 
-	@Resource(name = "securityFacade")
-	private ISecurityFacade securityFacade;
+	@Autowired
+	private SecurityFacade securityFacade;
 
 	/**
 	 * Konstruktor
@@ -44,6 +44,6 @@ public abstract class AbstractPageFactory implements IPageFactory {
 		return (isAuthorized() ? createPage(request) : new Err403Page(request)).getContent();
 	}
 
-	protected abstract IGrassPage createPage(GrassRequest request);
+	protected abstract GrassPage createPage(GrassRequest request);
 
 }

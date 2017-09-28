@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.articles.parser.elements;
 
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 public class TextTree extends AbstractElementTree {
 
@@ -11,7 +11,7 @@ public class TextTree extends AbstractElementTree {
         this.text = text;
     }
 
-    public void generateElement(IContext ctx) {
+    public void generateElement(Context ctx) {
         ctx.println(text);
     }
 

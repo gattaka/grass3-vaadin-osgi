@@ -7,19 +7,19 @@ import com.vaadin.ui.Link;
 
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
-import cz.gattserver.grass3.medic.facade.IMedicFacade;
+import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.template.AbstractDetailSubWindow;
 
 public class MedicalInstitutionDetailWindow extends AbstractDetailSubWindow {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 
-	private IMedicFacade medicalFacade;
+	private MedicFacade medicalFacade;
 
 	public MedicalInstitutionDetailWindow(Long id) {
 		super("Detail instituce");
 
-		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
+		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
 
 		final MedicalInstitutionDTO medicalInstitutionDTO = medicalFacade.getMedicalInstitutionById(id);
 

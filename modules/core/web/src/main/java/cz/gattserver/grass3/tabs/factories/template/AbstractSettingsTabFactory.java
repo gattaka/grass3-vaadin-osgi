@@ -1,27 +1,20 @@
 package cz.gattserver.grass3.tabs.factories.template;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.beans.BeansException;
-
-import cz.gattserver.grass3.facades.ISecurityFacade;
+import cz.gattserver.grass3.facades.SecurityFacade;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pages.template.GrassLayout;
-import cz.gattserver.grass3.security.ICoreACL;
-import cz.gattserver.grass3.tabs.template.ISettingsTab;
+import cz.gattserver.grass3.tabs.template.SettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
-public abstract class AbstractSettingsTabFactory implements ISettingsTabFactory {
+public abstract class AbstractSettingsTabFactory implements SettingsTabFactory {
 
 	private String tabName;
 	private String tabURL;
-	private String beanName;
 
-	@Resource(name = "coreACL")
-	private ICoreACL coreACL;
-
-	@Resource(name = "securityFacade")
-	private ISecurityFacade securityFacade;
+	@Autowired
+	private SecurityFacade securityFacade;
 
 	/**
 	 * Konstruktor
@@ -55,9 +48,9 @@ public abstract class AbstractSettingsTabFactory implements ISettingsTabFactory 
 	}
 
 	public GrassLayout createTabIfAuthorized(GrassRequest request) {
-		return ((ISettingsTab) createTab(request)).getContent();
+		return ((SettingsTab) createTab(request)).getContent();
 	}
 
-	protected abstract ISettingsTab createTab(GrassRequest request);
+	protected abstract SettingsTab createTab(GrassRequest request);
 
 }

@@ -3,13 +3,13 @@ package cz.gattserver.grass3.articles.editor.api;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 
 /**
  * Kontext pouzity pri generovani kodu.
  */
-public class ContextImpl implements IContext {
+public class ContextImpl implements Context {
 
 	/**
 	 * Vystupni stream.

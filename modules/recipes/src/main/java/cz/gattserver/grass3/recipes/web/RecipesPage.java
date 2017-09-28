@@ -13,7 +13,7 @@ import com.vaadin.ui.themes.Reindeer;
 import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.pages.template.OneColumnPage;
-import cz.gattserver.grass3.recipes.facades.IRecipesFacade;
+import cz.gattserver.grass3.recipes.facades.RecipesFacade;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
 import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
 import cz.gattserver.grass3.template.CreateButton;
@@ -25,7 +25,7 @@ public class RecipesPage extends OneColumnPage {
 	private static final long serialVersionUID = -950042653154868289L;
 
 	@Autowired
-	private IRecipesFacade recipesFacade;
+	private RecipesFacade recipesFacade;
 
 	private VerticalLayout menu;
 	private VerticalLayout contentLayout;

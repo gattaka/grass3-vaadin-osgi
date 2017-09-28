@@ -23,7 +23,7 @@ import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.HWItemState;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
-import cz.gattserver.grass3.hw.facade.IHWFacade;
+import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -32,7 +32,7 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	@Autowired
-	private IHWFacade hwFacade;
+	private HWFacade hwFacade;
 
 	private ServiceNoteDTO serviceNoteDTO;
 

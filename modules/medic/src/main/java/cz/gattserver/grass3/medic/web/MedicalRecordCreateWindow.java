@@ -27,7 +27,7 @@ import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import cz.gattserver.grass3.medic.dto.MedicamentDTO;
 import cz.gattserver.grass3.medic.dto.PhysicianDTO;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
-import cz.gattserver.grass3.medic.facade.IMedicFacade;
+import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -35,7 +35,7 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
-	private IMedicFacade medicalFacade;
+	private MedicFacade medicalFacade;
 
 	public MedicalRecordCreateWindow(final Component triggerComponent) {
 		this(triggerComponent, null, null);
@@ -55,7 +55,7 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 			ScheduledVisitDTO scheduledVisitDTO, MedicalRecordDTO recordDTO) {
 		super(recordDTO == null ? "Založení nového záznamu" : "Úprava záznamu");
 
-		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
+		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
 
 		triggerComponent.setEnabled(false);
 

@@ -3,7 +3,7 @@ package cz.gattserver.grass3.search;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
@@ -32,7 +32,7 @@ public class SearchPage extends OneColumnPage {
 
 	public static final String NAME = "search";
 
-	@Resource(name = "searchFacade")
+	@Autowired
 	private SearchFacade searchFacade;
 
 	private VerticalLayout outputLayout;

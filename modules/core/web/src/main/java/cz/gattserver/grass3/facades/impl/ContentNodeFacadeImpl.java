@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,10 +13,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import cz.gattserver.grass3.facades.IContentNodeFacade;
-import cz.gattserver.grass3.facades.IContentTagFacade;
-import cz.gattserver.grass3.facades.ISecurityFacade;
-import cz.gattserver.grass3.facades.IUserFacade;
+import cz.gattserver.grass3.facades.ContentNodeFacade;
+import cz.gattserver.grass3.facades.ContentTagFacade;
+import cz.gattserver.grass3.facades.SecurityFacade;
+import cz.gattserver.grass3.facades.UserFacade;
 import cz.gattserver.grass3.model.dao.ContentNodeRepository;
 import cz.gattserver.grass3.model.dao.NodeRepository;
 import cz.gattserver.grass3.model.dao.UserRepository;
@@ -28,24 +26,24 @@ import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
-import cz.gattserver.grass3.model.util.Mapper;
+import cz.gattserver.grass3.model.util.CoreMapper;
 import cz.gattserver.grass3.security.Role;
 
 @Transactional
-@Component("contentNodeFacade")
-public class ContentNodeFacadeImpl implements IContentNodeFacade {
+@Component
+public class ContentNodeFacadeImpl implements ContentNodeFacade {
 
-	@Resource(name = "mapper")
-	private Mapper mapper;
+	@Autowired
+	private CoreMapper mapper;
 
-	@Resource(name = "securityFacade")
-	private ISecurityFacade securityFacade;
+	@Autowired
+	private SecurityFacade securityFacade;
 
-	@Resource(name = "contentTagFacade")
-	private IContentTagFacade contentTagFacade;
+	@Autowired
+	private ContentTagFacade contentTagFacade;
 
-	@Resource(name = "userFacade")
-	private IUserFacade userFacade;
+	@Autowired
+	private UserFacade userFacade;
 
 	@Autowired
 	private UserRepository userRepository;

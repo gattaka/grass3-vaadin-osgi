@@ -7,7 +7,7 @@ import cz.gattserver.grass3.articles.basic.headers.HeaderTree;
 import cz.gattserver.grass3.articles.favlink.plugin.LinkTree;
 import cz.gattserver.grass3.articles.parser.elements.TextTree;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 public class SourcesTree extends AbstractElementTree {
 
@@ -20,7 +20,7 @@ public class SourcesTree extends AbstractElementTree {
 	}
 
 	@Override
-	public void generateElement(IContext ctx) {
+	public void generateElement(Context ctx) {
 		List<AbstractElementTree> headerList = new ArrayList<>();
 		headerList.add(new TextTree("Odkazy a zdroje"));
 

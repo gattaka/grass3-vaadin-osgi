@@ -10,33 +10,33 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
-import cz.gattserver.grass3.ui.util.IPageFactoriesRegister;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.ui.util.PageFactoriesRegister;
 
-@Component(value = "pageFactoriesRegister")
-public class PageFactoriesRegisterImpl implements IPageFactoriesRegister {
+@Component
+public class PageFactoriesRegisterImpl implements PageFactoriesRegister {
 
 	/**
 	 * Domovská stránka
 	 */
 	@Resource(name = "homePageFactory")
-	private IPageFactory homePageFactory;
+	private PageFactory homePageFactory;
 
 	/**
 	 * Hlavní mapa stránek
 	 */
 	@Autowired
-	private List<IPageFactory> pageFactories;
+	private List<PageFactory> pageFactories;
 
-	private Map<String, IPageFactory> factories = new HashMap<String, IPageFactory>();
+	private Map<String, PageFactory> factories = new HashMap<String, PageFactory>();
 
 	@PostConstruct
 	public void init() {
-		for (IPageFactory factory : pageFactories)
+		for (PageFactory factory : pageFactories)
 			factories.put(factory.getPageName(), factory);
 	}
 
-	public void setHomepageFactory(IPageFactory homepageFactory) {
+	public void setHomepageFactory(PageFactory homepageFactory) {
 		this.homePageFactory = homepageFactory;
 	}
 
@@ -44,15 +44,15 @@ public class PageFactoriesRegisterImpl implements IPageFactoriesRegister {
 	 * Dělá prakticky to samé jako původní get, až na to, že pakliže není
 	 * nalezena factory pro daný klíč, je vrácena factory homepage
 	 */
-	public IPageFactory get(String key) {
-		IPageFactory factory = factories.get(key);
+	public PageFactory get(String key) {
+		PageFactory factory = factories.get(key);
 		return factory == null ? homePageFactory : factory;
 	}
 
 	/**
 	 * Původní put metoda - má prakticky jediné použití a tím je tvorba aliasů
 	 */
-	public IPageFactory putAlias(String pageName, IPageFactory factory) {
+	public PageFactory putAlias(String pageName, PageFactory factory) {
 		return factories.put(pageName, factory);
 	}
 

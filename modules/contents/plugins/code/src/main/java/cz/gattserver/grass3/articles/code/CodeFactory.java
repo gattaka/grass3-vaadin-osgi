@@ -2,13 +2,13 @@ package cz.gattserver.grass3.articles.code;
 
 import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
-import cz.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
+import cz.gattserver.grass3.articles.parser.interfaces.PluginFactory;
 
 /**
  * 
  * @author gatt
  */
-public class CodeFactory implements IPluginFactory {
+public class CodeFactory implements PluginFactory {
 
 	private String tag;
 	private String description;

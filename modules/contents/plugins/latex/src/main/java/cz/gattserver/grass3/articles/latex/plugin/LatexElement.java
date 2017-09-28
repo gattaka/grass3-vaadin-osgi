@@ -24,7 +24,7 @@ import cz.gattserver.grass3.articles.parser.PluginBag;
 import cz.gattserver.grass3.articles.parser.exceptions.ParserException;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
-import cz.gattserver.grass3.config.IConfigurationService;
+import cz.gattserver.grass3.config.ConfigurationService;
 
 /**
  * 
@@ -60,7 +60,7 @@ public class LatexElement extends AbstractParserPlugin {
 	 * Zjistí dle aktuální konfigurace výstupní adresář
 	 */
 	private String getOutputPath() {
-		IConfigurationService configurationService = (IConfigurationService) SpringContextHelper
+		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper
 				.getBean("configurationService");
 
 		LatexConfiguration configuration = new LatexConfiguration();

@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
+import cz.gattserver.grass3.articles.parser.interfaces.PluginFactory;
 
 /**
  * 
@@ -15,7 +15,7 @@ import cz.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
 @Component("pluginRegister")
 public class PluginRegister {
 
-	private Map<String, IPluginFactory> plugins = new HashMap<String, IPluginFactory>();
+	private Map<String, PluginFactory> plugins = new HashMap<String, PluginFactory>();
 
 	/**
 	 * Registers tag for parser and insert tags in editor tag catalog
@@ -25,7 +25,7 @@ public class PluginRegister {
 	 * @return true if the element registration was successful, false if the tag
 	 *         key is occupied
 	 */
-	public boolean registerPlugin(IPluginFactory pluginFactory) {
+	public boolean registerPlugin(PluginFactory pluginFactory) {
 
 		if (plugins.containsKey(pluginFactory.getTag())) {
 			return false;
@@ -46,7 +46,7 @@ public class PluginRegister {
 		return plugins.containsKey(tag);
 	}
 
-	public IPluginFactory get(String tag) {
+	public PluginFactory get(String tag) {
 
 		// je tady takový plugin ?
 		if (!isRegistered(tag)) {
@@ -57,7 +57,7 @@ public class PluginRegister {
 
 	}
 
-	public IPluginFactory unregisterPlugin(String tag) {
+	public PluginFactory unregisterPlugin(String tag) {
 		return plugins.remove(tag);
 	}
 }

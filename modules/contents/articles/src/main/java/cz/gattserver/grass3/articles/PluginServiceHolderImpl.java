@@ -7,23 +7,22 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import cz.gattserver.grass3.articles.parser.PluginRegister;
-import cz.gattserver.grass3.articles.service.IPluginService;
+import cz.gattserver.grass3.articles.service.PluginService;
 
-@Component("pluginServiceHolder")
-public class PluginServiceHolderImpl implements IPluginServiceHolder {
+@Component
+public class PluginServiceHolderImpl implements PluginServiceHolder {
 
-	@Resource(name = "pluginRegister")
+	@Autowired
 	private PluginRegister pluginRegister;
 
 	@Autowired(required = false)
-	private List<IPluginService> services;
+	private List<PluginService> services;
 
 	private PluginServiceHolderImpl() {
 	};
@@ -34,7 +33,7 @@ public class PluginServiceHolderImpl implements IPluginServiceHolder {
 		if (services == null)
 			return;
 
-		for (IPluginService service : services) {
+		for (PluginService service : services) {
 			// přidej do registru pro parser
 			pluginRegister.registerPlugin(service.getPluginFactory());
 
@@ -52,8 +51,7 @@ public class PluginServiceHolderImpl implements IPluginServiceHolder {
 
 		// existuje skupina ?
 		if (editorCatalog.containsKey(resources.getTagFamily())) {
-			editorCatalog.get(resources.getTagFamily()).put(resources.getTag(),
-					resources);
+			editorCatalog.get(resources.getTagFamily()).put(resources.getTag(), resources);
 		} else {
 			// založ
 			Map<String, EditorButtonResources> map = new HashMap<String, EditorButtonResources>();
@@ -67,8 +65,7 @@ public class PluginServiceHolderImpl implements IPluginServiceHolder {
 	}
 
 	public synchronized Set<EditorButtonResources> getGroupTags(String group) {
-		return new HashSet<EditorButtonResources>(editorCatalog.get(group)
-				.values());
+		return new HashSet<EditorButtonResources>(editorCatalog.get(group).values());
 	}
 
 }

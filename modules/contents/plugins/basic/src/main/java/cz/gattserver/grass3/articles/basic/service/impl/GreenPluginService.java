@@ -4,15 +4,15 @@ import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.articles.basic.style.color.GreenFactory;
 import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
-import cz.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
-import cz.gattserver.grass3.articles.service.IPluginService;
+import cz.gattserver.grass3.articles.parser.interfaces.PluginFactory;
+import cz.gattserver.grass3.articles.service.PluginService;
 
 @Component
-public class GreenPluginService implements IPluginService {
+public class GreenPluginService implements PluginService {
 
 	private GreenFactory factory = new GreenFactory();
 
-	public IPluginFactory getPluginFactory() {
+	public PluginFactory getPluginFactory() {
 		return factory;
 	}
 

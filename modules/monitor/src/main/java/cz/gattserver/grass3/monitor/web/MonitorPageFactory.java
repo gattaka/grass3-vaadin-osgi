@@ -3,7 +3,7 @@ package cz.gattserver.grass3.monitor.web;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.pages.factories.template.AbstractPageFactory;
-import cz.gattserver.grass3.pages.template.IGrassPage;
+import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
@@ -25,7 +25,7 @@ public class MonitorPageFactory extends AbstractPageFactory {
 	}
 
 	@Override
-	protected IGrassPage createPage(GrassRequest request) {
+	protected GrassPage createPage(GrassRequest request) {
 		return new MonitorPage(request);
 	}
 }

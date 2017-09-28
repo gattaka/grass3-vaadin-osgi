@@ -17,7 +17,7 @@ import cz.gattserver.grass3.articles.parser.elements.TextTree;
 import cz.gattserver.grass3.articles.parser.exceptions.ParserException;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
-import cz.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
+import cz.gattserver.grass3.articles.parser.interfaces.PluginFactory;
 import cz.gattserver.grass3.articles.parser.misc.HTMLEscaper;
 
 /**
@@ -186,7 +186,7 @@ public class PluginBag {
 
 		log(this.getClass().getSimpleName() + ": Looking for the right ParserPlugin for tag '" + tag + "'");
 
-		IPluginFactory pluginFactory = pluginRegister.get(tag);
+		PluginFactory pluginFactory = pluginRegister.get(tag);
 
 		if (pluginFactory != null) {
 

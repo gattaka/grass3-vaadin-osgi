@@ -1,23 +1,17 @@
 package cz.gattserver.grass3.medic.web;
 
-import javax.annotation.Resource;
-
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 
-import cz.gattserver.grass3.medic.facade.IMedicFacade;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
-import cz.gattserver.grass3.template.ISelectable;
+import cz.gattserver.grass3.template.Selectable;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
 public class MedicPage extends OneColumnPage {
 
 	private static final long serialVersionUID = -950042653154868289L;
-
-	@Resource(name = "medicFacade")
-	private IMedicFacade medicFacade;
 
 	public MedicPage(GrassRequest request) {
 		super(request);
@@ -51,8 +45,8 @@ public class MedicPage extends OneColumnPage {
 			public void selectedTabChange(SelectedTabChangeEvent event) {
 				TabSheet tabSheet = (TabSheet) event.getComponent();
 				Component component = tabSheet.getSelectedTab();
-				if (component != null && component instanceof ISelectable) {
-					((ISelectable) component).select();
+				if (component != null && component instanceof Selectable) {
+					((Selectable) component).select();
 				}
 			}
 		});

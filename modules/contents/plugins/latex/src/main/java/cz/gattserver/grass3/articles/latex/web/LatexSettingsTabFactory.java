@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.tabs.factories.template.AbstractSettingsTabFactory;
-import cz.gattserver.grass3.tabs.template.ISettingsTab;
+import cz.gattserver.grass3.tabs.template.SettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
 @Component("latexSettingsTabFactory")
@@ -21,7 +21,7 @@ public class LatexSettingsTabFactory extends AbstractSettingsTabFactory {
 	}
 
 	@Override
-	protected ISettingsTab createTab(GrassRequest request) {
+	protected SettingsTab createTab(GrassRequest request) {
 		return new LatexSettingsTab(request);
 	}
 }

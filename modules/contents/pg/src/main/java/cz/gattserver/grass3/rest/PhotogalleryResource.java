@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import cz.gattserver.grass3.facades.ISecurityFacade;
+import cz.gattserver.grass3.facades.SecurityFacade;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryRESTDTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
-import cz.gattserver.grass3.pg.facade.IPhotogalleryFacade;
+import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
 import cz.gattserver.grass3.pg.facade.UnauthorizedAccessException;
 
 @Controller
@@ -31,10 +31,10 @@ import cz.gattserver.grass3.pg.facade.UnauthorizedAccessException;
 public class PhotogalleryResource {
 
 	@Autowired
-	private IPhotogalleryFacade photogalleryFacade;
+	private PhotogalleryFacade photogalleryFacade;
 
-	@Resource(name = "securityFacade")
-	private ISecurityFacade securityFacade;
+	@Autowired
+	private SecurityFacade securityFacade;
 
 	@RequestMapping("/log")
 	public @ResponseBody String log() {

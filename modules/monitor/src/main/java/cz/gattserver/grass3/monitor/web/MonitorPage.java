@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.monitor.facade.IMonitorFacade;
+import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 import cz.gattserver.grass3.monitor.processor.ConsoleOutputTO;
 import cz.gattserver.grass3.monitor.web.label.FAILMonitorItem;
 import cz.gattserver.grass3.monitor.web.label.MonitorItemFactory;
@@ -17,7 +17,7 @@ public class MonitorPage extends OneColumnPage {
 	private static final long serialVersionUID = -950042653154868289L;
 
 	@Autowired
-	private IMonitorFacade monitorFacade;
+	private MonitorFacade monitorFacade;
 
 	public MonitorPage(GrassRequest request) {
 		super(request);

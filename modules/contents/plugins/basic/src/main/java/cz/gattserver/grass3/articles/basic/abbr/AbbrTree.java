@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.articles.basic.abbr;
 
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 public class AbbrTree extends AbstractElementTree {
 
@@ -14,7 +14,7 @@ public class AbbrTree extends AbstractElementTree {
 	}
 
 	@Override
-	public void generateElement(IContext ctx) {
+	public void generateElement(Context ctx) {
 		ctx.print("<abbr title=\"" + title + "\">" + text + "</abbr>");
 	}
 }

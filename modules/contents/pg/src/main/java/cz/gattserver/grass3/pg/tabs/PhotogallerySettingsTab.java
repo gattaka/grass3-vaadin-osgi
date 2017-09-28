@@ -11,9 +11,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.facades.IContentTagFacade;
+import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
-import cz.gattserver.grass3.pg.facade.IPhotogalleryFacade;
+import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
@@ -22,10 +22,10 @@ public class PhotogallerySettingsTab extends AbstractSettingsTab {
 	private static final long serialVersionUID = 2474374292329895766L;
 
 	@Resource(name = "photogalleryFacade")
-	private IPhotogalleryFacade photogalleryFacade;
+	private PhotogalleryFacade photogalleryFacade;
 
 	@Resource(name = "contentTagFacade")
-	private IContentTagFacade contentTagFacade;
+	private ContentTagFacade contentTagFacade;
 
 	public PhotogallerySettingsTab(GrassRequest request) {
 		super(request);

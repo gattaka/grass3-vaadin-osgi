@@ -1,32 +1,11 @@
 package cz.gattserver.grass3.security;
 
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Component;
-
-import cz.gattserver.grass3.config.CoreConfiguration;
-import cz.gattserver.grass3.config.IConfigurationService;
-import cz.gattserver.grass3.facades.IUserFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.IAuthorizable;
+import cz.gattserver.grass3.model.dto.Authorizable;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
-import cz.gattserver.grass3.service.ISectionService;
+import cz.gattserver.grass3.service.SectionService;
 
-/**
- * Access control list, bere uživatele a operaci a vyhodnocuje, zda povolit nebo
- * zablokovat
- * 
- * @author gatt
- * 
- */
-@Component("coreACL")
-public final class CoreACL implements ICoreACL {
-
-	@Resource(name = "userFacade")
-	IUserFacade userFacade;
-
-	@Resource(name = "configurationService")
-	IConfigurationService configurationService;
+public interface CoreACL {
 
 	/**
 	 * =======================================================================
@@ -37,16 +16,12 @@ public final class CoreACL implements ICoreACL {
 	/**
 	 * Může uživatel zobrazit danou sekci ?
 	 */
-	public boolean canShowSection(ISectionService section, UserInfoDTO user) {
-		return section.isVisibleForRoles(user.getRoles());
-	}
+	public boolean canShowSection(SectionService section, UserInfoDTO user);
 
 	/**
 	 * Může uživatel upravovat "hlášky"
 	 */
-	public boolean canModifyQuotes(UserInfoDTO user) {
-		return isLoggedIn(user) && user.getRoles().contains(Role.ADMIN);
-	}
+	public boolean canModifyQuotes(UserInfoDTO user);
 
 	/**
 	 * =======================================================================
@@ -62,37 +37,17 @@ public final class CoreACL implements ICoreACL {
 	/**
 	 * Může uživatel vytvářet obsah ?
 	 */
-	public boolean canCreateContent(UserInfoDTO user) {
-		if (isLoggedIn(user)) {
-			// pokud má uživatel oprávnění AUTHOR, pak může
-			if (user.getRoles().contains(Role.AUTHOR))
-				return true;
-		}
-		return false;
-	}
+	public boolean canCreateContent(UserInfoDTO user);
 
 	/**
 	 * Může uživatel upravit daný obsah ?
 	 */
-	public boolean canModifyContent(IAuthorizable content, UserInfoDTO user) {
-		if (isLoggedIn(user)) {
-			// pokud je admin, může upravit kterýkoliv obsah
-			if (user.getRoles().contains(Role.ADMIN))
-				return true;
-
-			// pokud jsi autor, můžeš upravit svůj obsah
-			if (content.getAuthor().getId().equals(user.getId()))
-				return true;
-		}
-		return false;
-	}
+	public boolean canModifyContent(Authorizable content, UserInfoDTO user);
 
 	/**
 	 * Může uživatel smazat daný obsah ?
 	 */
-	public boolean canDeleteContent(IAuthorizable content, UserInfoDTO user) {
-		return canModifyContent(content, user);
-	}
+	public boolean canDeleteContent(Authorizable content, UserInfoDTO user);
 
 	/**
 	 * =======================================================================
@@ -103,36 +58,22 @@ public final class CoreACL implements ICoreACL {
 	/**
 	 * Může uživatel založit kategorii ?
 	 */
-	public boolean canCreateNode(UserInfoDTO user) {
-		if (isLoggedIn(user)) {
-			// pokud je admin, můžeš
-			if (user.getRoles().contains(Role.ADMIN))
-				return true;
-		}
-		// jinak false
-		return false;
-	}
+	public boolean canCreateNode(UserInfoDTO user);
 
 	/**
 	 * Může uživatel upravit kategorii ?
 	 */
-	public boolean canModifyNode(UserInfoDTO user) {
-		return canCreateNode(user);
-	}
+	public boolean canModifyNode(UserInfoDTO user);
 
 	/**
 	 * Může uživatel přesunout kategorii ?
 	 */
-	public boolean canMoveNode(UserInfoDTO user) {
-		return canModifyNode(user);
-	}
+	public boolean canMoveNode(UserInfoDTO user);
 
 	/**
 	 * Může uživatel smazat kategorii ?
 	 */
-	public boolean canDeleteNode(UserInfoDTO user) {
-		return canModifyNode(user);
-	}
+	public boolean canDeleteNode(UserInfoDTO user);
 
 	/**
 	 * =======================================================================
@@ -143,84 +84,46 @@ public final class CoreACL implements ICoreACL {
 	/**
 	 * Je uživatel přihlášen?
 	 */
-	@Override
-	public boolean isLoggedIn(UserInfoDTO user) {
-		return user.getId() != null;
-	}
+	public boolean isLoggedIn(UserInfoDTO user);
 
 	/**
 	 * Může daný uživatel zobrazit detaily o uživateli X ?
 	 */
-	public boolean canShowUserDetails(UserInfoDTO anotherUser, UserInfoDTO user) {
-		// nelze zobrazit detail od žádného uživatele
-		if (user.getId() == null || anotherUser == null)
-			return false;
-
-		// uživatel může vidět detaily o sobě
-		if (user.getId().equals(anotherUser.getId()))
-			return true;
-
-		// administrator může vidět detaily od všech uživatelů
-		if (user.getRoles().contains(Role.ADMIN))
-			return true;
-
-		return false;
-	}
+	public boolean canShowUserDetails(UserInfoDTO anotherUser, UserInfoDTO user);
 
 	/**
 	 * Může se uživatel zaregistrovat ?
 	 */
-	public boolean canRegistrate(UserInfoDTO user) {
-		if (!isLoggedIn(user)) {
-			// jenom host se může registrovat
-			CoreConfiguration configuration = new CoreConfiguration();
-			configurationService.loadConfiguration(configuration);
-			return configuration.isRegistrations();
-		}
-		// jinak false
-		return false;
-	}
+	public boolean canRegistrate(UserInfoDTO user);
 
 	/**
 	 * Může zobrazit stránku s nastavením ?
 	 */
-	public boolean canShowSettings(UserInfoDTO user) {
-		return isLoggedIn(user);
-	}
+	public boolean canShowSettings(UserInfoDTO user);
 
 	/**
 	 * Může zobrazit stránku s nastavením aplikace ?
 	 */
-	public boolean canShowApplicationSettings(UserInfoDTO user) {
-		return user.getRoles().contains(Role.ADMIN);
-	}
+	public boolean canShowApplicationSettings(UserInfoDTO user);
 
 	/**
 	 * Může zobrazit stránku s nastavením kategorií ?
 	 */
-	public boolean canShowCategoriesSettings(UserInfoDTO user) {
-		return user.getRoles().contains(Role.ADMIN);
-	}
+	public boolean canShowCategoriesSettings(UserInfoDTO user);
 
 	/**
 	 * Může zobrazit stránku s nastavením uživatelů ?
 	 */
-	public boolean canShowUserSettings(UserInfoDTO user) {
-		return user.getRoles().contains(Role.ADMIN);
-	}
+	public boolean canShowUserSettings(UserInfoDTO user);
 
 	/**
 	 * Může přidat obsah do svých oblíbených ?
 	 */
-	public boolean canAddContentToFavourites(ContentNodeDTO contentNodeDTO, UserInfoDTO user) {
-		return isLoggedIn(user) && userFacade.hasInFavourites(contentNodeDTO.getId(), user.getId()) == false;
-	}
+	public boolean canAddContentToFavourites(ContentNodeDTO contentNodeDTO, UserInfoDTO user);
 
 	/**
 	 * Může odebrat obsah ze svých oblíbených ?
 	 */
-	public boolean canRemoveContentFromFavourites(ContentNodeDTO contentNodeDTO, UserInfoDTO user) {
-		return isLoggedIn(user) && userFacade.hasInFavourites(contentNodeDTO.getId(), user.getId()) == true;
-	}
+	public boolean canRemoveContentFromFavourites(ContentNodeDTO contentNode, UserInfoDTO user);
 
 }

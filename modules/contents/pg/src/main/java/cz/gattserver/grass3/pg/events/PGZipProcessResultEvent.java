@@ -2,9 +2,9 @@ package cz.gattserver.grass3.pg.events;
 
 import java.io.File;
 
-import cz.gattserver.grass3.events.IResultEvent;
+import cz.gattserver.grass3.events.ResultEvent;
 
-public class PGZipProcessResultEvent implements IResultEvent {
+public class PGZipProcessResultEvent implements ResultEvent {
 
 	private static final long serialVersionUID = -7417313051667964628L;
 

@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 
 public class TableTree extends AbstractElementTree {
@@ -20,7 +20,7 @@ public class TableTree extends AbstractElementTree {
 	}
 
 	@Override
-	public void generateElement(IContext ctx) {
+	public void generateElement(Context ctx) {
 		Iterator<List<AbstractElementTree>> iterator = listElements.iterator();
 		List<AbstractElementTree> tableElement = iterator.next();
 

@@ -3,7 +3,7 @@ package cz.gattserver.grass3.articles.basic.headers;
 import java.util.List;
 
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 public class HeaderTree extends AbstractElementTree {
 
@@ -24,7 +24,7 @@ public class HeaderTree extends AbstractElementTree {
 	}
 
 	@Override
-	public void generateElement(IContext ctx) {
+	public void generateElement(Context ctx) {
 		ctx.resetHeaderLevel();
 		ctx.print("<div class=\"articles-basic-h" + level + "\">");
 		ctx.print("<a class=\"articles-basic-h-id\" href=\""

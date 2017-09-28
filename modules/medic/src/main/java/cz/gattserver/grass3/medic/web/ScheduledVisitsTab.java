@@ -26,20 +26,20 @@ import com.vaadin.ui.Button.ClickEvent;
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitState;
-import cz.gattserver.grass3.medic.facade.IMedicFacade;
+import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.util.MedicUtil;
 import cz.gattserver.grass3.medic.web.ScheduledVisitsCreateWindow.Operation;
 import cz.gattserver.grass3.template.DetailTableButton;
-import cz.gattserver.grass3.template.ISelectable;
+import cz.gattserver.grass3.template.Selectable;
 import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 
-public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
+public class ScheduledVisitsTab extends VerticalLayout implements Selectable {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
-	private IMedicFacade medicFacade;
+	private MedicFacade medicFacade;
 
 	final Table toBePlannedTable = new Table();
 	final Table plannedTable = new Table();
@@ -449,7 +449,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements ISelectable {
 
 	public ScheduledVisitsTab() {
 
-		medicFacade = SpringContextHelper.getBean(IMedicFacade.class);
+		medicFacade = SpringContextHelper.getBean(MedicFacade.class);
 
 		setSpacing(true);
 		setMargin(true);

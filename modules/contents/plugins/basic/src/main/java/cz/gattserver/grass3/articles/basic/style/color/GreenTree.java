@@ -4,7 +4,7 @@ import java.util.List;
 
 import cz.gattserver.grass3.articles.basic.style.StyleTree;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 public class GreenTree extends StyleTree {
 
@@ -13,12 +13,12 @@ public class GreenTree extends StyleTree {
 	}
 
 	@Override
-	public void generateStartTag(IContext ctx) {
+	public void generateStartTag(Context ctx) {
 		ctx.print("<span style='color: green'>");
 	}
 
 	@Override
-	public void generateEndTag(IContext ctx) {
+	public void generateEndTag(Context ctx) {
 		ctx.print("</span>");
 	}
 

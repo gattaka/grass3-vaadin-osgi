@@ -23,7 +23,7 @@ import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitState;
-import cz.gattserver.grass3.medic.facade.IMedicFacade;
+import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -31,7 +31,7 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
-	private IMedicFacade medicalFacade;
+	private MedicFacade medicalFacade;
 
 	private static final String PLANNED_CREATION_TITLE = "Založení nové plánované návštěvy";
 	private static final String TO_BE_PLANNED_CREATION_TITLE = "Naplánování objednání";
@@ -80,7 +80,7 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 
 		boolean planned = operation.equals(Operation.PLANNED) || operation.equals(Operation.PLANNED_FROM_TO_BE_PLANNED);
 
-		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
+		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
 
 		GridLayout winLayout = new GridLayout(2, 6);
 		winLayout.setWidth("350px");

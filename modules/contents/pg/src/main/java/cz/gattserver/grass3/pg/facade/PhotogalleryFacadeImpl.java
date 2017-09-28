@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
@@ -25,10 +24,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import cz.gattserver.grass3.config.IConfigurationService;
-import cz.gattserver.grass3.events.IEventBus;
-import cz.gattserver.grass3.facades.IContentNodeFacade;
-import cz.gattserver.grass3.facades.ISecurityFacade;
+import cz.gattserver.grass3.config.ConfigurationService;
+import cz.gattserver.grass3.events.EventBus;
+import cz.gattserver.grass3.facades.ContentNodeFacade;
+import cz.gattserver.grass3.facades.SecurityFacade;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
@@ -52,28 +51,28 @@ import cz.gattserver.grass3.pg.util.PhotogalleryMapper;
 import cz.gattserver.grass3.security.Role;
 
 @Transactional
-@Component("photogalleryFacade")
-public class PhotogalleryFacadeImpl implements IPhotogalleryFacade {
+@Component
+public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 
 	private static Logger logger = LoggerFactory.getLogger(PhotogalleryFacadeImpl.class);
 
-	@Resource(name = "contentNodeFacade")
-	private IContentNodeFacade contentNodeFacade;
+	@Autowired
+	private ContentNodeFacade contentNodeFacade;
 
-	@Resource(name = "photogalleryMapper")
+	@Autowired
 	private PhotogalleryMapper photogalleriesMapper;
 
-	@Resource(name = "securityFacade")
-	private ISecurityFacade securityFacade;
+	@Autowired
+	private SecurityFacade securityFacade;
 
-	@Resource
-	private IConfigurationService configurationService;
+	@Autowired
+	private ConfigurationService configurationService;
 
 	@Autowired
 	private PhotoGalleryRepository photogalleryRepository;
 
 	@Autowired
-	private IEventBus eventBus;
+	private EventBus eventBus;
 
 	@Override
 	public PhotogalleryConfiguration getConfiguration() {

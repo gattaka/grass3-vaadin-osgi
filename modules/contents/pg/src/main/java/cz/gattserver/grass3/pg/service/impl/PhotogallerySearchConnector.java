@@ -5,29 +5,26 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
-import cz.gattserver.grass3.pg.facade.IPhotogalleryFacade;
-import cz.gattserver.grass3.search.service.ISearchConnector;
-import cz.gattserver.grass3.search.service.ISearchField;
+import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
+import cz.gattserver.grass3.search.service.SearchConnector;
+import cz.gattserver.grass3.search.service.SearchField;
 import cz.gattserver.grass3.search.service.SearchEntity;
-import cz.gattserver.grass3.security.ICoreACL;
 import cz.gattserver.web.common.URLIdentifierUtils;
 
 @Component("photogalleriesSearchConnector")
-public class PhotogallerySearchConnector implements ISearchConnector {
+public class PhotogallerySearchConnector implements SearchConnector {
 
-	@Resource(name = "coreACL")
-	private ICoreACL coreACL;
-
-	@Resource(name = "photogalleryFacade")
-	private IPhotogalleryFacade photogalleryFacade;
+	@Autowired
+	private PhotogalleryFacade photogalleryFacade;
 
 	@Resource(name = "photogalleryViewerPageFactory")
-	private IPageFactory photogalleryViewerPageFactory;
+	private PageFactory photogalleryViewerPageFactory;
 
 	public List<SearchEntity> getAvailableSearchEntities(UserInfoDTO user) {
 
@@ -58,7 +55,7 @@ public class PhotogallerySearchConnector implements ISearchConnector {
 
 	}
 
-	public Enum<? extends ISearchField>[] getSearchFields() {
+	public Enum<? extends SearchField>[] getSearchFields() {
 		return PhotogallerySearchField.values();
 	}
 

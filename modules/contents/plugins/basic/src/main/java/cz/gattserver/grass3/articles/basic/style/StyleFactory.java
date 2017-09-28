@@ -1,12 +1,12 @@
 package cz.gattserver.grass3.articles.basic.style;
 
-import cz.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
+import cz.gattserver.grass3.articles.parser.interfaces.PluginFactory;
 
 /**
  * 
  * @author gatt
  */
-public abstract class StyleFactory implements IPluginFactory {
+public abstract class StyleFactory implements PluginFactory {
 
 	private final String tag;
 

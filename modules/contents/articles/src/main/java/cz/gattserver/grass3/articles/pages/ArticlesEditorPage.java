@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.tokenfield.TokenField;
 
 import com.vaadin.data.util.BeanContainer;
@@ -36,16 +37,16 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.articles.IPluginServiceHolder;
+import cz.gattserver.grass3.articles.PluginServiceHolder;
 import cz.gattserver.grass3.articles.dto.ArticleDTO;
 import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
-import cz.gattserver.grass3.articles.facade.IArticleFacade;
+import cz.gattserver.grass3.articles.facade.ArticleFacade;
 import cz.gattserver.grass3.articles.parser.PartsFinder;
-import cz.gattserver.grass3.facades.IContentTagFacade;
-import cz.gattserver.grass3.facades.INodeFacade;
+import cz.gattserver.grass3.facades.ContentTagFacade;
+import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.JScriptItem;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.security.Role;
@@ -63,23 +64,23 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 	private static final Logger logger = LoggerFactory.getLogger(ArticlesEditorPage.class);
 
-	@Resource(name = "nodeFacade")
-	private INodeFacade nodeFacade;
+	@Autowired
+	private NodeFacade nodeFacade;
 
-	@Resource(name = "articleFacade")
-	private IArticleFacade articleFacade;
+	@Autowired
+	private ArticleFacade articleFacade;
 
-	@Resource(name = "contentTagFacade")
-	private IContentTagFacade contentTagFacade;
+	@Autowired
+	private ContentTagFacade contentTagFacade;
 
-	@Resource(name = "pluginServiceHolder")
-	private IPluginServiceHolder pluginServiceHolder;
+	@Autowired
+	private PluginServiceHolder pluginServiceHolder;
 
 	@Resource(name = "nodePageFactory")
-	private IPageFactory nodePageFactory;
+	private PageFactory nodePageFactory;
 
 	@Resource(name = "articlesViewerPageFactory")
-	private IPageFactory articlesViewerPageFactory;
+	private PageFactory articlesViewerPageFactory;
 
 	private NodeDTO node;
 	private ArticleDTO article;

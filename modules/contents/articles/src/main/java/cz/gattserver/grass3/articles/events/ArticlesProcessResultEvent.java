@@ -1,8 +1,8 @@
 package cz.gattserver.grass3.articles.events;
 
-import cz.gattserver.grass3.events.IResultEvent;
+import cz.gattserver.grass3.events.ResultEvent;
 
-public class ArticlesProcessResultEvent implements IResultEvent {
+public class ArticlesProcessResultEvent implements ResultEvent {
 
 	private static final long serialVersionUID = -7417313051667964628L;
 

@@ -3,8 +3,7 @@ package cz.gattserver.grass3.pages;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
 
 import com.vaadin.shared.ui.label.ContentMode;
@@ -12,13 +11,11 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.facades.IContentNodeFacade;
-import cz.gattserver.grass3.facades.IContentTagFacade;
+import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.pages.template.BasePage;
 import cz.gattserver.grass3.pages.template.ContentsByTagQuery;
 import cz.gattserver.grass3.pages.template.ContentsLazyTable;
-import cz.gattserver.grass3.security.ICoreACL;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
 
@@ -26,14 +23,8 @@ public class TagPage extends BasePage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
-	@Resource(name = "contentTagFacade")
-	private IContentTagFacade contentTagFacade;
-
-	@Resource(name = "contentNodeFacade")
-	private IContentNodeFacade contentNodeFacade;
-
-	@Resource(name = "coreACL")
-	private ICoreACL coreACL;
+	@Autowired
+	private ContentTagFacade contentTagFacade;
 
 	private ContentTagDTO tag;
 	private Label tagLabel;

@@ -1,8 +1,8 @@
 package cz.gattserver.grass3.articles.events;
 
-import cz.gattserver.grass3.events.IStartEvent;
+import cz.gattserver.grass3.events.StartEvent;
 
-public class ArticlesProcessStartEvent implements IStartEvent {
+public class ArticlesProcessStartEvent implements StartEvent {
 	
 	private static final long serialVersionUID = -6327153009560081031L;
 

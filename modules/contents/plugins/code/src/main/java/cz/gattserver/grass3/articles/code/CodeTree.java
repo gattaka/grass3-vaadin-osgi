@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.articles.code;
 
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 public class CodeTree extends AbstractElementTree {
 
@@ -17,7 +17,7 @@ public class CodeTree extends AbstractElementTree {
 		this.mode = mode;
 	}
 
-	public void generateElement(IContext ctx) {
+	public void generateElement(Context ctx) {
 
 		// CSS resources
 		ctx.addCSSResource("articles/code/code_style.css");

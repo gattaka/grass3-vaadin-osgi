@@ -34,7 +34,7 @@ import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.HWItemState;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
-import cz.gattserver.grass3.hw.facade.IHWFacade;
+import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.grass3.ui.util.GrassFilterDecorator;
 import cz.gattserver.grass3.ui.util.StringToDateConverter;
 import cz.gattserver.grass3.ui.util.StringToMoneyConverter;
@@ -48,7 +48,7 @@ public class HWItemsTab extends VerticalLayout {
 	private static final long serialVersionUID = -5013459007975657195L;
 
 	@Autowired
-	private IHWFacade hwFacade;
+	private HWFacade hwFacade;
 
 	private final FilterTable table = new FilterTable();
 	private LazyQueryContainer container;

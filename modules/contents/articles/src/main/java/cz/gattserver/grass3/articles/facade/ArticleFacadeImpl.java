@@ -7,8 +7,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -29,11 +27,11 @@ import cz.gattserver.grass3.articles.parser.PluginBag;
 import cz.gattserver.grass3.articles.parser.PluginRegister;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractParser;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 import cz.gattserver.grass3.articles.service.impl.ArticlesContentService;
 import cz.gattserver.grass3.articles.util.ArticlesMapper;
-import cz.gattserver.grass3.events.IEventBus;
-import cz.gattserver.grass3.facades.IContentNodeFacade;
+import cz.gattserver.grass3.events.EventBus;
+import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
@@ -41,25 +39,25 @@ import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 
 @Transactional
-@Component("articleFacade")
-public class ArticleFacadeImpl implements IArticleFacade {
+@Component
+public class ArticleFacadeImpl implements ArticleFacade {
 
 	@Autowired
-	private IEventBus eventBus;
+	private EventBus eventBus;
 
-	@Resource(name = "contentNodeFacade")
-	private IContentNodeFacade contentNodeFacade;
+	@Autowired
+	private ContentNodeFacade contentNodeFacade;
 
-	@Resource(name = "articlesMapper")
+	@Autowired
 	private ArticlesMapper articlesMapper;
 
 	@Autowired
 	private ArticleRepository articleRepository;
 
-	@Resource(name = "pluginRegister")
+	@Autowired
 	private PluginRegister pluginRegister;
 
-	private IContext processArticle(String source, String contextRoot) {
+	private Context processArticle(String source, String contextRoot) {
 
 		if (contextRoot == null)
 			throw new IllegalArgumentException("ContextRoot nemůže být null");
@@ -70,7 +68,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 
 		// výstup
 		AbstractElementTree tree = parser.parse(pluginBag);
-		IContext ctx = new ContextImpl();
+		Context ctx = new ContextImpl();
 		tree.generate(ctx);
 
 		return ctx;
@@ -85,7 +83,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 	 */
 	public ArticleDTO processPreview(String text, String contextRoot) {
 
-		IContext context = processArticle(text, contextRoot);
+		Context context = processArticle(text, contextRoot);
 
 		ArticleDTO articleDTO = new ArticleDTO();
 		articleDTO.setPluginCSSResources(context.getCSSResources());
@@ -158,7 +156,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 		Article article = articleRepository.findOne(articleId);
 
 		// nasetuj do něj vše potřebné
-		IContext context = processArticle(text, contextRoot);
+		Context context = processArticle(text, contextRoot);
 		article.setOutputHTML(context.getOutput());
 		article.setPluginCSSResources(context.getCSSResources());
 
@@ -211,7 +209,7 @@ public class ArticleFacadeImpl implements IArticleFacade {
 		Article article = new Article();
 
 		// nasetuj do něj vše potřebné
-		IContext context = processArticle(text, contextRoot);
+		Context context = processArticle(text, contextRoot);
 		article.setOutputHTML(context.getOutput());
 		article.setPluginCSSResources(context.getCSSResources());
 		article.setPluginJSResources(createJSResourcesSet(context.getJSResources()));

@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.pages;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
@@ -14,21 +14,21 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
-import cz.gattserver.grass3.facades.IQuotesFacade;
+import cz.gattserver.grass3.facades.QuotesFacade;
 import cz.gattserver.grass3.model.dto.QuoteDTO;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
-import cz.gattserver.grass3.security.ICoreACL;
+import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
 public class QuotesPage extends OneColumnPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
-	@Resource(name = "coreACL")
-	private ICoreACL coreACL;
+	@Autowired
+	private CoreACL coreACL;
 
-	@Resource(name = "quotesFacade")
-	IQuotesFacade quotesFacade;
+	@Autowired
+	private QuotesFacade quotesFacade;
 
 	public QuotesPage(GrassRequest request) {
 		super(request);
@@ -98,32 +98,29 @@ public class QuotesPage extends OneColumnPage {
 		final TextField newQuoteText = new TextField();
 		newQuoteText.setWidth("200px");
 		newQuoteText.addValidator(new StringLengthValidator(
-				"Text hlášky nesmí být prázdný a může mít maximálně "
-						+ maxLength + " znaků", 1, maxLength, false));
+				"Text hlášky nesmí být prázdný a může mít maximálně " + maxLength + " znaků", 1, maxLength, false));
 		panelLayout.addComponent(newQuoteText);
 
-		Button createButton = new Button("Vytvořit",
-				new Button.ClickListener() {
+		Button createButton = new Button("Vytvořit", new Button.ClickListener() {
 
-					private static final long serialVersionUID = -4315617904120991885L;
+			private static final long serialVersionUID = -4315617904120991885L;
 
-					public void buttonClick(ClickEvent event) {
-						if (newQuoteText.isValid() == false)
-							return;
+			public void buttonClick(ClickEvent event) {
+				if (newQuoteText.isValid() == false)
+					return;
 
-						if (quotesFacade.createNewQuote((String) newQuoteText
-								.getValue())) {
-							showInfo("Nová hláška byla úspěšně vložena.");
-							// refresh list
-							populateQuotesTable();
-							// clean
-							newQuoteText.setValue("");
-						} else {
-							showWarning("Nezdařilo se vložit novou hlášku.");
-						}
+				if (quotesFacade.createNewQuote((String) newQuoteText.getValue())) {
+					showInfo("Nová hláška byla úspěšně vložena.");
+					// refresh list
+					populateQuotesTable();
+					// clean
+					newQuoteText.setValue("");
+				} else {
+					showWarning("Nezdařilo se vložit novou hlášku.");
+				}
 
-					}
-				});
+			}
+		});
 		panelLayout.addComponent(createButton);
 
 	}

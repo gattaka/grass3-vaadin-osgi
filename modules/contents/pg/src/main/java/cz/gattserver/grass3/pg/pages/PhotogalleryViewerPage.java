@@ -26,22 +26,19 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-import cz.gattserver.grass3.config.IConfigurationService;
-import cz.gattserver.grass3.events.IEventBus;
-import cz.gattserver.grass3.facades.INodeFacade;
-import cz.gattserver.grass3.facades.IUserFacade;
+import cz.gattserver.grass3.config.ConfigurationService;
+import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import cz.gattserver.grass3.pg.events.PGZipProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.PGZipProcessResultEvent;
 import cz.gattserver.grass3.pg.events.PGZipProcessStartEvent;
-import cz.gattserver.grass3.pg.facade.IPhotogalleryFacade;
+import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
 import cz.gattserver.grass3.pg.util.PGUtils;
-import cz.gattserver.grass3.security.ICoreACL;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.ui.progress.BaseProgressBar;
@@ -60,32 +57,23 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	private static final long serialVersionUID = 5078280973817331002L;
 
-	@Resource(name = "coreACL")
-	private ICoreACL coreACL;
-
-	@Resource(name = "photogalleryFacade")
-	private IPhotogalleryFacade photogalleryFacade;
-
-	@Resource(name = "userFacade")
-	private IUserFacade userFacade;
-
-	@Resource(name = "nodeFacade")
-	private INodeFacade nodeFacade;
-
-	@Resource
-	private IConfigurationService configurationService;
-
-	@Resource(name = "photogalleryViewerPageFactory")
-	private IPageFactory photogalleryViewerPageFactory;
-
-	@Resource(name = "nodePageFactory")
-	private IPageFactory nodePageFactory;
-
-	@Resource(name = "photogalleryEditorPageFactory")
-	private IPageFactory photogalleryEditorPageFactory;
+	@Autowired
+	private PhotogalleryFacade photogalleryFacade;
 
 	@Autowired
-	private IEventBus eventBus;
+	private ConfigurationService configurationService;
+
+	@Resource(name = "photogalleryViewerPageFactory")
+	private PageFactory photogalleryViewerPageFactory;
+
+	@Resource(name = "nodePageFactory")
+	private PageFactory nodePageFactory;
+
+	@Resource(name = "photogalleryEditorPageFactory")
+	private PageFactory photogalleryEditorPageFactory;
+
+	@Autowired
+	private EventBus eventBus;
 
 	private UI ui = UI.getCurrent();
 	private ProgressWindow progressIndicatorWindow;
@@ -355,10 +343,17 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				System.out.println("zipPhotogallery thread: " + Thread.currentThread().getId());
-				eventBus.subscribe(PhotogalleryViewerPage.this);
-				ui.setPollInterval(200);
-				photogalleryFacade.zipGallery(galleryDir);
+				UI.getCurrent().addWindow(new ConfirmWindow("Přejete si vytvořit ZIP galerie?") {
+					private static final long serialVersionUID = 3413875885960257844L;
+
+					@Override
+					protected void onConfirm(ClickEvent event) {
+						System.out.println("zipPhotogallery thread: " + Thread.currentThread().getId());
+						eventBus.subscribe(PhotogalleryViewerPage.this);
+						ui.setPollInterval(200);
+						photogalleryFacade.zipGallery(galleryDir);
+					}
+				});
 			}
 		});
 		statusLabelWrapper.addComponent(downloadZip);
@@ -586,7 +581,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	}
 
 	@Override
-	protected IPageFactory getContentViewerPageFactory() {
+	protected PageFactory getContentViewerPageFactory() {
 		return photogalleryViewerPageFactory;
 	}
 

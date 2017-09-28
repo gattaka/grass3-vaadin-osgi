@@ -13,18 +13,18 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.security.Role;
-import cz.gattserver.grass3.service.ISectionService;
+import cz.gattserver.grass3.service.SectionService;
 
 @Component("medicSection")
-public class MedicSection implements ISectionService {
+public class MedicSection implements SectionService {
 
 	@Resource(name = "medicPageFactory")
-	private IPageFactory medicPageFactory;
+	private PageFactory medicPageFactory;
 
 	@Autowired
-	private IEmailNotifier emailNotifier;
+	private EmailNotifier emailNotifier;
 
 	private final static long ONCE_PER_DAY = 1000 * 60 * 60 * 24;
 	private final static int ONE_DAY = 1;
@@ -53,7 +53,7 @@ public class MedicSection implements ISectionService {
 		return roles.contains(Role.ADMIN);
 	}
 
-	public IPageFactory getSectionPageFactory() {
+	public PageFactory getSectionPageFactory() {
 		return medicPageFactory;
 	}
 

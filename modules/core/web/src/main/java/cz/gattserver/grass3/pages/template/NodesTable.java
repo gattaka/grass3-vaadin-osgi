@@ -9,7 +9,7 @@ import com.vaadin.ui.Table;
 
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.util.ComparableLink;
 import cz.gattserver.grass3.util.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.ImageIcons;
@@ -23,7 +23,7 @@ public class NodesTable extends Table {
 
 	public NodesTable(AbstractGrassPage page) {
 		// inject na Table nefunguje kvůli něčemu v předkovi
-		final IPageFactory nodePageFactory = (IPageFactory) SpringContextHelper.getBean("nodePageFactory");
+		final PageFactory nodePageFactory = (PageFactory) SpringContextHelper.getBean("nodePageFactory");
 
 		setHeight("200px");
 

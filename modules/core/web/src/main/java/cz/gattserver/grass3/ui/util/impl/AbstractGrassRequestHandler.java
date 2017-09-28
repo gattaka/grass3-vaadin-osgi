@@ -25,9 +25,9 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinResponse;
 import com.vaadin.server.VaadinSession;
 
-import cz.gattserver.grass3.ui.util.IGrassRequestHandler;
+import cz.gattserver.grass3.ui.util.GrassRequestHandler;
 
-public abstract class AbstractGrassRequestHandler implements IGrassRequestHandler {
+public abstract class AbstractGrassRequestHandler implements GrassRequestHandler {
 
 	private static final long serialVersionUID = 7154339775034959876L;
 

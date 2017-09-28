@@ -1,7 +1,5 @@
 package cz.gattserver.grass3.articles.tabs;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.validator.AbstractStringValidator;
@@ -18,10 +16,9 @@ import cz.gattserver.grass3.articles.config.ArticlesConfiguration;
 import cz.gattserver.grass3.articles.events.ArticlesProcessProgressEvent;
 import cz.gattserver.grass3.articles.events.ArticlesProcessResultEvent;
 import cz.gattserver.grass3.articles.events.ArticlesProcessStartEvent;
-import cz.gattserver.grass3.articles.facade.IArticleFacade;
-import cz.gattserver.grass3.config.IConfigurationService;
-import cz.gattserver.grass3.events.IEventBus;
-import cz.gattserver.grass3.facades.IContentTagFacade;
+import cz.gattserver.grass3.articles.facade.ArticleFacade;
+import cz.gattserver.grass3.config.ConfigurationService;
+import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.progress.BaseProgressBar;
 import cz.gattserver.grass3.ui.progress.ProgressWindow;
@@ -33,17 +30,14 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
-	@Resource(name = "articleFacade")
-	private IArticleFacade articleFacade;
-
-	@Resource(name = "contentTagFacade")
-	private IContentTagFacade contentTagFacade;
-
-	@Resource(name = "configurationService")
-	private IConfigurationService configurationService;
+	@Autowired
+	private ArticleFacade articleFacade;
 
 	@Autowired
-	private IEventBus eventBus;
+	private ConfigurationService configurationService;
+
+	@Autowired
+	private EventBus eventBus;
 
 	private UI ui = UI.getCurrent();
 	private ProgressWindow progressIndicatorWindow;

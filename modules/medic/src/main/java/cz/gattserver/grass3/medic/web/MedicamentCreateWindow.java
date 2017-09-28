@@ -14,7 +14,7 @@ import com.vaadin.ui.UI;
 
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.medic.dto.MedicamentDTO;
-import cz.gattserver.grass3.medic.facade.IMedicFacade;
+import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -22,7 +22,7 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
-	private IMedicFacade medicalFacade;
+	private MedicFacade medicalFacade;
 
 	public MedicamentCreateWindow() {
 		this(null);
@@ -33,7 +33,7 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 		super(modifiedMedicamentDTO == null ? "Založení nového medikamentu"
 				: "Úprava medikamentu");
 
-		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
+		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
 
 		GridLayout winLayout = new GridLayout(2, 4);
 		winLayout.setMargin(true);

@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.tabs;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -17,8 +17,8 @@ import com.vaadin.ui.Slider.ValueOutOfBoundsException;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.config.CoreConfiguration;
-import cz.gattserver.grass3.config.IConfigurationService;
-import cz.gattserver.grass3.facades.IContentTagFacade;
+import cz.gattserver.grass3.config.ConfigurationService;
+import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.window.InfoWindow;
@@ -26,11 +26,11 @@ import cz.gattserver.web.common.window.WarnWindow;
 
 public class ApplicationSettingsTab extends AbstractSettingsTab {
 
-	@Resource(name = "contentTagFacade")
-	private IContentTagFacade contentTagFacade;
+	@Autowired
+	private ContentTagFacade contentTagFacade;
 
-	@Resource(name = "configurationService")
-	IConfigurationService configurationService;
+	@Autowired
+	private ConfigurationService configurationService;
 
 	private static final long serialVersionUID = 2474374292329895766L;
 

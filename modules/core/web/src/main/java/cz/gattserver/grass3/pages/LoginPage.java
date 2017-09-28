@@ -7,7 +7,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
@@ -16,7 +16,7 @@ public class LoginPage extends OneColumnPage {
 	private static final long serialVersionUID = 8276040419934174157L;
 
 	@Resource(name = "homePageFactory")
-	private IPageFactory homePageFactory;
+	private PageFactory homePageFactory;
 
 	public LoginPage(GrassRequest request) {
 		super(request);

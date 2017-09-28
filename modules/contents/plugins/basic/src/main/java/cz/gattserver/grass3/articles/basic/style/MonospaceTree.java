@@ -3,7 +3,7 @@ package cz.gattserver.grass3.articles.basic.style;
 import java.util.List;
 
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 public class MonospaceTree extends StyleTree {
 
@@ -12,13 +12,13 @@ public class MonospaceTree extends StyleTree {
 	}
 
 	@Override
-	public void generateStartTag(IContext ctx) {
+	public void generateStartTag(Context ctx) {
 		ctx.print("<span class=\"articles-basic-monospaced\">");
 		ctx.addCSSResource("articles/basic/style.css");
 	}
 
 	@Override
-	public void generateEndTag(IContext ctx) {
+	public void generateEndTag(Context ctx) {
 		ctx.print("</span>");
 	}
 

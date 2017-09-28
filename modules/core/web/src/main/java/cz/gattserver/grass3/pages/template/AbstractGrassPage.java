@@ -7,15 +7,15 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
-public abstract class AbstractGrassPage extends GrassLayout implements IGrassPage {
+public abstract class AbstractGrassPage extends GrassLayout implements GrassPage {
 
 	private static final long serialVersionUID = 604170960797872356L;
 
 	@Resource(name = "homePageFactory")
-	private IPageFactory homePageFactory;
+	private PageFactory homePageFactory;
 
 	public AbstractGrassPage(GrassRequest request) {
 		super("grass", request);

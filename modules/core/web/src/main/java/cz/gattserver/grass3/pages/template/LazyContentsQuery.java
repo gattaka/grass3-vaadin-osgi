@@ -8,13 +8,13 @@ import org.vaadin.addons.lazyquerycontainer.AbstractBeanQuery;
 import org.vaadin.addons.lazyquerycontainer.QueryDefinition;
 
 import cz.gattserver.grass3.SpringContextHelper;
-import cz.gattserver.grass3.facades.IContentNodeFacade;
+import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 
 public abstract class LazyContentsQuery extends AbstractBeanQuery<ContentNodeOverviewDTO> {
 
 	@Autowired
-	protected IContentNodeFacade contentNodeFacade;
+	protected ContentNodeFacade contentNodeFacade;
 
 	public LazyContentsQuery(QueryDefinition definition, Map<String, Object> queryConfiguration,
 			Object[] sortPropertyIds, boolean[] sortStates) {

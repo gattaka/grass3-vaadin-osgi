@@ -3,7 +3,7 @@ package cz.gattserver.grass3.articles.container.plugin;
 import java.util.List;
 
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 
 public class ContainerTree extends AbstractElementTree {
@@ -14,7 +14,7 @@ public class ContainerTree extends AbstractElementTree {
 		this.elist = elist;
 	}
 
-	public void generateElement(IContext ctx) {
+	public void generateElement(Context ctx) {
 		
 		ctx.addCSSResource("articles/container/style.css");
 		ctx.addJSResource("articles/container/container.js");

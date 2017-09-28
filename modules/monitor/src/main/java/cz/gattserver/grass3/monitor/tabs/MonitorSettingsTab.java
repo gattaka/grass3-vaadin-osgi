@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.monitor.tabs;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -12,7 +12,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
-import cz.gattserver.grass3.monitor.facade.IMonitorFacade;
+import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
@@ -20,8 +20,8 @@ public class MonitorSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 
-	@Resource
-	private IMonitorFacade monitorFacade;
+	@Autowired
+	private MonitorFacade monitorFacade;
 
 	public MonitorSettingsTab(GrassRequest request) {
 		super(request);

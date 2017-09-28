@@ -48,7 +48,7 @@ import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
-import cz.gattserver.grass3.hw.facade.IHWFacade;
+import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.grass3.template.MultiUpload;
 import cz.gattserver.grass3.ui.util.StringToDateConverter;
 import cz.gattserver.grass3.util.MoneyFormatter;
@@ -66,7 +66,7 @@ public class HWItemDetailWindow extends WebWindow {
 	private static final String DEFAULT_NOTE_LABEL_VALUE = "- Zvolte servisní záznam -";
 
 	@Autowired
-	private IHWFacade hwFacade;
+	private HWFacade hwFacade;
 
 	private GridLayout winLayout;
 	private VerticalLayout hwImageLayout;

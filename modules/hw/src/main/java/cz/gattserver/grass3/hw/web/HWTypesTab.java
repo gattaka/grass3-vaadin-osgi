@@ -16,7 +16,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
-import cz.gattserver.grass3.hw.facade.IHWFacade;
+import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.ConfirmWindow;
@@ -27,7 +27,7 @@ public class HWTypesTab extends VerticalLayout {
 	private static final long serialVersionUID = -5013459007975657195L;
 
 	@Autowired
-	private IHWFacade hwFacade;
+	private HWFacade hwFacade;
 
 	final Table table = new Table();
 	private BeanContainer<Long, HWItemTypeDTO> container;

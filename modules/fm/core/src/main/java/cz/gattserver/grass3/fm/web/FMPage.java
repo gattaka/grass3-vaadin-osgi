@@ -39,7 +39,7 @@ import com.vaadin.ui.Window;
 import cz.gattserver.grass3.fm.FMExplorer;
 import cz.gattserver.grass3.fm.FMExplorer.FileProcessState;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.template.Breadcrumb;
 import cz.gattserver.grass3.template.MultiUpload;
@@ -59,7 +59,7 @@ public class FMPage extends OneColumnPage {
 	private static final long serialVersionUID = -950042653154868289L;
 
 	@Resource(name = "fmPageFactory")
-	private IPageFactory fmPageFactory;
+	private PageFactory fmPageFactory;
 
 	/**
 	 * FM Explorer s potřebnými daty a metodami pro procházení souborů

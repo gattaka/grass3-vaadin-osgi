@@ -12,7 +12,7 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import cz.gattserver.grass3.SpringContextHelper;
-import cz.gattserver.grass3.config.IConfigurationService;
+import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
 
 public class FMExplorer {
@@ -158,7 +158,7 @@ public class FMExplorer {
 	 * @throws JAXBException
 	 */
 	private FMConfiguration loadConfiguration() {
-		IConfigurationService configurationService = (IConfigurationService) SpringContextHelper
+		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper
 				.getBean("configurationService");
 		FMConfiguration configuration = new FMConfiguration();
 		configurationService.loadConfiguration(configuration);

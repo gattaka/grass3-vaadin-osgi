@@ -6,26 +6,24 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import cz.gattserver.grass3.facades.IContentTagFacade;
+import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.model.dao.ContentNodeRepository;
 import cz.gattserver.grass3.model.dao.ContentTagRepository;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
-import cz.gattserver.grass3.model.util.Mapper;
+import cz.gattserver.grass3.model.util.CoreMapper;
 
 @Transactional
-@Component("contentTagFacade")
-public class ContentTagFacadeImpl implements IContentTagFacade {
+@Component
+public class ContentTagFacadeImpl implements ContentTagFacade {
 
-	@Resource(name = "mapper")
-	private Mapper mapper;
+	@Autowired
+	private CoreMapper mapper;
 
 	@Autowired
 	private ContentTagRepository contentTagRepository;
@@ -46,8 +44,8 @@ public class ContentTagFacadeImpl implements IContentTagFacade {
 	}
 
 	/**
-	 * Bere řetězec tagů, parsuje je a ukládá do nich (nebo vytvoří nové) referenci na tento obsah - <b>mění
-	 * {@link ContentNode} entitu v DB</b>
+	 * Bere řetězec tagů, parsuje je a ukládá do nich (nebo vytvoří nové)
+	 * referenci na tento obsah - <b>mění {@link ContentNode} entitu v DB</b>
 	 * 
 	 * @param tagsDTOs
 	 *            tagy

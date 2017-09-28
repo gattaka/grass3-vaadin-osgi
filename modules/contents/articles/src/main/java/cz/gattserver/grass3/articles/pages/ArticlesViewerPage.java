@@ -2,6 +2,8 @@ package cz.gattserver.grass3.articles.pages;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
@@ -9,16 +11,13 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.articles.dto.ArticleDTO;
-import cz.gattserver.grass3.articles.facade.IArticleFacade;
-import cz.gattserver.grass3.facades.IContentNodeFacade;
-import cz.gattserver.grass3.facades.INodeFacade;
-import cz.gattserver.grass3.facades.IUserFacade;
+import cz.gattserver.grass3.articles.facade.ArticleFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.pages.template.JScriptItem;
-import cz.gattserver.grass3.security.ICoreACL;
+import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.ui.util.GrassRequest;
@@ -33,32 +32,23 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 	private static final long serialVersionUID = 5078280973817331002L;
 
-	@Resource(name = "coreACL")
-	private ICoreACL coreACL;
+	@Autowired
+	private CoreACL coreACL;
 
-	@Resource(name = "articleFacade")
-	private IArticleFacade articleFacade;
+	@Autowired
+	private ArticleFacade articleFacade;
 
-	@Resource(name = "userFacade")
-	private IUserFacade userFacade;
-
-	@Resource(name = "nodeFacade")
-	private INodeFacade nodeFacade;
-
-	@Resource(name = "contentNodeFacade")
-	private IContentNodeFacade contentNodeFacade;
-
-	@Resource(name = "articlesViewerPageFactory")
-	private IPageFactory articlesViewerPageFactory;
+	@Autowired
+	private PageFactory articlesViewerPageFactory;
 
 	@Resource(name = "nodePageFactory")
-	private IPageFactory nodePageFactory;
+	private PageFactory nodePageFactory;
 
 	@Resource(name = "homePageFactory")
-	private IPageFactory homePageFactory;
+	private PageFactory homePageFactory;
 
 	@Resource(name = "articlesEditorPageFactory")
-	private IPageFactory articlesEditorPageFactory;
+	private PageFactory articlesEditorPageFactory;
 
 	private ArticleDTO article;
 
@@ -130,7 +120,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 	}
 
 	@Override
-	protected IPageFactory getContentViewerPageFactory() {
+	protected PageFactory getContentViewerPageFactory() {
 		return articlesViewerPageFactory;
 	}
 

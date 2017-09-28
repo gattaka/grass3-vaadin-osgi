@@ -2,13 +2,13 @@ package cz.gattserver.grass3.articles.latex.plugin;
 
 import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
-import cz.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
+import cz.gattserver.grass3.articles.parser.interfaces.PluginFactory;
 
 /**
  * 
  * @author gatt
  */
-public class LatexFactory implements IPluginFactory {
+public class LatexFactory implements PluginFactory {
 
 	private final String tag = "TEX";
 

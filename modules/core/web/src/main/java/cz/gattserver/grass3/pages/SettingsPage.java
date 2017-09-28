@@ -12,11 +12,11 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
-import cz.gattserver.grass3.tabs.factories.template.ISettingsTabFactory;
+import cz.gattserver.grass3.tabs.factories.template.SettingsTabFactory;
 import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.grass3.ui.util.ISettingsTabFactoriesRegister;
+import cz.gattserver.grass3.ui.util.SettingsTabFactoriesRegister;
 import cz.gattserver.web.common.URLPathAnalyzer;
 
 public class SettingsPage extends TwoColumnPage {
@@ -24,15 +24,15 @@ public class SettingsPage extends TwoColumnPage {
 	private static final long serialVersionUID = 2474374292329895766L;
 
 	@Autowired
-	private List<ISettingsTabFactory> settingsTabFactories;
+	private List<SettingsTabFactory> settingsTabFactories;
 
 	@Resource(name = "settingsPageFactory")
-	private IPageFactory settingsPageFactory;
+	private PageFactory settingsPageFactory;
 
-	@Resource(name = "settingsTabFactoriesRegister")
-	private ISettingsTabFactoriesRegister settingsTabFactoriesRegister;
+	@Autowired
+	private SettingsTabFactoriesRegister settingsTabFactoriesRegister;
 
-	private ISettingsTabFactory settingsTabFactory = null;
+	private SettingsTabFactory settingsTabFactory = null;
 
 	public SettingsPage(GrassRequest request) {
 		super(request);
@@ -42,8 +42,7 @@ public class SettingsPage extends TwoColumnPage {
 	protected void init() {
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		String settingsTabName = analyzer.getCurrentPathToken();
-		ISettingsTabFactory settingsTabFactory = settingsTabFactoriesRegister
-				.getFactory(settingsTabName);
+		SettingsTabFactory settingsTabFactory = settingsTabFactoriesRegister.getFactory(settingsTabName);
 
 		if (settingsTabFactory != null) {
 			if (settingsTabFactory.isAuthorized() == false) {
@@ -53,7 +52,7 @@ public class SettingsPage extends TwoColumnPage {
 				this.settingsTabFactory = settingsTabFactory;
 			}
 		}
-		
+
 		super.init();
 	}
 
@@ -62,10 +61,9 @@ public class SettingsPage extends TwoColumnPage {
 		VerticalLayout leftColumnLayout = new VerticalLayout();
 		leftColumnLayout.setMargin(true);
 
-		for (ISettingsTabFactory settingsTabFactory : settingsTabFactories) {
+		for (SettingsTabFactory settingsTabFactory : settingsTabFactories) {
 			Link link = new Link(settingsTabFactory.getSettingsCaption(),
-					getPageResource(settingsPageFactory,
-							settingsTabFactory.getSettingsURL()));
+					getPageResource(settingsPageFactory, settingsTabFactory.getSettingsURL()));
 			leftColumnLayout.addComponent(link);
 		}
 

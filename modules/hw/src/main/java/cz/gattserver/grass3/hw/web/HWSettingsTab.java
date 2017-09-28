@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.hw.web;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
@@ -10,7 +10,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
-import cz.gattserver.grass3.config.IConfigurationService;
+import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
@@ -19,8 +19,8 @@ public class HWSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = -3310643769376755875L;
 
-	@Resource(name = "configurationService")
-	IConfigurationService configurationService;
+	@Autowired
+	private ConfigurationService configurationService;
 
 	public HWSettingsTab(GrassRequest request) {
 		super(request);
@@ -40,8 +40,7 @@ public class HWSettingsTab extends AbstractSettingsTab {
 		layout.addComponent(settingsLayout);
 
 		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new Label("<h2>Nastavení</h2>",
-				ContentMode.HTML));
+		settingsLayout.addComponent(new Label("<h2>Nastavení</h2>", ContentMode.HTML));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
@@ -52,8 +51,7 @@ public class HWSettingsTab extends AbstractSettingsTab {
 		/**
 		 * Kořenový adresář
 		 */
-		final TextField outputPathField = new TextField(
-				"Nastavení kořenového adresáře");
+		final TextField outputPathField = new TextField("Nastavení kořenového adresáře");
 		outputPathField.setValue(configuration.getRootDir());
 		settingsFieldsLayout.addComponent(outputPathField);
 

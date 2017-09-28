@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.articles.latex.plugin;
 
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 public class LatexTree extends AbstractElementTree {
 
@@ -14,7 +14,7 @@ public class LatexTree extends AbstractElementTree {
 	}
 
 	@Override
-	public void generateElement(IContext ctx) {
+	public void generateElement(Context ctx) {
 		ctx.print("<img style=\"vertical-align: middle;\" src=\"" + path + "\" alt=\"latex rovnice\" title=\"" + source + "\">");
 	}
 

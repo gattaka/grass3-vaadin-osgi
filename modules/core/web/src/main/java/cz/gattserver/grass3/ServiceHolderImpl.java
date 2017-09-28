@@ -8,8 +8,8 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.service.IContentService;
-import cz.gattserver.grass3.service.ISectionService;
+import cz.gattserver.grass3.service.ContentService;
+import cz.gattserver.grass3.service.SectionService;
 
 /**
  * {@link ServiceHolderImpl} udržuje přehled všech přihlášených modulů. Zároveň
@@ -19,8 +19,8 @@ import cz.gattserver.grass3.service.ISectionService;
  * @author gatt
  * 
  */
-@Component("serviceHolder")
-public class ServiceHolderImpl implements IServiceHolder {
+@Component
+public class ServiceHolderImpl implements ServiceHolder {
 
 	/**
 	 * Ošetření null kolekcí
@@ -29,10 +29,10 @@ public class ServiceHolderImpl implements IServiceHolder {
 	private void init() {
 
 		if (contentServices == null)
-			contentServices = new ArrayList<IContentService>();
+			contentServices = new ArrayList<ContentService>();
 
 		if (sectionServices == null) {
-			sectionServices = new ArrayList<ISectionService>();
+			sectionServices = new ArrayList<SectionService>();
 		}
 	}
 
@@ -40,16 +40,16 @@ public class ServiceHolderImpl implements IServiceHolder {
 	 * Obsahy
 	 */
 	@Autowired(required = false)
-	private List<IContentService> contentServices;
+	private List<ContentService> contentServices;
 
-	public List<IContentService> getContentServices() {
+	public List<ContentService> getContentServices() {
 		return contentServices;
 	}
 
-	public IContentService getContentServiceByName(String contentReaderID) {
+	public ContentService getContentServiceByName(String contentReaderID) {
 		if (contentServices == null)
 			return null;
-		for (IContentService contentService : contentServices) {
+		for (ContentService contentService : contentServices) {
 			if (contentService.getContentID().equals(contentReaderID))
 				return contentService;
 		}
@@ -60,9 +60,9 @@ public class ServiceHolderImpl implements IServiceHolder {
 	 * Sekce
 	 */
 	@Autowired(required = false)
-	private List<ISectionService> sectionServices;
+	private List<SectionService> sectionServices;
 
-	public List<ISectionService> getSectionServices() {
+	public List<SectionService> getSectionServices() {
 		return sectionServices;
 	}
 

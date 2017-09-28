@@ -6,15 +6,15 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.security.Role;
-import cz.gattserver.grass3.service.ISectionService;
+import cz.gattserver.grass3.service.SectionService;
 
 @Component("fmSection")
-public class FMSection implements ISectionService {
+public class FMSection implements SectionService {
 
 	@Resource(name = "fmPageFactory")
-	private IPageFactory fmPageFactory;
+	private PageFactory fmPageFactory;
 
 	public boolean isVisibleForRoles(Set<Role> roles) {
 		if (roles == null)
@@ -22,7 +22,7 @@ public class FMSection implements ISectionService {
 		return roles.contains(Role.ADMIN) || roles.contains(Role.FRIEND);
 	}
 
-	public IPageFactory getSectionPageFactory() {
+	public PageFactory getSectionPageFactory() {
 		return fmPageFactory;
 	}
 

@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.articles.favlink.web;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
@@ -11,7 +11,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
-import cz.gattserver.grass3.config.IConfigurationService;
+import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
@@ -19,8 +19,8 @@ public class FavlinkSettingsTab extends AbstractSettingsTab {
 
 	private static final long serialVersionUID = -3310643769376755875L;
 
-	@Resource(name = "configurationService")
-	IConfigurationService configurationService;
+	@Autowired
+	private ConfigurationService configurationService;
 
 	public FavlinkSettingsTab(GrassRequest request) {
 		super(request);

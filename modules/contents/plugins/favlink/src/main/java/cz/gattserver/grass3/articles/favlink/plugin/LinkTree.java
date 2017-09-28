@@ -13,8 +13,8 @@ import cz.gattserver.grass3.articles.favlink.Downloader;
 import cz.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
 import cz.gattserver.grass3.articles.parser.exceptions.ParserException;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
-import cz.gattserver.grass3.config.IConfigurationService;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
+import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.web.common.ui.ImageIcons;
 
 public class LinkTree extends AbstractElementTree {
@@ -47,7 +47,7 @@ public class LinkTree extends AbstractElementTree {
 	 */
 	private String getCachePath() {
 
-		IConfigurationService configurationService = (IConfigurationService) SpringContextHelper
+		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper
 				.getBean("configurationService");
 
 		FavlinkConfiguration configuration = new FavlinkConfiguration();
@@ -101,7 +101,7 @@ public class LinkTree extends AbstractElementTree {
 	}
 
 	@Override
-	public void generateElement(IContext ctx) {
+	public void generateElement(Context ctx) {
 		ctx.print("<a href=\"" + link + "\" alt=\"" + link + "\" >");
 		ctx.print("<img style=\"margin: 4px 5px -4px 2px;\" height=\"16\" width=\"16\" src=\"" + imgURL
 				+ "\" title=\"Favicon of " + link + "\" />");

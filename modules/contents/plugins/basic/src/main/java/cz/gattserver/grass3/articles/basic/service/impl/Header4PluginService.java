@@ -4,15 +4,15 @@ import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.articles.basic.headers.Header4Factory;
 import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
-import cz.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
-import cz.gattserver.grass3.articles.service.IPluginService;
+import cz.gattserver.grass3.articles.parser.interfaces.PluginFactory;
+import cz.gattserver.grass3.articles.service.PluginService;
 
 @Component
-public class Header4PluginService implements IPluginService {
+public class Header4PluginService implements PluginService {
 
 	private Header4Factory factory = new Header4Factory();
 
-	public IPluginFactory getPluginFactory() {
+	public PluginFactory getPluginFactory() {
 		return factory;
 	}
 

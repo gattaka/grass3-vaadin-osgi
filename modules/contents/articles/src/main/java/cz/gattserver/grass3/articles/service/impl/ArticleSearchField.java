@@ -1,8 +1,8 @@
 package cz.gattserver.grass3.articles.service.impl;
 
-import cz.gattserver.grass3.search.service.ISearchField;
+import cz.gattserver.grass3.search.service.SearchField;
 
-public enum ArticleSearchField implements ISearchField {
+public enum ArticleSearchField implements SearchField {
 
 	NAME("Název"), CONTENT("Obsah");
 

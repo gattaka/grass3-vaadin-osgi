@@ -10,31 +10,31 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.search.service.ISearchConnector;
+import cz.gattserver.grass3.search.service.SearchConnector;
 
 @Component("connectorAggregator")
-public class ConnectorAggregatorImpl implements IConnectorAggregator {
+public class ConnectorAggregatorImpl implements ConnectorAggregator {
 
 	@Autowired(required = false)
-	private List<ISearchConnector> searchConnectors;
+	private List<SearchConnector> searchConnectors;
 
-	private Map<String, ISearchConnector> searchConnectorsById = new HashMap<String, ISearchConnector>();
+	private Map<String, SearchConnector> searchConnectorsById = new HashMap<String, SearchConnector>();
 
 	@PostConstruct
 	private void init() {
 		if (searchConnectors == null)
-			searchConnectors = new ArrayList<ISearchConnector>();
+			searchConnectors = new ArrayList<SearchConnector>();
 
-		for (ISearchConnector connector : searchConnectors) {
+		for (SearchConnector connector : searchConnectors) {
 			searchConnectorsById.put(connector.getModuleId(), connector);
 		}
 	}
 
-	public List<ISearchConnector> getSearchConnectors() {
+	public List<SearchConnector> getSearchConnectors() {
 		return searchConnectors;
 	}
 
-	public Map<String, ISearchConnector> getSearchConnectorsById() {
+	public Map<String, SearchConnector> getSearchConnectorsById() {
 		return searchConnectorsById;
 	}
 

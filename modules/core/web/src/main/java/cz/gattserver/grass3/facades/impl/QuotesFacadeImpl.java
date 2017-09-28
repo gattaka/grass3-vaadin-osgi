@@ -4,24 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import cz.gattserver.grass3.facades.IQuotesFacade;
+import cz.gattserver.grass3.facades.QuotesFacade;
 import cz.gattserver.grass3.model.dao.QuoteRepository;
 import cz.gattserver.grass3.model.domain.Quote;
 import cz.gattserver.grass3.model.dto.QuoteDTO;
-import cz.gattserver.grass3.model.util.Mapper;
+import cz.gattserver.grass3.model.util.CoreMapper;
 
 @Transactional
-@Component("quotesFacade")
-public class QuotesFacadeImpl implements IQuotesFacade {
+@Component
+public class QuotesFacadeImpl implements QuotesFacade {
 
-	@Resource(name = "mapper")
-	private Mapper mapper;
+	@Autowired
+	private CoreMapper mapper;
 
 	@Autowired
 	private QuoteRepository quoteRepository;

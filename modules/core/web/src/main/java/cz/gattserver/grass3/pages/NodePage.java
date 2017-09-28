@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
 
 import com.vaadin.shared.ui.label.ContentMode;
@@ -20,17 +21,16 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.facades.IContentNodeFacade;
-import cz.gattserver.grass3.facades.INodeFacade;
+import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.ContentsLazyTable;
 import cz.gattserver.grass3.pages.template.NewContentNodeTable;
 import cz.gattserver.grass3.pages.template.NodeContentsQuery;
 import cz.gattserver.grass3.pages.template.NodesTable;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
-import cz.gattserver.grass3.security.ICoreACL;
+import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.template.Breadcrumb;
 import cz.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.util.GrassRequest;
@@ -40,17 +40,14 @@ public class NodePage extends OneColumnPage {
 
 	private static final long serialVersionUID = -499585200973560016L;
 
-	@Resource(name = "coreACL")
-	private ICoreACL coreACL;
+	@Autowired
+	private CoreACL coreACL;
 
-	@Resource(name = "nodeFacade")
-	private INodeFacade nodeFacade;
-
-	@Resource(name = "contentNodeFacade")
-	private IContentNodeFacade contentNodeFacade;
+	@Autowired
+	private NodeFacade nodeFacade;
 
 	@Resource(name = "nodePageFactory")
-	private IPageFactory nodePageFactory;
+	private PageFactory nodePageFactory;
 
 	// Přehled podkategorií
 	private NodesTable subNodesTable;

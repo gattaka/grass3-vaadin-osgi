@@ -13,20 +13,20 @@ import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import cz.gattserver.grass3.facades.IUserFacade;
+import cz.gattserver.grass3.facades.UserFacade;
 import cz.gattserver.grass3.model.dao.ContentNodeRepository;
 import cz.gattserver.grass3.model.dao.UserRepository;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
-import cz.gattserver.grass3.model.util.Mapper;
+import cz.gattserver.grass3.model.util.CoreMapper;
 import cz.gattserver.grass3.security.Role;
 
 @Transactional
-@Component("userFacade")
-public class UserFacadeImpl implements IUserFacade {
+@Component
+public class UserFacadeImpl implements UserFacade {
 
-	@Resource(name = "mapper")
-	private Mapper mapper;
+	@Autowired
+	private CoreMapper mapper;
 
 	@Resource(name = "grassPasswordEncoder")
 	private PasswordEncoder encoder;

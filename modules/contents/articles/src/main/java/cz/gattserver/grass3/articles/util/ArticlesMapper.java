@@ -5,23 +5,22 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.articles.domain.Article;
 import cz.gattserver.grass3.articles.domain.ArticleJSResource;
 import cz.gattserver.grass3.articles.dto.ArticleDTO;
-import cz.gattserver.grass3.model.util.Mapper;
+import cz.gattserver.grass3.model.util.CoreMapper;
 
-@Component("articlesMapper")
+@Component
 public class ArticlesMapper {
 
 	/**
 	 * Core mapper
 	 */
-	@Resource(name = "mapper")
-	private Mapper mapper;
+	@Autowired
+	private CoreMapper mapper;
 
 	/**
 	 * Převede {@link Article} na {@link ArticleDTO}

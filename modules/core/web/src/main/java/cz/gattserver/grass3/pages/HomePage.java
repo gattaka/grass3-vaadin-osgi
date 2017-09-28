@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import org.perf4j.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
 
 import com.vaadin.shared.ui.label.ContentMode;
@@ -21,11 +22,10 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.facades.IContentNodeFacade;
-import cz.gattserver.grass3.facades.IContentTagFacade;
+import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.BasePage;
 import cz.gattserver.grass3.pages.template.ContentsLazyTable;
 import cz.gattserver.grass3.pages.template.FavouriteContentsQuery;
@@ -40,17 +40,11 @@ public class HomePage extends BasePage {
 
 	private static Logger logger = LoggerFactory.getLogger(StopWatch.DEFAULT_LOGGER_NAME);
 
-	/**
-	 * Fasády
-	 */
-	@Resource(name = "contentNodeFacade")
-	private IContentNodeFacade contentNodeFacade;
-
-	@Resource(name = "contentTagFacade")
-	private IContentTagFacade contentTagFacade;
+	@Autowired
+	private ContentTagFacade contentTagFacade;
 
 	@Resource(name = "tagPageFactory")
-	private IPageFactory tagPageFactory;
+	private PageFactory tagPageFactory;
 
 	/**
 	 * Kolik je nejmenší font pro tagcloud ?

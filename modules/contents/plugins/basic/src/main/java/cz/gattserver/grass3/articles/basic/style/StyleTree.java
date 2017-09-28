@@ -3,7 +3,7 @@ package cz.gattserver.grass3.articles.basic.style;
 import java.util.List;
 
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 
 public abstract class StyleTree extends AbstractElementTree {
@@ -15,17 +15,17 @@ public abstract class StyleTree extends AbstractElementTree {
     }
 
     @Override
-    public void generateElement(IContext ctx) {
+    public void generateElement(Context ctx) {
         generateStartTag(ctx);
         generateBlock(ctx);
         generateEndTag(ctx);
     }
 
-    protected abstract void generateStartTag(IContext ctx);
+    protected abstract void generateStartTag(Context ctx);
 
-    protected abstract void generateEndTag(IContext ctx);
+    protected abstract void generateEndTag(Context ctx);
 
-    protected void generateBlock(IContext ctx) {
+    protected void generateBlock(Context ctx) {
         if (elements != null) {
             for (AbstractElementTree et : elements) {
                 et.generate(ctx);

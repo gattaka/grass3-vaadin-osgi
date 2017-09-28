@@ -47,18 +47,18 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.events.IEventBus;
-import cz.gattserver.grass3.facades.IContentTagFacade;
-import cz.gattserver.grass3.facades.INodeFacade;
+import cz.gattserver.grass3.events.EventBus;
+import cz.gattserver.grass3.facades.ContentTagFacade;
+import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.pages.factories.template.IPageFactory;
+import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import cz.gattserver.grass3.pg.events.PGProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.PGProcessResultEvent;
 import cz.gattserver.grass3.pg.events.PGProcessStartEvent;
-import cz.gattserver.grass3.pg.facade.IPhotogalleryFacade;
+import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
 import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.template.DefaultContentOperations;
@@ -78,23 +78,23 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 	private static final Logger logger = LoggerFactory.getLogger(PhotogalleryEditorPage.class);
 
-	@Resource(name = "nodeFacade")
-	private INodeFacade nodeFacade;
-
-	@Resource(name = "photogalleryFacade")
-	private IPhotogalleryFacade photogalleryFacade;
-
-	@Resource(name = "contentTagFacade")
-	private IContentTagFacade contentTagFacade;
-
-	@Resource(name = "nodePageFactory")
-	private IPageFactory nodePageFactory;
-
-	@Resource(name = "photogalleryViewerPageFactory")
-	private IPageFactory photogalleryViewerPageFactory;
+	@Autowired
+	private NodeFacade nodeFacade;
 
 	@Autowired
-	private IEventBus eventBus;
+	private PhotogalleryFacade photogalleryFacade;
+
+	@Autowired
+	private ContentTagFacade contentTagFacade;
+
+	@Resource(name = "nodePageFactory")
+	private PageFactory nodePageFactory;
+
+	@Resource(name = "photogalleryViewerPageFactory")
+	private PageFactory photogalleryViewerPageFactory;
+
+	@Autowired
+	private EventBus eventBus;
 
 	private UI ui = UI.getCurrent();
 	private ProgressWindow progressIndicatorWindow;
@@ -193,18 +193,18 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 				: photogalleryFacade.createGalleryDir();
 		galleryDir = dir;
 
-		VerticalLayout editorTextLayout = new VerticalLayout();
-		editorTextLayout.setSpacing(true);
-		editorTextLayout.setMargin(true);
+		VerticalLayout editorLayout = new VerticalLayout();
+		editorLayout.setSpacing(true);
+		editorLayout.setMargin(true);
 
 		VerticalLayout nameLayout = new VerticalLayout();
-		editorTextLayout.addComponent(nameLayout);
+		editorLayout.addComponent(nameLayout);
 		nameLayout.addComponent(new Label("<h2>Název galerie</h2>", ContentMode.HTML));
 		nameLayout.addComponent(photogalleryNameField);
 		photogalleryNameField.setWidth("100%");
 
 		VerticalLayout keywordsLayout = new VerticalLayout();
-		editorTextLayout.addComponent(keywordsLayout);
+		editorLayout.addComponent(keywordsLayout);
 
 		// label
 		keywordsLayout.addComponent(new Label("<h2>Klíčová slova</h2>", ContentMode.HTML));
@@ -233,7 +233,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		VerticalLayout contentLayout = new VerticalLayout();
 		contentLayout.setSpacing(true);
-		editorTextLayout.addComponent(contentLayout);
+		editorLayout.addComponent(contentLayout);
 		contentLayout.addComponent(new Label("<h2>Položky</h2>", ContentMode.HTML));
 
 		final GridLayout gridLayout = new GridLayout(3, 2);
@@ -384,7 +384,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		VerticalLayout contentOptionsLayout = new VerticalLayout();
 		contentOptionsLayout.setSpacing(true);
-		editorTextLayout.addComponent(contentOptionsLayout);
+		editorLayout.addComponent(contentOptionsLayout);
 		contentOptionsLayout.addComponent(new Label("<h2>Nastavení</h2>", ContentMode.HTML));
 
 		publicatedCheckBox.setCaption("Publikovat galerii");
@@ -398,7 +398,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);
 		buttonLayout.setMargin(new MarginInfo(true, false, false, false));
-		editorTextLayout.addComponent(buttonLayout);
+		editorLayout.addComponent(buttonLayout);
 
 		// Uložit
 		Button saveButton = new Button("Uložit");
@@ -470,7 +470,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		});
 		buttonLayout.addComponent(cancelButton);
 
-		return editorTextLayout;
+		return editorLayout;
 	}
 
 	private boolean isFormValid() {

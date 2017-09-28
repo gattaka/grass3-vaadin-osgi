@@ -10,7 +10,7 @@ import java.util.Set;
  * @author gatt
  * 
  */
-public class ContentNodeDTO implements Serializable, IAuthorizable {
+public class ContentNodeDTO implements Serializable, Authorizable {
 
 	private static final long serialVersionUID = 723375154665160018L;
 

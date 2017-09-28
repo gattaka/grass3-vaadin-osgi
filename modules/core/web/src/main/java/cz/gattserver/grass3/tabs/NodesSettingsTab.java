@@ -2,7 +2,7 @@ package cz.gattserver.grass3.tabs;
 
 import java.util.List;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
@@ -33,7 +33,7 @@ import com.vaadin.ui.Tree.TreeTargetDetails;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-import cz.gattserver.grass3.facades.INodeFacade;
+import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
@@ -56,8 +56,8 @@ public class NodesSettingsTab extends AbstractSettingsTab {
 	private String sectionRootCaption;
 	private Panel panel;
 
-	@Resource(name = "nodeFacade")
-	private INodeFacade nodeFacade;
+	@Autowired
+	private NodeFacade nodeFacade;
 
 	public NodesSettingsTab(GrassRequest request) {
 		super(request);

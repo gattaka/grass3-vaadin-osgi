@@ -17,8 +17,8 @@ import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
-import cz.gattserver.grass3.facades.IContentNodeFacade;
-import cz.gattserver.grass3.facades.INodeFacade;
+import cz.gattserver.grass3.facades.ContentNodeFacade;
+import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
@@ -29,10 +29,10 @@ public abstract class ContentMoveWindow extends WebWindow {
 	private static final long serialVersionUID = -2550619983411515006L;
 
 	@Autowired
-	private INodeFacade nodeFacade;
+	private NodeFacade nodeFacade;
 
 	@Autowired
-	private IContentNodeFacade contentNodeFacade;
+	private ContentNodeFacade contentNodeFacade;
 
 	private Button moveBtn;
 	private Tree tree;

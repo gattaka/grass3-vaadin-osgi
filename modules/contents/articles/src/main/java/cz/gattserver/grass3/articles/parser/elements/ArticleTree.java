@@ -7,7 +7,7 @@ package cz.gattserver.grass3.articles.parser.elements;
 import java.util.List;
 
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 
 /**
@@ -22,7 +22,7 @@ public class ArticleTree extends AbstractElementTree {
         this.elements = elements;
     }
 
-    public void generateElement(IContext ctx) {
+    public void generateElement(Context ctx) {
         if (elements != null) {
             for (AbstractElementTree et : elements) {
                 et.generate(ctx);

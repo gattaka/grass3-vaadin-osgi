@@ -9,7 +9,7 @@ import java.util.Date;
  * @author gatt
  * 
  */
-public class ContentNodeOverviewDTO implements Serializable, IAuthorizable {
+public class ContentNodeOverviewDTO implements Serializable, Authorizable {
 
 	private static final long serialVersionUID = 723375154665160018L;
 

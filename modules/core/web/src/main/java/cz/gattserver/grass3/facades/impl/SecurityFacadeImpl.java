@@ -2,8 +2,6 @@ package cz.gattserver.grass3.facades.impl;
 
 import java.util.Calendar;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,18 +9,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import cz.gattserver.grass3.facades.ISecurityFacade;
-import cz.gattserver.grass3.facades.IUserFacade;
+import cz.gattserver.grass3.facades.SecurityFacade;
+import cz.gattserver.grass3.facades.UserFacade;
 import cz.gattserver.grass3.model.dao.UserRepository;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 
 @Transactional
-@Component("securityFacade")
-public class SecurityFacadeImpl implements ISecurityFacade {
+@Component
+public class SecurityFacadeImpl implements SecurityFacade {
 
-	@Resource(name = "userFacade")
-	private IUserFacade userFacade;
+	@Autowired
+	private UserFacade userFacade;
 
 	@Autowired
 	private UserRepository userRepository;

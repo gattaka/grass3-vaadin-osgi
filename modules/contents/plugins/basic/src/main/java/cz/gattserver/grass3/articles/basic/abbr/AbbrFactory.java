@@ -2,13 +2,13 @@ package cz.gattserver.grass3.articles.basic.abbr;
 
 import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
-import cz.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
+import cz.gattserver.grass3.articles.parser.interfaces.PluginFactory;
 
 /**
  * 
  * @author gatt
  */
-public class AbbrFactory implements IPluginFactory {
+public class AbbrFactory implements PluginFactory {
 
 	private final String tag = "ABBR";
 	private final String titleTag = "T";

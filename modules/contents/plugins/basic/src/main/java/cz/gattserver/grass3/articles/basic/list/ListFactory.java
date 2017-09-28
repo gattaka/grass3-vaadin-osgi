@@ -2,14 +2,14 @@ package cz.gattserver.grass3.articles.basic.list;
 
 import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
-import cz.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
+import cz.gattserver.grass3.articles.parser.interfaces.PluginFactory;
 
 
 /**
  * 
  * @author gatt
  */
-public class ListFactory implements IPluginFactory {
+public class ListFactory implements PluginFactory {
 
 	private final String unorderedTag = "UL";
 	private final String unorderedImage = "articles/basic/img/ul_16.png";

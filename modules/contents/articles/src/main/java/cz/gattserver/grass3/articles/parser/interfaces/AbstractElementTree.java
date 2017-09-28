@@ -24,7 +24,7 @@ public abstract class AbstractElementTree {
 	 * @param ctx
 	 *            kontext, do kterého se má výstup zapisovat
 	 */
-	public final void generate(IContext ctx) {
+	public final void generate(Context ctx) {
 		// Pak zavolá k provedení samotný element
 		generateElement(ctx);
 	}
@@ -36,5 +36,5 @@ public abstract class AbstractElementTree {
 	 * 
 	 * @param ctx
 	 */
-	protected abstract void generateElement(IContext ctx);
+	protected abstract void generateElement(Context ctx);
 }

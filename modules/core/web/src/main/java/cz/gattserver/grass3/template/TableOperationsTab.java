@@ -22,7 +22,7 @@ import cz.gattserver.grass3.model.dto.Identifiable;
  *            třída zobrazované entity
  * 
  */
-public abstract class TableOperationsTab<T extends Identifiable> extends VerticalLayout implements ISelectable {
+public abstract class TableOperationsTab<T extends Identifiable> extends VerticalLayout implements Selectable {
 
 	private static final long serialVersionUID = 6844434642906509277L;
 

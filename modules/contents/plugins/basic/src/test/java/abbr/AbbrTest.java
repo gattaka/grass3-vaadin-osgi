@@ -10,7 +10,7 @@ import cz.gattserver.grass3.articles.lexer.Lexer;
 import cz.gattserver.grass3.articles.parser.PluginBag;
 import cz.gattserver.grass3.articles.parser.PluginRegister;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.IContext;
+import cz.gattserver.grass3.articles.parser.interfaces.Context;
 
 
 public class AbbrTest {
@@ -29,7 +29,7 @@ public class AbbrTest {
 		AbstractElementTree tree = abbrElement
 				.parse(getBagWithText("[ABBR]HTML[T]Hypertext Markup Language[/T][/ABBR]"));
 
-		IContext ctx = new ContextImpl();
+		Context ctx = new ContextImpl();
 		tree.generate(ctx);
 		assertTrue(ctx.getOutput().endsWith(
 				"<abbr title=\"Hypertext Markup Language\">HTML</abbr>"));

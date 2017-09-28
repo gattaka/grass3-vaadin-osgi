@@ -2,13 +2,13 @@ package cz.gattserver.grass3.articles.basic.table;
 
 import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
-import cz.gattserver.grass3.articles.parser.interfaces.IPluginFactory;
+import cz.gattserver.grass3.articles.parser.interfaces.PluginFactory;
 
 /**
  * 
  * @author gatt
  */
-public class TableFactory implements IPluginFactory {
+public class TableFactory implements PluginFactory {
 
 	private final String withHeadTag = "HTABLE";
 	private final String withHeadImage = "articles/basic/img/htbl_16.png";

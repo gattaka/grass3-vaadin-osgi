@@ -14,7 +14,7 @@ import com.vaadin.ui.UI;
 
 import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
-import cz.gattserver.grass3.medic.facade.IMedicFacade;
+import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -22,7 +22,7 @@ public abstract class MedicalInstitutionCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
-	private IMedicFacade medicalFacade;
+	private MedicFacade medicalFacade;
 
 	public MedicalInstitutionCreateWindow() {
 		this(null);
@@ -31,7 +31,7 @@ public abstract class MedicalInstitutionCreateWindow extends WebWindow {
 	public MedicalInstitutionCreateWindow(MedicalInstitutionDTO modifiedMedicalInstitutionDTO) {
 		super(modifiedMedicalInstitutionDTO == null ? "Založení nové instituce" : "Úprava instituce");
 
-		medicalFacade = SpringContextHelper.getBean(IMedicFacade.class);
+		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
 
 		GridLayout winLayout = new GridLayout(2, 6);
 		winLayout.setMargin(true);

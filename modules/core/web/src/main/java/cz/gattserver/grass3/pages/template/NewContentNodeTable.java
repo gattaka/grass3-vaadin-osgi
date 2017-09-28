@@ -9,6 +9,7 @@ import com.vaadin.ui.Table;
 
 import cz.gattserver.grass3.ServiceHolder;
 import cz.gattserver.grass3.SpringContextHelper;
+import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.service.ContentService;
 import cz.gattserver.grass3.template.DefaultContentOperations;
@@ -24,7 +25,8 @@ public class NewContentNodeTable extends Table {
 
 	public NewContentNodeTable(AbstractGrassPage page, final NodeDTO node) {
 		// inject na Table nefunguje kvůli něčemu v předkovi
-		final ServiceHolder serviceHolder = (ServiceHolder) SpringContextHelper.getBean("serviceHolder");
+		final ServiceHolder serviceHolder = (ServiceHolder) SpringContextHelper.getContext()
+				.getBean(ServiceHolder.class);
 
 		setHeight("200px");
 

@@ -23,17 +23,20 @@ public class FMExplorer {
 	// *File - objekt java.io.File obsahující cestu k souboru/adresáři
 
 	/**
-	 * Absolutní cesta od systémového kořene ke kořeni FM, jako {@link File} objekt
+	 * Absolutní cesta od systémového kořene ke kořeni FM, jako {@link File}
+	 * objekt
 	 */
 	private File rootFile;
 
 	/**
-	 * Absolutní cesta od systémového kořene k souboru FM, jako {@link File} objekt
+	 * Absolutní cesta od systémového kořene k souboru FM, jako {@link File}
+	 * objekt
 	 */
 	private File requestedFile;
 
 	/**
-	 * Absolutní cesta od systémového kořene k tmp adresáři, jako {@link File} objekt
+	 * Absolutní cesta od systémového kořene k tmp adresáři, jako {@link File}
+	 * objekt
 	 */
 	private File tmpDirFile;
 
@@ -60,15 +63,18 @@ public class FMExplorer {
 	}
 
 	/**
-	 * {@link FMExplorer} začne v adresáři, který je podle konfigurace jako jeho root (omezení).
+	 * {@link FMExplorer} začne v adresáři, který je podle konfigurace jako jeho
+	 * root (omezení).
 	 * 
 	 * @param relativePath
-	 *            cesta, ve kterém má {@link FMExplorer} začít - pokud narazí na zabezpečovací chybu (podtečení root
-	 *            adreáře) nebo jiný problém, vyhodí pokusí se použít kořenový adresář a důvod jeho použití uloží do
-	 *            {@code state} proměnné
+	 *            cesta, ve kterém má {@link FMExplorer} začít - pokud narazí na
+	 *            zabezpečovací chybu (podtečení root adreáře) nebo jiný
+	 *            problém, vyhodí pokusí se použít kořenový adresář a důvod jeho
+	 *            použití uloží do {@code state} proměnné
 	 * @throws IOException
-	 *             tuto chybu vyhazuje pouze pokud se nezdařilo pracovat ani s kořenovým adresářem, jinak je přednostně
-	 *             tato chyba odchycena a je použit právě kořenový adresář namísto předaného souboru
+	 *             tuto chybu vyhazuje pouze pokud se nezdařilo pracovat ani s
+	 *             kořenovým adresářem, jinak je přednostně tato chyba odchycena
+	 *             a je použit právě kořenový adresář namísto předaného souboru
 	 */
 	public FMExplorer(String relativePath) throws IOException {
 
@@ -83,8 +89,9 @@ public class FMExplorer {
 		requestedFile = new File(rootFile, relativePath);
 
 		/**
-		 * Otestuj, zda File existuje, pokud ne, přesměruj se na kořenový adresář a zapiš, že bylo nutné použít kořenový
-		 * adresář kvůli neexistenci předávaného souboru
+		 * Otestuj, zda File existuje, pokud ne, přesměruj se na kořenový
+		 * adresář a zapiš, že bylo nutné použít kořenový adresář kvůli
+		 * neexistenci předávaného souboru
 		 */
 		if (requestedFile.exists() == false) {
 			requestedFile = rootFile;
@@ -92,8 +99,9 @@ public class FMExplorer {
 		}
 
 		/**
-		 * Převede soubor na canonický tvar, ve kterém jsou eliminovány veškeré části cesty, kvůli kterým by se nedaly
-		 * soubory rychle porovnávat ("..",".","~" atd.)
+		 * Převede soubor na canonický tvar, ve kterém jsou eliminovány veškeré
+		 * části cesty, kvůli kterým by se nedaly soubory rychle porovnávat
+		 * ("..",".","~" atd.)
 		 */
 		try {
 			requestedFile = requestedFile.getCanonicalFile();
@@ -104,8 +112,9 @@ public class FMExplorer {
 		}
 
 		/**
-		 * Zkontroluj validnost souboru, pokud není, přesměruj se na kořenový adresář a zapiš, že bylo nutné použít
-		 * kořenový adresář kvůli nevalidnosti předávaného souboru
+		 * Zkontroluj validnost souboru, pokud není, přesměruj se na kořenový
+		 * adresář a zapiš, že bylo nutné použít kořenový adresář kvůli
+		 * nevalidnosti předávaného souboru
 		 */
 		if (isValid(requestedFile) == false) {
 			requestedFile = rootFile;
@@ -158,8 +167,8 @@ public class FMExplorer {
 	 * @throws JAXBException
 	 */
 	private FMConfiguration loadConfiguration() {
-		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper
-				.getBean("configurationService");
+		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper.getContext()
+				.getBean(ConfigurationService.class);
 		FMConfiguration configuration = new FMConfiguration();
 		configurationService.loadConfiguration(configuration);
 		return configuration;
@@ -207,14 +216,15 @@ public class FMExplorer {
 	}
 
 	/**
-	 * Spočítá do hloubky velikost adresáře - pokud je mu předán soubor, který není adresář vrátí jeho velikost.
-	 * MAX_VALUE Long je (2^63)-1, což je víc než 10^18, to je hodnota akorát velká pro pokrytí záznam Exbibajt (2^60)
+	 * Spočítá do hloubky velikost adresáře - pokud je mu předán soubor, který
+	 * není adresář vrátí jeho velikost. MAX_VALUE Long je (2^63)-1, což je víc
+	 * než 10^18, to je hodnota akorát velká pro pokrytí záznam Exbibajt (2^60)
 	 * 
 	 * @param file
 	 *            adresář k spočítání
 	 * @param skippedFiles
-	 *            list do kterého budou nastaveny ty soubory, u kterých se nezdařilo čtení velikosti a proto nemohly být
-	 *            započítány
+	 *            list do kterého budou nastaveny ty soubory, u kterých se
+	 *            nezdařilo čtení velikosti a proto nemohly být započítány
 	 * @return velikost adresáře včetně podadresářů
 	 */
 	public long getDeepDirSize(File file, List<File> skippedFiles) {
@@ -340,8 +350,8 @@ public class FMExplorer {
 	}
 
 	/**
-	 * Vezme cestu k souboru a odstřihne od ní cestu k rootDir-u, předpokládá se, že file je již v canonickém tvaru a
-	 * existuje
+	 * Vezme cestu k souboru a odstřihne od ní cestu k rootDir-u, předpokládá
+	 * se, že file je již v canonickém tvaru a existuje
 	 * 
 	 * @param file
 	 *            soubor na zpracování
@@ -374,7 +384,8 @@ public class FMExplorer {
 	}
 
 	/**
-	 * Vrátí aktuální adresář - jde o canonickou verzi názvu souboru, který byl předán konstruktoru
+	 * Vrátí aktuální adresář - jde o canonickou verzi názvu souboru, který byl
+	 * předán konstruktoru
 	 */
 	public File getRequestedFile() {
 		return requestedFile;

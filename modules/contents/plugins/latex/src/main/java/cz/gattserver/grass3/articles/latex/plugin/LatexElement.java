@@ -39,8 +39,7 @@ public class LatexElement extends AbstractParserPlugin {
 	}
 
 	private String bytesToHex(byte[] bt) {
-		char hexDigit[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'a', 'b', 'c', 'd', 'e', 'f' };
+		char hexDigit[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 		StringBuffer buf = new StringBuffer();
 		for (int j = 0; j < bt.length; j++) {
 			buf.append(hexDigit[(bt[j] >> 4) & 0x0f]);
@@ -49,8 +48,7 @@ public class LatexElement extends AbstractParserPlugin {
 		return buf.toString();
 	}
 
-	private byte[] getSHA1FromString(String input)
-			throws NoSuchAlgorithmException {
+	private byte[] getSHA1FromString(String input) throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("SHA1");
 		md.update(input.getBytes());
 		return md.digest();
@@ -60,8 +58,8 @@ public class LatexElement extends AbstractParserPlugin {
 	 * Zjistí dle aktuální konfigurace výstupní adresář
 	 */
 	private String getOutputPath() {
-		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper
-				.getBean("configurationService");
+		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper.getContext()
+				.getBean(ConfigurationService.class);
 
 		LatexConfiguration configuration = new LatexConfiguration();
 		configurationService.loadConfiguration(configuration);
@@ -91,8 +89,8 @@ public class LatexElement extends AbstractParserPlugin {
 		 * EOF nebo můj koncový tag.
 		 */
 		while (true) {
-			if ((pluginBag.getToken() == Token.END_TAG && pluginBag.getEndTag()
-					.equals(tag)) || pluginBag.getToken() == Token.EOF)
+			if ((pluginBag.getToken() == Token.END_TAG && pluginBag.getEndTag().equals(tag))
+					|| pluginBag.getToken() == Token.EOF)
 				break;
 			formulaBuilder.append(pluginBag.getCodeTextTree().getText());
 		}
@@ -122,8 +120,7 @@ public class LatexElement extends AbstractParserPlugin {
 			}
 
 		String filePath = outputPath + "/" + formulaHash + ".png";
-		String path = LatexConfiguration.IMAGE_PATH_ALIAS + "/" + formulaHash
-				+ ".png";
+		String path = LatexConfiguration.IMAGE_PATH_ALIAS + "/" + formulaHash + ".png";
 
 		/**
 		 * Pokud existuje soubor, který má stejný hash, pak se nezdržuj renderem
@@ -133,10 +130,9 @@ public class LatexElement extends AbstractParserPlugin {
 		if (!file.exists()) {
 			try {
 				TeXFormula teXFormula = new TeXFormula(formula);
-				TeXIcon teXIcon = teXFormula.createTeXIcon(
-						TeXConstants.STYLE_DISPLAY, 20);
-				BufferedImage image = new BufferedImage(teXIcon.getIconWidth(),
-						teXIcon.getIconHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+				TeXIcon teXIcon = teXFormula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 20);
+				BufferedImage image = new BufferedImage(teXIcon.getIconWidth(), teXIcon.getIconHeight(),
+						BufferedImage.TYPE_4BYTE_ABGR);
 				JLabel label = new JLabel();
 				label.setForeground(Color.darkGray);
 				teXIcon.paintIcon(label, image.getGraphics(), 0, 0);

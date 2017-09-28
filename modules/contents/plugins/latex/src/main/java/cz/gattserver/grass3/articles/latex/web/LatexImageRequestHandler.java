@@ -23,8 +23,8 @@ public class LatexImageRequestHandler extends AbstractGrassRequestHandler {
 	 * Zjistí dle aktuální konfigurace výstupní adresář
 	 */
 	private String getOutputPath() {
-		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper
-				.getBean("configurationService");
+		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper.getContext()
+				.getBean(ConfigurationService.class);
 
 		LatexConfiguration configuration = new LatexConfiguration();
 		configurationService.loadConfiguration(configuration);

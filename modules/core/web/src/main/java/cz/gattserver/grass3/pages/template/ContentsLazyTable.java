@@ -46,7 +46,7 @@ public abstract class ContentsLazyTable extends Table {
 	public ContentsLazyTable() {
 		nodePageFactory = (PageFactory) SpringContextHelper.getBean("nodePageFactory");
 		noServicePageFactory = (PageFactory) SpringContextHelper.getBean("noServicePageFactory");
-		serviceHolder = (ServiceHolder) SpringContextHelper.getBean("serviceHolder");
+		serviceHolder = (ServiceHolder) SpringContextHelper.getContext().getBean(ServiceHolder.class);
 	}
 
 	protected ContentNodeOverviewDTO getValueFromId(Object itemId) {
@@ -71,8 +71,7 @@ public abstract class ContentsLazyTable extends Table {
 				ContentNodeOverviewDTO contentNode = getValueFromId(itemId);
 
 				// jaká prohlížecí služba odpovídá tomuto obsahu
-				ContentService contentService = serviceHolder
-						.getContentServiceByName(contentNode.getContentReaderID());
+				ContentService contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
 
 				Embedded icon = new Embedded();
 				if (contentService == null) {
@@ -94,8 +93,7 @@ public abstract class ContentsLazyTable extends Table {
 				ContentNodeOverviewDTO contentNode = getValueFromId(itemId);
 
 				// jaká prohlížecí služba odpovídá tomuto obsahu
-				ContentService contentService = serviceHolder
-						.getContentServiceByName(contentNode.getContentReaderID());
+				ContentService contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
 
 				PageFactory pageFactory = null;
 				if (contentService == null)

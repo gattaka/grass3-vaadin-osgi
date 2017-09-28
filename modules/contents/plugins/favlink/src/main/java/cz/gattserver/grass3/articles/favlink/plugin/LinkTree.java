@@ -47,8 +47,8 @@ public class LinkTree extends AbstractElementTree {
 	 */
 	private String getCachePath() {
 
-		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper
-				.getBean("configurationService");
+		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper.getContext()
+				.getBean(ConfigurationService.class);
 
 		FavlinkConfiguration configuration = new FavlinkConfiguration();
 		configurationService.loadConfiguration(configuration);

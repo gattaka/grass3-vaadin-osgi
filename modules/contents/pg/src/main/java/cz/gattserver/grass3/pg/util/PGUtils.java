@@ -41,51 +41,10 @@ public class PGUtils {
 				orientation = directories.iterator().next().getInt(ExifIFD0Directory.TAG_ORIENTATION);
 			}
 		} catch (Exception e) {
+			System.out.println(e);
 		}
 
 		return orientation;
-	}
-
-	public static AffineTransform getExifTransformation(int orientation, int width, int height) {
-
-		AffineTransform t = new AffineTransform();
-
-		switch (orientation) {
-		case 1:
-			break;
-		case 2: // Flip X
-			t.scale(-1.0, 1.0);
-			t.translate(-width, 0);
-			break;
-		case 3: // PI rotation
-			t.translate(width, height);
-			t.rotate(Math.PI);
-			break;
-		case 4: // Flip Y
-			t.scale(1.0, -1.0);
-			t.translate(0, -height);
-			break;
-		case 5: // - PI/2 and Flip X
-			t.rotate(-Math.PI / 2);
-			t.scale(-1.0, 1.0);
-			break;
-		case 6: // -PI/2 and -width
-			t.translate(height, 0);
-			t.rotate(Math.PI / 2);
-			break;
-		case 7: // PI/2 and Flip
-			t.scale(-1.0, 1.0);
-			t.translate(-height, 0);
-			t.translate(0, width);
-			t.rotate(3 * Math.PI / 2);
-			break;
-		case 8: // PI / 2
-			t.translate(0, width);
-			t.rotate(3 * Math.PI / 2);
-			break;
-		}
-
-		return t;
 	}
 
 	public static BufferedImage resizeBufferedImage(BufferedImage image, int maxWidth, int maxHeight) {
@@ -101,9 +60,56 @@ public class PGUtils {
 
 		int orientation = readImageOrientation(inputFile);
 		if (orientation != 1) {
-			BufferedImage temp = new BufferedImage(image.getHeight(), image.getWidth(), BufferedImage.TYPE_INT_RGB);
+
+			AffineTransform transform = new AffineTransform();
+			int transformedWidth = image.getWidth();
+			int transformedHeight = image.getHeight();
+
+			switch (orientation) {
+			case 1:
+				break;
+			case 2: // Flip X
+				transform.scale(-1.0, 1.0);
+				transform.translate(-image.getWidth(), 0);
+				break;
+			case 3: // PI rotation
+				transform.translate(image.getWidth(), image.getHeight());
+				transform.rotate(Math.PI);
+				break;
+			case 4: // Flip Y
+				transform.scale(1.0, -1.0);
+				transform.translate(0, -image.getHeight());
+				break;
+			case 5: // - PI/2 and Flip X
+				transform.rotate(-Math.PI / 2);
+				transform.scale(-1.0, 1.0);
+				transformedWidth = image.getHeight();
+				transformedHeight = image.getWidth();
+				break;
+			case 6: // -PI/2 and -width
+				transform.translate(image.getHeight(), 0);
+				transform.rotate(Math.PI / 2);
+				transformedWidth = image.getHeight();
+				transformedHeight = image.getWidth();
+				break;
+			case 7: // PI/2 and Flip
+				transform.scale(-1.0, 1.0);
+				transform.translate(-image.getHeight(), 0);
+				transform.translate(0, image.getWidth());
+				transform.rotate(3 * Math.PI / 2);
+				transformedWidth = image.getHeight();
+				transformedHeight = image.getWidth();
+				break;
+			case 8: // PI / 2
+				transform.translate(0, image.getWidth());
+				transform.rotate(3 * Math.PI / 2);
+				transformedWidth = image.getHeight();
+				transformedHeight = image.getWidth();
+				break;
+			}
+
+			BufferedImage temp = new BufferedImage(transformedWidth, transformedHeight, BufferedImage.TYPE_INT_RGB);
 			Graphics2D g2 = temp.createGraphics();
-			AffineTransform transform = getExifTransformation(orientation, image.getWidth(), image.getHeight());
 			g2.transform(transform);
 			g2.drawImage(image, 0, 0, Color.WHITE, null);
 			g2.dispose();
@@ -122,7 +128,8 @@ public class PGUtils {
 
 	public static boolean isVideo(String file) {
 		String fileToExt = file.toLowerCase();
-		return fileToExt.endsWith(".mp4") || fileToExt.endsWith(".ogg") || fileToExt.endsWith(".webm") || fileToExt.endsWith(".mov");
+		return fileToExt.endsWith(".mp4") || fileToExt.endsWith(".ogg") || fileToExt.endsWith(".webm")
+				|| fileToExt.endsWith(".mov");
 	}
 
 }

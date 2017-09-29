@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -20,16 +19,15 @@ import net.engio.mbassy.listener.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.vaadin.tokenfield.TokenField;
 
+import com.fo0.advancedtokenfield.main.AdvancedTokenField;
+import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -102,7 +100,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	private NodeDTO node;
 	private PhotogalleryDTO photogallery;
 
-	private TokenField photogalleryKeywords;
+	private AdvancedTokenField photogalleryKeywords;
 	private TextField photogalleryNameField;
 	private DateField photogalleryDateField;
 	private CheckBox publicatedCheckBox;
@@ -130,7 +128,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		newFiles = new ArrayList<>();
 
-		photogalleryKeywords = new TokenField();
+		photogalleryKeywords = new AdvancedTokenField();
 		photogalleryNameField = new TextField();
 		photogalleryDateField = new DateField();
 		publicatedCheckBox = new CheckBox();
@@ -163,7 +161,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			photogalleryNameField.setValue(photogallery.getContentNode().getName());
 
 			for (ContentTagDTO tagDTO : photogallery.getContentNode().getContentTags()) {
-				photogalleryKeywords.addToken(tagDTO.getName());
+				photogalleryKeywords.addToken(new Token(tagDTO.getName()));
 			}
 
 			publicatedCheckBox.setValue(photogallery.getContentNode().isPublicated());
@@ -219,16 +217,22 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		keywordsMenuAndTextLayout.addComponent(photogalleryKeywords);
 
 		List<ContentTagDTO> contentTags = contentTagFacade.getContentTagsForOverview();
-		BeanContainer<String, ContentTagDTO> tokens = new BeanContainer<String, ContentTagDTO>(ContentTagDTO.class);
-		tokens.setBeanIdProperty("name");
-		tokens.addAll(contentTags);
+		// BeanContainer<String, ContentTagDTO> tokens = new
+		// BeanContainer<String, ContentTagDTO>(ContentTagDTO.class);
+		// tokens.setBeanIdProperty("name");
+		// tokens.addAll(contentTags);
 
-		photogalleryKeywords.setStyleName(TokenField.STYLE_TOKENFIELD);
-		photogalleryKeywords.setContainerDataSource(tokens);
-		photogalleryKeywords.setFilteringMode(FilteringMode.CONTAINS); // suggest
-		photogalleryKeywords.setTokenCaptionPropertyId("name");
-		photogalleryKeywords.setInputPrompt("klíčové slovo");
-		photogalleryKeywords.setRememberNewTokens(false);
+		// photogalleryKeywords.setStyleName(TokenField.STYLE_TOKENFIELD);
+		// photogalleryKeywords.setContainerDataSource(tokens);
+		contentTags.forEach(t -> {
+			Token to = new Token(t.getName());
+			photogalleryKeywords.addTokenToInputField(to);
+		});
+		// photogalleryKeywords.setFilteringMode(FilteringMode.CONTAINS); //
+		// suggest
+		// photogalleryKeywords.setTokenCaptionPropertyId("name");
+		// photogalleryKeywords.setInputPrompt("klíčové slovo");
+		// photogalleryKeywords.setRememberNewTokens(false);
 		photogalleryKeywords.isEnabled();
 
 		VerticalLayout contentLayout = new VerticalLayout();
@@ -485,21 +489,22 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void saveOrUpdatePhotogallery() {
 
 		System.out.println("saveOrUpdatePhotogallery thread: " + Thread.currentThread().getId());
 
 		eventBus.subscribe(PhotogalleryEditorPage.this);
 		ui.setPollInterval(200);
+		List<String> tokens = new ArrayList<>();
+		photogalleryKeywords.getTokens().forEach(t -> tokens.add(t.getValue()));
 		if (editMode) {
-			photogalleryFacade.modifyPhotogallery(String.valueOf(photogalleryNameField.getValue()),
-					(Collection<String>) photogalleryKeywords.getValue(), publicatedCheckBox.getValue(), photogallery,
-					getRequest().getContextRoot(), photogalleryDateField.getValue());
+			photogalleryFacade.modifyPhotogallery(String.valueOf(photogalleryNameField.getValue()), tokens,
+					publicatedCheckBox.getValue(), photogallery, getRequest().getContextRoot(),
+					photogalleryDateField.getValue());
 		} else {
-			photogalleryFacade.savePhotogallery(String.valueOf(photogalleryNameField.getValue()),
-					(Collection<String>) photogalleryKeywords.getValue(), galleryDir, publicatedCheckBox.getValue(),
-					node, getGrassUI().getUser(), getRequest().getContextRoot(), photogalleryDateField.getValue());
+			photogalleryFacade.savePhotogallery(String.valueOf(photogalleryNameField.getValue()), tokens, galleryDir,
+					publicatedCheckBox.getValue(), node, getGrassUI().getUser(), getRequest().getContextRoot(),
+					photogalleryDateField.getValue());
 		}
 	}
 

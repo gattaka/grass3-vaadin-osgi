@@ -5,10 +5,10 @@ import java.io.FileNotFoundException;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
 import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.ui.util.impl.AbstractGrassRequestHandler;
+import cz.gattserver.web.common.SpringContextHelper;
 
 @Component
 public class FavlinkImageRequestHandler extends AbstractGrassRequestHandler {

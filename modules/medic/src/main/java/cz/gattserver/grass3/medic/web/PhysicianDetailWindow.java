@@ -1,9 +1,9 @@
 package cz.gattserver.grass3.medic.web;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.medic.dto.PhysicianDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.template.AbstractDetailSubWindow;
+import cz.gattserver.web.common.SpringContextHelper;
 
 public class PhysicianDetailWindow extends AbstractDetailSubWindow {
 

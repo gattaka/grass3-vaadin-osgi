@@ -6,16 +6,21 @@
 
 	<parent>
 		<groupId>cz.gattserver.grass3</groupId>
-		<artifactId>grass3-parent</artifactId>
+		<artifactId>modules</artifactId>
 		<version>1.0.0</version>
 	</parent>
+
+	<properties>
+		<querydsl.version>4.1.4</querydsl.version>
+		<querydsl-apt.version>1.1.3</querydsl-apt.version>
+	</properties>
 
 	<dependencies>
 
 		<!-- Grass3 jádro -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>core-web</artifactId>
+			<artifactId>core</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 
@@ -30,35 +35,19 @@
 
 	<build>
 		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<!-- inherits config from parent: can override if required -->
+			</plugin>
+
 			<plugin>
 				<groupId>com.mysema.maven</groupId>
 				<artifactId>apt-maven-plugin</artifactId>
-				<version>1.1.3</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>process</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>target/generated-sources/java</outputDirectory>
-							<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
+
 		</plugins>
-		<!-- <pluginManagement> -->
-		<!-- <plugins> -->
-		<!-- <plugin> -->
-		<!-- <groupId>com.mysema.maven</groupId> -->
-		<!-- <artifactId>apt-maven-plugin</artifactId> -->
-		<!-- <version>1.1.3</version> -->
-		<!-- </plugin> -->
-		<!-- </plugins> -->
-		<!-- </pluginManagement> -->
 	</build>
-
-
-
 
 </project>

@@ -8,13 +8,13 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.articles.favlink.Downloader;
 import cz.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
 import cz.gattserver.grass3.articles.parser.exceptions.ParserException;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
 import cz.gattserver.grass3.articles.parser.interfaces.Context;
 import cz.gattserver.grass3.config.ConfigurationService;
+import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcons;
 
 public class LinkTree extends AbstractElementTree {

@@ -7,10 +7,10 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.BaseTheme;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.template.AbstractDetailSubWindow;
+import cz.gattserver.web.common.SpringContextHelper;
 
 public class SchuduledVisitDetailWindow extends AbstractDetailSubWindow {
 
@@ -36,8 +36,8 @@ public class SchuduledVisitDetailWindow extends AbstractDetailSubWindow {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				UI.getCurrent().addWindow(
-						new MedicalInstitutionDetailWindow(scheduledVisitDTO.getInstitution().getId()));
+				UI.getCurrent()
+						.addWindow(new MedicalInstitutionDetailWindow(scheduledVisitDTO.getInstitution().getId()));
 			}
 		});
 		instButton.setStyleName(BaseTheme.BUTTON_LINK);

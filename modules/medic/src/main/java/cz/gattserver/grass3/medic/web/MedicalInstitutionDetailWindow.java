@@ -5,10 +5,10 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.template.AbstractDetailSubWindow;
+import cz.gattserver.web.common.SpringContextHelper;
 
 public class MedicalInstitutionDetailWindow extends AbstractDetailSubWindow {
 

@@ -3,7 +3,7 @@ package cz.gattserver.grass3.medic.dto;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import cz.gattserver.grass3.model.dto.Identifiable;
+import cz.gattserver.common.Identifiable;
 
 public class MedicalInstitutionDTO implements Identifiable {
 

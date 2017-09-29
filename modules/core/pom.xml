@@ -1,16 +1,132 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>cz.gattserver.grass3</groupId>
 	<artifactId>core</artifactId>
-	<version>1.0.0</version>
 	<name>GRASS3 Core</name>
 
-	<packaging>pom</packaging>
+	<parent>
+		<groupId>cz.gattserver.grass3</groupId>
+		<artifactId>modules</artifactId>
+		<version>1.0.0</version>
+	</parent>
 
-	<modules>
-		<module>common</module>
-		<module>web</module>
-	</modules>
+	<properties>
+		<vaadin.version>7.7.8</vaadin.version>
+		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
+		<vaadin.widgetset.mode>local</vaadin.widgetset.mode>
+		<widgetset.target>${basedir}/../../../web/src/main/webapp/VAADIN/widgetsets</widgetset.target>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>vaadin-addons</id>
+			<url>http://maven.vaadin.com/vaadin-addons</url>
+		</repository>
+		<repository>
+			<id>vaadin-snapshots</id>
+			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>vaadin-snapshots</id>
+			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<dependencies>
+
+		<!-- Web app common -->
+		<dependency>
+			<groupId>cz.gattserver</groupId>
+			<artifactId>web-common</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<!-- Jackson JSON Mapper -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.10</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<!-- inherits config from parent: can override if required -->
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>gwt</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<phase>initialize</phase>
+								<configuration>
+									<target>
+										<delete dir="${widgetset.target}" />
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>com.vaadin</groupId>
+						<artifactId>vaadin-maven-plugin</artifactId>
+						<version>${vaadin.plugin.version}</version>
+						<configuration>
+							<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+							<!-- <runTarget>mobilemail</runTarget> -->
+							<!-- We are doing "inplace" but into subdir VAADIN/widgetsets. This 
+								way compatible with Vaadin eclipse plugin. -->
+							<webappDirectory>${widgetset.target}</webappDirectory>
+							<hostedWebapp>${widgetset.target}
+							</hostedWebapp>
+							<noServer>true</noServer>
+							<draftCompile>false</draftCompile>
+							<compileReport>false</compileReport>
+							<style>OBF</style>
+							<strict>true</strict>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>resources</goal>
+									<goal>update-widgetset</goal>
+									<goal>compile</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>

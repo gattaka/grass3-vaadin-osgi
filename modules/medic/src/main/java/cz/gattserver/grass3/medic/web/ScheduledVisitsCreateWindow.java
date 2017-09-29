@@ -18,12 +18,12 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitState;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
+import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -146,8 +146,8 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 		winLayout.addComponent(separator, 0, 4);
 
 		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button(getSubmitBtnCaptionByOperation(operation, visitDTO),
-				new Button.ClickListener() {
+		winLayout.addComponent(
+				saveBtn = new Button(getSubmitBtnCaptionByOperation(operation, visitDTO), new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;
 

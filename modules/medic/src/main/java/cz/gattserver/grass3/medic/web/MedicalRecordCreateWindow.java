@@ -21,13 +21,13 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.UI;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import cz.gattserver.grass3.medic.dto.MedicamentDTO;
 import cz.gattserver.grass3.medic.dto.PhysicianDTO;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
+import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -41,18 +41,16 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 		this(triggerComponent, null, null);
 	}
 
-	public MedicalRecordCreateWindow(final Component triggerComponent,
-			ScheduledVisitDTO scheduledVisitDTO) {
+	public MedicalRecordCreateWindow(final Component triggerComponent, ScheduledVisitDTO scheduledVisitDTO) {
 		this(triggerComponent, scheduledVisitDTO, null);
 	}
 
-	public MedicalRecordCreateWindow(final Component triggerComponent,
-			MedicalRecordDTO recordDTO) {
+	public MedicalRecordCreateWindow(final Component triggerComponent, MedicalRecordDTO recordDTO) {
 		this(triggerComponent, null, recordDTO);
 	}
 
-	private MedicalRecordCreateWindow(final Component triggerComponent,
-			ScheduledVisitDTO scheduledVisitDTO, MedicalRecordDTO recordDTO) {
+	private MedicalRecordCreateWindow(final Component triggerComponent, ScheduledVisitDTO scheduledVisitDTO,
+			MedicalRecordDTO recordDTO) {
 		super(recordDTO == null ? "Založení nového záznamu" : "Úprava záznamu");
 
 		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
@@ -65,8 +63,7 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 
 		winLayout.setWidth("400px");
 
-		final MedicalRecordDTO medicalRecordDTO = recordDTO == null ? new MedicalRecordDTO()
-				: recordDTO;
+		final MedicalRecordDTO medicalRecordDTO = recordDTO == null ? new MedicalRecordDTO() : recordDTO;
 
 		if (scheduledVisitDTO != null) {
 			medicalRecordDTO.setDate(scheduledVisitDTO.getDate());
@@ -78,10 +75,8 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 		fieldGroup.setItemDataSource(medicalRecordDTO);
 
 		Set<PhysicianDTO> physicians = medicalFacade.getAllPhysicians();
-		BeanItemContainer<PhysicianDTO> physiciansContainer = new BeanItemContainer<>(
-				PhysicianDTO.class, physicians);
-		final ComboBox physicianComboBox = new ComboBox("Ošetřující lékař",
-				physiciansContainer);
+		BeanItemContainer<PhysicianDTO> physiciansContainer = new BeanItemContainer<>(PhysicianDTO.class, physicians);
+		final ComboBox physicianComboBox = new ComboBox("Ošetřující lékař", physiciansContainer);
 		winLayout.addComponent(physicianComboBox, 0, 0, 1, 0);
 		physicianComboBox.setWidth("100%");
 		physicianComboBox.setNullSelectionAllowed(false);
@@ -97,12 +92,10 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 		dateField.setImmediate(true);
 		fieldGroup.bind(dateField, "date");
 
-		List<MedicalInstitutionDTO> institutions = medicalFacade
-				.getAllMedicalInstitutions();
+		List<MedicalInstitutionDTO> institutions = medicalFacade.getAllMedicalInstitutions();
 		BeanItemContainer<MedicalInstitutionDTO> institutionsContainer = new BeanItemContainer<>(
 				MedicalInstitutionDTO.class, institutions);
-		final ComboBox institutionComboBox = new ComboBox("Instituce",
-				institutionsContainer);
+		final ComboBox institutionComboBox = new ComboBox("Instituce", institutionsContainer);
 		winLayout.addComponent(institutionComboBox, 0, 2, 1, 2);
 		institutionComboBox.setWidth("100%");
 		institutionComboBox.setNullSelectionAllowed(false);
@@ -117,8 +110,7 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 
 		BeanItemContainer<MedicamentDTO> medicamentsContainer = new BeanItemContainer<MedicamentDTO>(
 				MedicamentDTO.class, medicalFacade.getAllMedicaments());
-		final TwinColSelect typeSelect = new TwinColSelect("Medikamenty",
-				medicamentsContainer);
+		final TwinColSelect typeSelect = new TwinColSelect("Medikamenty", medicamentsContainer);
 		typeSelect.setWidth("100%");
 		typeSelect.setRows(7);
 		typeSelect.setNullSelectionAllowed(true);
@@ -133,9 +125,8 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 		winLayout.addComponent(separator, 0, 5);
 
 		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button(
-				recordDTO == null ? "Založit" : "Upravit",
-				new Button.ClickListener() {
+		winLayout.addComponent(
+				saveBtn = new Button(recordDTO == null ? "Založit" : "Upravit", new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;
 
@@ -143,19 +134,14 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 					public void buttonClick(ClickEvent event) {
 						try {
 							fieldGroup.commit();
-							if (medicalFacade
-									.saveMedicalRecord(medicalRecordDTO) == false) {
-								UI.getCurrent()
-										.addWindow(
-												new ErrorWindow(
-														"Nezdařilo se uložit nový záznam"));
+							if (medicalFacade.saveMedicalRecord(medicalRecordDTO) == false) {
+								UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se uložit nový záznam"));
 							} else {
 								onSuccess();
 							}
 							close();
 						} catch (CommitException e) {
-							Notification.show("   Chybná vstupní data\n\n   "
-									+ e.getCause().getMessage(),
+							Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
 									Notification.Type.TRAY_NOTIFICATION);
 						}
 					}

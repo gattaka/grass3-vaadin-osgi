@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import cz.gattserver.grass3.model.dto.Identifiable;
+import cz.gattserver.common.Identifiable;
 
 public class ScheduledVisitDTO implements Identifiable{
 

@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.vaadin.tokenfield.TokenField;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -44,6 +43,9 @@ import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.BaseTheme;
 
+import cz.gattserver.common.util.CZSuffixCreator;
+import cz.gattserver.common.util.HumanBytesSizeCreator;
+import cz.gattserver.common.util.MoneyFormatter;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
@@ -51,10 +53,7 @@ import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.grass3.template.MultiUpload;
 import cz.gattserver.grass3.ui.util.StringToDateConverter;
-import cz.gattserver.grass3.util.MoneyFormatter;
 import cz.gattserver.web.common.ui.ImageIcons;
-import cz.gattserver.web.common.util.CZSuffixCreator;
-import cz.gattserver.web.common.util.HumanBytesSizeCreator;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.ImageDetailWindow;
@@ -227,7 +226,8 @@ public class HWItemDetailWindow extends WebWindow {
 		 * Typy
 		 */
 		HorizontalLayout typesLayout = new HorizontalLayout();
-		typesLayout.addStyleName(TokenField.STYLE_TOKENFIELD);
+		// TODO
+		// typesLayout.addStyleName(TokenField.STYLE_TOKENFIELD);
 		typesLayout.setSpacing(true);
 		for (HWItemTypeDTO type : hwItem.getTypes()) {
 			Button btn = new Button(type.getName());

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.util.MedicUtil;
-import cz.gattserver.grass3.util.ServerMail;
+import cz.gattserver.web.common.mail.ServerMail;
 
 @Component
 public class EmailNotifierImpl extends TimerTask implements EmailNotifier {

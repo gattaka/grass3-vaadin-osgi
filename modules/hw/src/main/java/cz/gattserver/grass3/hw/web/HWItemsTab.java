@@ -1,9 +1,10 @@
 package cz.gattserver.grass3.hw.web;
 
 import java.math.BigDecimal;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,12 +14,11 @@ import org.tepi.filtertable.FilterTable;
 import org.tepi.filtertable.datefilter.DateInterval;
 import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
-import org.vaadin.tokenfield.TokenField;
 
+import com.fo0.advancedtokenfield.main.AdvancedTokenField;
+import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.data.Container.Filter;
-import com.vaadin.data.util.BeanContainer;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Field;
@@ -52,7 +52,7 @@ public class HWItemsTab extends VerticalLayout {
 
 	private final FilterTable table = new FilterTable();
 	private LazyQueryContainer container;
-	private TokenField hwTypesFilter;
+	private AdvancedTokenField hwTypesFilter;
 
 	private HWFilterDTO filterDTO;
 
@@ -64,9 +64,12 @@ public class HWItemsTab extends VerticalLayout {
 	}
 
 	private void populateContainer() {
-		@SuppressWarnings("unchecked")
-		Collection<String> collection = (Collection<String>) hwTypesFilter.getValue();
-		filterDTO.setTypes(collection);
+		List<Token> collection = hwTypesFilter.getTokens();
+		List<String> types = new ArrayList<>();
+		collection.forEach(t -> {
+			types.add(t.getValue());
+		});
+		filterDTO.setTypes(types);
 		container.refresh();
 	}
 
@@ -180,7 +183,7 @@ public class HWItemsTab extends VerticalLayout {
 		 */
 		// menu tagů + textfield tagů
 		// http://marc.virtuallypreinstalled.com/TokenField/
-		hwTypesFilter = new TokenField();
+		hwTypesFilter = new AdvancedTokenField();
 		HorizontalLayout hwTypesFilterLayout = new HorizontalLayout();
 		hwTypesFilterLayout.setSpacing(true);
 		addComponent(hwTypesFilterLayout);
@@ -188,19 +191,27 @@ public class HWItemsTab extends VerticalLayout {
 		hwTypesFilterLayout.addComponent(hwTypesFilter);
 
 		Set<HWItemTypeDTO> hwTypes = hwFacade.getAllHWTypes();
-		BeanContainer<String, HWItemTypeDTO> tokens = new BeanContainer<String, HWItemTypeDTO>(HWItemTypeDTO.class);
-		tokens.setBeanIdProperty("name");
-		tokens.addAll(hwTypes);
+		// BeanContainer<String, HWItemTypeDTO> tokens = new
+		// BeanContainer<String, HWItemTypeDTO>(HWItemTypeDTO.class);
+		// tokens.setBeanIdProperty("name");
+		// tokens.addAll(hwTypes);
 
-		hwTypesFilter.setStyleName(TokenField.STYLE_TOKENFIELD);
-		hwTypesFilter.setContainerDataSource(tokens);
-		hwTypesFilter.setNewTokensAllowed(false);
-		hwTypesFilter.setFilteringMode(FilteringMode.CONTAINS); // suggest
-		hwTypesFilter.setTokenCaptionPropertyId("name");
-		hwTypesFilter.setInputPrompt("Filtrovat dle typu hw");
+		// hwTypesFilter.setStyleName(TokenField.STYLE_TOKENFIELD);
+		// hwTypesFilter.setContainerDataSource(tokens);
+		hwTypes.forEach(t -> {
+			Token to = new Token(t.getName());
+			hwTypesFilter.addTokenToInputField(to);
+		});
+		hwTypesFilter.setAllowNewItems(false);
+		// hwTypesFilter.setFilteringMode(FilteringMode.CONTAINS); // suggest
+		// hwTypesFilter.setTokenCaptionPropertyId("name");
+		// hwTypesFilter.setInputPrompt("Filtrovat dle typu hw");
 		hwTypesFilter.isEnabled();
-
-		hwTypesFilter.addValueChangeListener(e -> populateContainer());
+		hwTypesFilter.addTokenAddListener(t -> {
+			populateContainer();
+			return t;
+		});
+		// hwTypesFilter.addValueChangeListener(e -> populateContainer());
 
 		/**
 		 * Tabulka HW

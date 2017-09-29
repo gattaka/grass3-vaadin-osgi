@@ -12,9 +12,9 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.medic.dto.MedicamentDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
+import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -28,10 +28,8 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 		this(null);
 	}
 
-	public MedicamentCreateWindow(MedicamentDTO modifiedMedicamentDTO
-			) {
-		super(modifiedMedicamentDTO == null ? "Založení nového medikamentu"
-				: "Úprava medikamentu");
+	public MedicamentCreateWindow(MedicamentDTO modifiedMedicamentDTO) {
+		super(modifiedMedicamentDTO == null ? "Založení nového medikamentu" : "Úprava medikamentu");
 
 		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
 
@@ -41,10 +39,8 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 
 		winLayout.setWidth("300px");
 
-		final MedicamentDTO medicamentDTO = modifiedMedicamentDTO == null ? new MedicamentDTO()
-				: modifiedMedicamentDTO;
-		final BeanFieldGroup<MedicamentDTO> fieldGroup = new BeanFieldGroup<MedicamentDTO>(
-				MedicamentDTO.class);
+		final MedicamentDTO medicamentDTO = modifiedMedicamentDTO == null ? new MedicamentDTO() : modifiedMedicamentDTO;
+		final BeanFieldGroup<MedicamentDTO> fieldGroup = new BeanFieldGroup<MedicamentDTO>(MedicamentDTO.class);
 		fieldGroup.setItemDataSource(medicamentDTO);
 
 		final TextField nameField = new TextField("Název");
@@ -62,9 +58,8 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 		winLayout.addComponent(separator, 0, 2);
 
 		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button(
-				modifiedMedicamentDTO == null ? "Založit" : "Upravit",
-				new Button.ClickListener() {
+		winLayout.addComponent(
+				saveBtn = new Button(modifiedMedicamentDTO == null ? "Založit" : "Upravit", new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;
 
@@ -73,17 +68,13 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 						try {
 							fieldGroup.commit();
 							if (medicalFacade.saveMedicament(medicamentDTO) == false) {
-								UI.getCurrent()
-										.addWindow(
-												new ErrorWindow(
-														"Nezdařilo se vytvořit nový záznam"));
+								UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
 							} else {
 								onSuccess();
 							}
 							close();
 						} catch (CommitException e) {
-							Notification.show("   Chybná vstupní data\n\n   "
-									+ e.getCause().getMessage(),
+							Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
 									Notification.Type.TRAY_NOTIFICATION);
 						}
 					}

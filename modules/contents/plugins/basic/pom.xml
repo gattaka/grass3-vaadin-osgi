@@ -7,13 +7,12 @@
 
 	<parent>
 		<groupId>cz.gattserver.grass3</groupId>
-		<artifactId>grass3-parent</artifactId>
+		<artifactId>plugins</artifactId>
 		<version>1.0.0</version>
 	</parent>
 
 	<dependencies>
 
-		<!-- GRASS ARTICLES BUNDLE -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles</artifactId>

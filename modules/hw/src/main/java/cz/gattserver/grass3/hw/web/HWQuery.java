@@ -10,11 +10,11 @@ import org.vaadin.addons.lazyquerycontainer.QueryDefinition;
 
 import com.querydsl.core.types.OrderSpecifier;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.hw.dto.HWFilterDTO;
 import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
+import cz.gattserver.web.common.SpringContextHelper;
 
 public class HWQuery extends AbstractBeanQuery<HWItemOverviewDTO> {
 

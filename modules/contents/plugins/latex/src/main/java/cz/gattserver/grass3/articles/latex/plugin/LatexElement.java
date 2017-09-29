@@ -17,7 +17,6 @@ import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.articles.latex.config.LatexConfiguration;
 import cz.gattserver.grass3.articles.lexer.Token;
 import cz.gattserver.grass3.articles.parser.PluginBag;
@@ -25,6 +24,7 @@ import cz.gattserver.grass3.articles.parser.exceptions.ParserException;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
 import cz.gattserver.grass3.config.ConfigurationService;
+import cz.gattserver.web.common.SpringContextHelper;
 
 /**
  * 

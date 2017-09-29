@@ -14,16 +14,15 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.vaadin.tokenfield.TokenField;
 
-import com.vaadin.data.util.BeanContainer;
+import com.fo0.advancedtokenfield.main.AdvancedTokenField;
+import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.event.FieldEvents.FocusEvent;
 import com.vaadin.event.FieldEvents.FocusListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutAction.ModifierKey;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -86,7 +85,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private ArticleDTO article;
 
 	private TextArea articleTextArea;
-	private TokenField articleKeywords;
+	private AdvancedTokenField articleKeywords;
 	private TextField articleNameField;
 	private CheckBox publicatedCheckBox;
 
@@ -104,7 +103,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	protected void init() {
 
 		articleTextArea = new TextArea();
-		articleKeywords = new TokenField();
+		articleKeywords = new AdvancedTokenField();
 		articleNameField = new TextField();
 		publicatedCheckBox = new CheckBox();
 
@@ -155,7 +154,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			articleNameField.setValue(article.getContentNode().getName());
 
 			for (ContentTagDTO tagDTO : article.getContentNode().getContentTags()) {
-				articleKeywords.addToken(tagDTO.getName());
+				articleKeywords.addToken(new Token(tagDTO.getName()));
 			}
 
 			publicatedCheckBox.setValue(article.getContentNode().isPublicated());
@@ -307,16 +306,21 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		keywordsMenuAndTextLayout.addComponent(articleKeywords);
 
 		List<ContentTagDTO> contentTags = contentTagFacade.getContentTagsForOverview();
-		BeanContainer<String, ContentTagDTO> tokens = new BeanContainer<String, ContentTagDTO>(ContentTagDTO.class);
-		tokens.setBeanIdProperty("name");
-		tokens.addAll(contentTags);
+		// BeanContainer<String, ContentTagDTO> tokens = new
+		// BeanContainer<String, ContentTagDTO>(ContentTagDTO.class);
+		// tokens.setBeanIdProperty("name");
+		// tokens.addAll(contentTags);
 
-		articleKeywords.setStyleName(TokenField.STYLE_TOKENFIELD);
-		articleKeywords.setContainerDataSource(tokens);
-		articleKeywords.setFilteringMode(FilteringMode.CONTAINS); // suggest
-		articleKeywords.setTokenCaptionPropertyId("name");
-		articleKeywords.setInputPrompt("klíčové slovo");
-		articleKeywords.setRememberNewTokens(false);
+		// articleKeywords.setStyleName(TokenField.STYLE_TOKENFIELD);
+		// articleKeywords.setContainerDataSource(tokens);
+		contentTags.forEach(t -> {
+			Token to = new Token(t.getName());
+			articleKeywords.addTokenToInputField(to);
+		});
+		// articleKeywords.setFilteringMode(FilteringMode.CONTAINS); // suggest
+		// articleKeywords.setTokenCaptionPropertyId("name");
+		// articleKeywords.setInputPrompt("klíčové slovo");
+		// articleKeywords.setRememberNewTokens(false);
 		articleKeywords.isEnabled();
 
 		VerticalLayout articleContentLayout = new VerticalLayout();
@@ -465,9 +469,10 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	private Collection<String> getArticlesKeywords() {
-		return (Collection<String>) articleKeywords.getValue();
+		List<String> tokens = new ArrayList<>();
+		articleKeywords.getTokens().forEach(t -> tokens.add(t.getValue()));
+		return tokens;
 	}
 
 	private boolean saveOrUpdateArticle() {

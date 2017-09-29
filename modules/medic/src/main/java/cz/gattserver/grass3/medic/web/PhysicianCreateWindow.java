@@ -11,9 +11,9 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
-import cz.gattserver.grass3.SpringContextHelper;
 import cz.gattserver.grass3.medic.dto.PhysicianDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
+import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -53,8 +53,8 @@ public abstract class PhysicianCreateWindow extends WebWindow {
 		winLayout.addComponent(separator, 0, 1);
 
 		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button(modifiedPhysicianDTO == null ? "Přidat" : "Upravit",
-				new Button.ClickListener() {
+		winLayout.addComponent(
+				saveBtn = new Button(modifiedPhysicianDTO == null ? "Přidat" : "Upravit", new Button.ClickListener() {
 
 					private static final long serialVersionUID = -8435971966889831628L;
 

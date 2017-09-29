@@ -7,7 +7,7 @@
 
 	<parent>
 		<groupId>cz.gattserver.grass3</groupId>
-		<artifactId>grass3-parent</artifactId>
+		<artifactId>plugins</artifactId>
 		<version>1.0.0</version>
 	</parent>
 
@@ -17,13 +17,6 @@
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-
-		<!-- GRASS Core web -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>core-web</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 

@@ -2,16 +2,16 @@ package cz.gattserver.grass3.pages;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.IndexedContainer;
+import com.vaadin.v7.ui.Table;
 import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.facades.QuotesFacade;
@@ -19,6 +19,7 @@ import cz.gattserver.grass3.model.dto.QuoteDTO;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.ui.FieldUtils;
 
 public class QuotesPage extends OneColumnPage {
 
@@ -96,9 +97,9 @@ public class QuotesPage extends OneColumnPage {
 
 		final int maxLength = 90;
 		final TextField newQuoteText = new TextField();
+		FieldUtils.addValidator(newQuoteText, new StringLengthValidator(
+				"Text hlášky nesmí být prázdný a může mít maximálně " + maxLength + " znaků", 1, maxLength));
 		newQuoteText.setWidth("200px");
-		newQuoteText.addValidator(new StringLengthValidator(
-				"Text hlášky nesmí být prázdný a může mít maximálně " + maxLength + " znaků", 1, maxLength, false));
 		panelLayout.addComponent(newQuoteText);
 
 		Button createButton = new Button("Vytvořit", new Button.ClickListener() {
@@ -106,10 +107,10 @@ public class QuotesPage extends OneColumnPage {
 			private static final long serialVersionUID = -4315617904120991885L;
 
 			public void buttonClick(ClickEvent event) {
-				if (newQuoteText.isValid() == false)
+				if (newQuoteText.getComponentError() != null)
 					return;
 
-				if (quotesFacade.createNewQuote((String) newQuoteText.getValue())) {
+				if (quotesFacade.createNewQuote(newQuoteText.getValue())) {
 					showInfo("Nová hláška byla úspěšně vložena.");
 					// refresh list
 					populateQuotesTable();

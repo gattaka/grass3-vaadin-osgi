@@ -9,6 +9,6 @@ import cz.gattserver.grass3.recipes.model.domain.Recipe;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
-	@Query("select r from Recipe r order by name asc")
+	@Query("select r from RECIPE r order by name asc")
 	List<Recipe> findAllSortByName();
 }

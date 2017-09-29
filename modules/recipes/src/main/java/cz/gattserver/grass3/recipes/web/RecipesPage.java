@@ -2,14 +2,14 @@ package cz.gattserver.grass3.recipes.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.v7.ui.themes.Reindeer;
 import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.pages.template.OneColumnPage;

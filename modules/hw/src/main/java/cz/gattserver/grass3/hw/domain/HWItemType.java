@@ -3,15 +3,13 @@ package cz.gattserver.grass3.hw.domain;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
 /**
  * Typ hw
  */
-@Entity
-@Table(name = "HW_ITEM_TYPE")
+@Entity(name = "HW_ITEM_TYPE")
 public class HWItemType {
 
 	/**

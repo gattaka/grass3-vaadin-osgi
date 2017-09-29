@@ -13,16 +13,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
+import org.hibernate.annotations.SortComparator;
 
 import cz.gattserver.grass3.model.domain.ContentNode;
 
-@Entity
-@Table(name = "ARTICLE")
+@Entity(name = "ARTICLE")
 public class Article {
 
 	/**
@@ -61,7 +58,7 @@ public class Article {
 	 * Dodatečné JS resources, které je potřeba nahrát (od pluginů)
 	 */
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@Sort(type = SortType.COMPARATOR, comparator = ArticleJSResourceComparator.class)
+	@SortComparator(ArticleJSResourceComparator.class)
 	private SortedSet<ArticleJSResource> pluginJSResources;
 
 	/**
@@ -99,8 +96,7 @@ public class Article {
 		return pluginJSResources;
 	}
 
-	public void setPluginJSResources(
-			SortedSet<ArticleJSResource> pluginJSResources) {
+	public void setPluginJSResources(SortedSet<ArticleJSResource> pluginJSResources) {
 		this.pluginJSResources = pluginJSResources;
 	}
 

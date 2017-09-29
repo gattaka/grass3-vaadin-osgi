@@ -9,7 +9,7 @@ import cz.gattserver.grass3.medic.domain.MedicalRecord;
 
 public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, Long> {
 
-	@Query("select m from MedicalRecord m order by m.date desc")
+	@Query("select m from MEDICAL_RECORD m order by m.date desc")
 	List<MedicalRecord> findOrderByDateDesc();
 
 }

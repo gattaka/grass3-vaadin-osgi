@@ -5,7 +5,10 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.vaadin.server.Page;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -188,7 +191,11 @@ public abstract class BasePage extends AbstractGrassPage {
 
 				@Override
 				public void buttonClick(ClickEvent event) {
-					redirect(getPageURL("j_spring_security_logout"));
+					SecurityContext context = SecurityContextHolder.getContext();
+					context.setAuthentication(null);
+					SecurityContextHolder.clearContext();
+					getSession().close();
+					Page.getCurrent().reload();
 				}
 			});
 			logOffButton.setStyleName(Reindeer.BUTTON_LINK);

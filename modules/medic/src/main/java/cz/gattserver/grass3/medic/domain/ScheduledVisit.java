@@ -7,13 +7,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 
-@Entity
-@Table(name = "MEDICAL_VISIT")
+@Entity(name = "MEDICAL_VISIT")
 public class ScheduledVisit {
 
 	@Id

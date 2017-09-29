@@ -3,12 +3,10 @@ package cz.gattserver.grass3.articles.domain;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
-@Entity
-@Table(name = "ARTICLE_JS_RESOURCE")
+@Entity(name = "ARTICLE_JS_RESOURCE")
 public class ArticleJSResource implements Comparable<ArticleJSResource> {
 
 	/**

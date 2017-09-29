@@ -9,14 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 
-@Entity
-@Table(name = "MEDICAL_RECORD")
+@Entity(name = "MEDICAL_RECORD")
 public class MedicalRecord {
 
 	@Id

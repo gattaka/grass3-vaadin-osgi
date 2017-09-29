@@ -14,6 +14,6 @@ public interface HWItemRepository extends JpaRepository<HWItem, Long>, HWItemRep
 
 	public List<HWItem> findByUsedInId(Long id);
 
-	@Query("select i from HWItem i inner join i.types types where types.name in ?1")
+	@Query("select i from HW_ITEM i inner join i.types types where types.name in ?1")
 	public List<HWItem> getHWItemsByTypes(Collection<String> types);
 }

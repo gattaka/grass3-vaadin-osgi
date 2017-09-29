@@ -13,7 +13,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -22,8 +21,7 @@ import cz.gattserver.grass3.hw.dto.HWItemState;
 /**
  * HW Objekt
  */
-@Entity
-@Table(name = "HW_ITEM")
+@Entity(name = "HW_ITEM")
 public class HWItem {
 
 	/**

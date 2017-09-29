@@ -2,7 +2,6 @@ package cz.gattserver.grass3.medic.web;
 
 import java.util.Collection;
 
-import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
 
@@ -65,6 +64,6 @@ public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionDTO> 
 		table.setSelectable(true);
 		table.setImmediate(true);
 		table.setConverter("web", new StringToPreviewConverter(50));
-		table.setVisibleColumns(new String[] { "name", "address", "web" });
+		table.setVisibleColumns(new Object[] { "name", "address", "web" });
 	}
 }

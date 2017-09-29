@@ -14,8 +14,8 @@ import com.querydsl.jpa.impl.JPAQuery;
 
 import cz.gattserver.grass3.hw.domain.HWItem;
 import cz.gattserver.grass3.hw.domain.HWItemType;
-//import cz.gattserver.grass3.hw.domain.QHWItem;
-//import cz.gattserver.grass3.hw.domain.QHWItemType;
+import cz.gattserver.grass3.hw.domain.QHWItem;
+import cz.gattserver.grass3.hw.domain.QHWItemType;
 import cz.gattserver.grass3.hw.dto.HWFilterDTO;
 import cz.gattserver.grass3.model.util.PredicateBuilder;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
@@ -27,43 +27,37 @@ public class HWItemRepositoryCustomImpl implements HWItemRepositoryCustom {
 	private EntityManager entityManager;
 
 	private Predicate createPredicateHWItems(HWFilterDTO filter) {
-		// QHWItem h = QHWItem.hWItem;
-		// QHWItemType t = QHWItemType.hWItemType;
-		// PredicateBuilder builder = new PredicateBuilder();
-		// builder.like(h.name, filter.getName());
-		// builder.eq(h.state, filter.getState());
-		// builder.like(h.usedIn.name, filter.getUsedIn());
-		// builder.like(h.supervizedFor, filter.getSupervizedFor());
-		// builder.eq(h.price, filter.getPrice());
-		// builder.between(h.purchaseDate, filter.getPurchaseDateFrom(),
-		// filter.getPurchaseDateTo());
-		// if (filter.getTypes() != null)
-		// for (String type : filter.getTypes()) {
-		// JPAQuery<HWItemType> subQuery = new JPAQuery<>();
-		// subQuery.from(t).where(t.name.eq(type), h.types.contains(t));
-		// builder.exists(subQuery);
-		// }
-		// return builder.getPredicate();
-		return null;
+		QHWItem h = QHWItem.hWItem;
+		QHWItemType t = QHWItemType.hWItemType;
+		PredicateBuilder builder = new PredicateBuilder();
+		builder.like(h.name, filter.getName());
+		builder.eq(h.state, filter.getState());
+		builder.like(h.usedIn.name, filter.getUsedIn());
+		builder.like(h.supervizedFor, filter.getSupervizedFor());
+		builder.eq(h.price, filter.getPrice());
+		builder.between(h.purchaseDate, filter.getPurchaseDateFrom(), filter.getPurchaseDateTo());
+		if (filter.getTypes() != null)
+			for (String type : filter.getTypes()) {
+				JPAQuery<HWItemType> subQuery = new JPAQuery<>();
+				subQuery.from(t).where(t.name.eq(type), h.types.contains(t));
+				builder.exists(subQuery);
+			}
+		return builder.getPredicate();
 	}
 
 	@Override
 	public long countHWItems(HWFilterDTO filter) {
-		// JPAQuery<HWItem> query = new JPAQuery<>(entityManager);
-		// QHWItem h = QHWItem.hWItem;
-		// return
-		// query.from(h).where(createPredicateHWItems(filter)).fetchCount();
-		return 0L;
+		JPAQuery<HWItem> query = new JPAQuery<>(entityManager);
+		QHWItem h = QHWItem.hWItem;
+		return query.from(h).where(createPredicateHWItems(filter)).fetchCount();
 	}
 
 	@Override
 	public List<HWItem> getHWItems(HWFilterDTO filter, Pageable pageable, OrderSpecifier<?>[] order) {
-		// JPAQuery<HWItem> query = new JPAQuery<>(entityManager);
-		// QuerydslUtil.applyPagination(pageable, query);
-		// QHWItem h = QHWItem.hWItem;
-		// return
-		// query.from(h).where(createPredicateHWItems(filter)).orderBy(order).fetch();
-		return null;
+		JPAQuery<HWItem> query = new JPAQuery<>(entityManager);
+		QuerydslUtil.applyPagination(pageable, query);
+		QHWItem h = QHWItem.hWItem;
+		return query.from(h).where(createPredicateHWItems(filter)).orderBy(order).fetch();
 	}
 
 }

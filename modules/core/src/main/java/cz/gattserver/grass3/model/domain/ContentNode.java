@@ -9,12 +9,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
-@Entity
-@Table(name = "CONTENTNODE")
+@Entity(name = "CONTENTNODE")
 public class ContentNode {
 
 	/**

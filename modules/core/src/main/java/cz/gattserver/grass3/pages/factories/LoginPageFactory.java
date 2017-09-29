@@ -18,7 +18,10 @@ public class LoginPageFactory extends AbstractPageFactory {
 	private CoreACL coreACL;
 
 	public LoginPageFactory() {
-		super("login");
+		// kvůli Spring security se tohle nesmí jmenovat login, musí tam být
+		// něco jiného, aby se nechytil filtr -- ten rozhodí Vaadin JSON
+		// komunikaci a stránka nenajede
+		super("loginpage");
 	}
 
 	@Override

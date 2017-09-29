@@ -4,14 +4,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
 import cz.gattserver.grass3.model.domain.ContentNode;
 
-@Entity
-@Table(name = "PHOTOGALLERY")
+@Entity(name = "PHOTOGALLERY")
 public class Photogallery {
 
 	/**

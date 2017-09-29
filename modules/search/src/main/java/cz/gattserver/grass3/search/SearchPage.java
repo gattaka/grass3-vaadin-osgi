@@ -9,8 +9,7 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.combobox.FilteringMode;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
@@ -37,7 +36,7 @@ public class SearchPage extends OneColumnPage {
 
 	private VerticalLayout outputLayout;
 	private TextField searchField;
-	private ComboBox moduleCombo;
+	private ComboBox<String> moduleCombo;
 
 	public SearchPage(GrassRequest request) {
 		super(request);
@@ -48,7 +47,7 @@ public class SearchPage extends OneColumnPage {
 
 		outputLayout = new VerticalLayout();
 		searchField = new TextField();
-		moduleCombo = new ComboBox();
+		moduleCombo = new ComboBox<>();
 
 		super.init();
 	}
@@ -126,13 +125,11 @@ public class SearchPage extends OneColumnPage {
 		/**
 		 * 2.) Rozbalovací seznam
 		 */
-		for (String moduleId : moduleIds) {
-			moduleCombo.addItem(moduleId);
-		}
-		moduleCombo.setNullSelectionAllowed(false);
+		moduleCombo.setItems(moduleIds);
+		moduleCombo.setEmptySelectionAllowed(false);
 		moduleCombo.setValue(moduleIds.iterator().next());
-		moduleCombo.setFilteringMode(FilteringMode.CONTAINS);
-		moduleCombo.setImmediate(true);
+		// TODO
+		// moduleCombo.setFilteringMode(FilteringMode.CONTAINS);
 		searchLayout.addComponent(moduleCombo);
 
 		/**

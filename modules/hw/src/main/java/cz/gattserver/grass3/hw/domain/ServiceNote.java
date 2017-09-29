@@ -6,7 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -15,8 +14,7 @@ import cz.gattserver.grass3.hw.dto.HWItemState;
 /**
  * Údaj o opravě, změně součástí apod.
  */
-@Entity
-@Table(name = "SERVICE_NOTE")
+@Entity(name = "SERVICE_NOTE")
 public class ServiceNote {
 
 	/**
@@ -47,7 +45,7 @@ public class ServiceNote {
 	 * Součásti
 	 */
 	private String usage;
-	
+
 	public Long getId() {
 		return id;
 	}

@@ -66,22 +66,6 @@ public abstract class GrassLayout extends CustomLayout {
 		JavaScript.eval(builder.toString());
 	}
 
-	// public void loadJS(JScriptItem... scripts) {
-	// StringBuilder builder = new StringBuilder();
-	// buildJSBatch(builder, 0, scripts);
-	//
-	// StringBuilder jQueryBuilder = new StringBuilder();
-	// jQueryBuilder
-	// .append("if (true) {var head= document.getElementsByTagName('head')[0]; "
-	// + "var script= document.createElement('script'); " +
-	// "script.type= 'text/javascript'; "
-	// + "script.src= './VAADIN/themes/grass/js/jquery.js'; "
-	// + "script.onreadystatechange= function () {" +
-	// "if (this.readyState == 'complete') { alert($);")
-	// .append(builder).append("}};" + "head.appendChild(script); }");
-	// JavaScript.eval(jQueryBuilder.toString());
-	// }
-
 	private void buildJSBatch(StringBuilder builder, int index, JScriptItem... scripts) {
 		if (index >= scripts.length)
 			return;

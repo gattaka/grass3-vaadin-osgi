@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans:beans xmlns="http://www.springframework.org/schema/security"
 	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-                    http://www.springframework.org/schema/beans/spring-beans.xsd
-                    http://www.springframework.org/schema/security 
-                    http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<!-- http://www.baeldung.com/spring-security-remember-me -->
+	<!-- http://www.baeldung.com/spring-security-login -->
 
-	<http auto-config="true" use-expressions="true">
+	<http>
+		<csrf disabled="true" />
 		<intercept-url pattern="/**" access="permitAll" />
-		<form-login login-page="/login" default-target-url="/"
-			authentication-failure-url="/loginfailed" />
-		<logout logout-success-url="/home" />
-
-		<!-- token-validity-seconds 2 weeks (default) -->
-		<remember-me key="grass3-d1b3395b306b568d2fd977109c08540b" />
+		<!-- Pokud se tady nechá odkaz na login, tak se Vaadin nedostane na widgetset 
+			na login page (místo JSON response přijde login page...) Všechny možné ostatní 
+			postupy selhaly, takže to je nakonec udělané tak, že se přihlašování udělá 
+			programaticky. To ale nefunguje bez springSecurityFilterChain ... a ten zase 
+			chce http definici ... a ta chce aspoň jeden vstupní bod. -->
+		<form-login login-page='/not-existing-login-page' />
+		<logout />
 	</http>
 
 	<authentication-manager alias="authenticationManager">

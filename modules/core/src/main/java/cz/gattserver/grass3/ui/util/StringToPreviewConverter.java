@@ -2,7 +2,7 @@ package cz.gattserver.grass3.ui.util;
 
 import java.util.Locale;
 
-import com.vaadin.data.util.converter.Converter;
+import com.vaadin.v7.data.util.converter.Converter;
 
 import cz.gattserver.common.util.StringPreviewCreator;
 
@@ -18,13 +18,13 @@ public class StringToPreviewConverter implements Converter<String, String> {
 
 	@Override
 	public String convertToModel(String value, Class<? extends String> targetType, Locale locale)
-			throws com.vaadin.data.util.converter.Converter.ConversionException {
+			throws Converter.ConversionException {
 		return value;
 	}
 
 	@Override
 	public String convertToPresentation(String value, Class<? extends String> targetType, Locale locale)
-			throws com.vaadin.data.util.converter.Converter.ConversionException {
+			throws Converter.ConversionException {
 		return StringPreviewCreator.createPreview(value, previewLength);
 	}
 

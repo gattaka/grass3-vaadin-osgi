@@ -1,7 +1,5 @@
 package cz.gattserver.grass3.medic.web;
 
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Alignment;
@@ -10,6 +8,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
 
 import cz.gattserver.grass3.medic.dto.PhysicianDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
@@ -45,8 +45,8 @@ public abstract class PhysicianCreateWindow extends WebWindow {
 		final TextField nameField = new TextField("Jméno");
 		winLayout.addComponent(nameField, 0, 0, 1, 0);
 		nameField.setWidth("100%");
-		nameField.setImmediate(true);
-		fieldGroup.bind(nameField, "name");
+		// nameField.setImmediate(true);
+		// fieldGroup.bind(nameField, "name");
 
 		Label separator = new Label("");
 		separator.setHeight("10px");

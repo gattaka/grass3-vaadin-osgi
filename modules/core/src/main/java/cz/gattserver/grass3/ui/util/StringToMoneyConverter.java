@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import com.vaadin.data.util.converter.StringToBigDecimalConverter;
+import com.vaadin.v7.data.util.converter.StringToBigDecimalConverter;
 
 public class StringToMoneyConverter extends StringToBigDecimalConverter {
 	private static final long serialVersionUID = -2914696445291603483L;

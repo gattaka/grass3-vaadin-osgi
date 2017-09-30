@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.pg.facade;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +39,7 @@ public interface PhotogalleryFacade {
 	 * @return {@code true} pokud se úprava zdařila, jinak {@code false}
 	 */
 	public void modifyPhotogallery(String name, Collection<String> tags, boolean publicated,
-			PhotogalleryDTO photogallery, String contextRoot, Date date);
+			PhotogalleryDTO photogallery, String contextRoot, LocalDate date);
 
 	/**
 	 * Uloží galerii
@@ -60,7 +61,7 @@ public interface PhotogalleryFacade {
 	 *         {@code null}
 	 */
 	public void savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
-			NodeDTO node, UserInfoDTO author, String contextRoot, Date date);
+			NodeDTO node, UserInfoDTO author, String contextRoot, LocalDate date);
 
 	/**
 	 * Získá galerii dle jeho identifikátoru

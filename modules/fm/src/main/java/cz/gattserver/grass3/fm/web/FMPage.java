@@ -11,11 +11,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.Action;
-import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
@@ -30,11 +26,15 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.Table.Align;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.Property.ValueChangeEvent;
+import com.vaadin.v7.data.util.IndexedContainer;
+import com.vaadin.v7.event.ItemClickEvent;
+import com.vaadin.v7.ui.Table;
+import com.vaadin.v7.ui.Table.Align;
 
 import cz.gattserver.common.util.HumanBytesSizeCreator;
 import cz.gattserver.common.util.ReferenceHolder;
@@ -438,8 +438,6 @@ public class FMPage extends OneColumnPage {
 			private static final long serialVersionUID = 8490964871266821307L;
 
 			public void buttonClick(ClickEvent event) {
-				if (newNameField.isValid() == false)
-					return;
 				switch (explorer.renameFile(file, (String) newNameField.getValue())) {
 				case SUCCESS:
 					showInfo("Soubor byl úspěšně přejmenován.");
@@ -683,7 +681,8 @@ public class FMPage extends OneColumnPage {
 
 		final TextField newDirName = new TextField();
 		newDirName.setWidth("200px");
-		newDirName.setRequired(true);
+		// TODO
+		newDirName.setRequiredIndicatorVisible(true);
 		panelLayout.addComponent(newDirName);
 
 		Button createButton = new Button("Vytvořit", new Button.ClickListener() {
@@ -691,7 +690,7 @@ public class FMPage extends OneColumnPage {
 			private static final long serialVersionUID = -4315617904120991885L;
 
 			public void buttonClick(ClickEvent event) {
-				if (newDirName.isValid() == false)
+				if (newDirName.getValue() == null)
 					return;
 				switch (explorer.createNewDir(newDirName.getValue().toString())) {
 				case SUCCESS:

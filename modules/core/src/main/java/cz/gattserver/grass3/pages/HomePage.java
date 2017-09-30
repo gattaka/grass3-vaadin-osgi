@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -14,9 +13,8 @@ import org.perf4j.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
 
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
@@ -28,9 +26,6 @@ import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.BasePage;
 import cz.gattserver.grass3.pages.template.ContentsLazyTable;
-import cz.gattserver.grass3.pages.template.FavouriteContentsQuery;
-import cz.gattserver.grass3.pages.template.RecentAddedContentsQuery;
-import cz.gattserver.grass3.pages.template.RecentModifiedContentsQuery;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
 
@@ -79,15 +74,15 @@ public class HomePage extends BasePage {
 			ContentsLazyTable favouritesContentsTable = new ContentsLazyTable() {
 				private static final long serialVersionUID = -2628924290654351639L;
 
-				@Override
-				protected BeanQueryFactory<?> createBeanQuery() {
-					BeanQueryFactory<?> queryFactory = new BeanQueryFactory<FavouriteContentsQuery>(
-							FavouriteContentsQuery.class);
-					Map<String, Object> queryConfiguration = new HashMap<>();
-					queryConfiguration.put(FavouriteContentsQuery.KEY, user.getId());
-					queryFactory.setQueryConfiguration(queryConfiguration);
-					return queryFactory;
-				}
+//				@Override
+//				protected BeanQueryFactory<?> createBeanQuery() {
+//					BeanQueryFactory<?> queryFactory = new BeanQueryFactory<FavouriteContentsQuery>(
+//							FavouriteContentsQuery.class);
+//					Map<String, Object> queryConfiguration = new HashMap<>();
+//					queryConfiguration.put(FavouriteContentsQuery.KEY, user.getId());
+//					queryFactory.setQueryConfiguration(queryConfiguration);
+//					return queryFactory;
+//				}
 			};
 			favouritesContentsTable.populate(HomePage.this);
 			favouritesLayout.addComponent(favouritesContentsTable);
@@ -255,20 +250,20 @@ public class HomePage extends BasePage {
 		ContentsLazyTable recentAddedContentsTable = new ContentsLazyTable() {
 			private static final long serialVersionUID = -2628924290654351639L;
 
-			@Override
-			protected BeanQueryFactory<?> createBeanQuery() {
-				return new BeanQueryFactory<RecentAddedContentsQuery>(RecentAddedContentsQuery.class);
-			}
+//			@Override
+//			protected BeanQueryFactory<?> createBeanQuery() {
+//				return new BeanQueryFactory<RecentAddedContentsQuery>(RecentAddedContentsQuery.class);
+//			}
 		};
 		recentAddedContentsTable.populate(this);
 
 		ContentsLazyTable recentModifiedContentsTable = new ContentsLazyTable() {
 			private static final long serialVersionUID = -2628924290654351639L;
 
-			@Override
-			protected BeanQueryFactory<?> createBeanQuery() {
-				return new BeanQueryFactory<RecentModifiedContentsQuery>(RecentModifiedContentsQuery.class);
-			}
+//			@Override
+//			protected BeanQueryFactory<?> createBeanQuery() {
+//				return new BeanQueryFactory<RecentModifiedContentsQuery>(RecentModifiedContentsQuery.class);
+//			}
 		};
 		recentModifiedContentsTable.populate(this);
 

@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.articles.pages;
 
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -16,8 +16,7 @@ public class ArticleContentComponent extends CustomComponent {
 		VerticalLayout layout = new VerticalLayout();
 		setCompositionRoot(layout);
 
-		layout.addComponent(new Label(articleDTO.getOutputHTML(),
-				ContentMode.HTML));
+		layout.addComponent(new Label(articleDTO.getOutputHTML(), ContentMode.HTML));
 
 	}
 }

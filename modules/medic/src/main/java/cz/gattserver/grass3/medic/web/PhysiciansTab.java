@@ -2,8 +2,8 @@ package cz.gattserver.grass3.medic.web;
 
 import java.util.Collection;
 
-import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
+import com.vaadin.v7.ui.Table;
 
 import cz.gattserver.grass3.medic.dto.PhysicianDTO;
 

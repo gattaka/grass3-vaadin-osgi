@@ -6,21 +6,21 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.v7.data.Property.ValueChangeEvent;
+import com.vaadin.v7.data.Property.ValueChangeListener;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.ui.Table;
 import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
@@ -185,8 +185,9 @@ public class ScheduledVisitsTab extends VerticalLayout implements Selectable {
 		plannedTable.setSelectable(true);
 		plannedTable.setImmediate(true);
 		plannedTable.setVisibleColumns("icon", "date", "purpose", "institution");
-		plannedTable.setConverter("date", new StringToFullDateConverter());
-		plannedTable.addValueChangeListener(new ValueChangeListener() {
+//		plannedTable.setConverter("date", new StringToFullDateConverter());
+		plannedTable.addValueChangeListener(
+				new ValueChangeListener() {
 
 			private static final long serialVersionUID = -8943196289027284739L;
 
@@ -333,7 +334,7 @@ public class ScheduledVisitsTab extends VerticalLayout implements Selectable {
 		toBePlannedTable.setSelectable(true);
 		toBePlannedTable.setImmediate(true);
 		toBePlannedTable.setVisibleColumns("icon", "date", "period", "purpose", "institution");
-		toBePlannedTable.setConverter("date", new StringToMonthDateConverter());
+//		toBePlannedTable.setConverter("date", new StringToMonthDateConverter());
 		toBePlannedTable.addValueChangeListener(new ValueChangeListener() {
 
 			private static final long serialVersionUID = -8943196289027284739L;

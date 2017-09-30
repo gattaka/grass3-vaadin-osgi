@@ -17,13 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fo0.advancedtokenfield.main.AdvancedTokenField;
 import com.fo0.advancedtokenfield.main.Token;
-import com.vaadin.event.FieldEvents.FocusEvent;
-import com.vaadin.event.FieldEvents.FocusListener;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutAction.ModifierKey;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.Registration;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
@@ -91,7 +90,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 	private boolean editMode;
 	private PartsFinder.Result parts;
-	private FocusListener articleTextAreaFocusListener;
+	private Registration articleTextAreaFocusRegistration;
 
 	public ArticlesEditorPage(GrassRequest request) {
 		super(request);
@@ -108,17 +107,11 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		publicatedCheckBox = new CheckBox();
 
 		// zavádění listener pro JS listener akcí jako je vepsání tabulátoru
-		articleTextArea.addFocusListener(articleTextAreaFocusListener = new FocusListener() {
-			private static final long serialVersionUID = -1481395375265209522L;
-
-			@Override
-			public void focus(FocusEvent event) {
-				JavaScript.eval("registerTabListener()");
-				// musí se odebrat, jinak budou problikávat vkládání přes
-				// tlačítka
-				articleTextArea.removeFocusListener(articleTextAreaFocusListener);
-			}
-
+		articleTextAreaFocusRegistration = articleTextArea.addFocusListener(event -> {
+			JavaScript.eval("registerTabListener()");
+			// musí se odebrat, jinak budou problikávat vkládání přes
+			// tlačítka
+			articleTextAreaFocusRegistration.remove();
 		});
 
 		editMode = false;
@@ -336,7 +329,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		publicatedCheckBox.setCaption("Publikovat článek");
 		publicatedCheckBox.setDescription("Je-li prázdné, uvidí článek pouze jeho autor");
-		publicatedCheckBox.setImmediate(true);
+		// TODO
+		// publicatedCheckBox.setImmediate(true);
 		articleOptionsLayout.addComponent(publicatedCheckBox);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();

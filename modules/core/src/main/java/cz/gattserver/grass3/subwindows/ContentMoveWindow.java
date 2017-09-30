@@ -5,16 +5,16 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.Property.ValueChangeEvent;
+import com.vaadin.v7.data.util.HierarchicalContainer;
+import com.vaadin.v7.ui.Tree;
 import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.facades.ContentNodeFacade;
@@ -58,7 +58,8 @@ public abstract class ContentMoveWindow extends WebWindow {
 		tree = new Tree();
 		panel.setContent(tree);
 		tree.setImmediate(true);
-		tree.addValueChangeListener(new Property.ValueChangeListener() {
+		tree.addValueChangeListener(
+				new Property.ValueChangeListener() {
 			private static final long serialVersionUID = 191011037696709486L;
 
 			public void valueChange(ValueChangeEvent event) {

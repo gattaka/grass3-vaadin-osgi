@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import com.vaadin.data.util.converter.Converter;
+import com.vaadin.v7.data.util.converter.Converter;
 
 public class DateToStringConverter implements Converter<Date, String> {
 	private static final long serialVersionUID = -2914696445291603483L;
@@ -23,13 +23,13 @@ public class DateToStringConverter implements Converter<Date, String> {
 
 	@Override
 	public String convertToModel(Date value, Class<? extends String> targetType, Locale locale)
-			throws com.vaadin.data.util.converter.Converter.ConversionException {
+			throws Converter.ConversionException {
 		return value == null ? null : getFormat().format(value);
 	}
 
 	@Override
 	public Date convertToPresentation(String value, Class<? extends Date> targetType, Locale locale)
-			throws com.vaadin.data.util.converter.Converter.ConversionException {
+			throws Converter.ConversionException {
 		try {
 			return value == null ? null : getFormat().parse(value);
 		} catch (ParseException e) {

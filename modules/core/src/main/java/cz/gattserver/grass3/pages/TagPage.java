@@ -4,9 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
 
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -61,14 +60,14 @@ public class TagPage extends BasePage {
 		ContentsLazyTable tagContentsTable = new ContentsLazyTable() {
 			private static final long serialVersionUID = -2628924290654351639L;
 
-			@Override
-			protected BeanQueryFactory<?> createBeanQuery() {
-				BeanQueryFactory<?> queryFactory = new BeanQueryFactory<ContentsByTagQuery>(ContentsByTagQuery.class);
-				Map<String, Object> queryConfiguration = new HashMap<>();
-				queryConfiguration.put(ContentsByTagQuery.KEY, tag.getId());
-				queryFactory.setQueryConfiguration(queryConfiguration);
-				return queryFactory;
-			}
+//			@Override
+//			protected BeanQueryFactory<?> createBeanQuery() {
+//				BeanQueryFactory<?> queryFactory = new BeanQueryFactory<ContentsByTagQuery>(ContentsByTagQuery.class);
+//				Map<String, Object> queryConfiguration = new HashMap<>();
+//				queryConfiguration.put(ContentsByTagQuery.KEY, tag.getId());
+//				queryFactory.setQueryConfiguration(queryConfiguration);
+//				return queryFactory;
+//			}
 		};
 		tagContentsTable.populate(TagPage.this);
 

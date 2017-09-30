@@ -2,8 +2,8 @@ package cz.gattserver.grass3.medic.web;
 
 import java.util.Collection;
 
-import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
+import com.vaadin.v7.ui.Table;
 
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import cz.gattserver.grass3.ui.util.StringToDateConverter;
@@ -80,8 +80,9 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 	@Override
 	protected void customizeTable(Table table) {
 		table.setWidth("100%");
-		table.setConverter("date", new StringToDateConverter("d. MMMMM yyyy"));
-		table.setConverter("record", new StringToPreviewConverter(50));
+		// table.setConverter("date", new StringToDateConverter("d. MMMMM
+		// yyyy"));
+		// table.setConverter("record", new StringToPreviewConverter(50));
 		table.setSelectable(true);
 		table.setImmediate(true);
 		setTableColumns(table);

@@ -7,7 +7,7 @@ import org.springframework.security.core.AuthenticationException;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.VaadinService;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;

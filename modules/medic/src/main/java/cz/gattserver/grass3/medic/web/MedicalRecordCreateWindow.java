@@ -4,22 +4,25 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.shared.ui.datefield.DateResolution;
+import com.vaadin.shared.ui.datefield.DateTimeResolution;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
+import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.UI;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.shared.ui.datefield.Resolution;
 
 import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
@@ -75,49 +78,46 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 		fieldGroup.setItemDataSource(medicalRecordDTO);
 
 		Set<PhysicianDTO> physicians = medicalFacade.getAllPhysicians();
-		BeanItemContainer<PhysicianDTO> physiciansContainer = new BeanItemContainer<>(PhysicianDTO.class, physicians);
-		final ComboBox physicianComboBox = new ComboBox("Ošetřující lékař", physiciansContainer);
+		final ComboBox<PhysicianDTO> physicianComboBox = new ComboBox<>("Ošetřující lékař", physicians);
 		winLayout.addComponent(physicianComboBox, 0, 0, 1, 0);
 		physicianComboBox.setWidth("100%");
-		physicianComboBox.setNullSelectionAllowed(false);
-		physicianComboBox.setImmediate(true);
-		fieldGroup.bind(physicianComboBox, "physician");
+		physicianComboBox.setEmptySelectionAllowed(false);
+		// physicianComboBox.setImmediate(true);
+		// fieldGroup.bind(physicianComboBox, "physician");
 
-		final DateField dateField = new DateField("Datum návštěvy");
+		final DateTimeField dateField = new DateTimeField("Datum návštěvy");
 		dateField.setDateFormat("d. MMMMM yyyy, HH:mm");
 		dateField.setLocale(Locale.forLanguageTag("CS"));
-		dateField.setResolution(Resolution.MINUTE);
+		dateField.setResolution(DateTimeResolution.MINUTE);
 		winLayout.addComponent(dateField, 0, 1, 1, 1);
 		dateField.setWidth("100%");
-		dateField.setImmediate(true);
-		fieldGroup.bind(dateField, "date");
+		// dateField.setImmediate(true);
+		// fieldGroup.bind(dateField, "date");
 
 		List<MedicalInstitutionDTO> institutions = medicalFacade.getAllMedicalInstitutions();
-		BeanItemContainer<MedicalInstitutionDTO> institutionsContainer = new BeanItemContainer<>(
-				MedicalInstitutionDTO.class, institutions);
-		final ComboBox institutionComboBox = new ComboBox("Instituce", institutionsContainer);
+		final ComboBox<MedicalInstitutionDTO> institutionComboBox = new ComboBox<>("Instituce",
+				medicalFacade.getAllMedicalInstitutions());
 		winLayout.addComponent(institutionComboBox, 0, 2, 1, 2);
 		institutionComboBox.setWidth("100%");
-		institutionComboBox.setNullSelectionAllowed(false);
-		institutionComboBox.setImmediate(true);
-		fieldGroup.bind(institutionComboBox, "institution");
+		institutionComboBox.setEmptySelectionAllowed(false);
+		// institutionComboBox.setImmediate(true);
+		// fieldGroup.bind(institutionComboBox, "institution");
 
 		final TextArea recordField = new TextArea("Záznam");
 		winLayout.addComponent(recordField, 0, 3, 1, 3);
 		recordField.setWidth("100%");
-		recordField.setImmediate(true);
-		fieldGroup.bind(recordField, "record");
+		// recordField.setImmediate(true);
+		// fieldGroup.bind(recordField, "record");
 
-		BeanItemContainer<MedicamentDTO> medicamentsContainer = new BeanItemContainer<MedicamentDTO>(
-				MedicamentDTO.class, medicalFacade.getAllMedicaments());
-		final TwinColSelect typeSelect = new TwinColSelect("Medikamenty", medicamentsContainer);
+		final TwinColSelect<MedicamentDTO> typeSelect = new TwinColSelect<>("Medikamenty",
+				medicalFacade.getAllMedicaments());
 		typeSelect.setWidth("100%");
 		typeSelect.setRows(7);
-		typeSelect.setNullSelectionAllowed(true);
-		typeSelect.setMultiSelect(true);
-		typeSelect.setImmediate(true);
-		typeSelect.setItemCaptionPropertyId("name");
-		fieldGroup.bind(typeSelect, "medicaments");
+		// typeSelect.sete(true);
+		// typeSelect.setMultiSelect(true);
+		// typeSelect.setImmediate(true);
+		// typeSelect.setItemCaptionPropertyId("name");
+		// fieldGroup.bind(typeSelect, "medicaments");
 		winLayout.addComponent(typeSelect, 0, 4, 1, 4);
 
 		Label separator = new Label("");

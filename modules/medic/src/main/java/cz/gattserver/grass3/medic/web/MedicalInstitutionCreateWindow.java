@@ -1,7 +1,5 @@
 package cz.gattserver.grass3.medic.web;
 
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Alignment;
@@ -11,6 +9,8 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
 
 import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
@@ -48,26 +48,26 @@ public abstract class MedicalInstitutionCreateWindow extends WebWindow {
 		final TextField nameField = new TextField("Název");
 		winLayout.addComponent(nameField, 0, 0, 1, 0);
 		nameField.setWidth("100%");
-		nameField.setImmediate(true);
-		fieldGroup.bind(nameField, "name");
+		// nameField.setImmediate(true);
+		// fieldGroup.bind(nameField, "name");
 
 		final TextField addressField = new TextField("Adresa");
 		winLayout.addComponent(addressField, 0, 1, 1, 1);
 		addressField.setWidth("100%");
-		addressField.setImmediate(true);
-		fieldGroup.bind(addressField, "address");
+		// addressField.setImmediate(true);
+		// fieldGroup.bind(addressField, "address");
 
 		final TextField webField = new TextField("Webové stránky");
 		winLayout.addComponent(webField, 0, 2, 1, 2);
 		webField.setWidth("100%");
-		fieldGroup.bind(webField, "web");
+		// fieldGroup.bind(webField, "web");
 
 		final TextArea hoursField = new TextArea("Otevírací hodiny");
 		winLayout.addComponent(hoursField, 0, 3, 1, 3);
 		hoursField.setWidth("100%");
 		hoursField.setHeight("200px");
-		hoursField.setImmediate(true);
-		fieldGroup.bind(hoursField, "hours");
+		// hoursField.setImmediate(true);
+		// fieldGroup.bind(hoursField, "hours");
 
 		Label separator = new Label("");
 		separator.setHeight("10px");

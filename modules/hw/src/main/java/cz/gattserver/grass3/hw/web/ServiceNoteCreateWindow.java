@@ -5,19 +5,19 @@ import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.TextArea;
 
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
@@ -68,7 +68,7 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 		DateField eventDateField = new DateField("Datum");
 		eventDateField.setDateFormat("dd.MM.yyyy");
 		eventDateField.setLocale(Locale.forLanguageTag("CS"));
-		fieldGroup.bind(eventDateField, "date");
+		// fieldGroup.bind(eventDateField, "date");
 		winLayout.addComponent(eventDateField, 0, 0);
 
 		ComboBox stateComboBox = new ComboBox("Stav");

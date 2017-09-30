@@ -7,21 +7,21 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.TwinColSelect;
 
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.HWItemState;
@@ -73,34 +73,34 @@ public abstract class HWItemCreateWindow extends WebWindow {
 		winLayout.setSpacing(true);
 
 		TextField nameField = new TextField("Název");
-		nameField.setImmediate(true);
+		// nameField.setImmediate(true);
 		nameField.setWidth("100%");
-		fieldGroup.bind(nameField, "name");
+		// fieldGroup.bind(nameField, "name");
 		winLayout.addComponent(nameField, 0, 0);
 
 		DateField purchaseDateField = new DateField("Získáno");
 		purchaseDateField.setDateFormat("dd.MM.yyyy");
 		purchaseDateField.setLocale(Locale.forLanguageTag("CS"));
-		fieldGroup.bind(purchaseDateField, "purchaseDate");
+		// fieldGroup.bind(purchaseDateField, "purchaseDate");
 		purchaseDateField.setSizeFull();
 		winLayout.addComponent(purchaseDateField, 0, 1);
 
 		DateField destructionDateField = new DateField("Odepsáno");
 		destructionDateField.setDateFormat("dd.MM.yyyy");
 		destructionDateField.setLocale(Locale.forLanguageTag("CS"));
-		fieldGroup.bind(destructionDateField, "destructionDate");
+		// fieldGroup.bind(destructionDateField, "destructionDate");
 		destructionDateField.setSizeFull();
 		winLayout.addComponent(destructionDateField, 0, 2);
 
 		TextField priceField = new TextField("Cena");
-		fieldGroup.bind(priceField, "price");
+		// fieldGroup.bind(priceField, "price");
 		priceField.setSizeFull();
 		winLayout.addComponent(priceField, 1, 0);
 
 		ComboBox stateComboBox = new ComboBox("Stav");
 		stateComboBox.setWidth("100%");
 		stateComboBox.setNullSelectionAllowed(false);
-		stateComboBox.setImmediate(true);
+		// stateComboBox.setImmediate(true);
 		stateComboBox.setContainerDataSource(
 				new BeanItemContainer<HWItemState>(HWItemState.class, Arrays.asList(HWItemState.values())));
 		stateComboBox.setItemCaptionPropertyId("name");
@@ -108,15 +108,15 @@ public abstract class HWItemCreateWindow extends WebWindow {
 		winLayout.addComponent(stateComboBox, 1, 1);
 
 		TextField warrantyYearsField = new TextField("Záruka (roky)");
-		fieldGroup.bind(warrantyYearsField, "warrantyYears");
+		// fieldGroup.bind(warrantyYearsField, "warrantyYears");
 		warrantyYearsField.setSizeFull();
 		winLayout.addComponent(warrantyYearsField, 1, 2);
 
 		TextField supervizedForField = new TextField("Spravováno pro");
-		supervizedForField.setImmediate(true);
+		// supervizedForField.setImmediate(true);
 		supervizedForField.setWidth("100%");
-		supervizedForField.setNullRepresentation("");
-		fieldGroup.bind(supervizedForField, "supervizedFor");
+		// supervizedForField.setNullRepresentation("");
+		// fieldGroup.bind(supervizedForField, "supervizedFor");
 		winLayout.addComponent(supervizedForField, 0, 3, 1, 3);
 
 		Set<HWItemTypeDTO> types = hwFacade.getAllHWTypes();

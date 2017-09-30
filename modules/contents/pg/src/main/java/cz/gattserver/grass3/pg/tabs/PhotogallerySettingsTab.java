@@ -3,7 +3,7 @@ package cz.gattserver.grass3.pg.tabs;
 import javax.annotation.Resource;
 
 import com.vaadin.data.validator.StringLengthValidator;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
@@ -16,6 +16,7 @@ import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.ui.FieldUtils;
 
 public class PhotogallerySettingsTab extends AbstractSettingsTab {
 
@@ -58,7 +59,7 @@ public class PhotogallerySettingsTab extends AbstractSettingsTab {
 		 */
 		final TextField miniaturesDirField = new TextField("Název adresářů miniatur");
 		miniaturesDirField.setValue(String.valueOf(configuration.getMiniaturesDir()));
-		miniaturesDirField.addValidator(new StringLengthValidator("Nesmí být prázdné", 1, 1024, false));
+		FieldUtils.addValidator(miniaturesDirField, new StringLengthValidator("Nesmí být prázdné", 1, 1024));
 		settingsFieldsLayout.addComponent(miniaturesDirField);
 
 		/**
@@ -66,7 +67,7 @@ public class PhotogallerySettingsTab extends AbstractSettingsTab {
 		 */
 		final TextField rootDirField = new TextField("Kořenový adresář fotogalerií");
 		rootDirField.setValue(String.valueOf(configuration.getRootDir()));
-		rootDirField.addValidator(new StringLengthValidator("Nesmí být prázdné", 1, 1024, false));
+		FieldUtils.addValidator(rootDirField, new StringLengthValidator("Nesmí být prázdné", 1, 1024));
 		settingsFieldsLayout.addComponent(rootDirField);
 
 		/**
@@ -77,12 +78,12 @@ public class PhotogallerySettingsTab extends AbstractSettingsTab {
 			private static final long serialVersionUID = 8490964871266821307L;
 
 			public void buttonClick(ClickEvent event) {
-
-				if (rootDirField.isValid() && miniaturesDirField.isValid())
-
+				// TODO
+				if (rootDirField.getComponentError() == null && miniaturesDirField.getComponentError() == null) {
 					configuration.setRootDir(rootDirField.getValue());
-				configuration.setMiniaturesDir(miniaturesDirField.getValue());
-				photogalleryFacade.storeConfiguration(configuration);
+					configuration.setMiniaturesDir(miniaturesDirField.getValue());
+					photogalleryFacade.storeConfiguration(configuration);
+				}
 			}
 		});
 		settingsFieldsLayout.addComponent(saveButton);

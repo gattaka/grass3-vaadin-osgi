@@ -8,6 +8,8 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,13 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fo0.advancedtokenfield.main.AdvancedTokenField;
 import com.fo0.advancedtokenfield.main.Token;
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -40,11 +39,15 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.Property.ValueChangeEvent;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.ui.Table;
 
+import cz.gattserver.common.util.DateUtil;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
@@ -165,7 +168,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			}
 
 			publicatedCheckBox.setValue(photogallery.getContentNode().isPublicated());
-			photogalleryDateField.setValue(photogallery.getContentNode().getCreationDate());
+			photogalleryDateField.setValue(DateUtil.toLocalDate(photogallery.getContentNode().getCreationDate()));
 
 		} else {
 			logger.debug("Neznámá operace: '" + operationToken + "'");
@@ -248,7 +251,6 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		final Embedded image = new Embedded();
 		image.setWidth("300px");
-		image.setImmediate(true);
 
 		final Label previewLabel = new Label("<center>Náhled</center>", ContentMode.HTML);
 		previewLabel.setHeight("300px");
@@ -393,7 +395,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		publicatedCheckBox.setCaption("Publikovat galerii");
 		publicatedCheckBox.setDescription("Je-li prázdné, uvidí galerii pouze její autor");
-		publicatedCheckBox.setImmediate(true);
+		// publicatedCheckBox.setImmediate(true);
 		contentOptionsLayout.addComponent(publicatedCheckBox);
 
 		photogalleryDateField.setCaption("Přepsat datum vytvoření galerie");

@@ -2,8 +2,8 @@ package cz.gattserver.grass3.articles.tabs;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.validator.AbstractStringValidator;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.data.validator.IntegerRangeValidator;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
@@ -23,6 +23,7 @@ import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.progress.BaseProgressBar;
 import cz.gattserver.grass3.ui.progress.ProgressWindow;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import net.engio.mbassy.listener.Handler;
 
@@ -46,30 +47,6 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 
 	public ArticlesSettingsTab(GrassRequest request) {
 		super(request);
-	}
-
-	/**
-	 * Validátor pro validaci kladný celých čísel (celá čísla větší než nula)
-	 * 
-	 */
-	private static class PositiveIntegerValidator extends AbstractStringValidator {
-
-		private static final long serialVersionUID = 6306586184856533108L;
-
-		public PositiveIntegerValidator(String errorMessage) {
-			super(errorMessage);
-		}
-
-		@Override
-		protected boolean isValidValue(String value) {
-			try {
-				int number = Integer.parseInt(value);
-				return number > 0;
-			} catch (Exception e) {
-				return false;
-			}
-		}
-
 	}
 
 	@Override
@@ -98,7 +75,8 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 		 * Délka tabulátoru ve znacích
 		 */
 		final TextField tabLengthField = new TextField("Délka tabulátoru");
-		tabLengthField.addValidator(new PositiveIntegerValidator("Délka tabulátoru musí být celé číslo"));
+		FieldUtils.addValidator(tabLengthField,
+				new IntegerRangeValidator("Délka tabulátoru musí být kladné celé číslo", 0, Integer.MAX_VALUE));
 		tabLengthField.setValue(String.valueOf(configuration.getTabLength()));
 		settingsFieldsLayout.addComponent(tabLengthField);
 
@@ -106,7 +84,8 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 		 * Prodleva mezi průběžnými zálohami článku
 		 */
 		final TextField backupTimeout = new TextField("Prodleva mezi zálohami");
-		backupTimeout.addValidator(new PositiveIntegerValidator("Prodleva mezi zálohami musí být celé číslo"));
+		FieldUtils.addValidator(backupTimeout,
+				new IntegerRangeValidator("Prodleva mezi zálohami musí být kladné celé číslo", 0, Integer.MAX_VALUE));
 		backupTimeout.setValue(String.valueOf(configuration.getBackupTimeout()));
 		settingsFieldsLayout.addComponent(backupTimeout);
 
@@ -118,12 +97,12 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 			private static final long serialVersionUID = 8490964871266821307L;
 
 			public void buttonClick(ClickEvent event) {
-
-				if (tabLengthField.isValid() && backupTimeout.isValid())
-
+				// TODO
+				if (tabLengthField.getComponentError() == null && backupTimeout.getComponentError() == null) {
 					configuration.setTabLength(Integer.parseInt(tabLengthField.getValue()));
-				configuration.setBackupTimeout(Integer.parseInt(backupTimeout.getValue()));
-				storeConfiguration(configuration);
+					configuration.setBackupTimeout(Integer.parseInt(backupTimeout.getValue()));
+					storeConfiguration(configuration);
+				}
 			}
 		});
 		settingsFieldsLayout.addComponent(saveButton);

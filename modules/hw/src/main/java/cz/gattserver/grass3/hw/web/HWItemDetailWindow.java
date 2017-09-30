@@ -13,17 +13,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.data.util.BeanContainer;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -37,11 +32,16 @@ import com.vaadin.ui.Layout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.Tab;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.BaseTheme;
+import com.vaadin.v7.data.Property.ValueChangeEvent;
+import com.vaadin.v7.data.Property.ValueChangeListener;
+import com.vaadin.v7.data.util.BeanContainer;
+import com.vaadin.v7.data.util.BeanItem;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.ui.Table;
+import com.vaadin.v7.ui.themes.BaseTheme;
 
 import cz.gattserver.common.util.CZSuffixCreator;
 import cz.gattserver.common.util.HumanBytesSizeCreator;
@@ -164,7 +164,7 @@ public class HWItemDetailWindow extends WebWindow {
 			}
 		});
 		upload.addSucceededListener(e -> tryCreateHWImage(hwItem));
-		upload.setImmediate(true);
+		// upload.setImmediate(true);
 		upload.setButtonCaption("Vložit foto");
 
 		HorizontalLayout uploadWrapperLayout = new HorizontalLayout();
@@ -397,7 +397,7 @@ public class HWItemDetailWindow extends WebWindow {
 		notesContainer.addAll(hwItem.getServiceNotes());
 
 		table.setContainerDataSource(notesContainer);
-		table.setConverter("date", new StringToDateConverter());
+		// table.setConverter("date", new StringToDateConverter());
 
 		table.setColumnHeader("date", "Datum");
 		table.setColumnHeader("state", "Stav");
@@ -451,7 +451,7 @@ public class HWItemDetailWindow extends WebWindow {
 		 * Založení nového servisního záznamu
 		 */
 		newNoteBtn = new Button("Přidat záznam");
-		newNoteBtn.setImmediate(true);
+		// newNoteBtn.setImmediate(true);
 		newNoteBtn.setIcon(new ThemeResource(ImageIcons.PENCIL_16_ICON));
 		newNoteBtn.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = 8876001665427003203L;
@@ -480,7 +480,7 @@ public class HWItemDetailWindow extends WebWindow {
 		 */
 		fixNoteBtn = new Button("Opravit záznam");
 		fixNoteBtn.setEnabled(false);
-		fixNoteBtn.setImmediate(true);
+		// fixNoteBtn.setImmediate(true);
 		fixNoteBtn.setIcon(new ThemeResource(ImageIcons.QUICKEDIT_16_ICON));
 		fixNoteBtn.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = 8876001665427003203L;

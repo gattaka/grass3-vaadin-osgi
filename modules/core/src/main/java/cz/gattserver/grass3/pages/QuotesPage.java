@@ -107,6 +107,7 @@ public class QuotesPage extends OneColumnPage {
 			private static final long serialVersionUID = -4315617904120991885L;
 
 			public void buttonClick(ClickEvent event) {
+				// TODO
 				if (newQuoteText.getComponentError() != null)
 					return;
 

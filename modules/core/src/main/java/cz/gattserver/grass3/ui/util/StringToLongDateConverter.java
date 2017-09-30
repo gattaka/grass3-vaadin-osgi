@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import com.vaadin.data.util.converter.Converter;
+import com.vaadin.v7.data.util.converter.Converter;
 
 public class StringToLongDateConverter implements Converter<String, Long> {
 	private static final long serialVersionUID = -2914696445291603483L;
@@ -31,7 +31,7 @@ public class StringToLongDateConverter implements Converter<String, Long> {
 
 	@Override
 	public Long convertToModel(String value, Class<? extends Long> targetType, Locale locale)
-			throws com.vaadin.data.util.converter.Converter.ConversionException {
+			throws Converter.ConversionException {
 		if (targetType != getModelType()) {
 			throw new ConversionException("Converter only supports " + getModelType().getName() + " (targetType was "
 					+ targetType.getName() + ")");
@@ -55,7 +55,7 @@ public class StringToLongDateConverter implements Converter<String, Long> {
 
 	@Override
 	public String convertToPresentation(Long value, Class<? extends String> targetType, Locale locale)
-			throws com.vaadin.data.util.converter.Converter.ConversionException {
+			throws Converter.ConversionException {
 		if (value == null) {
 			return null;
 		}

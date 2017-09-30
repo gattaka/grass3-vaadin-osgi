@@ -2,8 +2,6 @@ package cz.gattserver.grass3.hw.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
@@ -11,6 +9,8 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
 
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.facade.HWFacade;
@@ -46,7 +46,7 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 
 		final TextField nameField = new TextField();
 		winLayout.addComponent(nameField);
-		fieldGroup.bind(nameField, "name");
+		// fieldGroup.bind(nameField, "name");
 
 		winLayout.addComponent(new Button("Uložit", new Button.ClickListener() {
 

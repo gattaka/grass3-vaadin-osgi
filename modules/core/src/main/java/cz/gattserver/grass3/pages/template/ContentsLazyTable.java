@@ -2,14 +2,12 @@ package cz.gattserver.grass3.pages.template;
 
 import java.sql.Date;
 
-import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
-import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
-
-import com.vaadin.data.Item;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Embedded;
-import com.vaadin.ui.Table;
+import com.vaadin.v7.data.Container;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.util.BeanItem;
+import com.vaadin.v7.ui.Table;
 
 import cz.gattserver.grass3.ServiceHolder;
 import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
@@ -57,11 +55,12 @@ public abstract class ContentsLazyTable extends Table {
 	}
 
 	public void populate(final AbstractGrassPage page) {
-		LazyQueryContainer container = new LazyQueryContainer(createBeanQuery(), "id", 100, false);
+//		LazyQueryContainer container =  new LazyQueryContainer(createBeanQuery(), "id", 100, false);
+		Container container = null;
 		setContainerDataSource(container);
 
-		container.addContainerProperty(creationDateBind, Date.class, null, true, false);
-		container.addContainerProperty(lastModificationDateBind, Date.class, null, true, false);
+//		container.addContainerProperty(creationDateBind, Date.class, null, true, false);
+//		container.addContainerProperty(lastModificationDateBind, Date.class, null, true, false);
 
 		addGeneratedColumn(iconBind, new ColumnGenerator() {
 			private static final long serialVersionUID = 1546758854069400666L;
@@ -133,8 +132,8 @@ public abstract class ContentsLazyTable extends Table {
 
 		setColumnWidth(iconBind, 16);
 
-		setConverter(creationDateBind, new StringToDateConverter(ComparableStringDate.format));
-		setConverter(lastModificationDateBind, new StringToDateConverter(ComparableStringDate.format));
+//		setConverter(creationDateBind, new StringToDateConverter(ComparableStringDate.format));
+//		setConverter(lastModificationDateBind, new StringToDateConverter(ComparableStringDate.format));
 
 		setColumnHeader(iconBind, "");
 		setColumnHeader(nameBind, "Název");
@@ -159,6 +158,6 @@ public abstract class ContentsLazyTable extends Table {
 
 	}
 
-	protected abstract BeanQueryFactory<?> createBeanQuery();
+//	protected abstract BeanQueryFactory<?> createBeanQuery();
 
 }

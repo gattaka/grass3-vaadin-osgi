@@ -6,7 +6,7 @@ import org.tepi.filtertable.FilterDecorator;
 import org.tepi.filtertable.numberfilter.NumberFilterPopupConfig;
 
 import com.vaadin.server.Resource;
-import com.vaadin.shared.ui.datefield.Resolution;
+import com.vaadin.v7.shared.ui.datefield.Resolution;
 
 public class GrassFilterDecorator implements FilterDecorator {
 	private static final long serialVersionUID = 234978256739631357L;
@@ -88,6 +88,12 @@ public class GrassFilterDecorator implements FilterDecorator {
 
 	@Override
 	public String getAllItemsVisibleString() {
+		return null;
+	}
+
+	@Override
+	public String getNumberValidationErrorMessage() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

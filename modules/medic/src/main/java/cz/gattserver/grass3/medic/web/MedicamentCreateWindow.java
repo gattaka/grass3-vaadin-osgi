@@ -1,7 +1,5 @@
 package cz.gattserver.grass3.medic.web;
 
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Alignment;
@@ -11,6 +9,8 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
 
 import cz.gattserver.grass3.medic.dto.MedicamentDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
@@ -46,12 +46,12 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 		final TextField nameField = new TextField("Název");
 		winLayout.addComponent(nameField, 0, 0, 1, 0);
 		nameField.setWidth("100%");
-		fieldGroup.bind(nameField, "name");
+//		fieldGroup.bind(nameField, "name");
 
 		final TextArea toleranceField = new TextArea("Reakce, nežádoucí účinky");
 		winLayout.addComponent(toleranceField, 0, 1, 1, 1);
 		toleranceField.setWidth("100%");
-		fieldGroup.bind(toleranceField, "tolerance");
+//		fieldGroup.bind(toleranceField, "tolerance");
 
 		Label separator = new Label("");
 		separator.setHeight("10px");

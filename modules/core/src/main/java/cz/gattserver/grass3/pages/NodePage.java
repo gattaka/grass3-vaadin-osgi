@@ -8,9 +8,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
 
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -18,8 +17,8 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.ui.TextField;
 
 import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
@@ -216,14 +215,14 @@ public class NodePage extends OneColumnPage {
 		ContentsLazyTable contentsTable = new ContentsLazyTable() {
 			private static final long serialVersionUID = -2628924290654351639L;
 
-			@Override
-			protected BeanQueryFactory<?> createBeanQuery() {
-				BeanQueryFactory<?> queryFactory = new BeanQueryFactory<NodeContentsQuery>(NodeContentsQuery.class);
-				Map<String, Object> queryConfiguration = new HashMap<>();
-				queryConfiguration.put(NodeContentsQuery.KEY, node.getId());
-				queryFactory.setQueryConfiguration(queryConfiguration);
-				return queryFactory;
-			}
+//			@Override
+//			protected BeanQueryFactory<?> createBeanQuery() {
+//				BeanQueryFactory<?> queryFactory = new BeanQueryFactory<NodeContentsQuery>(NodeContentsQuery.class);
+//				Map<String, Object> queryConfiguration = new HashMap<>();
+//				queryConfiguration.put(NodeContentsQuery.KEY, node.getId());
+//				queryFactory.setQueryConfiguration(queryConfiguration);
+//				return queryFactory;
+//			}
 		};
 		contentsTable.populate(NodePage.this);
 

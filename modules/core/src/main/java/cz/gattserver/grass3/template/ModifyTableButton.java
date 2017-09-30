@@ -1,10 +1,10 @@
 package cz.gattserver.grass3.template;
 
 import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
+import com.vaadin.v7.ui.AbstractSelect;
 
 import cz.gattserver.web.common.ui.ImageIcons;
 

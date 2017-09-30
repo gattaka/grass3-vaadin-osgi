@@ -2,12 +2,12 @@ package cz.gattserver.grass3.medic.web;
 
 import java.text.SimpleDateFormat;
 
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
+import com.vaadin.v7.ui.themes.BaseTheme;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.themes.BaseTheme;
 
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;

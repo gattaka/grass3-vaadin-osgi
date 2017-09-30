@@ -3,20 +3,21 @@ package cz.gattserver.grass3.medic.web;
 import java.util.List;
 import java.util.Locale;
 
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.shared.ui.datefield.DateTimeResolution;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
+import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
 
 import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
@@ -101,45 +102,45 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 		final TextField purposeField = new TextField("Účel návštěvy");
 		winLayout.addComponent(purposeField, 0, 0, 1, 0);
 		purposeField.setWidth("100%");
-		purposeField.setImmediate(true);
-		fieldGroup.bind(purposeField, "purpose");
+		// purposeField.setImmediate(true);
+		// fieldGroup.bind(purposeField, "purpose");
 
 		if (planned == false) {
 			final TextField periodField = new TextField("Pravidelnost (měsíce)");
 			winLayout.addComponent(periodField, 0, 1);
 			periodField.setWidth("100%");
-			fieldGroup.bind(periodField, "period");
+			// fieldGroup.bind(periodField, "period");
 		}
 
-		final DateField dateField = new DateField("Datum návštěvy");
+		final DateTimeField dateField = new DateTimeField("Datum návštěvy");
 		dateField.setLocale(Locale.forLanguageTag("CS"));
 		if (planned) {
-			dateField.setResolution(Resolution.MINUTE);
+			dateField.setResolution(DateTimeResolution.MINUTE);
 			dateField.setDateFormat("d. MMMMM yyyy, HH:mm");
 			winLayout.addComponent(dateField, 0, 1, 1, 1);
 		} else {
-			dateField.setResolution(Resolution.MONTH);
+			dateField.setResolution(DateTimeResolution.MONTH);
 			dateField.setDateFormat("MMMMM yyyy");
 			winLayout.addComponent(dateField, 1, 1);
 		}
 
 		dateField.setWidth("100%");
-		dateField.setImmediate(true);
-		fieldGroup.bind(dateField, "date");
+		// dateField.setImmediate(true);
+		// fieldGroup.bind(dateField, "date");
 
 		List<MedicalRecordDTO> records = medicalFacade.getAllMedicalRecords();
-		final ComboBox recordsComboBox = new ComboBox("Navazuje na kontrolu", records);
+		final ComboBox<MedicalRecordDTO> recordsComboBox = new ComboBox<>("Navazuje na kontrolu", records);
 		winLayout.addComponent(recordsComboBox, 0, 2, 1, 2);
 		recordsComboBox.setWidth("100%");
-		fieldGroup.bind(recordsComboBox, "record");
+		// fieldGroup.bind(recordsComboBox, "record");
 
 		List<MedicalInstitutionDTO> institutions = medicalFacade.getAllMedicalInstitutions();
-		final ComboBox institutionComboBox = new ComboBox("Instituce", institutions);
+		final ComboBox<MedicalInstitutionDTO> institutionComboBox = new ComboBox<>("Instituce", institutions);
 		winLayout.addComponent(institutionComboBox, 0, 3, 1, 3);
 		institutionComboBox.setWidth("100%");
-		institutionComboBox.setNullSelectionAllowed(false);
-		institutionComboBox.setImmediate(true);
-		fieldGroup.bind(institutionComboBox, "institution");
+		institutionComboBox.setEmptySelectionAllowed(false);
+		// institutionComboBox.setImmediate(true);
+		// fieldGroup.bind(institutionComboBox, "institution");
 
 		Label separator = new Label("");
 		separator.setHeight("10px");

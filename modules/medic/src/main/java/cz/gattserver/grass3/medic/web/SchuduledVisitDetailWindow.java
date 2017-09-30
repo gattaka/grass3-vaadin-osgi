@@ -4,8 +4,8 @@ import java.text.SimpleDateFormat;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
+import com.vaadin.v7.ui.themes.BaseTheme;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.themes.BaseTheme;
 
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;

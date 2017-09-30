@@ -12,18 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.tepi.filtertable.FilterGenerator;
 import org.tepi.filtertable.FilterTable;
 import org.tepi.filtertable.datefilter.DateInterval;
-import org.vaadin.addons.lazyquerycontainer.BeanQueryFactory;
-import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
 
 import com.fo0.advancedtokenfield.main.AdvancedTokenField;
 import com.fo0.advancedtokenfield.main.Token;
-import com.vaadin.data.Container.Filter;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Field;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.CustomTable.Align;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -51,7 +46,7 @@ public class HWItemsTab extends VerticalLayout {
 	private HWFacade hwFacade;
 
 	private final FilterTable table = new FilterTable();
-	private LazyQueryContainer container;
+//	private LazyQueryContainer container;
 	private AdvancedTokenField hwTypesFilter;
 
 	private HWFilterDTO filterDTO;
@@ -70,7 +65,7 @@ public class HWItemsTab extends VerticalLayout {
 			types.add(t.getValue());
 		});
 		filterDTO.setTypes(types);
-		container.refresh();
+//		container.refresh();
 	}
 
 	private void sortTable() {
@@ -84,7 +79,8 @@ public class HWItemsTab extends VerticalLayout {
 	private void openNewItemWindow(boolean fix) {
 		HWItemDTO hwItem = null;
 		if (fix) {
-			Long id = (Long) table.getValue();
+			// TODO
+			Long id = null; // (Long) table.getValue();
 			hwItem = hwFacade.getHWItem(id);
 		}
 		addWindow(new HWItemCreateWindow(HWItemsTab.this, hwItem == null ? null : hwItem.getId()) {
@@ -99,7 +95,8 @@ public class HWItemsTab extends VerticalLayout {
 	}
 
 	private void openAddNoteWindow() {
-		Long id = (Long) table.getValue();
+		// TODO
+		Long id = null; // (Long) table.getValue();
 		HWItemDTO hwItem = hwFacade.getHWItem(id);
 
 		addWindow(new ServiceNoteCreateWindow(HWItemsTab.this, hwItem) {
@@ -115,7 +112,8 @@ public class HWItemsTab extends VerticalLayout {
 	}
 
 	private void openDetailWindow() {
-		Long id = (Long) table.getValue();
+		// TODO
+		Long id = null; // (Long) table.getValue();
 		if (id == null)
 			return;
 		addWindow(new HWItemDetailWindow(HWItemsTab.this, id) {
@@ -129,8 +127,9 @@ public class HWItemsTab extends VerticalLayout {
 	}
 
 	private void openDeleteWindow() {
+		// TODO
 		HWItemsTab.this.setEnabled(false);
-		Long id = (Long) table.getValue();
+		Long id = null; // (Long) table.getValue();
 		HWItemDTO hwItem = hwFacade.getHWItem(id);
 		addWindow(new ConfirmWindow(
 				"Opravdu smazat '" + hwItem.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?") {
@@ -218,22 +217,23 @@ public class HWItemsTab extends VerticalLayout {
 		 */
 		table.setSelectable(true);
 		table.setSortEnabled(true);
-		table.setImmediate(true);
-		BeanQueryFactory<HWQuery> factory = new BeanQueryFactory<HWQuery>(HWQuery.class);
-		Map<String, Object> conf = new HashMap<>();
-		conf.put(HWQuery.FILTER_KEY, filterDTO);
-		factory.setQueryConfiguration(conf);
-		container = new LazyQueryContainer(factory, "id", HWQuery.PAGE_SIZE, false);
-		container.addContainerProperty("name", String.class, "", false, true);
-		container.addContainerProperty("state", HWItemState.class, null, false, true);
-		container.addContainerProperty("usedInName", String.class, "", false, true);
-		container.addContainerProperty("supervizedFor", String.class, "", false, true);
-		container.addContainerProperty("price", BigDecimal.class, null, false, true);
-		container.addContainerProperty("purchaseDate", Date.class, null, false, true);
+		// TODO
+		// table.setImmediate(true);
+//		BeanQueryFactory<HWQuery> factory = new BeanQueryFactory<HWQuery>(HWQuery.class);
+//		Map<String, Object> conf = new HashMap<>();
+//		conf.put(HWQuery.FILTER_KEY, filterDTO);
+//		factory.setQueryConfiguration(conf);
+//		container = new LazyQueryContainer(factory, "id", HWQuery.PAGE_SIZE, false);
+//		container.addContainerProperty("name", String.class, "", false, true);
+//		container.addContainerProperty("state", HWItemState.class, null, false, true);
+//		container.addContainerProperty("usedInName", String.class, "", false, true);
+//		container.addContainerProperty("supervizedFor", String.class, "", false, true);
+//		container.addContainerProperty("price", BigDecimal.class, null, false, true);
+//		container.addContainerProperty("purchaseDate", Date.class, null, false, true);
 
-		table.setContainerDataSource(container);
-
-		table.setConverter("purchaseDate", new StringToDateConverter());
+//		table.setContainerDataSource(container);
+//
+//		table.setConverter("purchaseDate", new StringToDateConverter());
 		table.setConverter("price", new StringToMoneyConverter());
 
 		table.setColumnHeader("name", "Název");
@@ -242,9 +242,9 @@ public class HWItemsTab extends VerticalLayout {
 		table.setColumnHeader("state", "Stav");
 		table.setColumnHeader("usedInName", "Je součástí");
 		table.setColumnHeader("supervizedFor", "Spravováno pro");
-		table.setColumnAlignment("purchaseDate", Align.RIGHT);
-
-		table.setColumnAlignment("price", Align.RIGHT);
+//		table.setColumnAlignment("purchaseDate", Align.RIGHT);
+//
+//		table.setColumnAlignment("price", Align.RIGHT);
 
 		table.setVisibleColumns(
 				new Object[] { "name", "state", "usedInName", "supervizedFor", "price", "purchaseDate" });
@@ -261,64 +261,64 @@ public class HWItemsTab extends VerticalLayout {
 				return false;
 			}
 		});
-		table.setFilterGenerator(new FilterGenerator() {
-			private static final long serialVersionUID = 8801368960933927218L;
-
-			@Override
-			public AbstractField<?> getCustomFilterComponent(Object propertyId) {
-				return null;
-			}
-
-			private void updateFilter(Object propertyId, Object value) {
-				switch ((String) propertyId) {
-				case "name":
-					filterDTO.setName(value == null ? null : "*" + ((String) value) + "*");
-					break;
-				case "state":
-					filterDTO.setState((HWItemState) value);
-					break;
-				case "usedInName":
-					filterDTO.setUsedIn(value == null ? null : "*" + ((String) value) + "*");
-					break;
-				case "supervizedFor":
-					filterDTO.setSupervizedFor(value == null ? null : "*" + ((String) value) + "*");
-					break;
-				case "price":
-					filterDTO.setPrice((BigDecimal) value);
-					break;
-				case "purchaseDate":
-					filterDTO.setPurchaseDateFrom(value == null ? null : ((DateInterval) value).getFrom());
-					filterDTO.setPurchaseDateTo(value == null ? null : ((DateInterval) value).getTo());
-					break;
-				}
-				container.refresh();
-			}
-
-			@Override
-			public Filter generateFilter(Object propertyId, Field<?> originatingField) {
-				return null;
-			}
-
-			@Override
-			public Filter generateFilter(Object propertyId, Object value) {
-				return null;
-			}
-
-			@Override
-			public void filterRemoved(Object propertyId) {
-				updateFilter(propertyId, null);
-			}
-
-			@Override
-			public Filter filterGeneratorFailed(Exception reason, Object propertyId, Object value) {
-				return null;
-			}
-
-			@Override
-			public void filterAdded(Object propertyId, Class<? extends Filter> filterType, Object value) {
-				updateFilter(propertyId, value);
-			}
-		});
+//		table.setFilterGenerator(new FilterGenerator() {
+//			private static final long serialVersionUID = 8801368960933927218L;
+//
+//			@Override
+//			public AbstractField<?> getCustomFilterComponent(Object propertyId) {
+//				return null;
+//			}
+//
+//			private void updateFilter(Object propertyId, Object value) {
+//				switch ((String) propertyId) {
+//				case "name":
+//					filterDTO.setName(value == null ? null : "*" + ((String) value) + "*");
+//					break;
+//				case "state":
+//					filterDTO.setState((HWItemState) value);
+//					break;
+//				case "usedInName":
+//					filterDTO.setUsedIn(value == null ? null : "*" + ((String) value) + "*");
+//					break;
+//				case "supervizedFor":
+//					filterDTO.setSupervizedFor(value == null ? null : "*" + ((String) value) + "*");
+//					break;
+//				case "price":
+//					filterDTO.setPrice((BigDecimal) value);
+//					break;
+//				case "purchaseDate":
+//					filterDTO.setPurchaseDateFrom(value == null ? null : ((DateInterval) value).getFrom());
+//					filterDTO.setPurchaseDateTo(value == null ? null : ((DateInterval) value).getTo());
+//					break;
+//				}
+//				container.refresh();
+//			}
+//
+//			@Override
+//			public Filter generateFilter(Object propertyId, Field<?> originatingField) {
+//				return null;
+//			}
+//
+//			@Override
+//			public Filter generateFilter(Object propertyId, Object value) {
+//				return null;
+//			}
+//
+//			@Override
+//			public void filterRemoved(Object propertyId) {
+//				updateFilter(propertyId, null);
+//			}
+//
+//			@Override
+//			public Filter filterGeneratorFailed(Exception reason, Object propertyId, Object value) {
+//				return null;
+//			}
+//
+//			@Override
+//			public void filterAdded(Object propertyId, Class<? extends Filter> filterType, Object value) {
+//				updateFilter(propertyId, value);
+//			}
+//		});
 
 		sortTable();
 

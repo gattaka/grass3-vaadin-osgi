@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class StringToDateConverter extends
-		com.vaadin.data.util.converter.StringToDateConverter {
+		com.vaadin.data.converter.StringToDateConverter {
 	private static final long serialVersionUID = -2914696445291603483L;
 
 	private String dateFormat;

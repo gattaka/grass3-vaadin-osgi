@@ -6,8 +6,8 @@ import java.util.Arrays;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.vaadin.jouni.animator.AnimatorProxy;
-import org.vaadin.jouni.animator.shared.AnimType;
+import org.vaadin.jouni.animator.Animator;
+import org.vaadin.jouni.dom.client.Css;
 
 import com.vaadin.event.MouseEvents;
 import com.vaadin.server.ExternalResource;
@@ -109,8 +109,6 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	private File photoMiniaturesDirFile;
 	private File videoPreviewsDirFile;
 	private File slideshowDirFile;
-
-	private AnimatorProxy animatorProxy;
 
 	/**
 	 * Miniatury fotek
@@ -216,8 +214,6 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		galleryLayout.setSpacing(true);
 		galleryLayout.addStyleName("bordered");
 
-		animatorProxy = new AnimatorProxy();
-
 		galleryGridLayout = new GridLayout(GALLERY_GRID_COLS, GALLERY_GRID_ROWS);
 		galleryGridLayout.setSpacing(true);
 		galleryGridLayout.setMargin(true);
@@ -285,7 +281,6 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		// galerie
 		galleryLayout.addComponent(galleryGridLayout);
 		galleryLayout.setComponentAlignment(galleryGridLayout, Alignment.MIDDLE_CENTER);
-		galleryLayout.addComponent(animatorProxy);
 
 		// listenery spodních tlačítek
 		downRowBtn.addClickListener(new Button.ClickListener() {
@@ -378,7 +373,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 		refreshStatusLabel();
 		populateGrid(photoMiniatures, videoPreviews);
-		animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN).setDuration(200).setDelay(200);
+		Animator.animate(galleryGridLayout, new Css().opacity(0));
+		Animator.animate(galleryGridLayout, new Css().opacity(1)).delay(200).duration(200);
 		checkOffsetBtnsAvailability();
 
 		if (pgSelectedVideoItemId != null) {
@@ -464,7 +460,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	private void shiftGrid() {
 		populateGrid(photoMiniatures, videoPreviews);
 		refreshStatusLabel();
-		animatorProxy.animate(galleryGridLayout, AnimType.FADE_IN).setDuration(200).setDelay(200);
+		Animator.animate(galleryGridLayout, new Css().opacity(0));
+		Animator.animate(galleryGridLayout, new Css().opacity(1)).delay(200).duration(200);
 		checkOffsetBtnsAvailability();
 	}
 

@@ -11,10 +11,11 @@
 	</parent>
 
 	<properties>
-		<vaadin.version>7.7.8</vaadin.version>
-		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<vaadin.plugin.version>8.1.5</vaadin.plugin.version>
 		<vaadin.widgetset.mode>local</vaadin.widgetset.mode>
-		<widgetset.target>${basedir}/../../../web/src/main/webapp/VAADIN/widgetsets</widgetset.target>
+		<widgetset.target>${basedir}/../../web/src/main/webapp/VAADIN/widgetsets</widgetset.target>
 	</properties>
 
 	<repositories>
@@ -55,6 +56,12 @@
 			<version>1.0.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>cz.gattserver</groupId>
+			<artifactId>vaadin8-test</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
 		<!-- Jackson JSON Mapper -->
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
@@ -81,7 +88,7 @@
 				<plugins>
 					<plugin>
 						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.7</version>
+						<version>1.8</version>
 						<executions>
 							<execution>
 								<phase>initialize</phase>
@@ -101,7 +108,7 @@
 						<artifactId>vaadin-maven-plugin</artifactId>
 						<version>${vaadin.plugin.version}</version>
 						<configuration>
-							<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+							<!-- <extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs> -->
 							<!-- <runTarget>mobilemail</runTarget> -->
 							<!-- We are doing "inplace" but into subdir VAADIN/widgetsets. This 
 								way compatible with Vaadin eclipse plugin. -->

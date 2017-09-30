@@ -37,13 +37,14 @@ public abstract class MultiUpload extends CssLayout {
 			public void handleUploadStarted() {
 				onStart();
 			}
-			
+
 		}, new UploadFinishedHandler() {
 			private static final long serialVersionUID = -5820944267375820939L;
 
 			@Override
-			public void handleFile(InputStream in, String fileName, String mime, long size) {
-				MultiUpload.this.handleFile(in, fileName, mime, size);
+			public void handleFile(InputStream stream, String fileName, String mimeType, long length,
+					int filesLeftInQueue) {
+				MultiUpload.this.handleFile(stream, fileName, mimeType, length);
 			}
 
 		}, stateWindow, multiple);

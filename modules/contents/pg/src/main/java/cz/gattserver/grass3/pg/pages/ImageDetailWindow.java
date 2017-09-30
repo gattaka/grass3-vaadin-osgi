@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.vaadin.jouni.animator.AnimatorProxy;
-
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.FileResource;
@@ -20,7 +18,6 @@ public class ImageDetailWindow extends WebWindow {
 
 	private static final long serialVersionUID = 4928404864735034779L;
 
-	private AnimatorProxy animatorProxy = new AnimatorProxy();
 	private int currentIndex;
 	private List<Resource> list;
 	private Embedded embedded;
@@ -54,7 +51,6 @@ public class ImageDetailWindow extends WebWindow {
 
 		embedded = new Embedded(null, list.get(index));
 		embedded.setSizeUndefined();
-		slideShow.addComponent(animatorProxy);
 		slideShow.addComponent(embedded);
 		slideShow.setComponentAlignment(embedded, Alignment.MIDDLE_CENTER);
 		slideShow.setExpandRatio(embedded, 1);
@@ -87,7 +83,7 @@ public class ImageDetailWindow extends WebWindow {
 		currentIndex = index;
 		embedded.setSource(list.get(currentIndex));
 		setCaption((index + 1) + "/" + miniatures.length + " " + miniatures[currentIndex].getName());
-//		center();
+		// center();
 	}
 
 	@Override

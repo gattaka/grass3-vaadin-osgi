@@ -56,12 +56,6 @@
 			<version>1.0.0</version>
 		</dependency>
 
-		<dependency>
-			<groupId>cz.gattserver</groupId>
-			<artifactId>vaadin8-test</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
 		<!-- Jackson JSON Mapper -->
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>

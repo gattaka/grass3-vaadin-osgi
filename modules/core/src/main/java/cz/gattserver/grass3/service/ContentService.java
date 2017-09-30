@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.service;
 
-import com.vaadin.server.Resource;
+import com.vaadin.server.ThemeResource;
 
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 
@@ -20,8 +20,8 @@ public interface ContentService {
 	/**
 	 * Vrátí popisek k tlačítku "vytvořit nový obsah"
 	 * 
-	 * @return popisek ve stylu "článek", aby to pasovalo k popisku
-	 *         "Vytvořit nový"
+	 * @return popisek ve stylu "článek", aby to pasovalo k popisku "Vytvořit
+	 *         nový"
 	 */
 	public String getCreateNewContentLabel();
 
@@ -30,7 +30,7 @@ public interface ContentService {
 	 * 
 	 * @return cesta k ikoně obsahu
 	 */
-	public Resource getContentIcon();
+	public ThemeResource getContentIcon();
 
 	/**
 	 * Vrátí identifikátor služby obsahu

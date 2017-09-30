@@ -20,6 +20,7 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
@@ -37,6 +38,9 @@ public class HomePage extends BasePage {
 
 	@Autowired
 	private ContentTagFacade contentTagFacade;
+
+	@Autowired
+	private ContentNodeFacade contentNodeFacade;
 
 	@Resource(name = "tagPageFactory")
 	private PageFactory tagPageFactory;
@@ -71,20 +75,12 @@ public class HomePage extends BasePage {
 		if (coreACL.isLoggedIn(user)) {
 			VerticalLayout favouritesLayout = new VerticalLayout();
 			favouritesLayout.addComponent(new Label("<h2>Oblíbené obsahy</h2>", ContentMode.HTML));
-			ContentsLazyTable favouritesContentsTable = new ContentsLazyTable() {
-				private static final long serialVersionUID = -2628924290654351639L;
-
-//				@Override
-//				protected BeanQueryFactory<?> createBeanQuery() {
-//					BeanQueryFactory<?> queryFactory = new BeanQueryFactory<FavouriteContentsQuery>(
-//							FavouriteContentsQuery.class);
-//					Map<String, Object> queryConfiguration = new HashMap<>();
-//					queryConfiguration.put(FavouriteContentsQuery.KEY, user.getId());
-//					queryFactory.setQueryConfiguration(queryConfiguration);
-//					return queryFactory;
-//				}
-			};
-			favouritesContentsTable.populate(HomePage.this);
+			ContentsLazyTable favouritesContentsTable = new ContentsLazyTable();
+			favouritesContentsTable.populate(this, (sortOrder, offset, limit) -> {
+				return contentNodeFacade.getUserFavourite(user.getId(), offset / limit, limit).stream();
+			}, () -> {
+				return contentNodeFacade.getUserFavouriteCount(user.getId());
+			});
 			favouritesLayout.addComponent(favouritesContentsTable);
 			favouritesContentsTable.setWidth("100%");
 
@@ -93,7 +89,7 @@ public class HomePage extends BasePage {
 			int max = 200;
 			int header = 25;
 
-			int size = favouritesContentsTable.getContainerDataSource().getItemIds().size() * element;
+			int size = contentNodeFacade.getUserFavouriteCount(user.getId()) * element;
 
 			if (size < min)
 				size = min;
@@ -247,25 +243,15 @@ public class HomePage extends BasePage {
 
 	private void createRecentMenus(VerticalLayout pagelayout) {
 
-		ContentsLazyTable recentAddedContentsTable = new ContentsLazyTable() {
-			private static final long serialVersionUID = -2628924290654351639L;
+		ContentsLazyTable recentAddedContentsTable = new ContentsLazyTable();
+		recentAddedContentsTable.populate(this, (sortOrder, offset, limit) -> {
+			return contentNodeFacade.getRecentAdded(offset / limit, limit).stream();
+		}, contentNodeFacade::getCount);
 
-//			@Override
-//			protected BeanQueryFactory<?> createBeanQuery() {
-//				return new BeanQueryFactory<RecentAddedContentsQuery>(RecentAddedContentsQuery.class);
-//			}
-		};
-		recentAddedContentsTable.populate(this);
-
-		ContentsLazyTable recentModifiedContentsTable = new ContentsLazyTable() {
-			private static final long serialVersionUID = -2628924290654351639L;
-
-//			@Override
-//			protected BeanQueryFactory<?> createBeanQuery() {
-//				return new BeanQueryFactory<RecentModifiedContentsQuery>(RecentModifiedContentsQuery.class);
-//			}
-		};
-		recentModifiedContentsTable.populate(this);
+		ContentsLazyTable recentModifiedContentsTable = new ContentsLazyTable();
+		recentModifiedContentsTable.populate(this, (sortOrder, offset, limit) -> {
+			return contentNodeFacade.getRecentModified(offset / limit, limit).stream();
+		}, contentNodeFacade::getCount);
 
 		VerticalLayout recentAddedLayout = new VerticalLayout();
 		recentAddedLayout.addComponent(new Label("<h2>Nedávno přidané obsahy</h2>", ContentMode.HTML));

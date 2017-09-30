@@ -23,8 +23,8 @@ public class ArticlesContentService implements ContentService {
 		return "Vytvořit nový článek";
 	}
 
-	public com.vaadin.server.Resource getContentIcon() {
-		return (com.vaadin.server.Resource) new ThemeResource(ImageIcons.DOCUMENT_16_ICON);
+	public ThemeResource getContentIcon() {
+		return new ThemeResource(ImageIcons.DOCUMENT_16_ICON);
 	}
 
 	public String getContentID() {

@@ -23,8 +23,8 @@ public class PhotogalleryContentService implements ContentService {
 		return "Vytvořit novou galerii";
 	}
 
-	public com.vaadin.server.Resource getContentIcon() {
-		return (com.vaadin.server.Resource) new ThemeResource(ImageIcons.IMG_16_ICON);
+	public ThemeResource getContentIcon() {
+		return new ThemeResource(ImageIcons.IMG_16_ICON);
 	}
 
 	public String getContentID() {

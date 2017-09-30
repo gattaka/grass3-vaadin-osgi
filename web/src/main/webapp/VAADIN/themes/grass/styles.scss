@@ -1,0 +1,659 @@
+$v-app-loading-text: "Facebook Valo";
+$v-background-color: #fafafa;
+$v-app-background-color: #e7ebf2;
+$v-panel-background-color: #fff;
+$v-focus-color: #3b5998;
+$v-focus-style: 0 0 1px 1px rgba($v-focus-color, .5);
+$v-border-radius: 3px;
+$v-textfield-border-radius: 0;
+$v-font-family: Helvetica, Arial, 'lucida grande', tahoma, verdana, arial, sans-serif;
+$v-font-size: 14px;
+$v-font-color: #37404E;
+$v-font-weight: 400;
+$v-link-text-decoration: none;
+$v-shadow: 0 1px 0 (v-shade 0.2);
+$v-bevel: inset 0 1px 0 v-tint;
+$v-unit-size: 30px;
+$v-gradient: v-linear 12%;
+$v-overlay-shadow: 0 3px 8px v-shade, 0 0 0 1px (v-shade 0.7);
+$v-shadow-opacity: 20%;
+$v-selection-overlay-padding-horizontal: 0;
+$v-selection-overlay-padding-vertical: 6px;
+$v-selection-item-border-radius: 0;
+
+// Import valo after setting the parameters
+@import "../valo/valo";
+
+.grass {
+	@include valo;
+	
+	@import
+	url(http://fonts.googleapis.com/css?family=Voces|Inder|PT+Sans|Ubuntu|PT+Sans+Caption|Oxygen|Varela|Signika)
+	;
+
+	/*
+	font-family: 'Voces', cursive;
+	font-family: 'Inder', sans-serif;
+	font-family: 'PT Sans', sans-serif;
+	font-family: 'Ubuntu', sans-serif;
+	font-family: 'PT Sans Caption', sans-serif;
+	font-family: 'Oxygen', sans-serif;
+	font-family: 'Varela', sans-serif;
+	font-family: 'Signika', sans-serif;
+	*/
+	@font-face {
+		font-family: duru;
+		src: url('fonts/DuruSans-Regular.ttf');
+	}
+
+	.v-textarea.v-widget.v-has-width {
+		font-family: monospace;
+		font-size: 12px;
+		-moz-tab-size: 4;
+		-o-tab-size: 4;
+		tab-size: 4;
+	}
+	
+	.grasspage {
+		overflow: auto;
+		min-height: 100%;
+		position: relative;
+	}
+	
+	.error-label {
+		font-family: Arial;
+		font-size: 20px;
+	}
+	
+	.error-text-field {
+		opacity: 1;
+		filter: alpha(opacity = 80);
+		cursor: default;
+	}
+	
+	.error-layout {
+		border: 3px solid red;
+	}
+	
+	.v-button .v-icon {
+		padding-bottom: 1px;
+	}
+	
+	.v-panel-content-hw-panel {
+		white-space: pre-wrap;
+		padding: 5px;
+	}
+	
+	.hw-panel .v-label.v-has-width {
+		white-space: pre-wrap;
+		font-family: monospace;
+	}
+	
+	.shiftlabel {
+		margin-left: 5px;
+	}
+	
+	.bordered {
+		border: 1px solid #aaa
+	}
+	
+	/* == TOKENS =============================================================== */
+	.tokenfield .v-button-link {
+		background-color: #00B4F0;
+		border-radius: 2px;
+		-moz-border-radius: 2px;
+		-webkit-border-radius: 2px;
+		height: 23px;
+		padding: 4px 7px;
+	}
+	
+	.tokenfield .v-button-link:focus {
+		background-color: #00B4F0;
+		border-radius: 2px;
+		-moz-border-radius: 2px;
+		-webkit-border-radius: 2px;
+		height: 23px;
+		padding: 4px 7px;
+	}
+	
+	.tokenfield .v-button-emphasize, .tokenfield .v-button-emphasize:focus {
+		background-color: #EC0C6D;
+	}
+	
+	.tokenfield .v-button-link .v-button-caption {
+		color: #fff;
+		text-decoration: none;
+	}
+	/* input */
+	.tokentextfield .v-filterselect {
+		margin-bottom: 1px;
+		background: #ddd none;
+		border-radius: 2px;
+		-moz-border-radius: 2px;
+		-webkit-border-radius: 2px;
+	}
+	
+	.tokentextfield  .v-filterselect .v-filterselect-input {
+		background: transparent none;
+	}
+	
+	.tokentextfield  .v-filterselect .v-filterselect-button {
+		display: none;
+	}
+	
+	/* CssLayout special treatment */
+	.tokenfield .v-csslayout div {
+		float: left;
+	}
+	
+	.tokenfield .v-csslayout .v-button-link {
+		margin: 0 3px 1px 0;
+	}
+	
+	.tokenfield .v-csslayout .v-button-link {
+		height: 24px;
+	}
+	
+	/* == DEFAULT =============================================================== */
+	
+	/* Default clean */
+	body, div, p, span, li, ul {
+		margin: 0;
+		padding: 0;
+	}
+	
+	html, body {
+		height: 100%; /* pro footery */
+	}
+	
+	h2 {
+		font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
+			"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+		font-weight: normal;
+	}
+	
+	a:link, a:visited {
+		color: #045491;
+		text-decoration: none;
+	}
+	
+	a:link:hover, a:visited:hover {
+		color: #045491;
+		text-decoration: underline;
+	}
+	
+	a img.icon {
+		margin-right: 5px;
+		margin-bottom: -4px;
+	}
+	
+	/* == BACKGROUND AND BODY HEIGHT ============================================ */
+	.v-generated-body {
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		background: url("img/bgr2.png");
+		background-repeat: repeat;
+	}
+	
+	.v-app {
+		background: none;
+	}
+	
+	/* == PAGE HOLDERS ========================================================== */
+	#holder {
+		background-position: bottom right;
+		/* 	min-height: 100%; */
+		/* 	height: 100% !important; */
+		/* 	height: 100%; */
+		/* 	margin-bottom: -40px; */
+		margin-bottom: 100px;
+	}
+	
+	/* #push { */
+	/* 	height: 160px; */
+	/* } */
+	
+	/* == HEADER ================================================================ */
+	#top>h1 {
+		display: none;
+	}
+	
+	/* Logo */
+	#top>a {
+		text-decoration: none;
+		position: relative;
+		top: 34px;
+		left: 5px;
+	}
+	
+	#top a>img {
+		border: 0px;
+	}
+	
+	#top_holder {
+		position: relative;
+		/*background-color: #f3efff;*/
+		background: url("img/headPattern.png");
+		background-repeat: repeat-x;
+	}
+	
+	#top {
+		/** 990px je takovĂ˝ hezkĂ˝ prĹŻmÄ›r - na zmenĹˇenou verzi to stejnÄ› nebude 
+	    mĂ­t vliv, protoĹľe je to max-width a ne pevnÄ› width :) - podstatnĂ© je akorĂˇt **/
+		max-width: 990px;
+		height: 94px;
+		color: black;
+		margin-left: auto;
+		margin-right: auto;
+		/* 	margin-bottom: 43px; */
+		margin-bottom: 15px;
+		margin-top: 0;
+		/** podstatnĂ© !!! jinak se budou odstupy od okrajĹŻ u menu mÄ›nit jakmile se zobrazĂ­ scrollbar **/
+		padding: 0 15px 0 15px;
+	}
+	
+	/* == HOMELINK ============================================================== */
+	.v-link.v-link-homelink.homelink {
+		position: relative;
+		top: 32px;
+	}
+	
+	/* == QUOTES ================================================================ */
+	#quotes {
+		font-family: Tahoma, sans-serif;
+		font-size: 11pt;
+		color: white;
+		position: relative;
+		padding: 0px;
+		left: 100px;
+		width: 740px;
+		height: 16px;
+		margin-left: auto;
+		margin-right: auto;
+		text-align: center;
+		font-style: italic;
+		top: 10px
+	}
+	
+	.v-link.v-link-quote.quote a span {
+		color: white;
+		text-decoration: none;
+	}
+	
+	.v-link.v-link-quote.quote a:HOVER span {
+		color: white;
+	}
+	
+	.v-link.v-link-quote.quote a:HOVER {
+		color: white;
+	}
+	
+	/* == MAIN MENU ============================================================= */
+	.menu-wrapper {
+		/* 	top: 42px; */
+		top: 34px;
+		position: relative;
+		background: url("img/menu-shadow.png");
+		background-repeat: no-repeat;
+		position: relative;
+	}
+	
+	.menu {
+		margin: 0 10px;
+	}
+	
+	div.v-link.v-widget.menu-item.v-link-menu-item {
+		padding-top: 2px;
+	}
+	
+	div.v-link.v-widget.menu-item.v-link-menu-item a {
+		text-decoration: none;
+	}
+	
+	div.menu-wrapper div.v-link.v-widget a:hover span {
+		color: white;
+		text-shadow: rgba(0, 0, 0, 0.9) 0 1px 0;
+		padding: 0 4px;
+		text-decoration: none;
+	}
+	
+	div.v-link.v-widget.menu-item.v-link-menu-item a span {
+		color: #d1d3d6;
+		text-shadow: rgba(0, 0, 0, 0.9) 0 1px 0;
+		padding: 0 4px;
+		text-decoration: none;
+	}
+	
+	div.v-slot.v-slot-link.v-slot-user_status.v-slot-menu-item {
+		padding-top: 4px;
+	}
+	
+	div.v-slot.v-slot-link.v-slot-menu-item {
+		padding-top: 4px;
+	}
+	
+	div.v-button.v-widget.link.v-button-link.menu-item.v-button-menu-item span span
+		{
+		color: #d1d3d6;
+		text-shadow: rgba(0, 0, 0, 0.9) 0 1px 0;
+		padding: 0 4px;
+		text-decoration: none;
+	}
+	
+	div.v-button.v-widget.link.v-button-link.menu-item.v-button-menu-item span span:hover
+		{
+		color: white;
+		text-shadow: rgba(0, 0, 0, 0.9) 0 1px 0;
+		padding: 0 4px;
+		text-decoration: none;
+	}
+	
+	/* .menu .v-menubar .v-menubar-menuitem-selected { 
+	div.v-horizontallayout.v-layout.v-horizontal.v-widget.menu.v-horizontallayout-menu.v-has-width.v-has-height
+		{
+		background-image: url('common/img/vertical-sprites.png');
+		background-position: left -360px;
+	}
+	
+	.v-menubar-submenu .v-menubar-menuitem-selected {
+		background: rgb(159, 136, 77) repeat-x;
+		background-image: url(img/vertical-sprites.png);
+		background-position: left -731px;
+		color: #fff;
+		text-shadow: 0 1px 0 rgb(122, 102, 59);
+	}*/
+	
+	/* == ROUND BORDERS ========================================================= */
+	
+	/* spodnĂ­ okraj */
+	.bottomborder {
+		background: url("img/bB.png") repeat-x;
+		/* vyhnout se rohĹŻm */
+		margin: 0 10px 0 10px;
+		height: 10px;
+	}
+	
+	/* hornĂ­ okraj */
+	.topborder {
+		background: url("img/bT.png") repeat-x;
+		/* vyhnout se rohĹŻm */
+		margin: 0 10px 0 10px;
+		height: 10px;
+	}
+	
+	/* levĂ˝ okraj */
+	.leftborder {
+		background: url("img/bL.png") repeat-y;
+		margin: 0;
+		padding: 0 0 0 10px;
+	}
+	
+	/* pravĂ˝ okraj */
+	.rightborder {
+		background: url("img/bR.png") repeat-y right;
+		margin: 0;
+		padding: 0 10px 0 0;
+	}
+	
+	/* rohy */
+	.cornerborder {
+		background: url("img/corTL.png") no-repeat top left,
+			url("img/corBL.png") no-repeat bottom left, url("img/corTR.png")
+			no-repeat top right, url("img/corBR.png") no-repeat bottom right;
+	}
+	
+	/* == CONTENT BLOCK ========================================================= */
+	#content {
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 990px;
+	}
+	
+	/* == CONTENT WRAPPERS ====================================================== */
+	#right {
+		width: 755px;
+		display: inline-block;
+		margin-left: 10px;
+	}
+	
+	#left {
+		width: 220px;
+		display: inline-block;
+		vertical-align: top;
+	}
+	
+	#center {
+		width: 990px;
+	}
+	
+	/* == CONTENTS ============================================================== */
+	#centercontent, #leftcontent, #rightcontent {
+		background-color: #ece5cc;
+	}
+	
+	.left_content_view {
+		margin: 18px;
+	}
+	
+	.content_info div {
+		margin-bottom: 5px;
+	}
+	
+	.content_info {
+		margin-bottom: 10px;
+	}
+	
+	.content_tags {
+		margin-bottom: 10px;
+	}
+	
+	.content_operations div:first-child {
+		margin-top: 0px;
+	}
+	
+	.content_operations div {
+		margin-top: 5px;
+	}
+	
+	.content_operations .v-button-wrap {
+		padding: 4px 8px 0 5px;
+	}
+	
+	.content_operations .v-button.v-widget {
+		margin-right: 5px;
+	}
+	
+	.v-horizontallayout.v-layout.v-horizontal.v-widget.not-publicated-info.v-horizontallayout-not-publicated-info
+		{
+		margin-bottom: 0;
+		margin-top: 4px;
+		border: 1px rgb(112, 175, 233) solid;
+		padding: 12px 5px 0 5px;
+		width: 100%;
+		height: 42px;
+		text-align: center;
+		background-color: rgb(213, 235, 255);
+		text-align: center;
+	}
+	
+	/* == FOOTER PART =========================================================== */
+	#bottomshadow, #bottom {
+		overflow: hidden;
+		width: auto;
+	}
+	
+	#bottom_holder {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+	}
+	
+	#bottom {
+		clear: both;
+		background-color: #c2dfef;
+		padding: 5px;
+		/* 	bottom: 11px; */
+		font-size: 12px;
+		font-family: Verdana, "Verdana CE", Arial, "Arial CE",
+			"Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+		color: #555555;
+	}
+	
+	#bottom a {
+		text-decoration: none;
+	}
+	
+	#bottom a:HOVER {
+		text-decoration: underline;
+	}
+	
+	#bottomshadow {
+		background: url("img/bgrB.png");
+		background-repeat: repeat-x;
+		height: 11px;
+		bottom: 0px;
+		padding: 0;
+		margin: 0;
+	}
+	
+	/* ------------------------------------------------------------------------------- */
+	h2 {
+		border-bottom: 1px solid;
+		border-color: #888;
+		font-size: 15pt;
+		font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
+			"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+		font-weight: normal;
+		margin-top: 0;
+	}
+	
+	#left h2 {
+		font-size: 11pt;
+	}
+	
+	/* ========== */
+	/* Breadcrumb */
+	/* ========== */
+	.breadcrumb {
+		background: #F3EFDD;
+		padding: 4px 8px 0px 8px;
+		font-size: 14px;
+		font-weight: bold;
+		font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
+			"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+	}
+	
+	.v-link.v-link-breadcrumb_element.breadcrumb_element a span {
+		text-decoration: none;
+		color: #045491;
+	}
+	
+	.v-link.v-link-breadcrumb_element.breadcrumb_element a:visited span {
+		text-decoration: none;
+		color: #045491;
+	}
+	
+	.v-link.v-link-breadcrumb_element.breadcrumb_element a:hover span {
+		text-decoration: underline;
+		color: #2483c4;
+	}
+	
+	.breadcrumb .v-embedded.v-embedded-image {
+		margin: 2px 8px;	
+	}
+	
+	.breadcrumb_element {
+		
+	}
+	
+	/* ============= */
+	/* Link in table */
+	/* ============= */
+	.v-table .v-selected .v-link a span {
+		color: white;
+		text-shadow: #3B5A7A 0 1px 0;
+	}
+	
+	/* ================ */
+	/* CSS layout prvky */
+	/* ================ */
+	.v-csslayout.v-csslayout-tools_css_menu.tools_css_menu .v-button {
+		margin: 0 5px 5px 0;
+	}
+	
+	.v-label.v-label-msglabel.msglabel, .v-embedded.v-embedded-image.msgimg
+		{
+		display: inline-block;
+	}
+	
+	/* ====================== */
+	/* Tagy a jejich tagcloud */
+	/* ====================== */
+	.v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a,
+		.v-link.v-link-taglabel.taglabel, .v-label.v-widget.v-has-width span.tag-letter {
+		display: inline-block;
+		font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
+			"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+	}
+	
+	.v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a {
+		margin-right: 3px;
+		margin-bottom: 0px;
+		margin-top: 2px;
+	}
+	
+	.v-link.v-link-taglabel.taglabel {
+		margin-right: 10px;
+		margin-bottom: 2px;
+	}
+	
+	.v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a,
+		.v-link.v-link-taglabel.taglabel a span {
+		text-decoration: none;
+		color: #1B699F
+	}
+	
+	.v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a:VISITED,
+		.v-link.v-link-taglabel.taglabel a:VISITED {
+		color: #1B699F
+	}
+	
+	.v-label.v-widget.taglabel.v-label-taglabel.v-has-width.v-has-height a:HOVER,
+		.v-link.v-link-taglabel.taglabel a:HOVER {
+		color: #1B699F;
+		text-decoration: underline;
+	}
+	
+	span.tag-letter {
+	    font-weight: bold;
+	    margin: 4px 0px;
+	}
+	
+	/* ============== */
+	/* System monitor */
+	/* ============== */
+	.system-monitor-log-style, .system-monitor-fail-log-style,
+		.system-monitor-error-log-style, .system-monitor-ok-log-style {
+		font-weight: bold;
+		font-family: monospace;
+		white-space: pre-wrap;
+	}
+	
+	.system-monitor-log-style {
+		color: #000;
+	}
+	
+	.system-monitor-fail-log-style {
+		color: #D90;
+	}
+	
+	.system-monitor-error-log-style {
+		color: #c00;
+	}
+	
+	.system-monitor-ok-log-style {
+		color: #7B0;
+	}
+
+}

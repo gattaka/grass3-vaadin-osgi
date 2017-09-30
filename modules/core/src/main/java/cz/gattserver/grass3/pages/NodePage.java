@@ -1,9 +1,7 @@
 package cz.gattserver.grass3.pages;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -20,13 +18,13 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.v7.ui.TextField;
 
+import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.ContentsLazyTable;
 import cz.gattserver.grass3.pages.template.NewContentNodeTable;
-import cz.gattserver.grass3.pages.template.NodeContentsQuery;
 import cz.gattserver.grass3.pages.template.NodesTable;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.security.CoreACL;
@@ -44,6 +42,9 @@ public class NodePage extends OneColumnPage {
 
 	@Autowired
 	private NodeFacade nodeFacade;
+
+	@Autowired
+	private ContentNodeFacade contentNodeFacade;
 
 	@Resource(name = "nodePageFactory")
 	private PageFactory nodePageFactory;
@@ -212,19 +213,12 @@ public class NodePage extends OneColumnPage {
 	private void createContentsPart(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout contentsLayout = new VerticalLayout();
-		ContentsLazyTable contentsTable = new ContentsLazyTable() {
-			private static final long serialVersionUID = -2628924290654351639L;
-
-//			@Override
-//			protected BeanQueryFactory<?> createBeanQuery() {
-//				BeanQueryFactory<?> queryFactory = new BeanQueryFactory<NodeContentsQuery>(NodeContentsQuery.class);
-//				Map<String, Object> queryConfiguration = new HashMap<>();
-//				queryConfiguration.put(NodeContentsQuery.KEY, node.getId());
-//				queryFactory.setQueryConfiguration(queryConfiguration);
-//				return queryFactory;
-//			}
-		};
-		contentsTable.populate(NodePage.this);
+		ContentsLazyTable contentsTable = new ContentsLazyTable();
+		contentsTable.populate(this, (sortOrder, offset, limit) -> {
+			return contentNodeFacade.getByNode(node.getId(), offset / limit, limit).stream();
+		}, () -> {
+			return contentNodeFacade.getCountByNode(node.getId());
+		});
 
 		contentsLayout.addComponent(new Label("<h2>Obsahy</h2>", ContentMode.HTML));
 		contentsLayout.addComponent(contentsTable);

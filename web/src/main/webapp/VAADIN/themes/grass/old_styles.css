@@ -1,5 +1,5 @@
 /* Vychazim existujiciho theme Vaadin */
-@import "../reindeer/legacy-styles.css";
+@import "../valo/styles.css";
 
 @import
 	url(http://fonts.googleapis.com/css?family=Voces|Inder|PT+Sans|Ubuntu|PT+Sans+Caption|Oxygen|Varela|Signika)

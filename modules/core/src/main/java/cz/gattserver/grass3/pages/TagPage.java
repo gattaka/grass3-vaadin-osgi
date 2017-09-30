@@ -1,8 +1,5 @@
 package cz.gattserver.grass3.pages;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.shared.ui.ContentMode;
@@ -10,10 +7,10 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.pages.template.BasePage;
-import cz.gattserver.grass3.pages.template.ContentsByTagQuery;
 import cz.gattserver.grass3.pages.template.ContentsLazyTable;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
@@ -24,6 +21,9 @@ public class TagPage extends BasePage {
 
 	@Autowired
 	private ContentTagFacade contentTagFacade;
+
+	@Autowired
+	private ContentNodeFacade contentNodeFacade;
 
 	private ContentTagDTO tag;
 	private Label tagLabel;
@@ -57,19 +57,12 @@ public class TagPage extends BasePage {
 			return;
 		}
 
-		ContentsLazyTable tagContentsTable = new ContentsLazyTable() {
-			private static final long serialVersionUID = -2628924290654351639L;
-
-//			@Override
-//			protected BeanQueryFactory<?> createBeanQuery() {
-//				BeanQueryFactory<?> queryFactory = new BeanQueryFactory<ContentsByTagQuery>(ContentsByTagQuery.class);
-//				Map<String, Object> queryConfiguration = new HashMap<>();
-//				queryConfiguration.put(ContentsByTagQuery.KEY, tag.getId());
-//				queryFactory.setQueryConfiguration(queryConfiguration);
-//				return queryFactory;
-//			}
-		};
-		tagContentsTable.populate(TagPage.this);
+		ContentsLazyTable tagContentsTable = new ContentsLazyTable();
+		tagContentsTable.populate(this, (sortOrder, offset, limit) -> {
+			return contentNodeFacade.getByTag(tag.getId(), offset / limit, limit).stream();
+		}, () -> {
+			return contentNodeFacade.getCountByTag(tag.getId());
+		});
 
 		CustomLayout contentLayout = new CustomLayout("oneColumn");
 		layout.addComponent(contentLayout, "content");

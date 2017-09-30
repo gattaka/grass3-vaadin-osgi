@@ -242,7 +242,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		// výšce layoutu, který si vaadin počítá v době renderu a pak nemění !
 		VerticalLayout layout = new VerticalLayout();
 
-		layout.setMargin(true);
+		layout.setMargin(false);
 		layout.setSpacing(true);
 
 		layout.addComponent(breadcrumb);

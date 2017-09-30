@@ -1,4 +1,4 @@
-$v-app-loading-text: "Facebook Valo";
+$v-app-loading-text: "GRASS III";
 $v-background-color: #fafafa;
 $v-app-background-color: #e7ebf2;
 $v-panel-background-color: #fff;
@@ -26,25 +26,6 @@ $v-selection-item-border-radius: 0;
 
 .grass {
 	@include valo;
-	
-	@import
-	url(http://fonts.googleapis.com/css?family=Voces|Inder|PT+Sans|Ubuntu|PT+Sans+Caption|Oxygen|Varela|Signika)
-	;
-
-	/*
-	font-family: 'Voces', cursive;
-	font-family: 'Inder', sans-serif;
-	font-family: 'PT Sans', sans-serif;
-	font-family: 'Ubuntu', sans-serif;
-	font-family: 'PT Sans Caption', sans-serif;
-	font-family: 'Oxygen', sans-serif;
-	font-family: 'Varela', sans-serif;
-	font-family: 'Signika', sans-serif;
-	*/
-	@font-face {
-		font-family: duru;
-		src: url('fonts/DuruSans-Regular.ttf');
-	}
 
 	.v-textarea.v-widget.v-has-width {
 		font-family: monospace;
@@ -294,9 +275,10 @@ $v-selection-item-border-radius: 0;
 		/* 	top: 42px; */
 		top: 34px;
 		position: relative;
-		background: url("img/menu-shadow.png");
-		background-repeat: no-repeat;
-		position: relative;
+		/*background-image: linear-gradient(#333436, #444649);*/
+		background-color: #333436;
+	    border-top: 1px solid #505154;
+	    border-bottom: 1px solid #424246;
 	}
 	
 	.menu {
@@ -304,7 +286,7 @@ $v-selection-item-border-radius: 0;
 	}
 	
 	div.v-link.v-widget.menu-item.v-link-menu-item {
-		padding-top: 2px;
+		padding: 2px 0;
 	}
 	
 	div.v-link.v-widget.menu-item.v-link-menu-item a {
@@ -348,21 +330,6 @@ $v-selection-item-border-radius: 0;
 		padding: 0 4px;
 		text-decoration: none;
 	}
-	
-	/* .menu .v-menubar .v-menubar-menuitem-selected { 
-	div.v-horizontallayout.v-layout.v-horizontal.v-widget.menu.v-horizontallayout-menu.v-has-width.v-has-height
-		{
-		background-image: url('common/img/vertical-sprites.png');
-		background-position: left -360px;
-	}
-	
-	.v-menubar-submenu .v-menubar-menuitem-selected {
-		background: rgb(159, 136, 77) repeat-x;
-		background-image: url(img/vertical-sprites.png);
-		background-position: left -731px;
-		color: #fff;
-		text-shadow: 0 1px 0 rgb(122, 102, 59);
-	}*/
 	
 	/* == ROUND BORDERS ========================================================= */
 	

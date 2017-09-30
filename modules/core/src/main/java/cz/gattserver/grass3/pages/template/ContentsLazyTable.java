@@ -43,13 +43,21 @@ public class ContentsLazyTable extends Grid<ContentNodeOverviewDTO> {
 			SerializableSupplier<Integer> sizeCallback) {
 
 		setDataProvider(fetchItems, sizeCallback);
+		setSelectionMode(SelectionMode.NONE);
+
+		String iconBind = "customIcon";
+		String nameBind = "customName";
+		String nodeBind = "customNode";
+		String authorBind = "customAuthor";
+		String creationDateBind = "customCreationDate";
+		String lastModificationDateBind = "customLastModificationDate";
 
 		addColumn(contentNode -> {
 			ContentService contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
 			return contentService == null ? new ThemeResource(ImageIcons.WARNING_16_ICON)
 					: contentService.getContentIcon();
-		}, new ImageRenderer<>()).setWidth(16).setCaption("");
-		
+		}, new ImageRenderer<>()).setWidth(15 + 16 + 15).setCaption("").setId(iconBind);
+
 		addColumn(contentNode -> {
 			ContentService contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
 			PageFactory pageFactory = contentService == null ? noServicePageFactory
@@ -58,32 +66,27 @@ public class ContentsLazyTable extends Grid<ContentNodeOverviewDTO> {
 					+ page.getPageURL(pageFactory,
 							URLIdentifierUtils.createURLIdentifier(contentNode.getContentID(), contentNode.getName()))
 					+ "'>" + contentNode.getName() + "</a>";
-		}, new HtmlRenderer()).setCaption("Název");
-		
+		}, new HtmlRenderer()).setCaption("Název").setId(nameBind);
+
 		addColumn(contentNode -> {
 			NodeOverviewDTO contentParent = contentNode.getParent();
 			return "<a href='"
 					+ page.getPageResource(nodePageFactory,
 							URLIdentifierUtils.createURLIdentifier(contentParent.getId(), contentParent.getName()))
 					+ "'>" + contentParent.getName() + "</a>";
-		}, new HtmlRenderer());
-		
-		addColumn(contentNode -> {
-			NodeOverviewDTO contentParent = contentNode.getParent();
-			return "<a href='"
-					+ page.getPageResource(nodePageFactory,
-							URLIdentifierUtils.createURLIdentifier(contentParent.getId(), contentParent.getName()))
-					+ "'>" + contentParent.getName() + "</a>";
-		}, new HtmlRenderer()).setCaption("Kategorie");
-		
+		}, new HtmlRenderer()).setCaption("Kategorie").setId(nodeBind);
+
 		addColumn(contentNode -> {
 			return contentNode.getAuthor().getName();
-		}, new TextRenderer()).setCaption("Autor");
-		
-		addColumn(ContentNodeOverviewDTO::getCreationDate, new DateRenderer("d.M.yyyy")).setCaption("Datum vytvoření");
-		
-		addColumn(ContentNodeOverviewDTO::getLastModificationDate, new DateRenderer("d.M.yyyy"))
-				.setCaption("Datum úpravy");
+		}, new TextRenderer()).setCaption("Autor").setId(authorBind);
+
+		addColumn(ContentNodeOverviewDTO::getCreationDate, new DateRenderer("%1$te.%1$tm.%1$tY"))
+				.setCaption("Datum vytvoření").setId(creationDateBind).setStyleGenerator(item -> "v-align-right");
+
+		addColumn(ContentNodeOverviewDTO::getLastModificationDate, new DateRenderer("%1$te.%1$tm.%1$tY"))
+				.setCaption("Datum úpravy").setId(lastModificationDateBind).setStyleGenerator(item -> "v-align-right");
+
+		setColumns(iconBind, nameBind, nodeBind, authorBind, creationDateBind, lastModificationDateBind);
 
 		int min = 50;
 		int element = 25;

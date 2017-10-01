@@ -43,7 +43,7 @@ public abstract class AbstractGrassPage extends GrassLayout implements GrassPage
 		createContent(this);
 
 		// footer
-		addComponent(new Label("GRASS3"), "about");
+		addComponent(new Label("Powered by GRASS III © 2012-2017 Hynek Uhlíř"), "about");
 
 	}
 

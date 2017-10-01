@@ -51,8 +51,11 @@ public class LoginPage extends OneColumnPage {
 	@Override
 	protected Component createContent() {
 
+		VerticalLayout marginLayout = new VerticalLayout();
+		marginLayout.setMargin(true);
+		
 		VerticalLayout layout = new VerticalLayout();
-
+		marginLayout.addComponent(layout);
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
@@ -77,7 +80,7 @@ public class LoginPage extends OneColumnPage {
 		login.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 		layout.addComponent(login);
 
-		return layout;
+		return marginLayout;
 
 	}
 }

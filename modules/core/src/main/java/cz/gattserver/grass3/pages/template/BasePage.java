@@ -77,7 +77,7 @@ public abstract class BasePage extends AbstractGrassPage {
 		Link quotes = new Link();
 		quotes.setResource(getPageResource(quotesPageFactory));
 		quotes.setStyleName("quote");
-		quotes.setCaption(chooseQuote());
+		quotes.setCaption("\"" + chooseQuote() + "\"");
 
 		layout.addComponent(quotes, "quote");
 	}
@@ -191,7 +191,7 @@ public abstract class BasePage extends AbstractGrassPage {
 		// CustomLayout menu = new CustomLayout("menu");
 		HorizontalLayout menuExpander = new HorizontalLayout();
 		menuExpander.setWidth("970px");
-//		menuExpander.setHeight("70px");
+		// menuExpander.setHeight("70px");
 		menuExpander.addStyleName("menu");
 		menuExpander.setMargin(false);
 		menuExpander.setSpacing(false);

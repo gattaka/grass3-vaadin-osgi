@@ -46,25 +46,15 @@ public abstract class RecipeWindow extends WebWindow {
 
 		Button b;
 		if (to != null)
-			addComponent(b = new ModifyButton() {
-				private static final long serialVersionUID = 1669142984184558228L;
-
-				@Override
-				public void onClick(ClickEvent event) {
+			addComponent(b = new ModifyButton(event -> {
 					onSave(name.getValue(), desc.getValue(), to.getId());
 					close();
-				}
-			});
+			}));
 		else {
-			addComponent(b = new CreateButton() {
-				private static final long serialVersionUID = 4632843818680202003L;
-
-				@Override
-				public void onClick(ClickEvent event) {
+			addComponent(b = new CreateButton(event -> {
 					onSave(name.getValue(), desc.getValue(), null);
 					close();
-				}
-			});
+			}));
 		}
 		setComponentAlignment(b, Alignment.MIDDLE_CENTER);
 	}

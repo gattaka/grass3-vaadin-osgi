@@ -29,7 +29,7 @@ import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.subwindows.ContentMoveWindow;
-import cz.gattserver.grass3.template.AbstractButton;
+import cz.gattserver.grass3.template.ImageButton;
 import cz.gattserver.grass3.template.Breadcrumb;
 import cz.gattserver.grass3.template.DeleteButton;
 import cz.gattserver.grass3.template.ModifyButton;
@@ -37,7 +37,6 @@ import cz.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.ImageIcons;
-import cz.gattserver.web.common.window.InfoWindow;
 import cz.gattserver.web.common.window.WarnWindow;
 
 public abstract class ContentViewerPage extends TwoColumnPage {
@@ -114,68 +113,52 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		// Upravit
 		if (coreACL.canModifyContent(content, getUser())) {
-			operationsListLayout.addComponent(new ModifyButton() {
-				private static final long serialVersionUID = -491587087265983699L;
-
-				@Override
-				public void onClick(ClickEvent event) {
-					onEditOperation();
-				}
-			});
+			ModifyButton modBtn = new ModifyButton(event -> onEditOperation());
+			operationsListLayout.addComponent(modBtn);
+			modBtn.setIconAlternateText(modBtn.getCaption());
+			modBtn.setCaption(null);
 		}
 
 		// Smazat
-		if (coreACL.canDeleteContent(content, getUser())) {
-			operationsListLayout.addComponent(new DeleteButton() {
-				private static final long serialVersionUID = -4293982845547453908L;
+		if (coreACL.canDeleteContent(content,
 
-				@Override
-				public void onClick(ClickEvent event) {
-					onDeleteOperation();
-				}
+				getUser())) {
+			DeleteButton delBtn = new DeleteButton(event -> {
+				onDeleteOperation();
 			});
+			operationsListLayout.addComponent(delBtn);
+			delBtn.setIconAlternateText(delBtn.getCaption());
+			delBtn.setCaption(null);
 		}
 
 		// Oblíbené
-		removeFromFavouritesButton = new AbstractButton("Odebrat z oblíbených", ImageIcons.BROKEN_HEART_16_ICON) {
-			private static final long serialVersionUID = 2867032632695180826L;
-
-			@Override
-			public void onClick(ClickEvent event) {
-				// zdařilo se ? Pokud ano, otevři info okno
-				try {
-					userFacade.removeContentFromFavourites(content.getId(), getUser().getId());
-					InfoWindow infoSubwindow = new InfoWindow("Odebrání z oblíbených proběhlo úspěšně.");
-					getUI().addWindow(infoSubwindow);
-					removeFromFavouritesButton.setVisible(false);
-					addToFavouritesButton.setVisible(true);
-				} catch (Exception e) {
-					// Pokud ne, otevři warn okno
-					WarnWindow warnSubwindow = new WarnWindow("Odebrání z oblíbených se nezdařilo.");
-					getUI().addWindow(warnSubwindow);
-				}
+		removeFromFavouritesButton = new ImageButton(null, ImageIcons.BROKEN_HEART_16_ICON, event -> {
+			// zdařilo se ? Pokud ano, otevři info okno
+			try {
+				userFacade.removeContentFromFavourites(content.getId(), getUser().getId());
+				removeFromFavouritesButton.setVisible(false);
+				addToFavouritesButton.setVisible(true);
+			} catch (Exception e) {
+				// Pokud ne, otevři warn okno
+				WarnWindow warnSubwindow = new WarnWindow("Odebrání z oblíbených se nezdařilo.");
+				getUI().addWindow(warnSubwindow);
 			}
-		};
+		});
+		removeFromFavouritesButton.setIconAlternateText("Odebrat z oblíbených");
 
-		addToFavouritesButton = new AbstractButton("Přidat do oblíbených", ImageIcons.HEART_16_ICON) {
-			private static final long serialVersionUID = 2867032632695180826L;
-
-			@Override
-			public void onClick(ClickEvent event) {
-				// zdařilo se ? Pokud ano, otevři info okno
-				try {
-					userFacade.addContentToFavourites(content.getId(), getUser().getId());
-					InfoWindow infoSubwindow = new InfoWindow("Vložení do oblíbených proběhlo úspěšně.");
-					getUI().addWindow(infoSubwindow);
-					addToFavouritesButton.setVisible(false);
-					removeFromFavouritesButton.setVisible(true);
-				} catch (Exception e) {
-					// Pokud ne, otevři warn okno
-					WarnWindow warnSubwindow = new WarnWindow("Vložení do oblíbených se nezdařilo.");
-					getUI().addWindow(warnSubwindow);
-				}
+		addToFavouritesButton = new ImageButton(null, ImageIcons.HEART_16_ICON, event -> {
+			// zdařilo se ? Pokud ano, otevři info okno
+			try {
+				userFacade.addContentToFavourites(content.getId(), getUser().getId());
+				addToFavouritesButton.setVisible(false);
+				removeFromFavouritesButton.setVisible(true);
+			} catch (Exception e) {
+				// Pokud ne, otevři warn okno
+				WarnWindow warnSubwindow = new WarnWindow("Vložení do oblíbených se nezdařilo.");
+				getUI().addWindow(warnSubwindow);
 			}
-		};
+		});
+		addToFavouritesButton.setIconAlternateText("Přidat do oblíbených");
 
 		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(content, getUser()));
 		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(content, getUser()));
@@ -185,22 +168,19 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		// Změna kategorie
 		if (coreACL.canModifyContent(content, getUser())) {
-			operationsListLayout.addComponent(new AbstractButton("Přesunout", ImageIcons.MOVE_16_ICON) {
-				private static final long serialVersionUID = 4009430146436270013L;
+			ImageButton moveBtn = new ImageButton(null, ImageIcons.MOVE_16_ICON, event -> {
+				UI.getCurrent().addWindow(new ContentMoveWindow(content) {
+					private static final long serialVersionUID = 3748723613020816248L;
 
-				@Override
-				public void onClick(ClickEvent event) {
-					UI.getCurrent().addWindow(new ContentMoveWindow(content) {
-						private static final long serialVersionUID = 3748723613020816248L;
-
-						@Override
-						protected void onMove() {
-							redirect(getPageURL(getContentViewerPageFactory(),
-									URLIdentifierUtils.createURLIdentifier(content.getContentID(), content.getName())));
-						}
-					});
-				}
+					@Override
+					protected void onMove() {
+						redirect(getPageURL(getContentViewerPageFactory(),
+								URLIdentifierUtils.createURLIdentifier(content.getContentID(), content.getName())));
+					}
+				});
 			});
+			operationsListLayout.addComponent(moveBtn);
+			moveBtn.setIconAlternateText("Přesunout");
 		}
 	}
 

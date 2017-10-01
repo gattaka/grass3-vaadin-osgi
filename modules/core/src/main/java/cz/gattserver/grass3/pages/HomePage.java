@@ -18,6 +18,7 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.facades.ContentNodeFacade;
@@ -68,7 +69,7 @@ public class HomePage extends BasePage {
 		VerticalLayout pagelayout = new VerticalLayout();
 
 		pagelayout.setMargin(true);
-		pagelayout.setSpacing(true);
+		pagelayout.setSpacing(false);
 
 		// Oblíbené
 		UserInfoDTO user = getGrassUI().getUser();
@@ -208,16 +209,14 @@ public class HomePage extends BasePage {
 		});
 
 		char oldChar = 0;
+		char currChar = 0;
 		StringBuilder sb = null;
 		for (ContentTagDTO contentTag : contentTags) {
-
-			char currChar = contentTag.getName().toUpperCase().charAt(0);
+			currChar = contentTag.getName().toUpperCase().charAt(0);
 			if (currChar != oldChar) {
 				if (oldChar != 0) {
-					createTags(sb, tagCloudLayout);
+					createTags(sb, oldChar, tagCloudLayout);
 				}
-				tagCloudLayout.addComponent(
-						new Label("<span class=\"tag-letter\">" + currChar + "</span>", ContentMode.HTML));
 				sb = new StringBuilder();
 				oldChar = currChar;
 			}
@@ -228,14 +227,15 @@ public class HomePage extends BasePage {
 							URLIdentifierUtils.createURLIdentifier(contentTag.getId(), contentTag.getName()))
 					+ "' style='font-size:" + size + "pt'>" + contentTag.getName() + "</a> ");
 		}
-		createTags(sb, tagCloudLayout);
+		createTags(sb, currChar, tagCloudLayout);
 	}
 
-	private void createTags(StringBuilder sb, VerticalLayout tagCloudLayout) {
+	private void createTags(StringBuilder sb, char tag, Layout tagCloudLayout) {
 		Label tagLabel;
 		CssLayout tagCloud = new CssLayout();
 		tagCloudLayout.addComponent(tagCloud);
-		tagCloud.setWidth("100%");
+		tagCloud.addComponent(tagLabel = new Label("<span class=\"tag-letter\">" + tag + "</span>", ContentMode.HTML));
+		tagLabel.setSizeUndefined();
 		tagCloud.addComponent(tagLabel = new Label(sb.toString(), ContentMode.HTML));
 		tagLabel.addStyleName("taglabel");
 		tagLabel.setSizeFull();

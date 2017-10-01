@@ -158,7 +158,7 @@ public class Downloader {
 			}
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Nezdařilo se získat favicon z: " + address);
 		}
 
 		return null;

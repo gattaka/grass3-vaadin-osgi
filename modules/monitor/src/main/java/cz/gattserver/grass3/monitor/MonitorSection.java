@@ -27,7 +27,7 @@ public class MonitorSection implements SectionService {
 	}
 
 	public String getSectionCaption() {
-		return "System monitor";
+		return "System";
 	}
 
 }

@@ -253,6 +253,10 @@ $v-layout-margin-left: 10px;
 		text-align: center;
 		top: 10px
 	}
+
+	.v-link.v-widget.quote.v-link-quote {
+	    display: inline;
+	}
 	
 	.v-link.v-link-quote.quote a span {
 		color: white;
@@ -275,6 +279,7 @@ $v-layout-margin-left: 10px;
 	    border-top: 1px solid #505154;
 	    border-bottom: 1px solid #424246;
 	    border-radius: 4px;
+        box-shadow: 0 0px 10px 0px black;
 	}
 	
 	.menu {
@@ -375,20 +380,8 @@ $v-layout-margin-left: 10px;
 		margin-bottom: 10px;
 	}
 	
-	.content_operations div:first-child {
-		margin-top: 0px;
-	}
-	
-	.content_operations div {
-		margin-top: 5px;
-	}
-	
-	.content_operations .v-button-wrap {
-		padding: 4px 8px 0 5px;
-	}
-	
 	.content_operations .v-button.v-widget {
-		margin-right: 5px;
+		margin: 5px 5px 0 0;
 	}
 	
 	.v-horizontallayout.v-layout.v-horizontal.v-widget.not-publicated-info.v-horizontallayout-not-publicated-info
@@ -474,11 +467,9 @@ $v-layout-margin-left: 10px;
 	}
 	
 	.breadcrumb .v-embedded.v-embedded-image {
-		margin: 2px 8px;	
 	}
 	
 	.breadcrumb_element {
-		
 	}
 	
 	/* ============= */
@@ -492,8 +483,13 @@ $v-layout-margin-left: 10px;
 	/* ================ */
 	/* CSS layout prvky */
 	/* ================ */
+	
+	.v-csslayout.v-layout.v-widget.tools_css_menu.v-csslayout-tools_css_menu {
+    	padding: 10px 0 0 10px;
+	}
+	
 	.v-csslayout.v-csslayout-tools_css_menu.tools_css_menu .v-button {
-		margin: 0 5px 5px 0;
+		margin: 0 10px 10px 0;
 	}
 	
 	.v-label.v-label-msglabel.msglabel, .v-embedded.v-embedded-image.msgimg

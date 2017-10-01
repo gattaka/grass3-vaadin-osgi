@@ -9,6 +9,7 @@ import java.util.Collection;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomLayout;
 
+@Deprecated
 public class JQueryAccordion extends CustomLayout {
 
 	private static final long serialVersionUID = 6234687236886911109L;

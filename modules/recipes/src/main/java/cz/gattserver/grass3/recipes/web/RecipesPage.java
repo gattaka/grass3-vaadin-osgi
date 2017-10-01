@@ -9,7 +9,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.v7.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.pages.template.OneColumnPage;
@@ -60,28 +60,23 @@ public class RecipesPage extends OneColumnPage {
 					showDetail(recipesFacade.getRecipeById(to.getId()));
 				}
 			});
-			b.setStyleName(Reindeer.BUTTON_LINK);
+			b.setStyleName(ValoTheme.BUTTON_LINK);
 			menu.addComponent(b);
 		}
 
-		CreateButton createButton = new CreateButton() {
-			private static final long serialVersionUID = 7163642213966042835L;
+		CreateButton createButton = new CreateButton(event -> {
+			UI.getCurrent().addWindow(new RecipeWindow() {
+				private static final long serialVersionUID = -4863260002363608014L;
 
-			@Override
-			public void onClick(ClickEvent event) {
-				UI.getCurrent().addWindow(new RecipeWindow() {
-					private static final long serialVersionUID = -4863260002363608014L;
-
-					@Override
-					protected void onSave(String name, String desc, Long id) {
-						id = recipesFacade.saveRecipe(name, desc);
-						RecipeDTO to = new RecipeDTO(id, name, desc);
-						showDetail(to);
-						populateMenu();
-					}
-				});
-			}
-		};
+				@Override
+				protected void onSave(String name, String desc, Long id) {
+					id = recipesFacade.saveRecipe(name, desc);
+					RecipeDTO to = new RecipeDTO(id, name, desc);
+					showDetail(to);
+					populateMenu();
+				}
+			});
+		});
 		menu.addComponent(createButton);
 
 	}
@@ -115,24 +110,19 @@ public class RecipesPage extends OneColumnPage {
 		btnLayout.setSpacing(true);
 		contentLayout.addComponent(btnLayout);
 
-		btnLayout.addComponent(new ModifyButton() {
-			private static final long serialVersionUID = 3738277265620526416L;
+		btnLayout.addComponent(new ModifyButton(event -> {
+			UI.getCurrent().addWindow(new RecipeWindow(choosenRecipe) {
+				private static final long serialVersionUID = 5264621441522056786L;
 
-			@Override
-			public void onClick(ClickEvent event) {
-				UI.getCurrent().addWindow(new RecipeWindow(choosenRecipe) {
-					private static final long serialVersionUID = 5264621441522056786L;
-
-					@Override
-					protected void onSave(String name, String desc, Long id) {
-						recipesFacade.saveRecipe(name, desc, id);
-						RecipeDTO to = new RecipeDTO(id, name, desc);
-						showDetail(to);
-						populateMenu();
-					}
-				});
-			}
-		});
+				@Override
+				protected void onSave(String name, String desc, Long id) {
+					recipesFacade.saveRecipe(name, desc, id);
+					RecipeDTO to = new RecipeDTO(id, name, desc);
+					showDetail(to);
+					populateMenu();
+				}
+			});
+		}));
 		// btnLayout.addComponent(new DeleteButton() {
 		// private static final long serialVersionUID = 7163642213966042835L;
 		//

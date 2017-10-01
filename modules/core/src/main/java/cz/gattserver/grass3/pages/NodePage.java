@@ -7,16 +7,17 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.data.Binder;
+import com.vaadin.data.Binder.Binding;
+import com.vaadin.data.BindingValidationStatus;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.v7.ui.TextField;
 
 import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
@@ -32,6 +33,7 @@ import cz.gattserver.grass3.template.Breadcrumb;
 import cz.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
+import cz.gattserver.web.common.ui.ImageIcons;
 
 public class NodePage extends OneColumnPage {
 
@@ -51,7 +53,8 @@ public class NodePage extends OneColumnPage {
 
 	// Přehled podkategorií
 	private NodesTable subNodesTable;
-	private Label noSubNodesLabel;
+
+	private String newNodeName = null;
 
 	public NodePage(GrassRequest request) {
 		super(request);
@@ -59,7 +62,6 @@ public class NodePage extends OneColumnPage {
 
 	@Override
 	protected void init() {
-		noSubNodesLabel = new Label("Nebyly nalezeny žádné podkategorie");
 		super.init();
 	}
 
@@ -81,7 +83,7 @@ public class NodePage extends OneColumnPage {
 		NodeDTO node = nodeFacade.getNodeByIdForDetail(identifier.getId());
 
 		layout.setMargin(true);
-		layout.setSpacing(true);
+		layout.setSpacing(false);
 
 		// TODO pokud má jiný název, přesměruj na kategorii s ID-Název správným
 		// názvem
@@ -100,49 +102,37 @@ public class NodePage extends OneColumnPage {
 
 	private void createNewNodePanel(VerticalLayout layout, final NodeDTO node) {
 
-		Panel panel = new Panel("Vytvořit novou kategorii");
-		layout.addComponent(panel);
-
-		HorizontalLayout panelBackgroudLayout = new HorizontalLayout();
-		panelBackgroudLayout.setSizeFull();
-		panel.setContent(panelBackgroudLayout);
-
 		HorizontalLayout panelLayout = new HorizontalLayout();
+		panelLayout.setMargin(false);
 		panelLayout.setSpacing(true);
-		panelLayout.setMargin(true);
-		panelBackgroudLayout.addComponent(panelLayout);
+		layout.addComponent(panelLayout);
 
 		final TextField newNodeNameField = new TextField();
-		// newNodeName.setWidth("200px");
-		newNodeNameField.setRequired(true);
-		newNodeNameField.setRequiredError("Název kategorie nesmí být prázdný");
+		final Binding<Object, String> newNodeNameFieldBinder = new Binder<>().forField(newNodeNameField)
+				.asRequired("Název kategorie nesmí být prázdný").bind(o -> newNodeName, (o, value) -> {
+					newNodeName = value;
+				});
 		panelLayout.addComponent(newNodeNameField);
 
-		Button createButton = new Button("Vytvořit", new Button.ClickListener() {
+		Button createButton = new Button("Vytvořit novou kategorii", e -> {
+			BindingValidationStatus<String> status = newNodeNameFieldBinder.validate();
+			if (status.isError())
+				return;
 
-			private static final long serialVersionUID = -4315617904120991885L;
-
-			public void buttonClick(ClickEvent event) {
-				if (newNodeNameField.isValid() == false)
-					return;
-
-				String newNodeName = newNodeNameField.getValue();
-				Long newNodeId = nodeFacade.createNewNode(node, newNodeName);
-				if (newNodeId != null) {
-					showInfo("Nový kategorie byla úspěšně vytvořena.");
-					// refresh
-					populateSubnodesTable(node);
-					subNodesTable.setVisible(true);
-					noSubNodesLabel.setVisible(false);
-					redirect(getPageURL(nodePageFactory,
-							URLIdentifierUtils.createURLIdentifier(newNodeId, newNodeName)));
-					// clean
-					newNodeNameField.setValue("");
-				} else {
-					showWarning("Nezdařilo se vložit novou kategorii.");
-				}
+			String newNodeName = newNodeNameField.getValue();
+			Long newNodeId = nodeFacade.createNewNode(node, newNodeName);
+			if (newNodeId != null) {
+				showInfo("Nový kategorie byla úspěšně vytvořena.");
+				// refresh
+				populateSubnodesTable(node);
+				redirect(getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(newNodeId, newNodeName)));
+				// clean
+				newNodeNameField.setValue("");
+			} else {
+				showWarning("Nezdařilo se vložit novou kategorii.");
 			}
 		});
+		createButton.setIcon(new ThemeResource(ImageIcons.BRIEFCASE_PLUS_16_ICON));
 		panelLayout.addComponent(createButton);
 
 	}
@@ -188,13 +178,9 @@ public class NodePage extends OneColumnPage {
 		layout.addComponent(subNodesLayout);
 		subNodesTable.setWidth("100%");
 
-		noSubNodesLabel.setWidth(null);
-		subNodesLayout.addComponent(noSubNodesLabel);
-		subNodesLayout.setComponentAlignment(noSubNodesLabel, Alignment.MIDDLE_CENTER);
-
 		// Vytvořit novou kategorii
 		if (coreACL.canCreateNode(getUser())) {
-			createNewNodePanel(layout, node);
+			createNewNodePanel(subNodesLayout, node);
 		}
 	}
 
@@ -206,8 +192,6 @@ public class NodePage extends OneColumnPage {
 			return;
 		}
 		subNodesTable.populateTable(nodes);
-		subNodesTable.setVisible(nodes.size() != 0);
-		noSubNodesLabel.setVisible(nodes.size() == 0);
 	}
 
 	private void createContentsPart(VerticalLayout layout, NodeDTO node) {
@@ -237,7 +221,6 @@ public class NodePage extends OneColumnPage {
 		newContentsLayout.addComponent(new Label("<h2>Vytvořit nový obsah</h2>", ContentMode.HTML));
 		newContentsLayout.addComponent(newContentsTable);
 		newContentsTable.setWidth("100%");
-		newContentsTable.setHeight("100px");
 		newContentsLayout.setVisible(coreACL.canCreateContent(getUser()));
 
 		layout.addComponent(newContentsLayout);

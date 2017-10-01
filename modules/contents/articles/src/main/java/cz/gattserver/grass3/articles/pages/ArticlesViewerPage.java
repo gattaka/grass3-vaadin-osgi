@@ -116,7 +116,9 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 	@Override
 	protected void createContent(VerticalLayout layout) {
-		layout.addComponent(new Label(article.getOutputHTML(), ContentMode.HTML));
+		Label label = new Label(article.getOutputHTML(), ContentMode.HTML);
+		label.setWidth("100%");
+		layout.addComponent(label);
 	}
 
 	@Override

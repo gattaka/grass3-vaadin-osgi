@@ -27,7 +27,7 @@ public class HWSection implements SectionService {
 	}
 
 	public String getSectionCaption() {
-		return "Evidence HW";
+		return "HW";
 	}
 
 }

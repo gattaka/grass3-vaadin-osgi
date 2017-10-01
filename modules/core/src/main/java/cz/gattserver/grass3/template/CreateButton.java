@@ -1,13 +1,15 @@
 package cz.gattserver.grass3.template;
 
+import com.vaadin.ui.Button;
+
 import cz.gattserver.web.common.ui.ImageIcons;
 
-public abstract class CreateButton extends AbstractButton {
+public class CreateButton extends ImageButton {
 
 	private static final long serialVersionUID = -9054113192020716390L;
 
-	public CreateButton() {
-		super("Vytvořit", ImageIcons.PLUS_16_ICON);
+	public CreateButton(Button.ClickListener clickListener) {
+		super("Vytvořit", ImageIcons.PLUS_16_ICON, clickListener);
 	}
 
 }

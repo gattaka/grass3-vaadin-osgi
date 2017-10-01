@@ -1,13 +1,15 @@
 package cz.gattserver.grass3.template;
 
+import com.vaadin.ui.Button;
+
 import cz.gattserver.web.common.ui.ImageIcons;
 
-public abstract class DeleteButton extends AbstractButton {
+public class DeleteButton extends ImageButton {
 
 	private static final long serialVersionUID = -9054113192020716390L;
 
-	public DeleteButton() {
-		super("Smazat",ImageIcons.DELETE_16_ICON);
+	public DeleteButton(Button.ClickListener clickListener) {
+		super("Smazat", ImageIcons.DELETE_16_ICON, clickListener);
 	}
 
 }

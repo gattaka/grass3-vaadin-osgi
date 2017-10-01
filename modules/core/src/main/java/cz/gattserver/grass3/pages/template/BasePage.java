@@ -5,20 +5,12 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.vaadin.server.Page;
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomLayout;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.ValoTheme;
 
 import cz.gattserver.grass3.ServiceHolder;
 import cz.gattserver.grass3.facades.NodeFacade;
@@ -27,10 +19,8 @@ import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.security.CoreACL;
-import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.service.SectionService;
 import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.web.common.window.WebWindow;
 
 public abstract class BasePage extends AbstractGrassPage {
 
@@ -56,6 +46,9 @@ public abstract class BasePage extends AbstractGrassPage {
 
 	@Resource(name = "loginPageFactory")
 	protected PageFactory loginPageFactory;
+
+	@Resource(name = "logoutPageFactory")
+	protected PageFactory logoutPageFactory;
 
 	@Resource(name = "registrationPageFactory")
 	protected PageFactory registrationPageFactory;
@@ -130,58 +123,11 @@ public abstract class BasePage extends AbstractGrassPage {
 		// Přehled o uživateli
 		final UserInfoDTO userInfoDTO = getGrassUI().getUser();
 		if (coreACL.canShowUserDetails(userInfoDTO, getUser())) {
-
-			Button userDetailsButton = new Button(userInfoDTO.getName(), event -> {
-				final Window subwindow = new WebWindow("Detail uživatele " + userInfoDTO.getName());
-				subwindow.center();
-				getUI().addWindow(subwindow);
-				subwindow.setWidth("220px");
-				subwindow.setHeight("260px");
-				GridLayout gridLayout = new GridLayout(2, 4);
-				gridLayout.setMargin(true);
-				gridLayout.setSpacing(true);
-				gridLayout.setSizeFull();
-				subwindow.setContent(gridLayout);
-
-				// Jméno
-				gridLayout.addComponent(new Label("<h2>" + userInfoDTO.getName() + "</h2>", ContentMode.HTML), 0, 0, 1,
-						0);
-
-				// Admin ?
-				gridLayout.addComponent(new Label("Admin"), 0, 1);
-				gridLayout.addComponent(new Label(userInfoDTO.getRoles().contains(Role.ADMIN) ? "Ano" : "Ne"), 1, 1);
-
-				// Friend ?
-				gridLayout.addComponent(new Label("Friend"), 0, 2);
-				gridLayout.addComponent(new Label(userInfoDTO.getRoles().contains(Role.FRIEND) ? "Ano" : "Ne"), 1, 2);
-
-				// Author ?
-				gridLayout.addComponent(new Label("Author"), 0, 3);
-				gridLayout.addComponent(new Label(userInfoDTO.getRoles().contains(Role.AUTHOR) ? "Ano" : "Ne"), 1, 3);
-
-				subwindow.focus();
-			});
-			userDetailsButton.setStyleName(ValoTheme.BUTTON_LINK);
-			userDetailsButton.addStyleName("user_status");
-			createMenuComponent(menu, userDetailsButton);
-
-			// separator
-			Label separator = new Label("|");
-			createMenuComponent(menu, separator);
-
 			// nastavení
-			createMenuComponent(menu, new Link("Nastavení", getPageResource(settingsPageFactory)));
+			createMenuComponent(menu, new Link(userInfoDTO.getName(), getPageResource(settingsPageFactory)));
 
 			// odhlásit
-			Button logOffButton = new Button("Odhlásit", event -> {
-				SecurityContext context = SecurityContextHolder.getContext();
-				context.setAuthentication(null);
-				SecurityContextHolder.clearContext();
-				getSession().close();
-				Page.getCurrent().reload();
-			});
-			logOffButton.setStyleName(ValoTheme.BUTTON_LINK);
-			createMenuComponent(menu, logOffButton);
+			createMenuComponent(menu, new Link("Odhlásit", getPageResource(logoutPageFactory)));
 		}
 	}
 

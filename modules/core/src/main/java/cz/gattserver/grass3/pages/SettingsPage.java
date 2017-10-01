@@ -58,8 +58,12 @@ public class SettingsPage extends TwoColumnPage {
 
 	@Override
 	protected Component createLeftColumnContent() {
+		VerticalLayout marginLayout = new VerticalLayout();
+		marginLayout.setMargin(true);
+		
 		VerticalLayout leftColumnLayout = new VerticalLayout();
 		leftColumnLayout.setMargin(true);
+		marginLayout.addComponent(leftColumnLayout);
 
 		for (SettingsTabFactory settingsTabFactory : settingsTabFactories) {
 			Link link = new Link(settingsTabFactory.getSettingsCaption(),
@@ -67,7 +71,7 @@ public class SettingsPage extends TwoColumnPage {
 			leftColumnLayout.addComponent(link);
 		}
 
-		return leftColumnLayout;
+		return marginLayout;
 	}
 
 	@Override

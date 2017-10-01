@@ -23,6 +23,7 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.Registration;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.ui.Accordion;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
@@ -48,9 +49,9 @@ import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.JScriptItem;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.template.ImageButton;
 import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.grass3.ui.util.JQueryAccordion;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
 import cz.gattserver.web.common.ui.ImageIcons;
@@ -154,7 +155,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 			int partNumber;
 			if (partNumberToken != null && (partNumber = Integer.valueOf(partNumberToken)) >= 0) {
-
 				try {
 					parts = PartsFinder.findParts(new ByteArrayInputStream(article.getText().getBytes("UTF-8")),
 							partNumber);
@@ -213,19 +213,13 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		/**
 		 * Projdi zaregistrované pluginy a vytvoř menu nástrojů
 		 */
-		JQueryAccordion accordion = null;
-		try {
-			accordion = new JQueryAccordion(groups);
-		} catch (IOException e) {
-			// nemělo by se stát
-			e.printStackTrace();
-		}
+		Accordion accordion = new Accordion();
+		accordion.setSizeFull();
 		for (String group : groups) {
 
 			CssLayout groupToolsLayout = new CssLayout();
 			groupToolsLayout.addStyleName("tools_css_menu");
-			groupToolsLayout.setWidth("100%");
-			accordion.setNextElement(groupToolsLayout);
+			accordion.addTab(groupToolsLayout, group);
 
 			List<EditorButtonResources> resourcesBundles = new ArrayList<EditorButtonResources>(
 					pluginServiceHolder.getGroupTags(group));
@@ -236,22 +230,30 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				String prefix = resourceBundle.getPrefix();
 				String suffix = resourceBundle.getSuffix();
 
-				StringBuilder builder = new StringBuilder();
+				ImageButton btn = new ImageButton(resourceBundle.getDescription(), resourceBundle.getImage(), event -> {
+					JavaScript.eval("insert('" + prefix + "','" + suffix + "')");
+				});
 
-				builder.append("<div onClick=\"insert('" + prefix + "','" + suffix
-						+ "');\" tabindex=\"0\" role=\"button\" class=\"v-button v-widget\">");
-				builder.append("<span class=\"v-button-wrap\">");
-				if (resourceBundle.getImage() != null) {
-					builder.append("<img src=\"" + getRequest().getContextRoot() + "/VAADIN/themes/grass/"
-							+ resourceBundle.getImage().toString() + "\"/> ");
-				}
-				builder.append("<span class=\"v-button-caption\" style=\"vertical-align: super;\">"
-						+ resourceBundle.getDescription() + "</span>");
-				builder.append("</span>");
-				builder.append("</div>");
-				Label btnLabel = new Label(builder.toString(), ContentMode.HTML);
-				btnLabel.setWidth(null);
-				groupToolsLayout.addComponent(btnLabel);
+				// StringBuilder builder = new StringBuilder();
+				// builder.append("<div onClick=\"insert('" + prefix + "','" +
+				// suffix
+				// + "');\" tabindex=\"0\" role=\"button\" class=\"v-button
+				// v-widget\">");
+				// builder.append("<span class=\"v-button-wrap\">");
+				// if (resourceBundle.getImage() != null) {
+				// builder.append("<img src=\"" + getRequest().getContextRoot()
+				// + "/VAADIN/themes/grass/"
+				// + resourceBundle.getImage().toString() + "\"/> ");
+				// }
+				// builder.append("<span class=\"v-button-caption\"
+				// style=\"vertical-align: super;\">"
+				// + resourceBundle.getDescription() + "</span>");
+				// builder.append("</span>");
+				// builder.append("</div>");
+				// Label btnLabel = new Label(builder.toString(),
+				// ContentMode.HTML);
+				// btnLabel.setWidth(null);
+				groupToolsLayout.addComponent(btn);
 
 			}
 		}
@@ -264,7 +266,10 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				new JScriptItem("$( \"#accordion\" ).accordion({ event: \"click\", heightStyle: \"content\" })", true),
 				new JScriptItem("$(\".ui-accordion-content\").css(\"padding\",\"1em 1em\")", true) });
 
-		return accordion;
+		VerticalLayout hl = new VerticalLayout(accordion);
+		hl.setMargin(true);
+
+		return hl;
 	}
 
 	@Override
@@ -290,7 +295,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		articleKeywordsLayout.addComponent(new Label("<h2>Klíčová slova</h2>", ContentMode.HTML));
 
 		// menu tagů + textfield tagů
-		// http://marc.virtuallypreinstalled.com/TokenField/
 		HorizontalLayout keywordsMenuAndTextLayout = new HorizontalLayout();
 		keywordsMenuAndTextLayout.setWidth("100%");
 		keywordsMenuAndTextLayout.setSpacing(true);
@@ -299,22 +303,14 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		keywordsMenuAndTextLayout.addComponent(articleKeywords);
 
 		List<ContentTagDTO> contentTags = contentTagFacade.getContentTagsForOverview();
-		// BeanContainer<String, ContentTagDTO> tokens = new
-		// BeanContainer<String, ContentTagDTO>(ContentTagDTO.class);
-		// tokens.setBeanIdProperty("name");
-		// tokens.addAll(contentTags);
-
-		// articleKeywords.setStyleName(TokenField.STYLE_TOKENFIELD);
-		// articleKeywords.setContainerDataSource(tokens);
 		contentTags.forEach(t -> {
 			Token to = new Token(t.getName());
 			articleKeywords.addTokenToInputField(to);
 		});
-		// articleKeywords.setFilteringMode(FilteringMode.CONTAINS); // suggest
-		// articleKeywords.setTokenCaptionPropertyId("name");
-		// articleKeywords.setInputPrompt("klíčové slovo");
 		// articleKeywords.setRememberNewTokens(false);
 		articleKeywords.isEnabled();
+		articleKeywords.setAllowNewItems(true);
+		articleKeywords.getInputField().setPlaceholder("klíčové slovo");
 
 		VerticalLayout articleContentLayout = new VerticalLayout();
 		editorTextLayout.addComponent(articleContentLayout);
@@ -329,13 +325,11 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		publicatedCheckBox.setCaption("Publikovat článek");
 		publicatedCheckBox.setDescription("Je-li prázdné, uvidí článek pouze jeho autor");
-		// TODO
-		// publicatedCheckBox.setImmediate(true);
 		articleOptionsLayout.addComponent(publicatedCheckBox);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);
-		buttonLayout.setMargin(new MarginInfo(true, false, false, false));
+		buttonLayout.setMargin(true);
 		editorTextLayout.addComponent(buttonLayout);
 
 		// Náhled

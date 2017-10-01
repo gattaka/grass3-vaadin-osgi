@@ -58,7 +58,7 @@ public class MedicSection implements SectionService {
 	}
 
 	public String getSectionCaption() {
-		return "Zdravotní zápisník";
+		return "Medic";
 	}
 
 }

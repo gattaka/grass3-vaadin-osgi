@@ -7,7 +7,6 @@ import com.vaadin.ui.renderers.DateRenderer;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.renderers.ImageRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
-import com.vaadin.ui.themes.ValoTheme;
 
 import cz.gattserver.grass3.ServiceHolder;
 import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
@@ -33,7 +32,6 @@ public class ContentsLazyTable extends Grid<ContentNodeOverviewDTO> {
 
 	public ContentsLazyTable() {
 		super(ContentNodeOverviewDTO.class);
-		addStyleName(ValoTheme.TABLE_COMPACT);
 		nodePageFactory = (PageFactory) SpringContextHelper.getBean("nodePageFactory");
 		noServicePageFactory = (PageFactory) SpringContextHelper.getBean("noServicePageFactory");
 		serviceHolder = (ServiceHolder) SpringContextHelper.getContext().getBean(ServiceHolder.class);
@@ -56,7 +54,7 @@ public class ContentsLazyTable extends Grid<ContentNodeOverviewDTO> {
 			ContentService contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
 			return contentService == null ? new ThemeResource(ImageIcons.WARNING_16_ICON)
 					: contentService.getContentIcon();
-		}, new ImageRenderer<>()).setWidth(15 + 16 + 15).setCaption("").setId(iconBind);
+		}, new ImageRenderer<>()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(iconBind);
 
 		addColumn(contentNode -> {
 			ContentService contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
@@ -71,7 +69,7 @@ public class ContentsLazyTable extends Grid<ContentNodeOverviewDTO> {
 		addColumn(contentNode -> {
 			NodeOverviewDTO contentParent = contentNode.getParent();
 			return "<a href='"
-					+ page.getPageResource(nodePageFactory,
+					+ page.getPageURL(nodePageFactory,
 							URLIdentifierUtils.createURLIdentifier(contentParent.getId(), contentParent.getName()))
 					+ "'>" + contentParent.getName() + "</a>";
 		}, new HtmlRenderer()).setCaption("Kategorie").setId(nodeBind);
@@ -88,19 +86,7 @@ public class ContentsLazyTable extends Grid<ContentNodeOverviewDTO> {
 
 		setColumns(iconBind, nameBind, nodeBind, authorBind, creationDateBind, lastModificationDateBind);
 
-		int min = 50;
-		int element = 25;
-		int max = 400;
-		int header = 25;
-
-		int size = sizeCallback.get() * element;
-
-		if (size < min)
-			size = min;
-		if (size > max)
-			size = max;
-		size += header;
-		setHeight(size + "px");
+		setHeight(GridUtils.processHeight(sizeCallback.get()) + "px");
 
 	}
 

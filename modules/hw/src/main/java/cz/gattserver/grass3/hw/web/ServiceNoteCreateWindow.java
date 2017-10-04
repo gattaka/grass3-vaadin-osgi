@@ -81,7 +81,7 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 		winLayout.addComponent(stateComboBox, 1, 0);
 
 		ComboBox usedInCombo = new ComboBox("Je součástí");
-		fieldGroup.bind(usedInCombo, "usedIn");
+		fieldGroup.bind(usedInCombo, "usedInName");
 		usedInCombo.setSizeFull();
 		usedInCombo.setNullSelectionAllowed(true);
 		usedInCombo.setImmediate(true);

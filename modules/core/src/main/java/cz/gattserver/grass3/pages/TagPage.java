@@ -11,7 +11,7 @@ import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.pages.template.BasePage;
-import cz.gattserver.grass3.pages.template.ContentsLazyTable;
+import cz.gattserver.grass3.pages.template.ContentsLazyGrid;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
 
@@ -57,7 +57,7 @@ public class TagPage extends BasePage {
 			return;
 		}
 
-		ContentsLazyTable tagContentsTable = new ContentsLazyTable();
+		ContentsLazyGrid tagContentsTable = new ContentsLazyGrid();
 		tagContentsTable.populate(this, (sortOrder, offset, limit) -> {
 			return contentNodeFacade.getByTag(tag.getId(), offset / limit, limit).stream();
 		}, () -> {

@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.hw.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -33,12 +34,12 @@ public class HWItemDTO {
 	/**
 	 * Datum zakoupení (získání)
 	 */
-	private Date purchaseDate;
+	private LocalDate purchaseDate;
 
 	/**
 	 * Datum vyhození, zničení, prodání
 	 */
-	private Date destructionDate;
+	private LocalDate destructionDate;
 
 	/**
 	 * Cena
@@ -125,19 +126,19 @@ public class HWItemDTO {
 		this.types = types;
 	}
 
-	public Date getPurchaseDate() {
+	public LocalDate getPurchaseDate() {
 		return purchaseDate;
 	}
 
-	public void setPurchaseDate(Date purchaseDate) {
+	public void setPurchaseDate(LocalDate purchaseDate) {
 		this.purchaseDate = purchaseDate;
 	}
 
-	public Date getDestructionDate() {
+	public LocalDate getDestructionDate() {
 		return destructionDate;
 	}
 
-	public void setDestructionDate(Date destructionDate) {
+	public void setDestructionDate(LocalDate destructionDate) {
 		this.destructionDate = destructionDate;
 	}
 

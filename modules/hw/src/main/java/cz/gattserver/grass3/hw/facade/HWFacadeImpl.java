@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.OrderSpecifier;
 
+import cz.gattserver.common.util.DateUtil;
 import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.hw.dao.HWItemRepository;
@@ -102,8 +103,8 @@ public class HWFacadeImpl implements HWFacade {
 		else
 			item = hwItemRepository.findOne(hwItemDTO.getId());
 		item.setName(hwItemDTO.getName());
-		item.setPurchaseDate(hwItemDTO.getPurchaseDate());
-		item.setDestructionDate(hwItemDTO.getDestructionDate());
+		item.setPurchaseDate(DateUtil.toDate(hwItemDTO.getPurchaseDate()));
+		item.setDestructionDate(DateUtil.toDate(hwItemDTO.getDestructionDate()));
 		item.setPrice(hwItemDTO.getPrice());
 		item.setState(hwItemDTO.getState());
 		item.setSupervizedFor(hwItemDTO.getSupervizedFor());
@@ -123,9 +124,9 @@ public class HWFacadeImpl implements HWFacade {
 	}
 
 	@Override
-	public boolean deleteHWItem(HWItemDTO hwItem) {
+	public boolean deleteHWItem(Long id) {
 
-		HWItem item = hwItemRepository.findOne(hwItem.getId());
+		HWItem item = hwItemRepository.findOne(id);
 		for (ServiceNote note : item.getServiceNotes()) {
 			serviceNoteRepository.delete(note);
 		}
@@ -173,10 +174,10 @@ public class HWFacadeImpl implements HWFacade {
 	@Override
 	public void modifyServiceNote(ServiceNoteDTO serviceNoteDTO) {
 		ServiceNote serviceNote = serviceNoteRepository.findOne(serviceNoteDTO.getId());
-		serviceNote.setDate(serviceNoteDTO.getDate());
+		serviceNote.setDate(DateUtil.toDate(serviceNoteDTO.getDate()));
 		serviceNote.setDescription(serviceNoteDTO.getDescription());
 		serviceNote.setState(serviceNoteDTO.getState());
-		serviceNote.setUsage(serviceNoteDTO.getUsedIn() == null ? "" : serviceNoteDTO.getUsedIn().getName());
+		serviceNote.setUsage(serviceNoteDTO.getUsedInName());
 		serviceNoteRepository.save(serviceNote);
 	}
 
@@ -194,10 +195,10 @@ public class HWFacadeImpl implements HWFacade {
 
 		HWItem item = hwItemRepository.findOne(hwItemDTO.getId());
 		ServiceNote serviceNote = new ServiceNote();
-		serviceNote.setDate(serviceNoteDTO.getDate());
+		serviceNote.setDate(DateUtil.toDate(serviceNoteDTO.getDate()));
 		serviceNote.setDescription(serviceNoteDTO.getDescription());
 		serviceNote.setState(serviceNoteDTO.getState());
-		serviceNote.setUsage(serviceNoteDTO.getUsedIn() == null ? "" : serviceNoteDTO.getUsedIn().getName());
+		serviceNote.setUsage(serviceNoteDTO.getUsedInName());
 		serviceNote = serviceNoteRepository.save(serviceNote);
 		serviceNoteDTO.setId(serviceNote.getId());
 
@@ -209,16 +210,16 @@ public class HWFacadeImpl implements HWFacade {
 		HWItem oldTarget = item.getUsedIn();
 
 		// HW je někde součástí
-		if (serviceNoteDTO.getUsedIn() != null) {
+		if (serviceNoteDTO.getUsedInId() != null) {
 
 			// cílový HW, kde je nyní HW součástí
-			HWItem targetItem = hwItemRepository.findOne(serviceNoteDTO.getUsedIn().getId());
+			HWItem targetItem = hwItemRepository.findOne(serviceNoteDTO.getUsedInId());
 
 			// předtím nebyl nikde součástí
 			if (oldTarget == null) {
 				item.setUsedIn(targetItem);
 				saveHWPartMoveServiceNote(item, serviceNote, true);
-			} else if (oldTarget.getId() != serviceNoteDTO.getUsedIn().getId()) {
+			} else if (oldTarget.getId() != serviceNoteDTO.getUsedInId()) {
 				// již předtím byl součástí, ale nyní je jinde
 				saveHWPartMoveServiceNote(item, serviceNote, false);
 				item.setUsedIn(targetItem);
@@ -245,9 +246,9 @@ public class HWFacadeImpl implements HWFacade {
 	}
 
 	@Override
-	public boolean deleteHWItemType(HWItemTypeDTO hwItemType) {
+	public boolean deleteHWItemType(Long id) {
 
-		HWItemType itemType = hwItemTypeRepository.findOne(hwItemType.getId());
+		HWItemType itemType = hwItemTypeRepository.findOne(id);
 
 		List<HWItem> items = hwItemRepository.findByTypesId(itemType.getId());
 		for (HWItem item : items) {
@@ -416,8 +417,8 @@ public class HWFacadeImpl implements HWFacade {
 	}
 
 	@Override
-	public long countHWItems(HWFilterDTO filter) {
-		return hwItemRepository.countHWItems(filter);
+	public int countHWItems(HWFilterDTO filter) {
+		return (int) hwItemRepository.countHWItems(filter);
 	}
 
 	@Override

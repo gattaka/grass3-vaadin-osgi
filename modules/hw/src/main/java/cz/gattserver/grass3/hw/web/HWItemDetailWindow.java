@@ -4,10 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +23,8 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Embedded;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
@@ -32,16 +33,12 @@ import com.vaadin.ui.Layout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.Tab;
+import com.vaadin.ui.renderers.LocalDateRenderer;
+import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.v7.data.Property.ValueChangeEvent;
-import com.vaadin.v7.data.Property.ValueChangeListener;
-import com.vaadin.v7.data.util.BeanContainer;
-import com.vaadin.v7.data.util.BeanItem;
-import com.vaadin.v7.data.util.BeanItemContainer;
-import com.vaadin.v7.ui.Table;
-import com.vaadin.v7.ui.themes.BaseTheme;
+import com.vaadin.ui.themes.ValoTheme;
 
 import cz.gattserver.common.util.CZSuffixCreator;
 import cz.gattserver.common.util.HumanBytesSizeCreator;
@@ -79,6 +76,12 @@ public class HWItemDetailWindow extends WebWindow {
 	private FileDownloader downloader;
 	private Long hwItemId;
 	private Component triggerComponent;
+
+	private Grid<ServiceNoteDTO> serviceNotesGrid;
+	private Grid<File> docsGrid;
+
+	private final String STATE_BIND = "customState";
+	private final String DATE_BIND = "customDate";
 
 	private Label createShiftedLabel(String caption) {
 		Label label = new Label(caption, ContentMode.HTML);
@@ -231,12 +234,10 @@ public class HWItemDetailWindow extends WebWindow {
 		typesLayout.setSpacing(true);
 		for (HWItemTypeDTO type : hwItem.getTypes()) {
 			Button btn = new Button(type.getName());
-			btn.setStyleName(BaseTheme.BUTTON_LINK);
+			btn.setStyleName(ValoTheme.BUTTON_LINK);
 			typesLayout.addComponent(btn);
 		}
 		winLayout.addComponent(typesLayout, 1, 0, 3, 0);
-
-		DateFormat sdf = new StringToDateConverter().getFormat();
 
 		winLayout.addComponent(new Label("<strong>Stav</strong>", ContentMode.HTML), 1, 1);
 		winLayout.getComponent(1, 1).setWidth("80px");
@@ -244,7 +245,8 @@ public class HWItemDetailWindow extends WebWindow {
 
 		winLayout.addComponent(new Label("<strong>Získáno</strong>", ContentMode.HTML), 2, 1);
 		winLayout.getComponent(2, 1).setWidth("80px");
-		String purchDate = hwItem.getPurchaseDate() == null ? "-" : sdf.format(hwItem.getPurchaseDate());
+		String purchDate = hwItem.getPurchaseDate() == null ? "-"
+				: hwItem.getPurchaseDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 		winLayout.addComponent(createShiftedLabel(purchDate), 2, 2);
 
 		winLayout.addComponent(new Label("<strong>Spravováno pro</strong>", ContentMode.HTML), 3, 1);
@@ -265,14 +267,12 @@ public class HWItemDetailWindow extends WebWindow {
 		zarukaLayout.setSpacing(true);
 		String zarukaContent = createWarrantyYearsString(hwItem.getWarrantyYears());
 		if (hwItem.getWarrantyYears() != null && hwItem.getWarrantyYears() > 0 && hwItem.getPurchaseDate() != null) {
-			Calendar endDate = Calendar.getInstance();
-			endDate.setTime(hwItem.getPurchaseDate());
-			endDate.add(Calendar.YEAR, hwItem.getWarrantyYears());
-			boolean isInWarranty = endDate.after(Calendar.getInstance());
+			LocalDate endDate = hwItem.getPurchaseDate().plusYears(hwItem.getWarrantyYears());
+			boolean isInWarranty = endDate.isAfter(LocalDate.now());
 			Embedded emb = new Embedded(null,
 					new ThemeResource(isInWarranty ? ImageIcons.TICK_16_ICON : ImageIcons.DELETE_16_ICON));
 			zarukaLayout.addComponent(emb);
-			zarukaContent += " (do " + sdf.format(endDate.getTime()) + ")";
+			zarukaContent += " (do " + endDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + ")";
 			zarukaLayout.addComponent(new Label(zarukaContent));
 		} else {
 			zarukaLayout.addComponent(createShiftedLabel(zarukaContent));
@@ -285,7 +285,7 @@ public class HWItemDetailWindow extends WebWindow {
 		} else {
 			Button usedInBtn = new Button(hwItem.getUsedIn().getName());
 			usedInBtn.setDescription(hwItem.getUsedIn().getName());
-			usedInBtn.setStyleName(BaseTheme.BUTTON_LINK);
+			usedInBtn.setStyleName(ValoTheme.BUTTON_LINK);
 			usedInBtn.addStyleName("shiftlabel");
 			usedInBtn.addClickListener(e -> {
 				close();
@@ -309,7 +309,7 @@ public class HWItemDetailWindow extends WebWindow {
 		for (final HWItemOverviewDTO part : parts) {
 			Button partDetailBtn = new Button(part.getName());
 			partDetailBtn.setDescription(part.getName());
-			partDetailBtn.setStyleName(BaseTheme.BUTTON_LINK);
+			partDetailBtn.setStyleName(ValoTheme.BUTTON_LINK);
 			partDetailBtn.addStyleName("shiftlabel");
 			partDetailBtn.addClickListener(e -> {
 				close();
@@ -356,7 +356,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 				@Override
 				protected void onConfirm(ClickEvent event) {
-					if (hwFacade.deleteHWItem(hwItem)) {
+					if (hwFacade.deleteHWItem(hwItem.getId())) {
 						refreshTable();
 						HWItemDetailWindow.this.close();
 					} else {
@@ -377,8 +377,8 @@ public class HWItemDetailWindow extends WebWindow {
 		return wrapperLayout;
 	}
 
-	private void sortServiceNotes(Table table) {
-		table.sort(new Object[] { "date", "id" }, new boolean[] { false, false });
+	private void populateServiceNotesGrid() {
+		serviceNotesGrid.setItems(hwItem.getServiceNotes());
 	}
 
 	private Layout createServiceNotesTab() {
@@ -387,30 +387,26 @@ public class HWItemDetailWindow extends WebWindow {
 		/**
 		 * Tabulka záznamů
 		 */
-		final Table table = new Table();
-		table.setSelectable(true);
-		table.setImmediate(true);
+		serviceNotesGrid = new Grid<>(ServiceNoteDTO.class);
+		serviceNotesGrid.setSelectionMode(SelectionMode.SINGLE);
+		serviceNotesGrid.addColumn(ServiceNoteDTO::getDate, new LocalDateRenderer("dd.MM.yyyy")).setCaption("Získáno")
+				.setId(DATE_BIND).setStyleGenerator(item -> "v-align-right");
+		serviceNotesGrid.addColumn(hw -> {
+			return hw.getState().getName();
+		}, new TextRenderer()).setCaption("Stav").setId(STATE_BIND);
+		serviceNotesGrid.getColumn("usedInName").setCaption("Je součástí");
+		serviceNotesGrid.getColumn("description").setCaption("Obsah").setWidth(200);
+		serviceNotesGrid.getColumn("id").setHidden(true); // jinak nepůjde sort
+		serviceNotesGrid.setColumns("id", DATE_BIND, STATE_BIND, "usedInName", "description");
+		serviceNotesGrid.setWidth("100%");
+		serviceNotesGrid.setHeight("200px");
 
-		final BeanContainer<Long, ServiceNoteDTO> notesContainer = new BeanContainer<Long, ServiceNoteDTO>(
-				ServiceNoteDTO.class);
-		notesContainer.setBeanIdProperty("id");
-		notesContainer.addAll(hwItem.getServiceNotes());
+		serviceNotesGrid.sort(DATE_BIND);
+		serviceNotesGrid.sort("id");
 
-		table.setContainerDataSource(notesContainer);
-		// table.setConverter("date", new StringToDateConverter());
+		populateServiceNotesGrid();
 
-		table.setColumnHeader("date", "Datum");
-		table.setColumnHeader("state", "Stav");
-		table.setColumnHeader("usedInName", "Je součástí");
-		table.setColumnHeader("description", "Obsah");
-		table.setColumnWidth("description", 200);
-		table.setVisibleColumns(new Object[] { "date", "state", "usedInName", "description" });
-		table.setWidth("100%");
-		table.setHeight("200px");
-
-		sortServiceNotes(table);
-
-		wrapperLayout.addComponent(table);
+		wrapperLayout.addComponent(serviceNotesGrid);
 
 		/**
 		 * Detail záznamu
@@ -424,23 +420,17 @@ public class HWItemDetailWindow extends WebWindow {
 		wrapperLayout.addComponent(serviceNoteDetailPanel);
 		wrapperLayout.setExpandRatio(serviceNoteDetailPanel, 1);
 
-		table.addValueChangeListener(new ValueChangeListener() {
-
-			private static final long serialVersionUID = -8943196289027284739L;
-
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				if (table.getValue() != null) {
-					BeanContainer<?, ?> cont = (BeanContainer<?, ?>) table.getContainerDataSource();
-					BeanItem<?> item = cont.getItem(table.getValue());
-					ServiceNoteDTO serviceNoteDTO = (ServiceNoteDTO) item.getBean();
-					serviceNoteDescription.setValue((String) serviceNoteDTO.getDescription());
-				} else {
-					serviceNoteDescription.setValue(DEFAULT_NOTE_LABEL_VALUE);
-				}
-				fixNoteBtn.setEnabled(table.getValue() != null);
-				deleteNoteBtn.setEnabled(table.getValue() != null);
+		serviceNotesGrid.addSelectionListener(selection -> {
+			boolean sthSelected = false;
+			if (selection.getFirstSelectedItem().isPresent()) {
+				sthSelected = true;
+				ServiceNoteDTO serviceNoteDTO = selection.getFirstSelectedItem().get();
+				serviceNoteDescription.setValue((String) serviceNoteDTO.getDescription());
+			} else {
+				serviceNoteDescription.setValue(DEFAULT_NOTE_LABEL_VALUE);
 			}
+			fixNoteBtn.setEnabled(sthSelected);
+			deleteNoteBtn.setEnabled(sthSelected);
 		});
 
 		HorizontalLayout operationsLayout = new HorizontalLayout();
@@ -465,10 +455,8 @@ public class HWItemDetailWindow extends WebWindow {
 					protected void onSuccess(ServiceNoteDTO noteDTO) {
 						refreshTable();
 						createFirstTab();
-						notesContainer.addItem(noteDTO.getId(), noteDTO);
-						sortServiceNotes(table);
-						table.select(noteDTO.getId());
-						table.setCurrentPageFirstItemId(noteDTO.getId());
+						populateServiceNotesGrid();
+						serviceNotesGrid.select(noteDTO);
 					}
 				});
 			}
@@ -486,21 +474,17 @@ public class HWItemDetailWindow extends WebWindow {
 			private static final long serialVersionUID = 8876001665427003203L;
 
 			public void buttonClick(ClickEvent event) {
-				Object id = table.getValue();
-				@SuppressWarnings("unchecked")
-				BeanItem<ServiceNoteDTO> item = (BeanItem<ServiceNoteDTO>) table.getItem(id);
+				if (serviceNotesGrid.getSelectedItems().isEmpty())
+					return;
 
-				UI.getCurrent().addWindow(new ServiceNoteCreateWindow(newNoteBtn, hwItem, item.getBean()) {
+				UI.getCurrent().addWindow(new ServiceNoteCreateWindow(newNoteBtn, hwItem,
+						serviceNotesGrid.getSelectedItems().iterator().next()) {
 
 					private static final long serialVersionUID = -5582822648042555576L;
 
 					@Override
 					protected void onSuccess(ServiceNoteDTO noteDTO) {
-						table.removeItem(noteDTO.getId());
-						notesContainer.addItem(noteDTO.getId(), noteDTO);
-						sortServiceNotes(table);
-						table.select(noteDTO.getId());
-						table.setCurrentPageFirstItemId(noteDTO.getId());
+						populateServiceNotesGrid();
 					}
 				});
 			}
@@ -519,17 +503,17 @@ public class HWItemDetailWindow extends WebWindow {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				Object id = table.getValue();
-				@SuppressWarnings("unchecked")
-				BeanItem<ServiceNoteDTO> item = (BeanItem<ServiceNoteDTO>) table.getItem(id);
+				if (serviceNotesGrid.getSelectedItems().isEmpty())
+					return;
+				final ServiceNoteDTO item = serviceNotesGrid.getSelectedItems().iterator().next();
 				UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat vybraný servisní záznam?") {
 
 					private static final long serialVersionUID = -422763987707688597L;
 
 					@Override
 					protected void onConfirm(ClickEvent event) {
-						hwFacade.deleteServiceNote(item.getBean(), hwItem);
-						table.removeItem(item.getBean().getId());
+						hwFacade.deleteServiceNote(item, hwItem);
+						populateServiceNotesGrid();
 					}
 
 					@Override
@@ -631,15 +615,35 @@ public class HWItemDetailWindow extends WebWindow {
 		}
 	}
 
+	private void populateDocsGrid() {
+		docsGrid.setItems(hwFacade.getHWItemDocumentsFiles(hwItem));
+	}
+
 	private Layout createDocsTab() {
 		VerticalLayout wrapperLayout = createWrapperLayout(hwItem);
 
-		final Table table = new Table();
-		table.setSizeFull();
-		wrapperLayout.addComponent(table);
-		wrapperLayout.setExpandRatio(table, 1);
+		docsGrid = new Grid<>(File.class);
 
-		createDocumentsList(table);
+		docsGrid.addColumn(file -> {
+			Label sizelabel = new Label(HumanBytesSizeCreator.format(file.length(), true));
+			sizelabel.setDescription(file.length() + "B");
+			sizelabel.setSizeUndefined();
+			return sizelabel;
+		}, new TextRenderer()).setId("fileSize").setCaption("Velikost");
+
+		docsGrid.addColumn(file -> {
+			SimpleDateFormat sdf = new SimpleDateFormat("d.MM.yyyy");
+			Label label = new Label(sdf.format(new Date(file.lastModified())));
+			return label;
+		}, new TextRenderer()).setId("datum").setCaption("Datum");
+
+		docsGrid.setColumns("name", "datum", "fileSize");
+		docsGrid.getColumn("name").setCaption("Název");
+		docsGrid.setSizeFull();
+		wrapperLayout.addComponent(docsGrid);
+		wrapperLayout.setExpandRatio(docsGrid, 1);
+
+		populateDocsGrid();
 
 		HorizontalLayout uploadWrapperLayout = new HorizontalLayout();
 		uploadWrapperLayout.setWidth("100%");
@@ -651,12 +655,10 @@ public class HWItemDetailWindow extends WebWindow {
 
 			@Override
 			public void handleFile(InputStream in, String fileName, String mime, long size) {
-
 				hwFacade.saveDocumentsFile(in, fileName, hwItem);
 
 				// refresh listu
-				table.removeAllItems();
-				createDocumentsList(table);
+				populateDocsGrid();
 			}
 
 		};
@@ -670,10 +672,10 @@ public class HWItemDetailWindow extends WebWindow {
 		hwItemDocumentDownloadBtn.setEnabled(false);
 
 		final Button hwItemDocumentDeleteBtn = new Button("Smazat", e -> {
-			File file = (File) table.getValue();
-			if (file == null)
+			if (docsGrid.getSelectedItems().isEmpty())
 				return;
 
+			final File file = docsGrid.getSelectedItems().iterator().next();
 			UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat '" + file.getName() + "' ?") {
 				private static final long serialVersionUID = -1901927025986494370L;
 
@@ -682,8 +684,7 @@ public class HWItemDetailWindow extends WebWindow {
 					hwFacade.deleteHWItemFile(hwItem, file);
 
 					// refresh listu
-					table.removeAllItems();
-					createDocumentsList(table);
+					populateDocsGrid();
 				}
 			});
 		});
@@ -691,57 +692,24 @@ public class HWItemDetailWindow extends WebWindow {
 		hwItemDocumentDeleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
 		uploadWrapperLayout.addComponent(hwItemDocumentDeleteBtn);
 
-		table.addValueChangeListener(new ValueChangeListener() {
-
-			private static final long serialVersionUID = -8943196289027284739L;
-
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				if (downloader != null) {
-					downloader.remove();
-					downloader = null;
-				}
-				if (table.getValue() != null) {
-					File file = (File) table.getValue();
-					hwItemDocumentDeleteBtn.setEnabled(true);
-					hwItemDocumentDownloadBtn.setEnabled(true);
-					downloader = new FileDownloader(new FileResource(file));
-					downloader.extend(hwItemDocumentDownloadBtn);
-				} else {
-					hwItemDocumentDownloadBtn.setEnabled(false);
-					hwItemDocumentDeleteBtn.setEnabled(false);
-				}
+		docsGrid.addSelectionListener(selection -> {
+			if (downloader != null) {
+				downloader.remove();
+				downloader = null;
+			}
+			if (selection.getFirstSelectedItem().isPresent()) {
+				File file = selection.getFirstSelectedItem().get();
+				hwItemDocumentDeleteBtn.setEnabled(true);
+				hwItemDocumentDownloadBtn.setEnabled(true);
+				downloader = new FileDownloader(new FileResource(file));
+				downloader.extend(hwItemDocumentDownloadBtn);
+			} else {
+				hwItemDocumentDownloadBtn.setEnabled(false);
+				hwItemDocumentDeleteBtn.setEnabled(false);
 			}
 		});
 
 		return wrapperLayout;
-	}
-
-	private void createDocumentsList(Table table) {
-
-		final BeanItemContainer<File> cont = new BeanItemContainer<File>(File.class);
-		cont.addAll(Arrays.asList(hwFacade.getHWItemDocumentsFiles(hwItem)));
-		table.setContainerDataSource(cont);
-
-		table.addGeneratedColumn("fileSize", (Table source, Object itemId, Object columnId) -> {
-			File file = (File) itemId;
-			Label sizelabel = new Label(HumanBytesSizeCreator.format(file.length(), true));
-			sizelabel.setDescription(file.length() + "B");
-			sizelabel.setSizeUndefined();
-			return sizelabel;
-		});
-
-		table.addGeneratedColumn("datum", (Table source, Object itemId, Object columnId) -> {
-			File file = (File) itemId;
-			SimpleDateFormat sdf = new SimpleDateFormat("d.MM.yyyy");
-			Label label = new Label(sdf.format(new Date(file.lastModified())));
-			return label;
-		});
-
-		table.setVisibleColumns("name", "datum", "fileSize");
-		table.setColumnHeader("name", "Název");
-		table.setColumnHeader("datum", "Datum");
-		table.setColumnHeader("fileSize", "Velikost");
 	}
 
 	public HWItemDetailWindow(Component triggerComponent, final Long hwItemId) {

@@ -1,12 +1,8 @@
 package cz.gattserver.grass3.hw.facade;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.hw.domain.HWItem;
 import cz.gattserver.grass3.hw.domain.HWItemType;
@@ -16,109 +12,22 @@ import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 
-@Component("hwMapper")
-public class HWMapper {
+public interface HWMapper {
 
-	public HWItemTypeDTO mapHWItemType(HWItemType e) {
-		if (e == null)
-			return null;
+	public HWItemTypeDTO mapHWItemType(HWItemType e);
 
-		HWItemTypeDTO dto = new HWItemTypeDTO();
-		dto.setId(e.getId());
-		dto.setName(e.getName());
-		return dto;
-	}
+	public HWItemType mapHWItem(HWItemTypeDTO dto);
 
-	public HWItemType mapHWItem(HWItemTypeDTO dto) {
-		if (dto == null)
-			return null;
+	public Set<HWItemTypeDTO> mapHWItemTypes(Collection<HWItemType> list);
 
-		HWItemType e = new HWItemType();
-		e.setId(dto.getId());
-		e.setName(dto.getName());
-		return e;
-	}
+	public ServiceNoteDTO mapServiceNote(ServiceNote e);
 
-	public Set<HWItemTypeDTO> mapHWItemTypes(Collection<HWItemType> list) {
-		if (list == null)
-			return null;
+	public List<ServiceNoteDTO> mapServiceNotes(Collection<ServiceNote> list);
 
-		Set<HWItemTypeDTO> dtos = new LinkedHashSet<HWItemTypeDTO>();
-		for (HWItemType e : list) {
-			dtos.add(mapHWItemType(e));
-		}
-		return dtos;
-	}
+	public HWItemDTO mapHWItem(HWItem e);
 
-	public ServiceNoteDTO mapServiceNote(ServiceNote e) {
-		if (e == null)
-			return null;
+	public HWItemOverviewDTO mapHWItemOverview(HWItem e);
 
-		ServiceNoteDTO dto = new ServiceNoteDTO();
-		dto.setId(e.getId());
-		dto.setDate(e.getDate());
-		dto.setDescription(e.getDescription());
-		dto.setState(e.getState());
-		HWItemOverviewDTO overviewDTO = new HWItemOverviewDTO();
-		overviewDTO.setName(e.getUsage());
-		dto.setUsedIn(overviewDTO);
-		return dto;
-	}
-
-	public List<ServiceNoteDTO> mapServiceNotes(Collection<ServiceNote> list) {
-		if (list == null)
-			return null;
-
-		List<ServiceNoteDTO> dtos = new ArrayList<ServiceNoteDTO>();
-		for (ServiceNote e : list) {
-			dtos.add(mapServiceNote(e));
-		}
-		return dtos;
-	}
-
-	public HWItemDTO mapHWItem(HWItem e) {
-		if (e == null)
-			return null;
-
-		HWItemDTO dto = new HWItemDTO();
-		dto.setDestructionDate(e.getDestructionDate());
-		dto.setId(e.getId());
-		dto.setName(e.getName());
-		dto.setUsedIn(mapHWItemOverview(e.getUsedIn()));
-		dto.setPrice(e.getPrice());
-		dto.setPurchaseDate(e.getPurchaseDate());
-		dto.setServiceNotes(mapServiceNotes(e.getServiceNotes()));
-		dto.setSupervizedFor(e.getSupervizedFor());
-		dto.setState(e.getState());
-		dto.setTypes(mapHWItemTypes(e.getTypes()));
-		dto.setWarrantyYears(e.getWarrantyYears());
-		return dto;
-	}
-
-	public HWItemOverviewDTO mapHWItemOverview(HWItem e) {
-		if (e == null)
-			return null;
-
-		HWItemOverviewDTO dto = new HWItemOverviewDTO();
-		dto.setId(e.getId());
-		dto.setName(e.getName());
-		dto.setUsedIn(mapHWItemOverview(e.getUsedIn()));
-		dto.setSupervizedFor(e.getSupervizedFor());
-		dto.setPrice(e.getPrice());
-		dto.setPurchaseDate(e.getPurchaseDate());
-		dto.setState(e.getState());
-		return dto;
-	}
-
-	public List<HWItemOverviewDTO> mapHWItems(Collection<HWItem> list) {
-		if (list == null)
-			return null;
-
-		List<HWItemOverviewDTO> dtos = new ArrayList<HWItemOverviewDTO>();
-		for (HWItem e : list) {
-			dtos.add(mapHWItemOverview(e));
-		}
-		return dtos;
-	}
+	public List<HWItemOverviewDTO> mapHWItems(Collection<HWItem> list);
 
 }

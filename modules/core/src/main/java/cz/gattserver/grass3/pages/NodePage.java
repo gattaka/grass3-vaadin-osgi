@@ -24,9 +24,9 @@ import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
-import cz.gattserver.grass3.pages.template.ContentsLazyTable;
-import cz.gattserver.grass3.pages.template.NewContentNodeTable;
-import cz.gattserver.grass3.pages.template.NodesTable;
+import cz.gattserver.grass3.pages.template.ContentsLazyGrid;
+import cz.gattserver.grass3.pages.template.NewContentNodeGrid;
+import cz.gattserver.grass3.pages.template.NodesGrid;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.template.Breadcrumb;
@@ -52,7 +52,7 @@ public class NodePage extends OneColumnPage {
 	private PageFactory nodePageFactory;
 
 	// Přehled podkategorií
-	private NodesTable subNodesTable;
+	private NodesGrid subNodesTable;
 
 	private String newNodeName = null;
 
@@ -168,7 +168,7 @@ public class NodePage extends OneColumnPage {
 	private void createSubnodesPart(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout subNodesLayout = new VerticalLayout();
-		subNodesTable = new NodesTable(NodePage.this);
+		subNodesTable = new NodesGrid(NodePage.this);
 
 		subNodesLayout.addComponent(new Label("<h2>Podkategorie</h2>", ContentMode.HTML));
 
@@ -191,13 +191,13 @@ public class NodePage extends OneColumnPage {
 			showError500();
 			return;
 		}
-		subNodesTable.populateTable(nodes);
+		subNodesTable.populate(nodes);
 	}
 
 	private void createContentsPart(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout contentsLayout = new VerticalLayout();
-		ContentsLazyTable contentsTable = new ContentsLazyTable();
+		ContentsLazyGrid contentsTable = new ContentsLazyGrid();
 		contentsTable.populate(this, (sortOrder, offset, limit) -> {
 			return contentNodeFacade.getByNode(node.getId(), offset / limit, limit).stream();
 		}, () -> {
@@ -216,7 +216,7 @@ public class NodePage extends OneColumnPage {
 
 	private void createNewContentMenu(VerticalLayout layout, NodeDTO node) {
 		VerticalLayout newContentsLayout = new VerticalLayout();
-		NewContentNodeTable newContentsTable = new NewContentNodeTable(NodePage.this, node);
+		NewContentNodeGrid newContentsTable = new NewContentNodeGrid(NodePage.this, node);
 
 		newContentsLayout.addComponent(new Label("<h2>Vytvořit nový obsah</h2>", ContentMode.HTML));
 		newContentsLayout.addComponent(newContentsTable);

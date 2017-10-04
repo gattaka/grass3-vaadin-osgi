@@ -34,11 +34,11 @@ public interface HWFacade {
 
 	boolean saveHWItem(HWItemDTO hwItemDTO);
 
-	boolean deleteHWItem(HWItemDTO hwItem);
+	boolean deleteHWItem(Long id);
 
 	boolean addServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItem);
 
-	boolean deleteHWItemType(HWItemTypeDTO hwItemType);
+	boolean deleteHWItemType(Long id);
 
 	HWItemDTO getHWItem(Long itemId);
 
@@ -75,7 +75,7 @@ public interface HWFacade {
 	/**
 	 * Zjistí počet HW položek dle filtru
 	 */
-	long countHWItems(HWFilterDTO filter);
+	int countHWItems(HWFilterDTO filter);
 
 	List<HWItemOverviewDTO> getHWItems(HWFilterDTO filter, Pageable pageable, OrderSpecifier<?>[] order);
 

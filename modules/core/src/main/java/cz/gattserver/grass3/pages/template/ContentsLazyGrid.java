@@ -17,7 +17,7 @@ import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.ImageIcons;
 
-public class ContentsLazyTable extends Grid<ContentNodeOverviewDTO> {
+public class ContentsLazyGrid extends Grid<ContentNodeOverviewDTO> {
 
 	private static final long serialVersionUID = -5648982639686386190L;
 
@@ -30,7 +30,7 @@ public class ContentsLazyTable extends Grid<ContentNodeOverviewDTO> {
 	// @Resource(name = "serviceHolder")
 	private ServiceHolder serviceHolder;
 
-	public ContentsLazyTable() {
+	public ContentsLazyGrid() {
 		super(ContentNodeOverviewDTO.class);
 		nodePageFactory = (PageFactory) SpringContextHelper.getBean("nodePageFactory");
 		noServicePageFactory = (PageFactory) SpringContextHelper.getBean("noServicePageFactory");

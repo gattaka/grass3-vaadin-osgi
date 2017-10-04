@@ -69,7 +69,7 @@ public class HWTypesTab extends VerticalLayout {
 
 			@Override
 			protected void onConfirm(ClickEvent event) {
-				if (hwFacade.deleteHWItemType(hwItemType)) {
+				if (hwFacade.deleteHWItemType(hwItemType.getId())) {
 					populateContainer();
 				} else {
 					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));

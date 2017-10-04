@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.hw.dto;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * HW Objekt
@@ -21,7 +21,7 @@ public class HWItemOverviewDTO {
 	/**
 	 * Datum zakoupení (získání)
 	 */
-	private Date purchaseDate;
+	private LocalDate purchaseDate;
 
 	/**
 	 * Cena
@@ -36,7 +36,7 @@ public class HWItemOverviewDTO {
 	/**
 	 * Součást celku
 	 */
-	private HWItemOverviewDTO usedIn;
+	private String usedIn;
 
 	/**
 	 * Spravováno pro (spravuju tohle zařízení někomu?)
@@ -67,11 +67,11 @@ public class HWItemOverviewDTO {
 		this.name = name;
 	}
 
-	public Date getPurchaseDate() {
+	public LocalDate getPurchaseDate() {
 		return purchaseDate;
 	}
 
-	public void setPurchaseDate(Date purchaseDate) {
+	public void setPurchaseDate(LocalDate purchaseDate) {
 		this.purchaseDate = purchaseDate;
 	}
 
@@ -104,15 +104,11 @@ public class HWItemOverviewDTO {
 			return false;
 	}
 
-	public String getUsedInName() {
-		return usedIn == null ? "" : usedIn.getName();
-	}
-
-	public HWItemOverviewDTO getUsedIn() {
+	public String getUsedIn() {
 		return usedIn;
 	}
 
-	public void setUsedIn(HWItemOverviewDTO usedIn) { 
+	public void setUsedIn(String usedIn) {
 		this.usedIn = usedIn;
 	}
 

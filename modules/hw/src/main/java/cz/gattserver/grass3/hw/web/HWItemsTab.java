@@ -1,37 +1,36 @@
 package cz.gattserver.grass3.hw.web;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 
+import com.fo0.advancedtokenfield.events.TokenRemoveEvent;
 import com.fo0.advancedtokenfield.main.AdvancedTokenField;
 import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.v7.ui.Table;
+import com.vaadin.ui.renderers.LocalDateRenderer;
+import com.vaadin.ui.renderers.TextRenderer;
 
 import cz.gattserver.grass3.hw.dto.HWFilterDTO;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
-import cz.gattserver.grass3.hw.dto.HWItemState;
+import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.HWFacade;
-import cz.gattserver.grass3.ui.util.GrassFilterDecorator;
-import cz.gattserver.grass3.ui.util.StringToDateConverter;
-import cz.gattserver.grass3.ui.util.StringToMoneyConverter;
+import cz.gattserver.grass3.model.util.QuerydslUtil;
 import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
@@ -43,8 +42,11 @@ public class HWItemsTab extends VerticalLayout {
 	@Autowired
 	private HWFacade hwFacade;
 
-	private final Table table = new Table();
-	// private LazyQueryContainer container;
+	private final String PRICE_BIND = "customPrice";
+	private final String STATE_BIND = "customState";
+	private final String PURCHASE_DATE_BIND = "customPurchaseDate";
+
+	private Grid<HWItemOverviewDTO> grid;
 	private AdvancedTokenField hwTypesFilter;
 
 	private HWFilterDTO filterDTO;
@@ -53,21 +55,33 @@ public class HWItemsTab extends VerticalLayout {
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		table.setEnabled(enabled);
+		grid.setEnabled(enabled);
 	}
 
-	private void populateContainer() {
+	private void populate() {
 		List<Token> collection = hwTypesFilter.getTokens();
 		List<String> types = new ArrayList<>();
 		collection.forEach(t -> {
 			types.add(t.getValue());
 		});
 		filterDTO.setTypes(types);
-		// container.refresh();
-	}
-
-	private void sortTable() {
-		table.sort(new Object[] { "name" }, new boolean[] { true });
+		grid.setDataProvider((sortOrder, offset, limit) -> {
+			return hwFacade.getHWItems(filterDTO, new PageRequest(offset / limit, limit),
+					QuerydslUtil.transformOrdering(sortOrder, column -> {
+						switch (column) {
+						case PRICE_BIND:
+							return "price";
+						case STATE_BIND:
+							return "state";
+						case PURCHASE_DATE_BIND:
+							return "purchaseDate";
+						default:
+							return column;
+						}
+					})).stream();
+		}, () -> {
+			return hwFacade.countHWItems(filterDTO);
+		});
 	}
 
 	private void addWindow(Window win) {
@@ -87,7 +101,7 @@ public class HWItemsTab extends VerticalLayout {
 
 			@Override
 			protected void onSuccess() {
-				populateContainer();
+				populate();
 			}
 		});
 	}
@@ -103,41 +117,39 @@ public class HWItemsTab extends VerticalLayout {
 
 			@Override
 			protected void onSuccess(ServiceNoteDTO noteDTO) {
-				populateContainer(); // změna stavu
+				populate(); // změna stavu
 			}
 		});
 
 	}
 
 	private void openDetailWindow() {
-		// TODO
-		Long id = null; // (Long) table.getValue();
-		if (id == null)
+		if (grid.getSelectedItems().isEmpty())
 			return;
-		addWindow(new HWItemDetailWindow(HWItemsTab.this, id) {
+		addWindow(new HWItemDetailWindow(HWItemsTab.this, grid.getSelectedItems().iterator().next().getId()) {
 			private static final long serialVersionUID = -8711057204738112594L;
 
 			@Override
 			protected void refreshTable() {
-				populateContainer();
+				populate();
 			}
 		});
 	}
 
 	private void openDeleteWindow() {
-		// TODO
+		if (grid.getSelectedItems().isEmpty())
+			return;
 		HWItemsTab.this.setEnabled(false);
-		Long id = null; // (Long) table.getValue();
-		HWItemDTO hwItem = hwFacade.getHWItem(id);
+		HWItemOverviewDTO to = grid.getSelectedItems().iterator().next();
 		addWindow(new ConfirmWindow(
-				"Opravdu smazat '" + hwItem.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?") {
+				"Opravdu smazat '" + to.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?") {
 
 			private static final long serialVersionUID = -422763987707688597L;
 
 			@Override
 			protected void onConfirm(ClickEvent event) {
-				if (hwFacade.deleteHWItem(hwItem)) {
-					populateContainer();
+				if (hwFacade.deleteHWItem(to.getId())) {
+					populate();
 				} else {
 					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
 				}
@@ -178,9 +190,24 @@ public class HWItemsTab extends VerticalLayout {
 		/**
 		 * Filtr na typy HW
 		 */
-		// menu tagů + textfield tagů
-		// http://marc.virtuallypreinstalled.com/TokenField/
-		hwTypesFilter = new AdvancedTokenField();
+		// šlo by to udělat i pomocí listenerů, ale ty jsou volané ještě než
+		// dojde k úpravě dat v komponentě, takže si musím přidání tokenu hlídat
+		// buď ručně nebo udržovat vlastní stav, takhle udělám populate správně
+		hwTypesFilter = new AdvancedTokenField() {
+			private static final long serialVersionUID = 3928334636230041507L;
+
+			@Override
+			public void addToken(Token token) {
+				super.addToken(token);
+				populate();
+			}
+
+			@Override
+			public void removeTokenFromLayout(TokenRemoveEvent event) {
+				super.removeTokenFromLayout(event);
+				populate();
+			}
+		};
 		HorizontalLayout hwTypesFilterLayout = new HorizontalLayout();
 		hwTypesFilterLayout.setSpacing(true);
 		addComponent(hwTypesFilterLayout);
@@ -188,169 +215,54 @@ public class HWItemsTab extends VerticalLayout {
 		hwTypesFilterLayout.addComponent(hwTypesFilter);
 
 		Set<HWItemTypeDTO> hwTypes = hwFacade.getAllHWTypes();
-		// BeanContainer<String, HWItemTypeDTO> tokens = new
-		// BeanContainer<String, HWItemTypeDTO>(HWItemTypeDTO.class);
-		// tokens.setBeanIdProperty("name");
-		// tokens.addAll(hwTypes);
-
-		// hwTypesFilter.setStyleName(TokenField.STYLE_TOKENFIELD);
-		// hwTypesFilter.setContainerDataSource(tokens);
 		hwTypes.forEach(t -> {
 			Token to = new Token(t.getName());
 			hwTypesFilter.addTokenToInputField(to);
 		});
 		hwTypesFilter.setAllowNewItems(false);
-		// hwTypesFilter.setFilteringMode(FilteringMode.CONTAINS); // suggest
-		// hwTypesFilter.setTokenCaptionPropertyId("name");
-		// hwTypesFilter.setInputPrompt("Filtrovat dle typu hw");
+		hwTypesFilter.getInputField().setPlaceholder("Filtrovat dle typu hw");
 		hwTypesFilter.isEnabled();
-		hwTypesFilter.addTokenAddListener(t -> {
-			populateContainer();
-			return t;
-		});
-		// hwTypesFilter.addValueChangeListener(e -> populateContainer());
 
 		/**
 		 * Tabulka HW
 		 */
-		table.setSelectable(true);
-		table.setSortEnabled(true);
-		// TODO
-		// table.setImmediate(true);
-		// BeanQueryFactory<HWQuery> factory = new
-		// BeanQueryFactory<HWQuery>(HWQuery.class);
-		// Map<String, Object> conf = new HashMap<>();
-		// conf.put(HWQuery.FILTER_KEY, filterDTO);
-		// factory.setQueryConfiguration(conf);
-		// container = new LazyQueryContainer(factory, "id", HWQuery.PAGE_SIZE,
-		// false);
-		// container.addContainerProperty("name", String.class, "", false,
-		// true);
-		// container.addContainerProperty("state", HWItemState.class, null,
-		// false, true);
-		// container.addContainerProperty("usedInName", String.class, "", false,
-		// true);
-		// container.addContainerProperty("supervizedFor", String.class, "",
-		// false, true);
-		// container.addContainerProperty("price", BigDecimal.class, null,
-		// false, true);
-		// container.addContainerProperty("purchaseDate", Date.class, null,
-		// false, true);
+		grid = new Grid<>(HWItemOverviewDTO.class);
+		grid.setSelectionMode(SelectionMode.SINGLE);
+		grid.setWidth("100%");
 
-		// table.setContainerDataSource(container);
-		//
-		// table.setConverter("purchaseDate", new StringToDateConverter());
-		table.setConverter("price", new StringToMoneyConverter());
+		grid.getColumn("name").setCaption("Název").setWidth(300);
+		grid.getColumn("purchaseDate").setCaption("Získáno");
+		grid.getColumn("usedIn").setCaption("Je součástí").setWidth(180);
+		grid.getColumn("supervizedFor").setCaption("Spravováno pro");
+		grid.addColumn(hw -> {
+			return FieldUtils.formatMoney(hw.getPrice());
+		}, new TextRenderer()).setCaption("Cena").setId(PRICE_BIND).setStyleGenerator(item -> "v-align-right");
+		grid.addColumn(hw -> {
+			return hw.getState().getName();
+		}, new TextRenderer()).setCaption("Stav").setId(STATE_BIND);
+		grid.addColumn(HWItemOverviewDTO::getPurchaseDate, new LocalDateRenderer("dd.MM.yyyy")).setCaption("Získáno")
+				.setId(PURCHASE_DATE_BIND).setStyleGenerator(item -> "v-align-right");
 
-		table.setColumnHeader("name", "Název");
-		table.setColumnHeader("purchaseDate", "Získáno");
-		table.setColumnHeader("price", "Cena");
-		table.setColumnHeader("state", "Stav");
-		table.setColumnHeader("usedInName", "Je součástí");
-		table.setColumnHeader("supervizedFor", "Spravováno pro");
-		// table.setColumnAlignment("purchaseDate", Align.RIGHT);
-		//
-		// table.setColumnAlignment("price", Align.RIGHT);
+		grid.setColumns("name", STATE_BIND, "usedIn", "supervizedFor", PRICE_BIND, PURCHASE_DATE_BIND);
 
-		table.setVisibleColumns(
-				new Object[] { "name", "state", "usedInName", "supervizedFor", "price", "purchaseDate" });
-		table.setColumnWidth("name", 300);
-		table.setColumnWidth("usedInName", 180);
-		table.setWidth("100%");
+		populate();
+		grid.sort("name");
 
-		// table.setFilterBarVisible(true);
-		// table.setFilterDecorator(new GrassFilterDecorator() {
-		// private static final long serialVersionUID = -6862621820503893204L;
-		//
-		// @Override
-		// public boolean isTextFilterImmediate(Object propertyId) {
-		// return false;
-		// }
-		// });
-		// table.setFilterGenerator(new FilterGenerator() {
-		// private static final long serialVersionUID = 8801368960933927218L;
-		//
-		// @Override
-		// public AbstractField<?> getCustomFilterComponent(Object propertyId) {
-		// return null;
-		// }
-		//
-		// private void updateFilter(Object propertyId, Object value) {
-		// switch ((String) propertyId) {
-		// case "name":
-		// filterDTO.setName(value == null ? null : "*" + ((String) value) +
-		// "*");
-		// break;
-		// case "state":
-		// filterDTO.setState((HWItemState) value);
-		// break;
-		// case "usedInName":
-		// filterDTO.setUsedIn(value == null ? null : "*" + ((String) value) +
-		// "*");
-		// break;
-		// case "supervizedFor":
-		// filterDTO.setSupervizedFor(value == null ? null : "*" + ((String)
-		// value) + "*");
-		// break;
-		// case "price":
-		// filterDTO.setPrice((BigDecimal) value);
-		// break;
-		// case "purchaseDate":
-		// filterDTO.setPurchaseDateFrom(value == null ? null : ((DateInterval)
-		// value).getFrom());
-		// filterDTO.setPurchaseDateTo(value == null ? null : ((DateInterval)
-		// value).getTo());
-		// break;
-		// }
-		// container.refresh();
-		// }
-		//
-		// @Override
-		// public Filter generateFilter(Object propertyId, Field<?>
-		// originatingField) {
-		// return null;
-		// }
-		//
-		// @Override
-		// public Filter generateFilter(Object propertyId, Object value) {
-		// return null;
-		// }
-		//
-		// @Override
-		// public void filterRemoved(Object propertyId) {
-		// updateFilter(propertyId, null);
-		// }
-		//
-		// @Override
-		// public Filter filterGeneratorFailed(Exception reason, Object
-		// propertyId, Object value) {
-		// return null;
-		// }
-		//
-		// @Override
-		// public void filterAdded(Object propertyId, Class<? extends Filter>
-		// filterType, Object value) {
-		// updateFilter(propertyId, value);
-		// }
-		// });
-
-		sortTable();
-
-		table.addItemClickListener(event -> {
-			if (event.isDoubleClick()) {
+		grid.addItemClickListener(event -> {
+			if (event.getMouseEventDetails().isDoubleClick()) {
 				openDetailWindow();
 			}
 		});
 
-		table.addValueChangeListener(e -> {
-			boolean enabled = table.getValue() != null;
+		grid.addSelectionListener(e -> {
+			boolean enabled = e.getFirstSelectedItem().isPresent();
 			deleteBtn.setEnabled(enabled);
 			detailsBtn.setEnabled(enabled);
 			newNoteBtn.setEnabled(enabled);
 			fixBtn.setEnabled(enabled);
 		});
 
-		addComponent(table);
+		addComponent(grid);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);

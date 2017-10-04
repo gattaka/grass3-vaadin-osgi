@@ -27,7 +27,7 @@ import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.BasePage;
-import cz.gattserver.grass3.pages.template.ContentsLazyTable;
+import cz.gattserver.grass3.pages.template.ContentsLazyGrid;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
 
@@ -76,7 +76,7 @@ public class HomePage extends BasePage {
 		if (coreACL.isLoggedIn(user)) {
 			VerticalLayout favouritesLayout = new VerticalLayout();
 			favouritesLayout.addComponent(new Label("<h2>Oblíbené obsahy</h2>", ContentMode.HTML));
-			ContentsLazyTable favouritesContentsTable = new ContentsLazyTable();
+			ContentsLazyGrid favouritesContentsTable = new ContentsLazyGrid();
 			favouritesContentsTable.populate(this, (sortOrder, offset, limit) -> {
 				return contentNodeFacade.getUserFavourite(user.getId(), offset / limit, limit).stream();
 			}, () -> {
@@ -243,12 +243,12 @@ public class HomePage extends BasePage {
 
 	private void createRecentMenus(VerticalLayout pagelayout) {
 
-		ContentsLazyTable recentAddedContentsTable = new ContentsLazyTable();
+		ContentsLazyGrid recentAddedContentsTable = new ContentsLazyGrid();
 		recentAddedContentsTable.populate(this, (sortOrder, offset, limit) -> {
 			return contentNodeFacade.getRecentAdded(offset / limit, limit).stream();
 		}, contentNodeFacade::getCount);
 
-		ContentsLazyTable recentModifiedContentsTable = new ContentsLazyTable();
+		ContentsLazyGrid recentModifiedContentsTable = new ContentsLazyGrid();
 		recentModifiedContentsTable.populate(this, (sortOrder, offset, limit) -> {
 			return contentNodeFacade.getRecentModified(offset / limit, limit).stream();
 		}, contentNodeFacade::getCount);

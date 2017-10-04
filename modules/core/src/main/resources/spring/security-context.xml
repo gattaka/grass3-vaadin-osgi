@@ -15,7 +15,7 @@
 			postupy selhaly, takže to je nakonec udělané tak, že se přihlašování udělá 
 			programaticky. To ale nefunguje bez springSecurityFilterChain ... a ten zase 
 			chce http definici ... a ta chce aspoň jeden vstupní bod. -->
-		<form-login login-page='/not-existing-login-page' />
+		<form-login login-page='/loginpage' />
 		<logout />
 	</http>
 

@@ -13,12 +13,12 @@ import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.ImageIcons;
 
-public class NodesTable extends Grid<NodeDTO> {
+public class NodesGrid extends Grid<NodeDTO> {
 
 	private static final long serialVersionUID = -2220485504407844582L;
 
-	public NodesTable(AbstractGrassPage page) {
-		// inject na Table nefunguje kvůli něčemu v předkovi
+	public NodesGrid(AbstractGrassPage page) {
+		// inject nefunguje kvůli něčemu v předkovi
 		final PageFactory nodePageFactory = (PageFactory) SpringContextHelper.getBean("nodePageFactory");
 
 		setHeight("200px");
@@ -41,7 +41,7 @@ public class NodesTable extends Grid<NodeDTO> {
 
 	}
 
-	public void populateTable(List<NodeDTO> nodes) {
+	public void populate(List<NodeDTO> nodes) {
 		setItems(nodes);
 		setHeight(GridUtils.processHeight(nodes.size()) + "px");
 	}

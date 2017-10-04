@@ -13,12 +13,12 @@ import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.URLIdentifierUtils;
 
-public class NewContentNodeTable extends Grid<ContentService> {
+public class NewContentNodeGrid extends Grid<ContentService> {
 
 	private static final long serialVersionUID = -2220485504407844582L;
 
-	public NewContentNodeTable(AbstractGrassPage page, final NodeDTO node) {
-		// inject na Table nefunguje kvůli něčemu v předkovi
+	public NewContentNodeGrid(AbstractGrassPage page, final NodeDTO node) {
+		// inject nefunguje kvůli něčemu v předkovi
 		final ServiceHolder serviceHolder = (ServiceHolder) SpringContextHelper.getContext()
 				.getBean(ServiceHolder.class);
 

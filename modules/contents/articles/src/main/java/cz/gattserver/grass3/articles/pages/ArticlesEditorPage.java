@@ -22,7 +22,6 @@ import com.vaadin.event.ShortcutAction.ModifierKey;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.Registration;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Accordion;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -234,27 +233,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 					JavaScript.eval("insert('" + prefix + "','" + suffix + "')");
 				});
 
-				// StringBuilder builder = new StringBuilder();
-				// builder.append("<div onClick=\"insert('" + prefix + "','" +
-				// suffix
-				// + "');\" tabindex=\"0\" role=\"button\" class=\"v-button
-				// v-widget\">");
-				// builder.append("<span class=\"v-button-wrap\">");
-				// if (resourceBundle.getImage() != null) {
-				// builder.append("<img src=\"" + getRequest().getContextRoot()
-				// + "/VAADIN/themes/grass/"
-				// + resourceBundle.getImage().toString() + "\"/> ");
-				// }
-				// builder.append("<span class=\"v-button-caption\"
-				// style=\"vertical-align: super;\">"
-				// + resourceBundle.getDescription() + "</span>");
-				// builder.append("</span>");
-				// builder.append("</div>");
-				// Label btnLabel = new Label(builder.toString(),
-				// ContentMode.HTML);
-				// btnLabel.setWidth(null);
 				groupToolsLayout.addComponent(btn);
-
 			}
 		}
 
@@ -307,7 +286,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			Token to = new Token(t.getName());
 			articleKeywords.addTokenToInputField(to);
 		});
-		// articleKeywords.setRememberNewTokens(false);
 		articleKeywords.isEnabled();
 		articleKeywords.setAllowNewItems(true);
 		articleKeywords.getInputField().setPlaceholder("klíčové slovo");

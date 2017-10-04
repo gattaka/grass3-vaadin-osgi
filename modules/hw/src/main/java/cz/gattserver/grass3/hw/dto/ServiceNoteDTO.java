@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.hw.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -19,7 +19,7 @@ public class ServiceNoteDTO {
 	 * Datum události
 	 */
 	@NotNull
-	private Date date;
+	private LocalDate date;
 
 	/**
 	 * Popis změny
@@ -36,22 +36,25 @@ public class ServiceNoteDTO {
 	/**
 	 * Součásti
 	 */
-	private HWItemOverviewDTO usedIn;
-
-	public HWItemOverviewDTO getUsedIn() {
-		return usedIn;
-	}
-
-	public void setUsedIn(HWItemOverviewDTO usedIn) {
-		this.usedIn = usedIn;
-	}
+	private String usedInName;
+	private Long usedInId;
 
 	public String getUsedInName() {
-		if (usedIn != null)
-			return usedIn.getName();
-		return "";
+		return usedInName;
 	}
-	
+
+	public void setUsedInName(String usedInName) {
+		this.usedInName = usedInName;
+	}
+
+	public Long getUsedInId() {
+		return usedInId;
+	}
+
+	public void setUsedInId(Long usedInId) {
+		this.usedInId = usedInId;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -68,11 +71,11 @@ public class ServiceNoteDTO {
 		this.description = description;
 	}
 
-	public Date getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 

@@ -26,8 +26,12 @@ public class HWPage extends OneColumnPage {
 		layout.setSpacing(true);
 		layout.setMargin(true);
 
+		VerticalLayout marginlayout = new VerticalLayout();
+		marginlayout.setMargin(true);
+		layout.addComponent(marginlayout);
+
 		TabSheet tabSheet = new TabSheet();
-		layout.addComponent(tabSheet);
+		marginlayout.addComponent(tabSheet);
 
 		tabSheet.addTab(new HWItemsTab(), "Přehled");
 		tabSheet.addTab(new HWTypesTab(), "Typy zařízení");

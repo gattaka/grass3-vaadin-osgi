@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Resource;
@@ -51,6 +52,7 @@ import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.grass3.template.MultiUpload;
 import cz.gattserver.grass3.ui.util.StringToDateConverter;
 import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.TokenField;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.ImageDetailWindow;
@@ -205,6 +207,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 		HorizontalLayout itemLayout = new HorizontalLayout();
 		itemLayout.setSpacing(true);
+		itemLayout.setMargin(new MarginInfo(true, false, false, false));
 		wrapperLayout.addComponent(itemLayout);
 
 		/**
@@ -221,22 +224,21 @@ public class HWItemDetailWindow extends WebWindow {
 		 * Grid
 		 */
 		winLayout = new GridLayout(5, 10);
+		winLayout.setWidth("100%");
 		itemLayout.addComponent(winLayout);
 		winLayout.setSpacing(true);
 
 		/**
 		 * Typy
 		 */
-		HorizontalLayout typesLayout = new HorizontalLayout();
-		// TODO
-		// typesLayout.addStyleName(TokenField.STYLE_TOKENFIELD);
-		typesLayout.setSpacing(true);
-		for (HWItemTypeDTO type : hwItem.getTypes()) {
-			Button btn = new Button(type.getName());
-			btn.setStyleName(ValoTheme.BUTTON_LINK);
-			typesLayout.addComponent(btn);
-		}
-		winLayout.addComponent(typesLayout, 1, 0, 3, 0);
+		TokenField types = new TokenField();
+		types.getInputField().setVisible(false);
+		types.setEnabled(false);
+		hwItem.getTypes().forEach(type -> {
+			Token token = new Token(type.getName());
+			types.addToken(token);
+		});
+		winLayout.addComponent(types, 1, 0, 3, 0);
 
 		winLayout.addComponent(new Label("<strong>Stav</strong>", ContentMode.HTML), 1, 1);
 		winLayout.getComponent(1, 1).setWidth("80px");
@@ -724,7 +726,16 @@ public class HWItemDetailWindow extends WebWindow {
 		sheet.addTab(createServiceNotesTab(), "Záznamy", new ThemeResource(ImageIcons.CLIPBOARD_16_ICON));
 		sheet.addTab(createPhotosTab(), "Fotografie", new ThemeResource(ImageIcons.IMG_16_ICON));
 		sheet.addTab(createDocsTab(), "Dokumentace", new ThemeResource(ImageIcons.DOCUMENT_16_ICON));
-		setContent(sheet);
+		HorizontalLayout marginLayout = new HorizontalLayout();
+		marginLayout.setMargin(true);
+
+		HorizontalLayout layout = new HorizontalLayout();
+		layout.setMargin(true);
+		marginLayout.addComponent(layout);
+
+		layout.setSizeFull();
+		layout.addComponent(sheet);
+		setContent(layout);
 
 		triggerComponent.setEnabled(false);
 

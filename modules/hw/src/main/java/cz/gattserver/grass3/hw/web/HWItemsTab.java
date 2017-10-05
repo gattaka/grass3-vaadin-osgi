@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.hw.web;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -9,20 +10,26 @@ import org.springframework.data.domain.PageRequest;
 
 import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.LocalDateRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
+import com.vaadin.ui.themes.ValoTheme;
 
 import cz.gattserver.grass3.hw.dto.HWFilterDTO;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
+import cz.gattserver.grass3.hw.dto.HWItemState;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.HWFacade;
@@ -168,7 +175,7 @@ public class HWItemsTab extends VerticalLayout {
 		filterDTO = new HWFilterDTO();
 
 		setSpacing(true);
-		setMargin(true);
+		setMargin(new MarginInfo(true, false, false, false));
 
 		// final Button filterByTypeBtn = new Button("Filtrovat dle typu");
 		final Button newHWBtn = new Button("Založit novou položku HW");
@@ -190,6 +197,7 @@ public class HWItemsTab extends VerticalLayout {
 		 * Filtr na typy HW
 		 */
 		hwTypesFilter = new TokenField();
+		hwTypesFilter.getInputField().setWidth("200px");
 		hwTypesFilter.addTokenAddListener(t -> {
 			populate();
 			return t;
@@ -220,7 +228,7 @@ public class HWItemsTab extends VerticalLayout {
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setWidth("100%");
 
-		grid.getColumn("name").setCaption("Název").setWidth(300);
+		grid.getColumn("name").setCaption("Název").setWidth(260);
 		grid.getColumn("purchaseDate").setCaption("Získáno");
 		grid.getColumn("usedIn").setCaption("Je součástí").setWidth(180);
 		grid.getColumn("supervizedFor").setCaption("Spravováno pro");
@@ -229,11 +237,52 @@ public class HWItemsTab extends VerticalLayout {
 		}, new TextRenderer()).setCaption("Cena").setId(PRICE_BIND).setStyleGenerator(item -> "v-align-right");
 		grid.addColumn(hw -> {
 			return hw.getState().getName();
-		}, new TextRenderer()).setCaption("Stav").setId(STATE_BIND);
+		}, new TextRenderer()).setCaption("Stav").setId(STATE_BIND).setWidth(130);
 		grid.addColumn(HWItemOverviewDTO::getPurchaseDate, new LocalDateRenderer("dd.MM.yyyy")).setCaption("Získáno")
 				.setId(PURCHASE_DATE_BIND).setStyleGenerator(item -> "v-align-right");
 
 		grid.setColumns("name", STATE_BIND, "usedIn", "supervizedFor", PRICE_BIND, PURCHASE_DATE_BIND);
+
+		HeaderRow filteringHeader = grid.appendHeaderRow();
+
+		// Název
+		TextField nazevColumnField = new TextField();
+		nazevColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		nazevColumnField.setWidth("100%");
+		nazevColumnField.addValueChangeListener(e -> {
+			filterDTO.setName(e.getValue());
+			populate();
+		});
+		filteringHeader.getCell("name").setComponent(nazevColumnField);
+
+		// Stav
+		ComboBox<HWItemState> stavColumnCombo = new ComboBox<>(null, Arrays.asList(HWItemState.values()));
+		stavColumnCombo.addStyleName(ValoTheme.COMBOBOX_TINY);
+		stavColumnCombo.setWidth("100%");
+		stavColumnCombo.addValueChangeListener(e -> {
+			filterDTO.setState(e.getValue());
+			populate();
+		});
+		filteringHeader.getCell(STATE_BIND).setComponent(stavColumnCombo);
+
+		// Je součástí
+		TextField usedInColumnField = new TextField();
+		usedInColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		usedInColumnField.addValueChangeListener(e -> {
+			filterDTO.setUsedIn(e.getValue());
+			populate();
+		});
+		filteringHeader.getCell("usedIn").setComponent(usedInColumnField);
+
+		// Spravován pro
+		TextField supervizedForColumnField = new TextField();
+		supervizedForColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		supervizedForColumnField.setWidth("100%");
+		supervizedForColumnField.addValueChangeListener(e -> {
+			filterDTO.setSupervizedFor(e.getValue());
+			populate();
+		});
+		filteringHeader.getCell("supervizedFor").setComponent(supervizedForColumnField);
 
 		populate();
 		grid.sort("name");

@@ -1,8 +1,8 @@
 $v-app-loading-text: "GRASS III";
-$v-background-color: hsl(46, 5%, 98%);
-$v-app-background-color: hsl(47, 39%, 75%);
+$v-background-color: hsl(210, 0%, 98%); // hsl(46, 5%, 98%);
+$v-app-background-color: hsl(46, 5%, 98%); // hsl(47, 39%, 75%);
 $v-panel-background-color: #fff;
-$v-focus-color: #3b5998;
+$v-focus-color: #3779b3;
 $v-focus-style: 0 0 1px 1px rgba($v-focus-color, .5);
 $v-border-radius: 3px;
 $v-textfield-border-radius: 0;
@@ -26,7 +26,7 @@ $v-layout-margin-bottom: 10px;
 $v-layout-margin-left: 10px;
 
 // Import valo after setting the parameters
-@import "../valo/valo";
+@import "../valo/valo.scss";
 
 .grass {
 	@include valo;
@@ -568,5 +568,14 @@ $v-layout-margin-left: 10px;
 	.system-monitor-ok-log-style {
 		color: #7B0;
 	}
+}
 
+.grass.v-app {
+	background-color: hsl(47, 39%, 75%);
+}
+
+.advancedtokenfield-layouttokens .v-component-group {
+	margin: 0 5px 0 0;
+	background: #3779b3;
+	padding: 4px 5px 2px 10px;	
 }

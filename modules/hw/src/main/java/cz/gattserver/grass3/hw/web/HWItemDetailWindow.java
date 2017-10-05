@@ -167,7 +167,6 @@ public class HWItemDetailWindow extends WebWindow {
 			}
 		});
 		upload.addSucceededListener(e -> tryCreateHWImage(hwItem));
-		// upload.setImmediate(true);
 		upload.setButtonCaption("Vložit foto");
 
 		HorizontalLayout uploadWrapperLayout = new HorizontalLayout();
@@ -441,7 +440,6 @@ public class HWItemDetailWindow extends WebWindow {
 		 * Založení nového servisního záznamu
 		 */
 		newNoteBtn = new Button("Přidat záznam");
-		// newNoteBtn.setImmediate(true);
 		newNoteBtn.setIcon(new ThemeResource(ImageIcons.PENCIL_16_ICON));
 		newNoteBtn.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = 8876001665427003203L;

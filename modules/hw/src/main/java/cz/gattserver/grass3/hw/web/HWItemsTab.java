@@ -7,8 +7,6 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
-import com.fo0.advancedtokenfield.events.TokenRemoveEvent;
-import com.fo0.advancedtokenfield.main.AdvancedTokenField;
 import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Button;
@@ -32,6 +30,7 @@ import cz.gattserver.grass3.model.util.QuerydslUtil;
 import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.TokenField;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 
@@ -47,7 +46,7 @@ public class HWItemsTab extends VerticalLayout {
 	private final String PURCHASE_DATE_BIND = "customPurchaseDate";
 
 	private Grid<HWItemOverviewDTO> grid;
-	private AdvancedTokenField hwTypesFilter;
+	private TokenField hwTypesFilter;
 
 	private HWFilterDTO filterDTO;
 
@@ -190,24 +189,15 @@ public class HWItemsTab extends VerticalLayout {
 		/**
 		 * Filtr na typy HW
 		 */
-		// šlo by to udělat i pomocí listenerů, ale ty jsou volané ještě než
-		// dojde k úpravě dat v komponentě, takže si musím přidání tokenu hlídat
-		// buď ručně nebo udržovat vlastní stav, takhle udělám populate správně
-		hwTypesFilter = new AdvancedTokenField() {
-			private static final long serialVersionUID = 3928334636230041507L;
-
-			@Override
-			public void addToken(Token token) {
-				super.addToken(token);
-				populate();
-			}
-
-			@Override
-			public void removeTokenFromLayout(TokenRemoveEvent event) {
-				super.removeTokenFromLayout(event);
-				populate();
-			}
-		};
+		hwTypesFilter = new TokenField();
+		hwTypesFilter.addTokenAddListener(t -> {
+			populate();
+			return t;
+		});
+		hwTypesFilter.addTokenRemoveListener(t -> {
+			populate();
+			return t;
+		});
 		HorizontalLayout hwTypesFilterLayout = new HorizontalLayout();
 		hwTypesFilterLayout.setSpacing(true);
 		addComponent(hwTypesFilterLayout);

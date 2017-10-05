@@ -17,6 +17,8 @@
 			chce http definici ... a ta chce aspoň jeden vstupní bod. -->
 		<form-login login-page='/loginpage' />
 		<logout />
+		<!-- token-validity-seconds 2 weeks (default) -->
+		<remember-me key="grass3-d1b3395b306b568d2fd977109c08540b" />
 	</http>
 
 	<authentication-manager alias="authenticationManager">

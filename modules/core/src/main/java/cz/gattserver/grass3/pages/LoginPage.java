@@ -9,6 +9,7 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
@@ -35,9 +36,9 @@ public class LoginPage extends OneColumnPage {
 		super(request);
 	}
 
-	private boolean login(String username, String password) {
+	private boolean login(String username, String password, boolean remember) {
 		try {
-			securityFacade.login(username, password);
+			securityFacade.login(username, password, remember);
 			// Reinitialize the session to protect against session fixation
 			// attacks. This does not work
 			// with websocket communication.
@@ -53,7 +54,7 @@ public class LoginPage extends OneColumnPage {
 
 		VerticalLayout marginLayout = new VerticalLayout();
 		marginLayout.setMargin(true);
-		
+
 		VerticalLayout layout = new VerticalLayout();
 		marginLayout.addComponent(layout);
 		layout.setMargin(true);
@@ -67,10 +68,13 @@ public class LoginPage extends OneColumnPage {
 		PasswordField password = new PasswordField("Heslo");
 		layout.addComponent(password);
 
+		CheckBox rememberMe = new CheckBox("Zapamatovat si přihlášení");
+		layout.addComponent(rememberMe);
+
 		Button login = new Button("Přihlásit", evt -> {
 			String pword = password.getValue();
 			password.setValue("");
-			if (!login(username.getValue(), pword)) {
+			if (!login(username.getValue(), pword, rememberMe.getValue())) {
 				Notification.show("Přihlášení se nezdařilo");
 				username.focus();
 			} else {

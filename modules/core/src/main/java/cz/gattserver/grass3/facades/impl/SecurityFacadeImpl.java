@@ -8,7 +8,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,9 +29,12 @@ public class SecurityFacadeImpl implements SecurityFacade {
 	private UserRepository userRepository;
 
 	@Autowired
-	AuthenticationManager authenticationManager;
+	private AuthenticationManager authenticationManager;
 
-	public boolean login(String username, String password) {
+	@Autowired
+	private RememberMeServices rememberMeServices;
+
+	public boolean login(String username, String password, boolean remember) {
 
 		UserInfoDTO principal = new UserInfoDTO();
 		principal.setName(username);
@@ -42,6 +47,11 @@ public class SecurityFacadeImpl implements SecurityFacade {
 			if (auth.isAuthenticated()) {
 				principal = (UserInfoDTO) auth.getPrincipal();
 				SecurityContextHolder.getContext().setAuthentication(auth);
+				if (remember && rememberMeServices instanceof TokenBasedRememberMeServices) {
+					TokenBasedRememberMeServices rms = (TokenBasedRememberMeServices) rememberMeServices;
+					rms.onLoginSuccess(VaadinServletService.getCurrentServletRequest(),
+							VaadinServletService.getCurrentResponse().getHttpServletResponse(), auth);
+				}
 				// zapiš údaj o posledním přihlášení
 				User user = userRepository.findOne(principal.getId());
 				user.setLastLoginDate(Calendar.getInstance().getTime());

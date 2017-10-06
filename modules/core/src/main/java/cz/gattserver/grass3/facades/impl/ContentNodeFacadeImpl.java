@@ -71,89 +71,25 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 		return contentNodeDTOs;
 	}
 
-	/**
-	 * Získá set naposledy přidaných obsahů
-	 * 
-	 * @param size
-	 * @return
-	 */
-	public List<ContentNodeOverviewDTO> getRecentAddedForOverview(int maxResults) {
-		List<ContentNode> contentNodes = contentNodeRepository
-				.findByCreationDateNotNullOrderByCreationDateDesc(new PageRequest(0, maxResults)).getContent();
-		List<ContentNodeOverviewDTO> contentNodeDTOs = mapper.mapContentNodeOverviewCollection(contentNodes);
-		return contentNodeDTOs;
-	}
-
-	/**
-	 * Získá set naposledy upravených obsahů
-	 * 
-	 * @param size
-	 * @return
-	 */
-	public List<ContentNodeOverviewDTO> getRecentModifiedForOverview(int maxResults) {
-		List<ContentNode> contentNodes = contentNodeRepository
-				.findByLastModificationDateNotNullOrderByLastModificationDateDesc(new PageRequest(0, maxResults))
-				.getContent();
-		List<ContentNodeOverviewDTO> contentNodeDTOs = mapper.mapContentNodeOverviewCollection(contentNodes);
-		return contentNodeDTOs;
-	}
-
-	/**
-	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node -
-	 * zkrácená verze metody pro obsah, jež nemá tagy
-	 * 
-	 * @param contentModuleId
-	 *            identifikátor modulu obsahů
-	 * @param contentId
-	 *            id obsahu (v rámci modulu), který je ukládán
-	 * @param name
-	 *            jméno obsahu
-	 * @param publicated
-	 *            je článek publikován ?
-	 * @param node
-	 *            kategorie do které se vkládá
-	 * @param author
-	 *            uživatel, který článek vytvořil
-	 * @return instanci {@link ContentNode}, který byl k obsahu vytvořen, nebo
-	 */
 	public ContentNode save(String contentModuleId, Long contentId, String name, boolean publicated, Long node,
-			Long author) {
-		return save(contentModuleId, contentId, name, null, publicated, node, author);
+			Long author, boolean draft) {
+		return save(contentModuleId, contentId, name, null, publicated, node, author, draft);
 	}
 
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, Long node, Long author) {
-		return save(contentModuleId, contentId, name, tags, publicated, node, author, null);
+			boolean publicated, Long node, Long author, boolean draft) {
+		return save(contentModuleId, contentId, name, tags, publicated, node, author, draft, null);
 	}
 
-	/**
-	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node
-	 * 
-	 * @param contentModuleId
-	 *            identifikátor modulu obsahů
-	 * @param contentId
-	 *            id obsahu (v rámci modulu), který je ukládán
-	 * @param name
-	 *            jméno obsahu
-	 * @param tags
-	 *            řetězec tagů, který se má společně s obsahem uložit
-	 * @param publicated
-	 *            je článek publikován ?
-	 * @param nodeId
-	 *            kategorie do které se vkládá
-	 * @param author
-	 *            uživatel, který článek vytvořil
-	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
-	 *         nebo
-	 */
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, Long nodeId, Long author, Date date) {
+			boolean publicated, Long nodeId, Long author, boolean draft, Date date) {
 
 		ContentNode contentNode = new ContentNode();
 		contentNode.setContentId(contentId);
 		contentNode.setContentReaderId(contentModuleId);
 		contentNode.setCreationDate(date == null ? Calendar.getInstance().getTime() : date);
 		contentNode.setName(name);
+		contentNode.setDraft(draft);
 		contentNode.setPublicated(publicated);
 
 		// Ulož contentNode
@@ -238,13 +174,12 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	}
 
 	/**
-	 * Smaže obsah
+	 * Smaže obsah dle id obecného uzlu obsahu
 	 * 
 	 * @param contentNode
-	 *            uzel obsahu, který patří k tomuto obsahu
-	 * @return true pokud proběhla úprava úspěšně jinak false
+	 *            id obecného uzlu obsahu
 	 */
-	public void delete(Long contentNodeId) {
+	public void deleteByContentNodeId(Long contentNodeId) {
 		userFacade.removeContentFromAllUsersFavourites(contentNodeId);
 
 		// vymaž tagy
@@ -258,6 +193,22 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 		node = nodeRepository.save(node);
 
 		contentNodeRepository.delete(contentNode);
+	}
+
+	/**
+	 * Smaže obsah dle id koncového obsahu
+	 * 
+	 * @param contentId
+	 *            id koncového obsahu
+	 */
+	public void deleteByContentId(Long contentId) {
+		Long contentNodeId = contentNodeRepository.findContentNodeIdByContentId(contentId);
+
+		if (contentNodeId != null) {
+			deleteByContentNodeId(contentNodeId);
+		} else {
+			throw new IllegalStateException("Dle ID koncového obsahu nebyl nalezen obecný uzel obsahu");
+		}
 	}
 
 	@Override

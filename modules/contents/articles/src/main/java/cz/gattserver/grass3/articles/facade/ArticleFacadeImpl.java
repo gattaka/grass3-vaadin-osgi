@@ -34,9 +34,6 @@ import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
 
 @Transactional
 @Component
@@ -75,101 +72,18 @@ public class ArticleFacadeImpl implements ArticleFacade {
 	}
 
 	/**
-	 * Zpracuje článek a vrátí jeho HMTL výstup.
-	 * 
-	 * @param text
-	 *            vstupní text článku
-	 * @return výstupní DTO článku, pokud se překlad zdařil, jinak {@code null}
-	 */
-	public ArticleDTO processPreview(String text, String contextRoot) {
-
-		Context context = processArticle(text, contextRoot);
-
-		ArticleDTO articleDTO = new ArticleDTO();
-		articleDTO.setPluginCSSResources(context.getCSSResources());
-		articleDTO.setPluginJSResources(context.getJSResources());
-		articleDTO.setOutputHTML(context.getOutput());
-		articleDTO.setSearchableOutput(HTMLTrimmer.trim(context.getOutput()));
-
-		return articleDTO;
-
-	}
-
-	/**
-	 * Uloží rozpracovaný článek - nepřekládá ho, jenom uloží obsah polí v
-	 * editoru
-	 * 
-	 * @param name
-	 *            název článku
-	 * @param text
-	 *            obsah článku
-	 * @param tags
-	 *            klíčová slova článku
-	 * @param node
-	 *            kategorie do kteér se vkládá
-	 * @param author
-	 *            uživatel, který článek vytvořil
-	 * @return {@code true} pokud vše dopadlo v pořádku, jinak {@code false}
-	 */
-	public void saveTemp(String name, String text, String tags, NodeDTO node, UserInfoDTO author) {
-		// TODO
-	}
-
-	/**
 	 * Smaže článek
 	 * 
 	 * @param article
 	 *            článek ke smazání
 	 * @return {@code true} pokud se zdařilo smazat jiank {@code false}
 	 */
-	public void deleteArticle(ArticleDTO articleDTO) {
-
+	public void deleteArticle(Long id) {
 		// smaž článek
-		articleRepository.delete(articleDTO.getId());
+		articleRepository.delete(id);
 
 		// smaž jeho content node
-		ContentNodeDTO contentNodeDTO = articleDTO.getContentNode();
-		if (contentNodeDTO != null) {
-			contentNodeFacade.delete(contentNodeDTO.getId());
-		}
-	}
-
-	/**
-	 * Upraví článek
-	 * 
-	 * @param name
-	 *            název článku
-	 * @param text
-	 *            obsah článku
-	 * @param tags
-	 *            klíčová slova článku
-	 * @param publicated
-	 *            je článek publikován ?
-	 * @param articleDTO
-	 *            původní článek
-	 * @return {@code true} pokud se úprava zdařila, jinak {@code false}
-	 */
-	public void modifyArticle(String name, String text, Collection<String> tags, boolean publicated, Long articleId,
-			Long contentNodeId, String contextRoot) {
-
-		// článek
-		Article article = articleRepository.findOne(articleId);
-
-		// nasetuj do něj vše potřebné
-		Context context = processArticle(text, contextRoot);
-		article.setOutputHTML(context.getOutput());
-		article.setPluginCSSResources(context.getCSSResources());
-
-		article.setPluginJSResources(createJSResourcesSet(context.getJSResources()));
-
-		article.setText(text);
-		article.setSearchableOutput(HTMLTrimmer.trim(context.getOutput()));
-
-		// ulož ho
-		articleRepository.save(article);
-
-		// content node
-		contentNodeFacade.modify(contentNodeId, name, tags, publicated);
+		contentNodeFacade.deleteByContentId(id);
 	}
 
 	private SortedSet<ArticleJSResource> createJSResourcesSet(Set<String> scripts) {
@@ -195,37 +109,66 @@ public class ArticleFacadeImpl implements ArticleFacade {
 	 *            klíčová slova článku
 	 * @param publicated
 	 *            je článek publikován ?
-	 * @param node
+	 * @param nodeId
 	 *            kategorie do které se vkládá
-	 * @param author
+	 * @param authorId
 	 *            uživatel, který článek vytvořil
+	 * @param contextRoot
+	 *            od jakého adresového kořene se mají generovat linky v článku
+	 * @param processForm
+	 *            jakým způsobem se má článek zpracovat
+	 * @param existingId
+	 *            id, jde-li o úpravu existujícího článku
 	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
 	 *         {@code null}
 	 */
-	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, NodeDTO node,
-			UserInfoDTO author, String contextRoot) {
+	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, Long nodeId,
+			Long authorId, String contextRoot, ArticleProcessForm processForm, Long existingId) {
 
-		// vytvoř nový článek
-		Article article = new Article();
+		// Flags
+		boolean process = false;
+		boolean draft = false;
+		switch (processForm) {
+		case DRAFT:
+			draft = true;
+			break;
+		case PREVIEW:
+			draft = true;
+		case FULL:
+			process = true;
+		}
+
+		Article article;
+		if (existingId == null)
+			// vytvoř nový článek
+			article = new Article();
+		else
+			article = articleRepository.findOne(existingId);
 
 		// nasetuj do něj vše potřebné
-		Context context = processArticle(text, contextRoot);
-		article.setOutputHTML(context.getOutput());
-		article.setPluginCSSResources(context.getCSSResources());
-		article.setPluginJSResources(createJSResourcesSet(context.getJSResources()));
+		if (process) {
+			Context context = processArticle(text, contextRoot);
+			article.setOutputHTML(context.getOutput());
+			article.setPluginCSSResources(context.getCSSResources());
+			article.setPluginJSResources(createJSResourcesSet(context.getJSResources()));
+			article.setSearchableOutput(HTMLTrimmer.trim(context.getOutput()));
+		}
 		article.setText(text);
-		article.setSearchableOutput(HTMLTrimmer.trim(context.getOutput()));
 
 		// ulož ho a nasetuj jeho id
 		article = articleRepository.save(article);
 
-		// vytvoř odpovídající content node
-		ContentNode contentNode = contentNodeFacade.save(ArticlesContentService.ID, article.getId(), name, tags,
-				publicated, node.getId(), author.getId());
+		if (existingId == null) {
+			// vytvoř odpovídající content node
+			ContentNode contentNode = contentNodeFacade.save(ArticlesContentService.ID, article.getId(), name, tags,
+					publicated, nodeId, authorId,draft);
 
-		// ulož do článku referenci na jeho contentnode
-		article.setContentNode(contentNode);
-		articleRepository.save(article);
+			// ulož do článku referenci na jeho contentnode
+			article.setContentNode(contentNode);
+			articleRepository.save(article);
+		} else {
+			contentNodeFacade.modify(article.getContentNode().getId(), name, tags, publicated);
+		}
 
 		return article.getId();
 	}
@@ -266,9 +209,10 @@ public class ArticleFacadeImpl implements ArticleFacade {
 			for (ContentTag tag : tagsDTOs)
 				tags.add(tag.getName());
 
-			modifyArticle(article.getContentNode().getName(), article.getText(), tags,
-					article.getContentNode().getPublicated(), article.getId(), article.getContentNode().getId(),
-					contextRoot);
+			saveArticle(article.getContentNode().getName(), article.getText(), tags,
+					article.getContentNode().getPublicated(), article.getContentNode().getId(),
+					article.getContentNode().getAuthor().getId(), contextRoot, ArticleProcessForm.FULL,
+					article.getId());
 
 			eventBus.publish(new ArticlesProcessProgressEvent(
 					"(" + current + "/" + total + ") " + article.getContentNode().getName()));

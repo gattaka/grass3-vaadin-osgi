@@ -22,6 +22,8 @@ public class NewContentNodeGrid extends Grid<ContentService> {
 		final ServiceHolder serviceHolder = (ServiceHolder) SpringContextHelper.getContext()
 				.getBean(ServiceHolder.class);
 
+		setSelectionMode(SelectionMode.NONE);
+		
 		String iconBind = "customIcon";
 		String nameBind = "customName";
 

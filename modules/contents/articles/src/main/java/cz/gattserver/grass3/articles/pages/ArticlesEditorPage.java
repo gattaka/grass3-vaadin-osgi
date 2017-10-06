@@ -19,7 +19,6 @@ import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutAction.ModifierKey;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.Registration;
-import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Accordion;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -28,7 +27,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.JavaScript;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -37,6 +35,7 @@ import cz.gattserver.grass3.articles.PluginServiceHolder;
 import cz.gattserver.grass3.articles.dto.ArticleDTO;
 import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import cz.gattserver.grass3.articles.facade.ArticleFacade;
+import cz.gattserver.grass3.articles.facade.ArticleProcessForm;
 import cz.gattserver.grass3.articles.parser.PartsFinder;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
@@ -81,14 +80,16 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private PageFactory articlesViewerPageFactory;
 
 	private NodeDTO node;
-	private ArticleDTO article;
 
 	private TextArea articleTextArea;
 	private TokenField articleKeywords;
 	private TextField articleNameField;
 	private CheckBox publicatedCheckBox;
 
-	private boolean editMode;
+	private Long existingArticleId;
+	private String existingArticleName;
+	private Long existingDraftId;
+
 	private PartsFinder.Result parts;
 	private Registration articleTextAreaFocusRegistration;
 
@@ -101,9 +102,9 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	@Override
 	protected void init() {
 
-		articleTextArea = new TextArea();
-		articleKeywords = new TokenField();
 		articleNameField = new TextField();
+		articleKeywords = new TokenField();
+		articleTextArea = new TextArea();
 		publicatedCheckBox = new CheckBox();
 
 		// zavádění listener pro JS listener akcí jako je vepsání tabulátoru
@@ -114,7 +115,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			articleTextAreaFocusRegistration.remove();
 		});
 
-		editMode = false;
 		parts = null;
 
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
@@ -132,9 +132,10 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			showError404();
 		}
 
+		ArticleDTO article = null;
+
 		// operace ?
 		if (operationToken.equals(DefaultContentOperations.NEW.toString())) {
-			editMode = false;
 			node = nodeFacade.getNodeByIdForOverview(identifier.getId());
 			articleNameField.setValue("");
 			articleTextArea.setValue("");
@@ -142,8 +143,10 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		} else if (operationToken.equals(DefaultContentOperations.EDIT.toString())) {
 
-			editMode = true;
 			article = articleFacade.getArticleForDetail(identifier.getId());
+			existingArticleId = article.getId();
+			existingArticleName = article.getContentNode().getName();
+
 			articleNameField.setValue(article.getContentNode().getName());
 
 			for (ContentTagDTO tagDTO : article.getContentNode().getContentTags()) {
@@ -254,20 +257,22 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	@Override
 	protected Component createRightColumnContent() {
 
+		VerticalLayout marginLayout = new VerticalLayout();
+		marginLayout.setMargin(true);
+
 		VerticalLayout editorTextLayout = new VerticalLayout();
-		editorTextLayout.setSpacing(true);
 		editorTextLayout.setMargin(true);
+		marginLayout.addComponent(editorTextLayout);
 
 		// editor.js
 		loadJS(new JScriptItem("articles/js/editor.js"));
 
-		VerticalLayout articleNameLayout = new VerticalLayout();
-		editorTextLayout.addComponent(articleNameLayout);
-		articleNameLayout.addComponent(new H2Label("Název článku"));
-		articleNameLayout.addComponent(articleNameField);
+		editorTextLayout.addComponent(new H2Label("Název článku"));
+		editorTextLayout.addComponent(articleNameField);
 		articleNameField.setWidth("100%");
 
 		VerticalLayout articleKeywordsLayout = new VerticalLayout();
+		articleKeywordsLayout.setMargin(false);
 		editorTextLayout.addComponent(articleKeywordsLayout);
 
 		// label
@@ -290,24 +295,19 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		articleKeywords.setAllowNewItems(true);
 		articleKeywords.getInputField().setPlaceholder("klíčové slovo");
 
-		VerticalLayout articleContentLayout = new VerticalLayout();
-		editorTextLayout.addComponent(articleContentLayout);
-		articleContentLayout.addComponent(new H2Label("Obsah článku"));
-		articleContentLayout.addComponent(articleTextArea);
+		editorTextLayout.addComponent(new H2Label("Obsah článku"));
+		editorTextLayout.addComponent(articleTextArea);
 		articleTextArea.setSizeFull();
 		articleTextArea.setRows(30);
 
-		VerticalLayout articleOptionsLayout = new VerticalLayout();
-		editorTextLayout.addComponent(articleOptionsLayout);
-		articleOptionsLayout.addComponent(new H2Label("Nastavení článku"));
-
+		editorTextLayout.addComponent(new H2Label("Nastavení článku"));
 		publicatedCheckBox.setCaption("Publikovat článek");
 		publicatedCheckBox.setDescription("Je-li prázdné, uvidí článek pouze jeho autor");
-		articleOptionsLayout.addComponent(publicatedCheckBox);
+		editorTextLayout.addComponent(publicatedCheckBox);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);
-		buttonLayout.setMargin(true);
+		buttonLayout.setMargin(false);
 		editorTextLayout.addComponent(buttonLayout);
 
 		// Náhled
@@ -318,22 +318,33 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			private static final long serialVersionUID = 607422393151282918L;
 
 			public void buttonClick(ClickEvent event) {
+				try {
+					String text = null;
+					if (parts != null) {
+						StringBuilder builder = new StringBuilder();
+						builder.append(parts.getPrePart());
+						builder.append(articleTextArea.getValue());
+						builder.append(parts.getPostPart());
+						text = builder.toString();
+					} else {
+						text = articleTextArea.getValue();
+					}
 
-				String text = null;
-				if (parts != null) {
-					StringBuilder builder = new StringBuilder();
-					builder.append(parts.getPrePart());
-					builder.append(String.valueOf(articleTextArea.getValue()));
-					builder.append(parts.getPostPart());
-					text = builder.toString();
-				} else {
-					text = String.valueOf(articleTextArea.getValue());
+					String draftName = "Draft:" + articleNameField.getValue();
+					Long id = articleFacade.saveArticle(draftName, text, getArticlesKeywords(), false, node.getId(),
+							getGrassUI().getUser().getId(), getRequest().getContextRoot(), ArticleProcessForm.PREVIEW,
+							existingDraftId);
+
+					if (id != null) {
+						existingDraftId = id;
+						JavaScript.eval("window.open('"
+								+ getPageURL(articlesViewerPageFactory,
+										URLIdentifierUtils.createURLIdentifier(existingDraftId, draftName))
+								+ "','_blank');");
+					}
+				} catch (Exception e) {
+					logger.error("Při ukládání náhledu článku došlo k chybě", e);
 				}
-
-				ArticleDTO articleDTO = articleFacade.processPreview(text, getRequest().getContextRoot());
-
-				PreviewWindow previewWindow = new PreviewWindow(articleDTO);
-				getUI().addWindow(previewWindow);
 			}
 
 		});
@@ -350,13 +361,12 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				if (isFormValid() == false)
 					return;
 
-				// pokud se bude měnit
-				boolean oldMode = editMode;
-
 				if (saveOrUpdateArticle()) {
-					showSilentInfo(oldMode ? "Úprava článku proběhla úspěšně" : "Uložení článku proběhlo úspěšně");
+					showSilentInfo(ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku proběhla úspěšně"
+							: "Uložení článku proběhlo úspěšně");
 				} else {
-					showWarning(oldMode ? "Úprava článku se nezdařila" : "Uložení článku se nezdařilo");
+					showWarning(ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku se nezdařila"
+							: "Uložení článku se nezdařilo");
 				}
 			}
 
@@ -372,7 +382,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			private static final long serialVersionUID = 607422393151282918L;
 
 			public void buttonClick(ClickEvent event) {
-
 				if (isFormValid() == false)
 					return;
 
@@ -380,7 +389,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 					// Tady nemá cena dávat infowindow
 					returnToArticle();
 				} else {
-					showWarning(editMode ? "Úprava článku se nezdařila" : "Uložení článku se nezdařilo");
+					showWarning(ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku se nezdařila"
+							: "Uložení článku se nezdařilo");
 				}
 
 			}
@@ -406,7 +416,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 					protected void onConfirm(ClickEvent event) {
 						// ruším úpravu existujícího článku (vracím se na
 						// článek), nebo nového (vracím se do kategorie) ?
-						if (editMode) {
+						if (existingArticleId != null) {
 							returnToArticle();
 						} else {
 							returnToNode();
@@ -420,7 +430,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		});
 		buttonLayout.addComponent(cancelButton);
 
-		return editorTextLayout;
+		return marginLayout;
 	}
 
 	private boolean isFormValid() {
@@ -443,53 +453,53 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 	private boolean saveOrUpdateArticle() {
 		try {
-			if (editMode) {
-
-				String text = null;
-				if (parts != null) {
-					StringBuilder builder = new StringBuilder();
-					builder.append(parts.getPrePart());
-					builder.append(String.valueOf(articleTextArea.getValue()));
-					builder.append(parts.getPostPart());
-					text = builder.toString();
-				} else {
-					text = String.valueOf(articleTextArea.getValue());
-				}
-
-				articleFacade.modifyArticle(String.valueOf(articleNameField.getValue()), text, getArticlesKeywords(),
-						publicatedCheckBox.getValue(), article.getId(), article.getContentNode().getId(),
-						getRequest().getContextRoot());
+			String text = null;
+			if (parts != null) {
+				StringBuilder builder = new StringBuilder();
+				builder.append(parts.getPrePart());
+				builder.append(articleTextArea.getValue());
+				builder.append(parts.getPostPart());
+				text = builder.toString();
 			} else {
-				Long id = articleFacade.saveArticle(String.valueOf(articleNameField.getValue()),
-						String.valueOf(articleTextArea.getValue()), getArticlesKeywords(),
-						publicatedCheckBox.getValue(), node, getGrassUI().getUser(), getRequest().getContextRoot());
+				text = articleTextArea.getValue();
+			}
 
-				if (id == null)
-					return false;
+			Long id = articleFacade.saveArticle(articleNameField.getValue(), text, getArticlesKeywords(),
+					publicatedCheckBox.getValue(), node.getId(), getGrassUI().getUser().getId(),
+					getRequest().getContextRoot(), ArticleProcessForm.FULL, this.existingArticleId);
 
-				// odteď budeme editovat
-				editMode = true;
-				article = articleFacade.getArticleForDetail(id);
+			if (id != null) {
+				this.existingArticleId = id;
+				this.existingArticleName = articleNameField.getValue();
+				return true;
 			}
 		} catch (Exception e) {
-			return false;
+			logger.error("Při ukládání článku došlo k chybě", e);
 		}
-		return true;
+		return false;
 	}
 
 	/**
 	 * Zavolá vrácení se na článek
 	 */
 	private void returnToArticle() {
+		// smaž draft
+		if (existingDraftId != null)
+			articleFacade.deleteArticle(existingDraftId);
+
 		JavaScript.eval("window.onbeforeunload = null;");
 		redirect(getPageURL(articlesViewerPageFactory,
-				URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName())));
+				URLIdentifierUtils.createURLIdentifier(existingArticleId, existingArticleName)));
 	}
 
 	/**
 	 * zavolání vrácení se na kategorii
 	 */
 	private void returnToNode() {
+		// smaž draft
+		if (existingDraftId != null)
+			articleFacade.deleteArticle(existingDraftId);
+
 		JavaScript.eval("window.onbeforeunload = null;");
 		redirect(getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName())));
 	}

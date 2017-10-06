@@ -48,6 +48,11 @@ public class ContentNodeDTO implements Serializable, Authorizable {
 	 * Je obsah ve fázi příprav, nebo už má být publikován ?
 	 */
 	private Boolean publicated = true;
+	
+	/**
+	 * Jde o plnohodnotný článek, nebo jde o rozpracovaný obsah?
+	 */
+	private Boolean draft = false;
 
 	/**
 	 * Tagy
@@ -63,6 +68,14 @@ public class ContentNodeDTO implements Serializable, Authorizable {
 	 * DB identifikátor
 	 */
 	private Long id;
+
+	public Boolean isDraft() {
+		return draft;
+	}
+
+	public void setDraft(Boolean draft) {
+		this.draft = draft;
+	}
 
 	public Long getId() {
 		return id;

@@ -106,7 +106,9 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		}
 
 		operationsListLayout = new CssLayout();
-		createContentOperations(operationsListLayout);
+		if (!content.isDraft()) {
+			createContentOperations(operationsListLayout);
+		}
 
 		JavaScript.eval("var pageScroll = document.getElementsByClassName('v-ui v-scrollable')[0]; "
 				/*	*/ + "$(pageScroll).scroll(function() { "
@@ -206,7 +208,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		layout.addComponent(contentCreationDateNameLabel, "createDate");
 		layout.addComponent(contentLastModificationDateLabel, "modifyDate");
 
-		if (content.isPublicated() == false) {
+		if (!content.isPublicated()) {
 			HorizontalLayout publicatedLayout = new HorizontalLayout();
 			publicatedLayout.setSpacing(true);
 			publicatedLayout.setMargin(false);

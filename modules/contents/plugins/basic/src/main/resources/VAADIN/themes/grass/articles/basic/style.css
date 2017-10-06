@@ -43,8 +43,8 @@
 	border-radius: 4px;
 }
 
-.level1 {
-	
+.level1, .level2, .level3, .level4 {
+	font-size: 12px;
 }
 
 .level2 {

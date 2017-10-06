@@ -16,68 +16,80 @@ public interface ContentNodeFacade {
 	public List<ContentNodeOverviewDTO> getUserFavourite(Long user);
 
 	/**
-	 * Získá set naposledy přidaných obsahů
-	 * 
-	 * @param size
-	 * @return
-	 */
-	public List<ContentNodeOverviewDTO> getRecentAddedForOverview(int maxResults);
-
-	/**
-	 * Získá set naposledy upravených obsahů
-	 * 
-	 * @param size
-	 * @return
-	 */
-	public List<ContentNodeOverviewDTO> getRecentModifiedForOverview(int maxResults);
-
-	/**
 	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node -
 	 * zkrácená verze metody pro obsah, jež nemá tagy
 	 * 
-	 * @param contentModule
+	 * @param contentModuleId
 	 *            identifikátor modulu obsahů
-	 * @param contentNode
-	 *            id obsahu (v rámci modulu), který je ukládán
+	 * @param contentId
+	 *            id koncového obsahu, který je ukládán
 	 * @param name
 	 *            jméno obsahu
 	 * @param publicated
-	 *            je článek publikován ?
+	 *            je obsah publikován?
 	 * @param node
-	 *            kategorie do kteér se vkládá
+	 *            kategorie do které se vkládá
 	 * @param author
-	 *            uživatel, který článek vytvořil
+	 *            uživatel, který obsah vytvořil
+	 * @param draft
+	 *            jedná se o rozpracovaný obsah?
 	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
 	 *         nebo
 	 */
-	public ContentNode save(String contentModule, Long contentNode, String name, boolean publicated, Long node,
-			Long author);
+	public ContentNode save(String contentModuleId, Long contentId, String name, boolean publicated, Long node,
+			Long author, boolean draft);
 
 	/**
 	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node
 	 * 
-	 * @param contentModule
+	 * @param contentModuleId
 	 *            identifikátor modulu obsahů
-	 * @param contentNode
-	 *            id obsahu (v rámci modulu), který je ukládán
+	 * @param contentId
+	 *            id koncového obsahu, který je ukládán
 	 * @param name
 	 *            jméno obsahu
 	 * @param tags
 	 *            řetězec tagů, který se má společně s obsahem uložit
 	 * @param publicated
-	 *            je článek publikován ?
+	 *            je obsah publikován?
 	 * @param nodeId
 	 *            kategorie do které se vkládá
 	 * @param author
-	 *            uživatel, který článek vytvořil
+	 *            uživatel, který obsah vytvořil
+	 * @param draft
+	 *            jedná se o rozpracovaný obsah?
 	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
 	 *         nebo
 	 */
-	public ContentNode save(String contentModule, Long contentNode, String name, Collection<String> tags,
-			boolean publicated, Long nodeId, Long author);
-
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, Long nodeId, Long author, Date date);
+			boolean publicated, Long nodeId, Long author, boolean draft);
+
+	/**
+	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node
+	 * 
+	 * @param contentModuleId
+	 *            identifikátor modulu obsahů
+	 * @param contentId
+	 *            id koncového obsahu, který je ukládán
+	 * @param name
+	 *            jméno obsahu
+	 * @param tags
+	 *            řetězec tagů, který se má společně s obsahem uložit
+	 * @param publicated
+	 *            je obsah publikován?
+	 * @param nodeId
+	 *            kategorie do které se vkládá
+	 * @param author
+	 *            uživatel, který obsah vytvořil
+	 * @param draft
+	 *            jedná se o rozpracovaný obsah?
+	 * @param date
+	 *            vnucené datum vytvoření
+	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
+	 *         nebo
+	 */
+	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
+			boolean publicated, Long nodeId, Long author, boolean draft, Date date);
 
 	/**
 	 * Získá contentNodeDTO dle jeho id
@@ -91,32 +103,54 @@ public interface ContentNodeFacade {
 	/**
 	 * Upraví obsah a uloží ho do DB - verze metody pro obsah bez tagů
 	 * 
-	 * @param contentNode
+	 * @param contentNodeId
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 */
-	public void modify(Long contentNode, String name, boolean publicated);
+	public void modify(Long contentNodeId, String name, boolean publicated);
 
 	/**
 	 * Upraví obsah a uloží ho do DB
 	 * 
-	 * @param contentNode
+	 * @param contentNodeId
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @param tags
 	 *            řetězec tagů, který se má společně s obsahem uložit
 	 * @param publicated
-	 *            je článek publikován ?
+	 *            je obsah publikován ?
 	 */
-	public void modify(Long contentNode, String name, Collection<String> tags, boolean publicated);
-
-	public void modify(Long contentId, String name, Collection<String> tags, boolean publicated, Date creationDate);
+	public void modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated);
 
 	/**
-	 * Smaže obsah
+	 * Upraví obsah a uloží ho do DB - verze s možností editace data vytvoření
+	 * obsahu
 	 * 
-	 * @param contentNode
+	 * @param contentNodeId
 	 *            uzel obsahu, který patří k tomuto obsahu
+	 * @param tags
+	 *            řetězec tagů, který se má společně s obsahem uložit
+	 * @param publicated
+	 *            je obsah publikován ?
+	 * @param creationDate
+	 *            vnucené datum vytvoření obsahu, které přepíše původní
+	 *            automatické datum
 	 */
-	public void delete(Long contentNode);
+	public void modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated, Date creationDate);
+
+	/**
+	 * Smaže obsah dle id obecného uzlu obsahu
+	 * 
+	 * @param contentNodeId
+	 *            id obecného uzlu obsahu
+	 */
+	public void deleteByContentNodeId(Long contentNodeId);
+
+	/**
+	 * Smaže obsah dle id koncového obsahu
+	 * 
+	 * @param contentId
+	 *            id koncového obsahu
+	 */
+	public void deleteByContentId(Long contentId);
 
 	/**
 	 * Přesune obsah mezi kategoriemi

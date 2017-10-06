@@ -128,6 +128,7 @@ public class HomePage extends BasePage {
 	private void createTagCloud(VerticalLayout pagelayout) {
 
 		VerticalLayout tagCloudLayout = new VerticalLayout();
+		tagCloudLayout.setMargin(false);
 		tagCloudLayout.addComponent(new H2Label("Tagy"));
 		pagelayout.addComponent(tagCloudLayout);
 

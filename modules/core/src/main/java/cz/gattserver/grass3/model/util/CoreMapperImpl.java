@@ -135,6 +135,7 @@ public class CoreMapperImpl implements CoreMapper {
 		contentNodeDTO.setLastModificationDate(e.getLastModificationDate());
 		contentNodeDTO.setName(e.getName());
 		contentNodeDTO.setPublicated(e.getPublicated());
+		contentNodeDTO.setDraft(e.getDraft());
 		contentNodeDTO.setContentTags(mapContentTagCollectionForOverview(e.getContentTags()));
 		contentNodeDTO.setParent(mapNodeForBreadcrumb(e.getParent()));
 

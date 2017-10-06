@@ -106,7 +106,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 
 		photogalleryRepository.delete(photogallery.getId());
 		ContentNodeDTO contentNodeDTO = photogallery.getContentNode();
-		contentNodeFacade.delete(contentNodeDTO.getId());
+		contentNodeFacade.deleteByContentNodeId(contentNodeDTO.getId());
 	}
 
 	/**
@@ -339,7 +339,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 		// vytvoř odpovídající content node
 		eventBus.publish(new PGProcessProgressEvent("Uložení obsahu galerie"));
 		ContentNode contentNode = contentNodeFacade.save(PhotogalleryContentService.ID, photogallery.getId(), name,
-				tags, publicated, node.getId(), author.getId(), DateUtil.toDate(date));
+				tags, publicated, node.getId(), author.getId(), false, DateUtil.toDate(date));
 
 		if (contentNode == null) {
 			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));

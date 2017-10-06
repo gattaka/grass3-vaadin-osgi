@@ -47,9 +47,14 @@ public class ContentNode {
 	private Date lastModificationDate;
 
 	/**
-	 * Je obsah ve fázi příprav, nebo už má být publikován ?
+	 * Je obsah určen k publikování nebo je soukromý?
 	 */
 	private Boolean publicated = true;
+
+	/**
+	 * Jde o plnohodnotný článek, nebo jde o rozpracovaný obsah?
+	 */
+	private Boolean draft = false;
 
 	/**
 	 * Tagy
@@ -70,6 +75,14 @@ public class ContentNode {
 	@GeneratedValue(generator = "increment")
 	@GenericGenerator(name = "increment", strategy = "increment")
 	private Long id;
+
+	public Boolean getDraft() {
+		return draft;
+	}
+
+	public void setDraft(Boolean draft) {
+		this.draft = draft;
+	}
 
 	@Override
 	public boolean equals(Object obj) {

@@ -74,7 +74,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		// RESCUE -- tohle by se normálně stát nemělo, ale umožňuje to aspoň
 		// vyřešit stav, ve kterém existuje takovýto nezobrazitelný obsah
 		if (article.getContentNode() == null) {
-			articleFacade.deleteArticle(article);
+			articleFacade.deleteArticle(article.getId());
 			redirect(getPageURL(homePageFactory.getPageName()));
 		}
 
@@ -159,7 +159,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 				// zdařilo se ? Pokud ano, otevři info okno a při
 				// potvrzení jdi na kategorii
 				try {
-					articleFacade.deleteArticle(article);
+					articleFacade.deleteArticle(article.getId());
 					InfoWindow infoSubwindow = new InfoWindow("Smazání článku proběhlo úspěšně.") {
 
 						private static final long serialVersionUID = -6688396549852552674L;

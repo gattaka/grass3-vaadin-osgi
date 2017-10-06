@@ -38,6 +38,7 @@ import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -85,7 +86,7 @@ public class NodesSettingsTab extends AbstractSettingsTab {
 		VerticalLayout usersLayout = new VerticalLayout();
 		layout.addComponent(usersLayout);
 
-		usersLayout.addComponent(new Label("<h2>Správa kategorií</h2>", ContentMode.HTML));
+		usersLayout.addComponent(new H2Label("Správa kategorií"));
 
 		usersLayout.addComponent(tree);
 		tree.setImmediate(true);

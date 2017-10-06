@@ -45,7 +45,7 @@ public class Breadcrumb extends HorizontalLayout {
 		setSizeFull();
 
 		breadcrumbLayout = new HorizontalLayout();
-		breadcrumbLayout.setHeight("20px");
+		breadcrumbLayout.setHeight("18px");
 		addComponent(breadcrumbLayout);
 	}
 

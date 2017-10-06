@@ -24,6 +24,7 @@ import cz.gattserver.grass3.ui.progress.BaseProgressBar;
 import cz.gattserver.grass3.ui.progress.ProgressWindow;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.ui.FieldUtils;
+import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import net.engio.mbassy.listener.Handler;
 
@@ -63,7 +64,7 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 		final ArticlesConfiguration configuration = loadConfiguration();
 
 		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new Label("<h2>Nastavení</h2>", ContentMode.HTML));
+		settingsLayout.addComponent(new H2Label("Nastavení"));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
@@ -111,7 +112,7 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 		/**
 		 * Reprocess tlačítko
 		 */
-		settingsLayout.addComponent(new Label("</br><h2>Přegenerování obsahů</h2>", ContentMode.HTML));
+		settingsLayout.addComponent(new H2Label("Přegenerování obsahů"));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout reprocessLayout = new VerticalLayout();

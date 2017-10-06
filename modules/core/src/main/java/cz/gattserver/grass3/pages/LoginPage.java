@@ -7,11 +7,9 @@ import org.springframework.security.core.AuthenticationException;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.VaadinService;
-import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
@@ -21,6 +19,7 @@ import cz.gattserver.grass3.facades.SecurityFacade;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.ui.H2Label;
 
 public class LoginPage extends OneColumnPage {
 
@@ -60,7 +59,7 @@ public class LoginPage extends OneColumnPage {
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
-		layout.addComponent(new Label("<h2>Přihlášení</h2>", ContentMode.HTML));
+		layout.addComponent(new H2Label("Přihlášení"));
 
 		TextField username = new TextField("Login");
 		layout.addComponent(username);

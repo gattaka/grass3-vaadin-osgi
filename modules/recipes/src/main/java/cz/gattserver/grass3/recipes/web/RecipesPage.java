@@ -19,6 +19,7 @@ import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
 import cz.gattserver.grass3.template.CreateButton;
 import cz.gattserver.grass3.template.ModifyButton;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.ui.H2Label;
 
 public class RecipesPage extends OneColumnPage {
 
@@ -43,7 +44,7 @@ public class RecipesPage extends OneColumnPage {
 	}
 
 	private void showDetail(RecipeDTO choosenRecipe) {
-		nameLabel.setValue("<h2>" + choosenRecipe.getName() + "</h2>");
+		nameLabel.setValue(choosenRecipe.getName());
 		contentLabel.setValue(recipesFacade.eolToBreakline(choosenRecipe.getDescription()));
 		contentLayout.setVisible(true);
 		this.choosenRecipe = choosenRecipe;
@@ -96,9 +97,7 @@ public class RecipesPage extends OneColumnPage {
 		layout.addComponent(contentLayout);
 		contentLayout.setVisible(false);
 
-		nameLabel = new Label();
-		nameLabel.setContentMode(ContentMode.HTML);
-		nameLabel.setSizeUndefined();
+		nameLabel = new H2Label();
 		contentLayout.addComponent(nameLabel);
 
 		contentLabel = new Label();

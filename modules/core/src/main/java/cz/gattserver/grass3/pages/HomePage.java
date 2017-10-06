@@ -30,6 +30,7 @@ import cz.gattserver.grass3.pages.template.BasePage;
 import cz.gattserver.grass3.pages.template.ContentsLazyGrid;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
+import cz.gattserver.web.common.ui.H2Label;
 
 public class HomePage extends BasePage {
 
@@ -66,16 +67,20 @@ public class HomePage extends BasePage {
 		CustomLayout contentLayout = new CustomLayout("oneColumn");
 		layout.addComponent(contentLayout, "content");
 
-		VerticalLayout pagelayout = new VerticalLayout();
+		VerticalLayout marginLayout = new VerticalLayout();
+		marginLayout.setMargin(true);
 
+		VerticalLayout pagelayout = new VerticalLayout();
 		pagelayout.setMargin(true);
-		pagelayout.setSpacing(false);
+		pagelayout.setSpacing(true);
+		marginLayout.addComponent(pagelayout);
 
 		// Oblíbené
 		UserInfoDTO user = getGrassUI().getUser();
 		if (coreACL.isLoggedIn(user)) {
 			VerticalLayout favouritesLayout = new VerticalLayout();
-			favouritesLayout.addComponent(new Label("<h2>Oblíbené obsahy</h2>", ContentMode.HTML));
+			favouritesLayout.setMargin(false);
+			favouritesLayout.addComponent(new H2Label("Oblíbené obsahy"));
 			ContentsLazyGrid favouritesContentsTable = new ContentsLazyGrid();
 			favouritesContentsTable.populate(this, (sortOrder, offset, limit) -> {
 				return contentNodeFacade.getUserFavourite(user.getId(), offset / limit, limit).stream();
@@ -116,14 +121,14 @@ public class HomePage extends BasePage {
 		System.out.println(log);
 		logger.info(log);
 
-		contentLayout.addComponent(pagelayout, "content");
+		contentLayout.addComponent(marginLayout, "content");
 
 	}
 
 	private void createTagCloud(VerticalLayout pagelayout) {
 
 		VerticalLayout tagCloudLayout = new VerticalLayout();
-		tagCloudLayout.addComponent(new Label("<h2>Tagy</h2>", ContentMode.HTML));
+		tagCloudLayout.addComponent(new H2Label("Tagy"));
 		pagelayout.addComponent(tagCloudLayout);
 
 		final List<ContentTagDTO> contentTags = contentTagFacade.getContentTagsForOverview();
@@ -254,7 +259,8 @@ public class HomePage extends BasePage {
 		}, contentNodeFacade::getCount);
 
 		VerticalLayout recentAddedLayout = new VerticalLayout();
-		recentAddedLayout.addComponent(new Label("<h2>Nedávno přidané obsahy</h2>", ContentMode.HTML));
+		recentAddedLayout.setMargin(false);
+		recentAddedLayout.addComponent(new H2Label("Nedávno přidané obsahy"));
 		recentAddedLayout.addComponent(recentAddedContentsTable);
 		recentAddedContentsTable.setWidth("100%");
 		recentAddedContentsTable.setHeight("200px");
@@ -262,7 +268,8 @@ public class HomePage extends BasePage {
 
 		// Nedávno upravené obsahy
 		VerticalLayout recentModifiedLayout = new VerticalLayout();
-		recentModifiedLayout.addComponent(new Label("<h2>Nedávno upravené obsahy</h2>", ContentMode.HTML));
+		recentModifiedLayout.setMargin(false);
+		recentModifiedLayout.addComponent(new H2Label("Nedávno upravené obsahy"));
 		recentModifiedLayout.addComponent(recentModifiedContentsTable);
 		recentModifiedContentsTable.setWidth("100%");
 		recentModifiedContentsTable.setHeight("200px");

@@ -5,11 +5,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.Binder.Binding;
-import com.vaadin.data.BindingValidationStatus;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
@@ -33,6 +31,7 @@ import cz.gattserver.grass3.template.Breadcrumb;
 import cz.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
+import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcons;
 
 public class NodePage extends OneColumnPage {
@@ -54,8 +53,6 @@ public class NodePage extends OneColumnPage {
 	// Přehled podkategorií
 	private NodesGrid subNodesTable;
 
-	private String newNodeName = null;
-
 	public NodePage(GrassRequest request) {
 		super(request);
 	}
@@ -68,7 +65,13 @@ public class NodePage extends OneColumnPage {
 	@Override
 	protected Component createContent() {
 
+		VerticalLayout marginLayout = new VerticalLayout();
+		marginLayout.setMargin(true);
+
 		VerticalLayout layout = new VerticalLayout();
+		layout.setMargin(true);
+		layout.setSpacing(true);
+		marginLayout.addComponent(layout);
 
 		String nodeName = getRequest().getAnalyzer().getNextPathToken();
 		if (nodeName == null)
@@ -82,9 +85,6 @@ public class NodePage extends OneColumnPage {
 
 		NodeDTO node = nodeFacade.getNodeByIdForDetail(identifier.getId());
 
-		layout.setMargin(true);
-		layout.setSpacing(false);
-
 		// TODO pokud má jiný název, přesměruj na kategorii s ID-Název správným
 		// názvem
 
@@ -97,7 +97,7 @@ public class NodePage extends OneColumnPage {
 		// Obsahy
 		createContentsPart(layout, node);
 
-		return layout;
+		return marginLayout;
 	}
 
 	private void createNewNodePanel(VerticalLayout layout, final NodeDTO node) {
@@ -108,18 +108,15 @@ public class NodePage extends OneColumnPage {
 		layout.addComponent(panelLayout);
 
 		final TextField newNodeNameField = new TextField();
-		final Binding<Object, String> newNodeNameFieldBinder = new Binder<>().forField(newNodeNameField)
-				.asRequired("Název kategorie nesmí být prázdný").bind(o -> newNodeName, (o, value) -> {
-					newNodeName = value;
-				});
+		newNodeNameField.setPlaceholder("Nová kategorie");
 		panelLayout.addComponent(newNodeNameField);
 
 		Button createButton = new Button("Vytvořit novou kategorii", e -> {
-			BindingValidationStatus<String> status = newNodeNameFieldBinder.validate();
-			if (status.isError())
-				return;
-
 			String newNodeName = newNodeNameField.getValue();
+			if (StringUtils.isBlank(newNodeName)) {
+				showError("Název kategorie nesmí být prázdný");
+				return;
+			}
 			Long newNodeId = nodeFacade.createNewNode(node, newNodeName);
 			if (newNodeId != null) {
 				showInfo("Nový kategorie byla úspěšně vytvořena.");
@@ -168,9 +165,10 @@ public class NodePage extends OneColumnPage {
 	private void createSubnodesPart(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout subNodesLayout = new VerticalLayout();
+		subNodesLayout.setMargin(false);
 		subNodesTable = new NodesGrid(NodePage.this);
 
-		subNodesLayout.addComponent(new Label("<h2>Podkategorie</h2>", ContentMode.HTML));
+		subNodesLayout.addComponent(new H2Label("Podkategorie"));
 
 		populateSubnodesTable(node);
 
@@ -197,6 +195,7 @@ public class NodePage extends OneColumnPage {
 	private void createContentsPart(VerticalLayout layout, NodeDTO node) {
 
 		VerticalLayout contentsLayout = new VerticalLayout();
+		contentsLayout.setMargin(false);
 		ContentsLazyGrid contentsTable = new ContentsLazyGrid();
 		contentsTable.populate(this, (sortOrder, offset, limit) -> {
 			return contentNodeFacade.getByNode(node.getId(), offset / limit, limit).stream();
@@ -204,7 +203,7 @@ public class NodePage extends OneColumnPage {
 			return contentNodeFacade.getCountByNode(node.getId());
 		});
 
-		contentsLayout.addComponent(new Label("<h2>Obsahy</h2>", ContentMode.HTML));
+		contentsLayout.addComponent(new H2Label("Obsahy"));
 		contentsLayout.addComponent(contentsTable);
 		contentsTable.setWidth("100%");
 		layout.addComponent(contentsLayout);
@@ -216,9 +215,10 @@ public class NodePage extends OneColumnPage {
 
 	private void createNewContentMenu(VerticalLayout layout, NodeDTO node) {
 		VerticalLayout newContentsLayout = new VerticalLayout();
+		newContentsLayout.setMargin(false);
 		NewContentNodeGrid newContentsTable = new NewContentNodeGrid(NodePage.this, node);
 
-		newContentsLayout.addComponent(new Label("<h2>Vytvořit nový obsah</h2>", ContentMode.HTML));
+		newContentsLayout.addComponent(new H2Label("Vytvořit nový obsah"));
 		newContentsLayout.addComponent(newContentsTable);
 		newContentsTable.setWidth("100%");
 		newContentsLayout.setVisible(coreACL.canCreateContent(getUser()));

@@ -1,13 +1,11 @@
 .articles-basic-h1 {
 	font-size: 15pt;
-	padding-bottom: 4px;
-	margin-bottom: 10px;
+	margin-bottom: 10px !important;
 	border-bottom: 1px #BBB solid;
 }
 
 .articles-basic-h2 {
 	font-size: 13pt;
-	padding-bottom: 4px;
 	margin-bottom: 10px;
 	border-bottom: 1px #BBB solid;
 	margin-left: 5px;

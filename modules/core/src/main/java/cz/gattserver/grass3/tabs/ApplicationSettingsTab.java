@@ -21,6 +21,7 @@ import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.window.InfoWindow;
 import cz.gattserver.web.common.window.WarnWindow;
 
@@ -55,7 +56,7 @@ public class ApplicationSettingsTab extends AbstractSettingsTab {
 		final CoreConfiguration configuration = loadConfiguration();
 
 		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new Label("<h2>Nastavení aplikace</h2>", ContentMode.HTML));
+		settingsLayout.addComponent(new H2Label("Nastavení aplikace"));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();

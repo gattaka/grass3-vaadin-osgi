@@ -16,6 +16,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.UI;
@@ -36,6 +37,7 @@ import cz.gattserver.grass3.template.ModifyButton;
 import cz.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
+import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.WarnWindow;
 
@@ -85,7 +87,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("d.M.yyyy HH:mm:ss");
 
-		contentNameLabel = new Label("<h2>" + content.getName() + "</h2>", ContentMode.HTML);
+		contentNameLabel = new H2Label(content.getName());
 
 		contentAuthorNameLabel = new Label(content.getAuthor().getName());
 
@@ -106,7 +108,17 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		operationsListLayout = new CssLayout();
 		createContentOperations(operationsListLayout);
 
+		JavaScript.eval("var pageScroll = document.getElementsByClassName('v-ui v-scrollable')[0]; "
+				/*	*/ + "$(pageScroll).scroll(function() { "
+				/*		*/ + "var height = $(pageScroll).scrollTop(); "
+				/*		*/ + "if (height > 100) "
+				/*			*/ + "document.getElementById('left').style['margin-top'] = (height - 100) + 'px'; "
+				/*		*/ + "else "
+				/*			*/ + "document.getElementById('left').style['margin-top'] = '0px'; "
+				/*	*/ + "});");
+
 		super.init();
+
 	}
 
 	protected void createContentOperations(CssLayout operationsListLayout) {
@@ -216,26 +228,22 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 	@Override
 	protected Component createRightColumnContent() {
+		VerticalLayout marginlayout = new VerticalLayout();
+		marginlayout.setMargin(true);
 
-		// TODO obsahy článků potřebují tady mít právě CustomLayout aby se dalo
-		// pomocí JS roztahovat - jinak je to závislé na předpočítané pevné
-		// výšce layoutu, který si vaadin počítá v době renderu a pak nemění !
 		VerticalLayout layout = new VerticalLayout();
+		marginlayout.addComponent(layout);
 
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
 		layout.addComponent(breadcrumb);
-
-		// Název obsahu
-		VerticalLayout nameLayout = new VerticalLayout();
-		layout.addComponent(nameLayout);
-		nameLayout.addComponent(contentNameLabel);
+		layout.addComponent(contentNameLabel);
 
 		// samotný obsah
 		createContent(layout);
 
-		return layout;
+		return marginlayout;
 
 	}
 

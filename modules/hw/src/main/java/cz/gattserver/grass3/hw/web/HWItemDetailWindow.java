@@ -46,7 +46,6 @@ import cz.gattserver.common.util.HumanBytesSizeCreator;
 import cz.gattserver.common.util.MoneyFormatter;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
-import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.grass3.template.MultiUpload;

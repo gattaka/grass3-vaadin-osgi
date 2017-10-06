@@ -86,7 +86,7 @@ public class NodeFacadeImpl implements NodeFacade {
 	public Long createNewNode(NodeDTO parent, String name) {
 
 		Node node = new Node();
-		node.setName(name);
+		node.setName(name.trim());
 		node = nodeRepository.save(node);
 		if (node == null)
 			return null;

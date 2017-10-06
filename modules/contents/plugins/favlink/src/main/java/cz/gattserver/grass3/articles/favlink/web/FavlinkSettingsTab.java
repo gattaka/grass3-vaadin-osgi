@@ -14,6 +14,7 @@ import cz.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
 import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.ui.H2Label;
 
 public class FavlinkSettingsTab extends AbstractSettingsTab {
 
@@ -40,7 +41,7 @@ public class FavlinkSettingsTab extends AbstractSettingsTab {
 		layout.addComponent(settingsLayout);
 
 		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new Label("<h2>Nastavení</h2>", ContentMode.HTML));
+		settingsLayout.addComponent(new H2Label("Nastavení"));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();

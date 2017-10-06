@@ -69,6 +69,7 @@ import cz.gattserver.grass3.ui.progress.ProgressWindow;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
+import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.WarnWindow;
@@ -200,7 +201,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		VerticalLayout nameLayout = new VerticalLayout();
 		editorLayout.addComponent(nameLayout);
-		nameLayout.addComponent(new Label("<h2>Název galerie</h2>", ContentMode.HTML));
+		nameLayout.addComponent(new H2Label("Název galerie"));
 		nameLayout.addComponent(photogalleryNameField);
 		photogalleryNameField.setWidth("100%");
 
@@ -208,7 +209,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		editorLayout.addComponent(keywordsLayout);
 
 		// label
-		keywordsLayout.addComponent(new Label("<h2>Klíčová slova</h2>", ContentMode.HTML));
+		keywordsLayout.addComponent(new H2Label("Klíčová slova"));
 
 		// menu tagů + textfield tagů
 		// http://marc.virtuallypreinstalled.com/TokenField/
@@ -241,7 +242,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		VerticalLayout contentLayout = new VerticalLayout();
 		contentLayout.setSpacing(true);
 		editorLayout.addComponent(contentLayout);
-		contentLayout.addComponent(new Label("<h2>Položky</h2>", ContentMode.HTML));
+		contentLayout.addComponent(new H2Label("Položky"));
 
 		final GridLayout gridLayout = new GridLayout(3, 2);
 		gridLayout.setSpacing(true);
@@ -391,7 +392,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		VerticalLayout contentOptionsLayout = new VerticalLayout();
 		contentOptionsLayout.setSpacing(true);
 		editorLayout.addComponent(contentOptionsLayout);
-		contentOptionsLayout.addComponent(new Label("<h2>Nastavení</h2>", ContentMode.HTML));
+		contentOptionsLayout.addComponent(new H2Label("Nastavení"));
 
 		publicatedCheckBox.setCaption("Publikovat galerii");
 		publicatedCheckBox.setDescription("Je-li prázdné, uvidí galerii pouze její autor");

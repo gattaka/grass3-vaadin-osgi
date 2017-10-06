@@ -51,6 +51,7 @@ import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
+import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.ui.TokenField;
 import cz.gattserver.web.common.window.ConfirmWindow;
@@ -262,7 +263,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		VerticalLayout articleNameLayout = new VerticalLayout();
 		editorTextLayout.addComponent(articleNameLayout);
-		articleNameLayout.addComponent(new Label("<h2>Název článku</h2>", ContentMode.HTML));
+		articleNameLayout.addComponent(new H2Label("Název článku"));
 		articleNameLayout.addComponent(articleNameField);
 		articleNameField.setWidth("100%");
 
@@ -270,7 +271,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		editorTextLayout.addComponent(articleKeywordsLayout);
 
 		// label
-		articleKeywordsLayout.addComponent(new Label("<h2>Klíčová slova</h2>", ContentMode.HTML));
+		articleKeywordsLayout.addComponent(new H2Label("Klíčová slova"));
 
 		// menu tagů + textfield tagů
 		HorizontalLayout keywordsMenuAndTextLayout = new HorizontalLayout();
@@ -291,14 +292,14 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		VerticalLayout articleContentLayout = new VerticalLayout();
 		editorTextLayout.addComponent(articleContentLayout);
-		articleContentLayout.addComponent(new Label("<h2>Obsah článku</h2>", ContentMode.HTML));
+		articleContentLayout.addComponent(new H2Label("Obsah článku"));
 		articleContentLayout.addComponent(articleTextArea);
 		articleTextArea.setSizeFull();
 		articleTextArea.setRows(30);
 
 		VerticalLayout articleOptionsLayout = new VerticalLayout();
 		editorTextLayout.addComponent(articleOptionsLayout);
-		articleOptionsLayout.addComponent(new Label("<h2>Nastavení článku</h2>", ContentMode.HTML));
+		articleOptionsLayout.addComponent(new H2Label("Nastavení článku"));
 
 		publicatedCheckBox.setCaption("Publikovat článek");
 		publicatedCheckBox.setDescription("Je-li prázdné, uvidí článek pouze jeho autor");

@@ -16,6 +16,7 @@ import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.ui.FieldUtils;
+import cz.gattserver.web.common.ui.H2Label;
 
 public class MonitorSettingsTab extends AbstractSettingsTab {
 
@@ -42,7 +43,7 @@ public class MonitorSettingsTab extends AbstractSettingsTab {
 		final MonitorConfiguration configuration = monitorFacade.getConfiguration();
 
 		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new Label("<h2>Nastavení</h2>", ContentMode.HTML));
+		settingsLayout.addComponent(new H2Label("Nastavení"));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();

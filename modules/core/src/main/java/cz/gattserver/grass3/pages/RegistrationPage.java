@@ -22,6 +22,7 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.facades.UserFacade;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.web.common.ui.H2Label;
 
 public class RegistrationPage extends OneColumnPage {
 
@@ -48,7 +49,7 @@ public class RegistrationPage extends OneColumnPage {
 
 		VerticalLayout formLayout = new VerticalLayout();
 		layout.addComponent(formLayout);
-		formLayout.addComponent(new Label("<h2>Registrace nového uživatele</h2>", ContentMode.HTML));
+		formLayout.addComponent(new H2Label("Registrace nového uživatele"));
 
 		VerticalLayout formFieldsLayout = new VerticalLayout();
 		formLayout.addComponent(formFieldsLayout);

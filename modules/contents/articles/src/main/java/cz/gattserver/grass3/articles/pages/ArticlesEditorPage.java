@@ -40,7 +40,7 @@ import cz.gattserver.grass3.articles.parser.PartsFinder;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
-import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.JScriptItem;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
@@ -79,7 +79,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	@Resource(name = "articlesViewerPageFactory")
 	private PageFactory articlesViewerPageFactory;
 
-	private NodeDTO node;
+	private NodeBreadcrumbDTO node;
 
 	private TextArea articleTextArea;
 	private TokenField articleKeywords;
@@ -142,8 +142,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			publicatedCheckBox.setValue(true);
 
 		} else if (operationToken.equals(DefaultContentOperations.EDIT.toString())) {
-
 			article = articleFacade.getArticleForDetail(identifier.getId());
+			node = article.getContentNode().getParent();
 			existingArticleId = article.getId();
 			existingArticleName = article.getContentNode().getName();
 

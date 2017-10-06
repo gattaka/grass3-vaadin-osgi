@@ -161,7 +161,7 @@ public class ArticleFacadeImpl implements ArticleFacade {
 		if (existingId == null) {
 			// vytvoř odpovídající content node
 			ContentNode contentNode = contentNodeFacade.save(ArticlesContentService.ID, article.getId(), name, tags,
-					publicated, nodeId, authorId,draft);
+					publicated, nodeId, authorId, draft);
 
 			// ulož do článku referenci na jeho contentnode
 			article.setContentNode(contentNode);

@@ -16,7 +16,7 @@ public class ArticlesSettingsTabFactory extends AbstractSettingsTabFactory {
 	}
 
 	public boolean isAuthorized() {
-		return getUser().getRoles().contains(Role.ADMIN);
+		return getUser().isAdmin();
 	}
 
 	@Override

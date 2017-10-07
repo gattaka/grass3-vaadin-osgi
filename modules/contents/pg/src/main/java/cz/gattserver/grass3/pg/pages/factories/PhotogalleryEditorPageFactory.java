@@ -20,7 +20,7 @@ public class PhotogalleryEditorPageFactory extends AbstractPageFactory {
 	@Override
 	protected boolean isAuthorized() {
 		return getUser() != null
-				&& (getUser().getRoles().contains(Role.ADMIN) || getUser().getRoles().contains(Role.AUTHOR));
+				&& (getUser().isAdmin() || getUser().hasRole(Role.AUTHOR));
 	}
 
 	@Override

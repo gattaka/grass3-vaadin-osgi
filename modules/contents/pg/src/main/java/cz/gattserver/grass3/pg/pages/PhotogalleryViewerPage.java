@@ -39,7 +39,6 @@ import cz.gattserver.grass3.pg.events.PGZipProcessResultEvent;
 import cz.gattserver.grass3.pg.events.PGZipProcessStartEvent;
 import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
 import cz.gattserver.grass3.pg.util.PGUtils;
-import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.ui.progress.BaseProgressBar;
 import cz.gattserver.grass3.ui.progress.ProgressWindow;
@@ -154,7 +153,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 		if (photogallery.getContentNode().isPublicated()
 				|| (getUser() != null && (photogallery.getContentNode().getAuthor().equals(getUser())
-						|| getUser().getRoles().contains(Role.ADMIN)))) {
+						|| getUser().isAdmin()))) {
 		} else {
 			showError403();
 			return;

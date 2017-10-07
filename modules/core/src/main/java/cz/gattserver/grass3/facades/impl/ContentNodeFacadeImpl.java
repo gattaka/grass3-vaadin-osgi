@@ -27,7 +27,6 @@ import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.model.util.CoreMapper;
-import cz.gattserver.grass3.security.Role;
 
 @Transactional
 @Component
@@ -78,11 +77,11 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
 			boolean publicated, Long node, Long author, boolean draft) {
-		return save(contentModuleId, contentId, name, tags, publicated, node, author, draft, null);
+		return save(contentModuleId, contentId, name, tags, publicated, node, author, draft, null, null);
 	}
 
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, Long nodeId, Long author, boolean draft, Date date) {
+			boolean publicated, Long nodeId, Long author, boolean draft, Date date, Long draftSourceId) {
 
 		ContentNode contentNode = new ContentNode();
 		contentNode.setContentId(contentId);
@@ -90,6 +89,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 		contentNode.setCreationDate(date == null ? Calendar.getInstance().getTime() : date);
 		contentNode.setName(name);
 		contentNode.setDraft(draft);
+		contentNode.setDraftSourceId(draftSourceId);
 		contentNode.setPublicated(publicated);
 
 		// Ulož contentNode
@@ -233,7 +233,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 
 	private Page<ContentNode> innerByUserAccess(PageRequest pr) {
 		UserInfoDTO user = securityFacade.getCurrentUser();
-		return contentNodeRepository.findByUserAccess(user.getId(), user.getRoles().contains(Role.ADMIN), pr);
+		return contentNodeRepository.findByUserAccess(user.getId(), user.isAdmin(), pr);
 	}
 
 	@Override
@@ -260,8 +260,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 
 	private Page<ContentNode> innerByTagAndUserAccess(Long tagId, PageRequest pr) {
 		UserInfoDTO user = securityFacade.getCurrentUser();
-		return contentNodeRepository.findByTagAndUserAccess(tagId, user.getId(), user.getRoles().contains(Role.ADMIN),
-				pr);
+		return contentNodeRepository.findByTagAndUserAccess(tagId, user.getId(), user.isAdmin(), pr);
 	}
 
 	@Override
@@ -282,8 +281,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 
 	private Page<ContentNode> innerByUserFavouritesAndUserAccess(Long userId, PageRequest pr) {
 		UserInfoDTO user = securityFacade.getCurrentUser();
-		return contentNodeRepository.findByUserFavouritesAndUserAccess(userId, user.getId(),
-				user.getRoles().contains(Role.ADMIN), pr);
+		return contentNodeRepository.findByUserFavouritesAndUserAccess(userId, user.getId(), user.isAdmin(), pr);
 	}
 
 	@Override
@@ -303,8 +301,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 
 	private Page<ContentNode> innerByNodeAndUserAccess(Long nodeId, PageRequest pr) {
 		UserInfoDTO user = securityFacade.getCurrentUser();
-		return contentNodeRepository.findByNodeAndUserAccess(nodeId, user.getId(), user.getRoles().contains(Role.ADMIN),
-				pr);
+		return contentNodeRepository.findByNodeAndUserAccess(nodeId, user.getId(), user.isAdmin(), pr);
 	}
 
 	@Override

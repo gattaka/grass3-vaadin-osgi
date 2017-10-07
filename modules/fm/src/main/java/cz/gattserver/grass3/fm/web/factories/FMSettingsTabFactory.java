@@ -18,7 +18,7 @@ public class FMSettingsTabFactory extends AbstractSettingsTabFactory {
 	public boolean isAuthorized() {
 		if (getUser() == null)
 			return false;
-		return getUser().getRoles().contains(Role.ADMIN);
+		return getUser().isAdmin();
 	}
 
 	@Override

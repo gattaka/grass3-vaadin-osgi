@@ -151,6 +151,14 @@ public class UserInfoDTO implements UserDetails {
 		return this.getRoles();
 	}
 
+	public boolean hasRole(Role role) {
+		return getRoles().contains(role);
+	}
+
+	public boolean isAdmin() {
+		return hasRole(Role.ADMIN);
+	}
+
 	@Override
 	public String toString() {
 		return name;

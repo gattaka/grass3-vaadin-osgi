@@ -52,9 +52,14 @@ public class ContentNode {
 	private Boolean publicated = true;
 
 	/**
-	 * Jde o plnohodnotný článek, nebo jde o rozpracovaný obsah?
+	 * Jde o plnohodnotný obsah, nebo jde o rozpracovaný obsah?
 	 */
 	private Boolean draft = false;
+
+	/**
+	 * Jde-li o draft upravovaného obsahu, jaké je jeho id
+	 */
+	private Long draftSourceId;
 
 	/**
 	 * Tagy
@@ -82,6 +87,14 @@ public class ContentNode {
 
 	public void setDraft(Boolean draft) {
 		this.draft = draft;
+	}
+
+	public Long getDraftSourceId() {
+		return draftSourceId;
+	}
+
+	public void setDraftSourceId(Long draftSourceId) {
+		this.draftSourceId = draftSourceId;
 	}
 
 	@Override

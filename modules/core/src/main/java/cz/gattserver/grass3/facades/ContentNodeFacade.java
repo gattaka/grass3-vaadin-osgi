@@ -85,11 +85,13 @@ public interface ContentNodeFacade {
 	 *            jedná se o rozpracovaný obsah?
 	 * @param date
 	 *            vnucené datum vytvoření
+	 * @param draftSourceId
+	 *            id existujícího zdrojového obsahu, od kterého je draft
 	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
 	 *         nebo
 	 */
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, Long nodeId, Long author, boolean draft, Date date);
+			boolean publicated, Long nodeId, Long author, boolean draft, Date date, Long draftSourceId);
 
 	/**
 	 * Získá contentNodeDTO dle jeho id

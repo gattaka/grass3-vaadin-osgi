@@ -363,10 +363,13 @@ div.v-button.v-widget.link.v-button-link.menu-item.v-button-menu-item span span:
 }
 
 /* == CONTENTS ============================================================== */
-#centercontent, #leftcontent, #rightcontent, #bottom {		
+#centercontent, #leftcontent, #rightcontent {		
 	background-color: hsl(46, 40%, 93%);
-	border: 1px solid #b3b3b3;
 	border-radius: 4px;
+}
+
+#centercontent, #leftcontent, #rightcontent, #bottom {		
+	border: 1px solid #b3b3b3;
 }
 
 .grass .left_content_view {
@@ -578,9 +581,8 @@ span.tag-letter {
 	color: #7B0;
 }
 
-
 .grass .advancedtokenfield-layouttokens .v-component-group {
-	margin: 0 5px 0 0 !important;
-	background: #3779b3 !important;
-	padding: 4px 5px 2px 10px !important;	
+	margin: 0 5px 5px 0;
+	background: #3779b3;
+	padding: 4px 5px 2px 10px;	
 }

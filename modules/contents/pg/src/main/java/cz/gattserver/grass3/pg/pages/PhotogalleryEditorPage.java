@@ -8,8 +8,6 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,7 +59,6 @@ import cz.gattserver.grass3.pg.events.PGProcessResultEvent;
 import cz.gattserver.grass3.pg.events.PGProcessStartEvent;
 import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
 import cz.gattserver.grass3.pg.util.PGUtils;
-import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.template.MultiUpload;
 import cz.gattserver.grass3.ui.progress.BaseProgressBar;
@@ -178,7 +175,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		}
 
 		if ((photogallery == null || photogallery.getContentNode().getAuthor().equals(getGrassUI().getUser()))
-				|| getGrassUI().getUser().getRoles().contains(Role.ADMIN)) {
+				|| getGrassUI().getUser().isAdmin()) {
 			super.init();
 		} else {
 			// nemá oprávnění upravovat tento obsah

@@ -18,7 +18,6 @@ import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.pages.template.JScriptItem;
 import cz.gattserver.grass3.security.CoreACL;
-import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.URLIdentifierUtils;
@@ -78,9 +77,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			redirect(getPageURL(homePageFactory.getPageName()));
 		}
 
-		if (article.getContentNode().isPublicated()
-				|| (getUser() != null && (article.getContentNode().getAuthor().equals(getUser())
-						|| getUser().getRoles().contains(Role.ADMIN)))) {
+		if (article.getContentNode().isPublicated() || (getUser() != null
+				&& (article.getContentNode().getAuthor().equals(getUser()) || getUser().isAdmin()))) {
 		} else {
 			showError403();
 			return;

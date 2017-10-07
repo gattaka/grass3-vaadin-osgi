@@ -69,6 +69,19 @@ public class Article {
 	@GenericGenerator(name = "increment", strategy = "increment")
 	private Long id;
 
+	/**
+	 * Je-li draft a má-li rozpracovanou pouze část článku, pak kterou
+	 */
+	private Integer partNumber;
+
+	public Integer getPartNumber() {
+		return partNumber;
+	}
+
+	public void setPartNumber(Integer partNumber) {
+		this.partNumber = partNumber;
+	}
+
 	public Long getId() {
 		return id;
 	}

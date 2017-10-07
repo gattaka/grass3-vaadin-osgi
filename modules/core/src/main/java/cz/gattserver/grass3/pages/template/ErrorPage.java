@@ -6,6 +6,7 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Link;
 
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
@@ -44,7 +45,8 @@ public abstract class ErrorPage extends AbstractGrassPage {
 	}
 
 	@Override
-	protected void createMenu(CustomLayout layout) {
+	protected void createMenuItems(HorizontalLayout menu) {
+		createMenuComponent(menu, new Link("Domů", getPageResource(homePageFactory)));
 	}
 
 	protected abstract String getErrorText();

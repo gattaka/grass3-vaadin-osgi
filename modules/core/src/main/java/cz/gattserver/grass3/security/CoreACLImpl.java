@@ -44,7 +44,7 @@ public final class CoreACLImpl implements CoreACL {
 	 * Může uživatel upravovat "hlášky"
 	 */
 	public boolean canModifyQuotes(UserInfoDTO user) {
-		return isLoggedIn(user) && user.getRoles().contains(Role.ADMIN);
+		return isLoggedIn(user) && user.isAdmin();
 	}
 
 	/**
@@ -64,7 +64,7 @@ public final class CoreACLImpl implements CoreACL {
 	public boolean canCreateContent(UserInfoDTO user) {
 		if (isLoggedIn(user)) {
 			// pokud má uživatel oprávnění AUTHOR, pak může
-			if (user.getRoles().contains(Role.AUTHOR))
+			if (user.hasRole(Role.AUTHOR))
 				return true;
 		}
 		return false;
@@ -76,7 +76,7 @@ public final class CoreACLImpl implements CoreACL {
 	public boolean canModifyContent(Authorizable content, UserInfoDTO user) {
 		if (isLoggedIn(user)) {
 			// pokud je admin, může upravit kterýkoliv obsah
-			if (user.getRoles().contains(Role.ADMIN))
+			if (user.isAdmin())
 				return true;
 
 			// pokud jsi autor, můžeš upravit svůj obsah
@@ -105,7 +105,7 @@ public final class CoreACLImpl implements CoreACL {
 	public boolean canCreateNode(UserInfoDTO user) {
 		if (isLoggedIn(user)) {
 			// pokud je admin, můžeš
-			if (user.getRoles().contains(Role.ADMIN))
+			if (user.isAdmin())
 				return true;
 		}
 		// jinak false
@@ -160,7 +160,7 @@ public final class CoreACLImpl implements CoreACL {
 			return true;
 
 		// administrator může vidět detaily od všech uživatelů
-		if (user.getRoles().contains(Role.ADMIN))
+		if (user.isAdmin())
 			return true;
 
 		return false;
@@ -191,21 +191,21 @@ public final class CoreACLImpl implements CoreACL {
 	 * Může zobrazit stránku s nastavením aplikace ?
 	 */
 	public boolean canShowApplicationSettings(UserInfoDTO user) {
-		return user.getRoles().contains(Role.ADMIN);
+		return user.isAdmin();
 	}
 
 	/**
 	 * Může zobrazit stránku s nastavením kategorií ?
 	 */
 	public boolean canShowCategoriesSettings(UserInfoDTO user) {
-		return user.getRoles().contains(Role.ADMIN);
+		return user.isAdmin();
 	}
 
 	/**
 	 * Může zobrazit stránku s nastavením uživatelů ?
 	 */
 	public boolean canShowUserSettings(UserInfoDTO user) {
-		return user.getRoles().contains(Role.ADMIN);
+		return user.isAdmin();
 	}
 
 	/**

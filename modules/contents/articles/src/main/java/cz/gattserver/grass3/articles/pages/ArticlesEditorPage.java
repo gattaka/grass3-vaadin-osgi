@@ -25,14 +25,17 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.articles.PluginServiceHolder;
 import cz.gattserver.grass3.articles.dto.ArticleDTO;
+import cz.gattserver.grass3.articles.dto.ArticleDraftOverviewDTO;
 import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import cz.gattserver.grass3.articles.facade.ArticleFacade;
 import cz.gattserver.grass3.articles.facade.ArticleProcessForm;
@@ -44,7 +47,6 @@ import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.JScriptItem;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
-import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.template.ImageButton;
 import cz.gattserver.grass3.template.DefaultContentOperations;
 import cz.gattserver.grass3.ui.util.GrassRequest;
@@ -89,6 +91,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private Long existingArticleId;
 	private String existingArticleName;
 	private Long existingDraftId;
+	private Integer partNumber;
 
 	private PartsFinder.Result parts;
 	private Registration articleTextAreaFocusRegistration;
@@ -99,23 +102,9 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				"window.onbeforeunload = function() { return \"Opravdu si přejete ukončit editor a odejít - rozpracovaná data nejsou uložena ?\" };");
 	}
 
-	@Override
-	protected void init() {
-
-		articleNameField = new TextField();
-		articleKeywords = new TokenField();
-		articleTextArea = new TextArea();
-		publicatedCheckBox = new CheckBox();
-
-		// zavádění listener pro JS listener akcí jako je vepsání tabulátoru
-		articleTextAreaFocusRegistration = articleTextArea.addFocusListener(event -> {
-			JavaScript.eval("registerTabListener()");
-			// musí se odebrat, jinak budou problikávat vkládání přes
-			// tlačítka
-			articleTextAreaFocusRegistration.remove();
-		});
-
+	private void defaultCreateContent(CustomLayout customlayout) {
 		parts = null;
+		ArticleDTO article = null;
 
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		String operationToken = analyzer.getNextPathToken();
@@ -132,15 +121,12 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			showError404();
 		}
 
-		ArticleDTO article = null;
-
 		// operace ?
 		if (operationToken.equals(DefaultContentOperations.NEW.toString())) {
 			node = nodeFacade.getNodeByIdForOverview(identifier.getId());
 			articleNameField.setValue("");
 			articleTextArea.setValue("");
 			publicatedCheckBox.setValue(true);
-
 		} else if (operationToken.equals(DefaultContentOperations.EDIT.toString())) {
 			article = articleFacade.getArticleForDetail(identifier.getId());
 			node = article.getContentNode().getParent();
@@ -155,7 +141,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 			publicatedCheckBox.setValue(article.getContentNode().isPublicated());
 
-			int partNumber;
 			if (partNumberToken != null && (partNumber = Integer.valueOf(partNumberToken)) >= 0) {
 				try {
 					parts = PartsFinder.findParts(new ByteArrayInputStream(article.getText().getBytes("UTF-8")),
@@ -180,12 +165,93 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		}
 
 		if ((article == null || article.getContentNode().getAuthor().equals(getGrassUI().getUser()))
-				|| getGrassUI().getUser().getRoles().contains(Role.ADMIN)) {
-			super.init();
+				|| getGrassUI().getUser().isAdmin()) {
+			super.createContent(customlayout);
 		} else {
 			// nemá oprávnění upravovat tento článek
 			showError403();
 			return;
+		}
+	}
+
+	@Override
+	protected void createContent(CustomLayout customlayout) {
+		articleNameField = new TextField();
+		articleKeywords = new TokenField();
+		articleTextArea = new TextArea();
+		publicatedCheckBox = new CheckBox();
+
+		// zavádění listener pro JS listener akcí jako je vepsání tabulátoru
+		articleTextAreaFocusRegistration = articleTextArea.addFocusListener(event -> {
+			JavaScript.eval("registerTabListener()");
+			// musí se odebrat, jinak budou problikávat vkládání přes
+			// tlačítka
+			articleTextAreaFocusRegistration.remove();
+		});
+
+		List<ArticleDraftOverviewDTO> drafts = articleFacade.getDraftsForUser(getGrassUI().getUser());
+
+		if (drafts.isEmpty()) {
+			// nejsou-li v DB žádné pro přihlášeného uživatele viditelné drafty
+			// článků, otevři editor dle operace (new/edit)
+			defaultCreateContent(customlayout);
+		} else {
+			// pokud jsou nalezeny drafty k dokončení, nabídni je k výběru
+			UI.getCurrent().addWindow(new DraftMenuWindow(drafts) {
+				private static final long serialVersionUID = 1040472008288522032L;
+
+				@Override
+				protected void onChoose(ArticleDraftOverviewDTO draft) {
+					parts = null;
+					ArticleDTO article = null;
+
+					existingDraftId = draft.getId();
+
+					node = draft.getContentNode().getParent();
+					articleNameField.setValue(draft.getContentNode().getName());
+					for (ContentTagDTO tagDTO : draft.getContentNode().getContentTags()) {
+						articleKeywords.addToken(new Token(tagDTO.getName()));
+					}
+					publicatedCheckBox.setValue(draft.getContentNode().isPublicated());
+					articleTextArea.setValue(draft.getText());
+
+					// jedná se o draft již existujícího obsahu?
+					if (draft.getContentNode().getDraftSourceId() != null) {
+						article = articleFacade.getArticleForDetail(draft.getContentNode().getDraftSourceId());
+						existingArticleId = article.getId();
+						existingArticleName = article.getContentNode().getName();
+
+						// Úprava části článku může být pouze u existujícího
+						// článku
+						if (draft.getPartNumber() != null) {
+							partNumber = draft.getPartNumber();
+							try {
+								// parts se musí krájet z původního obsahu,
+								// protože v draftu je teď jenom ta část
+								parts = PartsFinder.findParts(
+										new ByteArrayInputStream(article.getText().getBytes("UTF-8")), partNumber);
+							} catch (UnsupportedEncodingException e) {
+								e.printStackTrace();
+								showError500();
+								return;
+							} catch (IOException e) {
+								e.printStackTrace();
+								showError500();
+								return;
+							}
+						}
+					}
+
+					ArticlesEditorPage.super.createContent(customlayout);
+				}
+
+				@Override
+				protected void onCancel() {
+					// nebyl vybrán žádný draft, pokračuj výchozím otevřením
+					// editoru (new/edit)
+					defaultCreateContent(customlayout);
+				}
+			});
 		}
 
 	}
@@ -319,21 +385,13 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 			public void buttonClick(ClickEvent event) {
 				try {
-					String text = null;
-					if (parts != null) {
-						StringBuilder builder = new StringBuilder();
-						builder.append(parts.getPrePart());
-						builder.append(articleTextArea.getValue());
-						builder.append(parts.getPostPart());
-						text = builder.toString();
-					} else {
-						text = articleTextArea.getValue();
-					}
-
-					String draftName = "Draft:" + articleNameField.getValue();
-					Long id = articleFacade.saveArticle(draftName, text, getArticlesKeywords(), false, node.getId(),
-							getGrassUI().getUser().getId(), getRequest().getContextRoot(), ArticleProcessForm.PREVIEW,
-							existingDraftId);
+					// Náhled ukazuje pouze danou část, která je upravovaná
+					// (nespojuje parts)
+					String draftName = articleNameField.getValue();
+					Long id = articleFacade.saveArticle(draftName, articleTextArea.getValue(), getArticlesKeywords(),
+							publicatedCheckBox.getValue(), node.getId(), getGrassUI().getUser().getId(),
+							getRequest().getContextRoot(), ArticleProcessForm.PREVIEW, existingDraftId, partNumber,
+							existingArticleId);
 
 					if (id != null) {
 						existingDraftId = id;
@@ -469,6 +527,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 					getRequest().getContextRoot(), ArticleProcessForm.FULL, this.existingArticleId);
 
 			if (id != null) {
+				// byl uložen článek, od teď eviduj draft, jako draft
+				// existujícího obsahu
 				this.existingArticleId = id;
 				this.existingArticleName = articleNameField.getValue();
 				return true;

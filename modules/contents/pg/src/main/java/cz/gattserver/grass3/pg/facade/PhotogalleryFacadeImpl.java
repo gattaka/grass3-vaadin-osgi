@@ -50,7 +50,6 @@ import cz.gattserver.grass3.pg.service.impl.PhotogalleryContentService;
 import cz.gattserver.grass3.pg.util.DecodeAndCaptureFrames;
 import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.pg.util.PhotogalleryMapper;
-import cz.gattserver.grass3.security.Role;
 
 @Transactional
 @Component
@@ -339,7 +338,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 		// vytvoř odpovídající content node
 		eventBus.publish(new PGProcessProgressEvent("Uložení obsahu galerie"));
 		ContentNode contentNode = contentNodeFacade.save(PhotogalleryContentService.ID, photogallery.getId(), name,
-				tags, publicated, node.getId(), author.getId(), false, DateUtil.toDate(date));
+				tags, publicated, node.getId(), author.getId(), false, DateUtil.toDate(date), null);
 
 		if (contentNode == null) {
 			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
@@ -433,7 +432,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 			return null;
 
 		UserInfoDTO user = securityFacade.getCurrentUser();
-		if (gallery.getContentNode().getPublicated() || user.getRoles().contains(Role.ADMIN)
+		if (gallery.getContentNode().getPublicated() || user.isAdmin()
 				|| gallery.getContentNode().getAuthor().getId().equals(user.getId())) {
 
 			PhotogalleryConfiguration configuration = getConfiguration();
@@ -465,7 +464,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 			return null;
 
 		UserInfoDTO user = securityFacade.getCurrentUser();
-		if (gallery.getContentNode().getPublicated() || user.getRoles().contains(Role.ADMIN)
+		if (gallery.getContentNode().getPublicated() || user.isAdmin()
 				|| gallery.getContentNode().getAuthor().getId().equals(user.getId())) {
 			PhotogalleryConfiguration configuration = getConfiguration();
 			File file = new File(configuration.getRootDir() + "/" + gallery.getPhotogalleryPath() + "/"

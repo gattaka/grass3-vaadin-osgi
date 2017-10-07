@@ -16,6 +16,7 @@ import cz.gattserver.grass3.articles.dao.ArticleRepository;
 import cz.gattserver.grass3.articles.domain.Article;
 import cz.gattserver.grass3.articles.domain.ArticleJSResource;
 import cz.gattserver.grass3.articles.dto.ArticleDTO;
+import cz.gattserver.grass3.articles.dto.ArticleDraftOverviewDTO;
 import cz.gattserver.grass3.articles.editor.api.ContextImpl;
 import cz.gattserver.grass3.articles.events.ArticlesProcessProgressEvent;
 import cz.gattserver.grass3.articles.events.ArticlesProcessResultEvent;
@@ -34,6 +35,7 @@ import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
+import cz.gattserver.grass3.model.dto.UserInfoDTO;
 
 @Transactional
 @Component
@@ -124,6 +126,43 @@ public class ArticleFacadeImpl implements ArticleFacade {
 	 */
 	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, Long nodeId,
 			Long authorId, String contextRoot, ArticleProcessForm processForm, Long existingId) {
+		return saveArticle(name, text, tags, publicated, nodeId, authorId, contextRoot, processForm, existingId, null,
+				null);
+	}
+
+	/**
+	 * Uloží článek
+	 * 
+	 * @param name
+	 *            název článku
+	 * @param text
+	 *            obsah článku
+	 * @param tags
+	 *            klíčová slova článku
+	 * @param publicated
+	 *            je článek publikován ?
+	 * @param nodeId
+	 *            kategorie do které se vkládá
+	 * @param authorId
+	 *            uživatel, který článek vytvořil
+	 * @param contextRoot
+	 *            od jakého adresového kořene se mají generovat linky v článku
+	 * @param processForm
+	 *            jakým způsobem se má článek zpracovat
+	 * @param existingId
+	 *            id, jde-li o úpravu existujícího článku
+	 * @param partNumber
+	 *            číslo části, je-li editována specifická část článku (povinné,
+	 *            pouze jde-li o ukládání draftu)
+	 * @param draftSourceId
+	 *            id existujícího zdrojového článku, jde-li o draft existujícího
+	 *            článku
+	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
+	 *         {@code null}
+	 */
+	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, Long nodeId,
+			Long authorId, String contextRoot, ArticleProcessForm processForm, Long existingId, Integer partNumber,
+			Long draftSourceId) {
 
 		// Flags
 		boolean process = false;
@@ -139,11 +178,15 @@ public class ArticleFacadeImpl implements ArticleFacade {
 		}
 
 		Article article;
-		if (existingId == null)
+		if (existingId == null) {
 			// vytvoř nový článek
 			article = new Article();
-		else
+			if (draft) {
+				article.setPartNumber(partNumber);
+			}
+		} else {
 			article = articleRepository.findOne(existingId);
+		}
 
 		// nasetuj do něj vše potřebné
 		if (process) {
@@ -161,7 +204,7 @@ public class ArticleFacadeImpl implements ArticleFacade {
 		if (existingId == null) {
 			// vytvoř odpovídající content node
 			ContentNode contentNode = contentNodeFacade.save(ArticlesContentService.ID, article.getId(), name, tags,
-					publicated, nodeId, authorId, draft);
+					publicated, nodeId, authorId, draft, null, draftSourceId);
 
 			// ulož do článku referenci na jeho contentnode
 			article.setContentNode(contentNode);
@@ -209,10 +252,12 @@ public class ArticleFacadeImpl implements ArticleFacade {
 			for (ContentTag tag : tagsDTOs)
 				tags.add(tag.getName());
 
+			ArticleProcessForm articleProcessForm = Boolean.TRUE.equals(article.getContentNode().getDraft())
+					? ArticleProcessForm.PREVIEW : ArticleProcessForm.FULL;
 			saveArticle(article.getContentNode().getName(), article.getText(), tags,
 					article.getContentNode().getPublicated(), article.getContentNode().getId(),
-					article.getContentNode().getAuthor().getId(), contextRoot, ArticleProcessForm.FULL,
-					article.getId());
+					article.getContentNode().getAuthor().getId(), contextRoot, articleProcessForm, article.getId(),
+					article.getPartNumber(), article.getContentNode().getDraftSourceId());
 
 			eventBus.publish(new ArticlesProcessProgressEvent(
 					"(" + current + "/" + total + ") " + article.getContentNode().getName()));
@@ -232,6 +277,15 @@ public class ArticleFacadeImpl implements ArticleFacade {
 		if (articles == null)
 			return null;
 		List<ArticleDTO> articleDTOs = articlesMapper.mapArticlesForSearch(articles);
+		return articleDTOs;
+	}
+
+	@Override
+	public List<ArticleDraftOverviewDTO> getDraftsForUser(UserInfoDTO user) {
+		List<Article> articles = articleRepository.findDraftsForUser(user.getId(), user.isAdmin());
+		if (articles == null)
+			return null;
+		List<ArticleDraftOverviewDTO> articleDTOs = articlesMapper.mapArticlesForDraftOverview(articles);
 		return articleDTOs;
 	}
 

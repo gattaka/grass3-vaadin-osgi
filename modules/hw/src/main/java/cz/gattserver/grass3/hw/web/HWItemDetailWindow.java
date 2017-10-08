@@ -133,15 +133,10 @@ public class HWItemDetailWindow extends WebWindow {
 				e -> UI.getCurrent().addWindow(new ImageDetailWindow(hwItem.getName(), icon)));
 
 		Button hwItemImageDeleteBtn = new Button("Smazat", e -> {
-			UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto HW položky ?") {
-				private static final long serialVersionUID = -1901927025986494370L;
-
-				@Override
-				protected void onConfirm(ClickEvent event) {
-					hwFacade.deleteHWItemIconFile(hwItem);
-					createHWItemImageUpload(hwItem);
-				}
-			});
+			UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto HW položky ?", ev -> {
+				hwFacade.deleteHWItemIconFile(hwItem);
+				createHWItemImageUpload(hwItem);
+			}));
 		});
 
 		hwItemImageDetailBtn.setIcon(new ThemeResource(ImageIcons.SEARCH_16_ICON));
@@ -349,20 +344,17 @@ public class HWItemDetailWindow extends WebWindow {
 		 */
 		deleteBtn.addClickListener(e -> {
 			deleteBtn.setEnabled(false);
-			UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat '" + hwItem.getName()
-					+ "' (budou smazány i servisní záznamy a údaje u součástí) ?") {
-
-				private static final long serialVersionUID = -422763987707688597L;
-
-				@Override
-				protected void onConfirm(ClickEvent event) {
-					if (hwFacade.deleteHWItem(hwItem.getId())) {
-						refreshTable();
-						HWItemDetailWindow.this.close();
-					} else {
-						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
-					}
-				}
+			UI.getCurrent().addWindow(new ConfirmWindow(
+					"Opravdu smazat '" + hwItem.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?",
+					ev -> {
+						if (hwFacade.deleteHWItem(hwItem.getId())) {
+							refreshTable();
+							HWItemDetailWindow.this.close();
+						} else {
+							UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
+						}
+					}) {
+				private static final long serialVersionUID = -2258948311452935061L;
 
 				@Override
 				public void close() {
@@ -505,15 +497,11 @@ public class HWItemDetailWindow extends WebWindow {
 				if (serviceNotesGrid.getSelectedItems().isEmpty())
 					return;
 				final ServiceNoteDTO item = serviceNotesGrid.getSelectedItems().iterator().next();
-				UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat vybraný servisní záznam?") {
-
+				UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat vybraný servisní záznam?", e -> {
+					hwFacade.deleteServiceNote(item, hwItem);
+					populateServiceNotesGrid();
+				}) {
 					private static final long serialVersionUID = -422763987707688597L;
-
-					@Override
-					protected void onConfirm(ClickEvent event) {
-						hwFacade.deleteServiceNote(item, hwItem);
-						populateServiceNotesGrid();
-					}
 
 					@Override
 					public void close() {
@@ -590,18 +578,13 @@ public class HWItemDetailWindow extends WebWindow {
 					e -> UI.getCurrent().addWindow(new ImageDetailWindow(hwItem.getName(), file)));
 
 			Button hwItemImageDeleteBtn = new Button("Smazat",
-					e -> UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto HW položky ?") {
-						private static final long serialVersionUID = -1901927025986494370L;
+					e -> UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto HW položky ?", ev -> {
+						hwFacade.deleteHWItemFile(hwItem, file);
 
-						@Override
-						protected void onConfirm(ClickEvent event) {
-							hwFacade.deleteHWItemFile(hwItem, file);
-
-							// refresh listu
-							listLayout.removeAllComponents();
-							createImagesList(listLayout);
-						}
-					}));
+						// refresh listu
+						listLayout.removeAllComponents();
+						createImagesList(listLayout);
+					})));
 
 			hwItemImageDetailBtn.setIcon(new ThemeResource(ImageIcons.SEARCH_16_ICON));
 			hwItemImageDeleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
@@ -675,17 +658,10 @@ public class HWItemDetailWindow extends WebWindow {
 				return;
 
 			final File file = docsGrid.getSelectedItems().iterator().next();
-			UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat '" + file.getName() + "' ?") {
-				private static final long serialVersionUID = -1901927025986494370L;
-
-				@Override
-				protected void onConfirm(ClickEvent event) {
-					hwFacade.deleteHWItemFile(hwItem, file);
-
-					// refresh listu
-					populateDocsGrid();
-				}
-			});
+			UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat '" + file.getName() + "' ?", ev -> {
+				hwFacade.deleteHWItemFile(hwItem, file);
+				populateDocsGrid();
+			}));
 		});
 		hwItemDocumentDeleteBtn.setEnabled(false);
 		hwItemDocumentDeleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));

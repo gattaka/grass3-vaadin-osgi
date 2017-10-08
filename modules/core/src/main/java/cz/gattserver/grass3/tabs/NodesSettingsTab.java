@@ -152,79 +152,61 @@ public class NodesSettingsTab extends AbstractSettingsTab {
 					// Přesunutí znamená rovnou přesun kategorie - v tom případě
 					// je potřeba vyhodit potvrzovací okno
 					getUI().addWindow(new ConfirmWindow(
-							"Opravdu přesunout '" + source.getName() + "' do '" + target.getName() + "' ?") {
-
-						private static final long serialVersionUID = 414272650677665672L;
-
-						@Override
-						protected void onConfirm(ClickEvent event) {
-							if (nodeFacade.moveNode(source, target)) {
-								if (container.setParent(sourceItemId, targetItemId)
-										&& container.hasChildren(targetItemId)) {
-									// move first in the container
-									container.moveAfterSibling(sourceItemId, null);
+							"Opravdu přesunout '" + source.getName() + "' do '" + target.getName() + "' ?", e -> {
+								if (nodeFacade.moveNode(source, target)) {
+									if (container.setParent(sourceItemId, targetItemId)
+											&& container.hasChildren(targetItemId)) {
+										// move first in the container
+										container.moveAfterSibling(sourceItemId, null);
+									}
+									NodesSettingsTab.this.showInfo("Přesun kategorie proběhl úspěšně");
+								} else {
+									NodesSettingsTab.this
+											.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
 								}
-								NodesSettingsTab.this.showInfo("Přesun kategorie proběhl úspěšně");
-							} else {
-								NodesSettingsTab.this
-										.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
-							}
-						}
-					});
-
+							}));
 					break;
 				case TOP:
 
 					// Přesunutí znamená rovnou přesun kategorie - v tom případě
 					// je potřeba vyhodit potvrzovací okno
-					getUI().addWindow(new ConfirmWindow("Opravdu přesunout '" + source.getName() + "' do "
-							+ (parentItemId == null ? "kořene sekce ?" : ("'" + parent.getName() + "' ?"))) {
-
-						private static final long serialVersionUID = 414272650677665672L;
-
-						@Override
-						protected void onConfirm(ClickEvent event) {
-							if (nodeFacade.moveNode(source, parent)) {
-								if (container.setParent(sourceItemId, parentItemId)) {
-									// reorder only the two items,
-									// moving source
-									// above target
-									container.moveAfterSibling(sourceItemId, targetItemId);
-									container.moveAfterSibling(targetItemId, sourceItemId);
+					getUI().addWindow(new ConfirmWindow(
+							"Opravdu přesunout '" + source.getName() + "' do "
+									+ (parentItemId == null ? "kořene sekce ?" : ("'" + parent.getName() + "' ?")),
+							e -> {
+								if (nodeFacade.moveNode(source, parent)) {
+									if (container.setParent(sourceItemId, parentItemId)) {
+										// reorder only the two items,
+										// moving source
+										// above target
+										container.moveAfterSibling(sourceItemId, targetItemId);
+										container.moveAfterSibling(targetItemId, sourceItemId);
+									}
+									NodesSettingsTab.this.showInfo("Přesun kategorie proběhl úspěšně");
+								} else {
+									NodesSettingsTab.this
+											.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
 								}
-								NodesSettingsTab.this.showInfo("Přesun kategorie proběhl úspěšně");
-							} else {
-								NodesSettingsTab.this
-										.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
-							}
-						}
-					});
-
+							}));
 					break;
 				case BOTTOM:
 
 					// Přesunutí znamená rovnou přesun kategorie - v tom případě
 					// je potřeba vyhodit potvrzovací okno
-
-					getUI().addWindow(new ConfirmWindow("Opravdu přesunout '" + source.getName() + "' do "
-							+ (parentItemId == null ? "kořene sekce ?" : ("'" + parent.getName() + "' ?"))) {
-
-						private static final long serialVersionUID = 414272650677665672L;
-
-						@Override
-						protected void onConfirm(ClickEvent event) {
-							if (nodeFacade.moveNode(source, parent)) {
-								if (container.setParent(sourceItemId, parentItemId)) {
-									container.moveAfterSibling(sourceItemId, targetItemId);
+					getUI().addWindow(new ConfirmWindow(
+							"Opravdu přesunout '" + source.getName() + "' do "
+									+ (parentItemId == null ? "kořene sekce ?" : ("'" + parent.getName() + "' ?")),
+							e -> {
+								if (nodeFacade.moveNode(source, parent)) {
+									if (container.setParent(sourceItemId, parentItemId)) {
+										container.moveAfterSibling(sourceItemId, targetItemId);
+									}
+									NodesSettingsTab.this.showInfo("Přesun kategorie proběhl úspěšně");
+								} else {
+									NodesSettingsTab.this
+											.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
 								}
-								NodesSettingsTab.this.showInfo("Přesun kategorie proběhl úspěšně");
-							} else {
-								NodesSettingsTab.this
-										.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
-							}
-						}
-					});
-
+							}));
 					break;
 				}
 			}
@@ -254,26 +236,18 @@ public class NodesSettingsTab extends AbstractSettingsTab {
 				final NodeDTO node = (NodeDTO) target;
 				if (action == ACTION_DELETE) {
 
-					getUI().addWindow(new ConfirmWindow("Opravdu smazat kategorii '" + node.getName() + "' ?") {
-
-						private static final long serialVersionUID = 9193745051559434697L;
-
-						@Override
-						protected void onConfirm(ClickEvent event) {
-
-							if (nodeFacade.isEmpty(node) == false) {
-								NodesSettingsTab.this.showWarning("Kategorie musí být prázdná");
+					getUI().addWindow(new ConfirmWindow("Opravdu smazat kategorii '" + node.getName() + "' ?", e -> {
+						if (nodeFacade.isEmpty(node) == false) {
+							NodesSettingsTab.this.showWarning("Kategorie musí být prázdná");
+						} else {
+							if (nodeFacade.deleteNode(node)) {
+								tree.removeItem(target);
+								NodesSettingsTab.this.showInfo("Kategorie byla úspěšně smazána");
 							} else {
-								if (nodeFacade.deleteNode(node)) {
-									tree.removeItem(target);
-									NodesSettingsTab.this.showInfo("Kategorie byla úspěšně smazána");
-								} else {
-									NodesSettingsTab.this.showWarning("Nezdařilo se smazat vybranou kategorii");
-								}
+								NodesSettingsTab.this.showWarning("Nezdařilo se smazat vybranou kategorii");
 							}
-
 						}
-					});
+					}));
 
 				} else if (action == ACTION_RENAME) {
 					final Window subwindow = new WebWindow("Přejmenovat");

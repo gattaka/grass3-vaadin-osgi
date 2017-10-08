@@ -28,19 +28,13 @@ public abstract class DeleteTableButton<T> extends TableSelectedItemBtn<T> {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				final T selectedValue = getSelectedValue(table);
-				Window win = new ConfirmWindow(getConfirmMessage(selectedValue)) {
-
-					private static final long serialVersionUID = -422763987707688597L;
-
-					@Override
-					protected void onConfirm(ClickEvent event) {
-						try {
-							DeleteTableButton.this.onConfirm(selectedValue);
-						} catch (Exception e) {
-							onError();
-						}
+				Window win = new ConfirmWindow(getConfirmMessage(selectedValue), ev -> {
+					try {
+						DeleteTableButton.this.onConfirm(selectedValue);
+					} catch (Exception e) {
+						onError();
 					}
-				};
+				});
 				UI.getCurrent().addWindow(win);
 			}
 		};

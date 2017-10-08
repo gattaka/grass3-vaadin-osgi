@@ -450,25 +450,17 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			private static final long serialVersionUID = 607422393151282918L;
 
 			public void buttonClick(ClickEvent event) {
-
 				ConfirmWindow confirmSubwindow = new ConfirmWindow(
-						"Opravdu si přejete zavřít editor galerie ? Veškeré neuložené změny budou ztraceny.") {
-
-					private static final long serialVersionUID = -3214040983143363831L;
-
-					@Override
-					protected void onConfirm(ClickEvent event) {
-						// ruším úpravu existující galerie (vracím se na
-						// galerii), nebo nové (vracím se do kategorie) ?
-						if (editMode) {
-							returnToPhotogallery();
-						} else {
-							returnToNode();
-						}
-					}
-				};
+						"Opravdu si přejete zavřít editor galerie ? Veškeré neuložené změny budou ztraceny.", e -> {
+							// ruším úpravu existující galerie (vracím se na
+							// galerii), nebo nové (vracím se do kategorie) ?
+							if (editMode) {
+								returnToPhotogallery();
+							} else {
+								returnToNode();
+							}
+						});
 				getUI().addWindow(confirmSubwindow);
-
 			}
 
 		});

@@ -3,6 +3,8 @@ package cz.gattserver.grass3.articles.pages;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,6 +30,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.JavaScript;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -466,27 +469,48 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			public void buttonClick(ClickEvent event) {
 
 				ConfirmWindow confirmSubwindow = new ConfirmWindow(
-						"Opravdu si přejete zavřít editor článku ? Veškeré neuložené změny budou ztraceny.") {
-
-					private static final long serialVersionUID = -3214040983143363831L;
-
-					@Override
-					protected void onConfirm(ClickEvent event) {
-						// ruším úpravu existujícího článku (vracím se na
-						// článek), nebo nového (vracím se do kategorie) ?
-						if (existingArticleId != null) {
-							returnToArticle();
-						} else {
-							returnToNode();
-						}
-					}
-				};
+						"Opravdu si přejete zavřít editor článku ? Veškeré neuložené změny budou ztraceny.", e -> {
+							// ruším úpravu existujícího článku (vracím se na
+							// článek), nebo nového (vracím se do kategorie) ?
+							if (existingArticleId != null) {
+								returnToArticle();
+							} else {
+								returnToNode();
+							}
+						});
 				getUI().addWindow(confirmSubwindow);
-
 			}
 
 		});
 		buttonLayout.addComponent(cancelButton);
+
+		final Label autosaveLabel = new Label();
+		buttonLayout.addComponent(autosaveLabel);
+
+		// Auto-ukládání
+		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.articles.autosave", arguments -> {
+			try {
+				// Náhled ukazuje pouze danou část, která je upravovaná
+				// (nespojuje parts)
+				String draftName = articleNameField.getValue();
+				Long id = articleFacade.saveArticle(draftName, articleTextArea.getValue(), getArticlesKeywords(),
+						publicatedCheckBox.getValue(), node.getId(), getGrassUI().getUser().getId(),
+						getRequest().getContextRoot(), ArticleProcessForm.DRAFT, existingDraftId, partNumber,
+						existingArticleId);
+
+				if (id != null) {
+					existingDraftId = id;
+					autosaveLabel.setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+							+ " Automaticky uloženo");
+					autosaveLabel.setStyleName("label-ok");
+				}
+			} catch (Exception e) {
+				autosaveLabel.setValue(
+						LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "Chyba uložení");
+				autosaveLabel.setStyleName("label-err");
+			}
+		});
+		JavaScript.eval("setInterval(function(){ cz.gattserver.grass3.articles.autosave(); }, 10000);");
 
 		return marginLayout;
 	}

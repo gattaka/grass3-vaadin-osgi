@@ -373,39 +373,32 @@ public class FMPage extends OneColumnPage {
 		Label subWindowLabel = new Label(groupOperation.getValue() ? "Opravdu chcete smazat vybrané soubory ?"
 				: "Opravdu chcete smazat soubor \"" + file.getName() + "\" ?");
 
-		final Window subwindow = new ConfirmWindow(subWindowLabel) {
+		final Window subwindow = new ConfirmWindow(subWindowLabel, e -> {
+			FileProcessState overallResult = FileProcessState.SUCCESS;
 
-			private static final long serialVersionUID = 6350190755480244374L;
-
-			@Override
-			protected void onConfirm(ClickEvent event) {
-				FileProcessState overallResult = FileProcessState.SUCCESS;
-
-				// skupinově nebo RMB vybraný soubor ?
-				if (groupOperation.getValue()) {
-					FileProcessState partialResult;
-					for (File markedFile : markedFiles) {
-						partialResult = explorer.deleteFile(markedFile);
-						if (partialResult.equals(FileProcessState.SUCCESS) == false) {
-							overallResult = partialResult;
-						}
+			// skupinově nebo RMB vybraný soubor ?
+			if (groupOperation.getValue()) {
+				FileProcessState partialResult;
+				for (File markedFile : markedFiles) {
+					partialResult = explorer.deleteFile(markedFile);
+					if (partialResult.equals(FileProcessState.SUCCESS) == false) {
+						overallResult = partialResult;
 					}
-				} else {
-					overallResult = explorer.deleteFile(file);
 				}
-
-				// všechno se podařilo smazat
-				if (overallResult.equals(FileProcessState.SUCCESS)) {
-					// refresh dir list
-					createDirList();
-					showInfo("Soubory byly úspěšně odstraněny.");
-				} else {
-					// něco se nepodařilo
-					showWarning("Některé soubory se nezdařilo smazat.");
-				}
+			} else {
+				overallResult = explorer.deleteFile(file);
 			}
 
-		};
+			// všechno se podařilo smazat
+			if (overallResult.equals(FileProcessState.SUCCESS)) {
+				// refresh dir list
+				createDirList();
+				showInfo("Soubory byly úspěšně odstraněny.");
+			} else {
+				// něco se nepodařilo
+				showWarning("Některé soubory se nezdařilo smazat.");
+			}
+		});
 		getGrassUI().addWindow(subwindow);
 
 	}

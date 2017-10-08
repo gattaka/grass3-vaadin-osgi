@@ -13,7 +13,6 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
@@ -148,18 +147,14 @@ public class HWItemsTab extends VerticalLayout {
 		HWItemsTab.this.setEnabled(false);
 		HWItemOverviewDTO to = grid.getSelectedItems().iterator().next();
 		addWindow(new ConfirmWindow(
-				"Opravdu smazat '" + to.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?") {
-
+				"Opravdu smazat '" + to.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?", e -> {
+					if (hwFacade.deleteHWItem(to.getId())) {
+						populate();
+					} else {
+						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
+					}
+				}) {
 			private static final long serialVersionUID = -422763987707688597L;
-
-			@Override
-			protected void onConfirm(ClickEvent event) {
-				if (hwFacade.deleteHWItem(to.getId())) {
-					populate();
-				} else {
-					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
-				}
-			}
 
 			@Override
 			public void close() {

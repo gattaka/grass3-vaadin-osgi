@@ -127,17 +127,12 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 			public void buttonClick(ClickEvent event) {
 
 				ConfirmWindow confirmSubwindow = new ConfirmWindow(
-						"Přegenerování všech článků může zabrat delší čas a dojde během něj zřejmě k mnoha drobným změnám - opravdu přegenerovat ?") {
-
-					private static final long serialVersionUID = -1214461419119865670L;
-
-					@Override
-					protected void onConfirm(ClickEvent event) {
-						eventBus.subscribe(ArticlesSettingsTab.this);
-						ui.setPollInterval(200);
-						articleFacade.reprocessAllArticles(getRequest().getContextRoot());
-					}
-				};
+						"Přegenerování všech článků může zabrat delší čas a dojde během něj zřejmě k mnoha drobným změnám - opravdu přegenerovat ?",
+						e -> {
+							eventBus.subscribe(ArticlesSettingsTab.this);
+							ui.setPollInterval(200);
+							articleFacade.reprocessAllArticles(getRequest().getContextRoot());
+						});
 				confirmSubwindow.setWidth("460px");
 				confirmSubwindow.setHeight("230px");
 				getUI().addWindow(confirmSubwindow);

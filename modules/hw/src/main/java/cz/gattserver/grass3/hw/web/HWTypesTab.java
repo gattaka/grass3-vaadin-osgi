@@ -63,18 +63,15 @@ public class HWTypesTab extends VerticalLayout {
 		BeanItem<?> item = cont.getItem(table.getValue());
 		final HWItemTypeDTO hwItemType = (HWItemTypeDTO) item.getBean();
 		UI.getCurrent().addWindow(new ConfirmWindow(
-				"Opravdu smazat '" + hwItemType.getName() + "' (typ bude odebrán od všech označených položek HW) ?") {
-
+				"Opravdu smazat '" + hwItemType.getName() + "' (typ bude odebrán od všech označených položek HW) ?",
+				e -> {
+					if (hwFacade.deleteHWItemType(hwItemType.getId())) {
+						populateContainer();
+					} else {
+						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
+					}
+				}) {
 			private static final long serialVersionUID = -422763987707688597L;
-
-			@Override
-			protected void onConfirm(ClickEvent event) {
-				if (hwFacade.deleteHWItemType(hwItemType.getId())) {
-					populateContainer();
-				} else {
-					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
-				}
-			}
 
 			@Override
 			public void close() {

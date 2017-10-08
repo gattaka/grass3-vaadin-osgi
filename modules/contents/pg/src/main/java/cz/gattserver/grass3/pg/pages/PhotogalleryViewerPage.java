@@ -151,9 +151,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			return;
 		}
 
-		if (photogallery.getContentNode().isPublicated()
-				|| (getUser() != null && (photogallery.getContentNode().getAuthor().equals(getUser())
-						|| getUser().isAdmin()))) {
+		if (photogallery.getContentNode().isPublicated() || (getUser() != null
+				&& (photogallery.getContentNode().getAuthor().equals(getUser()) || getUser().isAdmin()))) {
 		} else {
 			showError403();
 			return;
@@ -337,17 +336,12 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				UI.getCurrent().addWindow(new ConfirmWindow("Přejete si vytvořit ZIP galerie?") {
-					private static final long serialVersionUID = 3413875885960257844L;
-
-					@Override
-					protected void onConfirm(ClickEvent event) {
-						System.out.println("zipPhotogallery thread: " + Thread.currentThread().getId());
-						eventBus.subscribe(PhotogalleryViewerPage.this);
-						ui.setPollInterval(200);
-						photogalleryFacade.zipGallery(galleryDir);
-					}
-				});
+				UI.getCurrent().addWindow(new ConfirmWindow("Přejete si vytvořit ZIP galerie?", e -> {
+					System.out.println("zipPhotogallery thread: " + Thread.currentThread().getId());
+					eventBus.subscribe(PhotogalleryViewerPage.this);
+					ui.setPollInterval(200);
+					photogalleryFacade.zipGallery(galleryDir);
+				}));
 			}
 		});
 		statusLabelWrapper.addComponent(downloadZip);
@@ -583,51 +577,40 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	@Override
 	protected void onDeleteOperation() {
-		ConfirmWindow confirmSubwindow = new ConfirmWindow("Opravdu si přejete smazat tuto galerii ?") {
+		ConfirmWindow confirmSubwindow = new ConfirmWindow("Opravdu si přejete smazat tuto galerii ?", ev -> {
+			NodeBreadcrumbDTO nodeDTO = photogallery.getContentNode().getParent();
 
-			private static final long serialVersionUID = -3214040983143363831L;
+			final String nodeURL = getPageURL(nodePageFactory,
+					URLIdentifierUtils.createURLIdentifier(nodeDTO.getId(), nodeDTO.getName()));
 
-			@Override
-			protected void onConfirm(ClickEvent event) {
+			// zdařilo se ? Pokud ano, otevři info okno a při
+			// potvrzení jdi na kategorii
+			try {
+				photogalleryFacade.deletePhotogallery(photogallery);
+				InfoWindow infoSubwindow = new InfoWindow("Smazání galerie proběhlo úspěšně.") {
 
-				NodeBreadcrumbDTO nodeDTO = photogallery.getContentNode().getParent();
+					private static final long serialVersionUID = -6688396549852552674L;
 
-				final String nodeURL = getPageURL(nodePageFactory,
-						URLIdentifierUtils.createURLIdentifier(nodeDTO.getId(), nodeDTO.getName()));
+					protected void onProceed(ClickEvent event) {
+						redirect(nodeURL);
+					};
+				};
+				getUI().addWindow(infoSubwindow);
 
-				// zdařilo se ? Pokud ano, otevři info okno a při
+			} catch (Exception e) {
+				// Pokud ne, otevři warn okno a při
 				// potvrzení jdi na kategorii
-				try {
-					photogalleryFacade.deletePhotogallery(photogallery);
-					InfoWindow infoSubwindow = new InfoWindow("Smazání galerie proběhlo úspěšně.") {
+				WarnWindow warnSubwindow = new WarnWindow("Smazání galerie se nezdařilo.") {
 
-						private static final long serialVersionUID = -6688396549852552674L;
+					private static final long serialVersionUID = -6688396549852552674L;
 
-						protected void onProceed(ClickEvent event) {
-							redirect(nodeURL);
-						};
+					protected void onProceed(ClickEvent event) {
+						redirect(nodeURL);
 					};
-					getUI().addWindow(infoSubwindow);
-
-				} catch (Exception e) {
-					// Pokud ne, otevři warn okno a při
-					// potvrzení jdi na kategorii
-					WarnWindow warnSubwindow = new WarnWindow("Smazání galerie se nezdařilo.") {
-
-						private static final long serialVersionUID = -6688396549852552674L;
-
-						protected void onProceed(ClickEvent event) {
-							redirect(nodeURL);
-						};
-					};
-					getUI().addWindow(warnSubwindow);
-				}
-
-				// zavři původní confirm okno
-				getUI().removeWindow(this);
-
+				};
+				getUI().addWindow(warnSubwindow);
 			}
-		};
+		});
 		getUI().addWindow(confirmSubwindow);
 	}
 

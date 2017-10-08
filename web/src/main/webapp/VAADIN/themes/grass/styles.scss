@@ -586,3 +586,19 @@ span.tag-letter {
 	background: #3779b3;
 	padding: 4px 5px 2px 10px;	
 }
+
+.grass .v-slot.v-slot-label-ok, .grass .v-slot.v-slot-label-err
+	{
+	padding: 3px 8px 2px 8px;
+	border-radius: 3px;
+}
+
+.grass .v-slot.v-slot-label-ok {
+	border: 2px solid #42af0b;
+	background-color: rgba(66, 175, 11, 0.25);
+}
+
+.grass .v-slot.v-slot-label-err {
+	border: 2px solid hsla(14, 88%, 36%, 1);
+	background-color: hsla(14, 93%, 38%, 0.25);
+}

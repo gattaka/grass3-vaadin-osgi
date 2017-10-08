@@ -142,50 +142,38 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 	@Override
 	protected void onDeleteOperation() {
-		ConfirmWindow confirmSubwindow = new ConfirmWindow("Opravdu si přejete smazat tento článek ?") {
+		ConfirmWindow confirmSubwindow = new ConfirmWindow("Opravdu si přejete smazat tento článek ?", event -> {
+			NodeBreadcrumbDTO nodeDTO = article.getContentNode().getParent();
+			final String nodeURL = getPageURL(nodePageFactory,
+					URLIdentifierUtils.createURLIdentifier(nodeDTO.getId(), nodeDTO.getName()));
 
-			private static final long serialVersionUID = -3214040983143363831L;
+			// zdařilo se ? Pokud ano, otevři info okno a při
+			// potvrzení jdi na kategorii
+			try {
+				articleFacade.deleteArticle(article.getId());
+				InfoWindow infoSubwindow = new InfoWindow("Smazání článku proběhlo úspěšně.") {
 
-			@Override
-			protected void onConfirm(ClickEvent event) {
+					private static final long serialVersionUID = -6688396549852552674L;
 
-				NodeBreadcrumbDTO nodeDTO = article.getContentNode().getParent();
-
-				final String nodeURL = getPageURL(nodePageFactory,
-						URLIdentifierUtils.createURLIdentifier(nodeDTO.getId(), nodeDTO.getName()));
-
-				// zdařilo se ? Pokud ano, otevři info okno a při
+					protected void onProceed(ClickEvent event) {
+						redirect(nodeURL);
+					};
+				};
+				getUI().addWindow(infoSubwindow);
+			} catch (Exception e) {
+				// Pokud ne, otevři warn okno a při
 				// potvrzení jdi na kategorii
-				try {
-					articleFacade.deleteArticle(article.getId());
-					InfoWindow infoSubwindow = new InfoWindow("Smazání článku proběhlo úspěšně.") {
+				WarnWindow warnSubwindow = new WarnWindow("Smazání článku se nezdařilo.") {
 
-						private static final long serialVersionUID = -6688396549852552674L;
+					private static final long serialVersionUID = -6688396549852552674L;
 
-						protected void onProceed(ClickEvent event) {
-							redirect(nodeURL);
-						};
+					protected void onProceed(ClickEvent event) {
+						redirect(nodeURL);
 					};
-					getUI().addWindow(infoSubwindow);
-				} catch (Exception e) {
-					// Pokud ne, otevři warn okno a při
-					// potvrzení jdi na kategorii
-					WarnWindow warnSubwindow = new WarnWindow("Smazání článku se nezdařilo.") {
-
-						private static final long serialVersionUID = -6688396549852552674L;
-
-						protected void onProceed(ClickEvent event) {
-							redirect(nodeURL);
-						};
-					};
-					getUI().addWindow(warnSubwindow);
-				}
-
-				// zavři původní confirm okno
-				getUI().removeWindow(this);
-
+				};
+				getUI().addWindow(warnSubwindow);
 			}
-		};
+		});
 		getUI().addWindow(confirmSubwindow);
 
 	}

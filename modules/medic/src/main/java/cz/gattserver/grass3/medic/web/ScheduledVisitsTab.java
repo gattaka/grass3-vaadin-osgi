@@ -89,19 +89,16 @@ public class ScheduledVisitsTab extends VerticalLayout implements Selectable {
 
 	private void openDeleteWindow(final ScheduledVisitDTO visit, final boolean planned) {
 		ScheduledVisitsTab.this.setEnabled(false);
-		UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat '" + visit.getPurpose() + "' ?") {
+		UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat '" + visit.getPurpose() + "' ?", ev -> {
+			try {
+				medicFacade.deleteScheduledVisit(visit);
+				populateContainer(planned);
+			} catch (Exception e) {
+				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
+			}
+		}) {
 
 			private static final long serialVersionUID = -422763987707688597L;
-
-			@Override
-			protected void onConfirm(ClickEvent event) {
-				try {
-					medicFacade.deleteScheduledVisit(visit);
-					populateContainer(planned);
-				} catch (Exception e) {
-					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
-				}
-			}
 
 			@Override
 			public void close() {
@@ -185,9 +182,8 @@ public class ScheduledVisitsTab extends VerticalLayout implements Selectable {
 		plannedTable.setSelectable(true);
 		plannedTable.setImmediate(true);
 		plannedTable.setVisibleColumns("icon", "date", "purpose", "institution");
-//		plannedTable.setConverter("date", new StringToFullDateConverter());
-		plannedTable.addValueChangeListener(
-				new ValueChangeListener() {
+		// plannedTable.setConverter("date", new StringToFullDateConverter());
+		plannedTable.addValueChangeListener(new ValueChangeListener() {
 
 			private static final long serialVersionUID = -8943196289027284739L;
 
@@ -334,7 +330,8 @@ public class ScheduledVisitsTab extends VerticalLayout implements Selectable {
 		toBePlannedTable.setSelectable(true);
 		toBePlannedTable.setImmediate(true);
 		toBePlannedTable.setVisibleColumns("icon", "date", "period", "purpose", "institution");
-//		toBePlannedTable.setConverter("date", new StringToMonthDateConverter());
+		// toBePlannedTable.setConverter("date", new
+		// StringToMonthDateConverter());
 		toBePlannedTable.addValueChangeListener(new ValueChangeListener() {
 
 			private static final long serialVersionUID = -8943196289027284739L;

@@ -38,13 +38,13 @@ public class HWItemTypeDTO {
 
 	@Override
 	public int hashCode() {
-		return name.hashCode();
+		return id.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj != null && obj instanceof HWItemTypeDTO) {
-			return ((HWItemTypeDTO) obj).getName().equals(name);
+			return id.equals(((HWItemTypeDTO) obj).getId());
 		} else
 			return false;
 	}

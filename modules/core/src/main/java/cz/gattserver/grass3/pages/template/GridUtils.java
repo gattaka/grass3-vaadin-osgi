@@ -2,7 +2,10 @@ package cz.gattserver.grass3.pages.template;
 
 public class GridUtils {
 
-	public static final int ICON_COLUMN_WIDTH = 15 + 16 + 15;
+	public static final int ICON_COLUMN_WIDTH = 8 + 16 + 8;
+	public static final int DATE_COLUMN_WIDTH = 110;
+	public static final int AUTHOR_COLUMN_WIDTH = 90;
+	public static final int NODE_COLUMN_WIDTH = 150;
 	
 	public static int processHeight(int dataAmount) {
 		int element = 31;

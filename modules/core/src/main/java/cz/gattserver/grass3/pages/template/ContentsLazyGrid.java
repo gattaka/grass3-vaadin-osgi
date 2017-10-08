@@ -72,17 +72,19 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewDTO> {
 					+ page.getPageURL(nodePageFactory,
 							URLIdentifierUtils.createURLIdentifier(contentParent.getId(), contentParent.getName()))
 					+ "'>" + contentParent.getName() + "</a>";
-		}, new HtmlRenderer()).setCaption("Kategorie").setId(nodeBind);
+		}, new HtmlRenderer()).setCaption("Kategorie").setId(nodeBind).setWidth(GridUtils.NODE_COLUMN_WIDTH);
 
 		addColumn(contentNode -> {
 			return contentNode.getAuthor().getName();
-		}, new TextRenderer()).setCaption("Autor").setId(authorBind);
+		}, new TextRenderer()).setCaption("Autor").setId(authorBind).setWidth(100);
 
 		addColumn(ContentNodeOverviewDTO::getCreationDate, new DateRenderer("%1$te.%1$tm.%1$tY"))
-				.setCaption("Datum vytvoření").setId(creationDateBind).setStyleGenerator(item -> "v-align-right");
+				.setCaption("Datum vytvoření").setId(creationDateBind).setStyleGenerator(item -> "v-align-right")
+				.setWidth(GridUtils.DATE_COLUMN_WIDTH);
 
 		addColumn(ContentNodeOverviewDTO::getLastModificationDate, new DateRenderer("%1$te.%1$tm.%1$tY"))
-				.setCaption("Datum úpravy").setId(lastModificationDateBind).setStyleGenerator(item -> "v-align-right");
+				.setCaption("Datum úpravy").setId(lastModificationDateBind).setStyleGenerator(item -> "v-align-right")
+				.setWidth(GridUtils.DATE_COLUMN_WIDTH);
 
 		setColumns(iconBind, nameBind, nodeBind, authorBind, creationDateBind, lastModificationDateBind);
 

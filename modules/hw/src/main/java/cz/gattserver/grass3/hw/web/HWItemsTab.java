@@ -227,9 +227,8 @@ public class HWItemsTab extends VerticalLayout {
 		grid.getColumn("purchaseDate").setCaption("Získáno");
 		grid.getColumn("usedIn").setCaption("Je součástí").setWidth(180);
 		grid.getColumn("supervizedFor").setCaption("Spravováno pro");
-		grid.addColumn(hw -> {
-			return FieldUtils.formatMoney(hw.getPrice());
-		}, new TextRenderer()).setCaption("Cena").setId(PRICE_BIND).setStyleGenerator(item -> "v-align-right");
+		grid.addColumn(hw -> FieldUtils.formatMoney(hw.getPrice()), new TextRenderer()).setCaption("Cena")
+				.setId(PRICE_BIND).setStyleGenerator(item -> "v-align-right");
 		grid.addColumn(hw -> {
 			return hw.getState().getName();
 		}, new TextRenderer()).setCaption("Stav").setId(STATE_BIND).setWidth(130);

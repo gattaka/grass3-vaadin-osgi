@@ -1,14 +1,18 @@
 package cz.gattserver.grass3.hw.web;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.Binder;
-import com.vaadin.data.BinderValidationStatus;
+import com.vaadin.data.ValidationException;
+import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -69,77 +73,83 @@ public abstract class HWItemCreateWindow extends WebWindow {
 		winLayout.setWidth("400px");
 		winLayout.setSpacing(true);
 
-		Binder<HWItemDTO> binder = new Binder<>();
+		Binder<HWItemDTO> binder = new Binder<>(HWItemDTO.class);
 
 		TextField nameField = new TextField("Název");
 		nameField.setWidth("100%");
-		binder.bind(nameField, HWItemDTO::getName, HWItemDTO::setName);
+		binder.forField(nameField).asRequired("Název položky je povinný").bind("name");
 		winLayout.addComponent(nameField, 0, 0, 1, 0);
 
 		DateField purchaseDateField = new DateField("Získáno");
 		purchaseDateField.setDateFormat("dd.MM.yyyy");
 		purchaseDateField.setLocale(Locale.forLanguageTag("CS"));
 		purchaseDateField.setSizeFull();
-		binder.bind(purchaseDateField, HWItemDTO::getPurchaseDate, HWItemDTO::setPurchaseDate);
+		binder.bind(purchaseDateField, "purchaseDate");
 		winLayout.addComponent(purchaseDateField, 0, 1);
 
 		TextField priceField = new TextField("Cena");
 		priceField.setSizeFull();
-		binder.forField(priceField)
-				.withConverter(toModel -> new BigDecimal(toModel),
-						toPresentation -> FieldUtils.formatMoney(toPresentation), "Cena musí být číslo")
-				.bind(HWItemDTO::getPrice, HWItemDTO::setPrice);
+		binder.forField(priceField).withConverter(toModel -> {
+			try {
+				if (StringUtils.isBlank(toModel))
+					return null;
+				DecimalFormat df = new DecimalFormat();
+				df.setParseBigDecimal(true);
+				return (BigDecimal) df.parse(toModel);
+			} catch (ParseException e1) {
+				throw new IllegalArgumentException();
+			}
+		}, toPresentation -> FieldUtils.formatMoney(toPresentation), "Cena musí být číslo").bind("price");
 		winLayout.addComponent(priceField, 1, 1);
 
 		DateField destructionDateField = new DateField("Odepsáno");
 		destructionDateField.setDateFormat("dd.MM.yyyy");
 		destructionDateField.setLocale(Locale.forLanguageTag("CS"));
-		binder.bind(destructionDateField, HWItemDTO::getDestructionDate, HWItemDTO::setDestructionDate);
+		binder.bind(destructionDateField, "destructionDate");
 		destructionDateField.setSizeFull();
 		winLayout.addComponent(destructionDateField, 0, 2);
 
 		ComboBox<HWItemState> stateComboBox = new ComboBox<>("Stav", Arrays.asList(HWItemState.values()));
 		stateComboBox.setWidth("100%");
 		stateComboBox.setEmptySelectionAllowed(false);
-		stateComboBox.setItemCaptionGenerator(item -> item.name());
-
-		winLayout.addComponent(stateComboBox, 1, 1);
+		stateComboBox.setItemCaptionGenerator(item -> item.getName());
+		binder.forField(stateComboBox).asRequired("Stav položky je povinný").bind("state");
+		winLayout.addComponent(stateComboBox, 1, 2);
 
 		TextField warrantyYearsField = new TextField("Záruka (roky)");
-		// fieldGroup.bind(warrantyYearsField, "warrantyYears");
+		binder.forField(warrantyYearsField)
+				.withConverter(new StringToIntegerConverter(null, "Záruka musí být celé číslo")).bind("warrantyYears");
 		warrantyYearsField.setSizeFull();
-		winLayout.addComponent(warrantyYearsField, 1, 2);
+		winLayout.addComponent(warrantyYearsField, 0, 3);
 
 		TextField supervizedForField = new TextField("Spravováno pro");
-		// supervizedForField.setImmediate(true);
 		supervizedForField.setWidth("100%");
-		// supervizedForField.setNullRepresentation("");
-		// fieldGroup.bind(supervizedForField, "supervizedFor");
-		winLayout.addComponent(supervizedForField, 0, 3, 1, 3);
+		binder.bind(supervizedForField, "supervizedFor");
+		winLayout.addComponent(supervizedForField, 1, 3);
 
 		Set<HWItemTypeDTO> types = hwFacade.getAllHWTypes();
 		final TwinColSelect<HWItemTypeDTO> typeSelect = new TwinColSelect<>("Typy", types);
 		typeSelect.setWidth("100%");
 		typeSelect.setRows(7);
 		typeSelect.setItemCaptionGenerator(HWItemTypeDTO::getName);
-		binder.bind(typeSelect, HWItemDTO::getTypes, HWItemDTO::setTypes);
+		binder.bind(typeSelect, "types");
 		winLayout.addComponent(typeSelect, 0, 4, 1, 4);
 
 		Button createBtn;
 		layout.addComponent(createBtn = new Button("Uložit", e -> {
-			BinderValidationStatus<HWItemDTO> status = binder.validate();
-			if (status.isOk()) {
+			try {
+				binder.writeBean(hwItemDTO);
 				if (hwFacade.saveHWItem(hwItemDTO)) {
 					onSuccess();
 				} else {
 					UI.getCurrent().addWindow(new ErrorWindow("Uložení se nezdařilo"));
 				}
 				close();
-			} else {
-				Notification.show("Chybná vstupní data\n\n   " + status.getValidationErrors().get(0).getErrorMessage(),
-						Notification.Type.TRAY_NOTIFICATION);
+			} catch (ValidationException ve) {
+				Notification.show(
+						"Chybná vstupní data\n\n   " + ve.getValidationErrors().iterator().next().getErrorMessage(),
+						Notification.Type.ERROR_MESSAGE);
 			}
-
 		}));
 		layout.setComponentAlignment(createBtn, Alignment.BOTTOM_RIGHT);
 

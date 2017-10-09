@@ -5,19 +5,17 @@ import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
-import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.data.fieldgroup.FieldGroup;
-import com.vaadin.v7.data.util.BeanItemContainer;
-import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.TextArea;
 
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
@@ -56,8 +54,8 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 			serviceNoteDTO.setState(hwItem.getState());
 		}
 
-		final BeanFieldGroup<ServiceNoteDTO> fieldGroup = new BeanFieldGroup<ServiceNoteDTO>(ServiceNoteDTO.class);
-		fieldGroup.setItemDataSource(serviceNoteDTO);
+		Binder<ServiceNoteDTO> binder = new Binder<>(ServiceNoteDTO.class);
+		binder.setBean(serviceNoteDTO);
 
 		GridLayout winLayout = new GridLayout(2, 4);
 		setContent(winLayout);
@@ -68,67 +66,50 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 		DateField eventDateField = new DateField("Datum");
 		eventDateField.setDateFormat("dd.MM.yyyy");
 		eventDateField.setLocale(Locale.forLanguageTag("CS"));
-		// fieldGroup.bind(eventDateField, "date");
+		binder.bind(eventDateField, "date");
 		winLayout.addComponent(eventDateField, 0, 0);
 
-		ComboBox stateComboBox = new ComboBox("Stav");
-		stateComboBox.setNullSelectionAllowed(false);
-		stateComboBox.setImmediate(true);
-		stateComboBox.setContainerDataSource(
-				new BeanItemContainer<HWItemState>(HWItemState.class, Arrays.asList(HWItemState.values())));
-		stateComboBox.setItemCaptionPropertyId("name");
-		fieldGroup.bind(stateComboBox, "state");
+		ComboBox<HWItemState> stateComboBox = new ComboBox<>("Stav", Arrays.asList(HWItemState.values()));
+		stateComboBox.setEmptySelectionAllowed(false);
+		stateComboBox.setItemCaptionGenerator(a -> a.getName());
+		binder.bind(stateComboBox, "state");
 		winLayout.addComponent(stateComboBox, 1, 0);
 
-		ComboBox usedInCombo = new ComboBox("Je součástí");
-		fieldGroup.bind(usedInCombo, "usedInName");
+		ComboBox<HWItemOverviewDTO> usedInCombo = new ComboBox<>("Je součástí",
+				hwFacade.getHWItemsAvailableForPart(hwItem));
 		usedInCombo.setSizeFull();
-		usedInCombo.setNullSelectionAllowed(true);
-		usedInCombo.setImmediate(true);
-		usedInCombo.setContainerDataSource(new BeanItemContainer<HWItemOverviewDTO>(HWItemOverviewDTO.class,
-				hwFacade.getHWItemsAvailableForPart(hwItem)));
-		usedInCombo.setItemCaptionPropertyId("name");
+		usedInCombo.setEmptySelectionAllowed(true);
+		usedInCombo.setItemCaptionGenerator(a -> a.getName());
 		usedInCombo.setValue(hwItem.getUsedIn());
+		binder.bind(usedInCombo, "usedInName");
 		winLayout.addComponent(usedInCombo, 0, 1, 1, 1);
 
 		TextArea descriptionField = new TextArea("Popis");
-		descriptionField.setImmediate(true);
-		fieldGroup.bind(descriptionField, "description");
 		descriptionField.setWidth("100%");
 		descriptionField.setHeight("120px");
+		binder.bind(descriptionField, "description");
 		winLayout.addComponent(descriptionField, 0, 2, 1, 2);
 
 		Button createBtn;
-		winLayout.addComponent(
-				createBtn = new Button(fixNote == null ? "Zapsat" : "Upravit", new Button.ClickListener() {
-
-					private static final long serialVersionUID = -8435971966889831628L;
-
-					@Override
-					public void buttonClick(ClickEvent event) {
-
-						try {
-							fieldGroup.commit();
-							if (fixNote == null) {
-								if (hwFacade.addServiceNote(serviceNoteDTO, hwItem)) {
-									onSuccess(serviceNoteDTO);
-								} else {
-									UI.getCurrent()
-											.addWindow(new ErrorWindow("Nezdařilo se zapsat nový servisní záznam"));
-								}
-							} else {
-								hwFacade.modifyServiceNote(serviceNoteDTO);
-								onSuccess(serviceNoteDTO);
-							}
-							close();
-						} catch (FieldGroup.CommitException e) {
-							Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
-									Notification.Type.TRAY_NOTIFICATION);
-						}
-
+		winLayout.addComponent(createBtn = new Button(fixNote == null ? "Zapsat" : "Upravit", e -> {
+			try {
+				binder.writeBean(serviceNoteDTO);
+				if (fixNote == null) {
+					if (hwFacade.addServiceNote(serviceNoteDTO, hwItem)) {
+						onSuccess(serviceNoteDTO);
+					} else {
+						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se zapsat nový servisní záznam"));
 					}
-
-				}), 1, 3);
+				} else {
+					hwFacade.modifyServiceNote(serviceNoteDTO);
+					onSuccess(serviceNoteDTO);
+				}
+				close();
+			} catch (ValidationException ex) {
+				Notification.show("   Chybná vstupní data\n\n   " + ex.getBeanValidationErrors().iterator().next(),
+						Notification.Type.TRAY_NOTIFICATION);
+			}
+		}), 1, 3);
 		winLayout.setComponentAlignment(createBtn, Alignment.BOTTOM_RIGHT);
 
 		addCloseListener(e -> triggerComponent.setEnabled(true));

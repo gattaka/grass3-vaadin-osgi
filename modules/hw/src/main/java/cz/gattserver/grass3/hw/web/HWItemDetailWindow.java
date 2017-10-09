@@ -49,7 +49,6 @@ import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.grass3.template.MultiUpload;
-import cz.gattserver.grass3.ui.util.StringToDateConverter;
 import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.ui.TokenField;
 import cz.gattserver.web.common.window.ConfirmWindow;
@@ -254,7 +253,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 		winLayout.addComponent(new Label("<strong>Odepsáno</strong>", ContentMode.HTML), 2, 3);
 		String destrDate = hwItem.getDestructionDate() == null ? "-"
-				: new StringToDateConverter().getFormat().format(hwItem.getDestructionDate());
+				: hwItem.getDestructionDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 		winLayout.addComponent(createShiftedLabel(destrDate), 2, 4);
 
 		winLayout.addComponent(new Label("<strong>Záruka</strong>", ContentMode.HTML), 3, 3);

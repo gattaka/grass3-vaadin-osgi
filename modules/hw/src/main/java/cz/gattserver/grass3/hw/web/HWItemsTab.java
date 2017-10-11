@@ -56,13 +56,6 @@ public class HWItemsTab extends VerticalLayout {
 
 	private HWFilterDTO filterDTO;
 
-	// BUG ? Při disable na tabu a opětovném enabled zůstane table disabled
-	@Override
-	public void setEnabled(boolean enabled) {
-		super.setEnabled(enabled);
-		grid.setEnabled(enabled);
-	}
-
 	private void populate() {
 		List<Token> collection = hwTypesFilter.getTokens();
 		List<String> types = new ArrayList<>();
@@ -96,8 +89,9 @@ public class HWItemsTab extends VerticalLayout {
 	private void openNewItemWindow(boolean fix) {
 		HWItemDTO hwItem = null;
 		if (fix) {
-			// TODO
-			Long id = null; // (Long) table.getValue();
+			if (grid.getSelectedItems().isEmpty())
+				return;
+			Long id = grid.getSelectedItems().iterator().next().getId();
 			hwItem = hwFacade.getHWItem(id);
 		}
 		addWindow(new HWItemCreateWindow(HWItemsTab.this, hwItem == null ? null : hwItem.getId()) {
@@ -112,8 +106,9 @@ public class HWItemsTab extends VerticalLayout {
 	}
 
 	private void openAddNoteWindow() {
-		// TODO
-		Long id = null; // (Long) table.getValue();
+		if (grid.getSelectedItems().isEmpty())
+			return;
+		Long id = grid.getSelectedItems().iterator().next().getId();
 		HWItemDTO hwItem = hwFacade.getHWItem(id);
 
 		addWindow(new ServiceNoteCreateWindow(HWItemsTab.this, hwItem) {
@@ -128,10 +123,8 @@ public class HWItemsTab extends VerticalLayout {
 
 	}
 
-	private void openDetailWindow() {
-		if (grid.getSelectedItems().isEmpty())
-			return;
-		addWindow(new HWItemDetailWindow(HWItemsTab.this, grid.getSelectedItems().iterator().next().getId()) {
+	private void openDetailWindow(Long id) {
+		addWindow(new HWItemDetailWindow(HWItemsTab.this, id) {
 			private static final long serialVersionUID = -8711057204738112594L;
 
 			@Override
@@ -172,7 +165,6 @@ public class HWItemsTab extends VerticalLayout {
 		setSpacing(true);
 		setMargin(new MarginInfo(true, false, false, false));
 
-		// final Button filterByTypeBtn = new Button("Filtrovat dle typu");
 		final Button newHWBtn = new Button("Založit novou položku HW");
 		final Button newNoteBtn = new Button("Přidat servisní záznam");
 		final Button detailsBtn = new Button("Detail");
@@ -241,7 +233,7 @@ public class HWItemsTab extends VerticalLayout {
 
 		// Název
 		TextField nazevColumnField = new TextField();
-		nazevColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		nazevColumnField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterDTO.setName(e.getValue());
@@ -251,7 +243,7 @@ public class HWItemsTab extends VerticalLayout {
 
 		// Stav
 		ComboBox<HWItemState> stavColumnCombo = new ComboBox<>(null, Arrays.asList(HWItemState.values()));
-		stavColumnCombo.addStyleName(ValoTheme.COMBOBOX_TINY);
+		stavColumnCombo.addStyleName(ValoTheme.COMBOBOX_SMALL);
 		stavColumnCombo.setWidth("100%");
 		stavColumnCombo.addValueChangeListener(e -> {
 			filterDTO.setState(e.getValue());
@@ -261,7 +253,7 @@ public class HWItemsTab extends VerticalLayout {
 
 		// Je součástí
 		TextField usedInColumnField = new TextField();
-		usedInColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		usedInColumnField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
 		usedInColumnField.addValueChangeListener(e -> {
 			filterDTO.setUsedIn(e.getValue());
 			populate();
@@ -270,7 +262,7 @@ public class HWItemsTab extends VerticalLayout {
 
 		// Spravován pro
 		TextField supervizedForColumnField = new TextField();
-		supervizedForColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		supervizedForColumnField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
 		supervizedForColumnField.setWidth("100%");
 		supervizedForColumnField.addValueChangeListener(e -> {
 			filterDTO.setSupervizedFor(e.getValue());
@@ -283,7 +275,7 @@ public class HWItemsTab extends VerticalLayout {
 
 		grid.addItemClickListener(event -> {
 			if (event.getMouseEventDetails().isDoubleClick()) {
-				openDetailWindow();
+				openDetailWindow(event.getItem().getId());
 			}
 		});
 
@@ -316,7 +308,7 @@ public class HWItemsTab extends VerticalLayout {
 		/**
 		 * Zobrazení detailů položky HW
 		 */
-		detailsBtn.addClickListener(e -> openDetailWindow());
+		detailsBtn.addClickListener(e -> openDetailWindow(grid.getSelectedItems().iterator().next().getId()));
 		buttonLayout.addComponent(detailsBtn);
 
 		/**

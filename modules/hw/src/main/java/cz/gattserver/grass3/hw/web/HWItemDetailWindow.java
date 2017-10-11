@@ -12,7 +12,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Resource;
@@ -48,9 +47,9 @@ import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.HWFacade;
+import cz.gattserver.grass3.pages.template.GridUtils;
 import cz.gattserver.grass3.template.MultiUpload;
 import cz.gattserver.web.common.ui.ImageIcons;
-import cz.gattserver.web.common.ui.TokenField;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.ImageDetailWindow;
@@ -127,6 +126,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		btnLayout.setSpacing(true);
+		btnLayout.setMargin(false);
 
 		Button hwItemImageDetailBtn = new Button("Detail",
 				e -> UI.getCurrent().addWindow(new ImageDetailWindow(hwItem.getName(), icon)));
@@ -166,9 +166,10 @@ public class HWItemDetailWindow extends WebWindow {
 
 		HorizontalLayout uploadWrapperLayout = new HorizontalLayout();
 		uploadWrapperLayout.addStyleName("bordered");
-		uploadWrapperLayout.setWidth("200px");
-		uploadWrapperLayout.setHeight("200px");
+		uploadWrapperLayout.setWidth("220px");
+		uploadWrapperLayout.setHeight("220px");
 		uploadWrapperLayout.addComponent(upload);
+		uploadWrapperLayout.setMargin(false);
 		uploadWrapperLayout.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
 
 		hwImageLayout.removeAllComponents();
@@ -184,12 +185,9 @@ public class HWItemDetailWindow extends WebWindow {
 
 	private VerticalLayout createWrapperLayout(HWItemDTO hwItem) {
 		VerticalLayout wrapperLayout = new VerticalLayout();
-		wrapperLayout.setMargin(new MarginInfo(false, true, true, true));
 		wrapperLayout.setSpacing(true);
+		wrapperLayout.setMargin(new MarginInfo(true, false, false, false));
 		wrapperLayout.setSizeFull();
-
-		Label name = new Label("<h3>" + hwItem.getName() + "</h3>", ContentMode.HTML);
-		wrapperLayout.addComponent(name);
 
 		return wrapperLayout;
 	}
@@ -199,39 +197,43 @@ public class HWItemDetailWindow extends WebWindow {
 		VerticalLayout wrapperLayout = createWrapperLayout(hwItem);
 
 		HorizontalLayout itemLayout = new HorizontalLayout();
-		itemLayout.setSpacing(true);
-		itemLayout.setMargin(new MarginInfo(true, false, false, false));
+		itemLayout.setSpacing(false);
+		itemLayout.setMargin(false);
+		itemLayout.setSizeUndefined();
 		wrapperLayout.addComponent(itemLayout);
 
 		/**
 		 * Foto
 		 */
 		hwImageLayout = new VerticalLayout();
-		hwImageLayout.setWidth("200px");
-		hwImageLayout.setHeight("200px");
+		hwImageLayout.setWidth("220px");
+		hwImageLayout.setHeight("220px");
 		hwImageLayout.setSpacing(true);
+		hwImageLayout.setMargin(false);
 		itemLayout.addComponent(hwImageLayout);
 		createHWImageOrUpload(hwItem);
 
 		/**
 		 * Grid
 		 */
-		winLayout = new GridLayout(5, 10);
-		winLayout.setWidth("100%");
+		winLayout = new GridLayout(5, 7);
 		itemLayout.addComponent(winLayout);
+		itemLayout.setComponentAlignment(winLayout, Alignment.TOP_LEFT);
 		winLayout.setSpacing(true);
+		winLayout.setMargin(false);
 
 		/**
 		 * Typy
 		 */
-		TokenField types = new TokenField();
-		types.getInputField().setVisible(false);
-		types.setEnabled(false);
+		HorizontalLayout tags = new HorizontalLayout();
+		tags.setSpacing(true);
 		hwItem.getTypes().forEach(type -> {
-			Token token = new Token(type.getName());
-			types.addToken(token);
+			Label token = new Label(type.getName());
+			token.setSizeUndefined();
+			token.setStyleName("read-only-token");
+			tags.addComponent(token);
 		});
-		winLayout.addComponent(types, 1, 0, 3, 0);
+		winLayout.addComponent(tags, 1, 0, 3, 0);
 
 		winLayout.addComponent(new Label("<strong>Stav</strong>", ContentMode.HTML), 1, 1);
 		winLayout.getComponent(1, 1).setWidth("80px");
@@ -244,7 +246,6 @@ public class HWItemDetailWindow extends WebWindow {
 		winLayout.addComponent(createShiftedLabel(purchDate), 2, 2);
 
 		winLayout.addComponent(new Label("<strong>Spravováno pro</strong>", ContentMode.HTML), 3, 1);
-		winLayout.getComponent(3, 1).setWidth("100px");
 		winLayout.addComponent(createShiftedLabel(hwItem.getSupervizedFor() == null ? "-" : hwItem.getSupervizedFor()),
 				3, 2);
 
@@ -280,7 +281,6 @@ public class HWItemDetailWindow extends WebWindow {
 			Button usedInBtn = new Button(hwItem.getUsedIn().getName());
 			usedInBtn.setDescription(hwItem.getUsedIn().getName());
 			usedInBtn.setStyleName(ValoTheme.BUTTON_LINK);
-			usedInBtn.addStyleName("shiftlabel");
 			usedInBtn.addClickListener(e -> {
 				close();
 				UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, hwItem.getUsedIn().getId()));
@@ -288,23 +288,30 @@ public class HWItemDetailWindow extends WebWindow {
 			winLayout.addComponent(usedInBtn, 1, 6, 4, 6);
 		}
 
-		List<HWItemOverviewDTO> parts = hwFacade.getAllParts(hwItem.getId());
-		Label name = new Label("<h3>Součásti</h3>", ContentMode.HTML);
-		wrapperLayout.addComponent(name);
+		VerticalLayout partsWrapperLayout = new VerticalLayout();
+		partsWrapperLayout.setSpacing(false);
+		partsWrapperLayout.setMargin(false);
+		partsWrapperLayout.setSizeFull();
+		wrapperLayout.addComponent(partsWrapperLayout);
+		wrapperLayout.setComponentAlignment(partsWrapperLayout, Alignment.TOP_LEFT);
+		wrapperLayout.setExpandRatio(partsWrapperLayout, 1);
 
+		Label name = new Label("<h3>Součásti</h3>", ContentMode.HTML);
+		partsWrapperLayout.addComponent(name);
+
+		List<HWItemOverviewDTO> parts = hwFacade.getAllParts(hwItem.getId());
 		VerticalLayout partsLayout = new VerticalLayout();
-		partsLayout.setSpacing(true);
-		partsLayout.setMargin(true);
+		partsLayout.setSpacing(false);
+		partsLayout.setMargin(false);
 		Panel partsPanel = new Panel(partsLayout);
 		partsPanel.setSizeFull();
-		wrapperLayout.addComponent(partsPanel);
-		wrapperLayout.setExpandRatio(partsPanel, 1);
+		partsWrapperLayout.addComponent(partsPanel);
+		partsWrapperLayout.setExpandRatio(partsPanel, 1);
 
 		for (final HWItemOverviewDTO part : parts) {
 			Button partDetailBtn = new Button(part.getName());
 			partDetailBtn.setDescription(part.getName());
 			partDetailBtn.setStyleName(ValoTheme.BUTTON_LINK);
-			partDetailBtn.addStyleName("shiftlabel");
 			partDetailBtn.addClickListener(e -> {
 				close();
 				HWItemDTO detailTO = hwFacade.getHWItem(part.getId());
@@ -380,13 +387,13 @@ public class HWItemDetailWindow extends WebWindow {
 		 */
 		serviceNotesGrid = new Grid<>(ServiceNoteDTO.class);
 		serviceNotesGrid.setSelectionMode(SelectionMode.SINGLE);
-		serviceNotesGrid.addColumn(ServiceNoteDTO::getDate, new LocalDateRenderer("dd.MM.yyyy")).setCaption("Získáno")
-				.setId(DATE_BIND).setStyleGenerator(item -> "v-align-right");
+		serviceNotesGrid.addColumn(ServiceNoteDTO::getDate, new LocalDateRenderer("dd.MM.yyyy")).setCaption("Datum")
+				.setId(DATE_BIND).setStyleGenerator(item -> "v-align-right").setWidth(GridUtils.DATE_COLUMN_WIDTH);
 		serviceNotesGrid.addColumn(hw -> {
 			return hw.getState().getName();
-		}, new TextRenderer()).setCaption("Stav").setId(STATE_BIND);
-		serviceNotesGrid.getColumn("usedInName").setCaption("Je součástí");
-		serviceNotesGrid.getColumn("description").setCaption("Obsah").setWidth(200);
+		}, new TextRenderer()).setCaption("Stav").setId(STATE_BIND).setWidth(130);
+		serviceNotesGrid.getColumn("usedInName").setCaption("Je součástí").setWidth(180);
+		serviceNotesGrid.getColumn("description").setCaption("Obsah").setWidth(441);
 		serviceNotesGrid.getColumn("id").setHidden(true); // jinak nepůjde sort
 		serviceNotesGrid.setColumns("id", DATE_BIND, STATE_BIND, "usedInName", "description");
 		serviceNotesGrid.setWidth("100%");
@@ -564,6 +571,7 @@ public class HWItemDetailWindow extends WebWindow {
 			VerticalLayout imageLayout = new VerticalLayout();
 			listLayout.addComponent(imageLayout);
 			imageLayout.setSpacing(true);
+			imageLayout.setMargin(false);
 
 			Resource resource = new FileResource(file);
 			Image img = new Image(null, resource);
@@ -605,18 +613,11 @@ public class HWItemDetailWindow extends WebWindow {
 
 		docsGrid = new Grid<>(File.class);
 
-		docsGrid.addColumn(file -> {
-			Label sizelabel = new Label(HumanBytesSizeCreator.format(file.length(), true));
-			sizelabel.setDescription(file.length() + "B");
-			sizelabel.setSizeUndefined();
-			return sizelabel;
-		}, new TextRenderer()).setId("fileSize").setCaption("Velikost");
+		docsGrid.addColumn(file -> HumanBytesSizeCreator.format(file.length(), true), new TextRenderer())
+				.setId("fileSize").setCaption("Velikost").setStyleGenerator(item -> "v-align-right");
 
-		docsGrid.addColumn(file -> {
-			SimpleDateFormat sdf = new SimpleDateFormat("d.MM.yyyy");
-			Label label = new Label(sdf.format(new Date(file.lastModified())));
-			return label;
-		}, new TextRenderer()).setId("datum").setCaption("Datum");
+		docsGrid.addColumn(file -> new SimpleDateFormat("d.MM.yyyy").format(new Date(file.lastModified())),
+				new TextRenderer()).setId("datum").setCaption("Datum");
 
 		docsGrid.setColumns("name", "datum", "fileSize");
 		docsGrid.getColumn("name").setCaption("Název");
@@ -700,15 +701,16 @@ public class HWItemDetailWindow extends WebWindow {
 		sheet.addTab(createServiceNotesTab(), "Záznamy", new ThemeResource(ImageIcons.CLIPBOARD_16_ICON));
 		sheet.addTab(createPhotosTab(), "Fotografie", new ThemeResource(ImageIcons.IMG_16_ICON));
 		sheet.addTab(createDocsTab(), "Dokumentace", new ThemeResource(ImageIcons.DOCUMENT_16_ICON));
-		HorizontalLayout marginLayout = new HorizontalLayout();
-		marginLayout.setMargin(true);
 
-		HorizontalLayout layout = new HorizontalLayout();
-		layout.setMargin(true);
-		marginLayout.addComponent(layout);
-
+		VerticalLayout layout = new VerticalLayout();
+		layout.setSpacing(false);
+		layout.setMargin(new MarginInfo(false, true, true, true));
 		layout.setSizeFull();
+
+		Label name = new Label("<h3>" + hwItem.getName() + "</h3>", ContentMode.HTML);
+		layout.addComponent(name);
 		layout.addComponent(sheet);
+		layout.setExpandRatio(sheet, 1);
 		setContent(layout);
 
 		triggerComponent.setEnabled(false);

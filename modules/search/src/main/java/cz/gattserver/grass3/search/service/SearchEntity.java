@@ -14,8 +14,7 @@ public class SearchEntity {
 		private String content;
 		private boolean tokenized;
 
-		public Field(Enum<? extends SearchField> name, String content,
-				boolean tokenized) {
+		public Field(Enum<? extends SearchField> name, String content, boolean tokenized) {
 			this.name = name;
 			this.content = content;
 			this.tokenized = tokenized;
@@ -83,8 +82,7 @@ public class SearchEntity {
 		return link;
 	}
 
-	public boolean addField(Enum<? extends SearchField> name, String content,
-			boolean tokenized) {
+	public boolean addField(Enum<? extends SearchField> name, String content, boolean tokenized) {
 		return fields.add(new Field(name, content, tokenized));
 	}
 }

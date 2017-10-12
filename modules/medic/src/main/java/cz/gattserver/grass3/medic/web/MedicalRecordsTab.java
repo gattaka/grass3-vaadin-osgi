@@ -2,36 +2,23 @@ package cz.gattserver.grass3.medic.web;
 
 import java.util.Collection;
 
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.Window;
-import com.vaadin.v7.ui.Table;
+import com.vaadin.ui.renderers.DateRenderer;
 
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
-import cz.gattserver.grass3.ui.util.StringToDateConverter;
-import cz.gattserver.grass3.ui.util.StringToPreviewConverter;
 
 public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 
 	private static final long serialVersionUID = -5013459007975657195L;
-
-	@Override
-	public void populateContainer() {
-		super.populateContainer();
-		Table table = (Table) this.table;
-		table.sort(new Object[] { "date" }, new boolean[] { false });
-		setTableColumns(table);
-	}
 
 	public MedicalRecordsTab() {
 		super(MedicalRecordDTO.class);
 	}
 
 	@Override
-	public void select() {
-		populateContainer();
-	}
-
-	@Override
-	protected Collection<MedicalRecordDTO> getTableItems() {
+	protected Collection<MedicalRecordDTO> getItems() {
 		return medicFacade.getAllMedicalRecords();
 	}
 
@@ -42,7 +29,8 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 
 			@Override
 			protected void onSuccess() {
-				populateContainer();
+				data = getItems();
+				grid.setItems(data);
 			}
 		};
 	}
@@ -59,7 +47,7 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 
 			@Override
 			protected void onSuccess() {
-				populateContainer();
+				grid.getDataProvider().refreshItem(dto);
 			}
 		};
 	}
@@ -69,23 +57,17 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 		medicFacade.deleteMedicalRecord(dto);
 	}
 
-	private void setTableColumns(Table table) {
-		table.setVisibleColumns(new Object[] { "date", "institution", "physician", "record" });
-		table.setColumnHeader("date", "Datum");
-		table.setColumnHeader("institution", "Instituce");
-		table.setColumnHeader("physician", "Ošetřující lékař");
-		table.setColumnHeader("record", "Záznam");
-	}
-
 	@Override
-	protected void customizeTable(Table table) {
-		table.setWidth("100%");
-		// table.setConverter("date", new StringToDateConverter("d. MMMMM
-		// yyyy"));
-		// table.setConverter("record", new StringToPreviewConverter(50));
-		table.setSelectable(true);
-		table.setImmediate(true);
-		setTableColumns(table);
+	protected void customizeGrid(Grid<MedicalRecordDTO> grid) {
+		grid.addColumn(MedicalRecordDTO::getDate, new DateRenderer("%1$td. %1$tB %1$tY")).setCaption("Datum")
+				.setId("fdate");
+		grid.getColumn("institution").setCaption("Instituce");
+		grid.getColumn("physician").setCaption("Ošetřující lékař");
+		grid.getColumn("record").setCaption("Záznam");
+		grid.setColumns("fdate", "institution", "physician", "record");
+		grid.setWidth("100%");
+		grid.setSelectionMode(SelectionMode.SINGLE);
+		grid.sort("fdate");
 	}
 
 }

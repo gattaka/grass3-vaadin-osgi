@@ -2,10 +2,10 @@ package cz.gattserver.grass3.medic.web;
 
 import cz.gattserver.common.Identifiable;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
-import cz.gattserver.grass3.template.TableOperationsTab;
+import cz.gattserver.grass3.template.GridOperationsTab;
 import cz.gattserver.web.common.SpringContextHelper;
 
-public abstract class MedicPageTab<T extends Identifiable> extends TableOperationsTab<T> {
+public abstract class MedicPageTab<T extends Identifiable> extends GridOperationsTab<T> {
 
 	private static final long serialVersionUID = 2057957439013190170L;
 

@@ -15,11 +15,9 @@ public abstract class AbstractDetailSubWindow extends WebWindow {
 
 	public AbstractDetailSubWindow(String name) {
 		super(name);
-
 		layout = new VerticalLayout();
 		layout.setMargin(true);
 		layout.setSpacing(true);
-
 	}
 
 	protected Label addDetailLine(String caption, String content) {

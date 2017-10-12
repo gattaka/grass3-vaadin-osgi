@@ -4,20 +4,17 @@ import java.util.List;
 import java.util.Locale;
 
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.data.Binder;
+import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.shared.ui.datefield.DateTimeResolution;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.DateField;
 import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
-import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
 
 import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
@@ -95,21 +92,20 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 			scheduledVisitDTO.setState(planned ? ScheduledVisitState.PLANNED : ScheduledVisitState.TO_BE_PLANNED);
 		}
 
-		final BeanFieldGroup<ScheduledVisitDTO> fieldGroup = new BeanFieldGroup<ScheduledVisitDTO>(
-				ScheduledVisitDTO.class);
-		fieldGroup.setItemDataSource(scheduledVisitDTO);
+		Binder<ScheduledVisitDTO> binder = new Binder<>(ScheduledVisitDTO.class);
+		binder.setBean(scheduledVisitDTO);
 
 		final TextField purposeField = new TextField("Účel návštěvy");
 		winLayout.addComponent(purposeField, 0, 0, 1, 0);
 		purposeField.setWidth("100%");
-		// purposeField.setImmediate(true);
-		// fieldGroup.bind(purposeField, "purpose");
+		binder.forField(purposeField).bind("purpose");
 
 		if (planned == false) {
 			final TextField periodField = new TextField("Pravidelnost (měsíce)");
 			winLayout.addComponent(periodField, 0, 1);
 			periodField.setWidth("100%");
-			// fieldGroup.bind(periodField, "period");
+			binder.forField(periodField)
+					.withConverter(new StringToIntegerConverter(0, "Počet měsíců musí být celé číslo")).bind("period");
 		}
 
 		final DateTimeField dateField = new DateTimeField("Datum návštěvy");
@@ -125,49 +121,40 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 		}
 
 		dateField.setWidth("100%");
-		// dateField.setImmediate(true);
-		// fieldGroup.bind(dateField, "date");
+		binder.forField(dateField).bind("date");
 
 		List<MedicalRecordDTO> records = medicalFacade.getAllMedicalRecords();
 		final ComboBox<MedicalRecordDTO> recordsComboBox = new ComboBox<>("Navazuje na kontrolu", records);
 		winLayout.addComponent(recordsComboBox, 0, 2, 1, 2);
 		recordsComboBox.setWidth("100%");
-		// fieldGroup.bind(recordsComboBox, "record");
+		binder.forField(recordsComboBox).bind("record");
 
 		List<MedicalInstitutionDTO> institutions = medicalFacade.getAllMedicalInstitutions();
 		final ComboBox<MedicalInstitutionDTO> institutionComboBox = new ComboBox<>("Instituce", institutions);
 		winLayout.addComponent(institutionComboBox, 0, 3, 1, 3);
 		institutionComboBox.setWidth("100%");
 		institutionComboBox.setEmptySelectionAllowed(false);
-		// institutionComboBox.setImmediate(true);
-		// fieldGroup.bind(institutionComboBox, "institution");
+		binder.forField(institutionComboBox).bind("institution");
 
 		Label separator = new Label("");
 		separator.setHeight("10px");
 		winLayout.addComponent(separator, 0, 4);
 
 		Button saveBtn;
-		winLayout.addComponent(
-				saveBtn = new Button(getSubmitBtnCaptionByOperation(operation, visitDTO), new Button.ClickListener() {
-
-					private static final long serialVersionUID = -8435971966889831628L;
-
-					@Override
-					public void buttonClick(ClickEvent event) {
-						try {
-							fieldGroup.commit();
-							if (medicalFacade.saveScheduledVisit(scheduledVisitDTO) == false) {
-								UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
-							} else {
-								onSuccess();
-							}
-							close();
-						} catch (CommitException e) {
-							Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
-									Notification.Type.TRAY_NOTIFICATION);
-						}
-					}
-				}), 1, 5);
+		winLayout.addComponent(saveBtn = new Button(getSubmitBtnCaptionByOperation(operation, visitDTO), event -> {
+			try {
+				binder.writeBean(scheduledVisitDTO);
+				if (medicalFacade.saveScheduledVisit(scheduledVisitDTO) == false) {
+					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
+				} else {
+					onSuccess();
+				}
+				close();
+			} catch (Exception e) {
+				Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
+						Notification.Type.TRAY_NOTIFICATION);
+			}
+		}), 1, 5);
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
 
 		// vyplňuji objednání na základě plánovaného objednání

@@ -2,18 +2,18 @@ package cz.gattserver.grass3.medic.web;
 
 import java.util.Collection;
 
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.Window;
-import com.vaadin.v7.ui.Table;
 
 import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
-import cz.gattserver.grass3.ui.util.StringToPreviewConverter;
 
 public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionDTO> {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
 	@Override
-	protected Collection<MedicalInstitutionDTO> getTableItems() {
+	protected Collection<MedicalInstitutionDTO> getItems() {
 		return medicFacade.getAllMedicalInstitutions();
 	}
 
@@ -24,7 +24,8 @@ public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionDTO> 
 
 			@Override
 			protected void onSuccess() {
-				populateContainer();
+				data = getItems();
+				grid.setItems(data);
 			}
 		};
 	}
@@ -41,7 +42,7 @@ public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionDTO> 
 
 			@Override
 			protected void onSuccess() {
-				populateContainer();
+				grid.getDataProvider().refreshItem(dto);
 			}
 		};
 	}
@@ -56,14 +57,12 @@ public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionDTO> 
 	}
 
 	@Override
-	protected void customizeTable(Table table) {
-		table.setColumnHeader("name", "Název");
-		table.setColumnHeader("address", "Adresa");
-		table.setColumnHeader("web", "Stránky");
-		table.setWidth("100%");
-		table.setSelectable(true);
-		table.setImmediate(true);
-		// table.setConverter("web", new StringToPreviewConverter(50));
-		table.setVisibleColumns(new Object[] { "name", "address", "web" });
+	protected void customizeGrid(Grid<MedicalInstitutionDTO> grid) {
+		grid.getColumn("name").setCaption("Název");
+		grid.getColumn("address").setCaption("Adresa");
+		grid.getColumn("web").setCaption("Stránky");
+		grid.setWidth("100%");
+		grid.setSelectionMode(SelectionMode.SINGLE);
+		grid.setColumns("name", "address", "web");
 	}
 }

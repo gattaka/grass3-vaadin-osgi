@@ -2,8 +2,9 @@ package cz.gattserver.grass3.medic.web;
 
 import java.util.Collection;
 
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.Window;
-import com.vaadin.v7.ui.Table;
 
 import cz.gattserver.grass3.medic.dto.PhysicianDTO;
 
@@ -16,7 +17,7 @@ public class PhysiciansTab extends MedicPageTab<PhysicianDTO> {
 	}
 
 	@Override
-	protected Collection<PhysicianDTO> getTableItems() {
+	protected Collection<PhysicianDTO> getItems() {
 		return medicFacade.getAllPhysicians();
 	}
 
@@ -27,7 +28,8 @@ public class PhysiciansTab extends MedicPageTab<PhysicianDTO> {
 
 			@Override
 			protected void onSuccess() {
-				populateContainer();
+				data = getItems();
+				grid.setItems(data);
 			}
 		};
 	}
@@ -44,7 +46,7 @@ public class PhysiciansTab extends MedicPageTab<PhysicianDTO> {
 
 			@Override
 			protected void onSuccess() {
-				populateContainer();
+				grid.getDataProvider().refreshItem(dto);
 			}
 		};
 	}
@@ -55,12 +57,11 @@ public class PhysiciansTab extends MedicPageTab<PhysicianDTO> {
 	}
 
 	@Override
-	protected void customizeTable(Table table) {
-		table.setColumnHeader("name", "Jméno");
-		table.setWidth("100%");
-		table.setSelectable(true);
-		table.setImmediate(true);
-		table.setVisibleColumns(new Object[] { "name" });
+	protected void customizeGrid(Grid<PhysicianDTO> grid) {
+		grid.getColumn("name").setCaption("Jméno");
+		grid.setWidth("100%");
+		grid.setSelectionMode(SelectionMode.SINGLE);
+		grid.setColumns("name");
 	}
 
 }

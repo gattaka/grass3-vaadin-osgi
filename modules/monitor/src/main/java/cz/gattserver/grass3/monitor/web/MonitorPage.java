@@ -35,7 +35,7 @@ public class MonitorPage extends OneColumnPage {
 		layout.setMargin(true);
 
 		layout.addComponent(MonitorItemFactory.createMonitorItem(monitorFacade.getUptime()));
-		
+
 		ConsoleOutputTO mouted = monitorFacade.getBackupDiskMounted();
 		if (monitorFacade.getBackupDiskMounted().isError() == false) {
 			if (Boolean.parseBoolean(mouted.getOutput())) {

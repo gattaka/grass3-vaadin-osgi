@@ -3,11 +3,9 @@ package cz.gattserver.grass3.monitor.tabs;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.validator.StringLengthValidator;
-import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 

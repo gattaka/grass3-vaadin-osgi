@@ -92,6 +92,12 @@ $v-layout-margin-left: 10px;
 	border: 1px solid #aaa;
 }
 
+.grass .v-button-link {
+	height: initial;
+    padding: 0;
+    margin: 0;
+}
+
 /* == TOKENS =============================================================== */
 .grass .tokenfield .v-button-link {
 	background-color: #00B4F0;

@@ -25,19 +25,6 @@
 		</property>
 	</bean>
 
-	<!-- <bean -->
-	<!-- class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"> -->
-	<!-- <property name="targetClass" -->
-	<!-- value="org.springframework.security.core.context.SecurityContextHolder" 
-		/> -->
-	<!-- <property name="targetMethod" value="setStrategyName" /> -->
-	<!-- <property name="arguments"> -->
-	<!-- <list> -->
-	<!-- <value>MODE_INHERITABLETHREADLOCAL</value> -->
-	<!-- </list> -->
-	<!-- </property> -->
-	<!-- </bean> -->
-
 	<!-- org.apache.tomcat.jdbc.pool.DataSource musí vidět na driver - protože 
 		je to ale volané z Tomcat classloaderu musí se dodat přímo do serveru, viz. 
 		http://stackoverflow.com/questions/13161747/jdbc-apache-tomcat-pooling-jar -->

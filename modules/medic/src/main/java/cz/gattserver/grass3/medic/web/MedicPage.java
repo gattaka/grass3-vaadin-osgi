@@ -3,10 +3,8 @@ package cz.gattserver.grass3.medic.web;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 
 import cz.gattserver.grass3.pages.template.OneColumnPage;
-import cz.gattserver.grass3.template.Selectable;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
 public class MedicPage extends OneColumnPage {
@@ -24,9 +22,14 @@ public class MedicPage extends OneColumnPage {
 
 	@Override
 	protected Component createContent() {
+
+		VerticalLayout marginLayout = new VerticalLayout();
+		marginLayout.setMargin(true);
+
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);
 		layout.setMargin(true);
+		marginLayout.addComponent(layout);
 
 		TabSheet tabSheet = new TabSheet();
 		layout.addComponent(tabSheet);
@@ -37,21 +40,7 @@ public class MedicPage extends OneColumnPage {
 		tabSheet.addTab(new MedicamentsTab(), "Medikamenty");
 		tabSheet.addTab(new PhysiciansTab(), "Doktoři");
 
-		tabSheet.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
-
-			private static final long serialVersionUID = 6943259268778916110L;
-
-			@Override
-			public void selectedTabChange(SelectedTabChangeEvent event) {
-				TabSheet tabSheet = (TabSheet) event.getComponent();
-				Component component = tabSheet.getSelectedTab();
-				if (component != null && component instanceof Selectable) {
-					((Selectable) component).select();
-				}
-			}
-		});
-
-		return layout;
+		return marginLayout;
 	}
 
 }

@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.medic.dto;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.validation.constraints.NotNull;
@@ -43,7 +44,7 @@ public class ScheduledVisitDTO implements Identifiable{
 	 * Datum kontroly
 	 */
 	@NotNull
-	private Date date;
+	private LocalDate date;
 
 	/**
 	 * Perioda v měsících
@@ -106,11 +107,11 @@ public class ScheduledVisitDTO implements Identifiable{
 		this.record = record;
 	}
 
-	public Date getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 

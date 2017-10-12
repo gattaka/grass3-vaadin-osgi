@@ -6,7 +6,7 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
-import com.vaadin.v7.ui.themes.BaseTheme;
+import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
@@ -40,7 +40,7 @@ public class MedicalRecordDetailWindow extends AbstractDetailSubWindow {
 						.addWindow(new MedicalInstitutionDetailWindow(medicalRecordDTO.getInstitution().getId()));
 			}
 		});
-		button.setStyleName(BaseTheme.BUTTON_LINK);
+		button.setStyleName(ValoTheme.BUTTON_LINK);
 		addDetailLine("Instituce", button);
 
 		addDetailLine("Ošetřující lékař", medicalRecordDTO.getPhysician().getName());

@@ -2,8 +2,9 @@ package cz.gattserver.grass3.medic.web;
 
 import java.util.Collection;
 
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.Window;
-import com.vaadin.v7.ui.Table;
+import com.vaadin.ui.Grid.SelectionMode;
 
 import cz.gattserver.grass3.medic.dto.MedicamentDTO;
 
@@ -16,7 +17,7 @@ public class MedicamentsTab extends MedicPageTab<MedicamentDTO> {
 	}
 
 	@Override
-	protected Collection<MedicamentDTO> getTableItems() {
+	protected Collection<MedicamentDTO> getItems() {
 		return medicFacade.getAllMedicaments();
 	}
 
@@ -27,7 +28,8 @@ public class MedicamentsTab extends MedicPageTab<MedicamentDTO> {
 
 			@Override
 			protected void onSuccess() {
-				populateContainer();
+				data = getItems();
+				grid.setItems(data);
 			}
 		};
 	}
@@ -44,7 +46,7 @@ public class MedicamentsTab extends MedicPageTab<MedicamentDTO> {
 
 			@Override
 			protected void onSuccess() {
-				populateContainer();
+				grid.getDataProvider().refreshItem(dto);
 			}
 		};
 	}
@@ -55,13 +57,12 @@ public class MedicamentsTab extends MedicPageTab<MedicamentDTO> {
 	}
 
 	@Override
-	protected void customizeTable(Table table) {
-		table.setColumnHeader("name", "Název");
-		table.setColumnHeader("tolerance", "Reakce, nežádoucí účinky");
-		table.setWidth("100%");
-		table.setSelectable(true);
-		table.setImmediate(true);
-		table.setVisibleColumns(new String[] { "name", "tolerance" });
+	protected void customizeGrid(Grid<MedicamentDTO> grid) {
+		grid.getColumn("name").setCaption("Název");
+		grid.getColumn("tolerance").setCaption("Reakce, nežádoucí účinky");
+		grid.setWidth("100%");
+		grid.setSelectionMode(SelectionMode.SINGLE);
+		grid.setColumns("name", "tolerance");
 	}
 
 }

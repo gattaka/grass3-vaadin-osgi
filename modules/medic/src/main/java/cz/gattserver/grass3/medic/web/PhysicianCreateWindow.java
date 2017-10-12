@@ -1,15 +1,13 @@
 package cz.gattserver.grass3.medic.web;
 
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.data.Binder;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
-import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
 
 import cz.gattserver.grass3.medic.dto.PhysicianDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
@@ -38,42 +36,34 @@ public abstract class PhysicianCreateWindow extends WebWindow {
 
 		winLayout.setWidth("300px");
 
-		final PhysicianDTO physicianDTO = modifiedPhysicianDTO == null ? new PhysicianDTO() : modifiedPhysicianDTO;
-		final BeanFieldGroup<PhysicianDTO> fieldGroup = new BeanFieldGroup<PhysicianDTO>(PhysicianDTO.class);
-		fieldGroup.setItemDataSource(physicianDTO);
+		PhysicianDTO physicianDTO = modifiedPhysicianDTO == null ? new PhysicianDTO() : modifiedPhysicianDTO;
+		Binder<PhysicianDTO> binder = new Binder<PhysicianDTO>(PhysicianDTO.class);
+		binder.setBean(physicianDTO);
 
 		final TextField nameField = new TextField("Jméno");
 		winLayout.addComponent(nameField, 0, 0, 1, 0);
 		nameField.setWidth("100%");
-		// nameField.setImmediate(true);
-		// fieldGroup.bind(nameField, "name");
+		binder.forField(nameField).bind("name");
 
 		Label separator = new Label("");
 		separator.setHeight("10px");
 		winLayout.addComponent(separator, 0, 1);
 
 		Button saveBtn;
-		winLayout.addComponent(
-				saveBtn = new Button(modifiedPhysicianDTO == null ? "Přidat" : "Upravit", new Button.ClickListener() {
-
-					private static final long serialVersionUID = -8435971966889831628L;
-
-					@Override
-					public void buttonClick(ClickEvent event) {
-						try {
-							fieldGroup.commit();
-							if (medicalFacade.savePhysician(physicianDTO) == false) {
-								UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
-							} else {
-								onSuccess();
-							}
-							close();
-						} catch (CommitException e) {
-							Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
-									Notification.Type.TRAY_NOTIFICATION);
-						}
-					}
-				}), 1, 2);
+		winLayout.addComponent(saveBtn = new Button(modifiedPhysicianDTO == null ? "Přidat" : "Upravit", e -> {
+			try {
+				binder.writeBean(physicianDTO);
+				if (medicalFacade.savePhysician(physicianDTO) == false) {
+					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
+				} else {
+					onSuccess();
+				}
+				close();
+			} catch (Exception ex) {
+				Notification.show("   Chybná vstupní data\n\n   " + ex.getCause().getMessage(),
+						Notification.Type.TRAY_NOTIFICATION);
+			}
+		}), 1, 2);
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
 
 		setContent(winLayout);

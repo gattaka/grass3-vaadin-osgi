@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.pages.template;
 
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,13 +85,13 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		content = getContentNodeDTO();
 		updateBreadcrumb(content);
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("d.M.yyyy HH:mm:ss");
+		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("d.M.yyyy HH:mm:ss");
 
 		contentNameLabel = new H2Label(content.getName());
 
 		contentAuthorNameLabel = new Label(content.getAuthor().getName());
 
-		contentCreationDateNameLabel = new Label(dateFormat.format(content.getCreationDate()));
+		contentCreationDateNameLabel = new Label(content.getCreationDate().format(dateFormat));
 
 		contentLastModificationDateLabel = new Label(content.getLastModificationDate() == null ? "<em>-neupraveno-</em>"
 				: dateFormat.format(content.getLastModificationDate()));

@@ -32,36 +32,26 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 	@Autowired
 	private HWFacade hwFacade;
 
-	private ServiceNoteDTO serviceNoteDTO;
-
 	public ServiceNoteCreateWindow(final Component triggerComponent, final HWItemDTO hwItem) {
 		this(triggerComponent, hwItem, null);
 	}
 
-	public ServiceNoteCreateWindow(final Component triggerComponent, final HWItemDTO hwItem,
-			final ServiceNoteDTO fixNote) {
-		super(fixNote == null ? "Nový servisní záznam" : "Oprava existujícího servisního záznamu");
-
-		setWidth("320px");
+	public ServiceNoteCreateWindow(Component triggerComponent, final HWItemDTO hwItem, ServiceNoteDTO originalDTO) {
+		super(originalDTO == null ? "Nový servisní záznam" : "Oprava existujícího servisního záznamu");
 
 		triggerComponent.setEnabled(false);
 
-		if (fixNote != null) {
-			serviceNoteDTO = fixNote;
-		} else {
-			serviceNoteDTO = new ServiceNoteDTO();
-			serviceNoteDTO.setDescription("");
-			serviceNoteDTO.setState(hwItem.getState());
-		}
+		ServiceNoteDTO formDTO = new ServiceNoteDTO();
+		formDTO.setDescription("");
+		formDTO.setState(hwItem.getState());
 
 		Binder<ServiceNoteDTO> binder = new Binder<>(ServiceNoteDTO.class);
-		binder.setBean(serviceNoteDTO);
+		binder.setBean(formDTO);
 
 		GridLayout winLayout = new GridLayout(2, 4);
 		setContent(winLayout);
 		winLayout.setSpacing(true);
 		winLayout.setMargin(true);
-		winLayout.setWidth("100%");
 
 		DateField eventDateField = new DateField("Datum");
 		eventDateField.setDateFormat("dd.MM.yyyy");
@@ -71,6 +61,7 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 
 		ComboBox<HWItemState> stateComboBox = new ComboBox<>("Stav", Arrays.asList(HWItemState.values()));
 		stateComboBox.setEmptySelectionAllowed(false);
+		// namísto propertyId a captionId jsou funkcionální settery a gettery
 		stateComboBox.setItemCaptionGenerator(a -> a.getName());
 		binder.bind(stateComboBox, "state");
 		winLayout.addComponent(stateComboBox, 1, 0);
@@ -81,7 +72,18 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 		usedInCombo.setEmptySelectionAllowed(true);
 		usedInCombo.setItemCaptionGenerator(a -> a.getName());
 		usedInCombo.setValue(hwItem.getUsedIn());
-		binder.bind(usedInCombo, "usedInName");
+		// ekvivalent Convertoru z v7
+		binder.bind(usedInCombo, note -> {
+			if (note.getUsedInName() == null)
+				return null;
+			HWItemOverviewDTO to = new HWItemOverviewDTO();
+			to.setId(note.getUsedInId());
+			to.setName(note.getUsedInName());
+			return to;
+		}, (note, item) -> {
+			note.setUsedInId(item == null ? null : item.getId());
+			note.setUsedInName(item == null ? null : item.getName());
+		});
 		winLayout.addComponent(usedInCombo, 0, 1, 1, 1);
 
 		TextArea descriptionField = new TextArea("Popis");
@@ -91,18 +93,19 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 		winLayout.addComponent(descriptionField, 0, 2, 1, 2);
 
 		Button createBtn;
-		winLayout.addComponent(createBtn = new Button(fixNote == null ? "Zapsat" : "Upravit", e -> {
+		winLayout.addComponent(createBtn = new Button(originalDTO == null ? "Zapsat" : "Upravit", e -> {
 			try {
-				binder.writeBean(serviceNoteDTO);
-				if (fixNote == null) {
-					if (hwFacade.addServiceNote(serviceNoteDTO, hwItem)) {
-						onSuccess(serviceNoteDTO);
+				ServiceNoteDTO writeDTO = originalDTO == null ? new ServiceNoteDTO() : originalDTO;
+				binder.writeBean(writeDTO);
+				if (originalDTO == null) {
+					if (hwFacade.addServiceNote(writeDTO, hwItem)) {
+						onSuccess(writeDTO);
 					} else {
 						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se zapsat nový servisní záznam"));
 					}
 				} else {
-					hwFacade.modifyServiceNote(serviceNoteDTO);
-					onSuccess(serviceNoteDTO);
+					hwFacade.modifyServiceNote(writeDTO);
+					onSuccess(writeDTO);
 				}
 				close();
 			} catch (ValidationException ex) {
@@ -114,6 +117,9 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 
 		addCloseListener(e -> triggerComponent.setEnabled(true));
 
+		// Poté, co je form probindován se nastaví hodnoty dle originálu
+		if (originalDTO != null)
+			binder.readBean(originalDTO);
 	}
 
 	protected abstract void onSuccess(ServiceNoteDTO noteDTO);

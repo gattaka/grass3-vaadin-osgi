@@ -11,7 +11,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.renderers.DateRenderer;
+import com.vaadin.ui.renderers.LocalDateTimeRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
 
 import cz.gattserver.grass3.articles.dto.ArticleDraftOverviewDTO;
@@ -62,7 +62,7 @@ public abstract class DraftMenuWindow extends WebWindow {
 		grid.addColumn(a -> {
 			return a.getContentNode().getLastModificationDate() == null ? a.getContentNode().getCreationDate()
 					: a.getContentNode().getLastModificationDate();
-		}, new DateRenderer("%1$te.%1$tm.%1$tY %1$tH:%1$tM")).setCaption("Naposledy upraveno")
+		}, new LocalDateTimeRenderer("d.MM.yyyy HH:mm")).setCaption("Naposledy upraveno")
 				.setId(lastModificationDateBind).setStyleGenerator(item -> "v-align-right");
 
 		grid.setColumns(nameBind, "text", lastModificationDateBind);

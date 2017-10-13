@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.pg.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public class PhotogalleryRESTDTO {
@@ -18,12 +18,12 @@ public class PhotogalleryRESTDTO {
 	/**
 	 * Kdy byl obsah vytvořen
 	 */
-	private Date creationDate;
+	private LocalDateTime creationDate;
 
 	/**
 	 * Kdy byl naposledy upraven
 	 */
-	private Date lastModificationDate;
+	private LocalDateTime lastModificationDate;
 
 	/**
 	 * Jméno uživatele
@@ -35,8 +35,8 @@ public class PhotogalleryRESTDTO {
 	 */
 	private Set<String> files;
 
-	public PhotogalleryRESTDTO(Long id, String name, Date creationDate, Date lastModificationDate, String author,
-			Set<String> files) {
+	public PhotogalleryRESTDTO(Long id, String name, LocalDateTime creationDate, LocalDateTime lastModificationDate,
+			String author, Set<String> files) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -54,19 +54,19 @@ public class PhotogalleryRESTDTO {
 		this.files = files;
 	}
 
-	public Date getCreationDate() {
+	public LocalDateTime getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(Date creationDate) {
+	public void setCreationDate(LocalDateTime creationDate) {
 		this.creationDate = creationDate;
 	}
 
-	public Date getLastModificationDate() {
+	public LocalDateTime getLastModificationDate() {
 		return lastModificationDate;
 	}
 
-	public void setLastModificationDate(Date lastModificationDate) {
+	public void setLastModificationDate(LocalDateTime lastModificationDate) {
 		this.lastModificationDate = lastModificationDate;
 	}
 

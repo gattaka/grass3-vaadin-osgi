@@ -1,7 +1,6 @@
 package cz.gattserver.grass3.pg.pages;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileAlreadyExistsException;
@@ -20,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.fo0.advancedtokenfield.main.AdvancedTokenField;
 import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.ThemeResource;
@@ -31,8 +29,10 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.DateField;
+import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.Embedded;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.JavaScript;
@@ -40,12 +40,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.v7.data.Property;
-import com.vaadin.v7.data.Property.ValueChangeEvent;
-import com.vaadin.v7.data.util.BeanItemContainer;
-import com.vaadin.v7.ui.Table;
 
-import cz.gattserver.common.util.DateUtil;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
@@ -60,6 +55,7 @@ import cz.gattserver.grass3.pg.events.PGProcessStartEvent;
 import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
 import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.template.DefaultContentOperations;
+import cz.gattserver.grass3.template.DeleteGridButton;
 import cz.gattserver.grass3.template.MultiUpload;
 import cz.gattserver.grass3.ui.progress.BaseProgressBar;
 import cz.gattserver.grass3.ui.progress.ProgressWindow;
@@ -68,6 +64,7 @@ import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.TokenField;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.WarnWindow;
 
@@ -101,9 +98,9 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	private NodeDTO node;
 	private PhotogalleryDTO photogallery;
 
-	private AdvancedTokenField photogalleryKeywords;
+	private TokenField photogalleryKeywords;
 	private TextField photogalleryNameField;
-	private DateField photogalleryDateField;
+	private DateTimeField photogalleryDateField;
 	private CheckBox publicatedCheckBox;
 
 	private File galleryDir;
@@ -129,9 +126,9 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		newFiles = new ArrayList<>();
 
-		photogalleryKeywords = new AdvancedTokenField();
+		photogalleryKeywords = new TokenField();
 		photogalleryNameField = new TextField();
-		photogalleryDateField = new DateField();
+		photogalleryDateField = new DateTimeField();
 		publicatedCheckBox = new CheckBox();
 
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
@@ -166,7 +163,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			}
 
 			publicatedCheckBox.setValue(photogallery.getContentNode().isPublicated());
-			photogalleryDateField.setValue(DateUtil.toLocalDate(photogallery.getContentNode().getCreationDate()));
+			photogalleryDateField.setValue(photogallery.getContentNode().getCreationDate());
 
 		} else {
 			logger.debug("Neznámá operace: '" + operationToken + "'");
@@ -218,23 +215,13 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		keywordsMenuAndTextLayout.addComponent(photogalleryKeywords);
 
 		List<ContentTagDTO> contentTags = contentTagFacade.getContentTagsForOverview();
-		// BeanContainer<String, ContentTagDTO> tokens = new
-		// BeanContainer<String, ContentTagDTO>(ContentTagDTO.class);
-		// tokens.setBeanIdProperty("name");
-		// tokens.addAll(contentTags);
-
-		// photogalleryKeywords.setStyleName(TokenField.STYLE_TOKENFIELD);
-		// photogalleryKeywords.setContainerDataSource(tokens);
 		contentTags.forEach(t -> {
 			Token to = new Token(t.getName());
 			photogalleryKeywords.addTokenToInputField(to);
 		});
-		// photogalleryKeywords.setFilteringMode(FilteringMode.CONTAINS); //
-		// suggest
-		// photogalleryKeywords.setTokenCaptionPropertyId("name");
-		// photogalleryKeywords.setInputPrompt("klíčové slovo");
-		// photogalleryKeywords.setRememberNewTokens(false);
 		photogalleryKeywords.isEnabled();
+		photogalleryKeywords.setAllowNewItems(true);
+		photogalleryKeywords.getInputField().setPlaceholder("klíčové slovo");
 
 		VerticalLayout contentLayout = new VerticalLayout();
 		contentLayout.setSpacing(true);
@@ -263,78 +250,49 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		imageWrapper.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
 		// gridLayout.addComponent(imageWrapper, 0, 0, 1, 0);
 
-		final Table table = new Table();
-		if (editMode) {
+		final Grid<File> table = new Grid<>(File.class);
+		final List<File> items = editMode
+				? Arrays.asList(galleryDir.listFiles(pathname -> pathname.isDirectory() == false)) : new ArrayList<>();
+		table.setItems(items);
 
-			BeanItemContainer<File> container = new BeanItemContainer<>(File.class,
-					Arrays.asList(galleryDir.listFiles(new FileFilter() {
-
-						@Override
-						public boolean accept(File pathname) {
-							return pathname.isDirectory() == false;
-						}
-					})));
-
-			table.setContainerDataSource(container);
-		} else {
-			table.setContainerDataSource(new BeanItemContainer<>(File.class));
-		}
-
-		table.setSelectable(true);
+		table.setSelectionMode(SelectionMode.SINGLE);
 		table.setSizeFull();
-		table.setImmediate(true);
-		table.setColumnHeader("name", "Název");
-		table.setVisibleColumns(new Object[] { "name" });
+		table.getColumn("name").setCaption("Název");
+		table.setColumns("name");
 
-		final Button removeBtn = new Button("Odstranit", new Button.ClickListener() {
-			private static final long serialVersionUID = -4816423459867256516L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				Object value = table.getValue();
-				File file = (File) value;
-
-				if (editMode) {
-					if (PGUtils.isImage(file.getName())) {
-						photogalleryFacade.tryDeleteMiniatureImage(file, photogallery);
-						photogalleryFacade.tryDeleteSlideshowImage(file, photogallery);
-					}
-
-					if (PGUtils.isVideo(file.getName())) {
-						photogalleryFacade.tryDeletePreviewImage(file, photogallery);
-					}
-
+		final Button removeBtn = new DeleteGridButton<>("Odstranit", file -> {
+			if (editMode) {
+				if (PGUtils.isImage(file.getName())) {
+					photogalleryFacade.tryDeleteMiniatureImage(file, photogallery);
+					photogalleryFacade.tryDeleteSlideshowImage(file, photogallery);
 				}
 
-				file.delete();
-				table.removeItem(file);
+				if (PGUtils.isVideo(file.getName())) {
+					photogalleryFacade.tryDeletePreviewImage(file, photogallery);
+				}
 			}
-		});
-		removeBtn.setEnabled(false);
+			file.delete();
+			items.remove(file);
+			table.getDataProvider().refreshAll();
+		}, table);
+
 		gridLayout.addComponent(removeBtn, 1, 1);
 		gridLayout.setComponentAlignment(removeBtn, Alignment.MIDDLE_CENTER);
 
-		table.addValueChangeListener(new Property.ValueChangeListener() {
-			private static final long serialVersionUID = -7300482828441860086L;
-
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				File file = (File) event.getProperty().getValue();
-
-				if (file == null) {
-					gridLayout.removeComponent(imageWrapper);
-					gridLayout.addComponent(previewLabel, 0, 0, 1, 0);
-					removeBtn.setEnabled(false);
-				} else {
-					if (PGUtils.isImage(file.getName())) {
-						if (imageWrapper.getParent() == null) {
-							gridLayout.removeComponent(previewLabel);
-							gridLayout.addComponent(imageWrapper, 0, 0, 1, 0);
-						}
-						image.setSource(new FileResource(file));
+		table.addSelectionListener(event -> {
+			if (event.getAllSelectedItems().isEmpty()) {
+				gridLayout.removeComponent(imageWrapper);
+				gridLayout.addComponent(previewLabel, 0, 0, 1, 0);
+			} else {
+				File file = event.getFirstSelectedItem().get();
+				if (PGUtils.isImage(file.getName())) {
+					if (imageWrapper.getParent() == null) {
+						gridLayout.removeComponent(previewLabel);
+						gridLayout.addComponent(imageWrapper, 0, 0, 1, 0);
 					}
-					removeBtn.setEnabled(true);
+					image.setSource(new FileResource(file));
 				}
+				removeBtn.setEnabled(true);
 			}
 		});
 		gridLayout.addComponent(table, 2, 0, 2, 1);
@@ -355,7 +313,8 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 				try {
 					Files.copy(in, path);
 					newFiles.add(path);
-					table.addItem(path.toFile());
+					items.add(path.toFile());
+					table.getDataProvider().refreshAll();
 				} catch (FileAlreadyExistsException f) {
 					if (warnWindowDeployed == false) {
 						existingFiles = new Label("", ContentMode.HTML);
@@ -393,7 +352,6 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		publicatedCheckBox.setCaption("Publikovat galerii");
 		publicatedCheckBox.setDescription("Je-li prázdné, uvidí galerii pouze její autor");
-		// publicatedCheckBox.setImmediate(true);
 		contentOptionsLayout.addComponent(publicatedCheckBox);
 
 		photogalleryDateField.setCaption("Přepsat datum vytvoření galerie");

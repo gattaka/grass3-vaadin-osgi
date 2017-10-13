@@ -7,7 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -25,7 +25,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import cz.gattserver.common.util.DateUtil;
 import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.facades.ContentNodeFacade;
@@ -249,7 +248,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 	@Override
 	@Async
 	public void modifyPhotogallery(String name, Collection<String> tags, boolean publicated,
-			PhotogalleryDTO photogalleryDTO, String contextRoot, LocalDate date) {
+			PhotogalleryDTO photogalleryDTO, String contextRoot, LocalDateTime date) {
 
 		try {
 			logger.info("modifyPhotogallery thread: " + Thread.currentThread().getId());
@@ -271,8 +270,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 				return;
 			}
 
-			contentNodeFacade.modify(photogalleryDTO.getContentNode().getId(), name, tags, publicated,
-					DateUtil.toDate(date));
+			contentNodeFacade.modify(photogalleryDTO.getContentNode().getId(), name, tags, publicated, date);
 
 		} catch (java.lang.Exception e) {
 			// content node
@@ -309,7 +307,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 	@Override
 	@Async
 	public void savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
-			NodeDTO node, UserInfoDTO author, String contextRoot, LocalDate date) {
+			NodeDTO node, UserInfoDTO author, String contextRoot, LocalDateTime date) {
 
 		System.out.println("savePhotogallery thread: " + Thread.currentThread().getId());
 
@@ -338,7 +336,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 		// vytvoř odpovídající content node
 		eventBus.publish(new PGProcessProgressEvent("Uložení obsahu galerie"));
 		ContentNode contentNode = contentNodeFacade.save(PhotogalleryContentService.ID, photogallery.getId(), name,
-				tags, publicated, node.getId(), author.getId(), false, DateUtil.toDate(date), null);
+				tags, publicated, node.getId(), author.getId(), false, date, null);
 
 		if (contentNode == null) {
 			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));

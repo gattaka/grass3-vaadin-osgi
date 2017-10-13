@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.medic.domain;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -9,8 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -37,8 +35,7 @@ public class MedicalRecord {
 	/**
 	 * Kdy se to stalo
 	 */
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date date;
+	private LocalDateTime date;
 
 	/**
 	 * Záznam o vyšetření
@@ -76,11 +73,11 @@ public class MedicalRecord {
 		this.physician = physician;
 	}
 
-	public Date getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 

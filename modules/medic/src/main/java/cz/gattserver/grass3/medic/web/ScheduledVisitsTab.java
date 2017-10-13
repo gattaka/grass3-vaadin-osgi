@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.medic.web;
 
-import java.util.Calendar;
 import java.util.Collection;
 
 import org.joda.time.LocalDate;
@@ -20,8 +19,8 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.renderers.DateRenderer;
 import com.vaadin.ui.renderers.ImageRenderer;
+import com.vaadin.ui.renderers.LocalDateTimeRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
 
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
@@ -200,7 +199,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 
 		grid.addColumn(ScheduledVisitDTO::getState, new TextRenderer()).setId("state").setCaption("Stav");
 		grid.addColumn(ScheduledVisitDTO::getPurpose).setId("purpose").setCaption("Účel");
-		grid.addColumn(ScheduledVisitDTO::getDate, new DateRenderer("%1$te.%1$tm.%1$tY")).setId("date")
+		grid.addColumn(ScheduledVisitDTO::getDate, new LocalDateTimeRenderer("dd.MM.yyyy")).setId("date")
 				.setCaption("Datum");
 		grid.addColumn(item -> item.getInstitution().getName()).setId("institution").setCaption("Instituce");
 		grid.setWidth("100%");
@@ -272,14 +271,10 @@ public class ScheduledVisitsTab extends VerticalLayout {
 
 				@Override
 				protected void onSuccess() {
-
 					if (toBePlannedVisitDTO.getPeriod() > 0) {
 						// posuň plánování a ulož úpravu
-						Calendar calendar = Calendar.getInstance();
-						calendar.setTime(toBePlannedVisitDTO.getDate());
-						calendar.add(Calendar.MONTH, toBePlannedVisitDTO.getPeriod());
-						toBePlannedVisitDTO.setDate(calendar.getTime());
-
+						toBePlannedVisitDTO
+								.setDate(toBePlannedVisitDTO.getDate().plusMonths(toBePlannedVisitDTO.getPeriod()));
 						if (medicFacade.saveScheduledVisit(toBePlannedVisitDTO) == false) {
 							Notification.show("Nezdařilo se naplánovat příští objednání", Type.WARNING_MESSAGE);
 						}

@@ -5,7 +5,7 @@ import java.util.Collection;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.renderers.DateRenderer;
+import com.vaadin.ui.renderers.LocalDateTimeRenderer;
 
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
 
@@ -59,7 +59,7 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 
 	@Override
 	protected void customizeGrid(Grid<MedicalRecordDTO> grid) {
-		grid.addColumn(MedicalRecordDTO::getDate, new DateRenderer("%1$td. %1$tB %1$tY")).setCaption("Datum")
+		grid.addColumn(MedicalRecordDTO::getDate, new LocalDateTimeRenderer("dd.MM.yyyy")).setCaption("Datum")
 				.setId("fdate");
 		grid.getColumn("institution").setCaption("Instituce");
 		grid.getColumn("physician").setCaption("Ošetřující lékař");

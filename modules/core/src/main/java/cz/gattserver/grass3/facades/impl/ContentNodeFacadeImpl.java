@@ -1,8 +1,7 @@
 package cz.gattserver.grass3.facades.impl;
 
-import java.util.Calendar;
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -56,6 +55,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	/**
 	 * Získá set oblíbených obsahů daného uživatele
 	 */
+	@Override
 	public List<ContentNodeOverviewDTO> getUserFavourite(Long user) {
 		User u = userRepository.findOne(user);
 		if (u == null)
@@ -70,23 +70,26 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 		return contentNodeDTOs;
 	}
 
+	@Override
 	public ContentNode save(String contentModuleId, Long contentId, String name, boolean publicated, Long node,
 			Long author, boolean draft) {
 		return save(contentModuleId, contentId, name, null, publicated, node, author, draft);
 	}
 
+	@Override
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
 			boolean publicated, Long node, Long author, boolean draft) {
 		return save(contentModuleId, contentId, name, tags, publicated, node, author, draft, null, null);
 	}
 
+	@Override
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, Long nodeId, Long author, boolean draft, Date date, Long draftSourceId) {
+			boolean publicated, Long nodeId, Long author, boolean draft, LocalDateTime date, Long draftSourceId) {
 
 		ContentNode contentNode = new ContentNode();
 		contentNode.setContentId(contentId);
 		contentNode.setContentReaderId(contentModuleId);
-		contentNode.setCreationDate(date == null ? Calendar.getInstance().getTime() : date);
+		contentNode.setCreationDate(date);
 		contentNode.setName(name);
 		contentNode.setDraft(draft);
 		contentNode.setDraftSourceId(draftSourceId);
@@ -121,6 +124,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	 *            identifikátor obsahu
 	 * @return obsah
 	 */
+	@Override
 	public ContentNodeDTO getByID(Long contentNodeId) {
 		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
 		ContentNodeDTO contentNodeDTO = mapper.mapContentNodeForDetail(contentNode);
@@ -134,6 +138,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 * @return true pokud proběhla úprava úspěšně jinak false
 	 */
+	@Override
 	public void modify(Long contentNodeId, String name, boolean publicated) {
 		modify(contentNodeId, name, null, publicated);
 	}
@@ -148,15 +153,17 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	 * @param publicated
 	 *            je článek publikován ?
 	 */
+	@Override
 	public void modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated) {
 		modify(contentNodeId, name, tags, publicated, null);
 	}
 
+	@Override
 	public void modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated,
-			Date creationDate) {
+			LocalDateTime creationDate) {
 		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
 
-		contentNode.setLastModificationDate(Calendar.getInstance().getTime());
+		contentNode.setLastModificationDate(LocalDateTime.now());
 		contentNode.setName(name);
 		contentNode.setPublicated(publicated);
 
@@ -179,6 +186,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	 * @param contentNode
 	 *            id obecného uzlu obsahu
 	 */
+	@Override
 	public void deleteByContentNodeId(Long contentNodeId) {
 		userFacade.removeContentFromAllUsersFavourites(contentNodeId);
 
@@ -201,6 +209,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	 * @param contentId
 	 *            id koncového obsahu
 	 */
+	@Override
 	public void deleteByContentId(Long contentId) {
 		Long contentNodeId = contentNodeRepository.findContentNodeIdByContentId(contentId);
 

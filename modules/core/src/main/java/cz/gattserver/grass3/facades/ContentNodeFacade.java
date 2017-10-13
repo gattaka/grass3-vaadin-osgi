@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.facades;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import cz.gattserver.grass3.model.domain.ContentNode;
@@ -91,7 +91,7 @@ public interface ContentNodeFacade {
 	 *         nebo
 	 */
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, Long nodeId, Long author, boolean draft, Date date, Long draftSourceId);
+			boolean publicated, Long nodeId, Long author, boolean draft, LocalDateTime date, Long draftSourceId);
 
 	/**
 	 * Získá contentNodeDTO dle jeho id
@@ -136,7 +136,8 @@ public interface ContentNodeFacade {
 	 *            vnucené datum vytvoření obsahu, které přepíše původní
 	 *            automatické datum
 	 */
-	public void modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated, Date creationDate);
+	public void modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated,
+			LocalDateTime creationDate);
 
 	/**
 	 * Smaže obsah dle id obecného uzlu obsahu

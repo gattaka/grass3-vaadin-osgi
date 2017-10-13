@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.model.domain;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -39,12 +39,12 @@ public class ContentNode {
 	/**
 	 * Kdy byl obsah vytvořen
 	 */
-	private Date creationDate;
+	private LocalDateTime creationDate;
 
 	/**
 	 * Kdy byl naposledy upraven
 	 */
-	private Date lastModificationDate;
+	private LocalDateTime lastModificationDate;
 
 	/**
 	 * Je obsah určen k publikování nebo je soukromý?
@@ -125,19 +125,19 @@ public class ContentNode {
 		this.contentReaderId = contentReaderId;
 	}
 
-	public Date getCreationDate() {
+	public LocalDateTime getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(Date creationDate) {
+	public void setCreationDate(LocalDateTime creationDate) {
 		this.creationDate = creationDate;
 	}
 
-	public Date getLastModificationDate() {
+	public LocalDateTime getLastModificationDate() {
 		return lastModificationDate;
 	}
 
-	public void setLastModificationDate(Date lastModificationDate) {
+	public void setLastModificationDate(LocalDateTime lastModificationDate) {
 		this.lastModificationDate = lastModificationDate;
 	}
 

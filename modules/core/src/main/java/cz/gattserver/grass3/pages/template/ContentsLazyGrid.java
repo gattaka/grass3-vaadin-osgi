@@ -3,9 +3,9 @@ package cz.gattserver.grass3.pages.template;
 import com.vaadin.server.SerializableSupplier;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.renderers.DateRenderer;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.renderers.ImageRenderer;
+import com.vaadin.ui.renderers.LocalDateTimeRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
 
 import cz.gattserver.grass3.ServiceHolder;
@@ -78,11 +78,11 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewDTO> {
 			return contentNode.getAuthor().getName();
 		}, new TextRenderer()).setCaption("Autor").setId(authorBind).setWidth(100);
 
-		addColumn(ContentNodeOverviewDTO::getCreationDate, new DateRenderer("%1$te.%1$tm.%1$tY"))
+		addColumn(ContentNodeOverviewDTO::getCreationDate, new LocalDateTimeRenderer("d.MM.yyyy"))
 				.setCaption("Datum vytvoření").setId(creationDateBind).setStyleGenerator(item -> "v-align-right")
 				.setWidth(GridUtils.DATE_COLUMN_WIDTH);
 
-		addColumn(ContentNodeOverviewDTO::getLastModificationDate, new DateRenderer("%1$te.%1$tm.%1$tY"))
+		addColumn(ContentNodeOverviewDTO::getLastModificationDate, new LocalDateTimeRenderer("d.MM.yyyy"))
 				.setCaption("Datum úpravy").setId(lastModificationDateBind).setStyleGenerator(item -> "v-align-right")
 				.setWidth(GridUtils.DATE_COLUMN_WIDTH);
 

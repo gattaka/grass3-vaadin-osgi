@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.medic.facade;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,7 +61,7 @@ public class MedicMapperImpl implements MedicMapper {
 		dto.setRecord(mapMedicalRecord(e.getRecord()));
 		dto.setPlanned(e.isPlanned());
 
-		if (Calendar.getInstance().getTime().compareTo(dto.getDate()) > 0) {
+		if (LocalDateTime.now().compareTo(dto.getDate()) > 0) {
 			dto.setState(ScheduledVisitState.MISSED);
 		} else {
 			dto.setState(e.isPlanned() ? ScheduledVisitState.PLANNED : ScheduledVisitState.TO_BE_PLANNED);

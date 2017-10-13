@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.model.dto;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -37,12 +37,12 @@ public class ContentNodeDTO implements Serializable, Authorizable {
 	/**
 	 * Kdy byl obsah vytvořen
 	 */
-	private Date creationDate;
+	private LocalDateTime creationDate;
 
 	/**
 	 * Kdy byl naposledy upraven
 	 */
-	private Date lastModificationDate;
+	private LocalDateTime lastModificationDate;
 
 	/**
 	 * Je obsah ve fázi příprav, nebo už má být publikován ?
@@ -106,19 +106,19 @@ public class ContentNodeDTO implements Serializable, Authorizable {
 		this.contentReaderID = contentReaderID;
 	}
 
-	public Date getCreationDate() {
+	public LocalDateTime getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(Date creationDate) {
+	public void setCreationDate(LocalDateTime creationDate) {
 		this.creationDate = creationDate;
 	}
 
-	public Date getLastModificationDate() {
+	public LocalDateTime getLastModificationDate() {
 		return lastModificationDate;
 	}
 
-	public void setLastModificationDate(Date lastModificationDate) {
+	public void setLastModificationDate(LocalDateTime lastModificationDate) {
 		this.lastModificationDate = lastModificationDate;
 	}
 

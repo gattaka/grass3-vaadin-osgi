@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.medic.domain;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -45,7 +45,7 @@ public class ScheduledVisit {
 	/**
 	 * Datum kontroly
 	 */
-	private Date date;
+	private LocalDateTime date;
 
 	/**
 	 * Perioda v měsících
@@ -100,11 +100,11 @@ public class ScheduledVisit {
 		this.record = record;
 	}
 
-	public Date getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 

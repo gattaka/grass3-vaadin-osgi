@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.medic.dto;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 
 import cz.gattserver.common.Identifiable;
 
-public class MedicalRecordDTO implements Identifiable{
+public class MedicalRecordDTO implements Identifiable {
 
 	private Long id;
 
@@ -30,7 +30,7 @@ public class MedicalRecordDTO implements Identifiable{
 	 * Kdy se to stalo
 	 */
 	@NotNull
-	private Date date;
+	private LocalDateTime date;
 
 	/**
 	 * Záznam o vyšetření
@@ -68,11 +68,11 @@ public class MedicalRecordDTO implements Identifiable{
 		this.physician = physician;
 	}
 
-	public Date getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 

@@ -9,7 +9,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +47,7 @@ public class UserFacadeImpl implements UserFacade {
 	public UserInfoDTO getUserByLogin(String username, String password) {
 		List<User> loggedUser = userRepository.findByName(username);
 		if (loggedUser != null && loggedUser.size() == 1
-				&& loggedUser.get(0).getPassword().equals(encoder.encodePassword(password, null))) {
+				&& loggedUser.get(0).getPassword().equals(encoder.encode(password))) {
 
 			User user = loggedUser.get(0);
 			if (user != null)
@@ -69,7 +69,7 @@ public class UserFacadeImpl implements UserFacade {
 		user.setConfirmed(false);
 		user.setEmail(email);
 		user.setName(username);
-		user.setPassword(encoder.encodePassword(password, null));
+		user.setPassword(encoder.encode(password));
 		user.setRegistrationDate(Calendar.getInstance().getTime());
 		EnumSet<Role> roles = EnumSet.of(Role.USER);
 		user.setRoles(roles);

@@ -1,11 +1,16 @@
 package cz.gattserver.grass3.pages.factories;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.server.Page;
+import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinServletRequest;
+import com.vaadin.server.VaadinServletResponse;
 import com.vaadin.server.VaadinSession;
 
 import cz.gattserver.grass3.pages.LoginPage;
@@ -34,12 +39,17 @@ public class LogoutPageFactory extends AbstractPageFactory {
 
 	@Override
 	protected GrassPage createPage(GrassRequest request) {
-		SecurityContext context = SecurityContextHolder.getContext();
-		context.setAuthentication(null);
-		SecurityContextHolder.clearContext();
+		VaadinSession.getCurrent().getSession().invalidate();
 		VaadinSession.getCurrent().close();
-		Page.getCurrent().reload();
-		
+		VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null) {
+			new SecurityContextLogoutHandler().logout(VaadinServletRequest.getCurrent(),
+					VaadinServletResponse.getCurrent(), auth);
+		}
+		// context.setAuthentication(null);
+		SecurityContextHolder.clearContext();
+
 		return new LoginPage(request);
 	}
 

@@ -2,7 +2,6 @@ package cz.gattserver.grass3.articles.latex.web;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.tabs.factories.template.AbstractSettingsTabFactory;
 import cz.gattserver.grass3.tabs.template.SettingsTab;
 import cz.gattserver.grass3.ui.util.GrassRequest;

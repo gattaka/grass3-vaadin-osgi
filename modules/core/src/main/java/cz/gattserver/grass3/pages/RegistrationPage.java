@@ -1,22 +1,8 @@
 package cz.gattserver.grass3.pages;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.client.ui.Field;
-import com.vaadin.data.Validator;
-import com.vaadin.data.validator.EmailValidator;
-import com.vaadin.data.validator.StringLengthValidator;
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.facades.UserFacade;

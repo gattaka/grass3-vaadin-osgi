@@ -23,7 +23,9 @@
 
 	<authentication-manager alias="authenticationManager">
 		<authentication-provider user-service-ref="grassUserDetailService">
-			<password-encoder ref="grassPasswordEncoder" />
+			<password-encoder ref="grassPasswordEncoder">
+				<salt-source system-wide="${security.salt}" />
+			</password-encoder>
 		</authentication-provider>
 	</authentication-manager>
 

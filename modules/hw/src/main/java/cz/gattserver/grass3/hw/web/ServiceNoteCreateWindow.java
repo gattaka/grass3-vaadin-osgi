@@ -98,11 +98,8 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 				ServiceNoteDTO writeDTO = originalDTO == null ? new ServiceNoteDTO() : originalDTO;
 				binder.writeBean(writeDTO);
 				if (originalDTO == null) {
-					if (hwFacade.addServiceNote(writeDTO, hwItem)) {
-						onSuccess(writeDTO);
-					} else {
-						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se zapsat nový servisní záznam"));
-					}
+					hwFacade.addServiceNote(writeDTO, hwItem);
+					onSuccess(writeDTO);
 				} else {
 					hwFacade.modifyServiceNote(writeDTO);
 					onSuccess(writeDTO);
@@ -111,6 +108,8 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 			} catch (ValidationException ex) {
 				Notification.show("   Chybná vstupní data\n\n   " + ex.getBeanValidationErrors().iterator().next(),
 						Notification.Type.TRAY_NOTIFICATION);
+			} catch (Exception ex) {
+				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se zapsat nový servisní záznam"));
 			}
 		}), 1, 3);
 		winLayout.setComponentAlignment(createBtn, Alignment.BOTTOM_RIGHT);

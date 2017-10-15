@@ -96,7 +96,7 @@ public class HWTypesTab extends VerticalLayout {
 		HWItemTypeDTO hwItemTypeDTO = null;
 		if (fix)
 			hwItemTypeDTO = grid.getSelectedItems().iterator().next();
-		Window win = new HWItemTypeCreateWindow(HWTypesTab.this, hwItemTypeDTO == null ? null : hwItemTypeDTO.getId()) {
+		Window win = new HWItemTypeCreateWindow(hwItemTypeDTO == null ? null : hwItemTypeDTO.getId()) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -118,10 +118,11 @@ public class HWTypesTab extends VerticalLayout {
 		UI.getCurrent().addWindow(new ConfirmWindow(
 				"Opravdu smazat '" + hwItemType.getName() + "' (typ bude odebrán od všech označených položek HW)?",
 				e -> {
-					if (hwFacade.deleteHWItemType(hwItemType.getId())) {
+					try {
+						hwFacade.deleteHWItemType(hwItemType.getId());
 						data.remove(hwItemType);
 						grid.getDataProvider().refreshAll();
-					} else {
+					} catch (Exception ex) {
 						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
 					}
 				}) {

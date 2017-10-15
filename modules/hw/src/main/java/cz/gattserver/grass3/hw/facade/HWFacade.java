@@ -30,15 +30,15 @@ public interface HWFacade {
 
 	List<HWItemOverviewDTO> getHWItemsAvailableForPart(HWItemDTO item);
 
-	boolean saveHWType(HWItemTypeDTO hwItemTypeDTO);
+	void saveHWType(HWItemTypeDTO hwItemTypeDTO);
 
-	boolean saveHWItem(HWItemDTO hwItemDTO);
+	void saveHWItem(HWItemDTO hwItemDTO);
 
-	boolean deleteHWItem(Long id);
+	void deleteHWItem(Long id);
 
-	boolean addServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItem);
+	void addServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItem);
 
-	boolean deleteHWItemType(Long id);
+	void deleteHWItemType(Long id);
 
 	HWItemDTO getHWItem(Long itemId);
 

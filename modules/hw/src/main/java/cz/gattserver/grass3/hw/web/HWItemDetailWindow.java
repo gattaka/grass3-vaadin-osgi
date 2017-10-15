@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,7 +22,6 @@ import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
@@ -74,7 +74,8 @@ public class HWItemDetailWindow extends WebWindow {
 	private HWItemDTO hwItem;
 	private FileDownloader downloader;
 	private Long hwItemId;
-	private Component triggerComponent;
+
+	private Optional<Runnable> refreshGrid = Optional.empty();
 
 	private Grid<ServiceNoteDTO> serviceNotesGrid;
 	private Grid<File> docsGrid;
@@ -97,9 +98,6 @@ public class HWItemDetailWindow extends WebWindow {
 	private String createWarrantyYearsString(Integer warrantyYears) {
 		return new CZSuffixCreator("rok", "roky", "let").createStringWithSuffix(warrantyYears);
 	}
-
-	protected void refreshTable() {
-	};
 
 	/**
 	 * Pokusí se získat ikonu HW
@@ -283,7 +281,7 @@ public class HWItemDetailWindow extends WebWindow {
 			usedInBtn.setStyleName(ValoTheme.BUTTON_LINK);
 			usedInBtn.addClickListener(e -> {
 				close();
-				UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, hwItem.getUsedIn().getId()));
+				UI.getCurrent().addWindow(new HWItemDetailWindow(hwItem.getUsedIn().getId()));
 			});
 			winLayout.addComponent(usedInBtn, 1, 6, 4, 6);
 		}
@@ -302,7 +300,7 @@ public class HWItemDetailWindow extends WebWindow {
 		List<HWItemOverviewDTO> parts = hwFacade.getAllParts(hwItem.getId());
 		VerticalLayout partsLayout = new VerticalLayout();
 		partsLayout.setSpacing(false);
-		partsLayout.setMargin(false);
+		partsLayout.setMargin(true);
 		Panel partsPanel = new Panel(partsLayout);
 		partsPanel.setSizeFull();
 		partsWrapperLayout.addComponent(partsPanel);
@@ -315,7 +313,7 @@ public class HWItemDetailWindow extends WebWindow {
 			partDetailBtn.addClickListener(e -> {
 				close();
 				HWItemDTO detailTO = hwFacade.getHWItem(part.getId());
-				UI.getCurrent().addWindow(new HWItemDetailWindow(triggerComponent, detailTO.getId()));
+				UI.getCurrent().addWindow(new HWItemDetailWindow(detailTO.getId()));
 			});
 			partsLayout.addComponent(partDetailBtn);
 		}
@@ -331,13 +329,13 @@ public class HWItemDetailWindow extends WebWindow {
 		 * Oprava údajů existující položky HW
 		 */
 		fixBtn.addClickListener(e -> {
-			UI.getCurrent().addWindow(new HWItemCreateWindow(HWItemDetailWindow.this, hwItem.getId()) {
+			UI.getCurrent().addWindow(new HWItemCreateWindow(hwItem) {
 
 				private static final long serialVersionUID = -1397391593801030584L;
 
 				@Override
 				protected void onSuccess() {
-					refreshTable();
+					refreshGrid.ifPresent(Runnable::run);
 					createFirstTab();
 					sheet.setSelectedTab(0);
 				}
@@ -349,26 +347,17 @@ public class HWItemDetailWindow extends WebWindow {
 		 * Smazání položky HW
 		 */
 		deleteBtn.addClickListener(e -> {
-			deleteBtn.setEnabled(false);
 			UI.getCurrent().addWindow(new ConfirmWindow(
 					"Opravdu smazat '" + hwItem.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?",
 					ev -> {
-						if (hwFacade.deleteHWItem(hwItem.getId())) {
-							refreshTable();
+						try {
+							hwFacade.deleteHWItem(hwItem.getId());
+							refreshGrid.ifPresent(Runnable::run);
 							HWItemDetailWindow.this.close();
-						} else {
+						} catch (Exception ex) {
 							UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
 						}
-					}) {
-				private static final long serialVersionUID = -2258948311452935061L;
-
-				@Override
-				public void close() {
-					deleteBtn.setEnabled(true);
-					super.close();
-				}
-
-			});
+					}));
 		});
 		operationsLayout.addComponent(deleteBtn);
 
@@ -450,7 +439,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 					@Override
 					protected void onSuccess(ServiceNoteDTO noteDTO) {
-						refreshTable();
+						refreshGrid.ifPresent(Runnable::run);
 						createFirstTab();
 						populateServiceNotesGrid();
 						serviceNotesGrid.select(noteDTO);
@@ -465,7 +454,6 @@ public class HWItemDetailWindow extends WebWindow {
 		 */
 		fixNoteBtn = new Button("Opravit záznam");
 		fixNoteBtn.setEnabled(false);
-		// fixNoteBtn.setImmediate(true);
 		fixNoteBtn.setIcon(new ThemeResource(ImageIcons.QUICKEDIT_16_ICON));
 		fixNoteBtn.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = 8876001665427003203L;
@@ -687,10 +675,9 @@ public class HWItemDetailWindow extends WebWindow {
 		return wrapperLayout;
 	}
 
-	public HWItemDetailWindow(Component triggerComponent, final Long hwItemId) {
+	public HWItemDetailWindow(Long hwItemId) {
 		super("Detail HW");
 		this.hwItemId = hwItemId;
-		this.triggerComponent = triggerComponent;
 
 		setWidth("900px");
 		setHeight("700px");
@@ -713,14 +700,12 @@ public class HWItemDetailWindow extends WebWindow {
 		layout.setExpandRatio(sheet, 1);
 		setContent(layout);
 
-		triggerComponent.setEnabled(false);
-
-		addCloseListener(e -> {
-			if (triggerComponent != null)
-				triggerComponent.setEnabled(true);
-		});
-
 		center();
+	}
+
+	public HWItemDetailWindow withRefreshGrid(Runnable refreshGridRunnable) {
+		refreshGrid = Optional.of(refreshGridRunnable);
+		return this;
 	}
 
 	private void createFirstTab() {

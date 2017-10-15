@@ -17,7 +17,7 @@ public interface MedicFacade {
 
 	Set<PhysicianDTO> getAllPhysicians();
 
-	boolean savePhysician(PhysicianDTO dto);
+	void savePhysician(PhysicianDTO dto);
 
 	PhysicianDTO getPhysicianById(Long id);
 
@@ -27,7 +27,7 @@ public interface MedicFacade {
 
 	List<MedicalInstitutionDTO> getAllMedicalInstitutions();
 
-	boolean saveMedicalInstitution(MedicalInstitutionDTO dto);
+	void saveMedicalInstitution(MedicalInstitutionDTO dto);
 
 	MedicalInstitutionDTO getMedicalInstitutionById(Long id);
 
@@ -39,7 +39,7 @@ public interface MedicFacade {
 
 	List<ScheduledVisitDTO> getAllScheduledVisits();
 
-	boolean saveScheduledVisit(ScheduledVisitDTO dto);
+	void saveScheduledVisit(ScheduledVisitDTO dto);
 
 	ScheduledVisitDTO createPlannedScheduledVisitFromToBePlanned(ScheduledVisitDTO dto);
 
@@ -51,7 +51,7 @@ public interface MedicFacade {
 
 	List<MedicalRecordDTO> getAllMedicalRecords();
 
-	boolean saveMedicalRecord(MedicalRecordDTO dto);
+	void saveMedicalRecord(MedicalRecordDTO dto);
 
 	MedicalRecordDTO getMedicalRecordById(Long id);
 
@@ -61,7 +61,7 @@ public interface MedicFacade {
 
 	Set<MedicamentDTO> getAllMedicaments();
 
-	boolean saveMedicament(MedicamentDTO dto);
+	void saveMedicament(MedicamentDTO dto);
 
 	MedicamentDTO getMedicamentById(Long id);
 

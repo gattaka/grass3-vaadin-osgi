@@ -61,7 +61,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 	}
 
 	private void openCompletedWindow(final ScheduledVisitDTO scheduledVisitDTO) {
-		Window win = new MedicalRecordCreateWindow(ScheduledVisitsTab.this, scheduledVisitDTO) {
+		Window win = new MedicalRecordCreateWindow(scheduledVisitDTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -271,21 +271,23 @@ public class ScheduledVisitsTab extends VerticalLayout {
 
 				@Override
 				protected void onSuccess() {
-					if (toBePlannedVisitDTO.getPeriod() > 0) {
-						// posuň plánování a ulož úpravu
-						toBePlannedVisitDTO
-								.setDate(toBePlannedVisitDTO.getDate().plusMonths(toBePlannedVisitDTO.getPeriod()));
-						if (medicFacade.saveScheduledVisit(toBePlannedVisitDTO) == false) {
-							Notification.show("Nezdařilo se naplánovat příští objednání", Type.WARNING_MESSAGE);
+					try {
+						if (toBePlannedVisitDTO.getPeriod() > 0) {
+							// posuň plánování a ulož úpravu
+							toBePlannedVisitDTO
+									.setDate(toBePlannedVisitDTO.getDate().plusMonths(toBePlannedVisitDTO.getPeriod()));
+							medicFacade.saveScheduledVisit(toBePlannedVisitDTO);
+						} else {
+							// nemá pravidelnost - návštěva byla objednána,
+							// plánování návštěvy lze smazat
+							medicFacade.deleteScheduledVisit(toBePlannedVisitDTO);
 						}
-					} else {
-						// nemá pravidelnost - návštěva byla objednána,
-						// plánování návštěvy lze smazat
-						medicFacade.deleteScheduledVisit(toBePlannedVisitDTO);
-					}
 
-					populateContainer(true);
-					populateContainer(false);
+						populateContainer(true);
+						populateContainer(false);
+					} catch (Exception ex) {
+						Notification.show("Nezdařilo se naplánovat příští objednání", Type.WARNING_MESSAGE);
+					}
 				}
 			};
 			UI.getCurrent().addWindow(win);

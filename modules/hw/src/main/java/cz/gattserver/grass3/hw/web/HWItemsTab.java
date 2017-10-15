@@ -94,7 +94,7 @@ public class HWItemsTab extends VerticalLayout {
 			Long id = grid.getSelectedItems().iterator().next().getId();
 			hwItem = hwFacade.getHWItem(id);
 		}
-		addWindow(new HWItemCreateWindow(HWItemsTab.this, hwItem == null ? null : hwItem.getId()) {
+		addWindow(new HWItemCreateWindow(hwItem == null ? null : hwItem.getId()) {
 
 			private static final long serialVersionUID = -1397391593801030584L;
 
@@ -124,14 +124,7 @@ public class HWItemsTab extends VerticalLayout {
 	}
 
 	private void openDetailWindow(Long id) {
-		addWindow(new HWItemDetailWindow(HWItemsTab.this, id) {
-			private static final long serialVersionUID = -8711057204738112594L;
-
-			@Override
-			protected void refreshTable() {
-				populate();
-			}
-		});
+		addWindow(new HWItemDetailWindow(id).withRefreshGrid(this::populate));
 	}
 
 	private void openDeleteWindow() {
@@ -141,9 +134,10 @@ public class HWItemsTab extends VerticalLayout {
 		HWItemOverviewDTO to = grid.getSelectedItems().iterator().next();
 		addWindow(new ConfirmWindow(
 				"Opravdu smazat '" + to.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?", e -> {
-					if (hwFacade.deleteHWItem(to.getId())) {
+					try {
+						hwFacade.deleteHWItem(to.getId());
 						populate();
-					} else {
+					} catch (Exception ex) {
 						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
 					}
 				}) {

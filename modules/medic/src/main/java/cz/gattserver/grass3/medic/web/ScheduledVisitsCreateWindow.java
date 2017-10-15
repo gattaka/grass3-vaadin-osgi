@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import com.vaadin.ui.Button;
 import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.shared.ui.datefield.DateTimeResolution;
 import com.vaadin.ui.Alignment;
@@ -73,8 +74,8 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 		}
 	}
 
-	public ScheduledVisitsCreateWindow(Operation operation, ScheduledVisitDTO visitDTO) {
-		super(getTitleByOperation(operation, visitDTO));
+	public ScheduledVisitsCreateWindow(Operation operation, ScheduledVisitDTO originalDTO) {
+		super(getTitleByOperation(operation, originalDTO));
 
 		boolean planned = operation.equals(Operation.PLANNED) || operation.equals(Operation.PLANNED_FROM_TO_BE_PLANNED);
 
@@ -85,15 +86,13 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 		winLayout.setMargin(true);
 		winLayout.setSpacing(true);
 
-		final ScheduledVisitDTO scheduledVisitDTO = visitDTO == null ? new ScheduledVisitDTO() : visitDTO;
-		if (visitDTO == null) {
-			scheduledVisitDTO.setPurpose("");
-			scheduledVisitDTO.setPlanned(planned);
-			scheduledVisitDTO.setState(planned ? ScheduledVisitState.PLANNED : ScheduledVisitState.TO_BE_PLANNED);
-		}
+		ScheduledVisitDTO formDTO = new ScheduledVisitDTO();
+		formDTO.setPurpose("");
+		formDTO.setPlanned(planned);
+		formDTO.setState(planned ? ScheduledVisitState.PLANNED : ScheduledVisitState.TO_BE_PLANNED);
 
 		Binder<ScheduledVisitDTO> binder = new Binder<>(ScheduledVisitDTO.class);
-		binder.setBean(scheduledVisitDTO);
+		binder.setBean(formDTO);
 
 		final TextField purposeField = new TextField("Účel návštěvy");
 		winLayout.addComponent(purposeField, 0, 0, 1, 0);
@@ -141,27 +140,30 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 		winLayout.addComponent(separator, 0, 4);
 
 		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button(getSubmitBtnCaptionByOperation(operation, visitDTO), event -> {
+		winLayout.addComponent(saveBtn = new Button(getSubmitBtnCaptionByOperation(operation, originalDTO), e -> {
 			try {
-				binder.writeBean(scheduledVisitDTO);
-				if (medicalFacade.saveScheduledVisit(scheduledVisitDTO) == false) {
-					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
-				} else {
-					onSuccess();
-				}
+				ScheduledVisitDTO writeDTO = originalDTO == null ? new ScheduledVisitDTO() : originalDTO;
+				binder.writeBean(writeDTO);
+				medicalFacade.saveScheduledVisit(writeDTO);
+				onSuccess();
 				close();
-			} catch (Exception e) {
-				Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
+			} catch (ValidationException ex) {
+				Notification.show("   Chybná vstupní data\n\n   " + ex.getCause().getMessage(),
 						Notification.Type.TRAY_NOTIFICATION);
+			} catch (Exception ex) {
+				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
 			}
 		}), 1, 5);
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
 
+		if (originalDTO != null)
+			binder.readBean(originalDTO);
+
 		// vyplňuji objednání na základě plánovaného objednání
-		if (visitDTO != null && planned) {
-			purposeField.setValue(visitDTO.getPurpose());
-			recordsComboBox.setValue(visitDTO.getRecord());
-			institutionComboBox.setValue(visitDTO.getInstitution());
+		if (originalDTO != null && planned) {
+			purposeField.setValue(originalDTO.getPurpose());
+			recordsComboBox.setValue(originalDTO.getRecord());
+			institutionComboBox.setValue(originalDTO.getInstitution());
 		}
 
 		setContent(winLayout);

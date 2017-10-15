@@ -5,10 +5,10 @@ import java.util.Set;
 
 import com.vaadin.ui.Button;
 import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
 import com.vaadin.shared.ui.datefield.DateTimeResolution;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
@@ -33,25 +33,22 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 
 	private MedicFacade medicalFacade;
 
-	public MedicalRecordCreateWindow(final Component triggerComponent) {
-		this(triggerComponent, null, null);
+	public MedicalRecordCreateWindow() {
+		this(null, null);
 	}
 
-	public MedicalRecordCreateWindow(final Component triggerComponent, ScheduledVisitDTO scheduledVisitDTO) {
-		this(triggerComponent, scheduledVisitDTO, null);
+	public MedicalRecordCreateWindow(ScheduledVisitDTO scheduledVisitDTO) {
+		this(scheduledVisitDTO, null);
 	}
 
-	public MedicalRecordCreateWindow(final Component triggerComponent, MedicalRecordDTO recordDTO) {
-		this(triggerComponent, null, recordDTO);
+	public MedicalRecordCreateWindow(MedicalRecordDTO recordDTO) {
+		this(null, recordDTO);
 	}
 
-	private MedicalRecordCreateWindow(final Component triggerComponent, ScheduledVisitDTO scheduledVisitDTO,
-			MedicalRecordDTO recordDTO) {
-		super(recordDTO == null ? "Založení nového záznamu" : "Úprava záznamu");
+	private MedicalRecordCreateWindow(ScheduledVisitDTO scheduledVisitDTO, MedicalRecordDTO originalDTO) {
+		super(originalDTO == null ? "Založení nového záznamu" : "Úprava záznamu");
 
 		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
-
-		triggerComponent.setEnabled(false);
 
 		GridLayout winLayout = new GridLayout(2, 7);
 		winLayout.setMargin(true);
@@ -59,15 +56,10 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 
 		winLayout.setWidth("400px");
 
-		final MedicalRecordDTO medicalRecordDTO = recordDTO == null ? new MedicalRecordDTO() : recordDTO;
-
-		if (scheduledVisitDTO != null) {
-			medicalRecordDTO.setDate(scheduledVisitDTO.getDate());
-			medicalRecordDTO.setInstitution(scheduledVisitDTO.getInstitution());
-		}
+		MedicalRecordDTO formDTO = new MedicalRecordDTO();
 
 		Binder<MedicalRecordDTO> binder = new Binder<MedicalRecordDTO>(MedicalRecordDTO.class);
-		binder.setBean(medicalRecordDTO);
+		binder.setBean(formDTO);
 
 		Set<PhysicianDTO> physicians = medicalFacade.getAllPhysicians();
 		final ComboBox<PhysicianDTO> physicianComboBox = new ComboBox<>("Ošetřující lékař", physicians);
@@ -109,26 +101,31 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 		winLayout.addComponent(separator, 0, 5);
 
 		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button(recordDTO == null ? "Založit" : "Upravit", e -> {
+		winLayout.addComponent(saveBtn = new Button(originalDTO == null ? "Založit" : "Upravit", e -> {
 			try {
-				binder.writeBean(medicalRecordDTO);
-				if (medicalFacade.saveMedicalRecord(medicalRecordDTO) == false) {
-					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se uložit nový záznam"));
-				} else {
-					onSuccess();
-				}
+				MedicalRecordDTO writeDTO = originalDTO == null ? new MedicalRecordDTO() : originalDTO;
+				binder.writeBean(writeDTO);
+				medicalFacade.saveMedicalRecord(writeDTO);
+				onSuccess();
 				close();
-			} catch (Exception ex) {
+			} catch (ValidationException ex) {
 				Notification.show("   Chybná vstupní data\n\n   " + ex.getCause().getMessage(),
 						Notification.Type.TRAY_NOTIFICATION);
+			} catch (Exception ex) {
+				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se uložit nový záznam"));
 			}
 		}), 1, 6);
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
 
+		if (originalDTO != null)
+			binder.readBean(originalDTO);
+
+		if (scheduledVisitDTO != null) {
+			dateField.setValue(scheduledVisitDTO.getDate());
+			institutionComboBox.setValue(scheduledVisitDTO.getInstitution());
+		}
+
 		setContent(winLayout);
-
-		addCloseListener(e -> triggerComponent.setEnabled(true));
-
 	}
 
 	protected abstract void onSuccess();

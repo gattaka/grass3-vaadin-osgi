@@ -2,6 +2,7 @@ package cz.gattserver.grass3.medic.web;
 
 import com.vaadin.ui.Button;
 import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
@@ -26,8 +27,8 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 		this(null);
 	}
 
-	public MedicamentCreateWindow(MedicamentDTO modifiedMedicamentDTO) {
-		super(modifiedMedicamentDTO == null ? "Založení nového medikamentu" : "Úprava medikamentu");
+	public MedicamentCreateWindow(MedicamentDTO originalDTO) {
+		super(originalDTO == null ? "Založení nového medikamentu" : "Úprava medikamentu");
 
 		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
 
@@ -37,9 +38,9 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 
 		winLayout.setWidth("300px");
 
-		MedicamentDTO medicamentDTO = modifiedMedicamentDTO == null ? new MedicamentDTO() : modifiedMedicamentDTO;
+		MedicamentDTO formDTO = new MedicamentDTO();
 		Binder<MedicamentDTO> binder = new Binder<>(MedicamentDTO.class);
-		binder.setBean(medicamentDTO);
+		binder.setBean(formDTO);
 
 		final TextField nameField = new TextField("Název");
 		winLayout.addComponent(nameField, 0, 0, 1, 0);
@@ -56,21 +57,24 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 		winLayout.addComponent(separator, 0, 2);
 
 		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button(modifiedMedicamentDTO == null ? "Založit" : "Upravit", e -> {
+		winLayout.addComponent(saveBtn = new Button(originalDTO == null ? "Založit" : "Upravit", e -> {
 			try {
-				binder.writeBean(medicamentDTO);
-				if (medicalFacade.saveMedicament(medicamentDTO) == false) {
-					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
-				} else {
-					onSuccess();
-				}
+				MedicamentDTO writeDTO = originalDTO == null ? new MedicamentDTO() : originalDTO;
+				binder.writeBean(writeDTO);
+				medicalFacade.saveMedicament(writeDTO);
+				onSuccess();
 				close();
-			} catch (Exception ex) {
+			} catch (ValidationException ex) {
 				Notification.show("   Chybná vstupní data\n\n   " + ex.getCause().getMessage(),
 						Notification.Type.TRAY_NOTIFICATION);
+			} catch (Exception ex) {
+				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
 			}
 		}), 1, 3);
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
+
+		if (originalDTO != null)
+			binder.readBean(originalDTO);
 
 		setContent(winLayout);
 

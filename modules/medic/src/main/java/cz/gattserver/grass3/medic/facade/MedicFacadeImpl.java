@@ -60,14 +60,14 @@ public class MedicFacadeImpl implements MedicFacade {
 	}
 
 	@Override
-	public boolean saveMedicalInstitution(MedicalInstitutionDTO dto) {
+	public void saveMedicalInstitution(MedicalInstitutionDTO dto) {
 		MedicalInstitution institution = new MedicalInstitution();
 		institution.setId(dto.getId());
 		institution.setAddress(dto.getAddress());
 		institution.setHours(dto.getHours());
 		institution.setName(dto.getName());
 		institution.setWeb(dto.getWeb());
-		return medicalInstitutionRepository.save(institution) != null;
+		medicalInstitutionRepository.save(institution);
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class MedicFacadeImpl implements MedicFacade {
 	}
 
 	@Override
-	public boolean saveScheduledVisit(ScheduledVisitDTO dto) {
+	public void saveScheduledVisit(ScheduledVisitDTO dto) {
 		ScheduledVisit visit = new ScheduledVisit();
 		visit.setId(dto.getId());
 		visit.setDate(dto.getDate());
@@ -125,7 +125,7 @@ public class MedicFacadeImpl implements MedicFacade {
 			visit.setInstitution(medicalInstitutionRepository.findOne(dto.getInstitution().getId()));
 		}
 
-		return scheduledVisitRepository.save(visit) != null;
+		scheduledVisitRepository.save(visit);
 	}
 
 	@Override
@@ -146,7 +146,7 @@ public class MedicFacadeImpl implements MedicFacade {
 	}
 
 	@Override
-	public boolean saveMedicalRecord(MedicalRecordDTO dto) {
+	public void saveMedicalRecord(MedicalRecordDTO dto) {
 		MedicalRecord record = new MedicalRecord();
 		record.setId(dto.getId());
 		record.setDate(dto.getDate());
@@ -167,7 +167,7 @@ public class MedicFacadeImpl implements MedicFacade {
 		}
 		record.setMedicaments(medicaments);
 
-		return medicalRecordRepository.save(record) != null;
+		medicalRecordRepository.save(record);
 	}
 
 	@Override
@@ -188,12 +188,12 @@ public class MedicFacadeImpl implements MedicFacade {
 	}
 
 	@Override
-	public boolean saveMedicament(MedicamentDTO dto) {
+	public void saveMedicament(MedicamentDTO dto) {
 		Medicament medicament = new Medicament();
 		medicament.setId(dto.getId());
 		medicament.setName(dto.getName());
 		medicament.setTolerance(dto.getTolerance());
-		return medicamentRepository.save(medicament) != null;
+		medicamentRepository.save(medicament);
 	}
 
 	@Override
@@ -214,11 +214,11 @@ public class MedicFacadeImpl implements MedicFacade {
 	}
 
 	@Override
-	public boolean savePhysician(PhysicianDTO dto) {
+	public void savePhysician(PhysicianDTO dto) {
 		Physician physician = new Physician();
 		physician.setId(dto.getId());
 		physician.setName(dto.getName());
-		return physicianRepository.save(physician) != null;
+		physicianRepository.save(physician);
 	}
 
 	@Override

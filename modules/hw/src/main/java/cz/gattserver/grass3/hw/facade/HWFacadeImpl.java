@@ -90,13 +90,13 @@ public class HWFacadeImpl implements HWFacade {
 	}
 
 	@Override
-	public boolean saveHWType(HWItemTypeDTO hwItemTypeDTO) {
+	public void saveHWType(HWItemTypeDTO hwItemTypeDTO) {
 		HWItemType type = hwMapper.mapHWItem(hwItemTypeDTO);
-		return hwItemTypeRepository.save(type) != null;
+		hwItemTypeRepository.save(type);
 	}
 
 	@Override
-	public boolean saveHWItem(HWItemDTO hwItemDTO) {
+	public void saveHWItem(HWItemDTO hwItemDTO) {
 		HWItem item;
 		if (hwItemDTO.getId() == null)
 			item = new HWItem();
@@ -120,12 +120,11 @@ public class HWFacadeImpl implements HWFacade {
 				item.getTypes().add(type);
 			}
 		}
-		return hwItemRepository.save(item) != null;
+		hwItemRepository.save(item);
 	}
 
 	@Override
-	public boolean deleteHWItem(Long id) {
-
+	public void deleteHWItem(Long id) {
 		HWItem item = hwItemRepository.findOne(id);
 		for (ServiceNote note : item.getServiceNotes()) {
 			serviceNoteRepository.delete(note);
@@ -140,8 +139,6 @@ public class HWFacadeImpl implements HWFacade {
 		}
 
 		hwItemRepository.delete(item.getId());
-
-		return true;
 	}
 
 	/**
@@ -191,8 +188,7 @@ public class HWFacadeImpl implements HWFacade {
 	}
 
 	@Override
-	public boolean addServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItemDTO) {
-
+	public void addServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItemDTO) {
 		HWItem item = hwItemRepository.findOne(hwItemDTO.getId());
 		ServiceNote serviceNote = new ServiceNote();
 		serviceNote.setDate(DateUtil.toDate(serviceNoteDTO.getDate()));
@@ -241,13 +237,10 @@ public class HWFacadeImpl implements HWFacade {
 		}
 
 		hwItemRepository.save(item);
-
-		return true;
 	}
 
 	@Override
-	public boolean deleteHWItemType(Long id) {
-
+	public void deleteHWItemType(Long id) {
 		HWItemType itemType = hwItemTypeRepository.findOne(id);
 
 		List<HWItem> items = hwItemRepository.findByTypesId(itemType.getId());
@@ -257,8 +250,6 @@ public class HWFacadeImpl implements HWFacade {
 		}
 
 		hwItemTypeRepository.delete(itemType);
-
-		return true;
 	}
 
 	@Override

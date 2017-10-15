@@ -24,7 +24,7 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 
 	@Override
 	protected Window createCreateWindow() {
-		return new MedicalRecordCreateWindow(MedicalRecordsTab.this) {
+		return new MedicalRecordCreateWindow() {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -42,7 +42,7 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 
 	@Override
 	protected Window createModifyWindow(MedicalRecordDTO dto) {
-		return new MedicalRecordCreateWindow(MedicalRecordsTab.this, dto) {
+		return new MedicalRecordCreateWindow(dto) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override

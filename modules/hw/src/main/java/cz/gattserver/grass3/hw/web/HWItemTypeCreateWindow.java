@@ -3,8 +3,9 @@ package cz.gattserver.grass3.hw.web;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -21,40 +22,58 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 	@Autowired
 	private HWFacade hwFacade;
 
-	public HWItemTypeCreateWindow(final Component triggerComponent, final Long fixTypeId) {
-		super("Založení nového typu HW");
+	public HWItemTypeCreateWindow(Long originalId) {
+		if (originalId == null) {
+			init(null);
+		} else {
+			HWItemTypeDTO originalDTO = hwFacade.getHWItemType(originalId);
+			init(originalDTO);
+		}
+	}
 
-		triggerComponent.setEnabled(false);
+	public HWItemTypeCreateWindow(HWItemTypeDTO originalDTO) {
+		init(originalDTO);
+	}
+
+	public HWItemTypeCreateWindow() {
+		init(null);
+	}
+
+	public void init(HWItemTypeDTO originalDTO) {
+		setCaption("Založení nového typu HW");
 
 		VerticalLayout winLayout = new VerticalLayout();
 		winLayout.setMargin(true);
 		winLayout.setSpacing(true);
 
-		HWItemTypeDTO hwItemTypeDTO;
-		if (fixTypeId != null) {
-			hwItemTypeDTO = hwFacade.getHWItemType(fixTypeId);
-		} else {
-			hwItemTypeDTO = new HWItemTypeDTO();
-			hwItemTypeDTO.setName("");
-		}
+		HWItemTypeDTO formDTO = new HWItemTypeDTO();
+		formDTO.setName("");
 
 		final TextField nameField = new TextField();
 		Binder<HWItemTypeDTO> binder = new Binder<HWItemTypeDTO>(HWItemTypeDTO.class);
-		binder.setBean(hwItemTypeDTO);
+		binder.setBean(formDTO);
 		binder.bind(nameField, "name");
-		
+
 		winLayout.addComponent(nameField);
 		winLayout.addComponent(new Button("Uložit", e -> {
-			if (hwFacade.saveHWType(hwItemTypeDTO)) {
-				onSuccess(hwItemTypeDTO);
-			} else {
+			try {
+				HWItemTypeDTO writeDTO = originalDTO == null ? new HWItemTypeDTO() : originalDTO;
+				binder.writeBean(writeDTO);
+				hwFacade.saveHWType(writeDTO);
+				onSuccess(writeDTO);
+				close();
+			} catch (ValidationException ex) {
+				Notification.show("   Chybná vstupní data\n\n   " + ex.getBeanValidationErrors().iterator().next(),
+						Notification.Type.TRAY_NOTIFICATION);
+			} catch (Exception ex) {
 				UI.getCurrent().addWindow(new ErrorWindow("Uložení se nezdařilo"));
 			}
-			close();
 		}));
 
+		if (originalDTO != null)
+			binder.readBean(originalDTO);
+
 		setContent(winLayout);
-		addCloseListener(e -> triggerComponent.setEnabled(true));
 	}
 
 	protected abstract void onSuccess(HWItemTypeDTO hwItemTypeDTO);

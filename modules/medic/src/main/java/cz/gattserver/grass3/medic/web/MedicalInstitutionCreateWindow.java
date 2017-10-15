@@ -2,6 +2,7 @@ package cz.gattserver.grass3.medic.web;
 
 import com.vaadin.ui.Button;
 import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
@@ -37,10 +38,9 @@ public abstract class MedicalInstitutionCreateWindow extends WebWindow {
 
 		winLayout.setWidth("500px");
 
-		final MedicalInstitutionDTO medicalInstitutionDTO = modifiedMedicalInstitutionDTO == null
-				? new MedicalInstitutionDTO() : modifiedMedicalInstitutionDTO;
+		MedicalInstitutionDTO formDTO = new MedicalInstitutionDTO();
 		Binder<MedicalInstitutionDTO> binder = new Binder<MedicalInstitutionDTO>(MedicalInstitutionDTO.class);
-		binder.setBean(medicalInstitutionDTO);
+		binder.setBean(formDTO);
 
 		final TextField nameField = new TextField("Název");
 		winLayout.addComponent(nameField, 0, 0, 1, 0);
@@ -68,22 +68,26 @@ public abstract class MedicalInstitutionCreateWindow extends WebWindow {
 		winLayout.addComponent(separator, 0, 4);
 
 		Button saveBtn;
-		winLayout.addComponent(
-				saveBtn = new Button(modifiedMedicalInstitutionDTO == null ? "Založit" : "Upravit", event -> {
+		winLayout
+				.addComponent(saveBtn = new Button(modifiedMedicalInstitutionDTO == null ? "Založit" : "Upravit", e -> {
 					try {
-						binder.writeBean(medicalInstitutionDTO);
-						if (medicalFacade.saveMedicalInstitution(medicalInstitutionDTO) == false) {
-							UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
-						} else {
-							onSuccess();
-						}
+						MedicalInstitutionDTO writeDTO = modifiedMedicalInstitutionDTO == null
+								? new MedicalInstitutionDTO() : modifiedMedicalInstitutionDTO;
+						binder.writeBean(writeDTO);
+						medicalFacade.saveMedicalInstitution(writeDTO);
+						onSuccess();
 						close();
-					} catch (Exception e) {
-						Notification.show("   Chybná vstupní data\n\n   " + e.getCause().getMessage(),
+					} catch (ValidationException ex) {
+						Notification.show("   Chybná vstupní data\n\n   " + ex.getCause().getMessage(),
 								Notification.Type.TRAY_NOTIFICATION);
+					} catch (Exception ex) {
+						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
 					}
 				}), 1, 5);
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
+
+		if (modifiedMedicalInstitutionDTO != null)
+			binder.readBean(modifiedMedicalInstitutionDTO);
 
 		setContent(winLayout);
 	}

@@ -7,6 +7,9 @@
 	<!-- http://www.baeldung.com/spring-security-remember-me -->
 	<!-- http://www.baeldung.com/spring-security-login -->
 
+	<!-- Deprecated - nově je -->
+	<!-- https://www.mkyong.com/spring-security/spring-security-password-hashing-example/ -->
+
 	<http>
 		<csrf disabled="true" />
 		<intercept-url pattern="/**" access="permitAll" />
@@ -21,10 +24,14 @@
 		<remember-me key="grass3-d1b3395b306b568d2fd977109c08540b" />
 	</http>
 
+	<beans:bean
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"
+		id="grassPasswordEncoder">
+	</beans:bean>
+
 	<authentication-manager alias="authenticationManager">
 		<authentication-provider user-service-ref="grassUserDetailService">
 			<password-encoder ref="grassPasswordEncoder">
-				<salt-source system-wide="${security.salt}" />
 			</password-encoder>
 		</authentication-provider>
 	</authentication-manager>

@@ -71,17 +71,6 @@
 
 	<task:annotation-driven executor="taskExecutor" />
 
-	<bean
-		class="org.springframework.security.authentication.dao.SystemWideSaltSource"
-		id="saltSource">
-		<property name="systemWideSalt" value="${security.salt}" />
-	</bean>
-
-	<bean id="grassPasswordEncoder"
-		class="org.springframework.security.crypto.password.StandardPasswordEncoder">
-		<constructor-arg name="secret" value="${security.salt}" />
-	</bean>
-
 	<jpa:repositories base-package="cz.gattserver.grass3"
 		repository-impl-postfix="CustomImpl" />
 

@@ -1,25 +1,25 @@
 package cz.gattserver.grass3.pages;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.validator.StringLengthValidator;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.util.IndexedContainer;
-import com.vaadin.v7.ui.Table;
-import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.facades.QuotesFacade;
 import cz.gattserver.grass3.model.dto.QuoteDTO;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.security.CoreACL;
+import cz.gattserver.grass3.template.CreateGridButton;
+import cz.gattserver.grass3.template.DeleteGridButton;
+import cz.gattserver.grass3.template.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.web.common.ui.FieldUtils;
+import cz.gattserver.web.common.window.ConfirmWindow;
 
 public class QuotesPage extends OneColumnPage {
 
@@ -31,14 +31,20 @@ public class QuotesPage extends OneColumnPage {
 	@Autowired
 	private QuotesFacade quotesFacade;
 
+	/**
+	 * Seznam hlášek
+	 */
+	private Grid<QuoteDTO> grid;
+
+	private List<QuoteDTO> data;
+
 	public QuotesPage(GrassRequest request) {
 		super(request);
 	}
 
-	/**
-	 * Seznam hlášek
-	 */
-	private Table table;
+	private void populateData() {
+		data = quotesFacade.getAllQuotes();
+	}
 
 	@Override
 	protected Component createContent() {
@@ -48,82 +54,47 @@ public class QuotesPage extends OneColumnPage {
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
-		createQuoteList(layout);
-		createNewQuotePanel(layout);
+		grid = new Grid<QuoteDTO>();
+		grid.setSizeFull();
+		layout.addComponent(grid);
+
+		populateData();
+
+		grid.setItems(data);
+		grid.addColumn(QuoteDTO::getId).setCaption("Id").setWidth(50);
+		grid.addColumn(QuoteDTO::getName).setCaption("Obsah");
+
+		HorizontalLayout btnLayout = new HorizontalLayout();
+		layout.addComponent(btnLayout);
+		layout.setComponentAlignment(btnLayout, Alignment.MIDDLE_CENTER);
+		btnLayout.setVisible(coreACL.canModifyQuotes(getUser()));
+
+		CreateGridButton createGridButton = new CreateGridButton("Přidat hlášku", e -> {
+			UI.getCurrent().addWindow(new QuoteWindow(q -> {
+				quotesFacade.saveQuote(q);
+				populateData();
+				grid.setItems(data);
+			}));
+		});
+		btnLayout.addComponent(createGridButton);
+
+		ModifyGridButton<QuoteDTO> modifyGridButton = new ModifyGridButton<>("Upravit hlášku", (e, originQuote) -> {
+			UI.getCurrent().addWindow(new QuoteWindow(originQuote, q -> {
+				quotesFacade.saveQuote(q);
+				grid.getDataProvider().refreshItem(q);
+				grid.select(q);
+			}));
+		}, grid);
+		btnLayout.addComponent(modifyGridButton);
+
+		DeleteGridButton<QuoteDTO> deleteGridButton = new DeleteGridButton<>("Odstranit hlášku", q -> {
+			quotesFacade.deleteQuote(q.getId());
+			data.remove(q);
+			grid.getDataProvider().refreshAll();
+		}, grid);
+		btnLayout.addComponent(deleteGridButton);
 
 		return layout;
-	}
-
-	private void createQuoteList(VerticalLayout layout) {
-
-		table = new Table();
-		table.setSizeFull();
-		layout.addComponent(table);
-
-		populateQuotesTable();
-	}
-
-	private void populateQuotesTable() {
-
-		IndexedContainer container = new IndexedContainer();
-		container.addContainerProperty("ID", Long.class, 1L);
-		container.addContainerProperty("Obsah", String.class, "");
-
-		table.setContainerDataSource(container);
-
-		for (QuoteDTO quote : quotesFacade.getAllQuotes()) {
-			Item item = table.addItem(quote);
-			item.getItemProperty("ID").setValue(quote.getId());
-			item.getItemProperty("Obsah").setValue(quote.getName());
-		}
-
-	}
-
-	private void createNewQuotePanel(VerticalLayout layout) {
-
-		Panel newQuotesPanel = new Panel("Nová hláška");
-		layout.addComponent(newQuotesPanel);
-
-		newQuotesPanel.setVisible(coreACL.canModifyQuotes(getUser()));
-
-		HorizontalLayout panelBackgroudLayout = new HorizontalLayout();
-		panelBackgroudLayout.setSizeFull();
-		newQuotesPanel.setContent(panelBackgroudLayout);
-
-		HorizontalLayout panelLayout = new HorizontalLayout();
-		panelLayout.setSpacing(true);
-		panelLayout.setMargin(true);
-		panelBackgroudLayout.addComponent(panelLayout);
-
-		final int maxLength = 90;
-		final TextField newQuoteText = new TextField();
-		FieldUtils.addValidator(newQuoteText, new StringLengthValidator(
-				"Text hlášky nesmí být prázdný a může mít maximálně " + maxLength + " znaků", 1, maxLength));
-		newQuoteText.setWidth("200px");
-		panelLayout.addComponent(newQuoteText);
-
-		Button createButton = new Button("Vytvořit", new Button.ClickListener() {
-
-			private static final long serialVersionUID = -4315617904120991885L;
-
-			public void buttonClick(ClickEvent event) {
-				// TODO
-				if (newQuoteText.getComponentError() != null)
-					return;
-
-				if (quotesFacade.createNewQuote(newQuoteText.getValue())) {
-					showInfo("Nová hláška byla úspěšně vložena.");
-					// refresh list
-					populateQuotesTable();
-					// clean
-					newQuoteText.setValue("");
-				} else {
-					showWarning("Nezdařilo se vložit novou hlášku.");
-				}
-
-			}
-		});
-		panelLayout.addComponent(createButton);
 
 	}
 }

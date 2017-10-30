@@ -7,14 +7,9 @@ import cz.gattserver.grass3.model.dto.QuoteDTO;
 public interface QuotesFacade {
 
 	/**
-	 * Vytvoří a uloží novou hlášku dle textu
-	 * 
-	 * @param text
-	 *            text hlášky
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
+	 * Uloží hlášku
 	 */
-	public boolean createNewQuote(String text);
+	public void saveQuote(QuoteDTO quoteDTO);
 
 	/**
 	 * Získá všechny hlášky a vrátí je jako list {@link QuoteDTO}
@@ -27,5 +22,10 @@ public interface QuotesFacade {
 	 * Vybere náhodně hlášku a vrátí její text
 	 */
 	public String getRandomQuote();
+
+	/**
+	 * Smaže hlášku
+	 */
+	public void deleteQuote(Long id);
 
 }

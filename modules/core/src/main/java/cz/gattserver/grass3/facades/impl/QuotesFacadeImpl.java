@@ -25,17 +25,13 @@ public class QuotesFacadeImpl implements QuotesFacade {
 	private QuoteRepository quoteRepository;
 
 	/**
-	 * Vytvoří a uloží novou hlášku dle textu
-	 * 
-	 * @param text
-	 *            text hlášky
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
+	 * Uloží hlášku
 	 */
-	public boolean createNewQuote(String text) {
+	public void saveQuote(QuoteDTO quoteDTO) {
 		Quote quote = new Quote();
-		quote.setName(text);
-		return quoteRepository.save(quote) != null;
+		quote.setId(quoteDTO.getId());
+		quote.setName(quoteDTO.getName());
+		quoteRepository.save(quote);
 	}
 
 	/**
@@ -65,6 +61,14 @@ public class QuotesFacadeImpl implements QuotesFacade {
 
 		Quote quote = quoteRepository.findOne(randomId);
 		return quote.getName();
+	}
+
+	/**
+	 * Smaže hlášku
+	 */
+	@Override
+	public void deleteQuote(Long id) {
+		quoteRepository.delete(id);
 	}
 
 }

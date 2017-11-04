@@ -8,6 +8,8 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.articles.dto.ArticleDTO;
@@ -28,8 +30,6 @@ import cz.gattserver.web.common.window.InfoWindow;
 import cz.gattserver.web.common.window.WarnWindow;
 
 public class ArticlesViewerPage extends ContentViewerPage {
-
-	private static final long serialVersionUID = 5078280973817331002L;
 
 	@Autowired
 	private CoreACL coreACL;
@@ -55,19 +55,18 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		super(request);
 	}
 
-	protected void init() {
+	@Override
+	protected Layout createPayload() {
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
 				.parseURLIdentifier(analyzer.getCurrentPathToken());
 		if (identifier == null) {
-			showError404();
-			return;
+			showErrorPage404();
 		}
 
 		article = articleFacade.getArticleForDetail(identifier.getId());
 		if (article == null) {
-			showError404();
-			return;
+			showErrorPage404();
 		}
 
 		// RESCUE -- tohle by se normálně stát nemělo, ale umožňuje to aspoň
@@ -80,8 +79,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		if (article.getContentNode().isPublicated() || (getUser() != null
 				&& (article.getContentNode().getAuthor().equals(getUser()) || getUser().isAdmin()))) {
 		} else {
-			showError403();
-			return;
+			showErrorPage403();
 		}
 
 		// CSS resources
@@ -102,9 +100,10 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		for (String resource : article.getPluginJSResources()) {
 			arr[i++] = new JScriptItem(resource);
 		}
-		loadJS(arr);
 
-		super.init();
+		Layout layout = super.createPayload();
+		loadJS(layout, arr);
+		return layout;
 	}
 
 	@Override
@@ -136,7 +135,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 					+ "/\" + $(this).attr(\"href\"));" + "$(this).html(\"<img alt=\\\" class=\\\"v-icon\\\" src=\\\""
 					+ getRequest().getContextRoot() + "/VAADIN/themes/grass/" + ImageIcons.PENCIL_16_ICON
 					+ "\\\"/>&nbsp\");" + "}" + ")";
-			loadJS(new JScriptItem(script, true));
+			loadJS(operationsListLayout, new JScriptItem(script, true));
 		}
 	}
 
@@ -159,7 +158,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 						redirect(nodeURL);
 					};
 				};
-				getUI().addWindow(infoSubwindow);
+				UI.getCurrent().addWindow(infoSubwindow);
 			} catch (Exception e) {
 				// Pokud ne, otevři warn okno a při
 				// potvrzení jdi na kategorii
@@ -171,11 +170,10 @@ public class ArticlesViewerPage extends ContentViewerPage {
 						redirect(nodeURL);
 					};
 				};
-				getUI().addWindow(warnSubwindow);
+				UI.getCurrent().addWindow(warnSubwindow);
 			}
 		});
-		getUI().addWindow(confirmSubwindow);
-
+		UI.getCurrent().addWindow(confirmSubwindow);
 	}
 
 	@Override

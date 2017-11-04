@@ -19,11 +19,8 @@ import cz.gattserver.grass3.template.CreateGridButton;
 import cz.gattserver.grass3.template.DeleteGridButton;
 import cz.gattserver.grass3.template.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.web.common.window.ConfirmWindow;
 
 public class QuotesPage extends OneColumnPage {
-
-	private static final long serialVersionUID = 2474374292329895766L;
 
 	@Autowired
 	private CoreACL coreACL;

@@ -4,13 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.security.CoreACL;
-import cz.gattserver.grass3.tabs.UsersSettingsTab;
-import cz.gattserver.grass3.tabs.factories.template.AbstractSettingsTabFactory;
-import cz.gattserver.grass3.tabs.template.SettingsTab;
+import cz.gattserver.grass3.tabs.UsersSettingsPage;
+import cz.gattserver.grass3.tabs.factories.template.AbstractModuleSettingsPageFactory;
+import cz.gattserver.grass3.tabs.template.ModuleSettingsPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
 @Component("usersSettingsTabFactory")
-public class UsersSettingsTabFactory extends AbstractSettingsTabFactory {
+public class UsersSettingsTabFactory extends AbstractModuleSettingsPageFactory {
 
 	@Autowired
 	private CoreACL coreACL;
@@ -24,8 +24,8 @@ public class UsersSettingsTabFactory extends AbstractSettingsTabFactory {
 	}
 
 	@Override
-	protected SettingsTab createTab(GrassRequest request) {
-		return new UsersSettingsTab(request);
+	protected ModuleSettingsPage createPage(GrassRequest request) {
+		return new UsersSettingsPage(request);
 	}
 
 }

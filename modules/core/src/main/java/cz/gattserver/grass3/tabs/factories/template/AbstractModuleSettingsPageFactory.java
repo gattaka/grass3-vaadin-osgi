@@ -4,11 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import cz.gattserver.grass3.facades.SecurityFacade;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
-import cz.gattserver.grass3.pages.template.GrassLayout;
-import cz.gattserver.grass3.tabs.template.SettingsTab;
+import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
-public abstract class AbstractSettingsTabFactory implements SettingsTabFactory {
+public abstract class AbstractModuleSettingsPageFactory implements ModuleSettingsPageFactory {
 
 	private String tabName;
 	private String tabURL;
@@ -27,7 +26,7 @@ public abstract class AbstractSettingsTabFactory implements SettingsTabFactory {
 	 *            měla by to být verze name bez diakritiky a obecně pouze s
 	 *            URL-friendly znaky
 	 */
-	public AbstractSettingsTabFactory(String name, String tabURL) {
+	public AbstractModuleSettingsPageFactory(String name, String tabURL) {
 		this.tabName = name;
 		this.tabURL = tabURL;
 	}
@@ -47,10 +46,10 @@ public abstract class AbstractSettingsTabFactory implements SettingsTabFactory {
 		return tabURL;
 	}
 
-	public GrassLayout createTabIfAuthorized(GrassRequest request) {
-		return ((SettingsTab) createTab(request)).getContent();
+	public GrassPage createPageIfAuthorized(GrassRequest request) {
+		return createPage(request);
 	}
 
-	protected abstract SettingsTab createTab(GrassRequest request);
+	protected abstract GrassPage createPage(GrassRequest request);
 
 }

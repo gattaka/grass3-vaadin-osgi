@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.latex.web;
+package cz.gattserver.grass3.hw.web;
 
 import org.springframework.stereotype.Component;
 
@@ -7,10 +7,10 @@ import cz.gattserver.grass3.tabs.factories.template.AbstractModuleSettingsPageFa
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
 @Component
-public class LatexSettingsTabFactory extends AbstractModuleSettingsPageFactory {
+public class HWSettingsPageFactory extends AbstractModuleSettingsPageFactory {
 
-	public LatexSettingsTabFactory() {
-		super("LaTeX", "latex");
+	public HWSettingsPageFactory() {
+		super("Evidence HW", "hw");
 	}
 
 	public boolean isAuthorized() {
@@ -21,6 +21,6 @@ public class LatexSettingsTabFactory extends AbstractModuleSettingsPageFactory {
 
 	@Override
 	protected GrassPage createPage(GrassRequest request) {
-		return new LatexSettingsPage(request);
+		return new HWSettingsPage(request);
 	}
 }

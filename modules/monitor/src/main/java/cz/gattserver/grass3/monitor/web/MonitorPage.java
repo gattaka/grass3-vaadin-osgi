@@ -14,18 +14,11 @@ import cz.gattserver.grass3.ui.util.GrassRequest;
 
 public class MonitorPage extends OneColumnPage {
 
-	private static final long serialVersionUID = -950042653154868289L;
-
 	@Autowired
 	private MonitorFacade monitorFacade;
 
 	public MonitorPage(GrassRequest request) {
 		super(request);
-	}
-
-	@Override
-	protected void init() {
-		super.init();
 	}
 
 	@Override

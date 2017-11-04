@@ -34,8 +34,6 @@ import cz.gattserver.web.common.ui.H2Label;
 
 public class HomePage extends BasePage {
 
-	private static final long serialVersionUID = 5355366043081283263L;
-
 	private static Logger logger = LoggerFactory.getLogger(StopWatch.DEFAULT_LOGGER_NAME);
 
 	@Autowired
@@ -135,7 +133,7 @@ public class HomePage extends BasePage {
 		final List<ContentTagDTO> contentTags = contentTagFacade.getContentTagsForOverview();
 
 		if (contentTags == null)
-			showError500();
+			showErrorPage500();
 
 		if (contentTags.isEmpty()) {
 			Label noTagsLabel = new Label("Nebyly nalezeny žádné tagy");

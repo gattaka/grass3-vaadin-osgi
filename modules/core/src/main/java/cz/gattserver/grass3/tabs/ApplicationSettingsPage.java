@@ -2,30 +2,27 @@ package cz.gattserver.grass3.tabs;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Component;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Component; 
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Slider;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.Slider.ValueOutOfBoundsException;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.v7.data.Property.ValueChangeEvent;
-import com.vaadin.v7.data.Property.ValueChangeListener;
-import com.vaadin.v7.ui.CheckBox;
-import com.vaadin.v7.ui.Slider;
 
 import cz.gattserver.grass3.config.CoreConfiguration;
 import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.facades.ContentTagFacade;
-import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
+import cz.gattserver.grass3.tabs.template.ModuleSettingsPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.window.InfoWindow;
 import cz.gattserver.web.common.window.WarnWindow;
 
-public class ApplicationSettingsTab extends AbstractSettingsTab {
+public class ApplicationSettingsPage extends ModuleSettingsPage {
 
 	@Autowired
 	private ContentTagFacade contentTagFacade;
@@ -33,18 +30,15 @@ public class ApplicationSettingsTab extends AbstractSettingsTab {
 	@Autowired
 	private ConfigurationService configurationService;
 
-	private static final long serialVersionUID = 2474374292329895766L;
-
 	private static final Double MIN_SESSION_TIMEOUT = 5.0;
 	private static final Double MAX_SESSION_TIMEOUT = 60.0;
 
-	public ApplicationSettingsTab(GrassRequest request) {
+	public ApplicationSettingsPage(GrassRequest request) {
 		super(request);
 	}
 
 	@Override
 	protected Component createContent() {
-
 		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);
@@ -96,16 +90,9 @@ public class ApplicationSettingsTab extends AbstractSettingsTab {
 		} catch (ValueOutOfBoundsException e) {
 			e.printStackTrace();
 		}
-		slider.setImmediate(true);
-		slider.addValueChangeListener(new ValueChangeListener() {
-
-			private static final long serialVersionUID = 2805427800313140023L;
-
-			public void valueChange(ValueChangeEvent event) {
-				Double value = (Double) event.getProperty().getValue();
-				valueLabel.setValue(String.valueOf(value));
-				configuration.setSessionTimeout(value);
-			}
+		slider.addValueChangeListener(event -> {
+			valueLabel.setValue(String.valueOf(event.getValue()));
+			configuration.setSessionTimeout(event.getValue());
 		});
 
 		sessionTimeoutLayout.addComponent(slider);
@@ -120,52 +107,33 @@ public class ApplicationSettingsTab extends AbstractSettingsTab {
 		 */
 		final CheckBox allowRegistrationsBox = new CheckBox("Povolit registrace");
 		allowRegistrationsBox.setValue(configuration.isRegistrations());
-		allowRegistrationsBox.addValueChangeListener(new ValueChangeListener() {
-
-			private static final long serialVersionUID = -4168795771060533842L;
-
-			public void valueChange(ValueChangeEvent event) {
-				configuration.setRegistrations(allowRegistrationsBox.getValue());
-			}
-		});
+		allowRegistrationsBox
+				.addValueChangeListener(event -> configuration.setRegistrations(allowRegistrationsBox.getValue()));
 
 		settingsFieldsLayout.addComponent(allowRegistrationsBox);
 
 		/**
 		 * Save tlačítko
 		 */
-		Button saveButton = new Button("Uložit", new Button.ClickListener() {
-
-			private static final long serialVersionUID = 8490964871266821307L;
-
-			public void buttonClick(ClickEvent event) {
-				storeConfiguration(configuration);
-			}
-		});
+		Button saveButton = new Button("Uložit", event -> storeConfiguration(configuration));
 		settingsFieldsLayout.addComponent(saveButton);
 
 		/**
 		 * Reset tagů
 		 */
-		Button contentTagsCountsResetBtn = new Button("Přepočítat údaje ContentTagů", new Button.ClickListener() {
-
-			private static final long serialVersionUID = 8490964871266821307L;
-
-			public void buttonClick(ClickEvent event) {
-				try {
-					contentTagFacade.countContentNodes();
-					InfoWindow infoSubwindow = new InfoWindow("Počty obsahů tagů byly úspěšně přepočítány");
-					getUI().addWindow(infoSubwindow);
-				} catch (Exception e) {
-					WarnWindow warnSubwindow = new WarnWindow("Nezdařilo se přepočítat počty obsahů tagů");
-					getUI().addWindow(warnSubwindow);
-				}
+		Button contentTagsCountsResetBtn = new Button("Přepočítat údaje ContentTagů", event -> {
+			try {
+				contentTagFacade.countContentNodes();
+				InfoWindow infoSubwindow = new InfoWindow("Počty obsahů tagů byly úspěšně přepočítány");
+				UI.getCurrent().addWindow(infoSubwindow);
+			} catch (Exception e) {
+				WarnWindow warnSubwindow = new WarnWindow("Nezdařilo se přepočítat počty obsahů tagů");
+				UI.getCurrent().addWindow(warnSubwindow);
 			}
 		});
 		settingsFieldsLayout.addComponent(contentTagsCountsResetBtn);
 
 		return layout;
-
 	}
 
 	private CoreConfiguration loadConfiguration() {

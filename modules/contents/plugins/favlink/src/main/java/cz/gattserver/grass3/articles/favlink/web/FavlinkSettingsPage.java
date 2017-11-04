@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.latex.web;
+package cz.gattserver.grass3.articles.favlink.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -6,29 +6,25 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Button.ClickEvent;
 
-import cz.gattserver.grass3.articles.latex.config.LatexConfiguration;
+import cz.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
 import cz.gattserver.grass3.config.ConfigurationService;
-import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
+import cz.gattserver.grass3.tabs.template.ModuleSettingsPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.ui.H2Label;
 
-public class LatexSettingsTab extends AbstractSettingsTab {
-
-	private static final long serialVersionUID = -3310643769376755875L;
+public class FavlinkSettingsPage extends ModuleSettingsPage {
 
 	@Autowired
 	private ConfigurationService configurationService;
 
-	public LatexSettingsTab(GrassRequest request) {
+	public FavlinkSettingsPage(GrassRequest request) {
 		super(request);
 	}
 
 	@Override
 	protected Component createContent() {
-
-		final LatexConfiguration configuration = loadConfiguration();
+		final FavlinkConfiguration configuration = loadConfiguration();
 
 		VerticalLayout layout = new VerticalLayout();
 
@@ -58,29 +54,23 @@ public class LatexSettingsTab extends AbstractSettingsTab {
 		 * Save tlačítko
 		 */
 
-		Button saveButton = new Button("Uložit", new Button.ClickListener() {
-
-			private static final long serialVersionUID = 8490964871266821307L;
-
-			public void buttonClick(ClickEvent event) {
-				configuration.setOutputPath((String) outputPathField.getValue());
-				storeConfiguration(configuration);
-			}
+		Button saveButton = new Button("Uložit", event -> {
+			configuration.setOutputPath((String) outputPathField.getValue());
+			storeConfiguration(configuration);
 		});
 
 		settingsFieldsLayout.addComponent(saveButton);
 
 		return layout;
-
 	}
 
-	private LatexConfiguration loadConfiguration() {
-		LatexConfiguration configuration = new LatexConfiguration();
+	private FavlinkConfiguration loadConfiguration() {
+		FavlinkConfiguration configuration = new FavlinkConfiguration();
 		configurationService.loadConfiguration(configuration);
 		return configuration;
 	}
 
-	private void storeConfiguration(LatexConfiguration configuration) {
+	private void storeConfiguration(FavlinkConfiguration configuration) {
 		configurationService.saveConfiguration(configuration);
 	}
 

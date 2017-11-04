@@ -4,8 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import cz.gattserver.grass3.facades.SecurityFacade;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
-import cz.gattserver.grass3.pages.err.Err403Page;
-import cz.gattserver.grass3.pages.template.GrassLayout;
+import cz.gattserver.grass3.pages.err.Error403Page;
 import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
@@ -41,8 +40,8 @@ public abstract class AbstractPageFactory implements PageFactory {
 
 	protected abstract boolean isAuthorized();
 
-	public GrassLayout createPageIfAuthorized(GrassRequest request) {
-		return (isAuthorized() ? createPage(request) : new Err403Page(request)).getContent();
+	public GrassPage createPageIfAuthorized(GrassRequest request) {
+		return isAuthorized() ? createPage(request) : new Error403Page(request);
 	}
 
 	protected abstract GrassPage createPage(GrassRequest request);

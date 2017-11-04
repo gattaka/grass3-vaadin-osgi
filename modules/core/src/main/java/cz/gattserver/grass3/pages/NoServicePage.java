@@ -10,8 +10,6 @@ import cz.gattserver.grass3.ui.util.GrassRequest;
 
 public class NoServicePage extends OneColumnPage {
 
-	private static final long serialVersionUID = 8907394744054280981L;
-
 	public NoServicePage(GrassRequest request) {
 		super(request);
 	}

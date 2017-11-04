@@ -11,11 +11,8 @@ public abstract class TwoColumnPage extends BasePage {
 		super(request);
 	}
 
-	private static final long serialVersionUID = 5064416476628186307L;
-
 	@Override
 	protected void createContent(CustomLayout layout) {
-
 		CustomLayout contentLayout = new CustomLayout("twoColumn");
 		layout.addComponent(contentLayout, "content");
 

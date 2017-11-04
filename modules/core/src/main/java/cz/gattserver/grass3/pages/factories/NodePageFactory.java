@@ -15,7 +15,7 @@ public class NodePageFactory extends AbstractPageFactory {
 	public NodePageFactory() {
 		super("category");
 	}
-	
+
 	@Override
 	protected boolean isAuthorized() {
 		return true;

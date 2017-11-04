@@ -3,25 +3,20 @@ package cz.gattserver.grass3.pg.tabs;
 import javax.annotation.Resource;
 
 import com.vaadin.data.validator.StringLengthValidator;
-import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
-import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
+import cz.gattserver.grass3.tabs.template.ModuleSettingsPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.H2Label;
 
-public class PhotogallerySettingsTab extends AbstractSettingsTab {
-
-	private static final long serialVersionUID = 2474374292329895766L;
+public class PhotogallerySettingsPage extends ModuleSettingsPage {
 
 	@Resource(name = "photogalleryFacade")
 	private PhotogalleryFacade photogalleryFacade;
@@ -29,13 +24,12 @@ public class PhotogallerySettingsTab extends AbstractSettingsTab {
 	@Resource(name = "contentTagFacade")
 	private ContentTagFacade contentTagFacade;
 
-	public PhotogallerySettingsTab(GrassRequest request) {
+	public PhotogallerySettingsPage(GrassRequest request) {
 		super(request);
 	}
 
 	@Override
 	protected Component createContent() {
-
 		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);
@@ -74,23 +68,17 @@ public class PhotogallerySettingsTab extends AbstractSettingsTab {
 		/**
 		 * Save tlačítko
 		 */
-		Button saveButton = new Button("Uložit", new Button.ClickListener() {
-
-			private static final long serialVersionUID = 8490964871266821307L;
-
-			public void buttonClick(ClickEvent event) {
-				// TODO
-				if (rootDirField.getComponentError() == null && miniaturesDirField.getComponentError() == null) {
-					configuration.setRootDir(rootDirField.getValue());
-					configuration.setMiniaturesDir(miniaturesDirField.getValue());
-					photogalleryFacade.storeConfiguration(configuration);
-				}
+		Button saveButton = new Button("Uložit", event -> {
+			// TODO
+			if (rootDirField.getComponentError() == null && miniaturesDirField.getComponentError() == null) {
+				configuration.setRootDir(rootDirField.getValue());
+				configuration.setMiniaturesDir(miniaturesDirField.getValue());
+				photogalleryFacade.storeConfiguration(configuration);
 			}
 		});
 		settingsFieldsLayout.addComponent(saveButton);
 
 		return layout;
-
 	}
 
 }

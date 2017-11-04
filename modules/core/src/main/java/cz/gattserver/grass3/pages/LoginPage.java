@@ -23,8 +23,6 @@ import cz.gattserver.web.common.ui.H2Label;
 
 public class LoginPage extends OneColumnPage {
 
-	private static final long serialVersionUID = 8276040419934174157L;
-
 	@Resource(name = "homePageFactory")
 	private PageFactory homePageFactory;
 

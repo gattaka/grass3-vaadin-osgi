@@ -10,18 +10,16 @@ import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.hw.HWConfiguration;
-import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
+import cz.gattserver.grass3.tabs.template.ModuleSettingsPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.ui.H2Label;
 
-public class HWSettingsTab extends AbstractSettingsTab {
-
-	private static final long serialVersionUID = -3310643769376755875L;
+public class HWSettingsPage extends ModuleSettingsPage {
 
 	@Autowired
 	private ConfigurationService configurationService;
 
-	public HWSettingsTab(GrassRequest request) {
+	public HWSettingsPage(GrassRequest request) {
 		super(request);
 	}
 

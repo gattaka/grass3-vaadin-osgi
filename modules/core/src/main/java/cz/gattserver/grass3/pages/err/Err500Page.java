@@ -12,13 +12,11 @@ public class Err500Page extends ErrorPage {
 		super(request);
 	}
 
-	private static final long serialVersionUID = -2679323424889989397L;
-
 	@Override
 	protected String getErrorText() {
 		return "500 - Došlo k chybě na straně serveru";
 	}
-	
+
 	@Override
 	protected Resource getErrorImage() {
 		return new ThemeResource("img/500.png");

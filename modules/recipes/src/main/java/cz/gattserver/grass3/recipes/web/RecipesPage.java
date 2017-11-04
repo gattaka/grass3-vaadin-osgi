@@ -10,7 +10,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.recipes.facades.RecipesFacade;
@@ -22,8 +21,6 @@ import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.ui.H2Label;
 
 public class RecipesPage extends OneColumnPage {
-
-	private static final long serialVersionUID = -950042653154868289L;
 
 	@Autowired
 	private RecipesFacade recipesFacade;
@@ -38,11 +35,6 @@ public class RecipesPage extends OneColumnPage {
 		super(request);
 	}
 
-	@Override
-	protected void init() {
-		super.init();
-	}
-
 	private void showDetail(RecipeDTO choosenRecipe) {
 		nameLabel.setValue(choosenRecipe.getName());
 		contentLabel.setValue(recipesFacade.eolToBreakline(choosenRecipe.getDescription()));
@@ -53,14 +45,7 @@ public class RecipesPage extends OneColumnPage {
 	private void populateMenu() {
 		menu.removeAllComponents();
 		for (RecipeOverviewDTO to : recipesFacade.getRecipes()) {
-			Button b = new Button(to.getName(), new Button.ClickListener() {
-				private static final long serialVersionUID = 7451387366203850483L;
-
-				@Override
-				public void buttonClick(ClickEvent event) {
-					showDetail(recipesFacade.getRecipeById(to.getId()));
-				}
-			});
+			Button b = new Button(to.getName(), event -> showDetail(recipesFacade.getRecipeById(to.getId())));
 			b.setStyleName(ValoTheme.BUTTON_LINK);
 			menu.addComponent(b);
 		}
@@ -79,7 +64,6 @@ public class RecipesPage extends OneColumnPage {
 			});
 		});
 		menu.addComponent(createButton);
-
 	}
 
 	@Override

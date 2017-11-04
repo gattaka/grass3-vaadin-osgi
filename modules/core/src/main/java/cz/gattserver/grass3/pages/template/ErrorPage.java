@@ -10,9 +10,7 @@ import com.vaadin.ui.Link;
 
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
-public abstract class ErrorPage extends AbstractGrassPage {
-
-	private static final long serialVersionUID = 3728073040878360420L;
+public abstract class ErrorPage extends MenuPage {
 
 	public ErrorPage(GrassRequest request) {
 		super(request);

@@ -8,7 +8,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -23,7 +22,6 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.Accordion;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
@@ -61,8 +59,6 @@ import cz.gattserver.web.common.ui.TokenField;
 import cz.gattserver.web.common.window.ConfirmWindow;
 
 public class ArticlesEditorPage extends TwoColumnPage {
-
-	private static final long serialVersionUID = -5148523174527532785L;
 
 	private static final Logger logger = LoggerFactory.getLogger(ArticlesEditorPage.class);
 
@@ -115,13 +111,13 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		String partNumberToken = analyzer.getNextPathToken();
 		if (operationToken == null || identifierToken == null) {
 			logger.debug("Chybí operace nebo identifikátor cíle");
-			showError404();
+			showErrorPage404();
 		}
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(identifierToken);
 		if (identifier == null) {
 			logger.debug("Nezdařilo se vytěžit URL identifikátor z řetězce: '" + identifierToken + "'");
-			showError404();
+			showErrorPage404();
 		}
 
 		// operace ?
@@ -150,11 +146,11 @@ public class ArticlesEditorPage extends TwoColumnPage {
 							partNumber);
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
-					showError500();
+					showErrorPage500();
 					return;
 				} catch (IOException e) {
 					e.printStackTrace();
-					showError500();
+					showErrorPage500();
 					return;
 				}
 				articleTextArea.setValue(parts.getTargetPart());
@@ -163,7 +159,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			}
 		} else {
 			logger.debug("Neznámá operace: '" + operationToken + "'");
-			showError404();
+			showErrorPage404();
 			return;
 		}
 
@@ -172,7 +168,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			super.createContent(customlayout);
 		} else {
 			// nemá oprávnění upravovat tento článek
-			showError403();
+			showErrorPage403();
 			return;
 		}
 	}
@@ -191,6 +187,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			// tlačítka
 			articleTextAreaFocusRegistration.remove();
 		});
+		// aby se zaregistroval JS listener
+		articleTextArea.focus();
 
 		List<ArticleDraftOverviewDTO> drafts = articleFacade.getDraftsForUser(getGrassUI().getUser());
 
@@ -235,11 +233,11 @@ public class ArticlesEditorPage extends TwoColumnPage {
 										new ByteArrayInputStream(article.getText().getBytes("UTF-8")), partNumber);
 							} catch (UnsupportedEncodingException e) {
 								e.printStackTrace();
-								showError500();
+								showErrorPage500();
 								return;
 							} catch (IOException e) {
 								e.printStackTrace();
-								showError500();
+								showErrorPage500();
 								return;
 							}
 						}
@@ -263,21 +261,14 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	protected Component createLeftColumnContent() {
 
 		List<String> groups = new ArrayList<String>(pluginServiceHolder.getRegisteredGroups());
-		Collections.sort(groups, new Comparator<String>() {
-
-			// odolné vůči null
-			public int compare(String o1, String o2) {
-				if (o1 == null) {
-					if (o2 == null)
-						return 0; // stejné
-					else
-						return "".compareTo(o2); // první ber jako prázdný
-				} else {
-					if (o2 == null)
-						return o1.compareTo(""); // druhý ber jako prázdný
-					else
-						return o1.compareTo(o2); // ani jeden není null
-				}
+		Collections.sort(groups, (o1, o2) -> {
+			if (o1 == null) {
+				return o2 == null ? 0 : "".compareTo(o2);
+			} else {
+				if (o2 == null)
+					return o1.compareTo(""); // druhý ber jako prázdný
+				else
+					return o1.compareTo(o2); // ani jeden není null
 			}
 		});
 
@@ -312,13 +303,15 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		// jQueryUI CSS
 		loadCSS(getRequest().getContextRoot() + "/VAADIN/themes/grass/js/humanity/jquery-ui.css");
 
-		// jQueryUI JS + jQueryUI Accordion render start
-		loadJS(new JScriptItem[] { new JScriptItem("js/jquery-ui.js"),
-				new JScriptItem("$( \"#accordion\" ).accordion({ event: \"click\", heightStyle: \"content\" })", true),
-				new JScriptItem("$(\".ui-accordion-content\").css(\"padding\",\"1em 1em\")", true) });
-
 		VerticalLayout hl = new VerticalLayout(accordion);
 		hl.setMargin(true);
+
+		// jQueryUI JS + jQueryUI Accordion render start
+		loadJS(hl,
+				new JScriptItem[] { new JScriptItem("js/jquery-ui.js"),
+						new JScriptItem("$( \"#accordion\" ).accordion({ event: \"click\", heightStyle: \"content\" })",
+								true),
+						new JScriptItem("$(\".ui-accordion-content\").css(\"padding\",\"1em 1em\")", true) });
 
 		return hl;
 	}
@@ -334,7 +327,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		marginLayout.addComponent(editorTextLayout);
 
 		// editor.js
-		loadJS(new JScriptItem("articles/js/editor.js"));
+		loadJS(editorTextLayout, new JScriptItem("articles/js/editor.js"));
 
 		editorTextLayout.addComponent(new H2Label("Název článku"));
 		editorTextLayout.addComponent(articleNameField);
@@ -382,55 +375,42 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		// Náhled
 		Button previewButton = new Button("Náhled");
 		previewButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.DOCUMENT_16_ICON));
-		previewButton.addClickListener(new Button.ClickListener() {
+		previewButton.addClickListener(event -> {
+			try {
+				// Náhled ukazuje pouze danou část, která je upravovaná
+				// (nespojuje parts)
+				String draftName = articleNameField.getValue();
+				Long id = articleFacade.saveArticle(draftName, articleTextArea.getValue(), getArticlesKeywords(),
+						publicatedCheckBox.getValue(), node.getId(), getGrassUI().getUser().getId(),
+						getRequest().getContextRoot(), ArticleProcessForm.PREVIEW, existingDraftId, partNumber,
+						existingArticleId);
 
-			private static final long serialVersionUID = 607422393151282918L;
-
-			public void buttonClick(ClickEvent event) {
-				try {
-					// Náhled ukazuje pouze danou část, která je upravovaná
-					// (nespojuje parts)
-					String draftName = articleNameField.getValue();
-					Long id = articleFacade.saveArticle(draftName, articleTextArea.getValue(), getArticlesKeywords(),
-							publicatedCheckBox.getValue(), node.getId(), getGrassUI().getUser().getId(),
-							getRequest().getContextRoot(), ArticleProcessForm.PREVIEW, existingDraftId, partNumber,
-							existingArticleId);
-
-					if (id != null) {
-						existingDraftId = id;
-						JavaScript.eval("window.open('"
-								+ getPageURL(articlesViewerPageFactory,
-										URLIdentifierUtils.createURLIdentifier(existingDraftId, draftName))
-								+ "','_blank');");
-					}
-				} catch (Exception e) {
-					logger.error("Při ukládání náhledu článku došlo k chybě", e);
+				if (id != null) {
+					existingDraftId = id;
+					JavaScript.eval("window.open('"
+							+ getPageURL(articlesViewerPageFactory,
+									URLIdentifierUtils.createURLIdentifier(existingDraftId, draftName))
+							+ "','_blank');");
 				}
+			} catch (Exception e) {
+				logger.error("Při ukládání náhledu článku došlo k chybě", e);
 			}
-
 		});
 		buttonLayout.addComponent(previewButton);
 
 		// Uložit
 		Button saveButton = new Button("Uložit");
 		saveButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.SAVE_16_ICON));
-		saveButton.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 607422393151282918L;
-
-			public void buttonClick(ClickEvent event) {
-				if (isFormValid() == false)
-					return;
-
-				if (saveOrUpdateArticle()) {
-					showSilentInfo(ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku proběhla úspěšně"
-							: "Uložení článku proběhlo úspěšně");
-				} else {
-					showWarning(ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku se nezdařila"
-							: "Uložení článku se nezdařilo");
-				}
+		saveButton.addClickListener(event -> {
+			if (isFormValid() == false)
+				return;
+			if (saveOrUpdateArticle()) {
+				showSilentInfo(ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku proběhla úspěšně"
+						: "Uložení článku proběhlo úspěšně");
+			} else {
+				showWarning(ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku se nezdařila"
+						: "Uložení článku se nezdařilo");
 			}
-
 		});
 		buttonLayout.addComponent(saveButton);
 		saveButton.setClickShortcut(KeyCode.S, ModifierKey.CTRL);
@@ -438,50 +418,32 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		// Uložit a zavřít
 		Button saveAndCloseButton = new Button("Uložit a zavřít");
 		saveAndCloseButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.SAVE_16_ICON));
-		saveAndCloseButton.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 607422393151282918L;
-
-			public void buttonClick(ClickEvent event) {
-				if (isFormValid() == false)
-					return;
-
-				if (saveOrUpdateArticle()) {
-					// Tady nemá cena dávat infowindow
-					returnToArticle();
-				} else {
-					showWarning(ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku se nezdařila"
-							: "Uložení článku se nezdařilo");
-				}
-
+		saveAndCloseButton.addClickListener(event -> {
+			if (isFormValid() == false)
+				return;
+			if (saveOrUpdateArticle()) {
+				// Tady nemá cena dávat infowindow
+				returnToArticle();
+			} else {
+				showWarning(ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku se nezdařila"
+						: "Uložení článku se nezdařilo");
 			}
-
 		});
 		buttonLayout.addComponent(saveAndCloseButton);
 
 		// Zrušit
 		Button cancelButton = new Button("Zrušit");
 		cancelButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.DELETE_16_ICON));
-		cancelButton.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 607422393151282918L;
-
-			public void buttonClick(ClickEvent event) {
-
-				ConfirmWindow confirmSubwindow = new ConfirmWindow(
-						"Opravdu si přejete zavřít editor článku ? Veškeré neuložené změny budou ztraceny.", e -> {
-							// ruším úpravu existujícího článku (vracím se na
-							// článek), nebo nového (vracím se do kategorie) ?
-							if (existingArticleId != null) {
-								returnToArticle();
-							} else {
-								returnToNode();
-							}
-						});
-				getUI().addWindow(confirmSubwindow);
-			}
-
-		});
+		cancelButton.addClickListener(event -> UI.getCurrent().addWindow(new ConfirmWindow(
+				"Opravdu si přejete zavřít editor článku ? Veškeré neuložené změny budou ztraceny.", e -> {
+					// ruším úpravu existujícího článku (vracím se na
+					// článek), nebo nového (vracím se do kategorie) ?
+					if (existingArticleId != null) {
+						returnToArticle();
+					} else {
+						returnToNode();
+					}
+				})));
 		buttonLayout.addComponent(cancelButton);
 
 		final Label autosaveLabel = new Label();
@@ -586,13 +548,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		JavaScript.eval("window.onbeforeunload = null;");
 		redirect(getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName())));
-	}
-
-	@Override
-	public void attach() {
-		super.attach();
-		// aby se zaregistroval JS listener
-		articleTextArea.focus();
 	}
 
 }

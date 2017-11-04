@@ -26,7 +26,6 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.DateTimeField;
@@ -37,6 +36,7 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -69,8 +69,6 @@ import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.WarnWindow;
 
 public class PhotogalleryEditorPage extends OneColumnPage {
-
-	private static final long serialVersionUID = -5148523174527532785L;
 
 	private static final Logger logger = LoggerFactory.getLogger(PhotogalleryEditorPage.class);
 
@@ -122,7 +120,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	}
 
 	@Override
-	protected void init() {
+	protected Layout createPayload() {
 
 		newFiles = new ArrayList<>();
 
@@ -136,13 +134,13 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		String identifierToken = analyzer.getNextPathToken();
 		if (operationToken == null || identifierToken == null) {
 			logger.debug("Chybí operace nebo identifikátor cíle");
-			showError404();
+			showErrorPage404();
 		}
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(identifierToken);
 		if (identifier == null) {
 			logger.debug("Nezdařilo se vytěžit URL identifikátor z řetězce: '" + identifierToken + "'");
-			showError404();
+			showErrorPage404();
 		}
 
 		// operace ?
@@ -151,9 +149,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			node = nodeFacade.getNodeByIdForOverview(identifier.getId());
 			photogalleryNameField.setValue("");
 			publicatedCheckBox.setValue(true);
-
 		} else if (operationToken.equals(DefaultContentOperations.EDIT.toString())) {
-
 			editMode = true;
 			photogallery = photogalleryFacade.getPhotogalleryForDetail(identifier.getId());
 			photogalleryNameField.setValue(photogallery.getContentNode().getName());
@@ -164,22 +160,19 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 			publicatedCheckBox.setValue(photogallery.getContentNode().isPublicated());
 			photogalleryDateField.setValue(photogallery.getContentNode().getCreationDate());
-
 		} else {
 			logger.debug("Neznámá operace: '" + operationToken + "'");
-			showError404();
-			return;
+			showErrorPage404();
 		}
 
 		if ((photogallery == null || photogallery.getContentNode().getAuthor().equals(getGrassUI().getUser()))
 				|| getGrassUI().getUser().isAdmin()) {
-			super.init();
 		} else {
 			// nemá oprávnění upravovat tento obsah
-			showError403();
-			return;
+			showErrorPage403();
 		}
 
+		return super.createPayload();
 	}
 
 	@Override
@@ -365,63 +358,38 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		// Uložit
 		Button saveButton = new Button("Uložit");
 		saveButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.SAVE_16_ICON));
-		saveButton.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 607422393151282918L;
-
-			public void buttonClick(ClickEvent event) {
-
-				if (isFormValid() == false)
-					return;
-
-				stayInEditor = true;
-				saveOrUpdatePhotogallery();
-
-			}
-
+		saveButton.addClickListener(event -> {
+			if (isFormValid() == false)
+				return;
+			stayInEditor = true;
+			saveOrUpdatePhotogallery();
 		});
 		buttonLayout.addComponent(saveButton);
 
 		// Uložit a zavřít
 		Button saveAndCloseButton = new Button("Uložit a zavřít");
 		saveAndCloseButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.SAVE_16_ICON));
-		saveAndCloseButton.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 607422393151282918L;
-
-			public void buttonClick(ClickEvent event) {
-				if (isFormValid() == false)
-					return;
-
-				stayInEditor = false;
-				saveOrUpdatePhotogallery();
-			}
-
+		saveAndCloseButton.addClickListener(event -> {
+			if (isFormValid() == false)
+				return;
+			stayInEditor = false;
+			saveOrUpdatePhotogallery();
 		});
 		buttonLayout.addComponent(saveAndCloseButton);
 
 		// Zrušit
 		Button cancelButton = new Button("Zrušit");
 		cancelButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.DELETE_16_ICON));
-		cancelButton.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 607422393151282918L;
-
-			public void buttonClick(ClickEvent event) {
-				ConfirmWindow confirmSubwindow = new ConfirmWindow(
-						"Opravdu si přejete zavřít editor galerie ? Veškeré neuložené změny budou ztraceny.", e -> {
-							// ruším úpravu existující galerie (vracím se na
-							// galerii), nebo nové (vracím se do kategorie) ?
-							if (editMode) {
-								returnToPhotogallery();
-							} else {
-								returnToNode();
-							}
-						});
-				getUI().addWindow(confirmSubwindow);
-			}
-
-		});
+		cancelButton.addClickListener(event -> UI.getCurrent().addWindow(new ConfirmWindow(
+				"Opravdu si přejete zavřít editor galerie ? Veškeré neuložené změny budou ztraceny.", e -> {
+					// ruším úpravu existující galerie (vracím se na
+					// galerii), nebo nové (vracím se do kategorie) ?
+					if (editMode) {
+						returnToPhotogallery();
+					} else {
+						returnToNode();
+					}
+				})));
 		buttonLayout.addComponent(cancelButton);
 
 		return editorLayout;
@@ -473,18 +441,6 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	private void returnToNode() {
 		JavaScript.eval("window.onbeforeunload = null;");
 		redirect(getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName())));
-	}
-
-	@Override
-	public void detach() {
-		super.detach();
-		for (Path file : newFiles) {
-			try {
-				Files.delete(file);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	@Handler

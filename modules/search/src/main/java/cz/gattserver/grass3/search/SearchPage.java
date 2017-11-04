@@ -16,6 +16,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -26,8 +27,6 @@ import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.ui.ImageIcons;
 
 public class SearchPage extends OneColumnPage {
-
-	private static final long serialVersionUID = -7063551976547889914L;
 
 	public static final String NAME = "search";
 
@@ -43,13 +42,11 @@ public class SearchPage extends OneColumnPage {
 	}
 
 	@Override
-	protected void init() {
-
+	protected Layout createPayload() {
 		outputLayout = new VerticalLayout();
 		searchField = new TextField();
 		moduleCombo = new ComboBox<>();
-
-		super.init();
+		return super.createPayload();
 	}
 
 	private void searchAndPrintHits() {
@@ -80,14 +77,10 @@ public class SearchPage extends OneColumnPage {
 
 	@Override
 	protected Component createContent() {
-
 		VerticalLayout layout = new VerticalLayout();
-
 		layout.setMargin(true);
 		layout.setSpacing(true);
-
 		init(layout);
-
 		return layout;
 	}
 
@@ -142,7 +135,6 @@ public class SearchPage extends OneColumnPage {
 
 		// při od-enterování by se mělo provést vyhledání
 		searchField.addShortcutListener(new ShortcutListener("Shortcut Name", ShortcutAction.KeyCode.ENTER, null) {
-
 			private static final long serialVersionUID = 4399065369299557562L;
 
 			@Override
@@ -153,7 +145,6 @@ public class SearchPage extends OneColumnPage {
 
 		// zaměř se na textové pole
 		searchField.focus();
-
 	}
 
 }

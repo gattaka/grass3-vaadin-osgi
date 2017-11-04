@@ -8,7 +8,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
-import cz.gattserver.grass3.pages.template.GrassLayout;
+import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.search.service.SearchField;
 import cz.gattserver.grass3.search.service.SearchHit;
 
@@ -24,5 +24,5 @@ public interface SearchFacade {
 	 * @throws InvalidTokenOffsetsException
 	 */
 	public List<SearchHit> search(String queryText, Set<Enum<? extends SearchField>> searchFields, String moduleId,
-			UserInfoDTO user, GrassLayout callingPage) throws IOException, InvalidTokenOffsetsException, ParseException;
+			UserInfoDTO user, GrassPage callingPage) throws IOException, InvalidTokenOffsetsException, ParseException;
 }

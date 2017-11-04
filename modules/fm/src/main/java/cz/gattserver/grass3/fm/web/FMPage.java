@@ -24,6 +24,7 @@ import com.vaadin.ui.Embedded;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
@@ -128,8 +129,7 @@ public class FMPage extends OneColumnPage {
 	}
 
 	@Override
-	protected void init() {
-
+	protected Layout createPayload() {
 		statusLabel = new Label();
 		breadcrumb = new Breadcrumb();
 
@@ -145,8 +145,7 @@ public class FMPage extends OneColumnPage {
 		try {
 			explorer = new FMExplorer(builder.toString());
 		} catch (IOException e) {
-			showError500();
-			return;
+			showErrorPage500();
 		}
 
 		// Bylo potřeba se vrátit do kořene, protože předložený adresář
@@ -178,7 +177,7 @@ public class FMPage extends OneColumnPage {
 			// RequestCycle.get().setRequestTarget(target);
 		}
 
-		super.init();
+		return super.createPayload();
 	}
 
 	private void initBreadcrumb(VerticalLayout layout) {

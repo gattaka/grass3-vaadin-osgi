@@ -1,34 +1,32 @@
-package cz.gattserver.grass3.monitor.tabs;
+package cz.gattserver.grass3.articles.latex.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Button.ClickEvent;
 
-import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
-import cz.gattserver.grass3.monitor.facade.MonitorFacade;
-import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
+import cz.gattserver.grass3.articles.latex.config.LatexConfiguration;
+import cz.gattserver.grass3.config.ConfigurationService;
+import cz.gattserver.grass3.tabs.template.ModuleSettingsPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.H2Label;
 
-public class MonitorSettingsTab extends AbstractSettingsTab {
-
-	private static final long serialVersionUID = 2474374292329895766L;
+public class LatexSettingsPage extends ModuleSettingsPage {
 
 	@Autowired
-	private MonitorFacade monitorFacade;
+	private ConfigurationService configurationService;
 
-	public MonitorSettingsTab(GrassRequest request) {
+	public LatexSettingsPage(GrassRequest request) {
 		super(request);
 	}
 
 	@Override
 	protected Component createContent() {
+
+		final LatexConfiguration configuration = loadConfiguration();
 
 		VerticalLayout layout = new VerticalLayout();
 
@@ -37,8 +35,6 @@ public class MonitorSettingsTab extends AbstractSettingsTab {
 
 		VerticalLayout settingsLayout = new VerticalLayout();
 		layout.addComponent(settingsLayout);
-
-		final MonitorConfiguration configuration = monitorFacade.getConfiguration();
 
 		settingsLayout.removeAllComponents();
 		settingsLayout.addComponent(new H2Label("Nastavení"));
@@ -50,31 +46,40 @@ public class MonitorSettingsTab extends AbstractSettingsTab {
 		settingsFieldsLayout.setSizeFull();
 
 		/**
-		 * Adresář skriptů
+		 * Výstupní cesta
 		 */
-		final TextField scriptsDirField = new TextField("Adresář skriptů");
-		scriptsDirField.setValue(String.valueOf(configuration.getScriptsDir()));
-		FieldUtils.addValidator(scriptsDirField, new StringLengthValidator("Nesmí být prázdné", 1, 1024));
-		settingsFieldsLayout.addComponent(scriptsDirField);
+		final TextField outputPathField = new TextField("Nastavení výstupní cesty");
+		outputPathField.setValue(configuration.getOutputPath());
+		settingsFieldsLayout.addComponent(outputPathField);
 
 		/**
 		 * Save tlačítko
 		 */
+
 		Button saveButton = new Button("Uložit", new Button.ClickListener() {
 
 			private static final long serialVersionUID = 8490964871266821307L;
 
 			public void buttonClick(ClickEvent event) {
-				if (scriptsDirField.getComponentError() == null) {
-					configuration.setScriptsDir(scriptsDirField.getValue());
-					monitorFacade.storeConfiguration(configuration);
-				}
+				configuration.setOutputPath((String) outputPathField.getValue());
+				storeConfiguration(configuration);
 			}
 		});
+
 		settingsFieldsLayout.addComponent(saveButton);
 
 		return layout;
 
+	}
+
+	private LatexConfiguration loadConfiguration() {
+		LatexConfiguration configuration = new LatexConfiguration();
+		configurationService.loadConfiguration(configuration);
+		return configuration;
+	}
+
+	private void storeConfiguration(LatexConfiguration configuration) {
+		configurationService.saveConfiguration(configuration);
 	}
 
 }

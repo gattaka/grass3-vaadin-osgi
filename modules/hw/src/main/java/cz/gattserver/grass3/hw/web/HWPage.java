@@ -9,15 +9,8 @@ import cz.gattserver.grass3.ui.util.GrassRequest;
 
 public class HWPage extends OneColumnPage {
 
-	private static final long serialVersionUID = -950042653154868289L;
-
 	public HWPage(GrassRequest request) {
 		super(request);
-	}
-
-	@Override
-	protected void init() {
-		super.init();
 	}
 
 	@Override

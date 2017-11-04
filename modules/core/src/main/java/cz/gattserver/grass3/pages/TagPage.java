@@ -16,8 +16,6 @@ import cz.gattserver.web.common.ui.H2Label;
 
 public class TagPage extends BasePage {
 
-	private static final long serialVersionUID = 2474374292329895766L;
-
 	@Autowired
 	private ContentTagFacade contentTagFacade;
 
@@ -35,18 +33,18 @@ public class TagPage extends BasePage {
 
 		String tagName = getRequest().getAnalyzer().getNextPathToken();
 		if (tagName == null)
-			showError404();
+			showErrorPage404();
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(tagName);
 		if (identifier == null) {
-			showError404();
+			showErrorPage404();
 			return;
 		}
 
 		tag = contentTagFacade.getContentTagById(identifier.getId());
 
 		if (tag == null) {
-			showError404();
+			showErrorPage404();
 			return;
 		}
 

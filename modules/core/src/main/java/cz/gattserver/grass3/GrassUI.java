@@ -10,13 +10,15 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
 
 import cz.gattserver.grass3.exception.ApplicationErrorHandler;
 import cz.gattserver.grass3.facades.SecurityFacade;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.pages.err.GrassPageException;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
-import cz.gattserver.grass3.pages.template.GrassLayout;
+import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.grass3.ui.util.PageFactoriesRegister;
 import cz.gattserver.web.common.SpringContextHelper;
@@ -38,14 +40,14 @@ public class GrassUI extends UI {
 	@Autowired
 	private SecurityFacade securityFacade;
 
-	@Resource(name = "err403Factory")
-	private PageFactory err403Factory;
+	@Resource(name = "err403PageFactory")
+	private PageFactory err403PageFactory;
 
-	@Resource(name = "err404Factory")
-	private PageFactory err404Factory;
+	@Resource(name = "err404PageFactory")
+	private PageFactory err404PageFactory;
 
-	@Resource(name = "err500Factory")
-	private PageFactory err500Factory;
+	@Resource(name = "err500PageFactory")
+	private PageFactory err500PageFactory;
 
 	public GrassUI() {
 		SpringContextHelper.inject(this);
@@ -74,21 +76,23 @@ public class GrassUI extends UI {
 		String token = analyzer.getNextPathToken();
 		PageFactory factory = pageFactoriesRegister.get(token);
 
-		GrassLayout buildedPage = factory.createPageIfAuthorized(grassRequest);
-
-		switch (grassRequest.getPageState()) {
-		case CLEAN:
-			setContent(buildedPage);
-			break;
-		case E403:
-			setContent(err403Factory.createPageIfAuthorized(grassRequest));
-			break;
-		case E404:
-			setContent(err404Factory.createPageIfAuthorized(grassRequest));
-			break;
-		case E500:
-			setContent(err500Factory.createPageIfAuthorized(grassRequest));
-			break;
+		try {
+			GrassPage page = factory.createPageIfAuthorized(grassRequest);
+			Component content = page.getContent();
+			setContent(content);
+		} catch (GrassPageException e) {
+			switch (e.getStatus()) {
+			case 403:
+				setContent(err403PageFactory.createPageIfAuthorized(grassRequest).getContent());
+				break;
+			case 404:
+				setContent(err404PageFactory.createPageIfAuthorized(grassRequest).getContent());
+				break;
+			case 500:
+			default:
+				setContent(err500PageFactory.createPageIfAuthorized(grassRequest).getContent());
+				break;
+			}
 		}
 
 	}

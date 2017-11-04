@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
-import cz.gattserver.grass3.pages.template.GrassLayout;
+import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.search.service.SearchConnector;
 import cz.gattserver.grass3.search.service.SearchField;
 import cz.gattserver.grass3.search.service.SearchEntity;
@@ -53,7 +53,7 @@ public class SearchFacadeImpl implements SearchFacade {
 	 * @throws InvalidTokenOffsetsException
 	 */
 	public List<SearchHit> search(String queryText, Set<Enum<? extends SearchField>> searchFields, String moduleId,
-			UserInfoDTO user, GrassLayout callingPage)
+			UserInfoDTO user, GrassPage callingPage)
 			throws IOException, InvalidTokenOffsetsException, ParseException {
 
 		StandardAnalyzer analyzer = new StandardAnalyzer();

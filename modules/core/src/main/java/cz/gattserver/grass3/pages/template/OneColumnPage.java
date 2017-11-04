@@ -6,12 +6,11 @@ import com.vaadin.ui.CustomLayout;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
 public abstract class OneColumnPage extends BasePage {
+	private static final long serialVersionUID = 5064416476628186307L;
 
 	public OneColumnPage(GrassRequest request) {
 		super(request);
 	}
-
-	private static final long serialVersionUID = 5064416476628186307L;
 
 	@Override
 	protected void createContent(CustomLayout layout) {

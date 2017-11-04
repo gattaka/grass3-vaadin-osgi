@@ -11,6 +11,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.v7.data.Item;
@@ -23,12 +24,12 @@ import com.vaadin.v7.ui.Table;
 import cz.gattserver.grass3.facades.UserFacade;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.security.Role;
-import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
+import cz.gattserver.grass3.tabs.template.ModuleSettingsPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.window.WebWindow;
 
-public class UsersSettingsTab extends AbstractSettingsTab {
+public class UsersSettingsPage extends ModuleSettingsPage {
 
 	private static final long serialVersionUID = 2474374292329895766L;
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("d.M.yyyy HH:mm:ss");
@@ -38,7 +39,7 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 
 	private Table userTable;
 
-	public UsersSettingsTab(GrassRequest request) {
+	public UsersSettingsPage(GrassRequest request) {
 		super(request);
 	}
 
@@ -181,7 +182,7 @@ public class UsersSettingsTab extends AbstractSettingsTab {
 
 				final Window subwindow = new WebWindow("Uživatelské role");
 				subwindow.center();
-				getUI().addWindow(subwindow);
+				UI.getCurrent().addWindow(subwindow);
 				subwindow.setWidth("220px");
 				VerticalLayout subwindowLayout = ((VerticalLayout) subwindow.getContent());
 

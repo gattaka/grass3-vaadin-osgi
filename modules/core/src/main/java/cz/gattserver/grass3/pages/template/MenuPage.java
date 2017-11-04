@@ -11,6 +11,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.Link;
 
 import cz.gattserver.grass3.ServiceHolder;
@@ -22,9 +23,7 @@ import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.service.SectionService;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
-public abstract class AbstractGrassPage extends GrassLayout implements GrassPage {
-
-	private static final long serialVersionUID = 604170960797872356L;
+public abstract class MenuPage extends GrassPage {
 
 	@Autowired
 	protected ServiceHolder serviceHolder;
@@ -53,24 +52,24 @@ public abstract class AbstractGrassPage extends GrassLayout implements GrassPage
 	@Resource(name = "registrationPageFactory")
 	protected PageFactory registrationPageFactory;
 
-	public AbstractGrassPage(GrassRequest request) {
-		super("grass", request);
-		addStyleName("grasspage");
-
-		init();
+	public MenuPage(GrassRequest request) {
+		super(request);
 	}
 
-	protected void init() {
+	@Override
+	protected Layout createPayload() {
+		CustomLayout layout = new CustomLayout("grass");
+		layout.addStyleName("grasspage");
 
 		// homelink (přes logo)
 		Link homelink = new Link();
 		homelink.addStyleName("homelink");
 		homelink.setResource(getPageResource(homePageFactory));
 		homelink.setIcon(new ThemeResource("img/logo.png"));
-		addComponent(homelink, "homelink");
+		layout.addComponent(homelink, "homelink");
 
 		// hlášky
-		createQuotes(this);
+		createQuotes(layout);
 
 		// menu
 		HorizontalLayout menuExpander = new HorizontalLayout();
@@ -79,7 +78,7 @@ public abstract class AbstractGrassPage extends GrassLayout implements GrassPage
 		menuExpander.addStyleName("menu");
 		menuExpander.setMargin(false);
 		menuExpander.setSpacing(false);
-		addComponent(menuExpander, "menu");
+		layout.addComponent(menuExpander, "menu");
 
 		HorizontalLayout menu = new HorizontalLayout();
 		menu.setSpacing(true);
@@ -90,11 +89,12 @@ public abstract class AbstractGrassPage extends GrassLayout implements GrassPage
 		createMenuItems(menu);
 
 		// obsah
-		createContent(this);
+		createContent(layout);
 
 		// footer
-		addComponent(new Label("Powered by GRASS III © 2012-2017 Hynek Uhlíř"), "about");
+		layout.addComponent(new Label("Powered by GRASS III © 2012-2017 Hynek Uhlíř"), "about");
 
+		return layout;
 	}
 
 	protected void createMenuComponent(HorizontalLayout menu, Component component) {
@@ -165,9 +165,5 @@ public abstract class AbstractGrassPage extends GrassLayout implements GrassPage
 	 * Získá obsah
 	 */
 	protected abstract void createContent(CustomLayout layout);
-
-	public GrassLayout getContent() {
-		return this;
-	}
 
 }

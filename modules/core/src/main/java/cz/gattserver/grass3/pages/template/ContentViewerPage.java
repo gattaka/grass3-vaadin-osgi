@@ -18,6 +18,7 @@ import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -42,8 +43,6 @@ import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.WarnWindow;
 
 public abstract class ContentViewerPage extends TwoColumnPage {
-
-	private static final long serialVersionUID = 5078280973817331002L;
 
 	@Autowired
 	private CoreACL coreACL;
@@ -77,8 +76,8 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		super(request);
 	}
 
-	protected void init() {
-
+	@Override
+	protected Layout createPayload() {
 		tagsListLayout = new CssLayout();
 		breadcrumb = new Breadcrumb();
 
@@ -88,11 +87,8 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("d.M.yyyy HH:mm:ss");
 
 		contentNameLabel = new H2Label(content.getName());
-
 		contentAuthorNameLabel = new Label(content.getAuthor().getName());
-
 		contentCreationDateNameLabel = new Label(content.getCreationDate().format(dateFormat));
-
 		contentLastModificationDateLabel = new Label(content.getLastModificationDate() == null ? "<em>-neupraveno-</em>"
 				: dateFormat.format(content.getLastModificationDate()));
 		contentLastModificationDateLabel.setContentMode(ContentMode.HTML);
@@ -119,12 +115,10 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 				/*			*/ + "document.getElementById('left').style['margin-top'] = '0px'; "
 				/*	*/ + "});");
 
-		super.init();
-
+		return super.createPayload();
 	}
 
 	protected void createContentOperations(CssLayout operationsListLayout) {
-
 		// Upravit
 		if (coreACL.canModifyContent(content, getUser())) {
 			ModifyButton modBtn = new ModifyButton(event -> onEditOperation());
@@ -134,9 +128,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		}
 
 		// Smazat
-		if (coreACL.canDeleteContent(content,
-
-				getUser())) {
+		if (coreACL.canDeleteContent(content, getUser())) {
 			DeleteButton delBtn = new DeleteButton(event -> {
 				onDeleteOperation();
 			});
@@ -154,8 +146,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 				addToFavouritesButton.setVisible(true);
 			} catch (Exception e) {
 				// Pokud ne, otevři warn okno
-				WarnWindow warnSubwindow = new WarnWindow("Odebrání z oblíbených se nezdařilo.");
-				getUI().addWindow(warnSubwindow);
+				UI.getCurrent().addWindow(new WarnWindow("Odebrání z oblíbených se nezdařilo."));
 			}
 		});
 		removeFromFavouritesButton.setIconAlternateText("Odebrat z oblíbených");
@@ -168,8 +159,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 				removeFromFavouritesButton.setVisible(true);
 			} catch (Exception e) {
 				// Pokud ne, otevři warn okno
-				WarnWindow warnSubwindow = new WarnWindow("Vložení do oblíbených se nezdařilo.");
-				getUI().addWindow(warnSubwindow);
+				UI.getCurrent().addWindow(new WarnWindow("Vložení do oblíbených se nezdařilo."));
 			}
 		});
 		addToFavouritesButton.setIconAlternateText("Přidat do oblíbených");
@@ -246,7 +236,6 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		createContent(layout);
 
 		return marginlayout;
-
 	}
 
 	protected abstract void createContent(VerticalLayout layout);
@@ -275,7 +264,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 			// nejprve zkus zjistit, zda předek existuje
 			if (parent == null)
-				showError404();
+				showErrorPage404();
 
 			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageResource(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(parent.getId(), parent.getName()))));

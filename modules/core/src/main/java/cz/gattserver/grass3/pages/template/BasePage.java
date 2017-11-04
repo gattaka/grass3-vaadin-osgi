@@ -11,9 +11,7 @@ import cz.gattserver.grass3.facades.QuotesFacade;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
-public abstract class BasePage extends AbstractGrassPage {
-
-	private static final long serialVersionUID = 502625699429764791L;
+public abstract class BasePage extends MenuPage {
 
 	@Autowired
 	protected QuotesFacade quotesFacade;
@@ -40,7 +38,7 @@ public abstract class BasePage extends AbstractGrassPage {
 	private String chooseQuote() {
 		String quote = quotesFacade.getRandomQuote();
 		if (quote == null) {
-			showError500();
+			showErrorPage500();
 		}
 		return quote;
 	}

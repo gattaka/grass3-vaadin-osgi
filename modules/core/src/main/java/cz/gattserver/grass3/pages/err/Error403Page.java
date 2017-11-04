@@ -6,13 +6,11 @@ import com.vaadin.server.ThemeResource;
 import cz.gattserver.grass3.pages.template.ErrorPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
-public class Err403Page extends ErrorPage {
+public class Error403Page extends ErrorPage {
 
-	public Err403Page(GrassRequest request) {
+	public Error403Page(GrassRequest request) {
 		super(request);
 	}
-
-	private static final long serialVersionUID = 3728073040878360420L;
 
 	@Override
 	protected String getErrorText() {

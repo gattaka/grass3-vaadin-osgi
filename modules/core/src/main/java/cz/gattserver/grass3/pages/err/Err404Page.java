@@ -12,13 +12,11 @@ public class Err404Page extends ErrorPage {
 		super(request);
 	}
 
-	private static final long serialVersionUID = 3728073040878360420L;
-
 	@Override
 	protected String getErrorText() {
 		return "404 - Hledaný obsah neexistuje";
 	}
-	
+
 	@Override
 	protected Resource getErrorImage() {
 		return new ThemeResource("img/404.png");

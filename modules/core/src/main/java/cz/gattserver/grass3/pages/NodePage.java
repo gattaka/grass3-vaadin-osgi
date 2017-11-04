@@ -34,8 +34,6 @@ import cz.gattserver.web.common.ui.ImageIcons;
 
 public class NodePage extends OneColumnPage {
 
-	private static final long serialVersionUID = -499585200973560016L;
-
 	@Autowired
 	private CoreACL coreACL;
 
@@ -56,11 +54,6 @@ public class NodePage extends OneColumnPage {
 	}
 
 	@Override
-	protected void init() {
-		super.init();
-	}
-
-	@Override
 	protected Component createContent() {
 
 		VerticalLayout marginLayout = new VerticalLayout();
@@ -73,11 +66,11 @@ public class NodePage extends OneColumnPage {
 
 		String nodeName = getRequest().getAnalyzer().getNextPathToken();
 		if (nodeName == null)
-			showError404();
+			showErrorPage404();
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(nodeName);
 		if (identifier == null) {
-			showError404();
+			showErrorPage404();
 			return layout;
 		}
 
@@ -145,7 +138,7 @@ public class NodePage extends OneColumnPage {
 
 			// nejprve zkus zjistit, zda předek existuje
 			if (parent == null)
-				showError404();
+				showErrorPage404();
 
 			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageResource(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(parent.getId(), parent.getName()))));
@@ -184,7 +177,7 @@ public class NodePage extends OneColumnPage {
 
 		List<NodeDTO> nodes = nodeFacade.getNodesByParentNode(node);
 		if (nodes == null) {
-			showError500();
+			showErrorPage500();
 			return;
 		}
 		subNodesTable.populate(nodes);

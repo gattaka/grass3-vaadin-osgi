@@ -19,8 +19,7 @@ public class ArticlesEditorPageFactory extends AbstractPageFactory {
 
 	@Override
 	protected boolean isAuthorized() {
-		return getUser() != null
-				&& (getUser().isAdmin() || getUser().hasRole(Role.AUTHOR));
+		return getUser() != null && (getUser().isAdmin() || getUser().hasRole(Role.AUTHOR));
 	}
 
 	@Override

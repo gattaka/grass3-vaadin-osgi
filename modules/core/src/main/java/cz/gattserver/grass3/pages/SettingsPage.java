@@ -9,63 +9,63 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.pages.err.Error403Page;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
-import cz.gattserver.grass3.tabs.factories.template.SettingsTabFactory;
+import cz.gattserver.grass3.tabs.factories.template.ModuleSettingsPageFactory;
 import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.grass3.ui.util.SettingsTabFactoriesRegister;
+import cz.gattserver.grass3.ui.util.ModuleSettingsPageFactoriesRegister;
 import cz.gattserver.web.common.URLPathAnalyzer;
 
 public class SettingsPage extends TwoColumnPage {
 
-	private static final long serialVersionUID = 2474374292329895766L;
-
 	@Autowired
-	private List<SettingsTabFactory> settingsTabFactories;
+	private List<ModuleSettingsPageFactory> settingsTabFactories;
 
 	@Resource(name = "settingsPageFactory")
 	private PageFactory settingsPageFactory;
 
 	@Autowired
-	private SettingsTabFactoriesRegister settingsTabFactoriesRegister;
+	private ModuleSettingsPageFactoriesRegister register;
 
-	private SettingsTabFactory settingsTabFactory = null;
+	private ModuleSettingsPageFactory settingsTabFactory = null;
 
 	public SettingsPage(GrassRequest request) {
 		super(request);
 	}
 
 	@Override
-	protected void init() {
+	protected Layout createPayload() {
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		String settingsTabName = analyzer.getCurrentPathToken();
-		SettingsTabFactory settingsTabFactory = settingsTabFactoriesRegister.getFactory(settingsTabName);
+		ModuleSettingsPageFactory moduleSettingsPageFactory = register.getFactory(settingsTabName);
 
-		if (settingsTabFactory != null) {
-			if (settingsTabFactory.isAuthorized() == false) {
-				showError403();
-				return;
+		if (moduleSettingsPageFactory != null) {
+			if (moduleSettingsPageFactory.isAuthorized() == false) {
+				showErrorPage403();
+				return new Error403Page(getRequest()).getContent();
 			} else {
-				this.settingsTabFactory = settingsTabFactory;
+				this.settingsTabFactory = moduleSettingsPageFactory;
 			}
 		}
 
-		super.init();
+		return super.createPayload();
 	}
 
 	@Override
 	protected Component createLeftColumnContent() {
 		VerticalLayout marginLayout = new VerticalLayout();
 		marginLayout.setMargin(true);
-		
+
 		VerticalLayout leftColumnLayout = new VerticalLayout();
 		leftColumnLayout.setMargin(true);
 		marginLayout.addComponent(leftColumnLayout);
 
-		for (SettingsTabFactory settingsTabFactory : settingsTabFactories) {
+		for (ModuleSettingsPageFactory settingsTabFactory : settingsTabFactories) {
 			Link link = new Link(settingsTabFactory.getSettingsCaption(),
 					getPageResource(settingsPageFactory, settingsTabFactory.getSettingsURL()));
 			leftColumnLayout.addComponent(link);
@@ -79,7 +79,7 @@ public class SettingsPage extends TwoColumnPage {
 
 		// pokud není pageFactory prázdná, pak se zobrazuje konkrétní nastavení
 		if (settingsTabFactory != null)
-			return settingsTabFactory.createTabIfAuthorized(getRequest());
+			return settingsTabFactory.createPageIfAuthorized(getRequest()).getContent();
 
 		// jinak zobraz info o nabídce
 		VerticalLayout layout = new VerticalLayout();

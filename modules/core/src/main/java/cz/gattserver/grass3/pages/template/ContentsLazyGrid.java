@@ -37,7 +37,7 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewDTO> {
 		serviceHolder = (ServiceHolder) SpringContextHelper.getContext().getBean(ServiceHolder.class);
 	}
 
-	public void populate(final AbstractGrassPage page, FetchItemsCallback<ContentNodeOverviewDTO> fetchItems,
+	public void populate(final MenuPage page, FetchItemsCallback<ContentNodeOverviewDTO> fetchItems,
 			SerializableSupplier<Integer> sizeCallback) {
 
 		setDataProvider(fetchItems, sizeCallback);

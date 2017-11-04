@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -17,7 +16,7 @@ import cz.gattserver.grass3.articles.events.ArticlesProcessStartEvent;
 import cz.gattserver.grass3.articles.facade.ArticleFacade;
 import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.events.EventBus;
-import cz.gattserver.grass3.tabs.template.AbstractSettingsTab;
+import cz.gattserver.grass3.tabs.template.ModuleSettingsPage;
 import cz.gattserver.grass3.ui.progress.BaseProgressBar;
 import cz.gattserver.grass3.ui.progress.ProgressWindow;
 import cz.gattserver.grass3.ui.util.GrassRequest;
@@ -26,9 +25,7 @@ import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import net.engio.mbassy.listener.Handler;
 
-public class ArticlesSettingsTab extends AbstractSettingsTab {
-
-	private static final long serialVersionUID = 2474374292329895766L;
+public class ArticlesSettingsPage extends ModuleSettingsPage {
 
 	@Autowired
 	private ArticleFacade articleFacade;
@@ -44,13 +41,12 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 
 	private Button reprocessButton;
 
-	public ArticlesSettingsTab(GrassRequest request) {
+	public ArticlesSettingsPage(GrassRequest request) {
 		super(request);
 	}
 
 	@Override
 	protected Component createContent() {
-
 		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);
@@ -92,17 +88,12 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 		/**
 		 * Save tlačítko
 		 */
-		Button saveButton = new Button("Uložit", new Button.ClickListener() {
-
-			private static final long serialVersionUID = 8490964871266821307L;
-
-			public void buttonClick(ClickEvent event) {
-				// TODO
-				if (tabLengthField.getComponentError() == null && backupTimeout.getComponentError() == null) {
-					configuration.setTabLength(Integer.parseInt(tabLengthField.getValue()));
-					configuration.setBackupTimeout(Integer.parseInt(backupTimeout.getValue()));
-					storeConfiguration(configuration);
-				}
+		Button saveButton = new Button("Uložit", event -> {
+			// TODO
+			if (tabLengthField.getComponentError() == null && backupTimeout.getComponentError() == null) {
+				configuration.setTabLength(Integer.parseInt(tabLengthField.getValue()));
+				configuration.setBackupTimeout(Integer.parseInt(backupTimeout.getValue()));
+				storeConfiguration(configuration);
 			}
 		});
 		settingsFieldsLayout.addComponent(saveButton);
@@ -120,29 +111,20 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 		reprocessLayout.setSizeFull();
 
 		reprocessButton = new Button("Přegenerovat všechny články");
-		reprocessButton.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 8490964871266821307L;
-
-			public void buttonClick(ClickEvent event) {
-
-				ConfirmWindow confirmSubwindow = new ConfirmWindow(
-						"Přegenerování všech článků může zabrat delší čas a dojde během něj zřejmě k mnoha drobným změnám - opravdu přegenerovat ?",
-						e -> {
-							eventBus.subscribe(ArticlesSettingsTab.this);
-							ui.setPollInterval(200);
-							articleFacade.reprocessAllArticles(getRequest().getContextRoot());
-						});
-				confirmSubwindow.setWidth("460px");
-				confirmSubwindow.setHeight("230px");
-				getUI().addWindow(confirmSubwindow);
-
-			}
+		reprocessButton.addClickListener(event -> {
+			ConfirmWindow confirmSubwindow = new ConfirmWindow(
+					"Přegenerování všech článků může zabrat delší čas a dojde během něj zřejmě k mnoha drobným změnám - opravdu přegenerovat ?",
+					e -> {
+						eventBus.subscribe(ArticlesSettingsPage.this);
+						ui.setPollInterval(200);
+						articleFacade.reprocessAllArticles(getRequest().getContextRoot());
+					});
+			confirmSubwindow.setWidth("460px");
+			confirmSubwindow.setHeight("230px");
+			UI.getCurrent().addWindow(confirmSubwindow);
 		});
 		reprocessLayout.addComponent(reprocessButton);
-
 		return layout;
-
 	}
 
 	private ArticlesConfiguration loadConfiguration() {
@@ -157,46 +139,35 @@ public class ArticlesSettingsTab extends AbstractSettingsTab {
 
 	@Handler
 	protected void onProcessStart(final ArticlesProcessStartEvent event) {
-		ui.access(new Runnable() {
-			@Override
-			public void run() {
-				BaseProgressBar progressBar = new BaseProgressBar(event.getCountOfStepsToDo());
-				progressBar.setIndeterminate(false);
-				progressBar.setValue(0f);
-				progressIndicatorWindow = new ProgressWindow(progressBar);
-				ui.addWindow(progressIndicatorWindow);
-			}
+		ui.access(() -> {
+			BaseProgressBar progressBar = new BaseProgressBar(event.getCountOfStepsToDo());
+			progressBar.setIndeterminate(false);
+			progressBar.setValue(0f);
+			progressIndicatorWindow = new ProgressWindow(progressBar);
+			ui.addWindow(progressIndicatorWindow);
 		});
 	}
 
 	@Handler
 	protected void onProcessProgress(ArticlesProcessProgressEvent event) {
-		ui.access(new Runnable() {
-			@Override
-			public void run() {
-				progressIndicatorWindow.indicateProgress(event.getStepDescription());
-			}
-		});
+		ui.access(() -> progressIndicatorWindow.indicateProgress(event.getStepDescription()));
 	}
 
 	@Handler
 	protected void onProcessResult(final ArticlesProcessResultEvent event) {
-		ui.access(new Runnable() {
-			@Override
-			public void run() {
-				// ui.setPollInterval(-1);
-				if (progressIndicatorWindow != null)
-					progressIndicatorWindow.closeOnDone();
-				reprocessButton.setEnabled(true);
+		ui.access(() -> {
+			// ui.setPollInterval(-1);
+			if (progressIndicatorWindow != null)
+				progressIndicatorWindow.closeOnDone();
+			reprocessButton.setEnabled(true);
 
-				if (event.isSuccess()) {
-					showInfo("Přegenerování článků proběhlo úspěšně");
-				} else {
-					showWarning("Přegenerování článků se nezdařilo");
-				}
+			if (event.isSuccess()) {
+				showInfo("Přegenerování článků proběhlo úspěšně");
+			} else {
+				showWarning("Přegenerování článků se nezdařilo");
 			}
 		});
-		eventBus.unsubscribe(ArticlesSettingsTab.this);
+		eventBus.unsubscribe(ArticlesSettingsPage.this);
 	}
 
 }

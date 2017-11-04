@@ -2,18 +2,18 @@ package cz.gattserver.grass3.pages.err.factories;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.pages.err.Err404Page;
+import cz.gattserver.grass3.pages.err.Error403Page;
 import cz.gattserver.grass3.pages.factories.template.AbstractPageFactory;
 import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.GrassRequest;
 
-@Component("err404Factory")
-public class Err404Factory extends AbstractPageFactory {
+@Component("err403PageFactory")
+public class Err403PageFactory extends AbstractPageFactory {
 
-	private static final long serialVersionUID = 1538011525952923446L;
+	private static final long serialVersionUID = 128945054380924993L;
 
-	public Err404Factory() {
-		super("err404");
+	public Err403PageFactory() {
+		super("err403");
 	}
 
 	@Override
@@ -23,6 +23,6 @@ public class Err404Factory extends AbstractPageFactory {
 
 	@Override
 	protected GrassPage createPage(GrassRequest request) {
-		return new Err404Page(request);
+		return new Error403Page(request);
 	}
 }

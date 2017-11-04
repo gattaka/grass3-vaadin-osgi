@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.jouni.animator.Animator;
 import org.vaadin.jouni.dom.client.Css;
 
-import com.vaadin.event.MouseEvents;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.ThemeResource;
@@ -21,6 +20,7 @@ import com.vaadin.ui.Embedded;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -53,8 +53,6 @@ import cz.gattserver.web.common.window.WebWindow;
 import net.engio.mbassy.listener.Handler;
 
 public class PhotogalleryViewerPage extends ContentViewerPage {
-
-	private static final long serialVersionUID = 5078280973817331002L;
 
 	@Autowired
 	private PhotogalleryFacade photogalleryFacade;
@@ -122,8 +120,8 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		super(request);
 	}
 
-	protected void init() {
-
+	@Override
+	protected Layout createPayload() {
 		rowsSum = 0;
 		imageSum = 0;
 		galleryGridRowOffset = 0;
@@ -141,21 +139,18 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
 				.parseURLIdentifier(analyzer.getNextPathToken());
 		if (identifier == null) {
-			showError404();
-			return;
+			showErrorPage404();
 		}
 
 		photogallery = photogalleryFacade.getPhotogalleryForDetail(identifier.getId());
 		if (photogallery == null) {
-			showError404();
-			return;
+			showErrorPage404();
 		}
 
 		if (photogallery.getContentNode().isPublicated() || (getUser() != null
 				&& (photogallery.getContentNode().getAuthor().equals(getUser()) || getUser().isAdmin()))) {
 		} else {
-			showError403();
-			return;
+			showErrorPage403();
 		}
 
 		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
@@ -169,12 +164,11 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		pgSelectedVideoItemId = analyzer.getNextPathToken();
 		if (pgSelectedVideoItemId != null) {
 			if (new File(galleryDir, pgSelectedVideoItemId).exists() == false) {
-				showError404();
-				return;
+				showErrorPage404();
 			}
 		}
 
-		super.init();
+		return super.createPayload();
 	}
 
 	@Override
@@ -239,40 +233,21 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		endPageBtn.setIcon(new ThemeResource(ImageIcons.DOWN_16_ICON));
 
 		// listenery horních tlačítek
-		upRowBtn.addClickListener(new Button.ClickListener() {
-			private static final long serialVersionUID = -6985989532144363433L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				galleryGridRowOffset--;
-			}
-		});
+		upRowBtn.addClickListener(event -> galleryGridRowOffset--);
 		topBtnsLayout.addComponent(upRowBtn);
 		topBtnsLayout.setComponentAlignment(upRowBtn, Alignment.MIDDLE_CENTER);
 
-		upPageBtn.addClickListener(new Button.ClickListener() {
-			private static final long serialVersionUID = -6985989532144363433L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				if (galleryGridRowOffset > GALLERY_GRID_ROWS) {
-					galleryGridRowOffset -= GALLERY_GRID_ROWS;
-				} else {
-					galleryGridRowOffset = 0;
-				}
+		upPageBtn.addClickListener(event -> {
+			if (galleryGridRowOffset > GALLERY_GRID_ROWS) {
+				galleryGridRowOffset -= GALLERY_GRID_ROWS;
+			} else {
+				galleryGridRowOffset = 0;
 			}
 		});
 		topBtnsLayout.addComponent(upPageBtn);
 		topBtnsLayout.setComponentAlignment(upPageBtn, Alignment.MIDDLE_CENTER);
 
-		startPageBtn.addClickListener(new Button.ClickListener() {
-			private static final long serialVersionUID = -6985989532144363433L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				galleryGridRowOffset = 0;
-			}
-		});
+		startPageBtn.addClickListener(event -> galleryGridRowOffset = 0);
 		topBtnsLayout.addComponent(startPageBtn);
 		topBtnsLayout.setComponentAlignment(startPageBtn, Alignment.MIDDLE_CENTER);
 
@@ -281,42 +256,25 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		galleryLayout.setComponentAlignment(galleryGridLayout, Alignment.MIDDLE_CENTER);
 
 		// listenery spodních tlačítek
-		downRowBtn.addClickListener(new Button.ClickListener() {
-			private static final long serialVersionUID = -6985989532144363433L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				galleryGridRowOffset++;
-			}
-		});
+		downRowBtn.addClickListener(event -> galleryGridRowOffset++);
 		bottomBtnsLayout.addComponent(downRowBtn);
 		bottomBtnsLayout.setComponentAlignment(downRowBtn, Alignment.MIDDLE_CENTER);
 
-		downPageBtn.addClickListener(new Button.ClickListener() {
-			private static final long serialVersionUID = -6985989532144363433L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				// kolik řádků zbývá do konce ?
-				int dif = rowsSum - (GALLERY_GRID_ROWS + galleryGridRowOffset);
-				if (dif > GALLERY_GRID_ROWS) {
-					galleryGridRowOffset += GALLERY_GRID_ROWS;
-				} else {
-					galleryGridRowOffset += dif;
-				}
+		downPageBtn.addClickListener(event -> {
+			// kolik řádků zbývá do konce ?
+			int dif = rowsSum - (GALLERY_GRID_ROWS + galleryGridRowOffset);
+			if (dif > GALLERY_GRID_ROWS) {
+				galleryGridRowOffset += GALLERY_GRID_ROWS;
+			} else {
+				galleryGridRowOffset += dif;
 			}
 		});
 		bottomBtnsLayout.addComponent(downPageBtn);
 		bottomBtnsLayout.setComponentAlignment(downPageBtn, Alignment.MIDDLE_CENTER);
 
-		endPageBtn.addClickListener(new Button.ClickListener() {
-			private static final long serialVersionUID = -6985989532144363433L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				int dif = rowsSum - (GALLERY_GRID_ROWS + galleryGridRowOffset);
-				galleryGridRowOffset += dif;
-			}
+		endPageBtn.addClickListener(event -> {
+			int dif = rowsSum - (GALLERY_GRID_ROWS + galleryGridRowOffset);
+			galleryGridRowOffset += dif;
 		});
 		bottomBtnsLayout.addComponent(endPageBtn);
 		bottomBtnsLayout.setComponentAlignment(endPageBtn, Alignment.MIDDLE_CENTER);
@@ -331,32 +289,18 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		statusLabelWrapper.setExpandRatio(rowStatusLabel, 1);
 		layout.addComponent(statusLabelWrapper);
 
-		Button downloadZip = new Button("Zabalit galerii jako ZIP", new Button.ClickListener() {
-			private static final long serialVersionUID = 803737402448795959L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				UI.getCurrent().addWindow(new ConfirmWindow("Přejete si vytvořit ZIP galerie?", e -> {
+		Button downloadZip = new Button("Zabalit galerii jako ZIP",
+				event -> UI.getCurrent().addWindow(new ConfirmWindow("Přejete si vytvořit ZIP galerie?", e -> {
 					System.out.println("zipPhotogallery thread: " + Thread.currentThread().getId());
 					eventBus.subscribe(PhotogalleryViewerPage.this);
 					ui.setPollInterval(200);
 					photogalleryFacade.zipGallery(galleryDir);
-				}));
-			}
-		});
+				})));
 		statusLabelWrapper.addComponent(downloadZip);
 		downloadZip.setIcon(new ThemeResource(ImageIcons.PRESENT_16_ICON));
 
 		// společný listener pro všechna tlačítka
-		Button.ClickListener btnCommonListener = new Button.ClickListener() {
-			private static final long serialVersionUID = -79498882279825509L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				shiftGrid();
-			}
-		};
-
+		Button.ClickListener btnCommonListener = event -> shiftGrid();
 		upRowBtn.addClickListener(btnCommonListener);
 		upPageBtn.addClickListener(btnCommonListener);
 		startPageBtn.addClickListener(btnCommonListener);
@@ -379,72 +323,60 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	@Handler
 	protected void onProcessStart(final PGZipProcessStartEvent event) {
-		ui.access(new Runnable() {
-			@Override
-			public void run() {
-				BaseProgressBar progressBar = new BaseProgressBar(event.getCountOfStepsToDo());
-				progressBar.setIndeterminate(false);
-				progressBar.setValue(0f);
-				progressIndicatorWindow = new ProgressWindow(progressBar);
-				ui.addWindow(progressIndicatorWindow);
-			}
+		ui.access(() -> {
+			BaseProgressBar progressBar = new BaseProgressBar(event.getCountOfStepsToDo());
+			progressBar.setIndeterminate(false);
+			progressBar.setValue(0f);
+			progressIndicatorWindow = new ProgressWindow(progressBar);
+			ui.addWindow(progressIndicatorWindow);
 		});
 	}
 
 	@Handler
 	protected void onProcessProgress(PGZipProcessProgressEvent event) {
-		ui.access(new Runnable() {
-			@Override
-			public void run() {
-				progressIndicatorWindow.indicateProgress(event.getStepDescription());
-			}
-		});
+		ui.access(() -> progressIndicatorWindow.indicateProgress(event.getStepDescription()));
 	}
 
 	@Handler
 	protected void onProcessResult(final PGZipProcessResultEvent event) {
-		ui.access(new Runnable() {
-			@Override
-			public void run() {
+		ui.access(() -> {
+			// ui.setPollInterval(-1);
+			if (progressIndicatorWindow != null)
+				progressIndicatorWindow.closeOnDone();
 
-				// ui.setPollInterval(-1);
-				if (progressIndicatorWindow != null)
-					progressIndicatorWindow.closeOnDone();
+			if (event.isSuccess()) {
+				ui.addWindow(new Window("Stáhnout") {
+					private static final long serialVersionUID = -3146957611784022710L;
 
-				if (event.isSuccess()) {
-					ui.addWindow(new Window("Stáhnout") {
-						private static final long serialVersionUID = -3146957611784022710L;
+					{
+						Link link = new Link("Stáhnout ZIP souboru", new FileResource(event.getZipFile()) {
+							private static final long serialVersionUID = -8702951153271074955L;
 
-						{
-							Link link = new Link("Stáhnout ZIP souboru", new FileResource(event.getZipFile()) {
-								private static final long serialVersionUID = -8702951153271074955L;
+							@Override
+							public String getFilename() {
+								return photogallery.getPhotogalleryPath() + ".zip";
+							}
+						});
+						link.setTargetName("_blank");
+						VerticalLayout layout = new VerticalLayout();
+						layout.setSpacing(true);
+						layout.setMargin(true);
+						setContent(layout);
+						layout.addComponent(link);
+						layout.setComponentAlignment(link, Alignment.MIDDLE_CENTER);
+						setModal(true);
+						center();
+					}
 
-								@Override
-								public String getFilename() {
-									return photogallery.getPhotogalleryPath() + ".zip";
-								}
-							});
-							link.setTargetName("_blank");
-							VerticalLayout layout = new VerticalLayout();
-							layout.setSpacing(true);
-							layout.setMargin(true);
-							setContent(layout);
-							layout.addComponent(link);
-							layout.setComponentAlignment(link, Alignment.MIDDLE_CENTER);
-							setModal(true);
-							center();
-						}
+					@Override
+					public void close() {
+						super.close();
+						event.getZipFile().delete();
+					}
+				});
 
-						@Override
-						public void close() {
-							super.close();
-							event.getZipFile().delete();
-						}
-					});
-
-				} else {
-					showWarning(event.getResultDetails());
-				}
+			} else {
+				showWarning(event.getResultDetails());
 			}
 		});
 		eventBus.unsubscribe(PhotogalleryViewerPage.this);
@@ -555,16 +487,11 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			galleryGridLayout.addComponent(itemLayout, gridIndex % GALLERY_GRID_COLS, gridIndex / GALLERY_GRID_COLS);
 			galleryGridLayout.setComponentAlignment(itemLayout, Alignment.MIDDLE_CENTER);
 
-			embedded.addClickListener(new MouseEvents.ClickListener() {
-				private static final long serialVersionUID = -6354607057332715984L;
-
-				@Override
-				public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
-					if (videos) {
-						showVideo(itemId, url);
-					} else {
-						showImage(miniatures, index);
-					}
+			embedded.addClickListener(event -> {
+				if (videos) {
+					showVideo(itemId, url);
+				} else {
+					showImage(miniatures, index);
 				}
 			});
 		}
@@ -588,30 +515,27 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			try {
 				photogalleryFacade.deletePhotogallery(photogallery);
 				InfoWindow infoSubwindow = new InfoWindow("Smazání galerie proběhlo úspěšně.") {
-
 					private static final long serialVersionUID = -6688396549852552674L;
 
 					protected void onProceed(ClickEvent event) {
 						redirect(nodeURL);
 					};
 				};
-				getUI().addWindow(infoSubwindow);
-
+				UI.getCurrent().addWindow(infoSubwindow);
 			} catch (Exception e) {
 				// Pokud ne, otevři warn okno a při
 				// potvrzení jdi na kategorii
 				WarnWindow warnSubwindow = new WarnWindow("Smazání galerie se nezdařilo.") {
-
 					private static final long serialVersionUID = -6688396549852552674L;
 
 					protected void onProceed(ClickEvent event) {
 						redirect(nodeURL);
 					};
 				};
-				getUI().addWindow(warnSubwindow);
+				UI.getCurrent().addWindow(warnSubwindow);
 			}
 		});
-		getUI().addWindow(confirmSubwindow);
+		UI.getCurrent().addWindow(confirmSubwindow);
 	}
 
 	@Override

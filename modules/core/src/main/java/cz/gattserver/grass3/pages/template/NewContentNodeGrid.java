@@ -17,7 +17,7 @@ public class NewContentNodeGrid extends Grid<ContentService> {
 
 	private static final long serialVersionUID = -2220485504407844582L;
 
-	public NewContentNodeGrid(AbstractGrassPage page, final NodeDTO node) {
+	public NewContentNodeGrid(MenuPage page, final NodeDTO node) {
 		// inject nefunguje kvůli něčemu v předkovi
 		final ServiceHolder serviceHolder = (ServiceHolder) SpringContextHelper.getContext()
 				.getBean(ServiceHolder.class);

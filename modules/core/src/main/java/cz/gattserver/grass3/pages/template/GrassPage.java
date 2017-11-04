@@ -34,10 +34,9 @@ public abstract class GrassPage {
 	private Layout content;
 
 	/**
-	 * Byl již nahrán jQuery skript ? Je nahráván lazy, aby se urychlilo
-	 * nahrávání stránek
+	 * Má se nahrát JQuery?
 	 */
-	private boolean jQueryPresent = false;
+	private boolean jQueryRequired = false;
 
 	/**
 	 * Konstruktor stránky. Slouží pro přípravu dat pro její sestavení, ale sám
@@ -58,6 +57,8 @@ public abstract class GrassPage {
 	public final Layout getContent() {
 		if (content == null)
 			content = createPayload();
+		if (jQueryRequired)
+			content.addComponent(new JQueryBootstrapComponent());
 		return content;
 	}
 
@@ -65,24 +66,6 @@ public abstract class GrassPage {
 
 	protected GrassRequest getRequest() {
 		return request;
-	}
-
-	/**
-	 * Vrací příznak zda již byl nahrán jQuery javaScript. Skript je nahráván
-	 * lazy, aby se urychlilo nahrávání stránek
-	 * 
-	 * @return <code>true</code>, pokud byl již na stránce nahrán jQuery
-	 *         javaScript
-	 */
-	public boolean isjQueryPresent() {
-		return jQueryPresent;
-	}
-
-	/**
-	 * Nastaví na stránce příznak, že již byl nahrán jQuery javaScript
-	 */
-	public void setjQueryPresent() {
-		this.jQueryPresent = true;
 	}
 
 	/**
@@ -107,11 +90,8 @@ public abstract class GrassPage {
 	 * 
 	 * @param links
 	 */
-	public void loadJS(Layout layout, JScriptItem... scripts) {
-		if (!isjQueryPresent()) {
-			layout.addComponent(new JQueryBootstrapComponent());
-			setjQueryPresent();
-		}
+	public void loadJS(JScriptItem... scripts) {
+		jQueryRequired = true;
 		StringBuilder builder = new StringBuilder();
 		buildJSBatch(builder, 0, scripts);
 		JavaScript.eval(builder.toString());

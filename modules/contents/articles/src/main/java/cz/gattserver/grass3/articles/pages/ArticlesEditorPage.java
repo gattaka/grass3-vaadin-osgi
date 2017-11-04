@@ -300,19 +300,11 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			}
 		}
 
-		// jQueryUI CSS
-		loadCSS(getRequest().getContextRoot() + "/VAADIN/themes/grass/js/humanity/jquery-ui.css");
+		// editor.js
+		loadJS(new JScriptItem("articles/js/editor.js"));
 
 		VerticalLayout hl = new VerticalLayout(accordion);
 		hl.setMargin(true);
-
-		// jQueryUI JS + jQueryUI Accordion render start
-		loadJS(hl,
-				new JScriptItem[] { new JScriptItem("js/jquery-ui.js"),
-						new JScriptItem("$( \"#accordion\" ).accordion({ event: \"click\", heightStyle: \"content\" })",
-								true),
-						new JScriptItem("$(\".ui-accordion-content\").css(\"padding\",\"1em 1em\")", true) });
-
 		return hl;
 	}
 
@@ -325,9 +317,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		VerticalLayout editorTextLayout = new VerticalLayout();
 		editorTextLayout.setMargin(true);
 		marginLayout.addComponent(editorTextLayout);
-
-		// editor.js
-		loadJS(editorTextLayout, new JScriptItem("articles/js/editor.js"));
 
 		editorTextLayout.addComponent(new H2Label("Název článku"));
 		editorTextLayout.addComponent(articleNameField);

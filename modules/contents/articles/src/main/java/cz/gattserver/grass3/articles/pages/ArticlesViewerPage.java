@@ -97,13 +97,11 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		int jsResourcesSize = article.getPluginJSResources().size();
 		JScriptItem[] arr = new JScriptItem[jsResourcesSize];
 		int i = 0;
-		for (String resource : article.getPluginJSResources()) {
+		for (String resource : article.getPluginJSResources())
 			arr[i++] = new JScriptItem(resource);
-		}
+		loadJS(arr);
 
-		Layout layout = super.createPayload();
-		loadJS(layout, arr);
-		return layout;
+		return super.createPayload();
 	}
 
 	@Override
@@ -135,7 +133,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 					+ "/\" + $(this).attr(\"href\"));" + "$(this).html(\"<img alt=\\\" class=\\\"v-icon\\\" src=\\\""
 					+ getRequest().getContextRoot() + "/VAADIN/themes/grass/" + ImageIcons.PENCIL_16_ICON
 					+ "\\\"/>&nbsp\");" + "}" + ")";
-			loadJS(operationsListLayout, new JScriptItem(script, true));
+			loadJS(new JScriptItem(script, true));
 		}
 	}
 

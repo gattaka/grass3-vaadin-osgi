@@ -30,7 +30,6 @@ import cz.gattserver.web.common.window.WarnWindow;
 public abstract class GrassPage {
 
 	private GrassRequest request;
-
 	private Layout content;
 
 	/**

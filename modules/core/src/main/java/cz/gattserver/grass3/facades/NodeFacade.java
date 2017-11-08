@@ -3,6 +3,7 @@ package cz.gattserver.grass3.facades;
 import java.util.List;
 
 import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.model.dto.NodeTreeDTO;
 
 public interface NodeFacade {
 
@@ -21,6 +22,11 @@ public interface NodeFacade {
 	 * Získá všechny kořenové kategorie
 	 */
 	public List<NodeDTO> getRootNodes();
+
+	/**
+	 * Získá všechny kategorie pro zobrazení ve stromu
+	 */
+	public List<NodeTreeDTO> getNodesForTree();
 
 	/**
 	 * Získá kategorie, které jsou jako potomci dané kategorie

@@ -111,7 +111,6 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 	 * Vytoří nové miniatury
 	 */
 	private boolean processMiniatureImages(Photogallery photogallery) {
-
 		PhotogalleryConfiguration configuration = getConfiguration();
 		String miniaturesDir = configuration.getMiniaturesDir();
 		String previewsDir = configuration.getPreviewsDir();
@@ -193,7 +192,6 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 	 * Vytoří nové slideshow verze souborů
 	 */
 	private boolean processSlideshowImages(Photogallery photogallery) {
-
 		PhotogalleryConfiguration configuration = getConfiguration();
 		String slideshowDir = configuration.getSlideshowDir();
 		File galleryDir = getGalleryDir(photogallery);
@@ -249,7 +247,6 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 	@Async
 	public void modifyPhotogallery(String name, Collection<String> tags, boolean publicated,
 			PhotogalleryDTO photogalleryDTO, String contextRoot, LocalDateTime date) {
-
 		try {
 			logger.info("modifyPhotogallery thread: " + Thread.currentThread().getId());
 
@@ -284,7 +281,6 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 
 	@Override
 	public File createGalleryDir() {
-
 		PhotogalleryConfiguration configuration = getConfiguration();
 		String dirRoot = configuration.getRootDir();
 		File dirRootFile = new File(dirRoot);
@@ -301,14 +297,12 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 
 		// ani na 10000 pokusů se nepodařilo vytvořit nekonfliktní adresář
 		return null;
-
 	}
 
 	@Override
 	@Async
 	public void savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
 			NodeDTO node, UserInfoDTO author, String contextRoot, LocalDateTime date) {
-
 		System.out.println("savePhotogallery thread: " + Thread.currentThread().getId());
 
 		// Počet kroků = miniatury + detaily + uložení
@@ -379,7 +373,6 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 
 	@Override
 	public void tryDeleteMiniatureImage(File file, PhotogalleryDTO photogalleryDTO) {
-
 		PhotogalleryConfiguration configuration = getConfiguration();
 		String miniaturesDir = configuration.getMiniaturesDir();
 		File galleryDir = getGalleryDir(photogalleryDTO);
@@ -392,7 +385,6 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 
 	@Override
 	public void tryDeletePreviewImage(File file, PhotogalleryDTO photogalleryDTO) {
-
 		PhotogalleryConfiguration configuration = getConfiguration();
 		String previewDir = configuration.getPreviewsDir();
 		File galleryDir = getGalleryDir(photogalleryDTO);
@@ -401,12 +393,10 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 		File previewFile = new File(previewDirFile, file.getName());
 		if (previewFile.exists())
 			previewFile.delete();
-
 	}
 
 	@Override
 	public void tryDeleteSlideshowImage(File file, PhotogalleryDTO photogalleryDTO) {
-
 		PhotogalleryConfiguration configuration = getConfiguration();
 		String slideshowDir = configuration.getSlideshowDir();
 		File galleryDir = getGalleryDir(photogalleryDTO);

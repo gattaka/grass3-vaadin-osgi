@@ -16,55 +16,6 @@ public interface ContentNodeFacade {
 	public List<ContentNodeOverviewDTO> getUserFavourite(Long user);
 
 	/**
-	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node -
-	 * zkrácená verze metody pro obsah, jež nemá tagy
-	 * 
-	 * @param contentModuleId
-	 *            identifikátor modulu obsahů
-	 * @param contentId
-	 *            id koncového obsahu, který je ukládán
-	 * @param name
-	 *            jméno obsahu
-	 * @param publicated
-	 *            je obsah publikován?
-	 * @param node
-	 *            kategorie do které se vkládá
-	 * @param author
-	 *            uživatel, který obsah vytvořil
-	 * @param draft
-	 *            jedná se o rozpracovaný obsah?
-	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
-	 *         nebo
-	 */
-	public ContentNode save(String contentModuleId, Long contentId, String name, boolean publicated, Long node,
-			Long author, boolean draft);
-
-	/**
-	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node
-	 * 
-	 * @param contentModuleId
-	 *            identifikátor modulu obsahů
-	 * @param contentId
-	 *            id koncového obsahu, který je ukládán
-	 * @param name
-	 *            jméno obsahu
-	 * @param tags
-	 *            řetězec tagů, který se má společně s obsahem uložit
-	 * @param publicated
-	 *            je obsah publikován?
-	 * @param nodeId
-	 *            kategorie do které se vkládá
-	 * @param author
-	 *            uživatel, který obsah vytvořil
-	 * @param draft
-	 *            jedná se o rozpracovaný obsah?
-	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
-	 *         nebo
-	 */
-	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, Long nodeId, Long author, boolean draft);
-
-	/**
 	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node
 	 * 
 	 * @param contentModuleId
@@ -84,11 +35,11 @@ public interface ContentNodeFacade {
 	 * @param draft
 	 *            jedná se o rozpracovaný obsah?
 	 * @param date
-	 *            vnucené datum vytvoření
+	 *            datum vytvoření nebo <code>null</code>
 	 * @param draftSourceId
-	 *            id existujícího zdrojového obsahu, od kterého je draft
-	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen,
-	 *         nebo
+	 *            id existujícího zdrojového obsahu, od kterého je draft nebo
+	 *            <code>null</code>
+	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen
 	 */
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
 			boolean publicated, Long nodeId, Long author, boolean draft, LocalDateTime date, Long draftSourceId);

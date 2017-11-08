@@ -88,7 +88,8 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		contentNameLabel = new H2Label(content.getName());
 		contentAuthorNameLabel = new Label(content.getAuthor().getName());
-		contentCreationDateNameLabel = new Label(content.getCreationDate().format(dateFormat));
+		contentCreationDateNameLabel = new Label(
+				content.getCreationDate() == null ? "" : content.getCreationDate().format(dateFormat));
 		contentLastModificationDateLabel = new Label(content.getLastModificationDate() == null ? "<em>-neupraveno-</em>"
 				: dateFormat.format(content.getLastModificationDate()));
 		contentLastModificationDateLabel.setContentMode(ContentMode.HTML);

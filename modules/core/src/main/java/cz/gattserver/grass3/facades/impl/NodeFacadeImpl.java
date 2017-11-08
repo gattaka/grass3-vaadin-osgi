@@ -10,6 +10,7 @@ import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dao.NodeRepository;
 import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.model.dto.NodeTreeDTO;
 import cz.gattserver.grass3.model.util.CoreMapper;
 
 @Transactional
@@ -22,9 +23,7 @@ public class NodeFacadeImpl implements NodeFacade {
 	@Autowired
 	private NodeRepository nodeRepository;
 
-	/**
-	 * Získá kategorii dle id
-	 */
+	@Override
 	public NodeDTO getNodeByIdForOverview(Long id) {
 		Node node = nodeRepository.findOne(id);
 		if (node == null)
@@ -33,10 +32,7 @@ public class NodeFacadeImpl implements NodeFacade {
 		return nodeDTO;
 	}
 
-	/**
-	 * Získá kategorii dle id a namapuje jí, aby se dala použít v detailu
-	 * kategorie
-	 */
+	@Override
 	public NodeDTO getNodeByIdForDetail(Long id) {
 		Node node = nodeRepository.findOne(id);
 		if (node == null)
@@ -45,9 +41,7 @@ public class NodeFacadeImpl implements NodeFacade {
 		return nodeDTO;
 	}
 
-	/**
-	 * Získá všechny kořenové kategorie
-	 */
+	@Override
 	public List<NodeDTO> getRootNodes() {
 		List<Node> rootNodes = nodeRepository.findByParentIsNull();
 		if (rootNodes == null) {
@@ -57,9 +51,17 @@ public class NodeFacadeImpl implements NodeFacade {
 		return rootNodesDTOs;
 	}
 
-	/**
-	 * Získá kategorie, které jsou jako potomci dané kategorie
-	 */
+	@Override
+	public List<NodeTreeDTO> getNodesForTree() {
+		List<Node> nodes = nodeRepository.findAll();
+		if (nodes == null) {
+			return null;
+		}
+		List<NodeTreeDTO> nodeDTOs = mapper.mapNodesForTree(nodes);
+		return nodeDTOs;
+	}
+
+	@Override
 	public List<NodeDTO> getNodesByParentNode(NodeDTO parent) {
 		List<Node> childrenNodes = nodeRepository.findByParentId(parent.getId());
 
@@ -71,20 +73,8 @@ public class NodeFacadeImpl implements NodeFacade {
 		return childrenNodesDTOs;
 	}
 
-	/**
-	 * Založí novou kategorii
-	 * 
-	 * @param parent
-	 *            pakliže je kategorii vkládána do jiné kategorie, je vyplněn
-	 *            její předek. Pokud je kategorie vkládána přímo do kořene
-	 *            sekce, je tento argument <code>null</code>
-	 * @param name
-	 *            jméno nové kategorie
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
-	 */
+	@Override
 	public Long createNewNode(NodeDTO parent, String name) {
-
 		Node node = new Node();
 		node.setName(name.trim());
 		node = nodeRepository.save(node);
@@ -107,19 +97,8 @@ public class NodeFacadeImpl implements NodeFacade {
 		return node.getId();
 	}
 
-	/**
-	 * Přesune kategorii
-	 * 
-	 * @param node
-	 *            kategorie k přesunu
-	 * @param newParent
-	 *            nový předek, do kterého má být kategorie přesunuta, nebo
-	 *            <code>null</code> pokud má být přesunuta do kořene sekce
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
-	 */
+	@Override
 	public boolean moveNode(NodeDTO node, NodeDTO newParent) {
-
 		// zamezí vkládání předků do potomků - projde postupně všechny předky
 		// cílové kategorie a pokud narazí na moje id, pak jsem předkem cílové
 		// kategorie, což je špatně
@@ -166,14 +145,7 @@ public class NodeFacadeImpl implements NodeFacade {
 		return true;
 	}
 
-	/**
-	 * Smaže kategorii, pokud je prázdná
-	 * 
-	 * @param node
-	 *            kategorie ke smazání
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
-	 */
+	@Override
 	public boolean deleteNode(NodeDTO node) {
 
 		Node nodeEntity = nodeRepository.findOne(node.getId());
@@ -187,16 +159,7 @@ public class NodeFacadeImpl implements NodeFacade {
 		return true;
 	}
 
-	/**
-	 * Přejmenuje kategorii
-	 * 
-	 * @param node
-	 *            kategorie k přejmenování
-	 * @param newName
-	 *            nový název
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
-	 */
+	@Override
 	public boolean rename(NodeDTO node, String newName) {
 
 		Node entity = nodeRepository.findOne(node.getId());
@@ -214,4 +177,5 @@ public class NodeFacadeImpl implements NodeFacade {
 		Node n = nodeRepository.findOne(node.getId());
 		return n.getContentNodes().size() + n.getSubNodes().size() == 0;
 	}
+
 }

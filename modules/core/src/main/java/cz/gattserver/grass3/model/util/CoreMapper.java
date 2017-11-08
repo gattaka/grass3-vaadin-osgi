@@ -13,6 +13,7 @@ import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.model.dto.NodeTreeDTO;
 import cz.gattserver.grass3.model.dto.QuoteDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 
@@ -123,4 +124,17 @@ public interface CoreMapper {
 	 * @return
 	 */
 	public List<NodeDTO> mapNodesForOverview(Collection<Node> nodes);
+
+	/**
+	 * Pro tree je potřeba akorát id, název a id parenta
+	 */
+	public NodeTreeDTO mapNodeForTree(Node e);
+
+	/**
+	 * Převede list {@link Node} na list {@link NodeTreeDTO}
+	 * 
+	 * @param nodes
+	 * @return
+	 */
+	public List<NodeTreeDTO> mapNodesForTree(Collection<Node> nodes);
 }

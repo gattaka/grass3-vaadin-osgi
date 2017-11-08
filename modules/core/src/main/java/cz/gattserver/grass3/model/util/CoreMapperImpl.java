@@ -19,36 +19,14 @@ import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
+import cz.gattserver.grass3.model.dto.NodeTreeDTO;
 import cz.gattserver.grass3.model.dto.QuoteDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 
-/**
- * <b>Mapper pro různé typy.</b>
- * 
- * <p>
- * Je potřeba aby byl volán na objektech s aktivními proxy objekty. To znamená,
- * že před tímto mapperem nedošlo k uzavření session, ve které byl původní
- * objekt pořízen.
- * </p>
- * 
- * <p>
- * Mapper využívá proxy objekty umístěné v atributech předávaných entit. Během
- * mapování tak může docházet k dotazům na DB, které produkují tyto proxy
- * objekty a které se bez původní session mapovaného objektu neobejdou.
- * </p>
- * 
- * @author gatt
- * 
- */
 @Component
 public class CoreMapperImpl implements CoreMapper {
 
-	/**
-	 * Převede {@link User} na {@link UserInfoDTO}
-	 * 
-	 * @param e
-	 * @return
-	 */
+	@Override
 	public UserInfoDTO map(User e) {
 		if (e == null)
 			return null;
@@ -67,12 +45,7 @@ public class CoreMapperImpl implements CoreMapper {
 		return userInfoDTO;
 	}
 
-	/**
-	 * Převede {@link Quote} na {@link QuoteDTO}
-	 * 
-	 * @param e
-	 * @return
-	 */
+	@Override
 	public QuoteDTO map(Quote e) {
 		if (e == null)
 			return null;
@@ -85,12 +58,7 @@ public class CoreMapperImpl implements CoreMapper {
 		return quoteDTO;
 	}
 
-	/**
-	 * Převede {@link ContentNode} na {@link ContentNodeOverviewDTO}
-	 * 
-	 * @param e
-	 * @return
-	 */
+	@Override
 	public ContentNodeOverviewDTO mapContentNodeOverview(ContentNode e) {
 		if (e == null)
 			return null;
@@ -114,13 +82,7 @@ public class CoreMapperImpl implements CoreMapper {
 		return contentNodeDTO;
 	}
 
-	/**
-	 * Převede {@link ContentNode} na {@link ContentNodeDTO}, používá se pro
-	 * detail obsahu, kde je potřeba rekurzivní mapování parentů do breadcrumb
-	 * 
-	 * @param e
-	 * @return
-	 */
+	@Override
 	public ContentNodeDTO mapContentNodeForDetail(ContentNode e) {
 		if (e == null)
 			return null;
@@ -143,12 +105,7 @@ public class CoreMapperImpl implements CoreMapper {
 		return contentNodeDTO;
 	}
 
-	/**
-	 * Převede set {@link ContentNode} na list {@link ContentNodeDTO}
-	 * 
-	 * @param contentNodes
-	 * @return
-	 */
+	@Override
 	public List<ContentNodeOverviewDTO> mapContentNodeOverviewCollection(Collection<ContentNode> contentNodes) {
 		if (contentNodes == null)
 			return null;
@@ -160,12 +117,7 @@ public class CoreMapperImpl implements CoreMapper {
 		return contentNodeDTOs;
 	}
 
-	/**
-	 * Převede {@link ContentTag} na {@link ContentTagDTO}
-	 * 
-	 * @param e
-	 * @return
-	 */
+	@Override
 	public ContentTagDTO mapContentTagForOverview(ContentTag e) {
 		if (e == null)
 			return null;
@@ -179,6 +131,7 @@ public class CoreMapperImpl implements CoreMapper {
 		return contentTagDTO;
 	}
 
+	@Override
 	public ContentTagDTO mapContentTag(ContentTag e) {
 		if (e == null)
 			return null;
@@ -192,12 +145,7 @@ public class CoreMapperImpl implements CoreMapper {
 		return contentTagDTO;
 	}
 
-	/**
-	 * Převede list {@link ContentTag} na list {@link ContentTagDTO}
-	 * 
-	 * @param contentTags
-	 * @return
-	 */
+	@Override
 	public List<ContentTagDTO> mapContentTagCollection(Collection<ContentTag> contentTags) {
 		if (contentTags == null)
 			return null;
@@ -209,12 +157,7 @@ public class CoreMapperImpl implements CoreMapper {
 		return contentTagDTOs;
 	}
 
-	/**
-	 * Převede list {@link ContentTag} na list {@link ContentTagDTO}
-	 * 
-	 * @param contentTags
-	 * @return
-	 */
+	@Override
 	public Set<ContentTagDTO> mapContentTagCollectionForOverview(Collection<ContentTag> contentTags) {
 		if (contentTags == null)
 			return null;
@@ -226,12 +169,7 @@ public class CoreMapperImpl implements CoreMapper {
 		return contentTagDTOs;
 	}
 
-	/**
-	 * Převede {@link Node} na {@link NodeDTO}
-	 * 
-	 * @param e
-	 * @return
-	 */
+	@Override
 	public NodeDTO mapNodeForDetail(Node e) {
 		if (e == null)
 			return null;
@@ -247,10 +185,6 @@ public class CoreMapperImpl implements CoreMapper {
 		return nodeDTO;
 	}
 
-	/**
-	 * Pro breadcrumb je potřeba id, název, ale navíc i rekurzivně to samé pro
-	 * parenta
-	 */
 	private NodeBreadcrumbDTO mapNodeForBreadcrumb(Node e) {
 		if (e == null)
 			return null;
@@ -264,9 +198,7 @@ public class CoreMapperImpl implements CoreMapper {
 		return nodeDTO;
 	}
 
-	/**
-	 * Pro overview je potřeba akorát id + název
-	 */
+	@Override
 	public NodeDTO mapNodeForOverview(Node e) {
 		if (e == null)
 			return null;
@@ -279,12 +211,7 @@ public class CoreMapperImpl implements CoreMapper {
 		return nodeDTO;
 	}
 
-	/**
-	 * Převede list {@link Node} na list {@link NodeDTO}
-	 * 
-	 * @param nodes
-	 * @return
-	 */
+	@Override
 	public List<NodeDTO> mapNodesForOverview(Collection<Node> nodes) {
 		if (nodes == null)
 			return null;
@@ -292,6 +219,33 @@ public class CoreMapperImpl implements CoreMapper {
 		List<NodeDTO> nodeDTOs = new ArrayList<NodeDTO>();
 		for (Node node : nodes) {
 			nodeDTOs.add(mapNodeForOverview(node));
+		}
+		return nodeDTOs;
+	}
+
+	@Override
+	public NodeTreeDTO mapNodeForTree(Node e) {
+		if (e == null)
+			return null;
+
+		NodeTreeDTO nodeDTO = new NodeTreeDTO();
+
+		nodeDTO.setId(e.getId());
+		nodeDTO.setName(e.getName());
+		if (e.getParent() != null)
+			nodeDTO.setParentId(e.getParent().getId());
+
+		return nodeDTO;
+	}
+
+	@Override
+	public List<NodeTreeDTO> mapNodesForTree(Collection<Node> nodes) {
+		if (nodes == null)
+			return null;
+
+		List<NodeTreeDTO> nodeDTOs = new ArrayList<NodeTreeDTO>();
+		for (Node node : nodes) {
+			nodeDTOs.add(mapNodeForTree(node));
 		}
 		return nodeDTOs;
 	}

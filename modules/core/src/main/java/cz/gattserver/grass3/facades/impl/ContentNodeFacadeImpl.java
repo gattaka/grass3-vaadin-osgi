@@ -71,20 +71,22 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	}
 
 	@Override
-	public ContentNode save(String contentModuleId, Long contentId, String name, boolean publicated, Long node,
-			Long author, boolean draft) {
-		return save(contentModuleId, contentId, name, null, publicated, node, author, draft);
-	}
-
-	@Override
-	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, Long node, Long author, boolean draft) {
-		return save(contentModuleId, contentId, name, tags, publicated, node, author, draft, null, null);
-	}
-
-	@Override
 	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
 			boolean publicated, Long nodeId, Long author, boolean draft, LocalDateTime date, Long draftSourceId) {
+
+		if (contentModuleId == null)
+			throw new IllegalArgumentException("'contentModuleId' nesmí být null");
+		if (contentId == null)
+			throw new IllegalArgumentException("'contentId' nesmí být null");
+		if (name == null)
+			throw new IllegalArgumentException("'name' nesmí být null");
+		if (nodeId == null)
+			throw new IllegalArgumentException("'nodeId' nesmí být null");
+		if (author == null)
+			throw new IllegalArgumentException("'author' nesmí být null");
+
+		if (date == null)
+			date = LocalDateTime.now();
 
 		ContentNode contentNode = new ContentNode();
 		contentNode.setContentId(contentId);

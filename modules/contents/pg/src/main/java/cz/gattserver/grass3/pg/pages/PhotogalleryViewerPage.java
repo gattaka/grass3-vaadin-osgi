@@ -26,6 +26,8 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
+import cz.gattserver.grass3.components.BaseProgressBar;
+import cz.gattserver.grass3.components.DefaultContentOperations;
 import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
@@ -39,10 +41,9 @@ import cz.gattserver.grass3.pg.events.PGZipProcessResultEvent;
 import cz.gattserver.grass3.pg.events.PGZipProcessStartEvent;
 import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
 import cz.gattserver.grass3.pg.util.PGUtils;
-import cz.gattserver.grass3.template.DefaultContentOperations;
-import cz.gattserver.grass3.ui.progress.BaseProgressBar;
-import cz.gattserver.grass3.ui.progress.ProgressWindow;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
+import cz.gattserver.grass3.windows.ProgressWindow;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
 import cz.gattserver.web.common.ui.ImageIcons;
@@ -139,18 +140,19 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
 				.parseURLIdentifier(analyzer.getNextPathToken());
 		if (identifier == null) {
-			showErrorPage404();
+			UIUtils.showErrorPage404();
 		}
 
 		photogallery = photogalleryFacade.getPhotogalleryForDetail(identifier.getId());
 		if (photogallery == null) {
-			showErrorPage404();
+			UIUtils.showErrorPage404();
 		}
 
-		if (photogallery.getContentNode().isPublicated() || (getUser() != null
-				&& (photogallery.getContentNode().getAuthor().equals(getUser()) || getUser().isAdmin()))) {
+		if (photogallery.getContentNode().isPublicated()
+				|| (UIUtils.getUser() != null && (photogallery.getContentNode().getAuthor().equals(UIUtils.getUser())
+						|| UIUtils.getUser().isAdmin()))) {
 		} else {
-			showErrorPage403();
+			UIUtils.showErrorPage403();
 		}
 
 		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
@@ -164,7 +166,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		pgSelectedVideoItemId = analyzer.getNextPathToken();
 		if (pgSelectedVideoItemId != null) {
 			if (new File(galleryDir, pgSelectedVideoItemId).exists() == false) {
-				showErrorPage404();
+				UIUtils.showErrorPage404();
 			}
 		}
 
@@ -376,7 +378,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 				});
 
 			} else {
-				showWarning(event.getResultDetails());
+				UIUtils.showWarning(event.getResultDetails());
 			}
 		});
 		eventBus.unsubscribe(PhotogalleryViewerPage.this);
@@ -518,7 +520,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 					private static final long serialVersionUID = -6688396549852552674L;
 
 					protected void onProceed(ClickEvent event) {
-						redirect(nodeURL);
+						UIUtils.redirect(nodeURL);
 					};
 				};
 				UI.getCurrent().addWindow(infoSubwindow);
@@ -529,7 +531,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 					private static final long serialVersionUID = -6688396549852552674L;
 
 					protected void onProceed(ClickEvent event) {
-						redirect(nodeURL);
+						UIUtils.redirect(nodeURL);
 					};
 				};
 				UI.getCurrent().addWindow(warnSubwindow);
@@ -540,7 +542,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 
 	@Override
 	protected void onEditOperation() {
-		redirect(getPageURL(photogalleryEditorPageFactory, DefaultContentOperations.EDIT.toString(),
+		UIUtils.redirect(getPageURL(photogalleryEditorPageFactory, DefaultContentOperations.EDIT.toString(),
 				URLIdentifierUtils.createURLIdentifier(photogallery.getId(), photogallery.getContentNode().getName())));
 	}
 }

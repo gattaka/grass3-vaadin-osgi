@@ -3,7 +3,7 @@ package cz.gattserver.grass3.pages.template;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomLayout;
 
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
 
 public abstract class TwoColumnPage extends BasePage {
 

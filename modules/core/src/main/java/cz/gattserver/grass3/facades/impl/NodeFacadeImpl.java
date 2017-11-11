@@ -74,7 +74,7 @@ public class NodeFacadeImpl implements NodeFacade {
 	}
 
 	@Override
-	public Long createNewNode(NodeDTO parent, String name) {
+	public Long createNewNode(Long parent, String name) {
 		Node node = new Node();
 		node.setName(name.trim());
 		node = nodeRepository.save(node);
@@ -82,7 +82,7 @@ public class NodeFacadeImpl implements NodeFacade {
 			return null;
 
 		if (parent != null) {
-			Node parentEntity = nodeRepository.findOne(parent.getId());
+			Node parentEntity = nodeRepository.findOne(parent);
 			parentEntity.getSubNodes().add(node);
 			parentEntity = nodeRepository.save(parentEntity);
 			if (parentEntity == null)
@@ -98,26 +98,26 @@ public class NodeFacadeImpl implements NodeFacade {
 	}
 
 	@Override
-	public boolean moveNode(NodeDTO node, NodeDTO newParent) {
+	public boolean moveNode(Long node, Long newParent) {
 		// zamezí vkládání předků do potomků - projde postupně všechny předky
 		// cílové kategorie a pokud narazí na moje id, pak jsem předkem cílové
 		// kategorie, což je špatně
-		Node parent = newParent == null ? null : nodeRepository.findOne(newParent.getId());
+		Node parent = newParent == null ? null : nodeRepository.findOne(newParent);
 		if (parent != null) {
 			// začínám od předka newParent - tohle je schválně, umožní mi to se
 			// pak ptát na id newParent - pokud totiž narazím na newParent id,
 			// pak je v DB cykl
 			parent = parent.getParent();
 			while (parent != null) {
-				if (parent.getId() == newParent.getId())
+				if (parent.getId() == newParent)
 					return false; // v DB je cykl
-				if (parent.getId() == node.getId())
+				if (parent.getId() == node)
 					return false; // vkládám do potomka
 				parent = parent.getParent();
 			}
 		}
 
-		Node nodeEntity = nodeRepository.findOne(node.getId());
+		Node nodeEntity = nodeRepository.findOne(node);
 
 		if (nodeEntity.getParent() != null) {
 			nodeEntity.getParent().getSubNodes().remove(nodeEntity);
@@ -127,7 +127,7 @@ public class NodeFacadeImpl implements NodeFacade {
 		}
 
 		if (newParent != null) {
-			Node newParentEntity = nodeRepository.findOne(newParent.getId());
+			Node newParentEntity = nodeRepository.findOne(newParent);
 			newParentEntity.getSubNodes().add(nodeEntity);
 			newParentEntity = nodeRepository.save(newParentEntity);
 			if (newParentEntity == null)
@@ -146,35 +146,28 @@ public class NodeFacadeImpl implements NodeFacade {
 	}
 
 	@Override
-	public boolean deleteNode(NodeDTO node) {
-
-		Node nodeEntity = nodeRepository.findOne(node.getId());
+	public void deleteNode(Long node) {
+		Node nodeEntity = nodeRepository.findOne(node);
 		Node parent = nodeEntity.getParent();
 		if (parent != null) {
 			parent.getSubNodes().remove(nodeEntity);
 			parent = nodeRepository.save(parent);
 		}
-
-		nodeRepository.delete(node.getId());
-		return true;
+		nodeRepository.delete(node);
 	}
 
 	@Override
-	public boolean rename(NodeDTO node, String newName) {
-
-		Node entity = nodeRepository.findOne(node.getId());
-
+	public boolean rename(Long node, String newName) {
+		Node entity = nodeRepository.findOne(node);
 		if (entity == null)
 			return false;
-
 		entity.setName(newName);
-
 		return nodeRepository.save(entity) != null;
 	}
 
 	@Override
-	public boolean isEmpty(NodeDTO node) {
-		Node n = nodeRepository.findOne(node.getId());
+	public boolean isEmpty(Long node) {
+		Node n = nodeRepository.findOne(node);
 		return n.getContentNodes().size() + n.getSubNodes().size() == 0;
 	}
 

@@ -10,7 +10,7 @@ import cz.gattserver.grass3.monitor.processor.ConsoleOutputTO;
 import cz.gattserver.grass3.monitor.web.label.FAILMonitorItem;
 import cz.gattserver.grass3.monitor.web.label.MonitorItemFactory;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
 
 public class MonitorPage extends OneColumnPage {
 

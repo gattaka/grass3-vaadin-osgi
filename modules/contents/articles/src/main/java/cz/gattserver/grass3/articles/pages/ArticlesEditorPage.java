@@ -41,16 +41,17 @@ import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import cz.gattserver.grass3.articles.facade.ArticleFacade;
 import cz.gattserver.grass3.articles.facade.ArticleProcessForm;
 import cz.gattserver.grass3.articles.parser.PartsFinder;
+import cz.gattserver.grass3.components.DefaultContentOperations;
+import cz.gattserver.grass3.components.ImageButton;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
+import cz.gattserver.grass3.js.JScriptItem;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
-import cz.gattserver.grass3.pages.template.JScriptItem;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
-import cz.gattserver.grass3.template.ImageButton;
-import cz.gattserver.grass3.template.DefaultContentOperations;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
 import cz.gattserver.web.common.ui.H2Label;
@@ -111,13 +112,13 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		String partNumberToken = analyzer.getNextPathToken();
 		if (operationToken == null || identifierToken == null) {
 			logger.debug("Chybí operace nebo identifikátor cíle");
-			showErrorPage404();
+			UIUtils.showErrorPage404();
 		}
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(identifierToken);
 		if (identifier == null) {
 			logger.debug("Nezdařilo se vytěžit URL identifikátor z řetězce: '" + identifierToken + "'");
-			showErrorPage404();
+			UIUtils.showErrorPage404();
 		}
 
 		// operace ?
@@ -146,11 +147,11 @@ public class ArticlesEditorPage extends TwoColumnPage {
 							partNumber);
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
-					showErrorPage500();
+					UIUtils.showErrorPage500();
 					return;
 				} catch (IOException e) {
 					e.printStackTrace();
-					showErrorPage500();
+					UIUtils.showErrorPage500();
 					return;
 				}
 				articleTextArea.setValue(parts.getTargetPart());
@@ -159,16 +160,16 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			}
 		} else {
 			logger.debug("Neznámá operace: '" + operationToken + "'");
-			showErrorPage404();
+			UIUtils.showErrorPage404();
 			return;
 		}
 
-		if ((article == null || article.getContentNode().getAuthor().equals(getGrassUI().getUser()))
-				|| getGrassUI().getUser().isAdmin()) {
+		if ((article == null || article.getContentNode().getAuthor().equals(UIUtils.getGrassUI().getUser()))
+				|| UIUtils.getGrassUI().getUser().isAdmin()) {
 			super.createContent(customlayout);
 		} else {
 			// nemá oprávnění upravovat tento článek
-			showErrorPage403();
+			UIUtils.showErrorPage403();
 			return;
 		}
 	}
@@ -190,7 +191,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		// aby se zaregistroval JS listener
 		articleTextArea.focus();
 
-		List<ArticleDraftOverviewDTO> drafts = articleFacade.getDraftsForUser(getGrassUI().getUser());
+		List<ArticleDraftOverviewDTO> drafts = articleFacade.getDraftsForUser(UIUtils.getGrassUI().getUser());
 
 		if (drafts.isEmpty()) {
 			// nejsou-li v DB žádné pro přihlášeného uživatele viditelné drafty
@@ -233,11 +234,11 @@ public class ArticlesEditorPage extends TwoColumnPage {
 										new ByteArrayInputStream(article.getText().getBytes("UTF-8")), partNumber);
 							} catch (UnsupportedEncodingException e) {
 								e.printStackTrace();
-								showErrorPage500();
+								UIUtils.showErrorPage500();
 								return;
 							} catch (IOException e) {
 								e.printStackTrace();
-								showErrorPage500();
+								UIUtils.showErrorPage500();
 								return;
 							}
 						}
@@ -370,7 +371,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				// (nespojuje parts)
 				String draftName = articleNameField.getValue();
 				Long id = articleFacade.saveArticle(draftName, articleTextArea.getValue(), getArticlesKeywords(),
-						publicatedCheckBox.getValue(), node.getId(), getGrassUI().getUser().getId(),
+						publicatedCheckBox.getValue(), node.getId(), UIUtils.getGrassUI().getUser().getId(),
 						getRequest().getContextRoot(), ArticleProcessForm.PREVIEW, existingDraftId, partNumber,
 						existingArticleId);
 
@@ -394,10 +395,10 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			if (isFormValid() == false)
 				return;
 			if (saveOrUpdateArticle()) {
-				showSilentInfo(ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku proběhla úspěšně"
-						: "Uložení článku proběhlo úspěšně");
+				UIUtils.showSilentInfo(ArticlesEditorPage.this.existingArticleId != null
+						? "Úprava článku proběhla úspěšně" : "Uložení článku proběhlo úspěšně");
 			} else {
-				showWarning(ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku se nezdařila"
+				UIUtils.showWarning(ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku se nezdařila"
 						: "Uložení článku se nezdařilo");
 			}
 		});
@@ -414,7 +415,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				// Tady nemá cena dávat infowindow
 				returnToArticle();
 			} else {
-				showWarning(ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku se nezdařila"
+				UIUtils.showWarning(ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku se nezdařila"
 						: "Uložení článku se nezdařilo");
 			}
 		});
@@ -445,7 +446,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				// (nespojuje parts)
 				String draftName = articleNameField.getValue();
 				Long id = articleFacade.saveArticle(draftName, articleTextArea.getValue(), getArticlesKeywords(),
-						publicatedCheckBox.getValue(), node.getId(), getGrassUI().getUser().getId(),
+						publicatedCheckBox.getValue(), node.getId(), UIUtils.getGrassUI().getUser().getId(),
 						getRequest().getContextRoot(), ArticleProcessForm.DRAFT, existingDraftId, partNumber,
 						existingArticleId);
 
@@ -471,7 +472,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		String name = articleNameField.getValue();
 
 		if (name == null || name.isEmpty()) {
-			showWarning("Název článku nemůže být prázdný");
+			UIUtils.showWarning("Název článku nemůže být prázdný");
 			return false;
 		}
 
@@ -498,7 +499,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			}
 
 			Long id = articleFacade.saveArticle(articleNameField.getValue(), text, getArticlesKeywords(),
-					publicatedCheckBox.getValue(), node.getId(), getGrassUI().getUser().getId(),
+					publicatedCheckBox.getValue(), node.getId(), UIUtils.getGrassUI().getUser().getId(),
 					getRequest().getContextRoot(), ArticleProcessForm.FULL, this.existingArticleId);
 
 			if (id != null) {
@@ -523,7 +524,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			articleFacade.deleteArticle(existingDraftId);
 
 		JavaScript.eval("window.onbeforeunload = null;");
-		redirect(getPageURL(articlesViewerPageFactory,
+		UIUtils.redirect(getPageURL(articlesViewerPageFactory,
 				URLIdentifierUtils.createURLIdentifier(existingArticleId, existingArticleName)));
 	}
 
@@ -536,7 +537,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			articleFacade.deleteArticle(existingDraftId);
 
 		JavaScript.eval("window.onbeforeunload = null;");
-		redirect(getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName())));
+		UIUtils.redirect(
+				getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName())));
 	}
 
 }

@@ -53,8 +53,7 @@ public class SearchFacadeImpl implements SearchFacade {
 	 * @throws InvalidTokenOffsetsException
 	 */
 	public List<SearchHit> search(String queryText, Set<Enum<? extends SearchField>> searchFields, String moduleId,
-			UserInfoDTO user, GrassPage callingPage)
-			throws IOException, InvalidTokenOffsetsException, ParseException {
+			UserInfoDTO user, GrassPage callingPage) throws IOException, InvalidTokenOffsetsException, ParseException {
 
 		StandardAnalyzer analyzer = new StandardAnalyzer();
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);

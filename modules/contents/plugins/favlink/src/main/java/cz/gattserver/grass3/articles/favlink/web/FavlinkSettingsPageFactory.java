@@ -2,9 +2,9 @@ package cz.gattserver.grass3.articles.favlink.web;
 
 import org.springframework.stereotype.Component;
 
+import cz.gattserver.grass3.pages.settings.factories.AbstractModuleSettingsPageFactory;
 import cz.gattserver.grass3.pages.template.GrassPage;
-import cz.gattserver.grass3.tabs.factories.template.AbstractModuleSettingsPageFactory;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
 
 @Component
 public class FavlinkSettingsPageFactory extends AbstractModuleSettingsPageFactory {

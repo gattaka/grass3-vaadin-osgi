@@ -14,12 +14,13 @@ import cz.gattserver.grass3.articles.events.ArticlesProcessProgressEvent;
 import cz.gattserver.grass3.articles.events.ArticlesProcessResultEvent;
 import cz.gattserver.grass3.articles.events.ArticlesProcessStartEvent;
 import cz.gattserver.grass3.articles.facade.ArticleFacade;
+import cz.gattserver.grass3.components.BaseProgressBar;
 import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.events.EventBus;
-import cz.gattserver.grass3.tabs.template.ModuleSettingsPage;
-import cz.gattserver.grass3.ui.progress.BaseProgressBar;
-import cz.gattserver.grass3.ui.progress.ProgressWindow;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.pages.settings.ModuleSettingsPage;
+import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
+import cz.gattserver.grass3.windows.ProgressWindow;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.window.ConfirmWindow;
@@ -162,9 +163,9 @@ public class ArticlesSettingsPage extends ModuleSettingsPage {
 			reprocessButton.setEnabled(true);
 
 			if (event.isSuccess()) {
-				showInfo("Přegenerování článků proběhlo úspěšně");
+				UIUtils.showInfo("Přegenerování článků proběhlo úspěšně");
 			} else {
-				showWarning("Přegenerování článků se nezdařilo");
+				UIUtils.showWarning("Přegenerování článků se nezdařilo");
 			}
 		});
 		eventBus.unsubscribe(ArticlesSettingsPage.this);

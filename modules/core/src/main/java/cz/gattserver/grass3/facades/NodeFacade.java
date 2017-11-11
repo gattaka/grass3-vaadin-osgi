@@ -38,54 +38,55 @@ public interface NodeFacade {
 	 * 
 	 * @param parent
 	 *            pakliže je kategorii vkládána do jiné kategorie, je vyplněn
-	 *            její předek. Pokud je kategorie vkládána přímo do kořene
+	 *            id předka. Pokud je kategorie vkládána přímo do kořene
 	 *            sekce, je tento argument <code>null</code>
 	 * @param name
 	 *            jméno nové kategorie
 	 * @return id kategorie pokud se přidání zdařilo, jinak <code>null</code>
 	 */
-	public Long createNewNode(NodeDTO parent, String name);
+	public Long createNewNode(Long parent, String name);
 
 	/**
 	 * Přesune kategorii
 	 * 
 	 * @param node
-	 *            kategorie k přesunu
+	 *            id kategorie k přesunu
 	 * @param newParent
-	 *            nový předek, do kterého má být kategorie přesunuta, nebo
+	 *            id nového předka, do kterého má být kategorie přesunuta, nebo
 	 *            <code>null</code> pokud má být přesunuta do kořene sekce
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean moveNode(NodeDTO node, NodeDTO newParent);
+	public boolean moveNode(Long node, Long newParent);
 
 	/**
 	 * Smaže kategorii, pokud je prázdná
 	 * 
 	 * @param node
-	 *            kategorie ke smazání
+	 *            id kategorie ke smazání
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean deleteNode(NodeDTO node);
+	public void deleteNode(Long node);
 
 	/**
 	 * Přejmenuje kategorii
 	 * 
 	 * @param node
-	 *            kategorie k přejmenování
+	 *            id kategorie k přejmenování
 	 * @param newName
 	 *            nový název
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public boolean rename(NodeDTO node, String newName);
+	public boolean rename(Long node, String newName);
 
 	/**
-	 * Je kategorie prázdná
+	 * Je kategorie prázdná?
 	 * 
 	 * @param node
+	 *            id kategorie
 	 * @return
 	 */
-	public boolean isEmpty(NodeDTO node);
+	public boolean isEmpty(Long node);
 }

@@ -16,7 +16,7 @@ import com.vaadin.ui.renderers.TextRenderer;
 
 import cz.gattserver.grass3.articles.dto.ArticleDraftOverviewDTO;
 import cz.gattserver.grass3.articles.facade.ArticleFacade;
-import cz.gattserver.grass3.pages.template.GridUtils;
+import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.WebWindow;
 

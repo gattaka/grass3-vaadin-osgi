@@ -18,7 +18,8 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.facades.SecurityFacade;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.H2Label;
 
 public class LoginPage extends OneColumnPage {
@@ -75,7 +76,7 @@ public class LoginPage extends OneColumnPage {
 				Notification.show("Přihlášení se nezdařilo");
 				username.focus();
 			} else {
-				redirect(getPageURL(homePageFactory));
+				UIUtils.redirect(getPageURL(homePageFactory));
 			}
 		});
 		login.setClickShortcut(ShortcutAction.KeyCode.ENTER);

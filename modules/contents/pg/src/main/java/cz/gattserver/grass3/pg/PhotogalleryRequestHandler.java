@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
-import cz.gattserver.grass3.ui.util.impl.AbstractGrassRequestHandler;
+import cz.gattserver.grass3.server.AbstractGrassRequestHandler;
 
 @Component
 public class PhotogalleryRequestHandler extends AbstractGrassRequestHandler {

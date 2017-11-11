@@ -6,7 +6,7 @@ import cz.gattserver.grass3.facades.SecurityFacade;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pages.err.Error403Page;
 import cz.gattserver.grass3.pages.template.GrassPage;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
 
 public abstract class AbstractPageFactory implements PageFactory {
 

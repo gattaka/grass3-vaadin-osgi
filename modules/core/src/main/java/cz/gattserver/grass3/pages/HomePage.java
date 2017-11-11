@@ -21,14 +21,15 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.components.ContentsLazyGrid;
 import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.BasePage;
-import cz.gattserver.grass3.pages.template.ContentsLazyGrid;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.H2Label;
 
@@ -74,7 +75,7 @@ public class HomePage extends BasePage {
 		marginLayout.addComponent(pagelayout);
 
 		// Oblíbené
-		UserInfoDTO user = getGrassUI().getUser();
+		UserInfoDTO user = UIUtils.getUser();
 		if (coreACL.isLoggedIn(user)) {
 			VerticalLayout favouritesLayout = new VerticalLayout();
 			favouritesLayout.setMargin(false);
@@ -133,7 +134,7 @@ public class HomePage extends BasePage {
 		final List<ContentTagDTO> contentTags = contentTagFacade.getContentTagsForOverview();
 
 		if (contentTags == null)
-			showErrorPage500();
+			UIUtils.showErrorPage500();
 
 		if (contentTags.isEmpty()) {
 			Label noTagsLabel = new Label("Nebyly nalezeny žádné tagy");

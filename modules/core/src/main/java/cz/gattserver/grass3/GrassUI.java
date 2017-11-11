@@ -14,13 +14,13 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
 
 import cz.gattserver.grass3.exception.ApplicationErrorHandler;
+import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.facades.SecurityFacade;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
-import cz.gattserver.grass3.pages.err.GrassPageException;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.GrassPage;
-import cz.gattserver.grass3.ui.util.GrassRequest;
-import cz.gattserver.grass3.ui.util.PageFactoriesRegister;
+import cz.gattserver.grass3.register.PageFactoriesRegister;
+import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.URLPathAnalyzer;
 

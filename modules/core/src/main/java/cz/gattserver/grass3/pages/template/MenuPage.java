@@ -14,19 +14,20 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Link;
 
-import cz.gattserver.grass3.ServiceHolder;
 import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.register.ServiceRegister;
 import cz.gattserver.grass3.security.CoreACL;
+import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.service.SectionService;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
 
 public abstract class MenuPage extends GrassPage {
 
 	@Autowired
-	protected ServiceHolder serviceHolder;
+	protected ServiceRegister serviceHolder;
 
 	@Autowired
 	protected CoreACL coreACL;
@@ -120,7 +121,7 @@ public abstract class MenuPage extends GrassPage {
 
 		// externí sekce
 		for (SectionService section : serviceHolder.getSectionServices()) {
-			if (coreACL.canShowSection(section, getUser())) {
+			if (coreACL.canShowSection(section, UIUtils.getUser())) {
 				createMenuComponent(menu,
 						new Link(section.getSectionCaption(), getPageResource(section.getSectionPageFactory())));
 			}
@@ -135,7 +136,7 @@ public abstract class MenuPage extends GrassPage {
 		 */
 
 		// Přihlášení
-		if (!coreACL.isLoggedIn(getUser())) {
+		if (!coreACL.isLoggedIn(UIUtils.getUser())) {
 			createMenuComponent(menu, new Link("Přihlášení", getPageResource(loginPageFactory)));
 		}
 
@@ -146,8 +147,8 @@ public abstract class MenuPage extends GrassPage {
 		// }
 
 		// Přehled o uživateli
-		final UserInfoDTO userInfoDTO = getGrassUI().getUser();
-		if (coreACL.canShowUserDetails(userInfoDTO, getUser())) {
+		final UserInfoDTO userInfoDTO = UIUtils.getGrassUI().getUser();
+		if (coreACL.canShowUserDetails(userInfoDTO, UIUtils.getUser())) {
 			// nastavení
 			createMenuComponent(menu, new Link(userInfoDTO.getName(), getPageResource(settingsPageFactory)));
 

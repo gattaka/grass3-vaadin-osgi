@@ -5,12 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.components.ContentsLazyGrid;
 import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
 import cz.gattserver.grass3.pages.template.BasePage;
-import cz.gattserver.grass3.pages.template.ContentsLazyGrid;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.H2Label;
 
@@ -33,18 +34,18 @@ public class TagPage extends BasePage {
 
 		String tagName = getRequest().getAnalyzer().getNextPathToken();
 		if (tagName == null)
-			showErrorPage404();
+			UIUtils.showErrorPage404();
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(tagName);
 		if (identifier == null) {
-			showErrorPage404();
+			UIUtils.showErrorPage404();
 			return;
 		}
 
 		tag = contentTagFacade.getContentTagById(identifier.getId());
 
 		if (tag == null) {
-			showErrorPage404();
+			UIUtils.showErrorPage404();
 			return;
 		}
 

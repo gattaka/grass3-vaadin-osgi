@@ -7,10 +7,10 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 
+import cz.gattserver.grass3.components.CreateButton;
+import cz.gattserver.grass3.components.ModifyButton;
 import cz.gattserver.grass3.recipes.facades.RecipesFacade;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
-import cz.gattserver.grass3.template.CreateButton;
-import cz.gattserver.grass3.template.ModifyButton;
 import cz.gattserver.web.common.window.WebWindow;
 
 public abstract class RecipeWindow extends WebWindow {

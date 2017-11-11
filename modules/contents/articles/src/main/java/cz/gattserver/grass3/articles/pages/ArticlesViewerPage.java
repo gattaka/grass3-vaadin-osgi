@@ -14,14 +14,15 @@ import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.articles.dto.ArticleDTO;
 import cz.gattserver.grass3.articles.facade.ArticleFacade;
+import cz.gattserver.grass3.components.DefaultContentOperations;
+import cz.gattserver.grass3.js.JScriptItem;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.ContentViewerPage;
-import cz.gattserver.grass3.pages.template.JScriptItem;
 import cz.gattserver.grass3.security.CoreACL;
-import cz.gattserver.grass3.template.DefaultContentOperations;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
 import cz.gattserver.web.common.ui.ImageIcons;
@@ -61,25 +62,25 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
 				.parseURLIdentifier(analyzer.getCurrentPathToken());
 		if (identifier == null) {
-			showErrorPage404();
+			UIUtils.showErrorPage404();
 		}
 
 		article = articleFacade.getArticleForDetail(identifier.getId());
 		if (article == null) {
-			showErrorPage404();
+			UIUtils.showErrorPage404();
 		}
 
 		// RESCUE -- tohle by se normálně stát nemělo, ale umožňuje to aspoň
 		// vyřešit stav, ve kterém existuje takovýto nezobrazitelný obsah
 		if (article.getContentNode() == null) {
 			articleFacade.deleteArticle(article.getId());
-			redirect(getPageURL(homePageFactory.getPageName()));
+			UIUtils.redirect(getPageURL(homePageFactory.getPageName()));
 		}
 
-		if (article.getContentNode().isPublicated() || (getUser() != null
-				&& (article.getContentNode().getAuthor().equals(getUser()) || getUser().isAdmin()))) {
+		if (article.getContentNode().isPublicated() || (UIUtils.getUser() != null
+				&& (article.getContentNode().getAuthor().equals(UIUtils.getUser()) || UIUtils.getUser().isAdmin()))) {
 		} else {
-			showErrorPage403();
+			UIUtils.showErrorPage403();
 		}
 
 		// CSS resources
@@ -126,7 +127,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		super.createContentOperations(operationsListLayout);
 
 		// Rychlé úpravy
-		if (coreACL.canModifyContent(article.getContentNode(), getUser())) {
+		if (coreACL.canModifyContent(article.getContentNode(), UIUtils.getUser())) {
 			String url = getPageURL(articlesEditorPageFactory, DefaultContentOperations.EDIT.toString(),
 					URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName()));
 			String script = "$(\".articles-basic-h-id\").each(" + "function(index){" + "$(this).attr(\"href\",\"" + url
@@ -153,7 +154,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 					private static final long serialVersionUID = -6688396549852552674L;
 
 					protected void onProceed(ClickEvent event) {
-						redirect(nodeURL);
+						UIUtils.redirect(nodeURL);
 					};
 				};
 				UI.getCurrent().addWindow(infoSubwindow);
@@ -165,7 +166,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 					private static final long serialVersionUID = -6688396549852552674L;
 
 					protected void onProceed(ClickEvent event) {
-						redirect(nodeURL);
+						UIUtils.redirect(nodeURL);
 					};
 				};
 				UI.getCurrent().addWindow(warnSubwindow);
@@ -176,7 +177,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 	@Override
 	protected void onEditOperation() {
-		redirect(getPageURL(articlesEditorPageFactory, DefaultContentOperations.EDIT.toString(),
+		UIUtils.redirect(getPageURL(articlesEditorPageFactory, DefaultContentOperations.EDIT.toString(),
 				URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName())));
 	}
 }

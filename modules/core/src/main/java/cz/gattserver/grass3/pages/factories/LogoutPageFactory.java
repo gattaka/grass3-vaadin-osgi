@@ -13,7 +13,7 @@ import com.vaadin.server.VaadinServletResponse;
 import cz.gattserver.grass3.pages.LoginPage;
 import cz.gattserver.grass3.pages.factories.template.AbstractPageFactory;
 import cz.gattserver.grass3.pages.template.GrassPage;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
 
 @Component("logoutPageFactory")
 public class LogoutPageFactory extends AbstractPageFactory {

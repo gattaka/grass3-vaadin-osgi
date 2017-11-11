@@ -11,14 +11,15 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.components.CreateGridButton;
+import cz.gattserver.grass3.components.DeleteGridButton;
+import cz.gattserver.grass3.components.ModifyGridButton;
 import cz.gattserver.grass3.facades.QuotesFacade;
 import cz.gattserver.grass3.model.dto.QuoteDTO;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.security.CoreACL;
-import cz.gattserver.grass3.template.CreateGridButton;
-import cz.gattserver.grass3.template.DeleteGridButton;
-import cz.gattserver.grass3.template.ModifyGridButton;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
 
 public class QuotesPage extends OneColumnPage {
 
@@ -64,7 +65,7 @@ public class QuotesPage extends OneColumnPage {
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		layout.addComponent(btnLayout);
 		layout.setComponentAlignment(btnLayout, Alignment.MIDDLE_CENTER);
-		btnLayout.setVisible(coreACL.canModifyQuotes(getUser()));
+		btnLayout.setVisible(coreACL.canModifyQuotes(UIUtils.getUser()));
 
 		CreateGridButton createGridButton = new CreateGridButton("Přidat hlášku", e -> {
 			UI.getCurrent().addWindow(new QuoteWindow(q -> {

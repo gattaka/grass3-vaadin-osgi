@@ -41,6 +41,10 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.components.BaseProgressBar;
+import cz.gattserver.grass3.components.DefaultContentOperations;
+import cz.gattserver.grass3.components.DeleteGridButton;
+import cz.gattserver.grass3.components.MultiUpload;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
@@ -54,12 +58,9 @@ import cz.gattserver.grass3.pg.events.PGProcessResultEvent;
 import cz.gattserver.grass3.pg.events.PGProcessStartEvent;
 import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
 import cz.gattserver.grass3.pg.util.PGUtils;
-import cz.gattserver.grass3.template.DefaultContentOperations;
-import cz.gattserver.grass3.template.DeleteGridButton;
-import cz.gattserver.grass3.template.MultiUpload;
-import cz.gattserver.grass3.ui.progress.BaseProgressBar;
-import cz.gattserver.grass3.ui.progress.ProgressWindow;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
+import cz.gattserver.grass3.windows.ProgressWindow;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
 import cz.gattserver.web.common.ui.H2Label;
@@ -134,13 +135,13 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		String identifierToken = analyzer.getNextPathToken();
 		if (operationToken == null || identifierToken == null) {
 			logger.debug("Chybí operace nebo identifikátor cíle");
-			showErrorPage404();
+			UIUtils.showErrorPage404();
 		}
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(identifierToken);
 		if (identifier == null) {
 			logger.debug("Nezdařilo se vytěžit URL identifikátor z řetězce: '" + identifierToken + "'");
-			showErrorPage404();
+			UIUtils.showErrorPage404();
 		}
 
 		// operace ?
@@ -162,14 +163,14 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			photogalleryDateField.setValue(photogallery.getContentNode().getCreationDate());
 		} else {
 			logger.debug("Neznámá operace: '" + operationToken + "'");
-			showErrorPage404();
+			UIUtils.showErrorPage404();
 		}
 
-		if ((photogallery == null || photogallery.getContentNode().getAuthor().equals(getGrassUI().getUser()))
-				|| getGrassUI().getUser().isAdmin()) {
+		if ((photogallery == null || photogallery.getContentNode().getAuthor().equals(UIUtils.getGrassUI().getUser()))
+				|| UIUtils.getGrassUI().getUser().isAdmin()) {
 		} else {
 			// nemá oprávnění upravovat tento obsah
-			showErrorPage403();
+			UIUtils.showErrorPage403();
 		}
 
 		return super.createPayload();
@@ -400,7 +401,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		String name = photogalleryNameField.getValue();
 
 		if (name == null || name.isEmpty()) {
-			showWarning("Název galerie nemůže být prázdný");
+			UIUtils.showWarning("Název galerie nemůže být prázdný");
 			return false;
 		}
 
@@ -421,7 +422,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 					photogalleryDateField.getValue());
 		} else {
 			photogalleryFacade.savePhotogallery(String.valueOf(photogalleryNameField.getValue()), tokens, galleryDir,
-					publicatedCheckBox.getValue(), node, getGrassUI().getUser(), getRequest().getContextRoot(),
+					publicatedCheckBox.getValue(), node, UIUtils.getGrassUI().getUser(), getRequest().getContextRoot(),
 					photogalleryDateField.getValue());
 		}
 	}
@@ -431,7 +432,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	 */
 	private void returnToPhotogallery() {
 		JavaScript.eval("window.onbeforeunload = null;");
-		redirect(getPageURL(photogalleryViewerPageFactory,
+		UIUtils.redirect(getPageURL(photogalleryViewerPageFactory,
 				URLIdentifierUtils.createURLIdentifier(photogallery.getId(), photogallery.getContentNode().getName())));
 	}
 
@@ -440,7 +441,8 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	 */
 	private void returnToNode() {
 		JavaScript.eval("window.onbeforeunload = null;");
-		redirect(getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName())));
+		UIUtils.redirect(
+				getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName())));
 	}
 
 	@Handler
@@ -488,9 +490,9 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 					if (stayInEditor == false)
 						returnToPhotogallery();
 
-					showInfo(editMode ? "Úprava galerie proběhla úspěšně" : "Uložení galerie proběhlo úspěšně");
+					UIUtils.showInfo(editMode ? "Úprava galerie proběhla úspěšně" : "Uložení galerie proběhlo úspěšně");
 				} else {
-					showWarning(editMode ? "Úprava galerie se nezdařila" : "Uložení galerie se nezdařilo");
+					UIUtils.showWarning(editMode ? "Úprava galerie se nezdařila" : "Uložení galerie se nezdařilo");
 				}
 
 				// odteď budeme editovat

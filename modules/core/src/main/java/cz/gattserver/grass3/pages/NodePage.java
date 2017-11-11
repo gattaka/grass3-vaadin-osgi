@@ -15,19 +15,20 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.components.Breadcrumb;
+import cz.gattserver.grass3.components.ContentsLazyGrid;
+import cz.gattserver.grass3.components.NewContentNodeGrid;
+import cz.gattserver.grass3.components.NodesGrid;
+import cz.gattserver.grass3.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
-import cz.gattserver.grass3.pages.template.ContentsLazyGrid;
-import cz.gattserver.grass3.pages.template.NewContentNodeGrid;
-import cz.gattserver.grass3.pages.template.NodesGrid;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.security.CoreACL;
-import cz.gattserver.grass3.template.Breadcrumb;
-import cz.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcons;
@@ -66,11 +67,11 @@ public class NodePage extends OneColumnPage {
 
 		String nodeName = getRequest().getAnalyzer().getNextPathToken();
 		if (nodeName == null)
-			showErrorPage404();
+			UIUtils.showErrorPage404();
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(nodeName);
 		if (identifier == null) {
-			showErrorPage404();
+			UIUtils.showErrorPage404();
 			return layout;
 		}
 
@@ -105,19 +106,20 @@ public class NodePage extends OneColumnPage {
 		Button createButton = new Button("Vytvořit novou kategorii", e -> {
 			String newNodeName = newNodeNameField.getValue();
 			if (StringUtils.isBlank(newNodeName)) {
-				showError("Název kategorie nesmí být prázdný");
+				UIUtils.showError("Název kategorie nesmí být prázdný");
 				return;
 			}
-			Long newNodeId = nodeFacade.createNewNode(node, newNodeName);
+			Long newNodeId = nodeFacade.createNewNode(node.getId(), newNodeName);
 			if (newNodeId != null) {
-				showInfo("Nový kategorie byla úspěšně vytvořena.");
+				UIUtils.showInfo("Nový kategorie byla úspěšně vytvořena.");
 				// refresh
 				populateSubnodesTable(node);
-				redirect(getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(newNodeId, newNodeName)));
+				UIUtils.redirect(
+						getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(newNodeId, newNodeName)));
 				// clean
 				newNodeNameField.setValue("");
 			} else {
-				showWarning("Nezdařilo se vložit novou kategorii.");
+				UIUtils.showWarning("Nezdařilo se vložit novou kategorii.");
 			}
 		});
 		createButton.setIcon(new ThemeResource(ImageIcons.BRIEFCASE_PLUS_16_ICON));
@@ -138,7 +140,7 @@ public class NodePage extends OneColumnPage {
 
 			// nejprve zkus zjistit, zda předek existuje
 			if (parent == null)
-				showErrorPage404();
+				UIUtils.showErrorPage404();
 
 			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageResource(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(parent.getId(), parent.getName()))));
@@ -168,7 +170,7 @@ public class NodePage extends OneColumnPage {
 		subNodesTable.setWidth("100%");
 
 		// Vytvořit novou kategorii
-		if (coreACL.canCreateNode(getUser())) {
+		if (coreACL.canCreateNode(UIUtils.getUser())) {
 			createNewNodePanel(subNodesLayout, node);
 		}
 	}
@@ -177,7 +179,7 @@ public class NodePage extends OneColumnPage {
 
 		List<NodeDTO> nodes = nodeFacade.getNodesByParentNode(node);
 		if (nodes == null) {
-			showErrorPage500();
+			UIUtils.showErrorPage500();
 			return;
 		}
 		subNodesTable.populate(nodes);
@@ -212,7 +214,7 @@ public class NodePage extends OneColumnPage {
 		newContentsLayout.addComponent(new H2Label("Vytvořit nový obsah"));
 		newContentsLayout.addComponent(newContentsTable);
 		newContentsTable.setWidth("100%");
-		newContentsLayout.setVisible(coreACL.canCreateContent(getUser()));
+		newContentsLayout.setVisible(coreACL.canCreateContent(UIUtils.getUser()));
 
 		layout.addComponent(newContentsLayout);
 	}

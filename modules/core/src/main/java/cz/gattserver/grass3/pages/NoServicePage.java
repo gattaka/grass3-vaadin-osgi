@@ -6,7 +6,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.pages.template.OneColumnPage;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
 
 public class NoServicePage extends OneColumnPage {
 

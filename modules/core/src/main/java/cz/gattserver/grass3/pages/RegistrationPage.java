@@ -16,7 +16,8 @@ import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.facades.UserFacade;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.H2Label;
 
 public class RegistrationPage extends OneColumnPage {
@@ -130,7 +131,7 @@ public class RegistrationPage extends OneColumnPage {
 			if (binder.isValid()) {
 				RegistrationTO bean = binder.getBean();
 				userFacade.registrateNewUser(bean.getEmail(), bean.getUsername(), bean.getPassword());
-				showInfo("Registrace proběhla úspěšně");
+				UIUtils.showInfo("Registrace proběhla úspěšně");
 				binder.setBean(new RegistrationTO());
 			} else {
 

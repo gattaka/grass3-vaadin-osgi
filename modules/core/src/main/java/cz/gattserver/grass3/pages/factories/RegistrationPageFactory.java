@@ -7,7 +7,7 @@ import cz.gattserver.grass3.pages.RegistrationPage;
 import cz.gattserver.grass3.pages.factories.template.AbstractPageFactory;
 import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.security.CoreACL;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
 
 @Component("registrationPageFactory")
 public class RegistrationPageFactory extends AbstractPageFactory {

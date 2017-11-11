@@ -3,9 +3,9 @@ package cz.gattserver.grass3.fm.web.factories;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.fm.web.FMSettingsPage;
+import cz.gattserver.grass3.pages.settings.factories.AbstractModuleSettingsPageFactory;
 import cz.gattserver.grass3.pages.template.GrassPage;
-import cz.gattserver.grass3.tabs.factories.template.AbstractModuleSettingsPageFactory;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
 
 @Component
 public class FMSettingsPageFactory extends AbstractModuleSettingsPageFactory {

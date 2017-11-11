@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.articles.latex.config.LatexConfiguration;
 import cz.gattserver.grass3.config.ConfigurationService;
-import cz.gattserver.grass3.ui.util.impl.AbstractGrassRequestHandler;
+import cz.gattserver.grass3.server.AbstractGrassRequestHandler;
 import cz.gattserver.web.common.SpringContextHelper;
 
 @Component

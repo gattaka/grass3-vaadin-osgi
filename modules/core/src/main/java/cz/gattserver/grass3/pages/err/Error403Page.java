@@ -3,8 +3,8 @@ package cz.gattserver.grass3.pages.err;
 import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
 
-import cz.gattserver.grass3.pages.template.ErrorPage;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.pages.err.template.ErrorPage;
+import cz.gattserver.grass3.server.GrassRequest;
 
 public class Error403Page extends ErrorPage {
 

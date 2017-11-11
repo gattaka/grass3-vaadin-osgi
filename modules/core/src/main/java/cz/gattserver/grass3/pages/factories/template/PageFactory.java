@@ -3,7 +3,7 @@ package cz.gattserver.grass3.pages.factories.template;
 import java.io.Serializable;
 
 import cz.gattserver.grass3.pages.template.GrassPage;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
 
 public interface PageFactory extends Serializable {
 

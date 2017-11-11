@@ -39,16 +39,17 @@ import com.vaadin.v7.ui.Table.Align;
 
 import cz.gattserver.common.util.HumanBytesSizeCreator;
 import cz.gattserver.common.util.ReferenceHolder;
+import cz.gattserver.grass3.components.Breadcrumb;
+import cz.gattserver.grass3.components.MultiUpload;
+import cz.gattserver.grass3.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.fm.FMExplorer;
 import cz.gattserver.grass3.fm.FMExplorer.FileProcessState;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
-import cz.gattserver.grass3.template.Breadcrumb;
-import cz.gattserver.grass3.template.MultiUpload;
-import cz.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
+import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.util.ComparableStringDate;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.WebWindow;
@@ -56,8 +57,6 @@ import cz.gattserver.web.common.window.InfoWindow;
 import cz.gattserver.web.common.window.WarnWindow;
 
 public class FMPage extends OneColumnPage {
-
-	private static final long serialVersionUID = -950042653154868289L;
 
 	@Resource(name = "fmPageFactory")
 	private PageFactory fmPageFactory;
@@ -145,7 +144,7 @@ public class FMPage extends OneColumnPage {
 		try {
 			explorer = new FMExplorer(builder.toString());
 		} catch (IOException e) {
-			showErrorPage500();
+			UIUtils.showErrorPage500();
 		}
 
 		// Bylo potřeba se vrátit do kořene, protože předložený adresář
@@ -155,16 +154,17 @@ public class FMPage extends OneColumnPage {
 			// úspěch - pokračujeme
 			break;
 		case MISSING:
-			showWarning("Cíl neexistuje - vracím se do kořenového adresáře");
+			UIUtils.showWarning("Cíl neexistuje - vracím se do kořenového adresáře");
 			break;
 		case NOT_VALID:
-			showWarning("Cíl se nachází mimo povolený rozsah souborů k prohlížení - vracím se do kořenového adresáře");
+			UIUtils.showWarning(
+					"Cíl se nachází mimo povolený rozsah souborů k prohlížení - vracím se do kořenového adresáře");
 			break;
 		case SYSTEM_ERROR:
-			showWarning("Z cíle nelze číst - vracím se do kořenového adresáře");
+			UIUtils.showWarning("Z cíle nelze číst - vracím se do kořenového adresáře");
 			break;
 		default:
-			showWarning("Neznámá chyba - vracím se do kořenového adresáře");
+			UIUtils.showWarning("Neznámá chyba - vracím se do kořenového adresáře");
 			break;
 		}
 
@@ -278,10 +278,10 @@ public class FMPage extends OneColumnPage {
 					File file = (File) event.getItemId();
 					if (file.isDirectory()) {
 						try {
-							redirect(getPageURL(fmPageFactory, explorer.fileURLFromRoot(file).toString()));
+							UIUtils.redirect(getPageURL(fmPageFactory, explorer.fileURLFromRoot(file).toString()));
 						} catch (IOException e) {
 							e.printStackTrace();
-							showWarning("Nezdařilo se otevřít soubor");
+							UIUtils.showWarning("Nezdařilo se otevřít soubor");
 						}
 					} else {
 						handleDownloadFile(file);
@@ -392,29 +392,29 @@ public class FMPage extends OneColumnPage {
 			if (overallResult.equals(FileProcessState.SUCCESS)) {
 				// refresh dir list
 				createDirList();
-				showInfo("Soubory byly úspěšně odstraněny.");
+				UIUtils.showInfo("Soubory byly úspěšně odstraněny.");
 			} else {
 				// něco se nepodařilo
-				showWarning("Některé soubory se nezdařilo smazat.");
+				UIUtils.showWarning("Některé soubory se nezdařilo smazat.");
 			}
 		});
-		getGrassUI().addWindow(subwindow);
+		UIUtils.getGrassUI().addWindow(subwindow);
 
 	}
 
 	private void handleOpenAction(File file) {
 		try {
-			redirect(getPageURL(fmPageFactory, explorer.fileURLFromRoot(file).toString()));
+			UIUtils.redirect(getPageURL(fmPageFactory, explorer.fileURLFromRoot(file).toString()));
 		} catch (IOException e) {
 			e.printStackTrace();
-			showWarning("Soubor se nepodařilo otevřít");
+			UIUtils.showWarning("Soubor se nepodařilo otevřít");
 		}
 	}
 
 	private void handleRenameAction(final File file, VerticalLayout layout) {
 		final Window subwindow = new WebWindow("Přejmenovat");
 		subwindow.center();
-		getGrassUI().addWindow(subwindow);
+		UIUtils.getGrassUI().addWindow(subwindow);
 
 		GridLayout subWindowlayout = new GridLayout(2, 2);
 		subwindow.setContent(subWindowlayout);
@@ -432,19 +432,19 @@ public class FMPage extends OneColumnPage {
 			public void buttonClick(ClickEvent event) {
 				switch (explorer.renameFile(file, (String) newNameField.getValue())) {
 				case SUCCESS:
-					showInfo("Soubor byl úspěšně přejmenován.");
+					UIUtils.showInfo("Soubor byl úspěšně přejmenován.");
 					// refresh dir list
 					createDirList();
 					break;
 				case ALREADY_EXISTS:
-					showWarning("Přejmenování se nezdařilo - soubor s tímto názvem již existuje.");
+					UIUtils.showWarning("Přejmenování se nezdařilo - soubor s tímto názvem již existuje.");
 					break;
 				case NOT_VALID:
-					showWarning(
+					UIUtils.showWarning(
 							"Přejmenování se nezdařilo - cílové umístění souboru se nachází mimo povolený rozsah souborů k prohlížení.");
 					break;
 				default:
-					showWarning("Přejmenování se nezdařilo - došlo k systémové chybě.");
+					UIUtils.showWarning("Přejmenování se nezdařilo - došlo k systémové chybě.");
 					break;
 				}
 				subwindow.close();
@@ -514,7 +514,8 @@ public class FMPage extends OneColumnPage {
 
 		// Jsou započítané všechny soubory podstromu ?
 		if (!skipList.isEmpty()) {
-			getGrassUI().addWindow(new WarnWindow("Některé soubory nemohly být započítány do celkové velikosti."));
+			UIUtils.getGrassUI()
+					.addWindow(new WarnWindow("Některé soubory nemohly být započítány do celkové velikosti."));
 		}
 		// Velikost (binární)
 		subWindowlayout.addComponent(new Label(HumanBytesSizeCreator.format(size, false)), 1, 6);
@@ -558,7 +559,8 @@ public class FMPage extends OneColumnPage {
 
 		// Jsou započítané všechny soubory podstromu ?
 		if (!skipList.isEmpty()) {
-			getGrassUI().addWindow(new InfoWindow("Některé soubory nemohly být započítány do celkové velikosti."));
+			UIUtils.getGrassUI()
+					.addWindow(new InfoWindow("Některé soubory nemohly být započítány do celkové velikosti."));
 		}
 		// Velikost (binární)
 		subWindowlayout.addComponent(new Label(HumanBytesSizeCreator.format(size, false)), 1, 2);
@@ -583,7 +585,7 @@ public class FMPage extends OneColumnPage {
 		subwindow.center();
 		subwindow.setWidth("470px");
 		subwindow.setHeight("300px");
-		getGrassUI().addWindow(subwindow);
+		UIUtils.getGrassUI().addWindow(subwindow);
 
 		// Skupina nebo RMB vybraný soubor
 		if (isOperationTargetSelectedGroup(file)) {
@@ -623,7 +625,7 @@ public class FMPage extends OneColumnPage {
 			}
 
 		};
-		getGrassUI().addWindow(dlWindow);
+		UIUtils.getGrassUI().addWindow(dlWindow);
 		// Page.getCurrent().open(, file.getName(), false);
 	}
 
@@ -686,21 +688,21 @@ public class FMPage extends OneColumnPage {
 					return;
 				switch (explorer.createNewDir(newDirName.getValue().toString())) {
 				case SUCCESS:
-					showInfo("Nový adresář byl úspěšně vytvořen.");
+					UIUtils.showInfo("Nový adresář byl úspěšně vytvořen.");
 					// refresh dir list
 					createDirList();
 					// clean
 					newDirName.setValue("");
 					break;
 				case ALREADY_EXISTS:
-					showWarning("Nezdařilo se vytvořit nový adresář - adresář s tímto jménem již existuje.");
+					UIUtils.showWarning("Nezdařilo se vytvořit nový adresář - adresář s tímto jménem již existuje.");
 					break;
 				case NOT_VALID:
-					showWarning(
+					UIUtils.showWarning(
 							"Nezdařilo se vytvořit nový adresář - cílové umístění adresáře se nachází mimo povolený rozsah souborů k prohlížení.");
 					break;
 				default:
-					showWarning("Nezdařilo se vytvořit nový adresář - došlo k systémové chybě.");
+					UIUtils.showWarning("Nezdařilo se vytvořit nový adresář - došlo k systémové chybě.");
 				}
 
 			}
@@ -733,14 +735,15 @@ public class FMPage extends OneColumnPage {
 					createDirList();
 					break;
 				case ALREADY_EXISTS:
-					showWarning("Soubor '" + fileName + "' nebylo možné uložit - soubor s tímto názvem již existuje.");
+					UIUtils.showWarning(
+							"Soubor '" + fileName + "' nebylo možné uložit - soubor s tímto názvem již existuje.");
 					break;
 				case NOT_VALID:
-					showWarning("Soubor '" + fileName
+					UIUtils.showWarning("Soubor '" + fileName
 							+ "' nebylo možné uložit - cílové umístění souboru se nachází mimo povolený rozsah souborů k prohlížení.");
 					break;
 				default:
-					showWarning("Soubor '" + fileName + "' nebylo možné uložit - došlo k systémové chybě.");
+					UIUtils.showWarning("Soubor '" + fileName + "' nebylo možné uložit - došlo k systémové chybě.");
 				}
 			}
 		};

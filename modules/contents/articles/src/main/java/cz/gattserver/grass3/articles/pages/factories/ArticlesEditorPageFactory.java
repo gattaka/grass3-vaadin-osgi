@@ -6,7 +6,7 @@ import cz.gattserver.grass3.articles.pages.ArticlesEditorPage;
 import cz.gattserver.grass3.pages.factories.template.AbstractPageFactory;
 import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.security.Role;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
 
 @Component("articlesEditorPageFactory")
 public class ArticlesEditorPageFactory extends AbstractPageFactory {

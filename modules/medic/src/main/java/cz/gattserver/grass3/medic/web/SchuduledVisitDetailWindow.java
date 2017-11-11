@@ -10,11 +10,11 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
-import cz.gattserver.grass3.template.AbstractDetailSubWindow;
+import cz.gattserver.grass3.windows.DetailWindow;
 import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.ui.BoldLabel;
 
-public class SchuduledVisitDetailWindow extends AbstractDetailSubWindow {
+public class SchuduledVisitDetailWindow extends DetailWindow {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 

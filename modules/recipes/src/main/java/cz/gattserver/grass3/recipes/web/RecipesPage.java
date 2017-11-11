@@ -11,13 +11,13 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import cz.gattserver.grass3.components.CreateButton;
+import cz.gattserver.grass3.components.ModifyButton;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.recipes.facades.RecipesFacade;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
 import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
-import cz.gattserver.grass3.template.CreateButton;
-import cz.gattserver.grass3.template.ModifyButton;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.web.common.ui.H2Label;
 
 public class RecipesPage extends OneColumnPage {

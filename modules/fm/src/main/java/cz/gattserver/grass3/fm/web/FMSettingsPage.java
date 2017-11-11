@@ -12,8 +12,8 @@ import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
-import cz.gattserver.grass3.tabs.template.ModuleSettingsPage;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.pages.settings.ModuleSettingsPage;
+import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.web.common.ui.H2Label;
 
 public class FMSettingsPage extends ModuleSettingsPage {

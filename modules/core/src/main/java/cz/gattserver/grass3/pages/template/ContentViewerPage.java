@@ -23,6 +23,11 @@ import com.vaadin.ui.Link;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.components.Breadcrumb;
+import cz.gattserver.grass3.components.DeleteButton;
+import cz.gattserver.grass3.components.ImageButton;
+import cz.gattserver.grass3.components.ModifyButton;
+import cz.gattserver.grass3.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.facades.UserFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.ContentTagDTO;
@@ -30,13 +35,9 @@ import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.security.CoreACL;
-import cz.gattserver.grass3.subwindows.ContentMoveWindow;
-import cz.gattserver.grass3.template.ImageButton;
-import cz.gattserver.grass3.template.Breadcrumb;
-import cz.gattserver.grass3.template.DeleteButton;
-import cz.gattserver.grass3.template.ModifyButton;
-import cz.gattserver.grass3.template.Breadcrumb.BreadcrumbElement;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
+import cz.gattserver.grass3.windows.ContentMoveWindow;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcons;
@@ -121,7 +122,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 	protected void createContentOperations(CssLayout operationsListLayout) {
 		// Upravit
-		if (coreACL.canModifyContent(content, getUser())) {
+		if (coreACL.canModifyContent(content, UIUtils.getUser())) {
 			ModifyButton modBtn = new ModifyButton(event -> onEditOperation());
 			operationsListLayout.addComponent(modBtn);
 			modBtn.setIconAlternateText(modBtn.getCaption());
@@ -129,7 +130,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		}
 
 		// Smazat
-		if (coreACL.canDeleteContent(content, getUser())) {
+		if (coreACL.canDeleteContent(content, UIUtils.getUser())) {
 			DeleteButton delBtn = new DeleteButton(event -> {
 				onDeleteOperation();
 			});
@@ -142,7 +143,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		removeFromFavouritesButton = new ImageButton(null, ImageIcons.BROKEN_HEART_16_ICON, event -> {
 			// zdařilo se ? Pokud ano, otevři info okno
 			try {
-				userFacade.removeContentFromFavourites(content.getId(), getUser().getId());
+				userFacade.removeContentFromFavourites(content.getId(), UIUtils.getUser().getId());
 				removeFromFavouritesButton.setVisible(false);
 				addToFavouritesButton.setVisible(true);
 			} catch (Exception e) {
@@ -155,7 +156,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		addToFavouritesButton = new ImageButton(null, ImageIcons.HEART_16_ICON, event -> {
 			// zdařilo se ? Pokud ano, otevři info okno
 			try {
-				userFacade.addContentToFavourites(content.getId(), getUser().getId());
+				userFacade.addContentToFavourites(content.getId(), UIUtils.getUser().getId());
 				addToFavouritesButton.setVisible(false);
 				removeFromFavouritesButton.setVisible(true);
 			} catch (Exception e) {
@@ -165,21 +166,21 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		});
 		addToFavouritesButton.setIconAlternateText("Přidat do oblíbených");
 
-		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(content, getUser()));
-		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(content, getUser()));
+		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(content, UIUtils.getUser()));
+		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(content, UIUtils.getUser()));
 
 		operationsListLayout.addComponent(addToFavouritesButton);
 		operationsListLayout.addComponent(removeFromFavouritesButton);
 
 		// Změna kategorie
-		if (coreACL.canModifyContent(content, getUser())) {
+		if (coreACL.canModifyContent(content, UIUtils.getUser())) {
 			ImageButton moveBtn = new ImageButton(null, ImageIcons.MOVE_16_ICON, event -> {
 				UI.getCurrent().addWindow(new ContentMoveWindow(content) {
 					private static final long serialVersionUID = 3748723613020816248L;
 
 					@Override
 					protected void onMove() {
-						redirect(getPageURL(getContentViewerPageFactory(),
+						UIUtils.redirect(getPageURL(getContentViewerPageFactory(),
 								URLIdentifierUtils.createURLIdentifier(content.getContentID(), content.getName())));
 					}
 				});
@@ -265,7 +266,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 			// nejprve zkus zjistit, zda předek existuje
 			if (parent == null)
-				showErrorPage404();
+				UIUtils.showErrorPage404();
 
 			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageResource(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(parent.getId(), parent.getName()))));

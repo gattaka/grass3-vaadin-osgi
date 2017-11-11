@@ -9,7 +9,8 @@ import com.vaadin.ui.Link;
 
 import cz.gattserver.grass3.facades.QuotesFacade;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
 
 public abstract class BasePage extends MenuPage {
 
@@ -38,7 +39,7 @@ public abstract class BasePage extends MenuPage {
 	private String chooseQuote() {
 		String quote = quotesFacade.getRandomQuote();
 		if (quote == null) {
-			showErrorPage500();
+			UIUtils.showErrorPage500();
 		}
 		return quote;
 	}

@@ -23,7 +23,8 @@ import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.search.service.SearchHit;
-import cz.gattserver.grass3.ui.util.GrassRequest;
+import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.ImageIcons;
 
 public class SearchPage extends OneColumnPage {
@@ -54,7 +55,7 @@ public class SearchPage extends OneColumnPage {
 		String searchText = (String) searchField.getValue();
 		try {
 			List<SearchHit> hits = searchFacade.search(searchText, null, (String) moduleCombo.getValue(),
-					getGrassUI().getUser(), this);
+					UIUtils.getGrassUI().getUser(), this);
 			outputLayout.removeAllComponents();
 
 			if (hits.size() == 0) {

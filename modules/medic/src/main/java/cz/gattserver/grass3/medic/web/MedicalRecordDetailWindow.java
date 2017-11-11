@@ -11,10 +11,10 @@ import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
-import cz.gattserver.grass3.template.AbstractDetailSubWindow;
+import cz.gattserver.grass3.windows.DetailWindow;
 import cz.gattserver.web.common.SpringContextHelper;
 
-public class MedicalRecordDetailWindow extends AbstractDetailSubWindow {
+public class MedicalRecordDetailWindow extends DetailWindow {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 

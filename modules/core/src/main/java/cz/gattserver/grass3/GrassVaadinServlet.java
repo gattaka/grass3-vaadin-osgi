@@ -14,7 +14,7 @@ import com.vaadin.server.SessionInitEvent;
 import com.vaadin.server.SessionInitListener;
 import com.vaadin.server.VaadinServlet;
 
-import cz.gattserver.grass3.ui.util.GrassRequestHandler;
+import cz.gattserver.grass3.server.GrassRequestHandler;
 import cz.gattserver.web.common.SpringContextHelper;
 
 public class GrassVaadinServlet extends VaadinServlet {

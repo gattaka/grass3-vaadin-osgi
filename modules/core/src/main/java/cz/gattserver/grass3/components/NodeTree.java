@@ -9,10 +9,14 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.contextmenu.ContextMenu;
+import com.vaadin.contextmenu.MenuItem;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.event.Action;
 import com.vaadin.event.Action.Handler;
+import com.vaadin.event.ShortcutAction;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -32,13 +36,13 @@ import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.WebWindow;
 
-public class NodeTree extends Tree<NodeTreeDTO> implements Handler {
+public class NodeTree extends Tree<NodeTreeDTO> {
 
 	private static final long serialVersionUID = -7457362355620092284L;
 
-	private static final Action ACTION_DELETE = new Action("Smazat");
-	private static final Action ACTION_RENAME = new Action("Přejmenovat");
-	private static final Action[] ACTIONS = new Action[] { ACTION_DELETE, ACTION_RENAME };
+	// private final Action ACTION_DELETE;
+	// private final Action ACTION_RENAME;
+	// private final Action[] ACTIONS;
 
 	private Map<Long, NodeTreeDTO> cache;
 	private Set<Long> visited;
@@ -54,6 +58,21 @@ public class NodeTree extends Tree<NodeTreeDTO> implements Handler {
 		setItemIconGenerator(i -> new ThemeResource(ImageIcons.FOLDER_16_ICON));
 		setItemCaptionGenerator(NodeTreeDTO::getName);
 		populate();
+
+		addShortcutListener(new ShortcutListener("Delete", ShortcutAction.KeyCode.DELETE, null) {
+			private static final long serialVersionUID = -7239845094514060176L;
+
+			@Override
+			public void handleAction(Object sender, Object target) {
+				if (!getSelectedItems().isEmpty())
+					deleteAction(getSelectedItems().iterator().next());
+			}
+		});
+		ContextMenu contextMenu = new ContextMenu(this, true);
+		contextMenu.addItem("Smazat", selectedItem -> {
+			if (!getSelectedItems().isEmpty())
+				deleteAction(getSelectedItems().iterator().next());
+		});
 	}
 
 	public void populate() {
@@ -85,74 +104,66 @@ public class NodeTree extends Tree<NodeTreeDTO> implements Handler {
 		select(cache.get(to.getId()));
 	}
 
-	@Override
-	public void handleAction(Action action, Object sender, final Object target) {
-		final NodeTreeDTO node = (NodeTreeDTO) target;
-		if (action == ACTION_DELETE) {
-			UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat kategorii '" + node.getName() + "' ?", e -> {
-				if (nodeFacade.isEmpty(node.getId()) == false) {
-					UIUtils.showWarning("Kategorie musí být prázdná");
-				} else {
-					try {
-						nodeFacade.deleteNode(node.getId());
-						NodeTree.this.getTreeData().removeItem(node);
-						UIUtils.showInfo("Kategorie byla úspěšně smazána");
-					} catch (Exception ex) {
-						UIUtils.showWarning("Nezdařilo se smazat vybranou kategorii");
-					}
+	private void deleteAction(NodeTreeDTO node) {
+		UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat kategorii '" + node.getName() + "' ?", e -> {
+			if (nodeFacade.isEmpty(node.getId()) == false) {
+				UIUtils.showWarning("Kategorie musí být prázdná");
+			} else {
+				try {
+					nodeFacade.deleteNode(node.getId());
+					NodeTree.this.getTreeData().removeItem(node);
+					UIUtils.showInfo("Kategorie byla úspěšně smazána");
+				} catch (Exception ex) {
+					UIUtils.showWarning("Nezdařilo se smazat vybranou kategorii");
 				}
-			}));
-
-		} else if (action == ACTION_RENAME) {
-			final Window subwindow = new WebWindow("Přejmenovat");
-			subwindow.center();
-			UI.getCurrent().addWindow(subwindow);
-
-			GridLayout subWindowlayout = new GridLayout(2, 2);
-			subwindow.setContent(subWindowlayout);
-			subWindowlayout.setMargin(true);
-			subWindowlayout.setSpacing(true);
-
-			final TextField newNameField = new TextField("Nový název:");
-			newNameField.setValue(node.getName());
-			subWindowlayout.addComponent(newNameField, 0, 0, 1, 0);
-
-			Button confirm = new Button("Přejmenovat", event -> {
-				if (StringUtils.isBlank(newNameField.getValue()))
-					UIUtils.showError("Název kategorie nesmí být prázdný");
-				if (nodeFacade.rename(node.getId(), newNameField.getValue())) {
-					UIUtils.showInfo("Kategorie byla úspěšně přejmenována");
-					node.setName((String) newNameField.getValue());
-				} else {
-					UIUtils.showWarning("Přejmenování se nezdařilo.");
-				}
-
-				subwindow.close();
-			});
-
-			subWindowlayout.addComponent(confirm, 0, 1);
-			subWindowlayout.setComponentAlignment(confirm, Alignment.MIDDLE_CENTER);
-
-			Button close = new Button("Storno", new Button.ClickListener() {
-
-				private static final long serialVersionUID = 8490964871266821307L;
-
-				public void buttonClick(ClickEvent event) {
-					subwindow.close();
-				}
-			});
-
-			subWindowlayout.addComponent(close, 1, 1);
-			subWindowlayout.setComponentAlignment(close, Alignment.MIDDLE_CENTER);
-
-			// Zaměř se na nové okno
-			subwindow.focus();
-		}
+			}
+		}));
 	}
 
-	@Override
-	public Action[] getActions(Object target, Object sender) {
-		return ACTIONS;
+	private void renameAction(NodeTreeDTO node) {
+		final Window subwindow = new WebWindow("Přejmenovat");
+		subwindow.center();
+		UI.getCurrent().addWindow(subwindow);
+
+		GridLayout subWindowlayout = new GridLayout(2, 2);
+		subwindow.setContent(subWindowlayout);
+		subWindowlayout.setMargin(true);
+		subWindowlayout.setSpacing(true);
+
+		final TextField newNameField = new TextField("Nový název:");
+		newNameField.setValue(node.getName());
+		subWindowlayout.addComponent(newNameField, 0, 0, 1, 0);
+
+		Button confirm = new Button("Přejmenovat", event -> {
+			if (StringUtils.isBlank(newNameField.getValue()))
+				UIUtils.showError("Název kategorie nesmí být prázdný");
+			if (nodeFacade.rename(node.getId(), newNameField.getValue())) {
+				UIUtils.showInfo("Kategorie byla úspěšně přejmenována");
+				node.setName((String) newNameField.getValue());
+			} else {
+				UIUtils.showWarning("Přejmenování se nezdařilo.");
+			}
+
+			subwindow.close();
+		});
+
+		subWindowlayout.addComponent(confirm, 0, 1);
+		subWindowlayout.setComponentAlignment(confirm, Alignment.MIDDLE_CENTER);
+
+		Button close = new Button("Storno", new Button.ClickListener() {
+
+			private static final long serialVersionUID = 8490964871266821307L;
+
+			public void buttonClick(ClickEvent event) {
+				subwindow.close();
+			}
+		});
+
+		subWindowlayout.addComponent(close, 1, 1);
+		subWindowlayout.setComponentAlignment(close, Alignment.MIDDLE_CENTER);
+
+		// Zaměř se na nové okno
+		subwindow.focus();
 	}
 
 	public void addNode(NodeTreeDTO newNode) {

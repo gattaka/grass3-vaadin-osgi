@@ -14,4 +14,6 @@
     <inherits name="com.vaadin.DefaultWidgetSet" />
 
     <inherits name="org.vaadin.jouni.dom.DomWidgetset" />
+
+    <inherits name="com.vaadin.contextmenu.WidgetSet" />
 </module>

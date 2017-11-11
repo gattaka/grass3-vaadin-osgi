@@ -171,8 +171,6 @@ public class NodesSettingsPage extends ModuleSettingsPage {
 			}
 		});
 
-		tree.populate();
-
 		createNewNodePanel(layout);
 
 		return layout;

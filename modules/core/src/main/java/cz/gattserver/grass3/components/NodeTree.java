@@ -9,24 +9,27 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.contextmenu.ContextMenu;
-import com.vaadin.contextmenu.MenuItem;
+import com.vaadin.contextmenu.GridContextMenu;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
-import com.vaadin.event.Action;
-import com.vaadin.event.Action.Handler;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.dnd.DropEffect;
+import com.vaadin.shared.ui.dnd.EffectAllowed;
+import com.vaadin.shared.ui.grid.DropMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Tree;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.TreeGrid;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.components.grid.TreeGridDragSource;
+import com.vaadin.ui.components.grid.TreeGridDropTarget;
 
 import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dto.NodeTreeDTO;
@@ -36,43 +39,134 @@ import cz.gattserver.web.common.ui.ImageIcons;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.WebWindow;
 
-public class NodeTree extends Tree<NodeTreeDTO> {
+public class NodeTree extends VerticalLayout {
 
 	private static final long serialVersionUID = -7457362355620092284L;
 
-	// private final Action ACTION_DELETE;
-	// private final Action ACTION_RENAME;
-	// private final Action[] ACTIONS;
-
 	private Map<Long, NodeTreeDTO> cache;
 	private Set<Long> visited;
+
+	private TreeGrid<NodeTreeDTO> grid;
+
+	private Set<NodeTreeDTO> draggedItems;
 
 	@Autowired
 	private NodeFacade nodeFacade;
 
 	public NodeTree() {
+		this(false);
+	}
+
+	public TreeGrid<NodeTreeDTO> getGrid() {
+		return grid;
+	}
+
+	public NodeTree(boolean enableEditFeatures) {
 		SpringContextHelper.inject(this);
+
+		setSpacing(true);
+		setMargin(false);
+
 		cache = new HashMap<>();
 		visited = new HashSet<>();
-		setSelectionMode(SelectionMode.SINGLE);
-		setItemIconGenerator(i -> new ThemeResource(ImageIcons.FOLDER_16_ICON));
-		setItemCaptionGenerator(NodeTreeDTO::getName);
+
+		grid = new TreeGrid<>();
+		grid.setSelectionMode(SelectionMode.SINGLE);
+		grid.setWidth("100%");
+		addComponent(grid);
+
+		// setItemIconGenerator(i -> new
+		// ThemeResource(ImageIcons.FOLDER_16_ICON));
+		// setItemCaptionGenerator(NodeTreeDTO::getName);
+		grid.addColumn(NodeTreeDTO::getName).setCaption("Název");
 		populate();
 
+		if (enableEditFeatures)
+			initEditFeatures();
+
+		setWidth("100%");
+	}
+
+	private void initEditFeatures() {
+		/*
+		 * Drag drop features
+		 */
+		TreeGridDragSource<NodeTreeDTO> dragSource = new TreeGridDragSource<>(grid);
+		dragSource.setEffectAllowed(EffectAllowed.MOVE);
+		dragSource.addGridDragStartListener(e -> draggedItems = e.getDraggedItems());
+
+		TreeGridDropTarget<NodeTreeDTO> dropTarget = new TreeGridDropTarget<>(grid, DropMode.ON_TOP_OR_BETWEEN);
+		dropTarget.setDropEffect(DropEffect.MOVE);
+		dropTarget.addTreeGridDropListener(event -> {
+			NodeTreeDTO dropNode = event.getDropTargetRow().get();
+			switch (event.getDropLocation()) {
+			case ON_TOP:
+				// vkládám do dropNode
+				break;
+			case ABOVE:
+			case BELOW:
+				// vkládám do parenta dropNode
+				dropNode = dropNode.getParentId() == null ? null : cache.get(dropNode.getParentId());
+				break;
+			case EMPTY:
+			default:
+				// výchozí je vkládání do root
+				dropNode = null;
+			}
+			for (NodeTreeDTO n : draggedItems)
+				moveAction(n, dropNode);
+			grid.getDataProvider().refreshAll();
+		});
+
+		/*
+		 * Context menu
+		 */
+		GridContextMenu<NodeTreeDTO> gridMenu = new GridContextMenu<>(grid);
+		gridMenu.addGridBodyContextMenuListener(e -> {
+			e.getContextMenu().removeItems();
+			if (e.getItem() != null) {
+				NodeTreeDTO node = (NodeTreeDTO) e.getItem();
+				grid.select(node);
+				e.getContextMenu().addItem("Smazat", new ThemeResource(ImageIcons.DELETE_16_ICON),
+						selectedItem -> deleteAction(node));
+				e.getContextMenu().addItem("Přejmenovat", new ThemeResource(ImageIcons.PENCIL_16_ICON),
+						selectedItem -> renameAction(node));
+			}
+			e.getContextMenu().addItem("Vytvořit zde novou", new ThemeResource(ImageIcons.PLUS_16_ICON),
+					selectedItem -> createNodeAction(e.getItem() == null ? null : (NodeTreeDTO) e.getItem()));
+		});
+
+		/*
+		 * Delete shortcut
+		 */
 		addShortcutListener(new ShortcutListener("Delete", ShortcutAction.KeyCode.DELETE, null) {
 			private static final long serialVersionUID = -7239845094514060176L;
 
 			@Override
 			public void handleAction(Object sender, Object target) {
-				if (!getSelectedItems().isEmpty())
-					deleteAction(getSelectedItems().iterator().next());
+				if (!grid.getSelectedItems().isEmpty())
+					deleteAction(grid.getSelectedItems().iterator().next());
 			}
 		});
-		ContextMenu contextMenu = new ContextMenu(this, true);
-		contextMenu.addItem("Smazat", selectedItem -> {
-			if (!getSelectedItems().isEmpty())
-				deleteAction(getSelectedItems().iterator().next());
-		});
+
+		/*
+		 * Buttons
+		 */
+		HorizontalLayout btnLayout = new HorizontalLayout();
+		btnLayout.setSpacing(true);
+		addComponent(btnLayout);
+
+		CreateGridButton createBtn = new CreateGridButton("Vytvořit", e -> createNodeAction(
+				grid.getSelectedItems().isEmpty() ? null : grid.getSelectedItems().iterator().next()));
+		btnLayout.addComponent(createBtn);
+
+		ModifyGridButton<NodeTreeDTO> modifyBtn = new ModifyGridButton<>("Přejmenovat", (e, i) -> renameAction(i),
+				grid);
+		btnLayout.addComponent(modifyBtn);
+
+		DeleteGridButton<NodeTreeDTO> deleteBtn = new DeleteGridButton<>("Smazat", i -> deleteAction(i), grid);
+		btnLayout.addComponent(deleteBtn);
+
 	}
 
 	public void populate() {
@@ -80,7 +174,7 @@ public class NodeTree extends Tree<NodeTreeDTO> {
 		TreeData<NodeTreeDTO> treeData = new TreeData<>();
 		nodes.forEach(n -> cache.put(n.getId(), n));
 		nodes.forEach(n -> addTreeItem(treeData, n));
-		setDataProvider(new TreeDataProvider<>(treeData));
+		grid.setDataProvider(new TreeDataProvider<>(treeData));
 	}
 
 	private void addTreeItem(TreeData<NodeTreeDTO> treeData, NodeTreeDTO node) {
@@ -98,10 +192,26 @@ public class NodeTree extends Tree<NodeTreeDTO> {
 		Long parent = to.getParentId();
 		while (parent != null) {
 			NodeTreeDTO n = cache.get(parent);
-			expand(n);
+			grid.expand(n);
 			parent = n.getParentId();
 		}
-		select(cache.get(to.getId()));
+		grid.select(cache.get(to.getId()));
+	}
+
+	private void moveAction(NodeTreeDTO node, NodeTreeDTO newParent) {
+		UI.getCurrent().addWindow(new ConfirmWindow("Opravdu přesunout '" + node.getName() + "' do "
+				+ (newParent == null ? "kořene sekce" : "'" + newParent.getName() + "'") + "?", e -> {
+					try {
+						nodeFacade.moveNode(node.getId(), newParent == null ? null : newParent.getId());
+						grid.getTreeData().removeItem(node);
+						node.setParentId(newParent == null ? null : newParent.getId());
+						grid.getTreeData().addItem(newParent, node);
+						grid.getDataProvider().refreshAll();
+						expandTo(node.getId());
+					} catch (Exception ex) {
+						UIUtils.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
+					}
+				}));
 	}
 
 	private void deleteAction(NodeTreeDTO node) {
@@ -111,8 +221,10 @@ public class NodeTree extends Tree<NodeTreeDTO> {
 			} else {
 				try {
 					nodeFacade.deleteNode(node.getId());
-					NodeTree.this.getTreeData().removeItem(node);
-					UIUtils.showInfo("Kategorie byla úspěšně smazána");
+					grid.getTreeData().removeItem(node);
+					grid.getDataProvider().refreshAll();
+					if (node.getParentId() != null)
+						expandTo(node.getParentId());
 				} catch (Exception ex) {
 					UIUtils.showWarning("Nezdařilo se smazat vybranou kategorii");
 				}
@@ -138,27 +250,19 @@ public class NodeTree extends Tree<NodeTreeDTO> {
 			if (StringUtils.isBlank(newNameField.getValue()))
 				UIUtils.showError("Název kategorie nesmí být prázdný");
 			if (nodeFacade.rename(node.getId(), newNameField.getValue())) {
-				UIUtils.showInfo("Kategorie byla úspěšně přejmenována");
 				node.setName((String) newNameField.getValue());
+				grid.getDataProvider().refreshItem(node);
+				expandTo(node.getId());
 			} else {
 				UIUtils.showWarning("Přejmenování se nezdařilo.");
 			}
 
 			subwindow.close();
 		});
-
 		subWindowlayout.addComponent(confirm, 0, 1);
 		subWindowlayout.setComponentAlignment(confirm, Alignment.MIDDLE_CENTER);
 
-		Button close = new Button("Storno", new Button.ClickListener() {
-
-			private static final long serialVersionUID = 8490964871266821307L;
-
-			public void buttonClick(ClickEvent event) {
-				subwindow.close();
-			}
-		});
-
+		Button close = new Button("Storno", event -> subwindow.close());
 		subWindowlayout.addComponent(close, 1, 1);
 		subWindowlayout.setComponentAlignment(close, Alignment.MIDDLE_CENTER);
 
@@ -166,12 +270,50 @@ public class NodeTree extends Tree<NodeTreeDTO> {
 		subwindow.focus();
 	}
 
-	public void addNode(NodeTreeDTO newNode) {
-		if (newNode.getId() == null || newNode.getName() == null)
-			throw new IllegalArgumentException("NodeTreeDTO musí mít vyplněn název a id");
-		NodeTreeDTO parentTO = cache.get(newNode.getParentId());
-		cache.put(newNode.getId(), newNode);
-		getTreeData().addItem(parentTO, newNode);
+	public void createNodeAction(NodeTreeDTO parentNode) {
+		final Window subwindow = new WebWindow(parentNode == null ? "Vytvořit novou kořenovou kategorii"
+				: "Vytvořit novou kategorii do '" + parentNode.getName() + "'");
+		subwindow.center();
+		UI.getCurrent().addWindow(subwindow);
+
+		GridLayout subWindowlayout = new GridLayout(2, 2);
+		subwindow.setContent(subWindowlayout);
+		subWindowlayout.setMargin(true);
+		subWindowlayout.setSpacing(true);
+
+		final TextField newNameField = new TextField("Nový název:");
+		subWindowlayout.addComponent(newNameField, 0, 0, 1, 0);
+
+		Button confirm = new Button("Vytvořit", event -> {
+			if (StringUtils.isBlank(newNameField.getValue()))
+				UIUtils.showError("Název kategorie nesmí být prázdný");
+			try {
+				String newNodeName = newNameField.getValue();
+				Long parentNodeId = parentNode == null ? null : parentNode.getId();
+				Long newNodeId = nodeFacade.createNewNode(parentNodeId, newNodeName);
+				NodeTreeDTO newNode = new NodeTreeDTO();
+				newNode.setId(newNodeId);
+				newNode.setName(newNodeName);
+				newNode.setParentId(parentNodeId);
+				cache.put(newNode.getId(), newNode);
+				grid.getTreeData().addItem(parentNode, newNode);
+				grid.getDataProvider().refreshAll();
+				expandTo(newNodeId);
+			} catch (Exception ex) {
+				UIUtils.showWarning("Vytvoření se nezdařilo.");
+			}
+
+			subwindow.close();
+		});
+		subWindowlayout.addComponent(confirm, 0, 1);
+		subWindowlayout.setComponentAlignment(confirm, Alignment.MIDDLE_CENTER);
+
+		Button close = new Button("Storno", event -> subwindow.close());
+		subWindowlayout.addComponent(close, 1, 1);
+		subWindowlayout.setComponentAlignment(close, Alignment.MIDDLE_CENTER);
+
+		// Zaměř se na nové okno
+		subwindow.focus();
 	}
 
 }

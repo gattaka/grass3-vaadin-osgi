@@ -98,51 +98,48 @@ public class NodeFacadeImpl implements NodeFacade {
 	}
 
 	@Override
-	public boolean moveNode(Long node, Long newParent) {
+	public void moveNode(Long nodeId, Long newParentId) {
+		Node newParentEntity = newParentId == null ? null : nodeRepository.findOne(newParentId);
+		Node nodeEntity = nodeRepository.findOne(nodeId);
+
+		// beze změn
+		if (nodeEntity.getParent().equals(newParentEntity))
+			return;
+
 		// zamezí vkládání předků do potomků - projde postupně všechny předky
 		// cílové kategorie a pokud narazí na moje id, pak jsem předkem cílové
 		// kategorie, což je špatně
-		Node parent = newParent == null ? null : nodeRepository.findOne(newParent);
-		if (parent != null) {
+		if (newParentEntity != null) {
+			Node cycleCheckParent = newParentEntity;
 			// začínám od předka newParent - tohle je schválně, umožní mi to se
 			// pak ptát na id newParent - pokud totiž narazím na newParent id,
 			// pak je v DB cykl
-			parent = parent.getParent();
-			while (parent != null) {
-				if (parent.getId() == newParent)
-					return false; // v DB je cykl
-				if (parent.getId() == node)
-					return false; // vkládám do potomka
-				parent = parent.getParent();
+			cycleCheckParent = cycleCheckParent.getParent();
+			while (cycleCheckParent != null) {
+				if (cycleCheckParent.getId() == newParentId)
+					throw new IllegalStateException("V grafu kategorií byl nalezen cykl");
+				if (cycleCheckParent.getId() == nodeId)
+					throw new IllegalArgumentException("Nelze vkládat předka do potomka");
+				cycleCheckParent = cycleCheckParent.getParent();
 			}
 		}
 
-		Node nodeEntity = nodeRepository.findOne(node);
-
 		if (nodeEntity.getParent() != null) {
 			nodeEntity.getParent().getSubNodes().remove(nodeEntity);
-			Node oldParentEntity = nodeRepository.save(nodeEntity.getParent());
-			if (oldParentEntity == null)
-				return false;
+			nodeRepository.save(nodeEntity.getParent());
 		}
 
-		if (newParent != null) {
-			Node newParentEntity = nodeRepository.findOne(newParent);
+		nodeRepository.flush();
+		
+		if (newParentId != null) {
 			newParentEntity.getSubNodes().add(nodeEntity);
 			newParentEntity = nodeRepository.save(newParentEntity);
-			if (newParentEntity == null)
-				return false;
-
 			nodeEntity.setParent(newParentEntity);
 		} else {
 			nodeEntity.setParent(null);
 		}
 
-		nodeEntity = nodeRepository.save(nodeEntity);
-		if (nodeEntity == null)
-			return false;
-
-		return true;
+		nodeRepository.save(nodeEntity);
 	}
 
 	@Override

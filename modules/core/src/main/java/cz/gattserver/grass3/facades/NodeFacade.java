@@ -37,9 +37,9 @@ public interface NodeFacade {
 	 * Založí novou kategorii
 	 * 
 	 * @param parent
-	 *            pakliže je kategorii vkládána do jiné kategorie, je vyplněn
-	 *            id předka. Pokud je kategorie vkládána přímo do kořene
-	 *            sekce, je tento argument <code>null</code>
+	 *            pakliže je kategorii vkládána do jiné kategorie, je vyplněn id
+	 *            předka. Pokud je kategorie vkládána přímo do kořene sekce, je
+	 *            tento argument <code>null</code>
 	 * @param name
 	 *            jméno nové kategorie
 	 * @return id kategorie pokud se přidání zdařilo, jinak <code>null</code>
@@ -49,15 +49,19 @@ public interface NodeFacade {
 	/**
 	 * Přesune kategorii
 	 * 
+	 * @throws IllegalStateException
+	 *             pokud zjistí, že je v grafu kategorií cykl a nejedná se tedy
+	 *             o strom
+	 * @throws IllegalArgumentException
+	 *             pokud je vkládánaná kategorie předkem kategorie, do které je
+	 *             vkládána -- nelze vložit předka do potomka
 	 * @param node
 	 *            id kategorie k přesunu
 	 * @param newParent
 	 *            id nového předka, do kterého má být kategorie přesunuta, nebo
 	 *            <code>null</code> pokud má být přesunuta do kořene sekce
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
 	 */
-	public boolean moveNode(Long node, Long newParent);
+	public void moveNode(Long node, Long newParent);
 
 	/**
 	 * Smaže kategorii, pokud je prázdná

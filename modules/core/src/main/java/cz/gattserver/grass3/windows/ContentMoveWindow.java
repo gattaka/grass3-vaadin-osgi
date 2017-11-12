@@ -37,12 +37,12 @@ public abstract class ContentMoveWindow extends WebWindow {
 
 		tree = new NodeTree();
 		panel.setContent(tree);
-		tree.addSelectionListener(event -> moveBtn.setEnabled(!event.getAllSelectedItems().isEmpty()));
+		tree.getGrid().addSelectionListener(event -> moveBtn.setEnabled(!event.getAllSelectedItems().isEmpty()));
 
 		moveBtn = new Button("Přesunout");
 		moveBtn.setEnabled(false);
 		moveBtn.addClickListener(event -> {
-			NodeTreeDTO nodeDTO = tree.getSelectedItems().iterator().next();
+			NodeTreeDTO nodeDTO = tree.getGrid().getSelectedItems().iterator().next();
 			contentNodeFacade.moveContent(nodeDTO.getId(), contentNodeDTO.getId());
 			close();
 			onMove();

@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.model.dto;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -41,12 +41,12 @@ public class UserInfoDTO implements UserDetails {
 	/**
 	 * Datum registrace
 	 */
-	private Date registrationDate;
+	private LocalDateTime registrationDate;
 
 	/**
 	 * Datum posledního přihlášení
 	 */
-	private Date lastLoginDate;
+	private LocalDateTime lastLoginDate;
 
 	/**
 	 * Email
@@ -91,19 +91,19 @@ public class UserInfoDTO implements UserDetails {
 		this.id = id;
 	}
 
-	public Date getRegistrationDate() {
+	public LocalDateTime getRegistrationDate() {
 		return registrationDate;
 	}
 
-	public void setRegistrationDate(Date registrationDate) {
+	public void setRegistrationDate(LocalDateTime registrationDate) {
 		this.registrationDate = registrationDate;
 	}
 
-	public Date getLastLoginDate() {
+	public LocalDateTime getLastLoginDate() {
 		return lastLoginDate;
 	}
 
-	public void setLastLoginDate(Date lastLoginDate) {
+	public void setLastLoginDate(LocalDateTime lastLoginDate) {
 		this.lastLoginDate = lastLoginDate;
 	}
 

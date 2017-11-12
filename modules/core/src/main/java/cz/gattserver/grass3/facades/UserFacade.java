@@ -65,8 +65,6 @@ public interface UserFacade {
 	 * Zablokuje uživatele
 	 * 
 	 * @param user
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
 	 */
 	public void banUser(Long user);
 
@@ -74,8 +72,6 @@ public interface UserFacade {
 	 * Upraví role uživatele
 	 * 
 	 * @param user
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
 	 */
 	public void changeUserRoles(Long user, Set<Role> roles);
 
@@ -90,7 +86,7 @@ public interface UserFacade {
 	 * Vrátí uživatele dle jména
 	 * 
 	 * @param username
-	 * @return
+	 * @return nalezný uživatel
 	 */
 	public UserInfoDTO getUser(String username);
 

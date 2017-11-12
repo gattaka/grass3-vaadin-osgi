@@ -199,6 +199,10 @@ public class NodeTree extends VerticalLayout {
 	}
 
 	private void moveAction(NodeTreeDTO node, NodeTreeDTO newParent) {
+		if (node.equals(newParent) || node.getParentId() == null && newParent == null
+				|| node.getParentId() != null && newParent != null && node.getParentId().equals(newParent.getId()))
+			return; // bez změn
+
 		UI.getCurrent().addWindow(new ConfirmWindow("Opravdu přesunout '" + node.getName() + "' do "
 				+ (newParent == null ? "kořene sekce" : "'" + newParent.getName() + "'") + "?", e -> {
 					try {
@@ -208,8 +212,8 @@ public class NodeTree extends VerticalLayout {
 						grid.getTreeData().addItem(newParent, node);
 						grid.getDataProvider().refreshAll();
 						expandTo(node.getId());
-					} catch (Exception ex) {
-						UIUtils.showWarning("Nezdařilo se přesunout kategorii do vybraného místa");
+					} catch (IllegalArgumentException ex) {
+						UIUtils.showWarning("Nelze přesunou předka do potomka");
 					}
 				}));
 	}

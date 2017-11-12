@@ -42,6 +42,7 @@ public class LatexSettingsPage extends ModuleSettingsPage {
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
 		settingsLayout.addComponent(settingsFieldsLayout);
+		settingsFieldsLayout.setMargin(false);
 		settingsFieldsLayout.setSpacing(true);
 		settingsFieldsLayout.setSizeFull();
 

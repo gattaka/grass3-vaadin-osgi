@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.facades.impl;
 
-import java.util.Calendar;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -54,7 +54,7 @@ public class SecurityFacadeImpl implements SecurityFacade {
 				}
 				// zapiš údaj o posledním přihlášení
 				User user = userRepository.findOne(principal.getId());
-				user.setLastLoginDate(Calendar.getInstance().getTime());
+				user.setLastLoginDate(LocalDateTime.now());
 				userRepository.save(user);
 				return true;
 			}

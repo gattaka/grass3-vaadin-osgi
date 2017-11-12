@@ -1,61 +1,45 @@
 package cz.gattserver.grass3.pages.settings;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.Property.ValueChangeEvent;
-import com.vaadin.v7.data.Property.ValueChangeListener;
-import com.vaadin.v7.data.util.IndexedContainer;
-import com.vaadin.v7.ui.CheckBox;
-import com.vaadin.v7.ui.Table;
+import com.vaadin.ui.renderers.LocalDateTimeRenderer;
+import com.vaadin.ui.renderers.TextRenderer;
 
+import cz.gattserver.grass3.components.GridButton;
 import cz.gattserver.grass3.facades.UserFacade;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.window.WebWindow;
 
 public class UsersSettingsPage extends ModuleSettingsPage {
 
-	private static final long serialVersionUID = 2474374292329895766L;
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("d.M.yyyy HH:mm:ss");
-
 	@Autowired
 	private UserFacade userFacade;
 
-	private Table userTable;
+	private Grid<UserInfoDTO> grid;
+
+	private List<UserInfoDTO> users;
 
 	public UsersSettingsPage(GrassRequest request) {
 		super(request);
 	}
 
-	/**
-	 * Přehled sloupců tabulky
-	 */
-	private enum ColumnId {
-
-		ID, JMÉNO, ROLE, REGISTROVÁN_OD, POSLEDNÍ_PŘIHLÁŠENÍ, AKTIVNÍ, EMAIL
-
-	}
-
 	@Override
 	protected Component createContent() {
 
-		userTable = new Table();
+		grid = new Grid<>();
 
 		VerticalLayout layout = new VerticalLayout();
 
@@ -66,168 +50,65 @@ public class UsersSettingsPage extends ModuleSettingsPage {
 		layout.addComponent(usersLayout);
 
 		usersLayout.addComponent(new H2Label("Správa uživatelů"));
+		usersLayout.addComponent(grid);
 
-		usersLayout.addComponent(userTable);
+		grid.setSizeFull();
+		grid.setSelectionMode(SelectionMode.SINGLE);
 
-		final HorizontalLayout userMenuLayout = new HorizontalLayout();
-		layout.addComponent(userMenuLayout);
-		userMenuLayout.setSpacing(true);
+		grid.addColumn(UserInfoDTO::getName, new TextRenderer()).setCaption("Jméno");
+		grid.addColumn(u -> u.getRoles().toString(), new TextRenderer()).setCaption("Role");
+		grid.addColumn(UserInfoDTO::getRegistrationDate, new LocalDateTimeRenderer("dd.MM.yyyy")).setCaption("Registrován");
+		grid.addColumn(UserInfoDTO::getLastLoginDate, new LocalDateTimeRenderer("dd.MM.yyyy")).setCaption("Naposledy přihlášen");
+		grid.addColumn(UserInfoDTO::getEmail, new TextRenderer()).setCaption("Email");
+		grid.addColumn(u -> u.isConfirmed() ? "Ano" : "Ne", new TextRenderer()).setCaption("Aktivní");
+		users = userFacade.getUserInfoFromAllUsers();
+		grid.setItems(users);
 
-		userTable.setColumnHeader(ColumnId.POSLEDNÍ_PŘIHLÁŠENÍ, "POSLEDNÍ PŘIHLÁŠENÍ");
-		userTable.setColumnHeader(ColumnId.REGISTROVÁN_OD, "REGISTROVÁN OD");
-		userTable.setSizeFull();
-		userTable.setSelectable(true);
-		userTable.setImmediate(true);
+		HorizontalLayout buttonLayout = new HorizontalLayout();
+		buttonLayout.setSpacing(true);
+		usersLayout.addComponent(buttonLayout);
 
-		userTable.addValueChangeListener(new Table.ValueChangeListener() {
+		buttonLayout.addComponent(new GridButton<>("Aktivovat", (e, user) -> {
+			user.setConfirmed(true);
+			userFacade.activateUser(user.getId());
+			grid.getDataProvider().refreshItem(user);
+		}, grid).setEnableResolver(user -> !user.isConfirmed()));
 
-			private static final long serialVersionUID = -6605391938100454104L;
+		buttonLayout.addComponent(new GridButton<>("Zablokovat", (e, user) -> {
+			user.setConfirmed(false);
+			userFacade.banUser(user.getId());
+			grid.getDataProvider().refreshItem(user);
+		}, grid).setEnableResolver(user -> user.isConfirmed()));
 
-			public void valueChange(ValueChangeEvent event) {
-				UserInfoDTO user = (UserInfoDTO) event.getProperty().getValue();
-				if (null == user) {
-					userMenuLayout.setVisible(false);
-				} else {
-					userMenuLayout.removeAllComponents();
-					userMenuLayout
-							.addComponent(user.isConfirmed() ? createBanButton(user) : createActivateButton(user));
-					userMenuLayout.addComponent(createSetRolesButton(user));
-					userMenuLayout.setVisible(true);
-				}
-			}
-		});
+		buttonLayout.addComponent(new GridButton<>("Upravit oprávnění",
+				(e, user) -> UI.getCurrent().addWindow(new WebWindow("Uživatelské role") {
+					private static final long serialVersionUID = -2416879310811585155L;
 
-		IndexedContainer container = new IndexedContainer();
-		container.addContainerProperty(ColumnId.ID, Long.class, null);
-		container.addContainerProperty(ColumnId.JMÉNO, String.class, null);
-		container.addContainerProperty(ColumnId.ROLE, String.class, null);
-		container.addContainerProperty(ColumnId.REGISTROVÁN_OD, String.class, null);
-		container.addContainerProperty(ColumnId.POSLEDNÍ_PŘIHLÁŠENÍ, String.class, null);
-		container.addContainerProperty(ColumnId.AKTIVNÍ, String.class, null);
-		container.addContainerProperty(ColumnId.EMAIL, String.class, null);
-		userTable.setContainerDataSource(container);
+					{
+						setWidth("220px");
 
-		List<UserInfoDTO> users = userFacade.getUserInfoFromAllUsers();
+						for (final Role value : Role.values()) {
+							final CheckBox checkbox = new CheckBox(value.getRoleName());
+							checkbox.setValue(user.getRoles().contains(value));
+							checkbox.addValueChangeListener(event -> {
+								if (checkbox.getValue()) {
+									user.getRoles().add(value);
+								} else {
+									user.getRoles().remove(value);
+								}
+							});
+							addComponent(checkbox);
+						}
 
-		for (UserInfoDTO user : users) {
-			Item item = userTable.addItem(user);
-			item.getItemProperty(ColumnId.ID).setValue(user.getId());
-			item.getItemProperty(ColumnId.JMÉNO).setValue(user.getName());
-			item.getItemProperty(ColumnId.ROLE).setValue(user.getRoles().toString());
-			item.getItemProperty(ColumnId.REGISTROVÁN_OD).setValue(dateFormat.format(user.getRegistrationDate()));
-			item.getItemProperty(ColumnId.POSLEDNÍ_PŘIHLÁŠENÍ)
-					.setValue(user.getLastLoginDate() == null ? "" : dateFormat.format(user.getLastLoginDate()));
-			item.getItemProperty(ColumnId.AKTIVNÍ).setValue(String.valueOf(user.isConfirmed()));
-			item.getItemProperty(ColumnId.EMAIL).setValue(user.getEmail());
-		}
+						addComponent(new Button("Upravit oprávnění", event -> {
+							userFacade.changeUserRoles(user.getId(), user.getRoles());
+							grid.getDataProvider().refreshItem(user);
+							close();
+						}));
+					}
+				}), grid));
 
 		return layout;
 
-	}
-
-	private Button createActivateButton(final UserInfoDTO user) {
-		Button button = new Button("Aktivovat");
-		button.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = -6499299273236613312L;
-
-			public void buttonClick(ClickEvent event) {
-				user.setConfirmed(true);
-				try {
-					userFacade.activateUser(user.getId());
-					UIUtils.showInfo("Uživatel '" + user.getName() + "' byl úspěšně aktivován");
-					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ).setValue(String.valueOf(user.isConfirmed()));
-					userTable.unselect(user);
-					userTable.select(user);
-				} catch (Exception e) {
-					UIUtils.showError("Nezdařilo se uložit úpravy provedené na uživateli '" + user.getName() + "'");
-				}
-
-			}
-
-		});
-		return button;
-	}
-
-	private Button createBanButton(final UserInfoDTO user) {
-		Button button = new Button("Zablokovat");
-		button.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 6949925629334741559L;
-
-			public void buttonClick(ClickEvent event) {
-				user.setConfirmed(false);
-				try {
-					userFacade.banUser(user.getId());
-					UIUtils.showInfo("Uživatel '" + user.getName() + "' byl úspěšně zablokován");
-					userTable.getContainerProperty(user, ColumnId.AKTIVNÍ).setValue(String.valueOf(user.isConfirmed()));
-					userTable.unselect(user);
-					userTable.select(user);
-				} catch (Exception e) {
-					UIUtils.showError("Nezdařilo se uložit úpravy provedené na uživateli '" + user.getName() + "'");
-				}
-			}
-
-		});
-		return button;
-	}
-
-	private Button createSetRolesButton(final UserInfoDTO user) {
-		Button button = new Button("Upravit oprávnění");
-		button.addClickListener(new Button.ClickListener() {
-
-			private static final long serialVersionUID = 8422572581790539334L;
-
-			public void buttonClick(ClickEvent event) {
-
-				final Window subwindow = new WebWindow("Uživatelské role");
-				subwindow.center();
-				UI.getCurrent().addWindow(subwindow);
-				subwindow.setWidth("220px");
-				VerticalLayout subwindowLayout = ((VerticalLayout) subwindow.getContent());
-
-				for (final Role value : Role.values()) {
-					final CheckBox checkbox = new CheckBox(value.getRoleName());
-					checkbox.setValue(user.getRoles().contains(value));
-					checkbox.addValueChangeListener(new ValueChangeListener() {
-
-						private static final long serialVersionUID = -4168795771060533842L;
-
-						public void valueChange(ValueChangeEvent event) {
-							if (checkbox.getValue()) {
-								user.getRoles().add(value);
-							} else {
-								user.getRoles().remove(value);
-							}
-						}
-					});
-					subwindowLayout.addComponent(checkbox);
-				}
-
-				Button applyBtn = new Button("Upravit oprávnění");
-				applyBtn.addClickListener(new Button.ClickListener() {
-
-					private static final long serialVersionUID = -6032630714904379342L;
-
-					public void buttonClick(ClickEvent event) {
-						try {
-							userFacade.changeUserRoles(user.getId(), user.getRoles());
-							UIUtils.showInfo("Oprávnění uživatele '" + user.getName() + "' byly úspěšně upraven");
-							userTable.getContainerProperty(user, ColumnId.ROLE).setValue(user.getRoles().toString());
-							userTable.unselect(user);
-							userTable.select(user);
-						} catch (Exception e) {
-							UIUtils.showError(
-									"Nezdařilo se uložit úpravy provedené na uživateli '" + user.getName() + "'");
-						}
-					}
-
-				});
-				subwindowLayout.addComponent(applyBtn);
-				subwindow.focus();
-			}
-
-		});
-		return button;
 	}
 }

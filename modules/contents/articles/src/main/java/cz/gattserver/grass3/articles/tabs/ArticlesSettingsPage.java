@@ -125,6 +125,7 @@ public class ArticlesSettingsPage extends ModuleSettingsPage {
 			UI.getCurrent().addWindow(confirmSubwindow);
 		});
 		reprocessLayout.addComponent(reprocessButton);
+		
 		return layout;
 	}
 

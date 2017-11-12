@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.model.domain;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -14,8 +14,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Column;
 import javax.persistence.UniqueConstraint;
 
@@ -59,16 +57,14 @@ public class User implements Serializable {
 	/**
 	 * Datum registrace
 	 */
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "REGISTRATION_DATE")
-	private Date registrationDate;
+	private LocalDateTime registrationDate;
 
 	/**
 	 * Datum posledního přihlášení
 	 */
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "LAST_LOGIN_DATE")
-	private Date lastLoginDate;
+	private LocalDateTime lastLoginDate;
 
 	/**
 	 * Oblíbené obsahy
@@ -119,19 +115,19 @@ public class User implements Serializable {
 		this.id = id;
 	}
 
-	public Date getRegistrationDate() {
+	public LocalDateTime getRegistrationDate() {
 		return registrationDate;
 	}
 
-	public void setRegistrationDate(Date registrationDate) {
+	public void setRegistrationDate(LocalDateTime registrationDate) {
 		this.registrationDate = registrationDate;
 	}
 
-	public Date getLastLoginDate() {
+	public LocalDateTime getLastLoginDate() {
 		return lastLoginDate;
 	}
 
-	public void setLastLoginDate(Date lastLoginDate) {
+	public void setLastLoginDate(LocalDateTime lastLoginDate) {
 		this.lastLoginDate = lastLoginDate;
 	}
 

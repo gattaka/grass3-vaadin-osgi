@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.facades.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -70,7 +70,7 @@ public class UserFacadeImpl implements UserFacade {
 		user.setEmail(email);
 		user.setName(username);
 		user.setPassword(encoder.encode(password));
-		user.setRegistrationDate(Calendar.getInstance().getTime());
+		user.setRegistrationDate(LocalDateTime.now());
 		EnumSet<Role> roles = EnumSet.of(Role.USER);
 		user.setRoles(roles);
 		userRepository.save(user);

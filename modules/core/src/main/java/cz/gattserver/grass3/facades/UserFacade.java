@@ -47,33 +47,36 @@ public interface UserFacade {
 	 * @param email
 	 * @param username
 	 * @param password
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
+	 * @return db id, které bylo nového uživateli přiděleno
 	 */
-	public void registrateNewUser(String email, String username, String password);
+	public Long registrateNewUser(String email, String username, String password);
 
 	/**
 	 * Aktivuje uživatele
 	 * 
-	 * @param user
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
+	 * @param userId
+	 *            id uživatele
 	 */
-	public void activateUser(Long user);
+	public void activateUser(Long userId);
 
 	/**
 	 * Zablokuje uživatele
 	 * 
-	 * @param user
+	 * @param userId
+	 *            id uživatele
 	 */
-	public void banUser(Long user);
+	public void banUser(Long userId);
 
 	/**
 	 * Upraví role uživatele
 	 * 
-	 * @param user
+	 * @param userId
+	 *            id uživatele
+	 * @param roles
+	 *            role, které mu budou nastaveny (nejedná se o přidání ale
+	 *            pevnou změnu výčtu rolí)
 	 */
-	public void changeUserRoles(Long user, Set<Role> roles);
+	public void changeUserRoles(Long userId, Set<Role> roles);
 
 	/**
 	 * Vrátí všechny uživatele

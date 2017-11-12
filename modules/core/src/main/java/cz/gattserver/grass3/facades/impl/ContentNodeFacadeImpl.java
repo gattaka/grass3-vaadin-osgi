@@ -71,7 +71,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	}
 
 	@Override
-	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
+	public Long save(String contentModuleId, Long contentId, String name, Collection<String> tags,
 			boolean publicated, Long nodeId, Long author, boolean draft, LocalDateTime date, Long draftSourceId) {
 
 		if (contentModuleId == null)
@@ -115,7 +115,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 		 */
 		contentTagFacade.saveTags(tags, contentNode);
 
-		return contentNode;
+		return contentNode.getContentId();
 
 	}
 

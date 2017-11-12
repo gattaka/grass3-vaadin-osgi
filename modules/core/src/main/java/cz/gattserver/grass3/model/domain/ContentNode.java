@@ -31,7 +31,7 @@ public class ContentNode {
 	private String name;
 
 	/**
-	 * nadřazený uzel (kategorie ve které obsah je)
+	 * Nadřazený uzel (kategorie ve které obsah je)
 	 */
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Node parent;
@@ -57,7 +57,7 @@ public class ContentNode {
 	private Boolean draft = false;
 
 	/**
-	 * Jde-li o draft upravovaného obsahu, jaké je jeho id
+	 * Jde-li o draft upravovaného obsahu, jaké je jeho id (obsah modulu obsahů)
 	 */
 	private Long draftSourceId;
 

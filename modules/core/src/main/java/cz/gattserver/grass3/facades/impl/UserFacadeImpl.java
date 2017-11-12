@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -37,13 +38,7 @@ public class UserFacadeImpl implements UserFacade {
 	@Autowired
 	private ContentNodeRepository contentNodeRepository;
 
-	/**
-	 * Zkusí najít uživatele dle jména a hesla
-	 * 
-	 * @param username
-	 * @param password
-	 * @return
-	 */
+	@Override
 	public UserInfoDTO getUserByLogin(String username, String password) {
 		List<User> loggedUser = userRepository.findByName(username);
 		if (loggedUser != null && loggedUser.size() == 1
@@ -56,15 +51,12 @@ public class UserFacadeImpl implements UserFacade {
 		return null;
 	}
 
-	/**
-	 * Zaregistruje nového uživatele
-	 * 
-	 * @param email
-	 * @param username
-	 * @param password
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak <code>false</code>
-	 */
-	public void registrateNewUser(String email, String username, String password) {
+	@Override
+	public Long registrateNewUser(String email, String username, String password) {
+		Validate.notNull(email, "'email' nesmí být null");
+		Validate.notNull(username, "'username' nesmí být null");
+		Validate.notNull(password, "'password' nesmí být null");
+
 		User user = new User();
 		user.setConfirmed(false);
 		user.setEmail(email);
@@ -73,50 +65,36 @@ public class UserFacadeImpl implements UserFacade {
 		user.setRegistrationDate(LocalDateTime.now());
 		EnumSet<Role> roles = EnumSet.of(Role.USER);
 		user.setRoles(roles);
-		userRepository.save(user);
+		user = userRepository.save(user);
+
+		return user.getId();
 	}
 
-	/**
-	 * Aktivuje uživatele
-	 * 
-	 * @param user
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak <code>false</code>
-	 */
-	public void activateUser(Long user) {
-		User u = userRepository.findOne(user);
+	@Override
+	public void activateUser(Long userId) {
+		Validate.notNull(userId, "'userId' nesmí být null");
+		User u = userRepository.findOne(userId);
 		u.setConfirmed(true);
 		userRepository.save(u);
 	}
 
-	/**
-	 * Zablokuje uživatele
-	 * 
-	 * @param user
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak <code>false</code>
-	 */
-	public void banUser(Long user) {
-		User u = userRepository.findOne(user);
+	@Override
+	public void banUser(Long userId) {
+		User u = userRepository.findOne(userId);
 		u.setConfirmed(false);
 		userRepository.save(u);
 	}
 
-	/**
-	 * Upraví role uživatele
-	 * 
-	 * @param user
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak <code>false</code>
-	 */
-	public void changeUserRoles(Long user, Set<Role> roles) {
-		User u = userRepository.findOne(user);
+	@Override
+	public void changeUserRoles(Long userId, Set<Role> roles) {
+		Validate.notNull(userId, "'userId' nesmí být null");
+		Validate.notNull(roles, "'roles' nesmí být null");
+		User u = userRepository.findOne(userId);
 		u.setRoles(roles);
 		userRepository.save(u);
 	}
 
-	/**
-	 * Vrátí všechny uživatele
-	 * 
-	 * @return list uživatelů
-	 */
+	@Override
 	public List<UserInfoDTO> getUserInfoFromAllUsers() {
 		List<User> users = userRepository.findAll();
 		List<UserInfoDTO> infoDTOs = new ArrayList<UserInfoDTO>();
@@ -126,12 +104,7 @@ public class UserFacadeImpl implements UserFacade {
 		return infoDTOs;
 	}
 
-	/**
-	 * Vrátí uživatele dle jména
-	 * 
-	 * @param username
-	 * @return
-	 */
+	@Override
 	public UserInfoDTO getUser(String username) {
 		List<User> loggedUser = userRepository.findByName(username);
 		if (loggedUser != null && loggedUser.size() == 1) {
@@ -142,16 +115,12 @@ public class UserFacadeImpl implements UserFacade {
 		return null;
 	}
 
-	/**
-	 * Zjistí zda daný obsah je v oblíbených daného uživatele
-	 */
+	@Override
 	public boolean hasInFavourites(Long content, Long user) {
 		return userRepository.findByIdAndFavouritesId(user, content) != null;
 	}
 
-	/**
-	 * Přidá obsah do oblíbených uživatele
-	 */
+	@Override
 	public void addContentToFavourites(Long contentId, Long user) {
 		User userEntity = userRepository.findOne(user);
 		userEntity.getFavourites().add(contentNodeRepository.findOne(contentId));
@@ -163,17 +132,13 @@ public class UserFacadeImpl implements UserFacade {
 		userRepository.save(user);
 	}
 
-	/**
-	 * Odebere obsah z oblíbených uživatele
-	 */
+	@Override
 	public void removeContentFromFavourites(Long contentId, Long user) {
 		User userEntity = userRepository.findOne(user);
 		removeContentFromFavourites(userEntity, contentId);
 	}
 
-	/**
-	 * Odebere obsah z oblíbených všech uživatelů
-	 */
+	@Override
 	public void removeContentFromAllUsersFavourites(Long contentId) {
 		// vymaž z oblíbených
 		List<User> users = userRepository.findByFavouritesId(contentId);

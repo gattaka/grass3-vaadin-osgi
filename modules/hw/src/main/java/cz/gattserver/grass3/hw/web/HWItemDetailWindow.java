@@ -40,8 +40,8 @@ import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import cz.gattserver.common.util.CZSuffixCreator;
-import cz.gattserver.common.util.HumanBytesSizeCreator;
+import cz.gattserver.common.util.CZSuffixFormatter;
+import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.common.util.MoneyFormatter;
 import cz.gattserver.grass3.components.MultiUpload;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
@@ -96,7 +96,7 @@ public class HWItemDetailWindow extends WebWindow {
 	}
 
 	private String createWarrantyYearsString(Integer warrantyYears) {
-		return new CZSuffixCreator("rok", "roky", "let").createStringWithSuffix(warrantyYears);
+		return new CZSuffixFormatter("rok", "roky", "let").format(warrantyYears);
 	}
 
 	/**
@@ -601,7 +601,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 		docsGrid = new Grid<>(File.class);
 
-		docsGrid.addColumn(file -> HumanBytesSizeCreator.format(file.length(), true), new TextRenderer())
+		docsGrid.addColumn(file -> HumanBytesSizeFormatter.format(file.length(), true), new TextRenderer())
 				.setId("fileSize").setCaption("Velikost").setStyleGenerator(item -> "v-align-right");
 
 		docsGrid.addColumn(file -> new SimpleDateFormat("d.MM.yyyy").format(new Date(file.lastModified())),

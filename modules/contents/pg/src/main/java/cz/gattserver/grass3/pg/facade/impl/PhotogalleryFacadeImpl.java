@@ -331,15 +331,17 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 
 		// vytvoř odpovídající content node
 		eventBus.publish(new PGProcessProgressEvent("Uložení obsahu galerie"));
-		ContentNode contentNode = contentNodeFacade.save(PhotogalleryContentService.ID, photogallery.getId(), name,
-				tags, publicated, node.getId(), author.getId(), false, date, null);
+		Long contentNodeId = contentNodeFacade.save(PhotogalleryContentService.ID, photogallery.getId(), name, tags,
+				publicated, node.getId(), author.getId(), false, date, null);
 
-		if (contentNode == null) {
+		if (contentNodeId == null) {
 			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
 			return;
 		}
 
 		// ulož do galerie referenci na její contentnode
+		ContentNode contentNode = new ContentNode();
+		contentNode.setId(contentNodeId);
 		photogallery.setContentNode(contentNode);
 		if (photogalleryRepository.save(photogallery) == null) {
 			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));

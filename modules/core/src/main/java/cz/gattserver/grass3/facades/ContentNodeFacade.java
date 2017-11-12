@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import cz.gattserver.grass3.model.domain.ContentNode;
+import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 
@@ -16,33 +17,36 @@ public interface ContentNodeFacade {
 	public List<ContentNodeOverviewDTO> getUserFavourite(Long user);
 
 	/**
-	 * Uloží obsah do DB, uloží jeho contentNode a link na něj do Node
+	 * Uloží {@link ContentNode} záznam o obsahu, který byl vytvořen nějakým
+	 * modulem obsahů, a připojí ho ke {@link Node} kategorii dle parametru.
 	 * 
 	 * @param contentModuleId
 	 *            identifikátor modulu obsahů
 	 * @param contentId
-	 *            id koncového obsahu, který je ukládán
+	 *            id obsahu, který byl vytvořen modulem obsahů a ke kterému má
+	 *            být vytvořen {@link ContentNode} záznam
 	 * @param name
 	 *            jméno obsahu
 	 * @param tags
 	 *            řetězec tagů, který se má společně s obsahem uložit
 	 * @param publicated
-	 *            je obsah publikován?
+	 *            <code>true</code>, pokud je obsah publikován
 	 * @param nodeId
-	 *            kategorie do které se vkládá
+	 *            id kategorie do které se vkládá
 	 * @param author
-	 *            uživatel, který obsah vytvořil
+	 *            id uživatele, který obsah vytvořil
 	 * @param draft
-	 *            jedná se o rozpracovaný obsah?
+	 *            <code>true</code>, pokud se jedná se o rozpracovaný obsah
 	 * @param date
-	 *            datum vytvoření nebo <code>null</code>
+	 *            předdefinované datum vytvoření nebo <code>null</code>, pokud
+	 *            je datem vytvoření aktuální čas
 	 * @param draftSourceId
-	 *            id existujícího zdrojového obsahu, od kterého je draft nebo
-	 *            <code>null</code>
-	 * @return instanci {@link ContentNodeDTO}, který byl k obsahu vytvořen
+	 *            id existujícího zdrojového obsahu (vytvořeného modulem
+	 *            obsahů), od kterého je draft nebo <code>null</code>
+	 * @return id {@link ContentNode} záznamu, který byl k obsahu vytvořen
 	 */
-	public ContentNode save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, Long nodeId, Long author, boolean draft, LocalDateTime date, Long draftSourceId);
+	public Long save(String contentModuleId, Long contentId, String name, Collection<String> tags, boolean publicated,
+			Long nodeId, Long author, boolean draft, LocalDateTime date, Long draftSourceId);
 
 	/**
 	 * Získá contentNodeDTO dle jeho id

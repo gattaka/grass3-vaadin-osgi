@@ -1,6 +1,5 @@
-package cz.gattserver.grass3.articles.facade;
+package cz.gattserver.grass3.articles.facade.impl;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +21,8 @@ import cz.gattserver.grass3.articles.editor.api.ContextImpl;
 import cz.gattserver.grass3.articles.events.ArticlesProcessProgressEvent;
 import cz.gattserver.grass3.articles.events.ArticlesProcessResultEvent;
 import cz.gattserver.grass3.articles.events.ArticlesProcessStartEvent;
+import cz.gattserver.grass3.articles.facade.ArticleFacade;
+import cz.gattserver.grass3.articles.facade.ArticleProcessMode;
 import cz.gattserver.grass3.articles.lexer.Lexer;
 import cz.gattserver.grass3.articles.parser.ArticleParser;
 import cz.gattserver.grass3.articles.parser.HTMLTrimmer;
@@ -74,13 +75,7 @@ public class ArticleFacadeImpl implements ArticleFacade {
 		return ctx;
 	}
 
-	/**
-	 * Smaže článek
-	 * 
-	 * @param article
-	 *            článek ke smazání
-	 * @return {@code true} pokud se zdařilo smazat jiank {@code false}
-	 */
+	@Override
 	public void deleteArticle(Long id) {
 		// smaž článek
 		articleRepository.delete(id);
@@ -101,68 +96,16 @@ public class ArticleFacadeImpl implements ArticleFacade {
 		return set;
 	}
 
-	/**
-	 * Uloží článek
-	 * 
-	 * @param name
-	 *            název článku
-	 * @param text
-	 *            obsah článku
-	 * @param tags
-	 *            klíčová slova článku
-	 * @param publicated
-	 *            je článek publikován ?
-	 * @param nodeId
-	 *            kategorie do které se vkládá
-	 * @param authorId
-	 *            uživatel, který článek vytvořil
-	 * @param contextRoot
-	 *            od jakého adresového kořene se mají generovat linky v článku
-	 * @param processForm
-	 *            jakým způsobem se má článek zpracovat
-	 * @param existingId
-	 *            id, jde-li o úpravu existujícího článku
-	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
-	 *         {@code null}
-	 */
+	@Override
 	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, Long nodeId,
-			Long authorId, String contextRoot, ArticleProcessForm processForm, Long existingId) {
+			Long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId) {
 		return saveArticle(name, text, tags, publicated, nodeId, authorId, contextRoot, processForm, existingId, null,
 				null);
 	}
 
-	/**
-	 * Uloží článek
-	 * 
-	 * @param name
-	 *            název článku
-	 * @param text
-	 *            obsah článku
-	 * @param tags
-	 *            klíčová slova článku
-	 * @param publicated
-	 *            je článek publikován ?
-	 * @param nodeId
-	 *            kategorie do které se vkládá
-	 * @param authorId
-	 *            uživatel, který článek vytvořil
-	 * @param contextRoot
-	 *            od jakého adresového kořene se mají generovat linky v článku
-	 * @param processForm
-	 *            jakým způsobem se má článek zpracovat
-	 * @param existingId
-	 *            id, jde-li o úpravu existujícího článku
-	 * @param partNumber
-	 *            číslo části, je-li editována specifická část článku (povinné,
-	 *            pouze jde-li o ukládání draftu)
-	 * @param draftSourceId
-	 *            id existujícího zdrojového článku, jde-li o draft existujícího
-	 *            článku
-	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
-	 *         {@code null}
-	 */
+	@Override
 	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, Long nodeId,
-			Long authorId, String contextRoot, ArticleProcessForm processForm, Long existingId, Integer partNumber,
+			Long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId, Integer partNumber,
 			Long draftSourceId) {
 
 		// Flags
@@ -217,13 +160,7 @@ public class ArticleFacadeImpl implements ArticleFacade {
 		return article.getId();
 	}
 
-	/**
-	 * Získá článek dle jeho identifikátoru pro jeho celé zobrazení
-	 * 
-	 * @param id
-	 *            identifikátor
-	 * @return DTO článku
-	 */
+	@Override
 	public ArticleDTO getArticleForDetail(Long id) {
 		Article article = articleRepository.findOne(id);
 		if (article == null)
@@ -232,10 +169,8 @@ public class ArticleFacadeImpl implements ArticleFacade {
 		return articleDTO;
 	}
 
-	/**
-	 * Spustí přegenerování
-	 */
 	@Async
+	@Override
 	public void reprocessAllArticles(String contextRoot) {
 
 		List<Article> articles = articleRepository.findAll();
@@ -253,8 +188,8 @@ public class ArticleFacadeImpl implements ArticleFacade {
 			for (ContentTag tag : tagsDTOs)
 				tags.add(tag.getName());
 
-			ArticleProcessForm articleProcessForm = Boolean.TRUE.equals(article.getContentNode().getDraft())
-					? ArticleProcessForm.PREVIEW : ArticleProcessForm.FULL;
+			ArticleProcessMode articleProcessForm = Boolean.TRUE.equals(article.getContentNode().getDraft())
+					? ArticleProcessMode.PREVIEW : ArticleProcessMode.FULL;
 			saveArticle(article.getContentNode().getName(), article.getText(), tags,
 					article.getContentNode().getPublicated(), article.getContentNode().getId(),
 					article.getContentNode().getAuthor().getId(), contextRoot, articleProcessForm, article.getId(),
@@ -268,11 +203,7 @@ public class ArticleFacadeImpl implements ArticleFacade {
 		eventBus.publish(new ArticlesProcessResultEvent());
 	}
 
-	/**
-	 * Získá všechny články a namapuje je pro použití při vyhledávání
-	 * 
-	 * @return
-	 */
+	@Override
 	public List<ArticleDTO> getAllArticlesForSearch() {
 		List<Article> articles = articleRepository.findAll();
 		if (articles == null)

@@ -1,6 +1,6 @@
-package cz.gattserver.grass3.pg.tabs;
+package cz.gattserver.grass3.pg.pages;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.Button;
@@ -8,7 +8,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.pages.settings.ModuleSettingsPage;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
@@ -18,11 +17,8 @@ import cz.gattserver.web.common.ui.H2Label;
 
 public class PhotogallerySettingsPage extends ModuleSettingsPage {
 
-	@Resource(name = "photogalleryFacade")
+	@Autowired
 	private PhotogalleryFacade photogalleryFacade;
-
-	@Resource(name = "contentTagFacade")
-	private ContentTagFacade contentTagFacade;
 
 	public PhotogallerySettingsPage(GrassRequest request) {
 		super(request);

@@ -26,7 +26,9 @@ import java.applet.*;
 import java.util.Vector;
 
 public class Interp2 extends Applet {
-    public void init() {
+	private static final long serialVersionUID = -9035246332072850583L;
+
+	public void init() {
         setLayout(new BorderLayout());
         InterpPanel dp = new InterpPanel();
         add("Center", dp);

@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.pg.facade;
+package cz.gattserver.grass3.pg.facade.impl;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -45,6 +45,8 @@ import cz.gattserver.grass3.pg.events.PGProcessStartEvent;
 import cz.gattserver.grass3.pg.events.PGZipProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.PGZipProcessResultEvent;
 import cz.gattserver.grass3.pg.events.PGZipProcessStartEvent;
+import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
+import cz.gattserver.grass3.pg.facade.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.pg.service.impl.PhotogalleryContentService;
 import cz.gattserver.grass3.pg.util.DecodeAndCaptureFrames;
 import cz.gattserver.grass3.pg.util.PGUtils;

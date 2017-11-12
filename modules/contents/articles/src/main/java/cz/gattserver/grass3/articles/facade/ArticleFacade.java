@@ -40,7 +40,7 @@ public interface ArticleFacade {
 	 *         {@code null}
 	 */
 	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, Long nodeId,
-			Long authorId, String contextRoot, ArticleProcessForm processForm, Long existingId, Integer partNumber,
+			Long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId, Integer partNumber,
 			Long draftSourceId);
 
 	/**
@@ -68,7 +68,7 @@ public interface ArticleFacade {
 	 *         {@code null}
 	 */
 	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, Long nodeId,
-			Long authorId, String contextRoot, ArticleProcessForm processForm, Long existingId);
+			Long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId);
 
 	/**
 	 * Smaže článek

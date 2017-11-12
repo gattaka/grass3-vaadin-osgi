@@ -39,7 +39,7 @@ import cz.gattserver.grass3.articles.dto.ArticleDTO;
 import cz.gattserver.grass3.articles.dto.ArticleDraftOverviewDTO;
 import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import cz.gattserver.grass3.articles.facade.ArticleFacade;
-import cz.gattserver.grass3.articles.facade.ArticleProcessForm;
+import cz.gattserver.grass3.articles.facade.ArticleProcessMode;
 import cz.gattserver.grass3.articles.parser.PartsFinder;
 import cz.gattserver.grass3.components.DefaultContentOperations;
 import cz.gattserver.grass3.components.ImageButton;
@@ -372,7 +372,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				String draftName = articleNameField.getValue();
 				Long id = articleFacade.saveArticle(draftName, articleTextArea.getValue(), getArticlesKeywords(),
 						publicatedCheckBox.getValue(), node.getId(), UIUtils.getGrassUI().getUser().getId(),
-						getRequest().getContextRoot(), ArticleProcessForm.PREVIEW, existingDraftId, partNumber,
+						getRequest().getContextRoot(), ArticleProcessMode.PREVIEW, existingDraftId, partNumber,
 						existingArticleId);
 
 				if (id != null) {
@@ -447,7 +447,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				String draftName = articleNameField.getValue();
 				Long id = articleFacade.saveArticle(draftName, articleTextArea.getValue(), getArticlesKeywords(),
 						publicatedCheckBox.getValue(), node.getId(), UIUtils.getGrassUI().getUser().getId(),
-						getRequest().getContextRoot(), ArticleProcessForm.DRAFT, existingDraftId, partNumber,
+						getRequest().getContextRoot(), ArticleProcessMode.DRAFT, existingDraftId, partNumber,
 						existingArticleId);
 
 				if (id != null) {
@@ -500,7 +500,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 			Long id = articleFacade.saveArticle(articleNameField.getValue(), text, getArticlesKeywords(),
 					publicatedCheckBox.getValue(), node.getId(), UIUtils.getGrassUI().getUser().getId(),
-					getRequest().getContextRoot(), ArticleProcessForm.FULL, this.existingArticleId);
+					getRequest().getContextRoot(), ArticleProcessMode.FULL, this.existingArticleId);
 
 			if (id != null) {
 				// byl uložen článek, od teď eviduj draft, jako draft

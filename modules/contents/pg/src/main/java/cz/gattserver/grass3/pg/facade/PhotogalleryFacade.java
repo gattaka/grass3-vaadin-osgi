@@ -11,6 +11,7 @@ import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryRESTDTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
+import cz.gattserver.grass3.pg.facade.exception.UnauthorizedAccessException;
 
 public interface PhotogalleryFacade {
 

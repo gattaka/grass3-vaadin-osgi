@@ -23,7 +23,7 @@ import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryRESTDTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
 import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
-import cz.gattserver.grass3.pg.facade.UnauthorizedAccessException;
+import cz.gattserver.grass3.pg.facade.exception.UnauthorizedAccessException;
 
 @Controller
 @RequestMapping("/pg")

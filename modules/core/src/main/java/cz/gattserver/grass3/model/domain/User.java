@@ -69,7 +69,7 @@ public class User implements Serializable {
 	/**
 	 * Oblíbené obsahy
 	 */
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
 	private Set<ContentNode> favourites;
 
 	/**

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+
+	<!-- Zpracování probíhá v obráceném pořadí, takže závislosti se musí psát 
+		odspoda tak, že nahoře jsou nejvíce závislé tabulky -->
+
+	<USER_ACCOUNTS />
+	<USER_ACCOUNTS_ROLES />
+	<CONTENTNODE />
+	<NODE_CONTENTNODE />
+	<CONTENT_TAG />
+	<CONTENTNODE_CONTENT_TAG />
+	<USER_ACCOUNTS_CONTENTNODE />
+
+</dataset>

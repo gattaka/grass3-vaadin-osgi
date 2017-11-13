@@ -16,12 +16,9 @@ public class GrassUserDetailService implements UserDetailsService {
 	private UserFacade userFacade;
 
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
 		final UserInfoDTO user = userFacade.getUser(username);
-		if (user == null) {
+		if (user == null)
 			throw new UsernameNotFoundException("Unable to find user");
-		}
-
 		return user;
 	}
 

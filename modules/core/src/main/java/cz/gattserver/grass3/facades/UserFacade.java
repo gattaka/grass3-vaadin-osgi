@@ -94,6 +94,14 @@ public interface UserFacade {
 	public UserInfoDTO getUser(String username);
 
 	/**
+	 * Vrátí uživatele dle id
+	 * 
+	 * @param id
+	 * @return nalezný uživatel
+	 */
+	public UserInfoDTO getUser(Long id);
+
+	/**
 	 * Zjistí zda daný obsah je v oblíbených daného uživatele
 	 */
 	public boolean hasInFavourites(Long content, Long user);

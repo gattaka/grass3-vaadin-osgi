@@ -40,13 +40,9 @@ public class UserFacadeImpl implements UserFacade {
 
 	@Override
 	public UserInfoDTO getUserByLogin(String username, String password) {
-		List<User> loggedUser = userRepository.findByName(username);
-		if (loggedUser != null && loggedUser.size() == 1
-				&& loggedUser.get(0).getPassword().equals(encoder.encode(password))) {
-
-			User user = loggedUser.get(0);
-			if (user != null)
-				return mapper.map(user);
+		User user = userRepository.findByName(username);
+		if (user != null && user.getPassword().equals(encoder.encode(password))) {
+			return mapper.map(user);
 		}
 		return null;
 	}
@@ -73,16 +69,13 @@ public class UserFacadeImpl implements UserFacade {
 	@Override
 	public void activateUser(Long userId) {
 		Validate.notNull(userId, "'userId' nesmí být null");
-		User u = userRepository.findOne(userId);
-		u.setConfirmed(true);
-		userRepository.save(u);
+		userRepository.updateConfirmed(userId, true);
 	}
 
 	@Override
 	public void banUser(Long userId) {
-		User u = userRepository.findOne(userId);
-		u.setConfirmed(false);
-		userRepository.save(u);
+		Validate.notNull(userId, "'userId' nesmí být null");
+		userRepository.updateConfirmed(userId, false);
 	}
 
 	@Override
@@ -105,24 +98,31 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	@Override
+	public UserInfoDTO getUser(Long id) {
+		Validate.notNull(id, "'id' uživatele nesmí být null");
+		User user = userRepository.findOne(id);
+		return user == null ? null : mapper.map(user);
+	}
+
+	@Override
 	public UserInfoDTO getUser(String username) {
-		List<User> loggedUser = userRepository.findByName(username);
-		if (loggedUser != null && loggedUser.size() == 1) {
-			User user = loggedUser.get(0);
-			if (user != null)
-				return mapper.map(user);
-		}
-		return null;
+		Validate.notNull(username, "'username' uživatele nesmí být null");
+		User user = userRepository.findByName(username);
+		return user == null ? null : mapper.map(user);
 	}
 
 	@Override
-	public boolean hasInFavourites(Long content, Long user) {
-		return userRepository.findByIdAndFavouritesId(user, content) != null;
+	public boolean hasInFavourites(Long contentId, Long userId) {
+		Validate.notNull(contentId, "'contentId' záznamu obsahu nesmí být null");
+		Validate.notNull(userId, "'userId' uživatele nesmí být null");
+		return userRepository.findByIdAndFavouritesId(userId, contentId) != null;
 	}
 
 	@Override
-	public void addContentToFavourites(Long contentId, Long user) {
-		User userEntity = userRepository.findOne(user);
+	public void addContentToFavourites(Long contentId, Long userId) {
+		Validate.notNull(contentId, "'contentId' záznamu obsahu nesmí být null");
+		Validate.notNull(userId, "'userId' uživatele nesmí být null");
+		User userEntity = userRepository.findOne(userId);
 		userEntity.getFavourites().add(contentNodeRepository.findOne(contentId));
 		userRepository.save(userEntity);
 	}
@@ -133,14 +133,16 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	@Override
-	public void removeContentFromFavourites(Long contentId, Long user) {
-		User userEntity = userRepository.findOne(user);
+	public void removeContentFromFavourites(Long contentId, Long userId) {
+		Validate.notNull(contentId, "'contentId' záznamu obsahu nesmí být null");
+		Validate.notNull(userId, "'userId' uživatele nesmí být null");
+		User userEntity = userRepository.findOne(userId);
 		removeContentFromFavourites(userEntity, contentId);
 	}
 
 	@Override
 	public void removeContentFromAllUsersFavourites(Long contentId) {
-		// vymaž z oblíbených
+		Validate.notNull(contentId, "'contentId' záznamu obsahu nesmí být null");
 		List<User> users = userRepository.findByFavouritesId(contentId);
 		if (users != null) {
 			for (User user : users)

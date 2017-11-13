@@ -115,7 +115,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 		 */
 		contentTagFacade.saveTags(tags, contentNode);
 
-		return contentNode.getContentId();
+		return contentNode.getId();
 
 	}
 

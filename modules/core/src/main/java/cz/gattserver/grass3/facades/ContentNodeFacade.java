@@ -12,11 +12,6 @@ import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 public interface ContentNodeFacade {
 
 	/**
-	 * Získá set oblíbených obsahů daného uživatele
-	 */
-	public List<ContentNodeOverviewDTO> getUserFavourite(Long user);
-
-	/**
 	 * Uloží {@link ContentNode} záznam o obsahu, který byl vytvořen nějakým
 	 * modulem obsahů, a připojí ho ke {@link Node} kategorii dle parametru.
 	 * 
@@ -113,16 +108,17 @@ public interface ContentNodeFacade {
 	/**
 	 * Přesune obsah mezi kategoriemi
 	 * 
-	 * @param nodeDTO
-	 *            cílová kategorie
-	 * 
-	 * @param contentNodeDTO
-	 *            obsah
+	 * @param nodeId
+	 *            id cílové kategorie
+	 * @param contentNodeId
+	 *            id obsahu k přesunutí
 	 */
-	public void moveContent(Long node, Long contentNode);
+	public void moveContent(Long nodeId, Long contentNodeId);
 
 	/**
 	 * Získá počet všech obsahů (pro LazyQueryContainer)
+	 * 
+	 * @return počet všech obsahů v DB
 	 */
 	public int getCount();
 
@@ -130,7 +126,10 @@ public interface ContentNodeFacade {
 	 * Získá stránku nedávno přidaných obsahů (pro LazyQueryContainer)
 	 * 
 	 * @param pageIndex
+	 *            číslo stránky dle stránkování
 	 * @param count
+	 *            velikost stránky při stránkování
+	 * @return list nalezených obsahů dle stránkování
 	 */
 	public List<ContentNodeOverviewDTO> getRecentAdded(int pageIndex, int count);
 
@@ -138,7 +137,10 @@ public interface ContentNodeFacade {
 	 * Získá stránku nedávno upravených obsahů (pro LazyQueryContainer)
 	 * 
 	 * @param pageIndex
+	 *            číslo stránky dle stránkování
 	 * @param count
+	 *            velikost stránky při stránkování
+	 * @return list nalezených obsahů dle stránkování
 	 */
 	public List<ContentNodeOverviewDTO> getRecentModified(int pageIndex, int count);
 
@@ -146,7 +148,8 @@ public interface ContentNodeFacade {
 	 * Získá počet obsahů dle tagu (pro LazyQueryContainer)
 	 * 
 	 * @param tagId
-	 * @return
+	 *            id tagu, dle kterého bude výběr omezen
+	 * @return počet obsahů dle tagu
 	 */
 	public int getCountByTag(Long tagId);
 
@@ -154,17 +157,21 @@ public interface ContentNodeFacade {
 	 * Získá stránku obsahů dle tagu (pro LazyQueryContainer)
 	 * 
 	 * @param tagId
+	 *            id tagu, dle kterého bude výběr omezen
 	 * @param pageIndex
+	 *            číslo stránky dle stránkování
 	 * @param count
-	 * @return
+	 *            velikost stránky při stránkování
+	 * @return list nalezených obsahů dle stránkování
 	 */
 	public List<ContentNodeOverviewDTO> getByTag(Long tagId, int pageIndex, int count);
 
 	/**
 	 * Získá počet oblíbených obsahů dle uživatele (pro LazyQueryContainer)
 	 * 
-	 * @param tagId
-	 * @return
+	 * @param userId
+	 *            id uživatele, dle kterého bude výběr omezen
+	 * @return počet obsahů dle uživatele
 	 */
 	public int getUserFavouriteCount(Long userId);
 
@@ -172,17 +179,21 @@ public interface ContentNodeFacade {
 	 * Získá stránku oblíbených obsahů dle uživatele (pro LazyQueryContainer)
 	 * 
 	 * @param userId
-	 * @param page
+	 *            id uživatele, z jehož oblíbených budou obsahy čteny
+	 * @param pageIndex
+	 *            číslo stránky dle stránkování
 	 * @param count
-	 * @return
+	 *            velikost stránky při stránkování
+	 * @return list nalezených obsahů dle stránkování a omezení
 	 */
-	public List<ContentNodeOverviewDTO> getUserFavourite(Long userId, int page, int count);
+	public List<ContentNodeOverviewDTO> getUserFavourite(Long userId, int pageIndex, int count);
 
 	/**
 	 * Získá počet obsahů dle kategorie (pro LazyQueryContainer)
 	 * 
 	 * @param nodeId
-	 * @return
+	 *            id kategorie, dle kterého bude výběr omezen
+	 * @return počet obsahů dle kategorie
 	 */
 	public int getCountByNode(Long nodeId);
 
@@ -190,10 +201,13 @@ public interface ContentNodeFacade {
 	 * Získá stránku obsahů dle kategorie (pro LazyQueryContainer)
 	 * 
 	 * @param nodeId
-	 * @param page
+	 *            id kategorie, ve které budou obsahy hledány
+	 * @param pageIndex
+	 *            číslo stránky dle stránkování
 	 * @param count
-	 * @return
+	 *            velikost stránky při stránkování
+	 * @return list nalezených obsahů dle stránkování a omezení
 	 */
-	public List<ContentNodeOverviewDTO> getByNode(Long nodeId, int page, int count);
+	public List<ContentNodeOverviewDTO> getByNode(Long nodeId, int pageIndex, int count);
 
 }

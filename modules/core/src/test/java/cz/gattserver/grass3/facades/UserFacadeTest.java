@@ -47,7 +47,7 @@ public class UserFacadeTest extends GrassFacadeTest {
 		Long user2Id = mockService.createMockUser(2);
 		userFacade.addContentToFavourites(contentNodeId, user2Id);
 
-		List<ContentNodeOverviewDTO> favourites = contentNodeFacade.getUserFavourite(user2Id);
+		List<ContentNodeOverviewDTO> favourites = contentNodeFacade.getUserFavourite(user2Id, 0, 10);
 		assertEquals(1, favourites.size());
 		assertEquals(contentName, favourites.get(0).getName());
 	}

@@ -98,9 +98,9 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	@Override
-	public UserInfoDTO getUser(Long id) {
-		Validate.notNull(id, "'id' uživatele nesmí být null");
-		User user = userRepository.findOne(id);
+	public UserInfoDTO getUser(Long userId) {
+		Validate.notNull(userId, "'userId' uživatele nesmí být null");
+		User user = userRepository.findOne(userId);
 		return user == null ? null : mapper.map(user);
 	}
 
@@ -112,41 +112,41 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	@Override
-	public boolean hasInFavourites(Long contentId, Long userId) {
-		Validate.notNull(contentId, "'contentId' záznamu obsahu nesmí být null");
+	public boolean hasInFavourites(Long contentNodeId, Long userId) {
+		Validate.notNull(contentNodeId, "'contentNodeId' záznamu obsahu nesmí být null");
 		Validate.notNull(userId, "'userId' uživatele nesmí být null");
-		return userRepository.findByIdAndFavouritesId(userId, contentId) != null;
+		return userRepository.findByIdAndFavouritesId(userId, contentNodeId) != null;
 	}
 
 	@Override
-	public void addContentToFavourites(Long contentId, Long userId) {
-		Validate.notNull(contentId, "'contentId' záznamu obsahu nesmí být null");
+	public void addContentToFavourites(Long contentNodeId, Long userId) {
+		Validate.notNull(contentNodeId, "'contentNodeId' záznamu obsahu nesmí být null");
 		Validate.notNull(userId, "'userId' uživatele nesmí být null");
 		User userEntity = userRepository.findOne(userId);
-		userEntity.getFavourites().add(contentNodeRepository.findOne(contentId));
+		userEntity.getFavourites().add(contentNodeRepository.findOne(contentNodeId));
 		userRepository.save(userEntity);
 	}
 
-	private void removeContentFromFavourites(User user, Long contentId) {
-		user.getFavourites().remove(contentNodeRepository.findOne(contentId));
+	private void removeContentFromFavourites(User user, Long contentNodeId) {
+		user.getFavourites().remove(contentNodeRepository.findOne(contentNodeId));
 		userRepository.save(user);
 	}
 
 	@Override
-	public void removeContentFromFavourites(Long contentId, Long userId) {
-		Validate.notNull(contentId, "'contentId' záznamu obsahu nesmí být null");
+	public void removeContentFromFavourites(Long contentNodeId, Long userId) {
+		Validate.notNull(contentNodeId, "'contentNodeId' záznamu obsahu nesmí být null");
 		Validate.notNull(userId, "'userId' uživatele nesmí být null");
 		User userEntity = userRepository.findOne(userId);
-		removeContentFromFavourites(userEntity, contentId);
+		removeContentFromFavourites(userEntity, contentNodeId);
 	}
 
 	@Override
-	public void removeContentFromAllUsersFavourites(Long contentId) {
-		Validate.notNull(contentId, "'contentId' záznamu obsahu nesmí být null");
-		List<User> users = userRepository.findByFavouritesId(contentId);
+	public void removeContentFromAllUsersFavourites(Long contentNodeId) {
+		Validate.notNull(contentNodeId, "'contentNodeId' záznamu obsahu nesmí být null");
+		List<User> users = userRepository.findByFavouritesId(contentNodeId);
 		if (users != null) {
 			for (User user : users)
-				removeContentFromFavourites(user, contentId);
+				removeContentFromFavourites(user, contentNodeId);
 		}
 	}
 }

@@ -3,7 +3,6 @@ package cz.gattserver.grass3.facades.impl;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -52,27 +51,9 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	@Autowired
 	private NodeRepository nodeRepository;
 
-	/**
-	 * Získá set oblíbených obsahů daného uživatele
-	 */
 	@Override
-	public List<ContentNodeOverviewDTO> getUserFavourite(Long user) {
-		User u = userRepository.findOne(user);
-		if (u == null)
-			return null;
-		Set<ContentNode> contentNodes = u.getFavourites();
-
-		if (contentNodes == null)
-			return null;
-
-		List<ContentNodeOverviewDTO> contentNodeDTOs = mapper.mapContentNodeOverviewCollection(contentNodes);
-
-		return contentNodeDTOs;
-	}
-
-	@Override
-	public Long save(String contentModuleId, Long contentId, String name, Collection<String> tags,
-			boolean publicated, Long nodeId, Long author, boolean draft, LocalDateTime date, Long draftSourceId) {
+	public Long save(String contentModuleId, Long contentId, String name, Collection<String> tags, boolean publicated,
+			Long nodeId, Long author, boolean draft, LocalDateTime date, Long draftSourceId) {
 
 		if (contentModuleId == null)
 			throw new IllegalArgumentException("'contentModuleId' nesmí být null");

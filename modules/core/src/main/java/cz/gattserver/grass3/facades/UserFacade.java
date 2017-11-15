@@ -7,28 +7,7 @@ import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.security.Role;
 
 /**
- * 
- * Fasáda na které je funkcionalita pro view aplikace. Má několik funkcí:
- * 
- * <ol>
- * <li>přebírá funkcionalitu kolem přípravy dat k zobrazení ve view ze samotných
- * view tříd a ty se tak starají pouze o využití těchto dat, nikoliv jejich
- * předzpracování</li>
- * <li>odděluje view od vazby na DAO třídy a tím model vrstvu</li>
- * <li>připravuje data do DTO tříd, takže nedochází k "propadnutí" proxy objektů
- * (například) od hibernate, čímž je opět lépe oddělena view vrstva od vrstvy
- * modelu</li>
- * </ol>
- * 
- * <p>
- * Fasády komunikují s view pomocí parametrů metod a DTO objektů, při jejich
- * vydávání je zřejmé, že data v DTO odpovídají DB entitě. Při jejich přijímání
- * (DTO je předáno fasádě) není ovšem dáno, že fasády využije vše z DTO. To se
- * řídí okolnostmi. Mezi DTO a entitou není přesný vztah 1:1.
- * </p>
- * 
- * @author gatt
- * 
+ * @author Hynek
  */
 public interface UserFacade {
 
@@ -36,8 +15,10 @@ public interface UserFacade {
 	 * Zkusí najít uživatele dle jména a hesla
 	 * 
 	 * @param username
+	 *            jméno uživatele (login)
 	 * @param password
-	 * @return
+	 *            heslo uživatele
+	 * @return uživatel nebo <code>null</code>
 	 */
 	public UserInfoDTO getUserByLogin(String username, String password);
 
@@ -45,8 +26,11 @@ public interface UserFacade {
 	 * Zaregistruje nového uživatele
 	 * 
 	 * @param email
+	 *            email uživatele
 	 * @param username
+	 *            jméno uživatele (login)
 	 * @param password
+	 *            heslo uživatele
 	 * @return db id, které bylo nového uživateli přiděleno
 	 */
 	public Long registrateNewUser(String email, String username, String password);
@@ -89,6 +73,7 @@ public interface UserFacade {
 	 * Vrátí uživatele dle jména
 	 * 
 	 * @param username
+	 *            jméno uživatele
 	 * @return nalezný uživatel
 	 */
 	public UserInfoDTO getUser(String username);
@@ -96,28 +81,48 @@ public interface UserFacade {
 	/**
 	 * Vrátí uživatele dle id
 	 * 
-	 * @param id
-	 * @return nalezný uživatel
+	 * @param userId
+	 *            id hledaného uživatele
+	 * @return nalezený uživatel
 	 */
-	public UserInfoDTO getUser(Long id);
+	public UserInfoDTO getUser(Long userId);
 
 	/**
 	 * Zjistí zda daný obsah je v oblíbených daného uživatele
+	 * 
+	 * @param contentNodeId
+	 *            id obsahu, který bude hledán v oblíbených
+	 * @param userId
+	 *            id uživatele, kterému bude prohledán seznam oblíbených
+	 * @return <code>true</code>, pokud má daný uživatel v oblíbených daný obsah
 	 */
-	public boolean hasInFavourites(Long content, Long user);
+	public boolean hasInFavourites(Long contentNodeId, Long userId);
 
 	/**
 	 * Přidá obsah do oblíbených uživatele
+	 * 
+	 * @param contentNodeId
+	 *            id obsahu, který bude přidán do oblíbených
+	 * @param userId
+	 *            id uživatele, kterému bude obsah přidán do oblíbených
 	 */
-	public void addContentToFavourites(Long content, Long user);
+	public void addContentToFavourites(Long contentNodeId, Long userId);
 
 	/**
 	 * Odebere obsah z oblíbených uživatele
+	 * 
+	 * @param contentNodeId
+	 *            id obsahu, který bude odebrán z oblíbených
+	 * @param userId
+	 *            id uživatele, kterému bude obsah odebrán z oblíbených
 	 */
-	public void removeContentFromFavourites(Long content, Long user);
+	public void removeContentFromFavourites(Long contentNodeId, Long userId);
 
 	/**
 	 * Odebere obsah z oblíbených všech uživatelů
+	 * 
+	 * @param contentNodeId
+	 *            id obsahu, který bude odebrán z oblíbených
 	 */
 	public void removeContentFromAllUsersFavourites(Long content);
 

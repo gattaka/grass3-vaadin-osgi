@@ -31,7 +31,7 @@ import cz.gattserver.grass3.components.DefaultContentOperations;
 import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
+import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
@@ -507,7 +507,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	@Override
 	protected void onDeleteOperation() {
 		ConfirmWindow confirmSubwindow = new ConfirmWindow("Opravdu si přejete smazat tuto galerii ?", ev -> {
-			NodeBreadcrumbDTO nodeDTO = photogallery.getContentNode().getParent();
+			NodeOverviewDTO nodeDTO = photogallery.getContentNode().getParent();
 
 			final String nodeURL = getPageURL(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(nodeDTO.getId(), nodeDTO.getName()));

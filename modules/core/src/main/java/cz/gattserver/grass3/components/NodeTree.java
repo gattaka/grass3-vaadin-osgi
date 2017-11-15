@@ -32,7 +32,7 @@ import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.components.grid.TreeGridDropTarget;
 
 import cz.gattserver.grass3.facades.NodeFacade;
-import cz.gattserver.grass3.model.dto.NodeTreeDTO;
+import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcons;
@@ -43,12 +43,12 @@ public class NodeTree extends VerticalLayout {
 
 	private static final long serialVersionUID = -7457362355620092284L;
 
-	private Map<Long, NodeTreeDTO> cache;
+	private Map<Long, NodeOverviewDTO> cache;
 	private Set<Long> visited;
 
-	private TreeGrid<NodeTreeDTO> grid;
+	private TreeGrid<NodeOverviewDTO> grid;
 
-	private Set<NodeTreeDTO> draggedItems;
+	private Set<NodeOverviewDTO> draggedItems;
 
 	@Autowired
 	private NodeFacade nodeFacade;
@@ -57,7 +57,7 @@ public class NodeTree extends VerticalLayout {
 		this(false);
 	}
 
-	public TreeGrid<NodeTreeDTO> getGrid() {
+	public TreeGrid<NodeOverviewDTO> getGrid() {
 		return grid;
 	}
 
@@ -78,7 +78,7 @@ public class NodeTree extends VerticalLayout {
 		// setItemIconGenerator(i -> new
 		// ThemeResource(ImageIcons.FOLDER_16_ICON));
 		// setItemCaptionGenerator(NodeTreeDTO::getName);
-		grid.addColumn(NodeTreeDTO::getName).setCaption("Název");
+		grid.addColumn(NodeOverviewDTO::getName).setCaption("Název");
 		populate();
 
 		if (enableEditFeatures)
@@ -91,14 +91,14 @@ public class NodeTree extends VerticalLayout {
 		/*
 		 * Drag drop features
 		 */
-		TreeGridDragSource<NodeTreeDTO> dragSource = new TreeGridDragSource<>(grid);
+		TreeGridDragSource<NodeOverviewDTO> dragSource = new TreeGridDragSource<>(grid);
 		dragSource.setEffectAllowed(EffectAllowed.MOVE);
 		dragSource.addGridDragStartListener(e -> draggedItems = e.getDraggedItems());
 
-		TreeGridDropTarget<NodeTreeDTO> dropTarget = new TreeGridDropTarget<>(grid, DropMode.ON_TOP_OR_BETWEEN);
+		TreeGridDropTarget<NodeOverviewDTO> dropTarget = new TreeGridDropTarget<>(grid, DropMode.ON_TOP_OR_BETWEEN);
 		dropTarget.setDropEffect(DropEffect.MOVE);
 		dropTarget.addTreeGridDropListener(event -> {
-			NodeTreeDTO dropNode = event.getDropTargetRow().get();
+			NodeOverviewDTO dropNode = event.getDropTargetRow().get();
 			switch (event.getDropLocation()) {
 			case ON_TOP:
 				// vkládám do dropNode
@@ -113,7 +113,7 @@ public class NodeTree extends VerticalLayout {
 				// výchozí je vkládání do root
 				dropNode = null;
 			}
-			for (NodeTreeDTO n : draggedItems)
+			for (NodeOverviewDTO n : draggedItems)
 				moveAction(n, dropNode);
 			grid.getDataProvider().refreshAll();
 		});
@@ -121,11 +121,11 @@ public class NodeTree extends VerticalLayout {
 		/*
 		 * Context menu
 		 */
-		GridContextMenu<NodeTreeDTO> gridMenu = new GridContextMenu<>(grid);
+		GridContextMenu<NodeOverviewDTO> gridMenu = new GridContextMenu<>(grid);
 		gridMenu.addGridBodyContextMenuListener(e -> {
 			e.getContextMenu().removeItems();
 			if (e.getItem() != null) {
-				NodeTreeDTO node = (NodeTreeDTO) e.getItem();
+				NodeOverviewDTO node = (NodeOverviewDTO) e.getItem();
 				grid.select(node);
 				e.getContextMenu().addItem("Smazat", new ThemeResource(ImageIcons.DELETE_16_ICON),
 						selectedItem -> deleteAction(node));
@@ -133,7 +133,7 @@ public class NodeTree extends VerticalLayout {
 						selectedItem -> renameAction(node));
 			}
 			e.getContextMenu().addItem("Vytvořit zde novou", new ThemeResource(ImageIcons.PLUS_16_ICON),
-					selectedItem -> createNodeAction(e.getItem() == null ? null : (NodeTreeDTO) e.getItem()));
+					selectedItem -> createNodeAction(e.getItem() == null ? null : (NodeOverviewDTO) e.getItem()));
 		});
 
 		/*
@@ -160,27 +160,27 @@ public class NodeTree extends VerticalLayout {
 				grid.getSelectedItems().isEmpty() ? null : grid.getSelectedItems().iterator().next()));
 		btnLayout.addComponent(createBtn);
 
-		ModifyGridButton<NodeTreeDTO> modifyBtn = new ModifyGridButton<>("Přejmenovat", (e, i) -> renameAction(i),
+		ModifyGridButton<NodeOverviewDTO> modifyBtn = new ModifyGridButton<>("Přejmenovat", (e, i) -> renameAction(i),
 				grid);
 		btnLayout.addComponent(modifyBtn);
 
-		DeleteGridButton<NodeTreeDTO> deleteBtn = new DeleteGridButton<>("Smazat", i -> deleteAction(i), grid);
+		DeleteGridButton<NodeOverviewDTO> deleteBtn = new DeleteGridButton<>("Smazat", i -> deleteAction(i), grid);
 		btnLayout.addComponent(deleteBtn);
 
 	}
 
 	public void populate() {
-		List<NodeTreeDTO> nodes = nodeFacade.getNodesForTree();
-		TreeData<NodeTreeDTO> treeData = new TreeData<>();
+		List<NodeOverviewDTO> nodes = nodeFacade.getNodesForTree();
+		TreeData<NodeOverviewDTO> treeData = new TreeData<>();
 		nodes.forEach(n -> cache.put(n.getId(), n));
 		nodes.forEach(n -> addTreeItem(treeData, n));
 		grid.setDataProvider(new TreeDataProvider<>(treeData));
 	}
 
-	private void addTreeItem(TreeData<NodeTreeDTO> treeData, NodeTreeDTO node) {
+	private void addTreeItem(TreeData<NodeOverviewDTO> treeData, NodeOverviewDTO node) {
 		if (visited.contains(node.getId()))
 			return;
-		NodeTreeDTO parent = cache.get(node.getParentId());
+		NodeOverviewDTO parent = cache.get(node.getParentId());
 		if (parent != null && !visited.contains(parent.getId()))
 			addTreeItem(treeData, parent);
 		treeData.addItem(parent, node);
@@ -188,17 +188,17 @@ public class NodeTree extends VerticalLayout {
 	}
 
 	public void expandTo(Long id) {
-		NodeTreeDTO to = cache.get(id);
+		NodeOverviewDTO to = cache.get(id);
 		Long parent = to.getParentId();
 		while (parent != null) {
-			NodeTreeDTO n = cache.get(parent);
+			NodeOverviewDTO n = cache.get(parent);
 			grid.expand(n);
 			parent = n.getParentId();
 		}
 		grid.select(cache.get(to.getId()));
 	}
 
-	private void moveAction(NodeTreeDTO node, NodeTreeDTO newParent) {
+	private void moveAction(NodeOverviewDTO node, NodeOverviewDTO newParent) {
 		if (node.equals(newParent) || node.getParentId() == null && newParent == null
 				|| node.getParentId() != null && newParent != null && node.getParentId().equals(newParent.getId()))
 			return; // bez změn
@@ -218,9 +218,9 @@ public class NodeTree extends VerticalLayout {
 				}));
 	}
 
-	private void deleteAction(NodeTreeDTO node) {
+	private void deleteAction(NodeOverviewDTO node) {
 		UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat kategorii '" + node.getName() + "' ?", e -> {
-			if (nodeFacade.isEmpty(node.getId()) == false) {
+			if (nodeFacade.isNodeEmpty(node.getId()) == false) {
 				UIUtils.showWarning("Kategorie musí být prázdná");
 			} else {
 				try {
@@ -236,7 +236,7 @@ public class NodeTree extends VerticalLayout {
 		}));
 	}
 
-	private void renameAction(NodeTreeDTO node) {
+	private void renameAction(NodeOverviewDTO node) {
 		final Window subwindow = new WebWindow("Přejmenovat");
 		subwindow.center();
 		UI.getCurrent().addWindow(subwindow);
@@ -274,7 +274,7 @@ public class NodeTree extends VerticalLayout {
 		subwindow.focus();
 	}
 
-	public void createNodeAction(NodeTreeDTO parentNode) {
+	public void createNodeAction(NodeOverviewDTO parentNode) {
 		final Window subwindow = new WebWindow(parentNode == null ? "Vytvořit novou kořenovou kategorii"
 				: "Vytvořit novou kategorii do '" + parentNode.getName() + "'");
 		subwindow.center();
@@ -295,7 +295,7 @@ public class NodeTree extends VerticalLayout {
 				String newNodeName = newNameField.getValue();
 				Long parentNodeId = parentNode == null ? null : parentNode.getId();
 				Long newNodeId = nodeFacade.createNewNode(parentNodeId, newNodeName);
-				NodeTreeDTO newNode = new NodeTreeDTO();
+				NodeOverviewDTO newNode = new NodeOverviewDTO();
 				newNode.setId(newNodeId);
 				newNode.setName(newNodeName);
 				newNode.setParentId(parentNodeId);

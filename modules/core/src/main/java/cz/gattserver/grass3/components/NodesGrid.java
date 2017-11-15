@@ -7,7 +7,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.renderers.ImageRenderer;
 
-import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.MenuPage;
 import cz.gattserver.grass3.ui.util.GridUtils;
@@ -15,7 +15,7 @@ import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.ImageIcons;
 
-public class NodesGrid extends Grid<NodeDTO> {
+public class NodesGrid extends Grid<NodeOverviewDTO> {
 
 	private static final long serialVersionUID = -2220485504407844582L;
 
@@ -43,7 +43,7 @@ public class NodesGrid extends Grid<NodeDTO> {
 
 	}
 
-	public void populate(List<NodeDTO> nodes) {
+	public void populate(List<NodeOverviewDTO> nodes) {
 		setItems(nodes);
 		setHeight(GridUtils.processHeight(nodes.size()) + "px");
 	}

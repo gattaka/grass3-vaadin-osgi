@@ -17,7 +17,7 @@ import cz.gattserver.grass3.articles.facade.ArticleFacade;
 import cz.gattserver.grass3.components.DefaultContentOperations;
 import cz.gattserver.grass3.js.JScriptItem;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
+import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.security.CoreACL;
@@ -141,7 +141,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 	@Override
 	protected void onDeleteOperation() {
 		ConfirmWindow confirmSubwindow = new ConfirmWindow("Opravdu si přejete smazat tento článek ?", event -> {
-			NodeBreadcrumbDTO nodeDTO = article.getContentNode().getParent();
+			NodeOverviewDTO nodeDTO = article.getContentNode().getParent();
 			final String nodeURL = getPageURL(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(nodeDTO.getId(), nodeDTO.getName()));
 

@@ -49,7 +49,7 @@ import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
-import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
@@ -94,7 +94,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	private UI ui = UI.getCurrent();
 	private ProgressWindow progressIndicatorWindow;
 
-	private NodeDTO node;
+	private NodeOverviewDTO node;
 	private PhotogalleryDTO photogallery;
 
 	private TokenField photogalleryKeywords;

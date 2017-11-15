@@ -31,7 +31,7 @@ import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.SecurityFacade;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.pg.dao.PhotoGalleryRepository;
@@ -304,7 +304,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 	@Override
 	@Async
 	public void savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
-			NodeDTO node, UserInfoDTO author, String contextRoot, LocalDateTime date) {
+			NodeOverviewDTO node, UserInfoDTO author, String contextRoot, LocalDateTime date) {
 		System.out.println("savePhotogallery thread: " + Thread.currentThread().getId());
 
 		// Počet kroků = miniatury + detaily + uložení

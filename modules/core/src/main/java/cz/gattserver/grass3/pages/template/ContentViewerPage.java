@@ -31,7 +31,7 @@ import cz.gattserver.grass3.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.facades.UserFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
-import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
+import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.security.CoreACL;
@@ -261,7 +261,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		/**
 		 * kategorie
 		 */
-		NodeBreadcrumbDTO parent = content.getParent();
+		NodeDTO parent = nodeFacade.getNodeByIdForDetail(content.getParent().getId());
 		while (true) {
 
 			// nejprve zkus zjistit, zda předek existuje

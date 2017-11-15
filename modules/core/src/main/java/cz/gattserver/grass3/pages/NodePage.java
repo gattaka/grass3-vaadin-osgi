@@ -22,8 +22,8 @@ import cz.gattserver.grass3.components.NodesGrid;
 import cz.gattserver.grass3.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
-import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.security.CoreACL;
@@ -127,7 +127,7 @@ public class NodePage extends OneColumnPage {
 
 	}
 
-	private void createBreadcrumb(VerticalLayout layout, NodeBreadcrumbDTO node) {
+	private void createBreadcrumb(VerticalLayout layout, NodeDTO node) {
 
 		Breadcrumb breadcrumb = new Breadcrumb();
 		layout.addComponent(breadcrumb);
@@ -135,7 +135,7 @@ public class NodePage extends OneColumnPage {
 		// pokud zjistím, že cesta neodpovídá, vyhodím 302 (přesměrování) na
 		// aktuální polohu cílové kategorie
 		List<BreadcrumbElement> breadcrumbElements = new ArrayList<BreadcrumbElement>();
-		NodeBreadcrumbDTO parent = node;
+		NodeDTO parent = node;
 		while (true) {
 
 			// nejprve zkus zjistit, zda předek existuje
@@ -156,7 +156,6 @@ public class NodePage extends OneColumnPage {
 	}
 
 	private void createSubnodesPart(VerticalLayout layout, NodeDTO node) {
-
 		VerticalLayout subNodesLayout = new VerticalLayout();
 		subNodesLayout.setMargin(false);
 		subNodesTable = new NodesGrid(NodePage.this);
@@ -176,8 +175,7 @@ public class NodePage extends OneColumnPage {
 	}
 
 	private void populateSubnodesTable(NodeDTO node) {
-
-		List<NodeDTO> nodes = nodeFacade.getNodesByParentNode(node);
+		List<NodeOverviewDTO> nodes = nodeFacade.getNodesByParentNode(node.getId());
 		if (nodes == null) {
 			UIUtils.showErrorPage500();
 			return;
@@ -186,7 +184,6 @@ public class NodePage extends OneColumnPage {
 	}
 
 	private void createContentsPart(VerticalLayout layout, NodeDTO node) {
-
 		VerticalLayout contentsLayout = new VerticalLayout();
 		contentsLayout.setMargin(false);
 		ContentsLazyGrid contentsTable = new ContentsLazyGrid();
@@ -203,7 +200,6 @@ public class NodePage extends OneColumnPage {
 
 		// Vytvořit obsahy
 		createNewContentMenu(layout, node);
-
 	}
 
 	private void createNewContentMenu(VerticalLayout layout, NodeDTO node) {

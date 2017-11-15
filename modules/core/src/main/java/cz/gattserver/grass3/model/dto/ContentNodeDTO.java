@@ -32,7 +32,7 @@ public class ContentNodeDTO implements Serializable, Authorizable {
 	/**
 	 * nadřazený uzel (kategorie ve které obsah je)
 	 */
-	private NodeBreadcrumbDTO parent;
+	private NodeOverviewDTO parent;
 
 	/**
 	 * Kdy byl obsah vytvořen
@@ -146,11 +146,11 @@ public class ContentNodeDTO implements Serializable, Authorizable {
 		this.name = name;
 	}
 
-	public NodeBreadcrumbDTO getParent() {
+	public NodeOverviewDTO getParent() {
 		return parent;
 	}
 
-	public void setParent(NodeBreadcrumbDTO parent) {
+	public void setParent(NodeOverviewDTO parent) {
 		this.parent = parent;
 	}
 

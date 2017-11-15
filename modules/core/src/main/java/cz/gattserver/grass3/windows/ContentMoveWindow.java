@@ -10,8 +10,7 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.components.NodeTree;
 import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
-import cz.gattserver.grass3.model.dto.NodeTreeDTO;
+import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.web.common.window.WebWindow;
 
 public abstract class ContentMoveWindow extends WebWindow {
@@ -42,7 +41,7 @@ public abstract class ContentMoveWindow extends WebWindow {
 		moveBtn = new Button("Přesunout");
 		moveBtn.setEnabled(false);
 		moveBtn.addClickListener(event -> {
-			NodeTreeDTO nodeDTO = tree.getGrid().getSelectedItems().iterator().next();
+			NodeOverviewDTO nodeDTO = tree.getGrid().getSelectedItems().iterator().next();
 			contentNodeFacade.moveContent(nodeDTO.getId(), contentNodeDTO.getId());
 			close();
 			onMove();
@@ -51,8 +50,8 @@ public abstract class ContentMoveWindow extends WebWindow {
 		layout.addComponent(moveBtn);
 		layout.setComponentAlignment(moveBtn, Alignment.MIDDLE_RIGHT);
 
-		NodeBreadcrumbDTO to = contentNodeDTO.getParent();
-		tree.expandTo(to.getParent().getId());
+		NodeOverviewDTO to = contentNodeDTO.getParent();
+		tree.expandTo(to.getParentId());
 	}
 
 	protected abstract void onMove();

@@ -47,7 +47,7 @@ import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.js.JScriptItem;
 import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
-import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
+import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.server.GrassRequest;
@@ -81,7 +81,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	@Resource(name = "articlesViewerPageFactory")
 	private PageFactory articlesViewerPageFactory;
 
-	private NodeBreadcrumbDTO node;
+	private NodeOverviewDTO node;
 
 	private TextArea articleTextArea;
 	private TokenField articleKeywords;

@@ -15,7 +15,7 @@ import com.vaadin.ui.Layout;
 import com.vaadin.ui.Link;
 
 import cz.gattserver.grass3.facades.NodeFacade;
-import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.register.ServiceRegister;
@@ -113,8 +113,8 @@ public abstract class MenuPage extends GrassPage {
 		 */
 
 		// sekce článků je rozbalená rovnou jako její kořenové kategorie
-		List<NodeDTO> nodes = nodeFacade.getRootNodes();
-		for (NodeDTO node : nodes) {
+		List<NodeOverviewDTO> nodes = nodeFacade.getRootNodes();
+		for (NodeOverviewDTO node : nodes) {
 			createMenuComponent(menu,
 					new Link(node.getName(), getPageResource(nodePageFactory, node.getId() + "-" + node.getName())));
 		}

@@ -16,10 +16,8 @@ import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
-import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
-import cz.gattserver.grass3.model.dto.NodeTreeDTO;
 import cz.gattserver.grass3.model.dto.QuoteDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 
@@ -100,7 +98,7 @@ public class CoreMapperImpl implements CoreMapper {
 		contentNodeDTO.setDraft(e.getDraft());
 		contentNodeDTO.setDraftSourceId(e.getDraftSourceId());
 		contentNodeDTO.setContentTags(mapContentTagCollectionForOverview(e.getContentTags()));
-		contentNodeDTO.setParent(mapNodeForBreadcrumb(e.getParent()));
+		contentNodeDTO.setParent(mapNodeForOverview(e.getParent()));
 
 		return contentNodeDTO;
 	}
@@ -178,74 +176,40 @@ public class CoreMapperImpl implements CoreMapper {
 
 		nodeDTO.setId(e.getId());
 		nodeDTO.setName(e.getName());
-		nodeDTO.setParent(mapNodeForBreadcrumb(e.getParent()));
-		// nodeDTO.setContentNodes(mapContentNodeOverviewCollection(e.getContentNodes()));
-		nodeDTO.setSubNodes(mapNodesForOverview(e.getSubNodes()));
-
-		return nodeDTO;
-	}
-
-	private NodeBreadcrumbDTO mapNodeForBreadcrumb(Node e) {
-		if (e == null)
-			return null;
-
-		NodeBreadcrumbDTO nodeDTO = new NodeBreadcrumbDTO();
-
-		nodeDTO.setId(e.getId());
-		nodeDTO.setName(e.getName());
-		nodeDTO.setParent(mapNodeForBreadcrumb(e.getParent()));
+		if (e.getParent() != null) {
+			nodeDTO.setParentId(e.getParent().getId());
+			nodeDTO.setParentName(e.getParent().getName());
+			nodeDTO.setParent(mapNodeForDetail(e.getParent()));
+		}
 
 		return nodeDTO;
 	}
 
 	@Override
-	public NodeDTO mapNodeForOverview(Node e) {
+	public NodeOverviewDTO mapNodeForOverview(Node e) {
 		if (e == null)
 			return null;
 
-		NodeDTO nodeDTO = new NodeDTO();
+		NodeOverviewDTO nodeDTO = new NodeOverviewDTO();
 
 		nodeDTO.setId(e.getId());
 		nodeDTO.setName(e.getName());
+		if (e.getParent() != null) {
+			nodeDTO.setParentId(e.getParent().getId());
+			nodeDTO.setParentName(e.getParent().getName());
+		}
 
 		return nodeDTO;
 	}
 
 	@Override
-	public List<NodeDTO> mapNodesForOverview(Collection<Node> nodes) {
+	public List<NodeOverviewDTO> mapNodesForOverview(Collection<Node> nodes) {
 		if (nodes == null)
 			return null;
 
-		List<NodeDTO> nodeDTOs = new ArrayList<NodeDTO>();
+		List<NodeOverviewDTO> nodeDTOs = new ArrayList<NodeOverviewDTO>();
 		for (Node node : nodes) {
 			nodeDTOs.add(mapNodeForOverview(node));
-		}
-		return nodeDTOs;
-	}
-
-	@Override
-	public NodeTreeDTO mapNodeForTree(Node e) {
-		if (e == null)
-			return null;
-
-		NodeTreeDTO nodeDTO = new NodeTreeDTO();
-
-		nodeDTO.setId(e.getId());
-		nodeDTO.setName(e.getName());
-		if (e.getParent() != null)
-			nodeDTO.setParentId(e.getParent().getId());
-
-		return nodeDTO;
-	}
-
-	@Override
-	public List<NodeTreeDTO> mapNodesForTree(Collection<Node> nodes) {
-		if (nodes == null)
-			return null;
-
-		List<NodeTreeDTO> nodeDTOs = new ArrayList<NodeTreeDTO>();
-		for (Node node : nodes) {
-			nodeDTOs.add(mapNodeForTree(node));
 		}
 		return nodeDTOs;
 	}

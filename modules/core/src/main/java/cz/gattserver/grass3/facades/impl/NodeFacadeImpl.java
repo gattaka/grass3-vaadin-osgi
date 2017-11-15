@@ -1,8 +1,10 @@
 package cz.gattserver.grass3.facades.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,7 +12,7 @@ import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.model.dao.NodeRepository;
 import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.model.dto.NodeTreeDTO;
+import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.model.util.CoreMapper;
 
 @Transactional
@@ -24,11 +26,11 @@ public class NodeFacadeImpl implements NodeFacade {
 	private NodeRepository nodeRepository;
 
 	@Override
-	public NodeDTO getNodeByIdForOverview(Long id) {
+	public NodeOverviewDTO getNodeByIdForOverview(Long id) {
 		Node node = nodeRepository.findOne(id);
 		if (node == null)
 			return null;
-		NodeDTO nodeDTO = mapper.mapNodeForOverview(node);
+		NodeOverviewDTO nodeDTO = mapper.mapNodeForOverview(node);
 		return nodeDTO;
 	}
 
@@ -42,47 +44,47 @@ public class NodeFacadeImpl implements NodeFacade {
 	}
 
 	@Override
-	public List<NodeDTO> getRootNodes() {
+	public List<NodeOverviewDTO> getRootNodes() {
 		List<Node> rootNodes = nodeRepository.findByParentIsNull();
 		if (rootNodes == null) {
 			return null;
 		}
-		List<NodeDTO> rootNodesDTOs = mapper.mapNodesForOverview(rootNodes);
+		List<NodeOverviewDTO> rootNodesDTOs = mapper.mapNodesForOverview(rootNodes);
 		return rootNodesDTOs;
 	}
 
 	@Override
-	public List<NodeTreeDTO> getNodesForTree() {
-		List<Node> nodes = nodeRepository.findAll();
+	public List<NodeOverviewDTO> getNodesForTree() {
+		List<Node> nodes = nodeRepository.findAll(new Sort("id"));
 		if (nodes == null) {
 			return null;
 		}
-		List<NodeTreeDTO> nodeDTOs = mapper.mapNodesForTree(nodes);
+		List<NodeOverviewDTO> nodeDTOs = mapper.mapNodesForOverview(nodes);
 		return nodeDTOs;
 	}
 
 	@Override
-	public List<NodeDTO> getNodesByParentNode(NodeDTO parent) {
-		List<Node> childrenNodes = nodeRepository.findByParentId(parent.getId());
+	public List<NodeOverviewDTO> getNodesByParentNode(Long parentId) {
+		List<Node> childrenNodes = nodeRepository.findByParentId(parentId);
 
 		if (childrenNodes == null) {
 			return null;
 		}
 
-		List<NodeDTO> childrenNodesDTOs = mapper.mapNodesForOverview(childrenNodes);
+		List<NodeOverviewDTO> childrenNodesDTOs = mapper.mapNodesForOverview(childrenNodes);
 		return childrenNodesDTOs;
 	}
 
 	@Override
-	public Long createNewNode(Long parent, String name) {
+	public Long createNewNode(Long parentId, String name) {
 		Node node = new Node();
 		node.setName(name.trim());
 		node = nodeRepository.save(node);
 		if (node == null)
 			return null;
 
-		if (parent != null) {
-			Node parentEntity = nodeRepository.findOne(parent);
+		if (parentId != null) {
+			Node parentEntity = nodeRepository.findOne(parentId);
 			parentEntity.getSubNodes().add(node);
 			parentEntity = nodeRepository.save(parentEntity);
 			if (parentEntity == null)
@@ -103,7 +105,7 @@ public class NodeFacadeImpl implements NodeFacade {
 		Node nodeEntity = nodeRepository.findOne(nodeId);
 
 		// beze změn
-		if (nodeEntity.getParent().equals(newParentEntity))
+		if (Objects.equals(nodeEntity.getParent(), newParentEntity))
 			return;
 
 		// zamezí vkládání předků do potomků - projde postupně všechny předky
@@ -130,7 +132,7 @@ public class NodeFacadeImpl implements NodeFacade {
 		}
 
 		nodeRepository.flush();
-		
+
 		if (newParentId != null) {
 			newParentEntity.getSubNodes().add(nodeEntity);
 			newParentEntity = nodeRepository.save(newParentEntity);
@@ -163,7 +165,7 @@ public class NodeFacadeImpl implements NodeFacade {
 	}
 
 	@Override
-	public boolean isEmpty(Long node) {
+	public boolean isNodeEmpty(Long node) {
 		Node n = nodeRepository.findOne(node);
 		return n.getContentNodes().size() + n.getSubNodes().size() == 0;
 	}

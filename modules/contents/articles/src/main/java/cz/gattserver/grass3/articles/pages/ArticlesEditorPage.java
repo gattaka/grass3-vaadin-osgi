@@ -46,7 +46,7 @@ import cz.gattserver.grass3.components.ImageButton;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.js.JScriptItem;
-import cz.gattserver.grass3.model.dto.ContentTagDTO;
+import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
@@ -135,7 +135,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 			articleNameField.setValue(article.getContentNode().getName());
 
-			for (ContentTagDTO tagDTO : article.getContentNode().getContentTags()) {
+			for (ContentTagOverviewDTO tagDTO : article.getContentNode().getContentTags()) {
 				articleKeywords.addToken(new Token(tagDTO.getName()));
 			}
 
@@ -211,7 +211,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 					node = draft.getContentNode().getParent();
 					articleNameField.setValue(draft.getContentNode().getName());
-					for (ContentTagDTO tagDTO : draft.getContentNode().getContentTags()) {
+					for (ContentTagOverviewDTO tagDTO : draft.getContentNode().getContentTags()) {
 						articleKeywords.addToken(new Token(tagDTO.getName()));
 					}
 					publicatedCheckBox.setValue(draft.getContentNode().isPublicated());
@@ -338,7 +338,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		keywordsMenuAndTextLayout.addComponent(articleKeywords);
 
-		List<ContentTagDTO> contentTags = contentTagFacade.getContentTagsForOverview();
+		List<ContentTagOverviewDTO> contentTags = contentTagFacade.getContentTagsForOverview();
 		contentTags.forEach(t -> {
 			Token to = new Token(t.getName());
 			articleKeywords.addTokenToInputField(to);

@@ -8,7 +8,7 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.components.ContentsLazyGrid;
 import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.ContentTagFacade;
-import cz.gattserver.grass3.model.dto.ContentTagDTO;
+import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
 import cz.gattserver.grass3.pages.template.BasePage;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.util.UIUtils;
@@ -23,7 +23,7 @@ public class TagPage extends BasePage {
 	@Autowired
 	private ContentNodeFacade contentNodeFacade;
 
-	private ContentTagDTO tag;
+	private ContentTagOverviewDTO tag;
 
 	public TagPage(GrassRequest request) {
 		super(request);

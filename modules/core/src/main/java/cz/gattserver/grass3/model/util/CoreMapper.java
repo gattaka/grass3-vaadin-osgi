@@ -11,7 +11,7 @@ import cz.gattserver.grass3.model.domain.Quote;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
-import cz.gattserver.grass3.model.dto.ContentTagDTO;
+import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.model.dto.NodeTreeDTO;
 import cz.gattserver.grass3.model.dto.QuoteDTO;
@@ -79,30 +79,30 @@ public interface CoreMapper {
 	public List<ContentNodeOverviewDTO> mapContentNodeOverviewCollection(Collection<ContentNode> contentNodes);
 
 	/**
-	 * Převede {@link ContentTag} na {@link ContentTagDTO}
+	 * Převede {@link ContentTag} na {@link ContentTagOverviewDTO}
 	 * 
 	 * @param e
 	 * @return
 	 */
-	public ContentTagDTO mapContentTagForOverview(ContentTag e);
+	public ContentTagOverviewDTO mapContentTagForOverview(ContentTag e);
 
-	public ContentTagDTO mapContentTag(ContentTag e);
+	public ContentTagOverviewDTO mapContentTag(ContentTag e);
 
 	/**
-	 * Převede list {@link ContentTag} na list {@link ContentTagDTO}
+	 * Převede list {@link ContentTag} na list {@link ContentTagOverviewDTO}
 	 * 
 	 * @param contentTags
 	 * @return
 	 */
-	public List<ContentTagDTO> mapContentTagCollection(Collection<ContentTag> contentTags);
+	public List<ContentTagOverviewDTO> mapContentTagCollection(Collection<ContentTag> contentTags);
 
 	/**
-	 * Převede list {@link ContentTag} na list {@link ContentTagDTO}
+	 * Převede list {@link ContentTag} na list {@link ContentTagOverviewDTO}
 	 * 
 	 * @param contentTags
 	 * @return
 	 */
-	public Set<ContentTagDTO> mapContentTagCollectionForOverview(Collection<ContentTag> contentTags);
+	public Set<ContentTagOverviewDTO> mapContentTagCollectionForOverview(Collection<ContentTag> contentTags);
 
 	/**
 	 * Převede {@link Node} na {@link NodeDTO}

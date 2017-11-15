@@ -123,7 +123,7 @@ public class ApplicationSettingsPage extends ModuleSettingsPage {
 		 */
 		Button contentTagsCountsResetBtn = new Button("Přepočítat údaje ContentTagů", event -> {
 			try {
-				contentTagFacade.countContentNodes();
+				contentTagFacade.processContentNodesCounts();
 				InfoWindow infoSubwindow = new InfoWindow("Počty obsahů tagů byly úspěšně přepočítány");
 				UI.getCurrent().addWindow(infoSubwindow);
 			} catch (Exception e) {

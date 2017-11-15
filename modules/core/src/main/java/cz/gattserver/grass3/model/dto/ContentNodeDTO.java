@@ -62,7 +62,7 @@ public class ContentNodeDTO implements Serializable, Authorizable {
 	/**
 	 * Tagy
 	 */
-	private Set<ContentTagDTO> contentTags;
+	private Set<ContentTagOverviewDTO> contentTags;
 
 	/**
 	 * Kdo ho vytvořil
@@ -162,11 +162,11 @@ public class ContentNodeDTO implements Serializable, Authorizable {
 		this.author = author;
 	}
 
-	public Set<ContentTagDTO> getContentTags() {
+	public Set<ContentTagOverviewDTO> getContentTags() {
 		return contentTags;
 	}
 
-	public void setContentTags(Set<ContentTagDTO> contentTags) {
+	public void setContentTags(Set<ContentTagOverviewDTO> contentTags) {
 		this.contentTags = contentTags;
 	}
 

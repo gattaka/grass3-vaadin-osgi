@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +16,7 @@ import cz.gattserver.grass3.model.dao.ContentNodeRepository;
 import cz.gattserver.grass3.model.dao.ContentTagRepository;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
-import cz.gattserver.grass3.model.dto.ContentTagDTO;
+import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
 import cz.gattserver.grass3.model.util.CoreMapper;
 
 @Transactional
@@ -31,28 +32,31 @@ public class ContentTagFacadeImpl implements ContentTagFacade {
 	@Autowired
 	private ContentNodeRepository contentNodeRepository;
 
-	public List<ContentTagDTO> getContentTagsForOverview() {
+	@Override
+	public List<ContentTagOverviewDTO> getContentTagsForOverview() {
 		List<ContentTag> contentTags = contentTagRepository.findAll();
-		if (contentTags == null)
-			return null;
-		Set<ContentTagDTO> contentTagDTOs = mapper.mapContentTagCollectionForOverview(contentTags);
-		return new ArrayList<ContentTagDTO>(contentTagDTOs);
+		Set<ContentTagOverviewDTO> contentTagDTOs = mapper.mapContentTagCollectionForOverview(contentTags);
+		return new ArrayList<ContentTagOverviewDTO>(contentTagDTOs);
 	}
 
+	@Override
+	public ContentTagOverviewDTO getContentTagById(Long id) {
+		Validate.notNull(id, "Id hledaného tagu nemůže být null");
+		return mapper.mapContentTag(contentTagRepository.findOne(id));
+	}
+
+	@Override
+	public ContentTagOverviewDTO getContentTagByName(String name) {
+		Validate.notNull(name, "Název hledaného tagu nemůže být null");
+		return mapper.mapContentTag(contentTagRepository.findByName(name));
+	}
+
+	@Override
 	public void saveTags(Collection<String> tagsDTOs, Long contentNodeId) {
 		saveTags(tagsDTOs, contentNodeRepository.findOne(contentNodeId));
 	}
 
-	/**
-	 * Bere řetězec tagů, parsuje je a ukládá do nich (nebo vytvoří nové)
-	 * referenci na tento obsah - <b>mění {@link ContentNode} entitu v DB</b>
-	 * 
-	 * @param tagsDTOs
-	 *            tagy
-	 * @param contentNodeDTO
-	 *            obsah, který je oanotován těmito tagy
-	 * @return množina tagů, jako objektů, odpovídající těm ze vstupního řetězce
-	 */
+	@Override
 	public void saveTags(Collection<String> tagsDTOs, ContentNode contentNode) {
 
 		// tagy, které které jsou použity/vytvořeny
@@ -137,18 +141,7 @@ public class ContentTagFacadeImpl implements ContentTagFacade {
 		}
 	}
 
-	/**
-	 * Získej tag dle jeho id
-	 * 
-	 * @param id
-	 * @return tag
-	 */
-	public ContentTagDTO getContentTagById(Long id) {
-		ContentTagDTO tag = mapper.mapContentTag(contentTagRepository.findOne(id));
-		return tag;
-	}
-
-	public void countContentNodes() {
+	public void processContentNodesCounts() {
 		for (ContentTag tag : contentTagRepository.findAll()) {
 			tag.setContentNodesCount(tag.getContentNodes().size());
 			contentTagRepository.save(tag);

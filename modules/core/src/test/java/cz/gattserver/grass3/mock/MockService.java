@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.mock;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.facades.UserFacade;
+import cz.gattserver.grass3.test.MockUtils;
 
 @Service
 public class MockService {
@@ -21,25 +23,21 @@ public class MockService {
 	@Autowired
 	private NodeFacade nodeFacade;
 
-	public Long createMockUser() {
-		return createMockUser(1);
-	}
-
 	public Long createMockUser(int variant) {
-		Long id = userFacade.registrateNewUser("mockUser@mockUser.cz", "mockUserName" + variant, "mockUserPassword");
+		Long id = userFacade.registrateNewUser(MockUtils.MOCK_USER_NAME + variant + "@mockUser.cz",
+				MockUtils.MOCK_USER_NAME + variant, MockUtils.MOCK_USER_PASSWORD + variant);
 		return id;
 	}
 
-	public Long createMockRootNode() {
-		Long id = nodeFacade.createNewNode(null, "mockNodeName");
+	public Long createMockRootNode(int variant) {
+		Long id = nodeFacade.createNewNode(null, MockUtils.MOCK_NODE_NAME + variant);
 		return id;
 	}
 
-	public Long createMockContent() {
-		Long userId = createMockUser();
-		Long nodeId = createMockRootNode();
-		Long contentNodeId = contentNodeFacade.save("mockModule", 34L, "mockContentName", null, true, nodeId, userId,
-				false, LocalDateTime.now(), null);
+	public Long createMockContentNode(Long contentId, Set<String> tags, Long nodeId, Long userId, int variant) {
+		Long contentNodeId = contentNodeFacade.save(MockUtils.MOCK_CONTENTNODE_MODULE + variant, contentId,
+				MockUtils.MOCK_CONTENTNODE_NAME + variant, tags, true, nodeId, userId, false, LocalDateTime.now(),
+				null);
 		return contentNodeId;
 	}
 

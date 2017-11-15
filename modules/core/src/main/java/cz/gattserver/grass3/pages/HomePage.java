@@ -24,7 +24,7 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.components.ContentsLazyGrid;
 import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.ContentTagFacade;
-import cz.gattserver.grass3.model.dto.ContentTagDTO;
+import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.BasePage;
@@ -131,7 +131,7 @@ public class HomePage extends BasePage {
 		tagCloudLayout.addComponent(new H2Label("Tagy"));
 		pagelayout.addComponent(tagCloudLayout);
 
-		final List<ContentTagDTO> contentTags = contentTagFacade.getContentTagsForOverview();
+		final List<ContentTagOverviewDTO> contentTags = contentTagFacade.getContentTagsForOverview();
 
 		if (contentTags == null)
 			UIUtils.showErrorPage500();
@@ -147,7 +147,7 @@ public class HomePage extends BasePage {
 		 * Pro škálování je potřeba znát počty obsahů ze všech tagů
 		 */
 		Set<Integer> counts = new HashSet<Integer>();
-		for (ContentTagDTO contentTag : contentTags) {
+		for (ContentTagOverviewDTO contentTag : contentTags) {
 			counts.add(contentTag.getContentNodesCount());
 		}
 
@@ -165,8 +165,8 @@ public class HomePage extends BasePage {
 		 * 
 		 * Seřaď položky listu dle počtu asociovaných obsahů (vzestupně)
 		 */
-		Collections.sort(contentTags, new Comparator<ContentTagDTO>() {
-			public int compare(ContentTagDTO o1, ContentTagDTO o2) {
+		Collections.sort(contentTags, new Comparator<ContentTagOverviewDTO>() {
+			public int compare(ContentTagOverviewDTO o1, ContentTagOverviewDTO o2) {
 				return o1.getContentNodesCount() - o2.getContentNodesCount();
 			}
 		});
@@ -185,7 +185,7 @@ public class HomePage extends BasePage {
 		 * vrátila velikost fontu, reps. kategorie velikosti.
 		 */
 		final HashMap<Integer, Integer> sizeTable = new HashMap<Integer, Integer>();
-		for (ContentTagDTO contentTag : contentTags) {
+		for (ContentTagOverviewDTO contentTag : contentTags) {
 
 			/**
 			 * Spočítej jeho fontsize - pokud jsem vyšší, pak přihoď velikost
@@ -207,8 +207,8 @@ public class HomePage extends BasePage {
 		 * 
 		 * Seřaď položky listu dle abecedy (vzestupně a case insensitive)
 		 */
-		Collections.sort(contentTags, new Comparator<ContentTagDTO>() {
-			public int compare(ContentTagDTO o1, ContentTagDTO o2) {
+		Collections.sort(contentTags, new Comparator<ContentTagOverviewDTO>() {
+			public int compare(ContentTagOverviewDTO o1, ContentTagOverviewDTO o2) {
 				return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
 			}
 		});
@@ -216,7 +216,7 @@ public class HomePage extends BasePage {
 		char oldChar = 0;
 		char currChar = 0;
 		StringBuilder sb = null;
-		for (ContentTagDTO contentTag : contentTags) {
+		for (ContentTagOverviewDTO contentTag : contentTags) {
 			currChar = contentTag.getName().toUpperCase().charAt(0);
 			if (currChar != oldChar) {
 				if (oldChar != 0) {

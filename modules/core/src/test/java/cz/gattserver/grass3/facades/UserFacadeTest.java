@@ -9,13 +9,13 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.test.GrassFacadeTest;
 
-@DatabaseTearDown(value = "deleteAll.xml", type = DatabaseOperation.DELETE_ALL)
+@DatabaseSetup(value = "deleteAll.xml", type = DatabaseOperation.DELETE_ALL)
 public class UserFacadeTest extends GrassFacadeTest {
 
 	@Autowired
@@ -26,7 +26,7 @@ public class UserFacadeTest extends GrassFacadeTest {
 
 	@Test
 	public void testActivateUser() {
-		Long id = mockService.createMockUser();
+		Long id = mockService.createMockUser(1);
 		UserInfoDTO user = userFacade.getUser(id);
 		assertFalse(user.isConfirmed());
 
@@ -38,7 +38,7 @@ public class UserFacadeTest extends GrassFacadeTest {
 	@Test
 	public void testAddContentToFavourites() {
 		Long userId = mockService.createMockUser(1);
-		Long nodeId = mockService.createMockRootNode();
+		Long nodeId = mockService.createMockRootNode(2);
 
 		String contentName = "testAddContentToFavouritesMockContentName";
 		Long contentNodeId = contentNodeFacade.save("testAddContentToFavouritesMockModule", 34L, contentName, null,

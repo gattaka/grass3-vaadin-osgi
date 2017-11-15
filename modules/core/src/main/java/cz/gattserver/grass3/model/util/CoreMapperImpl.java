@@ -15,7 +15,7 @@ import cz.gattserver.grass3.model.domain.Quote;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
 import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
-import cz.gattserver.grass3.model.dto.ContentTagDTO;
+import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.model.dto.NodeDTO;
 import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
@@ -118,11 +118,11 @@ public class CoreMapperImpl implements CoreMapper {
 	}
 
 	@Override
-	public ContentTagDTO mapContentTagForOverview(ContentTag e) {
+	public ContentTagOverviewDTO mapContentTagForOverview(ContentTag e) {
 		if (e == null)
 			return null;
 
-		ContentTagDTO contentTagDTO = new ContentTagDTO();
+		ContentTagOverviewDTO contentTagDTO = new ContentTagOverviewDTO();
 
 		contentTagDTO.setId(e.getId());
 		contentTagDTO.setName(e.getName());
@@ -132,25 +132,25 @@ public class CoreMapperImpl implements CoreMapper {
 	}
 
 	@Override
-	public ContentTagDTO mapContentTag(ContentTag e) {
+	public ContentTagOverviewDTO mapContentTag(ContentTag e) {
 		if (e == null)
 			return null;
 
-		ContentTagDTO contentTagDTO = new ContentTagDTO();
+		ContentTagOverviewDTO contentTagDTO = new ContentTagOverviewDTO();
 
 		contentTagDTO.setId(e.getId());
 		contentTagDTO.setName(e.getName());
-		// contentTagDTO.setContentNodes(mapContentNodeOverviewCollection(e.getContentNodes()));
+		contentTagDTO.setContentNodesCount(e.getContentNodesCount());
 
 		return contentTagDTO;
 	}
 
 	@Override
-	public List<ContentTagDTO> mapContentTagCollection(Collection<ContentTag> contentTags) {
+	public List<ContentTagOverviewDTO> mapContentTagCollection(Collection<ContentTag> contentTags) {
 		if (contentTags == null)
 			return null;
 
-		List<ContentTagDTO> contentTagDTOs = new ArrayList<ContentTagDTO>();
+		List<ContentTagOverviewDTO> contentTagDTOs = new ArrayList<ContentTagOverviewDTO>();
 		for (ContentTag contentTag : contentTags) {
 			contentTagDTOs.add(mapContentTag(contentTag));
 		}
@@ -158,11 +158,11 @@ public class CoreMapperImpl implements CoreMapper {
 	}
 
 	@Override
-	public Set<ContentTagDTO> mapContentTagCollectionForOverview(Collection<ContentTag> contentTags) {
+	public Set<ContentTagOverviewDTO> mapContentTagCollectionForOverview(Collection<ContentTag> contentTags) {
 		if (contentTags == null)
 			return null;
 
-		Set<ContentTagDTO> contentTagDTOs = new HashSet<ContentTagDTO>();
+		Set<ContentTagOverviewDTO> contentTagDTOs = new HashSet<ContentTagOverviewDTO>();
 		for (ContentTag contentTag : contentTags) {
 			contentTagDTOs.add(mapContentTagForOverview(contentTag));
 		}

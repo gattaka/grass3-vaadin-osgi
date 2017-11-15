@@ -4,11 +4,34 @@ import java.util.Collection;
 import java.util.List;
 
 import cz.gattserver.grass3.model.domain.ContentNode;
-import cz.gattserver.grass3.model.dto.ContentTagDTO;
+import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
 
 public interface ContentTagFacade {
 
-	public List<ContentTagDTO> getContentTagsForOverview();
+	/**
+	 * Získá tagy pro přehled
+	 * 
+	 * @return list tagů bez jejich vazeb na své obsahy
+	 */
+	public List<ContentTagOverviewDTO> getContentTagsForOverview();
+
+	/**
+	 * Získá tag pro přehled
+	 * 
+	 * @param id
+	 *            id tagu
+	 * @return tag bez jeho vazby na své obsahy
+	 */
+	public ContentTagOverviewDTO getContentTagById(Long id);
+
+	/**
+	 * Získá tag pro přehled
+	 * 
+	 * @param name
+	 *            název tagu
+	 * @return tag bez jeho vazby na své obsahy
+	 */
+	public ContentTagOverviewDTO getContentTagByName(String name);
 
 	/**
 	 * Bere řetězec tagů, parsuje je a ukládá do nich (nebo vytvoří nové)
@@ -17,22 +40,24 @@ public interface ContentTagFacade {
 	 * @param tags
 	 *            řetězec tagů oddělených mezerami
 	 * @param contentNodeId
-	 *            obsah, který je oanotován těmito tagy
-	 * @return množina tagů, jako objektů, odpovídající těm ze vstupního řetězce
+	 *            id obsahu, který je otagován těmito tagy
 	 */
 	public void saveTags(Collection<String> tags, Long contentNodeId);
 
+	/**
+	 * Bere řetězec tagů, parsuje je a ukládá do nich (nebo vytvoří nové)
+	 * referenci na tento obsah - <b>mění {@link ContentNode} entitu v DB</b>
+	 * 
+	 * @param tags
+	 *            řetězec tagů oddělených mezerami
+	 * @param contentNode
+	 *            obsah, který je otagován těmito tagy
+	 */
 	public void saveTags(Collection<String> tags, ContentNode contentNode);
 
 	/**
-	 * Získej tag dle jeho jména
-	 * 
-	 * @param tagName
-	 *            jméno tagu
-	 * @return tag
+	 * Přepočítá počty obsahů u jednotlivých tagů a tím nastaví jejich váhu
 	 */
-	public ContentTagDTO getContentTagById(Long contentNodeId);
-
-	public void countContentNodes();
+	public void processContentNodesCounts();
 
 }

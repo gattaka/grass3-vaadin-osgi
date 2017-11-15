@@ -30,7 +30,7 @@ import cz.gattserver.grass3.components.ModifyButton;
 import cz.gattserver.grass3.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.facades.UserFacade;
 import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.ContentTagDTO;
+import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
 import cz.gattserver.grass3.model.dto.NodeBreadcrumbDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
@@ -96,7 +96,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		contentLastModificationDateLabel.setContentMode(ContentMode.HTML);
 
 		tagsListLayout.removeAllComponents();
-		for (ContentTagDTO contentTag : content.getContentTags()) {
+		for (ContentTagOverviewDTO contentTag : content.getContentTags()) {
 			Link tagLink = new Link(contentTag.getName(), getPageResource(tagPageFactory,
 					URLIdentifierUtils.createURLIdentifier(contentTag.getId(), contentTag.getName())));
 			tagLink.addStyleName("taglabel");

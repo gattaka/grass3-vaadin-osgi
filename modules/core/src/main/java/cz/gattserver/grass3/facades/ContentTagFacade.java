@@ -2,18 +2,20 @@ package cz.gattserver.grass3.facades;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import cz.gattserver.grass3.model.domain.ContentNode;
+import cz.gattserver.grass3.model.dto.ContentTagCountTO;
 import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
 
 public interface ContentTagFacade {
 
 	/**
-	 * Získá tagy pro přehled
+	 * Získá tagy pro přehled seřazený dle názvu vzestupně
 	 * 
 	 * @return list tagů bez jejich vazeb na své obsahy
 	 */
-	public List<ContentTagOverviewDTO> getContentTagsForOverview();
+	List<ContentTagOverviewDTO> getContentTagsForOverviewOrderedByName();
 
 	/**
 	 * Získá tag pro přehled
@@ -22,16 +24,16 @@ public interface ContentTagFacade {
 	 *            id tagu
 	 * @return tag bez jeho vazby na své obsahy
 	 */
-	public ContentTagOverviewDTO getContentTagById(Long id);
+	ContentTagOverviewDTO getContentTagById(Long id);
 
 	/**
-	 * Získá tag pro přehled
+	 * Získá tag dle názvu
 	 * 
 	 * @param name
 	 *            název tagu
 	 * @return tag bez jeho vazby na své obsahy
 	 */
-	public ContentTagOverviewDTO getContentTagByName(String name);
+	ContentTagOverviewDTO getContentTagByName(String name);
 
 	/**
 	 * Bere řetězec tagů, parsuje je a ukládá do nich (nebo vytvoří nové)
@@ -42,7 +44,7 @@ public interface ContentTagFacade {
 	 * @param contentNodeId
 	 *            id obsahu, který je otagován těmito tagy
 	 */
-	public void saveTags(Collection<String> tags, Long contentNodeId);
+	void saveTags(Collection<String> tags, Long contentNodeId);
 
 	/**
 	 * Bere řetězec tagů, parsuje je a ukládá do nich (nebo vytvoří nové)
@@ -53,11 +55,36 @@ public interface ContentTagFacade {
 	 * @param contentNode
 	 *            obsah, který je otagován těmito tagy
 	 */
-	public void saveTags(Collection<String> tags, ContentNode contentNode);
+	void saveTags(Collection<String> tags, ContentNode contentNode);
 
 	/**
-	 * Přepočítá počty obsahů u jednotlivých tagů a tím nastaví jejich váhu
+	 * Získá počet obsahů s daným tagem
+	 * 
+	 * @param tagId
+	 *            id tagu jehož počet obsahů chci získat
+	 * @return počet obsahů s daným tagem
 	 */
-	public void processContentNodesCounts();
+	int getContentNodesCount(Long tagId);
+
+	/**
+	 * Získá mapu počtů obsahů dle jednotlivých tagů seřazenou dle počtu
+	 * 
+	 * @return mapa počtů dle tagů
+	 */
+	Map<Long, Integer> getContentNodesCounts();
+
+	/**
+	 * Získá info o tagu s nejnižším počtem obsahů
+	 * 
+	 * @return počet obsahů
+	 */
+	ContentTagCountTO getTagContentNodesLowestCount();
+
+	/**
+	 * Získá info o tagu s nejvyšším počtem obsahů
+	 * 
+	 * @return počet obsahů
+	 */
+	ContentTagCountTO getTagContentNodesHighestCount();
 
 }

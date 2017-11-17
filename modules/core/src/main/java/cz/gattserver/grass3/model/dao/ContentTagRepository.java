@@ -4,8 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import cz.gattserver.grass3.model.domain.ContentTag;
 
-public interface ContentTagRepository extends JpaRepository<ContentTag, Long> {
+public interface ContentTagRepository extends JpaRepository<ContentTag, Long>, ContentTagRepositoryCustom {
 
-	public ContentTag findByName(String name);
+	ContentTag findByName(String name);
 
 }

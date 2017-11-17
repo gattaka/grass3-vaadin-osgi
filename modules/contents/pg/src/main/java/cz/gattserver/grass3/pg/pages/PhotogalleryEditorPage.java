@@ -208,7 +208,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		keywordsMenuAndTextLayout.addComponent(photogalleryKeywords);
 
-		List<ContentTagOverviewDTO> contentTags = contentTagFacade.getContentTagsForOverview();
+		List<ContentTagOverviewDTO> contentTags = contentTagFacade.getContentTagsForOverviewOrderedByName();
 		contentTags.forEach(t -> {
 			Token to = new Token(t.getName());
 			photogalleryKeywords.addTokenToInputField(to);

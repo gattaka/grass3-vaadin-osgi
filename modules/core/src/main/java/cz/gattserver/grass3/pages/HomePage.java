@@ -3,9 +3,8 @@ package cz.gattserver.grass3.pages;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -131,7 +130,7 @@ public class HomePage extends BasePage {
 		tagCloudLayout.addComponent(new H2Label("Tagy"));
 		pagelayout.addComponent(tagCloudLayout);
 
-		final List<ContentTagOverviewDTO> contentTags = contentTagFacade.getContentTagsForOverview();
+		List<ContentTagOverviewDTO> contentTags = contentTagFacade.getContentTagsForOverviewOrderedByName();
 
 		if (contentTags == null)
 			UIUtils.showErrorPage500();
@@ -142,14 +141,10 @@ public class HomePage extends BasePage {
 		}
 
 		/**
-		 * O(n)
-		 * 
-		 * Pro škálování je potřeba znát počty obsahů ze všech tagů
+		 * Pro škálování je potřeba znát počty obsahů ze všech tagů + vzestupné
+		 * řazení
 		 */
-		Set<Integer> counts = new HashSet<Integer>();
-		for (ContentTagOverviewDTO contentTag : contentTags) {
-			counts.add(contentTag.getContentNodesCount());
-		}
+		Map<Long, Integer> counts = contentTagFacade.getContentNodesCounts();
 
 		/**
 		 * Přepočet na vypočtení jednotky převodu
@@ -161,21 +156,10 @@ public class HomePage extends BasePage {
 			koef = 1;
 
 		/**
-		 * O(n.log(n))
-		 * 
-		 * Seřaď položky listu dle počtu asociovaných obsahů (vzestupně)
-		 */
-		Collections.sort(contentTags, new Comparator<ContentTagOverviewDTO>() {
-			public int compare(ContentTagOverviewDTO o1, ContentTagOverviewDTO o2) {
-				return o1.getContentNodesCount() - o2.getContentNodesCount();
-			}
-		});
-
-		/**
 		 * Údaj o poslední příčce a velikosti, která jí odpovídala - dle toho
 		 * budu vědět kdy posunout ohodnocovací koeficient
 		 */
-		int lastSize = contentTags.isEmpty() ? 1 : contentTags.get(0).getContentNodesCount();
+		int lastSize = contentTags.isEmpty() ? 1 : contentTagFacade.getTagContentNodesLowestCount().getContentsCount();
 		int lastFontSize = MIN_FONT_SIZE_TAG_CLOUD;
 
 		/**
@@ -184,7 +168,7 @@ public class HomePage extends BasePage {
 		 * Potřebuju aby bylo možné nějak zavolat svůj počet obsahů a zpátky se
 		 * vrátila velikost fontu, reps. kategorie velikosti.
 		 */
-		final HashMap<Integer, Integer> sizeTable = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> sizeTable = new HashMap<Integer, Integer>();
 		for (ContentTagOverviewDTO contentTag : contentTags) {
 
 			/**
@@ -192,13 +176,14 @@ public class HomePage extends BasePage {
 			 * koef a ulož můj stav aby ostatní věděli, jestli mají zvyšovat,
 			 * nebo zůstat, protože mají stejnou velikost
 			 */
-			if (contentTag.getContentNodesCount() > lastSize) {
-				lastSize = contentTag.getContentNodesCount();
+			int tagContentsCount = counts.get(contentTag.getId());
+			if (tagContentsCount > lastSize) {
+				lastSize = tagContentsCount;
 				if (lastFontSize + koef <= MAX_FONT_SIZE_TAG_CLOUD)
 					lastFontSize += koef;
 			}
 
-			int size = contentTag.getContentNodesCount();
+			int size = tagContentsCount;
 			sizeTable.put(size, lastFontSize);
 		}
 
@@ -226,8 +211,9 @@ public class HomePage extends BasePage {
 				oldChar = currChar;
 			}
 
-			int size = sizeTable.get(contentTag.getContentNodesCount());
-			sb.append("<a title='" + contentTag.getContentNodesCount() + "'href='"
+			int tagContentsCount = counts.get(contentTag.getId());
+			int size = sizeTable.get(tagContentsCount);
+			sb.append("<a title='" + tagContentsCount + "'href='"
 					+ getPageURL(tagPageFactory,
 							URLIdentifierUtils.createURLIdentifier(contentTag.getId(), contentTag.getName()))
 					+ "' style='font-size:" + size + "pt'>" + contentTag.getName() + "</a> ");

@@ -124,7 +124,6 @@ public class CoreMapperImpl implements CoreMapper {
 
 		contentTagDTO.setId(e.getId());
 		contentTagDTO.setName(e.getName());
-		contentTagDTO.setContentNodesCount(e.getContentNodesCount());
 
 		return contentTagDTO;
 	}
@@ -138,7 +137,6 @@ public class CoreMapperImpl implements CoreMapper {
 
 		contentTagDTO.setId(e.getId());
 		contentTagDTO.setName(e.getName());
-		contentTagDTO.setContentNodesCount(e.getContentNodesCount());
 
 		return contentTagDTO;
 	}

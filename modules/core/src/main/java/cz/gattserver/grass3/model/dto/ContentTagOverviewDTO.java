@@ -6,7 +6,7 @@ package cz.gattserver.grass3.model.dto;
  * @author gatt
  * 
  */
-public class ContentTagOverviewDTO implements Comparable<ContentTagOverviewDTO> {
+public class ContentTagOverviewDTO {
 
 	/**
 	 * DB identifikátor
@@ -17,11 +17,6 @@ public class ContentTagOverviewDTO implements Comparable<ContentTagOverviewDTO> 
 	 * Název tagu
 	 */
 	private String name;
-
-	/**
-	 * Počet obsahů k tagu
-	 */
-	private int contentNodesCount;
 
 	public ContentTagOverviewDTO() {
 	}
@@ -44,19 +39,6 @@ public class ContentTagOverviewDTO implements Comparable<ContentTagOverviewDTO> 
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public int getContentNodesCount() {
-		return contentNodesCount;
-	}
-
-	public void setContentNodesCount(int contentNodesCount) {
-		this.contentNodesCount = contentNodesCount;
-	}
-
-	@Override
-	public int compareTo(ContentTagOverviewDTO o) {
-		return getName().compareTo(o.getName());
 	}
 
 }

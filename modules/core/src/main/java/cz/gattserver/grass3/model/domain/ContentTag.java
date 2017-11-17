@@ -31,12 +31,6 @@ public class ContentTag {
 	@ManyToMany(mappedBy = "contentTags")
 	private Set<ContentNode> contentNodes;
 
-	/**
-	 * Počet obsahů přiřazených k tomuto tagu (aplikace je pak mnohem rychlejší
-	 * když se to nemusí počítat)
-	 */
-	private Integer contentNodesCount;
-
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof ContentTag))
@@ -71,14 +65,6 @@ public class ContentTag {
 
 	public void setContentNodes(Set<ContentNode> contentNodes) {
 		this.contentNodes = contentNodes;
-	}
-
-	public Integer getContentNodesCount() {
-		return contentNodesCount;
-	}
-
-	public void setContentNodesCount(Integer contentNodesCount) {
-		this.contentNodesCount = contentNodesCount;
 	}
 
 }

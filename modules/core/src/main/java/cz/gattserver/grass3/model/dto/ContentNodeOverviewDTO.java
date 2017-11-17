@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.model.dto;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -9,9 +8,7 @@ import java.time.LocalDateTime;
  * @author gatt
  * 
  */
-public class ContentNodeOverviewDTO implements Serializable, Authorizable {
-
-	private static final long serialVersionUID = 723375154665160018L;
+public class ContentNodeOverviewDTO {
 
 	/**
 	 * ID služby, která daný obsah umí číst

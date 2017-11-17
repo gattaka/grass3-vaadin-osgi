@@ -3,11 +3,14 @@ package cz.gattserver.grass3.facades.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +19,7 @@ import cz.gattserver.grass3.model.dao.ContentNodeRepository;
 import cz.gattserver.grass3.model.dao.ContentTagRepository;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
+import cz.gattserver.grass3.model.dto.ContentTagCountTO;
 import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
 import cz.gattserver.grass3.model.util.CoreMapper;
 
@@ -33,8 +37,8 @@ public class ContentTagFacadeImpl implements ContentTagFacade {
 	private ContentNodeRepository contentNodeRepository;
 
 	@Override
-	public List<ContentTagOverviewDTO> getContentTagsForOverview() {
-		List<ContentTag> contentTags = contentTagRepository.findAll();
+	public List<ContentTagOverviewDTO> getContentTagsForOverviewOrderedByName() {
+		List<ContentTag> contentTags = contentTagRepository.findAll(new Sort("name"));
 		Set<ContentTagOverviewDTO> contentTagDTOs = mapper.mapContentTagCollectionForOverview(contentTags);
 		return new ArrayList<ContentTagOverviewDTO>(contentTagDTOs);
 	}
@@ -62,12 +66,10 @@ public class ContentTagFacadeImpl implements ContentTagFacade {
 		// tagy, které které jsou použity/vytvořeny
 		Set<ContentTag> tags = new HashSet<ContentTag>();
 
-		if (tagsDTOs != null)
+		if (tagsDTOs != null) {
 			for (String tag : tagsDTOs) {
-
 				// existuje už takový tag ?
 				ContentTag contentTag = contentTagRepository.findByName(tag);
-
 				if (contentTag == null) {
 					// ne ? - vytvoř
 					contentTag = new ContentTag();
@@ -76,8 +78,8 @@ public class ContentTagFacadeImpl implements ContentTagFacade {
 
 				// přidej ho do seznamu
 				tags.add(contentTag);
-
 			}
+		}
 
 		// Fáze #1
 		// získej tagy, které se už nepoužívají a na nich proveď odebrání
@@ -88,13 +90,9 @@ public class ContentTagFacadeImpl implements ContentTagFacade {
 				if (tags.contains(oldTag))
 					continue;
 
-				if (oldTag.getContentNodes().remove(contentNode) == false) {
-					// TODO ... pokud nebyl node v tagu, pak je někde chyba a
-					// měl by se aspon vyhodit warning
-				}
+				oldTag.getContentNodes().remove(contentNode);
 
 				// ulož změnu
-				oldTag.setContentNodesCount(oldTag.getContentNodes().size());
 				oldTag = contentTagRepository.save(oldTag);
 
 				// pokud je tag prázdný (nemá nodes) pak se může smazat
@@ -104,36 +102,6 @@ public class ContentTagFacadeImpl implements ContentTagFacade {
 			}
 		}
 
-		// Fáze #2
-		// vymaž tagy z node
-		// do všech tagů přidej odkaz na node
-		// tagy ulož nebo na nich proveď merge
-		// zároveň je rovnou přidej do node
-		contentNode.setContentTags(new HashSet<ContentTag>());
-		for (ContentTag tag : tags) {
-			if (tag.getContentNodes() == null)
-				tag.setContentNodes(new HashSet<ContentNode>());
-			tag.getContentNodes().add(contentNode);
-
-			// TODO else stejná jako if ????
-			// je nový ? Pak ho ulož a zkontroluj, že dostal id
-			if (tag.getId() == null) {
-				tag.setContentNodesCount(tag.getContentNodes().size());
-				tag = contentTagRepository.save(tag);
-
-			} else {
-				tag.setContentNodesCount(tag.getContentNodes().size());
-				tag = contentTagRepository.save(tag);
-			}
-
-			// přidej tag k node
-			contentNode.getContentTags().add(tag);
-
-		}
-
-		// merge contentNode
-		contentNode = contentNodeRepository.save(contentNode);
-
 		// Fáze #3
 		// smaž nepoužívané tagy
 		for (ContentTag tagToDelete : tagsToDelete) {
@@ -141,10 +109,27 @@ public class ContentTagFacadeImpl implements ContentTagFacade {
 		}
 	}
 
-	public void processContentNodesCounts() {
-		for (ContentTag tag : contentTagRepository.findAll()) {
-			tag.setContentNodesCount(tag.getContentNodes().size());
-			contentTagRepository.save(tag);
-		}
+	@Override
+	public int getContentNodesCount(Long tagId) {
+		return contentTagRepository.countContentTagContents(tagId);
 	}
+
+	@Override
+	public Map<Long, Integer> getContentNodesCounts() {
+		Map<Long, Integer> map = new LinkedHashMap<>();
+		for (ContentTagCountTO to : contentTagRepository.countContentTagsContents())
+			map.put(to.getId(), to.getContentsCount());
+		return map;
+	}
+
+	@Override
+	public ContentTagCountTO getTagContentNodesLowestCount() {
+		return contentTagRepository.findTagContentNodesLowestCount();
+	}
+
+	@Override
+	public ContentTagCountTO getTagContentNodesHighestCount() {
+		return contentTagRepository.findTagContentNodesHighestCount();
+	}
+
 }

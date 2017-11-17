@@ -70,14 +70,17 @@
 	</bean>
 
 	<task:annotation-driven executor="taskExecutor" />
+	
+	<tx:annotation-driven transaction-manager="transactionManager"
+		proxy-target-class="false" />
 
+	<context:annotation-config />
+
+	<context:component-scan base-package="cz.gattserver.grass3" />
+	
 	<jpa:repositories base-package="cz.gattserver.grass3"
 		repository-impl-postfix="CustomImpl" />
 
-	<tx:annotation-driven transaction-manager="transactionManager"
-		proxy-target-class="false" />
-	<context:annotation-config />
-	<context:component-scan base-package="cz.gattserver.grass3" />
 	<aop:aspectj-autoproxy />
 
 </beans>

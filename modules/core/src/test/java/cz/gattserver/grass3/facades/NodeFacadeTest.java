@@ -110,7 +110,7 @@ public class NodeFacadeTest extends GrassFacadeTest {
 	}
 
 	@Test
-	public void testMoveNode() {
+	public void testMoveNode_ok1() {
 		Long nodeId1 = nodeFacade.createNewNode(null, "testNode1");
 		Long nodeId2 = nodeFacade.createNewNode(null, "testNode2");
 		Long nodeId3 = nodeFacade.createNewNode(nodeId2, "testNode3");
@@ -118,33 +118,42 @@ public class NodeFacadeTest extends GrassFacadeTest {
 		nodeFacade.moveNode(nodeId2, nodeId1);
 		assertEquals(nodeId1, nodeFacade.getNodeByIdForOverview(nodeId2).getParentId());
 
-		try {
-			nodeFacade.moveNode(nodeId1, nodeId3);
-			fail("mělo spadnout na IllegalArgumentException");
-		} catch (IllegalArgumentException ex) {
-			// ok
-		}
-
-		try {
-			nodeFacade.moveNode(nodeId2, nodeId3);
-			fail("mělo spadnout na IllegalArgumentException");
-		} catch (IllegalArgumentException ex) {
-			// ok
-		}
-
 		NodeDTO nodeDTO = nodeFacade.getNodeByIdForDetail(nodeId3);
 		assertEquals(nodeId2, nodeDTO.getParentId());
 		assertEquals(nodeId2, nodeDTO.getParent().getId());
 		assertEquals(nodeId1, nodeDTO.getParent().getParentId());
 		assertEquals(nodeId1, nodeDTO.getParent().getParent().getId());
+	}
 
+	@Test
+	public void testMoveNode_ok2() {
+		Long nodeId1 = nodeFacade.createNewNode(null, "testNode1");
+		Long nodeId2 = nodeFacade.createNewNode(null, "testNode2");
+		Long nodeId3 = nodeFacade.createNewNode(nodeId2, "testNode3");
+
+		nodeFacade.moveNode(nodeId2, nodeId1);
 		nodeFacade.moveNode(nodeId3, nodeId1);
 
-		nodeDTO = nodeFacade.getNodeByIdForDetail(nodeId3);
+		NodeDTO nodeDTO = nodeFacade.getNodeByIdForDetail(nodeId3);
 		assertEquals(nodeId1, nodeDTO.getParentId());
 		assertEquals(nodeId1, nodeDTO.getParent().getId());
 		assertNull(nodeDTO.getParent().getParent());
+	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testMoveNode_fail1() {
+		Long nodeId1 = nodeFacade.createNewNode(null, "testNode1");
+		Long nodeId2 = nodeFacade.createNewNode(nodeId1, "testNode2");
+		Long nodeId3 = nodeFacade.createNewNode(nodeId2, "testNode3");
+		nodeFacade.moveNode(nodeId1, nodeId3);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testMoveNode_fail2() {
+		Long nodeId1 = nodeFacade.createNewNode(null, "testNode1");
+		Long nodeId2 = nodeFacade.createNewNode(nodeId1, "testNode2");
+		Long nodeId3 = nodeFacade.createNewNode(nodeId2, "testNode3");
+		nodeFacade.moveNode(nodeId2, nodeId3);
 	}
 
 	@Test

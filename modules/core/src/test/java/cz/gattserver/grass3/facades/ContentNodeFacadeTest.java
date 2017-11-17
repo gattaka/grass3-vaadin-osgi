@@ -281,7 +281,7 @@ public class ContentNodeFacadeTest extends GrassFacadeTest {
 		ContentTagOverviewDTO tag = contentTagFacade.getContentTagByName("něco");
 		assertNotNull(tag);
 		assertEquals("něco", tag.getName());
-		assertEquals(1, tag.getContentNodesCount());
+		assertEquals(1, contentTagFacade.getContentNodesCount(tag.getId()));
 		assertEquals(1, contentNodeFacade.getCountByTag(tag.getId()));
 
 		List<ContentNodeOverviewDTO> contentNodesByTag = contentNodeFacade.getByTag(tag.getId(), 0, 10);
@@ -297,7 +297,7 @@ public class ContentNodeFacadeTest extends GrassFacadeTest {
 		tag = contentTagFacade.getContentTagByName("pokusy");
 		assertNotNull(tag);
 		assertEquals("pokusy", tag.getName());
-		assertEquals(3, tag.getContentNodesCount());
+		assertEquals(3, contentTagFacade.getContentNodesCount(tag.getId()));
 		assertEquals(3, contentNodeFacade.getCountByTag(tag.getId()));
 
 		assertEquals(3, contentNodeFacade.getCount());

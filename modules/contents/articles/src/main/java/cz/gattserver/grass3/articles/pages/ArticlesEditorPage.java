@@ -338,7 +338,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		keywordsMenuAndTextLayout.addComponent(articleKeywords);
 
-		List<ContentTagOverviewDTO> contentTags = contentTagFacade.getContentTagsForOverview();
+		List<ContentTagOverviewDTO> contentTags = contentTagFacade.getContentTagsForOverviewOrderedByName();
 		contentTags.forEach(t -> {
 			Token to = new Token(t.getName());
 			articleKeywords.addTokenToInputField(to);

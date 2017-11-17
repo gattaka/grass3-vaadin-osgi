@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Component; 
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Slider;
@@ -117,21 +117,6 @@ public class ApplicationSettingsPage extends ModuleSettingsPage {
 		 */
 		Button saveButton = new Button("Uložit", event -> storeConfiguration(configuration));
 		settingsFieldsLayout.addComponent(saveButton);
-
-		/**
-		 * Reset tagů
-		 */
-		Button contentTagsCountsResetBtn = new Button("Přepočítat údaje ContentTagů", event -> {
-			try {
-				contentTagFacade.processContentNodesCounts();
-				InfoWindow infoSubwindow = new InfoWindow("Počty obsahů tagů byly úspěšně přepočítány");
-				UI.getCurrent().addWindow(infoSubwindow);
-			} catch (Exception e) {
-				WarnWindow warnSubwindow = new WarnWindow("Nezdařilo se přepočítat počty obsahů tagů");
-				UI.getCurrent().addWindow(warnSubwindow);
-			}
-		});
-		settingsFieldsLayout.addComponent(contentTagsCountsResetBtn);
 
 		return layout;
 	}

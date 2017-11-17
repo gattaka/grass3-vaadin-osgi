@@ -2,36 +2,36 @@ package cz.gattserver.grass3.facades;
 
 import java.util.List;
 
-import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
+import cz.gattserver.grass3.interfaces.NodeOverviewTO;
+import cz.gattserver.grass3.interfaces.NodeTO;
 
 public interface NodeFacade {
 
 	/**
 	 * Získá kategorii dle id
 	 */
-	public NodeOverviewDTO getNodeByIdForOverview(Long id);
+	public NodeOverviewTO getNodeByIdForOverview(Long id);
 
 	/**
 	 * Získá kategorii dle id a namapuje jí, aby se dala použít v detailu
 	 * kategorie
 	 */
-	public NodeDTO getNodeByIdForDetail(Long nodeId);
+	public NodeTO getNodeByIdForDetail(Long nodeId);
 
 	/**
 	 * Získá všechny kořenové kategorie
 	 */
-	public List<NodeOverviewDTO> getRootNodes();
+	public List<NodeOverviewTO> getRootNodes();
 
 	/**
 	 * Získá všechny kategorie pro zobrazení ve stromu
 	 */
-	public List<NodeOverviewDTO> getNodesForTree();
+	public List<NodeOverviewTO> getNodesForTree();
 
 	/**
 	 * Získá kategorie, které jsou jako potomci dané kategorie
 	 */
-	public List<NodeOverviewDTO> getNodesByParentNode(Long nodeId);
+	public List<NodeOverviewTO> getNodesByParentNode(Long nodeId);
 
 	/**
 	 * Založí novou kategorii

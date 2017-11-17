@@ -8,7 +8,7 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
@@ -26,7 +26,7 @@ public class PhotogallerySearchConnector implements SearchConnector {
 	@Resource(name = "photogalleryViewerPageFactory")
 	private PageFactory photogalleryViewerPageFactory;
 
-	public List<SearchEntity> getAvailableSearchEntities(UserInfoDTO user) {
+	public List<SearchEntity> getAvailableSearchEntities(UserInfoTO user) {
 
 		List<SearchEntity> searchEntities = new ArrayList<SearchEntity>();
 

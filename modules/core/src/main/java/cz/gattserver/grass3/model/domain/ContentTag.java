@@ -40,7 +40,7 @@ public class ContentTag {
 
 	@Override
 	public int hashCode() {
-		return getName().hashCode();
+		return getName() == null ? 0 : getName().hashCode();
 	}
 
 	public Long getId() {

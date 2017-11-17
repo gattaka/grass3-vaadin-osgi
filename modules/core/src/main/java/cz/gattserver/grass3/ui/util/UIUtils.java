@@ -7,7 +7,7 @@ import com.vaadin.ui.Notification.Type;
 
 import cz.gattserver.grass3.GrassUI;
 import cz.gattserver.grass3.exception.GrassPageException;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.InfoWindow;
 import cz.gattserver.web.common.window.WarnWindow;
@@ -20,7 +20,7 @@ public class UIUtils {
 	/**
 	 * Získá uživatele
 	 */
-	public static UserInfoDTO getUser() {
+	public static UserInfoTO getUser() {
 		return getGrassUI().getUser();
 	}
 

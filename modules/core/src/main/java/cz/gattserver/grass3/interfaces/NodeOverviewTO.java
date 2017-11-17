@@ -1,6 +1,6 @@
-package cz.gattserver.grass3.model.dto;
+package cz.gattserver.grass3.interfaces;
 
-public class NodeOverviewDTO {
+public class NodeOverviewTO {
 
 	/**
 	 * DB identifikátor

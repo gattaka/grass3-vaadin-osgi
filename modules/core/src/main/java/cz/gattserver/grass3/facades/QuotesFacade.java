@@ -2,21 +2,21 @@ package cz.gattserver.grass3.facades;
 
 import java.util.List;
 
-import cz.gattserver.grass3.model.dto.QuoteDTO;
+import cz.gattserver.grass3.interfaces.QuoteTO;
 
 public interface QuotesFacade {
 
 	/**
 	 * Uloží hlášku
 	 */
-	public void saveQuote(QuoteDTO quoteDTO);
+	public void saveQuote(QuoteTO quoteDTO);
 
 	/**
-	 * Získá všechny hlášky a vrátí je jako list {@link QuoteDTO}
+	 * Získá všechny hlášky a vrátí je jako list {@link QuoteTO}
 	 * 
 	 * @return
 	 */
-	public List<QuoteDTO> getAllQuotes();
+	public List<QuoteTO> getAllQuotes();
 
 	/**
 	 * Vybere náhodně hlášku a vrátí její text

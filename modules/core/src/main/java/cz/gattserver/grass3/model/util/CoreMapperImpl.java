@@ -8,28 +8,28 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
+import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
+import cz.gattserver.grass3.interfaces.ContentNodeTO;
+import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
+import cz.gattserver.grass3.interfaces.NodeOverviewTO;
+import cz.gattserver.grass3.interfaces.NodeTO;
+import cz.gattserver.grass3.interfaces.QuoteTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
 import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.domain.Quote;
 import cz.gattserver.grass3.model.domain.User;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
-import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
-import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
-import cz.gattserver.grass3.model.dto.QuoteDTO;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
 
 @Component
 public class CoreMapperImpl implements CoreMapper {
 
 	@Override
-	public UserInfoDTO map(User e) {
+	public UserInfoTO map(User e) {
 		if (e == null)
 			return null;
 
-		UserInfoDTO userInfoDTO = new UserInfoDTO();
+		UserInfoTO userInfoDTO = new UserInfoTO();
 
 		userInfoDTO.setConfirmed(e.isConfirmed());
 		userInfoDTO.setEmail(e.getEmail());
@@ -44,11 +44,11 @@ public class CoreMapperImpl implements CoreMapper {
 	}
 
 	@Override
-	public QuoteDTO map(Quote e) {
+	public QuoteTO map(Quote e) {
 		if (e == null)
 			return null;
 
-		QuoteDTO quoteDTO = new QuoteDTO();
+		QuoteTO quoteDTO = new QuoteTO();
 
 		quoteDTO.setId(e.getId());
 		quoteDTO.setName(e.getName());
@@ -57,11 +57,11 @@ public class CoreMapperImpl implements CoreMapper {
 	}
 
 	@Override
-	public ContentNodeOverviewDTO mapContentNodeOverview(ContentNode e) {
+	public ContentNodeOverviewTO mapContentNodeOverview(ContentNode e) {
 		if (e == null)
 			return null;
 
-		ContentNodeOverviewDTO contentNodeDTO = new ContentNodeOverviewDTO();
+		ContentNodeOverviewTO contentNodeDTO = new ContentNodeOverviewTO();
 
 		contentNodeDTO.setAuthor(map(e.getAuthor()));
 		contentNodeDTO.setContentID(e.getContentId());
@@ -72,7 +72,7 @@ public class CoreMapperImpl implements CoreMapper {
 		contentNodeDTO.setName(e.getName());
 		contentNodeDTO.setPublicated(e.getPublicated());
 
-		NodeOverviewDTO nodeDTO = new NodeOverviewDTO();
+		NodeOverviewTO nodeDTO = new NodeOverviewTO();
 		nodeDTO.setId(e.getParent().getId());
 		nodeDTO.setName(e.getParent().getName());
 		contentNodeDTO.setParent(nodeDTO);
@@ -81,11 +81,11 @@ public class CoreMapperImpl implements CoreMapper {
 	}
 
 	@Override
-	public ContentNodeDTO mapContentNodeForDetail(ContentNode e) {
+	public ContentNodeTO mapContentNodeForDetail(ContentNode e) {
 		if (e == null)
 			return null;
 
-		ContentNodeDTO contentNodeDTO = new ContentNodeDTO();
+		ContentNodeTO contentNodeDTO = new ContentNodeTO();
 
 		contentNodeDTO.setAuthor(map(e.getAuthor()));
 		contentNodeDTO.setContentID(e.getContentId());
@@ -104,11 +104,11 @@ public class CoreMapperImpl implements CoreMapper {
 	}
 
 	@Override
-	public List<ContentNodeOverviewDTO> mapContentNodeOverviewCollection(Collection<ContentNode> contentNodes) {
+	public List<ContentNodeOverviewTO> mapContentNodeOverviewCollection(Collection<ContentNode> contentNodes) {
 		if (contentNodes == null)
 			return null;
 
-		List<ContentNodeOverviewDTO> contentNodeDTOs = new ArrayList<ContentNodeOverviewDTO>();
+		List<ContentNodeOverviewTO> contentNodeDTOs = new ArrayList<ContentNodeOverviewTO>();
 		for (ContentNode contentNode : contentNodes) {
 			contentNodeDTOs.add(mapContentNodeOverview(contentNode));
 		}
@@ -116,11 +116,11 @@ public class CoreMapperImpl implements CoreMapper {
 	}
 
 	@Override
-	public ContentTagOverviewDTO mapContentTagForOverview(ContentTag e) {
+	public ContentTagOverviewTO mapContentTagForOverview(ContentTag e) {
 		if (e == null)
 			return null;
 
-		ContentTagOverviewDTO contentTagDTO = new ContentTagOverviewDTO();
+		ContentTagOverviewTO contentTagDTO = new ContentTagOverviewTO();
 
 		contentTagDTO.setId(e.getId());
 		contentTagDTO.setName(e.getName());
@@ -129,11 +129,11 @@ public class CoreMapperImpl implements CoreMapper {
 	}
 
 	@Override
-	public ContentTagOverviewDTO mapContentTag(ContentTag e) {
+	public ContentTagOverviewTO mapContentTag(ContentTag e) {
 		if (e == null)
 			return null;
 
-		ContentTagOverviewDTO contentTagDTO = new ContentTagOverviewDTO();
+		ContentTagOverviewTO contentTagDTO = new ContentTagOverviewTO();
 
 		contentTagDTO.setId(e.getId());
 		contentTagDTO.setName(e.getName());
@@ -142,11 +142,11 @@ public class CoreMapperImpl implements CoreMapper {
 	}
 
 	@Override
-	public List<ContentTagOverviewDTO> mapContentTagCollection(Collection<ContentTag> contentTags) {
+	public List<ContentTagOverviewTO> mapContentTagCollection(Collection<ContentTag> contentTags) {
 		if (contentTags == null)
 			return null;
 
-		List<ContentTagOverviewDTO> contentTagDTOs = new ArrayList<ContentTagOverviewDTO>();
+		List<ContentTagOverviewTO> contentTagDTOs = new ArrayList<ContentTagOverviewTO>();
 		for (ContentTag contentTag : contentTags) {
 			contentTagDTOs.add(mapContentTag(contentTag));
 		}
@@ -154,11 +154,11 @@ public class CoreMapperImpl implements CoreMapper {
 	}
 
 	@Override
-	public Set<ContentTagOverviewDTO> mapContentTagCollectionForOverview(Collection<ContentTag> contentTags) {
+	public Set<ContentTagOverviewTO> mapContentTagCollectionForOverview(Collection<ContentTag> contentTags) {
 		if (contentTags == null)
 			return null;
 
-		Set<ContentTagOverviewDTO> contentTagDTOs = new HashSet<ContentTagOverviewDTO>();
+		Set<ContentTagOverviewTO> contentTagDTOs = new HashSet<ContentTagOverviewTO>();
 		for (ContentTag contentTag : contentTags) {
 			contentTagDTOs.add(mapContentTagForOverview(contentTag));
 		}
@@ -166,11 +166,11 @@ public class CoreMapperImpl implements CoreMapper {
 	}
 
 	@Override
-	public NodeDTO mapNodeForDetail(Node e) {
+	public NodeTO mapNodeForDetail(Node e) {
 		if (e == null)
 			return null;
 
-		NodeDTO nodeDTO = new NodeDTO();
+		NodeTO nodeDTO = new NodeTO();
 
 		nodeDTO.setId(e.getId());
 		nodeDTO.setName(e.getName());
@@ -184,11 +184,11 @@ public class CoreMapperImpl implements CoreMapper {
 	}
 
 	@Override
-	public NodeOverviewDTO mapNodeForOverview(Node e) {
+	public NodeOverviewTO mapNodeForOverview(Node e) {
 		if (e == null)
 			return null;
 
-		NodeOverviewDTO nodeDTO = new NodeOverviewDTO();
+		NodeOverviewTO nodeDTO = new NodeOverviewTO();
 
 		nodeDTO.setId(e.getId());
 		nodeDTO.setName(e.getName());
@@ -201,11 +201,11 @@ public class CoreMapperImpl implements CoreMapper {
 	}
 
 	@Override
-	public List<NodeOverviewDTO> mapNodesForOverview(Collection<Node> nodes) {
+	public List<NodeOverviewTO> mapNodesForOverview(Collection<Node> nodes) {
 		if (nodes == null)
 			return null;
 
-		List<NodeOverviewDTO> nodeDTOs = new ArrayList<NodeOverviewDTO>();
+		List<NodeOverviewTO> nodeDTOs = new ArrayList<NodeOverviewTO>();
 		for (Node node : nodes) {
 			nodeDTOs.add(mapNodeForOverview(node));
 		}

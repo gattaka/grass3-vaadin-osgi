@@ -5,7 +5,7 @@ import java.util.List;
 
 import cz.gattserver.grass3.articles.dto.ArticleDTO;
 import cz.gattserver.grass3.articles.dto.ArticleDraftOverviewDTO;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 
 public interface ArticleFacade {
 
@@ -110,6 +110,6 @@ public interface ArticleFacade {
 	 * 
 	 * @return
 	 */
-	public List<ArticleDraftOverviewDTO> getDraftsForUser(UserInfoDTO user);
+	public List<ArticleDraftOverviewDTO> getDraftsForUser(UserInfoTO user);
 
 }

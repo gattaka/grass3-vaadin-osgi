@@ -1,13 +1,13 @@
 package cz.gattserver.grass3.pg.dto;
 
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
+import cz.gattserver.grass3.interfaces.ContentNodeTO;
 
 public class PhotogalleryDTO {
 
 	/**
 	 * Meta-informace o obsahu
 	 */
-	private ContentNodeDTO contentNode;
+	private ContentNodeTO contentNode;
 
 	/**
 	 * Relativní cesta (od kořene fotogalerie) k adresáři s fotografiemi
@@ -27,11 +27,11 @@ public class PhotogalleryDTO {
 		this.id = id;
 	}
 
-	public ContentNodeDTO getContentNode() {
+	public ContentNodeTO getContentNode() {
 		return contentNode;
 	}
 
-	public void setContentNode(ContentNodeDTO contentNode) {
+	public void setContentNode(ContentNodeTO contentNode) {
 		this.contentNode = contentNode;
 	}
 

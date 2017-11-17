@@ -16,7 +16,7 @@ import com.vaadin.ui.UI;
 import cz.gattserver.grass3.exception.ApplicationErrorHandler;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.facades.SecurityFacade;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.register.PageFactoriesRegister;
@@ -54,9 +54,9 @@ public class GrassUI extends UI {
 	}
 
 	/**
-	 * Získá aktuálního přihlášeného uživatele jako {@link UserInfoDTO} objekt
+	 * Získá aktuálního přihlášeného uživatele jako {@link UserInfoTO} objekt
 	 */
-	public UserInfoDTO getUser() {
+	public UserInfoTO getUser() {
 		return securityFacade.getCurrentUser();
 	}
 

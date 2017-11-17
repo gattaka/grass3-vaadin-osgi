@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.interfaces.NodeOverviewTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryRESTDTO;
@@ -61,7 +61,7 @@ public interface PhotogalleryFacade {
 	 *         {@code null}
 	 */
 	public void savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
-			NodeOverviewDTO node, UserInfoDTO author, String contextRoot, LocalDateTime date);
+			NodeOverviewTO node, UserInfoTO author, String contextRoot, LocalDateTime date);
 
 	/**
 	 * Získá galerii dle jeho identifikátoru

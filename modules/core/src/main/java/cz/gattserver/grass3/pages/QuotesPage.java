@@ -15,7 +15,7 @@ import cz.gattserver.grass3.components.CreateGridButton;
 import cz.gattserver.grass3.components.DeleteGridButton;
 import cz.gattserver.grass3.components.ModifyGridButton;
 import cz.gattserver.grass3.facades.QuotesFacade;
-import cz.gattserver.grass3.model.dto.QuoteDTO;
+import cz.gattserver.grass3.interfaces.QuoteTO;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.server.GrassRequest;
@@ -32,9 +32,9 @@ public class QuotesPage extends OneColumnPage {
 	/**
 	 * Seznam hlášek
 	 */
-	private Grid<QuoteDTO> grid;
+	private Grid<QuoteTO> grid;
 
-	private List<QuoteDTO> data;
+	private List<QuoteTO> data;
 
 	public QuotesPage(GrassRequest request) {
 		super(request);
@@ -52,15 +52,15 @@ public class QuotesPage extends OneColumnPage {
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
-		grid = new Grid<QuoteDTO>();
+		grid = new Grid<QuoteTO>();
 		grid.setSizeFull();
 		layout.addComponent(grid);
 
 		populateData();
 
 		grid.setItems(data);
-		grid.addColumn(QuoteDTO::getId).setCaption("Id").setWidth(50);
-		grid.addColumn(QuoteDTO::getName).setCaption("Obsah");
+		grid.addColumn(QuoteTO::getId).setCaption("Id").setWidth(50);
+		grid.addColumn(QuoteTO::getName).setCaption("Obsah");
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		layout.addComponent(btnLayout);
@@ -76,7 +76,7 @@ public class QuotesPage extends OneColumnPage {
 		});
 		btnLayout.addComponent(createGridButton);
 
-		ModifyGridButton<QuoteDTO> modifyGridButton = new ModifyGridButton<>("Upravit hlášku", (e, originQuote) -> {
+		ModifyGridButton<QuoteTO> modifyGridButton = new ModifyGridButton<>("Upravit hlášku", (e, originQuote) -> {
 			UI.getCurrent().addWindow(new QuoteWindow(originQuote, q -> {
 				quotesFacade.saveQuote(q);
 				grid.getDataProvider().refreshItem(q);
@@ -85,7 +85,7 @@ public class QuotesPage extends OneColumnPage {
 		}, grid);
 		btnLayout.addComponent(modifyGridButton);
 
-		DeleteGridButton<QuoteDTO> deleteGridButton = new DeleteGridButton<>("Odstranit hlášku", q -> {
+		DeleteGridButton<QuoteTO> deleteGridButton = new DeleteGridButton<>("Odstranit hlášku", q -> {
 			quotesFacade.deleteQuote(q.getId());
 			data.remove(q);
 			grid.getDataProvider().refreshAll();

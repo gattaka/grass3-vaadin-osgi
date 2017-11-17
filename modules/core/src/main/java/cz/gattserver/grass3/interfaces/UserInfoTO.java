@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.model.dto;
+package cz.gattserver.grass3.interfaces;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -19,7 +19,7 @@ import cz.gattserver.grass3.security.Role;
  * @author gatt
  * 
  */
-public class UserInfoDTO implements UserDetails {
+public class UserInfoTO implements UserDetails {
 
 	private static final long serialVersionUID = -3792334399923911589L;
 

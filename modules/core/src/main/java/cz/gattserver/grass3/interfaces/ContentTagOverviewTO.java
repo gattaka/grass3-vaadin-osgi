@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.model.dto;
+package cz.gattserver.grass3.interfaces;
 
 /**
  * Objekt sloužící pro přepravu dat mezi fasádou a view třídami
@@ -6,7 +6,7 @@ package cz.gattserver.grass3.model.dto;
  * @author gatt
  * 
  */
-public class ContentTagOverviewDTO {
+public class ContentTagOverviewTO {
 
 	/**
 	 * DB identifikátor
@@ -18,10 +18,10 @@ public class ContentTagOverviewDTO {
 	 */
 	private String name;
 
-	public ContentTagOverviewDTO() {
+	public ContentTagOverviewTO() {
 	}
 
-	public ContentTagOverviewDTO(String name) {
+	public ContentTagOverviewTO(String name) {
 		this.name = name;
 	}
 

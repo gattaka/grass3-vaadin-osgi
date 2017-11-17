@@ -15,15 +15,15 @@ import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.facades.SecurityFacade;
 import cz.gattserver.grass3.facades.UserFacade;
+import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
+import cz.gattserver.grass3.interfaces.ContentNodeTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.dao.ContentNodeRepository;
 import cz.gattserver.grass3.model.dao.NodeRepository;
 import cz.gattserver.grass3.model.dao.UserRepository;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.domain.User;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.model.util.CoreMapper;
 
 @Transactional
@@ -108,9 +108,9 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	 * @return obsah
 	 */
 	@Override
-	public ContentNodeDTO getByID(Long contentNodeId) {
+	public ContentNodeTO getByID(Long contentNodeId) {
 		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
-		ContentNodeDTO contentNodeDTO = mapper.mapContentNodeForDetail(contentNode);
+		ContentNodeTO contentNodeDTO = mapper.mapContentNodeForDetail(contentNode);
 		return contentNodeDTO;
 	}
 
@@ -224,7 +224,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	 */
 
 	private Page<ContentNode> innerByUserAccess(PageRequest pr) {
-		UserInfoDTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityFacade.getCurrentUser();
 		return contentNodeRepository.findByUserAccess(user.getId(), user.isAdmin(), pr);
 	}
 
@@ -234,13 +234,13 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	}
 
 	@Override
-	public List<ContentNodeOverviewDTO> getRecentAdded(int pageIndex, int count) {
+	public List<ContentNodeOverviewTO> getRecentAdded(int pageIndex, int count) {
 		return mapper.mapContentNodeOverviewCollection(
 				innerByUserAccess(new PageRequest(pageIndex, count, Sort.Direction.DESC, "creationDate")).getContent());
 	}
 
 	@Override
-	public List<ContentNodeOverviewDTO> getRecentModified(int pageIndex, int count) {
+	public List<ContentNodeOverviewTO> getRecentModified(int pageIndex, int count) {
 		return mapper.mapContentNodeOverviewCollection(
 				innerByUserAccess(new PageRequest(pageIndex, count, Sort.Direction.DESC, "lastModificationDate"))
 						.getContent());
@@ -251,7 +251,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	 */
 
 	private Page<ContentNode> innerByTagAndUserAccess(Long tagId, PageRequest pr) {
-		UserInfoDTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityFacade.getCurrentUser();
 		return contentNodeRepository.findByTagAndUserAccess(tagId, user.getId(), user.isAdmin(), pr);
 	}
 
@@ -261,7 +261,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	}
 
 	@Override
-	public List<ContentNodeOverviewDTO> getByTag(Long tagId, int pageIndex, int count) {
+	public List<ContentNodeOverviewTO> getByTag(Long tagId, int pageIndex, int count) {
 		return mapper.mapContentNodeOverviewCollection(
 				innerByTagAndUserAccess(tagId, new PageRequest(pageIndex, count, Sort.Direction.DESC, "creationDate"))
 						.getContent());
@@ -272,7 +272,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	 */
 
 	private Page<ContentNode> innerByUserFavouritesAndUserAccess(Long userId, PageRequest pr) {
-		UserInfoDTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityFacade.getCurrentUser();
 		return contentNodeRepository.findByUserFavouritesAndUserAccess(userId, user.getId(), user.isAdmin(), pr);
 	}
 
@@ -282,7 +282,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	}
 
 	@Override
-	public List<ContentNodeOverviewDTO> getUserFavourite(Long userId, int pageIndex, int count) {
+	public List<ContentNodeOverviewTO> getUserFavourite(Long userId, int pageIndex, int count) {
 		return mapper.mapContentNodeOverviewCollection(
 				innerByUserFavouritesAndUserAccess(userId, new PageRequest(pageIndex, count)).getContent());
 	}
@@ -292,7 +292,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	 */
 
 	private Page<ContentNode> innerByNodeAndUserAccess(Long nodeId, PageRequest pr) {
-		UserInfoDTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityFacade.getCurrentUser();
 		return contentNodeRepository.findByNodeAndUserAccess(nodeId, user.getId(), user.isAdmin(), pr);
 	}
 
@@ -302,7 +302,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	}
 
 	@Override
-	public List<ContentNodeOverviewDTO> getByNode(Long nodeId, int pageIndex, int count) {
+	public List<ContentNodeOverviewTO> getByNode(Long nodeId, int pageIndex, int count) {
 		return mapper.mapContentNodeOverviewCollection(
 				innerByNodeAndUserAccess(nodeId, new PageRequest(pageIndex, count)).getContent());
 	}

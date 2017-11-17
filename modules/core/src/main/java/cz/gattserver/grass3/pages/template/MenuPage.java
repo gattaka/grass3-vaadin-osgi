@@ -15,8 +15,8 @@ import com.vaadin.ui.Layout;
 import com.vaadin.ui.Link;
 
 import cz.gattserver.grass3.facades.NodeFacade;
-import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.interfaces.NodeOverviewTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.register.ServiceRegister;
 import cz.gattserver.grass3.security.CoreACL;
@@ -113,8 +113,8 @@ public abstract class MenuPage extends GrassPage {
 		 */
 
 		// sekce článků je rozbalená rovnou jako její kořenové kategorie
-		List<NodeOverviewDTO> nodes = nodeFacade.getRootNodes();
-		for (NodeOverviewDTO node : nodes) {
+		List<NodeOverviewTO> nodes = nodeFacade.getRootNodes();
+		for (NodeOverviewTO node : nodes) {
 			createMenuComponent(menu,
 					new Link(node.getName(), getPageResource(nodePageFactory, node.getId() + "-" + node.getName())));
 		}
@@ -147,7 +147,7 @@ public abstract class MenuPage extends GrassPage {
 		// }
 
 		// Přehled o uživateli
-		final UserInfoDTO userInfoDTO = UIUtils.getGrassUI().getUser();
+		final UserInfoTO userInfoDTO = UIUtils.getGrassUI().getUser();
 		if (coreACL.canShowUserDetails(userInfoDTO, UIUtils.getUser())) {
 			// nastavení
 			createMenuComponent(menu, new Link(userInfoDTO.getName(), getPageResource(settingsPageFactory)));

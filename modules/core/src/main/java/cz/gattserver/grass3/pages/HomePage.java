@@ -1,10 +1,6 @@
 package cz.gattserver.grass3.pages;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -23,8 +19,8 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.components.ContentsLazyGrid;
 import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.ContentTagFacade;
-import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.interfaces.ContentTagsCloudItemTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.BasePage;
 import cz.gattserver.grass3.server.GrassRequest;
@@ -61,7 +57,6 @@ public class HomePage extends BasePage {
 
 	@Override
 	protected void createContent(CustomLayout layout) {
-
 		CustomLayout contentLayout = new CustomLayout("oneColumn");
 		layout.addComponent(contentLayout, "content");
 
@@ -74,7 +69,7 @@ public class HomePage extends BasePage {
 		marginLayout.addComponent(pagelayout);
 
 		// Oblíbené
-		UserInfoDTO user = UIUtils.getUser();
+		UserInfoTO user = UIUtils.getUser();
 		if (coreACL.isLoggedIn(user)) {
 			VerticalLayout favouritesLayout = new VerticalLayout();
 			favouritesLayout.setMargin(false);
@@ -124,84 +119,22 @@ public class HomePage extends BasePage {
 	}
 
 	private void createTagCloud(VerticalLayout pagelayout) {
-
 		VerticalLayout tagCloudLayout = new VerticalLayout();
 		tagCloudLayout.setMargin(false);
 		tagCloudLayout.addComponent(new H2Label("Tagy"));
 		pagelayout.addComponent(tagCloudLayout);
 
-		List<ContentTagOverviewDTO> contentTags = contentTagFacade.getContentTagsForOverviewOrderedByName();
-
-		if (contentTags == null)
-			UIUtils.showErrorPage500();
-
+		List<ContentTagsCloudItemTO> contentTags = contentTagFacade.createTagsCloud(MAX_FONT_SIZE_TAG_CLOUD, MIN_FONT_SIZE_TAG_CLOUD);
 		if (contentTags.isEmpty()) {
 			Label noTagsLabel = new Label("Nebyly nalezeny žádné tagy");
 			tagCloudLayout.addComponent(noTagsLabel);
+			return;
 		}
-
-		/**
-		 * Pro škálování je potřeba znát počty obsahů ze všech tagů + vzestupné
-		 * řazení
-		 */
-		Map<Long, Integer> counts = contentTagFacade.getContentNodesCounts();
-
-		/**
-		 * Přepočet na vypočtení jednotky převodu
-		 */
-		double scale = MAX_FONT_SIZE_TAG_CLOUD - MIN_FONT_SIZE_TAG_CLOUD;
-		int koef = (int) Math.floor(scale / (counts.size() == 1 ? 1 : (counts.size() - 1)));
-
-		if (koef == 0)
-			koef = 1;
-
-		/**
-		 * Údaj o poslední příčce a velikosti, která jí odpovídala - dle toho
-		 * budu vědět kdy posunout ohodnocovací koeficient
-		 */
-		int lastSize = contentTags.isEmpty() ? 1 : contentTagFacade.getTagContentNodesLowestCount().getContentsCount();
-		int lastFontSize = MIN_FONT_SIZE_TAG_CLOUD;
-
-		/**
-		 * O(n)
-		 * 
-		 * Potřebuju aby bylo možné nějak zavolat svůj počet obsahů a zpátky se
-		 * vrátila velikost fontu, reps. kategorie velikosti.
-		 */
-		Map<Integer, Integer> sizeTable = new HashMap<Integer, Integer>();
-		for (ContentTagOverviewDTO contentTag : contentTags) {
-
-			/**
-			 * Spočítej jeho fontsize - pokud jsem vyšší, pak přihoď velikost
-			 * koef a ulož můj stav aby ostatní věděli, jestli mají zvyšovat,
-			 * nebo zůstat, protože mají stejnou velikost
-			 */
-			int tagContentsCount = counts.get(contentTag.getId());
-			if (tagContentsCount > lastSize) {
-				lastSize = tagContentsCount;
-				if (lastFontSize + koef <= MAX_FONT_SIZE_TAG_CLOUD)
-					lastFontSize += koef;
-			}
-
-			int size = tagContentsCount;
-			sizeTable.put(size, lastFontSize);
-		}
-
-		/**
-		 * O(n.log(n))
-		 * 
-		 * Seřaď položky listu dle abecedy (vzestupně a case insensitive)
-		 */
-		Collections.sort(contentTags, new Comparator<ContentTagOverviewDTO>() {
-			public int compare(ContentTagOverviewDTO o1, ContentTagOverviewDTO o2) {
-				return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-			}
-		});
 
 		char oldChar = 0;
 		char currChar = 0;
 		StringBuilder sb = null;
-		for (ContentTagOverviewDTO contentTag : contentTags) {
+		for (ContentTagsCloudItemTO contentTag : contentTags) {
 			currChar = contentTag.getName().toUpperCase().charAt(0);
 			if (currChar != oldChar) {
 				if (oldChar != 0) {
@@ -211,12 +144,10 @@ public class HomePage extends BasePage {
 				oldChar = currChar;
 			}
 
-			int tagContentsCount = counts.get(contentTag.getId());
-			int size = sizeTable.get(tagContentsCount);
-			sb.append("<a title='" + tagContentsCount + "'href='"
+			sb.append("<a title='" + contentTag.getContentsCount() + "'href='"
 					+ getPageURL(tagPageFactory,
 							URLIdentifierUtils.createURLIdentifier(contentTag.getId(), contentTag.getName()))
-					+ "' style='font-size:" + size + "pt'>" + contentTag.getName() + "</a> ");
+					+ "' style='font-size:" + contentTag.getFontSize() + "pt'>" + contentTag.getName() + "</a> ");
 		}
 		createTags(sb, currChar, tagCloudLayout);
 	}

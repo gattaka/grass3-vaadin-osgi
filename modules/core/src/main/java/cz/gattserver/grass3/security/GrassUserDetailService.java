@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.facades.UserFacade;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 
 @Component
 public class GrassUserDetailService implements UserDetailsService {
@@ -16,7 +16,7 @@ public class GrassUserDetailService implements UserDetailsService {
 	private UserFacade userFacade;
 
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		final UserInfoDTO user = userFacade.getUser(username);
+		final UserInfoTO user = userFacade.getUser(username);
 		if (user == null)
 			throw new UsernameNotFoundException("Unable to find user");
 		return user;

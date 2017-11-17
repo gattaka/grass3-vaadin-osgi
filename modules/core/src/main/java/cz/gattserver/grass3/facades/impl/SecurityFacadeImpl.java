@@ -17,9 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.vaadin.server.VaadinServletService;
 
 import cz.gattserver.grass3.facades.SecurityFacade;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.dao.UserRepository;
 import cz.gattserver.grass3.model.domain.User;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
 
 @Transactional
 @Component
@@ -36,7 +36,7 @@ public class SecurityFacadeImpl implements SecurityFacade {
 
 	public boolean login(String username, String password, boolean remember) {
 
-		UserInfoDTO principal = new UserInfoDTO();
+		UserInfoTO principal = new UserInfoTO();
 		principal.setName(username);
 
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(principal, password);
@@ -45,7 +45,7 @@ public class SecurityFacadeImpl implements SecurityFacade {
 		try {
 			Authentication auth = authenticationManager.authenticate(token);
 			if (auth.isAuthenticated()) {
-				principal = (UserInfoDTO) auth.getPrincipal();
+				principal = (UserInfoTO) auth.getPrincipal();
 				SecurityContextHolder.getContext().setAuthentication(auth);
 				if (remember && rememberMeServices instanceof TokenBasedRememberMeServices) {
 					TokenBasedRememberMeServices rms = (TokenBasedRememberMeServices) rememberMeServices;
@@ -64,15 +64,15 @@ public class SecurityFacadeImpl implements SecurityFacade {
 
 	}
 
-	public UserInfoDTO getCurrentUser() {
+	public UserInfoTO getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null) {
 			Object principal = authentication.getPrincipal();
-			if (principal instanceof UserInfoDTO) {
-				return (UserInfoDTO) principal;
+			if (principal instanceof UserInfoTO) {
+				return (UserInfoTO) principal;
 			}
 		}
-		UserInfoDTO anonUser = new UserInfoDTO();
+		UserInfoTO anonUser = new UserInfoTO();
 		return anonUser;
 	}
 

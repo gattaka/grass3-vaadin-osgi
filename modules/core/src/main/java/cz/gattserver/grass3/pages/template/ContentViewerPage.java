@@ -29,9 +29,9 @@ import cz.gattserver.grass3.components.ImageButton;
 import cz.gattserver.grass3.components.ModifyButton;
 import cz.gattserver.grass3.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.facades.UserFacade;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
-import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.interfaces.ContentNodeTO;
+import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
+import cz.gattserver.grass3.interfaces.NodeTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.security.CoreACL;
@@ -57,7 +57,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	@Resource(name = "tagPageFactory")
 	private PageFactory tagPageFactory;
 
-	private ContentNodeDTO content;
+	private ContentNodeTO content;
 	private Label contentNameLabel;
 	private Label contentAuthorNameLabel;
 	private Label contentCreationDateNameLabel;
@@ -96,7 +96,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		contentLastModificationDateLabel.setContentMode(ContentMode.HTML);
 
 		tagsListLayout.removeAllComponents();
-		for (ContentTagOverviewDTO contentTag : content.getContentTags()) {
+		for (ContentTagOverviewTO contentTag : content.getContentTags()) {
 			Link tagLink = new Link(contentTag.getName(), getPageResource(tagPageFactory,
 					URLIdentifierUtils.createURLIdentifier(contentTag.getId(), contentTag.getName())));
 			tagLink.addStyleName("taglabel");
@@ -242,11 +242,11 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 	protected abstract void createContent(VerticalLayout layout);
 
-	protected abstract ContentNodeDTO getContentNodeDTO();
+	protected abstract ContentNodeTO getContentNodeDTO();
 
 	protected abstract PageFactory getContentViewerPageFactory();
 
-	private void updateBreadcrumb(ContentNodeDTO content) {
+	private void updateBreadcrumb(ContentNodeTO content) {
 
 		// pokud zjistím, že cesta neodpovídá, vyhodím 302 (přesměrování) na
 		// aktuální polohu cílové kategorie
@@ -261,7 +261,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		/**
 		 * kategorie
 		 */
-		NodeDTO parent = nodeFacade.getNodeByIdForDetail(content.getParent().getId());
+		NodeTO parent = nodeFacade.getNodeByIdForDetail(content.getParent().getId());
 		while (true) {
 
 			// nejprve zkus zjistit, zda předek existuje

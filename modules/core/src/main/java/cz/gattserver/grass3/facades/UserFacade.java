@@ -3,7 +3,7 @@ package cz.gattserver.grass3.facades;
 import java.util.List;
 import java.util.Set;
 
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.security.Role;
 
 /**
@@ -20,7 +20,7 @@ public interface UserFacade {
 	 *            heslo uživatele
 	 * @return uživatel nebo <code>null</code>
 	 */
-	public UserInfoDTO getUserByLogin(String username, String password);
+	public UserInfoTO getUserByLogin(String username, String password);
 
 	/**
 	 * Zaregistruje nového uživatele
@@ -67,7 +67,7 @@ public interface UserFacade {
 	 * 
 	 * @return list uživatelů
 	 */
-	public List<UserInfoDTO> getUserInfoFromAllUsers();
+	public List<UserInfoTO> getUserInfoFromAllUsers();
 
 	/**
 	 * Vrátí uživatele dle jména
@@ -76,7 +76,7 @@ public interface UserFacade {
 	 *            jméno uživatele
 	 * @return nalezný uživatel
 	 */
-	public UserInfoDTO getUser(String username);
+	public UserInfoTO getUser(String username);
 
 	/**
 	 * Vrátí uživatele dle id
@@ -85,7 +85,7 @@ public interface UserFacade {
 	 *            id hledaného uživatele
 	 * @return nalezený uživatel
 	 */
-	public UserInfoDTO getUser(Long userId);
+	public UserInfoTO getUser(Long userId);
 
 	/**
 	 * Zjistí zda daný obsah je v oblíbených daného uživatele

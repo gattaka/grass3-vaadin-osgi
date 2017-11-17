@@ -3,7 +3,7 @@ package cz.gattserver.grass3.pages.factories.template;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cz.gattserver.grass3.facades.SecurityFacade;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.pages.err.Error403Page;
 import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.server.GrassRequest;
@@ -28,9 +28,9 @@ public abstract class AbstractPageFactory implements PageFactory {
 	}
 
 	/**
-	 * Získá aktuálního přihlášeného uživatele jako {@link UserInfoDTO} objekt
+	 * Získá aktuálního přihlášeného uživatele jako {@link UserInfoTO} objekt
 	 */
-	protected UserInfoDTO getUser() {
+	protected UserInfoTO getUser() {
 		return securityFacade.getCurrentUser();
 	}
 

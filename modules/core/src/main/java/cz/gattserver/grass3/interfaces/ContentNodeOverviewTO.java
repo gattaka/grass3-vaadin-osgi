@@ -1,18 +1,14 @@
-package cz.gattserver.grass3.model.dto;
+package cz.gattserver.grass3.interfaces;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 /**
- * Objekt sloužící pro přepravu dat mezi fasádou a view třídami
+ * Objekt sloužící pro přepravu dat mezi fasádou a view třídami, overview
  * 
  * @author gatt
  * 
  */
-public class ContentNodeDTO implements Serializable, Authorizable {
-
-	private static final long serialVersionUID = 723375154665160018L;
+public class ContentNodeOverviewTO {
 
 	/**
 	 * ID služby, která daný obsah umí číst
@@ -32,7 +28,7 @@ public class ContentNodeDTO implements Serializable, Authorizable {
 	/**
 	 * nadřazený uzel (kategorie ve které obsah je)
 	 */
-	private NodeOverviewDTO parent;
+	private NodeOverviewTO parent;
 
 	/**
 	 * Kdy byl obsah vytvořen
@@ -50,45 +46,14 @@ public class ContentNodeDTO implements Serializable, Authorizable {
 	private Boolean publicated = true;
 
 	/**
-	 * Jde o plnohodnotný článek, nebo jde o rozpracovaný obsah?
-	 */
-	private Boolean draft = false;
-
-	/**
-	 * Jde-li o draft upravovaného obsahu, jaké je jeho id
-	 */
-	private Long draftSourceId;
-
-	/**
-	 * Tagy
-	 */
-	private Set<ContentTagOverviewDTO> contentTags;
-
-	/**
 	 * Kdo ho vytvořil
 	 */
-	private UserInfoDTO author;
+	private UserInfoTO author;
 
 	/**
 	 * DB identifikátor
 	 */
 	private Long id;
-
-	public Long getDraftSourceId() {
-		return draftSourceId;
-	}
-
-	public void setDraftSourceId(Long draftSourceId) {
-		this.draftSourceId = draftSourceId;
-	}
-
-	public Boolean isDraft() {
-		return draft == null ? false : draft;
-	}
-
-	public void setDraft(Boolean draft) {
-		this.draft = draft;
-	}
 
 	public Long getId() {
 		return id;
@@ -146,28 +111,20 @@ public class ContentNodeDTO implements Serializable, Authorizable {
 		this.name = name;
 	}
 
-	public NodeOverviewDTO getParent() {
+	public NodeOverviewTO getParent() {
 		return parent;
 	}
 
-	public void setParent(NodeOverviewDTO parent) {
+	public void setParent(NodeOverviewTO parent) {
 		this.parent = parent;
 	}
 
-	public UserInfoDTO getAuthor() {
+	public UserInfoTO getAuthor() {
 		return author;
 	}
 
-	public void setAuthor(UserInfoDTO author) {
+	public void setAuthor(UserInfoTO author) {
 		this.author = author;
-	}
-
-	public Set<ContentTagOverviewDTO> getContentTags() {
-		return contentTags;
-	}
-
-	public void setContentTags(Set<ContentTagOverviewDTO> contentTags) {
-		this.contentTags = contentTags;
 	}
 
 }

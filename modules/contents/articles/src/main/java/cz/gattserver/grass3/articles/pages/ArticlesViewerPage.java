@@ -15,9 +15,9 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.articles.dto.ArticleDTO;
 import cz.gattserver.grass3.articles.facade.ArticleFacade;
 import cz.gattserver.grass3.components.DefaultContentOperations;
+import cz.gattserver.grass3.interfaces.ContentNodeTO;
+import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.js.JScriptItem;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.security.CoreACL;
@@ -106,7 +106,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 	}
 
 	@Override
-	protected ContentNodeDTO getContentNodeDTO() {
+	protected ContentNodeTO getContentNodeDTO() {
 		return article.getContentNode();
 	}
 
@@ -141,7 +141,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 	@Override
 	protected void onDeleteOperation() {
 		ConfirmWindow confirmSubwindow = new ConfirmWindow("Opravdu si přejete smazat tento článek ?", event -> {
-			NodeOverviewDTO nodeDTO = article.getContentNode().getParent();
+			NodeOverviewTO nodeDTO = article.getContentNode().getParent();
 			final String nodeURL = getPageURL(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(nodeDTO.getId(), nodeDTO.getName()));
 

@@ -35,9 +35,9 @@ import cz.gattserver.grass3.articles.service.impl.ArticlesContentService;
 import cz.gattserver.grass3.articles.util.ArticlesMapper;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.facades.ContentNodeFacade;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
 
 @Transactional
 @Component
@@ -215,7 +215,7 @@ public class ArticleFacadeImpl implements ArticleFacade {
 	}
 
 	@Override
-	public List<ArticleDraftOverviewDTO> getDraftsForUser(UserInfoDTO user) {
+	public List<ArticleDraftOverviewDTO> getDraftsForUser(UserInfoTO user) {
 		List<Article> articles = articleRepository.findDraftsForUser(user.getId(), user.isAdmin());
 		if (articles == null)
 			return null;

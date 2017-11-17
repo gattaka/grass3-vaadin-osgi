@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
+import cz.gattserver.grass3.interfaces.ContentTagsCloudItemTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
-import cz.gattserver.grass3.model.dto.ContentTagCountTO;
-import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
 
 public interface ContentTagFacade {
 
@@ -15,7 +15,7 @@ public interface ContentTagFacade {
 	 * 
 	 * @return list tagů bez jejich vazeb na své obsahy
 	 */
-	List<ContentTagOverviewDTO> getContentTagsForOverviewOrderedByName();
+	List<ContentTagOverviewTO> getTagsForOverviewOrderedByName();
 
 	/**
 	 * Získá tag pro přehled
@@ -24,7 +24,7 @@ public interface ContentTagFacade {
 	 *            id tagu
 	 * @return tag bez jeho vazby na své obsahy
 	 */
-	ContentTagOverviewDTO getContentTagById(Long id);
+	ContentTagOverviewTO getTagById(Long id);
 
 	/**
 	 * Získá tag dle názvu
@@ -33,7 +33,7 @@ public interface ContentTagFacade {
 	 *            název tagu
 	 * @return tag bez jeho vazby na své obsahy
 	 */
-	ContentTagOverviewDTO getContentTagByName(String name);
+	ContentTagOverviewTO getTagByName(String name);
 
 	/**
 	 * Bere řetězec tagů, parsuje je a ukládá do nich (nebo vytvoří nové)
@@ -64,27 +64,44 @@ public interface ContentTagFacade {
 	 *            id tagu jehož počet obsahů chci získat
 	 * @return počet obsahů s daným tagem
 	 */
-	int getContentNodesCount(Long tagId);
+	int getTagContentsCount(Long tagId);
 
 	/**
-	 * Získá mapu počtů obsahů dle jednotlivých tagů seřazenou dle počtu
+	 * Získá mapu id tagů s počty jejich obsahů, seřazených dle těchto počtů
 	 * 
-	 * @return mapa počtů dle tagů
+	 * @return mapa id tagů s počty
 	 */
-	Map<Long, Integer> getContentNodesCounts();
+	Map<Long, Integer> getTagsContentsCountsMap();
 
 	/**
-	 * Získá info o tagu s nejnižším počtem obsahů
+	 * Získá list skupin počtů obsahů seřazenou vzestupně dle počtu. Zjistí tak,
+	 * že počty obsahů tagů existují například ve skupinách:
 	 * 
-	 * @return počet obsahů
+	 * <p>
+	 * skupina tagů, které mají 1 obsah<br/>
+	 * skupina tagů, které mají 2 obsahy<br/>
+	 * skupina tagů, které mají 5 obsahů<br/>
+	 * skupina tagů, které mají 7 obsahů<br/>
+	 * skupina tagů, které mají 15 obsahů<br/>
+	 * a tak dále
+	 * </p>
+	 *
+	 * 
+	 * @return list skupin počtů seřazený vzestupně dle počtu
 	 */
-	ContentTagCountTO getTagContentNodesLowestCount();
+	List<Integer> getTagsContentsCountsGroups();
 
 	/**
-	 * Získá info o tagu s nejvyšším počtem obsahů
+	 * Vytvoří přehled tagů pro sestavení tagCloud
 	 * 
-	 * @return počet obsahů
+	 * @param maxFontSize
+	 *            velikost fontu, která má být přiřazena tagům s největším
+	 *            počtem obsahů
+	 * @param minFontSize
+	 *            velikost fontu, která má být přiřazena tagům s nejmenším
+	 *            počtem obsahů
+	 * @return list tagů seřazených dle počtu obsahů
 	 */
-	ContentTagCountTO getTagContentNodesHighestCount();
+	List<ContentTagsCloudItemTO> createTagsCloud(int maxFontSize, int minFontSize);
 
 }

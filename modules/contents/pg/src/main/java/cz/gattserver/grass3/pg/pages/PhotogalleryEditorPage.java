@@ -48,8 +48,8 @@ import cz.gattserver.grass3.components.MultiUpload;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
-import cz.gattserver.grass3.model.dto.ContentTagOverviewDTO;
-import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
+import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
+import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
@@ -94,7 +94,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	private UI ui = UI.getCurrent();
 	private ProgressWindow progressIndicatorWindow;
 
-	private NodeOverviewDTO node;
+	private NodeOverviewTO node;
 	private PhotogalleryDTO photogallery;
 
 	private TokenField photogalleryKeywords;
@@ -155,7 +155,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			photogallery = photogalleryFacade.getPhotogalleryForDetail(identifier.getId());
 			photogalleryNameField.setValue(photogallery.getContentNode().getName());
 
-			for (ContentTagOverviewDTO tagDTO : photogallery.getContentNode().getContentTags()) {
+			for (ContentTagOverviewTO tagDTO : photogallery.getContentNode().getContentTags()) {
 				photogalleryKeywords.addToken(new Token(tagDTO.getName()));
 			}
 
@@ -208,7 +208,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		keywordsMenuAndTextLayout.addComponent(photogalleryKeywords);
 
-		List<ContentTagOverviewDTO> contentTags = contentTagFacade.getContentTagsForOverviewOrderedByName();
+		List<ContentTagOverviewTO> contentTags = contentTagFacade.getTagsForOverviewOrderedByName();
 		contentTags.forEach(t -> {
 			Token to = new Token(t.getName());
 			photogalleryKeywords.addTokenToInputField(to);

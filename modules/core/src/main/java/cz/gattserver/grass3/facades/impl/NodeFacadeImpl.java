@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import cz.gattserver.grass3.facades.NodeFacade;
+import cz.gattserver.grass3.interfaces.NodeOverviewTO;
+import cz.gattserver.grass3.interfaces.NodeTO;
 import cz.gattserver.grass3.model.dao.NodeRepository;
 import cz.gattserver.grass3.model.domain.Node;
-import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
 import cz.gattserver.grass3.model.util.CoreMapper;
 
 @Transactional
@@ -26,52 +26,52 @@ public class NodeFacadeImpl implements NodeFacade {
 	private NodeRepository nodeRepository;
 
 	@Override
-	public NodeOverviewDTO getNodeByIdForOverview(Long id) {
+	public NodeOverviewTO getNodeByIdForOverview(Long id) {
 		Node node = nodeRepository.findOne(id);
 		if (node == null)
 			return null;
-		NodeOverviewDTO nodeDTO = mapper.mapNodeForOverview(node);
+		NodeOverviewTO nodeDTO = mapper.mapNodeForOverview(node);
 		return nodeDTO;
 	}
 
 	@Override
-	public NodeDTO getNodeByIdForDetail(Long id) {
+	public NodeTO getNodeByIdForDetail(Long id) {
 		Node node = nodeRepository.findOne(id);
 		if (node == null)
 			return null;
-		NodeDTO nodeDTO = mapper.mapNodeForDetail(node);
+		NodeTO nodeDTO = mapper.mapNodeForDetail(node);
 		return nodeDTO;
 	}
 
 	@Override
-	public List<NodeOverviewDTO> getRootNodes() {
+	public List<NodeOverviewTO> getRootNodes() {
 		List<Node> rootNodes = nodeRepository.findByParentIsNull();
 		if (rootNodes == null) {
 			return null;
 		}
-		List<NodeOverviewDTO> rootNodesDTOs = mapper.mapNodesForOverview(rootNodes);
+		List<NodeOverviewTO> rootNodesDTOs = mapper.mapNodesForOverview(rootNodes);
 		return rootNodesDTOs;
 	}
 
 	@Override
-	public List<NodeOverviewDTO> getNodesForTree() {
+	public List<NodeOverviewTO> getNodesForTree() {
 		List<Node> nodes = nodeRepository.findAll(new Sort("id"));
 		if (nodes == null) {
 			return null;
 		}
-		List<NodeOverviewDTO> nodeDTOs = mapper.mapNodesForOverview(nodes);
+		List<NodeOverviewTO> nodeDTOs = mapper.mapNodesForOverview(nodes);
 		return nodeDTOs;
 	}
 
 	@Override
-	public List<NodeOverviewDTO> getNodesByParentNode(Long parentId) {
+	public List<NodeOverviewTO> getNodesByParentNode(Long parentId) {
 		List<Node> childrenNodes = nodeRepository.findByParentId(parentId);
 
 		if (childrenNodes == null) {
 			return null;
 		}
 
-		List<NodeOverviewDTO> childrenNodesDTOs = mapper.mapNodesForOverview(childrenNodes);
+		List<NodeOverviewTO> childrenNodesDTOs = mapper.mapNodesForOverview(childrenNodes);
 		return childrenNodesDTOs;
 	}
 

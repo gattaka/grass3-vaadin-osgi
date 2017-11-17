@@ -5,7 +5,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.TextArea;
 
-import cz.gattserver.grass3.model.dto.QuoteDTO;
+import cz.gattserver.grass3.interfaces.QuoteTO;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -14,7 +14,7 @@ public class QuoteWindow extends WebWindow {
 	private static final long serialVersionUID = -8494081277784752858L;
 
 	interface SaveAction {
-		void onSave(QuoteDTO quoteDTO);
+		void onSave(QuoteTO quoteDTO);
 	}
 
 	public QuoteWindow(SaveAction saveAction) {
@@ -22,12 +22,12 @@ public class QuoteWindow extends WebWindow {
 		init(null, saveAction);
 	}
 
-	public QuoteWindow(QuoteDTO quote, SaveAction saveAction) {
+	public QuoteWindow(QuoteTO quote, SaveAction saveAction) {
 		super("Upravit hlášku");
 		init(quote, saveAction);
 	}
 
-	private void init(QuoteDTO quote, SaveAction saveAction) {
+	private void init(QuoteTO quote, SaveAction saveAction) {
 		final int maxLength = 90;
 		final TextArea newQuoteText = new TextArea();
 		newQuoteText.setRows(2);
@@ -44,7 +44,7 @@ public class QuoteWindow extends WebWindow {
 		addComponent(new Button("Uložit", event -> {
 			if (newQuoteText.getComponentError() != null)
 				return;
-			QuoteDTO q = quote == null ? new QuoteDTO() : quote;
+			QuoteTO q = quote == null ? new QuoteTO() : quote;
 			q.setName(newQuoteText.getValue());
 			saveAction.onSave(q);
 			close();

@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import cz.gattserver.grass3.facades.QuotesFacade;
+import cz.gattserver.grass3.interfaces.QuoteTO;
 import cz.gattserver.grass3.model.dao.QuoteRepository;
 import cz.gattserver.grass3.model.domain.Quote;
-import cz.gattserver.grass3.model.dto.QuoteDTO;
 import cz.gattserver.grass3.model.util.CoreMapper;
 
 @Transactional
@@ -27,7 +27,7 @@ public class QuotesFacadeImpl implements QuotesFacade {
 	/**
 	 * Uloží hlášku
 	 */
-	public void saveQuote(QuoteDTO quoteDTO) {
+	public void saveQuote(QuoteTO quoteDTO) {
 		Quote quote = new Quote();
 		quote.setId(quoteDTO.getId());
 		quote.setName(quoteDTO.getName());
@@ -35,13 +35,13 @@ public class QuotesFacadeImpl implements QuotesFacade {
 	}
 
 	/**
-	 * Získá všechny hlášky a vrátí je jako list {@link QuoteDTO}
+	 * Získá všechny hlášky a vrátí je jako list {@link QuoteTO}
 	 * 
 	 * @return
 	 */
-	public List<QuoteDTO> getAllQuotes() {
+	public List<QuoteTO> getAllQuotes() {
 		List<Quote> quotes = quoteRepository.findAll();
-		List<QuoteDTO> quoteDTOs = new ArrayList<QuoteDTO>();
+		List<QuoteTO> quoteDTOs = new ArrayList<QuoteTO>();
 		for (Quote quote : quotes) {
 			quoteDTOs.add(mapper.map(quote));
 		}

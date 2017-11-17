@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
+import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.Node;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
 
 public interface ContentNodeFacade {
 
@@ -50,7 +50,7 @@ public interface ContentNodeFacade {
 	 *            identifikátor obsahu
 	 * @return obsah
 	 */
-	public ContentNodeDTO getByID(Long id);
+	public ContentNodeTO getByID(Long id);
 
 	/**
 	 * Upraví obsah a uloží ho do DB - verze metody pro obsah bez tagů
@@ -131,7 +131,7 @@ public interface ContentNodeFacade {
 	 *            velikost stránky při stránkování
 	 * @return list nalezených obsahů dle stránkování
 	 */
-	public List<ContentNodeOverviewDTO> getRecentAdded(int pageIndex, int count);
+	public List<ContentNodeOverviewTO> getRecentAdded(int pageIndex, int count);
 
 	/**
 	 * Získá stránku nedávno upravených obsahů (pro LazyQueryContainer)
@@ -142,7 +142,7 @@ public interface ContentNodeFacade {
 	 *            velikost stránky při stránkování
 	 * @return list nalezených obsahů dle stránkování
 	 */
-	public List<ContentNodeOverviewDTO> getRecentModified(int pageIndex, int count);
+	public List<ContentNodeOverviewTO> getRecentModified(int pageIndex, int count);
 
 	/**
 	 * Získá počet obsahů dle tagu (pro LazyQueryContainer)
@@ -164,7 +164,7 @@ public interface ContentNodeFacade {
 	 *            velikost stránky při stránkování
 	 * @return list nalezených obsahů dle stránkování
 	 */
-	public List<ContentNodeOverviewDTO> getByTag(Long tagId, int pageIndex, int count);
+	public List<ContentNodeOverviewTO> getByTag(Long tagId, int pageIndex, int count);
 
 	/**
 	 * Získá počet oblíbených obsahů dle uživatele (pro LazyQueryContainer)
@@ -186,7 +186,7 @@ public interface ContentNodeFacade {
 	 *            velikost stránky při stránkování
 	 * @return list nalezených obsahů dle stránkování a omezení
 	 */
-	public List<ContentNodeOverviewDTO> getUserFavourite(Long userId, int pageIndex, int count);
+	public List<ContentNodeOverviewTO> getUserFavourite(Long userId, int pageIndex, int count);
 
 	/**
 	 * Získá počet obsahů dle kategorie (pro LazyQueryContainer)
@@ -208,6 +208,6 @@ public interface ContentNodeFacade {
 	 *            velikost stránky při stránkování
 	 * @return list nalezených obsahů dle stránkování a omezení
 	 */
-	public List<ContentNodeOverviewDTO> getByNode(Long nodeId, int pageIndex, int count);
+	public List<ContentNodeOverviewTO> getByNode(Long nodeId, int pageIndex, int count);
 
 }

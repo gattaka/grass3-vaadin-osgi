@@ -1,8 +1,8 @@
 package cz.gattserver.grass3.security;
 
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.Authorizable;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.interfaces.Authorizable;
+import cz.gattserver.grass3.interfaces.ContentNodeTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.service.SectionService;
 
 public interface CoreACL {
@@ -16,12 +16,12 @@ public interface CoreACL {
 	/**
 	 * Může uživatel zobrazit danou sekci ?
 	 */
-	public boolean canShowSection(SectionService section, UserInfoDTO user);
+	public boolean canShowSection(SectionService section, UserInfoTO user);
 
 	/**
 	 * Může uživatel upravovat "hlášky"
 	 */
-	public boolean canModifyQuotes(UserInfoDTO user);
+	public boolean canModifyQuotes(UserInfoTO user);
 
 	/**
 	 * =======================================================================
@@ -37,17 +37,17 @@ public interface CoreACL {
 	/**
 	 * Může uživatel vytvářet obsah ?
 	 */
-	public boolean canCreateContent(UserInfoDTO user);
+	public boolean canCreateContent(UserInfoTO user);
 
 	/**
 	 * Může uživatel upravit daný obsah ?
 	 */
-	public boolean canModifyContent(Authorizable content, UserInfoDTO user);
+	public boolean canModifyContent(Authorizable content, UserInfoTO user);
 
 	/**
 	 * Může uživatel smazat daný obsah ?
 	 */
-	public boolean canDeleteContent(Authorizable content, UserInfoDTO user);
+	public boolean canDeleteContent(Authorizable content, UserInfoTO user);
 
 	/**
 	 * =======================================================================
@@ -58,22 +58,22 @@ public interface CoreACL {
 	/**
 	 * Může uživatel založit kategorii ?
 	 */
-	public boolean canCreateNode(UserInfoDTO user);
+	public boolean canCreateNode(UserInfoTO user);
 
 	/**
 	 * Může uživatel upravit kategorii ?
 	 */
-	public boolean canModifyNode(UserInfoDTO user);
+	public boolean canModifyNode(UserInfoTO user);
 
 	/**
 	 * Může uživatel přesunout kategorii ?
 	 */
-	public boolean canMoveNode(UserInfoDTO user);
+	public boolean canMoveNode(UserInfoTO user);
 
 	/**
 	 * Může uživatel smazat kategorii ?
 	 */
-	public boolean canDeleteNode(UserInfoDTO user);
+	public boolean canDeleteNode(UserInfoTO user);
 
 	/**
 	 * =======================================================================
@@ -84,46 +84,46 @@ public interface CoreACL {
 	/**
 	 * Je uživatel přihlášen?
 	 */
-	public boolean isLoggedIn(UserInfoDTO user);
+	public boolean isLoggedIn(UserInfoTO user);
 
 	/**
 	 * Může daný uživatel zobrazit detaily o uživateli X ?
 	 */
-	public boolean canShowUserDetails(UserInfoDTO anotherUser, UserInfoDTO user);
+	public boolean canShowUserDetails(UserInfoTO anotherUser, UserInfoTO user);
 
 	/**
 	 * Může se uživatel zaregistrovat ?
 	 */
-	public boolean canRegistrate(UserInfoDTO user);
+	public boolean canRegistrate(UserInfoTO user);
 
 	/**
 	 * Může zobrazit stránku s nastavením ?
 	 */
-	public boolean canShowSettings(UserInfoDTO user);
+	public boolean canShowSettings(UserInfoTO user);
 
 	/**
 	 * Může zobrazit stránku s nastavením aplikace ?
 	 */
-	public boolean canShowApplicationSettings(UserInfoDTO user);
+	public boolean canShowApplicationSettings(UserInfoTO user);
 
 	/**
 	 * Může zobrazit stránku s nastavením kategorií ?
 	 */
-	public boolean canShowCategoriesSettings(UserInfoDTO user);
+	public boolean canShowCategoriesSettings(UserInfoTO user);
 
 	/**
 	 * Může zobrazit stránku s nastavením uživatelů ?
 	 */
-	public boolean canShowUserSettings(UserInfoDTO user);
+	public boolean canShowUserSettings(UserInfoTO user);
 
 	/**
 	 * Může přidat obsah do svých oblíbených ?
 	 */
-	public boolean canAddContentToFavourites(ContentNodeDTO contentNodeDTO, UserInfoDTO user);
+	public boolean canAddContentToFavourites(ContentNodeTO contentNodeDTO, UserInfoTO user);
 
 	/**
 	 * Může odebrat obsah ze svých oblíbených ?
 	 */
-	public boolean canRemoveContentFromFavourites(ContentNodeDTO contentNode, UserInfoDTO user);
+	public boolean canRemoveContentFromFavourites(ContentNodeTO contentNode, UserInfoTO user);
 
 }

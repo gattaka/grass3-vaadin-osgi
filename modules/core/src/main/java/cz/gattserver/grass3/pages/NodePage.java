@@ -22,8 +22,8 @@ import cz.gattserver.grass3.components.NodesGrid;
 import cz.gattserver.grass3.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.NodeFacade;
-import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
+import cz.gattserver.grass3.interfaces.NodeOverviewTO;
+import cz.gattserver.grass3.interfaces.NodeTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.security.CoreACL;
@@ -75,7 +75,7 @@ public class NodePage extends OneColumnPage {
 			return layout;
 		}
 
-		NodeDTO node = nodeFacade.getNodeByIdForDetail(identifier.getId());
+		NodeTO node = nodeFacade.getNodeByIdForDetail(identifier.getId());
 
 		// TODO pokud má jiný název, přesměruj na kategorii s ID-Název správným
 		// názvem
@@ -92,7 +92,7 @@ public class NodePage extends OneColumnPage {
 		return marginLayout;
 	}
 
-	private void createNewNodePanel(VerticalLayout layout, final NodeDTO node) {
+	private void createNewNodePanel(VerticalLayout layout, final NodeTO node) {
 
 		HorizontalLayout panelLayout = new HorizontalLayout();
 		panelLayout.setMargin(false);
@@ -127,7 +127,7 @@ public class NodePage extends OneColumnPage {
 
 	}
 
-	private void createBreadcrumb(VerticalLayout layout, NodeDTO node) {
+	private void createBreadcrumb(VerticalLayout layout, NodeTO node) {
 
 		Breadcrumb breadcrumb = new Breadcrumb();
 		layout.addComponent(breadcrumb);
@@ -135,7 +135,7 @@ public class NodePage extends OneColumnPage {
 		// pokud zjistím, že cesta neodpovídá, vyhodím 302 (přesměrování) na
 		// aktuální polohu cílové kategorie
 		List<BreadcrumbElement> breadcrumbElements = new ArrayList<BreadcrumbElement>();
-		NodeDTO parent = node;
+		NodeTO parent = node;
 		while (true) {
 
 			// nejprve zkus zjistit, zda předek existuje
@@ -155,7 +155,7 @@ public class NodePage extends OneColumnPage {
 		breadcrumb.resetBreadcrumb(breadcrumbElements);
 	}
 
-	private void createSubnodesPart(VerticalLayout layout, NodeDTO node) {
+	private void createSubnodesPart(VerticalLayout layout, NodeTO node) {
 		VerticalLayout subNodesLayout = new VerticalLayout();
 		subNodesLayout.setMargin(false);
 		subNodesTable = new NodesGrid(NodePage.this);
@@ -174,8 +174,8 @@ public class NodePage extends OneColumnPage {
 		}
 	}
 
-	private void populateSubnodesTable(NodeDTO node) {
-		List<NodeOverviewDTO> nodes = nodeFacade.getNodesByParentNode(node.getId());
+	private void populateSubnodesTable(NodeTO node) {
+		List<NodeOverviewTO> nodes = nodeFacade.getNodesByParentNode(node.getId());
 		if (nodes == null) {
 			UIUtils.showErrorPage500();
 			return;
@@ -183,7 +183,7 @@ public class NodePage extends OneColumnPage {
 		subNodesTable.populate(nodes);
 	}
 
-	private void createContentsPart(VerticalLayout layout, NodeDTO node) {
+	private void createContentsPart(VerticalLayout layout, NodeTO node) {
 		VerticalLayout contentsLayout = new VerticalLayout();
 		contentsLayout.setMargin(false);
 		ContentsLazyGrid contentsTable = new ContentsLazyGrid();
@@ -202,7 +202,7 @@ public class NodePage extends OneColumnPage {
 		createNewContentMenu(layout, node);
 	}
 
-	private void createNewContentMenu(VerticalLayout layout, NodeDTO node) {
+	private void createNewContentMenu(VerticalLayout layout, NodeTO node) {
 		VerticalLayout newContentsLayout = new VerticalLayout();
 		newContentsLayout.setMargin(false);
 		NewContentNodeGrid newContentsTable = new NewContentNodeGrid(NodePage.this, node);

@@ -6,7 +6,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.renderers.ImageRenderer;
 
-import cz.gattserver.grass3.model.dto.NodeDTO;
+import cz.gattserver.grass3.interfaces.NodeTO;
 import cz.gattserver.grass3.pages.template.MenuPage;
 import cz.gattserver.grass3.register.ServiceRegister;
 import cz.gattserver.grass3.service.ContentService;
@@ -18,7 +18,7 @@ public class NewContentNodeGrid extends Grid<ContentService> {
 
 	private static final long serialVersionUID = -2220485504407844582L;
 
-	public NewContentNodeGrid(MenuPage page, final NodeDTO node) {
+	public NewContentNodeGrid(MenuPage page, final NodeTO node) {
 		// inject nefunguje kvůli něčemu v předkovi
 		final ServiceRegister serviceHolder = (ServiceRegister) SpringContextHelper.getContext()
 				.getBean(ServiceRegister.class);

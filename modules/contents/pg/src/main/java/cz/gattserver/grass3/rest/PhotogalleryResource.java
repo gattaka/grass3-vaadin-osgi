@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cz.gattserver.grass3.facades.SecurityFacade;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryRESTDTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
 import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
@@ -37,7 +37,7 @@ public class PhotogalleryResource {
 
 	@RequestMapping("/log")
 	public @ResponseBody String log() {
-		UserInfoDTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityFacade.getCurrentUser();
 		return user.getName() == null ? "unauth" : user.getName();
 	}
 
@@ -56,7 +56,7 @@ public class PhotogalleryResource {
 	// http://localhost:8180/web/ws/pg/list
 	@RequestMapping("/list")
 	public ResponseEntity<List<PhotogalleryRESTOverviewDTO>> list() {
-		UserInfoDTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityFacade.getCurrentUser();
 		return new ResponseEntity<>(photogalleryFacade.getAllPhotogalleriesForREST(user.getId()), HttpStatus.OK);
 	}
 

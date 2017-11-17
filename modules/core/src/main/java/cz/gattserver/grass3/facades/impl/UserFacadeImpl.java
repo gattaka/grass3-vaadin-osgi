@@ -15,10 +15,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import cz.gattserver.grass3.facades.UserFacade;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.dao.ContentNodeRepository;
 import cz.gattserver.grass3.model.dao.UserRepository;
 import cz.gattserver.grass3.model.domain.User;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.model.util.CoreMapper;
 import cz.gattserver.grass3.security.Role;
 
@@ -39,7 +39,7 @@ public class UserFacadeImpl implements UserFacade {
 	private ContentNodeRepository contentNodeRepository;
 
 	@Override
-	public UserInfoDTO getUserByLogin(String username, String password) {
+	public UserInfoTO getUserByLogin(String username, String password) {
 		User user = userRepository.findByName(username);
 		if (user != null && user.getPassword().equals(encoder.encode(password))) {
 			return mapper.map(user);
@@ -88,9 +88,9 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	@Override
-	public List<UserInfoDTO> getUserInfoFromAllUsers() {
+	public List<UserInfoTO> getUserInfoFromAllUsers() {
 		List<User> users = userRepository.findAll();
-		List<UserInfoDTO> infoDTOs = new ArrayList<UserInfoDTO>();
+		List<UserInfoTO> infoDTOs = new ArrayList<UserInfoTO>();
 		for (User user : users) {
 			infoDTOs.add(mapper.map(user));
 		}
@@ -98,14 +98,14 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	@Override
-	public UserInfoDTO getUser(Long userId) {
+	public UserInfoTO getUser(Long userId) {
 		Validate.notNull(userId, "'userId' uživatele nesmí být null");
 		User user = userRepository.findOne(userId);
 		return user == null ? null : mapper.map(user);
 	}
 
 	@Override
-	public UserInfoDTO getUser(String username) {
+	public UserInfoTO getUser(String username) {
 		Validate.notNull(username, "'username' uživatele nesmí být null");
 		User user = userRepository.findByName(username);
 		return user == null ? null : mapper.map(user);

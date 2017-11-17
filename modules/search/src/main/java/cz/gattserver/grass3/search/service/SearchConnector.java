@@ -2,7 +2,7 @@ package cz.gattserver.grass3.search.service;
 
 import java.util.List;
 
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 
 /**
  * {@link SearchConnector} je způsob jakým sekce a obsahy obecně můžou
@@ -24,7 +24,7 @@ public interface SearchConnector {
 	 *            kterých se bude vyhledávat
 	 * @return list entit k vyhledávání
 	 */
-	public List<SearchEntity> getAvailableSearchEntities(UserInfoDTO user);
+	public List<SearchEntity> getAvailableSearchEntities(UserInfoTO user);
 
 	/**
 	 * Získá pole, podle kterých lze blíže vyhledávat v obsazích

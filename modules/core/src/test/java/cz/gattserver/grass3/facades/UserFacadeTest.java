@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.test.GrassFacadeTest;
 
 @DatabaseSetup(value = "deleteAll.xml", type = DatabaseOperation.DELETE_ALL)
@@ -27,7 +27,7 @@ public class UserFacadeTest extends GrassFacadeTest {
 	@Test
 	public void testActivateUser() {
 		Long id = mockService.createMockUser(1);
-		UserInfoDTO user = userFacade.getUser(id);
+		UserInfoTO user = userFacade.getUser(id);
 		assertFalse(user.isConfirmed());
 
 		userFacade.activateUser(user.getId());
@@ -47,7 +47,7 @@ public class UserFacadeTest extends GrassFacadeTest {
 		Long user2Id = mockService.createMockUser(2);
 		userFacade.addContentToFavourites(contentNodeId, user2Id);
 
-		List<ContentNodeOverviewDTO> favourites = contentNodeFacade.getUserFavourite(user2Id, 0, 10);
+		List<ContentNodeOverviewTO> favourites = contentNodeFacade.getUserFavourite(user2Id, 0, 10);
 		assertEquals(1, favourites.size());
 		assertEquals(contentName, favourites.get(0).getName());
 	}
@@ -58,7 +58,7 @@ public class UserFacadeTest extends GrassFacadeTest {
 		String email = "testuser@email.cz";
 		userFacade.registrateNewUser(email, username, "testUser00012xxx$");
 
-		UserInfoDTO user = userFacade.getUser(username);
+		UserInfoTO user = userFacade.getUser(username);
 		assertEquals(username, user.getName());
 		assertEquals(email, user.getEmail());
 		assertFalse(user.isConfirmed());

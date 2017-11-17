@@ -29,10 +29,10 @@ import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.facades.SecurityFacade;
+import cz.gattserver.grass3.interfaces.ContentNodeTO;
+import cz.gattserver.grass3.interfaces.NodeOverviewTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.pg.dao.PhotoGalleryRepository;
 import cz.gattserver.grass3.pg.domain.Photogallery;
@@ -105,7 +105,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 		deleteFileRecursively(galleryDir);
 
 		photogalleryRepository.delete(photogallery.getId());
-		ContentNodeDTO contentNodeDTO = photogallery.getContentNode();
+		ContentNodeTO contentNodeDTO = photogallery.getContentNode();
 		contentNodeFacade.deleteByContentNodeId(contentNodeDTO.getId());
 	}
 
@@ -304,7 +304,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 	@Override
 	@Async
 	public void savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
-			NodeOverviewDTO node, UserInfoDTO author, String contextRoot, LocalDateTime date) {
+			NodeOverviewTO node, UserInfoTO author, String contextRoot, LocalDateTime date) {
 		System.out.println("savePhotogallery thread: " + Thread.currentThread().getId());
 
 		// Počet kroků = miniatury + detaily + uložení
@@ -423,7 +423,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 		if (gallery == null)
 			return null;
 
-		UserInfoDTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityFacade.getCurrentUser();
 		if (gallery.getContentNode().getPublicated() || user.isAdmin()
 				|| gallery.getContentNode().getAuthor().getId().equals(user.getId())) {
 
@@ -455,7 +455,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 		if (gallery == null)
 			return null;
 
-		UserInfoDTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityFacade.getCurrentUser();
 		if (gallery.getContentNode().getPublicated() || user.isAdmin()
 				|| gallery.getContentNode().getAuthor().getId().equals(user.getId())) {
 			PhotogalleryConfiguration configuration = getConfiguration();

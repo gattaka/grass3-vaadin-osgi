@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.articles.dto;
 
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
+import cz.gattserver.grass3.interfaces.ContentNodeTO;
 
 /**
  * DTO pro výběr rozpracovaného článku v menu
@@ -18,7 +18,7 @@ public class ArticleDraftOverviewDTO {
 	/**
 	 * Meta-informace o obsahu
 	 */
-	private ContentNodeDTO contentNode;
+	private ContentNodeTO contentNode;
 
 	/**
 	 * DB identifikátor
@@ -49,11 +49,11 @@ public class ArticleDraftOverviewDTO {
 		this.text = text;
 	}
 
-	public ContentNodeDTO getContentNode() {
+	public ContentNodeTO getContentNode() {
 		return contentNode;
 	}
 
-	public void setContentNode(ContentNodeDTO contentNode) {
+	public void setContentNode(ContentNodeTO contentNode) {
 		this.contentNode = contentNode;
 	}
 

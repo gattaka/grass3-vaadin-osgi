@@ -8,8 +8,8 @@ import com.vaadin.ui.renderers.ImageRenderer;
 import com.vaadin.ui.renderers.LocalDateTimeRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
 
-import cz.gattserver.grass3.model.dto.ContentNodeOverviewDTO;
-import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
+import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
+import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.MenuPage;
 import cz.gattserver.grass3.register.ServiceRegister;
@@ -19,7 +19,7 @@ import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.ImageIcons;
 
-public class ContentsLazyGrid extends Grid<ContentNodeOverviewDTO> {
+public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 
 	private static final long serialVersionUID = -5648982639686386190L;
 
@@ -33,13 +33,13 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewDTO> {
 	private ServiceRegister serviceHolder;
 
 	public ContentsLazyGrid() {
-		super(ContentNodeOverviewDTO.class);
+		super(ContentNodeOverviewTO.class);
 		nodePageFactory = (PageFactory) SpringContextHelper.getBean("nodePageFactory");
 		noServicePageFactory = (PageFactory) SpringContextHelper.getBean("noServicePageFactory");
 		serviceHolder = (ServiceRegister) SpringContextHelper.getContext().getBean(ServiceRegister.class);
 	}
 
-	public void populate(final MenuPage page, FetchItemsCallback<ContentNodeOverviewDTO> fetchItems,
+	public void populate(final MenuPage page, FetchItemsCallback<ContentNodeOverviewTO> fetchItems,
 			SerializableSupplier<Integer> sizeCallback) {
 
 		setDataProvider(fetchItems, sizeCallback);
@@ -69,7 +69,7 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewDTO> {
 		}, new HtmlRenderer()).setCaption("Název").setId(nameBind);
 
 		addColumn(contentNode -> {
-			NodeOverviewDTO contentParent = contentNode.getParent();
+			NodeOverviewTO contentParent = contentNode.getParent();
 			return "<a href='"
 					+ page.getPageURL(nodePageFactory,
 							URLIdentifierUtils.createURLIdentifier(contentParent.getId(), contentParent.getName()))
@@ -80,11 +80,11 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewDTO> {
 			return contentNode.getAuthor().getName();
 		}, new TextRenderer()).setCaption("Autor").setId(authorBind).setWidth(100);
 
-		addColumn(ContentNodeOverviewDTO::getCreationDate, new LocalDateTimeRenderer("d.MM.yyyy"))
+		addColumn(ContentNodeOverviewTO::getCreationDate, new LocalDateTimeRenderer("d.MM.yyyy"))
 				.setCaption("Datum vytvoření").setId(creationDateBind).setStyleGenerator(item -> "v-align-right")
 				.setWidth(GridUtils.DATE_COLUMN_WIDTH);
 
-		addColumn(ContentNodeOverviewDTO::getLastModificationDate, new LocalDateTimeRenderer("d.MM.yyyy"))
+		addColumn(ContentNodeOverviewTO::getLastModificationDate, new LocalDateTimeRenderer("d.MM.yyyy"))
 				.setCaption("Datum úpravy").setId(lastModificationDateBind).setStyleGenerator(item -> "v-align-right")
 				.setWidth(GridUtils.DATE_COLUMN_WIDTH);
 

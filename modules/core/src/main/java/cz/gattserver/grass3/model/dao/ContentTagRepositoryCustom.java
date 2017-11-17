@@ -2,16 +2,12 @@ package cz.gattserver.grass3.model.dao;
 
 import java.util.List;
 
-import cz.gattserver.grass3.model.dto.ContentTagCountTO;
+import com.querydsl.core.Tuple;
 
 public interface ContentTagRepositoryCustom {
 
 	int countContentTagContents(Long id);
 
-	ContentTagCountTO findTagContentNodesLowestCount();
-
-	ContentTagCountTO findTagContentNodesHighestCount();
-	
-	List<ContentTagCountTO> countContentTagsContents();
+	List<Tuple> countContentTagsContents();
 
 }

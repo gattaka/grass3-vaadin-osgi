@@ -2,7 +2,7 @@ package cz.gattserver.grass3.articles.dto;
 
 import java.util.Set;
 
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
+import cz.gattserver.grass3.interfaces.ContentNodeTO;
 
 public class ArticleDTO {
 
@@ -24,7 +24,7 @@ public class ArticleDTO {
 	/**
 	 * Meta-informace o obsahu
 	 */
-	private ContentNodeDTO contentNode;
+	private ContentNodeTO contentNode;
 
 	/**
 	 * DB identifikátor
@@ -80,11 +80,11 @@ public class ArticleDTO {
 		this.id = id;
 	}
 
-	public ContentNodeDTO getContentNode() {
+	public ContentNodeTO getContentNode() {
 		return contentNode;
 	}
 
-	public void setContentNode(ContentNodeDTO contentNode) {
+	public void setContentNode(ContentNodeTO contentNode) {
 		this.contentNode = contentNode;
 	}
 

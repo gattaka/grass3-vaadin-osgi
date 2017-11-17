@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import cz.gattserver.grass3.model.dto.NodeDTO;
-import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
+import cz.gattserver.grass3.interfaces.NodeOverviewTO;
+import cz.gattserver.grass3.interfaces.NodeTO;
 import cz.gattserver.grass3.test.GrassFacadeTest;
 
 @DatabaseSetup(value = "deleteAll.xml", type = DatabaseOperation.DELETE_ALL)
@@ -23,7 +23,7 @@ public class NodeFacadeTest extends GrassFacadeTest {
 	@Test
 	public void testCreateNewNode() {
 		Long nodeId = nodeFacade.createNewNode(null, "testNode");
-		NodeDTO node = nodeFacade.getNodeByIdForDetail(nodeId);
+		NodeTO node = nodeFacade.getNodeByIdForDetail(nodeId);
 		assertNotNull(node);
 		assertEquals(nodeId, node.getId());
 		assertNull(node.getParent());
@@ -44,7 +44,7 @@ public class NodeFacadeTest extends GrassFacadeTest {
 	public void testGetNodeByIdForDetail() {
 		Long nodeId0 = nodeFacade.createNewNode(null, "testParent");
 		Long nodeId1 = nodeFacade.createNewNode(nodeId0, "testNode");
-		NodeDTO node = nodeFacade.getNodeByIdForDetail(nodeId1);
+		NodeTO node = nodeFacade.getNodeByIdForDetail(nodeId1);
 		assertEquals(nodeId1, node.getId());
 		assertEquals("testNode", node.getName());
 		assertEquals("testParent", node.getParent().getName());
@@ -54,7 +54,7 @@ public class NodeFacadeTest extends GrassFacadeTest {
 	public void testGetNodeByIdForOverview() {
 		Long nodeId0 = nodeFacade.createNewNode(null, "testParent");
 		Long nodeId1 = nodeFacade.createNewNode(nodeId0, "testNode");
-		NodeOverviewDTO node = nodeFacade.getNodeByIdForOverview(nodeId1);
+		NodeOverviewTO node = nodeFacade.getNodeByIdForOverview(nodeId1);
 		assertEquals(nodeId1, node.getId());
 		assertEquals("testNode", node.getName());
 		assertEquals(nodeId0, node.getParentId());
@@ -66,7 +66,7 @@ public class NodeFacadeTest extends GrassFacadeTest {
 		Long nodeId0 = nodeFacade.createNewNode(null, "testParent");
 		nodeFacade.createNewNode(nodeId0, "testNode1");
 		nodeFacade.createNewNode(nodeId0, "testNode2");
-		List<NodeOverviewDTO> nodes = nodeFacade.getNodesByParentNode(nodeId0);
+		List<NodeOverviewTO> nodes = nodeFacade.getNodesByParentNode(nodeId0);
 		assertEquals(2, nodes.size());
 		assertEquals("testNode1", nodes.get(0).getName());
 		assertEquals("testNode2", nodes.get(1).getName());
@@ -78,7 +78,7 @@ public class NodeFacadeTest extends GrassFacadeTest {
 		nodeFacade.createNewNode(nodeId0, "testNode1");
 		Long nodeId1 = nodeFacade.createNewNode(nodeId0, "testNode2");
 		nodeFacade.createNewNode(nodeId1, "testChild");
-		List<NodeOverviewDTO> nodes = nodeFacade.getNodesForTree();
+		List<NodeOverviewTO> nodes = nodeFacade.getNodesForTree();
 		assertEquals(4, nodes.size());
 		assertEquals("testParent", nodes.get(0).getName());
 		assertEquals("testNode1", nodes.get(1).getName());
@@ -93,7 +93,7 @@ public class NodeFacadeTest extends GrassFacadeTest {
 		nodeFacade.createNewNode(nodeId0, "testNode1");
 		Long nodeId1 = nodeFacade.createNewNode(nodeId0, "testNode2");
 		nodeFacade.createNewNode(nodeId1, "testChild");
-		List<NodeOverviewDTO> nodes = nodeFacade.getRootNodes();
+		List<NodeOverviewTO> nodes = nodeFacade.getRootNodes();
 		assertEquals(2, nodes.size());
 		assertEquals("testParent", nodes.get(0).getName());
 		assertEquals("testParent2", nodes.get(1).getName());
@@ -118,7 +118,7 @@ public class NodeFacadeTest extends GrassFacadeTest {
 		nodeFacade.moveNode(nodeId2, nodeId1);
 		assertEquals(nodeId1, nodeFacade.getNodeByIdForOverview(nodeId2).getParentId());
 
-		NodeDTO nodeDTO = nodeFacade.getNodeByIdForDetail(nodeId3);
+		NodeTO nodeDTO = nodeFacade.getNodeByIdForDetail(nodeId3);
 		assertEquals(nodeId2, nodeDTO.getParentId());
 		assertEquals(nodeId2, nodeDTO.getParent().getId());
 		assertEquals(nodeId1, nodeDTO.getParent().getParentId());
@@ -134,7 +134,7 @@ public class NodeFacadeTest extends GrassFacadeTest {
 		nodeFacade.moveNode(nodeId2, nodeId1);
 		nodeFacade.moveNode(nodeId3, nodeId1);
 
-		NodeDTO nodeDTO = nodeFacade.getNodeByIdForDetail(nodeId3);
+		NodeTO nodeDTO = nodeFacade.getNodeByIdForDetail(nodeId3);
 		assertEquals(nodeId1, nodeDTO.getParentId());
 		assertEquals(nodeId1, nodeDTO.getParent().getId());
 		assertNull(nodeDTO.getParent().getParent());

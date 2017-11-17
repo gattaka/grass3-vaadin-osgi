@@ -30,8 +30,8 @@ import cz.gattserver.grass3.components.BaseProgressBar;
 import cz.gattserver.grass3.components.DefaultContentOperations;
 import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.events.EventBus;
-import cz.gattserver.grass3.model.dto.ContentNodeDTO;
-import cz.gattserver.grass3.model.dto.NodeOverviewDTO;
+import cz.gattserver.grass3.interfaces.ContentNodeTO;
+import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
@@ -174,7 +174,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	}
 
 	@Override
-	protected ContentNodeDTO getContentNodeDTO() {
+	protected ContentNodeTO getContentNodeDTO() {
 		return photogallery.getContentNode();
 	}
 
@@ -507,7 +507,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	@Override
 	protected void onDeleteOperation() {
 		ConfirmWindow confirmSubwindow = new ConfirmWindow("Opravdu si přejete smazat tuto galerii ?", ev -> {
-			NodeOverviewDTO nodeDTO = photogallery.getContentNode().getParent();
+			NodeOverviewTO nodeDTO = photogallery.getContentNode().getParent();
 
 			final String nodeURL = getPageURL(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(nodeDTO.getId(), nodeDTO.getName()));

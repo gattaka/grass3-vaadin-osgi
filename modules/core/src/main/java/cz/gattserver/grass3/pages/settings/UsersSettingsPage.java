@@ -17,7 +17,7 @@ import com.vaadin.ui.renderers.TextRenderer;
 
 import cz.gattserver.grass3.components.GridButton;
 import cz.gattserver.grass3.facades.UserFacade;
-import cz.gattserver.grass3.model.dto.UserInfoDTO;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.web.common.ui.H2Label;
@@ -28,9 +28,9 @@ public class UsersSettingsPage extends ModuleSettingsPage {
 	@Autowired
 	private UserFacade userFacade;
 
-	private Grid<UserInfoDTO> grid;
+	private Grid<UserInfoTO> grid;
 
-	private List<UserInfoDTO> users;
+	private List<UserInfoTO> users;
 
 	public UsersSettingsPage(GrassRequest request) {
 		super(request);
@@ -55,11 +55,11 @@ public class UsersSettingsPage extends ModuleSettingsPage {
 		grid.setSizeFull();
 		grid.setSelectionMode(SelectionMode.SINGLE);
 
-		grid.addColumn(UserInfoDTO::getName, new TextRenderer()).setCaption("Jméno");
+		grid.addColumn(UserInfoTO::getName, new TextRenderer()).setCaption("Jméno");
 		grid.addColumn(u -> u.getRoles().toString(), new TextRenderer()).setCaption("Role");
-		grid.addColumn(UserInfoDTO::getRegistrationDate, new LocalDateTimeRenderer("dd.MM.yyyy")).setCaption("Registrován");
-		grid.addColumn(UserInfoDTO::getLastLoginDate, new LocalDateTimeRenderer("dd.MM.yyyy")).setCaption("Naposledy přihlášen");
-		grid.addColumn(UserInfoDTO::getEmail, new TextRenderer()).setCaption("Email");
+		grid.addColumn(UserInfoTO::getRegistrationDate, new LocalDateTimeRenderer("dd.MM.yyyy")).setCaption("Registrován");
+		grid.addColumn(UserInfoTO::getLastLoginDate, new LocalDateTimeRenderer("dd.MM.yyyy")).setCaption("Naposledy přihlášen");
+		grid.addColumn(UserInfoTO::getEmail, new TextRenderer()).setCaption("Email");
 		grid.addColumn(u -> u.isConfirmed() ? "Ano" : "Ne", new TextRenderer()).setCaption("Aktivní");
 		users = userFacade.getUserInfoFromAllUsers();
 		grid.setItems(users);

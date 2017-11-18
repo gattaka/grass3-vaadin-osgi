@@ -207,9 +207,8 @@ public class NodeTree extends VerticalLayout {
 				+ (newParent == null ? "kořene sekce" : "'" + newParent.getName() + "'") + "?", e -> {
 					try {
 						nodeFacade.moveNode(node.getId(), newParent == null ? null : newParent.getId());
-						grid.getTreeData().removeItem(node);
 						node.setParentId(newParent == null ? null : newParent.getId());
-						grid.getTreeData().addItem(newParent, node);
+						grid.getTreeData().setParent(node, newParent);
 						grid.getDataProvider().refreshAll();
 						expandTo(node.getId());
 					} catch (IllegalArgumentException ex) {

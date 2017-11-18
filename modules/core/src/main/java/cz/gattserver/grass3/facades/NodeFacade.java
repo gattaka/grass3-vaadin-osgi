@@ -9,12 +9,20 @@ public interface NodeFacade {
 
 	/**
 	 * Získá kategorii dle id
+	 * 
+	 * @param nodeId
+	 *            id kategorie
+	 * @return kategori dle id, namapovaná pro přehled
 	 */
-	public NodeOverviewTO getNodeByIdForOverview(Long id);
+	public NodeOverviewTO getNodeByIdForOverview(Long nodeId);
 
 	/**
 	 * Získá kategorii dle id a namapuje jí, aby se dala použít v detailu
 	 * kategorie
+	 * 
+	 * @param nodeId
+	 *            id kategorie
+	 * @return kategori dle id, namapovaná pro detail
 	 */
 	public NodeTO getNodeByIdForDetail(Long nodeId);
 

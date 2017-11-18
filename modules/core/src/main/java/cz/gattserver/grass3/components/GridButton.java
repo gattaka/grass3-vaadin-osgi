@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.components;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 import com.vaadin.ui.Button;
@@ -10,7 +11,7 @@ public class GridButton<T> extends Button {
 	private static final long serialVersionUID = -5924239277930098183L;
 
 	private Grid<T> grid;
-	private Function<T, Boolean> enableResolver;
+	private Function<Optional<T>, Boolean> enableResolver;
 
 	public interface ClickListener<T> {
 		public void buttonClick(ClickEvent event, T item);
@@ -31,11 +32,10 @@ public class GridButton<T> extends Button {
 		if (clickListener != null)
 			setClickListener(clickListener);
 		enableResolver = t -> !grid.getSelectedItems().isEmpty();
-		grid.addSelectionListener(
-				e -> GridButton.this.setEnabled(enableResolver.apply(e.getFirstSelectedItem().get())));
+		grid.addSelectionListener(e -> GridButton.this.setEnabled(enableResolver.apply(e.getFirstSelectedItem())));
 	}
 
-	public GridButton<T> setEnableResolver(Function<T, Boolean> enableResolver) {
+	public GridButton<T> setEnableResolver(Function<Optional<T>, Boolean> enableResolver) {
 		this.enableResolver = enableResolver;
 		return this;
 	}

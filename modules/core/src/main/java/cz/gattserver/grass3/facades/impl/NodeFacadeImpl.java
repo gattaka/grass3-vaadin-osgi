@@ -3,6 +3,7 @@ package cz.gattserver.grass3.facades.impl;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -26,19 +27,17 @@ public class NodeFacadeImpl implements NodeFacade {
 	private NodeRepository nodeRepository;
 
 	@Override
-	public NodeOverviewTO getNodeByIdForOverview(Long id) {
-		Node node = nodeRepository.findOne(id);
-		if (node == null)
-			return null;
+	public NodeOverviewTO getNodeByIdForOverview(Long nodeId) {
+		Validate.notNull(nodeId, "'nodeId' kategorie nemůže být null");
+		Node node = nodeRepository.findOne(nodeId);
 		NodeOverviewTO nodeDTO = mapper.mapNodeForOverview(node);
 		return nodeDTO;
 	}
 
 	@Override
-	public NodeTO getNodeByIdForDetail(Long id) {
-		Node node = nodeRepository.findOne(id);
-		if (node == null)
-			return null;
+	public NodeTO getNodeByIdForDetail(Long nodeId) {
+		Validate.notNull(nodeId, "'nodeId' kategorie nemůže být null");
+		Node node = nodeRepository.findOne(nodeId);
 		NodeTO nodeDTO = mapper.mapNodeForDetail(node);
 		return nodeDTO;
 	}

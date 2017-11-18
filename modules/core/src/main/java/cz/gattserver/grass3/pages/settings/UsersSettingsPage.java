@@ -57,8 +57,10 @@ public class UsersSettingsPage extends ModuleSettingsPage {
 
 		grid.addColumn(UserInfoTO::getName, new TextRenderer()).setCaption("Jméno");
 		grid.addColumn(u -> u.getRoles().toString(), new TextRenderer()).setCaption("Role");
-		grid.addColumn(UserInfoTO::getRegistrationDate, new LocalDateTimeRenderer("dd.MM.yyyy")).setCaption("Registrován");
-		grid.addColumn(UserInfoTO::getLastLoginDate, new LocalDateTimeRenderer("dd.MM.yyyy")).setCaption("Naposledy přihlášen");
+		grid.addColumn(UserInfoTO::getRegistrationDate, new LocalDateTimeRenderer("dd.MM.yyyy"))
+				.setCaption("Registrován");
+		grid.addColumn(UserInfoTO::getLastLoginDate, new LocalDateTimeRenderer("dd.MM.yyyy"))
+				.setCaption("Naposledy přihlášen");
 		grid.addColumn(UserInfoTO::getEmail, new TextRenderer()).setCaption("Email");
 		grid.addColumn(u -> u.isConfirmed() ? "Ano" : "Ne", new TextRenderer()).setCaption("Aktivní");
 		users = userFacade.getUserInfoFromAllUsers();
@@ -72,13 +74,13 @@ public class UsersSettingsPage extends ModuleSettingsPage {
 			user.setConfirmed(true);
 			userFacade.activateUser(user.getId());
 			grid.getDataProvider().refreshItem(user);
-		}, grid).setEnableResolver(user -> !user.isConfirmed()));
+		}, grid).setEnableResolver(user -> user.isPresent() && !user.get().isConfirmed()));
 
 		buttonLayout.addComponent(new GridButton<>("Zablokovat", (e, user) -> {
 			user.setConfirmed(false);
 			userFacade.banUser(user.getId());
 			grid.getDataProvider().refreshItem(user);
-		}, grid).setEnableResolver(user -> user.isConfirmed()));
+		}, grid).setEnableResolver(user -> user.isPresent() && user.get().isConfirmed()));
 
 		buttonLayout.addComponent(new GridButton<>("Upravit oprávnění",
 				(e, user) -> UI.getCurrent().addWindow(new WebWindow("Uživatelské role") {

@@ -43,9 +43,6 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	private UserFacade userFacade;
 
 	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
 	private ContentNodeRepository contentNodeRepository;
 
 	@Autowired
@@ -53,7 +50,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 
 	@Override
 	public Long save(String contentModuleId, Long contentId, String name, Collection<String> tags, boolean publicated,
-			Long nodeId, Long author, boolean draft, LocalDateTime date, Long draftSourceId) {
+			Long nodeId, Long authorId, boolean draft, LocalDateTime date, Long draftSourceId) {
 
 		if (contentModuleId == null)
 			throw new IllegalArgumentException("'contentModuleId' nesmí být null");
@@ -63,7 +60,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 			throw new IllegalArgumentException("'name' nesmí být null");
 		if (nodeId == null)
 			throw new IllegalArgumentException("'nodeId' nesmí být null");
-		if (author == null)
+		if (authorId == null)
 			throw new IllegalArgumentException("'author' nesmí být null");
 
 		if (date == null)
@@ -79,17 +76,21 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 		contentNode.setPublicated(publicated);
 
 		// Ulož contentNode
+//		Node parent = new Node();
+//		parent.setId(nodeId);
+//		contentNode.setParent(parent);
 		Node parent = nodeRepository.findOne(nodeId);
 		contentNode.setParent(parent);
 
-		User user = userRepository.findOne(author);
+		User user = new User();
+		user.setId(authorId);
 		contentNode.setAuthor(user);
-
+		
 		contentNode = contentNodeRepository.save(contentNode);
-
+		
 		parent.getContentNodes().add(contentNode);
 		parent = nodeRepository.save(parent);
-
+		
 		/**
 		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
 		 * aktualizovat kvůli mazání tagů údaje v DB)
@@ -97,7 +98,6 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 		contentTagFacade.saveTags(tags, contentNode);
 
 		return contentNode.getId();
-
 	}
 
 	/**

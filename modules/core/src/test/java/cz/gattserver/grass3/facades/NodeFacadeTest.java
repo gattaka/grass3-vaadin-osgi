@@ -101,12 +101,14 @@ public class NodeFacadeTest extends GrassFacadeTest {
 
 	@Test
 	public void testIsNodeEmpty() {
-		Long nodeId1 = nodeFacade.createNewNode(null, "testParent");
-		Long nodeId2 = nodeFacade.createNewNode(null, "testNode1");
+		Long nodeId1 = nodeFacade.createNewNode(null, "nodeWithContentNode");
+		Long nodeId2 = nodeFacade.createNewNode(null, "nodeWithSubNode");
+		Long nodeId3 = nodeFacade.createNewNode(nodeId2, "emptyNode");
 		Long userId1 = mockService.createMockUser(1);
 		mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		assertFalse(nodeFacade.isNodeEmpty(nodeId1));
-		assertTrue(nodeFacade.isNodeEmpty(nodeId2));
+		assertFalse(nodeFacade.isNodeEmpty(nodeId2));
+		assertTrue(nodeFacade.isNodeEmpty(nodeId3));
 	}
 
 	@Test

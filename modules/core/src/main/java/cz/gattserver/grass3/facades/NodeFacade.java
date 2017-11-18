@@ -88,10 +88,8 @@ public interface NodeFacade {
 	 *            id kategorie k přejmenování
 	 * @param newName
 	 *            nový název
-	 * @return <code>true</code> pokud se přidání zdařilo, jinak
-	 *         <code>false</code>
 	 */
-	public boolean rename(Long nodeId, String newName);
+	public void rename(Long nodeId, String newName);
 
 	/**
 	 * Je kategorie prázdná?

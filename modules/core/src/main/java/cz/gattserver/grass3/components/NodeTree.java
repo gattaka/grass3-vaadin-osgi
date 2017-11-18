@@ -252,11 +252,12 @@ public class NodeTree extends VerticalLayout {
 		Button confirm = new Button("Přejmenovat", event -> {
 			if (StringUtils.isBlank(newNameField.getValue()))
 				UIUtils.showError("Název kategorie nesmí být prázdný");
-			if (nodeFacade.rename(node.getId(), newNameField.getValue())) {
+			try {
+				nodeFacade.rename(node.getId(), newNameField.getValue());
 				node.setName((String) newNameField.getValue());
 				grid.getDataProvider().refreshItem(node);
 				expandTo(node.getId());
-			} else {
+			} catch (Exception e) {
 				UIUtils.showWarning("Přejmenování se nezdařilo.");
 			}
 

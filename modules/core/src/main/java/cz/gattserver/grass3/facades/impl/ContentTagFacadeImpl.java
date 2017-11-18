@@ -84,16 +84,6 @@ public class ContentTagFacadeImpl implements ContentTagFacade {
 			}
 		}
 
-		// Projdi ContentNode tagy a buď je ponech nebo je odeber, dle toho,
-		// jaké tagy jsou teď k obsahu ukládané
-		if (contentNode.getContentTags() != null) {
-			for (ContentTag oldTag : contentNode.getContentTags()) {
-				if (tags.contains(oldTag))
-					continue;
-				oldTag.getContentNodes().remove(contentNode);
-			}
-		}
-
 		// Nahraď stávající kolekci tagů novou kolekcí
 		contentNode.setContentTags(tagsEntities);
 		contentNodeRepository.save(contentNode);
@@ -137,9 +127,11 @@ public class ContentTagFacadeImpl implements ContentTagFacade {
 		// třeba až 17
 		List<Integer> countsGroups = getTagsContentsCountsGroups();
 
-		// Rozděl rozmezí velikosti fontů na tolik
+		// Rozděl rozmezí velikosti fontů na tolik dílů, kolik je skupin - 1
+		// protože poslední skupina má rovnou nejnižší velikost fontu
 		double scale = maxFontSize - minFontSize;
-		int fontSizeStep = (int) Math.floor(scale / (countsGroups.size() == 1 ? 1 : (countsGroups.size() - 1)));
+		int parts = countsGroups.size() - 1;
+		int fontSizeStep = parts == 0 ? 1 : (int) Math.floor(scale / parts);
 		if (fontSizeStep == 0)
 			fontSizeStep = 1;
 

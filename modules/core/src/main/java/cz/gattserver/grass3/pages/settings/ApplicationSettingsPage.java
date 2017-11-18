@@ -9,22 +9,15 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Slider;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.Slider.ValueOutOfBoundsException;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.config.CoreConfiguration;
 import cz.gattserver.grass3.config.ConfigurationService;
-import cz.gattserver.grass3.facades.ContentTagFacade;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.web.common.ui.H2Label;
-import cz.gattserver.web.common.window.InfoWindow;
-import cz.gattserver.web.common.window.WarnWindow;
 
 public class ApplicationSettingsPage extends ModuleSettingsPage {
-
-	@Autowired
-	private ContentTagFacade contentTagFacade;
 
 	@Autowired
 	private ConfigurationService configurationService;

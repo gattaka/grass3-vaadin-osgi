@@ -159,7 +159,11 @@ public class ContentNodeFacadeTest extends GrassFacadeTest {
 		assertNull(contentNodeFacade.getByID(contentNode1));
 		assertNotNull(contentNodeFacade.getByID(contentNode2));
 		assertNotNull(contentNodeFacade.getByID(contentNode3));
+	}
 
+	@Test(expected = IllegalStateException.class)
+	public void testDeleteByContentId_fail() {
+		contentNodeFacade.deleteByContentId(999999L);
 	}
 
 	@Test
@@ -214,8 +218,68 @@ public class ContentNodeFacadeTest extends GrassFacadeTest {
 		assertEquals(name, contentNodeByID.getName());
 		assertEquals(userId, contentNodeByID.getAuthor().getId());
 		assertEquals(nodeId2, contentNodeByID.getParent().getId());
+		assertNotNull(contentNodeByID.getCreationDate());
 
 		assertEquals(1, contentNodeFacade.getCount());
+	}
+
+	@Test
+	public void testSave2() {
+		assertEquals(0, contentNodeFacade.getCount());
+
+		Long userId = mockService.createMockUser(1);
+		mockService.createMockRootNode(1); // pro posuv id
+		Long nodeId2 = mockService.createMockRootNode(2);
+
+		String moduleId = "mockModule";
+		Long contentId = 2L;
+		String name = "Test obsah";
+		Long contentNodeId = contentNodeFacade.save(moduleId, contentId, name, null, true, nodeId2, userId, false, null,
+				null);
+
+		ContentNodeTO contentNodeByID = contentNodeFacade.getByID(contentNodeId);
+		assertNotNull(contentNodeByID);
+		assertEquals(moduleId, contentNodeByID.getContentReaderID());
+		assertEquals(contentId, contentNodeByID.getContentID());
+		assertEquals(name, contentNodeByID.getName());
+		assertEquals(userId, contentNodeByID.getAuthor().getId());
+		assertEquals(nodeId2, contentNodeByID.getParent().getId());
+		assertNotNull(contentNodeByID.getCreationDate());
+
+		assertEquals(1, contentNodeFacade.getCount());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testSave_fail() {
+		Long userId = mockService.createMockUser(1);
+		Long nodeId2 = mockService.createMockRootNode(2);
+		contentNodeFacade.save(null, 2L, "Test obsah", null, true, nodeId2, userId, false, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testSave_fail2() {
+		Long userId = mockService.createMockUser(1);
+		Long nodeId2 = mockService.createMockRootNode(2);
+		contentNodeFacade.save("testModule", null, "Test obsah", null, true, nodeId2, userId, false, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testSave_fail3() {
+		Long userId = mockService.createMockUser(1);
+		Long nodeId2 = mockService.createMockRootNode(2);
+		contentNodeFacade.save("testModule", 2L, null, null, true, nodeId2, userId, false, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testSave_fail4() {
+		Long userId = mockService.createMockUser(1);
+		contentNodeFacade.save("testModule", 2L, "Test obsah", null, true, null, userId, false, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testSave_fail5() {
+		Long nodeId2 = mockService.createMockRootNode(2);
+		contentNodeFacade.save("testModule", 2L, "Test obsah", null, true, nodeId2, null, false, null, null);
 	}
 
 	@Test

@@ -97,7 +97,8 @@ public interface ContentTagFacade {
 	 * 
 	 * @param maxFontSize
 	 *            velikost fontu, která má být přiřazena tagům s největším
-	 *            počtem obsahů
+	 *            počtem obsahů -- v závislosti na velikosti rozsahu velikosti
+	 *            fontu je možné, že největší tag může mít hodnotu maxFontSize-1
 	 * @param minFontSize
 	 *            velikost fontu, která má být přiřazena tagům s nejmenším
 	 *            počtem obsahů

@@ -102,6 +102,27 @@ public class ContentTagFacadeTest extends GrassFacadeTest {
 	}
 
 	@Test
+	public void testGetTagById() {
+		Long userId1 = mockService.createMockUser(1);
+		Long nodeId1 = mockService.createMockRootNode(1);
+
+		Set<String> tags = new HashSet<>();
+		tags.add("novinky");
+		tags.add("pokusy");
+		mockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
+
+		ContentTagOverviewTO tagTO = contentTagFacade.getTagByName("novinky");
+		assertEquals("novinky", tagTO.getName());
+		tagTO = contentTagFacade.getTagById(tagTO.getId());
+		assertEquals("novinky", tagTO.getName());
+		
+		tagTO = contentTagFacade.getTagByName("pokusy");
+		assertEquals("pokusy", tagTO.getName());
+		tagTO = contentTagFacade.getTagById(tagTO.getId());
+		assertEquals("pokusy", tagTO.getName());
+	}
+	
+	@Test
 	public void testSaveTags() {
 		Long userId1 = mockService.createMockUser(1);
 		Long nodeId1 = mockService.createMockRootNode(1);
@@ -239,6 +260,51 @@ public class ContentTagFacadeTest extends GrassFacadeTest {
 		assertEquals("e", item.getName());
 		assertEquals(4, item.getContentsCount().intValue());
 		assertEquals(15, item.getFontSize());
+	}
+	
+	@Test
+	public void testCreateTagsCloud_smallFontRange() {
+		Long userId1 = mockService.createMockUser(1);
+		Long nodeId1 = mockService.createMockRootNode(1);
+
+		Set<String> tags = new HashSet<>();
+		tags.add("a");
+		mockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
+		mockService.createMockContentNode(33L, tags, nodeId1, userId1, 2);
+
+		tags.add("c");
+		mockService.createMockContentNode(34L, tags, nodeId1, userId1, 3);
+		
+		tags.add("b");
+		mockService.createMockContentNode(35L, tags, nodeId1, userId1, 4);
+		
+		tags.add("aa");
+		mockService.createMockContentNode(36L, tags, nodeId1, userId1, 5);
+
+		List<ContentTagsCloudItemTO> list = contentTagFacade.createTagsCloud(7, 5);
+		assertEquals(4, list.size());
+
+		Iterator<ContentTagsCloudItemTO> iter = list.iterator();
+		ContentTagsCloudItemTO item = iter.next();
+		assertEquals("a", item.getName());
+		assertEquals(5, item.getContentsCount().intValue());
+		assertEquals(7, item.getFontSize());
+
+		item = iter.next();
+		assertEquals("aa", item.getName());
+		assertEquals(1, item.getContentsCount().intValue());
+		assertEquals(5, item.getFontSize());
+
+		item = iter.next();
+		assertEquals("b", item.getName());
+		assertEquals(2, item.getContentsCount().intValue());
+		assertEquals(6, item.getFontSize());
+		
+		item = iter.next();
+		assertEquals("c", item.getName());
+		assertEquals(3, item.getContentsCount().intValue());
+		assertEquals(7, item.getFontSize());
+		
 	}
 	
 	@Test

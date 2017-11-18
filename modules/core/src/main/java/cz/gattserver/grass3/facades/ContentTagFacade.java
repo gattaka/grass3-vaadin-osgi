@@ -3,6 +3,7 @@ package cz.gattserver.grass3.facades;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.ContentTagsCloudItemTO;
@@ -15,7 +16,7 @@ public interface ContentTagFacade {
 	 * 
 	 * @return list tagů bez jejich vazeb na své obsahy
 	 */
-	List<ContentTagOverviewTO> getTagsForOverviewOrderedByName();
+	Set<ContentTagOverviewTO> getTagsForOverviewOrderedByName();
 
 	/**
 	 * Získá tag pro přehled

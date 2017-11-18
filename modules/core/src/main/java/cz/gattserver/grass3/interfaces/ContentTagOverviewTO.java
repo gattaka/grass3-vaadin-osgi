@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.interfaces;
 
+import com.querydsl.core.annotations.QueryProjection;
+
 /**
  * Objekt sloužící pro přepravu dat mezi fasádou a view třídami
  * 

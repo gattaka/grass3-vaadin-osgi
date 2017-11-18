@@ -14,6 +14,7 @@ import java.util.Set;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,10 +44,10 @@ public class ContentTagFacadeImpl implements ContentTagFacade {
 	private ContentNodeRepository contentNodeRepository;
 
 	@Override
-	public List<ContentTagOverviewTO> getTagsForOverviewOrderedByName() {
-		List<ContentTag> contentTags = contentTagRepository.findAll(new Sort("name"));
+	public Set<ContentTagOverviewTO> getTagsForOverviewOrderedByName() {
+		List<ContentTag> contentTags = contentTagRepository.findAll(new Sort(Direction.ASC, "name"));
 		Set<ContentTagOverviewTO> contentTagDTOs = mapper.mapContentTagCollectionForOverview(contentTags);
-		return new ArrayList<ContentTagOverviewTO>(contentTagDTOs);
+		return contentTagDTOs;
 	}
 
 	@Override
@@ -168,7 +169,7 @@ public class ContentTagFacadeImpl implements ContentTagFacade {
 
 		// Vytáhni si tagy seřazené dle jména a dokonči vytváření datové sady
 		// pro tags cloud
-		List<ContentTagOverviewTO> tags = getTagsForOverviewOrderedByName();
+		Set<ContentTagOverviewTO> tags = getTagsForOverviewOrderedByName();
 		for (ContentTagOverviewTO tag : tags) {
 			ContentTagsCloudItemTO item = new ContentTagsCloudItemTO();
 			item.setId(tag.getId());

@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -208,7 +209,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		keywordsMenuAndTextLayout.addComponent(photogalleryKeywords);
 
-		List<ContentTagOverviewTO> contentTags = contentTagFacade.getTagsForOverviewOrderedByName();
+		Set<ContentTagOverviewTO> contentTags = contentTagFacade.getTagsForOverviewOrderedByName();
 		contentTags.forEach(t -> {
 			Token to = new Token(t.getName());
 			photogalleryKeywords.addTokenToInputField(to);

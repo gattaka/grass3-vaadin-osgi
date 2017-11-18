@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -338,7 +339,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		keywordsMenuAndTextLayout.addComponent(articleKeywords);
 
-		List<ContentTagOverviewTO> contentTags = contentTagFacade.getTagsForOverviewOrderedByName();
+		Set<ContentTagOverviewTO> contentTags = contentTagFacade.getTagsForOverviewOrderedByName();
 		contentTags.forEach(t -> {
 			Token to = new Token(t.getName());
 			articleKeywords.addTokenToInputField(to);

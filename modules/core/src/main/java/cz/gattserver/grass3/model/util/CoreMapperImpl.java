@@ -2,7 +2,7 @@ package cz.gattserver.grass3.model.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -158,7 +158,7 @@ public class CoreMapperImpl implements CoreMapper {
 		if (contentTags == null)
 			return null;
 
-		Set<ContentTagOverviewTO> contentTagDTOs = new HashSet<ContentTagOverviewTO>();
+		Set<ContentTagOverviewTO> contentTagDTOs = new LinkedHashSet<>();
 		for (ContentTag contentTag : contentTags) {
 			contentTagDTOs.add(mapContentTagForOverview(contentTag));
 		}

@@ -30,7 +30,7 @@ public class ContentTagRepositoryCustomImpl implements ContentTagRepositoryCusto
 	public List<Tuple> countContentTagsContents() {
 		JPAQuery<Tuple> query = new JPAQuery<>(entityManager);
 		QContentTag c = QContentTag.contentTag;
-		return query.select(c.id, c.contentNodes.size()).from(c).groupBy(c.id).orderBy(c.name.asc()).fetch();
+		return query.select(c.id, c.contentNodes.size()).from(c).groupBy(c.id).orderBy(c.contentNodes.size().asc()).fetch();
 	}
 
 }

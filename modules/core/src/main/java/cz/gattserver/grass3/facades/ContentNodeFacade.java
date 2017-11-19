@@ -100,10 +100,12 @@ public interface ContentNodeFacade {
 	/**
 	 * Smaže obsah dle id koncového obsahu
 	 * 
+	 * @param contentModuleId
+	 *            identifikátor modulu obsahů
 	 * @param contentId
-	 *            id koncového obsahu
+	 *            id koncového obsahu v rámci modulu obsahů
 	 */
-	public void deleteByContentId(Long contentId);
+	public void deleteByContentId(String contentModuleId, Long contentId);
 
 	/**
 	 * Přesune obsah mezi kategoriemi

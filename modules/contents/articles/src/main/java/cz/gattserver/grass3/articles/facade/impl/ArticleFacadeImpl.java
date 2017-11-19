@@ -81,7 +81,7 @@ public class ArticleFacadeImpl implements ArticleFacade {
 		articleRepository.delete(id);
 
 		// smaž jeho content node
-		contentNodeFacade.deleteByContentId(id);
+		contentNodeFacade.deleteByContentId(ArticlesContentService.ID, id);
 	}
 
 	private SortedSet<ArticleJSResource> createJSResourcesSet(Set<String> scripts) {

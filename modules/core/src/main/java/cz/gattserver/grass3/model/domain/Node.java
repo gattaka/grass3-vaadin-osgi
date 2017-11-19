@@ -21,20 +21,20 @@ public class Node {
 	/**
 	 * Předek uzlu
 	 */
-	@ManyToOne
+	@ManyToOne(optional = true)
 	private Node parent;
 
-	/**
-	 * Potomci uzlu
-	 */
-	@OneToMany
-	private Set<Node> subNodes;
-
-	/**
-	 * Obsahy uzlu
-	 */
-	@OneToMany
-	private Set<ContentNode> contentNodes;
+	// /**
+	// * Potomci uzlu
+	// */
+	// @OneToMany
+	// private Set<Node> subNodes;
+	//
+	// /**
+	// * Obsahy uzlu
+	// */
+	// @OneToMany
+	// private Set<ContentNode> contentNodes;
 
 	/**
 	 * DB identifikátor
@@ -80,20 +80,20 @@ public class Node {
 		this.parent = parent;
 	}
 
-	public Set<Node> getSubNodes() {
-		return subNodes;
-	}
-
-	public void setSubNodes(Set<Node> subNodes) {
-		this.subNodes = subNodes;
-	}
-
-	public Set<ContentNode> getContentNodes() {
-		return contentNodes;
-	}
-
-	public void setContentNodes(Set<ContentNode> contentNodes) {
-		this.contentNodes = contentNodes;
-	}
+	// public Set<Node> getSubNodes() {
+	// return subNodes;
+	// }
+	//
+	// public void setSubNodes(Set<Node> subNodes) {
+	// this.subNodes = subNodes;
+	// }
+	//
+	// public Set<ContentNode> getContentNodes() {
+	// return contentNodes;
+	// }
+	//
+	// public void setContentNodes(Set<ContentNode> contentNodes) {
+	// this.contentNodes = contentNodes;
+	// }
 
 }

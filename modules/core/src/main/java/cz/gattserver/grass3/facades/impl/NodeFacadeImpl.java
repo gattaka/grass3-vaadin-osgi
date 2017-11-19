@@ -68,27 +68,14 @@ public class NodeFacadeImpl implements NodeFacade {
 		Validate.notNull(name, "'name' kategorie nemůže být null");
 		Node node = new Node();
 		node.setName(name.trim());
-		node = nodeRepository.save(node);
-
-		// if (parentId != null) {
-		// Node parent = new Node();
-		// parent.setId(parentId);
-		// node.setParent(parent);
-		// }
 
 		if (parentId != null) {
-			Node parentEntity = nodeRepository.findOne(parentId);
-			parentEntity.getSubNodes().add(node);
-			parentEntity = nodeRepository.save(parentEntity);
-			if (parentEntity == null)
-				return null;
-
+			Node parentEntity = new Node();
+			parentEntity.setId(parentId);
 			node.setParent(parentEntity);
-			node = nodeRepository.save(node);
-			if (node == null)
-				return null;
 		}
 
+		node = nodeRepository.save(node);
 		return node.getId();
 	}
 
@@ -119,18 +106,7 @@ public class NodeFacadeImpl implements NodeFacade {
 					throw new IllegalArgumentException("Nelze vkládat předka do potomka");
 				cycleCheckParent = cycleCheckParent.getParent();
 			}
-		}
 
-		if (nodeEntity.getParent() != null) {
-			nodeEntity.getParent().getSubNodes().remove(nodeEntity);
-			nodeRepository.save(nodeEntity.getParent());
-		}
-
-		nodeRepository.flush();
-
-		if (newParentId != null) {
-			newParentEntity.getSubNodes().add(nodeEntity);
-			newParentEntity = nodeRepository.save(newParentEntity);
 			nodeEntity.setParent(newParentEntity);
 		} else {
 			nodeEntity.setParent(null);
@@ -141,13 +117,11 @@ public class NodeFacadeImpl implements NodeFacade {
 
 	@Override
 	public void deleteNode(Long nodeId) {
-		Validate.notNull(nodeId, "'nodeId' kategorie nemůže být null");
-		Node nodeEntity = nodeRepository.findOne(nodeId);
-		Node parent = nodeEntity.getParent();
-		if (parent != null) {
-			parent.getSubNodes().remove(nodeEntity);
-			parent = nodeRepository.save(parent);
-		}
+		Validate.notNull(nodeId, "'nodeId' kategorie ke smazání nemůže být null");
+		int countContents = nodeRepository.countContentNodes(nodeId);
+		int countSubNodes = nodeRepository.countSubNodes(nodeId);
+		if (countContents + countSubNodes > 0)
+			throw new IllegalStateException("Nelze mazat kategorii, ve které existují podkategorie nebo obsahy");
 		nodeRepository.delete(nodeId);
 	}
 
@@ -160,11 +134,10 @@ public class NodeFacadeImpl implements NodeFacade {
 
 	@Override
 	public boolean isNodeEmpty(Long nodeId) {
-		Node n = nodeRepository.findOne(nodeId);
-		return n.getContentNodes().size() + n.getSubNodes().size() == 0;
-		// Validate.notNull(nodeId, "'nodeId' kategorie nemůže být null");
-		// Integer count = nodeRepository.countAllSubNodes(nodeId);
-		// return count.equals(0);
+		Validate.notNull(nodeId, "'nodeId' kategorie nemůže být null");
+		int contentNodesCount = nodeRepository.countContentNodes(nodeId);
+		int subNodesCount = nodeRepository.countSubNodes(nodeId);
+		return contentNodesCount + subNodesCount == 0;
 	}
 
 }

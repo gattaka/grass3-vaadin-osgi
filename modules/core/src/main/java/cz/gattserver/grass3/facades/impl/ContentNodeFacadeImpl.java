@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,8 +20,6 @@ import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.dao.ContentNodeRepository;
-import cz.gattserver.grass3.model.dao.NodeRepository;
-import cz.gattserver.grass3.model.dao.UserRepository;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.domain.User;
@@ -44,9 +43,6 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 
 	@Autowired
 	private ContentNodeRepository contentNodeRepository;
-
-	@Autowired
-	private NodeRepository nodeRepository;
 
 	@Override
 	public Long save(String contentModuleId, Long contentId, String name, Collection<String> tags, boolean publicated,
@@ -76,37 +72,22 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 		contentNode.setPublicated(publicated);
 
 		// Ulož contentNode
-//		Node parent = new Node();
-//		parent.setId(nodeId);
-//		contentNode.setParent(parent);
-		Node parent = nodeRepository.findOne(nodeId);
+		Node parent = new Node();
+		parent.setId(nodeId);
 		contentNode.setParent(parent);
 
 		User user = new User();
 		user.setId(authorId);
 		contentNode.setAuthor(user);
-		
+
 		contentNode = contentNodeRepository.save(contentNode);
-		
-		parent.getContentNodes().add(contentNode);
-		parent = nodeRepository.save(parent);
-		
-		/**
-		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
-		 * aktualizovat kvůli mazání tagů údaje v DB)
-		 */
+
+		// aktualizace tagů
 		contentTagFacade.saveTags(tags, contentNode);
 
 		return contentNode.getId();
 	}
 
-	/**
-	 * Získá contentNodeDTO dle jeho id
-	 * 
-	 * @param contentNodeId
-	 *            identifikátor obsahu
-	 * @return obsah
-	 */
 	@Override
 	public ContentNodeTO getByID(Long contentNodeId) {
 		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
@@ -114,28 +95,11 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 		return contentNodeDTO;
 	}
 
-	/**
-	 * Upraví obsah a uloží ho do DB - verze metody pro obsah bez tagů
-	 * 
-	 * @param contentNodeId
-	 *            uzel obsahu, který patří k tomuto obsahu
-	 * @return true pokud proběhla úprava úspěšně jinak false
-	 */
 	@Override
 	public void modify(Long contentNodeId, String name, boolean publicated) {
 		modify(contentNodeId, name, null, publicated);
 	}
 
-	/**
-	 * Upraví obsah a uloží ho do DB
-	 * 
-	 * @param contentNodeId
-	 *            uzel obsahu, který patří k tomuto obsahu
-	 * @param tags
-	 *            řetězec tagů, který se má společně s obsahem uložit
-	 * @param publicated
-	 *            je článek publikován ?
-	 */
 	@Override
 	public void modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated) {
 		modify(contentNodeId, name, tags, publicated, null);
@@ -155,22 +119,13 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 
 		// Ulož změny v contentNode
 		contentNodeRepository.save(contentNode);
-
-		/**
-		 * Tagy - contentNode je uložen v rámce saveTags (musí se tam
-		 * aktualizovat kvůli mazání tagů údaje v DB)
-		 */
+		// aktualizace tagů
 		contentTagFacade.saveTags(tags, contentNodeId);
 	}
 
-	/**
-	 * Smaže obsah dle id obecného uzlu obsahu
-	 * 
-	 * @param contentNode
-	 *            id obecného uzlu obsahu
-	 */
 	@Override
 	public void deleteByContentNodeId(Long contentNodeId) {
+		Validate.notNull(contentNodeId, "'contentNodeId' nemůže být null");
 		userFacade.removeContentFromAllUsersFavourites(contentNodeId);
 
 		// vymaž tagy
@@ -178,24 +133,14 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 
 		// vymaž content node
 		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
-
-		Node node = contentNode.getParent();
-		node.getContentNodes().remove(contentNode);
-		node = nodeRepository.save(node);
-
 		contentNodeRepository.delete(contentNode);
 	}
 
-	/**
-	 * Smaže obsah dle id koncového obsahu
-	 * 
-	 * @param contentId
-	 *            id koncového obsahu
-	 */
 	@Override
-	public void deleteByContentId(Long contentId) {
-		Long contentNodeId = contentNodeRepository.findContentNodeIdByContentId(contentId);
-
+	public void deleteByContentId(String contentModuleId, Long contentId) {
+		Validate.notNull(contentModuleId, "'contentModuleId' nemůže být null");
+		Validate.notNull(contentId, "'contentId' nemůže být null");
+		Long contentNodeId = contentNodeRepository.findIdByContentModuleAndContentId(contentModuleId, contentId);
 		if (contentNodeId != null) {
 			deleteByContentNodeId(contentNodeId);
 		} else {
@@ -204,19 +149,10 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	}
 
 	@Override
-	public void moveContent(Long node, Long contentNodeId) {
-		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
-		Node newNode = nodeRepository.findOne(node);
-		Node oldNode = nodeRepository.findOne(contentNode.getParent().getId());
-
-		contentNode.setParent(newNode);
-		contentNodeRepository.save(contentNode);
-
-		newNode.getContentNodes().add(contentNode);
-		nodeRepository.save(newNode);
-
-		oldNode.getContentNodes().remove(contentNode);
-		nodeRepository.save(oldNode);
+	public void moveContent(Long nodeId, Long contentNodeId) {
+		Validate.notNull(nodeId, "'nodeId' nemůže být null");
+		Validate.notNull(contentNodeId, "'contentNodeId' nemůže být null");
+		contentNodeRepository.moveContent(nodeId, contentNodeId);
 	}
 
 	/**

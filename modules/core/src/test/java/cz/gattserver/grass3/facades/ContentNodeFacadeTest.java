@@ -33,8 +33,6 @@ public class ContentNodeFacadeTest extends GrassFacadeTest {
 
 	@Test
 	public void testGetRecentAdded() {
-		assertEquals(0, contentNodeFacade.getCount());
-
 		Long userId1 = mockService.createMockUser(1);
 		Long nodeId1 = mockService.createMockRootNode(1);
 
@@ -53,8 +51,6 @@ public class ContentNodeFacadeTest extends GrassFacadeTest {
 
 	@Test
 	public void testGetRecentModified() {
-		assertEquals(0, contentNodeFacade.getCount());
-
 		Long userId1 = mockService.createMockUser(1);
 		Long nodeId1 = mockService.createMockRootNode(1);
 
@@ -75,8 +71,6 @@ public class ContentNodeFacadeTest extends GrassFacadeTest {
 
 	@Test
 	public void testGetUserFavourite() {
-		assertEquals(0, contentNodeFacade.getCount());
-
 		Long userId1 = mockService.createMockUser(1);
 		Long userId2 = mockService.createMockUser(2);
 		Long nodeId1 = mockService.createMockRootNode(1);
@@ -119,7 +113,6 @@ public class ContentNodeFacadeTest extends GrassFacadeTest {
 		assertEquals(MockUtils.MOCK_CONTENTNODE_MODULE + 1, contentNode.getContentReaderID());
 		assertEquals(LocalDateTime.of(1980, 2, 3, 10, 15), contentNode.getCreationDate());
 		assertFalse(contentNode.isPublicated());
-
 	}
 
 	@Test
@@ -140,38 +133,11 @@ public class ContentNodeFacadeTest extends GrassFacadeTest {
 	}
 
 	@Test
-	public void testDeleteByContentId() {
-		assertEquals(0, contentNodeFacade.getCount());
-
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
-
-		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
-		Long contentNode2 = mockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
-		Long contentNode3 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 3);
-
-		assertEquals(3, contentNodeFacade.getCount());
-
-		contentNodeFacade.deleteByContentId(30L);
-
-		assertEquals(2, contentNodeFacade.getCount());
-
-		assertNull(contentNodeFacade.getByID(contentNode1));
-		assertNotNull(contentNodeFacade.getByID(contentNode2));
-		assertNotNull(contentNodeFacade.getByID(contentNode3));
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void testDeleteByContentId_fail() {
-		contentNodeFacade.deleteByContentId(999999L);
-	}
-
-	@Test
 	public void testDeleteByContentNodeId() {
-		assertEquals(0, contentNodeFacade.getCount());
-
 		Long userId1 = mockService.createMockUser(1);
 		Long nodeId1 = mockService.createMockRootNode(1);
+
+		assertEquals(0, contentNodeFacade.getCount());
 
 		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		Long contentNode2 = mockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
@@ -189,12 +155,36 @@ public class ContentNodeFacadeTest extends GrassFacadeTest {
 	}
 
 	@Test
-	public void testSave() {
+	public void testDeleteByContentId() {
+		Long userId1 = mockService.createMockUser(1);
+		Long nodeId1 = mockService.createMockRootNode(1);
+
 		assertEquals(0, contentNodeFacade.getCount());
 
+		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
+		Long contentNode2 = mockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
+		Long contentNode3 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 3);
+
+		assertEquals(3, contentNodeFacade.getCount());
+
+		contentNodeFacade.deleteByContentId(MockUtils.MOCK_CONTENTNODE_MODULE + 2, 31L);
+
+		assertEquals(2, contentNodeFacade.getCount());
+
+		assertNotNull(contentNodeFacade.getByID(contentNode1));
+		assertNull(contentNodeFacade.getByID(contentNode2));
+		assertNotNull(contentNodeFacade.getByID(contentNode3));
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testDeleteByContentId_fail() {
+		contentNodeFacade.deleteByContentId("noModule", 999999L);
+	}
+
+	@Test
+	public void testSave_GetByID_withTags() {
 		Long userId = mockService.createMockUser(1);
-		mockService.createMockRootNode(1); // pro posuv id
-		Long nodeId2 = mockService.createMockRootNode(2);
+		Long nodeId = mockService.createMockRootNode(2);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
@@ -205,9 +195,10 @@ public class ContentNodeFacadeTest extends GrassFacadeTest {
 		String moduleId = "mockModule";
 		Long contentId = 2L;
 		String name = "Test obsah";
-		Long contentNodeId = contentNodeFacade.save(moduleId, contentId, name, tags, true, nodeId2, userId, false,
+		Long contentNodeId = contentNodeFacade.save(moduleId, contentId, name, tags, true, nodeId, userId, false,
 				LocalDateTime.now(), null);
 
+		assertEquals(1, contentNodeFacade.getCount());
 		ContentNodeTO contentNodeByID = contentNodeFacade.getByID(contentNodeId);
 		assertNotNull(contentNodeByID);
 		assertEquals(moduleId, contentNodeByID.getContentReaderID());
@@ -217,69 +208,65 @@ public class ContentNodeFacadeTest extends GrassFacadeTest {
 		assertTrue(tags.isEmpty());
 		assertEquals(name, contentNodeByID.getName());
 		assertEquals(userId, contentNodeByID.getAuthor().getId());
-		assertEquals(nodeId2, contentNodeByID.getParent().getId());
+		assertEquals(nodeId, contentNodeByID.getParent().getId());
 		assertNotNull(contentNodeByID.getCreationDate());
-
-		assertEquals(1, contentNodeFacade.getCount());
 	}
 
 	@Test
-	public void testSave2() {
-		assertEquals(0, contentNodeFacade.getCount());
-
+	public void testSave_GetByID_withoutTags() {
 		Long userId = mockService.createMockUser(1);
-		mockService.createMockRootNode(1); // pro posuv id
-		Long nodeId2 = mockService.createMockRootNode(2);
+		Long nodeId = mockService.createMockRootNode(2);
 
 		String moduleId = "mockModule";
 		Long contentId = 2L;
 		String name = "Test obsah";
-		Long contentNodeId = contentNodeFacade.save(moduleId, contentId, name, null, true, nodeId2, userId, false, null,
+		Long contentNodeId = contentNodeFacade.save(moduleId, contentId, name, null, true, nodeId, userId, false, null,
 				null);
 
-		ContentNodeTO contentNodeByID = contentNodeFacade.getByID(contentNodeId);
-		assertNotNull(contentNodeByID);
-		assertEquals(moduleId, contentNodeByID.getContentReaderID());
-		assertEquals(contentId, contentNodeByID.getContentID());
-		assertEquals(name, contentNodeByID.getName());
-		assertEquals(userId, contentNodeByID.getAuthor().getId());
-		assertEquals(nodeId2, contentNodeByID.getParent().getId());
-		assertNotNull(contentNodeByID.getCreationDate());
-
 		assertEquals(1, contentNodeFacade.getCount());
+		ContentNodeTO contentNode = contentNodeFacade.getByID(contentNodeId);
+		assertNotNull(contentNode);
+		assertNotNull(contentNode.getContentTags());
+		assertTrue(contentNode.getContentTags().isEmpty());
+		assertEquals(moduleId, contentNode.getContentReaderID());
+		assertEquals(contentId, contentNode.getContentID());
+		assertEquals(name, contentNode.getName());
+		assertEquals(userId, contentNode.getAuthor().getId());
+		assertEquals(nodeId, contentNode.getParent().getId());
+		assertNotNull(contentNode.getCreationDate());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testSave_fail() {
+	public void testSave_withoutContentModuleId() {
 		Long userId = mockService.createMockUser(1);
-		Long nodeId2 = mockService.createMockRootNode(2);
-		contentNodeFacade.save(null, 2L, "Test obsah", null, true, nodeId2, userId, false, null, null);
+		Long nodeId = mockService.createMockRootNode(2);
+		contentNodeFacade.save(null, 2L, "Test obsah", null, true, nodeId, userId, false, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testSave_fail2() {
+	public void testSave_withoutContentId() {
 		Long userId = mockService.createMockUser(1);
-		Long nodeId2 = mockService.createMockRootNode(2);
-		contentNodeFacade.save("testModule", null, "Test obsah", null, true, nodeId2, userId, false, null, null);
+		Long nodeId = mockService.createMockRootNode(2);
+		contentNodeFacade.save("testModule", null, "Test obsah", null, true, nodeId, userId, false, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testSave_fail3() {
+	public void testSave_withoutName() {
 		Long userId = mockService.createMockUser(1);
-		Long nodeId2 = mockService.createMockRootNode(2);
-		contentNodeFacade.save("testModule", 2L, null, null, true, nodeId2, userId, false, null, null);
+		Long nodeId = mockService.createMockRootNode(2);
+		contentNodeFacade.save("testModule", 2L, null, null, true, nodeId, userId, false, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testSave_fail4() {
+	public void testSave_withoutNode() {
 		Long userId = mockService.createMockUser(1);
 		contentNodeFacade.save("testModule", 2L, "Test obsah", null, true, null, userId, false, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testSave_fail5() {
-		Long nodeId2 = mockService.createMockRootNode(2);
-		contentNodeFacade.save("testModule", 2L, "Test obsah", null, true, nodeId2, null, false, null, null);
+	public void testSave_withoutUser() {
+		Long nodeId = mockService.createMockRootNode(2);
+		contentNodeFacade.save("testModule", 2L, "Test obsah", null, true, nodeId, null, false, null, null);
 	}
 
 	@Test

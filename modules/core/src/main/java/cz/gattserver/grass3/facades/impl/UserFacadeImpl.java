@@ -39,15 +39,6 @@ public class UserFacadeImpl implements UserFacade {
 	private ContentNodeRepository contentNodeRepository;
 
 	@Override
-	public UserInfoTO getUserByLogin(String username, String password) {
-		User user = userRepository.findByName(username);
-		if (user != null && user.getPassword().equals(encoder.encode(password))) {
-			return mapper.map(user);
-		}
-		return null;
-	}
-
-	@Override
 	public Long registrateNewUser(String email, String username, String password) {
 		Validate.notNull(email, "'email' nesmí být null");
 		Validate.notNull(username, "'username' nesmí být null");
@@ -98,7 +89,7 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	@Override
-	public UserInfoTO getUser(Long userId) {
+	public UserInfoTO getUserById(Long userId) {
 		Validate.notNull(userId, "'userId' uživatele nesmí být null");
 		User user = userRepository.findOne(userId);
 		return user == null ? null : mapper.map(user);

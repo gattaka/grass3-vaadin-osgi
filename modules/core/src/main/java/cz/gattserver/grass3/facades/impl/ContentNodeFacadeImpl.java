@@ -47,17 +47,11 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	@Override
 	public Long save(String contentModuleId, Long contentId, String name, Collection<String> tags, boolean publicated,
 			Long nodeId, Long authorId, boolean draft, LocalDateTime date, Long draftSourceId) {
-
-		if (contentModuleId == null)
-			throw new IllegalArgumentException("'contentModuleId' nesmí být null");
-		if (contentId == null)
-			throw new IllegalArgumentException("'contentId' nesmí být null");
-		if (name == null)
-			throw new IllegalArgumentException("'name' nesmí být null");
-		if (nodeId == null)
-			throw new IllegalArgumentException("'nodeId' nesmí být null");
-		if (authorId == null)
-			throw new IllegalArgumentException("'author' nesmí být null");
+		Validate.notNull(contentModuleId, "'contentModuleId' nesmí být null");
+		Validate.notNull(contentId, "'contentId' nesmí být null");
+		Validate.notNull(name, "'name' nesmí být null");
+		Validate.notNull(nodeId, "'nodeId' nesmí být null");
+		Validate.notNull(authorId, "'authorId' nesmí být null");
 
 		if (date == null)
 			date = LocalDateTime.now();

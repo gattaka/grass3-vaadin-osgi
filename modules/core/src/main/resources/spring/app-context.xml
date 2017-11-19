@@ -39,13 +39,6 @@
 		<property name="testWhileIdle" value="true" />
 	</bean>
 
-	<bean id="jpaVendorAdapter"
-		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-		<property name="generateDdl" value="${hibernate.generateDdl}" />
-		<property name="databasePlatform" value="${hibernate.dialect}" />
-		<property name="showSql" value="${hibernate.show_sql}" />
-	</bean>
-
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceXmlLocation" value="classpath:jpa/jpa-persistence.xml" />
@@ -55,7 +48,18 @@
 				<value>cz.gattserver.grass3</value>
 			</list>
 		</property>
-		<property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql:false}</prop>
+				<prop key="hibernate.format_sql">${hibernate.format_sql:false}</prop>
+				<prop key="hibernate.use_sql_comments">${hibernate.use_sql_comments:false}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto:none}</prop>
+			</props>
+		</property>
 	</bean>
 
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
@@ -70,14 +74,14 @@
 	</bean>
 
 	<task:annotation-driven executor="taskExecutor" />
-	
+
 	<tx:annotation-driven transaction-manager="transactionManager"
 		proxy-target-class="false" />
 
 	<context:annotation-config />
 
 	<context:component-scan base-package="cz.gattserver.grass3" />
-	
+
 	<jpa:repositories base-package="cz.gattserver.grass3"
 		repository-impl-postfix="CustomImpl" />
 

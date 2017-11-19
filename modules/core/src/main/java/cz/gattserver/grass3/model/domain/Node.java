@@ -1,12 +1,9 @@
 package cz.gattserver.grass3.model.domain;
 
-import java.util.Set;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -23,18 +20,6 @@ public class Node {
 	 */
 	@ManyToOne(optional = true)
 	private Node parent;
-
-	// /**
-	// * Potomci uzlu
-	// */
-	// @OneToMany
-	// private Set<Node> subNodes;
-	//
-	// /**
-	// * Obsahy uzlu
-	// */
-	// @OneToMany
-	// private Set<ContentNode> contentNodes;
 
 	/**
 	 * DB identifikátor
@@ -79,21 +64,5 @@ public class Node {
 	public void setParent(Node parent) {
 		this.parent = parent;
 	}
-
-	// public Set<Node> getSubNodes() {
-	// return subNodes;
-	// }
-	//
-	// public void setSubNodes(Set<Node> subNodes) {
-	// this.subNodes = subNodes;
-	// }
-	//
-	// public Set<ContentNode> getContentNodes() {
-	// return contentNodes;
-	// }
-	//
-	// public void setContentNodes(Set<ContentNode> contentNodes) {
-	// this.contentNodes = contentNodes;
-	// }
 
 }

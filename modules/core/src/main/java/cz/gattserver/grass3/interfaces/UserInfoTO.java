@@ -11,13 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import cz.gattserver.grass3.security.Role;
 
 /**
- * Objekt sloužící pro přepravu dat mezi fasádou a view třídami. Obsahuje pouze
- * "povrchové" informace a vynechává tak různé reference jako reference na
- * oblíbené odkazy. Snižuje tak přenost z DB. Toto rozdělení je lepší než tam
- * nechávat null hodnoty.
- * 
  * @author gatt
- * 
  */
 public class UserInfoTO implements UserDetails {
 
@@ -132,7 +126,7 @@ public class UserInfoTO implements UserDetails {
 	}
 
 	public boolean isAccountNonLocked() {
-		return this.isConfirmed();
+		return isConfirmed();
 	}
 
 	public boolean isAccountNonExpired() {
@@ -140,7 +134,7 @@ public class UserInfoTO implements UserDetails {
 	}
 
 	public String getUsername() {
-		return this.getName();
+		return getName();
 	}
 
 	public String getPassword() {
@@ -148,7 +142,7 @@ public class UserInfoTO implements UserDetails {
 	}
 
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return this.getRoles();
+		return getRoles();
 	}
 
 	public boolean hasRole(Role role) {

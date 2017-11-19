@@ -12,17 +12,6 @@ import cz.gattserver.grass3.security.Role;
 public interface UserFacade {
 
 	/**
-	 * Zkusí najít uživatele dle jména a hesla
-	 * 
-	 * @param username
-	 *            jméno uživatele (login)
-	 * @param password
-	 *            heslo uživatele
-	 * @return uživatel nebo <code>null</code>
-	 */
-	public UserInfoTO getUserByLogin(String username, String password);
-
-	/**
 	 * Zaregistruje nového uživatele
 	 * 
 	 * @param email
@@ -85,7 +74,7 @@ public interface UserFacade {
 	 *            id hledaného uživatele
 	 * @return nalezený uživatel
 	 */
-	public UserInfoTO getUser(Long userId);
+	public UserInfoTO getUserById(Long userId);
 
 	/**
 	 * Zjistí zda daný obsah je v oblíbených daného uživatele

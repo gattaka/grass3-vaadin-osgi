@@ -24,7 +24,7 @@ public class MockService {
 	private NodeFacade nodeFacade;
 
 	public Long createMockUser(int variant) {
-		Long id = userFacade.registrateNewUser(MockUtils.MOCK_USER_NAME + variant + "@mockUser.cz",
+		Long id = userFacade.registrateNewUser(MockUtils.MOCK_USER_EMAIL + variant,
 				MockUtils.MOCK_USER_NAME + variant, MockUtils.MOCK_USER_PASSWORD + variant);
 		return id;
 	}

@@ -6,7 +6,7 @@ import javax.persistence.Id;
 
 import org.hibernate.annotations.GenericGenerator;
 
-@Entity(name = "Quote")
+@Entity(name = "QUOTE")
 public class Quote {
 
 	/**

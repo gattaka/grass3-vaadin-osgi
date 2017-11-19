@@ -4,6 +4,7 @@
 	<!-- Zpracování probíhá v obráceném pořadí, takže závislosti se musí psát 
 		odspoda tak, že nahoře jsou nejvíce závislé tabulky -->
 
+	<QUOTE />
 	<USER_ACCOUNTS />
 	<USER_ACCOUNTS_ROLES />
 	<NODE />

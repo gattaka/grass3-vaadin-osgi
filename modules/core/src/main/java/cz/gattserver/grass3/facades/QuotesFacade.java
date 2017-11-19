@@ -7,25 +7,44 @@ import cz.gattserver.grass3.interfaces.QuoteTO;
 public interface QuotesFacade {
 
 	/**
-	 * Uloží hlášku
+	 * Uloží novou hlášku
+	 * 
+	 * @param content
+	 *            obsah hlášky
+	 * @return id hlášky
 	 */
-	public void saveQuote(QuoteTO quoteDTO);
+	public Long createQuote(String content);
+
+	/**
+	 * Upraví existující hlášku
+	 * 
+	 * @param quoteId
+	 *            id existující hlášky
+	 * @param modifiedContent
+	 *            upravený obsah
+	 */
+	public void modifyQuote(Long quoteId, String modifiedContent);
 
 	/**
 	 * Získá všechny hlášky a vrátí je jako list {@link QuoteTO}
 	 * 
-	 * @return
+	 * @return list hlášek
 	 */
 	public List<QuoteTO> getAllQuotes();
 
 	/**
 	 * Vybere náhodně hlášku a vrátí její text
+	 * 
+	 * @return náhodná hláška
 	 */
 	public String getRandomQuote();
 
 	/**
 	 * Smaže hlášku
+	 * 
+	 * @param quoteId
+	 *            id hlášky ke smazání
 	 */
-	public void deleteQuote(Long id);
+	public void deleteQuote(Long quoteId);
 
 }

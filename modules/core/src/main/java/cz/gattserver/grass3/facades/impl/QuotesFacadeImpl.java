@@ -2,13 +2,14 @@ package cz.gattserver.grass3.facades.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import cz.gattserver.grass3.facades.QuotesFacade;
+import cz.gattserver.grass3.facades.RandomSource;
 import cz.gattserver.grass3.interfaces.QuoteTO;
 import cz.gattserver.grass3.model.dao.QuoteRepository;
 import cz.gattserver.grass3.model.domain.Quote;
@@ -23,22 +24,30 @@ public class QuotesFacadeImpl implements QuotesFacade {
 
 	@Autowired
 	private QuoteRepository quoteRepository;
+	
+	@Autowired
+	private RandomSource randomSource;
 
-	/**
-	 * Uloží hlášku
-	 */
-	public void saveQuote(QuoteTO quoteDTO) {
+	@Override
+	public Long createQuote(String content) {
+		Validate.notBlank(content, "Obsah hlášky nesmí být prázdný");
 		Quote quote = new Quote();
-		quote.setId(quoteDTO.getId());
-		quote.setName(quoteDTO.getName());
+		quote.setName(content);
+		quote = quoteRepository.save(quote);
+		return quote.getId();
+	}
+
+	@Override
+	public void modifyQuote(Long quoteId, String modifiedContent) {
+		Validate.notNull(quoteId, "quoteId hlášky nesmí být null");
+		Validate.notBlank(modifiedContent, "Obsah hlášky nesmí být prázdný");
+		Quote quote = new Quote();
+		quote.setId(quoteId);
+		quote.setName(modifiedContent);
 		quoteRepository.save(quote);
 	}
 
-	/**
-	 * Získá všechny hlášky a vrátí je jako list {@link QuoteTO}
-	 * 
-	 * @return
-	 */
+	@Override
 	public List<QuoteTO> getAllQuotes() {
 		List<Quote> quotes = quoteRepository.findAll();
 		List<QuoteTO> quoteDTOs = new ArrayList<QuoteTO>();
@@ -48,27 +57,18 @@ public class QuotesFacadeImpl implements QuotesFacade {
 		return quoteDTOs;
 	}
 
-	/**
-	 * Vybere náhodně hlášku a vrátí její text
-	 */
+	@Override
 	public String getRandomQuote() {
 		long count = quoteRepository.count();
 		if (count == 0)
-			return "~ nebyly nalezeny žádné záznamy ~";
-
-		Random generator = new Random();
-		Long randomId = Math.abs(generator.nextLong()) % count + 1;
-
-		Quote quote = quoteRepository.findOne(randomId);
-		return quote.getName();
+			return "";
+		return quoteRepository.findRandom(randomSource.getRandomNumber(count));
 	}
 
-	/**
-	 * Smaže hlášku
-	 */
 	@Override
-	public void deleteQuote(Long id) {
-		quoteRepository.delete(id);
+	public void deleteQuote(Long quoteId) {
+		Validate.notNull(quoteId, "quoteId hlášky nesmí být null");
+		quoteRepository.delete(quoteId);
 	}
 
 }

@@ -69,7 +69,7 @@ public class QuotesPage extends OneColumnPage {
 
 		CreateGridButton createGridButton = new CreateGridButton("Přidat hlášku", e -> {
 			UI.getCurrent().addWindow(new QuoteWindow(q -> {
-				quotesFacade.saveQuote(q);
+				quotesFacade.createQuote(q.getName());
 				populateData();
 				grid.setItems(data);
 			}));
@@ -78,7 +78,7 @@ public class QuotesPage extends OneColumnPage {
 
 		ModifyGridButton<QuoteTO> modifyGridButton = new ModifyGridButton<>("Upravit hlášku", (e, originQuote) -> {
 			UI.getCurrent().addWindow(new QuoteWindow(originQuote, q -> {
-				quotesFacade.saveQuote(q);
+				quotesFacade.modifyQuote(q.getId(), q.getName());
 				grid.getDataProvider().refreshItem(q);
 				grid.select(q);
 			}));

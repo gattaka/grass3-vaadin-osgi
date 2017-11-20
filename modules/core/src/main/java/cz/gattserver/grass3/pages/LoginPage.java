@@ -1,12 +1,15 @@
 package cz.gattserver.grass3.pages;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinServletService;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
@@ -36,7 +39,9 @@ public class LoginPage extends OneColumnPage {
 
 	private boolean login(String username, String password, boolean remember) {
 		try {
-			securityFacade.login(username, password, remember);
+			HttpServletRequest request = VaadinServletService.getCurrentServletRequest();
+			HttpServletResponse response = VaadinServletService.getCurrentResponse().getHttpServletResponse();
+			securityFacade.login(username, password, remember, request, response);
 			// Reinitialize the session to protect against session fixation
 			// attacks. This does not work
 			// with websocket communication.

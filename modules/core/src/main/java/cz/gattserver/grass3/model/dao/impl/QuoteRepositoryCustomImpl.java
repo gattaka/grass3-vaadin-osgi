@@ -20,7 +20,7 @@ public class QuoteRepositoryCustomImpl implements QuoteRepositoryCustom {
 	public String findRandom(long random) {
 		JPAQuery<String> query = new JPAQuery<>(entityManager);
 		QQuote q = QQuote.quote;
-		return query.select(q.name).from(q).offset(random - 1).limit(1).fetchOne();
+		return query.select(q.name).from(q).offset(random).limit(1).fetchOne();
 	}
 
 }

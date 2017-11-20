@@ -7,4 +7,5 @@ public interface SecurityFacade {
 	public boolean login(String username, String password, boolean remember);
 
 	public UserInfoTO getCurrentUser();
+
 }

@@ -92,14 +92,14 @@ public class UserFacadeImpl implements UserFacade {
 	public UserInfoTO getUserById(Long userId) {
 		Validate.notNull(userId, "'userId' uživatele nesmí být null");
 		User user = userRepository.findOne(userId);
-		return user == null ? null : mapper.map(user);
+		return mapper.map(user);
 	}
 
 	@Override
 	public UserInfoTO getUser(String username) {
 		Validate.notNull(username, "'username' uživatele nesmí být null");
 		User user = userRepository.findByName(username);
-		return user == null ? null : mapper.map(user);
+		return mapper.map(user);
 	}
 
 	@Override
@@ -135,9 +135,7 @@ public class UserFacadeImpl implements UserFacade {
 	public void removeContentFromAllUsersFavourites(Long contentNodeId) {
 		Validate.notNull(contentNodeId, "'contentNodeId' záznamu obsahu nesmí být null");
 		List<User> users = userRepository.findByFavouritesId(contentNodeId);
-		if (users != null) {
-			for (User user : users)
-				removeContentFromFavourites(user, contentNodeId);
-		}
+		for (User user : users)
+			removeContentFromFavourites(user, contentNodeId);
 	}
 }

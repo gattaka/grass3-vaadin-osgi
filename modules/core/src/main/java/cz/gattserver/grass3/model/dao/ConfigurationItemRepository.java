@@ -6,9 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import cz.gattserver.grass3.model.domain.ConfigurationItem;
 
-public interface ConfigurationItemRepository extends
-		JpaRepository<ConfigurationItem, String> {
+public interface ConfigurationItemRepository extends JpaRepository<ConfigurationItem, String> {
 
-	public List<ConfigurationItem> findByNameStartingWith(String prefix);
+	List<ConfigurationItem> findByNameStartingWith(String prefix);
 
 }

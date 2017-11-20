@@ -8,6 +8,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
@@ -17,6 +18,7 @@ import cz.gattserver.grass3.mock.MockService;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
 		TransactionalTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ContextConfiguration(locations = { "classpath:spring/app-context.xml", "classpath:spring/security-context.xml" })
+@WebAppConfiguration
 public abstract class GrassFacadeTest {
 	
 	@Autowired

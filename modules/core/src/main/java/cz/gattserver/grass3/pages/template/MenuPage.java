@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomLayout;
@@ -43,9 +44,6 @@ public abstract class MenuPage extends GrassPage {
 
 	@Resource(name = "loginPageFactory")
 	protected PageFactory loginPageFactory;
-
-	@Resource(name = "logoutPageFactory")
-	protected PageFactory logoutPageFactory;
 
 	@Resource(name = "settingsPageFactory")
 	protected PageFactory settingsPageFactory;
@@ -153,7 +151,7 @@ public abstract class MenuPage extends GrassPage {
 			createMenuComponent(menu, new Link(userInfoDTO.getName(), getPageResource(settingsPageFactory)));
 
 			// odhlásit
-			createMenuComponent(menu, new Link("Odhlásit", getPageResource(logoutPageFactory)));
+			createMenuComponent(menu, new Link("Odhlásit", new ExternalResource(getPageURL("logout"))));
 		}
 	}
 

@@ -9,7 +9,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.RememberMeServices;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +39,8 @@ public class SecurityFacadeImpl implements SecurityFacade {
 		principal.setName(username);
 
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(principal, password);
-		token.setDetails(new WebAuthenticationDetails(VaadinServletService.getCurrentServletRequest()));
+		// token.setDetails(new
+		// WebAuthenticationDetails(VaadinServletService.getCurrentServletRequest()));
 
 		try {
 			Authentication auth = authenticationManager.authenticate(token);

@@ -26,7 +26,7 @@ public class QuotesServiceImpl implements QuotesService {
 	private QuoteRepository quoteRepository;
 
 	@Autowired
-	private RandomSourceService randomSource;
+	private RandomSourceService randomSourceService;
 
 	@Override
 	public long createQuote(String content) {
@@ -61,7 +61,7 @@ public class QuotesServiceImpl implements QuotesService {
 		long count = quoteRepository.count();
 		if (count == 0)
 			return "";
-		return quoteRepository.findRandom(randomSource.getRandomNumber(count));
+		return quoteRepository.findRandom(randomSourceService.getRandomNumber(count));
 	}
 
 	@Override

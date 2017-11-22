@@ -10,7 +10,7 @@ import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.UserService;
 
 @Service
-public class UserDetailServiceImpl implements UserDetailsService {
+public class GrassUserDetailServiceImpl implements UserDetailsService {
 
 	@Autowired
 	private UserService userService;

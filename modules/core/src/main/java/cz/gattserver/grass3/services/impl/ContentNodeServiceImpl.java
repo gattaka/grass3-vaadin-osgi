@@ -33,13 +33,13 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	private CoreMapper mapper;
 
 	@Autowired
-	private SecurityService securityFacade;
+	private SecurityService securityService;
 
 	@Autowired
-	private ContentTagService contentTagFacade;
+	private ContentTagService contentTagService;
 
 	@Autowired
-	private UserService userFacade;
+	private UserService userService;
 
 	@Autowired
 	private ContentNodeRepository contentNodeRepository;
@@ -74,7 +74,7 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 		contentNode = contentNodeRepository.save(contentNode);
 
 		// aktualizace tagů
-		contentTagFacade.saveTags(tags, contentNode);
+		contentTagService.saveTags(tags, contentNode);
 
 		return contentNode.getId();
 	}
@@ -112,15 +112,15 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 		// Ulož změny v contentNode
 		contentNodeRepository.save(contentNode);
 		// aktualizace tagů
-		contentTagFacade.saveTags(tags, contentNodeId);
+		contentTagService.saveTags(tags, contentNodeId);
 	}
 
 	@Override
 	public void deleteByContentNodeId(long contentNodeId) {
-		userFacade.removeContentFromAllUsersFavourites(contentNodeId);
+		userService.removeContentFromAllUsersFavourites(contentNodeId);
 
 		// vymaž tagy
-		contentTagFacade.saveTags(null, contentNodeId);
+		contentTagService.saveTags(null, contentNodeId);
 
 		// vymaž content node
 		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
@@ -148,7 +148,7 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	 */
 
 	private Page<ContentNode> innerByUserAccess(PageRequest pr) {
-		UserInfoTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityService.getCurrentUser();
 		return contentNodeRepository.findByUserAccess(user.getId(), user.isAdmin(), pr);
 	}
 
@@ -175,7 +175,7 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	 */
 
 	private Page<ContentNode> innerByTagAndUserAccess(long tagId, PageRequest pr) {
-		UserInfoTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityService.getCurrentUser();
 		return contentNodeRepository.findByTagAndUserAccess(tagId, user.getId(), user.isAdmin(), pr);
 	}
 
@@ -196,7 +196,7 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	 */
 
 	private Page<ContentNode> innerByUserFavouritesAndUserAccess(long userId, PageRequest pr) {
-		UserInfoTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityService.getCurrentUser();
 		return contentNodeRepository.findByUserFavouritesAndUserAccess(userId, user.getId(), user.isAdmin(), pr);
 	}
 
@@ -216,7 +216,7 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	 */
 
 	private Page<ContentNode> innerByNodeAndUserAccess(long nodeId, PageRequest pr) {
-		UserInfoTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityService.getCurrentUser();
 		return contentNodeRepository.findByNodeAndUserAccess(nodeId, user.getId(), user.isAdmin(), pr);
 	}
 

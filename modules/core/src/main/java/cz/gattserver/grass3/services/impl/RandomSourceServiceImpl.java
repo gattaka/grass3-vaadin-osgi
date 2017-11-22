@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import cz.gattserver.grass3.services.RandomSourceService;
 
-@Service("randomSourceImpl")
+@Service("randomSourceServiceImpl")
 public class RandomSourceServiceImpl implements RandomSourceService {
 
 	@Override

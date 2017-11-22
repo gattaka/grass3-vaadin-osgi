@@ -13,14 +13,14 @@ import cz.gattserver.grass3.test.GrassFacadeTest;
 public class RandomSourceServiceImplTest extends GrassFacadeTest {
 
 	@Autowired
-	@Qualifier("randomSourceImpl")
-	private RandomSourceService randomSource;
+	@Qualifier("randomSourceServiceImpl")
+	private RandomSourceService randomSourceService;
 
 	@Test
 	public void test() {
-		assertEquals(0, randomSource.getRandomNumber(0));
-		assertEquals(0, randomSource.getRandomNumber(1));
-		assertTrue(randomSource.getRandomNumber(2) < 2);
+		assertEquals(0, randomSourceService.getRandomNumber(0));
+		assertEquals(0, randomSourceService.getRandomNumber(1));
+		assertTrue(randomSourceService.getRandomNumber(2) < 2);
 	}
 
 }

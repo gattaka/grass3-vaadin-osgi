@@ -36,10 +36,10 @@ public class SecurityServiceTest extends GrassFacadeTest {
 	private MockMvc mvc;
 
 	@Autowired
-	private SecurityService securityFacade;
+	private SecurityService securityService;
 
 	@Autowired
-	private UserService userFacade;
+	private UserService userService;
 
 	@Before
 	public void setup() {
@@ -51,11 +51,11 @@ public class SecurityServiceTest extends GrassFacadeTest {
 		MvcResult mvcResult = mvc.perform(get("/")).andReturn();
 
 		Long userId1 = mockService.createMockUser(1);
-		userFacade.activateUser(userId1);
-		boolean result = securityFacade.login(MockUtils.MOCK_USER_NAME + 1, MockUtils.MOCK_USER_PASSWORD + 1, false,
+		userService.activateUser(userId1);
+		boolean result = securityService.login(MockUtils.MOCK_USER_NAME + 1, MockUtils.MOCK_USER_PASSWORD + 1, false,
 				mvcResult.getRequest(), mvcResult.getResponse());
 		assertTrue(result);
-		UserInfoTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityService.getCurrentUser();
 		assertEquals(MockUtils.MOCK_USER_NAME + 1, user.getUsername());
 	}
 
@@ -64,8 +64,8 @@ public class SecurityServiceTest extends GrassFacadeTest {
 		MvcResult mvcResult = mvc.perform(get("/")).andReturn();
 
 		Long userId1 = mockService.createMockUser(1);
-		userFacade.activateUser(userId1);
-		boolean result = securityFacade.login("wrong", MockUtils.MOCK_USER_PASSWORD + 1, false, mvcResult.getRequest(),
+		userService.activateUser(userId1);
+		boolean result = securityService.login("wrong", MockUtils.MOCK_USER_PASSWORD + 1, false, mvcResult.getRequest(),
 				mvcResult.getResponse());
 		assertFalse(result);
 	}
@@ -75,15 +75,15 @@ public class SecurityServiceTest extends GrassFacadeTest {
 		MvcResult mvcResult = mvc.perform(get("/")).andReturn();
 
 		Long userId1 = mockService.createMockUser(1);
-		userFacade.activateUser(userId1);
-		boolean result = securityFacade.login(MockUtils.MOCK_USER_NAME + 1, "wrong", false, mvcResult.getRequest(),
+		userService.activateUser(userId1);
+		boolean result = securityService.login(MockUtils.MOCK_USER_NAME + 1, "wrong", false, mvcResult.getRequest(),
 				mvcResult.getResponse());
 		assertFalse(result);
 	}
 
 	@Test
 	public void testGetCurrentUser() {
-		UserInfoTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityService.getCurrentUser();
 		assertNotNull(user);
 		assertNull(user.getName());
 	}

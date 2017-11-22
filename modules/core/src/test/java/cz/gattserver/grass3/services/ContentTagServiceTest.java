@@ -17,7 +17,6 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.ContentTagsCloudItemTO;
-import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.ContentTagService;
 import cz.gattserver.grass3.test.GrassFacadeTest;
@@ -27,10 +26,10 @@ import cz.gattserver.grass3.test.MockUtils;
 public class ContentTagServiceTest extends GrassFacadeTest {
 
 	@Autowired
-	private ContentTagService contentTagFacade;
+	private ContentTagService contentTagService;
 
 	@Autowired
-	private ContentNodeService contentNodeFacade;
+	private ContentNodeService contentNodeService;
 
 	@Test
 	public void testGetTagsForOverviewOrderedByName() {
@@ -40,17 +39,17 @@ public class ContentTagServiceTest extends GrassFacadeTest {
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
 		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
-		contentTagFacade.saveTags(tags, contentNode1);
+		contentTagService.saveTags(tags, contentNode1);
 
 		tags.add("pokusy");
 		Long contentNode2 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
-		contentTagFacade.saveTags(tags, contentNode2);
+		contentTagService.saveTags(tags, contentNode2);
 
 		tags.add("atrapa");
 		Long contentNode3 = mockService.createMockContentNode(33L, null, nodeId1, userId1, 3);
-		contentTagFacade.saveTags(tags, contentNode3);
+		contentTagService.saveTags(tags, contentNode3);
 
-		Set<ContentTagOverviewTO> tagsTOs = contentTagFacade.getTagsForOverviewOrderedByName();
+		Set<ContentTagOverviewTO> tagsTOs = contentTagService.getTagsForOverviewOrderedByName();
 		assertEquals(3, tagsTOs.size());
 
 		Iterator<ContentTagOverviewTO> iter = tagsTOs.iterator();
@@ -67,28 +66,28 @@ public class ContentTagServiceTest extends GrassFacadeTest {
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
 		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
-		contentTagFacade.saveTags(tags, contentNode1);
+		contentTagService.saveTags(tags, contentNode1);
 
 		tags.add("pokusy");
 		Long contentNode2 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
-		contentTagFacade.saveTags(tags, contentNode2);
+		contentTagService.saveTags(tags, contentNode2);
 
 		tags.add("atrapa");
 		Long contentNode3 = mockService.createMockContentNode(33L, null, nodeId1, userId1, 3);
-		contentTagFacade.saveTags(tags, contentNode3);
+		contentTagService.saveTags(tags, contentNode3);
 
-		Set<ContentTagOverviewTO> tagsTOs = contentTagFacade.getTagsForOverviewOrderedByName();
+		Set<ContentTagOverviewTO> tagsTOs = contentTagService.getTagsForOverviewOrderedByName();
 		assertEquals(3, tagsTOs.size());
 
 		Iterator<ContentTagOverviewTO> iter = tagsTOs.iterator();
-		assertEquals(1, contentTagFacade.getTagContentsCount(iter.next().getId()));
-		assertEquals(3, contentTagFacade.getTagContentsCount(iter.next().getId()));
-		assertEquals(2, contentTagFacade.getTagContentsCount(iter.next().getId()));
+		assertEquals(1, contentTagService.getTagContentsCount(iter.next().getId()));
+		assertEquals(3, contentTagService.getTagContentsCount(iter.next().getId()));
+		assertEquals(2, contentTagService.getTagContentsCount(iter.next().getId()));
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testSaveTags_fail3() {
-		contentTagFacade.saveTags(new ArrayList<>(), null);
+		contentTagService.saveTags(new ArrayList<>(), null);
 	}
 
 	@Test
@@ -99,34 +98,34 @@ public class ContentTagServiceTest extends GrassFacadeTest {
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
 		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
-		contentTagFacade.saveTags(tags, contentNode1);
+		contentTagService.saveTags(tags, contentNode1);
 
 		tags.add("pokusy");
 		Long contentNode2 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
-		contentTagFacade.saveTags(tags, contentNode2);
+		contentTagService.saveTags(tags, contentNode2);
 
-		ContentTagOverviewTO tagTO = contentTagFacade.getTagByName("novinky");
+		ContentTagOverviewTO tagTO = contentTagService.getTagByName("novinky");
 		assertEquals("novinky", tagTO.getName());
-		assertEquals(2, contentTagFacade.getTagContentsCount(tagTO.getId()));
+		assertEquals(2, contentTagService.getTagContentsCount(tagTO.getId()));
 
-		tagTO = contentTagFacade.getTagByName("pokusy");
+		tagTO = contentTagService.getTagByName("pokusy");
 		assertEquals("pokusy", tagTO.getName());
-		assertEquals(1, contentTagFacade.getTagContentsCount(tagTO.getId()));
+		assertEquals(1, contentTagService.getTagContentsCount(tagTO.getId()));
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testGetTagByName_fail() {
-		contentTagFacade.getTagByName(null);
+		contentTagService.getTagByName(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testGetTagByName_fail2() {
-		contentTagFacade.getTagByName("");
+		contentTagService.getTagByName("");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testGetTagByName_fail3() {
-		contentTagFacade.getTagByName(" ");
+		contentTagService.getTagByName(" ");
 	}
 
 	@Test
@@ -139,14 +138,14 @@ public class ContentTagServiceTest extends GrassFacadeTest {
 		tags.add("pokusy");
 		mockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
 
-		ContentTagOverviewTO tagTO = contentTagFacade.getTagByName("novinky");
+		ContentTagOverviewTO tagTO = contentTagService.getTagByName("novinky");
 		assertEquals("novinky", tagTO.getName());
-		tagTO = contentTagFacade.getTagById(tagTO.getId());
+		tagTO = contentTagService.getTagById(tagTO.getId());
 		assertEquals("novinky", tagTO.getName());
 
-		tagTO = contentTagFacade.getTagByName("pokusy");
+		tagTO = contentTagService.getTagByName("pokusy");
 		assertEquals("pokusy", tagTO.getName());
-		tagTO = contentTagFacade.getTagById(tagTO.getId());
+		tagTO = contentTagService.getTagById(tagTO.getId());
 		assertEquals("pokusy", tagTO.getName());
 	}
 
@@ -158,27 +157,27 @@ public class ContentTagServiceTest extends GrassFacadeTest {
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
 		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
-		contentTagFacade.saveTags(tags, contentNode1);
+		contentTagService.saveTags(tags, contentNode1);
 
 		tags.add("pokusy");
 		Long contentNode2 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
-		contentTagFacade.saveTags(tags, contentNode2);
+		contentTagService.saveTags(tags, contentNode2);
 
-		ContentTagOverviewTO tagTO = contentTagFacade.getTagByName("novinky");
+		ContentTagOverviewTO tagTO = contentTagService.getTagByName("novinky");
 		assertEquals("novinky", tagTO.getName());
-		assertEquals(2, contentTagFacade.getTagContentsCount(tagTO.getId()));
+		assertEquals(2, contentTagService.getTagContentsCount(tagTO.getId()));
 
-		tagTO = contentTagFacade.getTagByName("pokusy");
+		tagTO = contentTagService.getTagByName("pokusy");
 		assertEquals("pokusy", tagTO.getName());
-		assertEquals(1, contentTagFacade.getTagContentsCount(tagTO.getId()));
+		assertEquals(1, contentTagService.getTagContentsCount(tagTO.getId()));
 
 		tags = new HashSet<>();
-		contentTagFacade.saveTags(tags, contentNode2);
+		contentTagService.saveTags(tags, contentNode2);
 
-		tagTO = contentTagFacade.getTagByName("novinky");
-		assertEquals(1, contentTagFacade.getTagContentsCount(tagTO.getId()));
+		tagTO = contentTagService.getTagByName("novinky");
+		assertEquals(1, contentTagService.getTagContentsCount(tagTO.getId()));
 
-		tagTO = contentTagFacade.getTagByName("pokusy");
+		tagTO = contentTagService.getTagByName("pokusy");
 		assertNull(tagTO);
 	}
 
@@ -190,22 +189,22 @@ public class ContentTagServiceTest extends GrassFacadeTest {
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
 		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
-		contentTagFacade.saveTags(tags, contentNode1);
+		contentTagService.saveTags(tags, contentNode1);
 
 		tags.add("pokusy");
 		Long contentNode2 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
-		contentTagFacade.saveTags(tags, contentNode2);
+		contentTagService.saveTags(tags, contentNode2);
 
-		ContentTagOverviewTO tagTO = contentTagFacade.getTagByName("novinky");
+		ContentTagOverviewTO tagTO = contentTagService.getTagByName("novinky");
 		assertEquals("novinky", tagTO.getName());
-		assertEquals(2, contentTagFacade.getTagContentsCount(tagTO.getId()));
+		assertEquals(2, contentTagService.getTagContentsCount(tagTO.getId()));
 
-		contentNodeFacade.deleteByContentId(MockUtils.MOCK_CONTENTNODE_MODULE + 2, 32L);
+		contentNodeService.deleteByContentId(MockUtils.MOCK_CONTENTNODE_MODULE + 2, 32L);
 
-		tagTO = contentTagFacade.getTagByName("novinky");
-		assertEquals(1, contentTagFacade.getTagContentsCount(tagTO.getId()));
+		tagTO = contentTagService.getTagByName("novinky");
+		assertEquals(1, contentTagService.getTagContentsCount(tagTO.getId()));
 
-		tagTO = contentTagFacade.getTagByName("pokusy");
+		tagTO = contentTagService.getTagByName("pokusy");
 		assertNull(tagTO);
 	}
 
@@ -217,22 +216,22 @@ public class ContentTagServiceTest extends GrassFacadeTest {
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
 		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
-		contentTagFacade.saveTags(tags, contentNode1);
+		contentTagService.saveTags(tags, contentNode1);
 
 		tags.add("pokusy");
 		Long contentNode2 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
-		contentTagFacade.saveTags(tags, contentNode2);
+		contentTagService.saveTags(tags, contentNode2);
 
-		ContentTagOverviewTO tagTO = contentTagFacade.getTagByName("novinky");
+		ContentTagOverviewTO tagTO = contentTagService.getTagByName("novinky");
 		assertEquals("novinky", tagTO.getName());
-		assertEquals(2, contentTagFacade.getTagContentsCount(tagTO.getId()));
+		assertEquals(2, contentTagService.getTagContentsCount(tagTO.getId()));
 
-		contentNodeFacade.deleteByContentNodeId(contentNode2);
+		contentNodeService.deleteByContentNodeId(contentNode2);
 
-		tagTO = contentTagFacade.getTagByName("novinky");
-		assertEquals(1, contentTagFacade.getTagContentsCount(tagTO.getId()));
+		tagTO = contentTagService.getTagByName("novinky");
+		assertEquals(1, contentTagService.getTagContentsCount(tagTO.getId()));
 
-		tagTO = contentTagFacade.getTagByName("pokusy");
+		tagTO = contentTagService.getTagByName("pokusy");
 		assertNull(tagTO);
 	}
 
@@ -256,7 +255,7 @@ public class ContentTagServiceTest extends GrassFacadeTest {
 		tags.add("tag5");
 		mockService.createMockContentNode(35L, tags, nodeId1, userId1, 5);
 
-		List<Integer> list = contentTagFacade.getTagsContentsCountsGroups();
+		List<Integer> list = contentTagService.getTagsContentsCountsGroups();
 		assertEquals(4, list.size());
 		assertEquals(1, list.get(0).intValue());
 		assertEquals(3, list.get(1).intValue());
@@ -284,7 +283,7 @@ public class ContentTagServiceTest extends GrassFacadeTest {
 		tags.add("tag5");
 		mockService.createMockContentNode(35L, tags, nodeId1, userId1, 5);
 
-		Map<Long, Integer> map = contentTagFacade.getTagsContentsCountsMap();
+		Map<Long, Integer> map = contentTagService.getTagsContentsCountsMap();
 		assertEquals(5, map.size());
 		Iterator<Integer> iter = map.values().iterator();
 		assertEquals(1, iter.next().intValue());
@@ -314,7 +313,7 @@ public class ContentTagServiceTest extends GrassFacadeTest {
 		tags.add("c");
 		mockService.createMockContentNode(35L, tags, nodeId1, userId1, 5);
 
-		List<ContentTagsCloudItemTO> list = contentTagFacade.createTagsCloud(20, 5);
+		List<ContentTagsCloudItemTO> list = contentTagService.createTagsCloud(20, 5);
 		assertEquals(5, list.size());
 
 		Iterator<ContentTagsCloudItemTO> iter = list.iterator();
@@ -363,7 +362,7 @@ public class ContentTagServiceTest extends GrassFacadeTest {
 		tags.add("aa");
 		mockService.createMockContentNode(36L, tags, nodeId1, userId1, 5);
 
-		List<ContentTagsCloudItemTO> list = contentTagFacade.createTagsCloud(7, 5);
+		List<ContentTagsCloudItemTO> list = contentTagService.createTagsCloud(7, 5);
 		assertEquals(4, list.size());
 
 		Iterator<ContentTagsCloudItemTO> iter = list.iterator();
@@ -398,7 +397,7 @@ public class ContentTagServiceTest extends GrassFacadeTest {
 		tags.add("q");
 		mockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
 
-		List<ContentTagsCloudItemTO> list = contentTagFacade.createTagsCloud(20, 5);
+		List<ContentTagsCloudItemTO> list = contentTagService.createTagsCloud(20, 5);
 		assertEquals(1, list.size());
 
 		Iterator<ContentTagsCloudItemTO> iter = list.iterator();
@@ -410,7 +409,7 @@ public class ContentTagServiceTest extends GrassFacadeTest {
 
 	@Test
 	public void testCreateTagsCloud_empty() {
-		List<ContentTagsCloudItemTO> list = contentTagFacade.createTagsCloud(20, 5);
+		List<ContentTagsCloudItemTO> list = contentTagService.createTagsCloud(20, 5);
 		assertEquals(0, list.size());
 	}
 

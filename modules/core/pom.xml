@@ -53,7 +53,10 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<configuration>
-					<excludes>cz/gattserver/grass3/facades/impl/RandomSourceImpl.class</excludes>
+					<excludes>
+						<exclude>cz/gattserver/grass3/services/impl/RandomSourceImpl.class</exclude>
+						<exclude>cz/gattserver/grass3/ui/**</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>

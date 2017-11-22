@@ -26,13 +26,13 @@ import cz.gattserver.grass3.test.MockUtils;
 public class ContentNodeServiceTest extends GrassFacadeTest {
 
 	@Autowired
-	private ContentNodeService contentNodeFacade;
+	private ContentNodeService contentNodeService;
 
 	@Autowired
-	private ContentTagService contentTagFacade;
+	private ContentTagService contentTagService;
 
 	@Autowired
-	private UserService userFacade;
+	private UserService userService;
 
 	@Test
 	public void testGetRecentAdded() {
@@ -42,7 +42,7 @@ public class ContentNodeServiceTest extends GrassFacadeTest {
 		Long contentNodeId1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		Long contentNodeId2 = mockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
 
-		List<ContentNodeOverviewTO> added = contentNodeFacade.getRecentAdded(0, 10);
+		List<ContentNodeOverviewTO> added = contentNodeService.getRecentAdded(0, 10);
 		assertEquals(2, added.size());
 
 		ContentNodeOverviewTO added2 = added.get(0);
@@ -60,9 +60,9 @@ public class ContentNodeServiceTest extends GrassFacadeTest {
 		Long contentNodeId1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		Long contentNodeId2 = mockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
 
-		contentNodeFacade.modify(contentNodeId1, "newName", true);
+		contentNodeService.modify(contentNodeId1, "newName", true);
 
-		List<ContentNodeOverviewTO> added = contentNodeFacade.getRecentModified(0, 10);
+		List<ContentNodeOverviewTO> added = contentNodeService.getRecentModified(0, 10);
 		assertEquals(2, added.size());
 
 		ContentNodeOverviewTO added1 = added.get(0);
@@ -80,12 +80,12 @@ public class ContentNodeServiceTest extends GrassFacadeTest {
 		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		mockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
 
-		userFacade.addContentToFavourites(contentNode1, userId1);
+		userService.addContentToFavourites(contentNode1, userId1);
 
-		assertEquals(1, contentNodeFacade.getUserFavouriteCount(userId1));
-		assertEquals(0, contentNodeFacade.getUserFavouriteCount(userId2));
+		assertEquals(1, contentNodeService.getUserFavouriteCount(userId1));
+		assertEquals(0, contentNodeService.getUserFavouriteCount(userId2));
 
-		List<ContentNodeOverviewTO> favourites = contentNodeFacade.getUserFavourite(userId1, 0, 10);
+		List<ContentNodeOverviewTO> favourites = contentNodeService.getUserFavourite(userId1, 0, 10);
 		assertEquals(1, favourites.size());
 		assertEquals(contentNode1, favourites.get(0).getId());
 	}
@@ -104,8 +104,8 @@ public class ContentNodeServiceTest extends GrassFacadeTest {
 		tags.add("new1");
 		tags.add("new2");
 
-		contentNodeFacade.modify(contentNode1, "newNameAfterModify", tags, false, LocalDateTime.of(1980, 2, 3, 10, 15));
-		ContentNodeTO contentNode = contentNodeFacade.getByID(contentNode1);
+		contentNodeService.modify(contentNode1, "newNameAfterModify", tags, false, LocalDateTime.of(1980, 2, 3, 10, 15));
+		ContentNodeTO contentNode = contentNodeService.getByID(contentNode1);
 
 		assertEquals("newNameAfterModify", contentNode.getName());
 		for (ContentTagOverviewTO t : contentNode.getContentTags())
@@ -120,7 +120,7 @@ public class ContentNodeServiceTest extends GrassFacadeTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testModify_fail() {
-		contentNodeFacade.modify(4, null, new HashSet<>(), false, LocalDateTime.of(1980, 2, 3, 10, 15));
+		contentNodeService.modify(4, null, new HashSet<>(), false, LocalDateTime.of(1980, 2, 3, 10, 15));
 	}
 
 	@Test
@@ -131,13 +131,13 @@ public class ContentNodeServiceTest extends GrassFacadeTest {
 		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		mockService.createMockContentNode(32L, null, nodeId2, userId1, 1);
 
-		assertEquals(1, contentNodeFacade.getCountByNode(nodeId1));
-		assertEquals(1, contentNodeFacade.getCountByNode(nodeId2));
+		assertEquals(1, contentNodeService.getCountByNode(nodeId1));
+		assertEquals(1, contentNodeService.getCountByNode(nodeId2));
 
-		contentNodeFacade.moveContent(nodeId2, contentNode1);
+		contentNodeService.moveContent(nodeId2, contentNode1);
 
-		assertEquals(0, contentNodeFacade.getCountByNode(nodeId1));
-		assertEquals(2, contentNodeFacade.getCountByNode(nodeId2));
+		assertEquals(0, contentNodeService.getCountByNode(nodeId1));
+		assertEquals(2, contentNodeService.getCountByNode(nodeId2));
 	}
 
 	@Test
@@ -145,21 +145,21 @@ public class ContentNodeServiceTest extends GrassFacadeTest {
 		Long userId1 = mockService.createMockUser(1);
 		Long nodeId1 = mockService.createMockRootNode(1);
 
-		assertEquals(0, contentNodeFacade.getCount());
+		assertEquals(0, contentNodeService.getCount());
 
 		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		Long contentNode2 = mockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
 		Long contentNode3 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 3);
 
-		assertEquals(3, contentNodeFacade.getCount());
+		assertEquals(3, contentNodeService.getCount());
 
-		contentNodeFacade.deleteByContentNodeId(contentNode2);
+		contentNodeService.deleteByContentNodeId(contentNode2);
 
-		assertEquals(2, contentNodeFacade.getCount());
+		assertEquals(2, contentNodeService.getCount());
 
-		assertNotNull(contentNodeFacade.getByID(contentNode1));
-		assertNull(contentNodeFacade.getByID(contentNode2));
-		assertNotNull(contentNodeFacade.getByID(contentNode3));
+		assertNotNull(contentNodeService.getByID(contentNode1));
+		assertNull(contentNodeService.getByID(contentNode2));
+		assertNotNull(contentNodeService.getByID(contentNode3));
 	}
 
 	@Test
@@ -167,26 +167,26 @@ public class ContentNodeServiceTest extends GrassFacadeTest {
 		Long userId1 = mockService.createMockUser(1);
 		Long nodeId1 = mockService.createMockRootNode(1);
 
-		assertEquals(0, contentNodeFacade.getCount());
+		assertEquals(0, contentNodeService.getCount());
 
 		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		Long contentNode2 = mockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
 		Long contentNode3 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 3);
 
-		assertEquals(3, contentNodeFacade.getCount());
+		assertEquals(3, contentNodeService.getCount());
 
-		contentNodeFacade.deleteByContentId(MockUtils.MOCK_CONTENTNODE_MODULE + 2, 31L);
+		contentNodeService.deleteByContentId(MockUtils.MOCK_CONTENTNODE_MODULE + 2, 31L);
 
-		assertEquals(2, contentNodeFacade.getCount());
+		assertEquals(2, contentNodeService.getCount());
 
-		assertNotNull(contentNodeFacade.getByID(contentNode1));
-		assertNull(contentNodeFacade.getByID(contentNode2));
-		assertNotNull(contentNodeFacade.getByID(contentNode3));
+		assertNotNull(contentNodeService.getByID(contentNode1));
+		assertNull(contentNodeService.getByID(contentNode2));
+		assertNotNull(contentNodeService.getByID(contentNode3));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testDeleteByContentId_fail() {
-		contentNodeFacade.deleteByContentId("noModule", 999999L);
+		contentNodeService.deleteByContentId("noModule", 999999L);
 	}
 
 	@Test
@@ -203,11 +203,11 @@ public class ContentNodeServiceTest extends GrassFacadeTest {
 		String moduleId = "mockModule";
 		Long contentId = 2L;
 		String name = "Test obsah";
-		Long contentNodeId = contentNodeFacade.save(moduleId, contentId, name, tags, true, nodeId, userId, false,
+		Long contentNodeId = contentNodeService.save(moduleId, contentId, name, tags, true, nodeId, userId, false,
 				LocalDateTime.now(), null);
 
-		assertEquals(1, contentNodeFacade.getCount());
-		ContentNodeTO contentNodeByID = contentNodeFacade.getByID(contentNodeId);
+		assertEquals(1, contentNodeService.getCount());
+		ContentNodeTO contentNodeByID = contentNodeService.getByID(contentNodeId);
 		assertNotNull(contentNodeByID);
 		assertEquals(moduleId, contentNodeByID.getContentReaderID());
 		assertEquals(contentId, contentNodeByID.getContentID());
@@ -228,11 +228,11 @@ public class ContentNodeServiceTest extends GrassFacadeTest {
 		String moduleId = "mockModule";
 		Long contentId = 2L;
 		String name = "Test obsah";
-		Long contentNodeId = contentNodeFacade.save(moduleId, contentId, name, null, true, nodeId, userId, false, null,
+		Long contentNodeId = contentNodeService.save(moduleId, contentId, name, null, true, nodeId, userId, false, null,
 				null);
 
-		assertEquals(1, contentNodeFacade.getCount());
-		ContentNodeTO contentNode = contentNodeFacade.getByID(contentNodeId);
+		assertEquals(1, contentNodeService.getCount());
+		ContentNodeTO contentNode = contentNodeService.getByID(contentNodeId);
 		assertNotNull(contentNode);
 		assertNotNull(contentNode.getContentTags());
 		assertTrue(contentNode.getContentTags().isEmpty());
@@ -248,19 +248,19 @@ public class ContentNodeServiceTest extends GrassFacadeTest {
 	public void testSave_withoutContentModuleId() {
 		Long userId = mockService.createMockUser(1);
 		Long nodeId = mockService.createMockRootNode(2);
-		contentNodeFacade.save(null, 2L, "Test obsah", null, true, nodeId, userId, false, null, null);
+		contentNodeService.save(null, 2L, "Test obsah", null, true, nodeId, userId, false, null, null);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testSave_withoutName() {
 		Long userId = mockService.createMockUser(1);
 		Long nodeId = mockService.createMockRootNode(2);
-		contentNodeFacade.save("testModule", 2L, null, null, true, nodeId, userId, false, null, null);
+		contentNodeService.save("testModule", 2L, null, null, true, nodeId, userId, false, null, null);
 	}
 
 	@Test
 	public void testGetByNode() {
-		assertEquals(0, contentNodeFacade.getCount());
+		assertEquals(0, contentNodeService.getCount());
 
 		Long userId1 = mockService.createMockUser(1);
 		Long userId2 = mockService.createMockUser(2);
@@ -273,10 +273,10 @@ public class ContentNodeServiceTest extends GrassFacadeTest {
 		Long contentNode2 = mockService.createMockContentNode(30L, tags, nodeId2, userId1, 2);
 		Long contentNode3 = mockService.createMockContentNode(25L, tags, nodeId2, userId2, 3);
 
-		assertEquals(1, contentNodeFacade.getCountByNode(nodeId1));
-		assertEquals(2, contentNodeFacade.getCountByNode(nodeId2));
+		assertEquals(1, contentNodeService.getCountByNode(nodeId1));
+		assertEquals(2, contentNodeService.getCountByNode(nodeId2));
 
-		List<ContentNodeOverviewTO> contentNodesByNode = contentNodeFacade.getByNode(nodeId2, 0, 10);
+		List<ContentNodeOverviewTO> contentNodesByNode = contentNodeService.getByNode(nodeId2, 0, 10);
 		assertEquals(2, contentNodesByNode.size());
 
 		ContentNodeOverviewTO contentNodeByNode = contentNodesByNode.get(0);
@@ -295,12 +295,12 @@ public class ContentNodeServiceTest extends GrassFacadeTest {
 		assertEquals(userId1, contentNodeByNode.getAuthor().getId());
 		assertEquals(nodeId2, contentNodeByNode.getParent().getId());
 
-		assertEquals(3, contentNodeFacade.getCount());
+		assertEquals(3, contentNodeService.getCount());
 	}
 
 	@Test
 	public void testGetByTag() {
-		assertEquals(0, contentNodeFacade.getCount());
+		assertEquals(0, contentNodeService.getCount());
 
 		Long userId1 = mockService.createMockUser(1);
 		Long userId2 = mockService.createMockUser(2);
@@ -318,13 +318,13 @@ public class ContentNodeServiceTest extends GrassFacadeTest {
 
 		Long contentNode3 = mockService.createMockContentNode(25L, tags, nodeId2, userId2, 3);
 
-		ContentTagOverviewTO tag = contentTagFacade.getTagByName("něco");
+		ContentTagOverviewTO tag = contentTagService.getTagByName("něco");
 		assertNotNull(tag);
 		assertEquals("něco", tag.getName());
-		assertEquals(1, contentTagFacade.getTagContentsCount(tag.getId()));
-		assertEquals(1, contentNodeFacade.getCountByTag(tag.getId()));
+		assertEquals(1, contentTagService.getTagContentsCount(tag.getId()));
+		assertEquals(1, contentNodeService.getCountByTag(tag.getId()));
 
-		List<ContentNodeOverviewTO> contentNodesByTag = contentNodeFacade.getByTag(tag.getId(), 0, 10);
+		List<ContentNodeOverviewTO> contentNodesByTag = contentNodeService.getByTag(tag.getId(), 0, 10);
 		assertEquals(1, contentNodesByTag.size());
 		ContentNodeOverviewTO contentNodeByTag = contentNodesByTag.get(0);
 		assertEquals(contentNode3, contentNodeByTag.getId());
@@ -334,13 +334,13 @@ public class ContentNodeServiceTest extends GrassFacadeTest {
 		assertEquals(userId2, contentNodeByTag.getAuthor().getId());
 		assertEquals(nodeId2, contentNodeByTag.getParent().getId());
 
-		tag = contentTagFacade.getTagByName("pokusy");
+		tag = contentTagService.getTagByName("pokusy");
 		assertNotNull(tag);
 		assertEquals("pokusy", tag.getName());
-		assertEquals(3, contentTagFacade.getTagContentsCount(tag.getId()));
-		assertEquals(3, contentNodeFacade.getCountByTag(tag.getId()));
+		assertEquals(3, contentTagService.getTagContentsCount(tag.getId()));
+		assertEquals(3, contentNodeService.getCountByTag(tag.getId()));
 
-		assertEquals(3, contentNodeFacade.getCount());
+		assertEquals(3, contentNodeService.getCount());
 
 	}
 

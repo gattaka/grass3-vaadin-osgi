@@ -19,13 +19,13 @@ import cz.gattserver.grass3.test.GrassFacadeTest;
 public class QuotesServiceTest extends GrassFacadeTest {
 
 	@Autowired
-	private QuotesService quotesFacade;
+	private QuotesService quotesService;
 
 	@Test
 	public void testGetAllQuotes() {
-		Long quoteId = quotesFacade.createQuote("test");
-		Long quoteId2 = quotesFacade.createQuote("test2");
-		List<QuoteTO> quotes = quotesFacade.getAllQuotes();
+		Long quoteId = quotesService.createQuote("test");
+		Long quoteId2 = quotesService.createQuote("test2");
+		List<QuoteTO> quotes = quotesService.getAllQuotes();
 		assertEquals(2, quotes.size());
 		assertEquals(quoteId, quotes.get(0).getId());
 		assertEquals("test", quotes.get(0).getName());
@@ -35,37 +35,37 @@ public class QuotesServiceTest extends GrassFacadeTest {
 
 	@Test
 	public void testGetRandomQuote() {
-		assertEquals("", quotesFacade.getRandomQuote());
-		quotesFacade.createQuote("test1");
-		assertEquals("test1", quotesFacade.getRandomQuote());
+		assertEquals("", quotesService.getRandomQuote());
+		quotesService.createQuote("test1");
+		assertEquals("test1", quotesService.getRandomQuote());
 
-		quotesFacade.createQuote("test2");
-		quotesFacade.createQuote("test3");
-		quotesFacade.createQuote("test4");
+		quotesService.createQuote("test2");
+		quotesService.createQuote("test3");
+		quotesService.createQuote("test4");
 
 		MockRandomSourceImpl.nextValue = 1L;
-		assertEquals("test2", quotesFacade.getRandomQuote());
+		assertEquals("test2", quotesService.getRandomQuote());
 		MockRandomSourceImpl.nextValue = 2L;
-		assertEquals("test3", quotesFacade.getRandomQuote());
+		assertEquals("test3", quotesService.getRandomQuote());
 		MockRandomSourceImpl.nextValue = 3L;
-		assertEquals("test4", quotesFacade.getRandomQuote());
+		assertEquals("test4", quotesService.getRandomQuote());
 	}
 
 	@Test
 	public void testDeleteQuote() {
-		Long quoteId = quotesFacade.createQuote("test");
-		quotesFacade.createQuote("test2");
-		List<QuoteTO> quotes = quotesFacade.getAllQuotes();
+		Long quoteId = quotesService.createQuote("test");
+		quotesService.createQuote("test2");
+		List<QuoteTO> quotes = quotesService.getAllQuotes();
 		assertEquals(2, quotes.size());
-		quotesFacade.deleteQuote(quoteId);
-		quotes = quotesFacade.getAllQuotes();
+		quotesService.deleteQuote(quoteId);
+		quotes = quotesService.getAllQuotes();
 		assertEquals(1, quotes.size());
 	}
 
 	@Test
 	public void testCreateQuote() {
-		Long quoteId = quotesFacade.createQuote("test");
-		List<QuoteTO> quotes = quotesFacade.getAllQuotes();
+		Long quoteId = quotesService.createQuote("test");
+		List<QuoteTO> quotes = quotesService.getAllQuotes();
 		assertEquals(1, quotes.size());
 		assertEquals(quoteId, quotes.get(0).getId());
 		assertEquals("test", quotes.get(0).getName());
@@ -73,44 +73,44 @@ public class QuotesServiceTest extends GrassFacadeTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testCreateQuote_fail() {
-		quotesFacade.createQuote(null);
+		quotesService.createQuote(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCreateQuote_fail2() {
-		quotesFacade.createQuote("");
+		quotesService.createQuote("");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCreateQuote_fail3() {
-		quotesFacade.createQuote(" ");
+		quotesService.createQuote(" ");
 	}
 
 	@Test
 	public void testModifyQuote() {
-		Long quoteId = quotesFacade.createQuote("test");
-		List<QuoteTO> quotes = quotesFacade.getAllQuotes();
+		Long quoteId = quotesService.createQuote("test");
+		List<QuoteTO> quotes = quotesService.getAllQuotes();
 		assertEquals(1, quotes.size());
 		assertEquals("test", quotes.get(0).getName());
-		quotesFacade.modifyQuote(quoteId, "ehhh");
-		quotes = quotesFacade.getAllQuotes();
+		quotesService.modifyQuote(quoteId, "ehhh");
+		quotes = quotesService.getAllQuotes();
 		assertEquals(1, quotes.size());
 		assertEquals("ehhh", quotes.get(0).getName());
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testModifyQuote_fail2() {
-		quotesFacade.modifyQuote(999L, null);
+		quotesService.modifyQuote(999L, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testModifyQuote_fail3() {
-		quotesFacade.modifyQuote(999L, "");
+		quotesService.modifyQuote(999L, "");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testModifyQuote_fail4() {
-		quotesFacade.modifyQuote(999L, " ");
+		quotesService.modifyQuote(999L, " ");
 	}
 
 }

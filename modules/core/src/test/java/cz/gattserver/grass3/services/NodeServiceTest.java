@@ -21,15 +21,15 @@ import cz.gattserver.grass3.test.GrassFacadeTest;
 public class NodeServiceTest extends GrassFacadeTest {
 
 	@Autowired
-	private NodeService nodeFacade;
+	private NodeService nodeService;
 
 	@Autowired
 	private NodeRepository nodeRepository;
 
 	@Test
 	public void testCreateNewNode() {
-		Long nodeId = nodeFacade.createNewNode(null, "testNode");
-		NodeTO node = nodeFacade.getNodeByIdForDetail(nodeId);
+		Long nodeId = nodeService.createNewNode(null, "testNode");
+		NodeTO node = nodeService.getNodeByIdForDetail(nodeId);
 		assertNotNull(node);
 		assertEquals(nodeId, node.getId());
 		assertNull(node.getParent());
@@ -38,49 +38,49 @@ public class NodeServiceTest extends GrassFacadeTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testCreateNewNode_fail() {
-		nodeFacade.createNewNode(null, null);
+		nodeService.createNewNode(null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCreateNewNode_fail2() {
-		nodeFacade.createNewNode(null, "");
+		nodeService.createNewNode(null, "");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCreateNewNode_fail3() {
-		nodeFacade.createNewNode(null, " ");
+		nodeService.createNewNode(null, " ");
 	}
 
 	@Test
 	public void testDeleteNode() {
-		assertEquals(0, nodeFacade.getNodesForTree().size());
-		Long nodeId1 = nodeFacade.createNewNode(null, "testNode");
-		nodeFacade.createNewNode(null, "testNode2");
-		assertEquals(2, nodeFacade.getNodesForTree().size());
-		nodeFacade.deleteNode(nodeId1);
-		assertEquals(1, nodeFacade.getNodesForTree().size());
+		assertEquals(0, nodeService.getNodesForTree().size());
+		Long nodeId1 = nodeService.createNewNode(null, "testNode");
+		nodeService.createNewNode(null, "testNode2");
+		assertEquals(2, nodeService.getNodesForTree().size());
+		nodeService.deleteNode(nodeId1);
+		assertEquals(1, nodeService.getNodesForTree().size());
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testDeleteNode_notEmpty() {
-		Long nodeId1 = nodeFacade.createNewNode(null, "testNode");
-		nodeFacade.createNewNode(nodeId1, "testNode");
-		nodeFacade.deleteNode(nodeId1);
+		Long nodeId1 = nodeService.createNewNode(null, "testNode");
+		nodeService.createNewNode(nodeId1, "testNode");
+		nodeService.deleteNode(nodeId1);
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testDeleteNode_notEmpty2() {
 		Long userId = mockService.createMockUser(1);
-		Long nodeId = nodeFacade.createNewNode(null, "testNode");
+		Long nodeId = nodeService.createNewNode(null, "testNode");
 		mockService.createMockContentNode(3L, null, nodeId, userId, 1);
-		nodeFacade.deleteNode(nodeId);
+		nodeService.deleteNode(nodeId);
 	}
 
 	@Test
 	public void testGetNodeByIdForDetail() {
-		Long nodeId0 = nodeFacade.createNewNode(null, "testParent");
-		Long nodeId1 = nodeFacade.createNewNode(nodeId0, "testNode");
-		NodeTO node = nodeFacade.getNodeByIdForDetail(nodeId1);
+		Long nodeId0 = nodeService.createNewNode(null, "testParent");
+		Long nodeId1 = nodeService.createNewNode(nodeId0, "testNode");
+		NodeTO node = nodeService.getNodeByIdForDetail(nodeId1);
 		assertEquals(nodeId1, node.getId());
 		assertEquals("testNode", node.getName());
 		assertEquals("testParent", node.getParent().getName());
@@ -88,9 +88,9 @@ public class NodeServiceTest extends GrassFacadeTest {
 
 	@Test
 	public void testGetNodeByIdForOverview() {
-		Long nodeId0 = nodeFacade.createNewNode(null, "testParent");
-		Long nodeId1 = nodeFacade.createNewNode(nodeId0, "testNode");
-		NodeOverviewTO node = nodeFacade.getNodeByIdForOverview(nodeId1);
+		Long nodeId0 = nodeService.createNewNode(null, "testParent");
+		Long nodeId1 = nodeService.createNewNode(nodeId0, "testNode");
+		NodeOverviewTO node = nodeService.getNodeByIdForOverview(nodeId1);
 		assertEquals(nodeId1, node.getId());
 		assertEquals("testNode", node.getName());
 		assertEquals(nodeId0, node.getParentId());
@@ -99,10 +99,10 @@ public class NodeServiceTest extends GrassFacadeTest {
 
 	@Test
 	public void testGetNodesByParentNode() {
-		Long nodeId0 = nodeFacade.createNewNode(null, "testParent");
-		nodeFacade.createNewNode(nodeId0, "testNode1");
-		nodeFacade.createNewNode(nodeId0, "testNode2");
-		List<NodeOverviewTO> nodes = nodeFacade.getNodesByParentNode(nodeId0);
+		Long nodeId0 = nodeService.createNewNode(null, "testParent");
+		nodeService.createNewNode(nodeId0, "testNode1");
+		nodeService.createNewNode(nodeId0, "testNode2");
+		List<NodeOverviewTO> nodes = nodeService.getNodesByParentNode(nodeId0);
 		assertEquals(2, nodes.size());
 		assertEquals("testNode1", nodes.get(0).getName());
 		assertEquals("testNode2", nodes.get(1).getName());
@@ -110,11 +110,11 @@ public class NodeServiceTest extends GrassFacadeTest {
 
 	@Test
 	public void testGetNodesForTree() {
-		Long nodeId0 = nodeFacade.createNewNode(null, "testParent");
-		nodeFacade.createNewNode(nodeId0, "testNode1");
-		Long nodeId1 = nodeFacade.createNewNode(nodeId0, "testNode2");
-		nodeFacade.createNewNode(nodeId1, "testChild");
-		List<NodeOverviewTO> nodes = nodeFacade.getNodesForTree();
+		Long nodeId0 = nodeService.createNewNode(null, "testParent");
+		nodeService.createNewNode(nodeId0, "testNode1");
+		Long nodeId1 = nodeService.createNewNode(nodeId0, "testNode2");
+		nodeService.createNewNode(nodeId1, "testChild");
+		List<NodeOverviewTO> nodes = nodeService.getNodesForTree();
 		assertEquals(4, nodes.size());
 		assertEquals("testParent", nodes.get(0).getName());
 		assertEquals("testNode1", nodes.get(1).getName());
@@ -124,12 +124,12 @@ public class NodeServiceTest extends GrassFacadeTest {
 
 	@Test
 	public void testGetRootNodes() {
-		Long nodeId0 = nodeFacade.createNewNode(null, "testParent");
-		nodeFacade.createNewNode(null, "testParent2");
-		nodeFacade.createNewNode(nodeId0, "testNode1");
-		Long nodeId1 = nodeFacade.createNewNode(nodeId0, "testNode2");
-		nodeFacade.createNewNode(nodeId1, "testChild");
-		List<NodeOverviewTO> nodes = nodeFacade.getRootNodes();
+		Long nodeId0 = nodeService.createNewNode(null, "testParent");
+		nodeService.createNewNode(null, "testParent2");
+		nodeService.createNewNode(nodeId0, "testNode1");
+		Long nodeId1 = nodeService.createNewNode(nodeId0, "testNode2");
+		nodeService.createNewNode(nodeId1, "testChild");
+		List<NodeOverviewTO> nodes = nodeService.getRootNodes();
 		assertEquals(2, nodes.size());
 		assertEquals("testParent", nodes.get(0).getName());
 		assertEquals("testParent2", nodes.get(1).getName());
@@ -137,44 +137,44 @@ public class NodeServiceTest extends GrassFacadeTest {
 
 	@Test
 	public void testIsNodeEmpty() {
-		Long nodeId1 = nodeFacade.createNewNode(null, "nodeWithContentNode");
-		Long nodeId2 = nodeFacade.createNewNode(null, "nodeWithSubNode");
-		Long nodeId3 = nodeFacade.createNewNode(nodeId2, "emptyNode");
+		Long nodeId1 = nodeService.createNewNode(null, "nodeWithContentNode");
+		Long nodeId2 = nodeService.createNewNode(null, "nodeWithSubNode");
+		Long nodeId3 = nodeService.createNewNode(nodeId2, "emptyNode");
 		Long userId1 = mockService.createMockUser(1);
 		mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
-		assertFalse(nodeFacade.isNodeEmpty(nodeId1));
-		assertFalse(nodeFacade.isNodeEmpty(nodeId2));
-		assertTrue(nodeFacade.isNodeEmpty(nodeId3));
+		assertFalse(nodeService.isNodeEmpty(nodeId1));
+		assertFalse(nodeService.isNodeEmpty(nodeId2));
+		assertTrue(nodeService.isNodeEmpty(nodeId3));
 	}
 
 	@Test
 	public void testMoveNode_newRoot() {
-		Long nodeId1 = nodeFacade.createNewNode(null, "testNode1");
-		Long nodeId2 = nodeFacade.createNewNode(nodeId1, "testNode3");
+		Long nodeId1 = nodeService.createNewNode(null, "testNode1");
+		Long nodeId2 = nodeService.createNewNode(nodeId1, "testNode3");
 
-		NodeTO nodeDTO = nodeFacade.getNodeByIdForDetail(nodeId2);
+		NodeTO nodeDTO = nodeService.getNodeByIdForDetail(nodeId2);
 		assertEquals(nodeId1, nodeDTO.getParentId());
 		assertEquals(nodeId1, nodeDTO.getParent().getId());
 		assertNull(nodeDTO.getParent().getParentId());
 		assertNull(nodeDTO.getParent().getParent());
 
-		nodeFacade.moveNode(nodeId2, null);
+		nodeService.moveNode(nodeId2, null);
 
-		nodeDTO = nodeFacade.getNodeByIdForDetail(nodeId2);
+		nodeDTO = nodeService.getNodeByIdForDetail(nodeId2);
 		assertNull(nodeDTO.getParentId());
 		assertNull(nodeDTO.getParent());
 	}
 
 	@Test
 	public void testMoveNode_ok1() {
-		Long nodeId1 = nodeFacade.createNewNode(null, "testNode1");
-		Long nodeId2 = nodeFacade.createNewNode(null, "testNode2");
-		Long nodeId3 = nodeFacade.createNewNode(nodeId2, "testNode3");
+		Long nodeId1 = nodeService.createNewNode(null, "testNode1");
+		Long nodeId2 = nodeService.createNewNode(null, "testNode2");
+		Long nodeId3 = nodeService.createNewNode(nodeId2, "testNode3");
 
-		nodeFacade.moveNode(nodeId2, nodeId1);
-		assertEquals(nodeId1, nodeFacade.getNodeByIdForOverview(nodeId2).getParentId());
+		nodeService.moveNode(nodeId2, nodeId1);
+		assertEquals(nodeId1, nodeService.getNodeByIdForOverview(nodeId2).getParentId());
 
-		NodeTO nodeDTO = nodeFacade.getNodeByIdForDetail(nodeId3);
+		NodeTO nodeDTO = nodeService.getNodeByIdForDetail(nodeId3);
 		assertEquals(nodeId2, nodeDTO.getParentId());
 		assertEquals(nodeId2, nodeDTO.getParent().getId());
 		assertEquals(nodeId1, nodeDTO.getParent().getParentId());
@@ -183,14 +183,14 @@ public class NodeServiceTest extends GrassFacadeTest {
 
 	@Test
 	public void testMoveNode_ok2() {
-		Long nodeId1 = nodeFacade.createNewNode(null, "testNode1");
-		Long nodeId2 = nodeFacade.createNewNode(null, "testNode2");
-		Long nodeId3 = nodeFacade.createNewNode(nodeId2, "testNode3");
+		Long nodeId1 = nodeService.createNewNode(null, "testNode1");
+		Long nodeId2 = nodeService.createNewNode(null, "testNode2");
+		Long nodeId3 = nodeService.createNewNode(nodeId2, "testNode3");
 
-		nodeFacade.moveNode(nodeId2, nodeId1);
-		nodeFacade.moveNode(nodeId3, nodeId1);
+		nodeService.moveNode(nodeId2, nodeId1);
+		nodeService.moveNode(nodeId3, nodeId1);
 
-		NodeTO nodeDTO = nodeFacade.getNodeByIdForDetail(nodeId3);
+		NodeTO nodeDTO = nodeService.getNodeByIdForDetail(nodeId3);
 		assertEquals(nodeId1, nodeDTO.getParentId());
 		assertEquals(nodeId1, nodeDTO.getParent().getId());
 		assertNull(nodeDTO.getParent().getParent());
@@ -198,13 +198,13 @@ public class NodeServiceTest extends GrassFacadeTest {
 
 	@Test
 	public void testMoveNode_noChange() {
-		Long nodeId1 = nodeFacade.createNewNode(null, "testNode1");
-		Long nodeId2 = nodeFacade.createNewNode(nodeId1, "testNode2");
-		Long nodeId3 = nodeFacade.createNewNode(nodeId2, "testNode3");
+		Long nodeId1 = nodeService.createNewNode(null, "testNode1");
+		Long nodeId2 = nodeService.createNewNode(nodeId1, "testNode2");
+		Long nodeId3 = nodeService.createNewNode(nodeId2, "testNode3");
 
-		nodeFacade.moveNode(nodeId3, nodeId2);
+		nodeService.moveNode(nodeId3, nodeId2);
 
-		NodeTO nodeDTO = nodeFacade.getNodeByIdForDetail(nodeId3);
+		NodeTO nodeDTO = nodeService.getNodeByIdForDetail(nodeId3);
 		assertEquals(nodeId2, nodeDTO.getParentId());
 		assertEquals(nodeId1, nodeDTO.getParent().getParentId());
 		assertNull(nodeDTO.getParent().getParent().getParent());
@@ -212,25 +212,25 @@ public class NodeServiceTest extends GrassFacadeTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testMoveNode_fail1() {
-		Long nodeId1 = nodeFacade.createNewNode(null, "testNode1");
-		Long nodeId2 = nodeFacade.createNewNode(nodeId1, "testNode2");
-		Long nodeId3 = nodeFacade.createNewNode(nodeId2, "testNode3");
-		nodeFacade.moveNode(nodeId1, nodeId3);
+		Long nodeId1 = nodeService.createNewNode(null, "testNode1");
+		Long nodeId2 = nodeService.createNewNode(nodeId1, "testNode2");
+		Long nodeId3 = nodeService.createNewNode(nodeId2, "testNode3");
+		nodeService.moveNode(nodeId1, nodeId3);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testMoveNode_fail2() {
-		Long nodeId1 = nodeFacade.createNewNode(null, "testNode1");
-		Long nodeId2 = nodeFacade.createNewNode(nodeId1, "testNode2");
-		Long nodeId3 = nodeFacade.createNewNode(nodeId2, "testNode3");
-		nodeFacade.moveNode(nodeId2, nodeId3);
+		Long nodeId1 = nodeService.createNewNode(null, "testNode1");
+		Long nodeId2 = nodeService.createNewNode(nodeId1, "testNode2");
+		Long nodeId3 = nodeService.createNewNode(nodeId2, "testNode3");
+		nodeService.moveNode(nodeId2, nodeId3);
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testMoveNode_dbCycle() {
-		Long nodeId1 = nodeFacade.createNewNode(null, "testNode1");
-		Long nodeId2 = nodeFacade.createNewNode(nodeId1, "testNode2");
-		Long nodeId3 = nodeFacade.createNewNode(nodeId2, "testNode3");
+		Long nodeId1 = nodeService.createNewNode(null, "testNode1");
+		Long nodeId2 = nodeService.createNewNode(nodeId1, "testNode2");
+		Long nodeId3 = nodeService.createNewNode(nodeId2, "testNode3");
 
 		Node node = nodeRepository.findOne(nodeId1);
 		Node node3 = new Node();
@@ -238,30 +238,30 @@ public class NodeServiceTest extends GrassFacadeTest {
 		node.setParent(node3);
 		nodeRepository.save(node);
 
-		Long nodeId4 = nodeFacade.createNewNode(null, "testNode4");
-		nodeFacade.moveNode(nodeId4, nodeId3);
+		Long nodeId4 = nodeService.createNewNode(null, "testNode4");
+		nodeService.moveNode(nodeId4, nodeId3);
 	}
 
 	@Test
 	public void testRenameNode() {
-		Long nodeId1 = nodeFacade.createNewNode(null, "testNode");
-		nodeFacade.rename(nodeId1, "newTestNode");
-		assertEquals("newTestNode", nodeFacade.getNodeByIdForOverview(nodeId1).getName());
+		Long nodeId1 = nodeService.createNewNode(null, "testNode");
+		nodeService.rename(nodeId1, "newTestNode");
+		assertEquals("newTestNode", nodeService.getNodeByIdForOverview(nodeId1).getName());
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testRenameNode_fail() {
-		nodeFacade.rename(1L, null);
+		nodeService.rename(1L, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testRenameNode_fail2() {
-		nodeFacade.rename(1L, "");
+		nodeService.rename(1L, "");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testRenameNode_fail3() {
-		nodeFacade.rename(1L, " ");
+		nodeService.rename(1L, " ");
 	}
 
 }

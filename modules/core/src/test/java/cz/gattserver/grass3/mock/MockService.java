@@ -34,7 +34,7 @@ public class MockService {
 		return id;
 	}
 
-	public Long createMockContentNode(Long contentId, Set<String> tags, Long nodeId, Long userId, int variant) {
+	public Long createMockContentNode(Long contentId, Set<String> tags, long nodeId, long userId, int variant) {
 		Long contentNodeId = contentNodeFacade.save(MockUtils.MOCK_CONTENTNODE_MODULE + variant, contentId,
 				MockUtils.MOCK_CONTENTNODE_NAME + variant, tags, true, nodeId, userId, false, LocalDateTime.now(),
 				null);

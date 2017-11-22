@@ -37,16 +37,16 @@ public class QuotesFacadeTest extends GrassFacadeTest {
 		assertEquals("", quotesFacade.getRandomQuote());
 		quotesFacade.createQuote("test1");
 		assertEquals("test1", quotesFacade.getRandomQuote());
-		
+
 		quotesFacade.createQuote("test2");
 		quotesFacade.createQuote("test3");
 		quotesFacade.createQuote("test4");
-		
-		MockRandomSourceImpl.nextValue = 2L;
+
+		MockRandomSourceImpl.nextValue = 1L;
 		assertEquals("test2", quotesFacade.getRandomQuote());
-		MockRandomSourceImpl.nextValue = 3L;
+		MockRandomSourceImpl.nextValue = 2L;
 		assertEquals("test3", quotesFacade.getRandomQuote());
-		MockRandomSourceImpl.nextValue = 4L;
+		MockRandomSourceImpl.nextValue = 3L;
 		assertEquals("test4", quotesFacade.getRandomQuote());
 	}
 
@@ -61,6 +61,11 @@ public class QuotesFacadeTest extends GrassFacadeTest {
 		assertEquals(1, quotes.size());
 	}
 
+	@Test(expected = NullPointerException.class)
+	public void testDeleteQuote_fail() {
+		quotesFacade.deleteQuote(null);
+	}
+
 	@Test
 	public void testCreateQuote() {
 		Long quoteId = quotesFacade.createQuote("test");
@@ -68,6 +73,11 @@ public class QuotesFacadeTest extends GrassFacadeTest {
 		assertEquals(1, quotes.size());
 		assertEquals(quoteId, quotes.get(0).getId());
 		assertEquals("test", quotes.get(0).getName());
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testCreateQuote_failed() {
+		quotesFacade.createQuote(null);
 	}
 
 	@Test
@@ -80,6 +90,26 @@ public class QuotesFacadeTest extends GrassFacadeTest {
 		quotes = quotesFacade.getAllQuotes();
 		assertEquals(1, quotes.size());
 		assertEquals("ehhh", quotes.get(0).getName());
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testModifyQuote_fail() {
+		quotesFacade.modifyQuote(null, "ehhh");
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testModifyQuote_fail2() {
+		quotesFacade.modifyQuote(999L, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testModifyQuote_fail3() {
+		quotesFacade.modifyQuote(999L, "");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testModifyQuote_fail4() {
+		quotesFacade.modifyQuote(999L, " ");
 	}
 
 }

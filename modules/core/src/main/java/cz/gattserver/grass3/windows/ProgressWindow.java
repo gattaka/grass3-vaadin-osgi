@@ -3,7 +3,6 @@ package cz.gattserver.grass3.windows;
 import java.text.DecimalFormat;
 
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -18,12 +17,6 @@ public class ProgressWindow extends Window {
 	private BaseProgressBar progressbar;
 	private Label progressItemLabel;
 	private Label descriptionLabel;
-
-	/**
-	 * Volá se při dokončení operace a zavření progressokna
-	 */
-	protected void onClose() {
-	}
 
 	public int getTotal() {
 		return progressbar.getTotal();
@@ -46,10 +39,6 @@ public class ProgressWindow extends Window {
 	}
 
 	public ProgressWindow(BaseProgressBar progressBar) {
-		this(null, progressBar);
-	}
-
-	public ProgressWindow(final Component fireComponent, BaseProgressBar progressBar) {
 		super("Průběh operace");
 
 		setWidth("300px");
@@ -82,26 +71,6 @@ public class ProgressWindow extends Window {
 
 		processWindowLayout.addComponent(descriptionLabel);
 		processWindowLayout.setComponentAlignment(descriptionLabel, Alignment.MIDDLE_CENTER);
-
-		// aby to nešlo pustit dvakrát vedle sebe
-		if (fireComponent != null)
-			fireComponent.setEnabled(false);
-
-		addCloseListener(new Window.CloseListener() {
-
-			private static final long serialVersionUID = -3163982269047432857L;
-
-			@Override
-			public void windowClose(CloseEvent e) {
-
-				// opět povol zahajující element
-				if (fireComponent != null)
-					fireComponent.setEnabled(true);
-
-				onClose();
-			}
-		});
-
 	}
 
 }

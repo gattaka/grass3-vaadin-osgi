@@ -40,8 +40,8 @@ public interface ContentNodeFacade {
 	 *            obsahů), od kterého je draft nebo <code>null</code>
 	 * @return id {@link ContentNode} záznamu, který byl k obsahu vytvořen
 	 */
-	public Long save(String contentModuleId, Long contentId, String name, Collection<String> tags, boolean publicated,
-			Long nodeId, Long author, boolean draft, LocalDateTime date, Long draftSourceId);
+	public long save(String contentModuleId, long contentId, String name, Collection<String> tags, boolean publicated,
+			long nodeId, long author, boolean draft, LocalDateTime date, Long draftSourceId);
 
 	/**
 	 * Získá contentNodeDTO dle jeho id
@@ -50,7 +50,7 @@ public interface ContentNodeFacade {
 	 *            identifikátor obsahu
 	 * @return obsah
 	 */
-	public ContentNodeTO getByID(Long id);
+	public ContentNodeTO getByID(long id);
 
 	/**
 	 * Upraví obsah a uloží ho do DB - verze metody pro obsah bez tagů
@@ -58,7 +58,7 @@ public interface ContentNodeFacade {
 	 * @param contentNodeId
 	 *            uzel obsahu, který patří k tomuto obsahu
 	 */
-	public void modify(Long contentNodeId, String name, boolean publicated);
+	public void modify(long contentNodeId, String name, boolean publicated);
 
 	/**
 	 * Upraví obsah a uloží ho do DB
@@ -70,7 +70,7 @@ public interface ContentNodeFacade {
 	 * @param publicated
 	 *            je obsah publikován ?
 	 */
-	public void modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated);
+	public void modify(long contentNodeId, String name, Collection<String> tags, boolean publicated);
 
 	/**
 	 * Upraví obsah a uloží ho do DB - verze s možností editace data vytvoření
@@ -86,7 +86,7 @@ public interface ContentNodeFacade {
 	 *            vnucené datum vytvoření obsahu, které přepíše původní
 	 *            automatické datum
 	 */
-	public void modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated,
+	public void modify(long contentNodeId, String name, Collection<String> tags, boolean publicated,
 			LocalDateTime creationDate);
 
 	/**
@@ -95,7 +95,7 @@ public interface ContentNodeFacade {
 	 * @param contentNodeId
 	 *            id obecného uzlu obsahu
 	 */
-	public void deleteByContentNodeId(Long contentNodeId);
+	public void deleteByContentNodeId(long contentNodeId);
 
 	/**
 	 * Smaže obsah dle id koncového obsahu
@@ -105,7 +105,7 @@ public interface ContentNodeFacade {
 	 * @param contentId
 	 *            id koncového obsahu v rámci modulu obsahů
 	 */
-	public void deleteByContentId(String contentModuleId, Long contentId);
+	public void deleteByContentId(String contentModuleId, long contentId);
 
 	/**
 	 * Přesune obsah mezi kategoriemi
@@ -115,7 +115,7 @@ public interface ContentNodeFacade {
 	 * @param contentNodeId
 	 *            id obsahu k přesunutí
 	 */
-	public void moveContent(Long nodeId, Long contentNodeId);
+	public void moveContent(long nodeId, long contentNodeId);
 
 	/**
 	 * Získá počet všech obsahů (pro LazyQueryContainer)
@@ -153,7 +153,7 @@ public interface ContentNodeFacade {
 	 *            id tagu, dle kterého bude výběr omezen
 	 * @return počet obsahů dle tagu
 	 */
-	public int getCountByTag(Long tagId);
+	public int getCountByTag(long tagId);
 
 	/**
 	 * Získá stránku obsahů dle tagu (pro LazyQueryContainer)
@@ -166,7 +166,7 @@ public interface ContentNodeFacade {
 	 *            velikost stránky při stránkování
 	 * @return list nalezených obsahů dle stránkování
 	 */
-	public List<ContentNodeOverviewTO> getByTag(Long tagId, int pageIndex, int count);
+	public List<ContentNodeOverviewTO> getByTag(long tagId, int pageIndex, int count);
 
 	/**
 	 * Získá počet oblíbených obsahů dle uživatele (pro LazyQueryContainer)
@@ -175,7 +175,7 @@ public interface ContentNodeFacade {
 	 *            id uživatele, dle kterého bude výběr omezen
 	 * @return počet obsahů dle uživatele
 	 */
-	public int getUserFavouriteCount(Long userId);
+	public int getUserFavouriteCount(long userId);
 
 	/**
 	 * Získá stránku oblíbených obsahů dle uživatele (pro LazyQueryContainer)
@@ -188,7 +188,7 @@ public interface ContentNodeFacade {
 	 *            velikost stránky při stránkování
 	 * @return list nalezených obsahů dle stránkování a omezení
 	 */
-	public List<ContentNodeOverviewTO> getUserFavourite(Long userId, int pageIndex, int count);
+	public List<ContentNodeOverviewTO> getUserFavourite(long userId, int pageIndex, int count);
 
 	/**
 	 * Získá počet obsahů dle kategorie (pro LazyQueryContainer)
@@ -197,7 +197,7 @@ public interface ContentNodeFacade {
 	 *            id kategorie, dle kterého bude výběr omezen
 	 * @return počet obsahů dle kategorie
 	 */
-	public int getCountByNode(Long nodeId);
+	public int getCountByNode(long nodeId);
 
 	/**
 	 * Získá stránku obsahů dle kategorie (pro LazyQueryContainer)
@@ -210,6 +210,6 @@ public interface ContentNodeFacade {
 	 *            velikost stránky při stránkování
 	 * @return list nalezených obsahů dle stránkování a omezení
 	 */
-	public List<ContentNodeOverviewTO> getByNode(Long nodeId, int pageIndex, int count);
+	public List<ContentNodeOverviewTO> getByNode(long nodeId, int pageIndex, int count);
 
 }

@@ -9,7 +9,7 @@ import cz.gattserver.grass3.facades.RandomSource;
 @Component
 public class MockRandomSourceImpl implements RandomSource {
 
-	public static long nextValue = 1L;
+	public static long nextValue = 0L;
 
 	@Override
 	public long getRandomNumber(long range) {

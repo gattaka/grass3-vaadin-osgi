@@ -45,13 +45,10 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	private ContentNodeRepository contentNodeRepository;
 
 	@Override
-	public Long save(String contentModuleId, Long contentId, String name, Collection<String> tags, boolean publicated,
-			Long nodeId, Long authorId, boolean draft, LocalDateTime date, Long draftSourceId) {
+	public long save(String contentModuleId, long contentId, String name, Collection<String> tags, boolean publicated,
+			long nodeId, long authorId, boolean draft, LocalDateTime date, Long draftSourceId) {
 		Validate.notNull(contentModuleId, "'contentModuleId' nesmí být null");
-		Validate.notNull(contentId, "'contentId' nesmí být null");
 		Validate.notNull(name, "'name' nesmí být null");
-		Validate.notNull(nodeId, "'nodeId' nesmí být null");
-		Validate.notNull(authorId, "'authorId' nesmí být null");
 
 		if (date == null)
 			date = LocalDateTime.now();
@@ -83,25 +80,26 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	}
 
 	@Override
-	public ContentNodeTO getByID(Long contentNodeId) {
+	public ContentNodeTO getByID(long contentNodeId) {
 		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
 		ContentNodeTO contentNodeDTO = mapper.mapContentNodeForDetail(contentNode);
 		return contentNodeDTO;
 	}
 
 	@Override
-	public void modify(Long contentNodeId, String name, boolean publicated) {
+	public void modify(long contentNodeId, String name, boolean publicated) {
 		modify(contentNodeId, name, null, publicated);
 	}
 
 	@Override
-	public void modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated) {
+	public void modify(long contentNodeId, String name, Collection<String> tags, boolean publicated) {
 		modify(contentNodeId, name, tags, publicated, null);
 	}
 
 	@Override
-	public void modify(Long contentNodeId, String name, Collection<String> tags, boolean publicated,
+	public void modify(long contentNodeId, String name, Collection<String> tags, boolean publicated,
 			LocalDateTime creationDate) {
+		Validate.notNull(name, "'name' nesmí být null");
 		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
 
 		contentNode.setLastModificationDate(LocalDateTime.now());
@@ -118,8 +116,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	}
 
 	@Override
-	public void deleteByContentNodeId(Long contentNodeId) {
-		Validate.notNull(contentNodeId, "'contentNodeId' nemůže být null");
+	public void deleteByContentNodeId(long contentNodeId) {
 		userFacade.removeContentFromAllUsersFavourites(contentNodeId);
 
 		// vymaž tagy
@@ -131,9 +128,8 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	}
 
 	@Override
-	public void deleteByContentId(String contentModuleId, Long contentId) {
+	public void deleteByContentId(String contentModuleId, long contentId) {
 		Validate.notNull(contentModuleId, "'contentModuleId' nemůže být null");
-		Validate.notNull(contentId, "'contentId' nemůže být null");
 		Long contentNodeId = contentNodeRepository.findIdByContentModuleAndContentId(contentModuleId, contentId);
 		if (contentNodeId != null) {
 			deleteByContentNodeId(contentNodeId);
@@ -143,9 +139,7 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	}
 
 	@Override
-	public void moveContent(Long nodeId, Long contentNodeId) {
-		Validate.notNull(nodeId, "'nodeId' nemůže být null");
-		Validate.notNull(contentNodeId, "'contentNodeId' nemůže být null");
+	public void moveContent(long nodeId, long contentNodeId) {
 		contentNodeRepository.moveContent(nodeId, contentNodeId);
 	}
 
@@ -180,18 +174,18 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	 * Dle tagu
 	 */
 
-	private Page<ContentNode> innerByTagAndUserAccess(Long tagId, PageRequest pr) {
+	private Page<ContentNode> innerByTagAndUserAccess(long tagId, PageRequest pr) {
 		UserInfoTO user = securityFacade.getCurrentUser();
 		return contentNodeRepository.findByTagAndUserAccess(tagId, user.getId(), user.isAdmin(), pr);
 	}
 
 	@Override
-	public int getCountByTag(Long tagId) {
+	public int getCountByTag(long tagId) {
 		return (int) innerByTagAndUserAccess(tagId, new PageRequest(1, 1)).getTotalElements();
 	}
 
 	@Override
-	public List<ContentNodeOverviewTO> getByTag(Long tagId, int pageIndex, int count) {
+	public List<ContentNodeOverviewTO> getByTag(long tagId, int pageIndex, int count) {
 		return mapper.mapContentNodeOverviewCollection(
 				innerByTagAndUserAccess(tagId, new PageRequest(pageIndex, count, Sort.Direction.DESC, "creationDate"))
 						.getContent());
@@ -201,18 +195,18 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	 * Dle oblíbených uživatele
 	 */
 
-	private Page<ContentNode> innerByUserFavouritesAndUserAccess(Long userId, PageRequest pr) {
+	private Page<ContentNode> innerByUserFavouritesAndUserAccess(long userId, PageRequest pr) {
 		UserInfoTO user = securityFacade.getCurrentUser();
 		return contentNodeRepository.findByUserFavouritesAndUserAccess(userId, user.getId(), user.isAdmin(), pr);
 	}
 
 	@Override
-	public int getUserFavouriteCount(Long userId) {
+	public int getUserFavouriteCount(long userId) {
 		return (int) innerByUserFavouritesAndUserAccess(userId, new PageRequest(1, 1)).getTotalElements();
 	}
 
 	@Override
-	public List<ContentNodeOverviewTO> getUserFavourite(Long userId, int pageIndex, int count) {
+	public List<ContentNodeOverviewTO> getUserFavourite(long userId, int pageIndex, int count) {
 		return mapper.mapContentNodeOverviewCollection(
 				innerByUserFavouritesAndUserAccess(userId, new PageRequest(pageIndex, count)).getContent());
 	}
@@ -221,18 +215,18 @@ public class ContentNodeFacadeImpl implements ContentNodeFacade {
 	 * Dle kategorie
 	 */
 
-	private Page<ContentNode> innerByNodeAndUserAccess(Long nodeId, PageRequest pr) {
+	private Page<ContentNode> innerByNodeAndUserAccess(long nodeId, PageRequest pr) {
 		UserInfoTO user = securityFacade.getCurrentUser();
 		return contentNodeRepository.findByNodeAndUserAccess(nodeId, user.getId(), user.isAdmin(), pr);
 	}
 
 	@Override
-	public int getCountByNode(Long nodeId) {
+	public int getCountByNode(long nodeId) {
 		return (int) innerByNodeAndUserAccess(nodeId, new PageRequest(1, 1)).getTotalElements();
 	}
 
 	@Override
-	public List<ContentNodeOverviewTO> getByNode(Long nodeId, int pageIndex, int count) {
+	public List<ContentNodeOverviewTO> getByNode(long nodeId, int pageIndex, int count) {
 		return mapper.mapContentNodeOverviewCollection(
 				innerByNodeAndUserAccess(nodeId, new PageRequest(pageIndex, count)).getContent());
 	}

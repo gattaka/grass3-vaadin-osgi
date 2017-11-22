@@ -2,6 +2,7 @@ package cz.gattserver.grass3.facades;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +17,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.ContentTagsCloudItemTO;
+import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.test.GrassFacadeTest;
 import cz.gattserver.grass3.test.MockUtils;
 
@@ -82,6 +84,11 @@ public class ContentTagFacadeTest extends GrassFacadeTest {
 		assertEquals(2, contentTagFacade.getTagContentsCount(iter.next().getId()));
 	}
 
+	@Test(expected = NullPointerException.class)
+	public void testSaveTags_fail3() {
+		contentTagFacade.saveTags(new ArrayList<>(), null);
+	}
+
 	@Test
 	public void testGetTagByName() {
 		Long userId1 = mockService.createMockUser(1);
@@ -103,6 +110,21 @@ public class ContentTagFacadeTest extends GrassFacadeTest {
 		tagTO = contentTagFacade.getTagByName("pokusy");
 		assertEquals("pokusy", tagTO.getName());
 		assertEquals(1, contentTagFacade.getTagContentsCount(tagTO.getId()));
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testGetTagByName_fail() {
+		contentTagFacade.getTagByName(null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetTagByName_fail2() {
+		contentTagFacade.getTagByName("");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetTagByName_fail3() {
+		contentTagFacade.getTagByName(" ");
 	}
 
 	@Test
@@ -171,7 +193,7 @@ public class ContentTagFacadeTest extends GrassFacadeTest {
 		tags.add("pokusy");
 		Long contentNode2 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
 		contentTagFacade.saveTags(tags, contentNode2);
-		
+
 		ContentTagOverviewTO tagTO = contentTagFacade.getTagByName("novinky");
 		assertEquals("novinky", tagTO.getName());
 		assertEquals(2, contentTagFacade.getTagContentsCount(tagTO.getId()));
@@ -198,7 +220,7 @@ public class ContentTagFacadeTest extends GrassFacadeTest {
 		tags.add("pokusy");
 		Long contentNode2 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
 		contentTagFacade.saveTags(tags, contentNode2);
-		
+
 		ContentTagOverviewTO tagTO = contentTagFacade.getTagByName("novinky");
 		assertEquals("novinky", tagTO.getName());
 		assertEquals(2, contentTagFacade.getTagContentsCount(tagTO.getId()));

@@ -17,10 +17,10 @@ public class QuoteRepositoryCustomImpl implements QuoteRepositoryCustom {
 	private EntityManager entityManager;
 
 	@Override
-	public String findRandom(long random) {
+	public String findRandom(long randomIndex) {
 		JPAQuery<String> query = new JPAQuery<>(entityManager);
 		QQuote q = QQuote.quote;
-		return query.select(q.name).from(q).offset(random).limit(1).fetchOne();
+		return query.select(q.name).from(q).orderBy(q.id.asc()).offset(randomIndex).limit(1).fetchOne();
 	}
 
 }

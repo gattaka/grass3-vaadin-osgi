@@ -51,24 +51,24 @@ public class ContentTagFacadeImpl implements ContentTagFacade {
 	}
 
 	@Override
-	public ContentTagOverviewTO getTagById(Long id) {
-		Validate.notNull(id, "Id hledaného tagu nemůže být null");
+	public ContentTagOverviewTO getTagById(long id) {
 		return mapper.mapContentTag(contentTagRepository.findOne(id));
 	}
 
 	@Override
 	public ContentTagOverviewTO getTagByName(String name) {
-		Validate.notNull(name, "Název hledaného tagu nemůže být null");
+		Validate.notBlank(name, "Název hledaného tagu nemůže být prázdný");
 		return mapper.mapContentTag(contentTagRepository.findByName(name));
 	}
 
 	@Override
-	public void saveTags(Collection<String> tagsDTOs, Long contentNodeId) {
-		saveTags(tagsDTOs, contentNodeRepository.findOne(contentNodeId));
+	public void saveTags(Collection<String> tags, long contentNodeId) {
+		saveTags(tags, contentNodeRepository.findOne(contentNodeId));
 	}
 
 	@Override
 	public void saveTags(Collection<String> tags, ContentNode contentNode) {
+		Validate.notNull(contentNode, "'contentNode' nemůže být null");
 		// tagy, které které jsou použity/vytvořeny
 		Set<ContentTag> tagsEntities = new HashSet<ContentTag>();
 		if (tags != null) {
@@ -93,8 +93,7 @@ public class ContentTagFacadeImpl implements ContentTagFacade {
 	}
 
 	@Override
-	public int getTagContentsCount(Long tagId) {
-		Validate.notNull(tagId, "'tagId' nemůže být null");
+	public int getTagContentsCount(long tagId) {
 		return contentTagRepository.countContentTagContents(tagId);
 	}
 

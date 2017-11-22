@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.facades.RandomSource;
 
-@Component
+@Component("randomSourceImpl")
 public class RandomSourceImpl implements RandomSource {
 
 	@Override

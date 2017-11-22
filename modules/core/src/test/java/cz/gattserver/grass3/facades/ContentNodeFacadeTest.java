@@ -115,6 +115,11 @@ public class ContentNodeFacadeTest extends GrassFacadeTest {
 		assertFalse(contentNode.isPublicated());
 	}
 
+	@Test(expected = NullPointerException.class)
+	public void testModify_fail() {
+		contentNodeFacade.modify(4, null, new HashSet<>(), false, LocalDateTime.of(1980, 2, 3, 10, 15));
+	}
+
 	@Test
 	public void testMoveContent() {
 		Long userId1 = mockService.createMockUser(1);
@@ -244,29 +249,10 @@ public class ContentNodeFacadeTest extends GrassFacadeTest {
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void testSave_withoutContentId() {
-		Long userId = mockService.createMockUser(1);
-		Long nodeId = mockService.createMockRootNode(2);
-		contentNodeFacade.save("testModule", null, "Test obsah", null, true, nodeId, userId, false, null, null);
-	}
-
-	@Test(expected = NullPointerException.class)
 	public void testSave_withoutName() {
 		Long userId = mockService.createMockUser(1);
 		Long nodeId = mockService.createMockRootNode(2);
 		contentNodeFacade.save("testModule", 2L, null, null, true, nodeId, userId, false, null, null);
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void testSave_withoutNode() {
-		Long userId = mockService.createMockUser(1);
-		contentNodeFacade.save("testModule", 2L, "Test obsah", null, true, null, userId, false, null, null);
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void testSave_withoutUser() {
-		Long nodeId = mockService.createMockRootNode(2);
-		contentNodeFacade.save("testModule", 2L, "Test obsah", null, true, nodeId, null, false, null, null);
 	}
 
 	@Test

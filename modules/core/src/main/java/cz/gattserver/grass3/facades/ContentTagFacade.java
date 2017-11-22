@@ -25,7 +25,7 @@ public interface ContentTagFacade {
 	 *            id tagu
 	 * @return tag bez jeho vazby na své obsahy
 	 */
-	ContentTagOverviewTO getTagById(Long id);
+	ContentTagOverviewTO getTagById(long id);
 
 	/**
 	 * Získá tag dle názvu
@@ -45,7 +45,7 @@ public interface ContentTagFacade {
 	 * @param contentNodeId
 	 *            id obsahu, který je otagován těmito tagy
 	 */
-	void saveTags(Collection<String> tags, Long contentNodeId);
+	void saveTags(Collection<String> tags, long contentNodeId);
 
 	/**
 	 * Bere řetězec tagů, parsuje je a ukládá do nich (nebo vytvoří nové)
@@ -65,7 +65,7 @@ public interface ContentTagFacade {
 	 *            id tagu jehož počet obsahů chci získat
 	 * @return počet obsahů s daným tagem
 	 */
-	int getTagContentsCount(Long tagId);
+	int getTagContentsCount(long tagId);
 
 	/**
 	 * Získá mapu id tagů s počty jejich obsahů, seřazených dle těchto počtů

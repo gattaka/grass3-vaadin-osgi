@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -45,8 +46,8 @@ public class PhotogalleryResource {
 	// http://localhost:8180/web/ws/pg/login
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public ResponseEntity<String> login(@RequestParam("login") String username,
-			@RequestParam("password") String password) {
-		if (securityFacade.login(username, password, false)) {
+			@RequestParam("password") String password, HttpServletRequest request, HttpServletResponse response) {
+		if (securityFacade.login(username, password, false, request, response)) {
 			return new ResponseEntity<>(HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

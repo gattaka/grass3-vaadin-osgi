@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import cz.gattserver.grass3.facades.QuotesFacade;
+import cz.gattserver.grass3.services.QuotesService;
 
 @Controller
 @RequestMapping("/agent")
@@ -16,7 +16,7 @@ public class AgentController {
 	private static Logger logger = LoggerFactory.getLogger(AgentController.class);
 
 	@Autowired
-	private QuotesFacade iQuotesFacade;
+	private QuotesService iQuotesFacade;
 
 	@RequestMapping("ping")
 	@ResponseBody

@@ -4,7 +4,7 @@ import com.vaadin.server.ErrorEvent;
 import com.vaadin.server.ErrorHandler;
 import com.vaadin.ui.UI;
 
-import cz.gattserver.grass3.windows.ExceptionWindow;
+import cz.gattserver.grass3.ui.windows.ExceptionWindow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

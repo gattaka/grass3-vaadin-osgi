@@ -23,7 +23,7 @@ import cz.gattserver.grass3.articles.parser.PluginBag;
 import cz.gattserver.grass3.articles.parser.exceptions.ParserException;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
-import cz.gattserver.grass3.config.ConfigurationService;
+import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.web.common.SpringContextHelper;
 
 /**

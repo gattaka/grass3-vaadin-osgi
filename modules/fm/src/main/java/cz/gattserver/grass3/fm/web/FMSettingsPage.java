@@ -10,10 +10,10 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
-import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
-import cz.gattserver.grass3.pages.settings.ModuleSettingsPage;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.ConfigurationService;
+import cz.gattserver.grass3.ui.pages.settings.ModuleSettingsPage;
 import cz.gattserver.web.common.ui.H2Label;
 
 public class FMSettingsPage extends ModuleSettingsPage {

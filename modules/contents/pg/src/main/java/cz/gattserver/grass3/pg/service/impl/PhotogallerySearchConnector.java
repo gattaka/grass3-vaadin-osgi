@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
-import cz.gattserver.grass3.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
 import cz.gattserver.grass3.search.service.SearchConnector;
 import cz.gattserver.grass3.search.service.SearchField;
+import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.search.service.SearchEntity;
 import cz.gattserver.web.common.URLIdentifierUtils;
 

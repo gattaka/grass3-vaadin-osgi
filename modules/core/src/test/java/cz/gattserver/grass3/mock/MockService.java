@@ -6,22 +6,22 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cz.gattserver.grass3.facades.ContentNodeFacade;
-import cz.gattserver.grass3.facades.NodeFacade;
-import cz.gattserver.grass3.facades.UserFacade;
+import cz.gattserver.grass3.services.ContentNodeService;
+import cz.gattserver.grass3.services.NodeService;
+import cz.gattserver.grass3.services.UserService;
 import cz.gattserver.grass3.test.MockUtils;
 
 @Service
 public class MockService {
 
 	@Autowired
-	private UserFacade userFacade;
+	private UserService userFacade;
 
 	@Autowired
-	private ContentNodeFacade contentNodeFacade;
+	private ContentNodeService contentNodeFacade;
 
 	@Autowired
-	private NodeFacade nodeFacade;
+	private NodeService nodeFacade;
 
 	public Long createMockUser(int variant) {
 		Long id = userFacade.registrateNewUser(MockUtils.MOCK_USER_EMAIL + variant,

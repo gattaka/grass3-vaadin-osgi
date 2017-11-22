@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
 import cz.gattserver.grass3.monitor.processor.Console;
 import cz.gattserver.grass3.monitor.processor.ConsoleOutputTO;
+import cz.gattserver.grass3.services.ConfigurationService;
 
 @Transactional
 @Component

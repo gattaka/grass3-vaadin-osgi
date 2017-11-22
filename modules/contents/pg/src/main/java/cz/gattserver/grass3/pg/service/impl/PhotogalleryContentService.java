@@ -4,8 +4,8 @@ import org.springframework.stereotype.Component;
 
 import com.vaadin.server.ThemeResource;
 
-import cz.gattserver.grass3.pages.factories.template.PageFactory;
-import cz.gattserver.grass3.service.ContentService;
+import cz.gattserver.grass3.modules.ContentService;
+import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.web.common.ui.ImageIcons;
 
 @Component("photogalleryContentService")

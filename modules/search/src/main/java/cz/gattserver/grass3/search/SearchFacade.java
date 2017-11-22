@@ -8,9 +8,9 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
-import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.search.service.SearchField;
 import cz.gattserver.grass3.search.service.SearchHit;
+import cz.gattserver.grass3.ui.pages.template.GrassPage;
 
 public interface SearchFacade {
 

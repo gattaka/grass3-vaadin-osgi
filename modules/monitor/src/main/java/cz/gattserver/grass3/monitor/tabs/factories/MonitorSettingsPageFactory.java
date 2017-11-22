@@ -3,9 +3,9 @@ package cz.gattserver.grass3.monitor.tabs.factories;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.monitor.tabs.MonitorSettingsPage;
-import cz.gattserver.grass3.pages.settings.factories.AbstractModuleSettingsPageFactory;
-import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.pages.settings.factories.AbstractModuleSettingsPageFactory;
+import cz.gattserver.grass3.ui.pages.template.GrassPage;
 
 @Component
 public class MonitorSettingsPageFactory extends AbstractModuleSettingsPageFactory {

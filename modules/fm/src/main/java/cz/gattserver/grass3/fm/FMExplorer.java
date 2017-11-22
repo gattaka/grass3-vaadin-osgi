@@ -11,8 +11,8 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
-import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
+import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.web.common.SpringContextHelper;
 
 public class FMExplorer {

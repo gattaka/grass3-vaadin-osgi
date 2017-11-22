@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.querydsl.core.types.OrderSpecifier;
 
 import cz.gattserver.common.util.DateUtil;
-import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.hw.dao.HWItemRepository;
 import cz.gattserver.grass3.hw.dao.HWItemTypeRepository;
@@ -39,6 +38,7 @@ import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
+import cz.gattserver.grass3.services.ConfigurationService;
 
 @Transactional
 @Component

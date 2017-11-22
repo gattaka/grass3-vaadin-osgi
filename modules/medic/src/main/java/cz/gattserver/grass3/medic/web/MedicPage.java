@@ -4,8 +4,8 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 
 public class MedicPage extends OneColumnPage {
 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import cz.gattserver.grass3.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 
 public class SearchEntity {
 

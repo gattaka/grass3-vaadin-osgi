@@ -21,9 +21,9 @@ import com.vaadin.ui.Link;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.search.service.SearchHit;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.ImageIcons;
 

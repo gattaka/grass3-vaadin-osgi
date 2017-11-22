@@ -42,16 +42,16 @@ import cz.gattserver.grass3.articles.editor.api.EditorButtonResources;
 import cz.gattserver.grass3.articles.facade.ArticleFacade;
 import cz.gattserver.grass3.articles.facade.ArticleProcessMode;
 import cz.gattserver.grass3.articles.parser.PartsFinder;
-import cz.gattserver.grass3.components.DefaultContentOperations;
-import cz.gattserver.grass3.components.ImageButton;
-import cz.gattserver.grass3.facades.ContentTagFacade;
-import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
-import cz.gattserver.grass3.js.JScriptItem;
-import cz.gattserver.grass3.pages.factories.template.PageFactory;
-import cz.gattserver.grass3.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.ContentTagService;
+import cz.gattserver.grass3.services.NodeService;
+import cz.gattserver.grass3.ui.components.DefaultContentOperations;
+import cz.gattserver.grass3.ui.components.ImageButton;
+import cz.gattserver.grass3.ui.js.JScriptItem;
+import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
@@ -65,13 +65,13 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private static final Logger logger = LoggerFactory.getLogger(ArticlesEditorPage.class);
 
 	@Autowired
-	private NodeFacade nodeFacade;
+	private NodeService nodeFacade;
 
 	@Autowired
 	private ArticleFacade articleFacade;
 
 	@Autowired
-	private ContentTagFacade contentTagFacade;
+	private ContentTagService contentTagFacade;
 
 	@Autowired
 	private PluginServiceHolder pluginServiceHolder;

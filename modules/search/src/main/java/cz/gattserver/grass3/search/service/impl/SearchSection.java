@@ -6,9 +6,9 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.modules.SectionService;
 import cz.gattserver.grass3.security.Role;
-import cz.gattserver.grass3.service.SectionService;
+import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 
 @Component("searchSection")
 public class SearchSection implements SectionService {

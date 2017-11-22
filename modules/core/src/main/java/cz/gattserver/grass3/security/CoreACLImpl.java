@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.config.CoreConfiguration;
-import cz.gattserver.grass3.config.ConfigurationService;
-import cz.gattserver.grass3.facades.UserFacade;
 import cz.gattserver.grass3.interfaces.Authorizable;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
-import cz.gattserver.grass3.service.SectionService;
+import cz.gattserver.grass3.modules.SectionService;
+import cz.gattserver.grass3.services.ConfigurationService;
+import cz.gattserver.grass3.services.UserService;
 
 /**
  * Access control list, bere uživatele a operaci a vyhodnocuje, zda povolit nebo
@@ -22,10 +22,10 @@ import cz.gattserver.grass3.service.SectionService;
 public final class CoreACLImpl implements CoreACL {
 
 	@Autowired
-	UserFacade userFacade;
+	private UserService userFacade;
 
 	@Autowired
-	ConfigurationService configurationService;
+	private ConfigurationService configurationService;
 
 	/**
 	 * =======================================================================

@@ -13,7 +13,7 @@ import cz.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
 import cz.gattserver.grass3.articles.parser.exceptions.ParserException;
 import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
 import cz.gattserver.grass3.articles.parser.interfaces.Context;
-import cz.gattserver.grass3.config.ConfigurationService;
+import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcons;
 

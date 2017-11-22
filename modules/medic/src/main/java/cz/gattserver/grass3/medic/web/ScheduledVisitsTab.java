@@ -23,12 +23,12 @@ import com.vaadin.ui.renderers.ImageRenderer;
 import com.vaadin.ui.renderers.LocalDateTimeRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
 
-import cz.gattserver.grass3.components.DetailGridButton;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitState;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.util.MedicUtil;
 import cz.gattserver.grass3.medic.web.ScheduledVisitsCreateWindow.Operation;
+import cz.gattserver.grass3.ui.components.DetailGridButton;
 import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.ui.BoldLabel;

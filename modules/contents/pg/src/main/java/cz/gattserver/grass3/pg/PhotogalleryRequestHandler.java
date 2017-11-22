@@ -6,9 +6,9 @@ import java.io.FileNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
 import cz.gattserver.grass3.server.AbstractGrassRequestHandler;
+import cz.gattserver.grass3.services.ConfigurationService;
 
 @Component
 public class PhotogalleryRequestHandler extends AbstractGrassRequestHandler {

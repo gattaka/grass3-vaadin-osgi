@@ -25,10 +25,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import cz.gattserver.grass3.config.ConfigurationService;
 import cz.gattserver.grass3.events.EventBus;
-import cz.gattserver.grass3.facades.ContentNodeFacade;
-import cz.gattserver.grass3.facades.SecurityFacade;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
@@ -51,6 +48,9 @@ import cz.gattserver.grass3.pg.service.impl.PhotogalleryContentService;
 import cz.gattserver.grass3.pg.util.DecodeAndCaptureFrames;
 import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.pg.util.PhotogalleryMapper;
+import cz.gattserver.grass3.services.ConfigurationService;
+import cz.gattserver.grass3.services.ContentNodeService;
+import cz.gattserver.grass3.services.SecurityService;
 
 @Transactional
 @Component
@@ -59,13 +59,13 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 	private static Logger logger = LoggerFactory.getLogger(PhotogalleryFacadeImpl.class);
 
 	@Autowired
-	private ContentNodeFacade contentNodeFacade;
+	private ContentNodeService contentNodeFacade;
 
 	@Autowired
 	private PhotogalleryMapper photogalleriesMapper;
 
 	@Autowired
-	private SecurityFacade securityFacade;
+	private SecurityService securityFacade;
 
 	@Autowired
 	private ConfigurationService configurationService;

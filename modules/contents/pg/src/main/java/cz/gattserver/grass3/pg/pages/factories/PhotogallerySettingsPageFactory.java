@@ -2,10 +2,10 @@ package cz.gattserver.grass3.pg.pages.factories;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.pages.settings.factories.AbstractModuleSettingsPageFactory;
-import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.pg.pages.PhotogallerySettingsPage;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.ui.pages.settings.factories.AbstractModuleSettingsPageFactory;
+import cz.gattserver.grass3.ui.pages.template.GrassPage;
 
 @Component
 public class PhotogallerySettingsPageFactory extends AbstractModuleSettingsPageFactory {

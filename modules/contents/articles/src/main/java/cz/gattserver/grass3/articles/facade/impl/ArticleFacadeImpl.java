@@ -34,10 +34,10 @@ import cz.gattserver.grass3.articles.parser.interfaces.Context;
 import cz.gattserver.grass3.articles.service.impl.ArticlesContentService;
 import cz.gattserver.grass3.articles.util.ArticlesMapper;
 import cz.gattserver.grass3.events.EventBus;
-import cz.gattserver.grass3.facades.ContentNodeFacade;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
+import cz.gattserver.grass3.services.ContentNodeService;
 
 @Transactional
 @Component
@@ -47,7 +47,7 @@ public class ArticleFacadeImpl implements ArticleFacade {
 	private EventBus eventBus;
 
 	@Autowired
-	private ContentNodeFacade contentNodeFacade;
+	private ContentNodeService contentNodeFacade;
 
 	@Autowired
 	private ArticlesMapper articlesMapper;

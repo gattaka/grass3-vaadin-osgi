@@ -5,9 +5,9 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Notification.Type;
 
-import cz.gattserver.grass3.GrassUI;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
+import cz.gattserver.grass3.ui.GrassUI;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.InfoWindow;
 import cz.gattserver.web.common.window.WarnWindow;

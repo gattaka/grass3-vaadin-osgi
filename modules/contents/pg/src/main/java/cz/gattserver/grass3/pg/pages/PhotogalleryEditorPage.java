@@ -42,17 +42,9 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.components.BaseProgressBar;
-import cz.gattserver.grass3.components.DefaultContentOperations;
-import cz.gattserver.grass3.components.DeleteGridButton;
-import cz.gattserver.grass3.components.MultiUpload;
 import cz.gattserver.grass3.events.EventBus;
-import cz.gattserver.grass3.facades.ContentTagFacade;
-import cz.gattserver.grass3.facades.NodeFacade;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
-import cz.gattserver.grass3.pages.factories.template.PageFactory;
-import cz.gattserver.grass3.pages.template.OneColumnPage;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import cz.gattserver.grass3.pg.events.PGProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.PGProcessResultEvent;
@@ -60,8 +52,16 @@ import cz.gattserver.grass3.pg.events.PGProcessStartEvent;
 import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
 import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.ContentTagService;
+import cz.gattserver.grass3.services.NodeService;
+import cz.gattserver.grass3.ui.components.BaseProgressBar;
+import cz.gattserver.grass3.ui.components.DefaultContentOperations;
+import cz.gattserver.grass3.ui.components.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.MultiUpload;
+import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.grass3.windows.ProgressWindow;
+import cz.gattserver.grass3.ui.windows.ProgressWindow;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
 import cz.gattserver.web.common.ui.H2Label;
@@ -75,13 +75,13 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	private static final Logger logger = LoggerFactory.getLogger(PhotogalleryEditorPage.class);
 
 	@Autowired
-	private NodeFacade nodeFacade;
+	private NodeService nodeFacade;
 
 	@Autowired
 	private PhotogalleryFacade photogalleryFacade;
 
 	@Autowired
-	private ContentTagFacade contentTagFacade;
+	private ContentTagService contentTagFacade;
 
 	@Resource(name = "nodePageFactory")
 	private PageFactory nodePageFactory;

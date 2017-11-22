@@ -29,11 +29,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
-import cz.gattserver.grass3.pages.template.GrassPage;
 import cz.gattserver.grass3.search.service.SearchConnector;
 import cz.gattserver.grass3.search.service.SearchField;
 import cz.gattserver.grass3.search.service.SearchEntity;
 import cz.gattserver.grass3.search.service.SearchHit;
+import cz.gattserver.grass3.ui.pages.template.GrassPage;
 
 @Component
 public class SearchFacadeImpl implements SearchFacade {

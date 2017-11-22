@@ -13,7 +13,7 @@ public interface QuotesFacade {
 	 *            obsah hlášky
 	 * @return id hlášky
 	 */
-	public Long createQuote(String content);
+	public long createQuote(String content);
 
 	/**
 	 * Upraví existující hlášku
@@ -23,7 +23,7 @@ public interface QuotesFacade {
 	 * @param modifiedContent
 	 *            upravený obsah
 	 */
-	public void modifyQuote(Long quoteId, String modifiedContent);
+	public void modifyQuote(long quoteId, String modifiedContent);
 
 	/**
 	 * Získá všechny hlášky a vrátí je jako list {@link QuoteTO}
@@ -45,6 +45,6 @@ public interface QuotesFacade {
 	 * @param quoteId
 	 *            id hlášky ke smazání
 	 */
-	public void deleteQuote(Long quoteId);
+	public void deleteQuote(long quoteId);
 
 }

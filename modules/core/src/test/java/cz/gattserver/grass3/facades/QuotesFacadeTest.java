@@ -61,11 +61,6 @@ public class QuotesFacadeTest extends GrassFacadeTest {
 		assertEquals(1, quotes.size());
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testDeleteQuote_fail() {
-		quotesFacade.deleteQuote(null);
-	}
-
 	@Test
 	public void testCreateQuote() {
 		Long quoteId = quotesFacade.createQuote("test");
@@ -76,8 +71,18 @@ public class QuotesFacadeTest extends GrassFacadeTest {
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void testCreateQuote_failed() {
+	public void testCreateQuote_fail() {
 		quotesFacade.createQuote(null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCreateQuote_fail2() {
+		quotesFacade.createQuote("");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCreateQuote_fail3() {
+		quotesFacade.createQuote(" ");
 	}
 
 	@Test
@@ -90,11 +95,6 @@ public class QuotesFacadeTest extends GrassFacadeTest {
 		quotes = quotesFacade.getAllQuotes();
 		assertEquals(1, quotes.size());
 		assertEquals("ehhh", quotes.get(0).getName());
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void testModifyQuote_fail() {
-		quotesFacade.modifyQuote(null, "ehhh");
 	}
 
 	@Test(expected = NullPointerException.class)

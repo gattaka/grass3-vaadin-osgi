@@ -14,7 +14,7 @@ public interface NodeFacade {
 	 *            id kategorie
 	 * @return kategori dle id, namapovaná pro přehled
 	 */
-	public NodeOverviewTO getNodeByIdForOverview(Long nodeId);
+	public NodeOverviewTO getNodeByIdForOverview(long nodeId);
 
 	/**
 	 * Získá kategorii dle id a namapuje jí, aby se dala použít v detailu
@@ -24,7 +24,7 @@ public interface NodeFacade {
 	 *            id kategorie
 	 * @return kategori dle id, namapovaná pro detail
 	 */
-	public NodeTO getNodeByIdForDetail(Long nodeId);
+	public NodeTO getNodeByIdForDetail(long nodeId);
 
 	/**
 	 * Získá všechny kořenové kategorie
@@ -39,7 +39,7 @@ public interface NodeFacade {
 	/**
 	 * Získá kategorie, které jsou jako potomci dané kategorie
 	 */
-	public List<NodeOverviewTO> getNodesByParentNode(Long nodeId);
+	public List<NodeOverviewTO> getNodesByParentNode(long nodeId);
 
 	/**
 	 * Založí novou kategorii
@@ -52,7 +52,7 @@ public interface NodeFacade {
 	 *            jméno nové kategorie
 	 * @return id kategorie pokud se přidání zdařilo, jinak <code>null</code>
 	 */
-	public Long createNewNode(Long parentId, String name);
+	public long createNewNode(Long parentId, String name);
 
 	/**
 	 * Přesune kategorii
@@ -69,7 +69,7 @@ public interface NodeFacade {
 	 *            id nového předka, do kterého má být kategorie přesunuta, nebo
 	 *            <code>null</code> pokud má být přesunuta do kořene sekce
 	 */
-	public void moveNode(Long nodeId, Long newParentId);
+	public void moveNode(long nodeId, Long newParentId);
 
 	/**
 	 * Smaže kategorii, pokud je prázdná
@@ -79,7 +79,7 @@ public interface NodeFacade {
 	 * @return <code>true</code> pokud se přidání zdařilo, jinak
 	 *         <code>false</code>
 	 */
-	public void deleteNode(Long nodeId);
+	public void deleteNode(long nodeId);
 
 	/**
 	 * Přejmenuje kategorii
@@ -89,7 +89,7 @@ public interface NodeFacade {
 	 * @param newName
 	 *            nový název
 	 */
-	public void rename(Long nodeId, String newName);
+	public void rename(long nodeId, String newName);
 
 	/**
 	 * Je kategorie prázdná?
@@ -98,5 +98,5 @@ public interface NodeFacade {
 	 *            id kategorie
 	 * @return
 	 */
-	public boolean isNodeEmpty(Long nodeId);
+	public boolean isNodeEmpty(long nodeId);
 }

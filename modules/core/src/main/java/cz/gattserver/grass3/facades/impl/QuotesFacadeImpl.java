@@ -24,12 +24,12 @@ public class QuotesFacadeImpl implements QuotesFacade {
 
 	@Autowired
 	private QuoteRepository quoteRepository;
-	
+
 	@Autowired
 	private RandomSource randomSource;
 
 	@Override
-	public Long createQuote(String content) {
+	public long createQuote(String content) {
 		Validate.notBlank(content, "Obsah hlášky nesmí být prázdný");
 		Quote quote = new Quote();
 		quote.setName(content);
@@ -38,8 +38,7 @@ public class QuotesFacadeImpl implements QuotesFacade {
 	}
 
 	@Override
-	public void modifyQuote(Long quoteId, String modifiedContent) {
-		Validate.notNull(quoteId, "quoteId hlášky nesmí být null");
+	public void modifyQuote(long quoteId, String modifiedContent) {
 		Validate.notBlank(modifiedContent, "Obsah hlášky nesmí být prázdný");
 		Quote quote = new Quote();
 		quote.setId(quoteId);
@@ -66,8 +65,7 @@ public class QuotesFacadeImpl implements QuotesFacade {
 	}
 
 	@Override
-	public void deleteQuote(Long quoteId) {
-		Validate.notNull(quoteId, "quoteId hlášky nesmí být null");
+	public void deleteQuote(long quoteId) {
 		quoteRepository.delete(quoteId);
 	}
 

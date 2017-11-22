@@ -61,6 +61,11 @@ public class UserFacadeTest extends GrassFacadeTest {
 		assertTrue(user.getRoles().contains(Role.FRIEND));
 	}
 
+	@Test(expected = NullPointerException.class)
+	public void testChangeUserRoles_fail() {
+		userFacade.changeUserRoles(1L, null);
+	}
+
 	@Test
 	public void testBanUser() {
 		Long userId = mockService.createMockUser(1);
@@ -163,6 +168,66 @@ public class UserFacadeTest extends GrassFacadeTest {
 		assertEquals(username, user.getName());
 		assertEquals(email, user.getEmail());
 		assertFalse(user.isConfirmed());
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testRegistrateNewUser_fail() {
+		userFacade.registrateNewUser(null, "username", "testUser00012xxx$");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testRegistrateNewUser_fail2() {
+		userFacade.registrateNewUser("", "username", "testUser00012xxx$");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testRegistrateNewUser_fail3() {
+		userFacade.registrateNewUser(" ", "username", "testUser00012xxx$");
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testRegistrateNewUser_fail4() {
+		userFacade.registrateNewUser("email", null, "testUser00012xxx$");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testRegistrateNewUser_fail5() {
+		userFacade.registrateNewUser("email", "", "testUser00012xxx$");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testRegistrateNewUser_fail6() {
+		userFacade.registrateNewUser("email", " ", "testUser00012xxx$");
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testRegistrateNewUser_fail7() {
+		userFacade.registrateNewUser("email", "username", null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testRegistrateNewUser_fail8() {
+		userFacade.registrateNewUser("email", "username", "");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testRegistrateNewUser_fail9() {
+		userFacade.registrateNewUser("email", "username", " ");
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testGetUser_fail() {
+		userFacade.getUser(null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetUser_fail2() {
+		userFacade.getUser("");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetUser_fail3() {
+		userFacade.getUser(" ");
 	}
 
 }

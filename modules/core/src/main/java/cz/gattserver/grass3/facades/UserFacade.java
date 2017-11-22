@@ -22,7 +22,7 @@ public interface UserFacade {
 	 *            heslo uživatele
 	 * @return db id, které bylo nového uživateli přiděleno
 	 */
-	public Long registrateNewUser(String email, String username, String password);
+	public long registrateNewUser(String email, String username, String password);
 
 	/**
 	 * Aktivuje uživatele
@@ -30,7 +30,7 @@ public interface UserFacade {
 	 * @param userId
 	 *            id uživatele
 	 */
-	public void activateUser(Long userId);
+	public void activateUser(long userId);
 
 	/**
 	 * Zablokuje uživatele
@@ -38,7 +38,7 @@ public interface UserFacade {
 	 * @param userId
 	 *            id uživatele
 	 */
-	public void banUser(Long userId);
+	public void banUser(long userId);
 
 	/**
 	 * Upraví role uživatele
@@ -49,7 +49,7 @@ public interface UserFacade {
 	 *            role, které mu budou nastaveny (nejedná se o přidání ale
 	 *            pevnou změnu výčtu rolí)
 	 */
-	public void changeUserRoles(Long userId, Set<Role> roles);
+	public void changeUserRoles(long userId, Set<Role> roles);
 
 	/**
 	 * Vrátí všechny uživatele
@@ -74,7 +74,7 @@ public interface UserFacade {
 	 *            id hledaného uživatele
 	 * @return nalezený uživatel
 	 */
-	public UserInfoTO getUserById(Long userId);
+	public UserInfoTO getUserById(long userId);
 
 	/**
 	 * Zjistí zda daný obsah je v oblíbených daného uživatele
@@ -85,7 +85,7 @@ public interface UserFacade {
 	 *            id uživatele, kterému bude prohledán seznam oblíbených
 	 * @return <code>true</code>, pokud má daný uživatel v oblíbených daný obsah
 	 */
-	public boolean hasInFavourites(Long contentNodeId, Long userId);
+	public boolean hasInFavourites(long contentNodeId, long userId);
 
 	/**
 	 * Přidá obsah do oblíbených uživatele
@@ -95,7 +95,7 @@ public interface UserFacade {
 	 * @param userId
 	 *            id uživatele, kterému bude obsah přidán do oblíbených
 	 */
-	public void addContentToFavourites(Long contentNodeId, Long userId);
+	public void addContentToFavourites(long contentNodeId, long userId);
 
 	/**
 	 * Odebere obsah z oblíbených uživatele
@@ -105,7 +105,7 @@ public interface UserFacade {
 	 * @param userId
 	 *            id uživatele, kterému bude obsah odebrán z oblíbených
 	 */
-	public void removeContentFromFavourites(Long contentNodeId, Long userId);
+	public void removeContentFromFavourites(long contentNodeId, long userId);
 
 	/**
 	 * Odebere obsah z oblíbených všech uživatelů
@@ -113,6 +113,6 @@ public interface UserFacade {
 	 * @param contentNodeId
 	 *            id obsahu, který bude odebrán z oblíbených
 	 */
-	public void removeContentFromAllUsersFavourites(Long content);
+	public void removeContentFromAllUsersFavourites(long content);
 
 }

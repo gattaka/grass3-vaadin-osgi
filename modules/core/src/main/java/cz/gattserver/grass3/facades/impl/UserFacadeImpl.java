@@ -39,10 +39,10 @@ public class UserFacadeImpl implements UserFacade {
 	private ContentNodeRepository contentNodeRepository;
 
 	@Override
-	public Long registrateNewUser(String email, String username, String password) {
-		Validate.notNull(email, "'email' nesmí být null");
-		Validate.notNull(username, "'username' nesmí být null");
-		Validate.notNull(password, "'password' nesmí být null");
+	public long registrateNewUser(String email, String username, String password) {
+		Validate.notBlank(email, "'email' nesmí být prázdný");
+		Validate.notBlank(username, "'username' nesmí být prázdný");
+		Validate.notBlank(password, "'password' nesmí být prázdný");
 
 		User user = new User();
 		user.setConfirmed(false);
@@ -58,21 +58,18 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	@Override
-	public void activateUser(Long userId) {
-		Validate.notNull(userId, "'userId' nesmí být null");
+	public void activateUser(long userId) {
 		userRepository.updateConfirmed(userId, true);
 	}
 
 	@Override
-	public void banUser(Long userId) {
-		Validate.notNull(userId, "'userId' nesmí být null");
+	public void banUser(long userId) {
 		userRepository.updateConfirmed(userId, false);
 	}
 
 	@Override
-	public void changeUserRoles(Long userId, Set<Role> roles) {
-		Validate.notNull(userId, "'userId' nesmí být null");
-		Validate.notNull(roles, "'roles' nesmí být null");
+	public void changeUserRoles(long userId, Set<Role> roles) {
+		Validate.notNull(roles, "'roles' nesmí být prázdný");
 		User u = userRepository.findOne(userId);
 		u.setRoles(roles);
 		userRepository.save(u);
@@ -89,30 +86,25 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	@Override
-	public UserInfoTO getUserById(Long userId) {
-		Validate.notNull(userId, "'userId' uživatele nesmí být null");
+	public UserInfoTO getUserById(long userId) {
 		User user = userRepository.findOne(userId);
 		return mapper.map(user);
 	}
 
 	@Override
 	public UserInfoTO getUser(String username) {
-		Validate.notNull(username, "'username' uživatele nesmí být null");
+		Validate.notBlank(username, "'username' uživatele nesmí být null");
 		User user = userRepository.findByName(username);
 		return mapper.map(user);
 	}
 
 	@Override
-	public boolean hasInFavourites(Long contentNodeId, Long userId) {
-		Validate.notNull(contentNodeId, "'contentNodeId' záznamu obsahu nesmí být null");
-		Validate.notNull(userId, "'userId' uživatele nesmí být null");
+	public boolean hasInFavourites(long contentNodeId, long userId) {
 		return userRepository.findByIdAndFavouritesId(userId, contentNodeId) != null;
 	}
 
 	@Override
-	public void addContentToFavourites(Long contentNodeId, Long userId) {
-		Validate.notNull(contentNodeId, "'contentNodeId' záznamu obsahu nesmí být null");
-		Validate.notNull(userId, "'userId' uživatele nesmí být null");
+	public void addContentToFavourites(long contentNodeId, long userId) {
 		User userEntity = userRepository.findOne(userId);
 		userEntity.getFavourites().add(contentNodeRepository.findOne(contentNodeId));
 		userRepository.save(userEntity);
@@ -124,16 +116,13 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	@Override
-	public void removeContentFromFavourites(Long contentNodeId, Long userId) {
-		Validate.notNull(contentNodeId, "'contentNodeId' záznamu obsahu nesmí být null");
-		Validate.notNull(userId, "'userId' uživatele nesmí být null");
+	public void removeContentFromFavourites(long contentNodeId, long userId) {
 		User userEntity = userRepository.findOne(userId);
 		removeContentFromFavourites(userEntity, contentNodeId);
 	}
 
 	@Override
-	public void removeContentFromAllUsersFavourites(Long contentNodeId) {
-		Validate.notNull(contentNodeId, "'contentNodeId' záznamu obsahu nesmí být null");
+	public void removeContentFromAllUsersFavourites(long contentNodeId) {
 		List<User> users = userRepository.findByFavouritesId(contentNodeId);
 		for (User user : users)
 			removeContentFromFavourites(user, contentNodeId);

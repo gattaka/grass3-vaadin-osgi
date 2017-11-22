@@ -27,16 +27,14 @@ public class NodeFacadeImpl implements NodeFacade {
 	private NodeRepository nodeRepository;
 
 	@Override
-	public NodeOverviewTO getNodeByIdForOverview(Long nodeId) {
-		Validate.notNull(nodeId, "'nodeId' kategorie nemůže být null");
+	public NodeOverviewTO getNodeByIdForOverview(long nodeId) {
 		Node node = nodeRepository.findOne(nodeId);
 		NodeOverviewTO nodeDTO = mapper.mapNodeForOverview(node);
 		return nodeDTO;
 	}
 
 	@Override
-	public NodeTO getNodeByIdForDetail(Long nodeId) {
-		Validate.notNull(nodeId, "'nodeId' kategorie nemůže být null");
+	public NodeTO getNodeByIdForDetail(long nodeId) {
 		Node node = nodeRepository.findOne(nodeId);
 		NodeTO nodeDTO = mapper.mapNodeForDetail(node);
 		return nodeDTO;
@@ -57,15 +55,15 @@ public class NodeFacadeImpl implements NodeFacade {
 	}
 
 	@Override
-	public List<NodeOverviewTO> getNodesByParentNode(Long parentId) {
+	public List<NodeOverviewTO> getNodesByParentNode(long parentId) {
 		List<Node> childrenNodes = nodeRepository.findByParentId(parentId);
 		List<NodeOverviewTO> childrenNodesDTOs = mapper.mapNodesForOverview(childrenNodes);
 		return childrenNodesDTOs;
 	}
 
 	@Override
-	public Long createNewNode(Long parentId, String name) {
-		Validate.notNull(name, "'name' kategorie nemůže být null");
+	public long createNewNode(Long parentId, String name) {
+		Validate.notBlank(name, "'name' kategorie nemůže být prázdný");
 		Node node = new Node();
 		node.setName(name.trim());
 
@@ -80,9 +78,7 @@ public class NodeFacadeImpl implements NodeFacade {
 	}
 
 	@Override
-	public void moveNode(Long nodeId, Long newParentId) {
-		Validate.notNull(nodeId, "'nodeId' kategorie nemůže být null");
-
+	public void moveNode(long nodeId, Long newParentId) {
 		Node newParentEntity = newParentId == null ? null : nodeRepository.findOne(newParentId);
 		Node nodeEntity = nodeRepository.findOne(nodeId);
 
@@ -116,8 +112,7 @@ public class NodeFacadeImpl implements NodeFacade {
 	}
 
 	@Override
-	public void deleteNode(Long nodeId) {
-		Validate.notNull(nodeId, "'nodeId' kategorie ke smazání nemůže být null");
+	public void deleteNode(long nodeId) {
 		int countContents = nodeRepository.countContentNodes(nodeId);
 		int countSubNodes = nodeRepository.countSubNodes(nodeId);
 		if (countContents + countSubNodes > 0)
@@ -126,15 +121,13 @@ public class NodeFacadeImpl implements NodeFacade {
 	}
 
 	@Override
-	public void rename(Long nodeId, String newName) {
-		Validate.notNull(nodeId, "'nodeId' kategorie nemůže být null");
-		Validate.notNull(newName, "'newName' kategorie nemůže být null");
+	public void rename(long nodeId, String newName) {
+		Validate.notBlank(newName, "'newName' kategorie nemůže být prázdný");
 		nodeRepository.rename(nodeId, newName);
 	}
 
 	@Override
-	public boolean isNodeEmpty(Long nodeId) {
-		Validate.notNull(nodeId, "'nodeId' kategorie nemůže být null");
+	public boolean isNodeEmpty(long nodeId) {
 		int contentNodesCount = nodeRepository.countContentNodes(nodeId);
 		int subNodesCount = nodeRepository.countSubNodes(nodeId);
 		return contentNodesCount + subNodesCount == 0;

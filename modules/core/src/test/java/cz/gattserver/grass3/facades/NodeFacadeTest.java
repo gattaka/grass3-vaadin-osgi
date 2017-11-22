@@ -35,6 +35,21 @@ public class NodeFacadeTest extends GrassFacadeTest {
 		assertEquals("testNode", node.getName());
 	}
 
+	@Test(expected = NullPointerException.class)
+	public void testCreateNewNode_fail() {
+		nodeFacade.createNewNode(null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCreateNewNode_fail2() {
+		nodeFacade.createNewNode(null, "");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCreateNewNode_fail3() {
+		nodeFacade.createNewNode(null, " ");
+	}
+
 	@Test
 	public void testDeleteNode() {
 		assertEquals(0, nodeFacade.getNodesForTree().size());
@@ -231,6 +246,21 @@ public class NodeFacadeTest extends GrassFacadeTest {
 		Long nodeId1 = nodeFacade.createNewNode(null, "testNode");
 		nodeFacade.rename(nodeId1, "newTestNode");
 		assertEquals("newTestNode", nodeFacade.getNodeByIdForOverview(nodeId1).getName());
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testRenameNode_fail() {
+		nodeFacade.rename(1L, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testRenameNode_fail2() {
+		nodeFacade.rename(1L, "");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testRenameNode_fail3() {
+		nodeFacade.rename(1L, " ");
 	}
 
 }

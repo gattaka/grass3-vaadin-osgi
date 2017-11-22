@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import cz.gattserver.grass3.services.RandomSourceService;
-import cz.gattserver.grass3.test.GrassFacadeTest;
+import cz.gattserver.grass3.test.AbstractTest;
 
-public class RandomSourceServiceImplTest extends GrassFacadeTest {
+public class RandomSourceServiceImplTest extends AbstractTest {
 
 	@Autowired
 	@Qualifier("randomSourceServiceImpl")

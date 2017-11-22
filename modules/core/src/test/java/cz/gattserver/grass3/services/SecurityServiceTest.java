@@ -20,12 +20,12 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.services.UserService;
-import cz.gattserver.grass3.test.GrassFacadeTest;
+import cz.gattserver.grass3.test.AbstractDBUnitTest;
 import cz.gattserver.grass3.test.MockUtils;
 
 @DatabaseSetup(value = "deleteAll.xml", type = DatabaseOperation.DELETE_ALL)
 @WebAppConfiguration
-public class SecurityServiceTest extends GrassFacadeTest {
+public class SecurityServiceTest extends AbstractDBUnitTest {
 
 	@Autowired
 	private WebApplicationContext context;

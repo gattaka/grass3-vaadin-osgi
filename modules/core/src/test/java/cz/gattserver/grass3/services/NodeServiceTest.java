@@ -15,10 +15,10 @@ import cz.gattserver.grass3.interfaces.NodeTO;
 import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.repositories.NodeRepository;
 import cz.gattserver.grass3.services.NodeService;
-import cz.gattserver.grass3.test.GrassFacadeTest;
+import cz.gattserver.grass3.test.AbstractDBUnitTest;
 
 @DatabaseSetup(value = "deleteAll.xml", type = DatabaseOperation.DELETE_ALL)
-public class NodeServiceTest extends GrassFacadeTest {
+public class NodeServiceTest extends AbstractDBUnitTest {
 
 	@Autowired
 	private NodeService nodeService;

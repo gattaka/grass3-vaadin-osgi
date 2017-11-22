@@ -19,11 +19,11 @@ import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.ContentTagsCloudItemTO;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.ContentTagService;
-import cz.gattserver.grass3.test.GrassFacadeTest;
+import cz.gattserver.grass3.test.AbstractDBUnitTest;
 import cz.gattserver.grass3.test.MockUtils;
 
 @DatabaseSetup(value = "deleteAll.xml", type = DatabaseOperation.DELETE_ALL)
-public class ContentTagServiceTest extends GrassFacadeTest {
+public class ContentTagServiceTest extends AbstractDBUnitTest {
 
 	@Autowired
 	private ContentTagService contentTagService;

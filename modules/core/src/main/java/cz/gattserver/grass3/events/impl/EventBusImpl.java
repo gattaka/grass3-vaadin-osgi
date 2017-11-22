@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.events.impl;
 
 import net.engio.mbassy.bus.MBassador;
+import net.engio.mbassy.bus.MessagePublication;
 import net.engio.mbassy.bus.config.BusConfiguration;
 
 import org.springframework.stereotype.Component;
@@ -22,12 +23,13 @@ public class EventBusImpl implements EventBus {
 	}
 
 	@Override
+	public MessagePublication publish(ProgressEvent event) {
+		return eventBus.publishAsync(event);
+	}
+
+	@Override
 	public void publish(Event event) {
-		if (event instanceof ProgressEvent) {
-			eventBus.publishAsync(event);
-		} else {
-			eventBus.publish(event);
-		}
+		eventBus.publish(event);
 	}
 
 	@Override

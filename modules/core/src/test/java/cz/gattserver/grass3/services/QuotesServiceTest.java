@@ -13,10 +13,10 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import cz.gattserver.grass3.interfaces.QuoteTO;
 import cz.gattserver.grass3.mock.MockRandomSourceImpl;
 import cz.gattserver.grass3.services.QuotesService;
-import cz.gattserver.grass3.test.GrassFacadeTest;
+import cz.gattserver.grass3.test.AbstractDBUnitTest;
 
 @DatabaseSetup(value = "deleteAll.xml", type = DatabaseOperation.DELETE_ALL)
-public class QuotesServiceTest extends GrassFacadeTest {
+public class QuotesServiceTest extends AbstractDBUnitTest {
 
 	@Autowired
 	private QuotesService quotesService;

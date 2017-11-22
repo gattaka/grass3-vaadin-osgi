@@ -110,17 +110,12 @@ public class NodePage extends OneColumnPage {
 				return;
 			}
 			Long newNodeId = nodeFacade.createNewNode(node.getId(), newNodeName);
-			if (newNodeId != null) {
-				UIUtils.showInfo("Nový kategorie byla úspěšně vytvořena.");
-				// refresh
-				populateSubnodesTable(node);
-				UIUtils.redirect(
-						getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(newNodeId, newNodeName)));
-				// clean
-				newNodeNameField.setValue("");
-			} else {
-				UIUtils.showWarning("Nezdařilo se vložit novou kategorii.");
-			}
+			// refresh
+			populateSubnodesTable(node);
+			UIUtils.redirect(
+					getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(newNodeId, newNodeName)));
+			// clean
+			newNodeNameField.setValue("");
 		});
 		createButton.setIcon(new ThemeResource(ImageIcons.BRIEFCASE_PLUS_16_ICON));
 		panelLayout.addComponent(createButton);
@@ -128,7 +123,6 @@ public class NodePage extends OneColumnPage {
 	}
 
 	private void createBreadcrumb(VerticalLayout layout, NodeTO node) {
-
 		Breadcrumb breadcrumb = new Breadcrumb();
 		layout.addComponent(breadcrumb);
 

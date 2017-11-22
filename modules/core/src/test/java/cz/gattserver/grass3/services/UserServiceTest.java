@@ -17,11 +17,11 @@ import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.UserService;
-import cz.gattserver.grass3.test.GrassFacadeTest;
+import cz.gattserver.grass3.test.AbstractDBUnitTest;
 import cz.gattserver.grass3.test.MockUtils;
 
 @DatabaseSetup(value = "deleteAll.xml", type = DatabaseOperation.DELETE_ALL)
-public class UserServiceTest extends GrassFacadeTest {
+public class UserServiceTest extends AbstractDBUnitTest {
 
 	@Autowired
 	private UserService userService;

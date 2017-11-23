@@ -115,6 +115,7 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 		assertEquals(userId1, contentNode.getAuthor().getId());
 		assertEquals(MockUtils.MOCK_CONTENTNODE_MODULE + 1, contentNode.getContentReaderID());
 		assertEquals(LocalDateTime.of(1980, 2, 3, 10, 15), contentNode.getCreationDate());
+		assertNotNull(contentNode.getLastModificationDate());
 		assertFalse(contentNode.isPublicated());
 	}
 

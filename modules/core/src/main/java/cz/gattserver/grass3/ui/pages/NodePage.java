@@ -17,9 +17,9 @@ import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeTO;
-import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ContentNodeService;
+import cz.gattserver.grass3.services.CoreACLService;
 import cz.gattserver.grass3.services.NodeService;
 import cz.gattserver.grass3.ui.components.Breadcrumb;
 import cz.gattserver.grass3.ui.components.ContentsLazyGrid;
@@ -36,7 +36,7 @@ import cz.gattserver.web.common.ui.ImageIcons;
 public class NodePage extends OneColumnPage {
 
 	@Autowired
-	private CoreACL coreACL;
+	private CoreACLService coreACL;
 
 	@Autowired
 	private NodeService nodeFacade;

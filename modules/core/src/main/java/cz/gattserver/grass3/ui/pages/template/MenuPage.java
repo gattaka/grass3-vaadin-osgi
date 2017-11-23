@@ -19,8 +19,8 @@ import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.modules.SectionService;
 import cz.gattserver.grass3.modules.register.ModuleRegister;
-import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.CoreACLService;
 import cz.gattserver.grass3.services.NodeService;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.util.UIUtils;
@@ -31,7 +31,7 @@ public abstract class MenuPage extends GrassPage {
 	protected ModuleRegister serviceHolder;
 
 	@Autowired
-	protected CoreACL coreACL;
+	protected CoreACLService coreACL;
 
 	@Autowired
 	protected NodeService nodeFacade;

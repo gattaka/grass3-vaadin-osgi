@@ -155,7 +155,7 @@ public class UserInfoTO implements UserDetails {
 
 	@Override
 	public String toString() {
-		return name;
+		return "Name: " + String.valueOf(name) + " Roles: " + roles.toString();
 	}
 
 }

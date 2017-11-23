@@ -12,8 +12,8 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.interfaces.QuoteTO;
-import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.CoreACLService;
 import cz.gattserver.grass3.services.QuotesService;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
@@ -24,7 +24,7 @@ import cz.gattserver.grass3.ui.util.UIUtils;
 public class QuotesPage extends OneColumnPage {
 
 	@Autowired
-	private CoreACL coreACL;
+	private CoreACLService coreACL;
 
 	@Autowired
 	private QuotesService quotesFacade;

@@ -1,11 +1,11 @@
-package cz.gattserver.grass3.security;
+package cz.gattserver.grass3.services;
 
 import cz.gattserver.grass3.interfaces.Authorizable;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.modules.SectionService;
 
-public interface CoreACL {
+public interface CoreACLService {
 
 	/**
 	 * =======================================================================

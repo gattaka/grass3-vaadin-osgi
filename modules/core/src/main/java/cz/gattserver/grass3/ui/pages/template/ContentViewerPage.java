@@ -26,8 +26,8 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeTO;
-import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.CoreACLService;
 import cz.gattserver.grass3.services.UserService;
 import cz.gattserver.grass3.ui.components.Breadcrumb;
 import cz.gattserver.grass3.ui.components.DeleteButton;
@@ -46,7 +46,7 @@ import cz.gattserver.web.common.window.WarnWindow;
 public abstract class ContentViewerPage extends TwoColumnPage {
 
 	@Autowired
-	private CoreACL coreACL;
+	private CoreACLService coreACL;
 
 	@Autowired
 	private UserService userFacade;

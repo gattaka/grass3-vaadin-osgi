@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.security;
+package cz.gattserver.grass3.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -8,7 +8,9 @@ import cz.gattserver.grass3.interfaces.Authorizable;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.modules.SectionService;
+import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.services.ConfigurationService;
+import cz.gattserver.grass3.services.CoreACLService;
 import cz.gattserver.grass3.services.UserService;
 
 /**
@@ -19,7 +21,7 @@ import cz.gattserver.grass3.services.UserService;
  * 
  */
 @Component
-public final class CoreACLImpl implements CoreACL {
+public final class CoreACLServiceImpl implements CoreACLService {
 
 	@Autowired
 	private UserService userFacade;

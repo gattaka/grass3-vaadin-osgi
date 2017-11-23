@@ -3,8 +3,8 @@ package cz.gattserver.grass3.ui.pages.factories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.CoreACLService;
 import cz.gattserver.grass3.ui.pages.LoginPage;
 import cz.gattserver.grass3.ui.pages.factories.template.AbstractPageFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
@@ -15,7 +15,7 @@ public class LoginPageFactory extends AbstractPageFactory {
 	private static final long serialVersionUID = 259563676017857878L;
 
 	@Autowired
-	private CoreACL coreACL;
+	private CoreACLService coreACL;
 
 	public LoginPageFactory() {
 		// kvůli Spring security se tohle nesmí jmenovat login, musí tam být

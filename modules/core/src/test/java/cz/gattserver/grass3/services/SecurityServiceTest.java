@@ -60,6 +60,19 @@ public class SecurityServiceTest extends AbstractDBUnitTest {
 	}
 
 	@Test
+	public void testLogin_remember() throws Exception {
+		MvcResult mvcResult = mvc.perform(get("/")).andReturn();
+
+		Long userId1 = mockService.createMockUser(1);
+		userService.activateUser(userId1);
+		boolean result = securityService.login(MockUtils.MOCK_USER_NAME + 1, MockUtils.MOCK_USER_PASSWORD + 1, true,
+				mvcResult.getRequest(), mvcResult.getResponse());
+		assertTrue(result);
+		UserInfoTO user = securityService.getCurrentUser();
+		assertEquals(MockUtils.MOCK_USER_NAME + 1, user.getUsername());
+	}
+
+	@Test
 	public void testLogin_failed() throws Exception {
 		MvcResult mvcResult = mvc.perform(get("/")).andReturn();
 

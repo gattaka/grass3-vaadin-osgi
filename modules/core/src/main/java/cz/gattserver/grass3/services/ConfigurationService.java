@@ -6,7 +6,19 @@ import cz.gattserver.grass3.config.AbstractConfiguration;
 
 public interface ConfigurationService extends Serializable {
 
-	public void loadConfiguration(AbstractConfiguration configuration);
+	/**
+	 * Nahraje existující konfiguraci a dopíše její vyplněné hodnoty do
+	 * předaného objektu konfigurace
+	 * 
+	 * @param configuration
+	 */
+	public <T extends AbstractConfiguration> void loadConfiguration(T configuration);
 
-	public boolean saveConfiguration(AbstractConfiguration configuration);
+	/**
+	 * Uloží konfiguraci.
+	 * 
+	 * @param configuration
+	 *            objekt konfigurace
+	 */
+	public <T extends AbstractConfiguration> void saveConfiguration(T configuration);
 }

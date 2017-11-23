@@ -16,8 +16,8 @@ import cz.gattserver.grass3.articles.dto.ArticleDTO;
 import cz.gattserver.grass3.articles.facade.ArticleFacade;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
-import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.CoreACLService;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
 import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
@@ -33,7 +33,7 @@ import cz.gattserver.web.common.window.WarnWindow;
 public class ArticlesViewerPage extends ContentViewerPage {
 
 	@Autowired
-	private CoreACL coreACL;
+	private CoreACLService coreACLService;
 
 	@Autowired
 	private ArticleFacade articleFacade;
@@ -127,7 +127,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		super.createContentOperations(operationsListLayout);
 
 		// Rychlé úpravy
-		if (coreACL.canModifyContent(article.getContentNode(), UIUtils.getUser())) {
+		if (coreACLService.canModifyContent(article.getContentNode(), UIUtils.getUser())) {
 			String url = getPageURL(articlesEditorPageFactory, DefaultContentOperations.EDIT.toString(),
 					URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName()));
 			String script = "$(\".articles-basic-h-id\").each(" + "function(index){" + "$(this).attr(\"href\",\"" + url

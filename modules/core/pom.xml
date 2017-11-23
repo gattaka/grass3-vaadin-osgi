@@ -56,6 +56,13 @@
 					<excludes>
 						<exclude>cz/gattserver/grass3/services/impl/RandomSourceImpl.class</exclude>
 						<exclude>cz/gattserver/grass3/ui/**</exclude>
+						<exclude>cz/gattserver/grass3/interfaces/**</exclude>
+						<exclude>cz/gattserver/grass3/security/**</exclude>
+						<exclude>cz/gattserver/grass3/server/**</exclude>
+						<exclude>cz/gattserver/grass3/model/**</exclude>
+						<exclude>cz/gattserver/grass3/exception/**</exclude>
+						<exclude>cz/gattserver/grass3/model/util/**</exclude>
+						<exclude>cz/gattserver/grass3/model/domain/**</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

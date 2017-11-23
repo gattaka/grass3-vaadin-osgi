@@ -3,8 +3,8 @@ package cz.gattserver.grass3.ui.pages.settings.factories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.security.CoreACL;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.CoreACLService;
 import cz.gattserver.grass3.ui.pages.settings.ModuleSettingsPage;
 import cz.gattserver.grass3.ui.pages.settings.NodesSettingsPage;
 
@@ -12,7 +12,7 @@ import cz.gattserver.grass3.ui.pages.settings.NodesSettingsPage;
 public class NodesSettingsPageFactory extends AbstractModuleSettingsPageFactory {
 
 	@Autowired
-	private CoreACL coreACL;
+	private CoreACLService coreACL;
 
 	public NodesSettingsPageFactory() {
 		super("Kategorie", "categories");

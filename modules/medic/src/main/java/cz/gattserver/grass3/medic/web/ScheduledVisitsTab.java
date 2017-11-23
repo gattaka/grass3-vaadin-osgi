@@ -1,10 +1,8 @@
 package cz.gattserver.grass3.medic.web;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.ContentMode;
@@ -318,8 +316,8 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		setSpacing(true);
 		setMargin(new MarginInfo(true, false, false, false));
 
-		DateTimeFormatter formatter = DateTimeFormat.forPattern("d.MM.yyyy");
-		addComponent(new Label("<strong>Dnes je: </strong>" + LocalDate.now().toString(formatter), ContentMode.HTML));
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.MM.yyyy");
+		addComponent(new Label("<strong>Dnes je: </strong>" + LocalDate.now().format(formatter), ContentMode.HTML));
 
 		createPlannedGrid();
 		createToBePlannedTable();

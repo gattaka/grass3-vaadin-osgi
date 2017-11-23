@@ -1,8 +1,7 @@
 package cz.gattserver.grass3.events.impl;
 
+import net.engio.mbassy.bus.IMessagePublication;
 import net.engio.mbassy.bus.MBassador;
-import net.engio.mbassy.bus.MessagePublication;
-import net.engio.mbassy.bus.config.BusConfiguration;
 
 import org.springframework.stereotype.Component;
 
@@ -19,11 +18,11 @@ public class EventBusImpl implements EventBus {
 
 	@PostConstruct
 	public void init() {
-		eventBus = new MBassador<Event>(BusConfiguration.Default(4, 4, 8));
+		eventBus = new MBassador<Event>();
 	}
 
 	@Override
-	public MessagePublication publish(ProgressEvent event) {
+	public IMessagePublication publish(ProgressEvent event) {
 		return eventBus.publishAsync(event);
 	}
 

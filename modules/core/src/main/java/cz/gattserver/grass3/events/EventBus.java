@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.events;
 
-import net.engio.mbassy.bus.MessagePublication;
+import net.engio.mbassy.bus.IMessagePublication;
 
 public interface EventBus {
 
@@ -11,7 +11,7 @@ public interface EventBus {
 	 *            událost
 	 * @return info objekt o asynchronním zveřejnění události
 	 */
-	public MessagePublication publish(ProgressEvent event);
+	public IMessagePublication publish(ProgressEvent event);
 
 	/**
 	 * Synchronní publikace události

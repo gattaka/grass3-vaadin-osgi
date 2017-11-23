@@ -16,7 +16,7 @@ public class EventBusTest extends AbstractTest {
 	private EventBus eventBus;
 
 	@Test
-	public void testEvents() throws InterruptedException, ExecutionException {
+	public void testUnsubscribe() throws InterruptedException, ExecutionException {
 		MockEventsHandler eventsHandler = new MockEventsHandler();
 		assertEquals(0, eventsHandler.state);
 		assertEquals(0, eventsHandler.currentStep);
@@ -24,13 +24,63 @@ public class EventBusTest extends AbstractTest {
 		assertNull(eventsHandler.currentStepDesc);
 
 		eventBus.subscribe(eventsHandler);
+
+		CompletableFuture<MockEventsHandler> future = eventsHandler.expectEvent();
 		eventBus.publish(new MockProcessStartEvent(3));
+		future.get();
+
 		assertEquals(1, eventsHandler.state);
 		assertEquals(0, eventsHandler.currentStep);
 		assertEquals(3, eventsHandler.steps);
 		assertNull(eventsHandler.currentStepDesc);
 
+		future = eventsHandler.expectEvent();
+		eventBus.publish(new MockProcessProgressEvent("progress... 1"));
+		future.get();
+		assertEquals(2, eventsHandler.state);
+		assertEquals(1, eventsHandler.currentStep);
+		assertEquals(3, eventsHandler.steps);
+		assertEquals("progress... 1", eventsHandler.currentStepDesc);
+
+		eventBus.unsubscribe(eventsHandler);
+
+		eventBus.publish(new MockProcessResultEvent(true, "ok"));
+
+		assertEquals(2, eventsHandler.state);
+		assertEquals(1, eventsHandler.currentStep);
+		assertEquals(3, eventsHandler.steps);
+		assertEquals("progress... 1", eventsHandler.currentStepDesc);
+
+		eventBus.subscribe(eventsHandler);
+
+		future = eventsHandler.expectEvent();
+		eventBus.publish(new MockProcessResultEvent(true, "ok"));
+		future.get();
+		assertEquals(3, eventsHandler.state);
+		assertEquals(1, eventsHandler.currentStep);
+		assertEquals(3, eventsHandler.steps);
+		assertEquals("progress... 1", eventsHandler.currentStepDesc);
+	}
+
+	@Test
+	public void testSubscribe() throws InterruptedException, ExecutionException {
+		MockEventsHandler eventsHandler = new MockEventsHandler();
+		assertEquals(0, eventsHandler.state);
+		assertEquals(0, eventsHandler.currentStep);
+		assertEquals(0, eventsHandler.steps);
+		assertNull(eventsHandler.currentStepDesc);
+
+		eventBus.subscribe(eventsHandler);
+
 		CompletableFuture<MockEventsHandler> future = eventsHandler.expectEvent();
+		eventBus.publish(new MockProcessStartEvent(3));
+		future.get();
+		assertEquals(1, eventsHandler.state);
+		assertEquals(0, eventsHandler.currentStep);
+		assertEquals(3, eventsHandler.steps);
+		assertNull(eventsHandler.currentStepDesc);
+
+		future = eventsHandler.expectEvent();
 		eventBus.publish(new MockProcessProgressEvent("progress... 1"));
 		future.get();
 		assertEquals(2, eventsHandler.state);
@@ -54,8 +104,9 @@ public class EventBusTest extends AbstractTest {
 		assertEquals(3, eventsHandler.steps);
 		assertEquals("progress... 3", eventsHandler.currentStepDesc);
 
-		eventBus.subscribe(eventsHandler);
+		future = eventsHandler.expectEvent();
 		eventBus.publish(new MockProcessResultEvent(true, "ok"));
+		future.get();
 		assertEquals(3, eventsHandler.state);
 		assertEquals(3, eventsHandler.currentStep);
 		assertEquals(3, eventsHandler.steps);

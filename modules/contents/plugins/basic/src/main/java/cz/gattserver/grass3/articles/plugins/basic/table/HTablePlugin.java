@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component;
  * @author gatt
  */
 @Component
-public class TablePlugin extends AbstractTablePlugin {
+public class HTablePlugin extends AbstractTablePlugin {
 
-	public TablePlugin() {
-		super(false);
+	public HTablePlugin() {
+		super(true);
 	}
 
 }

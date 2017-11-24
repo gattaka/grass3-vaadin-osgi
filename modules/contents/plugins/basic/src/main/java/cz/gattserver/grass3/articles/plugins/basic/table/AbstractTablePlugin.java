@@ -1,37 +1,34 @@
-package cz.gattserver.grass3.articles.plugins.basic.list;
-
-import org.springframework.stereotype.Component;
+package cz.gattserver.grass3.articles.plugins.basic.table;
 
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
 import cz.gattserver.grass3.articles.plugins.Plugin;
 
 /**
+ * 
  * @author gatt
  */
-@Component
-public class ListPlugin implements Plugin {
+public abstract class AbstractTablePlugin implements Plugin {
 
-	private final String unorderedTag = "UL";
-	private final String unorderedImage = "articles/basic/img/ul_16.png";
-	private final String orderedTag = "OL";
-	private final String orderedImage = "articles/basic/img/ol_16.png";
+	private final String withHeadTag = "HTABLE";
+	private final String withHeadImage = "articles/basic/img/htbl_16.png";
+	private final String withoutHeadTag = "TABLE";
+	private final String withoutHeadImage = "articles/basic/img/tbl_16.png";
 
-	private boolean ordered;
+	private boolean withHead;
 
 	private String tag;
 	private String image;
 
-	public ListPlugin(boolean ordered) {
-		this.ordered = ordered;
-		if (ordered) {
-			tag = orderedTag;
-			image = orderedImage;
+	public AbstractTablePlugin(boolean withHead) {
+		this.withHead = withHead;
+		if (withHead) {
+			tag = withHeadTag;
+			image = withHeadImage;
 		} else {
-			tag = unorderedTag;
-			image = unorderedImage;
+			tag = withoutHeadTag;
+			image = withoutHeadImage;
 		}
-
 	}
 
 	@Override
@@ -41,7 +38,7 @@ public class ListPlugin implements Plugin {
 
 	@Override
 	public Parser getParser() {
-		return new ListParser(tag, ordered);
+		return new TableParser(tag, withHead);
 	}
 
 	@Override
@@ -52,4 +49,5 @@ public class ListPlugin implements Plugin {
 		resources.setTagFamily("HTML");
 		return resources;
 	}
+
 }

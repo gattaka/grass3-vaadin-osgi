@@ -31,8 +31,8 @@ public class UserServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testGetUserInfoFromAllUsers() {
-		Long userId = mockService.createMockUser(1);
-		mockService.createMockUser(2);
+		Long userId = coreMockService.createMockUser(1);
+		coreMockService.createMockUser(2);
 		List<UserInfoTO> list = userService.getUserInfoFromAllUsers();
 		assertEquals(2, list.size());
 		assertEquals(userId, list.get(0).getId());
@@ -47,7 +47,7 @@ public class UserServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testChangeUserRoles() {
-		Long userId = mockService.createMockUser(1);
+		Long userId = coreMockService.createMockUser(1);
 		UserInfoTO user = userService.getUserById(userId);
 		assertEquals(1, user.getRoles().size());
 		assertTrue(user.getRoles().contains(Role.USER));
@@ -70,7 +70,7 @@ public class UserServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testBanUser() {
-		Long userId = mockService.createMockUser(1);
+		Long userId = coreMockService.createMockUser(1);
 		UserInfoTO user = userService.getUserById(userId);
 		assertFalse(user.isConfirmed());
 
@@ -85,7 +85,7 @@ public class UserServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testActivateUser() {
-		Long userId = mockService.createMockUser(1);
+		Long userId = coreMockService.createMockUser(1);
 		UserInfoTO user = userService.getUserById(userId);
 		assertFalse(user.isConfirmed());
 
@@ -96,11 +96,11 @@ public class UserServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testAddContentToFavourites() {
-		Long userId = mockService.createMockUser(1);
-		Long nodeId = mockService.createMockRootNode(2);
-		Long contentNodeId = mockService.createMockContentNode(220L, null, nodeId, userId, 1);
+		Long userId = coreMockService.createMockUser(1);
+		Long nodeId = coreMockService.createMockRootNode(2);
+		Long contentNodeId = coreMockService.createMockContentNode(220L, null, nodeId, userId, 1);
 
-		Long user2Id = mockService.createMockUser(2);
+		Long user2Id = coreMockService.createMockUser(2);
 		userService.addContentToFavourites(contentNodeId, user2Id);
 
 		List<ContentNodeOverviewTO> favourites = contentNodeService.getUserFavourite(user2Id, 0, 10);
@@ -110,12 +110,12 @@ public class UserServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testHasInFavourite() {
-		Long userId = mockService.createMockUser(1);
-		Long nodeId = mockService.createMockRootNode(2);
-		Long contentNodeId = mockService.createMockContentNode(220L, null, nodeId, userId, 1);
-		Long contentNodeId2 = mockService.createMockContentNode(20L, null, nodeId, userId, 2);
+		Long userId = coreMockService.createMockUser(1);
+		Long nodeId = coreMockService.createMockRootNode(2);
+		Long contentNodeId = coreMockService.createMockContentNode(220L, null, nodeId, userId, 1);
+		Long contentNodeId2 = coreMockService.createMockContentNode(20L, null, nodeId, userId, 2);
 
-		Long user2Id = mockService.createMockUser(2);
+		Long user2Id = coreMockService.createMockUser(2);
 		userService.addContentToFavourites(contentNodeId, user2Id);
 
 		assertTrue(userService.hasInFavourites(contentNodeId, user2Id));
@@ -124,11 +124,11 @@ public class UserServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testRemoveContentFromFavourites_manual() {
-		Long userId = mockService.createMockUser(1);
-		Long nodeId = mockService.createMockRootNode(2);
-		Long contentNodeId = mockService.createMockContentNode(220L, null, nodeId, userId, 1);
+		Long userId = coreMockService.createMockUser(1);
+		Long nodeId = coreMockService.createMockRootNode(2);
+		Long contentNodeId = coreMockService.createMockContentNode(220L, null, nodeId, userId, 1);
 
-		Long user2Id = mockService.createMockUser(2);
+		Long user2Id = coreMockService.createMockUser(2);
 		userService.addContentToFavourites(contentNodeId, user2Id);
 
 		List<ContentNodeOverviewTO> favourites = contentNodeService.getUserFavourite(user2Id, 0, 10);
@@ -143,11 +143,11 @@ public class UserServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testRemoveContentFromFavourites_byContentDelete() {
-		Long userId = mockService.createMockUser(1);
-		Long nodeId = mockService.createMockRootNode(2);
-		Long contentNodeId = mockService.createMockContentNode(220L, null, nodeId, userId, 1);
+		Long userId = coreMockService.createMockUser(1);
+		Long nodeId = coreMockService.createMockRootNode(2);
+		Long contentNodeId = coreMockService.createMockContentNode(220L, null, nodeId, userId, 1);
 
-		Long user2Id = mockService.createMockUser(2);
+		Long user2Id = coreMockService.createMockUser(2);
 		userService.addContentToFavourites(contentNodeId, user2Id);
 
 		List<ContentNodeOverviewTO> favourites = contentNodeService.getUserFavourite(user2Id, 0, 10);

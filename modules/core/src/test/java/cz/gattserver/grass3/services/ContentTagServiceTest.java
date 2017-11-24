@@ -33,20 +33,20 @@ public class ContentTagServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testGetTagsForOverviewOrderedByName() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
-		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
+		Long contentNode1 = coreMockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		contentTagService.saveTags(tags, contentNode1);
 
 		tags.add("pokusy");
-		Long contentNode2 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
+		Long contentNode2 = coreMockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
 		contentTagService.saveTags(tags, contentNode2);
 
 		tags.add("atrapa");
-		Long contentNode3 = mockService.createMockContentNode(33L, null, nodeId1, userId1, 3);
+		Long contentNode3 = coreMockService.createMockContentNode(33L, null, nodeId1, userId1, 3);
 		contentTagService.saveTags(tags, contentNode3);
 
 		Set<ContentTagOverviewTO> tagsTOs = contentTagService.getTagsForOverviewOrderedByName();
@@ -60,20 +60,20 @@ public class ContentTagServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testGetTagContentsCount() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
-		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
+		Long contentNode1 = coreMockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		contentTagService.saveTags(tags, contentNode1);
 
 		tags.add("pokusy");
-		Long contentNode2 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
+		Long contentNode2 = coreMockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
 		contentTagService.saveTags(tags, contentNode2);
 
 		tags.add("atrapa");
-		Long contentNode3 = mockService.createMockContentNode(33L, null, nodeId1, userId1, 3);
+		Long contentNode3 = coreMockService.createMockContentNode(33L, null, nodeId1, userId1, 3);
 		contentTagService.saveTags(tags, contentNode3);
 
 		Set<ContentTagOverviewTO> tagsTOs = contentTagService.getTagsForOverviewOrderedByName();
@@ -92,16 +92,16 @@ public class ContentTagServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testGetTagByName() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
-		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
+		Long contentNode1 = coreMockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		contentTagService.saveTags(tags, contentNode1);
 
 		tags.add("pokusy");
-		Long contentNode2 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
+		Long contentNode2 = coreMockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
 		contentTagService.saveTags(tags, contentNode2);
 
 		ContentTagOverviewTO tagTO = contentTagService.getTagByName("novinky");
@@ -130,13 +130,13 @@ public class ContentTagServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testGetTagById() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
 		tags.add("pokusy");
-		mockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
+		coreMockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
 
 		ContentTagOverviewTO tagTO = contentTagService.getTagByName("novinky");
 		assertEquals("novinky", tagTO.getName());
@@ -151,16 +151,16 @@ public class ContentTagServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testTagsDelete_bySaveTags() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
-		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
+		Long contentNode1 = coreMockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		contentTagService.saveTags(tags, contentNode1);
 
 		tags.add("pokusy");
-		Long contentNode2 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
+		Long contentNode2 = coreMockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
 		contentTagService.saveTags(tags, contentNode2);
 
 		ContentTagOverviewTO tagTO = contentTagService.getTagByName("novinky");
@@ -183,16 +183,16 @@ public class ContentTagServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testTagsDelete_byContentDelete() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
-		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
+		Long contentNode1 = coreMockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		contentTagService.saveTags(tags, contentNode1);
 
 		tags.add("pokusy");
-		Long contentNode2 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
+		Long contentNode2 = coreMockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
 		contentTagService.saveTags(tags, contentNode2);
 
 		ContentTagOverviewTO tagTO = contentTagService.getTagByName("novinky");
@@ -210,16 +210,16 @@ public class ContentTagServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testTagsDelete_byContentDelete2() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
-		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
+		Long contentNode1 = coreMockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		contentTagService.saveTags(tags, contentNode1);
 
 		tags.add("pokusy");
-		Long contentNode2 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
+		Long contentNode2 = coreMockService.createMockContentNode(32L, null, nodeId1, userId1, 2);
 		contentTagService.saveTags(tags, contentNode2);
 
 		ContentTagOverviewTO tagTO = contentTagService.getTagByName("novinky");
@@ -237,23 +237,23 @@ public class ContentTagServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testGetTagsContentsCountsGroups() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("tag1");
-		mockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
+		coreMockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
 
 		tags.add("tag2");
 		tags.add("tag3");
-		mockService.createMockContentNode(32L, tags, nodeId1, userId1, 2);
+		coreMockService.createMockContentNode(32L, tags, nodeId1, userId1, 2);
 
 		tags.add("tag4");
-		mockService.createMockContentNode(33L, tags, nodeId1, userId1, 3);
-		mockService.createMockContentNode(34L, tags, nodeId1, userId1, 4);
+		coreMockService.createMockContentNode(33L, tags, nodeId1, userId1, 3);
+		coreMockService.createMockContentNode(34L, tags, nodeId1, userId1, 4);
 
 		tags.add("tag5");
-		mockService.createMockContentNode(35L, tags, nodeId1, userId1, 5);
+		coreMockService.createMockContentNode(35L, tags, nodeId1, userId1, 5);
 
 		List<Integer> list = contentTagService.getTagsContentsCountsGroups();
 		assertEquals(4, list.size());
@@ -265,23 +265,23 @@ public class ContentTagServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testGetTagsContentsCountsMap() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("tag1");
-		mockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
+		coreMockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
 
 		tags.add("tag2");
 		tags.add("tag3");
-		mockService.createMockContentNode(32L, tags, nodeId1, userId1, 2);
+		coreMockService.createMockContentNode(32L, tags, nodeId1, userId1, 2);
 
 		tags.add("tag4");
-		mockService.createMockContentNode(33L, tags, nodeId1, userId1, 3);
-		mockService.createMockContentNode(34L, tags, nodeId1, userId1, 4);
+		coreMockService.createMockContentNode(33L, tags, nodeId1, userId1, 3);
+		coreMockService.createMockContentNode(34L, tags, nodeId1, userId1, 4);
 
 		tags.add("tag5");
-		mockService.createMockContentNode(35L, tags, nodeId1, userId1, 5);
+		coreMockService.createMockContentNode(35L, tags, nodeId1, userId1, 5);
 
 		Map<Long, Integer> map = contentTagService.getTagsContentsCountsMap();
 		assertEquals(5, map.size());
@@ -295,23 +295,23 @@ public class ContentTagServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testCreateTagsCloud() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("a");
-		mockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
+		coreMockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
 
 		tags.add("d");
 		tags.add("e");
-		mockService.createMockContentNode(32L, tags, nodeId1, userId1, 2);
+		coreMockService.createMockContentNode(32L, tags, nodeId1, userId1, 2);
 
 		tags.add("b");
-		mockService.createMockContentNode(33L, tags, nodeId1, userId1, 3);
-		mockService.createMockContentNode(34L, tags, nodeId1, userId1, 4);
+		coreMockService.createMockContentNode(33L, tags, nodeId1, userId1, 3);
+		coreMockService.createMockContentNode(34L, tags, nodeId1, userId1, 4);
 
 		tags.add("c");
-		mockService.createMockContentNode(35L, tags, nodeId1, userId1, 5);
+		coreMockService.createMockContentNode(35L, tags, nodeId1, userId1, 5);
 
 		List<ContentTagsCloudItemTO> list = contentTagService.createTagsCloud(20, 5);
 		assertEquals(5, list.size());
@@ -345,22 +345,22 @@ public class ContentTagServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testCreateTagsCloud_smallFontRange() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("a");
-		mockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
-		mockService.createMockContentNode(33L, tags, nodeId1, userId1, 2);
+		coreMockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
+		coreMockService.createMockContentNode(33L, tags, nodeId1, userId1, 2);
 
 		tags.add("c");
-		mockService.createMockContentNode(34L, tags, nodeId1, userId1, 3);
+		coreMockService.createMockContentNode(34L, tags, nodeId1, userId1, 3);
 
 		tags.add("b");
-		mockService.createMockContentNode(35L, tags, nodeId1, userId1, 4);
+		coreMockService.createMockContentNode(35L, tags, nodeId1, userId1, 4);
 
 		tags.add("aa");
-		mockService.createMockContentNode(36L, tags, nodeId1, userId1, 5);
+		coreMockService.createMockContentNode(36L, tags, nodeId1, userId1, 5);
 
 		List<ContentTagsCloudItemTO> list = contentTagService.createTagsCloud(7, 5);
 		assertEquals(4, list.size());
@@ -390,12 +390,12 @@ public class ContentTagServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testCreateTagsCloud_singleElement() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("q");
-		mockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
+		coreMockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
 
 		List<ContentTagsCloudItemTO> list = contentTagService.createTagsCloud(20, 5);
 		assertEquals(1, list.size());

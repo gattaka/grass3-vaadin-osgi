@@ -36,11 +36,11 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testGetRecentAdded() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
-		Long contentNodeId1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
-		Long contentNodeId2 = mockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
+		Long contentNodeId1 = coreMockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
+		Long contentNodeId2 = coreMockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
 
 		List<ContentNodeOverviewTO> added = contentNodeService.getRecentAdded(0, 10);
 		assertEquals(2, added.size());
@@ -54,11 +54,11 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testGetRecentModified() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
-		Long contentNodeId1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
-		Long contentNodeId2 = mockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
+		Long contentNodeId1 = coreMockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
+		Long contentNodeId2 = coreMockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
 
 		contentNodeService.modify(contentNodeId1, "newName", true);
 
@@ -74,11 +74,11 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testGetUserFavourite() {
-		Long userId1 = mockService.createMockUser(1);
-		Long userId2 = mockService.createMockUser(2);
-		Long nodeId1 = mockService.createMockRootNode(1);
-		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
-		mockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long userId2 = coreMockService.createMockUser(2);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
+		Long contentNode1 = coreMockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
+		coreMockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
 
 		userService.addContentToFavourites(contentNode1, userId1);
 
@@ -92,13 +92,13 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testModify() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
 		tags.add("pokusy");
-		Long contentNode1 = mockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
+		Long contentNode1 = coreMockService.createMockContentNode(30L, tags, nodeId1, userId1, 1);
 
 		tags = new HashSet<>();
 		tags.add("new1");
@@ -126,11 +126,11 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testMoveContent() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
-		Long nodeId2 = mockService.createMockRootNode(2);
-		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
-		mockService.createMockContentNode(32L, null, nodeId2, userId1, 1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
+		Long nodeId2 = coreMockService.createMockRootNode(2);
+		Long contentNode1 = coreMockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
+		coreMockService.createMockContentNode(32L, null, nodeId2, userId1, 1);
 
 		assertEquals(1, contentNodeService.getCountByNode(nodeId1));
 		assertEquals(1, contentNodeService.getCountByNode(nodeId2));
@@ -143,14 +143,14 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testDeleteByContentNodeId() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
 		assertEquals(0, contentNodeService.getCount());
 
-		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
-		Long contentNode2 = mockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
-		Long contentNode3 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 3);
+		Long contentNode1 = coreMockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
+		Long contentNode2 = coreMockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
+		Long contentNode3 = coreMockService.createMockContentNode(32L, null, nodeId1, userId1, 3);
 
 		assertEquals(3, contentNodeService.getCount());
 
@@ -165,14 +165,14 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testDeleteByContentId() {
-		Long userId1 = mockService.createMockUser(1);
-		Long nodeId1 = mockService.createMockRootNode(1);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
 
 		assertEquals(0, contentNodeService.getCount());
 
-		Long contentNode1 = mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
-		Long contentNode2 = mockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
-		Long contentNode3 = mockService.createMockContentNode(32L, null, nodeId1, userId1, 3);
+		Long contentNode1 = coreMockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
+		Long contentNode2 = coreMockService.createMockContentNode(31L, null, nodeId1, userId1, 2);
+		Long contentNode3 = coreMockService.createMockContentNode(32L, null, nodeId1, userId1, 3);
 
 		assertEquals(3, contentNodeService.getCount());
 
@@ -192,8 +192,8 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testSave_GetByID_withTags() {
-		Long userId = mockService.createMockUser(1);
-		Long nodeId = mockService.createMockRootNode(2);
+		Long userId = coreMockService.createMockUser(1);
+		Long nodeId = coreMockService.createMockRootNode(2);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
@@ -223,8 +223,8 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testSave_GetByID_withoutTags() {
-		Long userId = mockService.createMockUser(1);
-		Long nodeId = mockService.createMockRootNode(2);
+		Long userId = coreMockService.createMockUser(1);
+		Long nodeId = coreMockService.createMockRootNode(2);
 
 		String moduleId = "mockModule";
 		Long contentId = 2L;
@@ -247,15 +247,15 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testSave_withoutContentModuleId() {
-		Long userId = mockService.createMockUser(1);
-		Long nodeId = mockService.createMockRootNode(2);
+		Long userId = coreMockService.createMockUser(1);
+		Long nodeId = coreMockService.createMockRootNode(2);
 		contentNodeService.save(null, 2L, "Test obsah", null, true, nodeId, userId, false, null, null);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testSave_withoutName() {
-		Long userId = mockService.createMockUser(1);
-		Long nodeId = mockService.createMockRootNode(2);
+		Long userId = coreMockService.createMockUser(1);
+		Long nodeId = coreMockService.createMockRootNode(2);
 		contentNodeService.save("testModule", 2L, null, null, true, nodeId, userId, false, null, null);
 	}
 
@@ -263,16 +263,16 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 	public void testGetByNode() {
 		assertEquals(0, contentNodeService.getCount());
 
-		Long userId1 = mockService.createMockUser(1);
-		Long userId2 = mockService.createMockUser(2);
-		Long nodeId1 = mockService.createMockRootNode(1);
-		Long nodeId2 = mockService.createMockRootNode(2);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long userId2 = coreMockService.createMockUser(2);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
+		Long nodeId2 = coreMockService.createMockRootNode(2);
 
 		Set<String> tags = new HashSet<>();
 
-		mockService.createMockContentNode(20L, tags, nodeId1, userId1, 1);
-		Long contentNode2 = mockService.createMockContentNode(30L, tags, nodeId2, userId1, 2);
-		Long contentNode3 = mockService.createMockContentNode(25L, tags, nodeId2, userId2, 3);
+		coreMockService.createMockContentNode(20L, tags, nodeId1, userId1, 1);
+		Long contentNode2 = coreMockService.createMockContentNode(30L, tags, nodeId2, userId1, 2);
+		Long contentNode3 = coreMockService.createMockContentNode(25L, tags, nodeId2, userId2, 3);
 
 		assertEquals(1, contentNodeService.getCountByNode(nodeId1));
 		assertEquals(2, contentNodeService.getCountByNode(nodeId2));
@@ -303,21 +303,21 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 	public void testGetByTag() {
 		assertEquals(0, contentNodeService.getCount());
 
-		Long userId1 = mockService.createMockUser(1);
-		Long userId2 = mockService.createMockUser(2);
-		Long nodeId1 = mockService.createMockRootNode(1);
-		Long nodeId2 = mockService.createMockRootNode(2);
+		Long userId1 = coreMockService.createMockUser(1);
+		Long userId2 = coreMockService.createMockUser(2);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
+		Long nodeId2 = coreMockService.createMockRootNode(2);
 
 		Set<String> tags = new HashSet<>();
 		tags.add("novinky");
 		tags.add("pokusy");
 
-		mockService.createMockContentNode(20L, tags, nodeId1, userId1, 1);
-		mockService.createMockContentNode(30L, tags, nodeId2, userId1, 2);
+		coreMockService.createMockContentNode(20L, tags, nodeId1, userId1, 1);
+		coreMockService.createMockContentNode(30L, tags, nodeId2, userId1, 2);
 
 		tags.add("něco");
 
-		Long contentNode3 = mockService.createMockContentNode(25L, tags, nodeId2, userId2, 3);
+		Long contentNode3 = coreMockService.createMockContentNode(25L, tags, nodeId2, userId2, 3);
 
 		ContentTagOverviewTO tag = contentTagService.getTagByName("něco");
 		assertNotNull(tag);

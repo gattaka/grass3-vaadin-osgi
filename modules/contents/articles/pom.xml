@@ -17,6 +17,13 @@
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>core</artifactId>
 			<version>1.0.0</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>cz.gattserver.grass3</groupId>
+			<artifactId>core</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 
 		<!-- Grass3 search modul -->
@@ -27,7 +34,7 @@
 		</dependency>
 
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<!-- Generovani querydsl Q objektu -->
@@ -50,11 +57,7 @@
 					<excludes>
 						<exclude>cz/gattserver/grass3/articles/ui/**</exclude>
 						<exclude>cz/gattserver/grass3/articles/interfaces/**</exclude>
-						<exclude>cz/gattserver/grass3/server/**</exclude>
-						<exclude>cz/gattserver/grass3/model/**</exclude>
-						<exclude>cz/gattserver/grass3/exception/**</exclude>
-						<exclude>cz/gattserver/grass3/model/util/**</exclude>
-						<exclude>cz/gattserver/grass3/model/domain/**</exclude>
+						<exclude>cz/gattserver/grass3/articles/model/domain/**</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

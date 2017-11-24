@@ -70,9 +70,9 @@ public class NodeServiceTest extends AbstractDBUnitTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testDeleteNode_notEmpty2() {
-		Long userId = mockService.createMockUser(1);
+		Long userId = coreMockService.createMockUser(1);
 		Long nodeId = nodeService.createNewNode(null, "testNode");
-		mockService.createMockContentNode(3L, null, nodeId, userId, 1);
+		coreMockService.createMockContentNode(3L, null, nodeId, userId, 1);
 		nodeService.deleteNode(nodeId);
 	}
 
@@ -140,8 +140,8 @@ public class NodeServiceTest extends AbstractDBUnitTest {
 		Long nodeId1 = nodeService.createNewNode(null, "nodeWithContentNode");
 		Long nodeId2 = nodeService.createNewNode(null, "nodeWithSubNode");
 		Long nodeId3 = nodeService.createNewNode(nodeId2, "emptyNode");
-		Long userId1 = mockService.createMockUser(1);
-		mockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
+		Long userId1 = coreMockService.createMockUser(1);
+		coreMockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		assertFalse(nodeService.isNodeEmpty(nodeId1));
 		assertFalse(nodeService.isNodeEmpty(nodeId2));
 		assertTrue(nodeService.isNodeEmpty(nodeId3));

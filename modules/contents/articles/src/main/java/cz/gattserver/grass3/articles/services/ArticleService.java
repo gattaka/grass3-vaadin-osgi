@@ -39,8 +39,8 @@ public interface ArticleService {
 	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
 	 *         {@code null}
 	 */
-	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, Long nodeId,
-			Long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId, Integer partNumber,
+	public long saveArticle(String name, String text, Collection<String> tags, boolean publicated, long nodeId,
+			long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId, Integer partNumber,
 			Long draftSourceId);
 
 	/**
@@ -67,8 +67,8 @@ public interface ArticleService {
 	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
 	 *         {@code null}
 	 */
-	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, Long nodeId,
-			Long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId);
+	public long saveArticle(String name, String text, Collection<String> tags, boolean publicated, long nodeId,
+			long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId);
 
 	/**
 	 * Smaže článek
@@ -77,7 +77,7 @@ public interface ArticleService {
 	 *            článek ke smazání
 	 * @return {@code true} pokud se zdařilo smazat jiank {@code false}
 	 */
-	public void deleteArticle(Long id);
+	public void deleteArticle(long id);
 
 	/**
 	 * Získá článek dle jeho identifikátoru
@@ -86,7 +86,7 @@ public interface ArticleService {
 	 *            identifikátor
 	 * @return DTO článku
 	 */
-	public ArticleTO getArticleForDetail(Long id);
+	public ArticleTO getArticleForDetail(long id);
 
 	/**
 	 * Spustí přegenerování

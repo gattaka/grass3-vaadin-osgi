@@ -72,7 +72,7 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	@Override
-	public void deleteArticle(Long id) {
+	public void deleteArticle(long id) {
 		// smaž článek
 		articleRepository.delete(id);
 
@@ -93,15 +93,15 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	@Override
-	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, Long nodeId,
-			Long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId) {
+	public long saveArticle(String name, String text, Collection<String> tags, boolean publicated, long nodeId,
+			long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId) {
 		return saveArticle(name, text, tags, publicated, nodeId, authorId, contextRoot, processForm, existingId, null,
 				null);
 	}
 
 	@Override
-	public Long saveArticle(String name, String text, Collection<String> tags, boolean publicated, Long nodeId,
-			Long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId, Integer partNumber,
+	public long saveArticle(String name, String text, Collection<String> tags, boolean publicated, long nodeId,
+			long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId, Integer partNumber,
 			Long draftSourceId) {
 
 		// Flags
@@ -159,7 +159,7 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	@Override
-	public ArticleTO getArticleForDetail(Long id) {
+	public ArticleTO getArticleForDetail(long id) {
 		Article article = articleRepository.findOne(id);
 		if (article == null)
 			return null;

@@ -80,7 +80,7 @@
 
 	<context:annotation-config />
 
-	<context:component-scan base-package="cz.gattserver.grass3" />
+	<context:component-scan base-package="cz.gattserver" />
 
 	<jpa:repositories base-package="cz.gattserver.grass3"
 		repository-impl-postfix="CustomImpl" />

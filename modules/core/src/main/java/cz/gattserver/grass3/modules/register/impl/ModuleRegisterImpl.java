@@ -8,7 +8,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.modules.ContentService;
+import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.modules.SectionService;
 import cz.gattserver.grass3.modules.register.ModuleRegister;
 
@@ -24,38 +24,10 @@ import cz.gattserver.grass3.modules.register.ModuleRegister;
 public class ModuleRegisterImpl implements ModuleRegister {
 
 	/**
-	 * Ošetření null kolekcí
-	 */
-	@PostConstruct
-	private void init() {
-
-		if (contentServices == null)
-			contentServices = new ArrayList<ContentService>();
-
-		if (sectionServices == null) {
-			sectionServices = new ArrayList<SectionService>();
-		}
-	}
-
-	/**
 	 * Obsahy
 	 */
 	@Autowired(required = false)
-	private List<ContentService> contentServices;
-
-	public List<ContentService> getContentServices() {
-		return contentServices;
-	}
-
-	public ContentService getContentServiceByName(String contentReaderID) {
-		if (contentServices == null)
-			return null;
-		for (ContentService contentService : contentServices) {
-			if (contentService.getContentID().equals(contentReaderID))
-				return contentService;
-		}
-		return null;
-	}
+	private List<ContentModule> contentServices;
 
 	/**
 	 * Sekce
@@ -63,6 +35,36 @@ public class ModuleRegisterImpl implements ModuleRegister {
 	@Autowired(required = false)
 	private List<SectionService> sectionServices;
 
+	/**
+	 * Ošetření null kolekcí
+	 */
+	@PostConstruct
+	private void init() {
+		if (contentServices == null)
+			contentServices = new ArrayList<ContentModule>();
+
+		if (sectionServices == null) {
+			sectionServices = new ArrayList<SectionService>();
+		}
+	}
+
+	@Override
+	public List<ContentModule> getContentServices() {
+		return contentServices;
+	}
+
+	@Override
+	public ContentModule getContentServiceByName(String contentReaderID) {
+		if (contentServices == null)
+			return null;
+		for (ContentModule contentService : contentServices) {
+			if (contentService.getContentID().equals(contentReaderID))
+				return contentService;
+		}
+		return null;
+	}
+
+	@Override
 	public List<SectionService> getSectionServices() {
 		return sectionServices;
 	}

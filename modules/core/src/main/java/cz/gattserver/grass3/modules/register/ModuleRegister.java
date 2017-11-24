@@ -2,7 +2,7 @@ package cz.gattserver.grass3.modules.register;
 
 import java.util.List;
 
-import cz.gattserver.grass3.modules.ContentService;
+import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.modules.SectionService;
 
 /**
@@ -15,10 +15,10 @@ import cz.gattserver.grass3.modules.SectionService;
  */
 public interface ModuleRegister {
 
-	public List<ContentService> getContentServices();
+	List<ContentModule> getContentServices();
 
-	public ContentService getContentServiceByName(String contentReaderID);
+	ContentModule getContentServiceByName(String contentReaderID);
 
-	public List<SectionService> getSectionServices();
+	List<SectionService> getSectionServices();
 
 }

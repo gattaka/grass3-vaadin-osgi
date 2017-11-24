@@ -10,7 +10,7 @@ import com.vaadin.ui.renderers.TextRenderer;
 
 import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
-import cz.gattserver.grass3.modules.ContentService;
+import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.modules.register.ModuleRegister;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.MenuPage;
@@ -53,13 +53,13 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		String lastModificationDateBind = "customLastModificationDate";
 
 		addColumn(contentNode -> {
-			ContentService contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
+			ContentModule contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
 			return contentService == null ? new ThemeResource(ImageIcons.WARNING_16_ICON)
 					: contentService.getContentIcon();
 		}, new ImageRenderer<>()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(iconBind);
 
 		addColumn(contentNode -> {
-			ContentService contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
+			ContentModule contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
 			PageFactory pageFactory = contentService == null ? noServicePageFactory
 					: contentService.getContentViewerPageFactory();
 			return "<a href='"

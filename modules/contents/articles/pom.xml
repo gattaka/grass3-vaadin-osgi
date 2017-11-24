@@ -27,5 +27,38 @@
 		</dependency>
 
 	</dependencies>
+	
+	<build>
+		<plugins>
+			<!-- Generovani querydsl Q objektu -->
+			<plugin>
+				<groupId>com.mysema.maven</groupId>
+				<artifactId>apt-maven-plugin</artifactId>
+			</plugin>
+
+			<!-- MapStruct -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+
+			<!-- JaCoCo -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>cz/gattserver/grass3/articles/ui/**</exclude>
+						<exclude>cz/gattserver/grass3/articles/interfaces/**</exclude>
+						<exclude>cz/gattserver/grass3/server/**</exclude>
+						<exclude>cz/gattserver/grass3/model/**</exclude>
+						<exclude>cz/gattserver/grass3/exception/**</exclude>
+						<exclude>cz/gattserver/grass3/model/util/**</exclude>
+						<exclude>cz/gattserver/grass3/model/domain/**</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

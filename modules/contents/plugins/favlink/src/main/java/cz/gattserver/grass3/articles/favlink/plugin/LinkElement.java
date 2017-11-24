@@ -1,62 +1,110 @@
 package cz.gattserver.grass3.articles.favlink.plugin;
 
-import cz.gattserver.grass3.articles.lexer.Token;
-import cz.gattserver.grass3.articles.parser.PluginBag;
-import cz.gattserver.grass3.articles.parser.exceptions.ParserException;
-import cz.gattserver.grass3.articles.parser.interfaces.AbstractElementTree;
-import cz.gattserver.grass3.articles.parser.interfaces.AbstractParserPlugin;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-/**
- * 
- * @author gatt
- */
-public class LinkElement extends AbstractParserPlugin {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-	private String tag;
+import cz.gattserver.grass3.articles.editor.parser.Context;
+import cz.gattserver.grass3.articles.editor.parser.elements.Element;
+import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
+import cz.gattserver.grass3.articles.favlink.Downloader;
+import cz.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
+import cz.gattserver.grass3.services.ConfigurationService;
+import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.ui.ImageIcons;
 
-	public LinkElement(String tag) {
-		this.tag = tag;
+public class LinkElement implements Element {
+
+	private static final Logger logger = LoggerFactory.getLogger(LinkElement.class);
+
+	private String link;
+	private final static String defaultFavicon = "/" + ImageIcons.LABEL_16_ICON; // default
+	private String imgURL = null;
+	private String contextRoot;
+
+	public LinkElement(String link, String contextRoot) {
+		this.link = link.trim();
+		this.contextRoot = contextRoot;
+		setLink();
 	}
 
-	public AbstractElementTree parse(PluginBag pluginBag) {
+	private void setLink() {
+		String favicon = faviconImg();
+		// pokud favicon nebylo možné získat, pak vlož výchozí
+		if (favicon != null) {
+			imgURL = favicon;
+		} else {
+			imgURL = defaultFavicon;
+		}
+	}
 
-		// zpracovat počáteční tag
-		String startTag = pluginBag.getStartTag();
+	/**
+	 * Zjistí dle aktuální konfigurace výstupní adresář
+	 */
+	private String getCachePath() {
 
-		if (!startTag.equals(tag)) {
-			log("Čekal jsem: [" + tag + "] ne " + startTag);
+		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper.getContext()
+				.getBean(ConfigurationService.class);
+
+		FavlinkConfiguration configuration = new FavlinkConfiguration();
+		configurationService.loadConfiguration(configuration);
+		return configuration.getOutputPath();
+	}
+
+	private String faviconImg() {
+
+		// 1) Cache
+		String path = getCachePath();
+
+		// existuje cesta cache ?
+		File cacheFile = new File(path);
+		if (cacheFile.exists()) {
+			if (cacheFile.isFile()) {
+				logger.error("Cache path exists as file ! Aborting ...");
+				throw new ParserException();
+			}
+		} else {
+			if (cacheFile.mkdirs() == false) {
+				logger.error("Cache path creation failed ! Aborting ...");
+				throw new ParserException();
+			}
+		}
+
+		// 2) Zjisti identifikační část URL, podle které se bude hledat
+		// jméno
+		try {
+			URL url = new URL(link);
+			String domain = url.getHost() + ".png";
+
+			File file = new File(path, domain);
+
+			// pokud neexistuje, pak jej stáhni
+			if (!file.exists()) {
+				Downloader.download(file, url);
+			}
+
+			// 3) vrat URL na cache
+			return contextRoot + FavlinkConfiguration.IMAGE_PATH_ALIAS + "/" + domain;
+
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			throw new ParserException();
+		} catch (IOException e) {
+			e.printStackTrace();
 			throw new ParserException();
 		}
 
-		// START_TAG byl zpracován
-		pluginBag.nextToken();
-
-		StringBuilder link = new StringBuilder();
-
-		// zpracovat text - musím zahazovat anotace pozic, střetly by se
-		while ((pluginBag.getToken() != Token.END_TAG || !pluginBag.getEndTag().equals(tag))
-				&& pluginBag.getToken() != Token.EOF) {
-			link.append(pluginBag.getText());
-			pluginBag.nextToken();
-		}
-
-		// zpracovat koncový tag
-		String endTag = pluginBag.getEndTag();
-
-		if (!endTag.equals(tag)) {
-			log("Čekal jsem: [/" + tag + "] ne " + pluginBag.getCode());
-			throw new ParserException();
-		}
-
-		// END_TAG byl zpracován
-		pluginBag.nextToken();
-
-		return new LinkTree(link.toString(), pluginBag.getContextRoot());
 	}
 
 	@Override
-	public boolean canHoldBreakline() {
-		// nemůžu vložit <br/> do <a></a> elementu
-		return false;
+	public void apply(Context ctx) {
+		ctx.print("<a href=\"" + link + "\" >");
+		ctx.print("<img style=\"margin: 4px 5px -4px 2px;\" height=\"16\" width=\"16\" src=\"" + imgURL + "\" />");
+		ctx.print(link);
+		ctx.print("</a>");
 	}
 }

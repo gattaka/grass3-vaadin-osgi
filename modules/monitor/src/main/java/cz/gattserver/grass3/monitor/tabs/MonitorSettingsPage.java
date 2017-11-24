@@ -11,11 +11,11 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
 import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.ui.pages.settings.ModuleSettingsPage;
+import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.H2Label;
 
-public class MonitorSettingsPage extends ModuleSettingsPage {
+public class MonitorSettingsPage extends AbstractSettingsPage {
 
 	@Autowired
 	private MonitorFacade monitorFacade;

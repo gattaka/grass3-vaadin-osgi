@@ -7,7 +7,7 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.components.NodeTree;
 import cz.gattserver.web.common.ui.H2Label;
 
-public class NodesSettingsPage extends ModuleSettingsPage {
+public class NodesSettingsPage extends AbstractSettingsPage {
 
 	private NodeTree tree;
 

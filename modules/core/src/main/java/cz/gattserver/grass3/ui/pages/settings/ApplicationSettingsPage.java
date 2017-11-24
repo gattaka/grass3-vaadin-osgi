@@ -17,7 +17,7 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.web.common.ui.H2Label;
 
-public class ApplicationSettingsPage extends ModuleSettingsPage {
+public class ApplicationSettingsPage extends AbstractSettingsPage {
 
 	@Autowired
 	private ConfigurationService configurationService;

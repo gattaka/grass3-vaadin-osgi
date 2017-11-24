@@ -7,14 +7,14 @@ import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.renderers.ImageRenderer;
 
 import cz.gattserver.grass3.interfaces.NodeTO;
-import cz.gattserver.grass3.modules.ContentService;
+import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.modules.register.ModuleRegister;
 import cz.gattserver.grass3.ui.pages.template.MenuPage;
 import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.URLIdentifierUtils;
 
-public class NewContentNodeGrid extends Grid<ContentService> {
+public class NewContentNodeGrid extends Grid<ContentModule> {
 
 	private static final long serialVersionUID = -2220485504407844582L;
 
@@ -29,7 +29,7 @@ public class NewContentNodeGrid extends Grid<ContentService> {
 		String nameBind = "customName";
 
 		// jaké služby obsahů mám k dispozici ?
-		List<ContentService> contentServices = serviceHolder.getContentServices();
+		List<ContentModule> contentServices = serviceHolder.getContentServices();
 		setItems(contentServices);
 
 		addColumn(contentService -> contentService.getContentIcon(), new ImageRenderer<>())

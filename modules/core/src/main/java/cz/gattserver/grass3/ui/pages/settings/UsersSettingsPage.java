@@ -23,7 +23,7 @@ import cz.gattserver.grass3.ui.components.GridButton;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.window.WebWindow;
 
-public class UsersSettingsPage extends ModuleSettingsPage {
+public class UsersSettingsPage extends AbstractSettingsPage {
 
 	@Autowired
 	private UserService userFacade;

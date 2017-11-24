@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.CoreACLService;
-import cz.gattserver.grass3.ui.pages.settings.ModuleSettingsPage;
+import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
 import cz.gattserver.grass3.ui.pages.settings.NodesSettingsPage;
 
 @Component("nodesSettingsPageFactory")
@@ -23,7 +23,7 @@ public class NodesSettingsPageFactory extends AbstractModuleSettingsPageFactory 
 	}
 
 	@Override
-	protected ModuleSettingsPage createPage(GrassRequest request) {
+	protected AbstractSettingsPage createPage(GrassRequest request) {
 		return new NodesSettingsPage(request);
 	}
 

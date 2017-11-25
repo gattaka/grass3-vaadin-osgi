@@ -64,4 +64,25 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<!-- https://stackoverflow.com/questions/14609908/dependency-to-project-foo-with-type-test-jar-is-not-fully-supported -->
+		<!-- <profile> -->
+		<!-- <id>test-jars</id> -->
+		<!-- <activation> -->
+		<!-- <property> -->
+		<!-- <name>!m2e.version</name> -->
+		<!-- </property> -->
+		<!-- </activation> -->
+		<!-- <dependencies> -->
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>core</artifactId> -->
+		<!-- <version>1.0.0</version> -->
+		<!-- <type>test-jar</type> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+		<!-- </dependencies> -->
+		<!-- </profile> -->
+	</profiles>
+
 </project>

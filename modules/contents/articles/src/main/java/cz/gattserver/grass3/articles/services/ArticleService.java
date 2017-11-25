@@ -5,7 +5,6 @@ import java.util.List;
 
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
-import cz.gattserver.grass3.interfaces.UserInfoTO;
 
 public interface ArticleService {
 
@@ -34,10 +33,10 @@ public interface ArticleService {
 	 *            číslo části, je-li editována specifická část článku (povinné,
 	 *            pouze jde-li o ukládání draftu)
 	 * @param draftSourceId
-	 *            id existujícího zdrojového článku, jde-li o draft existujícího
-	 *            článku
-	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
-	 *         {@code null}
+	 *            id existujícího zdrojového článku, ke kterému je ukládán draft
+	 *            (jde-li o draft existujícího článku)
+	 * @return identifikátor článku
+	 * 
 	 */
 	public long saveArticle(String name, String text, Collection<String> tags, boolean publicated, long nodeId,
 			long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId, Integer partNumber,
@@ -105,11 +104,12 @@ public interface ArticleService {
 	/**
 	 * Získá všechny rozpracované články viditelné daným uživatelem
 	 * 
-	 * @param user
-	 *            uživatel, kterým je omezena viditelnost na rozpracované články
+	 * @param userId
+	 *            id uživatele, kterým je omezena viditelnost na rozpracované
+	 *            články
 	 * 
 	 * @return
 	 */
-	public List<ArticleDraftOverviewTO> getDraftsForUser(UserInfoTO user);
+	public List<ArticleDraftOverviewTO> getDraftsForUser(long userId);
 
 }

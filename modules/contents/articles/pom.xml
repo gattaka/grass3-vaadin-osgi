@@ -58,6 +58,11 @@
 						<exclude>cz/gattserver/grass3/articles/ui/**</exclude>
 						<exclude>cz/gattserver/grass3/articles/interfaces/**</exclude>
 						<exclude>cz/gattserver/grass3/articles/model/domain/**</exclude>
+						<exclude>cz/gattserver/grass3/articles/editor/parser/exceptions/**</exclude>
+						<exclude>cz/gattserver/grass3/modules/**</exclude>
+						<exclude>cz/gattserver/grass3/articles/config/**</exclude>
+						<exclude>cz/gattserver/grass3/articles/events/impl/**</exclude>
+						<exclude>cz/gattserver/grass3/articles/editor/parser/elements/**</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

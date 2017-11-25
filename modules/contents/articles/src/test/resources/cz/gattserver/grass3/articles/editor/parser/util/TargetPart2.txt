@@ -1,0 +1,14 @@
+[N2]Pokročilé využití[/N2]
+Následující příklad demonstruje více možnosti pattern matchingu
+
+[SCALA]abstract class TreeN
+case class InterN(key:String,left:TreeN,right:TreeN) extends TreeN
+case class LeafN(key:String,value:Int) extends TreeN
+
+def find(t:TreeN,key:String):Int={
+     t match {
+         case InterN(k,l,r) => find((if(k>=key)l else r),key)
+         case LeafN(k,v) => if(k==key) v else 0
+    }
+}[/SCALA]
+

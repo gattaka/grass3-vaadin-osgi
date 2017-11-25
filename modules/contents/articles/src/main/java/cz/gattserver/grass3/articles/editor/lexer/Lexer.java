@@ -5,7 +5,7 @@ import static cz.gattserver.grass3.articles.editor.lexer.Token.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cz.gattserver.grass3.articles.editor.parser.util.Position;
+import cz.gattserver.grass3.articles.editor.parser.interfaces.PositionTO;
 
 /**
  * 
@@ -33,8 +33,8 @@ public class Lexer {
 	/**
 	 * Vrati pocatecni pozici aktualniho symbolu.
 	 */
-	public Position getPosition() {
-		return new Position(pline, pcol);
+	public PositionTO getPosition() {
+		return new PositionTO(pline, pcol);
 	}
 
 	/**

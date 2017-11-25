@@ -1,44 +1,46 @@
 package cz.gattserver.grass3.articles.editor.parser.util;
 
 /**
- *
- * http://www.rgagnon.com/javadetails/java-0306.html
+ * Provádí převod HTML znaků, ze kterých jsou stavěny HTML tagy na bezpečné
+ * escapované řetězce, které budou mít efekt pouze jako text
+ * 
+ * @author Hynek
  *
  */
 public class HTMLEscaper {
 
-    public static String stringToHTMLString(String string) {
+	/**
+	 * Provádí escapování HTML znaků, ze kterých jsou stavěny HTML tagy
+	 * 
+	 * @param htmlUnsafeText
+	 *            text s HTML tagy, který má být převeden
+	 * @return převedený bezpečný text, ve kterém jsou HTML tagy převedeny na
+	 *         text
+	 */
+	public static String stringToHTMLString(String htmlUnsafeText) {
+		StringBuilder sb = new StringBuilder(htmlUnsafeText.length());
+		int len = htmlUnsafeText.length();
+		char c;
 
-        StringBuilder sb = new StringBuilder(string.length());
-        int len = string.length();
-        char c;
-
-        for (int i = 0; i < len; i++) {
-            c = string.charAt(i);
-
-            // HTML Special Chars
-            if (c == '"') {
-                sb.append("&quot;");
-            } else if (c == '&') {
-                sb.append("&amp;");
-            } else if (c == '<') {
-                sb.append("&lt;");
-            } else if (c == '>') {
-                sb.append("&gt;");
-            } else {
-//                int ci = 0xffff & c;
-//                if (ci < 160) // nothing special only 7 Bit
-//                {
-                    sb.append(c);
-//                } else {
-//                    // Not 7 Bit use the unicode system
-//                    sb.append("&#");
-//                    sb.append(new Integer(ci).toString());
-//                    sb.append(';');
-//                }
-            }
-        }
-
-        return sb.toString();
-    }
+		for (int i = 0; i < len; i++) {
+			c = htmlUnsafeText.charAt(i);
+			switch (c) {
+			case '"':
+				sb.append("&quot;");
+				break;
+			case '&':
+				sb.append("&amp;");
+				break;
+			case '<':
+				sb.append("&lt;");
+				break;
+			case '>':
+				sb.append("&gt;");
+				break;
+			default:
+				sb.append(c);
+			}
+		}
+		return sb.toString();
+	}
 }

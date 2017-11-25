@@ -49,14 +49,14 @@ public class PartsFinder {
 	 * Naparsuje vstupní text dle nadpisu a jeho pozice.
 	 * 
 	 * @param inputStream
+	 *            vstupní proud dat
 	 * @param searchPartOrderNumber
-	 *            kolikátá v pořadí má být hledaná část ? První nadpis, pátý
-	 *            nadpis ?
+	 *            kolikátá v pořadí má být hledaná část (bráno dle nadpisu)?
+	 *            Části jsou číslované od 0.
 	 * @return
 	 * @throws IOException
 	 */
-	public static Result findParts(InputStream inputStream,
-			final int searchPartOrderNumber) throws IOException {
+	public static Result findParts(InputStream inputStream, final int searchPartOrderNumber) throws IOException {
 
 		InputStreamReader reader = null;
 		try {
@@ -97,10 +97,8 @@ public class PartsFinder {
 					/**
 					 * Byl nalezen začátek nadpisu ?
 					 */
-					if (searchWindow.getChar(0) == '['
-							&& searchWindow.getChar(1) == 'N'
-							&& searchWindow.getChar(2) >= '0'
-							&& searchWindow.getChar(2) <= '5'
+					if (searchWindow.getChar(0) == '[' && searchWindow.getChar(1) == 'N'
+							&& searchWindow.getChar(2) >= '0' && searchWindow.getChar(2) <= '5'
 							&& searchWindow.getChar(3) == ']') {
 
 						/**
@@ -114,18 +112,14 @@ public class PartsFinder {
 							 * zpracuj ho jako předčást
 							 */
 							if (hitCounter == searchPartOrderNumber) {
-								result.prePart = builder.substring(
-										0,
-										builder.length()
-												- searchWindow.getSize());
+								result.prePart = builder.substring(0, builder.length() - searchWindow.getSize());
 								phase = ScanPhase.TARGET_PART;
 							}
-							hitCounter++; 
+							hitCounter++;
 
 						} else {
-							result.targetPart = builder.substring(
-									result.prePart.length(), builder.length()
-											- searchWindow.getSize());
+							result.targetPart = builder.substring(result.prePart.length(),
+									builder.length() - searchWindow.getSize());
 							phase = ScanPhase.POST_PART;
 						}
 					}
@@ -144,15 +138,13 @@ public class PartsFinder {
 					/**
 					 * Cílová část sahá až na konec souboru
 					 */
-					result.targetPart = builder.substring(result.prePart
-							.length());
+					result.targetPart = builder.substring(result.prePart.length());
 					break;
 				case POST_PART:
 					/**
 					 * Konec "post-části"
 					 */
-					result.postPart = builder.substring(result.prePart.length()
-							+ result.targetPart.length());
+					result.postPart = builder.substring(result.prePart.length() + result.targetPart.length());
 				}
 
 				/**

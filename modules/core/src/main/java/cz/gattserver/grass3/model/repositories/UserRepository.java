@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import cz.gattserver.grass3.model.domain.User;
+import cz.gattserver.grass3.security.Role;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -14,12 +15,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	User findByNameAndPassword(String name, String passwordHash);
 
-	User findByIdAndFavouritesId(Long userId, Long contentNodeId);
+	User findByIdAndFavouritesId(long userId, long contentNodeId);
 
-	List<User> findByFavouritesId(Long contentNodeId);
+	List<User> findByFavouritesId(long contentNodeId);
+
+	@Query("select ?2 member of u.roles from USER_ACCOUNTS u where u.id = ?1")
+	boolean hasRole(long userId, Role role);
 
 	@Modifying
 	@Query("update USER_ACCOUNTS u set u.confirmed = ?2 where u.id = ?1")
-	void updateConfirmed(Long userId, boolean b);
+	void updateConfirmed(long userId, boolean b);
+
 
 }

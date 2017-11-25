@@ -17,8 +17,8 @@ import cz.gattserver.grass3.articles.editor.parser.elements.ParserErrorElement;
 import cz.gattserver.grass3.articles.editor.parser.elements.PluginErrorElement;
 import cz.gattserver.grass3.articles.editor.parser.elements.TextElement;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
+import cz.gattserver.grass3.articles.editor.parser.interfaces.PositionTO;
 import cz.gattserver.grass3.articles.editor.parser.util.HTMLEscaper;
-import cz.gattserver.grass3.articles.editor.parser.util.Position;
 import cz.gattserver.grass3.articles.plugins.Plugin;
 import cz.gattserver.grass3.articles.plugins.register.PluginRegister;
 import cz.gattserver.web.common.SpringContextHelper;
@@ -141,7 +141,7 @@ public class PluginBag {
 		this.token = lexer.nextToken();
 	}
 
-	public Position getPosition() {
+	public PositionTO getPosition() {
 		return lexer.getPosition();
 	}
 

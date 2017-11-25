@@ -193,7 +193,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		// aby se zaregistroval JS listener
 		articleTextArea.focus();
 
-		List<ArticleDraftOverviewTO> drafts = articleFacade.getDraftsForUser(UIUtils.getGrassUI().getUser());
+		List<ArticleDraftOverviewTO> drafts = articleFacade.getDraftsForUser(UIUtils.getGrassUI().getUser().getId());
 
 		if (drafts.isEmpty()) {
 			// nejsou-li v DB žádné pro přihlášeného uživatele viditelné drafty

@@ -23,19 +23,20 @@ import cz.gattserver.grass3.articles.editor.parser.util.HTMLTagsFilter;
 import cz.gattserver.grass3.articles.events.impl.ArticlesProcessProgressEvent;
 import cz.gattserver.grass3.articles.events.impl.ArticlesProcessResultEvent;
 import cz.gattserver.grass3.articles.events.impl.ArticlesProcessStartEvent;
-import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
+import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.articles.model.domain.Article;
 import cz.gattserver.grass3.articles.model.domain.ArticleJSResource;
 import cz.gattserver.grass3.articles.model.repositories.ArticleRepository;
 import cz.gattserver.grass3.articles.model.util.ArticlesMapper;
-import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.articles.services.ArticleProcessMode;
+import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.events.EventBus;
-import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
+import cz.gattserver.grass3.model.repositories.UserRepository;
 import cz.gattserver.grass3.modules.ArticlesContentModule;
+import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.services.ContentNodeService;
 
 @Transactional
@@ -53,6 +54,9 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Autowired
 	private ArticleRepository articleRepository;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	private Context processArticle(String source, String contextRoot) {
 
@@ -211,8 +215,9 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	@Override
-	public List<ArticleDraftOverviewTO> getDraftsForUser(UserInfoTO user) {
-		List<Article> articles = articleRepository.findDraftsForUser(user.getId(), user.isAdmin());
+	public List<ArticleDraftOverviewTO> getDraftsForUser(long userId) {
+		boolean isAdmin = userRepository.hasRole(userId, Role.ADMIN);
+		List<Article> articles = articleRepository.findDraftsForUser(userId, isAdmin);
 		if (articles == null)
 			return null;
 		List<ArticleDraftOverviewTO> articleDTOs = articlesMapper.mapArticlesForDraftOverview(articles);

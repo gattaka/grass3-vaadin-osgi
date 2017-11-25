@@ -1,14 +1,14 @@
-package cz.gattserver.grass3.articles.editor.parser.util;
+package cz.gattserver.grass3.articles.editor.parser.interfaces;
 
 /**
  * Pozice ve vstupnim souboru.
  */
-public class Position {
+public class PositionTO {
 
 	private int line;
 	private int col;
 
-	public Position(int line, int col) {
+	public PositionTO(int line, int col) {
 		this.line = line;
 		this.col = col;
 	}

@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.parser;
+package cz.gattserver.grass3.articles.editor.parser.util;
 
 import static org.junit.Assert.*;
 

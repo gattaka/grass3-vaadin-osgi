@@ -25,6 +25,7 @@ import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
 import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
 import cz.gattserver.grass3.pg.facade.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.services.SecurityService;
+import cz.gattserver.grass3.services.impl.LoginResult;
 
 @Controller
 @RequestMapping("/pg")
@@ -47,7 +48,8 @@ public class PhotogalleryResource {
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public ResponseEntity<String> login(@RequestParam("login") String username,
 			@RequestParam("password") String password, HttpServletRequest request, HttpServletResponse response) {
-		if (securityFacade.login(username, password, false, request, response)) {
+		LoginResult result = securityFacade.login(username, password, false, request, response);
+		if (LoginResult.SUCCESS.equals(result)) {
 			return new ResponseEntity<>(HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.AuthenticationException;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.VaadinService;
@@ -13,13 +12,13 @@ import com.vaadin.server.VaadinServletService;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
+import cz.gattserver.grass3.services.impl.LoginResult;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
@@ -37,24 +36,22 @@ public class LoginPage extends OneColumnPage {
 		super(request);
 	}
 
-	private boolean login(String username, String password, boolean remember) {
-		try {
-			HttpServletRequest request = VaadinServletService.getCurrentServletRequest();
-			HttpServletResponse response = VaadinServletService.getCurrentResponse().getHttpServletResponse();
-			securityFacade.login(username, password, remember, request, response);
+	private LoginResult login(String username, String password, boolean remember) {
+		HttpServletRequest request = VaadinServletService.getCurrentServletRequest();
+		HttpServletResponse response = VaadinServletService.getCurrentResponse().getHttpServletResponse();
+		LoginResult loginResult = securityFacade.login(username, password, remember, request, response);
+		switch (loginResult) {
+		case SUCCESS:
 			// Reinitialize the session to protect against session fixation
-			// attacks. This does not work
-			// with websocket communication.
+			// attacks. This does not work with websocket communication.
 			VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
-			return true;
-		} catch (AuthenticationException ex) {
-			return false;
+		default:
+			return loginResult;
 		}
 	}
 
 	@Override
 	protected Component createContent() {
-
 		VerticalLayout marginLayout = new VerticalLayout();
 		marginLayout.setMargin(true);
 
@@ -77,17 +74,26 @@ public class LoginPage extends OneColumnPage {
 		Button login = new Button("Přihlásit", evt -> {
 			String pword = password.getValue();
 			password.setValue("");
-			if (!login(username.getValue(), pword, rememberMe.getValue())) {
-				Notification.show("Přihlášení se nezdařilo");
+			LoginResult loginResult = login(username.getValue(), pword, rememberMe.getValue());
+			switch (loginResult) {
+			case FAILED_CREDENTIALS:
+				UIUtils.showError("Špatné přihlašovací jméno nebo heslo");
 				username.focus();
-			} else {
+				break;
+			case FAILED_DISABLED:
+				UIUtils.showError("Účet je deaktivován");
+				break;
+			case FAILED_LOCKED:
+				UIUtils.showError("Účet je zamčen");
+				break;
+			case SUCCESS:
 				UIUtils.redirect(getPageURL(homePageFactory));
+				break;
 			}
 		});
 		login.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 		layout.addComponent(login);
 
 		return marginLayout;
-
 	}
 }

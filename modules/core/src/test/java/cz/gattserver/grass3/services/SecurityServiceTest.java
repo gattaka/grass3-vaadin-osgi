@@ -20,6 +20,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.services.UserService;
+import cz.gattserver.grass3.services.impl.LoginResult;
 import cz.gattserver.grass3.test.AbstractDBUnitTest;
 import cz.gattserver.grass3.test.MockUtils;
 
@@ -52,9 +53,9 @@ public class SecurityServiceTest extends AbstractDBUnitTest {
 
 		Long userId1 = coreMockService.createMockUser(1);
 		userService.activateUser(userId1);
-		boolean result = securityService.login(MockUtils.MOCK_USER_NAME + 1, MockUtils.MOCK_USER_PASSWORD + 1, false,
-				mvcResult.getRequest(), mvcResult.getResponse());
-		assertTrue(result);
+		LoginResult result = securityService.login(MockUtils.MOCK_USER_NAME + 1, MockUtils.MOCK_USER_PASSWORD + 1,
+				false, mvcResult.getRequest(), mvcResult.getResponse());
+		assertEquals(LoginResult.SUCCESS, result);
 		UserInfoTO user = securityService.getCurrentUser();
 		assertEquals(MockUtils.MOCK_USER_NAME + 1, user.getUsername());
 	}
@@ -65,9 +66,9 @@ public class SecurityServiceTest extends AbstractDBUnitTest {
 
 		Long userId1 = coreMockService.createMockUser(1);
 		userService.activateUser(userId1);
-		boolean result = securityService.login(MockUtils.MOCK_USER_NAME + 1, MockUtils.MOCK_USER_PASSWORD + 1, true,
+		LoginResult result = securityService.login(MockUtils.MOCK_USER_NAME + 1, MockUtils.MOCK_USER_PASSWORD + 1, true,
 				mvcResult.getRequest(), mvcResult.getResponse());
-		assertTrue(result);
+		assertEquals(LoginResult.SUCCESS, result);
 		UserInfoTO user = securityService.getCurrentUser();
 		assertEquals(MockUtils.MOCK_USER_NAME + 1, user.getUsername());
 	}
@@ -78,9 +79,9 @@ public class SecurityServiceTest extends AbstractDBUnitTest {
 
 		Long userId1 = coreMockService.createMockUser(1);
 		userService.activateUser(userId1);
-		boolean result = securityService.login("wrong", MockUtils.MOCK_USER_PASSWORD + 1, false, mvcResult.getRequest(),
-				mvcResult.getResponse());
-		assertFalse(result);
+		LoginResult result = securityService.login("wrong", MockUtils.MOCK_USER_PASSWORD + 1, false,
+				mvcResult.getRequest(), mvcResult.getResponse());
+		assertEquals(LoginResult.FAILED_CREDENTIALS, result);
 	}
 
 	@Test
@@ -89,9 +90,9 @@ public class SecurityServiceTest extends AbstractDBUnitTest {
 
 		Long userId1 = coreMockService.createMockUser(1);
 		userService.activateUser(userId1);
-		boolean result = securityService.login(MockUtils.MOCK_USER_NAME + 1, "wrong", false, mvcResult.getRequest(),
+		LoginResult result = securityService.login(MockUtils.MOCK_USER_NAME + 1, "wrong", false, mvcResult.getRequest(),
 				mvcResult.getResponse());
-		assertFalse(result);
+		assertEquals(LoginResult.FAILED_CREDENTIALS, result);
 	}
 
 	@Test

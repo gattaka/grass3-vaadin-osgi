@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,7 +37,7 @@ public class SecurityServiceImpl implements SecurityService {
 	@Autowired
 	private RememberMeServices rememberMeServices;
 
-	public boolean login(String username, String password, boolean remember, HttpServletRequest request,
+	public LoginResult login(String username, String password, boolean remember, HttpServletRequest request,
 			HttpServletResponse response) {
 
 		UserInfoTO principal = new UserInfoTO();
@@ -57,11 +59,15 @@ public class SecurityServiceImpl implements SecurityService {
 				User user = userRepository.findOne(principal.getId());
 				user.setLastLoginDate(LocalDateTime.now());
 				userRepository.save(user);
-				return true;
 			}
 		} catch (BadCredentialsException e) {
+			return LoginResult.FAILED_CREDENTIALS;
+		} catch (DisabledException e) {
+			return LoginResult.FAILED_DISABLED;
+		} catch (LockedException e) {
+			return LoginResult.FAILED_LOCKED;
 		}
-		return false;
+		return LoginResult.SUCCESS;
 	}
 
 	public UserInfoTO getCurrentUser() {

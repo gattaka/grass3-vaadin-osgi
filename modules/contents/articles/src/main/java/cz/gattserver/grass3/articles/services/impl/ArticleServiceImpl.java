@@ -19,7 +19,7 @@ import cz.gattserver.grass3.articles.editor.parser.PluginBag;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.impl.ArticleParser;
 import cz.gattserver.grass3.articles.editor.parser.impl.ContextImpl;
-import cz.gattserver.grass3.articles.editor.parser.util.HTMLTrimmer;
+import cz.gattserver.grass3.articles.editor.parser.util.HTMLTagsFilter;
 import cz.gattserver.grass3.articles.events.impl.ArticlesProcessProgressEvent;
 import cz.gattserver.grass3.articles.events.impl.ArticlesProcessResultEvent;
 import cz.gattserver.grass3.articles.events.impl.ArticlesProcessStartEvent;
@@ -134,7 +134,7 @@ public class ArticleServiceImpl implements ArticleService {
 			article.setOutputHTML(context.getOutput());
 			article.setPluginCSSResources(context.getCSSResources());
 			article.setPluginJSResources(createJSResourcesSet(context.getJSResources()));
-			article.setSearchableOutput(HTMLTrimmer.trim(context.getOutput()));
+			article.setSearchableOutput(HTMLTagsFilter.trim(context.getOutput()));
 		}
 		article.setText(text);
 

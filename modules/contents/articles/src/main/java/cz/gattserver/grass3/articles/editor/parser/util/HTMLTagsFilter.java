@@ -8,19 +8,38 @@ package cz.gattserver.grass3.articles.editor.parser.util;
  * @author gatt
  * 
  */
-public class HTMLTrimmer {
+public class HTMLTagsFilter {
 
-	private HTMLTrimmer() {
+	private HTMLTagsFilter() {
 	}
 
+	/**
+	 * <p>
+	 * Zbavuje text HTML tagů a vrací čistý text připravený pro search
+	 * indexování. Protože některé tagy mohou způsobit oddělení textu, vkládá za
+	 * každý tag preventivně mezeru. Protože text není určen ke čtení, ale k
+	 * indexování, nevadí to.
+	 * </p>
+	 * 
+	 * <p>
+	 * Příklad:
+	 * </p>
+	 * 
+	 * <p>
+	 * <strong>Vstup:</strong> proto &lt;strong&gt;požaduji&lt;/strong&gt;
+	 * </p>
+	 * <p>
+	 * <strong>Výstup:</strong> proto &nbsp;požaduji
+	 * </p>
+	 * 
+	 * @param text
+	 *            vstupní text, ve kterém můžou být HTML tagy
+	 * @return vyčištěný text, ve kterém je jenom obsah bez formátování
+	 */
 	public static String trim(String text) {
 
-		// vynechávám text ?
 		boolean trimMode = false;
-
-		// jsem na prvním znaku za vynechaným textem (mám vložit mezeru ?)
-		boolean justEnded = false;
-
+		boolean endTagOccured = false;
 		StringBuilder stringBuilder = new StringBuilder();
 
 		for (int index = 0; index < text.length(); index++) {
@@ -36,7 +55,7 @@ public class HTMLTrimmer {
 			// skončil tag - vypni trim
 			if (c == '>') {
 				trimMode = false;
-				justEnded = true;
+				endTagOccured = true;
 				continue;
 			}
 
@@ -44,17 +63,14 @@ public class HTMLTrimmer {
 			if (trimMode) {
 				continue;
 			} else {
-				if (justEnded) {
+				if (endTagOccured) {
+					endTagOccured = false;
 					stringBuilder.append(' ');
-					justEnded = false;
 				}
 				stringBuilder.append(c);
 			}
-
 		}
-
 		return stringBuilder.toString();
-
 	}
 
 }

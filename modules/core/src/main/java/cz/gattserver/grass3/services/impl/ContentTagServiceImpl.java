@@ -13,8 +13,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,8 +42,8 @@ public class ContentTagServiceImpl implements ContentTagService {
 	private ContentNodeRepository contentNodeRepository;
 
 	@Override
-	public Set<ContentTagOverviewTO> getTagsForOverviewOrderedByName() {
-		List<ContentTag> contentTags = contentTagRepository.findAll(new Sort(Direction.ASC, "name"));
+	public Set<ContentTagOverviewTO> getTagsForOverviewOrderedByName() {	
+		List<ContentTag> contentTags = contentTagRepository.findAllOrderByNameCaseInsensitive();
 		Set<ContentTagOverviewTO> contentTagDTOs = mapper.mapContentTagCollectionForOverview(contentTags);
 		return contentTagDTOs;
 	}

@@ -356,7 +356,7 @@ public class ContentTagServiceTest extends AbstractDBUnitTest {
 		tags.add("c");
 		coreMockService.createMockContentNode(34L, tags, nodeId1, userId1, 3);
 
-		tags.add("b");
+		tags.add("Ab");
 		coreMockService.createMockContentNode(35L, tags, nodeId1, userId1, 4);
 
 		tags.add("aa");
@@ -376,8 +376,9 @@ public class ContentTagServiceTest extends AbstractDBUnitTest {
 		assertEquals(1, item.getContentsCount().intValue());
 		assertEquals(5, item.getFontSize());
 
+		// Velká a malá písmena musí být brána v řazení jako stejná
 		item = iter.next();
-		assertEquals("b", item.getName());
+		assertEquals("Ab", item.getName());
 		assertEquals(2, item.getContentsCount().intValue());
 		assertEquals(6, item.getFontSize());
 

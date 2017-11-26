@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.plugins.basic.headers;
+package cz.gattserver.grass3.articles.plugins.headers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,7 @@ import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.PluginBag;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
+import cz.gattserver.grass3.articles.plugins.headers.HeaderElement;
 
 /**
  * @author gatt

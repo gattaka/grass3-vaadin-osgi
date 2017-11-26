@@ -1,6 +1,8 @@
-package cz.gattserver.grass3.articles.plugins.basic.headers;
+package cz.gattserver.grass3.articles.plugins.headers;
 
 import org.springframework.stereotype.Component;
+
+import cz.gattserver.grass3.articles.plugins.headers.AbstractHeaderPlugin;
 
 /**
  * @author gatt

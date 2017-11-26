@@ -1,8 +1,9 @@
-package cz.gattserver.grass3.articles.plugins.basic.headers;
+package cz.gattserver.grass3.articles.plugins.headers;
 
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
 import cz.gattserver.grass3.articles.plugins.Plugin;
+import cz.gattserver.grass3.articles.plugins.headers.HeaderParser;
 
 /**
  * @author gatt

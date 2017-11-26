@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.plugins.basic.headers;
+package cz.gattserver.grass3.articles.plugins.headers;
 
 import java.util.List;
 
@@ -18,13 +18,13 @@ public class HeaderElement implements Element {
 	@Override
 	public void apply(Context ctx) {
 		ctx.resetHeaderLevel();
-		ctx.print("<div class=\"articles-basic-h" + level + "\">");
-		ctx.print("<a class=\"articles-basic-h-id\" href=\"" + ctx.getNextHeaderIdentifier() + "\"></a>");
+		ctx.print("<div class=\"articles-h" + level + "\">");
+		ctx.print("<a class=\"articles-h-id\" href=\"" + ctx.getNextHeaderIdentifier() + "\"></a>");
 		for (Element headerText : headerContent)
 			headerText.apply(ctx);
 		ctx.print("</div>");
 		ctx.setHeaderLevel(level);
-		ctx.addCSSResource("articles/basic/style.css");
+		ctx.addCSSResource("articles/style.css");
 	}
 
 	public void setHeaderText(List<Element> headerContent) {

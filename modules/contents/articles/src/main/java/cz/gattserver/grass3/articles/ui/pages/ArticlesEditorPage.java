@@ -39,9 +39,9 @@ import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResour
 import cz.gattserver.grass3.articles.editor.parser.util.PartsFinder;
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
+import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
 import cz.gattserver.grass3.articles.plugins.register.PluginRegister;
 import cz.gattserver.grass3.articles.services.ArticleService;
-import cz.gattserver.grass3.articles.services.ArticleProcessMode;
 import cz.gattserver.grass3.articles.ui.windows.DraftMenuWindow;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
@@ -69,7 +69,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private NodeService nodeFacade;
 
 	@Autowired
-	private ArticleService articleFacade;
+	private ArticleService articleService;
 
 	@Autowired
 	private ContentTagService contentTagFacade;
@@ -130,7 +130,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			articleTextArea.setValue("");
 			publicatedCheckBox.setValue(true);
 		} else if (operationToken.equals(DefaultContentOperations.EDIT.toString())) {
-			article = articleFacade.getArticleForDetail(identifier.getId());
+			article = articleService.getArticleForDetail(identifier.getId());
 			node = article.getContentNode().getParent();
 			existingArticleId = article.getId();
 			existingArticleName = article.getContentNode().getName();
@@ -193,7 +193,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		// aby se zaregistroval JS listener
 		articleTextArea.focus();
 
-		List<ArticleDraftOverviewTO> drafts = articleFacade.getDraftsForUser(UIUtils.getGrassUI().getUser().getId());
+		List<ArticleDraftOverviewTO> drafts = articleService.getDraftsForUser(UIUtils.getGrassUI().getUser().getId());
 
 		if (drafts.isEmpty()) {
 			// nejsou-li v DB žádné pro přihlášeného uživatele viditelné drafty
@@ -221,7 +221,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 					// jedná se o draft již existujícího obsahu?
 					if (draft.getContentNode().getDraftSourceId() != null) {
-						article = articleFacade.getArticleForDetail(draft.getContentNode().getDraftSourceId());
+						article = articleService.getArticleForDetail(draft.getContentNode().getDraftSourceId());
 						existingArticleId = article.getId();
 						existingArticleName = article.getContentNode().getName();
 
@@ -369,21 +369,35 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		previewButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.DOCUMENT_16_ICON));
 		previewButton.addClickListener(event -> {
 			try {
+
 				// Náhled ukazuje pouze danou část, která je upravovaná
 				// (nespojuje parts)
 				String draftName = articleNameField.getValue();
-				Long id = articleFacade.saveArticle(draftName, articleTextArea.getValue(), getArticlesKeywords(),
-						publicatedCheckBox.getValue(), node.getId(), UIUtils.getGrassUI().getUser().getId(),
-						getRequest().getContextRoot(), ArticleProcessMode.PREVIEW, existingDraftId, partNumber,
-						existingArticleId);
+				ArticlePayloadTO payload = new ArticlePayloadTO(draftName, articleTextArea.getValue(),
+						getArticlesKeywords(), publicatedCheckBox.getValue(), getRequest().getContextRoot());
 
-				if (id != null) {
-					existingDraftId = id;
-					JavaScript.eval("window.open('"
-							+ getPageURL(articlesViewerPageFactory,
-									URLIdentifierUtils.createURLIdentifier(existingDraftId, draftName))
-							+ "','_blank');");
+				if (existingDraftId == null) {
+					if (existingArticleId == null) {
+						existingDraftId = articleService.saveDraft(payload, node.getId(),
+								UIUtils.getGrassUI().getUser().getId(), true);
+					} else {
+						existingDraftId = articleService.saveDraftOfExistingArticle(payload, node.getId(),
+								UIUtils.getGrassUI().getUser().getId(), partNumber, existingArticleId, true);
+					}
+				} else {
+					if (existingArticleId == null) {
+						articleService.modifyDraft(existingDraftId, payload, true);
+					} else {
+						articleService.modifyDraftOfExistingArticle(existingDraftId, payload, partNumber,
+								existingArticleId, true);
+					}
 				}
+
+				JavaScript
+						.eval("window.open('"
+								+ getPageURL(articlesViewerPageFactory,
+										URLIdentifierUtils.createURLIdentifier(existingDraftId, draftName))
+								+ "','_blank');");
 			} catch (Exception e) {
 				logger.error("Při ukládání náhledu článku došlo k chybě", e);
 			}
@@ -447,17 +461,28 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				// Náhled ukazuje pouze danou část, která je upravovaná
 				// (nespojuje parts)
 				String draftName = articleNameField.getValue();
-				Long id = articleFacade.saveArticle(draftName, articleTextArea.getValue(), getArticlesKeywords(),
-						publicatedCheckBox.getValue(), node.getId(), UIUtils.getGrassUI().getUser().getId(),
-						getRequest().getContextRoot(), ArticleProcessMode.DRAFT, existingDraftId, partNumber,
-						existingArticleId);
-
-				if (id != null) {
-					existingDraftId = id;
-					autosaveLabel.setValue(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
-							+ " Automaticky uloženo");
-					autosaveLabel.setStyleName("label-ok");
+				ArticlePayloadTO payload = new ArticlePayloadTO(draftName, articleTextArea.getValue(),
+						getArticlesKeywords(), publicatedCheckBox.getValue(), getRequest().getContextRoot());
+				if (existingDraftId == null) {
+					if (existingArticleId == null) {
+						existingDraftId = articleService.saveDraft(payload, node.getId(),
+								UIUtils.getGrassUI().getUser().getId(), false);
+					} else {
+						existingDraftId = articleService.saveDraftOfExistingArticle(payload, node.getId(),
+								UIUtils.getGrassUI().getUser().getId(), partNumber, existingArticleId, false);
+					}
+				} else {
+					if (existingArticleId == null) {
+						articleService.modifyDraft(existingDraftId, payload, false);
+					} else {
+						articleService.modifyDraftOfExistingArticle(existingDraftId, payload, partNumber,
+								existingArticleId, false);
+					}
 				}
+
+				autosaveLabel.setValue(
+						LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + " Automaticky uloženo");
+				autosaveLabel.setStyleName("label-ok");
 			} catch (Exception e) {
 				autosaveLabel.setValue(
 						LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "Chyba uložení");
@@ -500,17 +525,18 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				text = articleTextArea.getValue();
 			}
 
-			Long id = articleFacade.saveArticle(articleNameField.getValue(), text, getArticlesKeywords(),
-					publicatedCheckBox.getValue(), node.getId(), UIUtils.getGrassUI().getUser().getId(),
-					getRequest().getContextRoot(), ArticleProcessMode.FULL, this.existingArticleId);
-
-			if (id != null) {
+			ArticlePayloadTO payload = new ArticlePayloadTO(articleNameField.getValue(), text, getArticlesKeywords(),
+					publicatedCheckBox.getValue(), getRequest().getContextRoot());
+			if (existingArticleId == null) {
 				// byl uložen článek, od teď eviduj draft, jako draft
 				// existujícího obsahu
-				this.existingArticleId = id;
+				existingArticleId = articleService.saveArticle(payload, node.getId(),
+						UIUtils.getGrassUI().getUser().getId());
 				this.existingArticleName = articleNameField.getValue();
-				return true;
+			} else {
+				articleService.modifyArticle(existingArticleId, payload, partNumber);
 			}
+			return true;
 		} catch (Exception e) {
 			logger.error("Při ukládání článku došlo k chybě", e);
 		}
@@ -523,7 +549,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private void returnToArticle() {
 		// smaž draft
 		if (existingDraftId != null)
-			articleFacade.deleteArticle(existingDraftId);
+			articleService.deleteArticle(existingDraftId);
 
 		JavaScript.eval("window.onbeforeunload = null;");
 		UIUtils.redirect(getPageURL(articlesViewerPageFactory,
@@ -536,7 +562,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private void returnToNode() {
 		// smaž draft
 		if (existingDraftId != null)
-			articleFacade.deleteArticle(existingDraftId);
+			articleService.deleteArticle(existingDraftId);
 
 		JavaScript.eval("window.onbeforeunload = null;");
 		UIUtils.redirect(

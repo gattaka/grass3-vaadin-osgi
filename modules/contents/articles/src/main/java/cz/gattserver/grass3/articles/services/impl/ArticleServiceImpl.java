@@ -24,12 +24,12 @@ import cz.gattserver.grass3.articles.events.impl.ArticlesProcessProgressEvent;
 import cz.gattserver.grass3.articles.events.impl.ArticlesProcessResultEvent;
 import cz.gattserver.grass3.articles.events.impl.ArticlesProcessStartEvent;
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
+import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.articles.model.domain.Article;
 import cz.gattserver.grass3.articles.model.domain.ArticleJSResource;
 import cz.gattserver.grass3.articles.model.repositories.ArticleRepository;
 import cz.gattserver.grass3.articles.model.util.ArticlesMapper;
-import cz.gattserver.grass3.articles.services.ArticleProcessMode;
 import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.model.domain.ContentNode;
@@ -97,29 +97,39 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	@Override
-	public long saveArticle(String name, String text, Collection<String> tags, boolean publicated, long nodeId,
-			long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId) {
-		return saveArticle(name, text, tags, publicated, nodeId, authorId, contextRoot, processForm, existingId, null,
-				null);
+	public long saveArticle(ArticlePayloadTO payload, long nodeId, long authorId) {
+		return innerSaveArticle(payload, nodeId, authorId, true, false, null, null, null);
 	}
 
 	@Override
-	public long saveArticle(String name, String text, Collection<String> tags, boolean publicated, long nodeId,
-			long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId, Integer partNumber,
-			Long draftSourceId) {
+	public void modifyArticle(long articleId, ArticlePayloadTO payload, Integer partNumber) {
+		innerSaveArticle(payload, null, null, true, false, articleId, partNumber, null);
+	}
 
-		// Flags
-		boolean process = false;
-		boolean draft = false;
-		switch (processForm) {
-		case DRAFT:
-			draft = true;
-			break;
-		case PREVIEW:
-			draft = true;
-		case FULL:
-			process = true;
-		}
+	@Override
+	public long saveDraft(ArticlePayloadTO payload, long nodeId, long authorId, boolean asPreview) {
+		return innerSaveArticle(payload, nodeId, authorId, asPreview, true, null, null, null);
+	}
+
+	@Override
+	public long saveDraftOfExistingArticle(ArticlePayloadTO payload, long nodeId, long authorId, Integer partNumber,
+			long originArticleId, boolean asPreview) {
+		return innerSaveArticle(payload, nodeId, authorId, asPreview, true, null, partNumber, originArticleId);
+	}
+
+	@Override
+	public void modifyDraft(long drafId, ArticlePayloadTO payload, boolean asPreview) {
+		innerSaveArticle(payload, null, null, asPreview, true, drafId, null, null);
+	}
+
+	@Override
+	public void modifyDraftOfExistingArticle(long drafId, ArticlePayloadTO payload, Integer partNumber,
+			long originArticleId, boolean asPreview) {
+		innerSaveArticle(payload, null, null, asPreview, true, drafId, partNumber, originArticleId);
+	}
+
+	private long innerSaveArticle(ArticlePayloadTO payload, Long nodeId, Long authorId, boolean process, boolean draft,
+			Long existingId, Integer partNumber, Long draftSourceId) {
 
 		Article article;
 		if (existingId == null) {
@@ -134,21 +144,21 @@ public class ArticleServiceImpl implements ArticleService {
 
 		// nasetuj do něj vše potřebné
 		if (process) {
-			Context context = processArticle(text, contextRoot);
+			Context context = processArticle(payload.getText(), payload.getContextRoot());
 			article.setOutputHTML(context.getOutput());
 			article.setPluginCSSResources(context.getCSSResources());
 			article.setPluginJSResources(createJSResourcesSet(context.getJSResources()));
 			article.setSearchableOutput(HTMLTagsFilter.trim(context.getOutput()));
 		}
-		article.setText(text);
+		article.setText(payload.getText());
 
 		// ulož ho a nasetuj jeho id
 		article = articleRepository.save(article);
 
 		if (existingId == null) {
 			// vytvoř odpovídající content node
-			Long contentNodeId = contentNodeFacade.save(ArticlesContentModule.ID, article.getId(), name, tags,
-					publicated, nodeId, authorId, draft, null, draftSourceId);
+			Long contentNodeId = contentNodeFacade.save(ArticlesContentModule.ID, article.getId(), payload.getName(),
+					payload.getTags(), payload.isPublicated(), nodeId, authorId, draft, null, draftSourceId);
 
 			// ulož do článku referenci na jeho contentnode
 			ContentNode contentNode = new ContentNode();
@@ -156,7 +166,8 @@ public class ArticleServiceImpl implements ArticleService {
 			article.setContentNode(contentNode);
 			articleRepository.save(article);
 		} else {
-			contentNodeFacade.modify(article.getContentNode().getId(), name, tags, publicated);
+			contentNodeFacade.modify(article.getContentNode().getId(), payload.getName(), payload.getTags(),
+					payload.isPublicated());
 		}
 
 		return article.getId();
@@ -175,27 +186,31 @@ public class ArticleServiceImpl implements ArticleService {
 	@Override
 	public void reprocessAllArticles(String contextRoot) {
 
+		// TODO paging!
 		List<Article> articles = articleRepository.findAll();
 		int total = articles.size();
-
-		// Počet kroků = miniatury + detaily + uložení
 		eventBus.publish(new ArticlesProcessStartEvent(total));
 
 		int current = 0;
 		for (Article article : articles) {
 
 			Collection<ContentTag> tagsDTOs = article.getContentNode().getContentTags();
-
 			Set<String> tags = new HashSet<String>();
 			for (ContentTag tag : tagsDTOs)
 				tags.add(tag.getName());
 
-			ArticleProcessMode articleProcessForm = Boolean.TRUE.equals(article.getContentNode().getDraft())
-					? ArticleProcessMode.PREVIEW : ArticleProcessMode.FULL;
-			saveArticle(article.getContentNode().getName(), article.getText(), tags,
-					article.getContentNode().getPublicated(), article.getContentNode().getId(),
-					article.getContentNode().getAuthor().getId(), contextRoot, articleProcessForm, article.getId(),
-					article.getPartNumber(), article.getContentNode().getDraftSourceId());
+			ArticlePayloadTO payload = new ArticlePayloadTO(article.getContentNode().getName(), article.getText(), tags,
+					article.getContentNode().getPublicated(), contextRoot);
+			if (article.getContentNode().getDraft()) {
+				if (article.getContentNode().getDraftSourceId() != null) {
+					modifyDraftOfExistingArticle(article.getId(), payload, null,
+							article.getContentNode().getDraftSourceId(), true);
+				} else {
+					modifyDraft(article.getId(), payload, true);
+				}
+			} else {
+				modifyArticle(article.getId(), payload, null);
+			}
 
 			eventBus.publish(new ArticlesProcessProgressEvent(
 					"(" + current + "/" + total + ") " + article.getContentNode().getName()));
@@ -207,7 +222,7 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public List<ArticleTO> getAllArticlesForSearch() {
-		List<Article> articles = articleRepository.findAll();
+		List<Article> articles = articleRepository.findAllForSearch();
 		if (articles == null)
 			return null;
 		List<ArticleTO> articleDTOs = articlesMapper.mapArticlesForSearch(articles);
@@ -216,7 +231,7 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public List<ArticleDraftOverviewTO> getDraftsForUser(long userId) {
-		boolean isAdmin = userRepository.hasRole(userId, Role.ADMIN);
+		boolean isAdmin = userRepository.hasRole(userId, Role.ADMIN) == 1L;
 		List<Article> articles = articleRepository.findDraftsForUser(userId, isAdmin);
 		if (articles == null)
 			return null;

@@ -19,12 +19,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	List<User> findByFavouritesId(long contentNodeId);
 
-	@Query("select ?2 member of u.roles from USER_ACCOUNTS u where u.id = ?1")
-	boolean hasRole(long userId, Role role);
+	@Query("select count(u) from USER_ACCOUNTS u where u.id = ?1 and ?2 member of u.roles")
+	long hasRole(long userId, Role role);
 
 	@Modifying
 	@Query("update USER_ACCOUNTS u set u.confirmed = ?2 where u.id = ?1")
 	void updateConfirmed(long userId, boolean b);
-
 
 }

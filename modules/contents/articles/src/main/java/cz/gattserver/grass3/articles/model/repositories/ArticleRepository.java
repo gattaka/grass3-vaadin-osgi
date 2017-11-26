@@ -12,4 +12,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 	@Query(value = "select a from ARTICLE a join a.contentNode c where c.draft = true and (?2 = true or c.author.id = ?1) order by c.creationDate desc")
 	List<Article> findDraftsForUser(Long userId, boolean admin);
 
+	@Query(value = "select a from ARTICLE a join a.contentNode c where c.draft = false and c.publicated = true order by c.creationDate desc")
+	List<Article> findAllForSearch();
+
 }

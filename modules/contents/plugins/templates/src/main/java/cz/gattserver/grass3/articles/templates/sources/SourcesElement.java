@@ -7,7 +7,7 @@ import cz.gattserver.grass3.articles.editor.parser.Context;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.elements.TextElement;
 import cz.gattserver.grass3.articles.favlink.plugin.LinkElement;
-import cz.gattserver.grass3.articles.plugins.basic.headers.HeaderElement;
+import cz.gattserver.grass3.articles.plugins.headers.HeaderElement;
 
 public class SourcesElement implements Element {
 

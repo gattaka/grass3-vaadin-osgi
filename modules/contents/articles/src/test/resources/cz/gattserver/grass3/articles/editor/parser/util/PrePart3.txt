@@ -1,0 +1,44 @@
+[N1]Podstata[/N1]
+[UL]jde o jeden z nejsilnějších nástrojů Scaly
+vhodné pro switch
+vhodné při přidávání operací na uzly nějaké stromové struktury (napíše se pro ní jeden nový pattern-match)
+nevhodné při přidávání nových subtypů uzlů nějaké stromové struktury (do všech operací se musí připsat odpovídající "case" u pattern-matching switche[/UL]
+
+[N2]Běžný switch[/N2]
+Vypadá podobně jako v Javě, místo default je použita opět "default hodnota", kterou reprezentuje podtržítko
+
+[SCALA]def  decode(n:Int){
+  n match {
+    case 1 => println("One")
+    case 2 => println("Two")
+    case 5 => println("Five")
+    case _ => println("Error")
+  }
+}[/SCALA]
+
+případně, lepší cestou
+
+[SCALA]def  decode(n:Int){
+  println(n match {
+    case 1 => "One"
+    case 2 => "Two"
+    case 5 => "Five"
+    case _ => "Error"
+    }
+  )
+}[/SCALA]
+
+[N2]Pokročilé využití[/N2]
+Následující příklad demonstruje více možnosti pattern matchingu
+
+[SCALA]abstract class TreeN
+case class InterN(key:String,left:TreeN,right:TreeN) extends TreeN
+case class LeafN(key:String,value:Int) extends TreeN
+
+def find(t:TreeN,key:String):Int={
+     t match {
+         case InterN(k,l,r) => find((if(k>=key)l else r),key)
+         case LeafN(k,v) => if(k==key) v else 0
+    }
+}[/SCALA]
+

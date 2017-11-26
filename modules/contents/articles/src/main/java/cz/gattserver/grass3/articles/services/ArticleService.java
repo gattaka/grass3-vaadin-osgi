@@ -1,80 +1,115 @@
 package cz.gattserver.grass3.articles.services;
 
-import java.util.Collection;
 import java.util.List;
 
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
+import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
 
 public interface ArticleService {
 
 	/**
-	 * Uloží článek
+	 * Uloží nový článek
 	 * 
-	 * @param name
-	 *            název článku
-	 * @param text
-	 *            obsah článku
-	 * @param tags
-	 *            klíčová slova článku
-	 * @param publicated
-	 *            je článek publikován ?
+	 * @param payload
+	 *            obsahové informace článku
 	 * @param nodeId
-	 *            kategorie do které se vkládá
+	 *            id kategorie, do které je článek ukládán
 	 * @param authorId
-	 *            uživatel, který článek vytvořil
-	 * @param contextRoot
-	 *            od jakého adresového kořene se mají generovat linky v článku
-	 * @param processForm
-	 *            jakým způsobem se má článek zpracovat
-	 * @param existingId
-	 *            id, jde-li o úpravu existujícího článku
-	 * @param partNumber
-	 *            číslo části, je-li editována specifická část článku (povinné,
-	 *            pouze jde-li o ukládání draftu)
-	 * @param draftSourceId
-	 *            id existujícího zdrojového článku, ke kterému je ukládán draft
-	 *            (jde-li o draft existujícího článku)
-	 * @return identifikátor článku
-	 * 
+	 *            id uživatele, který článek vytvořil
+	 * @return id uloženého článku, pokud se operace zdařila
 	 */
-	public long saveArticle(String name, String text, Collection<String> tags, boolean publicated, long nodeId,
-			long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId, Integer partNumber,
-			Long draftSourceId);
+	public long saveArticle(ArticlePayloadTO payload, long nodeId, long authorId);
 
 	/**
-	 * Uloží článek
+	 * Upraví článek
 	 * 
-	 * @param name
-	 *            název článku
-	 * @param text
-	 *            obsah článku
-	 * @param tags
-	 *            klíčová slova článku
-	 * @param publicated
-	 *            je článek publikován ?
-	 * @param nodeId
-	 *            kategorie do které se vkládá
-	 * @param authorId
-	 *            uživatel, který článek vytvořil
-	 * @param contextRoot
-	 *            od jakého adresového kořene se mají generovat linky v článku
-	 * @param processForm
-	 *            jakým způsobem se má článek zpracovat
-	 * @param existingId
-	 *            id, jde-li o úpravu existujícího článku
-	 * @return identifikátor článku pokud vše dopadlo v pořádku, jinak
-	 *         {@code null}
+	 * @param articleId
+	 *            id upravovaného článku
+	 * @param payload
+	 *            obsahové informace článku
+	 * @param partNumber
+	 *            číslo části článku (číslováno od 0), je-li upravována pouze
+	 *            jeho část, může být <code>null</code>, pokud je upravován celý
+	 *            článek
 	 */
-	public long saveArticle(String name, String text, Collection<String> tags, boolean publicated, long nodeId,
-			long authorId, String contextRoot, ArticleProcessMode processForm, Long existingId);
+	public void modifyArticle(long articleId, ArticlePayloadTO payload, Integer partNumber);
+
+	/**
+	 * Uloží koncept článku z vytváření nového článku
+	 * 
+	 * @param payload
+	 *            obsahové informace článku
+	 * @param nodeId
+	 *            id kategorie, do které je článek ukládán
+	 * @param authorId
+	 *            id uživatele, který článek vytvořil
+	 * @param asPreview
+	 *            <code>true</code>, pokud je koncept vytvářen za účelem náhledu
+	 * @return id uloženého konceptu, pokud se operace zdařila
+	 */
+	public long saveDraft(ArticlePayloadTO payload, long nodeId, long authorId, boolean asPreview);
+
+	/**
+	 * Uloží koncept článku z upravovaného článku
+	 * 
+	 * @param payload
+	 *            obsahové informace článku
+	 * @param nodeId
+	 *            id kategorie, do které je článek ukládán
+	 * @param authorId
+	 *            id uživatele, který článek vytvořil
+	 * @param partNumber
+	 *            číslo části článku (číslováno od 0), je-li upravována pouze
+	 *            jeho část, může být <code>null</code>, pokud je upravován celý
+	 *            článek
+	 * @param originArticleId
+	 *            id článku, k jehož úpravě je ukládán tento koncept
+	 * @param asPreview
+	 *            <code>true</code>, pokud je koncept vytvářen za účelem náhledu
+	 * @return id uloženého konceptu, pokud se operace zdařila
+	 */
+	public long saveDraftOfExistingArticle(ArticlePayloadTO payload, long nodeId, long authorId, Integer partNumber,
+			long originArticleId, boolean asPreview);
+
+	/**
+	 * Upraví koncept článku z vytváření nového článku
+	 * 
+	 * @param drafId
+	 *            id upravovaného konceptu
+	 * @param payload
+	 *            obsahové informace článku
+	 * @param asPreview
+	 *            <code>true</code>, pokud je koncept upravován za účelem
+	 *            náhledu
+	 */
+	public void modifyDraft(long drafId, ArticlePayloadTO payload, boolean asPreview);
+
+	/**
+	 * Upraví koncept článku z upravovaného článku
+	 * 
+	 * @param drafId
+	 *            id upravovaného konceptu
+	 * @param payload
+	 *            obsahové informace článku
+	 * @param partNumber
+	 *            číslo části článku (číslováno od 0), je-li upravována pouze
+	 *            jeho část, může být <code>null</code>, pokud je upravován celý
+	 *            článek
+	 * @param originArticleId
+	 *            id článku, k jehož úpravě je ukládán tento koncept
+	 * @param asPreview
+	 *            <code>true</code>, pokud je koncept upravován za účelem
+	 *            náhledu
+	 */
+	public void modifyDraftOfExistingArticle(long drafId, ArticlePayloadTO payload, Integer partNumber,
+			long originArticleId, boolean asPreview);
 
 	/**
 	 * Smaže článek
 	 * 
 	 * @param article
 	 *            článek ke smazání
-	 * @return {@code true} pokud se zdařilo smazat jiank {@code false}
 	 */
 	public void deleteArticle(long id);
 
@@ -88,16 +123,18 @@ public interface ArticleService {
 	public ArticleTO getArticleForDetail(long id);
 
 	/**
-	 * Spustí přegenerování
+	 * Spustí přegenerování všech článků
 	 * 
 	 * @param contextRoot
+	 *            kořenová adresa, od které mají být vytvoření linky na CSS a JS
+	 *            zdroje, jež může článek na sobě mít
 	 */
 	public void reprocessAllArticles(String contextRoot);
 
 	/**
 	 * Získá všechny články a namapuje je pro použití při vyhledávání
 	 * 
-	 * @return
+	 * @return list článků, ve kterých je možné vyhledávat
 	 */
 	public List<ArticleTO> getAllArticlesForSearch();
 
@@ -107,8 +144,7 @@ public interface ArticleService {
 	 * @param userId
 	 *            id uživatele, kterým je omezena viditelnost na rozpracované
 	 *            články
-	 * 
-	 * @return
+	 * @return list konceptů
 	 */
 	public List<ArticleDraftOverviewTO> getDraftsForUser(long userId);
 

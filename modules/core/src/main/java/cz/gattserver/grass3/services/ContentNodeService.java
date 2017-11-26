@@ -65,10 +65,12 @@ public interface ContentNodeService {
 	 * 
 	 * @param contentNodeId
 	 *            uzel obsahu, který patří k tomuto obsahu
+	 * @param name
+	 *            název obsahu
 	 * @param tags
 	 *            řetězec tagů, který se má společně s obsahem uložit
 	 * @param publicated
-	 *            je obsah publikován ?
+	 *            <code>true</code>, pokud je obsah publikován
 	 */
 	public void modify(long contentNodeId, String name, Collection<String> tags, boolean publicated);
 
@@ -78,10 +80,12 @@ public interface ContentNodeService {
 	 * 
 	 * @param contentNodeId
 	 *            uzel obsahu, který patří k tomuto obsahu
+	 * @param name
+	 *            název obsahu
 	 * @param tags
 	 *            řetězec tagů, který se má společně s obsahem uložit
 	 * @param publicated
-	 *            je obsah publikován ?
+	 *            <code>true</code>, pokud je obsah publikován
 	 * @param creationDate
 	 *            vnucené datum vytvoření obsahu, které přepíše původní
 	 *            automatické datum

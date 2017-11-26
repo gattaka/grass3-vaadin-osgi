@@ -1,0 +1,6 @@
+[N1]Podstata[/N1]
+[UL]jde o jeden z nejsilnějších nástrojů Scaly
+vhodné pro switch
+vhodné při přidávání operací na uzly nějaké stromové struktury (napíše se pro ní jeden nový pattern-match)
+nevhodné při přidávání nových subtypů uzlů nějaké stromové struktury (do všech operací se musí připsat odpovídající "case" u pattern-matching switche[/UL]
+

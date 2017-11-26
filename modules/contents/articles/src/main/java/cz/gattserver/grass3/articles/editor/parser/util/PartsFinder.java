@@ -3,7 +3,7 @@ package cz.gattserver.grass3.articles.editor.parser.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Hledač částí pro částečné úpravy
@@ -53,19 +53,12 @@ public class PartsFinder {
 	 * @param searchPartOrderNumber
 	 *            kolikátá v pořadí má být hledaná část (bráno dle nadpisu)?
 	 *            Části jsou číslované od 0.
-	 * @return
+	 * @return rozdělený text dle vybraného nadpisu na pre-část, cílovou část a
+	 *         post-část
 	 * @throws IOException
 	 */
 	public static Result findParts(InputStream inputStream, final int searchPartOrderNumber) throws IOException {
-
-		InputStreamReader reader = null;
-		try {
-			reader = new InputStreamReader(inputStream, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// tohle by se opravdu stát nemělo
-			e.printStackTrace();
-		}
-
+		InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
 		int hitCounter = 0;
 
 		FinderArray searchWindow = new FinderArray();
@@ -77,40 +70,29 @@ public class PartsFinder {
 
 		int c;
 		while (true) {
-
 			c = reader.read();
 
-			/**
-			 * Dokud není konec souboru střádej text a hledej počátek nadpisu
-			 */
+			// Dokud není konec souboru střádej text a hledej počátek nadpisu
 			if (c != -1) {
 				builder.append((char) c);
 
-				/**
-				 * Nadpis mne zajímá pouze pokud jsem ještě nenašel cílovou část
-				 * a nebo pokud hledám začátek dalšího nadpisu kde tím pádem
-				 * cílová část končí
-				 */
+				// Nadpis mne zajímá pouze pokud jsem ještě nenašel cílovou část
+				// a nebo pokud hledám začátek dalšího nadpisu kde tím pádem
+				// cílová část končí
 				if (phase != ScanPhase.POST_PART) {
 					searchWindow.addChar((char) c);
 
-					/**
-					 * Byl nalezen začátek nadpisu ?
-					 */
+					// Byl nalezen začátek nadpisu ?
 					if (searchWindow.getChar(0) == '[' && searchWindow.getChar(1) == 'N'
 							&& searchWindow.getChar(2) >= '0' && searchWindow.getChar(2) <= '5'
 							&& searchWindow.getChar(3) == ']') {
 
-						/**
-						 * Hledal jsem cílovou část - právě skončila "předčást"
-						 */
+						// Hledal jsem cílovou část - právě skončila "předčást"
 						if (phase == ScanPhase.PRE_PART) {
 
-							/**
-							 * Zvyš čítač nálezů nadpisů - pokud byl nalezen
-							 * hledaný nadpis (chtěl jsem text 3. nadpisu apod.)
-							 * zpracuj ho jako předčást
-							 */
+							// Zvyš čítač nálezů nadpisů - pokud byl nalezen
+							// hledaný nadpis (chtěl jsem text 3. nadpisu apod.)
+							// zpracuj ho jako předčást
 							if (hitCounter == searchPartOrderNumber) {
 								result.prePart = builder.substring(0, builder.length() - searchWindow.getSize());
 								phase = ScanPhase.TARGET_PART;
@@ -124,39 +106,27 @@ public class PartsFinder {
 						}
 					}
 				}
-
 			} else {
-
 				switch (phase) {
 				case PRE_PART:
-					/**
-					 * Nebyl nalezen ani jeden nadpis
-					 */
+					// Nebyl nalezen ani jeden nadpis
 					result.targetPart = builder.toString();
 					break;
 				case TARGET_PART:
-					/**
-					 * Cílová část sahá až na konec souboru
-					 */
+					// Cílová část sahá až na konec souboru
 					result.targetPart = builder.substring(result.prePart.length());
 					break;
 				case POST_PART:
-					/**
-					 * Konec "post-části"
-					 */
+					// Konec "post-části"
 					result.postPart = builder.substring(result.prePart.length() + result.targetPart.length());
 				}
 
-				/**
-				 * Je konec souboru, opusť smyčku
-				 */
+				// Je konec souboru, opusť smyčku
 				break;
 			}
-
 		}
 
 		result.checkSum = builder.length();
-
 		return result;
 	}
 

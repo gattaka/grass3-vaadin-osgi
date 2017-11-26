@@ -67,6 +67,38 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 	}
 
 	@Test
+	public void testSaveArticle_empty() {
+		Set<String> tags = new HashSet<>();
+		tags.add("tag1");
+		tags.add("tag2");
+
+		long userId = coreMockService.createMockUser(1);
+		long nodeId = coreMockService.createMockRootNode(1);
+		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName", "", tags, true, "mockContextRoot");
+		long articleId = articleService.saveArticle(payload, nodeId, userId);
+
+		ArticleTO articleTO = articleService.getArticleForDetail(articleId);
+		assertNotNull(articleTO);
+		assertEquals("mockArticleName", articleTO.getContentNode().getName());
+		assertEquals(new Long(nodeId), articleTO.getContentNode().getParent().getId());
+		assertEquals(new Long(userId), articleTO.getContentNode().getAuthor().getId());
+		assertEquals(new Long(articleId), articleTO.getContentNode().getContentID());
+		assertEquals(ArticlesContentModule.ID, articleTO.getContentNode().getContentReaderID());
+		assertEquals(2, articleTO.getContentNode().getContentTags().size());
+		assertTrue(articleTO.getContentNode().isPublicated());
+		assertFalse(articleTO.getContentNode().isDraft());
+		assertNull(articleTO.getContentNode().getDraftSourceId());
+		assertNull(articleTO.getContentNode().getLastModificationDate());
+		assertNotNull(articleTO.getContentNode().getCreationDate());
+
+		assertTrue(articleTO.getPluginCSSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSResources().isEmpty());
+		assertEquals("", articleTO.getText());
+		assertEquals("~ empty ~", articleTO.getOutputHTML());
+		assertNull(articleTO.getSearchableOutput());
+	}
+
+	@Test
 	public void testModifyArticle() {
 		Set<String> tags = new HashSet<>();
 		tags.add("tag1");

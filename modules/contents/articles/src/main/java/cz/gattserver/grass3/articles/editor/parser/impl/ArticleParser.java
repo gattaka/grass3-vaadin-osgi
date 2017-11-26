@@ -66,7 +66,6 @@ public class ArticleParser implements Parser {
 			 * Konec článku = prázdný článek
 			 */
 			return new ArticleElement(null);
-
 		case EOL:
 		case START_TAG:
 		case TEXT:
@@ -84,7 +83,6 @@ public class ArticleParser implements Parser {
 			List<Element> elist = new ArrayList<Element>();
 			pluginBag.getBlock(elist);
 			return new ArticleElement(elist);
-
 		default:
 			logger.warn("Čekal jsem: " + EOL + "," + EOF + "," + START_TAG + " nebo " + TEXT + " ale dostal jsem "
 					+ pluginBag.getToken());

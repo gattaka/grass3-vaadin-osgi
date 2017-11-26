@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
+import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTOBuilder;
 import cz.gattserver.grass3.articles.plugins.Plugin;
 import cz.gattserver.web.common.ui.ImageIcons;
 
@@ -29,9 +30,7 @@ public class ImagePlugin implements Plugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		EditorButtonResourcesTO resources = new EditorButtonResourcesTO(tag, description, '[' + tag + ']',
-				"[/" + tag + ']', image);
-		resources.setTagFamily("HTML");
-		return resources;
+		return new EditorButtonResourcesTOBuilder(tag, "HTML").setDescription(description)
+				.setImageAsThemeResource(image).build();
 	}
 }

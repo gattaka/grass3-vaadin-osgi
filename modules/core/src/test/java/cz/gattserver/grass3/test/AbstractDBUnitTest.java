@@ -9,6 +9,6 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
 		TransactionalTestExecutionListener.class, DbUnitTestExecutionListener.class })
-public abstract class AbstractDBUnitTest extends AbstractTest {
+public abstract class AbstractDBUnitTest extends AbstractContextAwareTest {
 
 }

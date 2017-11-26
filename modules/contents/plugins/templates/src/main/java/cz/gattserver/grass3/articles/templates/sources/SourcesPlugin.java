@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
+import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTOBuilder;
 import cz.gattserver.grass3.articles.plugins.Plugin;
 
 /**
@@ -26,11 +27,6 @@ public class SourcesPlugin implements Plugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		EditorButtonResourcesTO resources = new EditorButtonResourcesTO(tag);
-		resources.setDescription("Zdroje");
-		resources.setPrefix("[" + tag + "]");
-		resources.setSuffix("[/" + tag + "]");
-		resources.setTagFamily("Šablony");
-		return resources;
+		return new EditorButtonResourcesTOBuilder(tag, "Šablony").setDescription("Zdroje").build();
 	}
 }

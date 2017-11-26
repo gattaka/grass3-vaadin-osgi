@@ -8,9 +8,9 @@ import java.util.concurrent.ExecutionException;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import cz.gattserver.grass3.test.AbstractTest;
+import cz.gattserver.grass3.test.AbstractContextAwareTest;
 
-public class EventBusTest extends AbstractTest {
+public class EventBusTest extends AbstractContextAwareTest {
 
 	@Autowired
 	private EventBus eventBus;

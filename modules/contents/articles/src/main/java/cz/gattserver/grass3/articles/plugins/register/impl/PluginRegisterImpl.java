@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.articles.plugins.register.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,31 +29,30 @@ public class PluginRegisterImpl implements PluginRegister {
 	/**
 	 * Pluginy dle skupin
 	 */
-	private Map<String, Map<String, EditorButtonResourcesTO>> editorCatalog = new HashMap<String, Map<String, EditorButtonResourcesTO>>();
-	private Map<String, Plugin> plugins = new HashMap<String, Plugin>();
+	private Map<String, Map<String, EditorButtonResourcesTO>> editorCatalog;
+	private Map<String, Plugin> plugins;
 
 	@PostConstruct
 	private void init() {
+		// Ošetření null kolekcí
 		if (injectedPlugins == null)
-			return;
+			injectedPlugins = new ArrayList<>();
+
+		editorCatalog = new HashMap<String, Map<String, EditorButtonResourcesTO>>();
+		plugins = new HashMap<String, Plugin>();
 		for (Plugin plugin : injectedPlugins) {
 			registerPlugin(plugin);
 			addButtonToGroup(plugin.getEditorButtonResources());
 		}
 	}
 
-	@Override
-	public boolean registerPlugin(Plugin plugin) {
-		if (plugins.containsKey(plugin.getTag())) {
-			return false;
-		}
-		plugins.put(plugin.getTag(), plugin);
-		return true;
+	private Plugin registerPlugin(Plugin plugin) {
+		return plugins.put(plugin.getTag(), plugin);
 	}
 
 	@Override
 	public Set<String> getRegisteredTags() {
-		return plugins.keySet();
+		return Collections.unmodifiableSet(plugins.keySet());
 	}
 
 	@Override
@@ -61,25 +62,21 @@ public class PluginRegisterImpl implements PluginRegister {
 
 	@Override
 	public Plugin get(String tag) {
-		if (!isRegistered(tag)) {
-			return null;
-		}
 		return plugins.get(tag);
 	}
 
 	@Override
-	public Plugin unregisterPlugin(String tag) {
-		return plugins.remove(tag);
+	public Set<String> getRegisteredGroups() {
+		return Collections.unmodifiableSet(editorCatalog.keySet());
 	}
 
 	@Override
-	public synchronized Set<String> getRegisteredGroups() {
-		return new HashSet<String>(editorCatalog.keySet());
-	}
-
-	@Override
-	public synchronized Set<EditorButtonResourcesTO> getGroupTags(String group) {
-		return new HashSet<EditorButtonResourcesTO>(editorCatalog.get(group).values());
+	public Set<EditorButtonResourcesTO> getGroupTags(String group) {
+		Map<String, EditorButtonResourcesTO> resources = editorCatalog.get(group);
+		if (resources == null)
+			return new HashSet<EditorButtonResourcesTO>();
+		else
+			return new HashSet<EditorButtonResourcesTO>(resources.values());
 	}
 
 	private void addButtonToGroup(EditorButtonResourcesTO resources) {

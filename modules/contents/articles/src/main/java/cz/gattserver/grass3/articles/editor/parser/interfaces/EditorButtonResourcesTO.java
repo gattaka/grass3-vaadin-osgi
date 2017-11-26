@@ -1,7 +1,6 @@
 package cz.gattserver.grass3.articles.editor.parser.interfaces;
 
 import com.vaadin.server.Resource;
-import com.vaadin.server.ThemeResource;
 
 /**
  * Třída obsahující všechny potřebné informace pro začlenění pluginu do UI
@@ -18,63 +17,14 @@ public class EditorButtonResourcesTO implements Comparable<EditorButtonResources
 	private String suffix;
 	private Resource imageResource;
 
-	/**
-	 * Default constructor
-	 * 
-	 * @param description
-	 *            nápis na vkládacím prvku v editoru (popisek tlačítka)
-	 * @param prefix
-	 *            počáteční tag + (nepovinné) nějaké věci, které se mají vložit
-	 *            před označený text
-	 * @param suffix
-	 *            koncový tag + (nepovinné) nějaké věci, které se mají vložit za
-	 *            označený text
-	 * @param imageResource
-	 *            resource ikony pluginu
-	 */
-	public EditorButtonResourcesTO(String tag, String description, String prefix, String suffix, Resource imageResource) {
+	protected EditorButtonResourcesTO(String tag, String tagFamily, String description, String prefix, String suffix,
+			Resource imageResource) {
 		this.tag = tag;
+		this.tagFamily = tagFamily;
 		this.description = description;
 		this.prefix = prefix;
 		this.suffix = suffix;
 		this.imageResource = imageResource;
-	}
-
-	/**
-	 * Default constructor
-	 * 
-	 * @param description
-	 *            nápis na vkládacím prvku v editoru (popisek tlačítka)
-	 * @param prefix
-	 *            počáteční tag + (nepovinné) nějaké věci, které se mají vložit
-	 *            před označený text
-	 * @param suffix
-	 *            koncový tag + (nepovinné) nějaké věci, které se mají vložit za
-	 *            označený text
-	 * @param imageName
-	 *            název ikony pluginu (bude vzata z Theme resources)
-	 */
-	public EditorButtonResourcesTO(String tag, String description, String prefix, String suffix, String imageName) {
-		this.tag = tag;
-		this.description = description;
-		this.prefix = prefix;
-		this.suffix = suffix;
-		this.imageResource = new ThemeResource(imageName);
-	}
-
-	/**
-	 * Konstruktor pro případy "běžných" prvků, kdy je všechno stejné - jak
-	 * popisek, tak počteční a koncový tag. Z logiky věci vyplývá, že zadávaný
-	 * parametr je pouze název elementu/tagu bez hranatých závorek nebo lomítek
-	 * 
-	 * @param tag
-	 */
-	public EditorButtonResourcesTO(String tag) {
-		this.tag = tag;
-		this.description = tag;
-		this.prefix = '[' + tag + ']';
-		this.suffix = "[/" + tag + ']';
-		this.imageResource = null;
 	}
 
 	/**
@@ -113,40 +63,12 @@ public class EditorButtonResourcesTO implements Comparable<EditorButtonResources
 		return tagFamily;
 	}
 
-	public void setTagFamily(String tagFamily) {
-		this.tagFamily = tagFamily;
-	}
-
 	public Resource getImage() {
 		return imageResource;
 	}
 
-	public void setImage(Resource image) {
-		this.imageResource = image;
-	}
-
-	public void setImageName(String imageName) {
-		this.imageResource = new ThemeResource(imageName);
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
-
-	public void setSuffix(String suffix) {
-		this.suffix = suffix;
-	}
-
 	public String getTag() {
 		return tag;
-	}
-
-	public void setTag(String tag) {
-		this.tag = tag;
 	}
 
 	public int compareTo(EditorButtonResourcesTO o) {

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
+import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTOBuilder;
 
 /**
  * @author gatt
@@ -33,11 +34,8 @@ public class MonospacePlugin extends AbstractStylePlugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		EditorButtonResourcesTO resources = new EditorButtonResourcesTO(TAG);
-		resources.setImageName("articles/basic/img/mono_16.png");
-		resources.setDescription("");
-		resources.setTagFamily("Formátování");
-		return resources;
+		return new EditorButtonResourcesTOBuilder(TAG, "Formátování")
+				.setImageAsThemeResource("articles/basic/img/mono_16.png").build();
 	}
 
 }

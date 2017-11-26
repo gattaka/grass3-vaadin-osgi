@@ -10,15 +10,11 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
  */
 public interface PluginRegister {
 
-	boolean registerPlugin(Plugin plugin);
-
 	Set<String> getRegisteredTags();
 
 	boolean isRegistered(String tag);
 
 	Plugin get(String tag);
-
-	Plugin unregisterPlugin(String tag);
 
 	Set<String> getRegisteredGroups();
 

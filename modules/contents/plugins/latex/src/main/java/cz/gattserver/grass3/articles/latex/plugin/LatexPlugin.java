@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
+import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTOBuilder;
 import cz.gattserver.grass3.articles.plugins.Plugin;
 
 /**
@@ -26,9 +27,7 @@ public class LatexPlugin implements Plugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		EditorButtonResourcesTO resources = new EditorButtonResourcesTO(tag);
-		resources.setTagFamily("LaTeX");
-		return resources;
+		return new EditorButtonResourcesTOBuilder(tag, "LaTeX").build();
 	}
 
 }

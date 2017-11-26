@@ -2,6 +2,7 @@ package cz.gattserver.grass3.articles.plugins.basic.list;
 
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
+import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTOBuilder;
 import cz.gattserver.grass3.articles.plugins.Plugin;
 
 /**
@@ -31,10 +32,6 @@ public abstract class AbstractListPlugin implements Plugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		EditorButtonResourcesTO resources = new EditorButtonResourcesTO(tag);
-		resources.setImageName(image);
-		resources.setDescription("");
-		resources.setTagFamily("HTML");
-		return resources;
+		return new EditorButtonResourcesTOBuilder(tag, "HTML").setImageAsThemeResource(image).build();
 	}
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
+import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTOBuilder;
 import cz.gattserver.grass3.articles.plugins.basic.style.AbstractStyleElement;
 import cz.gattserver.grass3.articles.plugins.basic.style.AbstractStyleParser;
 import cz.gattserver.grass3.articles.plugins.basic.style.AbstractStylePlugin;
@@ -36,10 +37,7 @@ public class BluePlugin extends AbstractStylePlugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		EditorButtonResourcesTO resources = new EditorButtonResourcesTO(TAG);
-		resources.setDescription("Modře");
-		resources.setTagFamily("Obarvení");
-		return resources;
+		return new EditorButtonResourcesTOBuilder(TAG, "Obarvení").setDescription("Modře").build();
 	}
 
 }

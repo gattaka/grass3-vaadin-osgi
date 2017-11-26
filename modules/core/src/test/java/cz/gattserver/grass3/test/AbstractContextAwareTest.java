@@ -9,7 +9,7 @@ import cz.gattserver.grass3.mock.CoreMockService;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(locations = { "classpath:spring/app-context.xml", "classpath:spring/security-context.xml" })
-public abstract class AbstractTest {
+public abstract class AbstractContextAwareTest {
 
 	@Autowired
 	protected CoreMockService coreMockService;

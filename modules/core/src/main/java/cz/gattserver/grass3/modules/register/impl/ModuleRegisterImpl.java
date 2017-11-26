@@ -1,7 +1,10 @@
 package cz.gattserver.grass3.modules.register.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -13,9 +16,7 @@ import cz.gattserver.grass3.modules.SectionService;
 import cz.gattserver.grass3.modules.register.ModuleRegister;
 
 /**
- * {@link ModuleRegisterImpl} udržuje přehled všech přihlášených modulů. Zároveň
- * přijímá registrace listenerů vůči bind a unbind metodám pro jednotlivé
- * služby.
+ * {@link ModuleRegisterImpl} udržuje přehled všech přihlášených modulů.
  * 
  * @author gatt
  * 
@@ -27,46 +28,42 @@ public class ModuleRegisterImpl implements ModuleRegister {
 	 * Obsahy
 	 */
 	@Autowired(required = false)
-	private List<ContentModule> contentServices;
+	private List<ContentModule> injectedContentModules;
+	private Map<String, ContentModule> contentModules;
 
 	/**
 	 * Sekce
 	 */
 	@Autowired(required = false)
-	private List<SectionService> sectionServices;
+	private List<SectionService> injectedSectionModules;
 
-	/**
-	 * Ošetření null kolekcí
-	 */
 	@PostConstruct
 	private void init() {
-		if (contentServices == null)
-			contentServices = new ArrayList<ContentModule>();
-
-		if (sectionServices == null) {
-			sectionServices = new ArrayList<SectionService>();
+		// Ošetření null kolekcí
+		if (injectedContentModules == null)
+			injectedContentModules = new ArrayList<ContentModule>();
+		if (injectedSectionModules == null) {
+			injectedSectionModules = new ArrayList<SectionService>();
 		}
+
+		contentModules = new HashMap<String, ContentModule>();
+		for (ContentModule c : injectedContentModules)
+			contentModules.put(c.getContentID(), c);
 	}
 
 	@Override
 	public List<ContentModule> getContentServices() {
-		return contentServices;
+		return Collections.unmodifiableList(injectedContentModules);
 	}
 
 	@Override
 	public ContentModule getContentServiceByName(String contentReaderID) {
-		if (contentServices == null)
-			return null;
-		for (ContentModule contentService : contentServices) {
-			if (contentService.getContentID().equals(contentReaderID))
-				return contentService;
-		}
-		return null;
+		return contentModules.get(contentReaderID);
 	}
 
 	@Override
 	public List<SectionService> getSectionServices() {
-		return sectionServices;
+		return Collections.unmodifiableList(injectedSectionModules);
 	}
 
 }

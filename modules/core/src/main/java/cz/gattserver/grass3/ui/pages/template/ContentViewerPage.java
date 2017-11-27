@@ -23,6 +23,7 @@ import com.vaadin.ui.Link;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeTO;
@@ -266,7 +267,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 			// nejprve zkus zjistit, zda předek existuje
 			if (parent == null)
-				UIUtils.showErrorPage404();
+				throw new GrassPageException(404);
 
 			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageResource(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(parent.getId(), parent.getName()))));

@@ -35,12 +35,12 @@ public class UserInfoTO implements UserDetails {
 	/**
 	 * Datum registrace
 	 */
-	private LocalDateTime registrationDate;
+	private transient LocalDateTime registrationDate;
 
 	/**
 	 * Datum posledního přihlášení
 	 */
-	private LocalDateTime lastLoginDate;
+	private transient LocalDateTime lastLoginDate;
 
 	/**
 	 * Email

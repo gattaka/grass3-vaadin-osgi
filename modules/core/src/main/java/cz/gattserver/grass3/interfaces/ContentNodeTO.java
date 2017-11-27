@@ -1,18 +1,9 @@
 package cz.gattserver.grass3.interfaces;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-/**
- * Objekt sloužící pro přepravu dat mezi fasádou a view třídami
- * 
- * @author gatt
- * 
- */
-public class ContentNodeTO implements Serializable, Authorizable {
-
-	private static final long serialVersionUID = 723375154665160018L;
+public class ContentNodeTO  {
 
 	/**
 	 * ID služby, která daný obsah umí číst

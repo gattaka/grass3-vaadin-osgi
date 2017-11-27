@@ -2,7 +2,7 @@ package cz.gattserver.grass3.articles.ui.pages;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -43,6 +43,7 @@ import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
 import cz.gattserver.grass3.articles.plugins.register.PluginRegister;
 import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.articles.ui.windows.DraftMenuWindow;
+import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.server.GrassRequest;
@@ -114,13 +115,13 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		String partNumberToken = analyzer.getNextPathToken();
 		if (operationToken == null || identifierToken == null) {
 			logger.debug("Chybí operace nebo identifikátor cíle");
-			UIUtils.showErrorPage404();
+			throw new GrassPageException(404);
 		}
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(identifierToken);
 		if (identifier == null) {
 			logger.debug("Nezdařilo se vytěžit URL identifikátor z řetězce: '" + identifierToken + "'");
-			UIUtils.showErrorPage404();
+			throw new GrassPageException(404);
 		}
 
 		// operace ?
@@ -145,16 +146,10 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 			if (partNumberToken != null && (partNumber = Integer.valueOf(partNumberToken)) >= 0) {
 				try {
-					parts = PartsFinder.findParts(new ByteArrayInputStream(article.getText().getBytes("UTF-8")),
-							partNumber);
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-					UIUtils.showErrorPage500();
-					return;
+					parts = PartsFinder.findParts(
+							new ByteArrayInputStream(article.getText().getBytes(StandardCharsets.UTF_8)), partNumber);
 				} catch (IOException e) {
-					e.printStackTrace();
-					UIUtils.showErrorPage500();
-					return;
+					throw new GrassPageException(500, e);
 				}
 				articleTextArea.setValue(parts.getTargetPart());
 			} else {
@@ -162,8 +157,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			}
 		} else {
 			logger.debug("Neznámá operace: '" + operationToken + "'");
-			UIUtils.showErrorPage404();
-			return;
+			throw new GrassPageException(404);
 		}
 
 		if ((article == null || article.getContentNode().getAuthor().equals(UIUtils.getGrassUI().getUser()))
@@ -171,8 +165,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			super.createContent(customlayout);
 		} else {
 			// nemá oprávnění upravovat tento článek
-			UIUtils.showErrorPage403();
-			return;
+			throw new GrassPageException(403);
 		}
 	}
 
@@ -233,15 +226,10 @@ public class ArticlesEditorPage extends TwoColumnPage {
 								// parts se musí krájet z původního obsahu,
 								// protože v draftu je teď jenom ta část
 								parts = PartsFinder.findParts(
-										new ByteArrayInputStream(article.getText().getBytes("UTF-8")), partNumber);
-							} catch (UnsupportedEncodingException e) {
-								e.printStackTrace();
-								UIUtils.showErrorPage500();
-								return;
+										new ByteArrayInputStream(article.getText().getBytes(StandardCharsets.UTF_8)),
+										partNumber);
 							} catch (IOException e) {
-								e.printStackTrace();
-								UIUtils.showErrorPage500();
-								return;
+								throw new GrassPageException(500, e);
 							}
 						}
 					}

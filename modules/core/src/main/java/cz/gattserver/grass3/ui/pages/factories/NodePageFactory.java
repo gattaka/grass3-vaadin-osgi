@@ -10,8 +10,6 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 @Component("nodePageFactory")
 public class NodePageFactory extends AbstractPageFactory {
 
-	private static final long serialVersionUID = -3658456878731957677L;
-
 	public NodePageFactory() {
 		super("category");
 	}

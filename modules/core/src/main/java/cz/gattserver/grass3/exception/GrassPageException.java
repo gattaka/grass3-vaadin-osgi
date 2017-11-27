@@ -6,6 +6,11 @@ public class GrassPageException extends RuntimeException {
 
 	private int status;
 
+	public GrassPageException(int status, Throwable e) {
+		super("Error: " + status, e);
+		this.status = status;
+	}
+
 	public GrassPageException(int status) {
 		super("Error: " + status);
 		this.status = status;

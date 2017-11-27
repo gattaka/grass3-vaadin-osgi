@@ -4,8 +4,6 @@ import cz.gattserver.grass3.events.ResultEvent;
 
 public class ArticlesProcessResultEvent implements ResultEvent {
 
-	private static final long serialVersionUID = -7417313051667964628L;
-
 	private boolean success;
 	private String resultDetails;
 	private Long galleryId;
@@ -13,7 +11,7 @@ public class ArticlesProcessResultEvent implements ResultEvent {
 	public ArticlesProcessResultEvent() {
 		this.success = true;
 	}
-	
+
 	public ArticlesProcessResultEvent(Long galleryId) {
 		this();
 		this.galleryId = galleryId;

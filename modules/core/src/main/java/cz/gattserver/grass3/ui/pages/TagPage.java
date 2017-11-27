@@ -5,13 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.ContentTagService;
 import cz.gattserver.grass3.ui.components.ContentsLazyGrid;
 import cz.gattserver.grass3.ui.pages.template.BasePage;
-import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.H2Label;
 
@@ -34,20 +34,16 @@ public class TagPage extends BasePage {
 
 		String tagName = getRequest().getAnalyzer().getNextPathToken();
 		if (tagName == null)
-			UIUtils.showErrorPage404();
+			throw new GrassPageException(404);
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(tagName);
-		if (identifier == null) {
-			UIUtils.showErrorPage404();
-			return;
-		}
+		if (identifier == null)
+			throw new GrassPageException(404);
 
 		tag = contentTagFacade.getTagById(identifier.getId());
 
-		if (tag == null) {
-			UIUtils.showErrorPage404();
-			return;
-		}
+		if (tag == null)
+			throw new GrassPageException(404);
 
 		ContentsLazyGrid tagContentsTable = new ContentsLazyGrid();
 		tagContentsTable.populate(this, (sortOrder, offset, limit) -> {

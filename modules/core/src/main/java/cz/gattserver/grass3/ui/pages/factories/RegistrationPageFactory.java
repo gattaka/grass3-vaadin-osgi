@@ -12,8 +12,6 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 @Component("registrationPageFactory")
 public class RegistrationPageFactory extends AbstractPageFactory {
 
-	private static final long serialVersionUID = 3789569117229850461L;
-
 	@Autowired
 	private CoreACLService coreACL;
 

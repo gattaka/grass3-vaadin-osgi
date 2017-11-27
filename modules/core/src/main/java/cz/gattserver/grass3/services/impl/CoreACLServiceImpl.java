@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.config.CoreConfiguration;
-import cz.gattserver.grass3.interfaces.Authorizable;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.modules.SectionService;
@@ -75,7 +74,7 @@ public final class CoreACLServiceImpl implements CoreACLService {
 	/**
 	 * Může uživatel upravit daný obsah ?
 	 */
-	public boolean canModifyContent(Authorizable content, UserInfoTO user) {
+	public boolean canModifyContent(ContentNodeTO content, UserInfoTO user) {
 		if (isLoggedIn(user)) {
 			// pokud je admin, může upravit kterýkoliv obsah
 			if (user.isAdmin())
@@ -91,7 +90,7 @@ public final class CoreACLServiceImpl implements CoreACLService {
 	/**
 	 * Může uživatel smazat daný obsah ?
 	 */
-	public boolean canDeleteContent(Authorizable content, UserInfoTO user) {
+	public boolean canDeleteContent(ContentNodeTO content, UserInfoTO user) {
 		return canModifyContent(content, user);
 	}
 

@@ -13,13 +13,12 @@ import com.vaadin.ui.Layout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.modules.register.ModuleSettingsPageFactoriesRegister;
 import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.ui.pages.err.Error403Page;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.settings.factories.ModuleSettingsPageFactory;
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
-import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
 
 public class SettingsPage extends TwoColumnPage {
@@ -47,8 +46,7 @@ public class SettingsPage extends TwoColumnPage {
 
 		if (moduleSettingsPageFactory != null) {
 			if (moduleSettingsPageFactory.isAuthorized() == false) {
-				UIUtils.showErrorPage403();
-				return new Error403Page(getRequest()).getContent();
+				throw new GrassPageException(403);
 			} else {
 				this.settingsTabFactory = moduleSettingsPageFactory;
 			}

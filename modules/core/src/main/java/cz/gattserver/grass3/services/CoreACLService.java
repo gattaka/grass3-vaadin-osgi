@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.services;
 
-import cz.gattserver.grass3.interfaces.Authorizable;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.modules.SectionService;
@@ -42,12 +41,12 @@ public interface CoreACLService {
 	/**
 	 * Může uživatel upravit daný obsah ?
 	 */
-	public boolean canModifyContent(Authorizable content, UserInfoTO user);
+	public boolean canModifyContent(ContentNodeTO content, UserInfoTO user);
 
 	/**
 	 * Může uživatel smazat daný obsah ?
 	 */
-	public boolean canDeleteContent(Authorizable content, UserInfoTO user);
+	public boolean canDeleteContent(ContentNodeTO content, UserInfoTO user);
 
 	/**
 	 * =======================================================================

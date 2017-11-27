@@ -15,6 +15,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeTO;
 import cz.gattserver.grass3.server.GrassRequest;
@@ -67,13 +68,11 @@ public class NodePage extends OneColumnPage {
 
 		String nodeName = getRequest().getAnalyzer().getNextPathToken();
 		if (nodeName == null)
-			UIUtils.showErrorPage404();
+			throw new GrassPageException(404);
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(nodeName);
-		if (identifier == null) {
-			UIUtils.showErrorPage404();
-			return layout;
-		}
+		if (identifier == null)
+			throw new GrassPageException(404);
 
 		NodeTO node = nodeFacade.getNodeByIdForDetail(identifier.getId());
 
@@ -134,7 +133,7 @@ public class NodePage extends OneColumnPage {
 
 			// nejprve zkus zjistit, zda předek existuje
 			if (parent == null)
-				UIUtils.showErrorPage404();
+				throw new GrassPageException(404);
 
 			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageResource(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(parent.getId(), parent.getName()))));
@@ -170,10 +169,8 @@ public class NodePage extends OneColumnPage {
 
 	private void populateSubnodesTable(NodeTO node) {
 		List<NodeOverviewTO> nodes = nodeFacade.getNodesByParentNode(node.getId());
-		if (nodes == null) {
-			UIUtils.showErrorPage500();
-			return;
-		}
+		if (nodes == null)
+			throw new GrassPageException(500);
 		subNodesTable.populate(nodes);
 	}
 

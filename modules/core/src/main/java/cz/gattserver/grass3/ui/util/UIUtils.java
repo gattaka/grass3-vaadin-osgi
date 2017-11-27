@@ -5,7 +5,6 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Notification.Type;
 
-import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.ui.GrassUI;
 import cz.gattserver.web.common.window.ErrorWindow;
@@ -67,18 +66,6 @@ public class UIUtils {
 	public static void showError(String caption) {
 		ErrorWindow errorSubwindow = new ErrorWindow(caption);
 		getGrassUI().addWindow(errorSubwindow);
-	}
-
-	public static void showErrorPage500() {
-		throw new GrassPageException(500);
-	}
-
-	public static void showErrorPage404() {
-		throw new GrassPageException(404);
-	}
-
-	public static void showErrorPage403() {
-		throw new GrassPageException(403);
 	}
 
 }

@@ -27,6 +27,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 import cz.gattserver.grass3.events.EventBus;
+import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
@@ -139,20 +140,18 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
 				.parseURLIdentifier(analyzer.getNextPathToken());
-		if (identifier == null) {
-			UIUtils.showErrorPage404();
-		}
+		if (identifier == null)
+			throw new GrassPageException(404);
 
 		photogallery = photogalleryFacade.getPhotogalleryForDetail(identifier.getId());
-		if (photogallery == null) {
-			UIUtils.showErrorPage404();
-		}
+		if (photogallery == null)
+			throw new GrassPageException(404);
 
 		if (photogallery.getContentNode().isPublicated()
 				|| (UIUtils.getUser() != null && (photogallery.getContentNode().getAuthor().equals(UIUtils.getUser())
 						|| UIUtils.getUser().isAdmin()))) {
 		} else {
-			UIUtils.showErrorPage403();
+			throw new GrassPageException(403);
 		}
 
 		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
@@ -166,7 +165,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		pgSelectedVideoItemId = analyzer.getNextPathToken();
 		if (pgSelectedVideoItemId != null) {
 			if (new File(galleryDir, pgSelectedVideoItemId).exists() == false) {
-				UIUtils.showErrorPage404();
+				throw new GrassPageException(404);
 			}
 		}
 

@@ -43,6 +43,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.events.EventBus;
+import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
@@ -136,13 +137,13 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		String identifierToken = analyzer.getNextPathToken();
 		if (operationToken == null || identifierToken == null) {
 			logger.debug("Chybí operace nebo identifikátor cíle");
-			UIUtils.showErrorPage404();
+			throw new GrassPageException(404);
 		}
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(identifierToken);
 		if (identifier == null) {
 			logger.debug("Nezdařilo se vytěžit URL identifikátor z řetězce: '" + identifierToken + "'");
-			UIUtils.showErrorPage404();
+			throw new GrassPageException(404);
 		}
 
 		// operace ?
@@ -164,14 +165,14 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			photogalleryDateField.setValue(photogallery.getContentNode().getCreationDate());
 		} else {
 			logger.debug("Neznámá operace: '" + operationToken + "'");
-			UIUtils.showErrorPage404();
+			throw new GrassPageException(404);
 		}
 
 		if ((photogallery == null || photogallery.getContentNode().getAuthor().equals(UIUtils.getGrassUI().getUser()))
 				|| UIUtils.getGrassUI().getUser().isAdmin()) {
 		} else {
 			// nemá oprávnění upravovat tento obsah
-			UIUtils.showErrorPage403();
+			throw new GrassPageException(403);
 		}
 
 		return super.createPayload();

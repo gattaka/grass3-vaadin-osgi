@@ -22,8 +22,6 @@ import cz.gattserver.grass3.services.ConfigurationService;
 @Service
 public class ConfigurationServiceImpl implements ConfigurationService {
 
-	private static final long serialVersionUID = -2565316748839842203L;
-
 	@Autowired
 	private ConfigurationItemRepository configurationItemRepository;
 
@@ -102,7 +100,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 						: configuration.getPrefix().length() + 1;
 				if (field.getName().equals(item.getName().substring(subindex))) {
 					try {
-						Object[] args = { StringSerializer.deserialize(item.getValue(), field.getType()) };
+						Object[] args = { StringSerializer.deserialize(item.getValue()) };
 						Class<?>[] params = { field.getType() };
 						Method setMethod = null;
 						setMethod = type.getDeclaredMethod(createSetMethodName(field.getName()), params);

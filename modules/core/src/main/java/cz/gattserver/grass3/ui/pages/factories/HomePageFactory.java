@@ -9,7 +9,6 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 
 @Component(value = "homePageFactory")
 public class HomePageFactory extends AbstractPageFactory {
-	private static final long serialVersionUID = 1836925840118204442L;
 
 	public HomePageFactory() {
 		super("home");

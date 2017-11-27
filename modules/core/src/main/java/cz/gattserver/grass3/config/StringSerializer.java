@@ -6,15 +6,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-
-import cz.gattserver.common.util.Base64Coder;
+import java.util.Base64;
 
 public class StringSerializer {
 
-	/** Read the object from Base64 string. */
-	public static <T> T deserialize(String s, Class<T> type)
-			throws IOException, ClassNotFoundException {
-		byte[] data = Base64Coder.decode(s);
+	private StringSerializer() {
+	}
+
+	public static <T> T deserialize(String s) throws IOException, ClassNotFoundException {
+		byte[] data = Base64.getDecoder().decode(s);
 		ByteArrayInputStream bais = new ByteArrayInputStream(data);
 		ObjectInputStream in = new ObjectInputStream(bais);
 		@SuppressWarnings("unchecked")
@@ -23,12 +23,11 @@ public class StringSerializer {
 		return result;
 	}
 
-	/** Write the object to a Base64 string. */
 	public static String serialize(Serializable o) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ObjectOutputStream out = new ObjectOutputStream(baos);
 		out.writeObject(o); // Serialize Object
 		out.close();
-		return new String(Base64Coder.encode(baos.toByteArray()));
+		return new String(Base64.getEncoder().encodeToString(baos.toByteArray()));
 	}
 }

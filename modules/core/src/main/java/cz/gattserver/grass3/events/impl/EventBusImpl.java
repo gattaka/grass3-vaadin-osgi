@@ -18,7 +18,7 @@ public class EventBusImpl implements EventBus {
 
 	@PostConstruct
 	public void init() {
-		eventBus = new MBassador<Event>();
+		eventBus = new MBassador<>();
 	}
 
 	@Override

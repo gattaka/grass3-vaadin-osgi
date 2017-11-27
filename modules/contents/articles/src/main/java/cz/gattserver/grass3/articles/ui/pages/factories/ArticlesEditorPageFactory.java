@@ -11,8 +11,6 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 @Component("articlesEditorPageFactory")
 public class ArticlesEditorPageFactory extends AbstractPageFactory {
 
-	private static final long serialVersionUID = 9120334766218647141L;
-
 	public ArticlesEditorPageFactory() {
 		super("articles-editor");
 	}

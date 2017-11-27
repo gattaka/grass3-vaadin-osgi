@@ -10,8 +10,6 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 
 public abstract class AbstractPageFactory implements PageFactory {
 
-	private static final long serialVersionUID = 3988625640870100368L;
-
 	private String pageName;
 
 	@Autowired

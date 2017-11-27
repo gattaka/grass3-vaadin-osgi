@@ -10,8 +10,6 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 @Component(value = "noServicePageFactory")
 public class NoServicePageFactory extends AbstractPageFactory {
 
-	private static final long serialVersionUID = -8393895002312736988L;
-
 	public NoServicePageFactory() {
 		super("noservice");
 	}

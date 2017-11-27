@@ -334,11 +334,6 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 		Long contentNodeId = contentNodeFacade.save(PhotogalleryContentService.ID, photogallery.getId(), name, tags,
 				publicated, node.getId(), author.getId(), false, date, null);
 
-		if (contentNodeId == null) {
-			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
-			return;
-		}
-
 		// ulož do galerie referenci na její contentnode
 		ContentNode contentNode = new ContentNode();
 		contentNode.setId(contentNodeId);

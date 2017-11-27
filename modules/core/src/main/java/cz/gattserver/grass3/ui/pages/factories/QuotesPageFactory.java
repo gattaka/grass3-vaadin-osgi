@@ -10,8 +10,6 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 @Component("quotesPageFactory")
 public class QuotesPageFactory extends AbstractPageFactory {
 
-	private static final long serialVersionUID = 130456003400328236L;
-
 	public QuotesPageFactory() {
 		super("quotes");
 	}

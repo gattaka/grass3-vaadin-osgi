@@ -1,10 +1,8 @@
 package cz.gattserver.grass3.services;
 
-import java.io.Serializable;
-
 import cz.gattserver.grass3.config.AbstractConfiguration;
 
-public interface ConfigurationService extends Serializable {
+public interface ConfigurationService {
 
 	/**
 	 * Nahraje existující konfiguraci a dopíše její vyplněné hodnoty do

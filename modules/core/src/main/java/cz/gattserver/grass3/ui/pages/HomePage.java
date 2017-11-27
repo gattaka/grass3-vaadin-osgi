@@ -124,7 +124,8 @@ public class HomePage extends BasePage {
 		tagCloudLayout.addComponent(new H2Label("Tagy"));
 		pagelayout.addComponent(tagCloudLayout);
 
-		List<ContentTagsCloudItemTO> contentTags = contentTagFacade.createTagsCloud(MAX_FONT_SIZE_TAG_CLOUD, MIN_FONT_SIZE_TAG_CLOUD);
+		List<ContentTagsCloudItemTO> contentTags = contentTagFacade.createTagsCloud(MAX_FONT_SIZE_TAG_CLOUD,
+				MIN_FONT_SIZE_TAG_CLOUD);
 		if (contentTags.isEmpty()) {
 			Label noTagsLabel = new Label("Nebyly nalezeny žádné tagy");
 			tagCloudLayout.addComponent(noTagsLabel);
@@ -149,7 +150,8 @@ public class HomePage extends BasePage {
 							URLIdentifierUtils.createURLIdentifier(contentTag.getId(), contentTag.getName()))
 					+ "' style='font-size:" + contentTag.getFontSize() + "pt'>" + contentTag.getName() + "</a> ");
 		}
-		createTags(sb, currChar, tagCloudLayout);
+		if (sb != null)
+			createTags(sb, currChar, tagCloudLayout);
 	}
 
 	private void createTags(StringBuilder sb, char tag, Layout tagCloudLayout) {

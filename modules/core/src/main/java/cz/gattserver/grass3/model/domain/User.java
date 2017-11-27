@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.model.domain;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.Set;
@@ -23,9 +22,7 @@ import cz.gattserver.grass3.security.Role;
 
 @Entity(name = "USER_ACCOUNTS")
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "name" }) })
-public class User implements Serializable {
-
-	private static final long serialVersionUID = 1370519912799856102L;
+public class User {
 
 	/**
 	 * DB identifikátor
@@ -106,7 +103,7 @@ public class User implements Serializable {
 	public Set<Role> getRoles() {
 		return roles;
 	}
-	
+
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}

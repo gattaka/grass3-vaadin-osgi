@@ -14,6 +14,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.articles.services.ArticleService;
+import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.server.GrassRequest;
@@ -61,14 +62,12 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
 				.parseURLIdentifier(analyzer.getCurrentPathToken());
-		if (identifier == null) {
-			UIUtils.showErrorPage404();
-		}
+		if (identifier == null)
+			throw new GrassPageException(404);
 
 		article = articleFacade.getArticleForDetail(identifier.getId());
-		if (article == null) {
-			UIUtils.showErrorPage404();
-		}
+		if (article == null)
+			throw new GrassPageException(404);
 
 		// RESCUE -- tohle by se normálně stát nemělo, ale umožňuje to aspoň
 		// vyřešit stav, ve kterém existuje takovýto nezobrazitelný obsah
@@ -80,7 +79,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		if (article.getContentNode().isPublicated() || (UIUtils.getUser() != null
 				&& (article.getContentNode().getAuthor().equals(UIUtils.getUser()) || UIUtils.getUser().isAdmin()))) {
 		} else {
-			UIUtils.showErrorPage403();
+			throw new GrassPageException(403);
 		}
 
 		// CSS resources

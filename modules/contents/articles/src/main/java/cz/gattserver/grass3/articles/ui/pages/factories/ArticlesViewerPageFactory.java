@@ -10,8 +10,6 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 @Component("articlesViewerPageFactory")
 public class ArticlesViewerPageFactory extends AbstractPageFactory {
 
-	private static final long serialVersionUID = -2129382943779873599L;
-
 	public ArticlesViewerPageFactory() {
 		super("articles");
 	}

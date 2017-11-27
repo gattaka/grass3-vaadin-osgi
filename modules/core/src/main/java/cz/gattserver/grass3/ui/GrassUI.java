@@ -13,7 +13,6 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
 
-import cz.gattserver.grass3.exception.ApplicationErrorHandler;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.modules.register.PageFactoriesRegister;
@@ -23,6 +22,7 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.URLPathAnalyzer;
+import cz.gattserver.web.common.exception.ui.ApplicationErrorHandler;
 
 @Title("Gattserver")
 @Theme("grass")

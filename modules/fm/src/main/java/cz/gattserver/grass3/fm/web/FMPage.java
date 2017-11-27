@@ -39,6 +39,7 @@ import com.vaadin.v7.ui.Table.Align;
 
 import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.common.util.ReferenceHolder;
+import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.fm.FMExplorer;
 import cz.gattserver.grass3.fm.FMExplorer.FileProcessState;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
@@ -144,7 +145,7 @@ public class FMPage extends OneColumnPage {
 		try {
 			explorer = new FMExplorer(builder.toString());
 		} catch (IOException e) {
-			UIUtils.showErrorPage500();
+			throw new GrassPageException(500, e);
 		}
 
 		// Bylo potřeba se vrátit do kořene, protože předložený adresář

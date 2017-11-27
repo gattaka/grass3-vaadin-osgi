@@ -10,8 +10,6 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 @Component("err500PageFactory")
 public class Error500PageFactory extends AbstractPageFactory {
 
-	private static final long serialVersionUID = -8588396224579592218L;
-
 	public Error500PageFactory() {
 		super("err500");
 	}

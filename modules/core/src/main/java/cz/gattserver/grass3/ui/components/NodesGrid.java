@@ -2,7 +2,6 @@ package cz.gattserver.grass3.ui.components;
 
 import java.util.List;
 
-import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.renderers.ImageRenderer;
@@ -13,7 +12,7 @@ import cz.gattserver.grass3.ui.pages.template.MenuPage;
 import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.URLIdentifierUtils;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 
 public class NodesGrid extends Grid<NodeOverviewTO> {
 
@@ -29,7 +28,7 @@ public class NodesGrid extends Grid<NodeOverviewTO> {
 		String iconBind = "customIcon";
 		String nameBind = "customName";
 
-		addColumn(contentNode -> new ThemeResource(ImageIcons.BRIEFCASE_16_ICON), new ImageRenderer<>())
+		addColumn(contentNode -> ImageIcon.BRIEFCASE_16_ICON.createResource(), new ImageRenderer<>())
 				.setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(iconBind);
 
 		addColumn(node -> {

@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Resource;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
@@ -49,7 +48,7 @@ import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.grass3.ui.components.MultiUpload;
 import cz.gattserver.grass3.ui.util.GridUtils;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 import cz.gattserver.web.common.window.ImageDetailWindow;
@@ -136,8 +135,8 @@ public class HWItemDetailWindow extends WebWindow {
 			}));
 		});
 
-		hwItemImageDetailBtn.setIcon(new ThemeResource(ImageIcons.SEARCH_16_ICON));
-		hwItemImageDeleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
+		hwItemImageDetailBtn.setIcon(ImageIcon.SEARCH_16_ICON.createResource());
+		hwItemImageDeleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
 
 		btnLayout.addComponent(hwItemImageDetailBtn);
 		btnLayout.addComponent(hwItemImageDeleteBtn);
@@ -263,7 +262,7 @@ public class HWItemDetailWindow extends WebWindow {
 			LocalDate endDate = hwItem.getPurchaseDate().plusYears(hwItem.getWarrantyYears());
 			boolean isInWarranty = endDate.isAfter(LocalDate.now());
 			Embedded emb = new Embedded(null,
-					new ThemeResource(isInWarranty ? ImageIcons.TICK_16_ICON : ImageIcons.DELETE_16_ICON));
+					isInWarranty ? ImageIcon.TICK_16_ICON.createResource() : ImageIcon.DELETE_16_ICON.createResource());
 			zarukaLayout.addComponent(emb);
 			zarukaContent += " (do " + endDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + ")";
 			zarukaLayout.addComponent(new Label(zarukaContent));
@@ -322,8 +321,8 @@ public class HWItemDetailWindow extends WebWindow {
 		operationsLayout.setSpacing(true);
 		wrapperLayout.addComponent(operationsLayout);
 
-		final Button fixBtn = new Button("Upravit", new ThemeResource(ImageIcons.QUICKEDIT_16_ICON));
-		final Button deleteBtn = new Button("Smazat", new ThemeResource(ImageIcons.DELETE_16_ICON));
+		final Button fixBtn = new Button("Upravit", ImageIcon.QUICKEDIT_16_ICON.createResource());
+		final Button deleteBtn = new Button("Smazat", ImageIcon.DELETE_16_ICON.createResource());
 
 		/**
 		 * Oprava údajů existující položky HW
@@ -428,7 +427,7 @@ public class HWItemDetailWindow extends WebWindow {
 		 * Založení nového servisního záznamu
 		 */
 		newNoteBtn = new Button("Přidat záznam");
-		newNoteBtn.setIcon(new ThemeResource(ImageIcons.PENCIL_16_ICON));
+		newNoteBtn.setIcon(ImageIcon.PENCIL_16_ICON.createResource());
 		newNoteBtn.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = 8876001665427003203L;
 
@@ -454,7 +453,7 @@ public class HWItemDetailWindow extends WebWindow {
 		 */
 		fixNoteBtn = new Button("Opravit záznam");
 		fixNoteBtn.setEnabled(false);
-		fixNoteBtn.setIcon(new ThemeResource(ImageIcons.QUICKEDIT_16_ICON));
+		fixNoteBtn.setIcon(ImageIcon.QUICKEDIT_16_ICON.createResource());
 		fixNoteBtn.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = 8876001665427003203L;
 
@@ -481,7 +480,7 @@ public class HWItemDetailWindow extends WebWindow {
 		 */
 		deleteNoteBtn = new Button("Smazat záznam");
 		deleteNoteBtn.setEnabled(false);
-		deleteNoteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
+		deleteNoteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
 		deleteNoteBtn.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 4983897852548880141L;
@@ -581,8 +580,8 @@ public class HWItemDetailWindow extends WebWindow {
 						createImagesList(listLayout);
 					})));
 
-			hwItemImageDetailBtn.setIcon(new ThemeResource(ImageIcons.SEARCH_16_ICON));
-			hwItemImageDeleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
+			hwItemImageDetailBtn.setIcon(ImageIcon.SEARCH_16_ICON.createResource());
+			hwItemImageDeleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
 
 			btnLayout.addComponent(hwItemImageDetailBtn);
 			btnLayout.addComponent(hwItemImageDeleteBtn);
@@ -637,7 +636,7 @@ public class HWItemDetailWindow extends WebWindow {
 		uploadWrapperLayout.addStyleName("bordered");
 		uploadWrapperLayout.addComponent(multiFileUpload);
 
-		final Button hwItemDocumentDownloadBtn = new Button("Stáhnout", new ThemeResource(ImageIcons.DOWN_16_ICON));
+		final Button hwItemDocumentDownloadBtn = new Button("Stáhnout", ImageIcon.DOWN_16_ICON.createResource());
 		uploadWrapperLayout.addComponent(hwItemDocumentDownloadBtn);
 		hwItemDocumentDownloadBtn.setEnabled(false);
 
@@ -652,7 +651,7 @@ public class HWItemDetailWindow extends WebWindow {
 			}));
 		});
 		hwItemDocumentDeleteBtn.setEnabled(false);
-		hwItemDocumentDeleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
+		hwItemDocumentDeleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
 		uploadWrapperLayout.addComponent(hwItemDocumentDeleteBtn);
 
 		docsGrid.addSelectionListener(selection -> {
@@ -685,9 +684,9 @@ public class HWItemDetailWindow extends WebWindow {
 		sheet = new TabSheet();
 		sheet.setSizeFull();
 		createFirstTab();
-		sheet.addTab(createServiceNotesTab(), "Záznamy", new ThemeResource(ImageIcons.CLIPBOARD_16_ICON));
-		sheet.addTab(createPhotosTab(), "Fotografie", new ThemeResource(ImageIcons.IMG_16_ICON));
-		sheet.addTab(createDocsTab(), "Dokumentace", new ThemeResource(ImageIcons.DOCUMENT_16_ICON));
+		sheet.addTab(createServiceNotesTab(), "Záznamy", ImageIcon.CLIPBOARD_16_ICON.createResource());
+		sheet.addTab(createPhotosTab(), "Fotografie", ImageIcon.IMG_16_ICON.createResource());
+		sheet.addTab(createDocsTab(), "Dokumentace", ImageIcon.DOCUMENT_16_ICON.createResource());
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(false);
@@ -713,6 +712,6 @@ public class HWItemDetailWindow extends WebWindow {
 		Tab tab = sheet.getTab(0);
 		if (tab != null)
 			sheet.removeTab(tab);
-		sheet.addTab(createItemDetailsLayout(hwItem), "Info", new ThemeResource(ImageIcons.GEAR2_16_ICON), 0);
+		sheet.addTab(createItemDetailsLayout(hwItem), "Info", ImageIcon.GEAR2_16_ICON.createResource(), 0);
 	}
 }

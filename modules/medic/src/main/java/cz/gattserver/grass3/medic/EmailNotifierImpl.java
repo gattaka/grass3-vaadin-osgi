@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.util.MedicUtil;
-import cz.gattserver.web.common.mail.ServerMail;
+import cz.gattserver.grass3.services.MailService;
 
 @Component
 public class EmailNotifierImpl extends TimerTask implements EmailNotifier {
@@ -18,12 +18,15 @@ public class EmailNotifierImpl extends TimerTask implements EmailNotifier {
 	@Autowired
 	private MedicFacade medicFacade;
 
+	@Autowired
+	private MailService mailService;
+
 	@Override
 	public void run() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 		for (ScheduledVisitDTO to : medicFacade.getAllScheduledVisits()) {
 			if (MedicUtil.fromNowAfter7Days(to, LocalDateTime.now())) {
-				ServerMail.sendToAdmin("GRASS3 Medic oznámená o plánované události",
+				mailService.sendToAdmin("GRASS3 Medic oznámená o plánované události",
 						"Událost naplánovaná na: " + dateFormat.format(to.getDate())
 								+ " se blíží (nastane v příštích 7 dnech):\n\n" + "Instituce:\t"
 								+ to.getInstitution().toString() + "\nDůvod návštěvy:\t" + to.getPurpose());

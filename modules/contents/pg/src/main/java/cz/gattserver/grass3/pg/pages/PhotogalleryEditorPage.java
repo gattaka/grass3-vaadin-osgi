@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.server.FileResource;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
@@ -66,7 +65,7 @@ import cz.gattserver.grass3.ui.windows.ProgressWindow;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
 import cz.gattserver.web.common.ui.H2Label;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.TokenField;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.WarnWindow;
@@ -317,15 +316,16 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 						warnWindow = new WarnWindow("Následující soubory již existují:") {
 							private static final long serialVersionUID = 3428203680996794639L;
 
-							protected void createDetails() {
+							@Override
+							protected void createDetails(String details) {
 								addComponent(existingFiles);
-							};
+							}
 
 							public void close() {
 								existingFiles.setValue("");
 								warnWindowDeployed = false;
 								super.close();
-							};
+							}
 						};
 						UI.getCurrent().addWindow(warnWindow);
 						warnWindowDeployed = true;
@@ -360,7 +360,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		// Uložit
 		Button saveButton = new Button("Uložit");
-		saveButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.SAVE_16_ICON));
+		saveButton.setIcon(ImageIcon.SAVE_16_ICON.createResource());
 		saveButton.addClickListener(event -> {
 			if (isFormValid() == false)
 				return;
@@ -371,7 +371,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		// Uložit a zavřít
 		Button saveAndCloseButton = new Button("Uložit a zavřít");
-		saveAndCloseButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.SAVE_16_ICON));
+		saveAndCloseButton.setIcon(ImageIcon.SAVE_16_ICON.createResource());
 		saveAndCloseButton.addClickListener(event -> {
 			if (isFormValid() == false)
 				return;
@@ -382,7 +382,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		// Zrušit
 		Button cancelButton = new Button("Zrušit");
-		cancelButton.setIcon((com.vaadin.server.Resource) new ThemeResource(ImageIcons.DELETE_16_ICON));
+		cancelButton.setIcon(ImageIcon.DELETE_16_ICON.createResource());
 		cancelButton.addClickListener(event -> UI.getCurrent().addWindow(new ConfirmWindow(
 				"Opravdu si přejete zavřít editor galerie ? Veškeré neuložené změny budou ztraceny.", e -> {
 					// ruším úpravu existující galerie (vracím se na

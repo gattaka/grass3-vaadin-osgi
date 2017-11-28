@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.modules;
 
-import com.vaadin.server.ThemeResource;
+import com.vaadin.server.Resource;
 
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 
@@ -10,12 +10,12 @@ public interface ContentModule {
 	 * Vrátí instanci stránky, která slouží jako editor pro vytváření nebo
 	 * modifikaci daného obsahu
 	 */
-	public PageFactory getContentEditorPageFactory();
+	PageFactory getContentEditorPageFactory();
 
 	/**
 	 * Vrátí instanci stránky, která slouží jako prohlížeč obsahu
 	 */
-	public PageFactory getContentViewerPageFactory();
+	PageFactory getContentViewerPageFactory();
 
 	/**
 	 * Vrátí popisek k tlačítku "vytvořit nový obsah"
@@ -23,20 +23,20 @@ public interface ContentModule {
 	 * @return popisek ve stylu "článek", aby to pasovalo k popisku "Vytvořit
 	 *         nový"
 	 */
-	public String getCreateNewContentLabel();
+	String getCreateNewContentLabel();
 
 	/**
 	 * Vrátí cestu k ikoně, kterou bude obsah reprezentován
 	 * 
 	 * @return cesta k ikoně obsahu
 	 */
-	public ThemeResource getContentIcon();
+	Resource getContentIcon();
 
 	/**
 	 * Vrátí identifikátor služby obsahu
 	 * 
 	 * @return identifikátor služby
 	 */
-	public String getContentID();
+	String getContentID();
 
 }

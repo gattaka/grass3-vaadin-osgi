@@ -14,7 +14,6 @@ import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.dnd.DropEffect;
 import com.vaadin.shared.ui.dnd.EffectAllowed;
 import com.vaadin.shared.ui.grid.DropMode;
@@ -35,7 +34,7 @@ import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.services.NodeService;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.SpringContextHelper;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.WebWindow;
 
@@ -127,12 +126,12 @@ public class NodeTree extends VerticalLayout {
 			if (e.getItem() != null) {
 				NodeOverviewTO node = (NodeOverviewTO) e.getItem();
 				grid.select(node);
-				e.getContextMenu().addItem("Smazat", new ThemeResource(ImageIcons.DELETE_16_ICON),
+				e.getContextMenu().addItem("Smazat", ImageIcon.DELETE_16_ICON.createResource(),
 						selectedItem -> deleteAction(node));
-				e.getContextMenu().addItem("Přejmenovat", new ThemeResource(ImageIcons.PENCIL_16_ICON),
+				e.getContextMenu().addItem("Přejmenovat", ImageIcon.PENCIL_16_ICON.createResource(),
 						selectedItem -> renameAction(node));
 			}
-			e.getContextMenu().addItem("Vytvořit zde novou", new ThemeResource(ImageIcons.PLUS_16_ICON),
+			e.getContextMenu().addItem("Vytvořit zde novou", ImageIcon.PLUS_16_ICON.createResource(),
 					selectedItem -> createNodeAction(e.getItem() == null ? null : (NodeOverviewTO) e.getItem()));
 		});
 

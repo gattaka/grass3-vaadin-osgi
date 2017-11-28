@@ -6,7 +6,7 @@ import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTOBuilder;
 import cz.gattserver.grass3.articles.plugins.Plugin;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 
 /**
  * @author gatt
@@ -29,6 +29,6 @@ public class LinkPlugin implements Plugin {
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
 		return new EditorButtonResourcesTOBuilder(tag, "HTML").setDescription("Link")
-				.setImageAsThemeResource(ImageIcons.GLOBE_16_ICON).build();
+				.setImageResource(ImageIcon.GLOBE_16_ICON.createResource()).build();
 	}
 }

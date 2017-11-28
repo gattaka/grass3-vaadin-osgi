@@ -6,7 +6,7 @@ import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTOBuilder;
 import cz.gattserver.grass3.articles.plugins.Plugin;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 
 /**
  * @author gatt
@@ -16,7 +16,6 @@ public class ImagePlugin implements Plugin {
 
 	private final String tag = "IMG";
 	private final String description = "Obrázek";
-	private final String image = ImageIcons.IMG_16_ICON;
 
 	@Override
 	public String getTag() {
@@ -31,6 +30,6 @@ public class ImagePlugin implements Plugin {
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
 		return new EditorButtonResourcesTOBuilder(tag, "HTML").setDescription(description)
-				.setImageAsThemeResource(image).build();
+				.setImageResource(ImageIcon.IMG_16_ICON.createResource()).build();
 	}
 }

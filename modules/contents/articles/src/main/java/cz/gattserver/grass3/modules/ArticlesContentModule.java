@@ -4,11 +4,9 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import com.vaadin.server.ThemeResource;
-
 import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 
 @Component("articlesContentModule")
 public class ArticlesContentModule implements ContentModule {
@@ -25,18 +23,22 @@ public class ArticlesContentModule implements ContentModule {
 		return "Vytvořit nový článek";
 	}
 
-	public ThemeResource getContentIcon() {
-		return new ThemeResource(ImageIcons.DOCUMENT_16_ICON);
+	@Override
+	public com.vaadin.server.Resource getContentIcon() {
+		return ImageIcon.DOCUMENT_16_ICON.createResource();
 	}
 
+	@Override
 	public String getContentID() {
 		return ID;
 	}
 
+	@Override
 	public PageFactory getContentEditorPageFactory() {
 		return articlesEditorPageFactory;
 	}
 
+	@Override
 	public PageFactory getContentViewerPageFactory() {
 		return articlesViewerPageFactory;
 	}

@@ -15,14 +15,14 @@ import cz.gattserver.grass3.articles.favlink.Downloader;
 import cz.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.web.common.SpringContextHelper;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 
 public class LinkElement implements Element {
 
 	private static final Logger logger = LoggerFactory.getLogger(LinkElement.class);
 
 	private String link;
-	private final static String defaultFavicon = "/" + ImageIcons.LABEL_16_ICON; // default
+	private final static String defaultFavicon = "/" + ImageIcon.LABEL_16_ICON; // default
 	private String imgURL = null;
 	private String contextRoot;
 

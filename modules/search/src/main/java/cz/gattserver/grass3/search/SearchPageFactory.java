@@ -9,8 +9,6 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 @Component("searchPageFactory")
 public class SearchPageFactory extends AbstractPageFactory {
 
-	private static final long serialVersionUID = 3240022274263676476L;
-
 	public SearchPageFactory() {
 		super("search");
 	}

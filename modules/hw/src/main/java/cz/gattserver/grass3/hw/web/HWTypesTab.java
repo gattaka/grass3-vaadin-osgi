@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
@@ -17,7 +16,7 @@ import com.vaadin.ui.Window;
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.web.common.SpringContextHelper;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 
@@ -42,9 +41,9 @@ public class HWTypesTab extends VerticalLayout {
 		final Button deleteBtn = new Button("Smazat");
 		fixBtn.setEnabled(false);
 		deleteBtn.setEnabled(false);
-		newTypeBtn.setIcon(new ThemeResource(ImageIcons.PLUS_16_ICON));
-		fixBtn.setIcon(new ThemeResource(ImageIcons.QUICKEDIT_16_ICON));
-		deleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
+		newTypeBtn.setIcon(ImageIcon.PLUS_16_ICON.createResource());
+		fixBtn.setIcon(ImageIcon.QUICKEDIT_16_ICON.createResource());
+		deleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
 
 		grid = new Grid<>(HWItemTypeDTO.class);
 		data = hwFacade.getAllHWTypes();

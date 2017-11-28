@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
-import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
@@ -30,7 +29,7 @@ import cz.gattserver.grass3.ui.components.DetailGridButton;
 import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.ui.BoldLabel;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 
@@ -119,10 +118,10 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		deleteBtn.setEnabled(false);
 		completedBtn.setEnabled(false);
 		modifyBtn.setEnabled(false);
-		newTypeBtn.setIcon(new ThemeResource(ImageIcons.PLUS_16_ICON));
-		deleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
-		completedBtn.setIcon(new ThemeResource(ImageIcons.RIGHT_16_ICON));
-		modifyBtn.setIcon(new ThemeResource(ImageIcons.PENCIL_16_ICON));
+		newTypeBtn.setIcon(ImageIcon.PLUS_16_ICON.createResource());
+		deleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
+		completedBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
+		modifyBtn.setIcon(ImageIcon.PENCIL_16_ICON.createResource());
 
 		final Button detailBtn = new DetailGridButton<ScheduledVisitDTO>("Detail",
 				(e, item) -> UI.getCurrent().addWindow(new SchuduledVisitDetailWindow(item.getId())), plannedGrid);
@@ -187,10 +186,10 @@ public class ScheduledVisitsTab extends VerticalLayout {
 	private void prepareGrid(Grid<ScheduledVisitDTO> grid) {
 		grid.addColumn(item -> {
 			if (item.getState().equals(ScheduledVisitState.MISSED)) {
-				return new ThemeResource(ImageIcons.WARNING_16_ICON);
+				return ImageIcon.WARNING_16_ICON.createResource();
 			} else {
 				if (MedicUtil.isVisitPending(item))
-					return new ThemeResource(ImageIcons.CLOCK_16_ICON);
+					return ImageIcon.CLOCK_16_ICON.createResource();
 			}
 			return null;
 		}, new ImageRenderer<>()).setId("icon").setWidth(GridUtils.ICON_COLUMN_WIDTH);
@@ -216,10 +215,10 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		deleteBtn.setEnabled(false);
 		planBtn.setEnabled(false);
 		modifyBtn.setEnabled(false);
-		newBtn.setIcon(new ThemeResource(ImageIcons.PLUS_16_ICON));
-		deleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
-		planBtn.setIcon(new ThemeResource(ImageIcons.CALENDAR_16_ICON));
-		modifyBtn.setIcon(new ThemeResource(ImageIcons.PENCIL_16_ICON));
+		newBtn.setIcon(ImageIcon.PLUS_16_ICON.createResource());
+		deleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
+		planBtn.setIcon(ImageIcon.CALENDAR_16_ICON.createResource());
+		modifyBtn.setIcon(ImageIcon.PENCIL_16_ICON.createResource());
 
 		final Button detailBtn = new DetailGridButton<ScheduledVisitDTO>("Detail",
 				(e, item) -> UI.getCurrent().addWindow(new SchuduledVisitDetailWindow(item.getId())), toBePlannedGrid);

@@ -11,11 +11,9 @@ import org.vaadin.jouni.dom.client.Css;
 
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.FileResource;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -47,9 +45,8 @@ import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.grass3.ui.windows.ProgressWindow;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.window.ConfirmWindow;
-import cz.gattserver.web.common.window.InfoWindow;
 import cz.gattserver.web.common.window.WarnWindow;
 import cz.gattserver.web.common.window.WebWindow;
 import net.engio.mbassy.listener.Handler;
@@ -226,12 +223,12 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		layout.addComponent(bottomBtnsLayout);
 
 		// ikony tlačítek
-		upRowBtn.setIcon(new ThemeResource(ImageIcons.UP_16_ICON));
-		downRowBtn.setIcon(new ThemeResource(ImageIcons.DOWN_16_ICON));
-		upPageBtn.setIcon(new ThemeResource(ImageIcons.UP_16_ICON));
-		downPageBtn.setIcon(new ThemeResource(ImageIcons.DOWN_16_ICON));
-		startPageBtn.setIcon(new ThemeResource(ImageIcons.UP_16_ICON));
-		endPageBtn.setIcon(new ThemeResource(ImageIcons.DOWN_16_ICON));
+		upRowBtn.setIcon(ImageIcon.UP_16_ICON.createResource());
+		downRowBtn.setIcon(ImageIcon.DOWN_16_ICON.createResource());
+		upPageBtn.setIcon(ImageIcon.UP_16_ICON.createResource());
+		downPageBtn.setIcon(ImageIcon.DOWN_16_ICON.createResource());
+		startPageBtn.setIcon(ImageIcon.UP_16_ICON.createResource());
+		endPageBtn.setIcon(ImageIcon.DOWN_16_ICON.createResource());
 
 		// listenery horních tlačítek
 		upRowBtn.addClickListener(event -> galleryGridRowOffset--);
@@ -298,7 +295,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 					photogalleryFacade.zipGallery(galleryDir);
 				})));
 		statusLabelWrapper.addComponent(downloadZip);
-		downloadZip.setIcon(new ThemeResource(ImageIcons.PRESENT_16_ICON));
+		downloadZip.setIcon(ImageIcon.PRESENT_16_ICON.createResource());
 
 		// společný listener pro všechna tlačítka
 		Button.ClickListener btnCommonListener = event -> shiftGrid();
@@ -515,24 +512,11 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			// potvrzení jdi na kategorii
 			try {
 				photogalleryFacade.deletePhotogallery(photogallery);
-				InfoWindow infoSubwindow = new InfoWindow("Smazání galerie proběhlo úspěšně.") {
-					private static final long serialVersionUID = -6688396549852552674L;
-
-					protected void onProceed(ClickEvent event) {
-						UIUtils.redirect(nodeURL);
-					};
-				};
-				UI.getCurrent().addWindow(infoSubwindow);
+				UIUtils.redirect(nodeURL);
 			} catch (Exception e) {
 				// Pokud ne, otevři warn okno a při
 				// potvrzení jdi na kategorii
-				WarnWindow warnSubwindow = new WarnWindow("Smazání galerie se nezdařilo.") {
-					private static final long serialVersionUID = -6688396549852552674L;
-
-					protected void onProceed(ClickEvent event) {
-						UIUtils.redirect(nodeURL);
-					};
-				};
+				WarnWindow warnSubwindow = new WarnWindow("Smazání galerie se nezdařilo.");
 				UI.getCurrent().addWindow(warnSubwindow);
 			}
 		});

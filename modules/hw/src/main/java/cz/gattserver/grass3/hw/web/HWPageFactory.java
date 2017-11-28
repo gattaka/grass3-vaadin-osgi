@@ -9,8 +9,6 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 @Component("hwPageFactory")
 public class HWPageFactory extends AbstractPageFactory {
 
-	private static final long serialVersionUID = -8008345071231675889L;
-
 	public HWPageFactory() {
 		super("hw");
 	}

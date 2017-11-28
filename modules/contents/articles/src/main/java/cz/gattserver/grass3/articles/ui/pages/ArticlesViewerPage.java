@@ -5,7 +5,6 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
@@ -26,9 +25,8 @@ import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.URLPathAnalyzer;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.window.ConfirmWindow;
-import cz.gattserver.web.common.window.InfoWindow;
 import cz.gattserver.web.common.window.WarnWindow;
 
 public class ArticlesViewerPage extends ContentViewerPage {
@@ -131,7 +129,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 					URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName()));
 			String script = "$(\".articles-basic-h-id\").each(" + "function(index){" + "$(this).attr(\"href\",\"" + url
 					+ "/\" + $(this).attr(\"href\"));" + "$(this).html(\"<img alt=\\\" class=\\\"v-icon\\\" src=\\\""
-					+ getRequest().getContextRoot() + "/VAADIN/themes/grass/" + ImageIcons.PENCIL_16_ICON
+					+ getRequest().getContextRoot() + "/VAADIN/themes/grass/" + ImageIcon.PENCIL_16_ICON
 					+ "\\\"/>&nbsp\");" + "}" + ")";
 			loadJS(new JScriptItem(script, true));
 		}
@@ -148,26 +146,11 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			// potvrzení jdi na kategorii
 			try {
 				articleFacade.deleteArticle(article.getId());
-				InfoWindow infoSubwindow = new InfoWindow("Smazání článku proběhlo úspěšně.") {
-
-					private static final long serialVersionUID = -6688396549852552674L;
-
-					protected void onProceed(ClickEvent event) {
-						UIUtils.redirect(nodeURL);
-					};
-				};
-				UI.getCurrent().addWindow(infoSubwindow);
+				UIUtils.redirect(nodeURL);
 			} catch (Exception e) {
 				// Pokud ne, otevři warn okno a při
 				// potvrzení jdi na kategorii
-				WarnWindow warnSubwindow = new WarnWindow("Smazání článku se nezdařilo.") {
-
-					private static final long serialVersionUID = -6688396549852552674L;
-
-					protected void onProceed(ClickEvent event) {
-						UIUtils.redirect(nodeURL);
-					};
-				};
+				WarnWindow warnSubwindow = new WarnWindow("Smazání článku se nezdařilo.");
 				UI.getCurrent().addWindow(warnSubwindow);
 			}
 		});

@@ -73,6 +73,12 @@
 		<property name="queueCapacity" value="25" />
 	</bean>
 
+	<bean id="grassMailService" class="cz.gattserver.grass3.services.impl.MailServiceImpl">
+		<property name="grassMailAddress" value="${grass.mail.address}" />
+		<property name="grassMailPassword" value="${grass.mail.password}" />
+		<property name="grassNotificationAddress" value="${grass.notification.address}" />
+	</bean>
+
 	<task:annotation-driven executor="taskExecutor" />
 
 	<tx:annotation-driven transaction-manager="transactionManager"

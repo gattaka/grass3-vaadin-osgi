@@ -15,7 +15,6 @@ import com.vaadin.event.Action;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -51,7 +50,7 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.ComparableStringDate;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.WebWindow;
 import cz.gattserver.web.common.window.InfoWindow;
@@ -482,9 +481,9 @@ public class FMPage extends OneColumnPage {
 		// ikona
 		Embedded icon = new Embedded();
 		if (file.isDirectory())
-			icon.setSource(new ThemeResource(ImageIcons.FOLDER_16_ICON));
+			icon.setSource(ImageIcon.FOLDER_16_ICON.createResource());
 		else
-			icon.setSource(new ThemeResource(ImageIcons.PRESENT_16_ICON));
+			icon.setSource(ImageIcon.PRESENT_16_ICON.createResource());
 		subWindowlayout.addComponent(icon, 0, 0);
 
 		// název
@@ -830,7 +829,7 @@ public class FMPage extends OneColumnPage {
 
 			Item item = filestable.addItem(parent);
 			Embedded icon = new Embedded();
-			icon.setSource(new ThemeResource(ImageIcons.FOLDER_16_ICON));
+			icon.setSource(ImageIcon.FOLDER_16_ICON.createResource());
 			item.getItemProperty(ColumnId.IKONA).setValue(icon);
 			item.getItemProperty(ColumnId.NÁZEV).setValue("..");
 		}
@@ -839,7 +838,7 @@ public class FMPage extends OneColumnPage {
 		for (File file : directories) {
 			Item item = filestable.addItem(file);
 			Embedded icon = new Embedded();
-			icon.setSource(new ThemeResource(ImageIcons.FOLDER_16_ICON));
+			icon.setSource(ImageIcon.FOLDER_16_ICON.createResource());
 			item.getItemProperty(ColumnId.IKONA).setValue(icon);
 
 			item.getItemProperty(ColumnId.NÁZEV).setValue(file.getName());
@@ -852,7 +851,7 @@ public class FMPage extends OneColumnPage {
 		for (File file : innerFiles) {
 			Item item = filestable.addItem(file);
 			Embedded icon = new Embedded();
-			icon.setSource(new ThemeResource(ImageIcons.PRESENT_16_ICON));
+			icon.setSource(ImageIcon.PRESENT_16_ICON.createResource());
 			item.getItemProperty(ColumnId.IKONA).setValue(icon);
 
 			item.getItemProperty(ColumnId.NÁZEV).setValue(file.getName());

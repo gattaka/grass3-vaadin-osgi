@@ -1,7 +1,6 @@
 package cz.gattserver.grass3.ui.components;
 
 import com.vaadin.server.SerializableSupplier;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.renderers.ImageRenderer;
@@ -17,7 +16,7 @@ import cz.gattserver.grass3.ui.pages.template.MenuPage;
 import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.URLIdentifierUtils;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 
 public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 
@@ -54,7 +53,7 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 
 		addColumn(contentNode -> {
 			ContentModule contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
-			return contentService == null ? new ThemeResource(ImageIcons.WARNING_16_ICON)
+			return contentService == null ? ImageIcon.WARNING_16_ICON.createResource()
 					: contentService.getContentIcon();
 		}, new ImageRenderer<>()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(iconBind);
 

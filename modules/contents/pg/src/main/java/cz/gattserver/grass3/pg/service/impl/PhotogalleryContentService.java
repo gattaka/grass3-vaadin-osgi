@@ -4,11 +4,9 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import com.vaadin.server.ThemeResource;
-
 import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 
 @Component("photogalleryContentService")
 public class PhotogalleryContentService implements ContentModule {
@@ -21,22 +19,27 @@ public class PhotogalleryContentService implements ContentModule {
 	@Resource(name = "photogalleryEditorPageFactory")
 	private PageFactory photogalleryEditorPageFactory;
 
+	@Override
 	public String getCreateNewContentLabel() {
 		return "Vytvořit novou galerii";
 	}
 
-	public ThemeResource getContentIcon() {
-		return new ThemeResource(ImageIcons.IMG_16_ICON);
+	@Override
+	public com.vaadin.server.Resource getContentIcon() {
+		return ImageIcon.IMG_16_ICON.createResource();
 	}
 
+	@Override
 	public String getContentID() {
 		return ID;
 	}
 
+	@Override
 	public PageFactory getContentEditorPageFactory() {
 		return photogalleryEditorPageFactory;
 	}
 
+	@Override
 	public PageFactory getContentViewerPageFactory() {
 		return photogalleryViewerPageFactory;
 	}

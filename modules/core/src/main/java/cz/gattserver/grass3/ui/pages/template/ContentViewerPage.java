@@ -8,7 +8,6 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -41,7 +40,7 @@ import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.grass3.ui.windows.ContentMoveWindow;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.H2Label;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.window.WarnWindow;
 
 public abstract class ContentViewerPage extends TwoColumnPage {
@@ -141,7 +140,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		}
 
 		// Oblíbené
-		removeFromFavouritesButton = new ImageButton(null, ImageIcons.BROKEN_HEART_16_ICON, event -> {
+		removeFromFavouritesButton = new ImageButton(null, ImageIcon.BROKEN_HEART_16_ICON.createResource(), event -> {
 			// zdařilo se ? Pokud ano, otevři info okno
 			try {
 				userFacade.removeContentFromFavourites(content.getId(), UIUtils.getUser().getId());
@@ -154,7 +153,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		});
 		removeFromFavouritesButton.setIconAlternateText("Odebrat z oblíbených");
 
-		addToFavouritesButton = new ImageButton(null, ImageIcons.HEART_16_ICON, event -> {
+		addToFavouritesButton = new ImageButton(null, ImageIcon.HEART_16_ICON.createResource(), event -> {
 			// zdařilo se ? Pokud ano, otevři info okno
 			try {
 				userFacade.addContentToFavourites(content.getId(), UIUtils.getUser().getId());
@@ -175,7 +174,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		// Změna kategorie
 		if (coreACL.canModifyContent(content, UIUtils.getUser())) {
-			ImageButton moveBtn = new ImageButton(null, ImageIcons.MOVE_16_ICON, event -> {
+			ImageButton moveBtn = new ImageButton(null, ImageIcon.MOVE_16_ICON.createResource(), event -> {
 				UI.getCurrent().addWindow(new ContentMoveWindow(content) {
 					private static final long serialVersionUID = 3748723613020816248L;
 
@@ -206,7 +205,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 			publicatedLayout.setSpacing(true);
 			publicatedLayout.setMargin(false);
 			publicatedLayout.addStyleName("not-publicated-info");
-			publicatedLayout.addComponent(new Embedded(null, new ThemeResource(ImageIcons.INFO_16_ICON)));
+			publicatedLayout.addComponent(new Embedded(null, ImageIcon.INFO_16_ICON.createResource()));
 			publicatedLayout.addComponent(new Label("<strong>Nepublikováno</strong>", ContentMode.HTML));
 			layout.addComponent(publicatedLayout, "pubinfo");
 		}

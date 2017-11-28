@@ -8,7 +8,6 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
@@ -32,7 +31,7 @@ import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.H2Label;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 
 public class NodePage extends OneColumnPage {
 
@@ -116,7 +115,7 @@ public class NodePage extends OneColumnPage {
 			// clean
 			newNodeNameField.setValue("");
 		});
-		createButton.setIcon(new ThemeResource(ImageIcons.BRIEFCASE_PLUS_16_ICON));
+		createButton.setIcon(ImageIcon.BRIEFCASE_PLUS_16_ICON.createResource());
 		panelLayout.addComponent(createButton);
 
 	}

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
 import com.fo0.advancedtokenfield.main.Token;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -35,7 +34,7 @@ import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
 import cz.gattserver.web.common.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.TokenField;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
@@ -168,11 +167,11 @@ public class HWItemsTab extends VerticalLayout {
 		detailsBtn.setEnabled(false);
 		fixBtn.setEnabled(false);
 		deleteBtn.setEnabled(false);
-		newHWBtn.setIcon(new ThemeResource(ImageIcons.PLUS_16_ICON));
-		newNoteBtn.setIcon(new ThemeResource(ImageIcons.PENCIL_16_ICON));
-		detailsBtn.setIcon(new ThemeResource(ImageIcons.CLIPBOARD_16_ICON));
-		fixBtn.setIcon(new ThemeResource(ImageIcons.QUICKEDIT_16_ICON));
-		deleteBtn.setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
+		newHWBtn.setIcon(ImageIcon.PLUS_16_ICON.createResource());
+		newNoteBtn.setIcon(ImageIcon.PENCIL_16_ICON.createResource());
+		detailsBtn.setIcon(ImageIcon.CLIPBOARD_16_ICON.createResource());
+		fixBtn.setIcon(ImageIcon.QUICKEDIT_16_ICON.createResource());
+		deleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
 
 		/**
 		 * Filtr na typy HW

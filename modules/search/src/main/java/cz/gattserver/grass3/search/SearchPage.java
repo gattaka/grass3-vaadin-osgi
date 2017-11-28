@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.ExternalResource;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -25,7 +24,7 @@ import cz.gattserver.grass3.search.service.SearchHit;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 
 public class SearchPage extends OneColumnPage {
 
@@ -114,7 +113,7 @@ public class SearchPage extends OneColumnPage {
 			}
 		});
 		searchLayout.addComponent(searchButton);
-		searchButton.setIcon(new ThemeResource(ImageIcons.SEARCH_16_ICON));
+		searchButton.setIcon(ImageIcon.SEARCH_16_ICON.createResource());
 
 		/**
 		 * 2.) Rozbalovací seznam

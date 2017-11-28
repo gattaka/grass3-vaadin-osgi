@@ -1,9 +1,8 @@
 package cz.gattserver.grass3.ui.components;
 
-import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Grid;
 
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 
 public class DetailGridButton<T> extends GridButton<T> {
 
@@ -11,7 +10,7 @@ public class DetailGridButton<T> extends GridButton<T> {
 
 	public DetailGridButton(String caption, GridButton.ClickListener<T> clickListener, Grid<T> grid) {
 		super(caption, clickListener, grid);
-		setIcon(new ThemeResource(ImageIcons.INFO_16_ICON));
+		setIcon(ImageIcon.INFO_16_ICON.createResource());
 	}
 
 }

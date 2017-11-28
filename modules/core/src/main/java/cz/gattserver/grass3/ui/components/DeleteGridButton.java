@@ -1,11 +1,10 @@
 package cz.gattserver.grass3.ui.components;
 
-import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
-import cz.gattserver.web.common.ui.ImageIcons;
+import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.window.ConfirmWindow;
 import cz.gattserver.web.common.window.ErrorWindow;
 
@@ -29,7 +28,7 @@ public class DeleteGridButton<T> extends GridButton<T> {
 			});
 			UI.getCurrent().addWindow(win);
 		});
-		setIcon(new ThemeResource(ImageIcons.DELETE_16_ICON));
+		setIcon(ImageIcon.DELETE_16_ICON.createResource());
 	}
 
 	protected void onError() {

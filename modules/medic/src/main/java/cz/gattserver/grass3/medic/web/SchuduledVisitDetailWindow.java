@@ -11,7 +11,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.ui.windows.DetailWindow;
-import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.BoldLabel;
 
 public class SchuduledVisitDetailWindow extends DetailWindow {

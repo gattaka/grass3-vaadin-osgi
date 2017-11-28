@@ -27,11 +27,11 @@ import cz.gattserver.grass3.medic.util.MedicUtil;
 import cz.gattserver.grass3.medic.web.ScheduledVisitsCreateWindow.Operation;
 import cz.gattserver.grass3.ui.components.DetailGridButton;
 import cz.gattserver.grass3.ui.util.GridUtils;
-import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.BoldLabel;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.window.ConfirmWindow;
-import cz.gattserver.web.common.window.ErrorWindow;
+import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.ErrorWindow;
 
 public class ScheduledVisitsTab extends VerticalLayout {
 

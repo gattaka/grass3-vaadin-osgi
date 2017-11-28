@@ -14,8 +14,8 @@ import cz.gattserver.grass3.modules.register.ModuleRegister;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.MenuPage;
 import cz.gattserver.grass3.ui.util.GridUtils;
-import cz.gattserver.web.common.SpringContextHelper;
-import cz.gattserver.web.common.URLIdentifierUtils;
+import cz.gattserver.web.common.server.URLIdentifierUtils;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 
 public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {

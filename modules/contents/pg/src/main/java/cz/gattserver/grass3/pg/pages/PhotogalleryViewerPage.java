@@ -43,12 +43,12 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.grass3.ui.windows.ProgressWindow;
-import cz.gattserver.web.common.URLIdentifierUtils;
-import cz.gattserver.web.common.URLPathAnalyzer;
+import cz.gattserver.web.common.server.URLIdentifierUtils;
+import cz.gattserver.web.common.server.URLPathAnalyzer;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.window.ConfirmWindow;
-import cz.gattserver.web.common.window.WarnWindow;
-import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.WarnWindow;
+import cz.gattserver.web.common.ui.window.WebWindow;
 import net.engio.mbassy.listener.Handler;
 
 public class PhotogalleryViewerPage extends ContentViewerPage {
@@ -424,7 +424,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	}
 
 	private void showImage(File[] miniatures, int index) {
-		UI.getCurrent().addWindow(new ImageDetailWindow(miniatures, index, slideshowDirFile) {
+		UI.getCurrent().addWindow(new ImageSlideshowWindow(miniatures, index, slideshowDirFile) {
 			private static final long serialVersionUID = 5403584860186673877L;
 
 			@Override

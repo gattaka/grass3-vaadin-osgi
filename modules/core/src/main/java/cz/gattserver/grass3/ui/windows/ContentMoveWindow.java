@@ -11,7 +11,7 @@ import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.ui.components.NodeTree;
-import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebWindow;
 
 public abstract class ContentMoveWindow extends WebWindow {
 

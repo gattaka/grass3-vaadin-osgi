@@ -5,8 +5,8 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.window.ConfirmWindow;
-import cz.gattserver.web.common.window.ErrorWindow;
+import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.ErrorWindow;
 
 public class DeleteGridButton<T> extends GridButton<T> {
 

@@ -7,9 +7,9 @@ import com.vaadin.ui.Notification.Type;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.ui.GrassUI;
-import cz.gattserver.web.common.window.ErrorWindow;
-import cz.gattserver.web.common.window.InfoWindow;
-import cz.gattserver.web.common.window.WarnWindow;
+import cz.gattserver.web.common.ui.window.ErrorWindow;
+import cz.gattserver.web.common.ui.window.InfoWindow;
+import cz.gattserver.web.common.ui.window.WarnWindow;
 
 public class UIUtils {
 

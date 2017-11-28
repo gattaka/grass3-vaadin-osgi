@@ -38,10 +38,10 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.grass3.ui.windows.ContentMoveWindow;
-import cz.gattserver.web.common.URLIdentifierUtils;
+import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.window.WarnWindow;
+import cz.gattserver.web.common.ui.window.WarnWindow;
 
 public abstract class ContentViewerPage extends TwoColumnPage {
 

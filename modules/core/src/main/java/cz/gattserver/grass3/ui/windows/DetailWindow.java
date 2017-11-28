@@ -5,7 +5,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebWindow;
 
 public abstract class DetailWindow extends WebWindow {
 

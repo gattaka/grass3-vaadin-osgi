@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.fo0.advancedtokenfield.main.AdvancedTokenField;
 import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.server.FileResource;
 import com.vaadin.shared.ui.ContentMode;
@@ -57,18 +58,17 @@ import cz.gattserver.grass3.services.NodeService;
 import cz.gattserver.grass3.ui.components.BaseProgressBar;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
-import cz.gattserver.grass3.ui.components.MultiUpload;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.grass3.ui.windows.ProgressWindow;
-import cz.gattserver.web.common.URLIdentifierUtils;
-import cz.gattserver.web.common.URLPathAnalyzer;
+import cz.gattserver.web.common.server.URLIdentifierUtils;
+import cz.gattserver.web.common.server.URLPathAnalyzer;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.TokenField;
-import cz.gattserver.web.common.window.ConfirmWindow;
-import cz.gattserver.web.common.window.WarnWindow;
+import cz.gattserver.web.common.ui.MultiUpload;
+import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.WarnWindow;
 
 public class PhotogalleryEditorPage extends OneColumnPage {
 
@@ -98,7 +98,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	private NodeOverviewTO node;
 	private PhotogalleryDTO photogallery;
 
-	private TokenField photogalleryKeywords;
+	private AdvancedTokenField photogalleryKeywords;
 	private TextField photogalleryNameField;
 	private DateTimeField photogalleryDateField;
 	private CheckBox publicatedCheckBox;
@@ -126,7 +126,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 		newFiles = new ArrayList<>();
 
-		photogalleryKeywords = new TokenField();
+		photogalleryKeywords = new AdvancedTokenField();
 		photogalleryNameField = new TextField();
 		photogalleryDateField = new DateTimeField();
 		publicatedCheckBox = new CheckBox();
@@ -299,7 +299,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		uploadWrapper.addStyleName("bordered");
 		contentLayout.addComponent(uploadWrapper);
 
-		final MultiUpload multiUpload = new MultiUpload() {
+		MultiUpload multiUpload = new MultiUpload() {
 			private static final long serialVersionUID = -5223991901495532219L;
 
 			@Override

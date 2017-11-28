@@ -17,8 +17,8 @@ import com.vaadin.ui.renderers.TextRenderer;
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
 import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.ui.util.GridUtils;
-import cz.gattserver.web.common.window.ConfirmWindow;
-import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.WebWindow;
 
 public abstract class DraftMenuWindow extends WebWindow {
 

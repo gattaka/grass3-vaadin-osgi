@@ -6,7 +6,7 @@ import com.vaadin.ui.Label;
 import cz.gattserver.grass3.medic.dto.MedicamentDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.ui.windows.DetailWindow;
-import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 
 public class MedicamentDetailWindow extends DetailWindow {
 

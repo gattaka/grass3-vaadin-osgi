@@ -23,11 +23,11 @@ import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.web.common.URLIdentifierUtils;
-import cz.gattserver.web.common.URLPathAnalyzer;
+import cz.gattserver.web.common.server.URLIdentifierUtils;
+import cz.gattserver.web.common.server.URLPathAnalyzer;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.window.ConfirmWindow;
-import cz.gattserver.web.common.window.WarnWindow;
+import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.WarnWindow;
 
 public class ArticlesViewerPage extends ContentViewerPage {
 

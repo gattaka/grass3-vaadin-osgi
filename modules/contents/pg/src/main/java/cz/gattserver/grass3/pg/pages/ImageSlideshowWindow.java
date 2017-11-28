@@ -12,9 +12,9 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 
-import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebWindow;
 
-public class ImageDetailWindow extends WebWindow {
+public class ImageSlideshowWindow extends WebWindow {
 
 	private static final long serialVersionUID = 4928404864735034779L;
 
@@ -23,7 +23,7 @@ public class ImageDetailWindow extends WebWindow {
 	private Embedded embedded;
 	private File[] miniatures;
 
-	public ImageDetailWindow(File[] miniatures, int index, File slideshowDir) {
+	public ImageSlideshowWindow(File[] miniatures, int index, File slideshowDir) {
 		super((index + 1) + "/" + miniatures.length + " " + miniatures[index].getName());
 		this.currentIndex = index;
 		this.miniatures = miniatures;

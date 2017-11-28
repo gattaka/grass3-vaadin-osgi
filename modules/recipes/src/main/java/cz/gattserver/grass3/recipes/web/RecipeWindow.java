@@ -11,7 +11,7 @@ import cz.gattserver.grass3.recipes.facades.RecipesFacade;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
 import cz.gattserver.grass3.ui.components.CreateButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
-import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebWindow;
 
 public abstract class RecipeWindow extends WebWindow {
 

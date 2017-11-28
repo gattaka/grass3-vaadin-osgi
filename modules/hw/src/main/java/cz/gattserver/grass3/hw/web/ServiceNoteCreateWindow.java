@@ -22,8 +22,8 @@ import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.HWItemState;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.HWFacade;
-import cz.gattserver.web.common.window.ErrorWindow;
-import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ErrorWindow;
+import cz.gattserver.web.common.ui.window.WebWindow;
 
 public abstract class ServiceNoteCreateWindow extends WebWindow {
 

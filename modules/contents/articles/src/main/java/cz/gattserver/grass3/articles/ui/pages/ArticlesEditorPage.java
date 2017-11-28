@@ -16,6 +16,8 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fo0.advancedtokenfield.main.AdvancedTokenField;
 import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutAction.ModifierKey;
@@ -54,12 +56,11 @@ import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.web.common.URLIdentifierUtils;
-import cz.gattserver.web.common.URLPathAnalyzer;
+import cz.gattserver.web.common.server.URLIdentifierUtils;
+import cz.gattserver.web.common.server.URLPathAnalyzer;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.TokenField;
-import cz.gattserver.web.common.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.ConfirmWindow;
 
 public class ArticlesEditorPage extends TwoColumnPage {
 
@@ -86,7 +87,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private NodeOverviewTO node;
 
 	private TextArea articleTextArea;
-	private TokenField articleKeywords;
+	private AdvancedTokenField articleKeywords;
 	private TextField articleNameField;
 	private CheckBox publicatedCheckBox;
 
@@ -171,7 +172,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	@Override
 	protected void createContent(CustomLayout customlayout) {
 		articleNameField = new TextField();
-		articleKeywords = new TokenField();
+		articleKeywords = new AdvancedTokenField();
 		articleTextArea = new TextArea();
 		publicatedCheckBox = new CheckBox();
 

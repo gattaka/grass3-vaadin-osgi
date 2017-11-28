@@ -25,7 +25,7 @@ import cz.gattserver.grass3.ui.components.ContentsLazyGrid;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.BasePage;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.web.common.URLIdentifierUtils;
+import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.H2Label;
 
 public class HomePage extends BasePage {

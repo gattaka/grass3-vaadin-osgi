@@ -21,7 +21,7 @@ import cz.gattserver.grass3.articles.editor.parser.interfaces.PositionTO;
 import cz.gattserver.grass3.articles.editor.parser.util.HTMLEscaper;
 import cz.gattserver.grass3.articles.plugins.Plugin;
 import cz.gattserver.grass3.articles.plugins.register.PluginRegister;
-import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 
 /**
  * Propojovací třída pluginů a jejich parserů - zajišťuje, že když si Parser

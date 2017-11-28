@@ -8,7 +8,7 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.js.JQueryBootstrapComponent;
 import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
-import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 
 /**
  * Základní layout pro stránky systému Grass. Volá {@link SpringContextHelper}

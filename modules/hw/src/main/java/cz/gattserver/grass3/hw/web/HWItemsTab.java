@@ -8,6 +8,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
+import com.fo0.advancedtokenfield.main.AdvancedTokenField;
 import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
@@ -32,12 +33,11 @@ import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.HWFacade;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
-import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.TokenField;
-import cz.gattserver.web.common.window.ConfirmWindow;
-import cz.gattserver.web.common.window.ErrorWindow;
+import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.ErrorWindow;
 
 public class HWItemsTab extends VerticalLayout {
 
@@ -51,7 +51,7 @@ public class HWItemsTab extends VerticalLayout {
 	private final String PURCHASE_DATE_BIND = "customPurchaseDate";
 
 	private Grid<HWItemOverviewDTO> grid;
-	private TokenField hwTypesFilter;
+	private AdvancedTokenField hwTypesFilter;
 
 	private HWFilterDTO filterDTO;
 
@@ -140,6 +140,7 @@ public class HWItemsTab extends VerticalLayout {
 						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
 					}
 				}) {
+
 			private static final long serialVersionUID = -422763987707688597L;
 
 			@Override
@@ -147,6 +148,7 @@ public class HWItemsTab extends VerticalLayout {
 				HWItemsTab.this.setEnabled(true);
 				super.close();
 			}
+
 		});
 	}
 
@@ -176,16 +178,10 @@ public class HWItemsTab extends VerticalLayout {
 		/**
 		 * Filtr na typy HW
 		 */
-		hwTypesFilter = new TokenField();
+		hwTypesFilter = new AdvancedTokenField();
 		hwTypesFilter.getInputField().setWidth("200px");
-		hwTypesFilter.addTokenAddListener(t -> {
-			populate();
-			return t;
-		});
-		hwTypesFilter.addTokenRemoveListener(t -> {
-			populate();
-			return t;
-		});
+		hwTypesFilter.addTokenAddListener(token -> populate());
+		hwTypesFilter.addTokenRemoveListener(e -> populate());
 		HorizontalLayout hwTypesFilterLayout = new HorizontalLayout();
 		hwTypesFilterLayout.setSpacing(true);
 		addComponent(hwTypesFilterLayout);

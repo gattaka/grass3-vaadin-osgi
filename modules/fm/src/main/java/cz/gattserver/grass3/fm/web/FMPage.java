@@ -44,17 +44,17 @@ import cz.gattserver.grass3.fm.FMExplorer.FileProcessState;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.components.Breadcrumb;
-import cz.gattserver.grass3.ui.components.MultiUpload;
 import cz.gattserver.grass3.ui.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.ComparableStringDate;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.window.ConfirmWindow;
-import cz.gattserver.web.common.window.WebWindow;
-import cz.gattserver.web.common.window.InfoWindow;
-import cz.gattserver.web.common.window.WarnWindow;
+import cz.gattserver.web.common.ui.MultiUpload;
+import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.InfoWindow;
+import cz.gattserver.web.common.ui.window.WarnWindow;
+import cz.gattserver.web.common.ui.window.WebWindow;
 
 public class FMPage extends OneColumnPage {
 

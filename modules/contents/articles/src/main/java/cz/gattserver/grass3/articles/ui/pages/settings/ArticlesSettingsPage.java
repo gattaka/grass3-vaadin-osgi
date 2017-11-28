@@ -23,7 +23,7 @@ import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.grass3.ui.windows.ProgressWindow;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.H2Label;
-import cz.gattserver.web.common.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.ConfirmWindow;
 import net.engio.mbassy.listener.Handler;
 
 public class ArticlesSettingsPage extends AbstractSettingsPage {

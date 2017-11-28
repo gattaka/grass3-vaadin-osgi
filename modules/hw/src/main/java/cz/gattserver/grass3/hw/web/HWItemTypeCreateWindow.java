@@ -12,8 +12,8 @@ import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.hw.dto.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.facade.HWFacade;
-import cz.gattserver.web.common.window.ErrorWindow;
-import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ErrorWindow;
+import cz.gattserver.web.common.ui.window.WebWindow;
 
 public abstract class HWItemTypeCreateWindow extends WebWindow {
 

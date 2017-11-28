@@ -22,7 +22,7 @@ import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
 import cz.gattserver.grass3.articles.latex.config.LatexConfiguration;
 import cz.gattserver.grass3.services.ConfigurationService;
-import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 
 /**
  * @author gatt

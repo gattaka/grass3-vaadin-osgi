@@ -19,7 +19,7 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.settings.factories.ModuleSettingsPageFactory;
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
-import cz.gattserver.web.common.URLPathAnalyzer;
+import cz.gattserver.web.common.server.URLPathAnalyzer;
 
 public class SettingsPage extends TwoColumnPage {
 

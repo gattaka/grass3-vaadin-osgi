@@ -8,7 +8,7 @@ import com.vaadin.ui.Link;
 import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.ui.windows.DetailWindow;
-import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 
 public class MedicalInstitutionDetailWindow extends DetailWindow {
 

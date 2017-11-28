@@ -20,9 +20,9 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
-import cz.gattserver.web.common.SpringContextHelper;
-import cz.gattserver.web.common.URLPathAnalyzer;
-import cz.gattserver.web.common.exception.ui.ApplicationErrorHandler;
+import cz.gattserver.web.common.server.URLPathAnalyzer;
+import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.exception.ApplicationErrorHandler;
 
 @Title("Gattserver")
 @Theme("grass")

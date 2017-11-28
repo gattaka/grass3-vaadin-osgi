@@ -46,13 +46,13 @@ import cz.gattserver.grass3.hw.dto.HWItemDTO;
 import cz.gattserver.grass3.hw.dto.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.dto.ServiceNoteDTO;
 import cz.gattserver.grass3.hw.facade.HWFacade;
-import cz.gattserver.grass3.ui.components.MultiUpload;
 import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.window.ConfirmWindow;
-import cz.gattserver.web.common.window.ErrorWindow;
-import cz.gattserver.web.common.window.ImageDetailWindow;
-import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.ui.MultiUpload;
+import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.ErrorWindow;
+import cz.gattserver.web.common.ui.window.ImageDetailWindow;
+import cz.gattserver.web.common.ui.window.WebWindow;
 
 public class HWItemDetailWindow extends WebWindow {
 

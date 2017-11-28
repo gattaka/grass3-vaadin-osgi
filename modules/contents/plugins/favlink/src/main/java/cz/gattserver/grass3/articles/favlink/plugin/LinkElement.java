@@ -14,7 +14,7 @@ import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
 import cz.gattserver.grass3.articles.favlink.Downloader;
 import cz.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
 import cz.gattserver.grass3.services.ConfigurationService;
-import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 
 public class LinkElement implements Element {

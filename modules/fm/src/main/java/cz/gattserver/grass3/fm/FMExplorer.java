@@ -13,7 +13,7 @@ import javax.xml.bind.JAXBException;
 
 import cz.gattserver.grass3.fm.config.FMConfiguration;
 import cz.gattserver.grass3.services.ConfigurationService;
-import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 
 public class FMExplorer {
 

@@ -7,7 +7,7 @@ import com.vaadin.ui.TextArea;
 
 import cz.gattserver.grass3.interfaces.QuoteTO;
 import cz.gattserver.web.common.ui.FieldUtils;
-import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebWindow;
 
 public class QuoteWindow extends WebWindow {
 

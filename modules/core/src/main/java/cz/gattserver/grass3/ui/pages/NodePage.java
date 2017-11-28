@@ -29,7 +29,7 @@ import cz.gattserver.grass3.ui.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.web.common.URLIdentifierUtils;
+import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcon;
 

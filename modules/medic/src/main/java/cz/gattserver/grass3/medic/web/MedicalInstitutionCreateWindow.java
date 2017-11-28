@@ -13,9 +13,9 @@ import com.vaadin.ui.UI;
 
 import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
-import cz.gattserver.web.common.SpringContextHelper;
-import cz.gattserver.web.common.window.ErrorWindow;
-import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.window.ErrorWindow;
+import cz.gattserver.web.common.ui.window.WebWindow;
 
 public abstract class MedicalInstitutionCreateWindow extends WebWindow {
 

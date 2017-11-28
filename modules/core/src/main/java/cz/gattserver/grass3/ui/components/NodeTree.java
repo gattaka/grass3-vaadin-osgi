@@ -33,10 +33,10 @@ import com.vaadin.ui.components.grid.TreeGridDropTarget;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.services.NodeService;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.window.ConfirmWindow;
-import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.WebWindow;
 
 public class NodeTree extends VerticalLayout {
 

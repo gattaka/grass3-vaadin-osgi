@@ -14,8 +14,8 @@ import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.search.service.SearchConnector;
 import cz.gattserver.grass3.search.service.SearchField;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
+import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.grass3.search.service.SearchEntity;
-import cz.gattserver.web.common.URLIdentifierUtils;
 
 @Component("articlesSearchConnector")
 public class ArticlesSearchConnector implements SearchConnector {

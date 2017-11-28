@@ -3,7 +3,7 @@ package cz.gattserver.grass3.medic.web;
 import cz.gattserver.common.Identifiable;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.ui.components.GridOperationsTab;
-import cz.gattserver.web.common.SpringContextHelper;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 
 public abstract class MedicPageTab<T extends Identifiable> extends GridOperationsTab<T> {
 

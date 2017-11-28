@@ -21,7 +21,7 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.UserService;
 import cz.gattserver.grass3.ui.components.GridButton;
 import cz.gattserver.web.common.ui.H2Label;
-import cz.gattserver.web.common.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebWindow;
 
 public class UsersSettingsPage extends AbstractSettingsPage {
 

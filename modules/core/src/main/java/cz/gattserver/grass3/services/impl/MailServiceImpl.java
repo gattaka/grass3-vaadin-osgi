@@ -10,11 +10,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.springframework.stereotype.Service;
-
 import cz.gattserver.grass3.services.MailService;
 
-@Service
 public class MailServiceImpl implements MailService {
 
 	private String grassMailAddress;

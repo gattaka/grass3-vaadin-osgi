@@ -10,13 +10,14 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.renderers.ImageRenderer;
+import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.renderers.LocalDateTimeRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
 
@@ -186,13 +187,13 @@ public class ScheduledVisitsTab extends VerticalLayout {
 	private void prepareGrid(Grid<ScheduledVisitDTO> grid) {
 		grid.addColumn(item -> {
 			if (item.getState().equals(ScheduledVisitState.MISSED)) {
-				return ImageIcon.WARNING_16_ICON.createResource();
+				return new Image("", ImageIcon.WARNING_16_ICON.createResource());
 			} else {
 				if (MedicUtil.isVisitPending(item))
-					return ImageIcon.CLOCK_16_ICON.createResource();
+					return new Image("", ImageIcon.CLOCK_16_ICON.createResource());
 			}
 			return null;
-		}, new ImageRenderer<>()).setId("icon").setWidth(GridUtils.ICON_COLUMN_WIDTH);
+		}, new ComponentRenderer()).setId("icon").setWidth(GridUtils.ICON_COLUMN_WIDTH);
 
 		grid.addColumn(ScheduledVisitDTO::getState, new TextRenderer()).setId("state").setCaption("Stav");
 		grid.addColumn(ScheduledVisitDTO::getPurpose).setId("purpose").setCaption("Účel");

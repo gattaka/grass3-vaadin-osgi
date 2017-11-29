@@ -3,8 +3,9 @@ package cz.gattserver.grass3.ui.components;
 import java.util.List;
 
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.renderers.HtmlRenderer;
-import com.vaadin.ui.renderers.ImageRenderer;
 
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
@@ -28,7 +29,7 @@ public class NodesGrid extends Grid<NodeOverviewTO> {
 		String iconBind = "customIcon";
 		String nameBind = "customName";
 
-		addColumn(contentNode -> ImageIcon.BRIEFCASE_16_ICON.createResource(), new ImageRenderer<>())
+		addColumn(contentNode -> new Image("", ImageIcon.BRIEFCASE_16_ICON.createResource()), new ComponentRenderer())
 				.setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(iconBind);
 
 		addColumn(node -> {

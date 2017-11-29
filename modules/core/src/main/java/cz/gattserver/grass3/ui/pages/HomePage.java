@@ -9,9 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.server.ClassResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.VerticalLayout;
@@ -27,6 +29,7 @@ import cz.gattserver.grass3.ui.pages.template.BasePage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.H2Label;
+import cz.gattserver.web.common.ui.ImageIcon;
 
 public class HomePage extends BasePage {
 

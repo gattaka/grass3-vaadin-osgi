@@ -26,10 +26,6 @@ public class Lexer {
 	private int pcol, pline; // pozice řádek, sloupec
 	private StringBuilder word = new StringBuilder(); // načtený identifikátor
 
-	private void log(String log) {
-		logger.info(log);
-	}
-
 	/**
 	 * Vrati pocatecni pozici aktualniho symbolu.
 	 */
@@ -135,7 +131,7 @@ public class Lexer {
 	 */
 	public Token nextToken() {
 		Token symbol = readNextToken();
-		log("LEXER: Token made -> " + symbol);
+		logger.debug("LEXER: Token made -> " + symbol);
 		return symbol;
 	}
 

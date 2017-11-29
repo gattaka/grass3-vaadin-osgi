@@ -76,4 +76,29 @@ public class MailServiceImpl implements MailService {
 			e.printStackTrace();
 		}
 	}
+
+	public String getGrassMailAddress() {
+		return grassMailAddress;
+	}
+
+	public void setGrassMailAddress(String grassMailAddress) {
+		this.grassMailAddress = grassMailAddress;
+	}
+
+	public String getGrassMailPassword() {
+		return grassMailPassword;
+	}
+
+	public void setGrassMailPassword(String grassMailPassword) {
+		this.grassMailPassword = grassMailPassword;
+	}
+
+	public String getGrassNotificationAddress() {
+		return grassNotificationAddress;
+	}
+
+	public void setGrassNotificationAddress(String grassNotificationAddress) {
+		this.grassNotificationAddress = grassNotificationAddress;
+	}
+
 }

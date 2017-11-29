@@ -1,21 +1,23 @@
-package abbr;
+package cz.gattserver.grass3.articles.plugins.basic.abbr;
 
 import static org.junit.Assert.*;
+
+import java.util.HashMap;
 
 import org.junit.Test;
 
 import cz.gattserver.grass3.articles.editor.lexer.Lexer;
 import cz.gattserver.grass3.articles.editor.parser.Context;
-import cz.gattserver.grass3.articles.editor.parser.PluginBag;
+import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.impl.ContextImpl;
 import cz.gattserver.grass3.articles.plugins.basic.abbr.AbbrParser;
 
-public class AbbrTest {
+public class AbbrParserTest {
 
-	private PluginBag getBagWithText(String text) {
+	private ParsingProcessor getParsingProcessorWithText(String text) {
 		Lexer lexer = new Lexer(text);
-		PluginBag pluginBag = new PluginBag(lexer, "contextRoot");
+		ParsingProcessor pluginBag = new ParsingProcessor(lexer, "contextRoot", new HashMap<>());
 		pluginBag.nextToken(); // musí se inicializovat
 		return pluginBag;
 	}
@@ -23,7 +25,8 @@ public class AbbrTest {
 	@Test
 	public void test() {
 		AbbrParser abbrElement = new AbbrParser("ABBR", "T");
-		Element element = abbrElement.parse(getBagWithText("[ABBR]HTML[T]Hypertext Markup Language[/T][/ABBR]"));
+		Element element = abbrElement
+				.parse(getParsingProcessorWithText("[ABBR]HTML[T]Hypertext Markup Language[/T][/ABBR]"));
 
 		Context ctx = new ContextImpl();
 		element.apply(ctx);

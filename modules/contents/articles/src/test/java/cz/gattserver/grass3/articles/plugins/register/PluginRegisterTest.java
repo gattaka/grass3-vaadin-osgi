@@ -2,6 +2,7 @@ package cz.gattserver.grass3.articles.plugins.register;
 
 import static org.junit.Assert.*;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
@@ -16,7 +17,7 @@ import cz.gattserver.grass3.test.AbstractContextAwareTest;
 public class PluginRegisterTest extends AbstractContextAwareTest {
 
 	@Autowired
-	private PluginRegister pluginRegister;
+	private PluginRegisterService pluginRegister;
 
 	@Test
 	public void testGetRegisteredTags() {
@@ -25,25 +26,27 @@ public class PluginRegisterTest extends AbstractContextAwareTest {
 	}
 
 	@Test
-	public void testGet() {
-		Plugin mockTag = pluginRegister.get("MOCK_TAG");
+	public void testCreateRegisterSnapshot() {
+		Map<String, Plugin> map = pluginRegister.createRegisterSnapshot();
+
+		Plugin mockTag = map.get("MOCK_TAG");
 		assertNotNull(mockTag);
 		assertEquals("MOCK_TAG", mockTag.getTag());
 		assertEquals(MockPlugin.class, mockTag.getClass());
 		assertEquals(MockParser.class, mockTag.getParser().getClass());
 
-		assertNull(pluginRegister.get("NONEXISTENT_TAG"));
+		assertNull(map.get("NONEXISTENT_TAG"));
 	}
 
 	@Test
 	public void testGetGroupTags() {
-		Set<EditorButtonResourcesTO> resourcesTOs = pluginRegister.getGroupTags("Mock");
+		Set<EditorButtonResourcesTO> resourcesTOs = pluginRegister.getTagResourcesByGroup("Mock");
 		assertEquals(1, resourcesTOs.size());
 
-		resourcesTOs = pluginRegister.getGroupTags("Nadpisy");
+		resourcesTOs = pluginRegister.getTagResourcesByGroup("Nadpisy");
 		assertEquals(4, resourcesTOs.size());
 
-		resourcesTOs = pluginRegister.getGroupTags("Nonexistent");
+		resourcesTOs = pluginRegister.getTagResourcesByGroup("Nonexistent");
 		assertTrue(resourcesTOs.isEmpty());
 	}
 
@@ -53,12 +56,6 @@ public class PluginRegisterTest extends AbstractContextAwareTest {
 		assertEquals(2, groups.size());
 		assertTrue(groups.contains("Nadpisy"));
 		assertTrue(groups.contains("Mock"));
-	}
-
-	@Test
-	public void testIsRegistered() {
-		assertTrue(pluginRegister.isRegistered("MOCK_TAG"));
-		assertFalse(pluginRegister.isRegistered("NONEXISTENT_TAG"));
 	}
 
 }

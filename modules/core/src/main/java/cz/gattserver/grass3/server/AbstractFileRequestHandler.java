@@ -5,10 +5,6 @@ import java.io.FileNotFoundException;
 
 public abstract class AbstractFileRequestHandler extends AbstractGrassRequestHandler {
 
-	public AbstractFileRequestHandler(String mountPoint) {
-		super(mountPoint);
-	}
-
 	private static final long serialVersionUID = 7154339775034959876L;
 
 	/**
@@ -16,9 +12,13 @@ public abstract class AbstractFileRequestHandler extends AbstractGrassRequestHan
 	 */
 	protected abstract String getRootDir();
 
+	public AbstractFileRequestHandler(String mountPoint) {
+		super(mountPoint);
+	}
+
 	@Override
 	protected File getFile(String fileName) throws FileNotFoundException {
-		return new File(getRootDir() + "/" + fileName);
+		return new File(getRootDir(), fileName);
 	}
 
 }

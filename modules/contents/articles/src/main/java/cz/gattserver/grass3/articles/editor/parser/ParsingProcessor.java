@@ -3,11 +3,11 @@ package cz.gattserver.grass3.articles.editor.parser;
 import static cz.gattserver.grass3.articles.editor.lexer.Token.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import cz.gattserver.grass3.articles.editor.lexer.Lexer;
 import cz.gattserver.grass3.articles.editor.lexer.Token;
@@ -20,36 +20,29 @@ import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.PositionTO;
 import cz.gattserver.grass3.articles.editor.parser.util.HTMLEscaper;
 import cz.gattserver.grass3.articles.plugins.Plugin;
-import cz.gattserver.grass3.articles.plugins.register.PluginRegister;
-import cz.gattserver.web.common.spring.SpringContextHelper;
 
 /**
- * Propojovací třída pluginů a jejich parserů - zajišťuje, že když si Parser
- * předá "kontext" mezi sebou a ParserPluginem, že ParserPlugin bude pracovat s
- * daty, jejichž změny pak rovnou uvidí původní Parser.
- * 
- * Každý parser v sobě může mít obsahy jiných pluginů, proto je potřeba aby měl
- * možnost si zavolat o překlad nějaké části svého obsahu jiný plugin. Protože
- * ale rozhodování, který plugin na co zavolat náleží centrálnímu parseru, je to
- * řešené takto pomocí předávání tohoto objektu, který volá pluginy na základně
- * žádností provádějících pluginů, plus si drží informace jako pozice v textu
- * apod.
+ * <p>
+ * Každý {@link Parser} v sobě může mít obsahy jiných {@link Plugin}ů, proto je
+ * potřeba aby měl možnost si zavolat o překlad nějaké části svého obsahu jiný
+ * plugin.
+ * </p>
+ * <p>
+ * Protože ale rozhodování, který plugin na co zavolat náleží centrálnímu
+ * parseru, je to řešené takto pomocí předávání tohoto objektu, který volá
+ * pluginy na základně žádností provádějících pluginů, plus si drží informace
+ * jako pozice v textu apod.
+ * </p>
  * 
  * @author gatt
  */
-public class PluginBag {
-
-	@Autowired
-	private PluginRegister pluginRegister;
-
-	private Token token;
-	private Lexer lexer;
+public class ParsingProcessor {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private void log(String log) {
-		logger.info(log);
-	}
+	private Map<String, Plugin> registerSnapshot;
+	private Token token;
+	private Lexer lexer;
 
 	/**
 	 * některé pluginy potřebují sázet linky a u těch je občas potřeba znát
@@ -59,8 +52,9 @@ public class PluginBag {
 
 	/**
 	 * zásobník aktivovaných pluginů - dalo by se to řešit automaticky pomocí
-	 * předávání instancí PluginBag, ale to má stejný význam, navíc to ještě na
-	 * zásobník (systémový) ukládá kvantum věcí navíc, tohle je úspornější
+	 * předávání instancí {@link ParsingProcessor}, ale to má stejný význam,
+	 * navíc to ještě na zásobník (systémový) ukládá kvantum věcí navíc, tohle
+	 * je úspornější
 	 */
 	private Stack<StackElement> activePlugins;
 
@@ -91,7 +85,13 @@ public class PluginBag {
 			this.tag = tag;
 			this.parserPlugin = parserPlugin;
 		}
+	}
 
+	public ParsingProcessor(Lexer lexer, String contextRoot, Map<String, Plugin> registerSnapshot) {
+		this.lexer = lexer;
+		this.contextRoot = contextRoot;
+		this.activePlugins = new Stack<StackElement>();
+		this.registerSnapshot = registerSnapshot;
 	}
 
 	/**
@@ -99,19 +99,12 @@ public class PluginBag {
 	 * jako {@code <br/>
 	 * }
 	 * 
-	 * @return {@code true }, pokud lze vypisovat znak {@code <br/>} jinak
+	 * @return {@code true}, pokud lze vypisovat znak {@code <br/>} jinak
 	 */
 	public boolean canHoldBreakline() {
 		// pokud to teď řídí nějaký plugin, tak vrať jeho rozhodnutí,
 		// jinak pokud jsme pod základním Parserem, tak tam se může všechno
 		return activePlugins.empty() ? true : activePlugins.peek().parserPlugin.canHoldBreakline();
-	}
-
-	public PluginBag(Lexer lexer, String contextRoot) {
-		SpringContextHelper.inject(this);
-		this.lexer = lexer;
-		this.contextRoot = contextRoot;
-		this.activePlugins = new Stack<StackElement>();
 	}
 
 	/**
@@ -190,9 +183,9 @@ public class PluginBag {
 
 		String tag = getStartTag();
 
-		log(this.getClass().getSimpleName() + ": Looking for the right ParserPlugin for tag '" + tag + "'");
+		logger.info("Looking for the right ParserPlugin for tag '" + tag + "'");
 
-		Plugin plugin = pluginRegister.get(tag);
+		Plugin plugin = registerSnapshot.get(tag);
 
 		if (plugin != null) {
 
@@ -203,34 +196,32 @@ public class PluginBag {
 					// vstupuješ do dalšího patra parsovacího stromu
 					// => nastav si, že tento plugin je právě u prohledávání
 					activePlugins.push(new StackElement(parser, tag));
-					log(this.getClass().getSimpleName() + ": " + parser.getClass().getCanonicalName()
-							+ " was pushed in stack and launched");
-					log(this.getClass().getSimpleName() + ": activePlugins: " + activePlugins.size());
+					logger.info(parser.getClass().getCanonicalName() + " was pushed in stack and launched");
+					logger.info("activePlugins: " + activePlugins.size());
 
 					// Spusť plugin
 					Element elementTree = parser.parse(this);
 
 					parser = activePlugins.pop().getParserPlugin();
-					log(this.getClass().getSimpleName() + ": " + parser.getClass().getCanonicalName()
-							+ " terminates (clean) and was poped from stack");
-					log(this.getClass().getSimpleName() + ": activePlugins: " + activePlugins.size());
+					logger.info(parser.getClass().getCanonicalName() + " terminates (clean) and was poped from stack");
+					logger.info("activePlugins: " + activePlugins.size());
 
 					return elementTree;
 
 				} catch (ParserException pe) {
 					// Plugin běží, ale něco se mu nelíbí a tak vyhodil výjimku
 					parser = activePlugins.pop().getParserPlugin();
-					log(this.getClass().getSimpleName() + ": " + parser.getClass().getCanonicalName()
+					logger.warn(parser.getClass().getCanonicalName()
 							+ " terminates (parse error) and was poped from stack");
-					log(this.getClass().getSimpleName() + ": activePlugins: " + activePlugins.size());
+					logger.warn("activePlugins: " + activePlugins.size());
 					return new ParserErrorElement(tag);
 				}
 			} catch (Exception ex) {
 				// V pluginu došlo k chybě
 				parser = activePlugins.pop().getParserPlugin();
-				log(this.getClass().getSimpleName() + ": " + parser.getClass().getCanonicalName()
-						+ " terminates (plugin error) and was poped from stack");
-				log(this.getClass().getSimpleName() + ": activePlugins: " + activePlugins.size());
+				logger.error(
+						parser.getClass().getCanonicalName() + " terminates (plugin error) and was poped from stack");
+				logger.error("activePlugins: " + activePlugins.size());
 				logger.error("Plugin error", ex);
 				return new PluginErrorElement(tag);
 			}
@@ -248,7 +239,7 @@ public class PluginBag {
 	 *            elementů a textu
 	 */
 	public void getBlock(List<Element> elist) {
-		log(this.getClass().getSimpleName() + ": block: " + getToken());
+		logger.info("block: " + getToken());
 		switch (getToken()) {
 		case START_TAG:
 		case TEXT:
@@ -304,14 +295,14 @@ public class PluginBag {
 	}
 
 	private BreaklineElement getBreakline() {
-		log(this.getClass().getSimpleName() + ": breakline: " + getToken());
+		logger.info("breakline: " + getToken());
 		switch (getToken()) {
 		case EOL:
 			// pokud je povolené odřádkování, tak se vloží <br/> jinak ' '
 			nextToken();
 			return new BreaklineElement(canHoldBreakline());
 		default:
-			log("Čekal jsem: " + EOL + ", ne " + getToken() + "%n");
+			logger.warn("Čekal jsem: " + EOL + ", ne " + getToken() + "%n");
 			throw new ParserException();
 		}
 	}
@@ -322,7 +313,7 @@ public class PluginBag {
 	 * @return
 	 */
 	public Element getElement() {
-		log(this.getClass().getSimpleName() + ": element: " + getToken());
+		logger.info("element: " + getToken());
 		switch (getToken()) {
 		case START_TAG:
 		case END_TAG:
@@ -334,8 +325,8 @@ public class PluginBag {
 			return getBreakline();
 		case EOF:
 		default:
-			log("Čekal jsem: " + START_TAG + ", " + END_TAG + ", " + TEXT + " nebo " + EOL + ", ne " + getToken()
-					+ "%n");
+			logger.warn("Čekal jsem: " + START_TAG + ", " + END_TAG + ", " + TEXT + " nebo " + EOL + ", ne "
+					+ getToken() + "%n");
 			throw new ParserException();
 		}
 	}
@@ -351,7 +342,7 @@ public class PluginBag {
 	}
 
 	private TextElement getTextTree(boolean escaped) {
-		log(this.getClass().getSimpleName() + ": text: " + getToken());
+		logger.info("text: " + getToken());
 		String text = escaped ? getText() : getCode();
 		nextToken();
 		TextElement element = new TextElement(text);

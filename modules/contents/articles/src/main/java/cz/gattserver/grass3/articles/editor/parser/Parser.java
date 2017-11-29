@@ -15,7 +15,7 @@ public interface Parser {
 	 * @return {@link Element} AST strom pro finální generování výsledného
 	 *         článku
 	 */
-	Element parse(PluginBag pluginBag);
+	Element parse(ParsingProcessor pluginBag);
 
 	/**
 	 * Zjistí od parseru jestli bere konce řádků

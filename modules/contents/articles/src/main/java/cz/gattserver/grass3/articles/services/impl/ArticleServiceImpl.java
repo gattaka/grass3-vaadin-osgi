@@ -7,15 +7,16 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import cz.gattserver.grass3.articles.editor.lexer.Lexer;
 import cz.gattserver.grass3.articles.editor.parser.Context;
 import cz.gattserver.grass3.articles.editor.parser.Parser;
-import cz.gattserver.grass3.articles.editor.parser.PluginBag;
+import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.impl.ArticleParser;
 import cz.gattserver.grass3.articles.editor.parser.impl.ContextImpl;
@@ -30,6 +31,7 @@ import cz.gattserver.grass3.articles.model.domain.Article;
 import cz.gattserver.grass3.articles.model.domain.ArticleJSResource;
 import cz.gattserver.grass3.articles.model.repositories.ArticleRepository;
 import cz.gattserver.grass3.articles.model.util.ArticlesMapper;
+import cz.gattserver.grass3.articles.plugins.register.PluginRegisterService;
 import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.model.domain.ContentNode;
@@ -40,7 +42,7 @@ import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.services.ContentNodeService;
 
 @Transactional
-@Component
+@Service
 public class ArticleServiceImpl implements ArticleService {
 
 	@Autowired
@@ -58,14 +60,15 @@ public class ArticleServiceImpl implements ArticleService {
 	@Autowired
 	private UserRepository userRepository;
 
-	private Context processArticle(String source, String contextRoot) {
+	@Autowired
+	private PluginRegisterService pluginRegister;
 
-		if (contextRoot == null)
-			throw new IllegalArgumentException("ContextRoot nemůže být null");
+	private Context processArticle(String source, String contextRoot) {
+		Validate.notNull(contextRoot, "ContextRoot nemůže být null");
 
 		Lexer lexer = new Lexer(source);
 		Parser parser = new ArticleParser();
-		PluginBag pluginBag = new PluginBag(lexer, contextRoot);
+		ParsingProcessor pluginBag = new ParsingProcessor(lexer, contextRoot, pluginRegister.createRegisterSnapshot());
 
 		// výstup
 		Element tree = parser.parse(pluginBag);

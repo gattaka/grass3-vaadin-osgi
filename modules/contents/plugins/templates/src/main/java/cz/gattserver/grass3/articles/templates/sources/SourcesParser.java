@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import cz.gattserver.grass3.articles.editor.lexer.Token;
 import cz.gattserver.grass3.articles.editor.parser.Parser;
-import cz.gattserver.grass3.articles.editor.parser.PluginBag;
+import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
 
@@ -27,7 +27,7 @@ public class SourcesParser implements Parser {
 	}
 
 	@Override
-	public Element parse(PluginBag pluginBag) {
+	public Element parse(ParsingProcessor pluginBag) {
 		// zpracovat počáteční tag
 		parseStartTag(pluginBag);
 
@@ -45,7 +45,7 @@ public class SourcesParser implements Parser {
 		return false;
 	}
 
-	private void parseStartTag(PluginBag pluginBag) {
+	private void parseStartTag(ParsingProcessor pluginBag) {
 		String startTag = pluginBag.getStartTag();
 
 		if (!startTag.equals(tag)) {
@@ -56,7 +56,7 @@ public class SourcesParser implements Parser {
 		pluginBag.nextToken();
 	}
 
-	private void parseSources(PluginBag pluginBag) {
+	private void parseSources(ParsingProcessor pluginBag) {
 		// dokud není konec souboru nebo můj uzavírací tag
 		StringBuilder builder = new StringBuilder();
 		while (pluginBag.getToken() != Token.EOF
@@ -75,7 +75,7 @@ public class SourcesParser implements Parser {
 			sources.add(builder.toString());
 	}
 
-	private void parseEndTag(PluginBag pluginBag) {
+	private void parseEndTag(ParsingProcessor pluginBag) {
 		String endTag = pluginBag.getEndTag();
 
 		if (!endTag.equals(tag)) {

@@ -11,17 +11,19 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
 import cz.gattserver.grass3.articles.plugins.Plugin;
-import cz.gattserver.grass3.articles.plugins.register.PluginRegister;
+import cz.gattserver.grass3.articles.plugins.register.PluginRegisterService;
 
 /**
+ * Služba, která přes spring DI získává pluginy
+ * 
  * @author gatt
  */
-@Component
-public class PluginRegisterImpl implements PluginRegister {
+@Service
+public class PluginRegisterServiceImpl implements PluginRegisterService {
 
 	@Autowired(required = false)
 	private List<Plugin> injectedPlugins;
@@ -56,22 +58,12 @@ public class PluginRegisterImpl implements PluginRegister {
 	}
 
 	@Override
-	public boolean isRegistered(String tag) {
-		return plugins.containsKey(tag);
-	}
-
-	@Override
-	public Plugin get(String tag) {
-		return plugins.get(tag);
-	}
-
-	@Override
 	public Set<String> getRegisteredGroups() {
 		return Collections.unmodifiableSet(editorCatalog.keySet());
 	}
 
 	@Override
-	public Set<EditorButtonResourcesTO> getGroupTags(String group) {
+	public Set<EditorButtonResourcesTO> getTagResourcesByGroup(String group) {
 		Map<String, EditorButtonResourcesTO> resources = editorCatalog.get(group);
 		if (resources == null)
 			return new HashSet<EditorButtonResourcesTO>();
@@ -89,5 +81,10 @@ public class PluginRegisterImpl implements PluginRegister {
 			map.put(resources.getTag(), resources);
 			editorCatalog.put(resources.getTagFamily(), map);
 		}
+	}
+
+	@Override
+	public Map<String, Plugin> createRegisterSnapshot() {
+		return Collections.unmodifiableMap(plugins);
 	}
 }

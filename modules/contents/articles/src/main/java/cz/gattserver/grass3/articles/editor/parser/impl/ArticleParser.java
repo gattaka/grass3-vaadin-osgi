@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cz.gattserver.grass3.articles.editor.parser.Parser;
-import cz.gattserver.grass3.articles.editor.parser.PluginBag;
+import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.ArticleElement;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.elements.ParserErrorElement;
@@ -39,13 +39,13 @@ public class ArticleParser implements Parser {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private PluginBag pluginBag;
+	private ParsingProcessor pluginBag;
 
 	/**
 	 * Postaví strom článku a vyhodnotí chyby. Vstupní metoda pro zpracování
 	 * článku.
 	 */
-	public Element parse(PluginBag pluginBag) {
+	public Element parse(ParsingProcessor pluginBag) {
 		this.pluginBag = pluginBag;
 		pluginBag.nextToken();
 		ArticleElement p = article();

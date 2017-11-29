@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cz.gattserver.grass3.articles.editor.parser.Parser;
-import cz.gattserver.grass3.articles.editor.parser.PluginBag;
+import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
 
@@ -27,7 +27,7 @@ public abstract class AbstractStyleParser implements Parser {
 	}
 
 	@Override
-	public Element parse(PluginBag pluginBag) {
+	public Element parse(ParsingProcessor pluginBag) {
 
 		// zpracovat počáteční tag
 		String startTag = pluginBag.getStartTag();

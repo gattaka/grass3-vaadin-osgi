@@ -41,7 +41,7 @@ import cz.gattserver.grass3.articles.editor.parser.util.PartsFinder;
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
 import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
-import cz.gattserver.grass3.articles.plugins.register.PluginRegister;
+import cz.gattserver.grass3.articles.plugins.register.PluginRegisterService;
 import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.articles.ui.windows.DraftMenuWindow;
 import cz.gattserver.grass3.exception.GrassPageException;
@@ -76,7 +76,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private ContentTagService contentTagFacade;
 
 	@Autowired
-	private PluginRegister pluginRegister;
+	private PluginRegisterService pluginRegister;
 
 	@Resource(name = "nodePageFactory")
 	private PageFactory nodePageFactory;
@@ -275,7 +275,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			accordion.addTab(groupToolsLayout, group);
 
 			List<EditorButtonResourcesTO> resourcesBundles = new ArrayList<EditorButtonResourcesTO>(
-					pluginRegister.getGroupTags(group));
+					pluginRegister.getTagResourcesByGroup(group));
 			Collections.sort(resourcesBundles);
 
 			for (EditorButtonResourcesTO resourceBundle : resourcesBundles) {

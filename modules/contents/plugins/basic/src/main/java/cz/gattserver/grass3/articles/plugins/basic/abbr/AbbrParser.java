@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import cz.gattserver.grass3.articles.editor.lexer.Token;
 import cz.gattserver.grass3.articles.editor.parser.Parser;
-import cz.gattserver.grass3.articles.editor.parser.PluginBag;
+import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
 
@@ -27,7 +27,7 @@ public class AbbrParser implements Parser {
 	}
 
 	@Override
-	public Element parse(PluginBag pluginBag) {
+	public Element parse(ParsingProcessor pluginBag) {
 		// zpracovat počáteční tag
 		parseStartTag(pluginBag);
 
@@ -55,7 +55,7 @@ public class AbbrParser implements Parser {
 		return false;
 	}
 
-	private void parseStartTag(PluginBag pluginBag) {
+	private void parseStartTag(ParsingProcessor pluginBag) {
 		String startTag = pluginBag.getStartTag();
 
 		if (!startTag.equals(tag)) {
@@ -66,7 +66,7 @@ public class AbbrParser implements Parser {
 		pluginBag.nextToken();
 	}
 
-	private void parseAbbreviation(PluginBag pluginBag) {
+	private void parseAbbreviation(ParsingProcessor pluginBag) {
 		if (pluginBag.getToken() != Token.EOF) {
 			text = pluginBag.getText();
 		}
@@ -77,7 +77,7 @@ public class AbbrParser implements Parser {
 		pluginBag.nextToken();
 	}
 
-	private void parseTextStartTag(PluginBag pluginBag) {
+	private void parseTextStartTag(ParsingProcessor pluginBag) {
 		String startTag = pluginBag.getStartTag();
 
 		if (!startTag.equals(titleTag)) {
@@ -88,7 +88,7 @@ public class AbbrParser implements Parser {
 		pluginBag.nextToken();
 	}
 
-	private void parseTitle(PluginBag pluginBag) {
+	private void parseTitle(ParsingProcessor pluginBag) {
 		if (pluginBag.getToken() != Token.EOF) {
 			title = pluginBag.getText();
 		}
@@ -99,7 +99,7 @@ public class AbbrParser implements Parser {
 		pluginBag.nextToken();
 	}
 
-	private void parseTextEndTag(PluginBag pluginBag) {
+	private void parseTextEndTag(ParsingProcessor pluginBag) {
 		String endTag = pluginBag.getEndTag();
 
 		if (!endTag.equals(titleTag)) {
@@ -110,7 +110,7 @@ public class AbbrParser implements Parser {
 		pluginBag.nextToken();
 	}
 
-	private void parseEndTag(PluginBag pluginBag) {
+	private void parseEndTag(ParsingProcessor pluginBag) {
 		String endTag = pluginBag.getEndTag();
 
 		if (!endTag.equals(tag)) {

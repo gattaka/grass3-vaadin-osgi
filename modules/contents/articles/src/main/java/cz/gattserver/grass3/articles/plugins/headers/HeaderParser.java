@@ -41,11 +41,6 @@ public class HeaderParser implements Parser {
 		// START_tag byl zpracován
 		pluginBag.nextToken();
 
-		/*
-		 * // elementy .. prostě blok List<EditorElementTree> elist = new
-		 * ArrayList<EditorElementTree>(); block(elist);
-		 */
-
 		// zpracovat text
 		List<Element> elist = new ArrayList<Element>();
 		pluginBag.getBlock(elist);

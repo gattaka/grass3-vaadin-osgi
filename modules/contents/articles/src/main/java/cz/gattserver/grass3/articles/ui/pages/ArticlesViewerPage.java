@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.server.ClassResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
@@ -74,15 +75,13 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			UIUtils.redirect(getPageURL(homePageFactory.getPageName()));
 		}
 
-		if (article.getContentNode().isPublicated() || (UIUtils.getUser() != null
-				&& (article.getContentNode().getAuthor().equals(UIUtils.getUser()) || UIUtils.getUser().isAdmin()))) {
-		} else {
+		if (!article.getContentNode().isPublicated() && !UIUtils.getUser().isAdmin()
+				&& article.getContentNode().getAuthor().equals(UIUtils.getUser())) {
 			throw new GrassPageException(403);
 		}
 
 		// CSS resources
 		for (String css : article.getPluginCSSResources()) {
-
 			// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
 			// obejít problém se závislosí pluginů na úložišti theme apod. a
 			// přitom umožnit aby se CSS odkazovali na externí zdroje
@@ -127,10 +126,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		if (coreACLService.canModifyContent(article.getContentNode(), UIUtils.getUser())) {
 			String url = getPageURL(articlesEditorPageFactory, DefaultContentOperations.EDIT.toString(),
 					URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName()));
-			String script = "$(\".articles-basic-h-id\").each(" + "function(index){" + "$(this).attr(\"href\",\"" + url
-					+ "/\" + $(this).attr(\"href\"));" + "$(this).html(\"<img alt=\\\" class=\\\"v-icon\\\" src=\\\""
-					+ getRequest().getContextRoot() + "/VAADIN/themes/grass/" + ImageIcon.PENCIL_16_ICON
-					+ "\\\"/>&nbsp\");" + "}" + ")";
+			String script = "$(\".articles-h-id\").each(" + "function(index){" + "$(this).attr(\"href\",\"" + url
+					+ "/\" + $(this).attr(\"href\"));" + "$(this).html(\"[edit]\");" + "}" + ")";
 			loadJS(new JScriptItem(script, true));
 		}
 	}

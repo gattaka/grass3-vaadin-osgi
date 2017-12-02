@@ -243,12 +243,12 @@ public class ParsingProcessor {
 	}
 
 	/**
-	 * Zpracuje obsah jako sadu elementů skládajích se z čehokoliv. Výsledné AST
-	 * stromy přidá do předaného listu
+	 * Zpracuje obsah jako podstrom prvků. Parsuje, dokud nenarazí na volný
+	 * {@link Token#END_TAG}, tedy ukončovací tag, který nebyl zpracován v rámci
+	 * párování tagů prvků podstromu.
 	 * 
 	 * @param elist
-	 *            list do kterého se mají ukládat výsledné AST jednotlivých
-	 *            elementů a textu
+	 *            list do kterého se budou ukládat výsledné podstromy prvků
 	 */
 	public void getBlock(List<Element> elist) {
 		logger.info("block: " + getToken());
@@ -260,50 +260,36 @@ public class ParsingProcessor {
 			getBlock(elist);
 			break;
 		case END_TAG:
-			/**
-			 * Ukončovací tag znamená:
-			 * 
-			 * a) konec bloku nějakého tagu
-			 * 
-			 * špatně se ověřuje, protože pokud je block volán z pluginu, tak se
-			 * plugin se spoléhá na to, že block se tady ukončí a plugin si pak
-			 * vyzvedne END_TAG sám a také se ukončí.
-			 * 
-			 * může se ale tady stát (a stalo se), že ale žádný plugin venku
-			 * nečeká a block tak vlastně ukončí parsování jenom protože našel
-			 * koncový tag nějakého existujícího pluginu
-			 * 
-			 * je proto nutné si nějak evidovat, zda někdo vyzvedne po ukončení
-			 * tag nebo ne - pokud nikdo nečeká na vyzvednutí bude se END_TAG
-			 * existujícího pluginu brát jako chyba nebo jako text, pokud plugin
-			 * čeká až block skončí, bude se to ignorovat a provede se normální
-			 * ukončení na break
-			 * 
-			 * b) text - není to tag, ale jen text
-			 * 
-			 * dá se ověřit tak, že pokud žádný plugin tenhle tag nezná tak je
-			 * to text ...
-			 * 
-			 **/
-			// pokud jsem ve volání a narazil jsem na ukončovací tag
-			// volajícího pluginu, tak to ukonči
+			// je aktivní nějaký plugin nebo parsuju kořenový blok článku?
 			if (!activePlugins.empty()) {
+				// pokud je ativní nějaký plugin, pak čeká na svůj ukončovací
+				// token -- zkontroluj, zda je jeho
 				String expectedEndTag = activePlugins.peek().getTag();
 				String actualEndTag = getEndTag();
-				if (expectedEndTag.equals(actualEndTag))
+				if (expectedEndTag.equals(actualEndTag)) {
+					// je jeho, ukončil jsem v pořádku parsování jeho obsahu
+					// jako podstrom prvků, ukonči blok
 					break;
-				else
-					throw new TokenException(expectedEndTag, actualEndTag);
+				} else {
+					boolean isInActive = activePlugins.contains(actualEndTag);
+					// není jeho -- jde o ukončovací tag některého z aktivních
+					// pluginů? Pokud ano, pak to ber jako chybu. Pokud ne, pak
+					// ho ber jako text a parsuj obsah dál, jako prvky jeho
+					// podstromu.
+					// Tím je umožněno, aby se dalo napsat například
+					// [N1][/TEST][/N1], ale zároveň aby se dali lokalizovat
+					// chyby
+					if (isInActive)
+						throw new TokenException(expectedEndTag, actualEndTag);
+				}
 			}
-
-			// pokud nejsi ve volání, musíš endTag zpracovat jako text
-			// pokud jsi ve volání, ale tento tag není známý, je to text
 			elist.add(getTextTree());
 			getBlock(elist);
 			break;
 		case EOF:
 		default:
-			// konec kaskády
+			if (!activePlugins.isEmpty())
+				throw new TokenException(Token.END_TAG, activePlugins.peek().getTag());
 			break;
 		}
 	}

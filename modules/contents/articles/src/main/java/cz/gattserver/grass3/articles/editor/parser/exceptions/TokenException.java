@@ -26,12 +26,17 @@ public class TokenException extends RuntimeException {
 	}
 
 	public TokenException(String expectedContent, String actualContent) {
-		Validate.notNull(expectedContent, "Expected Token nesmí být null");
-		Validate.notNull(actualContent, "Actual Token nesmí být null");
+		Validate.notNull(expectedContent, "Expected content nesmí být null");
+		Validate.notNull(actualContent, "Actual content nesmí být null");
 		this.message = "Expected content: '" + expectedContent + "' Actual content: "
 				+ StringPreviewCreator.createPreview(actualContent, 20);
 	}
 
+	public TokenException(Token expected, String tag) {
+		Validate.notNull(expected, "Expected Token nesmí být null");
+		this.message = "Expected Token: " + expected + " (" + tag + ") Actual Token: " + Token.EOF;
+	}
+	
 	public TokenException(Token expected) {
 		Validate.notNull(expected, "Expected Token nesmí být null");
 		this.message = "Expected Token: " + expected + " Actual Token: " + Token.EOF;

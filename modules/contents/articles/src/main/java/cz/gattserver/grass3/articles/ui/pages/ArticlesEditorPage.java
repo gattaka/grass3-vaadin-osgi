@@ -295,7 +295,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 	@Override
 	protected Component createRightColumnContent() {
-
 		VerticalLayout marginLayout = new VerticalLayout();
 		marginLayout.setMargin(true);
 

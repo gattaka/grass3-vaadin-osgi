@@ -63,6 +63,11 @@ public class EditorButtonResourcesTOBuilder {
 		this.imageResource = null;
 	}
 
+	/**
+	 * Vezme nasetovaná data a vytvoří z nich {@link EditorButtonResourcesTO}
+	 * 
+	 * @return {@link EditorButtonResourcesTO} instance
+	 */
 	public EditorButtonResourcesTO build() {
 		Validate.notBlank(tag);
 		String prefix = this.prefix;
@@ -137,11 +142,25 @@ public class EditorButtonResourcesTOBuilder {
 		return imageResource;
 	}
 
+	/**
+	 * Vytvoří zdroj obrázku jako {@link ThemeResource}
+	 * 
+	 * @param image
+	 *            adresa obrázku v rámci tématu
+	 * @return <code>this</code> pro řetězení
+	 */
 	public EditorButtonResourcesTOBuilder setImageAsThemeResource(String image) {
 		this.imageResource = new ThemeResource(image);
 		return this;
 	}
 
+	/**
+	 * Nastaví zdroj obrázku
+	 * 
+	 * @param imageResource
+	 *            zdroj
+	 * @return <code>this</code> pro řetězení
+	 */
 	public EditorButtonResourcesTOBuilder setImageResource(Resource imageResource) {
 		this.imageResource = imageResource;
 		return this;

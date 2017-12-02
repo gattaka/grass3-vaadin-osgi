@@ -26,6 +26,10 @@
 	margin-left: 10px;
 }
 
+a.articles-h-id {
+    font-size: 85%;
+}
+
 .level1, .level2, .level3, .level4 {
 	font-size: 12px;
 }

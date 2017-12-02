@@ -19,9 +19,9 @@ public class HeaderElement implements Element {
 	public void apply(Context ctx) {
 		ctx.resetHeaderLevel();
 		ctx.print("<div class=\"articles-h" + level + "\">");
-		ctx.print("<a class=\"articles-h-id\" href=\"" + ctx.getNextHeaderIdentifier() + "\"></a>");
 		for (Element headerText : headerContent)
 			headerText.apply(ctx);
+		ctx.print(" <a class=\"articles-h-id\" href=\"" + ctx.getNextHeaderIdentifier() + "\"></a>");
 		ctx.print("</div>");
 		ctx.setHeaderLevel(level);
 		ctx.addCSSResource("articles/style.css");

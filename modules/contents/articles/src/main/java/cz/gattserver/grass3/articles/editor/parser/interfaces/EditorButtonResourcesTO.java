@@ -63,10 +63,20 @@ public class EditorButtonResourcesTO implements Comparable<EditorButtonResources
 		return tagFamily;
 	}
 
+	/**
+	 * Získá zdroj pro obrázek tlačítka
+	 * 
+	 * @return resource obrázku
+	 */
 	public Resource getImage() {
 		return imageResource;
 	}
 
+	/**
+	 * Získá tag
+	 * 
+	 * @return název tagu
+	 */
 	public String getTag() {
 		return tag;
 	}

@@ -61,7 +61,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		assertEquals("[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende",
 				articleTO.getText());
 		assertEquals(
-				"<div class=\"articles-h1\"><a class=\"articles-h-id\" href=\"0\"></a>Úvod</div><div class=\"level1\">[TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG] </div><div class=\"articles-h1\"><a class=\"articles-h-id\" href=\"1\"></a>Konec</div><div class=\"level1\"> ende</div>",
+				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">[TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG] </div><div class=\"articles-h1\">Konec <a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level1\"> ende</div>",
 				articleTO.getOutputHTML());
 		assertNull(articleTO.getSearchableOutput());
 	}
@@ -137,7 +137,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		assertEquals("[N1]Úvod[/N1][TAG]<strong>mockArticleTextNew</strong>[/TAG] [N1]Konec[/N1] ende",
 				articleTO.getText());
 		assertEquals(
-				"<div class=\"articles-h1\"><a class=\"articles-h-id\" href=\"0\"></a>Úvod</div><div class=\"level1\">[TAG]&lt;strong&gt;mockArticleTextNew&lt;/strong&gt;[/TAG] </div><div class=\"articles-h1\"><a class=\"articles-h-id\" href=\"1\"></a>Konec</div><div class=\"level1\"> ende</div>",
+				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">[TAG]&lt;strong&gt;mockArticleTextNew&lt;/strong&gt;[/TAG] </div><div class=\"articles-h1\">Konec <a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level1\"> ende</div>",
 				articleTO.getOutputHTML());
 		assertNull(articleTO.getSearchableOutput());
 	}
@@ -174,7 +174,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		assertEquals("[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende",
 				articleTO.getText());
 		assertEquals(
-				"<div class=\"articles-h1\"><a class=\"articles-h-id\" href=\"0\"></a>Úvod</div><div class=\"level1\">[TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG] </div><div class=\"articles-h1\"><a class=\"articles-h-id\" href=\"1\"></a>Konec</div><div class=\"level1\"> ende</div>",
+				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">[TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG] </div><div class=\"articles-h1\">Konec <a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level1\"> ende</div>",
 				articleTO.getOutputHTML());
 		assertNull(articleTO.getSearchableOutput());
 	}
@@ -337,7 +337,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		assertNull(articleTO.getPluginJSResources());
 		assertNull(articleTO.getText());
 		assertNull(articleTO.getOutputHTML());
-		assertEquals(" Úvod [TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG]  Konec  ende",
+		assertEquals(" Úvod  [TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG]  Konec   ende",
 				articleTO.getSearchableOutput());
 	}
 }

@@ -21,6 +21,11 @@ public enum Token {
 	TEXT,
 
 	/**
+	 * Tabulátor
+	 */
+	TAB,
+	
+	/**
 	 * Konec řádku
 	 */
 	EOL,

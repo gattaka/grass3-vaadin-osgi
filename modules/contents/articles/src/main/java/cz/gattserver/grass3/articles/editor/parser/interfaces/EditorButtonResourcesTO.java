@@ -10,12 +10,12 @@ import com.vaadin.server.Resource;
  */
 public class EditorButtonResourcesTO implements Comparable<EditorButtonResourcesTO> {
 
-	private String tag;
-	private String tagFamily;
-	private String description;
-	private String prefix;
-	private String suffix;
-	private Resource imageResource;
+	private final String tag;
+	private final String tagFamily;
+	private final String description;
+	private final String prefix;
+	private final String suffix;
+	private final Resource imageResource;
 
 	protected EditorButtonResourcesTO(String tag, String tagFamily, String description, String prefix, String suffix,
 			Resource imageResource) {

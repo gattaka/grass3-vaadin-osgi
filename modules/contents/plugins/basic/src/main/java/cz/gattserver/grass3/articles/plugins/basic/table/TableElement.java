@@ -11,73 +11,51 @@ import cz.gattserver.grass3.articles.editor.parser.elements.Element;
  */
 public class TableElement implements Element {
 
-	private List<List<Element>> listElements;
+	private List<List<List<Element>>> rows;
 	private boolean withHead;
 	private int cols;
 
-	public TableElement(List<List<Element>> listElements, boolean withHead, int cols) {
-		this.listElements = listElements;
+	public TableElement(List<List<List<Element>>> rows, boolean withHead, int cols) {
+		this.rows = rows;
 		this.withHead = withHead;
 		this.cols = cols;
 	}
 
 	@Override
 	public void apply(Context ctx) {
-		Iterator<List<Element>> iterator = listElements.iterator();
-		List<Element> tableElement = iterator.next();
+		if (rows.isEmpty())
+			return;
 
+		int row = 0;
 		ctx.print(
 				"<table bordercolor=\"#888\" cellpadding=\"5px\" rules=\"all\" border=\"0\" style=\"margin-left: auto; margin-right: auto;\">");
 		if (withHead) {
 			ctx.print("<thead>");
-			boolean lineComplete = false;
-			for (int i = 0; i < cols; i++) {
+			Iterator<List<Element>> it = rows.get(row).iterator();
+			for (int col = 0; col < cols; col++) {
 				ctx.print("<th>");
-				lineComplete = tableElement.isEmpty();
-				if (lineComplete == false) {
-					// vypiš všechny elementy pole tabulky
-					for (Element elementTree : tableElement) {
-						elementTree.apply(ctx);
-					}
-					tableElement = iterator.next();
-				}
+				if (it.hasNext())
+					for (Element e : it.next())
+						e.apply(ctx);
 				ctx.print("</th>");
 			}
+			row++;
 			ctx.print("</thead>");
 		}
-		/**
-		 * Tabulka musí kontrolovat prázdná okna, ta totiž znamenají konec řádky
-		 * tabulky, přičemž každá řádka může mít různý počet políček - maximálně
-		 * cols
-		 */
-		while (true) {
+		// Tabulka musí kontrolovat prázdná okna, ta totiž znamenají konec řádky
+		// tabulky, přičemž každá řádka může mít různý počet políček - maximálně
+		// cols
+		for (; row < rows.size(); row++) {
 			ctx.print("<tr>");
-			boolean lineComplete = false;
-			for (int i = 0; i < cols; i++) {
+			Iterator<List<Element>> it = rows.get(row).iterator();
+			for (int col = 0; col < cols; col++) {
 				ctx.print("<td>");
-				if (tableElement.isEmpty()) {
-					if (i > 0)
-						lineComplete = true;
-					else if (iterator.hasNext())
-						tableElement = iterator.next();
-					else
-						iterator = null;
-				}
-				if (iterator != null && lineComplete == false) {
-					// vypiš všechny elementy pole tabulky
-					for (Element element : tableElement) {
-						element.apply(ctx);
-					}
-					if (iterator.hasNext())
-						tableElement = iterator.next();
-					else
-						iterator = null;
-				}
+				if (it.hasNext())
+					for (Element e : it.next())
+						e.apply(ctx);
 				ctx.print("</td>");
 			}
 			ctx.print("</tr>");
-			if (iterator == null)
-				break;
 		}
 		ctx.print("</table>");
 	}

@@ -39,12 +39,6 @@ public class SourcesParser implements Parser {
 		return new SourcesElement(sources, pluginBag.getContextRoot());
 	}
 
-	@Override
-	public boolean canHoldBreaklineElement() {
-		// nemůžu vložit <br/> do <a></a> elementu
-		return false;
-	}
-
 	private void parseStartTag(ParsingProcessor pluginBag) {
 		String startTag = pluginBag.getStartTag();
 

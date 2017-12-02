@@ -102,19 +102,6 @@ public class ParsingProcessor {
 	}
 
 	/**
-	 * Vrátí, zda aktuální prováděný parser může mít v sobě znaky konce řádku
-	 * jako {@code <br/>
-	 * }
-	 * 
-	 * @return {@code true}, pokud lze vypisovat znak {@code <br/>} jinak
-	 */
-	public boolean canHoldBreakline() {
-		// pokud to teď řídí nějaký plugin, tak vrať jeho rozhodnutí,
-		// jinak pokud jsme pod základním Parserem, tak tam se může všechno
-		return activePlugins.empty() ? true : activePlugins.peek().parserPlugin.canHoldBreaklineElement();
-	}
-
-	/**
 	 * Pro pluginy, které pracují s linky a obrázky je potřeba občas uvádět
 	 * kořen webu, ke kterému potom budou
 	 * 
@@ -254,6 +241,7 @@ public class ParsingProcessor {
 		switch (getToken()) {
 		case START_TAG:
 		case TEXT:
+		case TAB:
 		case EOL:
 			elist.add(getElement());
 			getBlock(elist);
@@ -295,9 +283,8 @@ public class ParsingProcessor {
 
 	private BreaklineElement getBreakline() {
 		logger.info("breakline: " + getToken());
-		// pokud je povolené odřádkování, tak se vloží <br/> jinak ' '
 		nextToken();
-		return new BreaklineElement(canHoldBreakline());
+		return new BreaklineElement();
 	}
 
 	/**
@@ -313,13 +300,14 @@ public class ParsingProcessor {
 			Element element = parseTag();
 			return element == null ? getTextTree() : element;
 		case TEXT:
+		case TAB:
 			return getTextTree();
 		case EOL:
 			return getBreakline();
 		case EOF:
 		default:
-			logger.warn("Čekal jsem: " + START_TAG + ", " + END_TAG + ", " + TEXT + " nebo " + EOL + ", ne "
-					+ getToken() + "%n");
+			logger.warn("Čekal jsem jeden z [" + new Token[] { START_TAG, END_TAG, TEXT, EOL } + "], ne " + getToken()
+					+ "%n");
 			throw new ParserException();
 		}
 	}

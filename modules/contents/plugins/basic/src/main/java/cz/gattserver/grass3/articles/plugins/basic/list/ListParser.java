@@ -16,9 +16,9 @@ import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
  * @author gatt
  */
 public class ListParser implements Parser {
-	
+
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
-	
+
 	private String tag;
 	private boolean ordered;
 
@@ -97,11 +97,5 @@ public class ListParser implements Parser {
 		}
 
 		return new ListElement(listElements, ordered);
-	}
-
-	@Override
-	public boolean canHoldBreaklineElement() {
-		// nemůžu vložit <br/> do <a></a> elementu
-		return false;
 	}
 }

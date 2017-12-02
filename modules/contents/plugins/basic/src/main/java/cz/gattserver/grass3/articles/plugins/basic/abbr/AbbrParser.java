@@ -44,12 +44,6 @@ public class AbbrParser implements Parser {
 		return new AbbrElement(text, title);
 	}
 
-	@Override
-	public boolean canHoldBreaklineElement() {
-		// nemůžu vložit <br/> do <a></a> elementu
-		return false;
-	}
-
 	private void parseStartTag(ParsingProcessor processor) {
 		String startTag = processor.getStartTag();
 		if (!startTag.equals(tag))

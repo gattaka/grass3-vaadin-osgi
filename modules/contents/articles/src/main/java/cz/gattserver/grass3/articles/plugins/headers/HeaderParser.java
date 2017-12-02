@@ -60,16 +60,4 @@ public class HeaderParser implements Parser {
 
 		return new HeaderElement(elist, level);
 	}
-
-	/**
-	 * http://validator.w3.org/#validate_by_input+with_options
-	 * http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd
-	 * 
-	 */
-	@Override
-	public boolean canHoldBreaklineElement() {
-		// nemůžu vložit <br/> do <h1></h1> elementu
-		return false;
-	}
-
 }

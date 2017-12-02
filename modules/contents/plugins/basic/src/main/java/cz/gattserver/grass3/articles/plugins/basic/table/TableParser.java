@@ -11,14 +11,15 @@ import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
+import cz.gattserver.grass3.articles.editor.parser.exceptions.TokenException;
 
 /**
  * @author gatt
  */
-public class TableParser implements Parser{
+public class TableParser implements Parser {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
-	
+
 	private String tag;
 	private boolean withHead;
 
@@ -35,7 +36,6 @@ public class TableParser implements Parser{
 
 	@Override
 	public Element parse(ParsingProcessor pluginBag) {
-
 		// zpracovat počáteční tag
 		String startTag = pluginBag.getStartTag();
 
@@ -47,82 +47,76 @@ public class TableParser implements Parser{
 		// START_TAG byl zpracován
 		pluginBag.nextToken();
 
-		/**
-		 * Zpracovat položek listu, nemůžu volat blok, protože ten končí až na
-		 * mém koncovém tagu, kdežto já potřebuju odlišit položky tabulky konci
-		 * řádků
-		 */
-		List<List<Element>> tableElements = new ArrayList<List<Element>>();
-		List<Element> elist = new ArrayList<Element>();
-		while ((pluginBag.getToken() != Token.EOF)
-				&& (pluginBag.getToken() != Token.END_TAG || !pluginBag
-						.getEndTag().equals(tag))) {
+		// Řádky
+		List<List<List<Element>>> rows = new ArrayList<>();
+		// Buňky v řádku
+		List<List<Element>> cells = new ArrayList<>();
+		// Elementy ve buňce (může být více elementů vedle sebe)
+		List<Element> elements = new ArrayList<>();
+		// Nemůžu volat blok, protože ten končí až na mém koncovém tagu, kdežto
+		// já potřebuju odlišit položky tabulky přes tabulátory a konce řádků
+		while (pluginBag.getToken() != Token.END_TAG || !pluginBag.getEndTag().equals(tag)) {
 			switch (pluginBag.getToken()) {
-			/**
-			 * V elementu listu můžou být jiné pluginy
-			 */
+			// V elementu listu můžou být jiné pluginy
 			case START_TAG:
-				elist.add(pluginBag.getElement());
+				elements.add(pluginBag.getElement());
 				break;
-			/**
-			 * Jinak to načítám jako text
-			 */
+			// Jinak to načítám jako text
 			case END_TAG:
 			case TEXT:
-				elist.add(pluginBag.getTextTree());
+				elements.add(pluginBag.getTextTree());
 				break;
-			/**
-			 * Konec řádku značí konec položky tabulky
-			 */
-			case EOL:
-				tableElements.add(elist);
-				/**
-				 * Pokud předchozí řádek byl prázdný, značí to konec řádky v
-				 * tabulce, takže bych měl spočítat sloupce
-				 */
-				if (elist.isEmpty()) {
-					maxCols = colsSoFar > maxCols ? colsSoFar : maxCols;
-					colsSoFar = 0;
-				} else {
-					colsSoFar++;
-				}
-				elist = new ArrayList<Element>();
+			// Tabulátor značí konec buňky tabulky
+			case TAB:
+				colsSoFar++;
+				cells.add(elements);
+				elements = new ArrayList<>();
 				pluginBag.nextToken();
 				break;
-			default:
+			// Konec řádku značí konec řádku tabulky
+			case EOL:
+				if (!elements.isEmpty()) {
+					colsSoFar++;
+					maxCols = colsSoFar > maxCols ? colsSoFar : maxCols;
+					cells.add(elements);
+				}
+				if (!cells.isEmpty()) {
+					rows.add(cells);
+				}
+				colsSoFar = 0;
+				elements = new ArrayList<>();
+				cells = new ArrayList<>();
+				pluginBag.nextToken();
 				break;
+			case EOF:
+				throw new TokenException(
+						new Token[] { Token.START_TAG, Token.END_TAG, Token.TEXT, Token.TAB, Token.EOL });
 			}
 		}
 
 		// po ukončení může být ještě něco nepřidáno - přidej to
-		if (!elist.isEmpty()) {
+		if (!elements.isEmpty()) {
 			colsSoFar++;
 			maxCols = colsSoFar > maxCols ? colsSoFar : maxCols;
-			tableElements.add(elist);
+			cells.add(elements);
+		}
+
+		if (!cells.isEmpty()) {
+			rows.add(cells);
 		}
 
 		// zpracovat koncový tag
 		String endTag = pluginBag.getEndTag();
-
-		if (!endTag.equals(tag)) {
-			logger.warn("Čekal jsem: [/" + tag + "] ne " + pluginBag.getCode());
-			throw new ParserException();
-		}
+		if (!endTag.equals(tag))
+			throw new TokenException(tag, endTag);
 
 		// END_TAG byl zpracován
 		pluginBag.nextToken();
 
 		// protože za tabulkou je mezera ignoruje se případný <br/>
-		if (pluginBag.getToken().equals(Token.EOL)) {
+		if (pluginBag.getToken().equals(Token.EOL))
 			pluginBag.nextToken();
-		}
 
-		return new TableElement(tableElements, withHead, maxCols);
-	}
-
-	@Override
-	public boolean canHoldBreaklineElement() {
-		// nemůžu vložit <br/> do <a></a> elementu
-		return false;
+		return new TableElement(rows, withHead, maxCols);
 	}
 }

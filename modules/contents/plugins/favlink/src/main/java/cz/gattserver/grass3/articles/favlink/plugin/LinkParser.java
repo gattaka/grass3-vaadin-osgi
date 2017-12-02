@@ -58,10 +58,4 @@ public class LinkParser implements Parser {
 
 		return new LinkElement(link.toString(), pluginBag.getContextRoot());
 	}
-
-	@Override
-	public boolean canHoldBreaklineElement() {
-		// nemůžu vložit <br/> do <a></a> elementu
-		return false;
-	}
 }

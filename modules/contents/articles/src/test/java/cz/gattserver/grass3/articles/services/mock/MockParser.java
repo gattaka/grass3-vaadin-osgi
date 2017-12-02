@@ -34,12 +34,6 @@ public class MockParser implements Parser {
 		return new MockElement(numberOfStars);
 	}
 
-	@Override
-	public boolean canHoldBreaklineElement() {
-		// ne
-		return false;
-	}
-
 	private void parseStartTag(ParsingProcessor pluginBag) {
 		String startTag = pluginBag.getStartTag();
 		if (!startTag.equals(tag)) {

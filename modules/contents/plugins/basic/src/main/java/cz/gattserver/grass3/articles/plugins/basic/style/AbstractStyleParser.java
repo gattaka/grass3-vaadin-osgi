@@ -58,9 +58,4 @@ public abstract class AbstractStyleParser implements Parser {
 
 		return getElement(elist);
 	}
-
-	@Override
-	public boolean canHoldBreaklineElement() {
-		return true;
-	}
 }

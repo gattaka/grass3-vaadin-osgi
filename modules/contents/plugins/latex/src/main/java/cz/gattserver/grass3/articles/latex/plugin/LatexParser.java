@@ -158,10 +158,4 @@ public class LatexParser implements Parser {
 		// (optional), default ikona
 		return new LatexElement(pluginBag.getContextRoot() + path, formula);
 	}
-
-	@Override
-	public boolean canHoldBreaklineElement() {
-		// nemůžu vložit <br/> do latex elementu
-		return false;
-	}
 }

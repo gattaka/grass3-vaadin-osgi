@@ -59,11 +59,4 @@ public class ImageParser implements Parser {
 
 		return new ImageElement(link.toString());
 	}
-
-	@Override
-	public boolean canHoldBreaklineElement() {
-		// nemůžu vložit <br/> do <img/> elementu
-		return false;
-	}
-
 }

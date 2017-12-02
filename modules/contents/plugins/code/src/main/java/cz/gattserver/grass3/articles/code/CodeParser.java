@@ -100,10 +100,4 @@ public class CodeParser implements Parser {
 		// (optional), default ikona
 		return new CodeElement(code.toString(), description, lib, mode);
 	}
-
-	@Override
-	public boolean canHoldBreaklineElement() {
-		// nemůžu vložit <br/> do tabulky kodu
-		return false;
-	}
 }

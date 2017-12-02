@@ -25,35 +25,35 @@ public class AbbrParserTest {
 
 	@Test
 	public void test() {
-		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
-		Element element = abbrElement.parse(getParsingProcessorWithText(
+		AbbrParser parser = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = parser.parse(getParsingProcessorWithText(
 				"[CUSTOM_TAG]HTML[CUSTOM_TAG2]Hypertext Markup Language[/CUSTOM_TAG2][/CUSTOM_TAG]"));
 
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
-		assertTrue(ctx.getOutput().endsWith("<abbr title=\"Hypertext Markup Language\">HTML</abbr>"));
+		assertEquals("<abbr title=\"Hypertext Markup Language\">HTML</abbr>", ctx.getOutput());
 	}
 
 	@Test(expected = TokenException.class)
 	public void test_failAbbrEOF() {
-		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
-		Element element = abbrElement.parse(getParsingProcessorWithText("[CUSTOM_TAG]HTML[CUSTOM_TAG2]"));
+		AbbrParser parser = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = parser.parse(getParsingProcessorWithText("[CUSTOM_TAG]HTML[CUSTOM_TAG2]"));
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 	}
 
 	@Test(expected = TokenException.class)
 	public void test_failTitleEOF() {
-		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
-		Element element = abbrElement.parse(getParsingProcessorWithText("[CUSTOM_TAG]"));
+		AbbrParser parser = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = parser.parse(getParsingProcessorWithText("[CUSTOM_TAG]"));
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 	}
 
 	@Test(expected = TokenException.class)
 	public void test_failBadAbbrStartTag() {
-		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
-		Element element = abbrElement.parse(getParsingProcessorWithText(
+		AbbrParser parser = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = parser.parse(getParsingProcessorWithText(
 				"[BAD_TAG]HTML[CUSTOM_TAG2]Hypertext Markup Language[/CUSTOM_TAG2][/CUSTOM_TAG]"));
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
@@ -61,8 +61,8 @@ public class AbbrParserTest {
 
 	@Test(expected = TokenException.class)
 	public void test_failBadAbbrEndTag() {
-		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
-		Element element = abbrElement.parse(getParsingProcessorWithText(
+		AbbrParser parser = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = parser.parse(getParsingProcessorWithText(
 				"[CUSTOM_TAG]HTML[CUSTOM_TAG2]Hypertext Markup Language[/CUSTOM_TAG2][/BAD_TAG]"));
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
@@ -70,8 +70,8 @@ public class AbbrParserTest {
 
 	@Test(expected = TokenException.class)
 	public void test_failBadTitleStartTag() {
-		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
-		Element element = abbrElement.parse(getParsingProcessorWithText(
+		AbbrParser parser = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = parser.parse(getParsingProcessorWithText(
 				"[CUSTOM_TAG]HTML[BAD_TAG2]Hypertext Markup Language[/CUSTOM_TAG2][/CUSTOM_TAG]"));
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
@@ -79,8 +79,8 @@ public class AbbrParserTest {
 
 	@Test(expected = TokenException.class)
 	public void test_failBadTitleEndTag() {
-		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
-		Element element = abbrElement.parse(getParsingProcessorWithText(
+		AbbrParser parser = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = parser.parse(getParsingProcessorWithText(
 				"[CUSTOM_TAG]HTML[CUSTOM_TAG2]Hypertext Markup Language[/BAD_TAG2][/CUSTOM_TAG]"));
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
@@ -88,8 +88,8 @@ public class AbbrParserTest {
 
 	@Test(expected = TokenException.class)
 	public void test_failMandatoryAbbr() {
-		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
-		Element element = abbrElement
+		AbbrParser parser = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = parser
 				.parse(getParsingProcessorWithText("[CUSTOM_TAG][CUSTOM_TAG2][/CUSTOM_TAG2][/CUSTOM_TAG]"));
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
@@ -97,8 +97,8 @@ public class AbbrParserTest {
 
 	@Test(expected = TokenException.class)
 	public void test_failMandatoryTitle() {
-		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
-		Element element = abbrElement
+		AbbrParser parser = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = parser
 				.parse(getParsingProcessorWithText("[CUSTOM_TAG] [CUSTOM_TAG2][/CUSTOM_TAG2][/CUSTOM_TAG]"));
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
@@ -106,8 +106,8 @@ public class AbbrParserTest {
 
 	@Test(expected = TokenException.class)
 	public void test_failMandatorySubtag() {
-		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
-		Element element = abbrElement.parse(getParsingProcessorWithText("[CUSTOM_TAG][/CUSTOM_TAG]"));
+		AbbrParser parser = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = parser.parse(getParsingProcessorWithText("[CUSTOM_TAG][/CUSTOM_TAG]"));
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 	}

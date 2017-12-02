@@ -97,9 +97,7 @@ public class Lexer {
 	private int nextChar() {
 		if (index == source.length())
 			return -1;
-		/**
-		 * index se inkrementuje vždy
-		 */
+		// index se inkrementuje vždy
 		ch = source.charAt(index);
 		index++;
 		if (ch == '\n' || ch == '\r') {
@@ -110,9 +108,7 @@ public class Lexer {
 			br = true;
 			return -2;
 		}
-		/**
-		 * Údaj o sloupci se inkrementuje jenom pokud před ním nebyl konec řádky
-		 */
+		// Údaj o sloupci se inkrementuje jenom pokud před ním nebyl konec řádky
 		if (br == true)
 			br = false;
 		else
@@ -121,13 +117,9 @@ public class Lexer {
 	}
 
 	/**
-	 * Provede jednu iteraci a vrátí token (DEBUG verze - ve skutečnosti akorát
-	 * volá metodu {@code readNextToken} která dělá skutečnou práci; tato metoda
-	 * je tady protože readNextToken vrací hodnotu z více míst, tak aby se to
-	 * dalo jednoduše logovat ...)
+	 * Provede jednu iteraci a vrátí token
 	 * 
-	 * @return token, která našel
-	 * @see Token
+	 * @return {@link Token} token, který našel
 	 */
 	public Token nextToken() {
 		Token symbol = readNextToken();
@@ -136,7 +128,6 @@ public class Lexer {
 	}
 
 	private Token readNextToken() {
-
 		// ulož si pozice, než je záhy smažeš
 		// od indexu se musí odečítat 1 protože index ukazuje vždy o znak napřed
 		pcol = col - 1;
@@ -148,6 +139,12 @@ public class Lexer {
 		if (ch == -2) {
 			ch = nextChar(); // musím se ale posunout !!!
 			return EOL;
+		}
+
+		// tabulátor - \t
+		if (ch == '\t') {
+			ch = nextChar(); // musím se ale posunout !!!
+			return TAB;
 		}
 
 		// pokud jsem na konci souboru, tak to sdělím okamžitě
@@ -203,11 +200,8 @@ public class Lexer {
 			// jinak to nechám dojet jako text
 		}
 
-		/**
-		 * Jinak je to text - dokud nedojde (začátek tagu, konec souboru, nová
-		 * řádka)
-		 */
-		while ((ch != '[') && (ch != -1) && (ch != -2)) {
+		// Jinak je to text -- dokud nedojde ke změně, pokračuj ve čtení znaků
+		while ((ch != '[') && (ch != -1) && (ch != -2) && (ch != '\t')) {
 			word.append((char) ch);
 			ch = nextChar();
 		}

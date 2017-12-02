@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.articles.editor.parser.impl;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,10 +78,5 @@ public class ArticleParser implements Parser {
 			parsingProcessor.getBlock(elist);
 			return new ArticleElement(elist);
 		}
-	}
-
-	@Override
-	public boolean canHoldBreaklineElement() {
-		return false;
 	}
 }

@@ -3,22 +3,16 @@ package cz.gattserver.grass3.articles.plugins.basic.table;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import cz.gattserver.grass3.articles.editor.lexer.Token;
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
-import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.TokenException;
 
 /**
  * @author gatt
  */
 public class TableParser implements Parser {
-
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private String tag;
 	private boolean withHead;
@@ -39,10 +33,8 @@ public class TableParser implements Parser {
 		// zpracovat počáteční tag
 		String startTag = pluginBag.getStartTag();
 
-		if (!startTag.equals(tag)) {
-			logger.warn("Čekal jsem: [" + tag + "] ne " + startTag);
-			throw new ParserException();
-		}
+		if (!startTag.equals(tag))
+			throw new TokenException(tag, startTag);
 
 		// START_TAG byl zpracován
 		pluginBag.nextToken();
@@ -105,10 +97,8 @@ public class TableParser implements Parser {
 			rows.add(cells);
 		}
 
-		// zpracovat koncový tag
-		String endTag = pluginBag.getEndTag();
-		if (!endTag.equals(tag))
-			throw new TokenException(tag, endTag);
+		// kontrola koncového tagu není potřeba, je již proveden v rámci
+		// předchozího cyklu
 
 		// END_TAG byl zpracován
 		pluginBag.nextToken();

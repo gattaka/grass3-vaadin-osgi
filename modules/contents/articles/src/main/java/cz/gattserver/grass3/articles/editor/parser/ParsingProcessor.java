@@ -223,6 +223,8 @@ public class ParsingProcessor {
 				logger.error("Plugin error", ex);
 				return new PluginErrorElement(tag);
 			}
+		} else {
+			logger.info("ParserPlugin for tag '" + tag + "' not found, '" + tag + "' is text");
 		}
 
 		return null; // jinak vrať null - žádný plugin tohle nezná

@@ -250,7 +250,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 	@Override
 	protected Component createLeftColumnContent() {
-
 		List<String> groups = new ArrayList<String>(pluginRegister.getRegisteredGroups());
 		Collections.sort(groups, (o1, o2) -> {
 			if (o1 == null) {
@@ -263,13 +262,10 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			}
 		});
 
-		/**
-		 * Projdi zaregistrované pluginy a vytvoř menu nástrojů
-		 */
+		// Projdi zaregistrované pluginy a vytvoř menu nástrojů
 		Accordion accordion = new Accordion();
 		accordion.setSizeFull();
 		for (String group : groups) {
-
 			CssLayout groupToolsLayout = new CssLayout();
 			groupToolsLayout.addStyleName("tools_css_menu");
 			accordion.addTab(groupToolsLayout, group);
@@ -279,14 +275,12 @@ public class ArticlesEditorPage extends TwoColumnPage {
 			Collections.sort(resourcesBundles);
 
 			for (EditorButtonResourcesTO resourceBundle : resourcesBundles) {
-
 				String prefix = resourceBundle.getPrefix();
 				String suffix = resourceBundle.getSuffix();
 
 				ImageButton btn = new ImageButton(resourceBundle.getDescription(), resourceBundle.getImage(), event -> {
 					JavaScript.eval("insert('" + prefix + "','" + suffix + "')");
 				});
-
 				groupToolsLayout.addComponent(btn);
 			}
 		}

@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.articles.editor.parser.impl;
 
-import static cz.gattserver.grass3.articles.editor.lexer.Token.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +11,6 @@ import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.ArticleElement;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
-import cz.gattserver.grass3.articles.editor.parser.elements.ParserErrorElement;
 
 /**
  * 
@@ -39,15 +37,15 @@ public class ArticleParser implements Parser {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private ParsingProcessor pluginBag;
+	private ParsingProcessor parsingProcessor;
 
 	/**
 	 * Postaví strom článku a vyhodnotí chyby. Vstupní metoda pro zpracování
 	 * článku.
 	 */
-	public Element parse(ParsingProcessor pluginBag) {
-		this.pluginBag = pluginBag;
-		pluginBag.nextToken();
+	public Element parse(ParsingProcessor parsingProcessor) {
+		this.parsingProcessor = parsingProcessor;
+		parsingProcessor.nextToken();
 		ArticleElement p = article();
 		return p;
 	}
@@ -59,17 +57,14 @@ public class ArticleParser implements Parser {
 	 * @return strom článku
 	 */
 	private ArticleElement article() {
-		logger.debug("article: " + pluginBag.getToken());
-		switch (pluginBag.getToken()) {
+		logger.debug("article: " + parsingProcessor.getToken());
+		switch (parsingProcessor.getToken()) {
 		case EOF:
 			/**
 			 * Konec článku = prázdný článek
 			 */
 			return new ArticleElement(null);
-		case EOL:
-		case START_TAG:
-		case TEXT:
-		case END_TAG:
+		default:
 			/**
 			 * Konec řádky (ne článku), počáteční tag, text - zpracuj obsah jako
 			 * blok elementů a textu - vyrob si list do kterého se budou
@@ -81,14 +76,8 @@ public class ArticleParser implements Parser {
 			 * pluginu, tudíž to není chyba, že tím článek začíná
 			 */
 			List<Element> elist = new ArrayList<Element>();
-			pluginBag.getBlock(elist);
+			parsingProcessor.getBlock(elist);
 			return new ArticleElement(elist);
-		default:
-			logger.warn("Čekal jsem: " + EOL + "," + EOF + "," + START_TAG + " nebo " + TEXT + " ale dostal jsem "
-					+ pluginBag.getToken());
-			List<Element> errorList = new ArrayList<Element>();
-			errorList.add(new ParserErrorElement("Article"));
-			return new ArticleElement(errorList);
 		}
 	}
 

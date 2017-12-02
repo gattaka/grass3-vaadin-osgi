@@ -1,20 +1,16 @@
 package cz.gattserver.grass3.articles.plugins.basic.abbr;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import cz.gattserver.grass3.articles.editor.lexer.Token;
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
+import cz.gattserver.grass3.articles.editor.parser.exceptions.TokenException;
 
 /**
  * @author gatt
  */
 public class AbbrParser implements Parser {
-
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private String tag;
 	private String titleTag;
@@ -57,67 +53,45 @@ public class AbbrParser implements Parser {
 
 	private void parseStartTag(ParsingProcessor pluginBag) {
 		String startTag = pluginBag.getStartTag();
-
-		if (!startTag.equals(tag)) {
-			logger.warn("Čekal jsem: [" + tag + "] ne " + startTag);
-			throw new ParserException();
-		}
-
+		if (!startTag.equals(tag))
+			throw new TokenException(tag, startTag);
 		pluginBag.nextToken();
 	}
 
 	private void parseAbbreviation(ParsingProcessor pluginBag) {
-		if (pluginBag.getToken() != Token.EOF) {
+		if (pluginBag.getToken() != Token.EOF)
 			text = pluginBag.getText();
-		}
-
-		if (text == null)
+		else
 			throw new ParserException();
-
 		pluginBag.nextToken();
 	}
 
 	private void parseTextStartTag(ParsingProcessor pluginBag) {
 		String startTag = pluginBag.getStartTag();
-
-		if (!startTag.equals(titleTag)) {
-			logger.warn("Čekal jsem: [" + titleTag + "] ne " + startTag);
-			throw new ParserException();
-		}
-
+		if (!startTag.equals(titleTag))
+			throw new TokenException(titleTag, startTag);
 		pluginBag.nextToken();
 	}
 
 	private void parseTitle(ParsingProcessor pluginBag) {
-		if (pluginBag.getToken() != Token.EOF) {
+		if (pluginBag.getToken() != Token.EOF)
 			title = pluginBag.getText();
-		}
-
-		if (title == null)
-			throw new ParserException();
-
+		else
+			throw new TokenException(Token.TEXT);
 		pluginBag.nextToken();
 	}
 
 	private void parseTextEndTag(ParsingProcessor pluginBag) {
 		String endTag = pluginBag.getEndTag();
-
-		if (!endTag.equals(titleTag)) {
-			logger.warn("Čekal jsem: [/" + titleTag + "] ne " + pluginBag.getCode());
-			throw new ParserException();
-		}
-
+		if (!endTag.equals(titleTag))
+			throw new TokenException(titleTag, pluginBag.getCode());
 		pluginBag.nextToken();
 	}
 
 	private void parseEndTag(ParsingProcessor pluginBag) {
 		String endTag = pluginBag.getEndTag();
-
-		if (!endTag.equals(tag)) {
-			logger.warn("Čekal jsem: [/" + tag + "] ne " + pluginBag.getCode());
-			throw new ParserException();
-		}
-
+		if (!endTag.equals(tag))
+			throw new TokenException(tag, pluginBag.getCode());
 		pluginBag.nextToken();
 	}
 }

@@ -15,7 +15,7 @@ import org.openqa.selenium.remote.server.SeleniumServer;
 
 public class WebTest {
 
-	private static final String APP_BASE_URL = "http://localhost:8080";
+	private static final String APP_BASE_URL = "http://localhost:8180/web/home";
 
 	private WebDriver driver;
 

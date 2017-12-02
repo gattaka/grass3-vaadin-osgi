@@ -1,7 +1,5 @@
 function insert(prefix, suffix) {
-
 	var offset = prefix.length;
-
 	var textarea = $('.v-textarea')[0];
 	if (textarea) {
 		textarea.focus();
@@ -11,7 +9,6 @@ function insert(prefix, suffix) {
 
 		// existuje výběr ?
 		if (selection) {
-
 			// MSIE
 			if (navigator.userAgent.match(/msie/i)) { // ie
 				// co je to range -
@@ -48,7 +45,6 @@ function insert(prefix, suffix) {
 				startPos = textarea.selectionStart;
 			}
 		} else { // gecko & webkit
-
 			// získej místo počátku výběru
 			startPos = textarea.selectionStart;
 
@@ -113,7 +109,6 @@ function insert(prefix, suffix) {
 			// " + startPos);
 			// logMessage("<strong>" + suffix +"</strong> " + "set on endPos: "
 			// + endPos);
-
 		}
 	} else {
 		// logError("textarea is null");

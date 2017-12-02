@@ -74,6 +74,12 @@ public class EditorButtonResourcesTOBuilder {
 		if (StringUtils.isBlank(suffix))
 			suffix = defaultSuffix;
 
+		// Pokud nemá ani text tlačítka, ani obrázek, dej jako text tlačítka
+		// jméno tagu
+		String description = this.description;
+		if (StringUtils.isBlank(description) && imageResource == null)
+			description = tag;
+
 		if (!prefix.startsWith(defaultPrefix))
 			throw new IllegalArgumentException("Prefix musí začínat: " + defaultPrefix);
 		if (!suffix.endsWith(defaultSuffix))

@@ -8,6 +8,7 @@ import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
+import cz.gattserver.grass3.articles.editor.parser.exceptions.TokenException;
 import cz.gattserver.grass3.articles.editor.parser.util.HTMLEscaper;
 
 /**
@@ -39,7 +40,7 @@ public class CodeParser implements Parser {
 
 		if (!startTag.equals(tag)) {
 			logger.warn("Čekal jsem: [" + tag + "] ne " + startTag);
-			throw new ParserException();
+			throw new TokenException(tag, startTag);
 		}
 
 		// START_TAG byl zpracován

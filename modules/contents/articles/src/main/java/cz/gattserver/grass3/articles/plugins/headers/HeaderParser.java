@@ -10,7 +10,7 @@ import cz.gattserver.grass3.articles.editor.lexer.Token;
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
-import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
+import cz.gattserver.grass3.articles.editor.parser.exceptions.TokenException;
 import cz.gattserver.grass3.articles.plugins.headers.HeaderElement;
 
 /**
@@ -35,10 +35,8 @@ public class HeaderParser implements Parser {
 		String startTag = pluginBag.getStartTag();
 		logger.debug(pluginBag.getToken().toString());
 
-		if (!startTag.equals(tag)) {
-			logger.warn("Čekal jsem: [" + tag + "], ne [" + startTag + "]");
-			throw new ParserException();
-		}
+		if (!startTag.equals(tag))
+			throw new TokenException(tag, startTag);
 
 		// START_tag byl zpracován
 		pluginBag.nextToken();
@@ -55,18 +53,15 @@ public class HeaderParser implements Parser {
 
 		// zpracovat koncový tag
 		String endTag = pluginBag.getEndTag();
-		if (!endTag.equals(tag)) {
-			logger.warn("Čekal jsem: [/" + tag + "], ne [" + endTag + "]");
-			throw new ParserException();
-		}
+		if (!endTag.equals(tag))
+			throw new TokenException(tag, endTag);
 
 		// END_tag byl zpracován
 		pluginBag.nextToken();
 
 		// protože za H je mezera ignoruje se případný <br/>
-		if (pluginBag.getToken().equals(Token.EOL)) {
+		if (pluginBag.getToken().equals(Token.EOL))
 			pluginBag.nextToken();
-		}
 
 		return new HeaderElement(elist, level);
 	}

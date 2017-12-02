@@ -61,7 +61,7 @@ public class ImageParser implements Parser {
 	}
 
 	@Override
-	public boolean canHoldBreakline() {
+	public boolean canHoldBreaklineElement() {
 		// nemůžu vložit <br/> do <img/> elementu
 		return false;
 	}

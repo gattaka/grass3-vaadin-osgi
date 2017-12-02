@@ -4,7 +4,6 @@ import cz.gattserver.grass3.articles.editor.lexer.Token;
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
-import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.TokenException;
 
 /**
@@ -23,75 +22,75 @@ public class AbbrParser implements Parser {
 	}
 
 	@Override
-	public Element parse(ParsingProcessor pluginBag) {
+	public Element parse(ParsingProcessor processor) {
 		// zpracovat počáteční tag
-		parseStartTag(pluginBag);
+		parseStartTag(processor);
 
 		// zpracuje zkratku (text)
-		parseAbbreviation(pluginBag);
+		parseAbbreviation(processor);
 
 		// zpracovat počáteční tag textu
-		parseTextStartTag(pluginBag);
+		parseTextStartTag(processor);
 
 		// zpracuje title (popis, vysvětlení zkratky)
-		parseTitle(pluginBag);
+		parseTitle(processor);
 
 		// zpracuje koncový tag textu
-		parseTextEndTag(pluginBag);
+		parseTextEndTag(processor);
 
 		// zpracovat koncový tag
-		parseEndTag(pluginBag);
+		parseEndTag(processor);
 
 		return new AbbrElement(text, title);
 	}
 
 	@Override
-	public boolean canHoldBreakline() {
+	public boolean canHoldBreaklineElement() {
 		// nemůžu vložit <br/> do <a></a> elementu
 		return false;
 	}
 
-	private void parseStartTag(ParsingProcessor pluginBag) {
-		String startTag = pluginBag.getStartTag();
+	private void parseStartTag(ParsingProcessor processor) {
+		String startTag = processor.getStartTag();
 		if (!startTag.equals(tag))
 			throw new TokenException(tag, startTag);
-		pluginBag.nextToken();
+		processor.nextToken();
 	}
 
-	private void parseAbbreviation(ParsingProcessor pluginBag) {
-		if (pluginBag.getToken() != Token.EOF)
-			text = pluginBag.getText();
-		else
-			throw new ParserException();
-		pluginBag.nextToken();
-	}
-
-	private void parseTextStartTag(ParsingProcessor pluginBag) {
-		String startTag = pluginBag.getStartTag();
-		if (!startTag.equals(titleTag))
-			throw new TokenException(titleTag, startTag);
-		pluginBag.nextToken();
-	}
-
-	private void parseTitle(ParsingProcessor pluginBag) {
-		if (pluginBag.getToken() != Token.EOF)
-			title = pluginBag.getText();
+	private void parseAbbreviation(ParsingProcessor processor) {
+		if (processor.getToken() != Token.EOF)
+			text = processor.getText();
 		else
 			throw new TokenException(Token.TEXT);
-		pluginBag.nextToken();
+		processor.nextToken();
 	}
 
-	private void parseTextEndTag(ParsingProcessor pluginBag) {
-		String endTag = pluginBag.getEndTag();
+	private void parseTextStartTag(ParsingProcessor processor) {
+		String startTag = processor.getStartTag();
+		if (!startTag.equals(titleTag))
+			throw new TokenException(titleTag, startTag);
+		processor.nextToken();
+	}
+
+	private void parseTitle(ParsingProcessor processor) {
+		if (processor.getToken() != Token.EOF)
+			title = processor.getText();
+		else
+			throw new TokenException(Token.TEXT);
+		processor.nextToken();
+	}
+
+	private void parseTextEndTag(ParsingProcessor processor) {
+		String endTag = processor.getEndTag();
 		if (!endTag.equals(titleTag))
-			throw new TokenException(titleTag, pluginBag.getCode());
-		pluginBag.nextToken();
+			throw new TokenException(titleTag, processor.getCode());
+		processor.nextToken();
 	}
 
-	private void parseEndTag(ParsingProcessor pluginBag) {
-		String endTag = pluginBag.getEndTag();
+	private void parseEndTag(ParsingProcessor processor) {
+		String endTag = processor.getEndTag();
 		if (!endTag.equals(tag))
-			throw new TokenException(tag, pluginBag.getCode());
-		pluginBag.nextToken();
+			throw new TokenException(tag, processor.getCode());
+		processor.nextToken();
 	}
 }

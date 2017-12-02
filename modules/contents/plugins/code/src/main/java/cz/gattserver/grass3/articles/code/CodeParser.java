@@ -48,24 +48,20 @@ public class CodeParser implements Parser {
 
 		StringBuilder code = new StringBuilder();
 
-		/**
-		 * Zpracuje vnitřek tagů jako code - jedu dokud nenarazím na svůj
-		 * koncový tag - všechno ostatní beru jako obsah zdrojáku - text i
-		 * potenciální počáteční tagy. Jediná věc, která mne může zastavit je
-		 * EOF nebo můj koncový tag. Načítám text po řádcích protože chci
-		 * zachovat řádkování kódu. Jinak kód by měl být escapován.
-		 */
+		// Zpracuje vnitřek tagů jako code - jedu dokud nenarazím na svůj
+		// koncový tag - všechno ostatní beru jako obsah zdrojáku - text i
+		// potenciální počáteční tagy. Jediná věc, která mne může zastavit je
+		// EOF nebo můj koncový tag. Načítám text po řádcích protože chci
+		// zachovat řádkování kódu. Jinak kód by měl být escapován.
 		Token lastToken = null;
 		Token currentToken = null;
 		while (true) {
 			currentToken = pluginBag.getToken();
 			if ((currentToken == Token.END_TAG && pluginBag.getEndTag().equals(tag)) || currentToken == Token.EOF)
 				break;
-			/**
-			 * Pokud načteš TEXT, tak přidej jeho obsah, pokud pak načtečeš EOL,
-			 * tak nepřidávej prázdný řádek, ledaže by jsi načetl EOL EOL - pak
-			 * je to prázdný řádek
-			 */
+			// Pokud načteš TEXT, tak přidej jeho obsah, pokud pak načtečeš EOL,
+			// tak nepřidávej prázdný řádek, ledaže by jsi načetl EOL EOL - pak
+			// je to prázdný řádek
 			if (currentToken == Token.TEXT || currentToken == Token.END_TAG || currentToken == Token.START_TAG)
 				code.append(HTMLEscaper.stringToHTMLString(pluginBag.getCode()));
 			else if (currentToken == Token.EOL) {
@@ -106,7 +102,7 @@ public class CodeParser implements Parser {
 	}
 
 	@Override
-	public boolean canHoldBreakline() {
+	public boolean canHoldBreaklineElement() {
 		// nemůžu vložit <br/> do tabulky kodu
 		return false;
 	}

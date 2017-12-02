@@ -40,7 +40,7 @@ public class SourcesParser implements Parser {
 	}
 
 	@Override
-	public boolean canHoldBreakline() {
+	public boolean canHoldBreaklineElement() {
 		// nemůžu vložit <br/> do <a></a> elementu
 		return false;
 	}

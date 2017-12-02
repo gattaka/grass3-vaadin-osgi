@@ -67,7 +67,7 @@ public class HeaderParser implements Parser {
 	 * 
 	 */
 	@Override
-	public boolean canHoldBreakline() {
+	public boolean canHoldBreaklineElement() {
 		// nemůžu vložit <br/> do <h1></h1> elementu
 		return false;
 	}

@@ -82,7 +82,7 @@ public class ArticleParser implements Parser {
 	}
 
 	@Override
-	public boolean canHoldBreakline() {
+	public boolean canHoldBreaklineElement() {
 		return false;
 	}
 }

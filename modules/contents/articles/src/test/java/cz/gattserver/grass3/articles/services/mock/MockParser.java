@@ -35,7 +35,7 @@ public class MockParser implements Parser {
 	}
 
 	@Override
-	public boolean canHoldBreakline() {
+	public boolean canHoldBreaklineElement() {
 		// ne
 		return false;
 	}

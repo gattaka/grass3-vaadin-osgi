@@ -160,7 +160,7 @@ public class LatexParser implements Parser {
 	}
 
 	@Override
-	public boolean canHoldBreakline() {
+	public boolean canHoldBreaklineElement() {
 		// nemůžu vložit <br/> do latex elementu
 		return false;
 	}

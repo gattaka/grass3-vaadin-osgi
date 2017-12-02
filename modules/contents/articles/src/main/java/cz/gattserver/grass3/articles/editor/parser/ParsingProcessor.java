@@ -111,7 +111,7 @@ public class ParsingProcessor {
 	public boolean canHoldBreakline() {
 		// pokud to teď řídí nějaký plugin, tak vrať jeho rozhodnutí,
 		// jinak pokud jsme pod základním Parserem, tak tam se může všechno
-		return activePlugins.empty() ? true : activePlugins.peek().parserPlugin.canHoldBreakline();
+		return activePlugins.empty() ? true : activePlugins.peek().parserPlugin.canHoldBreaklineElement();
 	}
 
 	/**
@@ -168,6 +168,8 @@ public class ParsingProcessor {
 	 * tedy počáteční a koncovou hranatou závorku
 	 * 
 	 * @return počáteční tag
+	 * @throws TokenException
+	 *             pokud není akutální token {@link Token#START_TAG}
 	 */
 	public String getStartTag() {
 		if (!Token.START_TAG.equals(token))
@@ -180,6 +182,8 @@ public class ParsingProcessor {
 	 * tedy počáteční a koncovou hranatou závorku a lomítko
 	 * 
 	 * @return koncový tag
+	 * @throws TokenException
+	 *             pokud není akutální token {@link Token#END_TAG}
 	 */
 	public String getEndTag() {
 		if (!Token.END_TAG.equals(token))
@@ -191,17 +195,12 @@ public class ParsingProcessor {
 	 * ParserCore
 	 */
 	private Element parseTag() {
-
 		String tag = getStartTag();
-
 		logger.info("Looking for the right ParserPlugin for tag '" + tag + "'");
 
 		Plugin plugin = registerSnapshot.get(tag);
-
 		if (plugin != null) {
-
 			Parser parser = plugin.getParser();
-
 			try {
 				// vstupuješ do dalšího patra parsovacího stromu
 				// => nastav si, že tento plugin je právě u prohledávání
@@ -296,15 +295,9 @@ public class ParsingProcessor {
 
 	private BreaklineElement getBreakline() {
 		logger.info("breakline: " + getToken());
-		switch (getToken()) {
-		case EOL:
-			// pokud je povolené odřádkování, tak se vloží <br/> jinak ' '
-			nextToken();
-			return new BreaklineElement(canHoldBreakline());
-		default:
-			logger.warn("Čekal jsem: " + EOL + ", ne " + getToken() + "%n");
-			throw new ParserException();
-		}
+		// pokud je povolené odřádkování, tak se vloží <br/> jinak ' '
+		nextToken();
+		return new BreaklineElement(canHoldBreakline());
 	}
 
 	/**

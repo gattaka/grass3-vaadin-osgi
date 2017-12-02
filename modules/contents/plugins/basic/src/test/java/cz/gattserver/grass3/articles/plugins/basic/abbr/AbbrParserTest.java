@@ -34,11 +34,60 @@ public class AbbrParserTest {
 		assertTrue(ctx.getOutput().endsWith("<abbr title=\"Hypertext Markup Language\">HTML</abbr>"));
 	}
 
-	/**
-	 * Zkratka i popisek jsou povinné
-	 */
 	@Test(expected = TokenException.class)
-	public void test_fail() {
+	public void test_failAbbrEOF() {
+		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = abbrElement.parse(getParsingProcessorWithText("[CUSTOM_TAG]HTML[CUSTOM_TAG2]"));
+		Context ctx = new ContextImpl();
+		element.apply(ctx);
+	}
+
+	@Test(expected = TokenException.class)
+	public void test_failTitleEOF() {
+		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = abbrElement.parse(getParsingProcessorWithText("[CUSTOM_TAG]"));
+		Context ctx = new ContextImpl();
+		element.apply(ctx);
+	}
+
+	@Test(expected = TokenException.class)
+	public void test_failBadAbbrStartTag() {
+		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = abbrElement.parse(getParsingProcessorWithText(
+				"[BAD_TAG]HTML[CUSTOM_TAG2]Hypertext Markup Language[/CUSTOM_TAG2][/CUSTOM_TAG]"));
+		Context ctx = new ContextImpl();
+		element.apply(ctx);
+	}
+
+	@Test(expected = TokenException.class)
+	public void test_failBadAbbrEndTag() {
+		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = abbrElement.parse(getParsingProcessorWithText(
+				"[CUSTOM_TAG]HTML[CUSTOM_TAG2]Hypertext Markup Language[/CUSTOM_TAG2][/BAD_TAG]"));
+		Context ctx = new ContextImpl();
+		element.apply(ctx);
+	}
+
+	@Test(expected = TokenException.class)
+	public void test_failBadTitleStartTag() {
+		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = abbrElement.parse(getParsingProcessorWithText(
+				"[CUSTOM_TAG]HTML[BAD_TAG2]Hypertext Markup Language[/CUSTOM_TAG2][/CUSTOM_TAG]"));
+		Context ctx = new ContextImpl();
+		element.apply(ctx);
+	}
+
+	@Test(expected = TokenException.class)
+	public void test_failBadTitleEndTag() {
+		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
+		Element element = abbrElement.parse(getParsingProcessorWithText(
+				"[CUSTOM_TAG]HTML[CUSTOM_TAG2]Hypertext Markup Language[/BAD_TAG2][/CUSTOM_TAG]"));
+		Context ctx = new ContextImpl();
+		element.apply(ctx);
+	}
+
+	@Test(expected = TokenException.class)
+	public void test_failMandatoryAbbr() {
 		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
 		Element element = abbrElement
 				.parse(getParsingProcessorWithText("[CUSTOM_TAG][CUSTOM_TAG2][/CUSTOM_TAG2][/CUSTOM_TAG]"));
@@ -46,11 +95,8 @@ public class AbbrParserTest {
 		element.apply(ctx);
 	}
 
-	/**
-	 * Zkratka i popisek jsou povinné
-	 */
 	@Test(expected = TokenException.class)
-	public void test_fail2() {
+	public void test_failMandatoryTitle() {
 		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
 		Element element = abbrElement
 				.parse(getParsingProcessorWithText("[CUSTOM_TAG] [CUSTOM_TAG2][/CUSTOM_TAG2][/CUSTOM_TAG]"));
@@ -58,11 +104,8 @@ public class AbbrParserTest {
 		element.apply(ctx);
 	}
 
-	/**
-	 * Zkratka i popisek jsou povinné
-	 */
 	@Test(expected = TokenException.class)
-	public void test_fail3() {
+	public void test_failMandatorySubtag() {
 		AbbrParser abbrElement = new AbbrParser("CUSTOM_TAG", "CUSTOM_TAG2");
 		Element element = abbrElement.parse(getParsingProcessorWithText("[CUSTOM_TAG][/CUSTOM_TAG]"));
 		Context ctx = new ContextImpl();

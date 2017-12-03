@@ -28,7 +28,7 @@ public class ImageParser implements Parser {
 
 		// zpracovat počáteční tag
 		String startTag = pluginBag.getStartTag();
-		logger.debug(pluginBag.getToken().toString());
+		logger.debug("{}", pluginBag.getToken());
 
 		if (!startTag.equals(tag))
 			throw new TokenException(tag, startTag);
@@ -45,7 +45,7 @@ public class ImageParser implements Parser {
 
 		// zpracovat koncový tag
 		String endTag = pluginBag.getEndTag();
-		logger.debug(pluginBag.getToken().toString());
+		logger.debug("{}", pluginBag.getToken());
 
 		if (!endTag.equals(tag))
 			throw new TokenException(tag, endTag);

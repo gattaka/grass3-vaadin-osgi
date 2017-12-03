@@ -15,7 +15,7 @@ import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResour
 @Component
 public class UnderlinePlugin extends AbstractStylePlugin {
 
-	public final static String TAG = "UND";
+	public static final String TAG = "UND";
 
 	public UnderlinePlugin() {
 		super(TAG);

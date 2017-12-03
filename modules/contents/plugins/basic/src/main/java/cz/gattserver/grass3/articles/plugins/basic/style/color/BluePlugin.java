@@ -18,7 +18,7 @@ import cz.gattserver.grass3.articles.plugins.basic.style.AbstractStylePlugin;
 @Component
 public class BluePlugin extends AbstractStylePlugin {
 
-	public final static String TAG = "BLU";
+	public static final String TAG = "BLU";
 
 	public BluePlugin() {
 		super(TAG);

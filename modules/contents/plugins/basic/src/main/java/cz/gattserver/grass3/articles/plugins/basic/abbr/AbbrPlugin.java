@@ -13,24 +13,24 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
 @Component
 public class AbbrPlugin implements Plugin {
 
-	private final String tag = "ABBR";
-	private final String titleTag = "T";
-	private String image = "articles/basic/img/abbr_16.png";
+	private static final String TAG = "ABBR";
+	private static final String TITLE_TAG = "T";
+	private static final String IMAGE_PATH = "articles/basic/img/abbr_16.png";
 
 	@Override
 	public String getTag() {
-		return tag;
+		return TAG;
 	}
 
 	@Override
 	public Parser getParser() {
-		return new AbbrParser(tag, titleTag);
+		return new AbbrParser(TAG, TITLE_TAG);
 	}
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(tag, "HTML").setPrefix("[" + tag + "]")
-				.setSuffix("[" + titleTag + "][/" + titleTag + "][/" + tag + "]").setImageAsThemeResource(image)
+		return new EditorButtonResourcesTOBuilder(TAG, "HTML").setPrefix("[" + TAG + "]")
+				.setSuffix("[" + TITLE_TAG + "][/" + TITLE_TAG + "][/" + TAG + "]").setImageAsThemeResource(IMAGE_PATH)
 				.build();
 	}
 }

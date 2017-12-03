@@ -15,7 +15,7 @@ import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResour
 @Component
 public class CrossoutPlugin extends AbstractStylePlugin {
 
-	public final static String TAG = "CROSS";
+	public static final String TAG = "CROSS";
 
 	public CrossoutPlugin() {
 		super(TAG);

@@ -15,7 +15,7 @@ import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResour
 @Component
 public class SupPlugin extends AbstractStylePlugin {
 
-	public final static String TAG = "SUP";
+	public static final String TAG = "SUP";
 
 	public SupPlugin() {
 		super(TAG);

@@ -19,7 +19,7 @@ import cz.gattserver.grass3.articles.plugins.basic.style.AbstractStylePlugin;
 @Component
 public class RedPlugin extends AbstractStylePlugin {
 
-	public final static String TAG = "RED";
+	public static final String TAG = "RED";
 
 	public RedPlugin() {
 		super(TAG);

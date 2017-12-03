@@ -15,7 +15,7 @@ import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResour
 @Component
 public class ItalicPlugin extends AbstractStylePlugin {
 
-	public final static String TAG = "EM";
+	public static final String TAG = "EM";
 
 	public ItalicPlugin() {
 		super(TAG);

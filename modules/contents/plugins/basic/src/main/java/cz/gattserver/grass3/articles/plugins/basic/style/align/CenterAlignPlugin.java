@@ -18,7 +18,7 @@ import cz.gattserver.grass3.articles.plugins.basic.style.AbstractStylePlugin;
 @Component
 public class CenterAlignPlugin extends AbstractStylePlugin {
 
-	public final static String TAG = "ALGNCT";
+	public static final String TAG = "ALGNCT";
 
 	public CenterAlignPlugin() {
 		super(TAG);

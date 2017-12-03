@@ -260,7 +260,7 @@ public class ParsingProcessor {
 					// jako podstrom prvků, ukonči blok
 					break;
 				} else {
-					boolean isInActive = activePlugins.contains(actualEndTag);
+					boolean isInActive = activePlugins.stream().anyMatch(e -> e.tag.equals(actualEndTag));
 					// není jeho -- jde o ukončovací tag některého z aktivních
 					// pluginů? Pokud ano, pak to ber jako chybu. Pokud ne, pak
 					// ho ber jako text a parsuj obsah dál, jako prvky jeho

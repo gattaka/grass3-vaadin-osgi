@@ -18,7 +18,7 @@ import cz.gattserver.grass3.articles.plugins.basic.style.AbstractStylePlugin;
 @Component
 public class RightAlignPlugin extends AbstractStylePlugin {
 
-	public final static String TAG = "ALGNRT";
+	public static final String TAG = "ALGNRT";
 
 	public RightAlignPlugin() {
 		super(TAG);

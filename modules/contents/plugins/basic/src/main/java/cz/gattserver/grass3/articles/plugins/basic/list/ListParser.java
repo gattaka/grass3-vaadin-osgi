@@ -36,8 +36,8 @@ public class ListParser implements Parser {
 		// Zpracovat položek listu, nemůžu volat blok, protože ten končí až na
 		// mém koncovém tagu, kdežto já potřebuju odlišit položky listu konci
 		// řádků
-		List<List<Element>> listElements = new ArrayList<List<Element>>();
-		List<Element> elist = new ArrayList<Element>();
+		List<List<Element>> listElements = new ArrayList<>();
+		List<Element> elist = new ArrayList<>();
 		while (pluginBag.getToken() != Token.END_TAG || !pluginBag.getEndTag().equals(tag)) {
 			switch (pluginBag.getToken()) {
 			// V elementu listu můžou být jiné pluginy
@@ -53,7 +53,7 @@ public class ListParser implements Parser {
 			// Konec řádku značí konec položky listu
 			case EOL:
 				listElements.add(elist);
-				elist = new ArrayList<Element>();
+				elist = new ArrayList<>();
 				pluginBag.nextToken();
 				break;
 			case EOF:

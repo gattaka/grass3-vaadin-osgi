@@ -15,7 +15,7 @@ import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResour
 @Component
 public class StrongPlugin extends AbstractStylePlugin {
 
-	public final static String TAG = "STR";
+	public static final String TAG = "STR";
 
 	public StrongPlugin() {
 		super(TAG);

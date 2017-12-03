@@ -15,7 +15,7 @@ import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResour
 @Component
 public class MonospacePlugin extends AbstractStylePlugin {
 
-	public final static String TAG = "MONSPC";
+	public static final String TAG = "MONSPC";
 
 	public MonospacePlugin() {
 		super(TAG);

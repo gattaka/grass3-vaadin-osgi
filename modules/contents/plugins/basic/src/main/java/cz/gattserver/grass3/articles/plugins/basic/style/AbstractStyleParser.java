@@ -31,7 +31,7 @@ public abstract class AbstractStyleParser implements Parser {
 
 		// zpracovat počáteční tag
 		String startTag = pluginBag.getStartTag();
-		logger.debug(pluginBag.getToken().toString());
+		logger.debug("{}", pluginBag.getToken());
 
 		if (!startTag.equals(tag))
 			throw new TokenException(tag, startTag);
@@ -42,13 +42,13 @@ public abstract class AbstractStyleParser implements Parser {
 		// zpracovat text
 		// tady se sice pustí blok, ale blok nemá jinou zarážku než EOF,
 		// to já nechci - já potřebuju aby skončil na definovaném tagu
-		List<Element> elist = new ArrayList<Element>();
+		List<Element> elist = new ArrayList<>();
 		pluginBag.getBlock(elist);
 		// nextToken() - je již voláno v block() !!!
 
 		// zpracovat koncový tag
 		String endTag = pluginBag.getEndTag();
-		logger.debug(pluginBag.getToken().toString());
+		logger.debug("{}", pluginBag.getToken());
 
 		if (!endTag.equals(tag))
 			throw new TokenException(tag, endTag);

@@ -15,7 +15,7 @@ import cz.gattserver.grass3.articles.plugins.basic.style.AbstractStylePlugin;
  */
 public class LeftAlignPlugin extends AbstractStylePlugin {
 
-	public final static String TAG = "ALGNLT";
+	public static final String TAG = "ALGNLT";
 
 	public LeftAlignPlugin() {
 		super(TAG);

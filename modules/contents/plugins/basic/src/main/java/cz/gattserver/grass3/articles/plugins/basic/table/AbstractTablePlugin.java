@@ -11,10 +11,10 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
  */
 public abstract class AbstractTablePlugin implements Plugin {
 
-	private final String withHeadTag = "HTABLE";
-	private final String withHeadImage = "articles/basic/img/htbl_16.png";
-	private final String withoutHeadTag = "TABLE";
-	private final String withoutHeadImage = "articles/basic/img/tbl_16.png";
+	private static final String WITH_HEAD_TAG = "HTABLE";
+	private static final String WITH_HEAD_IMAGE = "articles/basic/img/htbl_16.png";
+	private static final String WITHOUT_HEAD_TAG = "TABLE";
+	private static final String WITHOUT_HEAD_IMAGE = "articles/basic/img/tbl_16.png";
 
 	private boolean withHead;
 
@@ -24,11 +24,11 @@ public abstract class AbstractTablePlugin implements Plugin {
 	public AbstractTablePlugin(boolean withHead) {
 		this.withHead = withHead;
 		if (withHead) {
-			tag = withHeadTag;
-			image = withHeadImage;
+			tag = WITH_HEAD_TAG;
+			image = WITH_HEAD_IMAGE;
 		} else {
-			tag = withoutHeadTag;
-			image = withoutHeadImage;
+			tag = WITHOUT_HEAD_TAG;
+			image = WITHOUT_HEAD_IMAGE;
 		}
 	}
 

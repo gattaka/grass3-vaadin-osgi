@@ -14,22 +14,22 @@ import cz.gattserver.web.common.ui.ImageIcon;
 @Component
 public class ImagePlugin implements Plugin {
 
-	private final String tag = "IMG";
-	private final String description = "Obrázek";
+	private static final String TAG = "IMG";
+	private static final String DESCRIPTION = "Obrázek";
 
 	@Override
 	public String getTag() {
-		return tag;
+		return TAG;
 	}
 
 	@Override
 	public Parser getParser() {
-		return new ImageParser(tag);
+		return new ImageParser(TAG);
 	}
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(tag, "HTML").setDescription(description)
+		return new EditorButtonResourcesTOBuilder(TAG, "HTML").setDescription(DESCRIPTION)
 				.setImageResource(ImageIcon.IMG_16_ICON.createResource()).build();
 	}
 }

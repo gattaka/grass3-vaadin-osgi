@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.code;
+package cz.gattserver.grass3.articles.plugins.code;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

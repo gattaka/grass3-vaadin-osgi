@@ -44,14 +44,11 @@ public abstract class AbstractStyleParser implements Parser {
 		// to já nechci - já potřebuju aby skončil na definovaném tagu
 		List<Element> elist = new ArrayList<>();
 		pluginBag.getBlock(elist, tag);
-		// nextToken() - je již voláno v block() !!!
 
-		// zpracovat koncový tag
-		String endTag = pluginBag.getEndTag();
+		// zpracovat koncový tag, není potřeba kontrolovat, jaký je to endtag,
+		// protože buď je to můj endtag nebo jde o EOF (vyplývá z bloku)
+		pluginBag.getEndTag();
 		logger.debug("{}", pluginBag.getToken());
-
-		if (!endTag.equals(tag))
-			throw new TokenException(tag, endTag);
 
 		// END_TAG byl zpracován
 		pluginBag.nextToken();

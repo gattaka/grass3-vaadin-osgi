@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.code;
+package cz.gattserver.grass3.articles.plugins.code;
 
 import cz.gattserver.grass3.articles.editor.parser.Context;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;

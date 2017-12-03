@@ -1,8 +1,6 @@
-package cz.gattserver.grass3.articles.code.service.impl;
+package cz.gattserver.grass3.articles.plugins.code;
 
 import org.springframework.stereotype.Component;
-
-import cz.gattserver.grass3.articles.code.AbstractCodePlugin;
 
 @Component
 public class CodePlugin extends AbstractCodePlugin {

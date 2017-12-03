@@ -232,8 +232,8 @@ public class ParsingProcessor {
 
 	/**
 	 * Zpracuje obsah jako podstrom prvků. Parsuje, dokud nenarazí na zadaný
-	 * {@link Token#END_TAG} ukončovací tag. Jiné ukončovací tagy bere jako text
-	 * nebo jako chybu předčasného ukončení.
+	 * {@link Token#END_TAG} ukončovací tag nebo na {@link Token#EOF}. Jiné
+	 * ukončovací tagy bere jako text nebo jako chybu předčasného ukončení.
 	 * 
 	 * @param elist
 	 *            list do kterého se budou ukládat výsledné podstromy prvků

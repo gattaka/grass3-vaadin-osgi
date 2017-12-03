@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.code;
+package cz.gattserver.grass3.articles.plugins.code;
 
 import org.apache.commons.lang3.StringUtils;
 

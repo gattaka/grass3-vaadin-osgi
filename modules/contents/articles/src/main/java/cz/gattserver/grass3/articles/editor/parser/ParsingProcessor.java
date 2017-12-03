@@ -315,12 +315,11 @@ public class ParsingProcessor {
 	}
 
 	/**
-	 * Zpracuje obsah jako obyčejý text - nebezpečné znaky zaescapuje
+	 * Zpracuje obsah jako obyčejný text - nebezpečné znaky zaescapuje
 	 * 
 	 * @return escapovaný text TextTree AST
 	 */
 	public TextElement getTextTree() {
-		// většinou chci aby znaky byly escapovány
 		return getTextTree(true);
 	}
 
@@ -338,7 +337,6 @@ public class ParsingProcessor {
 	 * @return neescapovaný {@link TextElement} AST
 	 */
 	public TextElement getCodeTextTree() {
-		// ... to je taky text, ale neescapován
 		return getTextTree(false);
 	}
 }

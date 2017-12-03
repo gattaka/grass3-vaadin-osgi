@@ -10,14 +10,14 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
  */
 public abstract class AbstractListPlugin implements Plugin {
 
-	private boolean ordered;
+	private final boolean ordered;
+	private final String tag;
+	private final String image;
 
-	private String tag;
-	private String image;
-
-	public AbstractListPlugin(String tag, String image) {
+	public AbstractListPlugin(String tag, String image, boolean ordered) {
 		this.tag = tag;
 		this.image = image;
+		this.ordered = ordered;
 	}
 
 	@Override

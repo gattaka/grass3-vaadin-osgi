@@ -18,9 +18,7 @@ public class ListElement implements Element {
 	@Override
 	public void apply(Context ctx) {
 		ctx.print(ordered ? "<ol>" : "<ul>");
-		/**
-		 * Každá položka listu se může skládat z více parserových elementů
-		 */
+		// Každá položka listu se může skládat z více parserových elementů
 		for (List<Element> elist : listElements) {
 			ctx.print("<li>");
 			for (Element elementTree : elist) {

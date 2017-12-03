@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class OrderedListPlugin extends AbstractListPlugin {
 
 	public OrderedListPlugin() {
-		super("OL", "articles/basic/img/ol_16.png");
+		super("OL", "articles/basic/img/ol_16.png", true);
 	}
 
 }

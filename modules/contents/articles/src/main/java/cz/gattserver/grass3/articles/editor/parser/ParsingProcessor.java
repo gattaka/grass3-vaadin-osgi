@@ -231,14 +231,21 @@ public class ParsingProcessor {
 	}
 
 	/**
-	 * Zpracuje obsah jako podstrom prvků. Parsuje, dokud nenarazí na volný
-	 * {@link Token#END_TAG}, tedy ukončovací tag, který nebyl zpracován v rámci
-	 * párování tagů prvků podstromu.
+	 * Zpracuje obsah jako podstrom prvků. Parsuje, dokud nenarazí na zadaný
+	 * {@link Token#END_TAG} ukončovací tag. Jiné ukončovací tagy bere jako text
+	 * nebo jako chybu předčasného ukončení.
 	 * 
 	 * @param elist
 	 *            list do kterého se budou ukládat výsledné podstromy prvků
+	 * @param stopEndTag
+	 *            ukončovací tag, na kterém se má zastavit parsování. Může být
+	 *            <code>null</code>, v tom případě zpracovávám až do
+	 *            {@link Token#EOF}
+	 * @throws TokenException
+	 *             pokud najde předčasně ukončovací tag některého z předchozích
+	 *             aktivních pluginů (v rámci zpracování jejich podstromu)
 	 */
-	public void getBlock(List<Element> elist) {
+	public void getBlock(List<Element> elist, String stopEndTag) {
 		logger.info("block: " + getToken());
 		switch (getToken()) {
 		case START_TAG:
@@ -246,34 +253,32 @@ public class ParsingProcessor {
 		case TAB:
 		case EOL:
 			elist.add(getElement());
-			getBlock(elist);
+			getBlock(elist, stopEndTag);
 			break;
 		case END_TAG:
-			// je aktivní nějaký plugin nebo parsuju kořenový blok článku?
-			if (!activePlugins.empty()) {
-				// pokud je ativní nějaký plugin, pak čeká na svůj ukončovací
-				// token -- zkontroluj, zda je jeho
-				String expectedEndTag = activePlugins.peek().getTag();
-				String actualEndTag = getEndTag();
-				if (expectedEndTag.equals(actualEndTag)) {
-					// je jeho, ukončil jsem v pořádku parsování jeho obsahu
-					// jako podstrom prvků, ukonči blok
+			String actualEndTag = getEndTag();
+			if (stopEndTag != null) {
+				if (actualEndTag.equals(stopEndTag)) {
+					// ukončil jsem v pořádku parsování obsahu jako podstrom
+					// prvků,
+					// ukonči blok
 					break;
 				} else {
 					boolean isInActive = activePlugins.stream().anyMatch(e -> e.tag.equals(actualEndTag));
-					// není jeho -- jde o ukončovací tag některého z aktivních
-					// pluginů? Pokud ano, pak to ber jako chybu. Pokud ne, pak
+					// nejde náhodou o ukončovací tag některého z aktivních
+					// pluginů?
+					// Pokud ano, pak to ber jako chybu. Pokud ne, pak
 					// ho ber jako text a parsuj obsah dál, jako prvky jeho
 					// podstromu.
 					// Tím je umožněno, aby se dalo napsat například
 					// [N1][/TEST][/N1], ale zároveň aby se dali lokalizovat
 					// chyby
 					if (isInActive)
-						throw new TokenException(expectedEndTag, actualEndTag);
+						throw new TokenException(stopEndTag, actualEndTag);
 				}
 			}
 			elist.add(getTextTree());
-			getBlock(elist);
+			getBlock(elist, stopEndTag);
 			break;
 		case EOF:
 		default:
@@ -281,6 +286,7 @@ public class ParsingProcessor {
 				throw new TokenException(Token.END_TAG, activePlugins.peek().getTag());
 			break;
 		}
+
 	}
 
 	private BreaklineElement getBreakline() {

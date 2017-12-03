@@ -43,7 +43,7 @@ public class HeaderParser implements Parser {
 
 		// zpracovat text
 		List<Element> elist = new ArrayList<Element>();
-		pluginBag.getBlock(elist);
+		pluginBag.getBlock(elist, tag);
 		// nextToken() - je již voláno v text() !!!
 
 		// zpracovat koncový tag

@@ -75,7 +75,7 @@ public class ArticleParser implements Parser {
 			 * pluginu, tudíž to není chyba, že tím článek začíná
 			 */
 			List<Element> elist = new ArrayList<Element>();
-			parsingProcessor.getBlock(elist);
+			parsingProcessor.getBlock(elist, null);
 			return new ArticleElement(elist);
 		}
 	}

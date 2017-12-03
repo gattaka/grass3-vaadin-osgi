@@ -43,7 +43,7 @@ public abstract class AbstractStyleParser implements Parser {
 		// tady se sice pustí blok, ale blok nemá jinou zarážku než EOF,
 		// to já nechci - já potřebuju aby skončil na definovaném tagu
 		List<Element> elist = new ArrayList<>();
-		pluginBag.getBlock(elist);
+		pluginBag.getBlock(elist, tag);
 		// nextToken() - je již voláno v block() !!!
 
 		// zpracovat koncový tag

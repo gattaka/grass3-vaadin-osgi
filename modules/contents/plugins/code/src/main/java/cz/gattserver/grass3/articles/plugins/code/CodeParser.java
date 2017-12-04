@@ -80,21 +80,12 @@ public class CodeParser implements Parser {
 		}
 
 		// zpracovat koncový tag
-		String endTag = pluginBag.getEndTag();
-		logger.debug(pluginBag.getToken().toString());
-
-		if (!endTag.equals(tag)) {
-			logger.warn("Čekal jsem: [/" + tag + "], ne " + pluginBag.getCode());
-			throw new ParserException();
-		}
-
 		// END_TAG byl zpracován
 		pluginBag.nextToken();
 
 		// protože za CODE je většinou mezera ignoruje se případný <br/>
-		if (pluginBag.getToken().equals(Token.EOL)) {
+		if (pluginBag.getToken().equals(Token.EOL))
 			pluginBag.nextToken();
-		}
 
 		// position 1, position 2, link odkazu, text odkazu (optional), ikona
 		// (optional), default ikona

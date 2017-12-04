@@ -12,11 +12,11 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
  */
 public abstract class AbstractCodePlugin implements Plugin {
 
-	private String tag;
-	private String description;
-	private String image;
-	private String lib;
-	private String mode;
+	private final String tag;
+	private final String description;
+	private final String image;
+	private final String lib;
+	private final String mode;
 
 	public AbstractCodePlugin(String tag, String description, String image, String lib, String mode) {
 		this.tag = tag;

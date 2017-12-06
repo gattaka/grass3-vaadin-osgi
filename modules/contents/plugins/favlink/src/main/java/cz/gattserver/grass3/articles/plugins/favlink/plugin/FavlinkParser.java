@@ -46,6 +46,8 @@ public class FavlinkParser implements Parser {
 		String faviconURL = null;
 		for (FaviconObtainStrategy s : strategies) {
 			faviconURL = s.obtainFaviconURL(pageURL.toString(), parsingProcessor.getContextRoot());
+			if (faviconURL != null)
+				break;
 		}
 
 		// zpracovat koncový tag

@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.favlink.ui.pages.settings;
+package cz.gattserver.grass3.articles.plugins.favlink.ui.pages.settings;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -7,7 +7,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
+import cz.gattserver.grass3.articles.plugins.favlink.config.FavlinkConfiguration;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
@@ -44,17 +44,12 @@ public class FavlinkSettingsPage extends AbstractSettingsPage {
 		settingsFieldsLayout.setSpacing(true);
 		settingsFieldsLayout.setSizeFull();
 
-		/**
-		 * Výstupní cesta
-		 */
+		// Výstupní cesta
 		final TextField outputPathField = new TextField("Nastavení výstupní cesty");
 		outputPathField.setValue(configuration.getOutputPath());
 		settingsFieldsLayout.addComponent(outputPathField);
 
-		/**
-		 * Save tlačítko
-		 */
-
+		// Save tlačítko
 		Button saveButton = new Button("Uložit", event -> {
 			configuration.setOutputPath((String) outputPathField.getValue());
 			storeConfiguration(configuration);

@@ -1,8 +1,8 @@
-package cz.gattserver.grass3.articles.favlink.ui.pages.settings.factories;
+package cz.gattserver.grass3.articles.plugins.favlink.ui.pages.settings.factories;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.articles.favlink.ui.pages.settings.FavlinkSettingsPage;
+import cz.gattserver.grass3.articles.plugins.favlink.ui.pages.settings.FavlinkSettingsPage;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.settings.factories.AbstractModuleSettingsPageFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;

@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.favlink.config;
+package cz.gattserver.grass3.articles.plugins.favlink.config;
 
 import cz.gattserver.grass3.config.AbstractConfiguration;
 

@@ -6,7 +6,7 @@ import java.util.List;
 import cz.gattserver.grass3.articles.editor.parser.Context;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.elements.TextElement;
-import cz.gattserver.grass3.articles.favlink.plugin.LinkElement;
+import cz.gattserver.grass3.articles.plugins.favlink.plugin.FavlinkElement;
 import cz.gattserver.grass3.articles.plugins.headers.HeaderElement;
 
 public class SourcesElement implements Element {
@@ -36,7 +36,7 @@ public class SourcesElement implements Element {
 					ctx.print(chunks[i]);
 					ctx.print(" ");
 				} else {
-					new LinkElement(chunks[chunks.length - 1], contextRoot).apply(ctx);
+					new FavlinkElement(chunks[chunks.length - 1], contextRoot).apply(ctx);
 				}
 			}
 			ctx.print("</li>");

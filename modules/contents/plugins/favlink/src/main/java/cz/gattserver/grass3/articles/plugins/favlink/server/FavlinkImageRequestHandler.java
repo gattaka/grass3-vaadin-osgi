@@ -1,11 +1,11 @@
-package cz.gattserver.grass3.articles.favlink.server;
+package cz.gattserver.grass3.articles.plugins.favlink.server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.articles.favlink.config.FavlinkConfiguration;
+import cz.gattserver.grass3.articles.plugins.favlink.config.FavlinkConfiguration;
 import cz.gattserver.grass3.server.AbstractGrassRequestHandler;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.web.common.spring.SpringContextHelper;

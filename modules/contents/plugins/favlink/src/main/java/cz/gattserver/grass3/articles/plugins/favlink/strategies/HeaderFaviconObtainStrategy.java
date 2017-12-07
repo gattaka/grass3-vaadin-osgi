@@ -1,8 +1,8 @@
-package cz.gattserver.grass3.articles.plugins.favlink;
+package cz.gattserver.grass3.articles.plugins.favlink.strategies;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -10,6 +10,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import cz.gattserver.grass3.articles.plugins.favlink.FaviconUtils;
 
 /**
  * @author gatt
@@ -91,10 +93,10 @@ public class HeaderFaviconObtainStrategy extends CacheFaviconObtainStrategy {
 	}
 
 	@Override
-	protected void onCacheMiss(URL pageURL, File targetFile) {
+	protected void onCacheMiss(URL pageURL, Path targetFile) {
 		logger.info("Zkouším hledat v hlavičce");
 		String faviconAddress = findFaviconAddressOnPage(pageURL);
-		DownloadUtils.tryDownloadFavicon(targetFile, faviconAddress);
+		FaviconUtils.downloadFile(targetFile, faviconAddress);
 	}
 
 }

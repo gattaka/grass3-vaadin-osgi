@@ -4,13 +4,13 @@ import cz.gattserver.grass3.config.AbstractConfiguration;
 
 public class FavlinkConfiguration extends AbstractConfiguration {
 
-	public FavlinkConfiguration() {
-		super("cz.gattserver.grass3.articles.favlink");
-	}
-
 	public static final String IMAGE_PATH_ALIAS = "/articles-favlink-plugin";
 
 	private String outputPath = "favlink/cache";
+
+	public FavlinkConfiguration() {
+		super("cz.gattserver.grass3.articles.favlink");
+	}
 
 	public String getOutputPath() {
 		return outputPath;

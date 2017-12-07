@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.plugins.favlink;
+package cz.gattserver.grass3.articles.plugins.favlink.strategies;
 
 /**
  * Rozhraní společné pro všechny strategie pro získávání favicon ikony dle URL

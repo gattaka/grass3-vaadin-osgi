@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.plugins.favlink;
+package cz.gattserver.grass3.articles.plugins.favlink.strategies;
 
 import cz.gattserver.web.common.ui.ImageIcon;
 

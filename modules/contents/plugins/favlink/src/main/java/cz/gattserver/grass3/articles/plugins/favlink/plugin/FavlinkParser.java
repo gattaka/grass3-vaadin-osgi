@@ -7,7 +7,7 @@ import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.TokenException;
-import cz.gattserver.grass3.articles.plugins.favlink.FaviconObtainStrategy;
+import cz.gattserver.grass3.articles.plugins.favlink.strategies.FaviconObtainStrategy;
 
 /**
  * @author gatt

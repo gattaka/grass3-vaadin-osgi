@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.articles.plugins.favlink.plugin;
 
-import cz.gattserver.grass3.articles.plugins.favlink.FaviconObtainStrategy;
+import cz.gattserver.grass3.articles.plugins.favlink.strategies.FaviconObtainStrategy;
 
 public class MockFaviconObtainStrategy implements FaviconObtainStrategy {
 

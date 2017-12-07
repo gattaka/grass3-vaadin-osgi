@@ -7,9 +7,10 @@ import org.junit.Test;
 import com.vaadin.server.ClassResource;
 
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
+import cz.gattserver.grass3.test.AbstractContextAwareTest;
 import cz.gattserver.web.common.ui.ImageIcon;
 
-public class FavlinkPluginTest {
+public class FavlinkPluginTest extends AbstractContextAwareTest {
 
 	@Test
 	public void testProperties() {

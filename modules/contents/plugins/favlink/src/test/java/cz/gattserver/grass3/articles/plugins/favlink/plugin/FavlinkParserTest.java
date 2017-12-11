@@ -13,6 +13,7 @@ import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.TokenException;
 import cz.gattserver.grass3.articles.editor.parser.impl.ContextImpl;
+import cz.gattserver.grass3.articles.plugins.favlink.test.MockFaviconObtainStrategy;
 
 public class FavlinkParserTest {
 

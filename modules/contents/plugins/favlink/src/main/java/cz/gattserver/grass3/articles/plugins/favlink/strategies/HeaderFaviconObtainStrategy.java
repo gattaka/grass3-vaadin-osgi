@@ -29,22 +29,23 @@ public class HeaderFaviconObtainStrategy extends CacheFaviconObtainStrategy {
 		// stránka a tam se baseURI liší od počátečního
 		// url.getHost() hlavní stránky
 
-		logger.info("Favicon address found on page, address: " + faviconAddress);
+		String tryMsg = "Zkouším stáhnout favicon z: {}";
+
+		logger.info("Favicon adresa nalezena na: {}", faviconAddress);
 		if (faviconAddress.startsWith(HTTP_PREFIX) || faviconAddress.startsWith(HTTPS_PREFIX)) {
 			// absolutní cesta pro favicon
-			logger.info("Trying download favicon from: " + faviconAddress);
+			logger.info(tryMsg, faviconAddress);
 			return faviconAddress;
 		} else if (faviconAddress.startsWith("//")) {
-			// absolutní cesta pro favicon, která míst 'http://' začíná jenom
-			// '//'
-			// tahle to má například stackoverflow
+			// absolutní cesta pro favicon, která místo 'http://' začíná jenom
+			// '//' tahle to má například stackoverflow
 			String faviconFullAddress = HTTP_PREFIX_SHORT + faviconAddress;
-			logger.info("Trying download favicon from: " + faviconFullAddress);
+			logger.info(tryMsg, faviconFullAddress);
 			return faviconFullAddress;
 		} else {
 			// relativní cesta pro favicon
-			String faviconFullAddress = baseURI + "/" + faviconAddress;
-			logger.info("Trying download favicon from: " + faviconFullAddress);
+			String faviconFullAddress = baseURI + (faviconAddress.startsWith("/") ? "" : "/") + faviconAddress;
+			logger.info(tryMsg, faviconFullAddress);
 			return faviconFullAddress;
 		}
 	}

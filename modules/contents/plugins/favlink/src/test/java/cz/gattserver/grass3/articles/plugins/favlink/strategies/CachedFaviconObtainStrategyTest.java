@@ -1,6 +1,9 @@
 package cz.gattserver.grass3.articles.plugins.favlink.strategies;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URL;
@@ -14,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import cz.gattserver.grass3.articles.plugins.favlink.test.MockFileSystemService;
 import cz.gattserver.grass3.test.AbstractContextAwareTest;
 
-public class CacheFaviconObtainStrategyTest extends AbstractContextAwareTest {
+public class CachedFaviconObtainStrategyTest extends AbstractContextAwareTest {
 
 	@Autowired
 	private MockFileSystemService fileSystemService;

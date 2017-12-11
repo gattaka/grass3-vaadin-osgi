@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.plugins.favlink.plugin;
+package cz.gattserver.grass3.articles.plugins.favlink.test;
 
 import cz.gattserver.grass3.articles.plugins.favlink.strategies.FaviconObtainStrategy;
 

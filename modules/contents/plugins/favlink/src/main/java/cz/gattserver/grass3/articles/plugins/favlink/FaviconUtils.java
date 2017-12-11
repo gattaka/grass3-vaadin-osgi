@@ -141,8 +141,7 @@ public class FaviconUtils {
 	 */
 	public static URL getPageURL(String pageAddress) {
 		try {
-			URL url = new URL(pageAddress);
-			return url;
+			return new URL(pageAddress);
 		} catch (MalformedURLException e) {
 			throw new ParserException("Nezdařilo se vytěžit název domény ze zadané adresy", e);
 		}
@@ -157,8 +156,7 @@ public class FaviconUtils {
 	 * @return název favicon souboru bez přípony (tu ještě neznám)
 	 */
 	public static String createFaviconRootFilename(URL pageURL) {
-		String faviconFilename = pageURL.getHost();
-		return faviconFilename;
+		return pageURL.getHost();
 	}
 
 }

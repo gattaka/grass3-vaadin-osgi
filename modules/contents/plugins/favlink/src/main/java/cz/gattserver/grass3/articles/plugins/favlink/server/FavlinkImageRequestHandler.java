@@ -23,7 +23,7 @@ public class FavlinkImageRequestHandler extends AbstractGrassRequestHandler {
 	 * Zjistí dle aktuální konfigurace výstupní adresář
 	 */
 	private String getOutputPath() {
-		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper.getContext()
+		ConfigurationService configurationService = SpringContextHelper.getContext()
 				.getBean(ConfigurationService.class);
 
 		FavlinkConfiguration configuration = new FavlinkConfiguration();
@@ -33,7 +33,7 @@ public class FavlinkImageRequestHandler extends AbstractGrassRequestHandler {
 
 	@Override
 	protected File getFile(String fileName) throws FileNotFoundException {
-		return new File(getOutputPath() + "/" + fileName);
+		return new File(getOutputPath(), fileName);
 	}
 
 }

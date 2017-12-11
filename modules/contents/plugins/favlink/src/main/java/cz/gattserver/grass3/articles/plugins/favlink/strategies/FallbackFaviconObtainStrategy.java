@@ -11,11 +11,11 @@ import cz.gattserver.web.common.ui.ImageIcon;
  */
 public class FallbackFaviconObtainStrategy implements FaviconObtainStrategy {
 
-	private final static String defaultFavicon = "/" + ImageIcon.LABEL_16_ICON;
+	private static final String DEFAULT_FAVICON = "/" + ImageIcon.GLOBE_16_ICON.name();
 
 	@Override
 	public String obtainFaviconURL(String pageURL, String contextRoot) {
-		return defaultFavicon;
+		return DEFAULT_FAVICON;
 	}
 
 }

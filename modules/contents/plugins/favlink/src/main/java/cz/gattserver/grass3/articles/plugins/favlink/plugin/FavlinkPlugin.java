@@ -21,11 +21,11 @@ import cz.gattserver.web.common.ui.ImageIcon;
 @Component
 public class FavlinkPlugin implements Plugin {
 
-	private final String tag = "A";
+	private static final String TAG = "A";
 
 	@Override
 	public String getTag() {
-		return tag;
+		return TAG;
 	}
 
 	@Override
@@ -34,12 +34,12 @@ public class FavlinkPlugin implements Plugin {
 		strategies.add(new AddressFaviconObtainStrategy());
 		strategies.add(new HeaderFaviconObtainStrategy());
 		strategies.add(new FallbackFaviconObtainStrategy());
-		return new FavlinkParser(tag, strategies);
+		return new FavlinkParser(TAG, strategies);
 	}
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(tag, "HTML").setDescription("Link")
+		return new EditorButtonResourcesTOBuilder(TAG, "HTML").setDescription("Link")
 				.setImageResource(ImageIcon.GLOBE_16_ICON.createResource()).build();
 	}
 }

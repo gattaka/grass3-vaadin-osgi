@@ -54,6 +54,8 @@ public class HeaderFaviconObtainStrategy extends CacheFaviconObtainStrategy {
 		Document doc;
 		try {
 
+			String rootURL = pageURL.getProtocol() + "://" + pageURL.getHost() + ":" + pageURL.getPort();
+
 			// http://en.wikipedia.org/wiki/Favicon
 			// need http protocol
 			// bez agenta to často hodí 403 Forbidden, protože si myslí, že jsem
@@ -67,7 +69,7 @@ public class HeaderFaviconObtainStrategy extends CacheFaviconObtainStrategy {
 			if (element != null) {
 				ico = element.attr("href");
 				if (StringUtils.isNotBlank(ico))
-					return createFullFaviconAddress(ico, doc.baseUri());
+					return createFullFaviconAddress(ico, rootURL);
 			}
 
 			// link PNG
@@ -75,7 +77,7 @@ public class HeaderFaviconObtainStrategy extends CacheFaviconObtainStrategy {
 			if (element != null) {
 				ico = element.attr("href");
 				if (StringUtils.isNotBlank(ico))
-					return createFullFaviconAddress(ico, doc.baseUri());
+					return createFullFaviconAddress(ico, rootURL);
 			}
 
 			// meta + content
@@ -83,7 +85,7 @@ public class HeaderFaviconObtainStrategy extends CacheFaviconObtainStrategy {
 			if (element != null) {
 				ico = element.attr("content");
 				if (StringUtils.isNotBlank(ico))
-					return createFullFaviconAddress(ico, doc.baseUri());
+					return createFullFaviconAddress(ico, rootURL);
 			}
 
 		} catch (IOException e) {
@@ -97,6 +99,8 @@ public class HeaderFaviconObtainStrategy extends CacheFaviconObtainStrategy {
 	protected String onCacheMiss(URL pageURL, Path cacheDir, String faviconRootFilename) {
 		logger.info("Zkouším hledat v hlavičce");
 		String faviconAddress = findFaviconAddressOnPage(pageURL);
+		if (faviconAddress == null)
+			return null;
 		String extension = faviconAddress.substring(faviconAddress.lastIndexOf('.'), faviconAddress.length());
 		String fileName = faviconRootFilename + extension;
 		FaviconUtils.downloadFile(cacheDir.resolve(fileName), faviconAddress);

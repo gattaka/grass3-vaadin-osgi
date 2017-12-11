@@ -14,13 +14,12 @@ import cz.gattserver.grass3.articles.plugins.favlink.FaviconUtils;
 public class AddressFaviconObtainStrategy extends CacheFaviconObtainStrategy {
 
 	private static final Logger logger = LoggerFactory.getLogger(AddressFaviconObtainStrategy.class);
-	private static final String HTTP_PREFIX = "http://";
 	private static final String FAVICON_ICO = "favicon.ico";
 	private static final String FAVICON_PNG = "favicon.png";
 
 	@Override
 	protected String onCacheMiss(URL pageURL, Path cacheDir, String faviconRootFilename) {
-		String address = HTTP_PREFIX + pageURL.getHost();
+		String address = pageURL.getProtocol() + "://" + pageURL.getHost() + ":" + pageURL.getPort();
 
 		// root + /favicon.ico
 		logger.info("Trying favicon.ico");

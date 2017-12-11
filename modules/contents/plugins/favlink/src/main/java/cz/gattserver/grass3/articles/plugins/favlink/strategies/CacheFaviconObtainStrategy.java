@@ -21,13 +21,27 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
  */
 public abstract class CacheFaviconObtainStrategy implements FaviconObtainStrategy {
 
-	protected abstract void onCacheMiss(URL pageURL, Path targetFile);
-
 	@Autowired
 	private ConfigurationService configurationService;
 
 	@Autowired
 	private FileSystemService fileSystemService;
+
+	/**
+	 * Získá favicon z adresy, uloží ji pod předurčeným názvem + přípona, pod
+	 * kterou byla favicona nalezena a vrátí celé jméno uloženého souboru
+	 * 
+	 * @param pageURL
+	 *            stránka, jejíž favicon hledám
+	 * @param cacheDir
+	 *            {@link Path} adresáře do kterého má být favicon soubor uložen
+	 * @param faviconRootFilename
+	 *            kořenové jméno souboru, pod kterým bude nalezená favicon
+	 *            uložena
+	 * @return název souboru -- tedy kořenové jméno + přípona. Pokud se
+	 *         favicon nepodařilo najít, pak <code>null</code>
+	 */
+	protected abstract String onCacheMiss(URL pageURL, Path cacheDir, String faviconRootFilename);
 
 	public CacheFaviconObtainStrategy() {
 		SpringContextHelper.inject(this);
@@ -36,19 +50,25 @@ public abstract class CacheFaviconObtainStrategy implements FaviconObtainStrateg
 	@Override
 	public String obtainFaviconURL(String pageAddress, String contextRoot) {
 		URL pageURL = FaviconUtils.getPageURL(pageAddress);
-		String faviconFilename = FaviconUtils.createFaviconFilename(pageURL);
-		Path cachedFilePath = createCachedFilePath(faviconFilename);
-		if (!Files.exists(cachedFilePath))
-			onCacheMiss(pageURL, cachedFilePath);
-		if (!Files.exists(cachedFilePath))
-			return null;
-		return FaviconUtils.createCachedFaviconAddress(contextRoot, faviconFilename);
-	}
-
-	protected Path createCachedFilePath(String faviconFilename) {
+		String faviconRootFilename = FaviconUtils.createFaviconRootFilename(pageURL);
 		Path cacheDir = getCacheDirectoryPath();
-		Path filePath = cacheDir.resolve(faviconFilename);
-		return filePath;
+
+		// Cached ICO
+		String faviconICOFilename = faviconRootFilename + ".ico";
+		if (Files.exists(cacheDir.resolve(faviconICOFilename)))
+			return FaviconUtils.createCachedFaviconAddress(contextRoot, faviconICOFilename);
+
+		// Cached PNG
+		String faviconPNGFilename = faviconRootFilename + ".png";
+		if (Files.exists(cacheDir.resolve(faviconPNGFilename)))
+			return FaviconUtils.createCachedFaviconAddress(contextRoot, faviconPNGFilename);
+
+		// Custom strategie
+		String fileName = onCacheMiss(pageURL, cacheDir, faviconRootFilename);
+		if (fileName != null)
+			return FaviconUtils.createCachedFaviconAddress(contextRoot, fileName);
+		else
+			return null;
 	}
 
 	/**

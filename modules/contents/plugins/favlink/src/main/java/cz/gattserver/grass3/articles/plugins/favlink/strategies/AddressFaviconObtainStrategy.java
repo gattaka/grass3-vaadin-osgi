@@ -19,17 +19,21 @@ public class AddressFaviconObtainStrategy extends CacheFaviconObtainStrategy {
 	private static final String FAVICON_PNG = "favicon.png";
 
 	@Override
-	protected void onCacheMiss(URL pageURL, Path targetFile) {
+	protected String onCacheMiss(URL pageURL, Path cacheDir, String faviconRootFilename) {
 		String address = HTTP_PREFIX + pageURL.getHost();
 
 		// root + /favicon.ico
 		logger.info("Trying favicon.ico");
-		if (FaviconUtils.downloadFile(targetFile, address + "/" + FAVICON_ICO))
-			return;
+		String icoFavicon = faviconRootFilename + ".ico";
+		if (FaviconUtils.downloadFile(cacheDir.resolve(icoFavicon), address + "/" + FAVICON_ICO))
+			return icoFavicon;
 
 		// root + /favicon.png
+		String pngFavicon = faviconRootFilename + ".png";
 		logger.info("Trying favicon.png");
-		if (FaviconUtils.downloadFile(targetFile, address + "/" + FAVICON_PNG))
-			return;
+		if (FaviconUtils.downloadFile(cacheDir.resolve(pngFavicon), address + "/" + FAVICON_PNG))
+			return pngFavicon;
+
+		return null;
 	}
 }

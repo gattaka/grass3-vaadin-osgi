@@ -94,10 +94,13 @@ public class HeaderFaviconObtainStrategy extends CacheFaviconObtainStrategy {
 	}
 
 	@Override
-	protected void onCacheMiss(URL pageURL, Path targetFile) {
+	protected String onCacheMiss(URL pageURL, Path cacheDir, String faviconRootFilename) {
 		logger.info("Zkouším hledat v hlavičce");
 		String faviconAddress = findFaviconAddressOnPage(pageURL);
-		FaviconUtils.downloadFile(targetFile, faviconAddress);
+		String extension = faviconAddress.substring(faviconAddress.lastIndexOf('.'), faviconAddress.length());
+		String fileName = faviconRootFilename + extension;
+		FaviconUtils.downloadFile(cacheDir.resolve(fileName), faviconAddress);
+		return fileName;
 	}
 
 }

@@ -149,14 +149,15 @@ public class FaviconUtils {
 	}
 
 	/**
-	 * Vytvoří název ikony dle předaného URL odkazu, ke kterému favicon hledám
+	 * Vytvoří název souboru ikony dle předaného URL odkazu, ke kterému favicon
+	 * hledám.
 	 * 
 	 * @param pageURL
 	 *            odkaz, ke kterému hledám favicon
-	 * @return název favicon souboru, například "google.com.png"
+	 * @return název favicon souboru bez přípony (tu ještě neznám)
 	 */
-	public static String createFaviconFilename(URL pageURL) {
-		String faviconFilename = pageURL.getHost() + ".png";
+	public static String createFaviconRootFilename(URL pageURL) {
+		String faviconFilename = pageURL.getHost();
 		return faviconFilename;
 	}
 

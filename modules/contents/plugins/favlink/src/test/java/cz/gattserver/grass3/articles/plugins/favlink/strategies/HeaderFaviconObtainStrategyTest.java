@@ -111,5 +111,77 @@ public class HeaderFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		assertTrue(Files.exists(mockDir));
 		assertTrue(Files.exists(mockDir.resolve("localhost.png")));
 	}
+	
+	@Test
+	public void testHeaderFaviconObtainStrategy_http_ico() throws IOException {
+		// server
+		MockServerClient msc = new MockServerClient("localhost", 1929);
+
+		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_ico.html"));
+		msc.when(new HttpRequest().withMethod("GET").withPath("/"))
+				.respond(new HttpResponse().withStatusCode(200).withBody(page));
+
+		byte[] favicon = IOUtils.toByteArray(this.getClass().getResourceAsStream("imgadr/headerFaviconMockHTML.ico"));
+		msc.when(new HttpRequest().withMethod("GET").withPath("/imgadr/headerFaviconMockHTML.ico"))
+				.respond(new HttpResponse().withStatusCode(200).withBody(favicon));
+
+		Path mockDir = fileSystemService.getFileSystem().getPath("favlink", "cache");
+		assertFalse(Files.exists(mockDir));
+
+		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy();
+		String link = strategy.obtainFaviconURL("http://localhost:1929", "mycontextroot");
+		assertEquals("mycontextroot/articles-favlink-plugin/localhost.ico", link);
+
+		assertTrue(Files.exists(mockDir));
+		assertTrue(Files.exists(mockDir.resolve("localhost.ico")));
+	}
+	
+	@Test
+	public void testHeaderFaviconObtainStrategy_slashed_ico() throws IOException {
+		// server
+		MockServerClient msc = new MockServerClient("localhost", 1929);
+
+		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_slashed_ico.html"));
+		msc.when(new HttpRequest().withMethod("GET").withPath("/"))
+				.respond(new HttpResponse().withStatusCode(200).withBody(page));
+
+		byte[] favicon = IOUtils.toByteArray(this.getClass().getResourceAsStream("imgadr/headerFaviconMockHTML.ico"));
+		msc.when(new HttpRequest().withMethod("GET").withPath("/imgadr/headerFaviconMockHTML.ico"))
+				.respond(new HttpResponse().withStatusCode(200).withBody(favicon));
+
+		Path mockDir = fileSystemService.getFileSystem().getPath("favlink", "cache");
+		assertFalse(Files.exists(mockDir));
+
+		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy();
+		String link = strategy.obtainFaviconURL("http://localhost:1929", "mycontextroot");
+		assertEquals("mycontextroot/articles-favlink-plugin/localhost.ico", link);
+
+		assertTrue(Files.exists(mockDir));
+		assertTrue(Files.exists(mockDir.resolve("localhost.ico")));
+	}
+	
+	@Test
+	public void testHeaderFaviconObtainStrategy_slashed2_ico() throws IOException {
+		// server
+		MockServerClient msc = new MockServerClient("localhost", 1929);
+
+		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_slashed2_ico.html"));
+		msc.when(new HttpRequest().withMethod("GET").withPath("/"))
+				.respond(new HttpResponse().withStatusCode(200).withBody(page));
+
+		byte[] favicon = IOUtils.toByteArray(this.getClass().getResourceAsStream("imgadr/headerFaviconMockHTML.ico"));
+		msc.when(new HttpRequest().withMethod("GET").withPath("/imgadr/headerFaviconMockHTML.ico"))
+				.respond(new HttpResponse().withStatusCode(200).withBody(favicon));
+
+		Path mockDir = fileSystemService.getFileSystem().getPath("favlink", "cache");
+		assertFalse(Files.exists(mockDir));
+
+		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy();
+		String link = strategy.obtainFaviconURL("http://localhost:1929", "mycontextroot");
+		assertEquals("mycontextroot/articles-favlink-plugin/localhost.ico", link);
+
+		assertTrue(Files.exists(mockDir));
+		assertTrue(Files.exists(mockDir.resolve("localhost.ico")));
+	}
 
 }

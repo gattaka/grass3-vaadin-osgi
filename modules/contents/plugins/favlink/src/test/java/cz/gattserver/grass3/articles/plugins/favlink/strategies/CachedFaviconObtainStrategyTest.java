@@ -32,8 +32,9 @@ public class CachedFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		CacheFaviconObtainStrategy strategy = new CacheFaviconObtainStrategy() {
 
 			@Override
-			protected void onCacheMiss(URL pageURL, Path targetFile) {
+			protected String onCacheMiss(URL pageURL, Path cacheDir, String faviconRootFilename) {
 				// nic
+				return null;
 			}
 		};
 		Path mockDir = fileSystemService.getFileSystem().getPath("favlink", "cache");
@@ -48,9 +49,11 @@ public class CachedFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		CacheFaviconObtainStrategy strategy = new CacheFaviconObtainStrategy() {
 
 			@Override
-			protected void onCacheMiss(URL pageURL, Path targetFile) {
+			protected String onCacheMiss(URL pageURL, Path cacheDir, String faviconRootFilename) {
 				try {
-					Files.createFile(targetFile);
+					String fileName = faviconRootFilename + ".png";
+					Files.createFile(cacheDir.resolve(fileName));
+					return fileName;
 				} catch (IOException e) {
 					throw new IllegalStateException("fail!");
 				}
@@ -68,8 +71,9 @@ public class CachedFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		CacheFaviconObtainStrategy strategy = new CacheFaviconObtainStrategy() {
 
 			@Override
-			protected void onCacheMiss(URL pageURL, Path targetFile) {
+			protected String onCacheMiss(URL pageURL, Path cacheDir, String faviconRootFilename) {
 				// nic
+				return null;
 			}
 		};
 		String link = strategy.obtainFaviconURL("http://www.test.cz", "mycontextroot");

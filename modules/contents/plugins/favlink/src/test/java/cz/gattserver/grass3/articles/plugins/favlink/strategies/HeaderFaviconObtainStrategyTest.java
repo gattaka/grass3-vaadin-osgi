@@ -17,6 +17,7 @@ import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import cz.gattserver.grass3.articles.plugins.favlink.FaviconCache;
 import cz.gattserver.grass3.articles.plugins.favlink.test.MockFileSystemService;
 import cz.gattserver.grass3.test.AbstractContextAwareTest;
 
@@ -50,7 +51,7 @@ public class HeaderFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		Path mockDir = fileSystemService.getFileSystem().getPath("favlink", "cache");
 		assertFalse(Files.exists(mockDir));
 
-		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy();
+		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy(new FaviconCache());
 		String link = strategy.obtainFaviconURL("http://localhost:1929/dummy/site", "mycontextroot");
 		assertNull(link);
 	}
@@ -71,7 +72,7 @@ public class HeaderFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		Path mockDir = fileSystemService.getFileSystem().getPath("favlink", "cache");
 		assertFalse(Files.exists(mockDir));
 
-		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy();
+		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy(new FaviconCache());
 		String link = strategy.obtainFaviconURL("http://localhost:1929/dummy/site", "mycontextroot");
 		assertEquals("mycontextroot/articles-favlink-plugin/localhost.png", link);
 
@@ -95,7 +96,7 @@ public class HeaderFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		Path mockDir = fileSystemService.getFileSystem().getPath("favlink", "cache");
 		assertFalse(Files.exists(mockDir));
 
-		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy();
+		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy(new FaviconCache());
 		String link = strategy.obtainFaviconURL("http://localhost:1929/dummy/site", "mycontextroot");
 		assertEquals("mycontextroot/articles-favlink-plugin/localhost.ico", link);
 
@@ -119,7 +120,7 @@ public class HeaderFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		Path mockDir = fileSystemService.getFileSystem().getPath("favlink", "cache");
 		assertFalse(Files.exists(mockDir));
 
-		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy();
+		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy(new FaviconCache());
 		String link = strategy.obtainFaviconURL("http://localhost:1929/dummy/site", "mycontextroot");
 		assertEquals("mycontextroot/articles-favlink-plugin/localhost.ico", link);
 
@@ -143,7 +144,7 @@ public class HeaderFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		Path mockDir = fileSystemService.getFileSystem().getPath("favlink", "cache");
 		assertFalse(Files.exists(mockDir));
 
-		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy();
+		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy(new FaviconCache());
 		String link = strategy.obtainFaviconURL("http://localhost:1929/dummy/site", "mycontextroot");
 		assertEquals("mycontextroot/articles-favlink-plugin/localhost.ico", link);
 
@@ -167,7 +168,7 @@ public class HeaderFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		Path mockDir = fileSystemService.getFileSystem().getPath("favlink", "cache");
 		assertFalse(Files.exists(mockDir));
 
-		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy();
+		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy(new FaviconCache());
 		String link = strategy.obtainFaviconURL("http://localhost:1929/dummy/site", "mycontextroot");
 		assertEquals("mycontextroot/articles-favlink-plugin/localhost.ico", link);
 

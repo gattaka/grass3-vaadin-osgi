@@ -11,6 +11,7 @@ import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
+import cz.gattserver.grass3.articles.plugins.favlink.strategies.FaviconObtainStrategy;
 
 /**
  * @author gatt
@@ -20,10 +21,13 @@ public class SourcesParser implements Parser {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private String tag;
-	private List<String> sources = new ArrayList<>();
+	private List<String> faviconURLs = new ArrayList<>();
+	private List<String> pageURLs = new ArrayList<>();
+	private FaviconObtainStrategy strategy;
 
-	public SourcesParser(String tag) {
+	public SourcesParser(String tag, FaviconObtainStrategy strategy) {
 		this.tag = tag;
+		this.strategy = strategy;
 	}
 
 	@Override
@@ -36,7 +40,7 @@ public class SourcesParser implements Parser {
 
 		// zpracovat koncový tag
 		parseEndTag(pluginBag);
-		return new SourcesElement(sources, pluginBag.getContextRoot());
+		return new SourcesElement(faviconURLs, pageURLs);
 	}
 
 	private void parseStartTag(ParsingProcessor pluginBag) {
@@ -50,23 +54,29 @@ public class SourcesParser implements Parser {
 		pluginBag.nextToken();
 	}
 
-	private void parseSources(ParsingProcessor pluginBag) {
+	private void parseSources(ParsingProcessor parsingProcessor) {
 		// dokud není konec souboru nebo můj uzavírací tag
 		StringBuilder builder = new StringBuilder();
-		while (pluginBag.getToken() != Token.EOF
-				&& (pluginBag.getToken() != Token.END_TAG || pluginBag.getEndTag().equals(tag) == false)) {
-			if (pluginBag.getToken() == Token.EOL && builder.length() != 0) {
-				sources.add(builder.toString());
+		while (parsingProcessor.getToken() != Token.EOF && (parsingProcessor.getToken() != Token.END_TAG
+				|| parsingProcessor.getEndTag().equals(tag) == false)) {
+			if (parsingProcessor.getToken() == Token.EOL && builder.length() != 0) {
+				processURL(builder.toString(), parsingProcessor);
 				builder = new StringBuilder();
 			} else {
-				String text = pluginBag.getText();
+				String text = parsingProcessor.getText();
 				if (text != null && text.isEmpty() == false)
 					builder.append(text);
 			}
-			pluginBag.nextToken();
+			parsingProcessor.nextToken();
 		}
 		if (builder.length() != 0)
-			sources.add(builder.toString());
+			processURL(builder.toString(), parsingProcessor);
+	}
+
+	private void processURL(String pageURL, ParsingProcessor parsingProcessor) {
+		String faviconURL = strategy.obtainFaviconURL(pageURL, parsingProcessor.getContextRoot());
+		pageURLs.add(pageURL);
+		faviconURLs.add(faviconURL);
 	}
 
 	private void parseEndTag(ParsingProcessor pluginBag) {

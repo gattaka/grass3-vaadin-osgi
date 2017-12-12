@@ -148,6 +148,25 @@ public class FaviconUtils {
 	}
 
 	/**
+	 * Vrátí jméno souboru favicony, dle adresy stránky, jejíž favicon se
+	 * získává a adresy favicony. Bere tak v potaz příponu souboru.
+	 * 
+	 * @param pageURL
+	 *            adresa stránky, jejíž favicon hledám (z ní získá základ názvu
+	 *            souboru)-- například http://test.domain.com/neco/nekde
+	 * @param faviconAddress
+	 *            adresa souboru favicony, kterou jsem našel (z ní získá příponu
+	 *            souboru favicony) -- například
+	 *            http://test.domain.com/imgs/fav.ico
+	 * @return název souboru favicony -- například test.domain.com.ico
+	 */
+	public static String getFaviconFilename(URL pageURL, String faviconAddress) {
+		String faviconRootFilename = FaviconUtils.createFaviconRootFilename(pageURL);
+		String extension = faviconAddress.substring(faviconAddress.lastIndexOf('.'), faviconAddress.length());
+		return faviconRootFilename + extension;
+	}
+
+	/**
 	 * Vytvoří název souboru ikony dle předaného URL odkazu, ke kterému favicon
 	 * hledám.
 	 * 

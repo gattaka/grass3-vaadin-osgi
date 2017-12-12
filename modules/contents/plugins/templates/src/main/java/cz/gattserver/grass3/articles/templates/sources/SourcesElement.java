@@ -11,12 +11,12 @@ import cz.gattserver.grass3.articles.plugins.headers.HeaderElement;
 
 public class SourcesElement implements Element {
 
-	private List<String> sources;
-	private String contextRoot;
+	private List<String> faviconURLs = new ArrayList<>();
+	private List<String> pageURLs = new ArrayList<>();
 
-	public SourcesElement(List<String> sources, String contextRoot) {
-		this.sources = sources;
-		this.contextRoot = contextRoot;
+	public SourcesElement(List<String> faviconURLs, List<String> pageURLs) {
+		this.faviconURLs = faviconURLs;
+		this.pageURLs = pageURLs;
 	}
 
 	@Override
@@ -28,17 +28,9 @@ public class SourcesElement implements Element {
 		new HeaderElement(headerList, 1).apply(ctx);
 
 		ctx.print("<ol style=\"padding-left: 25px; margin-top: 0px;\" >");
-		for (String source : sources) {
+		for (int i = 0; i < faviconURLs.size(); i++) {
 			ctx.print("<li>");
-			String[] chunks = source.split("\\s+");
-			for (int i = 0; i < chunks.length; i++) {
-				if (i != chunks.length - 1) {
-					ctx.print(chunks[i]);
-					ctx.print(" ");
-				} else {
-					new FavlinkElement(chunks[chunks.length - 1], contextRoot).apply(ctx);
-				}
-			}
+			new FavlinkElement(faviconURLs.get(i), pageURLs.get(i)).apply(ctx);
 			ctx.print("</li>");
 		}
 		ctx.print("</ol>");

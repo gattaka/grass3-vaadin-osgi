@@ -2,7 +2,6 @@ package cz.gattserver.grass3.articles.plugins.favlink.plugin;
 
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 import org.junit.Test;
@@ -25,7 +24,7 @@ public class FavlinkParserTest {
 	}
 
 	private FavlinkParser createMockParser() {
-		return new FavlinkParser("MOCK", Arrays.asList(new MockFaviconObtainStrategy()));
+		return new FavlinkParser("MOCK", new MockFaviconObtainStrategy());
 	}
 
 	@Test

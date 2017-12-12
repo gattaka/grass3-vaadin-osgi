@@ -1,7 +1,5 @@
 package cz.gattserver.grass3.articles.plugins.favlink.plugin;
 
-import java.util.List;
-
 import cz.gattserver.grass3.articles.editor.lexer.Token;
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
@@ -15,11 +13,11 @@ import cz.gattserver.grass3.articles.plugins.favlink.strategies.FaviconObtainStr
 public class FavlinkParser implements Parser {
 
 	private String tag;
-	private List<FaviconObtainStrategy> strategies;
+	private FaviconObtainStrategy strategy;
 
-	public FavlinkParser(String tag, List<FaviconObtainStrategy> strategies) {
+	public FavlinkParser(String tag, FaviconObtainStrategy strategy) {
 		this.tag = tag;
-		this.strategies = strategies;
+		this.strategy = strategy;
 	}
 
 	@Override
@@ -44,11 +42,7 @@ public class FavlinkParser implements Parser {
 		String pageURL = builder.toString();
 
 		String faviconURL = null;
-		for (FaviconObtainStrategy s : strategies) {
-			faviconURL = s.obtainFaviconURL(pageURL, parsingProcessor.getContextRoot());
-			if (faviconURL != null)
-				break;
-		}
+		faviconURL = strategy.obtainFaviconURL(pageURL, parsingProcessor.getContextRoot());
 
 		// zpracovat koncový tag
 		// END_TAG byl zpracován

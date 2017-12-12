@@ -6,6 +6,7 @@ import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTOBuilder;
 import cz.gattserver.grass3.articles.plugins.Plugin;
+import cz.gattserver.grass3.articles.plugins.favlink.strategies.CombinedFaviconObtainStrategy;
 
 /**
  * @author gatt
@@ -22,7 +23,7 @@ public class SourcesPlugin implements Plugin {
 
 	@Override
 	public Parser getParser() {
-		return new SourcesParser(tag);
+		return new SourcesParser(tag, new CombinedFaviconObtainStrategy());
 	}
 
 	@Override

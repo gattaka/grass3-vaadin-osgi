@@ -2,7 +2,6 @@ package cz.gattserver.grass3.articles.plugins.favlink.strategies;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -11,17 +10,43 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cz.gattserver.grass3.articles.plugins.favlink.FaviconCache;
 import cz.gattserver.grass3.articles.plugins.favlink.FaviconUtils;
 
 /**
+ * Strategie, která získává favicon adresu pomocí parsování HTML stránky a
+ * hledání odkazů na favicon soubor.
+ * 
  * @author gatt
  */
-public class HeaderFaviconObtainStrategy extends CacheFaviconObtainStrategy {
+public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 
 	private static final Logger logger = LoggerFactory.getLogger(HeaderFaviconObtainStrategy.class);
 	private static final String HTTP_PREFIX_SHORT = "http:";
 	private static final String HTTP_PREFIX = "http://";
 	private static final String HTTPS_PREFIX = "https://";
+
+	private FaviconCache cache;
+
+	public HeaderFaviconObtainStrategy(FaviconCache cache) {
+		this.cache = cache;
+	}
+
+	@Override
+	public String obtainFaviconURL(String pageURL, String contextRoot) {
+		logger.info("Zkouším hledat v hlavičce");
+
+		URL url = FaviconUtils.getPageURL(pageURL);
+		String faviconAddress = findFaviconAddressOnPage(url);
+		if (faviconAddress == null)
+			return null;
+
+		String faviconFilename = cache.downloadAndSaveFavicon(url, faviconAddress);
+		if (faviconFilename != null)
+			return FaviconUtils.createCachedFaviconAddress(contextRoot, faviconFilename);
+
+		return null;
+	}
 
 	private String createFullFaviconAddress(String faviconAddress, String baseURI) {
 
@@ -93,18 +118,6 @@ public class HeaderFaviconObtainStrategy extends CacheFaviconObtainStrategy {
 		}
 
 		return null;
-	}
-
-	@Override
-	protected String onCacheMiss(URL pageURL, Path cacheDir, String faviconRootFilename) {
-		logger.info("Zkouším hledat v hlavičce");
-		String faviconAddress = findFaviconAddressOnPage(pageURL);
-		if (faviconAddress == null)
-			return null;
-		String extension = faviconAddress.substring(faviconAddress.lastIndexOf('.'), faviconAddress.length());
-		String fileName = faviconRootFilename + extension;
-		FaviconUtils.downloadFile(cacheDir.resolve(fileName), faviconAddress);
-		return fileName;
 	}
 
 }

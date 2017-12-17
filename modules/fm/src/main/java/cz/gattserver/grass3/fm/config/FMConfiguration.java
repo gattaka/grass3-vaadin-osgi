@@ -30,8 +30,6 @@ public class FMConfiguration extends AbstractConfiguration {
 	 */
 	private Set<Role> roles = new HashSet<Role>();
 
-	private String tmpDir = "tmpUpload";
-
 	public FMConfiguration() {
 		super("cz.gattserver.grass3.fm");
 		roles.add(Role.ADMIN);
@@ -71,14 +69,6 @@ public class FMConfiguration extends AbstractConfiguration {
 
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
-	}
-
-	public String getTmpDir() {
-		return tmpDir;
-	}
-
-	public void setTmpDir(String tmpDir) {
-		this.tmpDir = tmpDir;
 	}
 
 }

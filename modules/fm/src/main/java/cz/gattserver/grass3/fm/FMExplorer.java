@@ -7,8 +7,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import javax.xml.bind.JAXBException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,19 +22,14 @@ public class FMExplorer {
 	private FileSystem fileSystem;
 
 	/**
-	 * Absolutní cesta ke kořeni FM úložiště
+	 * Cesta ke kořeni FM úložiště
 	 */
-	private Path rootAbsPath;
+	private Path rootPath;
 
 	/**
-	 * Absolutní cesta od systémového kořene k souboru FM objekt
+	 * Cesta od kořene k souboru FM objekt
 	 */
 	private Path requestedPath;
-
-	/**
-	 * Absolutní cesta od systémového kořene k tmp adresáři objekt
-	 */
-	private Path tmpAbsPath;
 
 	/**
 	 * Konfigurace FM
@@ -102,13 +95,13 @@ public class FMExplorer {
 			relativePath = "";
 
 		// Vytvoř File z předávané relativní cesty
-		requestedPath = rootAbsPath.resolve(relativePath).normalize();
+		requestedPath = rootPath.resolve(relativePath).normalize();
 
 		// Otestuj, zda File existuje, pokud ne, přesměruj se na kořenový
 		// adresář a zapiš, že bylo nutné použít kořenový adresář kvůli
 		// neexistenci předávaného souboru
 		if (!Files.exists(requestedPath)) {
-			this.requestedPath = rootAbsPath;
+			this.requestedPath = rootPath;
 			state = FileProcessState.MISSING;
 		}
 
@@ -116,7 +109,7 @@ public class FMExplorer {
 		// adresář a zapiš, že bylo nutné použít kořenový adresář kvůli
 		// nevalidnosti předávaného souboru
 		if (!isValid(requestedPath)) {
-			requestedPath = rootAbsPath;
+			requestedPath = rootPath;
 			state = FileProcessState.NOT_VALID;
 		}
 	}
@@ -124,23 +117,14 @@ public class FMExplorer {
 	private void processConfiguration() {
 		configuration = loadConfiguration();
 		loadRootDirFromConfiguration(configuration);
-		loadUploadDirFromConfiguration(configuration);
 	}
 
 	private void loadRootDirFromConfiguration(FMConfiguration configuration) {
 		String rootDir = configuration.getRootDir();
-		rootAbsPath = fileSystem.getPath(rootDir);
-		if (!rootAbsPath.isAbsolute() || !Files.exists(rootAbsPath))
-			throw new GrassPageException(500, "Kořenový adresář FM modulu musí být existující absolutní cesta");
-		rootAbsPath = rootAbsPath.normalize();
-	}
-
-	private void loadUploadDirFromConfiguration(FMConfiguration configuration) {
-		String tmpDir = configuration.getTmpDir();
-		tmpAbsPath = fileSystem.getPath(tmpDir);
-		if (!tmpAbsPath.isAbsolute() || !Files.exists(tmpAbsPath))
-			throw new GrassPageException(500, "Dočasný adresář FM modulu musí být existující absolutní cesta");
-		tmpAbsPath = tmpAbsPath.normalize();
+		rootPath = fileSystem.getPath(rootDir);
+		if (!Files.exists(rootPath))
+			throw new GrassPageException(500, "Kořenový adresář FM modulu musí existovat");
+		rootPath = rootPath.normalize();
 	}
 
 	/**
@@ -163,7 +147,7 @@ public class FMExplorer {
 	 *             pokud testovaný soubor neexistuje
 	 */
 	public boolean isValid(Path adeptPath) {
-		return adeptPath.startsWith(rootAbsPath);
+		return adeptPath.startsWith(rootPath);
 	}
 
 	/**
@@ -291,7 +275,7 @@ public class FMExplorer {
 	 * @throws IOException
 	 */
 	public String fileURLFromRoot(Path path) throws IOException {
-		String rootURL = rootAbsPath.toUri().toString();
+		String rootURL = rootPath.toUri().toString();
 		String fileURL = path.toUri().toString();
 		return fileURL.substring(rootURL.length());
 	}
@@ -309,15 +293,11 @@ public class FMExplorer {
 	}
 
 	public Path getRootPath() {
-		return rootAbsPath;
+		return rootPath;
 	}
 
 	public Path getRequestedPath() {
 		return requestedPath;
-	}
-
-	public Path getTmpDirFile() {
-		return tmpAbsPath;
 	}
 
 }

@@ -1,27 +1,31 @@
 package cz.gattserver.grass3.fm.web;
 
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationResult;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Button.ClickEvent;
 
 import cz.gattserver.grass3.fm.config.FMConfiguration;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ConfigurationService;
+import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
 import cz.gattserver.web.common.ui.H2Label;
 
 public class FMSettingsPage extends AbstractSettingsPage {
 
-	private static final long serialVersionUID = -3310643769376755875L;
-
 	@Autowired
 	private ConfigurationService configurationService;
+
+	@Autowired
+	private FileSystemService fileSystemService;
 
 	public FMSettingsPage(GrassRequest request) {
 		super(request);
@@ -31,6 +35,7 @@ public class FMSettingsPage extends AbstractSettingsPage {
 	protected Component createContent() {
 
 		final FMConfiguration configuration = loadConfiguration();
+		final FileSystem fs = fileSystemService.getFileSystem();
 
 		VerticalLayout layout = new VerticalLayout();
 
@@ -49,30 +54,27 @@ public class FMSettingsPage extends AbstractSettingsPage {
 		settingsFieldsLayout.setSpacing(true);
 		settingsFieldsLayout.setSizeFull();
 
-		/**
-		 * Kořenový adresář
-		 */
+		// Kořenový adresář
 		final TextField outputPathField = new TextField("Nastavení kořenového adresáře");
 		outputPathField.setValue(configuration.getRootDir());
 		settingsFieldsLayout.addComponent(outputPathField);
 
-		/**
-		 * Save tlačítko
-		 */
-		Button saveButton = new Button("Uložit", new Button.ClickListener() {
+		Binder<FMConfiguration> binder = new Binder<>();
+		binder.forField(outputPathField).asRequired("Kořenový adresář je povinný")
+				.withValidator((val, c) -> Files.exists(fs.getPath(val)) ? ValidationResult.ok()
+						: ValidationResult.error("Kořenový adresář musí existovat"))
+				.bind(FMConfiguration::getRootDir, FMConfiguration::setRootDir);
 
-			private static final long serialVersionUID = 8490964871266821307L;
-
-			public void buttonClick(ClickEvent event) {
-				configuration.setRootDir((String) outputPathField.getValue());
-				storeConfiguration(configuration);
-			}
+		// Save tlačítko
+		Button saveButton = new Button("Uložit", e -> {
+			configuration.setRootDir((String) outputPathField.getValue());
+			storeConfiguration(configuration);
 		});
+		binder.addValueChangeListener(l -> saveButton.setEnabled(binder.isValid()));
 
 		settingsFieldsLayout.addComponent(saveButton);
 
 		return layout;
-
 	}
 
 	private FMConfiguration loadConfiguration() {

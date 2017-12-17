@@ -43,12 +43,8 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 		Path rootDir = fs.getPath("/some/path/fm/root/");
 		Files.createDirectories(rootDir);
 
-		Path tmpDir = fs.getPath("/some/path/fm/tmp/");
-		Files.createDirectories(tmpDir);
-
 		FMConfiguration fmc = new FMConfiguration();
 		fmc.setRootDir(rootDir.toString());
-		fmc.setTmpDir(tmpDir.toString());
 		configurationService.saveConfiguration(fmc);
 
 		FMExplorer explorer = new FMExplorer("../../fm", fs);
@@ -71,35 +67,12 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 
 		Path rootDir = fs.getPath("/some/path/fm/root/");
 
-		Path tmpDir = fs.getPath("/some/path/fm/tmp/");
-		Files.createDirectories(tmpDir);
-
 		FMConfiguration fmc = new FMConfiguration();
 		fmc.setRootDir(rootDir.toString());
-		fmc.setTmpDir(tmpDir.toString());
 		configurationService.saveConfiguration(fmc);
 
 		exception.expect(GrassPageException.class);
-		exception.expectMessage("Error: 500, Kořenový adresář FM modulu musí být existující absolutní cesta");
-		new FMExplorer("sub1", fs);
-	}
-
-	@Test
-	public void test_failTmp() throws IOException {
-		FileSystem fs = fileSystemService.getFileSystem();
-
-		Path rootDir = fs.getPath("/some/path/fm/root/");
-		Files.createDirectories(rootDir);
-
-		Path tmpDir = fs.getPath("/some/path/fm/tmp/");
-
-		FMConfiguration fmc = new FMConfiguration();
-		fmc.setRootDir(rootDir.toString());
-		fmc.setTmpDir(tmpDir.toString());
-		configurationService.saveConfiguration(fmc);
-
-		exception.expect(GrassPageException.class);
-		exception.expectMessage("Error: 500, Dočasný adresář FM modulu musí být existující absolutní cesta");
+		exception.expectMessage("Error: 500, Kořenový adresář FM modulu musí existovat");
 		new FMExplorer("sub1", fs);
 	}
 

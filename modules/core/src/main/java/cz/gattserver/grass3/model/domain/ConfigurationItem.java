@@ -16,7 +16,7 @@ public class ConfigurationItem {
 
 	@Id
 	private String name;
-	
+
 	@Column(columnDefinition = "CLOB")
 	private String value;
 
@@ -48,15 +48,15 @@ public class ConfigurationItem {
 	public boolean equals(Object obj) {
 		if (obj instanceof ConfigurationItem) {
 			String objName = ((ConfigurationItem) obj).getName();
-			if (objName == null) {
-				if (name == null) {
-					return true;
-				} else {
-					return false;
-				}
-			}
+			if (objName == null)
+				return name == null;
 			return objName.equals(name);
 		}
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return name.hashCode();
 	}
 }

@@ -86,8 +86,6 @@ public interface CoreMapper {
 	 */
 	public ContentTagOverviewTO mapContentTagForOverview(ContentTag e);
 
-	public ContentTagOverviewTO mapContentTag(ContentTag e);
-
 	/**
 	 * Převede list {@link ContentTag} na list {@link ContentTagOverviewTO}
 	 * 

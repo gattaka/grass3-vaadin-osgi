@@ -6,7 +6,6 @@ import java.util.Date;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.ExpressionUtils;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BeanPath;
 import com.querydsl.core.types.dsl.BooleanPath;
 import com.querydsl.core.types.dsl.DateTimePath;
@@ -317,7 +316,7 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder like(StringExpression path, String value) {
-		if (isNotBlank(value) && "*".equals(value) == false) {
+		if (isNotBlank(value) && !"*".equals(value)) {
 			booleanBuilder.and(path.likeIgnoreCase(prepareForLike(value)));
 		}
 		return this;
@@ -373,11 +372,6 @@ public class PredicateBuilder {
 		} else if (isNotBlank(to)) {
 			like(path, prepareForLike(to));
 		}
-		/*
-		 * else if (isNotBlank(from)) { booleanBuilder.and(path.between(from,
-		 * "žžžžžžžžžž")); } else if (isNotBlank(to)) {
-		 * booleanBuilder.and(path.between("0000000000", to)); }
-		 */
 		return this;
 	}
 
@@ -427,13 +421,7 @@ public class PredicateBuilder {
 
 	/**
 	 * Vrací celkový objekt predicate pro použítí v dotazu.
-	 * 
-	 * @return Predikát
 	 */
-	public Predicate getPredicate() {
-		return booleanBuilder;
-	}
-
 	public BooleanBuilder getBuilder() {
 		return booleanBuilder;
 	}

@@ -33,7 +33,7 @@ public final class QuerydslUtil {
 		@SuppressWarnings("unchecked")
 		OrderSpecifier<String>[] specifiers = new OrderSpecifier[sortPropertyIds.length];
 		for (int i = 0; i < sortPropertyIds.length; i++) {
-			specifiers[i] = new OrderSpecifier<String>(asc[i] ? Order.ASC : Order.DESC,
+			specifiers[i] = new OrderSpecifier<>(asc[i] ? Order.ASC : Order.DESC,
 					ExpressionUtils.path(String.class, (String) sortPropertyIds[i]));
 		}
 		return specifiers;
@@ -44,7 +44,7 @@ public final class QuerydslUtil {
 		@SuppressWarnings("unchecked")
 		OrderSpecifier<String>[] specifiers = new OrderSpecifier[sortProperties.size()];
 		for (int i = 0; i < sortProperties.size(); i++) {
-			specifiers[i] = new OrderSpecifier<String>(
+			specifiers[i] = new OrderSpecifier<>(
 					sortProperties.get(i).getDirection().equals(SortDirection.ASCENDING) ? Order.ASC : Order.DESC,
 					ExpressionUtils.path(String.class, columnReplacer.replace(sortProperties.get(i).getSorted())));
 		}

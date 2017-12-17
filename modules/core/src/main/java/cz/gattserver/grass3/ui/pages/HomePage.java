@@ -75,11 +75,10 @@ public class HomePage extends BasePage {
 			favouritesLayout.setMargin(false);
 			favouritesLayout.addComponent(new H2Label("Oblíbené obsahy"));
 			ContentsLazyGrid favouritesContentsTable = new ContentsLazyGrid();
-			favouritesContentsTable.populate(this, (sortOrder, offset, limit) -> {
-				return contentNodeFacade.getUserFavourite(user.getId(), offset / limit, limit).stream();
-			}, () -> {
-				return contentNodeFacade.getUserFavouriteCount(user.getId());
-			});
+			favouritesContentsTable.populate(this,
+					(sortOrder, offset, limit) -> contentNodeFacade
+							.getUserFavourite(user.getId(), offset / limit, limit).stream(),
+					() -> contentNodeFacade.getUserFavouriteCount(user.getId()));
 			favouritesLayout.addComponent(favouritesContentsTable);
 			favouritesContentsTable.setWidth("100%");
 
@@ -137,7 +136,7 @@ public class HomePage extends BasePage {
 		StringBuilder sb = null;
 		for (ContentTagsCloudItemTO contentTag : contentTags) {
 			currChar = contentTag.getName().toUpperCase().charAt(0);
-			if (currChar != oldChar) {
+			if (currChar != oldChar || oldChar == 0) {
 				if (oldChar != 0) {
 					createTags(sb, oldChar, tagCloudLayout);
 				}

@@ -79,19 +79,19 @@ public class FaviconCache {
 		configurationService.loadConfiguration(configuration);
 
 		// existuje cesta cache?
-		Path cacheDir = fileSystemService.getFileSystem().getPath(configuration.getOutputPath());
-		if (Files.exists(cacheDir)) {
-			if (!Files.isDirectory(cacheDir))
+		Path path = fileSystemService.getFileSystem().getPath(configuration.getOutputPath());
+		if (Files.exists(path)) {
+			if (!Files.isDirectory(path))
 				throw new ParserException("Favicon cache soubor není adresář");
 		} else {
 			try {
-				Files.createDirectories(cacheDir);
+				Files.createDirectories(path);
 			} catch (Exception e) {
 				throw new ParserException("Vytváření favicon cache adresáře se nezdařilo", e);
 			}
 		}
 
-		return cacheDir;
+		return path;
 	}
 
 }

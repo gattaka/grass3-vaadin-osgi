@@ -66,8 +66,8 @@ public class GrassUI extends UI {
 
 		String path = request.getPathInfo();
 		String contextPath = request.getContextPath();
-		logger.info("Context Path: [" + contextPath + "]");
-		logger.info("Path: [" + path + "]");
+		logger.info("Context Path: [{}]", contextPath);
+		logger.info("Path: [{}]", path);
 
 		GrassRequest grassRequest = new GrassRequest(request);
 		URLPathAnalyzer analyzer = grassRequest.getAnalyzer();

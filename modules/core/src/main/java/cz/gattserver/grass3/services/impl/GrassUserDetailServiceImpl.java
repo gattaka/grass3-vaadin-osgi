@@ -15,7 +15,7 @@ public class GrassUserDetailServiceImpl implements UserDetailsService {
 	@Autowired
 	private UserService userService;
 
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String username) {
 		final UserInfoTO user = userService.getUser(username);
 		if (user == null)
 			throw new UsernameNotFoundException("Unable to find user");

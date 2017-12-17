@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,8 @@ import cz.gattserver.grass3.services.ConfigurationService;
 @Transactional
 @Service
 public class ConfigurationServiceImpl implements ConfigurationService {
+
+	private Logger logger = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
 
 	@Autowired
 	private ConfigurationItemRepository configurationItemRepository;
@@ -61,30 +65,50 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		return createMethodName("set", fieldName);
 	}
 
+	private Method getGetMethod(Field field, Class<? extends AbstractConfiguration> type) {
+		Class<?>[] params = {};
+		try {
+			return type.getDeclaredMethod(createGetMethodName(field.getName()), params);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	private Method getIsMethod(Field field, Class<? extends AbstractConfiguration> type) {
+		Class<?>[] params = {};
+		try {
+			return type.getDeclaredMethod(createIsMethodName(field.getName()), params);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
 	public <T extends AbstractConfiguration> List<ConfigurationItem> getConfigurationItems(T configuration) {
-		List<ConfigurationItem> items = new ArrayList<ConfigurationItem>();
+		List<ConfigurationItem> items = new ArrayList<>();
 		Class<? extends AbstractConfiguration> type = configuration.getClass();
 		for (Field field : type.getDeclaredFields()) {
 			NonConfigValue annotation = field.getAnnotation(NonConfigValue.class);
 			if (annotation == null) {
 				String value = null;
 				Object[] args = {};
-				Class<?>[] params = {};
-				try {
-					Method getMethod = null;
-					try {
-						getMethod = type.getDeclaredMethod(createGetMethodName(field.getName()), params);
-					} catch (NoSuchMethodException e) {
-						getMethod = type.getDeclaredMethod(createIsMethodName(field.getName()), params);
-					}
-					value = StringSerializer.serialize((Serializable) getMethod.invoke(configuration, args));
-					items.add(new ConfigurationItem(createConfigName(configuration, field.getName()), value));
-				} catch (Exception e) {
+				Method getMethod = null;
+				getMethod = getGetMethod(field, type);
+				if (getMethod == null)
+					getMethod = getIsMethod(field, type);
+				if (getMethod == null) {
+					logger.error("Nezdařilo se získat pole konfigurační položky {}", field.getName());
 					continue;
 				}
+				try {
+					value = StringSerializer.serialize((Serializable) getMethod.invoke(configuration, args));
+				} catch (Exception e) {
+					logger.error("Nezdařilo se získat hodnotu konfigurační položky {}", field.getName(), e);
+				}
+				items.add(new ConfigurationItem(createConfigName(configuration, field.getName()), value));
 			}
 		}
 		return items;
+
 	}
 
 	public <T extends AbstractConfiguration> void populateConfigurationFromMap(List<ConfigurationItem> items,
@@ -106,7 +130,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 						setMethod = type.getDeclaredMethod(createSetMethodName(field.getName()), params);
 						setMethod.invoke(configuration, args);
 					} catch (Exception e) {
-						e.printStackTrace();
+						logger.error("Nezdařilo se nastavit hodnotu konfigurační položky {}", item.getName(), e);
 						continue;
 					}
 				}

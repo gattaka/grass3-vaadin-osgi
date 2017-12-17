@@ -42,7 +42,7 @@ public class HWItemRepositoryCustomImpl implements HWItemRepositoryCustom {
 				subQuery.from(t).where(t.name.eq(type), h.types.contains(t));
 				builder.exists(subQuery);
 			}
-		return builder.getPredicate();
+		return builder.getBuilder();
 	}
 
 	@Override

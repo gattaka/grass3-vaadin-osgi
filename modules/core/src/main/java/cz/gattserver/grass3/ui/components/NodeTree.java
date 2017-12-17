@@ -74,9 +74,6 @@ public class NodeTree extends VerticalLayout {
 		grid.setWidth("100%");
 		addComponent(grid);
 
-		// setItemIconGenerator(i -> new
-		// ThemeResource(ImageIcons.FOLDER_16_ICON));
-		// setItemCaptionGenerator(NodeTreeDTO::getName);
 		grid.addColumn(NodeOverviewTO::getName).setCaption("Název");
 		populate();
 
@@ -163,7 +160,7 @@ public class NodeTree extends VerticalLayout {
 				grid);
 		btnLayout.addComponent(modifyBtn);
 
-		DeleteGridButton<NodeOverviewTO> deleteBtn = new DeleteGridButton<>("Smazat", i -> deleteAction(i), grid);
+		DeleteGridButton<NodeOverviewTO> deleteBtn = new DeleteGridButton<>("Smazat", this::deleteAction, grid);
 		btnLayout.addComponent(deleteBtn);
 
 	}
@@ -218,7 +215,7 @@ public class NodeTree extends VerticalLayout {
 
 	private void deleteAction(NodeOverviewTO node) {
 		UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat kategorii '" + node.getName() + "' ?", e -> {
-			if (nodeFacade.isNodeEmpty(node.getId()) == false) {
+			if (!nodeFacade.isNodeEmpty(node.getId())) {
 				UIUtils.showWarning("Kategorie musí být prázdná");
 			} else {
 				try {

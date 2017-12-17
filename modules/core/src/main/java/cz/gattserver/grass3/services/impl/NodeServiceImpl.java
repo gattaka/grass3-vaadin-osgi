@@ -29,36 +29,31 @@ public class NodeServiceImpl implements NodeService {
 	@Override
 	public NodeOverviewTO getNodeByIdForOverview(long nodeId) {
 		Node node = nodeRepository.findOne(nodeId);
-		NodeOverviewTO nodeDTO = mapper.mapNodeForOverview(node);
-		return nodeDTO;
+		return mapper.mapNodeForOverview(node);
 	}
 
 	@Override
 	public NodeTO getNodeByIdForDetail(long nodeId) {
 		Node node = nodeRepository.findOne(nodeId);
-		NodeTO nodeDTO = mapper.mapNodeForDetail(node);
-		return nodeDTO;
+		return mapper.mapNodeForDetail(node);
 	}
 
 	@Override
 	public List<NodeOverviewTO> getRootNodes() {
 		List<Node> rootNodes = nodeRepository.findByParentIsNull();
-		List<NodeOverviewTO> rootNodesDTOs = mapper.mapNodesForOverview(rootNodes);
-		return rootNodesDTOs;
+		return mapper.mapNodesForOverview(rootNodes);
 	}
 
 	@Override
 	public List<NodeOverviewTO> getNodesForTree() {
 		List<Node> nodes = nodeRepository.findAll(new Sort("id"));
-		List<NodeOverviewTO> nodeDTOs = mapper.mapNodesForOverview(nodes);
-		return nodeDTOs;
+		return mapper.mapNodesForOverview(nodes);
 	}
 
 	@Override
 	public List<NodeOverviewTO> getNodesByParentNode(long parentId) {
 		List<Node> childrenNodes = nodeRepository.findByParentId(parentId);
-		List<NodeOverviewTO> childrenNodesDTOs = mapper.mapNodesForOverview(childrenNodes);
-		return childrenNodesDTOs;
+		return mapper.mapNodesForOverview(childrenNodes);
 	}
 
 	@Override

@@ -49,7 +49,7 @@ public class QuotesServiceImpl implements QuotesService {
 	@Override
 	public List<QuoteTO> getAllQuotes() {
 		List<Quote> quotes = quoteRepository.findAll();
-		List<QuoteTO> quoteDTOs = new ArrayList<QuoteTO>();
+		List<QuoteTO> quoteDTOs = new ArrayList<>();
 		for (Quote quote : quotes) {
 			quoteDTOs.add(mapper.map(quote));
 		}

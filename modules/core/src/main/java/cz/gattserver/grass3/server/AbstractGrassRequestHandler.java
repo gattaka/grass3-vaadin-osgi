@@ -15,7 +15,10 @@ import java.util.zip.GZIPOutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.Validate;
 import org.apache.tika.Tika;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinResponse;
@@ -23,12 +26,24 @@ import com.vaadin.server.VaadinSession;
 
 public abstract class AbstractGrassRequestHandler implements GrassRequestHandler {
 
+	private transient Logger logger = LoggerFactory.getLogger(AbstractGrassRequestHandler.class);
+
 	private static final long serialVersionUID = 7154339775034959876L;
 
 	private static final int DEFAULT_BUFFER_SIZE = 10240; // ..bytes = 10KB.
 	private static final long DEFAULT_EXPIRE_TIME = 604800000L; // ..ms = 1
 																// week.
 	private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
+
+	private static final String ETAG = "ETag";
+	private static final String EXPIRES = "Expires";
+	private static final String LAST_MODIFIED = "Last-Modified";
+	private static final String IF_MODIFIED_SINCE = "If-Modified-Since";
+	private static final String CONTENT_RANGE = "Content-Range";
+	private static final String CONTENT_ENCODING = "Content-Encoding";
+	private static final String CONTENT_LENGTH = "Content-Length";
+	private static final String RANGE = "Range";
+	private static final String IF_RANGE = "If-Range";
 
 	private String mountPoint;
 
@@ -42,11 +57,12 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 	}
 
 	protected String getMimeType(File file) {
+		Validate.notNull(file, "Soubor pro zjištění MIME typu nesmí být null");
 		Tika tika = new Tika();
 		try {
 			return tika.detect(file);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Nezdařilo se zjištění MIME souboru", e);
 		}
 		return null;
 	}
@@ -57,11 +73,11 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 			throws IOException {
 
 		String path = request.getPathInfo();
-		boolean content = "HEAD".equals(request.getMethod()) == false;
+		boolean content = !"HEAD".equals(request.getMethod());
 
 		// adresa musí začínat mountpointem
 		// adresa musí být delší než mountpoint + '/'
-		if (path.startsWith(mountPoint) == false || path.length() <= (mountPoint.length() + 1))
+		if (!path.startsWith(mountPoint) || path.length() <= (mountPoint.length() + 1))
 			return false;
 
 		// credit:
@@ -107,8 +123,8 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 		String ifNoneMatch = request.getHeader("If-None-Match");
 		if (ifNoneMatch != null && matches(ifNoneMatch, eTag)) {
 			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-			response.setHeader("ETag", eTag); // Required in 304.
-			response.setDateHeader("Expires", expires); // Postpone cache with 1
+			response.setHeader(ETAG, eTag); // Required in 304.
+			response.setDateHeader(EXPIRES, expires); // Postpone cache with 1
 														// week.
 			return true;
 		}
@@ -116,11 +132,11 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 		// If-Modified-Since header should be greater than LastModified. If so,
 		// then return 304.
 		// This header is ignored if any If-None-Match header is specified.
-		long ifModifiedSince = request.getDateHeader("If-Modified-Since");
+		long ifModifiedSince = request.getDateHeader(IF_MODIFIED_SINCE);
 		if (ifNoneMatch == null && ifModifiedSince != -1 && ifModifiedSince + 1000 > lastModified) {
 			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-			response.setHeader("ETag", eTag); // Required in 304.
-			response.setDateHeader("Expires", expires); // Postpone cache with 1
+			response.setHeader(ETAG, eTag); // Required in 304.
+			response.setDateHeader(EXPIRES, expires); // Postpone cache with 1
 														// week.
 		}
 		// Validate request headers for resume
@@ -146,18 +162,17 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 
 		// Prepare some variables. The full Range represents the complete file.
 		Range full = new Range(0, length - 1, length);
-		List<Range> ranges = new ArrayList<Range>();
+		List<Range> ranges = new ArrayList<>();
 
 		// Validate and process Range and If-Range headers.
-		String range = request.getHeader("Range");
+		String range = request.getHeader(RANGE);
 		if (range != null) {
 
 			// Range header should match format "bytes=n-n,n-n,n-n...". If not,
 			// then return 416.
 			if (!range.matches("^bytes=\\d*-\\d*(,\\d*-\\d*)*$")) {
-				response.setHeader("Content-Range", "bytes */" + length); // Required
-																			// in
-																			// 416.
+				// Required in 416.
+				response.setHeader(CONTENT_RANGE, "bytes */" + length);
 				response.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE,
 						"SC_REQUESTED_RANGE_NOT_SATISFIABLE");
 				return true;
@@ -166,13 +181,11 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 			// If-Range header should either match ETag or be greater then
 			// LastModified. If not,
 			// then return full file.
-			String ifRange = request.getHeader("If-Range");
+			String ifRange = request.getHeader(IF_RANGE);
 			if (ifRange != null && !ifRange.equals(eTag)) {
 				try {
-					long ifRangeTime = request.getDateHeader("If-Range"); // Throws
-																			// IAE
-																			// if
-																			// invalid.
+					// Throws IAE if invalid.
+					long ifRangeTime = request.getDateHeader(IF_RANGE);
 					if (ifRangeTime != -1 && ifRangeTime + 1000 < lastModified) {
 						ranges.add(full);
 					}
@@ -189,8 +202,8 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 					// examples returns bytes at:
 					// 50-80 (50 to 80), 40- (40 to length=100), -20
 					// (length-20=80 to length=100).
-					long start = sublong(part, 0, part.indexOf("-"));
-					long end = sublong(part, part.indexOf("-") + 1, part.length());
+					long start = sublong(part, 0, part.indexOf('-'));
+					long end = sublong(part, part.indexOf('-') + 1, part.length());
 
 					if (start == -1) {
 						start = length - end;
@@ -202,9 +215,9 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 					// Check if Range is syntactically valid. If not, then
 					// return 416.
 					if (start > end) {
-						response.setHeader("Content-Range", "bytes */" + length); // Required
-																					// in
-																					// 416.
+						response.setHeader(CONTENT_RANGE, "bytes */" + length); // Required
+																				// in
+																				// 416.
 						response.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE,
 								"SC_REQUESTED_RANGE_NOT_SATISFIABLE");
 						return true;
@@ -253,44 +266,36 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 		}
 
 		// Initialize response.
-		// response.reset();
-		// response.setBufferSize(DEFAULT_BUFFER_SIZE);
 		response.setHeader("Content-Disposition", disposition + ";filename=\"" + fileName + "\"");
 		response.setHeader("Accept-Ranges", "bytes");
-		response.setHeader("ETag", eTag);
-		response.setDateHeader("Last-Modified", lastModified);
-		response.setDateHeader("Expires", expires);
+		response.setHeader(ETAG, eTag);
+		response.setDateHeader(LAST_MODIFIED, lastModified);
+		response.setDateHeader(EXPIRES, expires);
 
 		// Send requested file (part(s)) to client
 		// ------------------------------------------------
 
-		// Prepare streams.
-		RandomAccessFile input = null;
 		OutputStream output = null;
-
-		try {
-			// Open streams.
-			input = new RandomAccessFile(file, "r");
+		try (RandomAccessFile input = new RandomAccessFile(file, "r");) {
 			output = response.getOutputStream();
-
 			if (ranges.isEmpty() || ranges.get(0) == full) {
 
 				// Return full file.
 				Range r = full;
 				response.setContentType(contentType);
-				response.setHeader("Content-Range", "bytes " + r.start + "-" + r.end + "/" + r.total);
+				response.setHeader(CONTENT_RANGE, "bytes " + r.start + "-" + r.end + "/" + r.total);
 
 				if (content) {
 					if (acceptsGzip) {
 						// The browser accepts GZIP, so GZIP the content.
-						response.setHeader("Content-Encoding", "gzip");
+						response.setHeader(CONTENT_ENCODING, "gzip");
 						output = new GZIPOutputStream(output, DEFAULT_BUFFER_SIZE);
 					} else {
 						// Content length is not directly predictable in case of
 						// GZIP.
 						// So only add it if there is no means of GZIP, else
 						// browser will hang.
-						response.setHeader("Content-Length", String.valueOf(r.length));
+						response.setHeader(CONTENT_LENGTH, String.valueOf(r.length));
 					}
 
 					// Copy full range.
@@ -302,8 +307,8 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 				// Return single part of file.
 				Range r = ranges.get(0);
 				response.setContentType(contentType);
-				response.setHeader("Content-Range", "bytes " + r.start + "-" + r.end + "/" + r.total);
-				response.setHeader("Content-Length", String.valueOf(r.length));
+				response.setHeader(CONTENT_RANGE, "bytes " + r.start + "-" + r.end + "/" + r.total);
+				response.setHeader(CONTENT_LENGTH, String.valueOf(r.length));
 				response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT); // 206.
 
 				if (content) {
@@ -343,7 +348,6 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 		} finally {
 			// Gently close streams.
 			close(output);
-			close(input);
 		}
 
 		return true; // We wrote a response
@@ -429,7 +433,8 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 			long toRead = length;
 
 			while ((read = input.read(buffer)) > 0) {
-				if ((toRead -= read) > 0) {
+				toRead -= read;
+				if (toRead > 0) {
 					output.write(buffer, 0, read);
 				} else {
 					output.write(buffer, 0, (int) toRead + read);

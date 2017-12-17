@@ -1,44 +1,42 @@
 package cz.gattserver.grass3.fm;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
 public class FMExplorer {
 
-	// Suffixy:
-	// *URL - cesta k souboru/adresáři; nezávislá na platformě
-	// *Path - cesta k souboru/adresáři; závislá na platformě (viz. separator)
-	// *File - objekt java.io.File obsahující cestu k souboru/adresáři
+	private Logger logger = LoggerFactory.getLogger(FMExplorer.class);
+
+	private FileSystem fileSystem;
 
 	/**
-	 * Absolutní cesta od systémového kořene ke kořeni FM, jako {@link File}
-	 * objekt
+	 * Absolutní cesta ke kořeni FM úložiště
 	 */
-	private File rootFile;
+	private Path rootAbsPath;
 
 	/**
-	 * Absolutní cesta od systémového kořene k souboru FM, jako {@link File}
-	 * objekt
+	 * Absolutní cesta od systémového kořene k souboru FM objekt
 	 */
-	private File requestedFile;
+	private Path requestedPath;
 
 	/**
-	 * Absolutní cesta od systémového kořene k tmp adresáři, jako {@link File}
-	 * objekt
+	 * Absolutní cesta od systémového kořene k tmp adresáři objekt
 	 */
-	private File tmpDirFile;
+	private Path tmpAbsPath;
 
 	/**
 	 * Konfigurace FM
@@ -59,7 +57,27 @@ public class FMExplorer {
 	 * Stav zpracování souboru
 	 */
 	public static enum FileProcessState {
-		SUCCESS, MISSING, NOT_VALID, ALREADY_EXISTS, SYSTEM_ERROR
+		/**
+		 * V pořádku, nalezen
+		 */
+		SUCCESS,
+		/**
+		 * Nebyl nalezen
+		 */
+		MISSING,
+		/**
+		 * Existuje, ale podtéká kořenový adresář FM modulu, což je porušení
+		 * security omezení
+		 */
+		NOT_VALID,
+		/**
+		 * Cílový soubor existuje, nelze vytvořit/přesunout/kopírovat
+		 */
+		ALREADY_EXISTS,
+		/**
+		 * Operace se nezdařila kvůli systémové chybě
+		 */
+		SYSTEM_ERROR
 	}
 
 	/**
@@ -76,95 +94,59 @@ public class FMExplorer {
 	 *             kořenovým adresářem, jinak je přednostně tato chyba odchycena
 	 *             a je použit právě kořenový adresář namísto předaného souboru
 	 */
-	public FMExplorer(String relativePath) throws IOException {
-
+	public FMExplorer(String relativePath, FileSystem fileSystem) {
+		this.fileSystem = fileSystem;
 		processConfiguration();
 
 		if (relativePath == null)
 			relativePath = "";
 
-		/**
-		 * Vytvoř File z předávané relativní cesty
-		 */
-		requestedFile = new File(rootFile, relativePath);
+		// Vytvoř File z předávané relativní cesty
+		requestedPath = rootAbsPath.resolve(relativePath).normalize();
 
-		/**
-		 * Otestuj, zda File existuje, pokud ne, přesměruj se na kořenový
-		 * adresář a zapiš, že bylo nutné použít kořenový adresář kvůli
-		 * neexistenci předávaného souboru
-		 */
-		if (requestedFile.exists() == false) {
-			requestedFile = rootFile;
+		// Otestuj, zda File existuje, pokud ne, přesměruj se na kořenový
+		// adresář a zapiš, že bylo nutné použít kořenový adresář kvůli
+		// neexistenci předávaného souboru
+		if (!Files.exists(requestedPath)) {
+			this.requestedPath = rootAbsPath;
 			state = FileProcessState.MISSING;
 		}
 
-		/**
-		 * Převede soubor na canonický tvar, ve kterém jsou eliminovány veškeré
-		 * části cesty, kvůli kterým by se nedaly soubory rychle porovnávat
-		 * ("..",".","~" atd.)
-		 */
-		try {
-			requestedFile = requestedFile.getCanonicalFile();
-		} catch (IOException e) {
-			e.printStackTrace();
-			requestedFile = rootFile;
-			state = FileProcessState.SYSTEM_ERROR;
-		}
-
-		/**
-		 * Zkontroluj validnost souboru, pokud není, přesměruj se na kořenový
-		 * adresář a zapiš, že bylo nutné použít kořenový adresář kvůli
-		 * nevalidnosti předávaného souboru
-		 */
-		if (isValid(requestedFile) == false) {
-			requestedFile = rootFile;
+		// Zkontroluj validnost souboru, pokud není, přesměruj se na kořenový
+		// adresář a zapiš, že bylo nutné použít kořenový adresář kvůli
+		// nevalidnosti předávaného souboru
+		if (!isValid(requestedPath)) {
+			requestedPath = rootAbsPath;
 			state = FileProcessState.NOT_VALID;
 		}
-
 	}
 
-	private void processConfiguration() throws IOException {
-
-		/**
-		 * Začni nahráním konfigurace
-		 */
+	private void processConfiguration() {
 		configuration = loadConfiguration();
 		loadRootDirFromConfiguration(configuration);
 		loadUploadDirFromConfiguration(configuration);
-
 	}
 
-	private void loadRootDirFromConfiguration(FMConfiguration configuration) throws IOException {
-
+	private void loadRootDirFromConfiguration(FMConfiguration configuration) {
 		String rootDir = configuration.getRootDir();
-
-		// pokud kořenový adresář neexistuje vytvoř jej
-		File rootFile = new File(rootDir);
-		if (!rootFile.exists())
-			if (rootFile.mkdirs())
-				throw new IOException();
-
-		this.rootFile = rootFile.getCanonicalFile();
+		rootAbsPath = fileSystem.getPath(rootDir);
+		if (!rootAbsPath.isAbsolute() || !Files.exists(rootAbsPath))
+			throw new GrassPageException(500, "Kořenový adresář FM modulu musí být existující absolutní cesta");
+		rootAbsPath = rootAbsPath.normalize();
 	}
 
-	private void loadUploadDirFromConfiguration(FMConfiguration configuration) throws IOException {
-
+	private void loadUploadDirFromConfiguration(FMConfiguration configuration) {
 		String tmpDir = configuration.getTmpDir();
-
-		// pokud kořenový adresář neexistuje vytvoř jej
-		File tmpFile = new File(tmpDir);
-		if (!tmpFile.exists())
-			if (tmpFile.mkdirs())
-				throw new IOException("Unable to create tmp directory for uploads");
-
-		tmpDirFile = tmpFile.getCanonicalFile();
+		tmpAbsPath = fileSystem.getPath(tmpDir);
+		if (!tmpAbsPath.isAbsolute() || !Files.exists(tmpAbsPath))
+			throw new GrassPageException(500, "Dočasný adresář FM modulu musí být existující absolutní cesta");
+		tmpAbsPath = tmpAbsPath.normalize();
 	}
 
 	/**
 	 * Získá aktuální konfiguraci ze souboru konfigurace
 	 * 
 	 * @return soubor konfigurace FM
-	 * @throws JAXBException
 	 */
 	private FMConfiguration loadConfiguration() {
 		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper.getContext()
@@ -175,17 +157,13 @@ public class FMExplorer {
 	}
 
 	/**
-	 * Ověří, že požadovaný adresář nepodtéká adresář kořenový
+	 * Ověří, že požadovaný adresář nepodtéká kořenový adresář
 	 * 
 	 * @throws IOException
 	 *             pokud testovaný soubor neexistuje
 	 */
-	public boolean isValid(File adeptFile) throws IOException {
-		String rootDirCanonicalPath = rootFile.getCanonicalPath();
-		String adeptFileCanonicalPath = adeptFile.getCanonicalPath();
-
-		// adeptFile canonical cesta musí obsahovat rootFile canonical cestu
-		return adeptFileCanonicalPath.startsWith(rootDirCanonicalPath);
+	public boolean isValid(Path adeptPath) {
+		return adeptPath.startsWith(rootAbsPath);
 	}
 
 	/**
@@ -193,24 +171,19 @@ public class FMExplorer {
 	 * 
 	 * @param name
 	 *            jméno adresáře
+	 * @return výsledek operace
 	 */
 	public FileProcessState createNewDir(String name) {
-		File newFile = new File(requestedFile, name);
+		Path newPath = requestedPath.resolve(name);
 		try {
-			newFile = newFile.getCanonicalFile();
-			if (isValid(newFile) == false) {
+			if (!isValid(newPath))
 				return FileProcessState.NOT_VALID;
-			}
-			if (newFile.exists()) {
+			if (Files.exists(newPath))
 				return FileProcessState.ALREADY_EXISTS;
-			}
-			if (newFile.mkdir() == false) {
-				return FileProcessState.SYSTEM_ERROR;
-			} else {
-				return FileProcessState.SUCCESS;
-			}
+			Files.createDirectory(newPath);
+			return FileProcessState.SUCCESS;
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Nezdařilo se vytvořit nový adresář {}", newPath.toString(), e);
 			return FileProcessState.SYSTEM_ERROR;
 		}
 	}
@@ -220,30 +193,27 @@ public class FMExplorer {
 	 * není adresář vrátí jeho velikost. MAX_VALUE Long je (2^63)-1, což je víc
 	 * než 10^18, to je hodnota akorát velká pro pokrytí záznam Exbibajt (2^60)
 	 * 
-	 * @param file
+	 * @param path
 	 *            adresář k spočítání
-	 * @param skippedFiles
-	 *            list do kterého budou nastaveny ty soubory, u kterých se
-	 *            nezdařilo čtení velikosti a proto nemohly být započítány
 	 * @return velikost adresáře včetně podadresářů
+	 * @throws IOException
+	 *             pokud se nezdaří spočítat velikost souboru kvůli
+	 *             {@link IOException} chybě
 	 */
-	public long getDeepDirSize(File file, List<File> skippedFiles) {
+	public long getDeepDirSize(Path path) throws IOException {
+		return innerGetDeepDirSize(path);
+	}
 
-		if (file.isFile())
-			return file.length();
-
-		long size = 0L;
-		File[] subFiles = file.listFiles();
-		if (subFiles == null) {
-			skippedFiles.add(file);
-			return file.length();
-		}
-		for (File subfile : subFiles) {
-			size += getDeepDirSize(subfile, skippedFiles);
-		}
-
-		return size;
-
+	private long innerGetDeepDirSize(Path path) throws IOException {
+		if (!Files.isDirectory(path))
+			return Files.size(path);
+		return Files.list(path).mapToLong(value -> {
+			try {
+				return innerGetDeepDirSize(value);
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}
+		}).sum();
 	}
 
 	/**
@@ -253,16 +223,16 @@ public class FMExplorer {
 	 *            dočasný soubor
 	 * @param filename
 	 *            jeho název
-	 * @return true pokud se podařilo, jinak false
+	 * @return výsledek operace
 	 */
 	public FileProcessState saveFile(InputStream in, String filename) {
-		Path path = Paths.get(requestedFile.getPath(), filename);
+		Path path = requestedPath.resolve(filename);
 		try {
 			Files.copy(in, path);
 		} catch (FileAlreadyExistsException f) {
 			return FileProcessState.ALREADY_EXISTS;
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Nezdařilo se vytvořit soubor {}", filename, e);
 			return FileProcessState.SYSTEM_ERROR;
 		}
 		return FileProcessState.SUCCESS;
@@ -273,49 +243,17 @@ public class FMExplorer {
 	 * 
 	 * @param file
 	 *            soubor
-	 * @return true pokud se zdařilo, jinak false
+	 * @return výsledek operace
 	 */
-	public FileProcessState deleteFile(File file) {
-
+	public FileProcessState deleteFile(Path file) {
 		try {
-			file = file.getCanonicalFile();
-			if (isValid(file) == false) {
+			if (!isValid(file))
 				return FileProcessState.NOT_VALID;
-			}
+			// TODO
+			Files.delete(file);
+			return FileProcessState.SUCCESS;
 		} catch (IOException e) {
-			e.printStackTrace();
-			return FileProcessState.SYSTEM_ERROR;
-		}
-
-		FileProcessState overallResult = FileProcessState.SUCCESS;
-
-		// lze smazat přímo ?
-		if (file.isFile() || file.list() == null || file.list().length == 0) {
-			// budeš smazán přímo (později)
-		} else {
-			FileProcessState partialResult;
-			for (File subFile : file.listFiles()) {
-				partialResult = deleteFile(subFile);
-				// pokud mazání skončilo chybou, zaznamenej ji, jinak ponech
-				// poslední stav
-				if (partialResult.equals(FileProcessState.SUCCESS) == false) {
-					overallResult = partialResult;
-				}
-			}
-		}
-
-		// společné pro promazaný strom adresářů a pro jednoduchý soubor
-		try {
-			if (file.delete() == false) {
-				return FileProcessState.SYSTEM_ERROR;
-			} else {
-				// vrať konjunkci výsledků mazání podadresářů - SUCCESS bude
-				// tedy vrácen pouze tehdy, pokud byly všechna rekurzivní mazání
-				// také hodnocena stavem SUCCESS
-				return overallResult;
-			}
-		} catch (SecurityException e) {
-			e.printStackTrace();
+			logger.error("Nezdařilo se smazat soubor {}", file.toString(), e);
 			return FileProcessState.SYSTEM_ERROR;
 		}
 	}
@@ -328,23 +266,17 @@ public class FMExplorer {
 	 * @param newName
 	 *            nové jméno
 	 */
-	public FileProcessState renameFile(File file, String newName) {
-		File renamedFile = new File(file.getParent(), newName);
+	public FileProcessState renameFile(Path path, String newName) {
+		Path renamedPath = path.getParent().resolve(newName);
 		try {
-			renamedFile = renamedFile.getCanonicalFile();
-			if (isValid(renamedFile) == false) {
+			if (!isValid(renamedPath))
 				return FileProcessState.NOT_VALID;
-			}
-			if (renamedFile.exists()) {
+			if (Files.exists(renamedPath))
 				return FileProcessState.ALREADY_EXISTS;
-			}
-			if (file.renameTo(renamedFile) == false) {
-				return FileProcessState.SYSTEM_ERROR;
-			} else {
-				return FileProcessState.SUCCESS;
-			}
+			Files.move(path, renamedPath);
+			return FileProcessState.SUCCESS;
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Nezdařilo se přejmenovat soubor {} na {}", path, renamedPath, e);
 			return FileProcessState.SYSTEM_ERROR;
 		}
 	}
@@ -353,14 +285,14 @@ public class FMExplorer {
 	 * Vezme cestu k souboru a odstřihne od ní cestu k rootDir-u, předpokládá
 	 * se, že file je již v canonickém tvaru a existuje
 	 * 
-	 * @param file
+	 * @param path
 	 *            soubor na zpracování
 	 * @return koncová cesta k souboru od rootDir
 	 * @throws IOException
 	 */
-	public String fileURLFromRoot(File file) throws IOException {
-		String rootURL = rootFile.toURI().toString();
-		String fileURL = file.toURI().toString();
+	public String fileURLFromRoot(Path path) throws IOException {
+		String rootURL = rootAbsPath.toUri().toString();
+		String fileURL = path.toUri().toString();
 		return fileURL.substring(rootURL.length());
 	}
 
@@ -376,23 +308,16 @@ public class FMExplorer {
 		return state;
 	}
 
-	/**
-	 * Vrátí kořenový adresář - kanonickou verzi
-	 */
-	public File getRootFile() {
-		return rootFile;
+	public Path getRootPath() {
+		return rootAbsPath;
 	}
 
-	/**
-	 * Vrátí aktuální adresář - jde o canonickou verzi názvu souboru, který byl
-	 * předán konstruktoru
-	 */
-	public File getRequestedFile() {
-		return requestedFile;
+	public Path getRequestedPath() {
+		return requestedPath;
 	}
 
-	public File getTmpDirFile() {
-		return tmpDirFile;
+	public Path getTmpDirFile() {
+		return tmpAbsPath;
 	}
 
 }

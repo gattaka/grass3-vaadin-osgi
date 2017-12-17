@@ -82,8 +82,7 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	@Override
 	public ContentNodeTO getByID(long contentNodeId) {
 		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
-		ContentNodeTO contentNodeDTO = mapper.mapContentNodeForDetail(contentNode);
-		return contentNodeDTO;
+		return mapper.mapContentNodeForDetail(contentNode);
 	}
 
 	@Override

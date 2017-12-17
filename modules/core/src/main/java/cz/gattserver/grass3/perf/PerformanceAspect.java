@@ -20,14 +20,12 @@ public class PerformanceAspect {
 		StopWatch stopWatch = new StopWatch(className + "#" + methodName);
 
 		try {
-			Object result = joinPoint.proceed();
-			return result;
+			return joinPoint.proceed();
 		} catch (IllegalArgumentException e) {
 			logger.info(methodName + " throw an exception");
 			throw e;
 		} finally {
 			String log = stopWatch.stop();
-			// System.out.println(log);
 			logger.info(log);
 		}
 	}

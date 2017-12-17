@@ -9,7 +9,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Slider;
-import com.vaadin.ui.Slider.ValueOutOfBoundsException;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.config.CoreConfiguration;
@@ -19,11 +18,11 @@ import cz.gattserver.web.common.ui.H2Label;
 
 public class ApplicationSettingsPage extends AbstractSettingsPage {
 
-	@Autowired
-	private ConfigurationService configurationService;
-
 	private static final Double MIN_SESSION_TIMEOUT = 5.0;
 	private static final Double MAX_SESSION_TIMEOUT = 60.0;
+
+	@Autowired
+	private ConfigurationService configurationService;
 
 	public ApplicationSettingsPage(GrassRequest request) {
 		super(request);
@@ -78,11 +77,7 @@ public class ApplicationSettingsPage extends AbstractSettingsPage {
 		slider.setMin(MIN_SESSION_TIMEOUT);
 		slider.setMax(MAX_SESSION_TIMEOUT);
 
-		try {
-			slider.setValue(initValue);
-		} catch (ValueOutOfBoundsException e) {
-			e.printStackTrace();
-		}
+		slider.setValue(initValue);
 		slider.addValueChangeListener(event -> {
 			valueLabel.setValue(String.valueOf(event.getValue()));
 			configuration.setSessionTimeout(event.getValue());

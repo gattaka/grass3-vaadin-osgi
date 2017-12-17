@@ -28,7 +28,7 @@ public class PageFactoriesRegisterImpl implements PageFactoriesRegister {
 	@Autowired
 	private List<PageFactory> pageFactories;
 
-	private Map<String, PageFactory> factories = new HashMap<String, PageFactory>();
+	private Map<String, PageFactory> factories = new HashMap<>();
 
 	@PostConstruct
 	public void init() {

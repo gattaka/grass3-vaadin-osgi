@@ -4,8 +4,6 @@ import cz.gattserver.grass3.events.ResultEvent;
 
 public class MockProcessResultEvent implements ResultEvent {
 
-	private static final long serialVersionUID = -7417313051667964628L;
-
 	private boolean success;
 	private String resultDetails;
 	private Long galleryId;

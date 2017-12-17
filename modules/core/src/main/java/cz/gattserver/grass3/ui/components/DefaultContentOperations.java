@@ -8,24 +8,19 @@ package cz.gattserver.grass3.ui.components;
  */
 public enum DefaultContentOperations {
 
-	
 	/**
 	 * Vytvoření
 	 */
 	NEW,
-	
+
 	/**
 	 * Úprava
 	 */
 	EDIT,
-	
+
 	/**
 	 * Smazání
 	 */
 	DELETE;
 
-	public String toString() {
-		return super.toString().toLowerCase();
-	};
-	
 }

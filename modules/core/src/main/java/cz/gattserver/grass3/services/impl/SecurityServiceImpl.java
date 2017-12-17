@@ -78,8 +78,7 @@ public class SecurityServiceImpl implements SecurityService {
 				return (UserInfoTO) principal;
 			}
 		}
-		UserInfoTO anonUser = new UserInfoTO();
-		return anonUser;
+		return new UserInfoTO();
 	}
 
 }

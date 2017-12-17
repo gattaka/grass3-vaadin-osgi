@@ -42,21 +42,20 @@ public class ContentTagServiceImpl implements ContentTagService {
 	private ContentNodeRepository contentNodeRepository;
 
 	@Override
-	public Set<ContentTagOverviewTO> getTagsForOverviewOrderedByName() {	
+	public Set<ContentTagOverviewTO> getTagsForOverviewOrderedByName() {
 		List<ContentTag> contentTags = contentTagRepository.findAllOrderByNameCaseInsensitive();
-		Set<ContentTagOverviewTO> contentTagDTOs = mapper.mapContentTagCollectionForOverview(contentTags);
-		return contentTagDTOs;
+		return mapper.mapContentTagCollectionForOverview(contentTags);
 	}
 
 	@Override
 	public ContentTagOverviewTO getTagById(long id) {
-		return mapper.mapContentTag(contentTagRepository.findOne(id));
+		return mapper.mapContentTagForOverview(contentTagRepository.findOne(id));
 	}
 
 	@Override
 	public ContentTagOverviewTO getTagByName(String name) {
 		Validate.notBlank(name, "Název hledaného tagu nemůže být prázdný");
-		return mapper.mapContentTag(contentTagRepository.findByName(name));
+		return mapper.mapContentTagForOverview(contentTagRepository.findByName(name));
 	}
 
 	@Override
@@ -68,7 +67,7 @@ public class ContentTagServiceImpl implements ContentTagService {
 	public void saveTags(Collection<String> tags, ContentNode contentNode) {
 		Validate.notNull(contentNode, "'contentNode' nemůže být null");
 		// tagy, které které jsou použity/vytvořeny
-		Set<ContentTag> tagsEntities = new HashSet<ContentTag>();
+		Set<ContentTag> tagsEntities = new HashSet<>();
 		if (tags != null) {
 			for (String tag : tags) {
 				// existuje už takový tag ?
@@ -126,9 +125,9 @@ public class ContentTagServiceImpl implements ContentTagService {
 
 		// Rozděl rozmezí velikosti fontů na tolik dílů, kolik je skupin - 1
 		// protože poslední skupina má rovnou nejnižší velikost fontu
-		double scale = maxFontSize - minFontSize;
+		int scale = maxFontSize - minFontSize;
 		int parts = countsGroups.size() - 1;
-		int fontSizeStep = parts == 0 ? 1 : (int) Math.floor(scale / parts);
+		int fontSizeStep = parts == 0 ? 1 : scale / parts;
 		if (fontSizeStep == 0)
 			fontSizeStep = 1;
 
@@ -138,7 +137,7 @@ public class ContentTagServiceImpl implements ContentTagService {
 
 		// Potřebuju aby bylo možné nějak zavolat svůj počet obsahů a zpátky se
 		// vrátila velikost fontu, reps. kategorie velikosti.
-		Map<Integer, Integer> fontSizeByCountsGroupMap = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> fontSizeByCountsGroupMap = new HashMap<>();
 		for (Entry<Long, Integer> entry : countsMap.entrySet()) {
 			// Spočítej jeho fontsize - pokud jsem vyšší, pak přihoď velikost
 			// dle vypočteného přírůstku a ulož můj stav aby ostatní věděli,

@@ -11,9 +11,7 @@ import java.util.Set;
  * @author gatt
  * 
  */
-public class UserTO extends UserInfoTO {
-
-	private static final long serialVersionUID = -5604641536015981637L;
+public class UserTO extends UserFieldsTO {
 
 	/**
 	 * Oblíbené obsahy

@@ -41,12 +41,12 @@ public class ModuleRegisterImpl implements ModuleRegister {
 	private void init() {
 		// Ošetření null kolekcí
 		if (injectedContentModules == null)
-			injectedContentModules = new ArrayList<ContentModule>();
+			injectedContentModules = new ArrayList<>();
 		if (injectedSectionModules == null) {
-			injectedSectionModules = new ArrayList<SectionService>();
+			injectedSectionModules = new ArrayList<>();
 		}
 
-		contentModules = new HashMap<String, ContentModule>();
+		contentModules = new HashMap<>();
 		for (ContentModule c : injectedContentModules)
 			contentModules.put(c.getContentID(), c);
 	}

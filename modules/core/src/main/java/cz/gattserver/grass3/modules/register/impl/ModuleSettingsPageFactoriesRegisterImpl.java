@@ -13,8 +13,7 @@ import cz.gattserver.grass3.modules.register.ModuleSettingsPageFactoriesRegister
 import cz.gattserver.grass3.ui.pages.settings.factories.ModuleSettingsPageFactory;
 
 @Component(value = "settingsPageFactoriesRegister")
-public class ModuleSettingsPageFactoriesRegisterImpl implements
-		ModuleSettingsPageFactoriesRegister {
+public class ModuleSettingsPageFactoriesRegisterImpl implements ModuleSettingsPageFactoriesRegister {
 
 	@Autowired
 	private List<ModuleSettingsPageFactory> settingsTabFactories;
@@ -22,7 +21,7 @@ public class ModuleSettingsPageFactoriesRegisterImpl implements
 	/**
 	 * Hlavní mapa stránek
 	 */
-	private Map<String, ModuleSettingsPageFactory> factories = new HashMap<String, ModuleSettingsPageFactory>();
+	private Map<String, ModuleSettingsPageFactory> factories = new HashMap<>();
 
 	@PostConstruct
 	private void init() {
@@ -34,8 +33,7 @@ public class ModuleSettingsPageFactoriesRegisterImpl implements
 		return factories.get(name);
 	}
 
-	public ModuleSettingsPageFactory putAlias(String settingsTabName,
-			ModuleSettingsPageFactory factory) {
+	public ModuleSettingsPageFactory putAlias(String settingsTabName, ModuleSettingsPageFactory factory) {
 		return factories.put(settingsTabName, factory);
 	}
 

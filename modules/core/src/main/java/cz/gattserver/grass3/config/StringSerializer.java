@@ -28,6 +28,6 @@ public class StringSerializer {
 		ObjectOutputStream out = new ObjectOutputStream(baos);
 		out.writeObject(o); // Serialize Object
 		out.close();
-		return new String(Base64.getEncoder().encodeToString(baos.toByteArray()));
+		return Base64.getEncoder().encodeToString(baos.toByteArray());
 	}
 }

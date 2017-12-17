@@ -2,6 +2,7 @@ package cz.gattserver.grass3.model.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -106,9 +107,9 @@ public class CoreMapperImpl implements CoreMapper {
 	@Override
 	public List<ContentNodeOverviewTO> mapContentNodeOverviewCollection(Collection<ContentNode> contentNodes) {
 		if (contentNodes == null)
-			return null;
+			return new ArrayList<>();
 
-		List<ContentNodeOverviewTO> contentNodeDTOs = new ArrayList<ContentNodeOverviewTO>();
+		List<ContentNodeOverviewTO> contentNodeDTOs = new ArrayList<>();
 		for (ContentNode contentNode : contentNodes) {
 			contentNodeDTOs.add(mapContentNodeOverview(contentNode));
 		}
@@ -129,26 +130,13 @@ public class CoreMapperImpl implements CoreMapper {
 	}
 
 	@Override
-	public ContentTagOverviewTO mapContentTag(ContentTag e) {
-		if (e == null)
-			return null;
-
-		ContentTagOverviewTO contentTagDTO = new ContentTagOverviewTO();
-
-		contentTagDTO.setId(e.getId());
-		contentTagDTO.setName(e.getName());
-
-		return contentTagDTO;
-	}
-
-	@Override
 	public List<ContentTagOverviewTO> mapContentTagCollection(Collection<ContentTag> contentTags) {
 		if (contentTags == null)
-			return null;
+			return new ArrayList<>();
 
-		List<ContentTagOverviewTO> contentTagDTOs = new ArrayList<ContentTagOverviewTO>();
+		List<ContentTagOverviewTO> contentTagDTOs = new ArrayList<>();
 		for (ContentTag contentTag : contentTags) {
-			contentTagDTOs.add(mapContentTag(contentTag));
+			contentTagDTOs.add(mapContentTagForOverview(contentTag));
 		}
 		return contentTagDTOs;
 	}
@@ -156,7 +144,7 @@ public class CoreMapperImpl implements CoreMapper {
 	@Override
 	public Set<ContentTagOverviewTO> mapContentTagCollectionForOverview(Collection<ContentTag> contentTags) {
 		if (contentTags == null)
-			return null;
+			return new HashSet<>();
 
 		Set<ContentTagOverviewTO> contentTagDTOs = new LinkedHashSet<>();
 		for (ContentTag contentTag : contentTags) {
@@ -203,9 +191,9 @@ public class CoreMapperImpl implements CoreMapper {
 	@Override
 	public List<NodeOverviewTO> mapNodesForOverview(Collection<Node> nodes) {
 		if (nodes == null)
-			return null;
+			return new ArrayList<>();
 
-		List<NodeOverviewTO> nodeDTOs = new ArrayList<NodeOverviewTO>();
+		List<NodeOverviewTO> nodeDTOs = new ArrayList<>();
 		for (Node node : nodes) {
 			nodeDTOs.add(mapNodeForOverview(node));
 		}

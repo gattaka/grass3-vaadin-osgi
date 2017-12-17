@@ -1,15 +1,18 @@
 package cz.gattserver.grass3.fm.web;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.event.Action;
 import com.vaadin.server.ExternalResource;
@@ -19,7 +22,8 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Embedded;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -27,39 +31,35 @@ import com.vaadin.ui.Layout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.TreeGrid;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.Property.ValueChangeEvent;
-import com.vaadin.v7.data.util.IndexedContainer;
-import com.vaadin.v7.event.ItemClickEvent;
-import com.vaadin.v7.ui.Table;
-import com.vaadin.v7.ui.Table.Align;
 
-import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.common.util.ReferenceHolder;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.fm.FMExplorer;
 import cz.gattserver.grass3.fm.FMExplorer.FileProcessState;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.ui.components.Breadcrumb;
 import cz.gattserver.grass3.ui.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
-import cz.gattserver.grass3.ui.util.ComparableStringDate;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.MultiUpload;
 import cz.gattserver.web.common.ui.window.ConfirmWindow;
-import cz.gattserver.web.common.ui.window.InfoWindow;
-import cz.gattserver.web.common.ui.window.WarnWindow;
 import cz.gattserver.web.common.ui.window.WebWindow;
 
 public class FMPage extends OneColumnPage {
 
+	private Logger logger = LoggerFactory.getLogger(FMPage.class);
+
 	@Resource(name = "fmPageFactory")
 	private PageFactory fmPageFactory;
+
+	@Autowired
+	private FileSystemService fileSystemService;
 
 	/**
 	 * FM Explorer s potřebnými daty a metodami pro procházení souborů
@@ -69,7 +69,7 @@ public class FMPage extends OneColumnPage {
 	/**
 	 * Filestable
 	 */
-	private Table filestable;
+	private Grid<Path> filestable;
 
 	/**
 	 * Hodnota status labelu, když nejsou vybraná žádná pole
@@ -96,7 +96,7 @@ public class FMPage extends OneColumnPage {
 	/**
 	 * Akce kontextového menu tabulky souborů
 	 */
-	private Set<File> markedFiles;
+	private Set<Path> markedPaths;
 	private static final Action ACTION_OPEN = new Action("Otevřít");
 	private static final Action ACTION_RENAME = new Action("Přejmenovat");
 	private static final Action ACTION_MOVE = new Action("Přesunout");
@@ -141,11 +141,7 @@ public class FMPage extends OneColumnPage {
 		}
 
 		// kontrolu validnosti adresáře je potřeba provést už v init
-		try {
-			explorer = new FMExplorer(builder.toString());
-		} catch (IOException e) {
-			throw new GrassPageException(500, e);
-		}
+		explorer = new FMExplorer(builder.toString(), fileSystemService.getFileSystem());
 
 		// Bylo potřeba se vrátit do kořene, protože předložený adresář
 		// neexistuje nebo není dostupný ? Pokud ano, vyhoď varování.
@@ -188,24 +184,20 @@ public class FMPage extends OneColumnPage {
 		// aktuální polohu cílové kategorie
 		List<BreadcrumbElement> breadcrumbElements = new ArrayList<BreadcrumbElement>();
 
-		File next = explorer.getRequestedFile();
-		String rootPath = explorer.getRootFile().getPath();
+		Path next = explorer.getRequestedPath();
+		Path rootPath = explorer.getRootPath();
 		try {
 			do {
-
-				String filePathFromRoot = explorer.fileURLFromRoot(next);
-				breadcrumbElements.add(new BreadcrumbElement(next.getPath().equals(rootPath) ? "/" : next.getName(),
-						getPageResource(fmPageFactory, filePathFromRoot)));
-
-				next = next.getParentFile();
-
+				String fileURLFromRoot = explorer.fileURLFromRoot(next);
+				breadcrumbElements
+						.add(new BreadcrumbElement(next.equals(rootPath) ? "/" : next.getFileName().toString(),
+								getPageResource(fmPageFactory, fileURLFromRoot)));
+				next = next.getParent();
 				// pokud je můj předek null nebo jsem mimo povolený rozsah, pak
 				// je to konec a je to všechno
-			} while (next != null && next.getPath().length() >= rootPath.length());
-
+			} while (next != null && next.startsWith(rootPath));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new GrassPageException(500, e);
 		}
 
 		breadcrumb.resetBreadcrumb(breadcrumbElements);
@@ -213,164 +205,72 @@ public class FMPage extends OneColumnPage {
 
 	private void initFilestable(VerticalLayout layout) {
 
-		filestable = new Table();
+		filestable = new Grid<>();
 		layout.addComponent(filestable);
 		filestable.setSizeFull();
-		filestable.setSelectable(true);
-		filestable.setMultiSelect(true);
-		filestable.setImmediate(true);
+		filestable.setSelectionMode(SelectionMode.MULTI);
 		filestable.setColumnReorderingAllowed(true);
-		filestable.setColumnCollapsingAllowed(true);
 
-		filestable.addValueChangeListener(new Table.ValueChangeListener() {
+		filestable.addSelectionListener(e -> {
+			// Můžu si dovolit potlačit varování přetypování na Set s parametrem
+			// File, protože vím, že v těch values jsou jenom File - uživatel
+			// tohle nemůže ovlivnit
+			Set<Path> value = e.getAllSelectedItems();
+			if (null == value || value.size() == 0) {
+				markedPaths = null;
+				statusLabel.setValue(satusLabelStaticValue);
+			} else {
+				markedPaths = value;
+				switch (markedPaths.size()) {
+				case 1:
+					statusLabel.setValue("Vybrán 1 soubor");
+					break;
+				case 2:
+				case 3:
+				case 4:
+					statusLabel.setValue("Vybrány " + markedPaths.size() + " soubory ");
+					break;
+				default:
+					statusLabel.setValue("Vybráno " + markedPaths.size() + " souborů");
+				}
+			}
+		});
 
-			private static final long serialVersionUID = -6605391938100454104L;
-
-			/**
-			 * Můžu si dovolit potlačit varování přetypování na Set s parametrem
-			 * File, protože vím, že v těch values jsou jenom File - uživatel
-			 * tohle nemůže ovlivnit
-			 */
-			@SuppressWarnings("unchecked")
-			public void valueChange(ValueChangeEvent event) {
-				Set<?> value = (Set<File>) event.getProperty().getValue();
-				if (null == value || value.size() == 0) {
-					markedFiles = null;
-					statusLabel.setValue(satusLabelStaticValue);
-				} else {
-					markedFiles = (Set<File>) filestable.getValue();
-					switch (markedFiles.size()) {
-					case 1:
-						statusLabel.setValue("Vybrán 1 soubor");
-						break;
-					case 2:
-					case 3:
-					case 4:
-						statusLabel.setValue("Vybrány " + markedFiles.size() + " soubory ");
-						break;
-					default:
-						statusLabel.setValue("Vybráno " + markedFiles.size() + " souborů");
+		filestable.addItemClickListener(e -> {
+			if (e.getMouseEventDetails().isDoubleClick()) {
+				Path path = e.getItem();
+				if (Files.isDirectory(path)) {
+					try {
+						UIUtils.redirect(getPageURL(fmPageFactory, explorer.fileURLFromRoot(path).toString()));
+					} catch (IOException ex) {
+						logger.error("Nezdařilo se otevřít soubor", ex);
+						UIUtils.showWarning("Nezdařilo se otevřít soubor");
 					}
-				}
-				/**
-				 * Je potřeba, aby se přegenerovaly context Menu - viditelnost
-				 * položek je totiž závislá na selected souborech
-				 */
-				// TODO - tohle je dočasný workaround, kterým se trigne
-				// getActions z handleru - jedině tak se projeví vlastnost v
-				// menu skupinového označení - problém je ale v tom, že pak
-				// blbne informace o range při shift-klávesa výběru
-				if (markedFiles != null && markedFiles.size() > 1) {
-					// filestable.setVisible(false);
-					// filestable.setVisible(true);
-					// filestable.requestRepaint();
-					filestable.refreshRowCache();
-				}
-			}
-
-		});
-
-		filestable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
-			private static final long serialVersionUID = 2068314108919135281L;
-
-			public void itemClick(ItemClickEvent event) {
-				if (event.isDoubleClick()) {
-					File file = (File) event.getItemId();
-					if (file.isDirectory()) {
-						try {
-							UIUtils.redirect(getPageURL(fmPageFactory, explorer.fileURLFromRoot(file).toString()));
-						} catch (IOException e) {
-							e.printStackTrace();
-							UIUtils.showWarning("Nezdařilo se otevřít soubor");
-						}
-					} else {
-						handleDownloadFile(file);
-					}
-				}
-			}
-		});
-
-		filestable.addActionHandler(new Action.Handler() {
-
-			private static final long serialVersionUID = -1204234416330259274L;
-
-			public Action[] getActions(Object target, Object sender) {
-
-				// ?? Tohle se prostě sem může dostat ...
-				if (target == null)
-					return new Action[0];
-
-				File targetFile = (File) target;
-
-				// Akce pro skupinu se nabízí v případě, že:
-				// - RMB kliká na soubor z vybrané skupiny
-				// - skupina obsahuje více souborů
-				if (markedFiles != null && markedFiles.size() > 1 && markedFiles.contains(targetFile)) {
-					return ACTIONS_GROUP;
 				} else {
-					if (targetFile.isDirectory())
-						return ACTIONS_DIR;
-					else
-						return ACTIONS_FILE;
+					handleDownloadFile(path);
 				}
 			}
-
-			/**
-			 * Je bezpečné zde potlačit warning protože se do filestable dávají
-			 * jenom items typu File
-			 */
-			@SuppressWarnings("unchecked")
-			private Set<File> getValues() {
-				return (Set<File>) filestable.getValue();
-			}
-
-			public void handleAction(Action action, Object sender, Object target) {
-				File targetFile = (File) target;
-
-				/**
-				 * Pokud RMB neklikl na položku již v označených položkách, zruš
-				 * označení položek a vyber jenom tuto
-				 */
-				Set<File> selected = getValues();
-				if (!selected.contains(targetFile)) {
-					selected = new HashSet<File>();
-					selected.add(targetFile);
-					filestable.setValue(selected);
-				}
-
-				if (action == ACTION_OPEN) {
-					handleOpenAction(targetFile);
-				} else if (action == ACTION_RENAME) {
-					handleRenameAction(targetFile, layout);
-				} else if (action == ACTION_DETAILS) {
-					handleDetailsAction(targetFile, layout);
-				} else if (action == ACTION_DELETE) {
-					handleDeleteAction(targetFile, layout);
-				} else if (action == ACTION_DOWNLOAD) {
-					handleDownloadFile(targetFile);
-				}
-			}
-
 		});
+
 	}
 
 	/**
-	 * Pokud jsou nějaké soubory označeny a je v nich i ten, který byl cíle RMB,
-	 * pak to ber jako skupinovou operaci. Tato funkce v zásadě rozhoduje o tom,
-	 * zda mám brát jako "target" operace selected skupinu (true) nebo vybraný
-	 * soubor (false)
+	 * Pokud jsou nějaké soubory označeny a je v nich i ten, který byl cílem
+	 * RMB, pak to ber jako skupinovou operaci. Tato funkce v zásadě rozhoduje o
+	 * tom, zda mám brát jako "target" operace selected skupinu (true) nebo
+	 * vybraný soubor (false)
 	 */
-	private boolean isOperationTargetSelectedGroup(File file) {
-		return (markedFiles != null && markedFiles.size() > 1 && markedFiles.contains(file));
+	private boolean isOperationTargetSelectedGroup(Path path) {
+		return (markedPaths != null && markedPaths.size() > 1 && markedPaths.contains(path));
 	}
 
-	private void handleDeleteAction(final File file, VerticalLayout layout) {
+	private void handleDeleteAction(final Path path, VerticalLayout layout) {
 
 		final ReferenceHolder<Boolean> groupOperation = ReferenceHolder
-				.newBooleanHolder(isOperationTargetSelectedGroup(file));
+				.newBooleanHolder(isOperationTargetSelectedGroup(path));
 
 		Label subWindowLabel = new Label(groupOperation.getValue() ? "Opravdu chcete smazat vybrané soubory ?"
-				: "Opravdu chcete smazat soubor \"" + file.getName() + "\" ?");
+				: "Opravdu chcete smazat soubor \"" + path.getFileName() + "\" ?");
 
 		final Window subwindow = new ConfirmWindow(subWindowLabel, e -> {
 			FileProcessState overallResult = FileProcessState.SUCCESS;
@@ -378,14 +278,14 @@ public class FMPage extends OneColumnPage {
 			// skupinově nebo RMB vybraný soubor ?
 			if (groupOperation.getValue()) {
 				FileProcessState partialResult;
-				for (File markedFile : markedFiles) {
-					partialResult = explorer.deleteFile(markedFile);
+				for (Path markedPath : markedPaths) {
+					partialResult = explorer.deleteFile(markedPath);
 					if (partialResult.equals(FileProcessState.SUCCESS) == false) {
 						overallResult = partialResult;
 					}
 				}
 			} else {
-				overallResult = explorer.deleteFile(file);
+				overallResult = explorer.deleteFile(path);
 			}
 
 			// všechno se podařilo smazat
@@ -402,16 +302,16 @@ public class FMPage extends OneColumnPage {
 
 	}
 
-	private void handleOpenAction(File file) {
+	private void handleOpenAction(Path path) {
 		try {
-			UIUtils.redirect(getPageURL(fmPageFactory, explorer.fileURLFromRoot(file).toString()));
+			UIUtils.redirect(getPageURL(fmPageFactory, explorer.fileURLFromRoot(path).toString()));
 		} catch (IOException e) {
 			e.printStackTrace();
 			UIUtils.showWarning("Soubor se nepodařilo otevřít");
 		}
 	}
 
-	private void handleRenameAction(final File file, VerticalLayout layout) {
+	private void handleRenameAction(final Path path, VerticalLayout layout) {
 		final Window subwindow = new WebWindow("Přejmenovat");
 		subwindow.center();
 		UIUtils.getGrassUI().addWindow(subwindow);
@@ -422,7 +322,7 @@ public class FMPage extends OneColumnPage {
 		subWindowlayout.setSpacing(true);
 
 		final TextField newNameField = new TextField("Nový název:");
-		newNameField.setValue(file.getName());
+		newNameField.setValue(path.getFileName().toString());
 		subWindowlayout.addComponent(newNameField, 0, 0, 1, 0);
 
 		Button confirm = new Button("Přejmenovat", new Button.ClickListener() {
@@ -430,7 +330,7 @@ public class FMPage extends OneColumnPage {
 			private static final long serialVersionUID = 8490964871266821307L;
 
 			public void buttonClick(ClickEvent event) {
-				switch (explorer.renameFile(file, (String) newNameField.getValue())) {
+				switch (explorer.renameFile(path, (String) newNameField.getValue())) {
 				case SUCCESS:
 					UIUtils.showInfo("Soubor byl úspěšně přejmenován.");
 					// refresh dir list
@@ -470,136 +370,8 @@ public class FMPage extends OneColumnPage {
 		subwindow.focus();
 	}
 
-	private void createSingleFileDetails(final File file, final WebWindow subwindow) {
-
-		GridLayout subWindowlayout = new GridLayout(2, 8);
-		subwindow.setContent(subWindowlayout);
-		subWindowlayout.setMargin(true);
-		subWindowlayout.setSpacing(true);
-		subWindowlayout.setSizeFull();
-
-		// ikona
-		Embedded icon = new Embedded();
-		if (file.isDirectory())
-			icon.setSource(ImageIcon.FOLDER_16_ICON.createResource());
-		else
-			icon.setSource(ImageIcon.PRESENT_16_ICON.createResource());
-		subWindowlayout.addComponent(icon, 0, 0);
-
-		// název
-		subWindowlayout.addComponent(new Label(file.getName()), 1, 0);
-
-		// Datum
-		subWindowlayout.addComponent(new Label("Datum úpravy:"), 0, 1);
-		subWindowlayout.addComponent(new Label(String.valueOf(new Date(file.lastModified()))), 1, 1);
-
-		// Čtení
-		subWindowlayout.addComponent(new Label("Čtení:"), 0, 2);
-		subWindowlayout.addComponent(new Label(file.canRead() ? "Ano" : "Ne"), 1, 2);
-
-		// Zápis
-		subWindowlayout.addComponent(new Label("Zápis:"), 0, 3);
-		subWindowlayout.addComponent(new Label(file.canWrite() ? "Ano" : "Ne"), 1, 3);
-
-		// Spouštění
-		subWindowlayout.addComponent(new Label("Spouštění:"), 0, 4);
-		subWindowlayout.addComponent(new Label(file.canExecute() ? "Ano" : "Ne"), 1, 4);
-
-		// Velikost
-		subWindowlayout.addComponent(new Label("Velikost:"), 0, 5);
-		List<File> skipList = new ArrayList<File>();
-		long size = explorer.getDeepDirSize(file, skipList);
-		String humanSize = HumanBytesSizeFormatter.format(size, true);
-		subWindowlayout.addComponent(new Label(humanSize), 1, 5);
-
-		// Jsou započítané všechny soubory podstromu ?
-		if (!skipList.isEmpty()) {
-			UIUtils.getGrassUI()
-					.addWindow(new WarnWindow("Některé soubory nemohly být započítány do celkové velikosti."));
-		}
-		// Velikost (binární)
-		subWindowlayout.addComponent(new Label(HumanBytesSizeFormatter.format(size, false)), 1, 6);
-
-		// OK button
-		Button close = new Button("OK", new Button.ClickListener() {
-
-			private static final long serialVersionUID = 8490964871266821307L;
-
-			public void buttonClick(ClickEvent event) {
-				subwindow.close();
-			}
-		});
-
-		subWindowlayout.addComponent(close, 0, 7);
-		subWindowlayout.setComponentAlignment(close, Alignment.BOTTOM_LEFT);
-
-	}
-
-	private void createGroupDetails(final WebWindow subwindow) {
-
-		GridLayout subWindowlayout = new GridLayout(2, 4);
-		subwindow.setContent(subWindowlayout);
-		subWindowlayout.setMargin(true);
-		subWindowlayout.setSpacing(true);
-		subWindowlayout.setSizeFull();
-
-		// Počet
-		subWindowlayout.addComponent(new Label("Počet souborů:"), 0, 0);
-		subWindowlayout.addComponent(new Label(String.valueOf(markedFiles.size())), 1, 0);
-
-		// Velikost
-		subWindowlayout.addComponent(new Label("Velikost:"), 0, 1);
-		List<File> skipList = new ArrayList<File>();
-		long size = 0;
-		for (File file : markedFiles) {
-			size += explorer.getDeepDirSize(file, skipList);
-		}
-		String humanSize = HumanBytesSizeFormatter.format(size, true);
-		subWindowlayout.addComponent(new Label(humanSize), 1, 1);
-
-		// Jsou započítané všechny soubory podstromu ?
-		if (!skipList.isEmpty()) {
-			UIUtils.getGrassUI()
-					.addWindow(new InfoWindow("Některé soubory nemohly být započítány do celkové velikosti."));
-		}
-		// Velikost (binární)
-		subWindowlayout.addComponent(new Label(HumanBytesSizeFormatter.format(size, false)), 1, 2);
-
-		// OK button
-		Button close = new Button("OK", new Button.ClickListener() {
-
-			private static final long serialVersionUID = 8490964871266821307L;
-
-			public void buttonClick(ClickEvent event) {
-				subwindow.close();
-			}
-		});
-
-		subWindowlayout.addComponent(close, 0, 3);
-		subWindowlayout.setComponentAlignment(close, Alignment.BOTTOM_LEFT);
-
-	}
-
-	private void handleDetailsAction(final File file, VerticalLayout layout) {
-		final WebWindow subwindow = new WebWindow("Detail");
-		subwindow.center();
-		subwindow.setWidth("470px");
-		subwindow.setHeight("300px");
-		UIUtils.getGrassUI().addWindow(subwindow);
-
-		// Skupina nebo RMB vybraný soubor
-		if (isOperationTargetSelectedGroup(file)) {
-			createGroupDetails(subwindow);
-		} else {
-			createSingleFileDetails(file, subwindow);
-		}
-
-		// Zaměř se na nové okno
-		subwindow.focus();
-	}
-
-	private void handleDownloadFile(final File file) {
-		WebWindow dlWindow = new WebWindow("Stáhnout " + file.getName()) {
+	private void handleDownloadFile(final Path file) {
+		WebWindow dlWindow = new WebWindow("Stáhnout " + file.getFileName()) {
 
 			private static final long serialVersionUID = 926172618599746150L;
 
@@ -611,11 +383,11 @@ public class FMPage extends OneColumnPage {
 				Button button = new Button("Stáhnout");
 				horizontalLayout.addComponent(button);
 				horizontalLayout.setComponentAlignment(button, Alignment.MIDDLE_CENTER);
-				FileDownloader downloader = new FileDownloader(new FileResource(file));
+				FileDownloader downloader = new FileDownloader(new FileResource(file.toFile()));
 				downloader.extend(button);
 				try {
 					String url = getRequest().getContextRoot() + FMConfiguration.FM_PATH + "/"
-							+ explorer.fileURLFromRoot(explorer.getRequestedFile()) + file.getName();
+							+ explorer.fileURLFromRoot(explorer.getRequestedPath()) + file.getFileName();
 					Link link;
 					horizontalLayout.addComponent(link = new Link(url, new ExternalResource(url)));
 					horizontalLayout.setComponentAlignment(link, Alignment.MIDDLE_CENTER);
@@ -748,43 +520,6 @@ public class FMPage extends OneColumnPage {
 			}
 		};
 
-		// multiFileUpload = new MultiFileUpload() {
-		//
-		// private static final long serialVersionUID = -6217699369125272543L;
-		//
-		// @Override
-		// protected String getAreaText() {
-		// return "<small>VLOŽ<br/>SOUBORY</small>";
-		// }
-		//
-		// @Override
-		// protected void handleFile(File file, String fileName, String
-		// mimeType, long length) {
-		// switch (explorer.saveFile(file, fileName)) {
-		// case SUCCESS:
-		// // refresh
-		// createDirList();
-		// break;
-		// case ALREADY_EXISTS:
-		// showWarning("Soubor '" + fileName +
-		// "' nebylo možné uložit - soubor s tímto názvem již existuje.");
-		// break;
-		// case NOT_VALID:
-		// showWarning("Soubor '"
-		// + fileName
-		// +
-		// "' nebylo možné uložit - cílové umístění souboru se nachází mimo
-		// povolený rozsah souborů k prohlížení.");
-		// break;
-		// default:
-		// showWarning("Soubor '" + fileName +
-		// "' nebylo možné uložit - došlo k systémové chybě.");
-		// }
-		// }
-		// };
-		// multiFileUpload.setRootDirectory(explorer.getTmpDirFile().getAbsolutePath());
-		// multiFileUpload.setUploadButtonCaption("Vybrat soubory");
-
 		multiFileUpload.setSizeFull();
 		panelLayout.addComponent(multiFileUpload);
 
@@ -792,77 +527,99 @@ public class FMPage extends OneColumnPage {
 
 	private void createDirList() {
 
-		IndexedContainer container = new IndexedContainer();
-		container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
-		container.addContainerProperty(ColumnId.NÁZEV, String.class, null);
-		container.addContainerProperty(ColumnId.VELIKOST, String.class, "");
-		container.addContainerProperty(ColumnId.DATUM, ComparableStringDate.class, new ComparableStringDate(null));
-		container.addContainerProperty(ColumnId.OPRÁVNĚNÍ, String.class, "");
-		filestable.setContainerDataSource(container);
-		filestable.setColumnWidth(ColumnId.IKONA, 16);
-		filestable.setColumnHeader(ColumnId.IKONA, "");
-
-		// filestable.setItemIconPropertyId(ColumnId.ICON); // ikon sloupec
-		// filestable.setRowHeaderMode(Table.ROW_HEADER_MODE_ICON_ONLY);
-		filestable.setColumnAlignment(ColumnId.VELIKOST, Align.RIGHT);
-
-		List<File> directories = new ArrayList<File>();
-		List<File> innerFiles = new ArrayList<File>();
-
-		// Projdi všechny soubory v adresáři
-		File[] subfiles = explorer.getRequestedFile().listFiles();
-		if (subfiles == null) {
-			// getSession().error("Nezdařilo se číst z adresáře");
-		} else {
-			for (File file : subfiles) {
-				if (file.isDirectory()) {
-					directories.add(file);
-				} else {
-					innerFiles.add(file);
-				}
+		int size;
+		try {
+			size = (int) Files.list(explorer.getRequestedPath()).count();
+		} catch (IOException e) {
+			throw new GrassPageException(500, e);
+		}
+		filestable.setDataProvider((sortOrder, offset, limit) -> {
+			try {
+				return Files.list(explorer.getRequestedPath()).skip(offset).limit(limit);
+			} catch (IOException e) {
+				throw new GrassPageException(500, e);
 			}
-		}
+		}, () -> size);
 
-		// Předek - pouze pokud nejsem v kořeni
-		if (!explorer.getRequestedFile().getPath().equals(explorer.getRootFile().getPath())) {
-			File parent = explorer.getRequestedFile().getParentFile();
-
-			Item item = filestable.addItem(parent);
-			Embedded icon = new Embedded();
-			icon.setSource(ImageIcon.FOLDER_16_ICON.createResource());
-			item.getItemProperty(ColumnId.IKONA).setValue(icon);
-			item.getItemProperty(ColumnId.NÁZEV).setValue("..");
-		}
-
-		// Adresáře
-		for (File file : directories) {
-			Item item = filestable.addItem(file);
-			Embedded icon = new Embedded();
-			icon.setSource(ImageIcon.FOLDER_16_ICON.createResource());
-			item.getItemProperty(ColumnId.IKONA).setValue(icon);
-
-			item.getItemProperty(ColumnId.NÁZEV).setValue(file.getName());
-			item.getItemProperty(ColumnId.DATUM).setValue(new ComparableStringDate(new Date(file.lastModified())));
-			item.getItemProperty(ColumnId.OPRÁVNĚNÍ).setValue(
-					(file.canExecute() ? "x" : "-") + (file.canRead() ? "r" : "-") + (file.canWrite() ? "w" : "-"));
-		}
-
-		// Soubory
-		for (File file : innerFiles) {
-			Item item = filestable.addItem(file);
-			Embedded icon = new Embedded();
-			icon.setSource(ImageIcon.PRESENT_16_ICON.createResource());
-			item.getItemProperty(ColumnId.IKONA).setValue(icon);
-
-			item.getItemProperty(ColumnId.NÁZEV).setValue(file.getName());
-			item.getItemProperty(ColumnId.VELIKOST).setValue(HumanBytesSizeFormatter.format(file.length(), true));
-			item.getItemProperty(ColumnId.DATUM).setValue(new ComparableStringDate(new Date(file.lastModified())));
-			item.getItemProperty(ColumnId.OPRÁVNĚNÍ).setValue(
-					(file.canExecute() ? "x" : "-") + (file.canRead() ? "r" : "-") + (file.canWrite() ? "w" : "-"));
-		}
+		// IndexedContainer container = new IndexedContainer();
+		// container.addContainerProperty(ColumnId.IKONA, Embedded.class, null);
+		// container.addContainerProperty(ColumnId.NÁZEV, String.class, null);
+		// container.addContainerProperty(ColumnId.VELIKOST, String.class, "");
+		// // container.addContainerProperty(ColumnId.DATUM,
+		// // ComparableStringDate.class, new ComparableStringDate(null));
+		// container.addContainerProperty(ColumnId.OPRÁVNĚNÍ, String.class, "");
+		// filestable.setContainerDataSource(container);
+		// filestable.setColumnWidth(ColumnId.IKONA, 16);
+		// filestable.setColumnHeader(ColumnId.IKONA, "");
+		//
+		// // filestable.setItemIconPropertyId(ColumnId.ICON); // ikon sloupec
+		// // filestable.setRowHeaderMode(Table.ROW_HEADER_MODE_ICON_ONLY);
+		// filestable.setColumnAlignment(ColumnId.VELIKOST, Align.RIGHT);
+		//
+		// List<File> directories = new ArrayList<File>();
+		// List<File> innerFiles = new ArrayList<File>();
+		//
+		// // Projdi všechny soubory v adresáři
+		// File[] subfiles = ;
+		// if (subfiles == null) {
+		// // getSession().error("Nezdařilo se číst z adresáře");
+		// } else {
+		// for (File file : subfiles) {
+		// if (file.isDirectory()) {
+		// directories.add(file);
+		// } else {
+		// innerFiles.add(file);
+		// }
+		// }
+		// }
+		//
+		// // Předek - pouze pokud nejsem v kořeni
+		// if
+		// (!explorer.getRequestedPath().getPath().equals(explorer.getRootPath().getPath()))
+		// {
+		// File parent = explorer.getRequestedPath().getParentFile();
+		//
+		// Item item = filestable.addItem(parent);
+		// Embedded icon = new Embedded();
+		// icon.setSource(ImageIcon.FOLDER_16_ICON.createResource());
+		// item.getItemProperty(ColumnId.IKONA).setValue(icon);
+		// item.getItemProperty(ColumnId.NÁZEV).setValue("..");
+		// }
+		//
+		// // Adresáře
+		// for (File file : directories) {
+		// Item item = filestable.addItem(file);
+		// Embedded icon = new Embedded();
+		// icon.setSource(ImageIcon.FOLDER_16_ICON.createResource());
+		// item.getItemProperty(ColumnId.IKONA).setValue(icon);
+		//
+		// item.getItemProperty(ColumnId.NÁZEV).setValue(file.getName());
+		// // item.getItemProperty(ColumnId.DATUM).setValue(new
+		// // ComparableStringDate(new Date(file.lastModified())));
+		// item.getItemProperty(ColumnId.OPRÁVNĚNÍ).setValue(
+		// (file.canExecute() ? "x" : "-") + (file.canRead() ? "r" : "-") +
+		// (file.canWrite() ? "w" : "-"));
+		// }
+		//
+		// // Soubory
+		// for (File file : innerFiles) {
+		// Item item = filestable.addItem(file);
+		// Embedded icon = new Embedded();
+		// icon.setSource(ImageIcon.PRESENT_16_ICON.createResource());
+		// item.getItemProperty(ColumnId.IKONA).setValue(icon);
+		//
+		// item.getItemProperty(ColumnId.NÁZEV).setValue(file.getName());
+		// item.getItemProperty(ColumnId.VELIKOST).setValue(HumanBytesSizeFormatter.format(file.length(),
+		// true));
+		// // item.getItemProperty(ColumnId.DATUM).setValue(new
+		// // ComparableStringDate(new Date(file.lastModified())));
+		// item.getItemProperty(ColumnId.OPRÁVNĚNÍ).setValue(
+		// (file.canExecute() ? "x" : "-") + (file.canRead() ? "r" : "-") +
+		// (file.canWrite() ? "w" : "-"));
+		// }
 
 		// Status label static value
-		satusLabelStaticValue = "Zobrazeno " + directories.size() + " adresářů, " + innerFiles.size() + " souborů";
+		satusLabelStaticValue = "Zobrazeno " + size + " souborů";
 		statusLabel.setValue(satusLabelStaticValue);
 
 	}

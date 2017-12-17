@@ -21,8 +21,7 @@ public class NewContentNodeGrid extends Grid<ContentModule> {
 
 	public NewContentNodeGrid(MenuPage page, final NodeTO node) {
 		// inject nefunguje kvůli něčemu v předkovi
-		final ModuleRegister serviceHolder = (ModuleRegister) SpringContextHelper.getContext()
-				.getBean(ModuleRegister.class);
+		final ModuleRegister serviceHolder = SpringContextHelper.getContext().getBean(ModuleRegister.class);
 
 		setSelectionMode(SelectionMode.NONE);
 
@@ -36,13 +35,11 @@ public class NewContentNodeGrid extends Grid<ContentModule> {
 		addColumn(contentService -> new Image("", contentService.getContentIcon()), new ComponentRenderer())
 				.setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(iconBind);
 
-		addColumn(contentService -> {
-			return "<a href='"
-					+ page.getPageURL(contentService.getContentEditorPageFactory(),
-							DefaultContentOperations.NEW.toString(),
-							URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()))
-					+ "'>" + contentService.getCreateNewContentLabel() + "</a>";
-		}, new HtmlRenderer()).setCaption("Obsah").setId(nameBind);
+		addColumn(contentService -> "<a href='"
+				+ page.getPageURL(contentService.getContentEditorPageFactory(), DefaultContentOperations.NEW.toString(),
+						URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()))
+				+ "'>" + contentService.getCreateNewContentLabel() + "</a>", new HtmlRenderer()).setCaption("Obsah")
+						.setId(nameBind);
 
 		setColumns(iconBind, nameBind);
 

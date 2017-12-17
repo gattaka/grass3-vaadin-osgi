@@ -34,12 +34,7 @@ public class BaseProgressBar extends ProgressBar {
 	 */
 	public boolean increaseProgress() {
 		current++;
-		getUI().access(new Runnable() {
-			@Override
-			public void run() {
-				BaseProgressBar.this.setValue(getProgress());
-			}
-		});
+		getUI().access(() -> BaseProgressBar.this.setValue(getProgress()));
 		return current == total - 1;
 	}
 

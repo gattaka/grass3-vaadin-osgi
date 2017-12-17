@@ -63,12 +63,7 @@ public final class CoreACLServiceImpl implements CoreACLService {
 	 * Může uživatel vytvářet obsah ?
 	 */
 	public boolean canCreateContent(UserInfoTO user) {
-		if (isLoggedIn(user)) {
-			// pokud má uživatel oprávnění AUTHOR, pak může
-			if (user.hasRole(Role.AUTHOR))
-				return true;
-		}
-		return false;
+		return isLoggedIn(user) && user.hasRole(Role.AUTHOR);
 	}
 
 	/**
@@ -104,13 +99,7 @@ public final class CoreACLServiceImpl implements CoreACLService {
 	 * Může uživatel založit kategorii ?
 	 */
 	public boolean canCreateNode(UserInfoTO user) {
-		if (isLoggedIn(user)) {
-			// pokud je admin, můžeš
-			if (user.isAdmin())
-				return true;
-		}
-		// jinak false
-		return false;
+		return isLoggedIn(user) && user.isAdmin();
 	}
 
 	/**
@@ -161,10 +150,7 @@ public final class CoreACLServiceImpl implements CoreACLService {
 			return true;
 
 		// administrator může vidět detaily od všech uživatelů
-		if (user.isAdmin())
-			return true;
-
-		return false;
+		return user.isAdmin();
 	}
 
 	/**
@@ -213,14 +199,14 @@ public final class CoreACLServiceImpl implements CoreACLService {
 	 * Může přidat obsah do svých oblíbených ?
 	 */
 	public boolean canAddContentToFavourites(ContentNodeTO contentNodeDTO, UserInfoTO user) {
-		return isLoggedIn(user) && userFacade.hasInFavourites(contentNodeDTO.getId(), user.getId()) == false;
+		return isLoggedIn(user) && !userFacade.hasInFavourites(contentNodeDTO.getId(), user.getId());
 	}
 
 	/**
 	 * Může odebrat obsah ze svých oblíbených ?
 	 */
 	public boolean canRemoveContentFromFavourites(ContentNodeTO contentNodeDTO, UserInfoTO user) {
-		return isLoggedIn(user) && userFacade.hasInFavourites(contentNodeDTO.getId(), user.getId()) == true;
+		return isLoggedIn(user) && userFacade.hasInFavourites(contentNodeDTO.getId(), user.getId());
 	}
 
 }

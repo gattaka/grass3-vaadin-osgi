@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<modelConfiguration>
-    <password></password>
-    <!--<URL>jdbc:h2:grass3H2DB</URL>-->
-    <!--<URL>jdbc:h2:tcp://localhost/grass3H2DB.h2.db;TRACE_LEVEL_FILE=3</URL>-->
-    <URL>jdbc:h2:tcp://localhost/grass3H2DB;TRACE_LEVEL_FIlE=3</URL>
-    <username>sa</username>
-</modelConfiguration>

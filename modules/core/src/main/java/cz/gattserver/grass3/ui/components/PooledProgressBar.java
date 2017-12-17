@@ -38,7 +38,7 @@ public abstract class PooledProgressBar extends ProgressBar {
 	 *            procentuální stav operace
 	 */
 	protected void indicateProgress(float progress) {
-	};
+	}
 
 	/**
 	 * 
@@ -46,8 +46,9 @@ public abstract class PooledProgressBar extends ProgressBar {
 	 *            celkový počet elementů ke zpracování
 	 */
 	public PooledProgressBar(int total) {
-		this.total = total + 1; // +1 protože se musí započítat i samotné
-								// generování procesu (jinak se bude dělit 0)
+		// +1 protože se musí započítat i samotné
+		// generování procesu (jinak se bude dělit 0)
+		this.total = total + 1;
 		progressThread = new ProgressThread();
 		executor.execute(progressThread);
 	}
@@ -68,24 +69,11 @@ public abstract class PooledProgressBar extends ProgressBar {
 
 			UI ui = getUI();
 
-			// UI connectorUI = getUI();
-			// UI currentUI = UI.getCurrent();
-			// if (connectorUI.equals(currentUI)) {
-			// System.out.println("OK");
-			// } else {
-			// System.out.println("WTF");
-			// }
-
 			VaadinSession session = getSession();
 			if (session == null) {
 				incrementState();
 			} else {
-				ui.access(new Runnable() {
-					@Override
-					public void run() {
-						incrementState();
-					}
-				});
+				ui.access(this::incrementState);
 			}
 		}
 

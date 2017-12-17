@@ -3,13 +3,13 @@ package cz.gattserver.grass3.services.impl;
 import java.util.Properties;
 
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import cz.gattserver.grass3.exception.GrassException;
 import cz.gattserver.grass3.services.MailService;
 
 public class MailServiceImpl implements MailService {
@@ -25,52 +25,38 @@ public class MailServiceImpl implements MailService {
 
 	@Override
 	public void sendEmail(String toEmail, String subject, String body) {
-		try {
+		body += "\n\n--\nZasláno systémem GRASS3";
 
-			body += "\n\n--\nZasláno systémem GRASS3";
+		final String fromEmail = grassMailAddress;
+		final String password = grassMailPassword;
 
-			final String fromEmail = grassMailAddress;
-			final String password = grassMailPassword;
+		Properties props = new Properties();
+		props.put("mail.smtp.timeout", "10000");
+		props.put("mail.smtp.connectiontimeout", "10000");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.socketFactory.port", "465");
+		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.port", "465");
+		props.put("mail.smtp.ssl.enable", "true"); // !!!
+		props.put("mail.smtp.ssl.trust", "*");
 
-			Properties props = new Properties();
-
-			props.put("mail.smtp.timeout", "10000");
-			props.put("mail.smtp.connectiontimeout", "10000");
-
-			props.put("mail.smtp.host", "smtp.gmail.com");
-			props.put("mail.smtp.socketFactory.port", "465");
-			props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-			props.put("mail.smtp.auth", "true");
-			props.put("mail.smtp.port", "465");
-
-			props.put("mail.smtp.ssl.enable", "true"); // !!!
-			props.put("mail.smtp.ssl.trust", "*");
-
-			Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
-				@Override
-				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication(fromEmail, password);
-				}
-			});
-
-			try {
-
-				Message message = new MimeMessage(session);
-				message.setFrom(new InternetAddress(fromEmail));
-				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-				message.setSubject(subject);
-				message.setText(body);
-
-				System.out.println("Sending");
-				Transport.send(message);
-				System.out.println("Done");
-
-			} catch (MessagingException e) {
-				throw new RuntimeException(e);
+		Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+			@Override
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(fromEmail, password);
 			}
+		});
 
+		try {
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(fromEmail));
+			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+			message.setSubject(subject);
+			message.setText(body);
+			Transport.send(message);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new GrassException("Nezdařilo se odeslat email", e);
 		}
 	}
 

@@ -160,7 +160,10 @@ public class NodeTree extends VerticalLayout {
 				grid);
 		btnLayout.addComponent(modifyBtn);
 
-		DeleteGridButton<NodeOverviewTO> deleteBtn = new DeleteGridButton<>("Smazat", this::deleteAction, grid);
+		// mazání chci po jednom
+		DeleteGridButton<NodeOverviewTO> deleteBtn = new DeleteGridButton<>("Smazat",
+				nodes -> deleteAction(nodes.iterator().next()), grid);
+		deleteBtn.setEnableResolver(items -> items.size() == 1);
 		btnLayout.addComponent(deleteBtn);
 
 	}

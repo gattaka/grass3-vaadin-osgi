@@ -85,11 +85,12 @@ public class QuotesPage extends OneColumnPage {
 		}, grid);
 		btnLayout.addComponent(modifyGridButton);
 
-		DeleteGridButton<QuoteTO> deleteGridButton = new DeleteGridButton<>("Odstranit hlášku", q -> {
-			quotesFacade.deleteQuote(q.getId());
-			data.remove(q);
-			grid.getDataProvider().refreshAll();
-		}, grid);
+		DeleteGridButton<QuoteTO> deleteGridButton = new DeleteGridButton<>("Odstranit hlášky",
+				items -> items.forEach(q -> {
+					quotesFacade.deleteQuote(q.getId());
+					data.remove(q);
+					grid.getDataProvider().refreshAll();
+				}), grid);
 		btnLayout.addComponent(deleteGridButton);
 
 		return layout;

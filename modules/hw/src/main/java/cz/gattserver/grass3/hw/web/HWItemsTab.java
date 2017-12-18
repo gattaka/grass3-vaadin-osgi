@@ -62,23 +62,19 @@ public class HWItemsTab extends VerticalLayout {
 			types.add(t.getValue());
 		});
 		filterDTO.setTypes(types);
-		grid.setDataProvider((sortOrder, offset, limit) -> {
-			return hwFacade.getHWItems(filterDTO, new PageRequest(offset / limit, limit),
-					QuerydslUtil.transformOrdering(sortOrder, column -> {
-						switch (column) {
-						case PRICE_BIND:
-							return "price";
-						case STATE_BIND:
-							return "state";
-						case PURCHASE_DATE_BIND:
-							return "purchaseDate";
-						default:
-							return column;
-						}
-					})).stream();
-		}, () -> {
-			return hwFacade.countHWItems(filterDTO);
-		});
+		grid.setDataProvider((sortOrder, offset, limit) -> hwFacade.getHWItems(filterDTO,
+				new PageRequest(offset / limit, limit), QuerydslUtil.transformOrdering(sortOrder, column -> {
+					switch (column) {
+					case PRICE_BIND:
+						return "price";
+					case STATE_BIND:
+						return "state";
+					case PURCHASE_DATE_BIND:
+						return "purchaseDate";
+					default:
+						return column;
+					}
+				})).stream(), () -> hwFacade.countHWItems(filterDTO));
 	}
 
 	private void addWindow(Window win) {

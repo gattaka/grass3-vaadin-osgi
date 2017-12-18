@@ -62,9 +62,6 @@ public abstract class GridOperationsTab<T extends Identifiable> extends Vertical
 
 		init();
 
-		/**
-		 * Přehled
-		 */
 		grid = new Grid<>(clazz);
 		grid.setItems(getItems());
 		customizeGrid(grid);
@@ -82,14 +79,13 @@ public abstract class GridOperationsTab<T extends Identifiable> extends Vertical
 		final Button modifyBtn = new ModifyGridButton<>("Upravit",
 				(e, item) -> UI.getCurrent().addWindow(createModifyWindow(item)), grid);
 
-		final Button deleteBtn = new DeleteGridButton<>("Smazat", item -> {
-			deleteEntity(item);
-			data.remove(item);
+		final Button deleteBtn = new DeleteGridButton<>("Smazat", items -> {
+			items.forEach(this::deleteEntity);
+			data.removeAll(items);
 			grid.getDataProvider().refreshAll();
 		}, grid);
 
 		placeButtons(buttonLayout, createBtn, detailBtn, modifyBtn, deleteBtn);
-
 	}
 
 	protected void placeButtons(HorizontalLayout buttonLayout, Button createBtn, Button detailBtn, Button modifyBtn,

@@ -266,18 +266,14 @@ public class FMExplorer {
 	}
 
 	/**
-	 * Vezme cestu k souboru a odstřihne od ní cestu k rootDir-u, předpokládá
-	 * se, že file je již v canonickém tvaru a existuje
+	 * Vezme cestu k souboru a odstřihne od ní cestu k rootDir-u
 	 * 
 	 * @param path
 	 *            soubor na zpracování
 	 * @return koncová cesta k souboru od rootDir
-	 * @throws IOException
 	 */
-	public String fileURLFromRoot(Path path) throws IOException {
-		String rootURL = rootPath.toUri().toString();
-		String fileURL = path.toUri().toString();
-		return fileURL.substring(rootURL.length());
+	public String fileFromRoot(Path path) {
+		return rootPath.relativize(path).toString();
 	}
 
 	public FMConfiguration getConfiguration() {

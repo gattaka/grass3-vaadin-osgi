@@ -255,7 +255,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 		table.getColumn("name").setCaption("Název");
 		table.setColumns("name");
 
-		final Button removeBtn = new DeleteGridButton<>("Odstranit", file -> {
+		final Button removeBtn = new DeleteGridButton<>("Odstranit", files -> files.forEach(file -> {
 			if (editMode) {
 				if (PGUtils.isImage(file.getName())) {
 					photogalleryFacade.tryDeleteMiniatureImage(file, photogallery);
@@ -269,7 +269,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			file.delete();
 			items.remove(file);
 			table.getDataProvider().refreshAll();
-		}, table);
+		}), table);
 
 		gridLayout.addComponent(removeBtn, 1, 1);
 		gridLayout.setComponentAlignment(removeBtn, Alignment.MIDDLE_CENTER);

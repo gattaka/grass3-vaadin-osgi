@@ -70,25 +70,29 @@ public class UsersSettingsPage extends AbstractSettingsPage {
 		buttonLayout.setSpacing(true);
 		usersLayout.addComponent(buttonLayout);
 
-		buttonLayout.addComponent(new GridButton<>("Aktivovat", (e, user) -> {
-			user.setConfirmed(true);
-			userFacade.activateUser(user.getId());
-			grid.getDataProvider().refreshItem(user);
-		}, grid).setEnableResolver(user -> user.isPresent() && !user.get().isConfirmed()));
+		buttonLayout.addComponent(new GridButton<>("Aktivovat", (e, users) -> {
+			users.forEach(user -> {
+				user.setConfirmed(true);
+				userFacade.activateUser(user.getId());
+				grid.getDataProvider().refreshItem(user);
+			});
+		}, grid).setEnableResolver(users -> !users.iterator().next().isConfirmed()));
 
-		buttonLayout.addComponent(new GridButton<>("Zablokovat", (e, user) -> {
-			user.setConfirmed(false);
-			userFacade.banUser(user.getId());
-			grid.getDataProvider().refreshItem(user);
-		}, grid).setEnableResolver(user -> user.isPresent() && user.get().isConfirmed()));
+		buttonLayout.addComponent(new GridButton<>("Zablokovat", (e, users) -> {
+			users.forEach(user -> {
+				user.setConfirmed(false);
+				userFacade.banUser(user.getId());
+				grid.getDataProvider().refreshItem(user);
+			});
+		}, grid).setEnableResolver(users -> users.iterator().next().isConfirmed()));
 
 		buttonLayout.addComponent(new GridButton<>("Upravit oprávnění",
-				(e, user) -> UI.getCurrent().addWindow(new WebWindow("Uživatelské role") {
+				(e, users) -> UI.getCurrent().addWindow(new WebWindow("Uživatelské role") {
 					private static final long serialVersionUID = -2416879310811585155L;
 
 					{
+						UserInfoTO user = users.iterator().next();
 						setWidth("220px");
-
 						for (final Role value : Role.values()) {
 							final CheckBox checkbox = new CheckBox(value.getRoleName());
 							checkbox.setValue(user.getRoles().contains(value));

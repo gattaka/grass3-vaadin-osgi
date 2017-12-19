@@ -79,7 +79,8 @@ public class CodeParser implements Parser {
 		}
 
 		// zpracovat koncový tag
-		// END_TAG byl zpracován
+		// END_TAG byl zpracován, ověř, že to byl můj ukončovací tag
+		pluginBag.getEndTag();
 		pluginBag.nextToken();
 
 		// protože za CODE je většinou mezera ignoruje se případný <br/>

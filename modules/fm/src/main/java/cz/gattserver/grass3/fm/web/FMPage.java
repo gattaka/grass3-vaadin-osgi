@@ -114,6 +114,8 @@ public class FMPage extends OneColumnPage {
 		case SUCCESS:
 			// úspěch - pokračujeme
 			Page.getCurrent().addPopStateListener(e -> {
+				// Odparsuj počátek http://host//context-root/fm a získej
+				// lokální cestu v rámci FM modulu
 				int start = e.getUri().indexOf(getRequest().getContextRoot());
 				String fmPath = e.getUri().substring(
 						start + getRequest().getContextRoot().length() + 1 + fmPageFactory.getPageName().length());
@@ -251,9 +253,9 @@ public class FMPage extends OneColumnPage {
 			if (e.getMouseEventDetails().isDoubleClick()) {
 				Path path = e.getItem();
 				if (Files.isDirectory(path))
-					// UIUtils.redirect(getPageURL(fmPageFactory,
-					// explorer.fileFromRoot(path).toString()));
 					handleGotoDirAction(path, false);
+				else
+					handleDownloadAction(path);
 			} else {
 				if (e.getMouseEventDetails().isShiftKey()) {
 					if (grid.getSelectedItems().contains(e.getItem()))
@@ -419,12 +421,24 @@ public class FMPage extends OneColumnPage {
 		}));
 	}
 
+	private void handleDownloadAction(Path item) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getRequest().getContextRoot());
+		sb.append("/");
+		sb.append(FMConfiguration.FM_PATH);
+		for (Path part : explorer.getCurrentRelativePath()) {
+			sb.append("/");
+			sb.append(part.toString());
+		}
+		sb.append("/");
+		sb.append(item.getFileName().toString());
+		JavaScript.eval("window.open('" + sb.toString() + "', '_blank');");
+	}
+
 	private void handleDownloadAction(Set<Path> items) {
 		Path item = items.iterator().next();
 		if (items.size() == 1 && !Files.isDirectory(item)) {
-			String url = getRequest().getContextRoot() + FMConfiguration.FM_PATH + "/"
-					+ explorer.getCurrentRelativePath() + item.getFileName();
-			JavaScript.eval("window.open('" + url + "', '_blank');");
+			handleDownloadAction(item);
 		} else {
 			// TODO adresář nebo více souborů stáhne je jako ZIP
 		}

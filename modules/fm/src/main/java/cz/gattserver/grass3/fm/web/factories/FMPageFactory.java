@@ -11,8 +11,6 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 @Component("fmPageFactory")
 public class FMPageFactory extends AbstractPageFactory {
 
-	private static final long serialVersionUID = -2643365441921408821L;
-
 	public FMPageFactory() {
 		super("fm");
 	}

@@ -27,9 +27,9 @@ public class FMExplorer {
 	private Path rootPath;
 
 	/**
-	 * Cesta od kořene k souboru FM objekt
+	 * Plná cesta od systémového kořene
 	 */
-	private Path requestedPath;
+	private Path currentAbsolutePath;
 
 	/**
 	 * Konfigurace FM
@@ -95,21 +95,21 @@ public class FMExplorer {
 			relativePath = "";
 
 		// Vytvoř File z předávané relativní cesty
-		requestedPath = rootPath.resolve(relativePath).normalize();
+		currentAbsolutePath = rootPath.resolve(relativePath).normalize();
 
 		// Otestuj, zda File existuje, pokud ne, přesměruj se na kořenový
 		// adresář a zapiš, že bylo nutné použít kořenový adresář kvůli
 		// neexistenci předávaného souboru
-		if (!Files.exists(requestedPath)) {
-			this.requestedPath = rootPath;
+		if (!Files.exists(currentAbsolutePath)) {
+			this.currentAbsolutePath = rootPath;
 			state = FileProcessState.MISSING;
 		}
 
 		// Zkontroluj validnost souboru, pokud není, přesměruj se na kořenový
 		// adresář a zapiš, že bylo nutné použít kořenový adresář kvůli
 		// nevalidnosti předávaného souboru
-		if (!isValid(requestedPath)) {
-			requestedPath = rootPath;
+		if (!isValid(currentAbsolutePath)) {
+			currentAbsolutePath = rootPath;
 			state = FileProcessState.NOT_VALID;
 		}
 	}
@@ -158,7 +158,7 @@ public class FMExplorer {
 	 * @return výsledek operace
 	 */
 	public FileProcessState createNewDir(String name) {
-		Path newPath = requestedPath.resolve(name);
+		Path newPath = currentAbsolutePath.resolve(name);
 		try {
 			if (!isValid(newPath))
 				return FileProcessState.NOT_VALID;
@@ -169,6 +169,16 @@ public class FMExplorer {
 		} catch (IOException e) {
 			logger.error("Nezdařilo se vytvořit nový adresář {}", newPath.toString(), e);
 			return FileProcessState.SYSTEM_ERROR;
+		}
+	}
+
+	public FileProcessState tryGotoDir(String name) {
+		Path newPath = rootPath.resolve(name).normalize();
+		if (isValid(newPath)) {
+			currentAbsolutePath = newPath;
+			return FileProcessState.SUCCESS;
+		} else {
+			return FileProcessState.NOT_VALID;
 		}
 	}
 
@@ -210,7 +220,7 @@ public class FMExplorer {
 	 * @return výsledek operace
 	 */
 	public FileProcessState saveFile(InputStream in, String filename) {
-		Path path = requestedPath.resolve(filename);
+		Path path = currentAbsolutePath.resolve(filename);
 		try {
 			Files.copy(in, path);
 		} catch (FileAlreadyExistsException f) {
@@ -292,8 +302,18 @@ public class FMExplorer {
 		return rootPath;
 	}
 
-	public Path getRequestedPath() {
-		return requestedPath;
+	public Path getCurrentAbsolutePath() {
+		return currentAbsolutePath;
+	}
+	
+	public Path getCurrentRelativePath() {
+		return rootPath.relativize(currentAbsolutePath);
+	}
+
+	public Path getParentPath() {
+		if (currentAbsolutePath.equals(rootPath))
+			return currentAbsolutePath;
+		return currentAbsolutePath.getParent();
 	}
 
 }

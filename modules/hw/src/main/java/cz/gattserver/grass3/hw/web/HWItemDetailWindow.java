@@ -39,7 +39,7 @@ import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import cz.gattserver.common.util.CZSuffixFormatter;
+import cz.gattserver.common.util.CZAmountFormatter;
 import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.common.util.MoneyFormatter;
 import cz.gattserver.grass3.hw.dto.HWItemDTO;
@@ -95,7 +95,7 @@ public class HWItemDetailWindow extends WebWindow {
 	}
 
 	private String createWarrantyYearsString(Integer warrantyYears) {
-		return new CZSuffixFormatter("rok", "roky", "let").format(warrantyYears);
+		return new CZAmountFormatter("rok", "roky", "let").format(warrantyYears);
 	}
 
 	/**

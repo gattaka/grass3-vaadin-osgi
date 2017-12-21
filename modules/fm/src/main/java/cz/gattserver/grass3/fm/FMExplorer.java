@@ -6,12 +6,17 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
+import cz.gattserver.grass3.fm.interfaces.PathChunkTO;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
@@ -19,6 +24,9 @@ public class FMExplorer {
 
 	private Logger logger = LoggerFactory.getLogger(FMExplorer.class);
 
+	/**
+	 * Filesystem, pod kterým {@link FMExplorer} momentálně operuje
+	 */
 	private FileSystem fileSystem;
 
 	/**
@@ -32,46 +40,9 @@ public class FMExplorer {
 	private Path currentAbsolutePath;
 
 	/**
-	 * Konfigurace FM
-	 */
-	private FMConfiguration configuration;
-
-	/**
-	 * Byla cesta souboru odvozena od souboru ?
-	 */
-	private boolean pathDerivedFromFile = false;
-
-	/**
 	 * V jakém stavu je zpracovávaný soubor ?
 	 */
 	private FileProcessState state = FileProcessState.SUCCESS;
-
-	/**
-	 * Stav zpracování souboru
-	 */
-	public static enum FileProcessState {
-		/**
-		 * V pořádku, nalezen
-		 */
-		SUCCESS,
-		/**
-		 * Nebyl nalezen
-		 */
-		MISSING,
-		/**
-		 * Existuje, ale podtéká kořenový adresář FM modulu, což je porušení
-		 * security omezení
-		 */
-		NOT_VALID,
-		/**
-		 * Cílový soubor existuje, nelze vytvořit/přesunout/kopírovat
-		 */
-		ALREADY_EXISTS,
-		/**
-		 * Operace se nezdařila kvůli systémové chybě
-		 */
-		SYSTEM_ERROR
-	}
 
 	/**
 	 * {@link FMExplorer} začne v adresáři, který je podle konfigurace jako jeho
@@ -89,7 +60,7 @@ public class FMExplorer {
 	 */
 	public FMExplorer(String relativePath, FileSystem fileSystem) {
 		this.fileSystem = fileSystem;
-		processConfiguration();
+		loadRootDirFromConfiguration();
 
 		if (relativePath == null)
 			relativePath = "";
@@ -114,12 +85,8 @@ public class FMExplorer {
 		}
 	}
 
-	private void processConfiguration() {
-		configuration = loadConfiguration();
-		loadRootDirFromConfiguration(configuration);
-	}
-
-	private void loadRootDirFromConfiguration(FMConfiguration configuration) {
+	private void loadRootDirFromConfiguration() {
+		FMConfiguration configuration = loadConfiguration();
 		String rootDir = configuration.getRootDir();
 		rootPath = fileSystem.getPath(rootDir);
 		if (!Files.exists(rootPath))
@@ -133,11 +100,11 @@ public class FMExplorer {
 	 * @return soubor konfigurace FM
 	 */
 	private FMConfiguration loadConfiguration() {
-		ConfigurationService configurationService = (ConfigurationService) SpringContextHelper.getContext()
+		ConfigurationService configurationService = SpringContextHelper.getContext()
 				.getBean(ConfigurationService.class);
-		FMConfiguration configuration = new FMConfiguration();
-		configurationService.loadConfiguration(configuration);
-		return configuration;
+		FMConfiguration c = new FMConfiguration();
+		configurationService.loadConfiguration(c);
+		return c;
 	}
 
 	/**
@@ -172,6 +139,14 @@ public class FMExplorer {
 		}
 	}
 
+	/**
+	 * Změní aktuální adresář
+	 * 
+	 * @param name
+	 *            jméno adresáře, do kterého přecházím. Může být ".." pro
+	 *            vrácení se nahoru
+	 * @return výsledek operace
+	 */
 	public FileProcessState tryGotoDir(String name) {
 		Path newPath = rootPath.resolve(name).normalize();
 		if (isValid(newPath)) {
@@ -189,25 +164,55 @@ public class FMExplorer {
 	 * 
 	 * @param path
 	 *            adresář k spočítání
-	 * @return velikost adresáře včetně podadresářů
+	 * @return velikost adresáře včetně podadresářů nebo <code>null</code>,
+	 *         pokud se jedná o nadřazený adresář
 	 * @throws IOException
 	 *             pokud se nezdaří spočítat velikost souboru kvůli
 	 *             {@link IOException} chybě
 	 */
-	public long getDeepDirSize(Path path) throws IOException {
-		return innerGetDeepDirSize(path);
+	public Long getDeepDirSize(Path path) throws IOException {
+		if (currentAbsolutePath.resolve(path).normalize().startsWith(currentAbsolutePath))
+			return innerGetDeepDirSize(path);
+		return null;
 	}
 
-	private long innerGetDeepDirSize(Path path) throws IOException {
+	private Long innerGetDeepDirSize(Path path) throws IOException {
 		if (!Files.isDirectory(path))
 			return Files.size(path);
-		return Files.list(path).mapToLong(value -> {
-			try {
-				return innerGetDeepDirSize(value);
-			} catch (IOException e) {
-				throw new IllegalStateException(e);
-			}
-		}).sum();
+		try (Stream<Path> stream = Files.list(path)) {
+			Long sum = 0L;
+			for (Iterator<Path> it = stream.iterator(); it.hasNext();)
+				sum += innerGetDeepDirSize(it.next());
+			return sum;
+		}
+	}
+
+	public int listCount() {
+		try (Stream<Path> stream = Files.list(currentAbsolutePath)) {
+			// +1 za odkaz na nadřazený adresář
+			return (int) stream.count() + 1;
+		} catch (IOException e) {
+			throw new GrassPageException(500, e);
+		}
+	}
+
+	public Stream<Path> listing(int offset, int limit) {
+		try {
+			return Stream
+					.concat(Stream.of(fileSystem.getPath("..")), Files.list(currentAbsolutePath).sorted((p1, p2) -> {
+						if (Files.isDirectory(p1)) {
+							if (Files.isDirectory(p2))
+								return p1.getFileName().compareTo(p2);
+							return -1;
+						} else {
+							if (Files.isDirectory(p2))
+								return 1;
+							return p1.getFileName().compareTo(p2);
+						}
+					})).skip(offset).limit(limit);
+		} catch (IOException e) {
+			throw new GrassPageException(500, e);
+		}
 	}
 
 	/**
@@ -243,7 +248,6 @@ public class FMExplorer {
 		try {
 			if (!isValid(file))
 				return FileProcessState.NOT_VALID;
-			// TODO
 			Files.delete(file);
 			return FileProcessState.SUCCESS;
 		} catch (IOException e) {
@@ -286,12 +290,23 @@ public class FMExplorer {
 		return rootPath.relativize(path).toString();
 	}
 
-	public FMConfiguration getConfiguration() {
-		return configuration;
-	}
-
-	public boolean isPathDerivedFromFile() {
-		return pathDerivedFromFile;
+	/**
+	 * Připraví dle aktuální cesty (od FM kořene) díly, ze kterých lze sestavit
+	 * breadcrumb navigaci.
+	 * 
+	 * @return
+	 */
+	public List<PathChunkTO> getBreadcrumbChunks() {
+		Path next = currentAbsolutePath;
+		List<PathChunkTO> chunks = new ArrayList<>();
+		do {
+			String fileURLFromRoot = fileFromRoot(next);
+			chunks.add(new PathChunkTO(next.equals(rootPath) ? "/" : next.getFileName().toString(), fileURLFromRoot));
+			next = next.getParent();
+			// pokud je můj předek null nebo jsem mimo povolený rozsah, pak
+			// je to konec a je to všechno
+		} while (next != null && next.startsWith(rootPath));
+		return chunks;
 	}
 
 	public FileProcessState getState() {
@@ -305,7 +320,7 @@ public class FMExplorer {
 	public Path getCurrentAbsolutePath() {
 		return currentAbsolutePath;
 	}
-	
+
 	public Path getCurrentRelativePath() {
 		return rootPath.relativize(currentAbsolutePath);
 	}

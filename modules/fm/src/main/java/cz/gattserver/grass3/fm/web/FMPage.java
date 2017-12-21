@@ -10,7 +10,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
@@ -30,11 +29,12 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.renderers.LocalDateTimeRenderer;
 
+import cz.gattserver.common.util.CZAmountFormatter;
 import cz.gattserver.common.util.HumanBytesSizeFormatter;
-import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.fm.FMExplorer;
-import cz.gattserver.grass3.fm.FMExplorer.FileProcessState;
+import cz.gattserver.grass3.fm.FileProcessState;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
+import cz.gattserver.grass3.fm.interfaces.PathChunkTO;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.ui.components.Breadcrumb;
@@ -58,6 +58,10 @@ public class FMPage extends OneColumnPage {
 	@Autowired
 	private FileSystemService fileSystemService;
 
+	private final CZAmountFormatter selectFormatter;
+	private final CZAmountFormatter listFormatter;
+	private String listFormatterValue;
+
 	private FileSystem fileSystem;
 
 	/**
@@ -71,11 +75,6 @@ public class FMPage extends OneColumnPage {
 	private Grid<Path> grid;
 
 	/**
-	 * Hodnota status labelu, když nejsou vybraná žádná pole
-	 */
-	private String satusLabelStaticValue;
-
-	/**
 	 * Status label, vybrané soubory apod.
 	 */
 	private Label statusLabel;
@@ -87,10 +86,13 @@ public class FMPage extends OneColumnPage {
 
 	public FMPage(GrassRequest request) {
 		super(request);
+		selectFormatter = new CZAmountFormatter("Vybrán %d soubor", "Vybrány %d soubory", "Vybráno %d souborů");
+		listFormatter = new CZAmountFormatter("Zobrazen %d soubor", "Zobrazeny %d soubory", "Zobrazeno %d souborů");
 	}
 
 	@Override
 	protected Layout createPayload() {
+
 		statusLabel = new Label();
 		breadcrumb = new Breadcrumb();
 
@@ -145,15 +147,6 @@ public class FMPage extends OneColumnPage {
 			break;
 		}
 
-		if (explorer.isPathDerivedFromFile()) {
-			// nabídni ke stáhnutí tento souboru TODO
-			// ResourceStreamRequestTarget target = new
-			// ResourceStreamRequestTarget(
-			// new FileResourceStream(absoluteRequestedFile));
-			// target.setFileName(absoluteRequestedFile.getName());
-			// RequestCycle.get().setRequestTarget(target);
-		}
-
 		return super.createPayload();
 	}
 
@@ -184,19 +177,9 @@ public class FMPage extends OneColumnPage {
 	private void populateBreadcrumb() {
 		// pokud zjistím, že cesta neodpovídá, vyhodím 302 (přesměrování) na
 		// aktuální polohu cílové kategorie
-		List<BreadcrumbElement> breadcrumbElements = new ArrayList<BreadcrumbElement>();
-
-		Path next = explorer.getCurrentAbsolutePath();
-		Path rootPath = explorer.getRootPath();
-		do {
-			String fileURLFromRoot = explorer.fileFromRoot(next);
-			breadcrumbElements.add(new BreadcrumbElement(next.equals(rootPath) ? "/" : next.getFileName().toString(),
-					getPageResource(fmPageFactory, fileURLFromRoot)));
-			next = next.getParent();
-			// pokud je můj předek null nebo jsem mimo povolený rozsah, pak
-			// je to konec a je to všechno
-		} while (next != null && next.startsWith(rootPath));
-
+		List<BreadcrumbElement> breadcrumbElements = new ArrayList<>();
+		for (PathChunkTO c : explorer.getBreadcrumbChunks())
+			breadcrumbElements.add(new BreadcrumbElement(c.getName(), getPageResource(fmPageFactory, c.getPath())));
 		breadcrumb.resetBreadcrumb(breadcrumbElements);
 	}
 
@@ -211,13 +194,14 @@ public class FMPage extends OneColumnPage {
 				(Files.isDirectory(p) ? ImageIcon.FOLDER_16_ICON : ImageIcon.DOCUMENT_16_ICON).createResource()),
 				new ComponentRenderer()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("");
 
-		grid.addColumn(Path::getFileName).setCaption("Název");
+		grid.addColumn(Path::getFileName).setCaption("Název").setExpandRatio(1);
 
 		grid.addColumn(p -> {
 			try {
-				return HumanBytesSizeFormatter.format(Files.size(p), true);
+				Long size = explorer.getDeepDirSize(p);
+				return size == null ? "" : HumanBytesSizeFormatter.format(size, true);
 			} catch (IOException e1) {
-				return "err";
+				return "n/a";
 			}
 		}).setCaption("Velikost").setStyleGenerator(item -> "v-align-right");
 
@@ -231,22 +215,7 @@ public class FMPage extends OneColumnPage {
 
 		grid.addSelectionListener(e -> {
 			Set<Path> value = e.getAllSelectedItems();
-			if (null == value || value.size() == 0) {
-				statusLabel.setValue(satusLabelStaticValue);
-			} else {
-				switch (value.size()) {
-				case 1:
-					statusLabel.setValue("Vybrán 1 soubor");
-					break;
-				case 2:
-				case 3:
-				case 4:
-					statusLabel.setValue("Vybrány " + value.size() + " soubory ");
-					break;
-				default:
-					statusLabel.setValue("Vybráno " + value.size() + " souborů");
-				}
-			}
+			statusLabel.setValue(value.isEmpty() ? listFormatterValue : selectFormatter.format(value.size()));
 		});
 
 		grid.addItemClickListener(e -> {
@@ -278,35 +247,9 @@ public class FMPage extends OneColumnPage {
 	}
 
 	private void populateGrid() {
-		int size;
-		try {
-			// +1 za odkaz na nadřazený adresář
-			size = (int) Files.list(explorer.getCurrentAbsolutePath()).count() + 1;
-		} catch (IOException e) {
-			throw new GrassPageException(500, e);
-		}
-		grid.setDataProvider((sortOrder, offset, limit) -> {
-			try {
-				return Stream.concat(Stream.of(fileSystem.getPath("..")),
-						Files.list(explorer.getCurrentAbsolutePath()).sorted((p1, p2) -> {
-							if (Files.isDirectory(p1)) {
-								if (Files.isDirectory(p2))
-									return p1.getFileName().compareTo(p2);
-								return -1;
-							} else {
-								if (Files.isDirectory(p2))
-									return 1;
-								return p1.getFileName().compareTo(p2);
-							}
-						})).skip(offset).limit(limit);
-			} catch (IOException e) {
-				throw new GrassPageException(500, e);
-			}
-		}, () -> size);
-
-		// Status label static value
-		satusLabelStaticValue = "Zobrazeno " + size + " souborů";
-		statusLabel.setValue(satusLabelStaticValue);
+		int size = explorer.listCount();
+		grid.setDataProvider((sortOrder, offset, limit) -> explorer.listing(offset, limit), () -> size);
+		statusLabel.setValue(listFormatterValue = listFormatter.format(size));
 	}
 
 	private void createButtonsLayout(VerticalLayout layout) {

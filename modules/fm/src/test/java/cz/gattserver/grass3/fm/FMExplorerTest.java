@@ -14,7 +14,7 @@ import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cz.gattserver.grass3.exception.GrassPageException;
-import cz.gattserver.grass3.fm.FMExplorer.FileProcessState;
+import cz.gattserver.grass3.fm.FileProcessState;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
 import cz.gattserver.grass3.fm.test.MockFileSystemService;
 import cz.gattserver.grass3.services.ConfigurationService;

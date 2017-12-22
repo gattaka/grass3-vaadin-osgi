@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,17 +54,20 @@ public class FMExplorer {
 	 *            zabezpečovací chybu (podtečení root adreáře) nebo jiný
 	 *            problém, vyhodí pokusí se použít kořenový adresář a důvod jeho
 	 *            použití uloží do {@code state} proměnné
+	 * @param fileSystem
+	 *            {@link FileSystem}, ve kterém se bude {@link FMExplorer}
+	 *            pohybovat
 	 * @throws IOException
 	 *             tuto chybu vyhazuje pouze pokud se nezdařilo pracovat ani s
 	 *             kořenovým adresářem, jinak je přednostně tato chyba odchycena
 	 *             a je použit právě kořenový adresář namísto předaného souboru
 	 */
 	public FMExplorer(String relativePath, FileSystem fileSystem) {
+		Validate.notNull(relativePath, "RelativePath nesmí být null");
+		Validate.notNull(fileSystem, "Filesystem nesmí být null");
+
 		this.fileSystem = fileSystem;
 		loadRootDirFromConfiguration();
-
-		if (relativePath == null)
-			relativePath = "";
 
 		// Vytvoř File z předávané relativní cesty
 		currentAbsolutePath = rootPath.resolve(relativePath).normalize();
@@ -143,18 +147,17 @@ public class FMExplorer {
 	 * Změní aktuální adresář
 	 * 
 	 * @param name
-	 *            jméno adresáře, do kterého přecházím. Může být ".." pro
-	 *            vrácení se nahoru
+	 *            jméno adresáře od kořene FM
 	 * @return výsledek operace
 	 */
 	public FileProcessState tryGotoDir(String name) {
 		Path newPath = rootPath.resolve(name).normalize();
-		if (isValid(newPath)) {
-			currentAbsolutePath = newPath;
-			return FileProcessState.SUCCESS;
-		} else {
+		if (!isValid(newPath))
 			return FileProcessState.NOT_VALID;
-		}
+		if (!Files.exists(newPath))
+			return FileProcessState.MISSING;
+		currentAbsolutePath = newPath;
+		return FileProcessState.SUCCESS;
 	}
 
 	/**
@@ -163,7 +166,7 @@ public class FMExplorer {
 	 * než 10^18, to je hodnota akorát velká pro pokrytí záznam Exbibajt (2^60)
 	 * 
 	 * @param path
-	 *            adresář k spočítání
+	 *            adresář k spočítání od aktuálního adresáře
 	 * @return velikost adresáře včetně podadresářů nebo <code>null</code>,
 	 *         pokud se jedná o nadřazený adresář
 	 * @throws IOException
@@ -171,8 +174,9 @@ public class FMExplorer {
 	 *             {@link IOException} chybě
 	 */
 	public Long getDeepDirSize(Path path) throws IOException {
-		if (currentAbsolutePath.resolve(path).normalize().startsWith(currentAbsolutePath))
-			return innerGetDeepDirSize(path);
+		Path absPath = currentAbsolutePath.resolve(path).normalize();
+		if (absPath.startsWith(currentAbsolutePath))
+			return innerGetDeepDirSize(absPath);
 		return null;
 	}
 
@@ -187,6 +191,12 @@ public class FMExplorer {
 		}
 	}
 
+	/**
+	 * Vrátí počet položek pro výpis obsahu aktuálního adresáře. Započítává i
+	 * odkaz ".." na nadřazený adresář.
+	 * 
+	 * @return
+	 */
 	public int listCount() {
 		try (Stream<Path> stream = Files.list(currentAbsolutePath)) {
 			// +1 za odkaz na nadřazený adresář
@@ -196,6 +206,16 @@ public class FMExplorer {
 		}
 	}
 
+	/**
+	 * Vrátí {@link Stream} absolutních {@link Path} a na začátku ".." odkaz na
+	 * nadřazený adresář.
+	 * 
+	 * @param offset
+	 *            offset pro stránkování
+	 * @param limit
+	 *            velikost stránky
+	 * @return
+	 */
 	public Stream<Path> listing(int offset, int limit) {
 		try {
 			return Stream
@@ -240,18 +260,21 @@ public class FMExplorer {
 	/**
 	 * Smaže soubor
 	 * 
-	 * @param file
-	 *            soubor
+	 * @param path
+	 *            absolutní cest k souboru
 	 * @return výsledek operace
 	 */
-	public FileProcessState deleteFile(Path file) {
+	public FileProcessState deleteFile(Path path) {
+		Path pathToDelete = path.normalize();
 		try {
-			if (!isValid(file))
+			if (!isValid(pathToDelete))
 				return FileProcessState.NOT_VALID;
-			Files.delete(file);
+			if (!Files.exists(pathToDelete))
+				return FileProcessState.MISSING;
+			Files.delete(pathToDelete);
 			return FileProcessState.SUCCESS;
 		} catch (IOException e) {
-			logger.error("Nezdařilo se smazat soubor {}", file.toString(), e);
+			logger.error("Nezdařilo se smazat soubor {}", path.toString(), e);
 			return FileProcessState.SYSTEM_ERROR;
 		}
 	}
@@ -259,13 +282,13 @@ public class FMExplorer {
 	/**
 	 * Přejmenuje soubor
 	 * 
-	 * @param file
-	 *            soubor
+	 * @param path
+	 *            absolutní cest k souboru
 	 * @param newName
 	 *            nové jméno
 	 */
 	public FileProcessState renameFile(Path path, String newName) {
-		Path renamedPath = path.getParent().resolve(newName);
+		Path renamedPath = path.getParent().resolve(newName).normalize();
 		try {
 			if (!isValid(renamedPath))
 				return FileProcessState.NOT_VALID;
@@ -323,12 +346,6 @@ public class FMExplorer {
 
 	public Path getCurrentRelativePath() {
 		return rootPath.relativize(currentAbsolutePath);
-	}
-
-	public Path getParentPath() {
-		if (currentAbsolutePath.equals(rootPath))
-			return currentAbsolutePath;
-		return currentAbsolutePath.getParent();
 	}
 
 }

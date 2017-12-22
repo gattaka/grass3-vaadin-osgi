@@ -3,6 +3,8 @@ package cz.gattserver.grass3.fm.config;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang3.Validate;
+
 import cz.gattserver.grass3.config.AbstractConfiguration;
 import cz.gattserver.grass3.security.Role;
 
@@ -18,12 +20,12 @@ public class FMConfiguration extends AbstractConfiguration {
 	/**
 	 * Kolik souborů zároveň se smí poslat na server
 	 */
-	private Integer maxSimUploads = 50;
+	private int maxSimUploads = 50;
 
 	/**
 	 * Maximální velikost upload souboru v KB
 	 */
-	private Long maxKBytesUploadSize = 100000L; // 100MB
+	private long maxKBytesUploadSize = 100000L; // 100MB
 
 	/**
 	 * Jakým rolím má být modul přístupný - defaultně jenom adminovi
@@ -41,26 +43,24 @@ public class FMConfiguration extends AbstractConfiguration {
 	}
 
 	public void setRootDir(String rootDir) {
-		if (rootDir != null && !rootDir.isEmpty())
-			this.rootDir = rootDir;
+		Validate.notBlank(rootDir, "RootDir nesmí být prázdný");
+		this.rootDir = rootDir;
 	}
 
-	public Integer getMaxSimUploads() {
+	public int getMaxSimUploads() {
 		return maxSimUploads;
 	}
 
-	public void setMaxSimUploads(Integer maxSimUploads) {
-		if (maxSimUploads != null)
-			this.maxSimUploads = maxSimUploads;
+	public void setMaxSimUploads(int maxSimUploads) {
+		this.maxSimUploads = maxSimUploads;
 	}
 
-	public Long getMaxKBytesUploadSize() {
+	public long getMaxKBytesUploadSize() {
 		return maxKBytesUploadSize;
 	}
 
-	public void setMaxKBytesUploadSize(Long maxKBytesUploadSize) {
-		if (maxKBytesUploadSize != null)
-			this.maxKBytesUploadSize = maxKBytesUploadSize;
+	public void setMaxKBytesUploadSize(long maxKBytesUploadSize) {
+		this.maxKBytesUploadSize = maxKBytesUploadSize;
 	}
 
 	public Set<Role> getRoles() {

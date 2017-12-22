@@ -6,7 +6,6 @@ public class PathChunkTO {
 	private String path;
 
 	public PathChunkTO(String name, String path) {
-		super();
 		this.name = name;
 		this.path = path;
 	}

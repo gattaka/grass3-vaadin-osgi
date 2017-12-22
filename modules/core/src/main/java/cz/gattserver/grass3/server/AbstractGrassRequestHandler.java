@@ -48,12 +48,12 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 	private String mountPoint;
 
 	/**
-	 * @param mountPoint
-	 *            místo do kterého bude přimountován tento servlet - musí
-	 *            začínat zpětným lomítkem - například "/soubory"
+	 * @param mountPointName
+	 *            název místa do kterého bude přimountován tento servlet --
+	 *            například "soubory"
 	 */
-	public AbstractGrassRequestHandler(String mountPoint) {
-		this.mountPoint = mountPoint;
+	public AbstractGrassRequestHandler(String mountPointName) {
+		this.mountPoint = "/" + mountPointName;
 	}
 
 	protected String getMimeType(File file) {

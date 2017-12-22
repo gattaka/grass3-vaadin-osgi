@@ -162,7 +162,7 @@ public class FMPage extends OneColumnPage {
 		layout.addComponent(statusLabel);
 
 		createBreadcrumb(layout);
-		createFilestable(layout);
+		createFilesGrid(layout);
 		createButtonsLayout(layout);
 
 		marginLayout.addComponent(layout);
@@ -183,7 +183,7 @@ public class FMPage extends OneColumnPage {
 		breadcrumb.resetBreadcrumb(breadcrumbElements);
 	}
 
-	private void createFilestable(VerticalLayout layout) {
+	private void createFilesGrid(VerticalLayout layout) {
 		grid = new Grid<>();
 		layout.addComponent(grid);
 		grid.setSizeFull();
@@ -219,37 +219,43 @@ public class FMPage extends OneColumnPage {
 		});
 
 		grid.addItemClickListener(e -> {
-			if (e.getMouseEventDetails().isDoubleClick()) {
-				Path path = e.getItem();
-				if (Files.isDirectory(path))
-					handleGotoDirAction(path, false);
-				else
-					handleDownloadAction(path);
-			} else {
-				if (e.getMouseEventDetails().isShiftKey()) {
-					if (grid.getSelectedItems().contains(e.getItem()))
-						grid.deselect(e.getItem());
-					else
-						grid.select(e.getItem());
-				} else {
-					if (grid.getSelectedItems().size() == 1
-							&& grid.getSelectedItems().iterator().next().equals(e.getItem())) {
-						grid.deselect(e.getItem());
-					} else {
-						grid.deselectAll();
-						grid.select(e.getItem());
-					}
-				}
-			}
+			if (e.getMouseEventDetails().isDoubleClick())
+				handleGridDblClick(e.getItem());
+			else
+				handleGridSingleClick(e.getItem(), e.getMouseEventDetails().isShiftKey());
 		});
 
 		populateGrid();
 	}
 
+	private void handleGridDblClick(Path path) {
+		if (Files.isDirectory(path))
+			handleGotoDirAction(path, false);
+		else
+			handleDownloadAction(path);
+	}
+
+	private void handleGridSingleClick(Path path, boolean shift) {
+		if (shift) {
+			if (grid.getSelectedItems().contains(path))
+				grid.deselect(path);
+			else
+				grid.select(path);
+		} else {
+			if (grid.getSelectedItems().size() == 1 && grid.getSelectedItems().iterator().next().equals(path)) {
+				grid.deselect(path);
+			} else {
+				grid.deselectAll();
+				grid.select(path);
+			}
+		}
+	}
+
 	private void populateGrid() {
 		int size = explorer.listCount();
 		grid.setDataProvider((sortOrder, offset, limit) -> explorer.listing(offset, limit), () -> size);
-		statusLabel.setValue(listFormatterValue = listFormatter.format(size));
+		listFormatterValue = listFormatter.format(size);
+		statusLabel.setValue(listFormatterValue);
 	}
 
 	private void createButtonsLayout(VerticalLayout layout) {
@@ -290,14 +296,11 @@ public class FMPage extends OneColumnPage {
 		GridButton<Path> gotoButton = new GridButton<>("Přejít",
 				(e, items) -> handleGotoDirAction(items.iterator().next(), false), grid);
 		gotoButton.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
-		gotoButton.setEnableResolver(items -> {
-			return items.size() == 1 && Files.isDirectory(items.iterator().next());
-		});
+		gotoButton.setEnableResolver(items -> items.size() == 1 && Files.isDirectory(items.iterator().next()));
+
 		buttonsLayout.addComponent(gotoButton);
-
 		buttonsLayout.addComponent(new ModifyGridButton<Path>("Přejmenovat", (e, p) -> handleRenameAction(p), grid));
-
-		buttonsLayout.addComponent(new DeleteGridButton<Path>("Smazat", items -> handleDeleteAction(items), grid));
+		buttonsLayout.addComponent(new DeleteGridButton<Path>("Smazat", this::handleDeleteAction, grid));
 	}
 
 	private void handleNewDirectory() {

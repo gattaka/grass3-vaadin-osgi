@@ -4,7 +4,7 @@ import cz.gattserver.grass3.config.AbstractConfiguration;
 
 public class FavlinkConfiguration extends AbstractConfiguration {
 
-	public static final String IMAGE_PATH_ALIAS = "/articles-favlink-plugin";
+	public static final String IMAGE_PATH_ALIAS = "articles-favlink-plugin";
 
 	private String outputPath = "favlink/cache";
 

@@ -8,7 +8,7 @@ import cz.gattserver.grass3.security.Role;
 
 public class FMConfiguration extends AbstractConfiguration {
 
-	public static final String FM_PATH = "/fm-files";
+	public static final String FM_PATH = "fm-files";
 
 	/**
 	 * Kořenový adresář FM
@@ -28,7 +28,7 @@ public class FMConfiguration extends AbstractConfiguration {
 	/**
 	 * Jakým rolím má být modul přístupný - defaultně jenom adminovi
 	 */
-	private Set<Role> roles = new HashSet<Role>();
+	private Set<Role> roles = new HashSet<>();
 
 	public FMConfiguration() {
 		super("cz.gattserver.grass3.fm");

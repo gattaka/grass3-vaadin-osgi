@@ -19,7 +19,7 @@ public class DeleteGridButton<T> extends GridButton<T> {
 
 	public DeleteGridButton(String caption, ConfirmAction<T> confirmAction, Grid<T> grid) {
 		super(caption, grid);
-		setClickListener((e, items) -> {
+		setClickListener(items -> {
 			Window win = new ConfirmWindow(getConfirmMessage(), ev -> confirmAction.onConfirm(items));
 			UI.getCurrent().addWindow(win);
 		});

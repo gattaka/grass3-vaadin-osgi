@@ -1,32 +1,27 @@
 package cz.gattserver.grass3.pg;
 
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
-import cz.gattserver.grass3.server.AbstractGrassRequestHandler;
-import cz.gattserver.grass3.services.ConfigurationService;
+import cz.gattserver.grass3.pg.config.PGConfiguration;
+import cz.gattserver.grass3.server.AbstractConfiguratedPathRequestHandler;
 
-@Component
-public class PhotogalleryRequestHandler extends AbstractGrassRequestHandler {
+@Component("pgRequestHandler")
+public class PhotogalleryRequestHandler extends AbstractConfiguratedPathRequestHandler {
 
 	private static final long serialVersionUID = 7154339775034959876L;
 
-	@Autowired
-	private ConfigurationService configurationService;
-
 	public PhotogalleryRequestHandler() {
-		super(PhotogalleryConfiguration.PHOTOGALLERY_PATH);
+		super(PGConfiguration.PHOTOGALLERY_PATH);
 	}
 
 	@Override
-	protected File getFile(String fileName) throws FileNotFoundException {
-		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
-		configurationService.loadConfiguration(configuration);
-		return new File(configuration.getRootDir() + "/" + fileName);
+	protected Path getPath(String fileName) throws FileNotFoundException {
+		PGConfiguration configuration = new PGConfiguration();
+		getConfigurationService().loadConfiguration(configuration);
+		return getFileSystemService().getFileSystem().getPath(configuration.getRootDir(), fileName);
 	}
 
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
-import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
+import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryRESTDTO;
 import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
@@ -85,7 +85,7 @@ public interface PhotogalleryFacade {
 	/**
 	 * Získá objekt konfigurace
 	 */
-	public PhotogalleryConfiguration getConfiguration();
+	public PGConfiguration getConfiguration();
 
 	/**
 	 * Získá adresář galerie
@@ -109,7 +109,7 @@ public interface PhotogalleryFacade {
 	/**
 	 * Uloží konfiguraci
 	 */
-	public void storeConfiguration(PhotogalleryConfiguration configuration);
+	public void storeConfiguration(PGConfiguration configuration);
 
 	/**
 	 * Pokusí se smazat slideshow verzi od předaného souboru

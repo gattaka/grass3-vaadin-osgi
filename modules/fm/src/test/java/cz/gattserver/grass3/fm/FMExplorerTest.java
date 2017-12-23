@@ -7,7 +7,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -18,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.fm.FileProcessState;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
-import cz.gattserver.grass3.fm.interfaces.PathChunkTO;
+import cz.gattserver.grass3.fm.interfaces.FMItemTO;
 import cz.gattserver.grass3.fm.test.MockFileSystemService;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.test.AbstractContextAwareTest;
@@ -55,17 +54,17 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 		FileSystem fs = fileSystemService.getFileSystem();
 		Path rootDir = prepareFS(fs);
 
-		FMExplorer explorer = new FMExplorer("../../fm", fs);
-		assertEquals(FileProcessState.NOT_VALID, explorer.getState());
+		FMExplorer explorer = new FMExplorer(fs);
+		assertEquals(FileProcessState.NOT_VALID, explorer.goToDir("../../fm"));
 
-		explorer = new FMExplorer("sub1", fs);
-		assertEquals(FileProcessState.MISSING, explorer.getState());
+		explorer = new FMExplorer(fs);
+		assertEquals(FileProcessState.MISSING, explorer.goToDir("sub1"));
 
 		String subDirName = "sub2";
 		Path subDir = rootDir.resolve(subDirName);
 		Files.createDirectory(subDir);
-		explorer = new FMExplorer(subDirName, fs);
-		assertEquals(FileProcessState.SUCCESS, explorer.getState());
+		explorer = new FMExplorer(fs);
+		assertEquals(FileProcessState.SUCCESS, explorer.goToDir(subDirName));
 	}
 
 	@Test
@@ -73,7 +72,7 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 		FileSystem fs = fileSystemService.getFileSystem();
 		Path rootDir = prepareFS(fs);
 
-		FMExplorer explorer = new FMExplorer("", fs);
+		FMExplorer explorer = new FMExplorer(fs);
 		String newDirName = "newDir";
 		explorer.createNewDir(newDirName);
 
@@ -88,33 +87,17 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 		String subDirName = "subDir1/subDir2";
 		Path subDir = Files.createDirectories(rootDir.resolve(subDirName));
 
-		FMExplorer explorer = new FMExplorer("subDir1", fs);
-		assertEquals(FileProcessState.SUCCESS, explorer.deleteFile(subDir));
+		FMExplorer explorer = new FMExplorer(fs);
+		explorer.goToDir("subDir1");
+
+		assertEquals(FileProcessState.NOT_VALID, explorer.deleteFile("../.."));
+		assertTrue(Files.exists(subDir));
+
+		assertEquals(FileProcessState.MISSING, explorer.deleteFile("nonexisting"));
+		assertTrue(Files.exists(subDir));
+
+		assertEquals(FileProcessState.SUCCESS, explorer.deleteFile("subDir2"));
 		assertFalse(Files.exists(subDir));
-	}
-
-	@Test
-	public void testDeleteFile_NotValid() throws IOException {
-		FileSystem fs = fileSystemService.getFileSystem();
-		Path rootDir = prepareFS(fs);
-		String subDirName = "subDir1/subDir2";
-		Path subDir = Files.createDirectories(rootDir.resolve(subDirName));
-
-		FMExplorer explorer = new FMExplorer("subDir1", fs);
-		assertEquals(FileProcessState.NOT_VALID, explorer.deleteFile(rootDir.resolve("..")));
-		assertTrue(Files.exists(subDir));
-	}
-
-	@Test
-	public void testDeleteFile_Missing() throws IOException {
-		FileSystem fs = fileSystemService.getFileSystem();
-		Path rootDir = prepareFS(fs);
-		String subDirName = "subDir1/subDir2";
-		Path subDir = Files.createDirectories(rootDir.resolve(subDirName));
-
-		FMExplorer explorer = new FMExplorer("subDir1", fs);
-		assertEquals(FileProcessState.MISSING, explorer.deleteFile(subDir.resolve("nonexisting")));
-		assertTrue(Files.exists(subDir));
 	}
 
 	@Test
@@ -124,61 +107,68 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 		String subDirName = "subDir1/subDir2";
 		Path subDir = Files.createDirectories(rootDir.resolve(subDirName));
 
-		FMExplorer explorer = new FMExplorer("subDir1", fs);
-		assertEquals(FileProcessState.SUCCESS, explorer.renameFile(subDir, "sssDir"));
+		FMExplorer explorer = new FMExplorer(fs);
+		explorer.goToDir("subDir1");
+
+		assertEquals(FileProcessState.NOT_VALID, explorer.renameFile("subDir2", "../../../sssDir"));
+		assertTrue(Files.exists(subDir));
+
+		assertEquals(FileProcessState.ALREADY_EXISTS, explorer.renameFile("subDir2", "../subDir1"));
+		assertTrue(Files.exists(subDir));
+
+		assertEquals(FileProcessState.SUCCESS, explorer.renameFile("subDir2", "sssDir"));
 		assertTrue(Files.exists(rootDir.resolve("subDir1").resolve("sssDir")));
 	}
 
 	@Test
-	public void testRenameFile_NotValid() throws IOException {
-		FileSystem fs = fileSystemService.getFileSystem();
-		Path rootDir = prepareFS(fs);
-		String subDirName = "subDir1/subDir2";
-		Path subDir = Files.createDirectories(rootDir.resolve(subDirName));
-
-		FMExplorer explorer = new FMExplorer("subDir1", fs);
-		assertEquals(FileProcessState.NOT_VALID, explorer.renameFile(subDir, "../../../sssDir"));
-		assertTrue(Files.exists(subDir));
-	}
-
-	@Test
-	public void testRenameFile_Missing() throws IOException {
-		FileSystem fs = fileSystemService.getFileSystem();
-		Path rootDir = prepareFS(fs);
-		String subDirName = "subDir1/subDir2";
-		Path subDir = Files.createDirectories(rootDir.resolve(subDirName));
-
-		FMExplorer explorer = new FMExplorer("subDir1", fs);
-		assertEquals(FileProcessState.ALREADY_EXISTS, explorer.renameFile(subDir, "../subDir1"));
-		assertTrue(Files.exists(subDir));
-	}
-
-	@Test
-	public void testGotoDir() throws IOException {
+	public void testGoToDir() throws IOException {
 		FileSystem fs = fileSystemService.getFileSystem();
 		Path rootDir = prepareFS(fs);
 		String subDirName = "subDir1/subDir2";
 		Files.createDirectories(rootDir.resolve(subDirName));
 
-		FMExplorer explorer = new FMExplorer("subDir1", fs);
-		assertEquals("/some/path/fm/root", explorer.getRootPath().toString());
-		assertEquals("/some/path/fm/root/subDir1", explorer.getCurrentAbsolutePath().toString());
-		assertEquals("subDir1", explorer.getCurrentRelativePath().toString());
+		FMExplorer explorer = new FMExplorer(fs);
+		assertEquals(FileProcessState.MISSING, explorer.goToDir("nonExisting"));
+		assertEquals(FileProcessState.NOT_VALID, explorer.goToDir("../../test"));
+		assertEquals(FileProcessState.SUCCESS, explorer.goToDir("subDir1/subDir2"));
+	}
 
-		assertEquals(FileProcessState.MISSING, explorer.tryGotoDir("nonExisting"));
-		assertEquals("/some/path/fm/root", explorer.getRootPath().toString());
-		assertEquals("/some/path/fm/root/subDir1", explorer.getCurrentAbsolutePath().toString());
-		assertEquals("subDir1", explorer.getCurrentRelativePath().toString());
+	@Test
+	public void testGoToDirFromCurrentDir() throws IOException {
+		FileSystem fs = fileSystemService.getFileSystem();
+		Path rootDir = prepareFS(fs);
+		String subDirName = "subDir1/subDir2";
+		Files.createDirectories(rootDir.resolve(subDirName));
 
-		assertEquals(FileProcessState.NOT_VALID, explorer.tryGotoDir("../../test"));
-		assertEquals("/some/path/fm/root", explorer.getRootPath().toString());
-		assertEquals("/some/path/fm/root/subDir1", explorer.getCurrentAbsolutePath().toString());
-		assertEquals("subDir1", explorer.getCurrentRelativePath().toString());
+		FMExplorer explorer = new FMExplorer(fs);
+		assertEquals(FileProcessState.SUCCESS, explorer.goToDirFromCurrentDir("subDir1"));
+		assertEquals(FileProcessState.SUCCESS, explorer.goToDirFromCurrentDir("subDir2"));
+	}
 
-		assertEquals(FileProcessState.SUCCESS, explorer.tryGotoDir("subDir1/subDir2"));
-		assertEquals("/some/path/fm/root", explorer.getRootPath().toString());
-		assertEquals("/some/path/fm/root/subDir1/subDir2", explorer.getCurrentAbsolutePath().toString());
-		assertEquals("subDir1/subDir2", explorer.getCurrentRelativePath().toString());
+	@Test
+	public void testGoToDirByURL() throws IOException {
+		FileSystem fs = fileSystemService.getFileSystem();
+		Path rootDir = prepareFS(fs);
+		String subDirName = "subDir1/subDir2";
+		Files.createDirectories(rootDir.resolve(subDirName));
+
+		FMExplorer explorer = new FMExplorer(fs);
+		assertEquals(FileProcessState.SUCCESS,
+				explorer.goToDirByURL("http://test/web", "fm-test", "http://test/web/fm-test/subDir1"));
+		assertEquals(FileProcessState.SUCCESS, explorer.goToDirFromCurrentDir("subDir2"));
+	}
+
+	@Test
+	public void testGetCurrentURL() throws IOException {
+		FileSystem fs = fileSystemService.getFileSystem();
+		Path rootDir = prepareFS(fs);
+		String subDirName = "subDir1/subDir2";
+		Files.createDirectories(rootDir.resolve(subDirName));
+
+		FMExplorer explorer = new FMExplorer(fs);
+		assertEquals("http://test/web/fm-test/", explorer.getCurrentURL("http://test/web", "fm-test"));
+		explorer.goToDir("subDir1/subDir2");
+		assertEquals("http://test/web/fm-test/subDir1/subDir2", explorer.getCurrentURL("http://test/web", "fm-test"));
 	}
 
 	@Test
@@ -187,19 +177,50 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 		Path rootDir = prepareFS(fs);
 		String subDirName2 = "subDir1/subDir2";
 		Path subDir2 = Files.createDirectories(rootDir.resolve(subDirName2));
-		Files.createDirectories(subDir2.resolve("subDir3"));
-		Files.createFile(subDir2.resolve("file1"));
-		Files.createFile(subDir2.resolve("file2"));
+		Path subDir3 = Files.createDirectories(subDir2.resolve("subDir3"));
+		Path file1 = Files.createFile(subDir2.resolve("file1"));
+		Path file2 = Files.createFile(subDir2.resolve("file2"));
+		Path file3 = Files.createFile(subDir3.resolve("file3"));
+		Path file4 = Files.createFile(subDir3.resolve("file4"));
 
-		FMExplorer explorer = new FMExplorer(subDirName2, fs);
+		Files.write(file1, new byte[] { 1, 1, 1 });
+		Files.write(file2, new byte[] { 1 });
+		Files.write(file3, new byte[] { 1, 1, 1, 1 });
+		Files.write(file4, new byte[] { 1, 1, 1, 1, 1 });
+
+		FMExplorer explorer = new FMExplorer(fs);
+		explorer.goToDir(subDirName2);
 
 		assertEquals(4, explorer.listCount());
 
-		Iterator<Path> it = explorer.listing(0, 10).iterator();
-		assertEquals("..", it.next().toString());
-		assertEquals("/some/path/fm/root/subDir1/subDir2/subDir3", it.next().toString());
-		assertEquals("/some/path/fm/root/subDir1/subDir2/file1", it.next().toString());
-		assertEquals("/some/path/fm/root/subDir1/subDir2/file2", it.next().toString());
+		Iterator<FMItemTO> it = explorer.listing(0, 10).iterator();
+		FMItemTO item = it.next();
+		assertEquals("..", item.getName());
+		assertNotNull(item.getLastModified());
+		assertEquals("", item.getSize());
+		assertTrue(item.isDirectory());
+		assertNull(item.getPathFromFMRoot());
+
+		item = it.next();
+		assertEquals("subDir3", item.getName());
+		assertNotNull(item.getLastModified());
+		assertEquals("9 B", item.getSize());
+		assertTrue(item.isDirectory());
+		assertNull(item.getPathFromFMRoot());
+
+		item = it.next();
+		assertEquals("file1", item.getName());
+		assertNotNull(item.getLastModified());
+		assertEquals("3 B", item.getSize());
+		assertFalse(item.isDirectory());
+		assertNull(item.getPathFromFMRoot());
+
+		item = it.next();
+		assertEquals("file2", item.getName());
+		assertNotNull(item.getLastModified());
+		assertEquals("1 B", item.getSize());
+		assertFalse(item.isDirectory());
+		assertNull(item.getPathFromFMRoot());
 	}
 
 	@Test
@@ -212,57 +233,28 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 		Files.createFile(subDir2.resolve("file1"));
 		Files.createFile(subDir2.resolve("file2"));
 
-		FMExplorer explorer = new FMExplorer(subDirName2, fs);
+		FMExplorer explorer = new FMExplorer(fs);
+		explorer.goToDir(subDirName2);
 
-		List<PathChunkTO> chunks = explorer.getBreadcrumbChunks();
-		assertEquals("subDir2", chunks.get(0).getName());
-		assertEquals("subDir1/subDir2", chunks.get(0).getPath().toString());
-		assertEquals("subDir1", chunks.get(1).getName());
-		assertEquals("subDir1", chunks.get(1).getPath().toString());
-		assertEquals("/", chunks.get(2).getName());
-		assertEquals("", chunks.get(2).getPath().toString());
-	}
+		Iterator<FMItemTO> it = explorer.getBreadcrumbChunks().iterator();
+		FMItemTO item = it.next();
+		assertEquals("subDir2", item.getName());
+		assertEquals("subDir1/subDir2", item.getPathFromFMRoot());
 
-	@Test
-	public void testDeepDirSize() throws IOException {
-		FileSystem fs = fileSystemService.getFileSystem();
-		Path rootDir = prepareFS(fs);
-		String subDirName2 = "subDir1/subDir2";
-		Path subDir2 = Files.createDirectories(rootDir.resolve(subDirName2));
-		Path subDir3 = Files.createDirectories(subDir2.resolve("subDir3"));
-		Path file1 = Files.createFile(subDir2.resolve("file1"));
-		Path file2 = Files.createFile(subDir2.resolve("file2"));
-		Path file3 = Files.createFile(subDir3.resolve("file3"));
+		item = it.next();
+		assertEquals("subDir1", item.getName());
+		assertEquals("subDir1", item.getPathFromFMRoot());
 
-		Files.write(file1, new byte[] { 1, 1, 1 });
-		Files.write(file2, new byte[] { 1 });
-		Files.write(file3, new byte[] { 1, 1, 1, 1 });
-
-		FMExplorer explorer = new FMExplorer(subDirName2, fs);
-
-		assertEquals(3L, explorer.getDeepDirSize(file1).longValue());
-		assertEquals(1L, explorer.getDeepDirSize(file2).longValue());
-		assertNull(explorer.getDeepDirSize(rootDir.resolve("..")));
-		assertEquals(4L, explorer.getDeepDirSize(subDir3).longValue());
-
-		assertEquals(8L, explorer.getDeepDirSize(fs.getPath("")).longValue());
-
-		exception.expect(IOException.class);
-		assertNull(explorer.getDeepDirSize(fs.getPath("nonexisting")));
-	}
-
-	@Test
-	public void test_failNullRelativePath() throws IOException {
-		exception.expect(NullPointerException.class);
-		exception.expectMessage("RelativePath nesmí být null");
-		new FMExplorer(null, null);
+		item = it.next();
+		assertEquals("/", item.getName());
+		assertEquals("", item.getPathFromFMRoot());
 	}
 
 	@Test
 	public void test_failNullFS() throws IOException {
 		exception.expect(NullPointerException.class);
 		exception.expectMessage("Filesystem nesmí být null");
-		new FMExplorer("", null);
+		new FMExplorer(null);
 	}
 
 	@Test
@@ -277,7 +269,7 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 
 		exception.expect(GrassPageException.class);
 		exception.expectMessage("Error: 500, Kořenový adresář FM modulu musí existovat");
-		new FMExplorer("sub1", fs);
+		new FMExplorer(fs);
 	}
 
 }

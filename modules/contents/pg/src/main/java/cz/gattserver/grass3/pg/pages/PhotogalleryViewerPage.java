@@ -28,7 +28,7 @@ import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
-import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
+import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
 import cz.gattserver.grass3.pg.events.PGZipProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.PGZipProcessResultEvent;
@@ -151,7 +151,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 			throw new GrassPageException(403);
 		}
 
-		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
+		PGConfiguration configuration = new PGConfiguration();
 		configurationService.loadConfiguration(configuration);
 
 		galleryDir = new File(configuration.getRootDir(), photogallery.getPhotogalleryPath());
@@ -443,7 +443,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	}
 
 	private String getItemURL(String itemId) {
-		return getRequest().getContextRoot() + PhotogalleryConfiguration.PHOTOGALLERY_PATH + "/"
+		return getRequest().getContextRoot() + PGConfiguration.PHOTOGALLERY_PATH + "/"
 				+ photogallery.getPhotogalleryPath() + "/" + itemId;
 	}
 

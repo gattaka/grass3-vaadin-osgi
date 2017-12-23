@@ -74,10 +74,10 @@ public abstract class GridOperationsTab<T extends Identifiable> extends Vertical
 		final Button createBtn = new CreateGridButton("Založit", e -> UI.getCurrent().addWindow(createCreateWindow()));
 
 		final Button detailBtn = new DetailGridButton<>("Detail",
-				(e, item) -> UI.getCurrent().addWindow(createDetailWindow(item.getId())), grid);
+				item -> UI.getCurrent().addWindow(createDetailWindow(item.getId())), grid);
 
 		final Button modifyBtn = new ModifyGridButton<>("Upravit",
-				(e, item) -> UI.getCurrent().addWindow(createModifyWindow(item)), grid);
+				item -> UI.getCurrent().addWindow(createModifyWindow(item)), grid);
 
 		final Button deleteBtn = new DeleteGridButton<>("Smazat", items -> {
 			items.forEach(this::deleteEntity);

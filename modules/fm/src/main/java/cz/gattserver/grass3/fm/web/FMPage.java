@@ -1,12 +1,7 @@
 package cz.gattserver.grass3.fm.web;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -30,11 +25,9 @@ import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.renderers.LocalDateTimeRenderer;
 
 import cz.gattserver.common.util.CZAmountFormatter;
-import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.grass3.fm.FMExplorer;
 import cz.gattserver.grass3.fm.FileProcessState;
-import cz.gattserver.grass3.fm.config.FMConfiguration;
-import cz.gattserver.grass3.fm.interfaces.PathChunkTO;
+import cz.gattserver.grass3.fm.interfaces.FMItemTO;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.ui.components.Breadcrumb;
@@ -72,7 +65,7 @@ public class FMPage extends OneColumnPage {
 	/**
 	 * Filestable
 	 */
-	private Grid<Path> grid;
+	private Grid<FMItemTO> grid;
 
 	/**
 	 * Status label, vybrané soubory apod.
@@ -107,27 +100,17 @@ public class FMPage extends OneColumnPage {
 		}
 		String path = builder.toString();
 
-		// kontrolu validnosti adresáře je potřeba provést už v init
-		explorer = new FMExplorer(path, fileSystem);
+		explorer = new FMExplorer(fileSystem);
+		FileProcessState result = explorer.goToDir(path);
 
-		// Bylo potřeba se vrátit do kořene, protože předložený adresář
-		// neexistuje nebo není dostupný ? Pokud ano, vyhoď varování.
-		switch (explorer.getState()) {
+		switch (result) {
 		case SUCCESS:
 			// úspěch - pokračujeme
 			Page.getCurrent().addPopStateListener(e -> {
-				// Odparsuj počátek http://host//context-root/fm a získej
-				// lokální cestu v rámci FM modulu
-				int start = e.getUri().indexOf(getRequest().getContextRoot());
-				String fmPath = e.getUri().substring(
-						start + getRequest().getContextRoot().length() + 1 + fmPageFactory.getPageName().length());
-				if (fmPath.isEmpty() || fmPath.startsWith("/")) {
-					if (fmPath.startsWith("/"))
-						fmPath = fmPath.substring(1);
-					handleGotoDirAction(fileSystem.getPath(fmPath), true);
-				} else {
-					// úplně jiná stránka, která akorát začíná na
-					// "context-root/fm"
+				if (FileProcessState.SUCCESS.equals(explorer.goToDirByURL(getRequest().getContextRoot(),
+						fmPageFactory.getPageName(), e.getUri()))) {
+					refreshView();
+					updatePageState();
 				}
 			});
 			updatePageState();
@@ -178,8 +161,8 @@ public class FMPage extends OneColumnPage {
 		// pokud zjistím, že cesta neodpovídá, vyhodím 302 (přesměrování) na
 		// aktuální polohu cílové kategorie
 		List<BreadcrumbElement> breadcrumbElements = new ArrayList<>();
-		for (PathChunkTO c : explorer.getBreadcrumbChunks())
-			breadcrumbElements.add(new BreadcrumbElement(c.getName(), getPageResource(fmPageFactory, c.getPath())));
+		for (FMItemTO c : explorer.getBreadcrumbChunks())
+			breadcrumbElements.add(new BreadcrumbElement(c.getName(), getPageResource(fmPageFactory, c.getPathFromFMRoot())));
 		breadcrumb.resetBreadcrumb(breadcrumbElements);
 	}
 
@@ -190,31 +173,18 @@ public class FMPage extends OneColumnPage {
 		grid.setSelectionMode(SelectionMode.MULTI);
 		grid.setColumnReorderingAllowed(true);
 
-		grid.addColumn(p -> new Image(null,
-				(Files.isDirectory(p) ? ImageIcon.FOLDER_16_ICON : ImageIcon.DOCUMENT_16_ICON).createResource()),
+		grid.addColumn(
+				p -> new Image(null,
+						(p.isDirectory() ? ImageIcon.FOLDER_16_ICON : ImageIcon.DOCUMENT_16_ICON).createResource()),
 				new ComponentRenderer()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("");
 
-		grid.addColumn(Path::getFileName).setCaption("Název").setExpandRatio(1);
-
-		grid.addColumn(p -> {
-			try {
-				Long size = explorer.getDeepDirSize(p);
-				return size == null ? "" : HumanBytesSizeFormatter.format(size, true);
-			} catch (IOException e1) {
-				return "n/a";
-			}
-		}).setCaption("Velikost").setStyleGenerator(item -> "v-align-right");
-
-		grid.addColumn(p -> {
-			try {
-				return LocalDateTime.ofInstant(Files.getLastModifiedTime(p).toInstant(), ZoneId.systemDefault());
-			} catch (IOException e1) {
-				return null;
-			}
-		}).setRenderer(new LocalDateTimeRenderer("d.MM.yyyy HH:mm")).setCaption("Upraveno");
+		grid.addColumn(FMItemTO::getName).setCaption("Název").setExpandRatio(1);
+		grid.addColumn(FMItemTO::getSize).setCaption("Velikost").setStyleGenerator(item -> "v-align-right");
+		grid.addColumn(FMItemTO::getLastModified).setRenderer(new LocalDateTimeRenderer("d.MM.yyyy HH:mm"))
+				.setCaption("Upraveno");
 
 		grid.addSelectionListener(e -> {
-			Set<Path> value = e.getAllSelectedItems();
+			Set<FMItemTO> value = e.getAllSelectedItems();
 			statusLabel.setValue(value.isEmpty() ? listFormatterValue : selectFormatter.format(value.size()));
 		});
 
@@ -228,25 +198,25 @@ public class FMPage extends OneColumnPage {
 		populateGrid();
 	}
 
-	private void handleGridDblClick(Path path) {
-		if (Files.isDirectory(path))
-			handleGotoDirAction(path, false);
+	private void handleGridDblClick(FMItemTO item) {
+		if (item.isDirectory())
+			handleGotoDirFromCurrentDirAction(item);
 		else
-			handleDownloadAction(path);
+			handleDownloadAction(item);
 	}
 
-	private void handleGridSingleClick(Path path, boolean shift) {
+	private void handleGridSingleClick(FMItemTO item, boolean shift) {
 		if (shift) {
-			if (grid.getSelectedItems().contains(path))
-				grid.deselect(path);
+			if (grid.getSelectedItems().contains(item))
+				grid.deselect(item);
 			else
-				grid.select(path);
+				grid.select(item);
 		} else {
-			if (grid.getSelectedItems().size() == 1 && grid.getSelectedItems().iterator().next().equals(path)) {
-				grid.deselect(path);
+			if (grid.getSelectedItems().size() == 1 && grid.getSelectedItems().iterator().next().equals(item)) {
+				grid.deselect(item);
 			} else {
 				grid.deselectAll();
-				grid.select(path);
+				grid.select(item);
 			}
 		}
 	}
@@ -289,18 +259,18 @@ public class FMPage extends OneColumnPage {
 		};
 		buttonsLayout.addComponent(multiFileUpload);
 
-		GridButton<Path> downloadButton = new GridButton<>("Stáhnout", (e, items) -> handleDownloadAction(items), grid);
+		GridButton<FMItemTO> downloadButton = new GridButton<>("Stáhnout", this::handleDownloadAction, grid);
 		downloadButton.setIcon(ImageIcon.DOWN_16_ICON.createResource());
 		buttonsLayout.addComponent(downloadButton);
 
-		GridButton<Path> gotoButton = new GridButton<>("Přejít",
-				(e, items) -> handleGotoDirAction(items.iterator().next(), false), grid);
+		GridButton<FMItemTO> gotoButton = new GridButton<>("Přejít",
+				items -> handleGotoDirFromCurrentDirAction(items.iterator().next()), grid);
 		gotoButton.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
-		gotoButton.setEnableResolver(items -> items.size() == 1 && Files.isDirectory(items.iterator().next()));
+		gotoButton.setEnableResolver(items -> items.size() == 1 && items.iterator().next().isDirectory());
 
 		buttonsLayout.addComponent(gotoButton);
-		buttonsLayout.addComponent(new ModifyGridButton<Path>("Přejmenovat", (e, p) -> handleRenameAction(p), grid));
-		buttonsLayout.addComponent(new DeleteGridButton<Path>("Smazat", this::handleDeleteAction, grid));
+		buttonsLayout.addComponent(new ModifyGridButton<FMItemTO>("Přejmenovat", this::handleRenameAction, grid));
+		buttonsLayout.addComponent(new DeleteGridButton<FMItemTO>("Smazat", this::handleDeleteAction, grid));
 	}
 
 	private void handleNewDirectory() {
@@ -323,10 +293,10 @@ public class FMPage extends OneColumnPage {
 		}));
 	}
 
-	private void handleDeleteAction(Set<Path> items) {
+	private void handleDeleteAction(Set<FMItemTO> items) {
 		FileProcessState overallResult = FileProcessState.SUCCESS;
-		for (Path p : items) {
-			FileProcessState partialResult = explorer.deleteFile(p);
+		for (FMItemTO p : items) {
+			FileProcessState partialResult = explorer.deleteFile(p.getName());
 			if (!partialResult.equals(FileProcessState.SUCCESS))
 				overallResult = partialResult;
 		}
@@ -335,20 +305,19 @@ public class FMPage extends OneColumnPage {
 		populateGrid();
 	}
 
-	private void handleGotoDirAction(Path path, boolean historyNavigation) {
-		String dir = (historyNavigation ? path.toString()
-				: explorer.getCurrentRelativePath().resolve(path.getFileName()).toString());
-		if (FileProcessState.SUCCESS.equals(explorer.tryGotoDir(dir))) {
-			populateBreadcrumb();
-			populateGrid();
-			if (!historyNavigation)
-				updatePageState();
-		}
+	private void handleGotoDirFromCurrentDirAction(FMItemTO item) {
+		if (FileProcessState.SUCCESS.equals(explorer.goToDirFromCurrentDir(item.getName())))
+			refreshView();
 	}
 
-	private void handleRenameAction(final Path path) {
-		UI.getCurrent().addWindow(new FileNameWindow("Přejmenovat", path.getFileName().toString(), (s, w) -> {
-			switch (explorer.renameFile(path, s)) {
+	private void refreshView() {
+		populateBreadcrumb();
+		populateGrid();
+	}
+
+	private void handleRenameAction(final FMItemTO item) {
+		UI.getCurrent().addWindow(new FileNameWindow("Přejmenovat", item.getName(), (s, w) -> {
+			switch (explorer.renameFile(item.getName(), s)) {
 			case SUCCESS:
 				populateGrid();
 				w.close();
@@ -367,23 +336,14 @@ public class FMPage extends OneColumnPage {
 		}));
 	}
 
-	private void handleDownloadAction(Path item) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getRequest().getContextRoot());
-		sb.append("/");
-		sb.append(FMConfiguration.FM_PATH);
-		for (Path part : explorer.getCurrentRelativePath()) {
-			sb.append("/");
-			sb.append(part.toString());
-		}
-		sb.append("/");
-		sb.append(item.getFileName().toString());
-		JavaScript.eval("window.open('" + sb.toString() + "', '_blank');");
+	private void handleDownloadAction(FMItemTO item) {
+		String link = explorer.getDownloadLink(getRequest().getContextRoot(), item.getName());
+		JavaScript.eval("window.open('" + link + "', '_blank');");
 	}
 
-	private void handleDownloadAction(Set<Path> items) {
-		Path item = items.iterator().next();
-		if (items.size() == 1 && !Files.isDirectory(item)) {
+	private void handleDownloadAction(Set<FMItemTO> items) {
+		FMItemTO item = items.iterator().next();
+		if (items.size() == 1 && !item.isDirectory()) {
 			handleDownloadAction(item);
 		} else {
 			// TODO adresář nebo více souborů stáhne je jako ZIP
@@ -394,15 +354,8 @@ public class FMPage extends OneColumnPage {
 		// Tohle je potřeba pushovat celé znova od kořene webu, protože jakmile
 		// se ve stavu objeví "/", je to bráno jako nový kořen a další pushState
 		// nahradí pouze poslední chunk
-		StringBuilder sb = new StringBuilder();
-		sb.append(getRequest().getContextRoot());
-		sb.append("/");
-		sb.append(fmPageFactory.getPageName());
-		for (Path part : explorer.getCurrentRelativePath()) {
-			sb.append("/");
-			sb.append(part.toString());
-		}
-		Page.getCurrent().pushState(sb.toString());
+		String currentURL = explorer.getCurrentURL(getRequest().getContextRoot(), fmPageFactory.getPageName());
+		Page.getCurrent().pushState(currentURL);
 	}
 
 }

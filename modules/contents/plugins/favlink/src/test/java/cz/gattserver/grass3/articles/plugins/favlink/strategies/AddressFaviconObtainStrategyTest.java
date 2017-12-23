@@ -56,7 +56,7 @@ public class AddressFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		// server
 		MockServerClient msc = new MockServerClient("localhost", 1929);
 
-		String page = IOUtils.toString(this.getClass().getResourceAsStream("addressFaviconMockHTML.html"));
+		String page = IOUtils.toString(this.getClass().getResourceAsStream("addressFaviconMockHTML.html"), "UTF-8");
 		msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
 				.respond(new HttpResponse().withStatusCode(200).withBody(page));
 
@@ -80,7 +80,7 @@ public class AddressFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		// server
 		MockServerClient msc = new MockServerClient("localhost", 1929);
 
-		String page = IOUtils.toString(this.getClass().getResourceAsStream("addressFaviconMockHTML.html"));
+		String page = IOUtils.toString(this.getClass().getResourceAsStream("addressFaviconMockHTML.html"), "UTF-8");
 		msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
 				.respond(new HttpResponse().withStatusCode(200).withBody(page));
 

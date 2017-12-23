@@ -10,10 +10,14 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 
 public abstract class AbstractPageFactory implements PageFactory {
 
-	private String pageName;
-
 	@Autowired
 	private SecurityService securityFacade;
+
+	private String pageName;
+
+	protected abstract boolean isAuthorized();
+
+	protected abstract GrassPage createPage(GrassRequest request);
 
 	/**
 	 * Konstruktor
@@ -36,12 +40,8 @@ public abstract class AbstractPageFactory implements PageFactory {
 		return pageName;
 	}
 
-	protected abstract boolean isAuthorized();
-
 	public GrassPage createPageIfAuthorized(GrassRequest request) {
 		return isAuthorized() ? createPage(request) : new Error403Page(request);
 	}
-
-	protected abstract GrassPage createPage(GrassRequest request);
 
 }

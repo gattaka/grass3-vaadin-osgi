@@ -43,7 +43,8 @@ public class CombinedFaviconObtainStrategyTest extends AbstractContextAwareTest 
 	public void testCombinedFaviconObtainStrategyTest_empty() throws IOException {
 		MockServerClient msc = new MockServerClient("localhost", 1929);
 
-		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_empty.html"));
+		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_empty.html"),
+				"UTF-8");
 		msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
 				.respond(new HttpResponse().withStatusCode(200).withBody(page));
 
@@ -67,7 +68,7 @@ public class CombinedFaviconObtainStrategyTest extends AbstractContextAwareTest 
 	public void testCombinedFaviconObtainStrategyTest_address() throws IOException {
 		MockServerClient msc = new MockServerClient("localhost", 1929);
 
-		String page = IOUtils.toString(this.getClass().getResourceAsStream("addressFaviconMockHTML.html"));
+		String page = IOUtils.toString(this.getClass().getResourceAsStream("addressFaviconMockHTML.html"), "UTF-8");
 		msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
 				.respond(new HttpResponse().withStatusCode(200).withBody(page));
 
@@ -84,7 +85,8 @@ public class CombinedFaviconObtainStrategyTest extends AbstractContextAwareTest 
 	public void testCombinedFaviconObtainStrategyTest_header() throws IOException {
 		MockServerClient msc = new MockServerClient("localhost", 1929);
 
-		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_http_png.html"));
+		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_http_png.html"),
+				"UTF-8");
 		msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
 				.respond(new HttpResponse().withStatusCode(200).withBody(page));
 

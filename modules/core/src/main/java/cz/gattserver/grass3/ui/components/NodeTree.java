@@ -156,8 +156,7 @@ public class NodeTree extends VerticalLayout {
 				grid.getSelectedItems().isEmpty() ? null : grid.getSelectedItems().iterator().next()));
 		btnLayout.addComponent(createBtn);
 
-		ModifyGridButton<NodeOverviewTO> modifyBtn = new ModifyGridButton<>("Přejmenovat", (e, i) -> renameAction(i),
-				grid);
+		ModifyGridButton<NodeOverviewTO> modifyBtn = new ModifyGridButton<>("Přejmenovat", this::renameAction, grid);
 		btnLayout.addComponent(modifyBtn);
 
 		// mazání chci po jednom

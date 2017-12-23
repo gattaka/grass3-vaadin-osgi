@@ -44,7 +44,8 @@ public class HeaderFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		// server
 		MockServerClient msc = new MockServerClient("localhost", 1929);
 
-		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_empty.html"));
+		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_empty.html"),
+				"UTF-8");
 		msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
 				.respond(new HttpResponse().withStatusCode(200).withBody(page));
 
@@ -61,7 +62,8 @@ public class HeaderFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		// server
 		MockServerClient msc = new MockServerClient("localhost", 1929);
 
-		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_http_png.html"));
+		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_http_png.html"),
+				"UTF-8");
 		msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
 				.respond(new HttpResponse().withStatusCode(200).withBody(page));
 
@@ -85,7 +87,8 @@ public class HeaderFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		// server
 		MockServerClient msc = new MockServerClient("localhost", 1929);
 
-		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_http_meta.html"));
+		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_http_meta.html"),
+				"UTF-8");
 		msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
 				.respond(new HttpResponse().withStatusCode(200).withBody(page));
 
@@ -109,7 +112,8 @@ public class HeaderFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		// server
 		MockServerClient msc = new MockServerClient("localhost", 1929);
 
-		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_http_ico.html"));
+		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_http_ico.html"),
+				"UTF-8");
 		msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
 				.respond(new HttpResponse().withStatusCode(200).withBody(page));
 
@@ -133,7 +137,8 @@ public class HeaderFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		// server
 		MockServerClient msc = new MockServerClient("localhost", 1929);
 
-		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_slashed_ico.html"));
+		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_slashed_ico.html"),
+				"UTF-8");
 		msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
 				.respond(new HttpResponse().withStatusCode(200).withBody(page));
 
@@ -157,7 +162,8 @@ public class HeaderFaviconObtainStrategyTest extends AbstractContextAwareTest {
 		// server
 		MockServerClient msc = new MockServerClient("localhost", 1929);
 
-		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_slashed2_ico.html"));
+		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_slashed2_ico.html"),
+				"UTF-8");
 		msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
 				.respond(new HttpResponse().withStatusCode(200).withBody(page));
 

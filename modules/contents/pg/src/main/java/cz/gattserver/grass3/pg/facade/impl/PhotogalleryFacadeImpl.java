@@ -30,7 +30,7 @@ import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
-import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
+import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.pg.dao.PhotoGalleryRepository;
 import cz.gattserver.grass3.pg.domain.Photogallery;
 import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
@@ -77,14 +77,14 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 	private EventBus eventBus;
 
 	@Override
-	public PhotogalleryConfiguration getConfiguration() {
-		PhotogalleryConfiguration configuration = new PhotogalleryConfiguration();
+	public PGConfiguration getConfiguration() {
+		PGConfiguration configuration = new PGConfiguration();
 		configurationService.loadConfiguration(configuration);
 		return configuration;
 	}
 
 	@Override
-	public void storeConfiguration(PhotogalleryConfiguration configuration) {
+	public void storeConfiguration(PGConfiguration configuration) {
 		configurationService.saveConfiguration(configuration);
 	}
 
@@ -113,7 +113,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 	 * Vytoří nové miniatury
 	 */
 	private boolean processMiniatureImages(Photogallery photogallery) {
-		PhotogalleryConfiguration configuration = getConfiguration();
+		PGConfiguration configuration = getConfiguration();
 		String miniaturesDir = configuration.getMiniaturesDir();
 		String previewsDir = configuration.getPreviewsDir();
 		File galleryDir = getGalleryDir(photogallery);
@@ -194,7 +194,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 	 * Vytoří nové slideshow verze souborů
 	 */
 	private boolean processSlideshowImages(Photogallery photogallery) {
-		PhotogalleryConfiguration configuration = getConfiguration();
+		PGConfiguration configuration = getConfiguration();
 		String slideshowDir = configuration.getSlideshowDir();
 		File galleryDir = getGalleryDir(photogallery);
 
@@ -283,7 +283,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 
 	@Override
 	public File createGalleryDir() {
-		PhotogalleryConfiguration configuration = getConfiguration();
+		PGConfiguration configuration = getConfiguration();
 		String dirRoot = configuration.getRootDir();
 		File dirRootFile = new File(dirRoot);
 
@@ -372,7 +372,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 
 	@Override
 	public void tryDeleteMiniatureImage(File file, PhotogalleryDTO photogalleryDTO) {
-		PhotogalleryConfiguration configuration = getConfiguration();
+		PGConfiguration configuration = getConfiguration();
 		String miniaturesDir = configuration.getMiniaturesDir();
 		File galleryDir = getGalleryDir(photogalleryDTO);
 		File miniDirFile = new File(galleryDir, miniaturesDir);
@@ -384,7 +384,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 
 	@Override
 	public void tryDeletePreviewImage(File file, PhotogalleryDTO photogalleryDTO) {
-		PhotogalleryConfiguration configuration = getConfiguration();
+		PGConfiguration configuration = getConfiguration();
 		String previewDir = configuration.getPreviewsDir();
 		File galleryDir = getGalleryDir(photogalleryDTO);
 		File previewDirFile = new File(galleryDir, previewDir);
@@ -396,7 +396,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 
 	@Override
 	public void tryDeleteSlideshowImage(File file, PhotogalleryDTO photogalleryDTO) {
-		PhotogalleryConfiguration configuration = getConfiguration();
+		PGConfiguration configuration = getConfiguration();
 		String slideshowDir = configuration.getSlideshowDir();
 		File galleryDir = getGalleryDir(photogalleryDTO);
 		File slideshowDirFile = new File(galleryDir, slideshowDir);
@@ -422,7 +422,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 		if (gallery.getContentNode().getPublicated() || user.isAdmin()
 				|| gallery.getContentNode().getAuthor().getId().equals(user.getId())) {
 
-			PhotogalleryConfiguration configuration = getConfiguration();
+			PGConfiguration configuration = getConfiguration();
 			File file = new File(configuration.getRootDir() + "/" + gallery.getPhotogalleryPath());
 			Set<String> files = new HashSet<>();
 			if (file.exists()) {
@@ -453,7 +453,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryFacade {
 		UserInfoTO user = securityFacade.getCurrentUser();
 		if (gallery.getContentNode().getPublicated() || user.isAdmin()
 				|| gallery.getContentNode().getAuthor().getId().equals(user.getId())) {
-			PhotogalleryConfiguration configuration = getConfiguration();
+			PGConfiguration configuration = getConfiguration();
 			File file = new File(configuration.getRootDir() + "/" + gallery.getPhotogalleryPath() + "/"
 					+ (mini ? configuration.getMiniaturesDir() : configuration.getSlideshowDir()) + "/" + fileName);
 			if (file.exists()) {

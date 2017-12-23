@@ -6,7 +6,7 @@ import cz.gattserver.grass3.config.AbstractConfiguration;
  * @author Hynek
  * 
  */
-public class PhotogalleryConfiguration extends AbstractConfiguration {
+public class PGConfiguration extends AbstractConfiguration {
 
 	public static final String PHOTOGALLERY_PATH = "photogallery-files";
 
@@ -18,7 +18,7 @@ public class PhotogalleryConfiguration extends AbstractConfiguration {
 
 	private String slideshowDir = "foto_slideshow";
 
-	public PhotogalleryConfiguration() {
+	public PGConfiguration() {
 		super("cz.gattserver.grass3.pg");
 	}
 

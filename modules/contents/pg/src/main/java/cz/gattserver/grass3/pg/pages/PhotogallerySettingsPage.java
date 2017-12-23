@@ -8,7 +8,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.pg.config.PhotogalleryConfiguration;
+import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
@@ -34,7 +34,7 @@ public class PhotogallerySettingsPage extends AbstractSettingsPage {
 		VerticalLayout settingsLayout = new VerticalLayout();
 		layout.addComponent(settingsLayout);
 
-		final PhotogalleryConfiguration configuration = photogalleryFacade.getConfiguration();
+		final PGConfiguration configuration = photogalleryFacade.getConfiguration();
 
 		settingsLayout.removeAllComponents();
 		settingsLayout.addComponent(new H2Label("Nastavení"));

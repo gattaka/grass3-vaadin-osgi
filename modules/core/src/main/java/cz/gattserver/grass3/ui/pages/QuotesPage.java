@@ -76,7 +76,7 @@ public class QuotesPage extends OneColumnPage {
 		});
 		btnLayout.addComponent(createGridButton);
 
-		ModifyGridButton<QuoteTO> modifyGridButton = new ModifyGridButton<>("Upravit hlášku", (e, originQuote) -> {
+		ModifyGridButton<QuoteTO> modifyGridButton = new ModifyGridButton<>("Upravit hlášku", originQuote -> {
 			UI.getCurrent().addWindow(new QuoteWindow(originQuote, q -> {
 				quotesFacade.modifyQuote(q.getId(), q.getName());
 				grid.getDataProvider().refreshItem(q);

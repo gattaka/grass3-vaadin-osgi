@@ -70,7 +70,7 @@ public class UsersSettingsPage extends AbstractSettingsPage {
 		buttonLayout.setSpacing(true);
 		usersLayout.addComponent(buttonLayout);
 
-		buttonLayout.addComponent(new GridButton<>("Aktivovat", (e, users) -> {
+		buttonLayout.addComponent(new GridButton<>("Aktivovat", users -> {
 			users.forEach(user -> {
 				user.setConfirmed(true);
 				userFacade.activateUser(user.getId());
@@ -78,7 +78,7 @@ public class UsersSettingsPage extends AbstractSettingsPage {
 			});
 		}, grid).setEnableResolver(users -> !users.iterator().next().isConfirmed()));
 
-		buttonLayout.addComponent(new GridButton<>("Zablokovat", (e, users) -> {
+		buttonLayout.addComponent(new GridButton<>("Zablokovat", users -> {
 			users.forEach(user -> {
 				user.setConfirmed(false);
 				userFacade.banUser(user.getId());
@@ -87,7 +87,7 @@ public class UsersSettingsPage extends AbstractSettingsPage {
 		}, grid).setEnableResolver(users -> users.iterator().next().isConfirmed()));
 
 		buttonLayout.addComponent(new GridButton<>("Upravit oprávnění",
-				(e, users) -> UI.getCurrent().addWindow(new WebWindow("Uživatelské role") {
+				users -> UI.getCurrent().addWindow(new WebWindow("Uživatelské role") {
 					private static final long serialVersionUID = -2416879310811585155L;
 
 					{

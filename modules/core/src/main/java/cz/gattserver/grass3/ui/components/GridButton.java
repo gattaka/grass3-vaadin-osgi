@@ -14,7 +14,7 @@ public class GridButton<T> extends Button {
 	private Function<Set<T>, Boolean> enableResolver;
 
 	public interface ClickListener<T> {
-		public void buttonClick(ClickEvent event, Set<T> item);
+		public void buttonClick(Set<T> item);
 	}
 
 	public GridButton(String caption, Grid<T> grid) {
@@ -22,7 +22,7 @@ public class GridButton<T> extends Button {
 	}
 
 	public void setClickListener(ClickListener<T> clickListener) {
-		super.addClickListener(e -> clickListener.buttonClick(e, grid.getSelectedItems()));
+		super.addClickListener(e -> clickListener.buttonClick(grid.getSelectedItems()));
 	}
 
 	public GridButton(String caption, ClickListener<T> clickListener, Grid<T> grid) {

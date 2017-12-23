@@ -1,12 +1,13 @@
 package cz.gattserver.grass3.server;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,6 +48,8 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 
 	private String mountPoint;
 
+	protected abstract Path getPath(String fileName) throws FileNotFoundException;
+
 	/**
 	 * @param mountPointName
 	 *            název místa do kterého bude přimountován tento servlet --
@@ -56,7 +59,7 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 		this.mountPoint = "/" + mountPointName;
 	}
 
-	protected String getMimeType(File file) {
+	protected String getMimeType(Path file) {
 		Validate.notNull(file, "Soubor pro zjištění MIME typu nesmí být null");
 		Tika tika = new Tika();
 		try {
@@ -67,24 +70,22 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 		return null;
 	}
 
-	protected abstract File getFile(String fileName) throws FileNotFoundException;
-
 	public boolean handleRequest(VaadinSession session, VaadinRequest request, VaadinResponse response)
 			throws IOException {
 
-		String path = request.getPathInfo();
+		String pathInfo = request.getPathInfo();
 		boolean content = !"HEAD".equals(request.getMethod());
 
 		// adresa musí začínat mountpointem
 		// adresa musí být delší než mountpoint + '/'
-		if (!path.startsWith(mountPoint) || path.length() <= (mountPoint.length() + 1))
+		if (!pathInfo.startsWith(mountPoint) || pathInfo.length() <= (mountPoint.length() + 1))
 			return false;
 
 		// credit:
 		// http://balusc.omnifaces.org/2009/02/fileservlet-supporting-resume-and.html
 
 		// Get requested file by path info.
-		String requestedFile = path.substring(mountPoint.length() + 1);
+		String requestedFile = pathInfo.substring(mountPoint.length() + 1);
 
 		// Check if file is actually supplied to the request URL.
 		if (requestedFile == null) {
@@ -97,10 +98,10 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 
 		// URL-decode the file name (might contain spaces and on) and prepare
 		// file object.
-		File file = getFile(URLDecoder.decode(requestedFile, "UTF-8"));
+		Path file = getPath(URLDecoder.decode(requestedFile, "UTF-8"));
 
 		// Check if file actually exists in filesystem.
-		if (!file.exists()) {
+		if (!Files.exists(file)) {
 			// Do your thing if the file appears to be non-existing.
 			// Throw an exception, or send 404, or show default/warning page, or
 			// just ignore it.
@@ -109,9 +110,9 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 		}
 
 		// Prepare some variables. The ETag is an unique identifier of the file.
-		String fileName = file.getName();
-		long length = file.length();
-		long lastModified = file.lastModified();
+		String fileName = file.getFileName().toString();
+		long length = Files.size(file);
+		long lastModified = Files.getLastModifiedTime(file).toMillis();
 		String eTag = fileName + "_" + length + "_" + lastModified;
 		long expires = System.currentTimeMillis() + DEFAULT_EXPIRE_TIME;
 
@@ -276,7 +277,7 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 		// ------------------------------------------------
 
 		OutputStream output = null;
-		try (RandomAccessFile input = new RandomAccessFile(file, "r");) {
+		try (RandomAccessFile input = new RandomAccessFile(file.toFile(), "r");) {
 			output = response.getOutputStream();
 			if (ranges.isEmpty() || ranges.get(0) == full) {
 

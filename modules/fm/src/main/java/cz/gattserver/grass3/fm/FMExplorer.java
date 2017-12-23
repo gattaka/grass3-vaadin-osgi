@@ -6,6 +6,8 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,9 +17,10 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
-import cz.gattserver.grass3.fm.interfaces.PathChunkTO;
+import cz.gattserver.grass3.fm.interfaces.FMItemTO;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
@@ -41,52 +44,20 @@ public class FMExplorer {
 	private Path currentAbsolutePath;
 
 	/**
-	 * V jakém stavu je zpracovávaný soubor ?
-	 */
-	private FileProcessState state = FileProcessState.SUCCESS;
-
-	/**
 	 * {@link FMExplorer} začne v adresáři, který je podle konfigurace jako jeho
 	 * root (omezení).
 	 * 
-	 * @param relativePath
-	 *            cesta, ve kterém má {@link FMExplorer} začít - pokud narazí na
-	 *            zabezpečovací chybu (podtečení root adreáře) nebo jiný
-	 *            problém, vyhodí pokusí se použít kořenový adresář a důvod jeho
-	 *            použití uloží do {@code state} proměnné
 	 * @param fileSystem
 	 *            {@link FileSystem}, ve kterém se bude {@link FMExplorer}
 	 *            pohybovat
-	 * @throws IOException
-	 *             tuto chybu vyhazuje pouze pokud se nezdařilo pracovat ani s
-	 *             kořenovým adresářem, jinak je přednostně tato chyba odchycena
-	 *             a je použit právě kořenový adresář namísto předaného souboru
 	 */
-	public FMExplorer(String relativePath, FileSystem fileSystem) {
-		Validate.notNull(relativePath, "RelativePath nesmí být null");
+	public FMExplorer(FileSystem fileSystem) {
 		Validate.notNull(fileSystem, "Filesystem nesmí být null");
 
 		this.fileSystem = fileSystem;
 		loadRootDirFromConfiguration();
 
-		// Vytvoř File z předávané relativní cesty
-		currentAbsolutePath = rootPath.resolve(relativePath).normalize();
-
-		// Otestuj, zda File existuje, pokud ne, přesměruj se na kořenový
-		// adresář a zapiš, že bylo nutné použít kořenový adresář kvůli
-		// neexistenci předávaného souboru
-		if (!Files.exists(currentAbsolutePath)) {
-			this.currentAbsolutePath = rootPath;
-			state = FileProcessState.MISSING;
-		}
-
-		// Zkontroluj validnost souboru, pokud není, přesměruj se na kořenový
-		// adresář a zapiš, že bylo nutné použít kořenový adresář kvůli
-		// nevalidnosti předávaného souboru
-		if (!isValid(currentAbsolutePath)) {
-			currentAbsolutePath = rootPath;
-			state = FileProcessState.NOT_VALID;
-		}
+		currentAbsolutePath = rootPath;
 	}
 
 	private void loadRootDirFromConfiguration() {
@@ -98,17 +69,45 @@ public class FMExplorer {
 		rootPath = rootPath.normalize();
 	}
 
-	/**
-	 * Získá aktuální konfiguraci ze souboru konfigurace
-	 * 
-	 * @return soubor konfigurace FM
-	 */
 	private FMConfiguration loadConfiguration() {
 		ConfigurationService configurationService = SpringContextHelper.getContext()
 				.getBean(ConfigurationService.class);
 		FMConfiguration c = new FMConfiguration();
 		configurationService.loadConfiguration(c);
 		return c;
+	}
+
+	/**
+	 * Změní aktuální adresář na adresář dle cesty od kořenového adresáře FM.
+	 * 
+	 * @param path
+	 *            cesta k adresáři od kořenového adresáře FM
+	 * @return výsledek operace
+	 */
+	public FileProcessState goToDir(String path) {
+		return goToDir(rootPath.resolve(path).normalize());
+	}
+
+	/**
+	 * Změní aktuální adresář na adresář dle cesty od aktuálního adresáře.
+	 * 
+	 * @param path
+	 *            cesta k adresáři z aktuálního adresáře
+	 * @return výsledek operace
+	 */
+	public FileProcessState goToDirFromCurrentDir(String path) {
+		return goToDir(currentAbsolutePath.resolve(path).normalize());
+	}
+
+	private FileProcessState goToDir(Path path) {
+		if (!isValid(path))
+			return FileProcessState.NOT_VALID;
+		if (!Files.exists(path))
+			return FileProcessState.MISSING;
+		if (!Files.isDirectory(path))
+			return FileProcessState.DIRECTORY_REQUIRED;
+		currentAbsolutePath = path;
+		return FileProcessState.SUCCESS;
 	}
 
 	/**
@@ -124,12 +123,12 @@ public class FMExplorer {
 	/**
 	 * Vytvoř nový adresář v aktuálním adresáři
 	 * 
-	 * @param name
-	 *            jméno adresáře
+	 * @param path
+	 *            cesta k souboru z aktuálního adresáře
 	 * @return výsledek operace
 	 */
-	public FileProcessState createNewDir(String name) {
-		Path newPath = currentAbsolutePath.resolve(name);
+	public FileProcessState createNewDir(String path) {
+		Path newPath = currentAbsolutePath.resolve(path);
 		try {
 			if (!isValid(newPath))
 				return FileProcessState.NOT_VALID;
@@ -144,36 +143,17 @@ public class FMExplorer {
 	}
 
 	/**
-	 * Změní aktuální adresář
-	 * 
-	 * @param name
-	 *            jméno adresáře od kořene FM
-	 * @return výsledek operace
-	 */
-	public FileProcessState tryGotoDir(String name) {
-		Path newPath = rootPath.resolve(name).normalize();
-		if (!isValid(newPath))
-			return FileProcessState.NOT_VALID;
-		if (!Files.exists(newPath))
-			return FileProcessState.MISSING;
-		currentAbsolutePath = newPath;
-		return FileProcessState.SUCCESS;
-	}
-
-	/**
-	 * Spočítá do hloubky velikost adresáře - pokud je mu předán soubor, který
-	 * není adresář vrátí jeho velikost. MAX_VALUE Long je (2^63)-1, což je víc
-	 * než 10^18, to je hodnota akorát velká pro pokrytí záznam Exbibajt (2^60)
+	 * Získá velikost soboru včetně podadresářů, pokud je adresářem.
 	 * 
 	 * @param path
-	 *            adresář k spočítání od aktuálního adresáře
-	 * @return velikost adresáře včetně podadresářů nebo <code>null</code>,
-	 *         pokud se jedná o nadřazený adresář
+	 *            cesta k souboru z aktuálního adresáře
+	 * @return velikost souboru včetně podadresářů nebo <code>null</code>, pokud
+	 *         se jedná o nadřazený adresář
 	 * @throws IOException
 	 *             pokud se nezdaří spočítat velikost souboru kvůli
 	 *             {@link IOException} chybě
 	 */
-	public Long getDeepDirSize(Path path) throws IOException {
+	public Long getFileSize(String path) throws IOException {
 		Path absPath = currentAbsolutePath.resolve(path).normalize();
 		if (absPath.startsWith(currentAbsolutePath))
 			return innerGetDeepDirSize(absPath);
@@ -216,101 +196,115 @@ public class FMExplorer {
 	 *            velikost stránky
 	 * @return
 	 */
-	public Stream<Path> listing(int offset, int limit) {
+	public Stream<FMItemTO> listing(int offset, int limit) {
 		try {
 			return Stream
-					.concat(Stream.of(fileSystem.getPath("..")), Files.list(currentAbsolutePath).sorted((p1, p2) -> {
-						if (Files.isDirectory(p1)) {
-							if (Files.isDirectory(p2))
-								return p1.getFileName().compareTo(p2);
-							return -1;
-						} else {
-							if (Files.isDirectory(p2))
-								return 1;
-							return p1.getFileName().compareTo(p2);
-						}
-					})).skip(offset).limit(limit);
+					.concat(Stream.of(currentAbsolutePath.resolve("..")),
+							Files.list(currentAbsolutePath).sorted(this::sortFile))
+					.skip(offset).limit(limit).map(this::mapPathToItem);
 		} catch (IOException e) {
 			throw new GrassPageException(500, e);
+		}
+	}
+
+	private FMItemTO mapPathToItem(Path path) {
+		FMItemTO to = new FMItemTO(path.getFileName().toString());
+		to.setDirectory(Files.isDirectory(path));
+		try {
+			to.setSize(path.normalize().startsWith(currentAbsolutePath)
+					? HumanBytesSizeFormatter.format(innerGetDeepDirSize(path), true) : "");
+		} catch (IOException e) {
+			to.setSize("n/a");
+		}
+		try {
+			to.setLastModified(
+					LocalDateTime.ofInstant(Files.getLastModifiedTime(path).toInstant(), ZoneId.systemDefault()));
+		} catch (IOException e) {
+			to.setLastModified(null);
+		}
+		return to;
+	}
+
+	private int sortFile(Path p1, Path p2) {
+		if (Files.isDirectory(p1)) {
+			if (Files.isDirectory(p2))
+				return p1.getFileName().compareTo(p2);
+			return -1;
+		} else {
+			if (Files.isDirectory(p2))
+				return 1;
+			return p1.getFileName().compareTo(p2);
 		}
 	}
 
 	/**
 	 * Uloží nahraný soubor
 	 * 
-	 * @param tmpFile
-	 *            dočasný soubor
-	 * @param filename
-	 *            jeho název
+	 * @param in
+	 *            vstupní proud dat
+	 * @param path
+	 *            cesta k souboru z aktuálního adresáře pod kterou bude soubor
+	 *            uložen
 	 * @return výsledek operace
 	 */
-	public FileProcessState saveFile(InputStream in, String filename) {
-		Path path = currentAbsolutePath.resolve(filename);
+	public FileProcessState saveFile(InputStream in, String path) {
+		Path pathToSaveAs = currentAbsolutePath.resolve(path).normalize();
 		try {
-			Files.copy(in, path);
+			Files.copy(in, pathToSaveAs);
 		} catch (FileAlreadyExistsException f) {
 			return FileProcessState.ALREADY_EXISTS;
 		} catch (IOException e) {
-			logger.error("Nezdařilo se vytvořit soubor {}", filename, e);
+			logger.error("Nezdařilo se vytvořit soubor {}", path, e);
 			return FileProcessState.SYSTEM_ERROR;
 		}
 		return FileProcessState.SUCCESS;
 	}
 
 	/**
-	 * Smaže soubor
+	 * Smaže soubor. Nelze smazat FM root.
 	 * 
 	 * @param path
-	 *            absolutní cest k souboru
+	 *            cesta k souboru z aktuálního adresáře
 	 * @return výsledek operace
 	 */
-	public FileProcessState deleteFile(Path path) {
-		Path pathToDelete = path.normalize();
+	public FileProcessState deleteFile(String path) {
+		Path pathToDelete = currentAbsolutePath.resolve(path).normalize();
 		try {
-			if (!isValid(pathToDelete))
+			if (!isValid(pathToDelete) || rootPath.equals(pathToDelete))
 				return FileProcessState.NOT_VALID;
 			if (!Files.exists(pathToDelete))
 				return FileProcessState.MISSING;
 			Files.delete(pathToDelete);
 			return FileProcessState.SUCCESS;
 		} catch (IOException e) {
-			logger.error("Nezdařilo se smazat soubor {}", path.toString(), e);
+			logger.error("Nezdařilo se smazat soubor {}", path, e);
 			return FileProcessState.SYSTEM_ERROR;
 		}
 	}
 
 	/**
-	 * Přejmenuje soubor
+	 * Přejmenuje soubor. Nelze přejmenovat FM root.
 	 * 
 	 * @param path
-	 *            absolutní cest k souboru
-	 * @param newName
-	 *            nové jméno
+	 *            cesta ke stávajícímu souboru z aktuálního adresáře
+	 * @param newPath
+	 *            cesta k novému souboru z aktuálního adresáře -- umožňuje
+	 *            použít ".." a "/" pro přesun
 	 */
-	public FileProcessState renameFile(Path path, String newName) {
-		Path renamedPath = path.getParent().resolve(newName).normalize();
+	public FileProcessState renameFile(String path, String newPath) {
+		Path currentPath = currentAbsolutePath.resolve(path).normalize();
+		Path renamedPath = currentPath.getParent().resolve(newPath).normalize();
 		try {
-			if (!isValid(renamedPath))
+			if (!isValid(currentPath) || !isValid(renamedPath) || rootPath.equals(currentPath))
 				return FileProcessState.NOT_VALID;
-			if (Files.exists(renamedPath))
+			if (!Files.exists(currentPath) || Files.exists(renamedPath))
 				return FileProcessState.ALREADY_EXISTS;
-			Files.move(path, renamedPath);
+			Files.move(currentPath, renamedPath);
 			return FileProcessState.SUCCESS;
 		} catch (IOException e) {
-			logger.error("Nezdařilo se přejmenovat soubor {} na {}", path, renamedPath, e);
+			logger.error("Nezdařilo se přejmenovat soubor {} na {}", path, newPath, e);
 			return FileProcessState.SYSTEM_ERROR;
 		}
-	}
-
-	/**
-	 * Vezme cestu k souboru a odstřihne od ní cestu k rootDir-u
-	 * 
-	 * @param path
-	 *            soubor na zpracování
-	 * @return koncová cesta k souboru od rootDir
-	 */
-	public String fileFromRoot(Path path) {
-		return rootPath.relativize(path).toString();
 	}
 
 	/**
@@ -319,12 +313,13 @@ public class FMExplorer {
 	 * 
 	 * @return
 	 */
-	public List<PathChunkTO> getBreadcrumbChunks() {
+	public List<FMItemTO> getBreadcrumbChunks() {
 		Path next = currentAbsolutePath;
-		List<PathChunkTO> chunks = new ArrayList<>();
+		List<FMItemTO> chunks = new ArrayList<>();
 		do {
-			String fileURLFromRoot = fileFromRoot(next);
-			chunks.add(new PathChunkTO(next.equals(rootPath) ? "/" : next.getFileName().toString(), fileURLFromRoot));
+			String fileURLFromRoot = getPathFromRoot(next);
+			chunks.add(new FMItemTO(next.equals(rootPath) ? "/" : next.getFileName().toString())
+					.setPathFromFMRoot(fileURLFromRoot));
 			next = next.getParent();
 			// pokud je můj předek null nebo jsem mimo povolený rozsah, pak
 			// je to konec a je to všechno
@@ -332,20 +327,92 @@ public class FMExplorer {
 		return chunks;
 	}
 
-	public FileProcessState getState() {
-		return state;
+	private String getPathFromRoot(Path path) {
+		return rootPath.relativize(path).toString();
 	}
 
-	public Path getRootPath() {
-		return rootPath;
-	}
-
-	public Path getCurrentAbsolutePath() {
-		return currentAbsolutePath;
-	}
-
-	public Path getCurrentRelativePath() {
+	private Path getCurrentRelativePath() {
 		return rootPath.relativize(currentAbsolutePath);
+	}
+
+	/**
+	 * Získá URL link k souboru v aktuálním adresáři. Neověřuje, zda soubor v
+	 * aktuálním adresáři opravdu existuje, pouze sestavuje link tak, jako by v
+	 * něm byl.
+	 * 
+	 * @param contextRootURL
+	 *            kořenové url aplikace, například
+	 *            <code>http://testweb/grass</code>
+	 * @param path
+	 *            cesta k souboru z aktuálního adresáře
+	 * @return link k souboru
+	 */
+	public String getDownloadLink(String contextRootURL, String path) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(contextRootURL);
+		sb.append("/");
+		sb.append(FMConfiguration.FM_PATH);
+		for (Path part : getCurrentRelativePath()) {
+			sb.append("/");
+			sb.append(part.toString());
+		}
+		sb.append("/");
+		sb.append(path);
+		return sb.toString();
+	}
+
+	/**
+	 * Získá URL pro aktuální stav FM. Pokud je tedy například FM v adresáři
+	 * <code>alfa</code>, contextRoot aplikace je
+	 * <code>http://testweb/grass</code> a URL cesta k FM modulu je
+	 * <code>fm-modul</code>, pak výsledné URL bude <br/>
+	 * 
+	 * <code>http://testweb/grass/fm-modul/alfa</code>
+	 * 
+	 * @param contextRootURL
+	 *            kořenové url aplikace, například
+	 *            <code>http://testweb/grass</code>
+	 * @param modulePageName
+	 *            URL cesta k FM modulu, například <code>fm-modul</code>
+	 * @return výsledné URL k aktuálnímu adresáři
+	 */
+	public String getCurrentURL(String contextRootURL, String modulePageName) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(contextRootURL);
+		sb.append("/");
+		sb.append(modulePageName);
+		for (Path part : getCurrentRelativePath()) {
+			sb.append("/");
+			sb.append(part.toString());
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * 
+	 * @param contextRootURL
+	 *            kořenové url aplikace, například
+	 *            <code>http://testweb/grass</code>
+	 * @param modulePageName
+	 *            URL cesta k FM modulu, například <code>fm-modul</code>
+	 * @param uri
+	 *            URL, dle kterého se má získat adresář, kam se mám přepnout
+	 * @return výsledek operace
+	 */
+	public FileProcessState goToDirByURL(String contextRootURL, String modulePageName, String uri) {
+		// Odparsuj počátek http://host//context-root/fm a získej
+		// lokální cestu v rámci FM modulu
+		int start = uri.indexOf(contextRootURL);
+		String fmPath = uri.substring(start + contextRootURL.length() + 1 + modulePageName.length());
+		if (fmPath.isEmpty() || fmPath.startsWith("/")) {
+			if (fmPath.startsWith("/"))
+				fmPath = fmPath.substring(1);
+			return goToDir(fmPath);
+		} else {
+			// úplně jiná stránka, která akorát začíná na
+			// "context-root/fm"
+			return FileProcessState.SYSTEM_ERROR;
+		}
 	}
 
 }

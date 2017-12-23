@@ -1,7 +1,6 @@
-package cz.gattserver.grass3.articles.plugins.favlink.server;
+package cz.gattserver.grass3.fm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -13,12 +12,12 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import cz.gattserver.grass3.articles.plugins.favlink.config.FavlinkConfiguration;
-import cz.gattserver.grass3.articles.plugins.favlink.test.MockFileSystemService;
+import cz.gattserver.grass3.fm.config.FMConfiguration;
+import cz.gattserver.grass3.fm.test.MockFileSystemService;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.test.AbstractContextAwareTest;
 
-public class FavlinkImageRequestHandlerTest extends AbstractContextAwareTest {
+public class FMRequestHandlerTest extends AbstractContextAwareTest {
 
 	@Autowired
 	private MockFileSystemService fileSystemService;
@@ -27,8 +26,8 @@ public class FavlinkImageRequestHandlerTest extends AbstractContextAwareTest {
 	private ConfigurationService configurationService;
 
 	@Autowired
-	@Qualifier("favlinkImageRequestHandler")
-	private FavlinkImageRequestHandler fmRequestHandler;
+	@Qualifier("fmRequestHandler")
+	private FMRequestHandler fmRequestHandler;
 
 	@Before
 	public void init() {
@@ -36,28 +35,28 @@ public class FavlinkImageRequestHandlerTest extends AbstractContextAwareTest {
 	}
 
 	private Path prepareFS(FileSystem fs) throws IOException {
-		Path outputDir = fs.getPath("/some/path/favlink/cache/");
-		Files.createDirectories(outputDir);
+		Path rootDir = fs.getPath("/some/path/fm/root/");
+		Files.createDirectories(rootDir);
 
-		FavlinkConfiguration configuration = new FavlinkConfiguration();
-		configuration.setOutputPath(outputDir.toString());
-		configurationService.saveConfiguration(configuration);
+		FMConfiguration fmc = new FMConfiguration();
+		fmc.setRootDir(rootDir.toString());
+		configurationService.saveConfiguration(fmc);
 
-		return outputDir;
+		return rootDir;
 	}
 
 	@Test
 	public void test() throws IOException {
 		FileSystem fs = fileSystemService.getFileSystem();
-		Path outputDir = prepareFS(fs);
-		Path testFile = Files.createFile(outputDir.resolve("testFile"));
+		Path rootDir = prepareFS(fs);
+		Path testFile = Files.createFile(rootDir.resolve("testFile"));
 		Files.write(testFile, new byte[] { 1, 1, 1 });
 
 		Path file = fmRequestHandler.getPath("testFile");
 		assertTrue(Files.exists(file));
 		assertEquals(3L, Files.size(file));
 		assertEquals("testFile", file.getFileName().toString());
-		assertEquals("/some/path/favlink/cache/testFile", file.toString());
+		assertEquals("/some/path/fm/root/testFile", file.toString());
 	}
 
 }

@@ -125,7 +125,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		modifyBtn.setIcon(ImageIcon.PENCIL_16_ICON.createResource());
 
 		final Button detailBtn = new DetailGridButton<ScheduledVisitDTO>("Detail",
-				(e, item) -> UI.getCurrent().addWindow(new SchuduledVisitDetailWindow(item.getId())), plannedGrid);
+				item -> UI.getCurrent().addWindow(new SchuduledVisitDetailWindow(item.getId())), plannedGrid);
 
 		/**
 		 * Přehled
@@ -222,7 +222,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		modifyBtn.setIcon(ImageIcon.PENCIL_16_ICON.createResource());
 
 		final Button detailBtn = new DetailGridButton<ScheduledVisitDTO>("Detail",
-				(e, item) -> UI.getCurrent().addWindow(new SchuduledVisitDetailWindow(item.getId())), toBePlannedGrid);
+				item -> UI.getCurrent().addWindow(new SchuduledVisitDetailWindow(item.getId())), toBePlannedGrid);
 
 		/**
 		 * Přehled

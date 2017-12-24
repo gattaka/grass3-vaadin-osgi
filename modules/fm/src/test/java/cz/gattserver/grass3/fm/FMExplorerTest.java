@@ -2,6 +2,7 @@ package cz.gattserver.grass3.fm;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -74,10 +75,35 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 
 		FMExplorer explorer = new FMExplorer(fs);
 		String newDirName = "newDir";
-		explorer.createNewDir(newDirName);
+		assertEquals(FileProcessState.SUCCESS, explorer.createNewDir(newDirName));
 
 		Path newDir = rootDir.resolve(newDirName);
 		assertTrue(Files.exists(newDir));
+
+		assertEquals(FileProcessState.ALREADY_EXISTS, explorer.createNewDir(newDirName));
+		assertEquals(FileProcessState.NOT_VALID, explorer.createNewDir("../testDir"));
+	}
+
+	@Test
+	public void testSort() throws IOException {
+		FileSystem fs = fileSystemService.getFileSystem();
+		Path adir = Files.createDirectory(fs.getPath("Adir"));
+		Path bdir = Files.createDirectory(fs.getPath("Bdir"));
+		Path afile = Files.createFile(fs.getPath("Afile"));
+		Path bfile = Files.createFile(fs.getPath("Bfile"));
+
+		assertEquals(0, FMExplorer.sortFile(adir, adir));
+		assertEquals(-1, FMExplorer.sortFile(adir, bdir));
+		assertEquals(1, FMExplorer.sortFile(bdir, adir));
+
+		assertEquals(0, FMExplorer.sortFile(afile, afile));
+		assertEquals(-1, FMExplorer.sortFile(afile, bfile));
+		assertEquals(1, FMExplorer.sortFile(bfile, afile));
+
+		assertEquals(-1, FMExplorer.sortFile(adir, afile));
+		assertEquals(1, FMExplorer.sortFile(afile, adir));
+		assertEquals(-1, FMExplorer.sortFile(bdir, afile));
+		assertEquals(1, FMExplorer.sortFile(afile, bdir));
 	}
 
 	@Test
@@ -101,6 +127,20 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 	}
 
 	@Test
+	public void testGetDownloadLink() throws IOException {
+		FileSystem fs = fileSystemService.getFileSystem();
+		Path rootDir = prepareFS(fs);
+		String subDirName = "subDir1/subDir2";
+		Files.createDirectories(rootDir.resolve(subDirName));
+
+		FMExplorer explorer = new FMExplorer(fs);
+		explorer.goToDir("subDir1");
+
+		assertEquals("http://test/web/" + FMConfiguration.FM_PATH + "/subDir1/testFile",
+				explorer.getDownloadLink("http://test/web", "testFile"));
+	}
+
+	@Test
 	public void testRenameFile() throws IOException {
 		FileSystem fs = fileSystemService.getFileSystem();
 		Path rootDir = prepareFS(fs);
@@ -111,6 +151,15 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 		explorer.goToDir("subDir1");
 
 		assertEquals(FileProcessState.NOT_VALID, explorer.renameFile("subDir2", "../../../sssDir"));
+		assertTrue(Files.exists(subDir));
+
+		assertEquals(FileProcessState.NOT_VALID, explorer.renameFile("../../someDir", "sssDir"));
+		assertTrue(Files.exists(subDir));
+
+		assertEquals(FileProcessState.NOT_VALID, explorer.renameFile("..", "sssDir"));
+		assertTrue(Files.exists(subDir));
+
+		assertEquals(FileProcessState.MISSING, explorer.renameFile("nonexistent", "sssDir"));
 		assertTrue(Files.exists(subDir));
 
 		assertEquals(FileProcessState.ALREADY_EXISTS, explorer.renameFile("subDir2", "../subDir1"));
@@ -126,11 +175,13 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 		Path rootDir = prepareFS(fs);
 		String subDirName = "subDir1/subDir2";
 		Files.createDirectories(rootDir.resolve(subDirName));
+		Files.createFile(rootDir.resolve("testFile"));
 
 		FMExplorer explorer = new FMExplorer(fs);
 		assertEquals(FileProcessState.MISSING, explorer.goToDir("nonExisting"));
 		assertEquals(FileProcessState.NOT_VALID, explorer.goToDir("../../test"));
 		assertEquals(FileProcessState.SUCCESS, explorer.goToDir("subDir1/subDir2"));
+		assertEquals(FileProcessState.DIRECTORY_REQUIRED, explorer.goToDir("testFile"));
 	}
 
 	@Test
@@ -156,6 +207,14 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 		assertEquals(FileProcessState.SUCCESS,
 				explorer.goToDirByURL("http://test/web", "fm-test", "http://test/web/fm-test/subDir1"));
 		assertEquals(FileProcessState.SUCCESS, explorer.goToDirFromCurrentDir("subDir2"));
+
+		assertEquals(FileProcessState.SUCCESS,
+				explorer.goToDirByURL("http://test/web", "fm-test", "http://test/web/fm-test"));
+		assertEquals(FileProcessState.SUCCESS, explorer.goToDirFromCurrentDir("subDir1"));
+
+		assertEquals(FileProcessState.SYSTEM_ERROR,
+				explorer.goToDirByURL("http://test/web", "fm-test", "http://test/web/fm-test-other-module"));
+		assertEquals(FileProcessState.SUCCESS, explorer.goToDirFromCurrentDir("subDir2"));
 	}
 
 	@Test
@@ -169,6 +228,22 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 		assertEquals("http://test/web/fm-test/", explorer.getCurrentURL("http://test/web", "fm-test"));
 		explorer.goToDir("subDir1/subDir2");
 		assertEquals("http://test/web/fm-test/subDir1/subDir2", explorer.getCurrentURL("http://test/web", "fm-test"));
+	}
+
+	@Test
+	public void testSaveFile() throws IOException {
+		FileSystem fs = fileSystemService.getFileSystem();
+		Path rootDir = prepareFS(fs);
+		FMExplorer explorer = new FMExplorer(fs);
+		byte[] content = new byte[] { 1, 1, 1, 1, 1 };
+		explorer.saveFile(new ByteArrayInputStream(content), "testFile");
+
+		Path testFile = rootDir.resolve("testFile");
+		assertTrue(Files.exists(testFile));
+		assertFalse(Files.isDirectory(testFile));
+
+		byte[] arr = Files.readAllBytes(testFile);
+		assertArrayEquals(content, arr);
 	}
 
 	@Test

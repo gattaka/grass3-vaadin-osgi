@@ -43,6 +43,18 @@ public class FMExplorer {
 	 */
 	private Path currentAbsolutePath;
 
+	public static int sortFile(Path p1, Path p2) {
+		if (Files.isDirectory(p1)) {
+			if (Files.isDirectory(p2))
+				return p1.getFileName().compareTo(p2);
+			return -1;
+		} else {
+			if (Files.isDirectory(p2))
+				return 1;
+			return p1.getFileName().compareTo(p2);
+		}
+	}
+
 	/**
 	 * {@link FMExplorer} začne v adresáři, který je podle konfigurace jako jeho
 	 * root (omezení).
@@ -117,7 +129,7 @@ public class FMExplorer {
 	 *             pokud testovaný soubor neexistuje
 	 */
 	public boolean isValid(Path adeptPath) {
-		return adeptPath.startsWith(rootPath);
+		return adeptPath.normalize().startsWith(rootPath);
 	}
 
 	/**
@@ -128,7 +140,7 @@ public class FMExplorer {
 	 * @return výsledek operace
 	 */
 	public FileProcessState createNewDir(String path) {
-		Path newPath = currentAbsolutePath.resolve(path);
+		Path newPath = currentAbsolutePath.resolve(path).normalize();
 		try {
 			if (!isValid(newPath))
 				return FileProcessState.NOT_VALID;
@@ -142,31 +154,13 @@ public class FMExplorer {
 		}
 	}
 
-	/**
-	 * Získá velikost soboru včetně podadresářů, pokud je adresářem.
-	 * 
-	 * @param path
-	 *            cesta k souboru z aktuálního adresáře
-	 * @return velikost souboru včetně podadresářů nebo <code>null</code>, pokud
-	 *         se jedná o nadřazený adresář
-	 * @throws IOException
-	 *             pokud se nezdaří spočítat velikost souboru kvůli
-	 *             {@link IOException} chybě
-	 */
-	public Long getFileSize(String path) throws IOException {
-		Path absPath = currentAbsolutePath.resolve(path).normalize();
-		if (absPath.startsWith(currentAbsolutePath))
-			return innerGetDeepDirSize(absPath);
-		return null;
-	}
-
-	private Long innerGetDeepDirSize(Path path) throws IOException {
+	private Long getFileSize(Path path) throws IOException {
 		if (!Files.isDirectory(path))
 			return Files.size(path);
 		try (Stream<Path> stream = Files.list(path)) {
 			Long sum = 0L;
 			for (Iterator<Path> it = stream.iterator(); it.hasNext();)
-				sum += innerGetDeepDirSize(it.next());
+				sum += getFileSize(it.next());
 			return sum;
 		}
 	}
@@ -200,7 +194,7 @@ public class FMExplorer {
 		try {
 			return Stream
 					.concat(Stream.of(currentAbsolutePath.resolve("..")),
-							Files.list(currentAbsolutePath).sorted(this::sortFile))
+							Files.list(currentAbsolutePath).sorted(FMExplorer::sortFile))
 					.skip(offset).limit(limit).map(this::mapPathToItem);
 		} catch (IOException e) {
 			throw new GrassPageException(500, e);
@@ -208,11 +202,11 @@ public class FMExplorer {
 	}
 
 	private FMItemTO mapPathToItem(Path path) {
-		FMItemTO to = new FMItemTO(path.getFileName().toString());
+		FMItemTO to = new FMItemTO().setName(path.getFileName().toString());
 		to.setDirectory(Files.isDirectory(path));
 		try {
 			to.setSize(path.normalize().startsWith(currentAbsolutePath)
-					? HumanBytesSizeFormatter.format(innerGetDeepDirSize(path), true) : "");
+					? HumanBytesSizeFormatter.format(getFileSize(path), true) : "");
 		} catch (IOException e) {
 			to.setSize("n/a");
 		}
@@ -223,18 +217,6 @@ public class FMExplorer {
 			to.setLastModified(null);
 		}
 		return to;
-	}
-
-	private int sortFile(Path p1, Path p2) {
-		if (Files.isDirectory(p1)) {
-			if (Files.isDirectory(p2))
-				return p1.getFileName().compareTo(p2);
-			return -1;
-		} else {
-			if (Files.isDirectory(p2))
-				return 1;
-			return p1.getFileName().compareTo(p2);
-		}
 	}
 
 	/**
@@ -297,7 +279,9 @@ public class FMExplorer {
 		try {
 			if (!isValid(currentPath) || !isValid(renamedPath) || rootPath.equals(currentPath))
 				return FileProcessState.NOT_VALID;
-			if (!Files.exists(currentPath) || Files.exists(renamedPath))
+			if (!Files.exists(currentPath))
+				return FileProcessState.MISSING;
+			if (Files.exists(renamedPath))
 				return FileProcessState.ALREADY_EXISTS;
 			Files.move(currentPath, renamedPath);
 			return FileProcessState.SUCCESS;
@@ -318,7 +302,7 @@ public class FMExplorer {
 		List<FMItemTO> chunks = new ArrayList<>();
 		do {
 			String fileURLFromRoot = getPathFromRoot(next);
-			chunks.add(new FMItemTO(next.equals(rootPath) ? "/" : next.getFileName().toString())
+			chunks.add(new FMItemTO().setName(next.equals(rootPath) ? "/" : next.getFileName().toString())
 					.setPathFromFMRoot(fileURLFromRoot));
 			next = next.getParent();
 			// pokud je můj předek null nebo jsem mimo povolený rozsah, pak

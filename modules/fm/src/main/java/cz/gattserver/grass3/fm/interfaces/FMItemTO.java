@@ -10,10 +10,6 @@ public class FMItemTO {
 	private boolean directory;
 	private LocalDateTime lastModified;
 
-	public FMItemTO(String name) {
-		this.name = name;
-	}
-
 	public String getSize() {
 		return size;
 	}

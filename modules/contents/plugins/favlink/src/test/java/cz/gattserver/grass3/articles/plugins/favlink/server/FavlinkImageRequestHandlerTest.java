@@ -28,7 +28,7 @@ public class FavlinkImageRequestHandlerTest extends AbstractContextAwareTest {
 
 	@Autowired
 	@Qualifier("favlinkImageRequestHandler")
-	private FavlinkImageRequestHandler fmRequestHandler;
+	private FavlinkImageRequestHandler favlinkImageRequestHandler;
 
 	@Before
 	public void init() {
@@ -53,7 +53,7 @@ public class FavlinkImageRequestHandlerTest extends AbstractContextAwareTest {
 		Path testFile = Files.createFile(outputDir.resolve("testFile"));
 		Files.write(testFile, new byte[] { 1, 1, 1 });
 
-		Path file = fmRequestHandler.getPath("testFile");
+		Path file = favlinkImageRequestHandler.getPath("testFile");
 		assertTrue(Files.exists(file));
 		assertEquals(3L, Files.size(file));
 		assertEquals("testFile", file.getFileName().toString());

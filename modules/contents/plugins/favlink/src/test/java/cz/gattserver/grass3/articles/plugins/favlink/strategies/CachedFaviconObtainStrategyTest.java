@@ -4,29 +4,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import cz.gattserver.grass3.articles.plugins.favlink.FaviconCache;
-import cz.gattserver.grass3.articles.plugins.favlink.test.MockFileSystemService;
-import cz.gattserver.grass3.test.AbstractContextAwareTest;
+import cz.gattserver.grass3.articles.plugins.favlink.test.StrategyTest;
 
-public class CachedFaviconObtainStrategyTest extends AbstractContextAwareTest {
-
-	@Autowired
-	private MockFileSystemService fileSystemService;
-
-	@Before
-	public void init() {
-		fileSystemService.init();
-	}
+public class CachedFaviconObtainStrategyTest extends StrategyTest {
 
 	@Test
 	public void testCacheFaviconObtainStrategy_missed() throws IOException {
+		FileSystem fs = fileSystemService.getFileSystem();
+		prepareFS(fs);
+		
 		FaviconCache cache = new FaviconCache();
 		CacheFaviconObtainStrategy strategy = new CacheFaviconObtainStrategy(cache);
 		String link = strategy.obtainFaviconURL("http://www.test.cz", "mycontextroot");
@@ -35,8 +28,14 @@ public class CachedFaviconObtainStrategyTest extends AbstractContextAwareTest {
 
 	@Test
 	public void testCacheFaviconObtainStrategy_cached() throws IOException {
+		FileSystem fs = fileSystemService.getFileSystem();
+		Path outputDir = prepareFS(fs);
+		
 		FaviconCache cache = new FaviconCache();
 		Path cacheDir = cache.getCacheDirectoryPath();
+		
+		assertEquals(outputDir, cacheDir);
+		
 		Files.createFile(cacheDir.resolve("www.test.cz.png"));
 		CacheFaviconObtainStrategy strategy = new CacheFaviconObtainStrategy(cache);
 		String link = strategy.obtainFaviconURL("http://www.test.cz", "mycontextroot");

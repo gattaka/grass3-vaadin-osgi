@@ -77,10 +77,9 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 
 	private String findFaviconAddressOnPage(URL pageURL) {
 		Document doc;
+		String rootURL = pageURL.getProtocol() + "://" + pageURL.getHost() + ":" + pageURL.getPort();
+
 		try {
-
-			String rootURL = pageURL.getProtocol() + "://" + pageURL.getHost() + ":" + pageURL.getPort();
-
 			// http://en.wikipedia.org/wiki/Favicon
 			// need http protocol
 			// bez agenta to často hodí 403 Forbidden, protože si myslí, že jsem
@@ -90,6 +89,7 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 			String ico;
 
 			// link ICO (upřednostňuj)
+			logger.info("Zkouším ICO hlavičku");
 			Element element = doc.head().select("link[href~=.*\\.ico]").first();
 			if (element != null) {
 				ico = element.attr("href");
@@ -98,6 +98,7 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 			}
 
 			// link PNG
+			logger.info("Zkouším PNG hlavičku");
 			element = doc.head().select("link[href~=.*\\.png]").first();
 			if (element != null) {
 				ico = element.attr("href");
@@ -106,6 +107,7 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 			}
 
 			// meta + content
+			logger.info("Zkouším META content");
 			element = doc.head().select("meta[itemprop=image]").first();
 			if (element != null) {
 				ico = element.attr("content");
@@ -114,9 +116,10 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 			}
 
 		} catch (IOException e) {
-			logger.info("Nezdařilo se získat favicon z: {}", pageURL);
+			logger.error("Nezdařilo se získat stránku z pageURL: {}", pageURL);
 		}
 
+		logger.info("Nezdařilo se získat favicon z: {}", pageURL);
 		return null;
 	}
 

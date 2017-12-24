@@ -129,7 +129,7 @@ public class FaviconUtils {
 	public static String createCachedFaviconAddress(String contextRoot, String faviconFilename) {
 		Validate.notBlank(contextRoot, "contextRoot nesmí být prázdný");
 		Validate.notBlank(faviconFilename, "faviconFilename nesmí být prázdný");
-		return contextRoot + FavlinkConfiguration.IMAGE_PATH_ALIAS + "/" + faviconFilename;
+		return contextRoot + "/" + FavlinkConfiguration.IMAGE_PATH_ALIAS + "/" + faviconFilename;
 	}
 
 	/**

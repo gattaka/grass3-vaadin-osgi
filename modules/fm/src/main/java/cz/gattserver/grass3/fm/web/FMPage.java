@@ -306,8 +306,10 @@ public class FMPage extends OneColumnPage {
 	}
 
 	private void handleGotoDirFromCurrentDirAction(FMItemTO item) {
-		if (FileProcessState.SUCCESS.equals(explorer.goToDirFromCurrentDir(item.getName())))
+		if (FileProcessState.SUCCESS.equals(explorer.goToDirFromCurrentDir(item.getName()))) {
 			refreshView();
+			updatePageState();
+		}
 	}
 
 	private void refreshView() {

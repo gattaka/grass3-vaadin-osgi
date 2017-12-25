@@ -9,8 +9,6 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 @Component("recipesPageFactory")
 public class RecipesPageFactory extends AbstractPageFactory {
 
-	private static final long serialVersionUID = 8984837128014801897L;
-
 	public RecipesPageFactory() {
 		super("recipes");
 	}

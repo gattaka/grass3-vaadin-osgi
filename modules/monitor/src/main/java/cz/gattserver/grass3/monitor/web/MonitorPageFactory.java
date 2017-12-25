@@ -9,8 +9,6 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 @Component("monitorPageFactory")
 public class MonitorPageFactory extends AbstractPageFactory {
 
-	private static final long serialVersionUID = 8984837128014801897L;
-
 	public MonitorPageFactory() {
 		super("system-monitor");
 	}

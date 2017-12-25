@@ -11,16 +11,13 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 @Component("photogalleryEditorPageFactory")
 public class PhotogalleryEditorPageFactory extends AbstractPageFactory {
 
-	private static final long serialVersionUID = 4542633366840601783L;
-
 	public PhotogalleryEditorPageFactory() {
 		super("photogallery-editor");
 	}
 
 	@Override
 	protected boolean isAuthorized() {
-		return getUser() != null
-				&& (getUser().isAdmin() || getUser().hasRole(Role.AUTHOR));
+		return getUser() != null && (getUser().isAdmin() || getUser().hasRole(Role.AUTHOR));
 	}
 
 	@Override

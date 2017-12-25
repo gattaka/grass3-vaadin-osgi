@@ -10,8 +10,6 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 @Component("photogalleryViewerPageFactory")
 public class PhotogalleryViewerPageFactory extends AbstractPageFactory {
 
-	private static final long serialVersionUID = 5981090011575615856L;
-
 	public PhotogalleryViewerPageFactory() {
 		super("photogallery");
 	}

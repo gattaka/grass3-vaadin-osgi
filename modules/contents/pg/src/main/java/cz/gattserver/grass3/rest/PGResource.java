@@ -1,9 +1,9 @@
 package cz.gattserver.grass3.rest;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -79,12 +79,12 @@ public class PGResource {
 
 	private void innerPhoto(Long id, String fileName, boolean mini, HttpServletResponse response) {
 		try {
-			File file = photogalleryFacade.getPhotoForREST(id, fileName, mini);
+			Path file = photogalleryFacade.getPhotoForREST(id, fileName, mini);
 			if (file == null) {
 				response.setStatus(HttpStatus.NOT_FOUND.value());
 				return;
 			}
-			InputStream is = new FileInputStream(file);
+			InputStream is = new FileInputStream(file.toFile());
 			IOUtils.copy(is, response.getOutputStream());
 			response.setStatus(HttpStatus.OK.value());
 			response.flushBuffer();

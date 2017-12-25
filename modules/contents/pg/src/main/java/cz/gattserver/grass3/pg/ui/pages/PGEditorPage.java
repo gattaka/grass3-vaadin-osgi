@@ -1,20 +1,16 @@
 package cz.gattserver.grass3.pg.ui.pages;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
-
-import net.engio.mbassy.listener.Handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +64,7 @@ import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.MultiUpload;
 import cz.gattserver.web.common.ui.window.ConfirmWindow;
 import cz.gattserver.web.common.ui.window.WarnWindow;
+import net.engio.mbassy.listener.Handler;
 
 public class PGEditorPage extends OneColumnPage {
 
@@ -77,7 +74,7 @@ public class PGEditorPage extends OneColumnPage {
 	private NodeService nodeFacade;
 
 	@Autowired
-	private PGService photogalleryFacade;
+	private PGService pgService;
 
 	@Autowired
 	private ContentTagService contentTagFacade;
@@ -102,7 +99,7 @@ public class PGEditorPage extends OneColumnPage {
 	private DateTimeField photogalleryDateField;
 	private CheckBox publicatedCheckBox;
 
-	private File galleryDir;
+	private Path galleryDir;
 
 	private boolean editMode;
 
@@ -152,7 +149,7 @@ public class PGEditorPage extends OneColumnPage {
 			publicatedCheckBox.setValue(true);
 		} else if (operationToken.equals(DefaultContentOperations.EDIT.toString())) {
 			editMode = true;
-			photogallery = photogalleryFacade.getPhotogalleryForDetail(identifier.getId());
+			photogallery = pgService.getPhotogalleryForDetail(identifier.getId());
 			photogalleryNameField.setValue(photogallery.getContentNode().getName());
 
 			for (ContentTagOverviewTO tagDTO : photogallery.getContentNode().getContentTags()) {
@@ -179,8 +176,7 @@ public class PGEditorPage extends OneColumnPage {
 	@Override
 	protected Component createContent() {
 
-		final File dir = editMode ? photogalleryFacade.getGalleryDir(photogallery)
-				: photogalleryFacade.createGalleryDir();
+		final Path dir = editMode ? pgService.getGalleryDir(photogallery) : pgService.createGalleryDir();
 		galleryDir = dir;
 
 		VerticalLayout marginLayout = new VerticalLayout();
@@ -247,52 +243,60 @@ public class PGEditorPage extends OneColumnPage {
 		imageWrapper.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
 		// gridLayout.addComponent(imageWrapper, 0, 0, 1, 0);
 
-		final Grid<File> table = new Grid<>(File.class);
-		final List<File> items = editMode
-				? Arrays.asList(galleryDir.listFiles(pathname -> pathname.isDirectory() == false)) : new ArrayList<>();
-		table.setItems(items);
+		final Grid<Path> grid = new Grid<>();
+		final List<Path> items = new ArrayList<>();
+		if (editMode) {
+			try (Stream<Path> stream = Files.list(galleryDir)) {
+				stream.filter(file -> !Files.isDirectory(file)).forEach(items::add);
+			} catch (IOException e) {
+				throw new GrassPageException(500, e);
+			}
+		}
+		grid.setItems(items);
 
-		table.setSelectionMode(SelectionMode.SINGLE);
-		table.setSizeFull();
-		table.getColumn("name").setCaption("Název");
-		table.setColumns("name");
+		grid.setSelectionMode(SelectionMode.SINGLE);
+		grid.setSizeFull();
+		grid.getColumn("name").setCaption("Název");
+		grid.setColumns("name");
 
 		final Button removeBtn = new DeleteGridButton<>("Odstranit", files -> files.forEach(file -> {
 			if (editMode) {
-				if (PGUtils.isImage(file.getName())) {
-					photogalleryFacade.tryDeleteMiniatureImage(file, photogallery);
-					photogalleryFacade.tryDeleteSlideshowImage(file, photogallery);
+				if (PGUtils.isImage(file.getFileName().toString())) {
+					pgService.tryDeleteMiniatureImage(file.getFileName().toString(), photogallery);
+					pgService.tryDeleteSlideshowImage(file.getFileName().toString(), photogallery);
 				}
-
-				if (PGUtils.isVideo(file.getName())) {
-					photogalleryFacade.tryDeletePreviewImage(file, photogallery);
-				}
+				if (PGUtils.isVideo(file.getFileName().toString()))
+					pgService.tryDeletePreviewImage(file.getFileName().toString(), photogallery);
 			}
-			file.delete();
-			items.remove(file);
-			table.getDataProvider().refreshAll();
-		}), table);
+			try {
+				Files.delete(file);
+				items.remove(file);
+			} catch (IOException e) {
+
+			}
+			grid.getDataProvider().refreshAll();
+		}), grid);
 
 		gridLayout.addComponent(removeBtn, 1, 1);
 		gridLayout.setComponentAlignment(removeBtn, Alignment.MIDDLE_CENTER);
 
-		table.addSelectionListener(event -> {
+		grid.addSelectionListener(event -> {
 			if (event.getAllSelectedItems().isEmpty()) {
 				gridLayout.removeComponent(imageWrapper);
 				gridLayout.addComponent(previewLabel, 0, 0, 1, 0);
 			} else {
-				File file = event.getFirstSelectedItem().get();
-				if (PGUtils.isImage(file.getName())) {
+				Path file = event.getFirstSelectedItem().get();
+				if (PGUtils.isImage(file.getFileName().toString())) {
 					if (imageWrapper.getParent() == null) {
 						gridLayout.removeComponent(previewLabel);
 						gridLayout.addComponent(imageWrapper, 0, 0, 1, 0);
 					}
-					image.setSource(new FileResource(file));
+					image.setSource(new FileResource(file.toFile()));
 				}
 				removeBtn.setEnabled(true);
 			}
 		});
-		gridLayout.addComponent(table, 2, 0, 2, 1);
+		gridLayout.addComponent(grid, 2, 0, 2, 1);
 
 		VerticalLayout uploadWrapper = new VerticalLayout();
 		uploadWrapper.setSpacing(true);
@@ -306,12 +310,12 @@ public class PGEditorPage extends OneColumnPage {
 
 			@Override
 			protected void handleFile(InputStream in, String fileName, String mimeType, long length) {
-				Path path = Paths.get(dir.getPath(), fileName);
+				Path path = dir.resolve(fileName);
 				try {
 					Files.copy(in, path);
 					newFiles.add(path);
-					items.add(path.toFile());
-					table.getDataProvider().refreshAll();
+					items.add(path);
+					grid.getDataProvider().refreshAll();
 				} catch (FileAlreadyExistsException f) {
 					if (warnWindowDeployed == false) {
 						existingFiles = new Label("", ContentMode.HTML);
@@ -417,11 +421,11 @@ public class PGEditorPage extends OneColumnPage {
 		List<String> tokens = new ArrayList<>();
 		photogalleryKeywords.getTokens().forEach(t -> tokens.add(t.getValue()));
 		if (editMode) {
-			photogalleryFacade.modifyPhotogallery(String.valueOf(photogalleryNameField.getValue()), tokens,
+			pgService.modifyPhotogallery(String.valueOf(photogalleryNameField.getValue()), tokens,
 					publicatedCheckBox.getValue(), photogallery, getRequest().getContextRoot(),
 					photogalleryDateField.getValue());
 		} else {
-			photogalleryFacade.savePhotogallery(String.valueOf(photogalleryNameField.getValue()), tokens, galleryDir,
+			pgService.savePhotogallery(String.valueOf(photogalleryNameField.getValue()), tokens, galleryDir,
 					publicatedCheckBox.getValue(), node, UIUtils.getGrassUI().getUser(), getRequest().getContextRoot(),
 					photogalleryDateField.getValue());
 		}
@@ -471,7 +475,7 @@ public class PGEditorPage extends OneColumnPage {
 			Long id = event.getGalleryId();
 			if (event.isSuccess() && (id != null || editMode)) {
 				if (editMode == false)
-					photogallery = photogalleryFacade.getPhotogalleryForDetail(id);
+					photogallery = pgService.getPhotogalleryForDetail(id);
 
 				// soubory byly uloženy a nepodléhají
 				// podmíněnému smazání

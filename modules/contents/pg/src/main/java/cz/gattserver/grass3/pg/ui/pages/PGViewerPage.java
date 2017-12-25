@@ -1,6 +1,8 @@
 package cz.gattserver.grass3.pg.ui.pages;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 import javax.annotation.Resource;
@@ -37,6 +39,7 @@ import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ConfigurationService;
+import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.ui.components.BaseProgressBar;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
@@ -71,6 +74,9 @@ public class PGViewerPage extends ContentViewerPage {
 	@Autowired
 	private EventBus eventBus;
 
+	@Autowired
+	private FileSystemService fileSystemService;
+
 	private UI ui = UI.getCurrent();
 	private ProgressWindow progressIndicatorWindow;
 
@@ -101,19 +107,19 @@ public class PGViewerPage extends ContentViewerPage {
 
 	private GridLayout galleryGridLayout;
 
-	private File galleryDir;
-	private File photoMiniaturesDirFile;
-	private File videoPreviewsDirFile;
-	private File slideshowDirFile;
+	private Path galleryDir;
+	private Path photoMiniaturesDirFile;
+	private Path videoPreviewsDirFile;
+	private Path slideshowDirFile;
 
 	/**
 	 * Miniatury fotek
 	 */
-	private File[] photoMiniatures;
+	private Path[] photoMiniatures;
 	/**
 	 * Náhledy videí
 	 */
-	private File[] videoPreviews;
+	private Path[] videoPreviews;
 
 	public PGViewerPage(GrassRequest request) {
 		super(request);
@@ -153,18 +159,16 @@ public class PGViewerPage extends ContentViewerPage {
 
 		PGConfiguration configuration = new PGConfiguration();
 		configurationService.loadConfiguration(configuration);
+		Path rootDir = fileSystemService.getFileSystem().getPath(configuration.getRootDir());
 
-		galleryDir = new File(configuration.getRootDir(), photogallery.getPhotogalleryPath());
-		photoMiniaturesDirFile = new File(galleryDir, configuration.getMiniaturesDir());
-		videoPreviewsDirFile = new File(galleryDir, configuration.getPreviewsDir());
-		slideshowDirFile = new File(galleryDir, configuration.getSlideshowDir());
+		galleryDir = rootDir.resolve(photogallery.getPhotogalleryPath());
+		photoMiniaturesDirFile = galleryDir.resolve(configuration.getMiniaturesDir());
+		videoPreviewsDirFile = galleryDir.resolve(configuration.getPreviewsDir());
+		slideshowDirFile = galleryDir.resolve(configuration.getSlideshowDir());
 
 		pgSelectedVideoItemId = analyzer.getNextPathToken();
-		if (pgSelectedVideoItemId != null) {
-			if (new File(galleryDir, pgSelectedVideoItemId).exists() == false) {
-				throw new GrassPageException(404);
-			}
-		}
+		if (pgSelectedVideoItemId != null && !Files.exists(galleryDir.resolve(pgSelectedVideoItemId)))
+			throw new GrassPageException(404);
 
 		return super.createPayload();
 	}
@@ -185,17 +189,20 @@ public class PGViewerPage extends ContentViewerPage {
 	protected void createContent(VerticalLayout layout) {
 
 		// pokud je galerie porušená, pak nic nevypisuj
-		if (photoMiniaturesDirFile.exists() == false || videoPreviewsDirFile.exists() == false) {
+		if (!Files.exists(photoMiniaturesDirFile) || !Files.exists(videoPreviewsDirFile)) {
 			layout.addComponent(new Label("Chyba: Galerie je porušená -- kontaktujte administrátora (ID: "
 					+ photogallery.getPhotogalleryPath() + ")"));
 			return;
 		}
 
-		photoMiniatures = photoMiniaturesDirFile.listFiles();
-		Arrays.sort(photoMiniatures);
-
-		videoPreviews = videoPreviewsDirFile.listFiles();
-		Arrays.sort(videoPreviews);
+		try {
+			photoMiniatures = Files.list(photoMiniaturesDirFile).toArray(Path[]::new);
+			videoPreviews = Files.list(videoPreviewsDirFile).toArray(Path[]::new);
+			Arrays.sort(photoMiniatures);
+			Arrays.sort(videoPreviews);
+		} catch (Exception e) {
+			throw new GrassPageException(500, e);
+		}
 
 		imageSum = photoMiniatures.length + videoPreviews.length;
 		rowsSum = (int) Math.ceil((photoMiniatures.length + videoPreviews.length) * 1f / GALLERY_GRID_COLS);
@@ -347,7 +354,7 @@ public class PGViewerPage extends ContentViewerPage {
 					private static final long serialVersionUID = -3146957611784022710L;
 
 					{
-						Link link = new Link("Stáhnout ZIP souboru", new FileResource(event.getZipFile()) {
+						Link link = new Link("Stáhnout ZIP souboru", new FileResource(event.getZipFile().toFile()) {
 							private static final long serialVersionUID = -8702951153271074955L;
 
 							@Override
@@ -369,7 +376,11 @@ public class PGViewerPage extends ContentViewerPage {
 					@Override
 					public void close() {
 						super.close();
-						event.getZipFile().delete();
+						try {
+							Files.delete(event.getZipFile());
+						} catch (IOException e) {
+							throw new GrassPageException(500, e);
+						}
 					}
 				});
 
@@ -423,7 +434,7 @@ public class PGViewerPage extends ContentViewerPage {
 		});
 	}
 
-	private void showImage(File[] miniatures, int index) {
+	private void showImage(Path[] miniatures, int index) {
 		UI.getCurrent().addWindow(new ImageSlideshowWindow(miniatures, index, slideshowDirFile) {
 			private static final long serialVersionUID = 5403584860186673877L;
 
@@ -443,11 +454,11 @@ public class PGViewerPage extends ContentViewerPage {
 	}
 
 	private String getItemURL(String itemId) {
-		return getRequest().getContextRoot() + PGConfiguration.PG_PATH + "/"
-				+ photogallery.getPhotogalleryPath() + "/" + itemId;
+		return getRequest().getContextRoot() + PGConfiguration.PG_PATH + "/" + photogallery.getPhotogalleryPath() + "/"
+				+ itemId;
 	}
 
-	private void populateGrid(final File[] miniatures, final File[] previews) {
+	private void populateGrid(final Path[] miniatures, final Path[] previews) {
 
 		galleryGridLayout.removeAllComponents();
 
@@ -466,13 +477,13 @@ public class PGViewerPage extends ContentViewerPage {
 			itemLayout.setSpacing(true);
 
 			// Image
-			final File miniature = videos ? previews[videoIndex] : miniatures[i];
-			Embedded embedded = new Embedded(null, new FileResource(miniature));
+			final Path miniature = videos ? previews[videoIndex] : miniatures[i];
+			Embedded embedded = new Embedded(null, new FileResource(miniature.toFile()));
 			itemLayout.addComponent(embedded);
 			itemLayout.setComponentAlignment(embedded, Alignment.MIDDLE_CENTER);
 
-			String itemId = videos ? miniature.getName().substring(0, miniature.getName().length() - 4)
-					: miniature.getName();
+			String filename = miniature.getFileName().toString();
+			String itemId = videos ? filename.substring(0, filename.length() - 4) : filename;
 
 			// odeber ".png"
 			final String url = getItemURL(itemId);

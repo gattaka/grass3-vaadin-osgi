@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.pg.service;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -60,7 +60,7 @@ public interface PGService {
 	 * @return identifikátor galerie pokud vše dopadlo v pořádku, jinak
 	 *         {@code null}
 	 */
-	public void savePhotogallery(String name, Collection<String> tags, File galleryDir, boolean publicated,
+	public void savePhotogallery(String name, Collection<String> tags, Path galleryDir, boolean publicated,
 			NodeOverviewTO node, UserInfoTO author, String contextRoot, LocalDateTime date);
 
 	/**
@@ -80,7 +80,7 @@ public interface PGService {
 	/**
 	 * Vytvoří nový adresář pro fotogalerii
 	 */
-	public File createGalleryDir();
+	public Path createGalleryDir();
 
 	/**
 	 * Získá objekt konfigurace
@@ -94,7 +94,7 @@ public interface PGService {
 	 *            objekt galerie
 	 * @return adresář
 	 */
-	public File getGalleryDir(PhotogalleryTO photogallery);
+	public Path getGalleryDir(PhotogalleryTO photogallery);
 
 	/**
 	 * Pokusí se smazat miniaturu od předaného souboru
@@ -104,7 +104,7 @@ public interface PGService {
 	 * @param photogalleryDTO
 	 *            objekt galerie
 	 */
-	public void tryDeleteMiniatureImage(File file, PhotogalleryTO photogalleryDTO);
+	public void tryDeleteMiniatureImage(String file, PhotogalleryTO photogalleryDTO);
 
 	/**
 	 * Uloží konfiguraci
@@ -119,7 +119,7 @@ public interface PGService {
 	 * @param photogalleryDTO
 	 *            objekt galerie
 	 */
-	public void tryDeleteSlideshowImage(File file, PhotogalleryTO photogalleryDTO);
+	public void tryDeleteSlideshowImage(String file, PhotogalleryTO photogalleryDTO);
 
 	/**
 	 * Pokusí se smazat preview verzi od předaného videa
@@ -129,7 +129,7 @@ public interface PGService {
 	 * @param photogalleryDTO
 	 *            objekt galerie
 	 */
-	void tryDeletePreviewImage(File file, PhotogalleryTO photogalleryDTO);
+	void tryDeletePreviewImage(String file, PhotogalleryTO photogalleryDTO);
 
 	/**
 	 * Získá všechny galerie a namapuje je pro použití REST
@@ -156,13 +156,13 @@ public interface PGService {
 	 *            jde miniaturu nebo plnou velikost?
 	 * @return
 	 */
-	public File getPhotoForREST(Long id, String fileName, boolean mini) throws UnauthorizedAccessException;
+	public Path getPhotoForREST(Long id, String fileName, boolean mini) throws UnauthorizedAccessException;
 
 	/**
 	 * Zazipuje galerii
 	 * 
 	 * @param galleryDir
 	 */
-	public void zipGallery(File galleryDir);
+	public void zipGallery(Path galleryDir);
 
 }

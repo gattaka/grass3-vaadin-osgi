@@ -1,14 +1,14 @@
 package cz.gattserver.grass3.pg.util;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.nio.file.Path;
 
 import org.jcodec.api.FrameGrab;
 
 public class DecodeAndCaptureFrames {
 
-	public BufferedImage decodeAndCaptureFrames(final String filename) throws Exception {
-		BufferedImage frame = FrameGrab.getFrame(new File(filename), 1);
+	public BufferedImage decodeAndCaptureFrames(Path file) throws Exception {
+		BufferedImage frame = FrameGrab.getFrame(file.toAbsolutePath().toFile(), 1);
 		return frame;
 	}
 

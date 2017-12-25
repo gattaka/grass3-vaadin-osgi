@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
 
 import javax.imageio.ImageIO;
@@ -19,23 +19,24 @@ import com.mortennobel.imagescaling.ResampleOp;
 
 public class PGUtils {
 
-	private static String getExtension(File file) {
-		int dot = file.getName().lastIndexOf(".");
-		if (dot <= 0 || file.getName().length() < 3)
+	private static String getExtension(Path file) {
+		String filename = file.getFileName().toString();
+		int dot = filename.lastIndexOf(".");
+		if (dot <= 0 || filename.length() < 3)
 			return "";
-		return file.getName().substring(dot + 1);
+		return filename.substring(dot + 1);
 	}
 
-	public static boolean isSmallerThenMaxArea(File inputFile, int maxArea) throws IOException {
-		BufferedImage image = ImageIO.read(inputFile);
+	public static boolean isSmallerThenMaxArea(Path inputFile, int maxArea) throws IOException {
+		BufferedImage image = ImageIO.read(inputFile.toFile());
 		return image.getHeight() * image.getWidth() < maxArea;
 	}
 
-	public static int readImageOrientation(File imageFile) {
+	public static int readImageOrientation(Path imageFile) {
 		Metadata metadata;
 		int orientation = 1;
 		try {
-			metadata = ImageMetadataReader.readMetadata(imageFile);
+			metadata = ImageMetadataReader.readMetadata(imageFile.toFile());
 			Collection<ExifIFD0Directory> directories = metadata.getDirectoriesOfType(ExifIFD0Directory.class);
 			if (directories.isEmpty() == false) {
 				orientation = directories.iterator().next().getInt(ExifIFD0Directory.TAG_ORIENTATION);
@@ -53,10 +54,10 @@ public class PGUtils {
 		return resampleOp.filter(image, null);
 	}
 
-	public static boolean resizeAndRotateImageFile(File inputFile, File destinationFile, int maxWidth, int maxHeight)
+	public static boolean resizeAndRotateImageFile(Path inputFile, Path destinationFile, int maxWidth, int maxHeight)
 			throws IOException {
 
-		BufferedImage image = resizeBufferedImage(ImageIO.read(inputFile), maxWidth, maxHeight);
+		BufferedImage image = resizeBufferedImage(ImageIO.read(inputFile.toFile()), maxWidth, maxHeight);
 
 		int orientation = readImageOrientation(inputFile);
 		if (orientation != 1) {
@@ -116,16 +117,30 @@ public class PGUtils {
 			image = temp;
 		}
 
-		ImageIO.write(image, getExtension(inputFile), destinationFile);
+		ImageIO.write(image, getExtension(inputFile), destinationFile.toFile());
 		return true;
 	}
 
+	/**
+	 * Zjistí dle přípony souboru, zda se jedná o obrázek
+	 * 
+	 * @param filename
+	 *            jméno souboru s příponou
+	 * @return <code>true</code>, pokud se dle přípony jedná o soubor obrázku
+	 */
 	public static boolean isImage(String file) {
 		String fileToExt = file.toLowerCase();
 		return fileToExt.endsWith(".jpg") || fileToExt.endsWith(".jpeg") || fileToExt.endsWith(".gif")
 				|| fileToExt.endsWith(".png") || fileToExt.endsWith(".bmp");
 	}
 
+	/**
+	 * Zjistí dle přípony souboru, zda se jedná o video
+	 * 
+	 * @param filename
+	 *            jméno souboru s příponou
+	 * @return <code>true</code>, pokud se dle přípony jedná o soubor videa
+	 */
 	public static boolean isVideo(String file) {
 		String fileToExt = file.toLowerCase();
 		return fileToExt.endsWith(".mp4") || fileToExt.endsWith(".ogg") || fileToExt.endsWith(".webm")

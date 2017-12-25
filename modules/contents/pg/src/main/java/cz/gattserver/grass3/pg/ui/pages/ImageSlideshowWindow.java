@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.pg.ui.pages;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,10 +22,10 @@ public class ImageSlideshowWindow extends WebWindow {
 	private int currentIndex;
 	private List<Resource> list;
 	private Embedded embedded;
-	private File[] miniatures;
+	private Path[] miniatures;
 
-	public ImageSlideshowWindow(File[] miniatures, int index, File slideshowDir) {
-		super((index + 1) + "/" + miniatures.length + " " + miniatures[index].getName());
+	public ImageSlideshowWindow(Path[] miniatures, int index, Path slideshowDir) {
+		super((index + 1) + "/" + miniatures.length + " " + miniatures[index].getFileName().toString());
 		this.currentIndex = index;
 		this.miniatures = miniatures;
 
@@ -35,13 +36,13 @@ public class ImageSlideshowWindow extends WebWindow {
 
 		list = new ArrayList<>();
 
-		for (File mini : miniatures) {
+		for (Path mini : miniatures) {
 
-			File image = new File(slideshowDir, mini.getName());
-			if (image.exists() == false)
-				image = new File(slideshowDir.getParent(), mini.getName());
+			Path image = slideshowDir.resolve(mini.getFileName().toString());
+			if (!Files.exists(image))
+				image = slideshowDir.getParent().resolve(mini.getFileName().toString());
 
-			Resource resource = new FileResource(image);
+			Resource resource = new FileResource(image.toFile());
 			list.add(resource);
 		}
 
@@ -82,7 +83,7 @@ public class ImageSlideshowWindow extends WebWindow {
 	protected void changeImage(int index) {
 		currentIndex = index;
 		embedded.setSource(list.get(currentIndex));
-		setCaption((index + 1) + "/" + miniatures.length + " " + miniatures[currentIndex].getName());
+		setCaption((index + 1) + "/" + miniatures.length + " " + miniatures[currentIndex].getFileName().toString());
 		// center();
 	}
 

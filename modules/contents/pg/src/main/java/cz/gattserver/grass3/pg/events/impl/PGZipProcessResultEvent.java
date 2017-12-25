@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.pg.events.impl;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import cz.gattserver.grass3.events.ResultEvent;
 
@@ -9,14 +9,14 @@ public class PGZipProcessResultEvent implements ResultEvent {
 	private boolean success;
 	private String resultDetails;
 
-	private File zipFile;
+	private Path zipFile;
 
-	public PGZipProcessResultEvent(File zipFile) {
+	public PGZipProcessResultEvent(Path zipFile) {
 		this.success = true;
 		this.zipFile = zipFile;
 	}
 
-	public File getZipFile() {
+	public Path getZipFile() {
 		return zipFile;
 	}
 

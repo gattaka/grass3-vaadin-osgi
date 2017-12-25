@@ -2,9 +2,9 @@ package cz.gattserver.grass3.pg.util;
 
 import java.util.List;
 
-import cz.gattserver.grass3.pg.domain.Photogallery;
-import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
-import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryDTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewDTO;
+import cz.gattserver.grass3.pg.model.domain.Photogallery;
 
 public interface PhotogalleryMapper {
 

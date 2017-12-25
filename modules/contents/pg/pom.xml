@@ -25,7 +25,7 @@
 			<artifactId>search</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		
+
 		<!-- JCodec -->
 		<dependency>
 			<groupId>cz.gattserver</groupId>
@@ -48,5 +48,15 @@
 		</dependency>
 
 	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- JaCoCo -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

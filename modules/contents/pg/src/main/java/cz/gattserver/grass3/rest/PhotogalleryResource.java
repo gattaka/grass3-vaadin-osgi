@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
-import cz.gattserver.grass3.pg.dto.PhotogalleryRESTDTO;
-import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
-import cz.gattserver.grass3.pg.facade.PhotogalleryFacade;
-import cz.gattserver.grass3.pg.facade.exception.UnauthorizedAccessException;
+import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTDTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewDTO;
+import cz.gattserver.grass3.pg.service.PhotogalleryService;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.services.impl.LoginResult;
 
@@ -32,7 +32,7 @@ import cz.gattserver.grass3.services.impl.LoginResult;
 public class PhotogalleryResource {
 
 	@Autowired
-	private PhotogalleryFacade photogalleryFacade;
+	private PhotogalleryService photogalleryFacade;
 
 	@Autowired
 	private SecurityService securityFacade;

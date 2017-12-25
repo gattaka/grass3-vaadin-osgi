@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.model.util.CoreMapper;
-import cz.gattserver.grass3.pg.domain.Photogallery;
-import cz.gattserver.grass3.pg.dto.PhotogalleryDTO;
-import cz.gattserver.grass3.pg.dto.PhotogalleryRESTOverviewDTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryDTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewDTO;
+import cz.gattserver.grass3.pg.model.domain.Photogallery;
 
 @Component
 public class PhotogalleryMapperImpl implements PhotogalleryMapper {

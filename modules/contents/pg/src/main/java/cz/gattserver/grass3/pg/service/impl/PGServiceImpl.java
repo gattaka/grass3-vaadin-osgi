@@ -30,7 +30,7 @@ import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
-import cz.gattserver.grass3.modules.PhotogalleryContentModule;
+import cz.gattserver.grass3.modules.PGModule;
 import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.pg.events.impl.PGProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.impl.PGProcessResultEvent;
@@ -39,12 +39,12 @@ import cz.gattserver.grass3.pg.events.impl.PGZipProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.impl.PGZipProcessResultEvent;
 import cz.gattserver.grass3.pg.events.impl.PGZipProcessStartEvent;
 import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
-import cz.gattserver.grass3.pg.interfaces.PhotogalleryDTO;
-import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTDTO;
-import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewDTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
 import cz.gattserver.grass3.pg.model.domain.Photogallery;
-import cz.gattserver.grass3.pg.model.repositories.PhotoGalleryRepository;
-import cz.gattserver.grass3.pg.service.PhotogalleryService;
+import cz.gattserver.grass3.pg.model.repositories.PhotogalleryRepository;
+import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.pg.util.DecodeAndCaptureFrames;
 import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.pg.util.PhotogalleryMapper;
@@ -54,9 +54,9 @@ import cz.gattserver.grass3.services.SecurityService;
 
 @Transactional
 @Component
-public class PhotogalleryFacadeImpl implements PhotogalleryService {
+public class PGServiceImpl implements PGService {
 
-	private static Logger logger = LoggerFactory.getLogger(PhotogalleryFacadeImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(PGServiceImpl.class);
 
 	@Autowired
 	private ContentNodeService contentNodeFacade;
@@ -71,7 +71,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryService {
 	private ConfigurationService configurationService;
 
 	@Autowired
-	private PhotoGalleryRepository photogalleryRepository;
+	private PhotogalleryRepository photogalleryRepository;
 
 	@Autowired
 	private EventBus eventBus;
@@ -100,7 +100,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryService {
 	}
 
 	@Override
-	public void deletePhotogallery(PhotogalleryDTO photogallery) {
+	public void deletePhotogallery(PhotogalleryTO photogallery) {
 		File galleryDir = getGalleryDir(photogallery);
 		deleteFileRecursively(galleryDir);
 
@@ -248,7 +248,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryService {
 	@Override
 	@Async
 	public void modifyPhotogallery(String name, Collection<String> tags, boolean publicated,
-			PhotogalleryDTO photogalleryDTO, String contextRoot, LocalDateTime date) {
+			PhotogalleryTO photogalleryDTO, String contextRoot, LocalDateTime date) {
 		try {
 			logger.info("modifyPhotogallery thread: " + Thread.currentThread().getId());
 
@@ -331,7 +331,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryService {
 
 		// vytvoř odpovídající content node
 		eventBus.publish(new PGProcessProgressEvent("Uložení obsahu galerie"));
-		Long contentNodeId = contentNodeFacade.save(PhotogalleryContentModule.ID, photogallery.getId(), name, tags,
+		Long contentNodeId = contentNodeFacade.save(PGModule.ID, photogallery.getId(), name, tags,
 				publicated, node.getId(), author.getId(), false, date, null);
 
 		// ulož do galerie referenci na její contentnode
@@ -347,22 +347,22 @@ public class PhotogalleryFacadeImpl implements PhotogalleryService {
 	}
 
 	@Override
-	public PhotogalleryDTO getPhotogalleryForDetail(Long id) {
+	public PhotogalleryTO getPhotogalleryForDetail(Long id) {
 		Photogallery photogallery = photogalleryRepository.findOne(id);
 		if (photogallery == null)
 			return null;
-		PhotogalleryDTO photogalleryDTO = photogalleriesMapper.mapPhotogalleryForDetail(photogallery);
+		PhotogalleryTO photogalleryDTO = photogalleriesMapper.mapPhotogalleryForDetail(photogallery);
 		return photogalleryDTO;
 	}
 
 	@Override
-	public List<PhotogalleryDTO> getAllPhotogalleriesForSearch() {
+	public List<PhotogalleryTO> getAllPhotogalleriesForSearch() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public File getGalleryDir(PhotogalleryDTO photogallery) {
+	public File getGalleryDir(PhotogalleryTO photogallery) {
 		return new File(getConfiguration().getRootDir(), photogallery.getPhotogalleryPath());
 	}
 
@@ -371,7 +371,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryService {
 	}
 
 	@Override
-	public void tryDeleteMiniatureImage(File file, PhotogalleryDTO photogalleryDTO) {
+	public void tryDeleteMiniatureImage(File file, PhotogalleryTO photogalleryDTO) {
 		PGConfiguration configuration = getConfiguration();
 		String miniaturesDir = configuration.getMiniaturesDir();
 		File galleryDir = getGalleryDir(photogalleryDTO);
@@ -383,7 +383,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryService {
 	}
 
 	@Override
-	public void tryDeletePreviewImage(File file, PhotogalleryDTO photogalleryDTO) {
+	public void tryDeletePreviewImage(File file, PhotogalleryTO photogalleryDTO) {
 		PGConfiguration configuration = getConfiguration();
 		String previewDir = configuration.getPreviewsDir();
 		File galleryDir = getGalleryDir(photogalleryDTO);
@@ -395,7 +395,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryService {
 	}
 
 	@Override
-	public void tryDeleteSlideshowImage(File file, PhotogalleryDTO photogalleryDTO) {
+	public void tryDeleteSlideshowImage(File file, PhotogalleryTO photogalleryDTO) {
 		PGConfiguration configuration = getConfiguration();
 		String slideshowDir = configuration.getSlideshowDir();
 		File galleryDir = getGalleryDir(photogalleryDTO);
@@ -407,13 +407,13 @@ public class PhotogalleryFacadeImpl implements PhotogalleryService {
 	}
 
 	@Override
-	public List<PhotogalleryRESTOverviewDTO> getAllPhotogalleriesForREST(Long userId) {
+	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId) {
 		return photogalleriesMapper
 				.mapPhotogalleryForRESTOverviewCollection(photogalleryRepository.findByUserAccess(userId));
 	}
 
 	@Override
-	public PhotogalleryRESTDTO getPhotogalleryForREST(Long id) throws UnauthorizedAccessException {
+	public PhotogalleryRESTTO getPhotogalleryForREST(Long id) throws UnauthorizedAccessException {
 		Photogallery gallery = photogalleryRepository.findOne(id);
 		if (gallery == null)
 			return null;
@@ -434,7 +434,7 @@ public class PhotogalleryFacadeImpl implements PhotogalleryService {
 				return null;
 			}
 
-			PhotogalleryRESTDTO photogalleryDTO = new PhotogalleryRESTDTO(gallery.getId(),
+			PhotogalleryRESTTO photogalleryDTO = new PhotogalleryRESTTO(gallery.getId(),
 					gallery.getContentNode().getName(), gallery.getContentNode().getCreationDate(),
 					gallery.getContentNode().getLastModificationDate(), gallery.getContentNode().getAuthor().getName(),
 					files);

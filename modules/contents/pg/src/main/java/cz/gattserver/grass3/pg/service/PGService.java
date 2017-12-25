@@ -9,11 +9,11 @@ import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
-import cz.gattserver.grass3.pg.interfaces.PhotogalleryDTO;
-import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTDTO;
-import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewDTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
 
-public interface PhotogalleryService {
+public interface PGService {
 
 	/**
 	 * Smaže galerii
@@ -22,7 +22,7 @@ public interface PhotogalleryService {
 	 *            galerie ke smazání
 	 * @return {@code true} pokud se zdařilo smazat jinak {@code false}
 	 */
-	public void deletePhotogallery(PhotogalleryDTO photogallery);
+	public void deletePhotogallery(PhotogalleryTO photogallery);
 
 	/**
 	 * Upraví galerii
@@ -39,7 +39,7 @@ public interface PhotogalleryService {
 	 * @return {@code true} pokud se úprava zdařila, jinak {@code false}
 	 */
 	public void modifyPhotogallery(String name, Collection<String> tags, boolean publicated,
-			PhotogalleryDTO photogallery, String contextRoot, LocalDateTime date);
+			PhotogalleryTO photogallery, String contextRoot, LocalDateTime date);
 
 	/**
 	 * Uloží galerii
@@ -70,12 +70,12 @@ public interface PhotogalleryService {
 	 *            identifikátor
 	 * @return DTO galerie
 	 */
-	public PhotogalleryDTO getPhotogalleryForDetail(Long id);
+	public PhotogalleryTO getPhotogalleryForDetail(Long id);
 
 	/**
 	 * Získá všechny galerie a namapuje je pro použití při vyhledávání
 	 */
-	public List<PhotogalleryDTO> getAllPhotogalleriesForSearch();
+	public List<PhotogalleryTO> getAllPhotogalleriesForSearch();
 
 	/**
 	 * Vytvoří nový adresář pro fotogalerii
@@ -94,7 +94,7 @@ public interface PhotogalleryService {
 	 *            objekt galerie
 	 * @return adresář
 	 */
-	public File getGalleryDir(PhotogalleryDTO photogallery);
+	public File getGalleryDir(PhotogalleryTO photogallery);
 
 	/**
 	 * Pokusí se smazat miniaturu od předaného souboru
@@ -104,7 +104,7 @@ public interface PhotogalleryService {
 	 * @param photogalleryDTO
 	 *            objekt galerie
 	 */
-	public void tryDeleteMiniatureImage(File file, PhotogalleryDTO photogalleryDTO);
+	public void tryDeleteMiniatureImage(File file, PhotogalleryTO photogalleryDTO);
 
 	/**
 	 * Uloží konfiguraci
@@ -119,7 +119,7 @@ public interface PhotogalleryService {
 	 * @param photogalleryDTO
 	 *            objekt galerie
 	 */
-	public void tryDeleteSlideshowImage(File file, PhotogalleryDTO photogalleryDTO);
+	public void tryDeleteSlideshowImage(File file, PhotogalleryTO photogalleryDTO);
 
 	/**
 	 * Pokusí se smazat preview verzi od předaného videa
@@ -129,12 +129,12 @@ public interface PhotogalleryService {
 	 * @param photogalleryDTO
 	 *            objekt galerie
 	 */
-	void tryDeletePreviewImage(File file, PhotogalleryDTO photogalleryDTO);
+	void tryDeletePreviewImage(File file, PhotogalleryTO photogalleryDTO);
 
 	/**
 	 * Získá všechny galerie a namapuje je pro použití REST
 	 */
-	public List<PhotogalleryRESTOverviewDTO> getAllPhotogalleriesForREST(Long userId);
+	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId);
 
 	/**
 	 * Získá detail fotogalerie pro REST
@@ -143,7 +143,7 @@ public interface PhotogalleryService {
 	 *            idetifikátor galerie
 	 * @return
 	 */
-	public PhotogalleryRESTDTO getPhotogalleryForREST(Long id) throws UnauthorizedAccessException;
+	public PhotogalleryRESTTO getPhotogalleryForREST(Long id) throws UnauthorizedAccessException;
 
 	/**
 	 * Získá fotografii dle galerie pro REST

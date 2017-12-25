@@ -2,15 +2,15 @@ package cz.gattserver.grass3.pg.ui.pages.factories;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.pg.ui.pages.PhotogallerySettingsPage;
+import cz.gattserver.grass3.pg.ui.pages.PGSettingsPage;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.settings.factories.AbstractModuleSettingsPageFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 
 @Component
-public class PhotogallerySettingsPageFactory extends AbstractModuleSettingsPageFactory {
+public class PGSettingsPageFactory extends AbstractModuleSettingsPageFactory {
 
-	public PhotogallerySettingsPageFactory() {
+	public PGSettingsPageFactory() {
 		super("Fotogalerie", "photogallery");
 	}
 
@@ -20,6 +20,6 @@ public class PhotogallerySettingsPageFactory extends AbstractModuleSettingsPageF
 
 	@Override
 	protected GrassPage createPage(GrassRequest request) {
-		return new PhotogallerySettingsPage(request);
+		return new PGSettingsPage(request);
 	}
 }

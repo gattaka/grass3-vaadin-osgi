@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.pg.interfaces;
 
-public class PhotogalleryRESTOverviewDTO {
+public class PhotogalleryRESTOverviewTO {
 
 	/**
 	 * DB identifikátor

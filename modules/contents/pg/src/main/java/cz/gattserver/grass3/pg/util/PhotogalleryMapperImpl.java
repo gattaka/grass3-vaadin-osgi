@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.model.util.CoreMapper;
-import cz.gattserver.grass3.pg.interfaces.PhotogalleryDTO;
-import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewDTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
 import cz.gattserver.grass3.pg.model.domain.Photogallery;
 
 @Component
@@ -21,10 +21,10 @@ public class PhotogalleryMapperImpl implements PhotogalleryMapper {
 	private CoreMapper mapper;
 
 	/**
-	 * Převede {@link Photogallery} na {@link PhotogalleryDTO}
+	 * Převede {@link Photogallery} na {@link PhotogalleryTO}
 	 */
-	public PhotogalleryDTO mapPhotogalleryForDetail(Photogallery photogallery) {
-		PhotogalleryDTO photogalleryDTO = new PhotogalleryDTO();
+	public PhotogalleryTO mapPhotogalleryForDetail(Photogallery photogallery) {
+		PhotogalleryTO photogalleryDTO = new PhotogalleryTO();
 
 		photogalleryDTO.setId(photogallery.getId());
 		photogalleryDTO.setPhotogalleryPath(photogallery.getPhotogalleryPath());
@@ -34,10 +34,10 @@ public class PhotogalleryMapperImpl implements PhotogalleryMapper {
 	}
 
 	/**
-	 * Převede {@link Photogallery} na {@link PhotogalleryRESTOverviewDTO}
+	 * Převede {@link Photogallery} na {@link PhotogalleryRESTOverviewTO}
 	 */
-	public PhotogalleryRESTOverviewDTO mapPhotogalleryForRESTOverview(Photogallery photogallery) {
-		PhotogalleryRESTOverviewDTO photogalleryDTO = new PhotogalleryRESTOverviewDTO();
+	public PhotogalleryRESTOverviewTO mapPhotogalleryForRESTOverview(Photogallery photogallery) {
+		PhotogalleryRESTOverviewTO photogalleryDTO = new PhotogalleryRESTOverviewTO();
 
 		photogalleryDTO.setId(photogallery.getId());
 		photogalleryDTO.setName(photogallery.getContentNode().getName());
@@ -47,14 +47,14 @@ public class PhotogalleryMapperImpl implements PhotogalleryMapper {
 
 	/**
 	 * Převede list {@link Photogallery} na list
-	 * {@link PhotogalleryRESTOverviewDTO}
+	 * {@link PhotogalleryRESTOverviewTO}
 	 */
-	public List<PhotogalleryRESTOverviewDTO> mapPhotogalleryForRESTOverviewCollection(
+	public List<PhotogalleryRESTOverviewTO> mapPhotogalleryForRESTOverviewCollection(
 			List<Photogallery> photogalleryCollection) {
-		List<PhotogalleryRESTOverviewDTO> list = new ArrayList<>();
+		List<PhotogalleryRESTOverviewTO> list = new ArrayList<>();
 
 		for (Photogallery photogallery : photogalleryCollection) {
-			PhotogalleryRESTOverviewDTO to = mapPhotogalleryForRESTOverview(photogallery);
+			PhotogalleryRESTOverviewTO to = mapPhotogalleryForRESTOverview(photogallery);
 			list.add(to);
 		}
 

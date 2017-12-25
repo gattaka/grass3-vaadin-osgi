@@ -32,8 +32,8 @@ import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.pg.events.impl.PGZipProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.impl.PGZipProcessResultEvent;
 import cz.gattserver.grass3.pg.events.impl.PGZipProcessStartEvent;
-import cz.gattserver.grass3.pg.interfaces.PhotogalleryDTO;
-import cz.gattserver.grass3.pg.service.PhotogalleryService;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
+import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ConfigurationService;
@@ -51,10 +51,10 @@ import cz.gattserver.web.common.ui.window.WarnWindow;
 import cz.gattserver.web.common.ui.window.WebWindow;
 import net.engio.mbassy.listener.Handler;
 
-public class PhotogalleryViewerPage extends ContentViewerPage {
+public class PGViewerPage extends ContentViewerPage {
 
 	@Autowired
-	private PhotogalleryService photogalleryFacade;
+	private PGService photogalleryFacade;
 
 	@Autowired
 	private ConfigurationService configurationService;
@@ -74,7 +74,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	private UI ui = UI.getCurrent();
 	private ProgressWindow progressIndicatorWindow;
 
-	private PhotogalleryDTO photogallery;
+	private PhotogalleryTO photogallery;
 
 	private int rowsSum;
 	private int imageSum;
@@ -115,7 +115,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	 */
 	private File[] videoPreviews;
 
-	public PhotogalleryViewerPage(GrassRequest request) {
+	public PGViewerPage(GrassRequest request) {
 		super(request);
 	}
 
@@ -290,7 +290,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 		Button downloadZip = new Button("Zabalit galerii jako ZIP",
 				event -> UI.getCurrent().addWindow(new ConfirmWindow("Přejete si vytvořit ZIP galerie?", e -> {
 					System.out.println("zipPhotogallery thread: " + Thread.currentThread().getId());
-					eventBus.subscribe(PhotogalleryViewerPage.this);
+					eventBus.subscribe(PGViewerPage.this);
 					ui.setPollInterval(200);
 					photogalleryFacade.zipGallery(galleryDir);
 				})));
@@ -377,7 +377,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 				UIUtils.showWarning(event.getResultDetails());
 			}
 		});
-		eventBus.unsubscribe(PhotogalleryViewerPage.this);
+		eventBus.unsubscribe(PGViewerPage.this);
 	}
 
 	private void shiftGrid() {
@@ -443,7 +443,7 @@ public class PhotogalleryViewerPage extends ContentViewerPage {
 	}
 
 	private String getItemURL(String itemId) {
-		return getRequest().getContextRoot() + PGConfiguration.PHOTOGALLERY_PATH + "/"
+		return getRequest().getContextRoot() + PGConfiguration.PG_PATH + "/"
 				+ photogallery.getPhotogalleryPath() + "/" + itemId;
 	}
 

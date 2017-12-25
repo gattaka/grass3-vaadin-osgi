@@ -21,18 +21,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
-import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTDTO;
-import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewDTO;
-import cz.gattserver.grass3.pg.service.PhotogalleryService;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
+import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.services.impl.LoginResult;
 
 @Controller
 @RequestMapping("/pg")
-public class PhotogalleryResource {
+public class PGResource {
 
 	@Autowired
-	private PhotogalleryService photogalleryFacade;
+	private PGService photogalleryFacade;
 
 	@Autowired
 	private SecurityService securityFacade;
@@ -58,15 +58,15 @@ public class PhotogalleryResource {
 
 	// http://localhost:8180/web/ws/pg/list
 	@RequestMapping("/list")
-	public ResponseEntity<List<PhotogalleryRESTOverviewDTO>> list() {
+	public ResponseEntity<List<PhotogalleryRESTOverviewTO>> list() {
 		UserInfoTO user = securityFacade.getCurrentUser();
 		return new ResponseEntity<>(photogalleryFacade.getAllPhotogalleriesForREST(user.getId()), HttpStatus.OK);
 	}
 
 	// http://localhost:8180/web/ws/pg/gallery?id=364
 	@RequestMapping("/gallery")
-	public ResponseEntity<PhotogalleryRESTDTO> gallery(@RequestParam(value = "id", required = true) Long id) {
-		PhotogalleryRESTDTO gallery;
+	public ResponseEntity<PhotogalleryRESTTO> gallery(@RequestParam(value = "id", required = true) Long id) {
+		PhotogalleryRESTTO gallery;
 		try {
 			gallery = photogalleryFacade.getPhotogalleryForREST(id);
 		} catch (UnauthorizedAccessException e) {

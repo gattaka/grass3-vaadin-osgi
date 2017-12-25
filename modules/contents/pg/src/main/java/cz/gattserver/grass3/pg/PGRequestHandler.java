@@ -9,12 +9,12 @@ import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.server.AbstractConfiguratedPathRequestHandler;
 
 @Component("pgRequestHandler")
-public class PhotogalleryRequestHandler extends AbstractConfiguratedPathRequestHandler {
+public class PGRequestHandler extends AbstractConfiguratedPathRequestHandler {
 
 	private static final long serialVersionUID = 7154339775034959876L;
 
-	public PhotogalleryRequestHandler() {
-		super(PGConfiguration.PHOTOGALLERY_PATH);
+	public PGRequestHandler() {
+		super(PGConfiguration.PG_PATH);
 	}
 
 	@Override

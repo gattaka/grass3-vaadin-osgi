@@ -9,18 +9,18 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.pg.config.PGConfiguration;
-import cz.gattserver.grass3.pg.service.PhotogalleryService;
+import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.H2Label;
 
-public class PhotogallerySettingsPage extends AbstractSettingsPage {
+public class PGSettingsPage extends AbstractSettingsPage {
 
 	@Autowired
-	private PhotogalleryService photogalleryFacade;
+	private PGService photogalleryFacade;
 
-	public PhotogallerySettingsPage(GrassRequest request) {
+	public PGSettingsPage(GrassRequest request) {
 		super(request);
 	}
 

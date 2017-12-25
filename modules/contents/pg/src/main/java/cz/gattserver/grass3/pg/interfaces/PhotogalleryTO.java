@@ -2,7 +2,7 @@ package cz.gattserver.grass3.pg.interfaces;
 
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 
-public class PhotogalleryDTO {
+public class PhotogalleryTO {
 
 	/**
 	 * Meta-informace o obsahu

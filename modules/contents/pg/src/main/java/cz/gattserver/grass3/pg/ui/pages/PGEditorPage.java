@@ -48,8 +48,8 @@ import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.pg.events.impl.PGProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.impl.PGProcessResultEvent;
 import cz.gattserver.grass3.pg.events.impl.PGProcessStartEvent;
-import cz.gattserver.grass3.pg.interfaces.PhotogalleryDTO;
-import cz.gattserver.grass3.pg.service.PhotogalleryService;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
+import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ContentTagService;
@@ -69,15 +69,15 @@ import cz.gattserver.web.common.ui.MultiUpload;
 import cz.gattserver.web.common.ui.window.ConfirmWindow;
 import cz.gattserver.web.common.ui.window.WarnWindow;
 
-public class PhotogalleryEditorPage extends OneColumnPage {
+public class PGEditorPage extends OneColumnPage {
 
-	private static final Logger logger = LoggerFactory.getLogger(PhotogalleryEditorPage.class);
+	private static final Logger logger = LoggerFactory.getLogger(PGEditorPage.class);
 
 	@Autowired
 	private NodeService nodeFacade;
 
 	@Autowired
-	private PhotogalleryService photogalleryFacade;
+	private PGService photogalleryFacade;
 
 	@Autowired
 	private ContentTagService contentTagFacade;
@@ -95,7 +95,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	private ProgressWindow progressIndicatorWindow;
 
 	private NodeOverviewTO node;
-	private PhotogalleryDTO photogallery;
+	private PhotogalleryTO photogallery;
 
 	private AdvancedTokenField photogalleryKeywords;
 	private TextField photogalleryNameField;
@@ -114,7 +114,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 	private Label existingFiles;
 	private WarnWindow warnWindow;
 
-	public PhotogalleryEditorPage(GrassRequest request) {
+	public PGEditorPage(GrassRequest request) {
 		super(request);
 		JavaScript.eval(
 				"window.onbeforeunload = function() { return \"Opravdu si přejete ukončit editor a odejít - rozpracovaná data nejsou uložena ?\" };");
@@ -412,7 +412,7 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 
 	private void saveOrUpdatePhotogallery() {
 		logger.info("saveOrUpdatePhotogallery thread: " + Thread.currentThread().getId());
-		eventBus.subscribe(PhotogalleryEditorPage.this);
+		eventBus.subscribe(PGEditorPage.this);
 		ui.setPollInterval(200);
 		List<String> tokens = new ArrayList<>();
 		photogalleryKeywords.getTokens().forEach(t -> tokens.add(t.getValue()));
@@ -487,6 +487,6 @@ public class PhotogalleryEditorPage extends OneColumnPage {
 			// odteď budeme editovat
 			editMode = true;
 		});
-		eventBus.unsubscribe(PhotogalleryEditorPage.this);
+		eventBus.unsubscribe(PGEditorPage.this);
 	}
 }

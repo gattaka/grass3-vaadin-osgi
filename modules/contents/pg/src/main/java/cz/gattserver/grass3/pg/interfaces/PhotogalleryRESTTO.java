@@ -3,7 +3,7 @@ package cz.gattserver.grass3.pg.interfaces;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-public class PhotogalleryRESTDTO {
+public class PhotogalleryRESTTO {
 
 	/**
 	 * DB identifikátor
@@ -35,7 +35,7 @@ public class PhotogalleryRESTDTO {
 	 */
 	private Set<String> files;
 
-	public PhotogalleryRESTDTO(Long id, String name, LocalDateTime creationDate, LocalDateTime lastModificationDate,
+	public PhotogalleryRESTTO(Long id, String name, LocalDateTime creationDate, LocalDateTime lastModificationDate,
 			String author, Set<String> files) {
 		super();
 		this.id = id;

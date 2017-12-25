@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
-import cz.gattserver.grass3.pg.interfaces.PhotogalleryDTO;
-import cz.gattserver.grass3.pg.service.PhotogalleryService;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
+import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.search.service.SearchConnector;
 import cz.gattserver.grass3.search.service.SearchField;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
@@ -18,10 +18,10 @@ import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.grass3.search.service.SearchEntity;
 
 @Component("photogalleriesSearchConnector")
-public class PhotogallerySearchConnector implements SearchConnector {
+public class PGSearchConnector implements SearchConnector {
 
 	@Autowired
-	private PhotogalleryService photogalleryFacade;
+	private PGService photogalleryFacade;
 
 	@Resource(name = "photogalleryViewerPageFactory")
 	private PageFactory photogalleryViewerPageFactory;
@@ -30,8 +30,8 @@ public class PhotogallerySearchConnector implements SearchConnector {
 
 		List<SearchEntity> searchEntities = new ArrayList<SearchEntity>();
 
-		List<PhotogalleryDTO> photogalleries = photogalleryFacade.getAllPhotogalleriesForSearch();
-		for (PhotogalleryDTO photogallery : photogalleries) {
+		List<PhotogalleryTO> photogalleries = photogalleryFacade.getAllPhotogalleriesForSearch();
+		for (PhotogalleryTO photogallery : photogalleries) {
 
 			// TODO
 			// if (coreACL.canShowContent(photogallery.getContentNode(), user))
@@ -42,7 +42,7 @@ public class PhotogallerySearchConnector implements SearchConnector {
 
 			SearchEntity searchEntity = new SearchEntity(photogalleryViewerPageFactory, suffix);
 
-			searchEntity.addField(PhotogallerySearchField.NAME, photogallery.getContentNode().getName(), true);
+			searchEntity.addField(PGSearchField.NAME, photogallery.getContentNode().getName(), true);
 			// searchEntity.addField(PhotogallerySearchField.CONTENT,
 			// photogallery.getSearchableOutput(), true);
 
@@ -56,7 +56,7 @@ public class PhotogallerySearchConnector implements SearchConnector {
 	}
 
 	public Enum<? extends SearchField>[] getSearchFields() {
-		return PhotogallerySearchField.values();
+		return PGSearchField.values();
 	}
 
 	public String getModuleId() {

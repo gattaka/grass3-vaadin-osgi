@@ -8,16 +8,16 @@ import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.web.common.ui.ImageIcon;
 
-@Component("photogalleryContentModules")
-public class PhotogalleryContentModule implements ContentModule {
+@Component("pgModules")
+public class PGModule implements ContentModule {
 
 	public static final String ID = "cz.gattserver.grass3.pg:0.0.1";
 
-	@Resource(name = "photogalleryViewerPageFactory")
-	private PageFactory photogalleryViewerPageFactory;
+	@Resource(name = "pgViewerPageFactory")
+	private PageFactory pgViewerPageFactory;
 
-	@Resource(name = "photogalleryEditorPageFactory")
-	private PageFactory photogalleryEditorPageFactory;
+	@Resource(name = "pgEditorPageFactory")
+	private PageFactory pgEditorPageFactory;
 
 	@Override
 	public String getCreateNewContentLabel() {
@@ -36,12 +36,12 @@ public class PhotogalleryContentModule implements ContentModule {
 
 	@Override
 	public PageFactory getContentEditorPageFactory() {
-		return photogalleryEditorPageFactory;
+		return pgEditorPageFactory;
 	}
 
 	@Override
 	public PageFactory getContentViewerPageFactory() {
-		return photogalleryViewerPageFactory;
+		return pgViewerPageFactory;
 	}
 
 }

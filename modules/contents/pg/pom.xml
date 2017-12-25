@@ -10,13 +10,6 @@
 		<version>1.0.0</version>
 	</parent>
 
-	<repositories>
-		<repository>
-			<id>xuggle repo</id>
-			<url>http://xuggle.googlecode.com/svn/trunk/repo/share/java/</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
 
 		<!-- Grass3 jádro -->
@@ -31,6 +24,13 @@
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>search</artifactId>
 			<version>1.0.0</version>
+		</dependency>
+		
+		<!-- JCodec -->
+		<dependency>
+			<groupId>cz.gattserver</groupId>
+			<artifactId>jcodec</artifactId>
+			<version>0.1.9.1</version>
 		</dependency>
 
 		<!-- java-image-scaling -->

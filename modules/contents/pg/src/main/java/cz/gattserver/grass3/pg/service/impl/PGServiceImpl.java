@@ -116,10 +116,32 @@ public class PGServiceImpl implements PGService {
 		contentNodeFacade.deleteByContentId(PGModule.ID, photogalleryId);
 	}
 
-	/**
-	 * Vytoří nové miniatury
-	 */
-	private boolean processMiniatureImages(Photogallery photogallery) {
+	private void createVideoMinature(Path file, Path outputFile) {
+		String videoName = outputFile.getFileName().toString();
+		try {
+			logger.info("Bylo nalezeno video {}", videoName);
+			logger.info("Bylo zahájeno zpracování náhledu videa {}", videoName);
+			BufferedImage image = new DecodeAndCaptureFrames().decodeAndCaptureFrames(file);
+			logger.info("Zpracování náhledu videa {} byla úspěšně dokončeno", videoName);
+			image = PGUtils.resizeBufferedImage(image, 150, 150);
+			ImageIO.write(image, "png", outputFile.toFile());
+			logger.info("Náhled videa {} byl úspěšně uložen", videoName);
+		} catch (Exception e) {
+			logger.error("Vytváření náhledu videa {} se nezdařilo", videoName, e);
+		}
+	}
+
+	private void createImageMinature(Path file, Path outputFile) {
+		String imageName = outputFile.getFileName().toString();
+		try {
+			PGUtils.resizeAndRotateImageFile(file, outputFile, 150, 150);
+			logger.info("Náhled obrázku {} byl úspěšně uložen", imageName);
+		} catch (Exception e) {
+			logger.error("Vytváření náhledu obrázku {} se nezdařilo", imageName, e);
+		}
+	}
+
+	private void processMiniatureImages(Photogallery photogallery) throws IOException {
 		PGConfiguration configuration = getConfiguration();
 		String miniaturesDir = configuration.getMiniaturesDir();
 		String previewsDir = configuration.getPreviewsDir();
@@ -128,36 +150,23 @@ public class PGServiceImpl implements PGService {
 		int total = 0;
 		try (Stream<Path> stream = Files.list(galleryDir)) {
 			total = (int) stream.count();
-		} catch (Exception e) {
-			return false;
 		}
 
 		int progress = 1;
 
 		Path miniDirFile = galleryDir.resolve(miniaturesDir);
-		if (!Files.exists(miniDirFile)) {
-			try {
-				Files.createDirectories(miniDirFile);
-			} catch (Exception e) {
-				return false;
-			}
-		}
+		if (!Files.exists(miniDirFile))
+			Files.createDirectories(miniDirFile);
 
 		Path prevDirFile = galleryDir.resolve(previewsDir);
-		if (!Files.exists(prevDirFile)) {
-			try {
-				Files.createDirectories(prevDirFile);
-			} catch (Exception e) {
-				return false;
-			}
-		}
+		if (!Files.exists(prevDirFile))
+			Files.createDirectories(prevDirFile);
 
 		try (Stream<Path> stream = Files.list(galleryDir)) {
 			Iterator<Path> it = stream.iterator();
 			while (it.hasNext()) {
 				Path file = it.next();
-				// pokud bych miniaturizoval adresář nebo miniatura existuje
-				// přeskoč
+				// pokud bych miniaturizoval adresář přeskoč
 				if (Files.isDirectory(file))
 					continue;
 
@@ -178,45 +187,17 @@ public class PGServiceImpl implements PGService {
 				progress++;
 
 				// už existuje? ok, není potřeba znovu vytvářet
-				if (Files.exists(outputFile))
-					continue;
-
-				// vytvoř miniaturu
-				if (videoExt) {
-					logger.info("Video found");
-					try {
-						logger.info("Video processing prepared");
-						BufferedImage image = new DecodeAndCaptureFrames().decodeAndCaptureFrames(file);
-						logger.info("Video processing started");
-						image = PGUtils.resizeBufferedImage(image, 150, 150);
-						ImageIO.write(image, "png", outputFile.toFile());
-
-						logger.info("Video processing finished");
-					} catch (Exception e) {
-						logger.error("Video processing failed", e);
-					}
-				} else {
-					try {
-						PGUtils.resizeAndRotateImageFile(file, outputFile, 150, 150);
-					} catch (Exception e) {
-						logger.error("Video resizing failed", e);
-						if (Files.exists(outputFile))
-							Files.delete(outputFile);
-						continue;
-					}
+				if (!Files.exists(outputFile)) {
+					if (videoExt)
+						createVideoMinature(file, outputFile);
+					else
+						createImageMinature(file, outputFile);
 				}
 			}
-		} catch (Exception e) {
-			return false;
 		}
-
-		return true;
 	}
 
-	/**
-	 * Vytoří nové slideshow verze souborů
-	 */
-	private boolean processSlideshowImages(Photogallery photogallery) {
+	private void processSlideshowImages(Photogallery photogallery) throws IOException {
 		PGConfiguration configuration = getConfiguration();
 		String slideshowDir = configuration.getSlideshowDir();
 		Path galleryDir = getGalleryDir(photogallery);
@@ -224,63 +205,38 @@ public class PGServiceImpl implements PGService {
 		int total = 0;
 		try (Stream<Path> stream = Files.list(galleryDir)) {
 			total = (int) stream.count();
-		} catch (Exception e) {
-			return false;
 		}
 
 		int progress = 1;
 
 		Path slideshowDirFile = galleryDir.resolve(slideshowDir);
-		if (!Files.exists(slideshowDirFile)) {
-			try {
-				Files.createDirectories(slideshowDirFile);
-			} catch (Exception e) {
-				return false;
-			}
-		}
+		if (!Files.exists(slideshowDirFile))
+			Files.createDirectories(slideshowDirFile);
 
 		try (Stream<Path> stream = Files.list(galleryDir)) {
 			Iterator<Path> it = stream.iterator();
 			while (it.hasNext()) {
 				Path file = it.next();
-
-				if (Files.isDirectory(file))
-					continue;
-
-				if (!PGUtils.isImage(file))
-					continue;
-
-				// soubor slideshow
 				Path outputFile = slideshowDirFile.resolve(file);
+
+				if (Files.exists(outputFile) || Files.isDirectory(file) || !PGUtils.isImage(file))
+					continue;
 
 				eventBus.publish(new PGProcessProgressEvent("Zpracování slideshow " + progress + "/" + total));
 				progress++;
 
-				if (PGUtils.isVideo(file))
-					continue;
-
-				if (Files.exists(outputFile))
-					continue;
-
 				// vytvoř slideshow verzi
-				try {
-					BufferedImage image = ImageIO.read(file.toFile());
-					if (image.getWidth() > 900 || image.getHeight() > 700) {
+				BufferedImage image = ImageIO.read(file.toFile());
+				if (image.getWidth() > 900 || image.getHeight() > 700) {
+					try {
 						PGUtils.resizeAndRotateImageFile(file, outputFile, 900, 700);
+					} catch (Exception e) {
+						logger.error("Při zpracování slideshow pro '{}' došlo k chybě", file.getFileName().toString(),
+								e);
 					}
-				} catch (Exception e) {
-					logger.error("Při zpracování slideshow pro '{}' došlo k chybě", file.getFileName().toString(), e);
-					if (Files.exists(outputFile))
-						Files.delete(outputFile);
-					continue;
 				}
 			}
-		} catch (Exception e) {
-			logger.error("Nezdařilo se vytvořit slideshow galerie", e);
-			return false;
 		}
-
-		return true;
 	}
 
 	@Override
@@ -295,6 +251,10 @@ public class PGServiceImpl implements PGService {
 		innerSavePhotogallery(payloadTO, null, nodeId, authorId, date);
 	}
 
+	private void publishPGProcessFailure() {
+		eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+	}
+	
 	private void innerSavePhotogallery(PhotogalleryPayloadTO payloadTO, Long existingId, Long nodeId, Long authorId,
 			LocalDateTime date) {
 		try (Stream<Path> stream = Files.list(payloadTO.getGalleryDir())) {
@@ -313,7 +273,7 @@ public class PGServiceImpl implements PGService {
 			// ulož ho a nasetuj jeho id
 			photogallery = photogalleryRepository.save(photogallery);
 			if (photogallery == null) {
-				eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+				publishPGProcessFailure();
 				return;
 			}
 
@@ -327,7 +287,7 @@ public class PGServiceImpl implements PGService {
 				contentNode.setId(contentNodeId);
 				photogallery.setContentNode(contentNode);
 				if (photogalleryRepository.save(photogallery) == null) {
-					eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+					publishPGProcessFailure();
 					return;
 				}
 			} else {
@@ -344,7 +304,7 @@ public class PGServiceImpl implements PGService {
 			// ulož ho a nasetuj jeho id
 			photogallery = photogalleryRepository.save(photogallery);
 			if (photogallery == null) {
-				eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+				publishPGProcessFailure();
 				return;
 			}
 
@@ -358,13 +318,13 @@ public class PGServiceImpl implements PGService {
 			contentNode.setId(contentNodeId);
 			photogallery.setContentNode(contentNode);
 			if (photogalleryRepository.save(photogallery) == null) {
-				eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+				publishPGProcessFailure();
 				return;
 			}
 
 			eventBus.publish(new PGProcessResultEvent(photogallery.getId()));
 		} catch (Exception e) {
-			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+			publishPGProcessFailure();
 			logger.error("Nezdařilo se uložit galerii", e);
 			return;
 		}

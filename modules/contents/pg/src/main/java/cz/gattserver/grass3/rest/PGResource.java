@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,8 @@ import cz.gattserver.grass3.services.impl.LoginResult;
 @Controller
 @RequestMapping("/pg")
 public class PGResource {
+
+	private static Logger logger = LoggerFactory.getLogger(PGResource.class);
 
 	@Autowired
 	private PGService photogalleryFacade;
@@ -78,22 +82,27 @@ public class PGResource {
 	}
 
 	private void innerPhoto(Long id, String fileName, boolean mini, HttpServletResponse response) {
+		Path file;
 		try {
-			Path file = photogalleryFacade.getPhotoForREST(id, fileName, mini);
-			if (file == null) {
-				response.setStatus(HttpStatus.NOT_FOUND.value());
-				return;
-			}
-			InputStream is = new FileInputStream(file.toFile());
+			file = photogalleryFacade.getPhotoForREST(id, fileName, mini);
+		} catch (UnauthorizedAccessException e) {
+			response.setStatus(HttpStatus.FORBIDDEN.value());
+			return;
+		}
+
+		if (file == null) {
+			response.setStatus(HttpStatus.NOT_FOUND.value());
+			return;
+		}
+
+		try (InputStream is = new FileInputStream(file.toFile())) {
 			IOUtils.copy(is, response.getOutputStream());
 			response.setStatus(HttpStatus.OK.value());
 			response.flushBuffer();
-		} catch (UnauthorizedAccessException e) {
-			response.setStatus(HttpStatus.FORBIDDEN.value());
-		} catch (IOException ex) {
-			System.err.println("IOError writing file to output stream");
-			ex.printStackTrace();
+		} catch (IOException e) {
+			logger.error("Nezdařilo se zapsat obsah souboru na výstup", e);
 			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return;
 		}
 	}
 

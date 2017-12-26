@@ -11,7 +11,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,8 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import cz.gattserver.common.util.ReferenceHolder;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.exception.GrassPageException;
-import cz.gattserver.grass3.interfaces.ContentNodeTO;
-import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.modules.PGModule;
@@ -44,6 +41,7 @@ import cz.gattserver.grass3.pg.events.impl.PGZipProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.impl.PGZipProcessResultEvent;
 import cz.gattserver.grass3.pg.events.impl.PGZipProcessStartEvent;
 import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
@@ -109,13 +107,13 @@ public class PGServiceImpl implements PGService {
 	}
 
 	@Override
-	public void deletePhotogallery(PhotogalleryTO photogallery) {
-		Path galleryDir = getGalleryDir(photogallery);
+	public void deletePhotogallery(long photogalleryId) {
+		String path = photogalleryRepository.findPhotogalleryPathById(photogalleryId);
+		Path galleryDir = getGalleryDir(path);
 		deleteFileRecursively(galleryDir);
 
-		photogalleryRepository.delete(photogallery.getId());
-		ContentNodeTO contentNodeDTO = photogallery.getContentNode();
-		contentNodeFacade.deleteByContentNodeId(contentNodeDTO.getId());
+		photogalleryRepository.delete(photogalleryId);
+		contentNodeFacade.deleteByContentId(PGModule.ID, photogalleryId);
 	}
 
 	/**
@@ -163,8 +161,8 @@ public class PGServiceImpl implements PGService {
 				if (Files.isDirectory(file))
 					continue;
 
-				boolean videoExt = PGUtils.isVideo(file.getFileName().toString());
-				boolean imageExt = PGUtils.isImage(file.getFileName().toString());
+				boolean videoExt = PGUtils.isVideo(file);
+				boolean imageExt = PGUtils.isImage(file);
 
 				if (!videoExt && !imageExt)
 					continue;
@@ -249,7 +247,7 @@ public class PGServiceImpl implements PGService {
 				if (Files.isDirectory(file))
 					continue;
 
-				if (!PGUtils.isImage(file.getFileName().toString()))
+				if (!PGUtils.isImage(file))
 					continue;
 
 				// soubor slideshow
@@ -258,7 +256,7 @@ public class PGServiceImpl implements PGService {
 				eventBus.publish(new PGProcessProgressEvent("Zpracování slideshow " + progress + "/" + total));
 				progress++;
 
-				if (PGUtils.isVideo(file.getFileName().toString()))
+				if (PGUtils.isVideo(file))
 					continue;
 
 				if (Files.exists(outputFile))
@@ -270,14 +268,15 @@ public class PGServiceImpl implements PGService {
 					if (image.getWidth() > 900 || image.getHeight() > 700) {
 						PGUtils.resizeAndRotateImageFile(file, outputFile, 900, 700);
 					}
-				} catch (java.lang.Exception e) {
-					e.printStackTrace();
+				} catch (Exception e) {
+					logger.error("Při zpracování slideshow pro '{}' došlo k chybě", file.getFileName().toString(), e);
 					if (Files.exists(outputFile))
 						Files.delete(outputFile);
 					continue;
 				}
 			}
 		} catch (Exception e) {
+			logger.error("Nezdařilo se vytvořit slideshow galerie", e);
 			return false;
 		}
 
@@ -286,17 +285,55 @@ public class PGServiceImpl implements PGService {
 
 	@Override
 	@Async
-	public void modifyPhotogallery(String name, Collection<String> tags, boolean publicated,
-			PhotogalleryTO photogalleryDTO, String contextRoot, LocalDateTime date) {
-		Path galleryDir = getGalleryDir(photogalleryDTO);
-		try (Stream<Path> stream = Files.list(galleryDir)) {
+	public void modifyPhotogallery(long photogalleryId, PhotogalleryPayloadTO payloadTO, LocalDateTime date) {
+		innerSavePhotogallery(payloadTO, photogalleryId, null, null, date);
+	}
+
+	@Override
+	@Async
+	public void savePhotogallery(PhotogalleryPayloadTO payloadTO, long nodeId, long authorId, LocalDateTime date) {
+		innerSavePhotogallery(payloadTO, null, nodeId, authorId, date);
+	}
+
+	private void innerSavePhotogallery(PhotogalleryPayloadTO payloadTO, Long existingId, Long nodeId, Long authorId,
+			LocalDateTime date) {
+		try (Stream<Path> stream = Files.list(payloadTO.getGalleryDir())) {
 			logger.info("modifyPhotogallery thread: " + Thread.currentThread().getId());
 
 			// Počet kroků = miniatury + detaily + uložení
 			int total = (int) stream.count();
 			eventBus.publish(new PGProcessStartEvent(2 * total + 1));
 
-			Photogallery photogallery = photogalleryRepository.findOne(photogalleryDTO.getId());
+			Photogallery photogallery = existingId == null ? new Photogallery()
+					: photogalleryRepository.findOne(existingId);
+
+			// nasetuj do ní vše potřebné
+			photogallery.setPhotogalleryPath(payloadTO.getGalleryDir().getFileName().toString());
+
+			// ulož ho a nasetuj jeho id
+			photogallery = photogalleryRepository.save(photogallery);
+			if (photogallery == null) {
+				eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+				return;
+			}
+
+			if (existingId == null) {
+				// vytvoř odpovídající content node
+				Long contentNodeId = contentNodeFacade.save(PGModule.ID, photogallery.getId(), payloadTO.getName(),
+						payloadTO.getTags(), payloadTO.isPublicated(), nodeId, authorId, false, date, null);
+
+				// ulož do článku referenci na jeho contentnode
+				ContentNode contentNode = new ContentNode();
+				contentNode.setId(contentNodeId);
+				photogallery.setContentNode(contentNode);
+				if (photogalleryRepository.save(photogallery) == null) {
+					eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+					return;
+				}
+			} else {
+				contentNodeFacade.modify(photogallery.getContentNode().getId(), payloadTO.getName(),
+						payloadTO.getTags(), payloadTO.isPublicated(), date);
+			}
 
 			// vytvoř miniatury
 			processMiniatureImages(photogallery);
@@ -304,21 +341,33 @@ public class PGServiceImpl implements PGService {
 			// vytvoř detaily
 			processSlideshowImages(photogallery);
 
-			// ulož ho
+			// ulož ho a nasetuj jeho id
+			photogallery = photogalleryRepository.save(photogallery);
+			if (photogallery == null) {
+				eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+				return;
+			}
+
+			// vytvoř odpovídající content node
+			eventBus.publish(new PGProcessProgressEvent("Uložení obsahu galerie"));
+			Long contentNodeId = contentNodeFacade.save(PGModule.ID, photogallery.getId(), payloadTO.getName(),
+					payloadTO.getTags(), payloadTO.isPublicated(), nodeId, authorId, false, date, null);
+
+			// ulož do galerie referenci na její contentnode
+			ContentNode contentNode = new ContentNode();
+			contentNode.setId(contentNodeId);
+			photogallery.setContentNode(contentNode);
 			if (photogalleryRepository.save(photogallery) == null) {
 				eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
 				return;
 			}
 
-			contentNodeFacade.modify(photogalleryDTO.getContentNode().getId(), name, tags, publicated, date);
+			eventBus.publish(new PGProcessResultEvent(photogallery.getId()));
 		} catch (Exception e) {
-			// content node
 			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
 			logger.error("Nezdařilo se uložit galerii", e);
 			return;
 		}
-
-		eventBus.publish(new PGProcessResultEvent());
 	}
 
 	@Override
@@ -347,63 +396,7 @@ public class PGServiceImpl implements PGService {
 	}
 
 	@Override
-	@Async
-	public void savePhotogallery(String name, Collection<String> tags, Path galleryDir, boolean publicated,
-			NodeOverviewTO node, UserInfoTO author, String contextRoot, LocalDateTime date) {
-		try (Stream<Path> stream = Files.list(galleryDir)) {
-			logger.info("modifyPhotogallery thread: " + Thread.currentThread().getId());
-
-			// Počet kroků = miniatury + detaily + uložení
-			int total = (int) stream.count();
-			eventBus.publish(new PGProcessStartEvent(2 * total + 1));
-
-			// Počet kroků = miniatury + detaily + uložení
-			eventBus.publish(new PGProcessStartEvent(2 * total + 1));
-
-			// vytvoř novou galerii
-			Photogallery photogallery = new Photogallery();
-
-			// nasetuj do ní vše potřebné
-			photogallery.setPhotogalleryPath(galleryDir.getFileName().toString());
-
-			// vytvoř miniatury
-			processMiniatureImages(photogallery);
-
-			// vytvoř detaily
-			processSlideshowImages(photogallery);
-
-			// ulož ho a nasetuj jeho id
-			photogallery = photogalleryRepository.save(photogallery);
-			if (photogallery == null) {
-				eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
-				return;
-			}
-
-			// vytvoř odpovídající content node
-			eventBus.publish(new PGProcessProgressEvent("Uložení obsahu galerie"));
-			Long contentNodeId = contentNodeFacade.save(PGModule.ID, photogallery.getId(), name, tags, publicated,
-					node.getId(), author.getId(), false, date, null);
-
-			// ulož do galerie referenci na její contentnode
-			ContentNode contentNode = new ContentNode();
-			contentNode.setId(contentNodeId);
-			photogallery.setContentNode(contentNode);
-			if (photogalleryRepository.save(photogallery) == null) {
-				eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
-				return;
-			}
-
-			eventBus.publish(new PGProcessResultEvent(photogallery.getId()));
-		} catch (Exception e) {
-			// content node
-			eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
-			logger.error("Nezdařilo se uložit galerii", e);
-			return;
-		}
-	}
-
-	@Override
-	public PhotogalleryTO getPhotogalleryForDetail(Long id) {
+	public PhotogalleryTO getPhotogalleryForDetail(long id) {
 		Photogallery photogallery = photogalleryRepository.findOne(id);
 		if (photogallery == null)
 			return null;

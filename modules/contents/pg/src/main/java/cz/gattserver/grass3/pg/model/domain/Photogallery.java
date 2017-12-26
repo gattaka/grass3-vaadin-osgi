@@ -35,9 +35,6 @@ public class Photogallery {
 		return id;
 	}
 
-	public Photogallery() {
-	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
@@ -195,9 +196,10 @@ public class PGViewerPage extends ContentViewerPage {
 			return;
 		}
 
-		try {
-			photoMiniatures = Files.list(photoMiniaturesDirFile).toArray(Path[]::new);
-			videoPreviews = Files.list(videoPreviewsDirFile).toArray(Path[]::new);
+		try (Stream<Path> miniStream = Files.list(photoMiniaturesDirFile);
+				Stream<Path> videosStream = Files.list(photoMiniaturesDirFile)) {
+			photoMiniatures = miniStream.toArray(Path[]::new);
+			videoPreviews = videosStream.toArray(Path[]::new);
 			Arrays.sort(photoMiniatures);
 			Arrays.sort(videoPreviews);
 		} catch (Exception e) {
@@ -522,7 +524,7 @@ public class PGViewerPage extends ContentViewerPage {
 			// zdařilo se ? Pokud ano, otevři info okno a při
 			// potvrzení jdi na kategorii
 			try {
-				photogalleryFacade.deletePhotogallery(photogallery);
+				photogalleryFacade.deletePhotogallery(photogallery.getId());
 				UIUtils.redirect(nodeURL);
 			} catch (Exception e) {
 				// Pokud ne, otevři warn okno a při

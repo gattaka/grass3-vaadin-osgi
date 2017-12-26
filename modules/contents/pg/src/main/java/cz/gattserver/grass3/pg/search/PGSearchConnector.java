@@ -27,32 +27,16 @@ public class PGSearchConnector implements SearchConnector {
 	private PageFactory photogalleryViewerPageFactory;
 
 	public List<SearchEntity> getAvailableSearchEntities(UserInfoTO user) {
-
-		List<SearchEntity> searchEntities = new ArrayList<SearchEntity>();
-
+		List<SearchEntity> searchEntities = new ArrayList<>();
 		List<PhotogalleryTO> photogalleries = photogalleryFacade.getAllPhotogalleriesForSearch();
 		for (PhotogalleryTO photogallery : photogalleries) {
-
-			// TODO
-			// if (coreACL.canShowContent(photogallery.getContentNode(), user))
-			// {
-
 			String suffix = URLIdentifierUtils.createURLIdentifier(photogallery.getContentNode().getContentID(),
 					photogallery.getContentNode().getName());
-
 			SearchEntity searchEntity = new SearchEntity(photogalleryViewerPageFactory, suffix);
-
 			searchEntity.addField(PGSearchField.NAME, photogallery.getContentNode().getName(), true);
-			// searchEntity.addField(PhotogallerySearchField.CONTENT,
-			// photogallery.getSearchableOutput(), true);
-
 			searchEntities.add(searchEntity);
-
-			// }
 		}
-
 		return searchEntities;
-
 	}
 
 	public Enum<? extends SearchField>[] getSearchFields() {

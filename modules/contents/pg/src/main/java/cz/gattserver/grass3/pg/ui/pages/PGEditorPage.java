@@ -44,6 +44,7 @@ import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.pg.events.impl.PGProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.impl.PGProcessResultEvent;
 import cz.gattserver.grass3.pg.events.impl.PGProcessStartEvent;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.pg.util.PGUtils;
@@ -261,11 +262,11 @@ public class PGEditorPage extends OneColumnPage {
 
 		final Button removeBtn = new DeleteGridButton<>("Odstranit", files -> files.forEach(file -> {
 			if (editMode) {
-				if (PGUtils.isImage(file.getFileName().toString())) {
+				if (PGUtils.isImage(file)) {
 					pgService.tryDeleteMiniatureImage(file.getFileName().toString(), photogallery);
 					pgService.tryDeleteSlideshowImage(file.getFileName().toString(), photogallery);
 				}
-				if (PGUtils.isVideo(file.getFileName().toString()))
+				if (PGUtils.isVideo(file))
 					pgService.tryDeletePreviewImage(file.getFileName().toString(), photogallery);
 			}
 			try {
@@ -286,7 +287,7 @@ public class PGEditorPage extends OneColumnPage {
 				gridLayout.addComponent(previewLabel, 0, 0, 1, 0);
 			} else {
 				Path file = event.getFirstSelectedItem().get();
-				if (PGUtils.isImage(file.getFileName().toString())) {
+				if (PGUtils.isImage(file)) {
 					if (imageWrapper.getParent() == null) {
 						gridLayout.removeComponent(previewLabel);
 						gridLayout.addComponent(imageWrapper, 0, 0, 1, 0);
@@ -338,7 +339,7 @@ public class PGEditorPage extends OneColumnPage {
 					}
 					existingFiles.setValue(existingFiles.getValue() + fileName + "<br/>");
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.error("Nezdařilo se uložit soubor {}", fileName, e);
 				}
 			}
 
@@ -420,13 +421,13 @@ public class PGEditorPage extends OneColumnPage {
 		ui.setPollInterval(200);
 		List<String> tokens = new ArrayList<>();
 		photogalleryKeywords.getTokens().forEach(t -> tokens.add(t.getValue()));
+		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(photogalleryNameField.getValue(), galleryDir,
+				tokens, publicatedCheckBox.getValue());
+
 		if (editMode) {
-			pgService.modifyPhotogallery(String.valueOf(photogalleryNameField.getValue()), tokens,
-					publicatedCheckBox.getValue(), photogallery, getRequest().getContextRoot(),
-					photogalleryDateField.getValue());
+			pgService.modifyPhotogallery(photogallery.getId(), payloadTO, photogalleryDateField.getValue());
 		} else {
-			pgService.savePhotogallery(String.valueOf(photogalleryNameField.getValue()), tokens, galleryDir,
-					publicatedCheckBox.getValue(), node, UIUtils.getGrassUI().getUser(), getRequest().getContextRoot(),
+			pgService.savePhotogallery(payloadTO, node.getId(), UIUtils.getGrassUI().getUser().getId(),
 					photogalleryDateField.getValue());
 		}
 	}

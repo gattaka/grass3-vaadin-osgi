@@ -2,15 +2,13 @@ package cz.gattserver.grass3.pg.service;
 
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
-import cz.gattserver.grass3.interfaces.NodeOverviewTO;
-import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
 
 public interface PGService {
@@ -22,55 +20,40 @@ public interface PGService {
 	 *            galerie ke smazání
 	 * @return {@code true} pokud se zdařilo smazat jinak {@code false}
 	 */
-	public void deletePhotogallery(PhotogalleryTO photogallery);
+	public void deletePhotogallery(long photogalleryId);
 
 	/**
 	 * Upraví galerii
 	 * 
-	 * @param name
-	 *            název galerie
-	 * @param tags
-	 *            klíčová slova galerie
-	 * @param publicated
-	 *            je galerie publikována ?
-	 * @param photogallery
-	 *            původní galerie
+	 * @param photogalleryId
+	 *            id původní galerie
+	 * @param payloadTO
+	 *            obsah galerie
 	 * @param date
-	 * @return {@code true} pokud se úprava zdařila, jinak {@code false}
 	 */
-	public void modifyPhotogallery(String name, Collection<String> tags, boolean publicated,
-			PhotogalleryTO photogallery, String contextRoot, LocalDateTime date);
+	public void modifyPhotogallery(long photogalleryId, PhotogalleryPayloadTO payloadTO, LocalDateTime date);
 
 	/**
 	 * Uloží galerii
 	 * 
-	 * @param name
-	 *            název galerie
-	 * @param tags
-	 *            klíčová slova galerie
-	 * @param galleryDir
-	 *            adresář se soubory fotogalerie
-	 * @param publicated
-	 *            je galerie publikována ?
-	 * @param node
+	 * @param payloadTO
+	 *            obsah galerie
+	 * @param nodeId
 	 *            kategorie do které se vkládá
-	 * @param author
+	 * @param authorId
 	 *            uživatel, který galerii vytvořil
 	 * @param date
-	 * @return identifikátor galerie pokud vše dopadlo v pořádku, jinak
-	 *         {@code null}
 	 */
-	public void savePhotogallery(String name, Collection<String> tags, Path galleryDir, boolean publicated,
-			NodeOverviewTO node, UserInfoTO author, String contextRoot, LocalDateTime date);
+	public void savePhotogallery(PhotogalleryPayloadTO payloadTO, long nodeId, long authorId, LocalDateTime date);
 
 	/**
 	 * Získá galerii dle jeho identifikátoru
 	 * 
 	 * @param id
 	 *            identifikátor
-	 * @return DTO galerie
+	 * @return TO galerie
 	 */
-	public PhotogalleryTO getPhotogalleryForDetail(Long id);
+	public PhotogalleryTO getPhotogalleryForDetail(long id);
 
 	/**
 	 * Získá všechny galerie a namapuje je pro použití při vyhledávání

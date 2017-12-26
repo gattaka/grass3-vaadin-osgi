@@ -37,7 +37,6 @@ public class ImageSlideshowWindow extends WebWindow {
 		list = new ArrayList<>();
 
 		for (Path mini : miniatures) {
-
 			Path image = slideshowDir.resolve(mini.getFileName().toString());
 			if (!Files.exists(image))
 				image = slideshowDir.getParent().resolve(mini.getFileName().toString());
@@ -84,7 +83,6 @@ public class ImageSlideshowWindow extends WebWindow {
 		currentIndex = index;
 		embedded.setSource(list.get(currentIndex));
 		setCaption((index + 1) + "/" + miniatures.length + " " + miniatures[currentIndex].getFileName().toString());
-		// center();
 	}
 
 	@Override

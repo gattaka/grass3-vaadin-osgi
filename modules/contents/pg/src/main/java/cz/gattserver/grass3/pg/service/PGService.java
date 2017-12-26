@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.pg.service;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -62,13 +63,15 @@ public interface PGService {
 
 	/**
 	 * Vytvoří nový adresář pro fotogalerii
+	 * 
+	 * @throws IOException
 	 */
-	public Path createGalleryDir();
+	public Path createGalleryDir() throws IOException;
 
 	/**
 	 * Získá objekt konfigurace
 	 */
-	public PGConfiguration getConfiguration();
+	public PGConfiguration loadConfiguration();
 
 	/**
 	 * Získá adresář galerie

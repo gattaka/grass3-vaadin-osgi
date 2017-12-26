@@ -34,7 +34,7 @@ public class PGSettingsPage extends AbstractSettingsPage {
 		VerticalLayout settingsLayout = new VerticalLayout();
 		layout.addComponent(settingsLayout);
 
-		final PGConfiguration configuration = photogalleryFacade.getConfiguration();
+		final PGConfiguration configuration = photogalleryFacade.loadConfiguration();
 
 		settingsLayout.removeAllComponents();
 		settingsLayout.addComponent(new H2Label("Nastavení"));

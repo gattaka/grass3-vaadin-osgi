@@ -46,16 +46,16 @@ import cz.gattserver.web.common.ui.window.WarnWindow;
 public abstract class ContentViewerPage extends TwoColumnPage {
 
 	@Autowired
-	private CoreACLService coreACL;
+	protected CoreACLService coreACL;
 
 	@Autowired
-	private UserService userFacade;
+	protected UserService userFacade;
 
 	@Resource(name = "nodePageFactory")
-	private PageFactory nodePageFactory;
+	protected PageFactory nodePageFactory;
 
 	@Resource(name = "tagPageFactory")
-	private PageFactory tagPageFactory;
+	protected PageFactory tagPageFactory;
 
 	private ContentNodeTO content;
 	private Label contentNameLabel;

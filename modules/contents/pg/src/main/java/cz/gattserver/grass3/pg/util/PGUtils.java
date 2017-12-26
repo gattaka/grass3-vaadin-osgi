@@ -11,7 +11,9 @@ import java.util.Collection;
 import javax.imageio.ImageIO;
 
 import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.mortennobel.imagescaling.DimensionConstrain;
 import com.mortennobel.imagescaling.ResampleFilters;
@@ -19,9 +21,12 @@ import com.mortennobel.imagescaling.ResampleOp;
 
 public class PGUtils {
 
+	private PGUtils() {
+	}
+
 	private static String getExtension(Path file) {
 		String filename = file.getFileName().toString();
-		int dot = filename.lastIndexOf(".");
+		int dot = filename.lastIndexOf('.');
 		if (dot <= 0 || filename.length() < 3)
 			return "";
 		return filename.substring(dot + 1);
@@ -32,19 +37,15 @@ public class PGUtils {
 		return image.getHeight() * image.getWidth() < maxArea;
 	}
 
-	public static int readImageOrientation(Path imageFile) {
+	public static int readImageOrientation(Path imageFile)
+			throws ImageProcessingException, IOException, MetadataException {
 		Metadata metadata;
 		int orientation = 1;
-		try {
-			metadata = ImageMetadataReader.readMetadata(imageFile.toFile());
-			Collection<ExifIFD0Directory> directories = metadata.getDirectoriesOfType(ExifIFD0Directory.class);
-			if (directories.isEmpty() == false) {
-				orientation = directories.iterator().next().getInt(ExifIFD0Directory.TAG_ORIENTATION);
-			}
-		} catch (Exception e) {
-			System.out.println(e);
+		metadata = ImageMetadataReader.readMetadata(imageFile.toFile());
+		Collection<ExifIFD0Directory> directories = metadata.getDirectoriesOfType(ExifIFD0Directory.class);
+		if (!directories.isEmpty()) {
+			orientation = directories.iterator().next().getInt(ExifIFD0Directory.TAG_ORIENTATION);
 		}
-
 		return orientation;
 	}
 
@@ -55,7 +56,7 @@ public class PGUtils {
 	}
 
 	public static boolean resizeAndRotateImageFile(Path inputFile, Path destinationFile, int maxWidth, int maxHeight)
-			throws IOException {
+			throws IOException, ImageProcessingException, MetadataException {
 
 		BufferedImage image = resizeBufferedImage(ImageIO.read(inputFile.toFile()), maxWidth, maxHeight);
 
@@ -106,6 +107,8 @@ public class PGUtils {
 				transform.rotate(3 * Math.PI / 2);
 				transformedWidth = image.getHeight();
 				transformedHeight = image.getWidth();
+				break;
+			default:
 				break;
 			}
 

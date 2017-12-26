@@ -50,7 +50,6 @@ import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ContentTagService;
-import cz.gattserver.grass3.services.NodeService;
 import cz.gattserver.grass3.ui.components.BaseProgressBar;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
@@ -72,16 +71,10 @@ public class PGEditorPage extends OneColumnPage {
 	private static final Logger logger = LoggerFactory.getLogger(PGEditorPage.class);
 
 	@Autowired
-	private NodeService nodeFacade;
-
-	@Autowired
 	private PGService pgService;
 
 	@Autowired
 	private ContentTagService contentTagFacade;
-
-	@Resource(name = "nodePageFactory")
-	private PageFactory nodePageFactory;
 
 	@Resource(name = "photogalleryViewerPageFactory")
 	private PageFactory photogalleryViewerPageFactory;
@@ -138,7 +131,7 @@ public class PGEditorPage extends OneColumnPage {
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(identifierToken);
 		if (identifier == null) {
-			logger.debug("Nezdařilo se vytěžit URL identifikátor z řetězce: '" + identifierToken + "'");
+			logger.debug("Nezdařilo se vytěžit URL identifikátor z řetězce: '{}'", identifierToken);
 			throw new GrassPageException(404);
 		}
 
@@ -160,16 +153,14 @@ public class PGEditorPage extends OneColumnPage {
 			publicatedCheckBox.setValue(photogallery.getContentNode().isPublicated());
 			photogalleryDateField.setValue(photogallery.getContentNode().getCreationDate());
 		} else {
-			logger.debug("Neznámá operace: '" + operationToken + "'");
+			logger.debug("Neznámá operace: '{}'", operationToken);
 			throw new GrassPageException(404);
 		}
 
-		if ((photogallery == null || photogallery.getContentNode().getAuthor().equals(UIUtils.getGrassUI().getUser()))
-				|| UIUtils.getGrassUI().getUser().isAdmin()) {
-		} else {
-			// nemá oprávnění upravovat tento obsah
+		// nemá oprávnění upravovat tento obsah
+		if (photogallery != null && !photogallery.getContentNode().getAuthor().equals(UIUtils.getGrassUI().getUser())
+				&& UIUtils.getGrassUI().getUser().isAdmin())
 			throw new GrassPageException(403);
-		}
 
 		return super.createPayload();
 	}
@@ -177,7 +168,12 @@ public class PGEditorPage extends OneColumnPage {
 	@Override
 	protected Component createContent() {
 
-		final Path dir = editMode ? pgService.getGalleryDir(photogallery) : pgService.createGalleryDir();
+		Path dir;
+		try {
+			dir = editMode ? pgService.getGalleryDir(photogallery) : pgService.createGalleryDir();
+		} catch (IOException e1) {
+			throw new GrassPageException(500);
+		}
 		galleryDir = dir;
 
 		VerticalLayout marginLayout = new VerticalLayout();
@@ -242,7 +238,6 @@ public class PGEditorPage extends OneColumnPage {
 		imageWrapper.setHeight("300px");
 		imageWrapper.addComponent(image);
 		imageWrapper.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
-		// gridLayout.addComponent(imageWrapper, 0, 0, 1, 0);
 
 		final Grid<Path> grid = new Grid<>();
 		final List<Path> items = new ArrayList<>();
@@ -273,7 +268,7 @@ public class PGEditorPage extends OneColumnPage {
 				Files.delete(file);
 				items.remove(file);
 			} catch (IOException e) {
-
+				logger.error("Nezdařilo se odstranit soubor {}", file.getFileName().toString());
 			}
 			grid.getDataProvider().refreshAll();
 		}), grid);
@@ -318,7 +313,7 @@ public class PGEditorPage extends OneColumnPage {
 					items.add(path);
 					grid.getDataProvider().refreshAll();
 				} catch (FileAlreadyExistsException f) {
-					if (warnWindowDeployed == false) {
+					if (!warnWindowDeployed) {
 						existingFiles = new Label("", ContentMode.HTML);
 						warnWindow = new WarnWindow("Následující soubory již existují:") {
 							private static final long serialVersionUID = 3428203680996794639L;
@@ -328,6 +323,7 @@ public class PGEditorPage extends OneColumnPage {
 								addComponent(existingFiles);
 							}
 
+							@Override
 							public void close() {
 								existingFiles.setValue("");
 								warnWindowDeployed = false;
@@ -370,7 +366,7 @@ public class PGEditorPage extends OneColumnPage {
 		Button saveButton = new Button("Uložit");
 		saveButton.setIcon(ImageIcon.SAVE_16_ICON.createResource());
 		saveButton.addClickListener(event -> {
-			if (isFormValid() == false)
+			if (!isFormValid())
 				return;
 			stayInEditor = true;
 			saveOrUpdatePhotogallery();
@@ -381,7 +377,7 @@ public class PGEditorPage extends OneColumnPage {
 		Button saveAndCloseButton = new Button("Uložit a zavřít");
 		saveAndCloseButton.setIcon(ImageIcon.SAVE_16_ICON.createResource());
 		saveAndCloseButton.addClickListener(event -> {
-			if (isFormValid() == false)
+			if (!isFormValid())
 				return;
 			stayInEditor = false;
 			saveOrUpdatePhotogallery();
@@ -469,19 +465,18 @@ public class PGEditorPage extends OneColumnPage {
 	@Handler
 	protected void onProcessResult(final PGProcessResultEvent event) {
 		ui.access(() -> {
-			// ui.setPollInterval(-1);
 			if (progressIndicatorWindow != null)
 				progressIndicatorWindow.closeOnDone();
 
 			Long id = event.getGalleryId();
 			if (event.isSuccess() && (id != null || editMode)) {
-				if (editMode == false)
+				if (!editMode)
 					photogallery = pgService.getPhotogalleryForDetail(id);
 
 				// soubory byly uloženy a nepodléhají
 				// podmíněnému smazání
 				newFiles.clear();
-				if (stayInEditor == false)
+				if (!stayInEditor)
 					returnToPhotogallery();
 
 				UIUtils.showInfo(editMode ? "Úprava galerie proběhla úspěšně" : "Uložení galerie proběhlo úspěšně");

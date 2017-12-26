@@ -23,6 +23,9 @@ import java.util.Map;
  */
 public class ZIPUtils {
 
+	private ZIPUtils() {
+	}
+
 	/**
 	 * Returns a zip file system
 	 * 

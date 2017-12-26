@@ -24,11 +24,12 @@ public class PhotogalleryMapperImpl implements PhotogalleryMapper {
 	 * Převede {@link Photogallery} na {@link PhotogalleryTO}
 	 */
 	public PhotogalleryTO mapPhotogalleryForDetail(Photogallery photogallery) {
-		PhotogalleryTO photogalleryDTO = new PhotogalleryTO();
+		if (photogallery == null)
+			return null;
 
+		PhotogalleryTO photogalleryDTO = new PhotogalleryTO();
 		photogalleryDTO.setId(photogallery.getId());
 		photogalleryDTO.setPhotogalleryPath(photogallery.getPhotogalleryPath());
-
 		photogalleryDTO.setContentNode(mapper.mapContentNodeForDetail(photogallery.getContentNode()));
 		return photogalleryDTO;
 	}
@@ -37,11 +38,12 @@ public class PhotogalleryMapperImpl implements PhotogalleryMapper {
 	 * Převede {@link Photogallery} na {@link PhotogalleryRESTOverviewTO}
 	 */
 	public PhotogalleryRESTOverviewTO mapPhotogalleryForRESTOverview(Photogallery photogallery) {
-		PhotogalleryRESTOverviewTO photogalleryDTO = new PhotogalleryRESTOverviewTO();
+		if (photogallery == null)
+			return null;
 
+		PhotogalleryRESTOverviewTO photogalleryDTO = new PhotogalleryRESTOverviewTO();
 		photogalleryDTO.setId(photogallery.getId());
 		photogalleryDTO.setName(photogallery.getContentNode().getName());
-
 		return photogalleryDTO;
 	}
 
@@ -52,12 +54,10 @@ public class PhotogalleryMapperImpl implements PhotogalleryMapper {
 	public List<PhotogalleryRESTOverviewTO> mapPhotogalleryForRESTOverviewCollection(
 			List<Photogallery> photogalleryCollection) {
 		List<PhotogalleryRESTOverviewTO> list = new ArrayList<>();
-
 		for (Photogallery photogallery : photogalleryCollection) {
 			PhotogalleryRESTOverviewTO to = mapPhotogalleryForRESTOverview(photogallery);
 			list.add(to);
 		}
-
 		return list;
 	}
 

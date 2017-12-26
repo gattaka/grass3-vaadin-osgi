@@ -8,6 +8,8 @@ import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.jouni.animator.Animator;
 import org.vaadin.jouni.dom.client.Css;
@@ -57,6 +59,8 @@ import net.engio.mbassy.listener.Handler;
 
 public class PGViewerPage extends ContentViewerPage {
 
+	private static final Logger logger = LoggerFactory.getLogger(PGViewerPage.class);
+
 	@Autowired
 	private PGService photogalleryFacade;
 
@@ -65,9 +69,6 @@ public class PGViewerPage extends ContentViewerPage {
 
 	@Resource(name = "photogalleryViewerPageFactory")
 	private PageFactory photogalleryViewerPageFactory;
-
-	@Resource(name = "nodePageFactory")
-	private PageFactory nodePageFactory;
 
 	@Resource(name = "photogalleryEditorPageFactory")
 	private PageFactory photogalleryEditorPageFactory;
@@ -151,12 +152,10 @@ public class PGViewerPage extends ContentViewerPage {
 		if (photogallery == null)
 			throw new GrassPageException(404);
 
-		if (photogallery.getContentNode().isPublicated()
-				|| (UIUtils.getUser() != null && (photogallery.getContentNode().getAuthor().equals(UIUtils.getUser())
-						|| UIUtils.getUser().isAdmin()))) {
-		} else {
+		if (!photogallery.getContentNode().isPublicated()
+				&& (UIUtils.getUser() == null || (!photogallery.getContentNode().getAuthor().equals(UIUtils.getUser())
+						&& !UIUtils.getUser().isAdmin())))
 			throw new GrassPageException(403);
-		}
 
 		PGConfiguration configuration = new PGConfiguration();
 		configurationService.loadConfiguration(configuration);
@@ -181,9 +180,7 @@ public class PGViewerPage extends ContentViewerPage {
 
 	private void configureBtnLayout(HorizontalLayout btnLayout) {
 		btnLayout.setSpacing(true);
-		// btnLayout.addStyleName("bordered");
 		btnLayout.setWidth("100%");
-		// btnLayout.setMargin(true);
 	}
 
 	@Override
@@ -298,7 +295,7 @@ public class PGViewerPage extends ContentViewerPage {
 
 		Button downloadZip = new Button("Zabalit galerii jako ZIP",
 				event -> UI.getCurrent().addWindow(new ConfirmWindow("Přejete si vytvořit ZIP galerie?", e -> {
-					System.out.println("zipPhotogallery thread: " + Thread.currentThread().getId());
+					logger.info("zipPhotogallery thread: {}", Thread.currentThread().getId());
 					eventBus.subscribe(PGViewerPage.this);
 					ui.setPollInterval(200);
 					photogalleryFacade.zipGallery(galleryDir);
@@ -321,11 +318,8 @@ public class PGViewerPage extends ContentViewerPage {
 		Animator.animate(galleryGridLayout, new Css().opacity(1)).delay(200).duration(200);
 		checkOffsetBtnsAvailability();
 
-		if (pgSelectedVideoItemId != null) {
-			if (PGUtils.isVideo(pgSelectedVideoItemId)) {
-				showVideo(pgSelectedVideoItemId, getItemURL(pgSelectedVideoItemId));
-			}
-		}
+		if (pgSelectedVideoItemId != null && PGUtils.isVideo(pgSelectedVideoItemId))
+			showVideo(pgSelectedVideoItemId, getItemURL(pgSelectedVideoItemId));
 	}
 
 	@Handler
@@ -347,33 +341,12 @@ public class PGViewerPage extends ContentViewerPage {
 	@Handler
 	protected void onProcessResult(final PGZipProcessResultEvent event) {
 		ui.access(() -> {
-			// ui.setPollInterval(-1);
 			if (progressIndicatorWindow != null)
 				progressIndicatorWindow.closeOnDone();
 
 			if (event.isSuccess()) {
-				ui.addWindow(new Window("Stáhnout") {
+				Window win = new Window("Stáhnout") {
 					private static final long serialVersionUID = -3146957611784022710L;
-
-					{
-						Link link = new Link("Stáhnout ZIP souboru", new FileResource(event.getZipFile().toFile()) {
-							private static final long serialVersionUID = -8702951153271074955L;
-
-							@Override
-							public String getFilename() {
-								return photogallery.getPhotogalleryPath() + ".zip";
-							}
-						});
-						link.setTargetName("_blank");
-						VerticalLayout layout = new VerticalLayout();
-						layout.setSpacing(true);
-						layout.setMargin(true);
-						setContent(layout);
-						layout.addComponent(link);
-						layout.setComponentAlignment(link, Alignment.MIDDLE_CENTER);
-						setModal(true);
-						center();
-					}
 
 					@Override
 					public void close() {
@@ -384,8 +357,25 @@ public class PGViewerPage extends ContentViewerPage {
 							throw new GrassPageException(500, e);
 						}
 					}
-				});
+				};
+				Link link = new Link("Stáhnout ZIP souboru", new FileResource(event.getZipFile().toFile()) {
+					private static final long serialVersionUID = -8702951153271074955L;
 
+					@Override
+					public String getFilename() {
+						return photogallery.getPhotogalleryPath() + ".zip";
+					}
+				});
+				link.setTargetName("_blank");
+				VerticalLayout layout = new VerticalLayout();
+				layout.setSpacing(true);
+				layout.setMargin(true);
+				win.setContent(layout);
+				layout.addComponent(link);
+				layout.setComponentAlignment(link, Alignment.MIDDLE_CENTER);
+				win.setModal(true);
+				win.center();
+				ui.addWindow(win);
 			} else {
 				UIUtils.showWarning(event.getResultDetails());
 			}
@@ -420,20 +410,14 @@ public class PGViewerPage extends ContentViewerPage {
 	}
 
 	private void showVideo(String videoName, String videoURL) {
-		UI.getCurrent().addWindow(new WebWindow(videoName) {
-			private static final long serialVersionUID = 5027839567542107630L;
-
-			{
-				String videoString = "<video id=\"video\" width=\"800\" height=\"600\" preload controls>"
-						+ "<source src=\"" + videoURL + "\" type=\"video/mp4\">" + "</video>";
-
-				Label video = new Label(videoString, ContentMode.HTML);
-
-				video.setWidth("800px");
-				video.setHeight("600px");
-				addComponent(video);
-			}
-		});
+		WebWindow win = new WebWindow(videoName);
+		String videoString = "<video id=\"video\" width=\"800\" height=\"600\" preload controls>" + "<source src=\""
+				+ videoURL + "\" type=\"video/mp4\">" + "</video>";
+		Label video = new Label(videoString, ContentMode.HTML);
+		video.setWidth("800px");
+		video.setHeight("600px");
+		win.addComponent(video);
+		UI.getCurrent().addWindow(win);
 	}
 
 	private void showImage(Path[] miniatures, int index) {

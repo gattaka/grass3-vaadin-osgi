@@ -563,10 +563,12 @@ public class PGServiceImpl implements PGService {
 	}
 
 	@Override
-	public boolean deleteFiles(Set<String> selected, List<String> items, String galleryDir) {
+	public boolean deleteFiles(Set<PhotogalleryViewItemTO> selected, List<PhotogalleryViewItemTO> items,
+			String galleryDir) {
 		Path galleryPath = getGalleryPath(galleryDir);
 		boolean result = true;
-		for (String file : selected) {
+		for (PhotogalleryViewItemTO itemTO : selected) {
+			String file = itemTO.getName();
 			try {
 				if (PGUtils.isImage(file)) {
 					tryDeleteGalleryFile(file, galleryPath, GalleryFileType.MINIATURE);
@@ -603,11 +605,16 @@ public class PGServiceImpl implements PGService {
 	}
 
 	@Override
-	public List<String> getItems(String galleryDir) throws IOException {
+	public List<PhotogalleryViewItemTO> getItems(String galleryDir) throws IOException {
 		Path galleryPath = getGalleryPath(galleryDir);
-		List<String> items = new ArrayList<>();
+		List<PhotogalleryViewItemTO> items = new ArrayList<>();
 		try (Stream<Path> stream = Files.list(galleryPath)) {
-			stream.filter(file -> !Files.isDirectory(file)).forEach(file -> items.add(file.getFileName().toString()));
+			stream.filter(file -> !Files.isDirectory(file)).forEach(file -> {
+				PhotogalleryViewItemTO itemTO = new PhotogalleryViewItemTO();
+				itemTO.setName(file.getFileName().toString());
+				items.add(itemTO);
+			});
+
 		}
 		return items;
 	}

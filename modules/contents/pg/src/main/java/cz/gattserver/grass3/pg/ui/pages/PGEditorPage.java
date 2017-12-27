@@ -43,6 +43,7 @@ import cz.gattserver.grass3.pg.events.impl.PGProcessResultEvent;
 import cz.gattserver.grass3.pg.events.impl.PGProcessStartEvent;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
 import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.server.GrassRequest;
@@ -102,10 +103,11 @@ public class PGEditorPage extends OneColumnPage {
 	 * Soubory, které byly nahrány od posledního uložení. V případě, že budou
 	 * úpravy zrušeny, je potřeba tyto soubory smazat.
 	 */
-	private List<String> newFiles;
+	private List<PhotogalleryViewItemTO> newFiles = new ArrayList<>();
 
 	public PGEditorPage(GrassRequest request) {
 		super(request);
+		// TODO JS zavola clean galerie od newFiles, tempDir apod.
 		JavaScript.eval(
 				"window.onbeforeunload = function() { return \"Opravdu si přejete ukončit editor a odejít - rozpracovaná data nejsou uložena ?\" };");
 	}
@@ -234,8 +236,8 @@ public class PGEditorPage extends OneColumnPage {
 		imageWrapper.addComponent(image);
 		imageWrapper.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
 
-		final Grid<String> grid = new Grid<>();
-		final List<String> items;
+		final Grid<PhotogalleryViewItemTO> grid = new Grid<>();
+		final List<PhotogalleryViewItemTO> items;
 		if (editMode) {
 			try {
 				items = pgService.getItems(galleryDir);
@@ -246,11 +248,10 @@ public class PGEditorPage extends OneColumnPage {
 			items = new ArrayList<>();
 		}
 		grid.setItems(items);
+		grid.addColumn(PhotogalleryViewItemTO::getName).setCaption("Název");
 
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setSizeFull();
-		grid.getColumn("name").setCaption("Název");
-		grid.setColumns("name");
 
 		final Button removeBtn = new DeleteGridButton<>("Odstranit", selected -> {
 			if (!pgService.deleteFiles(selected, items, galleryDir))
@@ -266,7 +267,8 @@ public class PGEditorPage extends OneColumnPage {
 				gridLayout.removeComponent(imageWrapper);
 				gridLayout.addComponent(previewLabel, 0, 0, 1, 0);
 			} else {
-				String file = event.getFirstSelectedItem().get();
+				PhotogalleryViewItemTO itemTO = event.getFirstSelectedItem().get();
+				String file = itemTO.getName();
 				if (PGUtils.isImage(file)) {
 					if (imageWrapper.getParent() == null) {
 						gridLayout.removeComponent(previewLabel);
@@ -297,9 +299,11 @@ public class PGEditorPage extends OneColumnPage {
 			protected void handleFile(InputStream in, String fileName, String mimeType, long length) {
 				try {
 					pgService.uploadFile(in, fileName, galleryDir);
-					newFiles.add(fileName);
-					items.add(fileName);
-					grid.getDataProvider().refreshAll();
+					PhotogalleryViewItemTO itemTO = new PhotogalleryViewItemTO();
+					itemTO.setName(fileName);
+					newFiles.add(itemTO);
+					items.add(itemTO);
+					grid.setItems(items);
 				} catch (FileAlreadyExistsException f) {
 					if (!warnWindowDeployed) {
 						existingFiles = new Label("", ContentMode.HTML);

@@ -132,7 +132,7 @@ public interface PGService {
 	 * @throws IllegalArgumentException
 	 *             pokud předaný adresář podtéká kořen modulu PG
 	 */
-	public boolean deleteFiles(Set<String> selected, List<String> items, String galleryDir);
+	public boolean deleteFiles(Set<PhotogalleryViewItemTO> selected, List<PhotogalleryViewItemTO> items, String galleryDir);
 
 	/**
 	 * Získá obrázek z galerie. Nemusí jít o existující galerii, proto je
@@ -186,7 +186,7 @@ public interface PGService {
 	 * @throws IllegalArgumentException
 	 *             pokud předaný adresář podtéká kořen modulu PG
 	 */
-	public List<String> getItems(String galleryDir) throws IOException;
+	public List<PhotogalleryViewItemTO> getItems(String galleryDir) throws IOException;
 
 	/**
 	 * Získá počet položek k zobrazení přehledu (miniatury obrázků a náhledy

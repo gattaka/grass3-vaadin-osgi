@@ -17,14 +17,14 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.grass3.search.service.SearchEntity;
 
-@Component("photogalleriesSearchConnector")
+@Component("pgSearchConnector")
 public class PGSearchConnector implements SearchConnector {
 
 	@Autowired
 	private PGService photogalleryFacade;
 
-	@Resource(name = "photogalleryViewerPageFactory")
-	private PageFactory photogalleryViewerPageFactory;
+	@Resource(name = "pgViewerPageFactory")
+	private PageFactory pgViewerPageFactory;
 
 	public List<SearchEntity> getAvailableSearchEntities(UserInfoTO user) {
 		List<SearchEntity> searchEntities = new ArrayList<>();
@@ -32,7 +32,7 @@ public class PGSearchConnector implements SearchConnector {
 		for (PhotogalleryTO photogallery : photogalleries) {
 			String suffix = URLIdentifierUtils.createURLIdentifier(photogallery.getContentNode().getContentID(),
 					photogallery.getContentNode().getName());
-			SearchEntity searchEntity = new SearchEntity(photogalleryViewerPageFactory, suffix);
+			SearchEntity searchEntity = new SearchEntity(pgViewerPageFactory, suffix);
 			searchEntity.addField(PGSearchField.NAME, photogallery.getContentNode().getName(), true);
 			searchEntities.add(searchEntity);
 		}

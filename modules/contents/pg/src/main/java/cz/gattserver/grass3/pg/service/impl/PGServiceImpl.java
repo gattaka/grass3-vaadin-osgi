@@ -2,6 +2,7 @@ package cz.gattserver.grass3.pg.service.impl;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,10 +39,12 @@ import cz.gattserver.grass3.pg.events.impl.PGZipProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.impl.PGZipProcessResultEvent;
 import cz.gattserver.grass3.pg.events.impl.PGZipProcessStartEvent;
 import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryItemType;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
 import cz.gattserver.grass3.pg.model.domain.Photogallery;
 import cz.gattserver.grass3.pg.model.repositories.PhotogalleryRepository;
 import cz.gattserver.grass3.pg.service.PGService;
@@ -81,6 +84,10 @@ public class PGServiceImpl implements PGService {
 	@Autowired
 	private EventBus eventBus;
 
+	private enum GalleryFileType {
+		MAIN_FILE, PREVIEW, SLIDESHOW, MINIATURE,
+	}
+
 	@Override
 	public PGConfiguration loadConfiguration() {
 		PGConfiguration configuration = new PGConfiguration();
@@ -93,19 +100,21 @@ public class PGServiceImpl implements PGService {
 		configurationService.saveConfiguration(configuration);
 	}
 
-	private void deleteFileRecursively(Path file) {
-		try (Stream<Path> stream = Files.list(file)) {
-			stream.forEach(this::deleteFileRecursively);
-			Files.delete(file);
-		} catch (Exception e) {
-			throw new IllegalStateException("Nelze smazat soubor '" + file.getFileName().toString() + "'");
+	private void deleteFileRecursively(Path file) throws IOException {
+		if (Files.isDirectory(file)) {
+			try (Stream<Path> stream = Files.list(file)) {
+				Iterator<Path> it = stream.iterator();
+				while (it.hasNext())
+					deleteFileRecursively(it.next());
+			}
 		}
+		Files.delete(file);
 	}
 
 	@Override
-	public void deletePhotogallery(long photogalleryId) {
+	public void deletePhotogallery(long photogalleryId) throws IOException {
 		String path = photogalleryRepository.findPhotogalleryPathById(photogalleryId);
-		Path galleryDir = getGalleryDir(path);
+		Path galleryDir = getGalleryPath(path);
 		deleteFileRecursively(galleryDir);
 
 		photogalleryRepository.delete(photogalleryId);
@@ -141,7 +150,7 @@ public class PGServiceImpl implements PGService {
 		PGConfiguration configuration = loadConfiguration();
 		String miniaturesDir = configuration.getMiniaturesDir();
 		String previewsDir = configuration.getPreviewsDir();
-		Path galleryDir = getGalleryDir(photogallery);
+		Path galleryDir = getGalleryPath(photogallery.getPhotogalleryPath());
 
 		int total = 0;
 		try (Stream<Path> stream = Files.list(galleryDir)) {
@@ -196,7 +205,7 @@ public class PGServiceImpl implements PGService {
 	private void processSlideshowImages(Photogallery photogallery) throws IOException {
 		PGConfiguration configuration = loadConfiguration();
 		String slideshowDir = configuration.getSlideshowDir();
-		Path galleryDir = getGalleryDir(photogallery);
+		Path galleryDir = getGalleryPath(photogallery.getPhotogalleryPath());
 
 		int total = 0;
 		try (Stream<Path> stream = Files.list(galleryDir)) {
@@ -253,7 +262,11 @@ public class PGServiceImpl implements PGService {
 
 	private void innerSavePhotogallery(PhotogalleryPayloadTO payloadTO, Long existingId, Long nodeId, Long authorId,
 			LocalDateTime date) {
-		try (Stream<Path> stream = Files.list(payloadTO.getGalleryDir())) {
+		Stream<Path> stream = null;
+		try {
+			String galleryDir = payloadTO.getGalleryDir();
+			Path galleryPath = getGalleryPath(galleryDir);
+			stream = Files.list(galleryPath);
 			logger.info("modifyPhotogallery thread: " + Thread.currentThread().getId());
 
 			// Počet kroků = miniatury + detaily + uložení
@@ -264,7 +277,7 @@ public class PGServiceImpl implements PGService {
 					: photogalleryRepository.findOne(existingId);
 
 			// nasetuj do ní vše potřebné
-			photogallery.setPhotogalleryPath(payloadTO.getGalleryDir().getFileName().toString());
+			photogallery.setPhotogalleryPath(galleryDir);
 
 			// ulož ho a nasetuj jeho id
 			photogallery = photogalleryRepository.save(photogallery);
@@ -323,18 +336,21 @@ public class PGServiceImpl implements PGService {
 			publishPGProcessFailure();
 			logger.error("Nezdařilo se uložit galerii", e);
 			return;
+		} finally {
+			if (stream != null)
+				stream.close();
 		}
 	}
 
 	@Override
-	public Path createGalleryDir() throws IOException {
+	public String createGalleryDir() throws IOException {
 		PGConfiguration configuration = loadConfiguration();
 		String dirRoot = configuration.getRootDir();
 		Path dirRootFile = fileSystemService.getFileSystem().getPath(dirRoot);
 		long systime = System.currentTimeMillis();
 		Path tmpDirFile = dirRootFile.resolve("pgTempDir_" + systime);
 		Files.createDirectories(tmpDirFile);
-		return tmpDirFile;
+		return tmpDirFile.getFileName().toString();
 	}
 
 	@Override
@@ -351,45 +367,62 @@ public class PGServiceImpl implements PGService {
 		return new ArrayList<>();
 	}
 
-	@Override
-	public Path getGalleryDir(PhotogalleryTO photogallery) {
-		return getGalleryDir(photogallery.getPhotogalleryPath());
-	}
-
-	private Path getGalleryDir(Photogallery photogallery) {
-		return getGalleryDir(photogallery.getPhotogalleryPath());
-	}
-
-	private Path getGalleryDir(String photogalleryPath) {
+	/**
+	 * Získá {@link Path} dle jména adresáře galerie
+	 * 
+	 * @param galleryDir
+	 *            jméno adresáře galerie
+	 * @return {@link Path} objekt galerie
+	 * @throws IllegalStateException
+	 *             pokud neexistuje kořenový adresář galerií -- chyba nastavení
+	 *             modulu PG
+	 * @throws IllegalArgumentException
+	 *             pokud předaný adresář podtéká kořen modulu PG
+	 */
+	private Path getGalleryPath(String galleryDir) {
 		PGConfiguration configuration = loadConfiguration();
-		return fileSystemService.getFileSystem().getPath(configuration.getRootDir(), photogalleryPath);
+		String rootDir = configuration.getRootDir();
+		Path rootPath = fileSystemService.getFileSystem().getPath(rootDir);
+		if (!Files.exists(rootPath))
+			throw new IllegalStateException("Kořenový adresář PG modulu musí existovat");
+		rootPath = rootPath.normalize();
+		Path galleryPath = rootPath.resolve(galleryDir);
+		if (!galleryPath.normalize().startsWith(rootPath))
+			throw new IllegalArgumentException("Podtečení kořenového adresáře galerií");
+		return galleryPath;
 	}
 
-	@Override
-	public void tryDeleteMiniatureImage(String file, PhotogalleryTO photogalleryDTO) {
-		deleteGalleryFile(file, photogalleryDTO, loadConfiguration().getMiniaturesDir());
-	}
-
-	@Override
-	public void tryDeletePreviewImage(String file, PhotogalleryTO photogalleryDTO) {
-		deleteGalleryFile(file, photogalleryDTO, loadConfiguration().getPreviewsDir());
-	}
-
-	@Override
-	public void tryDeleteSlideshowImage(String file, PhotogalleryTO photogalleryDTO) {
-		deleteGalleryFile(file, photogalleryDTO, loadConfiguration().getSlideshowDir());
-	}
-
-	private void deleteGalleryFile(String file, PhotogalleryTO photogalleryDTO, String subDir) {
-		Path galleryDir = getGalleryDir(photogalleryDTO);
-		Path miniDirFile = galleryDir.resolve(subDir);
-		Path miniFile = miniDirFile.resolve(file);
-		if (Files.exists(miniFile))
-			try {
-				Files.delete(miniFile);
-			} catch (IOException e) {
-				throw new IllegalStateException("Nelze smazat soubor '" + file + "'");
-			}
+	/**
+	 * Pokusí se smazat soubor z galerie
+	 * 
+	 * @param file
+	 *            jméno souboru
+	 * @param photogalleryTO
+	 *            adresář galerie
+	 * @param subDir
+	 *            jméno subadresáře
+	 * @throws IOException
+	 */
+	private void tryDeleteGalleryFile(String file, Path galleryDir, GalleryFileType fileType) throws IOException {
+		Path targetDir = galleryDir;
+		switch (fileType) {
+		case MAIN_FILE:
+			break;
+		case MINIATURE:
+			targetDir = targetDir.resolve(loadConfiguration().getMiniaturesDir());
+			break;
+		case PREVIEW:
+			targetDir = targetDir.resolve(loadConfiguration().getPreviewsDir());
+			break;
+		case SLIDESHOW:
+			targetDir = targetDir.resolve(loadConfiguration().getSlideshowDir());
+			break;
+		default:
+			break;
+		}
+		Path subFile = targetDir.resolve(file);
+		if (Files.exists(subFile))
+			Files.delete(subFile);
 	}
 
 	@Override
@@ -473,9 +506,8 @@ public class PGServiceImpl implements PGService {
 
 	@Async
 	@Override
-	public void zipGallery(Path galleryDir) {
-		Path rootPath = loadRootDirFromConfiguration(loadConfiguration());
-		Path galleryPath = rootPath.resolve(galleryDir);
+	public void zipGallery(String galleryDir) {
+		Path galleryPath = getGalleryPath(galleryDir);
 
 		logger.info("zipPhotogallery thread: " + Thread.currentThread().getId());
 
@@ -530,4 +562,140 @@ public class PGServiceImpl implements PGService {
 		}
 	}
 
+	@Override
+	public boolean deleteFiles(Set<String> selected, List<String> items, String galleryDir) {
+		Path galleryPath = getGalleryPath(galleryDir);
+		boolean result = true;
+		for (String file : selected) {
+			try {
+				if (PGUtils.isImage(file)) {
+					tryDeleteGalleryFile(file, galleryPath, GalleryFileType.MINIATURE);
+					tryDeleteGalleryFile(file, galleryPath, GalleryFileType.SLIDESHOW);
+				}
+				if (PGUtils.isVideo(file))
+					tryDeleteGalleryFile(file, galleryPath, GalleryFileType.PREVIEW);
+				tryDeleteGalleryFile(file, galleryPath, GalleryFileType.MAIN_FILE);
+				items.remove(file);
+			} catch (IOException e) {
+				logger.error("Nezdařilo se smazat soubor {}", file, e);
+				result = false;
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public Path getFullImage(String galleryDir, String file) {
+		Path galleryPath = getGalleryPath(galleryDir);
+		Path filePath = galleryPath.resolve(file);
+		if (!filePath.normalize().startsWith(galleryPath))
+			throw new IllegalArgumentException("Podtečení adresáře galerie");
+		return filePath;
+	}
+
+	@Override
+	public void uploadFile(InputStream in, String fileName, String galleryDir) throws IOException {
+		Path galleryPath = getGalleryPath(galleryDir);
+		Path filePath = galleryPath.resolve(fileName);
+		if (!filePath.normalize().startsWith(galleryPath))
+			throw new IllegalArgumentException("Podtečení adresáře galerie");
+		Files.copy(in, filePath);
+	}
+
+	@Override
+	public List<String> getItems(String galleryDir) throws IOException {
+		Path galleryPath = getGalleryPath(galleryDir);
+		List<String> items = new ArrayList<>();
+		try (Stream<Path> stream = Files.list(galleryPath)) {
+			stream.filter(file -> !Files.isDirectory(file)).forEach(file -> items.add(file.getFileName().toString()));
+		}
+		return items;
+	}
+
+	@Override
+	public int getViewItemsCount(String galleryDir) throws IOException {
+		Path galleryPath = getGalleryPath(galleryDir);
+		try (Stream<Path> stream = Files.list(galleryPath)) {
+			return (int) stream.filter(file -> !Files.isDirectory(file)).count();
+		}
+	}
+
+	@Override
+	public List<PhotogalleryViewItemTO> getViewItems(String galleryDir, int skip, int limit) throws IOException {
+		Path galleryPath = getGalleryPath(galleryDir);
+		PGConfiguration configuration = loadConfiguration();
+		Path miniaturesDir = galleryPath.resolve(configuration.getMiniaturesDir());
+		Path previewDir = galleryPath.resolve(configuration.getPreviewsDir());
+		List<PhotogalleryViewItemTO> list = new ArrayList<>();
+		try (Stream<Path> miniaturesStream = Files.list(miniaturesDir);
+				Stream<Path> previewsStream = Files.list(previewDir);) {
+			Stream.concat(miniaturesStream, previewsStream).skip(skip).limit(limit).forEach(file -> {
+				PhotogalleryViewItemTO itemTO = new PhotogalleryViewItemTO();
+				String fileName = file.getFileName().toString();
+				if (file.startsWith(previewDir)) {
+					itemTO.setType(PhotogalleryItemType.VIDEO);
+					// u videa je potřeba useknout příponu preview obrázku
+					// '.png', aby zůstala původní video přípona
+					itemTO.setName(fileName.substring(0, fileName.length() - 4));
+				} else {
+					itemTO.setType(PhotogalleryItemType.IMAGE);
+					itemTO.setName(fileName);
+				}
+				itemTO.setFile(file);
+				list.add(itemTO);
+			});
+		}
+		return list;
+	}
+
+	@Override
+	public PhotogalleryViewItemTO getSlideshowItem(String galleryDir, int index) throws IOException {
+		Path galleryPath = getGalleryPath(galleryDir);
+		PGConfiguration configuration = loadConfiguration();
+		Path miniaturesDir = galleryPath.resolve(configuration.getMiniaturesDir());
+		Path previewDir = galleryPath.resolve(configuration.getPreviewsDir());
+		Path slideshowDir = galleryPath.resolve(configuration.getSlideshowDir());
+		List<PhotogalleryViewItemTO> list = new ArrayList<>();
+		try (Stream<Path> miniaturesStream = Files.list(miniaturesDir);
+				Stream<Path> previewsStream = Files.list(previewDir);) {
+			Stream.concat(miniaturesStream, previewsStream).skip(index).limit(1).forEach(file -> {
+				PhotogalleryViewItemTO itemTO = new PhotogalleryViewItemTO();
+				String fileName = file.getFileName().toString();
+				if (file.startsWith(previewDir)) {
+					itemTO.setType(PhotogalleryItemType.VIDEO);
+					// u videa je potřeba useknout příponu preview obrázku
+					// '.png', aby zůstala původní video přípona
+					itemTO.setName(fileName.substring(0, fileName.length() - 4));
+					itemTO.setFile(galleryPath.resolve(itemTO.getName()));
+				} else {
+					itemTO.setType(PhotogalleryItemType.IMAGE);
+					itemTO.setName(fileName);
+					itemTO.setFile(slideshowDir.resolve(fileName));
+					// možná byl tak malý, že nebylo potřeba vytvářet slideshow
+					// velikost a stačí použít přímo původní soubor obrázku
+					if (!Files.exists(itemTO.getFile()))
+						itemTO.setFile(galleryPath.resolve(fileName));
+				}
+				list.add(itemTO);
+			});
+		}
+		return list.get(0);
+	}
+
+	@Override
+	public boolean checkGallery(String galleryDir) {
+		Path galleryPath = getGalleryPath(galleryDir);
+		PGConfiguration conf = loadConfiguration();
+		return Files.exists(galleryPath) && (Files.exists(galleryPath.resolve(conf.getMiniaturesDir()))
+				|| Files.exists(galleryPath.resolve(conf.getPreviewsDir())));
+	}
+
+	@Override
+	public void deleteZipFile(Path zipFile) {
+		try {
+			Files.delete(zipFile);
+		} catch (IOException e) {
+			logger.error("Nezdařilo se smazat ZIP soubor {}", zipFile.getFileName().toString());
+		}
+	}
 }

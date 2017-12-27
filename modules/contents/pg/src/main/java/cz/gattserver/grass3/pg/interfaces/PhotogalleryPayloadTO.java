@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.pg.interfaces;
 
-import java.nio.file.Path;
 import java.util.Collection;
 
 /**
@@ -12,7 +11,7 @@ import java.util.Collection;
 public class PhotogalleryPayloadTO {
 
 	private String name;
-	private Path galleryDir;
+	private String galleryDir;
 	private Collection<String> tags;
 	private boolean publicated;
 
@@ -32,7 +31,7 @@ public class PhotogalleryPayloadTO {
 	 * @param publicated
 	 *            <code>true</code>, pokud má být galerie zveřejněna
 	 */
-	public PhotogalleryPayloadTO(String name, Path galleryDir, Collection<String> tags, boolean publicated) {
+	public PhotogalleryPayloadTO(String name, String galleryDir, Collection<String> tags, boolean publicated) {
 		this.name = name;
 		this.galleryDir = galleryDir;
 		this.tags = tags;
@@ -59,7 +58,7 @@ public class PhotogalleryPayloadTO {
 	/**
 	 * @return adresář se soubory fotogalerie
 	 */
-	public Path getGalleryDir() {
+	public String getGalleryDir() {
 		return galleryDir;
 	}
 
@@ -68,7 +67,7 @@ public class PhotogalleryPayloadTO {
 	 *            adresář se soubory fotogalerie
 	 * @return tento objekt pro řetězení
 	 */
-	public PhotogalleryPayloadTO setGalleryDir(Path galleryDir) {
+	public PhotogalleryPayloadTO setGalleryDir(String galleryDir) {
 		this.galleryDir = galleryDir;
 		return this;
 	}

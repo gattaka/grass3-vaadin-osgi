@@ -1,59 +1,47 @@
 package cz.gattserver.grass3.pg.ui.pages;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
-import com.vaadin.server.FileResource;
-import com.vaadin.server.Resource;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Embedded;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
+import cz.gattserver.grass3.pg.service.PGService;
+import cz.gattserver.grass3.ui.util.UIUtils;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.WebWindow;
 
-public class ImageSlideshowWindow extends WebWindow {
+public abstract class ImageSlideshowWindow extends WebWindow {
 
 	private static final long serialVersionUID = 4928404864735034779L;
 
-	private int currentIndex;
-	private List<Resource> list;
-	private Embedded embedded;
-	private Path[] miniatures;
+	private transient PGService pgService;
 
-	public ImageSlideshowWindow(Path[] miniatures, int index, Path slideshowDir) {
-		super((index + 1) + "/" + miniatures.length + " " + miniatures[index].getFileName().toString());
+	private int currentIndex;
+	private int totalCount;
+	private HorizontalLayout slideShowLayout;
+
+	protected abstract Component showItem(PhotogalleryViewItemTO itemTO);
+
+	private PGService getPGService() {
+		if (pgService == null)
+			pgService = SpringContextHelper.getBean(PGService.class);
+		return pgService;
+	}
+
+	public ImageSlideshowWindow(final String galleryDir, int index, int count) {
+		this.totalCount = count;
 		this.currentIndex = index;
-		this.miniatures = miniatures;
 
 		setResizable(false);
 		center();
 
 		addStyleName("grass-image-slideshow-window");
 
-		list = new ArrayList<>();
-
-		for (Path mini : miniatures) {
-			Path image = slideshowDir.resolve(mini.getFileName().toString());
-			if (!Files.exists(image))
-				image = slideshowDir.getParent().resolve(mini.getFileName().toString());
-
-			Resource resource = new FileResource(image.toFile());
-			list.add(resource);
-		}
-
-		HorizontalLayout slideShow = new HorizontalLayout();
-		slideShow.setSizeFull();
-		layout.addComponent(slideShow);
-
-		embedded = new Embedded(null, list.get(index));
-		embedded.setSizeUndefined();
-		slideShow.addComponent(embedded);
-		slideShow.setComponentAlignment(embedded, Alignment.MIDDLE_CENTER);
-		slideShow.setExpandRatio(embedded, 1);
+		slideShowLayout = new HorizontalLayout();
+		slideShowLayout.setSizeFull();
+		layout.addComponent(slideShowLayout);
 
 		addAction(new ShortcutListener("Prev", KeyCode.ARROW_LEFT, null) {
 			private static final long serialVersionUID = -6194478959368277077L;
@@ -61,7 +49,7 @@ public class ImageSlideshowWindow extends WebWindow {
 			@Override
 			public void handleAction(Object sender, Object target) {
 				if (currentIndex > 0) {
-					changeImage(currentIndex - 1);
+					changeItem(galleryDir, currentIndex - 1);
 				}
 			}
 		});
@@ -71,18 +59,32 @@ public class ImageSlideshowWindow extends WebWindow {
 
 			@Override
 			public void handleAction(Object sender, Object target) {
-				if (currentIndex < list.size() - 1) {
-					changeImage(currentIndex + 1);
+				if (currentIndex < totalCount - 1) {
+					changeItem(galleryDir, currentIndex + 1);
 				}
 			}
 		});
 
 	}
 
-	protected void changeImage(int index) {
+	protected void changeItem(String galleryDir, int index) {
 		currentIndex = index;
-		embedded.setSource(list.get(currentIndex));
-		setCaption((index + 1) + "/" + miniatures.length + " " + miniatures[currentIndex].getFileName().toString());
+		PGService pgService = getPGService();
+
+		try {
+			PhotogalleryViewItemTO itemTO = pgService.getSlideshowItem(galleryDir, index);
+
+			Component slideshowComponent = showItem(itemTO);
+
+			slideShowLayout.removeAllComponents();
+			slideShowLayout.addComponent(slideshowComponent);
+			slideShowLayout.setComponentAlignment(slideshowComponent, Alignment.MIDDLE_CENTER);
+			slideShowLayout.setExpandRatio(slideshowComponent, 1);
+
+			setCaption((index + 1) + "/" + totalCount + " " + itemTO.getName());
+		} catch (Exception e) {
+			UIUtils.showWarning("Zobrazení položky se nezdařilo");
+		}
 	}
 
 	@Override

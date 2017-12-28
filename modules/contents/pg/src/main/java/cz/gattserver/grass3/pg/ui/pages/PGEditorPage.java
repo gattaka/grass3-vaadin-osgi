@@ -26,7 +26,6 @@ import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
@@ -218,26 +217,23 @@ public class PGEditorPage extends OneColumnPage {
 		editorLayout.addComponent(contentLayout);
 		contentLayout.addComponent(new H2Label("Položky"));
 
-		final GridLayout gridLayout = new GridLayout(3, 2);
+		HorizontalLayout gridLayout = new HorizontalLayout();
+		gridLayout.setMargin(false);
 		gridLayout.setSpacing(true);
-		gridLayout.setColumnExpandRatio(2, 1);
 		gridLayout.setWidth("100%");
 		contentLayout.addComponent(gridLayout);
-
-		final Embedded image = new Embedded();
-		image.setWidth("300px");
-
-		final Label previewLabel = new Label("<center>Náhled</center>", ContentMode.HTML);
-		previewLabel.setHeight("300px");
-		previewLabel.setWidth("300px");
-		previewLabel.addStyleName("bordered");
-		gridLayout.addComponent(previewLabel, 0, 0, 1, 0);
 
 		final VerticalLayout imageWrapper = new VerticalLayout();
 		imageWrapper.setWidth("300px");
 		imageWrapper.setHeight("300px");
-		imageWrapper.addComponent(image);
-		imageWrapper.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
+		imageWrapper.addStyleName("bordered");
+
+		final Embedded image = new Embedded();
+		image.addStyleName("resized-preview");
+
+		final Label previewLabel = new Label("<center>Náhled</center>", ContentMode.HTML);
+		imageWrapper.addComponent(previewLabel);
+		imageWrapper.setComponentAlignment(previewLabel, Alignment.MIDDLE_CENTER);
 
 		final Grid<PhotogalleryViewItemTO> grid = new Grid<>(PhotogalleryViewItemTO.class);
 		final List<PhotogalleryViewItemTO> items;
@@ -253,7 +249,6 @@ public class PGEditorPage extends OneColumnPage {
 		grid.setItems(items);
 		grid.setColumns("name");
 		grid.getColumn("name").setCaption("Název");
-
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setSizeFull();
 
@@ -265,38 +260,34 @@ public class PGEditorPage extends OneColumnPage {
 			grid.getDataProvider().refreshAll();
 		}, grid);
 
-		gridLayout.addComponent(removeBtn, 1, 1);
-		gridLayout.setComponentAlignment(removeBtn, Alignment.MIDDLE_CENTER);
-
 		grid.addSelectionListener(event -> {
-			if (event.getAllSelectedItems().isEmpty()) {
-				gridLayout.removeComponent(imageWrapper);
-				gridLayout.addComponent(previewLabel, 0, 0, 1, 0);
-			} else {
+			imageWrapper.removeAllComponents();
+			if (!event.getAllSelectedItems().isEmpty()) {
 				PhotogalleryViewItemTO itemTO = event.getFirstSelectedItem().get();
 				String file = itemTO.getName();
 				if (PGUtils.isImage(file)) {
-					if (imageWrapper.getParent() == null) {
-						gridLayout.removeComponent(previewLabel);
-						gridLayout.addComponent(imageWrapper, 0, 0, 1, 0);
-					}
 					try {
 						image.setSource(new FileResource(pgService.getFullImage(galleryDir, file).toFile()));
+						imageWrapper.addComponent(image);
+						return;
 					} catch (Exception e) {
 						UIUtils.showWarning("Obrázek nelze zobrazit");
 					}
 				}
 				removeBtn.setEnabled(true);
 			}
+			imageWrapper.addComponent(previewLabel);
+			imageWrapper.setComponentAlignment(previewLabel, Alignment.MIDDLE_CENTER);
 		});
-		gridLayout.addComponent(grid, 2, 0, 2, 1);
+		gridLayout.addComponent(grid);
+		gridLayout.setExpandRatio(grid, 1);
+		
+		gridLayout.addComponent(imageWrapper);
 
-		VerticalLayout uploadWrapper = new VerticalLayout();
-		uploadWrapper.setSpacing(true);
-		uploadWrapper.setWidth("100%");
-		uploadWrapper.setMargin(true);
-		uploadWrapper.addStyleName("bordered");
-		contentLayout.addComponent(uploadWrapper);
+		HorizontalLayout itemsButtonLayout = new HorizontalLayout();
+		itemsButtonLayout.setSpacing(true);
+		itemsButtonLayout.setMargin(false);
+		contentLayout.addComponent(itemsButtonLayout);
 
 		MultiUpload multiUpload = new MultiUpload() {
 			private static final long serialVersionUID = -5223991901495532219L;
@@ -339,8 +330,9 @@ public class PGEditorPage extends OneColumnPage {
 
 		};
 		multiUpload.setCaption("Nahrát obsah");
-		uploadWrapper.addComponent(multiUpload);
-		uploadWrapper.setComponentAlignment(multiUpload, Alignment.MIDDLE_CENTER);
+
+		itemsButtonLayout.addComponent(multiUpload);
+		itemsButtonLayout.addComponent(removeBtn);
 
 		VerticalLayout contentOptionsLayout = new VerticalLayout();
 		contentOptionsLayout.setSpacing(true);

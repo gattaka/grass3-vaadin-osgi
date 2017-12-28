@@ -257,7 +257,7 @@ public class PGViewerPage extends ContentViewerPage {
 		HorizontalLayout statusLabelWrapper = new HorizontalLayout();
 		statusLabelWrapper.setMargin(true);
 		statusLabelWrapper.addComponent(rowStatusLabel);
-		statusLabelWrapper.setComponentAlignment(rowStatusLabel, Alignment.MIDDLE_CENTER);
+		statusLabelWrapper.setComponentAlignment(rowStatusLabel, Alignment.MIDDLE_LEFT);
 		statusLabelWrapper.setWidth("100%");
 		statusLabelWrapper.addStyleName("bordered");
 		statusLabelWrapper.setExpandRatio(rowStatusLabel, 1);
@@ -311,6 +311,8 @@ public class PGViewerPage extends ContentViewerPage {
 	@Handler
 	protected void onProcessResult(final PGZipProcessResultEvent event) {
 		ui.access(() -> {
+			ui.setPollInterval(-1);
+			
 			if (progressIndicatorWindow != null)
 				progressIndicatorWindow.closeOnDone();
 

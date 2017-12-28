@@ -15298,3 +15298,11 @@ span.tag-letter {
     font-size: 20px;
     color: white;
 }
+
+.grass .resized-preview img {
+    display: block;
+    max-width: 280px;
+    max-height: 280px;
+    width: auto;
+    height: auto;
+}

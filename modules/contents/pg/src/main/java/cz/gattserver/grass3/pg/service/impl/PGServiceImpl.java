@@ -509,7 +509,7 @@ public class PGServiceImpl implements PGService {
 		progress.setValue(1);
 
 		String zipFileName = "grassPGTmpFile_" + new Date().getTime() + "_" + galleryDir;
-		Path zipFile = fileSystemService.getFileSystem().getPath(zipFileName);
+		Path zipFile = galleryPath.resolve(zipFileName);
 
 		try (FileSystem zipFileSystem = ZIPUtils.createZipFileSystem(zipFile, true)) {
 			performZip(galleryPath, zipFileSystem, progress, total);
@@ -534,12 +534,7 @@ public class PGServiceImpl implements PGService {
 				// Přidávám jenom soubory fotek a videí, miniatury/náhledy a
 				// slideshow nechci
 				if (!Files.isDirectory(src)) {
-					Path dest = zipFileSystem.getPath(root.toString(), src.toString());
-					Path parent = dest.getParent();
-					if (Files.notExists(parent)) {
-						logger.info("Vytvářím ZIP adresář {}", parent);
-						Files.createDirectories(parent);
-					}
+					Path dest = root.resolve(src.getFileName().toString());
 					Files.copy(src, dest, StandardCopyOption.REPLACE_EXISTING);
 				}
 			}

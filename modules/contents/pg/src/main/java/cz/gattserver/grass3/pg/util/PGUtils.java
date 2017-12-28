@@ -21,6 +21,8 @@ import com.mortennobel.imagescaling.ResampleOp;
 
 public class PGUtils {
 
+	public static final int MINIATURE_SIZE = 150;
+
 	private PGUtils() {
 	}
 
@@ -49,10 +51,19 @@ public class PGUtils {
 		return orientation;
 	}
 
+	public static BufferedImage resizeBufferedImage(BufferedImage image) {
+		return resizeBufferedImage(image, PGUtils.MINIATURE_SIZE, PGUtils.MINIATURE_SIZE);
+	}
+
 	public static BufferedImage resizeBufferedImage(BufferedImage image, int maxWidth, int maxHeight) {
 		ResampleOp resampleOp = new ResampleOp(DimensionConstrain.createMaxDimension(maxWidth, maxHeight));
 		resampleOp.setFilter(ResampleFilters.getLanczos3Filter());
 		return resampleOp.filter(image, null);
+	}
+
+	public static boolean resizeAndRotateImageFile(Path inputFile, Path destinationFile)
+			throws IOException, ImageProcessingException, MetadataException {
+		return resizeAndRotateImageFile(inputFile, destinationFile, PGUtils.MINIATURE_SIZE, PGUtils.MINIATURE_SIZE);
 	}
 
 	public static boolean resizeAndRotateImageFile(Path inputFile, Path destinationFile, int maxWidth, int maxHeight)

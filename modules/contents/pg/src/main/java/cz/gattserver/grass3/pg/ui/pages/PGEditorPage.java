@@ -143,8 +143,11 @@ public class PGEditorPage extends OneColumnPage {
 		} else if (operationToken.equals(DefaultContentOperations.EDIT.toString())) {
 			editMode = true;
 			photogallery = pgService.getPhotogalleryForDetail(identifier.getId());
-			photogalleryNameField.setValue(photogallery.getContentNode().getName());
 
+			if (photogallery == null)
+				throw new GrassPageException(404);
+
+			photogalleryNameField.setValue(photogallery.getContentNode().getName());
 			for (ContentTagOverviewTO tagDTO : photogallery.getContentNode().getContentTags()) {
 				photogalleryKeywords.addToken(new Token(tagDTO.getName()));
 			}
@@ -157,8 +160,8 @@ public class PGEditorPage extends OneColumnPage {
 		}
 
 		// nemá oprávnění upravovat tento obsah
-		if (photogallery != null && !photogallery.getContentNode().getAuthor().equals(UIUtils.getGrassUI().getUser())
-				&& UIUtils.getGrassUI().getUser().isAdmin())
+		if (!photogallery.getContentNode().getAuthor().getName().equals(UIUtils.getGrassUI().getUser().getName())
+				&& !UIUtils.getGrassUI().getUser().isAdmin())
 			throw new GrassPageException(403);
 
 		try {

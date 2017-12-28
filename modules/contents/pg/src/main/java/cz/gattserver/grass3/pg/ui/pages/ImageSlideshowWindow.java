@@ -1,10 +1,16 @@
 package cz.gattserver.grass3.pg.ui.pages;
 
 import com.vaadin.event.ShortcutAction.KeyCode;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
 import cz.gattserver.grass3.pg.service.PGService;
@@ -16,10 +22,14 @@ public abstract class ImageSlideshowWindow extends WebWindow {
 
 	private static final long serialVersionUID = 4928404864735034779L;
 
+	private static final Logger logger = LoggerFactory.getLogger(ImageSlideshowWindow.class);
+
 	private transient PGService pgService;
 
-	private int currentIndex;
+	protected int currentIndex;
 	private int totalCount;
+	private String galleryDir;
+	private Label itemLabel;
 	private HorizontalLayout slideShowLayout;
 
 	protected abstract Component showItem(PhotogalleryViewItemTO itemTO);
@@ -30,27 +40,40 @@ public abstract class ImageSlideshowWindow extends WebWindow {
 		return pgService;
 	}
 
-	public ImageSlideshowWindow(final String galleryDir, int index, int count) {
+	public ImageSlideshowWindow(final String galleryDir, int count) {
 		this.totalCount = count;
-		this.currentIndex = index;
+		this.galleryDir = galleryDir;
 
 		setResizable(false);
-		center();
+		setSizeFull();
 
 		addStyleName("grass-image-slideshow-window");
 
+		itemLabel = new Label();
+		itemLabel.setStyleName("white-bold-label");
+		itemLabel.setSizeUndefined();
+
+		VerticalLayout itemLayout = new VerticalLayout();
+
 		slideShowLayout = new HorizontalLayout();
 		slideShowLayout.setSizeFull();
-		layout.addComponent(slideShowLayout);
+
+		itemLayout.addComponent(itemLabel);
+		itemLayout.addComponent(itemLabel);
+		itemLayout.setComponentAlignment(itemLabel, Alignment.BOTTOM_CENTER);
+		itemLayout.addComponent(slideShowLayout);
+
+		layout.addComponent(itemLayout);
+		layout.setComponentAlignment(itemLayout, Alignment.MIDDLE_CENTER);
+		layout.setSizeFull();
 
 		addAction(new ShortcutListener("Prev", KeyCode.ARROW_LEFT, null) {
 			private static final long serialVersionUID = -6194478959368277077L;
 
 			@Override
 			public void handleAction(Object sender, Object target) {
-				if (currentIndex > 0) {
-					changeItem(galleryDir, currentIndex - 1);
-				}
+				if (currentIndex > 0)
+					showItem(currentIndex - 1);
 			}
 		});
 
@@ -59,18 +82,18 @@ public abstract class ImageSlideshowWindow extends WebWindow {
 
 			@Override
 			public void handleAction(Object sender, Object target) {
-				if (currentIndex < totalCount - 1) {
-					changeItem(galleryDir, currentIndex + 1);
-				}
+				if (currentIndex < totalCount - 1)
+					showItem(currentIndex + 1);
 			}
 		});
 
+		addClickListener(e -> close());
+
 	}
 
-	protected void changeItem(String galleryDir, int index) {
+	public void showItem(int index) {
 		currentIndex = index;
 		PGService pgService = getPGService();
-
 		try {
 			PhotogalleryViewItemTO itemTO = pgService.getSlideshowItem(galleryDir, index);
 
@@ -81,10 +104,14 @@ public abstract class ImageSlideshowWindow extends WebWindow {
 			slideShowLayout.setComponentAlignment(slideshowComponent, Alignment.MIDDLE_CENTER);
 			slideShowLayout.setExpandRatio(slideshowComponent, 1);
 
-			setCaption((index + 1) + "/" + totalCount + " " + itemTO.getName());
+			itemLabel.setValue((index + 1) + "/" + totalCount + " " + itemTO.getName());
 		} catch (Exception e) {
+			logger.error("Chyba při zobrazování slideshow položky fotogalerie", e);
 			UIUtils.showWarning("Zobrazení položky se nezdařilo");
+			close();
 		}
+
+		center();
 	}
 
 	@Override

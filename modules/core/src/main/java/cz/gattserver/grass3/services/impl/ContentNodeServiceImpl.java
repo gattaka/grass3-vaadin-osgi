@@ -130,11 +130,10 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	public void deleteByContentId(String contentModuleId, long contentId) {
 		Validate.notNull(contentModuleId, "'contentModuleId' nemůže být null");
 		Long contentNodeId = contentNodeRepository.findIdByContentModuleAndContentId(contentModuleId, contentId);
-		if (contentNodeId != null) {
+		if (contentNodeId != null)
 			deleteByContentNodeId(contentNodeId);
-		} else {
+		else
 			throw new IllegalStateException("Dle ID koncového obsahu nebyl nalezen obecný uzel obsahu");
-		}
 	}
 
 	@Override

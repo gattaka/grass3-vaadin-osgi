@@ -54,7 +54,7 @@ public class PGViewerPage extends ContentViewerPage {
 
 	private static final Logger logger = LoggerFactory.getLogger(PGViewerPage.class);
 	private static final String ROWS_STATUS_PREFIX = "Zobrazeny řádky: ";
-	private static final String IMAGE_SUM_PREFIX = " | Celkový počet fotek: ";
+	private static final String IMAGE_SUM_PREFIX = " | Celkem položek: ";
 
 	@Autowired
 	private PGService pgService;
@@ -79,11 +79,6 @@ public class PGViewerPage extends ContentViewerPage {
 	private static final int GALLERY_GRID_COLS = 4;
 	private static final int GALLERY_GRID_ROWS = 3;
 
-	/**
-	 * Položka z fotogalerie, která byla dle URL vybrána (nepovinné)
-	 */
-	private String pgSelectedVideoItemId;
-
 	private Label rowStatusLabel;
 
 	private Button upRowBtn;
@@ -95,6 +90,10 @@ public class PGViewerPage extends ContentViewerPage {
 
 	private GridLayout galleryGridLayout;
 
+	/**
+	 * Položka z fotogalerie, která byla dle URL vybrána (nepovinné)
+	 */
+	private Integer pgSelected;
 	private String galleryDir;
 
 	public PGViewerPage(GrassRequest request) {
@@ -132,13 +131,15 @@ public class PGViewerPage extends ContentViewerPage {
 			throw new GrassPageException(403);
 
 		galleryDir = photogallery.getPhotogalleryPath();
-		pgSelectedVideoItemId = analyzer.getNextPathToken();
 
-		// TODO -- přímé zobrazení videa dle odkazu
-		// if (pgSelectedVideoItemId != null) {
-		// !Files.exists(galleryDir.resolve(pgSelectedVideoItemId)))
-		// throw new GrassPageException(404);
-		// }
+		String pgSelectedToken = analyzer.getNextPathToken();
+		if (pgSelectedToken != null)
+			try {
+				// index je od 0, ale číslování obsahu bude od 1
+				pgSelected = Integer.valueOf(pgSelectedToken) - 1;
+			} catch (Exception e) {
+				throw new GrassPageException(404);
+			}
 
 		return super.createPayload();
 	}
@@ -174,7 +175,7 @@ public class PGViewerPage extends ContentViewerPage {
 		} catch (Exception e) {
 			throw new GrassPageException(500, e);
 		}
-		rowsSum = imageSum / GALLERY_GRID_COLS;
+		rowsSum = (int) Math.ceil((double) imageSum / GALLERY_GRID_COLS);
 
 		VerticalLayout galleryLayout = new VerticalLayout();
 		galleryLayout.setSpacing(true);
@@ -237,11 +238,10 @@ public class PGViewerPage extends ContentViewerPage {
 		downPageBtn.addClickListener(event -> {
 			// kolik řádků zbývá do konce ?
 			int dif = rowsSum - (GALLERY_GRID_ROWS + galleryGridRowOffset);
-			if (dif > GALLERY_GRID_ROWS) {
+			if (dif > GALLERY_GRID_ROWS)
 				galleryGridRowOffset += GALLERY_GRID_ROWS;
-			} else {
+			else
 				galleryGridRowOffset += dif;
-			}
 		});
 		bottomBtnsLayout.addComponent(downPageBtn);
 		bottomBtnsLayout.setComponentAlignment(downPageBtn, Alignment.MIDDLE_CENTER);
@@ -288,10 +288,8 @@ public class PGViewerPage extends ContentViewerPage {
 		Animator.animate(galleryGridLayout, new Css().opacity(1)).delay(200).duration(200);
 		checkOffsetBtnsAvailability();
 
-		// TODO -- přímé zobrazení videa dle odkazu
-		// if (pgSelectedVideoItemId != null &&
-		// PGUtils.isVideo(pgSelectedVideoItemId))
-		// showVideo(pgSelectedVideoItemId, getItemURL(pgSelectedVideoItemId));
+		if (pgSelected != null)
+			showItem(pgSelected);
 	}
 
 	@Handler
@@ -378,14 +376,12 @@ public class PGViewerPage extends ContentViewerPage {
 	}
 
 	private String getItemURL(String file) {
-		return getRequest().getContextRoot() + PGConfiguration.PG_PATH + "/" + photogallery.getPhotogalleryPath() + "/"
-				+ file;
+		return getRequest().getContextRoot() + "/" + PGConfiguration.PG_PATH + "/" + photogallery.getPhotogalleryPath()
+				+ "/" + file;
 	}
 
 	private void populateGrid() {
-
 		galleryGridLayout.removeAllComponents();
-
 		int start = galleryGridRowOffset * GALLERY_GRID_COLS;
 		int limit = GALLERY_GRID_COLS * GALLERY_GRID_ROWS;
 		int index = start;
@@ -393,6 +389,7 @@ public class PGViewerPage extends ContentViewerPage {
 			for (PhotogalleryViewItemTO item : pgService.getViewItems(galleryDir, start, limit)) {
 				final int currentIndex = index;
 				VerticalLayout itemLayout = new VerticalLayout();
+				itemLayout.setMargin(false);
 				itemLayout.setSpacing(true);
 
 				// Miniatura/Náhled
@@ -411,38 +408,43 @@ public class PGViewerPage extends ContentViewerPage {
 				galleryGridLayout.addComponent(itemLayout);
 				galleryGridLayout.setComponentAlignment(itemLayout, Alignment.MIDDLE_CENTER);
 
-				embedded.addClickListener(event -> {
-					UI.getCurrent().addWindow(new ImageSlideshowWindow(galleryDir, currentIndex, imageSum) {
-
-						@Override
-						protected Component showItem(PhotogalleryViewItemTO itemTO) {
-							// zajisti posuv přehledu
-							if (currentIndex > (galleryGridRowOffset + GALLERY_GRID_ROWS) * GALLERY_GRID_COLS - 1) {
-								galleryGridRowOffset++;
-								shiftGrid();
-							} else if (currentIndex < galleryGridRowOffset * GALLERY_GRID_COLS) {
-								galleryGridRowOffset--;
-								shiftGrid();
-							}
-
-							// vytvoř odpovídající komponentu pro zobrazení
-							// obrázku nebo videa
-							switch (itemTO.getType()) {
-							case VIDEO:
-								return showVideo(itemTO);
-							case IMAGE:
-							default:
-								return showImage(itemTO);
-							}
-						}
-					});
-				});
+				embedded.addClickListener(event -> showItem(currentIndex));
 
 				index++;
 			}
 		} catch (Exception e) {
 			UIUtils.showWarning("Listování galerie selhalo");
 		}
+	}
+
+	private void showItem(final int index) {
+		ImageSlideshowWindow window;
+		UI.getCurrent().addWindow(window = new ImageSlideshowWindow(galleryDir, imageSum) {
+			private static final long serialVersionUID = 7926209313704634472L;
+
+			@Override
+			protected Component showItem(PhotogalleryViewItemTO itemTO) {
+				// zajisti posuv přehledu
+				if (currentIndex > (galleryGridRowOffset + GALLERY_GRID_ROWS) * GALLERY_GRID_COLS - 1) {
+					galleryGridRowOffset++;
+					shiftGrid();
+				} else if (currentIndex < galleryGridRowOffset * GALLERY_GRID_COLS) {
+					galleryGridRowOffset--;
+					shiftGrid();
+				}
+
+				// vytvoř odpovídající komponentu pro zobrazení
+				// obrázku nebo videa
+				switch (itemTO.getType()) {
+				case VIDEO:
+					return showVideo(itemTO);
+				case IMAGE:
+				default:
+					return showImage(itemTO);
+				}
+			}
+		});
+		window.showItem(index);
 	}
 
 	private Component showVideo(PhotogalleryViewItemTO itemTO) {

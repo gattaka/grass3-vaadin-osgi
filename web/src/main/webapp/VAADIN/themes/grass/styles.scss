@@ -620,3 +620,23 @@ span.tag-letter {
 	border: 2px solid hsla(14, 88%, 36%, 1);
 	background-color: hsla(14, 93%, 38%, 0.25);
 }
+
+// Slideshow
+
+.grass .v-window.v-widget.v-has-width.v-has-height.grass-image-slideshow-window.v-window-grass-image-slideshow-window {
+    background: none;
+}
+
+.grass .grass-image-slideshow-window .v-window-outerheader {
+    display: none;
+}
+
+.grass .v-window-contents > .v-scrollable:before {
+    border: none;
+}
+
+.grass .white-bold-label {
+	font-family: Arial;
+    font-size: 20px;
+    color: white;
+}

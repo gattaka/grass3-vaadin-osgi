@@ -128,7 +128,7 @@ public class PGServiceImpl implements PGService {
 			logger.info("Bylo zahájeno zpracování náhledu videa {}", videoName);
 			BufferedImage image = new DecodeAndCaptureFrames().decodeAndCaptureFrames(file);
 			logger.info("Zpracování náhledu videa {} byla úspěšně dokončeno", videoName);
-			image = PGUtils.resizeBufferedImage(image, 150, 150);
+			image = PGUtils.resizeBufferedImage(image);
 			ImageIO.write(image, "png", outputFile.toFile());
 			logger.info("Náhled videa {} byl úspěšně uložen", videoName);
 		} catch (Exception e) {
@@ -139,7 +139,7 @@ public class PGServiceImpl implements PGService {
 	private void createImageMinature(Path file, Path outputFile) {
 		String imageName = outputFile.getFileName().toString();
 		try {
-			PGUtils.resizeAndRotateImageFile(file, outputFile, 150, 150);
+			PGUtils.resizeAndRotateImageFile(file, outputFile);
 			logger.info("Náhled obrázku {} byl úspěšně uložen", imageName);
 		} catch (Exception e) {
 			logger.error("Vytváření náhledu obrázku {} se nezdařilo", imageName, e);
@@ -222,7 +222,7 @@ public class PGServiceImpl implements PGService {
 			Iterator<Path> it = stream.iterator();
 			while (it.hasNext()) {
 				Path file = it.next();
-				Path outputFile = slideshowDirFile.resolve(file);
+				Path outputFile = slideshowDirFile.resolve(file.getFileName().toString());
 
 				if (Files.exists(outputFile) || Files.isDirectory(file) || !PGUtils.isImage(file))
 					continue;
@@ -304,32 +304,13 @@ public class PGServiceImpl implements PGService {
 						payloadTO.getTags(), payloadTO.isPublicated(), date);
 			}
 
+			eventBus.publish(new PGProcessProgressEvent("Uložení obsahu galerie"));
+
 			// vytvoř miniatury
 			processMiniatureImages(photogallery);
 
 			// vytvoř detaily
 			processSlideshowImages(photogallery);
-
-			// ulož ho a nasetuj jeho id
-			photogallery = photogalleryRepository.save(photogallery);
-			if (photogallery == null) {
-				publishPGProcessFailure();
-				return;
-			}
-
-			// vytvoř odpovídající content node
-			eventBus.publish(new PGProcessProgressEvent("Uložení obsahu galerie"));
-			Long contentNodeId = contentNodeFacade.save(PGModule.ID, photogallery.getId(), payloadTO.getName(),
-					payloadTO.getTags(), payloadTO.isPublicated(), nodeId, authorId, false, date, null);
-
-			// ulož do galerie referenci na její contentnode
-			ContentNode contentNode = new ContentNode();
-			contentNode.setId(contentNodeId);
-			photogallery.setContentNode(contentNode);
-			if (photogalleryRepository.save(photogallery) == null) {
-				publishPGProcessFailure();
-				return;
-			}
 
 			eventBus.publish(new PGProcessResultEvent(photogallery.getId()));
 		} catch (Exception e) {

@@ -4,9 +4,12 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystem;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -329,7 +332,7 @@ public class PGServiceImpl implements PGService {
 		String dirRoot = configuration.getRootDir();
 		Path dirRootFile = fileSystemService.getFileSystem().getPath(dirRoot);
 		long systime = System.currentTimeMillis();
-		Path tmpDirFile = dirRootFile.resolve("pgTempDir_" + systime);
+		Path tmpDirFile = dirRootFile.resolve("pgGal_" + systime);
 		Files.createDirectories(tmpDirFile);
 		return tmpDirFile.getFileName().toString();
 	}
@@ -544,10 +547,9 @@ public class PGServiceImpl implements PGService {
 	}
 
 	@Override
-	public boolean deleteFiles(Set<PhotogalleryViewItemTO> selected, List<PhotogalleryViewItemTO> items,
-			String galleryDir) {
+	public List<PhotogalleryViewItemTO> deleteFiles(Set<PhotogalleryViewItemTO> selected, String galleryDir) {
 		Path galleryPath = getGalleryPath(galleryDir);
-		boolean result = true;
+		List<PhotogalleryViewItemTO> removed = new ArrayList<>();
 		for (PhotogalleryViewItemTO itemTO : selected) {
 			String file = itemTO.getName();
 			try {
@@ -558,13 +560,12 @@ public class PGServiceImpl implements PGService {
 				if (PGUtils.isVideo(file))
 					tryDeleteGalleryFile(file, galleryPath, GalleryFileType.PREVIEW);
 				tryDeleteGalleryFile(file, galleryPath, GalleryFileType.MAIN_FILE);
-				items.remove(file);
+				removed.add(itemTO);
 			} catch (IOException e) {
 				logger.error("Nezdařilo se smazat soubor {}", file, e);
-				result = false;
 			}
 		}
-		return result;
+		return removed;
 	}
 
 	@Override
@@ -685,5 +686,23 @@ public class PGServiceImpl implements PGService {
 		} catch (IOException e) {
 			logger.error("Nezdařilo se smazat ZIP soubor {}", zipFile.getFileName().toString());
 		}
+	}
+
+	@Override
+	public void deleteDraftGallery(String galleryDir) throws IOException {
+		Path galleryPath = getGalleryPath(galleryDir);
+		Files.walkFileTree(galleryPath, new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				try {
+					Files.delete(file);
+				} catch (Exception e) {
+					logger.error("Nezdařilo se smazat soubor zrušené rozpracované galerie {}",
+							file.getFileName().toString(), e);
+				}
+				return FileVisitResult.CONTINUE;
+			}
+		});
+		Files.delete(galleryPath);
 	}
 }

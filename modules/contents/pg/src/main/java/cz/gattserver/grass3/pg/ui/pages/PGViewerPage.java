@@ -484,6 +484,7 @@ public class PGViewerPage extends ContentViewerPage {
 			} catch (Exception e) {
 				// Pokud ne, otevři warn okno a při
 				// potvrzení jdi na kategorii
+				logger.error("Během mazání galerie došlo k chybě", e);
 				WarnWindow warnSubwindow = new WarnWindow("Smazání galerie se nezdařilo.");
 				UI.getCurrent().addWindow(warnSubwindow);
 			}

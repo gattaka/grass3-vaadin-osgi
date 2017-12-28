@@ -121,18 +121,16 @@ public interface PGService {
 	 * 
 	 * @param selected
 	 *            vybrané soubory
-	 * @param items
-	 *            list všech souborů galerie pro přehled editoru
 	 * @param galleryDir
 	 *            adresář galerie
-	 * @return <code>true</code>, pokud se všechny soubory podařilo smazat
+	 * @return kolekci všech položek, které se podařilo úspěšně smazat
 	 * @throws IllegalStateException
 	 *             pokud neexistuje kořenový adresář galerií -- chyba nastavení
 	 *             modulu PG
 	 * @throws IllegalArgumentException
 	 *             pokud předaný adresář podtéká kořen modulu PG
 	 */
-	public boolean deleteFiles(Set<PhotogalleryViewItemTO> selected, List<PhotogalleryViewItemTO> items, String galleryDir);
+	public List<PhotogalleryViewItemTO> deleteFiles(Set<PhotogalleryViewItemTO> selected, String galleryDir);
 
 	/**
 	 * Získá obrázek z galerie. Nemusí jít o existující galerii, proto je
@@ -265,5 +263,19 @@ public interface PGService {
 	 *            zip soubor
 	 */
 	public void deleteZipFile(Path zipFile);
+
+	/**
+	 * Smaže rozpracovanou galerii, která ještě nebyla uložena do DB
+	 * 
+	 * @param galleryDir
+	 * @throws IOException
+	 *             pokud se nezdařilo číst přehled adresáře galerie
+	 * @throws IllegalStateException
+	 *             pokud neexistuje kořenový adresář galerií -- chyba nastavení
+	 *             modulu PG
+	 * @throws IllegalArgumentException
+	 *             pokud předaný adresář podtéká kořen modulu PG adresář galerie
+	 */
+	public void deleteDraftGallery(String galleryDir) throws IOException;
 
 }

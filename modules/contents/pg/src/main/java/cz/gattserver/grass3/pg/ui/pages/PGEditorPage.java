@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -103,11 +104,10 @@ public class PGEditorPage extends OneColumnPage {
 	 * Soubory, které byly nahrány od posledního uložení. V případě, že budou
 	 * úpravy zrušeny, je potřeba tyto soubory smazat.
 	 */
-	private List<PhotogalleryViewItemTO> newFiles = new ArrayList<>();
+	private Set<PhotogalleryViewItemTO> newFiles = new HashSet<>();
 
 	public PGEditorPage(GrassRequest request) {
 		super(request);
-		// TODO JS zavola clean galerie od newFiles, tempDir apod.
 		JavaScript.eval(
 				"window.onbeforeunload = function() { return \"Opravdu si přejete ukončit editor a odejít - rozpracovaná data nejsou uložena ?\" };");
 	}
@@ -154,15 +154,15 @@ public class PGEditorPage extends OneColumnPage {
 
 			publicatedCheckBox.setValue(photogallery.getContentNode().isPublicated());
 			photogalleryDateField.setValue(photogallery.getContentNode().getCreationDate());
+
+			// nemá oprávnění upravovat tento obsah
+			if (!photogallery.getContentNode().getAuthor().getName().equals(UIUtils.getGrassUI().getUser().getName())
+					&& !UIUtils.getGrassUI().getUser().isAdmin())
+				throw new GrassPageException(403);
 		} else {
 			logger.debug("Neznámá operace: '{}'", operationToken);
 			throw new GrassPageException(404);
 		}
-
-		// nemá oprávnění upravovat tento obsah
-		if (!photogallery.getContentNode().getAuthor().getName().equals(UIUtils.getGrassUI().getUser().getName())
-				&& !UIUtils.getGrassUI().getUser().isAdmin())
-			throw new GrassPageException(403);
 
 		try {
 			galleryDir = editMode ? photogallery.getPhotogalleryPath() : pgService.createGalleryDir();
@@ -239,7 +239,7 @@ public class PGEditorPage extends OneColumnPage {
 		imageWrapper.addComponent(image);
 		imageWrapper.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
 
-		final Grid<PhotogalleryViewItemTO> grid = new Grid<>();
+		final Grid<PhotogalleryViewItemTO> grid = new Grid<>(PhotogalleryViewItemTO.class);
 		final List<PhotogalleryViewItemTO> items;
 		if (editMode) {
 			try {
@@ -251,14 +251,17 @@ public class PGEditorPage extends OneColumnPage {
 			items = new ArrayList<>();
 		}
 		grid.setItems(items);
-		grid.addColumn(PhotogalleryViewItemTO::getName).setCaption("Název");
+		grid.setColumns("name");
+		grid.getColumn("name").setCaption("Název");
 
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setSizeFull();
 
 		final Button removeBtn = new DeleteGridButton<>("Odstranit", selected -> {
-			if (!pgService.deleteFiles(selected, items, galleryDir))
+			List<PhotogalleryViewItemTO> removed = pgService.deleteFiles(selected, galleryDir);
+			if (removed.size() != selected.size())
 				UIUtils.showWarning("Nezdařilo se smazat některé soubory");
+			items.removeAll(removed);
 			grid.getDataProvider().refreshAll();
 		}, grid);
 
@@ -384,17 +387,28 @@ public class PGEditorPage extends OneColumnPage {
 		cancelButton.setIcon(ImageIcon.DELETE_16_ICON.createResource());
 		cancelButton.addClickListener(event -> UI.getCurrent().addWindow(new ConfirmWindow(
 				"Opravdu si přejete zavřít editor galerie ? Veškeré neuložené změny budou ztraceny.", e -> {
-					// ruším úpravu existující galerie (vracím se na
-					// galerii), nebo nové (vracím se do kategorie) ?
-					if (editMode) {
+					cleanAfterCancelEdit();
+					if (editMode)
 						returnToPhotogallery();
-					} else {
+					else
 						returnToNode();
-					}
 				})));
 		buttonLayout.addComponent(cancelButton);
 
 		return marginLayout;
+	}
+
+	private void cleanAfterCancelEdit() {
+		if (editMode) {
+			pgService.deleteFiles(newFiles, galleryDir);
+		} else {
+			try {
+				pgService.deleteDraftGallery(galleryDir);
+			} catch (Exception e) {
+				logger.error("Nezdařilo se smazat zrušenou rozpracovanou galerii", e);
+				throw new GrassPageException(500, e);
+			}
+		}
 	}
 
 	private boolean isFormValid() {

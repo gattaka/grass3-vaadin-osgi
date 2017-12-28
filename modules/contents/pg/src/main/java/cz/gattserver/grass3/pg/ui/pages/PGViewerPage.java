@@ -312,7 +312,7 @@ public class PGViewerPage extends ContentViewerPage {
 	protected void onProcessResult(final PGZipProcessResultEvent event) {
 		ui.access(() -> {
 			ui.setPollInterval(-1);
-			
+
 			if (progressIndicatorWindow != null)
 				progressIndicatorWindow.closeOnDone();
 
@@ -420,8 +420,7 @@ public class PGViewerPage extends ContentViewerPage {
 	}
 
 	private void showItem(final int index) {
-		ImageSlideshowWindow window;
-		UI.getCurrent().addWindow(window = new ImageSlideshowWindow(galleryDir, imageSum) {
+		ImageSlideshowWindow window = new ImageSlideshowWindow(galleryDir, imageSum) {
 			private static final long serialVersionUID = 7926209313704634472L;
 
 			@Override
@@ -445,7 +444,8 @@ public class PGViewerPage extends ContentViewerPage {
 					return showImage(itemTO);
 				}
 			}
-		});
+		};
+		UI.getCurrent().addWindow(window);
 		window.showItem(index);
 	}
 

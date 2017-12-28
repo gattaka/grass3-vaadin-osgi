@@ -93,9 +93,9 @@ public abstract class ImageSlideshowWindow extends WebWindow {
 
 	public void showItem(int index) {
 		currentIndex = index;
-		PGService pgService = getPGService();
+		PGService service = getPGService();
 		try {
-			PhotogalleryViewItemTO itemTO = pgService.getSlideshowItem(galleryDir, index);
+			PhotogalleryViewItemTO itemTO = service.getSlideshowItem(galleryDir, index);
 
 			Component slideshowComponent = showItem(itemTO);
 

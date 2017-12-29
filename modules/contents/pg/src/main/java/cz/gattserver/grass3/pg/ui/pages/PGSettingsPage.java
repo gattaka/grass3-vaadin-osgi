@@ -18,7 +18,7 @@ import cz.gattserver.web.common.ui.H2Label;
 public class PGSettingsPage extends AbstractSettingsPage {
 
 	@Autowired
-	private PGService photogalleryFacade;
+	private PGService pgService;
 
 	public PGSettingsPage(GrassRequest request) {
 		super(request);
@@ -34,7 +34,7 @@ public class PGSettingsPage extends AbstractSettingsPage {
 		VerticalLayout settingsLayout = new VerticalLayout();
 		layout.addComponent(settingsLayout);
 
-		final PGConfiguration configuration = photogalleryFacade.loadConfiguration();
+		final PGConfiguration configuration = pgService.loadConfiguration();
 
 		settingsLayout.removeAllComponents();
 		settingsLayout.addComponent(new H2Label("Nastavení"));
@@ -69,7 +69,7 @@ public class PGSettingsPage extends AbstractSettingsPage {
 			if (rootDirField.getComponentError() == null && miniaturesDirField.getComponentError() == null) {
 				configuration.setRootDir(rootDirField.getValue());
 				configuration.setMiniaturesDir(miniaturesDirField.getValue());
-				photogalleryFacade.storeConfiguration(configuration);
+				pgService.storeConfiguration(configuration);
 			}
 		});
 		settingsFieldsLayout.addComponent(saveButton);

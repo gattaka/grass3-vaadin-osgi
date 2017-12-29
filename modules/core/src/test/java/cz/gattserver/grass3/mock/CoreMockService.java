@@ -15,27 +15,27 @@ import cz.gattserver.grass3.test.MockUtils;
 public class CoreMockService {
 
 	@Autowired
-	private UserService userFacade;
+	private UserService userService;
 
 	@Autowired
-	private ContentNodeService contentNodeFacade;
+	private ContentNodeService contentNodeService;
 
 	@Autowired
-	private NodeService nodeFacade;
+	private NodeService nodeService;
 
 	public long createMockUser(int variant) {
-		long id = userFacade.registrateNewUser(MockUtils.MOCK_USER_EMAIL + variant,
+		long id = userService.registrateNewUser(MockUtils.MOCK_USER_EMAIL + variant,
 				MockUtils.MOCK_USER_NAME + variant, MockUtils.MOCK_USER_PASSWORD + variant);
 		return id;
 	}
 
 	public long createMockRootNode(int variant) {
-		long id = nodeFacade.createNewNode(null, MockUtils.MOCK_NODE_NAME + variant);
+		long id = nodeService.createNewNode(null, MockUtils.MOCK_NODE_NAME + variant);
 		return id;
 	}
 
 	public long createMockContentNode(Long contentId, Set<String> tags, long nodeId, long userId, int variant) {
-		long contentNodeId = contentNodeFacade.save(MockUtils.MOCK_CONTENTNODE_MODULE + variant, contentId,
+		long contentNodeId = contentNodeService.save(MockUtils.MOCK_CONTENTNODE_MODULE + variant, contentId,
 				MockUtils.MOCK_CONTENTNODE_NAME + variant, tags, true, nodeId, userId, false, LocalDateTime.now(),
 				null);
 		return contentNodeId;

@@ -47,8 +47,7 @@ public class PGRequestHandlerTest extends AbstractContextAwareTest {
 
 	@Test
 	public void test() throws IOException {
-		FileSystem fs = fileSystemService.getFileSystem();
-		Path rootDir = prepareFS(fs);
+		Path rootDir = prepareFS(fileSystemService.getFileSystem());
 		Path testFile = Files.createFile(rootDir.resolve("testFile"));
 		Files.write(testFile, new byte[] { 1, 1, 1 });
 

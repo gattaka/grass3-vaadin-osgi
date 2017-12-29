@@ -9,9 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.server.ServiceException;
-import com.vaadin.server.SessionInitEvent;
-import com.vaadin.server.SessionInitListener;
 import com.vaadin.server.VaadinServlet;
 
 import cz.gattserver.web.common.spring.SpringContextHelper;
@@ -32,20 +29,13 @@ public class GrassVaadinServlet extends VaadinServlet {
 		// https://vaadin.com/old-forum/-/message_boards/view_message/3535024
 		// https://vaadin.com/forum#!/thread/3072331
 		// https://vaadin.com/book/vaadin7/-/page/advanced.requesthandler.html
-		getService().addSessionInitListener(new SessionInitListener() {
-			private static final long serialVersionUID = 4788831427663294496L;
-
-			@Override
-			public void sessionInit(SessionInitEvent event) throws ServiceException {
-
-				ApplicationContext context = SpringContextHelper.getContext();
-				if (context != null) {
-					Collection<GrassRequestHandler> grassRequestHandlers = context
-							.getBeansOfType(GrassRequestHandler.class).values();
-					for (GrassRequestHandler requestHandler : grassRequestHandlers) {
-						event.getSession().addRequestHandler(requestHandler);
-					}
-				}
+		getService().addSessionInitListener(event -> {
+			ApplicationContext context = SpringContextHelper.getContext();
+			if (context != null) {
+				Collection<GrassRequestHandler> grassRequestHandlers = context.getBeansOfType(GrassRequestHandler.class)
+						.values();
+				for (GrassRequestHandler requestHandler : grassRequestHandlers)
+					event.getSession().addRequestHandler(requestHandler);
 			}
 		});
 

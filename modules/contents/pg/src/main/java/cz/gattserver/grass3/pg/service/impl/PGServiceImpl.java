@@ -234,13 +234,15 @@ public class PGServiceImpl implements PGService {
 				progress++;
 
 				// vytvoř slideshow verzi
-				BufferedImage image = ImageIO.read(Files.newInputStream(file));
-				if (image.getWidth() > 900 || image.getHeight() > 700) {
-					try {
-						PGUtils.resizeAndRotateImageFile(file, outputFile, 900, 700);
-					} catch (Exception e) {
-						logger.error("Při zpracování slideshow pro '{}' došlo k chybě", file.getFileName().toString(),
-								e);
+				try (InputStream is = Files.newInputStream(file)) {
+					BufferedImage image = ImageIO.read(is);
+					if (image.getWidth() > 900 || image.getHeight() > 700) {
+						try {
+							PGUtils.resizeAndRotateImageFile(file, outputFile, 900, 700);
+						} catch (Exception e) {
+							logger.error("Při zpracování slideshow pro '{}' došlo k chybě",
+									file.getFileName().toString(), e);
+						}
 					}
 				}
 			}

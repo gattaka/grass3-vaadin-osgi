@@ -184,8 +184,7 @@ public class PGViewerPage extends ContentViewerPage {
 		galleryGridLayout = new GridLayout(GALLERY_GRID_COLS, GALLERY_GRID_ROWS);
 		galleryGridLayout.setSpacing(true);
 		galleryGridLayout.setMargin(true);
-		galleryGridLayout.setWidth("700px");
-		galleryGridLayout.setHeight("550px");
+		galleryGridLayout.setSizeFull();
 
 		// Horní layout tlačítek
 		HorizontalLayout topBtnsLayout = new HorizontalLayout();

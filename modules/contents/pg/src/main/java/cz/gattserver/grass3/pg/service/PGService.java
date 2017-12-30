@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Set;
 
 import cz.gattserver.grass3.pg.config.PGConfiguration;
+import cz.gattserver.grass3.pg.events.impl.PGProcessProgressEvent;
+import cz.gattserver.grass3.pg.events.impl.PGProcessResultEvent;
+import cz.gattserver.grass3.pg.events.impl.PGProcessStartEvent;
 import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
@@ -28,18 +31,24 @@ public interface PGService {
 	public void deletePhotogallery(long photogalleryId) throws IOException;
 
 	/**
-	 * Upraví galerii
+	 * Upraví galerii. Zpracování je prováděno v samostatném vlákně. Pro
+	 * komunikaci zpět jsou použity událost {@link PGProcessStartEvent},
+	 * {@link PGProcessProgressEvent} a {@link PGProcessResultEvent}
 	 * 
 	 * @param photogalleryId
 	 *            id původní galerie
 	 * @param payloadTO
 	 *            obsah galerie
 	 * @param date
+	 *            datum vytvoření galerie, může být i <code>null</code>, pak
+	 *            bude použito aktuální datum
 	 */
 	public void modifyPhotogallery(long photogalleryId, PhotogalleryPayloadTO payloadTO, LocalDateTime date);
 
 	/**
-	 * Uloží galerii
+	 * Uloží galerii. Zpracování je prováděno v samostatném vlákně. Pro
+	 * komunikaci zpět jsou použity událost {@link PGProcessStartEvent},
+	 * {@link PGProcessProgressEvent} a {@link PGProcessResultEvent}
 	 * 
 	 * @param payloadTO
 	 *            obsah galerie
@@ -48,6 +57,8 @@ public interface PGService {
 	 * @param authorId
 	 *            uživatel, který galerii vytvořil
 	 * @param date
+	 *            datum vytvoření galerie, může být i <code>null</code>, pak
+	 *            bude použito aktuální datum
 	 */
 	public void savePhotogallery(PhotogalleryPayloadTO payloadTO, long nodeId, long authorId, LocalDateTime date);
 

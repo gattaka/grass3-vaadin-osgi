@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 
@@ -35,7 +36,7 @@ public class PGUtils {
 	}
 
 	public static boolean isSmallerThenMaxArea(Path inputFile, int maxArea) throws IOException {
-		BufferedImage image = ImageIO.read(inputFile.toFile());
+		BufferedImage image = ImageIO.read(Files.newInputStream(inputFile));
 		return image.getHeight() * image.getWidth() < maxArea;
 	}
 
@@ -43,7 +44,7 @@ public class PGUtils {
 			throws ImageProcessingException, IOException, MetadataException {
 		Metadata metadata;
 		int orientation = 1;
-		metadata = ImageMetadataReader.readMetadata(imageFile.toFile());
+		metadata = ImageMetadataReader.readMetadata(Files.newInputStream(imageFile));
 		Collection<ExifIFD0Directory> directories = metadata.getDirectoriesOfType(ExifIFD0Directory.class);
 		if (!directories.isEmpty()) {
 			orientation = directories.iterator().next().getInt(ExifIFD0Directory.TAG_ORIENTATION);
@@ -69,7 +70,7 @@ public class PGUtils {
 	public static boolean resizeAndRotateImageFile(Path inputFile, Path destinationFile, int maxWidth, int maxHeight)
 			throws IOException, ImageProcessingException, MetadataException {
 
-		BufferedImage image = resizeBufferedImage(ImageIO.read(inputFile.toFile()), maxWidth, maxHeight);
+		BufferedImage image = resizeBufferedImage(ImageIO.read(Files.newInputStream(inputFile)), maxWidth, maxHeight);
 
 		int orientation = readImageOrientation(inputFile);
 		if (orientation != 1) {
@@ -131,7 +132,7 @@ public class PGUtils {
 			image = temp;
 		}
 
-		ImageIO.write(image, getExtension(inputFile), destinationFile.toFile());
+		ImageIO.write(image, getExtension(inputFile), Files.newOutputStream(destinationFile));
 		return true;
 	}
 
@@ -181,6 +182,6 @@ public class PGUtils {
 	 */
 	public static boolean isVideo(Path file) {
 		return PGUtils.isVideo(file.getFileName().toString());
-	}
-
+	}	
+	
 }

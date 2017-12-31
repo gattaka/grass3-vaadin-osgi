@@ -8,7 +8,12 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ImageComparator {
+
+	private static Logger logger = LoggerFactory.getLogger(ImageComparator.class);
 
 	private ImageComparator() {
 	}
@@ -60,7 +65,7 @@ public class ImageComparator {
 			} else
 				return false;
 		} catch (Exception e) {
-			System.out.println("Failed to compare image files ...");
+			logger.error("Nezdařilo se porovnat obrázky", e);
 			return false;
 		}
 	}
@@ -79,7 +84,7 @@ public class ImageComparator {
 		int height1 = imgA.getHeight();
 		int height2 = imgB.getHeight();
 		if ((width1 != width2) || (height1 != height2))
-			return 1;
+			return 1; // 100% rozdíl
 		else {
 			long difference = 0;
 			for (int y = 0; y < height1; y++) {
@@ -103,16 +108,15 @@ public class ImageComparator {
 			// Total number of blue pixels = width * height
 			// Total number of green pixels = width * height
 			// So total number of pixels = width * height * 3
-			double total_pixels = width1 * height1 * 3;
+			double totalPixels = width1 * height1 * 3.0;
 
 			// Normalizing the value of different pixels
 			// for accuracy(average pixels per color
 			// component)
-			double avg_different_pixels = difference / total_pixels;
+			double avgDifferentPixels = difference / totalPixels;
 
 			// There are 255 values of pixels in total
-			double percentage = (avg_different_pixels / 255);
-			return percentage;
+			return avgDifferentPixels / 255;
 		}
 	}
 }

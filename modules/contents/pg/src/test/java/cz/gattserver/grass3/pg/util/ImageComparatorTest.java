@@ -1,7 +1,6 @@
 package cz.gattserver.grass3.pg.util;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 
@@ -16,7 +15,7 @@ public class ImageComparatorTest {
 		assertTrue(ImageComparator.isEqualAsImageData(this.getClass().getResourceAsStream("armchair.png"),
 				this.getClass().getResourceAsStream("armchair.png")));
 		assertTrue(ImageComparator.isEqualAsImagePixels(this.getClass().getResourceAsStream("armchair.png"),
-				this.getClass().getResourceAsStream("armchair.png")));
+				this.getClass().getResourceAsStream("armchair.png")) == 0);
 	}
 
 	@Test
@@ -25,8 +24,8 @@ public class ImageComparatorTest {
 				this.getClass().getResourceAsStream("candle.png")));
 		assertFalse(ImageComparator.isEqualAsImageData(this.getClass().getResourceAsStream("armchair.png"),
 				this.getClass().getResourceAsStream("candle.png")));
-		assertFalse(ImageComparator.isEqualAsImagePixels(this.getClass().getResourceAsStream("armchair.png"),
-				this.getClass().getResourceAsStream("candle.png")));
+		assertTrue(ImageComparator.isEqualAsImagePixels(this.getClass().getResourceAsStream("armchair.png"),
+				this.getClass().getResourceAsStream("candle.png")) == 1);
 	}
 
 	@Test
@@ -36,7 +35,7 @@ public class ImageComparatorTest {
 		assertFalse(ImageComparator.isEqualAsImageData(this.getClass().getResourceAsStream("candle.png"),
 				this.getClass().getResourceAsStream("candle_indexed_colors.png")));
 		assertTrue(ImageComparator.isEqualAsImagePixels(this.getClass().getResourceAsStream("candle.png"),
-				this.getClass().getResourceAsStream("candle_indexed_colors.png")));
+				this.getClass().getResourceAsStream("candle_indexed_colors.png")) < 0.1);
 	}
 
 	@Test
@@ -45,8 +44,9 @@ public class ImageComparatorTest {
 				this.getClass().getResourceAsStream("candle.png")));
 		assertFalse(ImageComparator.isEqualAsImageData(this.getClass().getResourceAsStream("candle_indexed_colors.png"),
 				this.getClass().getResourceAsStream("candle.png")));
-		assertTrue(ImageComparator.isEqualAsImagePixels(this.getClass().getResourceAsStream("candle_indexed_colors.png"),
-				this.getClass().getResourceAsStream("candle.png")));
+		assertTrue(
+				ImageComparator.isEqualAsImagePixels(this.getClass().getResourceAsStream("candle_indexed_colors.png"),
+						this.getClass().getResourceAsStream("candle.png")) < 0.1);
 	}
 
 }

@@ -168,6 +168,10 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Files.copy(this.getClass().getResourceAsStream("small.jpg"), smallFile);
 		assertTrue(Files.exists(smallFile));
 
+		Path orientedLargeFile = galleryDir.resolve("04.jpg");
+		Files.copy(this.getClass().getResourceAsStream("orientedLarge.jpg"), orientedLargeFile);
+		assertTrue(Files.exists(orientedLargeFile));
+
 		Long userId1 = coreMockService.createMockUser(1);
 		Long nodeId1 = coreMockService.createMockRootNode(1);
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
@@ -190,6 +194,8 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PGConfiguration conf = new PGConfiguration();
 		configurationService.loadConfiguration(conf);
 
+		double acceptableDifference = 0.05; // 5%
+
 		// Animated small
 		Path animatedSmallMiniature = galleryDir.resolve(conf.getMiniaturesDir()).resolve("01.gif");
 		Path animatedSmallSlideshow = galleryDir.resolve(conf.getSlideshowDir()).resolve("01.gif");
@@ -197,7 +203,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		assertTrue(Files.exists(animatedSmallMiniature));
 		assertFalse(Files.exists(animatedSmallSlideshow));
 		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(animatedSmallMiniature),
-				this.getClass().getResourceAsStream("animatedSmallMiniature.gif")));
+				this.getClass().getResourceAsStream("animatedSmallMiniature.gif")) < acceptableDifference);
 
 		// Large
 		Path largeMiniature = galleryDir.resolve(conf.getMiniaturesDir()).resolve("02.jpg");
@@ -206,9 +212,9 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		assertTrue(Files.exists(largeMiniature));
 		assertTrue(Files.exists(largeSlideshow));
 		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(largeMiniature),
-				this.getClass().getResourceAsStream("largeMiniature.jpg")));
+				this.getClass().getResourceAsStream("largeMiniature.jpg")) < acceptableDifference);
 		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(largeSlideshow),
-				this.getClass().getResourceAsStream("largeSlideshow.jpg")));
+				this.getClass().getResourceAsStream("largeSlideshow.jpg")) < acceptableDifference);
 
 		// Small
 		Path smallMiniature = galleryDir.resolve(conf.getMiniaturesDir()).resolve("03.jpg");
@@ -217,8 +223,18 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		assertTrue(Files.exists(smallMiniature));
 		assertFalse(Files.exists(smallSlideshow));
 		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(smallMiniature),
-				this.getClass().getResourceAsStream("smallMiniature.jpg")));
+				this.getClass().getResourceAsStream("smallMiniature.jpg")) < acceptableDifference);
 
+		// Oriented large
+		Path orientedLargeMiniature = galleryDir.resolve(conf.getMiniaturesDir()).resolve("04.jpg");
+		Path orientedLargeSlideshow = galleryDir.resolve(conf.getSlideshowDir()).resolve("04.jpg");
+		assertTrue(Files.exists(orientedLargeFile));
+		assertTrue(Files.exists(orientedLargeMiniature));
+		assertTrue(Files.exists(orientedLargeSlideshow));
+		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(orientedLargeMiniature),
+				this.getClass().getResourceAsStream("orientedLargeMiniature.jpg")) < acceptableDifference);
+		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(orientedLargeSlideshow),
+				this.getClass().getResourceAsStream("orientedLargeSlideshow.jpg")) < acceptableDifference);
 	}
 
 }

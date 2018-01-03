@@ -7,15 +7,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import javax.imageio.ImageIO;
-
-import com.mortennobel.imagescaling.DimensionConstrain;
-import com.mortennobel.imagescaling.ResampleFilters;
-import com.mortennobel.imagescaling.ResampleOp;
-
 import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.resizers.configurations.Antialiasing;
-import net.coobird.thumbnailator.resizers.configurations.Dithering;
 
 public class PGUtils {
 
@@ -27,37 +19,27 @@ public class PGUtils {
 	public static String getExtension(Path file) {
 		String filename = file.getFileName().toString();
 		int dot = filename.lastIndexOf('.');
-		if (dot <= 0 || filename.length() < 3)
+		if (dot <= 0)
 			return "";
 		return filename.substring(dot + 1);
 	}
 
-	public static boolean isSmallerThenMaxArea(Path inputFile, int maxArea) throws IOException {
-		BufferedImage image = ImageIO.read(Files.newInputStream(inputFile));
-		return image.getHeight() * image.getWidth() < maxArea;
+	public static void resizeImage(Path inputFile, Path destinationFile) throws IOException {
+		resizeImage(inputFile, destinationFile, PGUtils.MINIATURE_SIZE, PGUtils.MINIATURE_SIZE);
 	}
 
-	public static BufferedImage resizeBufferedImage(BufferedImage image) {
-		return resizeBufferedImage(image, PGUtils.MINIATURE_SIZE, PGUtils.MINIATURE_SIZE);
+	public static void resizeVideoPreviewImage(BufferedImage inputImage, Path destinationFile) throws IOException {
+		try (OutputStream os = Files.newOutputStream(destinationFile)) {
+			Thumbnails.of(inputImage).outputFormat("png").size(PGUtils.MINIATURE_SIZE, PGUtils.MINIATURE_SIZE)
+					.toOutputStream(os);
+		}
 	}
 
-	public static BufferedImage resizeBufferedImage(BufferedImage image, int maxWidth, int maxHeight) {
-		ResampleOp resampleOp = new ResampleOp(DimensionConstrain.createMaxDimension(maxWidth, maxHeight));
-		resampleOp.setFilter(ResampleFilters.getLanczos3Filter());
-		return resampleOp.filter(image, null);
-	}
-
-	public static void resizeAndRotateImageFile(Path inputFile, Path destinationFile) throws IOException {
-		resizeAndRotateImageFile(inputFile, destinationFile, PGUtils.MINIATURE_SIZE, PGUtils.MINIATURE_SIZE);
-	}
-
-	public static void resizeAndRotateImageFile(Path inputFile, Path destinationFile, int maxWidth, int maxHeight)
+	public static void resizeImage(Path inputFile, Path destinationFile, int maxWidth, int maxHeight)
 			throws IOException {
-
 		try (InputStream is = Files.newInputStream(inputFile);
 				OutputStream os = Files.newOutputStream(destinationFile)) {
-			Thumbnails.of(is).size(maxWidth, maxHeight).keepAspectRatio(true).determineOutputFormat()
-					.dithering(Dithering.DISABLE).outputQuality(1).antialiasing(Antialiasing.ON).toOutputStream(os);
+			Thumbnails.of(is).size(maxWidth, maxHeight).toOutputStream(os);
 		}
 	}
 

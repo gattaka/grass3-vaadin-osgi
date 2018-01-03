@@ -31,21 +31,21 @@ public class ImageComparatorTest {
 	@Test
 	public void test3() throws IOException {
 		assertFalse(ImageComparator.isEqualAsFiles(this.getClass().getResourceAsStream("candle.png"),
-				this.getClass().getResourceAsStream("candle_indexed_colors.png")));
+				this.getClass().getResourceAsStream("candleIndexedColors.png")));
 		assertFalse(ImageComparator.isEqualAsImageData(this.getClass().getResourceAsStream("candle.png"),
-				this.getClass().getResourceAsStream("candle_indexed_colors.png")));
+				this.getClass().getResourceAsStream("candleIndexedColors.png")));
 		assertTrue(ImageComparator.isEqualAsImagePixels(this.getClass().getResourceAsStream("candle.png"),
-				this.getClass().getResourceAsStream("candle_indexed_colors.png")) < 0.1);
+				this.getClass().getResourceAsStream("candleIndexedColors.png")) < 0.1);
 	}
 
 	@Test
 	public void test4() throws IOException {
-		assertFalse(ImageComparator.isEqualAsFiles(this.getClass().getResourceAsStream("candle_indexed_colors.png"),
+		assertFalse(ImageComparator.isEqualAsFiles(this.getClass().getResourceAsStream("candleIndexedColors.png"),
 				this.getClass().getResourceAsStream("candle.png")));
-		assertFalse(ImageComparator.isEqualAsImageData(this.getClass().getResourceAsStream("candle_indexed_colors.png"),
+		assertFalse(ImageComparator.isEqualAsImageData(this.getClass().getResourceAsStream("candleIndexedColors.png"),
 				this.getClass().getResourceAsStream("candle.png")));
 		assertTrue(
-				ImageComparator.isEqualAsImagePixels(this.getClass().getResourceAsStream("candle_indexed_colors.png"),
+				ImageComparator.isEqualAsImagePixels(this.getClass().getResourceAsStream("candleIndexedColors.png"),
 						this.getClass().getResourceAsStream("candle.png")) < 0.1);
 	}
 

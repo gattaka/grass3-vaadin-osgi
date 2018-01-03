@@ -172,6 +172,91 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Files.copy(this.getClass().getResourceAsStream("orientedLarge.jpg"), orientedLargeFile);
 		assertTrue(Files.exists(orientedLargeFile));
 
+		Path x264MP4File = galleryDir.resolve("05.mp4");
+		Files.copy(this.getClass().getResourceAsStream("x264.mp4"), x264MP4File);
+		assertTrue(Files.exists(x264MP4File));
+
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
+		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
+				null, true);
+
+		PGMockEventsHandler eventsHandler = new PGMockEventsHandler();
+		eventBus.subscribe(eventsHandler);
+		CompletableFuture<PGMockEventsHandler> future = eventsHandler.expectEvent();
+
+		pgService.savePhotogallery(payloadTO, nodeId1, userId1, LocalDateTime.now());
+
+		future.get();
+
+		assertTrue(eventsHandler.success);
+		assertNotNull(eventsHandler.pgId);
+
+		eventBus.unsubscribe(eventsHandler);
+
+		PGConfiguration conf = new PGConfiguration();
+		configurationService.loadConfiguration(conf);
+
+		double acceptableDifference = 0.05; // 5%
+
+		// Animated small
+		Path animatedSmallMiniature = galleryDir.resolve(conf.getMiniaturesDir()).resolve("01.gif");
+		Path animatedSmallSlideshow = galleryDir.resolve(conf.getSlideshowDir()).resolve("01.gif");
+		assertTrue(Files.exists(animatedSmallFile));
+		assertTrue(Files.exists(animatedSmallMiniature));
+		assertFalse(Files.exists(animatedSmallSlideshow));
+		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(animatedSmallMiniature),
+				this.getClass().getResourceAsStream("animatedSmallMiniature.gif")) < acceptableDifference);
+
+		// Large
+		Path largeMiniature = galleryDir.resolve(conf.getMiniaturesDir()).resolve("02.jpg");
+		Path largeSlideshow = galleryDir.resolve(conf.getSlideshowDir()).resolve("02.jpg");
+		assertTrue(Files.exists(largeFile));
+		assertTrue(Files.exists(largeMiniature));
+		assertTrue(Files.exists(largeSlideshow));
+		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(largeMiniature),
+				this.getClass().getResourceAsStream("largeMiniature.jpg")) < acceptableDifference);
+		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(largeSlideshow),
+				this.getClass().getResourceAsStream("largeSlideshow.jpg")) < acceptableDifference);
+
+		// Small
+		Path smallMiniature = galleryDir.resolve(conf.getMiniaturesDir()).resolve("03.jpg");
+		Path smallSlideshow = galleryDir.resolve(conf.getSlideshowDir()).resolve("03.jpg");
+		assertTrue(Files.exists(smallFile));
+		assertTrue(Files.exists(smallMiniature));
+		assertFalse(Files.exists(smallSlideshow));
+		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(smallMiniature),
+				this.getClass().getResourceAsStream("smallMiniature.jpg")) < acceptableDifference);
+
+		// Oriented large
+		Path orientedLargeMiniature = galleryDir.resolve(conf.getMiniaturesDir()).resolve("04.jpg");
+		Path orientedLargeSlideshow = galleryDir.resolve(conf.getSlideshowDir()).resolve("04.jpg");
+		assertTrue(Files.exists(orientedLargeFile));
+		assertTrue(Files.exists(orientedLargeMiniature));
+		assertTrue(Files.exists(orientedLargeSlideshow));
+		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(orientedLargeMiniature),
+				this.getClass().getResourceAsStream("orientedLargeMiniature.jpg")) < acceptableDifference);
+		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(orientedLargeSlideshow),
+				this.getClass().getResourceAsStream("orientedLargeSlideshow.jpg")) < acceptableDifference);
+
+		// X264 MP4
+		Path x264MP4Preview = galleryDir.resolve(conf.getPreviewsDir()).resolve("05.mp4.png");
+		assertTrue(Files.exists(x264MP4File));
+		assertTrue(Files.exists(x264MP4Preview));
+		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(x264MP4Preview),
+				this.getClass().getResourceAsStream("x264Preview.png")) < acceptableDifference);
+	}
+
+	@Test
+	public void testModifyPhotogallery() throws IOException, InterruptedException, ExecutionException {
+		Path root = prepareFS(fileSystemService.getFileSystem());
+		Path galleryDir = root.resolve("testGallery");
+		Files.createDirectories(galleryDir);
+
+		Path animatedSmallFile = galleryDir.resolve("01.gif");
+		Files.copy(this.getClass().getResourceAsStream("animatedSmall.gif"), animatedSmallFile);
+		assertTrue(Files.exists(animatedSmallFile));
+
 		Long userId1 = coreMockService.createMockUser(1);
 		Long nodeId1 = coreMockService.createMockRootNode(1);
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
@@ -190,6 +275,28 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		long galleryId = eventsHandler.pgId;
 
 		eventBus.unsubscribe(eventsHandler);
+
+		Path largeFile = galleryDir.resolve("02.jpg");
+		Files.copy(this.getClass().getResourceAsStream("large.jpg"), largeFile);
+		assertTrue(Files.exists(largeFile));
+
+		Path smallFile = galleryDir.resolve("03.jpg");
+		Files.copy(this.getClass().getResourceAsStream("small.jpg"), smallFile);
+		assertTrue(Files.exists(smallFile));
+
+		Path orientedLargeFile = galleryDir.resolve("04.jpg");
+		Files.copy(this.getClass().getResourceAsStream("orientedLarge.jpg"), orientedLargeFile);
+		assertTrue(Files.exists(orientedLargeFile));
+
+		eventsHandler = new PGMockEventsHandler();
+		eventBus.subscribe(eventsHandler);
+		future = eventsHandler.expectEvent();
+
+		pgService.modifyPhotogallery(galleryId, payloadTO, LocalDateTime.now());
+
+		future.get();
+
+		assertTrue(eventsHandler.success);
 
 		PGConfiguration conf = new PGConfiguration();
 		configurationService.loadConfiguration(conf);

@@ -125,15 +125,15 @@ public class PGServiceImpl implements PGService {
 	}
 
 	private void createVideoMinature(Path file, Path outputFile) {
-		String videoName = outputFile.getFileName().toString();
+		String videoName = file.getFileName().toString();
+		String previewName = outputFile.getFileName().toString();
 		try {
 			logger.info("Bylo nalezeno video {}", videoName);
 			logger.info("Bylo zahájeno zpracování náhledu videa {}", videoName);
 			BufferedImage image = new DecodeAndCaptureFrames().decodeAndCaptureFrames(file);
 			logger.info("Zpracování náhledu videa {} byla úspěšně dokončeno", videoName);
-			image = PGUtils.resizeBufferedImage(image);
-			ImageIO.write(image, "png", outputFile.toFile());
-			logger.info("Náhled videa {} byl úspěšně uložen", videoName);
+			PGUtils.resizeVideoPreviewImage(image, outputFile);
+			logger.info("Náhled videa {} byl úspěšně uložen", previewName);
 		} catch (Exception e) {
 			logger.error("Vytváření náhledu videa {} se nezdařilo", videoName, e);
 		}
@@ -142,7 +142,7 @@ public class PGServiceImpl implements PGService {
 	private void createImageMinature(Path file, Path outputFile) {
 		String imageName = outputFile.getFileName().toString();
 		try {
-			PGUtils.resizeAndRotateImageFile(file, outputFile);
+			PGUtils.resizeImage(file, outputFile);
 			logger.info("Náhled obrázku {} byl úspěšně uložen", imageName);
 		} catch (Exception e) {
 			logger.error("Vytváření náhledu obrázku {} se nezdařilo", imageName, e);
@@ -238,7 +238,7 @@ public class PGServiceImpl implements PGService {
 					BufferedImage image = ImageIO.read(is);
 					if (image.getWidth() > 900 || image.getHeight() > 700) {
 						try {
-							PGUtils.resizeAndRotateImageFile(file, outputFile, 900, 700);
+							PGUtils.resizeImage(file, outputFile, 900, 700);
 						} catch (Exception e) {
 							logger.error("Při zpracování slideshow pro '{}' došlo k chybě",
 									file.getFileName().toString(), e);

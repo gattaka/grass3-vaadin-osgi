@@ -55,7 +55,6 @@ import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.pg.util.DecodeAndCaptureFrames;
 import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.pg.util.PhotogalleryMapper;
-import cz.gattserver.grass3.pg.util.ZIPUtils;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.FileSystemService;
@@ -506,16 +505,17 @@ public class PGServiceImpl implements PGService {
 			total.setValue((int) stream.count());
 			eventBus.publish(new PGZipProcessStartEvent(total.getValue() + 1));
 		} catch (Exception e) {
-			eventBus.publish(new PGZipProcessResultEvent(false, "Nezdařilo se získat počet souborů ke komprimaci"));
+			eventBus.publish(new PGZipProcessResultEvent("Nezdařilo se získat počet souborů ke komprimaci", e));
+			logger.error("Nezdařilo se vytvořit ZIP galerie", e);
 			return;
 		}
 
 		progress.setValue(1);
 
-		String zipFileName = "grassPGTmpFile_" + new Date().getTime() + "_" + galleryDir;
+		String zipFileName = "grassPGTmpFile-" + new Date().getTime() + "-" + galleryDir + ".zip";
 		Path zipFile = galleryPath.resolve(zipFileName);
 
-		try (FileSystem zipFileSystem = ZIPUtils.createZipFileSystem(zipFile, true)) {
+		try (FileSystem zipFileSystem = fileSystemService.newZipFileSystem(zipFile, true)) {
 			performZip(galleryPath, zipFileSystem, progress, total);
 			eventBus.publish(new PGZipProcessResultEvent(zipFile));
 		} catch (Exception e) {
@@ -526,13 +526,13 @@ public class PGServiceImpl implements PGService {
 
 	private void performZip(Path galleryPath, FileSystem zipFileSystem, ReferenceHolder<Integer> progress,
 			ReferenceHolder<Integer> total) throws IOException {
-		final Path root = zipFileSystem.getPath("/");
+		final Path root = zipFileSystem.getRootDirectories().iterator().next();
 		try (Stream<Path> stream = Files.list(galleryPath)) {
 			Iterator<Path> it = stream.iterator();
 			while (it.hasNext()) {
 				Path src = it.next();
-				eventBus.publish(new PGZipProcessProgressEvent(
-						"Přidávám '" + src + "' do ZIPu " + progress.getValue() + "/" + total.getValue()));
+				eventBus.publish(new PGZipProcessProgressEvent("Přidávám '" + src.getFileName() + "' do ZIPu "
+						+ progress.getValue() + "/" + total.getValue()));
 				progress.setValue(progress.getValue() + 1);
 
 				// Přidávám jenom soubory fotek a videí, miniatury/náhledy a

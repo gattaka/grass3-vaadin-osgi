@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import cz.gattserver.grass3.articles.plugins.favlink.config.FavlinkConfiguration;
-import cz.gattserver.grass3.articles.plugins.favlink.test.MockFileSystemService;
+import cz.gattserver.grass3.mock.MockFileSystemService;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.test.AbstractContextAwareTest;
 

@@ -13,6 +13,7 @@ import org.mockserver.integration.ClientAndServer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cz.gattserver.grass3.articles.plugins.favlink.config.FavlinkConfiguration;
+import cz.gattserver.grass3.mock.MockFileSystemService;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.test.AbstractContextAwareTest;
 
@@ -23,7 +24,7 @@ public abstract class StrategyTest extends AbstractContextAwareTest {
 
 	@Autowired
 	protected ConfigurationService configurationService;
-	
+
 	protected ClientAndServer mockServer;
 
 	@Before
@@ -47,5 +48,5 @@ public abstract class StrategyTest extends AbstractContextAwareTest {
 
 		return outputDir;
 	}
-	
+
 }

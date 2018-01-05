@@ -1,6 +1,11 @@
-package cz.gattserver.grass3.articles.plugins.favlink.test;
+package cz.gattserver.grass3.mock;
 
+import java.io.IOException;
+import java.net.URI;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.util.Collections;
 
 import javax.annotation.PostConstruct;
 
@@ -26,6 +31,16 @@ public class MockFileSystemService implements FileSystemService {
 	@Override
 	public FileSystem getFileSystem() {
 		return fileSystem;
+	}
+
+	@Override
+	public FileSystem newZipFileSystem(Path path, boolean create) throws IOException {
+		if (create) {
+			return FileSystems.newFileSystem(URI.create("jar:" + path.toUri()),
+					Collections.singletonMap("create", "true"), Jimfs.class.getClassLoader());
+		} else {
+			return FileSystems.newFileSystem(path, Jimfs.class.getClassLoader());
+		}
 	}
 
 }

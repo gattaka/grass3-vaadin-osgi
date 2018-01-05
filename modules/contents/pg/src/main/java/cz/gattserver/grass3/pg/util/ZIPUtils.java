@@ -1,12 +1,14 @@
 package cz.gattserver.grass3.pg.util;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * {@link ZIPUtils} based on
@@ -27,22 +29,34 @@ public class ZIPUtils {
 	}
 
 	/**
-	 * Returns a zip file system
+	 * List the contents of the specified zip file
 	 * 
-	 * @param zipFilename
-	 *            to construct the file system from
-	 * @param create
-	 *            true if the zip file should be created
-	 * @return a zip file system
-	 * @throws IOException
+	 * @param filename
 	 */
-	public static FileSystem createZipFileSystem(Path zipFile, boolean create) throws IOException {
-		final URI uri = URI.create("jar:file:" + zipFile.toUri().getPath());
-		final Map<String, String> env = new HashMap<>();
-		if (create) {
-			env.put("create", "true");
-		}
-		return FileSystems.newFileSystem(uri, env);
+	public static List<Path> list(FileSystem zipFileSystem) throws IOException {
+		final List<Path> result = new ArrayList<>();
+		final Path root = zipFileSystem.getRootDirectories().iterator().next();
+
+		// walk the file tree and print out the directory and filenames
+		Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				print(file);
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+				print(dir);
+				return FileVisitResult.CONTINUE;
+			}
+
+			private void print(Path file) throws IOException {
+				result.add(file);
+			}
+		});
+
+		return result;
 	}
 
 }

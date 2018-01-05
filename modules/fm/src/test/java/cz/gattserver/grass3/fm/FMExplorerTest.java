@@ -19,7 +19,7 @@ import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.fm.FileProcessState;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
 import cz.gattserver.grass3.fm.interfaces.FMItemTO;
-import cz.gattserver.grass3.fm.test.MockFileSystemService;
+import cz.gattserver.grass3.mock.MockFileSystemService;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.test.AbstractContextAwareTest;
 

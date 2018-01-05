@@ -1,0 +1,54 @@
+package cz.gattserver.grass3.pg.test;
+
+import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
+
+import cz.gattserver.grass3.pg.events.impl.PGZipProcessResultEvent;
+import net.engio.mbassy.listener.Handler;
+
+public class PGZipProcessMockEventsHandler {
+
+	private Path zipFile;
+	private String resultDetails = null;
+	private boolean success = false;
+	private Throwable resultException;
+
+	public CompletableFuture<PGZipProcessMockEventsHandler> future;
+
+	public CompletableFuture<PGZipProcessMockEventsHandler> expectEvent() {
+		future = new CompletableFuture<>();
+		return future;
+	}
+
+	@Handler
+	public void onResult(PGZipProcessResultEvent event) {
+		synchronized (this) {
+			zipFile = event.getZipFile();
+			resultDetails = event.getResultDetails();
+			success = event.isSuccess();
+			resultException = event.getResultException();
+		}
+		future.complete(this);
+	}
+
+	public synchronized Path getZipFile() {
+		return zipFile;
+	}
+
+	public synchronized String getResultDetails() {
+		return resultDetails;
+	}
+
+	public synchronized boolean isSuccess() {
+		return success;
+	}
+
+	public synchronized Throwable getResultException() {
+		return resultException;
+	}
+
+	public synchronized CompletableFuture<PGZipProcessMockEventsHandler> getFuture() {
+		return future;
+	}
+
+}

@@ -13,8 +13,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import cz.gattserver.grass3.mock.MockFileSystemService;
 import cz.gattserver.grass3.pg.config.PGConfiguration;
-import cz.gattserver.grass3.pg.test.MockFileSystemService;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.test.AbstractContextAwareTest;
 

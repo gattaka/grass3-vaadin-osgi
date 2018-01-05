@@ -22,6 +22,13 @@
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>core</artifactId>
 			<version>1.0.0</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>cz.gattserver.grass3</groupId>
+			<artifactId>core</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 
 		<!-- Grass3 search modul -->
@@ -40,11 +47,11 @@
 				<groupId>com.mysema.maven</groupId>
 				<artifactId>apt-maven-plugin</artifactId>
 			</plugin>
-
-			<!-- MapStruct -->
+			
+			<!-- JaCoCo -->
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

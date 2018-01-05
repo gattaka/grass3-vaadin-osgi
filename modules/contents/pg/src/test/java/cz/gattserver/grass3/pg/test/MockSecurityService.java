@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.pg.test;
 
-import java.util.Set;
+import java.util.HashSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,7 +17,14 @@ import cz.gattserver.grass3.services.impl.LoginResult;
 @Primary
 public class MockSecurityService implements SecurityService {
 
-	private Set<Role> roles;
+	private UserInfoTO infoTO;
+
+	public MockSecurityService() {
+		infoTO = new UserInfoTO();
+		infoTO.setName("mockUser");
+		infoTO.setRoles(new HashSet<>());
+		infoTO.setId(33333L);
+	}
 
 	@Override
 	public LoginResult login(String username, String password, boolean remember, HttpServletRequest request,
@@ -27,18 +34,19 @@ public class MockSecurityService implements SecurityService {
 
 	@Override
 	public UserInfoTO getCurrentUser() {
-		UserInfoTO mockTO = new UserInfoTO();
-		mockTO.setName("mockUser");
-		mockTO.setRoles(roles);
-		return mockTO;
+		return infoTO;
 	}
 
-	public Set<Role> getRoles() {
-		return roles;
+	public UserInfoTO getInfoTO() {
+		return infoTO;
 	}
 
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
+	public void setInfoTO(UserInfoTO infoTO) {
+		this.infoTO = infoTO;
+	}
+
+	public void setRoles(HashSet<Role> hashSet) {
+		infoTO.setRoles(hashSet);
 	}
 
 }

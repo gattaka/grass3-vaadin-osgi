@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -340,7 +341,8 @@ public class PGServiceImpl implements PGService {
 	}
 
 	@Override
-	public PhotogalleryTO getPhotogalleryForDetail(long id) {
+	public PhotogalleryTO getPhotogalleryForDetail(Long id) {
+		Validate.notNull(id, "Id galerie nesmí být null");
 		Photogallery photogallery = photogalleryRepository.findOne(id);
 		if (photogallery == null)
 			return null;

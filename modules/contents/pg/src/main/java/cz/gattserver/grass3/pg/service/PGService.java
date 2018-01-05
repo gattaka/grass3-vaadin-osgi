@@ -69,7 +69,7 @@ public interface PGService {
 	 *            identifikátor
 	 * @return TO galerie
 	 */
-	public PhotogalleryTO getPhotogalleryForDetail(long id);
+	public PhotogalleryTO getPhotogalleryForDetail(Long id);
 
 	/**
 	 * Získá všechny galerie a namapuje je pro použití při vyhledávání

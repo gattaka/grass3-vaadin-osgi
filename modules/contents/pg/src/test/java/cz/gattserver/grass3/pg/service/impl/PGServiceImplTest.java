@@ -7,6 +7,8 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -18,26 +20,37 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import cz.gattserver.grass3.events.EventBus;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.mock.CoreMockService;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.modules.PGModule;
 import cz.gattserver.grass3.pg.config.PGConfiguration;
+import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.model.domain.Photogallery;
 import cz.gattserver.grass3.pg.model.repositories.PhotogalleryRepository;
 import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.pg.test.MockFileSystemService;
+import cz.gattserver.grass3.pg.test.MockSecurityService;
 import cz.gattserver.grass3.pg.test.PGMockEventsHandler;
 import cz.gattserver.grass3.pg.util.ImageComparator;
+import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.test.AbstractDBUnitTest;
+import cz.gattserver.grass3.test.MockUtils;
 
 @DatabaseSetup(value = "deleteAll.xml", type = DatabaseOperation.DELETE_ALL)
 public class PGServiceImplTest extends AbstractDBUnitTest {
 
 	@Autowired
 	private MockFileSystemService fileSystemService;
+
+	@Autowired
+	private MockSecurityService mockSecurityService;
 
 	@Autowired
 	private ConfigurationService configurationService;
@@ -344,4 +357,227 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 				this.getClass().getResourceAsStream("orientedLargeSlideshow.jpg")) < acceptableDifference);
 	}
 
+	@Test
+	public void testCreateGalleryDir() throws IOException {
+		Path root = prepareFS(fileSystemService.getFileSystem());
+
+		String dir = pgService.createGalleryDir();
+		assertTrue(dir.startsWith("pgGal_"));
+
+		Path galleryDir = root.resolve(dir);
+		assertTrue(Files.exists(galleryDir));
+		assertTrue(Files.isDirectory(galleryDir));
+	}
+
+	@Test
+	public void testGetPhotogalleryForDetail() throws IOException, InterruptedException, ExecutionException {
+		Path root = prepareFS(fileSystemService.getFileSystem());
+
+		Path galleryDir = root.resolve("testGallery");
+		Files.createDirectories(galleryDir);
+
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
+		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
+				null, true);
+
+		PGMockEventsHandler eventsHandler = new PGMockEventsHandler();
+		eventBus.subscribe(eventsHandler);
+		CompletableFuture<PGMockEventsHandler> future = eventsHandler.expectEvent();
+
+		pgService.savePhotogallery(payloadTO, nodeId1, userId1, LocalDateTime.now());
+
+		future.get();
+
+		assertTrue(eventsHandler.success);
+		assertNotNull(eventsHandler.pgId);
+		long galleryId = eventsHandler.pgId;
+
+		eventBus.unsubscribe(eventsHandler);
+
+		PhotogalleryTO to = pgService.getPhotogalleryForDetail(galleryId);
+		assertEquals("testGallery", to.getPhotogalleryPath());
+		assertEquals("Test galerie", to.getContentNode().getName());
+		assertTrue(to.getContentNode().isPublicated());
+	}
+
+	private long createMockGallery(Path root, Long userId, Long nodeId, int variant, boolean publicated)
+			throws IOException, InterruptedException, ExecutionException {
+		Path galleryDir = root.resolve("testGallery" + variant);
+		Files.createDirectories(galleryDir);
+
+		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie" + variant,
+				galleryDir.getFileName().toString(), null, publicated);
+
+		PGMockEventsHandler eventsHandler = new PGMockEventsHandler();
+		eventBus.subscribe(eventsHandler);
+		CompletableFuture<PGMockEventsHandler> future = eventsHandler.expectEvent();
+
+		pgService.savePhotogallery(payloadTO, nodeId, userId, LocalDateTime.now());
+
+		future.get();
+
+		assertTrue(eventsHandler.success);
+		assertNotNull(eventsHandler.pgId);
+		long galleryId = eventsHandler.pgId;
+
+		eventBus.unsubscribe(eventsHandler);
+
+		return galleryId;
+	}
+
+	@Test
+	public void testGetAllPhotogalleriesForREST() throws IOException, InterruptedException, ExecutionException {
+		Path root = prepareFS(fileSystemService.getFileSystem());
+
+		Long userId1 = coreMockService.createMockUser(1);
+		Long userId2 = coreMockService.createMockUser(2);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
+		Long nodeId2 = coreMockService.createMockRootNode(2);
+
+		Long id1 = createMockGallery(root, userId1, nodeId1, 1, true);
+		Long id2 = createMockGallery(root, userId1, nodeId2, 2, true);
+		Long id3 = createMockGallery(root, userId2, nodeId1, 3, true);
+		createMockGallery(root, userId2, nodeId2, 4, false);
+
+		List<PhotogalleryRESTOverviewTO> list = pgService.getAllPhotogalleriesForREST(userId1);
+		assertEquals(3, list.size());
+		assertEquals("Test galerie3", list.get(0).getName());
+		assertEquals(id3, list.get(0).getId());
+		assertEquals("Test galerie2", list.get(1).getName());
+		assertEquals(id2, list.get(1).getId());
+		assertEquals("Test galerie1", list.get(2).getName());
+		assertEquals(id1, list.get(2).getId());
+	}
+
+	@Test
+	public void testGetPhotogalleryForREST()
+			throws IOException, InterruptedException, ExecutionException, UnauthorizedAccessException {
+		Path root = prepareFS(fileSystemService.getFileSystem());
+
+		Long userId = coreMockService.createMockUser(1);
+		Long nodeId = coreMockService.createMockRootNode(1);
+
+		Path galleryDir = root.resolve("testGalleryREST");
+		Files.createDirectories(galleryDir);
+
+		Path animatedSmallFile = galleryDir.resolve("01.gif");
+		Files.copy(this.getClass().getResourceAsStream("animatedSmall.gif"), animatedSmallFile);
+
+		Path largeFile = galleryDir.resolve("02.jpg");
+		Files.copy(this.getClass().getResourceAsStream("large.jpg"), largeFile);
+
+		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
+				null, true);
+
+		PGMockEventsHandler eventsHandler = new PGMockEventsHandler();
+		eventBus.subscribe(eventsHandler);
+		CompletableFuture<PGMockEventsHandler> future = eventsHandler.expectEvent();
+
+		pgService.savePhotogallery(payloadTO, nodeId, userId, LocalDateTime.now());
+
+		future.get();
+
+		assertTrue(eventsHandler.success);
+		assertNotNull(eventsHandler.pgId);
+		long galleryId = eventsHandler.pgId;
+
+		eventBus.unsubscribe(eventsHandler);
+
+		PhotogalleryRESTTO to = pgService.getPhotogalleryForREST(galleryId);
+
+		assertEquals(MockUtils.MOCK_USER_NAME + 1, to.getAuthor());
+		assertEquals(2, to.getFiles().size());
+		Iterator<String> it = to.getFiles().iterator();
+		assertEquals("01.gif", it.next());
+		assertEquals("02.jpg", it.next());
+		assertEquals(new Long(galleryId), to.getId());
+		assertEquals("Test galerie", to.getName());
+	}
+
+	public void testGetPhotogalleryForREST_succes1()
+			throws IOException, InterruptedException, ExecutionException, UnauthorizedAccessException {
+		Path root = prepareFS(fileSystemService.getFileSystem());
+
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
+		Long id1 = createMockGallery(root, userId1, nodeId1, 1, false);
+
+		UserInfoTO user = mockSecurityService.getCurrentUser();
+		user.setId(userId1);
+
+		pgService.getPhotogalleryForREST(id1);
+	}
+
+	public void testGetPhotogalleryForREST_succes2()
+			throws IOException, InterruptedException, ExecutionException, UnauthorizedAccessException {
+		Path root = prepareFS(fileSystemService.getFileSystem());
+
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
+		Long id1 = createMockGallery(root, userId1, nodeId1, 1, false);
+
+		UserInfoTO user = mockSecurityService.getCurrentUser();
+		user.getRoles().add(Role.ADMIN);
+
+		pgService.getPhotogalleryForREST(id1);
+	}
+
+	@Test(expected = UnauthorizedAccessException.class)
+	public void testGetPhotogalleryForREST_exception()
+			throws IOException, InterruptedException, ExecutionException, UnauthorizedAccessException {
+		Path root = prepareFS(fileSystemService.getFileSystem());
+
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
+		Long id1 = createMockGallery(root, userId1, nodeId1, 1, false);
+
+		pgService.getPhotogalleryForREST(id1);
+	}
+
+	@Test
+	public void testGetPhotoForREST()
+			throws IOException, InterruptedException, ExecutionException, UnauthorizedAccessException {
+		Path root = prepareFS(fileSystemService.getFileSystem());
+		Path galleryDir = root.resolve("testGallery");
+		Files.createDirectories(galleryDir);
+
+		Path largeFile = galleryDir.resolve("02.jpg");
+		Files.copy(this.getClass().getResourceAsStream("large.jpg"), largeFile);
+		assertTrue(Files.exists(largeFile));
+
+		Path smallFile = galleryDir.resolve("03.jpg");
+		Files.copy(this.getClass().getResourceAsStream("small.jpg"), smallFile);
+		assertTrue(Files.exists(smallFile));
+
+		Long userId1 = coreMockService.createMockUser(1);
+		Long nodeId1 = coreMockService.createMockRootNode(1);
+		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
+				null, true);
+
+		PGMockEventsHandler eventsHandler = new PGMockEventsHandler();
+		eventBus.subscribe(eventsHandler);
+		CompletableFuture<PGMockEventsHandler> future = eventsHandler.expectEvent();
+
+		pgService.savePhotogallery(payloadTO, nodeId1, userId1, LocalDateTime.now());
+
+		future.get();
+
+		long galleryId = eventsHandler.pgId;
+
+		eventBus.unsubscribe(eventsHandler);
+
+		PGConfiguration conf = new PGConfiguration();
+		configurationService.loadConfiguration(conf);
+
+		Path photoPath = pgService.getPhotoForREST(galleryId, "02.jpg", false);
+		assertEquals(galleryDir.resolve(conf.getSlideshowDir()).resolve("02.jpg"), photoPath);
+		photoPath = pgService.getPhotoForREST(galleryId, "03.jpg", false);
+		assertEquals(galleryDir.resolve("03.jpg"), photoPath);
+		photoPath = pgService.getPhotoForREST(galleryId, "02.jpg", true);
+		assertEquals(galleryDir.resolve(conf.getMiniaturesDir()).resolve("02.jpg"), photoPath);
+		photoPath = pgService.getPhotoForREST(galleryId, "03.jpg", true);
+		assertEquals(galleryDir.resolve(conf.getMiniaturesDir()).resolve("03.jpg"), photoPath);
+
+	}
 }

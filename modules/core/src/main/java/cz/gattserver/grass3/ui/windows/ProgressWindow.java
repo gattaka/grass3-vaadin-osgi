@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
@@ -17,17 +18,19 @@ public class ProgressWindow extends Window {
 	private BaseProgressBar progressbar;
 	private Label progressItemLabel;
 	private Label descriptionLabel;
+	private UI ui;
 
 	public int getTotal() {
 		return progressbar.getTotal();
 	}
 
-	public void closeOnDone() {
-		getUI().access(new Runnable() {
+	@Override
+	public void close() {
+		ui.access(new Runnable() {
 			@Override
 			public void run() {
-				setClosable(true);
-				close();
+				ui.setPollInterval(-1);
+				ProgressWindow.super.close();
 			}
 		});
 	}
@@ -40,7 +43,11 @@ public class ProgressWindow extends Window {
 
 	public ProgressWindow(BaseProgressBar progressBar) {
 		super("Průběh operace");
+		
+		this.ui = UI.getCurrent();
 
+		ui.setPollInterval(200);
+		
 		setWidth("300px");
 		setHeight("170px");
 		center();

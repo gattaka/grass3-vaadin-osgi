@@ -51,7 +51,7 @@ public class ZIPUtils {
 				return FileVisitResult.CONTINUE;
 			}
 
-			private void print(Path file) throws IOException {
+			private void print(Path file) {
 				result.add(file);
 			}
 		});

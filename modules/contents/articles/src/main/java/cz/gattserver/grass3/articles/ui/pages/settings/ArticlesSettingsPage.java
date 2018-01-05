@@ -117,7 +117,6 @@ public class ArticlesSettingsPage extends AbstractSettingsPage {
 					"Přegenerování všech článků může zabrat delší čas a dojde během něj zřejmě k mnoha drobným změnám - opravdu přegenerovat ?",
 					e -> {
 						eventBus.subscribe(ArticlesSettingsPage.this);
-						ui.setPollInterval(200);
 						articleFacade.reprocessAllArticles(getRequest().getContextRoot());
 					});
 			confirmSubwindow.setWidth("460px");
@@ -158,9 +157,8 @@ public class ArticlesSettingsPage extends AbstractSettingsPage {
 	@Handler
 	protected void onProcessResult(final ArticlesProcessResultEvent event) {
 		ui.access(() -> {
-			// ui.setPollInterval(-1);
 			if (progressIndicatorWindow != null)
-				progressIndicatorWindow.closeOnDone();
+				progressIndicatorWindow.close();
 			reprocessButton.setEnabled(true);
 
 			if (event.isSuccess()) {

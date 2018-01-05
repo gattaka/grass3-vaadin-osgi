@@ -415,7 +415,6 @@ public class PGEditorPage extends OneColumnPage {
 	private void saveOrUpdatePhotogallery() {
 		logger.info("saveOrUpdatePhotogallery thread: " + Thread.currentThread().getId());
 		eventBus.subscribe(PGEditorPage.this);
-		ui.setPollInterval(200);
 		List<String> tokens = new ArrayList<>();
 		photogalleryKeywords.getTokens().forEach(t -> tokens.add(t.getValue()));
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(photogalleryNameField.getValue(), galleryDir,
@@ -467,7 +466,7 @@ public class PGEditorPage extends OneColumnPage {
 	protected void onProcessResult(final PGProcessResultEvent event) {
 		ui.access(() -> {
 			if (progressIndicatorWindow != null)
-				progressIndicatorWindow.closeOnDone();
+				progressIndicatorWindow.close();
 
 			Long id = event.getGalleryId();
 			if (event.isSuccess() && (id != null || editMode)) {

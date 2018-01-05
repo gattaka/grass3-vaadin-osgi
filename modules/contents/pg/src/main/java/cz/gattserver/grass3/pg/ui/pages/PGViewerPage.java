@@ -266,7 +266,6 @@ public class PGViewerPage extends ContentViewerPage {
 				event -> UI.getCurrent().addWindow(new ConfirmWindow("Přejete si vytvořit ZIP galerie?", e -> {
 					logger.info("zipPhotogallery thread: {}", Thread.currentThread().getId());
 					eventBus.subscribe(PGViewerPage.this);
-					ui.setPollInterval(200);
 					pgService.zipGallery(galleryDir);
 				})));
 		statusLabelWrapper.addComponent(downloadZip);
@@ -310,10 +309,8 @@ public class PGViewerPage extends ContentViewerPage {
 	@Handler
 	protected void onProcessResult(final PGZipProcessResultEvent event) {
 		ui.access(() -> {
-			ui.setPollInterval(-1);
-
 			if (progressIndicatorWindow != null)
-				progressIndicatorWindow.closeOnDone();
+				progressIndicatorWindow.close();
 
 			if (event.isSuccess()) {
 				Window win = new Window("Stáhnout") {

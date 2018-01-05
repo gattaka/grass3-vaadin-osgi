@@ -281,7 +281,7 @@ public class PGEditorPage extends OneColumnPage {
 		});
 		gridLayout.addComponent(grid);
 		gridLayout.setExpandRatio(grid, 1);
-		
+
 		gridLayout.addComponent(imageWrapper);
 
 		HorizontalLayout itemsButtonLayout = new HorizontalLayout();
@@ -289,6 +289,34 @@ public class PGEditorPage extends OneColumnPage {
 		itemsButtonLayout.setMargin(false);
 		contentLayout.addComponent(itemsButtonLayout);
 
+		itemsButtonLayout.addComponent(createUploadButton(grid, items));
+		itemsButtonLayout.addComponent(removeBtn);
+
+		VerticalLayout contentOptionsLayout = new VerticalLayout();
+		contentOptionsLayout.setSpacing(true);
+		contentOptionsLayout.setMargin(false);
+		editorLayout.addComponent(contentOptionsLayout);
+		contentOptionsLayout.addComponent(new H2Label("Nastavení"));
+
+		publicatedCheckBox.setCaption("Publikovat galerii");
+		publicatedCheckBox.setDescription("Je-li prázdné, uvidí galerii pouze její autor");
+		contentOptionsLayout.addComponent(publicatedCheckBox);
+
+		photogalleryDateField.setCaption("Přepsat datum vytvoření galerie");
+		contentOptionsLayout.addComponent(photogalleryDateField);
+
+		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		buttonsLayout.setSpacing(true);
+		buttonsLayout.setMargin(false);
+		editorLayout.addComponent(buttonsLayout);
+
+		populateButtonsLayout(buttonsLayout);
+
+		return marginLayout;
+	}
+
+	private MultiUpload createUploadButton(final Grid<PhotogalleryViewItemTO> grid,
+			final List<PhotogalleryViewItemTO> items) {
 		MultiUpload multiUpload = new MultiUpload() {
 			private static final long serialVersionUID = -5223991901495532219L;
 
@@ -330,27 +358,10 @@ public class PGEditorPage extends OneColumnPage {
 
 		};
 		multiUpload.setCaption("Nahrát obsah");
+		return multiUpload;
+	}
 
-		itemsButtonLayout.addComponent(multiUpload);
-		itemsButtonLayout.addComponent(removeBtn);
-
-		VerticalLayout contentOptionsLayout = new VerticalLayout();
-		contentOptionsLayout.setSpacing(true);
-		contentOptionsLayout.setMargin(false);
-		editorLayout.addComponent(contentOptionsLayout);
-		contentOptionsLayout.addComponent(new H2Label("Nastavení"));
-
-		publicatedCheckBox.setCaption("Publikovat galerii");
-		publicatedCheckBox.setDescription("Je-li prázdné, uvidí galerii pouze její autor");
-		contentOptionsLayout.addComponent(publicatedCheckBox);
-
-		photogalleryDateField.setCaption("Přepsat datum vytvoření galerie");
-		contentOptionsLayout.addComponent(photogalleryDateField);
-
-		HorizontalLayout buttonLayout = new HorizontalLayout();
-		buttonLayout.setSpacing(true);
-		buttonLayout.setMargin(false);
-		editorLayout.addComponent(buttonLayout);
+	private void populateButtonsLayout(HorizontalLayout buttonLayout) {
 
 		// Uložit
 		Button saveButton = new Button("Uložit");
@@ -386,8 +397,6 @@ public class PGEditorPage extends OneColumnPage {
 						returnToNode();
 				})));
 		buttonLayout.addComponent(cancelButton);
-
-		return marginLayout;
 	}
 
 	private void cleanAfterCancelEdit() {
@@ -467,26 +476,41 @@ public class PGEditorPage extends OneColumnPage {
 		ui.access(() -> {
 			if (progressIndicatorWindow != null)
 				progressIndicatorWindow.close();
-
-			Long id = event.getGalleryId();
-			if (event.isSuccess() && (id != null || editMode)) {
-				if (!editMode)
-					photogallery = pgService.getPhotogalleryForDetail(id);
-
-				// soubory byly uloženy a nepodléhají
-				// podmíněnému smazání
-				newFiles.clear();
-				if (!stayInEditor)
-					returnToPhotogallery();
-
-				UIUtils.showInfo(editMode ? "Úprava galerie proběhla úspěšně" : "Uložení galerie proběhlo úspěšně");
-			} else {
-				UIUtils.showWarning(editMode ? "Úprava galerie se nezdařila" : "Uložení galerie se nezdařilo");
-			}
-
-			// odteď budeme editovat
-			editMode = true;
+			if (editMode)
+				onModifyResult(event);
+			else
+				onSaveResult(event);
 		});
 		eventBus.unsubscribe(PGEditorPage.this);
+	}
+
+	private void onSaveResult(PGProcessResultEvent event) {
+		Long id = event.getGalleryId();
+		if (event.isSuccess() && id != null) {
+			photogallery = pgService.getPhotogalleryForDetail(id);
+			// soubory byly uloženy a nepodléhají
+			// podmíněnému smazání
+			newFiles.clear();
+			if (!stayInEditor)
+				returnToPhotogallery();
+			// odteď budeme editovat
+			editMode = true;
+			UIUtils.showInfo("Uložení galerie proběhlo úspěšně");
+		} else {
+			UIUtils.showWarning("Uložení galerie se nezdařilo");
+		}
+	}
+
+	private void onModifyResult(PGProcessResultEvent event) {
+		if (event.isSuccess()) {
+			// soubory byly uloženy a nepodléhají
+			// podmíněnému smazání
+			newFiles.clear();
+			if (!stayInEditor)
+				returnToPhotogallery();
+			UIUtils.showInfo("Úprava galerie proběhla úspěšně");
+		} else {
+			UIUtils.showWarning("Úprava galerie se nezdařila");
+		}
 	}
 }

@@ -174,6 +174,10 @@ public class PGServiceImpl implements PGService {
 			Iterator<Path> it = stream.iterator();
 			while (it.hasNext()) {
 				Path file = it.next();
+
+				eventBus.publish(new PGProcessProgressEvent("Zpracování miniatur " + progress + "/" + total));
+				progress++;
+
 				// pokud bych miniaturizoval adresář přeskoč
 				if (Files.isDirectory(file))
 					continue;
@@ -181,24 +185,15 @@ public class PGServiceImpl implements PGService {
 				boolean videoExt = PGUtils.isVideo(file);
 				boolean imageExt = PGUtils.isImage(file);
 
-				if (!videoExt && !imageExt)
-					continue;
-
-				// soubor miniatury
-				Path outputFile;
-				if (videoExt)
-					outputFile = prevDirFile.resolve(file.getFileName().toString() + ".png");
-				else
-					outputFile = miniDirFile.resolve(file.getFileName().toString());
-
-				eventBus.publish(new PGProcessProgressEvent("Zpracování miniatur " + progress + "/" + total));
-				progress++;
-
-				// už existuje? ok, není potřeba znovu vytvářet
-				if (!Files.exists(outputFile)) {
-					if (videoExt)
+				if (videoExt) {
+					Path outputFile = prevDirFile.resolve(file.getFileName().toString() + ".png");
+					if (!Files.exists(outputFile))
 						createVideoMinature(file, outputFile);
-					else
+				}
+				
+				if (imageExt) {
+					Path outputFile = miniDirFile.resolve(file.getFileName().toString());
+					if (!Files.exists(outputFile))
 						createImageMinature(file, outputFile);
 				}
 			}
@@ -505,8 +500,9 @@ public class PGServiceImpl implements PGService {
 			total.setValue((int) stream.count());
 			eventBus.publish(new PGZipProcessStartEvent(total.getValue() + 1));
 		} catch (Exception e) {
-			eventBus.publish(new PGZipProcessResultEvent("Nezdařilo se získat počet souborů ke komprimaci", e));
-			logger.error("Nezdařilo se vytvořit ZIP galerie", e);
+			String msg = "Nezdařilo se získat počet souborů ke komprimaci";
+			eventBus.publish(new PGZipProcessResultEvent(msg, e));
+			logger.error(msg, e);
 			return;
 		}
 
@@ -519,8 +515,9 @@ public class PGServiceImpl implements PGService {
 			performZip(galleryPath, zipFileSystem, progress, total);
 			eventBus.publish(new PGZipProcessResultEvent(zipFile));
 		} catch (Exception e) {
-			eventBus.publish(new PGZipProcessResultEvent(false, "Nezdařilo se vytvořit ZIP galerie"));
-			logger.error("Nezdařilo se vytvořit ZIP galerie", e);
+			String msg = "Nezdařilo se vytvořit ZIP galerie";
+			eventBus.publish(new PGZipProcessResultEvent(msg, e));
+			logger.error(msg, e);
 		}
 	}
 

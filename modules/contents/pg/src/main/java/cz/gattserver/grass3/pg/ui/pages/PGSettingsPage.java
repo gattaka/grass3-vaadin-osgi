@@ -45,27 +45,20 @@ public class PGSettingsPage extends AbstractSettingsPage {
 		settingsFieldsLayout.setSpacing(true);
 		settingsFieldsLayout.setSizeFull();
 
-		/**
-		 * Název adresářů miniatur
-		 */
+		// Název adresářů miniatur
 		final TextField miniaturesDirField = new TextField("Název adresářů miniatur");
 		miniaturesDirField.setValue(String.valueOf(configuration.getMiniaturesDir()));
 		FieldUtils.addValidator(miniaturesDirField, new StringLengthValidator("Nesmí být prázdné", 1, 1024));
 		settingsFieldsLayout.addComponent(miniaturesDirField);
 
-		/**
-		 * Kořenový adresář fotogalerií
-		 */
+		// Kořenový adresář fotogalerií
 		final TextField rootDirField = new TextField("Kořenový adresář fotogalerií");
 		rootDirField.setValue(String.valueOf(configuration.getRootDir()));
 		FieldUtils.addValidator(rootDirField, new StringLengthValidator("Nesmí být prázdné", 1, 1024));
 		settingsFieldsLayout.addComponent(rootDirField);
 
-		/**
-		 * Save tlačítko
-		 */
+		// Save tlačítko
 		Button saveButton = new Button("Uložit", event -> {
-			// TODO
 			if (rootDirField.getComponentError() == null && miniaturesDirField.getComponentError() == null) {
 				configuration.setRootDir(rootDirField.getValue());
 				configuration.setMiniaturesDir(miniaturesDirField.getValue());

@@ -132,11 +132,12 @@ public interface ArticleService {
 	public void reprocessAllArticles(String contextRoot);
 
 	/**
-	 * Získá všechny články a namapuje je pro použití při vyhledávání
+	 * Získá všechny nerozpracované články a namapuje je pro použití při
+	 * vyhledávání
 	 * 
 	 * @param userId
-	 *            id uživatele, kterým je omezena viditelnost na rozpracované
-	 *            články
+	 *            id uživatele, který je přihlášen, aby dle něj byly do výsledků
+	 *            přidány i jeho nepublikované články
 	 * @return list článků, ve kterých je možné vyhledávat
 	 */
 	public List<ArticleTO> getAllArticlesForSearch(long userId);

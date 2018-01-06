@@ -316,9 +316,9 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		articleService.saveDraft(payload, nodeId, userId, true);
 
 		List<ArticleTO> articles = articleService.getAllArticlesForSearch(userId);
-		assertEquals(1, articles.size());
+		assertEquals(2, articles.size());
 
-		ArticleTO articleTO = articles.get(0);
+		ArticleTO articleTO = articles.get(1);
 
 		assertNotNull(articleTO);
 		assertEquals("mockArticleName", articleTO.getContentNode().getName());

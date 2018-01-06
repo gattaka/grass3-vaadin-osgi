@@ -57,17 +57,15 @@ public abstract class DraftMenuWindow extends WebWindow {
 		grid.setWidth("900px");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 
-		grid.addColumn(a -> {
-			return a.getContentNode().getName();
-		}, new TextRenderer()).setCaption("Název").setId(nameBind).setWidth(200);
+		grid.addColumn(a -> a.getContentNode().getName(), new TextRenderer()).setCaption("Název").setId(nameBind)
+				.setWidth(200);
 
 		grid.getColumn("text").setCaption("Náhled").setWidth(550);
 
-		grid.addColumn(a -> {
-			return a.getContentNode().getLastModificationDate() == null ? a.getContentNode().getCreationDate()
-					: a.getContentNode().getLastModificationDate();
-		}, new LocalDateTimeRenderer("d.MM.yyyy HH:mm")).setCaption("Naposledy upraveno")
-				.setId(lastModificationDateBind).setStyleGenerator(item -> "v-align-right");
+		grid.addColumn(a -> a.getContentNode().getLastModificationDate() == null ? a.getContentNode().getCreationDate()
+				: a.getContentNode().getLastModificationDate(), new LocalDateTimeRenderer("d.MM.yyyy HH:mm"))
+				.setCaption("Naposledy upraveno").setId(lastModificationDateBind)
+				.setStyleGenerator(item -> "v-align-right");
 
 		grid.setColumns(nameBind, "text", lastModificationDateBind);
 
@@ -91,15 +89,14 @@ public abstract class DraftMenuWindow extends WebWindow {
 		btnLayout.addComponent(close);
 		btnLayout.setComponentAlignment(close, Alignment.MIDDLE_CENTER);
 
-		Button delete = new Button("Smazat", ev -> {
-			UI.getCurrent().addWindow(new ConfirmWindow("Smazat rozpracovaný článek?", e -> {
-				ArticleDraftOverviewTO to = grid.getSelectedItems().iterator().next();
-				getArticleService().deleteArticle(to.getId());
-				drafts.remove(to);
-				grid.getDataProvider().refreshAll();
-				grid.deselectAll();
-			}));
-		});
+		Button delete = new Button("Smazat",
+				ev -> UI.getCurrent().addWindow(new ConfirmWindow("Smazat rozpracovaný článek?", e -> {
+					ArticleDraftOverviewTO to = grid.getSelectedItems().iterator().next();
+					getArticleService().deleteArticle(to.getId());
+					drafts.remove(to);
+					grid.getDataProvider().refreshAll();
+					grid.deselectAll();
+				})));
 		btnLayout.addComponent(delete);
 		btnLayout.setComponentAlignment(delete, Alignment.MIDDLE_CENTER);
 		delete.setEnabled(false);

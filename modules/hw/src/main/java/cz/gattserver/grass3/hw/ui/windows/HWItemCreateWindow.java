@@ -39,7 +39,7 @@ public abstract class HWItemCreateWindow extends WebWindow {
 	private HWService hwFacade;
 
 	public HWItemCreateWindow(Long originalId) {
-		init(hwFacade.getHWItem(originalId));
+		init(originalId == null ? null : hwFacade.getHWItem(originalId));
 	}
 
 	public HWItemCreateWindow() {

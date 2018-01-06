@@ -49,9 +49,12 @@ public class HWItemsTab extends VerticalLayout {
 	@Autowired
 	private HWService hwFacade;
 
-	private final String PRICE_BIND = "customPrice";
-	private final String STATE_BIND = "customState";
-	private final String PURCHASE_DATE_BIND = "customPurchaseDate";
+	private final String NAME_BIND = "nameBind";
+	private final String USED_IN_BIND = "usedInBind";
+	private final String SUPERVIZED_FOR_BIND = "supervizedForBind";
+	private final String PRICE_BIND = "priceBind";
+	private final String STATE_BIND = "stateBind";
+	private final String PURCHASE_DATE_BIND = "purchaseDateBind";
 
 	private Grid<HWItemOverviewDTO> grid;
 	private AdvancedTokenField hwTypesFilter;
@@ -74,6 +77,12 @@ public class HWItemsTab extends VerticalLayout {
 						return "state";
 					case PURCHASE_DATE_BIND:
 						return "purchaseDate";
+					case NAME_BIND:
+						return "name";
+					case USED_IN_BIND:
+						return "usedIn";
+					case SUPERVIZED_FOR_BIND:
+						return "supervizedFor";
 					default:
 						return column;
 					}
@@ -199,23 +208,20 @@ public class HWItemsTab extends VerticalLayout {
 		hwTypesFilter.isEnabled();
 
 		// Tabulka HW
-		grid = new Grid<>(HWItemOverviewDTO.class);
+		grid = new Grid<>();
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setWidth("100%");
 
-		grid.getColumn("name").setCaption("Název").setWidth(260);
-		grid.getColumn("purchaseDate").setCaption("Získáno");
-		grid.getColumn("usedIn").setCaption("Je součástí").setMaximumWidth(180);
-		grid.getColumn("supervizedFor").setCaption("Spravováno pro");
+		grid.addColumn(HWItemOverviewDTO::getName).setId(NAME_BIND).setCaption("Název").setWidth(260);
+		grid.addColumn(hw -> hw.getState().getName(), new TextRenderer()).setCaption("Stav").setId(STATE_BIND)
+				.setWidth(130);
+		grid.addColumn(HWItemOverviewDTO::getUsedInName).setId(USED_IN_BIND).setCaption("Je součástí")
+				.setMaximumWidth(180);
+		grid.addColumn(HWItemOverviewDTO::getSupervizedFor).setId(SUPERVIZED_FOR_BIND).setCaption("Spravováno pro");
 		grid.addColumn(hw -> FieldUtils.formatMoney(hw.getPrice()), new TextRenderer()).setCaption("Cena")
 				.setId(PRICE_BIND).setStyleGenerator(item -> "v-align-right");
-		grid.addColumn(hw -> {
-			return hw.getState().getName();
-		}, new TextRenderer()).setCaption("Stav").setId(STATE_BIND).setWidth(130);
 		grid.addColumn(HWItemOverviewDTO::getPurchaseDate, new LocalDateRenderer("dd.MM.yyyy")).setCaption("Získáno")
 				.setId(PURCHASE_DATE_BIND).setStyleGenerator(item -> "v-align-right");
-
-		grid.setColumns("name", STATE_BIND, "usedIn", "supervizedFor", PRICE_BIND, PURCHASE_DATE_BIND);
 
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
@@ -227,7 +233,7 @@ public class HWItemsTab extends VerticalLayout {
 			filterDTO.setName(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell("name").setComponent(nazevColumnField);
+		filteringHeader.getCell(NAME_BIND).setComponent(nazevColumnField);
 
 		// Stav
 		ComboBox<HWItemState> stavColumnCombo = new ComboBox<>(null, Arrays.asList(HWItemState.values()));
@@ -247,7 +253,7 @@ public class HWItemsTab extends VerticalLayout {
 			filterDTO.setUsedIn(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell("usedIn").setComponent(usedInColumnField);
+		filteringHeader.getCell(USED_IN_BIND).setComponent(usedInColumnField);
 
 		// Spravován pro
 		TextField supervizedForColumnField = new TextField();
@@ -257,10 +263,10 @@ public class HWItemsTab extends VerticalLayout {
 			filterDTO.setSupervizedFor(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell("supervizedFor").setComponent(supervizedForColumnField);
+		filteringHeader.getCell(SUPERVIZED_FOR_BIND).setComponent(supervizedForColumnField);
 
 		populate();
-		grid.sort("name");
+		grid.sort(NAME_BIND);
 
 		grid.addItemClickListener(event -> {
 			if (event.getMouseEventDetails().isDoubleClick()) {

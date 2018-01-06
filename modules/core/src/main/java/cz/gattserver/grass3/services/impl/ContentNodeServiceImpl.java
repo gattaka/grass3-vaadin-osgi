@@ -19,9 +19,9 @@ import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.repositories.ContentNodeRepository;
-import cz.gattserver.grass3.model.util.CoreMapper;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.ContentTagService;
+import cz.gattserver.grass3.services.CoreMapperService;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.services.UserService;
 
@@ -30,7 +30,7 @@ import cz.gattserver.grass3.services.UserService;
 public class ContentNodeServiceImpl implements ContentNodeService {
 
 	@Autowired
-	private CoreMapper mapper;
+	private CoreMapperService mapper;
 
 	@Autowired
 	private SecurityService securityService;

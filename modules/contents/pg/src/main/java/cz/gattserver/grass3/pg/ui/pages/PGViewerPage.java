@@ -36,6 +36,7 @@ import cz.gattserver.grass3.pg.interfaces.PhotogalleryItemType;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
 import cz.gattserver.grass3.pg.service.PGService;
+import cz.gattserver.grass3.pg.ui.windows.ImageSlideshowWindow;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.components.BaseProgressBar;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;

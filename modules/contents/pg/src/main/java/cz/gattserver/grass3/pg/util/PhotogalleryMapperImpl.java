@@ -6,10 +6,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.model.util.CoreMapper;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
 import cz.gattserver.grass3.pg.model.domain.Photogallery;
+import cz.gattserver.grass3.services.CoreMapperService;
 
 @Component
 public class PhotogalleryMapperImpl implements PhotogalleryMapper {
@@ -18,7 +18,7 @@ public class PhotogalleryMapperImpl implements PhotogalleryMapper {
 	 * Core mapper
 	 */
 	@Autowired
-	private CoreMapper mapper;
+	private CoreMapperService mapper;
 
 	/**
 	 * Převede {@link Photogallery} na {@link PhotogalleryTO}

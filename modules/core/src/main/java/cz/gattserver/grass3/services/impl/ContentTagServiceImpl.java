@@ -25,15 +25,15 @@ import cz.gattserver.grass3.model.domain.ContentTag;
 import cz.gattserver.grass3.model.domain.QContentTag;
 import cz.gattserver.grass3.model.repositories.ContentNodeRepository;
 import cz.gattserver.grass3.model.repositories.ContentTagRepository;
-import cz.gattserver.grass3.model.util.CoreMapper;
 import cz.gattserver.grass3.services.ContentTagService;
+import cz.gattserver.grass3.services.CoreMapperService;
 
 @Transactional
 @Service
 public class ContentTagServiceImpl implements ContentTagService {
 
 	@Autowired
-	private CoreMapper mapper;
+	private CoreMapperService mapper;
 
 	@Autowired
 	private ContentTagRepository contentTagRepository;

@@ -18,8 +18,8 @@ import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.repositories.ContentNodeRepository;
 import cz.gattserver.grass3.model.repositories.UserRepository;
-import cz.gattserver.grass3.model.util.CoreMapper;
 import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.services.CoreMapperService;
 import cz.gattserver.grass3.services.UserService;
 
 @Transactional
@@ -27,7 +27,7 @@ import cz.gattserver.grass3.services.UserService;
 public class UserServiceImpl implements UserService {
 
 	@Autowired
-	private CoreMapper mapper;
+	private CoreMapperService mapper;
 
 	@Resource(name = "grassPasswordEncoder")
 	private PasswordEncoder encoder;

@@ -31,9 +31,9 @@ import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.articles.model.domain.Article;
 import cz.gattserver.grass3.articles.model.domain.ArticleJSResource;
 import cz.gattserver.grass3.articles.model.repositories.ArticleRepository;
-import cz.gattserver.grass3.articles.model.util.ArticlesMapper;
 import cz.gattserver.grass3.articles.plugins.register.PluginRegisterService;
 import cz.gattserver.grass3.articles.services.ArticleService;
+import cz.gattserver.grass3.articles.services.ArticlesMapperService;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
@@ -53,7 +53,7 @@ public class ArticleServiceImpl implements ArticleService {
 	private ContentNodeService contentNodeFacade;
 
 	@Autowired
-	private ArticlesMapper articlesMapper;
+	private ArticlesMapperService articlesMapper;
 
 	@Autowired
 	private ArticleRepository articleRepository;

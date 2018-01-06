@@ -13,7 +13,7 @@ import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeTO;
 import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.repositories.NodeRepository;
-import cz.gattserver.grass3.model.util.CoreMapper;
+import cz.gattserver.grass3.services.CoreMapperService;
 import cz.gattserver.grass3.services.NodeService;
 
 @Transactional
@@ -21,7 +21,7 @@ import cz.gattserver.grass3.services.NodeService;
 public class NodeServiceImpl implements NodeService {
 
 	@Autowired
-	private CoreMapper mapper;
+	private CoreMapperService mapper;
 
 	@Autowired
 	private NodeRepository nodeRepository;

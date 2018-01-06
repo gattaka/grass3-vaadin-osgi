@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import cz.gattserver.grass3.interfaces.QuoteTO;
 import cz.gattserver.grass3.model.domain.Quote;
 import cz.gattserver.grass3.model.repositories.QuoteRepository;
-import cz.gattserver.grass3.model.util.CoreMapper;
+import cz.gattserver.grass3.services.CoreMapperService;
 import cz.gattserver.grass3.services.QuotesService;
 import cz.gattserver.grass3.services.RandomSourceService;
 
@@ -20,7 +20,7 @@ import cz.gattserver.grass3.services.RandomSourceService;
 public class QuotesServiceImpl implements QuotesService {
 
 	@Autowired
-	private CoreMapper mapper;
+	private CoreMapperService mapper;
 
 	@Autowired
 	private QuoteRepository quoteRepository;

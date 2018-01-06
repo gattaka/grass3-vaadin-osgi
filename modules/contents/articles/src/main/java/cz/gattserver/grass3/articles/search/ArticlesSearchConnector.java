@@ -14,6 +14,7 @@ import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.search.service.SearchConnector;
 import cz.gattserver.grass3.search.service.SearchField;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.grass3.search.service.SearchEntity;
 
@@ -28,14 +29,11 @@ public class ArticlesSearchConnector implements SearchConnector {
 
 	public List<SearchEntity> getAvailableSearchEntities(UserInfoTO user) {
 
-		List<SearchEntity> searchEntities = new ArrayList<SearchEntity>();
+		List<SearchEntity> searchEntities = new ArrayList<>();
 
-		List<ArticleTO> articles = articleFacade.getAllArticlesForSearch();
+		long id = UIUtils.getGrassUI().getUser().getId();
+		List<ArticleTO> articles = articleFacade.getAllArticlesForSearch(id);
 		for (ArticleTO article : articles) {
-
-			// TODO
-			// if (coreACL.canShowContent(article.getContentNode(), user)) {
-
 			String suffix = URLIdentifierUtils.createURLIdentifier(article.getContentNode().getContentID(),
 					article.getContentNode().getName());
 
@@ -45,8 +43,6 @@ public class ArticlesSearchConnector implements SearchConnector {
 			searchEntity.addField(ArticleSearchField.CONTENT, article.getSearchableOutput(), true);
 
 			searchEntities.add(searchEntity);
-
-			// }
 		}
 
 		return searchEntities;

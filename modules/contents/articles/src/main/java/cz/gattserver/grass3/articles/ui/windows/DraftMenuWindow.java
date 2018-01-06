@@ -2,8 +2,6 @@ package cz.gattserver.grass3.articles.ui.windows;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
@@ -17,6 +15,7 @@ import com.vaadin.ui.renderers.TextRenderer;
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
 import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.ui.util.GridUtils;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ConfirmWindow;
 import cz.gattserver.web.common.ui.window.WebWindow;
 
@@ -24,14 +23,19 @@ public abstract class DraftMenuWindow extends WebWindow {
 
 	private static final long serialVersionUID = 4105221381350726137L;
 
-	@Autowired
-	private ArticleService articleFacade;
+	private transient ArticleService articleFacade;
 
 	private boolean continueFlag = false;
 
 	protected abstract void onChoose(ArticleDraftOverviewTO draft);
 
 	protected abstract void onCancel();
+
+	private ArticleService getArticleService() {
+		if (articleFacade == null)
+			articleFacade = SpringContextHelper.getBean(ArticleService.class);
+		return articleFacade;
+	}
 
 	private void innerChoose(ArticleDraftOverviewTO draft) {
 		continueFlag = true;
@@ -90,7 +94,7 @@ public abstract class DraftMenuWindow extends WebWindow {
 		Button delete = new Button("Smazat", ev -> {
 			UI.getCurrent().addWindow(new ConfirmWindow("Smazat rozpracovaný článek?", e -> {
 				ArticleDraftOverviewTO to = grid.getSelectedItems().iterator().next();
-				articleFacade.deleteArticle(to.getId());
+				getArticleService().deleteArticle(to.getId());
 				drafts.remove(to);
 				grid.getDataProvider().refreshAll();
 				grid.deselectAll();

@@ -86,9 +86,6 @@ public class Article {
 		return id;
 	}
 
-	public Article() {
-	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}

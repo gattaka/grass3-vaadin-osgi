@@ -16,18 +16,33 @@ public class Lexer {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private String source;
-	private int index; // pozice na řádce
-	private int ch; // zkoumaný znak
-	private int line; // zkoumaná řádka
-	private int col; // zkoumaný sloupec
-	private boolean br = false; // pokud se právě skočilo přes breakline, musí
-								// se s inkrementací col počkat, jinak by byl
-								// napřed
-	private int pcol, pline; // pozice řádek, sloupec
-	private StringBuilder word = new StringBuilder(); // načtený identifikátor
+
+	// pozice na řádce
+	private int index;
+
+	// zkoumaný znak
+	private int ch;
+
+	// zkoumaná řádka
+	private int line;
+
+	// zkoumaný sloupec
+	private int col;
+
+	// pokud se právě skočilo přes breakline, musí
+	// se s inkrementací col počkat, jinak by byl
+	// napřed
+	private boolean br = false;
+
+	// pozice řádek, sloupec
+	private int pcol;
+	private int pline;
+
+	// načtený identifikátor
+	private StringBuilder word = new StringBuilder();
 
 	/**
-	 * Vrati pocatecni pozici aktualniho symbolu.
+	 * Vrátí počáteční pozici aktuálního symbolu
 	 */
 	public PositionTO getPosition() {
 		return new PositionTO(pline, pcol);
@@ -109,7 +124,7 @@ public class Lexer {
 			return -2;
 		}
 		// Údaj o sloupci se inkrementuje jenom pokud před ním nebyl konec řádky
-		if (br == true)
+		if (br)
 			br = false;
 		else
 			col++;
@@ -123,7 +138,7 @@ public class Lexer {
 	 */
 	public Token nextToken() {
 		Token symbol = readNextToken();
-		logger.debug("LEXER: Token made -> " + symbol);
+		logger.debug("LEXER: Token made -> {}", symbol);
 		return symbol;
 	}
 
@@ -157,47 +172,9 @@ public class Lexer {
 		// Tag - musí začínat '[', končit ']' a obsahovat pouze písmena, čísla
 		// nebo '_'
 		if (ch == '[') {
-
-			// zkontroluj vnitřek tagu
-			do {
-				word.append((char) ch);
-				ch = nextChar();
-
-				// beru podtržítka,
-				// čísla a písmena,
-				// lomítko, ale pouze pokud je na pozici 1 ~> [/TAG]
-				// a tag nesmí být roztaženej mezi řádky
-			} while (Character.isLetterOrDigit(ch) || ch == '_' || (ch == '/' && word.length() == 1));
-
-			// čtení bylo ukončeno kvůli konci řádku nebo EOF - ukonči řádku
-			// (byl to text, nekončilo se ']')
-			if (ch == -1 || ch == -2) {
-				return TEXT;
-			}
-
-			// zkontroluj ']'
-			if (ch == ']') {
-
-				word.append((char) ch);
-				ch = nextChar();
-
-				// pokud je tag vlastně prázdný, tak to není tag, ale text
-				if ((!word.toString().equals("[]")) && (!word.toString().equals("[/]"))) {
-
-					// pokud tag začínal [/ tak to byl koncový tag
-					return word.charAt(1) == '/' ? END_TAG : START_TAG;
-
-				}
-
-			}
-
-			// pokud mne vyhodila značna tagu, tak ukončím tohle jako text
-			// ale nebudu jí načítat - mohl bych přejet tag
-			if (ch == '[') {
-				return TEXT;
-			}
-
-			// jinak to nechám dojet jako text
+			Token token = readTagToken();
+			if (token != null)
+				return token;
 		}
 
 		// Jinak je to text -- dokud nedojde ke změně, pokračuj ve čtení znaků
@@ -209,4 +186,49 @@ public class Lexer {
 		// dočetl jsem text
 		return TEXT;
 	}
+
+	private Token readTagToken() {
+		// zkontroluj vnitřek tagu
+		do {
+			word.append((char) ch);
+			ch = nextChar();
+
+			// beru podtržítka,
+			// čísla a písmena,
+			// lomítko, ale pouze pokud je na pozici 1 ~> [/TAG]
+			// a tag nesmí být roztaženej mezi řádky
+		} while (Character.isLetterOrDigit(ch) || ch == '_' || (ch == '/' && word.length() == 1));
+
+		// čtení bylo ukončeno kvůli konci řádku nebo EOF - ukonči řádku
+		// (byl to text, nekončilo se ']')
+		if (ch == -1 || ch == -2) {
+			return TEXT;
+		}
+
+		// zkontroluj ']'
+		if (ch == ']') {
+
+			word.append((char) ch);
+			ch = nextChar();
+
+			// pokud je tag vlastně prázdný, tak to není tag, ale text
+			if ((!word.toString().equals("[]")) && (!word.toString().equals("[/]"))) {
+
+				// pokud tag začínal [/ tak to byl koncový tag
+				return word.charAt(1) == '/' ? END_TAG : START_TAG;
+
+			}
+
+		}
+
+		// pokud mne vyhodila značna tagu, tak ukončím tohle jako text
+		// ale nebudu jí načítat - mohl bych přejet tag
+		if (ch == '[') {
+			return TEXT;
+		}
+
+		// jinak to nechám dojet jako text
+		return null;
+	}
+
 }

@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -181,65 +182,60 @@ public class ArticleServiceImpl implements ArticleService {
 		Article article = articleRepository.findOne(id);
 		if (article == null)
 			return null;
-		ArticleTO articleDTO = articlesMapper.mapArticleForDetail(article);
-		return articleDTO;
+		return articlesMapper.mapArticleForDetail(article);
 	}
 
 	@Async
 	@Override
 	public void reprocessAllArticles(String contextRoot) {
-
-		// TODO paging!
-		List<Article> articles = articleRepository.findAll();
-		int total = articles.size();
+		int total = (int) articleRepository.count();
 		eventBus.publish(new ArticlesProcessStartEvent(total));
-
 		int current = 0;
-		for (Article article : articles) {
+		int pageSize = 100;
+		int pages = (int) Math.ceil(total * 1.0 / pageSize);
+		for (int page = 0; page < pages; page++) {
+			List<Article> articles = articleRepository.findAll(new PageRequest(page, pageSize)).getContent();
+			for (Article article : articles) {
 
-			Collection<ContentTag> tagsDTOs = article.getContentNode().getContentTags();
-			Set<String> tags = new HashSet<String>();
-			for (ContentTag tag : tagsDTOs)
-				tags.add(tag.getName());
+				Collection<ContentTag> tagsDTOs = article.getContentNode().getContentTags();
+				Set<String> tags = new HashSet<>();
+				for (ContentTag tag : tagsDTOs)
+					tags.add(tag.getName());
 
-			ArticlePayloadTO payload = new ArticlePayloadTO(article.getContentNode().getName(), article.getText(), tags,
-					article.getContentNode().getPublicated(), contextRoot);
-			if (article.getContentNode().getDraft()) {
-				if (article.getContentNode().getDraftSourceId() != null) {
-					modifyDraftOfExistingArticle(article.getId(), payload, null,
-							article.getContentNode().getDraftSourceId(), true);
+				ArticlePayloadTO payload = new ArticlePayloadTO(article.getContentNode().getName(), article.getText(),
+						tags, article.getContentNode().getPublicated(), contextRoot);
+				if (article.getContentNode().getDraft()) {
+					if (article.getContentNode().getDraftSourceId() != null) {
+						modifyDraftOfExistingArticle(article.getId(), payload, null,
+								article.getContentNode().getDraftSourceId(), true);
+					} else {
+						modifyDraft(article.getId(), payload, true);
+					}
 				} else {
-					modifyDraft(article.getId(), payload, true);
+					modifyArticle(article.getId(), payload, null);
 				}
-			} else {
-				modifyArticle(article.getId(), payload, null);
-			}
 
-			eventBus.publish(new ArticlesProcessProgressEvent(
-					"(" + current + "/" + total + ") " + article.getContentNode().getName()));
-			current++;
+				eventBus.publish(new ArticlesProcessProgressEvent(
+						"(" + current + "/" + total + ") " + article.getContentNode().getName()));
+				current++;
+			}
 		}
 
 		eventBus.publish(new ArticlesProcessResultEvent());
 	}
 
 	@Override
-	public List<ArticleTO> getAllArticlesForSearch() {
-		List<Article> articles = articleRepository.findAllForSearch();
-		if (articles == null)
-			return null;
-		List<ArticleTO> articleDTOs = articlesMapper.mapArticlesForSearch(articles);
-		return articleDTOs;
+	public List<ArticleTO> getAllArticlesForSearch(long userId) {
+		boolean isAdmin = userRepository.hasRole(userId, Role.ADMIN) == 1L;
+		List<Article> articles = articleRepository.findAllForSearch(userId, isAdmin);
+		return articlesMapper.mapArticlesForSearch(articles);
 	}
 
 	@Override
 	public List<ArticleDraftOverviewTO> getDraftsForUser(long userId) {
 		boolean isAdmin = userRepository.hasRole(userId, Role.ADMIN) == 1L;
 		List<Article> articles = articleRepository.findDraftsForUser(userId, isAdmin);
-		if (articles == null)
-			return null;
-		List<ArticleDraftOverviewTO> articleDTOs = articlesMapper.mapArticlesForDraftOverview(articles);
-		return articleDTOs;
+		return articlesMapper.mapArticlesForDraftOverview(articles);
 	}
 
 }

@@ -38,9 +38,6 @@ public class ArticleDraftOverviewTO {
 		this.partNumber = partNumber;
 	}
 
-	public ArticleDraftOverviewTO() {
-	}
-
 	public String getText() {
 		return text;
 	}

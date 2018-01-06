@@ -37,32 +37,20 @@ public class HTMLTagsFilter {
 	 * @return vyčištěný text, ve kterém je jenom obsah bez formátování
 	 */
 	public static String trim(String text) {
-
 		boolean trimMode = false;
 		boolean endTagOccured = false;
 		StringBuilder stringBuilder = new StringBuilder();
-
 		for (int index = 0; index < text.length(); index++) {
-
 			char c = text.charAt(index);
-
-			// započal tag - zapni trim
 			if (c == '<') {
+				// započal tag - zapni trim
 				trimMode = true;
-				continue;
-			}
-
-			// skončil tag - vypni trim
-			if (c == '>') {
+			} else if (c == '>') {
+				// skončil tag - vypni trim
 				trimMode = false;
 				endTagOccured = true;
-				continue;
-			}
-
-			// pokud jedu trim, ignoruj znaky, jinak je připisuj
-			if (trimMode) {
-				continue;
-			} else {
+			} else if (!trimMode) {
+				// pokud jedu trim, ignoruj znaky, jinak je připisuj
 				if (endTagOccured) {
 					endTagOccured = false;
 					stringBuilder.append(' ');

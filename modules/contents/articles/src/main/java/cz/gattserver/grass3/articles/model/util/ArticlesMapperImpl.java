@@ -32,12 +32,12 @@ public class ArticlesMapperImpl implements ArticlesMapper {
 		articleDTO.setId(article.getId());
 		articleDTO.setOutputHTML(article.getOutputHTML());
 
-		Set<String> pluginCSSResources = new LinkedHashSet<String>();
+		Set<String> pluginCSSResources = new LinkedHashSet<>();
 		for (String resource : article.getPluginCSSResources()) {
 			pluginCSSResources.add(resource);
 		}
 		articleDTO.setPluginCSSResources(pluginCSSResources);
-		Set<String> pluginJSResources = new LinkedHashSet<String>();
+		Set<String> pluginJSResources = new LinkedHashSet<>();
 		for (ArticleJSResource resource : article.getPluginJSResources()) {
 			pluginJSResources.add(resource.getName());
 		}
@@ -68,7 +68,7 @@ public class ArticlesMapperImpl implements ArticlesMapper {
 	 * @return
 	 */
 	public List<ArticleTO> mapArticlesForReprocess(List<Article> articles) {
-		List<ArticleTO> articleDTOs = new ArrayList<ArticleTO>();
+		List<ArticleTO> articleDTOs = new ArrayList<>();
 		for (Article article : articles) {
 			articleDTOs.add(mapArticleForDetail(article));
 		}
@@ -84,7 +84,7 @@ public class ArticlesMapperImpl implements ArticlesMapper {
 	 * @return
 	 */
 	public List<ArticleTO> mapArticlesForSearch(List<Article> articles) {
-		List<ArticleTO> articleDTOs = new ArrayList<ArticleTO>();
+		List<ArticleTO> articleDTOs = new ArrayList<>();
 		for (Article article : articles) {
 			articleDTOs.add(mapArticleForSearch(article));
 		}
@@ -101,7 +101,7 @@ public class ArticlesMapperImpl implements ArticlesMapper {
 	 * @return
 	 */
 	public List<ArticleDraftOverviewTO> mapArticlesForDraftOverview(List<Article> articles) {
-		List<ArticleDraftOverviewTO> articleDTOs = new ArrayList<ArticleDraftOverviewTO>();
+		List<ArticleDraftOverviewTO> articleDTOs = new ArrayList<>();
 		for (Article article : articles) {
 			articleDTOs.add(mapArticleForDraftOverview(article));
 		}

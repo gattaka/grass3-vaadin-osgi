@@ -9,6 +9,9 @@ package cz.gattserver.grass3.articles.editor.parser.util;
  */
 public class HTMLEscaper {
 
+	private HTMLEscaper() {
+	}
+
 	/**
 	 * Provádí escapování HTML znaků, ze kterých jsou stavěny HTML tagy
 	 * 

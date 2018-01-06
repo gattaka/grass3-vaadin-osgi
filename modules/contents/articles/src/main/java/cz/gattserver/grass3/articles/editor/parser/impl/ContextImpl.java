@@ -10,6 +10,8 @@ import cz.gattserver.grass3.articles.editor.parser.Context;
  */
 public class ContextImpl implements Context {
 
+	private static final String END_DIV = "</div>"; 
+	
 	/**
 	 * Vystupni stream.
 	 */
@@ -28,8 +30,8 @@ public class ContextImpl implements Context {
 	/**
 	 * Dodatečné zdroj vyžadované pluginy
 	 */
-	private Set<String> cssResources = new LinkedHashSet<String>();
-	private Set<String> jsResources = new LinkedHashSet<String>();
+	private Set<String> cssResources = new LinkedHashSet<>();
+	private Set<String> jsResources = new LinkedHashSet<>();
 
 	public ContextImpl() {
 		this.out = new StringBuilder();
@@ -52,7 +54,7 @@ public class ContextImpl implements Context {
 		// pokud byla již úroveň změněná, nejprve
 		// uzavři předchozí odsazovací div
 		if (this.textLevel != 0) {
-			out.append("</div>");
+			out.append(END_DIV);
 		}
 
 		// ulož si pro příští porovnání aktuální level
@@ -66,7 +68,7 @@ public class ContextImpl implements Context {
 		// pokud byla úroveň odsazení změněná, uzavři odsazovací div
 		// Zde by se mohl sice textLevel rovnou vynulovat, ale já připouštím
 		// možnost získat výstup a pak pokračovat ve vypisování výstupu
-		return (this.textLevel != 0) ? (out.toString() + "</div>") : out.toString();
+		return (this.textLevel != 0) ? (out.toString() + END_DIV) : out.toString();
 	}
 
 	public int getNextHeaderIdentifier() {
@@ -77,7 +79,7 @@ public class ContextImpl implements Context {
 		// pokud byla úroveň opravdu změněná,
 		// uzavři předchozí odsazovací div
 		if (this.textLevel != 0) {
-			out.append("</div>");
+			out.append(END_DIV);
 			textLevel = 0;
 		}
 	}

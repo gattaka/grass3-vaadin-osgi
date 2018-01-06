@@ -16,35 +16,48 @@ public class TokenException extends RuntimeException {
 
 	private static final long serialVersionUID = -4168431404585234070L;
 
+	private static final String EXPECTED_TOKEN_CHUNK = "Expected Token: ";
+	private static final String ACTUAL_TOKEN_CHUNK = " Actual Token: ";
+	private static final String EXPECTED_CONTENT_CHUNK = "Expected content: ";
+	private static final String ACTUAL_CONTENT_CHUNK = " Actual content: ";
+	
 	private final String message;
 
+	private void validateExpected(Object expected) {
+		Validate.notNull(expected, "Expected nesmí být null");
+	}
+
+	private void validateActual(Object actual) {
+		Validate.notNull(actual, "Actual nesmí být null");
+	}
+
 	public TokenException(Token expected, Token actual, String actualContent) {
-		Validate.notNull(expected, "Expected Token nesmí být null");
-		Validate.notNull(expected, "Actual Token nesmí být null");
-		this.message = "Expected Token: " + expected + " Actual Token: " + actual + " ("
+		validateExpected(expected);
+		validateActual(actual);
+		this.message = EXPECTED_TOKEN_CHUNK + expected + ACTUAL_TOKEN_CHUNK + actual + " ("
 				+ StringPreviewCreator.createPreview(actualContent, 20) + ")";
 	}
 
 	public TokenException(String expectedContent, String actualContent) {
-		Validate.notNull(expectedContent, "Expected content nesmí být null");
-		Validate.notNull(actualContent, "Actual content nesmí být null");
-		this.message = "Expected content: '" + expectedContent + "' Actual content: "
+		validateExpected(expectedContent);
+		validateActual(actualContent);
+		this.message = EXPECTED_CONTENT_CHUNK + expectedContent + ACTUAL_CONTENT_CHUNK
 				+ StringPreviewCreator.createPreview(actualContent, 20);
 	}
 
 	public TokenException(Token expected, String tag) {
-		Validate.notNull(expected, "Expected Token nesmí být null");
-		this.message = "Expected Token: " + expected + " (" + tag + ") Actual Token: " + Token.EOF;
+		validateExpected(expected);
+		this.message = EXPECTED_TOKEN_CHUNK + expected + " (" + tag + ")" + ACTUAL_TOKEN_CHUNK + Token.EOF;
 	}
 
 	public TokenException(Token[] expected) {
-		Validate.notNull(expected, "Expected Token nesmí být null");
-		this.message = "Expected Tokens: " + expected + " Actual Token: " + Token.EOF;
+		validateExpected(expected);
+		this.message = "Expected Tokens: " + expected + ACTUAL_TOKEN_CHUNK + Token.EOF;
 	}
 
 	public TokenException(Token expected) {
-		Validate.notNull(expected, "Expected Token nesmí být null");
-		this.message = "Expected Token: " + expected + " Actual Token: " + Token.EOF;
+		validateExpected(expected);
+		this.message = EXPECTED_TOKEN_CHUNK + expected + ACTUAL_TOKEN_CHUNK + Token.EOF;
 	}
 
 	@Override

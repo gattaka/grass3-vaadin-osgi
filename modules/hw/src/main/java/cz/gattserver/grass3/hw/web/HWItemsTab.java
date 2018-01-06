@@ -202,7 +202,7 @@ public class HWItemsTab extends VerticalLayout {
 
 		grid.getColumn("name").setCaption("Název").setWidth(260);
 		grid.getColumn("purchaseDate").setCaption("Získáno");
-		grid.getColumn("usedIn").setCaption("Je součástí").setWidth(180);
+		grid.getColumn("usedIn").setCaption("Je součástí").setMaximumWidth(180);
 		grid.getColumn("supervizedFor").setCaption("Spravováno pro");
 		grid.addColumn(hw -> FieldUtils.formatMoney(hw.getPrice()), new TextRenderer()).setCaption("Cena")
 				.setId(PRICE_BIND).setStyleGenerator(item -> "v-align-right");
@@ -218,7 +218,7 @@ public class HWItemsTab extends VerticalLayout {
 
 		// Název
 		TextField nazevColumnField = new TextField();
-		nazevColumnField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
+		nazevColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterDTO.setName(e.getValue());
@@ -228,7 +228,7 @@ public class HWItemsTab extends VerticalLayout {
 
 		// Stav
 		ComboBox<HWItemState> stavColumnCombo = new ComboBox<>(null, Arrays.asList(HWItemState.values()));
-		stavColumnCombo.addStyleName(ValoTheme.COMBOBOX_SMALL);
+		stavColumnCombo.addStyleName(ValoTheme.COMBOBOX_TINY);
 		stavColumnCombo.setWidth("100%");
 		stavColumnCombo.addValueChangeListener(e -> {
 			filterDTO.setState(e.getValue());
@@ -238,7 +238,8 @@ public class HWItemsTab extends VerticalLayout {
 
 		// Je součástí
 		TextField usedInColumnField = new TextField();
-		usedInColumnField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
+		usedInColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		usedInColumnField.setWidth("100%");
 		usedInColumnField.addValueChangeListener(e -> {
 			filterDTO.setUsedIn(e.getValue());
 			populate();
@@ -247,7 +248,7 @@ public class HWItemsTab extends VerticalLayout {
 
 		// Spravován pro
 		TextField supervizedForColumnField = new TextField();
-		supervizedForColumnField.addStyleName(ValoTheme.TEXTFIELD_SMALL);
+		supervizedForColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
 		supervizedForColumnField.setWidth("100%");
 		supervizedForColumnField.addValueChangeListener(e -> {
 			filterDTO.setSupervizedFor(e.getValue());

@@ -40,8 +40,8 @@ public class PluginRegisterServiceImpl implements PluginRegisterService {
 		if (injectedPlugins == null)
 			injectedPlugins = new ArrayList<>();
 
-		editorCatalog = new HashMap<String, Map<String, EditorButtonResourcesTO>>();
-		plugins = new HashMap<String, Plugin>();
+		editorCatalog = new HashMap<>();
+		plugins = new HashMap<>();
 		for (Plugin plugin : injectedPlugins) {
 			registerPlugin(plugin);
 			addButtonToGroup(plugin.getEditorButtonResources());
@@ -66,9 +66,9 @@ public class PluginRegisterServiceImpl implements PluginRegisterService {
 	public Set<EditorButtonResourcesTO> getTagResourcesByGroup(String group) {
 		Map<String, EditorButtonResourcesTO> resources = editorCatalog.get(group);
 		if (resources == null)
-			return new HashSet<EditorButtonResourcesTO>();
+			return new HashSet<>();
 		else
-			return new HashSet<EditorButtonResourcesTO>(resources.values());
+			return new HashSet<>(resources.values());
 	}
 
 	private void addButtonToGroup(EditorButtonResourcesTO resources) {
@@ -77,7 +77,7 @@ public class PluginRegisterServiceImpl implements PluginRegisterService {
 			editorCatalog.get(resources.getTagFamily()).put(resources.getTag(), resources);
 		} else {
 			// založ
-			Map<String, EditorButtonResourcesTO> map = new HashMap<String, EditorButtonResourcesTO>();
+			Map<String, EditorButtonResourcesTO> map = new HashMap<>();
 			map.put(resources.getTag(), resources);
 			editorCatalog.put(resources.getTagFamily(), map);
 		}

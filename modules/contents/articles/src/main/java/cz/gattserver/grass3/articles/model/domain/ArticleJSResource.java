@@ -31,9 +31,6 @@ public class ArticleJSResource implements Comparable<ArticleJSResource> {
 		return id;
 	}
 
-	public ArticleJSResource() {
-	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -57,6 +54,31 @@ public class ArticleJSResource implements Comparable<ArticleJSResource> {
 	@Override
 	public int compareTo(ArticleJSResource resource) {
 		return this.getExecutionOrder().compareTo(resource.getExecutionOrder());
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (obj instanceof ArticleJSResource) {
+			ArticleJSResource other = (ArticleJSResource) obj;
+			if (getName() == null) {
+				if (other.getName() != null)
+					return false;
+			} else if (!getName().equals(other.getName()))
+				return false;
+		}
+		return false;
 	}
 
 	@Override

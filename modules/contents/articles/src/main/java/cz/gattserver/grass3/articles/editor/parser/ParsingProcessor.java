@@ -2,9 +2,10 @@ package cz.gattserver.grass3.articles.editor.parser;
 
 import static cz.gattserver.grass3.articles.editor.lexer.Token.*;
 
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +58,7 @@ public class ParsingProcessor {
 	 * navíc to ještě na zásobník (systémový) ukládá kvantum věcí navíc, tohle
 	 * je úspornější
 	 */
-	private Stack<StackElement> activePlugins;
+	private Deque<StackElement> activePlugins;
 
 	/**
 	 * položka stacku
@@ -97,7 +98,7 @@ public class ParsingProcessor {
 	public ParsingProcessor(Lexer lexer, String contextRoot, Map<String, Plugin> registerSnapshot) {
 		this.lexer = lexer;
 		this.contextRoot = contextRoot;
-		this.activePlugins = new Stack<StackElement>();
+		this.activePlugins = new LinkedList<>();
 		this.registerSnapshot = registerSnapshot;
 	}
 
@@ -183,7 +184,9 @@ public class ParsingProcessor {
 	 */
 	private Element parseTag() {
 		String tag = getStartTag();
-		logger.info("Looking for the right ParserPlugin for tag '" + tag + "'");
+		logger.info("Looking for the right ParserPlugin for tag '{}'", tag);
+
+		String activePluginsMsg = "activePlugins: {}";
 
 		Plugin plugin = registerSnapshot.get(tag);
 		if (plugin != null) {
@@ -193,14 +196,14 @@ public class ParsingProcessor {
 				// => nastav si, že tento plugin je právě u prohledávání
 				activePlugins.push(new StackElement(parser, tag));
 				logger.info(parser.getClass() + " was pushed in stack and launched");
-				logger.info("activePlugins: " + activePlugins);
+				logger.info(activePluginsMsg, activePlugins);
 
 				// Spusť plugin
 				Element elementTree = parser.parse(this);
 
 				parser = activePlugins.pop().getParserPlugin();
 				logger.info(parser.getClass() + " terminates (clean) and was poped from stack");
-				logger.info("activePlugins: " + activePlugins);
+				logger.info(activePluginsMsg, activePlugins);
 
 				return elementTree;
 			} catch (TokenException ex) {
@@ -213,18 +216,18 @@ public class ParsingProcessor {
 				// Plugin běží, ale došlo v něm k nějaké jiné chybě
 				parser = activePlugins.pop().getParserPlugin();
 				logger.warn(parser.getClass() + " terminates (parse exception) and was poped from stack");
-				logger.warn("activePlugins: " + activePlugins);
+				logger.warn(activePluginsMsg, activePlugins);
 				return new ParserErrorElement(tag, pe.getMessage(), activePlugins.toString());
 			} catch (Exception ex) {
 				// Došlo k chybě
 				parser = activePlugins.pop().getParserPlugin();
 				logger.error(parser.getClass() + " terminates (plugin exception) and was poped from stack");
-				logger.error("activePlugins: " + activePlugins);
+				logger.error(activePluginsMsg, activePlugins);
 				logger.error("Plugin error", ex);
 				return new PluginErrorElement(tag);
 			}
 		} else {
-			logger.info("ParserPlugin for tag '" + tag + "' not found, '" + tag + "' is text");
+			logger.info("ParserPlugin for tag '{}' not found, '{}' is a text", tag, tag);
 		}
 
 		return null; // jinak vrať null - žádný plugin tohle nezná
@@ -314,8 +317,7 @@ public class ParsingProcessor {
 			return getBreakline();
 		case EOF:
 		default:
-			logger.warn("Čekal jsem jeden z [" + new Token[] { START_TAG, END_TAG, TEXT, EOL } + "], ne " + getToken()
-					+ "%n");
+			logger.warn("Čekal jsem jeden z [{}], ne {}", new Token[] { START_TAG, END_TAG, TEXT, EOL }, getToken());
 			throw new ParserException();
 		}
 	}
@@ -333,8 +335,7 @@ public class ParsingProcessor {
 		logger.info("text: " + getToken());
 		String text = escaped ? getText() : getCode();
 		nextToken();
-		TextElement element = new TextElement(text);
-		return element;
+		return new TextElement(text);
 	}
 
 	/**

@@ -39,12 +39,6 @@ public class ArticlesViewerPage extends ContentViewerPage {
 	@Autowired
 	private PageFactory articlesViewerPageFactory;
 
-	@Resource(name = "nodePageFactory")
-	private PageFactory nodePageFactory;
-
-	@Resource(name = "homePageFactory")
-	private PageFactory homePageFactory;
-
 	@Resource(name = "articlesEditorPageFactory")
 	private PageFactory articlesEditorPageFactory;
 

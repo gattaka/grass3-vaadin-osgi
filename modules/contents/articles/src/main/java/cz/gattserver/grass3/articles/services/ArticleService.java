@@ -134,9 +134,12 @@ public interface ArticleService {
 	/**
 	 * Získá všechny články a namapuje je pro použití při vyhledávání
 	 * 
+	 * @param userId
+	 *            id uživatele, kterým je omezena viditelnost na rozpracované
+	 *            články
 	 * @return list článků, ve kterých je možné vyhledávat
 	 */
-	public List<ArticleTO> getAllArticlesForSearch();
+	public List<ArticleTO> getAllArticlesForSearch(long userId);
 
 	/**
 	 * Získá všechny rozpracované články viditelné daným uživatelem

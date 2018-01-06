@@ -90,7 +90,6 @@ public class ArticlesSettingsPage extends AbstractSettingsPage {
 		 * Save tlačítko
 		 */
 		Button saveButton = new Button("Uložit", event -> {
-			// TODO
 			if (tabLengthField.getComponentError() == null && backupTimeout.getComponentError() == null) {
 				configuration.setTabLength(Integer.parseInt(tabLengthField.getValue()));
 				configuration.setBackupTimeout(Integer.parseInt(backupTimeout.getValue()));

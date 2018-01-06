@@ -9,8 +9,6 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import cz.gattserver.grass3.articles.editor.parser.util.PartsFinder.Result;
-
 public class PartsFinderTest {
 
 	@Test

@@ -70,27 +70,27 @@ public class EditorButtonResourcesTOBuilder {
 	 */
 	public EditorButtonResourcesTO build() {
 		Validate.notBlank(tag);
-		String prefix = this.prefix;
-		String suffix = this.suffix;
+		String pfx = this.prefix;
+		String sfx = this.suffix;
 		String defaultPrefix = '[' + tag + ']';
 		String defaultSuffix = "[/" + tag + ']';
-		if (StringUtils.isBlank(prefix))
-			prefix = defaultPrefix;
-		if (StringUtils.isBlank(suffix))
-			suffix = defaultSuffix;
+		if (StringUtils.isBlank(pfx))
+			pfx = defaultPrefix;
+		if (StringUtils.isBlank(sfx))
+			sfx = defaultSuffix;
 
 		// Pokud nemá ani text tlačítka, ani obrázek, dej jako text tlačítka
 		// jméno tagu
-		String description = this.description;
-		if (StringUtils.isBlank(description) && imageResource == null)
-			description = tag;
+		String dsc = this.description;
+		if (StringUtils.isBlank(dsc) && imageResource == null)
+			dsc = tag;
 
-		if (!prefix.startsWith(defaultPrefix))
+		if (!pfx.startsWith(defaultPrefix))
 			throw new IllegalArgumentException("Prefix musí začínat: " + defaultPrefix);
-		if (!suffix.endsWith(defaultSuffix))
+		if (!sfx.endsWith(defaultSuffix))
 			throw new IllegalArgumentException("Suffix musí končit: " + defaultSuffix);
 
-		return new EditorButtonResourcesTO(tag, tagFamily, description, prefix, suffix, imageResource);
+		return new EditorButtonResourcesTO(tag, tagFamily, dsc, pfx, sfx, imageResource);
 	}
 
 	public String getTag() {

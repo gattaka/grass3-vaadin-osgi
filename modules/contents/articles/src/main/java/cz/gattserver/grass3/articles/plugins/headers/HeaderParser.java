@@ -33,7 +33,7 @@ public class HeaderParser implements Parser {
 
 		// zpracovat počáteční tag
 		String startTag = pluginBag.getStartTag();
-		logger.debug(pluginBag.getToken().toString());
+		logger.debug("{}", pluginBag.getToken());
 
 		if (!startTag.equals(tag))
 			throw new TokenException(tag, startTag);
@@ -42,7 +42,7 @@ public class HeaderParser implements Parser {
 		pluginBag.nextToken();
 
 		// zpracovat text
-		List<Element> elist = new ArrayList<Element>();
+		List<Element> elist = new ArrayList<>();
 		pluginBag.getBlock(elist, tag);
 		// nextToken() - je již voláno v text() !!!
 

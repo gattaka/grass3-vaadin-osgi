@@ -13,32 +13,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class PartsFinder {
 
-	public static class Result {
-		private String prePart = "";
-		private String targetPart = "";
-		private String postPart = "";
-
-		// testovací účely
-		private int checkSum;
-
-		public String getPrePart() {
-			return prePart;
-		}
-
-		public String getTargetPart() {
-			return targetPart;
-		}
-
-		public String getPostPart() {
-			return postPart;
-		}
-
-		public int getCheckSum() {
-			return checkSum;
-		}
-	}
-
-	static enum ScanPhase {
+	enum ScanPhase {
 		PRE_PART, TARGET_PART, POST_PART
 	}
 
@@ -81,31 +56,10 @@ public class PartsFinder {
 				// cílová část končí
 				if (phase != ScanPhase.POST_PART) {
 					searchWindow.addChar((char) c);
-
-					// Byl nalezen začátek nadpisu ?
-					if (searchWindow.getChar(0) == '[' && searchWindow.getChar(1) == 'N'
-							&& searchWindow.getChar(2) >= '0' && searchWindow.getChar(2) <= '5'
-							&& searchWindow.getChar(3) == ']') {
-
-						// Hledal jsem cílovou část - právě skončila "předčást"
-						if (phase == ScanPhase.PRE_PART) {
-
-							// Zvyš čítač nálezů nadpisů - pokud byl nalezen
-							// hledaný nadpis (chtěl jsem text 3. nadpisu apod.)
-							// zpracuj ho jako předčást
-							if (hitCounter == searchPartOrderNumber) {
-								result.prePart = builder.substring(0, builder.length() - searchWindow.getSize());
-								phase = ScanPhase.TARGET_PART;
-							}
-							hitCounter++;
-
-						} else {
-							result.targetPart = builder.substring(result.prePart.length(),
-									builder.length() - searchWindow.getSize());
-							phase = ScanPhase.POST_PART;
-						}
-					}
+					hitCounter = searchForPartStart(searchWindow, searchPartOrderNumber, phase, result, hitCounter,
+							builder);
 				}
+
 			} else {
 				switch (phase) {
 				case PRE_PART:
@@ -128,6 +82,34 @@ public class PartsFinder {
 
 		result.checkSum = builder.length();
 		return result;
+	}
+
+	private static int searchForPartStart(FinderArray searchWindow, int searchPartOrderNumber, ScanPhase phase,
+			Result result, int hitCounter, StringBuilder builder) {
+		// Byl nalezen začátek nadpisu ?
+		if (searchWindow.getChar(0) == '[' && searchWindow.getChar(1) == 'N' && searchWindow.getChar(2) >= '0'
+				&& searchWindow.getChar(2) <= '5' && searchWindow.getChar(3) == ']') {
+
+			// Hledal jsem cílovou část - právě skončila "předčást"
+			if (phase == ScanPhase.PRE_PART) {
+
+				// Zvyš čítač nálezů nadpisů - pokud byl nalezen
+				// hledaný nadpis (chtěl jsem text 3. nadpisu apod.)
+				// zpracuj ho jako předčást
+				if (hitCounter == searchPartOrderNumber) {
+					result.prePart = builder.substring(0, builder.length() - searchWindow.getSize());
+					phase = ScanPhase.TARGET_PART;
+				}
+				return hitCounter + 1;
+
+			} else {
+				result.targetPart = builder.substring(result.prePart.length(),
+						builder.length() - searchWindow.getSize());
+				phase = ScanPhase.POST_PART;
+			}
+		}
+
+		return hitCounter;
 	}
 
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cz.gattserver.grass3.articles.editor.lexer.Token;
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.ArticleElement;
@@ -34,7 +35,7 @@ import cz.gattserver.grass3.articles.editor.parser.elements.Element;
  */
 public class ArticleParser implements Parser {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	private static Logger logger = LoggerFactory.getLogger(ArticleParser.class);
 
 	private ParsingProcessor parsingProcessor;
 
@@ -45,8 +46,7 @@ public class ArticleParser implements Parser {
 	public Element parse(ParsingProcessor parsingProcessor) {
 		this.parsingProcessor = parsingProcessor;
 		parsingProcessor.nextToken();
-		ArticleElement p = article();
-		return p;
+		return article();
 	}
 
 	/**
@@ -56,25 +56,20 @@ public class ArticleParser implements Parser {
 	 * @return strom článku
 	 */
 	private ArticleElement article() {
-		logger.debug("article: " + parsingProcessor.getToken());
-		switch (parsingProcessor.getToken()) {
-		case EOF:
-			/**
-			 * Konec článku = prázdný článek
-			 */
+		logger.debug("article: {}", parsingProcessor.getToken());
+		if (Token.EOF.equals(parsingProcessor.getToken())) {
+			// Konec článku = prázdný článek
 			return new ArticleElement(null);
-		default:
-			/**
-			 * Konec řádky (ne článku), počáteční tag, text - zpracuj obsah jako
-			 * blok elementů a textu - vyrob si list do kterého se budou
-			 * nalezené a zpracované AST elementů přidávat.
-			 * 
-			 * Koncový tag bude možná chyba, protože jsem ještě nenašel žádný
-			 * počáteční, ale protože Lexer nebere v úvahu sémantiku vstupu, tak
-			 * to může být klidně text protože [/ssss] není třeba tag žádného
-			 * pluginu, tudíž to není chyba, že tím článek začíná
-			 */
-			List<Element> elist = new ArrayList<Element>();
+		} else {
+			// Konec řádky (ne článku), počáteční tag, text - zpracuj obsah jako
+			// blok elementů a textu - vyrob si list do kterého se budou
+			// nalezené a zpracované AST elementů přidávat.
+			//
+			// Koncový tag bude možná chyba, protože jsem ještě nenašel žádný
+			// počáteční, ale protože Lexer nebere v úvahu sémantiku vstupu, tak
+			// to může být klidně text protože [/ssss] není třeba tag žádného
+			// pluginu, tudíž to není chyba, že tím článek začíná
+			List<Element> elist = new ArrayList<>();
 			parsingProcessor.getBlock(elist, null);
 			return new ArticleElement(elist);
 		}

@@ -1,7 +1,5 @@
 package cz.gattserver.grass3.hw.service;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
@@ -14,69 +12,88 @@ import com.querydsl.core.types.OrderSpecifier;
 
 import cz.gattserver.grass3.hw.interfaces.HWFilterDTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemDTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemFileTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewDTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeDTO;
 import cz.gattserver.grass3.hw.interfaces.ServiceNoteDTO;
 
 public interface HWService {
 
-	Set<HWItemTypeDTO> getAllHWTypes();
-
-	HWItemTypeDTO getHWItemType(Long fixTypeId);
-
-	List<HWItemOverviewDTO> getAllHWItems();
-
-	List<HWItemOverviewDTO> getHWItemsByTypes(Collection<String> types);
-
-	List<HWItemOverviewDTO> getHWItemsAvailableForPart(HWItemDTO item);
-
-	void saveHWType(HWItemTypeDTO hwItemTypeDTO);
-
-	void saveHWItem(HWItemDTO hwItemDTO);
-
-	void deleteHWItem(Long id);
-
-	void addServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItem);
-
-	void deleteHWItemType(Long id);
-
-	HWItemDTO getHWItem(Long itemId);
-
-	List<HWItemOverviewDTO> getAllParts(Long usedInItemId);
-
-	String getHWItemUploadDir(HWItemDTO item);
-
-	boolean saveImagesFile(InputStream in, String fileName, HWItemDTO item);
-
-	String getTmpDir();
-
-	File getHWItemIconFile(HWItemDTO itemDTO);
-
-	boolean deleteHWItemIconFile(HWItemDTO hwItem);
-
-	OutputStream createHWItemIconOutputStream(String filename, HWItemDTO hwItem) throws FileNotFoundException;
-
-	String getHWItemImagesUploadDir(HWItemDTO item);
-
-	String getHWItemDocumentsUploadDir(HWItemDTO item);
-
-	boolean saveDocumentsFile(InputStream in, String fileName, HWItemDTO item);
-
-	File[] getHWItemImagesFiles(HWItemDTO itemDTO);
-
-	boolean deleteHWItemFile(HWItemDTO hwItem, File file);
-
-	File[] getHWItemDocumentsFiles(HWItemDTO itemDTO);
-
-	void modifyServiceNote(ServiceNoteDTO serviceNoteDTO);
-
-	void deleteServiceNote(ServiceNoteDTO bean, HWItemDTO hwItem);
-
-	/**
-	 * Zjistí počet HW položek dle filtru
+	/*
+	 * Images
 	 */
-	int countHWItems(HWFilterDTO filter);
 
-	List<HWItemOverviewDTO> getHWItems(HWFilterDTO filter, Pageable pageable, OrderSpecifier<?>[] order);
+	public boolean saveImagesFile(InputStream in, String fileName, HWItemDTO item);
 
+	public List<HWItemFileTO> getHWItemImagesFiles(HWItemDTO itemDTO);
+
+	public InputStream getHWItemImagesFileInputStream(HWItemDTO hwItem, String name);
+
+	public boolean deleteHWItemImagesFile(HWItemDTO hwItem, String name);
+
+	/*
+	 * Documents
+	 */
+
+	public boolean saveDocumentsFile(InputStream in, String fileName, HWItemDTO item);
+
+	public List<HWItemFileTO> getHWItemDocumentsFiles(HWItemDTO itemDTO);
+
+	public InputStream getHWItemDocumentsFileInputStream(HWItemDTO hwItem, String name);
+
+	public boolean deleteHWItemDocumentsFile(HWItemDTO hwItem, String name);
+
+	/*
+	 * Icons
+	 */
+
+	public OutputStream createHWItemIconOutputStream(String filename, HWItemDTO hwItem);
+
+	public InputStream getHWItemIconFileInputStream(HWItemDTO hwItem);
+
+	public boolean deleteHWItemIconFile(HWItemDTO hwItem);
+
+	/*
+	 * Item types
+	 */
+
+	public void saveHWType(HWItemTypeDTO hwItemTypeDTO);
+
+	public Set<HWItemTypeDTO> getAllHWTypes();
+
+	public HWItemTypeDTO getHWItemType(Long fixTypeId);
+
+	public void deleteHWItemType(Long id);
+
+	/*
+	 * Items
+	 */
+
+	public void saveHWItem(HWItemDTO hwItemDTO);
+
+	public int countHWItems(HWFilterDTO filter);
+
+	public List<HWItemOverviewDTO> getAllHWItems();
+
+	public List<HWItemOverviewDTO> getHWItems(HWFilterDTO filter, Pageable pageable, OrderSpecifier<?>[] order);
+
+	public List<HWItemOverviewDTO> getHWItemsByTypes(Collection<String> types);
+
+	public HWItemDTO getHWItem(Long itemId);
+
+	public List<HWItemOverviewDTO> getAllParts(Long usedInItemId);
+
+	public List<HWItemOverviewDTO> getHWItemsAvailableForPart(HWItemDTO item);
+
+	public void deleteHWItem(Long id);
+
+	/*
+	 * Service notes
+	 */
+
+	public void addServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItemDTO);
+
+	public void modifyServiceNote(ServiceNoteDTO serviceNoteDTO);
+
+	public void deleteServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItemDTO);
 }

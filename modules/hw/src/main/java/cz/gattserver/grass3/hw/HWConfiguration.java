@@ -8,12 +8,20 @@ import cz.gattserver.grass3.security.Role;
 
 public class HWConfiguration extends AbstractConfiguration {
 
-	public static final String FM_PATH = "/hw-files";
-
 	/**
 	 * Kořenový adresář FM
 	 */
 	private String rootDir = "files/hw";
+
+	/**
+	 * Adresář pro ukládání obrázků
+	 */
+	private String imagesDir = "images";
+
+	/**
+	 * Adresář pro ukládání dokumentace
+	 */
+	private String documentsDir = "documents";
 
 	/**
 	 * Kolik souborů zároveň se smí poslat na server
@@ -29,8 +37,6 @@ public class HWConfiguration extends AbstractConfiguration {
 	 * Jakým rolím má být modul přístupný - defaultně jenom adminovi
 	 */
 	private Set<Role> roles = new HashSet<Role>();
-
-	private String tmpDir = "tmpUpload";
 
 	public HWConfiguration() {
 		super("cz.gattserver.grass3.hw");
@@ -73,12 +79,20 @@ public class HWConfiguration extends AbstractConfiguration {
 		this.roles = roles;
 	}
 
-	public String getTmpDir() {
-		return tmpDir;
+	public String getImagesDir() {
+		return imagesDir;
 	}
 
-	public void setTmpDir(String tmpDir) {
-		this.tmpDir = tmpDir;
+	public void setImagesDir(String imagesDir) {
+		this.imagesDir = imagesDir;
+	}
+
+	public String getDocumentsDir() {
+		return documentsDir;
+	}
+
+	public void setDocumentsDir(String documentsDir) {
+		this.documentsDir = documentsDir;
 	}
 
 }

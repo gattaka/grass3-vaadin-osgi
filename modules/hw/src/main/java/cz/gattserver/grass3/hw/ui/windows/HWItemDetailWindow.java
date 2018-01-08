@@ -26,7 +26,6 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Panel;
@@ -113,8 +112,8 @@ public class HWItemDetailWindow extends WebWindow {
 
 		hwImageLayout.removeAllComponents();
 
-		final Resource resource = new StreamResource(() -> iconIs, "icon");
-
+		// musí se jmenovat s příponou, aby se vůbec zobrazil
+		final Resource resource = new StreamResource(() -> iconIs, "icon.jpg");
 		Embedded hwItemImage = new Embedded(null, resource);
 		hwItemImage.addStyleName("thumbnail-200");
 
@@ -563,8 +562,9 @@ public class HWItemDetailWindow extends WebWindow {
 			imageLayout.setSpacing(true);
 			imageLayout.setMargin(false);
 
-			Image img = new Image(null, new StreamResource(
-					() -> hwFacade.getHWItemImagesFileInputStream(hwItem, file.getName()), file.getName()));
+			Resource resource = new StreamResource(
+					() -> hwFacade.getHWItemImagesFileInputStream(hwItem, file.getName()), file.getName());
+			Embedded img = new Embedded(null, resource);
 			img.addStyleName("thumbnail-200");
 			imageLayout.addComponent(img);
 

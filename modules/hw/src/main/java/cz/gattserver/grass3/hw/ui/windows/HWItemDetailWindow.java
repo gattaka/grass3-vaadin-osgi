@@ -115,9 +115,8 @@ public class HWItemDetailWindow extends WebWindow {
 
 		final Resource resource = new StreamResource(() -> iconIs, "icon");
 
-		Image hwItemImage = new Image(null, resource);
-
-		hwItemImage.setWidth("200px");
+		Embedded hwItemImage = new Embedded(null, resource);
+		hwItemImage.addStyleName("thumbnail-200");
 
 		hwImageLayout.addComponent(hwItemImage);
 		hwImageLayout.setComponentAlignment(hwItemImage, Alignment.TOP_CENTER);
@@ -134,11 +133,8 @@ public class HWItemDetailWindow extends WebWindow {
 					bimg = ImageIO.read(is);
 					int width = bimg.getWidth();
 					int height = bimg.getHeight();
-					UI.getCurrent()
-							.addWindow(new ImageDetailWindow(hwItem.getName(), width, height,
-									new StreamResource(
-											() -> hwFacade.getHWItemImagesFileInputStream(hwItem, hwItem.getName()),
-											hwItem.getName())));
+					UI.getCurrent().addWindow(new ImageDetailWindow(hwItem.getName(), width, height,
+							new StreamResource(() -> hwFacade.getHWItemIconFileInputStream(hwItem), hwItem.getName())));
 				} catch (IOException ex) {
 					throw new GrassException("Při čtení souboru ikony HW položky došlo k chybě.", ex);
 				}
@@ -569,7 +565,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 			Image img = new Image(null, new StreamResource(
 					() -> hwFacade.getHWItemImagesFileInputStream(hwItem, file.getName()), file.getName()));
-			img.setWidth("200px");
+			img.addStyleName("thumbnail-200");
 			imageLayout.addComponent(img);
 
 			HorizontalLayout btnLayout = new HorizontalLayout();

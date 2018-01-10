@@ -1,12 +1,15 @@
 package cz.gattserver.grass3.hw.interfaces;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
  * HW Objekt
  */
-public class HWItemOverviewDTO {
+public class HWItemOverviewTO implements Serializable {
+
+	private static final long serialVersionUID = 3678406951423588173L;
 
 	/**
 	 * Identifikátor hw
@@ -106,8 +109,8 @@ public class HWItemOverviewDTO {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HWItemOverviewDTO) {
-			return (((HWItemOverviewDTO) obj).getId().equals(id));
+		if (obj instanceof HWItemOverviewTO) {
+			return (((HWItemOverviewTO) obj).getId().equals(id));
 		} else
 			return false;
 	}

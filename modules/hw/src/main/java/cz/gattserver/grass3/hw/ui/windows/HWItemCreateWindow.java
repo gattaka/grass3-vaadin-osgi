@@ -8,7 +8,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
@@ -23,10 +22,11 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.UI;
 
-import cz.gattserver.grass3.hw.interfaces.HWItemDTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemState;
-import cz.gattserver.grass3.hw.interfaces.HWItemTypeDTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.window.ErrorWindow;
 import cz.gattserver.web.common.ui.window.WebWindow;
@@ -35,33 +35,35 @@ public abstract class HWItemCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
-	@Autowired
-	private HWService hwFacade;
+	private transient HWService hwService;
 
 	public HWItemCreateWindow(Long originalId) {
-		init(originalId == null ? null : hwFacade.getHWItem(originalId));
+		init(originalId == null ? null : getHWService().getHWItem(originalId));
 	}
 
 	public HWItemCreateWindow() {
 		init(null);
 	}
 
-	public HWItemCreateWindow(HWItemDTO originalDTO) {
+	public HWItemCreateWindow(HWItemTO originalDTO) {
 		init(originalDTO);
 	}
 
+	private HWService getHWService() {
+		if (hwService == null)
+			hwService = SpringContextHelper.getBean(HWService.class);
+		return hwService;
+	}
+
 	/**
-	 * @param triggerComponent
-	 *            volající komponenta (ta, která má být po dobu zobrazení okna
-	 *            zablokována)
 	 * @param originalId
 	 *            opravuji údaje existující položky, nebo vytvářím novou (
 	 *            {@code null}) ?
 	 */
-	private void init(HWItemDTO originalDTO) {
+	private void init(HWItemTO originalDTO) {
 		setCaption(originalDTO == null ? "Založení nové položky HW" : "Oprava údajů existující položky HW");
 
-		HWItemDTO formDTO = new HWItemDTO();
+		HWItemTO formDTO = new HWItemTO();
 		formDTO.setName("");
 		formDTO.setPrice(new BigDecimal(0));
 		formDTO.setWarrantyYears(0);
@@ -71,7 +73,7 @@ public abstract class HWItemCreateWindow extends WebWindow {
 		winLayout.setWidth("400px");
 		winLayout.setSpacing(true);
 
-		Binder<HWItemDTO> binder = new Binder<>(HWItemDTO.class);
+		Binder<HWItemTO> binder = new Binder<>(HWItemTO.class);
 		binder.setBean(formDTO);
 
 		TextField nameField = new TextField("Název");
@@ -98,7 +100,7 @@ public abstract class HWItemCreateWindow extends WebWindow {
 			} catch (ParseException e1) {
 				throw new IllegalArgumentException();
 			}
-		}, toPresentation -> FieldUtils.formatMoney(toPresentation), "Cena musí být číslo").bind("price");
+		}, FieldUtils::formatMoney, "Cena musí být číslo").bind("price");
 		winLayout.addComponent(priceField, 1, 1);
 
 		DateField destructionDateField = new DateField("Odepsáno");
@@ -111,7 +113,7 @@ public abstract class HWItemCreateWindow extends WebWindow {
 		ComboBox<HWItemState> stateComboBox = new ComboBox<>("Stav", Arrays.asList(HWItemState.values()));
 		stateComboBox.setWidth("100%");
 		stateComboBox.setEmptySelectionAllowed(false);
-		stateComboBox.setItemCaptionGenerator(item -> item.getName());
+		stateComboBox.setItemCaptionGenerator(HWItemState::getName);
 		binder.forField(stateComboBox).asRequired("Stav položky je povinný").bind("state");
 		winLayout.addComponent(stateComboBox, 1, 2);
 
@@ -126,20 +128,20 @@ public abstract class HWItemCreateWindow extends WebWindow {
 		binder.bind(supervizedForField, "supervizedFor");
 		winLayout.addComponent(supervizedForField, 1, 3);
 
-		Set<HWItemTypeDTO> types = hwFacade.getAllHWTypes();
-		final TwinColSelect<HWItemTypeDTO> typeSelect = new TwinColSelect<>("Typy", types);
+		Set<HWItemTypeTO> types = getHWService().getAllHWTypes();
+		final TwinColSelect<HWItemTypeTO> typeSelect = new TwinColSelect<>("Typy", types);
 		typeSelect.setWidth("100%");
 		typeSelect.setRows(7);
-		typeSelect.setItemCaptionGenerator(HWItemTypeDTO::getName);
+		typeSelect.setItemCaptionGenerator(HWItemTypeTO::getName);
 		binder.bind(typeSelect, "types");
 		winLayout.addComponent(typeSelect, 0, 4, 1, 4);
 
 		Button createBtn;
-		layout.addComponent(createBtn = new Button("Uložit", e -> {
+		createBtn = new Button("Uložit", e -> {
 			try {
-				HWItemDTO writeDTO = originalDTO == null ? new HWItemDTO() : originalDTO;
+				HWItemTO writeDTO = originalDTO == null ? new HWItemTO() : originalDTO;
 				binder.writeBean(writeDTO);
-				hwFacade.saveHWItem(writeDTO);
+				getHWService().saveHWItem(writeDTO);
 				onSuccess();
 				close();
 			} catch (ValidationException ve) {
@@ -149,7 +151,8 @@ public abstract class HWItemCreateWindow extends WebWindow {
 			} catch (Exception ve) {
 				UI.getCurrent().addWindow(new ErrorWindow("Uložení se nezdařilo"));
 			}
-		}));
+		});
+		layout.addComponent(createBtn);
 		layout.setComponentAlignment(createBtn, Alignment.BOTTOM_RIGHT);
 		setContent(layout);
 

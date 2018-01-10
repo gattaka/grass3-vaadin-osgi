@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 /**
  * Údaj o opravě, změně součástí apod.
  */
-public class ServiceNoteDTO {
+public class ServiceNoteTO {
 
 	/**
 	 * Identifikátor změny

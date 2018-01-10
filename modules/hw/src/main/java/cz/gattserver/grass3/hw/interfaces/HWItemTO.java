@@ -7,12 +7,14 @@ import java.util.Set;
 /**
  * HW Objekt
  */
-public class HWItemDTO extends HWItemOverviewDTO {
+public class HWItemTO extends HWItemOverviewTO {
+
+	private static final long serialVersionUID = 4661359528372859703L;
 
 	/**
 	 * Typ - klasifikace hw
 	 */
-	private Set<HWItemTypeDTO> types;
+	private Set<HWItemTypeTO> types;
 
 	/**
 	 * Datum vyhození, zničení, prodání
@@ -22,7 +24,7 @@ public class HWItemDTO extends HWItemOverviewDTO {
 	/**
 	 * Poznámky ke stavu hw - opravy apod.
 	 */
-	private List<ServiceNoteDTO> serviceNotes;
+	private List<ServiceNoteTO> serviceNotes;
 
 	/**
 	 * Počet let záruky
@@ -32,13 +34,13 @@ public class HWItemDTO extends HWItemOverviewDTO {
 	/**
 	 * Součást celku
 	 */
-	private HWItemOverviewDTO usedIn;
+	private HWItemOverviewTO usedIn;
 
-	public HWItemOverviewDTO getUsedIn() {
+	public HWItemOverviewTO getUsedIn() {
 		return usedIn;
 	}
 
-	public void setUsedIn(HWItemOverviewDTO usedIn) {
+	public void setUsedIn(HWItemOverviewTO usedIn) {
 		this.usedIn = usedIn;
 	}
 
@@ -50,11 +52,11 @@ public class HWItemDTO extends HWItemOverviewDTO {
 		this.warrantyYears = warrantyYears;
 	}
 
-	public Set<HWItemTypeDTO> getTypes() {
+	public Set<HWItemTypeTO> getTypes() {
 		return types;
 	}
 
-	public void setTypes(Set<HWItemTypeDTO> types) {
+	public void setTypes(Set<HWItemTypeTO> types) {
 		this.types = types;
 	}
 
@@ -66,11 +68,11 @@ public class HWItemDTO extends HWItemOverviewDTO {
 		this.destructionDate = destructionDate;
 	}
 
-	public List<ServiceNoteDTO> getServiceNotes() {
+	public List<ServiceNoteTO> getServiceNotes() {
 		return serviceNotes;
 	}
 
-	public void setServiceNotes(List<ServiceNoteDTO> serviceNotes) {
+	public void setServiceNotes(List<ServiceNoteTO> serviceNotes) {
 		this.serviceNotes = serviceNotes;
 	}
 

@@ -6,7 +6,7 @@ import javax.validation.constraints.Size;
 /**
  * Typ hw
  */
-public class HWItemTypeDTO {
+public class HWItemTypeTO {
 
 	/**
 	 * Identifikátor hw
@@ -43,8 +43,8 @@ public class HWItemTypeDTO {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj != null && obj instanceof HWItemTypeDTO) {
-			return id.equals(((HWItemTypeDTO) obj).getId());
+		if (obj != null && obj instanceof HWItemTypeTO) {
+			return id.equals(((HWItemTypeTO) obj).getId());
 		} else
 			return false;
 	}

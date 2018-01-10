@@ -9,10 +9,10 @@ import java.util.Set;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.common.util.DateUtil;
-import cz.gattserver.grass3.hw.interfaces.HWItemDTO;
-import cz.gattserver.grass3.hw.interfaces.HWItemOverviewDTO;
-import cz.gattserver.grass3.hw.interfaces.HWItemTypeDTO;
-import cz.gattserver.grass3.hw.interfaces.ServiceNoteDTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
+import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
 import cz.gattserver.grass3.hw.model.domain.HWItem;
 import cz.gattserver.grass3.hw.model.domain.HWItemType;
 import cz.gattserver.grass3.hw.model.domain.ServiceNote;
@@ -21,17 +21,17 @@ import cz.gattserver.grass3.hw.service.HWMapperService;
 @Component
 public class HWMapperServiceImpl implements HWMapperService {
 
-	public HWItemTypeDTO mapHWItemType(HWItemType e) {
+	public HWItemTypeTO mapHWItemType(HWItemType e) {
 		if (e == null)
 			return null;
 
-		HWItemTypeDTO dto = new HWItemTypeDTO();
+		HWItemTypeTO dto = new HWItemTypeTO();
 		dto.setId(e.getId());
 		dto.setName(e.getName());
 		return dto;
 	}
 
-	public HWItemType mapHWItem(HWItemTypeDTO dto) {
+	public HWItemType mapHWItem(HWItemTypeTO dto) {
 		if (dto == null)
 			return null;
 
@@ -41,22 +41,18 @@ public class HWMapperServiceImpl implements HWMapperService {
 		return e;
 	}
 
-	public Set<HWItemTypeDTO> mapHWItemTypes(Collection<HWItemType> list) {
-		if (list == null)
-			return null;
-
-		Set<HWItemTypeDTO> dtos = new LinkedHashSet<HWItemTypeDTO>();
-		for (HWItemType e : list) {
+	public Set<HWItemTypeTO> mapHWItemTypes(Collection<HWItemType> list) {
+		Set<HWItemTypeTO> dtos = new LinkedHashSet<>();
+		for (HWItemType e : list)
 			dtos.add(mapHWItemType(e));
-		}
 		return dtos;
 	}
 
-	public ServiceNoteDTO mapServiceNote(ServiceNote e) {
+	public ServiceNoteTO mapServiceNote(ServiceNote e) {
 		if (e == null)
 			return null;
 
-		ServiceNoteDTO dto = new ServiceNoteDTO();
+		ServiceNoteTO dto = new ServiceNoteTO();
 		dto.setId(e.getId());
 		dto.setDate(DateUtil.toLocalDate(e.getDate()));
 		dto.setDescription(e.getDescription());
@@ -65,22 +61,18 @@ public class HWMapperServiceImpl implements HWMapperService {
 		return dto;
 	}
 
-	public List<ServiceNoteDTO> mapServiceNotes(Collection<ServiceNote> list) {
-		if (list == null)
-			return null;
-
-		List<ServiceNoteDTO> dtos = new ArrayList<ServiceNoteDTO>();
-		for (ServiceNote e : list) {
+	public List<ServiceNoteTO> mapServiceNotes(Collection<ServiceNote> list) {
+		List<ServiceNoteTO> dtos = new ArrayList<>();
+		for (ServiceNote e : list)
 			dtos.add(mapServiceNote(e));
-		}
 		return dtos;
 	}
 
-	public HWItemDTO mapHWItem(HWItem e) {
+	public HWItemTO mapHWItem(HWItem e) {
 		if (e == null)
 			return null;
 
-		HWItemDTO dto = new HWItemDTO();
+		HWItemTO dto = new HWItemTO();
 		dto.setDestructionDate(DateUtil.toLocalDate(e.getDestructionDate()));
 		dto.setId(e.getId());
 		dto.setName(e.getName());
@@ -95,11 +87,11 @@ public class HWMapperServiceImpl implements HWMapperService {
 		return dto;
 	}
 
-	public HWItemOverviewDTO mapHWItemOverview(HWItem e) {
+	public HWItemOverviewTO mapHWItemOverview(HWItem e) {
 		if (e == null)
 			return null;
 
-		HWItemOverviewDTO dto = new HWItemOverviewDTO();
+		HWItemOverviewTO dto = new HWItemOverviewTO();
 		dto.setId(e.getId());
 		dto.setName(e.getName());
 		dto.setUsedInName(e.getUsedIn() == null ? null : e.getUsedIn().getName());
@@ -110,14 +102,10 @@ public class HWMapperServiceImpl implements HWMapperService {
 		return dto;
 	}
 
-	public List<HWItemOverviewDTO> mapHWItems(Collection<HWItem> list) {
-		if (list == null)
-			return null;
-
-		List<HWItemOverviewDTO> dtos = new ArrayList<HWItemOverviewDTO>();
-		for (HWItem e : list) {
+	public List<HWItemOverviewTO> mapHWItems(Collection<HWItem> list) {
+		List<HWItemOverviewTO> dtos = new ArrayList<>();
+		for (HWItem e : list)
 			dtos.add(mapHWItemOverview(e));
-		}
 		return dtos;
 	}
 

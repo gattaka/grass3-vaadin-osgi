@@ -1,7 +1,5 @@
 package cz.gattserver.grass3.hw.ui.windows;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
 import com.vaadin.ui.Button;
@@ -10,8 +8,9 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.hw.interfaces.HWItemTypeDTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorWindow;
 import cz.gattserver.web.common.ui.window.WebWindow;
 
@@ -19,19 +18,18 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
-	@Autowired
-	private HWService hwFacade;
+	private transient HWService hwService;
 
 	public HWItemTypeCreateWindow(Long originalId) {
 		if (originalId == null) {
 			init(null);
 		} else {
-			HWItemTypeDTO originalDTO = hwFacade.getHWItemType(originalId);
+			HWItemTypeTO originalDTO = getHWService().getHWItemType(originalId);
 			init(originalDTO);
 		}
 	}
 
-	public HWItemTypeCreateWindow(HWItemTypeDTO originalDTO) {
+	public HWItemTypeCreateWindow(HWItemTypeTO originalDTO) {
 		init(originalDTO);
 	}
 
@@ -39,27 +37,33 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 		init(null);
 	}
 
-	public void init(HWItemTypeDTO originalDTO) {
+	private HWService getHWService() {
+		if (hwService == null)
+			hwService = SpringContextHelper.getBean(HWService.class);
+		return hwService;
+	}
+
+	public void init(HWItemTypeTO originalDTO) {
 		setCaption("Založení nového typu HW");
 
 		VerticalLayout winLayout = new VerticalLayout();
 		winLayout.setMargin(true);
 		winLayout.setSpacing(true);
 
-		HWItemTypeDTO formDTO = new HWItemTypeDTO();
+		HWItemTypeTO formDTO = new HWItemTypeTO();
 		formDTO.setName("");
 
 		final TextField nameField = new TextField();
-		Binder<HWItemTypeDTO> binder = new Binder<HWItemTypeDTO>(HWItemTypeDTO.class);
+		Binder<HWItemTypeTO> binder = new Binder<>(HWItemTypeTO.class);
 		binder.setBean(formDTO);
 		binder.bind(nameField, "name");
 
 		winLayout.addComponent(nameField);
 		winLayout.addComponent(new Button("Uložit", e -> {
 			try {
-				HWItemTypeDTO writeDTO = originalDTO == null ? new HWItemTypeDTO() : originalDTO;
+				HWItemTypeTO writeDTO = originalDTO == null ? new HWItemTypeTO() : originalDTO;
 				binder.writeBean(writeDTO);
-				hwFacade.saveHWType(writeDTO);
+				getHWService().saveHWType(writeDTO);
 				onSuccess(writeDTO);
 				close();
 			} catch (ValidationException ex) {
@@ -76,6 +80,6 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 		setContent(winLayout);
 	}
 
-	protected abstract void onSuccess(HWItemTypeDTO hwItemTypeDTO);
+	protected abstract void onSuccess(HWItemTypeTO hwItemTypeDTO);
 
 }

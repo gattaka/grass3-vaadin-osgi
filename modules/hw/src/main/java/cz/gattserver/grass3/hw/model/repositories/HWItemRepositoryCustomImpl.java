@@ -12,7 +12,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 
-import cz.gattserver.grass3.hw.interfaces.HWFilterDTO;
+import cz.gattserver.grass3.hw.interfaces.HWFilterTO;
 import cz.gattserver.grass3.hw.model.domain.HWItem;
 import cz.gattserver.grass3.hw.model.domain.HWItemType;
 import cz.gattserver.grass3.hw.model.domain.QHWItem;
@@ -26,7 +26,7 @@ public class HWItemRepositoryCustomImpl implements HWItemRepositoryCustom {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	private Predicate createPredicateHWItems(HWFilterDTO filter) {
+	private Predicate createPredicateHWItems(HWFilterTO filter) {
 		QHWItem h = QHWItem.hWItem;
 		QHWItemType t = QHWItemType.hWItemType;
 		PredicateBuilder builder = new PredicateBuilder();
@@ -46,14 +46,14 @@ public class HWItemRepositoryCustomImpl implements HWItemRepositoryCustom {
 	}
 
 	@Override
-	public long countHWItems(HWFilterDTO filter) {
+	public long countHWItems(HWFilterTO filter) {
 		JPAQuery<HWItem> query = new JPAQuery<>(entityManager);
 		QHWItem h = QHWItem.hWItem;
 		return query.from(h).where(createPredicateHWItems(filter)).fetchCount();
 	}
 
 	@Override
-	public List<HWItem> getHWItems(HWFilterDTO filter, Pageable pageable, OrderSpecifier<?>[] order) {
+	public List<HWItem> getHWItems(HWFilterTO filter, Pageable pageable, OrderSpecifier<?>[] order) {
 		JPAQuery<HWItem> query = new JPAQuery<>(entityManager);
 		QuerydslUtil.applyPagination(pageable, query);
 		QHWItem h = QHWItem.hWItem;

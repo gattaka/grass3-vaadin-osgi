@@ -1,10 +1,13 @@
 package cz.gattserver.grass3.hw.interfaces;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 
-public class HWFilterDTO {
+public class HWFilterTO implements Serializable {
+
+	private static final long serialVersionUID = 7979321455877648798L;
 
 	private String name;
 	private HWItemState state;

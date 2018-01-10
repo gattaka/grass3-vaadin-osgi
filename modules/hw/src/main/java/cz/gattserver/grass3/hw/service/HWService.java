@@ -10,12 +10,12 @@ import org.springframework.data.domain.Pageable;
 
 import com.querydsl.core.types.OrderSpecifier;
 
-import cz.gattserver.grass3.hw.interfaces.HWFilterDTO;
-import cz.gattserver.grass3.hw.interfaces.HWItemDTO;
+import cz.gattserver.grass3.hw.interfaces.HWFilterTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemFileTO;
-import cz.gattserver.grass3.hw.interfaces.HWItemOverviewDTO;
-import cz.gattserver.grass3.hw.interfaces.HWItemTypeDTO;
-import cz.gattserver.grass3.hw.interfaces.ServiceNoteDTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
+import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
 
 public interface HWService {
 
@@ -23,45 +23,45 @@ public interface HWService {
 	 * Images
 	 */
 
-	public boolean saveImagesFile(InputStream in, String fileName, HWItemDTO item);
+	public boolean saveImagesFile(InputStream in, String fileName, HWItemTO item);
 
-	public List<HWItemFileTO> getHWItemImagesFiles(HWItemDTO itemDTO);
+	public List<HWItemFileTO> getHWItemImagesFiles(HWItemTO itemDTO);
 
-	public InputStream getHWItemImagesFileInputStream(HWItemDTO hwItem, String name);
+	public InputStream getHWItemImagesFileInputStream(HWItemTO hwItem, String name);
 
-	public boolean deleteHWItemImagesFile(HWItemDTO hwItem, String name);
+	public boolean deleteHWItemImagesFile(HWItemTO hwItem, String name);
 
 	/*
 	 * Documents
 	 */
 
-	public boolean saveDocumentsFile(InputStream in, String fileName, HWItemDTO item);
+	public boolean saveDocumentsFile(InputStream in, String fileName, HWItemTO item);
 
-	public List<HWItemFileTO> getHWItemDocumentsFiles(HWItemDTO itemDTO);
+	public List<HWItemFileTO> getHWItemDocumentsFiles(HWItemTO itemDTO);
 
-	public InputStream getHWItemDocumentsFileInputStream(HWItemDTO hwItem, String name);
+	public InputStream getHWItemDocumentsFileInputStream(HWItemTO hwItem, String name);
 
-	public boolean deleteHWItemDocumentsFile(HWItemDTO hwItem, String name);
+	public boolean deleteHWItemDocumentsFile(HWItemTO hwItem, String name);
 
 	/*
 	 * Icons
 	 */
 
-	public OutputStream createHWItemIconOutputStream(String filename, HWItemDTO hwItem);
+	public OutputStream createHWItemIconOutputStream(String filename, HWItemTO hwItem);
 
-	public InputStream getHWItemIconFileInputStream(HWItemDTO hwItem);
+	public InputStream getHWItemIconFileInputStream(HWItemTO hwItem);
 
-	public boolean deleteHWItemIconFile(HWItemDTO hwItem);
+	public boolean deleteHWItemIconFile(HWItemTO hwItem);
 
 	/*
 	 * Item types
 	 */
 
-	public void saveHWType(HWItemTypeDTO hwItemTypeDTO);
+	public void saveHWType(HWItemTypeTO hwItemTypeDTO);
 
-	public Set<HWItemTypeDTO> getAllHWTypes();
+	public Set<HWItemTypeTO> getAllHWTypes();
 
-	public HWItemTypeDTO getHWItemType(Long fixTypeId);
+	public HWItemTypeTO getHWItemType(Long fixTypeId);
 
 	public void deleteHWItemType(Long id);
 
@@ -69,21 +69,21 @@ public interface HWService {
 	 * Items
 	 */
 
-	public void saveHWItem(HWItemDTO hwItemDTO);
+	public void saveHWItem(HWItemTO hwItemDTO);
 
-	public int countHWItems(HWFilterDTO filter);
+	public int countHWItems(HWFilterTO filter);
 
-	public List<HWItemOverviewDTO> getAllHWItems();
+	public List<HWItemOverviewTO> getAllHWItems();
 
-	public List<HWItemOverviewDTO> getHWItems(HWFilterDTO filter, Pageable pageable, OrderSpecifier<?>[] order);
+	public List<HWItemOverviewTO> getHWItems(HWFilterTO filter, Pageable pageable, OrderSpecifier<?>[] order);
 
-	public List<HWItemOverviewDTO> getHWItemsByTypes(Collection<String> types);
+	public List<HWItemOverviewTO> getHWItemsByTypes(Collection<String> types);
 
-	public HWItemDTO getHWItem(Long itemId);
+	public HWItemTO getHWItem(Long itemId);
 
-	public List<HWItemOverviewDTO> getAllParts(Long usedInItemId);
+	public List<HWItemOverviewTO> getAllParts(Long usedInItemId);
 
-	public List<HWItemOverviewDTO> getHWItemsAvailableForPart(HWItemDTO item);
+	public List<HWItemOverviewTO> getHWItemsAvailableForPart(HWItemTO item);
 
 	public void deleteHWItem(Long id);
 
@@ -91,9 +91,9 @@ public interface HWService {
 	 * Service notes
 	 */
 
-	public void addServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItemDTO);
+	public void addServiceNote(ServiceNoteTO serviceNoteDTO, HWItemTO hwItemDTO);
 
-	public void modifyServiceNote(ServiceNoteDTO serviceNoteDTO);
+	public void modifyServiceNote(ServiceNoteTO serviceNoteDTO);
 
-	public void deleteServiceNote(ServiceNoteDTO serviceNoteDTO, HWItemDTO hwItemDTO);
+	public void deleteServiceNote(ServiceNoteTO serviceNoteDTO, HWItemTO hwItemDTO);
 }

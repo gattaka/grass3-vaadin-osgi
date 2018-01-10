@@ -2,8 +2,6 @@ package cz.gattserver.grass3.hw.ui;
 
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
@@ -13,7 +11,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-import cz.gattserver.grass3.hw.interfaces.HWItemTypeDTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.hw.ui.windows.HWItemTypeCreateWindow;
 import cz.gattserver.web.common.spring.SpringContextHelper;
@@ -25,15 +23,17 @@ public class HWTypesTab extends VerticalLayout {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
-	@Autowired
-	private HWService hwFacade;
+	private transient HWService hwService;
 
-	private Grid<HWItemTypeDTO> grid;
-	private Set<HWItemTypeDTO> data;
+	private Grid<HWItemTypeTO> grid;
+
+	private HWService getHWService() {
+		if (hwService == null)
+			hwService = SpringContextHelper.getBean(HWService.class);
+		return hwService;
+	}
 
 	public HWTypesTab() {
-		SpringContextHelper.inject(this);
-
 		setSpacing(true);
 		setMargin(new MarginInfo(true, false, false, false));
 
@@ -46,8 +46,8 @@ public class HWTypesTab extends VerticalLayout {
 		fixBtn.setIcon(ImageIcon.QUICKEDIT_16_ICON.createResource());
 		deleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
 
-		grid = new Grid<>(HWItemTypeDTO.class);
-		data = hwFacade.getAllHWTypes();
+		grid = new Grid<>(HWItemTypeTO.class);
+		Set<HWItemTypeTO> data = getHWService().getAllHWTypes();
 		grid.setItems(data);
 
 		grid.getColumn("name").setCaption("Název");
@@ -69,19 +69,19 @@ public class HWTypesTab extends VerticalLayout {
 		/**
 		 * Založení nového typu
 		 */
-		newTypeBtn.addClickListener(e -> openNewTypeWindow(false));
+		newTypeBtn.addClickListener(e -> openNewTypeWindow(data, false));
 		buttonLayout.addComponent(newTypeBtn);
 
 		/**
 		 * Úprava typu
 		 */
-		fixBtn.addClickListener(e -> openNewTypeWindow(true));
+		fixBtn.addClickListener(e -> openNewTypeWindow(data, true));
 		buttonLayout.addComponent(fixBtn);
 
 		/**
 		 * Smazání typu
 		 */
-		deleteBtn.addClickListener(e -> openDeleteWindow());
+		deleteBtn.addClickListener(e -> openDeleteWindow(data));
 		buttonLayout.addComponent(deleteBtn);
 	}
 
@@ -92,15 +92,15 @@ public class HWTypesTab extends VerticalLayout {
 		grid.setEnabled(enabled);
 	}
 
-	private void openNewTypeWindow(boolean fix) {
-		HWItemTypeDTO hwItemTypeDTO = null;
+	private void openNewTypeWindow(final Set<HWItemTypeTO> data, boolean fix) {
+		HWItemTypeTO hwItemTypeDTO = null;
 		if (fix)
 			hwItemTypeDTO = grid.getSelectedItems().iterator().next();
 		Window win = new HWItemTypeCreateWindow(hwItemTypeDTO == null ? null : hwItemTypeDTO.getId()) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
-			protected void onSuccess(HWItemTypeDTO hwItemTypeDTO) {
+			protected void onSuccess(HWItemTypeTO hwItemTypeDTO) {
 				if (fix)
 					grid.getDataProvider().refreshItem(hwItemTypeDTO);
 				else {
@@ -112,14 +112,14 @@ public class HWTypesTab extends VerticalLayout {
 		UI.getCurrent().addWindow(win);
 	}
 
-	private void openDeleteWindow() {
+	private void openDeleteWindow(final Set<HWItemTypeTO> data) {
 		HWTypesTab.this.setEnabled(false);
-		final HWItemTypeDTO hwItemType = grid.getSelectedItems().iterator().next();
+		final HWItemTypeTO hwItemType = grid.getSelectedItems().iterator().next();
 		UI.getCurrent().addWindow(new ConfirmWindow(
 				"Opravdu smazat '" + hwItemType.getName() + "' (typ bude odebrán od všech označených položek HW)?",
 				e -> {
 					try {
-						hwFacade.deleteHWItemType(hwItemType.getId());
+						getHWService().deleteHWItemType(hwItemType.getId());
 						data.remove(hwItemType);
 						grid.getDataProvider().refreshAll();
 					} catch (Exception ex) {

@@ -36,7 +36,7 @@ public class HWConfiguration extends AbstractConfiguration {
 	/**
 	 * Jakým rolím má být modul přístupný - defaultně jenom adminovi
 	 */
-	private Set<Role> roles = new HashSet<Role>();
+	private Set<Role> roles = new HashSet<>();
 
 	public HWConfiguration() {
 		super("cz.gattserver.grass3.hw");

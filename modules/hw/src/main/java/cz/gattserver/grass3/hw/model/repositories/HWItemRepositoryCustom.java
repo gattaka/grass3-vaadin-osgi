@@ -6,12 +6,12 @@ import org.springframework.data.domain.Pageable;
 
 import com.querydsl.core.types.OrderSpecifier;
 
-import cz.gattserver.grass3.hw.interfaces.HWFilterDTO;
+import cz.gattserver.grass3.hw.interfaces.HWFilterTO;
 import cz.gattserver.grass3.hw.model.domain.HWItem;
 
 public interface HWItemRepositoryCustom {
 
-	long countHWItems(HWFilterDTO filter);
+	long countHWItems(HWFilterTO filter);
 
-	List<HWItem> getHWItems(HWFilterDTO filter, Pageable pageable, OrderSpecifier<?>[] order);
+	List<HWItem> getHWItems(HWFilterTO filter, Pageable pageable, OrderSpecifier<?>[] order);
 }

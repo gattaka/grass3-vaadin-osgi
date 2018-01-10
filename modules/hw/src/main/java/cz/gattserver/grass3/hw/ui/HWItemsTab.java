@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
 import com.fo0.advancedtokenfield.main.AdvancedTokenField;
@@ -25,12 +24,12 @@ import com.vaadin.ui.renderers.LocalDateRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
-import cz.gattserver.grass3.hw.interfaces.HWFilterDTO;
-import cz.gattserver.grass3.hw.interfaces.HWItemDTO;
-import cz.gattserver.grass3.hw.interfaces.HWItemOverviewDTO;
+import cz.gattserver.grass3.hw.interfaces.HWFilterTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemState;
-import cz.gattserver.grass3.hw.interfaces.HWItemTypeDTO;
-import cz.gattserver.grass3.hw.interfaces.ServiceNoteDTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
+import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.hw.ui.windows.HWItemCreateWindow;
 import cz.gattserver.grass3.hw.ui.windows.HWItemDetailWindow;
@@ -46,29 +45,32 @@ public class HWItemsTab extends VerticalLayout {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
-	@Autowired
-	private HWService hwFacade;
+	private static final String NAME_BIND = "nameBind";
+	private static final String USED_IN_BIND = "usedInBind";
+	private static final String SUPERVIZED_FOR_BIND = "supervizedForBind";
+	private static final String PRICE_BIND = "priceBind";
+	private static final String STATE_BIND = "stateBind";
+	private static final String PURCHASE_DATE_BIND = "purchaseDateBind";
 
-	private final String NAME_BIND = "nameBind";
-	private final String USED_IN_BIND = "usedInBind";
-	private final String SUPERVIZED_FOR_BIND = "supervizedForBind";
-	private final String PRICE_BIND = "priceBind";
-	private final String STATE_BIND = "stateBind";
-	private final String PURCHASE_DATE_BIND = "purchaseDateBind";
+	private transient HWService hwService;
 
-	private Grid<HWItemOverviewDTO> grid;
+	private Grid<HWItemOverviewTO> grid;
 	private AdvancedTokenField hwTypesFilter;
 
-	private HWFilterDTO filterDTO;
+	private HWFilterTO filterDTO;
+
+	private HWService getHWService() {
+		if (hwService == null)
+			hwService = SpringContextHelper.getBean(HWService.class);
+		return hwService;
+	}
 
 	private void populate() {
 		List<Token> collection = hwTypesFilter.getTokens();
 		List<String> types = new ArrayList<>();
-		collection.forEach(t -> {
-			types.add(t.getValue());
-		});
+		collection.forEach(t -> types.add(t.getValue()));
 		filterDTO.setTypes(types);
-		grid.setDataProvider((sortOrder, offset, limit) -> hwFacade.getHWItems(filterDTO,
+		grid.setDataProvider((sortOrder, offset, limit) -> getHWService().getHWItems(filterDTO,
 				new PageRequest(offset / limit, limit), QuerydslUtil.transformOrdering(sortOrder, column -> {
 					switch (column) {
 					case PRICE_BIND:
@@ -86,7 +88,7 @@ public class HWItemsTab extends VerticalLayout {
 					default:
 						return column;
 					}
-				})).stream(), () -> hwFacade.countHWItems(filterDTO));
+				})).stream(), () -> getHWService().countHWItems(filterDTO));
 	}
 
 	private void addWindow(Window win) {
@@ -94,12 +96,12 @@ public class HWItemsTab extends VerticalLayout {
 	}
 
 	private void openNewItemWindow(boolean fix) {
-		HWItemDTO hwItem = null;
+		HWItemTO hwItem = null;
 		if (fix) {
 			if (grid.getSelectedItems().isEmpty())
 				return;
 			Long id = grid.getSelectedItems().iterator().next().getId();
-			hwItem = hwFacade.getHWItem(id);
+			hwItem = getHWService().getHWItem(id);
 		}
 		addWindow(new HWItemCreateWindow(hwItem == null ? null : hwItem.getId()) {
 
@@ -116,14 +118,14 @@ public class HWItemsTab extends VerticalLayout {
 		if (grid.getSelectedItems().isEmpty())
 			return;
 		Long id = grid.getSelectedItems().iterator().next().getId();
-		HWItemDTO hwItem = hwFacade.getHWItem(id);
+		HWItemTO hwItem = getHWService().getHWItem(id);
 
 		addWindow(new ServiceNoteCreateWindow(HWItemsTab.this, hwItem) {
 
 			private static final long serialVersionUID = -5582822648042555576L;
 
 			@Override
-			protected void onSuccess(ServiceNoteDTO noteDTO) {
+			protected void onSuccess(ServiceNoteTO noteDTO) {
 				populate(); // změna stavu
 			}
 		});
@@ -131,18 +133,18 @@ public class HWItemsTab extends VerticalLayout {
 	}
 
 	private void openDetailWindow(Long id) {
-		addWindow(new HWItemDetailWindow(id).withRefreshGrid(this::populate));
+		addWindow(new HWItemDetailWindow(id).setChangeListener(this::populate));
 	}
 
 	private void openDeleteWindow() {
 		if (grid.getSelectedItems().isEmpty())
 			return;
 		HWItemsTab.this.setEnabled(false);
-		HWItemOverviewDTO to = grid.getSelectedItems().iterator().next();
+		HWItemOverviewTO to = grid.getSelectedItems().iterator().next();
 		addWindow(new ConfirmWindow(
 				"Opravdu smazat '" + to.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?", e -> {
 					try {
-						hwFacade.deleteHWItem(to.getId());
+						getHWService().deleteHWItem(to.getId());
 						populate();
 					} catch (Exception ex) {
 						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
@@ -161,9 +163,7 @@ public class HWItemsTab extends VerticalLayout {
 	}
 
 	public HWItemsTab() {
-		SpringContextHelper.inject(this);
-
-		filterDTO = new HWFilterDTO();
+		filterDTO = new HWFilterTO();
 
 		setSpacing(true);
 		setMargin(new MarginInfo(true, false, false, false));
@@ -198,7 +198,7 @@ public class HWItemsTab extends VerticalLayout {
 
 		hwTypesFilterLayout.addComponent(hwTypesFilter);
 
-		Set<HWItemTypeDTO> hwTypes = hwFacade.getAllHWTypes();
+		Set<HWItemTypeTO> hwTypes = getHWService().getAllHWTypes();
 		hwTypes.forEach(t -> {
 			Token to = new Token(t.getName());
 			hwTypesFilter.addTokenToInputField(to);
@@ -212,15 +212,15 @@ public class HWItemsTab extends VerticalLayout {
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setWidth("100%");
 
-		grid.addColumn(HWItemOverviewDTO::getName).setId(NAME_BIND).setCaption("Název").setWidth(260);
+		grid.addColumn(HWItemOverviewTO::getName).setId(NAME_BIND).setCaption("Název").setWidth(260);
 		grid.addColumn(hw -> hw.getState().getName(), new TextRenderer()).setCaption("Stav").setId(STATE_BIND)
 				.setWidth(130);
-		grid.addColumn(HWItemOverviewDTO::getUsedInName).setId(USED_IN_BIND).setCaption("Je součástí")
+		grid.addColumn(HWItemOverviewTO::getUsedInName).setId(USED_IN_BIND).setCaption("Je součástí")
 				.setMaximumWidth(180);
-		grid.addColumn(HWItemOverviewDTO::getSupervizedFor).setId(SUPERVIZED_FOR_BIND).setCaption("Spravováno pro");
+		grid.addColumn(HWItemOverviewTO::getSupervizedFor).setId(SUPERVIZED_FOR_BIND).setCaption("Spravováno pro");
 		grid.addColumn(hw -> FieldUtils.formatMoney(hw.getPrice()), new TextRenderer()).setCaption("Cena")
 				.setId(PRICE_BIND).setStyleGenerator(item -> "v-align-right");
-		grid.addColumn(HWItemOverviewDTO::getPurchaseDate, new LocalDateRenderer("dd.MM.yyyy")).setCaption("Získáno")
+		grid.addColumn(HWItemOverviewTO::getPurchaseDate, new LocalDateRenderer("dd.MM.yyyy")).setCaption("Získáno")
 				.setId(PURCHASE_DATE_BIND).setStyleGenerator(item -> "v-align-right");
 
 		HeaderRow filteringHeader = grid.appendHeaderRow();

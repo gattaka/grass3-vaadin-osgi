@@ -291,6 +291,8 @@ public class HWServiceImpl implements HWService {
 
 	private Path getHWItemIconFile(HWItemTO hwItem) throws IOException {
 		Path hwPath = getHWPath(hwItem.getId());
+		if (!Files.exists(hwPath))
+			return null;
 		// ikona HW je nějaký obrázek s názvem "icon-###.@@@",
 		// kde ### je hash a @@@ je přípona
 		try (Stream<Path> stream = Files.list(hwPath)) {

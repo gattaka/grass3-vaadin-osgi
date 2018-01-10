@@ -120,16 +120,14 @@ public class HWItemsTab extends VerticalLayout {
 		Long id = grid.getSelectedItems().iterator().next().getId();
 		HWItemTO hwItem = getHWService().getHWItem(id);
 
-		addWindow(new ServiceNoteCreateWindow(HWItemsTab.this, hwItem) {
-
+		addWindow(new ServiceNoteCreateWindow(hwItem) {
 			private static final long serialVersionUID = -5582822648042555576L;
 
 			@Override
 			protected void onSuccess(ServiceNoteTO noteDTO) {
-				populate(); // změna stavu
+				populate();
 			}
 		});
-
 	}
 
 	private void openDetailWindow(Long id) {

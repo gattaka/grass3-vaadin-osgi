@@ -53,6 +53,10 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		return rootDir;
 	}
 
+	/*
+	 * Images
+	 */
+
 	@Test
 	public void saveImagesFile() throws IOException {
 		Path hwDir = prepareFS(fileSystemService.getFileSystem()).resolve("123456");
@@ -92,12 +96,93 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		itemTO.setId(123456L);
 		hwService.saveImagesFile(this.getClass().getResourceAsStream("large.jpg"), "testImage.jpg", itemTO);
 
+		InputStream is = hwService.getHWItemImagesFileInputStream(itemTO, "testImage.jpg");
+		assertTrue(ImageComparator.isEqualAsFiles(this.getClass().getResourceAsStream("large.jpg"), is));
+	}
+
+	@Test
+	public void deleteHWItemImagesFile() throws IOException {
+		Path hwDir = prepareFS(fileSystemService.getFileSystem()).resolve("123456");
+
+		HWItemTO itemTO = new HWItemTO();
+		itemTO.setId(123456L);
+		hwService.saveImagesFile(this.getClass().getResourceAsStream("large.jpg"), "testImage.jpg", itemTO);
+
 		HWConfiguration conf = new HWConfiguration();
 		configurationService.loadConfiguration(conf);
 
-		InputStream is = hwService.getHWItemImagesFileInputStream(itemTO, "testImage.jpg");
+		Path smallFile = hwDir.resolve(conf.getImagesDir()).resolve("testImage.jpg");
+		assertTrue(Files.exists(smallFile));
 
+		hwService.deleteHWItemImagesFile(itemTO, "testImage.jpg");
+
+		assertFalse(Files.exists(smallFile));
+	}
+
+	/*
+	 * Documents
+	 */
+
+	@Test
+	public void saveDocumentsFile() throws IOException {
+		Path hwDir = prepareFS(fileSystemService.getFileSystem()).resolve("123456");
+
+		HWItemTO itemTO = new HWItemTO();
+		itemTO.setId(123456L);
+		hwService.saveDocumentsFile(this.getClass().getResourceAsStream("large.jpg"), "testDoc.jpg", itemTO);
+
+		HWConfiguration conf = new HWConfiguration();
+		configurationService.loadConfiguration(conf);
+
+		Path smallFile = hwDir.resolve(conf.getDocumentsDir()).resolve("testDoc.jpg");
+		assertTrue(Files.exists(smallFile));
+	}
+
+	@Test
+	public void getHWItemDocumentsFiles() throws IOException {
+		prepareFS(fileSystemService.getFileSystem()).resolve("123456");
+
+		HWItemTO itemTO = new HWItemTO();
+		itemTO.setId(123456L);
+
+		hwService.saveDocumentsFile(this.getClass().getResourceAsStream("large.jpg"), "testDoc1.jpg", itemTO);
+		hwService.saveDocumentsFile(this.getClass().getResourceAsStream("large.jpg"), "testDoc2.jpg", itemTO);
+
+		List<HWItemFileTO> files = hwService.getHWItemDocumentsFiles(itemTO);
+		assertEquals(2, files.size());
+		assertEquals("testDoc1.jpg", files.get(0).getName());
+		assertEquals("testDoc2.jpg", files.get(1).getName());
+	}
+
+	@Test
+	public void getHWItemDocumentsFileInputStream() throws IOException {
+		prepareFS(fileSystemService.getFileSystem()).resolve("123456");
+
+		HWItemTO itemTO = new HWItemTO();
+		itemTO.setId(123456L);
+		hwService.saveDocumentsFile(this.getClass().getResourceAsStream("large.jpg"), "testDoc.jpg", itemTO);
+
+		InputStream is = hwService.getHWItemDocumentsFileInputStream(itemTO, "testDoc.jpg");
 		assertTrue(ImageComparator.isEqualAsFiles(this.getClass().getResourceAsStream("large.jpg"), is));
+	}
+
+	@Test
+	public void deleteHWItemDocumentsFile() throws IOException {
+		Path hwDir = prepareFS(fileSystemService.getFileSystem()).resolve("123456");
+
+		HWItemTO itemTO = new HWItemTO();
+		itemTO.setId(123456L);
+		hwService.saveDocumentsFile(this.getClass().getResourceAsStream("large.jpg"), "testDoc.jpg", itemTO);
+
+		HWConfiguration conf = new HWConfiguration();
+		configurationService.loadConfiguration(conf);
+
+		Path smallFile = hwDir.resolve(conf.getDocumentsDir()).resolve("testDoc.jpg");
+		assertTrue(Files.exists(smallFile));
+
+		hwService.deleteHWItemDocumentsFile(itemTO, "testDoc.jpg");
+
+		assertFalse(Files.exists(smallFile));
 	}
 
 }

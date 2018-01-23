@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+
+	<!-- Zpracování probíhá v obráceném pořadí, takže závislosti se musí psát 
+		odspoda tak, že nahoře jsou nejvíce závislé tabulky -->
+
+	<CONFIGURATIONITEM />
+	
+	<HW_ITEM />
+	<HW_ITEM_TYPE />
+	<SERVICE_NOTE />
+
+</dataset>

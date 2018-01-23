@@ -17,6 +17,7 @@ import cz.gattserver.grass3.mock.MockFileSystemService;
 import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.test.AbstractContextAwareTest;
+import cz.gattserver.grass3.ui.util.ImageComparator;
 
 public class PGUtilsTest extends AbstractContextAwareTest {
 

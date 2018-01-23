@@ -43,13 +43,13 @@ import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.pg.test.MockSecurityService;
 import cz.gattserver.grass3.pg.test.PGProcessMockEventsHandler;
 import cz.gattserver.grass3.pg.test.PGZipProcessMockEventsHandler;
-import cz.gattserver.grass3.pg.util.ImageComparator;
 import cz.gattserver.grass3.pg.util.ZIPUtils;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.test.AbstractDBUnitTest;
 import cz.gattserver.grass3.test.MockUtils;
+import cz.gattserver.grass3.ui.util.ImageComparator;
 
 @DatabaseSetup(value = "deleteAll.xml", type = DatabaseOperation.DELETE_ALL)
 public class PGServiceImplTest extends AbstractDBUnitTest {

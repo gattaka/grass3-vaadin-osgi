@@ -1,10 +1,12 @@
-package cz.gattserver.grass3.pg.util;
+package cz.gattserver.grass3.ui.util;
 
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 
 import org.junit.Test;
+
+import cz.gattserver.grass3.ui.util.ImageComparator;
 
 public class ImageComparatorTest {
 

@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.pg.util;
+package cz.gattserver.grass3.ui.util;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;

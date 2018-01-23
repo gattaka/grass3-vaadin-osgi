@@ -49,8 +49,7 @@ public class HWConfiguration extends AbstractConfiguration {
 	}
 
 	public void setRootDir(String rootDir) {
-		if (rootDir != null && !rootDir.isEmpty())
-			this.rootDir = rootDir;
+		this.rootDir = rootDir;
 	}
 
 	public Integer getMaxSimUploads() {
@@ -58,8 +57,7 @@ public class HWConfiguration extends AbstractConfiguration {
 	}
 
 	public void setMaxSimUploads(Integer maxSimUploads) {
-		if (maxSimUploads != null)
-			this.maxSimUploads = maxSimUploads;
+		this.maxSimUploads = maxSimUploads;
 	}
 
 	public Long getMaxKBytesUploadSize() {
@@ -67,8 +65,7 @@ public class HWConfiguration extends AbstractConfiguration {
 	}
 
 	public void setMaxKBytesUploadSize(Long maxKBytesUploadSize) {
-		if (maxKBytesUploadSize != null)
-			this.maxKBytesUploadSize = maxKBytesUploadSize;
+		this.maxKBytesUploadSize = maxKBytesUploadSize;
 	}
 
 	public Set<Role> getRoles() {

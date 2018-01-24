@@ -4,11 +4,13 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +45,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 	}
 
 	private Path prepareFS(FileSystem fs) throws IOException {
-		Path rootDir = fs.getPath("/some/path/pg/root/");
+		Path rootDir = fs.getPath("/some/path/hw/root/");
 		Files.createDirectories(rootDir);
 
 		HWConfiguration conf = new HWConfiguration();
@@ -182,6 +184,61 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 
 		hwService.deleteHWItemDocumentsFile(itemTO, "testDoc.jpg");
 
+		assertFalse(Files.exists(smallFile));
+	}
+
+	/*
+	 * Icons
+	 */
+
+	@Test
+	public void createHWItemIconOutputStream() throws IOException {
+		Path hwDir = prepareFS(fileSystemService.getFileSystem()).resolve("123456");
+		Files.createDirectories(hwDir);
+
+		HWItemTO itemTO = new HWItemTO();
+		itemTO.setId(123456L);
+		OutputStream os = hwService.createHWItemIconOutputStream("testIcon.jpg", itemTO);
+		IOUtils.copy(this.getClass().getResourceAsStream("large.jpg"), os);
+
+		HWConfiguration conf = new HWConfiguration();
+		configurationService.loadConfiguration(conf);
+
+		Path smallFile = hwDir.resolve("icon.jpg");
+		assertTrue(Files.exists(smallFile));
+	}
+
+	@Test
+	public void getHWItemIconFileInputStream() throws IOException {
+		Path hwDir = prepareFS(fileSystemService.getFileSystem()).resolve("123456");
+		Files.createDirectories(hwDir);
+
+		HWItemTO itemTO = new HWItemTO();
+		itemTO.setId(123456L);
+		OutputStream os = hwService.createHWItemIconOutputStream("testIcon.jpg", itemTO);
+		IOUtils.copy(this.getClass().getResourceAsStream("large.jpg"), os);
+
+		InputStream is = hwService.getHWItemIconFileInputStream(itemTO);
+		assertTrue(ImageComparator.isEqualAsFiles(this.getClass().getResourceAsStream("large.jpg"), is));
+	}
+
+	@Test
+	public void deleteHWItemIconFile() throws IOException {
+		Path hwDir = prepareFS(fileSystemService.getFileSystem()).resolve("123456");
+		Files.createDirectories(hwDir);
+
+		HWItemTO itemTO = new HWItemTO();
+		itemTO.setId(123456L);
+		OutputStream os = hwService.createHWItemIconOutputStream("testIcon.jpg", itemTO);
+		IOUtils.copy(this.getClass().getResourceAsStream("large.jpg"), os);
+
+		HWConfiguration conf = new HWConfiguration();
+		configurationService.loadConfiguration(conf);
+
+		Path smallFile = hwDir.resolve("icon.jpg");
+		assertTrue(Files.exists(smallFile));
+
+		hwService.deleteHWItemIconFile(itemTO);
 		assertFalse(Files.exists(smallFile));
 	}
 

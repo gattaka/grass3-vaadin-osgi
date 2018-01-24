@@ -276,13 +276,10 @@ public class HWServiceImpl implements HWService {
 		String[] parts = filename.split("\\.");
 		String extension = parts.length >= 1 ? parts[parts.length - 1] : "";
 
-		long time = System.currentTimeMillis();
-		int uniqueHash = (String.valueOf(time) + hwItem.getName()).hashCode();
-
 		Path hwItemDir;
 		try {
 			hwItemDir = getHWPath(hwItem.getId());
-			Path file = hwItemDir.resolve("icon-" + uniqueHash + "." + extension);
+			Path file = hwItemDir.resolve("icon." + extension);
 			return Files.newOutputStream(file);
 		} catch (IOException e) {
 			throw new GrassException("Nezdařila se příprava pro uložení ikony HW položky.", e);
@@ -293,11 +290,8 @@ public class HWServiceImpl implements HWService {
 		Path hwPath = getHWPath(hwItem.getId());
 		if (!Files.exists(hwPath))
 			return null;
-		// ikona HW je nějaký obrázek s názvem "icon-###.@@@",
-		// kde ### je hash a @@@ je přípona
 		try (Stream<Path> stream = Files.list(hwPath)) {
-			return stream.filter(p -> p.getFileName().toString().matches("icon-[^\\.]*\\.[^\\.]*")).findFirst()
-					.orElse(null);
+			return stream.filter(p -> p.getFileName().toString().matches("icon\\.[^\\.]*")).findFirst().orElse(null);
 		}
 	}
 

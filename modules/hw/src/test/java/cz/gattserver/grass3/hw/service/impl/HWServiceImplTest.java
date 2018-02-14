@@ -5,10 +5,15 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -20,7 +25,9 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.hw.interfaces.HWItemFileTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemState;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.mock.MockFileSystemService;
 import cz.gattserver.grass3.services.ConfigurationService;
@@ -240,6 +247,101 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 
 		hwService.deleteHWItemIconFile(itemTO);
 		assertFalse(Files.exists(smallFile));
+	}
+
+	/*
+	 * Item types
+	 */
+
+	@Test
+	public void saveHWType() {
+		HWItemTypeTO hwItemTypeTO = new HWItemTypeTO();
+		hwItemTypeTO.setName("myš");
+		Long id = hwService.saveHWType(hwItemTypeTO);
+
+		hwItemTypeTO = hwService.getHWItemType(id);
+		assertEquals("myš", hwItemTypeTO.getName());
+	}
+
+	@Test
+	public void getAllHWTypes() {
+		HWItemTypeTO hwItemTypeTO = new HWItemTypeTO();
+		hwItemTypeTO.setName("myš");
+		hwService.saveHWType(hwItemTypeTO);
+
+		hwItemTypeTO = new HWItemTypeTO();
+		hwItemTypeTO.setName("notebook");
+		hwService.saveHWType(hwItemTypeTO);
+
+		Set<HWItemTypeTO> types = hwService.getAllHWTypes();
+
+		assertEquals(2, types.size());
+		Iterator<HWItemTypeTO> it = types.iterator();
+		assertEquals("myš", it.next().getName());
+		assertEquals("notebook", it.next().getName());
+	}
+
+	@Test
+	public void deleteHWItemType() {
+		HWItemTypeTO hwItemTypeTO = new HWItemTypeTO();
+		hwItemTypeTO.setName("myš");
+		Long id = hwService.saveHWType(hwItemTypeTO);
+
+		hwItemTypeTO = new HWItemTypeTO();
+		hwItemTypeTO.setName("notebook");
+		hwService.saveHWType(hwItemTypeTO);
+
+		Set<HWItemTypeTO> types = hwService.getAllHWTypes();
+		assertEquals(2, types.size());
+
+		hwService.deleteHWItemType(id);
+
+		types = hwService.getAllHWTypes();
+		assertEquals(1, types.size());
+		assertEquals("notebook", types.iterator().next().getName());
+	}
+
+	/*
+	 * Items
+	 */
+
+	@Test
+	public void saveHWItem() {
+		HWItemTO itemTO = new HWItemTO();
+		itemTO.setName("test Name");
+		LocalDate destDate = LocalDate.now().minusDays(1);
+		itemTO.setDestructionDate(destDate);
+		itemTO.setPrice(new BigDecimal(650.50));
+		LocalDate purchDate = LocalDate.now();
+		itemTO.setPurchaseDate(purchDate);
+		itemTO.setState(HWItemState.BROKEN);
+		itemTO.setSupervizedFor("Táta");
+
+		HWItemTypeTO hwItemTypeTO = new HWItemTypeTO();
+		hwItemTypeTO.setName("notebook");
+		Long typeId = hwService.saveHWType(hwItemTypeTO);
+		hwItemTypeTO.setId(typeId);
+		Set<HWItemTypeTO> types = new HashSet<>();
+		types.add(hwItemTypeTO);
+
+		itemTO.setTypes(types);
+		itemTO.setUsedIn(null);
+		itemTO.setUsedInName(null);
+		itemTO.setWarrantyYears(2);
+
+		Long id = hwService.saveHWItem(itemTO);
+
+		HWItemTO savedItemTO = hwService.getHWItem(id);
+
+		assertEquals("test Name", savedItemTO.getName());
+		assertEquals(destDate, savedItemTO.getDestructionDate());
+		assertEquals(0, new BigDecimal(650.50).compareTo(savedItemTO.getPrice()));
+		assertEquals(purchDate, savedItemTO.getPurchaseDate());
+		assertEquals(HWItemState.BROKEN, savedItemTO.getState());
+		assertEquals("Táta", savedItemTO.getSupervizedFor());
+		assertEquals(1, savedItemTO.getTypes().size());
+		assertEquals("notebook", savedItemTO.getTypes().iterator().next().getName());
+		assertEquals(new Integer(2), savedItemTO.getWarrantyYears());
 	}
 
 }

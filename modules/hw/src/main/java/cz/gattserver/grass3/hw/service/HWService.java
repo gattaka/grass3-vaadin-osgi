@@ -57,7 +57,14 @@ public interface HWService {
 	 * Item types
 	 */
 
-	public void saveHWType(HWItemTypeTO hwItemTypeDTO);
+	/**
+	 * Uloží nebo aktualizuje typ hw položky
+	 * 
+	 * @param hwItemTypeTO
+	 *            to položky
+	 * @return id uložené položky
+	 */
+	public Long saveHWType(HWItemTypeTO hwItemTypeTO);
 
 	public Set<HWItemTypeTO> getAllHWTypes();
 
@@ -69,7 +76,7 @@ public interface HWService {
 	 * Items
 	 */
 
-	public void saveHWItem(HWItemTO hwItemDTO);
+	public Long saveHWItem(HWItemTO hwItemDTO);
 
 	public int countHWItems(HWFilterTO filter);
 

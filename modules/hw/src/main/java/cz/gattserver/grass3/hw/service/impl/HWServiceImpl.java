@@ -324,9 +324,10 @@ public class HWServiceImpl implements HWService {
 	 */
 
 	@Override
-	public void saveHWType(HWItemTypeTO hwItemTypeDTO) {
-		HWItemType type = hwMapper.mapHWItem(hwItemTypeDTO);
-		hwItemTypeRepository.save(type);
+	public Long saveHWType(HWItemTypeTO hwItemTypeTO) {
+		HWItemType type = hwMapper.mapHWItem(hwItemTypeTO);
+		type = hwItemTypeRepository.save(type);
+		return type.getId();
 	}
 
 	@Override
@@ -356,7 +357,7 @@ public class HWServiceImpl implements HWService {
 	 */
 
 	@Override
-	public void saveHWItem(HWItemTO hwItemDTO) {
+	public Long saveHWItem(HWItemTO hwItemDTO) {
 		HWItem item;
 		if (hwItemDTO.getId() == null)
 			item = new HWItem();
@@ -380,7 +381,7 @@ public class HWServiceImpl implements HWService {
 				item.getTypes().add(type);
 			}
 		}
-		hwItemRepository.save(item);
+		return hwItemRepository.save(item).getId();
 	}
 
 	@Override

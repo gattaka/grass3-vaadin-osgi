@@ -5,9 +5,10 @@
 		odspoda tak, že nahoře jsou nejvíce závislé tabulky -->
 
 	<CONFIGURATIONITEM />
-	
-	<HW_ITEM />
+
 	<HW_ITEM_TYPE />
 	<SERVICE_NOTE />
+	<HW_ITEM />
+	<HW_ITEM_HW_ITEM_TYPE />
 
 </dataset>

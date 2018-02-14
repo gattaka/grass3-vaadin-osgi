@@ -1,8 +1,5 @@
 package cz.gattserver.grass3.hw.interfaces;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 /**
  * Typ hw
  */
@@ -16,8 +13,6 @@ public class HWItemTypeTO {
 	/**
 	 * Název
 	 */
-	@NotNull
-	@Size(min = 1)
 	private String name;
 
 	public Long getId() {
@@ -34,19 +29,6 @@ public class HWItemTypeTO {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	@Override
-	public int hashCode() {
-		return id.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj != null && obj instanceof HWItemTypeTO) {
-			return id.equals(((HWItemTypeTO) obj).getId());
-		} else
-			return false;
 	}
 
 }

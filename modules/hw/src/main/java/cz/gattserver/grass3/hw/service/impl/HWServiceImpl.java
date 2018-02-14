@@ -90,8 +90,7 @@ public class HWServiceImpl implements HWService {
 	 *            id HW položky
 	 * @return {@link Path} adresář galerie
 	 * @throws IllegalStateException
-	 *             pokud neexistuje kořenový adresář HW -- chyba nastavení
-	 *             modulu HW
+	 *             pokud neexistuje kořenový adresář HW -- chyba nastavení modulu HW
 	 * @throws IllegalArgumentException
 	 *             pokud předaný adresář podtéká kořen modulu HW
 	 */
@@ -417,10 +416,9 @@ public class HWServiceImpl implements HWService {
 	}
 
 	@Override
-	public List<HWItemOverviewTO> getHWItemsAvailableForPart(HWItemTO item) {
-		List<HWItemOverviewTO> items = getAllHWItems();
-		items.remove(item);
-		return items;
+	public List<HWItemOverviewTO> getHWItemsAvailableForPart(Long itemId) {
+		List<HWItem> hwItemTypes = hwItemRepository.findAllExcept(itemId);
+		return hwMapper.mapHWItems(hwItemTypes);
 	}
 
 	@Override
@@ -446,8 +444,7 @@ public class HWServiceImpl implements HWService {
 	 */
 
 	/**
-	 * Vygeneruje {@link ServiceNote} o přidání/odebrání HW, uloží a přidá k
-	 * cílovému HW
+	 * Vygeneruje {@link ServiceNote} o přidání/odebrání HW, uloží a přidá k cílovému HW
 	 * 
 	 * @param triggerItem
 	 *            HW který je přidán/odebrán

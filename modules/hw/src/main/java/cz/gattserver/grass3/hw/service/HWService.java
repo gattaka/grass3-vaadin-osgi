@@ -90,7 +90,14 @@ public interface HWService {
 
 	public List<HWItemOverviewTO> getAllParts(Long usedInItemId);
 
-	public List<HWItemOverviewTO> getHWItemsAvailableForPart(HWItemTO item);
+	/**
+	 * Získá všechny předměty, kromě předmětu jehož id je předáno jako parametr
+	 * 
+	 * @param itemId
+	 *            id předmětu, který má být vyloučen z přehledu
+	 * @return HW předměty
+	 */
+	public List<HWItemOverviewTO> getHWItemsAvailableForPart(Long itemId);
 
 	public void deleteHWItem(Long id);
 

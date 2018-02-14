@@ -77,6 +77,7 @@ public class HWMapperServiceImpl implements HWMapperService {
 		dto.setId(e.getId());
 		dto.setName(e.getName());
 		dto.setUsedIn(mapHWItemOverview(e.getUsedIn()));
+		dto.setUsedInName(e.getUsedIn() == null ? null : e.getUsedIn().getName());
 		dto.setPrice(e.getPrice());
 		dto.setPurchaseDate(DateUtil.toLocalDate(e.getPurchaseDate()));
 		dto.setServiceNotes(mapServiceNotes(e.getServiceNotes()));

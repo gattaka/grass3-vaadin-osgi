@@ -16,4 +16,7 @@ public interface HWItemRepository extends JpaRepository<HWItem, Long>, HWItemRep
 
 	@Query("select i from HW_ITEM i inner join i.types types where types.name in ?1")
 	public List<HWItem> getHWItemsByTypes(Collection<String> types);
+
+	@Query("select i from HW_ITEM i where i.id <> ?1")
+	public List<HWItem> findAllExcept(Long itemId);
 }

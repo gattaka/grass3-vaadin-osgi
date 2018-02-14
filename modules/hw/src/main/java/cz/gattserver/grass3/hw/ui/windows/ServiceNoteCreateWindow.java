@@ -10,7 +10,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 
@@ -64,7 +63,7 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 		winLayout.addComponent(stateComboBox, 1, 0);
 
 		ComboBox<HWItemOverviewTO> usedInCombo = new ComboBox<>("Je součástí",
-				getHWService().getHWItemsAvailableForPart(hwItem));
+				getHWService().getHWItemsAvailableForPart(hwItem.getId()));
 		usedInCombo.setSizeFull();
 		usedInCombo.setEmptySelectionAllowed(true);
 		usedInCombo.setItemCaptionGenerator(HWItemOverviewTO::getName);

@@ -25,6 +25,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.hw.interfaces.HWItemFileTO;
+import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemState;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
@@ -342,6 +343,75 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		assertEquals(1, savedItemTO.getTypes().size());
 		assertEquals("notebook", savedItemTO.getTypes().iterator().next().getName());
 		assertEquals(new Integer(2), savedItemTO.getWarrantyYears());
+	}
+
+	@Test
+	public void saveHWItem2() {
+		HWItemTO itemTO = new HWItemTO();
+		itemTO.setName("test Name");
+		LocalDate destDate = LocalDate.now().minusDays(1);
+		itemTO.setDestructionDate(destDate);
+		itemTO.setPrice(new BigDecimal(650.50));
+		LocalDate purchDate = LocalDate.now();
+		itemTO.setPurchaseDate(purchDate);
+		itemTO.setState(HWItemState.BROKEN);
+		itemTO.setSupervizedFor("Táta");
+
+		HWItemTypeTO hwItemTypeTO = new HWItemTypeTO();
+		hwItemTypeTO.setName("notebook");
+		Long typeId = hwService.saveHWType(hwItemTypeTO);
+		hwItemTypeTO.setId(typeId);
+		Set<HWItemTypeTO> types = new HashSet<>();
+		types.add(hwItemTypeTO);
+
+		itemTO.setTypes(types);
+		itemTO.setUsedIn(null);
+		itemTO.setUsedInName(null);
+		itemTO.setWarrantyYears(2);
+
+		Long id = hwService.saveHWItem(itemTO);
+
+		HWItemTO itemTO2 = new HWItemTO();
+		itemTO2.setName("test komponenta");
+		LocalDate destDate2 = LocalDate.now().minusDays(2);
+		itemTO2.setDestructionDate(destDate2);
+		itemTO2.setPrice(new BigDecimal(600.50));
+		LocalDate purchDate2 = LocalDate.now().minusDays(3);
+		itemTO2.setPurchaseDate(purchDate2);
+		itemTO2.setState(HWItemState.DISASSEMBLED);
+
+		HWItemTypeTO hwItemTypeTO2 = new HWItemTypeTO();
+		hwItemTypeTO2.setName("RAM");
+		Long typeId2 = hwService.saveHWType(hwItemTypeTO2);
+		hwItemTypeTO2.setId(typeId2);
+		Set<HWItemTypeTO> types2 = new HashSet<>();
+		types2.add(hwItemTypeTO2);
+
+		List<HWItemOverviewTO> list = hwService.getAllHWItems();
+
+		assertEquals(1, list.size());
+		assertEquals(id, list.get(0).getId());
+
+		itemTO2.setTypes(types2);
+		itemTO2.setUsedIn(list.get(0));
+		itemTO2.setUsedInName(list.get(0).getName());
+		itemTO2.setWarrantyYears(1);
+
+		Long id2 = hwService.saveHWItem(itemTO2);
+
+		HWItemTO savedItemTO2 = hwService.getHWItem(id2);
+
+		assertEquals("test komponenta", savedItemTO2.getName());
+		assertEquals(destDate2, savedItemTO2.getDestructionDate());
+		assertEquals(0, new BigDecimal(600.50).compareTo(savedItemTO2.getPrice()));
+		assertEquals(purchDate2, savedItemTO2.getPurchaseDate());
+		assertEquals(HWItemState.DISASSEMBLED, savedItemTO2.getState());
+		assertNull(savedItemTO2.getSupervizedFor());
+		assertEquals(1, savedItemTO2.getTypes().size());
+		assertEquals("RAM", savedItemTO2.getTypes().iterator().next().getName());
+		assertEquals(new Integer(1), savedItemTO2.getWarrantyYears());
+		assertEquals(id, savedItemTO2.getUsedIn().getId());
+		assertEquals("test Name", savedItemTO2.getUsedInName());
 	}
 
 }

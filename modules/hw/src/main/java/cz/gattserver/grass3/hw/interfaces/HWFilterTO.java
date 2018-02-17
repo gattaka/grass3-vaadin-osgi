@@ -22,64 +22,72 @@ public class HWFilterTO implements Serializable {
 		return supervizedFor;
 	}
 
-	public void setSupervizedFor(String supervizedFor) {
+	public HWFilterTO setSupervizedFor(String supervizedFor) {
 		this.supervizedFor = supervizedFor;
+		return this;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public HWFilterTO setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public Date getPurchaseDateFrom() {
 		return purchaseDateFrom;
 	}
 
-	public void setPurchaseDateFrom(Date purchaseDateFrom) {
+	public HWFilterTO setPurchaseDateFrom(Date purchaseDateFrom) {
 		this.purchaseDateFrom = purchaseDateFrom;
+		return this;
 	}
 
 	public Date getPurchaseDateTo() {
 		return purchaseDateTo;
 	}
 
-	public void setPurchaseDateTo(Date purchaseDateTo) {
+	public HWFilterTO setPurchaseDateTo(Date purchaseDateTo) {
 		this.purchaseDateTo = purchaseDateTo;
+		return this;
 	}
 
 	public BigDecimal getPrice() {
 		return price;
 	}
 
-	public void setPrice(BigDecimal price) {
+	public HWFilterTO setPrice(BigDecimal price) {
 		this.price = price;
+		return this;
 	}
 
 	public HWItemState getState() {
 		return state;
 	}
 
-	public void setState(HWItemState state) {
+	public HWFilterTO setState(HWItemState state) {
 		this.state = state;
+		return this;
 	}
 
 	public String getUsedIn() {
 		return usedIn;
 	}
 
-	public void setUsedIn(String usedIn) {
+	public HWFilterTO setUsedIn(String usedIn) {
 		this.usedIn = usedIn;
+		return this;
 	}
 
 	public Collection<String> getTypes() {
 		return types;
 	}
 
-	public void setTypes(Collection<String> types) {
+	public HWFilterTO setTypes(Collection<String> types) {
 		this.types = types;
+		return this;
 	}
 
 }

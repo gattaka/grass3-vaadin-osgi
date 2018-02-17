@@ -20,6 +20,10 @@ public interface ContentTagRepository extends JpaRepository<ContentTag, Long>, C
 			nativeQuery = true)
 	List<Object> findContentNodesCountsGroups();
 
+	@Query(value = "select id, COUNT(contentnodes_id) as c from CONTENT_TAG join CONTENTNODE_CONTENT_TAG on CONTENT_TAG.id = contenttags_id group by id order by c",
+			nativeQuery = true)
+	List<Object[]> countContentTagsContents();
+
 	@Query("select t from CONTENT_TAG t order by UPPER(t.name)")
 	List<ContentTag> findAllOrderByNameCaseInsensitive();
 

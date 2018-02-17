@@ -24,6 +24,7 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import cz.gattserver.grass3.hw.HWConfiguration;
+import cz.gattserver.grass3.hw.interfaces.HWFilterTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemFileTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemState;
@@ -346,7 +347,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 	}
 
 	@Test
-	public void saveHWItem2() {
+	public void testHWItemOperations() {
 		HWItemTO itemTO = new HWItemTO();
 		itemTO.setName("test Name");
 		LocalDate destDate = LocalDate.now().minusDays(1);
@@ -412,6 +413,32 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		assertEquals(new Integer(1), savedItemTO2.getWarrantyYears());
 		assertEquals(id, savedItemTO2.getUsedIn().getId());
 		assertEquals("test Name", savedItemTO2.getUsedInName());
+
+		assertEquals(2, hwService.countHWItems(new HWFilterTO()));
+		assertEquals(1, hwService.countHWItems(new HWFilterTO().setUsedIn("test Name")));
+
+		List<HWItemOverviewTO> items = hwService.getAllHWItems();
+		assertEquals(2, items.size());
+		assertEquals(id, items.get(0).getId());
+		assertEquals(id2, items.get(1).getId());
+
+		items = hwService.getAllParts(id);
+		assertEquals(1, items.size());
+		assertEquals(id2, items.get(0).getId());
+
+		items = hwService.getHWItemsAvailableForPart(id);
+		assertEquals(1, items.size());
+		assertEquals(id2, items.get(0).getId());
+
+		items = hwService.getHWItemsAvailableForPart(id2);
+		assertEquals(1, items.size());
+		assertEquals(id, items.get(0).getId());
+
+		hwService.deleteHWItem(id);
+
+		items = hwService.getAllHWItems();
+		assertEquals(1, items.size());
+		assertEquals(id2, items.get(0).getId());
 	}
 
 }

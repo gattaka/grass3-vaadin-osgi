@@ -16,13 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.querydsl.core.Tuple;
-
 import cz.gattserver.grass3.interfaces.ContentTagsCloudItemTO;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
-import cz.gattserver.grass3.model.domain.QContentTag;
 import cz.gattserver.grass3.model.repositories.ContentNodeRepository;
 import cz.gattserver.grass3.model.repositories.ContentTagRepository;
 import cz.gattserver.grass3.services.ContentTagService;
@@ -97,8 +94,8 @@ public class ContentTagServiceImpl implements ContentTagService {
 	@Override
 	public Map<Long, Integer> getTagsContentsCountsMap() {
 		Map<Long, Integer> map = new LinkedHashMap<>();
-		for (Tuple to : contentTagRepository.countContentTagsContents())
-			map.put(to.get(QContentTag.contentTag.id), to.get(QContentTag.contentTag.contentNodes.size()));
+		for (Object[] to : contentTagRepository.countContentTagsContents())
+			map.put(((BigInteger) to[0]).longValue(), ((BigInteger) to[1]).intValue());
 		return map;
 	}
 

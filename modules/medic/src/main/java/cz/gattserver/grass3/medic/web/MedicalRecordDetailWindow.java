@@ -1,8 +1,7 @@
 package cz.gattserver.grass3.medic.web;
 
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 
-import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
@@ -23,10 +22,9 @@ public class MedicalRecordDetailWindow extends DetailWindow {
 	public MedicalRecordDetailWindow(Long id) {
 		super("Detail záznamu");
 
-		final MedicalRecordDTO medicalRecordDTO = getMedicFacade().getMedicalRecordById(id);
+		MedicalRecordDTO medicalRecordDTO = getMedicFacade().getMedicalRecordById(id);
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("d. MMMMM yyyy, H:mm");
-		addDetailLine("Datum", dateFormat.format(medicalRecordDTO.getDate()));
+		addDetailLine("Datum", medicalRecordDTO.getDate().format(DateTimeFormatter.ofPattern("d. MMMMM yyyy, H:mm")));
 
 		final Button button = new Button(medicalRecordDTO.getInstitution().getName());
 		button.addClickListener(new Button.ClickListener() {
@@ -45,7 +43,7 @@ public class MedicalRecordDetailWindow extends DetailWindow {
 
 		Label label;
 		label = addDetailLine("Záznam", medicalRecordDTO.getRecord());
-		label.setContentMode(ContentMode.PREFORMATTED);
+		label.setWidth("600px");
 
 		setContent(layout);
 	}

@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.medic.web;
 
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.GridLayout;
@@ -24,13 +24,12 @@ public class SchuduledVisitDetailWindow extends DetailWindow {
 		final ScheduledVisitDTO scheduledVisitDTO = SpringContextHelper.getBean(MedicFacade.class)
 				.getScheduledVisitById(id);
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("d. MMMMM yyyy, H:mm");
-
 		GridLayout layout = new GridLayout(2, 6);
 		layout.setSpacing(true);
 		layout.setMargin(true);
 		layout.addComponent(new BoldLabel("Datum"));
-		layout.addComponent(new Label(dateFormat.format(scheduledVisitDTO.getDate())));
+		layout.addComponent(
+				new Label(scheduledVisitDTO.getDate().format(DateTimeFormatter.ofPattern("d. MMMMM yyyy, H:mm"))));
 		layout.addComponent(new BoldLabel("Účel"));
 		layout.addComponent(new Label(scheduledVisitDTO.getPurpose()));
 

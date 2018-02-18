@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.medic.dto;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -94,8 +94,7 @@ public class MedicalRecordDTO implements Identifiable {
 
 	@Override
 	public String toString() {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-		return dateFormat.format(date) + " " + physician.getName();
+		return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) + " " + physician.getName();
 	}
 
 	@Override

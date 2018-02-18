@@ -1,5 +1,9 @@
 package cz.gattserver.grass3.ui.pages.template;
 
+import org.perf4j.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.server.ExternalResource;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Layout;
@@ -19,6 +23,8 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
  *
  */
 public abstract class GrassPage {
+
+	private static Logger perfLogger = LoggerFactory.getLogger(StopWatch.DEFAULT_LOGGER_NAME);
 
 	private GrassRequest request;
 	private Layout content;
@@ -45,8 +51,11 @@ public abstract class GrassPage {
 	 * {@link #createPayload()}, aby byl založen
 	 */
 	public final Layout getContent() {
-		if (content == null)
+		if (content == null) {
+			StopWatch stopWatch = new StopWatch("GrassPage#createPayload");
 			content = createPayload();
+			perfLogger.info(stopWatch.stop());
+		}
 		if (jQueryRequired)
 			content.addComponent(new JQueryBootstrapComponent());
 		return content;

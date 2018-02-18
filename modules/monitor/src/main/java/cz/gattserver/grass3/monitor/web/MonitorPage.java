@@ -27,10 +27,12 @@ public class MonitorPage extends OneColumnPage {
 		layout.setSpacing(false);
 		layout.setMargin(true);
 
+		// Uptime
 		layout.addComponent(MonitorItemFactory.createMonitorItem(monitorFacade.getUptime()));
 
+		// Backup disk
 		ConsoleOutputTO mouted = monitorFacade.getBackupDiskMounted();
-		if (monitorFacade.getBackupDiskMounted().isError() == false) {
+		if (!monitorFacade.getBackupDiskMounted().isError()) {
 			if (Boolean.parseBoolean(mouted.getOutput())) {
 				layout.addComponent(MonitorItemFactory.createMonitorItem(monitorFacade.getBackupDiskSizeInfo()));
 

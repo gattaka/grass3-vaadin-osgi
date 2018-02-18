@@ -12,12 +12,12 @@ public class MonitorItem extends HorizontalLayout {
 	public MonitorItem(String prefix, String styleClass, String value) {
 		Label prefixLabel = new Label("<span class=\"" + styleClass + "\">" + prefix + "</span>");
 		prefixLabel.setContentMode(ContentMode.HTML);
-		prefixLabel.setWidth("60px");
+		prefixLabel.setWidth("70px");
 		addComponent(prefixLabel);
 
 		Label outputLabel = new Label("<span class=\"" + LOG_STYLE_CLASS + "\">" + value + "</span>");
 		outputLabel.setContentMode(ContentMode.HTML);
-		outputLabel.setWidth("880px");
+		outputLabel.setWidth("870px");
 		addComponent(outputLabel);
 	}
 

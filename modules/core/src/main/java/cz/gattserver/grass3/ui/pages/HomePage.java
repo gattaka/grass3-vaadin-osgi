@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
+import com.vaadin.ui.JavaScript;
+import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.VerticalLayout;
@@ -27,10 +29,11 @@ import cz.gattserver.grass3.ui.pages.template.BasePage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.H2Label;
+import elemental.json.JsonArray;
 
 public class HomePage extends BasePage {
 
-	private static Logger logger = LoggerFactory.getLogger(StopWatch.DEFAULT_LOGGER_NAME);
+	private static Logger perfLogger = LoggerFactory.getLogger(StopWatch.DEFAULT_LOGGER_NAME);
 
 	@Autowired
 	private ContentTagService contentTagFacade;
@@ -69,6 +72,7 @@ public class HomePage extends BasePage {
 		marginLayout.addComponent(pagelayout);
 
 		// Oblíbené
+		StopWatch stopWatch = new StopWatch("HomePage#createRecentMenus");
 		UserInfoTO user = UIUtils.getUser();
 		if (coreACL.isLoggedIn(user)) {
 			VerticalLayout favouritesLayout = new VerticalLayout();
@@ -98,23 +102,26 @@ public class HomePage extends BasePage {
 
 			pagelayout.addComponent(favouritesLayout);
 		}
+		perfLogger.info(stopWatch.stop());
 
 		// Nedávno přidané a upravené obsahy
-		StopWatch stopWatch = new StopWatch("HomePage#createRecentMenus");
+		stopWatch = new StopWatch("HomePage#createRecentMenus");
 		createRecentMenus(pagelayout);
-		String log = stopWatch.stop();
-		System.out.println(log);
-		logger.info(log);
+		perfLogger.info(stopWatch.stop());
 
 		// Tag-cloud
-		stopWatch = new StopWatch("HomePage#createTagCloud");
-		createTagCloud(pagelayout);
-		log = stopWatch.stop();
-		System.out.println(log);
-		logger.info(log);
+		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.lazytagcloud", new JavaScriptFunction() {
+			private static final long serialVersionUID = 5850638851716815161L;
+
+			@Override
+			public void call(JsonArray arguments) {
+				createTagCloud(pagelayout);
+			}
+		});
+
+		JavaScript.eval("setTimeout(function(){ cz.gattserver.grass3.lazytagcloud(); }, 10);");
 
 		contentLayout.addComponent(marginLayout, "content");
-
 	}
 
 	private void createTagCloud(VerticalLayout pagelayout) {

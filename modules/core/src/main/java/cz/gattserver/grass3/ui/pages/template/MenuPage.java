@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.perf4j.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.server.ExternalResource;
@@ -26,6 +29,8 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.util.UIUtils;
 
 public abstract class MenuPage extends GrassPage {
+
+	private static Logger perfLogger = LoggerFactory.getLogger(StopWatch.DEFAULT_LOGGER_NAME);
 
 	@Autowired
 	protected ModuleRegister serviceHolder;
@@ -68,7 +73,9 @@ public abstract class MenuPage extends GrassPage {
 		layout.addComponent(homelink, "homelink");
 
 		// hlášky
+		StopWatch stopWatch = new StopWatch("MenuPage#createQuotes");
 		createQuotes(layout);
+		perfLogger.info(stopWatch.stop());
 
 		// menu
 		HorizontalLayout menuExpander = new HorizontalLayout();
@@ -85,10 +92,14 @@ public abstract class MenuPage extends GrassPage {
 		menu.setWidth("100%");
 		menuExpander.addComponent(menu);
 
+		stopWatch = new StopWatch("MenuPage#createMenuItems");
 		createMenuItems(menu);
+		perfLogger.info(stopWatch.stop());
 
 		// obsah
+		stopWatch = new StopWatch("MenuPage#createContent");
 		createContent(layout);
+		perfLogger.info(stopWatch.stop());
 
 		// footer
 		layout.addComponent(new Label("Powered by GRASS III © 2012-2017 Hynek Uhlíř"), "about");

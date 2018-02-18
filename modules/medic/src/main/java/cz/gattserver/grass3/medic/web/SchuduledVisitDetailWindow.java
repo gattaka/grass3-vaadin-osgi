@@ -18,14 +18,11 @@ public class SchuduledVisitDetailWindow extends DetailWindow {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 
-	private MedicFacade medicalFacade;
-
 	public SchuduledVisitDetailWindow(Long id) {
 		super("Detail návštěvy");
 
-		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
-
-		final ScheduledVisitDTO scheduledVisitDTO = medicalFacade.getScheduledVisitById(id);
+		final ScheduledVisitDTO scheduledVisitDTO = SpringContextHelper.getBean(MedicFacade.class)
+				.getScheduledVisitById(id);
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("d. MMMMM yyyy, H:mm");
 

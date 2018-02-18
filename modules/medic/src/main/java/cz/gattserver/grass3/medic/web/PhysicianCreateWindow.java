@@ -20,16 +20,12 @@ public abstract class PhysicianCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
-	private MedicFacade medicalFacade;
-
 	public PhysicianCreateWindow() {
 		this(null);
 	}
 
 	public PhysicianCreateWindow(PhysicianDTO originalDTO) {
 		super(originalDTO == null ? "Přidání doktora" : "Úprava doktora");
-
-		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
 
 		GridLayout winLayout = new GridLayout(2, 3);
 		winLayout.setMargin(true);
@@ -38,7 +34,7 @@ public abstract class PhysicianCreateWindow extends WebWindow {
 		winLayout.setWidth("300px");
 
 		PhysicianDTO formDTO = new PhysicianDTO();
-		Binder<PhysicianDTO> binder = new Binder<PhysicianDTO>(PhysicianDTO.class);
+		Binder<PhysicianDTO> binder = new Binder<>(PhysicianDTO.class);
 		binder.setBean(formDTO);
 
 		final TextField nameField = new TextField("Jméno");
@@ -50,12 +46,11 @@ public abstract class PhysicianCreateWindow extends WebWindow {
 		separator.setHeight("10px");
 		winLayout.addComponent(separator, 0, 1);
 
-		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button(originalDTO == null ? "Přidat" : "Upravit", e -> {
+		Button saveBtn = new Button(originalDTO == null ? "Přidat" : "Upravit", e -> {
 			try {
 				PhysicianDTO writeDTO = originalDTO == null ? new PhysicianDTO() : originalDTO;
 				binder.writeBean(writeDTO);
-				medicalFacade.savePhysician(formDTO);
+				SpringContextHelper.getBean(MedicFacade.class).savePhysician(formDTO);
 				onSuccess();
 				close();
 			} catch (ValidationException ex) {
@@ -64,7 +59,8 @@ public abstract class PhysicianCreateWindow extends WebWindow {
 			} catch (Exception ex) {
 				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
 			}
-		}), 1, 2);
+		});
+		winLayout.addComponent(saveBtn, 1, 2);
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
 
 		if (originalDTO != null)

@@ -21,7 +21,7 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
-	private MedicFacade medicalFacade;
+	private transient MedicFacade medicFacade;
 
 	public MedicamentCreateWindow() {
 		this(null);
@@ -29,8 +29,6 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 
 	public MedicamentCreateWindow(MedicamentDTO originalDTO) {
 		super(originalDTO == null ? "Založení nového medikamentu" : "Úprava medikamentu");
-
-		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
 
 		GridLayout winLayout = new GridLayout(2, 4);
 		winLayout.setMargin(true);
@@ -56,12 +54,11 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 		separator.setHeight("10px");
 		winLayout.addComponent(separator, 0, 2);
 
-		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button(originalDTO == null ? "Založit" : "Upravit", e -> {
+		Button saveBtn = new Button(originalDTO == null ? "Založit" : "Upravit", e -> {
 			try {
 				MedicamentDTO writeDTO = originalDTO == null ? new MedicamentDTO() : originalDTO;
 				binder.writeBean(writeDTO);
-				medicalFacade.saveMedicament(writeDTO);
+				getMedicFacade().saveMedicament(writeDTO);
 				onSuccess();
 				close();
 			} catch (ValidationException ex) {
@@ -70,7 +67,8 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 			} catch (Exception ex) {
 				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
 			}
-		}), 1, 3);
+		});
+		winLayout.addComponent(saveBtn, 1, 3);
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
 
 		if (originalDTO != null)
@@ -78,6 +76,12 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 
 		setContent(winLayout);
 
+	}
+
+	protected MedicFacade getMedicFacade() {
+		if (medicFacade == null)
+			medicFacade = SpringContextHelper.getBean(MedicFacade.class);
+		return medicFacade;
 	}
 
 	protected abstract void onSuccess();

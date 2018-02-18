@@ -9,13 +9,10 @@ public class PhysicianDetailWindow extends DetailWindow {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 
-	private MedicFacade medicalFacade;
-
 	public PhysicianDetailWindow(Long id) {
 		super("Detail instituce");
-		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
 
-		final PhysicianDTO physicianDTO = medicalFacade.getPhysicianById(id);
+		final PhysicianDTO physicianDTO = SpringContextHelper.getBean(MedicFacade.class).getPhysicianById(id);
 		addDetailLine("Jméno", physicianDTO.getName());
 		setContent(layout);
 	}

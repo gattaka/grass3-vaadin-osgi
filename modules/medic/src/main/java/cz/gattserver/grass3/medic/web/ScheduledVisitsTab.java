@@ -2,7 +2,6 @@ package cz.gattserver.grass3.medic.web;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
@@ -38,12 +37,21 @@ public class ScheduledVisitsTab extends VerticalLayout {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
-	private MedicFacade medicFacade;
+	private transient MedicFacade medicFacade;
 
 	private Grid<ScheduledVisitDTO> toBePlannedGrid = new Grid<>();
 	private Grid<ScheduledVisitDTO> plannedGrid = new Grid<>();
-	private Collection<ScheduledVisitDTO> toBePlannedGridData;
-	private Collection<ScheduledVisitDTO> plannedGridData;
+
+	public ScheduledVisitsTab() {
+		setSpacing(true);
+		setMargin(new MarginInfo(true, false, false, false));
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.MM.yyyy");
+		addComponent(new Label("<strong>Dnes je: </strong>" + LocalDate.now().format(formatter), ContentMode.HTML));
+
+		createPlannedGrid();
+		createToBePlannedTable();
+	}
 
 	private void openCreateWindow(final boolean planned, ScheduledVisitDTO scheduledVisitDTO) {
 		Window win = new ScheduledVisitsCreateWindow(planned ? Operation.PLANNED : Operation.TO_BE_PLANNED,
@@ -65,7 +73,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 			@Override
 			protected void onSuccess() {
 				try {
-					medicFacade.deleteScheduledVisit(scheduledVisitDTO);
+					getMedicFacade().deleteScheduledVisit(scheduledVisitDTO);
 				} catch (Exception e) {
 					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
 				}
@@ -79,7 +87,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		ScheduledVisitsTab.this.setEnabled(false);
 		UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat '" + visit.getPurpose() + "' ?", ev -> {
 			try {
-				medicFacade.deleteScheduledVisit(visit);
+				getMedicFacade().deleteScheduledVisit(visit);
 				populateContainer(planned);
 			} catch (Exception e) {
 				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
@@ -100,11 +108,9 @@ public class ScheduledVisitsTab extends VerticalLayout {
 	private void populateContainer(boolean planned) {
 		Grid<ScheduledVisitDTO> grid = planned ? plannedGrid : toBePlannedGrid;
 		if (planned) {
-			plannedGridData = medicFacade.getAllScheduledVisits(planned);
-			plannedGrid.setItems(plannedGridData);
+			plannedGrid.setItems(getMedicFacade().getAllScheduledVisits(planned));
 		} else {
-			toBePlannedGridData = medicFacade.getAllScheduledVisits(planned);
-			toBePlannedGrid.setItems(toBePlannedGridData);
+			toBePlannedGrid.setItems(getMedicFacade().getAllScheduledVisits(planned));
 		}
 		grid.getDataProvider().refreshAll();
 		grid.deselectAll();
@@ -263,7 +269,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 			final ScheduledVisitDTO toBePlannedVisitDTO = (ScheduledVisitDTO) toBePlannedGrid.getSelectedItems()
 					.iterator().next();
 
-			ScheduledVisitDTO newDto = medicFacade.createPlannedScheduledVisitFromToBePlanned(toBePlannedVisitDTO);
+			ScheduledVisitDTO newDto = getMedicFacade().createPlannedScheduledVisitFromToBePlanned(toBePlannedVisitDTO);
 			Window win = new ScheduledVisitsCreateWindow(Operation.PLANNED_FROM_TO_BE_PLANNED, newDto) {
 				private static final long serialVersionUID = -7566950396535469316L;
 
@@ -274,11 +280,11 @@ public class ScheduledVisitsTab extends VerticalLayout {
 							// posuň plánování a ulož úpravu
 							toBePlannedVisitDTO
 									.setDate(toBePlannedVisitDTO.getDate().plusMonths(toBePlannedVisitDTO.getPeriod()));
-							medicFacade.saveScheduledVisit(toBePlannedVisitDTO);
+							getMedicFacade().saveScheduledVisit(toBePlannedVisitDTO);
 						} else {
 							// nemá pravidelnost - návštěva byla objednána,
 							// plánování návštěvy lze smazat
-							medicFacade.deleteScheduledVisit(toBePlannedVisitDTO);
+							getMedicFacade().deleteScheduledVisit(toBePlannedVisitDTO);
 						}
 
 						populateContainer(true);
@@ -310,17 +316,10 @@ public class ScheduledVisitsTab extends VerticalLayout {
 
 	}
 
-	public ScheduledVisitsTab() {
-		medicFacade = SpringContextHelper.getBean(MedicFacade.class);
-
-		setSpacing(true);
-		setMargin(new MarginInfo(true, false, false, false));
-
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.MM.yyyy");
-		addComponent(new Label("<strong>Dnes je: </strong>" + LocalDate.now().format(formatter), ContentMode.HTML));
-
-		createPlannedGrid();
-		createToBePlannedTable();
+	protected MedicFacade getMedicFacade() {
+		if (medicFacade == null)
+			medicFacade = SpringContextHelper.getBean(MedicFacade.class);
+		return medicFacade;
 	}
 
 }

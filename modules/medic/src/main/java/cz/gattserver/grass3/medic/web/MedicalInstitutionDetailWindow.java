@@ -14,14 +14,12 @@ public class MedicalInstitutionDetailWindow extends DetailWindow {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 
-	private MedicFacade medicalFacade;
+	private transient MedicFacade medicFacade;
 
 	public MedicalInstitutionDetailWindow(Long id) {
 		super("Detail instituce");
 
-		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
-
-		final MedicalInstitutionDTO medicalInstitutionDTO = medicalFacade.getMedicalInstitutionById(id);
+		final MedicalInstitutionDTO medicalInstitutionDTO = getMedicFacade().getMedicalInstitutionById(id);
 
 		addDetailLine("Název", medicalInstitutionDTO.getName());
 
@@ -36,6 +34,12 @@ public class MedicalInstitutionDetailWindow extends DetailWindow {
 		label.setContentMode(ContentMode.PREFORMATTED);
 
 		setContent(layout);
-
 	}
+
+	protected MedicFacade getMedicFacade() {
+		if (medicFacade == null)
+			medicFacade = SpringContextHelper.getBean(MedicFacade.class);
+		return medicFacade;
+	}
+
 }

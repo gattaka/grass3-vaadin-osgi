@@ -19,7 +19,7 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 
 	@Override
 	protected Collection<MedicalRecordDTO> getItems() {
-		return medicFacade.getAllMedicalRecords();
+		return getMedicFacade().getAllMedicalRecords();
 	}
 
 	@Override
@@ -54,20 +54,21 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 
 	@Override
 	protected void deleteEntity(MedicalRecordDTO dto) {
-		medicFacade.deleteMedicalRecord(dto);
+		getMedicFacade().deleteMedicalRecord(dto);
 	}
 
 	@Override
 	protected void customizeGrid(Grid<MedicalRecordDTO> grid) {
+		String fdateID = "fdate";
 		grid.addColumn(MedicalRecordDTO::getDate, new LocalDateTimeRenderer("dd.MM.yyyy")).setCaption("Datum")
-				.setId("fdate");
+				.setId(fdateID);
 		grid.getColumn("institution").setCaption("Instituce");
 		grid.getColumn("physician").setCaption("Ošetřující lékař");
 		grid.getColumn("record").setCaption("Záznam");
-		grid.setColumns("fdate", "institution", "physician", "record");
+		grid.setColumns(fdateID, "institution", "physician", "record");
 		grid.setWidth("100%");
 		grid.setSelectionMode(SelectionMode.SINGLE);
-		grid.sort("fdate");
+		grid.sort(fdateID);
 	}
 
 }

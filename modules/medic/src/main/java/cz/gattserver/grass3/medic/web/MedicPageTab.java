@@ -9,15 +9,15 @@ public abstract class MedicPageTab<T extends Identifiable> extends GridOperation
 
 	private static final long serialVersionUID = 2057957439013190170L;
 
-	protected MedicFacade medicFacade;
+	private transient MedicFacade medicFacade;
 
 	public MedicPageTab(Class<T> clazz) {
 		super(clazz);
 	}
 
-	@Override
-	protected void init() {
-		medicFacade = SpringContextHelper.getBean(MedicFacade.class);
-		super.init();
+	protected MedicFacade getMedicFacade() {
+		if (medicFacade == null)
+			medicFacade = SpringContextHelper.getBean(MedicFacade.class);
+		return medicFacade;
 	}
 }

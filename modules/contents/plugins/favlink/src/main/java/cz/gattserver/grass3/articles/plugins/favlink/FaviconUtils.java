@@ -128,7 +128,7 @@ public class FaviconUtils {
 	 * @return URL adresa k favicon souboru z cache
 	 */
 	public static String createCachedFaviconAddress(String contextRoot, String faviconFilename) {
-		Validate.notBlank(contextRoot, "contextRoot nesmí být prázdný");
+		Validate.notNull(contextRoot, "contextRoot nesmí být null");
 		Validate.notBlank(faviconFilename, "faviconFilename nesmí být prázdný");
 		return contextRoot + "/" + FavlinkConfiguration.IMAGE_PATH_ALIAS + "/" + faviconFilename;
 	}

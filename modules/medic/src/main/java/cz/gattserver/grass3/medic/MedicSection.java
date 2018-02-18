@@ -26,10 +26,10 @@ public class MedicSection implements SectionService {
 	@Autowired
 	private EmailNotifier emailNotifier;
 
-	private final static long ONCE_PER_DAY = 1000 * 60 * 60 * 24;
-	private final static int ONE_DAY = 1;
-	private final static int FOUR_AM = 4;
-	private final static int ZERO_MINUTES = 0;
+	private static final long ONCE_PER_DAY = 1L * 1000 * 60 * 60 * 24;
+	private static final int ONE_DAY = 1;
+	private static final int FOUR_AM = 4;
+	private static final int ZERO_MINUTES = 0;
 
 	private static Date getTomorrowMorning4am() {
 		Calendar tomorrow = new GregorianCalendar();
@@ -44,7 +44,6 @@ public class MedicSection implements SectionService {
 		TimerTask fetchMail = emailNotifier.getTimerTask();
 		Timer timer = new Timer();
 		timer.scheduleAtFixedRate(fetchMail, getTomorrowMorning4am(), ONCE_PER_DAY);
-		// timer.scheduleAtFixedRate(fetchMail, Calendar.getInstance().getTime(), ONCE_PER_DAY);
 	}
 
 	public boolean isVisibleForRoles(Set<Role> roles) {

@@ -31,7 +31,7 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
-	private MedicFacade medicalFacade;
+	private transient MedicFacade medicFacade;
 
 	public MedicalRecordCreateWindow() {
 		this(null, null);
@@ -48,8 +48,6 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 	private MedicalRecordCreateWindow(ScheduledVisitDTO scheduledVisitDTO, MedicalRecordDTO originalDTO) {
 		super(originalDTO == null ? "Založení nového záznamu" : "Úprava záznamu");
 
-		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
-
 		GridLayout winLayout = new GridLayout(2, 7);
 		winLayout.setMargin(true);
 		winLayout.setSpacing(true);
@@ -58,10 +56,10 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 
 		MedicalRecordDTO formDTO = new MedicalRecordDTO();
 
-		Binder<MedicalRecordDTO> binder = new Binder<MedicalRecordDTO>(MedicalRecordDTO.class);
+		Binder<MedicalRecordDTO> binder = new Binder<>(MedicalRecordDTO.class);
 		binder.setBean(formDTO);
 
-		Set<PhysicianDTO> physicians = medicalFacade.getAllPhysicians();
+		Set<PhysicianDTO> physicians = getMedicFacade().getAllPhysicians();
 		final ComboBox<PhysicianDTO> physicianComboBox = new ComboBox<>("Ošetřující lékař", physicians);
 		winLayout.addComponent(physicianComboBox, 0, 0, 1, 0);
 		physicianComboBox.setWidth("100%");
@@ -77,7 +75,7 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 		binder.forField(dateField).bind("date");
 
 		final ComboBox<MedicalInstitutionDTO> institutionComboBox = new ComboBox<>("Instituce",
-				medicalFacade.getAllMedicalInstitutions());
+				getMedicFacade().getAllMedicalInstitutions());
 		winLayout.addComponent(institutionComboBox, 0, 2, 1, 2);
 		institutionComboBox.setWidth("100%");
 		institutionComboBox.setEmptySelectionAllowed(false);
@@ -89,7 +87,7 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 		binder.forField(recordField).bind("record");
 
 		final TwinColSelect<MedicamentDTO> typeSelect = new TwinColSelect<>("Medikamenty",
-				medicalFacade.getAllMedicaments());
+				getMedicFacade().getAllMedicaments());
 		typeSelect.setWidth("100%");
 		typeSelect.setRows(7);
 		typeSelect.setItemCaptionGenerator(MedicamentDTO::getName);
@@ -100,12 +98,11 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 		separator.setHeight("10px");
 		winLayout.addComponent(separator, 0, 5);
 
-		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button(originalDTO == null ? "Založit" : "Upravit", e -> {
+		Button saveBtn = new Button(originalDTO == null ? "Založit" : "Upravit", e -> {
 			try {
 				MedicalRecordDTO writeDTO = originalDTO == null ? new MedicalRecordDTO() : originalDTO;
 				binder.writeBean(writeDTO);
-				medicalFacade.saveMedicalRecord(writeDTO);
+				getMedicFacade().saveMedicalRecord(writeDTO);
 				onSuccess();
 				close();
 			} catch (ValidationException ex) {
@@ -114,7 +111,8 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 			} catch (Exception ex) {
 				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se uložit nový záznam"));
 			}
-		}), 1, 6);
+		});
+		winLayout.addComponent(saveBtn, 1, 6);
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
 
 		if (originalDTO != null)
@@ -126,6 +124,12 @@ public abstract class MedicalRecordCreateWindow extends WebWindow {
 		}
 
 		setContent(winLayout);
+	}
+
+	protected MedicFacade getMedicFacade() {
+		if (medicFacade == null)
+			medicFacade = SpringContextHelper.getBean(MedicFacade.class);
+		return medicFacade;
 	}
 
 	protected abstract void onSuccess();

@@ -21,7 +21,7 @@ public abstract class MedicalInstitutionCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
-	private MedicFacade medicalFacade;
+	private transient MedicFacade medicFacade;
 
 	public MedicalInstitutionCreateWindow() {
 		this(null);
@@ -30,8 +30,6 @@ public abstract class MedicalInstitutionCreateWindow extends WebWindow {
 	public MedicalInstitutionCreateWindow(MedicalInstitutionDTO modifiedMedicalInstitutionDTO) {
 		super(modifiedMedicalInstitutionDTO == null ? "Založení nové instituce" : "Úprava instituce");
 
-		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
-
 		GridLayout winLayout = new GridLayout(2, 6);
 		winLayout.setMargin(true);
 		winLayout.setSpacing(true);
@@ -39,7 +37,7 @@ public abstract class MedicalInstitutionCreateWindow extends WebWindow {
 		winLayout.setWidth("500px");
 
 		MedicalInstitutionDTO formDTO = new MedicalInstitutionDTO();
-		Binder<MedicalInstitutionDTO> binder = new Binder<MedicalInstitutionDTO>(MedicalInstitutionDTO.class);
+		Binder<MedicalInstitutionDTO> binder = new Binder<>(MedicalInstitutionDTO.class);
 		binder.setBean(formDTO);
 
 		final TextField nameField = new TextField("Název");
@@ -67,29 +65,34 @@ public abstract class MedicalInstitutionCreateWindow extends WebWindow {
 		separator.setHeight("10px");
 		winLayout.addComponent(separator, 0, 4);
 
-		Button saveBtn;
-		winLayout
-				.addComponent(saveBtn = new Button(modifiedMedicalInstitutionDTO == null ? "Založit" : "Upravit", e -> {
-					try {
-						MedicalInstitutionDTO writeDTO = modifiedMedicalInstitutionDTO == null
-								? new MedicalInstitutionDTO() : modifiedMedicalInstitutionDTO;
-						binder.writeBean(writeDTO);
-						medicalFacade.saveMedicalInstitution(writeDTO);
-						onSuccess();
-						close();
-					} catch (ValidationException ex) {
-						Notification.show("   Chybná vstupní data\n\n   " + ex.getCause().getMessage(),
-								Notification.Type.TRAY_NOTIFICATION);
-					} catch (Exception ex) {
-						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
-					}
-				}), 1, 5);
+		Button saveBtn = new Button(modifiedMedicalInstitutionDTO == null ? "Založit" : "Upravit", e -> {
+			try {
+				MedicalInstitutionDTO writeDTO = modifiedMedicalInstitutionDTO == null ? new MedicalInstitutionDTO()
+						: modifiedMedicalInstitutionDTO;
+				binder.writeBean(writeDTO);
+				getMedicFacade().saveMedicalInstitution(writeDTO);
+				onSuccess();
+				close();
+			} catch (ValidationException ex) {
+				Notification.show("   Chybná vstupní data\n\n   " + ex.getCause().getMessage(),
+						Notification.Type.TRAY_NOTIFICATION);
+			} catch (Exception ex) {
+				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
+			}
+		});
+		winLayout.addComponent(saveBtn, 1, 5);
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
 
 		if (modifiedMedicalInstitutionDTO != null)
 			binder.readBean(modifiedMedicalInstitutionDTO);
 
 		setContent(winLayout);
+	}
+
+	protected MedicFacade getMedicFacade() {
+		if (medicFacade == null)
+			medicFacade = SpringContextHelper.getBean(MedicFacade.class);
+		return medicFacade;
 	}
 
 	protected abstract void onSuccess();

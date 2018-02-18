@@ -6,6 +6,9 @@ import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 
 public class MedicUtil {
 
+	private MedicUtil() {
+	}
+
 	public static boolean isVisitPending(ScheduledVisitDTO dto) {
 		LocalDateTime date = dto.getDate();
 		LocalDateTime now = LocalDateTime.now();

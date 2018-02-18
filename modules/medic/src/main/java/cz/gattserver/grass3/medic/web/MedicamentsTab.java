@@ -18,7 +18,7 @@ public class MedicamentsTab extends MedicPageTab<MedicamentDTO> {
 
 	@Override
 	protected Collection<MedicamentDTO> getItems() {
-		return medicFacade.getAllMedicaments();
+		return getMedicFacade().getAllMedicaments();
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class MedicamentsTab extends MedicPageTab<MedicamentDTO> {
 
 	@Override
 	protected void deleteEntity(MedicamentDTO dto) {
-		medicFacade.deleteMedicament(dto);
+		getMedicFacade().deleteMedicament(dto);
 	}
 
 	@Override

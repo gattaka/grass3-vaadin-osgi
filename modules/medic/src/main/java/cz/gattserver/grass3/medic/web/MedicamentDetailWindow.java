@@ -12,14 +12,10 @@ public class MedicamentDetailWindow extends DetailWindow {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 
-	private MedicFacade medicalFacade;
-
 	public MedicamentDetailWindow(Long id) {
 		super("Detail instituce");
 
-		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
-
-		final MedicamentDTO medicamentDTO = medicalFacade.getMedicamentById(id);
+		final MedicamentDTO medicamentDTO = SpringContextHelper.getBean(MedicFacade.class).getMedicamentById(id);
 
 		addDetailLine("Název", medicamentDTO.getName());
 

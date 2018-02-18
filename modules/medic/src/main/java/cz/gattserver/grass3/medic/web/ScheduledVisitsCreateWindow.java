@@ -30,8 +30,6 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
-	private MedicFacade medicalFacade;
-
 	private static final String PLANNED_CREATION_TITLE = "Založení nové plánované návštěvy";
 	private static final String TO_BE_PLANNED_CREATION_TITLE = "Naplánování objednání";
 	private static final String PLANNED_EDIT_TITLE = "Úprava plánované návštěvy";
@@ -79,7 +77,7 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 
 		boolean planned = operation.equals(Operation.PLANNED) || operation.equals(Operation.PLANNED_FROM_TO_BE_PLANNED);
 
-		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
+		MedicFacade medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
 
 		GridLayout winLayout = new GridLayout(2, 6);
 		winLayout.setWidth("350px");
@@ -99,7 +97,7 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 		purposeField.setWidth("100%");
 		binder.forField(purposeField).bind("purpose");
 
-		if (planned == false) {
+		if (!planned) {
 			final TextField periodField = new TextField("Pravidelnost (měsíce)");
 			winLayout.addComponent(periodField, 0, 1);
 			periodField.setWidth("100%");
@@ -139,8 +137,7 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 		separator.setHeight("10px");
 		winLayout.addComponent(separator, 0, 4);
 
-		Button saveBtn;
-		winLayout.addComponent(saveBtn = new Button(getSubmitBtnCaptionByOperation(operation, originalDTO), e -> {
+		Button saveBtn = new Button(getSubmitBtnCaptionByOperation(operation, originalDTO), e -> {
 			try {
 				ScheduledVisitDTO writeDTO = originalDTO == null ? new ScheduledVisitDTO() : originalDTO;
 				binder.writeBean(writeDTO);
@@ -153,7 +150,8 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 			} catch (Exception ex) {
 				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
 			}
-		}), 1, 5);
+		});
+		winLayout.addComponent(saveBtn, 1, 5);
 		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
 
 		if (originalDTO != null)

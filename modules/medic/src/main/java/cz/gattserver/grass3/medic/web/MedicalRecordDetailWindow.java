@@ -18,14 +18,12 @@ public class MedicalRecordDetailWindow extends DetailWindow {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 
-	private MedicFacade medicalFacade;
+	private transient MedicFacade medicFacade;
 
 	public MedicalRecordDetailWindow(Long id) {
 		super("Detail záznamu");
 
-		medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
-
-		final MedicalRecordDTO medicalRecordDTO = medicalFacade.getMedicalRecordById(id);
+		final MedicalRecordDTO medicalRecordDTO = getMedicFacade().getMedicalRecordById(id);
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("d. MMMMM yyyy, H:mm");
 		addDetailLine("Datum", dateFormat.format(medicalRecordDTO.getDate()));
@@ -50,6 +48,11 @@ public class MedicalRecordDetailWindow extends DetailWindow {
 		label.setContentMode(ContentMode.PREFORMATTED);
 
 		setContent(layout);
+	}
 
+	protected MedicFacade getMedicFacade() {
+		if (medicFacade == null)
+			medicFacade = SpringContextHelper.getBean(MedicFacade.class);
+		return medicFacade;
 	}
 }

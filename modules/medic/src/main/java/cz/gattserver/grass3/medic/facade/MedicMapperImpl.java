@@ -37,14 +37,10 @@ public class MedicMapperImpl implements MedicMapper {
 	}
 
 	public List<MedicalInstitutionDTO> mapMedicalInstitutions(List<MedicalInstitution> e) {
-		if (e == null)
-			return null;
-
-		List<MedicalInstitutionDTO> list = new ArrayList<MedicalInstitutionDTO>();
+		List<MedicalInstitutionDTO> list = new ArrayList<>();
 		for (MedicalInstitution i : e) {
 			list.add(mapMedicalInstitution(i));
 		}
-
 		return list;
 	}
 
@@ -71,14 +67,10 @@ public class MedicMapperImpl implements MedicMapper {
 	}
 
 	public List<ScheduledVisitDTO> mapScheduledVisits(List<ScheduledVisit> e) {
-		if (e == null)
-			return null;
-
-		List<ScheduledVisitDTO> list = new ArrayList<ScheduledVisitDTO>();
+		List<ScheduledVisitDTO> list = new ArrayList<>();
 		for (ScheduledVisit i : e) {
 			list.add(mapScheduledVisit(i));
 		}
-
 		return list;
 	}
 
@@ -97,14 +89,10 @@ public class MedicMapperImpl implements MedicMapper {
 	}
 
 	public List<MedicalRecordDTO> mapMedicalRecords(List<MedicalRecord> e) {
-		if (e == null)
-			return null;
-
-		List<MedicalRecordDTO> list = new ArrayList<MedicalRecordDTO>();
+		List<MedicalRecordDTO> list = new ArrayList<>();
 		for (MedicalRecord i : e) {
 			list.add(mapMedicalRecord(i));
 		}
-
 		return list;
 	}
 
@@ -120,14 +108,10 @@ public class MedicMapperImpl implements MedicMapper {
 	}
 
 	public Set<MedicamentDTO> mapMedicaments(List<Medicament> e) {
-		if (e == null)
-			return null;
-
-		Set<MedicamentDTO> set = new HashSet<MedicamentDTO>();
+		Set<MedicamentDTO> set = new HashSet<>();
 		for (Medicament i : e) {
 			set.add(mapMedicament(i));
 		}
-
 		return set;
 	}
 
@@ -142,14 +126,10 @@ public class MedicMapperImpl implements MedicMapper {
 	}
 
 	public Set<PhysicianDTO> mapPhysicians(List<Physician> e) {
-		if (e == null)
-			return null;
-
-		Set<PhysicianDTO> set = new HashSet<PhysicianDTO>();
+		Set<PhysicianDTO> set = new HashSet<>();
 		for (Physician i : e) {
 			set.add(mapPhysician(i));
 		}
-
 		return set;
 	}
 

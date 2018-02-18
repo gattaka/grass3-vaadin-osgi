@@ -18,7 +18,7 @@ public class PhysiciansTab extends MedicPageTab<PhysicianDTO> {
 
 	@Override
 	protected Collection<PhysicianDTO> getItems() {
-		return medicFacade.getAllPhysicians();
+		return getMedicFacade().getAllPhysicians();
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class PhysiciansTab extends MedicPageTab<PhysicianDTO> {
 
 	@Override
 	protected void deleteEntity(PhysicianDTO dto) {
-		medicFacade.deletePhysician(dto);
+		getMedicFacade().deletePhysician(dto);
 	}
 
 	@Override

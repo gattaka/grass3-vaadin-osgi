@@ -190,7 +190,7 @@ public class PGServiceImpl implements PGService {
 					if (!Files.exists(outputFile))
 						createVideoMinature(file, outputFile);
 				}
-				
+
 				if (imageExt) {
 					Path outputFile = miniDirFile.resolve(file.getFileName().toString());
 					if (!Files.exists(outputFile))
@@ -409,8 +409,8 @@ public class PGServiceImpl implements PGService {
 
 	@Override
 	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId) {
-		return photogalleriesMapper
-				.mapPhotogalleryForRESTOverviewCollection(photogalleryRepository.findByUserAccess(userId));
+		return photogalleriesMapper.mapPhotogalleryForRESTOverviewCollection(userId != null
+				? photogalleryRepository.findByUserAccess(userId) : photogalleryRepository.findByAnonAccess());
 	}
 
 	@Override

@@ -114,7 +114,7 @@ public class MedicFacadeImpl implements MedicFacade {
 		// pouze pokud jde o save nikoliv o update
 		if (visit.getId() == null) {
 			// save nemůže mít stav MISSED
-			visit.setPlanned(dto.getState().equals(ScheduledVisitState.PLANNED));
+			visit.setPlanned(ScheduledVisitState.PLANNED.equals(dto.getState()));
 		}
 
 		if (dto.getRecord() != null) {

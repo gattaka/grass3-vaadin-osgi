@@ -3,6 +3,9 @@ package cz.gattserver.grass3.medic.web;
 import java.util.List;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.ui.Button;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
@@ -29,6 +32,8 @@ import cz.gattserver.web.common.ui.window.WebWindow;
 public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
+
+	private static final Logger logger = LoggerFactory.getLogger(ScheduledVisitsCreateWindow.class);
 
 	private static final String PLANNED_CREATION_TITLE = "Založení nové plánované návštěvy";
 	private static final String TO_BE_PLANNED_CREATION_TITLE = "Naplánování objednání";
@@ -148,7 +153,9 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 				Notification.show("   Chybná vstupní data\n\n   " + ex.getCause().getMessage(),
 						Notification.Type.TRAY_NOTIFICATION);
 			} catch (Exception ex) {
-				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
+				String msg = "Nezdařilo se vytvořit nový záznam";
+				UI.getCurrent().addWindow(new ErrorWindow(msg));
+				logger.error(msg, ex);
 			}
 		});
 		winLayout.addComponent(saveBtn, 1, 5);

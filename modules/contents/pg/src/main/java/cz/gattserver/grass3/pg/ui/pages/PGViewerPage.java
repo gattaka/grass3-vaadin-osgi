@@ -38,7 +38,6 @@ import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
 import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.pg.ui.windows.ImageSlideshowWindow;
 import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.ui.components.BaseProgressBar;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
@@ -270,6 +269,7 @@ public class PGViewerPage extends ContentViewerPage {
 		Button downloadZip = new Button("Zabalit galerii jako ZIP",
 				event -> UI.getCurrent().addWindow(new ConfirmWindow("Přejete si vytvořit ZIP galerie?", e -> {
 					logger.info("zipPhotogallery thread: {}", Thread.currentThread().getId());
+					progressIndicatorWindow = new ProgressWindow();
 					eventBus.subscribe(PGViewerPage.this);
 					pgService.zipGallery(galleryDir);
 				})));
@@ -297,23 +297,20 @@ public class PGViewerPage extends ContentViewerPage {
 
 	@Handler
 	protected void onProcessStart(final PGZipProcessStartEvent event) {
-		ui.access(() -> {
-			BaseProgressBar progressBar = new BaseProgressBar(event.getCountOfStepsToDo());
-			progressBar.setIndeterminate(false);
-			progressBar.setValue(0f);
-			progressIndicatorWindow = new ProgressWindow(progressBar);
+		progressIndicatorWindow.runInUI(() -> {
+			progressIndicatorWindow.setTotal(event.getCountOfStepsToDo());
 			ui.addWindow(progressIndicatorWindow);
 		});
 	}
 
 	@Handler
 	protected void onProcessProgress(PGZipProcessProgressEvent event) {
-		ui.access(() -> progressIndicatorWindow.indicateProgress(event.getStepDescription()));
+		progressIndicatorWindow.runInUI(() -> progressIndicatorWindow.indicateProgress(event.getStepDescription()));
 	}
 
 	@Handler
 	protected void onProcessResult(final PGZipProcessResultEvent event) {
-		ui.access(() -> {
+		progressIndicatorWindow.runInUI(() -> {
 			if (progressIndicatorWindow != null)
 				progressIndicatorWindow.close();
 

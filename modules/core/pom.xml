@@ -11,7 +11,7 @@
 	</parent>
 
 	<properties>
-		<vaadin.plugin.version>8.1.5</vaadin.plugin.version>
+		<vaadin.plugin.version>8.3.1</vaadin.plugin.version>
 		<vaadin.widgetset.mode>local</vaadin.widgetset.mode>
 		<widgetset.target>${basedir}/../../web/src/main/webapp/VAADIN/widgetsets</widgetset.target>
 	</properties>

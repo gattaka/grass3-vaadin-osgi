@@ -6,24 +6,32 @@ public class BaseProgressBar extends ProgressBar {
 
 	private static final long serialVersionUID = 9190321446320873139L;
 
-	private int total;
-	private int current;
-
-	/**
-	 * 
-	 * @param total
-	 *            celkový počet elementů ke zpracování
-	 */
-	public BaseProgressBar(int total) {
-		// +1 protože se musí započítat i samotné
-		// generování procesu (jinak se bude dělit v
-		// případě, že není co dělat 0)
-		this.total = total + 1;
-		current = 0;
-	}
+	private int total = 0;
+	private int current = 0;
 
 	public int getTotal() {
 		return total;
+	}
+
+	public BaseProgressBar setTotal(int total) {
+		this.total = total;
+		return this;
+	}
+
+	public int getCurrent() {
+		return current;
+	}
+
+	public BaseProgressBar setCurrent(int current) {
+		this.current = current;
+		return this;
+	}
+
+	/**
+	 * @return procentuální stav hotové práce
+	 */
+	public float getProgress() {
+		return total == 0 ? 1 : (float) current / total;
 	}
 
 	/**
@@ -36,13 +44,6 @@ public class BaseProgressBar extends ProgressBar {
 		current++;
 		getUI().access(() -> BaseProgressBar.this.setValue(getProgress()));
 		return current == total - 1;
-	}
-
-	/**
-	 * @return procentuální stav hotové práce
-	 */
-	public float getProgress() {
-		return (float) current / total;
 	}
 
 }

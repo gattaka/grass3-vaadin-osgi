@@ -17,7 +17,6 @@ import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ConfigurationService;
-import cz.gattserver.grass3.ui.components.BaseProgressBar;
 import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.grass3.ui.windows.ProgressWindow;
@@ -116,6 +115,7 @@ public class ArticlesSettingsPage extends AbstractSettingsPage {
 					"Přegenerování všech článků může zabrat delší čas a dojde během něj zřejmě k mnoha drobným změnám - opravdu přegenerovat ?",
 					e -> {
 						eventBus.subscribe(ArticlesSettingsPage.this);
+						progressIndicatorWindow = new ProgressWindow();
 						articleFacade.reprocessAllArticles(getRequest().getContextRoot());
 					});
 			confirmSubwindow.setWidth("460px");
@@ -123,7 +123,7 @@ public class ArticlesSettingsPage extends AbstractSettingsPage {
 			UI.getCurrent().addWindow(confirmSubwindow);
 		});
 		reprocessLayout.addComponent(reprocessButton);
-		
+
 		return layout;
 	}
 
@@ -139,23 +139,20 @@ public class ArticlesSettingsPage extends AbstractSettingsPage {
 
 	@Handler
 	protected void onProcessStart(final ArticlesProcessStartEvent event) {
-		ui.access(() -> {
-			BaseProgressBar progressBar = new BaseProgressBar(event.getCountOfStepsToDo());
-			progressBar.setIndeterminate(false);
-			progressBar.setValue(0f);
-			progressIndicatorWindow = new ProgressWindow(progressBar);
+		progressIndicatorWindow.runInUI(() -> {
+			progressIndicatorWindow.setTotal(event.getCountOfStepsToDo());
 			ui.addWindow(progressIndicatorWindow);
 		});
 	}
 
 	@Handler
 	protected void onProcessProgress(ArticlesProcessProgressEvent event) {
-		ui.access(() -> progressIndicatorWindow.indicateProgress(event.getStepDescription()));
+		progressIndicatorWindow.runInUI(() -> progressIndicatorWindow.indicateProgress(event.getStepDescription()));
 	}
 
 	@Handler
 	protected void onProcessResult(final ArticlesProcessResultEvent event) {
-		ui.access(() -> {
+		progressIndicatorWindow.runInUI(() -> {
 			if (progressIndicatorWindow != null)
 				progressIndicatorWindow.close();
 			reprocessButton.setEnabled(true);

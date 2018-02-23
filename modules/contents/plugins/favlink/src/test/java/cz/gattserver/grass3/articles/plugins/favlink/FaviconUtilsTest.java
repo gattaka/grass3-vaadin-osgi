@@ -16,11 +16,17 @@ public class FaviconUtilsTest {
 		assertEquals("/test-root/articles-favlink-plugin/favicon-name.png",
 				FaviconUtils.createCachedFaviconAddress("/test-root", "favicon-name.png"));
 	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testCreateCachedFaviconAddress_fail() {
+	
+	@Test
+	public void testCreateCachedFaviconAddress2() {
 		assertEquals("/articles-favlink-plugin/favicon-name.png",
 				FaviconUtils.createCachedFaviconAddress("", "favicon-name.png"));
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testCreateCachedFaviconAddress_fail() {
+		assertEquals("/articles-favlink-plugin/favicon-name.png",
+				FaviconUtils.createCachedFaviconAddress(null, "favicon-name.png"));
 	}
 
 	@Test(expected = IllegalArgumentException.class)

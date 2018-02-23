@@ -47,7 +47,7 @@ public class NodeTree extends VerticalLayout {
 
 	private TreeGrid<NodeOverviewTO> grid;
 
-	private Set<NodeOverviewTO> draggedItems;
+	private List<NodeOverviewTO> draggedItems;
 
 	@Autowired
 	private NodeService nodeFacade;

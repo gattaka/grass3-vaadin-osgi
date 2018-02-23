@@ -48,7 +48,6 @@ import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ContentTagService;
-import cz.gattserver.grass3.ui.components.BaseProgressBar;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
@@ -423,12 +422,14 @@ public class PGEditorPage extends OneColumnPage {
 
 	private void saveOrUpdatePhotogallery() {
 		logger.info("saveOrUpdatePhotogallery thread: " + Thread.currentThread().getId());
-		eventBus.subscribe(PGEditorPage.this);
 		List<String> tokens = new ArrayList<>();
 		photogalleryKeywords.getTokens().forEach(t -> tokens.add(t.getValue()));
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(photogalleryNameField.getValue(), galleryDir,
 				tokens, publicatedCheckBox.getValue());
 
+		eventBus.subscribe(PGEditorPage.this);
+		progressIndicatorWindow = new ProgressWindow();
+		
 		if (editMode) {
 			pgService.modifyPhotogallery(photogallery.getId(), payloadTO, photogalleryDateField.getValue());
 		} else {
@@ -457,23 +458,20 @@ public class PGEditorPage extends OneColumnPage {
 
 	@Handler
 	protected void onProcessStart(final PGProcessStartEvent event) {
-		ui.access(() -> {
-			BaseProgressBar progressBar = new BaseProgressBar(event.getCountOfStepsToDo());
-			progressBar.setIndeterminate(false);
-			progressBar.setValue(0f);
-			progressIndicatorWindow = new ProgressWindow(progressBar);
+		progressIndicatorWindow.runInUI(() -> {
+			progressIndicatorWindow.setTotal(event.getCountOfStepsToDo());
 			ui.addWindow(progressIndicatorWindow);
 		});
 	}
 
 	@Handler
 	protected void onProcessProgress(PGProcessProgressEvent event) {
-		ui.access(() -> progressIndicatorWindow.indicateProgress(event.getStepDescription()));
+		progressIndicatorWindow.runInUI(() -> progressIndicatorWindow.indicateProgress(event.getStepDescription()));
 	}
 
 	@Handler
 	protected void onProcessResult(final PGProcessResultEvent event) {
-		ui.access(() -> {
+		progressIndicatorWindow.runInUI(() -> {
 			if (progressIndicatorWindow != null)
 				progressIndicatorWindow.close();
 			if (editMode)

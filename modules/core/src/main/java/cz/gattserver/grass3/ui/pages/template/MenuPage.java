@@ -102,7 +102,7 @@ public abstract class MenuPage extends GrassPage {
 		perfLogger.info(stopWatch.stop());
 
 		// footer
-		layout.addComponent(new Label("Powered by GRASS III © 2012-2017 Hynek Uhlíř"), "about");
+		layout.addComponent(new Label("Powered by GRASS III © 2012-2018 Hynek Uhlíř"), "about");
 
 		return layout;
 	}

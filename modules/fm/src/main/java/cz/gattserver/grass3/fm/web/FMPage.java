@@ -162,7 +162,8 @@ public class FMPage extends OneColumnPage {
 		// aktuální polohu cílové kategorie
 		List<BreadcrumbElement> breadcrumbElements = new ArrayList<>();
 		for (FMItemTO c : explorer.getBreadcrumbChunks())
-			breadcrumbElements.add(new BreadcrumbElement(c.getName(), getPageResource(fmPageFactory, c.getPathFromFMRoot())));
+			breadcrumbElements
+					.add(new BreadcrumbElement(c.getName(), getPageResource(fmPageFactory, c.getPathFromFMRoot())));
 		breadcrumb.resetBreadcrumb(breadcrumbElements);
 	}
 
@@ -238,7 +239,7 @@ public class FMPage extends OneColumnPage {
 		MultiUpload multiFileUpload = new MultiUpload("Nahrát soubory") {
 			private static final long serialVersionUID = -415832652157894459L;
 
-			public void handleFile(InputStream in, String fileName, String mime, long size) {
+			public void handleFile(InputStream in, String fileName, String mime, long size, int filesLeftInQueue) {
 				switch (explorer.saveFile(in, fileName)) {
 				case SUCCESS:
 					// refresh

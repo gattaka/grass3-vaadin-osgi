@@ -320,7 +320,8 @@ public class PGEditorPage extends OneColumnPage {
 			private static final long serialVersionUID = -5223991901495532219L;
 
 			@Override
-			protected void handleFile(InputStream in, String fileName, String mimeType, long length) {
+			protected void handleFile(InputStream in, String fileName, String mimeType, long length,
+					int filesLeftInQueue) {
 				try {
 					pgService.uploadFile(in, fileName, galleryDir);
 					PhotogalleryViewItemTO itemTO = new PhotogalleryViewItemTO();
@@ -429,7 +430,7 @@ public class PGEditorPage extends OneColumnPage {
 
 		eventBus.subscribe(PGEditorPage.this);
 		progressIndicatorWindow = new ProgressWindow();
-		
+
 		if (editMode) {
 			pgService.modifyPhotogallery(photogallery.getId(), payloadTO, photogalleryDateField.getValue());
 		} else {

@@ -20,6 +20,14 @@ public class ProgressWindow extends Window {
 	private Label descriptionLabel;
 	private UI ui;
 
+	public static void runInUI(Runnable r, UI ui) {
+		if (ui.getSession() == null) {
+			r.run();
+		} else {
+			ui.access(r);
+		}
+	}
+
 	@Override
 	public void close() {
 		runInUI(() -> {
@@ -29,11 +37,7 @@ public class ProgressWindow extends Window {
 	}
 
 	public void runInUI(Runnable r) {
-		if (ui.getSession() == null) {
-			r.run();
-		} else {
-			ui.access(r);
-		}
+		ProgressWindow.runInUI(r, ui);
 	}
 
 	public void indicateProgress(String msg) {

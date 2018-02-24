@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.interfaces;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class ContentNodeTO extends ContentNodeOverviewTO {
@@ -41,6 +42,12 @@ public class ContentNodeTO extends ContentNodeOverviewTO {
 
 	public Set<ContentTagOverviewTO> getContentTags() {
 		return contentTags;
+	}
+
+	public Set<String> getContentTagsAsStrings() {
+		Set<String> set = new HashSet<>();
+		contentTags.forEach(c -> set.add(c.getName()));
+		return set;
 	}
 
 	public void setContentTags(Set<ContentTagOverviewTO> contentTags) {

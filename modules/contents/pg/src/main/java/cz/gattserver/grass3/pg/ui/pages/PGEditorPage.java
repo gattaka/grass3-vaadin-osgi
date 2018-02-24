@@ -1,8 +1,6 @@
 package cz.gattserver.grass3.pg.ui.pages;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -60,7 +58,6 @@ import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.MultiUpload;
 import cz.gattserver.web.common.ui.window.ConfirmWindow;
-import cz.gattserver.web.common.ui.window.WarnWindow;
 import net.engio.mbassy.listener.Handler;
 
 public class PGEditorPage extends OneColumnPage {
@@ -89,14 +86,10 @@ public class PGEditorPage extends OneColumnPage {
 	private TextField photogalleryNameField;
 	private DateTimeField photogalleryDateField;
 	private CheckBox publicatedCheckBox;
-	private Label existingFiles;
-	private WarnWindow warnWindow;
-
-	private boolean editMode;
-	private boolean stayInEditor = false;
-	private boolean warnWindowDeployed = false;
 
 	private String galleryDir;
+	private boolean editMode;
+	private boolean stayInEditor = false;
 
 	/**
 	 * Soubory, které byly nahrány od posledního uložení. V případě, že budou
@@ -248,7 +241,25 @@ public class PGEditorPage extends OneColumnPage {
 		grid.setItems(items);
 		grid.setColumns("name");
 		grid.getColumn("name").setCaption("Název");
-		grid.setSelectionMode(SelectionMode.SINGLE);
+		grid.setSelectionMode(SelectionMode.MULTI);
+		grid.addItemClickListener(e -> {
+			PhotogalleryViewItemTO item = e.getItem();
+			if (item == null)
+				return;
+			if (e.getMouseEventDetails().isShiftKey()) {
+				if (grid.getSelectedItems().contains(item))
+					grid.deselect(item);
+				else
+					grid.select(item);
+			} else {
+				if (grid.getSelectedItems().size() == 1 && grid.getSelectedItems().iterator().next().equals(item)) {
+					grid.deselect(item);
+				} else {
+					grid.deselectAll();
+					grid.select(item);
+				}
+			}
+		});
 		grid.setSizeFull();
 
 		final Button removeBtn = new DeleteGridButton<>("Odstranit", selected -> {
@@ -261,7 +272,7 @@ public class PGEditorPage extends OneColumnPage {
 
 		grid.addSelectionListener(event -> {
 			imageWrapper.removeAllComponents();
-			if (!event.getAllSelectedItems().isEmpty()) {
+			if (!event.getAllSelectedItems().isEmpty() && event.getAllSelectedItems().size() == 1) {
 				PhotogalleryViewItemTO itemTO = event.getFirstSelectedItem().get();
 				String file = itemTO.getName();
 				if (PGUtils.isImage(file)) {
@@ -316,49 +327,19 @@ public class PGEditorPage extends OneColumnPage {
 
 	private MultiUpload createUploadButton(final Grid<PhotogalleryViewItemTO> grid,
 			final List<PhotogalleryViewItemTO> items) {
-		MultiUpload multiUpload = new MultiUpload() {
-			private static final long serialVersionUID = -5223991901495532219L;
+		return new PGMultiUpload(galleryDir) {
+			private static final long serialVersionUID = -693498481160129134L;
 
 			@Override
-			protected void handleFile(InputStream in, String fileName, String mimeType, long length,
-					int filesLeftInQueue) {
-				try {
-					pgService.uploadFile(in, fileName, galleryDir);
-					PhotogalleryViewItemTO itemTO = new PhotogalleryViewItemTO();
-					itemTO.setName(fileName);
-					newFiles.add(itemTO);
-					items.add(itemTO);
-					grid.setItems(items);
-				} catch (FileAlreadyExistsException f) {
-					if (!warnWindowDeployed) {
-						existingFiles = new Label("", ContentMode.HTML);
-						warnWindow = new WarnWindow("Následující soubory již existují:") {
-							private static final long serialVersionUID = 3428203680996794639L;
-
-							@Override
-							protected void createDetails(String details) {
-								addComponent(existingFiles);
-							}
-
-							@Override
-							public void close() {
-								existingFiles.setValue("");
-								warnWindowDeployed = false;
-								super.close();
-							}
-						};
-						UI.getCurrent().addWindow(warnWindow);
-						warnWindowDeployed = true;
-					}
-					existingFiles.setValue(existingFiles.getValue() + fileName + "<br/>");
-				} catch (IOException e) {
-					logger.error("Nezdařilo se uložit soubor {}", fileName, e);
-				}
+			protected void fileUploadSuccess(String fileName) {
+				PhotogalleryViewItemTO itemTO = new PhotogalleryViewItemTO();
+				itemTO.setName(fileName);
+				newFiles.add(itemTO);
+				items.add(itemTO);
+				grid.setItems(items);
 			}
 
 		};
-		multiUpload.setCaption("Nahrát obsah");
-		return multiUpload;
 	}
 
 	private void populateButtonsLayout(HorizontalLayout buttonLayout) {

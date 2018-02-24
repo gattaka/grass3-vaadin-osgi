@@ -1057,7 +1057,7 @@
  */
 
 .v-vaadin-version:after {
-	content: "8.1.5";
+	content: "8.3.1";
 }
 
 .v-widget {
@@ -1148,7 +1148,7 @@
 	overflow: auto;
 }
 
-.v-assistive-device-only {
+.v-assistive-device-only, .v-assistive-device-only-label label {
 	position: absolute;
 	top: -2000px;
 	left: -2000px;
@@ -1738,6 +1738,61 @@ div.v-layout.v-horizontal.v-widget {
 	content: "!";
 }
 
+.grass .v-errorindicator-info {
+	color: #00a7f5;
+	font-weight: 600;
+	width: 15px;
+	text-align: center;
+}
+
+.grass .v-errorindicator-info:before {
+	content: "!";
+}
+
+.grass .v-errorindicator-warning {
+	color: #fc9c00;
+	font-weight: 600;
+	width: 15px;
+	text-align: center;
+}
+
+.grass .v-errorindicator-warning:before {
+	content: "!";
+}
+
+.grass .v-errorindicator-error {
+	color: #ed473b;
+	font-weight: 600;
+	width: 15px;
+	text-align: center;
+}
+
+.grass .v-errorindicator-error:before {
+	content: "!";
+}
+
+.grass .v-errorindicator-critical {
+	color: #fa007d;
+	font-weight: 600;
+	width: 15px;
+	text-align: center;
+}
+
+.grass .v-errorindicator-critical:before {
+	content: "!";
+}
+
+.grass .v-errorindicator-system {
+	color: #bb00ff;
+	font-weight: 600;
+	width: 15px;
+	text-align: center;
+}
+
+.grass .v-errorindicator-system:before {
+	content: "!";
+}
+
 .grass .v-required-field-indicator {
 	color: #ed473b;
 	padding: 0 0.2em;
@@ -1815,6 +1870,26 @@ div.v-layout.v-horizontal.v-widget {
 .grass .v-tooltip .v-errormessage h2:only-child {
 	font: inherit;
 	line-height: inherit;
+}
+
+.grass .v-tooltip .v-errormessage-info {
+	color: #00a7f5;
+}
+
+.grass .v-tooltip .v-errormessage-warning {
+	color: #fc9c00;
+}
+
+.grass .v-tooltip .v-errormessage-error {
+	color: #ed473b;
+}
+
+.grass .v-tooltip .v-errormessage-critical {
+	color: #fa007d;
+}
+
+.grass .v-tooltip .v-errormessage-system {
+	color: #bb00ff;
 }
 
 .grass .v-tooltip .v-tooltip-text {
@@ -3071,6 +3146,61 @@ div.v-layout.v-horizontal.v-widget {
 .grass .v-filterselect-error .v-filterselect-button {
 	color: #ed473b;
 	border-color: #ed473b;
+}
+
+.grass .v-filterselect-error-info .v-filterselect-input {
+	border-color: #00a7f5 !important;
+	background: #fafdff;
+	color: #195774;
+}
+
+.grass .v-filterselect-error-info .v-filterselect-button {
+	color: #00a7f5;
+	border-color: #00a7f5;
+}
+
+.grass .v-filterselect-error-warning .v-filterselect-input {
+	border-color: #fc9c00 !important;
+	background: #fffdfa;
+	color: #745119;
+}
+
+.grass .v-filterselect-error-warning .v-filterselect-button {
+	color: #fc9c00;
+	border-color: #fc9c00;
+}
+
+.grass .v-filterselect-error-error .v-filterselect-input {
+	border-color: #ed473b !important;
+	background: #fffbfb;
+	color: #6c2621;
+}
+
+.grass .v-filterselect-error-error .v-filterselect-button {
+	color: #ed473b;
+	border-color: #ed473b;
+}
+
+.grass .v-filterselect-error-critical .v-filterselect-input {
+	border-color: #fa007d !important;
+	background: #fffafc;
+	color: #741947;
+}
+
+.grass .v-filterselect-error-critical .v-filterselect-button {
+	color: #fa007d;
+	border-color: #fa007d;
+}
+
+.grass .v-filterselect-error-system .v-filterselect-input {
+	border-color: #bb00ff !important;
+	background: #fefaff;
+	color: #5c1974;
+}
+
+.grass .v-filterselect-error-system .v-filterselect-button {
+	color: #bb00ff;
+	border-color: #bb00ff;
 }
 
 .grass .v-filterselect-suggestpopup {
@@ -5103,6 +5233,36 @@ div.v-layout.v-horizontal.v-widget {
 	color: #6c2621;
 }
 
+.grass .v-textfield-error-info {
+	border-color: #00a7f5 !important;
+	background: #fafdff;
+	color: #195774;
+}
+
+.grass .v-textfield-error-warning {
+	border-color: #fc9c00 !important;
+	background: #fffdfa;
+	color: #745119;
+}
+
+.grass .v-textfield-error-error {
+	border-color: #ed473b !important;
+	background: #fffbfb;
+	color: #6c2621;
+}
+
+.grass .v-textfield-error-critical {
+	border-color: #fa007d !important;
+	background: #fffafc;
+	color: #741947;
+}
+
+.grass .v-textfield-error-system {
+	border-color: #bb00ff !important;
+	background: #fefaff;
+	color: #5c1974;
+}
+
 .grass .v-textfield-borderless {
 	border: none;
 	border-radius: 0;
@@ -5846,6 +6006,61 @@ div.v-layout.v-horizontal.v-widget {
 .grass .v-datefield-error .v-datefield-button {
 	color: #ed473b;
 	border-color: #ed473b;
+}
+
+.grass .v-datefield-error-info .v-datefield-textfield {
+	border-color: #00a7f5 !important;
+	background: #fafdff;
+	color: #195774;
+}
+
+.grass .v-datefield-error-info .v-datefield-button {
+	color: #00a7f5;
+	border-color: #00a7f5;
+}
+
+.grass .v-datefield-error-warning .v-datefield-textfield {
+	border-color: #fc9c00 !important;
+	background: #fffdfa;
+	color: #745119;
+}
+
+.grass .v-datefield-error-warning .v-datefield-button {
+	color: #fc9c00;
+	border-color: #fc9c00;
+}
+
+.grass .v-datefield-error-error .v-datefield-textfield {
+	border-color: #ed473b !important;
+	background: #fffbfb;
+	color: #6c2621;
+}
+
+.grass .v-datefield-error-error .v-datefield-button {
+	color: #ed473b;
+	border-color: #ed473b;
+}
+
+.grass .v-datefield-error-critical .v-datefield-textfield {
+	border-color: #fa007d !important;
+	background: #fffafc;
+	color: #741947;
+}
+
+.grass .v-datefield-error-critical .v-datefield-button {
+	color: #fa007d;
+	border-color: #fa007d;
+}
+
+.grass .v-datefield-error-system .v-datefield-textfield {
+	border-color: #bb00ff !important;
+	background: #fefaff;
+	color: #5c1974;
+}
+
+.grass .v-datefield-error-system .v-datefield-button {
+	color: #bb00ff;
+	border-color: #bb00ff;
 }
 
 .grass .v-datefield-full {
@@ -8339,6 +8554,30 @@ div.v-layout.v-horizontal.v-widget {
 	color: inherit;
 }
 
+.grass .v-window-closebox:focus::after {
+	content: "";
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	bottom: 5px;
+	left: 2px;
+	border-radius: 3px;
+	-webkit-box-shadow: 0 0 1px 1px rgba(55, 121, 179, 0.5);
+	box-shadow: 0 0 1px 1px rgba(55, 121, 179, 0.5);
+}
+
+.grass .v-window-maximizebox:focus::after, .grass .v-window-restorebox:focus::after {
+	content: "";
+	position: absolute;
+	top: 5px;
+	right: 2px;
+	bottom: 5px;
+	left: 5px;
+	border-radius: 3px;
+	-webkit-box-shadow: 0 0 1px 1px rgba(55, 121, 179, 0.5);
+	box-shadow: 0 0 1px 1px rgba(55, 121, 179, 0.5);
+}
+
 .grass .v-window-closebox {
 	padding-right: 3px;
 	border-radius: 0 3px 0 3px;
@@ -8366,6 +8605,10 @@ div.v-layout.v-horizontal.v-widget {
 	width: 30px;
 	padding-right: 0;
 	border-bottom-left-radius: 3px;
+}
+
+.grass .v-window-closebox-disabled  + .v-window-closebox:focus::after, .grass .v-window-resizebox-disabled  + .v-window-closebox:focus::after, .grass .v-window-restorebox-disabled  + .v-window-closebox:focus::after, .grass .v-window-maximizebox-disabled  + .v-window-closebox:focus::after {
+	left: 5px;
 }
 
 .grass .v-window-maximizebox:before {
@@ -12716,6 +12959,36 @@ div.v-layout.v-horizontal.v-widget {
 	color: #6c2621;
 }
 
+.grass .v-select-twincol-error-info .v-select-twincol-options, .grass .v-select-twincol-error-info .v-select-twincol-selections {
+	border-color: #00a7f5 !important;
+	background: #fafdff;
+	color: #195774;
+}
+
+.grass .v-select-twincol-error-warning .v-select-twincol-options, .grass .v-select-twincol-error-warning .v-select-twincol-selections {
+	border-color: #fc9c00 !important;
+	background: #fffdfa;
+	color: #745119;
+}
+
+.grass .v-select-twincol-error-error .v-select-twincol-options, .grass .v-select-twincol-error-error .v-select-twincol-selections {
+	border-color: #ed473b !important;
+	background: #fffbfb;
+	color: #6c2621;
+}
+
+.grass .v-select-twincol-error-critical .v-select-twincol-options, .grass .v-select-twincol-error-critical .v-select-twincol-selections {
+	border-color: #fa007d !important;
+	background: #fffafc;
+	color: #741947;
+}
+
+.grass .v-select-twincol-error-system .v-select-twincol-options, .grass .v-select-twincol-error-system .v-select-twincol-selections {
+	border-color: #bb00ff !important;
+	background: #fefaff;
+	color: #5c1974;
+}
+
 .grass .v-select select {
 	border: 1px solid #c5c5c5;
 	background-color: #fafafa;
@@ -15282,29 +15555,29 @@ span.tag-letter {
 }
 
 .grass .v-window.v-widget.v-has-width.v-has-height.grass-image-slideshow-window.v-window-grass-image-slideshow-window {
-    background: none;
+	background: none;
 }
 
 .grass .grass-image-slideshow-window .v-window-outerheader {
-    display: none;
+	display: none;
 }
 
 .grass .v-window-contents > .v-scrollable:before {
-    border: none;
+	border: none;
 }
 
 .grass .white-bold-label {
 	font-family: Arial;
-    font-size: 20px;
-    color: white;
+	font-size: 20px;
+	color: white;
 }
 
 .grass .resized-preview img {
-    display: block;
-    max-width: 280px;
-    max-height: 280px;
-    width: auto;
-    height: auto;
+	display: block;
+	max-width: 280px;
+	max-height: 280px;
+	width: auto;
+	height: auto;
 }
 
 .grass .thumbnail-200 img {

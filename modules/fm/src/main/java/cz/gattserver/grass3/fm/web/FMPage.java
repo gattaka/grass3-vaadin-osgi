@@ -239,7 +239,7 @@ public class FMPage extends OneColumnPage {
 		MultiUpload multiFileUpload = new MultiUpload("Nahrát soubory") {
 			private static final long serialVersionUID = -415832652157894459L;
 
-			public void handleFile(InputStream in, String fileName, String mime, long size, int filesLeftInQueue) {
+			public void fileUploadFinished(InputStream in, String fileName, String mime, long size, int filesLeftInQueue) {
 				switch (explorer.saveFile(in, fileName)) {
 				case SUCCESS:
 					// refresh

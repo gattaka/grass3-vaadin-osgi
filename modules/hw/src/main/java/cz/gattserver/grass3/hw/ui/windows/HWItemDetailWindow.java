@@ -487,7 +487,7 @@ public class HWItemDetailWindow extends WebWindow {
 			private static final long serialVersionUID = -3899558855555370125L;
 
 			@Override
-			protected void handleFile(InputStream in, String fileName, String mimeType, long length,
+			protected void fileUploadFinished(InputStream in, String fileName, String mimeType, long length,
 					int filesLeftInQueue) {
 				getHWService().saveImagesFile(in, fileName, hwItem);
 				// refresh listu
@@ -584,7 +584,7 @@ public class HWItemDetailWindow extends WebWindow {
 			private static final long serialVersionUID = 8500364606014524121L;
 
 			@Override
-			public void handleFile(InputStream in, String fileName, String mime, long size, int filesLeftInQueue) {
+			public void fileUploadFinished(InputStream in, String fileName, String mime, long size, int filesLeftInQueue) {
 				getHWService().saveDocumentsFile(in, fileName, hwItem);
 
 				// refresh listu

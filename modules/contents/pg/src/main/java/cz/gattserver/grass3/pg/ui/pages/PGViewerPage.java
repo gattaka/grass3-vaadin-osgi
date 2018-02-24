@@ -29,10 +29,14 @@ import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.pg.config.PGConfiguration;
+import cz.gattserver.grass3.pg.events.impl.PGProcessProgressEvent;
+import cz.gattserver.grass3.pg.events.impl.PGProcessResultEvent;
+import cz.gattserver.grass3.pg.events.impl.PGProcessStartEvent;
 import cz.gattserver.grass3.pg.events.impl.PGZipProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.impl.PGZipProcessResultEvent;
 import cz.gattserver.grass3.pg.events.impl.PGZipProcessStartEvent;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryItemType;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
 import cz.gattserver.grass3.pg.service.PGService;
@@ -53,8 +57,8 @@ import net.engio.mbassy.listener.Handler;
 public class PGViewerPage extends ContentViewerPage {
 
 	private static final Logger logger = LoggerFactory.getLogger(PGViewerPage.class);
-	private static final String ROWS_STATUS_PREFIX = "Zobrazeny řádky: ";
-	private static final String IMAGE_SUM_PREFIX = " | Celkem položek: ";
+	private static final String ROWS_STATUS_PREFIX = "Řádky: ";
+	private static final String IMAGE_SUM_PREFIX = " | Položek: ";
 
 	@Autowired
 	private PGService pgService;
@@ -88,6 +92,8 @@ public class PGViewerPage extends ContentViewerPage {
 	private Button startPageBtn;
 	private Button endPageBtn;
 
+	private PGMultiUpload upload;
+
 	private GridLayout galleryGridLayout;
 
 	/**
@@ -100,6 +106,10 @@ public class PGViewerPage extends ContentViewerPage {
 		super(request);
 	}
 
+	private boolean isAdminOrAuthor() {
+		return UIUtils.getUser().isAdmin() || !photogallery.getContentNode().getAuthor().equals(UIUtils.getUser());
+	}
+
 	@Override
 	protected Layout createPayload() {
 		rowsSum = 0;
@@ -107,6 +117,7 @@ public class PGViewerPage extends ContentViewerPage {
 		galleryGridRowOffset = 0;
 
 		rowStatusLabel = new Label();
+		rowStatusLabel.setSizeUndefined();
 
 		upRowBtn = new Button("Řádek nahoru");
 		downRowBtn = new Button("Řádek dolů");
@@ -128,9 +139,7 @@ public class PGViewerPage extends ContentViewerPage {
 		String magicPass = analyzer.getNextPathToken();
 
 		if (!"MAG1CK".equals(magicPass)) {
-			if (!photogallery.getContentNode().isPublicated() && (UIUtils.getUser() == null
-					|| (!photogallery.getContentNode().getAuthor().equals(UIUtils.getUser())
-							&& !UIUtils.getUser().isAdmin())))
+			if (!photogallery.getContentNode().isPublicated() && !isAdminOrAuthor())
 				throw new GrassPageException(403);
 		}
 
@@ -266,7 +275,26 @@ public class PGViewerPage extends ContentViewerPage {
 		statusLabelWrapper.setExpandRatio(rowStatusLabel, 1);
 		layout.addComponent(statusLabelWrapper);
 
-		Button downloadZip = new Button("Zabalit galerii jako ZIP",
+		upload = new PGMultiUpload(galleryDir) {
+			private static final long serialVersionUID = -693498481160129134L;
+
+			protected void queueFinished() {
+				super.queueFinished();
+
+				eventBus.subscribe(PGViewerPage.this);
+				progressIndicatorWindow = new ProgressWindow();
+				PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(photogallery.getContentNode().getName(),
+						galleryDir, photogallery.getContentNode().getContentTagsAsStrings(),
+						photogallery.getContentNode().isPublicated());
+				pgService.modifyPhotogallery(photogallery.getId(), payloadTO,
+						photogallery.getContentNode().getCreationDate());
+
+			};
+		};
+		if (coreACL.canModifyContent(photogallery.getContentNode(), UIUtils.getUser()))
+			statusLabelWrapper.addComponent(upload);
+
+		Button downloadZip = new Button("Zabalit do ZIP",
 				event -> UI.getCurrent().addWindow(new ConfirmWindow("Přejete si vytvořit ZIP galerie?", e -> {
 					logger.info("zipPhotogallery thread: {}", Thread.currentThread().getId());
 					progressIndicatorWindow = new ProgressWindow();
@@ -293,6 +321,34 @@ public class PGViewerPage extends ContentViewerPage {
 
 		if (pgSelected != null)
 			showItem(pgSelected);
+	}
+
+	@Handler
+	protected void onProcessStart(final PGProcessStartEvent event) {
+		progressIndicatorWindow.runInUI(() -> {
+			progressIndicatorWindow.setTotal(event.getCountOfStepsToDo());
+			ui.addWindow(progressIndicatorWindow);
+		});
+	}
+
+	@Handler
+	protected void onProcessProgress(PGProcessProgressEvent event) {
+		progressIndicatorWindow.runInUI(() -> progressIndicatorWindow.indicateProgress(event.getStepDescription()));
+	}
+
+	@Handler
+	protected void onProcessResult(final PGProcessResultEvent event) {
+		progressIndicatorWindow.runInUI(() -> {
+			if (progressIndicatorWindow != null)
+				progressIndicatorWindow.close();
+			Runnable onDone = () -> UIUtils.redirect(getPageURL(photogalleryViewerPageFactory, URLIdentifierUtils
+					.createURLIdentifier(photogallery.getId(), photogallery.getContentNode().getName())));
+			if (!upload.isWarnWindowDeployed())
+				onDone.run();
+			else
+				upload.getWarnWindow().addCloseListener(e -> onDone.run());
+		});
+		eventBus.unsubscribe(PGViewerPage.this);
 	}
 
 	@Handler

@@ -15499,7 +15499,7 @@ span.tag-letter {
 	margin: 4px 0px;
 }
 
-.grass .system-monitor-log-style, .system-monitor-fail-log-style, .system-monitor-error-log-style, .system-monitor-ok-log-style {
+.grass .system-monitor-log-style, .system-monitor-warn-log-style, .system-monitor-error-log-style, .system-monitor-ok-log-style {
 	font-weight: bold;
 	font-family: monospace;
 	white-space: pre-wrap;
@@ -15509,7 +15509,7 @@ span.tag-letter {
 	color: #000;
 }
 
-.grass .system-monitor-fail-log-style {
+.grass .system-monitor-warn-log-style {
 	color: #D90;
 }
 

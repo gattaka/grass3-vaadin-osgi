@@ -22,8 +22,9 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 import cz.gattserver.grass3.monitor.processor.ConsoleOutputTO;
-import cz.gattserver.grass3.monitor.web.label.FAILMonitorItem;
-import cz.gattserver.grass3.monitor.web.label.OKMonitorItem;
+import cz.gattserver.grass3.monitor.web.label.ErrorMonitorItem;
+import cz.gattserver.grass3.monitor.web.label.WarningMonitorItem;
+import cz.gattserver.grass3.monitor.web.label.SuccessMonitorItem;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.MailService;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
@@ -60,9 +61,9 @@ public class MonitorPage extends OneColumnPage {
 		VerticalLayout jvmLayout = createMonitorPart("System");
 		ConsoleOutputTO to = monitorFacade.getUptime();
 		if (to.isSuccess()) {
-			jvmLayout.addComponent(new OKMonitorItem(monitorFacade.getUptime().getOutput()));
+			jvmLayout.addComponent(new SuccessMonitorItem(monitorFacade.getUptime().getOutput()));
 		} else {
-			jvmLayout.addComponent(new FAILMonitorItem("System uptime info není dostupné"));
+			jvmLayout.addComponent(new WarningMonitorItem("System uptime info není dostupné"));
 		}
 
 		to = monitorFacade.getMemoryStatus();
@@ -87,7 +88,7 @@ public class MonitorPage extends OneColumnPage {
 					ProgressBar pb = new ProgressBar();
 					pb.setValue(usedRation);
 					pb.setWidth("200px");
-					itemLayout.addComponent(new OKMonitorItem("obsazeno " + humanFormat(used) + " (" + usedPerc + ") z "
+					itemLayout.addComponent(new SuccessMonitorItem("obsazeno " + humanFormat(used) + " (" + usedPerc + ") z "
 							+ humanFormat(total) + "; volno " + humanFormat(free), pb));
 					((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
 					jvmLayout.addComponent(itemLayout);
@@ -101,7 +102,7 @@ public class MonitorPage extends OneColumnPage {
 	}
 
 	private void createMemoryFailInfo(VerticalLayout jvmLayout) {
-		jvmLayout.addComponent(new FAILMonitorItem("System memory info není dostupné"));
+		jvmLayout.addComponent(new WarningMonitorItem("System memory info není dostupné"));
 	}
 
 	private void createJVMPart() {
@@ -126,18 +127,18 @@ public class MonitorPage extends OneColumnPage {
 
 			long elapsedSeconds = uptime / secondsInMilli;
 			jvmLayout.addComponent(
-					new OKMonitorItem(String.format("JVM uptime: %d days, %d hours, %d minutes, %d seconds%n",
+					new SuccessMonitorItem(String.format("JVM uptime: %d days, %d hours, %d minutes, %d seconds%n",
 							elapsedDays, elapsedHours, elapsedMinutes, elapsedSeconds)));
 		} catch (Exception e) {
-			jvmLayout.addComponent(new FAILMonitorItem("JVM uptime info není dostupné"));
+			jvmLayout.addComponent(new WarningMonitorItem("JVM uptime info není dostupné"));
 		}
 
 		try {
 			ThreadMXBean tb = ManagementFactory.getThreadMXBean();
-			jvmLayout.addComponent(new OKMonitorItem(
+			jvmLayout.addComponent(new SuccessMonitorItem(
 					"Aktuální stav vláken: " + tb.getThreadCount() + " peak: " + tb.getPeakThreadCount()));
 		} catch (Exception e) {
-			jvmLayout.addComponent(new FAILMonitorItem("JVM thread info není dostupné"));
+			jvmLayout.addComponent(new WarningMonitorItem("JVM thread info není dostupné"));
 		}
 	}
 
@@ -145,19 +146,23 @@ public class MonitorPage extends OneColumnPage {
 		VerticalLayout mountsLayout = createMonitorPart("Mount points");
 		ConsoleOutputTO mouted = monitorFacade.getDiskMounts();
 		if (mouted.isSuccess()) {
-			mountsLayout.addComponent(new OKMonitorItem(mouted.getOutput()));
+			mountsLayout.addComponent(new SuccessMonitorItem(mouted.getOutput()));
 		} else {
-			mountsLayout.addComponent(new FAILMonitorItem("Mount points info není dostupné"));
+			mountsLayout.addComponent(new WarningMonitorItem("Mount points info není dostupné"));
 		}
 	}
 
 	private void createBackupPart() {
 		VerticalLayout backupLayout = createMonitorPart("Backup");
 		ConsoleOutputTO mouted = monitorFacade.getBackupDiskMounted();
-		if (monitorFacade.getBackupDiskMounted().isSuccess() && Boolean.parseBoolean(mouted.getOutput())) {
-			backupLayout.addComponent(new OKMonitorItem(monitorFacade.getLastTimeOfBackup().getOutput()));
+		if (mouted.isSuccess()) {
+			if (Boolean.parseBoolean(mouted.getOutput())) {
+				backupLayout.addComponent(new SuccessMonitorItem(monitorFacade.getLastTimeOfBackup().getOutput()));
+			} else {
+				backupLayout.addComponent(new ErrorMonitorItem("Backup disk není připojen"));
+			}
 		} else {
-			backupLayout.addComponent(new FAILMonitorItem("Backup disk není připojen"));
+			backupLayout.addComponent(new WarningMonitorItem("Backup disk info není dostupné"));
 		}
 	}
 
@@ -174,7 +179,7 @@ public class MonitorPage extends OneColumnPage {
 					if (itemLayout != null)
 						diskLayout.addComponent(itemLayout);
 				} catch (IOException e) {
-					diskLayout.addComponent(new FAILMonitorItem(name + " info není dostupné"));
+					diskLayout.addComponent(new WarningMonitorItem(name + " info není dostupné"));
 				}
 			}
 		} else {
@@ -186,7 +191,7 @@ public class MonitorPage extends OneColumnPage {
 					if (itemLayout != null)
 						diskLayout.addComponent(itemLayout);
 				} catch (IOException e) {
-					diskLayout.addComponent(new FAILMonitorItem(name + " info není dostupné"));
+					diskLayout.addComponent(new WarningMonitorItem(name + " info není dostupné"));
 				}
 
 			}
@@ -208,7 +213,7 @@ public class MonitorPage extends OneColumnPage {
 		ProgressBar pb = new ProgressBar();
 		pb.setValue(usedRation);
 		pb.setWidth("200px");
-		itemLayout.addComponent(new OKMonitorItem(name + " [" + store.type() + "] obsazeno " + humanFormat(used) + " ("
+		itemLayout.addComponent(new SuccessMonitorItem(name + " [" + store.type() + "] obsazeno " + humanFormat(used) + " ("
 				+ usedPerc + ") z " + humanFormat(total) + "; volno " + humanFormat(usable), pb));
 		((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
 		return itemLayout;

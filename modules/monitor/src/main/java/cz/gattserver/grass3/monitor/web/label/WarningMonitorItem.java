@@ -10,17 +10,17 @@ import com.vaadin.ui.Component;
  * @author Hynek
  *
  */
-public class FAILMonitorItem extends MonitorItem {
+public class WarningMonitorItem extends MonitorItem {
 
 	private static final long serialVersionUID = 6591217631216026039L;
-	private final static String PREFIX = "[ FAIL ]";
-	private final static String LOG_STYLE_CLASS = "system-monitor-fail-log-style";
+	private final static String PREFIX = "[ WARN ]";
+	private final static String LOG_STYLE_CLASS = "system-monitor-warn-log-style";
 
-	public FAILMonitorItem(String value, Component interComp) {
+	public WarningMonitorItem(String value, Component interComp) {
 		super(PREFIX, LOG_STYLE_CLASS, interComp, value);
 	}
 
-	public FAILMonitorItem(String value) {
+	public WarningMonitorItem(String value) {
 		this(value, null);
 	}
 

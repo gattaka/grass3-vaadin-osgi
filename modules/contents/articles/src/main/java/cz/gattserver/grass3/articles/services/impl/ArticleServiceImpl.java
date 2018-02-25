@@ -204,7 +204,7 @@ public class ArticleServiceImpl implements ArticleService {
 
 				ArticlePayloadTO payload = new ArticlePayloadTO(article.getContentNode().getName(), article.getText(),
 						tags, article.getContentNode().getPublicated(), contextRoot);
-				if (article.getContentNode().getDraft()) {
+				if (article.getContentNode().getDraft() == null || article.getContentNode().getDraft()) {
 					if (article.getContentNode().getDraftSourceId() != null) {
 						modifyDraftOfExistingArticle(article.getId(), payload, null,
 								article.getContentNode().getDraftSourceId(), true);

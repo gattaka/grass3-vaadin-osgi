@@ -16,6 +16,8 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.JavaScript;
+import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.VerticalLayout;
 
@@ -29,6 +31,7 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.MailService;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.ui.H2Label;
+import elemental.json.JsonArray;
 
 public class MonitorPage extends OneColumnPage {
 
@@ -88,8 +91,8 @@ public class MonitorPage extends OneColumnPage {
 					ProgressBar pb = new ProgressBar();
 					pb.setValue(usedRation);
 					pb.setWidth("200px");
-					itemLayout.addComponent(new SuccessMonitorItem("obsazeno " + humanFormat(used) + " (" + usedPerc + ") z "
-							+ humanFormat(total) + "; volno " + humanFormat(free), pb));
+					itemLayout.addComponent(new SuccessMonitorItem("obsazeno " + humanFormat(used) + " (" + usedPerc
+							+ ") z " + humanFormat(total) + "; volno " + humanFormat(free), pb));
 					((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
 					jvmLayout.addComponent(itemLayout);
 				} catch (NumberFormatException e) {
@@ -213,8 +216,8 @@ public class MonitorPage extends OneColumnPage {
 		ProgressBar pb = new ProgressBar();
 		pb.setValue(usedRation);
 		pb.setWidth("200px");
-		itemLayout.addComponent(new SuccessMonitorItem(name + " [" + store.type() + "] obsazeno " + humanFormat(used) + " ("
-				+ usedPerc + ") z " + humanFormat(total) + "; volno " + humanFormat(usable), pb));
+		itemLayout.addComponent(new SuccessMonitorItem(name + " [" + store.type() + "] obsazeno " + humanFormat(used)
+				+ " (" + usedPerc + ") z " + humanFormat(total) + "; volno " + humanFormat(usable), pb));
 		((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
 		return itemLayout;
 	}
@@ -224,6 +227,27 @@ public class MonitorPage extends OneColumnPage {
 		layout = new VerticalLayout();
 		layout.setSpacing(false);
 		layout.setMargin(true);
+
+		// Tag-cloud
+		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.monitorupadate", new JavaScriptFunction() {
+			private static final long serialVersionUID = 5850638851716815161L;
+
+			@Override
+			public void call(JsonArray arguments) {
+				layout.removeAllComponents();
+				populateMonitor();
+			}
+		});
+
+		// update každé 5s
+		JavaScript.eval("setInterval(function(){ cz.gattserver.grass3.monitorupadate(); }, 5000);");
+
+		populateMonitor();
+
+		return layout;
+	}
+
+	private void populateMonitor() {
 
 		// System
 		createSystemPart();
@@ -246,7 +270,5 @@ public class MonitorPage extends OneColumnPage {
 			mailService.sendToAdmin("Test", "Test mail");
 		});
 		mailLayout.addComponent(testMailBtn);
-
-		return layout;
 	}
 }

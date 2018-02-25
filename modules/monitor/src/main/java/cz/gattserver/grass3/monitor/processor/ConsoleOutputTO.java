@@ -3,15 +3,15 @@ package cz.gattserver.grass3.monitor.processor;
 public class ConsoleOutputTO {
 
 	private String output;
-	private boolean error;
+	private boolean success;
 
 	public ConsoleOutputTO(String output) {
-		this(output, false);
+		this(output, true);
 	}
 
-	public ConsoleOutputTO(String output, boolean error) {
+	public ConsoleOutputTO(String output, boolean success) {
 		this.output = output;
-		this.error = error;
+		this.success = success;
 	}
 
 	public String getOutput() {
@@ -22,12 +22,12 @@ public class ConsoleOutputTO {
 		this.output = output;
 	}
 
-	public boolean isError() {
-		return error;
+	public boolean isSuccess() {
+		return success;
 	}
 
-	public void setError(boolean error) {
-		this.error = error;
+	public void setSuccess(boolean success) {
+		this.success = success;
 	}
 
 }

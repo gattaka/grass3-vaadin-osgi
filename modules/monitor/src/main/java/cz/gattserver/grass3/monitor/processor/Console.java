@@ -1,42 +1,52 @@
 package cz.gattserver.grass3.monitor.processor;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Console {
 
+	private static Logger logger = LoggerFactory.getLogger(Console.class);
+
 	public static ConsoleOutputTO executeCommand(String... commandAndArguments) {
 
-		File dummyInput = null;
+		Path dummyInput = null;
 		try {
-			dummyInput = File.createTempFile(String.valueOf(System.currentTimeMillis()), "GRASS-CONSOLE-DUMMY-INPUT");
-		} catch (IOException e1) {
-			return new ConsoleOutputTO("Error during creation of dummy input file (Console)", true);
+			dummyInput = Files.createTempFile(String.valueOf(System.currentTimeMillis()), "GRASS-CONSOLE-DUMMY-INPUT");
+		} catch (IOException e) {
+			logger.error("Nezdařilo se vytvořit dummy input soubor pro příkaz console", e);
+			return new ConsoleOutputTO(e.getMessage(), false);
 		}
 
 		try {
 			ProcessBuilder pb = new ProcessBuilder(commandAndArguments);
 
-			pb.redirectInput(dummyInput);
-
+			// staré API... toFile :( Ale tohle se stejně nedá testovat,
+			// protože OS-specific
+			pb.redirectInput(dummyInput.toFile());
 			Process process = pb.start();
-			InputStream is = process.getInputStream();
-			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(isr);
-			String line;
-
-			StringBuilder builder = new StringBuilder();
-			while ((line = br.readLine()) != null) {
-				builder.append(line);
+			int returned = process.waitFor();
+			if (returned != 0)
+				return new ConsoleOutputTO(
+						"Vrácená hodnota prováděného příkazu je '" + returned + "', namísto očekávané '0'", false);
+			try (BufferedReader buffer = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+				return new ConsoleOutputTO(buffer.lines().collect(Collectors.joining("\n")));
 			}
-			return new ConsoleOutputTO(builder.toString());
-		} catch (IOException e) {
-			return new ConsoleOutputTO("ERROR occurred during command execution: " + e.getMessage(), true);
+		} catch (Exception e) {
+			logger.error("Nezdařilo se provést příkaz console", e);
+			return new ConsoleOutputTO(e.getMessage(), false);
 		} finally {
-			dummyInput.delete();
+			try {
+				Files.delete(dummyInput);
+			} catch (IOException e) {
+				logger.error("Nezdařilo se smazat dočasný soubor logu console", e);
+			}
 		}
 
 	}

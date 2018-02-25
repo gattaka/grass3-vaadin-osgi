@@ -11,10 +11,12 @@ public interface MonitorFacade {
 
 	public ConsoleOutputTO getLastTimeOfBackup();
 
-	public ConsoleOutputTO getBackupDiskSizeInfo();
+	public ConsoleOutputTO getDiskMounts();
 
 	MonitorConfiguration getConfiguration();
 
 	void storeConfiguration(MonitorConfiguration configuration);
+
+	ConsoleOutputTO getMemoryStatus();
 
 }

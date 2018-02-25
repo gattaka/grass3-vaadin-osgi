@@ -40,17 +40,39 @@ public class MonitorFacadeImpl implements MonitorFacade {
 
 	@Override
 	public ConsoleOutputTO getBackupDiskMounted() {
+		// #!/bin/bash
+		//
+		// disk=$( df -h | grep backup )
+		//
+		// if [ -z "$disk" ]
+		// then echo "false"
+		// else echo "true"
+		// fi
 		return runScript("isBackupDiskMounted");
 	}
 
 	@Override
+	public ConsoleOutputTO getMemoryStatus() {
+		// #!/bin/bash
+		// free | grep 'Mem' | grep -o [0-9]*
+		return runScript("getMemoryStatus");
+	}
+
+	@Override
 	public ConsoleOutputTO getLastTimeOfBackup() {
+		// #!/bin/bash
+		// echo -n "SRV "
+		// tail -n 1 /mnt/backup/srv-backup.log
+		// echo -n "FTP "
+		// tail -n 1 /mnt/backup/ftp-backup.log
 		return runScript("getLastTimeOfBackup");
 	}
 
 	@Override
-	public ConsoleOutputTO getBackupDiskSizeInfo() {
-		return runScript("getBackupDiskSizeInfo");
+	public ConsoleOutputTO getDiskMounts() {
+		// #!/bin/bash
+		// /usr/bin/mount | egrep '^/'
+		return runScript("getDiskMounts");
 	}
 
 }

@@ -101,6 +101,7 @@ public class MonitorPage extends OneColumnPage {
 							pb));
 			((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
 			jvmLayout.addComponent(itemLayout);
+			break;
 		case UNAVAILABLE:
 		case ERROR:
 		default:
@@ -120,6 +121,7 @@ public class MonitorPage extends OneColumnPage {
 			jvmLayout.addComponent(new SuccessMonitorDisplay(
 					String.format("JVM uptime: %d days, %d hours, %d minutes, %d seconds%n", uptimeTO.getElapsedDays(),
 							uptimeTO.getElapsedHours(), uptimeTO.getElapsedMinutes(), uptimeTO.getElapsedSeconds())));
+			break;
 		case UNAVAILABLE:
 		case ERROR:
 		default:
@@ -134,6 +136,7 @@ public class MonitorPage extends OneColumnPage {
 		case SUCCESS:
 			jvmLayout.addComponent(new SuccessMonitorDisplay(
 					"Aktuální stav vláken: " + threadsTO.getCount() + " peak: " + threadsTO.getPeak()));
+			break;
 		case UNAVAILABLE:
 		case ERROR:
 		default:
@@ -147,6 +150,7 @@ public class MonitorPage extends OneColumnPage {
 		switch (to.getMonitorState()) {
 		case SUCCESS:
 			mountsLayout.addComponent(new SuccessMonitorDisplay(to.getValue()));
+			break;
 		case UNAVAILABLE:
 		case ERROR:
 		default:
@@ -160,8 +164,10 @@ public class MonitorPage extends OneColumnPage {
 		switch (mouted.getMonitorState()) {
 		case SUCCESS:
 			backupLayout.addComponent(new SuccessMonitorDisplay("Backup disk je připojen"));
+			break;
 		case ERROR:
 			backupLayout.addComponent(new ErrorMonitorDisplay("Backup disk není připojen"));
+			break;
 		case UNAVAILABLE:
 		default:
 			backupLayout.addComponent(new WarningMonitorDisplay("Backup disk info není dostupné"));
@@ -172,8 +178,10 @@ public class MonitorPage extends OneColumnPage {
 			switch (lastBackupTO.getMonitorState()) {
 			case SUCCESS:
 				backupLayout.addComponent(new SuccessMonitorDisplay(lastBackupTO.getValue()));
+				break;
 			case ERROR:
 				backupLayout.addComponent(new ErrorMonitorDisplay("Nebyla provedena pravidelná záloha"));
+				break;
 			case UNAVAILABLE:
 			default:
 				backupLayout.addComponent(

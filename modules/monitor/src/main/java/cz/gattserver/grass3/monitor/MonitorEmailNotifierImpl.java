@@ -10,7 +10,7 @@ import cz.gattserver.grass3.monitor.processor.item.MonitorState;
 import cz.gattserver.grass3.services.MailService;
 
 @Component
-public class EmailNotifierImpl extends TimerTask implements EmailNotifier {
+public class MonitorEmailNotifierImpl extends TimerTask implements MonitorEmailNotifier {
 
 	@Autowired
 	private MonitorFacade monitorFacade;

@@ -24,7 +24,7 @@ public class MonitorSection implements SectionService {
 	private PageFactory monitorPageFactory;
 
 	@Autowired
-	private EmailNotifier emailNotifier;
+	private MonitorEmailNotifier emailNotifier;
 
 	private static final long ONCE_PER_DAY = 1L * 1000 * 60 * 60 * 24;
 

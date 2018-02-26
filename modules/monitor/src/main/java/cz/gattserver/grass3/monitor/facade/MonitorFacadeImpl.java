@@ -1,5 +1,8 @@
 package cz.gattserver.grass3.monitor.facade;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,6 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
 import cz.gattserver.grass3.monitor.processor.Console;
 import cz.gattserver.grass3.monitor.processor.ConsoleOutputTO;
+import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.DiskMountsMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.MonitorState;
+import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
 import cz.gattserver.grass3.services.ConfigurationService;
 
 @Transactional
@@ -34,12 +45,83 @@ public class MonitorFacadeImpl implements MonitorFacade {
 	}
 
 	@Override
-	public ConsoleOutputTO getUptime() {
-		return Console.executeCommand("uptime");
+	public SystemUptimeMonitorItemTO getSystemUptime() {
+		ConsoleOutputTO to = Console.executeCommand("uptime");
+		SystemUptimeMonitorItemTO uptimeTO = new SystemUptimeMonitorItemTO();
+		uptimeTO.setMonitorState(to.isSuccess() ? MonitorState.SUCCESS : MonitorState.UNAVAILABLE);
+		uptimeTO.setValue(to.getOutput());
+		return uptimeTO;
 	}
 
 	@Override
-	public ConsoleOutputTO getBackupDiskMounted() {
+	public SystemMemoryMonitorItemTO getSystemMemoryStatus() {
+		// #!/bin/bash
+		// free | grep 'Mem' | grep -o [0-9]*
+		ConsoleOutputTO to = runScript("getMemoryStatus");
+		SystemMemoryMonitorItemTO itemTO = new SystemMemoryMonitorItemTO();
+
+		String[] values = to.getOutput().split("\n");
+		if (values.length != 6) {
+			itemTO.setMonitorState(MonitorState.UNAVAILABLE);
+			return itemTO;
+		} else {
+			try {
+				// * 1000 protože údaje jsou v KB
+				itemTO.setTotal(Long.parseLong(values[0]) * 1000);
+				itemTO.setUsed(Long.parseLong(values[1]) * 1000);
+				itemTO.setFree(Long.parseLong(values[2]) * 1000);
+				itemTO.setShared(Long.parseLong(values[3]) * 1000);
+				itemTO.setBuffCache(Long.parseLong(values[4]) * 1000);
+				itemTO.setAvailable(Long.parseLong(values[5]) * 1000);
+			} catch (NumberFormatException e) {
+				itemTO.setMonitorState(MonitorState.UNAVAILABLE);
+				return itemTO;
+			}
+		}
+
+		itemTO.setMonitorState(MonitorState.SUCCESS);
+		return itemTO;
+	}
+
+	@Override
+	public JVMUptimeMonitorItemTO getJVMUptime() {
+		JVMUptimeMonitorItemTO to = new JVMUptimeMonitorItemTO();
+		try {
+			to.setUptime(ManagementFactory.getRuntimeMXBean().getUptime());
+			to.setMonitorState(MonitorState.SUCCESS);
+		} catch (Exception e) {
+			to.setMonitorState(MonitorState.UNAVAILABLE);
+		}
+		return to;
+	}
+
+	@Override
+	public JVMThreadsMonitorItemTO getJVMThreads() {
+		JVMThreadsMonitorItemTO to = new JVMThreadsMonitorItemTO();
+		try {
+			ThreadMXBean tb = ManagementFactory.getThreadMXBean();
+			to.setCount(tb.getThreadCount());
+			to.setPeak(tb.getPeakThreadCount());
+			to.setMonitorState(MonitorState.SUCCESS);
+		} catch (Exception e) {
+			to.setMonitorState(MonitorState.UNAVAILABLE);
+		}
+		return to;
+	}
+
+	@Override
+	public DiskMountsMonitorItemTO getDiskMounts() {
+		// #!/bin/bash
+		// /usr/bin/mount | egrep '^/'
+		ConsoleOutputTO to = runScript("getDiskMounts");
+		DiskMountsMonitorItemTO itemTO = new DiskMountsMonitorItemTO();
+		itemTO.setMonitorState(to.isSuccess() ? MonitorState.SUCCESS : MonitorState.UNAVAILABLE);
+		itemTO.setValue(to.getOutput());
+		return itemTO;
+	}
+
+	@Override
+	public BackupDiskMountedMonitorItemTO getBackupDiskMounted() {
 		// #!/bin/bash
 		//
 		// disk=$( df -h | grep backup )
@@ -48,31 +130,37 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		// then echo "false"
 		// else echo "true"
 		// fi
-		return runScript("isBackupDiskMounted");
+		ConsoleOutputTO to = runScript("isBackupDiskMounted");
+		BackupDiskMountedMonitorItemTO itemTO = new BackupDiskMountedMonitorItemTO();
+		itemTO.setValue(to.getOutput());
+		if (to.isSuccess()) {
+			itemTO.setMonitorState(Boolean.parseBoolean(to.getOutput()) ? MonitorState.SUCCESS : MonitorState.ERROR);
+		} else {
+			itemTO.setMonitorState(MonitorState.UNAVAILABLE);
+		}
+		return itemTO;
 	}
 
 	@Override
-	public ConsoleOutputTO getMemoryStatus() {
-		// #!/bin/bash
-		// free | grep 'Mem' | grep -o [0-9]*
-		return runScript("getMemoryStatus");
-	}
-
-	@Override
-	public ConsoleOutputTO getLastTimeOfBackup() {
+	public LastBackupTimeMonitorItemTO getLastTimeOfBackup() {
 		// #!/bin/bash
 		// echo -n "SRV "
 		// tail -n 1 /mnt/backup/srv-backup.log
 		// echo -n "FTP "
 		// tail -n 1 /mnt/backup/ftp-backup.log
-		return runScript("getLastTimeOfBackup");
-	}
-
-	@Override
-	public ConsoleOutputTO getDiskMounts() {
-		// #!/bin/bash
-		// /usr/bin/mount | egrep '^/'
-		return runScript("getDiskMounts");
+		ConsoleOutputTO to = runScript("getLastTimeOfBackup");
+		LastBackupTimeMonitorItemTO itemTO = new LastBackupTimeMonitorItemTO();
+		itemTO.setValue(to.getOutput());
+		if (to.isSuccess()) {
+			// String test = "SRV Last backup: Po úno 26 00:00:23 CET 2018\nFTP
+			// Last backup: Po úno 26 00:01:38 CET 2018";
+			// TODO parsing času a porovnání, zda nejde o 24+ hodin starou
+			// zálohu
+			itemTO.setMonitorState(MonitorState.SUCCESS);
+		} else {
+			itemTO.setMonitorState(MonitorState.UNAVAILABLE);
+		}
+		return itemTO;
 	}
 
 }

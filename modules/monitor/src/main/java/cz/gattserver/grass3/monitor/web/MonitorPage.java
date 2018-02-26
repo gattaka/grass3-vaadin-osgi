@@ -1,8 +1,6 @@
 package cz.gattserver.grass3.monitor.web;
 
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -23,10 +21,17 @@ import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.grass3.monitor.facade.MonitorFacade;
-import cz.gattserver.grass3.monitor.processor.ConsoleOutputTO;
-import cz.gattserver.grass3.monitor.web.label.ErrorMonitorItem;
-import cz.gattserver.grass3.monitor.web.label.WarningMonitorItem;
-import cz.gattserver.grass3.monitor.web.label.SuccessMonitorItem;
+import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.DiskMountsMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.MonitorState;
+import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
+import cz.gattserver.grass3.monitor.web.label.ErrorMonitorDisplay;
+import cz.gattserver.grass3.monitor.web.label.WarningMonitorDisplay;
+import cz.gattserver.grass3.monitor.web.label.SuccessMonitorDisplay;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.MailService;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
@@ -62,111 +67,120 @@ public class MonitorPage extends OneColumnPage {
 
 	private void createSystemPart() {
 		VerticalLayout jvmLayout = createMonitorPart("System");
-		ConsoleOutputTO to = monitorFacade.getUptime();
-		if (to.isSuccess()) {
-			jvmLayout.addComponent(new SuccessMonitorItem(monitorFacade.getUptime().getOutput()));
-		} else {
-			jvmLayout.addComponent(new WarningMonitorItem("System uptime info není dostupné"));
+
+		/*
+		 * Uptime
+		 */
+		SystemUptimeMonitorItemTO uptimeTO = monitorFacade.getSystemUptime();
+		switch (uptimeTO.getMonitorState()) {
+		case SUCCESS:
+			jvmLayout.addComponent(new SuccessMonitorDisplay(uptimeTO.getValue()));
+			break;
+		case UNAVAILABLE:
+		case ERROR:
+		default:
+			jvmLayout.addComponent(new WarningMonitorDisplay("System uptime info není dostupné"));
 		}
 
-		to = monitorFacade.getMemoryStatus();
-		if (to.isSuccess()) {
-			String[] values = to.getOutput().split("\n");
-			if (values.length != 6) {
-				createMemoryFailInfo(jvmLayout);
-			} else {
-				try {
-					// * 1000 protože údaje jsou v KB
-					long total = Long.parseLong(values[0]) * 1000;
-					long used = Long.parseLong(values[1]) * 1000;
-					long free = Long.parseLong(values[2]) * 1000;
-					// int shared = Long.parseLong(values[3]);
-					// int buffCache = Long.parseLong(values[4]);
-					// int available = Long.parseLong(values[5]);
-
-					HorizontalLayout itemLayout = new HorizontalLayout();
-					itemLayout.setSpacing(true);
-					float usedRation = (float) used / total;
-					String usedPerc = NumberFormat.getIntegerInstance().format(usedRation * 100) + "%";
-					ProgressBar pb = new ProgressBar();
-					pb.setValue(usedRation);
-					pb.setWidth("200px");
-					itemLayout.addComponent(new SuccessMonitorItem("obsazeno " + humanFormat(used) + " (" + usedPerc
-							+ ") z " + humanFormat(total) + "; volno " + humanFormat(free), pb));
-					((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
-					jvmLayout.addComponent(itemLayout);
-				} catch (NumberFormatException e) {
-					createMemoryFailInfo(jvmLayout);
-				}
-			}
-		} else {
-			createMemoryFailInfo(jvmLayout);
+		/*
+		 * Memory
+		 */
+		SystemMemoryMonitorItemTO memoryTO = monitorFacade.getSystemMemoryStatus();
+		switch (memoryTO.getMonitorState()) {
+		case SUCCESS:
+			HorizontalLayout itemLayout = new HorizontalLayout();
+			itemLayout.setSpacing(true);
+			String usedPerc = NumberFormat.getIntegerInstance().format(memoryTO.getUsedRation() * 100) + "%";
+			ProgressBar pb = new ProgressBar();
+			pb.setValue(memoryTO.getUsedRation());
+			pb.setWidth("200px");
+			itemLayout
+					.addComponent(new SuccessMonitorDisplay(
+							"obsazeno " + humanFormat(memoryTO.getUsed()) + " (" + usedPerc + ") z "
+									+ humanFormat(memoryTO.getTotal()) + "; volno " + humanFormat(memoryTO.getFree()),
+							pb));
+			((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
+			jvmLayout.addComponent(itemLayout);
+		case UNAVAILABLE:
+		case ERROR:
+		default:
+			jvmLayout.addComponent(new WarningMonitorDisplay("System memory info není dostupné"));
 		}
-	}
-
-	private void createMemoryFailInfo(VerticalLayout jvmLayout) {
-		jvmLayout.addComponent(new WarningMonitorItem("System memory info není dostupné"));
 	}
 
 	private void createJVMPart() {
 		VerticalLayout jvmLayout = createMonitorPart("JVM");
 
-		// JVM Uptime
-		try {
-			long uptime = ManagementFactory.getRuntimeMXBean().getUptime();
-			long secondsInMilli = 1000;
-			long minutesInMilli = secondsInMilli * 60;
-			long hoursInMilli = minutesInMilli * 60;
-			long daysInMilli = hoursInMilli * 24;
-
-			long elapsedDays = uptime / daysInMilli;
-			uptime = uptime % daysInMilli;
-
-			long elapsedHours = uptime / hoursInMilli;
-			uptime = uptime % hoursInMilli;
-
-			long elapsedMinutes = uptime / minutesInMilli;
-			uptime = uptime % minutesInMilli;
-
-			long elapsedSeconds = uptime / secondsInMilli;
-			jvmLayout.addComponent(
-					new SuccessMonitorItem(String.format("JVM uptime: %d days, %d hours, %d minutes, %d seconds%n",
-							elapsedDays, elapsedHours, elapsedMinutes, elapsedSeconds)));
-		} catch (Exception e) {
-			jvmLayout.addComponent(new WarningMonitorItem("JVM uptime info není dostupné"));
+		/*
+		 * JVM Uptime
+		 */
+		JVMUptimeMonitorItemTO uptimeTO = monitorFacade.getJVMUptime();
+		switch (uptimeTO.getMonitorState()) {
+		case SUCCESS:
+			jvmLayout.addComponent(new SuccessMonitorDisplay(
+					String.format("JVM uptime: %d days, %d hours, %d minutes, %d seconds%n", uptimeTO.getElapsedDays(),
+							uptimeTO.getElapsedHours(), uptimeTO.getElapsedMinutes(), uptimeTO.getElapsedSeconds())));
+		case UNAVAILABLE:
+		case ERROR:
+		default:
+			jvmLayout.addComponent(new WarningMonitorDisplay("JVM uptime info není dostupné"));
 		}
 
-		try {
-			ThreadMXBean tb = ManagementFactory.getThreadMXBean();
-			jvmLayout.addComponent(new SuccessMonitorItem(
-					"Aktuální stav vláken: " + tb.getThreadCount() + " peak: " + tb.getPeakThreadCount()));
-		} catch (Exception e) {
-			jvmLayout.addComponent(new WarningMonitorItem("JVM thread info není dostupné"));
+		/*
+		 * JVM Threads
+		 */
+		JVMThreadsMonitorItemTO threadsTO = monitorFacade.getJVMThreads();
+		switch (threadsTO.getMonitorState()) {
+		case SUCCESS:
+			jvmLayout.addComponent(new SuccessMonitorDisplay(
+					"Aktuální stav vláken: " + threadsTO.getCount() + " peak: " + threadsTO.getPeak()));
+		case UNAVAILABLE:
+		case ERROR:
+		default:
+			jvmLayout.addComponent(new WarningMonitorDisplay("JVM thread info není dostupné"));
 		}
 	}
 
 	private void createMountsPart() {
 		VerticalLayout mountsLayout = createMonitorPart("Mount points");
-		ConsoleOutputTO mouted = monitorFacade.getDiskMounts();
-		if (mouted.isSuccess()) {
-			mountsLayout.addComponent(new SuccessMonitorItem(mouted.getOutput()));
-		} else {
-			mountsLayout.addComponent(new WarningMonitorItem("Mount points info není dostupné"));
+		DiskMountsMonitorItemTO to = monitorFacade.getDiskMounts();
+		switch (to.getMonitorState()) {
+		case SUCCESS:
+			mountsLayout.addComponent(new SuccessMonitorDisplay(to.getValue()));
+		case UNAVAILABLE:
+		case ERROR:
+		default:
+			mountsLayout.addComponent(new WarningMonitorDisplay("Mount points info není dostupné"));
 		}
 	}
 
 	private void createBackupPart() {
 		VerticalLayout backupLayout = createMonitorPart("Backup");
-		ConsoleOutputTO mouted = monitorFacade.getBackupDiskMounted();
-		if (mouted.isSuccess()) {
-			if (Boolean.parseBoolean(mouted.getOutput())) {
-				backupLayout.addComponent(new SuccessMonitorItem(monitorFacade.getLastTimeOfBackup().getOutput()));
-			} else {
-				backupLayout.addComponent(new ErrorMonitorItem("Backup disk není připojen"));
-			}
-		} else {
-			backupLayout.addComponent(new WarningMonitorItem("Backup disk info není dostupné"));
+		BackupDiskMountedMonitorItemTO mouted = monitorFacade.getBackupDiskMounted();
+		switch (mouted.getMonitorState()) {
+		case SUCCESS:
+			backupLayout.addComponent(new SuccessMonitorDisplay("Backup disk je připojen"));
+		case ERROR:
+			backupLayout.addComponent(new ErrorMonitorDisplay("Backup disk není připojen"));
+		case UNAVAILABLE:
+		default:
+			backupLayout.addComponent(new WarningMonitorDisplay("Backup disk info není dostupné"));
 		}
+
+		if (MonitorState.SUCCESS.equals(mouted.getMonitorState())) {
+			LastBackupTimeMonitorItemTO lastBackupTO = monitorFacade.getLastTimeOfBackup();
+			switch (lastBackupTO.getMonitorState()) {
+			case SUCCESS:
+				backupLayout.addComponent(new SuccessMonitorDisplay(lastBackupTO.getValue()));
+			case ERROR:
+				backupLayout.addComponent(new ErrorMonitorDisplay("Nebyla provedena pravidelná záloha"));
+			case UNAVAILABLE:
+			default:
+				backupLayout.addComponent(
+						new WarningMonitorDisplay("Backup disk info o provedení poslední zálohy není dostupné"));
+			}
+		}
+
 	}
 
 	private void createDisksPart() {
@@ -182,7 +196,7 @@ public class MonitorPage extends OneColumnPage {
 					if (itemLayout != null)
 						diskLayout.addComponent(itemLayout);
 				} catch (IOException e) {
-					diskLayout.addComponent(new WarningMonitorItem(name + " info není dostupné"));
+					diskLayout.addComponent(new WarningMonitorDisplay(name + " info není dostupné"));
 				}
 			}
 		} else {
@@ -194,7 +208,7 @@ public class MonitorPage extends OneColumnPage {
 					if (itemLayout != null)
 						diskLayout.addComponent(itemLayout);
 				} catch (IOException e) {
-					diskLayout.addComponent(new WarningMonitorItem(name + " info není dostupné"));
+					diskLayout.addComponent(new WarningMonitorDisplay(name + " info není dostupné"));
 				}
 
 			}
@@ -216,7 +230,7 @@ public class MonitorPage extends OneColumnPage {
 		ProgressBar pb = new ProgressBar();
 		pb.setValue(usedRation);
 		pb.setWidth("200px");
-		itemLayout.addComponent(new SuccessMonitorItem(name + " [" + store.type() + "] obsazeno " + humanFormat(used)
+		itemLayout.addComponent(new SuccessMonitorDisplay(name + " [" + store.type() + "] obsazeno " + humanFormat(used)
 				+ " (" + usedPerc + ") z " + humanFormat(total) + "; volno " + humanFormat(usable), pb));
 		((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
 		return itemLayout;

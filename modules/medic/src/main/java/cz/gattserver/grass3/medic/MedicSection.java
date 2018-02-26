@@ -1,8 +1,8 @@
 package cz.gattserver.grass3.medic;
 
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,23 +27,14 @@ public class MedicSection implements SectionService {
 	private EmailNotifier emailNotifier;
 
 	private static final long ONCE_PER_DAY = 1L * 1000 * 60 * 60 * 24;
-	private static final int ONE_DAY = 1;
-	private static final int FOUR_AM = 4;
-	private static final int ZERO_MINUTES = 0;
-
-	private static Date getTomorrowMorning4am() {
-		Calendar tomorrow = new GregorianCalendar();
-		tomorrow.add(Calendar.DATE, ONE_DAY);
-		Calendar result = new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH),
-				tomorrow.get(Calendar.DATE), FOUR_AM, ZERO_MINUTES);
-		return result.getTime();
-	}
 
 	@PostConstruct
 	private void initEmailNotifier() {
 		TimerTask fetchMail = emailNotifier.getTimerTask();
 		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(fetchMail, getTomorrowMorning4am(), ONCE_PER_DAY);
+		LocalDateTime ldt = LocalDateTime.now().plusDays(1).withHour(4);
+		Date tomorrowMorning4am = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+		timer.scheduleAtFixedRate(fetchMail, tomorrowMorning4am, ONCE_PER_DAY);
 	}
 
 	public boolean isVisibleForRoles(Set<Role> roles) {

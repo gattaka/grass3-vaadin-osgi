@@ -1,9 +1,16 @@
 package cz.gattserver.grass3.monitor;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.modules.SectionService;
@@ -15,6 +22,20 @@ public class MonitorSection implements SectionService {
 
 	@Resource(name = "monitorPageFactory")
 	private PageFactory monitorPageFactory;
+
+	@Autowired
+	private EmailNotifier emailNotifier;
+
+	private static final long ONCE_PER_DAY = 1L * 1000 * 60 * 60 * 24;
+
+	@PostConstruct
+	private void initEmailNotifier() {
+		TimerTask fetchMail = emailNotifier.getTimerTask();
+		Timer timer = new Timer();
+		LocalDateTime ldt = LocalDateTime.now().plusDays(1).withHour(4);
+		Date tomorrowMorning4am = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+		timer.scheduleAtFixedRate(fetchMail, tomorrowMorning4am, ONCE_PER_DAY);
+	}
 
 	public boolean isVisibleForRoles(Set<Role> roles) {
 		if (roles == null)

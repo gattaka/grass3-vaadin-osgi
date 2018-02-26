@@ -1,22 +1,32 @@
 package cz.gattserver.grass3.monitor.facade;
 
 import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
-import cz.gattserver.grass3.monitor.processor.ConsoleOutputTO;
+import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.DiskMountsMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
 
 public interface MonitorFacade {
-
-	public ConsoleOutputTO getUptime();
-
-	public ConsoleOutputTO getBackupDiskMounted();
-
-	public ConsoleOutputTO getLastTimeOfBackup();
-
-	public ConsoleOutputTO getDiskMounts();
 
 	MonitorConfiguration getConfiguration();
 
 	void storeConfiguration(MonitorConfiguration configuration);
 
-	ConsoleOutputTO getMemoryStatus();
+	SystemUptimeMonitorItemTO getSystemUptime();
+
+	SystemMemoryMonitorItemTO getSystemMemoryStatus();
+
+	JVMUptimeMonitorItemTO getJVMUptime();
+
+	JVMThreadsMonitorItemTO getJVMThreads();
+
+	DiskMountsMonitorItemTO getDiskMounts();
+
+	BackupDiskMountedMonitorItemTO getBackupDiskMounted();
+
+	LastBackupTimeMonitorItemTO getLastTimeOfBackup();
 
 }

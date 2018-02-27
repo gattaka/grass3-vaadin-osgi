@@ -1,7 +1,14 @@
 package cz.gattserver.grass3.monitor.facade;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.nio.file.FileStore;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +19,7 @@ import cz.gattserver.grass3.monitor.processor.Console;
 import cz.gattserver.grass3.monitor.processor.ConsoleOutputTO;
 import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskMountsMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.DiskStatusMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
@@ -161,6 +169,53 @@ public class MonitorFacadeImpl implements MonitorFacade {
 			itemTO.setMonitorState(MonitorState.UNAVAILABLE);
 		}
 		return itemTO;
+	}
+
+	@Override
+	public List<DiskStatusMonitorItemTO> getDiskStatus() {
+		List<DiskStatusMonitorItemTO> disks = new ArrayList<>();
+		if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
+			// win
+			for (Path root : FileSystems.getDefault().getRootDirectories()) {
+				DiskStatusMonitorItemTO to = new DiskStatusMonitorItemTO();
+				to.setName(root.toString());
+				try {
+					FileStore store = Files.getFileStore(root);
+					if (!analyzeStore(to, store))
+						continue;
+					to.setMonitorState(MonitorState.SUCCESS);
+				} catch (IOException e) {
+					to.setMonitorState(MonitorState.UNAVAILABLE);
+				}
+				disks.add(to);
+			}
+		} else {
+			// unix
+			for (FileStore store : FileSystems.getDefault().getFileStores()) {
+				DiskStatusMonitorItemTO to = new DiskStatusMonitorItemTO();
+				to.setName(store.name());
+				try {
+					if (!analyzeStore(to, store))
+						continue;
+					to.setMonitorState(MonitorState.SUCCESS);
+				} catch (IOException e) {
+					to.setMonitorState(MonitorState.UNAVAILABLE);
+				}
+				disks.add(to);
+			}
+		}
+		return disks;
+	}
+
+	private boolean analyzeStore(DiskStatusMonitorItemTO to, FileStore store) throws IOException {
+		to.setTotal(store.getTotalSpace());
+		// pokud je velikost disku 0, pak jde o virtuální skupinu jako
+		// proc, sys apod. -- ty stejně nechci zobrazovat
+		if (to.getTotal() == 0)
+			return false;
+		to.setType(store.type());
+		to.setUsable(store.getUsableSpace());
+		return true;
 	}
 
 }

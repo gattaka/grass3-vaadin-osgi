@@ -1,11 +1,7 @@
 package cz.gattserver.grass3.monitor.web;
 
-import java.io.IOException;
-import java.nio.file.FileStore;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.NumberFormat;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,6 +19,7 @@ import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskMountsMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.DiskStatusMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
@@ -193,55 +190,30 @@ public class MonitorPage extends OneColumnPage {
 
 	private void createDisksPart() {
 		VerticalLayout diskLayout = createMonitorPart("Disk status");
-
-		if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
-			// win
-			for (Path root : FileSystems.getDefault().getRootDirectories()) {
-				String name = root.toString();
-				try {
-					FileStore store = Files.getFileStore(root);
-					HorizontalLayout itemLayout = analyzeStore(store, name);
-					if (itemLayout != null)
-						diskLayout.addComponent(itemLayout);
-				} catch (IOException e) {
-					diskLayout.addComponent(new WarningMonitorDisplay(name + " info není dostupné"));
-				}
-			}
-		} else {
-			// unix
-			for (FileStore store : FileSystems.getDefault().getFileStores()) {
-				String name = store.name();
-				try {
-					HorizontalLayout itemLayout = analyzeStore(store, name);
-					if (itemLayout != null)
-						diskLayout.addComponent(itemLayout);
-				} catch (IOException e) {
-					diskLayout.addComponent(new WarningMonitorDisplay(name + " info není dostupné"));
-				}
-
+		List<DiskStatusMonitorItemTO> disks = monitorFacade.getDiskStatus();
+		for (DiskStatusMonitorItemTO disk : disks) {
+			switch (disk.getMonitorState()) {
+			case SUCCESS:
+				HorizontalLayout itemLayout = new HorizontalLayout();
+				itemLayout.setSpacing(true);
+				String usedPerc = NumberFormat.getIntegerInstance().format(disk.getUsedRation() * 100) + "%";
+				ProgressBar pb = new ProgressBar();
+				pb.setValue(disk.getUsedRation());
+				pb.setWidth("200px");
+				itemLayout.addComponent(new SuccessMonitorDisplay(disk.getName() + " [" + disk.getType() + "] obsazeno "
+						+ humanFormat(disk.getUsed()) + " (" + usedPerc + ") z " + humanFormat(disk.getTotal())
+						+ "; volno " + humanFormat(disk.getUsable()), pb));
+				((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
+				diskLayout.addComponent(itemLayout);
+				break;
+			case ERROR:
+				diskLayout.addComponent(new ErrorMonitorDisplay("Chyba disku"));
+				break;
+			case UNAVAILABLE:
+			default:
+				diskLayout.addComponent(new WarningMonitorDisplay(disk.getName() + " info není dostupné"));
 			}
 		}
-	}
-
-	private HorizontalLayout analyzeStore(FileStore store, String name) throws IOException {
-		HorizontalLayout itemLayout = new HorizontalLayout();
-		itemLayout.setSpacing(true);
-		long total = store.getTotalSpace();
-		// pokud je velikost disku 0, pak jde o virtuální skupinu jako
-		// proc, sys apod. -- ty stejně nechci zobrazovat
-		if (total == 0)
-			return null;
-		long usable = store.getUsableSpace();
-		long used = total - usable;
-		float usedRation = (float) used / total;
-		String usedPerc = NumberFormat.getIntegerInstance().format(usedRation * 100) + "%";
-		ProgressBar pb = new ProgressBar();
-		pb.setValue(usedRation);
-		pb.setWidth("200px");
-		itemLayout.addComponent(new SuccessMonitorDisplay(name + " [" + store.type() + "] obsazeno " + humanFormat(used)
-				+ " (" + usedPerc + ") z " + humanFormat(total) + "; volno " + humanFormat(usable), pb));
-		((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
-		return itemLayout;
 	}
 
 	@Override
@@ -250,7 +222,6 @@ public class MonitorPage extends OneColumnPage {
 		layout.setSpacing(false);
 		layout.setMargin(true);
 
-		// Tag-cloud
 		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.monitorupadate", new JavaScriptFunction() {
 			private static final long serialVersionUID = 5850638851716815161L;
 

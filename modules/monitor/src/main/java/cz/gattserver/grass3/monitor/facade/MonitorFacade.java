@@ -30,7 +30,7 @@ public interface MonitorFacade {
 
 	BackupDiskMountedMonitorItemTO getBackupDiskMounted();
 
-	LastBackupTimeMonitorItemTO getLastTimeOfBackup();
+	List<LastBackupTimeMonitorItemTO> getLastTimeOfBackup();
 
 	List<DiskStatusMonitorItemTO> getDiskStatus();
 

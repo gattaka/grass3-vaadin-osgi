@@ -7,6 +7,8 @@ import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,25 +152,50 @@ public class MonitorFacadeImpl implements MonitorFacade {
 	}
 
 	@Override
-	public LastBackupTimeMonitorItemTO getLastTimeOfBackup() {
+	public List<LastBackupTimeMonitorItemTO> getLastTimeOfBackup() {
 		// #!/bin/bash
 		// echo -n "SRV "
 		// tail -n 1 /mnt/backup/srv-backup.log
+		// echo -n "SYS "
+		// tail -n 1 /mnt/backup/srv-systemctl-backup.log
 		// echo -n "FTP "
 		// tail -n 1 /mnt/backup/ftp-backup.log
 		ConsoleOutputTO to = runScript("getLastTimeOfBackup");
-		LastBackupTimeMonitorItemTO itemTO = new LastBackupTimeMonitorItemTO();
-		itemTO.setValue(to.getOutput());
+		List<LastBackupTimeMonitorItemTO> list = new ArrayList<>();
+
+		String dummTarget = "TTT Last backup:  ";
+		String dummyDate = "HH:MM:SS DD.MM.YYYY";
+		String dummyLog = dummTarget + dummyDate;
+
 		if (to.isSuccess()) {
-			// String test = "SRV Last backup: Po úno 26 00:00:23 CET 2018\nFTP
-			// Last backup: Po úno 26 00:01:38 CET 2018";
-			// TODO parsing času a porovnání, zda nejde o 24+ hodin starou
-			// zálohu
-			itemTO.setMonitorState(MonitorState.SUCCESS);
+			for (String part : to.getOutput().split("\n")) {
+				LastBackupTimeMonitorItemTO itemTO = new LastBackupTimeMonitorItemTO();
+				if (part.length() == dummyLog.length()) {
+					String target = part.substring(0, 3);
+					String date = part.substring(dummTarget.length());
+					LocalDateTime lastBackup = LocalDateTime.parse(date,
+							DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy"));
+					// poslední záloha nesmí být starší než 24h
+					if (lastBackup.isBefore(LocalDateTime.now().minusHours(24))) {
+						itemTO.setMonitorState(MonitorState.ERROR);
+						itemTO.setValue(target);
+					} else {
+						itemTO.setMonitorState(MonitorState.SUCCESS);
+						itemTO.setValue(target + ": poslední záloha byla provedena " + date);
+					}
+					itemTO.setLastTime(lastBackup);
+				} else {
+					// nejsou podklady pro info o poslední záloze? Chyba!
+					itemTO.setMonitorState(MonitorState.ERROR);
+				}
+				list.add(itemTO);
+			}
 		} else {
+			LastBackupTimeMonitorItemTO itemTO = new LastBackupTimeMonitorItemTO();
 			itemTO.setMonitorState(MonitorState.UNAVAILABLE);
+			list.add(itemTO);
 		}
-		return itemTO;
+		return list;
 	}
 
 	@Override

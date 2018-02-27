@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.monitor.facade.MonitorFacade;
+import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.MonitorState;
 import cz.gattserver.grass3.services.MailService;
 
@@ -26,7 +27,13 @@ public class MonitorEmailNotifierImpl extends TimerTask implements MonitorEmailN
 					"[ ERR! ] Backup disk není připojen");
 		}
 
-		// TODO test stáří záloh
+		// Test, zda jsou prováděny pravidelně zálohy
+		for (LastBackupTimeMonitorItemTO to : monitorFacade.getLastTimeOfBackup()) {
+			if (MonitorState.ERROR.equals(to.getMonitorState())) {
+				mailService.sendToAdmin("GRASS3 Monitor oznámení o změně stavu monitorovaného předmětu",
+						"[ ERR! ] " + to.getValue() + " Záloha nebyla provedena nebo je starší než 24h");
+			}
+		}
 	}
 
 	@Override

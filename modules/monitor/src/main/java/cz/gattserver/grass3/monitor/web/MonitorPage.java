@@ -171,18 +171,21 @@ public class MonitorPage extends OneColumnPage {
 		}
 
 		if (MonitorState.SUCCESS.equals(mouted.getMonitorState())) {
-			LastBackupTimeMonitorItemTO lastBackupTO = monitorFacade.getLastTimeOfBackup();
-			switch (lastBackupTO.getMonitorState()) {
-			case SUCCESS:
-				backupLayout.addComponent(new SuccessMonitorDisplay(lastBackupTO.getValue()));
-				break;
-			case ERROR:
-				backupLayout.addComponent(new ErrorMonitorDisplay("Nebyla provedena pravidelná záloha"));
-				break;
-			case UNAVAILABLE:
-			default:
-				backupLayout.addComponent(
-						new WarningMonitorDisplay("Backup disk info o provedení poslední zálohy není dostupné"));
+			List<LastBackupTimeMonitorItemTO> lastBackupTOs = monitorFacade.getLastTimeOfBackup();
+			for (LastBackupTimeMonitorItemTO lastBackupTO : lastBackupTOs) {
+				switch (lastBackupTO.getMonitorState()) {
+				case SUCCESS:
+					backupLayout.addComponent(new SuccessMonitorDisplay(lastBackupTO.getValue()));
+					break;
+				case ERROR:
+					backupLayout.addComponent(new ErrorMonitorDisplay(
+							lastBackupTO.getValue() + ": Nebyla provedena pravidelná záloha nebo je starší, než 24h"));
+					break;
+				case UNAVAILABLE:
+				default:
+					backupLayout.addComponent(
+							new WarningMonitorDisplay("Backup disk info o provedení poslední zálohy není dostupné"));
+				}
 			}
 		}
 

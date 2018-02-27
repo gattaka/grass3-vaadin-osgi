@@ -16,6 +16,7 @@ import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.common.util.HumanBytesSizeFormatter;
+import cz.gattserver.grass3.monitor.MonitorEmailNotifier;
 import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskMountsMonitorItemTO;
@@ -39,6 +40,9 @@ public class MonitorPage extends OneColumnPage {
 
 	@Autowired
 	private MonitorFacade monitorFacade;
+	
+	@Autowired
+	private MonitorEmailNotifier emailNotifier;
 
 	@Autowired
 	private MailService mailService;
@@ -261,9 +265,9 @@ public class MonitorPage extends OneColumnPage {
 		createDisksPart();
 
 		// Mail test
-		VerticalLayout mailLayout = createMonitorPart("Mail test");
-		Button testMailBtn = new Button("Test mail", e -> {
-			mailService.sendToAdmin("Test", "Test mail");
+		VerticalLayout mailLayout = createMonitorPart("Mail notifier");
+		Button testMailBtn = new Button("Mail notifier", e -> {
+			emailNotifier.getTimerTask().run();
 		});
 		mailLayout.addComponent(testMailBtn);
 	}

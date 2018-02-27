@@ -22,7 +22,7 @@ public class MonitorEmailNotifierImpl extends TimerTask implements MonitorEmailN
 	@Override
 	public void run() {
 		// Test, zda je připojen backup disk
-		if (MonitorState.ERROR.equals(monitorFacade.getBackupDiskMounted())) {
+		if (MonitorState.ERROR.equals(monitorFacade.getBackupDiskMounted().getMonitorState())) {
 			mailService.sendToAdmin("GRASS3 Monitor oznámení o změně stavu monitorovaného předmětu",
 					"[ ERR! ] Backup disk není připojen");
 		}

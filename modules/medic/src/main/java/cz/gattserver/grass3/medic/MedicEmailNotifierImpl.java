@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.TimerTask;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +15,9 @@ import cz.gattserver.grass3.medic.util.MedicUtil;
 import cz.gattserver.grass3.services.MailService;
 
 @Component
-public class EmailNotifierImpl extends TimerTask implements EmailNotifier {
+public class MedicEmailNotifierImpl extends TimerTask implements MedicEmailNotifier {
+
+	private static Logger logger = LoggerFactory.getLogger(MedicEmailNotifierImpl.class);
 
 	@Autowired
 	private MedicFacade medicFacade;
@@ -23,6 +27,7 @@ public class EmailNotifierImpl extends TimerTask implements EmailNotifier {
 
 	@Override
 	public void run() {
+		logger.info("Medic TimerTask byl spuštěn");
 		for (ScheduledVisitDTO to : medicFacade.getAllScheduledVisits()) {
 			if (MedicUtil.fromNowAfter7Days(to, LocalDateTime.now())) {
 				mailService.sendToAdmin("GRASS3 Medic oznámená o plánované události",

@@ -32,7 +32,7 @@ public class MonitorSection implements SectionService {
 	private void initEmailNotifier() {
 		TimerTask fetchMail = emailNotifier.getTimerTask();
 		Timer timer = new Timer();
-		LocalDateTime ldt = LocalDateTime.now().plusDays(1).withHour(4);
+		LocalDateTime ldt = LocalDateTime.now().plusDays(1).withHour(3);
 		Date tomorrowMorning4am = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
 		timer.scheduleAtFixedRate(fetchMail, tomorrowMorning4am, ONCE_PER_DAY);
 	}

@@ -24,7 +24,7 @@ public class MedicSection implements SectionService {
 	private PageFactory medicPageFactory;
 
 	@Autowired
-	private EmailNotifier emailNotifier;
+	private MedicEmailNotifier emailNotifier;
 
 	private static final long ONCE_PER_DAY = 1L * 1000 * 60 * 60 * 24;
 

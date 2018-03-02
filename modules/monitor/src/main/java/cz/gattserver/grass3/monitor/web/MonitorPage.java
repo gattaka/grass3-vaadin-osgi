@@ -31,7 +31,6 @@ import cz.gattserver.grass3.monitor.web.label.ErrorMonitorDisplay;
 import cz.gattserver.grass3.monitor.web.label.WarningMonitorDisplay;
 import cz.gattserver.grass3.monitor.web.label.SuccessMonitorDisplay;
 import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.services.MailService;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.ui.H2Label;
 import elemental.json.JsonArray;
@@ -40,12 +39,9 @@ public class MonitorPage extends OneColumnPage {
 
 	@Autowired
 	private MonitorFacade monitorFacade;
-	
-	@Autowired
-	private MonitorEmailNotifier emailNotifier;
 
 	@Autowired
-	private MailService mailService;
+	private MonitorEmailNotifier emailNotifier;
 
 	private VerticalLayout layout;
 
@@ -258,11 +254,11 @@ public class MonitorPage extends OneColumnPage {
 		// Mount points
 		createMountsPart();
 
-		// Backup disk
-		createBackupPart();
-
 		// Úložiště
 		createDisksPart();
+
+		// Backup disk
+		createBackupPart();
 
 		// Mail test
 		VerticalLayout mailLayout = createMonitorPart("Mail notifier");

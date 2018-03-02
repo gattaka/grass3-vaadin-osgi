@@ -1,22 +1,24 @@
 package cz.gattserver.grass3.recipes.web;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
 
 import cz.gattserver.grass3.recipes.facades.RecipesFacade;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
 import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
 import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.ui.components.CreateButton;
-import cz.gattserver.grass3.ui.components.ModifyButton;
+import cz.gattserver.grass3.ui.components.CreateGridButton;
+import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.ui.H2Label;
 
@@ -25,11 +27,10 @@ public class RecipesPage extends OneColumnPage {
 	@Autowired
 	private RecipesFacade recipesFacade;
 
-	private VerticalLayout menu;
-	private VerticalLayout contentLayout;
 	private Label nameLabel;
 	private Label contentLabel;
 	private RecipeDTO choosenRecipe;
+	private List<RecipeOverviewDTO> recipes;
 
 	public RecipesPage(GrassRequest request) {
 		super(request);
@@ -38,19 +39,53 @@ public class RecipesPage extends OneColumnPage {
 	private void showDetail(RecipeDTO choosenRecipe) {
 		nameLabel.setValue(choosenRecipe.getName());
 		contentLabel.setValue(recipesFacade.eolToBreakline(choosenRecipe.getDescription()));
-		contentLayout.setVisible(true);
 		this.choosenRecipe = choosenRecipe;
 	}
 
-	private void populateMenu() {
-		menu.removeAllComponents();
-		for (RecipeOverviewDTO to : recipesFacade.getRecipes()) {
-			Button b = new Button(to.getName(), event -> showDetail(recipesFacade.getRecipeById(to.getId())));
-			b.setStyleName(ValoTheme.BUTTON_LINK);
-			menu.addComponent(b);
-		}
+	private void loadRecipes() {
+		recipes = recipesFacade.getRecipes();
+	}
 
-		CreateButton createButton = new CreateButton(event -> {
+	@Override
+	protected Component createContent() {
+		VerticalLayout layout = new VerticalLayout();
+		layout.setSpacing(true);
+		layout.setMargin(true);
+
+		HorizontalLayout recipesLayout = new HorizontalLayout();
+		layout.addComponent(recipesLayout);
+
+		loadRecipes();
+		Grid<RecipeOverviewDTO> grid = new Grid<>(null, recipes);
+		grid.addColumn(RecipeOverviewDTO::getName).setCaption("Název");
+		grid.setWidth("358px");
+		grid.setHeight("600px");
+		recipesLayout.addComponent(grid);
+
+		grid.addSelectionListener(
+				(e) -> e.getFirstSelectedItem().ifPresent((v) -> showDetail(recipesFacade.getRecipeById(v.getId()))));
+
+		VerticalLayout contentLayout = new VerticalLayout();
+		// contentLayout.setWidth("100%");
+		Panel panel = new Panel(contentLayout);
+		panel.setWidth("600px");
+		panel.setHeight("100%");
+		recipesLayout.addComponent(panel);
+		recipesLayout.setExpandRatio(panel, 1);
+
+		nameLabel = new H2Label();
+		contentLayout.addComponent(nameLabel);
+
+		contentLabel = new Label();
+		contentLabel.setWidth("560px");
+		contentLabel.setContentMode(ContentMode.HTML);
+		contentLayout.addComponent(contentLabel);
+
+		HorizontalLayout btnLayout = new HorizontalLayout();
+		btnLayout.setSpacing(true);
+		layout.addComponent(btnLayout);
+
+		btnLayout.addComponent(new CreateGridButton("Přidat", event -> {
 			UI.getCurrent().addWindow(new RecipeWindow() {
 				private static final long serialVersionUID = -4863260002363608014L;
 
@@ -59,41 +94,12 @@ public class RecipesPage extends OneColumnPage {
 					id = recipesFacade.saveRecipe(name, desc);
 					RecipeDTO to = new RecipeDTO(id, name, desc);
 					showDetail(to);
-					populateMenu();
+					loadRecipes();
 				}
 			});
-		});
-		menu.addComponent(createButton);
-	}
+		}));
 
-	@Override
-	protected Component createContent() {
-		HorizontalLayout layout = new HorizontalLayout();
-		layout.setSpacing(true);
-		layout.setMargin(true);
-
-		menu = new VerticalLayout();
-		menu.setSpacing(true);
-		layout.addComponent(menu);
-
-		contentLayout = new VerticalLayout();
-		contentLayout.setSpacing(true);
-		layout.addComponent(contentLayout);
-		contentLayout.setVisible(false);
-
-		nameLabel = new H2Label();
-		contentLayout.addComponent(nameLabel);
-
-		contentLabel = new Label();
-		contentLabel.setContentMode(ContentMode.HTML);
-		contentLabel.setWidth("700px");
-		contentLayout.addComponent(contentLabel);
-
-		HorizontalLayout btnLayout = new HorizontalLayout();
-		btnLayout.setSpacing(true);
-		contentLayout.addComponent(btnLayout);
-
-		btnLayout.addComponent(new ModifyButton(event -> {
+		btnLayout.addComponent(new ModifyGridButton<RecipeOverviewDTO>("Upravit", event -> {
 			UI.getCurrent().addWindow(new RecipeWindow(choosenRecipe) {
 				private static final long serialVersionUID = 5264621441522056786L;
 
@@ -102,20 +108,10 @@ public class RecipesPage extends OneColumnPage {
 					recipesFacade.saveRecipe(name, desc, id);
 					RecipeDTO to = new RecipeDTO(id, name, desc);
 					showDetail(to);
-					populateMenu();
+					loadRecipes();
 				}
 			});
-		}));
-		// btnLayout.addComponent(new DeleteButton() {
-		// private static final long serialVersionUID = 7163642213966042835L;
-		//
-		// @Override
-		// public void onClick(ClickEvent event) {
-		// // TOOD
-		// }
-		// });
-
-		populateMenu();
+		}, grid));
 
 		return layout;
 	}

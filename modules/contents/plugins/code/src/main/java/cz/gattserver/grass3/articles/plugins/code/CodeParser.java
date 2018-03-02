@@ -56,14 +56,18 @@ public class CodeParser implements Parser {
 		Token currentToken = null;
 		while (true) {
 			currentToken = pluginBag.getToken();
-			if ((currentToken == Token.END_TAG && pluginBag.getEndTag().equals(tag)) || currentToken == Token.EOF)
+			if ((Token.END_TAG.equals(currentToken) && pluginBag.getEndTag().equals(tag))
+					|| Token.EOF.equals(currentToken))
 				break;
 			// Pokud načteš TEXT, tak přidej jeho obsah, pokud pak načtečeš EOL,
 			// tak nepřidávej prázdný řádek, ledaže by jsi načetl EOL EOL - pak
 			// je to prázdný řádek
-			if (currentToken == Token.TEXT || currentToken == Token.END_TAG || currentToken == Token.START_TAG)
+			if (Token.TEXT.equals(currentToken) || Token.END_TAG.equals(currentToken)
+					|| Token.START_TAG.equals(currentToken)) {
 				code.append(HTMLEscaper.stringToHTMLString(pluginBag.getCode()));
-			else if (currentToken == Token.EOL) {
+			} else if (Token.TAB.equals(currentToken)) {
+				code.append('\t');
+			} else if (Token.EOL.equals(currentToken)) {
 				// prázdné řádky je potřeba prokládat mezerou, kterou si JS záhy
 				// uzavře do <p></p> elementů - bez této mezery by <p></p>
 				// element neudělal odřádkování nutné a zmizeli by tak prázdné

@@ -94,8 +94,18 @@ public interface PGService {
 	public void storeConfiguration(PGConfiguration configuration);
 
 	/**
+	 * Získá počet galerií pro použití REST
+	 * 
+	 * @param userId
+	 *            id přihlášeného uživatele, může být i <code>null</code>
+	 */
+	int countAllPhotogalleriesForREST(Long userId);
+
+	/**
 	 * Získá všechny galerie a namapuje je pro použití REST
 	 * 
+	 * @param userId
+	 *            id přihlášeného uživatele, může být i <code>null</code>
 	 * @param page
 	 *            číslo stránky
 	 * @param pageSize

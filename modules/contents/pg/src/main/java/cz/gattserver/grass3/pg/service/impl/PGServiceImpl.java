@@ -410,10 +410,17 @@ public class PGServiceImpl implements PGService {
 	}
 
 	@Override
+	public int countAllPhotogalleriesForREST(Long userId) {
+		return userId != null ? photogalleryRepository.countByUserAccess(userId)
+				: photogalleryRepository.countByAnonAccess();
+	}
+
+	@Override
 	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId, int page, int pageSize) {
 		Pageable pageable = new PageRequest(page, pageSize);
-		return photogalleriesMapper.mapPhotogalleryForRESTOverviewCollection(userId != null
-				? photogalleryRepository.findByUserAccess(userId,pageable) : photogalleryRepository.findByAnonAccess(pageable));
+		return photogalleriesMapper.mapPhotogalleryForRESTOverviewCollection(
+				userId != null ? photogalleryRepository.findByUserAccess(userId, pageable)
+						: photogalleryRepository.findByAnonAccess(pageable));
 	}
 
 	@Override

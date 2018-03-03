@@ -450,6 +450,9 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Long id3 = createMockGallery(root, userId2, nodeId1, 3, true);
 		createMockGallery(root, userId2, nodeId2, 4, false);
 
+		int count = pgService.countAllPhotogalleriesForREST(userId1);
+		assertEquals(3, count);
+
 		List<PhotogalleryRESTOverviewTO> list = pgService.getAllPhotogalleriesForREST(userId1, 0, 2);
 		assertEquals(2, list.size());
 		assertEquals("Test galerie3", list.get(0).getName());

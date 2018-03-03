@@ -10,8 +10,14 @@ import cz.gattserver.grass3.pg.model.domain.Photogallery;
 
 public interface PhotogalleryRepository extends JpaRepository<Photogallery, Long> {
 
+	@Query(value = "select count(p) from PHOTOGALLERY p where p.contentNode.publicated = true or p.contentNode.author.id = ?1")
+	public int countByUserAccess(Long userId);
+
 	@Query(value = "select p from PHOTOGALLERY p where p.contentNode.publicated = true or p.contentNode.author.id = ?1 order by p.contentNode.creationDate desc")
 	public List<Photogallery> findByUserAccess(Long userId, Pageable pageable);
+
+	@Query(value = "select count(p) from PHOTOGALLERY p where p.contentNode.publicated = true")
+	public int countByAnonAccess();
 
 	@Query(value = "select p from PHOTOGALLERY p where p.contentNode.publicated = true order by p.contentNode.creationDate desc")
 	public List<Photogallery> findByAnonAccess(Pageable pageable);

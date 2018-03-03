@@ -95,8 +95,13 @@ public interface PGService {
 
 	/**
 	 * Získá všechny galerie a namapuje je pro použití REST
+	 * 
+	 * @param page
+	 *            číslo stránky
+	 * @param pageSize
+	 *            velikost stránky
 	 */
-	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId);
+	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId, int page, int pageSize);
 
 	/**
 	 * Získá detail fotogalerie pro REST

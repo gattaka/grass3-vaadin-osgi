@@ -60,11 +60,14 @@ public class PGResource {
 		}
 	}
 
-	// http://localhost:8180/web/ws/pg/list
+	// http://localhost:8180/web/ws/pg/list?page=1&pageSize=10
 	@RequestMapping("/list")
-	public ResponseEntity<List<PhotogalleryRESTOverviewTO>> list() {
+	public ResponseEntity<List<PhotogalleryRESTOverviewTO>> list(
+			@RequestParam(value = "page", required = true) int page,
+			@RequestParam(value = "pageSize", required = true) int pageSize) {
 		UserInfoTO user = securityFacade.getCurrentUser();
-		return new ResponseEntity<>(photogalleryFacade.getAllPhotogalleriesForREST(user.getId()), HttpStatus.OK);
+		return new ResponseEntity<>(photogalleryFacade.getAllPhotogalleriesForREST(user.getId(), page, pageSize),
+				HttpStatus.OK);
 	}
 
 	// http://localhost:8180/web/ws/pg/gallery?id=364

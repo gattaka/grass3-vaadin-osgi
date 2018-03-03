@@ -25,6 +25,8 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -408,9 +410,10 @@ public class PGServiceImpl implements PGService {
 	}
 
 	@Override
-	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId) {
+	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId, int page, int pageSize) {
+		Pageable pageable = new PageRequest(page, pageSize);
 		return photogalleriesMapper.mapPhotogalleryForRESTOverviewCollection(userId != null
-				? photogalleryRepository.findByUserAccess(userId) : photogalleryRepository.findByAnonAccess());
+				? photogalleryRepository.findByUserAccess(userId,pageable) : photogalleryRepository.findByAnonAccess(pageable));
 	}
 
 	@Override

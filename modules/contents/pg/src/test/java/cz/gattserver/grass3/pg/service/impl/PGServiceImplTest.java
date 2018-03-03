@@ -450,14 +450,17 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Long id3 = createMockGallery(root, userId2, nodeId1, 3, true);
 		createMockGallery(root, userId2, nodeId2, 4, false);
 
-		List<PhotogalleryRESTOverviewTO> list = pgService.getAllPhotogalleriesForREST(userId1);
-		assertEquals(3, list.size());
+		List<PhotogalleryRESTOverviewTO> list = pgService.getAllPhotogalleriesForREST(userId1, 0, 2);
+		assertEquals(2, list.size());
 		assertEquals("Test galerie3", list.get(0).getName());
 		assertEquals(id3, list.get(0).getId());
 		assertEquals("Test galerie2", list.get(1).getName());
 		assertEquals(id2, list.get(1).getId());
-		assertEquals("Test galerie1", list.get(2).getName());
-		assertEquals(id1, list.get(2).getId());
+
+		list = pgService.getAllPhotogalleriesForREST(userId1, 1, 2);
+		assertEquals(1, list.size());
+		assertEquals("Test galerie1", list.get(0).getName());
+		assertEquals(id1, list.get(0).getId());
 	}
 
 	@Test

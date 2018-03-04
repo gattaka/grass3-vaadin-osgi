@@ -10,6 +10,8 @@ import java.util.TimerTask;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,16 +22,19 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 @Component("medicSection")
 public class MedicSection implements SectionService {
 
+	private static Logger logger = LoggerFactory.getLogger(MedicSection.class);
+
+	private static final long ONCE_PER_DAY = 1L * 1000 * 60 * 60 * 24;
+
 	@Resource(name = "medicPageFactory")
 	private PageFactory medicPageFactory;
 
 	@Autowired
 	private MedicEmailNotifier emailNotifier;
 
-	private static final long ONCE_PER_DAY = 1L * 1000 * 60 * 60 * 24;
-
 	@PostConstruct
-	private void initEmailNotifier() {
+	private final void init() {
+		logger.info("MedicSection init");
 		TimerTask fetchMail = emailNotifier.getTimerTask();
 		Timer timer = new Timer();
 		LocalDateTime ldt = LocalDateTime.now().plusDays(1).withHour(4);

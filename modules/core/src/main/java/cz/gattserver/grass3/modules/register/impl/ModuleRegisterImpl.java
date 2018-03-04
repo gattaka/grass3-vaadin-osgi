@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,8 @@ import cz.gattserver.grass3.modules.register.ModuleRegister;
 @Component
 public class ModuleRegisterImpl implements ModuleRegister {
 
+	private static Logger logger = LoggerFactory.getLogger(ModuleRegisterImpl.class);
+
 	/**
 	 * Obsahy
 	 */
@@ -38,7 +42,9 @@ public class ModuleRegisterImpl implements ModuleRegister {
 	private List<SectionService> injectedSectionModules;
 
 	@PostConstruct
-	private void init() {
+	private final void init() {
+		logger.info("ModuleRegister init");
+
 		// Ošetření null kolekcí
 		if (injectedContentModules == null)
 			injectedContentModules = new ArrayList<>();

@@ -16,7 +16,7 @@ public class MedicUtil {
 	}
 
 	public static boolean fromNowAfter7Days(ScheduledVisitDTO dto, LocalDateTime now) {
-		return now.plusDays(7).isAfter(dto.getDate());
+		return now.plusDays(7).isEqual(dto.getDate());
 	}
 
 }

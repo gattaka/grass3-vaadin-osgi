@@ -33,7 +33,7 @@ public class MedicEmailNotifierImpl extends TimerTask implements MedicEmailNotif
 				mailService.sendToAdmin("GRASS3 Medic oznámená o plánované události",
 						"Událost naplánovaná na: "
 								+ to.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
-								+ " se blíží (nastane v příštích 7 dnech):\n\n" + "Instituce:\t"
+								+ " se blíží (nastane za 7 dní):\n\n" + "Instituce:\t"
 								+ to.getInstitution().toString() + "\nDůvod návštěvy:\t" + to.getPurpose());
 			}
 		}

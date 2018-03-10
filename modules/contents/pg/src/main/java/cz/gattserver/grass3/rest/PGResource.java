@@ -1,9 +1,11 @@
 package cz.gattserver.grass3.rest;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,10 +22,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
 import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.services.SecurityService;
@@ -133,6 +137,33 @@ public class PGResource {
 	public void mini(@RequestParam(value = "id", required = true) Long id, String fileName,
 			HttpServletResponse response) {
 		innerPhoto(id, fileName, true, response);
+	}
+
+	// http://localhost:8180/web/ws/pg/create
+	// https://resttesttest.com/
+	// POST http://localhost:8180/web/ws/pg/create
+	// galleryName test-gallery
+	// files file1
+	// files file2
+	// files ...
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public ResponseEntity<String> handleFileUpload(
+			@RequestParam(value = "galleryName", required = true) String galleryName,
+			@RequestParam(value = "files", required = true) MultipartFile[] uploadingFiles)
+			throws IllegalStateException, IOException {
+		String galleryDir = photogalleryFacade.createGalleryDir();
+		try {
+			for (MultipartFile uploadedFile : uploadingFiles) {
+				photogalleryFacade.uploadFile(uploadedFile.getInputStream(), uploadedFile.getOriginalFilename(),
+						galleryDir);
+			}
+			PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(galleryName, galleryDir, null, true);
+			photogalleryFacade.savePhotogallery(payloadTO, 55L, 1L, LocalDateTime.now());
+		} catch (Exception e) {
+			new File(galleryDir).delete();
+		}
+
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

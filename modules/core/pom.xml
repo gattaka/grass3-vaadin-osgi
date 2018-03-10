@@ -32,6 +32,19 @@
 			<version>1.9.10</version>
 		</dependency>
 
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3.3</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-io</groupId>
+					<artifactId>commons-io</artifactId>
+					<!-- tady je 2.2 a já již používám 2.6 -->
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 		<!-- ===== -->
 		<!-- Testy -->
 		<!-- ===== -->

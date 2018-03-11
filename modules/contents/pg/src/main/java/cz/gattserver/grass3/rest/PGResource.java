@@ -151,18 +151,22 @@ public class PGResource {
 			@RequestParam(value = "galleryName", required = true) String galleryName,
 			@RequestParam(value = "files", required = true) MultipartFile[] uploadingFiles)
 			throws IllegalStateException, IOException {
+		logger.info("handleFileUpload /create volán");
 		String galleryDir = photogalleryFacade.createGalleryDir();
 		try {
 			for (MultipartFile uploadedFile : uploadingFiles) {
+				logger.info("handleFileUpload /create zpracován soubor " + uploadedFile.getOriginalFilename());
 				photogalleryFacade.uploadFile(uploadedFile.getInputStream(), uploadedFile.getOriginalFilename(),
 						galleryDir);
 			}
 			PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(galleryName, galleryDir, null, true);
 			photogalleryFacade.savePhotogallery(payloadTO, 55L, 1L, LocalDateTime.now());
 		} catch (Exception e) {
+			logger.error("handleFileUpload /create chyba", e);
 			new File(galleryDir).delete();
 		}
 
+		logger.info("handleFileUpload /create dokončen");
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 

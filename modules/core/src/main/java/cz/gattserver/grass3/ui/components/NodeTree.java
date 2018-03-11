@@ -71,16 +71,15 @@ public class NodeTree extends VerticalLayout {
 
 		grid = new TreeGrid<>();
 		grid.setSelectionMode(SelectionMode.SINGLE);
-		grid.setWidth("100%");
+		grid.setSizeFull();
 		addComponent(grid);
+		setExpandRatio(grid, 1);
 
 		grid.addColumn(NodeOverviewTO::getName).setCaption("Název");
 		populate();
 
 		if (enableEditFeatures)
 			initEditFeatures();
-
-		setWidth("100%");
 	}
 
 	private void initEditFeatures() {

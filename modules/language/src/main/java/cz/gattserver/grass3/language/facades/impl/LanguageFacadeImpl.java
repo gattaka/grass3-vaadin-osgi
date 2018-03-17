@@ -3,14 +3,13 @@ package cz.gattserver.grass3.language.facades.impl;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.gwt.user.client.Random;
 
 import cz.gattserver.grass3.language.facades.LanguageFacade;
 import cz.gattserver.grass3.language.model.dao.LanguageItemRepository;
@@ -110,7 +109,7 @@ public class LanguageFacadeImpl implements LanguageFacade {
 
 	private void randomChoose(int times, List<Long> ids, Set<Long> choosen) {
 		if (!ids.isEmpty())
-			IntStream.range(0, times).forEach(i -> choosen.add(ids.get(Random.nextInt(ids.size()))));
+			IntStream.range(0, times).forEach(i -> choosen.add(ids.get(new Random().nextInt(ids.size()))));
 	}
 
 	@Override

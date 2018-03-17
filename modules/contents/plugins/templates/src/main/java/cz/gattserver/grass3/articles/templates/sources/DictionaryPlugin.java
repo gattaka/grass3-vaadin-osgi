@@ -13,20 +13,20 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
 @Component
 public class DictionaryPlugin implements Plugin {
 
-	private final String tag = "DICTIONARY";
+	private static final String TAG = "DICTIONARY";
 
 	@Override
 	public String getTag() {
-		return tag;
+		return TAG;
 	}
 
 	@Override
 	public Parser getParser() {
-		return new DictionaryParser(tag);
+		return new DictionaryParser(TAG);
 	}
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(tag, "Šablony").setDescription("Slovník").build();
+		return new EditorButtonResourcesTOBuilder(TAG, "Šablony").setDescription("Slovník").build();
 	}
 }

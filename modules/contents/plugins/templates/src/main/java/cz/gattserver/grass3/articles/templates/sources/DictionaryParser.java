@@ -42,7 +42,7 @@ public class DictionaryParser implements Parser {
 		String startTag = pluginBag.getStartTag();
 
 		if (!startTag.equals(tag)) {
-			logger.warn("Čekal jsem: [" + tag + "] ne " + startTag);
+			logger.warn("Čekal jsem: [{}] ne {}", tag, startTag);
 			throw new ParserException();
 		}
 
@@ -74,7 +74,7 @@ public class DictionaryParser implements Parser {
 		String endTag = pluginBag.getEndTag();
 
 		if (!endTag.equals(tag)) {
-			logger.warn("Čekal jsem: [/" + tag + "] ne " + pluginBag.getCode());
+			logger.warn("Čekal jsem: [/{}] ne {}", tag, pluginBag.getCode());
 			throw new ParserException();
 		}
 

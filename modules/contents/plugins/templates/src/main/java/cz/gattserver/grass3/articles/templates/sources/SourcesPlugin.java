@@ -14,20 +14,20 @@ import cz.gattserver.grass3.articles.plugins.favlink.strategies.CombinedFaviconO
 @Component
 public class SourcesPlugin implements Plugin {
 
-	private final String tag = "SOURCES";
+	private static final String TAG = "SOURCES";
 
 	@Override
 	public String getTag() {
-		return tag;
+		return TAG;
 	}
 
 	@Override
 	public Parser getParser() {
-		return new SourcesParser(tag, new CombinedFaviconObtainStrategy());
+		return new SourcesParser(TAG, new CombinedFaviconObtainStrategy());
 	}
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(tag, "Šablony").setDescription("Zdroje").build();
+		return new EditorButtonResourcesTOBuilder(TAG, "Šablony").setDescription("Zdroje").build();
 	}
 }

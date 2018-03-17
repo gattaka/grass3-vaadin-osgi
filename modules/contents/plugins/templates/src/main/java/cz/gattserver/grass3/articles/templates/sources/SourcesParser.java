@@ -47,7 +47,7 @@ public class SourcesParser implements Parser {
 		String startTag = pluginBag.getStartTag();
 
 		if (!startTag.equals(tag)) {
-			logger.warn("Čekal jsem: [" + tag + "] ne " + startTag);
+			logger.warn("Čekal jsem: [{}] ne {}", tag, startTag);
 			throw new ParserException();
 		}
 
@@ -57,14 +57,14 @@ public class SourcesParser implements Parser {
 	private void parseSources(ParsingProcessor parsingProcessor) {
 		// dokud není konec souboru nebo můj uzavírací tag
 		StringBuilder builder = new StringBuilder();
-		while (parsingProcessor.getToken() != Token.EOF && (parsingProcessor.getToken() != Token.END_TAG
-				|| parsingProcessor.getEndTag().equals(tag) == false)) {
+		while (parsingProcessor.getToken() != Token.EOF
+				&& (parsingProcessor.getToken() != Token.END_TAG || !parsingProcessor.getEndTag().equals(tag))) {
 			if (parsingProcessor.getToken() == Token.EOL && builder.length() != 0) {
 				processURL(builder.toString(), parsingProcessor);
 				builder = new StringBuilder();
 			} else {
 				String text = parsingProcessor.getText();
-				if (text != null && text.isEmpty() == false)
+				if (text != null && !text.isEmpty())
 					builder.append(text);
 			}
 			parsingProcessor.nextToken();
@@ -83,7 +83,7 @@ public class SourcesParser implements Parser {
 		String endTag = pluginBag.getEndTag();
 
 		if (!endTag.equals(tag)) {
-			logger.warn("Čekal jsem: [/" + tag + "] ne " + pluginBag.getCode());
+			logger.warn("Čekal jsem: [/{}] ne {}", tag, pluginBag.getCode());
 			throw new ParserException();
 		}
 

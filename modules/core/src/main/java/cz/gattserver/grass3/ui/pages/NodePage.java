@@ -178,7 +178,7 @@ public class NodePage extends OneColumnPage {
 		contentsLayout.setMargin(false);
 		ContentsLazyGrid contentsTable = new ContentsLazyGrid();
 		contentsTable.populate(this, (sortOrder, offset, limit) -> {
-			return contentNodeFacade.getByNode(node.getId(), offset / limit, limit).stream();
+			return contentNodeFacade.getByNode(node.getId(), offset, limit).stream();
 		}, () -> {
 			return contentNodeFacade.getCountByNode(node.getId());
 		});

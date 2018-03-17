@@ -79,10 +79,11 @@ public class HomePage extends BasePage {
 			favouritesLayout.setMargin(false);
 			favouritesLayout.addComponent(new H2Label("Oblíbené obsahy"));
 			ContentsLazyGrid favouritesContentsTable = new ContentsLazyGrid();
-			favouritesContentsTable.populate(this,
-					(sortOrder, offset, limit) -> contentNodeFacade
-							.getUserFavourite(user.getId(), offset / limit, limit).stream(),
-					() -> contentNodeFacade.getUserFavouriteCount(user.getId()));
+			favouritesContentsTable
+					.populate(this,
+							(sortOrder, offset, limit) -> contentNodeFacade
+									.getUserFavourite(user.getId(), offset, limit).stream(),
+							() -> contentNodeFacade.getUserFavouriteCount(user.getId()));
 			favouritesLayout.addComponent(favouritesContentsTable);
 			favouritesContentsTable.setWidth("100%");
 
@@ -175,12 +176,12 @@ public class HomePage extends BasePage {
 
 		ContentsLazyGrid recentAddedContentsTable = new ContentsLazyGrid();
 		recentAddedContentsTable.populate(this, (sortOrder, offset, limit) -> {
-			return contentNodeFacade.getRecentAdded(offset / limit, limit).stream();
+			return contentNodeFacade.getRecentAdded(offset, limit).stream();
 		}, contentNodeFacade::getCount);
 
 		ContentsLazyGrid recentModifiedContentsTable = new ContentsLazyGrid();
 		recentModifiedContentsTable.populate(this, (sortOrder, offset, limit) -> {
-			return contentNodeFacade.getRecentModified(offset / limit, limit).stream();
+			return contentNodeFacade.getRecentModified(offset, limit).stream();
 		}, contentNodeFacade::getCount);
 
 		VerticalLayout recentAddedLayout = new VerticalLayout();

@@ -47,7 +47,7 @@ public class TagPage extends BasePage {
 
 		ContentsLazyGrid tagContentsTable = new ContentsLazyGrid();
 		tagContentsTable.populate(this, (sortOrder, offset, limit) -> {
-			return contentNodeFacade.getByTag(tag.getId(), offset / limit, limit).stream();
+			return contentNodeFacade.getByTag(tag.getId(), offset, limit).stream();
 		}, () -> {
 			return contentNodeFacade.getCountByTag(tag.getId());
 		});

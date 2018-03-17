@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.data.domain.PageRequest;
-
 import com.fo0.advancedtokenfield.main.AdvancedTokenField;
 import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.shared.ui.MarginInfo;
@@ -71,7 +69,7 @@ public class HWItemsTab extends VerticalLayout {
 		collection.forEach(t -> types.add(t.getValue()));
 		filterDTO.setTypes(types);
 		grid.setDataProvider((sortOrder, offset, limit) -> getHWService().getHWItems(filterDTO,
-				new PageRequest(offset / limit, limit), QuerydslUtil.transformOrdering(sortOrder, column -> {
+				QuerydslUtil.transformOffsetLimit(offset, limit), QuerydslUtil.transformOrdering(sortOrder, column -> {
 					switch (column) {
 					case PRICE_BIND:
 						return "price";

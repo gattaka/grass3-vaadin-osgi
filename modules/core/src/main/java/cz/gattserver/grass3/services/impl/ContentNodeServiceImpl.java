@@ -8,6 +8,7 @@ import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.repositories.ContentNodeRepository;
+import cz.gattserver.grass3.model.util.QuerydslUtil;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.ContentTagService;
 import cz.gattserver.grass3.services.CoreMapperService;
@@ -156,9 +158,10 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	}
 
 	@Override
-	public List<ContentNodeOverviewTO> getRecentAdded(int pageIndex, int count) {
+	public List<ContentNodeOverviewTO> getRecentAdded(int offset, int limit) {
 		return mapper.mapContentNodeOverviewCollection(
-				innerByUserAccess(new PageRequest(pageIndex, count, Sort.Direction.DESC, "creationDate")).getContent());
+				innerByUserAccess(QuerydslUtil.transformOffsetLimit(offset, limit, Sort.Direction.DESC, "creationDate"))
+						.getContent());
 	}
 
 	@Override
@@ -183,17 +186,16 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	}
 
 	@Override
-	public List<ContentNodeOverviewTO> getByTag(long tagId, int pageIndex, int count) {
-		return mapper.mapContentNodeOverviewCollection(
-				innerByTagAndUserAccess(tagId, new PageRequest(pageIndex, count, Sort.Direction.DESC, "creationDate"))
-						.getContent());
+	public List<ContentNodeOverviewTO> getByTag(long tagId, int offset, int limit) {
+		return mapper.mapContentNodeOverviewCollection(innerByTagAndUserAccess(tagId,
+				QuerydslUtil.transformOffsetLimit(offset, limit, Sort.Direction.DESC, "creationDate")).getContent());
 	}
 
 	/**
 	 * Dle oblíbených uživatele
 	 */
 
-	private Page<ContentNode> innerByUserFavouritesAndUserAccess(long userId, PageRequest pr) {
+	private Page<ContentNode> innerByUserFavouritesAndUserAccess(long userId, Pageable pr) {
 		UserInfoTO user = securityService.getCurrentUser();
 		return contentNodeRepository.findByUserFavouritesAndUserAccess(userId, user.getId(), user.isAdmin(), pr);
 	}
@@ -204,9 +206,10 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	}
 
 	@Override
-	public List<ContentNodeOverviewTO> getUserFavourite(long userId, int pageIndex, int count) {
+	public List<ContentNodeOverviewTO> getUserFavourite(long userId, int offset, int limit) {
 		return mapper.mapContentNodeOverviewCollection(
-				innerByUserFavouritesAndUserAccess(userId, new PageRequest(pageIndex, count)).getContent());
+				innerByUserFavouritesAndUserAccess(userId, QuerydslUtil.transformOffsetLimit(offset, limit))
+						.getContent());
 	}
 
 	/**
@@ -224,9 +227,9 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	}
 
 	@Override
-	public List<ContentNodeOverviewTO> getByNode(long nodeId, int pageIndex, int count) {
+	public List<ContentNodeOverviewTO> getByNode(long nodeId, int offset, int limit) {
 		return mapper.mapContentNodeOverviewCollection(
-				innerByNodeAndUserAccess(nodeId, new PageRequest(pageIndex, count)).getContent());
+				innerByNodeAndUserAccess(nodeId, QuerydslUtil.transformOffsetLimit(offset, limit)).getContent());
 	}
 
 }

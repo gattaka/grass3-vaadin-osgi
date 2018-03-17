@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +21,7 @@ import cz.gattserver.grass3.language.model.domain.LanguageItem;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.language.model.dto.LanguageTO;
 import cz.gattserver.grass3.language.util.Mapper;
+import cz.gattserver.grass3.model.util.QuerydslUtil;
 
 @Transactional
 @Component
@@ -59,9 +59,9 @@ public class LanguageFacadeImpl implements LanguageFacade {
 	 */
 
 	@Override
-	public List<LanguageItemTO> getLanguageItems(long languageId, ItemType type, int page, int size) {
-		return mapper.mapLanguageItems(
-				itemRepository.findAllByLanguageSortByName(languageId, type, new PageRequest(page, size)));
+	public List<LanguageItemTO> getLanguageItems(long languageId, ItemType type, int offset, int limit) {
+		return mapper.mapLanguageItems(itemRepository.findAllByLanguageSortByName(languageId, type,
+				QuerydslUtil.transformOffsetLimit(offset, limit)));
 	}
 
 	@Override

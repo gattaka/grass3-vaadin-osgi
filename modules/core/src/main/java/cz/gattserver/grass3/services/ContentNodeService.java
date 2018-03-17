@@ -131,24 +131,24 @@ public interface ContentNodeService {
 	/**
 	 * Získá stránku nedávno přidaných obsahů (pro LazyQueryContainer)
 	 * 
-	 * @param pageIndex
-	 *            číslo stránky dle stránkování
-	 * @param count
-	 *            velikost stránky při stránkování
+	 * @param offset
+	 *            offset
+	 * @param limit
+	 *            limit
 	 * @return list nalezených obsahů dle stránkování
 	 */
-	public List<ContentNodeOverviewTO> getRecentAdded(int pageIndex, int count);
+	public List<ContentNodeOverviewTO> getRecentAdded(int offset, int limit);
 
 	/**
 	 * Získá stránku nedávno upravených obsahů (pro LazyQueryContainer)
 	 * 
-	 * @param pageIndex
-	 *            číslo stránky dle stránkování
-	 * @param count
-	 *            velikost stránky při stránkování
+	 * @param offset
+	 *            offset
+	 * @param limit
+	 *            limit
 	 * @return list nalezených obsahů dle stránkování
 	 */
-	public List<ContentNodeOverviewTO> getRecentModified(int pageIndex, int count);
+	public List<ContentNodeOverviewTO> getRecentModified(int offset, int limit);
 
 	/**
 	 * Získá počet obsahů dle tagu (pro LazyQueryContainer)
@@ -164,13 +164,13 @@ public interface ContentNodeService {
 	 * 
 	 * @param tagId
 	 *            id tagu, dle kterého bude výběr omezen
-	 * @param pageIndex
-	 *            číslo stránky dle stránkování
-	 * @param count
-	 *            velikost stránky při stránkování
+	 * @param offset
+	 *            offset
+	 * @param limit
+	 *            limit
 	 * @return list nalezených obsahů dle stránkování
 	 */
-	public List<ContentNodeOverviewTO> getByTag(long tagId, int pageIndex, int count);
+	public List<ContentNodeOverviewTO> getByTag(long tagId, int offset, int limit);
 
 	/**
 	 * Získá počet oblíbených obsahů dle uživatele (pro LazyQueryContainer)
@@ -186,13 +186,13 @@ public interface ContentNodeService {
 	 * 
 	 * @param userId
 	 *            id uživatele, z jehož oblíbených budou obsahy čteny
-	 * @param pageIndex
-	 *            číslo stránky dle stránkování
-	 * @param count
-	 *            velikost stránky při stránkování
+	 * @param offset
+	 *            offset
+	 * @param limit
+	 *            limit
 	 * @return list nalezených obsahů dle stránkování a omezení
 	 */
-	public List<ContentNodeOverviewTO> getUserFavourite(long userId, int pageIndex, int count);
+	public List<ContentNodeOverviewTO> getUserFavourite(long userId, int offset, int limit);
 
 	/**
 	 * Získá počet obsahů dle kategorie (pro LazyQueryContainer)
@@ -208,12 +208,12 @@ public interface ContentNodeService {
 	 * 
 	 * @param nodeId
 	 *            id kategorie, ve které budou obsahy hledány
-	 * @param pageIndex
-	 *            číslo stránky dle stránkování
-	 * @param count
-	 *            velikost stránky při stránkování
+	 * @param offset
+	 *            offset
+	 * @param limit
+	 *            limit
 	 * @return list nalezených obsahů dle stránkování a omezení
 	 */
-	public List<ContentNodeOverviewTO> getByNode(long nodeId, int pageIndex, int count);
+	public List<ContentNodeOverviewTO> getByNode(long nodeId, int offset, int limit);
 
 }

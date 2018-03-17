@@ -19,7 +19,7 @@ public class LanguageItemTO {
 	/**
 	 * Jazyk pod který záznam patří
 	 */
-	private Long Language;
+	private Long language;
 
 	/**
 	 * Obsah
@@ -63,11 +63,11 @@ public class LanguageItemTO {
 	}
 
 	public Long getLanguage() {
-		return Language;
+		return language;
 	}
 
 	public void setLanguage(Long language) {
-		Language = language;
+		this.language = language;
 	}
 
 	public LocalDateTime getLastTested() {

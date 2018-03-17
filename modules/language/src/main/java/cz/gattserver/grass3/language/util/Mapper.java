@@ -45,13 +45,9 @@ public class Mapper {
 	 * @return
 	 */
 	public List<LanguageItemTO> mapLanguageItems(Collection<LanguageItem> items) {
-		if (items == null)
-			return null;
-
-		List<LanguageItemTO> tos = new ArrayList<LanguageItemTO>();
+		List<LanguageItemTO> tos = new ArrayList<>();
 		for (LanguageItem e : items)
 			tos.add(mapLanguageItem(e));
-
 		return tos;
 	}
 
@@ -108,13 +104,9 @@ public class Mapper {
 	 * @return
 	 */
 	public List<LanguageTO> mapLanguages(Collection<Language> items) {
-		if (items == null)
-			return null;
-
-		List<LanguageTO> tos = new ArrayList<LanguageTO>();
+		List<LanguageTO> tos = new ArrayList<>();
 		for (Language e : items)
 			tos.add(mapLanguage(e));
-
 		return tos;
 	}
 }

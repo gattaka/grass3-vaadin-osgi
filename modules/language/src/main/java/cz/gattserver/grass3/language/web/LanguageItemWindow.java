@@ -53,9 +53,10 @@ public class LanguageItemWindow extends WebWindow {
 
 		Button b;
 		if (to != null)
-			addComponent(b = new ModifyButton(clickListener));
+			b = new ModifyButton(clickListener);
 		else
-			addComponent(b = new CreateButton(clickListener));
+			b = new CreateButton(clickListener);
+		addComponent(b);
 		setComponentAlignment(b, Alignment.MIDDLE_CENTER);
 	}
 

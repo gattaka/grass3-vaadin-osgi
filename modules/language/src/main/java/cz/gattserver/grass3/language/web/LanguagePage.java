@@ -101,23 +101,21 @@ public class LanguagePage extends OneColumnPage {
 		chooseBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
 		btnLayout.addComponent(chooseBtn);
 
-		btnLayout.addComponent(new CreateGridButton("Přidat", event -> {
-			UI.getCurrent().addWindow(new LanguageWindow(to -> {
-				languageFacade.saveLanguage(to);
-				langs.clear();
-				langs.addAll(languageFacade.getLanguages());
-				grid.getDataProvider().refreshAll();
-			}));
-		}));
+		btnLayout.addComponent(
+				new CreateGridButton("Přidat", event -> UI.getCurrent().addWindow(new LanguageWindow(to -> {
+					languageFacade.saveLanguage(to);
+					langs.clear();
+					langs.addAll(languageFacade.getLanguages());
+					grid.getDataProvider().refreshAll();
+				}))));
 
-		btnLayout.addComponent(new ModifyGridButton<LanguageTO>("Upravit", item -> {
-			UI.getCurrent().addWindow(new LanguageWindow(item, to -> {
-				languageFacade.saveLanguage(to);
-				langs.clear();
-				langs.addAll(languageFacade.getLanguages());
-				grid.getDataProvider().refreshAll();
-			}));
-		}, grid));
+		btnLayout.addComponent(new ModifyGridButton<LanguageTO>("Upravit",
+				item -> UI.getCurrent().addWindow(new LanguageWindow(item, to -> {
+					languageFacade.saveLanguage(to);
+					langs.clear();
+					langs.addAll(languageFacade.getLanguages());
+					grid.getDataProvider().refreshAll();
+				})), grid));
 
 		return layout;
 	}
@@ -245,21 +243,19 @@ public class LanguagePage extends OneColumnPage {
 	private HorizontalLayout createButtonLayout(Grid<LanguageItemTO> grid, long langId, ItemType type) {
 		HorizontalLayout btnLayout = new HorizontalLayout();
 
-		btnLayout.addComponent(new CreateGridButton("Přidat", event -> {
-			UI.getCurrent().addWindow(new LanguageItemWindow(to -> {
-				to.setLanguage(langId);
-				to.setType(type);
-				languageFacade.saveLanguageItem(to);
-				grid.getDataProvider().refreshAll();
-			}));
-		}));
+		btnLayout.addComponent(
+				new CreateGridButton("Přidat", event -> UI.getCurrent().addWindow(new LanguageItemWindow(to -> {
+					to.setLanguage(langId);
+					to.setType(type);
+					languageFacade.saveLanguageItem(to);
+					grid.getDataProvider().refreshAll();
+				}))));
 
-		btnLayout.addComponent(new ModifyGridButton<LanguageItemTO>("Upravit", item -> {
-			UI.getCurrent().addWindow(new LanguageItemWindow(item, to -> {
-				languageFacade.saveLanguageItem(to);
-				grid.getDataProvider().refreshItem(to);
-			}));
-		}, grid));
+		btnLayout.addComponent(new ModifyGridButton<LanguageItemTO>("Upravit",
+				item -> UI.getCurrent().addWindow(new LanguageItemWindow(item, to -> {
+					languageFacade.saveLanguageItem(to);
+					grid.getDataProvider().refreshItem(to);
+				})), grid));
 
 		return btnLayout;
 	}

@@ -11,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.gwt.user.client.Random;
+
 import cz.gattserver.grass3.language.facades.LanguageFacade;
 import cz.gattserver.grass3.language.model.dao.LanguageItemRepository;
 import cz.gattserver.grass3.language.model.dao.LanguageRepository;
@@ -108,7 +110,7 @@ public class LanguageFacadeImpl implements LanguageFacade {
 
 	private void randomChoose(int times, List<Long> ids, Set<Long> choosen) {
 		if (!ids.isEmpty())
-			IntStream.range(0, times).forEach(i -> choosen.add(ids.get((int) Math.floor(Math.random() * ids.size()))));
+			IntStream.range(0, times).forEach(i -> choosen.add(ids.get(Random.nextInt(ids.size()))));
 	}
 
 	@Override

@@ -13,21 +13,21 @@
 
 	<dependencies>
 
-		<!-- GRASS ARTICLES BUNDLE -->
+		<!-- Grass articles -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 
-		<!-- GRASS ARTICLES BASIC BUNDLE -->
+		<!-- Grass basic articles pluginy -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles-basic</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 
-		<!-- GRASS ARTICLES FAVLINK BUNDLE -->
+		<!-- Grass favlink articles plugin -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles-favlink</artifactId>
@@ -35,5 +35,15 @@
 		</dependency>
 
 	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- JaCoCo -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

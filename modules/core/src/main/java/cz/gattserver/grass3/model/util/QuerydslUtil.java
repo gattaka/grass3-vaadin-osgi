@@ -46,22 +46,22 @@ public final class QuerydslUtil {
 		if (mod == 0) {
 			page = offset / limit;
 			pagesize = limit;
+		} else {
+			// pokud ne, pak limit je nějaký zbytek, například pro případ jako
+			// offset = 40 a limit = 16 není možné převádět na page a pagesize:
+			// 40/16 = 2,5 -> 2 (musí být celé číslo)
+			// page = 2 a pagesize = 16 udělá že se přeskočí prvních 32 záznamů
+			// a pak se nahraje dalších 16, tedy záznamy <33-48>, což je ale
+			// o 8 méně, než by se mělo vzít dle offset a limit <41-56>
+			// Zvětšit pagesize nemůžu, protože by to přestalo fungovat s page
+
+			// V takovém případ se ale jedná evidentně o zbytek, takže je rovnou
+			// možné stávající offset brát jako pagesize a page pak nastavit
+			// jako 1, aby se přeskočila 1x pagesize (offset) a poté se nahrál
+			// limit <= pagesize; limit může být větší než skutečně zbývá dat
+			page = 1;
+			pagesize = offset;
 		}
-
-		// pokud ne, pak limit je nějaký zbytek, například pro případ jako
-		// offset = 40 a limit = 16 není možné převádět na page a pagesize:
-		// 40/16 = 2,5 -> 2 (musí být celé číslo)
-		// page = 2 a pagesize = 16 udělá že se přeskočí prvních 32 záznamů a
-		// pak se nahraje dalších 16, tedy vezmu záznamy <33-48>, což je ale o
-		// 8 méně, než by se mělo původně vzít dle offset a limit <41-56>
-		// Zvětšit pagesize nemůžu, protože by to přestalo fungovat s page
-
-		// V takovém případ se ale jedná evidentně o zbytek, takže je rovnou
-		// možné stávající offset brát jako pagesize a page pak nastavit prostě
-		// jako 1, aby se přeskočila 1x pagesize (offset) a poté nahrála data
-		// pro limit <= pagesize; limit může být větší než skutečně zbývá dat
-		page = 1;
-		pagesize = offset;
 
 		if (dir != null && prop != null)
 			return new PageRequest(page, pagesize, dir, prop);
@@ -77,7 +77,7 @@ public final class QuerydslUtil {
 	 * @return
 	 */
 	public static PageRequest transformOffsetLimit(int offset, int limit) {
-		return transformOffsetLimit(offset, limit);
+		return transformOffsetLimit(offset, limit, null, null);
 	}
 
 	public static <T> JPAQuery<T> applyPagination(Pageable pageable, JPAQuery<T> query) {

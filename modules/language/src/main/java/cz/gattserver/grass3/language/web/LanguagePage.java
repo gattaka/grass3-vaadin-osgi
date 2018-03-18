@@ -31,6 +31,7 @@ import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.GridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.web.common.ui.BoldLabel;
 import cz.gattserver.web.common.ui.ImageIcon;
 
 public class LanguagePage extends OneColumnPage {
@@ -132,10 +133,16 @@ public class LanguagePage extends OneColumnPage {
 		testLayout.addComponent(new Label("Vyberte test"));
 		sheet.addComponent(testLayout);
 
-		btnLayout.addComponent(
-				new CreateGridButton("Spustit test slovíček", event -> startTest(langId, ItemType.WORD, testLayout)));
-		btnLayout.addComponent(
-				new CreateGridButton("Spustit test frází", event -> startTest(langId, ItemType.PHRASE, testLayout)));
+		Button wordsTestBtn = new Button("Spustit test slovíček",
+				event -> startTest(langId, ItemType.WORD, testLayout));
+		wordsTestBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
+		btnLayout.addComponent(wordsTestBtn);
+
+		Button phrasesTestBtn = new Button("Spustit test frází",
+				event -> startTest(langId, ItemType.PHRASE, testLayout));
+		phrasesTestBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
+		btnLayout.addComponent(phrasesTestBtn);
+
 		return sheet;
 	}
 
@@ -152,9 +159,13 @@ public class LanguagePage extends OneColumnPage {
 
 		GridLayout gridLayout = new GridLayout(2, items.size());
 		gridLayout.setSpacing(true);
+		gridLayout.setMargin(new MarginInfo(true, false, false, false));
 		gridLayout.setWidth("100%");
 		gridLayout.setColumnExpandRatio(1, 1);
 		testLayout.addComponent(gridLayout);
+
+		gridLayout.addComponent(new BoldLabel("Položka"));
+		gridLayout.addComponent(new BoldLabel("Překlad"));
 
 		for (LanguageItemTO item : items) {
 			Label label = new Label(item.getTranslation());
@@ -172,12 +183,17 @@ public class LanguagePage extends OneColumnPage {
 		submitBtn.addClickListener(e -> {
 			testLayout.removeAllComponents();
 
-			GridLayout resultLayout = new GridLayout(3, items.size());
-			resultLayout.setMargin(false);
+			GridLayout resultLayout = new GridLayout(4, items.size());
+			resultLayout.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
+			resultLayout.setMargin(new MarginInfo(true, false, false, false));
 			resultLayout.setSpacing(true);
 			resultLayout.setWidth("100%");
-			resultLayout.setColumnExpandRatio(2, 1);
+			resultLayout.setColumnExpandRatio(3, 1);
 			testLayout.addComponent(resultLayout);
+
+			resultLayout.addComponent(new BoldLabel("Položka"), 0, 0, 1, 0);
+			resultLayout.addComponent(new BoldLabel("Překlad"));
+			resultLayout.addComponent(new BoldLabel("Odpověď"));
 
 			answersMap.keySet().forEach(item -> {
 				TextField answerField = answersMap.get(item);
@@ -188,25 +204,19 @@ public class LanguagePage extends OneColumnPage {
 				Embedded image = new Embedded(null,
 						(success ? ImageIcon.TICK_16_ICON : ImageIcon.DELETE_16_ICON).createResource());
 				resultLayout.addComponent(image);
-				resultLayout.setComponentAlignment(image, Alignment.MIDDLE_LEFT);
+				resultLayout.setComponentAlignment(image, Alignment.BOTTOM_LEFT);
 
 				Label label = new Label(item.getTranslation());
 				label.setWidth(null);
 				resultLayout.addComponent(label);
-				resultLayout.setComponentAlignment(label, Alignment.MIDDLE_LEFT);
 
-				VerticalLayout compareLayout = new VerticalLayout();
-				compareLayout.setMargin(false);
-
-				Label resultCorrect = new Label(item.getContent());
-				compareLayout.addComponent(resultCorrect);
+				Label resultCorrect = new BoldLabel(item.getContent());
+				resultLayout.addComponent(resultCorrect);
 
 				TextField resultAnswerField = new TextField(null, answer);
 				resultAnswerField.setEnabled(false);
 				resultAnswerField.setWidth("100%");
-				compareLayout.addComponent(resultAnswerField);
-
-				resultLayout.addComponent(compareLayout);
+				resultLayout.addComponent(resultAnswerField);
 
 				languageFacade.updateItemAfterTest(item, success);
 

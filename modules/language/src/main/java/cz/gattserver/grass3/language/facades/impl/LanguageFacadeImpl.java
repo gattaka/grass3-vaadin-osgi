@@ -94,14 +94,13 @@ public class LanguageFacadeImpl implements LanguageFacade {
 		List<Long> toCheckIds = itemRepository.findIdsByLanguageAndSuccessRateRangeSortByContent(languageId, type, 8,
 				1.1);
 
-		// Vybírám náhodně 10 věcí
 		Set<Long> choosenIds = new HashSet<>();
-		// 5 jich neumím
-		randomChoose(5, toLearnIds, choosenIds);
-		// 3 si potřebuju vylepšit
-		randomChoose(3, toImproveIds, choosenIds);
-		// 2 si opakuju, abych nezapomněl
-		randomChoose(2, toCheckIds, choosenIds);
+		// Neumím
+		randomChoose(10, toLearnIds, choosenIds);
+		// Potřebuju si vylepšit
+		randomChoose(7, toImproveIds, choosenIds);
+		// Opakuju, abych nezapomněl
+		randomChoose(3, toCheckIds, choosenIds);
 
 		List<LanguageItem> items = itemRepository.findByIds(choosenIds);
 		return mapper.mapLanguageItems(items);
@@ -109,7 +108,12 @@ public class LanguageFacadeImpl implements LanguageFacade {
 
 	private void randomChoose(int times, List<Long> ids, Set<Long> choosen) {
 		if (!ids.isEmpty())
-			IntStream.range(0, times).forEach(i -> choosen.add(ids.get(new Random().nextInt(ids.size()))));
+			IntStream.range(0, times).forEach(i -> {
+				int rand = new Random().nextInt(ids.size());
+				Long id = ids.get(rand);
+				ids.remove(id);
+				choosen.add(id);
+			});
 	}
 
 	@Override

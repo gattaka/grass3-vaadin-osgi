@@ -36,6 +36,8 @@ import cz.gattserver.web.common.ui.ImageIcon;
 
 public class LanguagePage extends OneColumnPage {
 
+	private static final String PREKLAD_LABEL = "Překlad";
+
 	@Autowired
 	private LanguageFacade languageFacade;
 
@@ -165,7 +167,7 @@ public class LanguagePage extends OneColumnPage {
 		testLayout.addComponent(gridLayout);
 
 		gridLayout.addComponent(new BoldLabel("Položka"));
-		gridLayout.addComponent(new BoldLabel("Překlad"));
+		gridLayout.addComponent(new BoldLabel(PREKLAD_LABEL));
 
 		for (LanguageItemTO item : items) {
 			Label label = new Label(item.getTranslation());
@@ -192,7 +194,7 @@ public class LanguagePage extends OneColumnPage {
 			testLayout.addComponent(resultLayout);
 
 			resultLayout.addComponent(new BoldLabel("Položka"), 0, 0, 1, 0);
-			resultLayout.addComponent(new BoldLabel("Překlad"));
+			resultLayout.addComponent(new BoldLabel(PREKLAD_LABEL));
 			resultLayout.addComponent(new BoldLabel("Odpověď"));
 
 			answersMap.keySet().forEach(item -> {
@@ -237,7 +239,7 @@ public class LanguagePage extends OneColumnPage {
 				(sortOrder, offset, limit) -> languageFacade.getLanguageItems(langId, type, offset, limit).stream(),
 				() -> languageFacade.countLanguageItems(langId, type));
 		grid.addColumn(LanguageItemTO::getContent).setCaption("Obsah");
-		grid.addColumn(LanguageItemTO::getTranslation).setCaption("Překlad");
+		grid.addColumn(LanguageItemTO::getTranslation).setCaption(PREKLAD_LABEL);
 		grid.addColumn(item -> (Math.floor(item.getSuccessRate() * 1000) / 10) + "%").setCaption("Úspěšnost")
 				.setStyleGenerator(item -> "v-align-right");
 		grid.addColumn(LanguageItemTO::getLastTested, new LocalDateTimeRenderer("dd.MM.yyyy HH:mm"))

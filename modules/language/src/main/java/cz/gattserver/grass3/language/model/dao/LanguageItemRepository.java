@@ -17,12 +17,21 @@ public interface LanguageItemRepository extends JpaRepository<LanguageItem, Long
 	@Query("select i from LANGUAGEITEM i where i.language.id = ?1 and i.type = ?2 order by content asc")
 	List<LanguageItem> findAllByLanguageSortByName(long languageId, ItemType type, Pageable pageable);
 
+	@Query("select i from LANGUAGEITEM i where i.language.id = ?1 order by content asc")
+	List<LanguageItem> findAllByLanguageSortByName(long languageId, Pageable pageable);
+
 	@Query("select count(i) from LANGUAGEITEM i where i.language.id = ?1 and i.type = ?2")
 	int countAllByLanguage(long languageId, ItemType type);
+
+	@Query("select count(i) from LANGUAGEITEM i where i.language.id = ?1")
+	int countAllByLanguage(long languageId);
 
 	@Query("select i.id from LANGUAGEITEM i where i.language.id = ?1 and i.type = ?2 and i.successRate >= ?3 and i.successRate < ?4 order by content asc")
 	List<Long> findIdsByLanguageAndSuccessRateRangeSortByContent(long languageId, ItemType type, double minRate,
 			double maxRate);
+
+	@Query("select i.id from LANGUAGEITEM i where i.language.id = ?1 and i.successRate >= ?2 and i.successRate < ?3 order by content asc")
+	List<Long> findIdsByLanguageAndSuccessRateRangeSortByContent(long languageId, double minRate, double maxRate);
 
 	@Query("select i from LANGUAGEITEM i where i.id in ?1")
 	List<LanguageItem> findByIds(Set<Long> ids);

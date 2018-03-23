@@ -88,6 +88,9 @@ public class LanguagePage extends OneColumnPage {
 					case 2:
 						newTab = createItemsTab(langId, ItemType.PHRASE);
 						break;
+					case 3:
+						newTab = createItemsTab(langId, null);
+						break;
 					default:
 						break;
 					}
@@ -98,6 +101,7 @@ public class LanguagePage extends OneColumnPage {
 			tabSheet.addTab(createTestTab(langId), "Zkoušení");
 			tabSheet.addTab(new VerticalLayout(), "Slovíčka");
 			tabSheet.addTab(new VerticalLayout(), "Fráze");
+			tabSheet.addTab(new VerticalLayout(), "Vše");
 
 			langLayout.addComponent(tabSheet);
 		}));
@@ -142,6 +146,10 @@ public class LanguagePage extends OneColumnPage {
 				event -> startTest(langId, ItemType.PHRASE, testLayout));
 		phrasesTestBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
 		btnLayout.addComponent(phrasesTestBtn);
+
+		Button allTestBtn = new Button("Spustit test všeho", event -> startTest(langId, null, testLayout));
+		allTestBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
+		btnLayout.addComponent(allTestBtn);
 
 		return sheet;
 	}
@@ -256,16 +264,20 @@ public class LanguagePage extends OneColumnPage {
 		btnLayout.addComponent(
 				new CreateGridButton("Přidat", event -> UI.getCurrent().addWindow(new LanguageItemWindow(to -> {
 					to.setLanguage(langId);
-					to.setType(type);
 					languageFacade.saveLanguageItem(to);
 					grid.getDataProvider().refreshAll();
-				}))));
+				}, type))));
 
-		btnLayout.addComponent(new ModifyGridButton<LanguageItemTO>("Upravit",
-				item -> UI.getCurrent().addWindow(new LanguageItemWindow(item, to -> {
-					languageFacade.saveLanguageItem(to);
+		btnLayout.addComponent(new ModifyGridButton<LanguageItemTO>("Upravit", item -> {
+			ItemType oldType = item.getType();
+			UI.getCurrent().addWindow(new LanguageItemWindow(item, to -> {
+				languageFacade.saveLanguageItem(to);
+				if (oldType.equals(to.getType()))
 					grid.getDataProvider().refreshItem(to);
-				})), grid));
+				else
+					grid.getDataProvider().refreshAll();
+			}, type));
+		}, grid));
 
 		btnLayout.addComponent(new DeleteGridButton<LanguageItemTO>("Odstranit", items -> items.forEach(item -> {
 			languageFacade.deleteLanguageItem(item);

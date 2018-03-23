@@ -30,7 +30,7 @@ public interface LanguageFacade {
 	 * @param languageId
 	 *            id jazyka ze kterého mají být záznamy
 	 * @param type
-	 *            typ záznamu
+	 *            typ záznamu, může být <code>null</code>
 	 * @param page
 	 *            stránka
 	 * @param size
@@ -45,7 +45,8 @@ public interface LanguageFacade {
 	 * @param languageId
 	 *            jazyk v rámci kterého se bude zkoušet
 	 * @param type
-	 *            typ záznamů, které se budou zkoušet
+	 *            typ záznamů, které se budou zkoušet, může být
+	 *            <code>null</code>
 	 * @return list záznamů k přezkoušení
 	 */
 	List<LanguageItemTO> getLanguageItemsForTest(long languageId, ItemType type);
@@ -56,7 +57,7 @@ public interface LanguageFacade {
 	 * @param languageId
 	 *            id jazyka ze kterého mají být záznamy
 	 * @param type
-	 *            typ záznamu
+	 *            typ záznamu, může být <code>null</code>
 	 * @return počet záznamů
 	 */
 	int countLanguageItems(long languageId, ItemType type);

@@ -182,6 +182,7 @@ public class LanguagePage extends OneColumnPage {
 
 			TextField answerField = new TextField();
 			answerField.setWidth("100%");
+			answerField.setPlaceholder("varianta;varianta;...");
 			gridLayout.addComponent(answerField);
 
 			answersMap.put(item, answerField);
@@ -208,7 +209,13 @@ public class LanguagePage extends OneColumnPage {
 				String answer = answerField.getValue();
 				String correctAnswer = item.getContent().toLowerCase().trim();
 
-				boolean success = answer != null && answer.toLowerCase().trim().equals(correctAnswer);
+				boolean success = false;
+				for (String variant : answer.toLowerCase().split(";")) {
+					if (variant.trim().equals(correctAnswer)) {
+						success = true;
+						break;
+					}
+				}
 				Embedded image = new Embedded(null,
 						(success ? ImageIcon.TICK_16_ICON : ImageIcon.DELETE_16_ICON).createResource());
 				resultLayout.addComponent(image);

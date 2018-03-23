@@ -104,15 +104,20 @@ public class HWItemOverviewTO implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return id == null ? 0 : id.hashCode();
+		return id == null ? super.hashCode() : id.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof HWItemOverviewTO) {
-			return (((HWItemOverviewTO) obj).getId().equals(id));
-		} else
+		if (obj == null)
 			return false;
+		if (obj instanceof HWItemOverviewTO) {
+			HWItemOverviewTO hw = (HWItemOverviewTO) obj;
+			if (getId() != null)
+				return getId().equals(hw.getId());
+			return super.equals(hw);
+		}
+		return false;
 	}
 
 }

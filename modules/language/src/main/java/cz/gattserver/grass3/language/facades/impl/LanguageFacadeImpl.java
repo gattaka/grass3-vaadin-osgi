@@ -123,4 +123,9 @@ public class LanguageFacadeImpl implements LanguageFacade {
 		itemRepository.updateItem(item.getId(), newCount, newRate, LocalDateTime.now());
 	}
 
+	@Override
+	public void deleteLanguageItem(LanguageItemTO item) {
+		itemRepository.delete(item.getId());
+	}
+
 }

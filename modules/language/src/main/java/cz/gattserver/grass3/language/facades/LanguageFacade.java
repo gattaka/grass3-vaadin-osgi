@@ -81,4 +81,11 @@ public interface LanguageFacade {
 	 */
 	void updateItemAfterTest(LanguageItemTO item, boolean success);
 
+	/**
+	 * Smaže daný záznam
+	 * 
+	 * @param item
+	 */
+	void deleteLanguageItem(LanguageItemTO item);
+
 }

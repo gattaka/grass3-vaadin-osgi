@@ -28,7 +28,7 @@ import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.language.model.dto.LanguageTO;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
-import cz.gattserver.grass3.ui.components.GridButton;
+import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.ui.BoldLabel;
@@ -67,11 +67,11 @@ public class LanguagePage extends OneColumnPage {
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		langLayout.addComponent(btnLayout);
 
-		GridButton<LanguageTO> chooseBtn = new GridButton<>("Vybrat", item -> {
+		grid.addSelectionListener(se -> se.getFirstSelectedItem().ifPresent(item -> {
 			if (tabSheet != null)
 				langLayout.removeComponent(tabSheet);
 
-			long langId = item.iterator().next().getId();
+			long langId = item.getId();
 			tabSheet = new TabSheet();
 			tabSheet.addSelectedTabChangeListener(e -> {
 				if (!e.isUserOriginated())
@@ -96,13 +96,11 @@ public class LanguagePage extends OneColumnPage {
 			});
 
 			tabSheet.addTab(createTestTab(langId), "Zkoušení");
-			tabSheet.addTab(createItemsTab(langId, ItemType.WORD), "Slovíčka");
-			tabSheet.addTab(createItemsTab(langId, ItemType.PHRASE), "Fráze");
+			tabSheet.addTab(new VerticalLayout(), "Slovíčka");
+			tabSheet.addTab(new VerticalLayout(), "Fráze");
 
 			langLayout.addComponent(tabSheet);
-		}, grid);
-		chooseBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
-		btnLayout.addComponent(chooseBtn);
+		}));
 
 		btnLayout.addComponent(
 				new CreateGridButton("Přidat", event -> UI.getCurrent().addWindow(new LanguageWindow(to -> {
@@ -268,6 +266,11 @@ public class LanguagePage extends OneColumnPage {
 					languageFacade.saveLanguageItem(to);
 					grid.getDataProvider().refreshItem(to);
 				})), grid));
+
+		btnLayout.addComponent(new DeleteGridButton<LanguageItemTO>("Odstranit", items -> items.forEach(item -> {
+			languageFacade.deleteLanguageItem(item);
+			grid.getDataProvider().refreshAll();
+		}), grid));
 
 		return btnLayout;
 	}

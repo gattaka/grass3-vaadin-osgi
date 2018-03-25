@@ -2,6 +2,8 @@ package cz.gattserver.grass3.language.facades;
 
 import java.util.List;
 
+import com.vaadin.data.provider.QuerySortOrder;
+
 import cz.gattserver.grass3.language.model.domain.ItemType;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.language.model.dto.LanguageTO;
@@ -25,19 +27,28 @@ public interface LanguageFacade {
 	long saveLanguage(LanguageTO languageTO);
 
 	/**
+	 * Získá počet všech záznamů
+	 * 
+	 * @param filterTO
+	 *            filtrovací TO
+	 * @return počet záznamů
+	 */
+	int countLanguageItems(LanguageItemTO filterTO);
+
+	/**
 	 * Získá všechny záznamy (stránkované)
 	 * 
-	 * @param languageId
-	 *            id jazyka ze kterého mají být záznamy
-	 * @param type
-	 *            typ záznamu, může být <code>null</code>
+	 * @param filterTO
+	 *            filtrovací TO
 	 * @param page
 	 *            stránka
 	 * @param size
 	 *            velikost stránky
+	 * @param sortOrder
+	 *            info o řazení
 	 * @return list záznamů
 	 */
-	List<LanguageItemTO> getLanguageItems(long languageId, ItemType type, int page, int size);
+	List<LanguageItemTO> getLanguageItems(LanguageItemTO filterTO, int page, int size, List<QuerySortOrder> sortOrder);
 
 	/**
 	 * Získá záznamy na zkoušení
@@ -50,17 +61,6 @@ public interface LanguageFacade {
 	 * @return list záznamů k přezkoušení
 	 */
 	List<LanguageItemTO> getLanguageItemsForTest(long languageId, ItemType type);
-
-	/**
-	 * Získá počet všech záznamů
-	 * 
-	 * @param languageId
-	 *            id jazyka ze kterého mají být záznamy
-	 * @param type
-	 *            typ záznamu, může být <code>null</code>
-	 * @return počet záznamů
-	 */
-	int countLanguageItems(long languageId, ItemType type);
 
 	/**
 	 * Získá záznam dle id

@@ -8,7 +8,9 @@ import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 
 import cz.gattserver.grass3.language.model.domain.ItemType;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
@@ -58,26 +60,37 @@ public class LanguageItemWindow extends WebWindow {
 				LanguageItemTO::setTranslation);
 		addComponent(translationField);
 
-		translationField.addShortcutListener(new ShortcutListener("Submit", ShortcutAction.KeyCode.ENTER, null) {
+		ShortcutListener sl = new ShortcutListener("Submit", ShortcutAction.KeyCode.ENTER, null) {
 			private static final long serialVersionUID = -7239845094514060176L;
 
 			@Override
 			public void handleAction(Object sender, Object target) {
 				onSave(action, binder, targetTO);
 			}
-		});
+		};
+
+		contentField.addShortcutListener(sl);
+		translationField.addShortcutListener(sl);
 
 		binder.readBean(targetTO);
 
 		Button.ClickListener clickListener = e -> onSave(action, binder, targetTO);
 
-		Button b;
-		if (to != null)
-			b = new ModifyButton(clickListener);
-		else
-			b = new CreateButton(clickListener);
-		addComponent(b);
-		setComponentAlignment(b, Alignment.MIDDLE_CENTER);
+		HorizontalLayout buttonLayout = new HorizontalLayout();
+		addComponent(buttonLayout);
+		setComponentAlignment(buttonLayout, Alignment.MIDDLE_CENTER);
+
+		if (to != null) {
+			buttonLayout.addComponent(new ModifyButton(clickListener));
+		} else {
+			buttonLayout.addComponent(new CreateButton(clickListener));
+			Button createAndContinueBtn = new CreateButton(e -> {
+				clickListener.buttonClick(e);
+				UI.getCurrent().addWindow(new LanguageItemWindow(action, asType));
+			});
+			createAndContinueBtn.setCaption("Vytvořit a pokračovat");
+			buttonLayout.addComponent(createAndContinueBtn);
+		}
 	}
 
 	private void onSave(SaveAction action, Binder<LanguageItemTO> binder, LanguageItemTO targetTO) {

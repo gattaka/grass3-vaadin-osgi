@@ -12,12 +12,15 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.Tab;
+import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.LocalDateTimeRenderer;
+import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -241,25 +244,58 @@ public class LanguagePage extends OneColumnPage {
 
 	}
 
+	private void populate(Grid<LanguageItemTO> grid, LanguageItemTO filterTO) {
+		grid.setDataProvider(
+				(sortOrder, offset, limit) -> languageFacade.getLanguageItems(filterTO, offset, limit, sortOrder).stream(),
+				() -> languageFacade.countLanguageItems(filterTO));
+	}
+
 	private VerticalLayout createItemsTab(Long langId, ItemType type) {
 		VerticalLayout sheet = new VerticalLayout();
 		sheet.setMargin(new MarginInfo(true, false, false, false));
 
+		LanguageItemTO filterTO = new LanguageItemTO();
+		filterTO.setLanguage(langId);
+		filterTO.setType(type);
+
 		Grid<LanguageItemTO> grid = new Grid<>();
 		grid.setWidth("100%");
 		grid.setHeight("500px");
-		grid.setDataProvider(
-				(sortOrder, offset, limit) -> languageFacade.getLanguageItems(langId, type, offset, limit).stream(),
-				() -> languageFacade.countLanguageItems(langId, type));
-		grid.addColumn(LanguageItemTO::getContent).setCaption("Obsah");
-		grid.addColumn(LanguageItemTO::getTranslation).setCaption(PREKLAD_LABEL);
+
+		Column<LanguageItemTO, String> contentColumn = grid.addColumn(LanguageItemTO::getContent).setCaption("Obsah");
+		Column<LanguageItemTO, String> translationColumn = grid.addColumn(LanguageItemTO::getTranslation)
+				.setCaption(PREKLAD_LABEL);
 		grid.addColumn(item -> (Math.floor(item.getSuccessRate() * 1000) / 10) + "%").setCaption("Úspěšnost")
 				.setStyleGenerator(item -> "v-align-right");
 		grid.addColumn(LanguageItemTO::getLastTested, new LocalDateTimeRenderer("dd.MM.yyyy HH:mm"))
 				.setCaption("Naposledy zkoušeno").setStyleGenerator(item -> "v-align-right");
 		grid.addColumn(LanguageItemTO::getTested).setCaption("Zkoušeno");
-		sheet.addComponent(grid);
 
+		HeaderRow filteringHeader = grid.appendHeaderRow();
+
+		// Obsah
+		TextField contentFilterField = new TextField();
+		contentFilterField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		contentFilterField.setWidth("100%");
+		contentFilterField.addValueChangeListener(e -> {
+			filterTO.setContent(e.getValue());
+			populate(grid, filterTO);
+		});
+		filteringHeader.getCell(contentColumn).setComponent(contentFilterField);
+
+		// Překlad
+		TextField translationFilterField = new TextField();
+		translationFilterField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		translationFilterField.setWidth("100%");
+		translationFilterField.addValueChangeListener(e -> {
+			filterTO.setTranslation(e.getValue());
+			populate(grid, filterTO);
+		});
+		filteringHeader.getCell(translationColumn).setComponent(translationFilterField);
+
+		populate(grid, filterTO);
+
+		sheet.addComponent(grid);
 		sheet.addComponent(createButtonLayout(grid, langId, type));
 
 		return sheet;

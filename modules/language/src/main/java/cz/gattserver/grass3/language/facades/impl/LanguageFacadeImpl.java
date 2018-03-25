@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.vaadin.data.provider.QuerySortOrder;
+
 import cz.gattserver.grass3.language.facades.LanguageFacade;
 import cz.gattserver.grass3.language.model.dao.LanguageItemRepository;
 import cz.gattserver.grass3.language.model.dao.LanguageRepository;
@@ -58,23 +60,16 @@ public class LanguageFacadeImpl implements LanguageFacade {
 	 */
 
 	@Override
-	public List<LanguageItemTO> getLanguageItems(long languageId, ItemType type, int offset, int limit) {
-		List<LanguageItem> items;
-		if (type != null)
-			items = itemRepository.findAllByLanguageSortByName(languageId, type,
-					QuerydslUtil.transformOffsetLimit(offset, limit));
-		else
-			items = itemRepository.findAllByLanguageSortByName(languageId,
-					QuerydslUtil.transformOffsetLimit(offset, limit));
-		return mapper.mapLanguageItems(items);
+	public int countLanguageItems(LanguageItemTO filterTO) {
+		return (int) itemRepository.countAllByLanguage(filterTO);
 	}
 
 	@Override
-	public int countLanguageItems(long languageId, ItemType type) {
-		if (type != null)
-			return itemRepository.countAllByLanguage(languageId, type);
-		else
-			return itemRepository.countAllByLanguage(languageId);
+	public List<LanguageItemTO> getLanguageItems(LanguageItemTO filterTO, int offset, int limit,
+			List<QuerySortOrder> sortOrder) {
+		List<LanguageItem> items = itemRepository.findAllByLanguageSortByName(filterTO,
+				QuerydslUtil.transformOffsetLimit(offset, limit), QuerydslUtil.transformOrdering(sortOrder, s -> s));
+		return mapper.mapLanguageItems(items);
 	}
 
 	@Override

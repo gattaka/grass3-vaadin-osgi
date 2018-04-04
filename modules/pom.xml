@@ -21,6 +21,7 @@
 		<module>monitor</module>
 		<module>search</module>
 		<module>recipes</module>
+		<module>language</module>
 	</modules>
 
 </project>

@@ -28,6 +28,8 @@ public class LanguageItemRepositoryCustomImpl implements LanguageItemRepositoryC
 	private Predicate createPredicateHWItems(LanguageItemTO filterTO) {
 		QLanguageItem l = QLanguageItem.languageItem;
 		PredicateBuilder builder = new PredicateBuilder();
+		builder.eq(l.language.id, filterTO.getLanguage());
+		builder.eq(l.type, filterTO.getType());
 		builder.like(l.content, filterTO.getContent());
 		builder.like(l.translation, filterTO.getTranslation());
 		return builder.getBuilder();

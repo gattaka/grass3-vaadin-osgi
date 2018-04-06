@@ -245,8 +245,8 @@ public class LanguagePage extends OneColumnPage {
 	}
 
 	private void populate(Grid<LanguageItemTO> grid, LanguageItemTO filterTO) {
-		grid.setDataProvider(
-				(sortOrder, offset, limit) -> languageFacade.getLanguageItems(filterTO, offset, limit, sortOrder).stream(),
+		grid.setDataProvider((sortOrder, offset, limit) -> languageFacade
+				.getLanguageItems(filterTO, offset, limit, sortOrder).stream(),
 				() -> languageFacade.countLanguageItems(filterTO));
 	}
 
@@ -262,14 +262,18 @@ public class LanguagePage extends OneColumnPage {
 		grid.setWidth("100%");
 		grid.setHeight("500px");
 
-		Column<LanguageItemTO, String> contentColumn = grid.addColumn(LanguageItemTO::getContent).setCaption("Obsah");
+		Column<LanguageItemTO, String> contentColumn = grid.addColumn(LanguageItemTO::getContent).setCaption("Obsah")
+				.setSortProperty("content");
 		Column<LanguageItemTO, String> translationColumn = grid.addColumn(LanguageItemTO::getTranslation)
-				.setCaption(PREKLAD_LABEL);
+				.setCaption(PREKLAD_LABEL).setSortProperty("translation");
 		grid.addColumn(item -> (Math.floor(item.getSuccessRate() * 1000) / 10) + "%").setCaption("Úspěšnost")
-				.setStyleGenerator(item -> "v-align-right");
+				.setStyleGenerator(item -> "v-align-right").setSortProperty("successRate");
 		grid.addColumn(LanguageItemTO::getLastTested, new LocalDateTimeRenderer("dd.MM.yyyy HH:mm"))
-				.setCaption("Naposledy zkoušeno").setStyleGenerator(item -> "v-align-right");
-		grid.addColumn(LanguageItemTO::getTested).setCaption("Zkoušeno");
+				.setCaption("Naposledy zkoušeno").setStyleGenerator(item -> "v-align-right")
+				.setSortProperty("lastTested");
+		grid.addColumn(LanguageItemTO::getTested).setCaption("Zkoušeno").setSortProperty("tested");
+
+		grid.sort(contentColumn);
 
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 

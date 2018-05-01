@@ -61,14 +61,6 @@ public class SongDTO {
 		this.id = id;
 	}
 
-	public String getDescription() {
-		return text;
-	}
-
-	public void setDescription(String description) {
-		this.text = description;
-	}
-
 	public String getName() {
 		return name;
 	}

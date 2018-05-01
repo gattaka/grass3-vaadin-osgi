@@ -35,7 +35,7 @@ public interface SongsFacade {
 	/**
 	 * Založí/uprav novou písničku
 	 */
-	public Long saveSong(SongDTO songDTO);
+	public SongDTO saveSong(SongDTO songDTO);
 
 	/**
 	 * Převede každý "< br/ >" nebo "< br >" v textu na EOL znak
@@ -46,5 +46,12 @@ public interface SongsFacade {
 	 * Převede každý EOL znak v textu na "< br/ >"
 	 */
 	public String eolToBreakline(String text);
+
+	/**
+	 * Smaže písničku
+	 * 
+	 * @param id
+	 */
+	public void deleteSong(Long id);
 
 }

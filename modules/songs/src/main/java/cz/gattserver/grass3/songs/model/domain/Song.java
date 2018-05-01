@@ -7,7 +7,7 @@ import javax.persistence.Id;
 
 import org.hibernate.annotations.GenericGenerator;
 
-@Entity(name = "RECIPE")
+@Entity(name = "SONG")
 public class Song {
 
 	/**

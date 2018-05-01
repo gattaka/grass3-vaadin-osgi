@@ -38,10 +38,11 @@ public class SongsFacadeImpl implements SongsFacade {
 		return mapper.mapSong(song);
 	}
 
-	public Long saveSong(SongDTO to) {
+	public SongDTO saveSong(SongDTO to) {
 		Song song = mapper.mapSong(to);
 		song.setText(eolToBreakline(to.getText()));
-		return songsRepository.save(song).getId();
+		song = songsRepository.save(song);
+		return mapper.mapSong(song);
 	}
 
 	public String breaklineToEol(String text) {
@@ -60,5 +61,10 @@ public class SongsFacadeImpl implements SongsFacade {
 	@Override
 	public List<SongOverviewDTO> getSongsForREST(int page, int pageSize) {
 		return mapper.mapSongs(songsRepository.findAllOrderByNamePageable(new PageRequest(page, pageSize)));
+	}
+
+	@Override
+	public void deleteSong(Long id) {
+		songsRepository.delete(id);
 	}
 }

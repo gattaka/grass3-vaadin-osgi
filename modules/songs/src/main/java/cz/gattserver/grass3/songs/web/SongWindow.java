@@ -7,6 +7,7 @@ import com.vaadin.data.ValidationException;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
@@ -38,6 +39,7 @@ public abstract class SongWindow extends WebWindow {
 		setWidth("600px");
 
 		SongDTO formDTO = new SongDTO();
+		formDTO.setYear(0);
 
 		Binder<SongDTO> binder = new Binder<>(SongDTO.class);
 		binder.setBean(formDTO);
@@ -50,13 +52,15 @@ public abstract class SongWindow extends WebWindow {
 		final TextField authorField = new TextField("Autor");
 		binder.forField(authorField).bind(SongDTO::getAuthor, SongDTO::setAuthor);
 		authorField.setWidth("100%");
-		addComponent(authorField);
 
 		final TextField yearField = new TextField("Rok");
 		binder.forField(yearField).withConverter(new StringToIntegerConverter(null, "Rok musí být celé číslo"))
 				.bind(SongDTO::getYear, SongDTO::setYear);
 		yearField.setWidth("100%");
-		addComponent(yearField);
+
+		HorizontalLayout authorYearLayout = new HorizontalLayout(authorField, yearField);
+		authorYearLayout.setSizeFull();
+		addComponent(authorYearLayout);
 
 		final TextArea textField = new TextArea("Text");
 		binder.forField(textField).asRequired().bind(SongDTO::getText, SongDTO::setText);
@@ -73,7 +77,7 @@ public abstract class SongWindow extends WebWindow {
 
 		if (originalDTO != null) {
 			binder.readBean(originalDTO);
-			textField.setValue(songsFacade.breaklineToEol(originalDTO.getDescription()));
+			textField.setValue(songsFacade.breaklineToEol(originalDTO.getText()));
 		}
 	}
 

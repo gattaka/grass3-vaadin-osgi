@@ -99,7 +99,7 @@
 			<artifactId>recipes</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		
+
 		<!-- language -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
@@ -118,6 +118,13 @@
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>search</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<!-- zpěvník -->
+		<dependency>
+			<groupId>cz.gattserver.grass3</groupId>
+			<artifactId>songs</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 

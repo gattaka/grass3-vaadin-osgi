@@ -58,8 +58,8 @@ public class SongsPage extends OneColumnPage {
 			for (String line : choosenSong.getText().split("<br/>")) {
 				boolean chordLine = true;
 				for (String chunk : line.split(" |,|\t"))
-					if (StringUtils.isNotBlank(chunk)
-							&& !chunk.toLowerCase().matches(".+(b|#|mi|maj|dur|[0-9])|a|b|c|d|e|f|g|h")) {
+					if (StringUtils.isNotBlank(chunk) && !chunk.toLowerCase()
+							.matches("(([0-9]/)?[0-9]x)?(a|b|c|d|e|f|g|h)(b|#|mi|maj|dur)?[0-9]?")) {
 						chordLine = false;
 						break;
 					}

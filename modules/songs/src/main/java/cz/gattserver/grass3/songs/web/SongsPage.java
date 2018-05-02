@@ -3,6 +3,7 @@ package cz.gattserver.grass3.songs.web;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.server.Page;
@@ -55,15 +56,15 @@ public class SongsPage extends OneColumnPage {
 			authorYearLabel.setValue(value);
 			String htmlText = "";
 			for (String line : choosenSong.getText().split("<br/>")) {
-				boolean chordLine = false;
+				boolean chordLine = true;
 				for (String chunk : line.split(" |,|\t"))
-					if (chunk.toLowerCase().matches(".+b|.+#| [aehdcfgb]mi|b|e|h|d|c|f|g")) {
-						htmlText += "<span style='color: blue'>" + line + "</span><br/>";
-						chordLine = true;
+					if (StringUtils.isNotBlank(chunk)
+							&& !chunk.toLowerCase().matches(".+(b|#|mi|maj|dur|[0-9])|a|b|c|d|e|f|g|h")) {
+						chordLine = false;
 						break;
 					}
-				if (!chordLine)
-					htmlText += line + "<br/>";
+				htmlText += chordLine ? ("<span style='color: blue; white-space: pre;'>" + line + "</span><br/>")
+						: line + "<br/>";
 			}
 			contentLabel.setValue(htmlText);
 			this.choosenSong = choosenSong;
@@ -115,6 +116,8 @@ public class SongsPage extends OneColumnPage {
 		contentLayout.addComponent(authorYearLabel);
 
 		contentLabel = new Label();
+		contentLabel.setStyleName("song-text-area");
+		Page.getCurrent().getStyles().add(".v-slot.v-slot-song-text-area { font-family: monospace; }");
 		contentLabel.setWidth("560px");
 		contentLabel.setContentMode(ContentMode.HTML);
 		contentLayout.addComponent(contentLabel);

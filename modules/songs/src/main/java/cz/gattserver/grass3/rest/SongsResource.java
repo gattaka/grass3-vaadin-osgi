@@ -37,8 +37,8 @@ public class SongsResource {
 		return new ResponseEntity<>(songsFacade.getSongsCount(), HttpStatus.OK);
 	}
 
-	@RequestMapping("/recipe")
-	public @ResponseBody SongDTO recipe(@RequestParam(value = "id", required = true) Long id) {
+	@RequestMapping("/song")
+	public @ResponseBody SongDTO song(@RequestParam(value = "id", required = true) Long id) {
 		return songsFacade.getSongById(id);
 	}
 

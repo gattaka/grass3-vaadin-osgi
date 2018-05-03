@@ -1,8 +1,11 @@
 package cz.gattserver.grass3.songs.web;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,6 +28,7 @@ import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.ui.H2Label;
+import cz.gattserver.web.common.ui.MultiUpload;
 
 public class SongsPage extends OneColumnPage {
 
@@ -138,6 +142,44 @@ public class SongsPage extends OneColumnPage {
 				}
 			});
 		}));
+
+		MultiUpload multiFileUpload = new MultiUpload("Nahrát soubory") {
+			private static final long serialVersionUID = -415832652157894459L;
+
+			public void fileUploadFinished(InputStream in, String fileName, String mime, long size,
+					int filesLeftInQueue) {
+				SongDTO to = new SongDTO();
+				int nameEnd = fileName.indexOf("(");
+				int year = 0;
+				if (nameEnd < 0)
+					nameEnd = fileName.length();
+				else {
+					String yearPart = fileName.substring(nameEnd);
+					for (String chunk : yearPart.split(" |\\)|\\(")) {
+						if (chunk.matches("[0-9]+")) {
+							try {
+								year = Integer.parseInt(chunk);
+							} catch (NumberFormatException e) {
+								// nezdařilo se naparsovat číslo... ?
+							}
+							break;
+						}
+					}
+				}
+				to.setYear(year);
+				to.setName(fileName.substring(0, nameEnd).trim());
+				to.setAuthor("Hynek Uhlíř");
+				try {
+					to.setText(Streams.asString(in));
+				} catch (IOException e) {
+					to.setText("Nezdařilo se zpracovat obsah souboru");
+				}
+				to = songsFacade.saveSong(to);
+				showDetail(to);
+				loadSongs();
+			}
+		};
+		btnLayout.addComponent(multiFileUpload);
 
 		btnLayout.addComponent(new ModifyGridButton<SongOverviewDTO>("Upravit", event -> {
 			UI.getCurrent().addWindow(new SongWindow(choosenSong) {

@@ -14,15 +14,13 @@ import cz.gattserver.grass3.songs.model.dto.SongOverviewDTO;
  * <b>Mapper pro různé typy.</b>
  * 
  * <p>
- * Je potřeba aby byl volán na objektech s aktivními proxy objekty. To znamená,
- * že před tímto mapperem nedošlo k uzavření session, ve které byl původní
- * objekt pořízen.
+ * Je potřeba aby byl volán na objektech s aktivními proxy objekty. To znamená, že před tímto mapperem nedošlo k
+ * uzavření session, ve které byl původní objekt pořízen.
  * </p>
  * 
  * <p>
- * Mapper využívá proxy objekty umístěné v atributech předávaných entit. Během
- * mapování tak může docházet k dotazům na DB, které produkují tyto proxy
- * objekty a které se bez původní session mapovaného objektu neobejdou.
+ * Mapper využívá proxy objekty umístěné v atributech předávaných entit. Během mapování tak může docházet k dotazům na
+ * DB, které produkují tyto proxy objekty a které se bez původní session mapovaného objektu neobejdou.
  * </p>
  * 
  * @author gatt
@@ -64,7 +62,7 @@ public class Mapper {
 
 		List<SongOverviewDTO> songsDTOs = new ArrayList<SongOverviewDTO>();
 		for (Song song : songs) {
-			songsDTOs.add(new SongOverviewDTO(song.getName(), song.getAuthor(), song.getId()));
+			songsDTOs.add(new SongOverviewDTO(song.getName(), song.getAuthor(), song.getYear(), song.getId()));
 		}
 		return songsDTOs;
 	}

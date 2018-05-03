@@ -15,14 +15,20 @@ public class SongOverviewDTO {
 	private String author;
 
 	/**
+	 * Rok
+	 */
+	private Integer year;
+
+	/**
 	 * DB id
 	 */
 	private Long id;
 
-	public SongOverviewDTO(String name, String author, Long id) {
+	public SongOverviewDTO(String name, String author, Integer year, Long id) {
 		super();
 		this.name = name;
 		this.author = author;
+		this.year = year;
 		this.id = id;
 	}
 
@@ -60,6 +66,14 @@ public class SongOverviewDTO {
 
 	public void setAuthor(String author) {
 		this.author = author;
+	}
+
+	public Integer getYear() {
+		return year;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
 	}
 
 }

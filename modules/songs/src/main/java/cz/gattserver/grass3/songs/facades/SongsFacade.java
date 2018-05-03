@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.songs.facades;
 
+import java.io.InputStream;
 import java.util.List;
 
 import cz.gattserver.grass3.songs.model.dto.SongDTO;
@@ -53,5 +54,19 @@ public interface SongsFacade {
 	 * @param id
 	 */
 	public void deleteSong(Long id);
+
+	/**
+	 * Provede import písničky ze souboru
+	 * 
+	 * @param author
+	 * @param in
+	 * @param fileName
+	 * @param mime
+	 * @param size
+	 * @param filesLeftInQueue
+	 * @return
+	 */
+	public SongDTO importSong(String author, InputStream in, String fileName, String mime, long size,
+			int filesLeftInQueue);
 
 }

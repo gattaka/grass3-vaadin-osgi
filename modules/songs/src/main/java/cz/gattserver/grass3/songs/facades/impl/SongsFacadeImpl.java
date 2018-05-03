@@ -1,7 +1,10 @@
 package cz.gattserver.grass3.songs.facades.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
+import org.apache.commons.fileupload.util.Streams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -50,7 +53,8 @@ public class SongsFacadeImpl implements SongsFacade {
 	}
 
 	public String eolToBreakline(String text) {
-		return text.replace("" + '\n', "<br/>");
+		text = text.replace("\r\n", "<br/>");
+		return text.replace("\n", "<br/>");
 	}
 
 	@Override
@@ -66,5 +70,37 @@ public class SongsFacadeImpl implements SongsFacade {
 	@Override
 	public void deleteSong(Long id) {
 		songsRepository.delete(id);
+	}
+
+	@Override
+	public SongDTO importSong(String author, InputStream in, String fileName, String mime, long size,
+			int filesLeftInQueue) {
+		SongDTO to = new SongDTO();
+		int nameEnd = fileName.indexOf("(");
+		int year = 0;
+		if (nameEnd < 0)
+			nameEnd = fileName.length();
+		else {
+			String yearPart = fileName.substring(nameEnd);
+			for (String chunk : yearPart.split(" |\\)|\\(")) {
+				if (chunk.matches("[0-9]+")) {
+					try {
+						year = Integer.parseInt(chunk);
+					} catch (NumberFormatException e) {
+						// nezdařilo se naparsovat číslo... ?
+					}
+					break;
+				}
+			}
+		}
+		to.setYear(year);
+		to.setName(fileName.substring(0, nameEnd).trim());
+		to.setAuthor(author);
+		try {
+			to.setText(Streams.asString(in, "cp1250"));
+		} catch (IOException e) {
+			to.setText("Nezdařilo se zpracovat obsah souboru");
+		}
+		return saveSong(to);
 	}
 }

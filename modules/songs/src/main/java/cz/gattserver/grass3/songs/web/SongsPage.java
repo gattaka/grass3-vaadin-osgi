@@ -1,11 +1,9 @@
 package cz.gattserver.grass3.songs.web;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,6 +14,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -61,9 +60,9 @@ public class SongsPage extends OneColumnPage {
 			String htmlText = "";
 			for (String line : choosenSong.getText().split("<br/>")) {
 				boolean chordLine = true;
-				for (String chunk : line.split(" |,|\t"))
+				for (String chunk : line.split(" +| +|,|\t+"))
 					if (StringUtils.isNotBlank(chunk) && !chunk.toLowerCase()
-							.matches("(([0-9]/)?[0-9]x)?(a|b|c|d|e|f|g|h)(b|#|mi|maj|dur)?[0-9]?")) {
+							.matches("(a|b|c|d|e|f|g|h|x|/|#|mi|dim|maj|dur|[0-9]|-|\\+|\\(|\\)|capo|=|\\.)+")) {
 						chordLine = false;
 						break;
 					}
@@ -93,6 +92,7 @@ public class SongsPage extends OneColumnPage {
 		grid = new Grid<>(null, songs);
 		grid.addColumn(SongOverviewDTO::getName).setCaption("Název");
 		grid.addColumn(SongOverviewDTO::getAuthor).setCaption("Autor");
+		grid.addColumn(SongOverviewDTO::getYear).setCaption("Rok");
 		grid.setWidth("358px");
 		grid.setHeight("600px");
 		songsLayout.addComponent(grid);
@@ -143,43 +143,27 @@ public class SongsPage extends OneColumnPage {
 			});
 		}));
 
-		MultiUpload multiFileUpload = new MultiUpload("Nahrát soubory") {
+		final TextField importedAuthorField = new TextField();
+		importedAuthorField.setPlaceholder("Autor importovaných písní");
+		importedAuthorField.setWidth("200px");
+		btnLayout.addComponent(importedAuthorField);
+
+		MultiUpload multiFileUpload = new MultiUpload("Import") {
 			private static final long serialVersionUID = -415832652157894459L;
 
 			public void fileUploadFinished(InputStream in, String fileName, String mime, long size,
 					int filesLeftInQueue) {
-				SongDTO to = new SongDTO();
-				int nameEnd = fileName.indexOf("(");
-				int year = 0;
-				if (nameEnd < 0)
-					nameEnd = fileName.length();
-				else {
-					String yearPart = fileName.substring(nameEnd);
-					for (String chunk : yearPart.split(" |\\)|\\(")) {
-						if (chunk.matches("[0-9]+")) {
-							try {
-								year = Integer.parseInt(chunk);
-							} catch (NumberFormatException e) {
-								// nezdařilo se naparsovat číslo... ?
-							}
-							break;
-						}
-					}
-				}
-				to.setYear(year);
-				to.setName(fileName.substring(0, nameEnd).trim());
-				to.setAuthor("Hynek Uhlíř");
-				try {
-					to.setText(Streams.asString(in));
-				} catch (IOException e) {
-					to.setText("Nezdařilo se zpracovat obsah souboru");
-				}
-				to = songsFacade.saveSong(to);
+				SongDTO to = songsFacade.importSong(importedAuthorField.getValue(), in, fileName, mime, size,
+						filesLeftInQueue);
 				showDetail(to);
 				loadSongs();
 			}
 		};
+		multiFileUpload.setEnabled(false);
 		btnLayout.addComponent(multiFileUpload);
+
+		importedAuthorField
+				.addValueChangeListener(e -> multiFileUpload.setEnabled(StringUtils.isNotBlank(e.getValue())));
 
 		btnLayout.addComponent(new ModifyGridButton<SongOverviewDTO>("Upravit", event -> {
 			UI.getCurrent().addWindow(new SongWindow(choosenSong) {

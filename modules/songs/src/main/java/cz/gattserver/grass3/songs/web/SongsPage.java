@@ -101,7 +101,8 @@ public class SongsPage extends OneColumnPage {
 
 		grid = new Grid<>(null, songs);
 		Column<SongOverviewTO, String> nazevColumn = grid.addColumn(SongOverviewTO::getName).setCaption("Název");
-		Column<SongOverviewTO, String> authorColumn = grid.addColumn(SongOverviewTO::getAuthor).setCaption("Autor");
+		Column<SongOverviewTO, String> authorColumn = grid.addColumn(SongOverviewTO::getAuthor).setCaption("Autor")
+				.setWidth(150);
 		Column<SongOverviewTO, Integer> yearColumn = grid.addColumn(SongOverviewTO::getYear).setCaption("Rok")
 				.setWidth(60);
 		grid.setWidth("398px");
@@ -122,6 +123,7 @@ public class SongsPage extends OneColumnPage {
 		// Autor
 		TextField authorColumnField = new TextField();
 		authorColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		authorColumnField.setWidth("100%");
 		authorColumnField.addValueChangeListener(e -> {
 			filterTO.setAuthor(e.getValue());
 			loadSongs();

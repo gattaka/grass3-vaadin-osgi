@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cz.gattserver.grass3.songs.facades.SongsFacade;
-import cz.gattserver.grass3.songs.model.dto.SongDTO;
-import cz.gattserver.grass3.songs.model.dto.SongOverviewDTO;
+import cz.gattserver.grass3.songs.model.dto.SongTO;
+import cz.gattserver.grass3.songs.model.dto.SongOverviewTO;
 
 @Controller
 @RequestMapping("/songs")
@@ -22,7 +22,7 @@ public class SongsResource {
 	private SongsFacade songsFacade;
 
 	@RequestMapping("/list")
-	public ResponseEntity<List<SongOverviewDTO>> list(@RequestParam(value = "page", required = true) int page,
+	public ResponseEntity<List<SongOverviewTO>> list(@RequestParam(value = "page", required = true) int page,
 			@RequestParam(value = "pageSize", required = true) int pageSize) {
 		int count = songsFacade.getSongsCount();
 		// startIndex nesmí být víc než je počet, endIndex může být s tím si JPA
@@ -38,7 +38,7 @@ public class SongsResource {
 	}
 
 	@RequestMapping("/song")
-	public @ResponseBody SongDTO song(@RequestParam(value = "id", required = true) Long id) {
+	public @ResponseBody SongTO song(@RequestParam(value = "id", required = true) Long id) {
 		return songsFacade.getSongById(id);
 	}
 

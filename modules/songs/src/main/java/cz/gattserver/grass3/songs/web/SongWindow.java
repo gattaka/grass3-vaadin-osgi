@@ -14,7 +14,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
 import cz.gattserver.grass3.songs.facades.SongsFacade;
-import cz.gattserver.grass3.songs.model.dto.SongDTO;
+import cz.gattserver.grass3.songs.model.dto.SongTO;
 import cz.gattserver.grass3.ui.components.CreateButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
 import cz.gattserver.web.common.ui.window.ErrorWindow;
@@ -31,31 +31,31 @@ public abstract class SongWindow extends WebWindow {
 		this(null);
 	}
 
-	protected abstract void onSave(SongDTO dto);
+	protected abstract void onSave(SongTO dto);
 
-	public SongWindow(final SongDTO originalDTO) {
+	public SongWindow(final SongTO originalDTO) {
 		super(originalDTO == null ? "Založit" : "Upravit" + " písničku");
 
 		setWidth("600px");
 
-		SongDTO formDTO = new SongDTO();
+		SongTO formDTO = new SongTO();
 		formDTO.setYear(0);
 
-		Binder<SongDTO> binder = new Binder<>(SongDTO.class);
+		Binder<SongTO> binder = new Binder<>(SongTO.class);
 		binder.setBean(formDTO);
 
 		final TextField nameField = new TextField("Název");
-		binder.forField(nameField).asRequired().bind(SongDTO::getName, SongDTO::setName);
+		binder.forField(nameField).asRequired().bind(SongTO::getName, SongTO::setName);
 		nameField.setWidth("100%");
 		addComponent(nameField);
 
 		final TextField authorField = new TextField("Autor");
-		binder.forField(authorField).bind(SongDTO::getAuthor, SongDTO::setAuthor);
+		binder.forField(authorField).bind(SongTO::getAuthor, SongTO::setAuthor);
 		authorField.setWidth("100%");
 
 		final TextField yearField = new TextField("Rok");
 		binder.forField(yearField).withConverter(new StringToIntegerConverter(null, "Rok musí být celé číslo"))
-				.bind(SongDTO::getYear, SongDTO::setYear);
+				.bind(SongTO::getYear, SongTO::setYear);
 		yearField.setWidth("100%");
 
 		HorizontalLayout authorYearLayout = new HorizontalLayout(authorField, yearField);
@@ -63,7 +63,7 @@ public abstract class SongWindow extends WebWindow {
 		addComponent(authorYearLayout);
 
 		final TextArea textField = new TextArea("Text");
-		binder.forField(textField).asRequired().bind(SongDTO::getText, SongDTO::setText);
+		binder.forField(textField).asRequired().bind(SongTO::getText, SongTO::setText);
 		textField.setWidth("100%");
 		textField.setHeight("500px");
 		addComponent(textField);
@@ -81,9 +81,9 @@ public abstract class SongWindow extends WebWindow {
 		}
 	}
 
-	private void save(SongDTO originalDTO, Binder<SongDTO> binder) {
+	private void save(SongTO originalDTO, Binder<SongTO> binder) {
 		try {
-			SongDTO writeDTO = originalDTO == null ? new SongDTO() : originalDTO;
+			SongTO writeDTO = originalDTO == null ? new SongTO() : originalDTO;
 			binder.writeBean(writeDTO);
 			onSave(writeDTO);
 			close();

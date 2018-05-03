@@ -11,17 +11,22 @@ import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.HeaderRow;
+import com.vaadin.ui.themes.ValoTheme;
 
+import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.facades.SongsFacade;
-import cz.gattserver.grass3.songs.model.dto.SongDTO;
-import cz.gattserver.grass3.songs.model.dto.SongOverviewDTO;
+import cz.gattserver.grass3.songs.model.dto.SongTO;
+import cz.gattserver.grass3.songs.model.dto.SongOverviewTO;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
@@ -34,18 +39,23 @@ public class SongsPage extends OneColumnPage {
 	@Autowired
 	private SongsFacade songsFacade;
 
-	private Grid<SongOverviewDTO> grid;
+	@Autowired
+	private SecurityService securityService;
+
+	private Grid<SongOverviewTO> grid;
 	private Label nameLabel;
 	private Label authorYearLabel;
 	private Label contentLabel;
-	private SongDTO choosenSong;
-	private List<SongOverviewDTO> songs = new ArrayList<>();
+	private SongTO choosenSong;
+	private List<SongOverviewTO> songs = new ArrayList<>();
+
+	private SongOverviewTO filterTO = new SongOverviewTO();
 
 	public SongsPage(GrassRequest request) {
 		super(request);
 	}
 
-	private void showDetail(SongDTO choosenSong) {
+	private void showDetail(SongTO choosenSong) {
 		if (choosenSong == null) {
 			nameLabel.setValue(null);
 			authorYearLabel.setValue(null);
@@ -76,7 +86,7 @@ public class SongsPage extends OneColumnPage {
 
 	private void loadSongs() {
 		songs.clear();
-		songs.addAll(songsFacade.getSongs());
+		songs.addAll(songsFacade.getSongs(filterTO));
 		grid.getDataProvider().refreshAll();
 	}
 
@@ -90,12 +100,43 @@ public class SongsPage extends OneColumnPage {
 		layout.addComponent(songsLayout);
 
 		grid = new Grid<>(null, songs);
-		grid.addColumn(SongOverviewDTO::getName).setCaption("Název");
-		grid.addColumn(SongOverviewDTO::getAuthor).setCaption("Autor");
-		grid.addColumn(SongOverviewDTO::getYear).setCaption("Rok");
-		grid.setWidth("358px");
+		Column<SongOverviewTO, String> nazevColumn = grid.addColumn(SongOverviewTO::getName).setCaption("Název");
+		Column<SongOverviewTO, String> authorColumn = grid.addColumn(SongOverviewTO::getAuthor).setCaption("Autor");
+		Column<SongOverviewTO, Integer> yearColumn = grid.addColumn(SongOverviewTO::getYear).setCaption("Rok")
+				.setWidth(60);
+		grid.setWidth("398px");
 		grid.setHeight("600px");
 		songsLayout.addComponent(grid);
+
+		HeaderRow filteringHeader = grid.appendHeaderRow();
+
+		// Název
+		TextField nazevColumnField = new TextField();
+		nazevColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		nazevColumnField.addValueChangeListener(e -> {
+			filterTO.setName(e.getValue());
+			loadSongs();
+		});
+		filteringHeader.getCell(nazevColumn).setComponent(nazevColumnField);
+
+		// Autor
+		TextField authorColumnField = new TextField();
+		authorColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		authorColumnField.addValueChangeListener(e -> {
+			filterTO.setAuthor(e.getValue());
+			loadSongs();
+		});
+		filteringHeader.getCell(authorColumn).setComponent(authorColumnField);
+
+		// Rok
+		TextField yearColumnField = new TextField();
+		yearColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		yearColumnField.setWidth("100%");
+		yearColumnField.addValueChangeListener(e -> {
+			filterTO.setYear(StringUtils.isBlank(e.getValue()) ? null : Integer.valueOf(e.getValue()));
+			loadSongs();
+		});
+		filteringHeader.getCell(yearColumn).setComponent(yearColumnField);
 
 		loadSongs();
 
@@ -105,7 +146,7 @@ public class SongsPage extends OneColumnPage {
 		VerticalLayout contentLayout = new VerticalLayout();
 
 		Panel panel = new Panel(contentLayout);
-		panel.setWidth("600px");
+		panel.setWidth("560px");
 		panel.setHeight("100%");
 		songsLayout.addComponent(panel);
 		songsLayout.setExpandRatio(panel, 1);
@@ -122,7 +163,7 @@ public class SongsPage extends OneColumnPage {
 		contentLabel = new Label();
 		contentLabel.setStyleName("song-text-area");
 		Page.getCurrent().getStyles().add(".v-slot.v-slot-song-text-area { font-family: monospace; }");
-		contentLabel.setWidth("560px");
+		contentLabel.setWidth("520px");
 		contentLabel.setContentMode(ContentMode.HTML);
 		contentLayout.addComponent(contentLabel);
 
@@ -130,12 +171,14 @@ public class SongsPage extends OneColumnPage {
 		btnLayout.setSpacing(true);
 		layout.addComponent(btnLayout);
 
+		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(Role.ADMIN));
+
 		btnLayout.addComponent(new CreateGridButton("Přidat", event -> {
 			UI.getCurrent().addWindow(new SongWindow() {
 				private static final long serialVersionUID = -4863260002363608014L;
 
 				@Override
-				protected void onSave(SongDTO to) {
+				protected void onSave(SongTO to) {
 					to = songsFacade.saveSong(to);
 					showDetail(to);
 					loadSongs();
@@ -153,7 +196,7 @@ public class SongsPage extends OneColumnPage {
 
 			public void fileUploadFinished(InputStream in, String fileName, String mime, long size,
 					int filesLeftInQueue) {
-				SongDTO to = songsFacade.importSong(importedAuthorField.getValue(), in, fileName, mime, size,
+				SongTO to = songsFacade.importSong(importedAuthorField.getValue(), in, fileName, mime, size,
 						filesLeftInQueue);
 				showDetail(to);
 				loadSongs();
@@ -165,13 +208,13 @@ public class SongsPage extends OneColumnPage {
 		importedAuthorField
 				.addValueChangeListener(e -> multiFileUpload.setEnabled(StringUtils.isNotBlank(e.getValue())));
 
-		btnLayout.addComponent(new ModifyGridButton<SongOverviewDTO>("Upravit", event -> {
+		btnLayout.addComponent(new ModifyGridButton<SongOverviewTO>("Upravit", event -> {
 			UI.getCurrent().addWindow(new SongWindow(choosenSong) {
 
 				private static final long serialVersionUID = 5264621441522056786L;
 
 				@Override
-				protected void onSave(SongDTO to) {
+				protected void onSave(SongTO to) {
 					to = songsFacade.saveSong(to);
 					showDetail(to);
 					loadSongs();
@@ -179,8 +222,8 @@ public class SongsPage extends OneColumnPage {
 			});
 		}, grid));
 
-		btnLayout.addComponent(new DeleteGridButton<SongOverviewDTO>("Smazat", items -> {
-			for (SongOverviewDTO s : items)
+		btnLayout.addComponent(new DeleteGridButton<SongOverviewTO>("Smazat", items -> {
+			for (SongOverviewTO s : items)
 				songsFacade.deleteSong(s.getId());
 			loadSongs();
 			showDetail(null);

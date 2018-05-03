@@ -7,8 +7,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.songs.model.domain.Song;
-import cz.gattserver.grass3.songs.model.dto.SongDTO;
-import cz.gattserver.grass3.songs.model.dto.SongOverviewDTO;
+import cz.gattserver.grass3.songs.model.dto.SongTO;
+import cz.gattserver.grass3.songs.model.dto.SongOverviewTO;
 
 /**
  * <b>Mapper pro různé typy.</b>
@@ -30,16 +30,16 @@ import cz.gattserver.grass3.songs.model.dto.SongOverviewDTO;
 public class Mapper {
 
 	/**
-	 * Převede {@link Song} na {@link SongDTO}
+	 * Převede {@link Song} na {@link SongTO}
 	 * 
 	 * @param e
 	 * @return
 	 */
-	public SongDTO mapSong(Song e) {
+	public SongTO mapSong(Song e) {
 		if (e == null)
 			return null;
 
-		SongDTO song = new SongDTO();
+		SongTO song = new SongTO();
 
 		song.setId(e.getId());
 		song.setName(e.getName());
@@ -51,29 +51,29 @@ public class Mapper {
 	}
 
 	/**
-	 * Převede list {@link Song} na list {@link SongDTO}
+	 * Převede list {@link Song} na list {@link SongTO}
 	 * 
 	 * @param songs
 	 * @return
 	 */
-	public List<SongOverviewDTO> mapSongs(Collection<Song> songs) {
+	public List<SongOverviewTO> mapSongs(Collection<Song> songs) {
 		if (songs == null)
 			return null;
 
-		List<SongOverviewDTO> songsDTOs = new ArrayList<SongOverviewDTO>();
+		List<SongOverviewTO> songsDTOs = new ArrayList<SongOverviewTO>();
 		for (Song song : songs) {
-			songsDTOs.add(new SongOverviewDTO(song.getName(), song.getAuthor(), song.getYear(), song.getId()));
+			songsDTOs.add(new SongOverviewTO(song.getName(), song.getAuthor(), song.getYear(), song.getId()));
 		}
 		return songsDTOs;
 	}
 
 	/**
-	 * Převede {@link SongDTO} na {@link Song}
+	 * Převede {@link SongTO} na {@link Song}
 	 * 
 	 * @param e
 	 * @return
 	 */
-	public Song mapSong(SongDTO e) {
+	public Song mapSong(SongTO e) {
 		if (e == null)
 			return null;
 

@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import cz.gattserver.grass3.songs.facades.SongsFacade;
 import cz.gattserver.grass3.songs.model.dao.SongsRepository;
 import cz.gattserver.grass3.songs.model.domain.Song;
-import cz.gattserver.grass3.songs.model.dto.SongDTO;
-import cz.gattserver.grass3.songs.model.dto.SongOverviewDTO;
+import cz.gattserver.grass3.songs.model.dto.SongTO;
+import cz.gattserver.grass3.songs.model.dto.SongOverviewTO;
 import cz.gattserver.grass3.songs.util.Mapper;
 
 @Transactional
@@ -27,21 +27,21 @@ public class SongsFacadeImpl implements SongsFacade {
 	@Autowired
 	private SongsRepository songsRepository;
 
-	public List<SongOverviewDTO> getSongs() {
-		List<Song> songs = songsRepository.findAllOrderByName();
+	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO) {
+		List<Song> songs = songsRepository.findAllOrderByName(filterTO);
 		if (songs == null)
 			return null;
 		return mapper.mapSongs(songs);
 	}
 
-	public SongDTO getSongById(Long id) {
+	public SongTO getSongById(Long id) {
 		Song song = songsRepository.findOne(id);
 		if (song == null)
 			return null;
 		return mapper.mapSong(song);
 	}
 
-	public SongDTO saveSong(SongDTO to) {
+	public SongTO saveSong(SongTO to) {
 		Song song = mapper.mapSong(to);
 		song.setText(eolToBreakline(to.getText()));
 		song = songsRepository.save(song);
@@ -63,7 +63,7 @@ public class SongsFacadeImpl implements SongsFacade {
 	}
 
 	@Override
-	public List<SongOverviewDTO> getSongsForREST(int page, int pageSize) {
+	public List<SongOverviewTO> getSongsForREST(int page, int pageSize) {
 		return mapper.mapSongs(songsRepository.findAllOrderByNamePageable(new PageRequest(page, pageSize)));
 	}
 
@@ -73,9 +73,9 @@ public class SongsFacadeImpl implements SongsFacade {
 	}
 
 	@Override
-	public SongDTO importSong(String author, InputStream in, String fileName, String mime, long size,
+	public SongTO importSong(String author, InputStream in, String fileName, String mime, long size,
 			int filesLeftInQueue) {
-		SongDTO to = new SongDTO();
+		SongTO to = new SongTO();
 		// odřízne příponu
 		fileName = fileName.substring(0, fileName.lastIndexOf('.'));
 		int nameEnd = fileName.indexOf("(");

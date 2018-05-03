@@ -2,7 +2,7 @@ package cz.gattserver.grass3.songs.model.dto;
 
 import cz.gattserver.grass3.songs.model.domain.Song;
 
-public class SongDTO {
+public class SongTO {
 
 	/**
 	 * Název
@@ -29,10 +29,10 @@ public class SongDTO {
 	 */
 	private Long id;
 
-	public SongDTO() {
+	public SongTO() {
 	}
 
-	public SongDTO(String name, String author, Integer year, String text, Long id) {
+	public SongTO(String name, String author, Integer year, String text, Long id) {
 		super();
 		this.name = name;
 		this.author = author;

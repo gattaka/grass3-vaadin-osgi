@@ -76,6 +76,8 @@ public class SongsFacadeImpl implements SongsFacade {
 	public SongDTO importSong(String author, InputStream in, String fileName, String mime, long size,
 			int filesLeftInQueue) {
 		SongDTO to = new SongDTO();
+		// odřízne příponu
+		fileName = fileName.substring(0, fileName.lastIndexOf('.'));
 		int nameEnd = fileName.indexOf("(");
 		int year = 0;
 		if (nameEnd < 0)

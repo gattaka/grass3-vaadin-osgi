@@ -6,21 +6,25 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import cz.gattserver.grass3.songs.model.domain.Chord;
 import cz.gattserver.grass3.songs.model.domain.Song;
 import cz.gattserver.grass3.songs.model.dto.SongTO;
+import cz.gattserver.grass3.songs.model.dto.ChordTO;
 import cz.gattserver.grass3.songs.model.dto.SongOverviewTO;
 
 /**
  * <b>Mapper pro různé typy.</b>
  * 
  * <p>
- * Je potřeba aby byl volán na objektech s aktivními proxy objekty. To znamená, že před tímto mapperem nedošlo k
- * uzavření session, ve které byl původní objekt pořízen.
+ * Je potřeba aby byl volán na objektech s aktivními proxy objekty. To znamená,
+ * že před tímto mapperem nedošlo k uzavření session, ve které byl původní
+ * objekt pořízen.
  * </p>
  * 
  * <p>
- * Mapper využívá proxy objekty umístěné v atributech předávaných entit. Během mapování tak může docházet k dotazům na
- * DB, které produkují tyto proxy objekty a které se bez původní session mapovaného objektu neobejdou.
+ * Mapper využívá proxy objekty umístěné v atributech předávaných entit. Během
+ * mapování tak může docházet k dotazům na DB, které produkují tyto proxy
+ * objekty a které se bez původní session mapovaného objektu neobejdou.
  * </p>
  * 
  * @author gatt
@@ -58,13 +62,13 @@ public class Mapper {
 	 */
 	public List<SongOverviewTO> mapSongs(Collection<Song> songs) {
 		if (songs == null)
-			return null;
+			return new ArrayList<>();
 
-		List<SongOverviewTO> songsDTOs = new ArrayList<SongOverviewTO>();
-		for (Song song : songs) {
-			songsDTOs.add(new SongOverviewTO(song.getName(), song.getAuthor(), song.getYear(), song.getId()));
-		}
-		return songsDTOs;
+		List<SongOverviewTO> songsTOs = new ArrayList<SongOverviewTO>();
+		for (Song song : songs)
+			songsTOs.add(new SongOverviewTO(song.getName(), song.getAuthor(), song.getYear(), song.getId()));
+
+		return songsTOs;
 	}
 
 	/**
@@ -86,6 +90,63 @@ public class Mapper {
 		song.setText(e.getText());
 
 		return song;
+	}
+
+	/**
+	 * Převede {@link Chord} na {@link ChordTO}
+	 * 
+	 * @param e
+	 * @return
+	 */
+	public ChordTO mapChord(Chord e) {
+		if (e == null)
+			return null;
+
+		ChordTO chord = new ChordTO();
+
+		chord.setId(e.getId());
+		chord.setName(e.getName());
+		chord.setConfiguration(e.getConfiguration());
+		chord.setInstrument(e.getInstrument());
+
+		return chord;
+	}
+
+	/**
+	 * Převede {@link ChordTO} na {@link Chord}
+	 * 
+	 * @param e
+	 * @return
+	 */
+	public Chord mapChord(ChordTO e) {
+		if (e == null)
+			return null;
+
+		Chord chord = new Chord();
+
+		chord.setId(e.getId());
+		chord.setName(e.getName());
+		chord.setConfiguration(e.getConfiguration());
+		chord.setInstrument(e.getInstrument());
+
+		return chord;
+	}
+
+	/**
+	 * Převede list {@link Chord} na list {@link ChordTO}
+	 * 
+	 * @param chords
+	 * @return
+	 */
+	public List<ChordTO> mapChords(Collection<Chord> chords) {
+		if (chords == null)
+			return new ArrayList<>();
+
+		List<ChordTO> chordsTOs = new ArrayList<ChordTO>();
+		for (Chord chord : chords)
+			chordsTOs.add(new ChordTO(chord.getName(), chord.getInstrument(), chord.getConfiguration(), chord.getId()));
+
+		return chordsTOs;
 	}
 
 }

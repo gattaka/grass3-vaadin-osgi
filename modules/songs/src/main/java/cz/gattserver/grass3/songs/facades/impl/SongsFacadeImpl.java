@@ -11,9 +11,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import cz.gattserver.grass3.songs.facades.SongsFacade;
+import cz.gattserver.grass3.songs.model.dao.ChordsRepository;
 import cz.gattserver.grass3.songs.model.dao.SongsRepository;
+import cz.gattserver.grass3.songs.model.domain.Chord;
 import cz.gattserver.grass3.songs.model.domain.Song;
 import cz.gattserver.grass3.songs.model.dto.SongTO;
+import cz.gattserver.grass3.songs.model.dto.ChordTO;
 import cz.gattserver.grass3.songs.model.dto.SongOverviewTO;
 import cz.gattserver.grass3.songs.util.Mapper;
 
@@ -26,6 +29,9 @@ public class SongsFacadeImpl implements SongsFacade {
 
 	@Autowired
 	private SongsRepository songsRepository;
+
+	@Autowired
+	private ChordsRepository chordsRepository;
 
 	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO) {
 		List<Song> songs = songsRepository.findAllOrderByName(filterTO);
@@ -104,5 +110,23 @@ public class SongsFacadeImpl implements SongsFacade {
 			to.setText("Nezdařilo se zpracovat obsah souboru");
 		}
 		return saveSong(to);
+	}
+
+	@Override
+	public ChordTO saveChord(ChordTO to) {
+		Chord chord = mapper.mapChord(to);
+		chord = chordsRepository.save(chord);
+		to.setId(chord.getId());
+		return to;
+	}
+
+	@Override
+	public void deleteChord(Long id) {
+		chordsRepository.delete(id);
+	}
+
+	@Override
+	public List<ChordTO> getChords(ChordTO filterTO) {
+		return mapper.mapChords(chordsRepository.findAllOrderByName(filterTO));
 	}
 }

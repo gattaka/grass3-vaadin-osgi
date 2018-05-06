@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import cz.gattserver.grass3.songs.model.dto.SongTO;
+import cz.gattserver.grass3.songs.model.dto.ChordTO;
 import cz.gattserver.grass3.songs.model.dto.SongOverviewTO;
 
 public interface SongsFacade {
@@ -25,7 +26,8 @@ public interface SongsFacade {
 
 	/**
 	 * Získá všechny písničky
-	 * @param filterTO 
+	 * 
+	 * @param filterTO
 	 */
 	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO);
 
@@ -69,5 +71,29 @@ public interface SongsFacade {
 	 */
 	public SongTO importSong(String author, InputStream in, String fileName, String mime, long size,
 			int filesLeftInQueue);
+
+	/**
+	 * Uloží akord
+	 * 
+	 * @param to
+	 *            akord
+	 * @return
+	 */
+	public ChordTO saveChord(ChordTO to);
+
+	/**
+	 * Smaže akord
+	 * 
+	 * @param id
+	 */
+	public void deleteChord(Long id);
+
+	/**
+	 * Vyhledá akordy dle filtru
+	 * 
+	 * @param filterTO
+	 * @return
+	 */
+	public List<ChordTO> getChords(ChordTO filterTO);
 
 }

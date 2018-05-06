@@ -31,18 +31,18 @@ public abstract class SongWindow extends WebWindow {
 		this(null);
 	}
 
-	protected abstract void onSave(SongTO dto);
+	protected abstract void onSave(SongTO to);
 
-	public SongWindow(final SongTO originalDTO) {
-		super(originalDTO == null ? "Založit" : "Upravit" + " písničku");
+	public SongWindow(final SongTO originalTO) {
+		super(originalTO == null ? "Založit" : "Upravit" + " písničku");
 
 		setWidth("600px");
 
-		SongTO formDTO = new SongTO();
-		formDTO.setYear(0);
+		SongTO formTO = new SongTO();
+		formTO.setYear(0);
 
 		Binder<SongTO> binder = new Binder<>(SongTO.class);
-		binder.setBean(formDTO);
+		binder.setBean(formTO);
 
 		final TextField nameField = new TextField("Název");
 		binder.forField(nameField).asRequired().bind(SongTO::getName, SongTO::setName);
@@ -69,23 +69,23 @@ public abstract class SongWindow extends WebWindow {
 		addComponent(textField);
 
 		Button b;
-		if (originalDTO != null)
-			addComponent(b = new ModifyButton(event -> save(originalDTO, binder)));
+		if (originalTO != null)
+			addComponent(b = new ModifyButton(event -> save(originalTO, binder)));
 		else
-			addComponent(b = new CreateButton(event -> save(originalDTO, binder)));
+			addComponent(b = new CreateButton(event -> save(originalTO, binder)));
 		setComponentAlignment(b, Alignment.MIDDLE_CENTER);
 
-		if (originalDTO != null) {
-			binder.readBean(originalDTO);
-			textField.setValue(songsFacade.breaklineToEol(originalDTO.getText()));
+		if (originalTO != null) {
+			binder.readBean(originalTO);
+			textField.setValue(songsFacade.breaklineToEol(originalTO.getText()));
 		}
 	}
 
-	private void save(SongTO originalDTO, Binder<SongTO> binder) {
+	private void save(SongTO originalTO, Binder<SongTO> binder) {
 		try {
-			SongTO writeDTO = originalDTO == null ? new SongTO() : originalDTO;
-			binder.writeBean(writeDTO);
-			onSave(writeDTO);
+			SongTO writeTO = originalTO == null ? new SongTO() : originalTO;
+			binder.writeBean(writeTO);
+			onSave(writeTO);
 			close();
 		} catch (ValidationException ve) {
 			Notification.show(

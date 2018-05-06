@@ -22,7 +22,7 @@ public class Chord {
 	/**
 	 * Konfigurace
 	 */
-	private Integer configuration;
+	private Long configuration;
 
 	/**
 	 * DB id
@@ -68,11 +68,11 @@ public class Chord {
 		this.instrument = instrument;
 	}
 
-	public Integer getConfiguration() {
+	public Long getConfiguration() {
 		return configuration;
 	}
 
-	public void setConfiguration(Integer configuration) {
+	public void setConfiguration(Long configuration) {
 		this.configuration = configuration;
 	}
 

@@ -17,7 +17,7 @@ public class ChordTO {
 	/**
 	 * Konfigurace
 	 */
-	private Integer configuration;
+	private Long configuration;
 
 	/**
 	 * DB id
@@ -25,16 +25,16 @@ public class ChordTO {
 	private Long id;
 
 	public ChordTO() {
-		configuration = 0;
+		configuration = 0L;
 	}
 
-	public ChordTO(String name, Instrument instrument, Integer configuration, Long id) {
+	public ChordTO(String name, Instrument instrument, Long configuration, Long id) {
 		super();
 		this.name = name;
 		this.instrument = instrument;
 		this.configuration = configuration;
 		if (this.configuration == null)
-			this.configuration = 0;
+			this.configuration = 0L;
 		this.id = id;
 	}
 
@@ -74,11 +74,11 @@ public class ChordTO {
 		this.instrument = instrument;
 	}
 
-	public Integer getConfiguration() {
+	public Long getConfiguration() {
 		return configuration;
 	}
 
-	public void setConfiguration(Integer configuration) {
+	public void setConfiguration(Long configuration) {
 		this.configuration = configuration;
 	}
 

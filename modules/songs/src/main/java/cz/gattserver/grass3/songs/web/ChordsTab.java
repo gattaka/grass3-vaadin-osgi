@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Grid;
@@ -167,28 +168,30 @@ public class ChordsTab extends VerticalLayout {
 		}
 	}
 
-	private void createDisplayForGuitar(Integer integer) {
-		chordDescriptionLayout.addComponent(new Label("Od pražce č." + (integer.intValue() >> (4 * 6))));
-
-		GridLayout grid = new GridLayout(6, 5);
+	private void createDisplayForGuitar(Long configuration) {
+		GridLayout grid = new GridLayout(7, 9);
 		grid.setSpacing(false);
 		grid.setMargin(false);
+		grid.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
 		chordDescriptionLayout.addComponent(grid);
 
-		grid.addComponent(new Embedded(null, new ThemeResource("songs/strings_labels.png")), 0, 0, 5, 0);
-		for (int row = 0; row < 4; row++)
-			for (int col = 0; col < 6; col++) {
-				int mask = 1 << row * 6 + col;
-				String img = null;
-				if ((integer.intValue() & mask) > 0)
-					img = "hit_chord.png";
-				else
-					img = "empty_chord.png";
-				Embedded emb = new Embedded(null, new ThemeResource("songs/" + img));
-				emb.setHeight("53px");
-				emb.setWidth("34px");
-				grid.addComponent(emb, col, row + 1);
-			}
+		grid.addComponent(new Embedded(null, new ThemeResource("songs/strings_labels.png")), 1, 0, 6, 0);
+		for (int row = 1; row < grid.getRows(); row++)
+			for (int col = 0; col < grid.getColumns(); col++)
+				if (col == 0 && row > 0)
+					grid.addComponent(new Label(String.valueOf(row)), col, row);
+				else {
+					long mask = 1L << (row - 1) * 6 + (col - 1);
+					String img = null;
+					if ((configuration.longValue() & mask) > 0)
+						img = "hit_chord.png";
+					else
+						img = "empty_chord.png";
+					Embedded emb = new Embedded(null, new ThemeResource("songs/" + img));
+					emb.setHeight("53px");
+					emb.setWidth("34px");
+					grid.addComponent(emb, col, row);
+				}
 	}
 
 	private void loadChords() {

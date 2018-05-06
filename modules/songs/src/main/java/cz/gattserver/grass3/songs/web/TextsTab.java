@@ -211,7 +211,7 @@ public class TextsTab extends VerticalLayout {
 				boolean chordLine = true;
 				for (String chunk : line.split(" +| +|,|\t+"))
 					if (StringUtils.isNotBlank(chunk) && !chunk.toLowerCase()
-							.matches("(a|b|c|d|e|f|g|h|x|/|#|mi|m|dim|maj|dur|sus|[0-9]|-|\\+|\\(|\\)|capo|=|\\.)+")) {
+							.matches("(a|b|c|d|e|f|g|h|x|/|#|mi|m|dim|maj|dur|sus|add|[0-9]|-|\\+|\\(|\\)|capo|=|\\.)+")) {
 						chordLine = false;
 						break;
 					}

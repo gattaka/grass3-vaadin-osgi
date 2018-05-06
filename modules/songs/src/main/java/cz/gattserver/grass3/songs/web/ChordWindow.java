@@ -1,8 +1,6 @@
 package cz.gattserver.grass3.songs.web;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
@@ -93,28 +91,9 @@ public abstract class ChordWindow extends WebWindow {
 
 	private void refreshDescriptionLayoutAsGuitar(Binder<ChordTO> binder, ChordTO originalDTO, ChordTO formTO,
 			VerticalLayout chordDescriptionLayout) {
-		ComboBox<Integer> fretCombo = new ComboBox<Integer>("Od pražce",
-				IntStream.rangeClosed(1, 17).boxed().collect(Collectors.toList()));
-		fretCombo.setValue(1);
-		fretCombo.setEmptySelectionAllowed(false);
-
-		// 0-17 je 0-0b10001 < 2^5, tedy stačí 5 pozic, takže maska bude 31 a
-		// bude posunutá, aby se za ní daly psát pozice stisků jednotlivých
-		// strun
-		int fretBitMask = 31 << (4 * 6);
-		binder.forField(fretCombo).asRequired().bind(to -> to.getConfiguration().intValue() >> (4 * 6), (to, i) -> {
-			// vyčisti prostor
-			int value = formTO.getConfiguration().intValue() & ~fretBitMask;
-			// nastav nové hodnoty
-			value |= i << (4 * 6);
-			formTO.setConfiguration(value);
-		});
-
-		chordDescriptionLayout.addComponent(fretCombo);
-
 		String[] stringsLabel = new String[] { "E", "a", "d", "g", "h", "e" };
 
-		GridLayout layout = new GridLayout(6, 9);
+		GridLayout layout = new GridLayout(6, 17);
 		layout.setSpacing(false);
 		layout.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
 		chordDescriptionLayout.addComponent(layout);
@@ -131,14 +110,14 @@ public abstract class ChordWindow extends WebWindow {
 					} else {
 						CheckBox cb = new CheckBox();
 						layout.addComponent(cb, col, row);
-						int bitMask = 1 << ((row / 2 - 1) * layout.getColumns() + col);
+						long bitMask = 1L << ((row / 2 - 1) * layout.getColumns() + col);
 						if (originalDTO != null)
-							cb.setValue((originalDTO.getConfiguration().intValue() & bitMask) > 0);
+							cb.setValue((originalDTO.getConfiguration().longValue() & bitMask) > 0);
 						cb.addValueChangeListener(val -> {
 							if (val.getValue())
-								formTO.setConfiguration(formTO.getConfiguration().intValue() | bitMask);
+								formTO.setConfiguration(formTO.getConfiguration().longValue() | bitMask);
 							else
-								formTO.setConfiguration(formTO.getConfiguration().intValue() & ~bitMask);
+								formTO.setConfiguration(formTO.getConfiguration().longValue() & ~bitMask);
 						});
 					}
 		}

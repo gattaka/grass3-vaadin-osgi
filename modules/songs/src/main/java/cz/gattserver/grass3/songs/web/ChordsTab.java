@@ -6,13 +6,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.server.Page;
-import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
@@ -160,36 +160,33 @@ public class ChordsTab extends VerticalLayout {
 			Label chordDisplayLabel = new Label();
 			switch (choosenChord.getInstrument()) {
 			case GUITAR:
-				chordDisplayLabel.setContentMode(ContentMode.HTML);
-				chordDisplayLabel.setValue(createDisplayForGuitar(choosenChord.getConfiguration()));
-				chordDisplayLabel.setStyleName("chord-display-area");
-				Page.getCurrent().getStyles().add(
-						".v-label.v-widget.chord-display-area.v-label-chord-display-area.v-label-undef-w { font-family: monospace; white-space: pre;}");
+				createDisplayForGuitar(choosenChord.getConfiguration());
 			}
 			chordDescriptionLayout.addComponent(chordDisplayLabel);
 			this.choosenChord = choosenChord;
 		}
 	}
 
-	private String createDisplayForGuitar(Integer integer) {
-		String val = "";
-		val += " E   a   d   g   h   e <br/>";
-		for (int row = 0; row < 8; row++) {
-			if (row % 2 == 0) {
-				val += "-----------------------";
-			} else
-				for (int col = 0; col < 6; col++) {
-					int mask = 1 << (row / 2 * 6) + col;
-					if ((integer.intValue() & mask) > 0)
-						val += " X ";
-					else
-						val += "   ";
-					if (col != 5)
-						val += "|";
-				}
-			val += "<br/>";
-		}
-		return val;
+	private void createDisplayForGuitar(Integer integer) {
+		GridLayout grid = new GridLayout(6, 5);
+		grid.setSpacing(false);
+		grid.setMargin(false);
+		chordDescriptionLayout.addComponent(grid);
+
+		grid.addComponent(new Embedded(null, new ThemeResource("songs/strings_labels.png")), 0, 0, 5, 0);
+		for (int row = 0; row < 4; row++)
+			for (int col = 0; col < 6; col++) {
+				int mask = 1 << row * 6 + col;
+				String img = null;
+				if ((integer.intValue() & mask) > 0)
+					img = "hit_chord.png";
+				else
+					img = "empty_chord.png";
+				Embedded emb = new Embedded(null, new ThemeResource("songs/" + img));
+				emb.setHeight("53px");
+				emb.setWidth("34px");
+				grid.addComponent(emb, col, row + 1);
+			}
 	}
 
 	private void loadChords() {

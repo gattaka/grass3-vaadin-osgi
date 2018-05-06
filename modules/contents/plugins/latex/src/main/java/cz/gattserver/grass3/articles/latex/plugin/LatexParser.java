@@ -156,6 +156,6 @@ public class LatexParser implements Parser {
 
 		// position 1, position 2, link odkazu, text odkazu (optional), ikona
 		// (optional), default ikona
-		return new LatexElement(pluginBag.getContextRoot() + path, formula);
+		return new LatexElement(pluginBag.getContextRoot() + "/" + path, formula);
 	}
 }

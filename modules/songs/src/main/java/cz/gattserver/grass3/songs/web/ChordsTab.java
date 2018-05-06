@@ -168,6 +168,8 @@ public class ChordsTab extends VerticalLayout {
 	}
 
 	private void createDisplayForGuitar(Integer integer) {
+		chordDescriptionLayout.addComponent(new Label("Od pražce č." + (integer.intValue() >> (4 * 6))));
+
 		GridLayout grid = new GridLayout(6, 5);
 		grid.setSpacing(false);
 		grid.setMargin(false);

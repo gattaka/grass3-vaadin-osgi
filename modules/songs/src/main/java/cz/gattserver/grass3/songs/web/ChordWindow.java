@@ -61,7 +61,7 @@ public abstract class ChordWindow extends WebWindow {
 		chordDescriptionLayout.setMargin(false);
 		addComponent(chordDescriptionLayout);
 		instrumentField.addValueChangeListener(
-				e -> refreshDescriptionLayout(originalDTO, formTO, chordDescriptionLayout, e.getValue()));
+				e -> refreshDescriptionLayout(binder, originalDTO, formTO, chordDescriptionLayout, e.getValue()));
 		addComponent(chordDescriptionLayout);
 
 		binder.forField(instrumentField).asRequired().bind(ChordTO::getInstrument, ChordTO::setInstrument);
@@ -79,22 +79,37 @@ public abstract class ChordWindow extends WebWindow {
 		}
 	}
 
-	private void refreshDescriptionLayout(ChordTO originalDTO, ChordTO formTO, VerticalLayout chordDescriptionLayout,
-			Instrument instrument) {
+	private void refreshDescriptionLayout(Binder<ChordTO> binder, ChordTO originalDTO, ChordTO formTO,
+			VerticalLayout chordDescriptionLayout, Instrument instrument) {
 		chordDescriptionLayout.removeAllComponents();
 		switch (instrument) {
 		case GUITAR:
-			refreshDescriptionLayoutAsGuitar(originalDTO, formTO, chordDescriptionLayout);
+			refreshDescriptionLayoutAsGuitar(binder, originalDTO, formTO, chordDescriptionLayout);
 			break;
 		default:
 			break;
 		}
 	}
 
-	private void refreshDescriptionLayoutAsGuitar(ChordTO originalDTO, ChordTO formTO,
+	private void refreshDescriptionLayoutAsGuitar(Binder<ChordTO> binder, ChordTO originalDTO, ChordTO formTO,
 			VerticalLayout chordDescriptionLayout) {
 		ComboBox<Integer> fretCombo = new ComboBox<Integer>("Od pražce",
 				IntStream.rangeClosed(1, 17).boxed().collect(Collectors.toList()));
+		fretCombo.setValue(1);
+		fretCombo.setEmptySelectionAllowed(false);
+
+		// 0-17 je 0-0b10001 < 2^5, tedy stačí 5 pozic, takže maska bude 31 a
+		// bude posunutá, aby se za ní daly psát pozice stisků jednotlivých
+		// strun
+		int fretBitMask = 31 << (4 * 6);
+		binder.forField(fretCombo).asRequired().bind(to -> to.getConfiguration().intValue() >> (4 * 6), (to, i) -> {
+			// vyčisti prostor
+			int value = formTO.getConfiguration().intValue() & ~fretBitMask;
+			// nastav nové hodnoty
+			value |= i << (4 * 6);
+			formTO.setConfiguration(value);
+		});
+
 		chordDescriptionLayout.addComponent(fretCombo);
 
 		String[] stringsLabel = new String[] { "E", "a", "d", "g", "h", "e" };
@@ -116,14 +131,14 @@ public abstract class ChordWindow extends WebWindow {
 					} else {
 						CheckBox cb = new CheckBox();
 						layout.addComponent(cb, col, row);
-						int bitPos = 1 << ((row / 2 - 1) * layout.getColumns() + col);
+						int bitMask = 1 << ((row / 2 - 1) * layout.getColumns() + col);
 						if (originalDTO != null)
-							cb.setValue((originalDTO.getConfiguration().intValue() & bitPos) > 0);
+							cb.setValue((originalDTO.getConfiguration().intValue() & bitMask) > 0);
 						cb.addValueChangeListener(val -> {
 							if (val.getValue())
-								formTO.setConfiguration(formTO.getConfiguration().intValue() | bitPos);
+								formTO.setConfiguration(formTO.getConfiguration().intValue() | bitMask);
 							else
-								formTO.setConfiguration(formTO.getConfiguration().intValue() & ~bitPos);
+								formTO.setConfiguration(formTO.getConfiguration().intValue() & ~bitMask);
 						});
 					}
 		}

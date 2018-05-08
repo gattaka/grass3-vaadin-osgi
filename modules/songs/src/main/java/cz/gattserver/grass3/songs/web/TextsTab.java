@@ -19,8 +19,10 @@ import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.grid.ScrollDestination;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -56,6 +58,8 @@ public class TextsTab extends VerticalLayout {
 	private SongsPageFactory pageFactory;
 
 	private GrassRequest request;
+	private TabSheet tabSheet;
+	private ChordsTab chordsTab;
 
 	private Grid<SongOverviewTO> grid;
 	private Label nameLabel;
@@ -66,11 +70,13 @@ public class TextsTab extends VerticalLayout {
 	private List<SongOverviewTO> songs;
 	private SongOverviewTO filterTO;
 
-	public TextsTab(GrassRequest request) {
+	public TextsTab(GrassRequest request, TabSheet tabSheet, ChordsTab chordsTab) {
 		SpringContextHelper.inject(this);
 		setMargin(new MarginInfo(true, false, false, false));
 
 		this.request = request;
+		this.tabSheet = tabSheet;
+		this.chordsTab = chordsTab;
 
 		songs = new ArrayList<>();
 		filterTO = new SongOverviewTO();
@@ -252,8 +258,12 @@ public class TextsTab extends VerticalLayout {
 						break;
 					}
 				for (String c : chords) {
-					String chordLink = "<a target='_blank' href='" + request.getContextRoot() + "/"
-							+ pageFactory.getPageName() + "/chord/" + c + "'>" + c + "</a>";
+					// String chordLink = "<a target='_blank' href='" +
+					// request.getContextRoot() + "/"
+					// + pageFactory.getPageName() + "/chord/" + c + "'>" + c +
+					// "</a>";
+					String chordLink = "<span style='cursor: pointer;' onclick='grass.chords.show(\"" + c + "\")'>" + c
+							+ "</span>";
 					line = line.replaceAll(c + " ", chordLink + " ");
 					line = line.replaceAll(c + ",", chordLink + ",");
 					line = line.replaceAll(c + "\\)", chordLink + ")");
@@ -275,6 +285,11 @@ public class TextsTab extends VerticalLayout {
 				e.printStackTrace();
 			}
 		}
+
+		JavaScript.getCurrent().addFunction("grass.chords.show", arguments -> {
+			tabSheet.setSelectedTab(1);
+			chordsTab.selectChord(arguments.getString(0));
+		});
 	}
 
 	private void loadSongs() {

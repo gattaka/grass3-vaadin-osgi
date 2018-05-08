@@ -23,8 +23,8 @@ public class SongsPage extends OneColumnPage {
 		TabSheet tabSheet = new TabSheet();
 		layout.addComponent(tabSheet);
 
-		TextsTab tt = new TextsTab(getRequest());
 		ChordsTab ct = new ChordsTab(getRequest());
+		TextsTab tt = new TextsTab(getRequest(), tabSheet,ct);
 		tabSheet.addTab(tt, "Písničky");
 		tabSheet.addTab(ct, "Akordy");
 

@@ -168,10 +168,10 @@ public class ChordsTab extends VerticalLayout {
 		}, grid));
 	}
 
-	public void selectChord(Long id) {
-		ChordTO to = songsFacade.getChordById(id);
-		to.setId(id);
-		grid.select(to);
+	public void selectChord(String name) {
+		ChordTO to = songsFacade.getChordByName(name);
+		if (to != null)
+			grid.select(to);
 	}
 
 	private void showDetail(ChordTO choosenChord) {
@@ -194,7 +194,7 @@ public class ChordsTab extends VerticalLayout {
 			String currentURL;
 			try {
 				currentURL = request.getContextRoot() + "/" + pageFactory.getPageName() + "/chord/"
-						+ choosenChord.getId() + "-" + URLEncoder.encode(choosenChord.getName(), "UTF-8");
+						+ URLEncoder.encode(choosenChord.getName(), "UTF-8");
 				Page.getCurrent().pushState(currentURL);
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();

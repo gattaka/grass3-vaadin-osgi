@@ -30,16 +30,14 @@ public class SongsPage extends OneColumnPage {
 
 		String token = getRequest().getAnalyzer().getNextPathToken();
 		if (token != null) {
-			URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
-					.parseURLIdentifier(getRequest().getAnalyzer().getNextPathToken());
-			if (identifier != null) {
-				if ("text".equals(token.toLowerCase())) {
-					tabSheet.setSelectedTab(tt);
-					tt.selectSong(identifier.getId());
-				} else if ("chord".equals(token.toLowerCase())) {
-					tabSheet.setSelectedTab(ct);
-					ct.selectChord(identifier.getId());
-				}
+			if ("text".equals(token.toLowerCase())) {
+				URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
+						.parseURLIdentifier(getRequest().getAnalyzer().getNextPathToken());
+				tabSheet.setSelectedTab(tt);
+				tt.selectSong(identifier.getId());
+			} else if ("chord".equals(token.toLowerCase())) {
+				tabSheet.setSelectedTab(ct);
+				ct.selectChord(getRequest().getAnalyzer().getNextPathToken());
 			}
 		}
 

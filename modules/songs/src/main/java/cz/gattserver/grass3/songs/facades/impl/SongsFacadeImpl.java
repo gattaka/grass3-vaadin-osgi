@@ -134,4 +134,9 @@ public class SongsFacadeImpl implements SongsFacade {
 	public ChordTO getChordById(Long id) {
 		return mapper.mapChord(chordsRepository.findOne(id));
 	}
+
+	@Override
+	public ChordTO getChordByName(String name) {
+		return mapper.mapChord(chordsRepository.findByName(name));
+	}
 }

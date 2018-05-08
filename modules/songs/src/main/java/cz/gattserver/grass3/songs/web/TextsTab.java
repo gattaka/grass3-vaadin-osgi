@@ -5,6 +5,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.shared.ui.grid.ScrollDestination;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -29,6 +32,7 @@ import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.facades.SongsFacade;
+import cz.gattserver.grass3.songs.model.dto.ChordTO;
 import cz.gattserver.grass3.songs.model.dto.SongOverviewTO;
 import cz.gattserver.grass3.songs.model.dto.SongTO;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
@@ -212,10 +216,14 @@ public class TextsTab extends VerticalLayout {
 	}
 
 	public void selectSong(Long id) {
-		SongTO too = songsFacade.getSongById(id);
-		SongOverviewTO to = new SongOverviewTO(too.getName(), too.getAuthor(), too.getYear(), id);
-		to.setId(id);
-		grid.select(to);
+		int row = 0;
+		for (SongOverviewTO to : songs) {
+			if (to.getId().equals(id)) {
+				grid.select(to);
+				grid.scrollTo(row, ScrollDestination.MIDDLE);
+			}
+			row++;
+		}
 	}
 
 	private void showDetail(SongTO choosenSong) {
@@ -232,6 +240,8 @@ public class TextsTab extends VerticalLayout {
 			if (choosenSong.getYear() != null || choosenSong.getYear().intValue() > 0)
 				value = value + " (" + choosenSong.getYear() + ")";
 			authorYearLabel.setValue(value);
+			Set<String> chords = songsFacade.getChords(new ChordTO()).stream().map(ChordTO::getName)
+					.collect(Collectors.toSet());
 			String htmlText = "";
 			for (String line : choosenSong.getText().split("<br/>")) {
 				boolean chordLine = true;
@@ -241,6 +251,9 @@ public class TextsTab extends VerticalLayout {
 						chordLine = false;
 						break;
 					}
+				for (String c : chords)
+					line = line.replaceAll(c + "([ ]+|$)", "<a target='_blank' href='" + request.getContextRoot() + "/"
+							+ pageFactory.getPageName() + "/chord/" + c + "'>" + c + "</a>");
 				htmlText += chordLine ? ("<span style='color: blue; white-space: pre;'>" + line + "</span><br/>")
 						: line + "<br/>";
 			}

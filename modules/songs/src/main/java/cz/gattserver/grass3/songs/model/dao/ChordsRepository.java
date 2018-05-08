@@ -13,4 +13,7 @@ public interface ChordsRepository extends JpaRepository<Chord, Long>, ChordsRepo
 	@Query("select s from CHORD s order by instrument asc, name asc")
 	List<Chord> findAllOrderByNamePageable(Pageable pageRequest);
 
+	@Query("select s from CHORD s where name = ?1")
+	Chord findByName(String name);
+
 }

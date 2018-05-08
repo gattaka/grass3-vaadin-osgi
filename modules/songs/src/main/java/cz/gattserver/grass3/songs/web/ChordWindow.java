@@ -34,7 +34,11 @@ public abstract class ChordWindow extends WebWindow {
 	protected abstract void onSave(ChordTO to);
 
 	public ChordWindow(final ChordTO originalDTO) {
-		super(originalDTO == null ? "Založit" : "Upravit" + " akord");
+		this(originalDTO, false);
+	}
+
+	public ChordWindow(final ChordTO originalDTO, boolean copy) {
+		super(originalDTO == null || copy ? "Založit" : "Upravit" + " akord");
 
 		setWidth("600px");
 
@@ -65,15 +69,18 @@ public abstract class ChordWindow extends WebWindow {
 		binder.forField(instrumentField).asRequired().bind(ChordTO::getInstrument, ChordTO::setInstrument);
 
 		Button b;
-		if (originalDTO != null)
-			addComponent(b = new ModifyButton(event -> save(originalDTO, binder)));
+		if (originalDTO == null || copy)
+			addComponent(b = new CreateButton(event -> save(binder)));
 		else
-			addComponent(b = new CreateButton(event -> save(originalDTO, binder)));
+			addComponent(b = new ModifyButton(event -> save(binder)));
 		setComponentAlignment(b, Alignment.MIDDLE_CENTER);
 
 		if (originalDTO != null) {
 			binder.readBean(originalDTO);
 			formTO.setConfiguration(originalDTO.getConfiguration());
+			formTO.setId(originalDTO.getId());
+			if (copy)
+				binder.getBean().setId(null);
 		}
 	}
 
@@ -123,11 +130,12 @@ public abstract class ChordWindow extends WebWindow {
 		}
 	}
 
-	private void save(ChordTO originalTO, Binder<ChordTO> binder) {
+	private void save(Binder<ChordTO> binder) {
 		try {
-			ChordTO writeTO = originalTO == null ? new ChordTO() : originalTO;
+			ChordTO writeTO = new ChordTO();
 			binder.writeBean(writeTO);
 			writeTO.setConfiguration(binder.getBean().getConfiguration());
+			writeTO.setId(binder.getBean().getId());
 			onSave(writeTO);
 			close();
 		} catch (ValidationException ve) {

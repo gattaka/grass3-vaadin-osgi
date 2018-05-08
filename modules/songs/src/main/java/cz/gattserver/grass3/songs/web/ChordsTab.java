@@ -36,9 +36,11 @@ import cz.gattserver.grass3.songs.model.domain.Instrument;
 import cz.gattserver.grass3.songs.model.dto.ChordTO;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.GridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.H2Label;
+import cz.gattserver.web.common.ui.ImageIcon;
 
 public class ChordsTab extends VerticalLayout {
 
@@ -159,6 +161,21 @@ public class ChordsTab extends VerticalLayout {
 				}
 			});
 		}, grid));
+
+		GridButton<ChordTO> copyBtn = new GridButton<>("Kopie", event -> {
+			UI.getCurrent().addWindow(new ChordWindow(choosenChord, true) {
+				private static final long serialVersionUID = -4863260002363608014L;
+
+				@Override
+				protected void onSave(ChordTO to) {
+					to = songsFacade.saveChord(to);
+					showDetail(to);
+					loadChords();
+				}
+			});
+		}, grid);
+		copyBtn.setIcon(ImageIcon.QUICKEDIT_16_ICON.createResource());
+		btnLayout.addComponent(copyBtn);
 
 		btnLayout.addComponent(new DeleteGridButton<ChordTO>("Smazat", items -> {
 			for (ChordTO c : items)

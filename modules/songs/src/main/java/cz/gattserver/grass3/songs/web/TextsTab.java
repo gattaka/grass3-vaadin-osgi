@@ -251,9 +251,15 @@ public class TextsTab extends VerticalLayout {
 						chordLine = false;
 						break;
 					}
-				for (String c : chords)
-					line = line.replaceAll(c + "([ ]+|$)", "<a target='_blank' href='" + request.getContextRoot() + "/"
-							+ pageFactory.getPageName() + "/chord/" + c + "'>" + c + "</a>");
+				for (String c : chords) {
+					String chordLink = "<a target='_blank' href='" + request.getContextRoot() + "/"
+							+ pageFactory.getPageName() + "/chord/" + c + "'>" + c + "</a>";
+					line = line.replaceAll(c + " ", chordLink + " ");
+					line = line.replaceAll(c + ",", chordLink + ",");
+					line = line.replaceAll(c + "\\)", chordLink + ")");
+					line = line.replaceAll(c + "\\(", chordLink + "(");
+					line = line.replaceAll(c + "$", chordLink);
+				}
 				htmlText += chordLine ? ("<span style='color: blue; white-space: pre;'>" + line + "</span><br/>")
 						: line + "<br/>";
 			}

@@ -129,4 +129,9 @@ public class SongsFacadeImpl implements SongsFacade {
 	public List<ChordTO> getChords(ChordTO filterTO) {
 		return mapper.mapChords(chordsRepository.findAllOrderByName(filterTO));
 	}
+
+	@Override
+	public ChordTO getChordById(Long id) {
+		return mapper.mapChord(chordsRepository.findOne(id));
+	}
 }

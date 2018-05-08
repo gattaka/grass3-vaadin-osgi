@@ -1,8 +1,12 @@
 package cz.gattserver.grass3.songs.web;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,7 @@ import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
 import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.facades.SongsFacade;
 import cz.gattserver.grass3.songs.model.dto.SongOverviewTO;
@@ -43,6 +48,11 @@ public class TextsTab extends VerticalLayout {
 	@Autowired
 	private SecurityService securityService;
 
+	@Resource(name = "songsPageFactory")
+	private SongsPageFactory pageFactory;
+
+	private GrassRequest request;
+
 	private Grid<SongOverviewTO> grid;
 	private Label nameLabel;
 	private Label authorYearLabel;
@@ -52,9 +62,11 @@ public class TextsTab extends VerticalLayout {
 	private List<SongOverviewTO> songs;
 	private SongOverviewTO filterTO;
 
-	public TextsTab() {
+	public TextsTab(GrassRequest request) {
 		SpringContextHelper.inject(this);
 		setMargin(new MarginInfo(true, false, false, false));
+
+		this.request = request;
 
 		songs = new ArrayList<>();
 		filterTO = new SongOverviewTO();
@@ -104,8 +116,12 @@ public class TextsTab extends VerticalLayout {
 
 		loadSongs();
 
-		grid.addSelectionListener(
-				(e) -> e.getFirstSelectedItem().ifPresent((v) -> showDetail(songsFacade.getSongById(v.getId()))));
+		grid.addSelectionListener((e) -> {
+			if (e.getFirstSelectedItem().isPresent())
+				showDetail(songsFacade.getSongById(e.getFirstSelectedItem().get().getId()));
+			else
+				showDetail(null);
+		});
 
 		VerticalLayout contentLayout = new VerticalLayout();
 
@@ -192,6 +208,14 @@ public class TextsTab extends VerticalLayout {
 			loadSongs();
 			showDetail(null);
 		}, grid));
+
+	}
+
+	public void selectSong(Long id) {
+		SongTO too = songsFacade.getSongById(id);
+		SongOverviewTO to = new SongOverviewTO(too.getName(), too.getAuthor(), too.getYear(), id);
+		to.setId(id);
+		grid.select(to);
 	}
 
 	private void showDetail(SongTO choosenSong) {
@@ -200,6 +224,8 @@ public class TextsTab extends VerticalLayout {
 			authorYearLabel.setValue(null);
 			contentLabel.setValue(null);
 			this.choosenSong = null;
+			String currentURL = request.getContextRoot() + "/" + pageFactory.getPageName();
+			Page.getCurrent().pushState(currentURL);
 		} else {
 			nameLabel.setValue(choosenSong.getName());
 			String value = choosenSong.getAuthor();
@@ -210,8 +236,8 @@ public class TextsTab extends VerticalLayout {
 			for (String line : choosenSong.getText().split("<br/>")) {
 				boolean chordLine = true;
 				for (String chunk : line.split(" +| +|,|\t+"))
-					if (StringUtils.isNotBlank(chunk) && !chunk.toLowerCase()
-							.matches("(a|b|c|d|e|f|g|h|x|/|#|mi|m|dim|maj|dur|sus|add|[0-9]|-|\\+|\\(|\\)|capo|=|\\.)+")) {
+					if (StringUtils.isNotBlank(chunk) && !chunk.toLowerCase().matches(
+							"(a|b|c|d|e|f|g|h|x|/|#|mi|m|dim|maj|dur|sus|add|[0-9]|-|\\+|\\(|\\)|capo|=|\\.)+")) {
 						chordLine = false;
 						break;
 					}
@@ -220,6 +246,15 @@ public class TextsTab extends VerticalLayout {
 			}
 			contentLabel.setValue(htmlText);
 			this.choosenSong = choosenSong;
+
+			String currentURL;
+			try {
+				currentURL = request.getContextRoot() + "/" + pageFactory.getPageName() + "/text/" + choosenSong.getId()
+						+ "-" + URLEncoder.encode(choosenSong.getName(), "UTF-8");
+				Page.getCurrent().pushState(currentURL);
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

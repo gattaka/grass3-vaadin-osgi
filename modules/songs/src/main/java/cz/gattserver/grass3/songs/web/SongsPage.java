@@ -6,6 +6,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.web.common.server.URLIdentifierUtils;
 
 public class SongsPage extends OneColumnPage {
 
@@ -22,8 +23,25 @@ public class SongsPage extends OneColumnPage {
 		TabSheet tabSheet = new TabSheet();
 		layout.addComponent(tabSheet);
 
-		tabSheet.addTab(new TextsTab(), "Písničky");
-		tabSheet.addTab(new ChordsTab(), "Akordy");
+		TextsTab tt = new TextsTab(getRequest());
+		ChordsTab ct = new ChordsTab(getRequest());
+		tabSheet.addTab(tt, "Písničky");
+		tabSheet.addTab(ct, "Akordy");
+
+		String token = getRequest().getAnalyzer().getNextPathToken();
+		if (token != null) {
+			URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
+					.parseURLIdentifier(getRequest().getAnalyzer().getNextPathToken());
+			if (identifier != null) {
+				if ("text".equals(token.toLowerCase())) {
+					tabSheet.setSelectedTab(tt);
+					tt.selectSong(identifier.getId());
+				} else if ("chord".equals(token.toLowerCase())) {
+					tabSheet.setSelectedTab(ct);
+					ct.selectChord(identifier.getId());
+				}
+			}
+		}
 
 		return layout;
 	}

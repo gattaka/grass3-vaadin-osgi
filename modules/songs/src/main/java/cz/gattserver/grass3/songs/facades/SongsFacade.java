@@ -96,4 +96,12 @@ public interface SongsFacade {
 	 */
 	public List<ChordTO> getChords(ChordTO filterTO);
 
+	/**
+	 * Vyhledá akord dle id
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public ChordTO getChordById(Long id);
+
 }

@@ -2,6 +2,8 @@ package cz.gattserver.grass3.fm;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -367,7 +369,11 @@ public class FMExplorer {
 		sb.append(modulePageName);
 		for (Path part : getCurrentRelativePath()) {
 			sb.append("/");
-			sb.append(part.toString());
+			try {
+				sb.append(URLEncoder.encode(part.toString(), "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 		}
 		return sb.toString();
 	}

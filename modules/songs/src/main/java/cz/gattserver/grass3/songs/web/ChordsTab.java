@@ -1,11 +1,16 @@
 package cz.gattserver.grass3.songs.web;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
@@ -24,6 +29,7 @@ import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
 import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.facades.SongsFacade;
 import cz.gattserver.grass3.songs.model.domain.Instrument;
@@ -44,6 +50,11 @@ public class ChordsTab extends VerticalLayout {
 	@Autowired
 	private SecurityService securityService;
 
+	@Resource(name = "songsPageFactory")
+	private SongsPageFactory pageFactory;
+
+	private GrassRequest request;
+
 	private Grid<ChordTO> grid;
 	private Label nameLabel;
 	private VerticalLayout chordDescriptionLayout;
@@ -52,10 +63,11 @@ public class ChordsTab extends VerticalLayout {
 	private List<ChordTO> chords;
 	private ChordTO filterTO;
 
-	public ChordsTab() {
-
+	public ChordsTab(GrassRequest request) {
 		SpringContextHelper.inject(this);
 		setMargin(new MarginInfo(true, false, false, false));
+
+		this.request = request;
 
 		chords = new ArrayList<>();
 		filterTO = new ChordTO();
@@ -94,7 +106,12 @@ public class ChordsTab extends VerticalLayout {
 
 		loadChords();
 
-		grid.addSelectionListener((e) -> e.getFirstSelectedItem().ifPresent((v) -> showDetail(v)));
+		grid.addSelectionListener((e) -> {
+			if (e.getFirstSelectedItem().isPresent())
+				showDetail(e.getFirstSelectedItem().get());
+			else
+				showDetail(null);
+		});
 
 		VerticalLayout contentLayout = new VerticalLayout();
 
@@ -151,11 +168,19 @@ public class ChordsTab extends VerticalLayout {
 		}, grid));
 	}
 
+	public void selectChord(Long id) {
+		ChordTO to = songsFacade.getChordById(id);
+		to.setId(id);
+		grid.select(to);
+	}
+
 	private void showDetail(ChordTO choosenChord) {
 		chordDescriptionLayout.removeAllComponents();
 		if (choosenChord == null) {
 			nameLabel.setValue(null);
 			this.choosenChord = null;
+			String currentURL = request.getContextRoot() + "/" + pageFactory.getPageName();
+			Page.getCurrent().pushState(currentURL);
 		} else {
 			nameLabel.setValue(choosenChord.getName());
 			Label chordDisplayLabel = new Label();
@@ -165,6 +190,15 @@ public class ChordsTab extends VerticalLayout {
 			}
 			chordDescriptionLayout.addComponent(chordDisplayLabel);
 			this.choosenChord = choosenChord;
+
+			String currentURL;
+			try {
+				currentURL = request.getContextRoot() + "/" + pageFactory.getPageName() + "/chord/"
+						+ choosenChord.getId() + "-" + URLEncoder.encode(choosenChord.getName(), "UTF-8");
+				Page.getCurrent().pushState(currentURL);
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

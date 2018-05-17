@@ -78,6 +78,11 @@ public class LanguageFacadeImpl implements LanguageFacade {
 	}
 
 	@Override
+	public LanguageItemTO getLanguageItemByContent(long languageId, String content) {
+		return mapper.mapLanguageItem(itemRepository.findLanguageItemByContent(languageId, content));
+	}
+	
+	@Override
 	public Long saveLanguageItem(LanguageItemTO itemTO) {
 		LanguageItem item = mapper.mapLanguageItem(itemTO);
 		item = itemRepository.save(item);

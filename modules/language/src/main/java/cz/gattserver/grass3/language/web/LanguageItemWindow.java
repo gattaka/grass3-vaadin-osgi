@@ -3,6 +3,7 @@ package cz.gattserver.grass3.language.web;
 import java.util.Arrays;
 
 import com.vaadin.data.Binder;
+import com.vaadin.data.Validator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.Alignment;
@@ -26,11 +27,11 @@ public class LanguageItemWindow extends WebWindow {
 		void onSave(LanguageItemTO itemTO);
 	}
 
-	public LanguageItemWindow(SaveAction action, ItemType asType) {
-		this(null, action, asType);
+	public LanguageItemWindow(SaveAction action, Validator<String> validator, ItemType asType) {
+		this(null, action, validator, asType);
 	}
 
-	public LanguageItemWindow(LanguageItemTO to, SaveAction action, ItemType asType) {
+	public LanguageItemWindow(LanguageItemTO to, SaveAction action, Validator<String> validator, ItemType asType) {
 		super(to == null ? "Založit" : "Upravit" + " záznam");
 
 		setWidth("600px");
@@ -50,7 +51,8 @@ public class LanguageItemWindow extends WebWindow {
 
 		TextField contentField = new TextField("Obsah");
 		contentField.setWidth("100%");
-		binder.forField(contentField).asRequired().bind(LanguageItemTO::getContent, LanguageItemTO::setContent);
+		binder.forField(contentField).asRequired().withValidator(validator).bind(LanguageItemTO::getContent,
+				LanguageItemTO::setContent);
 		addComponent(contentField);
 		contentField.focus();
 
@@ -74,20 +76,16 @@ public class LanguageItemWindow extends WebWindow {
 
 		binder.readBean(targetTO);
 
-		Button.ClickListener clickListener = e -> onSave(action, binder, targetTO);
-
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		addComponent(buttonLayout);
 		setComponentAlignment(buttonLayout, Alignment.MIDDLE_CENTER);
 
 		if (to != null) {
-			buttonLayout.addComponent(new ModifyButton(clickListener));
+			buttonLayout.addComponent(new ModifyButton(e -> onSave(action, binder, targetTO)));
 		} else {
-			buttonLayout.addComponent(new CreateButton(clickListener));
-			Button createAndContinueBtn = new CreateButton(e -> {
-				clickListener.buttonClick(e);
-				UI.getCurrent().addWindow(new LanguageItemWindow(action, asType));
-			});
+			buttonLayout.addComponent(new CreateButton(e -> onSave(action, binder, targetTO)));
+			Button createAndContinueBtn = new CreateButton(
+					e -> onSaveAndContinue(action, binder, targetTO, validator, asType));
 			createAndContinueBtn.setCaption("Vytvořit a pokračovat");
 			buttonLayout.addComponent(createAndContinueBtn);
 		}
@@ -96,6 +94,15 @@ public class LanguageItemWindow extends WebWindow {
 	private void onSave(SaveAction action, Binder<LanguageItemTO> binder, LanguageItemTO targetTO) {
 		if (binder.writeBeanIfValid(targetTO)) {
 			action.onSave(targetTO);
+			close();
+		}
+	}
+
+	private void onSaveAndContinue(SaveAction action, Binder<LanguageItemTO> binder, LanguageItemTO targetTO,
+			Validator<String> validator, ItemType asType) {
+		if (binder.writeBeanIfValid(targetTO)) {
+			action.onSave(targetTO);
+			UI.getCurrent().addWindow(new LanguageItemWindow(action, validator, asType));
 			close();
 		}
 	}

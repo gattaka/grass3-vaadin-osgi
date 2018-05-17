@@ -23,6 +23,9 @@ public interface LanguageItemRepository extends JpaRepository<LanguageItem, Long
 	@Query("select i from LANGUAGEITEM i where i.id in ?1")
 	List<LanguageItem> findByIds(Set<Long> ids);
 
+	@Query("select i from LANGUAGEITEM i where i.language.id = ?1 and i.content = ?2")
+	LanguageItem findLanguageItemByContent(long languageId, String content);
+
 	@Modifying
 	@Query("update LANGUAGEITEM i set i.tested = ?2, i.successRate = ?3, i.lastTested = ?4 where i.id = ?1")
 	void updateItem(Long id, int newCount, double newRate, LocalDateTime now);

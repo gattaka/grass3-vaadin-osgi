@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.data.ValidationResult;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -313,6 +314,9 @@ public class LanguagePage extends OneColumnPage {
 					to.setLanguage(langId);
 					languageFacade.saveLanguageItem(to);
 					grid.getDataProvider().refreshAll();
+				}, (value, context) -> {
+					LanguageItemTO itemTO = languageFacade.getLanguageItemByContent(langId, value);
+					return itemTO == null ? ValidationResult.ok() : ValidationResult.error("Položka již existuje");
 				}, type))));
 
 		btnLayout.addComponent(new ModifyGridButton<LanguageItemTO>("Upravit", item -> {
@@ -323,6 +327,12 @@ public class LanguagePage extends OneColumnPage {
 					grid.getDataProvider().refreshItem(to);
 				else
 					grid.getDataProvider().refreshAll();
+			}, (value, context) -> {
+				LanguageItemTO itemTO = languageFacade.getLanguageItemByContent(langId, value);
+				if (itemTO == null || itemTO.getContent().equals(item.getContent()))
+					return ValidationResult.ok();
+				else
+					return ValidationResult.error("Položka již existuje");
 			}, type));
 		}, grid));
 

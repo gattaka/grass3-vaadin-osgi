@@ -68,6 +68,11 @@ public interface LanguageFacade {
 	LanguageItemTO getLanguageItemById(Long id);
 
 	/**
+	 * Získá záznam dle obsahu a id jazyka
+	 */
+	LanguageItemTO getLanguageItemByContent(long languageId, String content);
+
+	/**
 	 * Uloží záznam
 	 */
 	Long saveLanguageItem(LanguageItemTO itemTO);

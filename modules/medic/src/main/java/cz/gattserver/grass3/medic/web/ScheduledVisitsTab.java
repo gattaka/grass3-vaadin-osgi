@@ -205,7 +205,8 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		grid.addColumn(ScheduledVisitDTO::getPurpose).setId("purpose").setCaption("Účel");
 		grid.addColumn(ScheduledVisitDTO::getDate, new LocalDateTimeRenderer("dd.MM.yyyy")).setId("date")
 				.setCaption("Datum");
-		grid.addColumn(item -> item.getInstitution().getName()).setId("institution").setCaption("Instituce");
+		grid.addColumn(item -> item.getInstitution() == null ? "" : item.getInstitution().getName())
+				.setId("institution").setCaption("Instituce");
 		grid.setWidth("100%");
 		grid.setHeight("250px");
 		grid.setSelectionMode(SelectionMode.SINGLE);

@@ -50,6 +50,104 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 		this(operation, null);
 	}
 
+	public ScheduledVisitsCreateWindow(Operation operation, ScheduledVisitDTO originalDTO) {
+		super(getTitleByOperation(operation, originalDTO));
+
+		boolean planned = operation.equals(Operation.PLANNED) || operation.equals(Operation.PLANNED_FROM_TO_BE_PLANNED);
+
+		MedicFacade medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
+
+		GridLayout winLayout = new GridLayout(2, 6);
+		winLayout.setWidth("350px");
+		winLayout.setMargin(true);
+		winLayout.setSpacing(true);
+
+		ScheduledVisitDTO formDTO = new ScheduledVisitDTO();
+		formDTO.setPurpose("");
+		formDTO.setPlanned(planned);
+		formDTO.setState(planned ? ScheduledVisitState.PLANNED : ScheduledVisitState.TO_BE_PLANNED);
+
+		Binder<ScheduledVisitDTO> binder = new Binder<>(ScheduledVisitDTO.class);
+		binder.setBean(formDTO);
+
+		final TextField purposeField = new TextField("Účel návštěvy");
+		winLayout.addComponent(purposeField, 0, 0, 1, 0);
+		purposeField.setWidth("100%");
+		binder.forField(purposeField).asRequired().bind("purpose");
+
+		if (!planned) {
+			final TextField periodField = new TextField("Pravidelnost (měsíce)");
+			winLayout.addComponent(periodField, 0, 1);
+			periodField.setWidth("100%");
+			binder.forField(periodField)
+					.withConverter(new StringToIntegerConverter(0, "Počet měsíců musí být celé číslo")).bind("period");
+		}
+
+		final DateTimeField dateField = new DateTimeField("Datum návštěvy");
+		dateField.setLocale(Locale.forLanguageTag("CS"));
+		if (planned) {
+			dateField.setResolution(DateTimeResolution.MINUTE);
+			dateField.setDateFormat("d. MMMMM yyyy, HH:mm");
+			winLayout.addComponent(dateField, 0, 1, 1, 1);
+		} else {
+			dateField.setResolution(DateTimeResolution.MONTH);
+			dateField.setDateFormat("MMMMM yyyy");
+			winLayout.addComponent(dateField, 1, 1);
+		}
+
+		dateField.setWidth("100%");
+		binder.forField(dateField).asRequired().bind("date");
+
+		List<MedicalRecordDTO> records = medicalFacade.getAllMedicalRecords();
+		final ComboBox<MedicalRecordDTO> recordsComboBox = new ComboBox<>("Navazuje na kontrolu", records);
+		winLayout.addComponent(recordsComboBox, 0, 2, 1, 2);
+		recordsComboBox.setWidth("100%");
+		binder.forField(recordsComboBox).bind("record");
+
+		List<MedicalInstitutionDTO> institutions = medicalFacade.getAllMedicalInstitutions();
+		final ComboBox<MedicalInstitutionDTO> institutionComboBox = new ComboBox<>("Instituce", institutions);
+		winLayout.addComponent(institutionComboBox, 0, 3, 1, 3);
+		institutionComboBox.setWidth("100%");
+		institutionComboBox.setEmptySelectionAllowed(false);
+		binder.forField(institutionComboBox).asRequired().bind("institution");
+
+		Label separator = new Label("");
+		separator.setHeight("10px");
+		winLayout.addComponent(separator, 0, 4);
+
+		Button saveBtn = new Button(getSubmitBtnCaptionByOperation(operation, originalDTO), e -> {
+			try {
+				ScheduledVisitDTO writeDTO = originalDTO == null ? formDTO : originalDTO;
+				binder.writeBean(writeDTO);
+				medicalFacade.saveScheduledVisit(writeDTO);
+				onSuccess();
+				close();
+			} catch (ValidationException ex) {
+				Notification.show(
+						"Chybná vstupní data\n\n   " + ex.getValidationErrors().iterator().next().getErrorMessage(),
+						Notification.Type.ERROR_MESSAGE);
+			} catch (Exception ex) {
+				String msg = "Nezdařilo se vytvořit nový záznam";
+				UI.getCurrent().addWindow(new ErrorWindow(msg));
+				logger.error(msg, ex);
+			}
+		});
+		winLayout.addComponent(saveBtn, 1, 5);
+		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
+
+		if (originalDTO != null)
+			binder.readBean(originalDTO);
+
+		// vyplňuji objednání na základě plánovaného objednání
+		if (originalDTO != null && planned) {
+			purposeField.setValue(originalDTO.getPurpose());
+			recordsComboBox.setValue(originalDTO.getRecord());
+			institutionComboBox.setValue(originalDTO.getInstitution());
+		}
+
+		setContent(winLayout);
+	}
+
 	private static String getTitleByOperation(Operation operation, ScheduledVisitDTO visitDTO) {
 		switch (operation) {
 		case PLANNED:
@@ -75,104 +173,6 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 			// assert !
 			return null;
 		}
-	}
-
-	public ScheduledVisitsCreateWindow(Operation operation, ScheduledVisitDTO originalDTO) {
-		super(getTitleByOperation(operation, originalDTO));
-
-		boolean planned = operation.equals(Operation.PLANNED) || operation.equals(Operation.PLANNED_FROM_TO_BE_PLANNED);
-
-		MedicFacade medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
-
-		GridLayout winLayout = new GridLayout(2, 6);
-		winLayout.setWidth("350px");
-		winLayout.setMargin(true);
-		winLayout.setSpacing(true);
-
-		ScheduledVisitDTO formDTO = new ScheduledVisitDTO();
-		formDTO.setPurpose("");
-		formDTO.setPlanned(planned);
-		formDTO.setState(planned ? ScheduledVisitState.PLANNED : ScheduledVisitState.TO_BE_PLANNED);
-
-		Binder<ScheduledVisitDTO> binder = new Binder<>(ScheduledVisitDTO.class);
-		binder.setBean(formDTO);
-
-		final TextField purposeField = new TextField("Účel návštěvy");
-		winLayout.addComponent(purposeField, 0, 0, 1, 0);
-		purposeField.setWidth("100%");
-		binder.forField(purposeField).bind("purpose");
-
-		if (!planned) {
-			final TextField periodField = new TextField("Pravidelnost (měsíce)");
-			winLayout.addComponent(periodField, 0, 1);
-			periodField.setWidth("100%");
-			binder.forField(periodField)
-					.withConverter(new StringToIntegerConverter(0, "Počet měsíců musí být celé číslo")).bind("period");
-		}
-
-		final DateTimeField dateField = new DateTimeField("Datum návštěvy");
-		dateField.setLocale(Locale.forLanguageTag("CS"));
-		if (planned) {
-			dateField.setResolution(DateTimeResolution.MINUTE);
-			dateField.setDateFormat("d. MMMMM yyyy, HH:mm");
-			winLayout.addComponent(dateField, 0, 1, 1, 1);
-		} else {
-			dateField.setResolution(DateTimeResolution.MONTH);
-			dateField.setDateFormat("MMMMM yyyy");
-			winLayout.addComponent(dateField, 1, 1);
-		}
-
-		dateField.setWidth("100%");
-		binder.forField(dateField).bind("date");
-
-		List<MedicalRecordDTO> records = medicalFacade.getAllMedicalRecords();
-		final ComboBox<MedicalRecordDTO> recordsComboBox = new ComboBox<>("Navazuje na kontrolu", records);
-		winLayout.addComponent(recordsComboBox, 0, 2, 1, 2);
-		recordsComboBox.setWidth("100%");
-		binder.forField(recordsComboBox).bind("record");
-
-		List<MedicalInstitutionDTO> institutions = medicalFacade.getAllMedicalInstitutions();
-		final ComboBox<MedicalInstitutionDTO> institutionComboBox = new ComboBox<>("Instituce", institutions);
-		winLayout.addComponent(institutionComboBox, 0, 3, 1, 3);
-		institutionComboBox.setWidth("100%");
-		institutionComboBox.setEmptySelectionAllowed(false);
-		binder.forField(institutionComboBox).bind("institution");
-
-		Label separator = new Label("");
-		separator.setHeight("10px");
-		winLayout.addComponent(separator, 0, 4);
-
-		Button saveBtn = new Button(getSubmitBtnCaptionByOperation(operation, originalDTO), e -> {
-			try {
-				ScheduledVisitDTO writeDTO = originalDTO == null ? new ScheduledVisitDTO() : originalDTO;
-				binder.writeBean(writeDTO);
-				medicalFacade.saveScheduledVisit(writeDTO);
-				onSuccess();
-				close();
-			} catch (ValidationException ex) {
-				Notification.show("   Chybná vstupní data\n\n   " + ex.getCause().getMessage(),
-						Notification.Type.TRAY_NOTIFICATION);
-			} catch (Exception ex) {
-				String msg = "Nezdařilo se vytvořit nový záznam";
-				UI.getCurrent().addWindow(new ErrorWindow(msg));
-				logger.error(msg, ex);
-			}
-		});
-		winLayout.addComponent(saveBtn, 1, 5);
-		winLayout.setComponentAlignment(saveBtn, Alignment.BOTTOM_RIGHT);
-
-		if (originalDTO != null)
-			binder.readBean(originalDTO);
-
-		// vyplňuji objednání na základě plánovaného objednání
-		if (originalDTO != null && planned) {
-			purposeField.setValue(originalDTO.getPurpose());
-			recordsComboBox.setValue(originalDTO.getRecord());
-			institutionComboBox.setValue(originalDTO.getInstitution());
-		}
-
-		setContent(winLayout);
-
 	}
 
 	protected abstract void onSuccess();

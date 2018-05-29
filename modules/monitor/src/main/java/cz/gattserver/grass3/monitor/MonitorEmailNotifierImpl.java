@@ -28,16 +28,16 @@ public class MonitorEmailNotifierImpl extends TimerTask implements MonitorEmailN
 		logger.info("Monitor TimerTask byl spuštěn");
 
 		// Test, zda je připojen backup disk
-		if (MonitorState.ERROR.equals(monitorFacade.getBackupDiskMounted().getMonitorState())) {
+		if (!MonitorState.SUCCESS.equals(monitorFacade.getBackupDiskMounted().getMonitorState())) {
 			mailService.sendToAdmin("GRASS3 Monitor oznámení o změně stavu monitorovaného předmětu",
-					"[ ERR! ] Backup disk není připojen");
+					"Backup disk není připojen nebo se nezdařilo zjistit jeho stav");
 		}
 
 		// Test, zda jsou prováděny pravidelně zálohy
 		for (LastBackupTimeMonitorItemTO to : monitorFacade.getLastTimeOfBackup()) {
-			if (MonitorState.ERROR.equals(to.getMonitorState())) {
-				mailService.sendToAdmin("GRASS3 Monitor oznámení o změně stavu monitorovaného předmětu",
-						"[ ERR! ] " + to.getValue() + " Záloha nebyla provedena nebo je starší než 24h");
+			if (!MonitorState.SUCCESS.equals(to.getMonitorState())) {
+				mailService.sendToAdmin("GRASS3 Monitor oznámení o změně stavu monitorovaného předmětu", to.getValue()
+						+ " Záloha nebyla provedena, je starší než 24h nebo se nezdařilo zjistit její stav");
 			}
 		}
 	}

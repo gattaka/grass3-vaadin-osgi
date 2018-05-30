@@ -7,10 +7,13 @@ import java.util.Set;
 
 import com.fo0.advancedtokenfield.main.AdvancedTokenField;
 import com.fo0.advancedtokenfield.main.Token;
+import com.vaadin.data.provider.CallbackDataProvider;
+import com.vaadin.server.SerializableSupplier;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.FetchItemsCallback;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
@@ -29,7 +32,7 @@ import cz.gattserver.grass3.hw.interfaces.HWItemState;
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
 import cz.gattserver.grass3.hw.service.HWService;
-import cz.gattserver.grass3.hw.ui.windows.HWItemCreateWindow;
+import cz.gattserver.grass3.hw.ui.windows.HWItemWindow;
 import cz.gattserver.grass3.hw.ui.windows.HWItemDetailWindow;
 import cz.gattserver.grass3.hw.ui.windows.ServiceNoteCreateWindow;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
@@ -68,32 +71,40 @@ public class HWItemsTab extends VerticalLayout {
 		List<String> types = new ArrayList<>();
 		collection.forEach(t -> types.add(t.getValue()));
 		filterDTO.setTypes(types);
-		grid.setDataProvider((sortOrder, offset, limit) -> getHWService().getHWItems(filterDTO,
-				QuerydslUtil.transformOffsetLimit(offset, limit), QuerydslUtil.transformOrdering(sortOrder, column -> {
-					switch (column) {
-					case PRICE_BIND:
-						return "price";
-					case STATE_BIND:
-						return "state";
-					case PURCHASE_DATE_BIND:
-						return "purchaseDate";
-					case NAME_BIND:
-						return "name";
-					case USED_IN_BIND:
-						return "usedIn";
-					case SUPERVIZED_FOR_BIND:
-						return "supervizedFor";
-					default:
-						return column;
-					}
-				})).stream(), () -> getHWService().countHWItems(filterDTO));
+
+		FetchItemsCallback<HWItemOverviewTO> fetchItems = (sortOrder, offset, limit) -> getHWService()
+				.getHWItems(filterDTO, QuerydslUtil.transformOffsetLimit(offset, limit),
+						QuerydslUtil.transformOrdering(sortOrder, column -> {
+							switch (column) {
+							case PRICE_BIND:
+								return "price";
+							case STATE_BIND:
+								return "state";
+							case PURCHASE_DATE_BIND:
+								return "purchaseDate";
+							case NAME_BIND:
+								return "name";
+							case USED_IN_BIND:
+								return "usedIn";
+							case SUPERVIZED_FOR_BIND:
+								return "supervizedFor";
+							default:
+								return column;
+							}
+						}))
+				.stream();
+		SerializableSupplier<Integer> sizeCallback = () -> getHWService().countHWItems(filterDTO);
+		CallbackDataProvider<HWItemOverviewTO, Long> provider = new CallbackDataProvider<>(
+				q -> fetchItems.fetchItems(q.getSortOrders(), q.getOffset(), q.getLimit()), q -> sizeCallback.get(),
+				HWItemOverviewTO::getId);
+		grid.setDataProvider(provider);
 	}
 
 	private void addWindow(Window win) {
 		UI.getCurrent().addWindow(win);
 	}
 
-	private void openNewItemWindow(boolean fix) {
+	private void openItemWindow(boolean fix) {
 		HWItemTO hwItem = null;
 		if (fix) {
 			if (grid.getSelectedItems().isEmpty())
@@ -101,13 +112,16 @@ public class HWItemsTab extends VerticalLayout {
 			Long id = grid.getSelectedItems().iterator().next().getId();
 			hwItem = getHWService().getHWItem(id);
 		}
-		addWindow(new HWItemCreateWindow(hwItem == null ? null : hwItem.getId()) {
+		addWindow(new HWItemWindow(hwItem == null ? null : hwItem.getId()) {
 
 			private static final long serialVersionUID = -1397391593801030584L;
 
 			@Override
-			protected void onSuccess() {
+			protected void onSuccess(HWItemTO dto) {
 				populate();
+				HWItemOverviewTO filterTO = new HWItemOverviewTO();
+				filterTO.setId(dto.getId());
+				grid.select(filterTO);
 			}
 		});
 	}
@@ -285,7 +299,7 @@ public class HWItemsTab extends VerticalLayout {
 		addComponent(buttonLayout);
 
 		// Založení nové položky HW
-		newHWBtn.addClickListener(e -> openNewItemWindow(false));
+		newHWBtn.addClickListener(e -> openItemWindow(false));
 		buttonLayout.addComponent(newHWBtn);
 
 		// Založení nového servisního záznamu
@@ -297,7 +311,7 @@ public class HWItemsTab extends VerticalLayout {
 		buttonLayout.addComponent(detailsBtn);
 
 		// Oprava údajů existující položky HW
-		fixBtn.addClickListener(e -> openNewItemWindow(true));
+		fixBtn.addClickListener(e -> openItemWindow(true));
 		buttonLayout.addComponent(fixBtn);
 
 		// Smazání položky HW

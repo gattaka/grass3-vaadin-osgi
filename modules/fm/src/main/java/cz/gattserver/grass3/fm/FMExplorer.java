@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.fm;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -60,10 +59,12 @@ public class FMExplorer {
 	}
 
 	/**
-	 * {@link FMExplorer} začne v adresáři, který je podle konfigurace jako jeho root (omezení).
+	 * {@link FMExplorer} začne v adresáři, který je podle konfigurace jako jeho
+	 * root (omezení).
 	 * 
 	 * @param fileSystem
-	 *            {@link FileSystem}, ve kterém se bude {@link FMExplorer} pohybovat
+	 *            {@link FileSystem}, ve kterém se bude {@link FMExplorer}
+	 *            pohybovat
 	 */
 	public FMExplorer(FileSystem fileSystem) {
 		Validate.notNull(fileSystem, "Filesystem nesmí být null");
@@ -168,7 +169,8 @@ public class FMExplorer {
 	}
 
 	/**
-	 * Vrátí počet položek pro výpis obsahu aktuálního adresáře. Započítává i odkaz ".." na nadřazený adresář.
+	 * Vrátí počet položek pro výpis obsahu aktuálního adresáře. Započítává i
+	 * odkaz ".." na nadřazený adresář.
 	 * 
 	 * @return
 	 */
@@ -182,7 +184,8 @@ public class FMExplorer {
 	}
 
 	/**
-	 * Vrátí {@link Stream} absolutních {@link Path} a na začátku ".." odkaz na nadřazený adresář.
+	 * Vrátí {@link Stream} absolutních {@link Path} a na začátku ".." odkaz na
+	 * nadřazený adresář.
 	 * 
 	 * @param offset
 	 *            offset pro stránkování
@@ -225,7 +228,8 @@ public class FMExplorer {
 	 * @param in
 	 *            vstupní proud dat
 	 * @param path
-	 *            cesta k souboru z aktuálního adresáře pod kterou bude soubor uložen
+	 *            cesta k souboru z aktuálního adresáře pod kterou bude soubor
+	 *            uložen
 	 * @return výsledek operace
 	 */
 	public FileProcessState saveFile(InputStream in, String path) {
@@ -256,7 +260,13 @@ public class FMExplorer {
 			if (!Files.exists(pathToDelete))
 				return FileProcessState.MISSING;
 			try (Stream<Path> s = Files.walk(pathToDelete)) {
-				s.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+				s.sorted(Comparator.reverseOrder()).forEach(p -> {
+					try {
+						Files.delete(p);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				});
 			}
 			return FileProcessState.SUCCESS;
 		} catch (IOException e) {
@@ -271,7 +281,8 @@ public class FMExplorer {
 	 * @param path
 	 *            cesta ke stávajícímu souboru z aktuálního adresáře
 	 * @param newPath
-	 *            cesta k novému souboru z aktuálního adresáře -- umožňuje použít ".." a "/" pro přesun
+	 *            cesta k novému souboru z aktuálního adresáře -- umožňuje
+	 *            použít ".." a "/" pro přesun
 	 */
 	public FileProcessState renameFile(String path, String newPath) {
 		Path currentPath = currentAbsolutePath.resolve(path).normalize();
@@ -292,7 +303,8 @@ public class FMExplorer {
 	}
 
 	/**
-	 * Připraví dle aktuální cesty (od FM kořene) díly, ze kterých lze sestavit breadcrumb navigaci.
+	 * Připraví dle aktuální cesty (od FM kořene) díly, ze kterých lze sestavit
+	 * breadcrumb navigaci.
 	 * 
 	 * @return
 	 */
@@ -319,11 +331,13 @@ public class FMExplorer {
 	}
 
 	/**
-	 * Získá URL link k souboru v aktuálním adresáři. Neověřuje, zda soubor v aktuálním adresáři opravdu existuje, pouze
-	 * sestavuje link tak, jako by v něm byl.
+	 * Získá URL link k souboru v aktuálním adresáři. Neověřuje, zda soubor v
+	 * aktuálním adresáři opravdu existuje, pouze sestavuje link tak, jako by v
+	 * něm byl.
 	 * 
 	 * @param contextRootURL
-	 *            kořenové url aplikace, například <code>http://testweb/grass</code>
+	 *            kořenové url aplikace, například
+	 *            <code>http://testweb/grass</code>
 	 * @param path
 	 *            cesta k souboru z aktuálního adresáře
 	 * @return link k souboru
@@ -343,13 +357,16 @@ public class FMExplorer {
 	}
 
 	/**
-	 * Získá URL pro aktuální stav FM. Pokud je tedy například FM v adresáři <code>alfa</code>, contextRoot aplikace je
-	 * <code>http://testweb/grass</code> a URL cesta k FM modulu je <code>fm-modul</code>, pak výsledné URL bude <br/>
+	 * Získá URL pro aktuální stav FM. Pokud je tedy například FM v adresáři
+	 * <code>alfa</code>, contextRoot aplikace je
+	 * <code>http://testweb/grass</code> a URL cesta k FM modulu je
+	 * <code>fm-modul</code>, pak výsledné URL bude <br/>
 	 * 
 	 * <code>http://testweb/grass/fm-modul/alfa</code>
 	 * 
 	 * @param contextRootURL
-	 *            kořenové url aplikace, například <code>http://testweb/grass</code>
+	 *            kořenové url aplikace, například
+	 *            <code>http://testweb/grass</code>
 	 * @param modulePageName
 	 *            URL cesta k FM modulu, například <code>fm-modul</code>
 	 * @return výsledné URL k aktuálnímu adresáři
@@ -373,7 +390,8 @@ public class FMExplorer {
 	/**
 	 * 
 	 * @param contextRootURL
-	 *            kořenové url aplikace, například <code>http://testweb/grass</code>
+	 *            kořenové url aplikace, například
+	 *            <code>http://testweb/grass</code>
 	 * @param modulePageName
 	 *            URL cesta k FM modulu, například <code>fm-modul</code>
 	 * @param uri

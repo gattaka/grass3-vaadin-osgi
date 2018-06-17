@@ -16,7 +16,9 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.recipes.facades.RecipesFacade;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
 import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
+import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
@@ -26,6 +28,9 @@ public class RecipesPage extends OneColumnPage {
 
 	@Autowired
 	private RecipesFacade recipesFacade;
+
+	@Autowired
+	private SecurityService securityService;
 
 	private Label nameLabel;
 	private Label contentLabel;
@@ -84,6 +89,8 @@ public class RecipesPage extends OneColumnPage {
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		btnLayout.setSpacing(true);
 		layout.addComponent(btnLayout);
+
+		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(Role.ADMIN));
 
 		btnLayout.addComponent(new CreateGridButton("Přidat", event -> {
 			UI.getCurrent().addWindow(new RecipeWindow() {

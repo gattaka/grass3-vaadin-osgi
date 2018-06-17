@@ -32,21 +32,21 @@ import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.window.ErrorWindow;
 import cz.gattserver.web.common.ui.window.WebWindow;
 
-public abstract class HWItemCreateWindow extends WebWindow {
+public abstract class HWItemWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	private transient HWService hwService;
 
-	public HWItemCreateWindow(Long originalId) {
+	public HWItemWindow(Long originalId) {
 		init(originalId == null ? null : getHWService().getHWItem(originalId));
 	}
 
-	public HWItemCreateWindow() {
+	public HWItemWindow() {
 		init(null);
 	}
 
-	public HWItemCreateWindow(HWItemTO originalDTO) {
+	public HWItemWindow(HWItemTO originalDTO) {
 		init(originalDTO);
 	}
 
@@ -58,8 +58,7 @@ public abstract class HWItemCreateWindow extends WebWindow {
 
 	/**
 	 * @param originalId
-	 *            opravuji údaje existující položky, nebo vytvářím novou (
-	 *            {@code null}) ?
+	 *            opravuji údaje existující položky, nebo vytvářím novou ( {@code null}) ?
 	 */
 	private void init(HWItemTO originalDTO) {
 		setCaption(originalDTO == null ? "Založení nové položky HW" : "Oprava údajů existující položky HW");
@@ -144,8 +143,8 @@ public abstract class HWItemCreateWindow extends WebWindow {
 			try {
 				HWItemTO writeDTO = originalDTO == null ? new HWItemTO() : originalDTO;
 				binder.writeBean(writeDTO);
-				getHWService().saveHWItem(writeDTO);
-				onSuccess();
+				writeDTO.setId(getHWService().saveHWItem(writeDTO));
+				onSuccess(writeDTO);
 				close();
 			} catch (ValidationException ve) {
 				Notification.show(
@@ -163,6 +162,6 @@ public abstract class HWItemCreateWindow extends WebWindow {
 			binder.readBean(originalDTO);
 	}
 
-	protected abstract void onSuccess();
+	protected abstract void onSuccess(HWItemTO dto);
 
 }

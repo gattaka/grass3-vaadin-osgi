@@ -325,11 +325,11 @@ public class HWItemDetailWindow extends WebWindow {
 		/**
 		 * Oprava údajů existující položky HW
 		 */
-		final Button fixBtn = new ModifyButton(e -> UI.getCurrent().addWindow(new HWItemCreateWindow(hwItem) {
+		final Button fixBtn = new ModifyButton(e -> UI.getCurrent().addWindow(new HWItemWindow(hwItem) {
 			private static final long serialVersionUID = -1397391593801030584L;
 
 			@Override
-			protected void onSuccess() {
+			protected void onSuccess(HWItemTO dto) {
 				if (changeListener != null)
 					changeListener.onChange();
 				createFirstTab();
@@ -584,7 +584,8 @@ public class HWItemDetailWindow extends WebWindow {
 			private static final long serialVersionUID = 8500364606014524121L;
 
 			@Override
-			public void fileUploadFinished(InputStream in, String fileName, String mime, long size, int filesLeftInQueue) {
+			public void fileUploadFinished(InputStream in, String fileName, String mime, long size,
+					int filesLeftInQueue) {
 				getHWService().saveDocumentsFile(in, fileName, hwItem);
 
 				// refresh listu

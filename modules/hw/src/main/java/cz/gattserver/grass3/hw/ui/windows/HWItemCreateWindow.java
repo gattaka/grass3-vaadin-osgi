@@ -3,6 +3,7 @@ package cz.gattserver.grass3.hw.ui.windows;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
@@ -67,6 +68,8 @@ public abstract class HWItemCreateWindow extends WebWindow {
 		formDTO.setName("");
 		formDTO.setPrice(new BigDecimal(0));
 		formDTO.setWarrantyYears(0);
+		formDTO.setState(HWItemState.NEW);
+		formDTO.setPurchaseDate(LocalDate.now());
 
 		GridLayout winLayout = new GridLayout(2, 5);
 		layout.addComponent(winLayout);

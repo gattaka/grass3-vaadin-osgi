@@ -5,6 +5,7 @@ import java.util.List;
 import com.vaadin.data.provider.QuerySortOrder;
 
 import cz.gattserver.grass3.language.model.domain.ItemType;
+import cz.gattserver.grass3.language.model.dto.CrosswordTO;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.language.model.dto.LanguageTO;
 
@@ -93,5 +94,13 @@ public interface LanguageFacade {
 	 * @param item
 	 */
 	void deleteLanguageItem(LanguageItemTO item);
+
+	/**
+	 * Připraví křížovku
+	 * 
+	 * @param filterTO
+	 * @return křížovka
+	 */
+	CrosswordTO prepareCrossword(LanguageItemTO filterTO);
 
 }

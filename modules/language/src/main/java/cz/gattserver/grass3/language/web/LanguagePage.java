@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.ValidationResult;
+import com.vaadin.server.Page;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -28,6 +29,9 @@ import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.language.facades.LanguageFacade;
 import cz.gattserver.grass3.language.model.domain.ItemType;
+import cz.gattserver.grass3.language.model.dto.CrosswordCell;
+import cz.gattserver.grass3.language.model.dto.CrosswordHintTO;
+import cz.gattserver.grass3.language.model.dto.CrosswordTO;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.language.model.dto.LanguageTO;
 import cz.gattserver.grass3.server.GrassRequest;
@@ -53,6 +57,11 @@ public class LanguagePage extends OneColumnPage {
 
 	@Override
 	protected Component createContent() {
+
+		Page.getCurrent().getStyles()
+				.add("input.v-textfield.v-disabled.v-widget.crossword-cell.v-textfield-crossword-cell.v-has-width, "
+						+ "input.v-textfield.v-widget.crossword-cell.v-textfield-crossword-cell.v-has-width { "
+						+ "text-align: center; " + "font-variant: small-caps;" + "padding: 0;" + "}");
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);
@@ -95,6 +104,9 @@ public class LanguagePage extends OneColumnPage {
 					case 3:
 						newTab = createItemsTab(langId, null);
 						break;
+					case 4:
+						newTab = createCrosswordTab(langId);
+						break;
 					default:
 						break;
 					}
@@ -106,6 +118,7 @@ public class LanguagePage extends OneColumnPage {
 			tabSheet.addTab(new VerticalLayout(), "Slovíčka");
 			tabSheet.addTab(new VerticalLayout(), "Fráze");
 			tabSheet.addTab(new VerticalLayout(), "Vše");
+			tabSheet.addTab(new VerticalLayout(), "Křížovka");
 
 			langLayout.addComponent(tabSheet);
 		}));
@@ -127,6 +140,46 @@ public class LanguagePage extends OneColumnPage {
 				})), grid));
 
 		return layout;
+	}
+
+	private Component createCrosswordTab(long langId) {
+		HorizontalLayout sheet = new HorizontalLayout();
+		sheet.setMargin(new MarginInfo(true, false, false, false));
+
+		LanguageItemTO filterTO = new LanguageItemTO();
+		filterTO.setLanguage(langId);
+		filterTO.setType(ItemType.WORD);
+
+		CrosswordTO crosswordTO = languageFacade.prepareCrossword(filterTO);
+
+		VerticalLayout hintsLayout = new VerticalLayout();
+		sheet.addComponent(hintsLayout);
+		for (CrosswordHintTO to : crosswordTO.getHints()) {
+			Label l = new Label(to.getId() + ". " + to.getHint());
+			hintsLayout.addComponent(l);
+		}
+
+		GridLayout layout = new GridLayout(crosswordTO.getWidth(), crosswordTO.getHeight());
+		layout.setSpacing(false);
+		sheet.addComponent(layout);
+
+		for (int y = 0; y < crosswordTO.getHeight(); y++) {
+			for (int x = 0; x < crosswordTO.getWidth(); x++) {
+				CrosswordCell cell = crosswordTO.getCell(x, y);
+				if (cell != null) {
+					TextField t = new TextField();
+					t.addStyleName("crossword-cell");
+					t.setWidth("25px");
+					t.setHeight("25px");
+					t.setEnabled(cell.isWriteAllowed());
+					// if (!cell.isWriteAllowed())
+					t.setValue(cell.getValue());
+					layout.addComponent(t, x, y);
+				}
+			}
+		}
+
+		return sheet;
 	}
 
 	private VerticalLayout createTestTab(Long langId) {

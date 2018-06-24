@@ -19,8 +19,10 @@ import cz.gattserver.grass3.language.model.dao.LanguageRepository;
 import cz.gattserver.grass3.language.model.domain.ItemType;
 import cz.gattserver.grass3.language.model.domain.Language;
 import cz.gattserver.grass3.language.model.domain.LanguageItem;
+import cz.gattserver.grass3.language.model.dto.CrosswordTO;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.language.model.dto.LanguageTO;
+import cz.gattserver.grass3.language.util.CrosswordBuilder;
 import cz.gattserver.grass3.language.util.Mapper;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
 
@@ -81,7 +83,7 @@ public class LanguageFacadeImpl implements LanguageFacade {
 	public LanguageItemTO getLanguageItemByContent(long languageId, String content) {
 		return mapper.mapLanguageItem(itemRepository.findLanguageItemByContent(languageId, content));
 	}
-	
+
 	@Override
 	public Long saveLanguageItem(LanguageItemTO itemTO) {
 		LanguageItem item = mapper.mapLanguageItem(itemTO);
@@ -165,6 +167,14 @@ public class LanguageFacadeImpl implements LanguageFacade {
 	@Override
 	public void deleteLanguageItem(LanguageItemTO item) {
 		itemRepository.delete(item.getId());
+	}
+
+	@Override
+	public CrosswordTO prepareCrossword(LanguageItemTO filterTO) {
+		int sideSize = 20;
+		CrosswordBuilder crosswordBuilder = new CrosswordBuilder(sideSize,
+				itemRepository.findItemOfMaxLength(filterTO.getLanguage(), ItemType.WORD, sideSize));
+		return crosswordBuilder.build();
 	}
 
 }

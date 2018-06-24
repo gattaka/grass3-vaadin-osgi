@@ -1,9 +1,12 @@
 package cz.gattserver.grass3.language.web;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.ValidationResult;
@@ -37,6 +40,7 @@ import cz.gattserver.grass3.language.model.dto.LanguageTO;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.ModifyButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.ui.BoldLabel;
@@ -60,8 +64,11 @@ public class LanguagePage extends OneColumnPage {
 
 		Page.getCurrent().getStyles()
 				.add("input.v-textfield.v-disabled.v-widget.crossword-cell.v-textfield-crossword-cell.v-has-width, "
+						+ "input.v-textfield.v-widget.v-has-width.v-has-height.v-disabled.crossword-cell.v-textfield-crossword-cell.crossword-done.v-textfield-crossword-done, "
 						+ "input.v-textfield.v-widget.crossword-cell.v-textfield-crossword-cell.v-has-width { "
 						+ "text-align: center; " + "font-variant: small-caps;" + "padding: 0;" + "}");
+
+		// background-color: #cef29c;
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);
@@ -143,8 +150,12 @@ public class LanguagePage extends OneColumnPage {
 	}
 
 	private Component createCrosswordTab(long langId) {
-		HorizontalLayout sheet = new HorizontalLayout();
+		VerticalLayout sheet = new VerticalLayout();
 		sheet.setMargin(new MarginInfo(true, false, false, false));
+
+		HorizontalLayout mainLayout = new HorizontalLayout();
+		mainLayout.setMargin(new MarginInfo(true, false, false, false));
+		sheet.addComponent(mainLayout);
 
 		LanguageItemTO filterTO = new LanguageItemTO();
 		filterTO.setLanguage(langId);
@@ -152,16 +163,27 @@ public class LanguagePage extends OneColumnPage {
 
 		CrosswordTO crosswordTO = languageFacade.prepareCrossword(filterTO);
 
-		VerticalLayout hintsLayout = new VerticalLayout();
-		sheet.addComponent(hintsLayout);
+		List<TextField> writeFields = new ArrayList<>();
+
+		GridLayout hintsLayout = new GridLayout(3, crosswordTO.getHints().size());
+		hintsLayout.setSpacing(true);
+		hintsLayout.setDefaultComponentAlignment(Alignment.MIDDLE_RIGHT);
+		mainLayout.addComponent(hintsLayout);
 		for (CrosswordHintTO to : crosswordTO.getHints()) {
-			Label l = new Label(to.getId() + ". " + to.getHint());
-			hintsLayout.addComponent(l);
+			hintsLayout.addComponent(new Label(to.getId() + "."));
+			TextField tf = new TextField();
+			writeFields.add(tf);
+			hintsLayout.addComponent(tf);
+			Label hintLabel = new Label(to.getHint());
+			hintsLayout.addComponent(hintLabel);
+			hintsLayout.setComponentAlignment(hintLabel, Alignment.MIDDLE_LEFT);
 		}
 
 		GridLayout layout = new GridLayout(crosswordTO.getWidth(), crosswordTO.getHeight());
 		layout.setSpacing(false);
-		sheet.addComponent(layout);
+		mainLayout.addComponent(layout);
+
+		Map<TextField, String> fieldMap = new HashMap<>();
 
 		for (int y = 0; y < crosswordTO.getHeight(); y++) {
 			for (int x = 0; x < crosswordTO.getWidth(); x++) {
@@ -172,12 +194,36 @@ public class LanguagePage extends OneColumnPage {
 					t.setWidth("25px");
 					t.setHeight("25px");
 					t.setEnabled(cell.isWriteAllowed());
-					// if (!cell.isWriteAllowed())
-					t.setValue(cell.getValue());
+					if (!cell.isWriteAllowed()) {
+						t.setValue(cell.getValue());
+					} else {
+						t.setMaxLength(1);
+						fieldMap.put(t, cell.getValue());
+						t.addValueChangeListener(e -> {
+							for (TextField tf : fieldMap.keySet()) {
+								String is = tf.getValue();
+								String shouldBe = fieldMap.get(tf);
+								if (!shouldBe.equals(is) || StringUtils.isBlank(shouldBe) && StringUtils.isBlank(is))
+									return;
+							}
+							for (TextField tf : fieldMap.keySet()) {
+								tf.addStyleName("crossword-done");
+								tf.setEnabled(false);
+							}
+
+						});
+					}
 					layout.addComponent(t, x, y);
 				}
 			}
 		}
+
+		ModifyButton modifyButton = new ModifyButton(e -> {
+			for (TextField tf : fieldMap.keySet())
+				tf.setValue(fieldMap.get(tf));
+		});
+		modifyButton.setCaption("Vyřešit");
+		sheet.addComponent(modifyButton);
 
 		return sheet;
 	}

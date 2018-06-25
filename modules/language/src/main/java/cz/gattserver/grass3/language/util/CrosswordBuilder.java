@@ -65,43 +65,77 @@ public class CrosswordBuilder {
 		}
 	}
 
+	/**
+	 * Kontroluje, zda je možné na dané souřadnice daným směrem zapsat dané slovo
+	 * 
+	 * @param word
+	 *            zapisované slovo
+	 * @param x
+	 *            počáteční souřadnice x, od které se bude zapisovat (včetně hint buňky)
+	 * @param y
+	 *            počáteční souřadnice y, od které se bude zapisovat (včetně hint buňky)
+	 * @param horizontally
+	 *            přepínač, zda se bude zapisovat vodorovně (<code>true</code>) nebo svisle
+	 * @return <code>true</code>, pokud je zápis slova možný
+	 */
 	private boolean fits(String word, int x, int y, boolean horizontally) {
-		int start = horizontally ? x + 1 : y + 1;
-		int limit = horizontally ? crosswordTO.getWidth() : crosswordTO.getHeight();
-		int charCounter = 0;
 
-		// aspoň jedno slovo se protíná s tímto slovem
+		// aspoň jedno písmeno se musí protínat s jiným slovem
 		boolean emptyCrossSection = true;
 
-		// x:y musí být prázdné, jinak tam nepůjde dát hint číslo
+		// vejde se tam slovo vůbec?
+		if (horizontally && x + word.length() > crosswordTO.getWidth()
+				|| !horizontally && y + word.length() > crosswordTO.getHeight())
+			return false;
+
+		// počáteční souřadnice musí být úplně prázdné, jinak tam nepůjde dát hint
 		CrosswordCell cell = crosswordTO.getCell(x, y);
 		if (cell != null)
 			return false;
 
-		for (int i = start; i < limit && charCounter < word.length() + 1; i++) {
-			int checkX = horizontally ? i : x;
-			int checkY = horizontally ? y : i;
+		// prochází postupně buňky umístění slova a kontroluje, zda v nich (nebo v okolí) nedojde ke konfliktu
+		for (int i = 0; i < word.length() + 1; i++) {
+			int checkX = horizontally ? x + HINT_CELL_OFFSET + i : x;
+			int checkY = horizontally ? y : y + HINT_CELL_OFFSET + i;
 			cell = crosswordTO.getCell(checkX, checkY);
 
-			// vlevo nebo nad musí být volno, abych se nepřilepil k existujícímu
-			// obsahum, výjimkou je, pokud je tam hint nebo jsem na průsečíku
-			CrosswordCell nearCell = horizontally ? crosswordTO.getCell(checkX, checkY - 1)
-					: crosswordTO.getCell(checkX - 1, checkY);
-			if (cell == null && nearCell != null && nearCell.isWriteAllowed())
-				return false;
+			if (cell == null) {
+				if (horizontally) {
+					// Pokud slovo pokládám horizontálně, pak buď:
+					// 1.) jsem na průsečíku slov a pak se musí zkontrolovat jestli jsme na stejném písmenu -> 1.a/2.a
+					// 2.) jsem na prázdné buňce a nad/pod touto buňkou musí být také prázdná (jinak jsem přidal písmeno
+					// k
+					// existujícímu slovu, které končí/prochází na touto buňkou)
+					CrosswordCell aboveCell = crosswordTO.getCell(checkX, checkY - 1);
+					CrosswordCell belowCell = crosswordTO.getCell(checkX, checkY + 1);
+					if (aboveCell != null && aboveCell.isWriteAllowed()
+							|| belowCell != null && belowCell.isWriteAllowed())
+						return false;
+				} else {
+					// Pokud slovo pokládám vertikálně, pak buď:
+					// 1.) jsem na průsečíku slov a pak se musí zkontrolovat jestli jsme na stejném písmenu -> 1.a/2.a
+					// 2.) jsem na prázdné buňce a před/za touto buňkou musí být také prázdná (jinak jsem přidal písmeno
+					// k
+					// existujícímu slovu, které končí/prochází na touto buňkou)
+					CrosswordCell prevCell = crosswordTO.getCell(checkX - 1, checkY);
+					CrosswordCell nextCell = crosswordTO.getCell(checkX + 1, checkY);
+					if (prevCell != null && prevCell.isWriteAllowed() || nextCell != null && nextCell.isWriteAllowed())
+						return false;
+				}
+			}
 
-			if (charCounter < word.length()) {
+			if (i < word.length()) {
+				// 1.a/2.a jsem na průsečíku slov a pak se musí zkontrolovat jestli jsme na stejném písmenu
 				if (cell != null)
 					emptyCrossSection = false;
-				if (cell != null && !String.valueOf(word.charAt(charCounter)).equals(cell.getValue()))
+				if (cell != null && !String.valueOf(word.charAt(i)).equals(cell.getValue()))
 					return false;
 			} else {
-				// aby se nepropojil konec s vedlejším obsahem, musí být za
-				// slovem mezera nebo nevyplněná buňka
+				// souřadnice za koncem musí být prázdné nebo tam být mezera, aby se konec slova nepropojil s vedlejším
+				// obsahem, se kterým sousedí
 				if (cell != null && !cell.getValue().equals(" "))
 					return false;
 			}
-			charCounter++;
 		}
 
 		return !emptyCrossSection;

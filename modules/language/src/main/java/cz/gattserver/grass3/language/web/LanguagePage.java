@@ -153,8 +153,9 @@ public class LanguagePage extends OneColumnPage {
 		VerticalLayout sheet = new VerticalLayout();
 		sheet.setMargin(new MarginInfo(true, false, false, false));
 
-		HorizontalLayout mainLayout = new HorizontalLayout();
+		VerticalLayout mainLayout = new VerticalLayout();
 		mainLayout.setMargin(new MarginInfo(true, false, false, false));
+		mainLayout.setSpacing(true);
 		sheet.addComponent(mainLayout);
 
 		LanguageItemTO filterTO = new LanguageItemTO();
@@ -165,10 +166,9 @@ public class LanguagePage extends OneColumnPage {
 
 		List<CrosswordField> writeFields = new ArrayList<>();
 
-		GridLayout hintsLayout = new GridLayout(3, crosswordTO.getHints().size());
+		GridLayout hintsLayout = new GridLayout(6, crosswordTO.getHints().size() / 2);
 		hintsLayout.setSpacing(true);
 		hintsLayout.setDefaultComponentAlignment(Alignment.MIDDLE_RIGHT);
-		mainLayout.addComponent(hintsLayout);
 		for (CrosswordHintTO to : crosswordTO.getHints()) {
 			hintsLayout.addComponent(new Label(to.getId() + "."));
 			CrosswordField tf = new CrosswordField(to);
@@ -182,7 +182,10 @@ public class LanguagePage extends OneColumnPage {
 
 		GridLayout layout = new GridLayout(crosswordTO.getWidth(), crosswordTO.getHeight());
 		layout.setSpacing(false);
+
 		mainLayout.addComponent(layout);
+		mainLayout.setComponentAlignment(layout, Alignment.MIDDLE_CENTER);
+		mainLayout.addComponent(hintsLayout);
 
 		Map<TextField, String> fieldMap = new HashMap<>();
 

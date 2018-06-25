@@ -35,16 +35,21 @@ public class CrosswordBuilder {
 		crosswordTO.insertWord(0, HINT_CELL_OFFSET, item.getContent(), item.getTranslation(), true);
 		usedWords.add(item.getContent());
 
-		// opakovaně v podčtvercích
-		for (int offset = 0; offset < sideSize; offset += 2) {
+		// opakuj několikrát aby se postupně náhodně provázaly vertikální a
+		// horizontální slova, vytvořená v jednotlivých dávkách
+		for (int i = 0; i < 4; i++) {
 
-			// 2. vertikální slova na první slovo
-			for (int x = HINT_CELL_OFFSET; x < sideSize; x += 2)
-				fillCrosswordItem(x + offset, 0 + offset, false);
+			// prováděj postupně posuvy od počátku
+			for (int offset = 0; offset < sideSize; offset += 2) {
 
-			// 3. horizontální slova na existující slova
-			for (int y = HINT_CELL_OFFSET; y < sideSize; y += 2)
-				fillCrosswordItem(0 + offset, y + offset, true);
+				// vertikální slova
+				for (int x = HINT_CELL_OFFSET; x < sideSize; x += 2)
+					fillCrosswordItem(x, offset, false);
+
+				// horizontální slova
+				for (int y = HINT_CELL_OFFSET; y < sideSize; y += 2)
+					fillCrosswordItem(offset, y, true);
+			}
 		}
 
 		return crosswordTO;
@@ -66,16 +71,20 @@ public class CrosswordBuilder {
 	}
 
 	/**
-	 * Kontroluje, zda je možné na dané souřadnice daným směrem zapsat dané slovo
+	 * Kontroluje, zda je možné na dané souřadnice daným směrem zapsat dané
+	 * slovo
 	 * 
 	 * @param word
 	 *            zapisované slovo
 	 * @param x
-	 *            počáteční souřadnice x, od které se bude zapisovat (včetně hint buňky)
+	 *            počáteční souřadnice x, od které se bude zapisovat (včetně
+	 *            hint buňky)
 	 * @param y
-	 *            počáteční souřadnice y, od které se bude zapisovat (včetně hint buňky)
+	 *            počáteční souřadnice y, od které se bude zapisovat (včetně
+	 *            hint buňky)
 	 * @param horizontally
-	 *            přepínač, zda se bude zapisovat vodorovně (<code>true</code>) nebo svisle
+	 *            přepínač, zda se bude zapisovat vodorovně (<code>true</code>)
+	 *            nebo svisle
 	 * @return <code>true</code>, pokud je zápis slova možný
 	 */
 	private boolean fits(String word, int x, int y, boolean horizontally) {
@@ -88,12 +97,14 @@ public class CrosswordBuilder {
 				|| !horizontally && y + word.length() > crosswordTO.getHeight())
 			return false;
 
-		// počáteční souřadnice musí být úplně prázdné, jinak tam nepůjde dát hint
+		// počáteční souřadnice musí být úplně prázdné, jinak tam nepůjde dát
+		// hint
 		CrosswordCell cell = crosswordTO.getCell(x, y);
 		if (cell != null)
 			return false;
 
-		// prochází postupně buňky umístění slova a kontroluje, zda v nich (nebo v okolí) nedojde ke konfliktu
+		// prochází postupně buňky umístění slova a kontroluje, zda v nich (nebo
+		// v okolí) nedojde ke konfliktu
 		for (int i = 0; i < word.length() + 1; i++) {
 			int checkX = horizontally ? x + HINT_CELL_OFFSET + i : x;
 			int checkY = horizontally ? y : y + HINT_CELL_OFFSET + i;
@@ -102,8 +113,10 @@ public class CrosswordBuilder {
 			if (cell == null) {
 				if (horizontally) {
 					// Pokud slovo pokládám horizontálně, pak buď:
-					// 1.) jsem na průsečíku slov a pak se musí zkontrolovat jestli jsme na stejném písmenu -> 1.a/2.a
-					// 2.) jsem na prázdné buňce a nad/pod touto buňkou musí být také prázdná (jinak jsem přidal písmeno
+					// 1.) jsem na průsečíku slov a pak se musí zkontrolovat
+					// jestli jsme na stejném písmenu -> 1.a/2.a
+					// 2.) jsem na prázdné buňce a nad/pod touto buňkou musí být
+					// také prázdná (jinak jsem přidal písmeno
 					// k
 					// existujícímu slovu, které končí/prochází na touto buňkou)
 					CrosswordCell aboveCell = crosswordTO.getCell(checkX, checkY - 1);
@@ -113,8 +126,10 @@ public class CrosswordBuilder {
 						return false;
 				} else {
 					// Pokud slovo pokládám vertikálně, pak buď:
-					// 1.) jsem na průsečíku slov a pak se musí zkontrolovat jestli jsme na stejném písmenu -> 1.a/2.a
-					// 2.) jsem na prázdné buňce a před/za touto buňkou musí být také prázdná (jinak jsem přidal písmeno
+					// 1.) jsem na průsečíku slov a pak se musí zkontrolovat
+					// jestli jsme na stejném písmenu -> 1.a/2.a
+					// 2.) jsem na prázdné buňce a před/za touto buňkou musí být
+					// také prázdná (jinak jsem přidal písmeno
 					// k
 					// existujícímu slovu, které končí/prochází na touto buňkou)
 					CrosswordCell prevCell = crosswordTO.getCell(checkX - 1, checkY);
@@ -125,13 +140,15 @@ public class CrosswordBuilder {
 			}
 
 			if (i < word.length()) {
-				// 1.a/2.a jsem na průsečíku slov a pak se musí zkontrolovat jestli jsme na stejném písmenu
+				// 1.a/2.a jsem na průsečíku slov a pak se musí zkontrolovat
+				// jestli jsme na stejném písmenu
 				if (cell != null)
 					emptyCrossSection = false;
 				if (cell != null && !String.valueOf(word.charAt(i)).equals(cell.getValue()))
 					return false;
 			} else {
-				// souřadnice za koncem musí být prázdné nebo tam být mezera, aby se konec slova nepropojil s vedlejším
+				// souřadnice za koncem musí být prázdné nebo tam být mezera,
+				// aby se konec slova nepropojil s vedlejším
 				// obsahem, se kterým sousedí
 				if (cell != null && !cell.getValue().equals(" "))
 					return false;

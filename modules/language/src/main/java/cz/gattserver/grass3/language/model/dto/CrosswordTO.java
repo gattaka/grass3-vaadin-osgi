@@ -29,7 +29,7 @@ public class CrosswordTO {
 	}
 
 	public void insertWord(int x, int y, String word, String hint, boolean horizontally) {
-		CrosswordHintTO hintTO = new CrosswordHintTO(hints.size() + 1, x, y, horizontally, hint);
+		CrosswordHintTO hintTO = new CrosswordHintTO(hints.size() + 1, x, y, word.length(), horizontally, hint);
 		hints.add(hintTO);
 		contentData[x][y] = hintTO;
 		for (int i = 0; i < word.length(); i++) {

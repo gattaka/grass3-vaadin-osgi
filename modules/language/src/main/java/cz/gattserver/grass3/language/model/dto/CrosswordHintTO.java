@@ -3,25 +3,43 @@ package cz.gattserver.grass3.language.model.dto;
 public class CrosswordHintTO implements CrosswordCell {
 
 	private int id;
-	private int x;
-	private int y;
+	private int fromX;
+	private int fromY;
+	private int toX;
+	private int toY;
+	private int wordLength;
 	private boolean horizontally;
 	private String hint;
 
-	public CrosswordHintTO(int id, int x, int y, boolean horizontally, String hint) {
+	public CrosswordHintTO(int id, int fromX, int fromY, int wordLength, boolean horizontally, String hint) {
 		this.id = id;
-		this.x = x;
-		this.y = y;
+		this.wordLength = wordLength;
+		this.fromX = horizontally ? fromX + 1 : fromX;
+		this.fromY = horizontally ? fromY : fromY + 1;
+		this.toX = horizontally ? fromX + wordLength : fromX;
+		this.toY = horizontally ? fromY : fromY + wordLength;
 		this.horizontally = horizontally;
 		this.hint = hint;
 	}
 
-	public int getX() {
-		return x;
+	public int getWordLength() {
+		return wordLength;
 	}
 
-	public int getY() {
-		return y;
+	public int getFromX() {
+		return fromX;
+	}
+
+	public int getFromY() {
+		return fromY;
+	}
+
+	public int getToX() {
+		return toX;
+	}
+
+	public int getToY() {
+		return toY;
 	}
 
 	public boolean isHorizontally() {
@@ -35,7 +53,7 @@ public class CrosswordHintTO implements CrosswordCell {
 	public int getId() {
 		return id;
 	}
-	
+
 	@Override
 	public String getValue() {
 		return String.valueOf(id);

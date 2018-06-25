@@ -163,7 +163,7 @@ public class LanguagePage extends OneColumnPage {
 
 		CrosswordTO crosswordTO = languageFacade.prepareCrossword(filterTO);
 
-		List<TextField> writeFields = new ArrayList<>();
+		List<CrosswordField> writeFields = new ArrayList<>();
 
 		GridLayout hintsLayout = new GridLayout(3, crosswordTO.getHints().size());
 		hintsLayout.setSpacing(true);
@@ -171,8 +171,9 @@ public class LanguagePage extends OneColumnPage {
 		mainLayout.addComponent(hintsLayout);
 		for (CrosswordHintTO to : crosswordTO.getHints()) {
 			hintsLayout.addComponent(new Label(to.getId() + "."));
-			TextField tf = new TextField();
+			CrosswordField tf = new CrosswordField(to);
 			writeFields.add(tf);
+			tf.setMaxLength(to.getWordLength());
 			hintsLayout.addComponent(tf);
 			Label hintLabel = new Label(to.getHint());
 			hintsLayout.addComponent(hintLabel);
@@ -198,6 +199,12 @@ public class LanguagePage extends OneColumnPage {
 						t.setValue(cell.getValue());
 					} else {
 						t.setMaxLength(1);
+
+						// logika pro zapipsování skrz postranní pole
+						for (CrosswordField cf : writeFields)
+							cf.tryRegisterCellField(t, x, y);
+
+						// logika pro kontrolu správného výsledku
 						fieldMap.put(t, cell.getValue());
 						t.addValueChangeListener(e -> {
 							for (TextField tf : fieldMap.keySet()) {

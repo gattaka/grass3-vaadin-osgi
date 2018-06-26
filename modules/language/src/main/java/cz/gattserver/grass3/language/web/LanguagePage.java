@@ -38,7 +38,9 @@ import cz.gattserver.grass3.language.model.dto.CrosswordHintTO;
 import cz.gattserver.grass3.language.model.dto.CrosswordTO;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.language.model.dto.LanguageTO;
+import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
@@ -52,6 +54,9 @@ public class LanguagePage extends OneColumnPage {
 
 	@Autowired
 	private LanguageFacade languageFacade;
+
+	@Autowired
+	private SecurityService securityService;
 
 	private TabSheet tabSheet;
 
@@ -87,7 +92,8 @@ public class LanguagePage extends OneColumnPage {
 		langLayout.addComponent(grid);
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
-		langLayout.addComponent(btnLayout);
+		if (securityService.getCurrentUser().getRoles().contains(Role.ADMIN))
+			langLayout.addComponent(btnLayout);
 
 		grid.addSelectionListener(se -> se.getFirstSelectedItem().ifPresent(item -> {
 			if (tabSheet != null)
@@ -101,20 +107,17 @@ public class LanguagePage extends OneColumnPage {
 				Component selectedTab = tabSheet.getSelectedTab();
 				Tab tab = tabSheet.getTab(selectedTab);
 				int pos = tabSheet.getTabPosition(tab);
-				if (pos > 0) {
+				if (pos < 3) {
 					Component newTab = null;
 					switch (pos) {
-					case 1:
+					case 0:
 						newTab = createItemsTab(langId, ItemType.WORD);
 						break;
-					case 2:
+					case 1:
 						newTab = createItemsTab(langId, ItemType.PHRASE);
 						break;
-					case 3:
+					case 2:
 						newTab = createItemsTab(langId, null);
-						break;
-					case 4:
-						newTab = createCrosswordTab(langId);
 						break;
 					default:
 						break;
@@ -123,11 +126,12 @@ public class LanguagePage extends OneColumnPage {
 				}
 			});
 
-			tabSheet.addTab(createTestTab(langId), "Zkoušení");
-			tabSheet.addTab(new VerticalLayout(), "Slovíčka");
+			tabSheet.addTab(createItemsTab(langId, ItemType.WORD), "Slovíčka");
 			tabSheet.addTab(new VerticalLayout(), "Fráze");
 			tabSheet.addTab(new VerticalLayout(), "Vše");
-			tabSheet.addTab(new VerticalLayout(), "Křížovka");
+			if (securityService.getCurrentUser().getRoles().contains(Role.ADMIN))
+				tabSheet.addTab(createTestTab(langId), "Zkoušení");
+			tabSheet.addTab(createCrosswordTab(langId), "Křížovka");
 
 			langLayout.addComponent(tabSheet);
 		}));
@@ -268,7 +272,8 @@ public class LanguagePage extends OneColumnPage {
 							for (TextField tf : fieldMap.keySet()) {
 								String is = tf.getValue();
 								String shouldBe = fieldMap.get(tf);
-								if (!shouldBe.equals(is) || StringUtils.isBlank(shouldBe) && StringUtils.isBlank(is))
+								if (StringUtils.isNotBlank(shouldBe) && !shouldBe.toLowerCase().equals(is.toLowerCase())
+										|| StringUtils.isBlank(shouldBe) && StringUtils.isNotBlank(is))
 									return;
 							}
 							for (TextField tf : fieldMap.keySet()) {
@@ -422,12 +427,15 @@ public class LanguagePage extends OneColumnPage {
 				.setSortProperty("content");
 		Column<LanguageItemTO, String> translationColumn = grid.addColumn(LanguageItemTO::getTranslation)
 				.setCaption(PREKLAD_LABEL).setSortProperty("translation");
-		grid.addColumn(item -> (Math.floor(item.getSuccessRate() * 1000) / 10) + "%").setCaption("Úspěšnost")
-				.setStyleGenerator(item -> "v-align-right").setSortProperty("successRate");
-		grid.addColumn(LanguageItemTO::getLastTested, new LocalDateTimeRenderer("dd.MM.yyyy HH:mm"))
-				.setCaption("Naposledy zkoušeno").setStyleGenerator(item -> "v-align-right")
-				.setSortProperty("lastTested");
-		grid.addColumn(LanguageItemTO::getTested).setCaption("Zkoušeno").setSortProperty("tested");
+
+		if (securityService.getCurrentUser().getRoles().contains(Role.ADMIN)) {
+			grid.addColumn(item -> (Math.floor(item.getSuccessRate() * 1000) / 10) + "%").setCaption("Úspěšnost")
+					.setStyleGenerator(item -> "v-align-right").setSortProperty("successRate");
+			grid.addColumn(LanguageItemTO::getLastTested, new LocalDateTimeRenderer("dd.MM.yyyy HH:mm"))
+					.setCaption("Naposledy zkoušeno").setStyleGenerator(item -> "v-align-right")
+					.setSortProperty("lastTested");
+			grid.addColumn(LanguageItemTO::getTested).setCaption("Zkoušeno").setSortProperty("tested");
+		}
 
 		grid.sort(contentColumn);
 
@@ -456,7 +464,9 @@ public class LanguagePage extends OneColumnPage {
 		populate(grid, filterTO);
 
 		sheet.addComponent(grid);
-		sheet.addComponent(createButtonLayout(grid, langId, type));
+
+		if (securityService.getCurrentUser().getRoles().contains(Role.ADMIN))
+			sheet.addComponent(createButtonLayout(grid, langId, type));
 
 		return sheet;
 	}

@@ -17,9 +17,7 @@ public class LanguageSection implements SectionService {
 	private PageFactory languagePageFactory;
 
 	public boolean isVisibleForRoles(Set<Role> roles) {
-		if (roles == null)
-			return false;
-		return roles.contains(Role.ADMIN);
+		return true;
 	}
 
 	public PageFactory getSectionPageFactory() {

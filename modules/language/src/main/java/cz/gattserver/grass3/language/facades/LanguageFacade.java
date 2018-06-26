@@ -57,8 +57,7 @@ public interface LanguageFacade {
 	 * @param languageId
 	 *            jazyk v rámci kterého se bude zkoušet
 	 * @param type
-	 *            typ záznamů, které se budou zkoušet, může být
-	 *            <code>null</code>
+	 *            typ záznamů, které se budou zkoušet, může být <code>null</code>
 	 * @return list záznamů k přezkoušení
 	 */
 	List<LanguageItemTO> getLanguageItemsForTest(long languageId, ItemType type);
@@ -99,8 +98,9 @@ public interface LanguageFacade {
 	 * Připraví křížovku
 	 * 
 	 * @param filterTO
+	 * @param size
 	 * @return křížovka
 	 */
-	CrosswordTO prepareCrossword(LanguageItemTO filterTO);
+	CrosswordTO prepareCrossword(LanguageItemTO filterTO, int size);
 
 }

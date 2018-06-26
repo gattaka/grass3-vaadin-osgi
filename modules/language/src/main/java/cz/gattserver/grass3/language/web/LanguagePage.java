@@ -21,6 +21,7 @@ import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Slider;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.components.grid.HeaderRow;
@@ -40,7 +41,6 @@ import cz.gattserver.grass3.language.model.dto.LanguageTO;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
-import cz.gattserver.grass3.ui.components.ModifyButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.ui.BoldLabel;
@@ -68,7 +68,9 @@ public class LanguagePage extends OneColumnPage {
 						+ "input.v-textfield.v-widget.crossword-cell.v-textfield-crossword-cell.v-has-width { "
 						+ "text-align: center; " + "font-variant: small-caps;" + "padding: 0;" + "}");
 
-		// background-color: #cef29c;
+		Page.getCurrent().getStyles()
+				.add("input.v-textfield.v-widget.v-has-width.v-has-height.v-disabled.crossword-cell.v-textfield-crossword-cell.crossword-done.v-textfield-crossword-done { "
+						+ "background-color: #cef29c; " + "}");
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);
@@ -153,21 +155,75 @@ public class LanguagePage extends OneColumnPage {
 		VerticalLayout sheet = new VerticalLayout();
 		sheet.setMargin(new MarginInfo(true, false, false, false));
 
+		HorizontalLayout btnLayout = new HorizontalLayout();
+		sheet.addComponent(btnLayout);
+
+		Map<TextField, String> fieldMap = new HashMap<>();
+
+		Button giveUpTestBtn = new Button("Vzdát to", event -> {
+			for (TextField tf : fieldMap.keySet())
+				tf.setValue(fieldMap.get(tf));
+		});
+		giveUpTestBtn.setIcon(ImageIcon.FLAG_16_ICON.createResource());
+		btnLayout.addComponent(giveUpTestBtn);
+
+		Slider slider = new Slider(5, 30);
+
 		VerticalLayout mainLayout = new VerticalLayout();
 		mainLayout.setMargin(new MarginInfo(true, false, false, false));
 		mainLayout.setSpacing(true);
+
+		Button newCrosswordBtn = new Button("",
+				event -> generateNewCrossword(slider.getValue().intValue(), langId, fieldMap, mainLayout));
+		newCrosswordBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
+		btnLayout.addComponent(newCrosswordBtn);
+
+		slider.addValueChangeListener(e -> newCrosswordBtn
+				.setCaption("Nová křížovka " + e.getValue().intValue() + "x" + e.getValue().intValue()));
+
+		slider.setValue(15.0);
+
+		Button easierCrosswordBtn = new Button("",
+				event -> slider.setValue(Math.max(slider.getMin(), slider.getValue() - 1)));
+		easierCrosswordBtn.setIcon(ImageIcon.DOWN_16_ICON.createResource());
+		btnLayout.addComponent(easierCrosswordBtn);
+
+		btnLayout.addComponent(slider);
+
+		Button harderCrosswordBtn = new Button("",
+				event -> slider.setValue(Math.min(slider.getMax(), slider.getValue() + 1)));
+		harderCrosswordBtn.setIcon(ImageIcon.UP_16_ICON.createResource());
+		btnLayout.addComponent(harderCrosswordBtn);
+
 		sheet.addComponent(mainLayout);
+
+		return sheet;
+	}
+
+	private void generateNewCrossword(int size, long langId, Map<TextField, String> fieldMap,
+			VerticalLayout mainLayout) {
+
+		// clear
+		fieldMap.clear();
+		mainLayout.removeAllComponents();
 
 		LanguageItemTO filterTO = new LanguageItemTO();
 		filterTO.setLanguage(langId);
 		filterTO.setType(ItemType.WORD);
 
-		CrosswordTO crosswordTO = languageFacade.prepareCrossword(filterTO);
+		CrosswordTO crosswordTO = languageFacade.prepareCrossword(filterTO, size);
+
+		if (crosswordTO.getHints().isEmpty()) {
+			mainLayout.addComponent(new Label("Nezdařilo se sestavit křížovku"));
+			return;
+		}
 
 		List<CrosswordField> writeFields = new ArrayList<>();
 
-		GridLayout hintsLayout = new GridLayout(6, crosswordTO.getHints().size() / 2);
+		GridLayout hintsLayout = new GridLayout(6, Math.max(1, crosswordTO.getHints().size() / 2));
 		hintsLayout.setSpacing(true);
+		hintsLayout.setWidth("100%");
+		// hintsLayout.setColumnExpandRatio(columnIndex, ratio);
 		hintsLayout.setDefaultComponentAlignment(Alignment.MIDDLE_RIGHT);
 		for (CrosswordHintTO to : crosswordTO.getHints()) {
 			hintsLayout.addComponent(new Label(to.getId() + "."));
@@ -180,14 +236,13 @@ public class LanguagePage extends OneColumnPage {
 			hintsLayout.setComponentAlignment(hintLabel, Alignment.MIDDLE_LEFT);
 		}
 
-		GridLayout layout = new GridLayout(crosswordTO.getWidth(), crosswordTO.getHeight());
-		layout.setSpacing(false);
+		GridLayout crosswordLayout = new GridLayout(crosswordTO.getWidth(), crosswordTO.getHeight());
+		crosswordLayout.setMargin(new MarginInfo(false, false, true, false));
+		crosswordLayout.setSpacing(false);
 
-		mainLayout.addComponent(layout);
-		mainLayout.setComponentAlignment(layout, Alignment.MIDDLE_CENTER);
+		mainLayout.addComponent(crosswordLayout);
+		mainLayout.setComponentAlignment(crosswordLayout, Alignment.MIDDLE_CENTER);
 		mainLayout.addComponent(hintsLayout);
-
-		Map<TextField, String> fieldMap = new HashMap<>();
 
 		for (int y = 0; y < crosswordTO.getHeight(); y++) {
 			for (int x = 0; x < crosswordTO.getWidth(); x++) {
@@ -223,19 +278,10 @@ public class LanguagePage extends OneColumnPage {
 
 						});
 					}
-					layout.addComponent(t, x, y);
+					crosswordLayout.addComponent(t, x, y);
 				}
 			}
 		}
-
-		ModifyButton modifyButton = new ModifyButton(e -> {
-			for (TextField tf : fieldMap.keySet())
-				tf.setValue(fieldMap.get(tf));
-		});
-		modifyButton.setCaption("Vyřešit");
-		sheet.addComponent(modifyButton);
-
-		return sheet;
 	}
 
 	private VerticalLayout createTestTab(Long langId) {

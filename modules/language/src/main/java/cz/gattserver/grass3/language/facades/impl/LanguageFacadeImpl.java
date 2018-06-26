@@ -170,10 +170,9 @@ public class LanguageFacadeImpl implements LanguageFacade {
 	}
 
 	@Override
-	public CrosswordTO prepareCrossword(LanguageItemTO filterTO) {
-		int sideSize = 20;
-		CrosswordBuilder crosswordBuilder = new CrosswordBuilder(sideSize,
-				itemRepository.findItemOfMaxLength(filterTO.getLanguage(), ItemType.WORD, sideSize));
+	public CrosswordTO prepareCrossword(LanguageItemTO filterTO, int size) {
+		CrosswordBuilder crosswordBuilder = new CrosswordBuilder(size,
+				itemRepository.findItemOfMaxLength(filterTO.getLanguage(), ItemType.WORD, size));
 		return crosswordBuilder.build();
 	}
 

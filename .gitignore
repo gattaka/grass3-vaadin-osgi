@@ -10,3 +10,5 @@
 /grass3H2DB.lock.db
 /grass3H2DB.h2.db
 ServerMailCredentials
+*release.properties
+*pom.xml.releaseBackup

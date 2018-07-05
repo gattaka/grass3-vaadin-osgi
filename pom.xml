@@ -17,12 +17,14 @@
 	<scm>
 		<developerConnection>${scm.base.url}/grass3-vaadin-osgi</developerConnection>
 		<tag>HEAD</tag>
-	</scm> 
-	
+	</scm>
+
 	<properties>
 		<org.mapstruct.version>1.2.0.Final</org.mapstruct.version>
 		<querydsl.version>4.1.4</querydsl.version>
 		<querydsl-apt.version>1.1.3</querydsl-apt.version>
+		<!-- dokud nebude vše ok -->
+		<maven.javadoc.skip>true</maven.javadoc.skip>
 	</properties>
 
 	<modules>

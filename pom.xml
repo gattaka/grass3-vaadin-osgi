@@ -17,7 +17,7 @@
 	<scm>
 		<developerConnection>${scm.base.url}/grass3-vaadin-osgi</developerConnection>
 		<tag>HEAD</tag>
-	</scm>
+	</scm> 
 
 	<properties>
 		<org.mapstruct.version>1.2.0.Final</org.mapstruct.version>

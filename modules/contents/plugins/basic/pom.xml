@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>cz.gattserver.grass3</groupId>
 		<artifactId>plugins</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>

@@ -36,7 +36,7 @@ public abstract class GrassPage {
 
 	/**
 	 * Konstruktor stránky. Slouží pro přípravu dat pro její sestavení, ale sám
-	 * ještě nesestavuje. Na sestavení je potřeba ručně zavolat {@link #init()}.
+	 * ještě nesestavuje.
 	 * 
 	 * @param request
 	 *            {@link GrassRequest}, v rámci kterého je stránka vystavována
@@ -87,7 +87,8 @@ public abstract class GrassPage {
 	 * sebe odkazovat a bude zaručeno, že 1. skript bude celý nahrán před 2.
 	 * skriptem, který využívá jeho funkcí)
 	 * 
-	 * @param links
+	 * @param scripts
+	 *            skripty, které budou nahrány
 	 */
 	public void loadJS(JScriptItem... scripts) {
 		jQueryRequired = true;

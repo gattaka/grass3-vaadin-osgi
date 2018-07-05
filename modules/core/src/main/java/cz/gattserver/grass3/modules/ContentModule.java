@@ -7,13 +7,17 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 public interface ContentModule {
 
 	/**
-	 * Vrátí instanci stránky, která slouží jako editor pro vytváření nebo
+	 * Vrátí factory stránky, která slouží jako editor pro vytváření nebo
 	 * modifikaci daného obsahu
+	 * 
+	 * @return factory
 	 */
 	PageFactory getContentEditorPageFactory();
 
 	/**
-	 * Vrátí instanci stránky, která slouží jako prohlížeč obsahu
+	 * Vrátí factory stránky, která slouží jako prohlížeč obsahu
+	 * 
+	 * @return factory
 	 */
 	PageFactory getContentViewerPageFactory();
 

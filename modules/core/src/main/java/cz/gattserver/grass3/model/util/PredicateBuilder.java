@@ -42,30 +42,76 @@ public class PredicateBuilder {
 		return this;
 	}
 
+	/**
+	 * Přidání porovnání je rovno.
+	 * 
+	 * @param path
+	 *            cesta k atributu entity
+	 * @param value
+	 *            hodnota pro porovnání
+	 * @return this pro řetězení
+	 */
 	public PredicateBuilder eq(BooleanPath path, boolean value) {
 		booleanBuilder.and(path.eq(value));
 		return this;
 	}
 
+	/**
+	 * Přidání porovnání je rovno.
+	 * 
+	 * @param <T>
+	 *            {@link Enum} typ
+	 * @param path
+	 *            cesta k atributu entity
+	 * @param value
+	 *            hodnota pro porovnání
+	 * @return this pro řetězení
+	 */
 	public <T extends Enum<T>> PredicateBuilder eq(EnumPath<T> path, T value) {
 		if (value != null)
 			booleanBuilder.and(path.eq(value));
 		return this;
 	}
 
-	public PredicateBuilder eqSpace(StringPath path) {
+	/**
+	 * Přidání porovnání je null, empty nebo mezera.
+	 * 
+	 * @param path
+	 *            cesta k atributu entity
+	 * @return this pro řetězení
+	 */
+	public PredicateBuilder isBlank(StringPath path) {
 		booleanBuilder.and(path.isNull().or(path.isEmpty()).or(path.eq(" ")));
 		return this;
 	}
 
-	public PredicateBuilder eqZero(NumberExpression<Long> path) {
+	/**
+	 * Přidání porovnání je null nebo 0
+	 * 
+	 * @param path
+	 *            cesta k atributu entity
+	 * @return this pro řetězení
+	 */
+	public PredicateBuilder eqNullOrZero(NumberExpression<Long> path) {
 		booleanBuilder.and(path.isNull().or(path.eq(0L)));
 		return this;
 	}
 
 	/**
-	 * Přidání porvnání je rovno.
+	 * Přidání porovnání je rovno.
 	 * 
+	 * @param path
+	 *            cesta k atributu entity
+	 * @param value
+	 *            hodnota pro porovnání
+	 * @return this pro řetězení
+	 */
+
+	/**
+	 * Přidání porovnání je rovno.
+	 * 
+	 * @param <T>
+	 *            {@link Number} a {@link Comparable} typ
 	 * @param path
 	 *            cesta k atributu entity
 	 * @param value
@@ -80,8 +126,10 @@ public class PredicateBuilder {
 	}
 
 	/**
-	 * Přidání porvnání je není rovno rovno.
+	 * Přidání porovnání je není rovno.
 	 * 
+	 * @param <T>
+	 *            {@link Number} a {@link Comparable} typ
 	 * @param path
 	 *            cesta k atributu entity
 	 * @param value
@@ -96,7 +144,7 @@ public class PredicateBuilder {
 	}
 
 	/**
-	 * Přidání porvnání není rovno.
+	 * Přidání porovnání není rovno.
 	 * 
 	 * @param path
 	 *            cesta k atributu entity
@@ -111,6 +159,15 @@ public class PredicateBuilder {
 		return this;
 	}
 
+	/**
+	 * Přidání porovnání není rovno.
+	 * 
+	 * @param expression
+	 *            výraz pro porovnání
+	 * @param value
+	 *            hodnota pro porovnání
+	 * @return this pro řetězení
+	 */
 	public PredicateBuilder ne(StringExpression expression, String value) {
 		if (value != null) {
 			booleanBuilder.and(ExpressionUtils.or(expression.isNull(), expression.ne(value)));
@@ -118,48 +175,109 @@ public class PredicateBuilder {
 		return this;
 	}
 
+	/**
+	 * Přidání porovnání není null, není empty a není mezera.
+	 * 
+	 * @param path
+	 *            cesta k atributu entity
+	 * @return this pro řetězení
+	 */
 	public PredicateBuilder neEmpty(StringPath path) {
 		booleanBuilder.and(path.isNotNull());
 		booleanBuilder.and(path.isNotEmpty());
 		booleanBuilder.and(path.ne(" "));
-		booleanBuilder.and(path.ne("0"));
 		return this;
 	}
 
-	public <T extends Number & Comparable<?>> PredicateBuilder gtOrValueNull(NumberExpression<T> path,
-			NumberExpression<T> value) {
-		if (value != null) {
+	/**
+	 * Přidání porovnání je větší než.
+	 * 
+	 * @param <T>
+	 *            {@link Number} a {@link Comparable} typ
+	 * @param expression1
+	 *            výraz 1 k porovnání
+	 * @param expression2
+	 *            výraz 2 k porovnání
+	 * @return this pro řetězení
+	 */
+	public <T extends Number & Comparable<?>> PredicateBuilder gtOrValueNull(NumberExpression<T> expression1,
+			NumberExpression<T> expression2) {
+		if (expression2 != null) {
 			// je potřeba pro případy porovnání x > null, pak je výsledek totiž
 			// false, s porovnáním na "nebo null" pak takové případy vychází
-			booleanBuilder.and(ExpressionUtils.or(path.gt(value), value.isNull()));
+			booleanBuilder.and(ExpressionUtils.or(expression1.gt(expression2), expression2.isNull()));
 		}
 		return this;
 	}
 
-	public <T extends Number & Comparable<?>> PredicateBuilder gt(NumberExpression<T> path, T value) {
+	/**
+	 * Přidání porovnání je větší než.
+	 * 
+	 * @param <T>
+	 *            {@link Number} a {@link Comparable} typ
+	 * @param expression
+	 *            výraz k porovnání
+	 * @param value
+	 *            hodnota pro porovnání
+	 * @return this pro řetězení
+	 */
+	public <T extends Number & Comparable<?>> PredicateBuilder gt(NumberExpression<T> expression, T value) {
 		if (value != null) {
-			booleanBuilder.and(path.gt(value));
+			booleanBuilder.and(expression.gt(value));
 		}
 		return this;
 	}
 
-	public <T extends Number & Comparable<?>> PredicateBuilder ge(NumberExpression<T> path, T value) {
+	/**
+	 * Přidání porovnání je větší než nebo rovno.
+	 * 
+	 * @param <T>
+	 *            {@link Number} a {@link Comparable} typ
+	 * @param expression
+	 *            výraz k porovnání
+	 * @param value
+	 *            hodnota pro porovnání
+	 * @return this pro řetězení
+	 */
+	public <T extends Number & Comparable<?>> PredicateBuilder ge(NumberExpression<T> expression, T value) {
 		if (value != null) {
-			booleanBuilder.and(path.goe(value));
+			booleanBuilder.and(expression.goe(value));
 		}
 		return this;
 	}
 
-	public <T extends Number & Comparable<?>> PredicateBuilder lt(NumberExpression<T> path, T value) {
+	/**
+	 * Přidání porovnání je menší než.
+	 * 
+	 * @param <T>
+	 *            {@link Number} a {@link Comparable} typ
+	 * @param expression
+	 *            výraz k porovnání
+	 * @param value
+	 *            hodnota pro porovnání
+	 * @return this pro řetězení
+	 */
+	public <T extends Number & Comparable<?>> PredicateBuilder lt(NumberExpression<T> expression, T value) {
 		if (value != null) {
-			booleanBuilder.and(path.lt(value));
+			booleanBuilder.and(expression.lt(value));
 		}
 		return this;
 	}
 
-	public <T extends Number & Comparable<?>> PredicateBuilder le(NumberExpression<T> path, T value) {
+	/**
+	 * Přidání porovnání je menší než nebo rovno.
+	 * 
+	 * @param <T>
+	 *            {@link Number} a {@link Comparable} typ
+	 * @param expression
+	 *            výraz k porovnání
+	 * @param value
+	 *            hodnota pro porovnání
+	 * @return this pro řetězení
+	 */
+	public <T extends Number & Comparable<?>> PredicateBuilder le(NumberExpression<T> expression, T value) {
 		if (value != null) {
-			booleanBuilder.and(path.loe(value));
+			booleanBuilder.and(expression.loe(value));
 		}
 		return this;
 	}
@@ -229,8 +347,10 @@ public class PredicateBuilder {
 	/**
 	 * Přidání porvnání IS NULL.
 	 * 
+	 * @param <T>
+	 *            {@link Number} a {@link Comparable} typ
 	 * @param expression
-	 *            cesta k atributu entity
+	 *            výraz k porovnání
 	 * @return this pro řetězení
 	 */
 	public <T extends Number & Comparable<?>> PredicateBuilder isNull(NumberExpression<T> expression) {
@@ -240,6 +360,13 @@ public class PredicateBuilder {
 		return this;
 	}
 
+	/**
+	 * Přidání porvnání IS NULL.
+	 * 
+	 * @param expression
+	 *            výraz k porovnání
+	 * @return this pro řetězení
+	 */
 	public PredicateBuilder isNull(BeanPath<?> expression) {
 		if (expression != null) {
 			booleanBuilder.and(expression.isNull());
@@ -251,7 +378,7 @@ public class PredicateBuilder {
 	 * Přidání porvnání IS NULL nebo je ' '.
 	 * 
 	 * @param expression
-	 *            cesta k atributu entity
+	 *            výraz k porovnání
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder isEmpty(StringExpression expression) {
@@ -266,7 +393,7 @@ public class PredicateBuilder {
 	 * Přidání porvnání IS NOT NULL a zároveň není ' '.
 	 * 
 	 * @param expression
-	 *            cesta k atributu entity
+	 *            výraz k porovnání
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder isNotEmpty(StringExpression expression) {
@@ -282,7 +409,7 @@ public class PredicateBuilder {
 	 * Přidání porvnání IS NOT NULL.
 	 * 
 	 * @param expression
-	 *            cesta k atributu entity
+	 *            výraz k porovnání
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder isNotNull(NumberExpression<?> expression) {
@@ -292,6 +419,13 @@ public class PredicateBuilder {
 		return this;
 	}
 
+	/**
+	 * Přidání porvnání IS NOT NULL.
+	 * 
+	 * @param expression
+	 *            výraz k porovnání
+	 * @return this pro řetězení
+	 */
 	public PredicateBuilder isNotNull(BeanPath<?> expression) {
 		if (expression != null) {
 			booleanBuilder.and(expression.isNotNull());
@@ -307,30 +441,55 @@ public class PredicateBuilder {
 	}
 
 	/**
-	 * Přidá porovnání SQL like.
+	 * Přidá porovnání SQL IGNORE CASE LIKE.
 	 * 
-	 * @param path
-	 *            cesta k atributu entity
+	 * @param expression
+	 *            výraz k porovnání
 	 * @param value
 	 *            hodnota pro porovnání
 	 * @return this pro řetězení
 	 */
-	public PredicateBuilder like(StringExpression path, String value) {
+	public PredicateBuilder iLike(StringExpression expression, String value) {
 		if (isNotBlank(value) && !"*".equals(value)) {
-			booleanBuilder.and(path.likeIgnoreCase(prepareForLike(value)));
-		}
-		return this;
-	}
-
-	public PredicateBuilder notLike(StringExpression path, String value) {
-		if (isNotBlank(value)) {
-			booleanBuilder.andNot(path.likeIgnoreCase(prepareForLike(value)));
+			booleanBuilder.and(expression.likeIgnoreCase(prepareForLike(value)));
 		}
 		return this;
 	}
 
 	/**
-	 * Přidá porovnání SQL like.
+	 * Přidá porovnání SQL NOT IGNORE CASE LIKE.
+	 * 
+	 * @param expression
+	 *            výraz k porovnání
+	 * @param value
+	 *            hodnota pro porovnání
+	 * @return this pro řetězení
+	 */
+	public PredicateBuilder notILike(StringExpression expression, String value) {
+		if (isNotBlank(value)) {
+			booleanBuilder.andNot(expression.likeIgnoreCase(prepareForLike(value)));
+		}
+		return this;
+	}
+
+	/**
+	 * Přidá porovnání SQL LIKE.
+	 * 
+	 * @param expression
+	 *            výraz k porovnání
+	 * @param value
+	 *            hodnota pro porovnání
+	 * @return this pro řetězení
+	 */
+	public PredicateBuilder like(NumberExpression<?> expression, String value) {
+		if (isNotBlank(value)) {
+			booleanBuilder.and(expression.like(prepareForLike(value)));
+		}
+		return this;
+	}
+
+	/**
+	 * Přidá porovnání SQL LIKE.
 	 * 
 	 * @param path
 	 *            cesta k atributu entity
@@ -338,13 +497,6 @@ public class PredicateBuilder {
 	 *            hodnota pro porovnání
 	 * @return this pro řetězení
 	 */
-	public PredicateBuilder like(NumberExpression<?> path, String value) {
-		if (isNotBlank(value)) {
-			booleanBuilder.and(path.like(prepareForLike(value)));
-		}
-		return this;
-	}
-
 	public PredicateBuilder like(NumberPath<Long> path, Long value) {
 		if (value != null) {
 			like(path, value.toString());
@@ -368,9 +520,9 @@ public class PredicateBuilder {
 		if (isNotBlank(from) && isNotBlank(to)) {
 			booleanBuilder.and(path.between(from, to));
 		} else if (isNotBlank(from)) {
-			like(path, prepareForLike(from));
+			iLike(path, prepareForLike(from));
 		} else if (isNotBlank(to)) {
-			like(path, prepareForLike(to));
+			iLike(path, prepareForLike(to));
 		}
 		return this;
 	}
@@ -378,21 +530,23 @@ public class PredicateBuilder {
 	/**
 	 * Přidá porovnání SQL between.
 	 * 
-	 * @param path
-	 *            cesta k atributu entity
+	 * @param <T>
+	 *            {@link Number} a {@link Comparable} typ
+	 * @param expression
+	 *            výraz k porovnání
 	 * @param from
 	 *            hodnota pro porovnání
 	 * @param to
 	 *            hodnota pro porovnání
 	 * @return this pro řetězení
 	 */
-	public <T extends Number & Comparable<?>> PredicateBuilder between(NumberExpression<T> path, T from, T to) {
+	public <T extends Number & Comparable<?>> PredicateBuilder between(NumberExpression<T> expression, T from, T to) {
 		if (from != null && to != null) {
-			booleanBuilder.and(path.between(from, to));
+			booleanBuilder.and(expression.between(from, to));
 		} else if (from != null) {
-			booleanBuilder.and(path.eq(from));
+			booleanBuilder.and(expression.eq(from));
 		} else if (to != null) {
-			booleanBuilder.and(path.eq(to));
+			booleanBuilder.and(expression.eq(to));
 		}
 		return this;
 	}
@@ -421,6 +575,8 @@ public class PredicateBuilder {
 
 	/**
 	 * Vrací celkový objekt predicate pro použítí v dotazu.
+	 * 
+	 * @return builder
 	 */
 	public BooleanBuilder getBuilder() {
 		return booleanBuilder;

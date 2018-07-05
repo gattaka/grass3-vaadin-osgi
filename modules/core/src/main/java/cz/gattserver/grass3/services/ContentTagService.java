@@ -78,14 +78,14 @@ public interface ContentTagService {
 	 * Získá list skupin počtů obsahů seřazenou vzestupně dle počtu. Zjistí tak,
 	 * že počty obsahů tagů existují například ve skupinách:
 	 * 
-	 * <p>
-	 * skupina tagů, které mají 1 obsah<br/>
-	 * skupina tagů, které mají 2 obsahy<br/>
-	 * skupina tagů, které mají 5 obsahů<br/>
-	 * skupina tagů, které mají 7 obsahů<br/>
-	 * skupina tagů, které mají 15 obsahů<br/>
-	 * a tak dále
-	 * </p>
+	 * <ul>
+	 * <li>skupina tagů, které mají 1 obsah</li>
+	 * <li>skupina tagů, které mají 2 obsahy</li>
+	 * <li>skupina tagů, které mají 5 obsahů</li>
+	 * <li>skupina tagů, které mají 7 obsahů</li>
+	 * <li>skupina tagů, které mají 15 obsahů</li>
+	 * <li>a tak dále</li>
+	 * </ul>
 	 *
 	 * 
 	 * @return list skupin počtů seřazený vzestupně dle počtu

@@ -33,7 +33,7 @@ public final class QuerydslUtil {
 	 *            směr řazení
 	 * @param prop
 	 *            property podle které se bude řadit
-	 * @return
+	 * @return {@link PageRequest} objekt
 	 */
 	public static PageRequest transformOffsetLimit(int offset, int limit, Direction dir, String prop) {
 		// zjisti, zda offset je celočíselný násobek limitu
@@ -73,13 +73,26 @@ public final class QuerydslUtil {
 	 * Převádí offset a limit na page a pagesize
 	 * 
 	 * @param offset
+	 *            offset
 	 * @param limit
-	 * @return
+	 *            limit
+	 * @return {@link PageRequest} objekt
 	 */
 	public static PageRequest transformOffsetLimit(int offset, int limit) {
 		return transformOffsetLimit(offset, limit, null, null);
 	}
 
+	/**
+	 * Aplikuje vlastnosti stránkování
+	 * 
+	 * @param <T>
+	 *            typ {@link JPAQuery}
+	 * @param pageable
+	 *            definice stránkování
+	 * @param query
+	 *            pro aplikaci stránkování
+	 * @return {@link PageRequest} objekt
+	 */
 	public static <T> JPAQuery<T> applyPagination(Pageable pageable, JPAQuery<T> query) {
 		if (pageable == null) {
 			return query;

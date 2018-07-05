@@ -21,7 +21,7 @@ public abstract class OneColumnPage extends BasePage {
 	/**
 	 * Obsah sloupce
 	 * 
-	 * @param layout
+	 * @return layout
 	 */
 	protected abstract Component createContent();
 

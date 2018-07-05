@@ -168,11 +168,17 @@ public abstract class MenuPage extends GrassPage {
 
 	/**
 	 * Získá hlášky
+	 * 
+	 * @param layout
+	 *            layout, do kterého bude vytvořen obsah
 	 */
 	protected abstract void createQuotes(CustomLayout layout);
 
 	/**
 	 * Získá obsah
+	 * 
+	 * @param layout
+	 *            layout, do kterého bude vytvořen obsah
 	 */
 	protected abstract void createContent(CustomLayout layout);
 

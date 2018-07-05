@@ -27,8 +27,8 @@ public class SongsRepositoryCustomImpl implements SongsRepositoryCustom {
 		JPAQuery<Integer> query = new JPAQuery<>(entityManager);
 		QSong s = QSong.song;
 		PredicateBuilder builder = new PredicateBuilder();
-		builder.like(s.name, filterTO.getName());
-		builder.like(s.author, filterTO.getAuthor());
+		builder.iLike(s.name, filterTO.getName());
+		builder.iLike(s.author, filterTO.getAuthor());
 		builder.eq(s.year, filterTO.getYear());
 		return query.select(s).from(s).where(builder.getBuilder()).orderBy(new OrderSpecifier<>(Order.ASC, s.name))
 				.fetch();

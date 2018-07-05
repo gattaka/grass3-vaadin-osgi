@@ -57,6 +57,10 @@ public interface ContentNodeService {
 	 * 
 	 * @param contentNodeId
 	 *            uzel obsahu, který patří k tomuto obsahu
+	 * @param name
+	 *            název obsahu
+	 * @param publicated
+	 *            je obsah publikovaný
 	 */
 	public void modify(long contentNodeId, String name, boolean publicated);
 

@@ -8,9 +8,11 @@ public interface ConfigurationService {
 	 * Nahraje existující konfiguraci a dopíše její vyplněné hodnoty do
 	 * předaného objektu konfigurace
 	 * 
+	 * @param <T>
+	 *            AbstractConfiguration
 	 * @param configuration
 	 */
-	public <T extends AbstractConfiguration> void loadConfiguration(T configuration);
+	public void loadConfiguration(AbstractConfiguration configuration);
 
 	/**
 	 * Uloží konfiguraci.
@@ -18,5 +20,5 @@ public interface ConfigurationService {
 	 * @param configuration
 	 *            objekt konfigurace
 	 */
-	public <T extends AbstractConfiguration> void saveConfiguration(T configuration);
+	public void saveConfiguration(AbstractConfiguration configuration);
 }

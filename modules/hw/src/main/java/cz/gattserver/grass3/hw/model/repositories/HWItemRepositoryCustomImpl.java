@@ -30,10 +30,10 @@ public class HWItemRepositoryCustomImpl implements HWItemRepositoryCustom {
 		QHWItem h = QHWItem.hWItem;
 		QHWItemType t = QHWItemType.hWItemType;
 		PredicateBuilder builder = new PredicateBuilder();
-		builder.like(h.name, filter.getName());
+		builder.iLike(h.name, filter.getName());
 		builder.eq(h.state, filter.getState());
-		builder.like(h.usedIn.name, filter.getUsedIn());
-		builder.like(h.supervizedFor, filter.getSupervizedFor());
+		builder.iLike(h.usedIn.name, filter.getUsedIn());
+		builder.iLike(h.supervizedFor, filter.getSupervizedFor());
 		builder.eq(h.price, filter.getPrice());
 		builder.between(h.purchaseDate, filter.getPurchaseDateFrom(), filter.getPurchaseDateTo());
 		if (filter.getTypes() != null)

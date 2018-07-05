@@ -8,6 +8,12 @@ public interface ModuleSettingsPageFactoriesRegister {
 
 	/**
 	 * Tvorba aliasů
+	 * 
+	 * @param settingsName
+	 *            název nastavení
+	 * @param factory
+	 *            factory pro tvorbu stránky nastavení
+	 * @return zaregistrovaná factory
 	 */
 	public ModuleSettingsPageFactory putAlias(String settingsName, ModuleSettingsPageFactory factory);
 

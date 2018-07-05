@@ -30,8 +30,8 @@ public class LanguageItemRepositoryCustomImpl implements LanguageItemRepositoryC
 		PredicateBuilder builder = new PredicateBuilder();
 		builder.eq(l.language.id, filterTO.getLanguage());
 		builder.eq(l.type, filterTO.getType());
-		builder.like(l.content, filterTO.getContent());
-		builder.like(l.translation, filterTO.getTranslation());
+		builder.iLike(l.content, filterTO.getContent());
+		builder.iLike(l.translation, filterTO.getTranslation());
 		return builder.getBuilder();
 	}
 

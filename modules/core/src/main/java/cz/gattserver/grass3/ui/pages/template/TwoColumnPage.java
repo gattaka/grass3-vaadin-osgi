@@ -23,14 +23,14 @@ public abstract class TwoColumnPage extends BasePage {
 	/**
 	 * Obsah levé části
 	 * 
-	 * @param layout
+	 * @return layout
 	 */
 	protected abstract Component createLeftColumnContent();
 
 	/**
 	 * Obsah pravé části
 	 * 
-	 * @param layout
+	 * @return layout
 	 */
 	protected abstract Component createRightColumnContent();
 

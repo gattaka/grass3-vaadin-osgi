@@ -29,14 +29,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Autowired
 	private ConfigurationItemRepository configurationItemRepository;
 
-	public <T extends AbstractConfiguration> void loadConfiguration(T configuration) {
+	public void loadConfiguration(AbstractConfiguration configuration) {
 		Validate.notNull(configuration, "'configuration' nemůže být null");
 		List<ConfigurationItem> configurationItems = configurationItemRepository
 				.findByNameStartingWith(configuration.getPrefix());
 		populateConfigurationFromMap(configurationItems, configuration);
 	}
 
-	public <T extends AbstractConfiguration> void saveConfiguration(T configuration) {
+	public void saveConfiguration(AbstractConfiguration configuration) {
 		Validate.notNull(configuration, "'configuration' nemůže být null");
 		List<ConfigurationItem> items = getConfigurationItems(configuration);
 		// protože ukládá i null hodnoty jako novou configItem, uloží buď

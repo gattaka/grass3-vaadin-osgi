@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>cz.gattserver</groupId>
 		<artifactId>gattserver-parent</artifactId>
-		<version>1.0.8</version>
+		<version>1.0.9</version>
 	</parent>
 
 	<scm>
@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>cz.gattserver</groupId>
 			<artifactId>common-test</artifactId>
-			<version>1.0.2</version>
+			<version>1.0.3</version>
 			<type>pom</type>
 			<scope>test</scope>
 		</dependency>

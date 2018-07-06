@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>cz.gattserver.grass3</groupId>
 		<artifactId>grass3</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>core</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- ====================== -->
@@ -26,105 +26,105 @@
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- základní pluginy pro články -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles-basic</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- code pluginy pro články -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles-code</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- favicok link pluginy pro články -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles-favlink</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- latex pluginy pro články -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles-latex</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- šablonovací pluginy pro články -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles-templates</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- file manager -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>fm</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- evidence hw -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>hw</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- medic -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>medic</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- system monitor -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>monitor</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- recipes -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>recipes</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- language -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>language</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- fotogalerie -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>pg</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- vyhledávání -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>search</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- zpěvník -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>songs</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>

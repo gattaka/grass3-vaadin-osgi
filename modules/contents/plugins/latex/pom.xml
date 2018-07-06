@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>cz.gattserver.grass3</groupId>
 		<artifactId>plugins</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- http://forge.scilab.org/index.php/p/jlatexmath/doc/ -->

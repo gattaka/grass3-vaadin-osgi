@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cz.gattserver.grass3</groupId>
 	<artifactId>grass3</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.0.3</version>
 	<name>GRASS3 Modular Knowledge Base</name>
 
 	<packaging>pom</packaging>
@@ -15,7 +15,7 @@
 
 	<scm>
 		<developerConnection>${scm.base.url}/grass3-vaadin-osgi</developerConnection>
-		<tag>HEAD</tag>
+		<tag>grass3-1.0.3</tag>
 	</scm>
 
 	<properties>

@@ -30,7 +30,9 @@ public class AddressFaviconObtainStrategy implements FaviconObtainStrategy {
 	@Override
 	public String obtainFaviconURL(String pageURL, String contextRoot) {
 		URL url = FaviconUtils.getPageURL(pageURL);
-		String address = url.getProtocol() + "://" + url.getHost() + ":" + url.getPort();
+		String address = url.getProtocol() + "://" + url.getHost();
+		if (url.getPort() > 0)
+			address += ":" + url.getPort();
 		String faviconFilename;
 
 		// root + /favicon.ico

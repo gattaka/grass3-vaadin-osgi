@@ -164,6 +164,8 @@ public class FaviconUtils {
 	public static String getFaviconFilename(URL pageURL, String faviconAddress) {
 		String faviconRootFilename = FaviconUtils.createFaviconRootFilename(pageURL);
 		String extension = faviconAddress.substring(faviconAddress.lastIndexOf('.'), faviconAddress.length());
+		// Odstraní případné ?param=value apod. za .pripona textem
+		extension = extension.replaceAll("[^\\.A-Za-z0-9].+", "");
 		return faviconRootFilename + extension;
 	}
 

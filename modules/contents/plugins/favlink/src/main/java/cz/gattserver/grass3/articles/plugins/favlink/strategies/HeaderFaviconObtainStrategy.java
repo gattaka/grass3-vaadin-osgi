@@ -77,7 +77,9 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 
 	private String findFaviconAddressOnPage(URL pageURL) {
 		Document doc;
-		String rootURL = pageURL.getProtocol() + "://" + pageURL.getHost() + ":" + pageURL.getPort();
+		String rootURL = pageURL.getProtocol() + "://" + pageURL.getHost();
+		if (pageURL.getPort() > 0)
+			rootURL += ":" + pageURL.getPort();
 
 		try {
 			// http://en.wikipedia.org/wiki/Favicon

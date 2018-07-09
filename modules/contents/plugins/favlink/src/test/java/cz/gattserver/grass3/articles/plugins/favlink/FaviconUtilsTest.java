@@ -16,7 +16,7 @@ public class FaviconUtilsTest {
 		assertEquals("/test-root/articles-favlink-plugin/favicon-name.png",
 				FaviconUtils.createCachedFaviconAddress("/test-root", "favicon-name.png"));
 	}
-	
+
 	@Test
 	public void testCreateCachedFaviconAddress2() {
 		assertEquals("/articles-favlink-plugin/favicon-name.png",
@@ -27,6 +27,14 @@ public class FaviconUtilsTest {
 	public void testCreateCachedFaviconAddress_fail() {
 		assertEquals("/articles-favlink-plugin/favicon-name.png",
 				FaviconUtils.createCachedFaviconAddress(null, "favicon-name.png"));
+	}
+
+	@Test
+	public void testGetFaviconFilename() throws MalformedURLException {
+		assertEquals("ro-che.info.png",
+				FaviconUtils.getFaviconFilename(
+						new URL("https://ro-che.info/articles/2017-03-26-increase-open-files-limit"),
+						"https://ro-che.info/img/favicon.png?v=4"));
 	}
 
 	@Test(expected = IllegalArgumentException.class)

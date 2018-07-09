@@ -15153,7 +15153,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 24px;
 }
 
-body, div, p, span, li, ul {
+body, div, p, span, li {
 	margin: 0;
 	padding: 0;
 }

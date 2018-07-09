@@ -25,12 +25,16 @@ import cz.gattserver.grass3.modules.register.ModuleRegister;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.CoreACLService;
 import cz.gattserver.grass3.services.NodeService;
+import cz.gattserver.grass3.services.VersionInfoService;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.util.UIUtils;
 
 public abstract class MenuPage extends GrassPage {
 
 	private static Logger perfLogger = LoggerFactory.getLogger(StopWatch.DEFAULT_LOGGER_NAME);
+
+	@Autowired
+	protected VersionInfoService versionInfoService;
 
 	@Autowired
 	protected ModuleRegister serviceHolder;
@@ -102,7 +106,9 @@ public abstract class MenuPage extends GrassPage {
 		perfLogger.info(stopWatch.stop());
 
 		// footer
-		layout.addComponent(new Label("Powered by GRASS III © 2012-2018 Hynek Uhlíř"), "about");
+		layout.addComponent(
+				new Label("Powered by GRASS " + versionInfoService.getProjectVersion() + " © 2012-2018 Hynek Uhlíř"),
+				"about");
 
 		return layout;
 	}

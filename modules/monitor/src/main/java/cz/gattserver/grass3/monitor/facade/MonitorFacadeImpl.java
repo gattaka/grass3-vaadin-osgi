@@ -180,14 +180,12 @@ public class MonitorFacadeImpl implements MonitorFacade {
 					String date = part.substring(dummTarget.length());
 					LocalDateTime lastBackup = LocalDateTime.parse(date,
 							DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy"));
+					itemTO.setValue(target + ": poslední záloha byla provedena " + date);
 					// poslední záloha nesmí být starší než 24h
-					if (lastBackup.isBefore(LocalDateTime.now().minusHours(24))) {
+					if (lastBackup.isBefore(LocalDateTime.now().minusHours(24)))
 						itemTO.setMonitorState(MonitorState.ERROR);
-						itemTO.setValue(target);
-					} else {
+					else
 						itemTO.setMonitorState(MonitorState.SUCCESS);
-						itemTO.setValue(target + ": poslední záloha byla provedena " + date);
-					}
 					itemTO.setLastTime(lastBackup);
 				} else {
 					// nejsou podklady pro info o poslední záloze? Chyba!

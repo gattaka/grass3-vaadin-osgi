@@ -13,6 +13,7 @@ public class ImageElement implements Element {
 
 	@Override
 	public void apply(Context ctx) {
+		ctx.addCSSResource("articles/basic/style.css");
 		ctx.print("<a target=\"_blank\" href=\"" + link + "\"><img class=\"articles-basic-img\" src=\"" + link
 				+ "\" alt=\"" + link + "\" /></a>");
 	}

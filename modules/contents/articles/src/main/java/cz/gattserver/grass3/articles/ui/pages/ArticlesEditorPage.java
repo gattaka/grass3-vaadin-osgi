@@ -106,9 +106,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		articleNameField.setValue(article.getContentNode().getName());
 
-		for (ContentTagOverviewTO tagDTO : article.getContentNode().getContentTags()) {
+		for (ContentTagOverviewTO tagDTO : article.getContentNode().getContentTags())
 			articleKeywords.addToken(new Token(tagDTO.getName()));
-		}
 
 		publicatedCheckBox.setValue(article.getContentNode().isPublicated());
 
@@ -229,6 +228,9 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		articleTextArea = new TextArea();
 		publicatedCheckBox = new CheckBox();
 
+		// editor.js
+		loadJS(new JScriptItem("articles/js/editor.js"));
+
 		// zavádění listener pro JS listener akcí jako je vepsání tabulátoru
 		articleTextAreaFocusRegistration = articleTextArea.addFocusListener(event -> {
 			JavaScript.eval("registerTabListener()");
@@ -285,9 +287,6 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				groupToolsLayout.addComponent(btn);
 			}
 		}
-
-		// editor.js
-		loadJS(new JScriptItem("articles/js/editor.js"));
 
 		VerticalLayout hl = new VerticalLayout(accordion);
 		hl.setMargin(true);

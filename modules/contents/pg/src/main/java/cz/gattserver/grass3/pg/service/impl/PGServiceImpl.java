@@ -367,12 +367,18 @@ public class PGServiceImpl implements PGService {
 		PGConfiguration configuration = loadConfiguration();
 		String rootDir = configuration.getRootDir();
 		Path rootPath = fileSystemService.getFileSystem().getPath(rootDir);
-		if (!Files.exists(rootPath))
-			throw new IllegalStateException("Kořenový adresář PG modulu musí existovat");
+		if (!Files.exists(rootPath)) {
+			IllegalStateException ise = new IllegalStateException("Kořenový adresář PG modulu musí existovat");
+			logger.error("Nezdařilo se získat kořenový adresář galerií", ise);
+			throw ise;
+		}
 		rootPath = rootPath.normalize();
 		Path galleryPath = rootPath.resolve(galleryDir);
-		if (!galleryPath.normalize().startsWith(rootPath))
-			throw new IllegalArgumentException("Podtečení kořenového adresáře galerií");
+		if (!galleryPath.normalize().startsWith(rootPath)) {
+			IllegalArgumentException ise = new IllegalArgumentException("Podtečení kořenového adresáře galerií");
+			logger.error("Nezdařilo se získat kořenový adresář galerií", ise);
+			throw ise;
+		}
 		return galleryPath;
 	}
 

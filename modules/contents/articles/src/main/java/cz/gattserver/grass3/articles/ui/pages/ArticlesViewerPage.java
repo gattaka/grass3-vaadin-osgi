@@ -68,9 +68,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		}
 
 		if (!article.getContentNode().isPublicated() && !UIUtils.getUser().isAdmin()
-				&& article.getContentNode().getAuthor().equals(UIUtils.getUser())) {
+				&& !article.getContentNode().getAuthor().equals(UIUtils.getUser()))
 			throw new GrassPageException(403);
-		}
 
 		// CSS resources
 		for (String css : article.getPluginCSSResources()) {

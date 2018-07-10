@@ -107,7 +107,7 @@ public class PGViewerPage extends ContentViewerPage {
 	}
 
 	private boolean isAdminOrAuthor() {
-		return UIUtils.getUser().isAdmin() || !photogallery.getContentNode().getAuthor().equals(UIUtils.getUser());
+		return UIUtils.getUser().isAdmin() || photogallery.getContentNode().getAuthor().equals(UIUtils.getUser());
 	}
 
 	@Override
@@ -138,10 +138,8 @@ public class PGViewerPage extends ContentViewerPage {
 
 		String magicPass = analyzer.getNextPathToken();
 
-		if (!"MAG1CK".equals(magicPass)) {
-			if (!photogallery.getContentNode().isPublicated() && !isAdminOrAuthor())
-				throw new GrassPageException(403);
-		}
+		if (!"MAG1CK".equals(magicPass) && !photogallery.getContentNode().isPublicated() && !isAdminOrAuthor())
+			throw new GrassPageException(403);
 
 		galleryDir = photogallery.getPhotogalleryPath();
 

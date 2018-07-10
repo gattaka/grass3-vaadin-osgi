@@ -40,12 +40,12 @@ import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
 import cz.gattserver.grass3.pg.service.PGService;
-import cz.gattserver.grass3.pg.ui.windows.ImageSlideshowWindow;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
+import cz.gattserver.grass3.ui.windows.ImageSlideshowWindow;
 import cz.gattserver.grass3.ui.windows.ProgressWindow;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.server.URLPathAnalyzer;
@@ -472,11 +472,10 @@ public class PGViewerPage extends ContentViewerPage {
 	}
 
 	private void showItem(final int index) {
-		ImageSlideshowWindow window = new ImageSlideshowWindow(galleryDir, imageSum) {
+		ImageSlideshowWindow window = new ImageSlideshowWindow(imageSum) {
 			private static final long serialVersionUID = 7926209313704634472L;
 
-			@Override
-			protected Component showItem(PhotogalleryViewItemTO itemTO) {
+			private Component showItem(PhotogalleryViewItemTO itemTO) {
 				// zajisti posuv přehledu
 				if (currentIndex > (galleryGridRowOffset + GALLERY_GRID_ROWS) * GALLERY_GRID_COLS - 1) {
 					galleryGridRowOffset++;
@@ -496,6 +495,28 @@ public class PGViewerPage extends ContentViewerPage {
 					return showImage(itemTO);
 				}
 			}
+
+			@Override
+			public void showItem(int index) {
+				currentIndex = index;
+				try {
+					PhotogalleryViewItemTO itemTO = pgService.getSlideshowItem(galleryDir, index);
+
+					Component slideshowComponent = showItem(itemTO);
+
+					slideShowLayout.removeAllComponents();
+					slideShowLayout.addComponent(slideshowComponent);
+
+					itemLabel.setValue((index + 1) + "/" + totalCount + " " + itemTO.getName());
+				} catch (Exception e) {
+					logger.error("Chyba při zobrazování slideshow položky fotogalerie", e);
+					UIUtils.showWarning("Zobrazení položky se nezdařilo");
+					close();
+				}
+
+				center();
+			}
+
 		};
 		UI.getCurrent().addWindow(window);
 		window.showItem(index);

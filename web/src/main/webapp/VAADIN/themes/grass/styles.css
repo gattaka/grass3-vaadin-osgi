@@ -15566,6 +15566,11 @@ span.tag-letter {
 	border: none;
 }
 
+.grass .v-verticallayout.v-layout.v-vertical.v-widget.grass-scrollable.v-verticallayout-grass-scrollable.v-has-width.v-has-height.v-margin-top.v-margin-right.v-margin-bottom.v-margin-left {
+	height: 100vh;
+    overflow: auto;
+}
+
 .grass .white-bold-label {
 	font-family: Arial;
 	font-size: 20px;

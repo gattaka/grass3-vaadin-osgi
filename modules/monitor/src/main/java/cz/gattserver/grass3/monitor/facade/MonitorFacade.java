@@ -9,6 +9,7 @@ import cz.gattserver.grass3.monitor.processor.item.DiskStatusMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
 
@@ -33,5 +34,7 @@ public interface MonitorFacade {
 	List<LastBackupTimeMonitorItemTO> getLastTimeOfBackup();
 
 	List<DiskStatusMonitorItemTO> getDiskStatus();
+
+	List<ServerServiceMonitorItemTO> getServerServicesStatus();
 
 }

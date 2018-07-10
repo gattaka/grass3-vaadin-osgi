@@ -3,6 +3,10 @@ package cz.gattserver.grass3.monitor.facade;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -26,6 +30,7 @@ import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.MonitorState;
+import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
 import cz.gattserver.grass3.services.ConfigurationService;
@@ -243,6 +248,50 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		to.setType(store.type());
 		to.setUsable(store.getUsableSpace());
 		return true;
+	}
+
+	@Override
+	public List<ServerServiceMonitorItemTO> getServerServicesStatus() {
+		List<ServerServiceMonitorItemTO> items = new ArrayList<>();
+
+		ServerServiceMonitorItemTO nexusTO = new ServerServiceMonitorItemTO("Sonatype Nexus",
+				"http://gattserver.cz:8081");
+		testResponseCode(nexusTO);
+		items.add(nexusTO);
+
+		ServerServiceMonitorItemTO sonarTO = new ServerServiceMonitorItemTO("SonarQube", "http://gattserver.cz:9000");
+		testResponseCode(sonarTO);
+		items.add(sonarTO);
+
+		return items;
+	}
+
+	private void testResponseCode(ServerServiceMonitorItemTO itemTO) {
+		try {
+			URL url = new URL(itemTO.getAddress());
+			URLConnection uc = url.openConnection();
+			if (uc != null && uc instanceof HttpURLConnection) {
+				// HttpURLConnection
+				HttpURLConnection hc = (HttpURLConnection) uc;
+				hc.setInstanceFollowRedirects(true);
+
+				// bez agenta to často hodí 403 Forbidden, protože si myslí,
+				// že jsem asi bot ... (což vlastně jsem)
+				hc.setRequestProperty("User-Agent", "Mozilla");
+				hc.setConnectTimeout(1000);
+				hc.setReadTimeout(1000);
+				hc.connect();
+				itemTO.setResponseCode(hc.getResponseCode());
+				if (itemTO.getResponseCode() >= 200 && itemTO.getResponseCode() < 300)
+					itemTO.setMonitorState(MonitorState.SUCCESS);
+				else
+					itemTO.setMonitorState(MonitorState.ERROR);
+			}
+		} catch (SocketTimeoutException e) {
+			itemTO.setMonitorState(MonitorState.ERROR);
+		} catch (Exception e) {
+			itemTO.setMonitorState(MonitorState.UNAVAILABLE);
+		}
 	}
 
 }

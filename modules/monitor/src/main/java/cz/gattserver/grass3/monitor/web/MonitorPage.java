@@ -25,6 +25,7 @@ import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.MonitorState;
+import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.web.label.ErrorMonitorDisplay;
@@ -60,6 +61,25 @@ public class MonitorPage extends OneColumnPage {
 
 	private String humanFormat(long value) {
 		return HumanBytesSizeFormatter.format(value, false);
+	}
+
+	private void createServerServices() {
+		VerticalLayout serverServicesLayout = createMonitorPart("Server services");
+		for (ServerServiceMonitorItemTO to : monitorFacade.getServerServicesStatus()) {
+			String content = to.getName() + " (<a target='_blank' href='" + to.getAddress() + "'>" + to.getAddress()
+					+ "</a>) [status: " + to.getResponseCode() + "]";
+			switch (to.getMonitorState()) {
+			case SUCCESS:
+				serverServicesLayout.addComponent(new SuccessMonitorDisplay(content));
+				break;
+			case UNAVAILABLE:
+				serverServicesLayout.addComponent(new WarningMonitorDisplay(content));
+				break;
+			case ERROR:
+			default:
+				serverServicesLayout.addComponent(new ErrorMonitorDisplay(content));
+			}
+		}
 	}
 
 	private void createSystemPart() {
@@ -244,6 +264,9 @@ public class MonitorPage extends OneColumnPage {
 	}
 
 	private void populateMonitor() {
+
+		// Server services
+		createServerServices();
 
 		// System
 		createSystemPart();

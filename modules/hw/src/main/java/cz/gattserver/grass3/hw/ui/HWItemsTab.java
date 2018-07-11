@@ -36,6 +36,7 @@ import cz.gattserver.grass3.hw.ui.windows.HWItemWindow;
 import cz.gattserver.grass3.hw.ui.windows.HWItemDetailWindow;
 import cz.gattserver.grass3.hw.ui.windows.ServiceNoteCreateWindow;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
+import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -58,122 +59,12 @@ public class HWItemsTab extends VerticalLayout {
 	private Grid<HWItemOverviewTO> grid;
 	private AdvancedTokenField hwTypesFilter;
 
+	private GrassRequest grassRequest;
 	private HWFilterTO filterDTO;
 
-	private HWService getHWService() {
-		if (hwService == null)
-			hwService = SpringContextHelper.getBean(HWService.class);
-		return hwService;
-	}
-
-	private void populate() {
-		List<Token> collection = hwTypesFilter.getTokens();
-		List<String> types = new ArrayList<>();
-		collection.forEach(t -> types.add(t.getValue()));
-		filterDTO.setTypes(types);
-
-		FetchItemsCallback<HWItemOverviewTO> fetchItems = (sortOrder, offset, limit) -> getHWService()
-				.getHWItems(filterDTO, QuerydslUtil.transformOffsetLimit(offset, limit),
-						QuerydslUtil.transformOrdering(sortOrder, column -> {
-							switch (column) {
-							case PRICE_BIND:
-								return "price";
-							case STATE_BIND:
-								return "state";
-							case PURCHASE_DATE_BIND:
-								return "purchaseDate";
-							case NAME_BIND:
-								return "name";
-							case USED_IN_BIND:
-								return "usedIn";
-							case SUPERVIZED_FOR_BIND:
-								return "supervizedFor";
-							default:
-								return column;
-							}
-						}))
-				.stream();
-		SerializableSupplier<Integer> sizeCallback = () -> getHWService().countHWItems(filterDTO);
-		CallbackDataProvider<HWItemOverviewTO, Long> provider = new CallbackDataProvider<>(
-				q -> fetchItems.fetchItems(q.getSortOrders(), q.getOffset(), q.getLimit()), q -> sizeCallback.get(),
-				HWItemOverviewTO::getId);
-		grid.setDataProvider(provider);
-	}
-
-	private void addWindow(Window win) {
-		UI.getCurrent().addWindow(win);
-	}
-
-	private void openItemWindow(boolean fix) {
-		HWItemTO hwItem = null;
-		if (fix) {
-			if (grid.getSelectedItems().isEmpty())
-				return;
-			Long id = grid.getSelectedItems().iterator().next().getId();
-			hwItem = getHWService().getHWItem(id);
-		}
-		addWindow(new HWItemWindow(hwItem == null ? null : hwItem.getId()) {
-
-			private static final long serialVersionUID = -1397391593801030584L;
-
-			@Override
-			protected void onSuccess(HWItemTO dto) {
-				populate();
-				HWItemOverviewTO filterTO = new HWItemOverviewTO();
-				filterTO.setId(dto.getId());
-				grid.select(filterTO);
-			}
-		});
-	}
-
-	private void openAddNoteWindow() {
-		if (grid.getSelectedItems().isEmpty())
-			return;
-		Long id = grid.getSelectedItems().iterator().next().getId();
-		HWItemTO hwItem = getHWService().getHWItem(id);
-
-		addWindow(new ServiceNoteCreateWindow(hwItem) {
-			private static final long serialVersionUID = -5582822648042555576L;
-
-			@Override
-			protected void onSuccess(ServiceNoteTO noteDTO) {
-				populate();
-			}
-		});
-	}
-
-	private void openDetailWindow(Long id) {
-		addWindow(new HWItemDetailWindow(id).setChangeListener(this::populate));
-	}
-
-	private void openDeleteWindow() {
-		if (grid.getSelectedItems().isEmpty())
-			return;
-		HWItemsTab.this.setEnabled(false);
-		HWItemOverviewTO to = grid.getSelectedItems().iterator().next();
-		addWindow(new ConfirmWindow(
-				"Opravdu smazat '" + to.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?", e -> {
-					try {
-						getHWService().deleteHWItem(to.getId());
-						populate();
-					} catch (Exception ex) {
-						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
-					}
-				}) {
-
-			private static final long serialVersionUID = -422763987707688597L;
-
-			@Override
-			public void close() {
-				HWItemsTab.this.setEnabled(true);
-				super.close();
-			}
-
-		});
-	}
-
-	public HWItemsTab() {
+	public HWItemsTab(GrassRequest grassRequest) {
 		filterDTO = new HWFilterTO();
+		this.grassRequest = grassRequest;
 
 		setSpacing(true);
 		setMargin(new MarginInfo(true, false, false, false));
@@ -319,4 +210,117 @@ public class HWItemsTab extends VerticalLayout {
 		buttonLayout.addComponent(deleteBtn);
 
 	}
+
+	private HWService getHWService() {
+		if (hwService == null)
+			hwService = SpringContextHelper.getBean(HWService.class);
+		return hwService;
+	}
+
+	private void populate() {
+		List<Token> collection = hwTypesFilter.getTokens();
+		List<String> types = new ArrayList<>();
+		collection.forEach(t -> types.add(t.getValue()));
+		filterDTO.setTypes(types);
+
+		FetchItemsCallback<HWItemOverviewTO> fetchItems = (sortOrder, offset, limit) -> getHWService()
+				.getHWItems(filterDTO, QuerydslUtil.transformOffsetLimit(offset, limit),
+						QuerydslUtil.transformOrdering(sortOrder, column -> {
+							switch (column) {
+							case PRICE_BIND:
+								return "price";
+							case STATE_BIND:
+								return "state";
+							case PURCHASE_DATE_BIND:
+								return "purchaseDate";
+							case NAME_BIND:
+								return "name";
+							case USED_IN_BIND:
+								return "usedIn";
+							case SUPERVIZED_FOR_BIND:
+								return "supervizedFor";
+							default:
+								return column;
+							}
+						}))
+				.stream();
+		SerializableSupplier<Integer> sizeCallback = () -> getHWService().countHWItems(filterDTO);
+		CallbackDataProvider<HWItemOverviewTO, Long> provider = new CallbackDataProvider<>(
+				q -> fetchItems.fetchItems(q.getSortOrders(), q.getOffset(), q.getLimit()), q -> sizeCallback.get(),
+				HWItemOverviewTO::getId);
+		grid.setDataProvider(provider);
+	}
+
+	private void addWindow(Window win) {
+		UI.getCurrent().addWindow(win);
+	}
+
+	private void openItemWindow(boolean fix) {
+		HWItemTO hwItem = null;
+		if (fix) {
+			if (grid.getSelectedItems().isEmpty())
+				return;
+			Long id = grid.getSelectedItems().iterator().next().getId();
+			hwItem = getHWService().getHWItem(id);
+		}
+		addWindow(new HWItemWindow(hwItem == null ? null : hwItem.getId()) {
+
+			private static final long serialVersionUID = -1397391593801030584L;
+
+			@Override
+			protected void onSuccess(HWItemTO dto) {
+				populate();
+				HWItemOverviewTO filterTO = new HWItemOverviewTO();
+				filterTO.setId(dto.getId());
+				grid.select(filterTO);
+			}
+		});
+	}
+
+	private void openAddNoteWindow() {
+		if (grid.getSelectedItems().isEmpty())
+			return;
+		Long id = grid.getSelectedItems().iterator().next().getId();
+		HWItemTO hwItem = getHWService().getHWItem(id);
+
+		addWindow(new ServiceNoteCreateWindow(hwItem) {
+			private static final long serialVersionUID = -5582822648042555576L;
+
+			@Override
+			protected void onSuccess(ServiceNoteTO noteDTO) {
+				populate();
+			}
+		});
+	}
+
+	private void openDetailWindow(Long id) {
+		addWindow(new HWItemDetailWindow(id, grassRequest).setChangeListener(this::populate));
+	}
+
+	private void openDeleteWindow() {
+		if (grid.getSelectedItems().isEmpty())
+			return;
+		HWItemsTab.this.setEnabled(false);
+		HWItemOverviewTO to = grid.getSelectedItems().iterator().next();
+		addWindow(new ConfirmWindow(
+				"Opravdu smazat '" + to.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?", e -> {
+					try {
+						getHWService().deleteHWItem(to.getId());
+						populate();
+					} catch (Exception ex) {
+						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
+					}
+				}) {
+
+			private static final long serialVersionUID = -422763987707688597L;
+
+			@Override
+			public void close() {
+				HWItemsTab.this.setEnabled(true);
+				super.close();
+			}
+
+		});
+	}
+
 }

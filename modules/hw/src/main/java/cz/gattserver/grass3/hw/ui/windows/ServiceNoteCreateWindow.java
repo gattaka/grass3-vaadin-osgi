@@ -94,7 +94,7 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 				ServiceNoteTO writeDTO = originalDTO == null ? new ServiceNoteTO() : originalDTO;
 				binder.writeBean(writeDTO);
 				if (originalDTO == null) {
-					getHWService().addServiceNote(writeDTO, hwItem);
+					getHWService().addServiceNote(writeDTO, hwItem.getId());
 					onSuccess(writeDTO);
 				} else {
 					getHWService().modifyServiceNote(writeDTO);

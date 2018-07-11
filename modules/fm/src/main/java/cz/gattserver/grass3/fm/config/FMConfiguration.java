@@ -10,6 +10,9 @@ import cz.gattserver.grass3.security.Role;
 
 public class FMConfiguration extends AbstractConfiguration {
 
+	/**
+	 * HTTP cesta k souborům
+	 */
 	public static final String FM_PATH = "fm-files";
 
 	/**

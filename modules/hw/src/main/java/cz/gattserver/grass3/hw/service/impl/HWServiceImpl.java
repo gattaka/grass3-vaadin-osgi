@@ -90,7 +90,8 @@ public class HWServiceImpl implements HWService {
 	 *            id HW položky
 	 * @return {@link Path} adresář galerie
 	 * @throws IllegalStateException
-	 *             pokud neexistuje kořenový adresář HW -- chyba nastavení modulu HW
+	 *             pokud neexistuje kořenový adresář HW -- chyba nastavení
+	 *             modulu HW
 	 * @throws IllegalArgumentException
 	 *             pokud předaný adresář podtéká kořen modulu HW
 	 */
@@ -163,10 +164,10 @@ public class HWServiceImpl implements HWService {
 	}
 
 	@Override
-	public List<HWItemFileTO> getHWItemImagesFiles(HWItemTO itemDTO) {
+	public List<HWItemFileTO> getHWItemImagesFiles(Long id) {
 		Path imagesPath;
 		try {
-			imagesPath = getHWItemImagesPath(itemDTO.getId());
+			imagesPath = getHWItemImagesPath(id);
 			List<HWItemFileTO> list = new ArrayList<>();
 			try (Stream<Path> stream = Files.list(imagesPath)) {
 				stream.forEach(p -> list.add(mapPathToItem(p)));
@@ -178,24 +179,46 @@ public class HWServiceImpl implements HWService {
 	}
 
 	@Override
-	public InputStream getHWItemImagesFileInputStream(HWItemTO hwItem, String name) {
+	public long getHWItemImagesFilesCount(Long id) {
+		Path imagesPath;
+		try {
+			imagesPath = getHWItemImagesPath(id);
+			try (Stream<Path> stream = Files.list(imagesPath)) {
+				return stream.count();
+			}
+		} catch (IOException e) {
+			throw new GrassException("Nezdařilo se získat přehled grafických příloh HW položky.", e);
+		}
+	}
+
+	@Override
+	public Path getHWItemImagesFilePath(Long id, String name) {
 		Path images;
 		try {
-			images = getHWItemImagesPath(hwItem.getId());
+			images = getHWItemImagesPath(id);
 			Path image = images.resolve(name);
 			if (!image.normalize().startsWith(images))
 				throw new IllegalArgumentException(ILLEGAL_PATH_IMGS_ERR);
-			return Files.newInputStream(image);
+			return image;
 		} catch (IOException e) {
 			throw new GrassException("Nezdařilo se získat grafickou přílohu HW položky.", e);
 		}
 	}
 
 	@Override
-	public boolean deleteHWItemImagesFile(HWItemTO hwItem, String name) {
+	public InputStream getHWItemImagesFileInputStream(Long id, String name) {
+		try {
+			return Files.newInputStream(getHWItemImagesFilePath(id, name));
+		} catch (IOException e) {
+			throw new GrassException("Nezdařilo se získat grafickou přílohu HW položky.", e);
+		}
+	}
+
+	@Override
+	public boolean deleteHWItemImagesFile(Long id, String name) {
 		Path images;
 		try {
-			images = getHWItemImagesPath(hwItem.getId());
+			images = getHWItemImagesPath(id);
 			Path image = images.resolve(name);
 			if (!image.normalize().startsWith(images))
 				throw new IllegalArgumentException(ILLEGAL_PATH_IMGS_ERR);
@@ -210,9 +233,9 @@ public class HWServiceImpl implements HWService {
 	 */
 
 	@Override
-	public boolean saveDocumentsFile(InputStream in, String fileName, HWItemTO item) {
+	public boolean saveDocumentsFile(InputStream in, String fileName, Long id) {
 		try {
-			Path docsPath = getHWItemDocumentsPath(item.getId());
+			Path docsPath = getHWItemDocumentsPath(id);
 			Path docPath = docsPath.resolve(fileName);
 			if (!docPath.normalize().startsWith(docsPath))
 				throw new IllegalArgumentException(ILLEGAL_PATH_DOCS_ERR);
@@ -224,10 +247,10 @@ public class HWServiceImpl implements HWService {
 	}
 
 	@Override
-	public List<HWItemFileTO> getHWItemDocumentsFiles(HWItemTO itemDTO) {
+	public List<HWItemFileTO> getHWItemDocumentsFiles(Long id) {
 		Path docsPath;
 		try {
-			docsPath = getHWItemDocumentsPath(itemDTO.getId());
+			docsPath = getHWItemDocumentsPath(id);
 			List<HWItemFileTO> list = new ArrayList<>();
 			try (Stream<Path> stream = Files.list(docsPath)) {
 				stream.forEach(p -> list.add(mapPathToItem(p)));
@@ -239,24 +262,46 @@ public class HWServiceImpl implements HWService {
 	}
 
 	@Override
-	public InputStream getHWItemDocumentsFileInputStream(HWItemTO hwItem, String name) {
+	public long getHWItemDocumentsFilesCount(Long id) {
+		Path docsPath;
+		try {
+			docsPath = getHWItemDocumentsPath(id);
+			try (Stream<Path> stream = Files.list(docsPath)) {
+				return stream.count();
+			}
+		} catch (IOException e) {
+			throw new GrassException("Nezdařilo se získat přehled dokumentací HW položky", e);
+		}
+	}
+
+	@Override
+	public Path getHWItemDocumentsFilePath(Long id, String name) {
 		Path docs;
 		try {
-			docs = getHWItemDocumentsPath(hwItem.getId());
+			docs = getHWItemDocumentsPath(id);
 			Path doc = docs.resolve(name);
 			if (!doc.normalize().startsWith(docs))
 				throw new IllegalArgumentException(ILLEGAL_PATH_DOCS_ERR);
-			return Files.newInputStream(doc);
+			return doc;
 		} catch (IOException e) {
 			throw new GrassException("Nezdařilo se získat soubor dokumentace HW položky", e);
 		}
 	}
 
 	@Override
-	public boolean deleteHWItemDocumentsFile(HWItemTO hwItem, String name) {
+	public InputStream getHWItemDocumentsFileInputStream(Long id, String name) {
+		try {
+			return Files.newInputStream(getHWItemDocumentsFilePath(id, name));
+		} catch (IOException e) {
+			throw new GrassException("Nezdařilo se získat soubor dokumentace HW položky", e);
+		}
+	}
+
+	@Override
+	public boolean deleteHWItemDocumentsFile(Long id, String name) {
 		Path docs;
 		try {
-			docs = getHWItemDocumentsPath(hwItem.getId());
+			docs = getHWItemDocumentsPath(id);
 			Path doc = docs.resolve(name);
 			if (!doc.normalize().startsWith(docs))
 				throw new IllegalArgumentException(ILLEGAL_PATH_DOCS_ERR);
@@ -271,13 +316,13 @@ public class HWServiceImpl implements HWService {
 	 */
 
 	@Override
-	public OutputStream createHWItemIconOutputStream(String filename, HWItemTO hwItem) {
+	public OutputStream createHWItemIconOutputStream(String filename, Long id) {
 		String[] parts = filename.split("\\.");
 		String extension = parts.length >= 1 ? parts[parts.length - 1] : "";
 
 		Path hwItemDir;
 		try {
-			hwItemDir = getHWPath(hwItem.getId());
+			hwItemDir = getHWPath(id);
 			Path file = hwItemDir.resolve("icon." + extension);
 			return Files.newOutputStream(file);
 		} catch (IOException e) {
@@ -285,8 +330,8 @@ public class HWServiceImpl implements HWService {
 		}
 	}
 
-	private Path getHWItemIconFile(HWItemTO hwItem) throws IOException {
-		Path hwPath = getHWPath(hwItem.getId());
+	private Path getHWItemIconFile(Long id) throws IOException {
+		Path hwPath = getHWPath(id);
 		if (!Files.exists(hwPath))
 			return null;
 		try (Stream<Path> stream = Files.list(hwPath)) {
@@ -295,10 +340,10 @@ public class HWServiceImpl implements HWService {
 	}
 
 	@Override
-	public InputStream getHWItemIconFileInputStream(HWItemTO hwItem) {
+	public InputStream getHWItemIconFileInputStream(Long id) {
 		Path path;
 		try {
-			path = getHWItemIconFile(hwItem);
+			path = getHWItemIconFile(id);
 			return path != null ? Files.newInputStream(path) : null;
 		} catch (IOException e) {
 			throw new GrassException("Nezdařilo se získat ikonu HW položky.", e);
@@ -306,10 +351,10 @@ public class HWServiceImpl implements HWService {
 	}
 
 	@Override
-	public boolean deleteHWItemIconFile(HWItemTO hwItem) {
+	public boolean deleteHWItemIconFile(Long id) {
 		Path image;
 		try {
-			image = getHWItemIconFile(hwItem);
+			image = getHWItemIconFile(id);
 			if (image != null)
 				return Files.deleteIfExists(image);
 			return false;
@@ -444,7 +489,8 @@ public class HWServiceImpl implements HWService {
 	 */
 
 	/**
-	 * Vygeneruje {@link ServiceNote} o přidání/odebrání HW, uloží a přidá k cílovému HW
+	 * Vygeneruje {@link ServiceNote} o přidání/odebrání HW, uloží a přidá k
+	 * cílovému HW
 	 * 
 	 * @param triggerItem
 	 *            HW který je přidán/odebrán
@@ -470,8 +516,8 @@ public class HWServiceImpl implements HWService {
 	}
 
 	@Override
-	public void addServiceNote(ServiceNoteTO serviceNoteDTO, HWItemTO hwItemDTO) {
-		HWItem item = hwItemRepository.findOne(hwItemDTO.getId());
+	public void addServiceNote(ServiceNoteTO serviceNoteDTO, Long id) {
+		HWItem item = hwItemRepository.findOne(id);
 		ServiceNote serviceNote = new ServiceNote();
 		serviceNote.setDate(DateUtil.toDate(serviceNoteDTO.getDate()));
 		serviceNote.setDescription(serviceNoteDTO.getDescription());
@@ -532,8 +578,8 @@ public class HWServiceImpl implements HWService {
 	}
 
 	@Override
-	public void deleteServiceNote(ServiceNoteTO serviceNoteDTO, HWItemTO hwItemDTO) {
-		HWItem item = hwItemRepository.findOne(hwItemDTO.getId());
+	public void deleteServiceNote(ServiceNoteTO serviceNoteDTO, Long id) {
+		HWItem item = hwItemRepository.findOne(id);
 		ServiceNote serviceNote = serviceNoteRepository.findOne(serviceNoteDTO.getId());
 		item.getServiceNotes().remove(serviceNote);
 		hwItemRepository.save(item);

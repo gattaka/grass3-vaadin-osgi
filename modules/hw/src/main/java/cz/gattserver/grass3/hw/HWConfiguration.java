@@ -9,6 +9,11 @@ import cz.gattserver.grass3.security.Role;
 public class HWConfiguration extends AbstractConfiguration {
 
 	/**
+	 * HTTP cesta k souborům
+	 */
+	public static final String HW_PATH = "hw-files";
+	
+	/**
 	 * Kořenový adresář FM
 	 */
 	private String rootDir = "files/hw";

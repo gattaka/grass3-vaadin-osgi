@@ -93,7 +93,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		hwService.saveImagesFile(this.getClass().getResourceAsStream("large.jpg"), "testImage1.jpg", itemTO);
 		hwService.saveImagesFile(this.getClass().getResourceAsStream("large.jpg"), "testImage2.jpg", itemTO);
 
-		List<HWItemFileTO> files = hwService.getHWItemImagesFiles(itemTO);
+		List<HWItemFileTO> files = hwService.getHWItemImagesFiles(itemTO.getId());
 		assertEquals(2, files.size());
 		assertEquals("testImage1.jpg", files.get(0).getName());
 		assertEquals("testImage2.jpg", files.get(1).getName());
@@ -107,7 +107,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		itemTO.setId(123456L);
 		hwService.saveImagesFile(this.getClass().getResourceAsStream("large.jpg"), "testImage.jpg", itemTO);
 
-		InputStream is = hwService.getHWItemImagesFileInputStream(itemTO, "testImage.jpg");
+		InputStream is = hwService.getHWItemImagesFileInputStream(itemTO.getId(), "testImage.jpg");
 		assertTrue(ImageComparator.isEqualAsFiles(this.getClass().getResourceAsStream("large.jpg"), is));
 	}
 
@@ -125,7 +125,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		Path smallFile = hwDir.resolve(conf.getImagesDir()).resolve("testImage.jpg");
 		assertTrue(Files.exists(smallFile));
 
-		hwService.deleteHWItemImagesFile(itemTO, "testImage.jpg");
+		hwService.deleteHWItemImagesFile(itemTO.getId(), "testImage.jpg");
 
 		assertFalse(Files.exists(smallFile));
 	}
@@ -140,7 +140,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 
 		HWItemTO itemTO = new HWItemTO();
 		itemTO.setId(123456L);
-		hwService.saveDocumentsFile(this.getClass().getResourceAsStream("large.jpg"), "testDoc.jpg", itemTO);
+		hwService.saveDocumentsFile(this.getClass().getResourceAsStream("large.jpg"), "testDoc.jpg", itemTO.getId());
 
 		HWConfiguration conf = new HWConfiguration();
 		configurationService.loadConfiguration(conf);
@@ -156,10 +156,10 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		HWItemTO itemTO = new HWItemTO();
 		itemTO.setId(123456L);
 
-		hwService.saveDocumentsFile(this.getClass().getResourceAsStream("large.jpg"), "testDoc1.jpg", itemTO);
-		hwService.saveDocumentsFile(this.getClass().getResourceAsStream("large.jpg"), "testDoc2.jpg", itemTO);
+		hwService.saveDocumentsFile(this.getClass().getResourceAsStream("large.jpg"), "testDoc1.jpg", itemTO.getId());
+		hwService.saveDocumentsFile(this.getClass().getResourceAsStream("large.jpg"), "testDoc2.jpg", itemTO.getId());
 
-		List<HWItemFileTO> files = hwService.getHWItemDocumentsFiles(itemTO);
+		List<HWItemFileTO> files = hwService.getHWItemDocumentsFiles(itemTO.getId());
 		assertEquals(2, files.size());
 		assertEquals("testDoc1.jpg", files.get(0).getName());
 		assertEquals("testDoc2.jpg", files.get(1).getName());
@@ -171,9 +171,9 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 
 		HWItemTO itemTO = new HWItemTO();
 		itemTO.setId(123456L);
-		hwService.saveDocumentsFile(this.getClass().getResourceAsStream("large.jpg"), "testDoc.jpg", itemTO);
+		hwService.saveDocumentsFile(this.getClass().getResourceAsStream("large.jpg"), "testDoc.jpg", itemTO.getId());
 
-		InputStream is = hwService.getHWItemDocumentsFileInputStream(itemTO, "testDoc.jpg");
+		InputStream is = hwService.getHWItemDocumentsFileInputStream(itemTO.getId(), "testDoc.jpg");
 		assertTrue(ImageComparator.isEqualAsFiles(this.getClass().getResourceAsStream("large.jpg"), is));
 	}
 
@@ -183,7 +183,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 
 		HWItemTO itemTO = new HWItemTO();
 		itemTO.setId(123456L);
-		hwService.saveDocumentsFile(this.getClass().getResourceAsStream("large.jpg"), "testDoc.jpg", itemTO);
+		hwService.saveDocumentsFile(this.getClass().getResourceAsStream("large.jpg"), "testDoc.jpg", itemTO.getId());
 
 		HWConfiguration conf = new HWConfiguration();
 		configurationService.loadConfiguration(conf);
@@ -191,7 +191,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		Path smallFile = hwDir.resolve(conf.getDocumentsDir()).resolve("testDoc.jpg");
 		assertTrue(Files.exists(smallFile));
 
-		hwService.deleteHWItemDocumentsFile(itemTO, "testDoc.jpg");
+		hwService.deleteHWItemDocumentsFile(itemTO.getId(), "testDoc.jpg");
 
 		assertFalse(Files.exists(smallFile));
 	}
@@ -207,7 +207,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 
 		HWItemTO itemTO = new HWItemTO();
 		itemTO.setId(123456L);
-		OutputStream os = hwService.createHWItemIconOutputStream("testIcon.jpg", itemTO);
+		OutputStream os = hwService.createHWItemIconOutputStream("testIcon.jpg", itemTO.getId());
 		IOUtils.copy(this.getClass().getResourceAsStream("large.jpg"), os);
 
 		HWConfiguration conf = new HWConfiguration();
@@ -224,10 +224,10 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 
 		HWItemTO itemTO = new HWItemTO();
 		itemTO.setId(123456L);
-		OutputStream os = hwService.createHWItemIconOutputStream("testIcon.jpg", itemTO);
+		OutputStream os = hwService.createHWItemIconOutputStream("testIcon.jpg", itemTO.getId());
 		IOUtils.copy(this.getClass().getResourceAsStream("large.jpg"), os);
 
-		InputStream is = hwService.getHWItemIconFileInputStream(itemTO);
+		InputStream is = hwService.getHWItemIconFileInputStream(itemTO.getId());
 		assertTrue(ImageComparator.isEqualAsFiles(this.getClass().getResourceAsStream("large.jpg"), is));
 	}
 
@@ -238,7 +238,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 
 		HWItemTO itemTO = new HWItemTO();
 		itemTO.setId(123456L);
-		OutputStream os = hwService.createHWItemIconOutputStream("testIcon.jpg", itemTO);
+		OutputStream os = hwService.createHWItemIconOutputStream("testIcon.jpg", itemTO.getId());
 		IOUtils.copy(this.getClass().getResourceAsStream("large.jpg"), os);
 
 		HWConfiguration conf = new HWConfiguration();
@@ -247,7 +247,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		Path smallFile = hwDir.resolve("icon.jpg");
 		assertTrue(Files.exists(smallFile));
 
-		hwService.deleteHWItemIconFile(itemTO);
+		hwService.deleteHWItemIconFile(itemTO.getId());
 		assertFalse(Files.exists(smallFile));
 	}
 

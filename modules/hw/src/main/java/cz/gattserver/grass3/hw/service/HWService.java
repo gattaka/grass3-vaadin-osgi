@@ -2,6 +2,7 @@ package cz.gattserver.grass3.hw.service;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -23,35 +24,43 @@ public interface HWService {
 	 * Images
 	 */
 
-	public boolean saveImagesFile(InputStream in, String fileName, HWItemTO item);
+	boolean saveImagesFile(InputStream in, String fileName, HWItemTO item);
 
-	public List<HWItemFileTO> getHWItemImagesFiles(HWItemTO itemDTO);
+	List<HWItemFileTO> getHWItemImagesFiles(Long id);
 
-	public InputStream getHWItemImagesFileInputStream(HWItemTO hwItem, String name);
+	long getHWItemImagesFilesCount(Long id);
 
-	public boolean deleteHWItemImagesFile(HWItemTO hwItem, String name);
+	Path getHWItemImagesFilePath(Long id, String name);
+
+	InputStream getHWItemImagesFileInputStream(Long id, String name);
+
+	boolean deleteHWItemImagesFile(Long id, String name);
 
 	/*
 	 * Documents
 	 */
 
-	public boolean saveDocumentsFile(InputStream in, String fileName, HWItemTO item);
+	boolean saveDocumentsFile(InputStream in, String fileName, Long id);
 
-	public List<HWItemFileTO> getHWItemDocumentsFiles(HWItemTO itemDTO);
+	List<HWItemFileTO> getHWItemDocumentsFiles(Long id);
 
-	public InputStream getHWItemDocumentsFileInputStream(HWItemTO hwItem, String name);
+	long getHWItemDocumentsFilesCount(Long id);
 
-	public boolean deleteHWItemDocumentsFile(HWItemTO hwItem, String name);
+	Path getHWItemDocumentsFilePath(Long id, String name);
+
+	InputStream getHWItemDocumentsFileInputStream(Long id, String name);
+
+	boolean deleteHWItemDocumentsFile(Long id, String name);
 
 	/*
 	 * Icons
 	 */
 
-	public OutputStream createHWItemIconOutputStream(String filename, HWItemTO hwItem);
+	OutputStream createHWItemIconOutputStream(String filename, Long id);
 
-	public InputStream getHWItemIconFileInputStream(HWItemTO hwItem);
+	InputStream getHWItemIconFileInputStream(Long id);
 
-	public boolean deleteHWItemIconFile(HWItemTO hwItem);
+	boolean deleteHWItemIconFile(Long id);
 
 	/*
 	 * Item types
@@ -64,31 +73,31 @@ public interface HWService {
 	 *            to položky
 	 * @return id uložené položky
 	 */
-	public Long saveHWType(HWItemTypeTO hwItemTypeTO);
+	Long saveHWType(HWItemTypeTO hwItemTypeTO);
 
-	public Set<HWItemTypeTO> getAllHWTypes();
+	Set<HWItemTypeTO> getAllHWTypes();
 
-	public HWItemTypeTO getHWItemType(Long fixTypeId);
+	HWItemTypeTO getHWItemType(Long fixTypeId);
 
-	public void deleteHWItemType(Long id);
+	void deleteHWItemType(Long id);
 
 	/*
 	 * Items
 	 */
 
-	public Long saveHWItem(HWItemTO hwItemDTO);
+	Long saveHWItem(HWItemTO hwItemDTO);
 
-	public int countHWItems(HWFilterTO filter);
+	int countHWItems(HWFilterTO filter);
 
-	public List<HWItemOverviewTO> getAllHWItems();
+	List<HWItemOverviewTO> getAllHWItems();
 
-	public List<HWItemOverviewTO> getHWItems(HWFilterTO filter, Pageable pageable, OrderSpecifier<?>[] order);
+	List<HWItemOverviewTO> getHWItems(HWFilterTO filter, Pageable pageable, OrderSpecifier<?>[] order);
 
-	public List<HWItemOverviewTO> getHWItemsByTypes(Collection<String> types);
+	List<HWItemOverviewTO> getHWItemsByTypes(Collection<String> types);
 
-	public HWItemTO getHWItem(Long itemId);
+	HWItemTO getHWItem(Long itemId);
 
-	public List<HWItemOverviewTO> getAllParts(Long usedInItemId);
+	List<HWItemOverviewTO> getAllParts(Long usedInItemId);
 
 	/**
 	 * Získá všechny předměty, kromě předmětu jehož id je předáno jako parametr
@@ -97,17 +106,17 @@ public interface HWService {
 	 *            id předmětu, který má být vyloučen z přehledu
 	 * @return HW předměty
 	 */
-	public List<HWItemOverviewTO> getHWItemsAvailableForPart(Long itemId);
+	List<HWItemOverviewTO> getHWItemsAvailableForPart(Long itemId);
 
-	public void deleteHWItem(Long id);
+	void deleteHWItem(Long id);
 
 	/*
 	 * Service notes
 	 */
 
-	public void addServiceNote(ServiceNoteTO serviceNoteDTO, HWItemTO hwItemDTO);
+	void addServiceNote(ServiceNoteTO serviceNoteDTO, Long id);
 
-	public void modifyServiceNote(ServiceNoteTO serviceNoteDTO);
+	void modifyServiceNote(ServiceNoteTO serviceNoteDTO);
 
-	public void deleteServiceNote(ServiceNoteTO serviceNoteDTO, HWItemTO hwItemDTO);
+	void deleteServiceNote(ServiceNoteTO serviceNoteDTO, Long id);
 }

@@ -10,9 +10,9 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import com.vaadin.server.FileDownloader;
 import com.vaadin.server.Resource;
 import com.vaadin.server.StreamResource;
+import com.vaadin.shared.Registration;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
@@ -22,6 +22,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Panel;
@@ -39,10 +40,12 @@ import cz.gattserver.common.util.CZAmountFormatter;
 import cz.gattserver.common.util.MoneyFormatter;
 import cz.gattserver.grass3.exception.GrassException;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
+import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.hw.interfaces.HWItemFileTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.components.CreateButton;
 import cz.gattserver.grass3.ui.components.DeleteButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
@@ -64,23 +67,57 @@ public class HWItemDetailWindow extends WebWindow {
 
 	private static final String DEFAULT_NOTE_LABEL_VALUE = "- Zvolte servisní záznam -";
 	private static final String BORDERED_STYLE = "bordered";
+	private static final String STATE_BIND = "customState";
+	private static final String DATE_BIND = "customDate";
 
 	private transient HWService hwService;
 
 	private VerticalLayout hwImageLayout;
 
+	private Registration downloadBtnRegistration;
+
 	private TabSheet sheet;
 	private HWItemTO hwItem;
-	private FileDownloader downloader;
 	private Long hwItemId;
 
 	private Grid<ServiceNoteTO> serviceNotesGrid;
 	private Grid<HWItemFileTO> docsGrid;
 
-	private static final String STATE_BIND = "customState";
-	private static final String DATE_BIND = "customDate";
+	private GrassRequest grassRequest;
 
 	private ChangeListener changeListener;
+
+	public HWItemDetailWindow(Long hwItemId, GrassRequest grassRequest) {
+		super("Detail HW");
+		this.hwItemId = hwItemId;
+		this.grassRequest = grassRequest;
+
+		setWidth("900px");
+		setHeight("700px");
+
+		sheet = new TabSheet();
+		sheet.setSizeFull();
+		createFirstTab();
+		String zaznamyCaption = "Záznamy (" + hwItem.getServiceNotes().size() + ")";
+		String fotoCaption = "Fotografie (" + getHWService().getHWItemImagesFilesCount(hwItemId) + ")";
+		String dokumentaceCaption = "Dokumentace (" + getHWService().getHWItemDocumentsFilesCount(hwItemId) + ")";
+		sheet.addTab(createServiceNotesTab(), zaznamyCaption, ImageIcon.CLIPBOARD_16_ICON.createResource());
+		sheet.addTab(createPhotosTab(), fotoCaption, ImageIcon.IMG_16_ICON.createResource());
+		sheet.addTab(createDocsTab(), dokumentaceCaption, ImageIcon.DOCUMENT_16_ICON.createResource());
+
+		VerticalLayout layout = new VerticalLayout();
+		layout.setSpacing(false);
+		layout.setMargin(new MarginInfo(false, true, true, true));
+		layout.setSizeFull();
+
+		Label name = new Label("<h3>" + hwItem.getName() + "</h3>", ContentMode.HTML);
+		layout.addComponent(name);
+		layout.addComponent(sheet);
+		layout.setExpandRatio(sheet, 1);
+		setContent(layout);
+
+		center();
+	}
 
 	private HWService getHWService() {
 		if (hwService == null)
@@ -109,7 +146,7 @@ public class HWItemDetailWindow extends WebWindow {
 	 */
 	private boolean tryCreateHWImage(final HWItemTO hwItem) {
 		InputStream iconIs;
-		iconIs = getHWService().getHWItemIconFileInputStream(hwItem);
+		iconIs = getHWService().getHWItemIconFileInputStream(hwItemId);
 		if (iconIs == null)
 			return false;
 
@@ -129,14 +166,14 @@ public class HWItemDetailWindow extends WebWindow {
 
 		Button hwItemImageDetailBtn = new Button("Detail", e -> {
 			BufferedImage bimg = null;
-			InputStream is = getHWService().getHWItemIconFileInputStream(hwItem);
+			InputStream is = getHWService().getHWItemIconFileInputStream(hwItemId);
 			if (is != null)
 				try {
 					bimg = ImageIO.read(is);
 					int width = bimg.getWidth();
 					int height = bimg.getHeight();
 					UI.getCurrent().addWindow(new ImageDetailWindow(hwItem.getName(), width, height, new StreamResource(
-							() -> getHWService().getHWItemIconFileInputStream(hwItem), hwItem.getName())));
+							() -> getHWService().getHWItemIconFileInputStream(hwItemId), hwItem.getName())));
 				} catch (IOException ex) {
 					throw new GrassException("Při čtení souboru ikony HW položky došlo k chybě.", ex);
 				}
@@ -145,7 +182,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 		Button hwItemImageDeleteBtn = new DeleteButton(
 				e -> UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto HW položky ?", ev -> {
-					getHWService().deleteHWItemIconFile(hwItem);
+					getHWService().deleteHWItemIconFile(hwItemId);
 					createHWItemImageUpload(hwItem);
 				})));
 
@@ -162,7 +199,7 @@ public class HWItemDetailWindow extends WebWindow {
 	 */
 	private void createHWItemImageUpload(final HWItemTO hwItem) {
 		Upload upload = new Upload(null,
-				(String filename, String mimeType) -> getHWService().createHWItemIconOutputStream(filename, hwItem));
+				(String filename, String mimeType) -> getHWService().createHWItemIconOutputStream(filename, hwItemId));
 		upload.addSucceededListener(e -> tryCreateHWImage(hwItem));
 		upload.setButtonCaption("Vložit foto");
 
@@ -281,7 +318,7 @@ public class HWItemDetailWindow extends WebWindow {
 			usedInBtn.setStyleName(ValoTheme.BUTTON_LINK);
 			usedInBtn.addClickListener(e -> {
 				close();
-				UI.getCurrent().addWindow(new HWItemDetailWindow(hwItem.getUsedIn().getId()));
+				UI.getCurrent().addWindow(new HWItemDetailWindow(hwItem.getUsedIn().getId(), grassRequest));
 			});
 			winLayout.addComponent(usedInBtn, 1, 6, 4, 6);
 		}
@@ -297,7 +334,7 @@ public class HWItemDetailWindow extends WebWindow {
 		Label name = new Label("<h3>Součásti</h3>", ContentMode.HTML);
 		partsWrapperLayout.addComponent(name);
 
-		List<HWItemOverviewTO> parts = getHWService().getAllParts(hwItem.getId());
+		List<HWItemOverviewTO> parts = getHWService().getAllParts(hwItemId);
 		VerticalLayout partsLayout = new VerticalLayout();
 		partsLayout.setSpacing(false);
 		partsLayout.setMargin(true);
@@ -313,7 +350,7 @@ public class HWItemDetailWindow extends WebWindow {
 			partDetailBtn.addClickListener(e -> {
 				close();
 				HWItemTO detailTO = getHWService().getHWItem(part.getId());
-				UI.getCurrent().addWindow(new HWItemDetailWindow(detailTO.getId()));
+				UI.getCurrent().addWindow(new HWItemDetailWindow(detailTO.getId(), grassRequest));
 			});
 			partsLayout.addComponent(partDetailBtn);
 		}
@@ -345,7 +382,7 @@ public class HWItemDetailWindow extends WebWindow {
 				"Opravdu smazat '" + hwItem.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?",
 				ev -> {
 					try {
-						getHWService().deleteHWItem(hwItem.getId());
+						getHWService().deleteHWItem(hwItemId);
 						if (changeListener != null)
 							changeListener.onChange();
 						HWItemDetailWindow.this.close();
@@ -440,7 +477,7 @@ public class HWItemDetailWindow extends WebWindow {
 		 */
 		Button deleteNoteBtn = new DeleteGridButton<>("Smazat záznam", items -> {
 			ServiceNoteTO item = items.iterator().next();
-			getHWService().deleteServiceNote(item, hwItem);
+			getHWService().deleteServiceNote(item, hwItemId);
 			populateServiceNotesGrid();
 		}, serviceNotesGrid);
 
@@ -504,7 +541,7 @@ public class HWItemDetailWindow extends WebWindow {
 	}
 
 	private void createImagesList(GridLayout listLayout) {
-		for (final HWItemFileTO file : getHWService().getHWItemImagesFiles(hwItem)) {
+		for (final HWItemFileTO file : getHWService().getHWItemImagesFiles(hwItemId)) {
 
 			VerticalLayout imageLayout = new VerticalLayout();
 			listLayout.addComponent(imageLayout);
@@ -512,7 +549,7 @@ public class HWItemDetailWindow extends WebWindow {
 			imageLayout.setMargin(false);
 
 			Resource resource = new StreamResource(
-					() -> getHWService().getHWItemImagesFileInputStream(hwItem, file.getName()), file.getName());
+					() -> getHWService().getHWItemImagesFileInputStream(hwItemId, file.getName()), file.getName());
 			Embedded img = new Embedded(null, resource);
 			img.addStyleName("thumbnail-200");
 			imageLayout.addComponent(img);
@@ -523,14 +560,13 @@ public class HWItemDetailWindow extends WebWindow {
 			Button hwItemImageDetailBtn = new Button("Detail", e -> {
 				BufferedImage bimg = null;
 				try {
-					bimg = ImageIO.read(getHWService().getHWItemImagesFileInputStream(hwItem, file.getName()));
+					bimg = ImageIO.read(getHWService().getHWItemImagesFileInputStream(hwItemId, file.getName()));
 					int width = bimg.getWidth();
 					int height = bimg.getHeight();
 					UI.getCurrent()
-							.addWindow(new ImageDetailWindow(hwItem.getName(), width, height,
-									new StreamResource(
-											() -> getHWService().getHWItemImagesFileInputStream(hwItem, file.getName()),
-											file.getName())));
+							.addWindow(new ImageDetailWindow(hwItem.getName(), width, height, new StreamResource(
+									() -> getHWService().getHWItemImagesFileInputStream(hwItemId, file.getName()),
+									file.getName())));
 				} catch (IOException ex) {
 					throw new SystemException("Při čtení souboru '" + file.getName() + "' došlo k chybě.", ex);
 				}
@@ -538,7 +574,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 			Button hwItemImageDeleteBtn = new DeleteButton(
 					e -> UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto HW položky ?", ev -> {
-						getHWService().deleteHWItemImagesFile(hwItem, file.getName());
+						getHWService().deleteHWItemImagesFile(hwItemId, file.getName());
 
 						// refresh listu
 						listLayout.removeAllComponents();
@@ -557,7 +593,7 @@ public class HWItemDetailWindow extends WebWindow {
 	}
 
 	private void populateDocsGrid() {
-		docsGrid.setItems(getHWService().getHWItemDocumentsFiles(hwItem));
+		docsGrid.setItems(getHWService().getHWItemDocumentsFiles(hwItemId));
 		docsGrid.getDataProvider().refreshAll();
 		docsGrid.deselectAll();
 	}
@@ -586,7 +622,7 @@ public class HWItemDetailWindow extends WebWindow {
 			@Override
 			public void fileUploadFinished(InputStream in, String fileName, String mime, long size,
 					int filesLeftInQueue) {
-				getHWService().saveDocumentsFile(in, fileName, hwItem);
+				getHWService().saveDocumentsFile(in, fileName, hwItemId);
 
 				// refresh listu
 				populateDocsGrid();
@@ -603,24 +639,24 @@ public class HWItemDetailWindow extends WebWindow {
 
 		final Button hwItemDocumentDeleteBtn = new DeleteGridButton<>("Smazat", items -> {
 			HWItemFileTO item = items.iterator().next();
-			getHWService().deleteHWItemDocumentsFile(hwItem, item.getName());
+			getHWService().deleteHWItemDocumentsFile(hwItemId, item.getName());
 			populateDocsGrid();
 		}, docsGrid);
 		uploadWrapperLayout.addComponent(hwItemDocumentDeleteBtn);
 
+		docsGrid.addItemClickListener(e -> {
+			if (e.getMouseEventDetails().isDoubleClick())
+				downloadDocument(e.getItem());
+		});
+
 		docsGrid.addSelectionListener(selection -> {
-			if (downloader != null) {
-				downloader.remove();
-				downloader = null;
-			}
+			if (downloadBtnRegistration != null)
+				downloadBtnRegistration.remove();
 			if (selection.getFirstSelectedItem().isPresent()) {
 				HWItemFileTO item = selection.getFirstSelectedItem().get();
 				hwItemDocumentDeleteBtn.setEnabled(true);
 				hwItemDocumentDownloadBtn.setEnabled(true);
-				downloader = new FileDownloader(new StreamResource(
-						() -> getHWService().getHWItemDocumentsFileInputStream(hwItem, item.getName()),
-						item.getName()));
-				downloader.extend(hwItemDocumentDownloadBtn);
+				downloadBtnRegistration = hwItemDocumentDownloadBtn.addClickListener(e -> downloadDocument(item));
 			} else {
 				hwItemDocumentDownloadBtn.setEnabled(false);
 				hwItemDocumentDeleteBtn.setEnabled(false);
@@ -630,32 +666,9 @@ public class HWItemDetailWindow extends WebWindow {
 		return wrapperLayout;
 	}
 
-	public HWItemDetailWindow(Long hwItemId) {
-		super("Detail HW");
-		this.hwItemId = hwItemId;
-
-		setWidth("900px");
-		setHeight("700px");
-
-		sheet = new TabSheet();
-		sheet.setSizeFull();
-		createFirstTab();
-		sheet.addTab(createServiceNotesTab(), "Záznamy", ImageIcon.CLIPBOARD_16_ICON.createResource());
-		sheet.addTab(createPhotosTab(), "Fotografie", ImageIcon.IMG_16_ICON.createResource());
-		sheet.addTab(createDocsTab(), "Dokumentace", ImageIcon.DOCUMENT_16_ICON.createResource());
-
-		VerticalLayout layout = new VerticalLayout();
-		layout.setSpacing(false);
-		layout.setMargin(new MarginInfo(false, true, true, true));
-		layout.setSizeFull();
-
-		Label name = new Label("<h3>" + hwItem.getName() + "</h3>", ContentMode.HTML);
-		layout.addComponent(name);
-		layout.addComponent(sheet);
-		layout.setExpandRatio(sheet, 1);
-		setContent(layout);
-
-		center();
+	private void downloadDocument(HWItemFileTO item) {
+		JavaScript.eval("window.open('" + grassRequest.getContextRoot() + "/" + HWConfiguration.HW_PATH + "/" + hwItemId
+				+ "/doc/" + item.getName() + "', '_blank');");
 	}
 
 	private void createFirstTab() {

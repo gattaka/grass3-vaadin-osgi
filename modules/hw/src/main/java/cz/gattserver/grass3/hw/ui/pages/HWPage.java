@@ -28,7 +28,7 @@ public class HWPage extends OneColumnPage {
 		TabSheet tabSheet = new TabSheet();
 		marginlayout.addComponent(tabSheet);
 
-		tabSheet.addTab(new HWItemsTab(), "Přehled");
+		tabSheet.addTab(new HWItemsTab(getRequest()), "Přehled");
 		tabSheet.addTab(new HWTypesTab(), "Typy zařízení");
 
 		return layout;

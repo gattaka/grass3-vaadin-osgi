@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import javax.imageio.ImageIO;
-
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -231,15 +229,13 @@ public class PGServiceImpl implements PGService {
 				progress++;
 
 				// vytvoř slideshow verzi
-				try (InputStream is = Files.newInputStream(file)) {
-					BufferedImage image = ImageIO.read(is);
-					if (image.getWidth() > 900 || image.getHeight() > 700) {
-						try {
-							PGUtils.resizeImage(file, outputFile, 900, 700);
-						} catch (Exception e) {
-							logger.error("Při zpracování slideshow pro '{}' došlo k chybě",
-									file.getFileName().toString(), e);
-						}
+				BufferedImage image = PGUtils.getImageFromFile(file);
+				if (image.getWidth() > 900 || image.getHeight() > 700) {
+					try {
+						PGUtils.resizeImage(file, outputFile, 900, 700);
+					} catch (Exception e) {
+						logger.error("Při zpracování slideshow pro '{}' došlo k chybě", file.getFileName().toString(),
+								e);
 					}
 				}
 			}

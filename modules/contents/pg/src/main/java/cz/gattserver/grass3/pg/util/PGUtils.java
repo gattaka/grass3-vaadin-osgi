@@ -7,6 +7,10 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import javax.imageio.ImageIO;
+
+import at.dhyan.open_imaging.GifDecoder;
+import at.dhyan.open_imaging.GifDecoder.GifImage;
 import net.coobird.thumbnailator.Thumbnails;
 
 public class PGUtils {
@@ -39,7 +43,24 @@ public class PGUtils {
 			throws IOException {
 		try (InputStream is = Files.newInputStream(inputFile);
 				OutputStream os = Files.newOutputStream(destinationFile)) {
-			Thumbnails.of(is).size(maxWidth, maxHeight).toOutputStream(os);
+			if (inputFile.toString().toLowerCase().endsWith(".gif")) {
+				GifImage gifImage = GifDecoder.read(is);
+				BufferedImage image = gifImage.getFrame(0);
+				Thumbnails.of(image).outputFormat("png").size(maxWidth, maxHeight).toOutputStream(os);
+			} else {
+				Thumbnails.of(is).outputFormat("png").size(maxWidth, maxHeight).toOutputStream(os);
+			}
+		}
+	}
+
+	public static BufferedImage getImageFromFile(Path inputFile) throws IOException {
+		try (InputStream is = Files.newInputStream(inputFile)) {
+			if (inputFile.toString().toLowerCase().endsWith(".gif")) {
+				GifImage gifImage = GifDecoder.read(is);
+				return gifImage.getFrame(0);
+			} else {
+				return ImageIO.read(is);
+			}
 		}
 	}
 

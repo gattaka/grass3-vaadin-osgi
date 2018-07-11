@@ -183,6 +183,10 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Files.copy(this.getClass().getResourceAsStream("animatedSmall.gif"), animatedSmallFile);
 		assertTrue(Files.exists(animatedSmallFile));
 
+		Path animatedSmallFlawedFile = galleryDir.resolve("01b.gif");
+		Files.copy(this.getClass().getResourceAsStream("animatedSmallFlawed.gif"), animatedSmallFlawedFile);
+		assertTrue(Files.exists(animatedSmallFlawedFile));
+
 		Path largeFile = galleryDir.resolve("02.jpg");
 		Files.copy(this.getClass().getResourceAsStream("large.jpg"), largeFile);
 		assertTrue(Files.exists(largeFile));
@@ -220,7 +224,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PGConfiguration conf = new PGConfiguration();
 		configurationService.loadConfiguration(conf);
 
-		double acceptableDifference = 0.05; // 5%
+		double acceptableDifference = 0.1; // 10%
 
 		// Animated small
 		Path animatedSmallMiniature = galleryDir.resolve(conf.getMiniaturesDir()).resolve("01.gif");
@@ -230,6 +234,15 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		assertFalse(Files.exists(animatedSmallSlideshow));
 		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(animatedSmallMiniature),
 				this.getClass().getResourceAsStream("animatedSmallMiniature.gif")) < acceptableDifference);
+
+		// Animated small (flawed)
+		Path animatedSmallFlawedMiniature = galleryDir.resolve(conf.getMiniaturesDir()).resolve("01b.gif");
+		Path animatedSmallFlawedSlideshow = galleryDir.resolve(conf.getSlideshowDir()).resolve("01b.gif");
+		assertTrue(Files.exists(animatedSmallFlawedFile));
+		assertTrue(Files.exists(animatedSmallFlawedMiniature));
+		assertFalse(Files.exists(animatedSmallFlawedSlideshow));
+		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(animatedSmallFlawedMiniature),
+				this.getClass().getResourceAsStream("animatedSmallFlawedMiniature.gif")) < acceptableDifference);
 
 		// Large
 		Path largeMiniature = galleryDir.resolve(conf.getMiniaturesDir()).resolve("02.jpg");
@@ -299,6 +312,10 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 
 		eventBus.unsubscribe(eventsHandler);
 
+		Path animatedSmallFlawedFile = galleryDir.resolve("01b.gif");
+		Files.copy(this.getClass().getResourceAsStream("animatedSmallFlawed.gif"), animatedSmallFlawedFile);
+		assertTrue(Files.exists(animatedSmallFlawedFile));
+
 		Path largeFile = galleryDir.resolve("02.jpg");
 		Files.copy(this.getClass().getResourceAsStream("large.jpg"), largeFile);
 		assertTrue(Files.exists(largeFile));
@@ -324,7 +341,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PGConfiguration conf = new PGConfiguration();
 		configurationService.loadConfiguration(conf);
 
-		double acceptableDifference = 0.05; // 5%
+		double acceptableDifference = 0.1; // 10%
 
 		// Animated small
 		Path animatedSmallMiniature = galleryDir.resolve(conf.getMiniaturesDir()).resolve("01.gif");
@@ -334,6 +351,15 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		assertFalse(Files.exists(animatedSmallSlideshow));
 		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(animatedSmallMiniature),
 				this.getClass().getResourceAsStream("animatedSmallMiniature.gif")) < acceptableDifference);
+
+		// Animated small (flawed)
+		Path animatedSmallFlawedMiniature = galleryDir.resolve(conf.getMiniaturesDir()).resolve("01b.gif");
+		Path animatedSmallFlawedSlideshow = galleryDir.resolve(conf.getSlideshowDir()).resolve("01b.gif");
+		assertTrue(Files.exists(animatedSmallFlawedFile));
+		assertTrue(Files.exists(animatedSmallFlawedMiniature));
+		assertFalse(Files.exists(animatedSmallFlawedSlideshow));
+		assertTrue(ImageComparator.isEqualAsImagePixels(Files.newInputStream(animatedSmallFlawedMiniature),
+				this.getClass().getResourceAsStream("animatedSmallFlawedMiniature.gif")) < acceptableDifference);
 
 		// Large
 		Path largeMiniature = galleryDir.resolve(conf.getMiniaturesDir()).resolve("02.jpg");
@@ -440,6 +466,9 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 	public void testGetAllPhotogalleriesForREST() throws IOException, InterruptedException, ExecutionException {
 		Path root = prepareFS(fileSystemService.getFileSystem());
 
+		List<PhotogalleryTO> checkList = pgService.getAllPhotogalleriesForSearch();
+		checkList.size();
+
 		Long userId1 = coreMockService.createMockUser(1);
 		Long userId2 = coreMockService.createMockUser(2);
 		Long nodeId1 = coreMockService.createMockRootNode(1);
@@ -448,7 +477,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Long id1 = createMockGallery(root, userId1, nodeId1, 1, true);
 		Long id2 = createMockGallery(root, userId1, nodeId2, 2, true);
 		Long id3 = createMockGallery(root, userId2, nodeId1, 3, true);
-		createMockGallery(root, userId2, nodeId2, 4, false);
+		Long id4 = createMockGallery(root, userId2, nodeId2, 4, false);
 
 		int count = pgService.countAllPhotogalleriesForREST(userId1);
 		assertEquals(3, count);
@@ -464,6 +493,23 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		assertEquals(1, list.size());
 		assertEquals("Test galerie1", list.get(0).getName());
 		assertEquals(id1, list.get(0).getId());
+
+		count = pgService.countAllPhotogalleriesForREST(userId2);
+		assertEquals(4, count);
+
+		list = pgService.getAllPhotogalleriesForREST(userId2, 0, 2);
+		assertEquals(2, list.size());
+		assertEquals("Test galerie4", list.get(0).getName());
+		assertEquals(id4, list.get(0).getId());
+		assertEquals("Test galerie3", list.get(1).getName());
+		assertEquals(id3, list.get(1).getId());
+
+		list = pgService.getAllPhotogalleriesForREST(userId2, 1, 2);
+		assertEquals(2, list.size());
+		assertEquals("Test galerie2", list.get(0).getName());
+		assertEquals(id2, list.get(0).getId());
+		assertEquals("Test galerie1", list.get(1).getName());
+		assertEquals(id1, list.get(1).getId());
 	}
 
 	@Test

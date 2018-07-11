@@ -13,13 +13,13 @@ public interface PhotogalleryRepository extends JpaRepository<Photogallery, Long
 	@Query(value = "select count(p) from PHOTOGALLERY p where p.contentNode.publicated = true or p.contentNode.author.id = ?1")
 	public int countByUserAccess(Long userId);
 
-	@Query(value = "select p from PHOTOGALLERY p where p.contentNode.publicated = true or p.contentNode.author.id = ?1 order by p.contentNode.creationDate desc")
+	@Query(value = "select p from PHOTOGALLERY p where p.contentNode.publicated = true or p.contentNode.author.id = ?1 order by p.id desc")
 	public List<Photogallery> findByUserAccess(Long userId, Pageable pageable);
 
 	@Query(value = "select count(p) from PHOTOGALLERY p where p.contentNode.publicated = true")
 	public int countByAnonAccess();
 
-	@Query(value = "select p from PHOTOGALLERY p where p.contentNode.publicated = true order by p.contentNode.creationDate desc")
+	@Query(value = "select p from PHOTOGALLERY p where p.contentNode.publicated = true order by p.id desc")
 	public List<Photogallery> findByAnonAccess(Pageable pageable);
 
 	@Query(value = "select p.photogalleryPath from PHOTOGALLERY p where p.id = ?1")

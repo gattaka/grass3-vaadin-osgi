@@ -132,6 +132,13 @@
 			<artifactId>songs</artifactId>
 			<version>3.0.5-SNAPSHOT</version>
 		</dependency>
+		
+		<!-- nápoje -->
+		<dependency>
+			<groupId>cz.gattserver.grass3</groupId>
+			<artifactId>drinks</artifactId>
+			<version>3.0.5-SNAPSHOT</version>
+		</dependency>
 
 	</dependencies>
 

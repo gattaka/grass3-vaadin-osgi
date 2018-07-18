@@ -99,10 +99,12 @@ public class DrinksTab extends VerticalLayout {
 		// Typ
 		ComboBox<DrinkType> typeColumnField = new ComboBox<>(null, Arrays.asList(DrinkType.values()));
 		typeColumnField.setWidth("100%");
+		typeColumnField.addStyleName(ValoTheme.COMBOBOX_TINY);
 		typeColumnField.addValueChangeListener(e -> {
 			filterTO.setType(e.getValue());
 			loadDrinks();
 		});
+		typeColumnField.setItemCaptionGenerator(DrinkType::getCaption);
 		filteringHeader.getCell(authorColumn).setComponent(typeColumnField);
 
 		loadDrinks();

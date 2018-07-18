@@ -10,7 +10,7 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 public class DrinksPageFactory extends AbstractPageFactory {
 
 	public DrinksPageFactory() {
-		super("songs");
+		super("drinks");
 	}
 
 	@Override

@@ -24,7 +24,7 @@ public class DrinksPage extends OneColumnPage {
 		layout.addComponent(tabSheet);
 
 		DrinksTab tt = new DrinksTab(getRequest());
-		tabSheet.addTab(tt, "Písničky");
+		tabSheet.addTab(tt, "Nápoje");
 
 		String token = getRequest().getAnalyzer().getNextPathToken();
 		if (token != null) {

@@ -15,9 +15,9 @@ import cz.gattserver.grass3.songs.model.dao.ChordsRepository;
 import cz.gattserver.grass3.songs.model.dao.SongsRepository;
 import cz.gattserver.grass3.songs.model.domain.Chord;
 import cz.gattserver.grass3.songs.model.domain.Song;
-import cz.gattserver.grass3.songs.model.dto.SongTO;
-import cz.gattserver.grass3.songs.model.dto.ChordTO;
-import cz.gattserver.grass3.songs.model.dto.SongOverviewTO;
+import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
+import cz.gattserver.grass3.songs.model.interfaces.SongOverviewTO;
+import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 import cz.gattserver.grass3.songs.util.Mapper;
 
 @Transactional
@@ -33,6 +33,7 @@ public class SongsFacadeImpl implements SongsFacade {
 	@Autowired
 	private ChordsRepository chordsRepository;
 
+	@Override
 	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO) {
 		List<Song> songs = songsRepository.findAllOrderByName(filterTO);
 		if (songs == null)
@@ -40,6 +41,7 @@ public class SongsFacadeImpl implements SongsFacade {
 		return mapper.mapSongs(songs);
 	}
 
+	@Override
 	public SongTO getSongById(Long id) {
 		Song song = songsRepository.findOne(id);
 		if (song == null)
@@ -47,6 +49,7 @@ public class SongsFacadeImpl implements SongsFacade {
 		return mapper.mapSong(song);
 	}
 
+	@Override
 	public SongTO saveSong(SongTO to) {
 		Song song = mapper.mapSong(to);
 		song.setText(eolToBreakline(to.getText()));
@@ -54,10 +57,12 @@ public class SongsFacadeImpl implements SongsFacade {
 		return mapper.mapSong(song);
 	}
 
+	@Override
 	public String breaklineToEol(String text) {
 		return text.replace("<br/>", "" + '\n').replace("<br>", "" + '\n');
 	}
 
+	@Override
 	public String eolToBreakline(String text) {
 		text = text.replace("\r\n", "<br/>");
 		return text.replace("\n", "<br/>");

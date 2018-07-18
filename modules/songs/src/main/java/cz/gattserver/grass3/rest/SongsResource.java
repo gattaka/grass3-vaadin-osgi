@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cz.gattserver.grass3.songs.facades.SongsFacade;
-import cz.gattserver.grass3.songs.model.dto.SongTO;
-import cz.gattserver.grass3.songs.model.dto.SongOverviewTO;
+import cz.gattserver.grass3.songs.model.interfaces.SongOverviewTO;
+import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 
 @Controller
 @RequestMapping("/songs")

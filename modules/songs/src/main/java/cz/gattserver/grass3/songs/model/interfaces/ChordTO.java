@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.songs.model.dto;
+package cz.gattserver.grass3.songs.model.interfaces;
 
 import cz.gattserver.grass3.songs.model.domain.Instrument;
 

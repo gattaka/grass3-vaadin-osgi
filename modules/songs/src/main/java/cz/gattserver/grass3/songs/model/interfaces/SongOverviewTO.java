@@ -1,8 +1,8 @@
-package cz.gattserver.grass3.songs.model.dto;
+package cz.gattserver.grass3.songs.model.interfaces;
 
 import cz.gattserver.grass3.songs.model.domain.Song;
 
-public class SongTO {
+public class SongOverviewTO {
 
 	/**
 	 * Název
@@ -20,24 +20,18 @@ public class SongTO {
 	private Integer year;
 
 	/**
-	 * Text
-	 */
-	private String text;
-
-	/**
 	 * DB id
 	 */
 	private Long id;
 
-	public SongTO() {
+	public SongOverviewTO() {
 	}
 
-	public SongTO(String name, String author, Integer year, String text, Long id) {
+	public SongOverviewTO(String name, String author, Integer year, Long id) {
 		super();
 		this.name = name;
 		this.author = author;
 		this.year = year;
-		this.text = text;
 		this.id = id;
 	}
 
@@ -83,14 +77,6 @@ public class SongTO {
 
 	public void setYear(Integer year) {
 		this.year = year;
-	}
-
-	public String getText() {
-		return text;
-	}
-
-	public void setText(String text) {
-		this.text = text;
 	}
 
 }

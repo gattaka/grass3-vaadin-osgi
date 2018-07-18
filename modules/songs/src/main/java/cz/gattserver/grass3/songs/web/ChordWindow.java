@@ -17,7 +17,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.songs.model.domain.Instrument;
-import cz.gattserver.grass3.songs.model.dto.ChordTO;
+import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.ui.components.CreateButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
 import cz.gattserver.web.common.ui.window.ErrorWindow;

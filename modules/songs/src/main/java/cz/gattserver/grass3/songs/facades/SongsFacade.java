@@ -3,9 +3,9 @@ package cz.gattserver.grass3.songs.facades;
 import java.io.InputStream;
 import java.util.List;
 
-import cz.gattserver.grass3.songs.model.dto.SongTO;
-import cz.gattserver.grass3.songs.model.dto.ChordTO;
-import cz.gattserver.grass3.songs.model.dto.SongOverviewTO;
+import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
+import cz.gattserver.grass3.songs.model.interfaces.SongOverviewTO;
+import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 
 public interface SongsFacade {
 

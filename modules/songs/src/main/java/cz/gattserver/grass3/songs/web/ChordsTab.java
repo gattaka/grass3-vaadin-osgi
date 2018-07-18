@@ -33,7 +33,7 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.facades.SongsFacade;
 import cz.gattserver.grass3.songs.model.domain.Instrument;
-import cz.gattserver.grass3.songs.model.dto.ChordTO;
+import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.GridButton;

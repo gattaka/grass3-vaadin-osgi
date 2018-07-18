@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.songs.model.domain.Chord;
 import cz.gattserver.grass3.songs.model.domain.Song;
-import cz.gattserver.grass3.songs.model.dto.SongTO;
-import cz.gattserver.grass3.songs.model.dto.ChordTO;
-import cz.gattserver.grass3.songs.model.dto.SongOverviewTO;
+import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
+import cz.gattserver.grass3.songs.model.interfaces.SongOverviewTO;
+import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 
 /**
  * <b>Mapper pro různé typy.</b>

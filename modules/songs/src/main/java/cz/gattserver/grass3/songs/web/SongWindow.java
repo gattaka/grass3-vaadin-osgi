@@ -14,7 +14,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
 import cz.gattserver.grass3.songs.facades.SongsFacade;
-import cz.gattserver.grass3.songs.model.dto.SongTO;
+import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 import cz.gattserver.grass3.ui.components.CreateButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
 import cz.gattserver.web.common.ui.window.ErrorWindow;

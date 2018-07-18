@@ -14,7 +14,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import cz.gattserver.grass3.model.util.PredicateBuilder;
 import cz.gattserver.grass3.songs.model.domain.QSong;
 import cz.gattserver.grass3.songs.model.domain.Song;
-import cz.gattserver.grass3.songs.model.dto.SongOverviewTO;
+import cz.gattserver.grass3.songs.model.interfaces.SongOverviewTO;
 
 @Repository
 public class SongsRepositoryCustomImpl implements SongsRepositoryCustom {

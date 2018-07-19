@@ -82,6 +82,8 @@ public abstract class DrinkWindow extends WebWindow {
 					});
 					imageLayout.addComponent(deleteButton);
 					imageLayout.setComponentAlignment(deleteButton, Alignment.MIDDLE_CENTER);
+					DrinkWindow.this.center();
+					DrinkWindow.this.setWidth(null);
 				} catch (IOException e) {
 					String err = "Nezdařilo se nahrát obrázek nápoje";
 					logger.error(err, e);
@@ -98,27 +100,25 @@ public abstract class DrinkWindow extends WebWindow {
 		final TextField nameField = new TextField("Název");
 		binder.forField(nameField).asRequired().bind(DrinkTO::getName, DrinkTO::setName);
 		nameField.setWidth("100%");
-		addComponent(nameField);
 
 		final ComboBox<DrinkType> typeField = new ComboBox<>("Typ", Arrays.asList(DrinkType.values()));
 		typeField.setItemCaptionGenerator(DrinkType::getCaption);
-		binder.forField(typeField).bind(DrinkTO::getType, DrinkTO::setTyp);
+		binder.forField(typeField).asRequired().bind(DrinkTO::getType, DrinkTO::setTyp);
 		typeField.setWidth("100%");
 
 		final RatingStars ratingStars = new RatingStars();
-		binder.forField(ratingStars).bind(DrinkTO::getRating, DrinkTO::setRating);
+		binder.forField(ratingStars).asRequired().bind(DrinkTO::getRating, DrinkTO::setRating);
 		ratingStars.setAnimated(false);
 		ratingStars.setCaption("Hodnocení");
-		addComponent(ratingStars);
 
-		HorizontalLayout ratingTypeLayout = new HorizontalLayout(typeField, ratingStars);
-		ratingTypeLayout.setSizeFull();
-		addComponent(ratingTypeLayout);
+		HorizontalLayout infoLayout = new HorizontalLayout(nameField, typeField, ratingStars);
+		infoLayout.setSizeFull();
+		addComponent(infoLayout);
 
 		final TextArea descriptionField = new TextArea("Popis");
 		binder.forField(descriptionField).asRequired().bind(DrinkTO::getDescription, DrinkTO::setDescription);
 		descriptionField.setWidth("100%");
-		descriptionField.setHeight("200px");
+		descriptionField.setHeight("100px");
 		addComponent(descriptionField);
 
 		Button b;
@@ -136,6 +136,7 @@ public abstract class DrinkWindow extends WebWindow {
 		try {
 			DrinkTO writeTO = originalTO == null ? new DrinkTO() : originalTO;
 			binder.writeBean(writeTO);
+			writeTO.setImage(binder.getBean().getImage());
 			onSave(writeTO);
 			close();
 		} catch (ValidationException ve) {

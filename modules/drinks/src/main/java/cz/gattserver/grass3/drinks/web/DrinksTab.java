@@ -1,19 +1,29 @@
 package cz.gattserver.grass3.drinks.web;
 
+import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.vaadin.teemu.ratingstars.RatingStars;
 
 import com.vaadin.server.Page;
+import com.vaadin.server.StreamResource;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.grid.ScrollDestination;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
@@ -23,6 +33,8 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderRow;
+import com.vaadin.ui.renderers.ComponentRenderer;
+import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
 import cz.gattserver.grass3.drinks.facades.DrinksFacade;
@@ -38,6 +50,7 @@ import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.H2Label;
+import cz.gattserver.web.common.ui.ImageIcon;
 
 public class DrinksTab extends VerticalLayout {
 
@@ -56,8 +69,7 @@ public class DrinksTab extends VerticalLayout {
 
 	private Grid<DrinkOverviewTO> grid;
 	private Label nameLabel;
-	private Label typeLabel;
-	private Label ratingLabel;
+	private Embedded image;
 	private Label descriptionLabel;
 
 	private DrinkTO choosenDrink;
@@ -78,10 +90,15 @@ public class DrinksTab extends VerticalLayout {
 
 		grid = new Grid<>(null, drinks);
 		Column<DrinkOverviewTO, String> nazevColumn = grid.addColumn(DrinkOverviewTO::getName).setCaption("Název");
-		Column<DrinkOverviewTO, DrinkType> authorColumn = grid.addColumn(DrinkOverviewTO::getType).setCaption("Typ")
-				.setWidth(150);
-		grid.addColumn(DrinkOverviewTO::getRating).setCaption("Hodnocení");
-		grid.setWidth("398px");
+		Column<DrinkOverviewTO, DrinkType> authorColumn = grid.addColumn(DrinkOverviewTO::getType)
+				.setRenderer(DrinkType::getCaption, new TextRenderer()).setCaption("Typ").setWidth(100);
+		grid.addColumn(to -> {
+			RatingStars rs = new RatingStars();
+			rs.setValue(to.getRating());
+			rs.setReadOnly(true);
+			return rs;
+		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení");
+		grid.setWidth("438px");
 		grid.setHeight("600px");
 		mainLayout.addComponent(grid);
 
@@ -119,7 +136,7 @@ public class DrinksTab extends VerticalLayout {
 		VerticalLayout contentLayout = new VerticalLayout();
 
 		Panel panel = new Panel(contentLayout);
-		panel.setWidth("560px");
+		panel.setWidth("520px");
 		panel.setHeight("100%");
 		mainLayout.addComponent(panel);
 		mainLayout.setExpandRatio(panel, 1);
@@ -127,15 +144,12 @@ public class DrinksTab extends VerticalLayout {
 		nameLabel = new H2Label();
 		contentLayout.addComponent(nameLabel);
 
-		typeLabel = new Label();
-		contentLayout.addComponent(typeLabel);
+		image = new Embedded(null, ImageIcon.BUBBLE_16_ICON.createResource());
+		contentLayout.addComponent(image);
+		contentLayout.setComponentAlignment(image, Alignment.TOP_CENTER);
 
 		descriptionLabel = new Label();
 		contentLayout.addComponent(descriptionLabel);
-
-		ratingLabel = new Label();
-		ratingLabel.setWidth("520px");
-		contentLayout.addComponent(ratingLabel);
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		btnLayout.setSpacing(true);
@@ -191,20 +205,21 @@ public class DrinksTab extends VerticalLayout {
 	}
 
 	private void showDetail(DrinkTO choosenDrink) {
+		this.choosenDrink = choosenDrink;
 		if (choosenDrink == null) {
 			nameLabel.setValue(null);
-			ratingLabel.setValue(null);
 			descriptionLabel.setValue(null);
-			typeLabel.setValue(null);
-			this.choosenDrink = null;
 			String currentURL = request.getContextRoot() + "/" + pageFactory.getPageName();
 			Page.getCurrent().pushState(currentURL);
 		} else {
 			nameLabel.setValue(choosenDrink.getName());
-			ratingLabel.setValue(String.valueOf(choosenDrink.getRating()));
-			typeLabel.setValue(choosenDrink.getType().getCaption());
+			byte[] co = choosenDrink.getImage();
+			// https://vaadin.com/forum/thread/260778
+			String name = choosenDrink.getName()
+					+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+			image.setSource(new StreamResource(() -> new ByteArrayInputStream(co), name));
+			image.markAsDirty();
 			descriptionLabel.setValue(choosenDrink.getDescription());
-			this.choosenDrink = choosenDrink;
 
 			String currentURL;
 			try {

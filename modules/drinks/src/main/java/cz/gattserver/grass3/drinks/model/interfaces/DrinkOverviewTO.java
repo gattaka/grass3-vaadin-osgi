@@ -19,12 +19,12 @@ public class DrinkOverviewTO {
 	/**
 	 * Hodnocení
 	 */
-	private Integer rating;
+	private Double rating;
 
 	public DrinkOverviewTO() {
 	}
 
-	public DrinkOverviewTO(Long id, String name, DrinkType type, Integer rating) {
+	public DrinkOverviewTO(Long id, String name, DrinkType type, Double rating) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -56,11 +56,11 @@ public class DrinkOverviewTO {
 		this.name = name;
 	}
 
-	public Integer getRating() {
+	public Double getRating() {
 		return rating;
 	}
 
-	public void setRating(Integer rating) {
+	public void setRating(Double rating) {
 		this.rating = rating;
 	}
 

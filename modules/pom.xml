@@ -22,6 +22,7 @@
 		<module>recipes</module>
 		<module>language</module>
 		<module>songs</module>
+		<module>drinks</module>
 	</modules>
 
 </project>

@@ -32,7 +32,7 @@ public class Drink {
 	/**
 	 * Hodnocení
 	 */
-	private Integer rating;
+	private Double rating;
 
 	/**
 	 * Obrázek
@@ -70,11 +70,11 @@ public class Drink {
 		this.type = type;
 	}
 
-	public Integer getRating() {
+	public Double getRating() {
 		return rating;
 	}
 
-	public void setRating(Integer rating) {
+	public void setRating(Double rating) {
 		this.rating = rating;
 	}
 

@@ -3,13 +3,10 @@ package cz.gattserver.grass3.drinks.web;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -144,7 +141,9 @@ public class DrinksTab extends VerticalLayout {
 		nameLabel = new H2Label();
 		contentLayout.addComponent(nameLabel);
 
+		// musí tady něco být nahrané, jinak to pak nejde měnit (WTF?!)
 		image = new Embedded(null, ImageIcon.BUBBLE_16_ICON.createResource());
+		image.setVisible(false);
 		contentLayout.addComponent(image);
 		contentLayout.setComponentAlignment(image, Alignment.TOP_CENTER);
 
@@ -209,16 +208,22 @@ public class DrinksTab extends VerticalLayout {
 		if (choosenDrink == null) {
 			nameLabel.setValue(null);
 			descriptionLabel.setValue(null);
+			image.setVisible(false);
 			String currentURL = request.getContextRoot() + "/" + pageFactory.getPageName();
 			Page.getCurrent().pushState(currentURL);
 		} else {
 			nameLabel.setValue(choosenDrink.getName());
 			byte[] co = choosenDrink.getImage();
-			// https://vaadin.com/forum/thread/260778
-			String name = choosenDrink.getName()
-					+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-			image.setSource(new StreamResource(() -> new ByteArrayInputStream(co), name));
-			image.markAsDirty();
+			if (co != null) {
+				// https://vaadin.com/forum/thread/260778
+				String name = choosenDrink.getName()
+						+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+				image.setVisible(true);
+				image.setSource(new StreamResource(() -> new ByteArrayInputStream(co), name));
+				image.markAsDirty();
+			} else {
+				image.setVisible(false);
+			}
 			descriptionLabel.setValue(choosenDrink.getDescription());
 
 			String currentURL;

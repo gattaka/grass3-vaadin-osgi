@@ -3,6 +3,8 @@ package cz.gattserver.grass3.drinks.web;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
@@ -18,6 +20,8 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.JavaScript;
+import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
@@ -30,9 +34,11 @@ import cz.gattserver.grass3.ui.components.CreateButton;
 import cz.gattserver.grass3.ui.components.DeleteButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
 import cz.gattserver.grass3.ui.util.UIUtils;
+import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.MultiUpload;
 import cz.gattserver.web.common.ui.window.ErrorWindow;
 import cz.gattserver.web.common.ui.window.WebWindow;
+import elemental.json.JsonArray;
 
 public abstract class DrinkWindow extends WebWindow {
 
@@ -41,6 +47,8 @@ public abstract class DrinkWindow extends WebWindow {
 	private static final Logger logger = LoggerFactory.getLogger(DrinkWindow.class);
 
 	private MultiUpload upload;
+	private VerticalLayout imageLayout;
+	private Embedded image;
 
 	public DrinkWindow() {
 		this(null);
@@ -48,18 +56,58 @@ public abstract class DrinkWindow extends WebWindow {
 
 	protected abstract void onSave(DrinkTO to);
 
+	private void placeImage(DrinkTO to) {
+		// https://vaadin.com/forum/thread/260778
+		String name = to.getName() + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+		image.setSource(new StreamResource(() -> new ByteArrayInputStream(to.getImage()), name));
+		image.markAsDirty();
+		image.setVisible(true);
+		imageLayout.removeAllComponents();
+		imageLayout.addComponent(image);
+		imageLayout.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
+		DeleteButton deleteButton = new DeleteButton(e -> {
+			to.setImage(null);
+			placeUpload();
+		});
+		imageLayout.addComponent(deleteButton);
+		imageLayout.setComponentAlignment(deleteButton, Alignment.MIDDLE_CENTER);
+
+		// viz koment v konstruktoru
+		JavaScript.eval("setTimeout(function(){ cz.gattserver.grass3.delayed_center(); }, 10);");
+	}
+
+	private void placeUpload() {
+		imageLayout.removeAllComponents();
+		imageLayout.addComponent(upload);
+		imageLayout.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
+	}
+
 	public DrinkWindow(final DrinkTO originalTO) {
 		super(originalTO == null ? "Založit" : "Upravit" + " nápoj");
 
 		setWidth("600px");
+
+		// Tahle šílenost je tu proto, aby se vycentrovalo okno s donahraným
+		// obrázkem. Obrázek se bohužel nahrává nějak později, takže centrování
+		// nebere v potaz jeho velikost a centruje okno špatně. Tím, že se
+		// centrování zavolá později (až po nahrání obrázku, na který bohužel
+		// nemám listener, takže fix-time delay)
+		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.delayed_center", (arguments) -> {
+			DrinkWindow.this.setSizeUndefined();
+			DrinkWindow.this.center();
+		});
 
 		final DrinkTO formTO = new DrinkTO();
 
 		Binder<DrinkTO> binder = new Binder<>(DrinkTO.class);
 		binder.setBean(formTO);
 
-		final VerticalLayout imageLayout = new VerticalLayout();
+		imageLayout = new VerticalLayout();
 		addComponent(imageLayout);
+
+		// musí tady něco být nahrané, jinak to pak nejde měnit (WTF?!)
+		image = new Embedded(null, ImageIcon.BUBBLE_16_ICON.createResource());
+		image.setVisible(false);
 
 		upload = new MultiUpload("Nahrát foto", false) {
 			private static final long serialVersionUID = 8620441233254076257L;
@@ -69,21 +117,7 @@ public abstract class DrinkWindow extends WebWindow {
 					int filesLeftInQueue) {
 				try {
 					formTO.setImage(IOUtils.toByteArray(in));
-					Embedded em = new Embedded(null,
-							new StreamResource(() -> new ByteArrayInputStream(formTO.getImage()), fileName));
-					imageLayout.removeAllComponents();
-					imageLayout.addComponent(em);
-					imageLayout.setComponentAlignment(em, Alignment.MIDDLE_CENTER);
-					DeleteButton deleteButton = new DeleteButton(e -> {
-						formTO.setImage(null);
-						imageLayout.removeAllComponents();
-						imageLayout.addComponent(upload);
-						imageLayout.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
-					});
-					imageLayout.addComponent(deleteButton);
-					imageLayout.setComponentAlignment(deleteButton, Alignment.MIDDLE_CENTER);
-					DrinkWindow.this.center();
-					DrinkWindow.this.setWidth(null);
+					placeImage(formTO);
 				} catch (IOException e) {
 					String err = "Nezdařilo se nahrát obrázek nápoje";
 					logger.error(err, e);
@@ -94,8 +128,10 @@ public abstract class DrinkWindow extends WebWindow {
 		upload.setMaxFileSize(2000000);
 		upload.setAcceptedMimeTypes(Arrays.asList(new String[] { "image/jpg", "image/jpeg", "image/png" }));
 
-		imageLayout.addComponent(upload);
-		imageLayout.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
+		if (originalTO == null || originalTO.getImage() == null)
+			placeUpload();
+		else
+			placeImage(originalTO);
 
 		final TextField nameField = new TextField("Název");
 		binder.forField(nameField).asRequired().bind(DrinkTO::getName, DrinkTO::setName);
@@ -127,6 +163,11 @@ public abstract class DrinkWindow extends WebWindow {
 		else
 			addComponent(b = new CreateButton(event -> save(originalTO, binder)));
 		setComponentAlignment(b, Alignment.MIDDLE_CENTER);
+
+		addComponent(b = new ModifyButton(event -> {
+			setSizeUndefined();
+			center();
+		}));
 
 		if (originalTO != null)
 			binder.readBean(originalTO);

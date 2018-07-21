@@ -33,18 +33,16 @@ public abstract class RumWindow extends DrinkWindow<RumTO> {
 
 	@Override
 	protected RumTO createNewInstance() {
-		return new RumTO();
-	}
-
-	@Override
-	protected void initFormTO(RumTO formTO) {
+		RumTO formTO = new RumTO();
 		formTO.setRumType(RumType.DARK);
 		formTO.setAlcohol(0d);
+		return formTO;
 	}
 
 	@Override
 	protected VerticalLayout createForm(Binder<RumTO> binder) {
 		TextField nameField = new TextField("Název");
+		nameField.setWidth("320px");
 		binder.forField(nameField).asRequired().bind(RumTO::getName, RumTO::setName);
 
 		TextField countryField = new TextField("Země");
@@ -77,6 +75,7 @@ public abstract class RumWindow extends DrinkWindow<RumTO> {
 		alcoholField.setWidth("80px");
 
 		ComboBox<RumType> rumTypeField = new ComboBox<>("Typ rumu", Arrays.asList(RumType.values()));
+		rumTypeField.setEmptySelectionAllowed(false);
 		rumTypeField.setItemCaptionGenerator(RumType::getCaption);
 		binder.forField(rumTypeField).asRequired().bind(RumTO::getRumType, RumTO::setRumType);
 

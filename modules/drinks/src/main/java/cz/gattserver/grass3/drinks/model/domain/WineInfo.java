@@ -32,6 +32,9 @@ public class WineInfo {
 	 */
 	private WineType wineType;
 
+	public WineInfo() {
+	}
+
 	public WineInfo(String winery, Integer year, WineType wineType) {
 		super();
 		this.winery = winery;

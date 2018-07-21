@@ -34,12 +34,9 @@ public abstract class WineWindow extends DrinkWindow<WineTO> {
 
 	@Override
 	protected WineTO createNewInstance() {
-		return new WineTO();
-	}
-
-	@Override
-	protected void initFormTO(WineTO formTO) {
+		WineTO formTO = new WineTO();
 		formTO.setYear(0);
+		return formTO;
 	}
 
 	@Override
@@ -82,6 +79,7 @@ public abstract class WineWindow extends DrinkWindow<WineTO> {
 		alcoholField.setWidth("80px");
 
 		ComboBox<WineType> wineTypeField = new ComboBox<>("Typ vína", Arrays.asList(WineType.values()));
+		wineTypeField.setEmptySelectionAllowed(false);
 		wineTypeField.setItemCaptionGenerator(WineType::getCaption);
 		binder.forField(wineTypeField).asRequired().bind(WineTO::getWineType, WineTO::setWineType);
 

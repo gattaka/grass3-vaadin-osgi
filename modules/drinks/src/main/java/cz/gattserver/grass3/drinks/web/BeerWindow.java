@@ -32,13 +32,10 @@ public abstract class BeerWindow extends DrinkWindow<BeerTO> {
 
 	@Override
 	protected BeerTO createNewInstance() {
-		return new BeerTO();
-	}
-
-	@Override
-	protected void initFormTO(BeerTO formTO) {
+		BeerTO formTO = new BeerTO();
 		formTO.setCountry("ČR");
 		formTO.setMaltType(MaltType.BARLEY);
+		return formTO;
 	}
 
 	@Override
@@ -87,8 +84,9 @@ public abstract class BeerWindow extends DrinkWindow<BeerTO> {
 		ibuField.setWidth("80px");
 
 		ComboBox<MaltType> maltTypeField = new ComboBox<>("Typ sladu", Arrays.asList(MaltType.values()));
+		maltTypeField.setEmptySelectionAllowed(false);
 		maltTypeField.setItemCaptionGenerator(MaltType::getCaption);
-		binder.forField(maltTypeField).bind(BeerTO::getMaltType, BeerTO::setMaltType);
+		binder.forField(maltTypeField).asRequired().bind(BeerTO::getMaltType, BeerTO::setMaltType);
 
 		HorizontalLayout line2Layout = new HorizontalLayout(categoryField, degreeField, alcoholField, ibuField,
 				maltTypeField);

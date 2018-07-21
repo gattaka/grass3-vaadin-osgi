@@ -170,11 +170,11 @@ public class RumTab extends VerticalLayout {
 		});
 
 		HorizontalLayout contentLayout = new HorizontalLayout();
+		contentLayout.setSizeFull();
 		contentLayout.setMargin(true);
 
 		Panel panel = new Panel(contentLayout);
-		panel.setWidth("100%");
-		panel.setHeight("100%");
+		panel.setSizeFull();
 		addComponent(panel);
 		setExpandRatio(panel, 1);
 
@@ -185,7 +185,7 @@ public class RumTab extends VerticalLayout {
 		contentLayout.setComponentAlignment(image, Alignment.TOP_CENTER);
 
 		dataLayout = new VerticalLayout();
-		dataLayout.setWidth("100%");
+		// dataLayout.setWidth("700px");
 		dataLayout.setMargin(false);
 		contentLayout.addComponent(dataLayout);
 		contentLayout.setExpandRatio(dataLayout, 1);
@@ -280,6 +280,7 @@ public class RumTab extends VerticalLayout {
 			infoLayout.addComponent(new Label(choosenDrink.getRumType().getCaption()));
 
 			Label descriptionLabel = new Label(choosenDrink.getDescription());
+			descriptionLabel.setSizeFull();
 			dataLayout.addComponent(descriptionLabel);
 
 			String currentURL;

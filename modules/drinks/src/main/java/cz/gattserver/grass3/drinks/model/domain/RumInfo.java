@@ -27,6 +27,9 @@ public class RumInfo {
 	 */
 	private RumType rumType;
 
+	public RumInfo() {
+	}
+
 	public RumInfo(Integer years, RumType rumType) {
 		super();
 		this.years = years;

@@ -34,13 +34,10 @@ public abstract class WhiskeyWindow extends DrinkWindow<WhiskeyTO> {
 
 	@Override
 	protected WhiskeyTO createNewInstance() {
-		return new WhiskeyTO();
-	}
-
-	@Override
-	protected void initFormTO(WhiskeyTO formTO) {
+		WhiskeyTO formTO = new WhiskeyTO();
 		formTO.setAlcohol(0d);
 		formTO.setYears(0);
+		return formTO;
 	}
 
 	@Override
@@ -79,6 +76,7 @@ public abstract class WhiskeyWindow extends DrinkWindow<WhiskeyTO> {
 		alcoholField.setWidth("80px");
 
 		ComboBox<WhiskeyType> whiskeyTypeField = new ComboBox<>("Typ Whiskey", Arrays.asList(WhiskeyType.values()));
+		whiskeyTypeField.setEmptySelectionAllowed(false);
 		whiskeyTypeField.setItemCaptionGenerator(WhiskeyType::getCaption);
 		binder.forField(whiskeyTypeField).asRequired().bind(WhiskeyTO::getWhiskeyType, WhiskeyTO::setWhiskeyType);
 

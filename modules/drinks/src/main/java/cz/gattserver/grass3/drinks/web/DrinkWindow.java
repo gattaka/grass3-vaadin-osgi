@@ -61,9 +61,6 @@ public abstract class DrinkWindow<T extends DrinkTO> extends WebWindow {
 
 		T formTO = createNewInstance();
 
-		if (originalTO == null)
-			initFormTO(formTO);
-
 		Binder<T> binder = new Binder<>();
 		binder.setBean(formTO);
 
@@ -166,8 +163,6 @@ public abstract class DrinkWindow<T extends DrinkTO> extends WebWindow {
 	protected abstract void onSave(T to);
 
 	protected abstract T createNewInstance();
-
-	protected abstract void initFormTO(T formTO);
 
 	protected abstract VerticalLayout createForm(Binder<T> binder);
 

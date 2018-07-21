@@ -27,6 +27,9 @@ public class WhiskeyInfo {
 	 */
 	private WhiskeyType whiskeyType;
 
+	public WhiskeyInfo() {
+	}
+
 	public WhiskeyInfo(Integer years, WhiskeyType whiskeyType) {
 		super();
 		this.years = years;

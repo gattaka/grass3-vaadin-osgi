@@ -6,49 +6,60 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.vaadin.data.provider.QuerySortOrder;
+
 import cz.gattserver.grass3.drinks.facades.DrinksFacade;
+import cz.gattserver.grass3.drinks.model.dao.BeerInfoRepository;
 import cz.gattserver.grass3.drinks.model.dao.DrinkRepository;
+import cz.gattserver.grass3.drinks.model.domain.BeerInfo;
 import cz.gattserver.grass3.drinks.model.domain.Drink;
-import cz.gattserver.grass3.drinks.model.interfaces.DrinkOverviewTO;
-import cz.gattserver.grass3.drinks.model.interfaces.DrinkTO;
-import cz.gattserver.grass3.drinks.util.Mapper;
+import cz.gattserver.grass3.drinks.model.domain.DrinkType;
+import cz.gattserver.grass3.drinks.model.interfaces.BeerOverviewTO;
+import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
+import cz.gattserver.grass3.model.util.QuerydslUtil;
 
 @Transactional
 @Component
 public class DrinksFacadeImpl implements DrinksFacade {
 
 	@Autowired
-	private Mapper mapper;
-
-	@Autowired
 	private DrinkRepository drinkRepository;
 
+	@Autowired
+	private BeerInfoRepository beerInfoRepository;
+
 	@Override
-	public List<DrinkOverviewTO> getDrinks(DrinkOverviewTO filterTO) {
-		List<Drink> drinks = drinkRepository.findAllOrderByName(filterTO);
-		if (drinks == null)
-			return null;
-		return mapper.mapDrinks(drinks);
+	public int countBeers(BeerOverviewTO filterTO) {
+		return (int) drinkRepository.countBeers(filterTO);
 	}
 
 	@Override
-	public DrinkTO getDrinkById(Long id) {
-		Drink drink = drinkRepository.findOne(id);
-		if (drink == null)
-			return null;
-		return mapper.mapDrink(drink);
+	public List<BeerOverviewTO> getBeers(BeerOverviewTO filterTO, int offset, int limit,
+			List<QuerySortOrder> sortOrder) {
+		return drinkRepository.findBeers(filterTO, QuerydslUtil.transformOffsetLimit(offset, limit),
+				QuerydslUtil.transformOrdering(sortOrder, s -> s));
 	}
 
 	@Override
-	public DrinkTO saveDrink(DrinkTO to) {
-		Drink drinks = mapper.mapDrink(to);
-		drinks = drinkRepository.save(drinks);
-		return mapper.mapDrink(drinks);
+	public BeerTO getBeerById(Long id) {
+		return drinkRepository.findBeerById(id);
 	}
 
 	@Override
-	public int getDrinksCount() {
-		return (int) drinkRepository.count();
+	public BeerTO saveBeer(BeerTO to) {
+		BeerInfo b = new BeerInfo(to.getBrewery(), to.getIbu(), to.getDegrees(), to.getCategory(), to.getMaltType(),
+				to.getMalts(), to.getHops());
+		b.setId(to.getInfoId());
+		b = beerInfoRepository.save(b);
+
+		Drink d = new Drink(to.getName(), DrinkType.BEER, to.getRating(), to.getImage(), to.getDescription(),
+				to.getAlcohol(), to.getCountry(), b.getId());
+		d.setId(to.getId());
+		d = drinkRepository.save(d);
+
+		to.setId(d.getId());
+
+		return to;
 	}
 
 	@Override

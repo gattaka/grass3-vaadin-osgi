@@ -2,38 +2,50 @@ package cz.gattserver.grass3.drinks.facades;
 
 import java.util.List;
 
-import cz.gattserver.grass3.drinks.model.interfaces.DrinkOverviewTO;
-import cz.gattserver.grass3.drinks.model.interfaces.DrinkTO;
+import com.vaadin.data.provider.QuerySortOrder;
+
+import cz.gattserver.grass3.drinks.model.interfaces.BeerOverviewTO;
+import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
 
 public interface DrinksFacade {
 
 	/**
-	 * Získá počet nápojů v DB
-	 */
-	public int getDrinksCount();
-
-	/**
-	 * Získá všechny nápoje
+	 * Získá počet piv v DB
 	 * 
 	 * @param filterTO
 	 */
-	public List<DrinkOverviewTO> getDrinks(DrinkOverviewTO filterTO);
+	int countBeers(BeerOverviewTO filterTO);
 
 	/**
-	 * Získá nápoj dle id
+	 * Získá všechny piva
+	 * 
+	 * @param filterTO
+	 * @param offset
+	 * @param limit
+	 * @param sortOrder
+	 * @return
 	 */
-	public DrinkTO getDrinkById(Long id);
+	List<BeerOverviewTO> getBeers(BeerOverviewTO filterTO, int offset, int limit, List<QuerySortOrder> sortOrder);
+
+	/**
+	 * Získá pivo dle id
+	 * 
+	 * @param id
+	 */
+	BeerTO getBeerById(Long id);
 
 	/**
 	 * Založí/uprav novou nápoj
+	 * 
+	 * @param drinkDTO
 	 */
-	public DrinkTO saveDrink(DrinkTO drinkDTO);
+	BeerTO saveBeer(BeerTO drinkDTO);
 
 	/**
 	 * Smaže nápoj
 	 * 
 	 * @param id
 	 */
-	public void deleteDrink(Long id);
+	void deleteDrink(Long id);
 
 }

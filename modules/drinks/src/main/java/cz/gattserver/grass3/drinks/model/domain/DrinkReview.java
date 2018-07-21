@@ -9,7 +9,7 @@ import javax.persistence.Id;
 
 import org.hibernate.annotations.GenericGenerator;
 
-@Entity(name = "DRINKREVIEW")
+@Entity(name = "DRINKS_DRINKREVIEW")
 public class DrinkReview {
 
 	/**

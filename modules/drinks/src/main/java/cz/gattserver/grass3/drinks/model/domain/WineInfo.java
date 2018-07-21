@@ -1,0 +1,67 @@
+package cz.gattserver.grass3.drinks.model.domain;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+import org.hibernate.annotations.GenericGenerator;
+
+@Entity(name = "DRINKS_WINEINFO")
+public class WineInfo {
+
+	/**
+	 * DB id
+	 */
+	@Id
+	@GeneratedValue(generator = "increment")
+	@GenericGenerator(name = "increment", strategy = "increment")
+	private Long id;
+
+	/**
+	 * Vinařství
+	 */
+	private String winery;
+
+	/**
+	 * Ročník
+	 */
+	private Integer year;
+
+	/**
+	 * Typ vína
+	 */
+	private WineType wineType;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getWinery() {
+		return winery;
+	}
+
+	public void setWinery(String winery) {
+		this.winery = winery;
+	}
+
+	public Integer getYear() {
+		return year;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
+	}
+
+	public WineType getWineType() {
+		return wineType;
+	}
+
+	public void setWineType(WineType wineType) {
+		this.wineType = wineType;
+	}
+
+}

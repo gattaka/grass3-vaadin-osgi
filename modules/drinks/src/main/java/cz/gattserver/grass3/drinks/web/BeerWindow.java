@@ -1,35 +1,36 @@
 package cz.gattserver.grass3.drinks.web;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
-import org.apache.commons.io.IOUtils;
 import org.vaadin.teemu.ratingstars.RatingStars;
 
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
+import com.vaadin.data.converter.StringToDoubleConverter;
+import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.external.org.slf4j.Logger;
 import com.vaadin.external.org.slf4j.LoggerFactory;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.JavaScript;
-import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.drinks.model.domain.DrinkType;
-import cz.gattserver.grass3.drinks.model.interfaces.DrinkTO;
+import cz.gattserver.grass3.drinks.model.domain.MaltType;
+import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
+import cz.gattserver.grass3.drinks.util.ImageUtils;
 import cz.gattserver.grass3.ui.components.CreateButton;
 import cz.gattserver.grass3.ui.components.DeleteButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
@@ -38,25 +39,24 @@ import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.MultiUpload;
 import cz.gattserver.web.common.ui.window.ErrorWindow;
 import cz.gattserver.web.common.ui.window.WebWindow;
-import elemental.json.JsonArray;
 
-public abstract class DrinkWindow extends WebWindow {
+public abstract class BeerWindow extends WebWindow {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 
-	private static final Logger logger = LoggerFactory.getLogger(DrinkWindow.class);
+	private static final Logger logger = LoggerFactory.getLogger(BeerWindow.class);
 
 	private MultiUpload upload;
 	private VerticalLayout imageLayout;
 	private Embedded image;
 
-	public DrinkWindow() {
+	public BeerWindow() {
 		this(null);
 	}
 
-	protected abstract void onSave(DrinkTO to);
+	protected abstract void onSave(BeerTO to);
 
-	private void placeImage(DrinkTO to) {
+	private void placeImage(BeerTO to) {
 		// https://vaadin.com/forum/thread/260778
 		String name = to.getName() + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 		image.setSource(new StreamResource(() -> new ByteArrayInputStream(to.getImage()), name));
@@ -65,6 +65,7 @@ public abstract class DrinkWindow extends WebWindow {
 		imageLayout.removeAllComponents();
 		imageLayout.addComponent(image);
 		imageLayout.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
+
 		DeleteButton deleteButton = new DeleteButton(e -> {
 			to.setImage(null);
 			placeUpload();
@@ -82,10 +83,8 @@ public abstract class DrinkWindow extends WebWindow {
 		imageLayout.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
 	}
 
-	public DrinkWindow(final DrinkTO originalTO) {
+	public BeerWindow(final BeerTO originalTO) {
 		super(originalTO == null ? "Založit" : "Upravit" + " nápoj");
-
-		setWidth("600px");
 
 		// Tahle šílenost je tu proto, aby se vycentrovalo okno s donahraným
 		// obrázkem. Obrázek se bohužel nahrává nějak později, takže centrování
@@ -93,13 +92,18 @@ public abstract class DrinkWindow extends WebWindow {
 		// centrování zavolá později (až po nahrání obrázku, na který bohužel
 		// nemám listener, takže fix-time delay)
 		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.delayed_center", (arguments) -> {
-			DrinkWindow.this.setSizeUndefined();
-			DrinkWindow.this.center();
+			BeerWindow.this.setSizeUndefined();
+			BeerWindow.this.center();
 		});
 
-		final DrinkTO formTO = new DrinkTO();
+		BeerTO formTO = new BeerTO();
 
-		Binder<DrinkTO> binder = new Binder<>(DrinkTO.class);
+		if (originalTO == null) {
+			formTO.setCountry("ČR");
+			formTO.setMaltType(MaltType.BARLEY);
+		}
+
+		Binder<BeerTO> binder = new Binder<>(BeerTO.class);
 		binder.setBean(formTO);
 
 		imageLayout = new VerticalLayout();
@@ -116,7 +120,10 @@ public abstract class DrinkWindow extends WebWindow {
 			public void fileUploadFinished(InputStream in, String fileName, String mime, long size,
 					int filesLeftInQueue) {
 				try {
-					formTO.setImage(IOUtils.toByteArray(in));
+					// vytvoř miniaturu
+					ByteArrayOutputStream bos = new ByteArrayOutputStream();
+					ImageUtils.resizeImageFile(fileName, in, bos, 400, 400);
+					formTO.setImage(bos.toByteArray());
 					placeImage(formTO);
 				} catch (IOException e) {
 					String err = "Nezdařilo se nahrát obrázek nápoje";
@@ -130,52 +137,90 @@ public abstract class DrinkWindow extends WebWindow {
 
 		if (originalTO == null || originalTO.getImage() == null)
 			placeUpload();
-		else
+		else {
 			placeImage(originalTO);
+			formTO.setImage(originalTO.getImage());
+		}
+
+		final TextField breweryField = new TextField("Pivovar");
+		binder.forField(breweryField).asRequired().bind(BeerTO::getBrewery, BeerTO::setBrewery);
 
 		final TextField nameField = new TextField("Název");
-		binder.forField(nameField).asRequired().bind(DrinkTO::getName, DrinkTO::setName);
-		nameField.setWidth("100%");
+		binder.forField(nameField).asRequired().bind(BeerTO::getName, BeerTO::setName);
 
-		final ComboBox<DrinkType> typeField = new ComboBox<>("Typ", Arrays.asList(DrinkType.values()));
-		typeField.setItemCaptionGenerator(DrinkType::getCaption);
-		binder.forField(typeField).asRequired().bind(DrinkTO::getType, DrinkTO::setTyp);
-		typeField.setWidth("100%");
+		final TextField countryField = new TextField("Země");
+		binder.forField(countryField).asRequired().bind(BeerTO::getCountry, BeerTO::setCountry);
 
 		final RatingStars ratingStars = new RatingStars();
-		binder.forField(ratingStars).asRequired().bind(DrinkTO::getRating, DrinkTO::setRating);
+		binder.forField(ratingStars).asRequired().bind(BeerTO::getRating, BeerTO::setRating);
 		ratingStars.setAnimated(false);
 		ratingStars.setCaption("Hodnocení");
 
-		HorizontalLayout infoLayout = new HorizontalLayout(nameField, typeField, ratingStars);
-		infoLayout.setSizeFull();
-		addComponent(infoLayout);
+		HorizontalLayout line1Layout = new HorizontalLayout(breweryField, nameField, countryField, ratingStars);
+
+		final TextField categoryField = new TextField("Kategorie (APA, IPA, ...)");
+		binder.forField(categoryField).asRequired().bind(BeerTO::getCategory, BeerTO::setCategory);
+
+		final TextField degreeField = new TextField("Stupně (°)");
+		binder.forField(degreeField).withNullRepresentation("")
+				.withConverter(new StringToIntegerConverter(null, "Stupně (°) musí být celé číslo"))
+				.bind(BeerTO::getDegrees, BeerTO::setDegrees);
+		degreeField.setWidth("80px");
+
+		final TextField alcoholField = new TextField("Alkohol (%)");
+		binder.forField(alcoholField).withNullRepresentation("")
+				.withConverter(new StringToDoubleConverter(null, "Alkohol (%) musí být celé číslo"))
+				.bind(BeerTO::getAlcohol, BeerTO::setAlcohol);
+		alcoholField.setWidth("80px");
+
+		final TextField ibuField = new TextField("Hořkost (IBU)");
+		binder.forField(ibuField).withNullRepresentation("")
+				.withConverter(new StringToIntegerConverter(null, "Hořkost (IBU) musí být celé číslo"))
+				.bind(BeerTO::getIbu, BeerTO::setIbu);
+		ibuField.setWidth("80px");
+
+		final ComboBox<MaltType> maltTypeField = new ComboBox<>("Typ sladu", Arrays.asList(MaltType.values()));
+		maltTypeField.setItemCaptionGenerator(MaltType::getCaption);
+		binder.forField(maltTypeField).bind(BeerTO::getMaltType, BeerTO::setMaltType);
+
+		HorizontalLayout line2Layout = new HorizontalLayout(categoryField, degreeField, alcoholField, ibuField,
+				maltTypeField);
+
+		final TextField maltsField = new TextField("Slady");
+		binder.forField(maltsField).bind(BeerTO::getMalts, BeerTO::setMalts);
+		maltsField.setWidth("290px");
+
+		final TextField hopsField = new TextField("Chmely");
+		binder.forField(hopsField).bind(BeerTO::getHops, BeerTO::setHops);
+		hopsField.setWidth("290px");
+
+		HorizontalLayout line3Layout = new HorizontalLayout(maltsField, hopsField);
 
 		final TextArea descriptionField = new TextArea("Popis");
-		binder.forField(descriptionField).asRequired().bind(DrinkTO::getDescription, DrinkTO::setDescription);
-		descriptionField.setWidth("100%");
-		descriptionField.setHeight("100px");
-		addComponent(descriptionField);
+		binder.forField(descriptionField).asRequired().bind(BeerTO::getDescription, BeerTO::setDescription);
+		descriptionField.setWidth("600px");
+		descriptionField.setHeight("200px");
 
-		Button b;
+		HorizontalLayout btnsLayout = new HorizontalLayout();
+		btnsLayout.setSizeUndefined();
+
 		if (originalTO != null)
-			addComponent(b = new ModifyButton(event -> save(originalTO, binder)));
+			btnsLayout.addComponent(new ModifyButton(event -> save(originalTO, binder)));
 		else
-			addComponent(b = new CreateButton(event -> save(originalTO, binder)));
-		setComponentAlignment(b, Alignment.MIDDLE_CENTER);
+			btnsLayout.addComponent(new CreateButton(event -> save(originalTO, binder)));
 
-		addComponent(b = new ModifyButton(event -> {
-			setSizeUndefined();
-			center();
-		}));
+		VerticalLayout fieldsLayout = new VerticalLayout(line1Layout, line2Layout, line3Layout, descriptionField,
+				btnsLayout);
+		HorizontalLayout mainLayout = new HorizontalLayout(imageLayout, fieldsLayout);
+		addComponent(mainLayout);
 
 		if (originalTO != null)
 			binder.readBean(originalTO);
 	}
 
-	private void save(DrinkTO originalTO, Binder<DrinkTO> binder) {
+	private void save(BeerTO originalTO, Binder<BeerTO> binder) {
 		try {
-			DrinkTO writeTO = originalTO == null ? new DrinkTO() : originalTO;
+			BeerTO writeTO = originalTO == null ? new BeerTO() : originalTO;
 			binder.writeBean(writeTO);
 			writeTO.setImage(binder.getBean().getImage());
 			onSave(writeTO);

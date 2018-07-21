@@ -25,7 +25,7 @@ public class LanguageItemRepositoryCustomImpl implements LanguageItemRepositoryC
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	private Predicate createPredicateHWItems(LanguageItemTO filterTO) {
+	private Predicate createPredicateLanguageItems(LanguageItemTO filterTO) {
 		QLanguageItem l = QLanguageItem.languageItem;
 		PredicateBuilder builder = new PredicateBuilder();
 		builder.eq(l.language.id, filterTO.getLanguage());
@@ -39,7 +39,7 @@ public class LanguageItemRepositoryCustomImpl implements LanguageItemRepositoryC
 	public long countAllByLanguage(LanguageItemTO filterTO) {
 		JPAQuery<LanguageItem> query = new JPAQuery<>(entityManager);
 		QLanguageItem l = QLanguageItem.languageItem;
-		return query.from(l).where(createPredicateHWItems(filterTO)).fetchCount();
+		return query.from(l).where(createPredicateLanguageItems(filterTO)).fetchCount();
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class LanguageItemRepositoryCustomImpl implements LanguageItemRepositoryC
 		JPAQuery<LanguageItem> query = new JPAQuery<>(entityManager);
 		QuerydslUtil.applyPagination(pageable, query);
 		QLanguageItem l = QLanguageItem.languageItem;
-		return query.from(l).where(createPredicateHWItems(filterTO)).orderBy(order).fetch();
+		return query.from(l).where(createPredicateLanguageItems(filterTO)).orderBy(order).fetch();
 	}
 
 }

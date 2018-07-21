@@ -8,7 +8,7 @@ import javax.persistence.Lob;
 
 import org.hibernate.annotations.GenericGenerator;
 
-@Entity(name = "DRINK")
+@Entity(name = "DRINKS_DRINK")
 public class Drink {
 
 	/**
@@ -46,12 +46,67 @@ public class Drink {
 	@Column(columnDefinition = "TEXT")
 	private String description;
 
+	/**
+	 * % alkoholu
+	 */
+	private Double alcohol;
+
+	/**
+	 * Země původu
+	 */
+	private String country;
+
+	/**
+	 * Další informace k nápoji, dle typu
+	 */
+	private Long drinkInfo;
+
+	public Drink() {
+	}
+
+	public Drink(String name, DrinkType type, Double rating, byte[] image, String description, Double alcohol,
+			String country, Long drinkInfo) {
+		super();
+		this.name = name;
+		this.type = type;
+		this.rating = rating;
+		this.image = image;
+		this.description = description;
+		this.alcohol = alcohol;
+		this.country = country;
+		this.drinkInfo = drinkInfo;
+	}
+
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public Double getAlcohol() {
+		return alcohol;
+	}
+
+	public void setAlcohol(Double alcohol) {
+		this.alcohol = alcohol;
+	}
+
+	public Long getDrinkInfo() {
+		return drinkInfo;
+	}
+
+	public void setDrinkInfo(Long drinkInfo) {
+		this.drinkInfo = drinkInfo;
 	}
 
 	public String getName() {

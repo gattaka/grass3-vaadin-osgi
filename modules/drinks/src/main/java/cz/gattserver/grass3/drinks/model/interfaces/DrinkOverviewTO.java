@@ -21,15 +21,26 @@ public class DrinkOverviewTO {
 	 */
 	private Double rating;
 
+	/**
+	 * % alkoholu
+	 */
+	private Double alcohol;
+
+	/**
+	 * Země původu
+	 */
+	private String country;
+
 	public DrinkOverviewTO() {
 	}
 
-	public DrinkOverviewTO(Long id, String name, DrinkType type, Double rating) {
-		super();
+	public DrinkOverviewTO(Long id, String name, DrinkType type, Double rating, Double alcohol, String country) {
 		this.id = id;
 		this.name = name;
 		this.type = type;
 		this.rating = rating;
+		this.alcohol = alcohol;
+		this.country = country;
 	}
 
 	public Long getId() {
@@ -38,6 +49,22 @@ public class DrinkOverviewTO {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Double getAlcohol() {
+		return alcohol;
+	}
+
+	public void setAlcohol(Double alcohol) {
+		this.alcohol = alcohol;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
 	}
 
 	public DrinkType getType() {

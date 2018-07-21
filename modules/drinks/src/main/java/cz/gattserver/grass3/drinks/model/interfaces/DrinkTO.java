@@ -2,7 +2,7 @@ package cz.gattserver.grass3.drinks.model.interfaces;
 
 import cz.gattserver.grass3.drinks.model.domain.DrinkType;
 
-public class DrinkTO {
+public abstract class DrinkTO {
 
 	private Long id;
 
@@ -31,12 +31,54 @@ public class DrinkTO {
 	 */
 	private String description;
 
+	/**
+	 * % alkoholu
+	 */
+	private Double alcohol;
+
+	/**
+	 * Země původu
+	 */
+	private String country;
+
+	public DrinkTO() {
+	}
+
+	public DrinkTO(Long id, String name, DrinkType type, Double rating, byte[] image, String description,
+			Double alcohol, String country) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.type = type;
+		this.rating = rating;
+		this.image = image;
+		this.description = description;
+		this.alcohol = alcohol;
+		this.country = country;
+	}
+
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Double getAlcohol() {
+		return alcohol;
+	}
+
+	public void setAlcohol(Double alcohol) {
+		this.alcohol = alcohol;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
 	}
 
 	public String getName() {

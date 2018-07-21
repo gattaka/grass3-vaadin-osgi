@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>pg</artifactId>
 	<name>GRASS3 Photogallery content</name>
@@ -42,13 +43,6 @@
 			<groupId>org.jcodec</groupId>
 			<artifactId>jcodec-javase</artifactId>
 			<version>0.2.2</version>
-		</dependency>
-
-		<!-- java-image-scaling -->
-		<dependency>
-			<groupId>com.mortennobel</groupId>
-			<artifactId>java-image-scaling</artifactId>
-			<version>0.8.6</version>
 		</dependency>
 
 		<!-- Image metadata -->

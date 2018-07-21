@@ -9,6 +9,7 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
@@ -80,8 +81,14 @@ public class SearchPage extends OneColumnPage {
 		VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
 		layout.setSpacing(true);
+
 		init(layout);
-		return layout;
+
+		VerticalLayout marginLayout = new VerticalLayout();
+		marginLayout.setMargin(true);
+		marginLayout.addComponent(layout);
+
+		return marginLayout;
 	}
 
 	private void init(VerticalLayout layout) {

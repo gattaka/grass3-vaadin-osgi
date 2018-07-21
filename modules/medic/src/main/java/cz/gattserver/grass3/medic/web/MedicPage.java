@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.medic.web;
 
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
@@ -17,7 +18,7 @@ public class MedicPage extends OneColumnPage {
 	protected Component createContent() {
 
 		VerticalLayout marginLayout = new VerticalLayout();
-		marginLayout.setMargin(true);
+		marginLayout.setMargin(new MarginInfo(false, true, true, true));
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);

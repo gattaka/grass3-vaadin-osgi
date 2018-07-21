@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.songs.web;
 
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
@@ -20,11 +21,15 @@ public class SongsPage extends OneColumnPage {
 		layout.setSpacing(true);
 		layout.setMargin(true);
 
+		VerticalLayout marginLayout = new VerticalLayout();
+		marginLayout.setMargin(new MarginInfo(false, true, true, true));
+		marginLayout.addComponent(layout);
+
 		TabSheet tabSheet = new TabSheet();
 		layout.addComponent(tabSheet);
 
 		ChordsTab ct = new ChordsTab(getRequest());
-		TextsTab tt = new TextsTab(getRequest(), tabSheet,ct);
+		TextsTab tt = new TextsTab(getRequest(), tabSheet, ct);
 		tabSheet.addTab(tt, "Písničky");
 		tabSheet.addTab(ct, "Akordy");
 
@@ -41,6 +46,6 @@ public class SongsPage extends OneColumnPage {
 			}
 		}
 
-		return layout;
+		return marginLayout;
 	}
 }

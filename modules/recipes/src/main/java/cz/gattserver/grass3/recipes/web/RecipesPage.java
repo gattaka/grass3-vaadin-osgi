@@ -53,11 +53,16 @@ public class RecipesPage extends OneColumnPage {
 
 	@Override
 	protected Component createContent() {
+		VerticalLayout marginLayout = new VerticalLayout();
+		marginLayout.setMargin(true);
+
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);
 		layout.setMargin(true);
+		marginLayout.addComponent(layout);
 
 		HorizontalLayout recipesLayout = new HorizontalLayout();
+		recipesLayout.setWidth("100%");
 		layout.addComponent(recipesLayout);
 
 		loadRecipes();
@@ -73,7 +78,7 @@ public class RecipesPage extends OneColumnPage {
 		VerticalLayout contentLayout = new VerticalLayout();
 		// contentLayout.setWidth("100%");
 		Panel panel = new Panel(contentLayout);
-		panel.setWidth("600px");
+		panel.setWidth("100%");
 		panel.setHeight("100%");
 		recipesLayout.addComponent(panel);
 		recipesLayout.setExpandRatio(panel, 1);
@@ -82,7 +87,7 @@ public class RecipesPage extends OneColumnPage {
 		contentLayout.addComponent(nameLabel);
 
 		contentLabel = new Label();
-		contentLabel.setWidth("560px");
+		contentLabel.setWidth("100%");
 		contentLabel.setContentMode(ContentMode.HTML);
 		contentLayout.addComponent(contentLabel);
 
@@ -120,6 +125,6 @@ public class RecipesPage extends OneColumnPage {
 			});
 		}, grid));
 
-		return layout;
+		return marginLayout;
 	}
 }

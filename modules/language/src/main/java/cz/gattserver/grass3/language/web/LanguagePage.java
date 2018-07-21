@@ -85,7 +85,7 @@ public class LanguagePage extends OneColumnPage {
 		layout.addComponent(langLayout);
 
 		List<LanguageTO> langs = languageFacade.getLanguages();
-		Grid<LanguageTO> grid = new Grid<>("Jazyky", langs);
+		Grid<LanguageTO> grid = new Grid<>(null, langs);
 		grid.setWidth("100%");
 		grid.setHeight("150px");
 		grid.addColumn(LanguageTO::getName).setCaption("Název");

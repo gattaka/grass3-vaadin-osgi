@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.hw.ui.pages;
 
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
@@ -22,7 +23,7 @@ public class HWPage extends OneColumnPage {
 		layout.setMargin(true);
 
 		VerticalLayout marginlayout = new VerticalLayout();
-		marginlayout.setMargin(true);
+		marginlayout.setMargin(new MarginInfo(false, true, true, true));
 		layout.addComponent(marginlayout);
 
 		TabSheet tabSheet = new TabSheet();

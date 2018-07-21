@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>cz.gattserver.grass3</groupId>
 		<artifactId>plugins</artifactId>
-		<version>3.0.5-SNAPSHOT</version>
+		<version>3.0.5</version>
 	</parent>
 
 	<dependencies>
@@ -16,21 +16,21 @@
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles</artifactId>
-			<version>3.0.5-SNAPSHOT</version>
+			<version>3.0.5</version>
 		</dependency>
 
 		<!-- Grass basic articles pluginy -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles-basic</artifactId>
-			<version>3.0.5-SNAPSHOT</version>
+			<version>3.0.5</version>
 		</dependency>
 
 		<!-- Grass favlink articles plugin -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles-favlink</artifactId>
-			<version>3.0.5-SNAPSHOT</version>
+			<version>3.0.5</version>
 		</dependency>
 
 	</dependencies>

@@ -282,10 +282,12 @@ public class WineTab extends VerticalLayout {
 
 			BoldLabel b;
 			infoLayout.addComponent(new BoldLabel("Rok"));
-			infoLayout.addComponent(new Label(String.valueOf(choosenDrink.getYear())));
+			infoLayout.addComponent(
+					new Label(choosenDrink.getYear() == null ? "" : String.valueOf(choosenDrink.getYear())));
 			infoLayout.addComponent(b = new BoldLabel("Alkohol (%)"));
 			b.setWidth("120px");
-			infoLayout.addComponent(new Label(String.valueOf(choosenDrink.getAlcohol())));
+			infoLayout.addComponent(
+					new Label(choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol())));
 			infoLayout.addComponent(new BoldLabel("Typ vína"));
 			infoLayout.addComponent(new Label(choosenDrink.getWineType().getCaption()));
 

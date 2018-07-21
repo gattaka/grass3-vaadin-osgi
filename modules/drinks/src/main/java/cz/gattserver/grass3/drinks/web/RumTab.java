@@ -7,7 +7,6 @@ import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
@@ -18,7 +17,6 @@ import org.vaadin.teemu.ratingstars.RatingStars;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.shared.ui.grid.ScrollDestination;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Embedded;
@@ -73,7 +71,6 @@ public class RumTab extends VerticalLayout {
 	private VerticalLayout dataLayout;
 
 	private RumTO choosenDrink;
-	private List<RumOverviewTO> drinks;
 	private RumOverviewTO filterTO;
 
 	public RumTab(GrassRequest request) {
@@ -235,14 +232,9 @@ public class RumTab extends VerticalLayout {
 	}
 
 	public void selectDrink(Long id) {
-		int row = 0;
-		for (RumOverviewTO to : drinks) {
-			if (to.getId().equals(id)) {
-				grid.select(to);
-				grid.scrollTo(row, ScrollDestination.MIDDLE);
-			}
-			row++;
-		}
+		RumOverviewTO to = new RumOverviewTO();
+		to.setId(id);
+		grid.select(to);
 	}
 
 	private void showDetail(RumTO choosenDrink) {
@@ -278,10 +270,12 @@ public class RumTab extends VerticalLayout {
 
 			BoldLabel b;
 			infoLayout.addComponent(new BoldLabel("Stáří (roky)"));
-			infoLayout.addComponent(new Label(String.valueOf(choosenDrink.getYears())));
+			infoLayout.addComponent(
+					new Label(choosenDrink.getYears() == null ? "" : String.valueOf(choosenDrink.getYears())));
 			infoLayout.addComponent(b = new BoldLabel("Alkohol (%)"));
 			b.setWidth("120px");
-			infoLayout.addComponent(new Label(String.valueOf(choosenDrink.getAlcohol())));
+			infoLayout.addComponent(
+					new Label(choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol())));
 			infoLayout.addComponent(new BoldLabel("Typ rumu"));
 			infoLayout.addComponent(new Label(choosenDrink.getRumType().getCaption()));
 

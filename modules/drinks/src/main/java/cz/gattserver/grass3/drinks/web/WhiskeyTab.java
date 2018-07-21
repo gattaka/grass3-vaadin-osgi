@@ -7,7 +7,6 @@ import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
@@ -18,7 +17,6 @@ import org.vaadin.teemu.ratingstars.RatingStars;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.shared.ui.grid.ScrollDestination;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Embedded;
@@ -73,7 +71,6 @@ public class WhiskeyTab extends VerticalLayout {
 	private VerticalLayout dataLayout;
 
 	private WhiskeyTO choosenDrink;
-	private List<WhiskeyOverviewTO> drinks;
 	private WhiskeyOverviewTO filterTO;
 
 	public WhiskeyTab(GrassRequest request) {
@@ -236,14 +233,9 @@ public class WhiskeyTab extends VerticalLayout {
 	}
 
 	public void selectDrink(Long id) {
-		int row = 0;
-		for (WhiskeyOverviewTO to : drinks) {
-			if (to.getId().equals(id)) {
-				grid.select(to);
-				grid.scrollTo(row, ScrollDestination.MIDDLE);
-			}
-			row++;
-		}
+		WhiskeyOverviewTO to = new WhiskeyOverviewTO();
+		to.setId(id);
+		grid.select(to);
 	}
 
 	private void showDetail(WhiskeyTO choosenDrink) {

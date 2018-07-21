@@ -54,21 +54,24 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 
 		final Grid<RumOverviewTO> grid = new Grid<>();
 
-		Column<RumOverviewTO, String> nameColumn = grid.addColumn(RumOverviewTO::getName).setCaption("Název");
-		Column<RumOverviewTO, String> countryColumn = grid.addColumn(RumOverviewTO::getCountry).setCaption("Země");
+		Column<RumOverviewTO, String> nameColumn = grid.addColumn(RumOverviewTO::getName).setCaption("Název")
+				.setSortProperty("name");
+		Column<RumOverviewTO, String> countryColumn = grid.addColumn(RumOverviewTO::getCountry).setCaption("Země")
+				.setSortProperty("country");
 		Column<RumOverviewTO, Double> alcoholColumn = grid.addColumn(RumOverviewTO::getAlcohol)
 				.setRenderer(new NumberRenderer(NumberFormat.getNumberInstance(new Locale("cs", "CZ"))))
-				.setCaption("Alkohol (%)").setWidth(80);
+				.setCaption("Alkohol (%)").setWidth(80).setSortProperty("alcohol");
 		Column<RumOverviewTO, Integer> yearsColumn = grid.addColumn(RumOverviewTO::getYears).setCaption("Stáří (roky)")
-				.setWidth(90);
+				.setWidth(90).setSortProperty("years");
 		Column<RumOverviewTO, RumType> rumTypeColumn = grid.addColumn(RumOverviewTO::getRumType)
-				.setRenderer(RumType::getCaption, new TextRenderer()).setCaption("Typ rumu").setWidth(100);
+				.setRenderer(RumType::getCaption, new TextRenderer()).setCaption("Typ rumu").setWidth(100)
+				.setSortProperty("rumType");
 		grid.addColumn(to -> {
 			RatingStars rs = new RatingStars();
 			rs.setValue(to.getRating());
 			rs.setReadOnly(true);
 			return rs;
-		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení").setWidth(120);
+		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení").setWidth(120).setSortProperty("rating");
 		grid.setWidth("100%");
 		grid.setHeight("400px");
 

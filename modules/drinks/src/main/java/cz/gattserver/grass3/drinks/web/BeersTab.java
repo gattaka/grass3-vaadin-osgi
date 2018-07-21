@@ -54,25 +54,28 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 
 		final Grid<BeerOverviewTO> grid = new Grid<>();
 
-		Column<BeerOverviewTO, String> breweryColumn = grid.addColumn(BeerOverviewTO::getBrewery).setCaption("Pivovar");
-		Column<BeerOverviewTO, String> nameColumn = grid.addColumn(BeerOverviewTO::getName).setCaption("Název");
+		Column<BeerOverviewTO, String> breweryColumn = grid.addColumn(BeerOverviewTO::getBrewery).setCaption("Pivovar")
+				.setSortProperty("brewery");
+		Column<BeerOverviewTO, String> nameColumn = grid.addColumn(BeerOverviewTO::getName).setCaption("Název")
+				.setSortProperty("name");
 		Column<BeerOverviewTO, String> categoryColumn = grid.addColumn(BeerOverviewTO::getCategory)
-				.setCaption("Kategorie").setWidth(80);
+				.setCaption("Kategorie").setWidth(80).setSortProperty("category");
 		Column<BeerOverviewTO, Integer> degreesColumn = grid.addColumn(BeerOverviewTO::getDegrees)
-				.setCaption("Stupně (°)").setWidth(80);
+				.setCaption("Stupně (°)").setWidth(80).setSortProperty("degrees");
 		Column<BeerOverviewTO, Double> alcoholColumn = grid.addColumn(BeerOverviewTO::getAlcohol)
 				.setRenderer(new NumberRenderer(NumberFormat.getNumberInstance(new Locale("cs", "CZ"))))
-				.setCaption("Alkohol (%)").setWidth(80);
+				.setCaption("Alkohol (%)").setWidth(80).setSortProperty("alcohol");
 		Column<BeerOverviewTO, Integer> ibuColumn = grid.addColumn(BeerOverviewTO::getIbu).setCaption("Hořkost (IBU)")
-				.setWidth(90);
+				.setWidth(90).setSortProperty("ibu");
 		Column<BeerOverviewTO, MaltType> maltTypeColumn = grid.addColumn(BeerOverviewTO::getMaltType)
-				.setRenderer(MaltType::getCaption, new TextRenderer()).setCaption("Typ sladu").setWidth(100);
+				.setRenderer(MaltType::getCaption, new TextRenderer()).setCaption("Typ sladu").setWidth(100)
+				.setSortProperty("maltType");
 		grid.addColumn(to -> {
 			RatingStars rs = new RatingStars();
 			rs.setValue(to.getRating());
 			rs.setReadOnly(true);
 			return rs;
-		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení").setWidth(120);
+		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení").setWidth(120).setSortProperty("rating");
 		grid.setWidth("100%");
 		grid.setHeight("400px");
 		addComponent(grid);

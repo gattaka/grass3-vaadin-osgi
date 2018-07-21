@@ -54,22 +54,24 @@ public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
 
 		final Grid<WhiskeyOverviewTO> grid = new Grid<>();
 
-		Column<WhiskeyOverviewTO, String> nameColumn = grid.addColumn(WhiskeyOverviewTO::getName).setCaption("Název");
+		Column<WhiskeyOverviewTO, String> nameColumn = grid.addColumn(WhiskeyOverviewTO::getName).setCaption("Název")
+				.setSortProperty("name");
 		Column<WhiskeyOverviewTO, String> countryColumn = grid.addColumn(WhiskeyOverviewTO::getCountry)
-				.setCaption("Země");
+				.setCaption("Země").setSortProperty("country");
 		Column<WhiskeyOverviewTO, Double> alcoholColumn = grid.addColumn(WhiskeyOverviewTO::getAlcohol)
 				.setRenderer(new NumberRenderer(NumberFormat.getNumberInstance(new Locale("cs", "CZ"))))
-				.setCaption("Alkohol (%)").setWidth(80);
+				.setCaption("Alkohol (%)").setWidth(80).setSortProperty("alcohol");
 		Column<WhiskeyOverviewTO, Integer> yearsColumn = grid.addColumn(WhiskeyOverviewTO::getYears)
-				.setCaption("Stáří (roky)").setWidth(90);
+				.setCaption("Stáří (roky)").setWidth(90).setSortProperty("years");
 		Column<WhiskeyOverviewTO, WhiskeyType> WhiskeyTypeColumn = grid.addColumn(WhiskeyOverviewTO::getWhiskeyType)
-				.setRenderer(WhiskeyType::getCaption, new TextRenderer()).setCaption("Typ whiskey").setWidth(150);
+				.setRenderer(WhiskeyType::getCaption, new TextRenderer()).setCaption("Typ whiskey").setWidth(150)
+				.setSortProperty("whiskeyType");
 		grid.addColumn(to -> {
 			RatingStars rs = new RatingStars();
 			rs.setValue(to.getRating());
 			rs.setReadOnly(true);
 			return rs;
-		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení").setWidth(120);
+		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení").setWidth(120).setSortProperty("rating");
 		grid.setWidth("100%");
 		grid.setHeight("400px");
 		addComponent(grid);

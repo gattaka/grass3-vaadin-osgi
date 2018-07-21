@@ -191,12 +191,12 @@ public class DrinksFacadeImpl implements DrinksFacade {
 		WineInfo b = new WineInfo(to.getWinery(), to.getYear(), to.getWineType());
 		b.setId(to.getInfoId());
 		b = wineInfoRepository.save(b);
+		to.setInfoId(b.getId());
 
 		Drink d = new Drink(to.getName(), DrinkType.WINE, to.getRating(), to.getImage(), to.getDescription(),
 				to.getAlcohol(), to.getCountry(), b.getId());
 		d.setId(to.getId());
 		d = drinkRepository.save(d);
-
 		to.setId(d.getId());
 
 		return to;

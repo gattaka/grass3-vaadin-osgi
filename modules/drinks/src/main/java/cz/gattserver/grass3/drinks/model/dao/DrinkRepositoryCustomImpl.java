@@ -196,7 +196,7 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 		QDrink d = QDrink.drink;
 		QWineInfo b = QWineInfo.wineInfo;
 		PredicateBuilder builder = new PredicateBuilder();
-		builder.eq(d.type, DrinkType.WHISKY);
+		builder.eq(d.type, DrinkType.WINE);
 		builder.eq(b.wineType, filterTO.getWineType());
 		builder.iLike(d.name, filterTO.getName());
 		builder.iLike(d.country, filterTO.getCountry());

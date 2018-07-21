@@ -9,6 +9,8 @@ import org.vaadin.teemu.ratingstars.RatingStars;
 import com.vaadin.data.Binder;
 import com.vaadin.data.converter.StringToDoubleConverter;
 import com.vaadin.data.converter.StringToIntegerConverter;
+import com.vaadin.data.validator.DoubleRangeValidator;
+import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextArea;
@@ -37,31 +39,34 @@ public abstract class WhiskeyWindow extends DrinkWindow<WhiskeyTO> {
 
 	@Override
 	protected void initFormTO(WhiskeyTO formTO) {
+		formTO.setAlcohol(0d);
+		formTO.setYears(0);
 	}
 
 	@Override
 	protected VerticalLayout createForm(Binder<WhiskeyTO> binder) {
-		final TextField nameField = new TextField("Název");
+		TextField nameField = new TextField("Název");
 		binder.forField(nameField).asRequired().bind(WhiskeyTO::getName, WhiskeyTO::setName);
 
-		final TextField countryField = new TextField("Země");
+		TextField countryField = new TextField("Země");
 		binder.forField(countryField).asRequired().bind(WhiskeyTO::getCountry, WhiskeyTO::setCountry);
 
-		final RatingStars ratingStars = new RatingStars();
+		RatingStars ratingStars = new RatingStars();
 		binder.forField(ratingStars).asRequired().bind(WhiskeyTO::getRating, WhiskeyTO::setRating);
 		ratingStars.setAnimated(false);
 		ratingStars.setCaption("Hodnocení");
 
 		HorizontalLayout line1Layout = new HorizontalLayout(nameField, countryField, ratingStars);
 
-		final TextField yearsField = new TextField("Stáří (roky)");
-		binder.forField(yearsField).withNullRepresentation("").asRequired()
+		TextField yearsField = new TextField("Stáří (roky)");
+		binder.forField(yearsField)
 				.withConverter(new StringToIntegerConverter(null, "Stáří (roky) musí být celé číslo"))
+				.asRequired(new IntegerRangeValidator("Stáří je mimo rozsah (1-100)", 1, 100))
 				.bind(WhiskeyTO::getYears, WhiskeyTO::setYears);
 		yearsField.setWidth("80px");
 
-		final TextField alcoholField = new TextField("Alkohol (%)");
-		binder.forField(alcoholField).withNullRepresentation("").asRequired()
+		TextField alcoholField = new TextField("Alkohol (%)");
+		binder.forField(alcoholField)
 				.withConverter(new StringToDoubleConverter(null, "Alkohol (%) musí být celé číslo") {
 					private static final long serialVersionUID = 4910268168530306948L;
 
@@ -69,16 +74,17 @@ public abstract class WhiskeyWindow extends DrinkWindow<WhiskeyTO> {
 					protected NumberFormat getFormat(Locale locale) {
 						return NumberFormat.getNumberInstance(new Locale("cs", "CZ"));
 					}
-				}).bind(WhiskeyTO::getAlcohol, WhiskeyTO::setAlcohol);
+				}).asRequired(new DoubleRangeValidator("Obsah alkoholu je mimo rozsah (1-100)", 1d, 100d))
+				.bind(WhiskeyTO::getAlcohol, WhiskeyTO::setAlcohol);
 		alcoholField.setWidth("80px");
 
-		final ComboBox<WhiskeyType> whiskeyTypeField = new ComboBox<>("Typ Whiskey", Arrays.asList(WhiskeyType.values()));
+		ComboBox<WhiskeyType> whiskeyTypeField = new ComboBox<>("Typ Whiskey", Arrays.asList(WhiskeyType.values()));
 		whiskeyTypeField.setItemCaptionGenerator(WhiskeyType::getCaption);
-		binder.forField(whiskeyTypeField).bind(WhiskeyTO::getWhiskeyType, WhiskeyTO::setWhiskeyType);
+		binder.forField(whiskeyTypeField).asRequired().bind(WhiskeyTO::getWhiskeyType, WhiskeyTO::setWhiskeyType);
 
 		HorizontalLayout line2Layout = new HorizontalLayout(yearsField, alcoholField, whiskeyTypeField);
 
-		final TextArea descriptionField = new TextArea("Popis");
+		TextArea descriptionField = new TextArea("Popis");
 		binder.forField(descriptionField).asRequired().bind(WhiskeyTO::getDescription, WhiskeyTO::setDescription);
 		descriptionField.setWidth("600px");
 		descriptionField.setHeight("200px");

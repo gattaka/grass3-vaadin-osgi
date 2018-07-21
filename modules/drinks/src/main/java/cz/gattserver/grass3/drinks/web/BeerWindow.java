@@ -43,33 +43,32 @@ public abstract class BeerWindow extends DrinkWindow<BeerTO> {
 
 	@Override
 	protected VerticalLayout createForm(Binder<BeerTO> binder) {
-
-		final TextField breweryField = new TextField("Pivovar");
+		TextField breweryField = new TextField("Pivovar");
 		binder.forField(breweryField).asRequired().bind(BeerTO::getBrewery, BeerTO::setBrewery);
 
-		final TextField nameField = new TextField("Název");
+		TextField nameField = new TextField("Název");
 		binder.forField(nameField).asRequired().bind(BeerTO::getName, BeerTO::setName);
 
-		final TextField countryField = new TextField("Země");
+		TextField countryField = new TextField("Země");
 		binder.forField(countryField).asRequired().bind(BeerTO::getCountry, BeerTO::setCountry);
 
-		final RatingStars ratingStars = new RatingStars();
+		RatingStars ratingStars = new RatingStars();
 		binder.forField(ratingStars).asRequired().bind(BeerTO::getRating, BeerTO::setRating);
 		ratingStars.setAnimated(false);
 		ratingStars.setCaption("Hodnocení");
 
 		HorizontalLayout line1Layout = new HorizontalLayout(breweryField, nameField, countryField, ratingStars);
 
-		final TextField categoryField = new TextField("Kategorie (APA, IPA, ...)");
+		TextField categoryField = new TextField("Kategorie (APA, IPA, ...)");
 		binder.forField(categoryField).asRequired().bind(BeerTO::getCategory, BeerTO::setCategory);
 
-		final TextField degreeField = new TextField("Stupně (°)");
+		TextField degreeField = new TextField("Stupně (°)");
 		binder.forField(degreeField).withNullRepresentation("")
 				.withConverter(new StringToIntegerConverter(null, "Stupně (°) musí být celé číslo"))
 				.bind(BeerTO::getDegrees, BeerTO::setDegrees);
 		degreeField.setWidth("80px");
 
-		final TextField alcoholField = new TextField("Alkohol (%)");
+		TextField alcoholField = new TextField("Alkohol (%)");
 		binder.forField(alcoholField).withNullRepresentation("")
 				.withConverter(new StringToDoubleConverter(null, "Alkohol (%) musí být celé číslo") {
 					private static final long serialVersionUID = 4910268168530306948L;
@@ -81,30 +80,30 @@ public abstract class BeerWindow extends DrinkWindow<BeerTO> {
 				}).bind(BeerTO::getAlcohol, BeerTO::setAlcohol);
 		alcoholField.setWidth("80px");
 
-		final TextField ibuField = new TextField("Hořkost (IBU)");
+		TextField ibuField = new TextField("Hořkost (IBU)");
 		binder.forField(ibuField).withNullRepresentation("")
 				.withConverter(new StringToIntegerConverter(null, "Hořkost (IBU) musí být celé číslo"))
 				.bind(BeerTO::getIbu, BeerTO::setIbu);
 		ibuField.setWidth("80px");
 
-		final ComboBox<MaltType> maltTypeField = new ComboBox<>("Typ sladu", Arrays.asList(MaltType.values()));
+		ComboBox<MaltType> maltTypeField = new ComboBox<>("Typ sladu", Arrays.asList(MaltType.values()));
 		maltTypeField.setItemCaptionGenerator(MaltType::getCaption);
 		binder.forField(maltTypeField).bind(BeerTO::getMaltType, BeerTO::setMaltType);
 
 		HorizontalLayout line2Layout = new HorizontalLayout(categoryField, degreeField, alcoholField, ibuField,
 				maltTypeField);
 
-		final TextField maltsField = new TextField("Slady");
+		TextField maltsField = new TextField("Slady");
 		binder.forField(maltsField).bind(BeerTO::getMalts, BeerTO::setMalts);
 		maltsField.setWidth("290px");
 
-		final TextField hopsField = new TextField("Chmely");
+		TextField hopsField = new TextField("Chmely");
 		binder.forField(hopsField).bind(BeerTO::getHops, BeerTO::setHops);
 		hopsField.setWidth("290px");
 
 		HorizontalLayout line3Layout = new HorizontalLayout(maltsField, hopsField);
 
-		final TextArea descriptionField = new TextArea("Popis");
+		TextArea descriptionField = new TextArea("Popis");
 		binder.forField(descriptionField).asRequired().bind(BeerTO::getDescription, BeerTO::setDescription);
 		descriptionField.setWidth("600px");
 		descriptionField.setHeight("200px");

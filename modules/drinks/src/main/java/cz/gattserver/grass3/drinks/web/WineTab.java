@@ -1,31 +1,18 @@
 package cz.gattserver.grass3.drinks.web;
 
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.NumberFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Locale;
-
-import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.teemu.ratingstars.RatingStars;
 
-import com.vaadin.server.Page;
-import com.vaadin.server.StreamResource;
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -39,49 +26,33 @@ import cz.gattserver.grass3.drinks.facades.DrinksFacade;
 import cz.gattserver.grass3.drinks.model.domain.WineType;
 import cz.gattserver.grass3.drinks.model.interfaces.WineOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.WineTO;
-import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
-import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
-import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.BoldLabel;
 import cz.gattserver.web.common.ui.H2Label;
-import cz.gattserver.web.common.ui.ImageIcon;
 
-public class WineTab extends VerticalLayout {
+public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 
-	private static final long serialVersionUID = 594189301140808163L;
+	private static final long serialVersionUID = -8540314953045422691L;
 
 	@Autowired
 	private DrinksFacade drinksFacade;
 
-	@Autowired
-	private SecurityService securityService;
-
-	@Resource(name = "drinksPageFactory")
-	private PageFactory pageFactory;
-
-	private GrassRequest request;
-
-	private Grid<WineOverviewTO> grid;
-	private Embedded image;
-	private VerticalLayout dataLayout;
-
-	private WineTO choosenDrink;
-	private WineOverviewTO filterTO;
-
 	public WineTab(GrassRequest request) {
-		SpringContextHelper.inject(this);
-		setMargin(new MarginInfo(true, false, false, false));
+		super(request);
+	}
 
-		this.request = request;
+	@Override
+	protected WineOverviewTO createNewOverviewTO() {
+		return new WineOverviewTO();
+	}
 
-		filterTO = new WineOverviewTO();
+	@Override
+	protected Grid<WineOverviewTO> createGrid(final WineOverviewTO filterTO) {
+		final Grid<WineOverviewTO> grid = new Grid<>();
 
-		grid = new Grid<>();
 		Column<WineOverviewTO, String> wineryColumn = grid.addColumn(WineOverviewTO::getWinery).setCaption("Vinařství");
 		Column<WineOverviewTO, String> nameColumn = grid.addColumn(WineOverviewTO::getName).setCaption("Název");
 		Column<WineOverviewTO, String> countryColumn = grid.addColumn(WineOverviewTO::getCountry).setCaption("Země");
@@ -100,6 +71,7 @@ public class WineTab extends VerticalLayout {
 		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení").setWidth(120);
 		grid.setWidth("100%");
 		grid.setHeight("400px");
+
 		addComponent(grid);
 
 		HeaderRow filteringHeader = grid.appendHeaderRow();
@@ -170,43 +142,18 @@ public class WineTab extends VerticalLayout {
 		});
 		typeColumnField.setItemCaptionGenerator(WineType::getCaption);
 		filteringHeader.getCell(WineTypeColumn).setComponent(typeColumnField);
+		return grid;
+	}
 
-		populate();
+	@Override
+	protected void populate() {
+		grid.setDataProvider(
+				(sortOrder, offset, limit) -> drinksFacade.getWines(filterTO, offset, limit, sortOrder).stream(),
+				() -> drinksFacade.countWines(filterTO));
+	}
 
-		grid.addSelectionListener((e) -> {
-			if (e.getFirstSelectedItem().isPresent())
-				showDetail(drinksFacade.getWineById(e.getFirstSelectedItem().get().getId()));
-			else
-				showDetail(null);
-		});
-
-		HorizontalLayout contentLayout = new HorizontalLayout();
-		contentLayout.setMargin(true);
-
-		Panel panel = new Panel(contentLayout);
-		panel.setWidth("100%");
-		panel.setHeight("100%");
-		addComponent(panel);
-		setExpandRatio(panel, 1);
-
-		// musí tady něco být nahrané, jinak to pak nejde měnit (WTF?!)
-		image = new Embedded(null, ImageIcon.BUBBLE_16_ICON.createResource());
-		image.setVisible(false);
-		contentLayout.addComponent(image);
-		contentLayout.setComponentAlignment(image, Alignment.TOP_CENTER);
-
-		dataLayout = new VerticalLayout();
-		dataLayout.setWidth("100%");
-		dataLayout.setMargin(false);
-		contentLayout.addComponent(dataLayout);
-		contentLayout.setExpandRatio(dataLayout, 1);
-
-		HorizontalLayout btnLayout = new HorizontalLayout();
-		btnLayout.setSpacing(true);
-		addComponent(btnLayout);
-
-		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(Role.ADMIN));
-
+	@Override
+	protected void populateBtnLayout(HorizontalLayout btnLayout) {
 		btnLayout.addComponent(new CreateGridButton("Přidat", event -> {
 			UI.getCurrent().addWindow(new WineWindow() {
 				private static final long serialVersionUID = -4863260002363608014L;
@@ -222,6 +169,7 @@ public class WineTab extends VerticalLayout {
 
 		btnLayout.addComponent(new ModifyGridButton<WineOverviewTO>("Upravit", event -> {
 			UI.getCurrent().addWindow(new WineWindow(choosenDrink) {
+
 				private static final long serialVersionUID = 5264621441522056786L;
 
 				@Override
@@ -230,6 +178,7 @@ public class WineTab extends VerticalLayout {
 					showDetail(to);
 					populate();
 				}
+
 			});
 		}, grid));
 
@@ -239,76 +188,46 @@ public class WineTab extends VerticalLayout {
 			populate();
 			showDetail(null);
 		}, grid));
-
 	}
 
-	public void selectDrink(Long id) {
-		WineOverviewTO to = new WineOverviewTO();
-		to.setId(id);
-		grid.select(to);
+	@Override
+	protected void populateDetail(VerticalLayout dataLayout) {
+		H2Label nameLabel = new H2Label(
+				choosenDrink.getWinery() + " " + choosenDrink.getName() + " (" + choosenDrink.getCountry() + ")");
+		dataLayout.addComponent(nameLabel);
+
+		RatingStars rs = new RatingStars();
+		rs.setValue(choosenDrink.getRating());
+		rs.setReadOnly(true);
+		dataLayout.addComponent(rs);
+
+		GridLayout infoLayout = new GridLayout(2, 7);
+		dataLayout.addComponent(infoLayout);
+
+		BoldLabel b;
+		infoLayout.addComponent(new BoldLabel("Rok"));
+		infoLayout
+				.addComponent(new Label(choosenDrink.getYear() == null ? "" : String.valueOf(choosenDrink.getYear())));
+		infoLayout.addComponent(b = new BoldLabel("Alkohol (%)"));
+		b.setWidth("120px");
+		infoLayout.addComponent(
+				new Label(choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol())));
+		infoLayout.addComponent(new BoldLabel("Typ vína"));
+		infoLayout.addComponent(new Label(choosenDrink.getWineType().getCaption()));
+
+		Label descriptionLabel = new Label(choosenDrink.getDescription());
+		descriptionLabel.setSizeFull();
+		dataLayout.addComponent(descriptionLabel);
 	}
 
-	private void showDetail(WineTO choosenDrink) {
-		this.choosenDrink = choosenDrink;
-		dataLayout.removeAllComponents();
-		if (choosenDrink == null) {
-			image.setVisible(false);
-			String currentURL = request.getContextRoot() + "/" + pageFactory.getPageName();
-			Page.getCurrent().pushState(currentURL);
-		} else {
-			byte[] co = choosenDrink.getImage();
-			if (co != null) {
-				// https://vaadin.com/foWine/thread/260778
-				String name = choosenDrink.getName()
-						+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-				image.setVisible(true);
-				image.setSource(new StreamResource(() -> new ByteArrayInputStream(co), name));
-				image.markAsDirty();
-			} else {
-				image.setVisible(false);
-			}
-
-			H2Label nameLabel = new H2Label(
-					choosenDrink.getWinery() + " " + choosenDrink.getName() + " (" + choosenDrink.getCountry() + ")");
-			dataLayout.addComponent(nameLabel);
-
-			RatingStars rs = new RatingStars();
-			rs.setValue(choosenDrink.getRating());
-			rs.setReadOnly(true);
-			dataLayout.addComponent(rs);
-
-			GridLayout infoLayout = new GridLayout(2, 7);
-			dataLayout.addComponent(infoLayout);
-
-			BoldLabel b;
-			infoLayout.addComponent(new BoldLabel("Rok"));
-			infoLayout.addComponent(
-					new Label(choosenDrink.getYear() == null ? "" : String.valueOf(choosenDrink.getYear())));
-			infoLayout.addComponent(b = new BoldLabel("Alkohol (%)"));
-			b.setWidth("120px");
-			infoLayout.addComponent(
-					new Label(choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol())));
-			infoLayout.addComponent(new BoldLabel("Typ vína"));
-			infoLayout.addComponent(new Label(choosenDrink.getWineType().getCaption()));
-
-			Label descriptionLabel = new Label(choosenDrink.getDescription());
-			dataLayout.addComponent(descriptionLabel);
-
-			String currentURL;
-			try {
-				currentURL = request.getContextRoot() + "/" + pageFactory.getPageName() + "/wine/"
-						+ choosenDrink.getId() + "-" + URLEncoder.encode(choosenDrink.getName(), "UTF-8");
-				Page.getCurrent().pushState(currentURL);
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-		}
+	@Override
+	protected String getURLPath() {
+		return "wine";
 	}
 
-	private void populate() {
-		grid.setDataProvider(
-				(sortOrder, offset, limit) -> drinksFacade.getWines(filterTO, offset, limit, sortOrder).stream(),
-				() -> drinksFacade.countWines(filterTO));
+	@Override
+	protected WineTO findById(Long id) {
+		return drinksFacade.getWineById(id);
 	}
 
 }

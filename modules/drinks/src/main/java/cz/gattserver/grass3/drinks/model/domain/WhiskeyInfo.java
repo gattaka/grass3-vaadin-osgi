@@ -22,7 +22,16 @@ public class WhiskeyInfo {
 	 */
 	private Integer years;
 
+	/**
+	 * Typ whisky
+	 */
 	private WhiskeyType whiskeyType;
+
+	public WhiskeyInfo(Integer years, WhiskeyType whiskeyType) {
+		super();
+		this.years = years;
+		this.whiskeyType = whiskeyType;
+	}
 
 	public Long getId() {
 		return id;

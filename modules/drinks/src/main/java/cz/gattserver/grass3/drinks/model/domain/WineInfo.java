@@ -32,6 +32,13 @@ public class WineInfo {
 	 */
 	private WineType wineType;
 
+	public WineInfo(String winery, Integer year, WineType wineType) {
+		super();
+		this.winery = winery;
+		this.year = year;
+		this.wineType = wineType;
+	}
+
 	public Long getId() {
 		return id;
 	}

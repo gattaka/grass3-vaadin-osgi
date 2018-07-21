@@ -28,17 +28,38 @@ public class DrinksPage extends OneColumnPage {
 		TabSheet tabSheet = new TabSheet();
 		layout.addComponent(tabSheet);
 
-		BeersTab tt = new BeersTab(getRequest());
-		tabSheet.addTab(tt, "Piva");
+		BeersTab bt = new BeersTab(getRequest());
+		tabSheet.addTab(bt, "Piva");
+		RumTab rt = new RumTab(getRequest());
+		tabSheet.addTab(rt, "Rumy");
+		WhiskeyTab wht = new WhiskeyTab(getRequest());
+		tabSheet.addTab(wht, "Whiskey");
+		WineTab wit = new WineTab(getRequest());
+		tabSheet.addTab(wit, "Vína");
 
 		String token = getRequest().getAnalyzer().getNextPathToken();
 		if (token != null) {
-			if ("pivo".equals(token.toLowerCase())) {
-				URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
-						.parseURLIdentifier(getRequest().getAnalyzer().getNextPathToken());
-				tabSheet.setSelectedTab(tt);
-				tt.selectDrink(identifier.getId());
+			URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
+					.parseURLIdentifier(getRequest().getAnalyzer().getNextPathToken());
+			switch (token.toLowerCase()) {
+			case "beer":
+				tabSheet.setSelectedTab(bt);
+				bt.selectDrink(identifier.getId());
+				break;
+			case "rum":
+				tabSheet.setSelectedTab(rt);
+				rt.selectDrink(identifier.getId());
+				break;
+			case "whiskey":
+				tabSheet.setSelectedTab(wht);
+				wht.selectDrink(identifier.getId());
+				break;
+			case "wine":
+				tabSheet.setSelectedTab(wit);
+				wit.selectDrink(identifier.getId());
+				break;
 			}
+
 		}
 
 		return wrapperLayout;

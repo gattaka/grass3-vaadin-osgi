@@ -22,7 +22,16 @@ public class RumInfo {
 	 */
 	private Integer years;
 
+	/**
+	 * Typ rumu
+	 */
 	private RumType rumType;
+
+	public RumInfo(Integer years, RumType rumType) {
+		super();
+		this.years = years;
+		this.rumType = rumType;
+	}
 
 	public Long getId() {
 		return id;

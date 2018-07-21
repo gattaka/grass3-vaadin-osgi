@@ -73,11 +73,11 @@ public abstract class RumWindow extends DrinkWindow<RumTO> {
 				}).bind(RumTO::getAlcohol, RumTO::setAlcohol);
 		alcoholField.setWidth("80px");
 
-		final ComboBox<RumType> maltTypeField = new ComboBox<>("Typ rumu", Arrays.asList(RumType.values()));
-		maltTypeField.setItemCaptionGenerator(RumType::getCaption);
-		binder.forField(maltTypeField).asRequired().bind(RumTO::getRumType, RumTO::setRumType);
+		final ComboBox<RumType> rumTypeField = new ComboBox<>("Typ rumu", Arrays.asList(RumType.values()));
+		rumTypeField.setItemCaptionGenerator(RumType::getCaption);
+		binder.forField(rumTypeField).asRequired().bind(RumTO::getRumType, RumTO::setRumType);
 
-		HorizontalLayout line2Layout = new HorizontalLayout(yearsField, alcoholField, maltTypeField);
+		HorizontalLayout line2Layout = new HorizontalLayout(yearsField, alcoholField, rumTypeField);
 
 		final TextArea descriptionField = new TextArea("Popis");
 		binder.forField(descriptionField).asRequired().bind(RumTO::getDescription, RumTO::setDescription);

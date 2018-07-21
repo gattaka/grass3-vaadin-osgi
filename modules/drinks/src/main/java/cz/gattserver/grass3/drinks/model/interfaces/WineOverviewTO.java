@@ -10,7 +10,7 @@ public class WineOverviewTO extends DrinkOverviewTO {
 	/**
 	 * DB id
 	 */
-	private Long id;
+	private Long infoId;
 
 	/**
 	 * Vinařství
@@ -34,18 +34,18 @@ public class WineOverviewTO extends DrinkOverviewTO {
 	public WineOverviewTO(Long id, String name, DrinkType type, Double rating, Double alcohol, String country,
 			Long infoId, String winery, Integer year, WineType wineType) {
 		super(id, name, type, rating, alcohol, country);
-		this.id = infoId;
+		this.infoId = infoId;
 		this.winery = winery;
 		this.year = year;
 		this.wineType = wineType;
 	}
 
-	public Long getId() {
-		return id;
+	public Long getInfoId() {
+		return infoId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setInfoId(Long infoId) {
+		this.infoId = infoId;
 	}
 
 	public String getWinery() {

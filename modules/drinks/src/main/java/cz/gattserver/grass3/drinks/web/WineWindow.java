@@ -76,11 +76,11 @@ public abstract class WineWindow extends DrinkWindow<WineTO> {
 				}).bind(WineTO::getAlcohol, WineTO::setAlcohol);
 		alcoholField.setWidth("80px");
 
-		final ComboBox<WineType> maltTypeField = new ComboBox<>("Typ vína", Arrays.asList(WineType.values()));
-		maltTypeField.setItemCaptionGenerator(WineType::getCaption);
-		binder.forField(maltTypeField).bind(WineTO::getWineType, WineTO::setWineType);
+		final ComboBox<WineType> wineTypeField = new ComboBox<>("Typ vína", Arrays.asList(WineType.values()));
+		wineTypeField.setItemCaptionGenerator(WineType::getCaption);
+		binder.forField(wineTypeField).asRequired().bind(WineTO::getWineType, WineTO::setWineType);
 
-		HorizontalLayout line2Layout = new HorizontalLayout(yearsField, alcoholField, maltTypeField);
+		HorizontalLayout line2Layout = new HorizontalLayout(yearsField, alcoholField, wineTypeField);
 
 		final TextArea descriptionField = new TextArea("Popis");
 		binder.forField(descriptionField).asRequired().bind(WineTO::getDescription, WineTO::setDescription);

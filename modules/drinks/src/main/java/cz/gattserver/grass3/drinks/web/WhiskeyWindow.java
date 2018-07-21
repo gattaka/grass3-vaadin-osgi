@@ -72,11 +72,11 @@ public abstract class WhiskeyWindow extends DrinkWindow<WhiskeyTO> {
 				}).bind(WhiskeyTO::getAlcohol, WhiskeyTO::setAlcohol);
 		alcoholField.setWidth("80px");
 
-		final ComboBox<WhiskeyType> maltTypeField = new ComboBox<>("Typ Whiskey", Arrays.asList(WhiskeyType.values()));
-		maltTypeField.setItemCaptionGenerator(WhiskeyType::getCaption);
-		binder.forField(maltTypeField).bind(WhiskeyTO::getWhiskeyType, WhiskeyTO::setWhiskeyType);
+		final ComboBox<WhiskeyType> whiskeyTypeField = new ComboBox<>("Typ Whiskey", Arrays.asList(WhiskeyType.values()));
+		whiskeyTypeField.setItemCaptionGenerator(WhiskeyType::getCaption);
+		binder.forField(whiskeyTypeField).bind(WhiskeyTO::getWhiskeyType, WhiskeyTO::setWhiskeyType);
 
-		HorizontalLayout line2Layout = new HorizontalLayout(yearsField, alcoholField, maltTypeField);
+		HorizontalLayout line2Layout = new HorizontalLayout(yearsField, alcoholField, whiskeyTypeField);
 
 		final TextArea descriptionField = new TextArea("Popis");
 		binder.forField(descriptionField).asRequired().bind(WhiskeyTO::getDescription, WhiskeyTO::setDescription);

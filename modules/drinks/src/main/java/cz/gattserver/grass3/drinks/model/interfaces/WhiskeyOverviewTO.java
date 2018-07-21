@@ -10,7 +10,7 @@ public class WhiskeyOverviewTO extends DrinkOverviewTO {
 	/**
 	 * DB id
 	 */
-	private Long id;
+	private Long infoId;
 
 	/**
 	 * Stáří
@@ -29,17 +29,17 @@ public class WhiskeyOverviewTO extends DrinkOverviewTO {
 	public WhiskeyOverviewTO(Long id, String name, DrinkType type, Double rating, Double alcohol, String country,
 			Long infoId, Integer years, WhiskeyType whiskeyType) {
 		super(id, name, type, rating, alcohol, country);
-		this.id = infoId;
+		this.infoId = infoId;
 		this.years = years;
 		this.whiskeyType = whiskeyType;
 	}
 
-	public Long getId() {
-		return id;
+	public Long getInfoId() {
+		return infoId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setInfoId(Long infoId) {
+		this.infoId = infoId;
 	}
 
 	public WhiskeyType getWhiskeyType() {

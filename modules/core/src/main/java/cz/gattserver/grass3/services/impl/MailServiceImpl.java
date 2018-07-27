@@ -9,10 +9,15 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cz.gattserver.grass3.exception.GrassException;
 import cz.gattserver.grass3.services.MailService;
 
 public class MailServiceImpl implements MailService {
+
+	private static Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
 
 	private String grassMailAddress;
 	private String grassMailPassword;
@@ -56,7 +61,9 @@ public class MailServiceImpl implements MailService {
 			message.setText(body);
 			Transport.send(message);
 		} catch (Exception e) {
-			throw new GrassException("Nezdařilo se odeslat email", e);
+			String msg = "Nezdařilo se odeslat email";
+			logger.error(msg, e);
+			throw new GrassException(msg, e);
 		}
 	}
 

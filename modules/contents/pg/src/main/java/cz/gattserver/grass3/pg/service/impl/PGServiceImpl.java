@@ -12,6 +12,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -149,7 +150,7 @@ public class PGServiceImpl implements PGService {
 		}
 	}
 
-	private void processMiniatureImages(Photogallery photogallery) throws IOException {
+	private void processMiniatureImages(Photogallery photogallery, boolean reprocess) throws IOException {
 		PGConfiguration configuration = loadConfiguration();
 		String miniaturesDir = configuration.getMiniaturesDir();
 		String previewsDir = configuration.getPreviewsDir();
@@ -163,14 +164,22 @@ public class PGServiceImpl implements PGService {
 		int progress = 1;
 
 		Path miniDirFile = galleryDir.resolve(miniaturesDir);
+		Path prevDirFile = galleryDir.resolve(previewsDir);
+
+		if (reprocess) {
+			if (Files.exists(miniDirFile))
+				deleteFileRecursively(miniDirFile);
+			if (Files.exists(prevDirFile))
+				deleteFileRecursively(prevDirFile);
+		}
+
 		if (!Files.exists(miniDirFile))
 			Files.createDirectories(miniDirFile);
 
-		Path prevDirFile = galleryDir.resolve(previewsDir);
 		if (!Files.exists(prevDirFile))
 			Files.createDirectories(prevDirFile);
 
-		try (Stream<Path> stream = Files.list(galleryDir)) {
+		try (Stream<Path> stream = Files.list(galleryDir).sorted(getComparator())) {
 			Iterator<Path> it = stream.iterator();
 			while (it.hasNext()) {
 				Path file = it.next();
@@ -200,7 +209,7 @@ public class PGServiceImpl implements PGService {
 		}
 	}
 
-	private void processSlideshowImages(Photogallery photogallery) throws IOException {
+	private void processSlideshowImages(Photogallery photogallery, boolean reprocess) throws IOException {
 		PGConfiguration configuration = loadConfiguration();
 		String slideshowDir = configuration.getSlideshowDir();
 		Path galleryDir = getGalleryPath(photogallery.getPhotogalleryPath());
@@ -213,10 +222,14 @@ public class PGServiceImpl implements PGService {
 		int progress = 1;
 
 		Path slideshowDirFile = galleryDir.resolve(slideshowDir);
+
+		if (reprocess && Files.exists(slideshowDirFile))
+			deleteFileRecursively(slideshowDirFile);
+
 		if (!Files.exists(slideshowDirFile))
 			Files.createDirectories(slideshowDirFile);
 
-		try (Stream<Path> stream = Files.list(galleryDir)) {
+		try (Stream<Path> stream = Files.list(galleryDir).sorted(getComparator())) {
 			Iterator<Path> it = stream.iterator();
 			while (it.hasNext()) {
 				Path file = it.next();
@@ -264,7 +277,7 @@ public class PGServiceImpl implements PGService {
 		try {
 			String galleryDir = payloadTO.getGalleryDir();
 			Path galleryPath = getGalleryPath(galleryDir);
-			stream = Files.list(galleryPath);
+			stream = Files.list(galleryPath).sorted(getComparator());
 			logger.info("modifyPhotogallery thread: " + Thread.currentThread().getId());
 
 			// Počet kroků = miniatury + detaily + uložení
@@ -305,10 +318,10 @@ public class PGServiceImpl implements PGService {
 			eventBus.publish(new PGProcessProgressEvent("Uložení obsahu galerie"));
 
 			// vytvoř miniatury
-			processMiniatureImages(photogallery);
+			processMiniatureImages(photogallery, payloadTO.isReprocess());
 
 			// vytvoř detaily
-			processSlideshowImages(photogallery);
+			processSlideshowImages(photogallery, payloadTO.isReprocess());
 
 			eventBus.publish(new PGProcessResultEvent(photogallery.getId()));
 		} catch (Exception e) {
@@ -440,7 +453,7 @@ public class PGServiceImpl implements PGService {
 					gallery.getPhotogalleryPath());
 			if (Files.exists(file)) {
 				Set<String> files = new HashSet<>();
-				try (Stream<Path> stream = Files.list(file)) {
+				try (Stream<Path> stream = Files.list(file).sorted(getComparator())) {
 					stream.filter(f -> !Files.isDirectory(f)).forEach(f -> files.add(f.getFileName().toString()));
 				} catch (IOException e) {
 					throw new IllegalStateException(
@@ -598,7 +611,7 @@ public class PGServiceImpl implements PGService {
 	public List<PhotogalleryViewItemTO> getItems(String galleryDir) throws IOException {
 		Path galleryPath = getGalleryPath(galleryDir);
 		List<PhotogalleryViewItemTO> items = new ArrayList<>();
-		try (Stream<Path> stream = Files.list(galleryPath)) {
+		try (Stream<Path> stream = Files.list(galleryPath).sorted(getComparator())) {
 			stream.filter(file -> !Files.isDirectory(file)).forEach(file -> {
 				PhotogalleryViewItemTO itemTO = new PhotogalleryViewItemTO();
 				itemTO.setName(file.getFileName().toString());
@@ -617,6 +630,20 @@ public class PGServiceImpl implements PGService {
 		}
 	}
 
+	private Comparator<Path> getComparator() {
+		Comparator<Path> nameComparator = (p1, p2) -> p1.getFileName().toString()
+				.compareTo(p2.getFileName().toString());
+		Comparator<Path> comparator = (p1, p2) -> {
+			try {
+				return Files.getLastModifiedTime(p1).compareTo(Files.getLastModifiedTime(p2));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return nameComparator.compare(p1, p2);
+		};
+		return comparator;
+	}
+
 	@Override
 	public List<PhotogalleryViewItemTO> getViewItems(String galleryDir, int skip, int limit) throws IOException {
 		Path galleryPath = getGalleryPath(galleryDir);
@@ -624,8 +651,9 @@ public class PGServiceImpl implements PGService {
 		Path miniaturesDir = galleryPath.resolve(configuration.getMiniaturesDir());
 		Path previewDir = galleryPath.resolve(configuration.getPreviewsDir());
 		List<PhotogalleryViewItemTO> list = new ArrayList<>();
-		try (Stream<Path> miniaturesStream = Files.list(miniaturesDir);
-				Stream<Path> previewsStream = Files.list(previewDir);) {
+
+		try (Stream<Path> miniaturesStream = Files.list(miniaturesDir).sorted(getComparator());
+				Stream<Path> previewsStream = Files.list(previewDir).sorted(getComparator());) {
 			Stream.concat(miniaturesStream, previewsStream).skip(skip).limit(limit).forEach(file -> {
 				PhotogalleryViewItemTO itemTO = new PhotogalleryViewItemTO();
 				String fileName = file.getFileName().toString();
@@ -653,8 +681,8 @@ public class PGServiceImpl implements PGService {
 		Path previewDir = galleryPath.resolve(configuration.getPreviewsDir());
 		Path slideshowDir = galleryPath.resolve(configuration.getSlideshowDir());
 		List<PhotogalleryViewItemTO> list = new ArrayList<>();
-		try (Stream<Path> miniaturesStream = Files.list(miniaturesDir);
-				Stream<Path> previewsStream = Files.list(previewDir);) {
+		try (Stream<Path> miniaturesStream = Files.list(miniaturesDir).sorted(getComparator());
+				Stream<Path> previewsStream = Files.list(previewDir).sorted(getComparator());) {
 			Stream.concat(miniaturesStream, previewsStream).skip(index).limit(1).forEach(file -> {
 				PhotogalleryViewItemTO itemTO = new PhotogalleryViewItemTO();
 				String fileName = file.getFileName().toString();

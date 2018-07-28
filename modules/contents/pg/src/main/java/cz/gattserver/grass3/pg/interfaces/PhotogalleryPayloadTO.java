@@ -14,6 +14,7 @@ public class PhotogalleryPayloadTO {
 	private String galleryDir;
 	private Collection<String> tags;
 	private boolean publicated;
+	private boolean reprocess;
 
 	/**
 	 * Výchozí konstruktor
@@ -31,11 +32,13 @@ public class PhotogalleryPayloadTO {
 	 * @param publicated
 	 *            <code>true</code>, pokud má být galerie zveřejněna
 	 */
-	public PhotogalleryPayloadTO(String name, String galleryDir, Collection<String> tags, boolean publicated) {
+	public PhotogalleryPayloadTO(String name, String galleryDir, Collection<String> tags, boolean publicated,
+			boolean reprocess) {
 		this.name = name;
 		this.galleryDir = galleryDir;
 		this.tags = tags;
 		this.publicated = publicated;
+		this.reprocess = reprocess;
 	}
 
 	/**
@@ -103,6 +106,25 @@ public class PhotogalleryPayloadTO {
 	 */
 	public PhotogalleryPayloadTO setPublicated(boolean publicated) {
 		this.publicated = publicated;
+		return this;
+	}
+
+	/**
+	 * @return <code>true</code>, pokud se má galerii přegenerovat složka
+	 *         miniatur a slideshow
+	 */
+	public boolean isReprocess() {
+		return reprocess;
+	}
+
+	/**
+	 * @param reprocess
+	 *            <code>true</code>, pokud se má galerii přegenerovat složka
+	 *            miniatur a slideshow
+	 * @return tento objekt pro řetězení
+	 */
+	public PhotogalleryPayloadTO setReprocess(boolean reprocess) {
+		this.reprocess = reprocess;
 		return this;
 	}
 

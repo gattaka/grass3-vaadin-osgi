@@ -206,7 +206,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Long userId1 = coreMockService.createMockUser(1);
 		Long nodeId1 = coreMockService.createMockRootNode(1);
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
-				null, true);
+				null, true, false);
 
 		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
 		eventBus.subscribe(eventsHandler);
@@ -296,7 +296,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Long userId1 = coreMockService.createMockUser(1);
 		Long nodeId1 = coreMockService.createMockRootNode(1);
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
-				null, true);
+				null, true, false);
 
 		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
 		eventBus.subscribe(eventsHandler);
@@ -415,7 +415,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Long userId1 = coreMockService.createMockUser(1);
 		Long nodeId1 = coreMockService.createMockRootNode(1);
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
-				null, true);
+				null, true, false);
 
 		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
 		eventBus.subscribe(eventsHandler);
@@ -443,7 +443,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Files.createDirectories(galleryDir);
 
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie" + variant,
-				galleryDir.getFileName().toString(), null, publicated);
+				galleryDir.getFileName().toString(), null, publicated, false);
 
 		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
 		eventBus.subscribe(eventsHandler);
@@ -530,7 +530,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Files.copy(this.getClass().getResourceAsStream("large.jpg"), largeFile);
 
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
-				null, true);
+				null, true, false);
 
 		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
 		eventBus.subscribe(eventsHandler);
@@ -615,7 +615,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Long userId1 = coreMockService.createMockUser(1);
 		Long nodeId1 = coreMockService.createMockRootNode(1);
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
-				null, true);
+				null, true, false);
 
 		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
 		eventBus.subscribe(eventsHandler);
@@ -661,7 +661,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Long userId1 = coreMockService.createMockUser(1);
 		Long nodeId1 = coreMockService.createMockRootNode(1);
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
-				null, true);
+				null, true, false);
 
 		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
 		eventBus.subscribe(eventsHandler);
@@ -736,7 +736,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Long userId1 = coreMockService.createMockUser(1);
 		Long nodeId1 = coreMockService.createMockRootNode(1);
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
-				null, true);
+				null, true, false);
 
 		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
 		eventBus.subscribe(eventsHandler);
@@ -907,7 +907,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Long userId1 = coreMockService.createMockUser(1);
 		Long nodeId1 = coreMockService.createMockRootNode(1);
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
-				null, true);
+				null, true, false);
 
 		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
 		eventBus.subscribe(eventsHandler);
@@ -965,7 +965,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Long userId1 = coreMockService.createMockUser(1);
 		Long nodeId1 = coreMockService.createMockRootNode(1);
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
-				null, true);
+				null, true, false);
 
 		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
 		eventBus.subscribe(eventsHandler);
@@ -1017,7 +1017,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Long userId1 = coreMockService.createMockUser(1);
 		Long nodeId1 = coreMockService.createMockRootNode(1);
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
-				null, true);
+				null, true, false);
 
 		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
 		eventBus.subscribe(eventsHandler);
@@ -1049,7 +1049,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Long userId1 = coreMockService.createMockUser(1);
 		Long nodeId1 = coreMockService.createMockRootNode(1);
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
-				null, true);
+				null, true, false);
 
 		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
 		eventBus.subscribe(eventsHandler);

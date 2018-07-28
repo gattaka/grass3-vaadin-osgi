@@ -283,7 +283,7 @@ public class PGViewerPage extends ContentViewerPage {
 				progressIndicatorWindow = new ProgressWindow();
 				PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(photogallery.getContentNode().getName(),
 						galleryDir, photogallery.getContentNode().getContentTagsAsStrings(),
-						photogallery.getContentNode().isPublicated());
+						photogallery.getContentNode().isPublicated(), false);
 				pgService.modifyPhotogallery(photogallery.getId(), payloadTO,
 						photogallery.getContentNode().getCreationDate());
 

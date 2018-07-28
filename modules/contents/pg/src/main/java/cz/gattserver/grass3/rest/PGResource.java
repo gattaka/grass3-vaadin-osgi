@@ -159,7 +159,7 @@ public class PGResource {
 				photogalleryFacade.uploadFile(uploadedFile.getInputStream(), uploadedFile.getOriginalFilename(),
 						galleryDir);
 			}
-			PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(galleryName, galleryDir, null, true);
+			PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(galleryName, galleryDir, null, true, false);
 			photogalleryFacade.savePhotogallery(payloadTO, 55L, 1L, LocalDateTime.now());
 		} catch (Exception e) {
 			logger.error("handleFileUpload /create chyba", e);

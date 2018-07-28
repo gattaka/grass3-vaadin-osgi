@@ -86,6 +86,7 @@ public class PGEditorPage extends OneColumnPage {
 	private TextField photogalleryNameField;
 	private DateTimeField photogalleryDateField;
 	private CheckBox publicatedCheckBox;
+	private CheckBox reprocessSlideshowAndMiniCheckBox;
 
 	private String galleryDir;
 	private boolean editMode;
@@ -110,6 +111,7 @@ public class PGEditorPage extends OneColumnPage {
 		photogalleryNameField = new TextField();
 		photogalleryDateField = new DateTimeField();
 		publicatedCheckBox = new CheckBox();
+		reprocessSlideshowAndMiniCheckBox = new CheckBox();
 
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		String operationToken = analyzer.getNextPathToken();
@@ -312,6 +314,9 @@ public class PGEditorPage extends OneColumnPage {
 		publicatedCheckBox.setDescription("Je-li prázdné, uvidí galerii pouze její autor");
 		contentOptionsLayout.addComponent(publicatedCheckBox);
 
+		reprocessSlideshowAndMiniCheckBox.setCaption("Přegenerova slideshow a miniatury");
+		contentOptionsLayout.addComponent(reprocessSlideshowAndMiniCheckBox);
+
 		photogalleryDateField.setCaption("Přepsat datum vytvoření galerie");
 		contentOptionsLayout.addComponent(photogalleryDateField);
 
@@ -407,7 +412,7 @@ public class PGEditorPage extends OneColumnPage {
 		List<String> tokens = new ArrayList<>();
 		photogalleryKeywords.getTokens().forEach(t -> tokens.add(t.getValue()));
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(photogalleryNameField.getValue(), galleryDir,
-				tokens, publicatedCheckBox.getValue());
+				tokens, publicatedCheckBox.getValue(), reprocessSlideshowAndMiniCheckBox.getValue());
 
 		eventBus.subscribe(PGEditorPage.this);
 		progressIndicatorWindow = new ProgressWindow();

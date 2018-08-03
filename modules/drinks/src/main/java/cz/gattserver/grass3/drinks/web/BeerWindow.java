@@ -61,8 +61,14 @@ public abstract class BeerWindow extends DrinkWindow<BeerTO> {
 
 		TextField degreeField = new TextField("Stupně (°)");
 		binder.forField(degreeField).withNullRepresentation("")
-				.withConverter(new StringToIntegerConverter(null, "Stupně (°) musí být celé číslo"))
-				.bind(BeerTO::getDegrees, BeerTO::setDegrees);
+				.withConverter(new StringToIntegerConverter(null, "Stupně (°) musí být celé číslo") {
+					private static final long serialVersionUID = -6368685797049169076L;
+
+					@Override
+					protected NumberFormat getFormat(Locale locale) {
+						return NumberFormat.getNumberInstance(new Locale("cs", "CZ"));
+					}
+				}).bind(BeerTO::getDegrees, BeerTO::setDegrees);
 		degreeField.setWidth("80px");
 
 		TextField alcoholField = new TextField("Alkohol (%)");

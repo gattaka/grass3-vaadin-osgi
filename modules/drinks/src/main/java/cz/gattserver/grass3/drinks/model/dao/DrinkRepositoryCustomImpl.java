@@ -77,7 +77,12 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 		QDrink d = QDrink.drink;
 		QBeerInfo b = QBeerInfo.beerInfo;
 		QuerydslUtil.applyPagination(pageable, query);
-		return query
+
+		if (order.length == 0)
+			order = QuerydslUtil.transformOrdering(new String[] { b.brewery.toString(), d.name.toString() },
+					new boolean[] { false, false });
+
+ 		return query
 				.select(new QBeerOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, b.id, b.brewery,
 						b.ibu, b.degrees, b.category, b.maltType))
 				.from(d).join(b).on(d.drinkInfo.eq(b.id)).where(createPredicateBeers(filterTO)).orderBy(order).fetch();

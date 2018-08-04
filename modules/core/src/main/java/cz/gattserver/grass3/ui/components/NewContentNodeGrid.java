@@ -29,7 +29,7 @@ public class NewContentNodeGrid extends Grid<ContentModule> {
 		String nameBind = "customName";
 
 		// jaké služby obsahů mám k dispozici ?
-		List<ContentModule> contentServices = serviceHolder.getContentServices();
+		List<ContentModule> contentServices = serviceHolder.getContentModules();
 		setItems(contentServices);
 
 		addColumn(contentService -> new Image("", contentService.getContentIcon()), new ComponentRenderer())

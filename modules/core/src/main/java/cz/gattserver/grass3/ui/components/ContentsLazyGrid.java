@@ -53,13 +53,13 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		String lastModificationDateBind = "customLastModificationDate";
 
 		addColumn(contentNode -> {
-			ContentModule contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
+			ContentModule contentService = serviceHolder.getContentModulesByName(contentNode.getContentReaderID());
 			return new Image("", contentService == null ? ImageIcon.WARNING_16_ICON.createResource()
 					: contentService.getContentIcon());
 		}, new ComponentRenderer()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(iconBind);
 
 		addColumn(contentNode -> {
-			ContentModule contentService = serviceHolder.getContentServiceByName(contentNode.getContentReaderID());
+			ContentModule contentService = serviceHolder.getContentModulesByName(contentNode.getContentReaderID());
 			PageFactory pageFactory = contentService == null ? noServicePageFactory
 					: contentService.getContentViewerPageFactory();
 			return "<a href='"

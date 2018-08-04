@@ -15,9 +15,9 @@ import cz.gattserver.grass3.modules.SectionService;
  */
 public interface ModuleRegister {
 
-	List<ContentModule> getContentServices();
+	List<ContentModule> getContentModules();
 
-	ContentModule getContentServiceByName(String contentReaderID);
+	ContentModule getContentModulesByName(String contentReaderID);
 
 	List<SectionService> getSectionServices();
 

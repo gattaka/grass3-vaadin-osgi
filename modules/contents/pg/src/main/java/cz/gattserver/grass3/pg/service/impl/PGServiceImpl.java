@@ -184,12 +184,12 @@ public class PGServiceImpl implements PGService {
 			while (it.hasNext()) {
 				Path file = it.next();
 
-				eventBus.publish(new PGProcessProgressEvent("Zpracování miniatur " + progress + "/" + total));
-				progress++;
-
 				// pokud bych miniaturizoval adresář přeskoč
 				if (Files.isDirectory(file))
 					continue;
+
+				eventBus.publish(new PGProcessProgressEvent("Zpracování miniatur " + progress + "/" + total));
+				progress++;
 
 				boolean videoExt = PGUtils.isVideo(file);
 				boolean imageExt = PGUtils.isImage(file);

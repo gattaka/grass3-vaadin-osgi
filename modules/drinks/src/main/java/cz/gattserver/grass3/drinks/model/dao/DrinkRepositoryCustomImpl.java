@@ -82,7 +82,7 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 			order = QuerydslUtil.transformOrdering(new String[] { b.brewery.toString(), d.name.toString() },
 					new boolean[] { true, true });
 
- 		return query
+		return query
 				.select(new QBeerOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, b.id, b.brewery,
 						b.ibu, b.degrees, b.category, b.maltType))
 				.from(d).join(b).on(d.drinkInfo.eq(b.id)).where(createPredicateBeers(filterTO)).orderBy(order).fetch();
@@ -127,12 +127,16 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 	public List<RumOverviewTO> findRums(RumOverviewTO filterTO, PageRequest pageable, OrderSpecifier<?>[] order) {
 		JPAQuery<RumOverviewTO> query = new JPAQuery<>(entityManager);
 		QDrink d = QDrink.drink;
-		QRumInfo b = QRumInfo.rumInfo;
+		QRumInfo r = QRumInfo.rumInfo;
 		QuerydslUtil.applyPagination(pageable, query);
+
+		if (order.length == 0)
+			order = QuerydslUtil.transformOrdering(new String[] { d.name.toString() }, new boolean[] { true });
+
 		return query
-				.select(new QRumOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, b.id, b.years,
-						b.rumType))
-				.from(d).join(b).on(d.drinkInfo.eq(b.id)).where(createPredicateRums(filterTO)).orderBy(order).fetch();
+				.select(new QRumOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, r.id, r.years,
+						r.rumType))
+				.from(d).join(r).on(d.drinkInfo.eq(r.id)).where(createPredicateRums(filterTO)).orderBy(order).fetch();
 	}
 
 	@Override
@@ -173,12 +177,16 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 			OrderSpecifier<?>[] order) {
 		JPAQuery<WhiskeyOverviewTO> query = new JPAQuery<>(entityManager);
 		QDrink d = QDrink.drink;
-		QWhiskeyInfo b = QWhiskeyInfo.whiskeyInfo;
+		QWhiskeyInfo w = QWhiskeyInfo.whiskeyInfo;
 		QuerydslUtil.applyPagination(pageable, query);
+
+		if (order.length == 0)
+			order = QuerydslUtil.transformOrdering(new String[] { d.name.toString() }, new boolean[] { true });
+
 		return query
-				.select(new QWhiskeyOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, b.id, b.years,
-						b.whiskeyType))
-				.from(d).join(b).on(d.drinkInfo.eq(b.id)).where(createPredicateWhiskeys(filterTO)).orderBy(order)
+				.select(new QWhiskeyOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, w.id, w.years,
+						w.whiskeyType))
+				.from(d).join(w).on(d.drinkInfo.eq(w.id)).where(createPredicateWhiskeys(filterTO)).orderBy(order)
 				.fetch();
 	}
 
@@ -222,12 +230,17 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 	public List<WineOverviewTO> findWines(WineOverviewTO filterTO, PageRequest pageable, OrderSpecifier<?>[] order) {
 		JPAQuery<WineOverviewTO> query = new JPAQuery<>(entityManager);
 		QDrink d = QDrink.drink;
-		QWineInfo b = QWineInfo.wineInfo;
+		QWineInfo w = QWineInfo.wineInfo;
 		QuerydslUtil.applyPagination(pageable, query);
+
+		if (order.length == 0)
+			order = QuerydslUtil.transformOrdering(new String[] { w.winery.toString(), d.name.toString() },
+					new boolean[] { true, true });
+
 		return query
-				.select(new QWineOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, b.id, b.winery,
-						b.year, b.wineType))
-				.from(d).join(b).on(d.drinkInfo.eq(b.id)).where(createPredicateWines(filterTO)).orderBy(order).fetch();
+				.select(new QWineOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, w.id, w.winery,
+						w.year, w.wineType))
+				.from(d).join(w).on(d.drinkInfo.eq(w.id)).where(createPredicateWines(filterTO)).orderBy(order).fetch();
 	}
 
 	@Override

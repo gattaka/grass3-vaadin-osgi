@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.contextmenu.GridContextMenu;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
-import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.shared.ui.dnd.DropEffect;
 import com.vaadin.shared.ui.dnd.EffectAllowed;
@@ -34,7 +33,6 @@ import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.services.NodeService;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmWindow;
 import cz.gattserver.web.common.ui.window.WebWindow;
 
@@ -122,19 +120,19 @@ public class NodeTree extends VerticalLayout {
 			if (e.getItem() != null) {
 				NodeOverviewTO node = (NodeOverviewTO) e.getItem();
 				grid.select(node);
-				e.getContextMenu().addItem("Smazat", ImageIcon.DELETE_16_ICON.createResource(),
-						selectedItem -> deleteAction(node));
-				e.getContextMenu().addItem("Přejmenovat", ImageIcon.PENCIL_16_ICON.createResource(),
-						selectedItem -> renameAction(node));
+				// Bohužel, je zde asi bug, protože ContextMenu addon neumí
+				// zpracovat ClassResource, umí evidentě pouze ThemeResource
+				e.getContextMenu().addItem("Smazat", selectedItem -> deleteAction(node));
+				e.getContextMenu().addItem("Přejmenovat", selectedItem -> renameAction(node));
 			}
-			e.getContextMenu().addItem("Vytvořit zde novou", ImageIcon.PLUS_16_ICON.createResource(),
+			e.getContextMenu().addItem("Vytvořit zde novou",
 					selectedItem -> createNodeAction(e.getItem() == null ? null : (NodeOverviewTO) e.getItem()));
 		});
 
 		/*
 		 * Delete shortcut
 		 */
-		addShortcutListener(new ShortcutListener("Delete", ShortcutAction.KeyCode.DELETE, null) {
+		addShortcutListener(new ShortcutListener("Delete", null) {
 			private static final long serialVersionUID = -7239845094514060176L;
 
 			@Override

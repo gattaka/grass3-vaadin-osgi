@@ -25,7 +25,7 @@ public class BeerTO extends DrinkTO {
 	/**
 	 * Stupňovitost
 	 */
-	private Integer degrees;
+	private Double degrees;
 
 	/**
 	 * Kategorie -- IPA, APA, Ležák apod.
@@ -52,7 +52,7 @@ public class BeerTO extends DrinkTO {
 
 	@QueryProjection
 	public BeerTO(Long id, String name, DrinkType type, Double rating, byte[] image, String description, Double alcohol,
-			String country, Long infoId, String brewery, Integer ibu, Integer degrees, String category,
+			String country, Long infoId, String brewery, Integer ibu, Double degrees, String category,
 			MaltType maltType, String malts, String hops) {
 		super(id, name, type, rating, image, description, alcohol, country);
 		this.infoId = infoId;
@@ -105,11 +105,11 @@ public class BeerTO extends DrinkTO {
 		this.ibu = ibu;
 	}
 
-	public Integer getDegrees() {
+	public Double getDegrees() {
 		return degrees;
 	}
 
-	public void setDegrees(Integer degrees) {
+	public void setDegrees(Double degrees) {
 		this.degrees = degrees;
 	}
 

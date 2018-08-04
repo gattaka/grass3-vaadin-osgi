@@ -61,7 +61,7 @@ public abstract class BeerWindow extends DrinkWindow<BeerTO> {
 
 		TextField degreeField = new TextField("Stupně (°)");
 		binder.forField(degreeField).withNullRepresentation("")
-				.withConverter(new StringToIntegerConverter(null, "Stupně (°) musí být celé číslo") {
+				.withConverter(new StringToDoubleConverter(null, "Stupně (°) musí být celé číslo") {
 					private static final long serialVersionUID = -6368685797049169076L;
 
 					@Override

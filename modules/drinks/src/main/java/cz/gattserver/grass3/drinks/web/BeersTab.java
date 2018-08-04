@@ -60,7 +60,8 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 				.setSortProperty("name");
 		Column<BeerOverviewTO, String> categoryColumn = grid.addColumn(BeerOverviewTO::getCategory)
 				.setCaption("Kategorie").setWidth(80).setSortProperty("category");
-		Column<BeerOverviewTO, Integer> degreesColumn = grid.addColumn(BeerOverviewTO::getDegrees)
+		Column<BeerOverviewTO, Double> degreesColumn = grid.addColumn(BeerOverviewTO::getDegrees)
+				.setRenderer(new NumberRenderer(NumberFormat.getNumberInstance(new Locale("cs", "CZ"))))
 				.setCaption("Stupně (°)").setWidth(80).setSortProperty("degrees");
 		Column<BeerOverviewTO, Double> alcoholColumn = grid.addColumn(BeerOverviewTO::getAlcohol)
 				.setRenderer(new NumberRenderer(NumberFormat.getNumberInstance(new Locale("cs", "CZ"))))
@@ -119,7 +120,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 		degreesColumnField.setWidth("100%");
 		degreesColumnField.addValueChangeListener(e -> {
 			try {
-				filterTO.setDegrees(Integer.parseInt(e.getValue()));
+				filterTO.setDegrees(Double.parseDouble(e.getValue()));
 			} catch (Exception ex) {
 			}
 			populate();

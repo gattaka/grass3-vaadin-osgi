@@ -30,7 +30,7 @@ public class BeerInfo {
 	/**
 	 * Stupňovitost
 	 */
-	private Integer degrees;
+	private Double degrees;
 
 	/**
 	 * Kategorie -- IPA, APA, Ležák apod.
@@ -55,7 +55,7 @@ public class BeerInfo {
 	public BeerInfo() {
 	}
 
-	public BeerInfo(String brewery, Integer ibu, Integer degrees, String category, MaltType maltType, String malts,
+	public BeerInfo(String brewery, Integer ibu, Double degrees, String category, MaltType maltType, String malts,
 			String hops) {
 		super();
 		this.brewery = brewery;
@@ -107,11 +107,11 @@ public class BeerInfo {
 		this.ibu = ibu;
 	}
 
-	public Integer getDegrees() {
+	public Double getDegrees() {
 		return degrees;
 	}
 
-	public void setDegrees(Integer degrees) {
+	public void setDegrees(Double degrees) {
 		this.degrees = degrees;
 	}
 

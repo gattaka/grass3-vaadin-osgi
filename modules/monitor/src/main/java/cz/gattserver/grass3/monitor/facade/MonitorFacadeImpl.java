@@ -260,7 +260,11 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		ServerServiceMonitorItemTO sonarTO = new ServerServiceMonitorItemTO("SonarQube", "http://gattserver.cz:9000");
 		testResponseCode(sonarTO);
 		items.add(sonarTO);
-
+		
+		ServerServiceMonitorItemTO h2TO = new ServerServiceMonitorItemTO("H2", "http://gattserver.cz:8082");
+		testResponseCode(h2TO);
+		items.add(h2TO);
+		
 		return items;
 	}
 

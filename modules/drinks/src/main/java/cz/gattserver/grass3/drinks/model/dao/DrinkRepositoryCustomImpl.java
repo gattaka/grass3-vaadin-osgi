@@ -80,7 +80,7 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 
 		if (order.length == 0)
 			order = QuerydslUtil.transformOrdering(new String[] { b.brewery.toString(), d.name.toString() },
-					new boolean[] { false, false });
+					new boolean[] { true, true });
 
  		return query
 				.select(new QBeerOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, b.id, b.brewery,

@@ -70,6 +70,7 @@ public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
 			RatingStars rs = new RatingStars();
 			rs.setValue(to.getRating());
 			rs.setReadOnly(true);
+			rs.setAnimated(false);
 			return rs;
 		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení").setWidth(120).setSortProperty("rating");
 		grid.setWidth("100%");
@@ -189,6 +190,7 @@ public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
 		RatingStars rs = new RatingStars();
 		rs.setValue(choosenDrink.getRating());
 		rs.setReadOnly(true);
+		rs.setAnimated(false);
 		dataLayout.addComponent(rs);
 
 		GridLayout infoLayout = new GridLayout(2, 7);

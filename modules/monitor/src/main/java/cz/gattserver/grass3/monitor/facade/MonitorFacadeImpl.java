@@ -32,6 +32,7 @@ import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.MonitorState;
 import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
 import cz.gattserver.grass3.services.ConfigurationService;
 
@@ -88,6 +89,33 @@ public class MonitorFacadeImpl implements MonitorFacade {
 				itemTO.setShared(Long.parseLong(values[3]) * 1000);
 				itemTO.setBuffCache(Long.parseLong(values[4]) * 1000);
 				itemTO.setAvailable(Long.parseLong(values[5]) * 1000);
+			} catch (NumberFormatException e) {
+				itemTO.setMonitorState(MonitorState.UNAVAILABLE);
+				return itemTO;
+			}
+		}
+
+		itemTO.setMonitorState(MonitorState.SUCCESS);
+		return itemTO;
+	}
+
+	@Override
+	public SystemSwapMonitorItemTO getSystemSwapStatus() {
+		// #!/bin/bash
+		// free | grep 'Mem' | grep -o [0-9]*
+		ConsoleOutputTO to = runScript("getMemoryStatus");
+		SystemSwapMonitorItemTO itemTO = new SystemSwapMonitorItemTO();
+
+		String[] values = to.getOutput().split("\n");
+		if (values.length != 6) {
+			itemTO.setMonitorState(MonitorState.UNAVAILABLE);
+			return itemTO;
+		} else {
+			try {
+				// * 1000 protože údaje jsou v KB
+				itemTO.setTotal(Long.parseLong(values[0]) * 1000);
+				itemTO.setUsed(Long.parseLong(values[1]) * 1000);
+				itemTO.setFree(Long.parseLong(values[2]) * 1000);
 			} catch (NumberFormatException e) {
 				itemTO.setMonitorState(MonitorState.UNAVAILABLE);
 				return itemTO;
@@ -260,11 +288,11 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		ServerServiceMonitorItemTO sonarTO = new ServerServiceMonitorItemTO("SonarQube", "http://gattserver.cz:9000");
 		testResponseCode(sonarTO);
 		items.add(sonarTO);
-		
+
 		ServerServiceMonitorItemTO h2TO = new ServerServiceMonitorItemTO("H2", "http://gattserver.cz:8082");
 		testResponseCode(h2TO);
 		items.add(h2TO);
-		
+
 		return items;
 	}
 

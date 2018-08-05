@@ -11,6 +11,7 @@ import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
 
 public interface MonitorFacade {
@@ -22,6 +23,8 @@ public interface MonitorFacade {
 	SystemUptimeMonitorItemTO getSystemUptime();
 
 	SystemMemoryMonitorItemTO getSystemMemoryStatus();
+
+	SystemSwapMonitorItemTO getSystemSwapStatus();
 
 	JVMUptimeMonitorItemTO getJVMUptime();
 

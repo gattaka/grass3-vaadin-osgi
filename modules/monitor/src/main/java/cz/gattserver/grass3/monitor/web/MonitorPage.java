@@ -27,6 +27,7 @@ import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.MonitorState;
 import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.web.label.ErrorMonitorDisplay;
 import cz.gattserver.grass3.monitor.web.label.WarningMonitorDisplay;
@@ -111,11 +112,10 @@ public class MonitorPage extends OneColumnPage {
 			ProgressBar pb = new ProgressBar();
 			pb.setValue(memoryTO.getUsedRation());
 			pb.setWidth("200px");
-			itemLayout
-					.addComponent(new SuccessMonitorDisplay(
-							"obsazeno " + humanFormat(memoryTO.getUsed()) + " (" + usedPerc + ") z "
-									+ humanFormat(memoryTO.getTotal()) + "; volno " + humanFormat(memoryTO.getFree()),
-							pb));
+			itemLayout.addComponent(new SuccessMonitorDisplay(
+					"obsazeno " + humanFormat(memoryTO.getUsed()) + " (" + usedPerc + ") z "
+							+ humanFormat(memoryTO.getTotal()) + "; volno " + humanFormat(memoryTO.getAvailable()),
+					pb));
 			((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
 			jvmLayout.addComponent(itemLayout);
 			break;
@@ -123,6 +123,30 @@ public class MonitorPage extends OneColumnPage {
 		case ERROR:
 		default:
 			jvmLayout.addComponent(new WarningMonitorDisplay("System memory info není dostupné"));
+		}
+
+		/*
+		 * Swap
+		 */
+		SystemSwapMonitorItemTO swapTO = monitorFacade.getSystemSwapStatus();
+		switch (swapTO.getMonitorState()) {
+		case SUCCESS:
+			HorizontalLayout itemLayout = new HorizontalLayout();
+			itemLayout.setSpacing(true);
+			String usedPerc = NumberFormat.getIntegerInstance().format(swapTO.getUsedRation() * 100) + "%";
+			ProgressBar pb = new ProgressBar();
+			pb.setValue(swapTO.getUsedRation());
+			pb.setWidth("200px");
+			itemLayout.addComponent(
+					new SuccessMonitorDisplay("obsazeno " + humanFormat(swapTO.getUsed()) + " (" + usedPerc + ") z "
+							+ humanFormat(swapTO.getTotal()) + "; volno " + humanFormat(swapTO.getFree()), pb));
+			((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
+			jvmLayout.addComponent(itemLayout);
+			break;
+		case UNAVAILABLE:
+		case ERROR:
+		default:
+			jvmLayout.addComponent(new WarningMonitorDisplay("System swap info není dostupné"));
 		}
 	}
 

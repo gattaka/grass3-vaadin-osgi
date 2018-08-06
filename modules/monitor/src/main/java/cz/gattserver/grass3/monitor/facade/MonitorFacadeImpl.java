@@ -102,12 +102,12 @@ public class MonitorFacadeImpl implements MonitorFacade {
 	@Override
 	public SystemSwapMonitorItemTO getSystemSwapStatus() {
 		// #!/bin/bash
-		// free | grep 'Mem' | grep -o [0-9]*
-		ConsoleOutputTO to = runScript("getMemoryStatus");
+		// free | grep 'Swap' | grep -o [0-9]*
+		ConsoleOutputTO to = runScript("getSwapStatus");
 		SystemSwapMonitorItemTO itemTO = new SystemSwapMonitorItemTO();
 
 		String[] values = to.getOutput().split("\n");
-		if (values.length != 6) {
+		if (values.length != 3) {
 			itemTO.setMonitorState(MonitorState.UNAVAILABLE);
 			return itemTO;
 		} else {

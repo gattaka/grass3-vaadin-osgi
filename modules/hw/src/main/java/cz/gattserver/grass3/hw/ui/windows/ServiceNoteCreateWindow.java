@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.hw.ui.windows;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -33,15 +34,16 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 		this(hwItem, null);
 	}
 
-	public ServiceNoteCreateWindow(final HWItemTO hwItem, ServiceNoteTO originalDTO) {
-		super(originalDTO == null ? "Nový servisní záznam" : "Oprava existujícího servisního záznamu");
+	public ServiceNoteCreateWindow(final HWItemTO hwItem, ServiceNoteTO originalTO) {
+		super(originalTO == null ? "Nový servisní záznam" : "Oprava existujícího servisního záznamu");
 
-		ServiceNoteTO formDTO = new ServiceNoteTO();
-		formDTO.setDescription("");
-		formDTO.setState(hwItem.getState());
+		ServiceNoteTO formTO = new ServiceNoteTO();
+		formTO.setDate(LocalDate.now());
+		formTO.setDescription("");
+		formTO.setState(hwItem.getState());
 
 		Binder<ServiceNoteTO> binder = new Binder<>();
-		binder.setBean(formDTO);
+		binder.setBean(formTO);
 
 		GridLayout winLayout = new GridLayout(2, 4);
 		setContent(winLayout);
@@ -82,6 +84,9 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 		});
 		winLayout.addComponent(usedInCombo, 0, 1, 1, 1);
 
+		if (hwItem.getUsedIn() != null)
+			usedInCombo.setValue(hwItem.getUsedIn());
+
 		TextArea descriptionField = new TextArea("Popis");
 		descriptionField.setWidth("100%");
 		descriptionField.setHeight("120px");
@@ -89,11 +94,11 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 		winLayout.addComponent(descriptionField, 0, 2, 1, 2);
 
 		Button createBtn;
-		createBtn = new Button(originalDTO == null ? "Zapsat" : "Upravit", e -> {
+		createBtn = new Button(originalTO == null ? "Zapsat" : "Upravit", e -> {
 			try {
-				ServiceNoteTO writeDTO = originalDTO == null ? new ServiceNoteTO() : originalDTO;
+				ServiceNoteTO writeDTO = originalTO == null ? new ServiceNoteTO() : originalTO;
 				binder.writeBean(writeDTO);
-				if (originalDTO == null) {
+				if (originalTO == null) {
 					getHWService().addServiceNote(writeDTO, hwItem.getId());
 					onSuccess(writeDTO);
 				} else {
@@ -111,8 +116,8 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 		winLayout.setComponentAlignment(createBtn, Alignment.BOTTOM_RIGHT);
 
 		// Poté, co je form probindován se nastaví hodnoty dle originálu
-		if (originalDTO != null)
-			binder.readBean(originalDTO);
+		if (originalTO != null)
+			binder.readBean(originalTO);
 	}
 
 	private HWService getHWService() {

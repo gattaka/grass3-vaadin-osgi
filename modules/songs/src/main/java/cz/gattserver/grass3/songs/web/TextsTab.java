@@ -82,6 +82,7 @@ public class TextsTab extends VerticalLayout {
 		filterTO = new SongOverviewTO();
 
 		HorizontalLayout mainLayout = new HorizontalLayout();
+		mainLayout.setWidth("100%");
 		addComponent(mainLayout);
 
 		grid = new Grid<>(null, songs);
@@ -136,8 +137,7 @@ public class TextsTab extends VerticalLayout {
 		VerticalLayout contentLayout = new VerticalLayout();
 
 		Panel panel = new Panel(contentLayout);
-		panel.setWidth("560px");
-		panel.setHeight("100%");
+		panel.setSizeFull();
 		mainLayout.addComponent(panel);
 		mainLayout.setExpandRatio(panel, 1);
 
@@ -153,7 +153,7 @@ public class TextsTab extends VerticalLayout {
 		contentLabel = new Label();
 		contentLabel.setStyleName("song-text-area");
 		Page.getCurrent().getStyles().add(".v-slot.v-slot-song-text-area { font-family: monospace; }");
-		contentLabel.setWidth("520px");
+		contentLabel.setWidth("100%");
 		contentLabel.setContentMode(ContentMode.HTML);
 		contentLayout.addComponent(contentLabel);
 

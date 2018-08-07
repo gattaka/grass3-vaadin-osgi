@@ -76,10 +76,8 @@ public class RecipesPage extends OneColumnPage {
 				(e) -> e.getFirstSelectedItem().ifPresent((v) -> showDetail(recipesFacade.getRecipeById(v.getId()))));
 
 		VerticalLayout contentLayout = new VerticalLayout();
-		// contentLayout.setWidth("100%");
 		Panel panel = new Panel(contentLayout);
-		panel.setWidth("100%");
-		panel.setHeight("100%");
+		panel.setSizeFull();
 		recipesLayout.addComponent(panel);
 		recipesLayout.setExpandRatio(panel, 1);
 

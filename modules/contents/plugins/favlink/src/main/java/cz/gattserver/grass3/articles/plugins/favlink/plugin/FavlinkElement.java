@@ -15,7 +15,7 @@ public class FavlinkElement implements Element {
 
 	@Override
 	public void apply(Context ctx) {
-		ctx.print("<a href=\"" + link + "\" >");
+		ctx.print("<a style=\"word-wrap: break-word\" href=\"" + link + "\" >");
 		if (imgURL != null)
 			ctx.print("<img style=\"margin: 4px 5px -4px 2px;\" height=\"16\" width=\"16\" src=\"" + imgURL + "\" />");
 		ctx.print(link);

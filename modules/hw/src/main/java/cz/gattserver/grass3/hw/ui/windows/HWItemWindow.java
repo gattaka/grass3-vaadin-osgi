@@ -5,11 +5,14 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.fo0.advancedtokenfield.main.AdvancedTokenField;
+import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
 import com.vaadin.data.converter.StringToIntegerConverter;
@@ -20,7 +23,6 @@ import com.vaadin.ui.DateField;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.UI;
 
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
@@ -58,7 +60,8 @@ public abstract class HWItemWindow extends WebWindow {
 
 	/**
 	 * @param originalId
-	 *            opravuji údaje existující položky, nebo vytvářím novou ( {@code null}) ?
+	 *            opravuji údaje existující položky, nebo vytvářím novou (
+	 *            {@code null}) ?
 	 */
 	private void init(HWItemTO originalDTO) {
 		setCaption(originalDTO == null ? "Založení nové položky HW" : "Oprava údajů existující položky HW");
@@ -130,19 +133,30 @@ public abstract class HWItemWindow extends WebWindow {
 		binder.bind(supervizedForField, "supervizedFor");
 		winLayout.addComponent(supervizedForField, 1, 3);
 
-		Set<HWItemTypeTO> types = getHWService().getAllHWTypes();
-		final TwinColSelect<HWItemTypeTO> typeSelect = new TwinColSelect<>("Typy", types);
-		typeSelect.setWidth("100%");
-		typeSelect.setRows(7);
-		typeSelect.setItemCaptionGenerator(HWItemTypeTO::getName);
-		binder.bind(typeSelect, "types");
-		winLayout.addComponent(typeSelect, 0, 4, 1, 4);
+		AdvancedTokenField keywords = new AdvancedTokenField();
+		keywords.isEnabled();
+		keywords.setAllowNewItems(true);
+		keywords.getInputField().setPlaceholder("klíčové slovo");
+
+		Set<HWItemTypeTO> contentTypes = getHWService().getAllHWTypes();
+		contentTypes.forEach(t -> {
+			Token to = new Token(t.getName());
+			keywords.addTokenToInputField(to);
+		});
+
+		if (originalDTO != null)
+			for (String typeName : originalDTO.getTypes())
+				keywords.addToken(new Token(typeName));
+		winLayout.addComponent(keywords, 0, 4, 1, 4);
 
 		Button createBtn;
 		createBtn = new Button("Uložit", e -> {
 			try {
 				HWItemTO writeDTO = originalDTO == null ? new HWItemTO() : originalDTO;
 				binder.writeBean(writeDTO);
+				Set<String> tokens = new HashSet<>();
+				keywords.getTokens().forEach(t -> tokens.add(t.getValue()));
+				writeDTO.setTypes(tokens);
 				writeDTO.setId(getHWService().saveHWItem(writeDTO));
 				onSuccess(writeDTO);
 				close();

@@ -264,7 +264,6 @@ public class HWItemsTab extends VerticalLayout {
 			hwItem = getHWService().getHWItem(id);
 		}
 		addWindow(new HWItemWindow(hwItem == null ? null : hwItem.getId()) {
-
 			private static final long serialVersionUID = -1397391593801030584L;
 
 			@Override

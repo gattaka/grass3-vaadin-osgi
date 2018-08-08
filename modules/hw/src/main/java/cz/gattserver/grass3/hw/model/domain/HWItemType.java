@@ -25,6 +25,13 @@ public class HWItemType {
 	 */
 	private String name;
 
+	public HWItemType(String name) {
+		this.name = name;
+	}
+
+	public HWItemType() {
+	}
+
 	public Long getId() {
 		return id;
 	}

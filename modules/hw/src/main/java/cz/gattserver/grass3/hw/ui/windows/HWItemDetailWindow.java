@@ -276,8 +276,8 @@ public class HWItemDetailWindow extends WebWindow {
 		 */
 		HorizontalLayout tags = new HorizontalLayout();
 		tags.setSpacing(true);
-		hwItem.getTypes().forEach(type -> {
-			Label token = new Label(type.getName());
+		hwItem.getTypes().forEach(typeName -> {
+			Label token = new Label(typeName);
 			token.setSizeUndefined();
 			token.setStyleName("read-only-token");
 			tags.addComponent(token);
@@ -645,6 +645,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 				// refresh listu
 				populateDocsGrid();
+				sheet.getTab(3).setCaption(createDocsTabCaption());
 			}
 
 		};
@@ -660,6 +661,7 @@ public class HWItemDetailWindow extends WebWindow {
 			HWItemFileTO item = items.iterator().next();
 			getHWService().deleteHWItemDocumentsFile(hwItemId, item.getName());
 			populateDocsGrid();
+			sheet.getTab(3).setCaption(createDocsTabCaption());
 		}, docsGrid);
 		uploadWrapperLayout.addComponent(hwItemDocumentDeleteBtn);
 

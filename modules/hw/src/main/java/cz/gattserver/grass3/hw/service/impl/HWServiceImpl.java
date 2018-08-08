@@ -420,8 +420,12 @@ public class HWServiceImpl implements HWService {
 		item.setWarrantyYears(hwItemDTO.getWarrantyYears());
 		if (hwItemDTO.getTypes() != null) {
 			item.setTypes(new HashSet<HWItemType>());
-			for (HWItemTypeTO typeDTO : hwItemDTO.getTypes()) {
-				HWItemType type = hwItemTypeRepository.findOne(typeDTO.getId());
+			for (String typeName : hwItemDTO.getTypes()) {
+				HWItemType type = hwItemTypeRepository.findByName(typeName);
+				if (type == null) {
+					type = new HWItemType(typeName);
+					type = hwItemTypeRepository.save(type);
+				}
 				item.getTypes().add(type);
 			}
 		}

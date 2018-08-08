@@ -181,9 +181,8 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 				node = draft.getContentNode().getParent();
 				articleNameField.setValue(draft.getContentNode().getName());
-				for (ContentTagOverviewTO tagDTO : draft.getContentNode().getContentTags()) {
+				for (ContentTagOverviewTO tagDTO : draft.getContentNode().getContentTags())
 					articleKeywords.addToken(new Token(tagDTO.getName()));
-				}
 				publicatedCheckBox.setValue(draft.getContentNode().isPublicated());
 				articleTextArea.setValue(draft.getText());
 

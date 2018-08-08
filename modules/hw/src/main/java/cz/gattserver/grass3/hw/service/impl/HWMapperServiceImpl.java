@@ -2,6 +2,7 @@ package cz.gattserver.grass3.hw.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -83,7 +84,10 @@ public class HWMapperServiceImpl implements HWMapperService {
 		dto.setServiceNotes(mapServiceNotes(e.getServiceNotes()));
 		dto.setSupervizedFor(e.getSupervizedFor());
 		dto.setState(e.getState());
-		dto.setTypes(mapHWItemTypes(e.getTypes()));
+		Set<String> types = new HashSet<>();
+		for (HWItemType typeTO : e.getTypes())
+			types.add(typeTO.getName());
+		dto.setTypes(types);
 		dto.setWarrantyYears(e.getWarrantyYears());
 		return dto;
 	}

@@ -14,7 +14,7 @@ public class HWItemTO extends HWItemOverviewTO {
 	/**
 	 * Typ - klasifikace hw
 	 */
-	private Set<HWItemTypeTO> types;
+	private Set<String> types;
 
 	/**
 	 * Datum vyhození, zničení, prodání
@@ -52,11 +52,11 @@ public class HWItemTO extends HWItemOverviewTO {
 		this.warrantyYears = warrantyYears;
 	}
 
-	public Set<HWItemTypeTO> getTypes() {
+	public Set<String> getTypes() {
 		return types;
 	}
 
-	public void setTypes(Set<HWItemTypeTO> types) {
+	public void setTypes(Set<String> types) {
 		this.types = types;
 	}
 

@@ -15,6 +15,13 @@ public class HWItemTypeTO {
 	 */
 	private String name;
 
+	public HWItemTypeTO(String name) {
+		this.name = name;
+	}
+
+	public HWItemTypeTO() {
+	}
+
 	public Long getId() {
 		return id;
 	}

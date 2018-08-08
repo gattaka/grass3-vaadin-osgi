@@ -323,8 +323,8 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		hwItemTypeTO.setName("notebook");
 		Long typeId = hwService.saveHWType(hwItemTypeTO);
 		hwItemTypeTO.setId(typeId);
-		Set<HWItemTypeTO> types = new HashSet<>();
-		types.add(hwItemTypeTO);
+		Set<String> types = new HashSet<>();
+		types.add(hwItemTypeTO.getName());
 
 		itemTO.setTypes(types);
 		itemTO.setUsedIn(null);
@@ -342,7 +342,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		assertEquals(HWItemState.BROKEN, savedItemTO.getState());
 		assertEquals("Táta", savedItemTO.getSupervizedFor());
 		assertEquals(1, savedItemTO.getTypes().size());
-		assertEquals("notebook", savedItemTO.getTypes().iterator().next().getName());
+		assertEquals("notebook", savedItemTO.getTypes().iterator().next());
 		assertEquals(new Integer(2), savedItemTO.getWarrantyYears());
 	}
 
@@ -362,8 +362,8 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		hwItemTypeTO.setName("notebook");
 		Long typeId = hwService.saveHWType(hwItemTypeTO);
 		hwItemTypeTO.setId(typeId);
-		Set<HWItemTypeTO> types = new HashSet<>();
-		types.add(hwItemTypeTO);
+		Set<String> types = new HashSet<>();
+		types.add(hwItemTypeTO.getName());
 
 		itemTO.setTypes(types);
 		itemTO.setUsedIn(null);
@@ -385,8 +385,8 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		hwItemTypeTO2.setName("RAM");
 		Long typeId2 = hwService.saveHWType(hwItemTypeTO2);
 		hwItemTypeTO2.setId(typeId2);
-		Set<HWItemTypeTO> types2 = new HashSet<>();
-		types2.add(hwItemTypeTO2);
+		Set<String> types2 = new HashSet<>();
+		types2.add(hwItemTypeTO2.getName());
 
 		List<HWItemOverviewTO> list = hwService.getAllHWItems();
 
@@ -409,7 +409,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		assertEquals(HWItemState.DISASSEMBLED, savedItemTO2.getState());
 		assertNull(savedItemTO2.getSupervizedFor());
 		assertEquals(1, savedItemTO2.getTypes().size());
-		assertEquals("RAM", savedItemTO2.getTypes().iterator().next().getName());
+		assertEquals("RAM", savedItemTO2.getTypes().iterator().next());
 		assertEquals(new Integer(1), savedItemTO2.getWarrantyYears());
 		assertEquals(id, savedItemTO2.getUsedIn().getId());
 		assertEquals("test Name", savedItemTO2.getUsedInName());

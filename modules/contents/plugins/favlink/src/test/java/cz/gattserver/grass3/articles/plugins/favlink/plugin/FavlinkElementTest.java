@@ -15,7 +15,7 @@ public class FavlinkElementTest {
 		Context context = new ContextImpl();
 		element.apply(context);
 		assertEquals(
-				"<a href=\"http://mock.url.website\" >"
+				"<a style=\"word-wrap: break-word\" href=\"http://mock.url.website\" >"
 						+ "<img style=\"margin: 4px 5px -4px 2px;\" height=\"16\" width=\"16\" src=\"mock/imgs/favicon/fav.ico\" />http://mock.url.website</a>",
 				context.getOutput());
 	}
@@ -25,7 +25,7 @@ public class FavlinkElementTest {
 		FavlinkElement element = new FavlinkElement(null, "http://mock.url.website");
 		Context context = new ContextImpl();
 		element.apply(context);
-		assertEquals("<a href=\"http://mock.url.website\" >http://mock.url.website</a>", context.getOutput());
+		assertEquals("<a style=\"word-wrap: break-word\" href=\"http://mock.url.website\" >http://mock.url.website</a>", context.getOutput());
 	}
 
 }

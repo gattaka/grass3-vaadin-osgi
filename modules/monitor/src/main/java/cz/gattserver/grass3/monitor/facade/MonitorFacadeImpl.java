@@ -293,6 +293,15 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		testResponseCode(h2TO);
 		items.add(h2TO);
 
+		ServerServiceMonitorItemTO lichTO = new ServerServiceMonitorItemTO("LichEngine", "http://gattserver.cz:1337");
+		testResponseCode(lichTO);
+		items.add(lichTO);
+
+		ServerServiceMonitorItemTO catacombsTO = new ServerServiceMonitorItemTO("Catacombs",
+				"http://gattserver.cz:8333");
+		testResponseCode(catacombsTO);
+		items.add(catacombsTO);
+
 		return items;
 	}
 

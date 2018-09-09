@@ -3,6 +3,7 @@ package cz.gattserver.grass3.drinks.facades.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +58,15 @@ public class DrinksFacadeImpl implements DrinksFacade {
 	/*
 	 * Piva
 	 */
+	@Override
+	public int countBeers() {
+		return (int) drinkRepository.countBeers(null);
+	}
+
+	@Override
+	public List<BeerOverviewTO> getBeers(int page, int size) {
+		return drinkRepository.findBeers(null, new PageRequest(page, size), null);
+	}
 
 	@Override
 	public int countBeers(BeerOverviewTO filterTO) {
@@ -97,6 +107,16 @@ public class DrinksFacadeImpl implements DrinksFacade {
 	 */
 
 	@Override
+	public int countRums() {
+		return (int) drinkRepository.countRums(null);
+	}
+
+	@Override
+	public List<RumOverviewTO> getRums(int page, int size) {
+		return drinkRepository.findRums(null, new PageRequest(page, size), null);
+	}
+
+	@Override
 	public int countRums(RumOverviewTO filterTO) {
 		return (int) drinkRepository.countRums(filterTO);
 	}
@@ -131,6 +151,16 @@ public class DrinksFacadeImpl implements DrinksFacade {
 	/*
 	 * Whiskey
 	 */
+
+	@Override
+	public int countWhiskeys() {
+		return (int) drinkRepository.countWhiskeys(null);
+	}
+
+	@Override
+	public List<WhiskeyOverviewTO> getWhiskeys(int page, int size) {
+		return drinkRepository.findWhiskeys(null, new PageRequest(page, size), null);
+	}
 
 	@Override
 	public int countWhiskeys(WhiskeyOverviewTO filterTO) {
@@ -168,6 +198,16 @@ public class DrinksFacadeImpl implements DrinksFacade {
 	/*
 	 * Vína
 	 */
+
+	@Override
+	public int countWines() {
+		return (int) drinkRepository.countWines(null);
+	}
+
+	@Override
+	public List<WineOverviewTO> getWines(int page, int size) {
+		return drinkRepository.findWines(null, new PageRequest(page, size), null);
+	}
 
 	@Override
 	public int countWines(WineOverviewTO filterTO) {

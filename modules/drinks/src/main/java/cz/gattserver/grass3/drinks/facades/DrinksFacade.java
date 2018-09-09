@@ -29,6 +29,21 @@ public interface DrinksFacade {
 	/**
 	 * Získá počet piv v DB
 	 * 
+	 */
+	int countBeers();
+
+	/**
+	 * Získá všechny piva
+	 * 
+	 * @param offset
+	 * @param limit
+	 * @return
+	 */
+	List<BeerOverviewTO> getBeers(int offset, int limit);
+
+	/**
+	 * Získá počet piv v DB
+	 * 
 	 * @param filterTO
 	 */
 	int countBeers(BeerOverviewTO filterTO);
@@ -61,6 +76,21 @@ public interface DrinksFacade {
 	/*
 	 * Rumy
 	 */
+
+	/**
+	 * Získá počet rumů v DB
+	 * 
+	 */
+	int countRums();
+
+	/**
+	 * Získá všechny rumy
+	 * 
+	 * @param offset
+	 * @param limit
+	 * @return
+	 */
+	List<RumOverviewTO> getRums(int offset, int limit);
 
 	/**
 	 * Získá počet rumů v DB
@@ -101,6 +131,21 @@ public interface DrinksFacade {
 	/**
 	 * Získá počet whiskey v DB
 	 * 
+	 */
+	int countWhiskeys();
+
+	/**
+	 * Získá všechny whiskey
+	 * 
+	 * @param offset
+	 * @param limit
+	 * @return
+	 */
+	List<WhiskeyOverviewTO> getWhiskeys(int offset, int limit);
+
+	/**
+	 * Získá počet whiskey v DB
+	 * 
 	 * @param filterTO
 	 */
 	int countWhiskeys(WhiskeyOverviewTO filterTO);
@@ -134,6 +179,21 @@ public interface DrinksFacade {
 	/*
 	 * Vína
 	 */
+
+	/**
+	 * Získá počet vín v DB
+	 * 
+	 */
+	int countWines();
+
+	/**
+	 * Získá všechny vína
+	 * 
+	 * @param offset
+	 * @param limit
+	 * @return
+	 */
+	List<WineOverviewTO> getWines(int offset, int limit);
 
 	/**
 	 * Získá počet vín v DB

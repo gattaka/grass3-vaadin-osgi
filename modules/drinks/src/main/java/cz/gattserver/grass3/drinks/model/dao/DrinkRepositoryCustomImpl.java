@@ -53,13 +53,15 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 		QBeerInfo b = QBeerInfo.beerInfo;
 		PredicateBuilder builder = new PredicateBuilder();
 		builder.eq(d.type, DrinkType.BEER);
-		builder.iLike(b.brewery, filterTO.getBrewery());
-		builder.iLike(d.name, filterTO.getName());
-		builder.iLike(b.category, filterTO.getCategory());
-		builder.eq(b.degrees, filterTO.getDegrees());
-		builder.eq(d.alcohol, filterTO.getAlcohol());
-		builder.eq(b.ibu, filterTO.getIbu());
-		builder.eq(b.maltType, filterTO.getMaltType());
+		if (filterTO != null) {
+			builder.iLike(b.brewery, filterTO.getBrewery());
+			builder.iLike(d.name, filterTO.getName());
+			builder.iLike(b.category, filterTO.getCategory());
+			builder.eq(b.degrees, filterTO.getDegrees());
+			builder.eq(d.alcohol, filterTO.getAlcohol());
+			builder.eq(b.ibu, filterTO.getIbu());
+			builder.eq(b.maltType, filterTO.getMaltType());
+		}
 		return builder.getBuilder();
 	}
 
@@ -78,7 +80,7 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 		QBeerInfo b = QBeerInfo.beerInfo;
 		QuerydslUtil.applyPagination(pageable, query);
 
-		if (order.length == 0)
+		if (order == null || order.length == 0)
 			order = QuerydslUtil.transformOrdering(new String[] { b.brewery.toString(), d.name.toString() },
 					new boolean[] { true, true });
 
@@ -108,10 +110,12 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 		QRumInfo b = QRumInfo.rumInfo;
 		PredicateBuilder builder = new PredicateBuilder();
 		builder.eq(d.type, DrinkType.RUM);
-		builder.eq(b.rumType, filterTO.getRumType());
-		builder.iLike(d.name, filterTO.getName());
-		builder.iLike(d.country, filterTO.getCountry());
-		builder.eq(b.years, filterTO.getYears());
+		if (filterTO != null) {
+			builder.eq(b.rumType, filterTO.getRumType());
+			builder.iLike(d.name, filterTO.getName());
+			builder.iLike(d.country, filterTO.getCountry());
+			builder.eq(b.years, filterTO.getYears());
+		}
 		return builder.getBuilder();
 	}
 
@@ -130,7 +134,7 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 		QRumInfo r = QRumInfo.rumInfo;
 		QuerydslUtil.applyPagination(pageable, query);
 
-		if (order.length == 0)
+		if (order == null || order.length == 0)
 			order = QuerydslUtil.transformOrdering(new String[] { d.name.toString() }, new boolean[] { true });
 
 		return query
@@ -157,10 +161,12 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 		QWhiskeyInfo b = QWhiskeyInfo.whiskeyInfo;
 		PredicateBuilder builder = new PredicateBuilder();
 		builder.eq(d.type, DrinkType.WHISKY);
-		builder.eq(b.whiskeyType, filterTO.getWhiskeyType());
-		builder.iLike(d.name, filterTO.getName());
-		builder.iLike(d.country, filterTO.getCountry());
-		builder.eq(b.years, filterTO.getYears());
+		if (filterTO != null) {
+			builder.eq(b.whiskeyType, filterTO.getWhiskeyType());
+			builder.iLike(d.name, filterTO.getName());
+			builder.iLike(d.country, filterTO.getCountry());
+			builder.eq(b.years, filterTO.getYears());
+		}
 		return builder.getBuilder();
 	}
 
@@ -180,7 +186,7 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 		QWhiskeyInfo w = QWhiskeyInfo.whiskeyInfo;
 		QuerydslUtil.applyPagination(pageable, query);
 
-		if (order.length == 0)
+		if (order == null || order.length == 0)
 			order = QuerydslUtil.transformOrdering(new String[] { d.name.toString() }, new boolean[] { true });
 
 		return query
@@ -210,11 +216,13 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 		QWineInfo b = QWineInfo.wineInfo;
 		PredicateBuilder builder = new PredicateBuilder();
 		builder.eq(d.type, DrinkType.WINE);
-		builder.eq(b.wineType, filterTO.getWineType());
-		builder.iLike(d.name, filterTO.getName());
-		builder.iLike(d.country, filterTO.getCountry());
-		builder.iLike(b.winery, filterTO.getWinery());
-		builder.eq(b.year, filterTO.getYear());
+		if (filterTO != null) {
+			builder.eq(b.wineType, filterTO.getWineType());
+			builder.iLike(d.name, filterTO.getName());
+			builder.iLike(d.country, filterTO.getCountry());
+			builder.iLike(b.winery, filterTO.getWinery());
+			builder.eq(b.year, filterTO.getYear());
+		}
 		return builder.getBuilder();
 	}
 
@@ -233,7 +241,7 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 		QWineInfo w = QWineInfo.wineInfo;
 		QuerydslUtil.applyPagination(pageable, query);
 
-		if (order.length == 0)
+		if (order == null || order.length == 0)
 			order = QuerydslUtil.transformOrdering(new String[] { w.winery.toString(), d.name.toString() },
 					new boolean[] { true, true });
 

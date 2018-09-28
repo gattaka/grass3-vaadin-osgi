@@ -39,6 +39,8 @@ import elemental.json.JsonArray;
 
 public class MonitorPage extends OneColumnPage {
 
+	private static final int REFRESH_TIMEOUT = 5000;
+
 	@Autowired
 	private MonitorFacade monitorFacade;
 
@@ -279,8 +281,8 @@ public class MonitorPage extends OneColumnPage {
 			}
 		});
 
-		// update každé 5s
-		JavaScript.eval("setInterval(function(){ cz.gattserver.grass3.monitorupadate(); }, 5000);");
+		// update každé X vteřin
+		JavaScript.eval("setInterval(function(){ cz.gattserver.grass3.monitorupadate(); }, " + REFRESH_TIMEOUT + ");");
 
 		populateMonitor();
 

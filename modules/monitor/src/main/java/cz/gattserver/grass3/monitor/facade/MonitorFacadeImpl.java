@@ -40,6 +40,8 @@ import cz.gattserver.grass3.services.ConfigurationService;
 @Component
 public class MonitorFacadeImpl implements MonitorFacade {
 
+	private static final int HTTP_TEST_TIMEOUT = 5000;
+	
 	@Autowired
 	private ConfigurationService configurationService;
 
@@ -317,8 +319,8 @@ public class MonitorFacadeImpl implements MonitorFacade {
 				// bez agenta to často hodí 403 Forbidden, protože si myslí,
 				// že jsem asi bot ... (což vlastně jsem)
 				hc.setRequestProperty("User-Agent", "Mozilla");
-				hc.setConnectTimeout(1000);
-				hc.setReadTimeout(1000);
+				hc.setConnectTimeout(HTTP_TEST_TIMEOUT);
+				hc.setReadTimeout(HTTP_TEST_TIMEOUT);
 				hc.connect();
 				itemTO.setResponseCode(hc.getResponseCode());
 				if (itemTO.getResponseCode() >= 200 && itemTO.getResponseCode() < 300)

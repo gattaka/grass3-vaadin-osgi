@@ -271,7 +271,7 @@ public class TextsTab extends VerticalLayout {
 					line = line.replaceAll(c + "$", chordLink);
 				}
 				htmlText += chordLine ? ("<span style='color: blue; white-space: pre;'>" + line + "</span><br/>")
-						: line + "<br/>";
+						: ("<span style='white-space: pre;'>" + line + "</span><br/>");
 			}
 			contentLabel.setValue(htmlText);
 			this.choosenSong = choosenSong;

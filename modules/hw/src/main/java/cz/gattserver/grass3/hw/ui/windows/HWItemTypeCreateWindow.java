@@ -20,15 +20,6 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 
 	private transient HWService hwService;
 
-	public HWItemTypeCreateWindow(Long originalId) {
-		if (originalId == null) {
-			init(null);
-		} else {
-			HWItemTypeTO originalDTO = getHWService().getHWItemType(originalId);
-			init(originalDTO);
-		}
-	}
-
 	public HWItemTypeCreateWindow(HWItemTypeTO originalDTO) {
 		init(originalDTO);
 	}
@@ -52,10 +43,10 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 
 		HWItemTypeTO formDTO = new HWItemTypeTO();
 		formDTO.setName("");
-
-		final TextField nameField = new TextField();
 		Binder<HWItemTypeTO> binder = new Binder<>(HWItemTypeTO.class);
 		binder.setBean(formDTO);
+
+		final TextField nameField = new TextField();
 		binder.bind(nameField, "name");
 
 		winLayout.addComponent(nameField);

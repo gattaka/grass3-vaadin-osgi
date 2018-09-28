@@ -96,14 +96,14 @@ public class HWTypesTab extends VerticalLayout {
 		HWItemTypeTO hwItemTypeDTO = null;
 		if (fix)
 			hwItemTypeDTO = grid.getSelectedItems().iterator().next();
-		Window win = new HWItemTypeCreateWindow(hwItemTypeDTO == null ? null : hwItemTypeDTO.getId()) {
+		Window win = new HWItemTypeCreateWindow(hwItemTypeDTO == null ? null : hwItemTypeDTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
 			protected void onSuccess(HWItemTypeTO hwItemTypeDTO) {
-				if (fix)
+				if (fix) {
 					grid.getDataProvider().refreshItem(hwItemTypeDTO);
-				else {
+				} else {
 					data.add(hwItemTypeDTO);
 					grid.getDataProvider().refreshAll();
 				}

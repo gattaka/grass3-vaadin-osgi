@@ -1,0 +1,314 @@
+package cz.gattserver.grass3.campgames.service.impl;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.querydsl.core.types.OrderSpecifier;
+
+import cz.gattserver.common.util.HumanBytesSizeFormatter;
+import cz.gattserver.grass3.campgames.CampgamesConfiguration;
+import cz.gattserver.grass3.campgames.interfaces.CampgameFileTO;
+import cz.gattserver.grass3.campgames.interfaces.CampgameFilterTO;
+import cz.gattserver.grass3.campgames.interfaces.CampgameOverviewTO;
+import cz.gattserver.grass3.campgames.interfaces.CampgameTO;
+import cz.gattserver.grass3.campgames.interfaces.CampgameKeywordTO;
+import cz.gattserver.grass3.campgames.model.domain.Campgame;
+import cz.gattserver.grass3.campgames.model.domain.CampgameKeyword;
+import cz.gattserver.grass3.campgames.model.repositories.CampgameRepository;
+import cz.gattserver.grass3.campgames.model.repositories.CampgameKeywordRepository;
+import cz.gattserver.grass3.campgames.service.CampgamesMapperService;
+import cz.gattserver.grass3.campgames.service.CampgamesService;
+import cz.gattserver.grass3.exception.GrassException;
+import cz.gattserver.grass3.services.ConfigurationService;
+import cz.gattserver.grass3.services.FileSystemService;
+
+@Transactional
+@Component
+public class CampgamesServiceImpl implements CampgamesService {
+
+	private static final Logger logger = LoggerFactory.getLogger(CampgamesServiceImpl.class);
+
+	private static final String ILLEGAL_PATH_IMGS_ERR = "Podtečení adresáře grafických příloh";
+
+	@Autowired
+	private FileSystemService fileSystemService;
+
+	@Autowired
+	private CampgameRepository campgameRepository;
+
+	@Autowired
+	private CampgameKeywordRepository campgameKeywordRepository;
+
+	@Autowired
+	private ConfigurationService configurationService;
+
+	@Autowired
+	private CampgamesMapperService campgamesMapper;
+
+	/*
+	 * Config
+	 */
+
+	private CampgamesConfiguration loadConfiguration() {
+		CampgamesConfiguration configuration = new CampgamesConfiguration();
+		configurationService.loadConfiguration(configuration);
+		return configuration;
+	}
+
+	/**
+	 * Získá {@link Path} dle jména adresáře hry
+	 * 
+	 * @param id
+	 *            id hry
+	 * @return {@link Path} adresář hry
+	 * @throws IllegalStateException
+	 *             pokud neexistuje kořenový adresář her -- chyba nastavení
+	 *             modulu her
+	 * @throws IllegalArgumentException
+	 *             pokud předaný adresář podtéká kořen modulu her
+	 */
+	private Path getCampgamePath(Long id) {
+		Validate.notNull(id, "ID hry nesmí být null");
+		CampgamesConfiguration configuration = loadConfiguration();
+		String rootDir = configuration.getRootDir();
+		Path rootPath = fileSystemService.getFileSystem().getPath(rootDir);
+		if (!Files.exists(rootPath))
+			throw new IllegalStateException("Kořenový adresář modulu her musí existovat");
+		rootPath = rootPath.normalize();
+		Path campgamePath = rootPath.resolve(String.valueOf(id));
+		if (!campgamePath.normalize().startsWith(rootPath))
+			throw new IllegalArgumentException("Podtečení kořenového adresáře modulu her");
+		return campgamePath;
+	}
+
+	private Path getCampgameImagesPath(Long id) throws IOException {
+		CampgamesConfiguration configuration = loadConfiguration();
+		Path campgamePath = getCampgamePath(id);
+		Path file = campgamePath.resolve(configuration.getImagesDir());
+		if (!Files.exists(file))
+			Files.createDirectories(file);
+		return file;
+	}
+
+	private CampgameFileTO mapPathToItem(Path path) {
+		CampgameFileTO to = new CampgameFileTO().setName(path.getFileName().toString());
+		try {
+			to.setSize(HumanBytesSizeFormatter.format(Files.size(path), true));
+		} catch (IOException e) {
+			to.setSize("n/a");
+		}
+		try {
+			to.setLastModified(
+					LocalDateTime.ofInstant(Files.getLastModifiedTime(path).toInstant(), ZoneId.systemDefault()));
+		} catch (IOException e) {
+			to.setLastModified(null);
+		}
+		return to;
+	}
+
+	/*
+	 * Images
+	 */
+
+	@Override
+	public boolean saveImagesFile(InputStream in, String fileName, CampgameTO item) {
+		Path imagesPath;
+		try {
+			imagesPath = getCampgameImagesPath(item.getId());
+			Path imagePath = imagesPath.resolve(fileName);
+			if (!imagePath.normalize().startsWith(imagesPath))
+				throw new IllegalArgumentException(ILLEGAL_PATH_IMGS_ERR);
+			Files.copy(in, imagePath, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			logger.error("Nezdařilo se uložit obrázek ke hře", e);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public List<CampgameFileTO> getCampgameImagesFiles(Long id) {
+		Path imagesPath;
+		try {
+			imagesPath = getCampgameImagesPath(id);
+			List<CampgameFileTO> list = new ArrayList<>();
+			try (Stream<Path> stream = Files.list(imagesPath)) {
+				stream.forEach(p -> list.add(mapPathToItem(p)));
+			}
+			return list;
+		} catch (IOException e) {
+			throw new GrassException("Nezdařilo se získat přehled grafických příloh hry.", e);
+		}
+	}
+
+	@Override
+	public long getCampgameImagesFilesCount(Long id) {
+		Path imagesPath;
+		try {
+			imagesPath = getCampgameImagesPath(id);
+			try (Stream<Path> stream = Files.list(imagesPath)) {
+				return stream.count();
+			}
+		} catch (IOException e) {
+			throw new GrassException("Nezdařilo se získat přehled grafických příloh hry.", e);
+		}
+	}
+
+	@Override
+	public Path getCampgameImagesFilePath(Long id, String name) {
+		Path images;
+		try {
+			images = getCampgameImagesPath(id);
+			Path image = images.resolve(name);
+			if (!image.normalize().startsWith(images))
+				throw new IllegalArgumentException(ILLEGAL_PATH_IMGS_ERR);
+			return image;
+		} catch (IOException e) {
+			throw new GrassException("Nezdařilo se získat grafickou přílohu hry.", e);
+		}
+	}
+
+	@Override
+	public InputStream getCampgameImagesFileInputStream(Long id, String name) {
+		try {
+			return Files.newInputStream(getCampgameImagesFilePath(id, name));
+		} catch (IOException e) {
+			throw new GrassException("Nezdařilo se získat grafickou přílohu hry.", e);
+		}
+	}
+
+	@Override
+	public boolean deleteCampgameImagesFile(Long id, String name) {
+		Path images;
+		try {
+			images = getCampgameImagesPath(id);
+			Path image = images.resolve(name);
+			if (!image.normalize().startsWith(images))
+				throw new IllegalArgumentException(ILLEGAL_PATH_IMGS_ERR);
+			return Files.deleteIfExists(image);
+		} catch (IOException e) {
+			throw new GrassException("Nezdařilo se smazat grafickou přílohu hry.", e);
+		}
+	}
+
+	/*
+	 * Keywords
+	 */
+
+	@Override
+	public Long saveCampgameKeyword(CampgameKeywordTO campgameKeywordTO) {
+		CampgameKeyword type = campgamesMapper.mapCampgameKeyword(campgameKeywordTO);
+		type = campgameKeywordRepository.save(type);
+		return type.getId();
+	}
+
+	@Override
+	public Set<CampgameKeywordTO> getAllCampgameKeywords() {
+		List<CampgameKeyword> keywords = campgameKeywordRepository.findListOrderByName();
+		return campgamesMapper.mapCampgameKeywords(keywords);
+	}
+
+	@Override
+	public CampgameKeywordTO getCampgameKeyword(Long id) {
+		return campgamesMapper.mapCampgameKeyword(campgameKeywordRepository.findOne(id));
+	}
+
+	@Override
+	public void deleteCampgameKeyword(Long id) {
+		CampgameKeyword keyword = campgameKeywordRepository.findOne(id);
+		List<Campgame> games = campgameRepository.findByKeywordsId(keyword.getId());
+		for (Campgame game : games) {
+			game.getKeywords().remove(keyword);
+			campgameRepository.save(game);
+		}
+		campgameKeywordRepository.delete(keyword);
+	}
+
+	/*
+	 * Items
+	 */
+
+	@Override
+	public Long saveCampgame(CampgameTO gameTO) {
+		Campgame item;
+		if (gameTO.getId() == null)
+			item = new Campgame();
+		else
+			item = campgameRepository.findOne(gameTO.getId());
+		item.setName(gameTO.getName());
+		item.setDescription(gameTO.getDescription());
+		item.setOrigin(gameTO.getOrigin());
+		item.setPlayers(gameTO.getPlayers());
+		item.setPlayTime(gameTO.getPlayTime());
+		item.setPreparationTime(gameTO.getPreparationTime());
+		if (gameTO.getKeywords() != null) {
+			item.setKeywords(new HashSet<CampgameKeyword>());
+			for (String typeName : gameTO.getKeywords()) {
+				CampgameKeyword type = campgameKeywordRepository.findByName(typeName);
+				if (type == null) {
+					type = new CampgameKeyword(typeName);
+					type = campgameKeywordRepository.save(type);
+				}
+				item.getKeywords().add(type);
+			}
+		}
+		return campgameRepository.save(item).getId();
+	}
+
+	@Override
+	public int countCampgames(CampgameFilterTO filter) {
+		return (int) campgameRepository.countCampgames(filter);
+	}
+
+	@Override
+	public List<CampgameOverviewTO> getAllCampgames() {
+		List<Campgame> games = campgameRepository.findAll();
+		return campgamesMapper.mapCampgames(games);
+	}
+
+	@Override
+	public List<CampgameOverviewTO> getCampgames(CampgameFilterTO filter, Pageable pageable,
+			OrderSpecifier<?>[] order) {
+		return campgamesMapper.mapCampgames(campgameRepository.getCampgames(filter, pageable, order));
+	}
+
+	@Override
+	public List<CampgameOverviewTO> getCampgameByKeywords(Collection<String> keywords) {
+		List<Campgame> campgameKeywords = campgameRepository.getCampgamesByKeywords(keywords);
+		return campgamesMapper.mapCampgames(campgameKeywords);
+	}
+
+	@Override
+	public CampgameTO getCampgame(Long id) {
+		return campgamesMapper.mapCampgame(campgameRepository.findOne(id));
+	}
+
+	@Override
+	public void deleteCampgame(Long id) {
+		Campgame item = campgameRepository.findOne(id);
+
+		// TODO smazat images
+
+		campgameRepository.delete(item.getId());
+	}
+
+}

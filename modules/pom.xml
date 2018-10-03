@@ -23,6 +23,7 @@
 		<module>language</module>
 		<module>songs</module>
 		<module>drinks</module>
+		<module>campgames</module>
 	</modules>
 
 </project>

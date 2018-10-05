@@ -15,7 +15,7 @@ public class CampgamesRequestHandler extends AbstractConfiguratedPathRequestHand
 	private static final long serialVersionUID = 7154339775034959876L;
 
 	@Autowired
-	private CampgamesService hwService;
+	private CampgamesService campgamesService;
 
 	public CampgamesRequestHandler() {
 		super(CampgamesConfiguration.CAMPGAMES_PATH);
@@ -28,7 +28,7 @@ public class CampgamesRequestHandler extends AbstractConfiguratedPathRequestHand
 		String[] chunks = fileName.split("/");
 		Long id = Long.parseLong(chunks[0]);
 		String name = chunks[1];
-		return hwService.getCampgameImagesFilePath(id, name);
+		return campgamesService.getCampgameImagesFilePath(id, name);
 	}
 
 	@Override

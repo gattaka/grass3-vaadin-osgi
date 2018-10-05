@@ -78,10 +78,10 @@ public class CampgameOverviewTO implements Serializable {
 		if (obj == null)
 			return false;
 		if (obj instanceof CampgameOverviewTO) {
-			CampgameOverviewTO hw = (CampgameOverviewTO) obj;
+			CampgameOverviewTO to = (CampgameOverviewTO) obj;
 			if (getId() != null)
-				return getId().equals(hw.getId());
-			return super.equals(hw);
+				return getId().equals(to.getId());
+			return super.equals(to);
 		}
 		return false;
 	}

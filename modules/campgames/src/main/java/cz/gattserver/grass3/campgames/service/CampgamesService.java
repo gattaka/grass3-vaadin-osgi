@@ -39,13 +39,13 @@ public interface CampgamesService {
 	 */
 
 	/**
-	 * Uloží nebo aktualizuje typ hw položky
+	 * Uloží nebo aktualizuje klíčové slovo
 	 * 
-	 * @param hwItemTypeTO
+	 * @param to
 	 *            to položky
 	 * @return id uložené položky
 	 */
-	Long saveCampgameKeyword(CampgameKeywordTO hwItemTypeTO);
+	Long saveCampgameKeyword(CampgameKeywordTO to);
 
 	Set<CampgameKeywordTO> getAllCampgameKeywords();
 
@@ -57,7 +57,7 @@ public interface CampgamesService {
 	 * Items
 	 */
 
-	Long saveCampgame(CampgameTO hwItemDTO);
+	Long saveCampgame(CampgameTO to);
 
 	int countCampgames(CampgameFilterTO filter);
 

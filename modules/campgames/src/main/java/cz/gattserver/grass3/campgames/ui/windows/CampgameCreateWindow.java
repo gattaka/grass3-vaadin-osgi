@@ -7,7 +7,6 @@ import com.fo0.advancedtokenfield.main.AdvancedTokenField;
 import com.fo0.advancedtokenfield.main.Token;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
-import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.GridLayout;
@@ -26,10 +25,10 @@ public abstract class CampgameCreateWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
-	private transient CampgamesService hwService;
+	private transient CampgamesService campgamesService;
 
 	public CampgameCreateWindow(Long originalId) {
-		init(originalId == null ? null : getHWService().getCampgame(originalId));
+		init(originalId == null ? null : getCampgameService().getCampgame(originalId));
 	}
 
 	public CampgameCreateWindow() {
@@ -40,10 +39,10 @@ public abstract class CampgameCreateWindow extends WebWindow {
 		init(originalDTO);
 	}
 
-	private CampgamesService getHWService() {
-		if (hwService == null)
-			hwService = SpringContextHelper.getBean(CampgamesService.class);
-		return hwService;
+	private CampgamesService getCampgameService() {
+		if (campgamesService == null)
+			campgamesService = SpringContextHelper.getBean(CampgamesService.class);
+		return campgamesService;
 	}
 
 	/**
@@ -70,23 +69,37 @@ public abstract class CampgameCreateWindow extends WebWindow {
 		binder.forField(nameField).asRequired("Název položky je povinný").bind("name");
 		winLayout.addComponent(nameField, 0, 0, 1, 0);
 
-		TextField warrantyYearsField = new TextField("Záruka (roky)");
-		binder.forField(warrantyYearsField)
-				.withConverter(new StringToIntegerConverter(null, "Záruka musí být celé číslo")).bind("warrantyYears");
-		warrantyYearsField.setSizeFull();
-		winLayout.addComponent(warrantyYearsField, 0, 3);
+		TextField descriptionField = new TextField("Popis");
+		descriptionField.setWidth("100%");
+		binder.forField(descriptionField).bind("description");
+		winLayout.addComponent(descriptionField, 0, 1, 1, 1);
 
-		TextField supervizedForField = new TextField("Spravováno pro");
-		supervizedForField.setWidth("100%");
-		binder.bind(supervizedForField, "supervizedFor");
-		winLayout.addComponent(supervizedForField, 1, 3);
+		TextField originField = new TextField("Původ hry");
+		originField.setWidth("100%");
+		binder.forField(originField).bind("origin");
+		winLayout.addComponent(originField, 0, 2);
+
+		TextField playersField = new TextField("Počet hráčů");
+		playersField.setWidth("100%");
+		binder.forField(playersField).bind("players");
+		winLayout.addComponent(playersField, 1, 2);
+
+		TextField playTimeField = new TextField("Délka hry");
+		playTimeField.setWidth("100%");
+		binder.forField(playTimeField).bind("playTime");
+		winLayout.addComponent(playTimeField, 0, 3);
+
+		TextField preparationTimeField = new TextField("Délka přípravy");
+		preparationTimeField.setWidth("100%");
+		binder.forField(preparationTimeField).bind("preparationTime");
+		winLayout.addComponent(preparationTimeField, 1, 3);
 
 		AdvancedTokenField keywords = new AdvancedTokenField();
 		keywords.isEnabled();
 		keywords.setAllowNewItems(true);
 		keywords.getInputField().setPlaceholder("klíčové slovo");
 
-		Set<CampgameKeywordTO> contentTypes = getHWService().getAllCampgameKeywords();
+		Set<CampgameKeywordTO> contentTypes = getCampgameService().getAllCampgameKeywords();
 		contentTypes.forEach(t -> {
 			Token to = new Token(t.getName());
 			keywords.addTokenToInputField(to);
@@ -105,7 +118,7 @@ public abstract class CampgameCreateWindow extends WebWindow {
 				Set<String> keywordsTokens = new HashSet<>();
 				keywords.getTokens().forEach(t -> keywordsTokens.add(t.getValue()));
 				writeDTO.setKeywords(keywordsTokens);
-				writeDTO.setId(getHWService().saveCampgame(writeDTO));
+				writeDTO.setId(getCampgameService().saveCampgame(writeDTO));
 				onSuccess(writeDTO);
 				close();
 			} catch (ValidationException ve) {

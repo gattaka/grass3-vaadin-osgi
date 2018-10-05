@@ -50,8 +50,9 @@ public class FMSettingsPage extends AbstractSettingsPage {
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
-		settingsLayout.addComponent(settingsFieldsLayout);
 		settingsFieldsLayout.setSpacing(true);
+		settingsFieldsLayout.setMargin(false);
+		settingsLayout.addComponent(settingsFieldsLayout);
 		settingsFieldsLayout.setSizeFull();
 
 		// Kořenový adresář

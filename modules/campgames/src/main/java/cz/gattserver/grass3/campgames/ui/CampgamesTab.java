@@ -59,14 +59,14 @@ public class CampgamesTab extends VerticalLayout {
 		setSpacing(true);
 		setMargin(new MarginInfo(true, false, false, false));
 
-		final Button newHWBtn = new Button("Založit novou hru");
+		final Button newCampgameBtn = new Button("Založit novou hru");
 		final Button detailsBtn = new Button("Detail");
 		final Button fixBtn = new Button("Upravit");
 		final Button deleteBtn = new Button("Smazat");
 		detailsBtn.setEnabled(false);
 		fixBtn.setEnabled(false);
 		deleteBtn.setEnabled(false);
-		newHWBtn.setIcon(ImageIcon.PLUS_16_ICON.createResource());
+		newCampgameBtn.setIcon(ImageIcon.PLUS_16_ICON.createResource());
 		detailsBtn.setIcon(ImageIcon.CLIPBOARD_16_ICON.createResource());
 		fixBtn.setIcon(ImageIcon.QUICKEDIT_16_ICON.createResource());
 		deleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
@@ -101,10 +101,9 @@ public class CampgamesTab extends VerticalLayout {
 		grid.setWidth("100%");
 
 		grid.addColumn(CampgameOverviewTO::getName).setId(NAME_BIND).setCaption("Název").setWidth(260);
-		grid.addColumn(CampgameOverviewTO::getPlayers).setId(PLAYERS_BIND).setCaption("Hráčů").setWidth(260);
-		grid.addColumn(CampgameOverviewTO::getPlayTime).setId(PLAYTIME_BIND).setCaption("Délka hry").setWidth(260);
-		grid.addColumn(CampgameOverviewTO::getPreparationTime).setId(PREPARATIONTIME_BIND).setCaption("Délka přípravy")
-				.setWidth(260);
+		grid.addColumn(CampgameOverviewTO::getPlayers).setId(PLAYERS_BIND).setCaption("Hráčů").setWidth(150);
+		grid.addColumn(CampgameOverviewTO::getPlayTime).setId(PLAYTIME_BIND).setCaption("Délka hry").setWidth(150);
+		grid.addColumn(CampgameOverviewTO::getPreparationTime).setId(PREPARATIONTIME_BIND).setCaption("Délka přípravy");
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Název
@@ -169,19 +168,19 @@ public class CampgamesTab extends VerticalLayout {
 		buttonLayout.setSpacing(true);
 		addComponent(buttonLayout);
 
-		// Založení nové položky HW
-		newHWBtn.addClickListener(e -> openItemWindow(false));
-		buttonLayout.addComponent(newHWBtn);
+		// Založení nové hry
+		newCampgameBtn.addClickListener(e -> openItemWindow(false));
+		buttonLayout.addComponent(newCampgameBtn);
 
-		// Zobrazení detailů položky HW
+		// Zobrazení detailů hry
 		detailsBtn.addClickListener(e -> openDetailWindow(grid.getSelectedItems().iterator().next().getId()));
 		buttonLayout.addComponent(detailsBtn);
 
-		// Oprava údajů existující položky HW
+		// Oprava údajů existující hry
 		fixBtn.addClickListener(e -> openItemWindow(true));
 		buttonLayout.addComponent(fixBtn);
 
-		// Smazání položky HW
+		// Smazání hry
 		deleteBtn.addClickListener(e -> openDeleteWindow());
 		buttonLayout.addComponent(deleteBtn);
 

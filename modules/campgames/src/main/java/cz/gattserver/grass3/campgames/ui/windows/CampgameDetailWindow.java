@@ -42,23 +42,17 @@ public class CampgameDetailWindow extends WebWindow {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
-	private static final String STATE_BIND = "customState";
-	private static final String DATE_BIND = "customDate";
-
-	private transient CampgamesService hwService;
+	private transient CampgamesService campgamesService;
 
 	private TabSheet sheet;
 	private CampgameTO campgameTO;
 	private Long campgameId;
 
-	private GrassRequest grassRequest;
-
 	private ChangeListener changeListener;
 
-	public CampgameDetailWindow(Long hwItemId, GrassRequest grassRequest) {
-		super("Detail HW");
-		this.campgameId = hwItemId;
-		this.grassRequest = grassRequest;
+	public CampgameDetailWindow(Long campgameId, GrassRequest grassRequest) {
+		super("Detail hry");
+		this.campgameId = campgameId;
 
 		setWidth("900px");
 		setHeight("700px");
@@ -87,9 +81,9 @@ public class CampgameDetailWindow extends WebWindow {
 	}
 
 	private CampgamesService getCampgamesService() {
-		if (hwService == null)
-			hwService = SpringContextHelper.getBean(CampgamesService.class);
-		return hwService;
+		if (campgamesService == null)
+			campgamesService = SpringContextHelper.getBean(CampgamesService.class);
+		return campgamesService;
 	}
 
 	private VerticalLayout createWrapperLayout() {
@@ -100,37 +94,36 @@ public class CampgameDetailWindow extends WebWindow {
 		return wrapperLayout;
 	}
 
-	private Layout createItemDetailsLayout(CampgameTO hwItem) {
+	private Layout createItemDetailsLayout(CampgameTO campgameTO) {
 
 		VerticalLayout wrapperLayout = createWrapperLayout();
 
-		HorizontalLayout itemLayout = new HorizontalLayout();
-		itemLayout.setSpacing(false);
+		VerticalLayout itemLayout = new VerticalLayout();
+		itemLayout.setSpacing(true);
 		itemLayout.setMargin(false);
 		itemLayout.setSizeUndefined();
 		wrapperLayout.addComponent(itemLayout);
-
-		/**
-		 * Grid
-		 */
-		GridLayout winLayout = new GridLayout(5, 7);
-		itemLayout.addComponent(winLayout);
-		itemLayout.setComponentAlignment(winLayout, Alignment.TOP_LEFT);
-		winLayout.setSpacing(true);
-		winLayout.setMargin(false);
 
 		/**
 		 * Keywords
 		 */
 		HorizontalLayout tags = new HorizontalLayout();
 		tags.setSpacing(true);
-		hwItem.getKeywords().forEach(keyword -> {
+		campgameTO.getKeywords().forEach(keyword -> {
 			Label token = new Label(keyword);
 			token.setSizeUndefined();
 			token.setStyleName("read-only-token");
 			tags.addComponent(token);
 		});
-		winLayout.addComponent(tags, 1, 0, 3, 0);
+		itemLayout.addComponent(tags);
+
+		itemLayout.addComponent(new Label("<strong>Původ:</strong> " + campgameTO.getOrigin(), ContentMode.HTML));
+		itemLayout
+				.addComponent(new Label("<strong>Počet hráčů:</strong> " + campgameTO.getPlayers(), ContentMode.HTML));
+		itemLayout.addComponent(new Label("<strong>Délka hry:</strong> " + campgameTO.getPlayTime(), ContentMode.HTML));
+		itemLayout.addComponent(
+				new Label("<strong>Délka přípravy:</strong> " + campgameTO.getPreparationTime(), ContentMode.HTML));
+		itemLayout.addComponent(new Label(campgameTO.getDescription(), ContentMode.HTML));
 
 		VerticalLayout partsWrapperLayout = new VerticalLayout();
 		partsWrapperLayout.setSpacing(false);
@@ -145,9 +138,9 @@ public class CampgameDetailWindow extends WebWindow {
 		wrapperLayout.addComponent(operationsLayout);
 
 		/**
-		 * Oprava údajů existující položky HW
+		 * Oprava údajů existující hry
 		 */
-		final Button fixBtn = new ModifyButton(e -> UI.getCurrent().addWindow(new CampgameCreateWindow(hwItem) {
+		final Button fixBtn = new ModifyButton(e -> UI.getCurrent().addWindow(new CampgameCreateWindow(campgameTO) {
 			private static final long serialVersionUID = -1397391593801030584L;
 
 			@Override
@@ -161,11 +154,10 @@ public class CampgameDetailWindow extends WebWindow {
 		operationsLayout.addComponent(fixBtn);
 
 		/**
-		 * Smazání položky HW
+		 * Smazání hry
 		 */
-		final Button deleteBtn = new DeleteButton(e -> UI.getCurrent().addWindow(new ConfirmWindow(
-				"Opravdu smazat '" + hwItem.getName() + "' ?",
-				ev -> {
+		final Button deleteBtn = new DeleteButton(e -> UI.getCurrent()
+				.addWindow(new ConfirmWindow("Opravdu smazat '" + campgameTO.getName() + "' ?", ev -> {
 					try {
 						getCampgamesService().deleteCampgame(campgameId);
 						if (changeListener != null)
@@ -205,7 +197,7 @@ public class CampgameDetailWindow extends WebWindow {
 				// refresh listu
 				listLayout.removeAllComponents();
 				createImagesList(listLayout);
-				sheet.getTab(2).setCaption(createPhotosTabCaption());
+				sheet.getTab(1).setCaption(createPhotosTabCaption());
 			}
 		};
 
@@ -234,7 +226,7 @@ public class CampgameDetailWindow extends WebWindow {
 			HorizontalLayout btnLayout = new HorizontalLayout();
 			btnLayout.setSpacing(true);
 
-			Button hwItemImageDetailBtn = new Button("Detail", e -> {
+			Button imageDetailBtn = new Button("Detail", e -> {
 				BufferedImage bimg = null;
 				try {
 					bimg = ImageIO
@@ -251,21 +243,21 @@ public class CampgameDetailWindow extends WebWindow {
 				}
 			});
 
-			Button hwItemImageDeleteBtn = new DeleteButton(
-					e -> UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto HW položky ?", ev -> {
+			Button imageDeleteBtn = new DeleteButton(
+					e -> UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto?", ev -> {
 						getCampgamesService().deleteCampgameImagesFile(campgameId, file.getName());
 
 						// refresh listu
 						listLayout.removeAllComponents();
 						createImagesList(listLayout);
-						sheet.getTab(2).setCaption(createPhotosTabCaption());
+						sheet.getTab(1).setCaption(createPhotosTabCaption());
 					})));
 
-			hwItemImageDetailBtn.setIcon(ImageIcon.SEARCH_16_ICON.createResource());
-			hwItemImageDeleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
+			imageDetailBtn.setIcon(ImageIcon.SEARCH_16_ICON.createResource());
+			imageDeleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
 
-			btnLayout.addComponent(hwItemImageDetailBtn);
-			btnLayout.addComponent(hwItemImageDeleteBtn);
+			btnLayout.addComponent(imageDetailBtn);
+			btnLayout.addComponent(imageDeleteBtn);
 
 			imageLayout.addComponent(btnLayout);
 			imageLayout.setComponentAlignment(btnLayout, Alignment.BOTTOM_CENTER);

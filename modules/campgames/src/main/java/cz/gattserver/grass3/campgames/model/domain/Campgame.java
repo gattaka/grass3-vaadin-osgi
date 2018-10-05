@@ -18,7 +18,7 @@ import org.hibernate.annotations.GenericGenerator;
 public class Campgame {
 
 	/**
-	 * Identifikátor hw
+	 * Identifikátor
 	 */
 	@Id
 	@GeneratedValue(generator = "increment")

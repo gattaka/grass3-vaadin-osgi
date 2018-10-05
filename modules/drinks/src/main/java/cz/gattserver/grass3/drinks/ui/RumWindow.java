@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.drinks.web;
+package cz.gattserver.grass3.drinks.ui;
 
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -10,56 +10,55 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.converter.StringToDoubleConverter;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.validator.DoubleRangeValidator;
-import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import cz.gattserver.grass3.drinks.model.domain.WhiskeyType;
-import cz.gattserver.grass3.drinks.model.interfaces.WhiskeyTO;
+import cz.gattserver.grass3.drinks.model.domain.RumType;
+import cz.gattserver.grass3.drinks.model.interfaces.RumTO;
 
-public abstract class WhiskeyWindow extends DrinkWindow<WhiskeyTO> {
+public abstract class RumWindow extends DrinkWindow<RumTO> {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 
-	public WhiskeyWindow(WhiskeyTO to) {
+	public RumWindow(RumTO to) {
 		super(to);
 	}
 
-	public WhiskeyWindow() {
+	public RumWindow() {
 		super();
 	}
 
 	@Override
-	protected WhiskeyTO createNewInstance() {
-		WhiskeyTO formTO = new WhiskeyTO();
+	protected RumTO createNewInstance() {
+		RumTO formTO = new RumTO();
+		formTO.setRumType(RumType.DARK);
 		formTO.setAlcohol(0d);
-		formTO.setYears(0);
 		return formTO;
 	}
 
 	@Override
-	protected VerticalLayout createForm(Binder<WhiskeyTO> binder) {
+	protected VerticalLayout createForm(Binder<RumTO> binder) {
 		TextField nameField = new TextField("Název");
-		binder.forField(nameField).asRequired().bind(WhiskeyTO::getName, WhiskeyTO::setName);
+		nameField.setWidth("320px");
+		binder.forField(nameField).asRequired().bind(RumTO::getName, RumTO::setName);
 
 		TextField countryField = new TextField("Země");
-		binder.forField(countryField).asRequired().bind(WhiskeyTO::getCountry, WhiskeyTO::setCountry);
+		binder.forField(countryField).asRequired().bind(RumTO::getCountry, RumTO::setCountry);
 
 		RatingStars ratingStars = new RatingStars();
-		binder.forField(ratingStars).asRequired().bind(WhiskeyTO::getRating, WhiskeyTO::setRating);
+		binder.forField(ratingStars).asRequired().bind(RumTO::getRating, RumTO::setRating);
 		ratingStars.setAnimated(false);
 		ratingStars.setCaption("Hodnocení");
 
 		HorizontalLayout line1Layout = new HorizontalLayout(nameField, countryField, ratingStars);
 
 		TextField yearsField = new TextField("Stáří (roky)");
-		binder.forField(yearsField)
+		binder.forField(yearsField).withNullRepresentation("")
 				.withConverter(new StringToIntegerConverter(null, "Stáří (roky) musí být celé číslo"))
-				.asRequired(new IntegerRangeValidator("Stáří je mimo rozsah (1-100)", 1, 100))
-				.bind(WhiskeyTO::getYears, WhiskeyTO::setYears);
+				.bind(RumTO::getYears, RumTO::setYears);
 		yearsField.setWidth("80px");
 
 		TextField alcoholField = new TextField("Alkohol (%)");
@@ -72,18 +71,18 @@ public abstract class WhiskeyWindow extends DrinkWindow<WhiskeyTO> {
 						return NumberFormat.getNumberInstance(new Locale("cs", "CZ"));
 					}
 				}).asRequired(new DoubleRangeValidator("Obsah alkoholu je mimo rozsah (1-100)", 1d, 100d))
-				.bind(WhiskeyTO::getAlcohol, WhiskeyTO::setAlcohol);
+				.bind(RumTO::getAlcohol, RumTO::setAlcohol);
 		alcoholField.setWidth("80px");
 
-		ComboBox<WhiskeyType> whiskeyTypeField = new ComboBox<>("Typ Whiskey", Arrays.asList(WhiskeyType.values()));
-		whiskeyTypeField.setEmptySelectionAllowed(false);
-		whiskeyTypeField.setItemCaptionGenerator(WhiskeyType::getCaption);
-		binder.forField(whiskeyTypeField).asRequired().bind(WhiskeyTO::getWhiskeyType, WhiskeyTO::setWhiskeyType);
+		ComboBox<RumType> rumTypeField = new ComboBox<>("Typ rumu", Arrays.asList(RumType.values()));
+		rumTypeField.setEmptySelectionAllowed(false);
+		rumTypeField.setItemCaptionGenerator(RumType::getCaption);
+		binder.forField(rumTypeField).asRequired().bind(RumTO::getRumType, RumTO::setRumType);
 
-		HorizontalLayout line2Layout = new HorizontalLayout(yearsField, alcoholField, whiskeyTypeField);
+		HorizontalLayout line2Layout = new HorizontalLayout(yearsField, alcoholField, rumTypeField);
 
 		TextArea descriptionField = new TextArea("Popis");
-		binder.forField(descriptionField).asRequired().bind(WhiskeyTO::getDescription, WhiskeyTO::setDescription);
+		binder.forField(descriptionField).asRequired().bind(RumTO::getDescription, RumTO::setDescription);
 		descriptionField.setWidth("600px");
 		descriptionField.setHeight("200px");
 

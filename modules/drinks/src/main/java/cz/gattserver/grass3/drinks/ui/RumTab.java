@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.drinks.web;
+package cz.gattserver.grass3.drinks.ui;
 
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -23,9 +23,9 @@ import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
 import cz.gattserver.grass3.drinks.facades.DrinksFacade;
-import cz.gattserver.grass3.drinks.model.domain.WhiskeyType;
-import cz.gattserver.grass3.drinks.model.interfaces.WhiskeyOverviewTO;
-import cz.gattserver.grass3.drinks.model.interfaces.WhiskeyTO;
+import cz.gattserver.grass3.drinks.model.domain.RumType;
+import cz.gattserver.grass3.drinks.model.interfaces.RumOverviewTO;
+import cz.gattserver.grass3.drinks.model.interfaces.RumTO;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
@@ -33,39 +33,39 @@ import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.web.common.ui.BoldLabel;
 import cz.gattserver.web.common.ui.H2Label;
 
-public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
+public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 
 	private static final long serialVersionUID = 594189301140808163L;
 
 	@Autowired
 	private DrinksFacade drinksFacade;
 
-	public WhiskeyTab(GrassRequest request) {
+	public RumTab(GrassRequest request) {
 		super(request);
 	}
 
 	@Override
-	protected WhiskeyOverviewTO createNewOverviewTO() {
-		return new WhiskeyOverviewTO();
+	protected RumOverviewTO createNewOverviewTO() {
+		return new RumOverviewTO();
 	}
 
 	@Override
-	protected Grid<WhiskeyOverviewTO> createGrid(final WhiskeyOverviewTO filterTO) {
+	protected Grid<RumOverviewTO> createGrid(final RumOverviewTO filterTO) {
 
-		final Grid<WhiskeyOverviewTO> grid = new Grid<>();
+		final Grid<RumOverviewTO> grid = new Grid<>();
 
-		Column<WhiskeyOverviewTO, String> nameColumn = grid.addColumn(WhiskeyOverviewTO::getName).setCaption("Název")
+		Column<RumOverviewTO, String> nameColumn = grid.addColumn(RumOverviewTO::getName).setCaption("Název")
 				.setSortProperty("name");
-		Column<WhiskeyOverviewTO, String> countryColumn = grid.addColumn(WhiskeyOverviewTO::getCountry)
-				.setCaption("Země").setSortProperty("country");
-		Column<WhiskeyOverviewTO, Double> alcoholColumn = grid.addColumn(WhiskeyOverviewTO::getAlcohol)
+		Column<RumOverviewTO, String> countryColumn = grid.addColumn(RumOverviewTO::getCountry).setCaption("Země")
+				.setSortProperty("country");
+		Column<RumOverviewTO, Double> alcoholColumn = grid.addColumn(RumOverviewTO::getAlcohol)
 				.setRenderer(new NumberRenderer(NumberFormat.getNumberInstance(new Locale("cs", "CZ"))))
 				.setCaption("Alkohol (%)").setWidth(80).setSortProperty("alcohol");
-		Column<WhiskeyOverviewTO, Integer> yearsColumn = grid.addColumn(WhiskeyOverviewTO::getYears)
-				.setCaption("Stáří (roky)").setWidth(90).setSortProperty("years");
-		Column<WhiskeyOverviewTO, WhiskeyType> WhiskeyTypeColumn = grid.addColumn(WhiskeyOverviewTO::getWhiskeyType)
-				.setRenderer(WhiskeyType::getCaption, new TextRenderer()).setCaption("Typ whiskey").setWidth(150)
-				.setSortProperty("whiskeyType");
+		Column<RumOverviewTO, Integer> yearsColumn = grid.addColumn(RumOverviewTO::getYears).setCaption("Stáří (roky)")
+				.setWidth(90).setSortProperty("years");
+		Column<RumOverviewTO, RumType> rumTypeColumn = grid.addColumn(RumOverviewTO::getRumType)
+				.setRenderer(RumType::getCaption, new TextRenderer()).setCaption("Typ rumu").setWidth(100)
+				.setSortProperty("rumType");
 		grid.addColumn(to -> {
 			RatingStars rs = new RatingStars();
 			rs.setValue(to.getRating());
@@ -75,6 +75,7 @@ public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
 		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení").setWidth(120).setSortProperty("rating");
 		grid.setWidth("100%");
 		grid.setHeight("400px");
+
 		addComponent(grid);
 
 		HeaderRow filteringHeader = grid.appendHeaderRow();
@@ -125,16 +126,16 @@ public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
 		});
 		filteringHeader.getCell(yearsColumn).setComponent(yearsColumnField);
 
-		// Typ Whiskeyu
-		ComboBox<WhiskeyType> typeColumnField = new ComboBox<>(null, Arrays.asList(WhiskeyType.values()));
+		// Typ rumu
+		ComboBox<RumType> typeColumnField = new ComboBox<>(null, Arrays.asList(RumType.values()));
 		typeColumnField.setWidth("100%");
 		typeColumnField.addStyleName(ValoTheme.COMBOBOX_TINY);
 		typeColumnField.addValueChangeListener(e -> {
-			filterTO.setWhiskeyType(e.getValue());
+			filterTO.setRumType(e.getValue());
 			populate();
 		});
-		typeColumnField.setItemCaptionGenerator(WhiskeyType::getCaption);
-		filteringHeader.getCell(WhiskeyTypeColumn).setComponent(typeColumnField);
+		typeColumnField.setItemCaptionGenerator(RumType::getCaption);
+		filteringHeader.getCell(rumTypeColumn).setComponent(typeColumnField);
 
 		return grid;
 	}
@@ -142,40 +143,42 @@ public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
 	@Override
 	protected void populate() {
 		grid.setDataProvider(
-				(sortOrder, offset, limit) -> drinksFacade.getWhiskeys(filterTO, offset, limit, sortOrder).stream(),
-				() -> drinksFacade.countWhiskeys(filterTO));
+				(sortOrder, offset, limit) -> drinksFacade.getRums(filterTO, offset, limit, sortOrder).stream(),
+				() -> drinksFacade.countRums(filterTO));
 	}
 
 	@Override
 	protected void populateBtnLayout(HorizontalLayout btnLayout) {
 		btnLayout.addComponent(new CreateGridButton("Přidat", event -> {
-			UI.getCurrent().addWindow(new WhiskeyWindow() {
+			UI.getCurrent().addWindow(new RumWindow() {
 				private static final long serialVersionUID = -4863260002363608014L;
 
 				@Override
-				protected void onSave(WhiskeyTO to) {
-					to = drinksFacade.saveWhiskey(to);
+				protected void onSave(RumTO to) {
+					to = drinksFacade.saveRum(to);
 					showDetail(to);
 					populate();
 				}
 			});
 		}));
 
-		btnLayout.addComponent(new ModifyGridButton<WhiskeyOverviewTO>("Upravit", event -> {
-			UI.getCurrent().addWindow(new WhiskeyWindow(choosenDrink) {
+		btnLayout.addComponent(new ModifyGridButton<RumOverviewTO>("Upravit", event -> {
+			UI.getCurrent().addWindow(new RumWindow(choosenDrink) {
+
 				private static final long serialVersionUID = 5264621441522056786L;
 
 				@Override
-				protected void onSave(WhiskeyTO to) {
-					to = drinksFacade.saveWhiskey(to);
+				protected void onSave(RumTO to) {
+					to = drinksFacade.saveRum(to);
 					showDetail(to);
 					populate();
 				}
+
 			});
 		}, grid));
 
-		btnLayout.addComponent(new DeleteGridButton<WhiskeyOverviewTO>("Smazat", items -> {
-			for (WhiskeyOverviewTO s : items)
+		btnLayout.addComponent(new DeleteGridButton<RumOverviewTO>("Smazat", items -> {
+			for (RumOverviewTO s : items)
 				drinksFacade.deleteDrink(s.getId());
 			populate();
 			showDetail(null);
@@ -198,12 +201,14 @@ public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
 
 		BoldLabel b;
 		infoLayout.addComponent(new BoldLabel("Stáří (roky)"));
-		infoLayout.addComponent(new Label(String.valueOf(choosenDrink.getYears())));
+		infoLayout.addComponent(
+				new Label(choosenDrink.getYears() == null ? "" : String.valueOf(choosenDrink.getYears())));
 		infoLayout.addComponent(b = new BoldLabel("Alkohol (%)"));
 		b.setWidth("120px");
-		infoLayout.addComponent(new Label(String.valueOf(choosenDrink.getAlcohol())));
-		infoLayout.addComponent(new BoldLabel("Typ whiskey"));
-		infoLayout.addComponent(new Label(choosenDrink.getWhiskeyType().getCaption()));
+		infoLayout.addComponent(
+				new Label(choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol())));
+		infoLayout.addComponent(new BoldLabel("Typ rumu"));
+		infoLayout.addComponent(new Label(choosenDrink.getRumType().getCaption()));
 
 		Label descriptionLabel = new Label(choosenDrink.getDescription());
 		descriptionLabel.setSizeFull();
@@ -212,12 +217,12 @@ public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
 
 	@Override
 	protected String getURLPath() {
-		return "whiskey";
+		return "rum";
 	}
 
 	@Override
-	protected WhiskeyTO findById(Long id) {
-		return drinksFacade.getWhiskeyById(id);
+	protected RumTO findById(Long id) {
+		return drinksFacade.getRumById(id);
 	}
 
 }

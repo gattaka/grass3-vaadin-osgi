@@ -1,10 +1,14 @@
-package cz.gattserver.grass3.drinks.web;
+package cz.gattserver.grass3.drinks.ui.pages;
 
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.drinks.ui.BeersTab;
+import cz.gattserver.grass3.drinks.ui.RumTab;
+import cz.gattserver.grass3.drinks.ui.WhiskeyTab;
+import cz.gattserver.grass3.drinks.ui.WineTab;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.server.URLIdentifierUtils;

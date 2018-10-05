@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.drinks.web;
+package cz.gattserver.grass3.drinks.ui;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;

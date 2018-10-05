@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.drinks.web;
+package cz.gattserver.grass3.drinks.ui;
 
 import java.text.NumberFormat;
 import java.util.Arrays;

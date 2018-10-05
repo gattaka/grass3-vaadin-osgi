@@ -16,9 +16,7 @@ public class CampgamesPageFactory extends AbstractPageFactory {
 
 	@Override
 	protected boolean isAuthorized() {
-		if (getUser() == null)
-			return false;
-		return getUser().isAdmin();
+		return true;
 	}
 
 	@Override

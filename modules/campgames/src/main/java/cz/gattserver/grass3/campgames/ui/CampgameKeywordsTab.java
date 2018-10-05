@@ -14,6 +14,8 @@ import com.vaadin.ui.Window;
 import cz.gattserver.grass3.campgames.interfaces.CampgameKeywordTO;
 import cz.gattserver.grass3.campgames.service.CampgamesService;
 import cz.gattserver.grass3.campgames.ui.windows.CampgameKeywordWindow;
+import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmWindow;
@@ -63,6 +65,9 @@ public class CampgameKeywordsTab extends VerticalLayout {
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);
 		addComponent(buttonLayout);
+
+		buttonLayout.setVisible(
+				SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles().contains(Role.ADMIN));
 
 		/**
 		 * Úprava klíčového slova

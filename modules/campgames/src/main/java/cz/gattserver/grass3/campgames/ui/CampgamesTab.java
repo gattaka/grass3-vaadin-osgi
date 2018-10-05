@@ -29,7 +29,9 @@ import cz.gattserver.grass3.campgames.service.CampgamesService;
 import cz.gattserver.grass3.campgames.ui.windows.CampgameDetailWindow;
 import cz.gattserver.grass3.campgames.ui.windows.CampgameCreateWindow;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
+import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmWindow;
@@ -168,9 +170,13 @@ public class CampgamesTab extends VerticalLayout {
 		buttonLayout.setSpacing(true);
 		addComponent(buttonLayout);
 
+		boolean admin = SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
+				.contains(Role.ADMIN);
+
 		// Založení nové hry
 		newCampgameBtn.addClickListener(e -> openItemWindow(false));
 		buttonLayout.addComponent(newCampgameBtn);
+		newCampgameBtn.setVisible(admin);
 
 		// Zobrazení detailů hry
 		detailsBtn.addClickListener(e -> openDetailWindow(grid.getSelectedItems().iterator().next().getId()));
@@ -179,10 +185,12 @@ public class CampgamesTab extends VerticalLayout {
 		// Oprava údajů existující hry
 		fixBtn.addClickListener(e -> openItemWindow(true));
 		buttonLayout.addComponent(fixBtn);
+		fixBtn.setVisible(admin);
 
 		// Smazání hry
 		deleteBtn.addClickListener(e -> openDeleteWindow());
 		buttonLayout.addComponent(deleteBtn);
+		deleteBtn.setVisible(admin);
 
 	}
 

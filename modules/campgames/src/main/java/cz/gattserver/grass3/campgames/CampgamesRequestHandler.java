@@ -33,8 +33,7 @@ public class CampgamesRequestHandler extends AbstractConfiguratedPathRequestHand
 
 	@Override
 	protected String getMimeType(Path file) {
-		String type = super.getMimeType(file);
-		return type + "; charset=utf-8";
+		return super.getMimeType(file);
 	}
 
 }

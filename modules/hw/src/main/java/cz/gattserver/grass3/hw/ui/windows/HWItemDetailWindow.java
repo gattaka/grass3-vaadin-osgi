@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.shared.Registration;
@@ -54,7 +55,6 @@ import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.GridUtils;
-import cz.gattserver.web.common.exception.SystemException;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.MultiUpload;
@@ -428,7 +428,7 @@ public class HWItemDetailWindow extends WebWindow {
 		serviceNotesGrid.addColumn(hw -> hw.getState().getName(), new TextRenderer()).setCaption("Stav")
 				.setId(STATE_BIND).setWidth(130);
 		serviceNotesGrid.getColumn("usedInName").setCaption("Je součástí").setWidth(180);
-		serviceNotesGrid.getColumn("description").setCaption("Obsah").setWidth(441);
+		serviceNotesGrid.getColumn("description").setCaption("Obsah");
 		serviceNotesGrid.getColumn("id").setHidden(true); // jinak nepůjde sort
 		serviceNotesGrid.setColumns("id", DATE_BIND, STATE_BIND, "usedInName", "description");
 		serviceNotesGrid.setWidth("100%");
@@ -562,6 +562,7 @@ public class HWItemDetailWindow extends WebWindow {
 		for (final HWItemFileTO file : getHWService().getHWItemImagesFiles(hwItemId)) {
 
 			VerticalLayout imageLayout = new VerticalLayout();
+			listLayout.setComponentAlignment(imageLayout, Alignment.MIDDLE_CENTER);
 			listLayout.addComponent(imageLayout);
 			imageLayout.setSpacing(true);
 			imageLayout.setMargin(false);
@@ -575,20 +576,8 @@ public class HWItemDetailWindow extends WebWindow {
 			HorizontalLayout btnLayout = new HorizontalLayout();
 			btnLayout.setSpacing(true);
 
-			Button hwItemImageDetailBtn = new Button("Detail", e -> {
-				BufferedImage bimg = null;
-				try {
-					bimg = ImageIO.read(getHWService().getHWItemImagesFileInputStream(hwItemId, file.getName()));
-					int width = bimg.getWidth();
-					int height = bimg.getHeight();
-					UI.getCurrent()
-							.addWindow(new ImageDetailWindow(hwItem.getName(), width, height, new StreamResource(
-									() -> getHWService().getHWItemImagesFileInputStream(hwItemId, file.getName()),
-									file.getName())));
-				} catch (IOException ex) {
-					throw new SystemException("Při čtení souboru '" + file.getName() + "' došlo k chybě.", ex);
-				}
-			});
+			Button hwItemImageDetailBtn = new Button("Detail", e -> Page.getCurrent()
+					.open(HWConfiguration.HW_PATH + "/" + hwItem.getId() + "/" + file.getName(), file.getName()));
 
 			Button hwItemImageDeleteBtn = new DeleteButton(
 					e -> UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto HW položky ?", ev -> {

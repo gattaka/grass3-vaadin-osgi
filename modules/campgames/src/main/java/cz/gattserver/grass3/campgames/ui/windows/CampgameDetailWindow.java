@@ -1,11 +1,8 @@
 package cz.gattserver.grass3.campgames.ui.windows;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.InputStream;
 
-import javax.imageio.ImageIO;
-
+import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.shared.ui.ContentMode;
@@ -23,19 +20,20 @@ import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+import cz.gattserver.grass3.campgames.CampgamesConfiguration;
 import cz.gattserver.grass3.campgames.interfaces.CampgameFileTO;
 import cz.gattserver.grass3.campgames.interfaces.CampgameTO;
 import cz.gattserver.grass3.campgames.service.CampgamesService;
+import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.DeleteButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
-import cz.gattserver.web.common.exception.SystemException;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.MultiUpload;
 import cz.gattserver.web.common.ui.window.ConfirmWindow;
 import cz.gattserver.web.common.ui.window.ErrorWindow;
-import cz.gattserver.web.common.ui.window.ImageDetailWindow;
 import cz.gattserver.web.common.ui.window.WebWindow;
 
 public class CampgameDetailWindow extends WebWindow {
@@ -54,8 +52,8 @@ public class CampgameDetailWindow extends WebWindow {
 		super("Detail hry");
 		this.campgameId = campgameId;
 
-		setWidth("900px");
-		setHeight("700px");
+		setWidth("680px");
+		setHeight("600px");
 
 		sheet = new TabSheet();
 		sheet.setSizeFull();
@@ -95,7 +93,6 @@ public class CampgameDetailWindow extends WebWindow {
 	}
 
 	private Layout createItemDetailsLayout(CampgameTO campgameTO) {
-
 		VerticalLayout wrapperLayout = createWrapperLayout();
 
 		VerticalLayout itemLayout = new VerticalLayout();
@@ -117,13 +114,21 @@ public class CampgameDetailWindow extends WebWindow {
 		});
 		itemLayout.addComponent(tags);
 
-		itemLayout.addComponent(new Label("<strong>Původ:</strong> " + campgameTO.getOrigin(), ContentMode.HTML));
-		itemLayout
+		GridLayout metaInfoLayout = new GridLayout(2, 2);
+		metaInfoLayout.setSpacing(true);
+		itemLayout.addComponent(metaInfoLayout);
+
+		metaInfoLayout.addComponent(new Label("<strong>Původ:</strong> " + campgameTO.getOrigin(), ContentMode.HTML));
+		metaInfoLayout
 				.addComponent(new Label("<strong>Počet hráčů:</strong> " + campgameTO.getPlayers(), ContentMode.HTML));
-		itemLayout.addComponent(new Label("<strong>Délka hry:</strong> " + campgameTO.getPlayTime(), ContentMode.HTML));
-		itemLayout.addComponent(
+		metaInfoLayout
+				.addComponent(new Label("<strong>Délka hry:</strong> " + campgameTO.getPlayTime(), ContentMode.HTML));
+		metaInfoLayout.addComponent(
 				new Label("<strong>Délka přípravy:</strong> " + campgameTO.getPreparationTime(), ContentMode.HTML));
-		itemLayout.addComponent(new Label(campgameTO.getDescription(), ContentMode.HTML));
+
+		Label descLabel = new Label(campgameTO.getDescription());
+		descLabel.setSizeFull();
+		itemLayout.addComponent(descLabel);
 
 		VerticalLayout partsWrapperLayout = new VerticalLayout();
 		partsWrapperLayout.setSpacing(false);
@@ -136,6 +141,9 @@ public class CampgameDetailWindow extends WebWindow {
 		HorizontalLayout operationsLayout = new HorizontalLayout();
 		operationsLayout.setSpacing(true);
 		wrapperLayout.addComponent(operationsLayout);
+
+		operationsLayout.setVisible(
+				SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles().contains(Role.ADMIN));
 
 		/**
 		 * Oprava údajů existující hry
@@ -176,7 +184,7 @@ public class CampgameDetailWindow extends WebWindow {
 		VerticalLayout wrapperLayout = createWrapperLayout();
 
 		GridLayout listLayout = new GridLayout();
-		listLayout.setColumns(4);
+		listLayout.setColumns(3);
 		listLayout.setSpacing(true);
 		listLayout.setMargin(true);
 
@@ -204,6 +212,8 @@ public class CampgameDetailWindow extends WebWindow {
 		multiFileUpload.setCaption("Vložit fotografie");
 		multiFileUpload.setSizeUndefined();
 		wrapperLayout.addComponent(multiFileUpload);
+		multiFileUpload.setVisible(
+				SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles().contains(Role.ADMIN));
 
 		return wrapperLayout;
 	}
@@ -213,6 +223,7 @@ public class CampgameDetailWindow extends WebWindow {
 
 			VerticalLayout imageLayout = new VerticalLayout();
 			listLayout.addComponent(imageLayout);
+			listLayout.setComponentAlignment(imageLayout, Alignment.MIDDLE_CENTER);
 			imageLayout.setSpacing(true);
 			imageLayout.setMargin(false);
 
@@ -226,22 +237,10 @@ public class CampgameDetailWindow extends WebWindow {
 			HorizontalLayout btnLayout = new HorizontalLayout();
 			btnLayout.setSpacing(true);
 
-			Button imageDetailBtn = new Button("Detail", e -> {
-				BufferedImage bimg = null;
-				try {
-					bimg = ImageIO
-							.read(getCampgamesService().getCampgameImagesFileInputStream(campgameId, file.getName()));
-					int width = bimg.getWidth();
-					int height = bimg.getHeight();
-					UI.getCurrent()
-							.addWindow(new ImageDetailWindow(campgameTO.getName(), width, height,
-									new StreamResource(() -> getCampgamesService()
-											.getCampgameImagesFileInputStream(campgameId, file.getName()),
-											file.getName())));
-				} catch (IOException ex) {
-					throw new SystemException("Při čtení souboru '" + file.getName() + "' došlo k chybě.", ex);
-				}
-			});
+			Button imageDetailBtn = new Button("Detail",
+					e -> Page.getCurrent().open(
+							CampgamesConfiguration.CAMPGAMES_PATH + "/" + campgameTO.getId() + "/" + file.getName(),
+							file.getName()));
 
 			Button imageDeleteBtn = new DeleteButton(
 					e -> UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto?", ev -> {
@@ -258,6 +257,9 @@ public class CampgameDetailWindow extends WebWindow {
 
 			btnLayout.addComponent(imageDetailBtn);
 			btnLayout.addComponent(imageDeleteBtn);
+
+			imageDeleteBtn.setVisible(SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
+					.contains(Role.ADMIN));
 
 			imageLayout.addComponent(btnLayout);
 			imageLayout.setComponentAlignment(btnLayout, Alignment.BOTTOM_CENTER);

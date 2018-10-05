@@ -11,6 +11,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
@@ -69,8 +70,9 @@ public abstract class CampgameCreateWindow extends WebWindow {
 		binder.forField(nameField).asRequired("Název položky je povinný").bind("name");
 		winLayout.addComponent(nameField, 0, 0, 1, 0);
 
-		TextField descriptionField = new TextField("Popis");
+		TextArea descriptionField = new TextArea("Popis");
 		descriptionField.setWidth("100%");
+		descriptionField.setHeight("200px");
 		binder.forField(descriptionField).bind("description");
 		winLayout.addComponent(descriptionField, 0, 1, 1, 1);
 

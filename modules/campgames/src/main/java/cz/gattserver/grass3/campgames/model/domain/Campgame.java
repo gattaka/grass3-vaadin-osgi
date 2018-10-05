@@ -2,6 +2,7 @@ package cz.gattserver.grass3.campgames.model.domain;
 
 import java.util.Collection;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -48,6 +49,7 @@ public class Campgame {
 	/**
 	 * Popis
 	 */
+	@Column(columnDefinition = "TEXT")
 	private String description;
 
 	/**

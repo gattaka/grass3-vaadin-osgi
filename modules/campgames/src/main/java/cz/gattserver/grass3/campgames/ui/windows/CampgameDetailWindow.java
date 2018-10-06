@@ -112,7 +112,8 @@ public class CampgameDetailWindow extends WebWindow {
 			token.setStyleName("read-only-token");
 			tags.addComponent(token);
 		});
-		itemLayout.addComponent(tags);
+		if (!campgameTO.getKeywords().isEmpty())
+			itemLayout.addComponent(tags);
 
 		GridLayout metaInfoLayout = new GridLayout(2, 2);
 		metaInfoLayout.setSpacing(true);
@@ -126,7 +127,7 @@ public class CampgameDetailWindow extends WebWindow {
 		metaInfoLayout.addComponent(
 				new Label("<strong>Délka přípravy:</strong> " + campgameTO.getPreparationTime(), ContentMode.HTML));
 
-		Label descLabel = new Label(campgameTO.getDescription());
+		Label descLabel = new Label(campgameTO.getDescription().replaceAll("\n", "<br/>"), ContentMode.HTML);
 		descLabel.setSizeFull();
 		itemLayout.addComponent(descLabel);
 

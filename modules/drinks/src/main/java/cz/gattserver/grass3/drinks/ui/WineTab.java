@@ -7,6 +7,7 @@ import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.teemu.ratingstars.RatingStars;
 
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
@@ -221,7 +222,7 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 		infoLayout.addComponent(new BoldLabel("Typ vína"));
 		infoLayout.addComponent(new Label(choosenDrink.getWineType().getCaption()));
 
-		Label descriptionLabel = new Label(choosenDrink.getDescription());
+		Label descriptionLabel = new Label(choosenDrink.getDescription().replaceAll("\n", "<br/>"), ContentMode.HTML);
 		descriptionLabel.setSizeFull();
 		dataLayout.addComponent(descriptionLabel);
 	}

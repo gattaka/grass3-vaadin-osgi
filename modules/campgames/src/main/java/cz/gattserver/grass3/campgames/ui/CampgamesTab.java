@@ -102,9 +102,9 @@ public class CampgamesTab extends VerticalLayout {
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setWidth("100%");
 
-		grid.addColumn(CampgameOverviewTO::getName).setId(NAME_BIND).setCaption("Název").setWidth(260);
-		grid.addColumn(CampgameOverviewTO::getPlayers).setId(PLAYERS_BIND).setCaption("Hráčů").setWidth(150);
-		grid.addColumn(CampgameOverviewTO::getPlayTime).setId(PLAYTIME_BIND).setCaption("Délka hry").setWidth(150);
+		grid.addColumn(CampgameOverviewTO::getName).setId(NAME_BIND).setCaption("Název").setWidth(200);
+		grid.addColumn(CampgameOverviewTO::getPlayers).setId(PLAYERS_BIND).setCaption("Hráčů").setWidth(220);
+		grid.addColumn(CampgameOverviewTO::getPlayTime).setId(PLAYTIME_BIND).setCaption("Délka hry").setWidth(220);
 		grid.addColumn(CampgameOverviewTO::getPreparationTime).setId(PREPARATIONTIME_BIND).setCaption("Délka přípravy");
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 

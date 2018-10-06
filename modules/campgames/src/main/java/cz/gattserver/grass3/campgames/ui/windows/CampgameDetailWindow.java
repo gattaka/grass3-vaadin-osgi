@@ -98,8 +98,9 @@ public class CampgameDetailWindow extends WebWindow {
 		VerticalLayout itemLayout = new VerticalLayout();
 		itemLayout.setSpacing(true);
 		itemLayout.setMargin(false);
-		itemLayout.setSizeUndefined();
+		itemLayout.setSizeFull();
 		wrapperLayout.addComponent(itemLayout);
+		wrapperLayout.setExpandRatio(itemLayout, 1);
 
 		/**
 		 * Keywords
@@ -129,15 +130,14 @@ public class CampgameDetailWindow extends WebWindow {
 
 		Label descLabel = new Label(campgameTO.getDescription().replaceAll("\n", "<br/>"), ContentMode.HTML);
 		descLabel.setSizeFull();
-		itemLayout.addComponent(descLabel);
+		VerticalLayout layout = new VerticalLayout(descLabel);
+		layout.setMargin(true);
 
-		VerticalLayout partsWrapperLayout = new VerticalLayout();
-		partsWrapperLayout.setSpacing(false);
-		partsWrapperLayout.setMargin(false);
-		partsWrapperLayout.setSizeFull();
-		wrapperLayout.addComponent(partsWrapperLayout);
-		wrapperLayout.setComponentAlignment(partsWrapperLayout, Alignment.TOP_LEFT);
-		wrapperLayout.setExpandRatio(partsWrapperLayout, 1);
+		Panel panel = new Panel(layout);
+		panel.setWidth("100%");
+		panel.setHeight("100%");
+		itemLayout.addComponent(panel);
+		itemLayout.setExpandRatio(panel, 1);
 
 		HorizontalLayout operationsLayout = new HorizontalLayout();
 		operationsLayout.setSpacing(true);

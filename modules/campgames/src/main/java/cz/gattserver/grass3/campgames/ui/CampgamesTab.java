@@ -21,6 +21,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
+import cz.gattserver.grass3.campgames.CampgamesRole;
 import cz.gattserver.grass3.campgames.interfaces.CampgameFilterTO;
 import cz.gattserver.grass3.campgames.interfaces.CampgameKeywordTO;
 import cz.gattserver.grass3.campgames.interfaces.CampgameOverviewTO;
@@ -29,7 +30,6 @@ import cz.gattserver.grass3.campgames.service.CampgamesService;
 import cz.gattserver.grass3.campgames.ui.windows.CampgameDetailWindow;
 import cz.gattserver.grass3.campgames.ui.windows.CampgameCreateWindow;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
-import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.web.common.spring.SpringContextHelper;
@@ -102,9 +102,9 @@ public class CampgamesTab extends VerticalLayout {
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setWidth("100%");
 
-		grid.addColumn(CampgameOverviewTO::getName).setId(NAME_BIND).setCaption("Název").setWidth(200);
-		grid.addColumn(CampgameOverviewTO::getPlayers).setId(PLAYERS_BIND).setCaption("Hráčů").setWidth(220);
-		grid.addColumn(CampgameOverviewTO::getPlayTime).setId(PLAYTIME_BIND).setCaption("Délka hry").setWidth(220);
+		grid.addColumn(CampgameOverviewTO::getName).setId(NAME_BIND).setCaption("Název").setWidth(180);
+		grid.addColumn(CampgameOverviewTO::getPlayers).setId(PLAYERS_BIND).setCaption("Hráčů").setWidth(280);
+		grid.addColumn(CampgameOverviewTO::getPlayTime).setId(PLAYTIME_BIND).setCaption("Délka hry").setWidth(280);
 		grid.addColumn(CampgameOverviewTO::getPreparationTime).setId(PREPARATIONTIME_BIND).setCaption("Délka přípravy");
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
@@ -170,13 +170,13 @@ public class CampgamesTab extends VerticalLayout {
 		buttonLayout.setSpacing(true);
 		addComponent(buttonLayout);
 
-		boolean admin = SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
-				.contains(Role.ADMIN);
+		boolean editor = SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
+				.contains(CampgamesRole.CAMPGAME_EDITOR);
 
 		// Založení nové hry
 		newCampgameBtn.addClickListener(e -> openItemWindow(false));
 		buttonLayout.addComponent(newCampgameBtn);
-		newCampgameBtn.setVisible(admin);
+		newCampgameBtn.setVisible(editor);
 
 		// Zobrazení detailů hry
 		detailsBtn.addClickListener(e -> openDetailWindow(grid.getSelectedItems().iterator().next().getId()));
@@ -185,12 +185,12 @@ public class CampgamesTab extends VerticalLayout {
 		// Oprava údajů existující hry
 		fixBtn.addClickListener(e -> openItemWindow(true));
 		buttonLayout.addComponent(fixBtn);
-		fixBtn.setVisible(admin);
+		fixBtn.setVisible(editor);
 
 		// Smazání hry
 		deleteBtn.addClickListener(e -> openDeleteWindow());
 		buttonLayout.addComponent(deleteBtn);
-		deleteBtn.setVisible(admin);
+		deleteBtn.setVisible(editor);
 
 	}
 

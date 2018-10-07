@@ -3,7 +3,7 @@ package cz.gattserver.grass3.articles.ui.pages.factories;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.articles.ui.pages.ArticlesEditorPage;
-import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.factories.template.AbstractPageFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
@@ -17,7 +17,7 @@ public class ArticlesEditorPageFactory extends AbstractPageFactory {
 
 	@Override
 	protected boolean isAuthorized() {
-		return getUser() != null && (getUser().isAdmin() || getUser().hasRole(Role.AUTHOR));
+		return getUser() != null && (getUser().isAdmin() || getUser().hasRole(CoreRole.AUTHOR));
 	}
 
 	@Override

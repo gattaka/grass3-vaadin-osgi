@@ -39,7 +39,7 @@ import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
 import cz.gattserver.grass3.model.repositories.UserRepository;
 import cz.gattserver.grass3.modules.ArticlesContentModule;
-import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.services.ContentNodeService;
 
 @Transactional
@@ -226,14 +226,14 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public List<ArticleTO> getAllArticlesForSearch(long userId) {
-		boolean isAdmin = userRepository.hasRole(userId, Role.ADMIN) == 1L;
+		boolean isAdmin = userRepository.hasRole(userId, CoreRole.ADMIN.getAuthority()) == 1L;
 		List<Article> articles = articleRepository.findAllForSearch(userId, isAdmin);
 		return articlesMapper.mapArticlesForSearch(articles);
 	}
 
 	@Override
 	public List<ArticleDraftOverviewTO> getDraftsForUser(long userId) {
-		boolean isAdmin = userRepository.hasRole(userId, Role.ADMIN) == 1L;
+		boolean isAdmin = userRepository.hasRole(userId, CoreRole.ADMIN.getAuthority()) == 1L;
 		List<Article> articles = articleRepository.findDraftsForUser(userId, isAdmin);
 		return articlesMapper.mapArticlesForDraftOverview(articles);
 	}

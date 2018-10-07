@@ -49,7 +49,7 @@ public interface UserService {
 	 *            role, které mu budou nastaveny (nejedná se o přidání ale
 	 *            pevnou změnu výčtu rolí)
 	 */
-	public void changeUserRoles(long userId, Set<Role> roles);
+	public void changeUserRoles(long userId, Set<? extends Role> roles);
 
 	/**
 	 * Vrátí všechny uživatele

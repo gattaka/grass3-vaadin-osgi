@@ -28,4 +28,9 @@ public class SongsSection implements SectionService {
 		return "Zpěvník";
 	}
 
+	@Override
+	public Role[] getSectionRoles() {
+		return SongsRole.values();
+	}
+
 }

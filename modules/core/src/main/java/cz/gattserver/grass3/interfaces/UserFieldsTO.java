@@ -2,11 +2,11 @@ package cz.gattserver.grass3.interfaces;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Set;
 
-
 import cz.gattserver.grass3.model.domain.User;
+import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.security.Role;
 
 /**
@@ -31,7 +31,7 @@ public class UserFieldsTO {
 	/**
 	 * Role uživatele
 	 */
-	private Set<Role> roles = EnumSet.noneOf(Role.class);
+	private Set<Role> roles = new HashSet<>();
 
 	/**
 	 * Datum registrace
@@ -122,12 +122,12 @@ public class UserFieldsTO {
 		return password;
 	}
 
-	public boolean hasRole(Role role) {
+	public boolean hasRole(CoreRole role) {
 		return getRoles().contains(role);
 	}
 
 	public boolean isAdmin() {
-		return hasRole(Role.ADMIN);
+		return hasRole(CoreRole.ADMIN);
 	}
 
 	@Override

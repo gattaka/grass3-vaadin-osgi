@@ -28,9 +28,9 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
-import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
+import cz.gattserver.grass3.songs.SongsRole;
 import cz.gattserver.grass3.songs.facades.SongsFacade;
 import cz.gattserver.grass3.songs.model.domain.Instrument;
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
@@ -133,7 +133,7 @@ public class ChordsTab extends VerticalLayout {
 		btnLayout.setSpacing(true);
 		addComponent(btnLayout);
 
-		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(Role.ADMIN));
+		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));
 
 		btnLayout.addComponent(new CreateGridButton("Přidat", event -> {
 			UI.getCurrent().addWindow(new ChordWindow() {

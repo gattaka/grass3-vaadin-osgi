@@ -28,4 +28,9 @@ public class RecipesSection implements SectionService {
 		return "Recepty";
 	}
 
+	@Override
+	public Role[] getSectionRoles() {
+		return null;
+	}
+
 }

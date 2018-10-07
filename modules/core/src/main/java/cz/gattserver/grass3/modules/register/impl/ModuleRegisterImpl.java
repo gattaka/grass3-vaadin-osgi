@@ -4,8 +4,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -18,6 +20,8 @@ import cz.gattserver.common.util.CZComparator;
 import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.modules.SectionService;
 import cz.gattserver.grass3.modules.register.ModuleRegister;
+import cz.gattserver.grass3.security.CoreRole;
+import cz.gattserver.grass3.security.Role;
 
 /**
  * {@link ModuleRegisterImpl} udržuje přehled všech přihlášených modulů.
@@ -43,6 +47,11 @@ public class ModuleRegisterImpl implements ModuleRegister {
 	@Autowired(required = false)
 	private List<SectionService> injectedSectionModules;
 
+	/**
+	 * Role
+	 */
+	private Map<String, Role> roles = new HashMap<>();
+
 	@PostConstruct
 	private final void init() {
 		logger.info("ModuleRegister init");
@@ -57,6 +66,24 @@ public class ModuleRegisterImpl implements ModuleRegister {
 		contentModules = new HashMap<>();
 		for (ContentModule c : injectedContentModules)
 			contentModules.put(c.getContentID(), c);
+
+		// Role
+		for (CoreRole cr : CoreRole.values())
+			roles.put(cr.getAuthority(), cr);
+		for (SectionService ss : injectedSectionModules)
+			if (ss.getSectionRoles() != null)
+				for (Role r : ss.getSectionRoles())
+					roles.put(r.getAuthority(), r);
+	}
+
+	@Override
+	public Role resolveRole(String name) {
+		return roles.get(name);
+	}
+
+	@Override
+	public Set<Role> getRoles() {
+		return new HashSet<>(roles.values());
 	}
 
 	@Override

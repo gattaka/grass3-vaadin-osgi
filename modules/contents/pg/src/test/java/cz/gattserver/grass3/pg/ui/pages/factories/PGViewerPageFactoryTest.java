@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import cz.gattserver.grass3.pg.test.MockSecurityService;
-import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.test.AbstractContextAwareTest;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 
@@ -30,13 +30,13 @@ public class PGViewerPageFactoryTest extends AbstractContextAwareTest {
 
 		assertEquals("photogallery", factory.getPageName());
 
-		mockSecurityService.setRoles(new HashSet<>(Arrays.asList(Role.ADMIN)));
+		mockSecurityService.setRoles(new HashSet<>(Arrays.asList(CoreRole.ADMIN)));
 		assertTrue(factory.isAuthorized());
-		mockSecurityService.setRoles(new HashSet<>(Arrays.asList(Role.AUTHOR)));
+		mockSecurityService.setRoles(new HashSet<>(Arrays.asList(CoreRole.AUTHOR)));
 		assertTrue(factory.isAuthorized());
-		mockSecurityService.setRoles(new HashSet<>(Arrays.asList(Role.USER)));
+		mockSecurityService.setRoles(new HashSet<>(Arrays.asList(CoreRole.USER)));
 		assertTrue(factory.isAuthorized());
-		mockSecurityService.setRoles(new HashSet<>(Arrays.asList(Role.FRIEND)));
+		mockSecurityService.setRoles(new HashSet<>(Arrays.asList(CoreRole.FRIEND)));
 		assertTrue(factory.isAuthorized());
 	}
 

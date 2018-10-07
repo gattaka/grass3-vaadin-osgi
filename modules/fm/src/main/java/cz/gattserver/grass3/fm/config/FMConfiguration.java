@@ -6,7 +6,7 @@ import java.util.Set;
 import org.apache.commons.lang3.Validate;
 
 import cz.gattserver.grass3.config.AbstractConfiguration;
-import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.security.CoreRole;
 
 public class FMConfiguration extends AbstractConfiguration {
 
@@ -33,12 +33,12 @@ public class FMConfiguration extends AbstractConfiguration {
 	/**
 	 * Jakým rolím má být modul přístupný - defaultně jenom adminovi
 	 */
-	private Set<Role> roles = new HashSet<>();
+	private Set<CoreRole> roles = new HashSet<>();
 
 	public FMConfiguration() {
 		super("cz.gattserver.grass3.fm");
-		roles.add(Role.ADMIN);
-		roles.add(Role.FRIEND);
+		roles.add(CoreRole.ADMIN);
+		roles.add(CoreRole.FRIEND);
 	}
 
 	public String getRootDir() {
@@ -66,11 +66,11 @@ public class FMConfiguration extends AbstractConfiguration {
 		this.maxKBytesUploadSize = maxKBytesUploadSize;
 	}
 
-	public Set<Role> getRoles() {
+	public Set<CoreRole> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Set<Role> roles) {
+	public void setRoles(Set<CoreRole> roles) {
 		this.roles = roles;
 	}
 

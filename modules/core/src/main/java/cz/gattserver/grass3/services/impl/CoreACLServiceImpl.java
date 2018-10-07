@@ -7,7 +7,7 @@ import cz.gattserver.grass3.config.CoreConfiguration;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.modules.SectionService;
-import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.CoreACLService;
 import cz.gattserver.grass3.services.UserService;
@@ -63,7 +63,7 @@ public final class CoreACLServiceImpl implements CoreACLService {
 	 * Může uživatel vytvářet obsah ?
 	 */
 	public boolean canCreateContent(UserInfoTO user) {
-		return isLoggedIn(user) && user.hasRole(Role.AUTHOR);
+		return isLoggedIn(user) && user.hasRole(CoreRole.AUTHOR);
 	}
 
 	/**

@@ -22,7 +22,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.drinks.model.interfaces.DrinkOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.DrinkTO;
-import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
@@ -92,7 +92,7 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 		btnLayout.setSpacing(true);
 		addComponent(btnLayout);
 
-		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(Role.ADMIN));
+		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN));
 
 		populateBtnLayout(btnLayout);
 	}

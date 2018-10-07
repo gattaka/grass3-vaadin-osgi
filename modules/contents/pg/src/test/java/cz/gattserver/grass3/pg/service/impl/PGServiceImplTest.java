@@ -44,7 +44,7 @@ import cz.gattserver.grass3.pg.test.MockSecurityService;
 import cz.gattserver.grass3.pg.test.PGProcessMockEventsHandler;
 import cz.gattserver.grass3.pg.test.PGZipProcessMockEventsHandler;
 import cz.gattserver.grass3.pg.util.ZIPUtils;
-import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.test.AbstractDBUnitTest;
@@ -580,7 +580,7 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Long id1 = createMockGallery(root, userId1, nodeId1, 1, false);
 
 		UserInfoTO user = mockSecurityService.getCurrentUser();
-		user.getRoles().add(Role.ADMIN);
+		user.getRoles().add(CoreRole.ADMIN);
 
 		pgService.getPhotogalleryForREST(id1);
 	}

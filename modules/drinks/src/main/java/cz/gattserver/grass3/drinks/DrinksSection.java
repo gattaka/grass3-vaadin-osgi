@@ -28,4 +28,9 @@ public class DrinksSection implements SectionService {
 		return "Nápoje";
 	}
 
+	@Override
+	public Role[] getSectionRoles() {
+		return null;
+	}
+
 }

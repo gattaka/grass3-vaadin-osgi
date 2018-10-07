@@ -14,7 +14,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
-import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.UserService;
 import cz.gattserver.grass3.test.AbstractDBUnitTest;
@@ -42,7 +42,7 @@ public class UserServiceTest extends AbstractDBUnitTest {
 		assertNotNull(list.get(0).getRegistrationDate());
 		assertNull(list.get(0).getLastLoginDate());
 		assertEquals(1, list.get(0).getRoles().size());
-		assertTrue(list.get(0).getRoles().contains(Role.USER));
+		assertTrue(list.get(0).getRoles().contains(CoreRole.USER));
 	}
 
 	@Test
@@ -50,17 +50,17 @@ public class UserServiceTest extends AbstractDBUnitTest {
 		Long userId = coreMockService.createMockUser(1);
 		UserInfoTO user = userService.getUserById(userId);
 		assertEquals(1, user.getRoles().size());
-		assertTrue(user.getRoles().contains(Role.USER));
+		assertTrue(user.getRoles().contains(CoreRole.USER));
 
-		Set<Role> roles = new HashSet<>();
-		roles.add(Role.ADMIN);
-		roles.add(Role.FRIEND);
+		Set<CoreRole> roles = new HashSet<>();
+		roles.add(CoreRole.ADMIN);
+		roles.add(CoreRole.FRIEND);
 		userService.changeUserRoles(userId, roles);
 
 		user = userService.getUserById(userId);
 		assertEquals(2, user.getRoles().size());
-		assertTrue(user.getRoles().contains(Role.ADMIN));
-		assertTrue(user.getRoles().contains(Role.FRIEND));
+		assertTrue(user.getRoles().contains(CoreRole.ADMIN));
+		assertTrue(user.getRoles().contains(CoreRole.FRIEND));
 	}
 
 	@Test(expected = NullPointerException.class)

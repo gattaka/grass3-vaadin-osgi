@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.ui.pages.settings;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,6 +17,7 @@ import com.vaadin.ui.renderers.LocalDateTimeRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
+import cz.gattserver.grass3.modules.register.ModuleRegister;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.UserService;
@@ -27,6 +29,9 @@ public class UsersSettingsPage extends AbstractSettingsPage {
 
 	@Autowired
 	private UserService userFacade;
+
+	@Autowired
+	protected ModuleRegister moduleRegister;
 
 	private Grid<UserInfoTO> grid;
 
@@ -56,7 +61,8 @@ public class UsersSettingsPage extends AbstractSettingsPage {
 		grid.setSelectionMode(SelectionMode.SINGLE);
 
 		grid.addColumn(UserInfoTO::getName, new TextRenderer()).setCaption("Jméno");
-		grid.addColumn(u -> u.getRoles().toString(), new TextRenderer()).setCaption("Role");
+		grid.addColumn(u -> u.getRoles().stream().map(Role::getRoleName).collect(Collectors.joining(", ")),
+				new TextRenderer()).setCaption("Role");
 		grid.addColumn(UserInfoTO::getRegistrationDate, new LocalDateTimeRenderer("dd.MM.yyyy"))
 				.setCaption("Registrován");
 		grid.addColumn(UserInfoTO::getLastLoginDate, new LocalDateTimeRenderer("dd.MM.yyyy"))
@@ -93,14 +99,15 @@ public class UsersSettingsPage extends AbstractSettingsPage {
 					{
 						UserInfoTO user = users.iterator().next();
 						setWidth("220px");
-						for (final Role value : Role.values()) {
-							final CheckBox checkbox = new CheckBox(value.getRoleName());
-							checkbox.setValue(user.getRoles().contains(value));
+
+						for (final Role role : moduleRegister.getRoles()) {
+							final CheckBox checkbox = new CheckBox(role.getRoleName());
+							checkbox.setValue(user.getRoles().contains(role));
 							checkbox.addValueChangeListener(event -> {
 								if (checkbox.getValue()) {
-									user.getRoles().add(value);
+									user.getRoles().add(role);
 								} else {
-									user.getRoles().remove(value);
+									user.getRoles().remove(role);
 								}
 							});
 							addComponent(checkbox);

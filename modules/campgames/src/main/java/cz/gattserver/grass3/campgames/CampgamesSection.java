@@ -28,4 +28,9 @@ public class CampgamesSection implements SectionService {
 		return "Hry";
 	}
 
+	@Override
+	public Role[] getSectionRoles() {
+		return CampgamesRole.values();
+	}
+
 }

@@ -29,4 +29,9 @@ public class SearchSection implements SectionService {
 		return searchPageFactory;
 	}
 
+	@Override
+	public Role[] getSectionRoles() {
+		return null;
+	}
+
 }

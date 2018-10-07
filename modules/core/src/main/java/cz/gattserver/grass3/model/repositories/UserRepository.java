@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import cz.gattserver.grass3.model.domain.User;
-import cz.gattserver.grass3.security.Role;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -20,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	List<User> findByFavouritesId(long contentNodeId);
 
 	@Query("select count(u) from USER_ACCOUNTS u where u.id = ?1 and ?2 member of u.roles")
-	long hasRole(long userId, Role role);
+	long hasRole(long userId, String role);
 
 	@Modifying
 	@Query("update USER_ACCOUNTS u set u.confirmed = ?2 where u.id = ?1")

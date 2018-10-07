@@ -38,7 +38,7 @@ import cz.gattserver.grass3.language.model.dto.CrosswordHintTO;
 import cz.gattserver.grass3.language.model.dto.CrosswordTO;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.language.model.dto.LanguageTO;
-import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
@@ -92,7 +92,7 @@ public class LanguagePage extends OneColumnPage {
 		langLayout.addComponent(grid);
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
-		if (securityService.getCurrentUser().getRoles().contains(Role.ADMIN))
+		if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN))
 			langLayout.addComponent(btnLayout);
 
 		grid.addSelectionListener(se -> se.getFirstSelectedItem().ifPresent(item -> {
@@ -129,7 +129,7 @@ public class LanguagePage extends OneColumnPage {
 			tabSheet.addTab(createItemsTab(langId, ItemType.WORD), "Slovíčka");
 			tabSheet.addTab(new VerticalLayout(), "Fráze");
 			tabSheet.addTab(new VerticalLayout(), "Vše");
-			if (securityService.getCurrentUser().getRoles().contains(Role.ADMIN))
+			if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN))
 				tabSheet.addTab(createTestTab(langId), "Zkoušení");
 			tabSheet.addTab(createCrosswordTab(langId), "Křížovka");
 
@@ -428,7 +428,7 @@ public class LanguagePage extends OneColumnPage {
 		Column<LanguageItemTO, String> translationColumn = grid.addColumn(LanguageItemTO::getTranslation)
 				.setCaption(PREKLAD_LABEL).setSortProperty("translation");
 
-		if (securityService.getCurrentUser().getRoles().contains(Role.ADMIN)) {
+		if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN)) {
 			grid.addColumn(item -> (Math.floor(item.getSuccessRate() * 1000) / 10) + "%").setCaption("Úspěšnost")
 					.setStyleGenerator(item -> "v-align-right").setSortProperty("successRate");
 			grid.addColumn(LanguageItemTO::getLastTested, new LocalDateTimeRenderer("dd.MM.yyyy HH:mm"))
@@ -465,7 +465,7 @@ public class LanguagePage extends OneColumnPage {
 
 		sheet.addComponent(grid);
 
-		if (securityService.getCurrentUser().getRoles().contains(Role.ADMIN))
+		if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN))
 			sheet.addComponent(createButtonLayout(grid, langId, type));
 
 		return sheet;

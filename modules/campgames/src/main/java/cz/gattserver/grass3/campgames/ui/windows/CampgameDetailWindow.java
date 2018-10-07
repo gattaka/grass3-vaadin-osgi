@@ -24,7 +24,7 @@ import cz.gattserver.grass3.campgames.CampgamesConfiguration;
 import cz.gattserver.grass3.campgames.interfaces.CampgameFileTO;
 import cz.gattserver.grass3.campgames.interfaces.CampgameTO;
 import cz.gattserver.grass3.campgames.service.CampgamesService;
-import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.DeleteButton;
@@ -144,7 +144,7 @@ public class CampgameDetailWindow extends WebWindow {
 		wrapperLayout.addComponent(operationsLayout);
 
 		operationsLayout.setVisible(
-				SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles().contains(Role.ADMIN));
+				SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles().contains(CoreRole.ADMIN));
 
 		/**
 		 * Oprava údajů existující hry
@@ -214,7 +214,7 @@ public class CampgameDetailWindow extends WebWindow {
 		multiFileUpload.setSizeUndefined();
 		wrapperLayout.addComponent(multiFileUpload);
 		multiFileUpload.setVisible(
-				SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles().contains(Role.ADMIN));
+				SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles().contains(CoreRole.ADMIN));
 
 		return wrapperLayout;
 	}
@@ -260,7 +260,7 @@ public class CampgameDetailWindow extends WebWindow {
 			btnLayout.addComponent(imageDeleteBtn);
 
 			imageDeleteBtn.setVisible(SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
-					.contains(Role.ADMIN));
+					.contains(CoreRole.ADMIN));
 
 			imageLayout.addComponent(btnLayout);
 			imageLayout.setComponentAlignment(btnLayout, Alignment.BOTTOM_CENTER);

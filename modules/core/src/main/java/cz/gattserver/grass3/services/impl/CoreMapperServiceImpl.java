@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
@@ -21,10 +22,15 @@ import cz.gattserver.grass3.model.domain.ContentTag;
 import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.domain.Quote;
 import cz.gattserver.grass3.model.domain.User;
+import cz.gattserver.grass3.modules.register.ModuleRegister;
+import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.services.CoreMapperService;
 
 @Service
 public class CoreMapperServiceImpl implements CoreMapperService {
+
+	@Autowired
+	protected ModuleRegister moduleRegister;
 
 	@Override
 	public UserInfoTO map(User e) {
@@ -40,7 +46,11 @@ public class CoreMapperServiceImpl implements CoreMapperService {
 		userInfoDTO.setName(e.getName());
 		userInfoDTO.setPassword(e.getPassword());
 		userInfoDTO.setRegistrationDate(e.getRegistrationDate());
-		userInfoDTO.setRoles(e.getRoles());
+
+		Set<Role> set = new HashSet<>();
+		for (String s : e.getRoles())
+			set.add(moduleRegister.resolveRole(s));
+		userInfoDTO.setRoles(set);
 
 		return userInfoDTO;
 	}

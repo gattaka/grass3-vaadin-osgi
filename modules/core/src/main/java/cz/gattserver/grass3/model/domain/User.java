@@ -1,24 +1,22 @@
 package cz.gattserver.grass3.model.domain;
 
 import java.time.LocalDateTime;
-import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.GenericGenerator;
-
-import cz.gattserver.grass3.security.Role;
 
 @Entity(name = "USER_ACCOUNTS")
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "name" }) })
@@ -48,8 +46,8 @@ public class User {
 	 * Role uživatele
 	 */
 	@ElementCollection(fetch = FetchType.EAGER)
-	@Enumerated(EnumType.STRING)
-	private Set<Role> roles = EnumSet.noneOf(Role.class);
+	@CollectionTable(name = "USER_ACCOUNTS_ROLES", joinColumns = @JoinColumn(name = "USER_ACCOUNTS_ID"))
+	private Set<String> roles = new HashSet<>();
 
 	/**
 	 * Datum registrace
@@ -100,11 +98,11 @@ public class User {
 		this.password = password;
 	}
 
-	public Set<Role> getRoles() {
+	public Set<String> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Set<Role> roles) {
+	public void setRoles(Set<String> roles) {
 		this.roles = roles;
 	}
 

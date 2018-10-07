@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import cz.gattserver.grass3.drinks.ui.pages.factories.DrinksPageFactory;
 import cz.gattserver.grass3.modules.SectionService;
-import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.test.AbstractContextAwareTest;
 
 public class DrinksSectionTest extends AbstractContextAwareTest {
@@ -26,10 +26,10 @@ public class DrinksSectionTest extends AbstractContextAwareTest {
 		assertEquals("Nápoje", sectionService.getSectionCaption());
 		assertTrue(sectionService.getSectionPageFactory() instanceof DrinksPageFactory);
 		assertTrue(sectionService.isVisibleForRoles(null));
-		assertTrue(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(Role.ADMIN))));
-		assertTrue(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(Role.FRIEND))));
-		assertTrue(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(Role.USER))));
-		assertTrue(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(Role.AUTHOR))));
+		assertTrue(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(CoreRole.ADMIN))));
+		assertTrue(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(CoreRole.FRIEND))));
+		assertTrue(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(CoreRole.USER))));
+		assertTrue(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(CoreRole.AUTHOR))));
 	}
 
 }

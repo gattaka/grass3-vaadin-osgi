@@ -42,4 +42,11 @@ public interface SectionService {
 	 */
 	public boolean isVisibleForRoles(Set<Role> roles);
 
+	/**
+	 * Zavádí sekce nějaké své vlastní role? Pokud ano, ať je poskytne.
+	 * 
+	 * @return Pole rolí, specifických pro tento modul
+	 */
+	public Role[] getSectionRoles();
+
 }

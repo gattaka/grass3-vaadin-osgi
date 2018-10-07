@@ -84,7 +84,6 @@ public abstract class MenuPage extends GrassPage {
 		// menu
 		HorizontalLayout menuExpander = new HorizontalLayout();
 		menuExpander.setWidth("970px");
-		// menuExpander.setHeight("70px");
 		menuExpander.addStyleName("menu");
 		menuExpander.setMargin(false);
 		menuExpander.setSpacing(false);
@@ -92,7 +91,6 @@ public abstract class MenuPage extends GrassPage {
 
 		HorizontalLayout menu = new HorizontalLayout();
 		menu.setSpacing(true);
-		// menu.addStyleName("v-menubar");
 		menu.setWidth("100%");
 		menuExpander.addComponent(menu);
 
@@ -151,15 +149,13 @@ public abstract class MenuPage extends GrassPage {
 		 */
 
 		// Přihlášení
-		if (!coreACL.isLoggedIn(UIUtils.getUser())) {
+		if (!coreACL.isLoggedIn(UIUtils.getUser()))
 			createMenuComponent(menu, new Link("Přihlášení", getPageResource(loginPageFactory)));
-		}
 
 		// Registrace
-		// if (coreACL.canRegistrate(getUser())) {
+		// if (coreACL.canRegistrate(UIUtils.getUser()))
 		// createMenuComponent(menu, new Link("Registrace",
 		// getPageResource(registrationPageFactory)));
-		// }
 
 		// Přehled o uživateli
 		final UserInfoTO userInfoDTO = UIUtils.getGrassUI().getUser();

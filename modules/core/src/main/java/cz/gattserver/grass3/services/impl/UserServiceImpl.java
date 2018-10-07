@@ -2,7 +2,7 @@ package cz.gattserver.grass3.services.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +18,7 @@ import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.repositories.ContentNodeRepository;
 import cz.gattserver.grass3.model.repositories.UserRepository;
+import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.services.CoreMapperService;
 import cz.gattserver.grass3.services.UserService;
@@ -50,7 +51,8 @@ public class UserServiceImpl implements UserService {
 		user.setName(username);
 		user.setPassword(encoder.encode(password));
 		user.setRegistrationDate(LocalDateTime.now());
-		EnumSet<Role> roles = EnumSet.of(Role.USER);
+		Set<String> roles = new HashSet<>();
+		roles.add(CoreRole.USER.getAuthority());
 		user.setRoles(roles);
 		user = userRepository.save(user);
 
@@ -68,10 +70,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void changeUserRoles(long userId, Set<Role> roles) {
+	public void changeUserRoles(long userId, Set<? extends Role> roles) {
 		Validate.notNull(roles, "'roles' nesmí být prázdný");
 		User u = userRepository.findOne(userId);
-		u.setRoles(roles);
+		Set<String> set = new HashSet<>();
+		for (Role r : roles)
+			set.add(r.getAuthority());
+		u.setRoles(set);
 		userRepository.save(u);
 	}
 

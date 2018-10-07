@@ -16,7 +16,7 @@ import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
 import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.modules.ArticlesContentModule;
-import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.services.UserService;
 import cz.gattserver.grass3.test.AbstractDBUnitTest;
 
@@ -272,8 +272,8 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		assertEquals(1, list.size());
 		assertEquals(new Long(draftId), list.get(0).getId());
 
-		Set<Role> roles = new HashSet<>();
-		roles.add(Role.ADMIN);
+		Set<CoreRole> roles = new HashSet<>();
+		roles.add(CoreRole.ADMIN);
 		userService.changeUserRoles(userId, roles);
 
 		list = articleService.getDraftsForUser(userId);

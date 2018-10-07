@@ -64,6 +64,7 @@ public class SettingsPage extends TwoColumnPage {
 		leftColumnLayout.setMargin(true);
 		marginLayout.addComponent(leftColumnLayout);
 
+		settingsTabFactories.sort((a, b) -> a.getSettingsCaption().compareTo(b.getSettingsCaption()));
 		for (ModuleSettingsPageFactory settingsTabFactory : settingsTabFactories) {
 			Link link = new Link(settingsTabFactory.getSettingsCaption(),
 					getPageResource(settingsPageFactory, settingsTabFactory.getSettingsURL()));

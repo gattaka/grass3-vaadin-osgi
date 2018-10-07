@@ -28,4 +28,9 @@ public class LanguageSection implements SectionService {
 		return "Jazyky";
 	}
 
+	@Override
+	public Role[] getSectionRoles() {
+		return null;
+	}
+
 }

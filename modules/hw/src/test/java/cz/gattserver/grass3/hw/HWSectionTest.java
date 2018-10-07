@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import cz.gattserver.grass3.hw.ui.pages.factories.HWPageFactory;
 import cz.gattserver.grass3.modules.SectionService;
-import cz.gattserver.grass3.security.Role;
+import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.test.AbstractContextAwareTest;
 
 public class HWSectionTest extends AbstractContextAwareTest {
@@ -26,10 +26,10 @@ public class HWSectionTest extends AbstractContextAwareTest {
 		assertEquals("HW", sectionService.getSectionCaption());
 		assertTrue(sectionService.getSectionPageFactory() instanceof HWPageFactory);
 		assertFalse(sectionService.isVisibleForRoles(null));
-		assertTrue(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(Role.ADMIN))));
-		assertFalse(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(Role.FRIEND))));
-		assertFalse(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(Role.USER))));
-		assertFalse(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(Role.AUTHOR))));
+		assertTrue(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(CoreRole.ADMIN))));
+		assertFalse(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(CoreRole.FRIEND))));
+		assertFalse(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(CoreRole.USER))));
+		assertFalse(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(CoreRole.AUTHOR))));
 	}
 
 }

@@ -62,6 +62,8 @@ public class DrinksPage extends OneColumnPage {
 				tabSheet.setSelectedTab(wit);
 				wit.selectDrink(identifier.getId());
 				break;
+			default:
+				break;
 			}
 
 		}

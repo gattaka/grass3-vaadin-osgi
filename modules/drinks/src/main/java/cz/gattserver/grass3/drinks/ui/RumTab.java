@@ -2,7 +2,6 @@ package cz.gattserver.grass3.drinks.ui;
 
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.teemu.ratingstars.RatingStars;
 
 import com.vaadin.shared.ui.ContentMode;
@@ -19,7 +18,6 @@ import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
-import cz.gattserver.grass3.drinks.facades.DrinksFacade;
 import cz.gattserver.grass3.drinks.model.domain.RumType;
 import cz.gattserver.grass3.drinks.model.interfaces.RumOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.RumTO;
@@ -33,9 +31,6 @@ import cz.gattserver.web.common.ui.H2Label;
 public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 
 	private static final long serialVersionUID = 594189301140808163L;
-
-	@Autowired
-	private DrinksFacade drinksFacade;
 
 	public RumTab(GrassRequest request) {
 		super(request);
@@ -55,15 +50,15 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 		addNameColumn(grid, filteringHeader);
 		addCountryColumn(grid, filteringHeader);
 		addAlcoholColumn(grid, filteringHeader);
-		
+
 		Column<RumOverviewTO, Integer> yearsColumn = grid.addColumn(RumOverviewTO::getYears).setCaption("Stáří (roky)")
 				.setWidth(90).setSortProperty("years");
 		Column<RumOverviewTO, RumType> rumTypeColumn = grid.addColumn(RumOverviewTO::getRumType)
 				.setRenderer(RumType::getCaption, new TextRenderer()).setCaption("Typ rumu").setWidth(100)
 				.setSortProperty("rumType");
-		
+
 		addRatingStarsColumn(grid);
-		
+
 		grid.setWidth("100%");
 		grid.setHeight("400px");
 
@@ -74,10 +69,7 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 		yearsColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
 		yearsColumnField.setWidth("100%");
 		yearsColumnField.addValueChangeListener(e -> {
-			try {
-				filterTO.setYears(Integer.parseInt(e.getValue()));
-			} catch (Exception ex) {
-			}
+			filterTO.setYears(Integer.parseInt(e.getValue()));
 			populate();
 		});
 		filteringHeader.getCell(yearsColumn).setComponent(yearsColumnField);
@@ -99,43 +91,40 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 	@Override
 	protected void populate() {
 		grid.setDataProvider(
-				(sortOrder, offset, limit) -> drinksFacade.getRums(filterTO, offset, limit, sortOrder).stream(),
-				() -> drinksFacade.countRums(filterTO));
+				(sortOrder, offset, limit) -> getDrinksFacade().getRums(filterTO, offset, limit, sortOrder).stream(),
+				() -> getDrinksFacade().countRums(filterTO));
 	}
 
 	@Override
 	protected void populateBtnLayout(HorizontalLayout btnLayout) {
-		btnLayout.addComponent(new CreateGridButton("Přidat", event -> {
-			UI.getCurrent().addWindow(new RumWindow() {
-				private static final long serialVersionUID = -4863260002363608014L;
+		btnLayout.addComponent(new CreateGridButton("Přidat", event -> UI.getCurrent().addWindow(new RumWindow() {
+			private static final long serialVersionUID = -4863260002363608014L;
 
-				@Override
-				protected void onSave(RumTO to) {
-					to = drinksFacade.saveRum(to);
-					showDetail(to);
-					populate();
-				}
-			});
-		}));
+			@Override
+			protected void onSave(RumTO to) {
+				to = getDrinksFacade().saveRum(to);
+				showDetail(to);
+				populate();
+			}
+		})));
 
-		btnLayout.addComponent(new ModifyGridButton<RumOverviewTO>("Upravit", event -> {
-			UI.getCurrent().addWindow(new RumWindow(choosenDrink) {
+		btnLayout.addComponent(new ModifyGridButton<RumOverviewTO>("Upravit",
+				event -> UI.getCurrent().addWindow(new RumWindow(choosenDrink) {
 
-				private static final long serialVersionUID = 5264621441522056786L;
+					private static final long serialVersionUID = 5264621441522056786L;
 
-				@Override
-				protected void onSave(RumTO to) {
-					to = drinksFacade.saveRum(to);
-					showDetail(to);
-					populate();
-				}
+					@Override
+					protected void onSave(RumTO to) {
+						to = getDrinksFacade().saveRum(to);
+						showDetail(to);
+						populate();
+					}
 
-			});
-		}, grid));
+				}), grid));
 
 		btnLayout.addComponent(new DeleteGridButton<RumOverviewTO>("Smazat", items -> {
 			for (RumOverviewTO s : items)
-				drinksFacade.deleteDrink(s.getId());
+				getDrinksFacade().deleteDrink(s.getId());
 			populate();
 			showDetail(null);
 		}, grid));
@@ -155,11 +144,11 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 		GridLayout infoLayout = new GridLayout(2, 7);
 		dataLayout.addComponent(infoLayout);
 
-		BoldLabel b;
 		infoLayout.addComponent(new BoldLabel("Stáří (roky)"));
 		infoLayout.addComponent(
 				new Label(choosenDrink.getYears() == null ? "" : String.valueOf(choosenDrink.getYears())));
-		infoLayout.addComponent(b = new BoldLabel("Alkohol (%)"));
+		BoldLabel b = new BoldLabel("Alkohol (%)");
+		infoLayout.addComponent(b);
 		b.setWidth("120px");
 		infoLayout.addComponent(
 				new Label(choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol())));
@@ -178,7 +167,7 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 
 	@Override
 	protected RumTO findById(Long id) {
-		return drinksFacade.getRumById(id);
+		return getDrinksFacade().getRumById(id);
 	}
 
 }

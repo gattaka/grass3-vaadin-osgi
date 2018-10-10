@@ -2,7 +2,6 @@ package cz.gattserver.grass3.drinks.ui;
 
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.teemu.ratingstars.RatingStars;
 
 import com.vaadin.shared.ui.ContentMode;
@@ -19,7 +18,6 @@ import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
-import cz.gattserver.grass3.drinks.facades.DrinksFacade;
 import cz.gattserver.grass3.drinks.model.domain.WineType;
 import cz.gattserver.grass3.drinks.model.interfaces.WineOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.WineTO;
@@ -33,9 +31,6 @@ import cz.gattserver.web.common.ui.H2Label;
 public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 
 	private static final long serialVersionUID = -8540314953045422691L;
-
-	@Autowired
-	private DrinksFacade drinksFacade;
 
 	public WineTab(GrassRequest request) {
 		super(request);
@@ -71,7 +66,7 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 		});
 		filteringHeader.getCell(yearsColumn).setComponent(yearsColumnField);
 
-		Column<WineOverviewTO, WineType> WineTypeColumn = grid.addColumn(WineOverviewTO::getWineType)
+		Column<WineOverviewTO, WineType> wineTypeColumn = grid.addColumn(WineOverviewTO::getWineType)
 				.setRenderer(WineType::getCaption, new TextRenderer()).setCaption("Typ vína").setWidth(100)
 				.setSortProperty("wineType");
 
@@ -101,48 +96,45 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 			populate();
 		});
 		typeColumnField.setItemCaptionGenerator(WineType::getCaption);
-		filteringHeader.getCell(WineTypeColumn).setComponent(typeColumnField);
+		filteringHeader.getCell(wineTypeColumn).setComponent(typeColumnField);
 		return grid;
 	}
 
 	@Override
 	protected void populate() {
 		grid.setDataProvider(
-				(sortOrder, offset, limit) -> drinksFacade.getWines(filterTO, offset, limit, sortOrder).stream(),
-				() -> drinksFacade.countWines(filterTO));
+				(sortOrder, offset, limit) -> getDrinksFacade().getWines(filterTO, offset, limit, sortOrder).stream(),
+				() -> getDrinksFacade().countWines(filterTO));
 	}
 
 	@Override
 	protected void populateBtnLayout(HorizontalLayout btnLayout) {
-		btnLayout.addComponent(new CreateGridButton("Přidat", event -> {
-			UI.getCurrent().addWindow(new WineWindow() {
-				private static final long serialVersionUID = -4863260002363608014L;
+		btnLayout.addComponent(new CreateGridButton("Přidat", event -> UI.getCurrent().addWindow(new WineWindow() {
+			private static final long serialVersionUID = -4863260002363608014L;
 
-				@Override
-				protected void onSave(WineTO to) {
-					to = drinksFacade.saveWine(to);
-					showDetail(to);
-					populate();
-				}
-			});
-		}));
+			@Override
+			protected void onSave(WineTO to) {
+				to = getDrinksFacade().saveWine(to);
+				showDetail(to);
+				populate();
+			}
+		})));
 
-		btnLayout.addComponent(new ModifyGridButton<WineOverviewTO>("Upravit", event -> {
-			UI.getCurrent().addWindow(new WineWindow(choosenDrink) {
-				private static final long serialVersionUID = 5264621441522056786L;
+		btnLayout.addComponent(new ModifyGridButton<WineOverviewTO>("Upravit",
+				event -> UI.getCurrent().addWindow(new WineWindow(choosenDrink) {
+					private static final long serialVersionUID = 5264621441522056786L;
 
-				@Override
-				protected void onSave(WineTO to) {
-					to = drinksFacade.saveWine(to);
-					showDetail(to);
-					populate();
-				}
-			});
-		}, grid));
+					@Override
+					protected void onSave(WineTO to) {
+						to = getDrinksFacade().saveWine(to);
+						showDetail(to);
+						populate();
+					}
+				}), grid));
 
 		btnLayout.addComponent(new DeleteGridButton<WineOverviewTO>("Smazat", items -> {
 			for (WineOverviewTO s : items)
-				drinksFacade.deleteDrink(s.getId());
+				getDrinksFacade().deleteDrink(s.getId());
 			populate();
 			showDetail(null);
 		}, grid));
@@ -186,7 +178,7 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 
 	@Override
 	protected WineTO findById(Long id) {
-		return drinksFacade.getWineById(id);
+		return getDrinksFacade().getWineById(id);
 	}
 
 }

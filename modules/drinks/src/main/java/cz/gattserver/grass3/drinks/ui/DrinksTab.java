@@ -28,6 +28,7 @@ import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.renderers.NumberRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
+import cz.gattserver.grass3.drinks.facades.DrinksFacade;
 import cz.gattserver.grass3.drinks.model.interfaces.DrinkOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.DrinkTO;
 import cz.gattserver.grass3.security.CoreRole;
@@ -45,6 +46,7 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 
 	private transient SecurityService securityService;
 	private transient PageFactory drinksPageFactory;
+	private transient DrinksFacade drinksFacade;
 
 	private GrassRequest request;
 	private Embedded image;
@@ -154,16 +156,22 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení").setWidth(120).setSortProperty("rating");
 	}
 
-	private SecurityService getSecurityService() {
+	protected SecurityService getSecurityService() {
 		if (securityService == null)
 			securityService = SpringContextHelper.getBean(SecurityService.class);
 		return securityService;
 	}
 
-	private PageFactory getDrinksPageFactory() {
+	protected PageFactory getDrinksPageFactory() {
 		if (drinksPageFactory == null)
 			drinksPageFactory = (PageFactory) SpringContextHelper.getBean("drinksPageFactory");
 		return drinksPageFactory;
+	}
+
+	protected DrinksFacade getDrinksFacade() {
+		if (drinksFacade == null)
+			drinksFacade = SpringContextHelper.getBean(DrinksFacade.class);
+		return drinksFacade;
 	}
 
 	public void selectDrink(Long id) {

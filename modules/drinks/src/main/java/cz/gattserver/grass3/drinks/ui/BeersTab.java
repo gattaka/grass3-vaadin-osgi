@@ -4,7 +4,6 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Locale;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.teemu.ratingstars.RatingStars;
 
 import com.vaadin.shared.ui.ContentMode;
@@ -22,7 +21,6 @@ import com.vaadin.ui.renderers.NumberRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
-import cz.gattserver.grass3.drinks.facades.DrinksFacade;
 import cz.gattserver.grass3.drinks.model.domain.MaltType;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
@@ -36,9 +34,6 @@ import cz.gattserver.web.common.ui.H2Label;
 public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 
 	private static final long serialVersionUID = 594189301140808163L;
-
-	@Autowired
-	private DrinksFacade drinksFacade;
 
 	public BeersTab(GrassRequest request) {
 		super(request);
@@ -105,10 +100,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 		degreesColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
 		degreesColumnField.setWidth("100%");
 		degreesColumnField.addValueChangeListener(e -> {
-			try {
-				filterTO.setDegrees(Double.parseDouble(e.getValue()));
-			} catch (Exception ex) {
-			}
+			filterTO.setDegrees(Double.parseDouble(e.getValue()));
 			populate();
 		});
 		filteringHeader.getCell(degreesColumn).setComponent(degreesColumnField);
@@ -118,10 +110,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 		ibuColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
 		ibuColumnField.setWidth("100%");
 		ibuColumnField.addValueChangeListener(e -> {
-			try {
-				filterTO.setIbu(Integer.parseInt(e.getValue()));
-			} catch (Exception ex) {
-			}
+			filterTO.setIbu(Integer.parseInt(e.getValue()));
 			populate();
 		});
 		filteringHeader.getCell(ibuColumn).setComponent(ibuColumnField);
@@ -143,42 +132,38 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 	@Override
 	protected void populate() {
 		grid.setDataProvider(
-				(sortOrder, offset, limit) -> drinksFacade.getBeers(filterTO, offset, limit, sortOrder).stream(),
-				() -> drinksFacade.countBeers(filterTO));
+				(sortOrder, offset, limit) -> getDrinksFacade().getBeers(filterTO, offset, limit, sortOrder).stream(),
+				() -> getDrinksFacade().countBeers(filterTO));
 	}
 
 	@Override
 	protected void populateBtnLayout(HorizontalLayout btnLayout) {
-		btnLayout.addComponent(new CreateGridButton("Přidat", event -> {
-			UI.getCurrent().addWindow(new BeerWindow() {
-				private static final long serialVersionUID = -4863260002363608014L;
+		btnLayout.addComponent(new CreateGridButton("Přidat", event -> UI.getCurrent().addWindow(new BeerWindow() {
+			private static final long serialVersionUID = -4863260002363608014L;
 
-				@Override
-				protected void onSave(BeerTO to) {
-					to = drinksFacade.saveBeer(to);
-					showDetail(to);
-					populate();
-				}
-			});
-		}));
+			@Override
+			protected void onSave(BeerTO to) {
+				to = getDrinksFacade().saveBeer(to);
+				showDetail(to);
+				populate();
+			}
+		})));
 
-		btnLayout.addComponent(new ModifyGridButton<BeerOverviewTO>("Upravit", event -> {
-			UI.getCurrent().addWindow(new BeerWindow(choosenDrink) {
-				private static final long serialVersionUID = 5264621441522056786L;
+		btnLayout.addComponent(new ModifyGridButton<BeerOverviewTO>("Upravit",
+				event -> UI.getCurrent().addWindow(new BeerWindow(choosenDrink) {
+					private static final long serialVersionUID = 5264621441522056786L;
 
-				@Override
-				protected void onSave(BeerTO to) {
-					to = drinksFacade.saveBeer(to);
-					showDetail(to);
-					populate();
-				}
-
-			});
-		}, grid));
+					@Override
+					protected void onSave(BeerTO to) {
+						to = getDrinksFacade().saveBeer(to);
+						showDetail(to);
+						populate();
+					}
+				}), grid));
 
 		btnLayout.addComponent(new DeleteGridButton<BeerOverviewTO>("Smazat", items -> {
 			for (BeerOverviewTO s : items)
-				drinksFacade.deleteDrink(s.getId());
+				getDrinksFacade().deleteDrink(s.getId());
 			populate();
 			showDetail(null);
 		}, grid));
@@ -199,8 +184,8 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 		GridLayout infoLayout = new GridLayout(2, 7);
 		dataLayout.addComponent(infoLayout);
 
-		BoldLabel b;
-		infoLayout.addComponent(b = new BoldLabel("Kategorie"));
+		BoldLabel b = new BoldLabel("Kategorie");
+		infoLayout.addComponent(b);
 		b.setWidth("120px");
 		infoLayout.addComponent(new Label(choosenDrink.getCategory()));
 		infoLayout.addComponent(new BoldLabel("Stupně (°)"));
@@ -228,7 +213,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 
 	@Override
 	protected BeerTO findById(Long id) {
-		return drinksFacade.getBeerById(id);
+		return getDrinksFacade().getBeerById(id);
 	}
 
 }

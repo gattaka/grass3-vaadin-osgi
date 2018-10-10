@@ -54,7 +54,7 @@ public abstract class DrinkWindow<T extends DrinkTO> extends WebWindow {
 		// nebere v potaz jeho velikost a centruje okno špatně. Tím, že se
 		// centrování zavolá později (až po nahrání obrázku, na který bohužel
 		// nemám listener, takže fix-time delay)
-		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.delayed_center", (arguments) -> {
+		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.delayed_center", arguments -> {
 			DrinkWindow.this.setSizeUndefined();
 			DrinkWindow.this.center();
 		});
@@ -91,7 +91,7 @@ public abstract class DrinkWindow<T extends DrinkTO> extends WebWindow {
 			}
 		};
 		upload.setMaxFileSize(2000000);
-		upload.setAcceptedMimeTypes(Arrays.asList(new String[] { "image/jpg", "image/jpeg", "image/png" }));
+		upload.setAcceptedMimeTypes(Arrays.asList("image/jpg", "image/jpeg", "image/png"));
 
 		if (originalTO == null || originalTO.getImage() == null)
 			placeUpload();

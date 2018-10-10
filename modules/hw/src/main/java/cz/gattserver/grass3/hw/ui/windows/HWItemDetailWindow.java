@@ -562,8 +562,8 @@ public class HWItemDetailWindow extends WebWindow {
 		for (final HWItemFileTO file : getHWService().getHWItemImagesFiles(hwItemId)) {
 
 			VerticalLayout imageLayout = new VerticalLayout();
-			listLayout.setComponentAlignment(imageLayout, Alignment.MIDDLE_CENTER);
 			listLayout.addComponent(imageLayout);
+			listLayout.setComponentAlignment(imageLayout, Alignment.MIDDLE_CENTER);
 			imageLayout.setSpacing(true);
 			imageLayout.setMargin(false);
 

@@ -61,22 +61,6 @@ public class Drink {
 	 */
 	private Long drinkInfo;
 
-	public Drink() {
-	}
-
-	public Drink(String name, DrinkType type, Double rating, byte[] image, String description, Double alcohol,
-			String country, Long drinkInfo) {
-		super();
-		this.name = name;
-		this.type = type;
-		this.rating = rating;
-		this.image = image;
-		this.description = description;
-		this.alcohol = alcohol;
-		this.country = country;
-		this.drinkInfo = drinkInfo;
-	}
-
 	public Long getId() {
 		return id;
 	}
@@ -121,7 +105,7 @@ public class Drink {
 		return type;
 	}
 
-	public void setTyp(DrinkType type) {
+	public void setType(DrinkType type) {
 		this.type = type;
 	}
 
@@ -139,10 +123,6 @@ public class Drink {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public void setType(DrinkType type) {
-		this.type = type;
 	}
 
 	public byte[] getImage() {

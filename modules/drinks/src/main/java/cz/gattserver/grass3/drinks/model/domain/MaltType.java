@@ -8,7 +8,7 @@ package cz.gattserver.grass3.drinks.model.domain;
  */
 public enum MaltType {
 
-	BARLEY("Ječmen"), WHEAT("Pšenice");
+	BARLEY("Ječmen"), WHEAT("Pšenice"), RYE("Žito"), BARLEY_WHEAT("Ječmen a pšenice"), BARLEY_RYE("Ječmen a žito");
 
 	private String caption;
 

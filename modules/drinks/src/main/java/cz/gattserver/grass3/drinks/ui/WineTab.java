@@ -1,8 +1,6 @@
 package cz.gattserver.grass3.drinks.ui;
 
-import java.text.NumberFormat;
 import java.util.Arrays;
-import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.teemu.ratingstars.RatingStars;
@@ -18,8 +16,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.renderers.ComponentRenderer;
-import com.vaadin.ui.renderers.NumberRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -52,35 +48,39 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 
 	@Override
 	protected Grid<WineOverviewTO> createGrid(final WineOverviewTO filterTO) {
+
 		final Grid<WineOverviewTO> grid = new Grid<>();
+		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		Column<WineOverviewTO, String> wineryColumn = grid.addColumn(WineOverviewTO::getWinery).setCaption("Vinařství")
 				.setSortProperty("winery");
-		Column<WineOverviewTO, String> nameColumn = grid.addColumn(WineOverviewTO::getName).setCaption("Název")
-				.setSortProperty("name");
-		Column<WineOverviewTO, String> countryColumn = grid.addColumn(WineOverviewTO::getCountry).setCaption("Země")
-				.setSortProperty("country");
-		Column<WineOverviewTO, Double> alcoholColumn = grid.addColumn(WineOverviewTO::getAlcohol)
-				.setRenderer(new NumberRenderer(NumberFormat.getNumberInstance(new Locale("cs", "CZ"))))
-				.setCaption("Alkohol (%)").setWidth(80).setSortProperty("alcohol");
+
+		addNameColumn(grid, filteringHeader);
+		addCountryColumn(grid, filteringHeader);
+		addAlcoholColumn(grid, filteringHeader);
+
 		Column<WineOverviewTO, Integer> yearsColumn = grid.addColumn(WineOverviewTO::getYear).setCaption("Rok")
 				.setWidth(90).setSortProperty("year");
+
+		TextField yearsColumnField = new TextField();
+		yearsColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		yearsColumnField.setWidth("100%");
+		yearsColumnField.addValueChangeListener(e -> {
+			filterTO.setYear(Integer.parseInt(e.getValue()));
+			populate();
+		});
+		filteringHeader.getCell(yearsColumn).setComponent(yearsColumnField);
+
 		Column<WineOverviewTO, WineType> WineTypeColumn = grid.addColumn(WineOverviewTO::getWineType)
 				.setRenderer(WineType::getCaption, new TextRenderer()).setCaption("Typ vína").setWidth(100)
 				.setSortProperty("wineType");
-		grid.addColumn(to -> {
-			RatingStars rs = new RatingStars();
-			rs.setValue(to.getRating());
-			rs.setReadOnly(true);
-			rs.setAnimated(false);
-			return rs;
-		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení").setWidth(120).setSortProperty("rating");
+
+		addRatingStarsColumn(grid);
+
 		grid.setWidth("100%");
 		grid.setHeight("400px");
 
 		addComponent(grid);
-
-		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Vinařství
 		TextField wineryColumnField = new TextField();
@@ -91,52 +91,6 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 			populate();
 		});
 		filteringHeader.getCell(wineryColumn).setComponent(wineryColumnField);
-
-		// Země původu
-		TextField countryColumnField = new TextField();
-		countryColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
-		countryColumnField.setWidth("100%");
-		countryColumnField.addValueChangeListener(e -> {
-			filterTO.setCountry(e.getValue());
-			populate();
-		});
-		filteringHeader.getCell(countryColumn).setComponent(countryColumnField);
-
-		// Název
-		TextField nazevColumnField = new TextField();
-		nazevColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
-		nazevColumnField.setWidth("100%");
-		nazevColumnField.addValueChangeListener(e -> {
-			filterTO.setName(e.getValue());
-			populate();
-		});
-		filteringHeader.getCell(nameColumn).setComponent(nazevColumnField);
-
-		// Alkohol
-		TextField alcoholColumnField = new TextField();
-		alcoholColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
-		alcoholColumnField.setWidth("100%");
-		alcoholColumnField.addValueChangeListener(e -> {
-			try {
-				filterTO.setAlcohol(Double.parseDouble(e.getValue()));
-			} catch (Exception ex) {
-			}
-			populate();
-		});
-		filteringHeader.getCell(alcoholColumn).setComponent(alcoholColumnField);
-
-		// Rok
-		TextField yearsColumnField = new TextField();
-		yearsColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
-		yearsColumnField.setWidth("100%");
-		yearsColumnField.addValueChangeListener(e -> {
-			try {
-				filterTO.setYear(Integer.parseInt(e.getValue()));
-			} catch (Exception ex) {
-			}
-			populate();
-		});
-		filteringHeader.getCell(yearsColumn).setComponent(yearsColumnField);
 
 		// Typ vína
 		ComboBox<WineType> typeColumnField = new ComboBox<>(null, Arrays.asList(WineType.values()));
@@ -175,7 +129,6 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 
 		btnLayout.addComponent(new ModifyGridButton<WineOverviewTO>("Upravit", event -> {
 			UI.getCurrent().addWindow(new WineWindow(choosenDrink) {
-
 				private static final long serialVersionUID = 5264621441522056786L;
 
 				@Override
@@ -184,7 +137,6 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 					showDetail(to);
 					populate();
 				}
-
 			});
 		}, grid));
 
@@ -211,11 +163,11 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 		GridLayout infoLayout = new GridLayout(2, 7);
 		dataLayout.addComponent(infoLayout);
 
-		BoldLabel b;
 		infoLayout.addComponent(new BoldLabel("Rok"));
 		infoLayout
 				.addComponent(new Label(choosenDrink.getYear() == null ? "" : String.valueOf(choosenDrink.getYear())));
-		infoLayout.addComponent(b = new BoldLabel("Alkohol (%)"));
+		BoldLabel b = new BoldLabel("Alkohol (%)");
+		infoLayout.addComponent(b);
 		b.setWidth("120px");
 		infoLayout.addComponent(
 				new Label(choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol())));

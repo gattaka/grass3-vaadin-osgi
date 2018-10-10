@@ -23,6 +23,7 @@ import cz.gattserver.grass3.drinks.model.domain.WhiskeyInfo;
 import cz.gattserver.grass3.drinks.model.domain.WineInfo;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
+import cz.gattserver.grass3.drinks.model.interfaces.DrinkTO;
 import cz.gattserver.grass3.drinks.model.interfaces.RumOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.RumTO;
 import cz.gattserver.grass3.drinks.model.interfaces.WhiskeyOverviewTO;
@@ -85,6 +86,20 @@ public class DrinksFacadeImpl implements DrinksFacade {
 		return drinkRepository.findBeerById(id);
 	}
 
+	private Drink createDrink(DrinkType type, DrinkTO to, Long drinkInfoId) {
+		Drink d = new Drink();
+		d.setName(to.getName());
+		d.setType(type);
+		d.setRating(to.getRating());
+		d.setImage(to.getImage());
+		d.setDescription(to.getDescription());
+		d.setAlcohol(to.getAlcohol());
+		d.setCountry(to.getCountry());
+		d.setDrinkInfo(drinkInfoId);
+		d.setId(to.getId());
+		return d;
+	}
+
 	@Override
 	public BeerTO saveBeer(BeerTO to) {
 		BeerInfo b = new BeerInfo(to.getBrewery(), to.getIbu(), to.getDegrees(), to.getCategory(), to.getMaltType(),
@@ -92,13 +107,10 @@ public class DrinksFacadeImpl implements DrinksFacade {
 		b.setId(to.getInfoId());
 		b = beerInfoRepository.save(b);
 
-		Drink d = new Drink(to.getName(), DrinkType.BEER, to.getRating(), to.getImage(), to.getDescription(),
-				to.getAlcohol(), to.getCountry(), b.getId());
-		d.setId(to.getId());
+		Drink d = createDrink(DrinkType.BEER, to, b.getId());
 		d = drinkRepository.save(d);
 
 		to.setId(d.getId());
-
 		return to;
 	}
 
@@ -138,13 +150,10 @@ public class DrinksFacadeImpl implements DrinksFacade {
 		b.setId(to.getInfoId());
 		b = rumInfoRepository.save(b);
 
-		Drink d = new Drink(to.getName(), DrinkType.RUM, to.getRating(), to.getImage(), to.getDescription(),
-				to.getAlcohol(), to.getCountry(), b.getId());
-		d.setId(to.getId());
+		Drink d = createDrink(DrinkType.RUM, to, b.getId());
 		d = drinkRepository.save(d);
 
 		to.setId(d.getId());
-
 		return to;
 	}
 
@@ -185,13 +194,10 @@ public class DrinksFacadeImpl implements DrinksFacade {
 		b.setId(to.getInfoId());
 		b = whiskeyInfoRepository.save(b);
 
-		Drink d = new Drink(to.getName(), DrinkType.WHISKY, to.getRating(), to.getImage(), to.getDescription(),
-				to.getAlcohol(), to.getCountry(), b.getId());
-		d.setId(to.getId());
+		Drink d = createDrink(DrinkType.WHISKY, to, b.getId());
 		d = drinkRepository.save(d);
 
 		to.setId(d.getId());
-
 		return to;
 	}
 
@@ -233,12 +239,10 @@ public class DrinksFacadeImpl implements DrinksFacade {
 		b = wineInfoRepository.save(b);
 		to.setInfoId(b.getId());
 
-		Drink d = new Drink(to.getName(), DrinkType.WINE, to.getRating(), to.getImage(), to.getDescription(),
-				to.getAlcohol(), to.getCountry(), b.getId());
-		d.setId(to.getId());
+		Drink d = createDrink(DrinkType.WINE, to, b.getId());
 		d = drinkRepository.save(d);
-		to.setId(d.getId());
 
+		to.setId(d.getId());
 		return to;
 	}
 

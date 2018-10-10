@@ -73,5 +73,4 @@ public class WineInfo {
 	public void setWineType(WineType wineType) {
 		this.wineType = wineType;
 	}
-
 }

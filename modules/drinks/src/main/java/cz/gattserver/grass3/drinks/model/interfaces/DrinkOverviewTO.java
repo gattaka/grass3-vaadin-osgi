@@ -1,8 +1,12 @@
 package cz.gattserver.grass3.drinks.model.interfaces;
 
+import java.io.Serializable;
+
 import cz.gattserver.grass3.drinks.model.domain.DrinkType;
 
-public class DrinkOverviewTO {
+public class DrinkOverviewTO implements Serializable {
+
+	private static final long serialVersionUID = -621277156097372523L;
 
 	private Long id;
 

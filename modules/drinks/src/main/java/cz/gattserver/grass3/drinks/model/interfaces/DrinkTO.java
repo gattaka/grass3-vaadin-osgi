@@ -1,8 +1,12 @@
 package cz.gattserver.grass3.drinks.model.interfaces;
 
+import java.io.Serializable;
+
 import cz.gattserver.grass3.drinks.model.domain.DrinkType;
 
-public abstract class DrinkTO {
+public abstract class DrinkTO implements Serializable {
+
+	private static final long serialVersionUID = 2262189365795554976L;
 
 	private Long id;
 
@@ -93,7 +97,7 @@ public abstract class DrinkTO {
 		return type;
 	}
 
-	public void setTyp(DrinkType type) {
+	public void setType(DrinkType type) {
 		this.type = type;
 	}
 
@@ -111,10 +115,6 @@ public abstract class DrinkTO {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public void setType(DrinkType type) {
-		this.type = type;
 	}
 
 	public byte[] getImage() {

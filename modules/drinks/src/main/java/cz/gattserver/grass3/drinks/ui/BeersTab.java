@@ -18,7 +18,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.renderers.NumberRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.themes.ValoTheme;
@@ -54,36 +53,32 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 	protected Grid<BeerOverviewTO> createGrid(final BeerOverviewTO filterTO) {
 
 		final Grid<BeerOverviewTO> grid = new Grid<>();
+		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		Column<BeerOverviewTO, String> breweryColumn = grid.addColumn(BeerOverviewTO::getBrewery).setCaption("Pivovar")
 				.setSortProperty("brewery");
-		Column<BeerOverviewTO, String> nameColumn = grid.addColumn(BeerOverviewTO::getName).setCaption("Název")
-				.setSortProperty("name");
+
+		addNameColumn(grid, filteringHeader);
+
 		Column<BeerOverviewTO, String> categoryColumn = grid.addColumn(BeerOverviewTO::getCategory)
 				.setCaption("Kategorie").setWidth(80).setSortProperty("category");
 		Column<BeerOverviewTO, Double> degreesColumn = grid.addColumn(BeerOverviewTO::getDegrees)
 				.setRenderer(new NumberRenderer(NumberFormat.getNumberInstance(new Locale("cs", "CZ"))))
 				.setCaption("Stupně (°)").setWidth(80).setSortProperty("degrees");
-		Column<BeerOverviewTO, Double> alcoholColumn = grid.addColumn(BeerOverviewTO::getAlcohol)
-				.setRenderer(new NumberRenderer(NumberFormat.getNumberInstance(new Locale("cs", "CZ"))))
-				.setCaption("Alkohol (%)").setWidth(80).setSortProperty("alcohol");
+
+		addAlcoholColumn(grid, filteringHeader);
+
 		Column<BeerOverviewTO, Integer> ibuColumn = grid.addColumn(BeerOverviewTO::getIbu).setCaption("Hořkost (IBU)")
 				.setWidth(90).setSortProperty("ibu");
 		Column<BeerOverviewTO, MaltType> maltTypeColumn = grid.addColumn(BeerOverviewTO::getMaltType)
 				.setRenderer(MaltType::getCaption, new TextRenderer()).setCaption("Typ sladu").setWidth(100)
 				.setSortProperty("maltType");
-		grid.addColumn(to -> {
-			RatingStars rs = new RatingStars();
-			rs.setValue(to.getRating());
-			rs.setReadOnly(true);
-			rs.setAnimated(false);
-			return rs;
-		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení").setWidth(120).setSortProperty("rating");
+
+		addRatingStarsColumn(grid);
+
 		grid.setWidth("100%");
 		grid.setHeight("400px");
 		addComponent(grid);
-
-		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Pivovar
 		TextField breweryColumnField = new TextField();
@@ -94,16 +89,6 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 			populate();
 		});
 		filteringHeader.getCell(breweryColumn).setComponent(breweryColumnField);
-
-		// Název
-		TextField nazevColumnField = new TextField();
-		nazevColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
-		nazevColumnField.setWidth("100%");
-		nazevColumnField.addValueChangeListener(e -> {
-			filterTO.setName(e.getValue());
-			populate();
-		});
-		filteringHeader.getCell(nameColumn).setComponent(nazevColumnField);
 
 		// Kategorie
 		TextField categoryColumnField = new TextField();
@@ -127,19 +112,6 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 			populate();
 		});
 		filteringHeader.getCell(degreesColumn).setComponent(degreesColumnField);
-
-		// Alkohol
-		TextField alcoholColumnField = new TextField();
-		alcoholColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
-		alcoholColumnField.setWidth("100%");
-		alcoholColumnField.addValueChangeListener(e -> {
-			try {
-				filterTO.setAlcohol(Double.parseDouble(e.getValue()));
-			} catch (Exception ex) {
-			}
-			populate();
-		});
-		filteringHeader.getCell(alcoholColumn).setComponent(alcoholColumnField);
 
 		// Hořkost
 		TextField ibuColumnField = new TextField();

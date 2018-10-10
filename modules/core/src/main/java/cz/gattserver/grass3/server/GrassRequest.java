@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.server;
 
+import java.io.Serializable;
+
 import com.vaadin.server.VaadinRequest;
 
 import cz.gattserver.web.common.server.URLPathAnalyzer;
@@ -14,7 +16,9 @@ import cz.gattserver.web.common.server.URLPathAnalyzer;
  * @see URLPathAnalyzer
  * 
  */
-public class GrassRequest {
+public class GrassRequest implements Serializable {
+
+	private static final long serialVersionUID = 2619203299574769248L;
 
 	private final VaadinRequest vaadinRequest;
 	private final URLPathAnalyzer analyzer;

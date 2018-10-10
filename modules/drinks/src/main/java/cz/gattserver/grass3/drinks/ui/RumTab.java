@@ -1,8 +1,6 @@
 package cz.gattserver.grass3.drinks.ui;
 
-import java.text.NumberFormat;
 import java.util.Arrays;
-import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.teemu.ratingstars.RatingStars;
@@ -18,8 +16,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.renderers.ComponentRenderer;
-import com.vaadin.ui.renderers.NumberRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -54,65 +50,24 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 	protected Grid<RumOverviewTO> createGrid(final RumOverviewTO filterTO) {
 
 		final Grid<RumOverviewTO> grid = new Grid<>();
+		HeaderRow filteringHeader = grid.appendHeaderRow();
 
-		Column<RumOverviewTO, String> nameColumn = grid.addColumn(RumOverviewTO::getName).setCaption("Název")
-				.setSortProperty("name");
-		Column<RumOverviewTO, String> countryColumn = grid.addColumn(RumOverviewTO::getCountry).setCaption("Země")
-				.setSortProperty("country");
-		Column<RumOverviewTO, Double> alcoholColumn = grid.addColumn(RumOverviewTO::getAlcohol)
-				.setRenderer(new NumberRenderer(NumberFormat.getNumberInstance(new Locale("cs", "CZ"))))
-				.setCaption("Alkohol (%)").setWidth(80).setSortProperty("alcohol");
+		addNameColumn(grid, filteringHeader);
+		addCountryColumn(grid, filteringHeader);
+		addAlcoholColumn(grid, filteringHeader);
+		
 		Column<RumOverviewTO, Integer> yearsColumn = grid.addColumn(RumOverviewTO::getYears).setCaption("Stáří (roky)")
 				.setWidth(90).setSortProperty("years");
 		Column<RumOverviewTO, RumType> rumTypeColumn = grid.addColumn(RumOverviewTO::getRumType)
 				.setRenderer(RumType::getCaption, new TextRenderer()).setCaption("Typ rumu").setWidth(100)
 				.setSortProperty("rumType");
-		grid.addColumn(to -> {
-			RatingStars rs = new RatingStars();
-			rs.setValue(to.getRating());
-			rs.setReadOnly(true);
-			rs.setAnimated(false);
-			return rs;
-		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení").setWidth(120).setSortProperty("rating");
+		
+		addRatingStarsColumn(grid);
+		
 		grid.setWidth("100%");
 		grid.setHeight("400px");
 
 		addComponent(grid);
-
-		HeaderRow filteringHeader = grid.appendHeaderRow();
-
-		// Země původu
-		TextField countryColumnField = new TextField();
-		countryColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
-		countryColumnField.setWidth("100%");
-		countryColumnField.addValueChangeListener(e -> {
-			filterTO.setCountry(e.getValue());
-			populate();
-		});
-		filteringHeader.getCell(countryColumn).setComponent(countryColumnField);
-
-		// Název
-		TextField nazevColumnField = new TextField();
-		nazevColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
-		nazevColumnField.setWidth("100%");
-		nazevColumnField.addValueChangeListener(e -> {
-			filterTO.setName(e.getValue());
-			populate();
-		});
-		filteringHeader.getCell(nameColumn).setComponent(nazevColumnField);
-
-		// Alkohol
-		TextField alcoholColumnField = new TextField();
-		alcoholColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
-		alcoholColumnField.setWidth("100%");
-		alcoholColumnField.addValueChangeListener(e -> {
-			try {
-				filterTO.setAlcohol(Double.parseDouble(e.getValue()));
-			} catch (Exception ex) {
-			}
-			populate();
-		});
-		filteringHeader.getCell(alcoholColumn).setComponent(alcoholColumnField);
 
 		// Stáří (roky)
 		TextField yearsColumnField = new TextField();

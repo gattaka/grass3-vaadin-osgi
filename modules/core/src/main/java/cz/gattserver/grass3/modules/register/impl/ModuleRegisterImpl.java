@@ -71,9 +71,8 @@ public class ModuleRegisterImpl implements ModuleRegister {
 		for (CoreRole cr : CoreRole.values())
 			roles.put(cr.getAuthority(), cr);
 		for (SectionService ss : injectedSectionModules)
-			if (ss.getSectionRoles() != null)
-				for (Role r : ss.getSectionRoles())
-					roles.put(r.getAuthority(), r);
+			for (Role r : ss.getSectionRoles())
+				roles.put(r.getAuthority(), r);
 	}
 
 	@Override

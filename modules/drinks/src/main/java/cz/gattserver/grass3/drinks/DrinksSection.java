@@ -30,7 +30,7 @@ public class DrinksSection implements SectionService {
 
 	@Override
 	public Role[] getSectionRoles() {
-		return null;
+		return new Role[0];
 	}
 
 }

@@ -14,8 +14,11 @@ import com.mortennobel.imagescaling.ResampleOp;
 
 public class ImageUtils {
 
+	private ImageUtils() {
+	}
+
 	private static String getExtension(String filename) {
-		int dot = filename.lastIndexOf(".");
+		int dot = filename.lastIndexOf('.');
 		if (dot <= 0 || filename.length() < 3)
 			return "";
 		return filename.substring(dot + 1);

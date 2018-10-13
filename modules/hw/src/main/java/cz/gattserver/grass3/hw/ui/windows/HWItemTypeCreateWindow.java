@@ -34,6 +34,10 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 		return hwService;
 	}
 
+	@Override
+	protected void addCloseShortCut() {
+	}
+
 	public void init(HWItemTypeTO originalDTO) {
 		setCaption("Založení nového typu HW");
 

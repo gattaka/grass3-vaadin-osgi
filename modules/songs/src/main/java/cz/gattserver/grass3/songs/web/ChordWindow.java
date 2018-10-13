@@ -31,8 +31,6 @@ public abstract class ChordWindow extends WebWindow {
 		this(null);
 	}
 
-	protected abstract void onSave(ChordTO to);
-
 	public ChordWindow(final ChordTO originalDTO) {
 		this(originalDTO, false);
 	}
@@ -82,6 +80,10 @@ public abstract class ChordWindow extends WebWindow {
 			if (copy)
 				binder.getBean().setId(null);
 		}
+	}
+
+	@Override
+	protected void addCloseShortCut() {
 	}
 
 	private void refreshDescriptionLayout(Binder<ChordTO> binder, ChordTO originalDTO, ChordTO formTO,
@@ -146,5 +148,7 @@ public abstract class ChordWindow extends WebWindow {
 			UI.getCurrent().addWindow(new ErrorWindow("Uložení se nezdařilo"));
 		}
 	}
+
+	protected abstract void onSave(ChordTO to);
 
 }

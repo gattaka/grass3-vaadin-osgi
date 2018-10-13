@@ -31,8 +31,6 @@ public abstract class SongWindow extends WebWindow {
 		this(null);
 	}
 
-	protected abstract void onSave(SongTO to);
-
 	public SongWindow(final SongTO originalTO) {
 		super(originalTO == null ? "Založit" : "Upravit" + " písničku");
 
@@ -81,6 +79,10 @@ public abstract class SongWindow extends WebWindow {
 		}
 	}
 
+	@Override
+	protected void addCloseShortCut() {
+	}
+
 	private void save(SongTO originalTO, Binder<SongTO> binder) {
 		try {
 			SongTO writeTO = originalTO == null ? new SongTO() : originalTO;
@@ -95,5 +97,7 @@ public abstract class SongWindow extends WebWindow {
 			UI.getCurrent().addWindow(new ErrorWindow("Uložení se nezdařilo"));
 		}
 	}
+
+	protected abstract void onSave(SongTO to);
 
 }

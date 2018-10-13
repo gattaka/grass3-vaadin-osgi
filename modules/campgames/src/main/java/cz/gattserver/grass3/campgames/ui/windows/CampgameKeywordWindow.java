@@ -28,6 +28,10 @@ public abstract class CampgameKeywordWindow extends WebWindow {
 		init(null);
 	}
 
+	@Override
+	protected void addCloseShortCut() {
+	}
+	
 	private CampgamesService getCampgamesService() {
 		if (campgamesService == null)
 			campgamesService = SpringContextHelper.getBean(CampgamesService.class);

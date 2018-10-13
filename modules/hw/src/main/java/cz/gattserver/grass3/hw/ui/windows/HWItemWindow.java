@@ -52,6 +52,10 @@ public abstract class HWItemWindow extends WebWindow {
 		init(originalDTO);
 	}
 
+	@Override
+	protected void addCloseShortCut() {
+	}
+
 	private HWService getHWService() {
 		if (hwService == null)
 			hwService = SpringContextHelper.getBean(HWService.class);

@@ -58,7 +58,7 @@ public class ArticlesSettingsPage extends AbstractSettingsPage {
 		final ArticlesConfiguration configuration = loadConfiguration();
 
 		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new H2Label("Nastavení"));
+		settingsLayout.addComponent(new H2Label("Nastavení článků"));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();

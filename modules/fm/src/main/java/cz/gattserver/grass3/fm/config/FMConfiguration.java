@@ -7,6 +7,7 @@ import org.apache.commons.lang3.Validate;
 
 import cz.gattserver.grass3.config.AbstractConfiguration;
 import cz.gattserver.grass3.security.CoreRole;
+import cz.gattserver.grass3.security.Role;
 
 public class FMConfiguration extends AbstractConfiguration {
 
@@ -33,7 +34,7 @@ public class FMConfiguration extends AbstractConfiguration {
 	/**
 	 * Jakým rolím má být modul přístupný - defaultně jenom adminovi
 	 */
-	private Set<CoreRole> roles = new HashSet<>();
+	private Set<Role> roles = new HashSet<>();
 
 	public FMConfiguration() {
 		super("cz.gattserver.grass3.fm");
@@ -66,11 +67,11 @@ public class FMConfiguration extends AbstractConfiguration {
 		this.maxKBytesUploadSize = maxKBytesUploadSize;
 	}
 
-	public Set<CoreRole> getRoles() {
+	public Set<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Set<CoreRole> roles) {
+	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
 

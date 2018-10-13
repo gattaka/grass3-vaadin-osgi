@@ -5,6 +5,7 @@ import java.util.Set;
 
 import cz.gattserver.grass3.config.AbstractConfiguration;
 import cz.gattserver.grass3.security.CoreRole;
+import cz.gattserver.grass3.security.Role;
 
 public class HWConfiguration extends AbstractConfiguration {
 
@@ -12,7 +13,7 @@ public class HWConfiguration extends AbstractConfiguration {
 	 * HTTP cesta k souborům
 	 */
 	public static final String HW_PATH = "hw-files";
-	
+
 	/**
 	 * Kořenový adresář FM
 	 */
@@ -41,7 +42,7 @@ public class HWConfiguration extends AbstractConfiguration {
 	/**
 	 * Jakým rolím má být modul přístupný - defaultně jenom adminovi
 	 */
-	private Set<CoreRole> roles = new HashSet<>();
+	private Set<Role> roles = new HashSet<>();
 
 	public HWConfiguration() {
 		super("cz.gattserver.grass3.hw");
@@ -73,11 +74,11 @@ public class HWConfiguration extends AbstractConfiguration {
 		this.maxKBytesUploadSize = maxKBytesUploadSize;
 	}
 
-	public Set<CoreRole> getRoles() {
+	public Set<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Set<CoreRole> roles) {
+	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
 

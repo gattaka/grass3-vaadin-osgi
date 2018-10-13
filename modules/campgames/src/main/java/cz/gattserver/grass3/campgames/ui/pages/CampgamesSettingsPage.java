@@ -2,6 +2,7 @@ package cz.gattserver.grass3.campgames.ui.pages;
 
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,7 +34,6 @@ public class CampgamesSettingsPage extends AbstractSettingsPage {
 
 	@Override
 	protected Component createContent() {
-
 		final CampgamesConfiguration configuration = loadConfiguration();
 		final FileSystem fs = fileSystemService.getFileSystem();
 
@@ -46,7 +46,7 @@ public class CampgamesSettingsPage extends AbstractSettingsPage {
 		layout.addComponent(settingsLayout);
 
 		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new H2Label("Nastavení"));
+		settingsLayout.addComponent(new H2Label("Nastavení evidence táborových her"));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
@@ -60,13 +60,18 @@ public class CampgamesSettingsPage extends AbstractSettingsPage {
 		 */
 		final TextField outputPathField = new TextField("Nastavení kořenového adresáře");
 		outputPathField.setValue(configuration.getRootDir());
+		outputPathField.setWidth("300px");
 		settingsFieldsLayout.addComponent(outputPathField);
 
 		Binder<CampgamesConfiguration> binder = new Binder<>();
-		binder.forField(outputPathField).asRequired("Kořenový adresář je povinný")
-				.withValidator((val, c) -> Files.exists(fs.getPath(val)) ? ValidationResult.ok()
-						: ValidationResult.error("Kořenový adresář musí existovat"))
-				.bind(CampgamesConfiguration::getRootDir, CampgamesConfiguration::setRootDir);
+		binder.forField(outputPathField).asRequired("Kořenový adresář je povinný").withValidator((val, c) -> {
+			try {
+				return Files.exists(fs.getPath(val)) ? ValidationResult.ok()
+						: ValidationResult.error("Kořenový adresář musí existovat");
+			} catch (InvalidPathException e) {
+				return ValidationResult.error("Neplatná cesta");
+			}
+		}).bind(CampgamesConfiguration::getRootDir, CampgamesConfiguration::setRootDir);
 
 		// Save tlačítko
 		Button saveButton = new Button("Uložit", e -> {

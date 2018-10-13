@@ -1,8 +1,13 @@
 package cz.gattserver.grass3.monitor.tabs;
 
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationResult;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TextField;
@@ -11,8 +16,8 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
 import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
-import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.H2Label;
 
 public class MonitorSettingsPage extends AbstractSettingsPage {
@@ -20,12 +25,18 @@ public class MonitorSettingsPage extends AbstractSettingsPage {
 	@Autowired
 	private MonitorFacade monitorFacade;
 
+	@Autowired
+	private FileSystemService fileSystemService;
+
 	public MonitorSettingsPage(GrassRequest request) {
 		super(request);
 	}
 
 	@Override
 	protected Component createContent() {
+		final MonitorConfiguration configuration = monitorFacade.getConfiguration();
+		final FileSystem fs = fileSystemService.getFileSystem();
+
 		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);
@@ -34,10 +45,8 @@ public class MonitorSettingsPage extends AbstractSettingsPage {
 		VerticalLayout settingsLayout = new VerticalLayout();
 		layout.addComponent(settingsLayout);
 
-		final MonitorConfiguration configuration = monitorFacade.getConfiguration();
-
 		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new H2Label("Nastavení"));
+		settingsLayout.addComponent(new H2Label("Nastavení system monitoru"));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
@@ -50,9 +59,19 @@ public class MonitorSettingsPage extends AbstractSettingsPage {
 		 * Adresář skriptů
 		 */
 		final TextField scriptsDirField = new TextField("Adresář skriptů");
+		scriptsDirField.setWidth("300px");
 		scriptsDirField.setValue(String.valueOf(configuration.getScriptsDir()));
-		FieldUtils.addValidator(scriptsDirField, new StringLengthValidator("Nesmí být prázdné", 1, 1024));
 		settingsFieldsLayout.addComponent(scriptsDirField);
+
+		Binder<MonitorConfiguration> binder = new Binder<>();
+		binder.forField(scriptsDirField).asRequired("Adresář skriptů je povinný").withValidator((val, c) -> {
+			try {
+				return Files.exists(fs.getPath(val)) ? ValidationResult.ok()
+						: ValidationResult.error("Adresář skriptů musí existovat");
+			} catch (InvalidPathException e) {
+				return ValidationResult.error("Neplatná cesta");
+			}
+		}).bind(MonitorConfiguration::getScriptsDir, MonitorConfiguration::setScriptsDir);
 
 		/**
 		 * Save tlačítko
@@ -63,6 +82,8 @@ public class MonitorSettingsPage extends AbstractSettingsPage {
 				monitorFacade.storeConfiguration(configuration);
 			}
 		});
+		binder.addValueChangeListener(l -> saveButton.setEnabled(binder.isValid()));
+
 		settingsFieldsLayout.addComponent(saveButton);
 
 		return layout;

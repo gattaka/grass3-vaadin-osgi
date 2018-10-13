@@ -2,6 +2,7 @@ package cz.gattserver.grass3.hw.ui.pages;
 
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -46,7 +47,7 @@ public class HWSettingsPage extends AbstractSettingsPage {
 		layout.addComponent(settingsLayout);
 
 		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new H2Label("Nastavení"));
+		settingsLayout.addComponent(new H2Label("Nastavení evidence hw"));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
@@ -59,14 +60,19 @@ public class HWSettingsPage extends AbstractSettingsPage {
 		 * Kořenový adresář
 		 */
 		final TextField outputPathField = new TextField("Nastavení kořenového adresáře");
+		outputPathField.setWidth("300px");
 		outputPathField.setValue(configuration.getRootDir());
 		settingsFieldsLayout.addComponent(outputPathField);
 
 		Binder<HWConfiguration> binder = new Binder<>();
-		binder.forField(outputPathField).asRequired("Kořenový adresář je povinný")
-				.withValidator((val, c) -> Files.exists(fs.getPath(val)) ? ValidationResult.ok()
-						: ValidationResult.error("Kořenový adresář musí existovat"))
-				.bind(HWConfiguration::getRootDir, HWConfiguration::setRootDir);
+		binder.forField(outputPathField).asRequired("Kořenový adresář je povinný").withValidator((val, c) -> {
+			try {
+				return Files.exists(fs.getPath(val)) ? ValidationResult.ok()
+						: ValidationResult.error("Kořenový adresář musí existovat");
+			} catch (InvalidPathException e) {
+				return ValidationResult.error("Neplatná cesta");
+			}
+		}).bind(HWConfiguration::getRootDir, HWConfiguration::setRootDir);
 
 		// Save tlačítko
 		Button saveButton = new Button("Uložit", e -> {
@@ -75,8 +81,9 @@ public class HWSettingsPage extends AbstractSettingsPage {
 		});
 		binder.addValueChangeListener(l -> saveButton.setEnabled(binder.isValid()));
 
-		return layout;
+		settingsFieldsLayout.addComponent(saveButton);
 
+		return layout;
 	}
 
 	private HWConfiguration loadConfiguration() {

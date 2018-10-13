@@ -5,6 +5,7 @@ import java.util.Set;
 
 import cz.gattserver.grass3.config.AbstractConfiguration;
 import cz.gattserver.grass3.security.CoreRole;
+import cz.gattserver.grass3.security.Role;
 
 public class CampgamesConfiguration extends AbstractConfiguration {
 
@@ -36,7 +37,7 @@ public class CampgamesConfiguration extends AbstractConfiguration {
 	/**
 	 * Jakým rolím má být modul přístupný - defaultně jenom adminovi
 	 */
-	private Set<CoreRole> roles = new HashSet<>();
+	private Set<Role> roles = new HashSet<>();
 
 	public CampgamesConfiguration() {
 		super("cz.gattserver.grass3.campgames");
@@ -68,11 +69,11 @@ public class CampgamesConfiguration extends AbstractConfiguration {
 		this.maxKBytesUploadSize = maxKBytesUploadSize;
 	}
 
-	public Set<CoreRole> getRoles() {
+	public Set<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Set<CoreRole> roles) {
+	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
 

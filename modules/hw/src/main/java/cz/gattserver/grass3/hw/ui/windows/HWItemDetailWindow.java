@@ -577,7 +577,7 @@ public class HWItemDetailWindow extends WebWindow {
 			btnLayout.setSpacing(true);
 
 			Button hwItemImageDetailBtn = new Button("Detail", e -> Page.getCurrent()
-					.open(HWConfiguration.HW_PATH + "/" + hwItem.getId() + "/" + file.getName(), file.getName()));
+					.open(HWConfiguration.HW_PATH + "/" + hwItem.getId() + "/img/" + file.getName(), file.getName()));
 
 			Button hwItemImageDeleteBtn = new DeleteButton(
 					e -> UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto HW položky ?", ev -> {

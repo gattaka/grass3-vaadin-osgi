@@ -166,8 +166,8 @@ public class LanguagePage extends OneColumnPage {
 		Map<TextField, String> fieldMap = new HashMap<>();
 
 		Button giveUpTestBtn = new Button("Vzdát to", event -> {
-			for (TextField tf : fieldMap.keySet())
-				tf.setValue(fieldMap.get(tf));
+			for (Map.Entry<TextField, String> entry : fieldMap.entrySet())
+				entry.getKey().setValue(entry.getValue());
 		});
 		giveUpTestBtn.setIcon(ImageIcon.FLAG_16_ICON.createResource());
 		btnLayout.addComponent(giveUpTestBtn);
@@ -228,7 +228,6 @@ public class LanguagePage extends OneColumnPage {
 		GridLayout hintsLayout = new GridLayout(6, Math.max(1, crosswordTO.getHints().size() / 2));
 		hintsLayout.setSpacing(true);
 		hintsLayout.setWidth("100%");
-		// hintsLayout.setColumnExpandRatio(columnIndex, ratio);
 		hintsLayout.setDefaultComponentAlignment(Alignment.MIDDLE_RIGHT);
 		for (CrosswordHintTO to : crosswordTO.getHints()) {
 			hintsLayout.addComponent(new Label(to.getId() + "."));
@@ -269,24 +268,25 @@ public class LanguagePage extends OneColumnPage {
 
 						// logika pro kontrolu správného výsledku
 						fieldMap.put(t, cell.getValue());
-						t.addValueChangeListener(e -> {
-							for (TextField tf : fieldMap.keySet()) {
-								String is = tf.getValue();
-								String shouldBe = fieldMap.get(tf);
-								if (StringUtils.isNotBlank(shouldBe) && !shouldBe.toLowerCase().equals(is.toLowerCase())
-										|| StringUtils.isBlank(shouldBe) && StringUtils.isNotBlank(is))
-									return;
-							}
-							for (TextField tf : fieldMap.keySet()) {
-								tf.addStyleName("crossword-done");
-								tf.setEnabled(false);
-							}
-
-						});
+						t.addValueChangeListener(e -> checkCrossword(fieldMap));
 					}
 					crosswordLayout.addComponent(t, x, y);
 				}
 			}
+		}
+	}
+
+	private void checkCrossword(Map<TextField, String> fieldMap) {
+		for (Map.Entry<TextField, String> entry : fieldMap.entrySet()) {
+			String is = entry.getKey().getValue();
+			String shouldBe = entry.getValue();
+			if (StringUtils.isNotBlank(shouldBe) && !shouldBe.equalsIgnoreCase(is)
+					|| StringUtils.isBlank(shouldBe) && StringUtils.isNotBlank(is))
+				return;
+		}
+		for (TextField tf : fieldMap.keySet()) {
+			tf.addStyleName("crossword-done");
+			tf.setEnabled(false);
 		}
 	}
 
@@ -507,16 +507,13 @@ public class LanguagePage extends OneColumnPage {
 			grid.getDataProvider().refreshAll();
 		}), grid));
 
-		String caption = "všeho";
-		if (type != null)
-			switch (type) {
-			case WORD:
-				caption = "slovíček";
-				break;
-			case PHRASE:
-				caption = "frází";
-				break;
-			}
+		String caption;
+		if (ItemType.WORD == type)
+			caption = "slovíček";
+		else if (ItemType.PHRASE == type)
+			caption = "frází";
+		else
+			caption = "všeho";
 
 		Button testBtn = new Button("Spustit test " + caption, event -> {
 			tabSheet.setSelectedTab(3);

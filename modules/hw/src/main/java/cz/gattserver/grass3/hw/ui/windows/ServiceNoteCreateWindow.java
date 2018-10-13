@@ -118,6 +118,8 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 		// Poté, co je form probindován se nastaví hodnoty dle originálu
 		if (originalTO != null)
 			binder.readBean(originalTO);
+
+		removeAllCloseShortcuts();
 	}
 
 	private HWService getHWService() {

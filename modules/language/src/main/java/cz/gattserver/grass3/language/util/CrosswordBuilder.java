@@ -31,7 +31,6 @@ public class CrosswordBuilder {
 
 		// 1. počáteční slovo
 		LanguageItem item = dictionary.get(new Random().nextInt(dictionary.size()));
-		// LanguageItem item = dictionary.get(0);
 		crosswordTO.insertWord(0, HINT_CELL_OFFSET, item.getContent(), item.getTranslation(), true);
 		usedWords.add(item.getContent());
 
@@ -70,6 +69,69 @@ public class CrosswordBuilder {
 		}
 	}
 
+	private boolean checkFrameOfPlacing(String word, int x, int y, boolean horizontally) {
+		// vejde se tam vůbec to slovo?
+		if (horizontally && x + word.length() > crosswordTO.getWidth()
+				|| !horizontally && y + word.length() > crosswordTO.getHeight())
+			return false;
+		// počáteční souřadnice musí být úplně prázdné, aby tam šel dát hint
+		return crosswordTO.getCell(x, y) == null;
+	}
+
+	private boolean connectsHorizontally(int checkX, int checkY) {
+		// Pokud slovo pokládám horizontálně, pak buď:
+		// 1.) jsem na průsečíku slov a pak se musí zkontrolovat
+		// jestli jsme na stejném písmenu -> 1.a/2.a
+		// 2.) jsem na prázdné buňce a nad/pod touto buňkou musí být
+		// také prázdná (jinak jsem přidal písmeno k existujícímu
+		// slovu, které končí/prochází na touto buňkou)
+		CrosswordCell aboveCell = crosswordTO.getCell(checkX, checkY - 1);
+		CrosswordCell belowCell = crosswordTO.getCell(checkX, checkY + 1);
+		return !(aboveCell != null && aboveCell.isWriteAllowed() || belowCell != null && belowCell.isWriteAllowed());
+	}
+
+	private boolean connectsVertically(int checkX, int checkY) {
+		// Pokud slovo pokládám vertikálně, pak buď:
+		// 1.) jsem na průsečíku slov a pak se musí zkontrolovat
+		// jestli jsme na stejném písmenu -> 1.a/2.a
+		// 2.) jsem na prázdné buňce a před/za touto buňkou musí být
+		// také prázdná (jinak jsem přidal písmeno k existujícímu
+		// slovu, které končí/prochází na touto buňkou)
+		CrosswordCell prevCell = crosswordTO.getCell(checkX - 1, checkY);
+		CrosswordCell nextCell = crosswordTO.getCell(checkX + 1, checkY);
+		return !(prevCell != null && prevCell.isWriteAllowed() || nextCell != null && nextCell.isWriteAllowed());
+	}
+
+	private boolean fitsOnEmptyCell(boolean horizontally, int checkX, int checkY, CrosswordCell cell) {
+		if (cell != null)
+			return true;
+		if (horizontally) {
+			if (!connectsHorizontally(checkX, checkY))
+				return false;
+		} else {
+			if (!connectsVertically(checkX, checkY))
+				return false;
+		}
+		return true;
+	}
+
+	private int computeCheckX(int i, int x, boolean horizontally) {
+		return horizontally ? x + HINT_CELL_OFFSET + i : x;
+	}
+
+	private int computeCheckY(int i, int y, boolean horizontally) {
+		return horizontally ? y : y + HINT_CELL_OFFSET + i;
+	}
+
+	private boolean failsToAppend(String word, int i, CrosswordCell cell) {
+		if (i < word.length())
+			return false;
+		// souřadnice za koncem musí být prázdné nebo tam být mezera,
+		// aby se konec slova nepropojil s vedlejším
+		// obsahem, se kterým sousedí
+		return cell != null && !cell.getValue().equals(" ");
+	}
+
 	/**
 	 * Kontroluje, zda je možné na dané souřadnice daným směrem zapsat dané
 	 * slovo
@@ -92,75 +154,38 @@ public class CrosswordBuilder {
 		// aspoň jedno písmeno se musí protínat s jiným slovem
 		boolean emptyCrossSection = true;
 
-		// vejde se tam slovo vůbec?
-		if (horizontally && x + word.length() > crosswordTO.getWidth()
-				|| !horizontally && y + word.length() > crosswordTO.getHeight())
-			return false;
-
-		// počáteční souřadnice musí být úplně prázdné, jinak tam nepůjde dát
-		// hint
-		CrosswordCell cell = crosswordTO.getCell(x, y);
-		if (cell != null)
+		// zkontroluj rozměry a obecně věci nezávislé na obsahu slova
+		if (!checkFrameOfPlacing(word, x, y, horizontally))
 			return false;
 
 		// prochází postupně buňky umístění slova a kontroluje, zda v nich (nebo
 		// v okolí) nedojde ke konfliktu
 		for (int i = 0; i < word.length() + 1; i++) {
-			int checkX = horizontally ? x + HINT_CELL_OFFSET + i : x;
-			int checkY = horizontally ? y : y + HINT_CELL_OFFSET + i;
-			cell = crosswordTO.getCell(checkX, checkY);
+			int checkX = computeCheckX(i, x, horizontally);
+			int checkY = computeCheckY(i, y, horizontally);
+			CrosswordCell cell = crosswordTO.getCell(checkX, checkY);
 
-			if (cell == null) {
-				if (horizontally) {
-					// Pokud slovo pokládám horizontálně, pak buď:
-					// 1.) jsem na průsečíku slov a pak se musí zkontrolovat
-					// jestli jsme na stejném písmenu -> 1.a/2.a
-					// 2.) jsem na prázdné buňce a nad/pod touto buňkou musí být
-					// také prázdná (jinak jsem přidal písmeno
-					// k
-					// existujícímu slovu, které končí/prochází na touto buňkou)
-					CrosswordCell aboveCell = crosswordTO.getCell(checkX, checkY - 1);
-					CrosswordCell belowCell = crosswordTO.getCell(checkX, checkY + 1);
-					if (aboveCell != null && aboveCell.isWriteAllowed()
-							|| belowCell != null && belowCell.isWriteAllowed())
-						return false;
-				} else {
-					// Pokud slovo pokládám vertikálně, pak buď:
-					// 1.) jsem na průsečíku slov a pak se musí zkontrolovat
-					// jestli jsme na stejném písmenu -> 1.a/2.a
-					// 2.) jsem na prázdné buňce a před/za touto buňkou musí být
-					// také prázdná (jinak jsem přidal písmeno
-					// k
-					// existujícímu slovu, které končí/prochází na touto buňkou)
-					CrosswordCell prevCell = crosswordTO.getCell(checkX - 1, checkY);
-					CrosswordCell nextCell = crosswordTO.getCell(checkX + 1, checkY);
-					if (prevCell != null && prevCell.isWriteAllowed() || nextCell != null && nextCell.isWriteAllowed())
-						return false;
-				}
-			}
+			if (!fitsOnEmptyCell(horizontally, checkX, checkY, cell))
+				return false;
 
-			if (i < word.length()) {
-				// 1.a/2.a jsem na průsečíku slov a pak se musí zkontrolovat
-				// jestli jsme na stejném písmenu
-				if (cell != null)
-					emptyCrossSection = false;
-				if (cell != null && !String.valueOf(word.charAt(i)).equals(cell.getValue()))
-					return false;
-			} else {
-				// souřadnice za koncem musí být prázdné nebo tam být mezera,
-				// aby se konec slova nepropojil s vedlejším
-				// obsahem, se kterým sousedí
-				if (cell != null && !cell.getValue().equals(" "))
+			// 1.a/2.a jsem na průsečíku slov a pak se musí zkontrolovat
+			// jestli jsme na stejném písmenu
+			if (i < word.length() && cell != null) {
+				emptyCrossSection = false;
+				if (!String.valueOf(word.charAt(i)).equals(cell.getValue()))
 					return false;
 			}
+
+			if (failsToAppend(word, i, cell))
+				return false;
 		}
 
 		return !emptyCrossSection;
+
 	}
 
 	private LanguageItem randomRemove(List<LanguageItem> list) {
 		int index = new Random().nextInt(list.size());
-		// int index = 0;
 		return list.remove(index);
 	}
 

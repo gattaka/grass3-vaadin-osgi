@@ -59,6 +59,7 @@ public class LanguagePage extends OneColumnPage {
 	private SecurityService securityService;
 
 	private TabSheet tabSheet;
+	private VerticalLayout testLayout;
 
 	public LanguagePage(GrassRequest request) {
 		super(request);
@@ -296,7 +297,7 @@ public class LanguagePage extends OneColumnPage {
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		sheet.addComponent(btnLayout);
 
-		VerticalLayout testLayout = new VerticalLayout();
+		testLayout = new VerticalLayout();
 		testLayout.setMargin(false);
 		testLayout.addComponent(new Label("Vyberte test"));
 		sheet.addComponent(testLayout);
@@ -505,6 +506,26 @@ public class LanguagePage extends OneColumnPage {
 			languageFacade.deleteLanguageItem(item);
 			grid.getDataProvider().refreshAll();
 		}), grid));
+
+		String caption = "";
+		switch (type) {
+		case WORD:
+			caption = "slovíček";
+			break;
+		case PHRASE:
+			caption = "frází";
+			break;
+		default:
+			caption = "všeho";
+			break;
+		}
+
+		Button testBtn = new Button("Spustit test " + caption, event -> {
+			tabSheet.setSelectedTab(3);
+			startTest(langId, type, testLayout);
+		});
+		testBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
+		btnLayout.addComponent(testBtn);
 
 		return btnLayout;
 	}

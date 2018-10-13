@@ -507,18 +507,16 @@ public class LanguagePage extends OneColumnPage {
 			grid.getDataProvider().refreshAll();
 		}), grid));
 
-		String caption = "";
-		switch (type) {
-		case WORD:
-			caption = "slovíček";
-			break;
-		case PHRASE:
-			caption = "frází";
-			break;
-		default:
-			caption = "všeho";
-			break;
-		}
+		String caption = "všeho";
+		if (type != null)
+			switch (type) {
+			case WORD:
+				caption = "slovíček";
+				break;
+			case PHRASE:
+				caption = "frází";
+				break;
+			}
 
 		Button testBtn = new Button("Spustit test " + caption, event -> {
 			tabSheet.setSelectedTab(3);

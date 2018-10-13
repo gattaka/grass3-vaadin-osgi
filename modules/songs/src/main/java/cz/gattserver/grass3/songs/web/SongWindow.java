@@ -77,10 +77,8 @@ public abstract class SongWindow extends WebWindow {
 			binder.readBean(originalTO);
 			textField.setValue(songsFacade.breaklineToEol(originalTO.getText()));
 		}
-	}
 
-	@Override
-	protected void addCloseShortCut() {
+		removeAllCloseShortcuts();
 	}
 
 	private void save(SongTO originalTO, Binder<SongTO> binder) {

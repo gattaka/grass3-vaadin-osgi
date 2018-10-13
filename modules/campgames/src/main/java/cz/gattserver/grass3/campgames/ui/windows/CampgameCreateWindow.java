@@ -40,10 +40,6 @@ public abstract class CampgameCreateWindow extends WebWindow {
 		init(originalDTO);
 	}
 
-	@Override
-	protected void addCloseShortCut() {
-	}
-	
 	private CampgamesService getCampgameService() {
 		if (campgamesService == null)
 			campgamesService = SpringContextHelper.getBean(CampgamesService.class);
@@ -141,6 +137,8 @@ public abstract class CampgameCreateWindow extends WebWindow {
 
 		if (originalDTO != null)
 			binder.readBean(originalDTO);
+
+		removeAllCloseShortcuts();
 	}
 
 	protected abstract void onSuccess(CampgameTO dto);

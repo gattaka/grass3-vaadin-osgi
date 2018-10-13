@@ -52,9 +52,7 @@ public abstract class HWItemWindow extends WebWindow {
 		init(originalDTO);
 	}
 
-	@Override
-	protected void addCloseShortCut() {
-	}
+
 
 	private HWService getHWService() {
 		if (hwService == null)
@@ -178,6 +176,8 @@ public abstract class HWItemWindow extends WebWindow {
 
 		if (originalDTO != null)
 			binder.readBean(originalDTO);
+		
+		removeAllCloseShortcuts();
 	}
 
 	protected abstract void onSuccess(HWItemTO dto);

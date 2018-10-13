@@ -34,9 +34,6 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 		return hwService;
 	}
 
-	@Override
-	protected void addCloseShortCut() {
-	}
 
 	public void init(HWItemTypeTO originalDTO) {
 		setCaption("Založení nového typu HW");
@@ -73,6 +70,8 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 			binder.readBean(originalDTO);
 
 		setContent(winLayout);
+		
+		removeAllCloseShortcuts();
 	}
 
 	protected abstract void onSuccess(HWItemTypeTO hwItemTypeDTO);

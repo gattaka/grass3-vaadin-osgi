@@ -80,10 +80,8 @@ public abstract class ChordWindow extends WebWindow {
 			if (copy)
 				binder.getBean().setId(null);
 		}
-	}
 
-	@Override
-	protected void addCloseShortCut() {
+		removeAllCloseShortcuts();
 	}
 
 	private void refreshDescriptionLayout(Binder<ChordTO> binder, ChordTO originalDTO, ChordTO formTO,

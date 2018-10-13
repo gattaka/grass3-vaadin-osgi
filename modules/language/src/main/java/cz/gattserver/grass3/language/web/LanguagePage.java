@@ -65,6 +65,34 @@ public class LanguagePage extends OneColumnPage {
 		super(request);
 	}
 
+	private void createTabSheet(long langId) {
+		tabSheet = new TabSheet();
+		tabSheet.addSelectedTabChangeListener(e -> {
+			if (!e.isUserOriginated())
+				return;
+			Component selectedTab = tabSheet.getSelectedTab();
+			Tab tab = tabSheet.getTab(selectedTab);
+			int pos = tabSheet.getTabPosition(tab);
+			if (pos < 3) {
+				Component newTab = null;
+				switch (pos) {
+				case 0:
+					newTab = createItemsTab(langId, ItemType.WORD);
+					break;
+				case 1:
+					newTab = createItemsTab(langId, ItemType.PHRASE);
+					break;
+				case 2:
+					newTab = createItemsTab(langId, null);
+					break;
+				default:
+					break;
+				}
+				tabSheet.replaceComponent(selectedTab, newTab);
+			}
+		});
+	}
+
 	@Override
 	protected Component createContent() {
 
@@ -101,31 +129,7 @@ public class LanguagePage extends OneColumnPage {
 				langLayout.removeComponent(tabSheet);
 
 			long langId = item.getId();
-			tabSheet = new TabSheet();
-			tabSheet.addSelectedTabChangeListener(e -> {
-				if (!e.isUserOriginated())
-					return;
-				Component selectedTab = tabSheet.getSelectedTab();
-				Tab tab = tabSheet.getTab(selectedTab);
-				int pos = tabSheet.getTabPosition(tab);
-				if (pos < 3) {
-					Component newTab = null;
-					switch (pos) {
-					case 0:
-						newTab = createItemsTab(langId, ItemType.WORD);
-						break;
-					case 1:
-						newTab = createItemsTab(langId, ItemType.PHRASE);
-						break;
-					case 2:
-						newTab = createItemsTab(langId, null);
-						break;
-					default:
-						break;
-					}
-					tabSheet.replaceComponent(selectedTab, newTab);
-				}
-			});
+			createTabSheet(langId);
 
 			tabSheet.addTab(createItemsTab(langId, ItemType.WORD), "Slovíčka");
 			tabSheet.addTab(new VerticalLayout(), "Fráze");
@@ -240,13 +244,18 @@ public class LanguagePage extends OneColumnPage {
 			hintsLayout.setComponentAlignment(hintLabel, Alignment.MIDDLE_LEFT);
 		}
 
-		GridLayout crosswordLayout = new GridLayout(crosswordTO.getWidth(), crosswordTO.getHeight());
-		crosswordLayout.setMargin(new MarginInfo(false, false, true, false));
-		crosswordLayout.setSpacing(false);
+		GridLayout crosswordLayout = constructCrossword(crosswordTO, writeFields, fieldMap);
 
 		mainLayout.addComponent(crosswordLayout);
 		mainLayout.setComponentAlignment(crosswordLayout, Alignment.MIDDLE_CENTER);
 		mainLayout.addComponent(hintsLayout);
+	}
+
+	private GridLayout constructCrossword(CrosswordTO crosswordTO, List<CrosswordField> writeFields,
+			Map<TextField, String> fieldMap) {
+		GridLayout crosswordLayout = new GridLayout(crosswordTO.getWidth(), crosswordTO.getHeight());
+		crosswordLayout.setMargin(new MarginInfo(false, false, true, false));
+		crosswordLayout.setSpacing(false);
 
 		for (int y = 0; y < crosswordTO.getHeight(); y++) {
 			for (int x = 0; x < crosswordTO.getWidth(); x++) {
@@ -261,19 +270,24 @@ public class LanguagePage extends OneColumnPage {
 						t.setValue(cell.getValue());
 					} else {
 						t.setMaxLength(1);
-
-						// logika pro zapipsování skrz postranní pole
-						for (CrosswordField cf : writeFields)
-							cf.tryRegisterCellField(t, x, y);
-
-						// logika pro kontrolu správného výsledku
-						fieldMap.put(t, cell.getValue());
-						t.addValueChangeListener(e -> checkCrossword(fieldMap));
+						connectField(t, cell, x, y, writeFields, fieldMap);
 					}
 					crosswordLayout.addComponent(t, x, y);
 				}
 			}
 		}
+		return crosswordLayout;
+	}
+
+	private void connectField(TextField t, CrosswordCell cell, int x, int y, List<CrosswordField> writeFields,
+			Map<TextField, String> fieldMap) {
+		// logika pro zapipsování skrz postranní pole
+		for (CrosswordField cf : writeFields)
+			cf.tryRegisterCellField(t, x, y);
+
+		// logika pro kontrolu správného výsledku
+		fieldMap.put(t, cell.getValue());
+		t.addValueChangeListener(e -> checkCrossword(fieldMap));
 	}
 
 	private void checkCrossword(Map<TextField, String> fieldMap) {

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+
+	<!-- Zpracování probíhá v obráceném pořadí, takže závislosti se musí psát 
+		odspoda tak, že nahoře jsou nejvíce závislé tabulky -->
+
+	<LANGUAGE />
+	<LANGUAGEITEM />
+
+</dataset>

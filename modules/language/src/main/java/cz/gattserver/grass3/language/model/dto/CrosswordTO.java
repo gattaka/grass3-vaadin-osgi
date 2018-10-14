@@ -52,4 +52,18 @@ public class CrosswordTO {
 		return height;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				CrosswordCell c = contentData[x][y];
+				sb.append(c == null ? " " : c.getValue());
+				sb.append("|");
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+
 }

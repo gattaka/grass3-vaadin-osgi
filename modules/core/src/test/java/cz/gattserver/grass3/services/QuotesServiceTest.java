@@ -35,6 +35,9 @@ public class QuotesServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testGetRandomQuote() {
+		MockRandomSourceImpl.longValuesIndex = 0;
+		MockRandomSourceImpl.longValues = new long[] { 0L, 1L, 2L, 3L };
+
 		assertEquals("", quotesService.getRandomQuote());
 		quotesService.createQuote("test1");
 		assertEquals("test1", quotesService.getRandomQuote());
@@ -43,11 +46,8 @@ public class QuotesServiceTest extends AbstractDBUnitTest {
 		quotesService.createQuote("test3");
 		quotesService.createQuote("test4");
 
-		MockRandomSourceImpl.nextValue = 1L;
 		assertEquals("test2", quotesService.getRandomQuote());
-		MockRandomSourceImpl.nextValue = 2L;
 		assertEquals("test3", quotesService.getRandomQuote());
-		MockRandomSourceImpl.nextValue = 3L;
 		assertEquals("test4", quotesService.getRandomQuote());
 	}
 

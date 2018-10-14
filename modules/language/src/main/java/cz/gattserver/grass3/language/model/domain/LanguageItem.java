@@ -60,56 +60,63 @@ public class LanguageItem {
 		return tested;
 	}
 
-	public void setTested(Integer tested) {
+	public LanguageItem setTested(Integer tested) {
 		this.tested = tested;
+		return this;
 	}
 
 	public ItemType getType() {
 		return type;
 	}
 
-	public void setType(ItemType type) {
+	public LanguageItem setType(ItemType type) {
 		this.type = type;
+		return this;
 	}
 
 	public Language getLanguage() {
 		return language;
 	}
 
-	public void setLanguage(Language language) {
+	public LanguageItem setLanguage(Language language) {
 		this.language = language;
+		return this;
 	}
 
 	public LocalDateTime getLastTested() {
 		return lastTested;
 	}
 
-	public void setLastTested(LocalDateTime lastTested) {
+	public LanguageItem setLastTested(LocalDateTime lastTested) {
 		this.lastTested = lastTested;
+		return this;
 	}
 
 	public Double getSuccessRate() {
 		return successRate;
 	}
 
-	public void setSuccessRate(Double successRate) {
+	public LanguageItem setSuccessRate(Double successRate) {
 		this.successRate = successRate;
+		return this;
 	}
 
 	public String getContent() {
 		return content;
 	}
 
-	public void setContent(String content) {
+	public LanguageItem setContent(String content) {
 		this.content = content;
+		return this;
 	}
 
 	public String getTranslation() {
 		return translation;
 	}
 
-	public void setTranslation(String translation) {
+	public LanguageItem setTranslation(String translation) {
 		this.translation = translation;
+		return this;
 	}
 
 	public Long getId() {

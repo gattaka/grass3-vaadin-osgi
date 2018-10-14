@@ -3,16 +3,19 @@ package cz.gattserver.grass3.language.util;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import cz.gattserver.grass3.language.model.domain.LanguageItem;
 import cz.gattserver.grass3.language.model.dto.CrosswordCell;
 import cz.gattserver.grass3.language.model.dto.CrosswordTO;
+import cz.gattserver.grass3.services.RandomSourceService;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 
 public class CrosswordBuilder {
 
 	private static final int HINT_CELL_OFFSET = 1;
+
+	private RandomSourceService randomSource;
 
 	private int sideSize;
 	private List<LanguageItem> dictionary;
@@ -23,6 +26,7 @@ public class CrosswordBuilder {
 	public CrosswordBuilder(int sideSize, List<LanguageItem> dictionary) {
 		this.dictionary = dictionary;
 		this.sideSize = sideSize;
+		this.randomSource = SpringContextHelper.getBean(RandomSourceService.class);
 	}
 
 	public CrosswordTO build() {
@@ -30,7 +34,7 @@ public class CrosswordBuilder {
 		usedWords = new HashSet<>();
 
 		// 1. počáteční slovo
-		LanguageItem item = dictionary.get(new Random().nextInt(dictionary.size()));
+		LanguageItem item = dictionary.get(randomSource.getRandomInt(dictionary.size()));
 		crosswordTO.insertWord(0, HINT_CELL_OFFSET, item.getContent(), item.getTranslation(), true);
 		usedWords.add(item.getContent());
 
@@ -62,7 +66,7 @@ public class CrosswordBuilder {
 			LanguageItem item = randomRemove(workList);
 			if (item.getContent().length() <= maxLength && !usedWords.contains(item.getContent())
 					&& fits(item.getContent(), x, y, horizontally)) {
-				crosswordTO.insertWord(x, y, item.getContent(), item.getTranslation(), horizontally);
+				crosswordTO.insertWord(x, y, item.getContent().toLowerCase(), item.getTranslation(), horizontally);
 				usedWords.add(item.getContent());
 				break;
 			}
@@ -172,7 +176,7 @@ public class CrosswordBuilder {
 			// jestli jsme na stejném písmenu
 			if (i < word.length() && cell != null) {
 				emptyCrossSection = false;
-				if (!String.valueOf(word.charAt(i)).equals(cell.getValue()))
+				if (!String.valueOf(word.charAt(i)).equalsIgnoreCase(cell.getValue()))
 					return false;
 			}
 
@@ -185,7 +189,7 @@ public class CrosswordBuilder {
 	}
 
 	private LanguageItem randomRemove(List<LanguageItem> list) {
-		int index = new Random().nextInt(list.size());
+		int index = randomSource.getRandomInt(list.size());
 		return list.remove(index);
 	}
 

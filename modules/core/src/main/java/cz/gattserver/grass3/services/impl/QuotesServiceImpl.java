@@ -61,7 +61,7 @@ public class QuotesServiceImpl implements QuotesService {
 		long count = quoteRepository.count();
 		if (count == 0)
 			return "";
-		return quoteRepository.findRandom(randomSourceService.getRandomNumber(count));
+		return quoteRepository.findRandom(randomSourceService.getRandomLong(count));
 	}
 
 	@Override

@@ -52,8 +52,6 @@ public abstract class HWItemWindow extends WebWindow {
 		init(originalDTO);
 	}
 
-
-
 	private HWService getHWService() {
 		if (hwService == null)
 			hwService = SpringContextHelper.getBean(HWService.class);
@@ -92,12 +90,12 @@ public abstract class HWItemWindow extends WebWindow {
 		purchaseDateField.setDateFormat("dd.MM.yyyy");
 		purchaseDateField.setLocale(Locale.forLanguageTag("CS"));
 		purchaseDateField.setSizeFull();
-		binder.bind(purchaseDateField, "purchaseDate");
+		// binder.bind(purchaseDateField, "purchaseDate");
 		winLayout.addComponent(purchaseDateField, 0, 1);
 
 		TextField priceField = new TextField("Cena");
 		priceField.setSizeFull();
-		binder.forField(priceField).withConverter(toModel -> {
+		binder.forField(priceField).withNullRepresentation("").withConverter(toModel -> {
 			try {
 				if (StringUtils.isBlank(toModel))
 					return null;
@@ -125,7 +123,7 @@ public abstract class HWItemWindow extends WebWindow {
 		winLayout.addComponent(stateComboBox, 1, 2);
 
 		TextField warrantyYearsField = new TextField("Záruka (roky)");
-		binder.forField(warrantyYearsField)
+		binder.forField(warrantyYearsField).withNullRepresentation("")
 				.withConverter(new StringToIntegerConverter(null, "Záruka musí být celé číslo")).bind("warrantyYears");
 		warrantyYearsField.setSizeFull();
 		winLayout.addComponent(warrantyYearsField, 0, 3);
@@ -174,9 +172,10 @@ public abstract class HWItemWindow extends WebWindow {
 		layout.setComponentAlignment(createBtn, Alignment.BOTTOM_RIGHT);
 		setContent(layout);
 
-		if (originalDTO != null)
+		if (originalDTO != null) {
 			binder.readBean(originalDTO);
-		
+		}
+
 		removeAllCloseShortcuts();
 	}
 

@@ -23,17 +23,12 @@ public class MedicUtilTest {
 		dto.setDate(LocalDateTime.parse(dateStop, formatter));
 		assertFalse(MedicUtil.fromNowAfter7Days(dto, LocalDateTime.parse(dateStart, formatter)));
 
-		dateStart = "29.12.2012 09:29:58";
-		dateStop = "05.01.2013 10:31:48";
+		dateStart = "26.12.2012 09:29:58";
+		dateStop = "02.01.2013 10:31:48";
 
 		dto.setDate(LocalDateTime.parse(dateStop, formatter));
-		assertFalse(MedicUtil.fromNowAfter7Days(dto, LocalDateTime.parse(dateStart, formatter)));
+		assertTrue(MedicUtil.fromNowAfter7Days(dto, LocalDateTime.parse(dateStart, formatter)));
 
-		dateStart = "21.12.2012 09:29:58";
-		dateStop = "05.01.2013 10:31:48";
-
-		dto.setDate(LocalDateTime.parse(dateStop, formatter));
-		assertFalse(MedicUtil.fromNowAfter7Days(dto, LocalDateTime.parse(dateStart, formatter)));
 	}
 
 }

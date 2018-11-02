@@ -33,4 +33,10 @@ public interface LanguageItemRepository extends JpaRepository<LanguageItem, Long
 	@Query("select i from LANGUAGEITEM i where i.language.id = ?1 and i.type = ?2 and LENGTH(i.content) < ?3")
 	List<LanguageItem> findItemOfMaxLength(Long languageId, ItemType type, Integer i);
 
+	@Query("select SUM(i.successRate) from LANGUAGEITEM i where i.language.id = ?2 and i.type = ?1")
+	Integer findSuccessRateSumByLanguageAndType(ItemType type, Long langId);
+	
+	@Query("select count(i) from LANGUAGEITEM i where i.language.id = ?2 and i.type = ?1")
+	Integer countByLanguageAndType(ItemType type, Long langId);
+
 }

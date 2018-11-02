@@ -21,6 +21,7 @@ import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.Slider;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.Tab;
@@ -308,27 +309,48 @@ public class LanguagePage extends OneColumnPage {
 		VerticalLayout sheet = new VerticalLayout();
 		sheet.setMargin(new MarginInfo(true, false, false, false));
 
-		HorizontalLayout btnLayout = new HorizontalLayout();
-		sheet.addComponent(btnLayout);
+		HorizontalLayout wordTestLayout = new HorizontalLayout();
+		sheet.addComponent(wordTestLayout);
+
+		Button wordsTestBtn = new Button("Spustit test slovíček",
+				event -> startTest(langId, ItemType.WORD, testLayout));
+		wordsTestBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
+		wordTestLayout.addComponent(wordsTestBtn);
+
+		Float wordsProgress = languageFacade.getSuccessRateOfLanguageAndType(ItemType.WORD, langId);
+		ProgressBar wordsSuccessBar = new ProgressBar(wordsProgress);
+		wordTestLayout.addComponent(wordsSuccessBar);
+		wordTestLayout.setComponentAlignment(wordsSuccessBar, Alignment.MIDDLE_LEFT);
+		Label wordsProgressLabel = new Label((int) (wordsProgress * 100) + "%");
+		wordTestLayout.addComponent(wordsProgressLabel);
+		wordTestLayout.setComponentAlignment(wordsProgressLabel, Alignment.MIDDLE_LEFT);
+		wordsSuccessBar.setWidth("200px");
+
+		HorizontalLayout phrasesTestLayout = new HorizontalLayout();
+		sheet.addComponent(phrasesTestLayout);
+
+		Button phrasesTestBtn = new Button("Spustit test frází",
+				event -> startTest(langId, ItemType.PHRASE, testLayout));
+		phrasesTestBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
+		phrasesTestLayout.addComponent(phrasesTestBtn);
+
+		Float phrasesProgress = languageFacade.getSuccessRateOfLanguageAndType(ItemType.PHRASE, langId);
+		ProgressBar phrasesSuccessBar = new ProgressBar(phrasesProgress);
+		phrasesTestLayout.addComponent(phrasesSuccessBar);
+		phrasesTestLayout.setComponentAlignment(phrasesSuccessBar, Alignment.MIDDLE_LEFT);
+		Label phrasesProgressLabel = new Label((int) (phrasesProgress * 100) + "%");
+		phrasesTestLayout.addComponent(phrasesProgressLabel);
+		phrasesTestLayout.setComponentAlignment(phrasesProgressLabel, Alignment.MIDDLE_LEFT);
+		phrasesSuccessBar.setWidth("200px");
+
+		Button allTestBtn = new Button("Spustit test všeho", event -> startTest(langId, null, testLayout));
+		allTestBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
+		sheet.addComponent(allTestBtn);
 
 		testLayout = new VerticalLayout();
 		testLayout.setMargin(false);
 		testLayout.addComponent(new Label("Vyberte test"));
 		sheet.addComponent(testLayout);
-
-		Button wordsTestBtn = new Button("Spustit test slovíček",
-				event -> startTest(langId, ItemType.WORD, testLayout));
-		wordsTestBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
-		btnLayout.addComponent(wordsTestBtn);
-
-		Button phrasesTestBtn = new Button("Spustit test frází",
-				event -> startTest(langId, ItemType.PHRASE, testLayout));
-		phrasesTestBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
-		btnLayout.addComponent(phrasesTestBtn);
-
-		Button allTestBtn = new Button("Spustit test všeho", event -> startTest(langId, null, testLayout));
-		allTestBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
-		btnLayout.addComponent(allTestBtn);
 
 		return sheet;
 	}
@@ -535,6 +557,17 @@ public class LanguagePage extends OneColumnPage {
 		});
 		testBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
 		btnLayout.addComponent(testBtn);
+
+		if (type != null) {
+			Float wordsProgress = languageFacade.getSuccessRateOfLanguageAndType(type, langId);
+			ProgressBar wordsSuccessBar = new ProgressBar(wordsProgress);
+			btnLayout.addComponent(wordsSuccessBar);
+			btnLayout.setComponentAlignment(wordsSuccessBar, Alignment.MIDDLE_LEFT);
+			Label wordsProgressLabel = new Label((int) (wordsProgress * 100) + "%");
+			btnLayout.addComponent(wordsProgressLabel);
+			btnLayout.setComponentAlignment(wordsProgressLabel, Alignment.MIDDLE_LEFT);
+			wordsSuccessBar.setWidth("200px");
+		}
 
 		return btnLayout;
 	}

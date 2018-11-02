@@ -176,4 +176,10 @@ public class LanguageFacadeImpl implements LanguageFacade {
 		return crosswordBuilder.build();
 	}
 
+	@Override
+	public Float getSuccessRateOfLanguageAndType(ItemType type, Long langId) {
+		return ((float) itemRepository.findSuccessRateSumByLanguageAndType(type, langId))
+				/ itemRepository.countByLanguageAndType(type, langId);
+	}
+
 }

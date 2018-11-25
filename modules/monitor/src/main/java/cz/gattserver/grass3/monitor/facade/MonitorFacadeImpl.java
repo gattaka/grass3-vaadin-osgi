@@ -41,7 +41,7 @@ import cz.gattserver.grass3.services.ConfigurationService;
 public class MonitorFacadeImpl implements MonitorFacade {
 
 	private static final int HTTP_TEST_TIMEOUT = 5000;
-	
+
 	@Autowired
 	private ConfigurationService configurationService;
 
@@ -282,6 +282,11 @@ public class MonitorFacadeImpl implements MonitorFacade {
 	public List<ServerServiceMonitorItemTO> getServerServicesStatus() {
 		List<ServerServiceMonitorItemTO> items = new ArrayList<>();
 
+		ServerServiceMonitorItemTO syncthingTO = new ServerServiceMonitorItemTO("Syncthing",
+				"http://gattserver.cz:8127");
+		testResponseCode(syncthingTO, true);
+		items.add(syncthingTO);
+
 		ServerServiceMonitorItemTO nexusTO = new ServerServiceMonitorItemTO("Sonatype Nexus",
 				"http://gattserver.cz:8081");
 		testResponseCode(nexusTO);
@@ -308,6 +313,10 @@ public class MonitorFacadeImpl implements MonitorFacade {
 	}
 
 	private void testResponseCode(ServerServiceMonitorItemTO itemTO) {
+		testResponseCode(itemTO, false);
+	}
+
+	private void testResponseCode(ServerServiceMonitorItemTO itemTO, boolean anyCode) {
 		try {
 			URL url = new URL(itemTO.getAddress());
 			URLConnection uc = url.openConnection();
@@ -323,7 +332,7 @@ public class MonitorFacadeImpl implements MonitorFacade {
 				hc.setReadTimeout(HTTP_TEST_TIMEOUT);
 				hc.connect();
 				itemTO.setResponseCode(hc.getResponseCode());
-				if (itemTO.getResponseCode() >= 200 && itemTO.getResponseCode() < 300)
+				if (anyCode || itemTO.getResponseCode() >= 200 && itemTO.getResponseCode() < 300)
 					itemTO.setMonitorState(MonitorState.SUCCESS);
 				else
 					itemTO.setMonitorState(MonitorState.ERROR);

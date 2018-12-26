@@ -121,7 +121,7 @@ public class HWItemsTab extends VerticalLayout {
 		grid.addColumn(HWItemOverviewTO::getSupervizedFor).setId(SUPERVIZED_FOR_BIND).setCaption("Spravováno pro");
 		grid.addColumn(hw -> FieldUtils.formatMoney(hw.getPrice()), new TextRenderer()).setCaption("Cena")
 				.setId(PRICE_BIND).setStyleGenerator(item -> "v-align-right");
-		grid.addColumn(HWItemOverviewTO::getPurchaseDate, new LocalDateRenderer("dd.MM.yyyy")).setCaption("Získáno")
+		grid.addColumn(HWItemOverviewTO::getPurchaseDate, new LocalDateRenderer("d.M.yyyy")).setCaption("Získáno")
 				.setId(PURCHASE_DATE_BIND).setStyleGenerator(item -> "v-align-right");
 
 		HeaderRow filteringHeader = grid.appendHeaderRow();

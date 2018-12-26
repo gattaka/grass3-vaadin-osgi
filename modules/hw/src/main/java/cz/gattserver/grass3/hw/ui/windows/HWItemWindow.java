@@ -90,7 +90,7 @@ public abstract class HWItemWindow extends WebWindow {
 		purchaseDateField.setDateFormat("dd.MM.yyyy");
 		purchaseDateField.setLocale(Locale.forLanguageTag("CS"));
 		purchaseDateField.setSizeFull();
-		// binder.bind(purchaseDateField, "purchaseDate");
+		binder.bind(purchaseDateField, "purchaseDate");
 		winLayout.addComponent(purchaseDateField, 0, 1);
 
 		TextField priceField = new TextField("Cena");

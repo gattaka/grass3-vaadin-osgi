@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.server.Page;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
@@ -181,6 +182,10 @@ public class FMPage extends OneColumnPage {
 
 		grid.addColumn(FMItemTO::getName).setCaption("Název").setExpandRatio(1);
 		grid.addColumn(FMItemTO::getSize).setCaption("Velikost").setStyleGenerator(item -> "v-align-right");
+		grid.addColumn(to -> {
+			String link = explorer.getDownloadLink(getRequest().getContextRoot(), to.getName());
+			return new Label("<a href='" + link + "' target='_blank'>Stažení</a>", ContentMode.HTML);
+		}).setRenderer(new ComponentRenderer()).setCaption("Stažení");
 		grid.addColumn(FMItemTO::getLastModified).setRenderer(new LocalDateTimeRenderer("d.MM.yyyy HH:mm"))
 				.setCaption("Upraveno");
 
@@ -239,7 +244,8 @@ public class FMPage extends OneColumnPage {
 		MultiUpload multiFileUpload = new MultiUpload("Nahrát soubory") {
 			private static final long serialVersionUID = -415832652157894459L;
 
-			public void fileUploadFinished(InputStream in, String fileName, String mime, long size, int filesLeftInQueue) {
+			public void fileUploadFinished(InputStream in, String fileName, String mime, long size,
+					int filesLeftInQueue) {
 				switch (explorer.saveFile(in, fileName)) {
 				case SUCCESS:
 					// refresh

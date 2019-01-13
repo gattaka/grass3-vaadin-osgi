@@ -120,10 +120,11 @@ public class PGServiceImpl implements PGService {
 	public void deletePhotogallery(long photogalleryId) throws IOException {
 		String path = photogalleryRepository.findPhotogalleryPathById(photogalleryId);
 		Path galleryDir = getGalleryPath(path);
-		deleteFileRecursively(galleryDir);
 
 		photogalleryRepository.delete(photogalleryId);
 		contentNodeFacade.deleteByContentId(PGModule.ID, photogalleryId);
+
+		deleteFileRecursively(galleryDir);
 	}
 
 	private void createVideoMinature(Path file, Path outputFile) {

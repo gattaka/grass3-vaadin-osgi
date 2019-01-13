@@ -28,6 +28,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import cz.gattserver.common.util.ReferenceHolder;
@@ -257,12 +258,14 @@ public class PGServiceImpl implements PGService {
 
 	@Override
 	@Async
+	@Transactional(propagation = Propagation.NEVER)
 	public void modifyPhotogallery(long photogalleryId, PhotogalleryPayloadTO payloadTO, LocalDateTime date) {
 		innerSavePhotogallery(payloadTO, photogalleryId, null, null, date);
 	}
 
 	@Override
 	@Async
+	@Transactional(propagation = Propagation.NEVER)
 	public void savePhotogallery(PhotogalleryPayloadTO payloadTO, long nodeId, long authorId, LocalDateTime date) {
 		innerSavePhotogallery(payloadTO, null, nodeId, authorId, date);
 	}
@@ -271,51 +274,59 @@ public class PGServiceImpl implements PGService {
 		eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED)
+	private Photogallery transactionSavePhotogallery(String galleryDir, PhotogalleryPayloadTO payloadTO,
+			Long existingId, Long nodeId, Long authorId, LocalDateTime date) {
+		logger.info("modifyPhotogallery thread: " + Thread.currentThread().getId());
+
+		Photogallery photogallery = existingId == null ? new Photogallery()
+				: photogalleryRepository.findOne(existingId);
+
+		// nasetuj do ní vše potřebné
+		photogallery.setPhotogalleryPath(galleryDir);
+
+		// ulož ho a nasetuj jeho id
+		photogallery = photogalleryRepository.save(photogallery);
+		if (photogallery == null) {
+			publishPGProcessFailure();
+			return null;
+		}
+
+		if (existingId == null) {
+			// vytvoř odpovídající content node
+			Long contentNodeId = contentNodeFacade.save(PGModule.ID, photogallery.getId(), payloadTO.getName(),
+					payloadTO.getTags(), payloadTO.isPublicated(), nodeId, authorId, false, date, null);
+
+			// ulož do článku referenci na jeho contentnode
+			ContentNode contentNode = new ContentNode();
+			contentNode.setId(contentNodeId);
+			photogallery.setContentNode(contentNode);
+			if (photogalleryRepository.save(photogallery) == null) {
+				publishPGProcessFailure();
+				return null;
+			}
+		} else {
+			contentNodeFacade.modify(photogallery.getContentNode().getId(), payloadTO.getName(), payloadTO.getTags(),
+					payloadTO.isPublicated(), date);
+		}
+
+		eventBus.publish(new PGProcessProgressEvent("Uložení obsahu galerie"));
+
+		return photogallery;
+	}
+
+	@Transactional(propagation = Propagation.NEVER)
 	private void innerSavePhotogallery(PhotogalleryPayloadTO payloadTO, Long existingId, Long nodeId, Long authorId,
 			LocalDateTime date) {
-		Stream<Path> stream = null;
-		try {
-			String galleryDir = payloadTO.getGalleryDir();
-			Path galleryPath = getGalleryPath(galleryDir);
-			stream = Files.list(galleryPath).sorted(getComparator());
-			logger.info("modifyPhotogallery thread: " + Thread.currentThread().getId());
-
+		String galleryDir = payloadTO.getGalleryDir();
+		Path galleryPath = getGalleryPath(galleryDir);
+		try (Stream<Path> stream = Files.list(galleryPath).sorted(getComparator())) {
 			// Počet kroků = miniatury + detaily + uložení
 			int total = (int) stream.count();
 			eventBus.publish(new PGProcessStartEvent(2 * total + 1));
 
-			Photogallery photogallery = existingId == null ? new Photogallery()
-					: photogalleryRepository.findOne(existingId);
-
-			// nasetuj do ní vše potřebné
-			photogallery.setPhotogalleryPath(galleryDir);
-
-			// ulož ho a nasetuj jeho id
-			photogallery = photogalleryRepository.save(photogallery);
-			if (photogallery == null) {
-				publishPGProcessFailure();
-				return;
-			}
-
-			if (existingId == null) {
-				// vytvoř odpovídající content node
-				Long contentNodeId = contentNodeFacade.save(PGModule.ID, photogallery.getId(), payloadTO.getName(),
-						payloadTO.getTags(), payloadTO.isPublicated(), nodeId, authorId, false, date, null);
-
-				// ulož do článku referenci na jeho contentnode
-				ContentNode contentNode = new ContentNode();
-				contentNode.setId(contentNodeId);
-				photogallery.setContentNode(contentNode);
-				if (photogalleryRepository.save(photogallery) == null) {
-					publishPGProcessFailure();
-					return;
-				}
-			} else {
-				contentNodeFacade.modify(photogallery.getContentNode().getId(), payloadTO.getName(),
-						payloadTO.getTags(), payloadTO.isPublicated(), date);
-			}
-
-			eventBus.publish(new PGProcessProgressEvent("Uložení obsahu galerie"));
+			Photogallery photogallery = transactionSavePhotogallery(galleryDir, payloadTO, existingId, nodeId, authorId,
+					date);
 
 			// vytvoř miniatury
 			processMiniatureImages(photogallery, payloadTO.isReprocess());
@@ -328,9 +339,6 @@ public class PGServiceImpl implements PGService {
 			publishPGProcessFailure();
 			logger.error("Nezdařilo se uložit galerii", e);
 			return;
-		} finally {
-			if (stream != null)
-				stream.close();
 		}
 	}
 

@@ -6,10 +6,11 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.Validator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
+import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
@@ -34,20 +35,23 @@ public class LanguageItemWindow extends WebWindow {
 	public LanguageItemWindow(LanguageItemTO to, SaveAction action, Validator<String> validator, ItemType asType) {
 		super(to == null ? "Založit" : "Upravit" + " záznam");
 
+		removeCloseShortcut(KeyCode.ESCAPE);
+		
 		setWidth("600px");
 
-		LanguageItemTO targetTO = to == null ? new LanguageItemTO() : to;
+		if (asType == null)
+			asType = ItemType.values()[0];
 
-		if (asType != null)
-			targetTO.setType(asType);
+		LanguageItemTO targetTO = to == null ? new LanguageItemTO() : to;
+		targetTO.setType(asType);
 
 		Binder<LanguageItemTO> binder = new Binder<>();
 
-		ComboBox<ItemType> typeCombo = new ComboBox<>("Typ", Arrays.asList(ItemType.values()));
-		typeCombo.setItemCaptionGenerator(ItemType::getCaption);
-		binder.forField(typeCombo).asRequired().bind(LanguageItemTO::getType, LanguageItemTO::setType);
-		typeCombo.setEmptySelectionAllowed(false);
-		addComponent(typeCombo);
+		RadioButtonGroup<ItemType> typeRadio = new RadioButtonGroup<>(null, Arrays.asList(ItemType.values()));
+		typeRadio.setItemCaptionGenerator(ItemType::getCaption);
+		binder.forField(typeRadio).bind(LanguageItemTO::getType, LanguageItemTO::setType);
+		typeRadio.setStyleName("horizontal");
+		addComponent(typeRadio);
 
 		TextField contentField = new TextField("Obsah");
 		contentField.setWidth("100%");
@@ -85,7 +89,7 @@ public class LanguageItemWindow extends WebWindow {
 		} else {
 			buttonLayout.addComponent(new CreateButton(e -> onSave(action, binder, targetTO)));
 			Button createAndContinueBtn = new CreateButton(
-					e -> onSaveAndContinue(action, binder, targetTO, validator, asType));
+					e -> onSaveAndContinue(action, binder, targetTO, validator, typeRadio.getValue()));
 			createAndContinueBtn.setCaption("Vytvořit a pokračovat");
 			buttonLayout.addComponent(createAndContinueBtn);
 		}

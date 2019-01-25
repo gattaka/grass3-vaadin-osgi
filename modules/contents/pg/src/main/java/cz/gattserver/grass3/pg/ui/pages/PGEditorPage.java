@@ -314,7 +314,7 @@ public class PGEditorPage extends OneColumnPage {
 		publicatedCheckBox.setDescription("Je-li prázdné, uvidí galerii pouze její autor");
 		contentOptionsLayout.addComponent(publicatedCheckBox);
 
-		reprocessSlideshowAndMiniCheckBox.setCaption("Přegenerova slideshow a miniatury");
+		reprocessSlideshowAndMiniCheckBox.setCaption("Přegenerovat slideshow a miniatury");
 		contentOptionsLayout.addComponent(reprocessSlideshowAndMiniCheckBox);
 
 		photogalleryDateField.setCaption("Přepsat datum vytvoření galerie");

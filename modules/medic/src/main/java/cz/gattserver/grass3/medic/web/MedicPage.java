@@ -28,8 +28,10 @@ public class MedicPage extends OneColumnPage {
 		TabSheet tabSheet = new TabSheet();
 		layout.addComponent(tabSheet);
 
-		tabSheet.addTab(new ScheduledVisitsTab(), "Plánované návštěvy");
-		tabSheet.addTab(new MedicalRecordsTab(), "Záznamy");
+		MedicalRecordsTab medicalRecordsTab = new MedicalRecordsTab();
+		
+		tabSheet.addTab(new ScheduledVisitsTab(medicalRecordsTab), "Plánované návštěvy");
+		tabSheet.addTab(medicalRecordsTab, "Záznamy");
 		tabSheet.addTab(new MedicalInstitutionsTab(), "Instituce");
 		tabSheet.addTab(new MedicamentsTab(), "Medikamenty");
 		tabSheet.addTab(new PhysiciansTab(), "Doktoři");

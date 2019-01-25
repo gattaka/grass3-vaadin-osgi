@@ -2,6 +2,7 @@ package cz.gattserver.grass3.medic.web;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
@@ -42,7 +43,10 @@ public class ScheduledVisitsTab extends VerticalLayout {
 	private Grid<ScheduledVisitDTO> toBePlannedGrid = new Grid<>();
 	private Grid<ScheduledVisitDTO> plannedGrid = new Grid<>();
 
-	public ScheduledVisitsTab() {
+	private MedicalRecordsTab medicalRecordsTab;
+
+	public ScheduledVisitsTab(MedicalRecordsTab medicalRecordsTab) {
+		this.medicalRecordsTab = medicalRecordsTab;
 		setSpacing(true);
 		setMargin(new MarginInfo(true, false, false, false));
 
@@ -78,6 +82,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
 				}
 				populateContainer(true);
+				medicalRecordsTab.refreshGrid();
 			}
 		};
 		UI.getCurrent().addWindow(win);
@@ -139,7 +144,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		Label plannedTableLabel = new BoldLabel("Naplánované návštěvy");
 		addComponent(plannedTableLabel);
 
-		prepareGrid(plannedGrid);
+		prepareGrid(plannedGrid, true);
 
 		plannedGrid.addSelectionListener(event -> {
 			boolean enabled = event.getAllSelectedItems().size() == 1;
@@ -190,7 +195,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		populateContainer(true);
 	}
 
-	private void prepareGrid(Grid<ScheduledVisitDTO> grid) {
+	private void prepareGrid(Grid<ScheduledVisitDTO> grid, boolean fullTime) {
 		grid.addColumn(item -> {
 			if (item.getState().equals(ScheduledVisitState.MISSED)) {
 				return new Image("", ImageIcon.WARNING_16_ICON.createResource());
@@ -203,8 +208,13 @@ public class ScheduledVisitsTab extends VerticalLayout {
 
 		grid.addColumn(ScheduledVisitDTO::getState, new TextRenderer()).setId("state").setCaption("Stav");
 		grid.addColumn(ScheduledVisitDTO::getPurpose).setId("purpose").setCaption("Účel");
-		grid.addColumn(ScheduledVisitDTO::getDate, new LocalDateTimeRenderer("dd.MM.yyyy")).setId("date")
-				.setCaption("Datum");
+		if (fullTime)
+			grid.addColumn(ScheduledVisitDTO::getDate, new LocalDateTimeRenderer("dd.MM.yyyy HH:mm")).setId("date")
+					.setCaption("Datum");
+		else
+			grid.addColumn(ScheduledVisitDTO::getDate,
+					new LocalDateTimeRenderer("MMMM yyyy", Locale.forLanguageTag("CS"))).setId("date")
+					.setCaption("Datum");
 		grid.addColumn(item -> item.getInstitution() == null ? "" : item.getInstitution().getName())
 				.setId("institution").setCaption("Instituce");
 		grid.setWidth("100%");
@@ -237,7 +247,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		Label toBePlannedTableLabel = new BoldLabel("K objednání");
 		addComponent(toBePlannedTableLabel);
 
-		prepareGrid(toBePlannedGrid);
+		prepareGrid(toBePlannedGrid, false);
 		toBePlannedGrid.addSelectionListener(event -> {
 			boolean enabled = event.getAllSelectedItems().size() == 1;
 			detailBtn.setEnabled(enabled);

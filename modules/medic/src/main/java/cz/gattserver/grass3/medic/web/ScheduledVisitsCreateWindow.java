@@ -87,7 +87,7 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 		dateField.setLocale(Locale.forLanguageTag("CS"));
 		if (planned) {
 			dateField.setResolution(DateTimeResolution.MINUTE);
-			dateField.setDateFormat("d. MMMMM yyyy, HH:mm");
+			dateField.setDateFormat("d. MMMM yyyy, HH:mm");
 			winLayout.addComponent(dateField, 0, 1, 1, 1);
 		} else {
 			dateField.setResolution(DateTimeResolution.MONTH);

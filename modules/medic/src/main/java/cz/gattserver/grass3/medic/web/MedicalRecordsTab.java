@@ -29,10 +29,14 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 
 			@Override
 			protected void onSuccess() {
-				data = getItems();
-				grid.setItems(data);
+				refreshGrid();
 			}
 		};
+	}
+
+	public void refreshGrid() {
+		data = getItems();
+		grid.setItems(data);
 	}
 
 	@Override
@@ -60,7 +64,7 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 	@Override
 	protected void customizeGrid(Grid<MedicalRecordDTO> grid) {
 		String fdateID = "fdate";
-		grid.addColumn(MedicalRecordDTO::getDate, new LocalDateTimeRenderer("dd.MM.yyyy")).setCaption("Datum")
+		grid.addColumn(MedicalRecordDTO::getDate, new LocalDateTimeRenderer("dd.MM.yyyy HH:mm")).setCaption("Datum")
 				.setId(fdateID);
 		grid.getColumn("institution").setCaption("Instituce");
 		grid.getColumn("physician").setCaption("Ošetřující lékař");
@@ -68,7 +72,6 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 		grid.setColumns(fdateID, "institution", "physician", "record");
 		grid.setWidth("100%");
 		grid.setSelectionMode(SelectionMode.SINGLE);
-		grid.sort(fdateID);
 	}
 
 }

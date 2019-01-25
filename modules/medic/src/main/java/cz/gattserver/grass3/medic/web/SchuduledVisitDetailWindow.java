@@ -29,7 +29,7 @@ public class SchuduledVisitDetailWindow extends DetailWindow {
 		layout.setMargin(true);
 		layout.addComponent(new BoldLabel("Datum"));
 		layout.addComponent(
-				new Label(scheduledVisitDTO.getDate().format(DateTimeFormatter.ofPattern("d. MMMMM yyyy, H:mm"))));
+				new Label(scheduledVisitDTO.getDate().format(DateTimeFormatter.ofPattern("d. MMMM yyyy, H:mm"))));
 		layout.addComponent(new BoldLabel("Účel"));
 		layout.addComponent(new Label(scheduledVisitDTO.getPurpose()));
 

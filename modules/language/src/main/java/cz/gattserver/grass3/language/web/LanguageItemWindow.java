@@ -18,6 +18,7 @@ import cz.gattserver.grass3.language.model.domain.ItemType;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.ui.components.CreateButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
+import cz.gattserver.web.common.ui.window.ConfirmWindow;
 import cz.gattserver.web.common.ui.window.WebWindow;
 
 public class LanguageItemWindow extends WebWindow {
@@ -36,7 +37,7 @@ public class LanguageItemWindow extends WebWindow {
 		super(to == null ? "Založit" : "Upravit" + " záznam");
 
 		removeCloseShortcut(KeyCode.ESCAPE);
-		
+
 		setWidth("600px");
 
 		if (asType == null)
@@ -97,17 +98,37 @@ public class LanguageItemWindow extends WebWindow {
 
 	private void onSave(SaveAction action, Binder<LanguageItemTO> binder, LanguageItemTO targetTO) {
 		if (binder.writeBeanIfValid(targetTO)) {
-			action.onSave(targetTO);
-			close();
+			checkAndThen(targetTO, () -> {
+				action.onSave(targetTO);
+				close();
+			});
 		}
 	}
 
 	private void onSaveAndContinue(SaveAction action, Binder<LanguageItemTO> binder, LanguageItemTO targetTO,
 			Validator<String> validator, ItemType asType) {
 		if (binder.writeBeanIfValid(targetTO)) {
-			action.onSave(targetTO);
-			UI.getCurrent().addWindow(new LanguageItemWindow(action, validator, asType));
-			close();
+			checkAndThen(targetTO, () -> {
+				action.onSave(targetTO);
+				UI.getCurrent().addWindow(new LanguageItemWindow(action, validator, asType));
+				close();
+			});
+		}
+	}
+
+	private void checkAndThen(LanguageItemTO targetTO, Runnable r) {
+		if (targetTO.getContent().split(" ").length > 2 && ItemType.WORD.equals(targetTO.getType())) {
+			UI.getCurrent().addWindow(new ConfirmWindow(
+					"Opravdu uložit slovní spojení jako '" + ItemType.WORD.getCaption() + "' ?", e -> {
+						r.run();
+					}));
+		} else if (targetTO.getContent().split(" ").length == 1 && ItemType.PHRASE.equals(targetTO.getType())) {
+			UI.getCurrent().addWindow(
+					new ConfirmWindow("Opravdu uložit jedno slovo '" + ItemType.PHRASE.getCaption() + "' ?", e -> {
+						r.run();
+					}));
+		} else {
+			r.run();
 		}
 	}
 

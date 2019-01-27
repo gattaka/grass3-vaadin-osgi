@@ -6,6 +6,7 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 
@@ -29,17 +30,26 @@ public class SongsPage extends OneColumnPage {
 		layout.addComponent(tabSheet);
 
 		ChordsTab ct = new ChordsTab(getRequest());
-		TextsTab tt = new TextsTab(getRequest(), tabSheet, ct);
-		tabSheet.addTab(tt, "Písničky");
+		SongTab st = new SongTab(getRequest(), tabSheet, ct);
+		ListTab lt = new ListTab(getRequest(), tabSheet, st);
+		tabSheet.addTab(lt, "Seznam");
 		tabSheet.addTab(ct, "Akordy");
+		tabSheet.addTab(st, "Písnička");
+
+		tabSheet.addSelectedTabChangeListener((e) -> {
+			boolean isListTab = e.getTabSheet().getSelectedTab().equals(lt);
+			SongTO choosenSong = lt.getChoosenSong();
+			if (isListTab && choosenSong != null) {
+				lt.selectSong(lt.getChoosenSong().getId());
+			}
+		});
 
 		String token = getRequest().getAnalyzer().getNextPathToken();
 		if (token != null) {
 			if ("text".equals(token.toLowerCase())) {
 				URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
 						.parseURLIdentifier(getRequest().getAnalyzer().getNextPathToken());
-				tabSheet.setSelectedTab(tt);
-				tt.selectSong(identifier.getId());
+				lt.chooseSong(identifier.getId(), true);
 			} else if ("chord".equals(token.toLowerCase())) {
 				tabSheet.setSelectedTab(ct);
 				ct.selectChord(getRequest().getAnalyzer().getNextPathToken());

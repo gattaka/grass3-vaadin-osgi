@@ -85,7 +85,6 @@ public class ListTab extends VerticalLayout {
 				.setWidth(250);
 		Column<SongOverviewTO, Integer> yearColumn = grid.addColumn(SongOverviewTO::getYear).setCaption("Rok")
 				.setWidth(60);
-		grid.addColumn(SongOverviewTO::getPreview).setCaption("Náhled").setWidth(200);
 		grid.setWidth("100%");
 		grid.setHeight("600px");
 		addComponent(grid);

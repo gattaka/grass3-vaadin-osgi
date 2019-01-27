@@ -30,7 +30,7 @@ public class SongsRepositoryCustomImpl implements SongsRepositoryCustom {
 		builder.iLike(s.name, filterTO.getName());
 		builder.iLike(s.author, filterTO.getAuthor());
 		builder.eq(s.year, filterTO.getYear());
-		return query.select(new QSongOverviewTO(s.name, s.author, s.year, s.id, s.text.substring(0, 20))).from(s)
-				.where(builder.getBuilder()).orderBy(new OrderSpecifier<>(Order.ASC, s.name)).fetch();
+		return query.select(new QSongOverviewTO(s.name, s.author, s.year, s.id)).from(s).where(builder.getBuilder())
+				.orderBy(new OrderSpecifier<>(Order.ASC, s.name)).fetch();
 	}
 }

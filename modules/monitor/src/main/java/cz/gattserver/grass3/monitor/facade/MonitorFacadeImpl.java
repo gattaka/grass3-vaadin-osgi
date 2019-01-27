@@ -1,6 +1,8 @@
 package cz.gattserver.grass3.monitor.facade;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.net.HttpURLConnection;
@@ -14,8 +16,14 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.netbeans.lib.profiler.heap.Heap;
+import org.netbeans.lib.profiler.heap.HeapFactory;
+import org.netbeans.lib.profiler.heap.JavaClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,19 +47,16 @@ import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
 import cz.gattserver.grass3.services.ConfigurationService;
 
 import javax.management.MBeanServer;
-import java.lang.management.ManagementFactory;
-import com.sun.management.HotSpotDiagnosticMXBean;
 
 @Transactional
 @Component
 public class MonitorFacadeImpl implements MonitorFacade {
 
 	private static final int HTTP_TEST_TIMEOUT = 5000;
+	private static Logger logger = LoggerFactory.getLogger(MonitorFacadeImpl.class);
 
 	@Autowired
 	private ConfigurationService configurationService;
-
-	private static volatile HotSpotDiagnosticMXBean hotspotMBean;
 
 	@Override
 	public MonitorConfiguration getConfiguration() {
@@ -65,9 +70,13 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		configurationService.saveConfiguration(configuration);
 	}
 
-	private ConsoleOutputTO runScript(String script) {
+	private ConsoleOutputTO runScript(String script, String... param) {
 		String scriptsDir = getConfiguration().getScriptsDir();
-		return Console.executeCommand(scriptsDir + "/" + script + ".sh");
+		List<String> items = new ArrayList<>();
+		items.add(scriptsDir + "/" + script + ".sh");
+		for (String p : param)
+			items.add(p);
+		return Console.executeCommand(items);
 	}
 
 	@Override
@@ -292,23 +301,38 @@ public class MonitorFacadeImpl implements MonitorFacade {
 	public JVMHeapDumpMonitorItemTO getJVMHeapDump() {
 		JVMHeapDumpMonitorItemTO to = new JVMHeapDumpMonitorItemTO();
 		try {
-			if (hotspotMBean == null) {
-				synchronized (MonitorFacadeImpl.class) {
-					if (hotspotMBean == null) {
-						MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-						hotspotMBean = ManagementFactory.newPlatformMXBeanProxy(server,
-								"com.sun.management:type=HotSpotDiagnostic", HotSpotDiagnosticMXBean.class);
-					}
-				}
-			}
+
+			List<String> list = new ArrayList<>();
+
 			Path tempDirWithPrefix = Files.createTempDirectory("grassMonitorDump");
-			Path path = tempDirWithPrefix.resolve(System.currentTimeMillis() + ".hprof");
-			hotspotMBean.dumpHeap(path.toAbsolutePath().toString(), true);
-			to.setDump(Files.readAllLines(path));
+			// HeapDump.dumpHeap(path.toAbsolutePath().toString(), true);
+			//
+			// Heap heap = HeapFactory.createHeap(path.toFile());
+			// for (Object o : heap.getAllClasses()) {
+			// JavaClass jc = (JavaClass) o;
+			// list.add(jc.getName() + "\t" + jc.getAllInstancesSize());
+			// }
+
+			Path outFile = tempDirWithPrefix.resolve("out");
+			String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
+
+			ConsoleOutputTO consoleTO = runScript("getJmapList", pid, outFile.toAbsolutePath().toString());
+
+			// Runtime rt = Runtime.getRuntime();
+			// rt.exec("jmap.exe -histo:live " + pid + " > " +
+			// outFile.toAbsolutePath().toString() + " &");
+
+			Thread.sleep(2000);
+
+			to.setDump(Files.readAllLines(outFile));
+
+			// list.add(consoleTO.getOutput());
+			// to.setDump(list);
 
 			to.setMonitorState(MonitorState.SUCCESS);
 		} catch (Exception e) {
 			to.setMonitorState(MonitorState.UNAVAILABLE);
+			logger.error("Dump se nepovedl", e);
 		}
 		return to;
 	}

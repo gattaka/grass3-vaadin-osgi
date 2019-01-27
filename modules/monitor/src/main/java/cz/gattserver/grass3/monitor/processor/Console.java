@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -14,7 +16,11 @@ public class Console {
 
 	private static Logger logger = LoggerFactory.getLogger(Console.class);
 
-	public static ConsoleOutputTO executeCommand(String... commandAndArguments) {
+	public static ConsoleOutputTO executeCommand(String command) {
+		return executeCommand(Arrays.asList(command));
+	}
+
+	public static ConsoleOutputTO executeCommand(List<String> commandAndArguments) {
 
 		Path dummyInput = null;
 		try {

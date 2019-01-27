@@ -26,6 +26,8 @@ import cz.gattserver.grass3.monitor.processor.ConsoleOutputTO;
 import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskMountsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskStatusMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMHeapDumpMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMPIDMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
@@ -36,6 +38,10 @@ import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
 import cz.gattserver.grass3.services.ConfigurationService;
 
+import javax.management.MBeanServer;
+import java.lang.management.ManagementFactory;
+import com.sun.management.HotSpotDiagnosticMXBean;
+
 @Transactional
 @Component
 public class MonitorFacadeImpl implements MonitorFacade {
@@ -44,6 +50,8 @@ public class MonitorFacadeImpl implements MonitorFacade {
 
 	@Autowired
 	private ConfigurationService configurationService;
+
+	private static volatile HotSpotDiagnosticMXBean hotspotMBean;
 
 	@Override
 	public MonitorConfiguration getConfiguration() {
@@ -126,32 +134,6 @@ public class MonitorFacadeImpl implements MonitorFacade {
 
 		itemTO.setMonitorState(MonitorState.SUCCESS);
 		return itemTO;
-	}
-
-	@Override
-	public JVMUptimeMonitorItemTO getJVMUptime() {
-		JVMUptimeMonitorItemTO to = new JVMUptimeMonitorItemTO();
-		try {
-			to.setUptime(ManagementFactory.getRuntimeMXBean().getUptime());
-			to.setMonitorState(MonitorState.SUCCESS);
-		} catch (Exception e) {
-			to.setMonitorState(MonitorState.UNAVAILABLE);
-		}
-		return to;
-	}
-
-	@Override
-	public JVMThreadsMonitorItemTO getJVMThreads() {
-		JVMThreadsMonitorItemTO to = new JVMThreadsMonitorItemTO();
-		try {
-			ThreadMXBean tb = ManagementFactory.getThreadMXBean();
-			to.setCount(tb.getThreadCount());
-			to.setPeak(tb.getPeakThreadCount());
-			to.setMonitorState(MonitorState.SUCCESS);
-		} catch (Exception e) {
-			to.setMonitorState(MonitorState.UNAVAILABLE);
-		}
-		return to;
 	}
 
 	@Override
@@ -265,6 +247,70 @@ public class MonitorFacadeImpl implements MonitorFacade {
 			}
 		}
 		return disks;
+	}
+
+	@Override
+	public JVMUptimeMonitorItemTO getJVMUptime() {
+		JVMUptimeMonitorItemTO to = new JVMUptimeMonitorItemTO();
+		try {
+			to.setUptime(ManagementFactory.getRuntimeMXBean().getUptime());
+			to.setMonitorState(MonitorState.SUCCESS);
+		} catch (Exception e) {
+			to.setMonitorState(MonitorState.UNAVAILABLE);
+		}
+		return to;
+	}
+
+	@Override
+	public JVMThreadsMonitorItemTO getJVMThreads() {
+		JVMThreadsMonitorItemTO to = new JVMThreadsMonitorItemTO();
+		try {
+			ThreadMXBean tb = ManagementFactory.getThreadMXBean();
+			to.setCount(tb.getThreadCount());
+			to.setPeak(tb.getPeakThreadCount());
+			to.setMonitorState(MonitorState.SUCCESS);
+		} catch (Exception e) {
+			to.setMonitorState(MonitorState.UNAVAILABLE);
+		}
+		return to;
+	}
+
+	@Override
+	public JVMPIDMonitorItemTO getJVMPID() {
+		JVMPIDMonitorItemTO to = new JVMPIDMonitorItemTO();
+		try {
+			// https://stackoverflow.com/questions/35842/how-can-a-java-program-get-its-own-process-id
+			to.setPid(ManagementFactory.getRuntimeMXBean().getName());
+			to.setMonitorState(MonitorState.SUCCESS);
+		} catch (Exception e) {
+			to.setMonitorState(MonitorState.UNAVAILABLE);
+		}
+		return to;
+	}
+
+	@Override
+	public JVMHeapDumpMonitorItemTO getJVMHeapDump() {
+		JVMHeapDumpMonitorItemTO to = new JVMHeapDumpMonitorItemTO();
+		try {
+			if (hotspotMBean == null) {
+				synchronized (MonitorFacadeImpl.class) {
+					if (hotspotMBean == null) {
+						MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+						hotspotMBean = ManagementFactory.newPlatformMXBeanProxy(server,
+								"com.sun.management:type=HotSpotDiagnostic", HotSpotDiagnosticMXBean.class);
+					}
+				}
+			}
+			Path tempDirWithPrefix = Files.createTempDirectory("grassMonitorDump");
+			Path path = tempDirWithPrefix.resolve(System.currentTimeMillis() + ".hprof");
+			hotspotMBean.dumpHeap(path.toAbsolutePath().toString(), true);
+			to.setDump(Files.readAllLines(path));
+
+			to.setMonitorState(MonitorState.SUCCESS);
+		} catch (Exception e) {
+			to.setMonitorState(MonitorState.UNAVAILABLE);
+		}
+		return to;
 	}
 
 	private boolean analyzeStore(DiskStatusMonitorItemTO to, FileStore store) throws IOException {

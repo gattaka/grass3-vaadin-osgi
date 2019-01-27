@@ -21,6 +21,8 @@ import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskMountsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskStatusMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMHeapDumpMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMPIDMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
@@ -86,7 +88,7 @@ public class MonitorPage extends OneColumnPage {
 	}
 
 	private void createSystemPart() {
-		VerticalLayout jvmLayout = createMonitorPart("System");
+		VerticalLayout systemLayout = createMonitorPart("System");
 
 		/*
 		 * Uptime
@@ -94,12 +96,12 @@ public class MonitorPage extends OneColumnPage {
 		SystemUptimeMonitorItemTO uptimeTO = monitorFacade.getSystemUptime();
 		switch (uptimeTO.getMonitorState()) {
 		case SUCCESS:
-			jvmLayout.addComponent(new SuccessMonitorDisplay(uptimeTO.getValue()));
+			systemLayout.addComponent(new SuccessMonitorDisplay(uptimeTO.getValue()));
 			break;
 		case UNAVAILABLE:
 		case ERROR:
 		default:
-			jvmLayout.addComponent(new WarningMonitorDisplay("System uptime info není dostupné"));
+			systemLayout.addComponent(new WarningMonitorDisplay("System uptime info není dostupné"));
 		}
 
 		/*
@@ -119,12 +121,12 @@ public class MonitorPage extends OneColumnPage {
 							+ humanFormat(memoryTO.getTotal()) + "; volno " + humanFormat(memoryTO.getAvailable()),
 					pb));
 			((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
-			jvmLayout.addComponent(itemLayout);
+			systemLayout.addComponent(itemLayout);
 			break;
 		case UNAVAILABLE:
 		case ERROR:
 		default:
-			jvmLayout.addComponent(new WarningMonitorDisplay("System memory info není dostupné"));
+			systemLayout.addComponent(new WarningMonitorDisplay("System memory info není dostupné"));
 		}
 
 		/*
@@ -143,12 +145,12 @@ public class MonitorPage extends OneColumnPage {
 					new SuccessMonitorDisplay("obsazeno " + humanFormat(swapTO.getUsed()) + " (" + usedPerc + ") z "
 							+ humanFormat(swapTO.getTotal()) + "; volno " + humanFormat(swapTO.getFree()), pb));
 			((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
-			jvmLayout.addComponent(itemLayout);
+			systemLayout.addComponent(itemLayout);
 			break;
 		case UNAVAILABLE:
 		case ERROR:
 		default:
-			jvmLayout.addComponent(new WarningMonitorDisplay("System swap info není dostupné"));
+			systemLayout.addComponent(new WarningMonitorDisplay("System swap info není dostupné"));
 		}
 	}
 
@@ -172,6 +174,20 @@ public class MonitorPage extends OneColumnPage {
 		}
 
 		/*
+		 * JVM PID
+		 */
+		JVMPIDMonitorItemTO pidTO = monitorFacade.getJVMPID();
+		switch (pidTO.getMonitorState()) {
+		case SUCCESS:
+			jvmLayout.addComponent(new SuccessMonitorDisplay("JVM PID: " + pidTO.getPid()));
+			break;
+		case UNAVAILABLE:
+		case ERROR:
+		default:
+			jvmLayout.addComponent(new WarningMonitorDisplay("JVM PID info není dostupné"));
+		}
+
+		/*
 		 * JVM Threads
 		 */
 		JVMThreadsMonitorItemTO threadsTO = monitorFacade.getJVMThreads();
@@ -184,6 +200,22 @@ public class MonitorPage extends OneColumnPage {
 		case ERROR:
 		default:
 			jvmLayout.addComponent(new WarningMonitorDisplay("JVM thread info není dostupné"));
+		}
+
+		/*
+		 * JVM Dump
+		 */
+		JVMHeapDumpMonitorItemTO dumpTO = monitorFacade.getJVMHeapDump();
+		switch (dumpTO.getMonitorState()) {
+		case SUCCESS:
+			jvmLayout.addComponent(new SuccessMonitorDisplay("JVM Dump: "));
+			for (String s : dumpTO.getDump())
+				jvmLayout.addComponent(new SuccessMonitorDisplay(s));
+			break;
+		case UNAVAILABLE:
+		case ERROR:
+		default:
+			jvmLayout.addComponent(new WarningMonitorDisplay("JVM Dump info není dostupné"));
 		}
 	}
 
@@ -297,9 +329,6 @@ public class MonitorPage extends OneColumnPage {
 		// System
 		createSystemPart();
 
-		// JVM Uptime
-		createJVMPart();
-
 		// Mount points
 		createMountsPart();
 
@@ -308,6 +337,9 @@ public class MonitorPage extends OneColumnPage {
 
 		// Backup disk
 		createBackupPart();
+
+		// JVM Uptime
+		createJVMPart();
 
 		// Mail test
 		VerticalLayout mailLayout = createMonitorPart("Mail notifier");

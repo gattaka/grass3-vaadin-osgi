@@ -6,6 +6,8 @@ import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
 import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskMountsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskStatusMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMHeapDumpMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMPIDMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
@@ -26,10 +28,6 @@ public interface MonitorFacade {
 
 	SystemSwapMonitorItemTO getSystemSwapStatus();
 
-	JVMUptimeMonitorItemTO getJVMUptime();
-
-	JVMThreadsMonitorItemTO getJVMThreads();
-
 	DiskMountsMonitorItemTO getDiskMounts();
 
 	BackupDiskMountedMonitorItemTO getBackupDiskMounted();
@@ -39,5 +37,13 @@ public interface MonitorFacade {
 	List<DiskStatusMonitorItemTO> getDiskStatus();
 
 	List<ServerServiceMonitorItemTO> getServerServicesStatus();
+
+	JVMUptimeMonitorItemTO getJVMUptime();
+
+	JVMThreadsMonitorItemTO getJVMThreads();
+
+	JVMPIDMonitorItemTO getJVMPID();
+
+	JVMHeapDumpMonitorItemTO getJVMHeapDump();
 
 }

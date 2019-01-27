@@ -9,7 +9,11 @@ public class CreateButton extends ImageButton {
 	private static final long serialVersionUID = -9054113192020716390L;
 
 	public CreateButton(Button.ClickListener clickListener) {
-		super("Vytvořit", ImageIcon.PLUS_16_ICON.createResource(), clickListener);
+		this("Vytvořit", clickListener);
+	}
+
+	public CreateButton(String caption, Button.ClickListener clickListener) {
+		super(caption, ImageIcon.PLUS_16_ICON.createResource(), clickListener);
 	}
 
 }

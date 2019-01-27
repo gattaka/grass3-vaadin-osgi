@@ -35,10 +35,7 @@ public class SongsFacadeImpl implements SongsFacade {
 
 	@Override
 	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO) {
-		List<Song> songs = songsRepository.findAllOrderByName(filterTO);
-		if (songs == null)
-			return null;
-		return mapper.mapSongs(songs);
+		return songsRepository.findAllOrderByName(filterTO);
 	}
 
 	@Override

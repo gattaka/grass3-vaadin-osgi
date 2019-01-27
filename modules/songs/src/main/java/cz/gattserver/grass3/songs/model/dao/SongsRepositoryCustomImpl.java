@@ -13,7 +13,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 
 import cz.gattserver.grass3.model.util.PredicateBuilder;
 import cz.gattserver.grass3.songs.model.domain.QSong;
-import cz.gattserver.grass3.songs.model.domain.Song;
+import cz.gattserver.grass3.songs.model.interfaces.QSongOverviewTO;
 import cz.gattserver.grass3.songs.model.interfaces.SongOverviewTO;
 
 @Repository
@@ -23,14 +23,14 @@ public class SongsRepositoryCustomImpl implements SongsRepositoryCustom {
 	private EntityManager entityManager;
 
 	@Override
-	public List<Song> findAllOrderByName(SongOverviewTO filterTO) {
+	public List<SongOverviewTO> findAllOrderByName(SongOverviewTO filterTO) {
 		JPAQuery<Integer> query = new JPAQuery<>(entityManager);
 		QSong s = QSong.song;
 		PredicateBuilder builder = new PredicateBuilder();
 		builder.iLike(s.name, filterTO.getName());
 		builder.iLike(s.author, filterTO.getAuthor());
 		builder.eq(s.year, filterTO.getYear());
-		return query.select(s).from(s).where(builder.getBuilder()).orderBy(new OrderSpecifier<>(Order.ASC, s.name))
-				.fetch();
+		return query.select(new QSongOverviewTO(s.name, s.author, s.year, s.id, s.text.substring(0, 20))).from(s)
+				.where(builder.getBuilder()).orderBy(new OrderSpecifier<>(Order.ASC, s.name)).fetch();
 	}
 }

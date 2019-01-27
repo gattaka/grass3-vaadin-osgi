@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.songs.model.interfaces;
 
+import com.querydsl.core.annotations.QueryProjection;
+
 import cz.gattserver.grass3.songs.model.domain.Song;
 
 public class SongOverviewTO {
@@ -24,6 +26,11 @@ public class SongOverviewTO {
 	 */
 	private Long id;
 
+	/**
+	 * Náhled
+	 */
+	private String preview;
+
 	public SongOverviewTO() {
 	}
 
@@ -33,6 +40,16 @@ public class SongOverviewTO {
 		this.author = author;
 		this.year = year;
 		this.id = id;
+	}
+
+	@QueryProjection
+	public SongOverviewTO(String name, String author, Integer year, Long id, String preview) {
+		super();
+		this.name = name;
+		this.author = author;
+		this.year = year;
+		this.id = id;
+		this.preview = preview;
 	}
 
 	@Override
@@ -77,6 +94,14 @@ public class SongOverviewTO {
 
 	public void setYear(Integer year) {
 		this.year = year;
+	}
+
+	public String getPreview() {
+		return preview;
+	}
+
+	public void setPreview(String preview) {
+		this.preview = preview;
 	}
 
 }

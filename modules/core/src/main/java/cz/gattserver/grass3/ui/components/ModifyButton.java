@@ -9,7 +9,11 @@ public class ModifyButton extends ImageButton {
 	private static final long serialVersionUID = -9054113192020716390L;
 
 	public ModifyButton(Button.ClickListener clickListener) {
-		super("Upravit", ImageIcon.PENCIL_16_ICON.createResource(), clickListener);
+		this("Upravit", clickListener);
+	}
+
+	public ModifyButton(String caption, Button.ClickListener clickListener) {
+		super(caption, ImageIcon.PENCIL_16_ICON.createResource(), clickListener);
 	}
 
 }

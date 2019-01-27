@@ -55,14 +55,29 @@ public class ListTab extends VerticalLayout {
 	private TabSheet tabSheet;
 	private SongTab songTab;
 
-	public ListTab(GrassRequest request, TabSheet tabSheet, SongTab songTab) {
+	public ListTab(GrassRequest request, TabSheet tabSheet) {
 		SpringContextHelper.inject(this);
-		setMargin(new MarginInfo(true, false, false, false));
 
 		songs = new ArrayList<>();
 		filterTO = new SongOverviewTO();
+
 		this.tabSheet = tabSheet;
+	}
+
+	public SongTab getSongTab() {
+		return songTab;
+	}
+
+	public ListTab setSongTab(SongTab songTab) {
 		this.songTab = songTab;
+		return this;
+	}
+
+	public ListTab init() {
+		if (songTab == null)
+			throw new IllegalStateException();
+
+		setMargin(new MarginInfo(true, false, false, false));
 
 		grid = new Grid<>(null, songs);
 		Column<SongOverviewTO, String> nazevColumn = grid.addColumn(SongOverviewTO::getName).setCaption("Název");
@@ -70,6 +85,7 @@ public class ListTab extends VerticalLayout {
 				.setWidth(250);
 		Column<SongOverviewTO, Integer> yearColumn = grid.addColumn(SongOverviewTO::getYear).setCaption("Rok")
 				.setWidth(60);
+		grid.addColumn(SongOverviewTO::getPreview).setCaption("Náhled").setWidth(200);
 		grid.setWidth("100%");
 		grid.setHeight("600px");
 		addComponent(grid);
@@ -126,9 +142,8 @@ public class ListTab extends VerticalLayout {
 				@Override
 				protected void onSave(SongTO to) {
 					to = songsFacade.saveSong(to);
-					songTab.showDetail(to);
 					loadSongs();
-					selectSong(to.getId());
+					chooseSong(to.getId(), true);
 				}
 			});
 		}));
@@ -145,9 +160,8 @@ public class ListTab extends VerticalLayout {
 					int filesLeftInQueue) {
 				SongTO to = songsFacade.importSong(importedAuthorField.getValue(), in, fileName, mime, size,
 						filesLeftInQueue);
-				songTab.showDetail(to);
 				loadSongs();
-				selectSong(to.getId());
+				chooseSong(to.getId(), true);
 			}
 		};
 		multiFileUpload.setEnabled(false);
@@ -179,6 +193,7 @@ public class ListTab extends VerticalLayout {
 			songTab.showDetail(null);
 		}, grid));
 
+		return this;
 	}
 
 	public void selectSong(Long id) {
@@ -205,7 +220,7 @@ public class ListTab extends VerticalLayout {
 		return choosenSong;
 	}
 
-	private void loadSongs() {
+	public void loadSongs() {
 		songs.clear();
 		songs.addAll(songsFacade.getSongs(filterTO));
 		grid.getDataProvider().refreshAll();

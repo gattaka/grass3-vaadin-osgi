@@ -18,12 +18,18 @@ import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.services.SecurityService;
+import cz.gattserver.grass3.songs.SongsRole;
 import cz.gattserver.grass3.songs.facades.SongsFacade;
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.songs.model.interfaces.SongTO;
+import cz.gattserver.grass3.ui.components.CreateButton;
+import cz.gattserver.grass3.ui.components.DeleteButton;
+import cz.gattserver.grass3.ui.components.ModifyButton;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.H2Label;
 
@@ -34,25 +40,50 @@ public class SongTab extends VerticalLayout {
 	@Autowired
 	private SongsFacade songsFacade;
 
+	@Autowired
+	private SecurityService securityService;
+
 	@Resource(name = "songsPageFactory")
 	private SongsPageFactory pageFactory;
 
 	private GrassRequest request;
 	private TabSheet tabSheet;
 	private ChordsTab chordsTab;
+	private ListTab listTab;
 
 	private Label nameLabel;
 	private Label authorYearLabel;
 	private Label contentLabel;
 
-	public SongTab(GrassRequest request, TabSheet tabSheet, ChordsTab chordsTab) {
+	public SongTab(GrassRequest request, TabSheet tabSheet) {
 		SpringContextHelper.inject(this);
-		setMargin(new MarginInfo(true, false, false, false));
-
 		this.request = request;
 		this.tabSheet = tabSheet;
-		this.chordsTab = chordsTab;
+	}
 
+	public ChordsTab getChordsTab() {
+		return chordsTab;
+	}
+
+	public SongTab setChordsTab(ChordsTab chordsTab) {
+		this.chordsTab = chordsTab;
+		return this;
+	}
+
+	public ListTab getListTab() {
+		return listTab;
+	}
+
+	public SongTab setListTab(ListTab listTab) {
+		this.listTab = listTab;
+		return this;
+	}
+
+	public SongTab init() {
+		if (chordsTab == null || listTab == null)
+			throw new IllegalStateException();
+
+		setMargin(new MarginInfo(true, false, false, false));
 		VerticalLayout wrapLayout = new VerticalLayout();
 
 		Panel panel = new Panel(wrapLayout);
@@ -78,14 +109,54 @@ public class SongTab extends VerticalLayout {
 		contentLabel.setStyleName("song-text-area");
 		Page.getCurrent().getStyles()
 				.add(".v-slot.v-slot-song-text-area { font-family: monospace; font-size: 12px; overflow: auto; }");
-		Page.getCurrent().getStyles().add(
-				".song-text-area { -webkit-column-width: 300px; -moz-column-width: 300px; column-width: 300px; column-fill: auto; "
-				+ "-webkit-column-rule: 1px dotted #ddd; -moz-column-rule: 1px dotted #ddd; column-rule: 1px dotted #ddd; }");
+		Page.getCurrent().getStyles()
+				.add(".song-text-area { -webkit-column-width: 300px; -moz-column-width: 300px; column-width: 300px; column-fill: auto; "
+						+ "-webkit-column-rule: 1px dotted #ddd; -moz-column-rule: 1px dotted #ddd; column-rule: 1px dotted #ddd; }");
 		contentLabel.setHeight("700px");
 		contentLabel.setWidth(null);
 		contentLabel.setContentMode(ContentMode.HTML);
 		contentLayout.addComponent(contentLabel);
 
+		HorizontalLayout btnLayout = new HorizontalLayout();
+		btnLayout.setSpacing(true);
+		addComponent(btnLayout);
+
+		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));
+
+		btnLayout.addComponent(new CreateButton("Přidat", event -> {
+			UI.getCurrent().addWindow(new SongWindow() {
+				private static final long serialVersionUID = -4863260002363608014L;
+
+				@Override
+				protected void onSave(SongTO to) {
+					to = songsFacade.saveSong(to);
+					listTab.loadSongs();
+					listTab.chooseSong(to.getId(), false);
+				}
+			});
+		}));
+
+		btnLayout.addComponent(new ModifyButton("Upravit", event -> {
+			UI.getCurrent().addWindow(new SongWindow(listTab.getChoosenSong()) {
+				private static final long serialVersionUID = 5264621441522056786L;
+
+				@Override
+				protected void onSave(SongTO to) {
+					to = songsFacade.saveSong(to);
+					listTab.loadSongs();
+					listTab.chooseSong(to.getId(), false);
+				}
+			});
+		}));
+
+		btnLayout.addComponent(new DeleteButton("Smazat", e -> {
+			songsFacade.deleteSong(listTab.getChoosenSong().getId());
+			listTab.loadSongs();
+			showDetail(null);
+			tabSheet.setSelectedTab(listTab);
+		}));
+
+		return this;
 	}
 
 	public void showDetail(SongTO choosenSong) {

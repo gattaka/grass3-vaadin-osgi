@@ -9,7 +9,11 @@ public class DeleteButton extends ImageButton {
 	private static final long serialVersionUID = -9054113192020716390L;
 
 	public DeleteButton(Button.ClickListener clickListener) {
-		super("Smazat", ImageIcon.DELETE_16_ICON.createResource(), clickListener);
+		this("Smazat", clickListener);
+	}
+
+	public DeleteButton(String caption, Button.ClickListener clickListener) {
+		super(caption, ImageIcon.DELETE_16_ICON.createResource(), clickListener);
 	}
 
 }

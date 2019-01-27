@@ -30,11 +30,15 @@ public class SongsPage extends OneColumnPage {
 		layout.addComponent(tabSheet);
 
 		ChordsTab ct = new ChordsTab(getRequest());
-		SongTab st = new SongTab(getRequest(), tabSheet, ct);
-		ListTab lt = new ListTab(getRequest(), tabSheet, st);
+		SongTab st = new SongTab(getRequest(), tabSheet);
+		ListTab lt = new ListTab(getRequest(), tabSheet);
+
+		st.setChordsTab(ct).setListTab(lt).init();
+		lt.setSongTab(st).init();
+
 		tabSheet.addTab(lt, "Seznam");
-		tabSheet.addTab(ct, "Akordy");
 		tabSheet.addTab(st, "Písnička");
+		tabSheet.addTab(ct, "Akordy");
 
 		tabSheet.addSelectedTabChangeListener((e) -> {
 			boolean isListTab = e.getTabSheet().getSelectedTab().equals(lt);

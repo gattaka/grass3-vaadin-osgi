@@ -10,14 +10,6 @@
 		<version>3.0.10-SNAPSHOT</version>
 	</parent>
 
-	<repositories>
-		<repository>
-			<id>netbeans</id>
-			<name>netbeans</name>
-			<url>http://bits.netbeans.org/maven2</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
 
 		<!-- Grass3 jádro -->
@@ -25,14 +17,6 @@
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>core</artifactId>
 			<version>3.0.10-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<!-- This will need to be updated now that NetBeans is part of Apache 
-				works as of 11/12/2018 -->
-			<groupId>org.netbeans.modules</groupId>
-			<artifactId>org-netbeans-lib-profiler</artifactId>
-			<version>RELEASE802</version>
 		</dependency>
 
 	</dependencies>

@@ -1,8 +1,6 @@
 package cz.gattserver.grass3.monitor.facade;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.net.HttpURLConnection;
@@ -16,12 +14,9 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
-import org.netbeans.lib.profiler.heap.Heap;
-import org.netbeans.lib.profiler.heap.HeapFactory;
-import org.netbeans.lib.profiler.heap.JavaClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +29,7 @@ import cz.gattserver.grass3.monitor.processor.ConsoleOutputTO;
 import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskMountsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskStatusMonitorItemTO;
-import cz.gattserver.grass3.monitor.processor.item.JVMHeapDumpMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMHeapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMPIDMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
@@ -45,8 +40,6 @@ import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
 import cz.gattserver.grass3.services.ConfigurationService;
-
-import javax.management.MBeanServer;
 
 @Transactional
 @Component
@@ -289,7 +282,7 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		JVMPIDMonitorItemTO to = new JVMPIDMonitorItemTO();
 		try {
 			// https://stackoverflow.com/questions/35842/how-can-a-java-program-get-its-own-process-id
-			to.setPid(ManagementFactory.getRuntimeMXBean().getName());
+			to.setPid(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
 			to.setMonitorState(MonitorState.SUCCESS);
 		} catch (Exception e) {
 			to.setMonitorState(MonitorState.UNAVAILABLE);
@@ -298,36 +291,30 @@ public class MonitorFacadeImpl implements MonitorFacade {
 	}
 
 	@Override
-	public JVMHeapDumpMonitorItemTO getJVMHeapDump() {
-		JVMHeapDumpMonitorItemTO to = new JVMHeapDumpMonitorItemTO();
+	public JVMHeapMonitorItemTO getJVMHeap() {
+		JVMHeapMonitorItemTO to = new JVMHeapMonitorItemTO();
 		try {
 
-			List<String> list = new ArrayList<>();
-
 			Path tempDirWithPrefix = Files.createTempDirectory("grassMonitorDump");
-			// HeapDump.dumpHeap(path.toAbsolutePath().toString(), true);
-			//
-			// Heap heap = HeapFactory.createHeap(path.toFile());
-			// for (Object o : heap.getAllClasses()) {
-			// JavaClass jc = (JavaClass) o;
-			// list.add(jc.getName() + "\t" + jc.getAllInstancesSize());
-			// }
 
 			Path outFile = tempDirWithPrefix.resolve("out");
 			String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
 
-			ConsoleOutputTO consoleTO = runScript("getJmapList", pid, outFile.toAbsolutePath().toString());
-
-			// Runtime rt = Runtime.getRuntime();
-			// rt.exec("jmap.exe -histo:live " + pid + " > " +
-			// outFile.toAbsolutePath().toString() + " &");
+			runScript("getJmapList", pid, outFile.toAbsolutePath().toString());
 
 			Thread.sleep(2000);
 
-			to.setDump(Files.readAllLines(outFile));
-
-			// list.add(consoleTO.getOutput());
-			// to.setDump(list);
+			// outFile = Paths.get("c:/Users/gatta/Downloads").resolve("out");
+			Pattern pattern = Pattern.compile("\\s+[0-9]+:\\s+[0-9]+\\s+[0-9]+.+");
+			for (String s : Files.readAllLines(outFile)) {
+				if (!pattern.matcher(s).matches())
+					continue;
+				String[] parts = s.split("\\s+");
+				to.getLines()
+						.add(new JVMHeapMonitorItemTO.Line(
+								Integer.parseInt(parts[1].substring(0, parts[1].length() - 1)),
+								Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), parts[4]));
+			}
 
 			to.setMonitorState(MonitorState.SUCCESS);
 		} catch (Exception e) {

@@ -9,11 +9,15 @@ import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.JavaScript;
-import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.ProgressBar;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.HeaderRow;
+import com.vaadin.ui.themes.ValoTheme;
 
 import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.grass3.monitor.MonitorEmailNotifier;
@@ -21,7 +25,7 @@ import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskMountsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskStatusMonitorItemTO;
-import cz.gattserver.grass3.monitor.processor.item.JVMHeapDumpMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMHeapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMPIDMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
@@ -37,7 +41,6 @@ import cz.gattserver.grass3.monitor.web.label.SuccessMonitorDisplay;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.ui.H2Label;
-import elemental.json.JsonArray;
 
 public class MonitorPage extends OneColumnPage {
 
@@ -55,9 +58,7 @@ public class MonitorPage extends OneColumnPage {
 		super(request);
 	}
 
-	private VerticalLayout createMonitorPart(String caption) {
-		VerticalLayout partLayout = new VerticalLayout();
-		layout.addComponent(partLayout);
+	private VerticalLayout populateMonitorPart(String caption, VerticalLayout partLayout) {
 		partLayout.setMargin(true);
 		partLayout.setSpacing(false);
 		partLayout.addComponent(new H2Label(caption));
@@ -68,8 +69,8 @@ public class MonitorPage extends OneColumnPage {
 		return HumanBytesSizeFormatter.format(value, false);
 	}
 
-	private void createServerServices() {
-		VerticalLayout serverServicesLayout = createMonitorPart("Server services");
+	private void createServerServices(VerticalLayout serverServicesLayout) {
+		populateMonitorPart("Server services", serverServicesLayout);
 		for (ServerServiceMonitorItemTO to : monitorFacade.getServerServicesStatus()) {
 			String content = to.getName() + " (<a target='_blank' href='" + to.getAddress() + "'>" + to.getAddress()
 					+ "</a>) [status: " + to.getResponseCode() + "]";
@@ -87,8 +88,8 @@ public class MonitorPage extends OneColumnPage {
 		}
 	}
 
-	private void createSystemPart() {
-		VerticalLayout systemLayout = createMonitorPart("System");
+	private void createSystemPart(VerticalLayout systemLayout) {
+		populateMonitorPart("System", systemLayout);
 
 		/*
 		 * Uptime
@@ -154,8 +155,8 @@ public class MonitorPage extends OneColumnPage {
 		}
 	}
 
-	private void createJVMPart() {
-		VerticalLayout jvmLayout = createMonitorPart("JVM");
+	private void createJVMOverviewPart(VerticalLayout jvmOverviewLayout) {
+		populateMonitorPart("JVM Overview", jvmOverviewLayout);
 
 		/*
 		 * JVM Uptime
@@ -163,14 +164,14 @@ public class MonitorPage extends OneColumnPage {
 		JVMUptimeMonitorItemTO uptimeTO = monitorFacade.getJVMUptime();
 		switch (uptimeTO.getMonitorState()) {
 		case SUCCESS:
-			jvmLayout.addComponent(new SuccessMonitorDisplay(
+			jvmOverviewLayout.addComponent(new SuccessMonitorDisplay(
 					String.format("JVM uptime: %d days, %d hours, %d minutes, %d seconds%n", uptimeTO.getElapsedDays(),
 							uptimeTO.getElapsedHours(), uptimeTO.getElapsedMinutes(), uptimeTO.getElapsedSeconds())));
 			break;
 		case UNAVAILABLE:
 		case ERROR:
 		default:
-			jvmLayout.addComponent(new WarningMonitorDisplay("JVM uptime info není dostupné"));
+			jvmOverviewLayout.addComponent(new WarningMonitorDisplay("JVM uptime info není dostupné"));
 		}
 
 		/*
@@ -179,12 +180,12 @@ public class MonitorPage extends OneColumnPage {
 		JVMPIDMonitorItemTO pidTO = monitorFacade.getJVMPID();
 		switch (pidTO.getMonitorState()) {
 		case SUCCESS:
-			jvmLayout.addComponent(new SuccessMonitorDisplay("JVM PID: " + pidTO.getPid()));
+			jvmOverviewLayout.addComponent(new SuccessMonitorDisplay("JVM PID: " + pidTO.getPid()));
 			break;
 		case UNAVAILABLE:
 		case ERROR:
 		default:
-			jvmLayout.addComponent(new WarningMonitorDisplay("JVM PID info není dostupné"));
+			jvmOverviewLayout.addComponent(new WarningMonitorDisplay("JVM PID info není dostupné"));
 		}
 
 		/*
@@ -193,34 +194,54 @@ public class MonitorPage extends OneColumnPage {
 		JVMThreadsMonitorItemTO threadsTO = monitorFacade.getJVMThreads();
 		switch (threadsTO.getMonitorState()) {
 		case SUCCESS:
-			jvmLayout.addComponent(new SuccessMonitorDisplay(
+			jvmOverviewLayout.addComponent(new SuccessMonitorDisplay(
 					"Aktuální stav vláken: " + threadsTO.getCount() + " peak: " + threadsTO.getPeak()));
 			break;
 		case UNAVAILABLE:
 		case ERROR:
 		default:
-			jvmLayout.addComponent(new WarningMonitorDisplay("JVM thread info není dostupné"));
+			jvmOverviewLayout.addComponent(new WarningMonitorDisplay("JVM thread info není dostupné"));
 		}
+	}
 
-		/*
-		 * JVM Dump
-		 */
-		JVMHeapDumpMonitorItemTO dumpTO = monitorFacade.getJVMHeapDump();
-		switch (dumpTO.getMonitorState()) {
+	private void createJVMHeapPart(VerticalLayout jvmHeapLayout) {
+		populateMonitorPart("JVM Heap", jvmHeapLayout);
+		JVMHeapMonitorItemTO heapTO = monitorFacade.getJVMHeap();
+		switch (heapTO.getMonitorState()) {
 		case SUCCESS:
-			jvmLayout.addComponent(new SuccessMonitorDisplay("JVM Dump: "));
-			for (String s : dumpTO.getDump())
-				jvmLayout.addComponent(new SuccessMonitorDisplay(s));
+			jvmHeapLayout.addComponent(new SuccessMonitorDisplay("JVM Heap"));
+			Grid<JVMHeapMonitorItemTO.Line> grid = new Grid<>(null, heapTO.getLines());
+			grid.addColumn(JVMHeapMonitorItemTO.Line::getNum).setCaption("Pořadí");
+			Column<JVMHeapMonitorItemTO.Line, String> nameColumn = grid.addColumn(JVMHeapMonitorItemTO.Line::getName)
+					.setCaption("Třída");
+			grid.addColumn(JVMHeapMonitorItemTO.Line::getInstances).setCaption("Instance");
+			grid.addColumn(JVMHeapMonitorItemTO.Line::getBytes).setCaption("Byty");
+			grid.setWidth("100%");
+			grid.setHeight("300px");
+
+			HeaderRow filteringHeader = grid.appendHeaderRow();
+
+			// Obsah
+			TextField contentFilterField = new TextField();
+			contentFilterField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+			contentFilterField.setWidth("100%");
+			contentFilterField.addValueChangeListener(e -> {
+				grid.setItems(heapTO.getLines().stream().filter(
+						i -> i.getName().matches(contentFilterField.getValue().replaceAll("\\*", ".*") + ".*")));
+			});
+			filteringHeader.getCell(nameColumn).setComponent(contentFilterField);
+
+			jvmHeapLayout.addComponent(grid);
 			break;
 		case UNAVAILABLE:
 		case ERROR:
 		default:
-			jvmLayout.addComponent(new WarningMonitorDisplay("JVM Dump info není dostupné"));
+			jvmHeapLayout.addComponent(new WarningMonitorDisplay("JVM Heap info není dostupné"));
 		}
 	}
 
-	private void createMountsPart() {
-		VerticalLayout mountsLayout = createMonitorPart("Mount points");
+	private void createMountsPart(VerticalLayout mountsLayout) {
+		populateMonitorPart("Mount points", mountsLayout);
 		DiskMountsMonitorItemTO to = monitorFacade.getDiskMounts();
 		switch (to.getMonitorState()) {
 		case SUCCESS:
@@ -233,8 +254,8 @@ public class MonitorPage extends OneColumnPage {
 		}
 	}
 
-	private void createBackupPart() {
-		VerticalLayout backupLayout = createMonitorPart("Backup");
+	private void createBackupPart(VerticalLayout backupLayout) {
+		populateMonitorPart("Backup", backupLayout);
 		BackupDiskMountedMonitorItemTO mouted = monitorFacade.getBackupDiskMounted();
 		switch (mouted.getMonitorState()) {
 		case SUCCESS:
@@ -269,8 +290,8 @@ public class MonitorPage extends OneColumnPage {
 
 	}
 
-	private void createDisksPart() {
-		VerticalLayout diskLayout = createMonitorPart("Disk status");
+	private void createDisksPart(VerticalLayout diskLayout) {
+		populateMonitorPart("Disk status", diskLayout);
 		List<DiskStatusMonitorItemTO> disks = monitorFacade.getDiskStatus();
 		for (DiskStatusMonitorItemTO disk : disks) {
 			switch (disk.getMonitorState()) {
@@ -303,46 +324,56 @@ public class MonitorPage extends OneColumnPage {
 		layout.setSpacing(false);
 		layout.setMargin(true);
 
-		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.monitorupadate", new JavaScriptFunction() {
-			private static final long serialVersionUID = 5850638851716815161L;
-
-			@Override
-			public void call(JsonArray arguments) {
-				layout.removeAllComponents();
-				populateMonitor();
-			}
-		});
-
-		// update každé X vteřin
-		JavaScript.eval("setInterval(function(){ cz.gattserver.grass3.monitorupadate(); }, " + REFRESH_TIMEOUT + ");");
-
 		populateMonitor();
 
 		return layout;
 	}
 
+	private static interface RefreshedPart {
+		void populate(VerticalLayout partLayout);
+	}
+
+	private void createRefreshedPart(String refFuncId, RefreshedPart populateMethod) {
+		VerticalLayout partLayout = new VerticalLayout();
+		layout.addComponent(partLayout);
+		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.monitor." + refFuncId, (arguments) -> {
+			partLayout.removeAllComponents();
+			populateMethod.populate(partLayout);
+		});
+		JavaScript.eval("setInterval(function(){ cz.gattserver.grass3.monitor." + refFuncId + "(); }, "
+				+ REFRESH_TIMEOUT + ");");
+		populateMethod.populate(partLayout);
+	}
+
 	private void populateMonitor() {
 
 		// Server services
-		createServerServices();
+		createRefreshedPart("createServerServices", (partLayout) -> createServerServices(partLayout));
 
 		// System
-		createSystemPart();
+		createRefreshedPart("createSystemPart", (partLayout) -> createSystemPart(partLayout));
 
 		// Mount points
-		createMountsPart();
+		createRefreshedPart("createMountsPart", (partLayout) -> createMountsPart(partLayout));
 
 		// Úložiště
-		createDisksPart();
+		createRefreshedPart("createDisksPart", (partLayout) -> createDisksPart(partLayout));
 
 		// Backup disk
-		createBackupPart();
+		createRefreshedPart("createBackupPart", (partLayout) -> createBackupPart(partLayout));
 
-		// JVM Uptime
-		createJVMPart();
+		// JVM Overview
+		createRefreshedPart("createJVMOverviewPart", (partLayout) -> createJVMOverviewPart(partLayout));
+
+		// JVM Heap
+		VerticalLayout jvmHeapLayout = new VerticalLayout();
+		layout.addComponent(jvmHeapLayout);
+		createJVMHeapPart(jvmHeapLayout);
 
 		// Mail test
-		VerticalLayout mailLayout = createMonitorPart("Mail notifier");
+		VerticalLayout mailLayout = new VerticalLayout();
+		layout.addComponent(mailLayout);
+		populateMonitorPart("Mail notifier", mailLayout);
 		Button testMailBtn = new Button("Mail notifier", e -> {
 			emailNotifier.getTimerTask().run();
 		});

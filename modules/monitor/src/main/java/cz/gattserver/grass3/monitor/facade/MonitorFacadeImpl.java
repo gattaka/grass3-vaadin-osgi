@@ -300,12 +300,12 @@ public class MonitorFacadeImpl implements MonitorFacade {
 			Path outFile = tempDirWithPrefix.resolve("out");
 			String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
 
-			// runScript("getJmapList", pid,
-			// outFile.toAbsolutePath().toString());
+			runScript("getJmapList", pid, outFile.toAbsolutePath().toString());
 
-			// Thread.sleep(2000);
+			Thread.sleep(2000);
 
-			outFile = java.nio.file.Paths.get("c:/Users/gatta/Downloads").resolve("out");
+			// outFile =
+			// java.nio.file.Paths.get("c:/Users/gatta/Downloads").resolve("out");
 			Pattern pattern = Pattern.compile("[0-9]+:\\s+[0-9]+\\s+[0-9]+.+");
 			List<String> lines = Files.readAllLines(outFile);
 			for (String s : lines) {

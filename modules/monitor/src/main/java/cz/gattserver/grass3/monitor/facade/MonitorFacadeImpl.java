@@ -300,21 +300,26 @@ public class MonitorFacadeImpl implements MonitorFacade {
 			Path outFile = tempDirWithPrefix.resolve("out");
 			String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
 
-			runScript("getJmapList", pid, outFile.toAbsolutePath().toString());
+			// runScript("getJmapList", pid,
+			// outFile.toAbsolutePath().toString());
 
-			Thread.sleep(2000);
+			// Thread.sleep(2000);
 
-			// outFile = Paths.get("c:/Users/gatta/Downloads").resolve("out");
-			Pattern pattern = Pattern.compile("\\s+[0-9]+:\\s+[0-9]+\\s+[0-9]+.+");
-			for (String s : Files.readAllLines(outFile)) {
+			outFile = java.nio.file.Paths.get("c:/Users/gatta/Downloads").resolve("out");
+			Pattern pattern = Pattern.compile("[0-9]+:\\s+[0-9]+\\s+[0-9]+.+");
+			List<String> lines = Files.readAllLines(outFile);
+			for (String s : lines) {
+				s = s.trim();
 				if (!pattern.matcher(s).matches())
 					continue;
 				String[] parts = s.split("\\s+");
 				to.getLines()
 						.add(new JVMHeapMonitorItemTO.Line(
-								Integer.parseInt(parts[1].substring(0, parts[1].length() - 1)),
-								Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), parts[4]));
+								Integer.parseInt(parts[0].substring(0, parts[0].length() - 1)),
+								Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), parts[3]));
 			}
+
+			to.setFileName(outFile.toAbsolutePath().toString());
 
 			to.setMonitorState(MonitorState.SUCCESS);
 		} catch (Exception e) {

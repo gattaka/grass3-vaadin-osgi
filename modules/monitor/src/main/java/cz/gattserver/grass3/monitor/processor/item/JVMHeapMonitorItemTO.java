@@ -52,7 +52,18 @@ public class JVMHeapMonitorItemTO extends MonitorItemTO {
 		}
 	}
 
+	// debug
+	private String fileName;
+
 	private List<Line> lines = new ArrayList<>();
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 
 	public List<Line> getLines() {
 		return lines;

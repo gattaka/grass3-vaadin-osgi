@@ -210,6 +210,7 @@ public class MonitorPage extends OneColumnPage {
 		switch (heapTO.getMonitorState()) {
 		case SUCCESS:
 			jvmHeapLayout.addComponent(new SuccessMonitorDisplay("JVM Heap"));
+			jvmHeapLayout.addComponent(new SuccessMonitorDisplay("File: " + heapTO.getFileName()));
 			Grid<JVMHeapMonitorItemTO.Line> grid = new Grid<>(null, heapTO.getLines());
 			grid.addColumn(JVMHeapMonitorItemTO.Line::getNum).setCaption("Pořadí");
 			Column<JVMHeapMonitorItemTO.Line, String> nameColumn = grid.addColumn(JVMHeapMonitorItemTO.Line::getName)

@@ -212,7 +212,7 @@ public class SongTab extends VerticalLayout {
 		}
 
 		JavaScript.getCurrent().addFunction("grass.chords.show", arguments -> {
-			tabSheet.setSelectedTab(1);
+			tabSheet.setSelectedTab(chordsTab);
 			chordsTab.selectChord(arguments.getString(0));
 		});
 	}

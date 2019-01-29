@@ -30,6 +30,7 @@ import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemT
 import cz.gattserver.grass3.monitor.processor.item.DiskMountsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskStatusMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMHeapMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMPIDMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
@@ -278,6 +279,22 @@ public class MonitorFacadeImpl implements MonitorFacade {
 	}
 
 	@Override
+	public JVMMemoryMonitorItemTO getJVMMemory() {
+		JVMMemoryMonitorItemTO to = new JVMMemoryMonitorItemTO();
+		try {
+			Runtime runtime = Runtime.getRuntime();
+			to.setUsedMemory(runtime.totalMemory() - runtime.freeMemory());
+			to.setFreeMemory(runtime.freeMemory());
+			to.setTotalMemory(runtime.totalMemory());
+			to.setMaxMemory(runtime.maxMemory());
+			to.setMonitorState(MonitorState.SUCCESS);
+		} catch (Exception e) {
+			to.setMonitorState(MonitorState.UNAVAILABLE);
+		}
+		return to;
+	}
+
+	@Override
 	public JVMPIDMonitorItemTO getJVMPID() {
 		JVMPIDMonitorItemTO to = new JVMPIDMonitorItemTO();
 		try {
@@ -294,7 +311,6 @@ public class MonitorFacadeImpl implements MonitorFacade {
 	public JVMHeapMonitorItemTO getJVMHeap() {
 		JVMHeapMonitorItemTO to = new JVMHeapMonitorItemTO();
 		try {
-
 			Path tempDirWithPrefix = Files.createTempDirectory("grassMonitorDump");
 
 			Path outFile = tempDirWithPrefix.resolve("out");

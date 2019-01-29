@@ -26,6 +26,7 @@ import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemT
 import cz.gattserver.grass3.monitor.processor.item.DiskMountsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskStatusMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMHeapMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.JVMMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMPIDMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
@@ -88,6 +89,11 @@ public class MonitorPage extends OneColumnPage {
 		}
 	}
 
+	private String constructUsedTotalFreeDescription(long used, float ratio, long total, long free) {
+		return "obsazeno " + humanFormat(used) + " (" + NumberFormat.getIntegerInstance().format(ratio * 100) + "%) z "
+				+ humanFormat(total) + "; volno " + humanFormat(free);
+	}
+
 	private void createSystemPart(VerticalLayout systemLayout) {
 		populateMonitorPart("System", systemLayout);
 
@@ -111,18 +117,9 @@ public class MonitorPage extends OneColumnPage {
 		SystemMemoryMonitorItemTO memoryTO = monitorFacade.getSystemMemoryStatus();
 		switch (memoryTO.getMonitorState()) {
 		case SUCCESS:
-			HorizontalLayout itemLayout = new HorizontalLayout();
-			itemLayout.setSpacing(true);
-			String usedPerc = NumberFormat.getIntegerInstance().format(memoryTO.getUsedRation() * 100) + "%";
-			ProgressBar pb = new ProgressBar();
-			pb.setValue(memoryTO.getUsedRation());
-			pb.setWidth("200px");
-			itemLayout.addComponent(new SuccessMonitorDisplay(
-					"obsazeno " + humanFormat(memoryTO.getUsed()) + " (" + usedPerc + ") z "
-							+ humanFormat(memoryTO.getTotal()) + "; volno " + humanFormat(memoryTO.getAvailable()),
-					pb));
-			((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
-			systemLayout.addComponent(itemLayout);
+			systemLayout
+					.addComponent(constructProgressMonitor(memoryTO.getUsedRation(), constructUsedTotalFreeDescription(
+							memoryTO.getUsed(), memoryTO.getUsedRation(), memoryTO.getTotal(), memoryTO.getFree())));
 			break;
 		case UNAVAILABLE:
 		case ERROR:
@@ -136,17 +133,9 @@ public class MonitorPage extends OneColumnPage {
 		SystemSwapMonitorItemTO swapTO = monitorFacade.getSystemSwapStatus();
 		switch (swapTO.getMonitorState()) {
 		case SUCCESS:
-			HorizontalLayout itemLayout = new HorizontalLayout();
-			itemLayout.setSpacing(true);
-			String usedPerc = NumberFormat.getIntegerInstance().format(swapTO.getUsedRation() * 100) + "%";
-			ProgressBar pb = new ProgressBar();
-			pb.setValue(swapTO.getUsedRation());
-			pb.setWidth("200px");
-			itemLayout.addComponent(
-					new SuccessMonitorDisplay("obsazeno " + humanFormat(swapTO.getUsed()) + " (" + usedPerc + ") z "
-							+ humanFormat(swapTO.getTotal()) + "; volno " + humanFormat(swapTO.getFree()), pb));
-			((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
-			systemLayout.addComponent(itemLayout);
+			systemLayout.addComponent(
+					constructProgressMonitor(swapTO.getUsedRation(), constructUsedTotalFreeDescription(swapTO.getUsed(),
+							swapTO.getUsedRation(), swapTO.getTotal(), swapTO.getFree())));
 			break;
 		case UNAVAILABLE:
 		case ERROR:
@@ -202,6 +191,25 @@ public class MonitorPage extends OneColumnPage {
 		default:
 			jvmOverviewLayout.addComponent(new WarningMonitorDisplay("JVM thread info není dostupné"));
 		}
+
+		/*
+		 * JVM Memory
+		 */
+		JVMMemoryMonitorItemTO memoryTO = monitorFacade.getJVMMemory();
+		switch (memoryTO.getMonitorState()) {
+		case SUCCESS:
+			float usedRatio = memoryTO.getUsedMemory() / (float) memoryTO.getTotalMemory();
+			jvmOverviewLayout.addComponent(constructProgressMonitor(usedRatio, constructUsedTotalFreeDescription(
+					memoryTO.getUsedMemory(), usedRatio, memoryTO.getTotalMemory(), memoryTO.getFreeMemory())));
+			jvmOverviewLayout
+					.addComponent(new SuccessMonitorDisplay("Max memory: " + humanFormat(memoryTO.getMaxMemory())));
+			break;
+		case UNAVAILABLE:
+		case ERROR:
+		default:
+			jvmOverviewLayout.addComponent(new WarningMonitorDisplay("JVM thread info není dostupné"));
+		}
+
 	}
 
 	private void createJVMHeapPart(VerticalLayout jvmHeapLayout) {
@@ -291,23 +299,28 @@ public class MonitorPage extends OneColumnPage {
 
 	}
 
+	private HorizontalLayout constructProgressMonitor(float ration, String description) {
+		HorizontalLayout itemLayout = new HorizontalLayout();
+		itemLayout.setSpacing(true);
+		ProgressBar pb = new ProgressBar();
+		pb.setValue(ration);
+		pb.setWidth("200px");
+		itemLayout.addComponent(new SuccessMonitorDisplay(description, pb));
+		((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
+		return itemLayout;
+	}
+
 	private void createDisksPart(VerticalLayout diskLayout) {
 		populateMonitorPart("Disk status", diskLayout);
 		List<DiskStatusMonitorItemTO> disks = monitorFacade.getDiskStatus();
 		for (DiskStatusMonitorItemTO disk : disks) {
 			switch (disk.getMonitorState()) {
 			case SUCCESS:
-				HorizontalLayout itemLayout = new HorizontalLayout();
-				itemLayout.setSpacing(true);
 				String usedPerc = NumberFormat.getIntegerInstance().format(disk.getUsedRation() * 100) + "%";
-				ProgressBar pb = new ProgressBar();
-				pb.setValue(disk.getUsedRation());
-				pb.setWidth("200px");
-				itemLayout.addComponent(new SuccessMonitorDisplay(disk.getName() + " [" + disk.getType() + "] obsazeno "
+				String description = disk.getName() + " [" + disk.getType() + "] obsazeno "
 						+ humanFormat(disk.getUsed()) + " (" + usedPerc + ") z " + humanFormat(disk.getTotal())
-						+ "; volno " + humanFormat(disk.getUsable()), pb));
-				((AbstractOrderedLayout) pb.getParent()).setComponentAlignment(pb, Alignment.MIDDLE_CENTER);
-				diskLayout.addComponent(itemLayout);
+						+ "; volno " + humanFormat(disk.getUsable());
+				diskLayout.addComponent(constructProgressMonitor(disk.getUsedRation(), description));
 				break;
 			case ERROR:
 				diskLayout.addComponent(new ErrorMonitorDisplay("Chyba disku"));

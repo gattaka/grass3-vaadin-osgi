@@ -345,13 +345,15 @@ public class FMExplorer {
 	public String getDownloadLink(String contextRootURL, String path) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(contextRootURL);
-		sb.append("/");
+		if (!contextRootURL.endsWith("/"))
+			sb.append("/");
 		sb.append(FMConfiguration.FM_PATH);
 		for (Path part : getCurrentRelativePath()) {
 			sb.append("/");
 			sb.append(part.toString());
 		}
-		sb.append("/");
+		if (!sb.toString().endsWith("/"))
+			sb.append("/");
 		sb.append(path);
 		return sb.toString();
 	}

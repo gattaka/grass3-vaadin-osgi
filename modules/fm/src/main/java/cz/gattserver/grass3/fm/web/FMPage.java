@@ -1,5 +1,8 @@
 package cz.gattserver.grass3.fm.web;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.util.ArrayList;
@@ -7,11 +10,17 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.server.Page;
+import com.vaadin.server.StreamResource;
+import com.vaadin.server.StreamResource.StreamSource;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinServletRequest;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
@@ -22,8 +31,10 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.renderers.LocalDateTimeRenderer;
+import com.vaadin.ui.themes.ValoTheme;
 
 import cz.gattserver.common.util.CZAmountFormatter;
 import cz.gattserver.grass3.fm.FMExplorer;
@@ -43,6 +54,8 @@ import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.MultiUpload;
+import cz.gattserver.web.common.ui.window.WebWindow;
+import net.glxn.qrgen.javase.QRCode;
 
 public class FMPage extends OneColumnPage {
 
@@ -77,6 +90,8 @@ public class FMPage extends OneColumnPage {
 	 * Breadcrumb
 	 */
 	private Breadcrumb breadcrumb;
+
+	private String urlBase;
 
 	public FMPage(GrassRequest request) {
 		super(request);
@@ -131,6 +146,15 @@ public class FMPage extends OneColumnPage {
 			break;
 		}
 
+		VaadinRequest vaadinRequest = getRequest().getVaadinRequest();
+		HttpServletRequest httpServletRequest = ((VaadinServletRequest) vaadinRequest).getHttpServletRequest();
+		System.out.println(vaadinRequest.getContextPath());
+		System.out.println(httpServletRequest.getPathInfo());
+
+		String fullURL = httpServletRequest.getRequestURL().toString();
+		String urlEndPart = httpServletRequest.getPathInfo();
+		urlBase = fullURL.substring(0, fullURL.length() - urlEndPart.length());
+
 		return super.createPayload();
 	}
 
@@ -183,9 +207,45 @@ public class FMPage extends OneColumnPage {
 		grid.addColumn(FMItemTO::getName).setCaption("Název").setExpandRatio(1);
 		grid.addColumn(FMItemTO::getSize).setCaption("Velikost").setStyleGenerator(item -> "v-align-right");
 		grid.addColumn(to -> {
+			if (to.isDirectory())
+				return new Label();
 			String link = explorer.getDownloadLink(getRequest().getContextRoot(), to.getName());
 			return new Label("<a href='" + link + "' target='_blank'>Stažení</a>", ContentMode.HTML);
 		}).setRenderer(new ComponentRenderer()).setCaption("Stažení");
+
+		grid.addColumn(to -> {
+			if (to.isDirectory())
+				return new Label();
+			String link = explorer.getDownloadLink(urlBase, to.getName());
+			Button button = new Button("QR", new Button.ClickListener() {
+				private static final long serialVersionUID = 1996102817811495323L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					WebWindow ww = new WebWindow("QR");
+					Image image = new Image(link, new StreamResource(new StreamSource() {
+						private static final long serialVersionUID = -5705256069486765282L;
+
+						@Override
+						public InputStream getStream() {
+							try {
+								File file = QRCode.from(link).file();
+								return new FileInputStream(file);
+							} catch (IOException e) {
+								e.printStackTrace();
+								return null;
+							}
+						}
+					}, to.getName()));
+					ww.addComponent(image);
+					UI.getCurrent().addWindow(ww);
+				}
+			});
+			button.setDescription(link);
+			button.setStyleName(ValoTheme.BUTTON_LINK);
+			return button;
+		}).setRenderer(new ComponentRenderer()).setCaption("QR");
+
 		grid.addColumn(FMItemTO::getLastModified).setRenderer(new LocalDateTimeRenderer("d.MM.yyyy HH:mm"))
 				.setCaption("Upraveno");
 

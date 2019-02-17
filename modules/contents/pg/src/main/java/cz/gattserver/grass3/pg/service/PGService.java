@@ -98,20 +98,25 @@ public interface PGService {
 	 * 
 	 * @param userId
 	 *            id přihlášeného uživatele, může být i <code>null</code>
+	 * @param filter
+	 *            název galerie (s *)
 	 */
-	int countAllPhotogalleriesForREST(Long userId);
+	int countAllPhotogalleriesForREST(Long userId, String filter);
 
 	/**
 	 * Získá všechny galerie a namapuje je pro použití REST
 	 * 
 	 * @param userId
 	 *            id přihlášeného uživatele, může být i <code>null</code>
+	 * @param filter
+	 *            název galerie (s *)
 	 * @param page
 	 *            číslo stránky
 	 * @param pageSize
 	 *            velikost stránky
 	 */
-	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId, int page, int pageSize);
+	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId, String filter, int page,
+			int pageSize);
 
 	/**
 	 * Získá detail fotogalerie pro REST

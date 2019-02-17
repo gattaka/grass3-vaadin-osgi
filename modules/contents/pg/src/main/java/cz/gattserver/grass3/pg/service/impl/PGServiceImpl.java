@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -434,17 +435,31 @@ public class PGServiceImpl implements PGService {
 	}
 
 	@Override
-	public int countAllPhotogalleriesForREST(Long userId) {
-		return userId != null ? photogalleryRepository.countByUserAccess(userId)
-				: photogalleryRepository.countByAnonAccess();
+	public int countAllPhotogalleriesForREST(Long userId, String filter) {
+		if (StringUtils.isBlank(filter)) {
+			return userId != null ? photogalleryRepository.countByUserAccess(userId)
+					: photogalleryRepository.countByAnonAccess();
+		} else {
+			filter = filter.replace('*', '%').concat("%");
+			return userId != null ? photogalleryRepository.countByUserAccess(userId, filter)
+					: photogalleryRepository.countByAnonAccess(filter);
+		}
 	}
 
 	@Override
-	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId, int page, int pageSize) {
+	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId, String filter, int page,
+			int pageSize) {
 		Pageable pageable = new PageRequest(page, pageSize);
-		return photogalleriesMapper.mapPhotogalleryForRESTOverviewCollection(
-				userId != null ? photogalleryRepository.findByUserAccess(userId, pageable)
-						: photogalleryRepository.findByAnonAccess(pageable));
+		if (StringUtils.isBlank(filter)) {
+			return photogalleriesMapper.mapPhotogalleryForRESTOverviewCollection(
+					userId != null ? photogalleryRepository.findByUserAccess(userId, pageable)
+							: photogalleryRepository.findByAnonAccess(pageable));
+		} else {
+			filter = filter.replace('*', '%').concat("%");
+			return photogalleriesMapper.mapPhotogalleryForRESTOverviewCollection(
+					userId != null ? photogalleryRepository.findByUserAccess(userId, filter, pageable)
+							: photogalleryRepository.findByAnonAccess(filter, pageable));
+		}
 	}
 
 	@Override

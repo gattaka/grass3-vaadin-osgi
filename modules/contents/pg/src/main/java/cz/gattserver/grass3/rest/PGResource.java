@@ -66,24 +66,26 @@ public class PGResource {
 
 	// http://localhost:8180/web/ws/pg/count
 	@RequestMapping("/count")
-	public ResponseEntity<Integer> count() {
+	public ResponseEntity<Integer> count(@RequestParam(value = "filter", required = false) String filter) {
 		UserInfoTO user = securityFacade.getCurrentUser();
-		return new ResponseEntity<>(photogalleryFacade.countAllPhotogalleriesForREST(user.getId()), HttpStatus.OK);
+		return new ResponseEntity<>(photogalleryFacade.countAllPhotogalleriesForREST(user.getId(), filter),
+				HttpStatus.OK);
 	}
 
 	// http://localhost:8180/web/ws/pg/list?page=1&pageSize=10
 	@RequestMapping("/list")
 	public ResponseEntity<List<PhotogalleryRESTOverviewTO>> list(
 			@RequestParam(value = "page", required = true) int page,
-			@RequestParam(value = "pageSize", required = true) int pageSize) {
+			@RequestParam(value = "pageSize", required = true) int pageSize,
+			@RequestParam(value = "filter", required = false) String filter) {
 		UserInfoTO user = securityFacade.getCurrentUser();
-		int count = photogalleryFacade.countAllPhotogalleriesForREST(user.getId());
+		int count = photogalleryFacade.countAllPhotogalleriesForREST(user.getId(), filter);
 		// startIndex nesmí být víc než je počet, endIndex může být s tím si JPA
 		// poradí a sníží ho
 		if (page * pageSize > count)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		return new ResponseEntity<>(photogalleryFacade.getAllPhotogalleriesForREST(user.getId(), page, pageSize),
-				HttpStatus.OK);
+		return new ResponseEntity<>(
+				photogalleryFacade.getAllPhotogalleriesForREST(user.getId(), filter, page, pageSize), HttpStatus.OK);
 	}
 
 	// http://localhost:8180/web/ws/pg/gallery?id=364

@@ -46,6 +46,7 @@ import cz.gattserver.grass3.pg.events.impl.PGZipProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.impl.PGZipProcessResultEvent;
 import cz.gattserver.grass3.pg.events.impl.PGZipProcessStartEvent;
 import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
+import cz.gattserver.grass3.pg.interfaces.PhotoVersion;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryItemType;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
@@ -494,7 +495,8 @@ public class PGServiceImpl implements PGService {
 	}
 
 	@Override
-	public Path getPhotoForREST(Long id, String fileName, boolean mini) throws UnauthorizedAccessException {
+	public Path getPhotoForREST(Long id, String fileName, PhotoVersion photoVersion)
+			throws UnauthorizedAccessException {
 		Photogallery gallery = photogalleryRepository.findOne(id);
 		if (gallery == null)
 			return null;
@@ -507,20 +509,34 @@ public class PGServiceImpl implements PGService {
 			Path galleryPath = rootPath.resolve(gallery.getPhotogalleryPath());
 			Path miniaturesPath = galleryPath.resolve(configuration.getMiniaturesDir());
 			Path slideshowPath = galleryPath.resolve(configuration.getSlideshowDir());
-			Path file = mini ? miniaturesPath.resolve(fileName) : slideshowPath.resolve(fileName);
+			Path file;
+			switch (photoVersion) {
+			case MINI:
+				file = miniaturesPath.resolve(fileName);
+				break;
+			case SLIDESHOW:
+				file = slideshowPath.resolve(fileName);
+				break;
+			default:
+			case FULL:
+				file = galleryPath.resolve(fileName);
+				break;
+			}
 			if (Files.exists(file)) {
 				return file;
 			} else {
-				if (!mini) {
-					// pokud jsem nenašel slideshow, je to tak malý obrázek, že
-					// postačí originální velikost a nemá vytvořený slideshow
+				switch (photoVersion) {
+				case FULL:
+					// nenašel jsem ani plnou velikost? Problém!
+					return null;
+				case SLIDESHOW:
+				case MINI:
 					file = galleryPath.resolve(fileName);
 					if (Files.exists(file))
 						return file;
+					break;
 				}
-				// pokud jsem nenašel miniaturu, je potřeba ji vytvořit
 			}
-			return null;
 		}
 
 		throw new UnauthorizedAccessException();

@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTTO;
+import cz.gattserver.grass3.pg.interfaces.PhotoVersion;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
 import cz.gattserver.grass3.pg.service.PGService;
@@ -102,10 +103,10 @@ public class PGResource {
 		return new ResponseEntity<>(gallery, HttpStatus.OK);
 	}
 
-	private void innerPhoto(Long id, String fileName, boolean mini, HttpServletResponse response) {
+	private void innerPhoto(Long id, String fileName, PhotoVersion photoVersion, HttpServletResponse response) {
 		Path file;
 		try {
-			file = photogalleryFacade.getPhotoForREST(id, fileName, mini);
+			file = photogalleryFacade.getPhotoForREST(id, fileName, photoVersion);
 		} catch (UnauthorizedAccessException e) {
 			response.setStatus(HttpStatus.FORBIDDEN.value());
 			return;
@@ -131,14 +132,21 @@ public class PGResource {
 	@RequestMapping("/photo")
 	public void photo(@RequestParam(value = "id", required = true) Long id, String fileName,
 			HttpServletResponse response) {
-		innerPhoto(id, fileName, false, response);
+		innerPhoto(id, fileName, PhotoVersion.FULL, response);
+	}
+
+	// http://localhost:8180/web/ws/pg/slideshow?id=364&fileName=shocked_kittens_cr.jpg
+	@RequestMapping("/slideshow")
+	public void slideshow(@RequestParam(value = "id", required = true) Long id, String fileName,
+			HttpServletResponse response) {
+		innerPhoto(id, fileName, PhotoVersion.SLIDESHOW, response);
 	}
 
 	// http://localhost:8180/web/ws/pg/mini?id=364&fileName=shocked_kittens_cr.jpg
 	@RequestMapping("/mini")
 	public void mini(@RequestParam(value = "id", required = true) Long id, String fileName,
 			HttpServletResponse response) {
-		innerPhoto(id, fileName, true, response);
+		innerPhoto(id, fileName, PhotoVersion.MINI, response);
 	}
 
 	// http://localhost:8180/web/ws/pg/create

@@ -15,6 +15,7 @@ import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTTO;
+import cz.gattserver.grass3.pg.interfaces.PhotoVersion;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
 
@@ -134,11 +135,11 @@ public interface PGService {
 	 *            idetifikátor galerie
 	 * @param fileName
 	 *            jméno fotografie
-	 * @param mini
-	 *            jde miniaturu nebo plnou velikost?
+	 * @param photoVersion
+	 *            o jakou velikost fotky jde
 	 * @return {@link UnauthorizedAccessException}
 	 */
-	public Path getPhotoForREST(Long id, String fileName, boolean mini) throws UnauthorizedAccessException;
+	public Path getPhotoForREST(Long id, String fileName, PhotoVersion mini) throws UnauthorizedAccessException;
 
 	/**
 	 * Zazipuje galerii

@@ -5,13 +5,16 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import cz.gattserver.grass3.model.util.PredicateBuilder;
+import cz.gattserver.grass3.model.util.QuerydslUtil;
 import cz.gattserver.grass3.songs.model.domain.QSong;
 import cz.gattserver.grass3.songs.model.interfaces.QSongOverviewTO;
 import cz.gattserver.grass3.songs.model.interfaces.SongOverviewTO;
@@ -22,15 +25,28 @@ public class SongsRepositoryCustomImpl implements SongsRepositoryCustom {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	@Override
-	public List<SongOverviewTO> findAllOrderByName(SongOverviewTO filterTO) {
-		JPAQuery<Integer> query = new JPAQuery<>(entityManager);
+	private Predicate createPredicate(SongOverviewTO filterTO) {
 		QSong s = QSong.song;
 		PredicateBuilder builder = new PredicateBuilder();
 		builder.iLike(s.name, filterTO.getName());
 		builder.iLike(s.author, filterTO.getAuthor());
 		builder.eq(s.year, filterTO.getYear());
-		return query.select(new QSongOverviewTO(s.name, s.author, s.year, s.id)).from(s).where(builder.getBuilder())
-				.orderBy(new OrderSpecifier<>(Order.ASC, s.name)).fetch();
+		return builder.getBuilder();
+	}
+
+	@Override
+	public long count(SongOverviewTO filterTO) {
+		JPAQuery<Integer> query = new JPAQuery<>(entityManager);
+		QSong s = QSong.song;
+		return query.from(s).where(createPredicate(filterTO)).fetchCount();
+	}
+
+	@Override
+	public List<SongOverviewTO> findOrderByName(SongOverviewTO filterTO, Pageable pageable) {
+		JPAQuery<Integer> query = new JPAQuery<>(entityManager);
+		QSong s = QSong.song;
+		QuerydslUtil.applyPagination(pageable, query);
+		return query.select(new QSongOverviewTO(s.name, s.author, s.year, s.id)).from(s)
+				.where(createPredicate(filterTO)).orderBy(new OrderSpecifier<>(Order.ASC, s.name)).fetch();
 	}
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
-import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
+import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewTO;
 
 public interface RecipesService {
 
@@ -25,7 +25,7 @@ public interface RecipesService {
 	 * @param pageable
 	 *            stránkování
 	 */
-	public List<RecipeOverviewDTO> getRecipes(String filter, Pageable pageable);
+	public List<RecipeOverviewTO> getRecipes(String filter, Pageable pageable);
 
 	/**
 	 * Získá recept dle id

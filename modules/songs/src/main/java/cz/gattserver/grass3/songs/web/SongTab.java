@@ -24,7 +24,7 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.SongsRole;
-import cz.gattserver.grass3.songs.facades.SongsFacade;
+import cz.gattserver.grass3.songs.facades.SongsService;
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 import cz.gattserver.grass3.ui.components.CreateButton;
@@ -38,7 +38,7 @@ public class SongTab extends VerticalLayout {
 	private static final long serialVersionUID = 594189301140808163L;
 
 	@Autowired
-	private SongsFacade songsFacade;
+	private SongsService songsFacade;
 
 	@Autowired
 	private SecurityService securityService;
@@ -130,7 +130,7 @@ public class SongTab extends VerticalLayout {
 				@Override
 				protected void onSave(SongTO to) {
 					to = songsFacade.saveSong(to);
-					listTab.loadSongs();
+					listTab.populate();
 					listTab.chooseSong(to.getId(), false);
 				}
 			});
@@ -143,7 +143,7 @@ public class SongTab extends VerticalLayout {
 				@Override
 				protected void onSave(SongTO to) {
 					to = songsFacade.saveSong(to);
-					listTab.loadSongs();
+					listTab.populate();
 					listTab.chooseSong(to.getId(), false);
 				}
 			});
@@ -151,7 +151,7 @@ public class SongTab extends VerticalLayout {
 
 		btnLayout.addComponent(new DeleteButton("Smazat", e -> {
 			songsFacade.deleteSong(listTab.getChoosenSong().getId());
-			listTab.loadSongs();
+			listTab.populate();
 			showDetail(null);
 			tabSheet.setSelectedTab(listTab);
 		}));

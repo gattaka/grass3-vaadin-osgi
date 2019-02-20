@@ -3,33 +3,31 @@ package cz.gattserver.grass3.songs.facades;
 import java.io.InputStream;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.songs.model.interfaces.SongOverviewTO;
 import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 
-public interface SongsFacade {
+public interface SongsService {
 
 	/**
 	 * Získá počet písniček v DB
-	 */
-	public int getSongsCount();
-
-	/**
-	 * Získá všechny písničky pro REST použití
 	 * 
-	 * @param page
-	 *            číslo stránky
-	 * @param pageSize
-	 *            velikost stránky
+	 * @param filterTO
+	 *            filtr
 	 */
-	public List<SongOverviewTO> getSongsForREST(int page, int pageSize);
+	public int getSongsCount(SongOverviewTO filterTO);
 
 	/**
 	 * Získá všechny písničky
 	 * 
 	 * @param filterTO
+	 *            filtr
+	 * @param pageable
+	 *            stránkování
 	 */
-	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO);
+	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO, Pageable pageable);
 
 	/**
 	 * Získá písničku dle id

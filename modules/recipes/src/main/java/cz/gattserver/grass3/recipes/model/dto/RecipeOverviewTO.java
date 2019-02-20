@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.recipes.model.dto;
 
-public class RecipeOverviewDTO {
+public class RecipeOverviewTO {
 
 	/**
 	 * Název receptu
@@ -12,10 +12,10 @@ public class RecipeOverviewDTO {
 	 */
 	private Long id;
 
-	public RecipeOverviewDTO() {
+	public RecipeOverviewTO() {
 	}
 
-	public RecipeOverviewDTO(Long id, String name) {
+	public RecipeOverviewTO(Long id, String name) {
 		super();
 		this.id = id;
 		this.name = name;

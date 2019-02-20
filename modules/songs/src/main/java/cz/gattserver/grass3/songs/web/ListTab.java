@@ -1,18 +1,19 @@
 package cz.gattserver.grass3.songs.web;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.data.provider.CallbackDataProvider;
+import com.vaadin.server.SerializableSupplier;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.grid.ScrollDestination;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Grid.FetchItemsCallback;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
@@ -21,10 +22,11 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
+import cz.gattserver.grass3.model.util.QuerydslUtil;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.SongsRole;
-import cz.gattserver.grass3.songs.facades.SongsFacade;
+import cz.gattserver.grass3.songs.facades.SongsService;
 import cz.gattserver.grass3.songs.model.interfaces.SongOverviewTO;
 import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
@@ -38,10 +40,9 @@ public class ListTab extends VerticalLayout {
 	private static final long serialVersionUID = 594189301140808163L;
 
 	@Autowired
-	private SongsFacade songsFacade;
-
-	@Autowired
 	private SecurityService securityService;
+
+	private transient SongsService songsService;
 
 	@Resource(name = "songsPageFactory")
 	private SongsPageFactory pageFactory;
@@ -49,7 +50,6 @@ public class ListTab extends VerticalLayout {
 	private Grid<SongOverviewTO> grid;
 
 	private SongTO choosenSong;
-	private List<SongOverviewTO> songs;
 	private SongOverviewTO filterTO;
 
 	private TabSheet tabSheet;
@@ -57,10 +57,7 @@ public class ListTab extends VerticalLayout {
 
 	public ListTab(GrassRequest request, TabSheet tabSheet) {
 		SpringContextHelper.inject(this);
-
-		songs = new ArrayList<>();
 		filterTO = new SongOverviewTO();
-
 		this.tabSheet = tabSheet;
 	}
 
@@ -79,7 +76,7 @@ public class ListTab extends VerticalLayout {
 
 		setMargin(new MarginInfo(true, false, false, false));
 
-		grid = new Grid<>(null, songs);
+		grid = new Grid<>();
 		Column<SongOverviewTO, String> nazevColumn = grid.addColumn(SongOverviewTO::getName).setCaption("Název");
 		Column<SongOverviewTO, String> authorColumn = grid.addColumn(SongOverviewTO::getAuthor).setCaption("Autor")
 				.setWidth(250);
@@ -97,7 +94,7 @@ public class ListTab extends VerticalLayout {
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterTO.setName(e.getValue());
-			loadSongs();
+			populate();
 		});
 		filteringHeader.getCell(nazevColumn).setComponent(nazevColumnField);
 
@@ -107,7 +104,7 @@ public class ListTab extends VerticalLayout {
 		authorColumnField.setWidth("100%");
 		authorColumnField.addValueChangeListener(e -> {
 			filterTO.setAuthor(e.getValue());
-			loadSongs();
+			populate();
 		});
 		filteringHeader.getCell(authorColumn).setComponent(authorColumnField);
 
@@ -117,11 +114,11 @@ public class ListTab extends VerticalLayout {
 		yearColumnField.setWidth("100%");
 		yearColumnField.addValueChangeListener(e -> {
 			filterTO.setYear(StringUtils.isBlank(e.getValue()) ? null : Integer.valueOf(e.getValue()));
-			loadSongs();
+			populate();
 		});
 		filteringHeader.getCell(yearColumn).setComponent(yearColumnField);
 
-		loadSongs();
+		populate();
 
 		grid.addItemClickListener((e) -> {
 			if (e.getMouseEventDetails().isDoubleClick())
@@ -140,8 +137,8 @@ public class ListTab extends VerticalLayout {
 
 				@Override
 				protected void onSave(SongTO to) {
-					to = songsFacade.saveSong(to);
-					loadSongs();
+					to = getSongsService().saveSong(to);
+					populate();
 					chooseSong(to.getId(), true);
 				}
 			});
@@ -157,9 +154,9 @@ public class ListTab extends VerticalLayout {
 
 			public void fileUploadFinished(InputStream in, String fileName, String mime, long size,
 					int filesLeftInQueue) {
-				SongTO to = songsFacade.importSong(importedAuthorField.getValue(), in, fileName, mime, size,
+				SongTO to = getSongsService().importSong(importedAuthorField.getValue(), in, fileName, mime, size,
 						filesLeftInQueue);
-				loadSongs();
+				populate();
 				chooseSong(to.getId(), true);
 			}
 		};
@@ -171,15 +168,15 @@ public class ListTab extends VerticalLayout {
 
 		btnLayout.addComponent(new ModifyGridButton<SongOverviewTO>("Upravit", event -> {
 			UI.getCurrent().addWindow(
-					new SongWindow(songsFacade.getSongById(grid.getSelectedItems().iterator().next().getId())) {
+					new SongWindow(getSongsService().getSongById(grid.getSelectedItems().iterator().next().getId())) {
 
 						private static final long serialVersionUID = 5264621441522056786L;
 
 						@Override
 						protected void onSave(SongTO to) {
-							to = songsFacade.saveSong(to);
+							to = getSongsService().saveSong(to);
 							songTab.showDetail(to);
-							loadSongs();
+							populate();
 							selectSong(to.getId());
 						}
 					});
@@ -187,8 +184,8 @@ public class ListTab extends VerticalLayout {
 
 		btnLayout.addComponent(new DeleteGridButton<SongOverviewTO>("Smazat", items -> {
 			for (SongOverviewTO s : items)
-				songsFacade.deleteSong(s.getId());
-			loadSongs();
+				getSongsService().deleteSong(s.getId());
+			populate();
 			songTab.showDetail(null);
 		}, grid));
 
@@ -197,18 +194,14 @@ public class ListTab extends VerticalLayout {
 
 	public void selectSong(Long id) {
 		int row = 0;
-		for (SongOverviewTO to : songs) {
-			if (to.getId().equals(id)) {
-				grid.select(to);
-				grid.scrollTo(row, ScrollDestination.MIDDLE);
-				return;
-			}
-			row++;
-		}
+		SongOverviewTO to = new SongOverviewTO();
+		to.setId(id);
+		grid.select(to);
+		grid.scrollTo(row, ScrollDestination.MIDDLE);
 	}
 
 	public void chooseSong(Long id, boolean selectSong) {
-		choosenSong = songsFacade.getSongById(id);
+		choosenSong = getSongsService().getSongById(id);
 		songTab.showDetail(choosenSong);
 		tabSheet.setSelectedTab(songTab);
 		if (selectSong)
@@ -219,10 +212,20 @@ public class ListTab extends VerticalLayout {
 		return choosenSong;
 	}
 
-	public void loadSongs() {
-		songs.clear();
-		songs.addAll(songsFacade.getSongs(filterTO));
-		grid.getDataProvider().refreshAll();
+	private SongsService getSongsService() {
+		if (songsService == null)
+			songsService = SpringContextHelper.getBean(SongsService.class);
+		return songsService;
+	}
+
+	public void populate() {
+		FetchItemsCallback<SongOverviewTO> fetchItems = (sortOrder, offset, limit) -> getSongsService()
+				.getSongs(filterTO, QuerydslUtil.transformOffsetLimit(offset, limit)).stream();
+		SerializableSupplier<Integer> sizeCallback = () -> getSongsService().getSongsCount(filterTO);
+		CallbackDataProvider<SongOverviewTO, Long> provider = new CallbackDataProvider<>(
+				q -> fetchItems.fetchItems(q.getSortOrders(), q.getOffset(), q.getLimit()), q -> sizeCallback.get(),
+				SongOverviewTO::getId);
+		grid.setDataProvider(provider);
 	}
 
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.recipes.model.domain.Recipe;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
-import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
+import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewTO;
 
 /**
  * <b>Mapper pro různé typy.</b>
@@ -56,13 +56,13 @@ public class Mapper {
 	 * @param recipes
 	 * @return
 	 */
-	public List<RecipeOverviewDTO> mapRecipes(Collection<Recipe> recipes) {
+	public List<RecipeOverviewTO> mapRecipes(Collection<Recipe> recipes) {
 		if (recipes == null)
 			return null;
 
-		List<RecipeOverviewDTO> recipeDTOs = new ArrayList<RecipeOverviewDTO>();
+		List<RecipeOverviewTO> recipeDTOs = new ArrayList<RecipeOverviewTO>();
 		for (Recipe recipe : recipes) {
-			recipeDTOs.add(new RecipeOverviewDTO(recipe.getId(), recipe.getName()));
+			recipeDTOs.add(new RecipeOverviewTO(recipe.getId(), recipe.getName()));
 		}
 		return recipeDTOs;
 	}

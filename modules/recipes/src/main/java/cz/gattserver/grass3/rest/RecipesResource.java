@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import cz.gattserver.grass3.recipes.facades.RecipesService;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
-import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
+import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewTO;
 
 @Controller
 @RequestMapping("/recipes")
@@ -23,7 +23,7 @@ public class RecipesResource {
 	private RecipesService recipesFacade;
 
 	@RequestMapping("/list")
-	public ResponseEntity<List<RecipeOverviewDTO>> list(@RequestParam(value = "page", required = true) int page,
+	public ResponseEntity<List<RecipeOverviewTO>> list(@RequestParam(value = "page", required = true) int page,
 			@RequestParam(value = "pageSize", required = true) int pageSize,
 			@RequestParam(value = "filter", required = false) String filter) {
 		int count = recipesFacade.getRecipesCount(filter);

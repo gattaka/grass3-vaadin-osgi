@@ -13,7 +13,7 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
-import cz.gattserver.grass3.songs.facades.SongsFacade;
+import cz.gattserver.grass3.songs.facades.SongsService;
 import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 import cz.gattserver.grass3.ui.components.CreateButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
@@ -25,7 +25,7 @@ public abstract class SongWindow extends WebWindow {
 	private static final long serialVersionUID = 6803519662032576371L;
 
 	@Autowired
-	private SongsFacade songsFacade;
+	private SongsService songsFacade;
 
 	public SongWindow() {
 		this(null);

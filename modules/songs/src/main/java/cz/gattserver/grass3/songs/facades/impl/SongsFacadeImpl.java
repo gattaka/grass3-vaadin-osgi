@@ -6,11 +6,11 @@ import java.util.List;
 
 import org.apache.commons.fileupload.util.Streams;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import cz.gattserver.grass3.songs.facades.SongsFacade;
+import cz.gattserver.grass3.songs.facades.SongsService;
 import cz.gattserver.grass3.songs.model.dao.ChordsRepository;
 import cz.gattserver.grass3.songs.model.dao.SongsRepository;
 import cz.gattserver.grass3.songs.model.domain.Chord;
@@ -22,7 +22,7 @@ import cz.gattserver.grass3.songs.util.Mapper;
 
 @Transactional
 @Component
-public class SongsFacadeImpl implements SongsFacade {
+public class SongsFacadeImpl implements SongsService {
 
 	@Autowired
 	private Mapper mapper;
@@ -32,11 +32,6 @@ public class SongsFacadeImpl implements SongsFacade {
 
 	@Autowired
 	private ChordsRepository chordsRepository;
-
-	@Override
-	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO) {
-		return songsRepository.findAllOrderByName(filterTO);
-	}
 
 	@Override
 	public SongTO getSongById(Long id) {
@@ -66,13 +61,13 @@ public class SongsFacadeImpl implements SongsFacade {
 	}
 
 	@Override
-	public int getSongsCount() {
-		return (int) songsRepository.count();
+	public int getSongsCount(SongOverviewTO filterTO) {
+		return (int) songsRepository.count(filterTO);
 	}
 
 	@Override
-	public List<SongOverviewTO> getSongsForREST(int page, int pageSize) {
-		return mapper.mapSongs(songsRepository.findAllOrderByNamePageable(new PageRequest(page, pageSize)));
+	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO, Pageable pageable) {
+		return songsRepository.findOrderByName(filterTO, pageable);
 	}
 
 	@Override

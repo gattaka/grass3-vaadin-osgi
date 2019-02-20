@@ -21,7 +21,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
 import cz.gattserver.grass3.recipes.facades.RecipesService;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
-import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
+import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewTO;
 import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
@@ -38,11 +38,11 @@ public class RecipesPage extends OneColumnPage {
 
 	private transient RecipesService recipesService;
 
-	private Grid<RecipeOverviewDTO> grid;
+	private Grid<RecipeOverviewTO> grid;
 	private Label nameLabel;
 	private Label contentLabel;
 	private RecipeDTO choosenRecipe;
-	private RecipeOverviewDTO filterTO;
+	private RecipeOverviewTO filterTO;
 
 	public RecipesPage(GrassRequest request) {
 		super(request);
@@ -50,7 +50,7 @@ public class RecipesPage extends OneColumnPage {
 
 	private void showDetail(RecipeDTO choosenRecipe) {
 		nameLabel.setValue(choosenRecipe.getName());
-		contentLabel.setValue(recipesService.eolToBreakline(choosenRecipe.getDescription()));
+		contentLabel.setValue(getRecipesService().eolToBreakline(choosenRecipe.getDescription()));
 		this.choosenRecipe = choosenRecipe;
 	}
 
@@ -68,16 +68,16 @@ public class RecipesPage extends OneColumnPage {
 		recipesLayout.setWidth("100%");
 		layout.addComponent(recipesLayout);
 
-		filterTO = new RecipeOverviewDTO();
+		filterTO = new RecipeOverviewTO();
 
 		grid = new Grid<>();
-		Column<RecipeOverviewDTO, String> nazevColumn = grid.addColumn(RecipeOverviewDTO::getName).setCaption("Název");
+		Column<RecipeOverviewTO, String> nazevColumn = grid.addColumn(RecipeOverviewTO::getName).setCaption("Název");
 		grid.setWidth("358px");
 		grid.setHeight("600px");
 		recipesLayout.addComponent(grid);
 
-		grid.addSelectionListener(
-				(e) -> e.getFirstSelectedItem().ifPresent((v) -> showDetail(recipesService.getRecipeById(v.getId()))));
+		grid.addSelectionListener((e) -> e.getFirstSelectedItem()
+				.ifPresent((v) -> showDetail(getRecipesService().getRecipeById(v.getId()))));
 
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
@@ -119,7 +119,7 @@ public class RecipesPage extends OneColumnPage {
 
 				@Override
 				protected void onSave(String name, String desc, Long id) {
-					id = recipesService.saveRecipe(name, desc);
+					id = getRecipesService().saveRecipe(name, desc);
 					RecipeDTO to = new RecipeDTO(id, name, desc);
 					showDetail(to);
 					populate();
@@ -127,13 +127,13 @@ public class RecipesPage extends OneColumnPage {
 			});
 		}));
 
-		btnLayout.addComponent(new ModifyGridButton<RecipeOverviewDTO>("Upravit", event -> {
+		btnLayout.addComponent(new ModifyGridButton<RecipeOverviewTO>("Upravit", event -> {
 			UI.getCurrent().addWindow(new RecipeWindow(choosenRecipe) {
 				private static final long serialVersionUID = 5264621441522056786L;
 
 				@Override
 				protected void onSave(String name, String desc, Long id) {
-					recipesService.saveRecipe(name, desc, id);
+					getRecipesService().saveRecipe(name, desc, id);
 					RecipeDTO to = new RecipeDTO(id, name, desc);
 					showDetail(to);
 					populate();
@@ -151,12 +151,12 @@ public class RecipesPage extends OneColumnPage {
 	}
 
 	private void populate() {
-		FetchItemsCallback<RecipeOverviewDTO> fetchItems = (sortOrder, offset, limit) -> getRecipesService()
+		FetchItemsCallback<RecipeOverviewTO> fetchItems = (sortOrder, offset, limit) -> getRecipesService()
 				.getRecipes(filterTO.getName(), QuerydslUtil.transformOffsetLimit(offset, limit)).stream();
 		SerializableSupplier<Integer> sizeCallback = () -> getRecipesService().getRecipesCount(filterTO.getName());
-		CallbackDataProvider<RecipeOverviewDTO, Long> provider = new CallbackDataProvider<>(
+		CallbackDataProvider<RecipeOverviewTO, Long> provider = new CallbackDataProvider<>(
 				q -> fetchItems.fetchItems(q.getSortOrders(), q.getOffset(), q.getLimit()), q -> sizeCallback.get(),
-				RecipeOverviewDTO::getId);
+				RecipeOverviewTO::getId);
 		grid.setDataProvider(provider);
 	}
 }

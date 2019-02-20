@@ -31,7 +31,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.SongsRole;
-import cz.gattserver.grass3.songs.facades.SongsFacade;
+import cz.gattserver.grass3.songs.facades.SongsService;
 import cz.gattserver.grass3.songs.model.domain.Instrument;
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
@@ -47,7 +47,7 @@ public class ChordsTab extends VerticalLayout {
 	private static final long serialVersionUID = 2599065817744507785L;
 
 	@Autowired
-	private SongsFacade songsFacade;
+	private SongsService songsFacade;
 
 	@Autowired
 	private SecurityService securityService;

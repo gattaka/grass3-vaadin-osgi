@@ -12,7 +12,7 @@ import cz.gattserver.grass3.recipes.facades.RecipesService;
 import cz.gattserver.grass3.recipes.model.dao.RecipeRepository;
 import cz.gattserver.grass3.recipes.model.domain.Recipe;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
-import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
+import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewTO;
 import cz.gattserver.grass3.recipes.util.Mapper;
 
 @Transactional
@@ -66,7 +66,7 @@ public class RecipesServiceImpl implements RecipesService {
 	}
 
 	@Override
-	public List<RecipeOverviewDTO> getRecipes(String filter, Pageable pageable) {
+	public List<RecipeOverviewTO> getRecipes(String filter, Pageable pageable) {
 		return mapper.mapRecipes(
 				recipeRepository.findAllOrderByNamePageable(QuerydslUtil.transformSimpleLikeFilter(filter), pageable));
 	}

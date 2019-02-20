@@ -31,6 +31,7 @@ import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.modules.PGModule;
 import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
+import cz.gattserver.grass3.pg.interfaces.PhotoVersion;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryItemType;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
@@ -479,32 +480,32 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Long id3 = createMockGallery(root, userId2, nodeId1, 3, true);
 		Long id4 = createMockGallery(root, userId2, nodeId2, 4, false);
 
-		int count = pgService.countAllPhotogalleriesForREST(userId1);
+		int count = pgService.countAllPhotogalleriesForREST(userId1, null);
 		assertEquals(3, count);
 
-		List<PhotogalleryRESTOverviewTO> list = pgService.getAllPhotogalleriesForREST(userId1, 0, 2);
+		List<PhotogalleryRESTOverviewTO> list = pgService.getAllPhotogalleriesForREST(userId1, null, 0, 2);
 		assertEquals(2, list.size());
 		assertEquals("Test galerie3", list.get(0).getName());
 		assertEquals(id3, list.get(0).getId());
 		assertEquals("Test galerie2", list.get(1).getName());
 		assertEquals(id2, list.get(1).getId());
 
-		list = pgService.getAllPhotogalleriesForREST(userId1, 1, 2);
+		list = pgService.getAllPhotogalleriesForREST(userId1, null, 1, 2);
 		assertEquals(1, list.size());
 		assertEquals("Test galerie1", list.get(0).getName());
 		assertEquals(id1, list.get(0).getId());
 
-		count = pgService.countAllPhotogalleriesForREST(userId2);
+		count = pgService.countAllPhotogalleriesForREST(userId2, null);
 		assertEquals(4, count);
 
-		list = pgService.getAllPhotogalleriesForREST(userId2, 0, 2);
+		list = pgService.getAllPhotogalleriesForREST(userId2, null, 0, 2);
 		assertEquals(2, list.size());
 		assertEquals("Test galerie4", list.get(0).getName());
 		assertEquals(id4, list.get(0).getId());
 		assertEquals("Test galerie3", list.get(1).getName());
 		assertEquals(id3, list.get(1).getId());
 
-		list = pgService.getAllPhotogalleriesForREST(userId2, 1, 2);
+		list = pgService.getAllPhotogalleriesForREST(userId2, null, 1, 2);
 		assertEquals(2, list.size());
 		assertEquals("Test galerie2", list.get(0).getName());
 		assertEquals(id2, list.get(0).getId());
@@ -632,13 +633,13 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PGConfiguration conf = new PGConfiguration();
 		configurationService.loadConfiguration(conf);
 
-		Path photoPath = pgService.getPhotoForREST(galleryId, "02.jpg", false);
+		Path photoPath = pgService.getPhotoForREST(galleryId, "02.jpg", PhotoVersion.SLIDESHOW);
 		assertEquals(galleryDir.resolve(conf.getSlideshowDir()).resolve("02.jpg"), photoPath);
-		photoPath = pgService.getPhotoForREST(galleryId, "03.jpg", false);
+		photoPath = pgService.getPhotoForREST(galleryId, "03.jpg", PhotoVersion.SLIDESHOW);
 		assertEquals(galleryDir.resolve("03.jpg"), photoPath);
-		photoPath = pgService.getPhotoForREST(galleryId, "02.jpg", true);
+		photoPath = pgService.getPhotoForREST(galleryId, "02.jpg", PhotoVersion.MINI);
 		assertEquals(galleryDir.resolve(conf.getMiniaturesDir()).resolve("02.jpg"), photoPath);
-		photoPath = pgService.getPhotoForREST(galleryId, "03.jpg", true);
+		photoPath = pgService.getPhotoForREST(galleryId, "03.jpg", PhotoVersion.MINI);
 		assertEquals(galleryDir.resolve(conf.getMiniaturesDir()).resolve("03.jpg"), photoPath);
 
 	}

@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -483,14 +484,15 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		int count = pgService.countAllPhotogalleriesForREST(userId1, null);
 		assertEquals(3, count);
 
-		List<PhotogalleryRESTOverviewTO> list = pgService.getAllPhotogalleriesForREST(userId1, null, 0, 2);
+		List<PhotogalleryRESTOverviewTO> list = pgService.getAllPhotogalleriesForREST(userId1, null,
+				new PageRequest(0, 2));
 		assertEquals(2, list.size());
 		assertEquals("Test galerie3", list.get(0).getName());
 		assertEquals(id3, list.get(0).getId());
 		assertEquals("Test galerie2", list.get(1).getName());
 		assertEquals(id2, list.get(1).getId());
 
-		list = pgService.getAllPhotogalleriesForREST(userId1, null, 1, 2);
+		list = pgService.getAllPhotogalleriesForREST(userId1, null, new PageRequest(1, 2));
 		assertEquals(1, list.size());
 		assertEquals("Test galerie1", list.get(0).getName());
 		assertEquals(id1, list.get(0).getId());
@@ -498,14 +500,14 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		count = pgService.countAllPhotogalleriesForREST(userId2, null);
 		assertEquals(4, count);
 
-		list = pgService.getAllPhotogalleriesForREST(userId2, null, 0, 2);
+		list = pgService.getAllPhotogalleriesForREST(userId2, null, new PageRequest(0, 2));
 		assertEquals(2, list.size());
 		assertEquals("Test galerie4", list.get(0).getName());
 		assertEquals(id4, list.get(0).getId());
 		assertEquals("Test galerie3", list.get(1).getName());
 		assertEquals(id3, list.get(1).getId());
 
-		list = pgService.getAllPhotogalleriesForREST(userId2, null, 1, 2);
+		list = pgService.getAllPhotogalleriesForREST(userId2, null, new PageRequest(1, 2));
 		assertEquals(2, list.size());
 		assertEquals("Test galerie2", list.get(0).getName());
 		assertEquals(id2, list.get(0).getId());

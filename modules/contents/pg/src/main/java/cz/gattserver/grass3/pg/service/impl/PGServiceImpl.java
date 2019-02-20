@@ -20,12 +20,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -37,6 +35,7 @@ import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
+import cz.gattserver.grass3.model.util.QuerydslUtil;
 import cz.gattserver.grass3.modules.PGModule;
 import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.pg.events.impl.PGProcessProgressEvent;
@@ -437,30 +436,17 @@ public class PGServiceImpl implements PGService {
 
 	@Override
 	public int countAllPhotogalleriesForREST(Long userId, String filter) {
-		if (StringUtils.isBlank(filter)) {
-			return userId != null ? photogalleryRepository.countByUserAccess(userId)
-					: photogalleryRepository.countByAnonAccess();
-		} else {
-			filter = filter.replace('*', '%').concat("%");
-			return userId != null ? photogalleryRepository.countByUserAccess(userId, filter)
-					: photogalleryRepository.countByAnonAccess(filter);
-		}
+		filter = QuerydslUtil.transformSimpleLikeFilter(filter);
+		return userId != null ? photogalleryRepository.countByUserAccess(userId, filter)
+				: photogalleryRepository.countByAnonAccess(filter);
 	}
 
 	@Override
-	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId, String filter, int page,
-			int pageSize) {
-		Pageable pageable = new PageRequest(page, pageSize);
-		if (StringUtils.isBlank(filter)) {
-			return photogalleriesMapper.mapPhotogalleryForRESTOverviewCollection(
-					userId != null ? photogalleryRepository.findByUserAccess(userId, pageable)
-							: photogalleryRepository.findByAnonAccess(pageable));
-		} else {
-			filter = filter.replace('*', '%').concat("%");
-			return photogalleriesMapper.mapPhotogalleryForRESTOverviewCollection(
-					userId != null ? photogalleryRepository.findByUserAccess(userId, filter, pageable)
-							: photogalleryRepository.findByAnonAccess(filter, pageable));
-		}
+	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId, String filter, Pageable pageable) {
+		filter = QuerydslUtil.transformSimpleLikeFilter(filter);
+		return photogalleriesMapper.mapPhotogalleryForRESTOverviewCollection(
+				userId != null ? photogalleryRepository.findByUserAccess(userId, filter, pageable)
+						: photogalleryRepository.findByAnonAccess(filter, pageable));
 	}
 
 	@Override

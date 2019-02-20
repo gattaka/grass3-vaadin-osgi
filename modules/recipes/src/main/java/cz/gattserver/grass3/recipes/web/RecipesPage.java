@@ -1,19 +1,25 @@
 package cz.gattserver.grass3.recipes.web;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.data.provider.CallbackDataProvider;
+import com.vaadin.server.SerializableSupplier;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Grid.FetchItemsCallback;
+import com.vaadin.ui.components.grid.HeaderRow;
+import com.vaadin.ui.themes.ValoTheme;
 
-import cz.gattserver.grass3.recipes.facades.RecipesFacade;
+import cz.gattserver.grass3.model.util.QuerydslUtil;
+import cz.gattserver.grass3.recipes.facades.RecipesService;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
 import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
 import cz.gattserver.grass3.security.CoreRole;
@@ -22,20 +28,21 @@ import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.H2Label;
 
 public class RecipesPage extends OneColumnPage {
 
 	@Autowired
-	private RecipesFacade recipesFacade;
-
-	@Autowired
 	private SecurityService securityService;
 
+	private transient RecipesService recipesService;
+
+	private Grid<RecipeOverviewDTO> grid;
 	private Label nameLabel;
 	private Label contentLabel;
 	private RecipeDTO choosenRecipe;
-	private List<RecipeOverviewDTO> recipes;
+	private RecipeOverviewDTO filterTO;
 
 	public RecipesPage(GrassRequest request) {
 		super(request);
@@ -43,12 +50,8 @@ public class RecipesPage extends OneColumnPage {
 
 	private void showDetail(RecipeDTO choosenRecipe) {
 		nameLabel.setValue(choosenRecipe.getName());
-		contentLabel.setValue(recipesFacade.eolToBreakline(choosenRecipe.getDescription()));
+		contentLabel.setValue(recipesService.eolToBreakline(choosenRecipe.getDescription()));
 		this.choosenRecipe = choosenRecipe;
-	}
-
-	private void loadRecipes() {
-		recipes = recipesFacade.getRecipes();
 	}
 
 	@Override
@@ -65,15 +68,30 @@ public class RecipesPage extends OneColumnPage {
 		recipesLayout.setWidth("100%");
 		layout.addComponent(recipesLayout);
 
-		loadRecipes();
-		Grid<RecipeOverviewDTO> grid = new Grid<>(null, recipes);
-		grid.addColumn(RecipeOverviewDTO::getName).setCaption("Název");
+		filterTO = new RecipeOverviewDTO();
+
+		grid = new Grid<>();
+		Column<RecipeOverviewDTO, String> nazevColumn = grid.addColumn(RecipeOverviewDTO::getName).setCaption("Název");
 		grid.setWidth("358px");
 		grid.setHeight("600px");
 		recipesLayout.addComponent(grid);
 
 		grid.addSelectionListener(
-				(e) -> e.getFirstSelectedItem().ifPresent((v) -> showDetail(recipesFacade.getRecipeById(v.getId()))));
+				(e) -> e.getFirstSelectedItem().ifPresent((v) -> showDetail(recipesService.getRecipeById(v.getId()))));
+
+		HeaderRow filteringHeader = grid.appendHeaderRow();
+
+		// Název
+		TextField nazevColumnField = new TextField();
+		nazevColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		nazevColumnField.setWidth("100%");
+		nazevColumnField.addValueChangeListener(e -> {
+			filterTO.setName(e.getValue());
+			populate();
+		});
+		filteringHeader.getCell(nazevColumn).setComponent(nazevColumnField);
+
+		populate();
 
 		VerticalLayout contentLayout = new VerticalLayout();
 		Panel panel = new Panel(contentLayout);
@@ -101,10 +119,10 @@ public class RecipesPage extends OneColumnPage {
 
 				@Override
 				protected void onSave(String name, String desc, Long id) {
-					id = recipesFacade.saveRecipe(name, desc);
+					id = recipesService.saveRecipe(name, desc);
 					RecipeDTO to = new RecipeDTO(id, name, desc);
 					showDetail(to);
-					loadRecipes();
+					populate();
 				}
 			});
 		}));
@@ -115,14 +133,30 @@ public class RecipesPage extends OneColumnPage {
 
 				@Override
 				protected void onSave(String name, String desc, Long id) {
-					recipesFacade.saveRecipe(name, desc, id);
+					recipesService.saveRecipe(name, desc, id);
 					RecipeDTO to = new RecipeDTO(id, name, desc);
 					showDetail(to);
-					loadRecipes();
+					populate();
 				}
 			});
 		}, grid));
 
 		return marginLayout;
+	}
+
+	private RecipesService getRecipesService() {
+		if (recipesService == null)
+			recipesService = SpringContextHelper.getBean(RecipesService.class);
+		return recipesService;
+	}
+
+	private void populate() {
+		FetchItemsCallback<RecipeOverviewDTO> fetchItems = (sortOrder, offset, limit) -> getRecipesService()
+				.getRecipes(filterTO.getName(), QuerydslUtil.transformOffsetLimit(offset, limit)).stream();
+		SerializableSupplier<Integer> sizeCallback = () -> getRecipesService().getRecipesCount(filterTO.getName());
+		CallbackDataProvider<RecipeOverviewDTO, Long> provider = new CallbackDataProvider<>(
+				q -> fetchItems.fetchItems(q.getSortOrders(), q.getOffset(), q.getLimit()), q -> sizeCallback.get(),
+				RecipeOverviewDTO::getId);
+		grid.setDataProvider(provider);
 	}
 }

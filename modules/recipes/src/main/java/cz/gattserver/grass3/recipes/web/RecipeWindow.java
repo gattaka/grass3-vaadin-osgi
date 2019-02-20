@@ -7,7 +7,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 
-import cz.gattserver.grass3.recipes.facades.RecipesFacade;
+import cz.gattserver.grass3.recipes.facades.RecipesService;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
 import cz.gattserver.grass3.ui.components.CreateButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
@@ -18,7 +18,7 @@ public abstract class RecipeWindow extends WebWindow {
 	private static final long serialVersionUID = 6803519662032576371L;
 
 	@Autowired
-	private RecipesFacade recipesFacade;
+	private RecipesService recipesFacade;
 
 	public RecipeWindow() {
 		this(null);

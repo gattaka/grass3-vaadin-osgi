@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -86,7 +87,8 @@ public class PGResource {
 		if (page * pageSize > count)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		return new ResponseEntity<>(
-				photogalleryFacade.getAllPhotogalleriesForREST(user.getId(), filter, page, pageSize), HttpStatus.OK);
+				photogalleryFacade.getAllPhotogalleriesForREST(user.getId(), filter, new PageRequest(page, pageSize)),
+				HttpStatus.OK);
 	}
 
 	// http://localhost:8180/web/ws/pg/gallery?id=364

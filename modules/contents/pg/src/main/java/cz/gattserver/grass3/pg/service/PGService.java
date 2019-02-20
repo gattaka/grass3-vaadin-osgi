@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.domain.Pageable;
+
 import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.pg.events.impl.PGProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.impl.PGProcessResultEvent;
@@ -111,13 +113,10 @@ public interface PGService {
 	 *            id přihlášeného uživatele, může být i <code>null</code>
 	 * @param filter
 	 *            název galerie (s *)
-	 * @param page
-	 *            číslo stránky
-	 * @param pageSize
-	 *            velikost stránky
+	 * @param pageable
+	 *            stránkování
 	 */
-	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId, String filter, int page,
-			int pageSize);
+	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId, String filter, Pageable pageable);
 
 	/**
 	 * Získá detail fotogalerie pro REST

@@ -2,30 +2,30 @@ package cz.gattserver.grass3.recipes.facades;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
 import cz.gattserver.grass3.recipes.model.dto.RecipeOverviewDTO;
 
-public interface RecipesFacade {
+public interface RecipesService {
 
 	/**
 	 * Získá počet receptů v DB
-	 */
-	public int getRecipesCount();
-
-	/**
-	 * Získá všechny recepty pro REST použití
 	 * 
-	 * @param page
-	 *            číslo stránky
-	 * @param pageSize
-	 *            velikost stránky
+	 * @param filter
+	 *            název receptu (s *)
 	 */
-	public List<RecipeOverviewDTO> getRecipesForREST(int page, int pageSize);
+	public int getRecipesCount(String filter);
 
 	/**
 	 * Získá všechny recepty
+	 * 
+	 * @param filter
+	 *            filtr
+	 * @param pageable
+	 *            stránkování
 	 */
-	public List<RecipeOverviewDTO> getRecipes();
+	public List<RecipeOverviewDTO> getRecipes(String filter, Pageable pageable);
 
 	/**
 	 * Získá recept dle id

@@ -83,6 +83,20 @@ public final class QuerydslUtil {
 	}
 
 	/**
+	 * Upravuje jednoduchý filtrační text na like výraz pro JPA, aby se dal
+	 * použít přímo v LIKE výrazu, zatímco vstupem může být cokoliv, včetně
+	 * <code>null</code> hodnoty. Pokud je <code>null</code>, udělá z něj
+	 * prázdný řetězec s % znakem pro LIKE, jinak nahrazuje * znaky znakem % a
+	 * nakonec ještě jeden přidává.
+	 * 
+	 * @param filter
+	 * @return upravený řetězec pro LIKE filtr
+	 */
+	public static String transformSimpleLikeFilter(String filter) {
+		return filter == null ? "%" : filter.replace('*', '%').concat("%");
+	}
+
+	/**
 	 * Aplikuje vlastnosti stránkování
 	 * 
 	 * @param <T>

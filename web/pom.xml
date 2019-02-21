@@ -146,6 +146,13 @@
 			<artifactId>campgames</artifactId>
 			<version>3.0.10-SNAPSHOT</version>
 		</dependency>
+		
+		<!-- Knihy -->
+		<dependency>
+			<groupId>cz.gattserver.grass3</groupId>
+			<artifactId>books</artifactId>
+			<version>3.0.10-SNAPSHOT</version>
+		</dependency>
 
 	</dependencies>
 

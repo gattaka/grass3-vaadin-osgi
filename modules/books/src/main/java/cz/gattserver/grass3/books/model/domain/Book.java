@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.books.model.domain;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,7 +51,7 @@ public class Book {
 	/**
 	 * Kdy byla kniha vydána
 	 */
-	private LocalDateTime released;
+	private LocalDate released;
 
 	public Long getId() {
 		return id;
@@ -69,11 +69,11 @@ public class Book {
 		this.author = author;
 	}
 
-	public LocalDateTime getReleased() {
+	public LocalDate getReleased() {
 		return released;
 	}
 
-	public void setReleased(LocalDateTime released) {
+	public void setReleased(LocalDate released) {
 		this.released = released;
 	}
 

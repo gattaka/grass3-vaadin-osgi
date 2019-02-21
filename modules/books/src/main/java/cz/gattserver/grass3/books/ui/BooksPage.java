@@ -13,11 +13,11 @@ import org.vaadin.teemu.ratingstars.RatingStars;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -42,6 +42,7 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.BoldLabel;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcon;
 
@@ -63,6 +64,7 @@ public class BooksPage extends OneColumnPage {
 
 	public BooksPage(GrassRequest request) {
 		super(request);
+		this.request = request;
 	}
 
 	@Override
@@ -72,15 +74,8 @@ public class BooksPage extends OneColumnPage {
 		layout.setMargin(true);
 
 		VerticalLayout wrapperLayout = new VerticalLayout();
-		layout.setMargin(new MarginInfo(false, true, true, true));
+		layout.setMargin(true);
 		wrapperLayout.addComponent(layout);
-
-		String token = getRequest().getAnalyzer().getNextPathToken();
-		if (token != null) {
-			URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
-					.parseURLIdentifier(getRequest().getAnalyzer().getNextPathToken());
-			selectBook(identifier.getId());
-		}
 
 		filterTO = new BookOverviewTO();
 		grid = createGrid(filterTO);
@@ -124,6 +119,12 @@ public class BooksPage extends OneColumnPage {
 		btnLayout.setVisible(getSecurityService().getCurrentUser().getRoles().contains(CoreRole.ADMIN));
 
 		populateBtnLayout(btnLayout);
+
+		String token = getRequest().getAnalyzer().getNextPathToken();
+		if (token != null) {
+			URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(token);
+			selectBook(identifier.getId());
+		}
 
 		return wrapperLayout;
 	}
@@ -212,7 +213,7 @@ public class BooksPage extends OneColumnPage {
 	}
 
 	protected void populateDetail(VerticalLayout dataLayout) {
-		H2Label nameLabel = new H2Label(choosenBook.getAuthor() + " " + choosenBook.getName());
+		H2Label nameLabel = new H2Label(choosenBook.getName());
 		dataLayout.addComponent(nameLabel);
 
 		RatingStars rs = new RatingStars();
@@ -220,6 +221,17 @@ public class BooksPage extends OneColumnPage {
 		rs.setReadOnly(true);
 		rs.setAnimated(false);
 		dataLayout.addComponent(rs);
+
+		GridLayout infoLayout = new GridLayout(2, 7);
+		dataLayout.addComponent(infoLayout);
+
+		BoldLabel b = new BoldLabel("Autor");
+		infoLayout.addComponent(b);
+		b.setWidth("120px");
+		infoLayout.addComponent(new Label(choosenBook.getAuthor()));
+		infoLayout.addComponent(new BoldLabel("Vydáno"));
+		infoLayout.addComponent(new Label(choosenBook.getReleased() == null ? ""
+				: choosenBook.getReleased().format(DateTimeFormatter.ofPattern("d.M.yyyy"))));
 
 		Label descriptionLabel = new Label(choosenBook.getDescription().replaceAll("\n", "<br/>"), ContentMode.HTML);
 		descriptionLabel.setSizeFull();
@@ -232,7 +244,7 @@ public class BooksPage extends OneColumnPage {
 		return securityService;
 	}
 
-	protected PageFactory getDrinksPageFactory() {
+	protected PageFactory getBooksPageFactory() {
 		if (booksPageFactory == null)
 			booksPageFactory = (PageFactory) SpringContextHelper.getBean("booksPageFactory");
 		return booksPageFactory;
@@ -250,18 +262,18 @@ public class BooksPage extends OneColumnPage {
 		grid.select(to);
 	}
 
-	protected void showDetail(BookTO choosenDrink) {
-		this.choosenBook = choosenDrink;
+	protected void showDetail(BookTO choosenBook) {
+		this.choosenBook = choosenBook;
 		dataLayout.removeAllComponents();
-		if (choosenDrink == null) {
+		if (choosenBook == null) {
 			image.setVisible(false);
-			String currentURL = request.getContextRoot() + "/" + getDrinksPageFactory().getPageName();
+			String currentURL = request.getContextRoot() + "/" + getBooksPageFactory().getPageName();
 			Page.getCurrent().pushState(currentURL);
 		} else {
-			byte[] co = choosenDrink.getImage();
+			byte[] co = choosenBook.getImage();
 			if (co != null) {
 				// https://vaadin.com/forum/thread/260778
-				String name = choosenDrink.getName()
+				String name = choosenBook.getName()
 						+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 				image.setVisible(true);
 				image.setSource(new StreamResource(() -> new ByteArrayInputStream(co), name));
@@ -274,8 +286,8 @@ public class BooksPage extends OneColumnPage {
 
 			String currentURL;
 			try {
-				currentURL = request.getContextRoot() + "/" + getDrinksPageFactory().getPageName() + "/"
-						+ +choosenDrink.getId() + "-" + URLEncoder.encode(choosenDrink.getName(), "UTF-8");
+				currentURL = request.getContextRoot() + "/" + getBooksPageFactory().getPageName() + "/"
+						+ +choosenBook.getId() + "-" + URLEncoder.encode(choosenBook.getName(), "UTF-8");
 				Page.getCurrent().pushState(currentURL);
 			} catch (UnsupportedEncodingException e) {
 				logger.error("UnsupportedEncodingException in URL", e);

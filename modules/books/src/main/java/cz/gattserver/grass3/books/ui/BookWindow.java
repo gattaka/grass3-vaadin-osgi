@@ -16,7 +16,7 @@ import com.vaadin.external.org.slf4j.Logger;
 import com.vaadin.external.org.slf4j.LoggerFactory;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.DateTimeField;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.JavaScript;
@@ -46,6 +46,8 @@ public abstract class BookWindow extends WebWindow {
 	private MultiUpload upload;
 	private VerticalLayout imageLayout;
 	private Embedded image;
+
+	protected abstract void onSave(BookTO to);
 
 	public BookWindow() {
 		this(null);
@@ -165,16 +167,19 @@ public abstract class BookWindow extends WebWindow {
 		imageLayout.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
 	}
 
-	protected abstract void onSave(BookTO to);
-
 	protected VerticalLayout createForm(Binder<BookTO> binder) {
-		TextField authorField = new TextField("Autor");
-		binder.forField(authorField).asRequired().bind(BookTO::getAuthor, BookTO::setAuthor);
 
 		TextField nameField = new TextField("Název");
+		nameField.setWidth("600px");
 		binder.forField(nameField).asRequired().bind(BookTO::getName, BookTO::setName);
 
-		DateTimeField releasedField = new DateTimeField("Vydáno");
+		HorizontalLayout line1Layout = new HorizontalLayout(nameField);
+
+		TextField authorField = new TextField("Autor");
+		authorField.setWidth("200px");
+		binder.forField(authorField).asRequired().bind(BookTO::getAuthor, BookTO::setAuthor);
+
+		DateField releasedField = new DateField("Vydáno");
 		binder.forField(releasedField).bind(BookTO::getReleased, BookTO::setReleased);
 
 		RatingStars ratingStars = new RatingStars();
@@ -182,14 +187,14 @@ public abstract class BookWindow extends WebWindow {
 		ratingStars.setAnimated(false);
 		ratingStars.setCaption("Hodnocení");
 
-		HorizontalLayout line1Layout = new HorizontalLayout(authorField, nameField, releasedField, ratingStars);
+		HorizontalLayout line2Layout = new HorizontalLayout(authorField, releasedField, ratingStars);
 
 		TextArea descriptionField = new TextArea("Popis");
 		binder.forField(descriptionField).asRequired().bind(BookTO::getDescription, BookTO::setDescription);
 		descriptionField.setWidth("600px");
 		descriptionField.setHeight("200px");
 
-		return new VerticalLayout(line1Layout, descriptionField);
+		return new VerticalLayout(line1Layout, line2Layout, descriptionField);
 	}
 
 }

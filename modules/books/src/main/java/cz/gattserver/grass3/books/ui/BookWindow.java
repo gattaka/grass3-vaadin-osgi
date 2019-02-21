@@ -16,7 +16,6 @@ import com.vaadin.external.org.slf4j.Logger;
 import com.vaadin.external.org.slf4j.LoggerFactory;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.DateField;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.JavaScript;
@@ -179,8 +178,8 @@ public abstract class BookWindow extends WebWindow {
 		authorField.setWidth("200px");
 		binder.forField(authorField).asRequired().bind(BookTO::getAuthor, BookTO::setAuthor);
 
-		DateField releasedField = new DateField("Vydáno");
-		binder.forField(releasedField).bind(BookTO::getReleased, BookTO::setReleased);
+		TextField releasedField = new TextField("Vydáno");
+		binder.forField(releasedField).bind(BookTO::getYear, BookTO::setYear);
 
 		RatingStars ratingStars = new RatingStars();
 		binder.forField(ratingStars).asRequired().bind(BookTO::getRating, BookTO::setRating);

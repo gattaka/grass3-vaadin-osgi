@@ -49,7 +49,7 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
 		JPAQuery<BookOverviewTO> query = new JPAQuery<>(entityManager);
 		QBook b = QBook.book;
 		QuerydslUtil.applyPagination(pageable, query);
-		return query.select(new QBookOverviewTO(b.id, b.name, b.author, b.rating, b.released)).from(b)
+		return query.select(new QBookOverviewTO(b.id, b.name, b.author, b.rating, b.year)).from(b)
 				.where(createPredicateBooks(filterTO)).orderBy(order).fetch();
 	}
 
@@ -57,7 +57,7 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
 	public BookTO findBookById(Long id) {
 		JPAQuery<BookTO> query = new JPAQuery<>(entityManager);
 		QBook b = QBook.book;
-		return query.select(new QBookTO(b.id, b.name, b.author, b.rating, b.released, b.image, b.description)).from(b)
+		return query.select(new QBookTO(b.id, b.name, b.author, b.rating, b.year, b.image, b.description)).from(b)
 				.where(b.id.eq(id)).fetchOne();
 	}
 

@@ -1,7 +1,5 @@
 package cz.gattserver.grass3.books.model.interfaces;
 
-import java.time.LocalDate;
-
 import com.querydsl.core.annotations.QueryProjection;
 
 public class BookTO extends BookOverviewTO {
@@ -20,9 +18,8 @@ public class BookTO extends BookOverviewTO {
 	}
 
 	@QueryProjection
-	public BookTO(Long id, String name, String author, Double rating, LocalDate released, byte[] image,
-			String description) {
-		super(id, name, author, rating, released);
+	public BookTO(Long id, String name, String author, Double rating, String year, byte[] image, String description) {
+		super(id, name, author, rating, year);
 		this.image = image;
 		this.description = description;
 	}

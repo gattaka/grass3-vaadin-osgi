@@ -1,7 +1,5 @@
 package cz.gattserver.grass3.books.model.domain;
 
-import java.time.LocalDate;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -51,7 +49,7 @@ public class Book {
 	/**
 	 * Kdy byla kniha vydána
 	 */
-	private LocalDate released;
+	private String year;
 
 	public Long getId() {
 		return id;
@@ -69,12 +67,12 @@ public class Book {
 		this.author = author;
 	}
 
-	public LocalDate getReleased() {
-		return released;
+	public String getYear() {
+		return year;
 	}
 
-	public void setReleased(LocalDate released) {
-		this.released = released;
+	public void setYear(String year) {
+		this.year = year;
 	}
 
 	public String getName() {

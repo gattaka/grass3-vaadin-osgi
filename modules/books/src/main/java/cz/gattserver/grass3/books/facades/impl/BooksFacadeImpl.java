@@ -62,7 +62,7 @@ public class BooksFacadeImpl implements BooksFacade {
 		d.setRating(to.getRating());
 		d.setImage(to.getImage());
 		d.setDescription(to.getDescription());
-		d.setReleased(to.getReleased());
+		d.setYear(to.getYear());
 		d.setId(to.getId());
 		return d;
 	}

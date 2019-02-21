@@ -1,7 +1,5 @@
 package cz.gattserver.grass3.books.model.interfaces;
 
-import java.time.LocalDate;
-
 import com.querydsl.core.annotations.QueryProjection;
 
 public class BookOverviewTO {
@@ -26,19 +24,19 @@ public class BookOverviewTO {
 	/**
 	 * Kdy byla kniha vydána
 	 */
-	private LocalDate released;
+	private String year;
 
 	public BookOverviewTO() {
 	}
 
 	@QueryProjection
-	public BookOverviewTO(Long id, String name, String author, Double rating, LocalDate released) {
+	public BookOverviewTO(Long id, String name, String author, Double rating, String year) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.author = author;
 		this.rating = rating;
-		this.released = released;
+		this.year = year;
 	}
 
 	public Long getId() {
@@ -57,12 +55,12 @@ public class BookOverviewTO {
 		this.author = author;
 	}
 
-	public LocalDate getReleased() {
-		return released;
+	public String getYear() {
+		return year;
 	}
 
-	public void setReleased(LocalDate released) {
-		this.released = released;
+	public void setYear(String year) {
+		this.year = year;
 	}
 
 	public String getName() {

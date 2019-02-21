@@ -230,8 +230,7 @@ public class BooksPage extends OneColumnPage {
 		b.setWidth("120px");
 		infoLayout.addComponent(new Label(choosenBook.getAuthor()));
 		infoLayout.addComponent(new BoldLabel("Vydáno"));
-		infoLayout.addComponent(new Label(choosenBook.getReleased() == null ? ""
-				: choosenBook.getReleased().format(DateTimeFormatter.ofPattern("d.M.yyyy"))));
+		infoLayout.addComponent(new Label(choosenBook.getYear()));
 
 		Label descriptionLabel = new Label(choosenBook.getDescription().replaceAll("\n", "<br/>"), ContentMode.HTML);
 		descriptionLabel.setSizeFull();

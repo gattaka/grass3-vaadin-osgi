@@ -4,18 +4,23 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.perf4j.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.data.HasValue.ValueChangeEvent;
+import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.interfaces.ContentTagsCloudItemTO;
@@ -86,24 +91,11 @@ public class HomePage extends BasePage {
 							() -> contentNodeFacade.getUserFavouriteCount(user.getId()));
 			favouritesLayout.addComponent(favouritesContentsTable);
 			favouritesContentsTable.setWidth("100%");
-
-			int min = 50;
-			int element = 25;
-			int max = 200;
-			int header = 25;
-
-			int size = contentNodeFacade.getUserFavouriteCount(user.getId()) * element;
-
-			if (size < min)
-				size = min;
-			if (size > max)
-				size = max;
-			size += header;
-			favouritesContentsTable.setHeight(size + "px");
-
 			pagelayout.addComponent(favouritesLayout);
 		}
 		perfLogger.info(stopWatch.stop());
+
+		createSearchMenu(pagelayout);
 
 		// Nedávno přidané a upravené obsahy
 		stopWatch = new StopWatch("HomePage#createRecentMenus");
@@ -123,6 +115,43 @@ public class HomePage extends BasePage {
 		JavaScript.eval("setTimeout(function(){ cz.gattserver.grass3.lazytagcloud(); }, 10);");
 
 		contentLayout.addComponent(marginLayout, "content");
+	}
+
+	private void createSearchMenu(VerticalLayout pagelayout) {
+		VerticalLayout searchResultsLayout = new VerticalLayout();
+		searchResultsLayout.setMargin(false);
+		searchResultsLayout.addComponent(new H2Label("Vyhledávání"));
+		pagelayout.addComponent(searchResultsLayout);
+
+		TextField searchField = new TextField();
+		searchField.setPlaceholder("Název obsahu");
+		searchField.setWidth("100%");
+		searchResultsLayout.addComponent(searchField);
+
+		final ContentsLazyGrid searchResultsTable = new ContentsLazyGrid();
+		searchResultsTable.setWidth("100%");
+		searchResultsTable.setVisible(false);
+		searchResultsLayout.addComponent(searchResultsTable);
+
+		searchField.addValueChangeListener(new ValueChangeListener<String>() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void valueChange(ValueChangeEvent<String> event) {
+				String value = event.getValue();
+				if (StringUtils.isNotBlank(value) && !searchResultsTable.isVisible()) {
+					searchResultsTable.setVisible(true);
+					searchResultsTable.populate(HomePage.this, (sortOrder, offset, limit) -> {
+						return contentNodeFacade.getByName(searchField.getValue(), offset, limit).stream();
+					}, () -> contentNodeFacade.getCountByName(searchField.getValue()));
+					searchResultsTable.setHeight("200px");
+				}
+				searchResultsTable.getDataProvider().refreshAll();
+			}
+		});
+		searchField.setValueChangeMode(ValueChangeMode.LAZY);
+		searchField.setValueChangeTimeout(200);
+
 	}
 
 	private void createTagCloud(VerticalLayout pagelayout) {

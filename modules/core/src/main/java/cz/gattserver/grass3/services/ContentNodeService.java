@@ -220,4 +220,26 @@ public interface ContentNodeService {
 	 */
 	public List<ContentNodeOverviewTO> getByNode(long nodeId, int offset, int limit);
 
+	/**
+	 * Získá počet obsahů dle názvu
+	 * 
+	 * @param name
+	 *            název (vzor s *)
+	 * @return počet obsahů
+	 */
+	public int getCountByName(String value);
+
+	/**
+	 * Získá list obsahů dle názvu
+	 * 
+	 * @param name
+	 *            název (vzor s *)
+	 * @param offset
+	 *            stránkování
+	 * @param limit
+	 *            stránkování
+	 * @return list nalezených obsahů
+	 */
+	public List<ContentNodeOverviewTO> getByName(String value, int offset, int limit);
+
 }

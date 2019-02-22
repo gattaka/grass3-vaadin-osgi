@@ -105,7 +105,7 @@ public abstract class MenuPage extends GrassPage {
 
 		// footer
 		layout.addComponent(
-				new Label("Powered by GRASS " + versionInfoService.getProjectVersion() + " © 2012-2018 Hynek Uhlíř"),
+				new Label("Powered by GRASS " + versionInfoService.getProjectVersion() + " © 2012-2019 Hynek Uhlíř"),
 				"about");
 
 		return layout;

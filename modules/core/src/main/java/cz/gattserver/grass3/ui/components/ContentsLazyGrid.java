@@ -80,11 +80,11 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 			return contentNode.getAuthor().getName();
 		}, new TextRenderer()).setCaption("Autor").setId(authorBind).setWidth(100);
 
-		addColumn(ContentNodeOverviewTO::getCreationDate, new LocalDateTimeRenderer("d.MM.yyyy"))
+		addColumn(ContentNodeOverviewTO::getCreationDate, new LocalDateTimeRenderer("d.M.yyyy"))
 				.setCaption("Datum vytvoření").setId(creationDateBind).setStyleGenerator(item -> "v-align-right")
 				.setWidth(GridUtils.DATE_COLUMN_WIDTH);
 
-		addColumn(ContentNodeOverviewTO::getLastModificationDate, new LocalDateTimeRenderer("d.MM.yyyy"))
+		addColumn(ContentNodeOverviewTO::getLastModificationDate, new LocalDateTimeRenderer("d.M.yyyy"))
 				.setCaption("Datum úpravy").setId(lastModificationDateBind).setStyleGenerator(item -> "v-align-right")
 				.setWidth(GridUtils.DATE_COLUMN_WIDTH);
 

@@ -232,4 +232,25 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 				innerByNodeAndUserAccess(nodeId, QuerydslUtil.transformOffsetLimit(offset, limit)).getContent());
 	}
 
+	/**
+	 * Dle názvu
+	 */
+
+	private Page<ContentNode> innerByNameAndUserAccess(String name, PageRequest pr) {
+		UserInfoTO user = securityService.getCurrentUser();
+		name = "%" + name.replace('*', '%') + "%";
+		return contentNodeRepository.findByNameAndUserAccess(name, user.getId(), user.isAdmin(), pr);
+	}
+
+	@Override
+	public int getCountByName(String name) {
+		return (int) innerByNameAndUserAccess(name, new PageRequest(1, 1)).getTotalElements();
+	}
+
+	@Override
+	public List<ContentNodeOverviewTO> getByName(String name, int offset, int limit) {
+		return mapper.mapContentNodeOverviewCollection(
+				innerByNameAndUserAccess(name, QuerydslUtil.transformOffsetLimit(offset, limit)).getContent());
+	}
+
 }

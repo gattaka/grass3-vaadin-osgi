@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
+import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -48,6 +49,8 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
 	public List<BookOverviewTO> findBooks(BookOverviewTO filterTO, PageRequest pageable, OrderSpecifier<?>[] order) {
 		JPAQuery<BookOverviewTO> query = new JPAQuery<>(entityManager);
 		QBook b = QBook.book;
+		if (order == null)
+			order = new OrderSpecifier[] { new OrderSpecifier<>(Order.DESC, b.name) };
 		QuerydslUtil.applyPagination(pageable, query);
 		return query.select(new QBookOverviewTO(b.id, b.name, b.author, b.rating, b.year)).from(b)
 				.where(createPredicateBooks(filterTO)).orderBy(order).fetch();

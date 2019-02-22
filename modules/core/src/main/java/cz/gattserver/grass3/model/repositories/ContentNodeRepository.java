@@ -23,7 +23,7 @@ public interface ContentNodeRepository extends JpaRepository<ContentNode, Long> 
 	@Query("select c from CONTENTNODE c where c.parent.id = ?1 and (c.draft = false or c.draft is null) and (?3 = true or c.publicated = true or c.author.id = ?2) order by c.creationDate desc")
 	Page<ContentNode> findByNodeAndUserAccess(Long nodeId, Long userId, boolean admin, Pageable pageable);
 
-	@Query("select c from CONTENTNODE c where c.name like ?1 and (c.draft = false or c.draft is null) and (?3 = true or c.publicated = true or c.author.id = ?2) order by c.creationDate desc")
+	@Query("select c from CONTENTNODE c where lower(c.name) like lower(?1) and (c.draft = false or c.draft is null) and (?3 = true or c.publicated = true or c.author.id = ?2) order by c.creationDate desc")
 	Page<ContentNode> findByNameAndUserAccess(String name, Long userId, boolean admin, Pageable pageable);
 
 	@Query("select c.id from CONTENTNODE c where c.contentReaderId = ?1 and c.contentId = ?2")

@@ -92,56 +92,20 @@ public class LanguageFacadeImpl implements LanguageFacade {
 	}
 
 	@Override
-	public List<LanguageItemTO> getLanguageItemsForTest(long languageId, ItemType type) {
-		// sada na učení (ještě neumím)
-		List<Long> toLearnIds;
+	public List<LanguageItemTO> getLanguageItemsForTest(long languageId, double minRating, double maxRatingExclusive,
+			int maxCount, ItemType type) {
+		List<Long> ids;
 		if (type != null)
-			toLearnIds = itemRepository.findIdsByLanguageAndSuccessRateRangeSortByContent(languageId, type, 0, 5);
+			ids = itemRepository.findIdsByLanguageAndSuccessRateRangeSortByContent(languageId, type, minRating,
+					maxRatingExclusive);
 		else
-			toLearnIds = itemRepository.findIdsByLanguageAndSuccessRateRangeSortByContent(languageId, 0, 5);
+			ids = itemRepository.findIdsByLanguageAndSuccessRateRangeSortByContent(languageId, minRating,
+					maxRatingExclusive);
 
-		// sada na vylepšení (umím trochu)
-		List<Long> toImproveIds;
-		if (type != null)
-			toImproveIds = itemRepository.findIdsByLanguageAndSuccessRateRangeSortByContent(languageId, type, 5, 8);
-		else
-			toImproveIds = itemRepository.findIdsByLanguageAndSuccessRateRangeSortByContent(languageId, 5, 8);
-
-		// sada na opakování (umím, stačí občas opakovat)
-		// 1.1 je protože se max uvádí jako exclusive, tak aby se pobraly i ty,
-		// co jsou případně opravdu 100% = 1
-		List<Long> toRefreshIds;
-		if (type != null)
-			toRefreshIds = itemRepository.findIdsByLanguageAndSuccessRateRangeSortByContent(languageId, type, 8, 1.1);
-		else
-			toRefreshIds = itemRepository.findIdsByLanguageAndSuccessRateRangeSortByContent(languageId, 8, 1.1);
-
-		int numberOfItemsToLearn = 10;
-		int numberOfItemsToImprove = 7;
-		int numberOfItemsToRefresh = 3;
-		int numberOfItemsToChoose = 0;
-		int numberOfItemsChoosen = 0;
 		Set<Long> choosenIds = new HashSet<>();
 
-		// Neumím
-		numberOfItemsToChoose += numberOfItemsToLearn;
-		numberOfItemsChoosen = Math.min(numberOfItemsToChoose, toLearnIds.size());
-		if (!toLearnIds.isEmpty())
-			randomChoose(numberOfItemsChoosen, toLearnIds, choosenIds);
-		numberOfItemsToChoose -= numberOfItemsChoosen;
-
-		// Potřebuju si vylepšit
-		numberOfItemsToChoose += numberOfItemsToImprove;
-		numberOfItemsChoosen = Math.min(numberOfItemsToChoose, toImproveIds.size());
-		if (!toImproveIds.isEmpty())
-			randomChoose(numberOfItemsChoosen, toImproveIds, choosenIds);
-		numberOfItemsToChoose -= numberOfItemsChoosen;
-
-		// Opakuju, abych nezapomněl
-		numberOfItemsToChoose += numberOfItemsToRefresh;
-		numberOfItemsChoosen = Math.min(numberOfItemsToChoose, toRefreshIds.size());
-		if (!toRefreshIds.isEmpty())
-			randomChoose(numberOfItemsChoosen, toRefreshIds, choosenIds);
+		if (!ids.isEmpty())
+			randomChoose(maxCount < ids.size() ? maxCount : ids.size(), ids, choosenIds);
 
 		List<LanguageItem> items = itemRepository.findByIds(choosenIds);
 		return mapper.mapLanguageItems(items);

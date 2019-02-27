@@ -355,18 +355,31 @@ public class LanguagePage extends OneColumnPage {
 		return sheet;
 	}
 
+	private void createGridLine(LanguageItemTO item, GridLayout gridLayout, Map<LanguageItemTO, TextField> answersMap) {
+		Label label = new Label(item.getTranslation());
+		label.setWidth(null);
+		gridLayout.addComponent(label);
+
+		TextField answerField = new TextField();
+		answerField.setWidth("100%");
+		answerField.setPlaceholder("varianta;varianta;...");
+		gridLayout.addComponent(answerField);
+
+		answersMap.put(item, answerField);
+	}
+
 	private void startTest(Long langId, ItemType type, VerticalLayout testLayout) {
 		testLayout.removeAllComponents();
 
 		Map<LanguageItemTO, TextField> answersMap = new LinkedHashMap<>();
 
-		List<LanguageItemTO> items = languageFacade.getLanguageItemsForTest(langId, type);
-		if (items.isEmpty()) {
-			testLayout.addComponent(new Label("Není z čeho zkoušet"));
-			return;
-		}
+		List<LanguageItemTO> itemsToLearn = languageFacade.getLanguageItemsForTest(langId, 0, 0.1, 10, type);
+		List<LanguageItemTO> itemsToImprove = languageFacade.getLanguageItemsForTest(langId, 0.1, 0.8, 5, type);
+		List<LanguageItemTO> itemsToRefresh = languageFacade.getLanguageItemsForTest(langId, 0.8, 1.1, 4, type);
 
-		GridLayout gridLayout = new GridLayout(2, items.size());
+		int linesCount = 1 + itemsToLearn.size() + itemsToImprove.size() + itemsToRefresh.size() + 3;
+
+		GridLayout gridLayout = new GridLayout(2, linesCount);
 		gridLayout.setSpacing(true);
 		gridLayout.setMargin(new MarginInfo(true, false, false, false));
 		gridLayout.setWidth("100%");
@@ -376,24 +389,29 @@ public class LanguagePage extends OneColumnPage {
 		gridLayout.addComponent(new BoldLabel("Položka"));
 		gridLayout.addComponent(new BoldLabel(PREKLAD_LABEL));
 
-		for (LanguageItemTO item : items) {
-			Label label = new Label(item.getTranslation());
-			label.setWidth(null);
-			gridLayout.addComponent(label);
+		int line = 1;
 
-			TextField answerField = new TextField();
-			answerField.setWidth("100%");
-			answerField.setPlaceholder("varianta;varianta;...");
-			gridLayout.addComponent(answerField);
+		gridLayout.addComponent(new BoldLabel("Nové"), 0, line, 1, line);
+		for (LanguageItemTO item : itemsToLearn)
+			createGridLine(item, gridLayout, answersMap);
 
-			answersMap.put(item, answerField);
-		}
+		line += itemsToLearn.size() + 1;
+
+		gridLayout.addComponent(new BoldLabel("Ke zlepšení"), 0, line, 1, line);
+		for (LanguageItemTO item : itemsToImprove)
+			createGridLine(item, gridLayout, answersMap);
+
+		line += itemsToImprove.size() + 1;
+
+		gridLayout.addComponent(new BoldLabel("Opakování"), 0, line, 1, line);
+		for (LanguageItemTO item : itemsToRefresh)
+			createGridLine(item, gridLayout, answersMap);
 
 		Button submitBtn = new Button("Zkontrolovat");
 		submitBtn.addClickListener(e -> {
 			testLayout.removeAllComponents();
 
-			GridLayout resultLayout = new GridLayout(4, items.size());
+			GridLayout resultLayout = new GridLayout(4, linesCount - 3);
 			resultLayout.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
 			resultLayout.setMargin(new MarginInfo(true, false, false, false));
 			resultLayout.setSpacing(true);

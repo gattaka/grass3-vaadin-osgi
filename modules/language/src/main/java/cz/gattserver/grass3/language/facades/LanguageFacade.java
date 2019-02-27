@@ -59,9 +59,16 @@ public interface LanguageFacade {
 	 * @param type
 	 *            typ záznamů, které se budou zkoušet, může být
 	 *            <code>null</code>
+	 * @param minRating
+	 *            minimální úspěšnost
+	 * @param maxRatingExclusive
+	 *            maximální (nezahrnuto) úspěšnost
+	 * @param maxCount
+	 *            maximální počet záznamů, který se má vrátit
 	 * @return list záznamů k přezkoušení
 	 */
-	List<LanguageItemTO> getLanguageItemsForTest(long languageId, ItemType type);
+	List<LanguageItemTO> getLanguageItemsForTest(long languageId, double minRating, double maxRatingExclusive,
+			int maxCount, ItemType type);
 
 	/**
 	 * Získá záznam dle id

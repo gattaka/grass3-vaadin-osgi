@@ -158,7 +158,7 @@ public abstract class MenuPage extends GrassPage {
 		// getPageResource(registrationPageFactory)));
 
 		// Přehled o uživateli
-		final UserInfoTO userInfoDTO = UIUtils.getGrassUI().getUser();
+		final UserInfoTO userInfoDTO = UIUtils.getUser();
 		if (coreACL.canShowUserDetails(userInfoDTO, UIUtils.getUser())) {
 			// nastavení
 			createMenuComponent(menu, new Link(userInfoDTO.getName(), getPageResource(settingsPageFactory)));

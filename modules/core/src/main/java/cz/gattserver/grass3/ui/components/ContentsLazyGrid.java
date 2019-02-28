@@ -15,6 +15,7 @@ import cz.gattserver.grass3.modules.register.ModuleRegister;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.MenuPage;
 import cz.gattserver.grass3.ui.util.GridUtils;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -45,12 +46,18 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		setDataProvider(fetchItems, sizeCallback);
 		setSelectionMode(SelectionMode.NONE);
 
+		String lockIconBind = "lockIcon";
 		String iconBind = "customIcon";
 		String nameBind = "customName";
 		String nodeBind = "customNode";
 		String authorBind = "customAuthor";
 		String creationDateBind = "customCreationDate";
 		String lastModificationDateBind = "customLastModificationDate";
+
+		if (UIUtils.getUser() != null)
+			addColumn(contentNode -> {
+				return contentNode.isPublicated() ? null : new Image("", ImageIcon.SHIELD_16_ICON.createResource());
+			}, new ComponentRenderer()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(lockIconBind);
 
 		addColumn(contentNode -> {
 			ContentModule contentService = serviceHolder.getContentModulesByName(contentNode.getContentReaderID());
@@ -88,7 +95,11 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 				.setCaption("Datum úpravy").setId(lastModificationDateBind).setStyleGenerator(item -> "v-align-right")
 				.setWidth(GridUtils.DATE_COLUMN_WIDTH);
 
-		setColumns(iconBind, nameBind, nodeBind, authorBind, creationDateBind, lastModificationDateBind);
+		if (UIUtils.getUser() != null)
+			setColumns(iconBind, nameBind, lockIconBind, nodeBind, authorBind, creationDateBind,
+					lastModificationDateBind);
+		else
+			setColumns(iconBind, nameBind, nodeBind, authorBind, creationDateBind, lastModificationDateBind);
 
 		setHeight(GridUtils.processHeight(sizeCallback.get()) + "px");
 

@@ -117,6 +117,15 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 					return createFullFaviconAddress(ico, rootURL);
 			}
 
+			// link shortcut icon
+			// logger.info("Zkouším LINK REL shortcut icon content");
+			// element = doc.head().select("meta[itemprop=image]").first();
+			// if (element != null) {
+			// ico = element.attr("content");
+			// if (StringUtils.isNotBlank(ico))
+			// return createFullFaviconAddress(ico, rootURL);
+			// }
+
 		} catch (IOException e) {
 			logger.error("Nezdařilo se získat stránku z pageURL: {}", pageURL);
 		}

@@ -64,8 +64,12 @@ public class FaviconUtils {
 					}
 
 					logger.info("Favicon connected URL: " + hc.getURL());
+					if (hc.getContentLength() == 0) {
+						logger.info("Engine: ContentLength=0 ");
+						return null;
+					}
+
 					is = hc.getInputStream();
-					logger.info("Favicon redirected URL: " + hc.getURL());
 					if (is != null) {
 						logger.info("Engine: InputStream obtained");
 					} else {
@@ -109,6 +113,13 @@ public class FaviconUtils {
 		if (stream != null) {
 			try {
 				Files.copy(stream, targetFile);
+				logger.info("Favicon uložen, kontroluju velikost");
+				long size = Files.size(targetFile);
+				if (size == 0) {
+					logger.info("Favicon má velikost 0B, mažu soubor a označuju download jako neúspěšný");
+					Files.delete(targetFile);
+					return false;
+				}
 				return true;
 			} catch (IOException e) {
 				throw new ParserException("Nezdařilo se uložit staženou favicon", e);

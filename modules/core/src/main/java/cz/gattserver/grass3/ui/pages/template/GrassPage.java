@@ -107,7 +107,7 @@ public abstract class GrassPage {
 			// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
 			// obejít problém se závislosí pluginů na úložišti theme apod. a
 			// přitom umožnit aby se JS odkazovali na externí zdroje
-			if (!chunk.toLowerCase().startsWith("http://"))
+			if (!chunk.toLowerCase().startsWith("http://") || !chunk.toLowerCase().startsWith("https://"))
 				chunk = "\"" + getRequest().getContextRoot() + "/VAADIN/themes/grass/" + chunk + "\"";
 		}
 

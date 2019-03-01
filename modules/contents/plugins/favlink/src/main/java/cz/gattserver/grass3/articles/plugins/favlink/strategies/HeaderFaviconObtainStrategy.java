@@ -23,6 +23,7 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 
 	private static final Logger logger = LoggerFactory.getLogger(HeaderFaviconObtainStrategy.class);
 	private static final String HTTP_PREFIX_SHORT = "http:";
+	private static final String HTTPS_PREFIX_SHORT = "https:";
 	private static final String HTTP_PREFIX = "http://";
 	private static final String HTTPS_PREFIX = "https://";
 
@@ -64,7 +65,8 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 		} else if (faviconAddress.startsWith("//")) {
 			// absolutní cesta pro favicon, která místo 'http://' začíná jenom
 			// '//' tahle to má například stackoverflow
-			String faviconFullAddress = HTTP_PREFIX_SHORT + faviconAddress;
+			String prefix = baseURI.startsWith(HTTPS_PREFIX) ? HTTPS_PREFIX_SHORT : HTTP_PREFIX_SHORT;
+			String faviconFullAddress = prefix + faviconAddress;
 			logger.info(tryMsg, faviconFullAddress);
 			return faviconFullAddress;
 		} else {

@@ -76,7 +76,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
 			// obejít problém se závislosí pluginů na úložišti theme apod. a
 			// přitom umožnit aby se CSS odkazovali na externí zdroje
-			if (!css.toLowerCase().startsWith("http://"))
+			if (!css.toLowerCase().startsWith("http://") || !css.toLowerCase().startsWith("https://"))
 				css = getRequest().getContextRoot() + "/VAADIN/themes/grass/" + css;
 			loadCSS(css);
 		}

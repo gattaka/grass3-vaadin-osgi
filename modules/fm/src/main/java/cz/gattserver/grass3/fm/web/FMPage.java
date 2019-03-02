@@ -11,7 +11,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.server.Page;
@@ -194,7 +193,6 @@ public class FMPage extends OneColumnPage {
 
 	private void createFilesGrid(VerticalLayout layout) {
 		grid = new Grid<>();
-		layout.addComponent(grid);
 		grid.setSizeFull();
 		grid.setSelectionMode(SelectionMode.MULTI);
 		grid.setColumnReorderingAllowed(true);
@@ -297,8 +295,6 @@ public class FMPage extends OneColumnPage {
 	private void createButtonsLayout(VerticalLayout layout) {
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setSpacing(true);
-		layout.addComponent(buttonsLayout);
-
 		buttonsLayout.addComponent(new CreateGridButton("Vytvořit nový adresář", e -> handleNewDirectory()));
 
 		MultiUpload multiFileUpload = new MultiUpload("Nahrát soubory") {
@@ -324,6 +320,7 @@ public class FMPage extends OneColumnPage {
 				}
 			}
 		};
+		layout.addComponent(multiFileUpload.createDropComponent(grid));
 		buttonsLayout.addComponent(multiFileUpload);
 
 		GridButton<FMItemTO> downloadButton = new GridButton<>("Stáhnout", this::handleDownloadAction, grid);
@@ -338,6 +335,8 @@ public class FMPage extends OneColumnPage {
 		buttonsLayout.addComponent(gotoButton);
 		buttonsLayout.addComponent(new ModifyGridButton<FMItemTO>("Přejmenovat", this::handleRenameAction, grid));
 		buttonsLayout.addComponent(new DeleteGridButton<FMItemTO>("Smazat", this::handleDeleteAction, grid));
+
+		layout.addComponent(buttonsLayout);
 	}
 
 	private void handleNewDirectory() {

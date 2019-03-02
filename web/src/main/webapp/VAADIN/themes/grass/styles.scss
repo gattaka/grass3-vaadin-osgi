@@ -398,17 +398,20 @@ div.v-button.v-widget.link.v-button-link.menu-item.v-button-menu-item span span:
 	margin: 5px 5px 0 0;
 }
 
-.grass .v-horizontallayout.v-layout.v-horizontal.v-widget.not-publicated-info.v-horizontallayout-not-publicated-info
-	{
+.grass .v-horizontallayout.v-layout.v-horizontal.v-widget.not-publicated-info.v-horizontallayout-not-publicated-info {
 	margin-bottom: 0;
 	margin-top: 4px;
 	border: 1px rgb(112, 175, 233) solid;
-	padding: 12px 5px 0 5px;
+	padding: 10px 5px 0 5px;
 	width: 100%;
 	height: 42px;
 	text-align: center;
 	background-color: rgb(213, 235, 255);
 	text-align: center;
+}
+
+.grass .v-horizontallayout.v-layout.v-horizontal.v-widget.not-publicated-info.v-horizontallayout-not-publicated-info img {
+    margin-bottom: -3px;
 }
 
 .grass .v-horizontallayout.v-layout.v-horizontal.v-widget.not-publicated-info.v-horizontallayout-not-publicated-info .v-label.v-widget.v-label-undef-w {
@@ -665,4 +668,9 @@ span.tag-letter {
 .grass ul, .grass ol {
 	margin: 0px;
 	padding-inline-start: 15px;
+}
+
+.grass .v-grid-cell > * {
+    line-height: 1.3;
+    vertical-align: middle;
 }

@@ -56,7 +56,7 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 
 		if (UIUtils.getUser() != null)
 			addColumn(contentNode -> {
-				return contentNode.isPublicated() ? null : new Image("", ImageIcon.SHIELD_16_ICON.createResource());
+				return contentNode.isPublicated() ? null : new Image(null, ImageIcon.SHIELD_16_ICON.createResource());
 			}, new ComponentRenderer()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(lockIconBind);
 
 		addColumn(contentNode -> {

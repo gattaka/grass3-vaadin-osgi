@@ -56,14 +56,20 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 
 		if (UIUtils.getUser() != null)
 			addColumn(contentNode -> {
-				return contentNode.isPublicated() ? null : new Image(null, ImageIcon.SHIELD_16_ICON.createResource());
-			}, new ComponentRenderer()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(lockIconBind);
+				Image img = contentNode.isPublicated() ? null
+						: new Image(null, ImageIcon.SHIELD_16_ICON.createResource());
+				return img;
+			}, new ComponentRenderer()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(lockIconBind)
+					.setStyleGenerator(item -> "icon-cell");
 
 		addColumn(contentNode -> {
 			ContentModule contentService = serviceHolder.getContentModulesByName(contentNode.getContentReaderID());
-			return new Image("", contentService == null ? ImageIcon.WARNING_16_ICON.createResource()
+			Image img = new Image("", contentService == null ? ImageIcon.WARNING_16_ICON.createResource()
 					: contentService.getContentIcon());
-		}, new ComponentRenderer()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(iconBind);
+			img.setWidth("16px");
+			return img;
+		}, new ComponentRenderer()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(iconBind)
+				.setStyleGenerator(item -> "icon-cell");
 
 		addColumn(contentNode -> {
 			ContentModule contentService = serviceHolder.getContentModulesByName(contentNode.getContentReaderID());

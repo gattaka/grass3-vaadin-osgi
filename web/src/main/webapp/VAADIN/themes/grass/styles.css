@@ -1094,6 +1094,10 @@
 	display: none;
 }
 
+td.v-grid-cell.icon-cell {    
+    padding: 0 0 0 8px;
+}
+
 .v-ui {
 	position: relative;
 }

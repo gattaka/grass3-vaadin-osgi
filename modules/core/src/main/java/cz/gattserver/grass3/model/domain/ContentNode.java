@@ -85,7 +85,8 @@ public class ContentNode {
 	private Long id;
 
 	public Boolean getDraft() {
-		return draft;
+		// Zpětná kompatibilita s null záznamy
+		return Boolean.TRUE.equals(draft);
 	}
 
 	public void setDraft(Boolean draft) {

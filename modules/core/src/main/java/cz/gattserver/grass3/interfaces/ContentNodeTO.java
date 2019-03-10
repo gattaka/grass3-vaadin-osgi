@@ -143,11 +143,7 @@ public class ContentNodeTO {
 	}
 
 	public boolean isDraft() {
-		return Boolean.TRUE.equals(draft);
-	}
-
-	public void setDraft(Boolean draft) {
-		this.draft = draft;
+		return draft;
 	}
 
 	public Long getDraftSourceId() {

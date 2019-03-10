@@ -186,16 +186,17 @@ public class LanguageFacadeImplTest extends AbstractDBUnitTest {
 		itemTO.setTranslation("trans3");
 		languageFacade.saveLanguageItem(itemTO);
 
-		List<LanguageItemTO> items = languageFacade.getLanguageItemsForTest(languageTO.getId(), ItemType.PHRASE);
+		List<LanguageItemTO> items = languageFacade.getLanguageItemsForTest(languageTO.getId(), 0, 1, 10,
+				ItemType.PHRASE);
 		assertEquals(1, items.size());
 		assertEquals("aaa", items.get(0).getContent());
 
-		items = languageFacade.getLanguageItemsForTest(languageTO.getId(), ItemType.WORD);
+		items = languageFacade.getLanguageItemsForTest(languageTO.getId(), 0, 1, 10, ItemType.WORD);
 		assertEquals(2, items.size());
 		assertEquals("abab", items.get(0).getContent());
 		assertEquals("add", items.get(1).getContent());
 
-		items = languageFacade.getLanguageItemsForTest(languageTO.getId(), null);
+		items = languageFacade.getLanguageItemsForTest(languageTO.getId(), 0, 1, 10, null);
 		assertEquals(3, items.size());
 		assertEquals("aaa", items.get(0).getContent());
 		assertEquals("abab", items.get(1).getContent());

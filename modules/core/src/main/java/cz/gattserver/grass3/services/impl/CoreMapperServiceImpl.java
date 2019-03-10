@@ -10,7 +10,6 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
@@ -69,30 +68,6 @@ public class CoreMapperServiceImpl implements CoreMapperService {
 	}
 
 	@Override
-	public ContentNodeOverviewTO mapContentNodeOverview(ContentNode e) {
-		if (e == null)
-			return null;
-
-		ContentNodeOverviewTO contentNodeDTO = new ContentNodeOverviewTO();
-
-		contentNodeDTO.setAuthor(map(e.getAuthor()));
-		contentNodeDTO.setContentID(e.getContentId());
-		contentNodeDTO.setContentReaderID(e.getContentReaderId());
-		contentNodeDTO.setCreationDate(e.getCreationDate());
-		contentNodeDTO.setId(e.getId());
-		contentNodeDTO.setLastModificationDate(e.getLastModificationDate());
-		contentNodeDTO.setName(e.getName());
-		contentNodeDTO.setPublicated(e.getPublicated());
-
-		NodeOverviewTO nodeDTO = new NodeOverviewTO();
-		nodeDTO.setId(e.getParent().getId());
-		nodeDTO.setName(e.getParent().getName());
-		contentNodeDTO.setParent(nodeDTO);
-
-		return contentNodeDTO;
-	}
-
-	@Override
 	public ContentNodeTO mapContentNodeForDetail(ContentNode e) {
 		if (e == null)
 			return null;
@@ -113,18 +88,6 @@ public class CoreMapperServiceImpl implements CoreMapperService {
 		contentNodeDTO.setParent(mapNodeForOverview(e.getParent()));
 
 		return contentNodeDTO;
-	}
-
-	@Override
-	public List<ContentNodeOverviewTO> mapContentNodeOverviewCollection(Collection<ContentNode> contentNodes) {
-		if (contentNodes == null)
-			return new ArrayList<>();
-
-		List<ContentNodeOverviewTO> contentNodeDTOs = new ArrayList<>();
-		for (ContentNode contentNode : contentNodes) {
-			contentNodeDTOs.add(mapContentNodeOverview(contentNode));
-		}
-		return contentNodeDTOs;
 	}
 
 	@Override
@@ -210,4 +173,5 @@ public class CoreMapperServiceImpl implements CoreMapperService {
 		}
 		return nodeDTOs;
 	}
+
 }

@@ -104,7 +104,8 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 		tags.add("new1");
 		tags.add("new2");
 
-		contentNodeService.modify(contentNode1, "newNameAfterModify", tags, false, LocalDateTime.of(1980, 2, 3, 10, 15));
+		contentNodeService.modify(contentNode1, "newNameAfterModify", tags, false,
+				LocalDateTime.of(1980, 2, 3, 10, 15));
 		ContentNodeTO contentNode = contentNodeService.getByID(contentNode1);
 
 		assertEquals("newNameAfterModify", contentNode.getName());
@@ -285,16 +286,16 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 		assertEquals(MockUtils.MOCK_CONTENTNODE_MODULE + 3, contentNodeByNode.getContentReaderID());
 		assertEquals(new Long(25), contentNodeByNode.getContentID());
 		assertEquals(MockUtils.MOCK_CONTENTNODE_NAME + 3, contentNodeByNode.getName());
-		assertEquals(userId2, contentNodeByNode.getAuthor().getId());
-		assertEquals(nodeId2, contentNodeByNode.getParent().getId());
+		assertEquals(userId2, contentNodeByNode.getAuthorId());
+		assertEquals(nodeId2, contentNodeByNode.getParentNodeId());
 
 		contentNodeByNode = contentNodesByNode.get(1);
 		assertEquals(contentNode2, contentNodeByNode.getId());
 		assertEquals(MockUtils.MOCK_CONTENTNODE_MODULE + 2, contentNodeByNode.getContentReaderID());
 		assertEquals(new Long(30L), contentNodeByNode.getContentID());
 		assertEquals(MockUtils.MOCK_CONTENTNODE_NAME + 2, contentNodeByNode.getName());
-		assertEquals(userId1, contentNodeByNode.getAuthor().getId());
-		assertEquals(nodeId2, contentNodeByNode.getParent().getId());
+		assertEquals(userId1, contentNodeByNode.getAuthorId());
+		assertEquals(nodeId2, contentNodeByNode.getParentNodeId());
 
 		assertEquals(3, contentNodeService.getCount());
 	}
@@ -332,8 +333,8 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 		assertEquals(MockUtils.MOCK_CONTENTNODE_MODULE + 3, contentNodeByTag.getContentReaderID());
 		assertEquals(new Long(25L), contentNodeByTag.getContentID());
 		assertEquals(MockUtils.MOCK_CONTENTNODE_NAME + 3, contentNodeByTag.getName());
-		assertEquals(userId2, contentNodeByTag.getAuthor().getId());
-		assertEquals(nodeId2, contentNodeByTag.getParent().getId());
+		assertEquals(userId2, contentNodeByTag.getAuthorId());
+		assertEquals(nodeId2, contentNodeByTag.getParentNodeId());
 
 		tag = contentTagService.getTagByName("pokusy");
 		assertNotNull(tag);

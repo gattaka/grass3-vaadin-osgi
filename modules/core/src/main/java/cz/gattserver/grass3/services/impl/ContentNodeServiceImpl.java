@@ -6,12 +6,13 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.querydsl.core.QueryResults;
 
 import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
@@ -147,96 +148,93 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	 * Všechny obsahy
 	 */
 
-	private Page<ContentNode> innerByUserAccess(PageRequest pr) {
+	private QueryResults<ContentNodeOverviewTO> innerByUserAccess(PageRequest pr) {
 		UserInfoTO user = securityService.getCurrentUser();
 		return contentNodeRepository.findByUserAccess(user.getId(), user.isAdmin(), pr);
 	}
 
 	@Override
 	public int getCount() {
-		return (int) innerByUserAccess(new PageRequest(1, 1)).getTotalElements();
+		return (int) innerByUserAccess(new PageRequest(1, 1)).getTotal();
 	}
 
 	@Override
 	public List<ContentNodeOverviewTO> getRecentAdded(int offset, int limit) {
-		return mapper.mapContentNodeOverviewCollection(
-				innerByUserAccess(QuerydslUtil.transformOffsetLimit(offset, limit, Sort.Direction.DESC, "creationDate"))
-						.getContent());
+		return innerByUserAccess(QuerydslUtil.transformOffsetLimit(offset, limit, Sort.Direction.DESC, "creationDate"))
+				.getResults();
 	}
 
 	@Override
-	public List<ContentNodeOverviewTO> getRecentModified(int pageIndex, int count) {
-		return mapper.mapContentNodeOverviewCollection(
-				innerByUserAccess(new PageRequest(pageIndex, count, Sort.Direction.DESC, "lastModificationDate"))
-						.getContent());
+	public List<ContentNodeOverviewTO> getRecentModified(int offset, int limit) {
+		return innerByUserAccess(
+				QuerydslUtil.transformOffsetLimit(offset, limit, Sort.Direction.DESC, "lastModificationDate"))
+						.getResults();
 	}
 
 	/**
 	 * Dle tagu
 	 */
 
-	private Page<ContentNode> innerByTagAndUserAccess(long tagId, PageRequest pr) {
+	private QueryResults<ContentNodeOverviewTO> innerByTagAndUserAccess(long tagId, PageRequest pr) {
 		UserInfoTO user = securityService.getCurrentUser();
 		return contentNodeRepository.findByTagAndUserAccess(tagId, user.getId(), user.isAdmin(), pr);
 	}
 
 	@Override
 	public int getCountByTag(long tagId) {
-		return (int) innerByTagAndUserAccess(tagId, new PageRequest(1, 1)).getTotalElements();
+		return (int) innerByTagAndUserAccess(tagId, new PageRequest(1, 1)).getTotal();
 	}
 
 	@Override
 	public List<ContentNodeOverviewTO> getByTag(long tagId, int offset, int limit) {
-		return mapper.mapContentNodeOverviewCollection(innerByTagAndUserAccess(tagId,
-				QuerydslUtil.transformOffsetLimit(offset, limit, Sort.Direction.DESC, "creationDate")).getContent());
+		return innerByTagAndUserAccess(tagId,
+				QuerydslUtil.transformOffsetLimit(offset, limit, Sort.Direction.DESC, "creationDate")).getResults();
 	}
 
 	/**
 	 * Dle oblíbených uživatele
 	 */
 
-	private Page<ContentNode> innerByUserFavouritesAndUserAccess(long userId, Pageable pr) {
+	private QueryResults<ContentNodeOverviewTO> innerByUserFavouritesAndUserAccess(long userId, Pageable pr) {
 		UserInfoTO user = securityService.getCurrentUser();
 		return contentNodeRepository.findByUserFavouritesAndUserAccess(userId, user.getId(), user.isAdmin(), pr);
 	}
 
 	@Override
 	public int getUserFavouriteCount(long userId) {
-		return (int) innerByUserFavouritesAndUserAccess(userId, new PageRequest(1, 1)).getTotalElements();
+		return (int) innerByUserFavouritesAndUserAccess(userId, new PageRequest(1, 1)).getTotal();
 	}
 
 	@Override
 	public List<ContentNodeOverviewTO> getUserFavourite(long userId, int offset, int limit) {
-		return mapper.mapContentNodeOverviewCollection(
-				innerByUserFavouritesAndUserAccess(userId, QuerydslUtil.transformOffsetLimit(offset, limit))
-						.getContent());
+		return innerByUserFavouritesAndUserAccess(userId, QuerydslUtil.transformOffsetLimit(offset, limit))
+				.getResults();
 	}
 
 	/**
 	 * Dle kategorie
 	 */
 
-	private Page<ContentNode> innerByNodeAndUserAccess(long nodeId, PageRequest pr) {
+	private QueryResults<ContentNodeOverviewTO> innerByNodeAndUserAccess(long nodeId, PageRequest pr) {
 		UserInfoTO user = securityService.getCurrentUser();
 		return contentNodeRepository.findByNodeAndUserAccess(nodeId, user.getId(), user.isAdmin(), pr);
 	}
 
 	@Override
 	public int getCountByNode(long nodeId) {
-		return (int) innerByNodeAndUserAccess(nodeId, new PageRequest(1, 1)).getTotalElements();
+		return (int) innerByNodeAndUserAccess(nodeId, new PageRequest(1, 1)).getTotal();
 	}
 
 	@Override
 	public List<ContentNodeOverviewTO> getByNode(long nodeId, int offset, int limit) {
-		return mapper.mapContentNodeOverviewCollection(
-				innerByNodeAndUserAccess(nodeId, QuerydslUtil.transformOffsetLimit(offset, limit)).getContent());
+		return innerByNodeAndUserAccess(nodeId, QuerydslUtil.transformOffsetLimit(offset, limit)).getResults();
 	}
 
 	/**
 	 * Dle názvu
 	 */
 
-	private Page<ContentNode> innerByNameAndUserAccess(String name, PageRequest pr) {
+	private QueryResults<ContentNodeOverviewTO> innerByNameAndUserAccess(String name, PageRequest pr) {
 		UserInfoTO user = securityService.getCurrentUser();
 		name = "%" + name.replace('*', '%') + "%";
 		return contentNodeRepository.findByNameAndUserAccess(name, user.getId(), user.isAdmin(), pr);
@@ -244,13 +242,12 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 
 	@Override
 	public int getCountByName(String name) {
-		return (int) innerByNameAndUserAccess(name, new PageRequest(1, 1)).getTotalElements();
+		return (int) innerByNameAndUserAccess(name, new PageRequest(1, 1)).getTotal();
 	}
 
 	@Override
 	public List<ContentNodeOverviewTO> getByName(String name, int offset, int limit) {
-		return mapper.mapContentNodeOverviewCollection(
-				innerByNameAndUserAccess(name, QuerydslUtil.transformOffsetLimit(offset, limit)).getContent());
+		return innerByNameAndUserAccess(name, QuerydslUtil.transformOffsetLimit(offset, limit)).getResults();
 	}
 
 }

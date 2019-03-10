@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
@@ -54,14 +53,6 @@ public interface CoreMapperService {
 	public QuoteTO map(Quote e);
 
 	/**
-	 * Převede {@link ContentNode} na {@link ContentNodeOverviewTO}
-	 * 
-	 * @param e
-	 * @return
-	 */
-	public ContentNodeOverviewTO mapContentNodeOverview(ContentNode e);
-
-	/**
 	 * Převede {@link ContentNode} na {@link ContentNodeTO}, používá se pro
 	 * detail obsahu, kde je potřeba rekurzivní mapování parentů do breadcrumb
 	 * 
@@ -69,14 +60,6 @@ public interface CoreMapperService {
 	 * @return
 	 */
 	public ContentNodeTO mapContentNodeForDetail(ContentNode e);
-
-	/**
-	 * Převede set {@link ContentNode} na list {@link ContentNodeTO}
-	 * 
-	 * @param contentNodes
-	 * @return
-	 */
-	public List<ContentNodeOverviewTO> mapContentNodeOverviewCollection(Collection<ContentNode> contentNodes);
 
 	/**
 	 * Převede {@link ContentTag} na {@link ContentTagOverviewTO}

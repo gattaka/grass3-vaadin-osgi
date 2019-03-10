@@ -9,7 +9,6 @@ import com.vaadin.ui.renderers.LocalDateTimeRenderer;
 import com.vaadin.ui.renderers.TextRenderer;
 
 import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
-import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.modules.register.ModuleRegister;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
@@ -82,15 +81,14 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		}, new HtmlRenderer()).setCaption("Název").setId(nameBind);
 
 		addColumn(contentNode -> {
-			NodeOverviewTO contentParent = contentNode.getParent();
 			return "<a href='"
-					+ page.getPageURL(nodePageFactory,
-							URLIdentifierUtils.createURLIdentifier(contentParent.getId(), contentParent.getName()))
-					+ "'>" + contentParent.getName() + "</a>";
+					+ page.getPageURL(nodePageFactory, URLIdentifierUtils
+							.createURLIdentifier(contentNode.getParentNodeId(), contentNode.getParentNodeName()))
+					+ "'>" + contentNode.getParentNodeName() + "</a>";
 		}, new HtmlRenderer()).setCaption("Kategorie").setId(nodeBind).setWidth(GridUtils.NODE_COLUMN_WIDTH);
 
 		addColumn(contentNode -> {
-			return contentNode.getAuthor().getName();
+			return contentNode.getAuthorName();
 		}, new TextRenderer()).setCaption("Autor").setId(authorBind).setWidth(100);
 
 		addColumn(ContentNodeOverviewTO::getCreationDate, new LocalDateTimeRenderer("d.M.yyyy"))

@@ -3,6 +3,7 @@ package cz.gattserver.grass3.model.domain;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -49,11 +50,13 @@ public class ContentNode {
 	/**
 	 * Je obsah určen k publikování nebo je soukromý?
 	 */
+	@Column(nullable = false)
 	private Boolean publicated = true;
 
 	/**
 	 * Jde o plnohodnotný obsah, nebo jde o rozpracovaný obsah?
 	 */
+	@Column(nullable = false)
 	private Boolean draft = false;
 
 	/**

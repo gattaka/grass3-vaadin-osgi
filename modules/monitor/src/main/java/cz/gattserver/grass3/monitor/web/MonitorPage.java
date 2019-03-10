@@ -380,9 +380,9 @@ public class MonitorPage extends OneColumnPage {
 		createRefreshedPart("createJVMOverviewPart", (partLayout) -> createJVMOverviewPart(partLayout));
 
 		// JVM Heap
-		VerticalLayout jvmHeapLayout = new VerticalLayout();
-		layout.addComponent(jvmHeapLayout);
-		createJVMHeapPart(jvmHeapLayout);
+//		VerticalLayout jvmHeapLayout = new VerticalLayout();
+//		layout.addComponent(jvmHeapLayout);
+//		createJVMHeapPart(jvmHeapLayout);
 
 		// Mail test
 		VerticalLayout mailLayout = new VerticalLayout();

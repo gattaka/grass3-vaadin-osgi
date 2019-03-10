@@ -374,9 +374,10 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		testResponseCode(sonarTO);
 		items.add(sonarTO);
 
-		ServerServiceMonitorItemTO h2TO = new ServerServiceMonitorItemTO("H2", "http://gattserver.cz:8082");
-		testResponseCode(h2TO);
-		items.add(h2TO);
+		// ServerServiceMonitorItemTO h2TO = new
+		// ServerServiceMonitorItemTO("H2", "http://gattserver.cz:8082");
+		// testResponseCode(h2TO);
+		// items.add(h2TO);
 
 		ServerServiceMonitorItemTO lichTO = new ServerServiceMonitorItemTO("LichEngine", "http://gattserver.cz:1337");
 		testResponseCode(lichTO);

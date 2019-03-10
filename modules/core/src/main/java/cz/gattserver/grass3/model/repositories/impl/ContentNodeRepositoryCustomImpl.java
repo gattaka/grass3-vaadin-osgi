@@ -72,7 +72,7 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 		QContentTag t = QContentTag.contentTag;
 		QuerydslUtil.applyPagination(pageable, query);
 		return query.from(t).innerJoin(t.contentNodes, c).innerJoin(c.parent, n).innerJoin(c.author, u)
-				.where(createByUserAccessPredicate(userId, admin), c.id.eq(tagId))
+				.where(createByUserAccessPredicate(userId, admin), t.id.eq(tagId))
 				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,
 						c.lastModificationDate, c.publicated, u.name, u.id, c.id))
 				.orderBy(new OrderSpecifier<LocalDateTime>(Order.DESC, c.creationDate)).fetchResults();
@@ -85,9 +85,10 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 		QContentNode c = QContentNode.contentNode;
 		QNode n = QNode.node;
 		QUser u = QUser.user;
+		QUser uf = new QUser("favOwnerUser");
 		QuerydslUtil.applyPagination(pageable, query);
-		return query.from(u).innerJoin(u.favourites, c).innerJoin(c.parent, n).innerJoin(c.author, u)
-				.where(createByUserAccessPredicate(userId, admin), u.id.eq(favouritesUserId))
+		return query.from(uf).innerJoin(uf.favourites, c).innerJoin(c.parent, n).innerJoin(c.author, u)
+				.where(createByUserAccessPredicate(userId, admin), uf.id.eq(favouritesUserId))
 				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,
 						c.lastModificationDate, c.publicated, u.name, u.id, c.id))
 				.orderBy(new OrderSpecifier<LocalDateTime>(Order.DESC, c.creationDate)).fetchResults();

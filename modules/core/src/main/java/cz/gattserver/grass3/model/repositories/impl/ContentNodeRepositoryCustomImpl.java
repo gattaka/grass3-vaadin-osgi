@@ -37,7 +37,7 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 		QUser u = QUser.user;
 
 		BooleanBuilder builder = new BooleanBuilder();
-		builder.and(c.draft.isFalse());
+		builder.and(ExpressionUtils.anyOf(c.draft.isFalse(), c.draft.isNull()));
 		if (!admin)
 			builder.and(ExpressionUtils.anyOf(c.publicated.isTrue(), u.id.eq(userId)));
 
@@ -97,7 +97,7 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 		QNode n = QNode.node;
 		QUser u = QUser.user;
 		QuerydslUtil.applyPagination(pageable, query);
-		return query.from(u).innerJoin(c.parent, n).innerJoin(c.author, u)
+		return query.from(c).innerJoin(c.parent, n).innerJoin(c.author, u)
 				.where(createByUserAccessPredicate(userId, admin), n.id.eq(nodeId))
 				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,
 						c.lastModificationDate, c.publicated, u.name, u.id, c.id))
@@ -112,7 +112,7 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 		QNode n = QNode.node;
 		QUser u = QUser.user;
 		QuerydslUtil.applyPagination(pageable, query);
-		return query.from(u).innerJoin(c.parent, n).innerJoin(c.author, u)
+		return query.from(c).innerJoin(c.parent, n).innerJoin(c.author, u)
 				.where(createByUserAccessPredicate(userId, admin), c.name.toLowerCase().like(name.toLowerCase()))
 				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,
 						c.lastModificationDate, c.publicated, u.name, u.id, c.id))

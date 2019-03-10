@@ -113,16 +113,34 @@ public final class QuerydslUtil {
 		}
 		query.offset(pageable.getOffset());
 		query.limit(pageable.getPageSize());
+		if (pageable.getSort() != null)
+			pageable.getSort().forEach(s -> query.orderBy(transformOrder(s.getDirection(), s.getProperty())));
 		return query;
+	}
+
+	public static OrderSpecifier<String> transformOrder(boolean ascending, String property) {
+		return new OrderSpecifier<>(ascending ? Order.ASC : Order.DESC, ExpressionUtils.path(String.class, property));
+	}
+
+	public static OrderSpecifier<String> transformOrder(Direction direction, String property) {
+		return new OrderSpecifier<>(Direction.ASC.equals(direction) ? Order.ASC : Order.DESC,
+				ExpressionUtils.path(String.class, property));
+	}
+
+	public static OrderSpecifier<String> transformOrder(SortDirection sortDirection, String property) {
+		return new OrderSpecifier<>(SortDirection.ASCENDING.equals(sortDirection) ? Order.ASC : Order.DESC,
+				ExpressionUtils.path(String.class, property));
+	}
+
+	public static OrderSpecifier<String> transformOrder(Order order, String property) {
+		return new OrderSpecifier<>(order, ExpressionUtils.path(String.class, property));
 	}
 
 	public static OrderSpecifier<String>[] transformOrdering(Object[] sortPropertyIds, boolean[] asc) {
 		@SuppressWarnings("unchecked")
 		OrderSpecifier<String>[] specifiers = new OrderSpecifier[sortPropertyIds.length];
-		for (int i = 0; i < sortPropertyIds.length; i++) {
-			specifiers[i] = new OrderSpecifier<>(asc[i] ? Order.ASC : Order.DESC,
-					ExpressionUtils.path(String.class, (String) sortPropertyIds[i]));
-		}
+		for (int i = 0; i < sortPropertyIds.length; i++)
+			specifiers[i] = transformOrder(asc[i], (String) sortPropertyIds[i]);
 		return specifiers;
 	}
 
@@ -130,11 +148,9 @@ public final class QuerydslUtil {
 			SortColumnReplacer columnReplacer) {
 		@SuppressWarnings("unchecked")
 		OrderSpecifier<String>[] specifiers = new OrderSpecifier[sortProperties.size()];
-		for (int i = 0; i < sortProperties.size(); i++) {
-			specifiers[i] = new OrderSpecifier<>(
-					sortProperties.get(i).getDirection().equals(SortDirection.ASCENDING) ? Order.ASC : Order.DESC,
-					ExpressionUtils.path(String.class, columnReplacer.replace(sortProperties.get(i).getSorted())));
-		}
+		for (int i = 0; i < sortProperties.size(); i++)
+			specifiers[i] = transformOrder(sortProperties.get(i).getDirection(),
+					columnReplacer.replace(sortProperties.get(i).getSorted()));
 		return specifiers;
 	}
 

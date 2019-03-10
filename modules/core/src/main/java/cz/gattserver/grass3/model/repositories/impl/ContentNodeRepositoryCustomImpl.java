@@ -38,8 +38,12 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 
 		BooleanBuilder builder = new BooleanBuilder();
 		builder.and(ExpressionUtils.anyOf(c.draft.isFalse(), c.draft.isNull()));
-		if (!admin)
-			builder.and(ExpressionUtils.anyOf(c.publicated.isTrue(), u.id.eq(userId)));
+		if (!admin) {
+			if (userId != null)
+				builder.and(ExpressionUtils.anyOf(c.publicated.isTrue(), u.id.eq(userId)));
+			else
+				builder.and(c.publicated.isTrue());
+		}
 
 		return builder.getValue();
 	}

@@ -1,8 +1,10 @@
 package cz.gattserver.grass3.articles.plugins.favlink;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,15 +40,14 @@ public class FaviconCache {
 		URL pageURL = FaviconUtils.getPageURL(pageAddress);
 		String faviconRootFilename = FaviconUtils.createFaviconRootFilename(pageURL);
 
-		// Cached ICO
-		String faviconICOFilename = faviconRootFilename + ".ico";
-		if (Files.exists(cacheDir.resolve(faviconICOFilename)))
-			return faviconICOFilename;
-
-		// Cached PNG
-		String faviconPNGFilename = faviconRootFilename + ".png";
-		if (Files.exists(cacheDir.resolve(faviconPNGFilename)))
-			return faviconPNGFilename;
+		try {
+			Optional<Path> result = Files.list(cacheDir)
+					.filter(p -> p.getFileName().toString().matches(faviconRootFilename + "\\.[^.]+")).findFirst();
+			if (result.isPresent())
+				return result.get().getFileName().toString();
+		} catch (IOException e) {
+			throw new ParserException("Nezdařilo se prohledat favicony z adresáře favicon", e);
+		}
 
 		return null;
 	}

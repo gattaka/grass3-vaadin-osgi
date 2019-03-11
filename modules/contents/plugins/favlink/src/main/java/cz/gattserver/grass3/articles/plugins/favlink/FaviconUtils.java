@@ -55,30 +55,41 @@ public class FaviconUtils {
 					// to umí samo, dokud se nepřechází mezi
 					// HTTP a HTTPS, pak to nechává na manuální obsluze)
 					int responseCode = hc.getResponseCode();
-					if (responseCode == 301 || responseCode == 302 || responseCode == 303) {
+					if (responseCode >= 300 && responseCode < 400) {
 						String location = hc.getHeaderField("Location");
 						hc = (HttpURLConnection) (new URL(location).openConnection());
 						hc.setInstanceFollowRedirects(false);
 						hc.setRequestProperty("User-Agent", "Mozilla");
 						hc.connect();
+						responseCode = hc.getResponseCode();
+					}
+					if (responseCode < 200 || responseCode >= 300) {
+						logger.info("ERR: responseCode = " + responseCode);
+						return null;
+					}
+
+					if (hc.getContentType() != null
+							&& (hc.getContentType().contains("text") || hc.getContentType().contains("html"))) {
+						logger.info("ERR: ContentType = " + hc.getContentType());
+						return null;
 					}
 
 					logger.info("Favicon connected URL: " + hc.getURL());
 					if (hc.getContentLength() == 0) {
-						logger.info("Engine: ContentLength=0 ");
+						logger.info("ERR: ContentLength = 0 ");
 						return null;
 					}
 
 					is = hc.getInputStream();
 					if (is != null) {
-						logger.info("Engine: InputStream obtained");
+						logger.info("InputStream je OK");
 					} else {
-						logger.info("Engine: InputStream is null !");
+						logger.info("ERR: InputStream je null!");
 					}
 					return is;
 				}
 			} else {
-				logger.info("Engine: URL connection failed !");
+				logger.info("ERR: URL openConnection selhal");
 			}
 		} catch (Exception ex) {
 			logger.error(ex.toString());
@@ -108,18 +119,18 @@ public class FaviconUtils {
 	public static boolean downloadFile(Path targetFile, String address) {
 		Validate.notNull(targetFile, "'targetFile' nesmí být null");
 		Validate.notBlank(address, "'address' nesmí být null");
-		logger.info("Ukládám favicon adresy {} jako {}", address, targetFile.toString());
+		logger.info("Zkouším stáhnout a uložit favicon adresy {} jako {}", address, targetFile.toString());
 		InputStream stream = getResponseReader(address);
 		if (stream != null) {
 			try {
 				Files.copy(stream, targetFile);
-				logger.info("Favicon uložen, kontroluju velikost");
 				long size = Files.size(targetFile);
 				if (size == 0) {
 					logger.info("Favicon má velikost 0B, mažu soubor a označuju download jako neúspěšný");
 					Files.delete(targetFile);
 					return false;
 				}
+				logger.info("Favicon uložen a má velikost " + size + "B");
 				return true;
 			} catch (IOException e) {
 				throw new ParserException("Nezdařilo se uložit staženou favicon", e);

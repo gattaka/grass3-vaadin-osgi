@@ -49,7 +49,11 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 		return null;
 	}
 
-	private String createFullFaviconAddress(String faviconAddress, String baseURI) {
+	private String createFullFaviconAddress(String faviconAddress, URL pageURL) {
+
+		String rootURL = pageURL.getProtocol() + "://" + pageURL.getHost();
+		if (pageURL.getPort() > 0)
+			rootURL += ":" + pageURL.getPort();
 
 		// je potřeba z Jsoup doc.baseUri(), protože to může být i vložená
 		// stránka a tam se baseURI liší od počátečního
@@ -65,13 +69,17 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 		} else if (faviconAddress.startsWith("//")) {
 			// absolutní cesta pro favicon, která místo 'http://' začíná jenom
 			// '//' tahle to má například stackoverflow
-			String prefix = baseURI.startsWith(HTTPS_PREFIX) ? HTTPS_PREFIX_SHORT : HTTP_PREFIX_SHORT;
+			String prefix = rootURL.startsWith(HTTPS_PREFIX) ? HTTPS_PREFIX_SHORT : HTTP_PREFIX_SHORT;
 			String faviconFullAddress = prefix + faviconAddress;
 			logger.info(tryMsg, faviconFullAddress);
 			return faviconFullAddress;
 		} else {
 			// relativní cesta pro favicon
-			String faviconFullAddress = baseURI + (faviconAddress.startsWith("/") ? "" : "/") + faviconAddress;
+			String pathPart = pageURL.getPath();
+			if (pathPart.contains("/"))
+				pathPart = pathPart.substring(0, pathPart.lastIndexOf("/"));
+			String faviconFullAddress = rootURL + (pathPart.isEmpty() ? "" : pathPart)
+					+ (faviconAddress.startsWith("/") ? "" : "/") + faviconAddress;
 			logger.info(tryMsg, faviconFullAddress);
 			return faviconFullAddress;
 		}
@@ -79,9 +87,6 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 
 	private String findFaviconAddressOnPage(URL pageURL) {
 		Document doc;
-		String rootURL = pageURL.getProtocol() + "://" + pageURL.getHost();
-		if (pageURL.getPort() > 0)
-			rootURL += ":" + pageURL.getPort();
 
 		try {
 			// http://en.wikipedia.org/wiki/Favicon
@@ -98,7 +103,16 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 			if (element != null) {
 				ico = element.attr("href");
 				if (StringUtils.isNotBlank(ico))
-					return createFullFaviconAddress(ico, rootURL);
+					return createFullFaviconAddress(ico, pageURL);
+			}
+
+			// link rel=icon
+			logger.info("Zkouším rel=icon hlavičku");
+			element = doc.head().select("link[rel~=icon]").first();
+			if (element != null) {
+				ico = element.attr("href");
+				if (StringUtils.isNotBlank(ico))
+					return createFullFaviconAddress(ico, pageURL);
 			}
 
 			// link PNG
@@ -107,7 +121,7 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 			if (element != null) {
 				ico = element.attr("href");
 				if (StringUtils.isNotBlank(ico))
-					return createFullFaviconAddress(ico, rootURL);
+					return createFullFaviconAddress(ico, pageURL);
 			}
 
 			// meta + content
@@ -116,17 +130,8 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 			if (element != null) {
 				ico = element.attr("content");
 				if (StringUtils.isNotBlank(ico))
-					return createFullFaviconAddress(ico, rootURL);
+					return createFullFaviconAddress(ico, pageURL);
 			}
-
-			// link shortcut icon
-			// logger.info("Zkouším LINK REL shortcut icon content");
-			// element = doc.head().select("meta[itemprop=image]").first();
-			// if (element != null) {
-			// ico = element.attr("content");
-			// if (StringUtils.isNotBlank(ico))
-			// return createFullFaviconAddress(ico, rootURL);
-			// }
 
 		} catch (IOException e) {
 			logger.error("Nezdařilo se získat stránku z pageURL: {}", pageURL);

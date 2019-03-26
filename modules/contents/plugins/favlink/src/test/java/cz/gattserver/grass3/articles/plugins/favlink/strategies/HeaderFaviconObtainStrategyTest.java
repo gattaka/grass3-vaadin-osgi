@@ -77,7 +77,7 @@ public class HeaderFaviconObtainStrategyTest extends StrategyTest {
 				.respond(new HttpResponse().withStatusCode(200).withBody(page));
 
 		byte[] favicon = IOUtils.toByteArray(this.getClass().getResourceAsStream("imgadr/mockFavicon.ico"));
-		msc.when(new HttpRequest().withMethod("GET").withPath("/imgadr/mockFavicon.ico"))
+		msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/imgadr/mockFavicon.ico"))
 				.respond(new HttpResponse().withStatusCode(200).withBody(favicon));
 
 		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy(new FaviconCache());
@@ -127,7 +127,7 @@ public class HeaderFaviconObtainStrategyTest extends StrategyTest {
 				.respond(new HttpResponse().withStatusCode(200).withBody(page));
 
 		byte[] favicon = IOUtils.toByteArray(this.getClass().getResourceAsStream("imgadr/mockFavicon.ico"));
-		msc.when(new HttpRequest().withMethod("GET").withPath("/imgadr/mockFavicon.ico"))
+		msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/imgadr/mockFavicon.ico"))
 				.respond(new HttpResponse().withStatusCode(200).withBody(favicon));
 
 		HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy(new FaviconCache());

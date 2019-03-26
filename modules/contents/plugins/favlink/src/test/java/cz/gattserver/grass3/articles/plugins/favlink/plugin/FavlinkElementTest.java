@@ -37,7 +37,7 @@ public class FavlinkElementTest {
 		element.apply(context);
 		assertEquals(
 				"<a style=\"word-wrap: break-word\" href=\"http://mock.url.website/questions/3357477/is-asynctask-really-conceptually-flawed-or-am-i-just-missing-something/3359003#3359003\" >"
-						+ "<img style=\"margin: 4px 5px -4px 2px;\" height=\"16\" width=\"16\" src=\"mock/imgs/favicon/fav.ico\" />http://mock.url.website/questions/3357477/is-as...wed-or-am-i-just-missing-something/3359003#3359003</a>",
+						+ "<img style=\"margin: 4px 5px -4px 2px;\" height=\"16\" width=\"16\" src=\"mock/imgs/favicon/fav.ico\" />http://mock.url.website/questions/3357477/...r-am-i-just-missing-something/3359003#3359003</a>",
 				context.getOutput());
 	}
 

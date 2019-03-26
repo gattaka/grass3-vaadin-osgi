@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.fo0.advancedtokenfield.main.AdvancedTokenField;
-import com.fo0.advancedtokenfield.main.Token;
+import com.fo0.advancedtokenfield.model.Token;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
 import com.vaadin.ui.Alignment;
@@ -98,18 +98,18 @@ public abstract class CampgameCreateWindow extends WebWindow {
 
 		AdvancedTokenField keywords = new AdvancedTokenField();
 		keywords.isEnabled();
-		keywords.setAllowNewItems(true);
-		keywords.getInputField().setPlaceholder("klíčové slovo");
+		keywords.setAllowNewTokens(true);
+		keywords.getInputField().setPlaceHolder("klíčové slovo");
 
 		Set<CampgameKeywordTO> contentTypes = getCampgameService().getAllCampgameKeywords();
 		contentTypes.forEach(t -> {
-			Token to = new Token(t.getName());
+			Token to = Token.builder().idAndValue(t.getName()).build();
 			keywords.addTokenToInputField(to);
 		});
 
 		if (originalDTO != null)
 			for (String keyword : originalDTO.getKeywords())
-				keywords.addToken(new Token(keyword));
+				keywords.addToken(Token.builder().idAndValue(keyword).build());
 		winLayout.addComponent(keywords, 0, 4, 1, 4);
 
 		Button createBtn;

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.fo0.advancedtokenfield.main.AdvancedTokenField;
-import com.fo0.advancedtokenfield.main.Token;
+import com.fo0.advancedtokenfield.model.Token;
 import com.vaadin.data.provider.CallbackDataProvider;
 import com.vaadin.server.SerializableSupplier;
 import com.vaadin.shared.ui.MarginInfo;
@@ -78,7 +78,7 @@ public class CampgamesTab extends VerticalLayout {
 		keywordsFilter.getInputField().setWidth("200px");
 		keywordsFilter.getInputField().addValueChangeListener(e -> {
 			if (e.getValue() != null)
-				keywordsFilter.addToken(e.getValue());
+				keywordsFilter.addToken(Token.builder().idAndValue(e.getValue()).build());
 		});
 		keywordsFilter.addTokenAddListener(token -> populate());
 		keywordsFilter.addTokenRemoveListener(e -> populate());
@@ -90,11 +90,11 @@ public class CampgamesTab extends VerticalLayout {
 
 		Set<CampgameKeywordTO> keywords = getCampgamesService().getAllCampgameKeywords();
 		keywords.forEach(t -> {
-			Token to = new Token(t.getName());
+			Token to = Token.builder().idAndValue(t.getName()).build();
 			keywordsFilter.addTokenToInputField(to);
 		});
-		keywordsFilter.setAllowNewItems(false);
-		keywordsFilter.getInputField().setPlaceholder("Filtrovat dle klíčových slov");
+		keywordsFilter.setAllowNewTokens(false);
+		keywordsFilter.getInputField().setPlaceHolder("Filtrovat dle klíčových slov");
 		keywordsFilter.isEnabled();
 
 		// Tabulka her

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fo0.advancedtokenfield.main.AdvancedTokenField;
-import com.fo0.advancedtokenfield.main.Token;
+import com.fo0.advancedtokenfield.model.Token;
 import com.vaadin.server.FileResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
@@ -142,7 +142,7 @@ public class PGEditorPage extends OneColumnPage {
 
 			photogalleryNameField.setValue(photogallery.getContentNode().getName());
 			for (ContentTagOverviewTO tagDTO : photogallery.getContentNode().getContentTags()) {
-				photogalleryKeywords.addToken(new Token(tagDTO.getName()));
+				photogalleryKeywords.addToken(Token.builder().idAndValue(tagDTO.getName()).build());
 			}
 
 			publicatedCheckBox.setValue(photogallery.getContentNode().isPublicated());
@@ -198,12 +198,12 @@ public class PGEditorPage extends OneColumnPage {
 
 		Set<ContentTagOverviewTO> contentTags = contentTagFacade.getTagsForOverviewOrderedByName();
 		contentTags.forEach(t -> {
-			Token to = new Token(t.getName());
+			Token to = Token.builder().idAndValue(t.getName()).build();
 			photogalleryKeywords.addTokenToInputField(to);
 		});
 		photogalleryKeywords.isEnabled();
-		photogalleryKeywords.setAllowNewItems(true);
-		photogalleryKeywords.getInputField().setPlaceholder("klíčové slovo");
+		photogalleryKeywords.setAllowNewTokens(true);
+		photogalleryKeywords.getInputField().setPlaceHolder("klíčové slovo");
 
 		VerticalLayout contentLayout = new VerticalLayout();
 		contentLayout.setSpacing(true);

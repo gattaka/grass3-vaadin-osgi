@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.fo0.advancedtokenfield.main.AdvancedTokenField;
-import com.fo0.advancedtokenfield.main.Token;
+import com.fo0.advancedtokenfield.model.Token;
 import com.vaadin.data.provider.CallbackDataProvider;
 import com.vaadin.server.SerializableSupplier;
 import com.vaadin.shared.ui.MarginInfo;
@@ -89,7 +89,7 @@ public class HWItemsTab extends VerticalLayout {
 		hwTypesFilter.getInputField().setWidth("200px");
 		hwTypesFilter.getInputField().addValueChangeListener(e -> {
 			if (e.getValue() != null)
-				hwTypesFilter.addToken(e.getValue());
+				hwTypesFilter.addToken(Token.builder().idAndValue(e.getValue()).build());
 		});
 		hwTypesFilter.addTokenAddListener(token -> populate());
 		hwTypesFilter.addTokenRemoveListener(e -> populate());
@@ -101,11 +101,11 @@ public class HWItemsTab extends VerticalLayout {
 
 		Set<HWItemTypeTO> hwTypes = getHWService().getAllHWTypes();
 		hwTypes.forEach(t -> {
-			Token to = new Token(t.getName());
+			Token to = Token.builder().idAndValue(t.getName()).build();
 			hwTypesFilter.addTokenToInputField(to);
 		});
-		hwTypesFilter.setAllowNewItems(false);
-		hwTypesFilter.getInputField().setPlaceholder("Filtrovat dle typu hw");
+		hwTypesFilter.setAllowNewTokens(false);
+		hwTypesFilter.getInputField().setPlaceHolder("Filtrovat dle typu hw");
 		hwTypesFilter.isEnabled();
 
 		// Tabulka HW

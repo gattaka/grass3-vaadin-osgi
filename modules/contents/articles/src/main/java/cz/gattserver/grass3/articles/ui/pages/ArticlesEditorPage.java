@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fo0.advancedtokenfield.main.AdvancedTokenField;
-import com.fo0.advancedtokenfield.main.Token;
+import com.fo0.advancedtokenfield.model.Token;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutAction.ModifierKey;
 import com.vaadin.shared.Registration;
@@ -107,7 +107,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 		articleNameField.setValue(article.getContentNode().getName());
 
 		for (ContentTagOverviewTO tagDTO : article.getContentNode().getContentTags())
-			articleKeywords.addToken(new Token(tagDTO.getName()));
+			articleKeywords.addToken(Token.builder().idAndValue(tagDTO.getName()).build());
 
 		publicatedCheckBox.setValue(article.getContentNode().isPublicated());
 
@@ -182,7 +182,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 				node = draft.getContentNode().getParent();
 				articleNameField.setValue(draft.getContentNode().getName());
 				for (ContentTagOverviewTO tagDTO : draft.getContentNode().getContentTags())
-					articleKeywords.addToken(new Token(tagDTO.getName()));
+					articleKeywords.addToken(Token.builder().idAndValue(tagDTO.getName()).build());
 				publicatedCheckBox.setValue(draft.getContentNode().isPublicated());
 				articleTextArea.setValue(draft.getText());
 
@@ -453,12 +453,12 @@ public class ArticlesEditorPage extends TwoColumnPage {
 
 		Set<ContentTagOverviewTO> contentTags = contentTagFacade.getTagsForOverviewOrderedByName();
 		contentTags.forEach(t -> {
-			Token to = new Token(t.getName());
+			Token to = Token.builder().idAndValue(t.getName()).build();
 			articleKeywords.addTokenToInputField(to);
 		});
 		articleKeywords.isEnabled();
-		articleKeywords.setAllowNewItems(true);
-		articleKeywords.getInputField().setPlaceholder("klíčové slovo");
+		articleKeywords.setAllowNewTokens(true);
+		articleKeywords.getInputField().setPlaceHolder("klíčové slovo");
 
 		editorTextLayout.addComponent(new H2Label("Obsah článku"));
 		editorTextLayout.addComponent(articleTextArea);

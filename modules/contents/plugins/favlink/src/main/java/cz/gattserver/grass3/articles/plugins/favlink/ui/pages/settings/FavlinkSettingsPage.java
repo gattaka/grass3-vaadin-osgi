@@ -32,6 +32,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.grass3.articles.plugins.favlink.config.FavlinkConfiguration;
+import cz.gattserver.grass3.articles.plugins.favlink.strategies.CombinedFaviconObtainStrategy;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.FileSystemService;
@@ -149,6 +150,30 @@ public class FavlinkSettingsPage extends AbstractSettingsPage {
 						UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat favicon?", e -> {
 							try {
 								Files.delete(p);
+								populateGrid(grid, path);
+							} catch (IOException e1) {
+								logger.error("Nezdařilo se smazat favicon " + p.getFileName().toString(), e);
+							}
+						}));
+					}
+				});
+				button.setStyleName(ValoTheme.BUTTON_LINK);
+				return button;
+			}).setRenderer(new ComponentRenderer()).setCaption("Smazat");
+
+			grid.addColumn(p -> {
+				Button button = new Button("Přegenerovat", new Button.ClickListener() {
+					private static final long serialVersionUID = 1996102817811495323L;
+
+					@Override
+					public void buttonClick(ClickEvent event) {
+						UI.getCurrent().addWindow(new ConfirmWindow("Opravdu přegenerovat favicon?", e -> {
+							try {
+								Files.delete(p);
+								String fileName = p.getFileName().toString();
+								String urlName = "http://" + fileName.substring(0, fileName.lastIndexOf('.'));
+								new CombinedFaviconObtainStrategy().obtainFaviconURL(urlName,
+										getRequest().getContextRoot());
 								populateGrid(grid, path);
 							} catch (IOException e1) {
 								logger.error("Nezdařilo se smazat favicon " + p.getFileName().toString(), e);

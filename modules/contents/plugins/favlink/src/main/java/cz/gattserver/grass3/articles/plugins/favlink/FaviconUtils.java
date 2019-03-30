@@ -35,7 +35,7 @@ public class FaviconUtils {
 			// DOCUMENT response s neplatnou session, namísto adresovaného
 			// souboru favicony
 			address = address.replace("/./", "/");
-			url = new URL(address);
+			url = new URL(address).toURI().normalize().toURL();
 			URLConnection uc = url.openConnection();
 			if (uc != null) {
 				if (uc instanceof HttpURLConnection) {

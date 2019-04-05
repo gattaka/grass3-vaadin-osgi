@@ -410,28 +410,38 @@ public class PGServiceImpl implements PGService {
 	 *            adresář galerie
 	 * @param subDir
 	 *            jméno subadresáře
-	 * @throws IOException
+	 * @return <code>true</code>, pokud se odstranění zdaří, jinak
+	 *         <code>false</code>
 	 */
-	private void tryDeleteGalleryFile(String file, Path galleryDir, GalleryFileType fileType) throws IOException {
-		Path targetDir = galleryDir;
+	private boolean tryDeleteGalleryFile(String file, Path galleryDir, GalleryFileType fileType) {
+		Path subFile = null;
 		switch (fileType) {
-		case MAIN_FILE:
-			break;
 		case MINIATURE:
-			targetDir = targetDir.resolve(loadConfiguration().getMiniaturesDir());
+			subFile = galleryDir.resolve(loadConfiguration().getMiniaturesDir()).resolve(file);
 			break;
 		case PREVIEW:
-			targetDir = targetDir.resolve(loadConfiguration().getPreviewsDir());
+			subFile = galleryDir.resolve(loadConfiguration().getPreviewsDir()).resolve(file + ".png");
 			break;
 		case SLIDESHOW:
-			targetDir = targetDir.resolve(loadConfiguration().getSlideshowDir());
+			subFile = galleryDir.resolve(loadConfiguration().getSlideshowDir()).resolve(file);
 			break;
+		case MAIN_FILE:
 		default:
+			subFile = galleryDir.resolve(file);
 			break;
 		}
-		Path subFile = targetDir.resolve(file);
-		if (Files.exists(subFile))
-			Files.delete(subFile);
+		if (Files.exists(subFile)) {
+			try {
+				Files.delete(subFile);
+				return true;
+			} catch (Exception e) {
+				logger.error("Nezdařilo se smazat soubor {}", subFile, e);
+				return false;
+			}
+		} else {
+			logger.info("Nezdařilo se najít soubor {}", subFile);
+			return true;
+		}
 	}
 
 	@Override
@@ -599,18 +609,11 @@ public class PGServiceImpl implements PGService {
 		List<PhotogalleryViewItemTO> removed = new ArrayList<>();
 		for (PhotogalleryViewItemTO itemTO : selected) {
 			String file = itemTO.getName();
-			try {
-				if (PGUtils.isImage(file)) {
-					tryDeleteGalleryFile(file, galleryPath, GalleryFileType.MINIATURE);
-					tryDeleteGalleryFile(file, galleryPath, GalleryFileType.SLIDESHOW);
-				}
-				if (PGUtils.isVideo(file))
-					tryDeleteGalleryFile(file, galleryPath, GalleryFileType.PREVIEW);
-				tryDeleteGalleryFile(file, galleryPath, GalleryFileType.MAIN_FILE);
-				removed.add(itemTO);
-			} catch (IOException e) {
-				logger.error("Nezdařilo se smazat soubor {}", file, e);
-			}
+			tryDeleteGalleryFile(file, galleryPath, GalleryFileType.MINIATURE);
+			tryDeleteGalleryFile(file, galleryPath, GalleryFileType.SLIDESHOW);
+			tryDeleteGalleryFile(file, galleryPath, GalleryFileType.PREVIEW);
+			tryDeleteGalleryFile(file, galleryPath, GalleryFileType.MAIN_FILE);
+			removed.add(itemTO);
 		}
 		return removed;
 	}

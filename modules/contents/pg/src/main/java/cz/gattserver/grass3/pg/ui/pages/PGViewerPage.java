@@ -454,6 +454,8 @@ public class PGViewerPage extends ContentViewerPage {
 				String file = item.getFile().getFileName().toString();
 				String url = getItemURL(file);
 				boolean video = PhotogalleryItemType.VIDEO.equals(item.getType());
+				if (video)
+					url = url.substring(0, url.length() - 4);
 				Link link = new Link(video ? "Stáhnout video" : "Plné rozlišení", new ExternalResource(url));
 				link.setTargetName("_blank");
 				itemLayout.addComponent(link);

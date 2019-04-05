@@ -75,11 +75,6 @@ public interface PGService {
 	public PhotogalleryTO getPhotogalleryForDetail(Long id);
 
 	/**
-	 * Získá všechny galerie a namapuje je pro použití při vyhledávání
-	 */
-	public List<PhotogalleryTO> getAllPhotogalleriesForSearch();
-
-	/**
 	 * Vytvoří nový adresář pro fotogalerii
 	 * 
 	 * @throws IOException

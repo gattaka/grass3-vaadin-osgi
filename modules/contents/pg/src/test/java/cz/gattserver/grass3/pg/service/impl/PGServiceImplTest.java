@@ -468,9 +468,6 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 	public void testGetAllPhotogalleriesForREST() throws IOException, InterruptedException, ExecutionException {
 		Path root = prepareFS(fileSystemService.getFileSystem());
 
-		List<PhotogalleryTO> checkList = pgService.getAllPhotogalleriesForSearch();
-		checkList.size();
-
 		Long userId1 = coreMockService.createMockUser(1);
 		Long userId2 = coreMockService.createMockUser(2);
 		Long nodeId1 = coreMockService.createMockRootNode(1);

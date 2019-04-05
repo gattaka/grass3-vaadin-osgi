@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
+import org.jcodec.api.UnsupportedFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,10 +135,15 @@ public class PGServiceImpl implements PGService {
 		try {
 			logger.info("Bylo nalezeno video {}", videoName);
 			logger.info("Bylo zahájeno zpracování náhledu videa {}", videoName);
-			BufferedImage image = new DecodeAndCaptureFrames().decodeAndCaptureFrames(file);
-			logger.info("Zpracování náhledu videa {} byla úspěšně dokončeno", videoName);
-			PGUtils.resizeVideoPreviewImage(image, outputFile);
-			logger.info("Náhled videa {} byl úspěšně uložen", previewName);
+			try {
+				BufferedImage image = new DecodeAndCaptureFrames().decodeAndCaptureFrames(file);
+				logger.info("Zpracování náhledu videa {} byla úspěšně dokončeno", videoName);
+				PGUtils.resizeVideoPreviewImage(image, outputFile);
+				logger.info("Náhled videa {} byl úspěšně uložen", previewName);
+			} catch (UnsupportedFormatException e) {
+				PGUtils.createErrorPreview(videoName, outputFile);
+				logger.info("Chybový náhled videa {} byl úspěšně uložen", previewName);
+			}
 		} catch (Exception e) {
 			logger.error("Vytváření náhledu videa {} se nezdařilo", videoName, e);
 		}
@@ -362,12 +368,6 @@ public class PGServiceImpl implements PGService {
 		if (photogallery == null)
 			return null;
 		return photogalleriesMapper.mapPhotogalleryForDetail(photogallery);
-	}
-
-	@Override
-	public List<PhotogalleryTO> getAllPhotogalleriesForSearch() {
-		// TODO Auto-generated method stub
-		return new ArrayList<>();
 	}
 
 	/**

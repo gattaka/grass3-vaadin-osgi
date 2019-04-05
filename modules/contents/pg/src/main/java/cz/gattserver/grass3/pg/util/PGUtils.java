@@ -1,5 +1,8 @@
 package cz.gattserver.grass3.pg.util;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,11 +12,16 @@ import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import at.dhyan.open_imaging.GifDecoder;
 import at.dhyan.open_imaging.GifDecoder.GifImage;
 import net.coobird.thumbnailator.Thumbnails;
 
 public class PGUtils {
+
+	private static Logger logger = LoggerFactory.getLogger(PGUtils.class);
 
 	public static final int MINIATURE_SIZE = 150;
 
@@ -30,6 +38,31 @@ public class PGUtils {
 
 	public static void resizeImage(Path inputFile, Path destinationFile) throws IOException {
 		resizeImage(inputFile, destinationFile, PGUtils.MINIATURE_SIZE, PGUtils.MINIATURE_SIZE);
+	}
+
+	public static void createErrorPreview(String filename, Path destinationFile) {
+		int h = MINIATURE_SIZE;
+		int w = MINIATURE_SIZE;
+		BufferedImage backgroundImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics bg = backgroundImage.createGraphics();
+		bg.setColor(Color.WHITE);
+		bg.fillRect(0, 0, w, h);
+		int size = 15;
+		Font font = new Font(Font.MONOSPACED, Font.BOLD, size);
+		bg.setFont(font);
+		bg.setColor(Color.GRAY);
+		int line = size;
+		bg.drawString("Nepodporovaný", 5, line);
+		line += size;
+		bg.drawString("formát - náhled", 5, line);
+		line += size;
+		bg.drawString("nelze zpracovat", 5, line);
+		try (OutputStream o = Files.newOutputStream(destinationFile)) {
+			ImageIO.write(backgroundImage, "png", o);
+		} catch (IOException e) {
+			logger.error("Vytváření chybového náhledu videa {} se nezdařilo", destinationFile.getFileName().toString(),
+					e);
+		}
 	}
 
 	public static void resizeVideoPreviewImage(BufferedImage inputImage, Path destinationFile) throws IOException {

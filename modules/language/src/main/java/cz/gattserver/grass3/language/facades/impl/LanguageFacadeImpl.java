@@ -146,4 +146,9 @@ public class LanguageFacadeImpl implements LanguageFacade {
 				/ itemRepository.countByLanguageAndType(type, langId);
 	}
 
+	@Override
+	public void moveLanguageItemTo(LanguageItemTO item, LanguageTO lang) {
+		itemRepository.updateItemLang(item.getId(), lang.getId());
+	}
+
 }

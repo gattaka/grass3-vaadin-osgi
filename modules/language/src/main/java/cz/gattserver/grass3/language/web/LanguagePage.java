@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 import cz.gattserver.grass3.language.facades.LanguageFacade;
 import cz.gattserver.grass3.language.model.domain.ItemType;
@@ -44,10 +46,12 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.GridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.ui.BoldLabel;
 import cz.gattserver.web.common.ui.ImageIcon;
+import cz.gattserver.web.common.ui.window.WebWindow;
 
 public class LanguagePage extends OneColumnPage {
 
@@ -490,6 +494,7 @@ public class LanguagePage extends OneColumnPage {
 					.setCaption("Naposledy zkoušeno").setStyleGenerator(item -> "v-align-right")
 					.setSortProperty("lastTested");
 			grid.addColumn(LanguageItemTO::getTested).setCaption("Zkoušeno").setSortProperty("tested");
+			grid.addColumn(LanguageItemTO::getId).setCaption("Id").setSortProperty("id");
 		}
 
 		grid.sort(contentColumn);
@@ -561,6 +566,11 @@ public class LanguagePage extends OneColumnPage {
 			grid.getDataProvider().refreshAll();
 		}), grid));
 
+		GridButton<LanguageItemTO> moveBtn = new GridButton<>("Změnit jazyk", items -> changeLangOfItems(items, grid),
+				grid);
+		moveBtn.setIcon(ImageIcon.MOVE_16_ICON.createResource());
+		btnLayout.addComponent(moveBtn);
+
 		String caption;
 		if (ItemType.WORD == type)
 			caption = "slovíček";
@@ -588,6 +598,29 @@ public class LanguagePage extends OneColumnPage {
 		}
 
 		return btnLayout;
+	}
+
+	private void changeLangOfItems(Set<LanguageItemTO> items, Grid<LanguageItemTO> grid) {
+		Window w = new WebWindow("Změna jazyka");
+
+		VerticalLayout layout = new VerticalLayout();
+		layout.setSpacing(true);
+		layout.setMargin(true);
+		w.setContent(layout);
+
+		List<LanguageTO> langs = languageFacade.getLanguages();
+		Grid<LanguageTO> targatGrid = new Grid<>(null, langs);
+		targatGrid.addColumn(LanguageTO::getName).setCaption("Název");
+		layout.addComponent(targatGrid);
+
+		targatGrid.addSelectionListener(se -> se.getFirstSelectedItem().ifPresent(lang -> items.forEach(item -> {
+			languageFacade.moveLanguageItemTo(item, lang);
+			targatGrid.getDataProvider().refreshAll();
+			w.close();
+			grid.getDataProvider().refreshAll();
+		})));
+
+		UI.getCurrent().addWindow(w);
 	}
 
 }

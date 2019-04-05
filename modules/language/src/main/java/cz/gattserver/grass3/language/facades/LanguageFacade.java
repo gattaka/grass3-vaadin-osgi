@@ -122,4 +122,14 @@ public interface LanguageFacade {
 	 */
 	Float getSuccessRateOfLanguageAndType(ItemType type, Long langId);
 
+	/**
+	 * Změní jazykovou kategorii položky
+	 * 
+	 * @param item
+	 *            položka
+	 * @param lang
+	 *            nový jazyk
+	 */
+	void moveLanguageItemTo(LanguageItemTO item, LanguageTO lang);
+
 }

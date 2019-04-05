@@ -35,8 +35,12 @@ public interface LanguageItemRepository extends JpaRepository<LanguageItem, Long
 
 	@Query("select SUM(i.successRate) from LANGUAGEITEM i where i.language.id = ?2 and i.type = ?1")
 	Integer findSuccessRateSumByLanguageAndType(ItemType type, Long langId);
-	
+
 	@Query("select count(i) from LANGUAGEITEM i where i.language.id = ?2 and i.type = ?1")
 	Integer countByLanguageAndType(ItemType type, Long langId);
+
+	@Modifying
+	@Query("update LANGUAGEITEM i set i.language.id = ?2 where i.id = ?1")
+	void updateItemLang(Long id, Long id2);
 
 }

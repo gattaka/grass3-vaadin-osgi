@@ -21,7 +21,7 @@ public class Language {
 	 * Název
 	 */
 	private String name;
-
+	
 	public String getName() {
 		return name;
 	}

@@ -22,6 +22,7 @@ public class SourcesParser implements Parser {
 
 	private String tag;
 	private List<String> faviconURLs = new ArrayList<>();
+	private List<String> descriptions = new ArrayList<>();
 	private List<String> pageURLs = new ArrayList<>();
 	private FaviconObtainStrategy strategy;
 
@@ -40,7 +41,7 @@ public class SourcesParser implements Parser {
 
 		// zpracovat koncový tag
 		parseEndTag(pluginBag);
-		return new SourcesElement(faviconURLs, pageURLs);
+		return new SourcesElement(faviconURLs, descriptions, pageURLs);
 	}
 
 	private void parseStartTag(ParsingProcessor pluginBag) {
@@ -60,7 +61,7 @@ public class SourcesParser implements Parser {
 		while (parsingProcessor.getToken() != Token.EOF
 				&& (parsingProcessor.getToken() != Token.END_TAG || !parsingProcessor.getEndTag().equals(tag))) {
 			if (parsingProcessor.getToken() == Token.EOL && builder.length() != 0) {
-				processURL(builder.toString(), parsingProcessor);
+				processText(builder.toString(), parsingProcessor);
 				builder = new StringBuilder();
 			} else {
 				String text = parsingProcessor.getText();
@@ -70,12 +71,23 @@ public class SourcesParser implements Parser {
 			parsingProcessor.nextToken();
 		}
 		if (builder.length() != 0)
-			processURL(builder.toString(), parsingProcessor);
+			processText(builder.toString(), parsingProcessor);
 	}
 
-	private void processURL(String pageURL, ParsingProcessor parsingProcessor) {
+	private void processText(String text, ParsingProcessor parsingProcessor) {
+		String pageURL;
+		String description = "";
+		int lastSpace = text.trim().lastIndexOf(' ');
+		if (lastSpace > 0) {
+			description = text.substring(0, lastSpace);
+			pageURL = text.substring(lastSpace + 1);
+		} else {
+			pageURL = text;
+		}
+
 		String faviconURL = strategy.obtainFaviconURL(pageURL, parsingProcessor.getContextRoot());
 		pageURLs.add(pageURL);
+		descriptions.add(description);
 		faviconURLs.add(faviconURL);
 	}
 

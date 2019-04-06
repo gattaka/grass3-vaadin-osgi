@@ -12,10 +12,12 @@ import cz.gattserver.grass3.articles.plugins.headers.HeaderElement;
 public class SourcesElement implements Element {
 
 	private List<String> faviconURLs = new ArrayList<>();
+	private List<String> descriptions = new ArrayList<>();
 	private List<String> pageURLs = new ArrayList<>();
 
-	public SourcesElement(List<String> faviconURLs, List<String> pageURLs) {
+	public SourcesElement(List<String> faviconURLs, List<String> descriptions, List<String> pageURLs) {
 		this.faviconURLs = faviconURLs;
+		this.descriptions = descriptions;
 		this.pageURLs = pageURLs;
 	}
 
@@ -30,7 +32,7 @@ public class SourcesElement implements Element {
 		ctx.print("<ol style=\"padding-left: 25px; margin-top: 0px;\" >");
 		for (int i = 0; i < faviconURLs.size(); i++) {
 			ctx.print("<li>");
-			new FavlinkElement(faviconURLs.get(i), pageURLs.get(i)).apply(ctx);
+			new FavlinkElement(faviconURLs.get(i), descriptions.get(i), pageURLs.get(i)).apply(ctx);
 			ctx.print("</li>");
 		}
 		ctx.print("</ol>");

@@ -39,7 +39,17 @@ public class FavlinkParser implements Parser {
 			builder.append(parsingProcessor.getText());
 			parsingProcessor.nextToken();
 		}
-		String pageURL = builder.toString();
+		String text = builder.toString();
+
+		String pageURL;
+		String description = "";
+		int lastSpace = text.trim().lastIndexOf(' ');
+		if (lastSpace > 0) {
+			description = text.substring(0, lastSpace);
+			pageURL = text.substring(lastSpace + 1);
+		} else {
+			pageURL = text;
+		}
 
 		String faviconURL = null;
 		faviconURL = strategy.obtainFaviconURL(pageURL, parsingProcessor.getContextRoot());
@@ -49,6 +59,6 @@ public class FavlinkParser implements Parser {
 		parsingProcessor.getEndTag();
 		parsingProcessor.nextToken();
 
-		return new FavlinkElement(faviconURL, pageURL);
+		return new FavlinkElement(faviconURL, description, pageURL);
 	}
 }

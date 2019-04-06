@@ -570,13 +570,18 @@ public class PGServiceImpl implements PGService {
 		progress.setValue(1);
 
 		String zipFileName = "grassPGTmpFile-" + new Date().getTime() + "-" + galleryDir + ".zip";
-		Path zipFile = galleryPath.resolve(zipFileName);
-
-		try (FileSystem zipFileSystem = fileSystemService.newZipFileSystem(zipFile, true)) {
-			performZip(galleryPath, zipFileSystem, progress, total);
-			eventBus.publish(new PGZipProcessResultEvent(zipFile));
+		try {
+			Path zipFile = Files.createTempDirectory(zipFileName).resolve(zipFileName);
+			try (FileSystem zipFileSystem = fileSystemService.newZipFileSystem(zipFile, true)) {
+				performZip(galleryPath, zipFileSystem, progress, total);
+				eventBus.publish(new PGZipProcessResultEvent(zipFile));
+			} catch (Exception e) {
+				String msg = "Nezdařilo se vytvořit ZIP galerie";
+				eventBus.publish(new PGZipProcessResultEvent(msg, e));
+				logger.error(msg, e);
+			}
 		} catch (Exception e) {
-			String msg = "Nezdařilo se vytvořit ZIP galerie";
+			String msg = "Nezdařilo se vytvořit dočasný adresář pro ZIP galerie";
 			eventBus.publish(new PGZipProcessResultEvent(msg, e));
 			logger.error(msg, e);
 		}

@@ -699,19 +699,20 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		future2.get();
 		Path zipPath = eventsHandler2.getZipFile();
 
-		if (!eventsHandler2.isSuccess())
+		if (!eventsHandler2.isSuccess()) {
 			logger.error(eventsHandler2.getResultDetails(), eventsHandler2.getResultException());
-		else
+			assertTrue(false);
+		} else {
 			logger.info("zipPath: {}", zipPath);
+		}
 		eventBus.unsubscribe(eventsHandler2);
 
 		assertTrue(Files.exists(zipPath));
 
 		List<Path> zipContents = ZIPUtils.list(fileSystemService.newZipFileSystem(zipPath, false));
-		assertEquals(4, zipContents.size());
+		assertEquals(3, zipContents.size());
 		Iterator<Path> it = zipContents.iterator();
 		assertEquals("/", it.next().toString());
-		assertTrue(it.next().toString().matches("/grassPGTmpFile-[0-9]+-testGallery.zip"));
 		assertEquals("/03.jpg", it.next().toString());
 		assertEquals("/02.jpg", it.next().toString());
 

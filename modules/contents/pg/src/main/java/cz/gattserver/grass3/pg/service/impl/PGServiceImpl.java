@@ -571,7 +571,7 @@ public class PGServiceImpl implements PGService {
 
 		String zipFileName = "grassPGTmpFile-" + new Date().getTime() + "-" + galleryDir + ".zip";
 		try {
-			Path zipFile = Files.createTempDirectory(zipFileName).resolve(zipFileName);
+			Path zipFile = fileSystemService.createTmpDir("grassPGTmpFolder").resolve(zipFileName);
 			try (FileSystem zipFileSystem = fileSystemService.newZipFileSystem(zipFile, true)) {
 				performZip(galleryPath, zipFileSystem, progress, total);
 				eventBus.publish(new PGZipProcessResultEvent(zipFile));

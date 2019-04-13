@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Date;
 
 import javax.annotation.PostConstruct;
 
@@ -41,6 +43,11 @@ public class MockFileSystemService implements FileSystemService {
 		} else {
 			return FileSystems.newFileSystem(path, Jimfs.class.getClassLoader());
 		}
+	}
+
+	@Override
+	public Path createTmpDir(String name) throws IOException {
+		return Files.createDirectories(fileSystem.getPath("tmp", name + new Date().getTime()));
 	}
 
 }

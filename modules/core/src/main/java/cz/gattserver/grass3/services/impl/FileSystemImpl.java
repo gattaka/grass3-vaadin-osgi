@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,11 @@ public class FileSystemImpl implements FileSystemService {
 			env.put("create", "true");
 		}
 		return FileSystems.newFileSystem(URI.create("jar:" + path.toUri()), env);
+	}
+
+	@Override
+	public Path createTmpDir(String name) throws IOException {
+		return Files.createTempDirectory(name);
 	}
 
 }

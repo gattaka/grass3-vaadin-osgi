@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.ui.components;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import com.vaadin.ui.Button;
@@ -20,12 +21,13 @@ import cz.gattserver.common.Identifiable;
  *            třída zobrazované entity
  * 
  */
-public abstract class GridOperationsTab<T extends Identifiable> extends VerticalLayout {
+public abstract class GridOperationsTab<T extends Identifiable, C extends Collection<T> & Serializable>
+		extends VerticalLayout {
 
 	private static final long serialVersionUID = 6844434642906509277L;
 
 	protected Grid<T> grid;
-	protected Collection<T> data;
+	protected C data;
 
 	/**
 	 * Vytvoří okno pro založení entity
@@ -54,7 +56,7 @@ public abstract class GridOperationsTab<T extends Identifiable> extends Vertical
 	protected void customizeGrid(Grid<T> grid) {
 	}
 
-	protected abstract Collection<T> getItems();
+	protected abstract C getItems();
 
 	public GridOperationsTab(Class<T> clazz) {
 		setSpacing(true);

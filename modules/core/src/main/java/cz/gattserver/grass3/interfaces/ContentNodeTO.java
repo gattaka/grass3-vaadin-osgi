@@ -70,76 +70,86 @@ public class ContentNodeTO {
 		return contentReaderID;
 	}
 
-	public void setContentReaderID(String contentReaderID) {
+	public ContentNodeTO setContentReaderID(String contentReaderID) {
 		this.contentReaderID = contentReaderID;
+		return this;
 	}
 
 	public Long getContentID() {
 		return contentID;
 	}
 
-	public void setContentID(Long contentID) {
+	public ContentNodeTO setContentID(Long contentID) {
 		this.contentID = contentID;
+		return this;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public ContentNodeTO setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public NodeOverviewTO getParent() {
 		return parent;
 	}
 
-	public void setParent(NodeOverviewTO parent) {
+	public ContentNodeTO setParent(NodeOverviewTO parent) {
 		this.parent = parent;
+		return this;
 	}
 
 	public LocalDateTime getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(LocalDateTime creationDate) {
+	public ContentNodeTO setCreationDate(LocalDateTime creationDate) {
 		this.creationDate = creationDate;
+		return this;
 	}
 
 	public LocalDateTime getLastModificationDate() {
 		return lastModificationDate;
 	}
 
-	public void setLastModificationDate(LocalDateTime lastModificationDate) {
+	public ContentNodeTO setLastModificationDate(LocalDateTime lastModificationDate) {
 		this.lastModificationDate = lastModificationDate;
+		return this;
 	}
 
 	public boolean isPublicated() {
 		return publicated;
 	}
 
-	public void setPublicated(boolean publicated) {
+	public ContentNodeTO setPublicated(boolean publicated) {
 		this.publicated = publicated;
+		return this;
 	}
 
 	public UserInfoTO getAuthor() {
 		return author;
 	}
 
-	public void setAuthor(UserInfoTO author) {
+	public ContentNodeTO setAuthor(UserInfoTO author) {
 		this.author = author;
+		return this;
 	}
 
 	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public ContentNodeTO setId(Long id) {
 		this.id = id;
+		return this;
 	}
 
-	public void setDraft(boolean draft) {
+	public ContentNodeTO setDraft(boolean draft) {
 		this.draft = draft;
+		return this;
 	}
 
 	public boolean isDraft() {
@@ -150,8 +160,9 @@ public class ContentNodeTO {
 		return draftSourceId;
 	}
 
-	public void setDraftSourceId(Long draftSourceId) {
+	public ContentNodeTO setDraftSourceId(Long draftSourceId) {
 		this.draftSourceId = draftSourceId;
+		return this;
 	}
 
 	public Set<ContentTagOverviewTO> getContentTags() {
@@ -164,8 +175,9 @@ public class ContentNodeTO {
 		return set;
 	}
 
-	public void setContentTags(Set<ContentTagOverviewTO> contentTags) {
+	public ContentNodeTO setContentTags(Set<ContentTagOverviewTO> contentTags) {
 		this.contentTags = contentTags;
+		return this;
 	}
 
 }

@@ -3,26 +3,27 @@ package cz.gattserver.grass3.exception;
 public class GrassPageException extends RuntimeException {
 
 	private static final long serialVersionUID = -8947153927785372443L;
+	private static final String ERR = "Error: ";
 
 	private final int status;
 
 	public GrassPageException(int status, Throwable e) {
-		super("Error: " + status, e);
+		super(ERR + status, e);
 		this.status = status;
 	}
 
 	public GrassPageException(int status, String msg, Throwable e) {
-		super("Error: " + status + ", " + msg, e);
+		super(ERR + status + ", " + msg, e);
 		this.status = status;
 	}
 
 	public GrassPageException(int status) {
-		super("Error: " + status);
+		super(ERR + status);
 		this.status = status;
 	}
 
 	public GrassPageException(int status, String msg) {
-		super("Error: " + status + ", " + msg);
+		super(ERR + status + ", " + msg);
 		this.status = status;
 	}
 

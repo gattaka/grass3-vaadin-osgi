@@ -13,6 +13,8 @@ public class DeleteGridButton<T> extends GridButton<T> {
 
 	private static final long serialVersionUID = -5924239277930098183L;
 
+	private static final String CONFIRM_MSG = "Opravdu si přejete smazat vybrané položky?";
+
 	public interface ConfirmAction<T> {
 		public void onConfirm(Set<T> items);
 	}
@@ -27,7 +29,7 @@ public class DeleteGridButton<T> extends GridButton<T> {
 	}
 
 	protected String getConfirmMessage() {
-		return "Opravdu si přejete smazat vybrané položky?";
+		return CONFIRM_MSG;
 	}
 
 }

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.common.util.CZComparator;
+import cz.gattserver.grass3.exception.GrassException;
 import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.modules.SectionService;
 import cz.gattserver.grass3.modules.register.ModuleRegister;
@@ -101,8 +102,9 @@ public class ModuleRegisterImpl implements ModuleRegister {
 			try {
 				return new CZComparator().compare(s1.getSectionCaption(), s2.getSectionCaption());
 			} catch (ParseException e) {
-				logger.error("Nezdařilo se seřadit sekce", e);
-				throw new RuntimeException(e);
+				String msg = "Nezdařilo se seřadit sekce";
+				logger.error(msg, e);
+				throw new GrassException(msg, e);
 			}
 		});
 		return Collections.unmodifiableList(injectedSectionModules);

@@ -1,10 +1,7 @@
 package cz.gattserver.grass3.ui;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
@@ -31,32 +28,14 @@ public class GrassUI extends UI {
 	private static final long serialVersionUID = -785347532002801786L;
 	private static Logger logger = LoggerFactory.getLogger(GrassUI.class);
 
-	/**
-	 * Mapa stránek
-	 */
-	@Autowired
-	private PageFactoriesRegister pageFactoriesRegister;
-
-	@Autowired
-	private SecurityService securityFacade;
-
-	@Resource(name = "err403PageFactory")
-	private PageFactory err403PageFactory;
-
-	@Resource(name = "err404PageFactory")
-	private PageFactory err404PageFactory;
-
-	@Resource(name = "err500PageFactory")
-	private PageFactory err500PageFactory;
-
-	public GrassUI() {
-		SpringContextHelper.inject(this);
-	}
+	private transient SecurityService securityFacade;
 
 	/**
 	 * Získá aktuálního přihlášeného uživatele jako {@link UserInfoTO} objekt
 	 */
 	public UserInfoTO getUser() {
+		if (securityFacade == null)
+			securityFacade = SpringContextHelper.getBean(SecurityService.class);
 		return securityFacade.getCurrentUser();
 	}
 
@@ -74,7 +53,7 @@ public class GrassUI extends UI {
 
 		// pokud nebyla cesta prázná, pak proveď posuv
 		String token = analyzer.getNextPathToken();
-		PageFactory factory = pageFactoriesRegister.get(token);
+		PageFactory factory = SpringContextHelper.getBean(PageFactoriesRegister.class).get(token);
 
 		try {
 			GrassPage page = factory.createPageIfAuthorized(grassRequest);
@@ -83,14 +62,17 @@ public class GrassUI extends UI {
 		} catch (GrassPageException e) {
 			switch (e.getStatus()) {
 			case 403:
-				setContent(err403PageFactory.createPageIfAuthorized(grassRequest).getContent());
+				setContent(((PageFactory) SpringContextHelper.getBean("err403PageFactory"))
+						.createPageIfAuthorized(grassRequest).getContent());
 				break;
 			case 404:
-				setContent(err404PageFactory.createPageIfAuthorized(grassRequest).getContent());
+				setContent(((PageFactory) SpringContextHelper.getBean("err404PageFactory"))
+						.createPageIfAuthorized(grassRequest).getContent());
 				break;
 			case 500:
 			default:
-				setContent(err500PageFactory.createPageIfAuthorized(grassRequest).getContent());
+				setContent(((PageFactory) SpringContextHelper.getBean("err500PageFactory"))
+						.createPageIfAuthorized(grassRequest).getContent());
 				break;
 			}
 		}

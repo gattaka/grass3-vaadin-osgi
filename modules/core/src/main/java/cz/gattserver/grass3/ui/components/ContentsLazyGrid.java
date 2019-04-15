@@ -23,24 +23,16 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 
 	private static final long serialVersionUID = -5648982639686386190L;
 
-	// @Resource(name = "nodePageFactory")
-	private PageFactory nodePageFactory;
-
-	// @Resource(name = "noServicePageFactory")
-	private PageFactory noServicePageFactory;
-
-	// @Resource(name = "serviceHolder")
-	private ModuleRegister serviceHolder;
-
 	public ContentsLazyGrid() {
 		super(ContentNodeOverviewTO.class);
-		nodePageFactory = (PageFactory) SpringContextHelper.getBean("nodePageFactory");
-		noServicePageFactory = (PageFactory) SpringContextHelper.getBean("noServicePageFactory");
-		serviceHolder = (ModuleRegister) SpringContextHelper.getContext().getBean(ModuleRegister.class);
 	}
 
 	public void populate(final MenuPage page, FetchItemsCallback<ContentNodeOverviewTO> fetchItems,
 			SerializableSupplier<Integer> sizeCallback) {
+
+		PageFactory nodePageFactory = ((PageFactory) SpringContextHelper.getBean("nodePageFactory"));
+		PageFactory noServicePageFactory = (PageFactory) SpringContextHelper.getBean("noServicePageFactory");
+		ModuleRegister serviceHolder = SpringContextHelper.getContext().getBean(ModuleRegister.class);
 
 		setDataProvider(fetchItems, sizeCallback);
 		setSelectionMode(SelectionMode.NONE);
@@ -87,9 +79,8 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 					+ "'>" + contentNode.getParentNodeName() + "</a>";
 		}, new HtmlRenderer()).setCaption("Kategorie").setId(nodeBind).setWidth(GridUtils.NODE_COLUMN_WIDTH);
 
-		addColumn(contentNode -> {
-			return contentNode.getAuthorName();
-		}, new TextRenderer()).setCaption("Autor").setId(authorBind).setWidth(100);
+		addColumn(ContentNodeOverviewTO::getAuthorName, new TextRenderer()).setCaption("Autor").setId(authorBind)
+				.setWidth(100);
 
 		addColumn(ContentNodeOverviewTO::getCreationDate, new LocalDateTimeRenderer("d.M.yyyy"))
 				.setCaption("Datum vytvoření").setId(creationDateBind).setStyleGenerator(item -> "v-align-right")

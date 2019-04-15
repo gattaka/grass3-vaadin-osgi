@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.medic.web;
 
-import java.util.Collection;
+import java.util.ArrayList;
 
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
@@ -9,7 +9,7 @@ import com.vaadin.ui.renderers.LocalDateTimeRenderer;
 
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
 
-public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
+public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO, ArrayList<MedicalRecordDTO>> {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
@@ -18,8 +18,8 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO> {
 	}
 
 	@Override
-	protected Collection<MedicalRecordDTO> getItems() {
-		return getMedicFacade().getAllMedicalRecords();
+	protected ArrayList<MedicalRecordDTO> getItems() {
+		return new ArrayList<>(getMedicFacade().getAllMedicalRecords());
 	}
 
 	@Override

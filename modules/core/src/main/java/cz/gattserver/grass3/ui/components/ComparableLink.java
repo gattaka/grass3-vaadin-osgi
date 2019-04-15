@@ -20,7 +20,7 @@ public class ComparableLink extends Link implements Comparable<ComparableLink> {
 	}
 
 	public int compareTo(ComparableLink o) {
-		return this.getCaption().compareTo(o.getCaption());
+		return getCaption().compareTo(o.getCaption());
 	}
 
 }

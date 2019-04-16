@@ -32,12 +32,9 @@ public class NodesGrid extends Grid<NodeOverviewTO> {
 		addColumn(contentNode -> new Image("", ImageIcon.BRIEFCASE_16_ICON.createResource()), new ComponentRenderer())
 				.setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(iconBind);
 
-		addColumn(node -> {
-			return "<a href='"
-					+ page.getPageURL(nodePageFactory,
-							URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()))
-					+ "'>" + node.getName() + "</a>";
-		}, new HtmlRenderer()).setCaption("Kategorie").setId(nameBind);
+		addColumn(node -> "<a href='"
+				+ page.getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()))
+				+ "'>" + node.getName() + "</a>", new HtmlRenderer()).setCaption("Kategorie").setId(nameBind);
 
 		setColumns(iconBind, nameBind);
 

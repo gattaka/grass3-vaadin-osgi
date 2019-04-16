@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.ui.pages;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,15 +18,11 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.services.impl.LoginResult;
-import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.H2Label;
 
 public class LoginPage extends OneColumnPage {
-
-	@Resource(name = "homePageFactory")
-	private PageFactory homePageFactory;
 
 	@Autowired
 	private SecurityService securityFacade;
@@ -40,14 +35,12 @@ public class LoginPage extends OneColumnPage {
 		HttpServletRequest request = VaadinServletService.getCurrentServletRequest();
 		HttpServletResponse response = VaadinServletService.getCurrentResponse().getHttpServletResponse();
 		LoginResult loginResult = securityFacade.login(username, password, remember, request, response);
-		switch (loginResult) {
-		case SUCCESS:
+		if (LoginResult.SUCCESS == loginResult) {
 			// Reinitialize the session to protect against session fixation
 			// attacks. This does not work with websocket communication.
 			VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
-		default:
-			return loginResult;
 		}
+		return loginResult;
 	}
 
 	@Override

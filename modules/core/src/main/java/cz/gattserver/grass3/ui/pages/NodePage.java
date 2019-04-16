@@ -3,8 +3,6 @@ package cz.gattserver.grass3.ui.pages;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,14 +17,11 @@ import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeTO;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ContentNodeService;
-import cz.gattserver.grass3.services.CoreACLService;
-import cz.gattserver.grass3.services.NodeService;
 import cz.gattserver.grass3.ui.components.Breadcrumb;
 import cz.gattserver.grass3.ui.components.ContentsLazyGrid;
 import cz.gattserver.grass3.ui.components.NewContentNodeGrid;
 import cz.gattserver.grass3.ui.components.NodesGrid;
 import cz.gattserver.grass3.ui.components.Breadcrumb.BreadcrumbElement;
-import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
@@ -36,16 +31,7 @@ import cz.gattserver.web.common.ui.ImageIcon;
 public class NodePage extends OneColumnPage {
 
 	@Autowired
-	private CoreACLService coreACL;
-
-	@Autowired
-	private NodeService nodeFacade;
-
-	@Autowired
 	private ContentNodeService contentNodeFacade;
-
-	@Resource(name = "nodePageFactory")
-	private PageFactory nodePageFactory;
 
 	// Přehled podkategorií
 	private NodesGrid subNodesTable;
@@ -74,9 +60,6 @@ public class NodePage extends OneColumnPage {
 			throw new GrassPageException(404);
 
 		NodeTO node = nodeFacade.getNodeByIdForDetail(identifier.getId());
-
-		// TODO pokud má jiný název, přesměruj na kategorii s ID-Název správným
-		// názvem
 
 		// Navigační breadcrumb
 		createBreadcrumb(layout, node);
@@ -126,7 +109,7 @@ public class NodePage extends OneColumnPage {
 
 		// pokud zjistím, že cesta neodpovídá, vyhodím 302 (přesměrování) na
 		// aktuální polohu cílové kategorie
-		List<BreadcrumbElement> breadcrumbElements = new ArrayList<BreadcrumbElement>();
+		List<BreadcrumbElement> breadcrumbElements = new ArrayList<>();
 		NodeTO parent = node;
 		while (true) {
 
@@ -177,11 +160,9 @@ public class NodePage extends OneColumnPage {
 		VerticalLayout contentsLayout = new VerticalLayout();
 		contentsLayout.setMargin(false);
 		ContentsLazyGrid contentsTable = new ContentsLazyGrid();
-		contentsTable.populate(this, (sortOrder, offset, limit) -> {
-			return contentNodeFacade.getByNode(node.getId(), offset, limit).stream();
-		}, () -> {
-			return contentNodeFacade.getCountByNode(node.getId());
-		});
+		contentsTable.populate(this,
+				(sortOrder, offset, limit) -> contentNodeFacade.getByNode(node.getId(), offset, limit).stream(),
+				() -> contentNodeFacade.getCountByNode(node.getId()));
 
 		contentsLayout.addComponent(new H2Label("Obsahy"));
 		contentsLayout.addComponent(contentsTable);

@@ -44,8 +44,6 @@ public class MedicalRecordDetailWindow extends DetailWindow {
 		Label label;
 		label = addDetailLine("Záznam", medicalRecordDTO.getRecord());
 		label.setWidth("600px");
-
-		setContent(layout);
 	}
 
 	protected MedicFacade getMedicFacade() {

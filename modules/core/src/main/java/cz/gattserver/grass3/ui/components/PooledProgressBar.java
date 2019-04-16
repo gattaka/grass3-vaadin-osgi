@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.ui.components;
 
+import java.io.Serializable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -53,7 +54,8 @@ public abstract class PooledProgressBar extends ProgressBar {
 		executor.execute(progressThread);
 	}
 
-	public class ProgressThread extends Thread {
+	public class ProgressThread implements Runnable, Serializable {
+		private static final long serialVersionUID = -5332437286001073714L;
 
 		@Override
 		public void run() {
@@ -88,7 +90,6 @@ public abstract class PooledProgressBar extends ProgressBar {
 		private float getProgress() {
 			return (float) current / total;
 		}
-
 	}
 
 	public ProgressThread getProgressThread() {

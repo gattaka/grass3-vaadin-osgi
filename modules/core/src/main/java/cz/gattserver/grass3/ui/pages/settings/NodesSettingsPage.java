@@ -9,15 +9,13 @@ import cz.gattserver.web.common.ui.H2Label;
 
 public class NodesSettingsPage extends AbstractSettingsPage {
 
-	private NodeTree tree;
-
 	public NodesSettingsPage(GrassRequest request) {
 		super(request);
 	}
 
 	@Override
 	protected Component createContent() {
-		tree = new NodeTree(true);
+		NodeTree tree = new NodeTree(true);
 		VerticalLayout layout = new VerticalLayout();
 
 		layout.setMargin(true);

@@ -2,8 +2,6 @@ package cz.gattserver.grass3.ui.pages.settings;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.ui.Alignment;
@@ -16,7 +14,6 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.modules.register.ModuleSettingsPageFactoriesRegister;
 import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.settings.factories.ModuleSettingsPageFactory;
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
 import cz.gattserver.web.common.server.URLPathAnalyzer;
@@ -25,9 +22,6 @@ public class SettingsPage extends TwoColumnPage {
 
 	@Autowired
 	private List<ModuleSettingsPageFactory> settingsTabFactories;
-
-	@Resource(name = "settingsPageFactory")
-	private PageFactory settingsPageFactory;
 
 	@Autowired
 	private ModuleSettingsPageFactoriesRegister register;
@@ -45,7 +39,7 @@ public class SettingsPage extends TwoColumnPage {
 		ModuleSettingsPageFactory moduleSettingsPageFactory = register.getFactory(settingsTabName);
 
 		if (moduleSettingsPageFactory != null) {
-			if (moduleSettingsPageFactory.isAuthorized() == false) {
+			if (!moduleSettingsPageFactory.isAuthorized()) {
 				throw new GrassPageException(403);
 			} else {
 				this.settingsTabFactory = moduleSettingsPageFactory;
@@ -65,9 +59,8 @@ public class SettingsPage extends TwoColumnPage {
 		marginLayout.addComponent(leftColumnLayout);
 
 		settingsTabFactories.sort((a, b) -> a.getSettingsCaption().compareTo(b.getSettingsCaption()));
-		for (ModuleSettingsPageFactory settingsTabFactory : settingsTabFactories) {
-			Link link = new Link(settingsTabFactory.getSettingsCaption(),
-					getPageResource(settingsPageFactory, settingsTabFactory.getSettingsURL()));
+		for (ModuleSettingsPageFactory f : settingsTabFactories) {
+			Link link = new Link(f.getSettingsCaption(), getPageResource(settingsPageFactory, f.getSettingsURL()));
 			leftColumnLayout.addComponent(link);
 		}
 

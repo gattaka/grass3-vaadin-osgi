@@ -14,7 +14,6 @@ public class PhysicianDetailWindow extends DetailWindow {
 
 		final PhysicianDTO physicianDTO = SpringContextHelper.getBean(MedicFacade.class).getPhysicianById(id);
 		addDetailLine("Jméno", physicianDTO.getName());
-		setContent(layout);
 	}
 
 }

@@ -46,12 +46,10 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		String lastModificationDateBind = "customLastModificationDate";
 
 		if (UIUtils.getUser() != null)
-			addColumn(contentNode -> {
-				Image img = contentNode.isPublicated() ? null
-						: new Image(null, ImageIcon.SHIELD_16_ICON.createResource());
-				return img;
-			}, new ComponentRenderer()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(lockIconBind)
-					.setStyleGenerator(item -> "icon-cell");
+			addColumn(contentNode -> contentNode.isPublicated() ? null
+					: new Image(null, ImageIcon.SHIELD_16_ICON.createResource()), new ComponentRenderer())
+							.setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(lockIconBind)
+							.setStyleGenerator(item -> "icon-cell");
 
 		addColumn(contentNode -> {
 			ContentModule contentService = serviceHolder.getContentModulesByName(contentNode.getContentReaderID());
@@ -72,12 +70,13 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 					+ "'>" + contentNode.getName() + "</a>";
 		}, new HtmlRenderer()).setCaption("Název").setId(nameBind);
 
-		addColumn(contentNode -> {
-			return "<a href='"
-					+ page.getPageURL(nodePageFactory, URLIdentifierUtils
-							.createURLIdentifier(contentNode.getParentNodeId(), contentNode.getParentNodeName()))
-					+ "'>" + contentNode.getParentNodeName() + "</a>";
-		}, new HtmlRenderer()).setCaption("Kategorie").setId(nodeBind).setWidth(GridUtils.NODE_COLUMN_WIDTH);
+		addColumn(
+				contentNode -> "<a href='"
+						+ page.getPageURL(nodePageFactory,
+								URLIdentifierUtils.createURLIdentifier(contentNode.getParentNodeId(),
+										contentNode.getParentNodeName()))
+						+ "'>" + contentNode.getParentNodeName() + "</a>",
+				new HtmlRenderer()).setCaption("Kategorie").setId(nodeBind).setWidth(GridUtils.NODE_COLUMN_WIDTH);
 
 		addColumn(ContentNodeOverviewTO::getAuthorName, new TextRenderer()).setCaption("Autor").setId(authorBind)
 				.setWidth(100);

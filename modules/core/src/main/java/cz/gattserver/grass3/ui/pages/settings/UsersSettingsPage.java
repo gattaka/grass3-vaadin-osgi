@@ -35,8 +35,6 @@ public class UsersSettingsPage extends AbstractSettingsPage {
 
 	private Grid<UserInfoTO> grid;
 
-	private List<UserInfoTO> users;
-
 	public UsersSettingsPage(GrassRequest request) {
 		super(request);
 	}
@@ -69,57 +67,52 @@ public class UsersSettingsPage extends AbstractSettingsPage {
 				.setCaption("Naposledy přihlášen");
 		grid.addColumn(UserInfoTO::getEmail, new TextRenderer()).setCaption("Email");
 		grid.addColumn(u -> u.isConfirmed() ? "Ano" : "Ne", new TextRenderer()).setCaption("Aktivní");
-		users = userFacade.getUserInfoFromAllUsers();
+
+		List<UserInfoTO> users = userFacade.getUserInfoFromAllUsers();
 		grid.setItems(users);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);
 		usersLayout.addComponent(buttonLayout);
 
-		buttonLayout.addComponent(new GridButton<>("Aktivovat", users -> {
-			users.forEach(user -> {
-				user.setConfirmed(true);
-				userFacade.activateUser(user.getId());
-				grid.getDataProvider().refreshItem(user);
-			});
-		}, grid).setEnableResolver(users -> !users.iterator().next().isConfirmed()));
+		buttonLayout.addComponent(new GridButton<>("Aktivovat", u -> users.forEach(user -> {
+			user.setConfirmed(true);
+			userFacade.activateUser(user.getId());
+			grid.getDataProvider().refreshItem(user);
+		}), grid).setEnableResolver(u -> !users.iterator().next().isConfirmed()));
 
-		buttonLayout.addComponent(new GridButton<>("Zablokovat", users -> {
-			users.forEach(user -> {
-				user.setConfirmed(false);
-				userFacade.banUser(user.getId());
-				grid.getDataProvider().refreshItem(user);
-			});
-		}, grid).setEnableResolver(users -> users.iterator().next().isConfirmed()));
+		buttonLayout.addComponent(new GridButton<>("Zablokovat", u -> users.forEach(user -> {
+			user.setConfirmed(false);
+			userFacade.banUser(user.getId());
+			grid.getDataProvider().refreshItem(user);
+		}), grid).setEnableResolver(u -> users.iterator().next().isConfirmed()));
 
-		buttonLayout.addComponent(new GridButton<>("Upravit oprávnění",
-				users -> UI.getCurrent().addWindow(new WebWindow("Uživatelské role") {
-					private static final long serialVersionUID = -2416879310811585155L;
+		buttonLayout.addComponent(new GridButton<>("Upravit oprávnění", u -> {
+			WebWindow w = new WebWindow("Uživatelské role");
 
-					{
-						UserInfoTO user = users.iterator().next();
-						setWidth("220px");
+			UserInfoTO user = users.iterator().next();
+			w.setWidth("220px");
 
-						for (final Role role : moduleRegister.getRoles()) {
-							final CheckBox checkbox = new CheckBox(role.getRoleName());
-							checkbox.setValue(user.getRoles().contains(role));
-							checkbox.addValueChangeListener(event -> {
-								if (checkbox.getValue()) {
-									user.getRoles().add(role);
-								} else {
-									user.getRoles().remove(role);
-								}
-							});
-							addComponent(checkbox);
-						}
-
-						addComponent(new Button("Upravit oprávnění", event -> {
-							userFacade.changeUserRoles(user.getId(), user.getRoles());
-							grid.getDataProvider().refreshItem(user);
-							close();
-						}));
+			for (final Role role : moduleRegister.getRoles()) {
+				final CheckBox checkbox = new CheckBox(role.getRoleName());
+				checkbox.setValue(user.getRoles().contains(role));
+				checkbox.addValueChangeListener(event -> {
+					if (checkbox.getValue()) {
+						user.getRoles().add(role);
+					} else {
+						user.getRoles().remove(role);
 					}
-				}), grid));
+				});
+				w.addComponent(checkbox);
+			}
+
+			w.addComponent(new Button("Upravit oprávnění", event -> {
+				userFacade.changeUserRoles(user.getId(), user.getRoles());
+				grid.getDataProvider().refreshItem(user);
+				w.close();
+			}));
+			UI.getCurrent().addWindow(w);
+		}, grid));
 
 		return layout;
 

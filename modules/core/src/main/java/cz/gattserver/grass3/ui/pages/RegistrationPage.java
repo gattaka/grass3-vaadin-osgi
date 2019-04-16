@@ -133,8 +133,6 @@ public class RegistrationPage extends OneColumnPage {
 				userFacade.registrateNewUser(bean.getEmail(), bean.getUsername(), bean.getPassword());
 				UIUtils.showInfo("Registrace proběhla úspěšně");
 				binder.setBean(new RegistrationTO());
-			} else {
-
 			}
 		});
 		submitButton.setEnabled(false);

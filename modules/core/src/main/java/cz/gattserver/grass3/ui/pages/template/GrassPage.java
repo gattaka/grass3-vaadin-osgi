@@ -1,9 +1,5 @@
 package cz.gattserver.grass3.ui.pages.template;
 
-import org.perf4j.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.vaadin.server.ExternalResource;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Layout;
@@ -23,8 +19,6 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
  *
  */
 public abstract class GrassPage {
-
-	private static Logger perfLogger = LoggerFactory.getLogger(StopWatch.DEFAULT_LOGGER_NAME);
 
 	private GrassRequest request;
 	private Layout content;
@@ -51,11 +45,8 @@ public abstract class GrassPage {
 	 * {@link #createPayload()}, aby byl založen
 	 */
 	public final Layout getContent() {
-		if (content == null) {
-			StopWatch stopWatch = new StopWatch("GrassPage#createPayload");
+		if (content == null)
 			content = createPayload();
-			perfLogger.info(stopWatch.stop());
-		}
 		if (jQueryRequired)
 			content.addComponent(new JQueryBootstrapComponent());
 		return content;
@@ -103,13 +94,11 @@ public abstract class GrassPage {
 
 		JScriptItem js = scripts[index];
 		String chunk = js.getScript();
-		if (!js.isPlain()) {
-			// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
-			// obejít problém se závislosí pluginů na úložišti theme apod. a
-			// přitom umožnit aby se JS odkazovali na externí zdroje
-			if (!chunk.toLowerCase().startsWith("http://") || !chunk.toLowerCase().startsWith("https://"))
-				chunk = "\"" + getRequest().getContextRoot() + "/VAADIN/themes/grass/" + chunk + "\"";
-		}
+		// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
+		// obejít problém se závislosí pluginů na úložišti theme apod. a
+		// přitom umožnit aby se JS odkazovali na externí zdroje
+		if (!js.isPlain() && !chunk.toLowerCase().startsWith("http://") || !chunk.toLowerCase().startsWith("https://"))
+			chunk = "\"" + getRequest().getContextRoot() + "/VAADIN/themes/grass/" + chunk + "\"";
 
 		builder.append("$.getScript(").append(chunk).append(", function(){");
 		buildJSBatch(builder, index + 1, scripts);
@@ -137,7 +126,7 @@ public abstract class GrassPage {
 		if (relativeURLs.length == 1) {
 			return getPageURL(pageFactory) + "/" + relativeURLs[0];
 		} else {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(getPageURL(pageFactory));
 			for (String relativeURL : relativeURLs) {
 				if (relativeURL != null) {

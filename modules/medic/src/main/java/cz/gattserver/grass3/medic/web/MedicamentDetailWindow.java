@@ -23,7 +23,5 @@ public class MedicamentDetailWindow extends DetailWindow {
 		label = addDetailLine("Reakce", medicamentDTO.getTolerance());
 		label.setContentMode(ContentMode.PREFORMATTED);
 
-		setContent(layout);
-
 	}
 }

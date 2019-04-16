@@ -23,8 +23,6 @@ public class TagPage extends BasePage {
 	@Autowired
 	private ContentNodeService contentNodeFacade;
 
-	private ContentTagOverviewTO tag;
-
 	public TagPage(GrassRequest request) {
 		super(request);
 	}
@@ -40,17 +38,15 @@ public class TagPage extends BasePage {
 		if (identifier == null)
 			throw new GrassPageException(404);
 
-		tag = contentTagFacade.getTagById(identifier.getId());
+		ContentTagOverviewTO tag = contentTagFacade.getTagById(identifier.getId());
 
 		if (tag == null)
 			throw new GrassPageException(404);
 
 		ContentsLazyGrid tagContentsTable = new ContentsLazyGrid();
-		tagContentsTable.populate(this, (sortOrder, offset, limit) -> {
-			return contentNodeFacade.getByTag(tag.getId(), offset, limit).stream();
-		}, () -> {
-			return contentNodeFacade.getCountByTag(tag.getId());
-		});
+		tagContentsTable.populate(this,
+				(sortOrder, offset, limit) -> contentNodeFacade.getByTag(tag.getId(), offset, limit).stream(),
+				() -> contentNodeFacade.getCountByTag(tag.getId()));
 
 		CustomLayout contentLayout = new CustomLayout("oneColumn");
 		layout.addComponent(contentLayout, "content");

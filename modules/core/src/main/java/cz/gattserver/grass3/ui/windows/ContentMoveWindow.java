@@ -1,7 +1,5 @@
 package cz.gattserver.grass3.ui.windows;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 
@@ -9,14 +7,12 @@ import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.ui.components.NodeTree;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.WebWindow;
 
 public abstract class ContentMoveWindow extends WebWindow {
 
 	private static final long serialVersionUID = -2550619983411515006L;
-
-	@Autowired
-	private ContentNodeService contentNodeFacade;
 
 	private Button moveBtn;
 	private NodeTree tree;
@@ -30,12 +26,12 @@ public abstract class ContentMoveWindow extends WebWindow {
 		tree.getGrid().addSelectionListener(event -> moveBtn.setEnabled(!event.getAllSelectedItems().isEmpty()));
 		tree.setHeight("300px");
 		layout.addComponent(tree);
-		
+
 		moveBtn = new Button("Přesunout");
 		moveBtn.setEnabled(false);
 		moveBtn.addClickListener(event -> {
 			NodeOverviewTO nodeDTO = tree.getGrid().getSelectedItems().iterator().next();
-			contentNodeFacade.moveContent(nodeDTO.getId(), contentNodeDTO.getId());
+			SpringContextHelper.getBean(ContentNodeService.class).moveContent(nodeDTO.getId(), contentNodeDTO.getId());
 			close();
 			onMove();
 		});

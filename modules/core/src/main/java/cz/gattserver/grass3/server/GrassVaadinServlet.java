@@ -18,7 +18,7 @@ public class GrassVaadinServlet extends VaadinServlet {
 
 	private static final long serialVersionUID = -5411796850116104693L;
 
-	private Map<VaadinSession, Boolean> populatedSessions = new WeakHashMap<>();
+	private final Map<VaadinSession, Boolean> populatedSessions = new WeakHashMap<>();
 
 	@Override
 	protected VaadinServletService createServletService(DeploymentConfiguration deploymentConfiguration)

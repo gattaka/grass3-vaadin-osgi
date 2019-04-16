@@ -5,9 +5,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.perf4j.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.HasValue.ValueChangeEvent;
@@ -38,7 +35,15 @@ import elemental.json.JsonArray;
 
 public class HomePage extends BasePage {
 
-	private static Logger perfLogger = LoggerFactory.getLogger(StopWatch.DEFAULT_LOGGER_NAME);
+	/**
+	 * Kolik je nejmenší font pro tagcloud ?
+	 */
+	private static final int MIN_FONT_SIZE_TAG_CLOUD = 8;
+
+	/**
+	 * Kolik je největší font pro tagcloud ?
+	 */
+	private static final int MAX_FONT_SIZE_TAG_CLOUD = 22;
 
 	@Autowired
 	private ContentTagService contentTagFacade;
@@ -48,16 +53,6 @@ public class HomePage extends BasePage {
 
 	@Resource(name = "tagPageFactory")
 	private PageFactory tagPageFactory;
-
-	/**
-	 * Kolik je nejmenší font pro tagcloud ?
-	 */
-	private static int MIN_FONT_SIZE_TAG_CLOUD = 8;
-
-	/**
-	 * Kolik je největší font pro tagcloud ?
-	 */
-	private static int MAX_FONT_SIZE_TAG_CLOUD = 22;
 
 	public HomePage(GrassRequest request) {
 		super(request);
@@ -77,7 +72,6 @@ public class HomePage extends BasePage {
 		marginLayout.addComponent(pagelayout);
 
 		// Oblíbené
-		StopWatch stopWatch = new StopWatch("HomePage#createRecentMenus");
 		UserInfoTO user = UIUtils.getUser();
 		if (coreACL.isLoggedIn(user)) {
 			VerticalLayout favouritesLayout = new VerticalLayout();
@@ -93,14 +87,11 @@ public class HomePage extends BasePage {
 			favouritesContentsTable.setWidth("100%");
 			pagelayout.addComponent(favouritesLayout);
 		}
-		perfLogger.info(stopWatch.stop());
 
 		createSearchMenu(pagelayout);
 
 		// Nedávno přidané a upravené obsahy
-		stopWatch = new StopWatch("HomePage#createRecentMenus");
 		createRecentMenus(pagelayout);
-		perfLogger.info(stopWatch.stop());
 
 		// Tag-cloud
 		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.lazytagcloud", new JavaScriptFunction() {
@@ -141,9 +132,10 @@ public class HomePage extends BasePage {
 				String value = event.getValue();
 				if (StringUtils.isNotBlank(value) && !searchResultsTable.isVisible()) {
 					searchResultsTable.setVisible(true);
-					searchResultsTable.populate(HomePage.this, (sortOrder, offset, limit) -> {
-						return contentNodeFacade.getByName(searchField.getValue(), offset, limit).stream();
-					}, () -> contentNodeFacade.getCountByName(searchField.getValue()));
+					searchResultsTable.populate(HomePage.this,
+							(sortOrder, offset, limit) -> contentNodeFacade
+									.getByName(searchField.getValue(), offset, limit).stream(),
+							() -> contentNodeFacade.getCountByName(searchField.getValue()));
 					searchResultsTable.setHeight("200px");
 				}
 				searchResultsTable.getDataProvider().refreshAll();
@@ -194,9 +186,11 @@ public class HomePage extends BasePage {
 		Label tagLabel;
 		CssLayout tagCloud = new CssLayout();
 		tagCloudLayout.addComponent(tagCloud);
-		tagCloud.addComponent(tagLabel = new Label("<span class=\"tag-letter\">" + tag + "</span>", ContentMode.HTML));
+		tagLabel = new Label("<span class=\"tag-letter\">" + tag + "</span>", ContentMode.HTML);
+		tagCloud.addComponent(tagLabel);
 		tagLabel.setSizeUndefined();
-		tagCloud.addComponent(tagLabel = new Label(sb.toString(), ContentMode.HTML));
+		tagLabel = new Label(sb.toString(), ContentMode.HTML);
+		tagCloud.addComponent(tagLabel);
 		tagLabel.addStyleName("taglabel");
 		tagLabel.setSizeFull();
 	}
@@ -204,14 +198,14 @@ public class HomePage extends BasePage {
 	private void createRecentMenus(VerticalLayout pagelayout) {
 
 		ContentsLazyGrid recentAddedContentsTable = new ContentsLazyGrid();
-		recentAddedContentsTable.populate(this, (sortOrder, offset, limit) -> {
-			return contentNodeFacade.getRecentAdded(offset, limit).stream();
-		}, contentNodeFacade::getCount);
+		recentAddedContentsTable.populate(this,
+				(sortOrder, offset, limit) -> contentNodeFacade.getRecentAdded(offset, limit).stream(),
+				contentNodeFacade::getCount);
 
 		ContentsLazyGrid recentModifiedContentsTable = new ContentsLazyGrid();
-		recentModifiedContentsTable.populate(this, (sortOrder, offset, limit) -> {
-			return contentNodeFacade.getRecentModified(offset, limit).stream();
-		}, contentNodeFacade::getCount);
+		recentModifiedContentsTable.populate(this,
+				(sortOrder, offset, limit) -> contentNodeFacade.getRecentModified(offset, limit).stream(),
+				contentNodeFacade::getCount);
 
 		VerticalLayout recentAddedLayout = new VerticalLayout();
 		recentAddedLayout.setMargin(false);

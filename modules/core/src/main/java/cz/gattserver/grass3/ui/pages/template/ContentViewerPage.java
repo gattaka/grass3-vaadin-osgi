@@ -27,7 +27,6 @@ import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeTO;
 import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.services.CoreACLService;
 import cz.gattserver.grass3.services.UserService;
 import cz.gattserver.grass3.ui.components.Breadcrumb;
 import cz.gattserver.grass3.ui.components.DeleteButton;
@@ -46,13 +45,7 @@ import cz.gattserver.web.common.ui.window.WarnWindow;
 public abstract class ContentViewerPage extends TwoColumnPage {
 
 	@Autowired
-	protected CoreACLService coreACL;
-
-	@Autowired
 	protected UserService userFacade;
-
-	@Resource(name = "nodePageFactory")
-	protected PageFactory nodePageFactory;
 
 	@Resource(name = "tagPageFactory")
 	protected PageFactory tagPageFactory;
@@ -104,9 +97,8 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		}
 
 		operationsListLayout = new CssLayout();
-		if (!content.isDraft()) {
+		if (!content.isDraft())
 			createContentOperations(operationsListLayout);
-		}
 
 		JavaScript.eval("var pageScroll = document.getElementsByClassName('v-ui v-scrollable')[0]; "
 				/*	*/ + "$(pageScroll).scroll(function() { "
@@ -131,9 +123,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		// Smazat
 		if (coreACL.canDeleteContent(content, UIUtils.getUser())) {
-			DeleteButton delBtn = new DeleteButton(event -> {
-				onDeleteOperation();
-			});
+			DeleteButton delBtn = new DeleteButton(event -> onDeleteOperation());
 			operationsListLayout.addComponent(delBtn);
 			delBtn.setIconAlternateText(delBtn.getCaption());
 			delBtn.setCaption(null);
@@ -174,17 +164,16 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		// Změna kategorie
 		if (coreACL.canModifyContent(content, UIUtils.getUser())) {
-			ImageButton moveBtn = new ImageButton(null, ImageIcon.MOVE_16_ICON.createResource(), event -> {
-				UI.getCurrent().addWindow(new ContentMoveWindow(content) {
-					private static final long serialVersionUID = 3748723613020816248L;
+			ImageButton moveBtn = new ImageButton(null, ImageIcon.MOVE_16_ICON.createResource(),
+					event -> UI.getCurrent().addWindow(new ContentMoveWindow(content) {
+						private static final long serialVersionUID = 3748723613020816248L;
 
-					@Override
-					protected void onMove() {
-						UIUtils.redirect(getPageURL(getContentViewerPageFactory(),
-								URLIdentifierUtils.createURLIdentifier(content.getContentID(), content.getName())));
-					}
-				});
-			});
+						@Override
+						protected void onMove() {
+							UIUtils.redirect(getPageURL(getContentViewerPageFactory(),
+									URLIdentifierUtils.createURLIdentifier(content.getContentID(), content.getName())));
+						}
+					}));
 			operationsListLayout.addComponent(moveBtn);
 			moveBtn.setIconAlternateText("Přesunout");
 		}
@@ -250,7 +239,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		// pokud zjistím, že cesta neodpovídá, vyhodím 302 (přesměrování) na
 		// aktuální polohu cílové kategorie
-		List<BreadcrumbElement> breadcrumbElements = new ArrayList<BreadcrumbElement>();
+		List<BreadcrumbElement> breadcrumbElements = new ArrayList<>();
 
 		/**
 		 * obsah

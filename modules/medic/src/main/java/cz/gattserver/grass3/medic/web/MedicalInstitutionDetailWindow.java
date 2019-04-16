@@ -32,8 +32,6 @@ public class MedicalInstitutionDetailWindow extends DetailWindow {
 		Label label;
 		label = addDetailLine("Hodiny", medicalInstitutionDTO.getHours());
 		label.setContentMode(ContentMode.PREFORMATTED);
-
-		setContent(layout);
 	}
 
 	protected MedicFacade getMedicFacade() {

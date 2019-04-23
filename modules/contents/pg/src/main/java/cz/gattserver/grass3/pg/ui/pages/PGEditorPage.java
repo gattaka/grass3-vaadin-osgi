@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -418,10 +419,11 @@ public class PGEditorPage extends OneColumnPage {
 		progressIndicatorWindow = new ProgressWindow();
 
 		if (editMode) {
-			pgService.modifyPhotogallery(photogallery.getId(), payloadTO, photogalleryDateField.getValue());
-		} else {
-			pgService.savePhotogallery(payloadTO, node.getId(), UIUtils.getGrassUI().getUser().getId(),
+			pgService.modifyPhotogallery(UUID.randomUUID(), photogallery.getId(), payloadTO,
 					photogalleryDateField.getValue());
+		} else {
+			pgService.savePhotogallery(UUID.randomUUID(), payloadTO, node.getId(),
+					UIUtils.getGrassUI().getUser().getId(), photogalleryDateField.getValue());
 		}
 	}
 

@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
@@ -267,24 +268,24 @@ public class PGServiceImpl implements PGService {
 	@Override
 	@Async
 	@Transactional(propagation = Propagation.NEVER)
-	public void modifyPhotogallery(long photogalleryId, PhotogalleryPayloadTO payloadTO, LocalDateTime date) {
-		innerSavePhotogallery(payloadTO, photogalleryId, null, null, date);
+	public void modifyPhotogallery(UUID operationId, long photogalleryId, PhotogalleryPayloadTO payloadTO, LocalDateTime date) {
+		innerSavePhotogallery(operationId, payloadTO, photogalleryId, null, null, date);
 	}
 
 	@Override
 	@Async
 	@Transactional(propagation = Propagation.NEVER)
-	public void savePhotogallery(PhotogalleryPayloadTO payloadTO, long nodeId, long authorId, LocalDateTime date) {
-		innerSavePhotogallery(payloadTO, null, nodeId, authorId, date);
+	public void savePhotogallery(UUID operationId, PhotogalleryPayloadTO payloadTO, long nodeId, long authorId, LocalDateTime date) {
+		innerSavePhotogallery(operationId, payloadTO, null, nodeId, authorId, date);
 	}
 
-	private void publishPGProcessFailure() {
-		eventBus.publish(new PGProcessResultEvent(false, "Nezdařilo se uložit galerii"));
+	private void publishPGProcessFailure(UUID operationId) {
+		eventBus.publish(new PGProcessResultEvent(operationId, false, "Nezdařilo se uložit galerii"));
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	private Photogallery transactionSavePhotogallery(String galleryDir, PhotogalleryPayloadTO payloadTO,
-			Long existingId, Long nodeId, Long authorId, LocalDateTime date) {
+	private Photogallery transactionSavePhotogallery(UUID operationId, String galleryDir,
+			PhotogalleryPayloadTO payloadTO, Long existingId, Long nodeId, Long authorId, LocalDateTime date) {
 		logger.info("modifyPhotogallery thread: " + Thread.currentThread().getId());
 
 		Photogallery photogallery = existingId == null ? new Photogallery()
@@ -296,7 +297,7 @@ public class PGServiceImpl implements PGService {
 		// ulož ho a nasetuj jeho id
 		photogallery = photogalleryRepository.save(photogallery);
 		if (photogallery == null) {
-			publishPGProcessFailure();
+			publishPGProcessFailure(operationId);
 			return null;
 		}
 
@@ -310,7 +311,7 @@ public class PGServiceImpl implements PGService {
 			contentNode.setId(contentNodeId);
 			photogallery.setContentNode(contentNode);
 			if (photogalleryRepository.save(photogallery) == null) {
-				publishPGProcessFailure();
+				publishPGProcessFailure(operationId);
 				return null;
 			}
 		} else {
@@ -324,8 +325,8 @@ public class PGServiceImpl implements PGService {
 	}
 
 	@Transactional(propagation = Propagation.NEVER)
-	private void innerSavePhotogallery(PhotogalleryPayloadTO payloadTO, Long existingId, Long nodeId, Long authorId,
-			LocalDateTime date) {
+	private void innerSavePhotogallery(UUID operationId, PhotogalleryPayloadTO payloadTO, Long existingId, Long nodeId,
+			Long authorId, LocalDateTime date) {
 		String galleryDir = payloadTO.getGalleryDir();
 		Path galleryPath = getGalleryPath(galleryDir);
 		try (Stream<Path> stream = Files.list(galleryPath).sorted(getComparator())) {
@@ -333,8 +334,8 @@ public class PGServiceImpl implements PGService {
 			int total = (int) stream.count();
 			eventBus.publish(new PGProcessStartEvent(2 * total + 1));
 
-			Photogallery photogallery = transactionSavePhotogallery(galleryDir, payloadTO, existingId, nodeId, authorId,
-					date);
+			Photogallery photogallery = transactionSavePhotogallery(operationId, galleryDir, payloadTO, existingId,
+					nodeId, authorId, date);
 
 			// vytvoř miniatury
 			processMiniatureImages(photogallery, payloadTO.isReprocess());
@@ -342,9 +343,9 @@ public class PGServiceImpl implements PGService {
 			// vytvoř detaily
 			processSlideshowImages(photogallery, payloadTO.isReprocess());
 
-			eventBus.publish(new PGProcessResultEvent(photogallery.getId()));
+			eventBus.publish(new PGProcessResultEvent(operationId, photogallery.getId()));
 		} catch (Exception e) {
-			publishPGProcessFailure();
+			publishPGProcessFailure(operationId);
 			logger.error("Nezdařilo se uložit galerii", e);
 			return;
 		}

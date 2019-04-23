@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.pg.ui.pages;
 
+import java.util.UUID;
+
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -284,7 +286,7 @@ public class PGViewerPage extends ContentViewerPage {
 				PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(photogallery.getContentNode().getName(),
 						galleryDir, photogallery.getContentNode().getContentTagsAsStrings(),
 						photogallery.getContentNode().isPublicated(), false);
-				pgService.modifyPhotogallery(photogallery.getId(), payloadTO,
+				pgService.modifyPhotogallery(UUID.randomUUID(), photogallery.getId(), payloadTO,
 						photogallery.getContentNode().getCreationDate());
 
 			};

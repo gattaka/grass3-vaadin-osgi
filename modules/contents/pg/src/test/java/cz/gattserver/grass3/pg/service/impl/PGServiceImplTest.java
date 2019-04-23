@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -31,6 +32,7 @@ import cz.gattserver.grass3.mock.MockFileSystemService;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.modules.PGModule;
 import cz.gattserver.grass3.pg.config.PGConfiguration;
+import cz.gattserver.grass3.pg.events.impl.PGProcessResultEvent;
 import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.pg.interfaces.PhotoVersion;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryItemType;
@@ -43,9 +45,9 @@ import cz.gattserver.grass3.pg.model.domain.Photogallery;
 import cz.gattserver.grass3.pg.model.repositories.PhotogalleryRepository;
 import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.pg.test.MockSecurityService;
-import cz.gattserver.grass3.pg.test.PGProcessMockEventsHandler;
 import cz.gattserver.grass3.pg.test.PGZipProcessMockEventsHandler;
 import cz.gattserver.grass3.pg.util.ZIPUtils;
+import cz.gattserver.grass3.rest.PGEventsHandler;
 import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.ContentNodeService;
@@ -210,16 +212,19 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
 				null, true, false);
 
-		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
+		UUID operationId = UUID.randomUUID();
+
+		PGEventsHandler eventsHandler = new PGEventsHandler();
 		eventBus.subscribe(eventsHandler);
-		CompletableFuture<PGProcessMockEventsHandler> future = eventsHandler.expectEvent();
+		CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
 
-		pgService.savePhotogallery(payloadTO, nodeId1, userId1, LocalDateTime.now());
+		pgService.savePhotogallery(operationId, payloadTO, nodeId1, userId1, LocalDateTime.now());
 
-		future.get();
+		PGEventsHandler mock = future.get();
+		PGProcessResultEvent event = mock.getResultAndDelete(operationId);
 
-		assertTrue(eventsHandler.success);
-		assertNotNull(eventsHandler.pgId);
+		assertTrue(event.isSuccess());
+		assertNotNull(event.getGalleryId());
 
 		eventBus.unsubscribe(eventsHandler);
 
@@ -300,17 +305,20 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
 				null, true, false);
 
-		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
+		UUID operationId = UUID.randomUUID();
+
+		PGEventsHandler eventsHandler = new PGEventsHandler();
 		eventBus.subscribe(eventsHandler);
-		CompletableFuture<PGProcessMockEventsHandler> future = eventsHandler.expectEvent();
+		CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
 
-		pgService.savePhotogallery(payloadTO, nodeId1, userId1, LocalDateTime.now());
+		pgService.savePhotogallery(operationId, payloadTO, nodeId1, userId1, LocalDateTime.now());
 
-		future.get();
+		PGEventsHandler mock = future.get();
+		PGProcessResultEvent event = mock.getResultAndDelete(operationId);
 
-		assertTrue(eventsHandler.success);
-		assertNotNull(eventsHandler.pgId);
-		long galleryId = eventsHandler.pgId;
+		assertTrue(event.isSuccess());
+		assertNotNull(event.getGalleryId());
+		long galleryId = event.getGalleryId();
 
 		eventBus.unsubscribe(eventsHandler);
 
@@ -330,15 +338,18 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		Files.copy(this.getClass().getResourceAsStream("orientedLarge.jpg"), orientedLargeFile);
 		assertTrue(Files.exists(orientedLargeFile));
 
-		eventsHandler = new PGProcessMockEventsHandler();
+		operationId = UUID.randomUUID();
+
+		eventsHandler = new PGEventsHandler();
 		eventBus.subscribe(eventsHandler);
-		future = eventsHandler.expectEvent();
+		future = eventsHandler.expectEvent(operationId);
 
-		pgService.modifyPhotogallery(galleryId, payloadTO, LocalDateTime.now());
+		pgService.modifyPhotogallery(operationId, galleryId, payloadTO, LocalDateTime.now());
 
-		future.get();
+		mock = future.get();
+		event = mock.getResultAndDelete(operationId);
 
-		assertTrue(eventsHandler.success);
+		assertTrue(event.isSuccess());
 
 		PGConfiguration conf = new PGConfiguration();
 		configurationService.loadConfiguration(conf);
@@ -419,17 +430,20 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
 				null, true, false);
 
-		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
+		UUID operationId = UUID.randomUUID();
+
+		PGEventsHandler eventsHandler = new PGEventsHandler();
 		eventBus.subscribe(eventsHandler);
-		CompletableFuture<PGProcessMockEventsHandler> future = eventsHandler.expectEvent();
+		CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
 
-		pgService.savePhotogallery(payloadTO, nodeId1, userId1, LocalDateTime.now());
+		pgService.savePhotogallery(operationId, payloadTO, nodeId1, userId1, LocalDateTime.now());
 
-		future.get();
+		PGEventsHandler mock = future.get();
+		PGProcessResultEvent event = mock.getResultAndDelete(operationId);
 
-		assertTrue(eventsHandler.success);
-		assertNotNull(eventsHandler.pgId);
-		long galleryId = eventsHandler.pgId;
+		assertTrue(event.isSuccess());
+		assertNotNull(event.getGalleryId());
+		long galleryId = event.getGalleryId();
 
 		eventBus.unsubscribe(eventsHandler);
 
@@ -447,17 +461,20 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie" + variant,
 				galleryDir.getFileName().toString(), null, publicated, false);
 
-		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
+		UUID operationId = UUID.randomUUID();
+
+		PGEventsHandler eventsHandler = new PGEventsHandler();
 		eventBus.subscribe(eventsHandler);
-		CompletableFuture<PGProcessMockEventsHandler> future = eventsHandler.expectEvent();
+		CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
 
-		pgService.savePhotogallery(payloadTO, nodeId, userId, LocalDateTime.now());
+		pgService.savePhotogallery(operationId, payloadTO, nodeId, userId, LocalDateTime.now());
 
-		future.get();
+		PGEventsHandler mock = future.get();
+		PGProcessResultEvent event = mock.getResultAndDelete(operationId);
 
-		assertTrue(eventsHandler.success);
-		assertNotNull(eventsHandler.pgId);
-		long galleryId = eventsHandler.pgId;
+		assertTrue(event.isSuccess());
+		assertNotNull(event.getGalleryId());
+		long galleryId = event.getGalleryId();
 
 		eventBus.unsubscribe(eventsHandler);
 
@@ -532,17 +549,20 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
 				null, true, false);
 
-		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
+		UUID operationId = UUID.randomUUID();
+
+		PGEventsHandler eventsHandler = new PGEventsHandler();
 		eventBus.subscribe(eventsHandler);
-		CompletableFuture<PGProcessMockEventsHandler> future = eventsHandler.expectEvent();
+		CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
 
-		pgService.savePhotogallery(payloadTO, nodeId, userId, LocalDateTime.now());
+		pgService.savePhotogallery(operationId, payloadTO, nodeId, userId, LocalDateTime.now());
 
-		future.get();
+		PGEventsHandler mock = future.get();
+		PGProcessResultEvent event = mock.getResultAndDelete(operationId);
 
-		assertTrue(eventsHandler.success);
-		assertNotNull(eventsHandler.pgId);
-		long galleryId = eventsHandler.pgId;
+		assertTrue(event.isSuccess());
+		assertNotNull(event.getGalleryId());
+		long galleryId = event.getGalleryId();
 
 		eventBus.unsubscribe(eventsHandler);
 
@@ -617,15 +637,20 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
 				null, true, false);
 
-		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
+		UUID operationId = UUID.randomUUID();
+
+		PGEventsHandler eventsHandler = new PGEventsHandler();
 		eventBus.subscribe(eventsHandler);
-		CompletableFuture<PGProcessMockEventsHandler> future = eventsHandler.expectEvent();
+		CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
 
-		pgService.savePhotogallery(payloadTO, nodeId1, userId1, LocalDateTime.now());
+		pgService.savePhotogallery(operationId, payloadTO, nodeId1, userId1, LocalDateTime.now());
 
-		future.get();
+		PGEventsHandler mock = future.get();
+		PGProcessResultEvent event = mock.getResultAndDelete(operationId);
 
-		long galleryId = eventsHandler.pgId;
+		assertTrue(event.isSuccess());
+		assertNotNull(event.getGalleryId());
+		long galleryId = event.getGalleryId();
 
 		eventBus.unsubscribe(eventsHandler);
 
@@ -663,11 +688,13 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
 				null, true, false);
 
-		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
-		eventBus.subscribe(eventsHandler);
-		CompletableFuture<PGProcessMockEventsHandler> future = eventsHandler.expectEvent();
+		UUID operationId = UUID.randomUUID();
 
-		pgService.savePhotogallery(payloadTO, nodeId1, userId1, LocalDateTime.now());
+		PGEventsHandler eventsHandler = new PGEventsHandler();
+		eventBus.subscribe(eventsHandler);
+		CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
+
+		pgService.savePhotogallery(operationId, payloadTO, nodeId1, userId1, LocalDateTime.now());
 
 		future.get();
 
@@ -739,11 +766,13 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
 				null, true, false);
 
-		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
-		eventBus.subscribe(eventsHandler);
-		CompletableFuture<PGProcessMockEventsHandler> future = eventsHandler.expectEvent();
+		UUID operationId = UUID.randomUUID();
 
-		pgService.savePhotogallery(payloadTO, nodeId1, userId1, LocalDateTime.now());
+		PGEventsHandler eventsHandler = new PGEventsHandler();
+		eventBus.subscribe(eventsHandler);
+		CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
+
+		pgService.savePhotogallery(operationId, payloadTO, nodeId1, userId1, LocalDateTime.now());
 
 		future.get();
 
@@ -910,16 +939,19 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
 				null, true, false);
 
-		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
+		UUID operationId = UUID.randomUUID();
+
+		PGEventsHandler eventsHandler = new PGEventsHandler();
 		eventBus.subscribe(eventsHandler);
-		CompletableFuture<PGProcessMockEventsHandler> future = eventsHandler.expectEvent();
+		CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
 
-		pgService.savePhotogallery(payloadTO, nodeId1, userId1, LocalDateTime.now());
+		pgService.savePhotogallery(operationId, payloadTO, nodeId1, userId1, LocalDateTime.now());
 
-		future.get();
+		PGEventsHandler mock = future.get();
+		PGProcessResultEvent event = mock.getResultAndDelete(operationId);
 
-		assertTrue(eventsHandler.success);
-		assertNotNull(eventsHandler.pgId);
+		assertTrue(event.isSuccess());
+		assertNotNull(event.getGalleryId());
 
 		eventBus.unsubscribe(eventsHandler);
 
@@ -968,16 +1000,19 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
 				null, true, false);
 
-		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
+		UUID operationId = UUID.randomUUID();
+
+		PGEventsHandler eventsHandler = new PGEventsHandler();
 		eventBus.subscribe(eventsHandler);
-		CompletableFuture<PGProcessMockEventsHandler> future = eventsHandler.expectEvent();
+		CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
 
-		pgService.savePhotogallery(payloadTO, nodeId1, userId1, LocalDateTime.now());
+		pgService.savePhotogallery(operationId, payloadTO, nodeId1, userId1, LocalDateTime.now());
 
-		future.get();
+		PGEventsHandler mock = future.get();
+		PGProcessResultEvent event = mock.getResultAndDelete(operationId);
 
-		assertTrue(eventsHandler.success);
-		assertNotNull(eventsHandler.pgId);
+		assertTrue(event.isSuccess());
+		assertNotNull(event.getGalleryId());
 
 		eventBus.unsubscribe(eventsHandler);
 
@@ -1020,16 +1055,19 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
 				null, true, false);
 
-		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
+		UUID operationId = UUID.randomUUID();
+
+		PGEventsHandler eventsHandler = new PGEventsHandler();
 		eventBus.subscribe(eventsHandler);
-		CompletableFuture<PGProcessMockEventsHandler> future = eventsHandler.expectEvent();
+		CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
 
-		pgService.savePhotogallery(payloadTO, nodeId1, userId1, LocalDateTime.now());
+		pgService.savePhotogallery(operationId, payloadTO, nodeId1, userId1, LocalDateTime.now());
 
-		future.get();
+		PGEventsHandler mock = future.get();
+		PGProcessResultEvent event = mock.getResultAndDelete(operationId);
 
-		assertTrue(eventsHandler.success);
-		assertNotNull(eventsHandler.pgId);
+		assertTrue(event.isSuccess());
+		assertNotNull(event.getGalleryId());
 
 		eventBus.unsubscribe(eventsHandler);
 
@@ -1052,16 +1090,19 @@ public class PGServiceImplTest extends AbstractDBUnitTest {
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO("Test galerie", galleryDir.getFileName().toString(),
 				null, true, false);
 
-		PGProcessMockEventsHandler eventsHandler = new PGProcessMockEventsHandler();
+		UUID operationId = UUID.randomUUID();
+
+		PGEventsHandler eventsHandler = new PGEventsHandler();
 		eventBus.subscribe(eventsHandler);
-		CompletableFuture<PGProcessMockEventsHandler> future = eventsHandler.expectEvent();
+		CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
 
-		pgService.savePhotogallery(payloadTO, nodeId1, userId1, LocalDateTime.now());
+		pgService.savePhotogallery(operationId, payloadTO, nodeId1, userId1, LocalDateTime.now());
 
-		future.get();
+		PGEventsHandler mock = future.get();
+		PGProcessResultEvent event = mock.getResultAndDelete(operationId);
 
-		assertTrue(eventsHandler.success);
-		assertNotNull(eventsHandler.pgId);
+		assertTrue(event.isSuccess());
+		assertNotNull(event.getGalleryId());
 
 		eventBus.unsubscribe(eventsHandler);
 

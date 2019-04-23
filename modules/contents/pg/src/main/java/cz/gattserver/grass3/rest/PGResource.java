@@ -7,8 +7,9 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -22,18 +23,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
+import cz.gattserver.grass3.pg.events.impl.PGProcessResultEvent;
 import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTTO;
+import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.interfaces.PhotoVersion;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
 import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.services.SecurityService;
-import cz.gattserver.grass3.services.impl.LoginResult;
 
 @Controller
 @RequestMapping("/pg")
@@ -47,24 +49,8 @@ public class PGResource {
 	@Autowired
 	private SecurityService securityFacade;
 
-	@RequestMapping("/log")
-	public @ResponseBody String log() {
-		UserInfoTO user = securityFacade.getCurrentUser();
-		return user.getName() == null ? "unauth" : user.getName();
-	}
-
-	// curl -i -X POST -d login=jmeno -d password=heslo
-	// http://localhost:8180/web/ws/pg/login
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public ResponseEntity<String> login(@RequestParam("login") String username,
-			@RequestParam("password") String password, HttpServletRequest request, HttpServletResponse response) {
-		LoginResult result = securityFacade.login(username, password, false, request, response);
-		if (LoginResult.SUCCESS.equals(result)) {
-			return new ResponseEntity<>(HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-	}
+	@Autowired
+	private EventBus eventBus;
 
 	// http://localhost:8180/web/ws/pg/count
 	@RequestMapping("/count")
@@ -158,28 +144,131 @@ public class PGResource {
 	// files file1
 	// files file2
 	// files ...
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public ResponseEntity<String> handleFileUpload(
-			@RequestParam(value = "galleryName", required = true) String galleryName,
+	@RequestMapping(value = "/createfast", method = RequestMethod.POST)
+	public ResponseEntity<String> createfast(@RequestParam(value = "galleryName", required = true) String galleryName,
 			@RequestParam(value = "files", required = true) MultipartFile[] uploadingFiles)
 			throws IllegalStateException, IOException {
-		logger.info("handleFileUpload /create volán");
-		String galleryDir = photogalleryFacade.createGalleryDir();
+		UserInfoTO user = securityFacade.getCurrentUser();
+		if (user == null)
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		logger.info("/createfast volán");
+		String galleryDir = null;
 		try {
+			galleryDir = photogalleryFacade.createGalleryDir();
 			for (MultipartFile uploadedFile : uploadingFiles) {
-				logger.info("handleFileUpload /create zpracován soubor " + uploadedFile.getOriginalFilename());
+				logger.info("/createfast zpracován soubor " + uploadedFile.getOriginalFilename());
 				photogalleryFacade.uploadFile(uploadedFile.getInputStream(), uploadedFile.getOriginalFilename(),
 						galleryDir);
 			}
-			PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(galleryName, galleryDir, null, true, false);
-			photogalleryFacade.savePhotogallery(payloadTO, 55L, 1L, LocalDateTime.now());
-		} catch (Exception e) {
-			logger.error("handleFileUpload /create chyba", e);
-			new File(galleryDir).delete();
-		}
 
-		logger.info("handleFileUpload /create dokončen");
-		return new ResponseEntity<>(HttpStatus.OK);
+			UUID operationId = UUID.randomUUID();
+
+			PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(galleryName, galleryDir, null, true, false);
+			photogalleryFacade.savePhotogallery(operationId, payloadTO, 55L, 1L, LocalDateTime.now());
+
+			logger.info("/createfast dokončen");
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error("/createfast chyba", e);
+			if (galleryDir != null) {
+				try {
+					new File(galleryDir).delete();
+				} catch (Exception ee) {
+					logger.error("/createfast nezdařilo se smazat adresář galerie, u které došlo k chybě", ee);
+				}
+			}
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public ResponseEntity<Long> create(@RequestParam(value = "galleryName", required = true) String galleryName)
+			throws IllegalStateException, IOException {
+		UserInfoTO user = securityFacade.getCurrentUser();
+		if (user == null)
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		logger.info("/create volán");
+		try {
+			String galleryDir = photogalleryFacade.createGalleryDir();
+
+			UUID operationId = UUID.randomUUID();
+
+			PGEventsHandler eventsHandler = new PGEventsHandler();
+			eventBus.subscribe(eventsHandler);
+			CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
+
+			PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(galleryName, galleryDir, null, false, false);
+			photogalleryFacade.savePhotogallery(operationId, payloadTO, 55L, user.getId(), LocalDateTime.now());
+
+			eventsHandler = future.get();
+			PGProcessResultEvent event = eventsHandler.getResultAndDelete(operationId);
+			if (event.isSuccess()) {
+				logger.info("/create chyba", event.getResultDetails());
+				return new ResponseEntity<>(event.getGalleryId(), HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+
+			logger.info("/create dokončen");
+			return new ResponseEntity<>(event.getGalleryId(), HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error("/upload chyba", e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@RequestMapping(value = "/upload", method = RequestMethod.POST)
+	public ResponseEntity<String> create(@RequestParam(value = "galleryId", required = true) Long galleryId,
+			@RequestParam(value = "file", required = true) MultipartFile uploadedFile)
+			throws IllegalStateException, IOException {
+		UserInfoTO user = securityFacade.getCurrentUser();
+		if (user == null)
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		logger.info("/upload volán");
+		try {
+			PhotogalleryTO to = photogalleryFacade.getPhotogalleryForDetail(galleryId);
+			photogalleryFacade.uploadFile(uploadedFile.getInputStream(), uploadedFile.getOriginalFilename(),
+					to.getPhotogalleryPath());
+
+			logger.info("/upload dokončen");
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error("/upload chyba", e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@RequestMapping(value = "/process", method = RequestMethod.POST)
+	public ResponseEntity<String> process(@RequestParam(value = "galleryId", required = true) Long galleryId)
+			throws IllegalStateException, IOException {
+		UserInfoTO user = securityFacade.getCurrentUser();
+		if (user == null)
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		logger.info("/process volán");
+		try {
+			UUID operationId = UUID.randomUUID();
+
+			PGEventsHandler eventsHandler = new PGEventsHandler();
+			eventBus.subscribe(eventsHandler);
+			CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
+
+			PhotogalleryTO to = photogalleryFacade.getPhotogalleryForDetail(galleryId);
+			PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(to.getContentNode().getName(),
+					to.getPhotogalleryPath(), to.getContentNode().getContentTagsAsStrings(),
+					to.getContentNode().isPublicated(), true);
+			photogalleryFacade.modifyPhotogallery(operationId, to.getId(), payloadTO, LocalDateTime.now());
+
+			eventsHandler = future.get();
+			PGProcessResultEvent event = eventsHandler.getResultAndDelete(operationId);
+			if (event.isSuccess()) {
+				logger.info("/create chyba", event.getResultDetails());
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+
+			logger.info("/process dokončen");
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error("/process chyba", e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 }

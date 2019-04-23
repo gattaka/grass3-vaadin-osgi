@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 
@@ -46,7 +47,8 @@ public interface PGService {
 	 *            datum vytvoření galerie, může být i <code>null</code>, pak
 	 *            bude použito aktuální datum
 	 */
-	public void modifyPhotogallery(long photogalleryId, PhotogalleryPayloadTO payloadTO, LocalDateTime date);
+	public void modifyPhotogallery(UUID operationId, long photogalleryId, PhotogalleryPayloadTO payloadTO,
+			LocalDateTime date);
 
 	/**
 	 * Uloží galerii. Zpracování je prováděno v samostatném vlákně. Pro
@@ -63,7 +65,8 @@ public interface PGService {
 	 *            datum vytvoření galerie, může být i <code>null</code>, pak
 	 *            bude použito aktuální datum
 	 */
-	public void savePhotogallery(PhotogalleryPayloadTO payloadTO, long nodeId, long authorId, LocalDateTime date);
+	public void savePhotogallery(UUID operationId, PhotogalleryPayloadTO payloadTO, long nodeId, long authorId,
+			LocalDateTime date);
 
 	/**
 	 * Získá galerii dle jeho identifikátoru

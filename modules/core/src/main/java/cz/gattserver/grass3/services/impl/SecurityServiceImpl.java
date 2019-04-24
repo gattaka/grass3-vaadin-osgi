@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,15 @@ public class SecurityServiceImpl implements SecurityService {
 	@Autowired
 	private RememberMeServices rememberMeServices;
 
+	@Override
+	public void logout(HttpServletRequest request, HttpServletResponse response) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null) {
+			new SecurityContextLogoutHandler().logout(request, response, auth);
+		}
+	}
+
+	@Override
 	public LoginResult login(String username, String password, boolean remember, HttpServletRequest request,
 			HttpServletResponse response) {
 
@@ -70,6 +80,7 @@ public class SecurityServiceImpl implements SecurityService {
 		return LoginResult.SUCCESS;
 	}
 
+	@Override
 	public UserInfoTO getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null) {

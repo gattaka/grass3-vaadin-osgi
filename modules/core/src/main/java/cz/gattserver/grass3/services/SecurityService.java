@@ -13,4 +13,6 @@ public interface SecurityService {
 
 	public UserInfoTO getCurrentUser();
 
+	void logout(HttpServletRequest request, HttpServletResponse response);
+
 }

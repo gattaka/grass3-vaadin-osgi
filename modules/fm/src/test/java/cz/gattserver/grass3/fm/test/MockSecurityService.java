@@ -41,4 +41,8 @@ public class MockSecurityService implements SecurityService {
 		this.roles = roles;
 	}
 
+	@Override
+	public void logout(HttpServletRequest request, HttpServletResponse response) {
+	}
+
 }

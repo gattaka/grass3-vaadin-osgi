@@ -49,4 +49,8 @@ public class MockSecurityService implements SecurityService {
 		infoTO.setRoles(hashSet);
 	}
 
+	@Override
+	public void logout(HttpServletRequest request, HttpServletResponse response) {
+	}
+
 }

@@ -22,7 +22,7 @@ import cz.gattserver.grass3.articles.services.ArticleService;
 @RequestMapping("/articles")
 public class ArticlesResource {
 
-	private static Logger logger = LoggerFactory.getLogger(ArticlesResource.class);
+	private static Logger logger = LoggerFactory.getLogger(CoreResource.class);
 
 	@Autowired
 	private ArticleService articleService;

@@ -18,7 +18,7 @@ import cz.gattserver.grass3.services.impl.LoginResult;
 
 @Controller
 @RequestMapping("/core")
-public class ArticlesResource {
+public class CoreResource {
 
 	@Autowired
 	private SecurityService securityFacade;
@@ -36,10 +36,18 @@ public class ArticlesResource {
 			@RequestParam("password") String password, HttpServletRequest request, HttpServletResponse response) {
 		LoginResult result = securityFacade.login(username, password, false, request, response);
 		if (LoginResult.SUCCESS.equals(result)) {
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(request.getSession().getId(), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
+	}
+
+	// curl -i -X POST -d login=jmeno -d password=heslo
+	// http://localhost:8180/web/ws/pg/login
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+		securityFacade.logout(request, response);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

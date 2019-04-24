@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.SecurityService;
@@ -24,9 +23,13 @@ public class CoreResource {
 	private SecurityService securityFacade;
 
 	@RequestMapping("/logged")
-	public @ResponseBody String log() {
+	public ResponseEntity<String> logged() {
 		UserInfoTO user = securityFacade.getCurrentUser();
-		return user.getName() == null ? "unauth" : user.getName();
+		if (user.getName() == null) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		} else {
+			return new ResponseEntity<>(user.getName(), HttpStatus.OK);
+		}
 	}
 
 	// curl -i -X POST -d login=jmeno -d password=heslo
@@ -42,9 +45,7 @@ public class CoreResource {
 		}
 	}
 
-	// curl -i -X POST -d login=jmeno -d password=heslo
-	// http://localhost:8180/web/ws/pg/login
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	@RequestMapping(value = "/logout", method = RequestMethod.POST)
 	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
 		securityFacade.logout(request, response);
 		return new ResponseEntity<>(HttpStatus.OK);

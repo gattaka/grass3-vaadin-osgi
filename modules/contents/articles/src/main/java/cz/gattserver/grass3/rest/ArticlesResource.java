@@ -17,12 +17,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
 import cz.gattserver.grass3.articles.services.ArticleService;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
+import cz.gattserver.grass3.services.SecurityService;
 
 @Controller
 @RequestMapping("/articles")
 public class ArticlesResource {
 
 	private static Logger logger = LoggerFactory.getLogger(CoreResource.class);
+
+	@Autowired
+	private SecurityService securityFacade;
 
 	@Autowired
 	private ArticleService articleService;
@@ -36,6 +41,9 @@ public class ArticlesResource {
 	public ResponseEntity<String> smsImport(@RequestParam(value = "text", required = true) String text)
 			throws IllegalStateException, IOException {
 		logger.info("smsImport /create volán");
+		UserInfoTO user = securityFacade.getCurrentUser();
+		if (user == null || user.getId() == null)
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		ArticlePayloadTO payload = new ArticlePayloadTO(
 				"SMS Import " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("d.M.yyyy")), text,
 				new ArrayList<>(), false, "dummy");

@@ -148,10 +148,10 @@ public class PGResource {
 	public ResponseEntity<String> createfast(@RequestParam(value = "galleryName", required = true) String galleryName,
 			@RequestParam(value = "files", required = true) MultipartFile[] uploadingFiles)
 			throws IllegalStateException, IOException {
+		logger.info("/createfast volán");
 		UserInfoTO user = securityFacade.getCurrentUser();
 		if (user == null)
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-		logger.info("/createfast volán");
 		String galleryDir = null;
 		try {
 			galleryDir = photogalleryFacade.createGalleryDir();

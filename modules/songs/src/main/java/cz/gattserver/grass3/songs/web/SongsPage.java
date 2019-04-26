@@ -43,9 +43,8 @@ public class SongsPage extends OneColumnPage {
 		tabSheet.addSelectedTabChangeListener((e) -> {
 			boolean isListTab = e.getTabSheet().getSelectedTab().equals(lt);
 			SongTO choosenSong = lt.getChoosenSong();
-			if (isListTab && choosenSong != null) {
+			if (isListTab && choosenSong != null) 
 				lt.selectSong(lt.getChoosenSong().getId());
-			}
 		});
 
 		String token = getRequest().getAnalyzer().getNextPathToken();

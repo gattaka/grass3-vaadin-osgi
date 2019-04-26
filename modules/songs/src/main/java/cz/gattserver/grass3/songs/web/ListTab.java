@@ -193,11 +193,10 @@ public class ListTab extends VerticalLayout {
 	}
 
 	public void selectSong(Long id) {
-		int row = 0;
 		SongOverviewTO to = new SongOverviewTO();
 		to.setId(id);
+		grid.deselectAll();
 		grid.select(to);
-		grid.scrollTo(row, ScrollDestination.MIDDLE);
 	}
 
 	public void chooseSong(Long id, boolean selectSong) {

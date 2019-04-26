@@ -150,7 +150,7 @@ public class PGResource {
 			throws IllegalStateException, IOException {
 		logger.info("/createfast volán");
 		UserInfoTO user = securityFacade.getCurrentUser();
-		if (user == null)
+		if (user == null || user.getId() == null)
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		String galleryDir = null;
 		try {
@@ -185,7 +185,7 @@ public class PGResource {
 	public ResponseEntity<Long> create(@RequestParam(value = "galleryName", required = true) String galleryName)
 			throws IllegalStateException, IOException {
 		UserInfoTO user = securityFacade.getCurrentUser();
-		if (user == null)
+		if (user == null || user.getId() == null)
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		logger.info("/create volán");
 		try {
@@ -220,7 +220,7 @@ public class PGResource {
 			@RequestParam(value = "file", required = true) MultipartFile uploadedFile)
 			throws IllegalStateException, IOException {
 		UserInfoTO user = securityFacade.getCurrentUser();
-		if (user == null)
+		if (user == null || user.getId() == null)
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		logger.info("/upload volán");
 		try {
@@ -240,7 +240,7 @@ public class PGResource {
 	public ResponseEntity<String> process(@RequestParam(value = "galleryId", required = true) Long galleryId)
 			throws IllegalStateException, IOException {
 		UserInfoTO user = securityFacade.getCurrentUser();
-		if (user == null)
+		if (user == null || user.getId() == null)
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		logger.info("/process volán");
 		try {

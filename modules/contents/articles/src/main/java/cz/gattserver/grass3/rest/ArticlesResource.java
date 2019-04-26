@@ -24,7 +24,7 @@ import cz.gattserver.grass3.services.SecurityService;
 @RequestMapping("/articles")
 public class ArticlesResource {
 
-	private static Logger logger = LoggerFactory.getLogger(CoreResource.class);
+	private static Logger logger = LoggerFactory.getLogger(ArticlesResource.class);
 
 	@Autowired
 	private SecurityService securityFacade;

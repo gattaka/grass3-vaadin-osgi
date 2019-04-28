@@ -29,7 +29,6 @@ import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.Window.CloseListener;
 
 import cz.gattserver.grass3.events.EventBus;
-import cz.gattserver.grass3.exception.GrassException;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
@@ -560,13 +559,11 @@ public class PGViewerPage extends ContentViewerPage {
 
 			// zdařilo se ? Pokud ano, otevři info okno a při
 			// potvrzení jdi na kategorii
-			try {
-				pgService.deletePhotogallery(photogallery.getId());
+			if (pgService.deletePhotogallery(photogallery.getId())) {
 				UIUtils.redirect(nodeURL);
-			} catch (GrassException e) {
+			} else {
 				// Pokud ne, otevři warn okno a při
 				// potvrzení jdi na kategorii
-				logger.error("Během mazání galerie došlo k chybě", e);
 				WarnWindow warnSubwindow = new WarnWindow("Při mazání galerie se nezdařilo smazat některé soubory.");
 				warnSubwindow.addCloseListener(new CloseListener() {
 					private static final long serialVersionUID = 776795316168411336L;

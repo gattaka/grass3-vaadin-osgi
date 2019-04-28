@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.rest;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -135,50 +134,6 @@ public class PGResource {
 	public void mini(@RequestParam(value = "id", required = true) Long id, String fileName,
 			HttpServletResponse response) {
 		innerPhoto(id, fileName, PhotoVersion.MINI, response);
-	}
-
-	// http://localhost:8180/web/ws/pg/create
-	// https://resttesttest.com/
-	// POST http://localhost:8180/web/ws/pg/create
-	// galleryName test-gallery
-	// files file1
-	// files file2
-	// files ...
-	@RequestMapping(value = "/createfast", method = RequestMethod.POST)
-	public ResponseEntity<String> createfast(@RequestParam(value = "galleryName", required = true) String galleryName,
-			@RequestParam(value = "files", required = true) MultipartFile[] uploadingFiles)
-			throws IllegalStateException, IOException {
-		logger.info("/createfast volán");
-		UserInfoTO user = securityFacade.getCurrentUser();
-		if (user == null || user.getId() == null)
-			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-		String galleryDir = null;
-		try {
-			galleryDir = photogalleryFacade.createGalleryDir();
-			for (MultipartFile uploadedFile : uploadingFiles) {
-				logger.info("/createfast zpracován soubor " + uploadedFile.getOriginalFilename());
-				photogalleryFacade.uploadFile(uploadedFile.getInputStream(), uploadedFile.getOriginalFilename(),
-						galleryDir);
-			}
-
-			UUID operationId = UUID.randomUUID();
-
-			PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(galleryName, galleryDir, null, true, false);
-			photogalleryFacade.savePhotogallery(operationId, payloadTO, 55L, 1L, LocalDateTime.now());
-
-			logger.info("/createfast dokončen");
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-			logger.error("/createfast chyba", e);
-			if (galleryDir != null) {
-				try {
-					new File(galleryDir).delete();
-				} catch (Exception ee) {
-					logger.error("/createfast nezdařilo se smazat adresář galerie, u které došlo k chybě", ee);
-				}
-			}
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
 	}
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST)

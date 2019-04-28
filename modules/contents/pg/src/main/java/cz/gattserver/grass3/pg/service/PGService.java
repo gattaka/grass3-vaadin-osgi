@@ -10,7 +10,6 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 
-import cz.gattserver.grass3.exception.GrassException;
 import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.pg.events.impl.PGProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.impl.PGProcessResultEvent;
@@ -31,11 +30,11 @@ public interface PGService {
 	 * @param photogallery
 	 *            galerie ke smazání
 	 * @return {@code true} pokud se zdařilo smazat jinak {@code false}
-	 * @throws GrassException
-	 *             pokud se nezdaří smazat některé soubory (smaže tak aspoň
+	 * @return <code>false</code>
+	 *             pokud se nezdaŁří smazat některé soubory (smaže tak aspoň
 	 *             datové struktury)
 	 */
-	public void deletePhotogallery(long photogalleryId) throws GrassException;
+	public boolean deletePhotogallery(long photogalleryId);
 
 	/**
 	 * Upraví galerii. Zpracování je prováděno v samostatném vlákně. Pro

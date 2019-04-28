@@ -34,7 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import cz.gattserver.common.util.ReferenceHolder;
 import cz.gattserver.grass3.events.EventBus;
-import cz.gattserver.grass3.exception.GrassException;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
@@ -121,17 +120,21 @@ public class PGServiceImpl implements PGService {
 	}
 
 	@Override
-	public void deletePhotogallery(long photogalleryId) throws GrassException {
+	public boolean deletePhotogallery(long photogalleryId) {
 		String path = photogalleryRepository.findPhotogalleryPathById(photogalleryId);
 		Path galleryDir = getGalleryPath(path);
 
 		photogalleryRepository.delete(photogalleryId);
 		contentNodeFacade.deleteByContentId(PGModule.ID, photogalleryId);
 
+		// musí se řešit return stavem, protože exception by způsobilo rollback
+		// transakce, což nechci
 		try {
 			deleteFileRecursively(galleryDir);
+			return true;
 		} catch (Exception e) {
-			throw new GrassException("Nezdařilo se smazat některé soubory galerie: " + photogalleryId, e);
+			logger.error("Nezdařilo se smazat některé soubory galerie: " + photogalleryId, e);
+			return false;
 		}
 	}
 

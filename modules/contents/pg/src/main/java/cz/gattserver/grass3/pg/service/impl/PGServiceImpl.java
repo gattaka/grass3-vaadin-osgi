@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import cz.gattserver.common.util.ReferenceHolder;
 import cz.gattserver.grass3.events.EventBus;
+import cz.gattserver.grass3.exception.GrassException;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
@@ -120,14 +121,18 @@ public class PGServiceImpl implements PGService {
 	}
 
 	@Override
-	public void deletePhotogallery(long photogalleryId) throws IOException {
+	public void deletePhotogallery(long photogalleryId) throws GrassException {
 		String path = photogalleryRepository.findPhotogalleryPathById(photogalleryId);
 		Path galleryDir = getGalleryPath(path);
 
 		photogalleryRepository.delete(photogalleryId);
 		contentNodeFacade.deleteByContentId(PGModule.ID, photogalleryId);
 
-		deleteFileRecursively(galleryDir);
+		try {
+			deleteFileRecursively(galleryDir);
+		} catch (Exception e) {
+			throw new GrassException("Nezdařilo se smazat některé soubory galerie: " + photogalleryId, e);
+		}
 	}
 
 	private void createVideoMinature(Path file, Path outputFile) {
@@ -268,14 +273,16 @@ public class PGServiceImpl implements PGService {
 	@Override
 	@Async
 	@Transactional(propagation = Propagation.NEVER)
-	public void modifyPhotogallery(UUID operationId, long photogalleryId, PhotogalleryPayloadTO payloadTO, LocalDateTime date) {
+	public void modifyPhotogallery(UUID operationId, long photogalleryId, PhotogalleryPayloadTO payloadTO,
+			LocalDateTime date) {
 		innerSavePhotogallery(operationId, payloadTO, photogalleryId, null, null, date);
 	}
 
 	@Override
 	@Async
 	@Transactional(propagation = Propagation.NEVER)
-	public void savePhotogallery(UUID operationId, PhotogalleryPayloadTO payloadTO, long nodeId, long authorId, LocalDateTime date) {
+	public void savePhotogallery(UUID operationId, PhotogalleryPayloadTO payloadTO, long nodeId, long authorId,
+			LocalDateTime date) {
 		innerSavePhotogallery(operationId, payloadTO, null, nodeId, authorId, date);
 	}
 

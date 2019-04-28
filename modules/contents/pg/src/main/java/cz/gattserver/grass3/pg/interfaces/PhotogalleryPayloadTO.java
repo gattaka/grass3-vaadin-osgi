@@ -31,6 +31,9 @@ public class PhotogalleryPayloadTO {
 	 *            klíčová slova
 	 * @param publicated
 	 *            <code>true</code>, pokud má být galerie zveřejněna
+	 * @param reprocess
+	 *            <code>true</code>, pokud má si galerie přegenerovat náhledy,
+	 *            miniatury apod.
 	 */
 	public PhotogalleryPayloadTO(String name, String galleryDir, Collection<String> tags, boolean publicated,
 			boolean reprocess) {

@@ -202,7 +202,7 @@ public class PGResource {
 
 			eventsHandler = future.get();
 			PGProcessResultEvent event = eventsHandler.getResultAndDelete(operationId);
-			if (event.isSuccess()) {
+			if (!event.isSuccess()) {
 				logger.info("/create chyba", event.getResultDetails());
 				return new ResponseEntity<>(event.getGalleryId(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
@@ -216,8 +216,8 @@ public class PGResource {
 	}
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
-	public ResponseEntity<String> create(@RequestParam(value = "galleryId", required = true) Long galleryId,
-			@RequestParam(value = "file", required = true) MultipartFile uploadedFile)
+	public ResponseEntity<String> upload(@RequestParam(value = "galleryId", required = true) Long galleryId,
+			@RequestParam(value = "files", required = true) MultipartFile[] uploadedFile)
 			throws IllegalStateException, IOException {
 		UserInfoTO user = securityFacade.getCurrentUser();
 		if (user == null || user.getId() == null)
@@ -225,8 +225,9 @@ public class PGResource {
 		logger.info("/upload volán");
 		try {
 			PhotogalleryTO to = photogalleryFacade.getPhotogalleryForDetail(galleryId);
-			photogalleryFacade.uploadFile(uploadedFile.getInputStream(), uploadedFile.getOriginalFilename(),
-					to.getPhotogalleryPath());
+			for (MultipartFile file : uploadedFile)
+				photogalleryFacade.uploadFile(file.getInputStream(), file.getOriginalFilename(),
+						to.getPhotogalleryPath());
 
 			logger.info("/upload dokončen");
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -258,7 +259,7 @@ public class PGResource {
 
 			eventsHandler = future.get();
 			PGProcessResultEvent event = eventsHandler.getResultAndDelete(operationId);
-			if (event.isSuccess()) {
+			if (!event.isSuccess()) {
 				logger.info("/create chyba", event.getResultDetails());
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}

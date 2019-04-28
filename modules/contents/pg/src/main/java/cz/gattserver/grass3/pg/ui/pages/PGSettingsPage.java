@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationResult;
 import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -139,6 +140,7 @@ public class PGSettingsPage extends AbstractSettingsPage {
 				configuration.setRootDir(rootDirField.getValue());
 				configuration.setMiniaturesDir(miniaturesDirField.getValue());
 				pgService.storeConfiguration(configuration);
+				Page.getCurrent().reload();
 			}
 		});
 		binder.addValueChangeListener(l -> saveButton.setEnabled(binder.isValid()));

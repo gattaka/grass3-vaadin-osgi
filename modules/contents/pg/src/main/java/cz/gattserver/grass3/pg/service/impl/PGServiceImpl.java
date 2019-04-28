@@ -469,6 +469,12 @@ public class PGServiceImpl implements PGService {
 				userId != null ? photogalleryRepository.findByUserAccess(userId, filter, pageable)
 						: photogalleryRepository.findByAnonAccess(filter, pageable));
 	}
+	
+	@Override
+	public PhotogalleryRESTOverviewTO getPhotogalleryByDirectory(String directory) {
+		Photogallery gallery = photogalleryRepository.findByDirectory(directory);
+		return photogalleriesMapper.mapPhotogalleryForRESTOverview(gallery);
+	}
 
 	@Override
 	public PhotogalleryRESTTO getPhotogalleryForREST(Long id) throws UnauthorizedAccessException {

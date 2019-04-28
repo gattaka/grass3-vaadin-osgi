@@ -37,4 +37,7 @@ public interface PhotogalleryRepository extends JpaRepository<Photogallery, Long
 	@Query(value = "select p.photogalleryPath from PHOTOGALLERY p where p.id = ?1")
 	public String findPhotogalleryPathById(Long photogalleryId);
 
+	@Query(value = "select p from PHOTOGALLERY p where p.photogalleryPath = ?1")
+	public Photogallery findByDirectory(String directory);
+
 }

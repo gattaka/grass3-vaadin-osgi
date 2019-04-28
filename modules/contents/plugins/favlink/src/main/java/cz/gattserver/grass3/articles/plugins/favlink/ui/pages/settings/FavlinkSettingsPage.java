@@ -207,6 +207,7 @@ public class FavlinkSettingsPage extends AbstractSettingsPage {
 
 	private Stream<Path> createStream(Path path) {
 		try {
+			// zde se úmyslně nezavírá stream, protože se předává dál do vaadin
 			return Files.list(path)
 					.filter(p -> p.getFileName().toString().substring(0, p.getFileName().toString().lastIndexOf('.'))
 							.contains(filterName == null ? "" : filterName));
@@ -216,9 +217,19 @@ public class FavlinkSettingsPage extends AbstractSettingsPage {
 		return new ArrayList<Path>().stream();
 	}
 
+	private long count(Path path) {
+		try (Stream<Path> stream = Files.list(path)) {
+			return stream.filter(p -> p.getFileName().toString().contains(filterName == null ? "" : filterName))
+					.count();
+		} catch (IOException e) {
+			logger.error("Nezdařilo se načíst galerie z " + path.getFileName().toString(), e);
+			return 0;
+		}
+	}
+
 	private void populateGrid(Grid<Path> grid, Path path) {
 		grid.setDataProvider((sortOrder, offset, limit) -> createStream(path).skip(offset).limit(limit),
-				() -> (int) createStream(path).count());
+				() -> (int) count(path));
 	}
 
 	private String formatSize(Path path) {

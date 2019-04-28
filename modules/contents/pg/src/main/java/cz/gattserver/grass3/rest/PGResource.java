@@ -43,10 +43,10 @@ public class PGResource {
 	private static Logger logger = LoggerFactory.getLogger(PGResource.class);
 
 	@Autowired
-	private PGService photogalleryFacade;
+	private PGService pgService;
 
 	@Autowired
-	private SecurityService securityFacade;
+	private SecurityService securityService;
 
 	@Autowired
 	private EventBus eventBus;
@@ -54,8 +54,8 @@ public class PGResource {
 	// http://localhost:8180/web/ws/pg/count
 	@RequestMapping("/count")
 	public ResponseEntity<Integer> count(@RequestParam(value = "filter", required = false) String filter) {
-		UserInfoTO user = securityFacade.getCurrentUser();
-		return new ResponseEntity<>(photogalleryFacade.countAllPhotogalleriesForREST(user.getId(), filter),
+		UserInfoTO user = securityService.getCurrentUser();
+		return new ResponseEntity<>(pgService.countAllPhotogalleriesForREST(user.getId(), filter),
 				HttpStatus.OK);
 	}
 
@@ -65,14 +65,14 @@ public class PGResource {
 			@RequestParam(value = "page", required = true) int page,
 			@RequestParam(value = "pageSize", required = true) int pageSize,
 			@RequestParam(value = "filter", required = false) String filter) {
-		UserInfoTO user = securityFacade.getCurrentUser();
-		int count = photogalleryFacade.countAllPhotogalleriesForREST(user.getId(), filter);
+		UserInfoTO user = securityService.getCurrentUser();
+		int count = pgService.countAllPhotogalleriesForREST(user.getId(), filter);
 		// startIndex nesmí být víc než je počet, endIndex může být s tím si JPA
 		// poradí a sníží ho
 		if (page * pageSize > count)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		return new ResponseEntity<>(
-				photogalleryFacade.getAllPhotogalleriesForREST(user.getId(), filter, new PageRequest(page, pageSize)),
+				pgService.getAllPhotogalleriesForREST(user.getId(), filter, new PageRequest(page, pageSize)),
 				HttpStatus.OK);
 	}
 
@@ -81,7 +81,7 @@ public class PGResource {
 	public ResponseEntity<PhotogalleryRESTTO> gallery(@RequestParam(value = "id", required = true) Long id) {
 		PhotogalleryRESTTO gallery;
 		try {
-			gallery = photogalleryFacade.getPhotogalleryForREST(id);
+			gallery = pgService.getPhotogalleryForREST(id);
 		} catch (UnauthorizedAccessException e) {
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
@@ -93,7 +93,7 @@ public class PGResource {
 	private void innerPhoto(Long id, String fileName, PhotoVersion photoVersion, HttpServletResponse response) {
 		Path file;
 		try {
-			file = photogalleryFacade.getPhotoForREST(id, fileName, photoVersion);
+			file = pgService.getPhotoForREST(id, fileName, photoVersion);
 		} catch (UnauthorizedAccessException e) {
 			response.setStatus(HttpStatus.FORBIDDEN.value());
 			return;
@@ -139,12 +139,12 @@ public class PGResource {
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public ResponseEntity<Long> create(@RequestParam(value = "galleryName", required = true) String galleryName)
 			throws IllegalStateException, IOException {
-		UserInfoTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityService.getCurrentUser();
 		if (user == null || user.getId() == null)
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		logger.info("/create volán");
 		try {
-			String galleryDir = photogalleryFacade.createGalleryDir();
+			String galleryDir = pgService.createGalleryDir();
 
 			UUID operationId = UUID.randomUUID();
 
@@ -153,7 +153,7 @@ public class PGResource {
 			CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
 
 			PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(galleryName, galleryDir, null, false, false);
-			photogalleryFacade.savePhotogallery(operationId, payloadTO, 55L, user.getId(), LocalDateTime.now());
+			pgService.savePhotogallery(operationId, payloadTO, 55L, user.getId(), LocalDateTime.now());
 
 			eventsHandler = future.get();
 			PGProcessResultEvent event = eventsHandler.getResultAndDelete(operationId);
@@ -174,14 +174,14 @@ public class PGResource {
 	public ResponseEntity<String> upload(@RequestParam(value = "galleryId", required = true) Long galleryId,
 			@RequestParam(value = "files", required = true) MultipartFile[] uploadedFile)
 			throws IllegalStateException, IOException {
-		UserInfoTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityService.getCurrentUser();
 		if (user == null || user.getId() == null)
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		logger.info("/upload volán");
 		try {
-			PhotogalleryTO to = photogalleryFacade.getPhotogalleryForDetail(galleryId);
+			PhotogalleryTO to = pgService.getPhotogalleryForDetail(galleryId);
 			for (MultipartFile file : uploadedFile)
-				photogalleryFacade.uploadFile(file.getInputStream(), file.getOriginalFilename(),
+				pgService.uploadFile(file.getInputStream(), file.getOriginalFilename(),
 						to.getPhotogalleryPath());
 
 			logger.info("/upload dokončen");
@@ -195,7 +195,7 @@ public class PGResource {
 	@RequestMapping(value = "/process", method = RequestMethod.POST)
 	public ResponseEntity<String> process(@RequestParam(value = "galleryId", required = true) Long galleryId)
 			throws IllegalStateException, IOException {
-		UserInfoTO user = securityFacade.getCurrentUser();
+		UserInfoTO user = securityService.getCurrentUser();
 		if (user == null || user.getId() == null)
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		logger.info("/process volán");
@@ -206,11 +206,11 @@ public class PGResource {
 			eventBus.subscribe(eventsHandler);
 			CompletableFuture<PGEventsHandler> future = eventsHandler.expectEvent(operationId);
 
-			PhotogalleryTO to = photogalleryFacade.getPhotogalleryForDetail(galleryId);
+			PhotogalleryTO to = pgService.getPhotogalleryForDetail(galleryId);
 			PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(to.getContentNode().getName(),
 					to.getPhotogalleryPath(), to.getContentNode().getContentTagsAsStrings(),
 					to.getContentNode().isPublicated(), true);
-			photogalleryFacade.modifyPhotogallery(operationId, to.getId(), payloadTO, LocalDateTime.now());
+			pgService.modifyPhotogallery(operationId, to.getId(), payloadTO, LocalDateTime.now());
 
 			eventsHandler = future.get();
 			PGProcessResultEvent event = eventsHandler.getResultAndDelete(operationId);

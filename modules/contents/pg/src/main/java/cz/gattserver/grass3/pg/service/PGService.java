@@ -30,11 +30,10 @@ public interface PGService {
 	 * @param photogallery
 	 *            galerie ke smazání
 	 * @return {@code true} pokud se zdařilo smazat jinak {@code false}
-	 * @return <code>false</code>
-	 *             pokud se nezdaŁří smazat některé soubory (smaže tak aspoň
-	 *             datové struktury)
+	 * @return <code>false</code> pokud se nezdaŁří smazat některé soubory
+	 *         (smaže tak aspoň datové struktury)
 	 */
-	public boolean deletePhotogallery(long photogalleryId);
+	boolean deletePhotogallery(long photogalleryId);
 
 	/**
 	 * Upraví galerii. Zpracování je prováděno v samostatném vlákně. Pro
@@ -49,8 +48,7 @@ public interface PGService {
 	 *            datum vytvoření galerie, může být i <code>null</code>, pak
 	 *            bude použito aktuální datum
 	 */
-	public void modifyPhotogallery(UUID operationId, long photogalleryId, PhotogalleryPayloadTO payloadTO,
-			LocalDateTime date);
+	void modifyPhotogallery(UUID operationId, long photogalleryId, PhotogalleryPayloadTO payloadTO, LocalDateTime date);
 
 	/**
 	 * Uloží galerii. Zpracování je prováděno v samostatném vlákně. Pro
@@ -67,7 +65,7 @@ public interface PGService {
 	 *            datum vytvoření galerie, může být i <code>null</code>, pak
 	 *            bude použito aktuální datum
 	 */
-	public void savePhotogallery(UUID operationId, PhotogalleryPayloadTO payloadTO, long nodeId, long authorId,
+	void savePhotogallery(UUID operationId, PhotogalleryPayloadTO payloadTO, long nodeId, long authorId,
 			LocalDateTime date);
 
 	/**
@@ -77,24 +75,24 @@ public interface PGService {
 	 *            identifikátor
 	 * @return TO galerie
 	 */
-	public PhotogalleryTO getPhotogalleryForDetail(Long id);
+	PhotogalleryTO getPhotogalleryForDetail(Long id);
 
 	/**
 	 * Vytvoří nový adresář pro fotogalerii
 	 * 
 	 * @throws IOException
 	 */
-	public String createGalleryDir() throws IOException;
+	String createGalleryDir() throws IOException;
 
 	/**
 	 * Získá objekt konfigurace
 	 */
-	public PGConfiguration loadConfiguration();
+	PGConfiguration loadConfiguration();
 
 	/**
 	 * Uloží konfiguraci
 	 */
-	public void storeConfiguration(PGConfiguration configuration);
+	void storeConfiguration(PGConfiguration configuration);
 
 	/**
 	 * Získá počet galerií pro použití REST
@@ -116,7 +114,7 @@ public interface PGService {
 	 * @param pageable
 	 *            stránkování
 	 */
-	public List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId, String filter, Pageable pageable);
+	List<PhotogalleryRESTOverviewTO> getAllPhotogalleriesForREST(Long userId, String filter, Pageable pageable);
 
 	/**
 	 * Získá detail fotogalerie pro REST
@@ -125,7 +123,7 @@ public interface PGService {
 	 *            idetifikátor galerie
 	 * @return {@link UnauthorizedAccessException}
 	 */
-	public PhotogalleryRESTTO getPhotogalleryForREST(Long id) throws UnauthorizedAccessException;
+	PhotogalleryRESTTO getPhotogalleryForREST(Long id) throws UnauthorizedAccessException;
 
 	/**
 	 * Získá fotografii dle galerie pro REST
@@ -138,14 +136,14 @@ public interface PGService {
 	 *            o jakou velikost fotky jde
 	 * @return {@link UnauthorizedAccessException}
 	 */
-	public Path getPhotoForREST(Long id, String fileName, PhotoVersion mini) throws UnauthorizedAccessException;
+	Path getPhotoForREST(Long id, String fileName, PhotoVersion mini) throws UnauthorizedAccessException;
 
 	/**
 	 * Zazipuje galerii
 	 * 
 	 * @param galleryDir
 	 */
-	public void zipGallery(String galleryDir);
+	void zipGallery(String galleryDir);
 
 	/**
 	 * Smaže vybrané soubory z fotogalerie.
@@ -161,7 +159,7 @@ public interface PGService {
 	 * @throws IllegalArgumentException
 	 *             pokud předaný adresář podtéká kořen modulu PG
 	 */
-	public List<PhotogalleryViewItemTO> deleteFiles(Set<PhotogalleryViewItemTO> selected, String galleryDir);
+	List<PhotogalleryViewItemTO> deleteFiles(Set<PhotogalleryViewItemTO> selected, String galleryDir);
 
 	/**
 	 * Získá obrázek z galerie. Nemusí jít o existující galerii, proto je
@@ -180,7 +178,7 @@ public interface PGService {
 	 * @throws IllegalArgumentException
 	 *             pokud předaný soubor podtéká kořen galerie
 	 */
-	public Path getFullImage(String galleryDir, String file);
+	Path getFullImage(String galleryDir, String file);
 
 	/**
 	 * Nahraje soubory do galerie
@@ -199,7 +197,7 @@ public interface PGService {
 	 * @throws IllegalArgumentException
 	 *             pokud předaný adresář podtéká kořen modulu PG
 	 */
-	public void uploadFile(InputStream in, String fileName, String galleryDir) throws IOException;
+	void uploadFile(InputStream in, String fileName, String galleryDir) throws IOException;
 
 	/**
 	 * Získá list souborů dle galerie
@@ -215,7 +213,7 @@ public interface PGService {
 	 * @throws IllegalArgumentException
 	 *             pokud předaný adresář podtéká kořen modulu PG
 	 */
-	public List<PhotogalleryViewItemTO> getItems(String galleryDir) throws IOException;
+	List<PhotogalleryViewItemTO> getItems(String galleryDir) throws IOException;
 
 	/**
 	 * Získá počet položek k zobrazení přehledu (miniatury obrázků a náhledy
@@ -232,7 +230,7 @@ public interface PGService {
 	 * @throws IllegalArgumentException
 	 *             pokud předaný adresář podtéká kořen modulu PG
 	 */
-	public int getViewItemsCount(String galleryDir) throws IOException;
+	int getViewItemsCount(String galleryDir) throws IOException;
 
 	/**
 	 * Získá položky k zobrazení přehledu (miniatury obrázků a náhledy videí)
@@ -252,7 +250,7 @@ public interface PGService {
 	 * @throws IllegalArgumentException
 	 *             pokud předaný adresář podtéká kořen modulu PG
 	 */
-	public List<PhotogalleryViewItemTO> getViewItems(String galleryDir, int skip, int limit) throws IOException;
+	List<PhotogalleryViewItemTO> getViewItems(String galleryDir, int skip, int limit) throws IOException;
 
 	/**
 	 * Získá položku obrázku ze slideshow dle indexu
@@ -270,7 +268,7 @@ public interface PGService {
 	 * @throws IllegalArgumentException
 	 *             pokud předaný adresář podtéká kořen modulu PG
 	 */
-	public PhotogalleryViewItemTO getSlideshowItem(String galleryDir, int index) throws IOException;
+	PhotogalleryViewItemTO getSlideshowItem(String galleryDir, int index) throws IOException;
 
 	/**
 	 * Ověří, že galerie existuje a má patřičné podadresáře
@@ -285,7 +283,7 @@ public interface PGService {
 	 * @throws IllegalArgumentException
 	 *             pokud předaný adresář podtéká kořen modulu PG
 	 */
-	public boolean checkGallery(String galleryDir);
+	boolean checkGallery(String galleryDir);
 
 	/**
 	 * Smaže vygenerovaný zip soubor galerie
@@ -293,7 +291,7 @@ public interface PGService {
 	 * @param zipFile
 	 *            zip soubor
 	 */
-	public void deleteZipFile(Path zipFile);
+	void deleteZipFile(Path zipFile);
 
 	/**
 	 * Smaže rozpracovanou galerii, která ještě nebyla uložena do DB
@@ -307,6 +305,15 @@ public interface PGService {
 	 * @throws IllegalArgumentException
 	 *             pokud předaný adresář podtéká kořen modulu PG adresář galerie
 	 */
-	public void deleteDraftGallery(String galleryDir) throws IOException;
+	void deleteDraftGallery(String galleryDir) throws IOException;
+
+	/**
+	 * Získá fotogalerii dle jména adresáře, ke kterému galerie patří
+	 * 
+	 * @param directory
+	 *            jméno adresáře
+	 * @return overview objekt galerie
+	 */
+	PhotogalleryRESTOverviewTO getPhotogalleryByDirectory(String directory);
 
 }

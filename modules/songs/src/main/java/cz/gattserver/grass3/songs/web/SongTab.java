@@ -1,25 +1,41 @@
 package cz.gattserver.grass3.songs.web;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.server.Page;
+import com.vaadin.server.StreamResource;
+import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
@@ -32,10 +48,13 @@ import cz.gattserver.grass3.ui.components.DeleteButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.H2Label;
+import cz.gattserver.web.common.ui.window.WebWindow;
 
 public class SongTab extends VerticalLayout {
 
 	private static final long serialVersionUID = 594189301140808163L;
+
+	private static final Logger logger = LoggerFactory.getLogger(SongTab.class);
 
 	@Autowired
 	private SongsService songsFacade;
@@ -184,12 +203,15 @@ public class SongTab extends VerticalLayout {
 						break;
 					}
 				for (String c : chords) {
-					// String chordLink = "<a target='_blank' href='" +
-					// request.getContextRoot() + "/"
-					// + pageFactory.getPageName() + "/chord/" + c + "'>" + c +
-					// "</a>";
-					String chordLink = "<span style='cursor: pointer;' onclick='grass.chords.show(\"" + c + "\")'>" + c
-							+ "</span>";
+					String chordLink = c;
+					try {
+						chordLink = "<a target='_blank' href='" + request.getContextRoot() + "/"
+								+ pageFactory.getPageName() + "/chord/" + URLEncoder.encode(c, "UTF-8") + "'"
+								+ "onmouseover='grass.chords.show(\"" + c + "\", event.clientX, event.clientY)' "
+								+ "onmouseout='grass.chords.hide()' " + ">" + c + "</a>";
+					} catch (UnsupportedEncodingException e) {
+						logger.error("Chord link se nezdařilo vytvořit", e);
+					}
 					line = line.replaceAll(c + " ", chordLink + " ");
 					line = line.replaceAll(c + ",", chordLink + ",");
 					line = line.replaceAll(c + "\\)", chordLink + ")");
@@ -211,10 +233,90 @@ public class SongTab extends VerticalLayout {
 			}
 		}
 
-		JavaScript.getCurrent().addFunction("grass.chords.show", arguments -> {
-			tabSheet.setSelectedTab(chordsTab);
-			chordsTab.selectChord(arguments.getString(0));
-		});
+		JavaScript.getCurrent().addFunction("grass.chords.show",
+				args -> showHoverChord(args.getString(0), args.getNumber(1), args.getNumber(2)));
+		JavaScript.getCurrent().addFunction("grass.chords.hide", args -> hideAllWindows());
+	}
+
+	private void hideAllWindows() {
+		UI ui = UI.getCurrent();
+		Collection<Window> windows = Collections.unmodifiableCollection(ui.getWindows());
+		for (Window w : windows)
+			ui.removeWindow(w);
+	}
+
+	private void showHoverChord(String chord, double clientX, double clientY) {
+		hideAllWindows();
+
+		int size = 20;
+		int cols = 7;
+		int rows = 9;
+
+		int dx = size - 6;
+		int dy = size;
+		int textOffset = 5;
+
+		int w = cols * dx;
+		int h = rows * size + textOffset;
+
+		BufferedImage backgroundImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics bg = backgroundImage.createGraphics();
+		bg.setColor(Color.WHITE);
+		bg.fillRect(0, 0, w, h);
+
+		Font font = new Font(Font.MONOSPACED, Font.BOLD, size);
+		bg.setFont(font);
+		bg.setColor(Color.GRAY);
+		int fontYOffset = size / 5;
+
+		int pointD = dx - 5;
+		int pointR = pointD / 2;
+		int pointLineOffsetY = dy / 2 - pointR;
+		int pointLineOffsetX = dx / 2 - pointR;
+
+		ChordTO to = songsFacade.getChordByName(chord);
+		String[] strings = new String[] { "", "E", "a", "d", "g", "h", "e" };
+		for (int row = 0; row < rows; row++)
+			for (int col = 0; col < cols; col++)
+				if (row == 0) {
+					bg.drawString(strings[col], col * dx + dx / 4, dy - fontYOffset);
+				} else if (col == 0) {
+					bg.drawString(String.valueOf(row), col * dx,
+							row * dy + dy / 2 + size / 2 + textOffset - fontYOffset);
+				} else {
+					int x = col * dx;
+					int y = row * dy;
+					bg.drawLine(x, y + textOffset, x + dx, y + textOffset);
+					bg.setColor(Color.LIGHT_GRAY);
+					bg.drawLine(x + dx / 2, y + textOffset, x + dx / 2, y + dy + textOffset);
+					bg.setColor(Color.GRAY);
+					long mask = 1L << (row - 1) * 6 + (col - 1);
+					if ((to.getConfiguration().longValue() & mask) > 0)
+						bg.fillArc(x + pointLineOffsetX, y + textOffset + pointLineOffsetY, pointD, pointD, 0, 360);
+				}
+
+		Window window = new WebWindow(chord);
+		VerticalLayout layout = new VerticalLayout();
+		layout.addComponent(new Image(null, new StreamResource(new StreamSource() {
+			private static final long serialVersionUID = -5893071133311094692L;
+
+			@Override
+			public InputStream getStream() {
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				try {
+					ImageIO.write(backgroundImage, "png", os);
+					return new ByteArrayInputStream(os.toByteArray());
+				} catch (IOException e) {
+					logger.error("Nezdařilo se vytváření thumbnail akordu", e);
+					return null;
+				}
+			}
+		}, "Chord-" + chord)));
+		window.setContent(layout);
+		window.setModal(false);
+		window.setPositionX((int) clientX + 5);
+		window.setPositionY((int) clientY + 5);
+		UI.getCurrent().addWindow(window);
 	}
 
 }

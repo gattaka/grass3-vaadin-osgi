@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.data.provider.CallbackDataProvider;
 import com.vaadin.server.SerializableSupplier;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.shared.ui.grid.ScrollDestination;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.FetchItemsCallback;

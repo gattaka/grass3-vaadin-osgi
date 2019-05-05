@@ -15269,12 +15269,8 @@ a img.icon {
 	box-shadow: 0 0px 10px 0px black;
 }
 
-.grass .menu {
-	margin: 0 10px;
-}
-
 div.v-link.v-widget.menu-item.v-link-menu-item {
-	padding: 2px 0;
+	padding: 2px 2px;
 }
 
 div.v-link.v-widget.menu-item.v-link-menu-item a {
@@ -15284,14 +15280,12 @@ div.v-link.v-widget.menu-item.v-link-menu-item a {
 div.menu-wrapper div.v-link.v-widget a:hover span {
 	color: white;
 	text-shadow: rgba(0, 0, 0, 0.9) 0 1px 0;
-	padding: 0 4px;
 	text-decoration: none;
 }
 
 div.v-link.v-widget.menu-item.v-link-menu-item a span {
 	color: #d1d3d6;
 	text-shadow: rgba(0, 0, 0, 0.9) 0 1px 0;
-	padding: 0 4px;
 	text-decoration: none;
 }
 
@@ -15305,15 +15299,13 @@ div.v-slot.v-slot-link.v-slot-menu-item {
 
 div.v-button.v-widget.link.v-button-link.menu-item.v-button-menu-item span span {
 	color: #d1d3d6;
-	text-shadow: rgba(0, 0, 0, 0.9) 0 1px 0;
-	padding: 0 4px;
+	text-shadow: rgba(0, 0, 0, 0.9) 0 1px 0;	
 	text-decoration: none;
 }
 
 div.v-button.v-widget.link.v-button-link.menu-item.v-button-menu-item span span:hover {
 	color: white;
 	text-shadow: rgba(0, 0, 0, 0.9) 0 1px 0;
-	padding: 0 4px;
 	text-decoration: none;
 }
 

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -76,18 +77,13 @@ public abstract class MenuPage extends GrassPage {
 
 		// menu
 		HorizontalLayout menuExpander = new HorizontalLayout();
-		menuExpander.setWidth("970px");
+		menuExpander.setWidth("990px");
 		menuExpander.addStyleName("menu");
-		menuExpander.setMargin(false);
-		menuExpander.setSpacing(false);
+		menuExpander.setMargin(new MarginInfo(false, true));
+		menuExpander.setSpacing(true);
 		layout.addComponent(menuExpander, "menu");
 
-		HorizontalLayout menu = new HorizontalLayout();
-		menu.setSpacing(true);
-		menu.setWidth("100%");
-		menuExpander.addComponent(menu);
-
-		createMenuItems(menu);
+		createMenuItems(menuExpander);
 
 		// obsah
 		createContent(layout);
@@ -129,7 +125,7 @@ public abstract class MenuPage extends GrassPage {
 			}
 		}
 
-		Label sep = new Label();
+		Label sep = new Label(" ");
 		menu.addComponent(sep);
 		menu.setExpandRatio(sep, 1);
 
@@ -142,18 +138,18 @@ public abstract class MenuPage extends GrassPage {
 			createMenuComponent(menu, new Link("Přihlášení", getPageResource(loginPageFactory)));
 
 		// Registrace
-		// if (coreACL.canRegistrate(UIUtils.getUser()))
-		// createMenuComponent(menu, new Link("Registrace",
-		// getPageResource(registrationPageFactory)));
+		if (coreACL.canRegistrate(UIUtils.getUser()))
+			createMenuComponent(menu, new Link("Registrace", getPageResource(registrationPageFactory)));
 
 		// Přehled o uživateli
 		final UserInfoTO userInfoDTO = UIUtils.getUser();
 		if (coreACL.canShowUserDetails(userInfoDTO, UIUtils.getUser())) {
 			// nastavení
-			createMenuComponent(menu, new Link(userInfoDTO.getName(), getPageResource(settingsPageFactory)));
+			createMenuComponent(menu, new Link("Nastavení", getPageResource(settingsPageFactory)));
 
 			// odhlásit
-			createMenuComponent(menu, new Link("Odhlásit", new ExternalResource(getPageURL("logout"))));
+			createMenuComponent(menu,
+					new Link("Odhlásit (" + userInfoDTO.getName() + ")", new ExternalResource(getPageURL("logout"))));
 		}
 	}
 

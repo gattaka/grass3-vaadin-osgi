@@ -174,8 +174,9 @@ public class FMExplorer {
 	 * 
 	 * @return
 	 */
-	public int listCount() {
-		try (Stream<Path> stream = Files.list(currentAbsolutePath)) {
+	public int listCount(String filterName) {
+		try (Stream<Path> stream = Files.list(currentAbsolutePath)
+				.filter(p -> p.getFileName().toString().contains(filterName == null ? "" : filterName))) {
 			// +1 za odkaz na nadřazený adresář
 			return (int) stream.count() + 1;
 		} catch (IOException e) {
@@ -193,11 +194,12 @@ public class FMExplorer {
 	 *            velikost stránky
 	 * @return
 	 */
-	public Stream<FMItemTO> listing(int offset, int limit) {
+	public Stream<FMItemTO> listing(String filterName, int offset, int limit) {
 		try {
 			return Stream
 					.concat(Stream.of(currentAbsolutePath.resolve("..")),
-							Files.list(currentAbsolutePath).sorted(FMExplorer::sortFile))
+							Files.list(currentAbsolutePath).sorted(FMExplorer::sortFile).filter(
+									p -> p.getFileName().toString().contains(filterName == null ? "" : filterName)))
 					.skip(offset).limit(limit).map(this::mapPathToItem);
 		} catch (IOException e) {
 			throw new GrassPageException(500, e);

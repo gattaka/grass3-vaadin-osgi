@@ -22,12 +22,15 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
@@ -69,6 +72,8 @@ public class FMPage extends OneColumnPage {
 	private String listFormatterValue;
 
 	private FileSystem fileSystem;
+
+	private String filterName;
 
 	/**
 	 * FM Explorer s potřebnými daty a metodami pro procházení souborů
@@ -202,7 +207,7 @@ public class FMPage extends OneColumnPage {
 						(p.isDirectory() ? ImageIcon.FOLDER_16_ICON : ImageIcon.DOCUMENT_16_ICON).createResource()),
 				new ComponentRenderer()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("");
 
-		grid.addColumn(FMItemTO::getName).setCaption("Název").setExpandRatio(1);
+		Column<FMItemTO, String> nameColumn = grid.addColumn(FMItemTO::getName).setCaption("Název").setExpandRatio(1);
 		grid.addColumn(FMItemTO::getSize).setCaption("Velikost").setStyleGenerator(item -> "v-align-right");
 		grid.addColumn(to -> {
 			if (to.isDirectory())
@@ -259,6 +264,18 @@ public class FMPage extends OneColumnPage {
 				handleGridSingleClick(e.getItem(), e.getMouseEventDetails().isShiftKey());
 		});
 
+		HeaderRow filteringHeader = grid.appendHeaderRow();
+
+		// Obsah
+		TextField contentFilterField = new TextField();
+		contentFilterField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		contentFilterField.setWidth("100%");
+		contentFilterField.addValueChangeListener(e -> {
+			filterName = e.getValue();
+			populateGrid();
+		});
+		filteringHeader.getCell(nameColumn).setComponent(contentFilterField);
+
 		populateGrid();
 	}
 
@@ -286,8 +303,8 @@ public class FMPage extends OneColumnPage {
 	}
 
 	private void populateGrid() {
-		int size = explorer.listCount();
-		grid.setDataProvider((sortOrder, offset, limit) -> explorer.listing(offset, limit), () -> size);
+		int size = explorer.listCount(filterName);
+		grid.setDataProvider((sortOrder, offset, limit) -> explorer.listing(filterName, offset, limit), () -> size);
 		listFormatterValue = listFormatter.format(size);
 		statusLabel.setValue(listFormatterValue);
 	}

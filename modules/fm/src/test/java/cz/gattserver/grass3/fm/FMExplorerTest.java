@@ -266,9 +266,9 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 		FMExplorer explorer = new FMExplorer(fs);
 		explorer.goToDir(subDirName2);
 
-		assertEquals(4, explorer.listCount());
+		assertEquals(4, explorer.listCount(null));
 
-		Iterator<FMItemTO> it = explorer.listing(0, 10).iterator();
+		Iterator<FMItemTO> it = explorer.listing(null, 0, 10).iterator();
 		FMItemTO item = it.next();
 		assertEquals("..", item.getName());
 		assertNotNull(item.getLastModified());
@@ -296,6 +296,32 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 		assertEquals("1 B", item.getSize());
 		assertFalse(item.isDirectory());
 		assertNull(item.getPathFromFMRoot());
+
+		assertEquals(3, explorer.listCount("file"));
+
+		it = explorer.listing("file", 0, 10).iterator();
+		item = it.next();
+		assertEquals("..", item.getName());
+		assertNotNull(item.getLastModified());
+		assertEquals("", item.getSize());
+		assertTrue(item.isDirectory());
+		assertNull(item.getPathFromFMRoot());
+
+		item = it.next();
+		assertEquals("file1", item.getName());
+		assertNotNull(item.getLastModified());
+		assertEquals("3 B", item.getSize());
+		assertFalse(item.isDirectory());
+		assertNull(item.getPathFromFMRoot());
+
+		item = it.next();
+		assertEquals("file2", item.getName());
+		assertNotNull(item.getLastModified());
+		assertEquals("1 B", item.getSize());
+		assertFalse(item.isDirectory());
+		assertNull(item.getPathFromFMRoot());
+
+		assertFalse(it.hasNext());
 	}
 
 	@Test

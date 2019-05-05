@@ -1,6 +1,8 @@
 package cz.gattserver.grass3.songs.web;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import javax.annotation.Resource;
 
@@ -8,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.provider.CallbackDataProvider;
+import com.vaadin.server.Page;
 import com.vaadin.server.SerializableSupplier;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Grid;
@@ -52,11 +55,13 @@ public class ListTab extends VerticalLayout {
 	private SongOverviewTO filterTO;
 
 	private TabSheet tabSheet;
+	private GrassRequest request;
 	private SongTab songTab;
 
 	public ListTab(GrassRequest request, TabSheet tabSheet) {
 		SpringContextHelper.inject(this);
 		filterTO = new SongOverviewTO();
+		this.request = request;
 		this.tabSheet = tabSheet;
 	}
 
@@ -120,8 +125,10 @@ public class ListTab extends VerticalLayout {
 		populate();
 
 		grid.addItemClickListener((e) -> {
-			if (e.getMouseEventDetails().isDoubleClick())
+			if (e.getMouseEventDetails().isDoubleClick()) {
 				chooseSong(e.getItem().getId(), false);
+				openSongPage();
+			}
 		});
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
@@ -196,6 +203,17 @@ public class ListTab extends VerticalLayout {
 		to.setId(id);
 		grid.deselectAll();
 		grid.select(to);
+	}
+
+	public void openSongPage() {
+		String currentURL;
+		try {
+			currentURL = request.getContextRoot() + "/" + pageFactory.getPageName() + "/text/" + choosenSong.getId()
+					+ "-" + URLEncoder.encode(choosenSong.getName(), "UTF-8");
+			Page.getCurrent().open(currentURL, "_blank");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void chooseSong(Long id, boolean selectSong) {

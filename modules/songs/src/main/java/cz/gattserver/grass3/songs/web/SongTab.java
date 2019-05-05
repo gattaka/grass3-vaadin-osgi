@@ -1,8 +1,5 @@
 package cz.gattserver.grass3.songs.web;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -43,6 +40,7 @@ import cz.gattserver.grass3.songs.SongsRole;
 import cz.gattserver.grass3.songs.facades.SongsService;
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.songs.model.interfaces.SongTO;
+import cz.gattserver.grass3.songs.util.ChordImageUtils;
 import cz.gattserver.grass3.ui.components.CreateButton;
 import cz.gattserver.grass3.ui.components.DeleteButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
@@ -248,52 +246,8 @@ public class SongTab extends VerticalLayout {
 	private void showHoverChord(String chord, double clientX, double clientY) {
 		hideAllWindows();
 
-		int size = 20;
-		int cols = 7;
-		int rows = 9;
-
-		int dx = size - 6;
-		int dy = size;
-		int textOffset = 5;
-
-		int w = cols * dx;
-		int h = rows * size + textOffset;
-
-		BufferedImage backgroundImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-		Graphics bg = backgroundImage.createGraphics();
-		bg.setColor(Color.WHITE);
-		bg.fillRect(0, 0, w, h);
-
-		Font font = new Font(Font.MONOSPACED, Font.BOLD, size);
-		bg.setFont(font);
-		bg.setColor(Color.GRAY);
-		int fontYOffset = size / 5;
-
-		int pointD = dx - 5;
-		int pointR = pointD / 2;
-		int pointLineOffsetY = dy / 2 - pointR;
-		int pointLineOffsetX = dx / 2 - pointR;
-
 		ChordTO to = songsFacade.getChordByName(chord);
-		String[] strings = new String[] { "", "E", "a", "d", "g", "h", "e" };
-		for (int row = 0; row < rows; row++)
-			for (int col = 0; col < cols; col++)
-				if (row == 0) {
-					bg.drawString(strings[col], col * dx + dx / 4, dy - fontYOffset);
-				} else if (col == 0) {
-					bg.drawString(String.valueOf(row), col * dx,
-							row * dy + dy / 2 + size / 2 + textOffset - fontYOffset);
-				} else {
-					int x = col * dx;
-					int y = row * dy;
-					bg.drawLine(x, y + textOffset, x + dx, y + textOffset);
-					bg.setColor(Color.LIGHT_GRAY);
-					bg.drawLine(x + dx / 2, y + textOffset, x + dx / 2, y + dy + textOffset);
-					bg.setColor(Color.GRAY);
-					long mask = 1L << (row - 1) * 6 + (col - 1);
-					if ((to.getConfiguration().longValue() & mask) > 0)
-						bg.fillArc(x + pointLineOffsetX, y + textOffset + pointLineOffsetY, pointD, pointD, 0, 360);
-				}
+		BufferedImage image = ChordImageUtils.drawChord(to, 20);
 
 		Window window = new WebWindow(chord);
 		VerticalLayout layout = new VerticalLayout();
@@ -304,7 +258,7 @@ public class SongTab extends VerticalLayout {
 			public InputStream getStream() {
 				ByteArrayOutputStream os = new ByteArrayOutputStream();
 				try {
-					ImageIO.write(backgroundImage, "png", os);
+					ImageIO.write(image, "png", os);
 					return new ByteArrayInputStream(os.toByteArray());
 				} catch (IOException e) {
 					logger.error("Nezdařilo se vytváření thumbnail akordu", e);

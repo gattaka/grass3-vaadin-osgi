@@ -1,5 +1,10 @@
 package cz.gattserver.grass3.songs.web;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -7,19 +12,21 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.server.Page;
-import com.vaadin.server.ThemeResource;
+import com.vaadin.server.StreamResource;
+import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
@@ -34,6 +41,7 @@ import cz.gattserver.grass3.songs.SongsRole;
 import cz.gattserver.grass3.songs.facades.SongsService;
 import cz.gattserver.grass3.songs.model.domain.Instrument;
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
+import cz.gattserver.grass3.songs.util.ChordImageUtils;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.GridButton;
@@ -45,6 +53,8 @@ import cz.gattserver.web.common.ui.ImageIcon;
 public class ChordsTab extends VerticalLayout {
 
 	private static final long serialVersionUID = 2599065817744507785L;
+
+	private static final Logger logger = LoggerFactory.getLogger(ChordsTab.class);
 
 	@Autowired
 	private SongsService songsFacade;
@@ -203,7 +213,7 @@ public class ChordsTab extends VerticalLayout {
 			Label chordDisplayLabel = new Label();
 			switch (choosenChord.getInstrument()) {
 			case GUITAR:
-				createDisplayForGuitar(choosenChord.getConfiguration());
+				createDisplayForGuitar(choosenChord);
 			}
 			chordDescriptionLayout.addComponent(chordDisplayLabel);
 			this.choosenChord = choosenChord;
@@ -219,30 +229,25 @@ public class ChordsTab extends VerticalLayout {
 		}
 	}
 
-	private void createDisplayForGuitar(Long configuration) {
-		GridLayout grid = new GridLayout(7, 9);
-		grid.setSpacing(false);
-		grid.setMargin(false);
-		grid.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
-		chordDescriptionLayout.addComponent(grid);
+	private void createDisplayForGuitar(ChordTO choosenChord) {
+		BufferedImage image = ChordImageUtils.drawChord(choosenChord, 30);
+		VerticalLayout layout = new VerticalLayout();
+		chordDescriptionLayout.addComponent(layout);
+		layout.addComponent(new Image(null, new StreamResource(new StreamSource() {
+			private static final long serialVersionUID = -5893071133311094692L;
 
-		grid.addComponent(new Embedded(null, new ThemeResource("songs/strings_labels.png")), 1, 0, 6, 0);
-		for (int row = 1; row < grid.getRows(); row++)
-			for (int col = 0; col < grid.getColumns(); col++)
-				if (col == 0 && row > 0)
-					grid.addComponent(new Label(String.valueOf(row)), col, row);
-				else {
-					long mask = 1L << (row - 1) * 6 + (col - 1);
-					String img = null;
-					if ((configuration.longValue() & mask) > 0)
-						img = "hit_chord.png";
-					else
-						img = "empty_chord.png";
-					Embedded emb = new Embedded(null, new ThemeResource("songs/" + img));
-					emb.setHeight("53px");
-					emb.setWidth("34px");
-					grid.addComponent(emb, col, row);
+			@Override
+			public InputStream getStream() {
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				try {
+					ImageIO.write(image, "png", os);
+					return new ByteArrayInputStream(os.toByteArray());
+				} catch (IOException e) {
+					logger.error("Nezdařilo se vytváření thumbnail akordu", e);
+					return null;
 				}
+			}
+		}, "Chord-" + choosenChord.getName())));
 	}
 
 	private void loadChords() {

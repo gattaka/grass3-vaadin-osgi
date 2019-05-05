@@ -219,9 +219,10 @@ public class ListTab extends VerticalLayout {
 	public void chooseSong(Long id, boolean selectSong) {
 		choosenSong = getSongsService().getSongById(id);
 		songTab.showDetail(choosenSong);
-		tabSheet.setSelectedTab(songTab);
-		if (selectSong)
+		if (selectSong) {
+			tabSheet.setSelectedTab(songTab);
 			selectSong(id);
+		}
 	}
 
 	public SongTO getChoosenSong() {

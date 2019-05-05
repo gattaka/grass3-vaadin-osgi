@@ -268,8 +268,8 @@ public class SongTab extends VerticalLayout {
 		}, "Chord-" + chord)));
 		window.setContent(layout);
 		window.setModal(false);
-		window.setPositionX((int) clientX + 5);
-		window.setPositionY((int) clientY + 5);
+		window.setPositionX((int) clientX + 15);
+		window.setPositionY((int) clientY);
 		UI.getCurrent().addWindow(window);
 	}
 

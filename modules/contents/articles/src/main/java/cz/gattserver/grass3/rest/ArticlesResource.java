@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import cz.gattserver.grass3.articles.config.ArticlesConfiguration;
 import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleRESTTO;
 import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
+import cz.gattserver.grass3.modules.ArticlesContentModule;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.SecurityService;
 
@@ -66,7 +66,9 @@ public class ArticlesResource {
 	@RequestMapping("/count")
 	public ResponseEntity<Integer> count(@RequestParam(value = "filter", required = false) String filter) {
 		UserInfoTO user = securityService.getCurrentUser();
-		return new ResponseEntity<>(contentNodeService.getCountByName(filter, user.getId()), HttpStatus.OK);
+		return new ResponseEntity<>(
+				contentNodeService.getCountByNameAndContentReader(filter, ArticlesContentModule.ID, user.getId()),
+				HttpStatus.OK);
 	}
 
 	@RequestMapping("/list")
@@ -75,15 +77,14 @@ public class ArticlesResource {
 			@RequestParam(value = "filter", required = false) String filter) {
 		UserInfoTO user = securityService.getCurrentUser();
 
-		int count = contentNodeService.getCountByNameAndContentReader(filter, ArticlesConfiguration.PREFIX,
-				user.getId());
+		int count = contentNodeService.getCountByNameAndContentReader(filter, ArticlesContentModule.ID, user.getId());
 		// startIndex nesmí být víc než je počet, endIndex může být s tím si JPA
 		// poradí a sníží ho
 		if (page * pageSize > count)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-		return new ResponseEntity<>(contentNodeService.getByName(filter, user.getId(), new PageRequest(page, pageSize)),
-				HttpStatus.OK);
+		return new ResponseEntity<>(contentNodeService.getByNameAndContentReader(filter, ArticlesContentModule.ID,
+				user.getId(), new PageRequest(page, pageSize)), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/article", method = RequestMethod.GET)

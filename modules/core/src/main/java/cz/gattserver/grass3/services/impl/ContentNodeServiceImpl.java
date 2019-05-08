@@ -272,4 +272,14 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 				.getResults();
 	}
 
+	@Override
+	public List<ContentNodeOverviewTO> getByNameAndContentReader(String name, String contentReader, Long userId,
+			PageRequest pageRequest) {
+		boolean isAdmin = userId == null ? false : userRepository.findOne(userId).isAdmin();
+		name = name == null ? "%" : "%" + name.replace('*', '%') + "%";
+		return contentNodeRepository
+				.findByNameAndContentReaderAndUserAccess(name, contentReader, userId, isAdmin, pageRequest)
+				.getResults();
+	}
+
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import cz.gattserver.grass3.articles.config.ArticlesConfiguration;
 import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleRESTTO;
 import cz.gattserver.grass3.articles.services.ArticleService;
@@ -73,7 +74,9 @@ public class ArticlesResource {
 			@RequestParam(value = "pageSize", required = true) int pageSize,
 			@RequestParam(value = "filter", required = false) String filter) {
 		UserInfoTO user = securityService.getCurrentUser();
-		int count = contentNodeService.getCountByName(filter, user.getId());
+
+		int count = contentNodeService.getCountByNameAndContentReader(filter, ArticlesConfiguration.PREFIX,
+				user.getId());
 		// startIndex nesmí být víc než je počet, endIndex může být s tím si JPA
 		// poradí a sníží ho
 		if (page * pageSize > count)

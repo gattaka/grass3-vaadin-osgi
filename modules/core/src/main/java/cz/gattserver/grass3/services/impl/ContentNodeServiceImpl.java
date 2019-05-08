@@ -240,25 +240,34 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 
 	private QueryResults<ContentNodeOverviewTO> innerByNameAndUserAccess(String name, Long userId, boolean isAdmin,
 			PageRequest pr) {
-		name = "%" + name.replace('*', '%') + "%";
+		name = name == null ? "%" : "%" + name.replace('*', '%') + "%";
 		return contentNodeRepository.findByNameAndUserAccess(name, userId, isAdmin, pr);
 	}
 
 	@Override
 	public int getCountByName(String name, Long userId) {
-		boolean isAdmin = userRepository.findOne(userId).isAdmin();
+		boolean isAdmin = userId == null ? false : userRepository.findOne(userId).isAdmin();
 		return (int) innerByNameAndUserAccess(name, userId, isAdmin, new PageRequest(1, 1)).getTotal();
 	}
 
 	@Override
+	public int getCountByNameAndContentReader(String name, String contentReader, Long userId) {
+		boolean isAdmin = userId == null ? false : userRepository.findOne(userId).isAdmin();
+		name = name == null ? "%" : "%" + name.replace('*', '%') + "%";
+		return (int) contentNodeRepository
+				.findByNameAndContentReaderAndUserAccess(name, contentReader, userId, isAdmin, new PageRequest(1, 1))
+				.getTotal();
+	}
+
+	@Override
 	public List<ContentNodeOverviewTO> getByName(String name, Long userId, PageRequest pr) {
-		boolean isAdmin = userRepository.findOne(userId).isAdmin();
+		boolean isAdmin = userId == null ? false : userRepository.findOne(userId).isAdmin();
 		return innerByNameAndUserAccess(name, userId, isAdmin, pr).getResults();
 	}
 
 	@Override
 	public List<ContentNodeOverviewTO> getByName(String name, Long userId, int offset, int limit) {
-		boolean isAdmin = userRepository.findOne(userId).isAdmin();
+		boolean isAdmin = userId == null ? false : userRepository.findOne(userId).isAdmin();
 		return innerByNameAndUserAccess(name, userId, isAdmin, QuerydslUtil.transformOffsetLimit(offset, limit))
 				.getResults();
 	}

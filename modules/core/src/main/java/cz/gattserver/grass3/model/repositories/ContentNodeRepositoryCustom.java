@@ -22,4 +22,7 @@ public interface ContentNodeRepositoryCustom {
 	QueryResults<ContentNodeOverviewTO> findByNameAndUserAccess(String name, Long userId, boolean admin,
 			Pageable pageable);
 
+	QueryResults<ContentNodeOverviewTO> findByNameAndContentReaderAndUserAccess(String name, String contentReader,
+			Long userId, boolean admin, Pageable pageable);
+
 }

@@ -234,6 +234,19 @@ public interface ContentNodeService {
 	int getCountByName(String value, Long userId);
 
 	/**
+	 * Získá počet obsahů dle názvu a typu obsahu
+	 * 
+	 * @param name
+	 *            název (vzor s *)
+	 * @param contentReader
+	 *            typ obsahu
+	 * @param userId
+	 *            id uživatele
+	 * @return počet obsahů
+	 */
+	int getCountByNameAndContentReader(String value, String contentReader, Long userId);
+
+	/**
 	 * Získá list obsahů dle názvu
 	 * 
 	 * @param name

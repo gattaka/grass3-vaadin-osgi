@@ -4,8 +4,10 @@ import cz.gattserver.grass3.config.AbstractConfiguration;
 
 public class ArticlesConfiguration extends AbstractConfiguration {
 
+	public static final String PREFIX = "cz.gattserver.grass3.articles";
+
 	public ArticlesConfiguration() {
-		super("cz.gattserver.grass3.articles");
+		super(PREFIX);
 	}
 
 	/**

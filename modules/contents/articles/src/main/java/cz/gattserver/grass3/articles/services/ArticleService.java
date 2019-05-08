@@ -155,7 +155,7 @@ public interface ArticleService {
 	 *            přidány i jeho nepublikované články
 	 * @return list článků, ve kterých je možné vyhledávat
 	 */
-	public List<ArticleTO> getAllArticlesForSearch(long userId);
+	public List<ArticleTO> getAllArticlesForSearch(Long userId);
 
 	/**
 	 * Získá všechny rozpracované články viditelné daným uživatelem
@@ -165,6 +165,6 @@ public interface ArticleService {
 	 *            články
 	 * @return list konceptů
 	 */
-	public List<ArticleDraftOverviewTO> getDraftsForUser(long userId);
+	public List<ArticleDraftOverviewTO> getDraftsForUser(Long userId);
 
 }

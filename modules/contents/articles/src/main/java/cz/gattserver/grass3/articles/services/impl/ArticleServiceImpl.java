@@ -192,9 +192,9 @@ public class ArticleServiceImpl implements ArticleService {
 		Article article = articleRepository.findOne(id);
 		if (article == null)
 			return null;
-		User user = userRepository.findOne(userId);
-		if (article.getContentNode().getPublicated() || user.isAdmin()
-				|| article.getContentNode().getAuthor().getId().equals(user.getId())) {
+		User user = userId == null ? null : userRepository.findOne(userId);
+		if (article.getContentNode().getPublicated() || user != null
+				&& (user.isAdmin() || article.getContentNode().getAuthor().getId().equals(user.getId()))) {
 			return articlesMapper.mapArticleForREST(article);
 		}
 		throw new UnauthorizedAccessException();
@@ -240,15 +240,15 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	@Override
-	public List<ArticleTO> getAllArticlesForSearch(long userId) {
-		boolean isAdmin = userRepository.findOne(userId).isAdmin();
+	public List<ArticleTO> getAllArticlesForSearch(Long userId) {
+		boolean isAdmin = userId == null ? false : userRepository.findOne(userId).isAdmin();
 		List<Article> articles = articleRepository.findAllForSearch(userId, isAdmin);
 		return articlesMapper.mapArticlesForSearch(articles);
 	}
 
 	@Override
-	public List<ArticleDraftOverviewTO> getDraftsForUser(long userId) {
-		boolean isAdmin = userRepository.findOne(userId).isAdmin();
+	public List<ArticleDraftOverviewTO> getDraftsForUser(Long userId) {
+		boolean isAdmin = userId == null ? false : userRepository.findOne(userId).isAdmin();
 		List<Article> articles = articleRepository.findDraftsForUser(userId, isAdmin);
 		return articlesMapper.mapArticlesForDraftOverview(articles);
 	}

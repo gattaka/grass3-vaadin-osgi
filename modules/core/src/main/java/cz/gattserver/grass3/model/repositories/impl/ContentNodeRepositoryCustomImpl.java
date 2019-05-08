@@ -124,4 +124,20 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 				.orderBy(new OrderSpecifier<LocalDateTime>(Order.DESC, c.creationDate)).fetchResults();
 	}
 
+	@Override
+	public QueryResults<ContentNodeOverviewTO> findByNameAndContentReaderAndUserAccess(String name,
+			String contentReader, Long userId, boolean admin, Pageable pageable) {
+		JPAQuery<ContentNode> query = new JPAQuery<>(entityManager);
+		QContentNode c = QContentNode.contentNode;
+		QNode n = QNode.node;
+		QUser u = QUser.user;
+		QuerydslUtil.applyPagination(pageable, query);
+		return query.from(c).innerJoin(c.parent, n).innerJoin(c.author, u)
+				.where(createByUserAccessPredicate(userId, admin), c.name.toLowerCase().like(name.toLowerCase()),
+						c.contentReaderId.eq(contentReader))
+				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,
+						c.lastModificationDate, c.publicated, u.name, u.id, c.id))
+				.orderBy(new OrderSpecifier<LocalDateTime>(Order.DESC, c.creationDate)).fetchResults();
+	}
+
 }

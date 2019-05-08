@@ -27,6 +27,7 @@ import cz.gattserver.grass3.articles.events.impl.ArticlesProcessResultEvent;
 import cz.gattserver.grass3.articles.events.impl.ArticlesProcessStartEvent;
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
 import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
+import cz.gattserver.grass3.articles.interfaces.ArticleRESTTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.articles.model.domain.Article;
 import cz.gattserver.grass3.articles.model.domain.ArticleJSResource;
@@ -35,11 +36,12 @@ import cz.gattserver.grass3.articles.plugins.register.PluginRegisterService;
 import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.articles.services.ArticlesMapperService;
 import cz.gattserver.grass3.events.EventBus;
+import cz.gattserver.grass3.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.ContentTag;
+import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.repositories.UserRepository;
 import cz.gattserver.grass3.modules.ArticlesContentModule;
-import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.services.ContentNodeService;
 
 @Transactional
@@ -185,6 +187,19 @@ public class ArticleServiceImpl implements ArticleService {
 		return articlesMapper.mapArticleForDetail(article);
 	}
 
+	@Override
+	public ArticleRESTTO getArticleForREST(Long id, Long userId) throws UnauthorizedAccessException {
+		Article article = articleRepository.findOne(id);
+		if (article == null)
+			return null;
+		User user = userRepository.findOne(userId);
+		if (article.getContentNode().getPublicated() || user.isAdmin()
+				|| article.getContentNode().getAuthor().getId().equals(user.getId())) {
+			return articlesMapper.mapArticleForREST(article);
+		}
+		throw new UnauthorizedAccessException();
+	}
+
 	@Async
 	@Override
 	public void reprocessAllArticles(String contextRoot) {
@@ -226,14 +241,14 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public List<ArticleTO> getAllArticlesForSearch(long userId) {
-		boolean isAdmin = userRepository.hasRole(userId, CoreRole.ADMIN.getAuthority()) == 1L;
+		boolean isAdmin = userRepository.findOne(userId).isAdmin();
 		List<Article> articles = articleRepository.findAllForSearch(userId, isAdmin);
 		return articlesMapper.mapArticlesForSearch(articles);
 	}
 
 	@Override
 	public List<ArticleDraftOverviewTO> getDraftsForUser(long userId) {
-		boolean isAdmin = userRepository.hasRole(userId, CoreRole.ADMIN.getAuthority()) == 1L;
+		boolean isAdmin = userRepository.findOne(userId).isAdmin();
 		List<Article> articles = articleRepository.findDraftsForUser(userId, isAdmin);
 		return articlesMapper.mapArticlesForDraftOverview(articles);
 	}

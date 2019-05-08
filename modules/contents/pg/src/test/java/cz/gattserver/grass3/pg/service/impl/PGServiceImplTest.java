@@ -26,6 +26,7 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import cz.gattserver.grass3.events.EventBus;
+import cz.gattserver.grass3.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.mock.CoreMockService;
 import cz.gattserver.grass3.mock.MockFileSystemService;
@@ -33,7 +34,6 @@ import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.modules.PGModule;
 import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.pg.events.impl.PGProcessResultEvent;
-import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.pg.interfaces.PhotoVersion;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryItemType;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+
 import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
@@ -40,7 +42,7 @@ public interface ContentNodeService {
 	 *            obsahů), od kterého je draft nebo <code>null</code>
 	 * @return id {@link ContentNode} záznamu, který byl k obsahu vytvořen
 	 */
-	public long save(String contentModuleId, long contentId, String name, Collection<String> tags, boolean publicated,
+	long save(String contentModuleId, long contentId, String name, Collection<String> tags, boolean publicated,
 			long nodeId, long author, boolean draft, LocalDateTime date, Long draftSourceId);
 
 	/**
@@ -50,7 +52,7 @@ public interface ContentNodeService {
 	 *            identifikátor obsahu
 	 * @return obsah
 	 */
-	public ContentNodeTO getByID(long id);
+	ContentNodeTO getByID(long id);
 
 	/**
 	 * Upraví obsah a uloží ho do DB - verze metody pro obsah bez tagů
@@ -62,7 +64,7 @@ public interface ContentNodeService {
 	 * @param publicated
 	 *            je obsah publikovaný
 	 */
-	public void modify(long contentNodeId, String name, boolean publicated);
+	void modify(long contentNodeId, String name, boolean publicated);
 
 	/**
 	 * Upraví obsah a uloží ho do DB
@@ -76,7 +78,7 @@ public interface ContentNodeService {
 	 * @param publicated
 	 *            <code>true</code>, pokud je obsah publikován
 	 */
-	public void modify(long contentNodeId, String name, Collection<String> tags, boolean publicated);
+	void modify(long contentNodeId, String name, Collection<String> tags, boolean publicated);
 
 	/**
 	 * Upraví obsah a uloží ho do DB - verze s možností editace data vytvoření
@@ -94,7 +96,7 @@ public interface ContentNodeService {
 	 *            vnucené datum vytvoření obsahu, které přepíše původní
 	 *            automatické datum
 	 */
-	public void modify(long contentNodeId, String name, Collection<String> tags, boolean publicated,
+	void modify(long contentNodeId, String name, Collection<String> tags, boolean publicated,
 			LocalDateTime creationDate);
 
 	/**
@@ -103,7 +105,7 @@ public interface ContentNodeService {
 	 * @param contentNodeId
 	 *            id obecného uzlu obsahu
 	 */
-	public void deleteByContentNodeId(long contentNodeId);
+	void deleteByContentNodeId(long contentNodeId);
 
 	/**
 	 * Smaže obsah dle id koncového obsahu
@@ -113,7 +115,7 @@ public interface ContentNodeService {
 	 * @param contentId
 	 *            id koncového obsahu v rámci modulu obsahů
 	 */
-	public void deleteByContentId(String contentModuleId, long contentId);
+	void deleteByContentId(String contentModuleId, long contentId);
 
 	/**
 	 * Přesune obsah mezi kategoriemi
@@ -123,14 +125,14 @@ public interface ContentNodeService {
 	 * @param contentNodeId
 	 *            id obsahu k přesunutí
 	 */
-	public void moveContent(long nodeId, long contentNodeId);
+	void moveContent(long nodeId, long contentNodeId);
 
 	/**
 	 * Získá počet všech obsahů (pro LazyQueryContainer)
 	 * 
 	 * @return počet všech obsahů v DB
 	 */
-	public int getCount();
+	int getCount();
 
 	/**
 	 * Získá stránku nedávno přidaných obsahů (pro LazyQueryContainer)
@@ -141,7 +143,7 @@ public interface ContentNodeService {
 	 *            limit
 	 * @return list nalezených obsahů dle stránkování
 	 */
-	public List<ContentNodeOverviewTO> getRecentAdded(int offset, int limit);
+	List<ContentNodeOverviewTO> getRecentAdded(int offset, int limit);
 
 	/**
 	 * Získá stránku nedávno upravených obsahů (pro LazyQueryContainer)
@@ -152,7 +154,7 @@ public interface ContentNodeService {
 	 *            limit
 	 * @return list nalezených obsahů dle stránkování
 	 */
-	public List<ContentNodeOverviewTO> getRecentModified(int offset, int limit);
+	List<ContentNodeOverviewTO> getRecentModified(int offset, int limit);
 
 	/**
 	 * Získá počet obsahů dle tagu (pro LazyQueryContainer)
@@ -161,7 +163,7 @@ public interface ContentNodeService {
 	 *            id tagu, dle kterého bude výběr omezen
 	 * @return počet obsahů dle tagu
 	 */
-	public int getCountByTag(long tagId);
+	int getCountByTag(long tagId);
 
 	/**
 	 * Získá stránku obsahů dle tagu (pro LazyQueryContainer)
@@ -174,7 +176,7 @@ public interface ContentNodeService {
 	 *            limit
 	 * @return list nalezených obsahů dle stránkování
 	 */
-	public List<ContentNodeOverviewTO> getByTag(long tagId, int offset, int limit);
+	List<ContentNodeOverviewTO> getByTag(long tagId, int offset, int limit);
 
 	/**
 	 * Získá počet oblíbených obsahů dle uživatele (pro LazyQueryContainer)
@@ -183,7 +185,7 @@ public interface ContentNodeService {
 	 *            id uživatele, dle kterého bude výběr omezen
 	 * @return počet obsahů dle uživatele
 	 */
-	public int getUserFavouriteCount(long userId);
+	int getUserFavouriteCount(long userId);
 
 	/**
 	 * Získá stránku oblíbených obsahů dle uživatele (pro LazyQueryContainer)
@@ -196,7 +198,7 @@ public interface ContentNodeService {
 	 *            limit
 	 * @return list nalezených obsahů dle stránkování a omezení
 	 */
-	public List<ContentNodeOverviewTO> getUserFavourite(long userId, int offset, int limit);
+	List<ContentNodeOverviewTO> getUserFavourite(long userId, int offset, int limit);
 
 	/**
 	 * Získá počet obsahů dle kategorie (pro LazyQueryContainer)
@@ -205,7 +207,7 @@ public interface ContentNodeService {
 	 *            id kategorie, dle kterého bude výběr omezen
 	 * @return počet obsahů dle kategorie
 	 */
-	public int getCountByNode(long nodeId);
+	int getCountByNode(long nodeId);
 
 	/**
 	 * Získá stránku obsahů dle kategorie (pro LazyQueryContainer)
@@ -218,28 +220,45 @@ public interface ContentNodeService {
 	 *            limit
 	 * @return list nalezených obsahů dle stránkování a omezení
 	 */
-	public List<ContentNodeOverviewTO> getByNode(long nodeId, int offset, int limit);
+	List<ContentNodeOverviewTO> getByNode(long nodeId, int offset, int limit);
 
 	/**
 	 * Získá počet obsahů dle názvu
 	 * 
 	 * @param name
 	 *            název (vzor s *)
+	 * @param userId
+	 *            id uživatele
 	 * @return počet obsahů
 	 */
-	public int getCountByName(String value);
+	int getCountByName(String value, Long userId);
 
 	/**
 	 * Získá list obsahů dle názvu
 	 * 
 	 * @param name
 	 *            název (vzor s *)
+	 * @param userId
+	 *            id uživatele
 	 * @param offset
 	 *            stránkování
 	 * @param limit
 	 *            stránkování
 	 * @return list nalezených obsahů
 	 */
-	public List<ContentNodeOverviewTO> getByName(String value, int offset, int limit);
+	List<ContentNodeOverviewTO> getByName(String value, Long userId, int offset, int limit);
+
+	/**
+	 * Získá list obsahů dle názvu
+	 * 
+	 * @param name
+	 *            název (vzor s *)
+	 * @param userId
+	 *            id uživatele
+	 * @param pageRequest
+	 *            stránkování
+	 * @return list nalezených obsahů
+	 */
+	List<ContentNodeOverviewTO> getByName(String name, Long userId, PageRequest pageRequest);
 
 }

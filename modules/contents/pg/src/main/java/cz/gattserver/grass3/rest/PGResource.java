@@ -25,9 +25,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import cz.gattserver.grass3.events.EventBus;
+import cz.gattserver.grass3.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.pg.events.impl.PGProcessResultEvent;
-import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.interfaces.PhotoVersion;
@@ -55,8 +55,7 @@ public class PGResource {
 	@RequestMapping("/count")
 	public ResponseEntity<Integer> count(@RequestParam(value = "filter", required = false) String filter) {
 		UserInfoTO user = securityService.getCurrentUser();
-		return new ResponseEntity<>(pgService.countAllPhotogalleriesForREST(user.getId(), filter),
-				HttpStatus.OK);
+		return new ResponseEntity<>(pgService.countAllPhotogalleriesForREST(user.getId(), filter), HttpStatus.OK);
 	}
 
 	// http://localhost:8180/web/ws/pg/list?page=1&pageSize=10
@@ -140,7 +139,7 @@ public class PGResource {
 	public ResponseEntity<Long> create(@RequestParam(value = "galleryName", required = true) String galleryName)
 			throws IllegalStateException, IOException {
 		UserInfoTO user = securityService.getCurrentUser();
-		if (user == null || user.getId() == null)
+		if (user.getId() == null)
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		logger.info("/create volán");
 		try {
@@ -175,14 +174,13 @@ public class PGResource {
 			@RequestParam(value = "files", required = true) MultipartFile[] uploadedFile)
 			throws IllegalStateException, IOException {
 		UserInfoTO user = securityService.getCurrentUser();
-		if (user == null || user.getId() == null)
+		if (user.getId() == null)
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		logger.info("/upload volán");
 		try {
 			PhotogalleryTO to = pgService.getPhotogalleryForDetail(galleryId);
 			for (MultipartFile file : uploadedFile)
-				pgService.uploadFile(file.getInputStream(), file.getOriginalFilename(),
-						to.getPhotogalleryPath());
+				pgService.uploadFile(file.getInputStream(), file.getOriginalFilename(), to.getPhotogalleryPath());
 
 			logger.info("/upload dokončen");
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -196,7 +194,7 @@ public class PGResource {
 	public ResponseEntity<String> process(@RequestParam(value = "galleryId", required = true) Long galleryId)
 			throws IllegalStateException, IOException {
 		UserInfoTO user = securityService.getCurrentUser();
-		if (user == null || user.getId() == null)
+		if (user.getId() == null)
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		logger.info("/process volán");
 		try {

@@ -3,8 +3,10 @@ package cz.gattserver.grass3.articles.services;
 import java.util.List;
 
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
+import cz.gattserver.grass3.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
 import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
+import cz.gattserver.grass3.articles.interfaces.ArticleRESTTO;
 
 public interface ArticleService {
 
@@ -121,6 +123,19 @@ public interface ArticleService {
 	 * @return DTO článku
 	 */
 	public ArticleTO getArticleForDetail(long id);
+
+	/**
+	 * Získá článek pro REST dle jeho identifikátoru
+	 * 
+	 * @param id
+	 *            identifikátor
+	 * @param userId
+	 *            id přihlášeného uživatele
+	 * @return DTO článku
+	 * @throws UnauthorizedAccessException
+	 *             pokud uživatel nemá právo na přístup k obsahu
+	 */
+	public ArticleRESTTO getArticleForREST(Long id, Long userId) throws UnauthorizedAccessException;
 
 	/**
 	 * Spustí přegenerování všech článků

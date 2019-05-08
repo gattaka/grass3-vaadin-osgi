@@ -21,6 +21,7 @@ import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.repositories.ContentNodeRepository;
+import cz.gattserver.grass3.model.repositories.UserRepository;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.ContentTagService;
@@ -43,6 +44,9 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	@Autowired
 	private ContentNodeRepository contentNodeRepository;
@@ -234,20 +238,29 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	 * Dle názvu
 	 */
 
-	private QueryResults<ContentNodeOverviewTO> innerByNameAndUserAccess(String name, PageRequest pr) {
-		UserInfoTO user = securityService.getCurrentUser();
+	private QueryResults<ContentNodeOverviewTO> innerByNameAndUserAccess(String name, Long userId, boolean isAdmin,
+			PageRequest pr) {
 		name = "%" + name.replace('*', '%') + "%";
-		return contentNodeRepository.findByNameAndUserAccess(name, user.getId(), user.isAdmin(), pr);
+		return contentNodeRepository.findByNameAndUserAccess(name, userId, isAdmin, pr);
 	}
 
 	@Override
-	public int getCountByName(String name) {
-		return (int) innerByNameAndUserAccess(name, new PageRequest(1, 1)).getTotal();
+	public int getCountByName(String name, Long userId) {
+		boolean isAdmin = userRepository.findOne(userId).isAdmin();
+		return (int) innerByNameAndUserAccess(name, userId, isAdmin, new PageRequest(1, 1)).getTotal();
 	}
 
 	@Override
-	public List<ContentNodeOverviewTO> getByName(String name, int offset, int limit) {
-		return innerByNameAndUserAccess(name, QuerydslUtil.transformOffsetLimit(offset, limit)).getResults();
+	public List<ContentNodeOverviewTO> getByName(String name, Long userId, PageRequest pr) {
+		boolean isAdmin = userRepository.findOne(userId).isAdmin();
+		return innerByNameAndUserAccess(name, userId, isAdmin, pr).getResults();
+	}
+
+	@Override
+	public List<ContentNodeOverviewTO> getByName(String name, Long userId, int offset, int limit) {
+		boolean isAdmin = userRepository.findOne(userId).isAdmin();
+		return innerByNameAndUserAccess(name, userId, isAdmin, QuerydslUtil.transformOffsetLimit(offset, limit))
+				.getResults();
 	}
 
 }

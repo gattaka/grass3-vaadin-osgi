@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.pg.exception;
+package cz.gattserver.grass3.exception;
 
 public class UnauthorizedAccessException extends Exception {
 

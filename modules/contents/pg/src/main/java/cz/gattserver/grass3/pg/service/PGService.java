@@ -10,11 +10,11 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 
+import cz.gattserver.grass3.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.pg.config.PGConfiguration;
 import cz.gattserver.grass3.pg.events.impl.PGProcessProgressEvent;
 import cz.gattserver.grass3.pg.events.impl.PGProcessResultEvent;
 import cz.gattserver.grass3.pg.events.impl.PGProcessStartEvent;
-import cz.gattserver.grass3.pg.exception.UnauthorizedAccessException;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTTO;

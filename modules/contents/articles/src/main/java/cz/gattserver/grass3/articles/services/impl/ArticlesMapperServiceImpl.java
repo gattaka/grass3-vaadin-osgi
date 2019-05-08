@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
+import cz.gattserver.grass3.articles.interfaces.ArticleRESTTO;
 import cz.gattserver.grass3.articles.model.domain.Article;
 import cz.gattserver.grass3.articles.model.domain.ArticleJSResource;
 import cz.gattserver.grass3.articles.services.ArticlesMapperService;
@@ -24,9 +25,6 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 	@Autowired
 	private CoreMapperService mapper;
 
-	/**
-	 * Převede {@link Article} na {@link ArticleTO}
-	 */
 	public ArticleTO mapArticleForDetail(Article article) {
 		ArticleTO articleDTO = new ArticleTO();
 
@@ -34,16 +32,37 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 		articleDTO.setOutputHTML(article.getOutputHTML());
 
 		Set<String> pluginCSSResources = new LinkedHashSet<>();
-		for (String resource : article.getPluginCSSResources()) {
+		for (String resource : article.getPluginCSSResources())
 			pluginCSSResources.add(resource);
-		}
+
 		articleDTO.setPluginCSSResources(pluginCSSResources);
 		Set<String> pluginJSResources = new LinkedHashSet<>();
-		for (ArticleJSResource resource : article.getPluginJSResources()) {
+		for (ArticleJSResource resource : article.getPluginJSResources())
 			pluginJSResources.add(resource.getName());
-		}
+
 		articleDTO.setPluginJSResources(pluginJSResources);
 		articleDTO.setText(article.getText());
+
+		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article.getContentNode()));
+		return articleDTO;
+	}
+
+	public ArticleRESTTO mapArticleForREST(Article article) {
+		ArticleRESTTO articleDTO = new ArticleRESTTO();
+
+		articleDTO.setId(article.getId());
+		articleDTO.setOutputHTML(article.getOutputHTML());
+
+		Set<String> pluginCSSResources = new LinkedHashSet<>();
+		for (String resource : article.getPluginCSSResources())
+			pluginCSSResources.add(resource);
+
+		articleDTO.setPluginCSSResources(pluginCSSResources);
+		Set<String> pluginJSResources = new LinkedHashSet<>();
+		for (ArticleJSResource resource : article.getPluginJSResources())
+			pluginJSResources.add(resource.getName());
+
+		articleDTO.setPluginJSResources(pluginJSResources);
 
 		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article.getContentNode()));
 		return articleDTO;

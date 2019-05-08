@@ -25,6 +25,7 @@ import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.ContentTagService;
+import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.ContentsLazyGrid;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.BasePage;
@@ -50,6 +51,9 @@ public class HomePage extends BasePage {
 
 	@Autowired
 	private ContentNodeService contentNodeFacade;
+
+	@Autowired
+	private SecurityService securityService;
 
 	@Resource(name = "tagPageFactory")
 	private PageFactory tagPageFactory;
@@ -124,6 +128,8 @@ public class HomePage extends BasePage {
 		searchResultsTable.setVisible(false);
 		searchResultsLayout.addComponent(searchResultsTable);
 
+		UserInfoTO user = securityService.getCurrentUser();
+
 		searchField.addValueChangeListener(new ValueChangeListener<String>() {
 			private static final long serialVersionUID = 1L;
 
@@ -134,8 +140,8 @@ public class HomePage extends BasePage {
 					searchResultsTable.setVisible(true);
 					searchResultsTable.populate(HomePage.this,
 							(sortOrder, offset, limit) -> contentNodeFacade
-									.getByName(searchField.getValue(), offset, limit).stream(),
-							() -> contentNodeFacade.getCountByName(searchField.getValue()));
+									.getByName(searchField.getValue(), user.getId(), offset, limit).stream(),
+							() -> contentNodeFacade.getCountByName(searchField.getValue(), user.getId()));
 					searchResultsTable.setHeight("200px");
 				}
 				searchResultsTable.getDataProvider().refreshAll();

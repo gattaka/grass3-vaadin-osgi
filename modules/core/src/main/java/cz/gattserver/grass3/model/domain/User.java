@@ -19,6 +19,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.GenericGenerator;
 
 import cz.gattserver.grass3.security.CoreRole;
+import cz.gattserver.grass3.security.Role;
 
 @Entity(name = "USER_ACCOUNTS")
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "name" }) })
@@ -152,8 +153,8 @@ public class User {
 		this.favourites = favourites;
 	}
 
-	public boolean hasRole(CoreRole role) {
-		return getRoles().contains(role);
+	public boolean hasRole(Role role) {
+		return getRoles().contains(role.getAuthority());
 	}
 
 	public boolean isAdmin() {

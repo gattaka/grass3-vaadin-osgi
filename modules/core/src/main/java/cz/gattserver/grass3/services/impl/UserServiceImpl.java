@@ -84,9 +84,8 @@ public class UserServiceImpl implements UserService {
 	public List<UserInfoTO> getUserInfoFromAllUsers() {
 		List<User> users = userRepository.findAll();
 		List<UserInfoTO> infoDTOs = new ArrayList<>();
-		for (User user : users) {
+		for (User user : users) 
 			infoDTOs.add(mapper.map(user));
-		}
 		return infoDTOs;
 	}
 

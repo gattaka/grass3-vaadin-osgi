@@ -82,13 +82,13 @@ public class LanguagePage extends OneColumnPage {
 				Component newTab = null;
 				switch (pos) {
 				case 0:
-					newTab = createItemsTab(langId, ItemType.WORD);
+					newTab = createItemsTab(langId, null);
 					break;
 				case 1:
-					newTab = createItemsTab(langId, ItemType.PHRASE);
+					newTab = createItemsTab(langId, ItemType.WORD);
 					break;
 				case 2:
-					newTab = createItemsTab(langId, null);
+					newTab = createItemsTab(langId, ItemType.PHRASE);
 					break;
 				default:
 					break;
@@ -136,9 +136,9 @@ public class LanguagePage extends OneColumnPage {
 			long langId = item.getId();
 			createTabSheet(langId);
 
-			tabSheet.addTab(createItemsTab(langId, ItemType.WORD), "Slovíčka");
+			tabSheet.addTab(createItemsTab(langId, null), "Vše");
+			tabSheet.addTab(new VerticalLayout(), "Slovíčka");
 			tabSheet.addTab(new VerticalLayout(), "Fráze");
-			tabSheet.addTab(new VerticalLayout(), "Vše");
 			if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN))
 				tabSheet.addTab(createTestTab(langId), "Zkoušení");
 			tabSheet.addTab(createCrosswordTab(langId), "Křížovka");
@@ -161,6 +161,9 @@ public class LanguagePage extends OneColumnPage {
 					langs.addAll(languageFacade.getLanguages());
 					grid.getDataProvider().refreshAll();
 				})), grid));
+
+		if (!langs.isEmpty())
+			grid.select(langs.get(0));
 
 		return layout;
 	}

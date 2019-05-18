@@ -10,7 +10,6 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.ValidationResult;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
@@ -542,10 +541,7 @@ public class LanguagePage extends OneColumnPage {
 					to.setLanguage(langId);
 					languageFacade.saveLanguageItem(to);
 					grid.getDataProvider().refreshAll();
-				}, (value, context) -> {
-					LanguageItemTO itemTO = languageFacade.getLanguageItemByContent(langId, value);
-					return itemTO == null ? ValidationResult.ok() : ValidationResult.error("Položka již existuje");
-				}, type))));
+				}, langId, type))));
 
 		btnLayout.addComponent(new ModifyGridButton<LanguageItemTO>("Upravit", item -> {
 			ItemType oldType = item.getType();
@@ -555,13 +551,7 @@ public class LanguagePage extends OneColumnPage {
 					grid.getDataProvider().refreshItem(to);
 				else
 					grid.getDataProvider().refreshAll();
-			}, (value, context) -> {
-				LanguageItemTO itemTO = languageFacade.getLanguageItemByContent(langId, value);
-				if (itemTO == null || itemTO.getContent().equals(item.getContent()))
-					return ValidationResult.ok();
-				else
-					return ValidationResult.error("Položka již existuje");
-			}, type));
+			}, langId, type));
 		}, grid));
 
 		btnLayout.addComponent(new DeleteGridButton<LanguageItemTO>("Odstranit", items -> items.forEach(item -> {

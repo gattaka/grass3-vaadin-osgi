@@ -2,7 +2,10 @@ package cz.gattserver.grass3.language.web;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
@@ -14,6 +17,7 @@ import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
+import cz.gattserver.grass3.language.facades.LanguageFacade;
 import cz.gattserver.grass3.language.model.domain.ItemType;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.ui.components.CreateButton;
@@ -25,15 +29,18 @@ public class LanguageItemWindow extends WebWindow {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 
+	@Autowired
+	private LanguageFacade languageFacade;
+
 	interface SaveAction {
 		void onSave(LanguageItemTO itemTO);
 	}
 
-	public LanguageItemWindow(SaveAction action, Validator<String> validator, ItemType asType) {
-		this(null, action, validator, asType);
+	public LanguageItemWindow(SaveAction action, Long langId, ItemType asType) {
+		this(null, action, langId, asType);
 	}
 
-	public LanguageItemWindow(LanguageItemTO to, SaveAction action, Validator<String> validator, ItemType asType) {
+	public LanguageItemWindow(final LanguageItemTO to, SaveAction action, Long langId, ItemType asType) {
 		super(to == null ? "Založit" : "Upravit" + " záznam");
 
 		removeCloseShortcut(KeyCode.ESCAPE);
@@ -55,13 +62,26 @@ public class LanguageItemWindow extends WebWindow {
 		addComponent(typeRadio);
 
 		TextField contentField = new TextField("Obsah");
+		TextField translationField = new TextField("Překlad");
+
+		Validator<String> validator = (value, context) -> {
+			LanguageItemTO itemTO = languageFacade.getLanguageItemByContent(langId, value);
+			if (itemTO != null && itemTO.getContent().equals(value)
+					&& (to == null || !itemTO.getId().equals(to.getId()))) {
+				translationField.setPlaceholder(itemTO.getTranslation());
+				return ValidationResult.error("Položka již existuje");
+			} else {
+				translationField.setPlaceholder("");
+				return ValidationResult.ok();
+			}
+		};
+
 		contentField.setWidth("100%");
 		binder.forField(contentField).asRequired().withValidator(validator).bind(LanguageItemTO::getContent,
 				LanguageItemTO::setContent);
 		addComponent(contentField);
 		contentField.focus();
 
-		TextField translationField = new TextField("Překlad");
 		translationField.setWidth("100%");
 		binder.forField(translationField).asRequired().bind(LanguageItemTO::getTranslation,
 				LanguageItemTO::setTranslation);
@@ -90,7 +110,7 @@ public class LanguageItemWindow extends WebWindow {
 		} else {
 			buttonLayout.addComponent(new CreateButton(e -> onSave(action, binder, targetTO)));
 			Button createAndContinueBtn = new CreateButton(
-					e -> onSaveAndContinue(action, binder, targetTO, validator, typeRadio.getValue()));
+					e -> onSaveAndContinue(action, binder, targetTO, langId, typeRadio.getValue()));
 			createAndContinueBtn.setCaption("Vytvořit a pokračovat");
 			buttonLayout.addComponent(createAndContinueBtn);
 		}
@@ -106,11 +126,11 @@ public class LanguageItemWindow extends WebWindow {
 	}
 
 	private void onSaveAndContinue(SaveAction action, Binder<LanguageItemTO> binder, LanguageItemTO targetTO,
-			Validator<String> validator, ItemType asType) {
+			Long langId, ItemType asType) {
 		if (binder.writeBeanIfValid(targetTO)) {
 			checkAndThen(targetTO, () -> {
 				action.onSave(targetTO);
-				UI.getCurrent().addWindow(new LanguageItemWindow(action, validator, asType));
+				UI.getCurrent().addWindow(new LanguageItemWindow(action, langId, asType));
 				close();
 			});
 		}

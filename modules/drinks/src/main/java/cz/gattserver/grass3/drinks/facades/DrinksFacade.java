@@ -29,24 +29,17 @@ public interface DrinksFacade {
 	/**
 	 * Získá počet piv v DB
 	 * 
+	 * @param filterTO
 	 */
-	int countBeers();
-
-	/**
-	 * Získá všechny piva
-	 * 
-	 * @param offset
-	 * @param limit
-	 * @return
-	 */
-	List<BeerOverviewTO> getBeers(int offset, int limit);
+	int countBeers(BeerOverviewTO filterTO);
 
 	/**
 	 * Získá počet piv v DB
 	 * 
-	 * @param filterTO
+	 * @param filter
+	 *            filter přes název pivovaru a piva
 	 */
-	int countBeers(BeerOverviewTO filterTO);
+	int countBeers(String filter);
 
 	/**
 	 * Získá všechny piva
@@ -58,6 +51,17 @@ public interface DrinksFacade {
 	 * @return
 	 */
 	List<BeerOverviewTO> getBeers(BeerOverviewTO filterTO, int offset, int limit, List<QuerySortOrder> sortOrder);
+
+	/**
+	 * Získá všechny piva
+	 * 
+	 * @param filter
+	 *            filter přes název pivovaru a piva
+	 * @param offset
+	 * @param limit
+	 * @return
+	 */
+	List<BeerOverviewTO> getBeers(String filter, int offset, int limit);
 
 	/**
 	 * Získá pivo dle id
@@ -80,17 +84,21 @@ public interface DrinksFacade {
 	/**
 	 * Získá počet rumů v DB
 	 * 
+	 * @param filter
+	 *            filter přes název palírny a rumu
 	 */
-	int countRums();
+	int countRums(String filter);
 
 	/**
 	 * Získá všechny rumy
 	 * 
 	 * @param offset
 	 * @param limit
+	 * @param filter
+	 *            filter přes název palírny a rumu
 	 * @return
 	 */
-	List<RumOverviewTO> getRums(int offset, int limit);
+	List<RumOverviewTO> getRums(String filter, int offset, int limit);
 
 	/**
 	 * Získá počet rumů v DB
@@ -131,17 +139,21 @@ public interface DrinksFacade {
 	/**
 	 * Získá počet whiskey v DB
 	 * 
+	 * @param filter
+	 *            filter přes název palírny a whiskey
 	 */
-	int countWhiskeys();
+	int countWhiskeys(String filter);
 
 	/**
 	 * Získá všechny whiskey
 	 * 
 	 * @param offset
 	 * @param limit
+	 * @param filter
+	 *            filter přes název palírny a whiskey
 	 * @return
 	 */
-	List<WhiskeyOverviewTO> getWhiskeys(int offset, int limit);
+	List<WhiskeyOverviewTO> getWhiskeys(String filter, int offset, int limit);
 
 	/**
 	 * Získá počet whiskey v DB

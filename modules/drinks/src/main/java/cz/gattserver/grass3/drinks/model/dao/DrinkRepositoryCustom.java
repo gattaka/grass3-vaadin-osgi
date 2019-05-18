@@ -23,7 +23,11 @@ public interface DrinkRepositoryCustom {
 
 	long countBeers(BeerOverviewTO filterTO);
 
+	long countBeers(String filter);
+
 	List<BeerOverviewTO> findBeers(BeerOverviewTO filterTO, PageRequest pageable, OrderSpecifier<?>[] order);
+
+	List<BeerOverviewTO> findBeers(String filter, PageRequest pageable);
 
 	BeerTO findBeerById(Long id);
 
@@ -33,7 +37,11 @@ public interface DrinkRepositoryCustom {
 
 	long countRums(RumOverviewTO filterTO);
 
+	long countRums(String filter);
+
 	List<RumOverviewTO> findRums(RumOverviewTO filterTO, PageRequest pageable, OrderSpecifier<?>[] order);
+
+	List<RumOverviewTO> findRums(String filter, PageRequest pageable);
 
 	RumTO findRumById(Long id);
 
@@ -43,7 +51,11 @@ public interface DrinkRepositoryCustom {
 
 	long countWhiskeys(WhiskeyOverviewTO filterTO);
 
+	long countWhiskeys(String filter);
+
 	List<WhiskeyOverviewTO> findWhiskeys(WhiskeyOverviewTO filterTO, PageRequest pageable, OrderSpecifier<?>[] order);
+
+	List<WhiskeyOverviewTO> findWhiskeys(String filter, PageRequest pageable);
 
 	WhiskeyTO findWhiskeyById(Long id);
 

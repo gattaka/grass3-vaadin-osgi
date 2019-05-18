@@ -60,13 +60,13 @@ public class DrinksFacadeImpl implements DrinksFacade {
 	 * Piva
 	 */
 	@Override
-	public int countBeers() {
-		return (int) drinkRepository.countBeers(null);
+	public int countBeers(String filter) {
+		return (int) drinkRepository.countBeers(filter);
 	}
 
 	@Override
-	public List<BeerOverviewTO> getBeers(int page, int size) {
-		return drinkRepository.findBeers(null, new PageRequest(page, size), null);
+	public List<BeerOverviewTO> getBeers(String filter, int page, int size) {
+		return drinkRepository.findBeers(filter, new PageRequest(page, size));
 	}
 
 	@Override
@@ -119,13 +119,13 @@ public class DrinksFacadeImpl implements DrinksFacade {
 	 */
 
 	@Override
-	public int countRums() {
-		return (int) drinkRepository.countRums(null);
+	public int countRums(String filter) {
+		return (int) drinkRepository.countRums(filter);
 	}
 
 	@Override
-	public List<RumOverviewTO> getRums(int page, int size) {
-		return drinkRepository.findRums(null, new PageRequest(page, size), null);
+	public List<RumOverviewTO> getRums(String filter, int page, int size) {
+		return drinkRepository.findRums(filter, new PageRequest(page, size));
 	}
 
 	@Override
@@ -162,13 +162,13 @@ public class DrinksFacadeImpl implements DrinksFacade {
 	 */
 
 	@Override
-	public int countWhiskeys() {
-		return (int) drinkRepository.countWhiskeys(null);
+	public int countWhiskeys(String filter) {
+		return (int) drinkRepository.countWhiskeys(filter);
 	}
 
 	@Override
-	public List<WhiskeyOverviewTO> getWhiskeys(int page, int size) {
-		return drinkRepository.findWhiskeys(null, new PageRequest(page, size), null);
+	public List<WhiskeyOverviewTO> getWhiskeys(String filter, int page, int size) {
+		return drinkRepository.findWhiskeys(filter, new PageRequest(page, size));
 	}
 
 	@Override

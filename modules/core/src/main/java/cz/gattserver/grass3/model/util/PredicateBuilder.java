@@ -433,7 +433,7 @@ public class PredicateBuilder {
 		return this;
 	}
 
-	private String prepareForLike(String value) {
+	public static String prepareForLike(String value) {
 		// nahradí znaky * znakem % pro SQL a JPQL vyhledávání v LIKE a navíc
 		// přidá ještě jednou % aby se smazal rozdíl mezi údaji v DB, které mají
 		// za sebou mezery a údaji v aplikaci, které se zadávají bez mezer

@@ -5,9 +5,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -65,6 +67,27 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 		return builder.getBuilder();
 	}
 
+	private Predicate createPredicateBeers(String filter) {
+		QDrink d = QDrink.drink;
+		QBeerInfo b = QBeerInfo.beerInfo;
+		PredicateBuilder builder = new PredicateBuilder();
+		builder.eq(d.type, DrinkType.BEER);
+		if (StringUtils.isNotBlank(filter)) {
+			String matchString = '%' + filter.replace('*', '%') + '%';
+			builder.getBuilder()
+					.and(ExpressionUtils.or(d.name.likeIgnoreCase(matchString), b.brewery.likeIgnoreCase(matchString)));
+		}
+		return builder.getBuilder();
+	}
+
+	@Override
+	public long countBeers(String filter) {
+		JPAQuery<Drink> query = new JPAQuery<>(entityManager);
+		QDrink d = QDrink.drink;
+		QBeerInfo b = QBeerInfo.beerInfo;
+		return query.from(d).join(b).on(d.drinkInfo.eq(b.id)).where(createPredicateBeers(filter)).fetchCount();
+	}
+
 	@Override
 	public long countBeers(BeerOverviewTO filterTO) {
 		JPAQuery<Drink> query = new JPAQuery<>(entityManager);
@@ -88,6 +111,22 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 				.select(new QBeerOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, b.id, b.brewery,
 						b.ibu, b.degrees, b.category, b.maltType))
 				.from(d).join(b).on(d.drinkInfo.eq(b.id)).where(createPredicateBeers(filterTO)).orderBy(order).fetch();
+	}
+
+	@Override
+	public List<BeerOverviewTO> findBeers(String filter, PageRequest pageable) {
+		JPAQuery<BeerOverviewTO> query = new JPAQuery<>(entityManager);
+		QDrink d = QDrink.drink;
+		QBeerInfo b = QBeerInfo.beerInfo;
+		QuerydslUtil.applyPagination(pageable, query);
+
+		return query
+				.select(new QBeerOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, b.id, b.brewery,
+						b.ibu, b.degrees, b.category, b.maltType))
+				.from(d).join(b).on(d.drinkInfo.eq(b.id)).where(createPredicateBeers(filter))
+				.orderBy(QuerydslUtil.transformOrdering(new String[] { b.brewery.toString(), d.name.toString() },
+						new boolean[] { true, true }))
+				.fetch();
 	}
 
 	@Override
@@ -119,12 +158,32 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 		return builder.getBuilder();
 	}
 
+	private Predicate createPredicateRums(String filter) {
+		QDrink d = QDrink.drink;
+		PredicateBuilder builder = new PredicateBuilder();
+		builder.eq(d.type, DrinkType.RUM);
+		if (StringUtils.isNotBlank(filter)) {
+			String matchString = '%' + filter.replace('*', '%') + '%';
+			builder.getBuilder()
+					.and(ExpressionUtils.or(d.name.likeIgnoreCase(matchString), d.country.likeIgnoreCase(matchString)));
+		}
+		return builder.getBuilder();
+	}
+
 	@Override
 	public long countRums(RumOverviewTO filterTO) {
 		JPAQuery<Drink> query = new JPAQuery<>(entityManager);
 		QDrink d = QDrink.drink;
 		QRumInfo b = QRumInfo.rumInfo;
 		return query.from(d).join(b).on(d.drinkInfo.eq(b.id)).where(createPredicateRums(filterTO)).fetchCount();
+	}
+
+	@Override
+	public long countRums(String filter) {
+		JPAQuery<Drink> query = new JPAQuery<>(entityManager);
+		QDrink d = QDrink.drink;
+		QRumInfo b = QRumInfo.rumInfo;
+		return query.from(d).join(b).on(d.drinkInfo.eq(b.id)).where(createPredicateRums(filter)).fetchCount();
 	}
 
 	@Override
@@ -141,6 +200,21 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 				.select(new QRumOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, r.id, r.years,
 						r.rumType))
 				.from(d).join(r).on(d.drinkInfo.eq(r.id)).where(createPredicateRums(filterTO)).orderBy(order).fetch();
+	}
+
+	@Override
+	public List<RumOverviewTO> findRums(String filter, PageRequest pageable) {
+		JPAQuery<RumOverviewTO> query = new JPAQuery<>(entityManager);
+		QDrink d = QDrink.drink;
+		QRumInfo r = QRumInfo.rumInfo;
+		QuerydslUtil.applyPagination(pageable, query);
+
+		return query
+				.select(new QRumOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, r.id, r.years,
+						r.rumType))
+				.from(d).join(r).on(d.drinkInfo.eq(r.id)).where(createPredicateRums(filter))
+				.orderBy(QuerydslUtil.transformOrdering(new String[] { d.name.toString() }, new boolean[] { true }))
+				.fetch();
 	}
 
 	@Override
@@ -170,12 +244,32 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 		return builder.getBuilder();
 	}
 
+	private Predicate createPredicateWhiskeys(String filter) {
+		QDrink d = QDrink.drink;
+		PredicateBuilder builder = new PredicateBuilder();
+		builder.eq(d.type, DrinkType.WHISKY);
+		if (StringUtils.isNotBlank(filter)) {
+			String matchString = '%' + filter.replace('*', '%') + '%';
+			builder.getBuilder()
+					.and(ExpressionUtils.or(d.name.likeIgnoreCase(matchString), d.country.likeIgnoreCase(matchString)));
+		}
+		return builder.getBuilder();
+	}
+
 	@Override
 	public long countWhiskeys(WhiskeyOverviewTO filterTO) {
 		JPAQuery<Drink> query = new JPAQuery<>(entityManager);
 		QDrink d = QDrink.drink;
 		QWhiskeyInfo b = QWhiskeyInfo.whiskeyInfo;
 		return query.from(d).join(b).on(d.drinkInfo.eq(b.id)).where(createPredicateWhiskeys(filterTO)).fetchCount();
+	}
+
+	@Override
+	public long countWhiskeys(String filter) {
+		JPAQuery<Drink> query = new JPAQuery<>(entityManager);
+		QDrink d = QDrink.drink;
+		QWhiskeyInfo b = QWhiskeyInfo.whiskeyInfo;
+		return query.from(d).join(b).on(d.drinkInfo.eq(b.id)).where(createPredicateWhiskeys(filter)).fetchCount();
 	}
 
 	@Override
@@ -193,6 +287,21 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 				.select(new QWhiskeyOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, w.id, w.years,
 						w.whiskeyType))
 				.from(d).join(w).on(d.drinkInfo.eq(w.id)).where(createPredicateWhiskeys(filterTO)).orderBy(order)
+				.fetch();
+	}
+
+	@Override
+	public List<WhiskeyOverviewTO> findWhiskeys(String filter, PageRequest pageable) {
+		JPAQuery<WhiskeyOverviewTO> query = new JPAQuery<>(entityManager);
+		QDrink d = QDrink.drink;
+		QWhiskeyInfo w = QWhiskeyInfo.whiskeyInfo;
+		QuerydslUtil.applyPagination(pageable, query);
+
+		return query
+				.select(new QWhiskeyOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, w.id, w.years,
+						w.whiskeyType))
+				.from(d).join(w).on(d.drinkInfo.eq(w.id)).where(createPredicateWhiskeys(filter))
+				.orderBy(QuerydslUtil.transformOrdering(new String[] { d.name.toString() }, new boolean[] { true }))
 				.fetch();
 	}
 

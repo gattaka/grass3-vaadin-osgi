@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>cz.gattserver</groupId>
 			<artifactId>web-common</artifactId>
-			<version>1.0.11-SNAPSHOT</version>
+			<version>1.0.11</version>
 		</dependency>
 
 		<!-- Jackson JSON Mapper -->

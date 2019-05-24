@@ -64,6 +64,8 @@ public class LanguageItemWindow extends WebWindow {
 		TextField contentField = new TextField("Obsah");
 		TextField translationField = new TextField("Překlad");
 
+		typeRadio.addValueChangeListener(e -> contentField.focus());
+
 		Validator<String> validator = (value, context) -> {
 			LanguageItemTO itemTO = languageFacade.getLanguageItemByContent(langId, value);
 			if (itemTO != null && itemTO.getContent().equals(value)

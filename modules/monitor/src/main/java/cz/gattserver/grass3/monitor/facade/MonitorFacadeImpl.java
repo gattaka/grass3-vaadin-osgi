@@ -370,6 +370,11 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		testResponseCode(nexusTO);
 		items.add(nexusTO);
 
+		ServerServiceMonitorItemTO nexusSecureTO = new ServerServiceMonitorItemTO("Sonatype Nexus HTTPS",
+				"https://www.gattserver.cz:8843");
+		testResponseCode(nexusSecureTO);
+		items.add(nexusSecureTO);
+
 		ServerServiceMonitorItemTO sonarTO = new ServerServiceMonitorItemTO("SonarQube", "http://gattserver.cz:9000");
 		testResponseCode(sonarTO);
 		items.add(sonarTO);

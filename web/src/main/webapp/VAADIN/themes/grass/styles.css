@@ -1053,7 +1053,7 @@
  */
 
 .v-vaadin-version:after {
-	content: "8.5.1";
+	content: "8.8.2";
 }
 
 .v-widget {
@@ -4362,6 +4362,10 @@ div.v-layout.v-horizontal.v-widget {
 	left: 0;
 }
 
+.grass .v-grid-body .v-grid-header > .v-grid-row {
+	position: relative;
+}
+
 .grass .v-grid-row {
 	display: block;
 }
@@ -4537,6 +4541,8 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	border-right: 1px solid #d4d4d4;
+	position: relative;
+	z-index: 11;
 }
 
 .grass .v-grid-cell.frozen  + th, .grass .v-grid-cell.frozen  + td {
@@ -9002,6 +9008,10 @@ div.v-layout.v-horizontal.v-widget {
 	left: 0;
 }
 
+.grass .v-tree8-body .v-tree8-header > .v-tree8-row {
+	position: relative;
+}
+
 .grass .v-tree8-row {
 	display: block;
 }
@@ -9177,6 +9187,8 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	border-right: 1px solid #d4d4d4;
+	position: relative;
+	z-index: 11;
 }
 
 .grass .v-tree8-cell.frozen  + th, .grass .v-tree8-cell.frozen  + td {
@@ -9893,6 +9905,70 @@ div.v-layout.v-horizontal.v-widget {
 	padding-left: 15em;
 }
 
+.grass .v-tree8-node.depth-16 {
+	padding-left: 16em;
+}
+
+.grass .v-tree8-node.depth-17 {
+	padding-left: 17em;
+}
+
+.grass .v-tree8-node.depth-18 {
+	padding-left: 18em;
+}
+
+.grass .v-tree8-node.depth-19 {
+	padding-left: 19em;
+}
+
+.grass .v-tree8-node.depth-20 {
+	padding-left: 20em;
+}
+
+.grass .v-tree8-node.depth-21 {
+	padding-left: 21em;
+}
+
+.grass .v-tree8-node.depth-22 {
+	padding-left: 22em;
+}
+
+.grass .v-tree8-node.depth-23 {
+	padding-left: 23em;
+}
+
+.grass .v-tree8-node.depth-24 {
+	padding-left: 24em;
+}
+
+.grass .v-tree8-node.depth-25 {
+	padding-left: 25em;
+}
+
+.grass .v-tree8-node.depth-26 {
+	padding-left: 26em;
+}
+
+.grass .v-tree8-node.depth-27 {
+	padding-left: 27em;
+}
+
+.grass .v-tree8-node.depth-28 {
+	padding-left: 28em;
+}
+
+.grass .v-tree8-node.depth-29 {
+	padding-left: 29em;
+}
+
+.grass .v-tree8-node.depth-30 {
+	padding-left: 30em;
+}
+
+.grass .v-tree8-node.depth-31 {
+	padding-left: 31em;
+}
+
 .grass .v-tree8-cell-content {
 	display: inline-block;
 	vertical-align: middle;
@@ -10078,6 +10154,10 @@ div.v-layout.v-horizontal.v-widget {
 	left: 0;
 }
 
+.grass .v-treegrid-body .v-treegrid-header > .v-treegrid-row {
+	position: relative;
+}
+
 .grass .v-treegrid-row {
 	display: block;
 }
@@ -10253,6 +10333,8 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	border-right: 1px solid #d4d4d4;
+	position: relative;
+	z-index: 11;
 }
 
 .grass .v-treegrid-cell.frozen  + th, .grass .v-treegrid-cell.frozen  + td {
@@ -10967,6 +11049,70 @@ div.v-layout.v-horizontal.v-widget {
 
 .grass .v-treegrid-node.depth-15 {
 	padding-left: 15em;
+}
+
+.grass .v-treegrid-node.depth-16 {
+	padding-left: 16em;
+}
+
+.grass .v-treegrid-node.depth-17 {
+	padding-left: 17em;
+}
+
+.grass .v-treegrid-node.depth-18 {
+	padding-left: 18em;
+}
+
+.grass .v-treegrid-node.depth-19 {
+	padding-left: 19em;
+}
+
+.grass .v-treegrid-node.depth-20 {
+	padding-left: 20em;
+}
+
+.grass .v-treegrid-node.depth-21 {
+	padding-left: 21em;
+}
+
+.grass .v-treegrid-node.depth-22 {
+	padding-left: 22em;
+}
+
+.grass .v-treegrid-node.depth-23 {
+	padding-left: 23em;
+}
+
+.grass .v-treegrid-node.depth-24 {
+	padding-left: 24em;
+}
+
+.grass .v-treegrid-node.depth-25 {
+	padding-left: 25em;
+}
+
+.grass .v-treegrid-node.depth-26 {
+	padding-left: 26em;
+}
+
+.grass .v-treegrid-node.depth-27 {
+	padding-left: 27em;
+}
+
+.grass .v-treegrid-node.depth-28 {
+	padding-left: 28em;
+}
+
+.grass .v-treegrid-node.depth-29 {
+	padding-left: 29em;
+}
+
+.grass .v-treegrid-node.depth-30 {
+	padding-left: 30em;
+}
+
+.grass .v-treegrid-node.depth-31 {
+	padding-left: 31em;
 }
 
 .grass .v-treegrid-cell-content {
@@ -12452,6 +12598,14 @@ div.v-layout.v-horizontal.v-widget {
 
 .grass .v-tabsheet-right-aligned-tabs  > .v-tabsheet-tabcontainer {
 	text-align: right;
+}
+
+.grass .v-tabsheet-right-aligned-tabs .v-tabsheet-spacertd {
+	display: inline-block !important;
+}
+
+.grass .v-tabsheet-right-aligned-tabs .v-tabsheet-scroller {
+	padding-left: 9px;
 }
 
 .grass .v-tabsheet-padded-tabbar  > .v-tabsheet-tabcontainer .v-tabsheet-tabs {

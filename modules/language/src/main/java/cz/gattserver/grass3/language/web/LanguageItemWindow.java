@@ -50,8 +50,13 @@ public class LanguageItemWindow extends WebWindow {
 		if (asType == null)
 			asType = ItemType.values()[0];
 
-		LanguageItemTO targetTO = to == null ? new LanguageItemTO() : to;
-		targetTO.setType(asType);
+		LanguageItemTO targetTO;
+		if (to == null) {
+			targetTO = new LanguageItemTO();
+			targetTO.setType(asType);
+		} else {
+			targetTO = to;
+		}
 
 		Binder<LanguageItemTO> binder = new Binder<>();
 

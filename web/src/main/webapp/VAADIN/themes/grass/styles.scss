@@ -36,6 +36,21 @@ $v-layout-margin-left: 10px;
 	background-color: hsl(47, 39%, 75%);
 }
 
+.grass .v-app-loading:before {
+	content: "";
+	position: fixed;
+	z-index: 100;
+	top: 45%;
+	left: 50%;
+	width: 28px;
+	height: 28px;
+	padding: 8px;
+	margin-top: -22px;
+	margin-left: -22px;
+	background: #fff url(img/gattload.gif) no-repeat 50% !important;
+	border-radius: 3px;
+}
+
 .grass .v-verticallayout > .v-slot:first-child h2 {
 	margin-top: 0;
 	margin-bottom: 4px;

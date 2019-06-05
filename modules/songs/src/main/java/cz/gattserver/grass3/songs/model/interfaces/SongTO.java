@@ -1,7 +1,5 @@
 package cz.gattserver.grass3.songs.model.interfaces;
 
-import cz.gattserver.grass3.songs.model.domain.Song;
-
 public class SongTO {
 
 	/**
@@ -43,9 +41,9 @@ public class SongTO {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Song))
+		if (!(obj instanceof SongTO))
 			return false;
-		return ((Song) obj).getId() == getId();
+		return ((SongTO) obj).getId() == getId();
 	}
 
 	@Override

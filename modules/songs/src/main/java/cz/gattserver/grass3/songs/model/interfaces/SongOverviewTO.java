@@ -2,8 +2,6 @@ package cz.gattserver.grass3.songs.model.interfaces;
 
 import com.querydsl.core.annotations.QueryProjection;
 
-import cz.gattserver.grass3.songs.model.domain.Song;
-
 public class SongOverviewTO {
 
 	/**
@@ -40,9 +38,9 @@ public class SongOverviewTO {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Song))
+		if (!(obj instanceof SongOverviewTO))
 			return false;
-		return ((Song) obj).getId() == getId();
+		return ((SongOverviewTO) obj).getId() == getId();
 	}
 
 	@Override

@@ -1,10 +1,12 @@
 package cz.gattserver.grass3.language.facades.impl;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import cz.gattserver.grass3.language.model.domain.LanguageItem;
 import cz.gattserver.grass3.language.model.dto.CrosswordTO;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.language.model.dto.LanguageTO;
+import cz.gattserver.grass3.language.model.dto.StatisticsTO;
 import cz.gattserver.grass3.language.util.CrosswordBuilder;
 import cz.gattserver.grass3.language.util.Mapper;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
@@ -149,6 +152,18 @@ public class LanguageFacadeImpl implements LanguageFacade {
 	@Override
 	public void moveLanguageItemTo(LanguageItemTO item, LanguageTO lang) {
 		itemRepository.updateItemLang(item.getId(), lang.getId());
+	}
+
+	/*
+	 * Statistiky
+	 */
+
+	@Override
+	public List<StatisticsTO> getStatisticsItems(ItemType type, Long languageId) {
+		List<Object[]> items = type == null ? itemRepository.findStatisticsByLanguage(languageId)
+				: itemRepository.findStatisticsByLanguage(type.ordinal(), languageId);
+		return items.stream().map(o -> new StatisticsTO(((BigInteger) o[1]).intValue(), (Double) o[0]))
+				.collect(Collectors.toList());
 	}
 
 }

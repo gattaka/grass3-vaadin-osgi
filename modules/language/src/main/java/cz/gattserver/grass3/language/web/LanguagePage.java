@@ -1,5 +1,10 @@
 package cz.gattserver.grass3.language.web;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -7,10 +12,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.server.Page;
+import com.vaadin.server.StreamResource;
+import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -20,6 +31,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.Slider;
@@ -54,6 +66,7 @@ import cz.gattserver.web.common.ui.window.WebWindow;
 
 public class LanguagePage extends OneColumnPage {
 
+	private static final Logger logger = LoggerFactory.getLogger(LanguagePage.class);
 	private static final String PREKLAD_LABEL = "Překlad";
 
 	@Autowired
@@ -77,23 +90,26 @@ public class LanguagePage extends OneColumnPage {
 			Component selectedTab = tabSheet.getSelectedTab();
 			Tab tab = tabSheet.getTab(selectedTab);
 			int pos = tabSheet.getTabPosition(tab);
-			if (pos < 3) {
-				Component newTab = null;
-				switch (pos) {
-				case 0:
-					newTab = createItemsTab(langId, null);
-					break;
-				case 1:
-					newTab = createItemsTab(langId, ItemType.WORD);
-					break;
-				case 2:
-					newTab = createItemsTab(langId, ItemType.PHRASE);
-					break;
-				default:
-					break;
-				}
-				tabSheet.replaceComponent(selectedTab, newTab);
+			if (pos > 2 && pos != 5)
+				return;
+			Component newTab = null;
+			switch (pos) {
+			case 0:
+				newTab = createItemsTab(langId, null);
+				break;
+			case 1:
+				newTab = createItemsTab(langId, ItemType.WORD);
+				break;
+			case 2:
+				newTab = createItemsTab(langId, ItemType.PHRASE);
+				break;
+			case 5:
+				newTab = createStatisticsTab(langId);
+				break;
+			default:
+				break;
 			}
+			tabSheet.replaceComponent(selectedTab, newTab);
 		});
 	}
 
@@ -141,6 +157,8 @@ public class LanguagePage extends OneColumnPage {
 			if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN))
 				tabSheet.addTab(createTestTab(langId), "Zkoušení");
 			tabSheet.addTab(createCrosswordTab(langId), "Křížovka");
+			if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN))
+				tabSheet.addTab(createStatisticsTab(langId), "Statistiky");
 
 			langLayout.addComponent(tabSheet);
 		}));
@@ -531,6 +549,77 @@ public class LanguagePage extends OneColumnPage {
 			sheet.addComponent(createButtonLayout(grid, langId, type));
 
 		return sheet;
+	}
+
+	private Component createStatisticsTab(long langId) {
+		VerticalLayout sheet = new VerticalLayout();
+		sheet.setMargin(new MarginInfo(true, false, false, false));
+
+		LanguageItemTO to = new LanguageItemTO();
+		to.setLanguage(langId);
+		to.setType(ItemType.WORD);
+		int words = languageFacade.countLanguageItems(to);
+		to.setType(ItemType.PHRASE);
+		int phrases = languageFacade.countLanguageItems(to);
+
+		sheet.addComponent(new Label("Slovíček: " + words));
+		final BufferedImage wordsImage = ChartUtils.drawChart(languageFacade.getStatisticsItems(ItemType.WORD, langId));
+		sheet.addComponent(new Image(null, new StreamResource(new StreamSource() {
+			private static final long serialVersionUID = -5893071133311094692L;
+
+			@Override
+			public InputStream getStream() {
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				try {
+					ImageIO.write(wordsImage, "png", os);
+					return new ByteArrayInputStream(os.toByteArray());
+				} catch (IOException e) {
+					logger.error("Nezdařilo se vytváření grafu statistiky", e);
+					return null;
+				}
+			}
+		}, "wordsImage.png")));
+
+		sheet.addComponent(new Label("Frází: " + phrases));
+		final BufferedImage phrasesImage = ChartUtils
+				.drawChart(languageFacade.getStatisticsItems(ItemType.PHRASE, langId));
+		sheet.addComponent(new Image(null, new StreamResource(new StreamSource() {
+			private static final long serialVersionUID = -5893071133311094692L;
+
+			@Override
+			public InputStream getStream() {
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				try {
+					ImageIO.write(phrasesImage, "png", os);
+					return new ByteArrayInputStream(os.toByteArray());
+				} catch (IOException e) {
+					logger.error("Nezdařilo se vytváření grafu statistiky", e);
+					return null;
+				}
+			}
+		}, "phrasesImage.png")));
+
+		sheet.addComponent(new Label("Položek celkem: " + (words + phrases)));
+
+		final BufferedImage itemsImage = ChartUtils.drawChart(languageFacade.getStatisticsItems(null, langId));
+		sheet.addComponent(new Image(null, new StreamResource(new StreamSource() {
+			private static final long serialVersionUID = -5893071133311094692L;
+
+			@Override
+			public InputStream getStream() {
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				try {
+					ImageIO.write(itemsImage, "png", os);
+					return new ByteArrayInputStream(os.toByteArray());
+				} catch (IOException e) {
+					logger.error("Nezdařilo se vytváření grafu statistiky", e);
+					return null;
+				}
+			}
+		}, "itemsImage.png")));
+
+		return sheet;
+
 	}
 
 	private HorizontalLayout createButtonLayout(Grid<LanguageItemTO> grid, long langId, ItemType type) {

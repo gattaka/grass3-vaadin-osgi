@@ -8,6 +8,7 @@ import cz.gattserver.grass3.language.model.domain.ItemType;
 import cz.gattserver.grass3.language.model.dto.CrosswordTO;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.language.model.dto.LanguageTO;
+import cz.gattserver.grass3.language.model.dto.StatisticsTO;
 
 public interface LanguageFacade {
 
@@ -115,7 +116,7 @@ public interface LanguageFacade {
 	 * Zjistí % úspěšnosti daného jazyka, na daném typu zkoušených věcí
 	 * 
 	 * @param type
-	 *            tzyp zkoušených věcí
+	 *            typ zkoušených věcí
 	 * @param langId
 	 *            id jazyka
 	 * @return % úspěšnost
@@ -131,5 +132,16 @@ public interface LanguageFacade {
 	 *            nový jazyk
 	 */
 	void moveLanguageItemTo(LanguageItemTO item, LanguageTO lang);
+
+	/**
+	 * Získá přehled statistiky záznamů (stránkované)
+	 * 
+	 * @param type
+	 *            typ věcí
+	 * @param languageId
+	 *            id jazyka
+	 * @return list záznamů
+	 */
+	List<StatisticsTO> getStatisticsItems(ItemType type, Long languageId);
 
 }

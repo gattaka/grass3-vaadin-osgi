@@ -43,4 +43,12 @@ public interface LanguageItemRepository extends JpaRepository<LanguageItem, Long
 	@Query("update LANGUAGEITEM i set i.language.id = ?2 where i.id = ?1")
 	void updateItemLang(Long id, Long id2);
 
+	@Query(value = "select successrate, count(*) from LANGUAGEITEM where language_id = ?1 group by successrate order by successrate desc",
+			nativeQuery = true)
+	List<Object[]> findStatisticsByLanguage(Long languageId);
+
+	@Query(value = "select successrate, count(*) from LANGUAGEITEM where type = ?1 and language_id = ?2 group by successrate order by successrate desc",
+			nativeQuery = true)
+	List<Object[]> findStatisticsByLanguage(Integer type, Long languageId);
+
 }

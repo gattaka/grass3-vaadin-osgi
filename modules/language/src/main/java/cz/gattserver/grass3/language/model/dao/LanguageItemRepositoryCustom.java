@@ -15,4 +15,5 @@ public interface LanguageItemRepositoryCustom {
 
 	List<LanguageItem> findAllByLanguageSortByName(LanguageItemTO filterTO, PageRequest pageable,
 			OrderSpecifier<?>[] order);
+
 }

@@ -97,12 +97,16 @@ public abstract class GrassPage {
 		// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
 		// obejít problém se závislosí pluginů na úložišti theme apod. a
 		// přitom umožnit aby se JS odkazovali na externí zdroje
-		if (!js.isPlain() && !chunk.toLowerCase().startsWith("http://") || !chunk.toLowerCase().startsWith("https://"))
+		if (!js.isPlain()
+				&& (!chunk.toLowerCase().startsWith("http://") || !chunk.toLowerCase().startsWith("https://"))) {
 			chunk = "\"" + getRequest().getContextRoot() + "/VAADIN/themes/grass/" + chunk + "\"";
-
-		builder.append("$.getScript(").append(chunk).append(", function(){");
-		buildJSBatch(builder, index + 1, scripts);
-		builder.append("});");
+			builder.append("$.getScript(").append(chunk).append(", function(){");
+			buildJSBatch(builder, index + 1, scripts);
+			builder.append("});");
+		} else {
+			builder.append(chunk);
+			buildJSBatch(builder, index + 1, scripts);
+		}
 	}
 
 	/**

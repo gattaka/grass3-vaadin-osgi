@@ -83,11 +83,16 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 		// JS resources
 		int jsResourcesSize = article.getPluginJSResources().size();
-		JScriptItem[] arr = new JScriptItem[jsResourcesSize];
+		int jsCodesSize = article.getPluginJSCodes().size();
+
+		JScriptItem[] jsResourcesArr = new JScriptItem[jsResourcesSize + jsCodesSize];
 		int i = 0;
 		for (String resource : article.getPluginJSResources())
-			arr[i++] = new JScriptItem(resource);
-		loadJS(arr);
+			jsResourcesArr[i++] = new JScriptItem(resource);
+		for (String code : article.getPluginJSCodes())
+			jsResourcesArr[i++] = new JScriptItem(code, true);
+
+		loadJS(jsResourcesArr);
 
 		return super.createPayload();
 	}

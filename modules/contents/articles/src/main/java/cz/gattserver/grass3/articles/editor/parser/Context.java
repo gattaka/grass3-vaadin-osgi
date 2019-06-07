@@ -77,4 +77,8 @@ public interface Context {
 	 */
 	Set<String> getJSResources();
 
+	void addJSCode(String code);
+
+	Set<String> getJSCodes();
+
 }

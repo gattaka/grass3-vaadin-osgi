@@ -10,8 +10,8 @@ import cz.gattserver.grass3.articles.editor.parser.Context;
  */
 public class ContextImpl implements Context {
 
-	private static final String END_DIV = "</div>"; 
-	
+	private static final String END_DIV = "</div>";
+
 	/**
 	 * Vystupni stream.
 	 */
@@ -32,19 +32,23 @@ public class ContextImpl implements Context {
 	 */
 	private Set<String> cssResources = new LinkedHashSet<>();
 	private Set<String> jsResources = new LinkedHashSet<>();
+	private Set<String> jsCodes = new LinkedHashSet<>();
 
 	public ContextImpl() {
 		this.out = new StringBuilder();
 	}
 
+	@Override
 	public void print(String s) {
 		out.append(s);
 	}
 
+	@Override
 	public void println(String s) {
 		out.append(s);
 	}
 
+	@Override
 	public void setHeaderLevel(int level) {
 		// ani větší než 5
 		if (level > 5) {
@@ -64,6 +68,7 @@ public class ContextImpl implements Context {
 		out.append("<div class=\"level").append(level).append("\">");
 	}
 
+	@Override
 	public String getOutput() {
 		// pokud byla úroveň odsazení změněná, uzavři odsazovací div
 		// Zde by se mohl sice textLevel rovnou vynulovat, ale já připouštím
@@ -71,10 +76,12 @@ public class ContextImpl implements Context {
 		return (this.textLevel != 0) ? (out.toString() + END_DIV) : out.toString();
 	}
 
+	@Override
 	public int getNextHeaderIdentifier() {
 		return headerIdentifier++;
 	}
 
+	@Override
 	public void resetHeaderLevel() {
 		// pokud byla úroveň opravdu změněná,
 		// uzavři předchozí odsazovací div
@@ -84,19 +91,33 @@ public class ContextImpl implements Context {
 		}
 	}
 
+	@Override
 	public void addCSSResource(String url) {
 		cssResources.add(url);
 	}
 
+	@Override
 	public void addJSResource(String url) {
 		jsResources.add(url);
 	}
 
+	@Override
+	public void addJSCode(String code) {
+		jsCodes.add(code);
+	}
+
+	@Override
 	public Set<String> getCSSResources() {
 		return cssResources;
 	}
 
+	@Override
 	public Set<String> getJSResources() {
 		return jsResources;
+	}
+
+	@Override
+	public Set<String> getJSCodes() {
+		return jsCodes;
 	}
 }

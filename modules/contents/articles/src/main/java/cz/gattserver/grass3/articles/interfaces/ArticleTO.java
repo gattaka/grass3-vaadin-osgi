@@ -41,6 +41,11 @@ public class ArticleTO {
 	 */
 	private Set<String> pluginJSResources;
 
+	/**
+	 * Dodatečné JS kódy, které je potřeba nahrát (JS z článků)
+	 */
+	private Set<String> pluginJSCodes;
+
 	public ArticleTO() {
 	}
 
@@ -62,6 +67,14 @@ public class ArticleTO {
 
 	public void setPluginJSResources(Set<String> pluginJSResources) {
 		this.pluginJSResources = pluginJSResources;
+	}
+
+	public Set<String> getPluginJSCodes() {
+		return pluginJSCodes;
+	}
+
+	public void setPluginJSCodes(Set<String> pluginJSCodes) {
+		this.pluginJSCodes = pluginJSCodes;
 	}
 
 	public String getText() {

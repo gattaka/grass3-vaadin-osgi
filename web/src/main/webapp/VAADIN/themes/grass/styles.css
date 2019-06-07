@@ -1627,7 +1627,7 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 8px;
 	margin-top: -22px;
 	margin-left: -22px;
-	background: #fff url(img/gattload.gif) no-repeat 50%;
+	background: #fff url(img/gattload.gif) no-repeat 50% !important;
 	border-radius: 3px;
 }
 

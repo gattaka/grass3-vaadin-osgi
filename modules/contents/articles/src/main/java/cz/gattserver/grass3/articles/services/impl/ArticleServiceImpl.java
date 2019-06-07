@@ -30,6 +30,7 @@ import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleRESTTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.articles.model.domain.Article;
+import cz.gattserver.grass3.articles.model.domain.ArticleJSCode;
 import cz.gattserver.grass3.articles.model.domain.ArticleJSResource;
 import cz.gattserver.grass3.articles.model.repositories.ArticleRepository;
 import cz.gattserver.grass3.articles.plugins.register.PluginRegisterService;
@@ -93,9 +94,21 @@ public class ArticleServiceImpl implements ArticleService {
 	private SortedSet<ArticleJSResource> createJSResourcesSet(Set<String> scripts) {
 		int order = 0;
 		SortedSet<ArticleJSResource> set = new TreeSet<>();
-		for (String string : scripts) {
+		for (String name : scripts) {
 			ArticleJSResource resource = new ArticleJSResource();
-			resource.setName(string);
+			resource.setName(name);
+			resource.setExecutionOrder(order++);
+			set.add(resource);
+		}
+		return set;
+	}
+
+	private SortedSet<ArticleJSCode> createJSCodesSet(Set<String> contents) {
+		int order = 0;
+		SortedSet<ArticleJSCode> set = new TreeSet<>();
+		for (String content : contents) {
+			ArticleJSCode resource = new ArticleJSCode();
+			resource.setContent(content);
 			resource.setExecutionOrder(order++);
 			set.add(resource);
 		}
@@ -154,6 +167,7 @@ public class ArticleServiceImpl implements ArticleService {
 			article.setOutputHTML(context.getOutput());
 			article.setPluginCSSResources(context.getCSSResources());
 			article.setPluginJSResources(createJSResourcesSet(context.getJSResources()));
+			article.setPluginJSCodes(createJSCodesSet(context.getJSCodes()));
 			article.setSearchableOutput(HTMLTagsFilter.trim(context.getOutput()));
 		}
 		article.setText(payload.getText());

@@ -62,6 +62,13 @@ public class Article {
 	private SortedSet<ArticleJSResource> pluginJSResources;
 
 	/**
+	 * Dodatečné JS kódy, které je potřeba nahrát (JS z článků)
+	 */
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@SortComparator(ArticleJSCodeComparator.class)
+	private SortedSet<ArticleJSCode> pluginJSCodes;
+
+	/**
 	 * DB identifikátor
 	 */
 	@Id
@@ -108,6 +115,14 @@ public class Article {
 
 	public void setPluginJSResources(SortedSet<ArticleJSResource> pluginJSResources) {
 		this.pluginJSResources = pluginJSResources;
+	}
+
+	public SortedSet<ArticleJSCode> getPluginJSCodes() {
+		return pluginJSCodes;
+	}
+
+	public void setPluginJSCodes(SortedSet<ArticleJSCode> pluginJSCodes) {
+		this.pluginJSCodes = pluginJSCodes;
 	}
 
 	public void setContentNode(ContentNode contentNode) {

@@ -12,6 +12,7 @@ import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleRESTTO;
 import cz.gattserver.grass3.articles.model.domain.Article;
+import cz.gattserver.grass3.articles.model.domain.ArticleJSCode;
 import cz.gattserver.grass3.articles.model.domain.ArticleJSResource;
 import cz.gattserver.grass3.articles.services.ArticlesMapperService;
 import cz.gattserver.grass3.services.CoreMapperService;
@@ -34,13 +35,18 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 		Set<String> pluginCSSResources = new LinkedHashSet<>();
 		for (String resource : article.getPluginCSSResources())
 			pluginCSSResources.add(resource);
-
 		articleDTO.setPluginCSSResources(pluginCSSResources);
+
 		Set<String> pluginJSResources = new LinkedHashSet<>();
 		for (ArticleJSResource resource : article.getPluginJSResources())
 			pluginJSResources.add(resource.getName());
-
 		articleDTO.setPluginJSResources(pluginJSResources);
+
+		Set<String> pluginJSCodes = new LinkedHashSet<>();
+		for (ArticleJSCode code : article.getPluginJSCodes())
+			pluginJSCodes.add(code.getContent());
+		articleDTO.setPluginJSCodes(pluginJSCodes);
+
 		articleDTO.setText(article.getText());
 
 		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article.getContentNode()));
@@ -56,12 +62,11 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 		Set<String> pluginCSSResources = new LinkedHashSet<>();
 		for (String resource : article.getPluginCSSResources())
 			pluginCSSResources.add(resource);
-
 		articleDTO.setPluginCSSResources(pluginCSSResources);
+
 		Set<String> pluginJSResources = new LinkedHashSet<>();
 		for (ArticleJSResource resource : article.getPluginJSResources())
 			pluginJSResources.add(resource.getName());
-
 		articleDTO.setPluginJSResources(pluginJSResources);
 
 		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article.getContentNode()));

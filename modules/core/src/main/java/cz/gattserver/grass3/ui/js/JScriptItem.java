@@ -39,7 +39,7 @@ public class JScriptItem {
 
 	@Override
 	public String toString() {
-		return script + " (" + (plain ? "plain" : "file") + ")";
+		return (plain ? "-SKRIPT-" : script) + " (" + (plain ? "plain" : "file") + ")";
 	}
 
 }

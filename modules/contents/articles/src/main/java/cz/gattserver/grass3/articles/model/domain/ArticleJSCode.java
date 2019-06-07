@@ -1,13 +1,14 @@
 package cz.gattserver.grass3.articles.model.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.hibernate.annotations.GenericGenerator;
 
-@Entity(name = "ARTICLE_JS_RESOURCE")
-public class ArticleJSResource implements Comparable<ArticleJSResource> {
+@Entity(name = "ARTICLE_JS_CODE")
+public class ArticleJSCode implements Comparable<ArticleJSCode> {
 
 	/**
 	 * DB identifikátor
@@ -18,9 +19,10 @@ public class ArticleJSResource implements Comparable<ArticleJSResource> {
 	private Long id;
 
 	/**
-	 * Jméno skriptu
+	 * Obsah skriptu
 	 */
-	private String name;
+	@Column(columnDefinition = "TEXT")
+	private String content;
 
 	/**
 	 * Pořadí při nahrávání
@@ -35,12 +37,12 @@ public class ArticleJSResource implements Comparable<ArticleJSResource> {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getContent() {
+		return content;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	public Integer getExecutionOrder() {
@@ -52,7 +54,7 @@ public class ArticleJSResource implements Comparable<ArticleJSResource> {
 	}
 
 	@Override
-	public int compareTo(ArticleJSResource resource) {
+	public int compareTo(ArticleJSCode resource) {
 		return this.getExecutionOrder().compareTo(resource.getExecutionOrder());
 	}
 
@@ -60,7 +62,7 @@ public class ArticleJSResource implements Comparable<ArticleJSResource> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+		result = prime * result + ((getContent() == null) ? 0 : getContent().hashCode());
 		return result;
 	}
 
@@ -70,12 +72,12 @@ public class ArticleJSResource implements Comparable<ArticleJSResource> {
 			return true;
 		if (obj == null)
 			return false;
-		if (obj instanceof ArticleJSResource) {
-			ArticleJSResource other = (ArticleJSResource) obj;
-			if (getName() == null) {
-				if (other.getName() != null)
+		if (obj instanceof ArticleJSCode) {
+			ArticleJSCode other = (ArticleJSCode) obj;
+			if (getContent() == null) {
+				if (other.getContent() != null)
 					return false;
-			} else if (!getName().equals(other.getName()))
+			} else if (!getContent().equals(other.getContent()))
 				return false;
 		}
 		return false;
@@ -83,7 +85,7 @@ public class ArticleJSResource implements Comparable<ArticleJSResource> {
 
 	@Override
 	public String toString() {
-		return "Name: " + name + " Order: " + executionOrder;
+		return "Order: " + executionOrder;
 	}
 
 }

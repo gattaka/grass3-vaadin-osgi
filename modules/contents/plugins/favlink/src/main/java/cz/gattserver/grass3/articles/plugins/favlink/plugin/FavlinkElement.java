@@ -7,7 +7,7 @@ import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 
 public class FavlinkElement implements Element {
 
-	private static final int MAX_LENGTH = 110;
+	private static final int MAX_LENGTH = 100;
 	private static final int MIN_LINK_LENGTH = 20;
 
 	private String link = null;

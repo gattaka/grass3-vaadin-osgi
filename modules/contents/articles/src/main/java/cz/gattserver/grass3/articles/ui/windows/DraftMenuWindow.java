@@ -2,6 +2,8 @@ package cz.gattserver.grass3.articles.ui.windows;
 
 import java.util.List;
 
+import com.vaadin.event.ShortcutAction;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
@@ -45,6 +47,15 @@ public abstract class DraftMenuWindow extends WebWindow {
 	public DraftMenuWindow(List<ArticleDraftOverviewTO> drafts) {
 		super("Rozpracované obsahy");
 
+		addShortcutListener(new ShortcutListener("CloseByESC", ShortcutAction.KeyCode.ESCAPE, null) {
+			private static final long serialVersionUID = -7239845094514060176L;
+
+			@Override
+			public void handleAction(Object sender, Object target) {
+				close();
+			}
+		});
+
 		Label label = new Label("Byly nalezeny rozpracované obsahy -- přejete si pokračovat v jejich úpravách?");
 		addComponent(label);
 
@@ -68,6 +79,12 @@ public abstract class DraftMenuWindow extends WebWindow {
 				.setStyleGenerator(item -> "v-align-right");
 
 		grid.setColumns(nameBind, "text", lastModificationDateBind);
+		grid.addItemClickListener(e -> {
+			if (e.getMouseEventDetails().isDoubleClick()) {
+				innerChoose(e.getItem());
+				close();
+			}
+		});
 
 		addComponent(grid);
 

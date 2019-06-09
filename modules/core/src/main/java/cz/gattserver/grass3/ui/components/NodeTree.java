@@ -28,7 +28,6 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.components.grid.TreeGridDropTarget;
 
-import cz.gattserver.common.util.SerializableUtils;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.services.NodeService;
 import cz.gattserver.grass3.ui.util.UIUtils;
@@ -94,7 +93,7 @@ public class NodeTree extends VerticalLayout {
 		 */
 		TreeGridDragSource<NodeOverviewTO> dragSource = new TreeGridDragSource<>(grid);
 		dragSource.setEffectAllowed(EffectAllowed.MOVE);
-		dragSource.addGridDragStartListener(e -> draggedItems = SerializableUtils.ensureArrayList(e.getDraggedItems()));
+		dragSource.addGridDragStartListener(e -> draggedItems = new ArrayList<>(e.getDraggedItems()));
 
 		TreeGridDropTarget<NodeOverviewTO> dropTarget = new TreeGridDropTarget<>(grid, DropMode.ON_TOP_OR_BETWEEN);
 		dropTarget.setDropEffect(DropEffect.MOVE);

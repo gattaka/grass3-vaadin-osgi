@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.common.util.DateUtil;
+import cz.gattserver.common.util.DateUtils;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
@@ -55,7 +55,7 @@ public class HWMapperServiceImpl implements HWMapperService {
 
 		ServiceNoteTO dto = new ServiceNoteTO();
 		dto.setId(e.getId());
-		dto.setDate(DateUtil.toLocalDate(e.getDate()));
+		dto.setDate(DateUtils.toLocalDate(e.getDate()));
 		dto.setDescription(e.getDescription());
 		dto.setState(e.getState());
 		dto.setUsedInName(e.getUsage());
@@ -74,13 +74,13 @@ public class HWMapperServiceImpl implements HWMapperService {
 			return null;
 
 		HWItemTO dto = new HWItemTO();
-		dto.setDestructionDate(DateUtil.toLocalDate(e.getDestructionDate()));
+		dto.setDestructionDate(DateUtils.toLocalDate(e.getDestructionDate()));
 		dto.setId(e.getId());
 		dto.setName(e.getName());
 		dto.setUsedIn(mapHWItemOverview(e.getUsedIn()));
 		dto.setUsedInName(e.getUsedIn() == null ? null : e.getUsedIn().getName());
 		dto.setPrice(e.getPrice());
-		dto.setPurchaseDate(DateUtil.toLocalDate(e.getPurchaseDate()));
+		dto.setPurchaseDate(DateUtils.toLocalDate(e.getPurchaseDate()));
 		dto.setServiceNotes(mapServiceNotes(e.getServiceNotes()));
 		dto.setSupervizedFor(e.getSupervizedFor());
 		dto.setState(e.getState());
@@ -102,7 +102,7 @@ public class HWMapperServiceImpl implements HWMapperService {
 		dto.setUsedInName(e.getUsedIn() == null ? null : e.getUsedIn().getName());
 		dto.setSupervizedFor(e.getSupervizedFor());
 		dto.setPrice(e.getPrice());
-		dto.setPurchaseDate(DateUtil.toLocalDate(e.getPurchaseDate()));
+		dto.setPurchaseDate(DateUtils.toLocalDate(e.getPurchaseDate()));
 		dto.setState(e.getState());
 		return dto;
 	}

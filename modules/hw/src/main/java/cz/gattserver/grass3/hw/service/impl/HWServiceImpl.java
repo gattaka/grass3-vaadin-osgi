@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.OrderSpecifier;
 
-import cz.gattserver.common.util.DateUtil;
+import cz.gattserver.common.util.DateUtils;
 import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.grass3.exception.GrassException;
 import cz.gattserver.grass3.hw.HWConfiguration;
@@ -408,8 +408,8 @@ public class HWServiceImpl implements HWService {
 		else
 			item = hwItemRepository.findOne(hwItemDTO.getId());
 		item.setName(hwItemDTO.getName());
-		item.setPurchaseDate(DateUtil.toDate(hwItemDTO.getPurchaseDate()));
-		item.setDestructionDate(DateUtil.toDate(hwItemDTO.getDestructionDate()));
+		item.setPurchaseDate(DateUtils.toDate(hwItemDTO.getPurchaseDate()));
+		item.setDestructionDate(DateUtils.toDate(hwItemDTO.getDestructionDate()));
 		item.setPrice(hwItemDTO.getPrice());
 		item.setState(hwItemDTO.getState());
 		item.setSupervizedFor(hwItemDTO.getSupervizedFor());
@@ -523,7 +523,7 @@ public class HWServiceImpl implements HWService {
 	public void addServiceNote(ServiceNoteTO serviceNoteDTO, Long id) {
 		HWItem item = hwItemRepository.findOne(id);
 		ServiceNote serviceNote = new ServiceNote();
-		serviceNote.setDate(DateUtil.toDate(serviceNoteDTO.getDate()));
+		serviceNote.setDate(DateUtils.toDate(serviceNoteDTO.getDate()));
 		serviceNote.setDescription(serviceNoteDTO.getDescription());
 		serviceNote.setState(serviceNoteDTO.getState());
 		serviceNote.setUsage(serviceNoteDTO.getUsedInName());
@@ -574,7 +574,7 @@ public class HWServiceImpl implements HWService {
 	@Override
 	public void modifyServiceNote(ServiceNoteTO serviceNoteDTO) {
 		ServiceNote serviceNote = serviceNoteRepository.findOne(serviceNoteDTO.getId());
-		serviceNote.setDate(DateUtil.toDate(serviceNoteDTO.getDate()));
+		serviceNote.setDate(DateUtils.toDate(serviceNoteDTO.getDate()));
 		serviceNote.setDescription(serviceNoteDTO.getDescription());
 		serviceNote.setState(serviceNoteDTO.getState());
 		serviceNote.setUsage(serviceNoteDTO.getUsedInName());

@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQuery;
 
-import cz.gattserver.common.util.DateUtil;
+import cz.gattserver.common.util.DateUtils;
 
 public class PredicateBuilder {
 
@@ -564,11 +564,11 @@ public class PredicateBuilder {
 	 */
 	public PredicateBuilder between(DateTimePath<Date> path, Date from, Date to) {
 		if ((from != null) && to != null) {
-			booleanBuilder.and(path.between(DateUtil.resetTime(from), DateUtil.resetTimeToMidnight(to)));
+			booleanBuilder.and(path.between(DateUtils.resetTime(from), DateUtils.resetTimeToMidnight(to)));
 		} else if (from != null) {
-			booleanBuilder.and(path.gt(DateUtil.resetTime(from)));
+			booleanBuilder.and(path.gt(DateUtils.resetTime(from)));
 		} else if (to != null) {
-			booleanBuilder.and(path.lt(DateUtil.resetTime(to)));
+			booleanBuilder.and(path.lt(DateUtils.resetTime(to)));
 		}
 		return this;
 	}

@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity(name = "ARTICLE_JS_RESOURCE")
-public class ArticleJSResource implements Comparable<ArticleJSResource> {
+public class ArticleJSResource implements ExecutedInOrder, Comparable<ArticleJSResource> {
 
 	/**
 	 * DB identifikátor
@@ -43,10 +43,12 @@ public class ArticleJSResource implements Comparable<ArticleJSResource> {
 		this.name = name;
 	}
 
+	@Override
 	public Integer getExecutionOrder() {
 		return executionOrder;
 	}
 
+	@Override
 	public void setExecutionOrder(Integer executionOrder) {
 		this.executionOrder = executionOrder;
 	}

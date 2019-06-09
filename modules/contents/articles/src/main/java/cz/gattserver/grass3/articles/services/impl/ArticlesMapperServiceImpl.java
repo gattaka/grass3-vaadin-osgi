@@ -26,9 +26,7 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 	@Autowired
 	private CoreMapperService mapper;
 
-	public ArticleTO mapArticleForDetail(Article article) {
-		ArticleTO articleDTO = new ArticleTO();
-
+	public <T extends ArticleRESTTO> T mapArticleBase(Article article, T articleDTO) {
 		articleDTO.setId(article.getId());
 		articleDTO.setOutputHTML(article.getOutputHTML());
 
@@ -41,6 +39,13 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 		for (ArticleJSResource resource : article.getPluginJSResources())
 			pluginJSResources.add(resource.getName());
 		articleDTO.setPluginJSResources(pluginJSResources);
+
+		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article.getContentNode()));
+		return articleDTO;
+	}
+
+	public ArticleTO mapArticleForDetail(Article article) {
+		ArticleTO articleDTO = mapArticleBase(article, new ArticleTO());
 
 		Set<String> pluginJSCodes = new LinkedHashSet<>();
 		for (ArticleJSCode code : article.getPluginJSCodes())
@@ -54,21 +59,7 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 	}
 
 	public ArticleRESTTO mapArticleForREST(Article article) {
-		ArticleRESTTO articleDTO = new ArticleRESTTO();
-
-		articleDTO.setId(article.getId());
-		articleDTO.setOutputHTML(article.getOutputHTML());
-
-		Set<String> pluginCSSResources = new LinkedHashSet<>();
-		for (String resource : article.getPluginCSSResources())
-			pluginCSSResources.add(resource);
-		articleDTO.setPluginCSSResources(pluginCSSResources);
-
-		Set<String> pluginJSResources = new LinkedHashSet<>();
-		for (ArticleJSResource resource : article.getPluginJSResources())
-			pluginJSResources.add(resource.getName());
-		articleDTO.setPluginJSResources(pluginJSResources);
-
+		ArticleRESTTO articleDTO = mapArticleBase(article, new ArticleRESTTO());
 		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article.getContentNode()));
 		return articleDTO;
 	}
@@ -94,9 +85,8 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 	 */
 	public List<ArticleTO> mapArticlesForReprocess(List<Article> articles) {
 		List<ArticleTO> articleDTOs = new ArrayList<>();
-		for (Article article : articles) {
+		for (Article article : articles)
 			articleDTOs.add(mapArticleForDetail(article));
-		}
 		return articleDTOs;
 	}
 
@@ -110,9 +100,8 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 	 */
 	public List<ArticleTO> mapArticlesForSearch(List<Article> articles) {
 		List<ArticleTO> articleDTOs = new ArrayList<>();
-		for (Article article : articles) {
+		for (Article article : articles)
 			articleDTOs.add(mapArticleForSearch(article));
-		}
 		return articleDTOs;
 	}
 
@@ -126,9 +115,8 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 	 */
 	public List<ArticleDraftOverviewTO> mapArticlesForDraftOverview(List<Article> articles) {
 		List<ArticleDraftOverviewTO> articleDTOs = new ArrayList<>();
-		for (Article article : articles) {
+		for (Article article : articles)
 			articleDTOs.add(mapArticleForDraftOverview(article));
-		}
 		return articleDTOs;
 	}
 

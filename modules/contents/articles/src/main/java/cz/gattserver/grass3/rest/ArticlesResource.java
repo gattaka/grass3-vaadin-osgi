@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.rest;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -48,8 +47,7 @@ public class ArticlesResource {
 	// POST http://localhost:8180/web/ws/articles/create
 	// text test článku...
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public ResponseEntity<String> smsImport(@RequestParam(value = "text", required = true) String text)
-			throws IllegalStateException, IOException {
+	public ResponseEntity<String> smsImport(@RequestParam(value = "text", required = true) String text) {
 		logger.info("articles /create volán");
 		UserInfoTO user = securityService.getCurrentUser();
 		if (user.getId() == null)
@@ -88,8 +86,7 @@ public class ArticlesResource {
 	}
 
 	@RequestMapping(value = "/article", method = RequestMethod.GET)
-	public ResponseEntity<ArticleRESTTO> show(@RequestParam(value = "id", required = true) Long id)
-			throws IllegalStateException, IOException {
+	public ResponseEntity<ArticleRESTTO> show(@RequestParam(value = "id", required = true) Long id) {
 		logger.info("articles /article volán");
 		UserInfoTO user = securityService.getCurrentUser();
 		ArticleRESTTO article;

@@ -7,6 +7,11 @@ import cz.gattserver.grass3.interfaces.ContentNodeTO;
 public class ArticleRESTTO {
 
 	/**
+	 * DB identifikátor
+	 */
+	private Long id;
+
+	/**
 	 * Přeložený obsah článku
 	 */
 	private String outputHTML;
@@ -17,11 +22,6 @@ public class ArticleRESTTO {
 	private ContentNodeTO contentNode;
 
 	/**
-	 * DB identifikátor
-	 */
-	private Long id;
-
-	/**
 	 * Dodatečné CSS resources, které je potřeba nahrát (od pluginů)
 	 */
 	private Set<String> pluginCSSResources;
@@ -30,9 +30,6 @@ public class ArticleRESTTO {
 	 * Dodatečné JS resources, které je potřeba nahrát (od pluginů)
 	 */
 	private Set<String> pluginJSResources;
-
-	public ArticleRESTTO() {
-	}
 
 	public Set<String> getPluginCSSResources() {
 		return pluginCSSResources;

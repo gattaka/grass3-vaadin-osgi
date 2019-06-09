@@ -1627,7 +1627,7 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 8px;
 	margin-top: -22px;
 	margin-left: -22px;
-	background: #fff url(img/gattload.gif) no-repeat 50% !important;
+	background: #fff url(../valo/shared/img/spinner.gif) no-repeat 50%;
 	border-radius: 3px;
 }
 
@@ -15185,6 +15185,21 @@ div.v-layout.v-horizontal.v-widget {
 
 .grass.v-app {
 	background-color: #d8cda6;
+}
+
+.grass .v-app-loading:before {
+	content: "";
+	position: fixed;
+	z-index: 100;
+	top: 45%;
+	left: 50%;
+	width: 28px;
+	height: 28px;
+	padding: 8px;
+	margin-top: -22px;
+	margin-left: -22px;
+	background: #fff url(img/gattload.gif) no-repeat 50% !important;
+	border-radius: 3px;
 }
 
 .grass .v-verticallayout > .v-slot:first-child h2 {

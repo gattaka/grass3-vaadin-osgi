@@ -225,25 +225,7 @@ public class ArticleServiceImpl implements ArticleService {
 		for (int page = 0; page < pages; page++) {
 			List<Article> articles = articleRepository.findAll(new PageRequest(page, pageSize)).getContent();
 			for (Article article : articles) {
-
-				Collection<ContentTag> tagsDTOs = article.getContentNode().getContentTags();
-				Set<String> tags = new HashSet<>();
-				for (ContentTag tag : tagsDTOs)
-					tags.add(tag.getName());
-
-				ArticlePayloadTO payload = new ArticlePayloadTO(article.getContentNode().getName(), article.getText(),
-						tags, article.getContentNode().getPublicated(), contextRoot);
-				if (article.getContentNode().getDraft() == null || article.getContentNode().getDraft()) {
-					if (article.getContentNode().getDraftSourceId() != null) {
-						modifyDraftOfExistingArticle(article.getId(), payload, null,
-								article.getContentNode().getDraftSourceId(), true);
-					} else {
-						modifyDraft(article.getId(), payload, true);
-					}
-				} else {
-					modifyArticle(article.getId(), payload, null);
-				}
-
+				reprocessArticle(article, contextRoot);
 				eventBus.publish(new ArticlesProcessProgressEvent(
 						"(" + current + "/" + total + ") " + article.getContentNode().getName()));
 				current++;
@@ -251,6 +233,26 @@ public class ArticleServiceImpl implements ArticleService {
 		}
 
 		eventBus.publish(new ArticlesProcessResultEvent());
+	}
+
+	private void reprocessArticle(Article article, String contextRoot) {
+		Collection<ContentTag> tagsDTOs = article.getContentNode().getContentTags();
+		Set<String> tags = new HashSet<>();
+		for (ContentTag tag : tagsDTOs)
+			tags.add(tag.getName());
+
+		ArticlePayloadTO payload = new ArticlePayloadTO(article.getContentNode().getName(), article.getText(), tags,
+				article.getContentNode().getPublicated(), contextRoot);
+		if (article.getContentNode().getDraft() == null || article.getContentNode().getDraft()) {
+			if (article.getContentNode().getDraftSourceId() != null) {
+				modifyDraftOfExistingArticle(article.getId(), payload, null,
+						article.getContentNode().getDraftSourceId(), true);
+			} else {
+				modifyDraft(article.getId(), payload, true);
+			}
+		} else {
+			modifyArticle(article.getId(), payload, null);
+		}
 	}
 
 	@Override

@@ -17,6 +17,12 @@ public class PartsFinder {
 		PRE_PART, TARGET_PART, POST_PART
 	}
 
+	private static class State {
+		int hitCounter = 0;
+		StringBuilder builder = new StringBuilder();
+		ScanPhase phase = ScanPhase.PRE_PART;
+	}
+
 	private PartsFinder() {
 	}
 
@@ -53,15 +59,10 @@ public class PartsFinder {
 	 *         post-část
 	 * @throws IOException
 	 */
-	public static Result findParts(InputStream inputStream, final int searchPartOrderNumber) throws IOException {
+	public static Result findParts(InputStream inputStream, int searchPartOrderNumber) throws IOException {
 		InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-		int hitCounter = 0;
-
 		FinderArray searchWindow = new FinderArray();
-
-		StringBuilder builder = new StringBuilder();
-		ScanPhase phase = ScanPhase.PRE_PART;
-
+		State state = new State();
 		Result result = new Result();
 
 		int c;
@@ -70,47 +71,52 @@ public class PartsFinder {
 
 			// Dokud není konec souboru střádej text a hledej počátek nadpisu
 			if (c != -1) {
-				builder.append((char) c);
-
-				// Nadpis mne zajímá pouze pokud jsem ještě nenašel cílovou část
-				// a nebo pokud hledám začátek dalšího nadpisu kde tím pádem
-				// cílová část končí
-				if (phase != ScanPhase.POST_PART) {
-					searchWindow.addChar((char) c);
-
-					// Byl nalezen začátek nadpisu ?
-					if (isHeaderOpenTag(searchWindow)) {
-
-						// Hledal jsem cílovou část - právě skončila "předčást"
-						if (phase == ScanPhase.PRE_PART) {
-
-							// Zvyš čítač nálezů nadpisů - pokud byl nalezen
-							// hledaný nadpis (chtěl jsem text 3. nadpisu apod.)
-							// zpracuj ho jako předčást
-							if (hitCounter == searchPartOrderNumber) {
-								result.prePart = builder.substring(0, builder.length() - searchWindow.getSize());
-								phase = ScanPhase.TARGET_PART;
-							}
-							hitCounter++;
-
-						} else {
-							result.targetPart = builder.substring(result.prePart.length(),
-									builder.length() - searchWindow.getSize());
-							phase = ScanPhase.POST_PART;
-						}
-					}
-				}
-
+				processText(searchPartOrderNumber, state, searchWindow, result, (char) c);
 			} else {
-				recognizePart(phase, result, builder);
+				recognizePart(state.phase, result, state.builder);
 
 				// Je konec souboru, opusť smyčku
 				break;
 			}
 		}
 
-		result.checkSum = builder.length();
+		result.checkSum = state.builder.length();
 		return result;
+	}
+
+	private static void processText(int searchPartOrderNumber, State state, FinderArray searchWindow, Result result,
+			char c) {
+		
+		state.builder.append((char) c);
+
+		// Nadpis mne zajímá pouze pokud jsem ještě nenašel cílovou část
+		// a nebo pokud hledám začátek dalšího nadpisu kde tím pádem
+		// cílová část končí
+		if (state.phase != ScanPhase.POST_PART) {
+			searchWindow.addChar((char) c);
+
+			// Byl nalezen začátek nadpisu ?
+			if (isHeaderOpenTag(searchWindow)) {
+
+				// Hledal jsem cílovou část - právě skončila "předčást"
+				if (state.phase == ScanPhase.PRE_PART) {
+
+					// Zvyš čítač nálezů nadpisů - pokud byl nalezen
+					// hledaný nadpis (chtěl jsem text 3. nadpisu apod.)
+					// zpracuj ho jako předčást
+					if (state.hitCounter == searchPartOrderNumber) {
+						result.prePart = state.builder.substring(0, state.builder.length() - searchWindow.getSize());
+						state.phase = ScanPhase.TARGET_PART;
+					}
+					state.hitCounter++;
+
+				} else {
+					result.targetPart = state.builder.substring(result.prePart.length(),
+							state.builder.length() - searchWindow.getSize());
+					state.phase = ScanPhase.POST_PART;
+				}
+			}
+		}
 	}
 
 }

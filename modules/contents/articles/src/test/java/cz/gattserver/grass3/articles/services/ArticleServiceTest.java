@@ -58,10 +58,99 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 
 		assertFalse(articleTO.getPluginCSSResources().isEmpty());
 		assertTrue(articleTO.getPluginJSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSCodes().isEmpty());
 		assertEquals("[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende",
 				articleTO.getText());
 		assertEquals(
-				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">[TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG] </div><div class=\"articles-h1\">Konec <a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level1\"> ende</div>",
+				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">"
+						+ "[TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG] </div><div class=\"articles-h1\">Konec "
+						+ "<a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level1\"> ende</div>",
+				articleTO.getOutputHTML());
+		assertNull(articleTO.getSearchableOutput());
+	}
+
+	@Test
+	public void testSaveArticleWithPlugin() {
+		Set<String> tags = new HashSet<>();
+		tags.add("tag1");
+		tags.add("tag2");
+
+		long userId = coreMockService.createMockUser(1);
+		long nodeId = coreMockService.createMockRootNode(1);
+		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [MOCK_TAG]5[/MOCK_TAG] [N1]Konec[/N1] ende",
+				tags, true, "mockContextRoot");
+		long articleId = articleService.saveArticle(payload, nodeId, userId);
+
+		ArticleTO articleTO = articleService.getArticleForDetail(articleId);
+		assertNotNull(articleTO);
+		assertEquals("mockArticleName", articleTO.getContentNode().getName());
+		assertEquals(new Long(nodeId), articleTO.getContentNode().getParent().getId());
+		assertEquals(new Long(userId), articleTO.getContentNode().getAuthor().getId());
+		assertEquals(new Long(articleId), articleTO.getContentNode().getContentID());
+		assertEquals(ArticlesContentModule.ID, articleTO.getContentNode().getContentReaderID());
+		assertEquals(2, articleTO.getContentNode().getContentTags().size());
+		assertTrue(articleTO.getContentNode().isPublicated());
+		assertFalse(articleTO.getContentNode().isDraft());
+		assertNull(articleTO.getContentNode().getDraftSourceId());
+		assertNull(articleTO.getContentNode().getLastModificationDate());
+		assertNotNull(articleTO.getContentNode().getCreationDate());
+
+		assertFalse(articleTO.getPluginCSSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSCodes().isEmpty());
+		assertEquals(
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [MOCK_TAG]5[/MOCK_TAG] [N1]Konec[/N1] ende",
+				articleTO.getText());
+		assertEquals(
+				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">"
+						+ "[TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG] <span>*****</span> </div><div class=\"articles-h1\">Konec "
+						+ "<a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level1\"> ende</div>",
+				articleTO.getOutputHTML());
+		assertNull(articleTO.getSearchableOutput());
+	}
+
+	@Test
+	public void testSaveArticleWithJSPlugin() {
+		Set<String> tags = new HashSet<>();
+		tags.add("tag1");
+		tags.add("tag2");
+
+		long userId = coreMockService.createMockUser(1);
+		long nodeId = coreMockService.createMockRootNode(1);
+		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [MOCKJS_TAG]Test-content[/MOCKJS_TAG] [N1]Konec[/N1] ende",
+				tags, true, "mockContextRoot");
+		long articleId = articleService.saveArticle(payload, nodeId, userId);
+
+		ArticleTO articleTO = articleService.getArticleForDetail(articleId);
+		assertNotNull(articleTO);
+		assertEquals("mockArticleName", articleTO.getContentNode().getName());
+		assertEquals(new Long(nodeId), articleTO.getContentNode().getParent().getId());
+		assertEquals(new Long(userId), articleTO.getContentNode().getAuthor().getId());
+		assertEquals(new Long(articleId), articleTO.getContentNode().getContentID());
+		assertEquals(ArticlesContentModule.ID, articleTO.getContentNode().getContentReaderID());
+		assertEquals(2, articleTO.getContentNode().getContentTags().size());
+		assertTrue(articleTO.getContentNode().isPublicated());
+		assertFalse(articleTO.getContentNode().isDraft());
+		assertNull(articleTO.getContentNode().getDraftSourceId());
+		assertNull(articleTO.getContentNode().getLastModificationDate());
+		assertNotNull(articleTO.getContentNode().getCreationDate());
+
+		assertFalse(articleTO.getPluginCSSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSResources().isEmpty());
+		assertFalse(articleTO.getPluginJSCodes().isEmpty());
+
+		assertEquals(1, articleTO.getPluginJSCodes().size());
+		assertEquals("Test-content", articleTO.getPluginJSCodes().iterator().next());
+
+		assertEquals(
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [MOCKJS_TAG]Test-content[/MOCKJS_TAG] [N1]Konec[/N1] ende",
+				articleTO.getText());
+		assertEquals(
+				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">"
+						+ "[TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG] JS-loaded </div><div class=\"articles-h1\">Konec "
+						+ "<a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level1\"> ende</div>",
 				articleTO.getOutputHTML());
 		assertNull(articleTO.getSearchableOutput());
 	}
@@ -93,6 +182,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 
 		assertTrue(articleTO.getPluginCSSResources().isEmpty());
 		assertTrue(articleTO.getPluginJSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSCodes().isEmpty());
 		assertEquals("", articleTO.getText());
 		assertEquals("~ empty ~", articleTO.getOutputHTML());
 		assertNull(articleTO.getSearchableOutput());
@@ -134,10 +224,13 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 
 		assertFalse(articleTO.getPluginCSSResources().isEmpty());
 		assertTrue(articleTO.getPluginJSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSCodes().isEmpty());
 		assertEquals("[N1]Úvod[/N1][TAG]<strong>mockArticleTextNew</strong>[/TAG] [N1]Konec[/N1] ende",
 				articleTO.getText());
 		assertEquals(
-				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">[TAG]&lt;strong&gt;mockArticleTextNew&lt;/strong&gt;[/TAG] </div><div class=\"articles-h1\">Konec <a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level1\"> ende</div>",
+				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">"
+						+ "[TAG]&lt;strong&gt;mockArticleTextNew&lt;/strong&gt;[/TAG] </div><div class=\"articles-h1\">Konec "
+						+ "<a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level1\"> ende</div>",
 				articleTO.getOutputHTML());
 		assertNull(articleTO.getSearchableOutput());
 	}
@@ -171,10 +264,13 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 
 		assertFalse(articleTO.getPluginCSSResources().isEmpty());
 		assertTrue(articleTO.getPluginJSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSCodes().isEmpty());
 		assertEquals("[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende",
 				articleTO.getText());
 		assertEquals(
-				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">[TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG] </div><div class=\"articles-h1\">Konec <a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level1\"> ende</div>",
+				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">"
+						+ "[TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG] </div><div class=\"articles-h1\">Konec "
+						+ "<a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level1\"> ende</div>",
 				articleTO.getOutputHTML());
 		assertNull(articleTO.getSearchableOutput());
 	}
@@ -209,6 +305,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 
 		assertTrue(articleTO.getPluginCSSResources().isEmpty());
 		assertTrue(articleTO.getPluginJSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSCodes().isEmpty());
 		assertEquals("[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende",
 				articleTO.getText());
 		assertNull(articleTO.getOutputHTML());
@@ -335,6 +432,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 
 		assertNull(articleTO.getPluginCSSResources());
 		assertNull(articleTO.getPluginJSResources());
+		assertNull(articleTO.getPluginJSCodes());
 		assertNull(articleTO.getText());
 		assertNull(articleTO.getOutputHTML());
 		assertEquals(" Úvod  [TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG]  Konec   ende",

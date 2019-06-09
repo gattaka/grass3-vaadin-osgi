@@ -21,8 +21,8 @@ public class PluginRegisterTest extends AbstractContextAwareTest {
 
 	@Test
 	public void testGetRegisteredTags() {
-		assertEquals(5, pluginRegister.getRegisteredTags().size());
-		assertEquals("[N1, N2, N3, N4, MOCK_TAG]", pluginRegister.getRegisteredTags().toString());
+		assertEquals(6, pluginRegister.getRegisteredTags().size());
+		assertEquals("[MOCKJS_TAG, N1, N2, N3, N4, MOCK_TAG]", pluginRegister.getRegisteredTags().toString());
 	}
 
 	@Test
@@ -53,7 +53,7 @@ public class PluginRegisterTest extends AbstractContextAwareTest {
 	@Test
 	public void testGetRegisteredGroups() {
 		Set<String> groups = pluginRegister.getRegisteredGroups();
-		assertEquals(2, groups.size());
+		assertEquals(3, groups.size());
 		assertTrue(groups.contains("Nadpisy"));
 		assertTrue(groups.contains("Mock"));
 	}

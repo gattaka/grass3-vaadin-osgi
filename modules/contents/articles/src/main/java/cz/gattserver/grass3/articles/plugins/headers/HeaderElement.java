@@ -27,12 +27,4 @@ public class HeaderElement implements Element {
 		ctx.addCSSResource("articles/style.css");
 	}
 
-	public void setHeaderText(List<Element> headerContent) {
-		this.headerContent = headerContent;
-	}
-
-	public List<Element> getHeaderText() {
-		return headerContent;
-	}
-
 }

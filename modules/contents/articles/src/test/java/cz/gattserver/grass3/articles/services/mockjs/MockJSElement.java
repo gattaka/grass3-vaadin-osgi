@@ -14,6 +14,7 @@ public class MockJSElement implements Element {
 	@Override
 	public void apply(Context ctx) {
 		ctx.addJSCode(content);
+		ctx.addJSResource("pre-resource");
 		ctx.print("JS-loaded");
 	}
 

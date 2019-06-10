@@ -50,16 +50,10 @@ public class ContextImpl implements Context {
 
 	@Override
 	public void setHeaderLevel(int level) {
-		// ani větší než 5
-		if (level > 5) {
-			level = 5;
-		}
-
 		// pokud byla již úroveň změněná, nejprve
 		// uzavři předchozí odsazovací div
-		if (this.textLevel != 0) {
+		if (this.textLevel != 0)
 			out.append(END_DIV);
-		}
 
 		// ulož si pro příští porovnání aktuální level
 		textLevel = level;

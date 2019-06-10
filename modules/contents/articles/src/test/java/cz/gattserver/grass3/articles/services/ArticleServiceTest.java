@@ -38,7 +38,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long userId = coreMockService.createMockUser(1);
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
-				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true,
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende", tags, true,
 				"mockContextRoot");
 		long articleId = articleService.saveArticle(payload, nodeId, userId);
 
@@ -59,12 +59,13 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		assertFalse(articleTO.getPluginCSSResources().isEmpty());
 		assertTrue(articleTO.getPluginJSResources().isEmpty());
 		assertTrue(articleTO.getPluginJSCodes().isEmpty());
-		assertEquals("[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende",
+		assertEquals("[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
 				articleTO.getText());
 		assertEquals(
-				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">"
-						+ "[TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG] </div><div class=\"articles-h1\">Konec "
-						+ "<a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level1\"> ende</div>",
+				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">[TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG] "
+				+ "</div><div class=\"articles-h2\">Header2 <a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level2\"> dd </div><div class=\"articles-h3\">Header3 "
+				+ "<a class=\"articles-h-id\" href=\"2\"></a></div><div class=\"level3\"> ssaas </div><div class=\"articles-h4\">Header4 <a class=\"articles-h-id\" href=\"3\">"
+				+ "</a></div><div class=\"level4\"> fdd </div><div class=\"articles-h1\">Konec <a class=\"articles-h-id\" href=\"4\"></a></div><div class=\"level1\"> ende</div>",
 				articleTO.getOutputHTML());
 		assertNull(articleTO.getSearchableOutput());
 	}
@@ -138,8 +139,11 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		assertNotNull(articleTO.getContentNode().getCreationDate());
 
 		assertFalse(articleTO.getPluginCSSResources().isEmpty());
-		assertTrue(articleTO.getPluginJSResources().isEmpty());
+		assertFalse(articleTO.getPluginJSResources().isEmpty());
 		assertFalse(articleTO.getPluginJSCodes().isEmpty());
+
+		assertEquals(1, articleTO.getPluginJSResources().size());
+		assertEquals("pre-resource", articleTO.getPluginJSResources().iterator().next());
 
 		assertEquals(1, articleTO.getPluginJSCodes().size());
 		assertEquals("Test-content", articleTO.getPluginJSCodes().iterator().next());

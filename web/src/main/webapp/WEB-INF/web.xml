@@ -11,7 +11,6 @@
 		<param-value>
 			classpath:spring/app-context.xml
 			classpath:spring/security-context.xml
-			/WEB-INF/rest-servlet.xml
 		</param-value>
 	</context-param>
 	<listener>
@@ -61,7 +60,7 @@
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 
-	<!-- REST pro Grass Agenta -->
+	<!-- REST -->
 	<servlet>
 		<servlet-name>rest</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>

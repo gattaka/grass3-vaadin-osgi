@@ -10,7 +10,7 @@ import java.nio.file.Path;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.mockserver.client.server.MockServerClient;
+import org.mockserver.client.MockServerClient;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
 
@@ -21,19 +21,20 @@ public class CombinedFaviconObtainStrategyTest extends StrategyTest {
 
 	@Test
 	public void testCombinedFaviconObtainStrategyTest_empty() throws IOException {
-		MockServerClient msc = new MockServerClient("localhost", 1929);
+		try (MockServerClient msc = new MockServerClient("localhost", 1929)) {
 
-		FileSystem fs = fileSystemService.getFileSystem();
-		prepareFS(fs);
+			FileSystem fs = fileSystemService.getFileSystem();
+			prepareFS(fs);
 
-		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_empty.html"),
-				"UTF-8");
-		msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
-				.respond(new HttpResponse().withStatusCode(200).withBody(page));
+			String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_empty.html"),
+					"UTF-8");
+			msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
+					.respond(new HttpResponse().withStatusCode(200).withBody(page));
 
-		FaviconObtainStrategy strategy = new CombinedFaviconObtainStrategy();
-		String link = strategy.obtainFaviconURL("http://localhost:1929/dummy/site", "mycontextroot");
-		assertNull(link);
+			FaviconObtainStrategy strategy = new CombinedFaviconObtainStrategy();
+			String link = strategy.obtainFaviconURL("http://localhost:1929/dummy/site", "mycontextroot");
+			assertNull(link);
+		}
 	}
 
 	@Test
@@ -55,39 +56,41 @@ public class CombinedFaviconObtainStrategyTest extends StrategyTest {
 
 	@Test
 	public void testCombinedFaviconObtainStrategyTest_address() throws IOException {
-		MockServerClient msc = new MockServerClient("localhost", 1929);
-		
-		FileSystem fs = fileSystemService.getFileSystem();
-		prepareFS(fs);
+		try (MockServerClient msc = new MockServerClient("localhost", 1929)) {
 
-		byte[] favicon = IOUtils.toByteArray(this.getClass().getResourceAsStream("imgadr/mockFavicon.png"));
-		msc.when(new HttpRequest().withMethod("GET").withPath("/favicon.png"))
-				.respond(new HttpResponse().withStatusCode(200).withBody(favicon));
+			FileSystem fs = fileSystemService.getFileSystem();
+			prepareFS(fs);
 
-		FaviconObtainStrategy strategy = new CombinedFaviconObtainStrategy();
-		String link = strategy.obtainFaviconURL("http://localhost:1929/dummy/site", "mycontextroot");
-		assertEquals("mycontextroot/articles-favlink-plugin/localhost.png", link);
+			byte[] favicon = IOUtils.toByteArray(this.getClass().getResourceAsStream("imgadr/mockFavicon.png"));
+			msc.when(new HttpRequest().withMethod("GET").withPath("/favicon.png"))
+					.respond(new HttpResponse().withStatusCode(200).withBody(favicon));
+
+			FaviconObtainStrategy strategy = new CombinedFaviconObtainStrategy();
+			String link = strategy.obtainFaviconURL("http://localhost:1929/dummy/site", "mycontextroot");
+			assertEquals("mycontextroot/articles-favlink-plugin/localhost.png", link);
+		}
 	}
 
 	@Test
 	public void testCombinedFaviconObtainStrategyTest_header() throws IOException {
-		MockServerClient msc = new MockServerClient("localhost", 1929);
+		try (MockServerClient msc = new MockServerClient("localhost", 1929)) {
 
-		FileSystem fs = fileSystemService.getFileSystem();
-		prepareFS(fs);
-		
-		String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_http_png.html"),
-				"UTF-8");
-		msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
-				.respond(new HttpResponse().withStatusCode(200).withBody(page));
+			FileSystem fs = fileSystemService.getFileSystem();
+			prepareFS(fs);
 
-		byte[] favicon = IOUtils.toByteArray(this.getClass().getResourceAsStream("imgadr/mockFavicon.png"));
-		msc.when(new HttpRequest().withMethod("GET").withPath("/imgadr/mockFavicon.png"))
-				.respond(new HttpResponse().withStatusCode(200).withBody(favicon));
+			String page = IOUtils.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_http_png.html"),
+					"UTF-8");
+			msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
+					.respond(new HttpResponse().withStatusCode(200).withBody(page));
 
-		FaviconObtainStrategy strategy = new CombinedFaviconObtainStrategy();
-		String link = strategy.obtainFaviconURL("http://localhost:1929/dummy/site", "mycontextroot");
-		assertEquals("mycontextroot/articles-favlink-plugin/localhost.png", link);
+			byte[] favicon = IOUtils.toByteArray(this.getClass().getResourceAsStream("imgadr/mockFavicon.png"));
+			msc.when(new HttpRequest().withMethod("GET").withPath("/imgadr/mockFavicon.png"))
+					.respond(new HttpResponse().withStatusCode(200).withBody(favicon));
+
+			FaviconObtainStrategy strategy = new CombinedFaviconObtainStrategy();
+			String link = strategy.obtainFaviconURL("http://localhost:1929/dummy/site", "mycontextroot");
+			assertEquals("mycontextroot/articles-favlink-plugin/localhost.png", link);
+		}
 	}
 
 }

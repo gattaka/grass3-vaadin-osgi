@@ -12,9 +12,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleRESTTO;
@@ -40,6 +42,12 @@ public class ArticlesResource {
 
 	@Autowired
 	private ContentNodeService contentNodeService;
+
+	@RequestMapping(value = "/greet/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public String getCircuit(@PathVariable String id) {
+		return id + " world";
+	}
 
 	// http://localhost:8180/web/ws/articles/create
 	// http://resttesttest.com/ (pozor na http -- nedá se posílaz na http, pokud

@@ -26,6 +26,7 @@ import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.modules.ArticlesContentModule;
 import cz.gattserver.grass3.services.ContentNodeService;
+import cz.gattserver.grass3.services.NodeService;
 import cz.gattserver.grass3.services.SecurityService;
 
 @Controller
@@ -43,11 +44,8 @@ public class ArticlesResource {
 	@Autowired
 	private ContentNodeService contentNodeService;
 
-	@RequestMapping(value = "/greet/{id}", method = RequestMethod.GET)
-	@ResponseBody
-	public String getCircuit(@PathVariable String id) {
-		return id + " world";
-	}
+	@Autowired
+	private NodeService nodeService;
 
 	// http://localhost:8180/web/ws/articles/create
 	// http://resttesttest.com/ (pozor na http -- nedá se posílaz na http, pokud
@@ -55,7 +53,7 @@ public class ArticlesResource {
 	// POST http://localhost:8180/web/ws/articles/create
 	// text test článku...
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public ResponseEntity<String> smsImport(@RequestParam(value = "text", required = true) String text) {
+	public ResponseEntity<Long> smsImport(@RequestParam(value = "text", required = true) String text) {
 		logger.info("articles /create volán");
 		UserInfoTO user = securityService.getCurrentUser();
 		if (user.getId() == null)
@@ -63,10 +61,11 @@ public class ArticlesResource {
 		ArticlePayloadTO payload = new ArticlePayloadTO(
 				"SMS Import " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("d.M.yyyy")), text,
 				new ArrayList<>(), false, "dummy");
-		articleService.saveArticle(payload, 1L, 1L);
+
+		long articleId = articleService.saveArticle(payload, nodeService.getRootNodes().get(0).getId(), user.getId());
 
 		logger.info("articles /create dokončen");
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(articleId, HttpStatus.OK);
 	}
 
 	@RequestMapping("/count")

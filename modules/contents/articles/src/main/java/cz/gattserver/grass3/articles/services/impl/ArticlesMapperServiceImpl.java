@@ -76,21 +76,6 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 	}
 
 	/**
-	 * Převede kolekci {@link Article} na kolekci {@link ArticleTO} pro
-	 * přegenerování článku
-	 * 
-	 * @param articles
-	 *            vstupní kolekce entit {@link Article}
-	 * @return
-	 */
-	public List<ArticleTO> mapArticlesForReprocess(List<Article> articles) {
-		List<ArticleTO> articleDTOs = new ArrayList<>();
-		for (Article article : articles)
-			articleDTOs.add(mapArticleForDetail(article));
-		return articleDTOs;
-	}
-
-	/**
 	 * Převede kolekci {@link Article} na kolekci {@link ArticleTO} určenou pro
 	 * vyhledávání
 	 * 

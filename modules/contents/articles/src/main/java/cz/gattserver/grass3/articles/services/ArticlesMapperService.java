@@ -25,16 +25,6 @@ public interface ArticlesMapperService {
 	public ArticleTO mapArticleForSearch(Article article);
 
 	/**
-	 * Převede kolekci {@link Article} na kolekci {@link ArticleTO} pro
-	 * přegenerování článku
-	 * 
-	 * @param articles
-	 *            vstupní kolekce entit {@link Article}
-	 * @return
-	 */
-	public List<ArticleTO> mapArticlesForReprocess(List<Article> articles);
-
-	/**
 	 * Převede kolekci {@link Article} na kolekci {@link ArticleTO} určenou pro
 	 * vyhledávání
 	 * 

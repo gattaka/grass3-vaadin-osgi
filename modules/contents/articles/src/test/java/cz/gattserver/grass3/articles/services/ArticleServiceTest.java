@@ -69,6 +69,49 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 				articleTO.getOutputHTML());
 		assertNull(articleTO.getSearchableOutput());
 	}
+	
+	@Test
+	public void testReprocessArticles() {
+		Set<String> tags = new HashSet<>();
+		tags.add("tag1");
+		tags.add("tag2");
+
+		long userId = coreMockService.createMockUser(1);
+		long nodeId = coreMockService.createMockRootNode(1);
+		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende", tags, true,
+				"mockContextRoot");
+		long articleId = articleService.saveArticle(payload, nodeId, userId);
+
+		articleService.reprocessAllArticles("mockContextRoot");
+		
+		ArticleTO articleTO = articleService.getArticleForDetail(articleId);
+		assertNotNull(articleTO);
+		assertEquals("mockArticleName", articleTO.getContentNode().getName());
+		assertEquals(new Long(nodeId), articleTO.getContentNode().getParent().getId());
+		assertEquals(new Long(userId), articleTO.getContentNode().getAuthor().getId());
+		assertEquals(new Long(articleId), articleTO.getContentNode().getContentID());
+		assertEquals(ArticlesContentModule.ID, articleTO.getContentNode().getContentReaderID());
+		assertEquals(2, articleTO.getContentNode().getContentTags().size());
+		assertTrue(articleTO.getContentNode().isPublicated());
+		assertFalse(articleTO.getContentNode().isDraft());
+		assertNull(articleTO.getContentNode().getDraftSourceId());
+		assertNull(articleTO.getContentNode().getLastModificationDate());
+		assertNotNull(articleTO.getContentNode().getCreationDate());
+
+		assertFalse(articleTO.getPluginCSSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSCodes().isEmpty());
+		assertEquals("[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
+				articleTO.getText());
+		assertEquals(
+				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">[TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG] "
+				+ "</div><div class=\"articles-h2\">Header2 <a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level2\"> dd </div><div class=\"articles-h3\">Header3 "
+				+ "<a class=\"articles-h-id\" href=\"2\"></a></div><div class=\"level3\"> ssaas </div><div class=\"articles-h4\">Header4 <a class=\"articles-h-id\" href=\"3\">"
+				+ "</a></div><div class=\"level4\"> fdd </div><div class=\"articles-h1\">Konec <a class=\"articles-h-id\" href=\"4\"></a></div><div class=\"level1\"> ende</div>",
+				articleTO.getOutputHTML());
+		assertNull(articleTO.getSearchableOutput());
+	}
 
 	@Test
 	public void testSaveArticleWithPlugin() {

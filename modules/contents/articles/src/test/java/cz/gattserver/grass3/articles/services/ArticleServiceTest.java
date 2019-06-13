@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
 import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
+import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.modules.ArticlesContentModule;
 import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.services.UserService;
@@ -38,8 +40,8 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long userId = coreMockService.createMockUser(1);
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
-				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende", tags, true,
-				"mockContextRoot");
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
+				tags, true, "mockContextRoot");
 		long articleId = articleService.saveArticle(payload, nodeId, userId);
 
 		ArticleTO articleTO = articleService.getArticleForDetail(articleId);
@@ -59,17 +61,40 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		assertFalse(articleTO.getPluginCSSResources().isEmpty());
 		assertTrue(articleTO.getPluginJSResources().isEmpty());
 		assertTrue(articleTO.getPluginJSCodes().isEmpty());
-		assertEquals("[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
+		assertEquals(
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
 				articleTO.getText());
 		assertEquals(
 				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">[TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG] "
-				+ "</div><div class=\"articles-h2\">Header2 <a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level2\"> dd </div><div class=\"articles-h3\">Header3 "
-				+ "<a class=\"articles-h-id\" href=\"2\"></a></div><div class=\"level3\"> ssaas </div><div class=\"articles-h4\">Header4 <a class=\"articles-h-id\" href=\"3\">"
-				+ "</a></div><div class=\"level4\"> fdd </div><div class=\"articles-h1\">Konec <a class=\"articles-h-id\" href=\"4\"></a></div><div class=\"level1\"> ende</div>",
+						+ "</div><div class=\"articles-h2\">Header2 <a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level2\"> dd </div><div class=\"articles-h3\">Header3 "
+						+ "<a class=\"articles-h-id\" href=\"2\"></a></div><div class=\"level3\"> ssaas </div><div class=\"articles-h4\">Header4 <a class=\"articles-h-id\" href=\"3\">"
+						+ "</a></div><div class=\"level4\"> fdd </div><div class=\"articles-h1\">Konec <a class=\"articles-h-id\" href=\"4\"></a></div><div class=\"level1\"> ende</div>",
 				articleTO.getOutputHTML());
 		assertNull(articleTO.getSearchableOutput());
 	}
-	
+
+	@Test
+	public void testDeleteArticle() {
+		Set<String> tags = new HashSet<>();
+		tags.add("tag1");
+		tags.add("tag2");
+
+		long userId = coreMockService.createMockUser(1);
+		long nodeId = coreMockService.createMockRootNode(1);
+		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
+				tags, true, "mockContextRoot");
+		long articleId = articleService.saveArticle(payload, nodeId, userId);
+
+		ArticleTO articleTO = articleService.getArticleForDetail(articleId);
+		assertNotNull(articleTO);
+
+		articleService.deleteArticle(articleId);
+
+		articleTO = articleService.getArticleForDetail(articleId);
+		assertNull(articleTO);
+	}
+
 	@Test
 	public void testReprocessArticles() {
 		Set<String> tags = new HashSet<>();
@@ -79,12 +104,12 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long userId = coreMockService.createMockUser(1);
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
-				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende", tags, true,
-				"mockContextRoot");
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
+				tags, true, "mockContextRoot");
 		long articleId = articleService.saveArticle(payload, nodeId, userId);
 
 		articleService.reprocessAllArticles("mockContextRoot");
-		
+
 		ArticleTO articleTO = articleService.getArticleForDetail(articleId);
 		assertNotNull(articleTO);
 		assertEquals("mockArticleName", articleTO.getContentNode().getName());
@@ -102,13 +127,14 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		assertFalse(articleTO.getPluginCSSResources().isEmpty());
 		assertTrue(articleTO.getPluginJSResources().isEmpty());
 		assertTrue(articleTO.getPluginJSCodes().isEmpty());
-		assertEquals("[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
+		assertEquals(
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
 				articleTO.getText());
 		assertEquals(
 				"<div class=\"articles-h1\">Úvod <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\">[TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG] "
-				+ "</div><div class=\"articles-h2\">Header2 <a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level2\"> dd </div><div class=\"articles-h3\">Header3 "
-				+ "<a class=\"articles-h-id\" href=\"2\"></a></div><div class=\"level3\"> ssaas </div><div class=\"articles-h4\">Header4 <a class=\"articles-h-id\" href=\"3\">"
-				+ "</a></div><div class=\"level4\"> fdd </div><div class=\"articles-h1\">Konec <a class=\"articles-h-id\" href=\"4\"></a></div><div class=\"level1\"> ende</div>",
+						+ "</div><div class=\"articles-h2\">Header2 <a class=\"articles-h-id\" href=\"1\"></a></div><div class=\"level2\"> dd </div><div class=\"articles-h3\">Header3 "
+						+ "<a class=\"articles-h-id\" href=\"2\"></a></div><div class=\"level3\"> ssaas </div><div class=\"articles-h4\">Header4 <a class=\"articles-h-id\" href=\"3\">"
+						+ "</a></div><div class=\"level4\"> fdd </div><div class=\"articles-h1\">Konec <a class=\"articles-h-id\" href=\"4\"></a></div><div class=\"level1\"> ende</div>",
 				articleTO.getOutputHTML());
 		assertNull(articleTO.getSearchableOutput());
 	}
@@ -360,6 +386,192 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 	}
 
 	@Test
+	public void testModifyDraft() {
+		Set<String> tags = new HashSet<>();
+		tags.add("tag1");
+		tags.add("tag2");
+
+		long userId = coreMockService.createMockUser(1);
+		long nodeId = coreMockService.createMockRootNode(1);
+
+		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true,
+				"mockContextRoot");
+		Long draftId = articleService.saveDraft(payload, nodeId, userId, false);
+
+		tags = new HashSet<>();
+		tags.add("tag4");
+
+		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, "mockContextRoot");
+		articleService.modifyDraft(draftId, payload, false);
+
+		ArticleTO articleTO = articleService.getArticleForDetail(draftId);
+		assertNotNull(articleTO);
+		assertEquals("mockArticleNameNew", articleTO.getContentNode().getName());
+		assertEquals(new Long(nodeId), articleTO.getContentNode().getParent().getId());
+		assertEquals(new Long(userId), articleTO.getContentNode().getAuthor().getId());
+		assertEquals(new Long(draftId), articleTO.getContentNode().getContentID());
+		assertEquals(ArticlesContentModule.ID, articleTO.getContentNode().getContentReaderID());
+		assertEquals(1, articleTO.getContentNode().getContentTags().size());
+		assertEquals("tag4", articleTO.getContentNode().getContentTags().iterator().next().getName());
+		assertTrue(articleTO.getContentNode().isPublicated());
+		assertTrue(articleTO.getContentNode().isDraft());
+		assertNull(articleTO.getContentNode().getDraftSourceId());
+		assertNotNull(articleTO.getContentNode().getLastModificationDate());
+		assertNotNull(articleTO.getContentNode().getCreationDate());
+
+		assertTrue(articleTO.getPluginCSSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSCodes().isEmpty());
+		assertEquals("[N1]New[/N1] ende", articleTO.getText());
+		assertNull(articleTO.getOutputHTML());
+		assertNull(articleTO.getSearchableOutput());
+	}
+
+	@Test
+	public void testModifyDraftAsPreview() {
+		Set<String> tags = new HashSet<>();
+		tags.add("tag1");
+		tags.add("tag2");
+
+		long userId = coreMockService.createMockUser(1);
+		long nodeId = coreMockService.createMockRootNode(1);
+
+		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true,
+				"mockContextRoot");
+		Long draftId = articleService.saveDraft(payload, nodeId, userId, false);
+
+		tags = new HashSet<>();
+		tags.add("tag4");
+
+		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, "mockContextRoot");
+		articleService.modifyDraft(draftId, payload, true);
+
+		ArticleTO articleTO = articleService.getArticleForDetail(draftId);
+		assertNotNull(articleTO);
+		assertEquals("mockArticleNameNew", articleTO.getContentNode().getName());
+		assertEquals(new Long(nodeId), articleTO.getContentNode().getParent().getId());
+		assertEquals(new Long(userId), articleTO.getContentNode().getAuthor().getId());
+		assertEquals(new Long(draftId), articleTO.getContentNode().getContentID());
+		assertEquals(ArticlesContentModule.ID, articleTO.getContentNode().getContentReaderID());
+		assertEquals(1, articleTO.getContentNode().getContentTags().size());
+		assertEquals("tag4", articleTO.getContentNode().getContentTags().iterator().next().getName());
+		assertTrue(articleTO.getContentNode().isPublicated());
+		assertTrue(articleTO.getContentNode().isDraft());
+		assertNull(articleTO.getContentNode().getDraftSourceId());
+		assertNotNull(articleTO.getContentNode().getLastModificationDate());
+		assertNotNull(articleTO.getContentNode().getCreationDate());
+
+		assertFalse(articleTO.getPluginCSSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSCodes().isEmpty());
+		assertEquals("[N1]New[/N1] ende", articleTO.getText());
+		assertEquals(
+				"<div class=\"articles-h1\">New <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level1\"> ende</div>",
+				articleTO.getOutputHTML());
+		assertNull(articleTO.getSearchableOutput());
+	}
+
+	@Test
+	public void testSaveDraftOfExistingArticle() {
+		Set<String> tags = new HashSet<>();
+		tags.add("tag1");
+		tags.add("tag2");
+
+		long userId = coreMockService.createMockUser(1);
+		long nodeId = coreMockService.createMockRootNode(1);
+		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
+				tags, true, "mockContextRoot");
+		Long articleId = articleService.saveArticle(payload, nodeId, userId);
+
+		tags = new HashSet<>();
+		tags.add("tag4");
+
+		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, "mockContextRoot");
+		Long draftId = articleService.saveDraftOfExistingArticle(payload, nodeId, userId, null, articleId, false);
+
+		ArticleTO articleTO = articleService.getArticleForDetail(draftId);
+
+		assertNotNull(articleTO);
+		assertEquals("mockArticleNameNew", articleTO.getContentNode().getName());
+		assertEquals(new Long(nodeId), articleTO.getContentNode().getParent().getId());
+		assertEquals(new Long(userId), articleTO.getContentNode().getAuthor().getId());
+		assertEquals(new Long(draftId), articleTO.getContentNode().getContentID());
+		assertEquals(ArticlesContentModule.ID, articleTO.getContentNode().getContentReaderID());
+		assertEquals(1, articleTO.getContentNode().getContentTags().size());
+		assertEquals("tag4", articleTO.getContentNode().getContentTags().iterator().next().getName());
+		assertTrue(articleTO.getContentNode().isPublicated());
+		assertTrue(articleTO.getContentNode().isDraft());
+		assertEquals(articleId, articleTO.getContentNode().getDraftSourceId());
+		assertNull(articleTO.getContentNode().getLastModificationDate());
+		assertNotNull(articleTO.getContentNode().getCreationDate());
+
+		assertTrue(articleTO.getPluginCSSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSCodes().isEmpty());
+		assertEquals("[N1]New[/N1] ende", articleTO.getText());
+		assertNull(articleTO.getOutputHTML());
+		assertNull(articleTO.getSearchableOutput());
+	}
+
+	@Test
+	public void testModifyDraftOfExistingArticle() {
+		Set<String> tags = new HashSet<>();
+		tags.add("tag1");
+		tags.add("tag2");
+
+		long userId = coreMockService.createMockUser(1);
+		long nodeId = coreMockService.createMockRootNode(1);
+		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
+				tags, true, "mockContextRoot");
+		Long articleId = articleService.saveArticle(payload, nodeId, userId);
+
+		tags = new HashSet<>();
+		tags.add("tag4");
+
+		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, "mockContextRoot");
+		Long draftId = articleService.saveDraftOfExistingArticle(payload, nodeId, userId, null, articleId, false);
+
+		tags = new HashSet<>();
+		tags.add("tag5");
+		tags.add("tag6");
+		tags.add("tag7");
+
+		payload = new ArticlePayloadTO("mockArticleNameNew2", "[N1]New2[/N1] ende", tags, true, "mockContextRoot");
+		articleService.modifyDraftOfExistingArticle(draftId, payload, null, articleId, false);
+
+		ArticleTO articleTO = articleService.getArticleForDetail(draftId);
+
+		assertNotNull(articleTO);
+		assertEquals("mockArticleNameNew2", articleTO.getContentNode().getName());
+		assertEquals(new Long(nodeId), articleTO.getContentNode().getParent().getId());
+		assertEquals(new Long(userId), articleTO.getContentNode().getAuthor().getId());
+		assertEquals(new Long(draftId), articleTO.getContentNode().getContentID());
+		assertEquals(ArticlesContentModule.ID, articleTO.getContentNode().getContentReaderID());
+		assertEquals(3, articleTO.getContentNode().getContentTags().size());
+		List<String> arr = articleTO.getContentNode().getContentTags().stream().map(ContentTagOverviewTO::getName)
+				.collect(Collectors.toList());
+		assertTrue(arr.contains("tag5"));
+		assertTrue(arr.contains("tag6"));
+		assertTrue(arr.contains("tag7"));
+		assertTrue(articleTO.getContentNode().isPublicated());
+		assertTrue(articleTO.getContentNode().isDraft());
+		assertEquals(articleId, articleTO.getContentNode().getDraftSourceId());
+		assertNotNull(articleTO.getContentNode().getLastModificationDate());
+		assertNotNull(articleTO.getContentNode().getCreationDate());
+
+		assertTrue(articleTO.getPluginCSSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSResources().isEmpty());
+		assertTrue(articleTO.getPluginJSCodes().isEmpty());
+		assertEquals("[N1]New2[/N1] ende", articleTO.getText());
+		assertNull(articleTO.getOutputHTML());
+		assertNull(articleTO.getSearchableOutput());
+	}
+
+	@Test
 	public void testGetDraftsForUser() {
 		Set<String> tags = new HashSet<>();
 		tags.add("tag1");
@@ -426,63 +638,4 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		assertEquals(new Long(draftId), list.get(1).getId());
 	}
 
-	@Test
-	public void testGetAllArticlesForSearch() {
-		Set<String> tags = new HashSet<>();
-		tags.add("tag1");
-		tags.add("tag2");
-
-		long userId = coreMockService.createMockUser(1);
-		long nodeId = coreMockService.createMockRootNode(1);
-
-		// publikovaný článek
-		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
-				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true,
-				"mockContextRoot");
-		long articleId = articleService.saveArticle(payload, nodeId, userId);
-
-		// nepublikovaný článek
-		payload = new ArticlePayloadTO("UnpublishedMockArticleName",
-				"[N1]Úvod[/N1][TAG]<strong>UnpublishedMockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, false,
-				"mockContextRoot");
-		articleService.saveArticle(payload, nodeId, userId);
-
-		// draft
-		payload = new ArticlePayloadTO("DraftMockArticleName",
-				"[N1]Úvod[/N1][TAG]<strong>DraftMockArticleName</strong>[/TAG] [N1]Konec[/N1] ende", tags, false,
-				"mockContextRoot");
-		articleService.saveDraft(payload, nodeId, userId, false);
-
-		// náhled
-		payload = new ArticlePayloadTO("PreviewMockArticleName",
-				"[N1]Úvod[/N1][TAG]<strong>PreviewMockArticleName</strong>[/TAG] [N1]Konec[/N1] ende", tags, false,
-				"mockContextRoot");
-		articleService.saveDraft(payload, nodeId, userId, true);
-
-		List<ArticleTO> articles = articleService.getAllArticlesForSearch(userId);
-		assertEquals(2, articles.size());
-
-		ArticleTO articleTO = articles.get(1);
-
-		assertNotNull(articleTO);
-		assertEquals("mockArticleName", articleTO.getContentNode().getName());
-		assertEquals(new Long(nodeId), articleTO.getContentNode().getParent().getId());
-		assertEquals(new Long(userId), articleTO.getContentNode().getAuthor().getId());
-		assertEquals(new Long(articleId), articleTO.getContentNode().getContentID());
-		assertEquals(ArticlesContentModule.ID, articleTO.getContentNode().getContentReaderID());
-		assertEquals(2, articleTO.getContentNode().getContentTags().size());
-		assertTrue(articleTO.getContentNode().isPublicated());
-		assertFalse(articleTO.getContentNode().isDraft());
-		assertNull(articleTO.getContentNode().getDraftSourceId());
-		assertNull(articleTO.getContentNode().getLastModificationDate());
-		assertNotNull(articleTO.getContentNode().getCreationDate());
-
-		assertNull(articleTO.getPluginCSSResources());
-		assertNull(articleTO.getPluginJSResources());
-		assertNull(articleTO.getPluginJSCodes());
-		assertNull(articleTO.getText());
-		assertNull(articleTO.getOutputHTML());
-		assertEquals(" Úvod  [TAG]&lt;strong&gt;mockArticleText&lt;/strong&gt;[/TAG]  Konec   ende",
-				articleTO.getSearchableOutput());
-	}
 }

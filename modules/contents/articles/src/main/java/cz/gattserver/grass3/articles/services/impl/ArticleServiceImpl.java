@@ -256,13 +256,6 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	@Override
-	public List<ArticleTO> getAllArticlesForSearch(Long userId) {
-		boolean isAdmin = userId == null ? false : userRepository.findOne(userId).isAdmin();
-		List<Article> articles = articleRepository.findAllForSearch(userId, isAdmin);
-		return articlesMapper.mapArticlesForSearch(articles);
-	}
-
-	@Override
 	public List<ArticleDraftOverviewTO> getDraftsForUser(Long userId) {
 		boolean isAdmin = userId == null ? false : userRepository.findOne(userId).isAdmin();
 		List<Article> articles = articleRepository.findDraftsForUser(userId, isAdmin);

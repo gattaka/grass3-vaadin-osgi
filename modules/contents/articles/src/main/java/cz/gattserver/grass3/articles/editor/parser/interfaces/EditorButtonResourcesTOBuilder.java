@@ -93,35 +93,9 @@ public class EditorButtonResourcesTOBuilder {
 		return new EditorButtonResourcesTO(tag, tagFamily, dsc, pfx, sfx, imageResource);
 	}
 
-	public String getTag() {
-		return tag;
-	}
-
-	public EditorButtonResourcesTOBuilder setTag(String tag) {
-		this.tag = tag;
-		return this;
-	}
-
-	public String getTagFamily() {
-		return tagFamily;
-	}
-
-	public EditorButtonResourcesTOBuilder setTagFamily(String tagFamily) {
-		this.tagFamily = tagFamily;
-		return this;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
 	public EditorButtonResourcesTOBuilder setDescription(String description) {
 		this.description = description;
 		return this;
-	}
-
-	public String getPrefix() {
-		return prefix;
 	}
 
 	public EditorButtonResourcesTOBuilder setPrefix(String prefix) {
@@ -129,17 +103,9 @@ public class EditorButtonResourcesTOBuilder {
 		return this;
 	}
 
-	public String getSuffix() {
-		return suffix;
-	}
-
 	public EditorButtonResourcesTOBuilder setSuffix(String suffix) {
 		this.suffix = suffix;
 		return this;
-	}
-
-	public Resource getImageResource() {
-		return imageResource;
 	}
 
 	/**

@@ -20,21 +20,6 @@ public interface ArticlesMapperService {
 	public ArticleRESTTO mapArticleForREST(Article article);
 
 	/**
-	 * Mapuje článek pro vyhledávání
-	 */
-	public ArticleTO mapArticleForSearch(Article article);
-
-	/**
-	 * Převede kolekci {@link Article} na kolekci {@link ArticleTO} určenou pro
-	 * vyhledávání
-	 * 
-	 * @param articles
-	 *            vstupní kolekce entit {@link Article}
-	 * @return
-	 */
-	public List<ArticleTO> mapArticlesForSearch(List<Article> articles);
-
-	/**
 	 * Převede kolekci {@link Article} na kolekci {@link ArticleDraftOverviewTO}
 	 * určenou pro menu výběru rozpracovaného článku
 	 * 

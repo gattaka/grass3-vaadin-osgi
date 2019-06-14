@@ -18,9 +18,9 @@ public class AbbrParserTest {
 
 	private ParsingProcessor getParsingProcessorWithText(String text) {
 		Lexer lexer = new Lexer(text);
-		ParsingProcessor pluginBag = new ParsingProcessor(lexer, "contextRoot", new HashMap<>());
-		pluginBag.nextToken(); // musí se inicializovat
-		return pluginBag;
+		ParsingProcessor parsingProcessor = new ParsingProcessor(lexer, "contextRoot", new HashMap<>());
+		parsingProcessor.nextToken(); // musí se inicializovat
+		return parsingProcessor;
 	}
 
 	@Test

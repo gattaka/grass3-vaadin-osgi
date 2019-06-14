@@ -73,10 +73,10 @@ public class ArticleServiceImpl implements ArticleService {
 
 		Lexer lexer = new Lexer(source);
 		Parser parser = new ArticleParser();
-		ParsingProcessor pluginBag = new ParsingProcessor(lexer, contextRoot, pluginRegister.createRegisterSnapshot());
+		ParsingProcessor parsingProcessor = new ParsingProcessor(lexer, contextRoot, pluginRegister.createRegisterSnapshot());
 
 		// výstup
-		Element tree = parser.parse(pluginBag);
+		Element tree = parser.parse(parsingProcessor);
 		Context ctx = new ContextImpl();
 		tree.apply(ctx);
 

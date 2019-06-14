@@ -5,8 +5,6 @@ import static cz.gattserver.grass3.articles.editor.lexer.Token.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cz.gattserver.grass3.articles.editor.parser.interfaces.PositionTO;
-
 /**
  * 
  * @author gatt
@@ -23,30 +21,13 @@ public class Lexer {
 	// zkoumaný znak
 	private int ch;
 
-	// zkoumaná řádka
-	private int line;
-
-	// zkoumaný sloupec
-	private int col;
-
 	// pokud se právě skočilo přes breakline, musí
 	// se s inkrementací col počkat, jinak by byl
 	// napřed
 	private boolean br = false;
 
-	// pozice řádek, sloupec
-	private int pcol;
-	private int pline;
-
 	// načtený identifikátor
 	private StringBuilder word = new StringBuilder();
-
-	/**
-	 * Vrátí počáteční pozici aktuálního symbolu
-	 */
-	public PositionTO getPosition() {
-		return new PositionTO(pline, pcol);
-	}
 
 	/**
 	 * Bere zdrojový text a seká ho na tokeny
@@ -118,16 +99,12 @@ public class Lexer {
 		if (ch == '\n' || ch == '\r') {
 			if (ch == '\r')
 				index++;
-			line++;
-			col = 1;
 			br = true;
 			return -2;
 		}
 		// Údaj o sloupci se inkrementuje jenom pokud před ním nebyl konec řádky
 		if (br)
 			br = false;
-		else
-			col++;
 		return ch;
 	}
 
@@ -143,11 +120,6 @@ public class Lexer {
 	}
 
 	private Token readNextToken() {
-		// ulož si pozice, než je záhy smažeš
-		// od indexu se musí odečítat 1 protože index ukazuje vždy o znak napřed
-		pcol = col - 1;
-		pline = line;
-
 		word.setLength(0);
 
 		// konec řádku - \n
@@ -163,11 +135,8 @@ public class Lexer {
 		}
 
 		// pokud jsem na konci souboru, tak to sdělím okamžitě
-		if (ch == -1) {
-			pcol++; // musí se posunout o jeden aby vycházelo, že ukazuje tam,
-					// kde už není token
+		if (ch == -1)
 			return EOF;
-		}
 
 		// Tag - musí začínat '[', končit ']' a obsahovat pouze písmena, čísla
 		// nebo '_'
@@ -201,13 +170,11 @@ public class Lexer {
 
 		// čtení bylo ukončeno kvůli konci řádku nebo EOF - ukonči řádku
 		// (byl to text, nekončilo se ']')
-		if (ch == -1 || ch == -2) {
+		if (ch == -1 || ch == -2)
 			return TEXT;
-		}
 
 		// zkontroluj ']'
 		if (ch == ']') {
-
 			word.append((char) ch);
 			ch = nextChar();
 
@@ -216,16 +183,13 @@ public class Lexer {
 
 				// pokud tag začínal [/ tak to byl koncový tag
 				return word.charAt(1) == '/' ? END_TAG : START_TAG;
-
 			}
-
 		}
 
 		// pokud mne vyhodila značna tagu, tak ukončím tohle jako text
 		// ale nebudu jí načítat - mohl bych přejet tag
-		if (ch == '[') {
+		if (ch == '[')
 			return TEXT;
-		}
 
 		// jinak to nechám dojet jako text
 		return null;

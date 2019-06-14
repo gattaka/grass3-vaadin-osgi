@@ -26,7 +26,7 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 	@Autowired
 	private CoreMapperService mapper;
 
-	public <T extends ArticleRESTTO> T mapArticleBase(Article article, T articleDTO) {
+	private <T extends ArticleRESTTO> T mapArticleBase(Article article, T articleDTO) {
 		articleDTO.setId(article.getId());
 		articleDTO.setOutputHTML(article.getOutputHTML());
 
@@ -44,6 +44,7 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 		return articleDTO;
 	}
 
+	@Override
 	public ArticleTO mapArticleForDetail(Article article) {
 		ArticleTO articleDTO = mapArticleBase(article, new ArticleTO());
 
@@ -58,36 +59,11 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 		return articleDTO;
 	}
 
+	@Override
 	public ArticleRESTTO mapArticleForREST(Article article) {
 		ArticleRESTTO articleDTO = mapArticleBase(article, new ArticleRESTTO());
 		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article.getContentNode()));
 		return articleDTO;
-	}
-
-	/**
-	 * Mapuje článek pro vyhledávání
-	 */
-	public ArticleTO mapArticleForSearch(Article article) {
-		ArticleTO articleDTO = new ArticleTO();
-		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article.getContentNode()));
-		articleDTO.setId(article.getId());
-		articleDTO.setSearchableOutput(article.getSearchableOutput());
-		return articleDTO;
-	}
-
-	/**
-	 * Převede kolekci {@link Article} na kolekci {@link ArticleTO} určenou pro
-	 * vyhledávání
-	 * 
-	 * @param articles
-	 *            vstupní kolekce entit {@link Article}
-	 * @return
-	 */
-	public List<ArticleTO> mapArticlesForSearch(List<Article> articles) {
-		List<ArticleTO> articleDTOs = new ArrayList<>();
-		for (Article article : articles)
-			articleDTOs.add(mapArticleForSearch(article));
-		return articleDTOs;
 	}
 
 	/**
@@ -98,6 +74,7 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 	 *            vstupní kolekce entit {@link Article}
 	 * @return
 	 */
+	@Override
 	public List<ArticleDraftOverviewTO> mapArticlesForDraftOverview(List<Article> articles) {
 		List<ArticleDraftOverviewTO> articleDTOs = new ArrayList<>();
 		for (Article article : articles)
@@ -113,6 +90,7 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 	 *            vstupní {@link Article}
 	 * @return
 	 */
+	@Override
 	public ArticleDraftOverviewTO mapArticleForDraftOverview(Article article) {
 		ArticleDraftOverviewTO articleDTO = new ArticleDraftOverviewTO();
 		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article.getContentNode()));

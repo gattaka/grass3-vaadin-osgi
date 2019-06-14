@@ -19,7 +19,6 @@ import cz.gattserver.grass3.articles.editor.parser.elements.PluginErrorElement;
 import cz.gattserver.grass3.articles.editor.parser.elements.TextElement;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.TokenException;
-import cz.gattserver.grass3.articles.editor.parser.interfaces.PositionTO;
 import cz.gattserver.grass3.articles.editor.parser.util.HTMLEscaper;
 import cz.gattserver.grass3.articles.plugins.Plugin;
 
@@ -127,10 +126,6 @@ public class ParsingProcessor {
 	 */
 	public void nextToken() {
 		this.token = lexer.nextToken();
-	}
-
-	public PositionTO getPosition() {
-		return lexer.getPosition();
 	}
 
 	/**
@@ -267,7 +262,8 @@ public class ParsingProcessor {
 					// ukonči blok
 					break;
 				} else {
-					boolean isInActive = activePlugins.stream().anyMatch(e -> e.tag.equals(actualEndTag));
+					boolean isInActive = activePlugins.stream().map(StackElement::getTag)
+							.anyMatch(tag -> tag.equals(actualEndTag));
 					// nejde náhodou o ukončovací tag některého z aktivních
 					// pluginů?
 					// Pokud ano, pak to ber jako chybu. Pokud ne, pak

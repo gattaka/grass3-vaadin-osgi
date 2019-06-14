@@ -47,6 +47,20 @@ public class EditorButtonResourcesTOBuilderTest {
 
 	@Test
 	public void testCreateLong() {
+		EditorButtonResourcesTO to = new EditorButtonResourcesTOBuilder("tag", "tagFamily")
+				.setDescription("description").setPrefix("[tag][test][/test]Bla").setSuffix("[/tag]")
+				.setImageResource(new ThemeResource("resourceId")).build();
+		assertEquals("tag", to.getTag());
+		assertEquals("tagFamily", to.getTagFamily());
+		assertEquals("description", to.getDescription());
+		assertEquals("[tag][test][/test]Bla", to.getPrefix());
+		assertEquals("[/tag]", to.getSuffix());
+		assertTrue(to.getImage() instanceof ThemeResource);
+		assertEquals("resourceId", ((ThemeResource) to.getImage()).getResourceId());
+	}
+
+	@Test
+	public void testCreateChain() {
 		EditorButtonResourcesTO to = new EditorButtonResourcesTOBuilder("tag", "tagFamily", "description",
 				"[tag][test][/test]Bla", "[/tag]", new ThemeResource("resourceId")).build();
 		assertEquals("tag", to.getTag());

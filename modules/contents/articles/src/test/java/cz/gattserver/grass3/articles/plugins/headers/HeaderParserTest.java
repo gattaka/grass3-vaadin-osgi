@@ -34,8 +34,36 @@ public class HeaderParserTest {
 				ctx.getOutput());
 	}
 
+	@Test
+	public void testAfterLine() {
+		HeaderParser parser = new HeaderParser(2, "H2");
+		ParsingProcessor parsingProcessor = getParsingProcessorWithText("[H2]Hypertext Markup Language[/H2]\nfdd");
+		Element element = parser.parse(parsingProcessor);
+
+		Context ctx = new ContextImpl();
+		element.apply(ctx);
+		assertEquals(
+				"<div class=\"articles-h2\">Hypertext Markup Language <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level2\"></div>",
+				ctx.getOutput());
+		assertEquals("fdd", parsingProcessor.getText());
+	}
+
+	@Test
+	public void testAfterLine2() {
+		HeaderParser parser = new HeaderParser(2, "H2");
+		ParsingProcessor parsingProcessor = getParsingProcessorWithText("[H2]Hypertext Markup Language[/H2]\n\nfdd");
+		Element element = parser.parse(parsingProcessor);
+
+		Context ctx = new ContextImpl();
+		element.apply(ctx);
+		assertEquals(
+				"<div class=\"articles-h2\">Hypertext Markup Language <a class=\"articles-h-id\" href=\"0\"></a></div><div class=\"level2\"></div>",
+				ctx.getOutput());
+		assertEquals("fdd", parsingProcessor.getText());
+	}
+
 	@Test(expected = TokenException.class)
-	public void test_failMissingEndTag() {
+	public void testFailMissingEndTag() {
 		HeaderParser parser = new HeaderParser(2, "H2");
 		Element element = parser.parse(getParsingProcessorWithText("[H2]HTML[H2]"));
 		Context ctx = new ContextImpl();
@@ -43,7 +71,7 @@ public class HeaderParserTest {
 	}
 
 	@Test(expected = TokenException.class)
-	public void test_failEOF() {
+	public void testFailEOF() {
 		HeaderParser parser = new HeaderParser(2, "H2");
 		Element element = parser.parse(getParsingProcessorWithText("[H2]"));
 		Context ctx = new ContextImpl();
@@ -51,7 +79,7 @@ public class HeaderParserTest {
 	}
 
 	@Test(expected = TokenException.class)
-	public void test_failStartTag() {
+	public void testFailStartTag() {
 		HeaderParser parser = new HeaderParser(2, "H2");
 		Element element = parser.parse(getParsingProcessorWithText("[BAD_TAG]Hypertext Markup Language[/H2]"));
 		Context ctx = new ContextImpl();
@@ -59,15 +87,15 @@ public class HeaderParserTest {
 	}
 
 	@Test(expected = TokenException.class)
-	public void test_failEndTag() {
+	public void testFailEndTag() {
 		HeaderParser parser = new HeaderParser(2, "H2");
 		Element element = parser.parse(getParsingProcessorWithText("[H2]Hypertext Markup Language[/BAD_TAG]"));
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 	}
-	
+
 	@Test(expected = TokenException.class)
-	public void test_failEndTag2() {
+	public void testFailEndTag2() {
 		HeaderParser parser = new HeaderParser(2, "H2");
 		Element element = parser.parse(getParsingProcessorWithText("[H2]Hypertext Markup Language[/BAD_TAG] fddf"));
 		Context ctx = new ContextImpl();

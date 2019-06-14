@@ -27,6 +27,9 @@ public class MockParser implements Parser {
 
 		// počet
 		parseCount(pluginBag);
+		
+		if (numberOfStars == 0)
+			throw new IllegalStateException("ZERO");
 
 		// zpracovat koncový tag
 		parseEndTag(pluginBag);

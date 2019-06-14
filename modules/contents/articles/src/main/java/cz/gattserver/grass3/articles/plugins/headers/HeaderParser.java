@@ -54,8 +54,8 @@ public class HeaderParser implements Parser {
 		// END_tag byl zpracován
 		pluginBag.nextToken();
 
-		// protože za H je mezera ignoruje se případný <br/>
-		if (pluginBag.getToken().equals(Token.EOL))
+		// protože H je zalamovací ignoruje se případný <br/>
+		while (pluginBag.getToken().equals(Token.EOL))
 			pluginBag.nextToken();
 
 		return new HeaderElement(elist, level);

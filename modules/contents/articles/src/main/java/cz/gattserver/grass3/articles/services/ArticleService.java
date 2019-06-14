@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.articles.services;
 
 import java.util.List;
+import java.util.UUID;
 
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.exception.UnauthorizedAccessException;
@@ -144,7 +145,7 @@ public interface ArticleService {
 	 *            kořenová adresa, od které mají být vytvoření linky na CSS a JS
 	 *            zdroje, jež může článek na sobě mít
 	 */
-	public void reprocessAllArticles(String contextRoot);
+	public void reprocessAllArticles(UUID operationId, String contextRoot);
 
 	/**
 	 * Získá všechny rozpracované články viditelné daným uživatelem

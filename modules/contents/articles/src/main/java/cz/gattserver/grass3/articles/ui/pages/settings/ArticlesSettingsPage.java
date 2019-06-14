@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.articles.ui.pages.settings;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.data.validator.IntegerRangeValidator;
@@ -38,6 +40,7 @@ public class ArticlesSettingsPage extends AbstractSettingsPage {
 
 	private UI ui = UI.getCurrent();
 	private ProgressWindow progressIndicatorWindow;
+	private UUID uuid;
 
 	private Button reprocessButton;
 
@@ -116,7 +119,8 @@ public class ArticlesSettingsPage extends AbstractSettingsPage {
 					e -> {
 						eventBus.subscribe(ArticlesSettingsPage.this);
 						progressIndicatorWindow = new ProgressWindow();
-						articleFacade.reprocessAllArticles(getRequest().getContextRoot());
+						uuid = UUID.randomUUID();
+						articleFacade.reprocessAllArticles(uuid, getRequest().getContextRoot());
 					});
 			confirmSubwindow.setWidth("460px");
 			confirmSubwindow.setHeight("230px");

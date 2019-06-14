@@ -24,9 +24,10 @@ public class CoreMockService {
 	private NodeService nodeService;
 
 	public long createMockUser(int variant) {
-		long id = userService.registrateNewUser(MockUtils.MOCK_USER_EMAIL + variant,
+		long userId = userService.registrateNewUser(MockUtils.MOCK_USER_EMAIL + variant,
 				MockUtils.MOCK_USER_NAME + variant, MockUtils.MOCK_USER_PASSWORD + variant);
-		return id;
+		userService.activateUser(userId);
+		return userId;
 	}
 
 	public long createMockRootNode(int variant) {

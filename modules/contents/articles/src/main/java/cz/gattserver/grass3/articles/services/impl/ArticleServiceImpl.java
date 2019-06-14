@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -216,7 +217,7 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Async
 	@Override
-	public void reprocessAllArticles(String contextRoot) {
+	public void reprocessAllArticles(UUID operationId, String contextRoot) {
 		int total = (int) articleRepository.count();
 		eventBus.publish(new ArticlesProcessStartEvent(total));
 		int current = 0;
@@ -232,7 +233,7 @@ public class ArticleServiceImpl implements ArticleService {
 			}
 		}
 
-		eventBus.publish(new ArticlesProcessResultEvent());
+		eventBus.publish(new ArticlesProcessResultEvent(operationId));
 	}
 
 	private void reprocessArticle(Article article, String contextRoot) {
@@ -246,9 +247,9 @@ public class ArticleServiceImpl implements ArticleService {
 		if (article.getContentNode().getDraft() == null || article.getContentNode().getDraft()) {
 			if (article.getContentNode().getDraftSourceId() != null) {
 				modifyDraftOfExistingArticle(article.getId(), payload, null,
-						article.getContentNode().getDraftSourceId(), true);
+						article.getContentNode().getDraftSourceId(), false);
 			} else {
-				modifyDraft(article.getId(), payload, true);
+				modifyDraft(article.getId(), payload, false);
 			}
 		} else {
 			modifyArticle(article.getId(), payload, null);

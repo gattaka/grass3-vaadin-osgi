@@ -86,7 +86,7 @@ public class PartsFinder {
 
 	private static void processText(int searchPartOrderNumber, State state, FinderArray searchWindow, Result result,
 			char c) {
-		
+
 		state.builder.append((char) c);
 
 		// Nadpis mne zajímá pouze pokud jsem ještě nenašel cílovou část

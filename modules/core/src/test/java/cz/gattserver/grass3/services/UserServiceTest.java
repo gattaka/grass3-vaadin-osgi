@@ -72,10 +72,6 @@ public class UserServiceTest extends AbstractDBUnitTest {
 	public void testBanUser() {
 		Long userId = coreMockService.createMockUser(1);
 		UserInfoTO user = userService.getUserById(userId);
-		assertFalse(user.isConfirmed());
-
-		userService.activateUser(userId);
-		user = userService.getUserById(userId);
 		assertTrue(user.isConfirmed());
 
 		userService.banUser(userId);
@@ -85,8 +81,12 @@ public class UserServiceTest extends AbstractDBUnitTest {
 
 	@Test
 	public void testActivateUser() {
-		Long userId = coreMockService.createMockUser(1);
+		long userId = userService.registrateNewUser(MockUtils.MOCK_USER_EMAIL + 1, MockUtils.MOCK_USER_NAME + 1,
+				MockUtils.MOCK_USER_PASSWORD + 1);
 		UserInfoTO user = userService.getUserById(userId);
+		assertFalse(user.isConfirmed());
+
+		user = userService.getUserById(userId);
 		assertFalse(user.isConfirmed());
 
 		userService.activateUser(user.getId());

@@ -20,7 +20,7 @@ public class HeaderPluginTest {
 			assertEquals("N" + i, plugin.getTag());
 			assertEquals(HeaderParser.class, plugin.getParser().getClass());
 			EditorButtonResourcesTO to = plugin.getEditorButtonResources();
-			assertEquals("Nadpis " + i, to.getDescription());
+			assertEquals("H" + i, to.getDescription());
 			assertNull(to.getImage());
 			assertEquals("[N" + i + "]", to.getPrefix());
 			assertEquals("[/N" + i + "]", to.getSuffix());

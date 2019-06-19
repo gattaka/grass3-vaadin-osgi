@@ -32,7 +32,7 @@ public abstract class AbstractHeaderPlugin implements Plugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(tagTemplate + level, "Nadpisy").setDescription("Nadpis " + level)
+		return new EditorButtonResourcesTOBuilder(tagTemplate + level, "Nadpisy").setDescription("H" + level)
 				.build();
 	}
 

@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.articles.templates.plotter;
 
+import org.apache.commons.lang3.StringUtils;
+
 import cz.gattserver.grass3.articles.editor.lexer.Token;
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
@@ -12,56 +14,34 @@ import cz.gattserver.grass3.articles.editor.parser.exceptions.TokenException;
  */
 public class PlotterParser implements Parser {
 
-	private String tag;
-	private String startXTag;
-	private String endXTag;
-	private String startYTag;
-	private String endYTag;
-	private String funcTag;
+	private static final String FORMAT_ERROR = "Invalid plotter format. Expected: function;x1;x2;y1;y2";
 
-	private double startx;
-	private double endx;
-	private double starty;
-	private double endy;
-	private String function;
+	private String tag;
 
 	public PlotterParser(String tag) {
 		this.tag = tag;
-	}
-
-	public PlotterParser(String tag, String startXTag, String endXTag, String startYTag, String endYTag,
-			String funcTag) {
-		this.tag = tag;
-		this.startXTag = startXTag;
-		this.endXTag = endXTag;
-		this.startYTag = startYTag;
-		this.endYTag = endYTag;
-		this.funcTag = funcTag;
 	}
 
 	@Override
 	public Element parse(ParsingProcessor processor) {
 		parseStartTag(processor, tag);
 
-		parseStartTag(processor, startXTag);
-		startx = parseDoubleNumber(processor);
-		parseEndTag(processor, startXTag);
+		String text = parseText(processor);
+		if (StringUtils.isBlank(text))
+			throw new ParserException(FORMAT_ERROR);
 
-		parseStartTag(processor, endXTag);
-		endx = parseDoubleNumber(processor);
-		parseEndTag(processor, endXTag);
-		
-		parseStartTag(processor, startYTag);
-		starty = parseDoubleNumber(processor);
-		parseEndTag(processor, startYTag);
+		String[] values = text.split(";");
+		if (values.length != 5)
+			throw new ParserException(FORMAT_ERROR);
 
-		parseStartTag(processor, endYTag);
-		endy = parseDoubleNumber(processor);
-		parseEndTag(processor, endYTag);
+		String function = values[0];
+		if (!function.contains("x"))
+			throw new ParserException("Plotter function variable must be 'x'");
 
-		parseStartTag(processor, funcTag);
-		function = parseText(processor);
-		parseEndTag(processor, funcTag);
+		double startx = parseDoubleNumber(values[1], "'x1'");
+		double endx = parseDoubleNumber(values[2], "'x2'");
+		double starty = parseDoubleNumber(values[3], "'y1'");
+		double endy = parseDoubleNumber(values[4], "'y2'");
 
 		// zpracovat koncový tag
 		parseEndTag(processor, tag);
@@ -94,19 +74,12 @@ public class PlotterParser implements Parser {
 		return text;
 	}
 
-	private Double parseDoubleNumber(ParsingProcessor processor) {
-		Double number;
-		if (processor.getToken() != Token.EOF) {
-			try {
-				number = Double.parseDouble(processor.getText());
-			} catch (NumberFormatException e) {
-				throw new ParserException(e);
-			}
-		} else {
-			throw new TokenException(Token.TEXT);
+	private double parseDoubleNumber(String text, String name) {
+		try {
+			return Double.parseDouble(text);
+		} catch (NumberFormatException e) {
+			throw new ParserException("Invalid double for " + name);
 		}
-		processor.nextToken();
-		return number;
 	}
 
 }

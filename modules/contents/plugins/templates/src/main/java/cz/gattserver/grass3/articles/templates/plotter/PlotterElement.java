@@ -15,6 +15,10 @@ public class PlotterElement implements Element {
 	private double endy;
 	private String function;
 
+	protected UUID generateRandomUUID() {
+		return UUID.randomUUID();
+	}
+
 	public PlotterElement(double startx, double endx, double starty, double endy, String function) {
 		this.startx = startx;
 		this.endx = endx;
@@ -25,7 +29,7 @@ public class PlotterElement implements Element {
 
 	@Override
 	public void apply(Context ctx) {
-		String id = UUID.randomUUID().toString().replaceAll("-", "_");
+		String id = generateRandomUUID().toString().replaceAll("-", "_");
 		ctx.print("<canvas id=\"can" + id + "\" width=\"" + WIDTH
 				+ "\" height=\"300\" style=\"cursor: pointer\"></canvas>");
 		// minified https://javascript-minifier.com/

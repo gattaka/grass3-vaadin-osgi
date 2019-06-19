@@ -14,11 +14,6 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
 public class PlotterPlugin implements Plugin {
 
 	private static final String TAG = "PLOTTER";
-	private static final String TAG_STARTX = "STARTX";
-	private static final String TAG_ENDX = "ENDX";
-	private static final String TAG_STARTY = "STARTY";
-	private static final String TAG_ENDY = "ENDY";
-	private static final String TAG_FUNC = "FUNC";
 
 	@Override
 	public String getTag() {
@@ -27,14 +22,12 @@ public class PlotterPlugin implements Plugin {
 
 	@Override
 	public Parser getParser() {
-		return new PlotterParser(TAG, TAG_STARTX, TAG_ENDX, TAG_STARTY, TAG_ENDY, TAG_FUNC);
+		return new PlotterParser(TAG);
 	}
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(TAG, "Šablony").setPrefix(
-				"[" + TAG + "][" + TAG_STARTX + "][/" + TAG_STARTX + "][" + TAG_ENDX + "][/" + TAG_ENDX + "]["
-						+ TAG_STARTY + "][/" + TAG_STARTY + "][" + TAG_ENDY + "][/" + TAG_ENDY + "][" + TAG_FUNC + "]")
-				.setSuffix("[/" + TAG_FUNC + "][/" + TAG + "]").setDescription("Plotter").build();
+		return new EditorButtonResourcesTOBuilder(TAG, "Šablony").setPrefix("[" + TAG + "]x*x;-5;5;-10;10")
+				.setSuffix("[/" + TAG + "]").setDescription("Plotter (function;x1;x2;y1;y2)").build();
 	}
 }

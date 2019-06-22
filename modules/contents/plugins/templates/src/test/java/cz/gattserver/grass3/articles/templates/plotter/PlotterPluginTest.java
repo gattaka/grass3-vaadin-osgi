@@ -16,7 +16,7 @@ public class PlotterPluginTest {
 		EditorButtonResourcesTO to = plugin.getEditorButtonResources();
 		assertEquals("Plotter", to.getDescription());
 		assertNull(to.getImage());
-		assertEquals("[PLOTTER]x*x;-5;5;-10;10", to.getPrefix());
+		assertEquals("[PLOTTER]x*x;-5;5;-10;10[;width][;height]", to.getPrefix());
 		assertEquals("[/PLOTTER]", to.getSuffix());
 		assertEquals("PLOTTER", to.getTag());
 		assertEquals("Šablony", to.getTagFamily());

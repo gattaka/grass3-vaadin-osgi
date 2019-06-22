@@ -11,7 +11,7 @@ public class PlotterElementTest {
 
 	@Test
 	public void test() {
-		PlotterElement e = new PlotterElement(1.1, 2.2, 3.2, 45.5, "sin(x) * 2") {
+		PlotterElement e = new PlotterElement(1.1, 2.2, 3.2, 45.5, "sin(x) * 2", null, null) {
 			@Override
 			protected UUID generateRandomUUID() {
 				return UUID.fromString("8e6f402c-5432-4dca-9de7-f787f863fa20");

@@ -27,7 +27,7 @@ public class PlotterPlugin implements Plugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(TAG, "Šablony").setPrefix("[" + TAG + "]x*x;-5;5;-10;10")
+		return new EditorButtonResourcesTOBuilder(TAG, "Šablony").setPrefix("[" + TAG + "]x*x;-5;5;-10;10[;width][;height]")
 				.setSuffix("[/" + TAG + "]").setDescription("Plotter").build();
 	}
 }

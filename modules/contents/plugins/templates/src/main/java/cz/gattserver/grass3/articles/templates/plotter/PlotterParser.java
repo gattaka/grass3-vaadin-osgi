@@ -31,7 +31,7 @@ public class PlotterParser implements Parser {
 			throw new ParserException(FORMAT_ERROR);
 
 		String[] values = text.split(";");
-		if (values.length != 5)
+		if (values.length < 5 || values.length > 7)
 			throw new ParserException(FORMAT_ERROR);
 
 		String function = values[0];
@@ -43,10 +43,18 @@ public class PlotterParser implements Parser {
 		double starty = parseDoubleNumber(values[3], "'y1'");
 		double endy = parseDoubleNumber(values[4], "'y2'");
 
+		String width = null;
+		if (values.length > 5)
+			width = values[5];
+
+		String height = null;
+		if (values.length > 6)
+			height = values[6];
+
 		// zpracovat koncový tag
 		parseEndTag(processor, tag);
 
-		return new PlotterElement(startx, endx, starty, endy, function);
+		return new PlotterElement(startx, endx, starty, endy, function, width, height);
 	}
 
 	private void parseStartTag(ParsingProcessor processor, String tag) {

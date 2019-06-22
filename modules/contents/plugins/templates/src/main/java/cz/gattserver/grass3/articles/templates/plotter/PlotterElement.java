@@ -7,35 +7,44 @@ import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 
 public class PlotterElement implements Element {
 
-	private static final int WIDTH = 700;
-
 	private double startx;
 	private double endx;
 	private double starty;
 	private double endy;
 	private String function;
 
+	private String width;
+	private String height;
+
 	protected UUID generateRandomUUID() {
 		return UUID.randomUUID();
 	}
 
-	public PlotterElement(double startx, double endx, double starty, double endy, String function) {
+	public PlotterElement(double startx, double endx, double starty, double endy, String function, String width,
+			String height) {
 		this.startx = startx;
 		this.endx = endx;
 		this.starty = starty;
 		this.endy = endy;
 		this.function = function;
+		this.width = width;
+		this.height = height;
 	}
 
 	@Override
 	public void apply(Context ctx) {
 		String id = generateRandomUUID().toString().replaceAll("-", "_");
-		ctx.print("<canvas id=\"can" + id + "\" width=\"" + WIDTH
-				+ "\" height=\"300\" style=\"cursor: pointer\"></canvas>");
+		ctx.print("<div style=\"margin: 0px 5px; display: inline-block;\"><canvas id=\"can" + id
+				+ "\" style=\"cursor: pointer; \"");
+		if (width != null)
+			ctx.print(" width=\"" + width + "\" ");
+		if (height != null)
+			ctx.print(" height=\"" + height + "\" ");
+		ctx.print("></canvas></div>");
 		// minified https://javascript-minifier.com/
 		ctx.addJSCode("$.plotter" + id + "=function(){let e,t,l,n,i,o,r=document.getElementById(\"can" + id
-				+ "\"),a=r.getContext(\"2d\"),c=r.width,s=r.height,f=!1," + "h=" + startx + ",y=" + endx + ",g="
-				+ starty + ",u=" + endy + ",d=function(x){return " + function
+				+ "\"),a=r.getContext(\"2d\"),c=r.offsetWidth,s=r.offsetHeight,f=!1," + "h=" + startx + ",y=" + endx
+				+ ",g=" + starty + ",u=" + endy + ",d=function(x){return " + function
 				+ "},m=function(){a.clearRect(0,0,c,s),a.strokeStyle=\"grey\","
 				+ "a.fillStyle=\"grey\";a.font=\"13px Monospace\",a.strokeRect(0,0,c,s);l=1.01*Math.abs(h-y),"
 				+ "n=1.01*Math.abs(g-u),i=s/n,o=c/l;let e=Math.min(h,y),t=Math.max(h,y),r=l/c;if(r<=0||e>t)return "
@@ -49,7 +58,7 @@ public class PlotterElement implements Element {
 				+ "if(l<-21||l>c+21)continue;let n=l+8;a.beginPath(),a.moveTo(l,0),a.lineTo(l,s),a.stroke(),a.textAlign=\"left\",a.fillText(t,n,m-8)}"
 				+ "a.setLineDash([]),a.strokeStyle=\"grey\",a.fillStyle=\"grey\",a.beginPath(),a.moveTo(M,0),a.lineTo(M,s),a.stroke();"
 				+ "for(let l=e;l<=t;l+=r){let e=l*o+M,t=m-d(l)*i;a.fillStyle=\"blue\",a.fillRect(e-1.5,t-1.5,3,3)}};return r.addEventListener(\"wheel\","
-				+ "function(e){let t=e.deltaY>0?1.1:1/1.1;h*=t,y*=t,g*=t,u*=t,m()}),r.addEventListener(\"mousedown\",function(l){f=!0,e=l.clientX,t=l.clientY},!1),"
+				+ "function(e){e.preventDefault();let t=e.deltaY>0?1.1:1/1.1;h*=t,y*=t,g*=t,u*=t,m();}),r.addEventListener(\"mousedown\",function(l){f=!0,e=l.clientX,t=l.clientY},!1),"
 				+ "r.addEventListener(\"mouseup\",function(e){f=!1},!1),r.addEventListener(\"mouseleave\",function(e){f=!1},!1),r.addEventListener(\"mousemove\","
 				+ "function(l){if(!f)return;let n=(e-l.clientX)/o,r=(t-l.clientY)/i;h+=n,y+=n,g-=r,u-=r,m(),e=l.clientX,t=l.clientY},!1),{start:function(){m()}}}(),"
 				+ "$.plotter" + id + ".start();");

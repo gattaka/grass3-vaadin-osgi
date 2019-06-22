@@ -1,7 +1,7 @@
 <html>
 <body>
 	<div>
-		<canvas id="can" width="500" height="300" style="cursor: pointer"></canvas>
+		<canvas id="can" style="cursor: pointer"></canvas>
 	</div>
 	<script>
 let $ = {};
@@ -9,8 +9,8 @@ $.plotter = (function() {
 	
 	let canvas = document.getElementById("can");
 	let ctx = canvas.getContext("2d");
-	let width = canvas.width;
-	let height = canvas.height;	
+	let width = canvas.offsetWidth;
+	let height = canvas.offsetHeight;	
 	let dragged = false;
 	let draggedStartX;
 	let draggedStartY;
@@ -21,7 +21,7 @@ $.plotter = (function() {
 	let startY = 20.6;
 	let endY = -5;
 	
-	// na kolik procent je protažená Y osa?
+	// na kolik procent je prota�en� Y osa?
 	let xUnitProjection = 1.01;		
 	let yUnitProjection = 1.01;
 			
@@ -67,13 +67,13 @@ $.plotter = (function() {
 		let fromY = Math.min(startY, endY);
 		let toY = Math.max(startY, endY);
 		
-		// poloha hlavních osy 
+		// poloha hlavni osy 
 		let cyZero = height + Math.min(startY, endY) * cyUnit;
 		let cxZero = - Math.min(startX, endX) * cxUnit;
 		
 		// X OSA
 		
-		// x sekundární osa grafu		
+		// x sekundarni osa grafu		
 		let secXAxisCount = 8;	
 		let secXAxisUnit = yLength / secXAxisCount;			
 		let secXAxisRoundedUnit = secXAxisUnit > 10 ? 
@@ -115,7 +115,7 @@ $.plotter = (function() {
 				
 		// Y OSA
 				
-		// y sekundární osa grafu		
+		// y sekundarni osa grafu		
 		let secYAxisCount = 8;	
 		let secYAxisUnit = xLength / secYAxisCount;			
 		let secYAxisRoundedUnit = secYAxisUnit > 10 ? 
@@ -165,6 +165,7 @@ $.plotter = (function() {
 	};
 
 	canvas.addEventListener("wheel", function(e) {
+		e.preventDefault();
 		let multiplier = 1.1;
 		let delta = e.deltaY > 0 ? multiplier : 1 / multiplier;		
 		startX *= delta;

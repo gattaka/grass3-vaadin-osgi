@@ -19,7 +19,6 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -55,11 +54,7 @@ public class ArticlesResourceTest extends AbstractDBUnitTest {
 	@Before
 	public void init() throws Exception {
 		this.mockMvc = webAppContextSetup(webApplicationContext).build();
-
 		SecurityContextHolder.getContext().setAuthentication(null);
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		// ugh
-		assert authentication == null || authentication.getName() == null;
 	}
 
 	private long prepareArticle() {

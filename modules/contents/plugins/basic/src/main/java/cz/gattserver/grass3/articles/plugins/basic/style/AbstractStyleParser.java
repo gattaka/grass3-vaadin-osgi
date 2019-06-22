@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cz.gattserver.grass3.articles.editor.lexer.Token;
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
@@ -49,10 +50,14 @@ public abstract class AbstractStyleParser implements Parser {
 		// protože buď je to můj endtag nebo jde o EOF (vyplývá z bloku)
 		pluginBag.getEndTag();
 		logger.debug("{}", pluginBag.getToken());
-
+	
 		// END_TAG byl zpracován
 		pluginBag.nextToken();
 
+		// Zkus za stylem zpracovat ještě konec řádku
+		if (pluginBag.getToken().equals(Token.EOL))
+			pluginBag.nextToken();
+		
 		return getElement(elist);
 	}
 }

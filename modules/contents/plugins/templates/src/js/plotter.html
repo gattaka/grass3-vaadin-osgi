@@ -1,10 +1,9 @@
 <html>
 <body>
-	<div>
-		<canvas id="can" style="cursor: pointer"></canvas>
-	</div>
-	<script>
-let $ = {};
+<div>
+<canvas id="can" width="500" height="300" style="cursor: pointer"></canvas>
+</div>
+<script>let $ = {};
 $.plotter = (function() {
 	
 	let canvas = document.getElementById("can");
@@ -20,6 +19,12 @@ $.plotter = (function() {
 	
 	let startY = 20.6;
 	let endY = -5;
+	
+	let originalStartX = startX;	
+	let originalEndX = endX;
+	
+	let originalStartY = startY;
+	let originalEndY = endY;
 	
 	// na kolik procent je protažená Y osa?
 	let xUnitProjection = 1.01;		
@@ -39,6 +44,20 @@ $.plotter = (function() {
 	
 	let func = function(x) {
 		return x * x;
+	};
+
+	let ensureAxisUnitDigits = function(num, unit) {
+		let unitStr = unit.toString();
+		let numStr = num.toString();
+		if (num > 0 && numStr.length > unitStr.length + 1)
+			return Number(numStr.substring(0, unitStr.length));
+		if (num < 0 && numStr.length > unitStr.length + 2)
+			return Number(numStr.substring(0, unitStr.length + 1));
+		return num;
+	};
+
+	let roundUnit = function(unit) {
+		return Number(unit.toPrecision(2));
 	};
 
 	let paint = function() {		
@@ -67,19 +86,22 @@ $.plotter = (function() {
 		let fromY = Math.min(startY, endY);
 		let toY = Math.max(startY, endY);
 		
-		// poloha hlavni osy 
+		// poloha hlavních osy 
 		let cyZero = height + Math.min(startY, endY) * cyUnit;
 		let cxZero = - Math.min(startX, endX) * cxUnit;
 		
 		// X OSA
 		
-		// x sekundarni osa grafu		
+		// x sekundární osa grafu		
 		let secXAxisCount = 8;	
 		let secXAxisUnit = yLength / secXAxisCount;			
-		let secXAxisRoundedUnit = secXAxisUnit > 10 ? 
-			Math.ceil(secXAxisUnit / 10) * 10 : 
-			Math.ceil(secXAxisUnit);		
-		secXAxisCount = Math.ceil(yLength / secXAxisRoundedUnit);
+		let secXAxisRoundedUnit = roundUnit(secXAxisUnit);
+		let secXAxisNewCount = Math.ceil(yLength / secXAxisRoundedUnit);
+		if (secXAxisNewCount > secXAxisCount) {
+			secXAxisCount++;
+		} else if (secXAxisNewCount < secXAxisCount) {
+			secXAxisCount--;
+		}
 		if (secXAxisCount < 1 || secXAxisCount == Infinity)
 			secXAxisCount = 1;
 		let secXAxisOffset = Math.floor(fromY / secXAxisRoundedUnit) * secXAxisRoundedUnit;
@@ -91,7 +113,7 @@ $.plotter = (function() {
 		for (let i = 0; i <= secXAxisCount; i++) {		
 			let axisNumber = secXAxisRoundedUnit * i + secXAxisOffset;
 			let cy = cyZero - axisNumber * cyUnit;
-			// kontrolu, zda nebude osa a text uÅ¾ moc nahoÅ™e (a byl by tedy oÅ™Ã­zlÃ½)
+			// kontrolu, zda nebude osa a text už moc nahoøe (a byl by tedy oøízlý)
 			if (cy < -axesDrawTolerance || cy > height + axesDrawTolerance)
 				continue;			
 	
@@ -101,7 +123,7 @@ $.plotter = (function() {
 			ctx.stroke();
 
 			let textY = cy - fontOffset;					
-			ctx.fillText(axisNumber, cxZero + fontOffset, textY);				
+			ctx.fillText(roundUnit(axisNumber), cxZero + fontOffset, textY);				
 		}
 				
 		// x osa grafu		
@@ -115,13 +137,16 @@ $.plotter = (function() {
 				
 		// Y OSA
 				
-		// y sekundarni osa grafu		
+		// y sekundární osa grafu		
 		let secYAxisCount = 8;	
-		let secYAxisUnit = xLength / secYAxisCount;			
-		let secYAxisRoundedUnit = secYAxisUnit > 10 ? 
-			Math.ceil(secYAxisUnit / 10) * 10 : 
-			Math.ceil(secYAxisUnit);		
-		secYAxisCount = Math.ceil(xLength / secYAxisRoundedUnit);
+		let secYAxisUnit = xLength / secYAxisCount;				
+		let secYAxisRoundedUnit = roundUnit(secYAxisUnit);				 
+		let secYAxisNewCount = Math.ceil(xLength / secYAxisRoundedUnit);
+		if (secYAxisNewCount > secYAxisCount) {
+			secYAxisCount++;
+		} else if (secXAxisNewCount < secYAxisCount) {
+			secYAxisCount--;
+		}
 		if (secYAxisCount < 1 || secYAxisCount == Infinity)
 			secYAxisCount = 1;
 		let secYAxisOffset = Math.floor(fromX / secYAxisRoundedUnit) * secYAxisRoundedUnit;
@@ -130,7 +155,7 @@ $.plotter = (function() {
 		ctx.strokeStyle = "lightgrey";
 		ctx.fillStyle = "grey";
 		for (let i = 0; i <= secYAxisCount; i++) {	
-			let axisNumber = secYAxisRoundedUnit * i + secYAxisOffset;		
+			let axisNumber = secYAxisRoundedUnit * i + secYAxisOffset;
 			let cx = cxZero + axisNumber * cxUnit;			
 			if (cx < -axesDrawTolerance || cx > width + axesDrawTolerance)
 				continue;
@@ -142,7 +167,7 @@ $.plotter = (function() {
 			ctx.lineTo(cx, height);
 			ctx.stroke();		
 			ctx.textAlign = "left";
-			ctx.fillText(axisNumber, textX, cyZero - fontOffset);	
+			ctx.fillText(roundUnit(axisNumber), textX, cyZero - fontOffset);	
 		}
 					
 		// y osa grafu		
@@ -201,6 +226,14 @@ $.plotter = (function() {
 		paint();
 		draggedStartX = e.clientX;
 		draggedStartY = e.clientY;		
+	}, false);
+	
+	canvas.addEventListener("dblclick", function (e) {
+		startX = originalStartX;
+		endX = originalEndX;
+		startY = originalStartY;
+		endY = originalEndY;
+		paint();
 	}, false);
 
 	return {

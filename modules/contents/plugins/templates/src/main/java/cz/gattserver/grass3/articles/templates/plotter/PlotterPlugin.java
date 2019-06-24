@@ -14,6 +14,7 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
 public class PlotterPlugin implements Plugin {
 
 	private static final String TAG = "PLOTTER";
+	private static final String IMAGE_PATH = "articles/templates/img/plotter_16.png";
 
 	@Override
 	public String getTag() {
@@ -27,7 +28,8 @@ public class PlotterPlugin implements Plugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(TAG, "Šablony").setPrefix("[" + TAG + "]x*x;-5;5;-10;10[;width][;height]")
-				.setSuffix("[/" + TAG + "]").setDescription("Plotter").build();
+		return new EditorButtonResourcesTOBuilder(TAG, "Šablony")
+				.setPrefix("[" + TAG + "]x*x;-5;5;-10;10[;width][;height]").setSuffix("[/" + TAG + "]")
+				.setDescription("Plotter").setImageAsThemeResource(IMAGE_PATH).build();
 	}
 }

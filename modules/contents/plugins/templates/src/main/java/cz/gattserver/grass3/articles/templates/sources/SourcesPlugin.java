@@ -15,6 +15,7 @@ import cz.gattserver.grass3.articles.plugins.favlink.strategies.CombinedFaviconO
 public class SourcesPlugin implements Plugin {
 
 	private static final String TAG = "SOURCES";
+	private static final String IMAGE_PATH = "articles/templates/img/sources_16.png";
 
 	@Override
 	public String getTag() {
@@ -28,6 +29,7 @@ public class SourcesPlugin implements Plugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(TAG, "Šablony").setDescription("Zdroje").build();
+		return new EditorButtonResourcesTOBuilder(TAG, "Šablony").setDescription("Zdroje")
+				.setImageAsThemeResource(IMAGE_PATH).build();
 	}
 }

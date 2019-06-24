@@ -14,7 +14,8 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
 public class HTMLPlugin implements Plugin {
 
 	private static final String TAG = "HTML";
-	private static final String DESCRIPTION = "HTML code";
+	private static final String DESCRIPTION = "HTML";
+	private static final String IMAGE_PATH = "articles/basic/img/htmlxml_16.png";
 
 	@Override
 	public String getTag() {
@@ -28,6 +29,7 @@ public class HTMLPlugin implements Plugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(TAG, "HTML").setDescription(DESCRIPTION).build();
+		return new EditorButtonResourcesTOBuilder(TAG, "HTML").setDescription(DESCRIPTION)
+				.setImageAsThemeResource(IMAGE_PATH).build();
 	}
 }

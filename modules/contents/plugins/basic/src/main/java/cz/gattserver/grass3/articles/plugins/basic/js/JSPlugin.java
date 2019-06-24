@@ -15,6 +15,7 @@ public class JSPlugin implements Plugin {
 
 	private static final String TAG = "JSSOURCE";
 	private static final String DESCRIPTION = "JavaScript";
+	private static final String IMAGE_PATH = "articles/basic/img/js_16.png";
 
 	@Override
 	public String getTag() {
@@ -28,6 +29,7 @@ public class JSPlugin implements Plugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(TAG, "HTML").setDescription(DESCRIPTION).build();
+		return new EditorButtonResourcesTOBuilder(TAG, "HTML").setDescription(DESCRIPTION)
+				.setImageAsThemeResource(IMAGE_PATH).build();
 	}
 }

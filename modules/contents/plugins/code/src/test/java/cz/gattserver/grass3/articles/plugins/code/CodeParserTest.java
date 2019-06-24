@@ -239,7 +239,7 @@ public class CodeParserTest {
 		Element element = new XMLCodePlugin().getParser().parse(getParsingProcessorWithText("[XML]code[/XML]\n"));
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
-		assertEquals("<span class=\"lang_description\">HTML/XML</span><div class=\"barier\">"
+		assertEquals("<span class=\"lang_description\">XML</span><div class=\"barier\">"
 				+ "<div class=\"numberedtext\"><textarea name=\"codemirror_xml\">code</textarea>"
 				+ "</div></div><div id=\"code_koncovka\"></div>", ctx.getOutput());
 	}

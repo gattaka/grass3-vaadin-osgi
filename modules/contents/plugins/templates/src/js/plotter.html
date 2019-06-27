@@ -11,55 +11,49 @@ $.plotter = (function() {
 	let width = canvas.offsetWidth;
 	let height = canvas.offsetHeight;	
 	let dragged = false;
-	let draggedStartX;
-	let draggedStartY;
+	let xDraggedStart;
+	let yDraggedStart;
 	
-	let startX = -5;
-	let endX = 10.1;
+	let xUnit = 0.1;
+	let yUnit = 2;
+	let xCenter = 0.1;
+	let yCenter = 1.7;
 	
-	let startY = -6;
-	let endY = 8;
+	let xUnitOriginal = xUnit;
+	let yUnitOriginal = yUnit;
 	
-	let originalStartX = startX;	
-	let originalEndX = endX;
-	
-	let originalStartY = startY;
-	let originalEndY = endY;
-	
-	let xLengthOriginal;
-	let yLengthOriginal;
-	let xLength;
-	let yLength;
-	let cyUnit;
-	let cxUnit;
+	let xUnitsLength;
+	let yUnitsLength;
+	let xUnitPx;
+	let yUnitPx;
 	
 	// kolik px má na jednotka na ose
-	let axisUnitPxSize = 50;
-	let secXAxisCount = Math.ceil(height / axisUnitPxSize);
-	let secYAxisCount = Math.ceil(width / axisUnitPxSize);	
+	let axisStepPx = 50;
+	let xAxisSteps = Math.ceil(width / axisStepPx);	
+	let yAxisSteps = Math.ceil(height / axisStepPx);	
+	
+	let xPxOffset;
+	let yPxOffset;
 	
 	let func = function(x) {
 		return x * x;
 	};
 	
-	let calibrate = function() {	
-		xLengthOriginal = Math.abs(startX - endX);
-		yLengthOriginal = Math.abs(startY - endY);
-		xLength = xLengthOriginal * (1 + 2 / secXAxisCount);
-		yLength = yLengthOriginal * (1 + 2 / secYAxisCount);			
-		cyUnit = height / yLength;
-		cxUnit = width / xLength;
+	let calibrate = function() {			
+		xUnitsLength = xAxisSteps * xUnit;
+		yUnitsLength = yAxisSteps * yUnit;
+		xUnitPx = axisStepPx / xUnit;
+		yUnitPx = axisStepPx / yUnit;
 	};
-
-	let ensureAxisUnitDigits = function(num, unit) {
-		let unitStr = unit.toString();
-		let numStr = num.toString();
-		if (num > 0 && numStr.length > unitStr.length + 1)
-			return Number(numStr.substring(0, unitStr.length));
-		if (num < 0 && numStr.length > unitStr.length + 2)
-			return Number(numStr.substring(0, unitStr.length + 1));
-		return num;
-	};
+	
+	let init = function() {	
+		calibrate();
+		xUnit = xUnitOriginal;
+		yUnit = yUnitOriginal;		
+		xPxOffset = -xCenter * xUnitPx;
+		yPxOffset = yCenter * yUnitPx;
+		paint();
+	}
 
 	let roundUnit = function(unit) {
 		return Number(unit.toPrecision(2));
@@ -69,85 +63,51 @@ $.plotter = (function() {
 		ctx.clearRect(0, 0, width, height);
 		ctx.strokeStyle = "grey";
 		ctx.fillStyle = "grey";
-		let fontSize = 13;
-		let fontOffset = 8;
+		let fontSize = 11;
+		let fontOffset = 6;
 		let axesDrawTolerance = fontSize + fontOffset;
 		ctx.font = fontSize + "px Monospace";		
 		
 		ctx.strokeRect(0, 0, width, height);
 
-		let pointSize = 3;
+		let pointSize = 2;
 		
 		calibrate();
 
-		let xOverlap = (xLength - xLengthOriginal) / 2;
-		let yOverlap = (yLength - yLengthOriginal) / 2;
-		let fromX = Math.min(startX, endX) - xOverlap;
-		let toX = Math.max(startX, endX) + xOverlap;
-		let stepX = xLength / width;		
-		if (stepX <= 0 || fromX > toX) {
-			console.log("Plotter error, infinite cycle detected!");
-			return;
-		}
-		
-		let fromY = Math.min(startY, endY) - yOverlap;
-		let toY = Math.max(startY, endY) + yOverlap;
+		let xOffsetSteps = Math.floor(xPxOffset / axisStepPx);
+		let yOffsetSteps = Math.floor(yPxOffset / axisStepPx);	
+		let xPxOffsetRest = xPxOffset % axisStepPx;
+		let yPxOffsetRest = yPxOffset % axisStepPx;
+
+		// aby se eliminoval pøeskok "zubù" kolem nuly
+		if (xPxOffsetRest < 0)
+			xPxOffsetRest += axisStepPx;
+		if (yPxOffsetRest < 0)
+			yPxOffsetRest += axisStepPx;
+
+		let xFromUnit = -xUnitsLength / 2 - xOffsetSteps * xUnit;
+		let xToUnit = xFromUnit + xUnitsLength;
+		let yFromUnit = -yUnitsLength / 2 + yOffsetSteps * yUnit;
+		let yToUnit = yFromUnit + yUnitsLength;
 		
 		// poloha hlavních osy 
-		let cyZero = height + fromY * cyUnit;
-		let cxZero = - fromX * cxUnit;
+		let xPxZero = - xFromUnit * xUnitPx + xPxOffsetRest;		
+		let yPxZero = height + yFromUnit * yUnitPx + yPxOffsetRest;		
 		
-		// X OSA
-		
-		// x sekundární osa grafu				
-		let secXAxisUnit = yLength / secXAxisCount;			
-		let secXAxisRoundedUnit = roundUnit(secXAxisUnit);
-		if (secXAxisCount < 1 || secXAxisCount == Infinity)
-			secXAxisCount = 1;				
-		let secXAxisOffset = Math.floor(fromY / secXAxisRoundedUnit) * secXAxisRoundedUnit;
-		
-		ctx.setLineDash([5, 5]);
-		ctx.strokeStyle = "lightgrey";
+		// Jednotky na osách a popisky
+		ctx.strokeStyle = "#eeeeee";
 		ctx.fillStyle = "grey";
-		ctx.textAlign = "left";
-		for (let i = 0; i <= secXAxisCount; i++) {		
-			let axisNumber = secXAxisRoundedUnit * i + secXAxisOffset;
-			let cy = cyZero - axisNumber * cyUnit;		
-	
-			ctx.beginPath();
-			ctx.moveTo(0, cy);
-			ctx.lineTo(width, cy);
-			ctx.stroke();
-
-			let textY = cy - fontOffset;					
-			ctx.fillText(roundUnit(axisNumber), cxZero + fontOffset, textY);				
-		}
-				
-		// x osa grafu		
-		ctx.setLineDash([]);
-		ctx.strokeStyle = "grey";
-		ctx.fillStyle = "grey";
-		ctx.beginPath();
-		ctx.moveTo(0, cyZero);
-		ctx.lineTo(width, cyZero);
-		ctx.stroke();
-				
-		// Y OSA
-				
-		// y sekundární osa grafu				
-		let secYAxisUnit = xLength / secYAxisCount;				
-		let secYAxisRoundedUnit = roundUnit(secYAxisUnit);				 
-		if (secYAxisCount < 1 || secYAxisCount == Infinity)
-			secYAxisCount = 1;		
-		let secYAxisOffset = Math.floor(fromX / secYAxisRoundedUnit) * secYAxisRoundedUnit;
+		ctx.textAlign = "left";	
 		
-		ctx.setLineDash([5, 5]);
-		ctx.strokeStyle = "lightgrey";
-		ctx.fillStyle = "grey";
-		for (let i = 0; i <= secYAxisCount; i++) {	
-			let axisNumber = secYAxisRoundedUnit * i + secYAxisOffset;
-			let cx = cxZero + axisNumber * cxUnit;			
-		
+		// X osa
+		// -1 a <= pøidává na okraje +1 jednotku, to je kvùli 
+		// pøedvykreslování textu a osy, protože by se jinak 
+		// pøi scrollování najednou objevila, namísto vysunutí		
+		let xFromPxZeroSteps = Math.floor(xAxisSteps / 2) + xOffsetSteps;
+		let xFromPxZeroPxOffset = xPxZero - axisStepPx * xFromPxZeroSteps;
+		for (let i = -1; i <= xAxisSteps; i++) {	
+			let axisNumber = xUnit * (i - xFromPxZeroSteps);
+			let cx = xFromPxZeroPxOffset + axisStepPx * i;
 			let textX = cx + fontOffset;
 
 			ctx.beginPath();
@@ -155,23 +115,48 @@ $.plotter = (function() {
 			ctx.lineTo(cx, height);
 			ctx.stroke();		
 			ctx.textAlign = "left";
-			ctx.fillText(roundUnit(axisNumber), textX, cyZero - fontOffset);	
+			ctx.fillText(roundUnit(axisNumber), textX, yPxZero - fontOffset);	
 		}
-					
-		// y osa grafu		
-		ctx.setLineDash([]);
+		
+		// Y osa		
+		let yFromPxZeroSteps = yOffsetSteps - Math.floor(yAxisSteps / 2);
+		let yFromPxZeroPxOffset = yPxZero - axisStepPx * yFromPxZeroSteps;
+		for (let i = 0; i <= yAxisSteps; i++) {		
+			let axisNumber = yUnit * (yFromPxZeroSteps + i);
+			let cy = yFromPxZeroPxOffset - axisStepPx * i;		
+	
+			ctx.beginPath();
+			ctx.moveTo(0, cy);
+			ctx.lineTo(width, cy);
+			ctx.stroke();
+
+			let textY = cy - fontOffset;					
+			ctx.fillText(roundUnit(axisNumber), xPxZero + fontOffset, textY);				
+		}					
+		
+		// Hlavní èáry os
 		ctx.strokeStyle = "grey";
 		ctx.fillStyle = "grey";
+
+		// x osa grafu		
 		ctx.beginPath();
-		ctx.moveTo(cxZero, 0);
-		ctx.lineTo(cxZero, height);
+		ctx.moveTo(0, yPxZero);
+		ctx.lineTo(width, yPxZero);
 		ctx.stroke();
-
+		
+		// y osa grafu		
+		ctx.beginPath();
+		ctx.moveTo(xPxZero, 0);
+		ctx.lineTo(xPxZero, height);
+		ctx.stroke();	
+					
 		// PLOT
-
-		for (let x = fromX; x <= toX; x += stepX) {
-			let cx = x * cxUnit + cxZero;
-			let cy = cyZero - func(x) * cyUnit;
+		let stepX = 1 / xUnitPx;
+		// -xUnit protože jednotky X jsou vypisované zleva a graf by se
+		// dokresloval u levého kraje skokovì
+		for (let x = xFromUnit - xUnit; x <= xToUnit; x += stepX) {
+			let cx = x * xUnitPx + xPxZero;
+			let cy = yPxZero - func(x) * yUnitPx;
 			ctx.fillStyle = "blue";
 			ctx.fillRect(cx - pointSize / 2, cy - pointSize / 2, pointSize, pointSize);
 		}
@@ -179,19 +164,21 @@ $.plotter = (function() {
 
 	canvas.addEventListener("wheel", function(e) {
 		e.preventDefault();
-		let multiplier = 1.1;
-		let delta = e.deltaY > 0 ? multiplier : 1 / multiplier;	
-		startX = (startX) * delta;
-		endX = (endX) * delta;
-		startY = (startY) * delta;
-		endY = (endY) * delta;	
+		let step = 1.1;
+		if (e.deltaY > 0) {
+			xUnit *= step;
+			yUnit *= step;
+		} else {
+			xUnit /= step;
+			yUnit /= step;
+		}
 		paint();
 	});	
 		
 	canvas.addEventListener("mousedown", function (e) {
 		dragged = true;
-		draggedStartX = e.clientX;
-		draggedStartY = e.clientY;
+		xDraggedStart = e.clientX;
+		yDraggedStart = e.clientY;
 	}, false);
  
 	canvas.addEventListener("mouseup", function (e) {
@@ -205,29 +192,21 @@ $.plotter = (function() {
 	canvas.addEventListener("mousemove", function (e) {
 		if (!dragged) 
 			return;
-		let difX = (draggedStartX - e.clientX) / cxUnit;
-		let difY = (draggedStartY - e.clientY) / cyUnit;
-		startX += difX;
-		endX += difX;
-		startY -= difY;
-		endY -= difY;
+		xPxOffset -= (xDraggedStart - e.clientX);
+		yPxOffset -= (yDraggedStart - e.clientY);
+		xDraggedStart = e.clientX;
+		yDraggedStart = e.clientY;		
 		paint();
-		draggedStartX = e.clientX;
-		draggedStartY = e.clientY;		
 	}, false);
 	
 	canvas.addEventListener("dblclick", function (e) {
 		e.preventDefault();
-		startX = originalStartX;
-		endX = originalEndX;
-		startY = originalStartY;
-		endY = originalEndY;
-		paint();
+		init();		
 	}, false);
 
 	return {
 		start: function() {
-			paint();
+			init();
 		}
 	};
 	

@@ -29,7 +29,7 @@ public class PlotterPlugin implements Plugin {
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
 		return new EditorButtonResourcesTOBuilder(TAG, "Šablony")
-				.setPrefix("[" + TAG + "]x*x;-5;5;-10;10[;width][;height]").setSuffix("[/" + TAG + "]")
+				.setPrefix("[" + TAG + "]x*x;2;5;0;0[;width][;height]").setSuffix("[/" + TAG + "]")
 				.setDescription("Plotter").setImageAsThemeResource(IMAGE_PATH).build();
 	}
 }

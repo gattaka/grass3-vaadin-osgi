@@ -19,7 +19,7 @@ public class PlotterPluginTest {
 		assertEquals("Plotter", to.getDescription());
 		assertTrue(to.getImage() instanceof ThemeResource);
 		assertEquals("articles/templates/img/plotter_16.png", ((ThemeResource) to.getImage()).getResourceId());
-		assertEquals("[PLOTTER]x*x;-5;5;-10;10[;width][;height]", to.getPrefix());
+		assertEquals("[PLOTTER]x*x;2;5;0;0[;width][;height]", to.getPrefix());
 		assertEquals("[/PLOTTER]", to.getSuffix());
 		assertEquals("PLOTTER", to.getTag());
 		assertEquals("Šablony", to.getTagFamily());

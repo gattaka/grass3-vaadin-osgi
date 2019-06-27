@@ -38,10 +38,10 @@ public class PlotterParser implements Parser {
 		if (!function.contains("x"))
 			throw new ParserException("Plotter function variable must be 'x'");
 
-		double startx = parseDoubleNumber(values[1], "'x1'");
-		double endx = parseDoubleNumber(values[2], "'x2'");
-		double starty = parseDoubleNumber(values[3], "'y1'");
-		double endy = parseDoubleNumber(values[4], "'y2'");
+		double xUnit = parseDoubleNumber(values[1], "'xUnit'");
+		double yUnit = parseDoubleNumber(values[2], "'yUnit'");
+		double xCenter = parseDoubleNumber(values[3], "'xCenter'");
+		double yCenter = parseDoubleNumber(values[4], "'yCenter'");
 
 		String width = null;
 		if (values.length > 5)
@@ -54,7 +54,7 @@ public class PlotterParser implements Parser {
 		// zpracovat koncový tag
 		parseEndTag(processor, tag);
 
-		return new PlotterElement(startx, endx, starty, endy, function, width, height);
+		return new PlotterElement(xUnit, yUnit, xCenter, yCenter, function, width, height);
 	}
 
 	private void parseStartTag(ParsingProcessor processor, String tag) {

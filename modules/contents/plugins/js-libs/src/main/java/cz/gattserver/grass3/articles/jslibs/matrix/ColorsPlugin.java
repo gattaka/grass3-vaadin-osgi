@@ -3,6 +3,7 @@ package cz.gattserver.grass3.articles.jslibs.matrix;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.articles.editor.parser.Parser;
+import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTOBuilder;
 import cz.gattserver.grass3.articles.jslibs.GJSLibParser;
@@ -24,7 +25,12 @@ public class ColorsPlugin implements Plugin {
 
 	@Override
 	public Parser getParser() {
-		return new GJSLibParser(TAG);
+		return new GJSLibParser(TAG) {
+			@Override
+			protected Element createElement() {
+				return new ColorsElement();
+			}
+		};
 	}
 
 	@Override

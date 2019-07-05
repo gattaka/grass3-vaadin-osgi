@@ -1,18 +1,19 @@
-package cz.gattserver.grass3.articles.jslibs.matrix;
+package cz.gattserver.grass3.articles.jslibs;
 
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.TokenException;
+import cz.gattserver.grass3.articles.jslibs.matrix.ColorsElement;
 
 /**
  * @author gatt
  */
-public class MatrixParser implements Parser {
+public class GJSLibParser implements Parser {
 
 	private String tag;
 
-	public MatrixParser(String tag) {
+	public GJSLibParser(String tag) {
 		this.tag = tag;
 	}
 
@@ -23,7 +24,7 @@ public class MatrixParser implements Parser {
 		// zpracovat koncový tag
 		parseEndTag(processor, tag);
 
-		return new MatrixElement();
+		return new ColorsElement();
 	}
 
 	private void parseStartTag(ParsingProcessor processor, String tag) {

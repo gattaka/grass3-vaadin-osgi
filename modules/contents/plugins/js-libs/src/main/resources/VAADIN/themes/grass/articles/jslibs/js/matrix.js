@@ -1,6 +1,7 @@
+var $ = $ || {};
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes
 // https://stackoverflow.com/questions/32647215/declaring-static-constants-in-es6-classes
-let GJSLibMatrix = class Matrix {
+$.GJSLibMatrix = class GJSLibMatrix {
 
 	#rows = 0;
 	#cols = 0;
@@ -46,7 +47,7 @@ let GJSLibMatrix = class Matrix {
 		for (let r = 0; r < rows; r++) {
 			for (let c = 0; c < cols; c++) {
 				GJSLibMatrix.checkDefinedNumber(array[i], "element [" + r + "," + c + "]");
-				GJSLibMatrix.set(r,c, array[i++]);
+				matrix.set(r,c, array[i++]);
 			}
 		}
 		return matrix;
@@ -74,7 +75,19 @@ let GJSLibMatrix = class Matrix {
 	}
 	
 	print() {
-		console.table(this.#data);
+		//console.table(this.#data);
+		let line = '';
+		for (let r = 0; r < this.#rows; r++) {
+			line += r == 0 ? '┌\t' : (r == this.#rows - 1 ? '└\t' : '│\t');
+			for (let c = 0; c < this.#cols; c++) {
+				line += this.get(r,c) + '\t';
+				if (c == this.#cols - 1) {
+					line += r == 0 ? '┐' : (r == this.#rows - 1 ? '┘' : '│');
+					console.log(line);
+					line = '';
+				}
+			}
+		}		
 	}
 	
 	getRows() {
@@ -109,6 +122,11 @@ let GJSLibMatrix = class Matrix {
 		return result;				
 	}
 	
+	subtract(m) {
+		let m2 = m.multiplyByScalar(-1);
+		return this.add(m2);
+	}
+	
 	addScalar(n) {
 		GJSLibMatrix.checkDefinedNumber(n, "value");
 		let result = new GJSLibMatrix(this.#rows, this.#cols);
@@ -131,7 +149,20 @@ let GJSLibMatrix = class Matrix {
 				result.set(r, c, sum);
 			}
 		}			
-		return result;				
+		return result;	
+	}
+	
+	multiplyHadamard(m) {
+		GJSLibMatrix.checkMatrixInstance(m);		
+		if (m.getRows() != this.getRows())
+			throw "A.B requires A.rows = B.rows";
+		if (m.getCols() != this.getCols())
+			throw "A.B requires A.cols = B.cols";
+		let result = new GJSLibMatrix(this.getRows(), this.getCols());
+		for (let r = 0; r < result.getRows(); r++)
+			for (let c = 0; c < result.getCols(); c++)
+				result.set(r, c, this.get(r, c) * m.get(r, c));	
+		return result;	
 	}
 	
 	multiplyByScalar(n) {
@@ -141,6 +172,14 @@ let GJSLibMatrix = class Matrix {
 			for (let c = 0; c < this.#cols; c++)
 				result.set(r, c, this.get(r, c) * n);
 		return result;				
+	}
+	
+	map(func) {
+		let result = new GJSLibMatrix(this.#rows, this.#cols);
+		for (let r = 0; r < this.#rows; r++)			
+			for (let c = 0; c < this.#cols; c++)
+				result.set(r, c, func(this.get(r, c)));
+		return result;
 	}
 	
 	transpose() {		

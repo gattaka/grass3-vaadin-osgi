@@ -29,6 +29,6 @@ public class MatrixPlugin implements Plugin {
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
 		return new EditorButtonResourcesTOBuilder(TAG, "JS Libs").setPrefix("[" + TAG + "]").setSuffix("[/" + TAG + "]")
-				.setDescription("Matrix JS knihovna").setImageAsThemeResource(IMAGE_PATH).build();
+				.setDescription("Matrix").setImageAsThemeResource(IMAGE_PATH).build();
 	}
 }

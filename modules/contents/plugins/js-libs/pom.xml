@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>articles-js-libs</artifactId>
+	<name>GRASS3 Articles editor JS libraries plugins set</name>
+
+	<parent>
+		<groupId>cz.gattserver.grass3</groupId>
+		<artifactId>plugins</artifactId>
+		<version>3.0.13-SNAPSHOT</version>
+	</parent>
+
+	<dependencies>
+
+		<!-- Grass articles -->
+		<dependency>
+			<groupId>cz.gattserver.grass3</groupId>
+			<artifactId>articles</artifactId>
+			<version>3.0.13-SNAPSHOT</version>
+		</dependency>
+
+		<!-- Grass basic articles pluginy -->
+		<dependency>
+			<groupId>cz.gattserver.grass3</groupId>
+			<artifactId>articles-basic</artifactId>
+			<version>3.0.13-SNAPSHOT</version>
+		</dependency>
+		
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- JaCoCo -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

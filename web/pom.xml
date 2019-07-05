@@ -49,10 +49,17 @@
 			<version>3.0.13-SNAPSHOT</version>
 		</dependency>
 
-		<!-- favicok link pluginy pro články -->
+		<!-- favicon link pluginy pro články -->
 		<dependency>
 			<groupId>cz.gattserver.grass3</groupId>
 			<artifactId>articles-favlink</artifactId>
+			<version>3.0.13-SNAPSHOT</version>
+		</dependency>
+		
+		<!-- JS libs pluginy pro články -->
+		<dependency>
+			<groupId>cz.gattserver.grass3</groupId>
+			<artifactId>articles-js-libs</artifactId>
 			<version>3.0.13-SNAPSHOT</version>
 		</dependency>
 

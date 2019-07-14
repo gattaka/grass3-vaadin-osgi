@@ -155,4 +155,5 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		UIUtils.redirect(getPageURL(articlesEditorPageFactory, DefaultContentOperations.EDIT.toString(),
 				URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName())));
 	}
+	
 }

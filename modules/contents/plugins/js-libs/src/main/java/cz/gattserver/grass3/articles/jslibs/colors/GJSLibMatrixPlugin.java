@@ -13,7 +13,7 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
  * @author gatt
  */
 @Component
-public class MatrixPlugin implements Plugin {
+public class GJSLibMatrixPlugin implements Plugin {
 
 	private static final String TAG = "GJSLibMatrix";
 	private static final String IMAGE_PATH = "articles/jslibs/img/matrix_16.png";
@@ -28,7 +28,7 @@ public class MatrixPlugin implements Plugin {
 		return new GJSLibParser(TAG) {
 			@Override
 			protected Element createElement() {
-				return new MatrixElement();
+				return new GJSLibMatrixElement();
 			}
 		};
 	}

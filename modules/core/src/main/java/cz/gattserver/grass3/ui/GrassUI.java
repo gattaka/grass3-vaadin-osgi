@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Component;
@@ -57,6 +58,7 @@ public class GrassUI extends UI {
 
 		try {
 			GrassPage page = factory.createPageIfAuthorized(grassRequest);
+			Page.getCurrent().setTitle("Gattserver");
 			Component content = page.getContent();
 			setContent(content);
 		} catch (GrassPageException e) {

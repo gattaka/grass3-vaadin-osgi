@@ -3,7 +3,7 @@ package cz.gattserver.grass3.articles.jslibs.plotter;
 import cz.gattserver.grass3.articles.editor.parser.Context;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 
-public class PlotterElement implements Element {
+public class GJSLibPlotterElement implements Element {
 
 	@Override
 	public void apply(Context ctx) {

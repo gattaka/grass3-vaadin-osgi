@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -109,7 +110,10 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 				/*			*/ + "document.getElementById('left').style['margin-top'] = '0px'; "
 				/*	*/ + "});");
 
-		return super.createPayload();
+		Layout layout = super.createPayload();
+		layout.addAttachListener(e -> Page.getCurrent().setTitle(content.getName()));
+		layout.addDetachListener(e -> Page.getCurrent().setTitle("Gattserver"));
+		return layout;
 	}
 
 	protected void createContentOperations(CssLayout operationsListLayout) {

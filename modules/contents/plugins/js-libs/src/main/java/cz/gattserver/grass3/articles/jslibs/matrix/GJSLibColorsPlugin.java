@@ -13,7 +13,7 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
  * @author gatt
  */
 @Component
-public class ColorsPlugin implements Plugin {
+public class GJSLibColorsPlugin implements Plugin {
 
 	private static final String TAG = "GJSLibColors";
 	private static final String IMAGE_PATH = "articles/jslibs/img/colors_16.png";
@@ -28,7 +28,7 @@ public class ColorsPlugin implements Plugin {
 		return new GJSLibParser(TAG) {
 			@Override
 			protected Element createElement() {
-				return new ColorsElement();
+				return new GJSLibColorsElement();
 			}
 		};
 	}

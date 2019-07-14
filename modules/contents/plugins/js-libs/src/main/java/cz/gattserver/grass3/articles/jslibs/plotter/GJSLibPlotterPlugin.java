@@ -13,7 +13,7 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
  * @author gatt
  */
 @Component
-public class PlotterPlugin implements Plugin {
+public class GJSLibPlotterPlugin implements Plugin {
 
 	private static final String TAG = "GJSLibPlotter";
 	private static final String IMAGE_PATH = "articles/jslibs/img/plotter_16.png";
@@ -28,7 +28,7 @@ public class PlotterPlugin implements Plugin {
 		return new GJSLibParser(TAG) {
 			@Override
 			protected Element createElement() {
-				return new PlotterElement();
+				return new GJSLibPlotterElement();
 			}
 		};
 	}

@@ -24,11 +24,11 @@ public class JSParser implements Parser {
 	}
 
 	@Override
-	public Element parse(ParsingProcessor pluginBag) {
+	public Element parse(ParsingProcessor processor) {
 
 		// zpracovat počáteční tag
-		String startTag = pluginBag.getStartTag();
-		logger.debug(pluginBag.getToken().toString());
+		String startTag = processor.getStartTag();
+		logger.debug(processor.getToken().toString());
 
 		if (!startTag.equals(tag)) {
 			logger.warn("Čekal jsem: [" + tag + "] ne " + startTag);
@@ -36,7 +36,7 @@ public class JSParser implements Parser {
 		}
 
 		// START_TAG byl zpracován
-		pluginBag.nextToken();
+		processor.nextToken();
 
 		StringBuilder code = new StringBuilder();
 
@@ -47,26 +47,28 @@ public class JSParser implements Parser {
 		// zachovat řádkování kódu. Jinak kód by měl být escapován.
 		Token currentToken = null;
 		while (true) {
-			currentToken = pluginBag.getToken();
-			if ((Token.END_TAG.equals(currentToken) && pluginBag.getEndTag().equals(tag))
+			currentToken = processor.getToken();
+			if ((Token.END_TAG.equals(currentToken) && processor.getEndTag().equals(tag))
 					|| Token.EOF.equals(currentToken))
 				break;
 			if (Token.EOL.equals(currentToken)) {
 				code.append("\n");
 			} else {
-				code.append(pluginBag.getCode());
+				code.append(processor.getCode());
 			}
-			pluginBag.nextToken();
+			processor.nextToken();
 		}
 
 		// zpracovat koncový tag
 		// END_TAG byl zpracován, ověř, že to byl můj ukončovací tag
-		pluginBag.getEndTag();
-		pluginBag.nextToken();
+		processor.getEndTag();
 
-		// protože za CODE je většinou mezera ignoruje se případný <br/>
-		if (pluginBag.getToken().equals(Token.EOL))
-			pluginBag.nextToken();
+		// END_TAG byl zpracován
+		processor.nextToken();
+
+		// ignoruj případný <br/>
+		if (processor.getToken().equals(Token.EOL))
+			processor.nextToken();
 
 		return new JSElement(code.toString());
 	}

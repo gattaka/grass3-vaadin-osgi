@@ -3,9 +3,18 @@ package cz.gattserver.grass3.monitor.processor.item;
 public class DiskStatusMonitorItemTO extends MonitorItemTO {
 
 	private String name;
+	private String mount;
 	private String type;
 	private long total;
 	private long usable;
+
+	public String getMount() {
+		return mount;
+	}
+
+	public void setMount(String mount) {
+		this.mount = mount;
+	}
 
 	public String getType() {
 		return type;

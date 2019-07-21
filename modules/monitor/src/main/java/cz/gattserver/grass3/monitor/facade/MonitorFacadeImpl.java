@@ -9,16 +9,13 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,9 +24,7 @@ import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
 import cz.gattserver.grass3.monitor.processor.Console;
 import cz.gattserver.grass3.monitor.processor.ConsoleOutputTO;
 import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemTO;
-import cz.gattserver.grass3.monitor.processor.item.DiskMountsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskStatusMonitorItemTO;
-import cz.gattserver.grass3.monitor.processor.item.JVMHeapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMPIDMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
@@ -47,7 +42,6 @@ import cz.gattserver.grass3.services.ConfigurationService;
 public class MonitorFacadeImpl implements MonitorFacade {
 
 	private static final int HTTP_TEST_TIMEOUT = 5000;
-	private static Logger logger = LoggerFactory.getLogger(MonitorFacadeImpl.class);
 
 	@Autowired
 	private ConfigurationService configurationService;
@@ -140,17 +134,6 @@ public class MonitorFacadeImpl implements MonitorFacade {
 	}
 
 	@Override
-	public DiskMountsMonitorItemTO getDiskMounts() {
-		// #!/bin/bash
-		// /usr/bin/mount | egrep '^/'
-		ConsoleOutputTO to = runScript("getDiskMounts");
-		DiskMountsMonitorItemTO itemTO = new DiskMountsMonitorItemTO();
-		itemTO.setMonitorState(to.isSuccess() ? MonitorState.SUCCESS : MonitorState.UNAVAILABLE);
-		itemTO.setValue(to.getOutput());
-		return itemTO;
-	}
-
-	@Override
 	public BackupDiskMountedMonitorItemTO getBackupDiskMounted() {
 		// #!/bin/bash
 		//
@@ -218,36 +201,34 @@ public class MonitorFacadeImpl implements MonitorFacade {
 
 	@Override
 	public List<DiskStatusMonitorItemTO> getDiskStatus() {
+		// #!/bin/bash
+		// /usr/bin/mount | egrep '^/'
+		ConsoleOutputTO to = runScript("getDiskMounts");
+		if (!to.isSuccess())
+			return new ArrayList<>();
+		String mounts[] = to.getOutput().split("\n");
+		Map<String, String> devToMount = new HashMap<>();
+		for (String mount : mounts) {
+			String info[] = mount.split(" ");
+			devToMount.put(info[0], info[2]);
+		}
+
 		List<DiskStatusMonitorItemTO> disks = new ArrayList<>();
-		if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
-			// win
-			for (Path root : FileSystems.getDefault().getRootDirectories()) {
-				DiskStatusMonitorItemTO to = new DiskStatusMonitorItemTO();
-				to.setName(root.toString());
-				try {
-					FileStore store = Files.getFileStore(root);
-					if (!analyzeStore(to, store))
-						continue;
-					to.setMonitorState(MonitorState.SUCCESS);
-				} catch (IOException e) {
-					to.setMonitorState(MonitorState.UNAVAILABLE);
-				}
-				disks.add(to);
+		for (FileStore store : FileSystems.getDefault().getFileStores()) {
+			String mount = devToMount.get(store.name());
+			if (mount == null)
+				continue;
+			DiskStatusMonitorItemTO itemTO = new DiskStatusMonitorItemTO();
+			itemTO.setName(store.name());
+			itemTO.setMount(mount);
+			try {
+				if (!analyzeStore(itemTO, store))
+					continue;
+				itemTO.setMonitorState(MonitorState.SUCCESS);
+			} catch (IOException e) {
+				itemTO.setMonitorState(MonitorState.UNAVAILABLE);
 			}
-		} else {
-			// unix
-			for (FileStore store : FileSystems.getDefault().getFileStores()) {
-				DiskStatusMonitorItemTO to = new DiskStatusMonitorItemTO();
-				to.setName(store.name());
-				try {
-					if (!analyzeStore(to, store))
-						continue;
-					to.setMonitorState(MonitorState.SUCCESS);
-				} catch (IOException e) {
-					to.setMonitorState(MonitorState.UNAVAILABLE);
-				}
-				disks.add(to);
-			}
+			disks.add(itemTO);
 		}
 		return disks;
 	}
@@ -307,44 +288,6 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		return to;
 	}
 
-	@Override
-	public JVMHeapMonitorItemTO getJVMHeap() {
-		JVMHeapMonitorItemTO to = new JVMHeapMonitorItemTO();
-		try {
-			Path tempDirWithPrefix = Files.createTempDirectory("grassMonitorDump");
-
-			Path outFile = tempDirWithPrefix.resolve("out");
-			String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
-
-			runScript("getJmapList", pid, outFile.toAbsolutePath().toString());
-
-			Thread.sleep(2000);
-
-			// outFile =
-			// java.nio.file.Paths.get("c:/Users/gatta/Downloads").resolve("out");
-			Pattern pattern = Pattern.compile("[0-9]+:\\s+[0-9]+\\s+[0-9]+.+");
-			List<String> lines = Files.readAllLines(outFile);
-			for (String s : lines) {
-				s = s.trim();
-				if (!pattern.matcher(s).matches())
-					continue;
-				String[] parts = s.split("\\s+");
-				to.getLines()
-						.add(new JVMHeapMonitorItemTO.Line(
-								Integer.parseInt(parts[0].substring(0, parts[0].length() - 1)),
-								Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), parts[3]));
-			}
-
-			to.setFileName(outFile.toAbsolutePath().toString());
-
-			to.setMonitorState(MonitorState.SUCCESS);
-		} catch (Exception e) {
-			to.setMonitorState(MonitorState.UNAVAILABLE);
-			logger.error("Dump se nepovedl", e);
-		}
-		return to;
-	}
-
 	private boolean analyzeStore(DiskStatusMonitorItemTO to, FileStore store) throws IOException {
 		to.setTotal(store.getTotalSpace());
 		// pokud je velikost disku 0, pak jde o virtuální skupinu jako
@@ -379,19 +322,9 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		testResponseCode(sonarTO);
 		items.add(sonarTO);
 
-		// ServerServiceMonitorItemTO h2TO = new
-		// ServerServiceMonitorItemTO("H2", "http://gattserver.cz:8082");
-		// testResponseCode(h2TO);
-		// items.add(h2TO);
-
 		ServerServiceMonitorItemTO lichTO = new ServerServiceMonitorItemTO("LichEngine", "http://gattserver.cz:1337");
 		testResponseCode(lichTO);
 		items.add(lichTO);
-
-		ServerServiceMonitorItemTO catacombsTO = new ServerServiceMonitorItemTO("Catacombs",
-				"http://gattserver.cz:8333");
-		testResponseCode(catacombsTO);
-		items.add(catacombsTO);
 
 		return items;
 	}

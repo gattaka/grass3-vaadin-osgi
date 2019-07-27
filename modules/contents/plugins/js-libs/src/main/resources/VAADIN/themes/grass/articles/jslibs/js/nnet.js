@@ -1,6 +1,6 @@
 var $ = $ || {};
 $.GJSLibNeuralNet = class GJSLibNeuralNet {
-		
+	
 	#layersSizes;		
 
 	// pole matic vah dle vrstvy
@@ -74,21 +74,29 @@ $.GJSLibNeuralNet = class GJSLibNeuralNet {
 		}	
 	}	
 	
+	setWeights(layer, weights) {
+		this.#weights[layer] = weights;
+	}
+	
+	setBiases(layer, biases) {
+		this.#biases[layer] = biases;
+	}
+	
 	guess(inputs) {
 		let inputSize = this.#layersSizes[0];
-		let L = this.#layersSizes.length - 1;
+		let L = this.#layersSizes.length - 1;		
 		
 		// pole vektorů potenciálů dle vrstvy
 		let potentials = [];
 		// pole vektorů aktivací dle vrstvy
-		let activations = [];
+		let activations = [$.GJSLibMatrix.fromFlatArray(this.#layersSizes[0], 1, inputs)];
 		for (let l = 1; l < this.#layersSizes.length; l++) {
 			// z^l = w^l . a^(l-1) + b^l
 			potentials[l] = this.#weights[l].multiply(activations[l - 1]).add(this.#biases[l]);
 			// a^l = sigma(z^l)
 			activations[l] = potentials[l].map(this.#activationFunc.fce);
 		}
-		return activations[L];
+		return activations[L].toArray();
 	}
 		
 	train(trainBatchInputs, trainBatchOutputs, sensitivity, maxError, onGuess) {
@@ -99,7 +107,7 @@ $.GJSLibNeuralNet = class GJSLibNeuralNet {
 		// pole vektorů aktivací dle vrstvy
 		let activations = [];
 		// pole vektorů chyb dle vrstvy
-		let errors = [];		
+		let errors = [];
 		
 		let L = this.#layersSizes.length - 1;
 		

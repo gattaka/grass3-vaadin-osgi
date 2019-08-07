@@ -28,13 +28,13 @@ public class NodeServiceImpl implements NodeService {
 
 	@Override
 	public NodeOverviewTO getNodeByIdForOverview(long nodeId) {
-		Node node = nodeRepository.findOne(nodeId);
+		Node node = nodeRepository.findById(nodeId).orElse(null);
 		return mapper.mapNodeForOverview(node);
 	}
 
 	@Override
 	public NodeTO getNodeByIdForDetail(long nodeId) {
-		Node node = nodeRepository.findOne(nodeId);
+		Node node = nodeRepository.findById(nodeId).orElse(null);
 		return mapper.mapNodeForDetail(node);
 	}
 
@@ -46,7 +46,7 @@ public class NodeServiceImpl implements NodeService {
 
 	@Override
 	public List<NodeOverviewTO> getNodesForTree() {
-		List<Node> nodes = nodeRepository.findAll(new Sort("id"));
+		List<Node> nodes = nodeRepository.findAll(Sort.by("id"));
 		return mapper.mapNodesForOverview(nodes);
 	}
 
@@ -74,8 +74,8 @@ public class NodeServiceImpl implements NodeService {
 
 	@Override
 	public void moveNode(long nodeId, Long newParentId) {
-		Node newParentEntity = newParentId == null ? null : nodeRepository.findOne(newParentId);
-		Node nodeEntity = nodeRepository.findOne(nodeId);
+		Node newParentEntity = newParentId == null ? null : nodeRepository.findById(newParentId).orElse(null);
+		Node nodeEntity = nodeRepository.findById(nodeId).orElse(null);
 
 		// beze změn
 		if (Objects.equals(nodeEntity.getParent(), newParentEntity))
@@ -112,7 +112,7 @@ public class NodeServiceImpl implements NodeService {
 		int countSubNodes = nodeRepository.countSubNodes(nodeId);
 		if (countContents + countSubNodes > 0)
 			throw new IllegalStateException("Nelze mazat kategorii, ve které existují podkategorie nebo obsahy");
-		nodeRepository.delete(nodeId);
+		nodeRepository.deleteById(nodeId);
 	}
 
 	@Override

@@ -33,7 +33,7 @@ public class SongsResource {
 		// poradí a sníží ho
 		if (page * pageSize > count)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		return new ResponseEntity<>(songsFacade.getSongs(overviewTO, new PageRequest(page, pageSize)), HttpStatus.OK);
+		return new ResponseEntity<>(songsFacade.getSongs(overviewTO, PageRequest.of(page, pageSize)), HttpStatus.OK);
 	}
 
 	@RequestMapping("/count")

@@ -73,7 +73,8 @@ public class ArticleServiceImpl implements ArticleService {
 
 		Lexer lexer = new Lexer(source);
 		Parser parser = new ArticleParser();
-		ParsingProcessor parsingProcessor = new ParsingProcessor(lexer, contextRoot, pluginRegister.createRegisterSnapshot());
+		ParsingProcessor parsingProcessor = new ParsingProcessor(lexer, contextRoot,
+				pluginRegister.createRegisterSnapshot());
 
 		// výstup
 		Element tree = parser.parse(parsingProcessor);
@@ -86,7 +87,7 @@ public class ArticleServiceImpl implements ArticleService {
 	@Override
 	public void deleteArticle(long id) {
 		// smaž článek
-		articleRepository.delete(id);
+		articleRepository.deleteById(id);
 
 		// smaž jeho content node
 		contentNodeFacade.deleteByContentId(ArticlesContentModule.ID, id);
@@ -159,7 +160,7 @@ public class ArticleServiceImpl implements ArticleService {
 				article.setPartNumber(partNumber);
 			}
 		} else {
-			article = articleRepository.findOne(existingId);
+			article = articleRepository.findById(existingId).orElse(null);
 		}
 
 		// nasetuj do něj vše potřebné
@@ -196,7 +197,7 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public ArticleTO getArticleForDetail(long id) {
-		Article article = articleRepository.findOne(id);
+		Article article = articleRepository.findById(id).orElse(null);
 		if (article == null)
 			return null;
 		return articlesMapper.mapArticleForDetail(article);
@@ -204,10 +205,10 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public ArticleRESTTO getArticleForREST(Long id, Long userId) throws UnauthorizedAccessException {
-		Article article = articleRepository.findOne(id);
+		Article article = articleRepository.findById(id).orElse(null);
 		if (article == null)
 			return null;
-		User user = userId == null ? null : userRepository.findOne(userId);
+		User user = userId == null ? null : userRepository.findById(userId).orElse(null);
 		if (article.getContentNode().getPublicated() || user != null
 				&& (user.isAdmin() || article.getContentNode().getAuthor().getId().equals(user.getId()))) {
 			return articlesMapper.mapArticleForREST(article);
@@ -224,7 +225,7 @@ public class ArticleServiceImpl implements ArticleService {
 		int pageSize = 100;
 		int pages = (int) Math.ceil(total * 1.0 / pageSize);
 		for (int page = 0; page < pages; page++) {
-			List<Article> articles = articleRepository.findAll(new PageRequest(page, pageSize)).getContent();
+			List<Article> articles = articleRepository.findAll(PageRequest.of(page, pageSize)).getContent();
 			for (Article article : articles) {
 				reprocessArticle(article, contextRoot);
 				eventBus.publish(new ArticlesProcessProgressEvent(
@@ -258,7 +259,7 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public List<ArticleDraftOverviewTO> getDraftsForUser(Long userId) {
-		boolean isAdmin = userId == null ? false : userRepository.findOne(userId).isAdmin();
+		boolean isAdmin = userId == null ? false : userRepository.findById(userId).get().isAdmin();
 		List<Article> articles = articleRepository.findDraftsForUser(userId, isAdmin);
 		return articlesMapper.mapArticlesForDraftOverview(articles);
 	}

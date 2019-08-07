@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void changeUserRoles(long userId, Set<? extends Role> roles) {
 		Validate.notNull(roles, "'roles' nesmí být prázdný");
-		User u = userRepository.findOne(userId);
+		User u = userRepository.findById(userId).orElse(null);
 		Set<String> set = new HashSet<>();
 		for (Role r : roles)
 			set.add(r.getAuthority());
@@ -84,14 +84,14 @@ public class UserServiceImpl implements UserService {
 	public List<UserInfoTO> getUserInfoFromAllUsers() {
 		List<User> users = userRepository.findAll();
 		List<UserInfoTO> infoDTOs = new ArrayList<>();
-		for (User user : users) 
+		for (User user : users)
 			infoDTOs.add(mapper.map(user));
 		return infoDTOs;
 	}
 
 	@Override
 	public UserInfoTO getUserById(long userId) {
-		User user = userRepository.findOne(userId);
+		User user = userRepository.findById(userId).orElse(null);
 		return mapper.map(user);
 	}
 
@@ -109,19 +109,19 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void addContentToFavourites(long contentNodeId, long userId) {
-		User userEntity = userRepository.findOne(userId);
-		userEntity.getFavourites().add(contentNodeRepository.findOne(contentNodeId));
+		User userEntity = userRepository.findById(userId).orElse(null);
+		userEntity.getFavourites().add(contentNodeRepository.findById(contentNodeId).orElse(null));
 		userRepository.save(userEntity);
 	}
 
 	private void removeContentFromFavourites(User user, Long contentNodeId) {
-		user.getFavourites().remove(contentNodeRepository.findOne(contentNodeId));
+		user.getFavourites().remove(contentNodeRepository.findById(contentNodeId).orElse(null));
 		userRepository.save(user);
 	}
 
 	@Override
 	public void removeContentFromFavourites(long contentNodeId, long userId) {
-		User userEntity = userRepository.findOne(userId);
+		User userEntity = userRepository.findById(userId).orElse(null);
 		removeContentFromFavourites(userEntity, contentNodeId);
 	}
 

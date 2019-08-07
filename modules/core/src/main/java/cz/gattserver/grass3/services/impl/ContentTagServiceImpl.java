@@ -46,7 +46,7 @@ public class ContentTagServiceImpl implements ContentTagService {
 
 	@Override
 	public ContentTagOverviewTO getTagById(long id) {
-		return mapper.mapContentTagForOverview(contentTagRepository.findOne(id));
+		return mapper.mapContentTagForOverview(contentTagRepository.findById(id).orElse(null));
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class ContentTagServiceImpl implements ContentTagService {
 
 	@Override
 	public void saveTags(Collection<String> tags, long contentNodeId) {
-		saveTags(tags, contentNodeRepository.findOne(contentNodeId));
+		saveTags(tags, contentNodeRepository.findById(contentNodeId).orElse(null));
 	}
 
 	@Override

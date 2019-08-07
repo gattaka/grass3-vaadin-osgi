@@ -88,7 +88,7 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 
 	@Override
 	public ContentNodeTO getByID(long contentNodeId) {
-		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
+		ContentNode contentNode = contentNodeRepository.findById(contentNodeId).orElse(null);
 		return mapper.mapContentNodeForDetail(contentNode);
 	}
 
@@ -106,7 +106,7 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	public void modify(long contentNodeId, String name, Collection<String> tags, boolean publicated,
 			LocalDateTime creationDate) {
 		Validate.notNull(name, "'name' nesmí být null");
-		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
+		ContentNode contentNode = contentNodeRepository.findById(contentNodeId).orElse(null);
 
 		contentNode.setLastModificationDate(LocalDateTime.now());
 		contentNode.setName(name);
@@ -129,7 +129,7 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 		contentTagService.saveTags(null, contentNodeId);
 
 		// vymaž content node
-		ContentNode contentNode = contentNodeRepository.findOne(contentNodeId);
+		ContentNode contentNode = contentNodeRepository.findById(contentNodeId).orElse(null);
 		contentNodeRepository.delete(contentNode);
 	}
 
@@ -159,7 +159,7 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 
 	@Override
 	public int getCount() {
-		return (int) innerByUserAccess(new PageRequest(1, 1)).getTotal();
+		return (int) innerByUserAccess(PageRequest.of(1, 1)).getTotal();
 	}
 
 	@Override
@@ -186,7 +186,7 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 
 	@Override
 	public int getCountByTag(long tagId) {
-		return (int) innerByTagAndUserAccess(tagId, new PageRequest(1, 1)).getTotal();
+		return (int) innerByTagAndUserAccess(tagId, PageRequest.of(1, 1)).getTotal();
 	}
 
 	@Override
@@ -206,7 +206,7 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 
 	@Override
 	public int getUserFavouriteCount(long userId) {
-		return (int) innerByUserFavouritesAndUserAccess(userId, new PageRequest(1, 1)).getTotal();
+		return (int) innerByUserFavouritesAndUserAccess(userId, PageRequest.of(1, 1)).getTotal();
 	}
 
 	@Override
@@ -226,7 +226,7 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 
 	@Override
 	public int getCountByNode(long nodeId) {
-		return (int) innerByNodeAndUserAccess(nodeId, new PageRequest(1, 1)).getTotal();
+		return (int) innerByNodeAndUserAccess(nodeId, PageRequest.of(1, 1)).getTotal();
 	}
 
 	@Override
@@ -246,28 +246,28 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 
 	@Override
 	public int getCountByName(String name, Long userId) {
-		boolean isAdmin = userId == null ? false : userRepository.findOne(userId).isAdmin();
-		return (int) innerByNameAndUserAccess(name, userId, isAdmin, new PageRequest(1, 1)).getTotal();
+		boolean isAdmin = userId == null ? false : userRepository.findById(userId).get().isAdmin();
+		return (int) innerByNameAndUserAccess(name, userId, isAdmin, PageRequest.of(1, 1)).getTotal();
 	}
 
 	@Override
 	public int getCountByNameAndContentReader(String name, String contentReader, Long userId) {
-		boolean isAdmin = userId == null ? false : userRepository.findOne(userId).isAdmin();
+		boolean isAdmin = userId == null ? false : userRepository.findById(userId).get().isAdmin();
 		name = name == null ? "%" : "%" + name.replace('*', '%') + "%";
 		return (int) contentNodeRepository
-				.findByNameAndContentReaderAndUserAccess(name, contentReader, userId, isAdmin, new PageRequest(1, 1))
+				.findByNameAndContentReaderAndUserAccess(name, contentReader, userId, isAdmin, PageRequest.of(1, 1))
 				.getTotal();
 	}
 
 	@Override
 	public List<ContentNodeOverviewTO> getByName(String name, Long userId, PageRequest pr) {
-		boolean isAdmin = userId == null ? false : userRepository.findOne(userId).isAdmin();
+		boolean isAdmin = userId == null ? false : userRepository.findById(userId).get().isAdmin();
 		return innerByNameAndUserAccess(name, userId, isAdmin, pr).getResults();
 	}
 
 	@Override
 	public List<ContentNodeOverviewTO> getByName(String name, Long userId, int offset, int limit) {
-		boolean isAdmin = userId == null ? false : userRepository.findOne(userId).isAdmin();
+		boolean isAdmin = userId == null ? false : userRepository.findById(userId).get().isAdmin();
 		return innerByNameAndUserAccess(name, userId, isAdmin, QuerydslUtil.transformOffsetLimit(offset, limit))
 				.getResults();
 	}
@@ -275,7 +275,7 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	@Override
 	public List<ContentNodeOverviewTO> getByNameAndContentReader(String name, String contentReader, Long userId,
 			PageRequest pageRequest) {
-		boolean isAdmin = userId == null ? false : userRepository.findOne(userId).isAdmin();
+		boolean isAdmin = userId == null ? false : userRepository.findById(userId).get().isAdmin();
 		name = name == null ? "%" : "%" + name.replace('*', '%') + "%";
 		return contentNodeRepository
 				.findByNameAndContentReaderAndUserAccess(name, contentReader, userId, isAdmin, pageRequest)

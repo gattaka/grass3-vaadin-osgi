@@ -79,7 +79,7 @@ public class LanguageFacadeImpl implements LanguageFacade {
 
 	@Override
 	public LanguageItemTO getLanguageItemById(Long id) {
-		return mapper.mapLanguageItem(itemRepository.findOne(id));
+		return mapper.mapLanguageItem(itemRepository.findById(id).orElse(null));
 	}
 
 	@Override
@@ -133,7 +133,7 @@ public class LanguageFacadeImpl implements LanguageFacade {
 
 	@Override
 	public void deleteLanguageItem(LanguageItemTO item) {
-		itemRepository.delete(item.getId());
+		itemRepository.deleteById(item.getId());
 	}
 
 	@Override

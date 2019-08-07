@@ -51,7 +51,7 @@ public class MedicFacadeImpl implements MedicFacade {
 
 	@Override
 	public void deleteMedicalInstitution(MedicalInstitutionDTO institution) {
-		medicalInstitutionRepository.delete(institution.getId());
+		medicalInstitutionRepository.deleteById(institution.getId());
 	}
 
 	@Override
@@ -72,14 +72,14 @@ public class MedicFacadeImpl implements MedicFacade {
 
 	@Override
 	public MedicalInstitutionDTO getMedicalInstitutionById(Long id) {
-		return medicMapper.mapMedicalInstitution(medicalInstitutionRepository.findOne(id));
+		return medicMapper.mapMedicalInstitution(medicalInstitutionRepository.findById(id).orElse(null));
 	}
 
 	// Návštěvy
 
 	@Override
 	public void deleteScheduledVisit(ScheduledVisitDTO dto) {
-		scheduledVisitRepository.delete(dto.getId());
+		scheduledVisitRepository.deleteById(dto.getId());
 	}
 
 	@Override
@@ -118,11 +118,11 @@ public class MedicFacadeImpl implements MedicFacade {
 		}
 
 		if (dto.getRecord() != null) {
-			visit.setRecord(medicalRecordRepository.findOne(dto.getRecord().getId()));
+			visit.setRecord(medicalRecordRepository.findById(dto.getRecord().getId()).orElse(null));
 		}
 
 		if (dto.getInstitution() != null) {
-			visit.setInstitution(medicalInstitutionRepository.findOne(dto.getInstitution().getId()));
+			visit.setInstitution(medicalInstitutionRepository.findById(dto.getInstitution().getId()).orElse(null));
 		}
 
 		scheduledVisitRepository.save(visit);
@@ -130,14 +130,14 @@ public class MedicFacadeImpl implements MedicFacade {
 
 	@Override
 	public ScheduledVisitDTO getScheduledVisitById(Long id) {
-		return medicMapper.mapScheduledVisit(scheduledVisitRepository.findOne(id));
+		return medicMapper.mapScheduledVisit(scheduledVisitRepository.findById(id).orElse(null));
 	}
 
 	// Záznamy
 
 	@Override
 	public void deleteMedicalRecord(MedicalRecordDTO dto) {
-		scheduledVisitRepository.delete(dto.getId());
+		scheduledVisitRepository.deleteById(dto.getId());
 	}
 
 	@Override
@@ -153,16 +153,16 @@ public class MedicFacadeImpl implements MedicFacade {
 		record.setRecord(dto.getRecord());
 
 		if (dto.getPhysician() != null) {
-			record.setPhysician(physicianRepository.findOne(dto.getPhysician().getId()));
+			record.setPhysician(physicianRepository.findById(dto.getPhysician().getId()).orElse(null));
 		}
 
 		if (dto.getInstitution() != null) {
-			record.setInstitution(medicalInstitutionRepository.findOne(dto.getInstitution().getId()));
+			record.setInstitution(medicalInstitutionRepository.findById(dto.getInstitution().getId()).orElse(null));
 		}
 
 		List<Medicament> medicaments = new ArrayList<>();
 		for (MedicamentDTO m : dto.getMedicaments()) {
-			Medicament medicament = medicamentRepository.findOne(m.getId());
+			Medicament medicament = medicamentRepository.findById(m.getId()).orElse(null);
 			medicaments.add(medicament);
 		}
 		record.setMedicaments(medicaments);
@@ -172,14 +172,14 @@ public class MedicFacadeImpl implements MedicFacade {
 
 	@Override
 	public MedicalRecordDTO getMedicalRecordById(Long id) {
-		return medicMapper.mapMedicalRecord(medicalRecordRepository.findOne(id));
+		return medicMapper.mapMedicalRecord(medicalRecordRepository.findById(id).orElse(null));
 	}
 
 	// Medikamenty
 
 	@Override
 	public void deleteMedicament(MedicamentDTO dto) {
-		medicamentRepository.delete(dto.getId());
+		medicamentRepository.deleteById(dto.getId());
 	}
 
 	@Override
@@ -198,14 +198,14 @@ public class MedicFacadeImpl implements MedicFacade {
 
 	@Override
 	public MedicamentDTO getMedicamentById(Long id) {
-		return medicMapper.mapMedicament(medicamentRepository.findOne(id));
+		return medicMapper.mapMedicament(medicamentRepository.findById(id).orElse(null));
 	}
 
 	// Doktoři
 
 	@Override
 	public void deletePhysician(PhysicianDTO dto) {
-		physicianRepository.delete(dto.getId());
+		physicianRepository.deleteById(dto.getId());
 	}
 
 	@Override
@@ -223,7 +223,7 @@ public class MedicFacadeImpl implements MedicFacade {
 
 	@Override
 	public PhysicianDTO getPhysicianById(Long id) {
-		return medicMapper.mapPhysician(physicianRepository.findOne(id));
+		return medicMapper.mapPhysician(physicianRepository.findById(id).orElse(null));
 	}
 
 }

@@ -3,9 +3,9 @@ package cz.gattserver.grass3.books.facades.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.PageRequest;
 
 import com.vaadin.data.provider.QuerySortOrder;
 
@@ -25,7 +25,7 @@ public class BooksFacadeImpl implements BooksFacade {
 
 	@Override
 	public void deleteBook(Long id) {
-		bookRepository.delete(id);
+		bookRepository.deleteById(id);
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class BooksFacadeImpl implements BooksFacade {
 
 	@Override
 	public List<BookOverviewTO> getBooks(int page, int size) {
-		return bookRepository.findBooks(null, new PageRequest(page, size), null);
+		return bookRepository.findBooks(null, PageRequest.of(page, size), null);
 	}
 
 	@Override

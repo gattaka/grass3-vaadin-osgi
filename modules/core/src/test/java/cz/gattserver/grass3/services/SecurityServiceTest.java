@@ -19,7 +19,6 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.SecurityService;
-import cz.gattserver.grass3.services.UserService;
 import cz.gattserver.grass3.services.impl.LoginResult;
 import cz.gattserver.grass3.test.AbstractDBUnitTest;
 import cz.gattserver.grass3.test.MockUtils;

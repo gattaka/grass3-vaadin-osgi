@@ -66,7 +66,7 @@ public class QuotesServiceImpl implements QuotesService {
 
 	@Override
 	public void deleteQuote(long quoteId) {
-		quoteRepository.delete(quoteId);
+		quoteRepository.deleteById(quoteId);
 	}
 
 }

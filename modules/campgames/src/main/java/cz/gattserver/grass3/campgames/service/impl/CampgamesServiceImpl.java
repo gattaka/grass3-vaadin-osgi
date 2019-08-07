@@ -229,12 +229,12 @@ public class CampgamesServiceImpl implements CampgamesService {
 
 	@Override
 	public CampgameKeywordTO getCampgameKeyword(Long id) {
-		return campgamesMapper.mapCampgameKeyword(campgameKeywordRepository.findOne(id));
+		return campgamesMapper.mapCampgameKeyword(campgameKeywordRepository.findById(id).orElse(null));
 	}
 
 	@Override
 	public void deleteCampgameKeyword(Long id) {
-		CampgameKeyword keyword = campgameKeywordRepository.findOne(id);
+		CampgameKeyword keyword = campgameKeywordRepository.findById(id).orElse(null);
 		List<Campgame> games = campgameRepository.findByKeywordsId(keyword.getId());
 		for (Campgame game : games) {
 			game.getKeywords().remove(keyword);
@@ -253,7 +253,7 @@ public class CampgamesServiceImpl implements CampgamesService {
 		if (gameTO.getId() == null)
 			item = new Campgame();
 		else
-			item = campgameRepository.findOne(gameTO.getId());
+			item = campgameRepository.findById(gameTO.getId()).orElse(null);
 		item.setName(gameTO.getName());
 		item.setDescription(gameTO.getDescription());
 		item.setOrigin(gameTO.getOrigin());
@@ -299,16 +299,16 @@ public class CampgamesServiceImpl implements CampgamesService {
 
 	@Override
 	public CampgameTO getCampgame(Long id) {
-		return campgamesMapper.mapCampgame(campgameRepository.findOne(id));
+		return campgamesMapper.mapCampgame(campgameRepository.findById(id).orElse(null));
 	}
 
 	@Override
 	public void deleteCampgame(Long id) {
-		Campgame item = campgameRepository.findOne(id);
+		Campgame item = campgameRepository.findById(id).orElse(null);
 
 		// TODO smazat images
 
-		campgameRepository.delete(item.getId());
+		campgameRepository.deleteById(item.getId());
 	}
 
 }

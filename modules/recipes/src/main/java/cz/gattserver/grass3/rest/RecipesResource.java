@@ -31,7 +31,7 @@ public class RecipesResource {
 		// poradí a sníží ho
 		if (page * pageSize > count)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		return new ResponseEntity<>(recipesFacade.getRecipes(filter, new PageRequest(page, pageSize)), HttpStatus.OK);
+		return new ResponseEntity<>(recipesFacade.getRecipes(filter, PageRequest.of(page, pageSize)), HttpStatus.OK);
 	}
 
 	@RequestMapping("/count")

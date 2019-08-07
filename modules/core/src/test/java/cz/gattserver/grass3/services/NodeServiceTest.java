@@ -232,7 +232,7 @@ public class NodeServiceTest extends AbstractDBUnitTest {
 		Long nodeId2 = nodeService.createNewNode(nodeId1, "testNode2");
 		Long nodeId3 = nodeService.createNewNode(nodeId2, "testNode3");
 
-		Node node = nodeRepository.findOne(nodeId1);
+		Node node = nodeRepository.findById(nodeId1).orElse(null);
 		Node node3 = new Node();
 		node3.setId(nodeId3);
 		node.setParent(node3);

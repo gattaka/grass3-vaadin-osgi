@@ -53,7 +53,7 @@ public class DrinksFacadeImpl implements DrinksFacade {
 
 	@Override
 	public void deleteDrink(Long id) {
-		drinkRepository.delete(id);
+		drinkRepository.deleteById(id);
 	}
 
 	/*
@@ -66,7 +66,7 @@ public class DrinksFacadeImpl implements DrinksFacade {
 
 	@Override
 	public List<BeerOverviewTO> getBeers(String filter, int page, int size) {
-		return drinkRepository.findBeers(filter, new PageRequest(page, size));
+		return drinkRepository.findBeers(filter, PageRequest.of(page, size));
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class DrinksFacadeImpl implements DrinksFacade {
 
 	@Override
 	public List<RumOverviewTO> getRums(String filter, int page, int size) {
-		return drinkRepository.findRums(filter, new PageRequest(page, size));
+		return drinkRepository.findRums(filter, PageRequest.of(page, size));
 	}
 
 	@Override
@@ -168,7 +168,7 @@ public class DrinksFacadeImpl implements DrinksFacade {
 
 	@Override
 	public List<WhiskeyOverviewTO> getWhiskeys(String filter, int page, int size) {
-		return drinkRepository.findWhiskeys(filter, new PageRequest(page, size));
+		return drinkRepository.findWhiskeys(filter, PageRequest.of(page, size));
 	}
 
 	@Override
@@ -212,7 +212,7 @@ public class DrinksFacadeImpl implements DrinksFacade {
 
 	@Override
 	public List<WineOverviewTO> getWines(int page, int size) {
-		return drinkRepository.findWines(null, new PageRequest(page, size), null);
+		return drinkRepository.findWines(null, PageRequest.of(page, size), null);
 	}
 
 	@Override

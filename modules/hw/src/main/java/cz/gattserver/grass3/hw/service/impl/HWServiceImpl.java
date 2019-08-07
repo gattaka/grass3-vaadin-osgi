@@ -382,12 +382,12 @@ public class HWServiceImpl implements HWService {
 
 	@Override
 	public HWItemTypeTO getHWItemType(Long fixTypeId) {
-		return hwMapper.mapHWItemType(hwItemTypeRepository.findOne(fixTypeId));
+		return hwMapper.mapHWItemType(hwItemTypeRepository.findById(fixTypeId).orElse(null));
 	}
 
 	@Override
 	public void deleteHWItemType(Long id) {
-		HWItemType itemType = hwItemTypeRepository.findOne(id);
+		HWItemType itemType = hwItemTypeRepository.findById(id).orElse(null);
 		List<HWItem> items = hwItemRepository.findByTypesId(itemType.getId());
 		for (HWItem item : items) {
 			item.getTypes().remove(itemType);
@@ -406,7 +406,7 @@ public class HWServiceImpl implements HWService {
 		if (hwItemDTO.getId() == null)
 			item = new HWItem();
 		else
-			item = hwItemRepository.findOne(hwItemDTO.getId());
+			item = hwItemRepository.findById(hwItemDTO.getId()).orElse(null);
 		item.setName(hwItemDTO.getName());
 		item.setPurchaseDate(DateUtils.toDate(hwItemDTO.getPurchaseDate()));
 		item.setDestructionDate(DateUtils.toDate(hwItemDTO.getDestructionDate()));
@@ -414,7 +414,7 @@ public class HWServiceImpl implements HWService {
 		item.setState(hwItemDTO.getState());
 		item.setSupervizedFor(hwItemDTO.getSupervizedFor());
 		if (hwItemDTO.getUsedIn() != null) {
-			HWItem usedIn = hwItemRepository.findOne(hwItemDTO.getUsedIn().getId());
+			HWItem usedIn = hwItemRepository.findById(hwItemDTO.getUsedIn().getId()).orElse(null);
 			item.setUsedIn(usedIn);
 		}
 		item.setWarrantyYears(hwItemDTO.getWarrantyYears());
@@ -456,7 +456,7 @@ public class HWServiceImpl implements HWService {
 
 	@Override
 	public HWItemTO getHWItem(Long itemId) {
-		return hwMapper.mapHWItem(hwItemRepository.findOne(itemId));
+		return hwMapper.mapHWItem(hwItemRepository.findById(itemId).orElse(null));
 	}
 
 	@Override
@@ -472,7 +472,7 @@ public class HWServiceImpl implements HWService {
 
 	@Override
 	public void deleteHWItem(Long id) {
-		HWItem item = hwItemRepository.findOne(id);
+		HWItem item = hwItemRepository.findById(id).orElse(null);
 		for (ServiceNote note : item.getServiceNotes()) {
 			serviceNoteRepository.delete(note);
 		}
@@ -485,7 +485,7 @@ public class HWServiceImpl implements HWService {
 			hwItemRepository.save(targetItem);
 		}
 
-		hwItemRepository.delete(item.getId());
+		hwItemRepository.deleteById(item.getId());
 	}
 
 	/*
@@ -504,7 +504,7 @@ public class HWServiceImpl implements HWService {
 	 *            {@code true} pokud byl HW přidán
 	 */
 	private void saveHWPartMoveServiceNote(HWItem triggerItem, ServiceNote triggerNote, boolean added) {
-		HWItem targetItem = hwItemRepository.findOne(triggerItem.getUsedIn().getId());
+		HWItem targetItem = hwItemRepository.findById(triggerItem.getUsedIn().getId()).orElse(null);
 		ServiceNote removeNote = new ServiceNote();
 		removeNote.setDate(triggerNote.getDate());
 
@@ -521,7 +521,7 @@ public class HWServiceImpl implements HWService {
 
 	@Override
 	public void addServiceNote(ServiceNoteTO serviceNoteDTO, Long id) {
-		HWItem item = hwItemRepository.findOne(id);
+		HWItem item = hwItemRepository.findById(id).orElse(null);
 		ServiceNote serviceNote = new ServiceNote();
 		serviceNote.setDate(DateUtils.toDate(serviceNoteDTO.getDate()));
 		serviceNote.setDescription(serviceNoteDTO.getDescription());
@@ -541,7 +541,7 @@ public class HWServiceImpl implements HWService {
 		if (serviceNoteDTO.getUsedInId() != null) {
 
 			// cílový HW, kde je nyní HW součástí
-			HWItem targetItem = hwItemRepository.findOne(serviceNoteDTO.getUsedInId());
+			HWItem targetItem = hwItemRepository.findById(serviceNoteDTO.getUsedInId()).orElse(null);
 
 			// předtím nebyl nikde součástí
 			if (oldTarget == null) {
@@ -573,7 +573,7 @@ public class HWServiceImpl implements HWService {
 
 	@Override
 	public void modifyServiceNote(ServiceNoteTO serviceNoteDTO) {
-		ServiceNote serviceNote = serviceNoteRepository.findOne(serviceNoteDTO.getId());
+		ServiceNote serviceNote = serviceNoteRepository.findById(serviceNoteDTO.getId()).orElse(null);
 		serviceNote.setDate(DateUtils.toDate(serviceNoteDTO.getDate()));
 		serviceNote.setDescription(serviceNoteDTO.getDescription());
 		serviceNote.setState(serviceNoteDTO.getState());
@@ -583,8 +583,8 @@ public class HWServiceImpl implements HWService {
 
 	@Override
 	public void deleteServiceNote(ServiceNoteTO serviceNoteDTO, Long id) {
-		HWItem item = hwItemRepository.findOne(id);
-		ServiceNote serviceNote = serviceNoteRepository.findOne(serviceNoteDTO.getId());
+		HWItem item = hwItemRepository.findById(id).orElse(null);
+		ServiceNote serviceNote = serviceNoteRepository.findById(serviceNoteDTO.getId()).orElse(null);
 		item.getServiceNotes().remove(serviceNote);
 		hwItemRepository.save(item);
 		serviceNoteRepository.delete(serviceNote);

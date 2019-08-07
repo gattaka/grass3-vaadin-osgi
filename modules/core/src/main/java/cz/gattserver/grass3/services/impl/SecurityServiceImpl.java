@@ -66,7 +66,7 @@ public class SecurityServiceImpl implements SecurityService {
 					rms.onLoginSuccess(request, response, auth);
 				}
 				// zapiš údaj o posledním přihlášení
-				User user = userRepository.findOne(principal.getId());
+				User user = userRepository.findById(principal.getId()).orElse(null);
 				user.setLastLoginDate(LocalDateTime.now());
 				userRepository.save(user);
 			}

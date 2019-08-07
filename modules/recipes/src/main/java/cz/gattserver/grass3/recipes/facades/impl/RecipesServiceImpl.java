@@ -27,7 +27,7 @@ public class RecipesServiceImpl implements RecipesService {
 
 	@Override
 	public RecipeDTO getRecipeById(Long id) {
-		Recipe recipe = recipeRepository.findOne(id);
+		Recipe recipe = recipeRepository.findById(id).orElse(null);
 		if (recipe == null)
 			return null;
 		RecipeDTO recipeDTO = mapper.mapRecipe(recipe);

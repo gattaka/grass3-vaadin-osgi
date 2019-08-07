@@ -35,7 +35,7 @@ public class SongsFacadeImpl implements SongsService {
 
 	@Override
 	public SongTO getSongById(Long id) {
-		Song song = songsRepository.findOne(id);
+		Song song = songsRepository.findById(id).orElse(null);
 		if (song == null)
 			return null;
 		return mapper.mapSong(song);
@@ -72,7 +72,7 @@ public class SongsFacadeImpl implements SongsService {
 
 	@Override
 	public void deleteSong(Long id) {
-		songsRepository.delete(id);
+		songsRepository.deleteById(id);
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public class SongsFacadeImpl implements SongsService {
 
 	@Override
 	public void deleteChord(Long id) {
-		chordsRepository.delete(id);
+		chordsRepository.deleteById(id);
 	}
 
 	@Override
@@ -129,7 +129,7 @@ public class SongsFacadeImpl implements SongsService {
 
 	@Override
 	public ChordTO getChordById(Long id) {
-		return mapper.mapChord(chordsRepository.findOne(id));
+		return mapper.mapChord(chordsRepository.findById(id).orElse(null));
 	}
 
 	@Override

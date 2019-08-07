@@ -31,8 +31,7 @@
 
 	<authentication-manager alias="authenticationManager">
 		<authentication-provider user-service-ref="grassUserDetailServiceImpl">
-			<password-encoder ref="grassPasswordEncoder">
-			</password-encoder>
+			<password-encoder ref="grassPasswordEncoder" />
 		</authentication-provider>
 	</authentication-manager>
 

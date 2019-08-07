@@ -87,7 +87,7 @@ public class ArticlesResource {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
 		return new ResponseEntity<>(contentNodeService.getByNameAndContentReader(filter, ArticlesContentModule.ID,
-				user.getId(), new PageRequest(page, pageSize)), HttpStatus.OK);
+				user.getId(), PageRequest.of(page, pageSize)), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/article", method = RequestMethod.GET)

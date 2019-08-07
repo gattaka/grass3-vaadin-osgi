@@ -34,7 +34,7 @@ public class CampgamesResource {
 		if (page * pageSize > count)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		return new ResponseEntity<>(campgamesService.getCampgames(new CampgameFilterTO(),
-				new PageRequest(page, pageSize), new OrderSpecifier[0]), HttpStatus.OK);
+				PageRequest.of(page, pageSize), new OrderSpecifier[0]), HttpStatus.OK);
 	}
 
 	@RequestMapping("/count")

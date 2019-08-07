@@ -124,7 +124,7 @@ public class PGServiceImpl implements PGService {
 		String path = photogalleryRepository.findPhotogalleryPathById(photogalleryId);
 		Path galleryDir = getGalleryPath(path);
 
-		photogalleryRepository.delete(photogalleryId);
+		photogalleryRepository.deleteById(photogalleryId);
 		contentNodeFacade.deleteByContentId(PGModule.ID, photogalleryId);
 
 		// musí se řešit return stavem, protože exception by způsobilo rollback
@@ -299,7 +299,7 @@ public class PGServiceImpl implements PGService {
 		logger.info("modifyPhotogallery thread: " + Thread.currentThread().getId());
 
 		Photogallery photogallery = existingId == null ? new Photogallery()
-				: photogalleryRepository.findOne(existingId);
+				: photogalleryRepository.findById(existingId).orElse(null);
 
 		// nasetuj do ní vše potřebné
 		photogallery.setPhotogalleryPath(galleryDir);
@@ -375,7 +375,7 @@ public class PGServiceImpl implements PGService {
 	@Override
 	public PhotogalleryTO getPhotogalleryForDetail(Long id) {
 		Validate.notNull(id, "Id galerie nesmí být null");
-		Photogallery photogallery = photogalleryRepository.findOne(id);
+		Photogallery photogallery = photogalleryRepository.findById(id).orElse(null);
 		if (photogallery == null)
 			return null;
 		return photogalleriesMapper.mapPhotogalleryForDetail(photogallery);
@@ -469,7 +469,7 @@ public class PGServiceImpl implements PGService {
 				userId != null ? photogalleryRepository.findByUserAccess(userId, filter, pageable)
 						: photogalleryRepository.findByAnonAccess(filter, pageable));
 	}
-	
+
 	@Override
 	public PhotogalleryRESTOverviewTO getPhotogalleryByDirectory(String directory) {
 		Photogallery gallery = photogalleryRepository.findByDirectory(directory);
@@ -478,7 +478,7 @@ public class PGServiceImpl implements PGService {
 
 	@Override
 	public PhotogalleryRESTTO getPhotogalleryForREST(Long id) throws UnauthorizedAccessException {
-		Photogallery gallery = photogalleryRepository.findOne(id);
+		Photogallery gallery = photogalleryRepository.findById(id).orElse(null);
 		if (gallery == null)
 			return null;
 
@@ -510,7 +510,7 @@ public class PGServiceImpl implements PGService {
 	@Override
 	public Path getPhotoForREST(Long id, String fileName, PhotoVersion photoVersion)
 			throws UnauthorizedAccessException {
-		Photogallery gallery = photogalleryRepository.findOne(id);
+		Photogallery gallery = photogalleryRepository.findById(id).orElse(null);
 		if (gallery == null)
 			return null;
 

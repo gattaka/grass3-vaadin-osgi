@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
@@ -28,6 +29,7 @@ import cz.gattserver.grass3.services.CoreMapperService;
 @Service
 public class CoreMapperServiceImpl implements CoreMapperService {
 
+	@Lazy
 	@Autowired
 	protected ModuleRegister moduleRegister;
 

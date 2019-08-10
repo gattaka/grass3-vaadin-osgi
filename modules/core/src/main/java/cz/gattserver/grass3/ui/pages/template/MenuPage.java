@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.ThemeResource;
@@ -32,6 +33,7 @@ public abstract class MenuPage extends GrassPage {
 	@Autowired
 	protected VersionInfoService versionInfoService;
 
+	@Lazy
 	@Autowired
 	protected ModuleRegister serviceHolder;
 

@@ -1,19 +1,17 @@
 package cz.gattserver.grass3.services.impl;
 
-import java.util.Properties;
-
 import cz.gattserver.grass3.services.VersionInfoService;
 
 public class VersionInfoServiceImpl implements VersionInfoService {
 
-	private Properties versionProperties;
+	private String version;
 
-	public void setVersionProperties(Properties appProperties) {
-		this.versionProperties = appProperties;
+	public void setVersionProperties(String version) {
+		this.version = version;
 	}
 
 	@Override
 	public String getProjectVersion() {
-		return versionProperties.getProperty("version");
+		return version;
 	}
 }

@@ -54,9 +54,7 @@ public abstract class AbstractStyleParser implements Parser {
 		// END_TAG byl zpracován
 		pluginBag.nextToken();
 
-		// Zkus za stylem zpracovat ještě konec řádku
-		if (pluginBag.getToken().equals(Token.EOL))
-			pluginBag.nextToken();
+		// Za stylem se nesmí parsovat konec řádku
 		
 		return getElement(elist);
 	}

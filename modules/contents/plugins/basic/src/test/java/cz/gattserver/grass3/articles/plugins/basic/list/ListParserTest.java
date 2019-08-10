@@ -41,11 +41,11 @@ public class ListParserTest {
 	@Test
 	public void testMultiline() {
 		ListParser parser = new ListParser("CUSTOM_TAG", true);
-		Element element = parser.parse(getParsingProcessorWithText("[CUSTOM_TAG]test\nhehe[/CUSTOM_TAG]"));
+		Element element = parser.parse(getParsingProcessorWithText("[CUSTOM_TAG]test\nhehe\naa[/CUSTOM_TAG]"));
 
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
-		assertEquals("<ol><li>test</li><li>hehe</li></ol>", ctx.getOutput());
+		assertEquals("<ol><li>test</li><li>hehe</li><li>aa</li></ol>", ctx.getOutput());
 	}
 	
 	@Test

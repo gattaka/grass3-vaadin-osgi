@@ -27,6 +27,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.JavaScript;
+import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TextField;
@@ -59,6 +60,7 @@ import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.MultiUpload;
 import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import elemental.json.JsonArray;
 import net.engio.mbassy.listener.Handler;
 
 public class PGEditorPage extends OneColumnPage {
@@ -431,18 +433,34 @@ public class PGEditorPage extends OneColumnPage {
 	 * Zavolá vrácení se na galerii
 	 */
 	private void returnToPhotogallery() {
-		JavaScript.eval("window.onbeforeunload = null;");
-		UIUtils.redirect(getPageURL(photogalleryViewerPageFactory,
-				URLIdentifierUtils.createURLIdentifier(photogallery.getId(), photogallery.getContentNode().getName())));
+		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.closecallback", new JavaScriptFunction() {
+			private static final long serialVersionUID = 5850638851716815161L;
+
+			@Override
+			public void call(JsonArray arguments) {
+				UIUtils.redirect(getPageURL(photogalleryViewerPageFactory, URLIdentifierUtils
+						.createURLIdentifier(photogallery.getId(), photogallery.getContentNode().getName())));
+			}
+		});
+		JavaScript.eval(
+				"window.onbeforeunload = null; setTimeout(function(){ cz.gattserver.grass3.closecallback(); }, 10);");
 	}
 
 	/**
 	 * zavolání vrácení se na kategorii
 	 */
 	private void returnToNode() {
-		JavaScript.eval("window.onbeforeunload = null;");
-		UIUtils.redirect(
-				getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName())));
+		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.closecallback", new JavaScriptFunction() {
+			private static final long serialVersionUID = 5850638851716815161L;
+
+			@Override
+			public void call(JsonArray arguments) {
+				UIUtils.redirect(getPageURL(nodePageFactory,
+						URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName())));
+			}
+		});
+		JavaScript.eval(
+				"window.onbeforeunload = null; setTimeout(function(){ cz.gattserver.grass3.closecallback(); }, 10);");
 	}
 
 	@Handler

@@ -176,6 +176,7 @@
 					</webResources>
 					<warSourceDirectory>src/main/webapp</warSourceDirectory>
 					<warName>${project.artifactId}-${project.version}</warName>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
 

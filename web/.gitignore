@@ -4,3 +4,7 @@
 /target
 /.classpath
 /bin/
+/package.json
+/webpack.config.js
+/webpack.generated.js
+/node_modules

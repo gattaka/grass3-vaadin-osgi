@@ -11,10 +11,10 @@ import com.vaadin.ui.VerticalLayout;
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class HWItemTypeCreateWindow extends WebWindow {
+public abstract class HWItemTypeCreateWindow extends WebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -39,7 +39,7 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 		setCaption("Založení nového typu HW");
 
 		VerticalLayout winLayout = new VerticalLayout();
-		winLayout.setMargin(true);
+		winLayout.setPadding(true);
 		winLayout.setSpacing(true);
 
 		HWItemTypeTO formDTO = new HWItemTypeTO();
@@ -62,7 +62,7 @@ public abstract class HWItemTypeCreateWindow extends WebWindow {
 				Notification.show("   Chybná vstupní data\n\n   " + ex.getBeanValidationErrors().iterator().next(),
 						Notification.Type.TRAY_NOTIFICATION);
 			} catch (Exception ex) {
-				UI.getCurrent().addWindow(new ErrorWindow("Uložení se nezdařilo"));
+				UI.getCurrent().addWindow(new ErrorDialog("Uložení se nezdařilo"));
 			}
 		}));
 

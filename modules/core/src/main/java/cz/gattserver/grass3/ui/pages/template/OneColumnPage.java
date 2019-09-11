@@ -1,21 +1,24 @@
 package cz.gattserver.grass3.ui.pages.template;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Div;
 
 import cz.gattserver.grass3.server.GrassRequest;
 
 public abstract class OneColumnPage extends BasePage {
+
+	private static final long serialVersionUID = 5541555440277025949L;
 
 	public OneColumnPage(GrassRequest request) {
 		super(request);
 	}
 
 	@Override
-	protected void createContent(CustomLayout layout) {
-		CustomLayout contentLayout = new CustomLayout("oneColumn");
-		layout.addComponent(contentLayout, "content");
-		contentLayout.addComponent(createContent(), "content");
+	protected void createContent(Div layout) {
+		Div contentLayout = new Div();
+		contentLayout.setId("center-content");
+		contentLayout.add(createColumnContent());
+		layout.add(contentLayout);
 	}
 
 	/**
@@ -23,6 +26,6 @@ public abstract class OneColumnPage extends BasePage {
 	 * 
 	 * @return layout
 	 */
-	protected abstract Component createContent();
+	protected abstract Component createColumnContent();
 
 }

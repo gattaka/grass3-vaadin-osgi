@@ -17,13 +17,13 @@ public class HWPage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createContent() {
+	protected Component createColumnContent() {
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);
-		layout.setMargin(true);
+		layout.setPadding(true);
 
 		VerticalLayout marginlayout = new VerticalLayout();
-		marginlayout.setMargin(new MarginInfo(false, true, true, true));
+		marginlayout.setPadding(new MarginInfo(false, true, true, true));
 		layout.addComponent(marginlayout);
 
 		TabSheet tabSheet = new TabSheet();

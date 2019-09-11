@@ -3,9 +3,9 @@ package cz.gattserver.grass3.ui.components;
 import java.util.Set;
 import java.util.function.Function;
 
-import com.vaadin.shared.Registration;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.shared.Registration;
 
 public class GridButton<T> extends Button {
 

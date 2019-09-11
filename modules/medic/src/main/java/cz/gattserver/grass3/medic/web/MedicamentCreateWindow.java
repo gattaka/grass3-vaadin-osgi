@@ -14,10 +14,10 @@ import com.vaadin.ui.UI;
 import cz.gattserver.grass3.medic.dto.MedicamentDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class MedicamentCreateWindow extends WebWindow {
+public abstract class MedicamentCreateWindow extends WebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -65,7 +65,7 @@ public abstract class MedicamentCreateWindow extends WebWindow {
 				Notification.show("   Chybná vstupní data\n\n   " + ex.getCause().getMessage(),
 						Notification.Type.TRAY_NOTIFICATION);
 			} catch (Exception ex) {
-				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se vytvořit nový záznam"));
+				UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se vytvořit nový záznam"));
 			}
 		});
 		winLayout.addComponent(saveBtn, 1, 3);

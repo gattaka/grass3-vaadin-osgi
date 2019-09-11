@@ -5,10 +5,10 @@ import com.vaadin.ui.Label;
 
 import cz.gattserver.grass3.medic.dto.MedicamentDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
-import cz.gattserver.grass3.ui.windows.DetailWindow;
+import cz.gattserver.grass3.ui.windows.DetailDialog;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
-public class MedicamentDetailWindow extends DetailWindow {
+public class MedicamentDetailWindow extends DetailDialog {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 

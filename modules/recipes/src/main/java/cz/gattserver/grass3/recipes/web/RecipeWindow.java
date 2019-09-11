@@ -11,9 +11,9 @@ import cz.gattserver.grass3.recipes.facades.RecipesService;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
 import cz.gattserver.grass3.ui.components.CreateButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class RecipeWindow extends WebWindow {
+public abstract class RecipeWindow extends WebDialog {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 

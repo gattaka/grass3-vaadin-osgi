@@ -21,10 +21,10 @@ import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class ServiceNoteCreateWindow extends WebWindow {
+public abstract class ServiceNoteCreateWindow extends WebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -48,7 +48,7 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 		GridLayout winLayout = new GridLayout(2, 4);
 		setContent(winLayout);
 		winLayout.setSpacing(true);
-		winLayout.setMargin(true);
+		winLayout.setPadding(true);
 
 		DateField eventDateField = new DateField("Datum");
 		eventDateField.setDateFormat("dd.MM.yyyy");
@@ -109,7 +109,7 @@ public abstract class ServiceNoteCreateWindow extends WebWindow {
 			} catch (ValidationException ex) {
 				UIUtils.showError("Chybně vyplněný formulář");
 			} catch (Exception ex) {
-				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se zapsat nový servisní záznam"));
+				UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se zapsat nový servisní záznam"));
 			}
 		});
 		winLayout.addComponent(createBtn, 1, 3);

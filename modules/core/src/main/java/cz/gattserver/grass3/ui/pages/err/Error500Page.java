@@ -1,8 +1,5 @@
 package cz.gattserver.grass3.ui.pages.err;
 
-import com.vaadin.server.Resource;
-import com.vaadin.server.ThemeResource;
-
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.err.template.ErrorPage;
 
@@ -18,8 +15,8 @@ public class Error500Page extends ErrorPage {
 	}
 
 	@Override
-	protected Resource getErrorImage() {
-		return new ThemeResource("img/500.png");
+	protected String getErrorImage() {
+		return "img/500.png";
 	}
 
 }

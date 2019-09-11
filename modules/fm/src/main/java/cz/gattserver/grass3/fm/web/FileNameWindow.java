@@ -7,9 +7,9 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
 
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public class FileNameWindow extends WebWindow {
+public class FileNameWindow extends WebDialog {
 
 	private static final long serialVersionUID = 9163906666470561249L;
 

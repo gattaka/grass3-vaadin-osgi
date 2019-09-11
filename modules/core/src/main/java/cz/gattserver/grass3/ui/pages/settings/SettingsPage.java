@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Link;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.modules.register.ModuleSettingsPageFactoriesRegister;
@@ -33,7 +33,7 @@ public class SettingsPage extends TwoColumnPage {
 	}
 
 	@Override
-	protected Layout createPayload() {
+	protected Div createPayload() {
 		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
 		String settingsTabName = analyzer.getCurrentPathToken();
 		ModuleSettingsPageFactory moduleSettingsPageFactory = register.getFactory(settingsTabName);
@@ -52,16 +52,16 @@ public class SettingsPage extends TwoColumnPage {
 	@Override
 	protected Component createLeftColumnContent() {
 		VerticalLayout marginLayout = new VerticalLayout();
-		marginLayout.setMargin(true);
+		marginLayout.setPadding(true);
 
 		VerticalLayout leftColumnLayout = new VerticalLayout();
-		leftColumnLayout.setMargin(true);
-		marginLayout.addComponent(leftColumnLayout);
+		leftColumnLayout.setPadding(true);
+		marginLayout.add(leftColumnLayout);
 
 		settingsTabFactories.sort((a, b) -> a.getSettingsCaption().compareTo(b.getSettingsCaption()));
 		for (ModuleSettingsPageFactory f : settingsTabFactories) {
-			Link link = new Link(f.getSettingsCaption(), getPageResource(settingsPageFactory, f.getSettingsURL()));
-			leftColumnLayout.addComponent(link);
+			Anchor link = new Anchor(getPageURL(settingsPageFactory, f.getSettingsURL()), f.getSettingsCaption());
+			leftColumnLayout.add(link);
 		}
 
 		return marginLayout;
@@ -77,11 +77,11 @@ public class SettingsPage extends TwoColumnPage {
 		// jinak zobraz info o nabídce
 		VerticalLayout layout = new VerticalLayout();
 
-		Label label = new Label("Zvolte položku nastavení z menu");
-		layout.addComponent(label);
-		layout.setComponentAlignment(label, Alignment.MIDDLE_CENTER);
+		Span span = new Span("Zvolte položku nastavení z menu");
+		layout.add(span);
+		layout.setHorizontalComponentAlignment(Alignment.CENTER, span);
 		layout.setSpacing(true);
-		layout.setMargin(true);
+		layout.setPadding(true);
 
 		return layout;
 	}

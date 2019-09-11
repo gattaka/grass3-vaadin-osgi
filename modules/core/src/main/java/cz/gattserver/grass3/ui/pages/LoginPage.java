@@ -5,22 +5,22 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.server.VaadinService;
-import com.vaadin.server.VaadinServletService;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.PasswordField;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.server.VaadinService;
+import com.vaadin.flow.server.VaadinServletService;
 
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.services.impl.LoginResult;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.web.common.ui.H2Label;
 
 public class LoginPage extends OneColumnPage {
 
@@ -44,25 +44,25 @@ public class LoginPage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createContent() {
+	protected Component createColumnContent() {
 		VerticalLayout marginLayout = new VerticalLayout();
-		marginLayout.setMargin(true);
+		marginLayout.setPadding(true);
 
 		VerticalLayout layout = new VerticalLayout();
-		marginLayout.addComponent(layout);
-		layout.setMargin(true);
+		marginLayout.add(layout);
+		layout.setPadding(true);
 		layout.setSpacing(true);
 
-		layout.addComponent(new H2Label("Přihlášení"));
+		layout.add(new H2("Přihlášení"));
 
 		TextField username = new TextField("Login");
-		layout.addComponent(username);
+		layout.add(username);
 
 		PasswordField password = new PasswordField("Heslo");
-		layout.addComponent(password);
+		layout.add(password);
 
-		CheckBox rememberMe = new CheckBox("Zapamatovat si přihlášení");
-		layout.addComponent(rememberMe);
+		Checkbox rememberMe = new Checkbox("Zapamatovat si přihlášení");
+		layout.add(rememberMe);
 
 		Button login = new Button("Přihlásit", evt -> {
 			String pword = password.getValue();
@@ -84,8 +84,8 @@ public class LoginPage extends OneColumnPage {
 				break;
 			}
 		});
-		login.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-		layout.addComponent(login);
+		login.addClickShortcut(Key.ENTER);
+		layout.add(login);
 
 		return marginLayout;
 	}

@@ -2,11 +2,9 @@ package cz.gattserver.grass3.ui.components;
 
 import java.util.List;
 
-import com.vaadin.server.Resource;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.Embedded;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Link;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
 public class Breadcrumb extends HorizontalLayout {
 
@@ -16,10 +14,10 @@ public class Breadcrumb extends HorizontalLayout {
 
 	public static class BreadcrumbElement {
 		private String caption;
-		private Resource resource;
+		private String url;
 
-		public BreadcrumbElement(String caption, Resource resource) {
-			this.resource = resource;
+		public BreadcrumbElement(String caption, String url) {
+			this.url = url;
 			this.caption = caption;
 		}
 
@@ -31,22 +29,22 @@ public class Breadcrumb extends HorizontalLayout {
 			this.caption = caption;
 		}
 
-		public Resource getResource() {
-			return resource;
+		public String getUrl() {
+			return url;
 		}
 
-		public void setResource(Resource resource) {
-			this.resource = resource;
+		public void setUrl(String url) {
+			this.url = url;
 		}
 	}
 
 	public Breadcrumb() {
-		setStyleName("breadcrumb");
+		setClassName("breadcrumb");
 		setSizeFull();
 
 		breadcrumbLayout = new HorizontalLayout();
 		breadcrumbLayout.setHeight("18px");
-		addComponent(breadcrumbLayout);
+		add(breadcrumbLayout);
 	}
 
 	public Breadcrumb(List<BreadcrumbElement> breadcrumbElements) {
@@ -54,30 +52,28 @@ public class Breadcrumb extends HorizontalLayout {
 		initBreadcrumb(breadcrumbElements);
 	}
 
-	private Link createBreadcrumbElementLink(BreadcrumbElement element) {
-		Link link = new Link(element.getCaption(), element.getResource());
-		link.setStyleName("breadcrumb_element");
+	private Anchor createBreadcrumbElementLink(BreadcrumbElement element) {
+		Anchor link = new Anchor(element.getCaption(), element.getUrl());
+		link.setClassName("breadcrumb_element");
 		return link;
 	}
 
 	private void initBreadcrumb(List<BreadcrumbElement> breadcrumbElements) {
-
 		// konstrukce breadcrumb v opačném pořadí (správném)
 		BreadcrumbElement element = null;
 		for (int i = breadcrumbElements.size() - 1; i >= 0; i--) {
 			element = breadcrumbElements.get(i);
 			if (i != breadcrumbElements.size() - 1) {
-				Embedded separator = new Embedded();
-				separator.setSource(new ThemeResource("img/bullet.png"));
-				breadcrumbLayout.addComponent(separator);
+				Image separator = new Image("img/bullet.png", "bullet");
+				breadcrumbLayout.add(separator);
 			}
-			Link link = createBreadcrumbElementLink(element);
-			breadcrumbLayout.addComponent(link);
+			Anchor link = createBreadcrumbElementLink(element);
+			breadcrumbLayout.add(link);
 		}
 	}
 
 	public void resetBreadcrumb(List<BreadcrumbElement> breadcrumbElements) {
-		breadcrumbLayout.removeAllComponents();
+		breadcrumbLayout.removeAll();
 		initBreadcrumb(breadcrumbElements);
 	}
 

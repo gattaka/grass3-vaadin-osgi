@@ -19,10 +19,10 @@ import cz.gattserver.grass3.campgames.interfaces.CampgameKeywordTO;
 import cz.gattserver.grass3.campgames.interfaces.CampgameTO;
 import cz.gattserver.grass3.campgames.service.CampgamesService;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class CampgameCreateWindow extends WebWindow {
+public abstract class CampgameCreateWindow extends WebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -128,7 +128,7 @@ public abstract class CampgameCreateWindow extends WebWindow {
 						"Chybná vstupní data\n\n   " + ve.getValidationErrors().iterator().next().getErrorMessage(),
 						Notification.Type.ERROR_MESSAGE);
 			} catch (Exception ve) {
-				UI.getCurrent().addWindow(new ErrorWindow("Uložení se nezdařilo"));
+				UI.getCurrent().addWindow(new ErrorDialog("Uložení se nezdařilo"));
 			}
 		});
 		layout.addComponent(createBtn);

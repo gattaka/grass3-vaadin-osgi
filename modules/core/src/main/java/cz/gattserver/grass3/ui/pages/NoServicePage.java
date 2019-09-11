@@ -1,9 +1,9 @@
 package cz.gattserver.grass3.ui.pages;
 
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
@@ -15,15 +15,14 @@ public class NoServicePage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createContent() {
-
+	protected Component createColumnContent() {
 		VerticalLayout layout = new VerticalLayout();
 
-		Label label = new Label("Chybí služba pro čtení tohoto typu obsahu");
-		layout.addComponent(label);
-		layout.setComponentAlignment(label, Alignment.MIDDLE_CENTER);
+		Span span = new Span("Chybí služba pro čtení tohoto typu obsahu");
+		layout.add(span);
+		layout.setHorizontalComponentAlignment(Alignment.CENTER, span);
 
-		layout.setMargin(true);
+		layout.setPadding(true);
 		layout.setSizeFull();
 
 		return layout;

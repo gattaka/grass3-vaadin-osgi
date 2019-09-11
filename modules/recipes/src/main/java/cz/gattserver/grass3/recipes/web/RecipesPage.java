@@ -55,13 +55,13 @@ public class RecipesPage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createContent() {
+	protected Component createColumnContent() {
 		VerticalLayout marginLayout = new VerticalLayout();
-		marginLayout.setMargin(true);
+		marginLayout.setPadding(true);
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);
-		layout.setMargin(true);
+		layout.setPadding(true);
 		marginLayout.addComponent(layout);
 
 		HorizontalLayout recipesLayout = new HorizontalLayout();

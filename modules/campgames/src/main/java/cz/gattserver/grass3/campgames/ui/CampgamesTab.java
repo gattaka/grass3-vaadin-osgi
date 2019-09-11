@@ -4,22 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.fo0.advancedtokenfield.main.AdvancedTokenField;
-import com.fo0.advancedtokenfield.main.Token;
-import com.vaadin.data.provider.CallbackDataProvider;
-import com.vaadin.server.SerializableSupplier;
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.FetchItemsCallback;
-import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.campgames.CampgamesRole;
 import cz.gattserver.grass3.campgames.interfaces.CampgameFilterTO;
@@ -34,8 +21,8 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
 
 public class CampgamesTab extends VerticalLayout {
 
@@ -59,7 +46,7 @@ public class CampgamesTab extends VerticalLayout {
 		this.grassRequest = grassRequest;
 
 		setSpacing(true);
-		setMargin(new MarginInfo(true, false, false, false));
+		setPadding(new MarginInfo(true, false, false, false));
 
 		final Button newCampgameBtn = new Button("Založit novou hru");
 		final Button detailsBtn = new Button("Detail");
@@ -264,12 +251,12 @@ public class CampgamesTab extends VerticalLayout {
 			return;
 		CampgamesTab.this.setEnabled(false);
 		CampgameOverviewTO to = grid.getSelectedItems().iterator().next();
-		addWindow(new ConfirmWindow("Opravdu smazat '" + to.getName() + "' ?", e -> {
+		addWindow(new ConfirmDialog("Opravdu smazat '" + to.getName() + "' ?", e -> {
 			try {
 				getCampgamesService().deleteCampgame(to.getId());
 				populate();
 			} catch (Exception ex) {
-				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
+				UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se smazat vybranou položku"));
 			}
 		}) {
 

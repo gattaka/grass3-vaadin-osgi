@@ -1,11 +1,10 @@
 package cz.gattserver.grass3.ui.pages.template;
 
-import com.vaadin.server.ExternalResource;
-import com.vaadin.ui.JavaScript;
-import com.vaadin.ui.Layout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.Div;
 
 import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.ui.js.JQueryBootstrapComponent;
 import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.web.common.spring.SpringContextHelper;
@@ -18,10 +17,10 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
  * @author Hynek
  *
  */
-public abstract class GrassPage {
+public abstract class GrassPage extends Div {
 
 	private GrassRequest request;
-	private Layout content;
+	private Div content;
 
 	/**
 	 * Má se nahrát JQuery?
@@ -44,15 +43,15 @@ public abstract class GrassPage {
 	 * Získá obsah stránky, pokud ještě obsah není vytvořen zavolá
 	 * {@link #createPayload()}, aby byl založen
 	 */
-	public final Layout getContent() {
+	public final Component getContent() {
 		if (content == null)
 			content = createPayload();
 		if (jQueryRequired)
-			content.addComponent(new JQueryBootstrapComponent());
+			UI.getCurrent().getPage().addJavaScript("https://code.jquery.com/jquery-1.9.1.js");
 		return content;
 	}
 
-	protected abstract Layout createPayload();
+	protected abstract Div createPayload();
 
 	protected GrassRequest getRequest() {
 		return request;
@@ -70,7 +69,7 @@ public abstract class GrassPage {
 				.append("var link= document.createElement('link');").append("link.type= 'text/css';")
 				.append("link.rel= 'stylesheet';").append("link.href= '" + link + "';")
 				.append("head.appendChild(link);");
-		JavaScript.eval(loadStylesheet.toString());
+		UI.getCurrent().getPage().executeJs(loadStylesheet.toString());
 	}
 
 	/**
@@ -85,7 +84,7 @@ public abstract class GrassPage {
 		jQueryRequired = true;
 		StringBuilder builder = new StringBuilder();
 		buildJSBatch(builder, 0, scripts);
-		JavaScript.eval(builder.toString());
+		UI.getCurrent().getPage().executeJs(builder.toString());
 	}
 
 	private void buildJSBatch(StringBuilder builder, int index, JScriptItem... scripts) {
@@ -142,17 +141,4 @@ public abstract class GrassPage {
 		}
 	}
 
-	/**
-	 * Získá resource dle stránky
-	 */
-	public ExternalResource getPageResource(PageFactory pageFactory) {
-		return new ExternalResource(getPageURL(pageFactory));
-	}
-
-	/**
-	 * Získá resource dle stránky + relativní URL
-	 */
-	public ExternalResource getPageResource(PageFactory pageFactory, String... relativeURLs) {
-		return new ExternalResource(getPageURL(pageFactory, relativeURLs));
-	}
 }

@@ -8,20 +8,16 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.server.Page;
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.CustomLayout;
-import com.vaadin.ui.Embedded;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.JavaScript;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Link;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
@@ -37,11 +33,12 @@ import cz.gattserver.grass3.ui.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.grass3.ui.windows.ContentMoveWindow;
+import cz.gattserver.grass3.ui.windows.ContentMoveDialog;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
-import cz.gattserver.web.common.ui.H2Label;
+import cz.gattserver.web.common.ui.BoldSpan;
+import cz.gattserver.web.common.ui.HtmlSpan;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.window.WarnWindow;
+import cz.gattserver.web.common.ui.window.WarnDialog;
 
 public abstract class ContentViewerPage extends TwoColumnPage {
 
@@ -52,15 +49,15 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	protected PageFactory tagPageFactory;
 
 	private ContentNodeTO content;
-	private Label contentNameLabel;
-	private Label contentAuthorNameLabel;
-	private Label contentCreationDateNameLabel;
-	private Label contentLastModificationDateLabel;
-	private CssLayout tagsListLayout;
-	private CssLayout operationsListLayout;
+	private H2 contentNameLabel;
+	private Span contentAuthorNameLabel;
+	private Span contentCreationDateNameLabel;
+	private Span contentLastModificationDateLabel;
+	private Div tagsListLayout;
+	private Div operationsListLayout;
 
-	private Button removeFromFavouritesButton;
-	private Button addToFavouritesButton;
+	private ImageButton removeFromFavouritesButton;
+	private ImageButton addToFavouritesButton;
 
 	/**
 	 * Breadcrumb
@@ -72,8 +69,8 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	}
 
 	@Override
-	protected Layout createPayload() {
-		tagsListLayout = new CssLayout();
+	protected Div createPayload() {
+		tagsListLayout = new Div();
 		breadcrumb = new Breadcrumb();
 
 		content = getContentNodeDTO();
@@ -81,27 +78,27 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("d.M.yyyy HH:mm:ss");
 
-		contentNameLabel = new H2Label(content.getName());
-		contentAuthorNameLabel = new Label(content.getAuthor().getName());
-		contentCreationDateNameLabel = new Label(
+		contentNameLabel = new H2(content.getName());
+		contentAuthorNameLabel = new Span(content.getAuthor().getName());
+		contentCreationDateNameLabel = new HtmlSpan(
 				content.getCreationDate() == null ? "" : content.getCreationDate().format(dateFormat));
-		contentLastModificationDateLabel = new Label(content.getLastModificationDate() == null ? "<em>-neupraveno-</em>"
-				: dateFormat.format(content.getLastModificationDate()));
-		contentLastModificationDateLabel.setContentMode(ContentMode.HTML);
+		contentLastModificationDateLabel = new HtmlSpan(content.getLastModificationDate() == null
+				? "<em>-neupraveno-</em>" : dateFormat.format(content.getLastModificationDate()));
 
-		tagsListLayout.removeAllComponents();
+		tagsListLayout.removeAll();
 		for (ContentTagOverviewTO contentTag : content.getContentTags()) {
-			Link tagLink = new Link(contentTag.getName(), getPageResource(tagPageFactory,
-					URLIdentifierUtils.createURLIdentifier(contentTag.getId(), contentTag.getName())));
-			tagLink.addStyleName("taglabel");
-			tagsListLayout.addComponent(tagLink);
+			Anchor tagLink = new Anchor(getPageURL(tagPageFactory,
+					URLIdentifierUtils.createURLIdentifier(contentTag.getId(), contentTag.getName()),
+					contentTag.getName()));
+			tagLink.addClassName("taglabel");
+			tagsListLayout.add(tagLink);
 		}
 
-		operationsListLayout = new CssLayout();
+		operationsListLayout = new Div();
 		if (!content.isDraft())
 			createContentOperations(operationsListLayout);
 
-		JavaScript.eval("var pageScroll = document.getElementsByClassName('v-ui v-scrollable')[0]; "
+		UI.getCurrent().getPage().executeJs("var pageScroll = document.getElementsByClassName('v-ui v-scrollable')[0]; "
 				/*	*/ + "$(pageScroll).scroll(function() { "
 				/*		*/ + "var height = $(pageScroll).scrollTop(); "
 				/*		*/ + "if (height > 100) "
@@ -110,31 +107,31 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 				/*			*/ + "document.getElementById('left').style['margin-top'] = '0px'; "
 				/*	*/ + "});");
 
-		Layout layout = super.createPayload();
-		layout.addAttachListener(e -> Page.getCurrent().setTitle(content.getName()));
-		layout.addDetachListener(e -> Page.getCurrent().setTitle("Gattserver"));
+		Div layout = super.createPayload();
+		layout.addAttachListener(e -> UI.getCurrent().getPage().setTitle(content.getName()));
+		layout.addDetachListener(e -> UI.getCurrent().getPage().setTitle("Gattserver"));
 		return layout;
 	}
 
-	protected void createContentOperations(CssLayout operationsListLayout) {
+	protected void createContentOperations(HasComponents operationsListLayout) {
 		// Upravit
 		if (coreACL.canModifyContent(content, UIUtils.getUser())) {
 			ModifyButton modBtn = new ModifyButton(event -> onEditOperation());
-			operationsListLayout.addComponent(modBtn);
-			modBtn.setIconAlternateText(modBtn.getCaption());
-			modBtn.setCaption(null);
+			operationsListLayout.add(modBtn);
+			modBtn.setTooltip(modBtn.getText());
+			modBtn.setText(null);
 		}
 
 		// Smazat
 		if (coreACL.canDeleteContent(content, UIUtils.getUser())) {
 			DeleteButton delBtn = new DeleteButton(event -> onDeleteOperation());
-			operationsListLayout.addComponent(delBtn);
-			delBtn.setIconAlternateText(delBtn.getCaption());
-			delBtn.setCaption(null);
+			operationsListLayout.add(delBtn);
+			delBtn.setTooltip(delBtn.getText());
+			delBtn.setText(null);
 		}
 
 		// Oblíbené
-		removeFromFavouritesButton = new ImageButton(null, ImageIcon.BROKEN_HEART_16_ICON.createResource(), event -> {
+		removeFromFavouritesButton = new ImageButton("Odebrat z oblíbených", ImageIcon.BROKEN_HEART_16_ICON, event -> {
 			// zdařilo se ? Pokud ano, otevři info okno
 			try {
 				userFacade.removeContentFromFavourites(content.getId(), UIUtils.getUser().getId());
@@ -142,12 +139,11 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 				addToFavouritesButton.setVisible(true);
 			} catch (Exception e) {
 				// Pokud ne, otevři warn okno
-				UI.getCurrent().addWindow(new WarnWindow("Odebrání z oblíbených se nezdařilo."));
+				new WarnDialog("Odebrání z oblíbených se nezdařilo.").open();
 			}
-		});
-		removeFromFavouritesButton.setIconAlternateText("Odebrat z oblíbených");
+		}).clearText();
 
-		addToFavouritesButton = new ImageButton(null, ImageIcon.HEART_16_ICON.createResource(), event -> {
+		addToFavouritesButton = new ImageButton("Přidat do oblíbených", ImageIcon.HEART_16_ICON, event -> {
 			// zdařilo se ? Pokud ano, otevři info okno
 			try {
 				userFacade.addContentToFavourites(content.getId(), UIUtils.getUser().getId());
@@ -155,21 +151,20 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 				removeFromFavouritesButton.setVisible(true);
 			} catch (Exception e) {
 				// Pokud ne, otevři warn okno
-				UI.getCurrent().addWindow(new WarnWindow("Vložení do oblíbených se nezdařilo."));
+				new WarnDialog("Vložení do oblíbených se nezdařilo.").open();
 			}
-		});
-		addToFavouritesButton.setIconAlternateText("Přidat do oblíbených");
+		}).clearText();
 
 		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(content, UIUtils.getUser()));
 		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(content, UIUtils.getUser()));
 
-		operationsListLayout.addComponent(addToFavouritesButton);
-		operationsListLayout.addComponent(removeFromFavouritesButton);
+		operationsListLayout.add(addToFavouritesButton);
+		operationsListLayout.add(removeFromFavouritesButton);
 
 		// Změna kategorie
 		if (coreACL.canModifyContent(content, UIUtils.getUser())) {
-			ImageButton moveBtn = new ImageButton(null, ImageIcon.MOVE_16_ICON.createResource(),
-					event -> UI.getCurrent().addWindow(new ContentMoveWindow(content) {
+			ImageButton moveBtn = new ImageButton("Přesunout", ImageIcon.MOVE_16_ICON,
+					event -> new ContentMoveDialog(content) {
 						private static final long serialVersionUID = 3748723613020816248L;
 
 						@Override
@@ -177,37 +172,55 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 							UIUtils.redirect(getPageURL(getContentViewerPageFactory(),
 									URLIdentifierUtils.createURLIdentifier(content.getContentID(), content.getName())));
 						}
-					}));
-			operationsListLayout.addComponent(moveBtn);
-			moveBtn.setIconAlternateText("Přesunout");
+					}.open()).clearText();
+			operationsListLayout.add(moveBtn);
 		}
 	}
 
 	@Override
 	protected Component createLeftColumnContent() {
 
-		CustomLayout layout = new CustomLayout("contentView");
+		Div layout = new Div();
+		layout.setClassName("left-content-view");
 
 		// info - přehled
-		layout.addComponent(contentAuthorNameLabel, "author");
-		layout.addComponent(contentCreationDateNameLabel, "createDate");
-		layout.addComponent(contentLastModificationDateLabel, "modifyDate");
+		layout.add(new H2("Info"));
+		Div info = new Div();
+		info.setClassName("content-info");
+		layout.add(info);
+
+		info.add(new BoldSpan("Autor:"));
+		info.add(contentAuthorNameLabel);
+
+		info.add(new BoldSpan("Vytvořeno:"));
+		info.add(contentCreationDateNameLabel);
+
+		info.add(new BoldSpan("Upraveno:"));
+		info.add(contentLastModificationDateLabel);
 
 		if (!content.isPublicated()) {
 			HorizontalLayout publicatedLayout = new HorizontalLayout();
 			publicatedLayout.setSpacing(true);
-			publicatedLayout.setMargin(false);
-			publicatedLayout.addStyleName("not-publicated-info");
-			publicatedLayout.addComponent(new Embedded(null, ImageIcon.INFO_16_ICON.createResource()));
-			publicatedLayout.addComponent(new Label("<strong>Nepublikováno</strong>", ContentMode.HTML));
-			layout.addComponent(publicatedLayout, "pubinfo");
+			publicatedLayout.setPadding(false);
+			publicatedLayout.addClassName("not-publicated-info");
+			publicatedLayout.add(new Image(ImageIcon.INFO_16_ICON.createResource(), "Info"));
+			publicatedLayout.add(new BoldSpan("Nepublikováno"));
+			info.add(publicatedLayout);
 		}
 
 		// tagy
-		layout.addComponent(tagsListLayout, "tags");
+		layout.add(new H2("Tagy"));
+		Div tags = new Div();
+		tags.setClassName("content-tags");
+		layout.add(tags);
+		tags.add(tagsListLayout);
 
 		// nástrojová lišta
-		layout.addComponent(operationsListLayout, "operations");
+		layout.add(new H2("Operace s obsahem"));
+		Div operations = new Div();
+		operations.setClassName("content-operations");
+		layout.add(operations);
+		operations.add(operationsListLayout);
 
 		return layout;
 
@@ -216,16 +229,16 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	@Override
 	protected Component createRightColumnContent() {
 		VerticalLayout marginlayout = new VerticalLayout();
-		marginlayout.setMargin(true);
+		marginlayout.setPadding(true);
 
 		VerticalLayout layout = new VerticalLayout();
-		marginlayout.addComponent(layout);
+		marginlayout.add(layout);
 
-		layout.setMargin(true);
+		layout.setPadding(true);
 		layout.setSpacing(true);
 
-		layout.addComponent(breadcrumb);
-		layout.addComponent(contentNameLabel);
+		layout.add(breadcrumb);
+		layout.add(contentNameLabel);
 
 		// samotný obsah
 		createContent(layout);
@@ -248,7 +261,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		/**
 		 * obsah
 		 */
-		breadcrumbElements.add(new BreadcrumbElement(content.getName(), getPageResource(getContentViewerPageFactory(),
+		breadcrumbElements.add(new BreadcrumbElement(content.getName(), getPageURL(getContentViewerPageFactory(),
 				URLIdentifierUtils.createURLIdentifier(content.getContentID(), content.getName()))));
 
 		/**
@@ -261,7 +274,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 			if (parent == null)
 				throw new GrassPageException(404);
 
-			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageResource(nodePageFactory,
+			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageURL(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(parent.getId(), parent.getName()))));
 
 			// pokud je můj předek null, pak je to konec a je to všechno

@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.ProgressBar;
-import com.vaadin.ui.UI;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.progressbar.ProgressBar;
+import com.vaadin.flow.server.VaadinSession;
 
 public abstract class PooledProgressBar extends ProgressBar {
 
@@ -69,9 +69,9 @@ public abstract class PooledProgressBar extends ProgressBar {
 		public void increaseProgress() {
 			current++;
 
-			UI ui = getUI();
+			UI ui = UI.getCurrent();
 
-			VaadinSession session = getSession();
+			VaadinSession session = VaadinSession.getCurrent();
 			if (session == null) {
 				incrementState();
 			} else {

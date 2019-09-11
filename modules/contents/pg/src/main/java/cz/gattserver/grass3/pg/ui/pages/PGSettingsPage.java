@@ -51,12 +51,12 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
-import cz.gattserver.grass3.ui.windows.ProgressWindow;
+import cz.gattserver.grass3.ui.windows.ProgressDialog;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.H2Label;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
-import cz.gattserver.web.common.ui.window.InfoWindow;
-import cz.gattserver.web.common.ui.window.WarnWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
+import cz.gattserver.web.common.ui.window.InfoDialog;
+import cz.gattserver.web.common.ui.window.WarnDialog;
 import net.engio.mbassy.listener.Handler;
 
 public class PGSettingsPage extends AbstractSettingsPage {
@@ -78,7 +78,7 @@ public class PGSettingsPage extends AbstractSettingsPage {
 	private String filterName;
 
 	private UI ui = UI.getCurrent();
-	private ProgressWindow progressIndicatorWindow;
+	private ProgressDialog progressIndicatorWindow;
 
 	public PGSettingsPage(GrassRequest request) {
 		super(request);
@@ -91,7 +91,7 @@ public class PGSettingsPage extends AbstractSettingsPage {
 
 		VerticalLayout layout = new VerticalLayout();
 
-		layout.setMargin(true);
+		layout.setPadding(true);
 		layout.setSpacing(true);
 
 		VerticalLayout settingsLayout = new VerticalLayout();
@@ -104,7 +104,7 @@ public class PGSettingsPage extends AbstractSettingsPage {
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
 		settingsLayout.addComponent(settingsFieldsLayout);
 		settingsFieldsLayout.setSpacing(true);
-		settingsFieldsLayout.setMargin(false);
+		settingsFieldsLayout.setPadding(false);
 		settingsFieldsLayout.setSizeFull();
 
 		Binder<PGConfiguration> binder = new Binder<>();
@@ -184,11 +184,11 @@ public class PGSettingsPage extends AbstractSettingsPage {
 
 					@Override
 					public void buttonClick(ClickEvent event) {
-						UI.getCurrent().addWindow(new ConfirmWindow("Opravdu přegenerovat galerii?", e -> {
+						UI.getCurrent().addWindow(new ConfirmDialog("Opravdu přegenerovat galerii?", e -> {
 							UUID operationId = UUID.randomUUID();
 
 							PhotogalleryTO to = pgService.getPhotogalleryForDetail(p.getOverviewTO().getId());
-							progressIndicatorWindow = new ProgressWindow();
+							progressIndicatorWindow = new ProgressDialog();
 
 							eventBus.subscribe(PGSettingsPage.this);
 
@@ -214,7 +214,7 @@ public class PGSettingsPage extends AbstractSettingsPage {
 					public void buttonClick(ClickEvent event) {
 						String caption = item.getOverviewTO() == null ? "Opravdu smazat adresář?"
 								: "Opravdu smazat galerii (záznam v kategorii a data v adresáři)?";
-						UI.getCurrent().addWindow(new ConfirmWindow(caption, e -> deleteItem(item, path, grid)));
+						UI.getCurrent().addWindow(new ConfirmDialog(caption, e -> deleteItem(item, path, grid)));
 					}
 				});
 				button.setStyleName(ValoTheme.BUTTON_LINK);
@@ -253,13 +253,13 @@ public class PGSettingsPage extends AbstractSettingsPage {
 				});
 			} catch (IOException e1) {
 				logger.error("Nezdařilo se smazat adresář " + item.getPath().getFileName().toString(), e1);
-				WarnWindow warnSubwindow = new WarnWindow(
+				WarnDialog warnSubwindow = new WarnDialog(
 						"Při mazání adresáře došlo k chybě (" + e1.getMessage() + ")");
 				UI.getCurrent().addWindow(warnSubwindow);
 			}
 		} else {
 			if (!pgService.deletePhotogallery(item.getOverviewTO().getId())) {
-				WarnWindow warnSubwindow = new WarnWindow("Při mazání galerie se nezdařilo smazat některé soubory.");
+				WarnDialog warnSubwindow = new WarnDialog("Při mazání galerie se nezdařilo smazat některé soubory.");
 				UI.getCurrent().addWindow(warnSubwindow);
 			}
 		}
@@ -285,9 +285,9 @@ public class PGSettingsPage extends AbstractSettingsPage {
 			if (progressIndicatorWindow != null)
 				progressIndicatorWindow.close();
 			if (event.isSuccess())
-				ui.addWindow(new InfoWindow("Přegenerování dopladlo úspěšně"));
+				ui.addWindow(new InfoDialog("Přegenerování dopladlo úspěšně"));
 			else
-				ui.addWindow(new WarnWindow("Při přegenerování došlo k chybám: ", event.getResultDetails()));
+				ui.addWindow(new WarnDialog("Při přegenerování došlo k chybám: ", event.getResultDetails()));
 		});
 		eventBus.unsubscribe(PGSettingsPage.this);
 	}

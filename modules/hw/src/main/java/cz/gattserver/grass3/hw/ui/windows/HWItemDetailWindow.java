@@ -58,12 +58,12 @@ import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.MultiUpload;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.ImageDetailWindow;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public class HWItemDetailWindow extends WebWindow {
+public class HWItemDetailWindow extends WebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -109,7 +109,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(false);
-		layout.setMargin(new MarginInfo(false, true, true, true));
+		layout.setPadding(new MarginInfo(false, true, true, true));
 		layout.setSizeFull();
 
 		Label name = new Label("<h3>" + hwItem.getName() + "</h3>", ContentMode.HTML);
@@ -176,7 +176,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		btnLayout.setSpacing(true);
-		btnLayout.setMargin(false);
+		btnLayout.setPadding(false);
 
 		Button hwItemImageDetailBtn = new Button("Detail", e -> {
 			BufferedImage bimg = null;
@@ -195,7 +195,7 @@ public class HWItemDetailWindow extends WebWindow {
 		hwItemImageDetailBtn.setIcon(ImageIcon.SEARCH_16_ICON.createResource());
 
 		Button hwItemImageDeleteBtn = new DeleteButton(
-				e -> UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto HW položky ?", ev -> {
+				e -> UI.getCurrent().addWindow(new ConfirmDialog("Opravdu smazat foto HW položky ?", ev -> {
 					getHWService().deleteHWItemIconFile(hwItemId);
 					createHWItemImageUpload(hwItem);
 				})));
@@ -222,7 +222,7 @@ public class HWItemDetailWindow extends WebWindow {
 		uploadWrapperLayout.setWidth("220px");
 		uploadWrapperLayout.setHeight("220px");
 		uploadWrapperLayout.addComponent(upload);
-		uploadWrapperLayout.setMargin(false);
+		uploadWrapperLayout.setPadding(false);
 		uploadWrapperLayout.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
 
 		hwImageLayout.removeAllComponents();
@@ -238,7 +238,7 @@ public class HWItemDetailWindow extends WebWindow {
 	private VerticalLayout createWrapperLayout() {
 		VerticalLayout wrapperLayout = new VerticalLayout();
 		wrapperLayout.setSpacing(true);
-		wrapperLayout.setMargin(new MarginInfo(true, false, false, false));
+		wrapperLayout.setPadding(new MarginInfo(true, false, false, false));
 		wrapperLayout.setSizeFull();
 		return wrapperLayout;
 	}
@@ -249,7 +249,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 		HorizontalLayout itemLayout = new HorizontalLayout();
 		itemLayout.setSpacing(false);
-		itemLayout.setMargin(false);
+		itemLayout.setPadding(false);
 		itemLayout.setSizeUndefined();
 		wrapperLayout.addComponent(itemLayout);
 
@@ -258,7 +258,7 @@ public class HWItemDetailWindow extends WebWindow {
 		 */
 		hwImageLayout = new VerticalLayout();
 		hwImageLayout.setSpacing(true);
-		hwImageLayout.setMargin(false);
+		hwImageLayout.setPadding(false);
 		itemLayout.addComponent(hwImageLayout);
 		createHWImageOrUpload(hwItem);
 
@@ -269,7 +269,7 @@ public class HWItemDetailWindow extends WebWindow {
 		itemLayout.addComponent(winLayout);
 		itemLayout.setComponentAlignment(winLayout, Alignment.TOP_LEFT);
 		winLayout.setSpacing(true);
-		winLayout.setMargin(false);
+		winLayout.setPadding(false);
 
 		/**
 		 * Typy
@@ -339,7 +339,7 @@ public class HWItemDetailWindow extends WebWindow {
 
 		VerticalLayout partsWrapperLayout = new VerticalLayout();
 		partsWrapperLayout.setSpacing(false);
-		partsWrapperLayout.setMargin(false);
+		partsWrapperLayout.setPadding(false);
 		partsWrapperLayout.setSizeFull();
 		wrapperLayout.addComponent(partsWrapperLayout);
 		wrapperLayout.setComponentAlignment(partsWrapperLayout, Alignment.TOP_LEFT);
@@ -351,7 +351,7 @@ public class HWItemDetailWindow extends WebWindow {
 		List<HWItemOverviewTO> parts = getHWService().getAllParts(hwItemId);
 		VerticalLayout partsLayout = new VerticalLayout();
 		partsLayout.setSpacing(false);
-		partsLayout.setMargin(true);
+		partsLayout.setPadding(true);
 		Panel partsPanel = new Panel(partsLayout);
 		partsPanel.setSizeFull();
 		partsWrapperLayout.addComponent(partsPanel);
@@ -392,7 +392,7 @@ public class HWItemDetailWindow extends WebWindow {
 		/**
 		 * Smazání položky HW
 		 */
-		final Button deleteBtn = new DeleteButton(e -> UI.getCurrent().addWindow(new ConfirmWindow(
+		final Button deleteBtn = new DeleteButton(e -> UI.getCurrent().addWindow(new ConfirmDialog(
 				"Opravdu smazat '" + hwItem.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?",
 				ev -> {
 					try {
@@ -401,7 +401,7 @@ public class HWItemDetailWindow extends WebWindow {
 							changeListener.onChange();
 						HWItemDetailWindow.this.close();
 					} catch (Exception ex) {
-						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
+						UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se smazat vybranou položku"));
 					}
 				})));
 		operationsLayout.addComponent(deleteBtn);
@@ -528,7 +528,7 @@ public class HWItemDetailWindow extends WebWindow {
 		GridLayout listLayout = new GridLayout();
 		listLayout.setColumns(4);
 		listLayout.setSpacing(true);
-		listLayout.setMargin(true);
+		listLayout.setPadding(true);
 
 		Panel panel = new Panel(listLayout);
 		panel.setSizeFull();
@@ -565,7 +565,7 @@ public class HWItemDetailWindow extends WebWindow {
 			listLayout.addComponent(imageLayout);
 			listLayout.setComponentAlignment(imageLayout, Alignment.MIDDLE_CENTER);
 			imageLayout.setSpacing(true);
-			imageLayout.setMargin(false);
+			imageLayout.setPadding(false);
 
 			Resource resource = new StreamResource(
 					() -> getHWService().getHWItemImagesFileInputStream(hwItemId, file.getName()), file.getName());
@@ -580,7 +580,7 @@ public class HWItemDetailWindow extends WebWindow {
 					.open(HWConfiguration.HW_PATH + "/" + hwItem.getId() + "/img/" + file.getName(), file.getName()));
 
 			Button hwItemImageDeleteBtn = new DeleteButton(
-					e -> UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto HW položky ?", ev -> {
+					e -> UI.getCurrent().addWindow(new ConfirmDialog("Opravdu smazat foto HW položky ?", ev -> {
 						getHWService().deleteHWItemImagesFile(hwItemId, file.getName());
 
 						// refresh listu

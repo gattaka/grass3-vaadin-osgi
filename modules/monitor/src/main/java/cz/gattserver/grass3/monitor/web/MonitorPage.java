@@ -350,7 +350,7 @@ public class MonitorPage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createContent() {
+	protected Component createColumnContent() {
 		layout = new VerticalLayout();
 		layout.setSpacing(false);
 		layout.setMargin(true);

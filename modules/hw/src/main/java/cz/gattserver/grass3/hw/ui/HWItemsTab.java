@@ -40,8 +40,8 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
 
 public class HWItemsTab extends VerticalLayout {
 
@@ -67,7 +67,7 @@ public class HWItemsTab extends VerticalLayout {
 		this.grassRequest = grassRequest;
 
 		setSpacing(true);
-		setMargin(new MarginInfo(true, false, false, false));
+		setPadding(new MarginInfo(true, false, false, false));
 
 		final Button newHWBtn = new Button("Založit novou položku HW");
 		final Button newNoteBtn = new Button("Přidat servisní záznam");
@@ -301,13 +301,13 @@ public class HWItemsTab extends VerticalLayout {
 			return;
 		HWItemsTab.this.setEnabled(false);
 		HWItemOverviewTO to = grid.getSelectedItems().iterator().next();
-		addWindow(new ConfirmWindow(
+		addWindow(new ConfirmDialog(
 				"Opravdu smazat '" + to.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?", e -> {
 					try {
 						getHWService().deleteHWItem(to.getId());
 						populate();
 					} catch (Exception ex) {
-						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
+						UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se smazat vybranou položku"));
 					}
 				}) {
 

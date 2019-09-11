@@ -1,15 +1,13 @@
 package cz.gattserver.grass3.ui.util;
 
-import com.vaadin.server.Page;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Notification.Type;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.notification.Notification;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.ui.GrassUI;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
-import cz.gattserver.web.common.ui.window.InfoWindow;
-import cz.gattserver.web.common.ui.window.WarnWindow;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
+import cz.gattserver.web.common.ui.window.InfoDialog;
+import cz.gattserver.web.common.ui.window.WarnDialog;
 
 public class UIUtils {
 
@@ -34,38 +32,35 @@ public class UIUtils {
 	 * Přejde na stránku
 	 */
 	public static void redirect(String uri) {
-		Page.getCurrent().setLocation(uri);
+		UI.getCurrent().getPage().setLocation(uri);
 	}
 
 	/**
 	 * Notifikace pomocí {@link Notification}
 	 */
 	public static void showSilentInfo(String caption) {
-		Notification.show(caption, Type.TRAY_NOTIFICATION);
+		Notification.show(caption);
 	}
 
 	/**
-	 * Notifikace pomocí {@link InfoWindow}
+	 * Notifikace pomocí {@link InfoDialog}
 	 */
 	public static void showInfo(String caption) {
-		InfoWindow infoSubwindow = new InfoWindow(caption);
-		getGrassUI().addWindow(infoSubwindow);
+		new InfoDialog(caption).open();
 	}
 
 	/**
-	 * Notifikace varování pomocí {@link WarnWindow}
+	 * Notifikace varování pomocí {@link WarnDialog}
 	 */
 	public static void showWarning(String caption) {
-		WarnWindow warnSubwindow = new WarnWindow(caption);
-		getGrassUI().addWindow(warnSubwindow);
+		new WarnDialog(caption).open();
 	}
 
 	/**
-	 * Notifikace chyby pomocí {@link ErrorWindow}
+	 * Notifikace chyby pomocí {@link ErrorDialog}
 	 */
 	public static void showError(String caption) {
-		ErrorWindow errorSubwindow = new ErrorWindow(caption);
-		getGrassUI().addWindow(errorSubwindow);
+		new ErrorDialog(caption).open();
 	}
 
 }

@@ -2,12 +2,11 @@ package cz.gattserver.grass3.ui.components;
 
 import java.util.Set;
 
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Window;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Image;
 
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
 
 public class DeleteGridButton<T> extends GridButton<T> {
 
@@ -21,11 +20,8 @@ public class DeleteGridButton<T> extends GridButton<T> {
 
 	public DeleteGridButton(String caption, ConfirmAction<T> confirmAction, Grid<T> grid) {
 		super(caption, grid);
-		setClickListener(items -> {
-			Window win = new ConfirmWindow(getConfirmMessage(), ev -> confirmAction.onConfirm(items));
-			UI.getCurrent().addWindow(win);
-		});
-		setIcon(ImageIcon.DELETE_16_ICON.createResource());
+		setClickListener(items -> new ConfirmDialog(getConfirmMessage(), ev -> confirmAction.onConfirm(items)).open());
+		setIcon(new Image(ImageIcon.DELETE_16_ICON.createResource(), "Smazat"));
 	}
 
 	protected String getConfirmMessage() {

@@ -15,7 +15,7 @@ public class MedicPage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createContent() {
+	protected Component createColumnContent() {
 
 		VerticalLayout marginLayout = new VerticalLayout();
 		marginLayout.setMargin(new MarginInfo(false, true, true, true));

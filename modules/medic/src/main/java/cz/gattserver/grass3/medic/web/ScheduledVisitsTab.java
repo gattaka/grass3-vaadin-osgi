@@ -29,10 +29,10 @@ import cz.gattserver.grass3.medic.web.ScheduledVisitsCreateWindow.Operation;
 import cz.gattserver.grass3.ui.components.DetailGridButton;
 import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.BoldLabel;
+import cz.gattserver.web.common.ui.BoldSpan;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
 
 public class ScheduledVisitsTab extends VerticalLayout {
 
@@ -79,7 +79,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 				try {
 					getMedicFacade().deleteScheduledVisit(scheduledVisitDTO);
 				} catch (Exception e) {
-					UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
+					UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se smazat vybranou položku"));
 				}
 				populateContainer(true);
 				medicalRecordsTab.refreshGrid();
@@ -90,12 +90,12 @@ public class ScheduledVisitsTab extends VerticalLayout {
 
 	private void openDeleteWindow(final ScheduledVisitDTO visit, final boolean planned) {
 		ScheduledVisitsTab.this.setEnabled(false);
-		UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat '" + visit.getPurpose() + "' ?", ev -> {
+		UI.getCurrent().addWindow(new ConfirmDialog("Opravdu smazat '" + visit.getPurpose() + "' ?", ev -> {
 			try {
 				getMedicFacade().deleteScheduledVisit(visit);
 				populateContainer(planned);
 			} catch (Exception e) {
-				UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
+				UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se smazat vybranou položku"));
 			}
 		}) {
 
@@ -141,7 +141,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		/**
 		 * Přehled
 		 */
-		Label plannedTableLabel = new BoldLabel("Naplánované návštěvy");
+		Label plannedTableLabel = new BoldSpan("Naplánované návštěvy");
 		addComponent(plannedTableLabel);
 
 		prepareGrid(plannedGrid, true);
@@ -244,7 +244,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		/**
 		 * Přehled
 		 */
-		Label toBePlannedTableLabel = new BoldLabel("K objednání");
+		Label toBePlannedTableLabel = new BoldSpan("K objednání");
 		addComponent(toBePlannedTableLabel);
 
 		prepareGrid(toBePlannedGrid, false);

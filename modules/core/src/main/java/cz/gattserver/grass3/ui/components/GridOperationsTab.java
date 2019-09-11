@@ -3,12 +3,11 @@ package cz.gattserver.grass3.ui.components;
 import java.io.Serializable;
 import java.util.Collection;
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.common.Identifiable;
 
@@ -32,17 +31,17 @@ public abstract class GridOperationsTab<T extends Identifiable, C extends Collec
 	/**
 	 * Vytvoří okno pro založení entity
 	 */
-	protected abstract Window createCreateWindow();
+	protected abstract Dialog createCreateDialog();
 
 	/**
 	 * Vytvoří okno pro detail entity
 	 */
-	protected abstract Window createDetailWindow(Long id);
+	protected abstract Dialog createDetailDialog(Long id);
 
 	/**
 	 * Vytvoří okno pro úpravu entity
 	 */
-	protected abstract Window createModifyWindow(T dto);
+	protected abstract Dialog createModifyDialog(T dto);
 
 	/**
 	 * Smaže vybranou entitu
@@ -60,27 +59,23 @@ public abstract class GridOperationsTab<T extends Identifiable, C extends Collec
 
 	public GridOperationsTab(Class<T> clazz) {
 		setSpacing(true);
-		setMargin(true);
+		setPadding(true);
 
 		init();
 
 		grid = new Grid<>(clazz);
 		grid.setItems(getItems());
 		customizeGrid(grid);
-		addComponent(grid);
+		add(grid);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);
-		addComponent(buttonLayout);
+		add(buttonLayout);
 
-		final Button createBtn = new CreateGridButton("Založit", e -> UI.getCurrent().addWindow(createCreateWindow()));
-
-		final Button detailBtn = new DetailGridButton<>("Detail",
-				item -> UI.getCurrent().addWindow(createDetailWindow(item.getId())), grid);
-
-		final Button modifyBtn = new ModifyGridButton<>("Upravit",
-				item -> UI.getCurrent().addWindow(createModifyWindow(item)), grid);
-
+		final Button createBtn = new CreateGridButton("Založit", e -> createCreateDialog().open());
+		final Button detailBtn = new DetailGridButton<>("Detail", item -> createDetailDialog(item.getId()).open(),
+				grid);
+		final Button modifyBtn = new ModifyGridButton<>("Upravit", item -> createModifyDialog(item).open(), grid);
 		final Button deleteBtn = new DeleteGridButton<>("Smazat", items -> {
 			items.forEach(this::deleteEntity);
 			data.removeAll(items);
@@ -92,10 +87,10 @@ public abstract class GridOperationsTab<T extends Identifiable, C extends Collec
 
 	protected void placeButtons(HorizontalLayout buttonLayout, Button createBtn, Button detailBtn, Button modifyBtn,
 			Button deleteBtn) {
-		buttonLayout.addComponent(createBtn);
-		buttonLayout.addComponent(detailBtn);
-		buttonLayout.addComponent(modifyBtn);
-		buttonLayout.addComponent(deleteBtn);
+		buttonLayout.add(createBtn);
+		buttonLayout.add(detailBtn);
+		buttonLayout.add(modifyBtn);
+		buttonLayout.add(deleteBtn);
 	}
 
 	protected void init() {

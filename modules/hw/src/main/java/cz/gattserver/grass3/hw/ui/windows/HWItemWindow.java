@@ -31,10 +31,10 @@ import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class HWItemWindow extends WebWindow {
+public abstract class HWItemWindow extends WebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -165,7 +165,7 @@ public abstract class HWItemWindow extends WebWindow {
 						"Chybná vstupní data\n\n   " + ve.getValidationErrors().iterator().next().getErrorMessage(),
 						Notification.Type.ERROR_MESSAGE);
 			} catch (Exception ve) {
-				UI.getCurrent().addWindow(new ErrorWindow("Uložení se nezdařilo"));
+				UI.getCurrent().addWindow(new ErrorDialog("Uložení se nezdařilo"));
 			}
 		});
 		layout.addComponent(createBtn);

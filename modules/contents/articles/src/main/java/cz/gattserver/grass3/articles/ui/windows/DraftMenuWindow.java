@@ -18,10 +18,10 @@ import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
 import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class DraftMenuWindow extends WebWindow {
+public abstract class DraftMenuWindow extends WebDialog {
 
 	private static final long serialVersionUID = 4105221381350726137L;
 
@@ -107,7 +107,7 @@ public abstract class DraftMenuWindow extends WebWindow {
 		btnLayout.setComponentAlignment(close, Alignment.MIDDLE_CENTER);
 
 		Button delete = new Button("Smazat",
-				ev -> UI.getCurrent().addWindow(new ConfirmWindow("Smazat rozpracovaný článek?", e -> {
+				ev -> UI.getCurrent().addWindow(new ConfirmDialog("Smazat rozpracovaný článek?", e -> {
 					ArticleDraftOverviewTO to = grid.getSelectedItems().iterator().next();
 					getArticleService().deleteArticle(to.getId());
 					drafts.remove(to);

@@ -18,7 +18,7 @@ public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionDTO, 
 	}
 
 	@Override
-	protected Window createCreateWindow() {
+	protected Window createCreateDialog() {
 		return new MedicalInstitutionCreateWindow() {
 			private static final long serialVersionUID = 5711665262096833291L;
 
@@ -31,12 +31,12 @@ public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionDTO, 
 	}
 
 	@Override
-	protected Window createDetailWindow(Long id) {
+	protected Window createDetailDialog(Long id) {
 		return new MedicalInstitutionDetailWindow(id);
 	}
 
 	@Override
-	protected Window createModifyWindow(MedicalInstitutionDTO dto) {
+	protected Window createModifyDialog(MedicalInstitutionDTO dto) {
 		return new MedicalInstitutionCreateWindow(dto) {
 			private static final long serialVersionUID = -7566950396535469316L;
 

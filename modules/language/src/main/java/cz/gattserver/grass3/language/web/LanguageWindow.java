@@ -6,9 +6,9 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.TextField;
 
 import cz.gattserver.grass3.language.model.dto.LanguageTO;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public class LanguageWindow extends WebWindow {
+public class LanguageWindow extends WebDialog {
 
 	private static final long serialVersionUID = -8494081277784752858L;
 

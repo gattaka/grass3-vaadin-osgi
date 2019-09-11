@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.ui.components;
 
-import com.vaadin.ui.Grid;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Image;
 
 import cz.gattserver.web.common.ui.ImageIcon;
 
@@ -14,7 +15,7 @@ public class DetailGridButton<T> extends GridButton<T> {
 
 	public DetailGridButton(String caption, ClickListener<T> clickListener, Grid<T> grid) {
 		super(caption, items -> clickListener.buttonClick(items.iterator().next()), grid);
-		setIcon(ImageIcon.INFO_16_ICON.createResource());
+		setIcon(new Image(ImageIcon.INFO_16_ICON.createResource(), "Info"));
 		setEnableResolver(items -> items.size() == 1);
 	}
 

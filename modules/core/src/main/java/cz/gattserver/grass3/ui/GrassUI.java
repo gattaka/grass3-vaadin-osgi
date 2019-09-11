@@ -3,13 +3,11 @@ package cz.gattserver.grass3.ui;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.Title;
-import com.vaadin.server.Page;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.UI;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.page.Page;
+import com.vaadin.flow.server.VaadinRequest;
+import com.vaadin.flow.server.VaadinSession;
 
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
@@ -22,8 +20,6 @@ import cz.gattserver.web.common.server.URLPathAnalyzer;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.exception.ApplicationErrorHandler;
 
-@Title("Gattserver")
-@Theme("grass")
 public class GrassUI extends UI {
 
 	private static final long serialVersionUID = -785347532002801786L;
@@ -56,28 +52,31 @@ public class GrassUI extends UI {
 		String token = analyzer.getNextPathToken();
 		PageFactory factory = SpringContextHelper.getBean(PageFactoriesRegister.class).get(token);
 
-		try {
-			GrassPage page = factory.createPageIfAuthorized(grassRequest);
-			Page.getCurrent().setTitle("Gattserver");
-			Component content = page.getContent();
-			setContent(content);
-		} catch (GrassPageException e) {
-			switch (e.getStatus()) {
-			case 403:
-				setContent(((PageFactory) SpringContextHelper.getBean("err403PageFactory"))
-						.createPageIfAuthorized(grassRequest).getContent());
-				break;
-			case 404:
-				setContent(((PageFactory) SpringContextHelper.getBean("err404PageFactory"))
-						.createPageIfAuthorized(grassRequest).getContent());
-				break;
-			case 500:
-			default:
-				setContent(((PageFactory) SpringContextHelper.getBean("err500PageFactory"))
-						.createPageIfAuthorized(grassRequest).getContent());
-				break;
-			}
-		}
+		// try {
+		// GrassPage page = factory.createPageIfAuthorized(grassRequest);
+		// Page.getCurrent().setTitle("Gattserver");
+		// Component content = page.getContent();
+		// setContent(content);
+		// } catch (GrassPageException e) {
+		// switch (e.getStatus()) {
+		// case 403:
+		// setContent(((PageFactory)
+		// SpringContextHelper.getBean("err403PageFactory"))
+		// .createPageIfAuthorized(grassRequest).getContent());
+		// break;
+		// case 404:
+		// setContent(((PageFactory)
+		// SpringContextHelper.getBean("err404PageFactory"))
+		// .createPageIfAuthorized(grassRequest).getContent());
+		// break;
+		// case 500:
+		// default:
+		// setContent(((PageFactory)
+		// SpringContextHelper.getBean("err500PageFactory"))
+		// .createPageIfAuthorized(grassRequest).getContent());
+		// break;
+		// }
+		// }
 
 	}
 }

@@ -20,10 +20,10 @@ import cz.gattserver.grass3.songs.model.domain.Instrument;
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.ui.components.CreateButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class ChordWindow extends WebWindow {
+public abstract class ChordWindow extends WebDialog {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 
@@ -143,7 +143,7 @@ public abstract class ChordWindow extends WebWindow {
 					"Chybná vstupní data\n\n   " + ve.getValidationErrors().iterator().next().getErrorMessage(),
 					Notification.Type.ERROR_MESSAGE);
 		} catch (Exception ve) {
-			UI.getCurrent().addWindow(new ErrorWindow("Uložení se nezdařilo"));
+			UI.getCurrent().addWindow(new ErrorDialog("Uložení se nezdařilo"));
 		}
 	}
 

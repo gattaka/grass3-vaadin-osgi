@@ -1,55 +1,42 @@
 package cz.gattserver.grass3.ui.pages.err.template;
 
-import com.vaadin.server.Resource;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.CustomLayout;
-import com.vaadin.ui.Embedded;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Link;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
 import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.ui.pages.template.MenuPage;
+import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 
-public abstract class ErrorPage extends MenuPage {
+public abstract class ErrorPage extends OneColumnPage {
 
 	public ErrorPage(GrassRequest request) {
 		super(request);
 	}
 
 	@Override
-	protected void createQuotes(CustomLayout layout) {
-	}
-
-	@Override
-	protected void createContent(CustomLayout layout) {
-
-		CustomLayout contentLayout = new CustomLayout("oneColumn");
-		layout.addComponent(contentLayout, "content");
+	protected Component createColumnContent() {
 
 		HorizontalLayout horizontalLayout = new HorizontalLayout();
 		horizontalLayout.setSpacing(true);
-		horizontalLayout.setMargin(true);
+		horizontalLayout.setPadding(true);
 		horizontalLayout.setWidth("100%");
-		contentLayout.addComponent(horizontalLayout, "content");
 
-		Label label = new Label(getErrorText());
-		label.addStyleName("error-label");
-		Embedded img = new Embedded(null, getErrorImage());
+		Span span = new Span(getErrorText());
+		span.addClassName("error-label");
+		Image img = new Image(getErrorImage(), "Chyba");
 
-		horizontalLayout.addComponent(img);
-		horizontalLayout.addComponent(label);
-		horizontalLayout.setComponentAlignment(img, Alignment.MIDDLE_LEFT);
-		horizontalLayout.setComponentAlignment(label, Alignment.MIDDLE_CENTER);
-	}
+		horizontalLayout.add(img);
+		horizontalLayout.add(span);
+		horizontalLayout.setVerticalComponentAlignment(Alignment.START, img);
+		horizontalLayout.setVerticalComponentAlignment(Alignment.CENTER, span);
 
-	@Override
-	protected void createMenuItems(HorizontalLayout menu) {
-		createMenuComponent(menu, new Link("Domů", getPageResource(homePageFactory)));
+		return horizontalLayout;
 	}
 
 	protected abstract String getErrorText();
 
-	protected abstract Resource getErrorImage();
+	protected abstract String getErrorImage();
 
 }

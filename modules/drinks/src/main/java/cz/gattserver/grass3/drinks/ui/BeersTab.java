@@ -28,7 +28,7 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
-import cz.gattserver.web.common.ui.BoldLabel;
+import cz.gattserver.web.common.ui.BoldSpan;
 import cz.gattserver.web.common.ui.H2Label;
 
 public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
@@ -184,21 +184,21 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 		GridLayout infoLayout = new GridLayout(2, 7);
 		dataLayout.addComponent(infoLayout);
 
-		BoldLabel b = new BoldLabel("Kategorie");
+		BoldSpan b = new BoldSpan("Kategorie");
 		infoLayout.addComponent(b);
 		b.setWidth("120px");
 		infoLayout.addComponent(new Label(choosenDrink.getCategory()));
-		infoLayout.addComponent(new BoldLabel("Stupně (°)"));
+		infoLayout.addComponent(new BoldSpan("Stupně (°)"));
 		infoLayout.addComponent(new Label(String.valueOf(choosenDrink.getDegrees())));
-		infoLayout.addComponent(new BoldLabel("Alkohol (%)"));
+		infoLayout.addComponent(new BoldSpan("Alkohol (%)"));
 		infoLayout.addComponent(new Label(String.valueOf(choosenDrink.getAlcohol())));
-		infoLayout.addComponent(new BoldLabel("Hořkost (IBU)"));
+		infoLayout.addComponent(new BoldSpan("Hořkost (IBU)"));
 		infoLayout.addComponent(new Label(choosenDrink.getIbu() == null ? "" : String.valueOf(choosenDrink.getIbu())));
-		infoLayout.addComponent(new BoldLabel("Typ sladu"));
+		infoLayout.addComponent(new BoldSpan("Typ sladu"));
 		infoLayout.addComponent(new Label(choosenDrink.getMaltType().getCaption()));
-		infoLayout.addComponent(new BoldLabel("Slady"));
+		infoLayout.addComponent(new BoldSpan("Slady"));
 		infoLayout.addComponent(new Label(choosenDrink.getMalts()));
-		infoLayout.addComponent(new BoldLabel("Chmely"));
+		infoLayout.addComponent(new BoldSpan("Chmely"));
 		infoLayout.addComponent(new Label(choosenDrink.getHops()));
 
 		Label descriptionLabel = new Label(choosenDrink.getDescription().replaceAll("\n", "<br/>"), ContentMode.HTML);

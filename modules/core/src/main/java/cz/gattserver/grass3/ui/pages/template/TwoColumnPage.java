@@ -1,7 +1,7 @@
 package cz.gattserver.grass3.ui.pages.template;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Div;
 
 import cz.gattserver.grass3.server.GrassRequest;
 
@@ -12,12 +12,16 @@ public abstract class TwoColumnPage extends BasePage {
 	}
 
 	@Override
-	protected void createContent(CustomLayout layout) {
-		CustomLayout contentLayout = new CustomLayout("twoColumn");
-		layout.addComponent(contentLayout, "content");
-
-		contentLayout.addComponent(createLeftColumnContent(), "leftcontent");
-		contentLayout.addComponent(createRightColumnContent(), "rightcontent");
+	protected void createContent(Div layout) {
+		Div leftContentLayout = new Div();
+		leftContentLayout.setId("left-content");
+		leftContentLayout.add(createLeftColumnContent());
+		layout.add(leftContentLayout);
+		
+		Div rightContentLayout = new Div();
+		rightContentLayout.setId("right-content");
+		rightContentLayout.add(createRightColumnContent());
+		layout.add(rightContentLayout);
 	}
 
 	/**

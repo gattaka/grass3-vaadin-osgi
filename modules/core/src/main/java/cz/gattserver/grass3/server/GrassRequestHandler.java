@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.server;
 
-import com.vaadin.server.RequestHandler;
+import com.vaadin.flow.server.RequestHandler;
 
 public interface GrassRequestHandler extends RequestHandler {
 

@@ -39,7 +39,7 @@ import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
 import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.web.common.ui.H2Label;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
 
 public class FavlinkSettingsPage extends AbstractSettingsPage {
 
@@ -147,7 +147,7 @@ public class FavlinkSettingsPage extends AbstractSettingsPage {
 
 					@Override
 					public void buttonClick(ClickEvent event) {
-						UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat favicon?", e -> {
+						UI.getCurrent().addWindow(new ConfirmDialog("Opravdu smazat favicon?", e -> {
 							try {
 								Files.delete(p);
 								populateGrid(grid, path);
@@ -167,7 +167,7 @@ public class FavlinkSettingsPage extends AbstractSettingsPage {
 
 					@Override
 					public void buttonClick(ClickEvent event) {
-						UI.getCurrent().addWindow(new ConfirmWindow("Opravdu přegenerovat favicon?", e -> {
+						UI.getCurrent().addWindow(new ConfirmDialog("Opravdu přegenerovat favicon?", e -> {
 							try {
 								Files.delete(p);
 								String fileName = p.getFileName().toString();

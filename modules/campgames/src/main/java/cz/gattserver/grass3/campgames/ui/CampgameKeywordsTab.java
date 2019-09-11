@@ -2,14 +2,9 @@ package cz.gattserver.grass3.campgames.ui;
 
 import java.util.Set;
 
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.campgames.CampgamesRole;
 import cz.gattserver.grass3.campgames.interfaces.CampgameKeywordTO;
@@ -18,8 +13,8 @@ import cz.gattserver.grass3.campgames.ui.windows.CampgameKeywordWindow;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
 
 public class CampgameKeywordsTab extends VerticalLayout {
 
@@ -37,7 +32,7 @@ public class CampgameKeywordsTab extends VerticalLayout {
 
 	public CampgameKeywordsTab() {
 		setSpacing(true);
-		setMargin(new MarginInfo(true, false, false, false));
+		setPadding(new MarginInfo(true, false, false, false));
 
 		final Button fixBtn = new Button("Upravit");
 		final Button deleteBtn = new Button("Smazat");
@@ -112,14 +107,14 @@ public class CampgameKeywordsTab extends VerticalLayout {
 	private void openDeleteWindow(final Set<CampgameKeywordTO> data) {
 		CampgameKeywordsTab.this.setEnabled(false);
 		final CampgameKeywordTO campgameKeywordTO = grid.getSelectedItems().iterator().next();
-		UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat '" + campgameKeywordTO.getName()
+		UI.getCurrent().addWindow(new ConfirmDialog("Opravdu smazat '" + campgameKeywordTO.getName()
 				+ "' (klíčové slovo bude odebráno od všech označených her)?", e -> {
 					try {
 						getCampgamesService().deleteCampgameKeyword(campgameKeywordTO.getId());
 						data.remove(campgameKeywordTO);
 						grid.getDataProvider().refreshAll();
 					} catch (Exception ex) {
-						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
+						UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se smazat vybranou položku"));
 					}
 				}) {
 			private static final long serialVersionUID = -422763987707688597L;

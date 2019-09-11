@@ -76,15 +76,15 @@ public class SearchPage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createContent() {
+	protected Component createColumnContent() {
 		VerticalLayout layout = new VerticalLayout();
-		layout.setMargin(true);
+		layout.setPadding(true);
 		layout.setSpacing(true);
 
 		init(layout);
 
 		VerticalLayout marginLayout = new VerticalLayout();
-		marginLayout.setMargin(true);
+		marginLayout.setPadding(true);
 		marginLayout.addComponent(layout);
 
 		return marginLayout;

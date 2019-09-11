@@ -1,23 +1,23 @@
 package cz.gattserver.grass3.ui.windows;
 
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.ui.components.NodeTree;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class ContentMoveWindow extends WebWindow {
+public abstract class ContentMoveDialog extends WebDialog {
 
 	private static final long serialVersionUID = -2550619983411515006L;
 
 	private Button moveBtn;
 	private NodeTree tree;
 
-	public ContentMoveWindow(final ContentNodeTO contentNodeDTO) {
+	public ContentMoveDialog(final ContentNodeTO contentNodeDTO) {
 		super("Přesunout obsah");
 
 		setWidth("500px");
@@ -25,7 +25,7 @@ public abstract class ContentMoveWindow extends WebWindow {
 		tree = new NodeTree();
 		tree.getGrid().addSelectionListener(event -> moveBtn.setEnabled(!event.getAllSelectedItems().isEmpty()));
 		tree.setHeight("300px");
-		layout.addComponent(tree);
+		layout.add(tree);
 
 		moveBtn = new Button("Přesunout");
 		moveBtn.setEnabled(false);
@@ -36,8 +36,8 @@ public abstract class ContentMoveWindow extends WebWindow {
 			onMove();
 		});
 
-		layout.addComponent(moveBtn);
-		layout.setComponentAlignment(moveBtn, Alignment.MIDDLE_RIGHT);
+		layout.add(moveBtn);
+		layout.setHorizontalComponentAlignment(Alignment.END, moveBtn);
 
 		NodeOverviewTO to = contentNodeDTO.getParent();
 		tree.expandTo(to.getId());

@@ -10,11 +10,11 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
-import cz.gattserver.grass3.ui.windows.DetailWindow;
+import cz.gattserver.grass3.ui.windows.DetailDialog;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.BoldLabel;
+import cz.gattserver.web.common.ui.BoldSpan;
 
-public class SchuduledVisitDetailWindow extends DetailWindow {
+public class SchuduledVisitDetailWindow extends DetailDialog {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 
@@ -27,20 +27,20 @@ public class SchuduledVisitDetailWindow extends DetailWindow {
 		GridLayout layout = new GridLayout(2, 6);
 		layout.setSpacing(true);
 		layout.setMargin(true);
-		layout.addComponent(new BoldLabel("Datum"));
+		layout.addComponent(new BoldSpan("Datum"));
 		layout.addComponent(
 				new Label(scheduledVisitDTO.getDate().format(DateTimeFormatter.ofPattern("d. MMMM yyyy, H:mm"))));
-		layout.addComponent(new BoldLabel("Účel"));
+		layout.addComponent(new BoldSpan("Účel"));
 		layout.addComponent(new Label(scheduledVisitDTO.getPurpose()));
 
 		final Button instButton = new Button(scheduledVisitDTO.getInstitution().getName());
 		instButton.addClickListener(e -> UI.getCurrent()
 				.addWindow(new MedicalInstitutionDetailWindow(scheduledVisitDTO.getInstitution().getId())));
 		instButton.setStyleName(ValoTheme.BUTTON_LINK);
-		layout.addComponent(new BoldLabel("Instituce"));
+		layout.addComponent(new BoldSpan("Instituce"));
 		layout.addComponent(instButton);
 
-		layout.addComponent(new BoldLabel("Navazuje na"));
+		layout.addComponent(new BoldSpan("Navazuje na"));
 		if (scheduledVisitDTO.getRecord() != null) {
 			final Button recordButton = new Button(scheduledVisitDTO.getRecord().toString());
 			recordButton.addClickListener(e -> UI.getCurrent()
@@ -51,10 +51,10 @@ public class SchuduledVisitDetailWindow extends DetailWindow {
 			layout.addComponent(new Label("-"));
 		}
 
-		layout.addComponent(new BoldLabel("Pravidelnost (měsíce)"));
+		layout.addComponent(new BoldSpan("Pravidelnost (měsíce)"));
 		layout.addComponent(new Label(String.valueOf(scheduledVisitDTO.getPeriod())));
 
-		layout.addComponent(new BoldLabel("Stav"));
+		layout.addComponent(new BoldSpan("Stav"));
 		layout.addComponent(new Label(String.valueOf(scheduledVisitDTO.getState())));
 
 		setContent(layout);

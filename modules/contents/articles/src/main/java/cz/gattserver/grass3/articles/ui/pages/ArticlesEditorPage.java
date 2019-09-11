@@ -61,7 +61,7 @@ import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.server.URLPathAnalyzer;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import elemental.json.JsonArray;
 
 public class ArticlesEditorPage extends TwoColumnPage {
@@ -373,7 +373,7 @@ public class ArticlesEditorPage extends TwoColumnPage {
 	private Button createCancelButton() {
 		Button cancelButton = new Button("Zrušit");
 		cancelButton.setIcon(ImageIcon.DELETE_16_ICON.createResource());
-		cancelButton.addClickListener(event -> UI.getCurrent().addWindow(new ConfirmWindow(
+		cancelButton.addClickListener(event -> UI.getCurrent().addWindow(new ConfirmDialog(
 				"Opravdu si přejete zavřít editor článku ? Veškeré neuložené změny budou ztraceny.", e -> {
 					// ruším úpravu existujícího článku (vracím se na
 					// článek), nebo nového (vracím se do kategorie) ?

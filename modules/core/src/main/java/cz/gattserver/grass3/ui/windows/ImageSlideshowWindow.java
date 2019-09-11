@@ -1,79 +1,61 @@
 package cz.gattserver.grass3.ui.windows;
 
-import com.vaadin.event.ShortcutAction.KeyCode;
-import com.vaadin.event.ShortcutListener;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.Shortcuts;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class ImageSlideshowWindow extends WebWindow {
+public abstract class ImageSlideshowWindow extends WebDialog {
 
 	private static final long serialVersionUID = 4928404864735034779L;
 
 	protected int currentIndex;
 	protected int totalCount;
 	protected Label itemLabel;
-	protected CssLayout slideShowLayout;
+	protected Div slideShowLayout;
 
 	public abstract void showItem(int index);
 
 	public ImageSlideshowWindow(int count) {
 		this.totalCount = count;
 
-		setResizable(false);
 		setSizeFull();
 
-		addStyleName("grass-image-slideshow-window");
+		// TODO
+		// addclaStyleName("grass-image-slideshow-window");
 
-		layout.addStyleName("grass-scrollable");
+		layout.addClassName("grass-scrollable");
 
 		itemLabel = new Label();
-		itemLabel.setStyleName("white-bold-label");
+		itemLabel.addClassName("white-bold-label");
 		itemLabel.setSizeUndefined();
 
 		VerticalLayout itemLayout = new VerticalLayout();
 
-		slideShowLayout = new CssLayout();
+		slideShowLayout = new Div();
 
-		itemLayout.addComponent(itemLabel);
-		itemLayout.setComponentAlignment(itemLabel, Alignment.BOTTOM_CENTER);
-		itemLayout.addComponent(slideShowLayout);
-		itemLayout.setComponentAlignment(slideShowLayout, Alignment.TOP_CENTER);
+		itemLayout.add(itemLabel);
+		itemLayout.setHorizontalComponentAlignment(Alignment.CENTER, itemLabel);
+		itemLayout.add(slideShowLayout);
+		itemLayout.setHorizontalComponentAlignment(Alignment.CENTER, slideShowLayout);
 
-		layout.addComponent(itemLayout);
-		layout.setComponentAlignment(itemLayout, Alignment.MIDDLE_CENTER);
+		layout.add(itemLayout);
+		layout.setHorizontalComponentAlignment(Alignment.CENTER, itemLayout);
 		layout.setSizeFull();
 
-		addAction(new ShortcutListener("Prev", KeyCode.ARROW_LEFT, null) {
-			private static final long serialVersionUID = -6194478959368277077L;
+		Shortcuts.addShortcutListener(this, () -> {
+			if (currentIndex > 0)
+				showItem(currentIndex - 1);
+		}, Key.ARROW_LEFT);
 
-			@Override
-			public void handleAction(Object sender, Object target) {
-				if (currentIndex > 0)
-					showItem(currentIndex - 1);
-			}
-		});
+		Shortcuts.addShortcutListener(this, () -> {
+			if (currentIndex < totalCount - 1)
+				showItem(currentIndex + 1);
+		}, Key.ARROW_RIGHT);
 
-		addAction(new ShortcutListener("Next", KeyCode.ARROW_RIGHT, null) {
-			private static final long serialVersionUID = -6194478959368277077L;
-
-			@Override
-			public void handleAction(Object sender, Object target) {
-				if (currentIndex < totalCount - 1)
-					showItem(currentIndex + 1);
-			}
-		});
-
-		addClickListener(e -> close());
-
-	}
-
-	@Override
-	public void attach() {
-		focus();
-		super.attach();
 	}
 }

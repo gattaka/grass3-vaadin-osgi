@@ -6,11 +6,12 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
@@ -19,13 +20,13 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.ui.components.Breadcrumb;
 import cz.gattserver.grass3.ui.components.ContentsLazyGrid;
+import cz.gattserver.grass3.ui.components.ImageButton;
 import cz.gattserver.grass3.ui.components.NewContentNodeGrid;
 import cz.gattserver.grass3.ui.components.NodesGrid;
 import cz.gattserver.grass3.ui.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
-import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcon;
 
 public class NodePage extends OneColumnPage {
@@ -41,15 +42,15 @@ public class NodePage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createContent() {
+	protected Component createColumnContent() {
 
 		VerticalLayout marginLayout = new VerticalLayout();
-		marginLayout.setMargin(true);
+		marginLayout.setPadding(true);
 
 		VerticalLayout layout = new VerticalLayout();
-		layout.setMargin(true);
+		layout.setPadding(true);
 		layout.setSpacing(true);
-		marginLayout.addComponent(layout);
+		marginLayout.add(layout);
 
 		String nodeName = getRequest().getAnalyzer().getNextPathToken();
 		if (nodeName == null)
@@ -76,15 +77,15 @@ public class NodePage extends OneColumnPage {
 	private void createNewNodePanel(VerticalLayout layout, final NodeTO node) {
 
 		HorizontalLayout panelLayout = new HorizontalLayout();
-		panelLayout.setMargin(false);
+		panelLayout.setPadding(false);
 		panelLayout.setSpacing(true);
-		layout.addComponent(panelLayout);
+		layout.add(panelLayout);
 
 		final TextField newNodeNameField = new TextField();
 		newNodeNameField.setPlaceholder("Nová kategorie");
-		panelLayout.addComponent(newNodeNameField);
+		panelLayout.add(newNodeNameField);
 
-		Button createButton = new Button("Vytvořit novou kategorii", e -> {
+		Button createButton = new ImageButton("Vytvořit novou kategorii", ImageIcon.BRIEFCASE_PLUS_16_ICON, e -> {
 			String newNodeName = newNodeNameField.getValue();
 			if (StringUtils.isBlank(newNodeName)) {
 				UIUtils.showError("Název kategorie nesmí být prázdný");
@@ -98,14 +99,13 @@ public class NodePage extends OneColumnPage {
 			// clean
 			newNodeNameField.setValue("");
 		});
-		createButton.setIcon(ImageIcon.BRIEFCASE_PLUS_16_ICON.createResource());
-		panelLayout.addComponent(createButton);
+		panelLayout.add(createButton);
 
 	}
 
 	private void createBreadcrumb(VerticalLayout layout, NodeTO node) {
 		Breadcrumb breadcrumb = new Breadcrumb();
-		layout.addComponent(breadcrumb);
+		layout.add(breadcrumb);
 
 		// pokud zjistím, že cesta neodpovídá, vyhodím 302 (přesměrování) na
 		// aktuální polohu cílové kategorie
@@ -117,7 +117,7 @@ public class NodePage extends OneColumnPage {
 			if (parent == null)
 				throw new GrassPageException(404);
 
-			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageResource(nodePageFactory,
+			breadcrumbElements.add(new BreadcrumbElement(parent.getName(), getPageURL(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(parent.getId(), parent.getName()))));
 
 			// pokud je můj předek null, pak je to konec a je to všechno
@@ -132,15 +132,15 @@ public class NodePage extends OneColumnPage {
 
 	private void createSubnodesPart(VerticalLayout layout, NodeTO node) {
 		VerticalLayout subNodesLayout = new VerticalLayout();
-		subNodesLayout.setMargin(false);
+		subNodesLayout.setPadding(false);
 		subNodesTable = new NodesGrid(NodePage.this);
 
-		subNodesLayout.addComponent(new H2Label("Podkategorie"));
+		subNodesLayout.add(new H2("Podkategorie"));
 
 		populateSubnodesTable(node);
 
-		subNodesLayout.addComponent(subNodesTable);
-		layout.addComponent(subNodesLayout);
+		subNodesLayout.add(subNodesTable);
+		layout.add(subNodesLayout);
 		subNodesTable.setWidth("100%");
 
 		// Vytvořit novou kategorii
@@ -158,16 +158,16 @@ public class NodePage extends OneColumnPage {
 
 	private void createContentsPart(VerticalLayout layout, NodeTO node) {
 		VerticalLayout contentsLayout = new VerticalLayout();
-		contentsLayout.setMargin(false);
+		contentsLayout.setPadding(false);
 		ContentsLazyGrid contentsTable = new ContentsLazyGrid();
 		contentsTable.populate(this,
-				(sortOrder, offset, limit) -> contentNodeFacade.getByNode(node.getId(), offset, limit).stream(),
-				() -> contentNodeFacade.getCountByNode(node.getId()));
+				q -> contentNodeFacade.getByNode(node.getId(), q.getOffset(), q.getLimit()).stream(),
+				q -> contentNodeFacade.getCountByNode(node.getId()));
 
-		contentsLayout.addComponent(new H2Label("Obsahy"));
-		contentsLayout.addComponent(contentsTable);
+		contentsLayout.add(new H2("Obsahy"));
+		contentsLayout.add(contentsTable);
 		contentsTable.setWidth("100%");
-		layout.addComponent(contentsLayout);
+		layout.add(contentsLayout);
 
 		// Vytvořit obsahy
 		createNewContentMenu(layout, node);
@@ -175,15 +175,15 @@ public class NodePage extends OneColumnPage {
 
 	private void createNewContentMenu(VerticalLayout layout, NodeTO node) {
 		VerticalLayout newContentsLayout = new VerticalLayout();
-		newContentsLayout.setMargin(false);
+		newContentsLayout.setPadding(false);
 		NewContentNodeGrid newContentsTable = new NewContentNodeGrid(NodePage.this, node);
 
-		newContentsLayout.addComponent(new H2Label("Vytvořit nový obsah"));
-		newContentsLayout.addComponent(newContentsTable);
+		newContentsLayout.add(new H2("Vytvořit nový obsah"));
+		newContentsLayout.add(newContentsTable);
 		newContentsTable.setWidth("100%");
 		newContentsLayout.setVisible(coreACL.canCreateContent(UIUtils.getUser()));
 
-		layout.addComponent(newContentsLayout);
+		layout.add(newContentsLayout);
 	}
 
 }

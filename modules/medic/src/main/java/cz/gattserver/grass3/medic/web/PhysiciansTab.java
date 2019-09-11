@@ -22,7 +22,7 @@ public class PhysiciansTab extends MedicPageTab<PhysicianDTO, ArrayList<Physicia
 	}
 
 	@Override
-	protected Window createCreateWindow() {
+	protected Window createCreateDialog() {
 		return new PhysicianCreateWindow() {
 			private static final long serialVersionUID = -7566950396535469316L;
 
@@ -35,12 +35,12 @@ public class PhysiciansTab extends MedicPageTab<PhysicianDTO, ArrayList<Physicia
 	}
 
 	@Override
-	protected Window createDetailWindow(Long id) {
+	protected Window createDetailDialog(Long id) {
 		return new PhysicianDetailWindow(id);
 	}
 
 	@Override
-	protected Window createModifyWindow(PhysicianDTO dto) {
+	protected Window createModifyDialog(PhysicianDTO dto) {
 		return new PhysicianCreateWindow(dto) {
 			private static final long serialVersionUID = -7566950396535469316L;
 

@@ -1,12 +1,16 @@
 package cz.gattserver.grass3.ui.components;
 
-import com.vaadin.server.SerializableSupplier;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.renderers.ComponentRenderer;
-import com.vaadin.ui.renderers.HtmlRenderer;
-import com.vaadin.ui.renderers.LocalDateTimeRenderer;
-import com.vaadin.ui.renderers.TextRenderer;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
+import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.IconRenderer;
+import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 
 import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.modules.ContentModule;
@@ -27,14 +31,14 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		super(ContentNodeOverviewTO.class);
 	}
 
-	public void populate(final MenuPage page, FetchItemsCallback<ContentNodeOverviewTO> fetchItems,
-			SerializableSupplier<Integer> sizeCallback) {
+	public void populate(final MenuPage page, FetchCallback<ContentNodeOverviewTO, Void> fetchCallback,
+			CountCallback<ContentNodeOverviewTO, Void> countCallback) {
 
 		PageFactory nodePageFactory = ((PageFactory) SpringContextHelper.getBean("nodePageFactory"));
 		PageFactory noServicePageFactory = (PageFactory) SpringContextHelper.getBean("noServicePageFactory");
 		ModuleRegister serviceHolder = SpringContextHelper.getContext().getBean(ModuleRegister.class);
 
-		setDataProvider(fetchItems, sizeCallback);
+		setDataProvider(DataProvider.fromCallbacks(fetchCallback, countCallback));
 		setSelectionMode(SelectionMode.NONE);
 
 		String lockIconBind = "lockIcon";
@@ -45,49 +49,46 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		String creationDateBind = "customCreationDate";
 		String lastModificationDateBind = "customLastModificationDate";
 
-		if (UIUtils.getUser() != null)
-			addColumn(contentNode -> contentNode.isPublicated() ? null
-					: new Image(null, ImageIcon.SHIELD_16_ICON.createResource()), new ComponentRenderer())
-							.setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(lockIconBind)
-							.setStyleGenerator(item -> "icon-cell");
+		if (UIUtils.getUser() != null) {
+			addColumn(new IconRenderer<ContentNodeOverviewTO>(c -> c.isPublicated() ? new Span()
+					: new Image(ImageIcon.SHIELD_16_ICON.createResource(), "locked")))
+							.setWidth(GridUtils.ICON_COLUMN_WIDTH + "px").setHeader("").setKey(lockIconBind)
+							.setClassNameGenerator(item -> "icon-cell");
+		}
 
-		addColumn(contentNode -> {
-			ContentModule contentService = serviceHolder.getContentModulesByName(contentNode.getContentReaderID());
-			Image img = new Image("", contentService == null ? ImageIcon.WARNING_16_ICON.createResource()
-					: contentService.getContentIcon());
+		addColumn(new IconRenderer<ContentNodeOverviewTO>(c -> {
+			ContentModule contentService = serviceHolder.getContentModulesByName(c.getContentReaderID());
+			Image img = new Image(contentService == null ? ImageIcon.WARNING_16_ICON.createResource()
+					: contentService.getContentIcon(), "");
 			img.setWidth("16px");
 			return img;
-		}, new ComponentRenderer()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(iconBind)
-				.setStyleGenerator(item -> "icon-cell");
+		})).setHeader("").setKey(iconBind).setClassNameGenerator(item -> "icon-cell");
 
-		addColumn(contentNode -> {
+		addColumn(new ComponentRenderer<Anchor, ContentNodeOverviewTO>(contentNode -> {
 			ContentModule contentService = serviceHolder.getContentModulesByName(contentNode.getContentReaderID());
 			PageFactory pageFactory = contentService == null ? noServicePageFactory
 					: contentService.getContentViewerPageFactory();
-			return "<a href='"
-					+ page.getPageURL(pageFactory,
-							URLIdentifierUtils.createURLIdentifier(contentNode.getContentID(), contentNode.getName()))
-					+ "'>" + contentNode.getName() + "</a>";
-		}, new HtmlRenderer()).setCaption("Název").setId(nameBind);
+			String url = page.getPageURL(pageFactory,
+					URLIdentifierUtils.createURLIdentifier(contentNode.getContentID(), contentNode.getName()));
+			return new Anchor(url, contentNode.getName());
+		})).setHeader("Název").setId(nameBind);
 
-		addColumn(
-				contentNode -> "<a href='"
-						+ page.getPageURL(nodePageFactory,
-								URLIdentifierUtils.createURLIdentifier(contentNode.getParentNodeId(),
-										contentNode.getParentNodeName()))
-						+ "'>" + contentNode.getParentNodeName() + "</a>",
-				new HtmlRenderer()).setCaption("Kategorie").setId(nodeBind).setWidth(GridUtils.NODE_COLUMN_WIDTH);
+		addColumn(new ComponentRenderer<Anchor, ContentNodeOverviewTO>(contentNode -> {
+			String url = page.getPageURL(nodePageFactory, URLIdentifierUtils
+					.createURLIdentifier(contentNode.getParentNodeId(), contentNode.getParentNodeName())) + "'>"
+					+ contentNode.getParentNodeName();
+			return new Anchor(url, contentNode.getName());
+		})).setHeader("Kategorie").setId(nodeBind);
 
-		addColumn(ContentNodeOverviewTO::getAuthorName, new TextRenderer()).setCaption("Autor").setId(authorBind)
-				.setWidth(100);
+		addColumn(ContentNodeOverviewTO::getAuthorName).setHeader("Autor").setKey(authorBind).setWidth("100px");
 
-		addColumn(ContentNodeOverviewTO::getCreationDate, new LocalDateTimeRenderer("d.M.yyyy")).setCaption("Vytvořeno")
-				.setId(creationDateBind).setStyleGenerator(item -> "v-align-right")
-				.setWidth(GridUtils.DATE_COLUMN_WIDTH);
+		addColumn(new LocalDateTimeRenderer<>(ContentNodeOverviewTO::getCreationDate, "d.M.yyyy"))
+				.setHeader("Vytvořeno").setKey(creationDateBind).setClassNameGenerator(item -> "v-align-right")
+				.setFlexGrow(0).setWidth("90px");
 
-		addColumn(ContentNodeOverviewTO::getLastModificationDate, new LocalDateTimeRenderer("d.M.yyyy"))
-				.setCaption("Upraveno").setId(lastModificationDateBind).setStyleGenerator(item -> "v-align-right")
-				.setWidth(GridUtils.DATE_COLUMN_WIDTH);
+		addColumn(new LocalDateTimeRenderer<>(ContentNodeOverviewTO::getLastModificationDate, "d.M.yyyy"))
+				.setHeader("Upraveno").setKey(creationDateBind).setClassNameGenerator(item -> "v-align-right")
+				.setFlexGrow(0).setWidth("90px");
 
 		if (UIUtils.getUser() != null)
 			setColumns(iconBind, nameBind, lockIconBind, nodeBind, authorBind, creationDateBind,
@@ -95,7 +96,7 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		else
 			setColumns(iconBind, nameBind, nodeBind, authorBind, creationDateBind, lastModificationDateBind);
 
-		setHeight(GridUtils.processHeight(sizeCallback.get()) + "px");
+		setHeight(GridUtils.processHeight(countCallback.count(new Query<>())) + "px");
 
 	}
 

@@ -16,8 +16,8 @@ import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.hw.ui.windows.HWItemTypeCreateWindow;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
 
 public class HWTypesTab extends VerticalLayout {
 
@@ -35,7 +35,7 @@ public class HWTypesTab extends VerticalLayout {
 
 	public HWTypesTab() {
 		setSpacing(true);
-		setMargin(new MarginInfo(true, false, false, false));
+		setPadding(new MarginInfo(true, false, false, false));
 
 		final Button newTypeBtn = new Button("Založit nový typ");
 		final Button fixBtn = new Button("Upravit");
@@ -115,7 +115,7 @@ public class HWTypesTab extends VerticalLayout {
 	private void openDeleteWindow(final Set<HWItemTypeTO> data) {
 		HWTypesTab.this.setEnabled(false);
 		final HWItemTypeTO hwItemType = grid.getSelectedItems().iterator().next();
-		UI.getCurrent().addWindow(new ConfirmWindow(
+		UI.getCurrent().addWindow(new ConfirmDialog(
 				"Opravdu smazat '" + hwItemType.getName() + "' (typ bude odebrán od všech označených položek HW)?",
 				e -> {
 					try {
@@ -123,7 +123,7 @@ public class HWTypesTab extends VerticalLayout {
 						data.remove(hwItemType);
 						grid.getDataProvider().refreshAll();
 					} catch (Exception ex) {
-						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
+						UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se smazat vybranou položku"));
 					}
 				}) {
 			private static final long serialVersionUID = -422763987707688597L;

@@ -1,23 +1,37 @@
 package cz.gattserver.grass3.ui.components;
 
-import com.vaadin.server.Resource;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.Button;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Image;
+
+import cz.gattserver.web.common.ui.ImageIcon;
 
 public class ImageButton extends Button {
 
 	private static final long serialVersionUID = 4204958919924333786L;
 
-	public ImageButton(String caption, Resource imageResource, Button.ClickListener clickListener) {
-		setDescription(caption);
-		setCaption(caption);
-		if (imageResource != null)
-			setIcon(imageResource);
+	public ImageButton(String caption, ImageIcon icon, ComponentEventListener<ClickEvent<Button>> clickListener) {
+		setIcon(new Image(icon.createResource(), caption));
 		addClickListener(clickListener);
 	}
 
-	public ImageButton(String caption, String themeImageName, Button.ClickListener clickListener) {
-		this(caption, themeImageName == null ? null : new ThemeResource(themeImageName), clickListener);
+	public ImageButton(String caption, Image img, ComponentEventListener<ClickEvent<Button>> clickListener) {
+		setText(caption);
+		setTooltip(caption);
+		if (img != null)
+			setIcon(img);
+		addClickListener(clickListener);
+	}
+
+	public ImageButton setTooltip(String value) {
+		getElement().setProperty("title", value);
+		return this;
+	}
+
+	public ImageButton clearText() {
+		setText(null);
+		return this;
 	}
 
 }

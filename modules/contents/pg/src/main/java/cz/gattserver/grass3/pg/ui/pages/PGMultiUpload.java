@@ -13,10 +13,10 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 
 import cz.gattserver.grass3.pg.service.PGService;
-import cz.gattserver.grass3.ui.windows.ProgressWindow;
+import cz.gattserver.grass3.ui.windows.ProgressDialog;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.MultiUpload;
-import cz.gattserver.web.common.ui.window.WarnWindow;
+import cz.gattserver.web.common.ui.window.WarnDialog;
 
 public abstract class PGMultiUpload extends MultiUpload {
 
@@ -35,7 +35,7 @@ public abstract class PGMultiUpload extends MultiUpload {
 	 */
 	private boolean warnWindowDeployed = false;
 	private Label existingFiles;
-	private WarnWindow warnWindow;
+	private WarnDialog warnWindow;
 	private UI ui;
 
 	public PGMultiUpload(String galleryDir) {
@@ -49,7 +49,7 @@ public abstract class PGMultiUpload extends MultiUpload {
 		return warnWindowDeployed;
 	}
 	
-	public WarnWindow getWarnWindow() {
+	public WarnDialog getWarnWindow() {
 		return warnWindow;
 	}
 
@@ -65,7 +65,7 @@ public abstract class PGMultiUpload extends MultiUpload {
 		} catch (FileAlreadyExistsException f) {
 			if (!warnWindowDeployed) {
 				existingFiles = new Label("", ContentMode.HTML);
-				warnWindow = new WarnWindow("Následující soubory již existují:") {
+				warnWindow = new WarnDialog("Následující soubory již existují:") {
 					private static final long serialVersionUID = 3428203680996794639L;
 
 					@Override
@@ -80,7 +80,7 @@ public abstract class PGMultiUpload extends MultiUpload {
 						super.close();
 					}
 				};
-				ProgressWindow.runInUI(() -> ui.addWindow(warnWindow), ui);
+				ProgressDialog.runInUI(() -> ui.addWindow(warnWindow), ui);
 				warnWindowDeployed = true;
 			}
 			existingFiles.setValue(existingFiles.getValue() + fileName + "<br/>");

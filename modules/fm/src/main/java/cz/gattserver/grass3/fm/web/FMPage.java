@@ -56,7 +56,7 @@ import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.MultiUpload;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebDialog;
 import net.glxn.qrgen.javase.QRCode;
 
 public class FMPage extends OneColumnPage {
@@ -163,12 +163,12 @@ public class FMPage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createContent() {
+	protected Component createColumnContent() {
 		VerticalLayout marginLayout = new VerticalLayout();
-		marginLayout.setMargin(true);
+		marginLayout.setPadding(true);
 
 		VerticalLayout layout = new VerticalLayout();
-		layout.setMargin(true);
+		layout.setPadding(true);
 		layout.setSpacing(true);
 
 		layout.addComponent(statusLabel);
@@ -225,7 +225,7 @@ public class FMPage extends OneColumnPage {
 
 				@Override
 				public void buttonClick(ClickEvent event) {
-					WebWindow ww = new WebWindow("QR");
+					WebDialog ww = new WebDialog("QR");
 					Image image = new Image(link, new StreamResource(new StreamSource() {
 						private static final long serialVersionUID = -5705256069486765282L;
 

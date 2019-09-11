@@ -2,15 +2,16 @@ package cz.gattserver.grass3.ui.windows;
 
 import java.text.DecimalFormat;
 
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.server.Command;
 
 import cz.gattserver.grass3.ui.components.BaseProgressBar;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public class ProgressWindow extends Window {
+public class ProgressDialog extends WebDialog {
 
 	private static final long serialVersionUID = 2779568469991016255L;
 	private static DecimalFormat myFormatter = new DecimalFormat("##0.0");
@@ -20,9 +21,9 @@ public class ProgressWindow extends Window {
 	private Label descriptionLabel;
 	private UI ui;
 
-	public static void runInUI(Runnable r, UI ui) {
+	public static void runInUI(Command r, UI ui) {
 		if (ui.getSession() == null) {
-			r.run();
+			r.execute();
 		} else {
 			ui.access(r);
 		}
@@ -32,21 +33,21 @@ public class ProgressWindow extends Window {
 	public void close() {
 		runInUI(() -> {
 			ui.setPollInterval(-1);
-			ProgressWindow.super.close();
+			ProgressDialog.super.close();
 		});
 	}
 
-	public void runInUI(Runnable r) {
-		ProgressWindow.runInUI(r, ui);
+	public void runInUI(Command r) {
+		ProgressDialog.runInUI(r, ui);
 	}
 
 	public void indicateProgress(String msg) {
 		progressBar.increaseProgress();
-		progressItemLabel.setValue(myFormatter.format(progressBar.getProgress() * 100) + "%");
-		descriptionLabel.setValue(msg);
+		progressItemLabel.setText(myFormatter.format(progressBar.getProgress() * 100) + "%");
+		descriptionLabel.setText(msg);
 	}
 
-	public ProgressWindow setTotal(int total) {
+	public ProgressDialog setTotal(int total) {
 		progressBar.setTotal(total);
 		return this;
 	}
@@ -55,7 +56,7 @@ public class ProgressWindow extends Window {
 		return progressBar.getTotal();
 	}
 
-	public ProgressWindow() {
+	public ProgressDialog() {
 		super("Průběh operace");
 
 		this.ui = UI.getCurrent();
@@ -64,14 +65,12 @@ public class ProgressWindow extends Window {
 
 		setWidth("300px");
 		setHeight("170px");
-		center();
-
-		setResizable(false);
 
 		VerticalLayout processWindowLayout = new VerticalLayout();
-		setContent(processWindowLayout);
+		processWindowLayout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+		addComponent(processWindowLayout);
 
-		processWindowLayout.setMargin(true);
+		processWindowLayout.setPadding(true);
 		processWindowLayout.setSpacing(true);
 		processWindowLayout.setSizeFull();
 
@@ -85,14 +84,9 @@ public class ProgressWindow extends Window {
 		descriptionLabel = new Label();
 		descriptionLabel.setWidth(null);
 
-		processWindowLayout.addComponent(progressItemLabel);
-		processWindowLayout.setComponentAlignment(progressItemLabel, Alignment.MIDDLE_CENTER);
-
-		processWindowLayout.addComponent(progressBar);
-		processWindowLayout.setComponentAlignment(progressBar, Alignment.MIDDLE_CENTER);
-
-		processWindowLayout.addComponent(descriptionLabel);
-		processWindowLayout.setComponentAlignment(descriptionLabel, Alignment.MIDDLE_CENTER);
+		processWindowLayout.add(progressItemLabel);
+		processWindowLayout.add(progressBar);
+		processWindowLayout.add(descriptionLabel);
 	}
 
 }

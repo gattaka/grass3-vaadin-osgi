@@ -50,12 +50,12 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.grass3.ui.windows.ImageSlideshowWindow;
-import cz.gattserver.grass3.ui.windows.ProgressWindow;
+import cz.gattserver.grass3.ui.windows.ProgressDialog;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.server.URLPathAnalyzer;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
-import cz.gattserver.web.common.ui.window.WarnWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
+import cz.gattserver.web.common.ui.window.WarnDialog;
 import net.engio.mbassy.listener.Handler;
 
 public class PGViewerPage extends ContentViewerPage {
@@ -77,7 +77,7 @@ public class PGViewerPage extends ContentViewerPage {
 	private EventBus eventBus;
 
 	private UI ui = UI.getCurrent();
-	private ProgressWindow progressIndicatorWindow;
+	private ProgressDialog progressIndicatorWindow;
 
 	private PhotogalleryTO photogallery;
 
@@ -198,7 +198,7 @@ public class PGViewerPage extends ContentViewerPage {
 
 		galleryGridLayout = new GridLayout(GALLERY_GRID_COLS, GALLERY_GRID_ROWS);
 		galleryGridLayout.setSpacing(true);
-		galleryGridLayout.setMargin(true);
+		galleryGridLayout.setPadding(true);
 		galleryGridLayout.setSizeFull();
 
 		// Horní layout tlačítek
@@ -269,7 +269,7 @@ public class PGViewerPage extends ContentViewerPage {
 
 		// status labels + download
 		HorizontalLayout statusLabelWrapper = new HorizontalLayout();
-		statusLabelWrapper.setMargin(true);
+		statusLabelWrapper.setPadding(true);
 		statusLabelWrapper.addComponent(rowStatusLabel);
 		statusLabelWrapper.setComponentAlignment(rowStatusLabel, Alignment.MIDDLE_LEFT);
 		statusLabelWrapper.setWidth("100%");
@@ -284,7 +284,7 @@ public class PGViewerPage extends ContentViewerPage {
 				super.queueFinished();
 
 				eventBus.subscribe(PGViewerPage.this);
-				progressIndicatorWindow = new ProgressWindow();
+				progressIndicatorWindow = new ProgressDialog();
 				PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(photogallery.getContentNode().getName(),
 						galleryDir, photogallery.getContentNode().getContentTagsAsStrings(),
 						photogallery.getContentNode().isPublicated(), false);
@@ -297,9 +297,9 @@ public class PGViewerPage extends ContentViewerPage {
 			statusLabelWrapper.addComponent(upload);
 
 		Button downloadZip = new Button("Zabalit do ZIP",
-				event -> UI.getCurrent().addWindow(new ConfirmWindow("Přejete si vytvořit ZIP galerie?", e -> {
+				event -> UI.getCurrent().addWindow(new ConfirmDialog("Přejete si vytvořit ZIP galerie?", e -> {
 					logger.info("zipPhotogallery thread: {}", Thread.currentThread().getId());
-					progressIndicatorWindow = new ProgressWindow();
+					progressIndicatorWindow = new ProgressDialog();
 					eventBus.subscribe(PGViewerPage.this);
 					pgService.zipGallery(galleryDir);
 				})));
@@ -393,7 +393,7 @@ public class PGViewerPage extends ContentViewerPage {
 				link.setTargetName("_blank");
 				VerticalLayout layout = new VerticalLayout();
 				layout.setSpacing(true);
-				layout.setMargin(true);
+				layout.setPadding(true);
 				win.setContent(layout);
 				layout.addComponent(link);
 				layout.setComponentAlignment(link, Alignment.MIDDLE_CENTER);
@@ -447,7 +447,7 @@ public class PGViewerPage extends ContentViewerPage {
 			for (PhotogalleryViewItemTO item : pgService.getViewItems(galleryDir, start, limit)) {
 				final int currentIndex = index;
 				VerticalLayout itemLayout = new VerticalLayout();
-				itemLayout.setMargin(false);
+				itemLayout.setPadding(false);
 				itemLayout.setSpacing(true);
 
 				// Miniatura/Náhled
@@ -551,7 +551,7 @@ public class PGViewerPage extends ContentViewerPage {
 
 	@Override
 	protected void onDeleteOperation() {
-		ConfirmWindow confirmSubwindow = new ConfirmWindow("Opravdu si přejete smazat tuto galerii ?", ev -> {
+		ConfirmDialog confirmSubwindow = new ConfirmDialog("Opravdu si přejete smazat tuto galerii ?", ev -> {
 			NodeOverviewTO nodeDTO = photogallery.getContentNode().getParent();
 
 			final String nodeURL = getPageURL(nodePageFactory,
@@ -564,7 +564,7 @@ public class PGViewerPage extends ContentViewerPage {
 			} else {
 				// Pokud ne, otevři warn okno a při
 				// potvrzení jdi na kategorii
-				WarnWindow warnSubwindow = new WarnWindow("Při mazání galerie se nezdařilo smazat některé soubory.");
+				WarnDialog warnSubwindow = new WarnDialog("Při mazání galerie se nezdařilo smazat některé soubory.");
 				warnSubwindow.addCloseListener(new CloseListener() {
 					private static final long serialVersionUID = 776795316168411336L;
 

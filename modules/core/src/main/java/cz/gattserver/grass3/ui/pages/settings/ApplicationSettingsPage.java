@@ -2,19 +2,17 @@ package cz.gattserver.grass3.ui.pages.settings;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Slider;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.config.CoreConfiguration;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ConfigurationService;
-import cz.gattserver.web.common.ui.H2Label;
 
 public class ApplicationSettingsPage extends AbstractSettingsPage {
 
@@ -32,21 +30,21 @@ public class ApplicationSettingsPage extends AbstractSettingsPage {
 	protected Component createContent() {
 		VerticalLayout layout = new VerticalLayout();
 
-		layout.setMargin(true);
+		layout.setPadding(true);
 		layout.setSpacing(true);
 
 		VerticalLayout settingsLayout = new VerticalLayout();
-		layout.addComponent(settingsLayout);
+		layout.add(settingsLayout);
 
 		final CoreConfiguration configuration = loadConfiguration();
 
-		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new H2Label("Nastavení aplikace"));
+		settingsLayout.removeAll();
+		settingsLayout.add(new H2("Nastavení aplikace"));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
-		settingsLayout.addComponent(settingsFieldsLayout);
-		settingsFieldsLayout.setMargin(false);
+		settingsLayout.add(settingsFieldsLayout);
+		settingsFieldsLayout.setPadding(false);
 		settingsFieldsLayout.setSpacing(true);
 		settingsFieldsLayout.setSizeFull();
 
@@ -69,42 +67,46 @@ public class ApplicationSettingsPage extends AbstractSettingsPage {
 			storeConfiguration(configuration);
 		}
 
-		final Label valueLabel = new Label(initValue.toString());
-		valueLabel.setWidth("3em");
+		final Span valueSpan = new Span(initValue.toString());
+		valueSpan.setWidth("3em");
 
-		final Slider slider = new Slider("Session timeout (5-60 min.)");
-		slider.setWidth("100%");
-		slider.setMin(MIN_SESSION_TIMEOUT);
-		slider.setMax(MAX_SESSION_TIMEOUT);
-
-		slider.setValue(initValue);
-		slider.addValueChangeListener(event -> {
-			valueLabel.setValue(String.valueOf(event.getValue()));
-			configuration.setSessionTimeout(event.getValue());
-		});
-
-		sessionTimeoutLayout.addComponent(slider);
-		sessionTimeoutLayout.setExpandRatio(slider, 1);
-		sessionTimeoutLayout.addComponent(valueLabel);
-		sessionTimeoutLayout.setComponentAlignment(valueLabel, Alignment.BOTTOM_LEFT);
-
-		settingsFieldsLayout.addComponent(sessionTimeoutLayout);
+		// TODO
+		// Span sliderCaption = new Span("Session timeout (5-60 min.)");
+		// final PaperRangeSlider slider = new PaperRangeSlider();
+		// slider.setWidth("100%");
+		// slider.setMin(MIN_SESSION_TIMEOUT);
+		// slider.setMax(MAX_SESSION_TIMEOUT);
+		//
+		// slider.setValueMax(initValue);
+		// slider.addMaxValueChangeListener(event -> {
+		// valueSpan.setText(String.valueOf(event.getValueMax()));
+		// configuration.setSessionTimeout(event.getValueMax());
+		// });
+		//
+		// sessionTimeoutLayout.add(sliderCaption);
+		// sessionTimeoutLayout.add(slider);
+		// sessionTimeoutLayout.expand(slider);
+		// sessionTimeoutLayout.add(valueSpan);
+		// sessionTimeoutLayout.setVerticalComponentAlignment(Alignment.START,
+		// valueSpan);
+		//
+		// settingsFieldsLayout.add(sessionTimeoutLayout);
 
 		/**
 		 * Povolení registrací
 		 */
-		final CheckBox allowRegistrationsBox = new CheckBox("Povolit registrace");
+		final Checkbox allowRegistrationsBox = new Checkbox("Povolit registrace");
 		allowRegistrationsBox.setValue(configuration.isRegistrations());
 		allowRegistrationsBox
 				.addValueChangeListener(event -> configuration.setRegistrations(allowRegistrationsBox.getValue()));
 
-		settingsFieldsLayout.addComponent(allowRegistrationsBox);
+		settingsFieldsLayout.add(allowRegistrationsBox);
 
 		/**
 		 * Save tlačítko
 		 */
 		Button saveButton = new Button("Uložit", event -> storeConfiguration(configuration));
-		settingsFieldsLayout.addComponent(saveButton);
+		settingsFieldsLayout.add(saveButton);
 
 		return layout;
 	}

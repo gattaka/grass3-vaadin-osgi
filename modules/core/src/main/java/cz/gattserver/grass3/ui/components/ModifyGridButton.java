@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.ui.components;
 
-import com.vaadin.ui.Grid;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Image;
 
 import cz.gattserver.web.common.ui.ImageIcon;
 
@@ -14,7 +15,7 @@ public class ModifyGridButton<T> extends GridButton<T> {
 
 	public ModifyGridButton(String caption, ClickListener<T> clickListener, Grid<T> grid) {
 		super(caption, items -> clickListener.buttonClick(items.iterator().next()), grid);
-		setIcon(ImageIcon.PENCIL_16_ICON.createResource());
+		setIcon(new Image(ImageIcon.PENCIL_16_ICON.createResource(), "Upravit"));
 		setEnableResolver(items -> items.size() == 1);
 	}
 

@@ -60,9 +60,9 @@ import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.GridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
-import cz.gattserver.web.common.ui.BoldLabel;
+import cz.gattserver.web.common.ui.BoldSpan;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
 public class LanguagePage extends OneColumnPage {
 
@@ -114,7 +114,7 @@ public class LanguagePage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createContent() {
+	protected Component createColumnContent() {
 
 		Page.getCurrent().getStyles()
 				.add("input.v-textfield.v-disabled.v-widget.crossword-cell.v-textfield-crossword-cell.v-has-width, "
@@ -410,24 +410,24 @@ public class LanguagePage extends OneColumnPage {
 		gridLayout.setColumnExpandRatio(1, 1);
 		testLayout.addComponent(gridLayout);
 
-		gridLayout.addComponent(new BoldLabel("Položka"));
-		gridLayout.addComponent(new BoldLabel(PREKLAD_LABEL));
+		gridLayout.addComponent(new BoldSpan("Položka"));
+		gridLayout.addComponent(new BoldSpan(PREKLAD_LABEL));
 
 		int line = 1;
 
-		gridLayout.addComponent(new BoldLabel("Nové"), 0, line, 1, line);
+		gridLayout.addComponent(new BoldSpan("Nové"), 0, line, 1, line);
 		for (LanguageItemTO item : itemsToLearn)
 			createGridLine(item, gridLayout, answersMap);
 
 		line += itemsToLearn.size() + 1;
 
-		gridLayout.addComponent(new BoldLabel("Ke zlepšení"), 0, line, 1, line);
+		gridLayout.addComponent(new BoldSpan("Ke zlepšení"), 0, line, 1, line);
 		for (LanguageItemTO item : itemsToImprove)
 			createGridLine(item, gridLayout, answersMap);
 
 		line += itemsToImprove.size() + 1;
 
-		gridLayout.addComponent(new BoldLabel("Opakování"), 0, line, 1, line);
+		gridLayout.addComponent(new BoldSpan("Opakování"), 0, line, 1, line);
 		for (LanguageItemTO item : itemsToRefresh)
 			createGridLine(item, gridLayout, answersMap);
 
@@ -443,9 +443,9 @@ public class LanguagePage extends OneColumnPage {
 			resultLayout.setColumnExpandRatio(3, 1);
 			testLayout.addComponent(resultLayout);
 
-			resultLayout.addComponent(new BoldLabel("Položka"), 0, 0, 1, 0);
-			resultLayout.addComponent(new BoldLabel(PREKLAD_LABEL));
-			resultLayout.addComponent(new BoldLabel("Odpověď"));
+			resultLayout.addComponent(new BoldSpan("Položka"), 0, 0, 1, 0);
+			resultLayout.addComponent(new BoldSpan(PREKLAD_LABEL));
+			resultLayout.addComponent(new BoldSpan("Odpověď"));
 
 			answersMap.keySet().forEach(item -> {
 				TextField answerField = answersMap.get(item);
@@ -468,7 +468,7 @@ public class LanguagePage extends OneColumnPage {
 				label.setWidth(null);
 				resultLayout.addComponent(label);
 
-				Label resultCorrect = new BoldLabel(item.getContent());
+				Label resultCorrect = new BoldSpan(item.getContent());
 				resultLayout.addComponent(resultCorrect);
 
 				TextField resultAnswerField = new TextField(null, answer);
@@ -683,7 +683,7 @@ public class LanguagePage extends OneColumnPage {
 	}
 
 	private void changeLangOfItems(Set<LanguageItemTO> items, Grid<LanguageItemTO> grid) {
-		Window w = new WebWindow("Změna jazyka");
+		Window w = new WebDialog("Změna jazyka");
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);

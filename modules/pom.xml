@@ -13,18 +13,7 @@
 
 	<modules>
 		<module>core</module>
-		<module>contents</module>
-		<module>fm</module>
-		<module>hw</module>
-		<module>medic</module>
-		<module>monitor</module>
-		<module>search</module>
-		<module>recipes</module>
-		<module>language</module>
-		<module>songs</module>
-		<module>drinks</module>
-		<module>campgames</module>
-		<module>books</module>
+		
 	</modules>
 
 </project>

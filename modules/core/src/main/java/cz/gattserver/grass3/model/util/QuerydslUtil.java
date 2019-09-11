@@ -10,8 +10,8 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
-import com.vaadin.data.provider.QuerySortOrder;
-import com.vaadin.shared.data.sort.SortDirection;
+import com.vaadin.flow.data.provider.QuerySortOrder;
+import com.vaadin.flow.data.provider.SortDirection;
 
 public final class QuerydslUtil {
 
@@ -64,9 +64,9 @@ public final class QuerydslUtil {
 		}
 
 		if (dir != null && prop != null)
-			return new PageRequest(page, pagesize, dir, prop);
+			return PageRequest.of(page, pagesize, dir, prop);
 		else
-			return new PageRequest(page, pagesize);
+			return PageRequest.of(page, pagesize);
 	}
 
 	/**

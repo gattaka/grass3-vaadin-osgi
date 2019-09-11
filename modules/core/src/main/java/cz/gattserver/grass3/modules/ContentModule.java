@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.modules;
 
-import com.vaadin.server.Resource;
+import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 
@@ -34,7 +34,7 @@ public interface ContentModule {
 	 * 
 	 * @return cesta k ikoně obsahu
 	 */
-	Resource getContentIcon();
+	StreamResource getContentIcon();
 
 	/**
 	 * Vrátí identifikátor služby obsahu

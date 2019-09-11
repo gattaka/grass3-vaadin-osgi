@@ -2,23 +2,6 @@ package cz.gattserver.grass3.campgames.ui.windows;
 
 import java.io.InputStream;
 
-import com.vaadin.server.Page;
-import com.vaadin.server.Resource;
-import com.vaadin.server.StreamResource;
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Embedded;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TabSheet.Tab;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 
 import cz.gattserver.grass3.campgames.CampgamesConfiguration;
 import cz.gattserver.grass3.campgames.interfaces.CampgameFileTO;
@@ -31,12 +14,11 @@ import cz.gattserver.grass3.ui.components.DeleteButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.MultiUpload;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public class CampgameDetailWindow extends WebWindow {
+public class CampgameDetailWindow extends WebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -62,7 +44,7 @@ public class CampgameDetailWindow extends WebWindow {
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(false);
-		layout.setMargin(new MarginInfo(false, true, true, true));
+		layout.setPadding(new MarginInfo(false, true, true, true));
 		layout.setSizeFull();
 
 		Label name = new Label("<h3>" + campgameTO.getName() + "</h3>", ContentMode.HTML);
@@ -87,7 +69,7 @@ public class CampgameDetailWindow extends WebWindow {
 	private VerticalLayout createWrapperLayout() {
 		VerticalLayout wrapperLayout = new VerticalLayout();
 		wrapperLayout.setSpacing(true);
-		wrapperLayout.setMargin(new MarginInfo(true, false, false, false));
+		wrapperLayout.setPadding(new MarginInfo(true, false, false, false));
 		wrapperLayout.setSizeFull();
 		return wrapperLayout;
 	}
@@ -97,7 +79,7 @@ public class CampgameDetailWindow extends WebWindow {
 
 		VerticalLayout itemLayout = new VerticalLayout();
 		itemLayout.setSpacing(true);
-		itemLayout.setMargin(false);
+		itemLayout.setPadding(false);
 		itemLayout.setSizeFull();
 		wrapperLayout.addComponent(itemLayout);
 		wrapperLayout.setExpandRatio(itemLayout, 1);
@@ -131,7 +113,7 @@ public class CampgameDetailWindow extends WebWindow {
 		Label descLabel = new Label(campgameTO.getDescription().replaceAll("\n", "<br/>"), ContentMode.HTML);
 		descLabel.setSizeFull();
 		VerticalLayout layout = new VerticalLayout(descLabel);
-		layout.setMargin(true);
+		layout.setPadding(true);
 
 		Panel panel = new Panel(layout);
 		panel.setWidth("100%");
@@ -166,14 +148,14 @@ public class CampgameDetailWindow extends WebWindow {
 		 * Smazání hry
 		 */
 		final Button deleteBtn = new DeleteButton(e -> UI.getCurrent()
-				.addWindow(new ConfirmWindow("Opravdu smazat '" + campgameTO.getName() + "' ?", ev -> {
+				.addWindow(new ConfirmDialog("Opravdu smazat '" + campgameTO.getName() + "' ?", ev -> {
 					try {
 						getCampgamesService().deleteCampgame(campgameId);
 						if (changeListener != null)
 							changeListener.onChange();
 						CampgameDetailWindow.this.close();
 					} catch (Exception ex) {
-						UI.getCurrent().addWindow(new ErrorWindow("Nezdařilo se smazat vybranou položku"));
+						UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se smazat vybranou položku"));
 					}
 				})));
 		operationsLayout.addComponent(deleteBtn);
@@ -187,7 +169,7 @@ public class CampgameDetailWindow extends WebWindow {
 		GridLayout listLayout = new GridLayout();
 		listLayout.setColumns(3);
 		listLayout.setSpacing(true);
-		listLayout.setMargin(true);
+		listLayout.setPadding(true);
 
 		Panel panel = new Panel(listLayout);
 		panel.setSizeFull();
@@ -226,7 +208,7 @@ public class CampgameDetailWindow extends WebWindow {
 			listLayout.addComponent(imageLayout);
 			listLayout.setComponentAlignment(imageLayout, Alignment.MIDDLE_CENTER);
 			imageLayout.setSpacing(true);
-			imageLayout.setMargin(false);
+			imageLayout.setPadding(false);
 
 			Resource resource = new StreamResource(
 					() -> getCampgamesService().getCampgameImagesFileInputStream(campgameId, file.getName()),
@@ -244,7 +226,7 @@ public class CampgameDetailWindow extends WebWindow {
 							file.getName()));
 
 			Button imageDeleteBtn = new DeleteButton(
-					e -> UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat foto?", ev -> {
+					e -> UI.getCurrent().addWindow(new ConfirmDialog("Opravdu smazat foto?", ev -> {
 						getCampgamesService().deleteCampgameImagesFile(campgameId, file.getName());
 
 						// refresh listu

@@ -39,7 +39,7 @@ public class FMSettingsPage extends AbstractSettingsPage {
 
 		VerticalLayout layout = new VerticalLayout();
 
-		layout.setMargin(true);
+		layout.setPadding(true);
 		layout.setSpacing(true);
 
 		VerticalLayout settingsLayout = new VerticalLayout();
@@ -51,7 +51,7 @@ public class FMSettingsPage extends AbstractSettingsPage {
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
 		settingsFieldsLayout.setSpacing(true);
-		settingsFieldsLayout.setMargin(false);
+		settingsFieldsLayout.setPadding(false);
 		settingsLayout.addComponent(settingsFieldsLayout);
 		settingsFieldsLayout.setSizeFull();
 

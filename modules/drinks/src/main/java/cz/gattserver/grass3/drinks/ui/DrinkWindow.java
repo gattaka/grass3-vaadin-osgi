@@ -29,10 +29,10 @@ import cz.gattserver.grass3.ui.components.ModifyButton;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.MultiUpload;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class DrinkWindow<T extends DrinkTO> extends WebWindow {
+public abstract class DrinkWindow<T extends DrinkTO> extends WebDialog {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 
@@ -129,7 +129,7 @@ public abstract class DrinkWindow<T extends DrinkTO> extends WebWindow {
 					"Chybná vstupní data\n\n   " + ve.getValidationErrors().iterator().next().getErrorMessage(),
 					Notification.Type.ERROR_MESSAGE);
 		} catch (Exception ve) {
-			UI.getCurrent().addWindow(new ErrorWindow("Uložení se nezdařilo"));
+			UI.getCurrent().addWindow(new ErrorDialog("Uložení se nezdařilo"));
 		}
 	}
 

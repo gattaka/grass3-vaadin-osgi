@@ -25,7 +25,7 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
-import cz.gattserver.web.common.ui.BoldLabel;
+import cz.gattserver.web.common.ui.BoldSpan;
 import cz.gattserver.web.common.ui.H2Label;
 
 public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
@@ -141,13 +141,13 @@ public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
 		GridLayout infoLayout = new GridLayout(2, 7);
 		dataLayout.addComponent(infoLayout);
 
-		infoLayout.addComponent(new BoldLabel("Stáří (roky)"));
+		infoLayout.addComponent(new BoldSpan("Stáří (roky)"));
 		infoLayout.addComponent(new Label(String.valueOf(choosenDrink.getYears())));
-		BoldLabel b = new BoldLabel("Alkohol (%)");
+		BoldSpan b = new BoldSpan("Alkohol (%)");
 		infoLayout.addComponent(b);
 		b.setWidth("120px");
 		infoLayout.addComponent(new Label(String.valueOf(choosenDrink.getAlcohol())));
-		infoLayout.addComponent(new BoldLabel("Typ whiskey"));
+		infoLayout.addComponent(new BoldSpan("Typ whiskey"));
 		infoLayout.addComponent(new Label(choosenDrink.getWhiskeyType().getCaption()));
 
 		Label descriptionLabel = new Label(choosenDrink.getDescription().replaceAll("\n", "<br/>"), ContentMode.HTML);

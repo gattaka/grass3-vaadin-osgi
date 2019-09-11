@@ -4,8 +4,8 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.ui.CustomLayout;
-import com.vaadin.ui.Link;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
 
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.server.GrassRequest;
@@ -13,6 +13,8 @@ import cz.gattserver.grass3.services.QuotesService;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 
 public abstract class BasePage extends MenuPage {
+
+	private static final long serialVersionUID = -2685924539988484100L;
 
 	@Autowired
 	protected QuotesService quotesFacade;
@@ -25,15 +27,10 @@ public abstract class BasePage extends MenuPage {
 	}
 
 	@Override
-	protected void createQuotes(CustomLayout layout) {
-
-		// hlášky
-		Link quotes = new Link();
-		quotes.setResource(getPageResource(quotesPageFactory));
-		quotes.setStyleName("quote");
-		quotes.setCaption("\"" + chooseQuote() + "\"");
-
-		layout.addComponent(quotes, "quote");
+	protected void createQuotes(Div layout) {
+		Anchor quotes = new Anchor(getPageURL(quotesPageFactory), chooseQuote());
+		quotes.setClassName("quote");
+		layout.add(quotes);
 	}
 
 	private String chooseQuote() {

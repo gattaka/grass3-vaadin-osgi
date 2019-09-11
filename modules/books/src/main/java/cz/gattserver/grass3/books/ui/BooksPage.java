@@ -42,7 +42,7 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.BoldLabel;
+import cz.gattserver.web.common.ui.BoldSpan;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcon;
 
@@ -68,7 +68,7 @@ public class BooksPage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createContent() {
+	protected Component createColumnContent() {
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);
 		layout.setMargin(true);
@@ -225,11 +225,11 @@ public class BooksPage extends OneColumnPage {
 		GridLayout infoLayout = new GridLayout(2, 7);
 		dataLayout.addComponent(infoLayout);
 
-		BoldLabel b = new BoldLabel("Autor");
+		BoldSpan b = new BoldSpan("Autor");
 		infoLayout.addComponent(b);
 		b.setWidth("120px");
 		infoLayout.addComponent(new Label(choosenBook.getAuthor()));
-		infoLayout.addComponent(new BoldLabel("Vydáno"));
+		infoLayout.addComponent(new BoldSpan("Vydáno"));
 		infoLayout.addComponent(new Label(choosenBook.getYear()));
 
 		Label descriptionLabel = new Label(choosenBook.getDescription().replaceAll("\n", "<br/>"), ContentMode.HTML);

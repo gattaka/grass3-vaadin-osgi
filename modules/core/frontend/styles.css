@@ -1,0 +1,110 @@
+html, body {
+	height: 100%;
+	background-color: #d8cda6;
+}
+
+#holder {
+	background-position: bottom right;
+	margin-bottom: 100px;
+}
+
+#top-holder {
+	position: relative;
+	background: url(img/headPattern.png);
+	background-repeat: repeat-x;
+}
+
+#top {
+	max-width: 990px;
+	height: 94px;
+	color: black;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 18px;
+	margin-top: 0;
+	padding: 0 15px 0 15px;
+}
+
+#homelink {
+	position: relative;
+	top: 32px;
+}
+
+#top>h1 {
+	display: none;
+}
+
+#quotes {
+	font-family: Tahoma, sans-serif;
+	font-size: 9pt;
+	color: white;
+	position: relative;
+	padding: 0px;
+	left: 100px;
+	width: 740px;
+	height: 16px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	top: 10px;
+}
+
+#quote {
+	color: white;
+	text-decoration: none;
+}
+
+#menu-wrapper {
+	top: 32px;
+	position: relative;
+	background-color: #333436;
+	border-top: 1px solid #505154;
+	border-bottom: 1px solid #424246;
+	border-radius: 4px;
+	box-shadow: 0 0px 10px 0px black;
+}
+
+#content {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 990px;
+}
+
+#center {
+	width: 990px;
+}
+
+#centercontent, #leftcontent, #rightcontent, #bottom {
+	border: 1px solid #b3b3b3;
+}
+
+#centercontent, #leftcontent, #rightcontent {
+	background-color: #f4f1e6;
+	border-radius: 4px;
+}
+
+#bottom-holder {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+
+#bottom {
+	clear: both;
+	background-color: #c2dfef;
+	padding: 5px;
+	font-size: 12px;
+	font-family: Verdana, "Verdana CE", Arial, "Arial CE",
+		"Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+	text-align: center;
+	color: #555555;
+}
+
+#bottomshadow, #bottom {
+	overflow: hidden;
+	width: auto;
+}
+
+#bottomshadow {
+	height: 11px;
+}

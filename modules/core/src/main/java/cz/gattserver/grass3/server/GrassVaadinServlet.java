@@ -6,11 +6,11 @@ import java.util.WeakHashMap;
 
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.server.DeploymentConfiguration;
-import com.vaadin.server.ServiceException;
-import com.vaadin.server.VaadinServlet;
-import com.vaadin.server.VaadinServletService;
-import com.vaadin.server.VaadinSession;
+import com.vaadin.flow.function.DeploymentConfiguration;
+import com.vaadin.flow.server.ServiceException;
+import com.vaadin.flow.server.VaadinServlet;
+import com.vaadin.flow.server.VaadinServletService;
+import com.vaadin.flow.server.VaadinSession;
 
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
@@ -39,7 +39,5 @@ public class GrassVaadinServlet extends VaadinServlet {
 		});
 		return service;
 	}
-	
-	
 
 }

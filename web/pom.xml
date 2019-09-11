@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>web</artifactId>
 	<name>GRASS3 WAR wrapper</name>
@@ -11,9 +12,8 @@
 	</parent>
 
 	<properties>
-		<widgetset.target>${basedir}/target/VAADIN/widgetsets</widgetset.target>
-		<vaadin.plugin.version>8.5.1</vaadin.plugin.version>
-		<vaadin.widgetset.mode>local</vaadin.widgetset.mode>
+		<failOnMissingWebXml>false</failOnMissingWebXml>
+		<vaadin.version>14.0.0</vaadin.version>
 	</properties>
 
 	<dependencies>
@@ -28,256 +28,132 @@
 		<!-- ==== OPTIONAL DEPS === -->
 		<!-- ====================== -->
 
-		<!-- články -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>articles</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>articles</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- základní pluginy pro články -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>articles-basic</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>articles-basic</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- code pluginy pro články -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>articles-code</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>articles-code</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- favicon link pluginy pro články -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>articles-favlink</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
-		
-		<!-- JS libs pluginy pro články -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>articles-js-libs</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>articles-favlink</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- latex pluginy pro články -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>articles-latex</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>articles-js-libs</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- šablonovací pluginy pro články -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>articles-templates</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>articles-latex</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- file manager -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>fm</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>articles-templates</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- evidence hw -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>hw</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>fm</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- medic -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>medic</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>hw</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- system monitor -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>monitor</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>medic</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- recipes -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>recipes</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>monitor</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- language -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>language</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>recipes</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- fotogalerie -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>pg</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>language</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- zpěvník -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>songs</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>pg</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- nápoje -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>drinks</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>songs</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- Táborové hry -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>campgames</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>drinks</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
-		<!-- Knihy -->
-		<dependency>
-			<groupId>cz.gattserver.grass3</groupId>
-			<artifactId>books</artifactId>
-			<version>3.0.13-SNAPSHOT</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>campgames</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>cz.gattserver.grass3</groupId> -->
+		<!-- <artifactId>books</artifactId> -->
+		<!-- <version>3.0.13-SNAPSHOT</version> -->
+		<!-- </dependency> -->
 
 	</dependencies>
 
 	<build>
 		<plugins>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<webResources>
-						<resource>
-							<directory>src/main/webapp</directory>
-						</resource>
-						<!-- tohle tu musí být, jinak se to nedostane na Tomcat -->
-						<resource>
-							<directory>${basedir}/target/VAADIN</directory>
-							<targetPath>VAADIN</targetPath>
-						</resource>
-					</webResources>
-					<warSourceDirectory>src/main/webapp</warSourceDirectory>
-					<warName>${project.artifactId}-${project.version}</warName>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-				<!-- Clean up also any pre-compiled themes -->
-				<configuration>
-					<excludeDefaultDirectories>true</excludeDefaultDirectories>
-					<filesets>
-						<fileset>
-							<directory>${basedir}/target</directory>
-							<excludes>
-								<exclude>VAADIN/**</exclude>
-							</excludes>
-							<includes>
-								<include>**</include>
-							</includes>
-						</fileset>
-						<fileset>
-							<directory>src/main/webapp/VAADIN/themes</directory>
-							<includes>
-								<include>**/styles.css</include>
-								<include>**/styles.scss.cache</include>
-							</includes>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
-
 			<plugin>
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-maven-plugin</artifactId>
-				<version>${vaadin.plugin.version}</version>
+				<version>${vaadin.version}</version>
 				<executions>
 					<execution>
 						<goals>
-							<goal>update-theme</goal>
-							<!-- disabled by default to use on-the-fly theme compilation -->
-							<goal>compile-theme</goal>
+							<goal>prepare-frontend</goal>
+							<goal>build-frontend</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>gwt</id>
-			<build>
-				<plugins>
-
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.8</version>
-						<executions>
-							<execution>
-								<phase>initialize</phase>
-								<configuration>
-									<target>
-										<delete dir="${widgetset.target}" />
-									</target>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-
-					<plugin>
-						<groupId>com.vaadin</groupId>
-						<artifactId>vaadin-maven-plugin</artifactId>
-						<version>${vaadin.plugin.version}</version>
-						<configuration>
-							<!-- <extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs> -->
-							<webappDirectory>${widgetset.target}</webappDirectory>
-							<hostedWebapp>${widgetset.target}
-							</hostedWebapp>
-							<noServer>true</noServer>
-							<draftCompile>false</draftCompile>
-							<compileReport>false</compileReport>
-							<style>OBF</style>
-							<strict>true</strict>
-						</configuration>
-						<executions>
-							<execution>
-								<goals>
-									<goal>resources</goal>
-									<goal>update-widgetset</goal>
-									<goal>compile</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 </project>

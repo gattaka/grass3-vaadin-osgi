@@ -2,10 +2,11 @@ package cz.gattserver.grass3.ui.components;
 
 import java.util.List;
 
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.renderers.ComponentRenderer;
-import com.vaadin.ui.renderers.HtmlRenderer;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.IconRenderer;
 
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
@@ -29,12 +30,14 @@ public class NodesGrid extends Grid<NodeOverviewTO> {
 		String iconBind = "customIcon";
 		String nameBind = "customName";
 
-		addColumn(contentNode -> new Image("", ImageIcon.BRIEFCASE_16_ICON.createResource()), new ComponentRenderer())
-				.setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(iconBind);
+		addColumn(new IconRenderer<NodeOverviewTO>(c -> new Image(ImageIcon.BRIEFCASE_16_ICON.createResource(), "")))
+				.setHeader("").setKey(iconBind).setClassNameGenerator(item -> "icon-cell");
 
-		addColumn(node -> "<a href='"
-				+ page.getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()))
-				+ "'>" + node.getName() + "</a>", new HtmlRenderer()).setCaption("Kategorie").setId(nameBind);
+		addColumn(new ComponentRenderer<Anchor, NodeOverviewTO>(node -> {
+			String url = page.getPageURL(nodePageFactory,
+					URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()));
+			return new Anchor(url, node.getName());
+		})).setHeader("Kategorie").setId(nameBind);
 
 		setColumns(iconBind, nameBind);
 

@@ -1,11 +1,11 @@
 package cz.gattserver.grass3.ui.pages.settings;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.components.NodeTree;
-import cz.gattserver.web.common.ui.H2Label;
 
 public class NodesSettingsPage extends AbstractSettingsPage {
 
@@ -18,14 +18,14 @@ public class NodesSettingsPage extends AbstractSettingsPage {
 		NodeTree tree = new NodeTree(true);
 		VerticalLayout layout = new VerticalLayout();
 
-		layout.setMargin(true);
+		layout.setPadding(true);
 		layout.setSpacing(true);
 
 		VerticalLayout usersLayout = new VerticalLayout();
-		layout.addComponent(usersLayout);
+		layout.add(usersLayout);
 
-		usersLayout.addComponent(new H2Label("Správa kategorií"));
-		usersLayout.addComponent(tree);
+		usersLayout.add(new H2("Správa kategorií"));
+		usersLayout.add(tree);
 		return layout;
 	}
 

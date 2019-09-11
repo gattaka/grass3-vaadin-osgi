@@ -22,7 +22,7 @@ public class MedicamentsTab extends MedicPageTab<MedicamentDTO, ArrayList<Medica
 	}
 
 	@Override
-	protected Window createCreateWindow() {
+	protected Window createCreateDialog() {
 		return new MedicamentCreateWindow() {
 			private static final long serialVersionUID = -7566950396535469316L;
 
@@ -35,12 +35,12 @@ public class MedicamentsTab extends MedicPageTab<MedicamentDTO, ArrayList<Medica
 	}
 
 	@Override
-	protected Window createDetailWindow(Long id) {
+	protected Window createDetailDialog(Long id) {
 		return new MedicamentDetailWindow(id);
 	}
 
 	@Override
-	protected Window createModifyWindow(MedicamentDTO dto) {
+	protected Window createModifyDialog(MedicamentDTO dto) {
 		return new MedicamentCreateWindow(dto) {
 			private static final long serialVersionUID = -7566950396535469316L;
 

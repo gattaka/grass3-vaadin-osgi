@@ -22,10 +22,10 @@ import cz.gattserver.grass3.language.model.domain.ItemType;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.ui.components.CreateButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public class LanguageItemWindow extends WebWindow {
+public class LanguageItemWindow extends WebDialog {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 
@@ -145,13 +145,13 @@ public class LanguageItemWindow extends WebWindow {
 
 	private void checkAndThen(LanguageItemTO targetTO, Runnable r) {
 		if (targetTO.getContent().split(" ").length > 2 && ItemType.WORD.equals(targetTO.getType())) {
-			UI.getCurrent().addWindow(new ConfirmWindow(
+			UI.getCurrent().addWindow(new ConfirmDialog(
 					"Opravdu uložit slovní spojení jako '" + ItemType.WORD.getCaption() + "' ?", e -> {
 						r.run();
 					}));
 		} else if (targetTO.getContent().split(" ").length == 1 && ItemType.PHRASE.equals(targetTO.getType())) {
 			UI.getCurrent().addWindow(
-					new ConfirmWindow("Opravdu uložit jedno slovo '" + ItemType.PHRASE.getCaption() + "' ?", e -> {
+					new ConfirmDialog("Opravdu uložit jedno slovo '" + ItemType.PHRASE.getCaption() + "' ?", e -> {
 						r.run();
 					}));
 		} else {

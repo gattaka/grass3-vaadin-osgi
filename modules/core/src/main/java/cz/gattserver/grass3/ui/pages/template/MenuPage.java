@@ -7,15 +7,13 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
-import com.vaadin.server.ExternalResource;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Link;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.server.VaadinRequest;
 
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
@@ -29,6 +27,8 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.util.UIUtils;
 
 public abstract class MenuPage extends GrassPage {
+
+	private static final long serialVersionUID = 8095742933880807949L;
 
 	@Autowired
 	protected VersionInfoService versionInfoService;
@@ -63,44 +63,72 @@ public abstract class MenuPage extends GrassPage {
 	}
 
 	@Override
-	protected Layout createPayload() {
-		CustomLayout layout = new CustomLayout("grass");
-		layout.addStyleName("grasspage");
+	protected Div createPayload() {
+		Div payload = new Div();
+
+		Div holder = new Div();
+		holder.setId("holder");
+		payload.add(holder);
+
+		Div topHolder = new Div();
+		topHolder.setId("top-holder");
+		holder.add(topHolder);
+
+		Div top = new Div();
+		top.setId("top");
+		topHolder.add(top);
 
 		// homelink (přes logo)
-		Link homelink = new Link();
-		homelink.addStyleName("homelink");
-		homelink.setResource(getPageResource(homePageFactory));
-		homelink.setIcon(new ThemeResource("img/logo.png"));
-		layout.addComponent(homelink, "homelink");
+		String url = VaadinRequest.getCurrent().getContextPath();
+		Anchor homelink = new Anchor(url, new Image("img/logo.png", "Gattserver"));
+		homelink.setId("homelink");
+		top.add(homelink);
 
-		// hlášky
-		createQuotes(layout);
+		Div quotes = new Div();
+		quotes.setId("quotes");
+		top.add(quotes);
 
-		// menu
+		createQuotes(quotes);
+
+		Div menu = new Div();
+		menu.setId("menu-wrapper");
+		top.add(menu);
+
 		HorizontalLayout menuExpander = new HorizontalLayout();
 		menuExpander.setWidth("990px");
-		menuExpander.addStyleName("menu");
-		menuExpander.setMargin(new MarginInfo(false, true));
+		menuExpander.addClassName("menu");
+		menuExpander.setPadding(false);
 		menuExpander.setSpacing(true);
-		layout.addComponent(menuExpander, "menu");
+		menu.add(menuExpander);
 
 		createMenuItems(menuExpander);
 
-		// obsah
-		createContent(layout);
+		Div content = new Div();
+		content.setId("content");
+		holder.add(content);
 
-		// footer
-		layout.addComponent(
-				new Label("Powered by GRASS " + versionInfoService.getProjectVersion() + " © 2012-2019 Hynek Uhlíř"),
-				"about");
+		createContent(content);
 
-		return layout;
+		Div bottomHolder = new Div();
+		bottomHolder.setId("bottom-holder");
+		payload.add(bottomHolder);
+
+		Div bottom = new Div();
+		bottom.setId("bottom");
+		bottomHolder.add(bottom);
+
+		bottom.add(new Span("Powered by GRASS " + versionInfoService.getProjectVersion() + " © 2012-2019 Hynek Uhlíř"));
+
+		Div bottomShadow = new Div();
+		bottomShadow.setId("bottomshadow");
+		bottomHolder.add(bottomShadow);
+
+		return payload;
 	}
 
-	protected void createMenuComponent(HorizontalLayout menu, Component component) {
-		menu.addComponent(component);
-		component.addStyleName("menu-item");
+	protected void createMenuComponent(HorizontalLayout menu, Anchor component) {
+		menu.add(component);
+		component.addClassName("menu-item");
 	}
 
 	/**
@@ -116,20 +144,20 @@ public abstract class MenuPage extends GrassPage {
 		List<NodeOverviewTO> nodes = nodeFacade.getRootNodes();
 		for (NodeOverviewTO node : nodes) {
 			createMenuComponent(menu,
-					new Link(node.getName(), getPageResource(nodePageFactory, node.getId() + "-" + node.getName())));
+					new Anchor(getPageURL(nodePageFactory, node.getId() + "-" + node.getName()), node.getName()));
 		}
 
 		// externí sekce
 		for (SectionService section : serviceHolder.getSectionServices()) {
 			if (coreACL.canShowSection(section, UIUtils.getUser())) {
 				createMenuComponent(menu,
-						new Link(section.getSectionCaption(), getPageResource(section.getSectionPageFactory())));
+						new Anchor(getPageURL(section.getSectionPageFactory()), section.getSectionCaption()));
 			}
 		}
 
 		Label sep = new Label(" ");
-		menu.addComponent(sep);
-		menu.setExpandRatio(sep, 1);
+		menu.add(sep);
+		menu.expand(sep);
 
 		/**
 		 * User menu
@@ -137,21 +165,20 @@ public abstract class MenuPage extends GrassPage {
 
 		// Přihlášení
 		if (!coreACL.isLoggedIn(UIUtils.getUser()))
-			createMenuComponent(menu, new Link("Přihlášení", getPageResource(loginPageFactory)));
+			createMenuComponent(menu, new Anchor(getPageURL(loginPageFactory), "Přihlášení"));
 
 		// Registrace
 		if (coreACL.canRegistrate(UIUtils.getUser()))
-			createMenuComponent(menu, new Link("Registrace", getPageResource(registrationPageFactory)));
+			createMenuComponent(menu, new Anchor(getPageURL(registrationPageFactory), "Registrace"));
 
 		// Přehled o uživateli
 		final UserInfoTO userInfoDTO = UIUtils.getUser();
 		if (coreACL.canShowUserDetails(userInfoDTO, UIUtils.getUser())) {
 			// nastavení
-			createMenuComponent(menu, new Link("Nastavení", getPageResource(settingsPageFactory)));
+			createMenuComponent(menu, new Anchor(getPageURL(settingsPageFactory), "Nastavení"));
 
 			// odhlásit
-			createMenuComponent(menu,
-					new Link("Odhlásit (" + userInfoDTO.getName() + ")", new ExternalResource(getPageURL("logout"))));
+			createMenuComponent(menu, new Anchor(getPageURL("logout"), "Odhlásit (" + userInfoDTO.getName() + ")"));
 		}
 	}
 
@@ -161,7 +188,7 @@ public abstract class MenuPage extends GrassPage {
 	 * @param layout
 	 *            layout, do kterého bude vytvořen obsah
 	 */
-	protected abstract void createQuotes(CustomLayout layout);
+	protected abstract void createQuotes(Div layout);
 
 	/**
 	 * Získá obsah
@@ -169,6 +196,6 @@ public abstract class MenuPage extends GrassPage {
 	 * @param layout
 	 *            layout, do kterého bude vytvořen obsah
 	 */
-	protected abstract void createContent(CustomLayout layout);
+	protected abstract void createContent(Div layout);
 
 }

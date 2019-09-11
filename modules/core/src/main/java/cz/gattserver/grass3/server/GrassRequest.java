@@ -2,7 +2,7 @@ package cz.gattserver.grass3.server;
 
 import java.io.Serializable;
 
-import com.vaadin.server.VaadinRequest;
+import com.vaadin.flow.server.VaadinRequest;
 
 import cz.gattserver.web.common.server.URLPathAnalyzer;
 

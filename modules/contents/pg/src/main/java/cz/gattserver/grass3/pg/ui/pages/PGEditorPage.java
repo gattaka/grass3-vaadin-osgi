@@ -53,13 +53,13 @@ import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.grass3.ui.windows.ProgressWindow;
+import cz.gattserver.grass3.ui.windows.ProgressDialog;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.server.URLPathAnalyzer;
 import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.MultiUpload;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import elemental.json.JsonArray;
 import net.engio.mbassy.listener.Handler;
 
@@ -80,7 +80,7 @@ public class PGEditorPage extends OneColumnPage {
 	private EventBus eventBus;
 
 	private UI ui = UI.getCurrent();
-	private ProgressWindow progressIndicatorWindow;
+	private ProgressDialog progressIndicatorWindow;
 
 	private NodeOverviewTO node;
 	private PhotogalleryTO photogallery;
@@ -170,14 +170,14 @@ public class PGEditorPage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createContent() {
+	protected Component createColumnContent() {
 
 		VerticalLayout marginLayout = new VerticalLayout();
-		marginLayout.setMargin(true);
+		marginLayout.setPadding(true);
 		marginLayout.setSpacing(false);
 
 		VerticalLayout editorLayout = new VerticalLayout();
-		editorLayout.setMargin(true);
+		editorLayout.setPadding(true);
 		marginLayout.addComponent(editorLayout);
 
 		editorLayout.addComponent(new H2Label("Název galerie"));
@@ -185,7 +185,7 @@ public class PGEditorPage extends OneColumnPage {
 		photogalleryNameField.setWidth("100%");
 
 		VerticalLayout articleKeywordsLayout = new VerticalLayout();
-		articleKeywordsLayout.setMargin(false);
+		articleKeywordsLayout.setPadding(false);
 		editorLayout.addComponent(articleKeywordsLayout);
 
 		// label
@@ -210,12 +210,12 @@ public class PGEditorPage extends OneColumnPage {
 
 		VerticalLayout contentLayout = new VerticalLayout();
 		contentLayout.setSpacing(true);
-		contentLayout.setMargin(false);
+		contentLayout.setPadding(false);
 		editorLayout.addComponent(contentLayout);
 		contentLayout.addComponent(new H2Label("Položky"));
 
 		HorizontalLayout gridLayout = new HorizontalLayout();
-		gridLayout.setMargin(false);
+		gridLayout.setPadding(false);
 		gridLayout.setSpacing(true);
 		gridLayout.setWidth("100%");
 		contentLayout.addComponent(gridLayout);
@@ -301,7 +301,7 @@ public class PGEditorPage extends OneColumnPage {
 
 		HorizontalLayout itemsButtonLayout = new HorizontalLayout();
 		itemsButtonLayout.setSpacing(true);
-		itemsButtonLayout.setMargin(false);
+		itemsButtonLayout.setPadding(false);
 		contentLayout.addComponent(itemsButtonLayout);
 
 		itemsButtonLayout.addComponent(createUploadButton(grid, items));
@@ -309,7 +309,7 @@ public class PGEditorPage extends OneColumnPage {
 
 		VerticalLayout contentOptionsLayout = new VerticalLayout();
 		contentOptionsLayout.setSpacing(true);
-		contentOptionsLayout.setMargin(false);
+		contentOptionsLayout.setPadding(false);
 		editorLayout.addComponent(contentOptionsLayout);
 		contentOptionsLayout.addComponent(new H2Label("Nastavení"));
 
@@ -325,7 +325,7 @@ public class PGEditorPage extends OneColumnPage {
 
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setSpacing(true);
-		buttonsLayout.setMargin(false);
+		buttonsLayout.setPadding(false);
 		editorLayout.addComponent(buttonsLayout);
 
 		populateButtonsLayout(buttonsLayout);
@@ -377,7 +377,7 @@ public class PGEditorPage extends OneColumnPage {
 		// Zrušit
 		Button cancelButton = new Button("Zrušit");
 		cancelButton.setIcon(ImageIcon.DELETE_16_ICON.createResource());
-		cancelButton.addClickListener(event -> UI.getCurrent().addWindow(new ConfirmWindow(
+		cancelButton.addClickListener(event -> UI.getCurrent().addWindow(new ConfirmDialog(
 				"Opravdu si přejete zavřít editor galerie ? Veškeré neuložené změny budou ztraceny.", e -> {
 					cleanAfterCancelEdit();
 					if (editMode)
@@ -418,7 +418,7 @@ public class PGEditorPage extends OneColumnPage {
 				tokens, publicatedCheckBox.getValue(), reprocessSlideshowAndMiniCheckBox.getValue());
 
 		eventBus.subscribe(PGEditorPage.this);
-		progressIndicatorWindow = new ProgressWindow();
+		progressIndicatorWindow = new ProgressDialog();
 
 		if (editMode) {
 			pgService.modifyPhotogallery(UUID.randomUUID(), photogallery.getId(), payloadTO,

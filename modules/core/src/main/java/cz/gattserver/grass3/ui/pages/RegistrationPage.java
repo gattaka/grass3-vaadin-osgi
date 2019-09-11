@@ -2,23 +2,22 @@ package cz.gattserver.grass3.ui.pages;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.ValidationResult;
-import com.vaadin.data.ValueContext;
-import com.vaadin.data.validator.EmailValidator;
-import com.vaadin.data.validator.StringLengthValidator;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.PasswordField;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationResult;
+import com.vaadin.flow.data.validator.EmailValidator;
+import com.vaadin.flow.data.validator.StringLengthValidator;
 
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.UserService;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.web.common.ui.H2Label;
 
 public class RegistrationPage extends OneColumnPage {
 
@@ -72,20 +71,18 @@ public class RegistrationPage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createContent() {
+	protected Component createColumnContent() {
 		VerticalLayout layout = new VerticalLayout();
 
-		layout.setMargin(true);
+		layout.setPadding(true);
 		layout.setSpacing(true);
 
 		VerticalLayout formLayout = new VerticalLayout();
-		layout.addComponent(formLayout);
-		formLayout.addComponent(new H2Label("Registrace nového uživatele"));
+		layout.add(formLayout);
+		formLayout.add(new H2("Registrace nového uživatele"));
 
-		GridLayout formFieldsLayout = new GridLayout(2, 4);
-		formLayout.addComponent(formFieldsLayout);
-		formFieldsLayout.setSpacing(true);
-		formFieldsLayout.setMargin(false);
+		FormLayout formFieldsLayout = new FormLayout();
+		formLayout.add(formFieldsLayout);
 
 		Binder<RegistrationTO> binder = new Binder<>();
 		binder.setBean(new RegistrationTO());
@@ -96,35 +93,34 @@ public class RegistrationPage extends OneColumnPage {
 				.withValidator(new StringLengthValidator("Délka jména musí být mezi 2 až 20 znaky", MIN_USERNAME_LENGTH,
 						MAX_USERNAME_LENGTH))
 				.bind(RegistrationTO::getUsername, RegistrationTO::setUsername);
-		formFieldsLayout.addComponent(usernameField, 0, 0);
+		formFieldsLayout.add(usernameField);
 
 		// Email
 		final TextField emailField = new TextField("Email");
 		binder.forField(emailField).asRequired("Email je povinný")
 				.withValidator(new EmailValidator("Email má špatný tvar"))
 				.bind(RegistrationTO::getEmail, RegistrationTO::setEmail);
-		formFieldsLayout.addComponent(emailField, 0, 1);
+		formFieldsLayout.add(emailField);
 
 		// Password
 		final PasswordField passwordField = new PasswordField("Heslo");
 		binder.forField(passwordField).asRequired("Heslo je povinné").bind(RegistrationTO::getPassword,
 				RegistrationTO::setPassword);
-		formFieldsLayout.addComponent(passwordField, 0, 2);
+		formFieldsLayout.add(passwordField);
 
 		// Password 2
 		final PasswordField passwordCopyField = new PasswordField("Heslo znovu");
-		binder.forField(passwordCopyField).asRequired("Heslo je povinné")
-				.withValidator((String value, ValueContext context) -> {
-					if (binder.getBean().getPassword() != null && binder.getBean().getPassword().equals(value))
-						return ValidationResult.ok();
-					return ValidationResult.error("Hesla se musí shodovat");
-				}).bind(RegistrationTO::getPassword2, RegistrationTO::setPassword2);
-		formFieldsLayout.addComponent(passwordCopyField, 0, 3);
+		binder.forField(passwordCopyField).asRequired("Heslo je povinné").withValidator((value, context) -> {
+			if (binder.getBean().getPassword() != null && binder.getBean().getPassword().equals(value))
+				return ValidationResult.ok();
+			return ValidationResult.error("Hesla se musí shodovat");
+		}).bind(RegistrationTO::getPassword2, RegistrationTO::setPassword2);
+		formFieldsLayout.add(passwordCopyField);
 
 		VerticalLayout buttonLayout = new VerticalLayout();
-		formLayout.addComponent(buttonLayout);
+		formLayout.add(buttonLayout);
 		buttonLayout.setSpacing(true);
-		buttonLayout.setMargin(false);
+		buttonLayout.setPadding(false);
 
 		// Login button
 		Button submitButton = new Button("Registrovat", event -> {
@@ -136,7 +132,7 @@ public class RegistrationPage extends OneColumnPage {
 			}
 		});
 		submitButton.setEnabled(false);
-		buttonLayout.addComponent(submitButton);
+		buttonLayout.add(submitButton);
 
 		binder.addStatusChangeListener(e -> submitButton.setEnabled(e.getBinder().isValid()));
 

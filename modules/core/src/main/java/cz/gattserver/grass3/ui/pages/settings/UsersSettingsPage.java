@@ -6,16 +6,15 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.renderers.LocalDateTimeRenderer;
-import com.vaadin.ui.renderers.TextRenderer;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.modules.register.ModuleRegister;
@@ -23,8 +22,7 @@ import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.UserService;
 import cz.gattserver.grass3.ui.components.GridButton;
-import cz.gattserver.web.common.ui.H2Label;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
 public class UsersSettingsPage extends AbstractSettingsPage {
 
@@ -48,55 +46,55 @@ public class UsersSettingsPage extends AbstractSettingsPage {
 
 		VerticalLayout layout = new VerticalLayout();
 
-		layout.setMargin(true);
+		layout.setPadding(true);
 		layout.setSpacing(true);
 
 		VerticalLayout usersLayout = new VerticalLayout();
-		layout.addComponent(usersLayout);
+		layout.add(usersLayout);
 
-		usersLayout.addComponent(new H2Label("Správa uživatelů"));
-		usersLayout.addComponent(grid);
+		usersLayout.add(new H2("Správa uživatelů"));
+		usersLayout.add(grid);
 
 		grid.setSizeFull();
 		grid.setSelectionMode(SelectionMode.SINGLE);
 
-		grid.addColumn(UserInfoTO::getName, new TextRenderer()).setCaption("Jméno");
-		grid.addColumn(u -> u.getRoles().stream().map(Role::getRoleName).collect(Collectors.joining(", ")),
-				new TextRenderer()).setCaption("Role");
-		grid.addColumn(UserInfoTO::getRegistrationDate, new LocalDateTimeRenderer("dd.MM.yyyy"))
-				.setCaption("Registrován");
-		grid.addColumn(UserInfoTO::getLastLoginDate, new LocalDateTimeRenderer("dd.MM.yyyy"))
-				.setCaption("Naposledy přihlášen");
-		grid.addColumn(UserInfoTO::getEmail, new TextRenderer()).setCaption("Email");
-		grid.addColumn(u -> u.isConfirmed() ? "Ano" : "Ne", new TextRenderer()).setCaption("Aktivní");
+		grid.addColumn(UserInfoTO::getName).setHeader("Jméno");
+		grid.addColumn(u -> u.getRoles().stream().map(Role::getRoleName).collect(Collectors.joining(", ")))
+				.setHeader("Role");
+		grid.addColumn(new LocalDateTimeRenderer<>(UserInfoTO::getRegistrationDate, "dd.MM.yyyy"))
+				.setHeader("Registrován");
+		grid.addColumn(new LocalDateTimeRenderer<>(UserInfoTO::getLastLoginDate, "dd.MM.yyyy"))
+				.setHeader("Naposledy přihlášen");
+		grid.addColumn(UserInfoTO::getEmail).setHeader("Email");
+		grid.addColumn(u -> u.isConfirmed() ? "Ano" : "Ne").setHeader("Aktivní");
 
 		List<UserInfoTO> users = userFacade.getUserInfoFromAllUsers();
 		grid.setItems(users);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);
-		usersLayout.addComponent(buttonLayout);
+		usersLayout.add(buttonLayout);
 
-		buttonLayout.addComponent(new GridButton<>("Aktivovat", u -> users.forEach(user -> {
+		buttonLayout.add(new GridButton<>("Aktivovat", u -> users.forEach(user -> {
 			user.setConfirmed(true);
 			userFacade.activateUser(user.getId());
 			grid.getDataProvider().refreshItem(user);
 		}), grid).setEnableResolver(u -> !users.iterator().next().isConfirmed()));
 
-		buttonLayout.addComponent(new GridButton<>("Zablokovat", u -> users.forEach(user -> {
+		buttonLayout.add(new GridButton<>("Zablokovat", u -> users.forEach(user -> {
 			user.setConfirmed(false);
 			userFacade.banUser(user.getId());
 			grid.getDataProvider().refreshItem(user);
 		}), grid).setEnableResolver(u -> users.iterator().next().isConfirmed()));
 
-		buttonLayout.addComponent(new GridButton<>("Upravit oprávnění", u -> {
-			WebWindow w = new WebWindow("Uživatelské role");
+		buttonLayout.add(new GridButton<>("Upravit oprávnění", u -> {
+			WebDialog w = new WebDialog("Uživatelské role");
 
 			UserInfoTO user = users.iterator().next();
 			w.setWidth("220px");
 
 			for (final Role role : moduleRegister.getRoles()) {
-				final CheckBox checkbox = new CheckBox(role.getRoleName());
+				final Checkbox checkbox = new Checkbox(role.getRoleName());
 				checkbox.setValue(user.getRoles().contains(role));
 				checkbox.addValueChangeListener(event -> {
 					if (checkbox.getValue()) {
@@ -113,7 +111,7 @@ public class UsersSettingsPage extends AbstractSettingsPage {
 				grid.getDataProvider().refreshItem(user);
 				w.close();
 			}));
-			UI.getCurrent().addWindow(w);
+			w.open();
 		}, grid));
 
 		return layout;

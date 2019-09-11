@@ -2,12 +2,11 @@ package cz.gattserver.grass3.ui.pages;
 
 import java.util.List;
 
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.interfaces.QuoteTO;
 import cz.gattserver.grass3.server.GrassRequest;
@@ -30,43 +29,42 @@ public class QuotesPage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createContent() {
+	protected Component createColumnContent() {
 
 		VerticalLayout layout = new VerticalLayout();
 
-		layout.setMargin(true);
+		layout.setPadding(true);
 		layout.setSpacing(true);
 
 		Grid<QuoteTO> grid = new Grid<>();
 		grid.setSizeFull();
-		layout.addComponent(grid);
+		layout.add(grid);
 
 		populateData();
 
 		grid.setItems(data);
-		grid.addColumn(QuoteTO::getId).setCaption("Id").setWidth(50);
-		grid.addColumn(QuoteTO::getName).setCaption("Obsah");
+		grid.addColumn(QuoteTO::getId).setHeader("Id").setFlexGrow(0).setWidth("50px");
+		grid.addColumn(QuoteTO::getName).setHeader("Obsah");
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
-		layout.addComponent(btnLayout);
-		layout.setComponentAlignment(btnLayout, Alignment.MIDDLE_CENTER);
+		layout.add(btnLayout);
+		layout.setHorizontalComponentAlignment(Alignment.CENTER, btnLayout);
 		btnLayout.setVisible(coreACL.canModifyQuotes(UIUtils.getUser()));
 
-		CreateGridButton createGridButton = new CreateGridButton("Přidat hlášku",
-				e -> UI.getCurrent().addWindow(new QuoteWindow(q -> {
-					quotesFacade.createQuote(q.getName());
-					populateData();
-					grid.setItems(data);
-				})));
-		btnLayout.addComponent(createGridButton);
+		CreateGridButton createGridButton = new CreateGridButton("Přidat hlášku", e -> new QuoteDialog(q -> {
+			quotesFacade.createQuote(q.getName());
+			populateData();
+			grid.setItems(data);
+		}).open());
+		btnLayout.add(createGridButton);
 
 		ModifyGridButton<QuoteTO> modifyGridButton = new ModifyGridButton<>("Upravit hlášku",
-				originQuote -> UI.getCurrent().addWindow(new QuoteWindow(originQuote, q -> {
+				originQuote -> new QuoteDialog(originQuote, q -> {
 					quotesFacade.modifyQuote(q.getId(), q.getName());
 					grid.getDataProvider().refreshItem(q);
 					grid.select(q);
-				})), grid);
-		btnLayout.addComponent(modifyGridButton);
+				}).open(), grid);
+		btnLayout.add(modifyGridButton);
 
 		DeleteGridButton<QuoteTO> deleteGridButton = new DeleteGridButton<>("Odstranit hlášky",
 				items -> items.forEach(q -> {
@@ -74,7 +72,7 @@ public class QuotesPage extends OneColumnPage {
 					data.remove(q);
 					grid.getDataProvider().refreshAll();
 				}), grid);
-		btnLayout.addComponent(deleteGridButton);
+		btnLayout.add(deleteGridButton);
 
 		return layout;
 

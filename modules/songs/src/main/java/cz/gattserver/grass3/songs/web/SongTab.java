@@ -46,7 +46,7 @@ import cz.gattserver.grass3.ui.components.DeleteButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.H2Label;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
 public class SongTab extends VerticalLayout {
 
@@ -249,7 +249,7 @@ public class SongTab extends VerticalLayout {
 		ChordTO to = songsFacade.getChordByName(chord);
 		BufferedImage image = ChordImageUtils.drawChord(to, 20);
 
-		Window window = new WebWindow(chord);
+		Window window = new WebDialog(chord);
 		VerticalLayout layout = new VerticalLayout();
 		layout.addComponent(new Image(null, new StreamResource(new StreamSource() {
 			private static final long serialVersionUID = -5893071133311094692L;

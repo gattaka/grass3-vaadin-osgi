@@ -2,10 +2,11 @@ package cz.gattserver.grass3.ui.components;
 
 import java.util.List;
 
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.renderers.ComponentRenderer;
-import com.vaadin.ui.renderers.HtmlRenderer;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.IconRenderer;
 
 import cz.gattserver.grass3.interfaces.NodeTO;
 import cz.gattserver.grass3.modules.ContentModule;
@@ -32,14 +33,14 @@ public class NewContentNodeGrid extends Grid<ContentModule> {
 		List<ContentModule> contentServices = serviceHolder.getContentModules();
 		setItems(contentServices);
 
-		addColumn(contentService -> new Image("", contentService.getContentIcon()), new ComponentRenderer())
-				.setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("").setId(iconBind);
+		addColumn(new IconRenderer<ContentModule>(c -> new Image(c.getContentIcon(), ""))).setHeader("")
+				.setKey(iconBind).setClassNameGenerator(item -> "icon-cell");
 
-		addColumn(contentService -> "<a href='"
-				+ page.getPageURL(contentService.getContentEditorPageFactory(), DefaultContentOperations.NEW.toString(),
-						URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()))
-				+ "'>" + contentService.getCreateNewContentLabel() + "</a>", new HtmlRenderer()).setCaption("Obsah")
-						.setId(nameBind);
+		addColumn(new ComponentRenderer<Anchor, ContentModule>(c -> {
+			String url = page.getPageURL(c.getContentEditorPageFactory(), DefaultContentOperations.NEW.toString(),
+					URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()));
+			return new Anchor(url, c.getCreateNewContentLabel());
+		})).setHeader("Obsah").setId(nameBind);
 
 		setColumns(iconBind, nameBind);
 

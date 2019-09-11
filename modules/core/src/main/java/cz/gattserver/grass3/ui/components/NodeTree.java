@@ -4,36 +4,29 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.vaadin.contextmenu.GridContextMenu;
-import com.vaadin.data.TreeData;
-import com.vaadin.data.provider.TreeDataProvider;
-import com.vaadin.event.ShortcutListener;
-import com.vaadin.shared.ui.dnd.DropEffect;
-import com.vaadin.shared.ui.dnd.EffectAllowed;
-import com.vaadin.shared.ui.grid.DropMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.TreeGrid;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.components.grid.TreeGridDragSource;
-import com.vaadin.ui.components.grid.TreeGridDropTarget;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.Shortcuts;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.treegrid.TreeGrid;
+import com.vaadin.flow.data.provider.hierarchy.TreeData;
+import com.vaadin.flow.data.provider.hierarchy.TreeDataProvider;
 
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.services.NodeService;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
 public class NodeTree extends VerticalLayout {
 
@@ -69,7 +62,7 @@ public class NodeTree extends VerticalLayout {
 	public NodeTree(boolean enableEditFeatures) {
 
 		setSpacing(true);
-		setMargin(false);
+		setPadding(false);
 
 		cache = new HashMap<>();
 		visited = new HashSet<>();
@@ -77,10 +70,10 @@ public class NodeTree extends VerticalLayout {
 		grid = new TreeGrid<>();
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setSizeFull();
-		addComponent(grid);
-		setExpandRatio(grid, 1);
+		add(grid);
+		expand(grid);
 
-		grid.addColumn(NodeOverviewTO::getName).setCaption("Název");
+		grid.addColumn(NodeOverviewTO::getName).setHeader("Název");
 		populate();
 
 		if (enableEditFeatures)
@@ -88,87 +81,85 @@ public class NodeTree extends VerticalLayout {
 	}
 
 	private void initEditFeatures() {
-		/*
-		 * Drag drop features
-		 */
-		TreeGridDragSource<NodeOverviewTO> dragSource = new TreeGridDragSource<>(grid);
-		dragSource.setEffectAllowed(EffectAllowed.MOVE);
-		dragSource.addGridDragStartListener(e -> draggedItems = new ArrayList<>(e.getDraggedItems()));
 
-		TreeGridDropTarget<NodeOverviewTO> dropTarget = new TreeGridDropTarget<>(grid, DropMode.ON_TOP_OR_BETWEEN);
-		dropTarget.setDropEffect(DropEffect.MOVE);
-		dropTarget.addTreeGridDropListener(event -> {
-			NodeOverviewTO dropNode = event.getDropTargetRow().get();
-			switch (event.getDropLocation()) {
-			case ON_TOP:
-				// vkládám do dropNode
-				break;
-			case ABOVE:
-			case BELOW:
-				// vkládám do parenta dropNode
-				dropNode = dropNode.getParentId() == null ? null : cache.get(dropNode.getParentId());
-				break;
-			case EMPTY:
-			default:
-				// výchozí je vkládání do root
-				dropNode = null;
-			}
-			for (NodeOverviewTO n : draggedItems)
-				moveAction(n, dropNode);
-			grid.getDataProvider().refreshAll();
-		});
+		// TODO
+		// TreeGridDragSource<NodeOverviewTO> dragSource = new
+		// TreeGridDragSource<>(grid);
+		// dragSource.setEffectAllowed(EffectAllowed.MOVE);
+		// dragSource.addGridDragStartListener(e -> draggedItems = new
+		// ArrayList<>(e.getDraggedItems()));
+		//
+		// TreeGridDropTarget<NodeOverviewTO> dropTarget = new
+		// TreeGridDropTarget<>(grid, DropMode.ON_TOP_OR_BETWEEN);
+		// dropTarget.setDropEffect(DropEffect.MOVE);
+		// dropTarget.addTreeGridDropListener(event -> {
+		// NodeOverviewTO dropNode = event.getDropTargetRow().get();
+		// switch (event.getDropLocation()) {
+		// case ON_TOP:
+		// // vkládám do dropNode
+		// break;
+		// case ABOVE:
+		// case BELOW:
+		// // vkládám do parenta dropNode
+		// dropNode = dropNode.getParentId() == null ? null :
+		// cache.get(dropNode.getParentId());
+		// break;
+		// case EMPTY:
+		// default:
+		// // výchozí je vkládání do root
+		// dropNode = null;
+		// }
+		// for (NodeOverviewTO n : draggedItems)
+		// moveAction(n, dropNode);
+		// grid.getDataProvider().refreshAll();
+		// });
 
 		/*
 		 * Context menu
 		 */
 		GridContextMenu<NodeOverviewTO> gridMenu = new GridContextMenu<>(grid);
-		gridMenu.addGridBodyContextMenuListener(e -> {
-			e.getContextMenu().removeItems();
-			if (e.getItem() != null) {
-				NodeOverviewTO node = e.getItem();
+		gridMenu.addGridContextMenuOpenedListener(e -> {
+			gridMenu.removeAll();
+			if (e.getItem().isPresent()) {
+				NodeOverviewTO node = e.getItem().get();
 				grid.select(node);
 				// Bohužel, je zde asi bug, protože ContextMenu addon neumí
 				// zpracovat ClassResource, umí evidentě pouze ThemeResource
-				e.getContextMenu().addItem("Smazat", selectedItem -> deleteAction(node));
-				e.getContextMenu().addItem(PREJMENOVAT_LABEL, selectedItem -> renameAction(node));
+				gridMenu.addItem("Smazat", selectedItem -> deleteAction(node));
+				gridMenu.addItem(PREJMENOVAT_LABEL, selectedItem -> renameAction(node));
 			}
-			e.getContextMenu().addItem("Vytvořit zde novou",
-					selectedItem -> createNodeAction(e.getItem() == null ? null : e.getItem()));
+			gridMenu.addItem("Vytvořit zde novou", selectedItem -> createNodeAction(e.getItem()));
 		});
 
 		/*
 		 * Delete shortcut
 		 */
-		addShortcutListener(new ShortcutListener("Delete", null) {
-			private static final long serialVersionUID = -7239845094514060176L;
-
-			@Override
-			public void handleAction(Object sender, Object target) {
-				if (!grid.getSelectedItems().isEmpty())
-					deleteAction(grid.getSelectedItems().iterator().next());
-			}
-		});
+		Shortcuts.addShortcutListener(this, () -> {
+			if (!grid.getSelectedItems().isEmpty())
+				deleteAction(grid.getSelectedItems().iterator().next());
+		}, Key.DELETE);
 
 		/*
 		 * Buttons
 		 */
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		btnLayout.setSpacing(true);
-		addComponent(btnLayout);
+		add(btnLayout);
 
-		CreateGridButton createBtn = new CreateGridButton("Vytvořit", e -> createNodeAction(
-				grid.getSelectedItems().isEmpty() ? null : grid.getSelectedItems().iterator().next()));
-		btnLayout.addComponent(createBtn);
+		CreateGridButton createBtn = new CreateGridButton("Vytvořit",
+				e -> createNodeAction(grid.getSelectedItems().isEmpty() ? Optional.empty()
+						: Optional.of(grid.getSelectedItems().iterator().next())));
+		btnLayout.add(createBtn);
 
 		ModifyGridButton<NodeOverviewTO> modifyBtn = new ModifyGridButton<>(PREJMENOVAT_LABEL, this::renameAction,
 				grid);
-		btnLayout.addComponent(modifyBtn);
+		btnLayout.add(modifyBtn);
 
 		// mazání chci po jednom
 		DeleteGridButton<NodeOverviewTO> deleteBtn = new DeleteGridButton<>("Smazat",
 				nodes -> deleteAction(nodes.iterator().next()), grid);
 		deleteBtn.setEnableResolver(items -> items.size() == 1);
-		btnLayout.addComponent(deleteBtn);
+		btnLayout.add(deleteBtn);
 
 	}
 
@@ -206,7 +197,7 @@ public class NodeTree extends VerticalLayout {
 				|| node.getParentId() != null && newParent != null && node.getParentId().equals(newParent.getId()))
 			return; // bez změn
 
-		UI.getCurrent().addWindow(new ConfirmWindow("Opravdu přesunout '" + node.getName() + "' do "
+		new ConfirmDialog("Opravdu přesunout '" + node.getName() + "' do "
 				+ (newParent == null ? "kořene sekce" : "'" + newParent.getName() + "'") + "?", e -> {
 					try {
 						getNodeService().moveNode(node.getId(), newParent == null ? null : newParent.getId());
@@ -217,11 +208,11 @@ public class NodeTree extends VerticalLayout {
 					} catch (IllegalArgumentException ex) {
 						UIUtils.showWarning("Nelze přesunou předka do potomka");
 					}
-				}));
+				}).open();
 	}
 
 	private void deleteAction(NodeOverviewTO node) {
-		UI.getCurrent().addWindow(new ConfirmWindow("Opravdu smazat kategorii '" + node.getName() + "' ?", e -> {
+		new ConfirmDialog("Opravdu smazat kategorii '" + node.getName() + "' ?", e -> {
 			if (!getNodeService().isNodeEmpty(node.getId())) {
 				UIUtils.showWarning("Kategorie musí být prázdná");
 			} else {
@@ -235,24 +226,21 @@ public class NodeTree extends VerticalLayout {
 					UIUtils.showWarning("Nezdařilo se smazat vybranou kategorii");
 				}
 			}
-		}));
+		}).open();
 	}
 
 	private void renameAction(NodeOverviewTO node) {
-		final Window subwindow = new WebWindow(PREJMENOVAT_LABEL);
-		subwindow.center();
-		UI.getCurrent().addWindow(subwindow);
-
-		GridLayout subWindowlayout = new GridLayout(2, 2);
-		subwindow.setContent(subWindowlayout);
-		subWindowlayout.setMargin(true);
-		subWindowlayout.setSpacing(true);
+		final WebDialog dialog = new WebDialog(PREJMENOVAT_LABEL);
+		dialog.open();
 
 		final TextField newNameField = new TextField("Nový název:");
 		newNameField.setValue(node.getName());
-		subWindowlayout.addComponent(newNameField, 0, 0, 1, 0);
+		dialog.add(newNameField);
 
-		Button confirm = new Button(PREJMENOVAT_LABEL, event -> {
+		HorizontalLayout btnLayout = new HorizontalLayout();
+		dialog.addComponent(btnLayout);
+
+		Button confirmBtn = new Button(PREJMENOVAT_LABEL, event -> {
 			if (StringUtils.isBlank(newNameField.getValue()))
 				UIUtils.showError("Název kategorie nesmí být prázdný");
 			try {
@@ -264,63 +252,51 @@ public class NodeTree extends VerticalLayout {
 				UIUtils.showWarning("Přejmenování se nezdařilo.");
 			}
 
-			subwindow.close();
+			dialog.close();
 		});
-		subWindowlayout.addComponent(confirm, 0, 1);
-		subWindowlayout.setComponentAlignment(confirm, Alignment.MIDDLE_CENTER);
+		btnLayout.add(confirmBtn);
 
-		Button close = new Button("Storno", event -> subwindow.close());
-		subWindowlayout.addComponent(close, 1, 1);
-		subWindowlayout.setComponentAlignment(close, Alignment.MIDDLE_CENTER);
-
-		// Zaměř se na nové okno
-		subwindow.focus();
+		Button closeBtn = new Button("Storno", event -> dialog.close());
+		btnLayout.add(closeBtn);
 	}
 
-	public void createNodeAction(NodeOverviewTO parentNode) {
-		final Window subwindow = new WebWindow(parentNode == null ? "Vytvořit novou kořenovou kategorii"
-				: "Vytvořit novou kategorii do '" + parentNode.getName() + "'");
-		subwindow.center();
-		UI.getCurrent().addWindow(subwindow);
-
-		GridLayout subWindowlayout = new GridLayout(2, 2);
-		subwindow.setContent(subWindowlayout);
-		subWindowlayout.setMargin(true);
-		subWindowlayout.setSpacing(true);
+	public void createNodeAction(Optional<NodeOverviewTO> parentNode) {
+		final WebDialog dialog = new WebDialog(
+				parentNode.isPresent() ? "Vytvořit novou kategorii do '" + parentNode.get().getName() + "'"
+						: "Vytvořit novou kořenovou kategorii");
+		dialog.open();
 
 		final TextField newNameField = new TextField("Nový název:");
-		subWindowlayout.addComponent(newNameField, 0, 0, 1, 0);
+		dialog.addComponent(newNameField);
 
-		Button confirm = new Button("Vytvořit", event -> {
+		HorizontalLayout btnLayout = new HorizontalLayout();
+		dialog.addComponent(btnLayout);
+
+		Button confirmBtn = new Button("Vytvořit", event -> {
 			if (StringUtils.isBlank(newNameField.getValue()))
 				UIUtils.showError("Název kategorie nesmí být prázdný");
 			try {
 				String newNodeName = newNameField.getValue();
-				Long parentNodeId = parentNode == null ? null : parentNode.getId();
+				Long parentNodeId = parentNode.isPresent() ? parentNode.get().getId() : null;
 				Long newNodeId = getNodeService().createNewNode(parentNodeId, newNodeName);
 				NodeOverviewTO newNode = new NodeOverviewTO();
 				newNode.setId(newNodeId);
 				newNode.setName(newNodeName);
 				newNode.setParentId(parentNodeId);
 				cache.put(newNode.getId(), newNode);
-				grid.getTreeData().addItem(parentNode, newNode);
+				grid.getTreeData().addItem(parentNode.orElse(null), newNode);
 				grid.getDataProvider().refreshAll();
 				expandTo(newNodeId);
 			} catch (Exception ex) {
 				UIUtils.showWarning("Vytvoření se nezdařilo.");
 			}
 
-			subwindow.close();
+			dialog.close();
 		});
-		subWindowlayout.addComponent(confirm, 0, 1);
-		subWindowlayout.setComponentAlignment(confirm, Alignment.MIDDLE_CENTER);
+		btnLayout.add(confirmBtn);
 
-		Button close = new Button("Storno", event -> subwindow.close());
-		subWindowlayout.addComponent(close, 1, 1);
-		subWindowlayout.setComponentAlignment(close, Alignment.MIDDLE_CENTER);
-
-		// Zaměř se na nové okno
-		subwindow.focus();
+		Button closeBtn = new Button("Storno", event -> dialog.close());
+		btnLayout.add(closeBtn);
 	}
 
 }

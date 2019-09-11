@@ -1,7 +1,6 @@
 package cz.gattserver.grass3.ui.components;
 
-import com.vaadin.server.ExternalResource;
-import com.vaadin.ui.Link;
+import com.vaadin.flow.component.html.Anchor;
 
 /**
  * Speciální úprava Vaadin link elementu pro tabulky, které potřebují, aby byl
@@ -11,16 +10,16 @@ import com.vaadin.ui.Link;
  * @author Gattaka
  * 
  */
-public class ComparableLink extends Link implements Comparable<ComparableLink> {
+public class ComparableLink extends Anchor implements Comparable<ComparableLink> {
 
 	private static final long serialVersionUID = -1066469018592736445L;
 
-	public ComparableLink(String name, ExternalResource externalResource) {
-		super(name, externalResource);
+	public ComparableLink(String name, String url) {
+		super(name, url);
 	}
 
 	public int compareTo(ComparableLink o) {
-		return getCaption().compareTo(o.getCaption());
+		return getText().compareTo(o.getText());
 	}
 
 }

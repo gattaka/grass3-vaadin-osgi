@@ -58,7 +58,7 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 
 	public DrinksTab(GrassRequest request) {
 		SpringContextHelper.inject(this);
-		setMargin(new MarginInfo(true, false, false, false));
+		setPadding(new MarginInfo(true, false, false, false));
 
 		this.request = request;
 
@@ -76,7 +76,7 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 
 		HorizontalLayout contentLayout = new HorizontalLayout();
 		contentLayout.setSizeFull();
-		contentLayout.setMargin(true);
+		contentLayout.setPadding(true);
 
 		Panel panel = new Panel(contentLayout);
 		panel.setWidth("100%");
@@ -92,7 +92,7 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 
 		dataLayout = new VerticalLayout();
 		dataLayout.setWidth("100%");
-		dataLayout.setMargin(false);
+		dataLayout.setPadding(false);
 		contentLayout.addComponent(dataLayout);
 		contentLayout.setExpandRatio(dataLayout, 1);
 

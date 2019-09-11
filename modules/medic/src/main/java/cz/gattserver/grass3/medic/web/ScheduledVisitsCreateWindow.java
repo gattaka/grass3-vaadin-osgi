@@ -26,10 +26,10 @@ import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitState;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.window.ErrorWindow;
-import cz.gattserver.web.common.ui.window.WebWindow;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class ScheduledVisitsCreateWindow extends WebWindow {
+public abstract class ScheduledVisitsCreateWindow extends WebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -128,7 +128,7 @@ public abstract class ScheduledVisitsCreateWindow extends WebWindow {
 						Notification.Type.ERROR_MESSAGE);
 			} catch (Exception ex) {
 				String msg = "Nezdařilo se vytvořit nový záznam";
-				UI.getCurrent().addWindow(new ErrorWindow(msg));
+				UI.getCurrent().addWindow(new ErrorDialog(msg));
 				logger.error(msg, ex);
 			}
 		});

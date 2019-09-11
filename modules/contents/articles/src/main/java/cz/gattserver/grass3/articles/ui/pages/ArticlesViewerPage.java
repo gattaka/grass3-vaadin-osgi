@@ -25,8 +25,8 @@ import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.server.URLPathAnalyzer;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
-import cz.gattserver.web.common.ui.window.WarnWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
+import cz.gattserver.web.common.ui.window.WarnDialog;
 
 public class ArticlesViewerPage extends ContentViewerPage {
 
@@ -130,7 +130,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 	@Override
 	protected void onDeleteOperation() {
-		ConfirmWindow confirmSubwindow = new ConfirmWindow("Opravdu si přejete smazat tento článek ?", event -> {
+		ConfirmDialog confirmSubwindow = new ConfirmDialog("Opravdu si přejete smazat tento článek ?", event -> {
 			NodeOverviewTO nodeDTO = article.getContentNode().getParent();
 			final String nodeURL = getPageURL(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(nodeDTO.getId(), nodeDTO.getName()));
@@ -143,7 +143,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			} catch (Exception e) {
 				// Pokud ne, otevři warn okno a při
 				// potvrzení jdi na kategorii
-				WarnWindow warnSubwindow = new WarnWindow("Smazání článku se nezdařilo.");
+				WarnDialog warnSubwindow = new WarnDialog("Smazání článku se nezdařilo.");
 				UI.getCurrent().addWindow(warnSubwindow);
 			}
 		});

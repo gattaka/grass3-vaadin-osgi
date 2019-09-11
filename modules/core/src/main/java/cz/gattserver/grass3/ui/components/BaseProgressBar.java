@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.ui.components;
 
-import com.vaadin.ui.ProgressBar;
+import com.vaadin.flow.component.progressbar.ProgressBar;
 
 public class BaseProgressBar extends ProgressBar {
 
@@ -42,7 +42,7 @@ public class BaseProgressBar extends ProgressBar {
 	 */
 	public boolean increaseProgress() {
 		current++;
-		getUI().access(() -> BaseProgressBar.this.setValue(getProgress()));
+		getUI().ifPresent(ui -> ui.access(() -> BaseProgressBar.this.setValue(getProgress())));
 		return current == total - 1;
 	}
 

@@ -20,13 +20,13 @@ public class DrinksPage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createContent() {
+	protected Component createColumnContent() {
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);
-		layout.setMargin(true);
+		layout.setPadding(true);
 
 		VerticalLayout wrapperLayout = new VerticalLayout();
-		layout.setMargin(new MarginInfo(false, true, true, true));
+		layout.setPadding(new MarginInfo(false, true, true, true));
 		wrapperLayout.addComponent(layout);
 
 		TabSheet tabSheet = new TabSheet();

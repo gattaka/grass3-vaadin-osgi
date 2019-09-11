@@ -21,10 +21,10 @@ import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.grass3.ui.windows.ProgressWindow;
+import cz.gattserver.grass3.ui.windows.ProgressDialog;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.H2Label;
-import cz.gattserver.web.common.ui.window.ConfirmWindow;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import net.engio.mbassy.listener.Handler;
 
 public class ArticlesSettingsPage extends AbstractSettingsPage {
@@ -39,7 +39,7 @@ public class ArticlesSettingsPage extends AbstractSettingsPage {
 	private EventBus eventBus;
 
 	private UI ui = UI.getCurrent();
-	private ProgressWindow progressIndicatorWindow;
+	private ProgressDialog progressIndicatorWindow;
 	private UUID uuid;
 
 	private Button reprocessButton;
@@ -114,11 +114,11 @@ public class ArticlesSettingsPage extends AbstractSettingsPage {
 
 		reprocessButton = new Button("Přegenerovat všechny články");
 		reprocessButton.addClickListener(event -> {
-			ConfirmWindow confirmSubwindow = new ConfirmWindow(
+			ConfirmDialog confirmSubwindow = new ConfirmDialog(
 					"Přegenerování všech článků může zabrat delší čas a dojde během něj zřejmě k mnoha drobným změnám - opravdu přegenerovat ?",
 					e -> {
 						eventBus.subscribe(ArticlesSettingsPage.this);
-						progressIndicatorWindow = new ProgressWindow();
+						progressIndicatorWindow = new ProgressDialog();
 						uuid = UUID.randomUUID();
 						articleFacade.reprocessAllArticles(uuid, getRequest().getContextRoot());
 					});

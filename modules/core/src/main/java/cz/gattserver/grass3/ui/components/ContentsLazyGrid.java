@@ -27,7 +27,7 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 	private static final long serialVersionUID = -5648982639686386190L;
 
 	public ContentsLazyGrid() {
-		super(ContentNodeOverviewTO.class);
+		super();
 	}
 
 	public void populate(boolean showPubLock, final MenuPage page,
@@ -41,20 +41,12 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		setDataProvider(DataProvider.fromCallbacks(fetchCallback, countCallback));
 		setSelectionMode(SelectionMode.NONE);
 
-		String lockIconBind = "lockIcon";
 		String iconBind = "customIcon";
 		String nameBind = "customName";
+		String lockIconBind = "lockIcon";
 		String nodeBind = "customNode";
-		String authorBind = "customAuthor";
 		String creationDateBind = "customCreationDate";
 		String lastModificationDateBind = "customLastModificationDate";
-
-		if (showPubLock) {
-			addColumn(new IconRenderer<ContentNodeOverviewTO>(c -> c.isPublicated() ? new Span()
-					: new Image(ImageIcon.SHIELD_16_ICON.createResource(), "locked")))
-							.setWidth(GridUtils.ICON_COLUMN_WIDTH + "px").setHeader("").setKey(lockIconBind)
-							.setClassNameGenerator(item -> "icon-cell");
-		}
 
 		addColumn(new IconRenderer<ContentNodeOverviewTO>(c -> {
 			ContentModule contentService = serviceHolder.getContentModulesByName(c.getContentReaderID());
@@ -62,7 +54,8 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 					: contentService.getContentIcon(), "");
 			img.setWidth("16px");
 			return img;
-		})).setHeader("").setKey(iconBind).setClassNameGenerator(item -> "icon-cell");
+		}, c -> "")).setFlexGrow(0).setWidth("28px").setHeader("").setKey(iconBind)
+				.setClassNameGenerator(item -> "icon-cell");
 
 		addColumn(new ComponentRenderer<Anchor, ContentNodeOverviewTO>(contentNode -> {
 			ContentModule contentService = serviceHolder.getContentModulesByName(contentNode.getContentReaderID());
@@ -71,16 +64,21 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 			String url = page.getPageURL(pageFactory,
 					URLIdentifierUtils.createURLIdentifier(contentNode.getContentID(), contentNode.getName()));
 			return new Anchor(url, contentNode.getName());
-		})).setHeader("Název").setId(nameBind);
+		})).setFlexGrow(2).setHeader("Název").setId(nameBind);
+
+		if (showPubLock) {
+			addColumn(new IconRenderer<ContentNodeOverviewTO>(c -> c.isPublicated() ? new Span()
+					: new Image(ImageIcon.SHIELD_16_ICON.createResource(), "locked")))
+							.setWidth(GridUtils.ICON_COLUMN_WIDTH + "px").setHeader("").setKey(lockIconBind)
+							.setClassNameGenerator(item -> "icon-cell");
+		}
 
 		addColumn(new ComponentRenderer<Anchor, ContentNodeOverviewTO>(contentNode -> {
 			String url = page.getPageURL(nodePageFactory, URLIdentifierUtils
 					.createURLIdentifier(contentNode.getParentNodeId(), contentNode.getParentNodeName())) + "'>"
 					+ contentNode.getParentNodeName();
 			return new Anchor(url, contentNode.getName());
-		})).setHeader("Kategorie").setId(nodeBind);
-
-		addColumn(ContentNodeOverviewTO::getAuthorName).setHeader("Autor").setKey(authorBind).setWidth("100px");
+		})).setFlexGrow(2).setHeader("Kategorie").setId(nodeBind);
 
 		addColumn(new LocalDateTimeRenderer<>(ContentNodeOverviewTO::getCreationDate, "d.M.yyyy"))
 				.setHeader("Vytvořeno").setKey(creationDateBind).setClassNameGenerator(item -> "v-align-right")
@@ -91,7 +89,6 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 				.setFlexGrow(0).setWidth("90px");
 
 		setHeight(GridUtils.processHeight(countCallback.count(new Query<>())) + "px");
-
 	}
 
 }

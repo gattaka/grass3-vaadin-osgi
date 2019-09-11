@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
@@ -18,8 +17,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.lumo.Lumo;
 
 import cz.gattserver.grass3.interfaces.ContentTagsCloudItemTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
@@ -33,8 +30,6 @@ import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.HtmlSpan;
 
 @Route(value = "")
-@Theme(value = Lumo.class)
-@CssImport("./styles.css")
 public class HomePage extends OneColumnPage {
 
 	private static final long serialVersionUID = 3100924667157515504L;
@@ -63,33 +58,28 @@ public class HomePage extends OneColumnPage {
 
 	@Override
 	protected Component createColumnContent() {
-		VerticalLayout paddingLayout = new VerticalLayout();
-		paddingLayout.setPadding(true);
-
-		VerticalLayout pagelayout = new VerticalLayout();
-		pagelayout.setPadding(true);
-		pagelayout.setSpacing(true);
-		paddingLayout.add(pagelayout);
+		VerticalLayout layout = new VerticalLayout();
+		layout.setPadding(false);
+		layout.setSpacing(true);
+		layout.setSizeFull();
 
 		// Oblíbené
 		UserInfoTO user = getUser();
 		if (coreACL.isLoggedIn(user)) {
-			VerticalLayout favouritesLayout = new VerticalLayout();
-			favouritesLayout.setPadding(false);
-			favouritesLayout.add(new H2("Oblíbené obsahy"));
+			layout.add(new H2("Oblíbené obsahy"));
 			ContentsLazyGrid favouritesContentsTable = new ContentsLazyGrid();
-			favouritesContentsTable.populate(getUser() != null, this,
+			favouritesContentsTable.populate(getUser().getId() != null, this,
 					q -> contentNodeFacade.getUserFavourite(user.getId(), q.getOffset(), q.getLimit()).stream(),
 					q -> contentNodeFacade.getUserFavouriteCount(user.getId()));
-			favouritesLayout.add(favouritesContentsTable);
+			layout.add(favouritesContentsTable);
 			favouritesContentsTable.setWidth("100%");
-			pagelayout.add(favouritesLayout);
 		}
 
-		createSearchMenu(pagelayout);
+		layout.add(createSearchMenu());
 
 		// Nedávno přidané a upravené obsahy
-		createRecentMenus(pagelayout);
+		layout.add(createRecentAdded());
+		layout.add(createRecentModified());
 
 		// Tag-cloud
 		Div tagJsDiv = new Div() {
@@ -97,24 +87,24 @@ public class HomePage extends OneColumnPage {
 
 			@ClientCallable
 			private void tagCloundCallback() {
-				createTagCloud(pagelayout);
+				layout.add(createTagCloud());
 			}
 		};
+
 		String tagJsDivId = "tag-js-div";
 		tagJsDiv.setId(tagJsDivId);
-		paddingLayout.add(tagJsDiv);
+		layout.add(tagJsDiv);
 
 		UI.getCurrent().getPage().executeJs("setTimeout(function(){ document.getElementById('" + tagJsDivId
 				+ "').$server.tagCloundCallback() }, 10);");
 
-		return paddingLayout;
+		return layout;
 	}
 
-	private void createSearchMenu(VerticalLayout pagelayout) {
-		VerticalLayout searchResultsLayout = new VerticalLayout();
-		searchResultsLayout.setPadding(false);
+	private Component createSearchMenu() {
+		Div searchResultsLayout = new Div();
+		searchResultsLayout.setWidthFull();
 		searchResultsLayout.add(new H2("Vyhledávání"));
-		pagelayout.add(searchResultsLayout);
 
 		TextField searchField = new TextField();
 		searchField.setPlaceholder("Název obsahu");
@@ -132,7 +122,7 @@ public class HomePage extends OneColumnPage {
 			String value = e.getValue();
 			if (StringUtils.isNotBlank(value) && !searchResultsTable.isVisible()) {
 				searchResultsTable.setVisible(true);
-				searchResultsTable.populate(getUser() != null, HomePage.this,
+				searchResultsTable.populate(getUser().getId() != null, HomePage.this,
 						q -> contentNodeFacade
 								.getByName(searchField.getValue(), user.getId(), q.getOffset(), q.getLimit()).stream(),
 						q -> contentNodeFacade.getCountByName(searchField.getValue(), user.getId()));
@@ -144,20 +134,19 @@ public class HomePage extends OneColumnPage {
 		searchField.setValueChangeMode(ValueChangeMode.LAZY);
 		searchField.setValueChangeTimeout(200);
 
+		return searchResultsLayout;
 	}
 
-	private void createTagCloud(VerticalLayout pagelayout) {
-		VerticalLayout tagCloudLayout = new VerticalLayout();
-		tagCloudLayout.setPadding(false);
+	private Component createTagCloud() {
+		Div tagCloudLayout = new Div();
 		tagCloudLayout.add(new H2("Tagy"));
-		pagelayout.add(tagCloudLayout);
 
 		List<ContentTagsCloudItemTO> contentTags = contentTagFacade.createTagsCloud(MAX_FONT_SIZE_TAG_CLOUD,
 				MIN_FONT_SIZE_TAG_CLOUD);
 		if (contentTags.isEmpty()) {
 			Span noTagsSpan = new Span("Nebyly nalezeny žádné tagy");
 			tagCloudLayout.add(noTagsSpan);
-			return;
+			return tagCloudLayout;
 		}
 
 		char oldChar = 0;
@@ -167,7 +156,7 @@ public class HomePage extends OneColumnPage {
 			currChar = contentTag.getName().toUpperCase().charAt(0);
 			if (currChar != oldChar || oldChar == 0) {
 				if (oldChar != 0) {
-					createTags(sb, oldChar, tagCloudLayout);
+					populateTags(sb, oldChar, tagCloudLayout);
 				}
 				sb = new StringBuilder();
 				oldChar = currChar;
@@ -179,51 +168,60 @@ public class HomePage extends OneColumnPage {
 					+ "' style='font-size:" + contentTag.getFontSize() + "pt'>" + contentTag.getName() + "</a> ");
 		}
 		if (sb != null)
-			createTags(sb, currChar, tagCloudLayout);
+			populateTags(sb, currChar, tagCloudLayout);
+
+		return tagCloudLayout;
 	}
 
-	private void createTags(StringBuilder sb, char tag, VerticalLayout tagCloudLayout) {
-		Span tagLabel;
-		Div tagCloud = new Div();
-		tagCloudLayout.add(tagCloud);
-		tagLabel = new HtmlSpan("<span class=\"tag-letter\">" + tag + "</span>");
-		tagCloud.add(tagLabel);
-		tagLabel.setSizeUndefined();
-		tagLabel = new HtmlSpan(sb.toString());
-		tagCloud.add(tagLabel);
-		tagLabel.addClassName("taglabel");
-		tagLabel.setSizeFull();
+	private void populateTags(StringBuilder sb, char tag, Div tagCloudLayout) {
+		Div tagBlock = new Div();
+		tagCloudLayout.add(tagBlock);
+
+		Div tagLetter = new Div();
+		tagLetter.addClassName("tag-letter");
+		tagLetter.add(String.valueOf(tag));
+		tagBlock.add(tagLetter);
+		tagLetter.setSizeUndefined();
+
+		Div tagLabels = new Div();
+		tagLabels.addClassName("tag-labels");
+		tagBlock.add(tagLabels);
+		
+		Span tags = new HtmlSpan(sb.toString());
+		tagLabels.add(tags);
+		tags.setSizeFull();
 	}
 
-	private void createRecentMenus(VerticalLayout pagelayout) {
-
+	private Component createRecentAdded() {
 		ContentsLazyGrid recentAddedContentsTable = new ContentsLazyGrid();
-		recentAddedContentsTable.populate(getUser() != null, this,
+		recentAddedContentsTable.populate(getUser().getId() != null, this,
 				q -> contentNodeFacade.getRecentAdded(q.getOffset(), q.getLimit()).stream(),
 				q -> contentNodeFacade.getCount());
 
-		ContentsLazyGrid recentModifiedContentsTable = new ContentsLazyGrid();
-		recentModifiedContentsTable.populate(getUser() != null, this,
-				q -> contentNodeFacade.getRecentModified(q.getOffset(), q.getLimit()).stream(),
-				q -> contentNodeFacade.getCount());
-
-		VerticalLayout recentAddedLayout = new VerticalLayout();
-		recentAddedLayout.setPadding(false);
+		Div recentAddedLayout = new Div();
+		recentAddedLayout.setWidthFull();
 		recentAddedLayout.add(new H2("Nedávno přidané obsahy"));
 		recentAddedLayout.add(recentAddedContentsTable);
 		recentAddedContentsTable.setWidth("100%");
 		recentAddedContentsTable.setHeight("200px");
-		pagelayout.add(recentAddedLayout);
 
-		// Nedávno upravené obsahy
-		VerticalLayout recentModifiedLayout = new VerticalLayout();
-		recentModifiedLayout.setPadding(false);
+		return recentAddedLayout;
+	}
+
+	private Component createRecentModified() {
+		ContentsLazyGrid recentModifiedContentsTable = new ContentsLazyGrid();
+		recentModifiedContentsTable.populate(getUser().getId() != null, this,
+				q -> contentNodeFacade.getRecentModified(q.getOffset(), q.getLimit()).stream(),
+				q -> contentNodeFacade.getCount());
+
+		Div recentModifiedLayout = new Div();
+		recentModifiedLayout.setWidthFull();
 		recentModifiedLayout.add(new H2("Nedávno upravené obsahy"));
 		recentModifiedLayout.add(recentModifiedContentsTable);
 		recentModifiedContentsTable.setWidth("100%");
 		recentModifiedContentsTable.setHeight("200px");
-		pagelayout.add(recentModifiedLayout);
 
+		return recentModifiedLayout;
 	}
 
 }

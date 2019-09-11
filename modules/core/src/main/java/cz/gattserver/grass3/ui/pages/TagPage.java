@@ -47,7 +47,7 @@ public class TagPage extends OneColumnPage implements HasUrlParameter<String> {
 			throw new GrassPageException(404);
 
 		ContentsLazyGrid tagContentsTable = new ContentsLazyGrid();
-		tagContentsTable.populate(getUser() != null, this,
+		tagContentsTable.populate(getUser().getId() != null, this,
 				q -> contentNodeFacade.getByTag(tag.getId(), q.getOffset(), q.getLimit()).stream(),
 				q -> contentNodeFacade.getCountByTag(tag.getId()));
 

@@ -164,7 +164,7 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 		VerticalLayout contentsLayout = new VerticalLayout();
 		contentsLayout.setPadding(false);
 		ContentsLazyGrid contentsTable = new ContentsLazyGrid();
-		contentsTable.populate(getUser() != null, this,
+		contentsTable.populate(getUser().getId() != null, this,
 				q -> contentNodeFacade.getByNode(node.getId(), q.getOffset(), q.getLimit()).stream(),
 				q -> contentNodeFacade.getCountByNode(node.getId()));
 

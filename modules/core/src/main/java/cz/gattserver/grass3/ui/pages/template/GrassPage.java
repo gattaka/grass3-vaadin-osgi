@@ -2,8 +2,12 @@ package cz.gattserver.grass3.ui.pages.template;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.server.VaadinRequest;
+import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.lumo.Lumo;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.SecurityService;
@@ -19,6 +23,9 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
  * @author Hynek
  *
  */
+@JsModule("@vaadin/vaadin-lumo-styles/presets/compact.js")
+@Theme(value = Lumo.class )
+@CssImport("./styles.css")
 public abstract class GrassPage extends Div {
 
 	private static final long serialVersionUID = 7952966362953000385L;

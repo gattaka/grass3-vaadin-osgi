@@ -1,13 +1,10 @@
 package cz.gattserver.grass3.ui.pages.err;
 
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.err.template.ErrorPage;
 
 public class Error404Page extends ErrorPage {
 
-	public Error404Page(GrassRequest request) {
-		super(request);
-	}
+	private static final long serialVersionUID = 8346513920500065101L;
 
 	@Override
 	protected String getErrorText() {

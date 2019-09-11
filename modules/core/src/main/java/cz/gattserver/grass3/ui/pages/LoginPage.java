@@ -16,7 +16,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletService;
 
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.services.impl.LoginResult;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
@@ -24,12 +23,10 @@ import cz.gattserver.grass3.ui.util.UIUtils;
 
 public class LoginPage extends OneColumnPage {
 
+	private static final long serialVersionUID = 2568522523298977106L;
+	
 	@Autowired
 	private SecurityService securityFacade;
-
-	public LoginPage(GrassRequest request) {
-		super(request);
-	}
 
 	private LoginResult login(String username, String password, boolean remember) {
 		HttpServletRequest request = VaadinServletService.getCurrentServletRequest();

@@ -12,11 +12,13 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.Route;
 
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeTO;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.ui.components.Breadcrumb;
 import cz.gattserver.grass3.ui.components.ContentsLazyGrid;
@@ -29,7 +31,10 @@ import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
 
-public class NodePage extends OneColumnPage {
+@Route("category")
+public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
+
+	private static final long serialVersionUID = 1560125362904332256L;
 
 	@Autowired
 	private ContentNodeService contentNodeFacade;
@@ -37,8 +42,11 @@ public class NodePage extends OneColumnPage {
 	// Přehled podkategorií
 	private NodesGrid subNodesTable;
 
-	public NodePage(GrassRequest request) {
-		super(request);
+	private String categoryParameter;
+
+	@Override
+	public void setParameter(BeforeEvent event, String parameter) {
+		categoryParameter = parameter;
 	}
 
 	@Override
@@ -52,11 +60,7 @@ public class NodePage extends OneColumnPage {
 		layout.setSpacing(true);
 		marginLayout.add(layout);
 
-		String nodeName = getRequest().getAnalyzer().getNextPathToken();
-		if (nodeName == null)
-			throw new GrassPageException(404);
-
-		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(nodeName);
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(categoryParameter);
 		if (identifier == null)
 			throw new GrassPageException(404);
 
@@ -144,7 +148,7 @@ public class NodePage extends OneColumnPage {
 		subNodesTable.setWidth("100%");
 
 		// Vytvořit novou kategorii
-		if (coreACL.canCreateNode(UIUtils.getUser())) {
+		if (coreACL.canCreateNode(getUser())) {
 			createNewNodePanel(subNodesLayout, node);
 		}
 	}
@@ -160,7 +164,7 @@ public class NodePage extends OneColumnPage {
 		VerticalLayout contentsLayout = new VerticalLayout();
 		contentsLayout.setPadding(false);
 		ContentsLazyGrid contentsTable = new ContentsLazyGrid();
-		contentsTable.populate(this,
+		contentsTable.populate(getUser() != null, this,
 				q -> contentNodeFacade.getByNode(node.getId(), q.getOffset(), q.getLimit()).stream(),
 				q -> contentNodeFacade.getCountByNode(node.getId()));
 
@@ -181,7 +185,7 @@ public class NodePage extends OneColumnPage {
 		newContentsLayout.add(new H2("Vytvořit nový obsah"));
 		newContentsLayout.add(newContentsTable);
 		newContentsTable.setWidth("100%");
-		newContentsLayout.setVisible(coreACL.canCreateContent(UIUtils.getUser()));
+		newContentsLayout.setVisible(coreACL.canCreateContent(getUser()));
 
 		layout.add(newContentsLayout);
 	}

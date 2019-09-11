@@ -35,9 +35,6 @@ html, body {
 }
 
 #quotes {
-	font-family: Tahoma, sans-serif;
-	font-size: 9pt;
-	color: white;
 	position: relative;
 	padding: 0px;
 	left: 100px;
@@ -46,22 +43,35 @@ html, body {
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
-	top: 10px;
+	top: 0px;
 }
 
-#quote {
+#quotes a, #quotes a:hover {
+	font-family: Tahoma, sans-serif;
+	font-size: 9pt;
 	color: white;
-	text-decoration: none;
 }
 
 #menu-wrapper {
-	top: 32px;
+	top: 24px;
 	position: relative;
 	background-color: #333436;
 	border-top: 1px solid #505154;
 	border-bottom: 1px solid #424246;
 	border-radius: 4px;
 	box-shadow: 0 0px 10px 0px black;
+}
+
+vaadin-horizontal-layout.menu {
+	padding: 2px 14px;
+}
+
+.menu-item {
+	color: #d1d3d6;
+	text-shadow: rgba(0, 0, 0, 0.9) 0 1px 0;
+	text-decoration: none;
+	font: 400 14px/1.55 Helvetica, Arial, "lucida grande", tahoma, verdana,
+		arial, sans-serif;
 }
 
 #content {
@@ -74,11 +84,11 @@ html, body {
 	width: 990px;
 }
 
-#centercontent, #leftcontent, #rightcontent, #bottom {
+#center-content, #left-content, #right-content, #bottom {
 	border: 1px solid #b3b3b3;
 }
 
-#centercontent, #leftcontent, #rightcontent {
+#center-content, #left-content, #right-content {
 	background-color: #f4f1e6;
 	border-radius: 4px;
 }
@@ -100,11 +110,11 @@ html, body {
 	color: #555555;
 }
 
-#bottomshadow, #bottom {
+#bottom-shadow, #bottom {
 	overflow: hidden;
 	width: auto;
 }
 
-#bottomshadow {
+#bottom-shadow {
 	height: 11px;
 }

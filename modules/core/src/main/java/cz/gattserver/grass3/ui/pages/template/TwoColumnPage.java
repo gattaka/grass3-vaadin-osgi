@@ -3,13 +3,9 @@ package cz.gattserver.grass3.ui.pages.template;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
 
-import cz.gattserver.grass3.server.GrassRequest;
-
 public abstract class TwoColumnPage extends BasePage {
 
-	public TwoColumnPage(GrassRequest request) {
-		super(request);
-	}
+	private static final long serialVersionUID = -6878321656448036198L;
 
 	@Override
 	protected void createContent(Div layout) {
@@ -17,7 +13,7 @@ public abstract class TwoColumnPage extends BasePage {
 		leftContentLayout.setId("left-content");
 		leftContentLayout.add(createLeftColumnContent());
 		layout.add(leftContentLayout);
-		
+
 		Div rightContentLayout = new Div();
 		rightContentLayout.setId("right-content");
 		rightContentLayout.add(createRightColumnContent());

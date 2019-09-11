@@ -4,14 +4,11 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.components.NodeTree;
 
 public class NodesSettingsPage extends AbstractSettingsPage {
 
-	public NodesSettingsPage(GrassRequest request) {
-		super(request);
-	}
+	private static final long serialVersionUID = 6593478360842336977L;
 
 	@Override
 	protected Component createContent() {

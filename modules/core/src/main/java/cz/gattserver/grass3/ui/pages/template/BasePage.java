@@ -8,7 +8,6 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 
 import cz.gattserver.grass3.exception.GrassPageException;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.QuotesService;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 
@@ -22,14 +21,9 @@ public abstract class BasePage extends MenuPage {
 	@Resource(name = "quotesPageFactory")
 	protected PageFactory quotesPageFactory;
 
-	public BasePage(GrassRequest request) {
-		super(request);
-	}
-
 	@Override
 	protected void createQuotes(Div layout) {
 		Anchor quotes = new Anchor(getPageURL(quotesPageFactory), chooseQuote());
-		quotes.setClassName("quote");
 		layout.add(quotes);
 	}
 

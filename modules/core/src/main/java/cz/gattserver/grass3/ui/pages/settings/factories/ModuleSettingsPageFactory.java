@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.ui.pages.settings.factories;
 
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 
 public interface ModuleSettingsPageFactory {
@@ -9,8 +8,8 @@ public interface ModuleSettingsPageFactory {
 
 	public String getSettingsURL();
 
-	public GrassPage createPageIfAuthorized(GrassRequest request);
-	
+	public GrassPage createPageIfAuthorized();
+
 	public boolean isAuthorized();
 
 }

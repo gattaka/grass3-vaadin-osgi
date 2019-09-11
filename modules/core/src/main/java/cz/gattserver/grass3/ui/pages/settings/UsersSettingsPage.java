@@ -19,12 +19,13 @@ import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.modules.register.ModuleRegister;
 import cz.gattserver.grass3.security.Role;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.UserService;
 import cz.gattserver.grass3.ui.components.GridButton;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
 public class UsersSettingsPage extends AbstractSettingsPage {
+
+	private static final long serialVersionUID = -8797234297711740928L;
 
 	@Autowired
 	private UserService userFacade;
@@ -34,10 +35,6 @@ public class UsersSettingsPage extends AbstractSettingsPage {
 	protected ModuleRegister moduleRegister;
 
 	private Grid<UserInfoTO> grid;
-
-	public UsersSettingsPage(GrassRequest request) {
-		super(request);
-	}
 
 	@Override
 	protected Component createContent() {

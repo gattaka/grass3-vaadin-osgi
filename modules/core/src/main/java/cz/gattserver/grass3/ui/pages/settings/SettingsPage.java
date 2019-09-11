@@ -9,16 +9,18 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.modules.register.ModuleSettingsPageFactoriesRegister;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.settings.factories.ModuleSettingsPageFactory;
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
-import cz.gattserver.web.common.server.URLPathAnalyzer;
 
-public class SettingsPage extends TwoColumnPage {
+public class SettingsPage extends TwoColumnPage implements HasUrlParameter<String> {
+
+	private static final long serialVersionUID = 935609806962179905L;
 
 	@Autowired
 	private List<ModuleSettingsPageFactory> settingsTabFactories;
@@ -28,15 +30,16 @@ public class SettingsPage extends TwoColumnPage {
 
 	private ModuleSettingsPageFactory settingsTabFactory = null;
 
-	public SettingsPage(GrassRequest request) {
-		super(request);
+	private String moduleParameter;
+
+	@Override
+	public void setParameter(BeforeEvent event, String parameter) {
+		moduleParameter = parameter;
 	}
 
 	@Override
 	protected Div createPayload() {
-		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
-		String settingsTabName = analyzer.getCurrentPathToken();
-		ModuleSettingsPageFactory moduleSettingsPageFactory = register.getFactory(settingsTabName);
+		ModuleSettingsPageFactory moduleSettingsPageFactory = register.getFactory(moduleParameter);
 
 		if (moduleSettingsPageFactory != null) {
 			if (!moduleSettingsPageFactory.isAuthorized()) {
@@ -72,7 +75,7 @@ public class SettingsPage extends TwoColumnPage {
 
 		// pokud není pageFactory prázdná, pak se zobrazuje konkrétní nastavení
 		if (settingsTabFactory != null)
-			return settingsTabFactory.createPageIfAuthorized(getRequest()).getContent();
+			return settingsTabFactory.createPageIfAuthorized().getContent();
 
 		// jinak zobraz info o nabídce
 		VerticalLayout layout = new VerticalLayout();

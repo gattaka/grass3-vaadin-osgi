@@ -5,17 +5,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.Route;
 
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.ContentTagService;
 import cz.gattserver.grass3.ui.components.ContentsLazyGrid;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 
-public class TagPage extends OneColumnPage {
+@Route("tag")
+public class TagPage extends OneColumnPage implements HasUrlParameter<String> {
+
+	private static final long serialVersionUID = -2716406706042922900L;
 
 	@Autowired
 	private ContentTagService contentTagFacade;
@@ -23,17 +28,16 @@ public class TagPage extends OneColumnPage {
 	@Autowired
 	private ContentNodeService contentNodeFacade;
 
-	public TagPage(GrassRequest request) {
-		super(request);
+	private String tagParameter;
+
+	@Override
+	public void setParameter(BeforeEvent event, String parameter) {
+		tagParameter = parameter;
 	}
 
 	@Override
 	protected Component createColumnContent() {
-		String tagName = getRequest().getAnalyzer().getNextPathToken();
-		if (tagName == null)
-			throw new GrassPageException(404);
-
-		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(tagName);
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(tagParameter);
 		if (identifier == null)
 			throw new GrassPageException(404);
 
@@ -43,7 +47,7 @@ public class TagPage extends OneColumnPage {
 			throw new GrassPageException(404);
 
 		ContentsLazyGrid tagContentsTable = new ContentsLazyGrid();
-		tagContentsTable.populate(this,
+		tagContentsTable.populate(getUser() != null, this,
 				q -> contentNodeFacade.getByTag(tag.getId(), q.getOffset(), q.getLimit()).stream(),
 				q -> contentNodeFacade.getCountByTag(tag.getId()));
 

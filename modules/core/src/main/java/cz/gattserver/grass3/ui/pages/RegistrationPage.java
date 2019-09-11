@@ -14,22 +14,19 @@ import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.data.validator.StringLengthValidator;
 
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.UserService;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 
 public class RegistrationPage extends OneColumnPage {
 
+	private static final long serialVersionUID = 3104749805983602744L;
+
 	@Autowired
 	private UserService userFacade;
 
 	private static final int MIN_USERNAME_LENGTH = 2;
 	private static final int MAX_USERNAME_LENGTH = 20;
-
-	public RegistrationPage(GrassRequest request) {
-		super(request);
-	}
 
 	private static class RegistrationTO {
 		private String username;

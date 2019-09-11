@@ -11,20 +11,17 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.config.CoreConfiguration;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ConfigurationService;
 
 public class ApplicationSettingsPage extends AbstractSettingsPage {
 
+	private static final long serialVersionUID = 6536724991295498082L;
+	
 	private static final Double MIN_SESSION_TIMEOUT = 5.0;
 	private static final Double MAX_SESSION_TIMEOUT = 60.0;
 
 	@Autowired
 	private ConfigurationService configurationService;
-
-	public ApplicationSettingsPage(GrassRequest request) {
-		super(request);
-	}
 
 	@Override
 	protected Component createContent() {

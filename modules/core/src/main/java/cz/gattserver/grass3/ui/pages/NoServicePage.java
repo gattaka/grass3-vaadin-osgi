@@ -5,14 +5,11 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 
 public class NoServicePage extends OneColumnPage {
 
-	public NoServicePage(GrassRequest request) {
-		super(request);
-	}
+	private static final long serialVersionUID = -3691575066388167709L;
 
 	@Override
 	protected Component createColumnContent() {

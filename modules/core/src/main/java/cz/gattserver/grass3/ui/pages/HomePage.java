@@ -23,14 +23,12 @@ import com.vaadin.flow.theme.lumo.Lumo;
 
 import cz.gattserver.grass3.interfaces.ContentTagsCloudItemTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.ContentTagService;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.ContentsLazyGrid;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
-import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.HtmlSpan;
 
@@ -63,10 +61,6 @@ public class HomePage extends OneColumnPage {
 	@Resource(name = "tagPageFactory")
 	private PageFactory tagPageFactory;
 
-	public HomePage(GrassRequest request) {
-		super(request);
-	}
-
 	@Override
 	protected Component createColumnContent() {
 		VerticalLayout paddingLayout = new VerticalLayout();
@@ -78,13 +72,13 @@ public class HomePage extends OneColumnPage {
 		paddingLayout.add(pagelayout);
 
 		// Oblíbené
-		UserInfoTO user = UIUtils.getUser();
+		UserInfoTO user = getUser();
 		if (coreACL.isLoggedIn(user)) {
 			VerticalLayout favouritesLayout = new VerticalLayout();
 			favouritesLayout.setPadding(false);
 			favouritesLayout.add(new H2("Oblíbené obsahy"));
 			ContentsLazyGrid favouritesContentsTable = new ContentsLazyGrid();
-			favouritesContentsTable.populate(this,
+			favouritesContentsTable.populate(getUser() != null, this,
 					q -> contentNodeFacade.getUserFavourite(user.getId(), q.getOffset(), q.getLimit()).stream(),
 					q -> contentNodeFacade.getUserFavouriteCount(user.getId()));
 			favouritesLayout.add(favouritesContentsTable);
@@ -138,7 +132,7 @@ public class HomePage extends OneColumnPage {
 			String value = e.getValue();
 			if (StringUtils.isNotBlank(value) && !searchResultsTable.isVisible()) {
 				searchResultsTable.setVisible(true);
-				searchResultsTable.populate(HomePage.this,
+				searchResultsTable.populate(getUser() != null, HomePage.this,
 						q -> contentNodeFacade
 								.getByName(searchField.getValue(), user.getId(), q.getOffset(), q.getLimit()).stream(),
 						q -> contentNodeFacade.getCountByName(searchField.getValue(), user.getId()));
@@ -204,12 +198,12 @@ public class HomePage extends OneColumnPage {
 	private void createRecentMenus(VerticalLayout pagelayout) {
 
 		ContentsLazyGrid recentAddedContentsTable = new ContentsLazyGrid();
-		recentAddedContentsTable.populate(this,
+		recentAddedContentsTable.populate(getUser() != null, this,
 				q -> contentNodeFacade.getRecentAdded(q.getOffset(), q.getLimit()).stream(),
 				q -> contentNodeFacade.getCount());
 
 		ContentsLazyGrid recentModifiedContentsTable = new ContentsLazyGrid();
-		recentModifiedContentsTable.populate(this,
+		recentModifiedContentsTable.populate(getUser() != null, this,
 				q -> contentNodeFacade.getRecentModified(q.getOffset(), q.getLimit()).stream(),
 				q -> contentNodeFacade.getCount());
 

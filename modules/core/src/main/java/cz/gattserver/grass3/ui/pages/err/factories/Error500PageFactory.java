@@ -2,7 +2,6 @@ package cz.gattserver.grass3.ui.pages.err.factories;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.err.Error500Page;
 import cz.gattserver.grass3.ui.pages.factories.template.AbstractPageFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
@@ -20,7 +19,7 @@ public class Error500PageFactory extends AbstractPageFactory {
 	}
 
 	@Override
-	protected GrassPage createPage(GrassRequest request) {
-		return new Error500Page(request);
+	protected GrassPage createPage() {
+		return new Error500Page();
 	}
 }

@@ -3,8 +3,6 @@ package cz.gattserver.grass3.ui.util;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.notification.Notification;
 
-import cz.gattserver.grass3.interfaces.UserInfoTO;
-import cz.gattserver.grass3.ui.GrassUI;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.InfoDialog;
 import cz.gattserver.web.common.ui.window.WarnDialog;
@@ -12,20 +10,6 @@ import cz.gattserver.web.common.ui.window.WarnDialog;
 public class UIUtils {
 
 	private UIUtils() {
-	}
-
-	/**
-	 * Získá uživatele
-	 */
-	public static UserInfoTO getUser() {
-		return getGrassUI().getUser();
-	}
-
-	/**
-	 * Získá aktuální UI jako {@link GrassUI}
-	 */
-	public static GrassUI getGrassUI() {
-		return (GrassUI) UI.getCurrent();
 	}
 
 	/**

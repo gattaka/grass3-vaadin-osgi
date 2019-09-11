@@ -19,12 +19,10 @@ import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.modules.SectionService;
 import cz.gattserver.grass3.modules.register.ModuleRegister;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.CoreACLService;
 import cz.gattserver.grass3.services.NodeService;
 import cz.gattserver.grass3.services.VersionInfoService;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
-import cz.gattserver.grass3.ui.util.UIUtils;
 
 public abstract class MenuPage extends GrassPage {
 
@@ -57,10 +55,6 @@ public abstract class MenuPage extends GrassPage {
 
 	@Resource(name = "registrationPageFactory")
 	protected PageFactory registrationPageFactory;
-
-	public MenuPage(GrassRequest request) {
-		super(request);
-	}
 
 	@Override
 	protected Div createPayload() {
@@ -97,8 +91,7 @@ public abstract class MenuPage extends GrassPage {
 		HorizontalLayout menuExpander = new HorizontalLayout();
 		menuExpander.setWidth("990px");
 		menuExpander.addClassName("menu");
-		menuExpander.setPadding(false);
-		menuExpander.setSpacing(true);
+		menuExpander.setSpacing(true);		
 		menu.add(menuExpander);
 
 		createMenuItems(menuExpander);
@@ -120,7 +113,7 @@ public abstract class MenuPage extends GrassPage {
 		bottom.add(new Span("Powered by GRASS " + versionInfoService.getProjectVersion() + " © 2012-2019 Hynek Uhlíř"));
 
 		Div bottomShadow = new Div();
-		bottomShadow.setId("bottomshadow");
+		bottomShadow.setId("bottom-shadow");
 		bottomHolder.add(bottomShadow);
 
 		return payload;
@@ -149,7 +142,7 @@ public abstract class MenuPage extends GrassPage {
 
 		// externí sekce
 		for (SectionService section : serviceHolder.getSectionServices()) {
-			if (coreACL.canShowSection(section, UIUtils.getUser())) {
+			if (coreACL.canShowSection(section, getUser())) {
 				createMenuComponent(menu,
 						new Anchor(getPageURL(section.getSectionPageFactory()), section.getSectionCaption()));
 			}
@@ -164,16 +157,16 @@ public abstract class MenuPage extends GrassPage {
 		 */
 
 		// Přihlášení
-		if (!coreACL.isLoggedIn(UIUtils.getUser()))
+		if (!coreACL.isLoggedIn(getUser()))
 			createMenuComponent(menu, new Anchor(getPageURL(loginPageFactory), "Přihlášení"));
 
 		// Registrace
-		if (coreACL.canRegistrate(UIUtils.getUser()))
+		if (coreACL.canRegistrate(getUser()))
 			createMenuComponent(menu, new Anchor(getPageURL(registrationPageFactory), "Registrace"));
 
 		// Přehled o uživateli
-		final UserInfoTO userInfoDTO = UIUtils.getUser();
-		if (coreACL.canShowUserDetails(userInfoDTO, UIUtils.getUser())) {
+		final UserInfoTO userInfoDTO = getUser();
+		if (coreACL.canShowUserDetails(userInfoDTO, getUser())) {
 			// nastavení
 			createMenuComponent(menu, new Anchor(getPageURL(settingsPageFactory), "Nastavení"));
 

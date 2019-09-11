@@ -6,14 +6,11 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 
 public abstract class ErrorPage extends OneColumnPage {
 
-	public ErrorPage(GrassRequest request) {
-		super(request);
-	}
+	private static final long serialVersionUID = 4576353466500365046L;
 
 	@Override
 	protected Component createColumnContent() {

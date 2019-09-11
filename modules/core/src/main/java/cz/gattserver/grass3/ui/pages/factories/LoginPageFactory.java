@@ -3,7 +3,6 @@ package cz.gattserver.grass3.ui.pages.factories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.CoreACLService;
 import cz.gattserver.grass3.ui.pages.LoginPage;
 import cz.gattserver.grass3.ui.pages.factories.template.AbstractPageFactory;
@@ -29,8 +28,8 @@ public class LoginPageFactory extends AbstractPageFactory {
 	}
 
 	@Override
-	protected GrassPage createPage(GrassRequest request) {
-		return new LoginPage(request);
+	protected GrassPage createPage() {
+		return new LoginPage();
 	}
 
 }

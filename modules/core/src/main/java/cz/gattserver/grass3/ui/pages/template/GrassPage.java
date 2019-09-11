@@ -3,8 +3,10 @@ package cz.gattserver.grass3.ui.pages.template;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.server.VaadinRequest;
 
-import cz.gattserver.grass3.server.GrassRequest;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
+import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.web.common.spring.SpringContextHelper;
@@ -19,7 +21,10 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
  */
 public abstract class GrassPage extends Div {
 
-	private GrassRequest request;
+	private static final long serialVersionUID = 7952966362953000385L;
+
+	private transient SecurityService securityFacade;
+
 	private Div content;
 
 	/**
@@ -34,9 +39,9 @@ public abstract class GrassPage extends Div {
 	 * @param request
 	 *            {@link GrassRequest}, v rámci kterého je stránka vystavována
 	 */
-	public GrassPage(GrassRequest request) {
+	public GrassPage() {
 		SpringContextHelper.inject(this);
-		this.request = request;
+		add(getContent());
 	}
 
 	/**
@@ -52,10 +57,6 @@ public abstract class GrassPage extends Div {
 	}
 
 	protected abstract Div createPayload();
-
-	protected GrassRequest getRequest() {
-		return request;
-	}
 
 	/**
 	 * Nahraje CSS
@@ -98,7 +99,7 @@ public abstract class GrassPage extends Div {
 		// přitom umožnit aby se JS odkazovali na externí zdroje
 		if (!js.isPlain()
 				&& (!chunk.toLowerCase().startsWith("http://") || !chunk.toLowerCase().startsWith("https://"))) {
-			chunk = "\"" + getRequest().getContextRoot() + "/VAADIN/themes/grass/" + chunk + "\"";
+			chunk = "\"" + getContextPath() + "/VAADIN/themes/grass/" + chunk + "\"";
 			builder.append("$.getScript(").append(chunk).append(", function(){");
 			buildJSBatch(builder, index + 1, scripts);
 			builder.append("});");
@@ -108,18 +109,22 @@ public abstract class GrassPage extends Div {
 		}
 	}
 
+	public String getContextPath() {
+		return VaadinRequest.getCurrent().getContextPath();
+	}
+
 	/**
 	 * Získá URL stránky. Kořen webu + suffix dle pageFactory
 	 */
 	public String getPageURL(PageFactory pageFactory) {
-		return request.getContextRoot() + "/" + pageFactory.getPageName();
+		return getContextPath() + "/" + pageFactory.getPageName();
 	}
 
 	/**
 	 * Získá URL stránky. Kořen webu + suffix
 	 */
 	public String getPageURL(String suffix) {
-		return request.getContextRoot() + "/" + suffix;
+		return getContextPath() + "/" + suffix;
 	}
 
 	/**
@@ -139,6 +144,15 @@ public abstract class GrassPage extends Div {
 			}
 			return buffer.toString();
 		}
+	}
+
+	/**
+	 * Získá aktuálního přihlášeného uživatele jako {@link UserInfoTO} objekt
+	 */
+	public UserInfoTO getUser() {
+		if (securityFacade == null)
+			securityFacade = SpringContextHelper.getBean(SecurityService.class);
+		return securityFacade.getCurrentUser();
 	}
 
 }

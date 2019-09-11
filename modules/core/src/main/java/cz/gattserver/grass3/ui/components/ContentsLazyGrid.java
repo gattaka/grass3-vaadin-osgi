@@ -18,7 +18,6 @@ import cz.gattserver.grass3.modules.register.ModuleRegister;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.MenuPage;
 import cz.gattserver.grass3.ui.util.GridUtils;
-import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -31,7 +30,8 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		super(ContentNodeOverviewTO.class);
 	}
 
-	public void populate(final MenuPage page, FetchCallback<ContentNodeOverviewTO, Void> fetchCallback,
+	public void populate(boolean showPubLock, final MenuPage page,
+			FetchCallback<ContentNodeOverviewTO, Void> fetchCallback,
 			CountCallback<ContentNodeOverviewTO, Void> countCallback) {
 
 		PageFactory nodePageFactory = ((PageFactory) SpringContextHelper.getBean("nodePageFactory"));
@@ -49,7 +49,7 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		String creationDateBind = "customCreationDate";
 		String lastModificationDateBind = "customLastModificationDate";
 
-		if (UIUtils.getUser() != null) {
+		if (showPubLock) {
 			addColumn(new IconRenderer<ContentNodeOverviewTO>(c -> c.isPublicated() ? new Span()
 					: new Image(ImageIcon.SHIELD_16_ICON.createResource(), "locked")))
 							.setWidth(GridUtils.ICON_COLUMN_WIDTH + "px").setHeader("").setKey(lockIconBind)
@@ -87,14 +87,8 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 				.setFlexGrow(0).setWidth("90px");
 
 		addColumn(new LocalDateTimeRenderer<>(ContentNodeOverviewTO::getLastModificationDate, "d.M.yyyy"))
-				.setHeader("Upraveno").setKey(creationDateBind).setClassNameGenerator(item -> "v-align-right")
+				.setHeader("Upraveno").setKey(lastModificationDateBind).setClassNameGenerator(item -> "v-align-right")
 				.setFlexGrow(0).setWidth("90px");
-
-		if (UIUtils.getUser() != null)
-			setColumns(iconBind, nameBind, lockIconBind, nodeBind, authorBind, creationDateBind,
-					lastModificationDateBind);
-		else
-			setColumns(iconBind, nameBind, nodeBind, authorBind, creationDateBind, lastModificationDateBind);
 
 		setHeight(GridUtils.processHeight(countCallback.count(new Query<>())) + "px");
 

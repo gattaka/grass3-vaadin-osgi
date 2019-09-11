@@ -5,24 +5,22 @@ import java.util.List;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.interfaces.QuoteTO;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
-import cz.gattserver.grass3.ui.util.UIUtils;
 
+@Route("quotes")
 public class QuotesPage extends OneColumnPage {
 
-	private List<QuoteTO> data;
+	private static final long serialVersionUID = 6209768531464272839L;
 
-	public QuotesPage(GrassRequest request) {
-		super(request);
-	}
+	private List<QuoteTO> data;
 
 	private void populateData() {
 		data = quotesFacade.getAllQuotes();
@@ -49,7 +47,7 @@ public class QuotesPage extends OneColumnPage {
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		layout.add(btnLayout);
 		layout.setHorizontalComponentAlignment(Alignment.CENTER, btnLayout);
-		btnLayout.setVisible(coreACL.canModifyQuotes(UIUtils.getUser()));
+		btnLayout.setVisible(coreACL.canModifyQuotes(getUser()));
 
 		CreateGridButton createGridButton = new CreateGridButton("Přidat hlášku", e -> new QuoteDialog(q -> {
 			quotesFacade.createQuote(q.getName());

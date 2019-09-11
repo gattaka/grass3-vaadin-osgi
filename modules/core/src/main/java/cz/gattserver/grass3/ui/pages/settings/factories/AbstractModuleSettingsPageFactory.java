@@ -3,7 +3,6 @@ package cz.gattserver.grass3.ui.pages.settings.factories;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 
@@ -46,10 +45,10 @@ public abstract class AbstractModuleSettingsPageFactory implements ModuleSetting
 		return tabURL;
 	}
 
-	public GrassPage createPageIfAuthorized(GrassRequest request) {
-		return createPage(request);
+	public GrassPage createPageIfAuthorized() {
+		return createPage();
 	}
 
-	protected abstract GrassPage createPage(GrassRequest request);
+	protected abstract GrassPage createPage();
 
 }

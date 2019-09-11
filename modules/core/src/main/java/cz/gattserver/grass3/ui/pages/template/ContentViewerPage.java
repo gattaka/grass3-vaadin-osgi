@@ -23,7 +23,6 @@ import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeTO;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.UserService;
 import cz.gattserver.grass3.ui.components.Breadcrumb;
 import cz.gattserver.grass3.ui.components.DeleteButton;
@@ -41,6 +40,8 @@ import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.WarnDialog;
 
 public abstract class ContentViewerPage extends TwoColumnPage {
+
+	private static final long serialVersionUID = -1564043277444025560L;
 
 	@Autowired
 	protected UserService userFacade;
@@ -63,10 +64,6 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	 * Breadcrumb
 	 */
 	private Breadcrumb breadcrumb;
-
-	public ContentViewerPage(GrassRequest request) {
-		super(request);
-	}
 
 	@Override
 	protected Div createPayload() {
@@ -115,7 +112,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 
 	protected void createContentOperations(HasComponents operationsListLayout) {
 		// Upravit
-		if (coreACL.canModifyContent(content, UIUtils.getUser())) {
+		if (coreACL.canModifyContent(content, getUser())) {
 			ModifyButton modBtn = new ModifyButton(event -> onEditOperation());
 			operationsListLayout.add(modBtn);
 			modBtn.setTooltip(modBtn.getText());
@@ -123,7 +120,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		}
 
 		// Smazat
-		if (coreACL.canDeleteContent(content, UIUtils.getUser())) {
+		if (coreACL.canDeleteContent(content, getUser())) {
 			DeleteButton delBtn = new DeleteButton(event -> onDeleteOperation());
 			operationsListLayout.add(delBtn);
 			delBtn.setTooltip(delBtn.getText());
@@ -134,7 +131,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		removeFromFavouritesButton = new ImageButton("Odebrat z oblíbených", ImageIcon.BROKEN_HEART_16_ICON, event -> {
 			// zdařilo se ? Pokud ano, otevři info okno
 			try {
-				userFacade.removeContentFromFavourites(content.getId(), UIUtils.getUser().getId());
+				userFacade.removeContentFromFavourites(content.getId(), getUser().getId());
 				removeFromFavouritesButton.setVisible(false);
 				addToFavouritesButton.setVisible(true);
 			} catch (Exception e) {
@@ -146,7 +143,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		addToFavouritesButton = new ImageButton("Přidat do oblíbených", ImageIcon.HEART_16_ICON, event -> {
 			// zdařilo se ? Pokud ano, otevři info okno
 			try {
-				userFacade.addContentToFavourites(content.getId(), UIUtils.getUser().getId());
+				userFacade.addContentToFavourites(content.getId(), getUser().getId());
 				addToFavouritesButton.setVisible(false);
 				removeFromFavouritesButton.setVisible(true);
 			} catch (Exception e) {
@@ -155,14 +152,14 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 			}
 		}).clearText();
 
-		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(content, UIUtils.getUser()));
-		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(content, UIUtils.getUser()));
+		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(content, getUser()));
+		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(content, getUser()));
 
 		operationsListLayout.add(addToFavouritesButton);
 		operationsListLayout.add(removeFromFavouritesButton);
 
 		// Změna kategorie
-		if (coreACL.canModifyContent(content, UIUtils.getUser())) {
+		if (coreACL.canModifyContent(content, getUser())) {
 			ImageButton moveBtn = new ImageButton("Přesunout", ImageIcon.MOVE_16_ICON,
 					event -> new ContentMoveDialog(content) {
 						private static final long serialVersionUID = 3748723613020816248L;

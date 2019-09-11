@@ -3,7 +3,6 @@ package cz.gattserver.grass3.ui.pages.settings.factories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.CoreACLService;
 import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
 import cz.gattserver.grass3.ui.pages.settings.UsersSettingsPage;
@@ -23,8 +22,8 @@ public class UsersSettingsPageFactory extends AbstractModuleSettingsPageFactory 
 	}
 
 	@Override
-	protected AbstractSettingsPage createPage(GrassRequest request) {
-		return new UsersSettingsPage(request);
+	protected AbstractSettingsPage createPage() {
+		return new UsersSettingsPage();
 	}
 
 }

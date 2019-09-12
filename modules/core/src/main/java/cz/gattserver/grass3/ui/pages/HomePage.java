@@ -60,9 +60,8 @@ public class HomePage extends OneColumnPage {
 
 	@Override
 	protected Component createColumnContent() {
-		VerticalLayout layout = new VerticalLayout();
-		layout.setPadding(false);
-		layout.setSpacing(true);
+		Div layout = new Div();
+		layout.setClassName("home-div");
 		layout.setSizeFull();
 
 		// Oblíbené

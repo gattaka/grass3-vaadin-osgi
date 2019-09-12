@@ -21,6 +21,14 @@ flow-component-renderer img {
     margin-bottom: -2px;
 }
 
+.home-div div h2 {
+	margin-top: 10px;	
+}
+
+.home-div div:FIRST-CHILD h2 {
+	margin-top: 0px;
+}
+
 .tag-letter {
 	font-weight: bold;
 	margin: 4px 0px;

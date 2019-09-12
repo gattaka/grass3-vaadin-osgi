@@ -30,6 +30,7 @@ $_documentContainer.innerHTML = `<custom-style>
       --lumo-space-m: 0.625rem;
       --lumo-space-s: 0.3125rem;
       --lumo-space-xs: 0.1875rem;
+      --lumo-primary-text-color: #045491
     }
 
     /* Need to use a separete and stronger selector for other browsers where

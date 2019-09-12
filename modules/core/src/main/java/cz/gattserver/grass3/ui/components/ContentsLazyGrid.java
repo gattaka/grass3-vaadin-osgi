@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.ui.components;
 
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Anchor;
@@ -55,7 +56,8 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 			Image img = new Image(contentService == null ? ImageIcon.WARNING_16_ICON.createResource()
 					: contentService.getContentIcon(), "");
 			return img;
-		}, c -> "")).setFlexGrow(0).setWidth("28px").setHeader("").setKey(iconBind);
+		}, c -> "")).setFlexGrow(0).setWidth("28px").setHeader("").setTextAlign(ColumnTextAlign.CENTER)
+				.setKey(iconBind);
 
 		addColumn(new ComponentRenderer<Anchor, ContentNodeOverviewTO>(contentNode -> {
 			ContentModule contentService = serviceHolder.getContentModulesByName(contentNode.getContentReaderID());
@@ -66,9 +68,10 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		})).setFlexGrow(2).setHeader("Název").setId(nameBind);
 
 		if (showPubLock) {
-			addColumn(new IconRenderer<ContentNodeOverviewTO>(c -> c.isPublicated() ? new Span()
-					: new Image(ImageIcon.SHIELD_16_ICON.createResource(), "locked")))
-							.setWidth(GridUtils.ICON_COLUMN_WIDTH + "px").setHeader("").setKey(lockIconBind);
+			addColumn(new IconRenderer<ContentNodeOverviewTO>(
+					c -> c.isPublicated() ? new Span() : new Image(ImageIcon.SHIELD_16_ICON.createResource(), "locked"),
+					c -> "")).setFlexGrow(0).setWidth("26px").setHeader("").setTextAlign(ColumnTextAlign.CENTER)
+							.setKey(lockIconBind);
 		}
 
 		addColumn(new ComponentRenderer<Anchor, ContentNodeOverviewTO>(contentNode -> {

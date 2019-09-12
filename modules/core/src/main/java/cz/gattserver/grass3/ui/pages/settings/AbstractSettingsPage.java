@@ -10,10 +10,8 @@ public abstract class AbstractSettingsPage extends GrassPage {
 	private static final long serialVersionUID = 1226081678716885486L;
 
 	@Override
-	protected Div createPayload() {
-		Div layout = new Div();
+	protected void createPayload(Div layout) {
 		layout.add(createContent());
-		return layout;
 	}
 
 	protected abstract Component createContent();

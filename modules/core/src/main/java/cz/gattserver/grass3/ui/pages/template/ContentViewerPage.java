@@ -66,7 +66,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	private Breadcrumb breadcrumb;
 
 	@Override
-	protected Div createPayload() {
+	protected void createPayload(Div payload) {
 		tagsListLayout = new Div();
 		breadcrumb = new Breadcrumb();
 
@@ -104,10 +104,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 				/*			*/ + "document.getElementById('left').style['margin-top'] = '0px'; "
 				/*	*/ + "});");
 
-		Div layout = super.createPayload();
-		layout.addAttachListener(e -> UI.getCurrent().getPage().setTitle(content.getName()));
-		layout.addDetachListener(e -> UI.getCurrent().getPage().setTitle("Gattserver"));
-		return layout;
+		super.createPayload(payload);
 	}
 
 	protected void createContentOperations(HasComponents operationsListLayout) {

@@ -59,10 +59,9 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 
 		addColumn(new ComponentRenderer<Anchor, ContentNodeOverviewTO>(contentNode -> {
 			ContentModule contentService = serviceHolder.getContentModulesByName(contentNode.getContentReaderID());
-			PageFactory pageFactory = contentService == null ? noServicePageFactory
-					: contentService.getContentViewerPageFactory();
-			String url = page.getPageURL(pageFactory,
-					URLIdentifierUtils.createURLIdentifier(contentNode.getContentID(), contentNode.getName()));
+			String url = contentService == null ? page.getPageURL(noServicePageFactory)
+					: page.getPageURL(contentService.getContentViewerPageFactory(),
+							URLIdentifierUtils.createURLIdentifier(contentNode.getContentID(), contentNode.getName()));
 			return new Anchor(url, contentNode.getName());
 		})).setFlexGrow(2).setHeader("Název").setId(nameBind);
 

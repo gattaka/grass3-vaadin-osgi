@@ -13,11 +13,13 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.data.validator.StringLengthValidator;
+import com.vaadin.flow.router.Route;
 
 import cz.gattserver.grass3.services.UserService;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 
+@Route(value = "registration")
 public class RegistrationPage extends OneColumnPage {
 
 	private static final long serialVersionUID = 3104749805983602744L;

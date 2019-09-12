@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.ui.pages.template;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
@@ -24,15 +23,13 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
  *
  */
 @JsModule("@vaadin/vaadin-lumo-styles/presets/compact.js")
-@Theme(value = Lumo.class )
+@Theme(value = Lumo.class)
 @CssImport("./styles.css")
 public abstract class GrassPage extends Div {
 
 	private static final long serialVersionUID = 7952966362953000385L;
 
 	private transient SecurityService securityFacade;
-
-	private Div content;
 
 	/**
 	 * Má se nahrát JQuery?
@@ -48,22 +45,14 @@ public abstract class GrassPage extends Div {
 	 */
 	public GrassPage() {
 		SpringContextHelper.inject(this);
-		add(getContent());
-	}
-
-	/**
-	 * Získá obsah stránky, pokud ještě obsah není vytvořen zavolá
-	 * {@link #createPayload()}, aby byl založen
-	 */
-	public final Component getContent() {
-		if (content == null)
-			content = createPayload();
+		createPayload(this);
+		setId("main-div");
+		// TODO
 		if (jQueryRequired)
 			UI.getCurrent().getPage().addJavaScript("https://code.jquery.com/jquery-1.9.1.js");
-		return content;
 	}
 
-	protected abstract Div createPayload();
+	protected abstract void createPayload(Div div);
 
 	/**
 	 * Nahraje CSS

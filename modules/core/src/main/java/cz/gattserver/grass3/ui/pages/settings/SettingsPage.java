@@ -38,7 +38,7 @@ public class SettingsPage extends TwoColumnPage implements HasUrlParameter<Strin
 	}
 
 	@Override
-	protected Div createPayload() {
+	protected void createPayload(Div layout) {
 		ModuleSettingsPageFactory moduleSettingsPageFactory = register.getFactory(moduleParameter);
 
 		if (moduleSettingsPageFactory != null) {
@@ -49,7 +49,7 @@ public class SettingsPage extends TwoColumnPage implements HasUrlParameter<Strin
 			}
 		}
 
-		return super.createPayload();
+		super.createPayload(layout);
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public class SettingsPage extends TwoColumnPage implements HasUrlParameter<Strin
 
 		// pokud není pageFactory prázdná, pak se zobrazuje konkrétní nastavení
 		if (settingsTabFactory != null)
-			return settingsTabFactory.createPageIfAuthorized().getContent();
+			return settingsTabFactory.createPageIfAuthorized();
 
 		// jinak zobraz info o nabídce
 		VerticalLayout layout = new VerticalLayout();

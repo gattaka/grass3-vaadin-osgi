@@ -1,31 +1,39 @@
 html, body {
+	margin: 0;
+   	padding: 0;
 	height: 100%;
 	background-color: #d8cda6;
 }
 
 h2 {
-    border-bottom: 1px solid;
-    border-color: #888;
-    font-size: 15pt;
-    font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
-    font-weight: normal;
-    width: 100%;
-    margin-top: 0;
-    margin-bottom: 10px;
+	border-bottom: 1px solid;
+	border-color: #888;
+	font-size: 15pt;
+	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
+		"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+	font-weight: normal;
+	width: 100%;
+	margin-top: 0;
+	margin-bottom: 10px;
 }
 
 .tag-letter {
-    font-weight: bold;
-    margin: 4px 0px;
+	font-weight: bold;
+	margin: 4px 0px;
 }
 
 .tag-labels {
-    padding: 0 0 0 15px;
+	padding: 0 0 0 15px;
+}
+
+#main-div {
+	min-height: 100%;
+	position: relative;
 }
 
 #holder {
 	background-position: bottom right;
-	margin-bottom: 100px;
+	padding-bottom: 50px; 		
 }
 
 #top-holder {
@@ -50,7 +58,7 @@ h2 {
 	top: 32px;
 }
 
-#top>h1 {
+#top > h1 {
 	display: none;
 }
 
@@ -114,9 +122,11 @@ vaadin-horizontal-layout.menu {
 	padding: var(--lumo-space-l);
 }
 
-#bottom-holder {	
-	bottom: 0;
-	width: 100%;
+#bottom-holder {
+	height: 40px;
+	position: absolute;
+   	bottom: 0;
+   	width: 100%;
 }
 
 #bottom {

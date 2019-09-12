@@ -57,9 +57,7 @@ public abstract class MenuPage extends GrassPage {
 	protected PageFactory registrationPageFactory;
 
 	@Override
-	protected Div createPayload() {
-		Div payload = new Div();
-
+	protected void createPayload(Div payload) {
 		Div holder = new Div();
 		holder.setId("holder");
 		payload.add(holder);
@@ -91,7 +89,7 @@ public abstract class MenuPage extends GrassPage {
 		HorizontalLayout menuExpander = new HorizontalLayout();
 		menuExpander.setWidth("990px");
 		menuExpander.addClassName("menu");
-		menuExpander.setSpacing(true);		
+		menuExpander.setSpacing(true);
 		menu.add(menuExpander);
 
 		createMenuItems(menuExpander);
@@ -115,8 +113,6 @@ public abstract class MenuPage extends GrassPage {
 		Div bottomShadow = new Div();
 		bottomShadow.setId("bottom-shadow");
 		bottomHolder.add(bottomShadow);
-
-		return payload;
 	}
 
 	protected void createMenuComponent(HorizontalLayout menu, Anchor component) {

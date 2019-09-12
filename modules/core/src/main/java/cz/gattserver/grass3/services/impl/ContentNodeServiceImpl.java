@@ -152,27 +152,25 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	 * Všechny obsahy
 	 */
 
-	private QueryResults<ContentNodeOverviewTO> innerByUserAccess(PageRequest pr) {
+	private QueryResults<ContentNodeOverviewTO> innerByUserAccess(int offset, int limit, String sortProperty) {
 		UserInfoTO user = securityService.getCurrentUser();
-		return contentNodeRepository.findByUserAccess(user.getId(), user.isAdmin(), pr);
+		return contentNodeRepository.findByUserAccess(user.getId(), user.isAdmin(), offset, limit, sortProperty);
 	}
 
 	@Override
 	public int getCount() {
-		return (int) innerByUserAccess(PageRequest.of(1, 1)).getTotal();
+		int count = (int) innerByUserAccess(1, 1, "creationDate").getTotal();
+		return count;
 	}
 
 	@Override
 	public List<ContentNodeOverviewTO> getRecentAdded(int offset, int limit) {
-		return innerByUserAccess(QuerydslUtil.transformOffsetLimit(offset, limit, Sort.Direction.DESC, "creationDate"))
-				.getResults();
+		return innerByUserAccess(offset, limit, "creationDate").getResults();
 	}
 
 	@Override
 	public List<ContentNodeOverviewTO> getRecentModified(int offset, int limit) {
-		return innerByUserAccess(
-				QuerydslUtil.transformOffsetLimit(offset, limit, Sort.Direction.DESC, "lastModificationDate"))
-						.getResults();
+		return innerByUserAccess(offset, limit, "lastModificationDate").getResults();
 	}
 
 	/**

@@ -8,7 +8,8 @@ import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 
 public interface ContentNodeRepositoryCustom {
 
-	QueryResults<ContentNodeOverviewTO> findByUserAccess(Long userId, boolean admin, Pageable pageable);
+	QueryResults<ContentNodeOverviewTO> findByUserAccess(Long userId, boolean admin, int offset, int limit,
+			String sortProperty);
 
 	QueryResults<ContentNodeOverviewTO> findByTagAndUserAccess(Long tagId, Long userId, boolean admin,
 			Pageable pageable);

@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.ui.components;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
@@ -28,6 +29,7 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 
 	public ContentsLazyGrid() {
 		super();
+		addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 	}
 
 	public void populate(boolean showPubLock, final MenuPage page,
@@ -52,10 +54,8 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 			ContentModule contentService = serviceHolder.getContentModulesByName(c.getContentReaderID());
 			Image img = new Image(contentService == null ? ImageIcon.WARNING_16_ICON.createResource()
 					: contentService.getContentIcon(), "");
-			img.setWidth("16px");
 			return img;
-		}, c -> "")).setFlexGrow(0).setWidth("28px").setHeader("").setKey(iconBind)
-				.setClassNameGenerator(item -> "icon-cell");
+		}, c -> "")).setFlexGrow(0).setWidth("28px").setHeader("").setKey(iconBind);
 
 		addColumn(new ComponentRenderer<Anchor, ContentNodeOverviewTO>(contentNode -> {
 			ContentModule contentService = serviceHolder.getContentModulesByName(contentNode.getContentReaderID());
@@ -68,8 +68,7 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		if (showPubLock) {
 			addColumn(new IconRenderer<ContentNodeOverviewTO>(c -> c.isPublicated() ? new Span()
 					: new Image(ImageIcon.SHIELD_16_ICON.createResource(), "locked")))
-							.setWidth(GridUtils.ICON_COLUMN_WIDTH + "px").setHeader("").setKey(lockIconBind)
-							.setClassNameGenerator(item -> "icon-cell");
+							.setWidth(GridUtils.ICON_COLUMN_WIDTH + "px").setHeader("").setKey(lockIconBind);
 		}
 
 		addColumn(new ComponentRenderer<Anchor, ContentNodeOverviewTO>(contentNode -> {

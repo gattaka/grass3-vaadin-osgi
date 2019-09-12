@@ -17,6 +17,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 
 import cz.gattserver.grass3.interfaces.ContentTagsCloudItemTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
@@ -29,7 +30,8 @@ import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.HtmlSpan;
 
-@Route(value = "")
+@Route("")
+@RouteAlias("home")
 public class HomePage extends OneColumnPage {
 
 	private static final long serialVersionUID = 3100924667157515504L;
@@ -186,7 +188,7 @@ public class HomePage extends OneColumnPage {
 		Div tagLabels = new Div();
 		tagLabels.addClassName("tag-labels");
 		tagBlock.add(tagLabels);
-		
+
 		Span tags = new HtmlSpan(sb.toString());
 		tagLabels.add(tags);
 		tags.setSizeFull();

@@ -49,8 +49,11 @@ public class CoreMapperServiceImpl implements CoreMapperService {
 		userInfoDTO.setRegistrationDate(e.getRegistrationDate());
 
 		Set<Role> set = new HashSet<>();
-		for (String s : e.getRoles())
-			set.add(moduleRegister.resolveRole(s));
+		for (String s : e.getRoles()) {
+			Role role = moduleRegister.resolveRole(s);
+			if (role != null)
+				set.add(role);
+		}
 		userInfoDTO.setRoles(set);
 
 		return userInfoDTO;

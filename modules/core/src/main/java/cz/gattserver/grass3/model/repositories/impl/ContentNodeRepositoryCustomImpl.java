@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.BooleanBuilder;
@@ -14,6 +15,7 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
@@ -49,12 +51,13 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 	}
 
 	@Override
-	public QueryResults<ContentNodeOverviewTO> findByUserAccess(Long userId, boolean admin, Pageable pageable) {
+	public QueryResults<ContentNodeOverviewTO> findByUserAccess(Long userId, boolean admin, int offset, int limit,
+			String sortProperty) {
 		JPAQuery<ContentNode> query = new JPAQuery<>(entityManager);
 		QContentNode c = QContentNode.contentNode;
 		QNode n = QNode.node;
 		QUser u = QUser.user;
-		QuerydslUtil.applyPagination(pageable, query);
+		query.offset((long) offset).limit((long) limit).orderBy(QuerydslUtil.transformOrder(false, sortProperty));
 		return query.from(c).innerJoin(c.parent, n).innerJoin(c.author, u)
 				.where(createByUserAccessPredicate(userId, admin))
 				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,

@@ -3,23 +3,26 @@ package cz.gattserver.grass3.ui.components;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Shortcuts;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.treegrid.TreeGrid;
+import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
+import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
+import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
 import com.vaadin.flow.data.provider.hierarchy.TreeData;
-import com.vaadin.flow.data.provider.hierarchy.TreeDataProvider;
 
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.services.NodeService;
@@ -60,7 +63,6 @@ public class NodeTree extends VerticalLayout {
 	}
 
 	public NodeTree(boolean enableEditFeatures) {
-
 		setSpacing(true);
 		setPadding(false);
 
@@ -68,13 +70,36 @@ public class NodeTree extends VerticalLayout {
 		visited = new HashSet<>();
 
 		grid = new TreeGrid<>();
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		grid.setSelectionMode(SelectionMode.SINGLE);
-		grid.setSizeFull();
 		add(grid);
 		expand(grid);
 
-		grid.addColumn(NodeOverviewTO::getName).setHeader("Název");
-		populate();
+		grid.addHierarchyColumn(NodeOverviewTO::getName).setHeader("Název");
+		grid.addColumn(NodeOverviewTO::getId).setHeader("ID");
+		HierarchicalDataProvider<NodeOverviewTO, Void> dataProvider = new AbstractBackEndHierarchicalDataProvider<NodeOverviewTO, Void>() {
+			private static final long serialVersionUID = -977349474430704156L;
+
+			@Override
+			public int getChildCount(HierarchicalQuery<NodeOverviewTO, Void> query) {
+				if (query.getParent() == null)
+					return getNodeService().countRootNodes();
+				return getNodeService().countNodesByParentNode(query.getParent().getId());
+			}
+
+			@Override
+			public boolean hasChildren(NodeOverviewTO item) {
+				return getNodeService().countNodesByParentNode(item.getId()) > 0;
+			}
+
+			@Override
+			protected Stream<NodeOverviewTO> fetchChildrenFromBackEnd(HierarchicalQuery<NodeOverviewTO, Void> query) {
+				if (query.getParent() == null)
+					return getNodeService().getRootNodes().stream();
+				return getNodeService().getNodesByParentNode(query.getParent().getId()).stream();
+			}
+		};
+		grid.setDataProvider(dataProvider);
 
 		if (enableEditFeatures)
 			initEditFeatures();
@@ -160,15 +185,6 @@ public class NodeTree extends VerticalLayout {
 				nodes -> deleteAction(nodes.iterator().next()), grid);
 		deleteBtn.setEnableResolver(items -> items.size() == 1);
 		btnLayout.add(deleteBtn);
-
-	}
-
-	public void populate() {
-		List<NodeOverviewTO> nodes = getNodeService().getNodesForTree();
-		TreeData<NodeOverviewTO> treeData = new TreeData<>();
-		nodes.forEach(n -> cache.put(n.getId(), n));
-		nodes.forEach(n -> addTreeItem(treeData, n));
-		grid.setDataProvider(new TreeDataProvider<>(treeData));
 	}
 
 	private void addTreeItem(TreeData<NodeOverviewTO> treeData, NodeOverviewTO node) {

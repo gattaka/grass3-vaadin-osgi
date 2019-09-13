@@ -30,6 +30,11 @@ public interface NodeService {
 	 * Získá všechny kořenové kategorie
 	 */
 	public List<NodeOverviewTO> getRootNodes();
+	
+	/**
+	 * Získá všechny kořenové kategorie
+	 */
+	public int countRootNodes();
 
 	/**
 	 * Získá všechny kategorie pro zobrazení ve stromu
@@ -40,6 +45,11 @@ public interface NodeService {
 	 * Získá kategorie, které jsou jako potomci dané kategorie
 	 */
 	public List<NodeOverviewTO> getNodesByParentNode(long nodeId);
+	
+	/**
+	 * Získá počet kategorií, které jsou jako potomci dané kategorie
+	 */
+	public int countNodesByParentNode(long parentId);
 
 	/**
 	 * Založí novou kategorii

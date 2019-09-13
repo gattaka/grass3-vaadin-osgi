@@ -45,6 +45,11 @@ public class NodeServiceImpl implements NodeService {
 	}
 
 	@Override
+	public int countRootNodes() {
+		return nodeRepository.countByParentIsNull();
+	}
+
+	@Override
 	public List<NodeOverviewTO> getNodesForTree() {
 		List<Node> nodes = nodeRepository.findAll(Sort.by("id"));
 		return mapper.mapNodesForOverview(nodes);
@@ -54,6 +59,11 @@ public class NodeServiceImpl implements NodeService {
 	public List<NodeOverviewTO> getNodesByParentNode(long parentId) {
 		List<Node> childrenNodes = nodeRepository.findByParentId(parentId);
 		return mapper.mapNodesForOverview(childrenNodes);
+	}
+
+	@Override
+	public int countNodesByParentNode(long parentId) {
+		return nodeRepository.countByParentId(parentId);
 	}
 
 	@Override

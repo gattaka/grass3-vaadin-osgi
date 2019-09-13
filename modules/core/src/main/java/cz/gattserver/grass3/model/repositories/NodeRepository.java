@@ -12,7 +12,11 @@ public interface NodeRepository extends JpaRepository<Node, Long> {
 
 	List<Node> findByParentIsNull();
 
+	int countByParentIsNull();
+
 	List<Node> findByParentId(Long id);
+
+	int countByParentId(Long id);
 
 	@Modifying
 	@Query("update NODE n set n.name = ?2 where n.id = ?1")

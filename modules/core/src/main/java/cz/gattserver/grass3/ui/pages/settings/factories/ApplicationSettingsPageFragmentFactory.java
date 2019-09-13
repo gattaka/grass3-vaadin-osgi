@@ -24,17 +24,13 @@ public class ApplicationSettingsPageFragmentFactory extends AbstractPageFragment
 
 	@Override
 	public void createFragment(Div layout) {
-		VerticalLayout settingsLayout = new VerticalLayout();
-		layout.add(settingsLayout);
-
 		final CoreConfiguration configuration = loadConfiguration();
 
-		settingsLayout.removeAll();
-		settingsLayout.add(new H2("Nastavení aplikace"));
+		layout.add(new H2("Nastavení aplikace"));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
-		settingsLayout.add(settingsFieldsLayout);
+		layout.add(settingsFieldsLayout);
 		settingsFieldsLayout.setPadding(false);
 		settingsFieldsLayout.setSpacing(true);
 		settingsFieldsLayout.setSizeFull();

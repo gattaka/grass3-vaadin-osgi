@@ -9,10 +9,13 @@ const $_documentContainer = html`<dom-module id="grass-lumo-button" theme-for="v
         border: 1px solid #ddd;
       }
 
-	  [part="prefix"] {
-        margin-bottom: -0.25em;
-        margin-left: 0em;
-        margin-right: 0.50em;        
+	  ::slotted(img) {
+        margin-right: 0.50em;
+        margin-bottom: -0.25em;        
+      }
+      
+      [part="prefix"] {
+        margin: 0;        
       }
       
       :host(:hover)::before {

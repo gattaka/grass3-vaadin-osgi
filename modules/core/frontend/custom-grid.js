@@ -1,6 +1,6 @@
 const $_documentContainer = document.createElement('template');
 
-$_documentContainer.innerHTML = `<dom-module id="my-grid" theme-for="vaadin-grid">
+$_documentContainer.innerHTML = `<dom-module id="grass-grid" theme-for="vaadin-grid">
   <template>
     <style>
       

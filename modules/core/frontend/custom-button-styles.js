@@ -1,6 +1,6 @@
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 
-const $_documentContainer = html`<dom-module id="my-lumo-button" theme-for="vaadin-button">
+const $_documentContainer = html`<dom-module id="grass-lumo-button" theme-for="vaadin-button">
   <template>
     <style>
     

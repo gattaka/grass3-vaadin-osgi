@@ -2,6 +2,7 @@ package cz.gattserver.grass3.ui.components;
 
 import java.util.List;
 
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
@@ -33,8 +34,8 @@ public class NewContentNodeGrid extends Grid<ContentModule> {
 		List<ContentModule> contentServices = serviceHolder.getContentModules();
 		setItems(contentServices);
 
-		addColumn(new IconRenderer<ContentModule>(c -> new Image(c.getContentIcon(), ""))).setHeader("")
-				.setKey(iconBind).setClassNameGenerator(item -> "icon-cell");
+		addColumn(new IconRenderer<ContentModule>(c -> new Image(c.getContentIcon(), ""))).setHeader("").setFlexGrow(0)
+				.setWidth("28px").setHeader("").setTextAlign(ColumnTextAlign.CENTER).setKey(iconBind);
 
 		addColumn(new ComponentRenderer<Anchor, ContentModule>(c -> {
 			String url = page.getPageURL(c.getContentEditorPageFactory(), DefaultContentOperations.NEW.toString(),
@@ -42,10 +43,7 @@ public class NewContentNodeGrid extends Grid<ContentModule> {
 			return new Anchor(url, c.getCreateNewContentLabel());
 		})).setHeader("Obsah").setId(nameBind);
 
-		setColumns(iconBind, nameBind);
-
 		setHeight(GridUtils.processHeight(contentServices.size()) + "px");
-
 	}
 
 }

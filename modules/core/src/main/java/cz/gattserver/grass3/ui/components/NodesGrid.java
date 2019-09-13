@@ -2,7 +2,9 @@ package cz.gattserver.grass3.ui.components;
 
 import java.util.List;
 
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -24,23 +26,23 @@ public class NodesGrid extends Grid<NodeOverviewTO> {
 		// inject nefunguje kvůli něčemu v předkovi
 		final PageFactory nodePageFactory = (PageFactory) SpringContextHelper.getBean("nodePageFactory");
 
+		addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+
 		setHeight("200px");
 		setSelectionMode(SelectionMode.NONE);
 
 		String iconBind = "customIcon";
 		String nameBind = "customName";
 
-		addColumn(new IconRenderer<NodeOverviewTO>(c -> new Image(ImageIcon.BRIEFCASE_16_ICON.createResource(), "")))
-				.setHeader("").setKey(iconBind).setClassNameGenerator(item -> "icon-cell");
+		addColumn(new IconRenderer<NodeOverviewTO>(c -> new Image(ImageIcon.BRIEFCASE_16_ICON.createResource(), ""),
+				c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER)
+						.setKey(iconBind);
 
 		addColumn(new ComponentRenderer<Anchor, NodeOverviewTO>(node -> {
 			String url = page.getPageURL(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()));
 			return new Anchor(url, node.getName());
 		})).setHeader("Kategorie").setId(nameBind);
-
-		setColumns(iconBind, nameBind);
-
 	}
 
 	public void populate(List<NodeOverviewTO> nodes) {

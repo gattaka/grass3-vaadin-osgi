@@ -56,7 +56,7 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 			Image img = new Image(contentService == null ? ImageIcon.WARNING_16_ICON.createResource()
 					: contentService.getContentIcon(), "");
 			return img;
-		}, c -> "")).setFlexGrow(0).setWidth("28px").setHeader("").setTextAlign(ColumnTextAlign.CENTER)
+		}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER)
 				.setKey(iconBind);
 
 		addColumn(new ComponentRenderer<Anchor, ContentNodeOverviewTO>(contentNode -> {
@@ -70,8 +70,7 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		if (showPubLock) {
 			addColumn(new IconRenderer<ContentNodeOverviewTO>(
 					c -> c.isPublicated() ? new Span() : new Image(ImageIcon.SHIELD_16_ICON.createResource(), "locked"),
-					c -> "")).setFlexGrow(0).setWidth("26px").setHeader("").setTextAlign(ColumnTextAlign.CENTER)
-							.setKey(lockIconBind);
+					c -> "")).setFlexGrow(0).setWidth("26px").setHeader("").setKey(lockIconBind);
 		}
 
 		addColumn(new ComponentRenderer<Anchor, ContentNodeOverviewTO>(contentNode -> {

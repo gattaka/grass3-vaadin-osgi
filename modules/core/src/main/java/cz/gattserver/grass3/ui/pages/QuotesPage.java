@@ -3,9 +3,11 @@ package cz.gattserver.grass3.ui.pages;
 import java.util.List;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.interfaces.QuoteTO;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
@@ -32,7 +34,7 @@ public class QuotesPage extends OneColumnPage {
 	@Override
 	protected void createColumnContent(Div layout) {
 		Grid<QuoteTO> grid = new Grid<>();
-		grid.setSizeFull();
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		layout.add(grid);
 
 		populateData();
@@ -42,6 +44,7 @@ public class QuotesPage extends OneColumnPage {
 		grid.addColumn(QuoteTO::getName).setHeader("Obsah");
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
+		btnLayout.addClassName("top-margin");
 		layout.add(btnLayout);
 		btnLayout.setVisible(coreACL.canModifyQuotes(getUser()));
 

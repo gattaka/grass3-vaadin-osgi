@@ -1,6 +1,7 @@
 import '@vaadin/vaadin-lumo-styles/sizing.js';
 import '@vaadin/vaadin-lumo-styles/spacing.js';
 import '@polymer/polymer/lib/elements/custom-style.js';
+import './custom-button-styles.js';
 import './custom-grid.js';
 const $_documentContainer = document.createElement('template');
 

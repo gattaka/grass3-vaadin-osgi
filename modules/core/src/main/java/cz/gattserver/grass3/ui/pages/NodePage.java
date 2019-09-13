@@ -68,7 +68,7 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 		createContentsPart(layout, node);
 	}
 
-	private void createNewNodePanel(VerticalLayout layout, final NodeTO node) {
+	private void createNewNodePanel(Div layout, final NodeTO node) {
 		HorizontalLayout panelLayout = new HorizontalLayout();
 		panelLayout.setPadding(false);
 		panelLayout.setSpacing(true);
@@ -124,22 +124,18 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 	}
 
 	private void createSubnodesPart(Div layout, NodeTO node) {
-		VerticalLayout subNodesLayout = new VerticalLayout();
-		subNodesLayout.setPadding(false);
 		subNodesTable = new NodesGrid(NodePage.this);
 
-		subNodesLayout.add(new H2("Podkategorie"));
+		layout.add(new H2("Podkategorie"));
 
 		populateSubnodesTable(node);
 
-		subNodesLayout.add(subNodesTable);
-		layout.add(subNodesLayout);
+		layout.add(subNodesTable);
 		subNodesTable.setWidth("100%");
 
 		// Vytvořit novou kategorii
-		if (coreACL.canCreateNode(getUser())) {
-			createNewNodePanel(subNodesLayout, node);
-		}
+		if (coreACL.canCreateNode(getUser()))
+			createNewNodePanel(layout, node);
 	}
 
 	private void populateSubnodesTable(NodeTO node) {
@@ -150,33 +146,25 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 	}
 
 	private void createContentsPart(Div layout, NodeTO node) {
-		VerticalLayout contentsLayout = new VerticalLayout();
-		contentsLayout.setPadding(false);
+		layout.add(new H2("Obsahy"));
+		
 		ContentsLazyGrid contentsTable = new ContentsLazyGrid();
 		contentsTable.populate(getUser().getId() != null, this,
 				q -> contentNodeFacade.getByNode(node.getId(), q.getOffset(), q.getLimit()).stream(),
 				q -> contentNodeFacade.getCountByNode(node.getId()));
-
-		contentsLayout.add(new H2("Obsahy"));
-		contentsLayout.add(contentsTable);
+		layout.add(contentsTable);
 		contentsTable.setWidth("100%");
-		layout.add(contentsLayout);
 
 		// Vytvořit obsahy
-		createNewContentMenu(layout, node);
+		if (coreACL.canCreateContent(getUser()))
+			createNewContentMenu(layout, node);
 	}
 
 	private void createNewContentMenu(Div layout, NodeTO node) {
-		VerticalLayout newContentsLayout = new VerticalLayout();
-		newContentsLayout.setPadding(false);
+		layout.add(new H2("Vytvořit nový obsah"));
 		NewContentNodeGrid newContentsTable = new NewContentNodeGrid(NodePage.this, node);
-
-		newContentsLayout.add(new H2("Vytvořit nový obsah"));
-		newContentsLayout.add(newContentsTable);
+		layout.add(newContentsTable);
 		newContentsTable.setWidth("100%");
-		newContentsLayout.setVisible(coreACL.canCreateContent(getUser()));
-
-		layout.add(newContentsLayout);
 	}
 
 }

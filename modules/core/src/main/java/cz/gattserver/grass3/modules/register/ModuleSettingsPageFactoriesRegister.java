@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.modules.register;
 
-import cz.gattserver.grass3.ui.pages.settings.factories.ModuleSettingsPageFactory;
+import cz.gattserver.grass3.ui.pages.settings.ModuleSettingsPageFactory;
 
 public interface ModuleSettingsPageFactoriesRegister {
 

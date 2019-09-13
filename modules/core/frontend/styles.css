@@ -19,6 +19,10 @@ h2 {
 	margin-bottom: 10px;
 }
 
+.error-label {
+    text-align: center;
+}
+
 .top-margin {
 	margin-top: 10px;
 }
@@ -138,6 +142,19 @@ vaadin-horizontal-layout.menu {
 	background-color: #f4f1e6;
 	border-radius: 4px;
 	padding: var(--lumo-space-l);
+	box-sizing: border-box;
+}
+
+#left-content {
+    width: 220px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+#right-content {
+    width: 755px;
+    display: inline-block;
+    margin-left: 14px;
 }
 
 #bottom-holder {

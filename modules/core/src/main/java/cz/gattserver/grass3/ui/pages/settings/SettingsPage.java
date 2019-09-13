@@ -4,20 +4,20 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.OptionalParameter;
+import com.vaadin.flow.router.Route;
 
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.modules.register.ModuleSettingsPageFactoriesRegister;
-import cz.gattserver.grass3.ui.pages.settings.factories.ModuleSettingsPageFactory;
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
 
+@Route("settings")
 public class SettingsPage extends TwoColumnPage implements HasUrlParameter<String> {
 
 	private static final long serialVersionUID = 935609806962179905L;
@@ -33,8 +33,9 @@ public class SettingsPage extends TwoColumnPage implements HasUrlParameter<Strin
 	private String moduleParameter;
 
 	@Override
-	public void setParameter(BeforeEvent event, String parameter) {
+	public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
 		moduleParameter = parameter;
+		init();
 	}
 
 	@Override
@@ -53,40 +54,26 @@ public class SettingsPage extends TwoColumnPage implements HasUrlParameter<Strin
 	}
 
 	@Override
-	protected Component createLeftColumnContent() {
-		VerticalLayout marginLayout = new VerticalLayout();
-		marginLayout.setPadding(true);
-
-		VerticalLayout leftColumnLayout = new VerticalLayout();
-		leftColumnLayout.setPadding(true);
-		marginLayout.add(leftColumnLayout);
-
+	protected void createLeftColumnContent(Div leftContentLayout) {
+		VerticalLayout menuLayout = new VerticalLayout();
+		menuLayout.setSpacing(true);
+		menuLayout.setPadding(false);
+		leftContentLayout.add(menuLayout);
 		settingsTabFactories.sort((a, b) -> a.getSettingsCaption().compareTo(b.getSettingsCaption()));
 		for (ModuleSettingsPageFactory f : settingsTabFactories) {
 			Anchor link = new Anchor(getPageURL(settingsPageFactory, f.getSettingsURL()), f.getSettingsCaption());
-			leftColumnLayout.add(link);
+			menuLayout.add(link);
 		}
-
-		return marginLayout;
 	}
 
 	@Override
-	protected Component createRightColumnContent() {
-
-		// pokud není pageFactory prázdná, pak se zobrazuje konkrétní nastavení
-		if (settingsTabFactory != null)
-			return settingsTabFactory.createPageIfAuthorized();
-
-		// jinak zobraz info o nabídce
-		VerticalLayout layout = new VerticalLayout();
-
-		Span span = new Span("Zvolte položku nastavení z menu");
-		layout.add(span);
-		layout.setHorizontalComponentAlignment(Alignment.CENTER, span);
-		layout.setSpacing(true);
-		layout.setPadding(true);
-
-		return layout;
+	protected void createRightColumnContent(Div rightContentLayout) {
+		if (settingsTabFactory != null) {
+			settingsTabFactory.createFragmentIfAuthorized(rightContentLayout);
+		} else {
+			Span span = new Span("Zvolte položku nastavení z menu");
+			rightContentLayout.add(span);
+		}
 	}
 
 }

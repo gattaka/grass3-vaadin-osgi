@@ -1,6 +1,6 @@
-package cz.gattserver.grass3.ui.pages.settings.factories;
+package cz.gattserver.grass3.ui.pages.settings;
 
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
+import com.vaadin.flow.component.html.Div;
 
 public interface ModuleSettingsPageFactory {
 
@@ -8,7 +8,7 @@ public interface ModuleSettingsPageFactory {
 
 	public String getSettingsURL();
 
-	public GrassPage createPageIfAuthorized();
+	public void createFragmentIfAuthorized(Div layout);
 
 	public boolean isAuthorized();
 

@@ -2,7 +2,6 @@ package cz.gattserver.grass3.ui.pages.err.template;
 
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
@@ -12,6 +11,10 @@ public abstract class ErrorPage extends OneColumnPage {
 
 	private static final long serialVersionUID = 4576353466500365046L;
 
+	public ErrorPage() {
+		init();
+	}
+
 	@Override
 	protected void createColumnContent(Div layout) {
 		HorizontalLayout horizontalLayout = new HorizontalLayout();
@@ -19,14 +22,15 @@ public abstract class ErrorPage extends OneColumnPage {
 		horizontalLayout.setPadding(true);
 		horizontalLayout.setWidth("100%");
 
-		Span span = new Span(getErrorText());
-		span.addClassName("error-label");
+		Div div = new Div();
+		div.setText(getErrorText());
+		div.addClassName("error-label");
 		Image img = new Image(getErrorImage(), "Chyba");
 
 		horizontalLayout.add(img);
-		horizontalLayout.add(span);
-		horizontalLayout.setVerticalComponentAlignment(Alignment.START, img);
-		horizontalLayout.setVerticalComponentAlignment(Alignment.CENTER, span);
+		horizontalLayout.add(div);
+		horizontalLayout.setFlexGrow(1, div);
+		horizontalLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
 
 		layout.add(horizontalLayout);
 	}

@@ -8,9 +8,14 @@ import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
+import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.js.JScriptItem;
+import cz.gattserver.grass3.ui.pages.err.factories.Error403PageFactory;
+import cz.gattserver.grass3.ui.pages.err.factories.Error404PageFactory;
+import cz.gattserver.grass3.ui.pages.err.factories.Error500PageFactory;
+import cz.gattserver.grass3.ui.pages.factories.template.AbstractPageFactory;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
@@ -48,11 +53,28 @@ public abstract class GrassPage extends Div {
 	}
 
 	public void init() {
-		createPayload(this);
-		setId("main-div");
-		// TODO
-		if (jQueryRequired)
-			UI.getCurrent().getPage().addJavaScript("https://code.jquery.com/jquery-1.9.1.js");
+		try {
+			createPayload(this);
+			setId("main-div");
+			// TODO
+			if (jQueryRequired)
+				UI.getCurrent().getPage().addJavaScript("https://code.jquery.com/jquery-1.9.1.js");
+		} catch (GrassPageException e) {
+			AbstractPageFactory factory;
+			switch (e.getStatus()) {
+			case 403:
+				factory = (AbstractPageFactory) SpringContextHelper.getBean(Error403PageFactory.class);
+				break;
+			case 404:
+				factory = (AbstractPageFactory) SpringContextHelper.getBean(Error404PageFactory.class);
+				break;
+			case 500:
+			default:
+				factory = (AbstractPageFactory) SpringContextHelper.getBean(Error500PageFactory.class);
+				break;
+			}
+			UI.getCurrent().getPage().setLocation(getPageURL(factory));
+		}
 	}
 
 	protected abstract void createPayload(Div div);

@@ -8,7 +8,6 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
@@ -172,10 +171,10 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	}
 
 	@Override
-	protected Component createLeftColumnContent() {
-
+	protected void createLeftColumnContent(Div leftContentLayout) {
 		Div layout = new Div();
 		layout.setClassName("left-content-view");
+		leftContentLayout.add(layout);
 
 		// info - přehled
 		layout.add(new H2("Info"));
@@ -215,29 +214,15 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		operations.setClassName("content-operations");
 		layout.add(operations);
 		operations.add(operationsListLayout);
-
-		return layout;
-
 	}
 
 	@Override
-	protected Component createRightColumnContent() {
-		VerticalLayout marginlayout = new VerticalLayout();
-		marginlayout.setPadding(true);
-
-		VerticalLayout layout = new VerticalLayout();
-		marginlayout.add(layout);
-
-		layout.setPadding(true);
-		layout.setSpacing(true);
-
-		layout.add(breadcrumb);
-		layout.add(contentNameLabel);
+	protected void createRightColumnContent(Div rightContentLayout) {
+		rightContentLayout.add(breadcrumb);
+		rightContentLayout.add(contentNameLabel);
 
 		// samotný obsah
-		createContent(layout);
-
-		return marginlayout;
+		createContent(rightContentLayout);
 	}
 
 	protected abstract void createContent(VerticalLayout layout);

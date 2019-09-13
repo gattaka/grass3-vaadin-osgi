@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.modules.register.ModuleSettingsPageFactoriesRegister;
-import cz.gattserver.grass3.ui.pages.settings.factories.ModuleSettingsPageFactory;
+import cz.gattserver.grass3.ui.pages.settings.ModuleSettingsPageFactory;
 
 @Component(value = "settingsPageFactoriesRegister")
 public class ModuleSettingsPageFactoriesRegisterImpl implements ModuleSettingsPageFactoriesRegister {

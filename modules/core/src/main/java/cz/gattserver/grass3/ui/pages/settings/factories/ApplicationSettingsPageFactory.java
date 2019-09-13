@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.services.CoreACLService;
-import cz.gattserver.grass3.ui.pages.settings.ApplicationSettingsPage;
-import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
+import cz.gattserver.grass3.ui.pages.settings.AbstractModuleSettingsPageFactory;
+import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 
 @Component("applicationSettingsPageFactory")
 public class ApplicationSettingsPageFactory extends AbstractModuleSettingsPageFactory {
@@ -22,7 +22,7 @@ public class ApplicationSettingsPageFactory extends AbstractModuleSettingsPageFa
 	}
 
 	@Override
-	protected AbstractSettingsPage createPage() {
-		return new ApplicationSettingsPage();
+	protected AbstractPageFragmentFactory createPageFragmentFactory() {
+		return new ApplicationSettingsPageFragmentFactory();
 	}
 }

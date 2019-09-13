@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.ui.pages.template;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
 
 public abstract class TwoColumnPage extends BasePage {
@@ -11,13 +10,13 @@ public abstract class TwoColumnPage extends BasePage {
 	protected void createContent(Div layout) {
 		Div leftContentLayout = new Div();
 		leftContentLayout.setId("left-content");
-		leftContentLayout.add(createLeftColumnContent());
 		layout.add(leftContentLayout);
+		createLeftColumnContent(leftContentLayout);
 
 		Div rightContentLayout = new Div();
 		rightContentLayout.setId("right-content");
-		rightContentLayout.add(createRightColumnContent());
 		layout.add(rightContentLayout);
+		createRightColumnContent(rightContentLayout);
 	}
 
 	/**
@@ -25,13 +24,13 @@ public abstract class TwoColumnPage extends BasePage {
 	 * 
 	 * @return layout
 	 */
-	protected abstract Component createLeftColumnContent();
+	protected abstract void createLeftColumnContent(Div leftContentLayout);
 
 	/**
 	 * Obsah pravé části
 	 * 
 	 * @return layout
 	 */
-	protected abstract Component createRightColumnContent();
+	protected abstract void createRightColumnContent(Div rightContentLayout);
 
 }

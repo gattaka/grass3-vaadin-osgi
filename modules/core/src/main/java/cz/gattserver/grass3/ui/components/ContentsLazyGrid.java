@@ -77,7 +77,7 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 			String url = page.getPageURL(nodePageFactory, URLIdentifierUtils
 					.createURLIdentifier(contentNode.getParentNodeId(), contentNode.getParentNodeName())) + "'>"
 					+ contentNode.getParentNodeName();
-			return new Anchor(url, contentNode.getName());
+			return new Anchor(url, contentNode.getParentNodeName());
 		})).setFlexGrow(2).setHeader("Kategorie").setId(nodeBind);
 
 		addColumn(new LocalDateTimeRenderer<>(ContentNodeOverviewTO::getCreationDate, "d.M.yyyy"))

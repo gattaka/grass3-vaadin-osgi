@@ -10,7 +10,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -147,7 +146,7 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 
 	private void createContentsPart(Div layout, NodeTO node) {
 		layout.add(new H2("Obsahy"));
-		
+
 		ContentsLazyGrid contentsTable = new ContentsLazyGrid();
 		contentsTable.populate(getUser().getId() != null, this,
 				q -> contentNodeFacade.getByNode(node.getId(), q.getOffset(), q.getLimit()).stream(),

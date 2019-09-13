@@ -1,10 +1,10 @@
-package cz.gattserver.grass3.ui.pages.settings;
+package cz.gattserver.grass3.ui.pages.settings.factories;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -12,11 +12,10 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.config.CoreConfiguration;
 import cz.gattserver.grass3.services.ConfigurationService;
+import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 
-public class ApplicationSettingsPage extends AbstractSettingsPage {
+public class ApplicationSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 
-	private static final long serialVersionUID = 6536724991295498082L;
-	
 	private static final Double MIN_SESSION_TIMEOUT = 5.0;
 	private static final Double MAX_SESSION_TIMEOUT = 60.0;
 
@@ -24,12 +23,7 @@ public class ApplicationSettingsPage extends AbstractSettingsPage {
 	private ConfigurationService configurationService;
 
 	@Override
-	protected Component createContent() {
-		VerticalLayout layout = new VerticalLayout();
-
-		layout.setPadding(true);
-		layout.setSpacing(true);
-
+	public void createFragment(Div layout) {
 		VerticalLayout settingsLayout = new VerticalLayout();
 		layout.add(settingsLayout);
 
@@ -104,8 +98,6 @@ public class ApplicationSettingsPage extends AbstractSettingsPage {
 		 */
 		Button saveButton = new Button("Uložit", event -> storeConfiguration(configuration));
 		settingsFieldsLayout.add(saveButton);
-
-		return layout;
 	}
 
 	private CoreConfiguration loadConfiguration() {

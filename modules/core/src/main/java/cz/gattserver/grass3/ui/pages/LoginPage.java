@@ -5,12 +5,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
@@ -26,9 +26,13 @@ import cz.gattserver.grass3.ui.util.UIUtils;
 public class LoginPage extends OneColumnPage {
 
 	private static final long serialVersionUID = 2568522523298977106L;
-	
+
 	@Autowired
 	private SecurityService securityFacade;
+
+	public LoginPage() {
+		init();
+	}
 
 	private LoginResult login(String username, String password, boolean remember) {
 		HttpServletRequest request = VaadinServletService.getCurrentServletRequest();
@@ -43,25 +47,20 @@ public class LoginPage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createColumnContent() {
-		VerticalLayout marginLayout = new VerticalLayout();
-		marginLayout.setPadding(true);
-
-		VerticalLayout layout = new VerticalLayout();
-		marginLayout.add(layout);
-		layout.setPadding(true);
-		layout.setSpacing(true);
-
+	protected void createColumnContent(Div layout) {
 		layout.add(new H2("Přihlášení"));
 
+		FormLayout formLayout = new FormLayout();
+		layout.add(formLayout);
+
 		TextField username = new TextField("Login");
-		layout.add(username);
+		formLayout.add(username);
 
 		PasswordField password = new PasswordField("Heslo");
-		layout.add(password);
+		formLayout.add(password);
 
 		Checkbox rememberMe = new Checkbox("Zapamatovat si přihlášení");
-		layout.add(rememberMe);
+		formLayout.add(rememberMe);
 
 		Button login = new Button("Přihlásit", evt -> {
 			String pword = password.getValue();
@@ -84,8 +83,6 @@ public class LoginPage extends OneColumnPage {
 			}
 		});
 		login.addClickShortcut(Key.ENTER);
-		layout.add(login);
-
-		return marginLayout;
+		formLayout.add(login);
 	}
 }

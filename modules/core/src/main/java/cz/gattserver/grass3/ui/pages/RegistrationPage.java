@@ -2,9 +2,9 @@ package cz.gattserver.grass3.ui.pages;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -29,6 +29,10 @@ public class RegistrationPage extends OneColumnPage {
 
 	private static final int MIN_USERNAME_LENGTH = 2;
 	private static final int MAX_USERNAME_LENGTH = 20;
+
+	public RegistrationPage() {
+		init();
+	}
 
 	private static class RegistrationTO {
 		private String username;
@@ -70,15 +74,11 @@ public class RegistrationPage extends OneColumnPage {
 	}
 
 	@Override
-	protected Component createColumnContent() {
-		VerticalLayout layout = new VerticalLayout();
-
-		layout.setPadding(true);
-		layout.setSpacing(true);
+	protected void createColumnContent(Div layout) {
+		layout.add(new H2("Registrace nového uživatele"));
 
 		VerticalLayout formLayout = new VerticalLayout();
 		layout.add(formLayout);
-		formLayout.add(new H2("Registrace nového uživatele"));
 
 		FormLayout formFieldsLayout = new FormLayout();
 		formLayout.add(formFieldsLayout);
@@ -134,7 +134,5 @@ public class RegistrationPage extends OneColumnPage {
 		buttonLayout.add(submitButton);
 
 		binder.addStatusChangeListener(e -> submitButton.setEnabled(e.getBinder().isValid()));
-
-		return layout;
 	}
 }

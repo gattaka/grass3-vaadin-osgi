@@ -45,6 +45,9 @@ public abstract class GrassPage extends Div {
 	 */
 	public GrassPage() {
 		SpringContextHelper.inject(this);
+	}
+
+	public void init() {
 		createPayload(this);
 		setId("main-div");
 		// TODO

@@ -2,9 +2,8 @@ package cz.gattserver.grass3.ui.pages;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
@@ -33,10 +32,11 @@ public class TagPage extends OneColumnPage implements HasUrlParameter<String> {
 	@Override
 	public void setParameter(BeforeEvent event, String parameter) {
 		tagParameter = parameter;
+		init();
 	}
 
 	@Override
-	protected Component createColumnContent() {
+	protected void createColumnContent(Div layout) {
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(tagParameter);
 		if (identifier == null)
 			throw new GrassPageException(404);
@@ -46,28 +46,15 @@ public class TagPage extends OneColumnPage implements HasUrlParameter<String> {
 		if (tag == null)
 			throw new GrassPageException(404);
 
+		// Obsahy
+		layout.add(new H2("Obsahy označené tagem: " + tag.getName()));
+
 		ContentsLazyGrid tagContentsTable = new ContentsLazyGrid();
 		tagContentsTable.populate(getUser().getId() != null, this,
 				q -> contentNodeFacade.getByTag(tag.getId(), q.getOffset(), q.getLimit()).stream(),
 				q -> contentNodeFacade.getCountByTag(tag.getId()));
-
-		VerticalLayout pagelayout = new VerticalLayout();
-
-		pagelayout.setPadding(true);
-		pagelayout.setSpacing(true);
-
-		// Obsahy
-		VerticalLayout contentNodesLayout = new VerticalLayout();
-		contentNodesLayout.setSpacing(true);
-		contentNodesLayout.add(new H2("Obsahy označené tagem: " + tag.getName()));
-
-		contentNodesLayout.add(tagContentsTable);
 		tagContentsTable.setWidth("100%");
-		tagContentsTable.setHeight("300px");
-
-		pagelayout.add(contentNodesLayout);
-
-		return pagelayout;
+		layout.add(tagContentsTable);
 	}
 
 }

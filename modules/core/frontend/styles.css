@@ -2,6 +2,8 @@ html, body {
 	margin: 0;
    	padding: 0;
 	height: 100%;
+	width: 100%; 
+	/* 	width: 100vw; */
 	background-color: #d8cda6;
 }
 
@@ -17,16 +19,16 @@ h2 {
 	margin-bottom: 10px;
 }
 
+#center-content h2 {
+	margin-top: 10px;
+}
+
+#center-content h2:FIRST-CHILD {
+	margin-top: 0px;
+}
+
 flow-component-renderer img {
     margin-bottom: -2px;
-}
-
-.home-div div h2 {
-	margin-top: 10px;	
-}
-
-.home-div div:FIRST-CHILD h2 {
-	margin-top: 0px;
 }
 
 .tag-letter {

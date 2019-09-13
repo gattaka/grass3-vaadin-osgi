@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.ui.pages.template;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
 
 public abstract class OneColumnPage extends BasePage {
@@ -11,8 +10,8 @@ public abstract class OneColumnPage extends BasePage {
 	protected void createContent(Div layout) {
 		Div contentLayout = new Div();
 		contentLayout.setId("center-content");
-		contentLayout.add(createColumnContent());
 		layout.add(contentLayout);
+		createColumnContent(contentLayout);
 	}
 
 	/**
@@ -20,6 +19,6 @@ public abstract class OneColumnPage extends BasePage {
 	 * 
 	 * @return layout
 	 */
-	protected abstract Component createColumnContent();
+	protected abstract void createColumnContent(Div layout);
 
 }

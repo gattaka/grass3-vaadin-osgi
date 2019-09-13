@@ -2,17 +2,16 @@ package cz.gattserver.grass3.ui.pages;
 
 import java.util.List;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.interfaces.QuoteTO;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
+import cz.gattserver.grass3.ui.dialogs.QuoteDialog;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 
 @Route("quotes")
@@ -22,18 +21,16 @@ public class QuotesPage extends OneColumnPage {
 
 	private List<QuoteTO> data;
 
+	public QuotesPage() {
+		init();
+	}
+
 	private void populateData() {
 		data = quotesFacade.getAllQuotes();
 	}
 
 	@Override
-	protected Component createColumnContent() {
-
-		VerticalLayout layout = new VerticalLayout();
-
-		layout.setPadding(true);
-		layout.setSpacing(true);
-
+	protected void createColumnContent(Div layout) {
 		Grid<QuoteTO> grid = new Grid<>();
 		grid.setSizeFull();
 		layout.add(grid);
@@ -46,7 +43,6 @@ public class QuotesPage extends OneColumnPage {
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		layout.add(btnLayout);
-		layout.setHorizontalComponentAlignment(Alignment.CENTER, btnLayout);
 		btnLayout.setVisible(coreACL.canModifyQuotes(getUser()));
 
 		CreateGridButton createGridButton = new CreateGridButton("Přidat hlášku", e -> new QuoteDialog(q -> {
@@ -71,8 +67,5 @@ public class QuotesPage extends OneColumnPage {
 					grid.getDataProvider().refreshAll();
 				}), grid);
 		btnLayout.add(deleteGridButton);
-
-		return layout;
-
 	}
 }

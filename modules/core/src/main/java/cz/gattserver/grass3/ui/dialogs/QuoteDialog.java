@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.ui.pages;
+package cz.gattserver.grass3.ui.dialogs;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -12,7 +12,7 @@ public class QuoteDialog extends WebDialog {
 
 	private static final long serialVersionUID = -8494081277784752858L;
 
-	interface SaveAction {
+	public interface SaveAction {
 		void onSave(QuoteTO quoteDTO);
 	}
 

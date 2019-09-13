@@ -6,8 +6,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -47,19 +47,11 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 	@Override
 	public void setParameter(BeforeEvent event, String parameter) {
 		categoryParameter = parameter;
+		init();
 	}
 
 	@Override
-	protected Component createColumnContent() {
-
-		VerticalLayout marginLayout = new VerticalLayout();
-		marginLayout.setPadding(true);
-
-		VerticalLayout layout = new VerticalLayout();
-		layout.setPadding(true);
-		layout.setSpacing(true);
-		marginLayout.add(layout);
-
+	protected void createColumnContent(Div layout) {
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(categoryParameter);
 		if (identifier == null)
 			throw new GrassPageException(404);
@@ -74,12 +66,9 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 
 		// Obsahy
 		createContentsPart(layout, node);
-
-		return marginLayout;
 	}
 
 	private void createNewNodePanel(VerticalLayout layout, final NodeTO node) {
-
 		HorizontalLayout panelLayout = new HorizontalLayout();
 		panelLayout.setPadding(false);
 		panelLayout.setSpacing(true);
@@ -107,7 +96,7 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 
 	}
 
-	private void createBreadcrumb(VerticalLayout layout, NodeTO node) {
+	private void createBreadcrumb(Div layout, NodeTO node) {
 		Breadcrumb breadcrumb = new Breadcrumb();
 		layout.add(breadcrumb);
 
@@ -134,7 +123,7 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 		breadcrumb.resetBreadcrumb(breadcrumbElements);
 	}
 
-	private void createSubnodesPart(VerticalLayout layout, NodeTO node) {
+	private void createSubnodesPart(Div layout, NodeTO node) {
 		VerticalLayout subNodesLayout = new VerticalLayout();
 		subNodesLayout.setPadding(false);
 		subNodesTable = new NodesGrid(NodePage.this);
@@ -160,7 +149,7 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 		subNodesTable.populate(nodes);
 	}
 
-	private void createContentsPart(VerticalLayout layout, NodeTO node) {
+	private void createContentsPart(Div layout, NodeTO node) {
 		VerticalLayout contentsLayout = new VerticalLayout();
 		contentsLayout.setPadding(false);
 		ContentsLazyGrid contentsTable = new ContentsLazyGrid();
@@ -177,7 +166,7 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 		createNewContentMenu(layout, node);
 	}
 
-	private void createNewContentMenu(VerticalLayout layout, NodeTO node) {
+	private void createNewContentMenu(Div layout, NodeTO node) {
 		VerticalLayout newContentsLayout = new VerticalLayout();
 		newContentsLayout.setPadding(false);
 		NewContentNodeGrid newContentsTable = new NewContentNodeGrid(NodePage.this, node);

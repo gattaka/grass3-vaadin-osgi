@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.ui.windows;
+package cz.gattserver.grass3.ui.dialogs;
 
 import java.text.DecimalFormat;
 

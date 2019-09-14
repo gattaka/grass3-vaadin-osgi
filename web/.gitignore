@@ -8,3 +8,4 @@
 /webpack.config.js
 /webpack.generated.js
 /node_modules
+/package-lock.json

@@ -11,11 +11,6 @@
 		<version>3.0.13-SNAPSHOT</version>
 	</parent>
 
-	<properties>
-		<failOnMissingWebXml>false</failOnMissingWebXml>
-		<vaadin.version>14.0.0</vaadin.version>
-	</properties>
-
 	<dependencies>
 
 		<dependency>

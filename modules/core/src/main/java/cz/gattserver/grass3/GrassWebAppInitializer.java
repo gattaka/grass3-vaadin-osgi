@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.spring;
+package cz.gattserver.grass3;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
@@ -34,10 +34,17 @@ public class GrassWebAppInitializer implements WebApplicationInitializer {
 				.addMappingForUrlPatterns(null, false, "/*");
 
 		// Spring MVC Controllers (REST)
-		ServletRegistration.Dynamic springRegistration = servletContext.addServlet("dispatcher",
+		ServletRegistration.Dynamic springRegistration = servletContext.addServlet("ws-dispatcher",
 				new DispatcherServlet(context));
 		springRegistration.addMapping("/ws/*");
 		springRegistration.setLoadOnStartup(0);
+
+		// vaadin-spring
+		// ServletRegistration.Dynamic registration =
+		// servletContext.addServlet("vaadin-dispatcher",
+		// new SpringServlet(context, true));
+		// registration.setLoadOnStartup(1);
+		// registration.addMapping("/*");
 
 		// Vaadin
 		// GrassVaadinServlet vaadinServlet = new GrassVaadinServlet();

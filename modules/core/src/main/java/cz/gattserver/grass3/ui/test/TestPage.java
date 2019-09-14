@@ -11,11 +11,10 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
-@Route(value = "test")
-@Theme(value = Lumo.class)
+@Route(value = "probe")
 public class TestPage extends Div {
 
-	private static final long serialVersionUID = -8238445448784431524L;
+	private static final long serialVersionUID = 7617986983461352562L;
 
 	public TestPage() {
 		add(createTreeGrid());

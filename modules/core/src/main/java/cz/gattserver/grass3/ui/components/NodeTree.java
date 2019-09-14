@@ -1,15 +1,11 @@
 package cz.gattserver.grass3.ui.components;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,10 +19,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.treegrid.TreeGrid;
-import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
-import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
-import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
 import com.vaadin.flow.data.provider.hierarchy.TreeData;
+import com.vaadin.flow.data.provider.hierarchy.TreeDataProvider;
 
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.services.NodeService;
@@ -67,53 +61,24 @@ public class NodeTree extends VerticalLayout {
 	}
 
 	public NodeTree(boolean enableEditFeatures) {
+
 		setSpacing(true);
 		setPadding(false);
-
-		add(createTreeGrid());
-
-//		if (enableEditFeatures)
-//			initEditFeatures();
-	}
-
-	private void createTree() {
 
 		cache = new HashMap<>();
 		visited = new HashSet<>();
 
 		grid = new TreeGrid<>();
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		grid.setSelectionMode(SelectionMode.SINGLE);
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		add(grid);
 		expand(grid);
 
-		grid.addHierarchyColumn(NodeOverviewTO::getName).setHeader("Název").setId("nazev-column");
-		grid.addColumn(NodeOverviewTO::getId).setHeader("ID").setId("id-column");
-		HierarchicalDataProvider<NodeOverviewTO, Void> dataProvider = new AbstractBackEndHierarchicalDataProvider<NodeOverviewTO, Void>() {
-			private static final long serialVersionUID = -977349474430704156L;
+		grid.addHierarchyColumn(NodeOverviewTO::getName).setHeader("Název");
+		populate();
 
-			@Override
-			public int getChildCount(HierarchicalQuery<NodeOverviewTO, Void> query) {
-				if (query.getParent() == null)
-					return getNodeService().countRootNodes();
-				return getNodeService().countNodesByParentNode(query.getParent().getId());
-			}
-
-			@Override
-			public boolean hasChildren(NodeOverviewTO item) {
-				return getNodeService().countNodesByParentNode(item.getId()) > 0;
-			}
-
-			@Override
-			protected Stream<NodeOverviewTO> fetchChildrenFromBackEnd(HierarchicalQuery<NodeOverviewTO, Void> query) {
-				if (query.getParent() == null)
-					return getNodeService().getRootNodes().stream();
-				return getNodeService().getNodesByParentNode(query.getParent().getId()).stream();
-			}
-		};
-		grid.setDataProvider(dataProvider);
-
-		grid.expand(getNodeService().getRootNodes().get(0));
+		if (enableEditFeatures)
+			initEditFeatures();
 	}
 
 	private void initEditFeatures() {
@@ -196,6 +161,15 @@ public class NodeTree extends VerticalLayout {
 				nodes -> deleteAction(nodes.iterator().next()), grid);
 		deleteBtn.setEnableResolver(items -> items.size() == 1);
 		btnLayout.add(deleteBtn);
+
+	}
+
+	public void populate() {
+		List<NodeOverviewTO> nodes = getNodeService().getNodesForTree();
+		TreeData<NodeOverviewTO> treeData = new TreeData<>();
+		nodes.forEach(n -> cache.put(n.getId(), n));
+		nodes.forEach(n -> addTreeItem(treeData, n));
+		grid.setDataProvider(new TreeDataProvider<>(treeData));
 	}
 
 	private void addTreeItem(TreeData<NodeOverviewTO> treeData, NodeOverviewTO node) {
@@ -324,67 +298,6 @@ public class NodeTree extends VerticalLayout {
 
 		Button closeBtn = new Button("Storno", event -> dialog.close());
 		btnLayout.add(closeBtn);
-	}
-
-	/**
-	 * ***
-	 */
-
-	private TreeGrid<Project> createTreeGrid() {
-		TreeGrid<Project> treeGrid = new TreeGrid<>();
-		final List<Project> generateProjectsForYears = generateProjectsForYears(2010, 2016);
-		treeGrid.setItems(generateProjectsForYears, Project::getSubProjects);
-
-		treeGrid.addHierarchyColumn(Project::getName).setHeader("Project Name").setId("name-column");
-
-		treeGrid.expand(generateProjectsForYears.get(1)); // works!
-
-		return treeGrid;
-	}
-
-	private List<Project> generateProjectsForYears(int startYear, int endYear) {
-		List<Project> projects = new ArrayList<>();
-
-		for (int year = startYear; year <= endYear; year++) {
-			Project yearProject = new Project("Year " + year);
-
-			Random random = new Random();
-
-			for (int i = 1; i < 2 + random.nextInt(5); i++) {
-				Project customerProject = new Project("Customer Project " + i);
-				customerProject.setSubProjects(Arrays.asList(new Project("Implementation")));
-				yearProject.addSubProject(customerProject);
-			}
-			projects.add(yearProject);
-		}
-		return projects;
-	}
-
-	private class Project {
-
-		private List<Project> subProjects = new ArrayList<>();
-		private String name;
-
-		public Project(String name) {
-			this.name = name;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public List<Project> getSubProjects() {
-			return subProjects;
-		}
-
-		public void setSubProjects(List<Project> subProjects) {
-			this.subProjects = subProjects;
-		}
-
-		public void addSubProject(Project subProject) {
-			subProjects.add(subProject);
-		}
-
 	}
 
 }

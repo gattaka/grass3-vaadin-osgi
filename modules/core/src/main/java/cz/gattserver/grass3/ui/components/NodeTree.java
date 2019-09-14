@@ -1,9 +1,13 @@
 package cz.gattserver.grass3.ui.components;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -66,6 +70,14 @@ public class NodeTree extends VerticalLayout {
 		setSpacing(true);
 		setPadding(false);
 
+		add(createTreeGrid());
+
+//		if (enableEditFeatures)
+//			initEditFeatures();
+	}
+
+	private void createTree() {
+
 		cache = new HashMap<>();
 		visited = new HashSet<>();
 
@@ -75,8 +87,8 @@ public class NodeTree extends VerticalLayout {
 		add(grid);
 		expand(grid);
 
-		grid.addHierarchyColumn(NodeOverviewTO::getName).setHeader("Název");
-		grid.addColumn(NodeOverviewTO::getId).setHeader("ID");
+		grid.addHierarchyColumn(NodeOverviewTO::getName).setHeader("Název").setId("nazev-column");
+		grid.addColumn(NodeOverviewTO::getId).setHeader("ID").setId("id-column");
 		HierarchicalDataProvider<NodeOverviewTO, Void> dataProvider = new AbstractBackEndHierarchicalDataProvider<NodeOverviewTO, Void>() {
 			private static final long serialVersionUID = -977349474430704156L;
 
@@ -101,8 +113,7 @@ public class NodeTree extends VerticalLayout {
 		};
 		grid.setDataProvider(dataProvider);
 
-		if (enableEditFeatures)
-			initEditFeatures();
+		grid.expand(getNodeService().getRootNodes().get(0));
 	}
 
 	private void initEditFeatures() {
@@ -313,6 +324,67 @@ public class NodeTree extends VerticalLayout {
 
 		Button closeBtn = new Button("Storno", event -> dialog.close());
 		btnLayout.add(closeBtn);
+	}
+
+	/**
+	 * ***
+	 */
+
+	private TreeGrid<Project> createTreeGrid() {
+		TreeGrid<Project> treeGrid = new TreeGrid<>();
+		final List<Project> generateProjectsForYears = generateProjectsForYears(2010, 2016);
+		treeGrid.setItems(generateProjectsForYears, Project::getSubProjects);
+
+		treeGrid.addHierarchyColumn(Project::getName).setHeader("Project Name").setId("name-column");
+
+		treeGrid.expand(generateProjectsForYears.get(1)); // works!
+
+		return treeGrid;
+	}
+
+	private List<Project> generateProjectsForYears(int startYear, int endYear) {
+		List<Project> projects = new ArrayList<>();
+
+		for (int year = startYear; year <= endYear; year++) {
+			Project yearProject = new Project("Year " + year);
+
+			Random random = new Random();
+
+			for (int i = 1; i < 2 + random.nextInt(5); i++) {
+				Project customerProject = new Project("Customer Project " + i);
+				customerProject.setSubProjects(Arrays.asList(new Project("Implementation")));
+				yearProject.addSubProject(customerProject);
+			}
+			projects.add(yearProject);
+		}
+		return projects;
+	}
+
+	private class Project {
+
+		private List<Project> subProjects = new ArrayList<>();
+		private String name;
+
+		public Project(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public List<Project> getSubProjects() {
+			return subProjects;
+		}
+
+		public void setSubProjects(List<Project> subProjects) {
+			this.subProjects = subProjects;
+		}
+
+		public void addSubProject(Project subProject) {
+			subProjects.add(subProject);
+		}
+
 	}
 
 }

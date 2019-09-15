@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.ui.components;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +15,7 @@ import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
+import com.vaadin.flow.component.grid.dnd.GridDropMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -47,7 +47,7 @@ public class NodeTree extends VerticalLayout {
 	private TreeGrid<NodeOverviewTO> grid;
 
 	// Serializable ArrayList
-	private ArrayList<NodeOverviewTO> draggedItems;
+	private List<NodeOverviewTO> draggedItems;
 
 	public NodeTree() {
 		this(false);
@@ -86,64 +86,51 @@ public class NodeTree extends VerticalLayout {
 
 	private void initEditFeatures() {
 
-		// TODO
-		// TreeGridDragSource<NodeOverviewTO> dragSource = new
-		// TreeGridDragSource<>(grid);
-		// dragSource.setEffectAllowed(EffectAllowed.MOVE);
-		// dragSource.addGridDragStartListener(e -> draggedItems = new
-		// ArrayList<>(e.getDraggedItems()));
-		//
-		// TreeGridDropTarget<NodeOverviewTO> dropTarget = new
-		// TreeGridDropTarget<>(grid, DropMode.ON_TOP_OR_BETWEEN);
-		// dropTarget.setDropEffect(DropEffect.MOVE);
-		// dropTarget.addTreeGridDropListener(event -> {
-		// NodeOverviewTO dropNode = event.getDropTargetRow().get();
-		// switch (event.getDropLocation()) {
-		// case ON_TOP:
-		// // vkládám do dropNode
-		// break;
-		// case ABOVE:
-		// case BELOW:
-		// // vkládám do parenta dropNode
-		// dropNode = dropNode.getParentId() == null ? null :
-		// cache.get(dropNode.getParentId());
-		// break;
-		// case EMPTY:
-		// default:
-		// // výchozí je vkládání do root
-		// dropNode = null;
-		// }
-		// for (NodeOverviewTO n : draggedItems)
-		// moveAction(n, dropNode);
-		// grid.getDataProvider().refreshAll();
-		// });
+		grid.setRowsDraggable(true);
+		grid.setDropMode(GridDropMode.ON_TOP_OR_BETWEEN);
+
+		// Register listeners for the dnd events
+		grid.addDragStartListener(e -> draggedItems = e.getDraggedItems());
+
+		grid.addDropListener(e -> {
+			NodeOverviewTO dropNode = e.getDropTargetItem().get();
+			switch (e.getDropLocation()) {
+			case ON_TOP:
+				// vkládám do dropNode
+				break;
+			case ABOVE:
+			case BELOW:
+				// vkládám do parenta dropNode
+				dropNode = dropNode.getParentId() == null ? null : cache.get(dropNode.getParentId());
+				break;
+			case EMPTY:
+			default:
+				// výchozí je vkládání do root
+				dropNode = null;
+			}
+			for (NodeOverviewTO n : draggedItems)
+				moveAction(n, dropNode);
+			grid.getDataProvider().refreshAll();
+		});
 
 		/*
 		 * Context menu
 		 */
 		GridContextMenu<NodeOverviewTO> gridMenu = grid.addContextMenu();
-		
+
 		GridMenuItem<NodeOverviewTO> smazatMenu = gridMenu.addItem(SMAZAT_LABEL);
 		smazatMenu.addMenuItemClickListener(e -> deleteAction(e.getItem().get()));
-		
+
 		GridMenuItem<NodeOverviewTO> prejmenovatMenu = gridMenu.addItem(PREJMENOVAT_LABEL);
 		prejmenovatMenu.addMenuItemClickListener(e -> renameAction(e.getItem().get()));
-		
+
 		GridMenuItem<NodeOverviewTO> vytvoritMenu = gridMenu.addItem(VYTVORIT_LABEL);
 		vytvoritMenu.addMenuItemClickListener(e -> createNodeAction(e.getItem()));
-		
+
 		gridMenu.addGridContextMenuOpenedListener(e -> {
 			smazatMenu.setEnabled(e.getItem().isPresent());
 			prejmenovatMenu.setEnabled(e.getItem().isPresent());
 		});
-
-		/*
-		 * Delete shortcut
-		 */
-		Shortcuts.addShortcutListener(this, () -> {
-			if (!grid.getSelectedItems().isEmpty())
-				deleteAction(grid.getSelectedItems().iterator().next());
-		}, Key.DELETE);
 
 		/*
 		 * Buttons

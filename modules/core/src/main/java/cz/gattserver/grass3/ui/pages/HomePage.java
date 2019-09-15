@@ -13,6 +13,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
@@ -34,6 +35,11 @@ public class HomePage extends OneColumnPage {
 
 	private static final long serialVersionUID = 3100924667157515504L;
 
+	// Pro scan komponent do NPM
+	// https://vaadin.com/forum/thread/17765421/17771093
+	@SuppressWarnings("unused")
+	private TreeGrid<?> treeGridDeclaration;
+	
 	/**
 	 * Kolik je nejmenší font pro tagcloud ?
 	 */

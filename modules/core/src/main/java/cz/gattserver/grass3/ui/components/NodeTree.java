@@ -8,14 +8,13 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.Shortcuts;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import com.vaadin.flow.component.grid.dnd.GridDropMode;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -27,6 +26,7 @@ import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.services.NodeService;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
@@ -119,7 +119,7 @@ public class NodeTree extends VerticalLayout {
 		GridContextMenu<NodeOverviewTO> gridMenu = grid.addContextMenu();
 
 		GridMenuItem<NodeOverviewTO> smazatMenu = gridMenu.addItem(SMAZAT_LABEL);
-		smazatMenu.addMenuItemClickListener(e -> deleteAction(e.getItem().get()));
+		smazatMenu.addMenuItemClickListener(e -> askAndDelete(e.getItem().get()));
 
 		GridMenuItem<NodeOverviewTO> prejmenovatMenu = gridMenu.addItem(PREJMENOVAT_LABEL);
 		prejmenovatMenu.addMenuItemClickListener(e -> renameAction(e.getItem().get()));
@@ -149,8 +149,9 @@ public class NodeTree extends VerticalLayout {
 		btnLayout.add(modifyBtn);
 
 		// mazání chci po jednom
-		DeleteGridButton<NodeOverviewTO> deleteBtn = new DeleteGridButton<>("Smazat",
-				nodes -> deleteAction(nodes.iterator().next()), grid);
+		GridButton<NodeOverviewTO> deleteBtn = new GridButton<>("Smazat",
+				nodes -> askAndDelete(nodes.iterator().next()), grid);
+		deleteBtn.setIcon(new Image(ImageIcon.DELETE_16_ICON.createResource(), "Smazat"));
 		deleteBtn.setEnableResolver(items -> items.size() == 1);
 		btnLayout.add(deleteBtn);
 
@@ -204,22 +205,18 @@ public class NodeTree extends VerticalLayout {
 				}).open();
 	}
 
-	private void deleteAction(NodeOverviewTO node) {
-		new ConfirmDialog("Opravdu smazat kategorii '" + node.getName() + "' ?", e -> {
-			if (!getNodeService().isNodeEmpty(node.getId())) {
-				UIUtils.showWarning("Kategorie musí být prázdná");
-			} else {
-				try {
-					getNodeService().deleteNode(node.getId());
-					grid.getTreeData().removeItem(node);
-					grid.getDataProvider().refreshAll();
-					if (node.getParentId() != null)
-						expandTo(node.getParentId());
-				} catch (Exception ex) {
-					UIUtils.showWarning("Nezdařilo se smazat vybranou kategorii");
-				}
-			}
-		}).open();
+	private void askAndDelete(NodeOverviewTO node) {
+		if (!getNodeService().isNodeEmpty(node.getId())) {
+			UIUtils.showWarning("Kategorie musí být prázdná");
+		} else {
+			new ConfirmDialog("Opravdu smazat kategorii '" + node.getName() + "' ?", e -> {
+				getNodeService().deleteNode(node.getId());
+				grid.getTreeData().removeItem(node);
+				grid.getDataProvider().refreshAll();
+				if (node.getParentId() != null)
+					expandTo(node.getParentId());
+			}).open();
+		}
 	}
 
 	private void renameAction(NodeOverviewTO node) {

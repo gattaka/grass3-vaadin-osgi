@@ -18,14 +18,21 @@ public class DeleteGridButton<T> extends GridButton<T> {
 		public void onConfirm(Set<T> items);
 	}
 
-	public DeleteGridButton(String caption, ConfirmAction<T> confirmAction, Grid<T> grid) {
-		super(caption, grid);
-		setClickListener(items -> new ConfirmDialog(getConfirmMessage(), ev -> confirmAction.onConfirm(items)).open());
-		setIcon(new Image(ImageIcon.DELETE_16_ICON.createResource(), "Smazat"));
+	public interface ConfirmMsgFactory<T> {
+		public String create(Set<T> items);
 	}
 
-	protected String getConfirmMessage() {
-		return CONFIRM_MSG;
+	public DeleteGridButton(String caption, ConfirmAction<T> confirmAction, Grid<T> grid) {
+		this(caption, confirmAction, items -> CONFIRM_MSG, grid);
+	}
+
+	public DeleteGridButton(String caption, ConfirmAction<T> confirmAction, ConfirmMsgFactory<T> confirmMsgFactory,
+			Grid<T> grid) {
+		super(caption, grid);
+		setClickListener(
+				items -> new ConfirmDialog(confirmMsgFactory.create(items), ev -> confirmAction.onConfirm(items))
+						.open());
+		setIcon(new Image(ImageIcon.DELETE_16_ICON.createResource(), "Smazat"));
 	}
 
 }

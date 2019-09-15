@@ -12,8 +12,7 @@ public class ImageButton extends Button {
 	private static final long serialVersionUID = 4204958919924333786L;
 
 	public ImageButton(String caption, ImageIcon icon, ComponentEventListener<ClickEvent<Button>> clickListener) {
-		setIcon(new Image(icon.createResource(), caption));
-		addClickListener(clickListener);
+		this(caption, new Image(icon.createResource(), caption), clickListener);
 	}
 
 	public ImageButton(String caption, Image img, ComponentEventListener<ClickEvent<Button>> clickListener) {

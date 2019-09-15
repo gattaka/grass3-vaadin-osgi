@@ -11,6 +11,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
@@ -29,6 +30,7 @@ import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
 @Route("category")
 public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
@@ -73,26 +75,39 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 		panelLayout.setSpacing(true);
 		layout.add(panelLayout);
 
-		final TextField newNodeNameField = new TextField();
-		newNodeNameField.setPlaceholder("Nová kategorie");
-		panelLayout.add(newNodeNameField);
-
-		Button createButton = new ImageButton("Vytvořit novou kategorii", ImageIcon.BRIEFCASE_PLUS_16_ICON, e -> {
-			String newNodeName = newNodeNameField.getValue();
-			if (StringUtils.isBlank(newNodeName)) {
-				UIUtils.showError("Název kategorie nesmí být prázdný");
-				return;
-			}
-			Long newNodeId = nodeFacade.createNewNode(node.getId(), newNodeName);
-			// refresh
-			populateSubnodesTable(node);
-			UIUtils.redirect(
-					getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(newNodeId, newNodeName)));
-			// clean
-			newNodeNameField.setValue("");
-		});
+		Button createButton = new ImageButton("Vytvořit novou kategorii", ImageIcon.BRIEFCASE_PLUS_16_ICON,
+				e -> createNodeAction(node));
 		panelLayout.add(createButton);
+	}
 
+	public void createNodeAction(NodeOverviewTO parentNode) {
+		final WebDialog dialog = new WebDialog("Vytvořit novou kategorii do '" + parentNode.getName() + "'");
+		dialog.open();
+
+		final TextField newNameField = new TextField("Nový název:");
+		dialog.addComponent(newNameField);
+
+		NodeOverviewTO to = new NodeOverviewTO();
+		Binder<NodeOverviewTO> binder = new Binder<>(NodeOverviewTO.class);
+		binder.forField(newNameField).withValidator(StringUtils::isNotBlank, "Název kategorie nesmí být prázdný")
+				.bind(NodeOverviewTO::getName, NodeOverviewTO::setName);
+		binder.setBean(to);
+
+		HorizontalLayout btnLayout = new HorizontalLayout();
+		dialog.addComponent(btnLayout);
+
+		Button confirmBtn = new Button("Vytvořit", event -> {
+			if (binder.validate().isOk()) {
+				Long newNodeId = nodeFacade.createNewNode(parentNode.getId(), to.getName());
+				UIUtils.redirect(
+						getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(newNodeId, to.getName())));
+				dialog.close();
+			}
+		});
+		btnLayout.add(confirmBtn);
+
+		Button closeBtn = new Button("Storno", event -> dialog.close());
+		btnLayout.add(closeBtn);
 	}
 
 	private void createBreadcrumb(Div layout, NodeTO node) {

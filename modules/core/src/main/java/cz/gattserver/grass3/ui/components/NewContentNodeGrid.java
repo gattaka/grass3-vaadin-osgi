@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -26,6 +27,7 @@ public class NewContentNodeGrid extends Grid<ContentModule> {
 		final ModuleRegister serviceHolder = SpringContextHelper.getContext().getBean(ModuleRegister.class);
 
 		setSelectionMode(SelectionMode.NONE);
+		addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 
 		String iconBind = "customIcon";
 		String nameBind = "customName";
@@ -41,7 +43,7 @@ public class NewContentNodeGrid extends Grid<ContentModule> {
 			String url = page.getPageURL(c.getContentEditorPageFactory(), DefaultContentOperations.NEW.toString(),
 					URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()));
 			return new Anchor(url, c.getCreateNewContentLabel());
-		})).setHeader("Obsah").setId(nameBind);
+		})).setHeader("Obsah").setKey(nameBind);
 
 		setHeight(GridUtils.processHeight(contentServices.size()) + "px");
 	}

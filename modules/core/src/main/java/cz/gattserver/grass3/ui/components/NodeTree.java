@@ -12,9 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Shortcuts;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -33,7 +34,9 @@ public class NodeTree extends VerticalLayout {
 
 	private static final long serialVersionUID = -7457362355620092284L;
 
+	private static final String SMAZAT_LABEL = "Smazat";
 	private static final String PREJMENOVAT_LABEL = "Přejmenovat";
+	private static final String VYTVORIT_LABEL = "Vytvořit";
 
 	private transient NodeService nodeFacade;
 
@@ -118,18 +121,20 @@ public class NodeTree extends VerticalLayout {
 		/*
 		 * Context menu
 		 */
-		GridContextMenu<NodeOverviewTO> gridMenu = new GridContextMenu<>(grid);
+		GridContextMenu<NodeOverviewTO> gridMenu = grid.addContextMenu();
+		
+		GridMenuItem<NodeOverviewTO> smazatMenu = gridMenu.addItem(SMAZAT_LABEL);
+		smazatMenu.addMenuItemClickListener(e -> deleteAction(e.getItem().get()));
+		
+		GridMenuItem<NodeOverviewTO> prejmenovatMenu = gridMenu.addItem(PREJMENOVAT_LABEL);
+		prejmenovatMenu.addMenuItemClickListener(e -> renameAction(e.getItem().get()));
+		
+		GridMenuItem<NodeOverviewTO> vytvoritMenu = gridMenu.addItem(VYTVORIT_LABEL);
+		vytvoritMenu.addMenuItemClickListener(e -> createNodeAction(e.getItem()));
+		
 		gridMenu.addGridContextMenuOpenedListener(e -> {
-			gridMenu.removeAll();
-			if (e.getItem().isPresent()) {
-				NodeOverviewTO node = e.getItem().get();
-				grid.select(node);
-				// Bohužel, je zde asi bug, protože ContextMenu addon neumí
-				// zpracovat ClassResource, umí evidentě pouze ThemeResource
-				gridMenu.addItem("Smazat", selectedItem -> deleteAction(node));
-				gridMenu.addItem(PREJMENOVAT_LABEL, selectedItem -> renameAction(node));
-			}
-			gridMenu.addItem("Vytvořit zde novou", selectedItem -> createNodeAction(e.getItem()));
+			smazatMenu.setEnabled(e.getItem().isPresent());
+			prejmenovatMenu.setEnabled(e.getItem().isPresent());
 		});
 
 		/*

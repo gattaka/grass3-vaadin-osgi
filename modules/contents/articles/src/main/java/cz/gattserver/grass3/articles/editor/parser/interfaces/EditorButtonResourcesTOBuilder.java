@@ -3,8 +3,7 @@ package cz.gattserver.grass3.articles.editor.parser.interfaces;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
-import com.vaadin.server.Resource;
-import com.vaadin.server.ThemeResource;
+import com.vaadin.flow.server.StreamResource;
 
 /**
  * Builder pro immutable {@link EditorButtonResourcesTO}
@@ -19,7 +18,7 @@ public class EditorButtonResourcesTOBuilder {
 	private String description;
 	private String prefix;
 	private String suffix;
-	private Resource imageResource;
+	private StreamResource imageResource;
 
 	/**
 	 * @param tag
@@ -38,7 +37,7 @@ public class EditorButtonResourcesTOBuilder {
 	 *            resource ikony pluginu
 	 */
 	public EditorButtonResourcesTOBuilder(String tag, String tagFamily, String description, String prefix,
-			String suffix, Resource imageResource) {
+			String suffix, StreamResource imageResource) {
 		this.tag = tag;
 		this.tagFamily = tagFamily;
 		this.description = description;
@@ -109,25 +108,13 @@ public class EditorButtonResourcesTOBuilder {
 	}
 
 	/**
-	 * Vytvoří zdroj obrázku jako {@link ThemeResource}
-	 * 
-	 * @param image
-	 *            adresa obrázku v rámci tématu
-	 * @return <code>this</code> pro řetězení
-	 */
-	public EditorButtonResourcesTOBuilder setImageAsThemeResource(String image) {
-		this.imageResource = new ThemeResource(image);
-		return this;
-	}
-
-	/**
 	 * Nastaví zdroj obrázku
 	 * 
 	 * @param imageResource
 	 *            zdroj
 	 * @return <code>this</code> pro řetězení
 	 */
-	public EditorButtonResourcesTOBuilder setImageResource(Resource imageResource) {
+	public EditorButtonResourcesTOBuilder setImageResource(StreamResource imageResource) {
 		this.imageResource = imageResource;
 		return this;
 	}

@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.ui.pages;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,20 +52,20 @@ public class TokenField extends Div {
 		if (StringUtils.isNotBlank(value)) {
 			if (!tokens.containsKey(value)) {
 				addToken(value);
+				// tohle funguje i u custom value, narozdíl od clear(),
+				// které dělá nastavení na null, což value u custom-value
+				// stále je, takže se pole nevyčistí, protože nedošlo ke změně
+				// hodnot (null -> null)
+				comboBox.setValue("");
 			}
 		}
 	}
 
-	private void addToken(String string) {
+	public void addToken(String string) {
 		if (!tokens.containsKey(string)) {
 			Button tokenComponent = new DeleteButton(string, e -> deleteToken(string));
 			tokens.put(string, tokenComponent);
 			tokensLayout.add(tokenComponent);
-			// tohle funguje i u custom value, narozdíl od clear(),
-			// které dělá nastavení na null, což value u custom-value
-			// stále je, takže se pole nevyčistí, protože nedošlo ke změně
-			// hodnot (null -> null)
-			comboBox.setValue("");
 		}
 	}
 

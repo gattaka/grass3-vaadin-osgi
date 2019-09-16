@@ -2,17 +2,9 @@ package cz.gattserver.grass3.articles.ui.windows;
 
 import java.util.List;
 
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.event.ShortcutListener;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.renderers.LocalDateTimeRenderer;
-import com.vaadin.ui.renderers.TextRenderer;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.html.Span;
 
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
 import cz.gattserver.grass3.articles.services.ArticleService;
@@ -21,7 +13,7 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class DraftMenuWindow extends WebDialog {
+public abstract class DraftMenuDialog extends WebDialog {
 
 	private static final long serialVersionUID = 4105221381350726137L;
 
@@ -44,19 +36,10 @@ public abstract class DraftMenuWindow extends WebDialog {
 		onChoose(draft);
 	}
 
-	public DraftMenuWindow(List<ArticleDraftOverviewTO> drafts) {
+	public DraftMenuDialog(List<ArticleDraftOverviewTO> drafts) {
 		super("Rozpracované obsahy");
 
-		addShortcutListener(new ShortcutListener("CloseByESC", ShortcutAction.KeyCode.ESCAPE, null) {
-			private static final long serialVersionUID = -7239845094514060176L;
-
-			@Override
-			public void handleAction(Object sender, Object target) {
-				close();
-			}
-		});
-
-		Label label = new Label("Byly nalezeny rozpracované obsahy -- přejete si pokračovat v jejich úpravách?");
+		Span label = new Span("Byly nalezeny rozpracované obsahy -- přejete si pokračovat v jejich úpravách?");
 		addComponent(label);
 
 		String nameBind = "customName";

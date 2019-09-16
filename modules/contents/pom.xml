@@ -13,8 +13,8 @@
 	
 	<modules>
         <module>articles</module>
-        <module>pg</module>
-        <module>plugins</module>
+<!--         <module>pg</module> -->
+<!--         <module>plugins</module> -->
 	</modules>
 
 </project>

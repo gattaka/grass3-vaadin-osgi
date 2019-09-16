@@ -8,7 +8,6 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
@@ -16,7 +15,6 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
@@ -106,7 +104,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		super.createPayload(payload);
 	}
 
-	protected void createContentOperations(HasComponents operationsListLayout) {
+	protected void createContentOperations(Div operationsListLayout) {
 		// Upravit
 		if (coreACL.canModifyContent(content, getUser())) {
 			ModifyButton modBtn = new ModifyButton(event -> onEditOperation());
@@ -225,7 +223,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		createContent(rightContentLayout);
 	}
 
-	protected abstract void createContent(VerticalLayout layout);
+	protected abstract void createContent(Div layout);
 
 	protected abstract ContentNodeTO getContentNodeDTO();
 

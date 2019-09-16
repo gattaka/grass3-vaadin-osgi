@@ -4,19 +4,16 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.Route;
 
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.CoreACLService;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
 import cz.gattserver.grass3.ui.js.JScriptItem;
@@ -24,11 +21,14 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
-import cz.gattserver.web.common.server.URLPathAnalyzer;
+import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.WarnDialog;
 
-public class ArticlesViewerPage extends ContentViewerPage {
+@Route("articles")
+public class ArticlesViewerPage extends ContentViewerPage implements HasUrlParameter<String> {
+
+	private static final long serialVersionUID = 7511698289319715316L;
 
 	@Autowired
 	private CoreACLService coreACLService;
@@ -44,15 +44,9 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 	private ArticleTO article;
 
-	public ArticlesViewerPage(GrassRequest request) {
-		super(request);
-	}
-
 	@Override
-	protected Layout createPayload() {
-		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
-		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
-				.parseURLIdentifier(analyzer.getCurrentPathToken());
+	public void setParameter(BeforeEvent event, String parameter) {
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(parameter);
 		if (identifier == null)
 			throw new GrassPageException(404);
 
@@ -67,8 +61,8 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			UIUtils.redirect(getPageURL(homePageFactory.getPageName()));
 		}
 
-		if (!article.getContentNode().isPublicated() && !UIUtils.getUser().isAdmin()
-				&& !article.getContentNode().getAuthor().equals(UIUtils.getUser()))
+		if (!article.getContentNode().isPublicated() && !getUser().isAdmin()
+				&& !article.getContentNode().getAuthor().equals(getUser()))
 			throw new GrassPageException(403);
 
 		// CSS resources
@@ -77,7 +71,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			// obejít problém se závislosí pluginů na úložišti theme apod. a
 			// přitom umožnit aby se CSS odkazovali na externí zdroje
 			if (!css.toLowerCase().startsWith("http://") || !css.toLowerCase().startsWith("https://"))
-				css = getRequest().getContextRoot() + "/VAADIN/themes/grass/" + css;
+				css = getContextPath() + "/VAADIN/themes/grass/" + css;
 			loadCSS(css);
 		}
 
@@ -94,7 +88,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 		loadJS(jsResourcesArr);
 
-		return super.createPayload();
+		init();
 	}
 
 	@Override
@@ -103,10 +97,10 @@ public class ArticlesViewerPage extends ContentViewerPage {
 	}
 
 	@Override
-	protected void createContent(VerticalLayout layout) {
-		Label label = new Label(article.getOutputHTML(), ContentMode.HTML);
+	protected void createContent(Div layout) {
+		HtmlDiv label = new HtmlDiv(article.getOutputHTML());
 		label.setWidth("100%");
-		layout.addComponent(label);
+		layout.add(label);
 	}
 
 	@Override
@@ -115,11 +109,11 @@ public class ArticlesViewerPage extends ContentViewerPage {
 	}
 
 	@Override
-	protected void createContentOperations(CssLayout operationsListLayout) {
+	protected void createContentOperations(Div operationsListLayout) {
 		super.createContentOperations(operationsListLayout);
 
 		// Rychlé úpravy
-		if (coreACLService.canModifyContent(article.getContentNode(), UIUtils.getUser())) {
+		if (coreACLService.canModifyContent(article.getContentNode(), getUser())) {
 			String url = getPageURL(articlesEditorPageFactory, DefaultContentOperations.EDIT.toString(),
 					URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName()));
 			String script = "$(\".articles-h-id\").each(" + "function(index){" + "$(this).attr(\"href\",\"" + url
@@ -130,7 +124,7 @@ public class ArticlesViewerPage extends ContentViewerPage {
 
 	@Override
 	protected void onDeleteOperation() {
-		ConfirmDialog confirmSubwindow = new ConfirmDialog("Opravdu si přejete smazat tento článek ?", event -> {
+		ConfirmDialog confirmDialog = new ConfirmDialog("Opravdu si přejete smazat tento článek ?", event -> {
 			NodeOverviewTO nodeDTO = article.getContentNode().getParent();
 			final String nodeURL = getPageURL(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(nodeDTO.getId(), nodeDTO.getName()));
@@ -143,11 +137,11 @@ public class ArticlesViewerPage extends ContentViewerPage {
 			} catch (Exception e) {
 				// Pokud ne, otevři warn okno a při
 				// potvrzení jdi na kategorii
-				WarnDialog warnSubwindow = new WarnDialog("Smazání článku se nezdařilo.");
-				UI.getCurrent().addWindow(warnSubwindow);
+				WarnDialog warnDialog = new WarnDialog("Smazání článku se nezdařilo.");
+				warnDialog.open();
 			}
 		});
-		UI.getCurrent().addWindow(confirmSubwindow);
+		confirmDialog.open();
 	}
 
 	@Override
@@ -155,5 +149,5 @@ public class ArticlesViewerPage extends ContentViewerPage {
 		UIUtils.redirect(getPageURL(articlesEditorPageFactory, DefaultContentOperations.EDIT.toString(),
 				URLIdentifierUtils.createURLIdentifier(article.getId(), article.getContentNode().getName())));
 	}
-	
+
 }

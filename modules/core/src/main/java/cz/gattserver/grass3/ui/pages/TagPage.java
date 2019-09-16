@@ -40,8 +40,6 @@ public class TagPage extends OneColumnPage implements HasUrlParameter<String> {
 	@Override
 	protected void createColumnContent(Div layout) {
 
-		
-		
 		FetchItemsCallback<String> fetchItemsCallback = (filter, offset, limit) -> contentTagFacade
 				.findByFilter(filter, offset, limit).stream();
 		SerializableFunction<String, Integer> serializableFunction = filter -> contentTagFacade.countByFilter(filter);

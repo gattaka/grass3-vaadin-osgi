@@ -106,4 +106,22 @@ public interface ContentTagService {
 	 */
 	List<ContentTagsCloudItemTO> createTagsCloud(int maxFontSize, int minFontSize);
 
+	/**
+	 * Získá seznam tagů dle filtru
+	 * 
+	 * @param filter
+	 * @param offset
+	 * @param limit
+	 * @return stránkovaný filtrovaný seznam tagů
+	 */
+	List<String> findByFilter(String filter, int offset, int limit);
+
+	/**
+	 * Získá počet tagů dle filtru
+	 * 
+	 * @param filter
+	 * @return filtrovaný počet tagů
+	 */
+	Integer countByFilter(String filter);
+
 }

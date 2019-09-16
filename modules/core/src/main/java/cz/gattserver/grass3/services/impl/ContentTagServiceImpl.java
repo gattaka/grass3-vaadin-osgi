@@ -167,4 +167,14 @@ public class ContentTagServiceImpl implements ContentTagService {
 		return itemslist;
 	}
 
+	@Override
+	public List<String> findByFilter(String filter, int offset, int limit) {
+		return contentTagRepository.findByFilter(filter, offset, limit);
+	}
+
+	@Override
+	public Integer countByFilter(String filter) {
+		return contentTagRepository.countByFilter(filter);
+	}
+
 }

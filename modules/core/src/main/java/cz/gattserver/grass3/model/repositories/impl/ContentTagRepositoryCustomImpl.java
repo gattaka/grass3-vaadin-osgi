@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.model.repositories.impl;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -21,6 +23,22 @@ public class ContentTagRepositoryCustomImpl implements ContentTagRepositoryCusto
 		JPAQuery<Integer> query = new JPAQuery<>(entityManager);
 		QContentTag c = QContentTag.contentTag;
 		return query.select(c.contentNodes.size()).from(c).where(c.id.eq(id)).fetchOne();
+	}
+
+	@Override
+	public List<String> findByFilter(String filter, int offset, int limit) {
+		JPAQuery<Integer> query = new JPAQuery<>(entityManager);
+		QContentTag c = QContentTag.contentTag;
+		query.offset(offset);
+		query.limit(limit);
+		return query.select(c.name).from(c).where(c.name.like("%" + filter + "%")).fetch();
+	}
+
+	@Override
+	public Integer countByFilter(String filter) {
+		JPAQuery<Integer> query = new JPAQuery<>(entityManager);
+		QContentTag c = QContentTag.contentTag;
+		return (int) query.select(c).from(c).where(c.name.like("%" + filter + "%")).fetchCount();
 	}
 
 }

@@ -19,6 +19,14 @@ h2 {
 	margin-bottom: 10px;
 }
 
+.token-layout {
+    display: inline-block; 
+}
+
+.token-layout vaadin-button {
+    margin-right: 5px;
+}
+ 
 .error-label {
     text-align: center;
 }

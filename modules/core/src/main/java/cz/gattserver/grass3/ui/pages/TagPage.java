@@ -2,8 +2,10 @@ package cz.gattserver.grass3.ui.pages;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.flow.component.combobox.ComboBox.FetchItemsCallback;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
@@ -37,6 +39,17 @@ public class TagPage extends OneColumnPage implements HasUrlParameter<String> {
 
 	@Override
 	protected void createColumnContent(Div layout) {
+
+		
+		
+		FetchItemsCallback<String> fetchItemsCallback = (filter, offset, limit) -> contentTagFacade
+				.findByFilter(filter, offset, limit).stream();
+		SerializableFunction<String, Integer> serializableFunction = filter -> contentTagFacade.countByFilter(filter);
+		TokenField tokenField = new TokenField(fetchItemsCallback, serializableFunction);
+		layout.add(tokenField);
+
+		// ---
+
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(tagParameter);
 		if (identifier == null)
 			throw new GrassPageException(404);

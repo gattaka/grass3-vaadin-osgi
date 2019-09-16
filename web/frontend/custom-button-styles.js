@@ -7,6 +7,9 @@ const $_documentContainer = html`<dom-module id="grass-lumo-button" theme-for="v
       :host {        
         background-color: #fcfcfc;
         border: 1px solid #ddd;
+		/* aby bylo tlačítko na stejné úrovni a velikosti jako fieldy */        
+        padding-bottom: 2px;    
+    	height: 34px;        
       }
 
 	  ::slotted(img) {
@@ -14,8 +17,8 @@ const $_documentContainer = html`<dom-module id="grass-lumo-button" theme-for="v
         margin-bottom: -0.25em;        
       }
       
-      [part="prefix"] {
-        margin: 0;        
+      [part="prefix"], [part="label"] {
+        margin: 2px 0 0 0;
       }
       
       :host(:hover)::before {

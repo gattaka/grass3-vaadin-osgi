@@ -27,9 +27,9 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
  * @author Hynek
  *
  */
-//@JsModule("./custom.js")
-//@Theme(value = Lumo.class)
-//@CssImport("./styles.css")
+// @JsModule("./custom.js")
+// @Theme(value = Lumo.class)
+// @CssImport("./styles.css")
 public abstract class GrassPage extends Div {
 
 	private static final long serialVersionUID = 7952966362953000385L;
@@ -130,7 +130,7 @@ public abstract class GrassPage extends Div {
 		}
 	}
 
-	public String getContextPath() {
+	public static String getContextPath() {
 		return VaadinRequest.getCurrent().getContextPath();
 	}
 

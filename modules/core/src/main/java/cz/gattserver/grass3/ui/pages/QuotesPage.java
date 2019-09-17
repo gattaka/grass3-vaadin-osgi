@@ -6,7 +6,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
 import cz.gattserver.grass3.interfaces.QuoteTO;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
@@ -14,6 +13,7 @@ import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.dialogs.QuoteDialog;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 
 @Route("quotes")
 public class QuotesPage extends OneColumnPage {
@@ -42,8 +42,7 @@ public class QuotesPage extends OneColumnPage {
 		grid.addColumn(QuoteTO::getId).setHeader("Id").setFlexGrow(0).setWidth("50px");
 		grid.addColumn(QuoteTO::getName).setHeader("Obsah");
 
-		HorizontalLayout btnLayout = new HorizontalLayout();
-		btnLayout.addClassName("top-margin");
+		ButtonLayout btnLayout = new ButtonLayout();
 		layout.add(btnLayout);
 		btnLayout.setVisible(coreACL.canModifyQuotes(getUser()));
 

@@ -13,6 +13,7 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 
@@ -22,6 +23,7 @@ import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.services.UserService;
 import cz.gattserver.grass3.ui.components.GridButton;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
+import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
 public class UsersSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
@@ -63,21 +65,25 @@ public class UsersSettingsPageFragmentFactory extends AbstractPageFragmentFactor
 		buttonLayout.setSpacing(true);
 		layout.add(buttonLayout);
 
-		buttonLayout.add(new GridButton<>("Aktivovat", selectedUsers -> selectedUsers.forEach(u -> {
+		GridButton<UserInfoTO> activateBtn = new GridButton<>("Aktivovat", selectedUsers -> selectedUsers.forEach(u -> {
 			u.setConfirmed(true);
 			userFacade.activateUser(u.getId());
 			grid.getDataProvider().refreshItem(u);
 		}), grid).setEnableResolver(
-				selectedUsers -> !selectedUsers.isEmpty() && !selectedUsers.iterator().next().isConfirmed()));
+				selectedUsers -> !selectedUsers.isEmpty() && !selectedUsers.iterator().next().isConfirmed());
+		activateBtn.setIcon(new Image(ImageIcon.TICK_16_ICON.createResource(), "Aktivovat"));
+		buttonLayout.add(activateBtn);
 
-		buttonLayout.add(new GridButton<>("Zablokovat", selectedUsers -> users.forEach(user -> {
+		GridButton<UserInfoTO> blockBtn = new GridButton<>("Zablokovat", selectedUsers -> users.forEach(user -> {
 			user.setConfirmed(false);
 			userFacade.banUser(user.getId());
 			grid.getDataProvider().refreshItem(user);
 		}), grid).setEnableResolver(
-				selectedUsers -> !selectedUsers.isEmpty() && selectedUsers.iterator().next().isConfirmed()));
+				selectedUsers -> !selectedUsers.isEmpty() && selectedUsers.iterator().next().isConfirmed());
+		blockBtn.setIcon(new Image(ImageIcon.BLOCK_16_ICON.createResource(), "Zablokovat"));
+		buttonLayout.add(blockBtn);
 
-		buttonLayout.add(new GridButton<>("Upravit oprávnění", u -> {
+		GridButton<UserInfoTO> editBtn = new GridButton<>("Upravit oprávnění", u -> {
 			WebDialog w = new WebDialog("Uživatelské role");
 
 			UserInfoTO user = users.iterator().next();
@@ -102,6 +108,8 @@ public class UsersSettingsPageFragmentFactory extends AbstractPageFragmentFactor
 				w.close();
 			}));
 			w.open();
-		}, grid));
+		}, grid);
+		editBtn.setIcon(new Image(ImageIcon.PENCIL_16_ICON.createResource(), "Upravit oprávnění"));
+		buttonLayout.add(editBtn);
 	}
 }

@@ -30,7 +30,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.function.SerializableFunction;
@@ -60,6 +59,7 @@ import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.TokenField;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -469,8 +469,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		publicatedCheckBox.setLabel("Publikovat článek");
 		layout.add(publicatedCheckBox);
 
-		HorizontalLayout buttonLayout = new HorizontalLayout();
-		buttonLayout.addClassName("top-margin");
+		ButtonLayout buttonLayout = new ButtonLayout();
 		layout.add(buttonLayout);
 
 		// Náhled

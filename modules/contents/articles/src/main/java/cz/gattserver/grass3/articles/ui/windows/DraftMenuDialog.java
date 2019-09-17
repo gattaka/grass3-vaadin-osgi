@@ -2,12 +2,17 @@ package cz.gattserver.grass3.articles.ui.windows;
 
 import java.util.List;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
 import cz.gattserver.grass3.articles.services.ArticleService;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
@@ -42,28 +47,24 @@ public abstract class DraftMenuDialog extends WebDialog {
 		Span label = new Span("Byly nalezeny rozpracované obsahy -- přejete si pokračovat v jejich úpravách?");
 		addComponent(label);
 
-		String nameBind = "customName";
-		String lastModificationDateBind = "customLastModificationDate";
-
-		final Grid<ArticleDraftOverviewTO> grid = new Grid<>(ArticleDraftOverviewTO.class);
+		final Grid<ArticleDraftOverviewTO> grid = new Grid<>();
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		grid.setItems(drafts);
 		grid.setHeight(GridUtils.processHeight(drafts.size()) + "px");
 		grid.setWidth("900px");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 
-		grid.addColumn(a -> a.getContentNode().getName(), new TextRenderer()).setCaption("Název").setId(nameBind)
-				.setWidth(200);
+		grid.addColumn(new TextRenderer<>(a -> a.getContentNode().getName())).setHeader("Název").setWidth("200px")
+				.setFlexGrow(0);
+		grid.addColumn(new TextRenderer<>(a -> a.getText().substring(200))).setHeader("Náhled").setWidth("550px")
+				.setFlexGrow(0);
+		grid.addColumn(new LocalDateTimeRenderer<>(a -> a.getContentNode().getLastModificationDate() == null
+				? a.getContentNode().getCreationDate() : a.getContentNode().getLastModificationDate(),
+				"d.M.yyyy HH:mm")).setHeader("Naposledy upraveno").setClassNameGenerator(item -> "v-align-right")
+				.setFlexGrow(0).setWidth("90px");
 
-		grid.getColumn("text").setCaption("Náhled").setWidth(550);
-
-		grid.addColumn(a -> a.getContentNode().getLastModificationDate() == null ? a.getContentNode().getCreationDate()
-				: a.getContentNode().getLastModificationDate(), new LocalDateTimeRenderer("d.MM.yyyy HH:mm"))
-				.setCaption("Naposledy upraveno").setId(lastModificationDateBind)
-				.setStyleGenerator(item -> "v-align-right");
-
-		grid.setColumns(nameBind, "text", lastModificationDateBind);
 		grid.addItemClickListener(e -> {
-			if (e.getMouseEventDetails().isDoubleClick()) {
+			if (e.getClickCount() > 1) {
 				innerChoose(e.getItem());
 				close();
 			}
@@ -71,34 +72,27 @@ public abstract class DraftMenuDialog extends WebDialog {
 
 		addComponent(grid);
 
-		HorizontalLayout btnLayout = new HorizontalLayout();
-		btnLayout.setSpacing(true);
-		btnLayout.setMargin(false);
-		addComponent(btnLayout);
-		setComponentAlignment(btnLayout, Alignment.MIDDLE_CENTER);
+		ButtonLayout btnLayout = new ButtonLayout();
+		add(btnLayout);
 
 		final Button confirm = new Button("Vybrat", e -> {
 			innerChoose(grid.getSelectedItems().iterator().next());
 			close();
 		});
 		confirm.setEnabled(false);
-		btnLayout.addComponent(confirm);
-		btnLayout.setComponentAlignment(confirm, Alignment.MIDDLE_CENTER);
+		btnLayout.add(confirm);
 
 		Button close = new Button("Zrušit", e -> close());
-		btnLayout.addComponent(close);
-		btnLayout.setComponentAlignment(close, Alignment.MIDDLE_CENTER);
+		btnLayout.add(close);
 
-		Button delete = new Button("Smazat",
-				ev -> UI.getCurrent().addWindow(new ConfirmDialog("Smazat rozpracovaný článek?", e -> {
-					ArticleDraftOverviewTO to = grid.getSelectedItems().iterator().next();
-					getArticleService().deleteArticle(to.getId());
-					drafts.remove(to);
-					grid.getDataProvider().refreshAll();
-					grid.deselectAll();
-				})));
-		btnLayout.addComponent(delete);
-		btnLayout.setComponentAlignment(delete, Alignment.MIDDLE_CENTER);
+		Button delete = new Button("Smazat", ev -> new ConfirmDialog("Smazat rozpracovaný článek?", e -> {
+			ArticleDraftOverviewTO to = grid.getSelectedItems().iterator().next();
+			getArticleService().deleteArticle(to.getId());
+			drafts.remove(to);
+			grid.getDataProvider().refreshAll();
+			grid.deselectAll();
+		}).open());
+		btnLayout.add(delete);
 		delete.setEnabled(false);
 
 		grid.addSelectionListener(e -> {

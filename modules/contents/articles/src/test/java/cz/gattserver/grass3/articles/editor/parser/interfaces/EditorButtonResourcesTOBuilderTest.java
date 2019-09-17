@@ -2,12 +2,25 @@ package cz.gattserver.grass3.articles.editor.parser.interfaces;
 
 import static org.junit.Assert.*;
 
+import java.io.InputStream;
+
 import org.junit.Test;
 
-import com.vaadin.server.ExternalResource;
-import com.vaadin.server.ThemeResource;
+import com.vaadin.flow.server.InputStreamFactory;
+import com.vaadin.flow.server.StreamResource;
 
 public class EditorButtonResourcesTOBuilderTest {
+
+	private StreamResource createDummyResource() {
+		return new StreamResource("resourceId", new InputStreamFactory() {
+			private static final long serialVersionUID = 3561448763534828856L;
+
+			@Override
+			public InputStream createInputStream() {
+				return null;
+			}
+		});
+	}
 
 	@Test
 	public void testCreateShort() {
@@ -30,69 +43,52 @@ public class EditorButtonResourcesTOBuilderTest {
 		assertEquals("tag", to.getDescription());
 		assertEquals("[tag]", to.getPrefix());
 		assertEquals("[/tag]", to.getSuffix());
-
-		builder.setImageAsThemeResource("resource1");
-		to = builder.build();
-
-		assertNull(to.getDescription());
-		assertTrue(to.getImage() instanceof ThemeResource);
-		assertEquals("resource1", ((ThemeResource) to.getImage()).getResourceId());
-
-		builder.setImageResource(new ExternalResource("urlPath"));
-		to = builder.build();
-
-		assertTrue(to.getImage() instanceof ExternalResource);
-		assertEquals("urlPath", ((ExternalResource) to.getImage()).getURL());
 	}
 
 	@Test
 	public void testCreateLong() {
 		EditorButtonResourcesTO to = new EditorButtonResourcesTOBuilder("tag", "tagFamily")
-				.setDescription("description").setPrefix("[tag][test][/test]Bla").setSuffix("[/tag]")
-				.setImageResource(new ThemeResource("resourceId")).build();
+				.setDescription("description").setPrefix("[tag][test][/test]Bla").setSuffix("[/tag]").build();
 		assertEquals("tag", to.getTag());
 		assertEquals("tagFamily", to.getTagFamily());
 		assertEquals("description", to.getDescription());
 		assertEquals("[tag][test][/test]Bla", to.getPrefix());
 		assertEquals("[/tag]", to.getSuffix());
-		assertTrue(to.getImage() instanceof ThemeResource);
-		assertEquals("resourceId", ((ThemeResource) to.getImage()).getResourceId());
 	}
 
 	@Test
 	public void testCreateChain() {
 		EditorButtonResourcesTO to = new EditorButtonResourcesTOBuilder("tag", "tagFamily", "description",
-				"[tag][test][/test]Bla", "[/tag]", new ThemeResource("resourceId")).build();
+				"[tag][test][/test]Bla", "[/tag]", createDummyResource()).build();
 		assertEquals("tag", to.getTag());
 		assertEquals("tagFamily", to.getTagFamily());
 		assertEquals("description", to.getDescription());
 		assertEquals("[tag][test][/test]Bla", to.getPrefix());
 		assertEquals("[/tag]", to.getSuffix());
-		assertTrue(to.getImage() instanceof ThemeResource);
-		assertEquals("resourceId", ((ThemeResource) to.getImage()).getResourceId());
+		assertEquals("resourceId", to.getImage().getName());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testBadPrefixTag() {
 		new EditorButtonResourcesTOBuilder("tag", "tagFamily", "description", "[badTag]", "suffix",
-				new ThemeResource("resourceId")).build();
+				createDummyResource()).build();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testBadSuffixTag() {
 		new EditorButtonResourcesTOBuilder("tag", "tagFamily", "description", "[tag]", "[/badTag]",
-				new ThemeResource("resourceId")).build();
+				createDummyResource()).build();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testBadPrefix() {
-		new EditorButtonResourcesTOBuilder("tag", "tagFamily", "description", "prefix", "suffix",
-				new ThemeResource("resourceId")).build();
+		new EditorButtonResourcesTOBuilder("tag", "tagFamily", "description", "prefix", "suffix", createDummyResource())
+				.build();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testBadSuffix() {
-		new EditorButtonResourcesTOBuilder("tag", "tagFamily", "description", "[tag]", "suffix",
-				new ThemeResource("resourceId")).build();
+		new EditorButtonResourcesTOBuilder("tag", "tagFamily", "description", "[tag]", "suffix", createDummyResource())
+				.build();
 	}
 }

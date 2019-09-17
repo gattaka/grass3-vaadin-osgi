@@ -1,6 +1,11 @@
 package cz.gattserver.grass3.articles.services.mock;
 
+import java.io.InputStream;
+
 import org.springframework.stereotype.Component;
+
+import com.vaadin.flow.server.InputStreamFactory;
+import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
@@ -25,7 +30,15 @@ public class MockPlugin implements Plugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(tag, "Mock").setImageAsThemeResource(image).build();
+		return new EditorButtonResourcesTOBuilder(tag, "Mock")
+				.setImageResource(new StreamResource("mock.png", new InputStreamFactory() {
+					private static final long serialVersionUID = 7776929061334071659L;
+
+					@Override
+					public InputStream createInputStream() {
+						return MockPlugin.class.getResourceAsStream(image);
+					}
+				})).build();
 	}
 
 }

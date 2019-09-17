@@ -10,6 +10,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.common.Identifiable;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 
 /**
  * Template všech tabů, kde je v tabulce zobrazován přehled entit a dole jsou
@@ -68,7 +69,7 @@ public abstract class GridOperationsTab<T extends Identifiable, C extends Collec
 		customizeGrid(grid);
 		add(grid);
 
-		HorizontalLayout buttonLayout = new HorizontalLayout();
+		ButtonLayout buttonLayout = new ButtonLayout();
 		buttonLayout.setSpacing(true);
 		add(buttonLayout);
 
@@ -85,7 +86,7 @@ public abstract class GridOperationsTab<T extends Identifiable, C extends Collec
 		placeButtons(buttonLayout, createBtn, detailBtn, modifyBtn, deleteBtn);
 	}
 
-	protected void placeButtons(HorizontalLayout buttonLayout, Button createBtn, Button detailBtn, Button modifyBtn,
+	protected void placeButtons(ButtonLayout buttonLayout, Button createBtn, Button detailBtn, Button modifyBtn,
 			Button deleteBtn) {
 		buttonLayout.add(createBtn);
 		buttonLayout.add(detailBtn);

@@ -4,6 +4,8 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
+import com.vaadin.flow.server.StreamResource;
+
 import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -24,7 +26,7 @@ public class ArticlesContentModule implements ContentModule {
 	}
 
 	@Override
-	public com.vaadin.server.Resource getContentIcon() {
+	public StreamResource getContentIcon() {
 		return ImageIcon.DOCUMENT_16_ICON.createResource();
 	}
 

@@ -27,6 +27,7 @@ import cz.gattserver.grass3.ui.components.NewContentNodeGrid;
 import cz.gattserver.grass3.ui.components.NodesGrid;
 import cz.gattserver.grass3.ui.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -70,14 +71,11 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 	}
 
 	private void createNewNodePanel(Div layout, final NodeTO node) {
-		HorizontalLayout panelLayout = new HorizontalLayout();
-		panelLayout.setPadding(false);
-		panelLayout.setSpacing(true);
-		layout.add(panelLayout);
-
+		ButtonLayout buttonLayout = new ButtonLayout();
+		layout.add(buttonLayout);
 		Button createButton = new ImageButton("Vytvořit novou kategorii", ImageIcon.BRIEFCASE_PLUS_16_ICON,
 				e -> createNodeAction(node));
-		panelLayout.add(createButton);
+		buttonLayout.add(createButton);
 	}
 
 	public void createNodeAction(NodeOverviewTO parentNode) {

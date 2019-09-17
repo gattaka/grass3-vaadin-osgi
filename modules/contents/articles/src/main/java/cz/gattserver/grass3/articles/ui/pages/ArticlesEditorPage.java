@@ -183,7 +183,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		}
 
 		checkAuthorization(article);
-		super.createContent(customlayout);
+		super.createCenterElements(customlayout);
 	}
 
 	private void draftCreateContent(Div customlayout, List<ArticleDraftOverviewTO> drafts) {
@@ -226,7 +226,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 					}
 				}
 
-				ArticlesEditorPage.super.createContent(customlayout);
+				ArticlesEditorPage.super.createCenterElements(customlayout);
 			}
 
 			@Override
@@ -239,7 +239,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 	}
 
 	@Override
-	protected void createContent(Div customlayout) {
+	protected void createCenterElements(Div customlayout) {
 		articleNameField = new TextField();
 		FetchItemsCallback<String> fetchItemsCallback = (filter, offset, limit) -> contentTagFacade
 				.findByFilter(filter, offset, limit).stream();

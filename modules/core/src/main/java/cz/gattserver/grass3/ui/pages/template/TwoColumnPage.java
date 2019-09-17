@@ -7,7 +7,7 @@ public abstract class TwoColumnPage extends BasePage {
 	private static final long serialVersionUID = -6878321656448036198L;
 
 	@Override
-	protected void createContent(Div layout) {
+	protected void createCenterElements(Div layout) {
 		Div leftContentLayout = new Div();
 		leftContentLayout.setId("left-content");
 		layout.add(leftContentLayout);

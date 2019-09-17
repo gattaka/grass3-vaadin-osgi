@@ -7,16 +7,23 @@ html, body {
 	background-color: #d8cda6;
 }
 
-h2 {
+h2, h3 {
 	border-bottom: 1px solid;
 	border-color: #888;
-	font-size: 15pt;
 	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,
 		"Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
 	font-weight: normal;
 	width: 100%;
 	margin-top: 0;
 	margin-bottom: 10px;
+}
+
+h2 {
+	font-size: 15pt;
+}
+
+h3 {
+	font-size: 11pt;
 }
 
 .token-layout {
@@ -35,7 +42,7 @@ h2 {
 	margin-top: 10px;
 }
 
-#center-content h2 {
+#center-content h2, #right-content h2 {
 	margin-top: 10px;
 }
 
@@ -194,11 +201,29 @@ vaadin-horizontal-layout.menu {
 
 #breadcrumb {
 	background: #fdfaf2;
-}
-
-a.breadcrumb-element {
-	margin: 0 10px;
+	padding-top: 3px;
+    padding-bottom: 3px;
+    line-height: 20px;
+	padding-left: 10px;
+	padding-right: 0px;
 	font-weight: bold;
     font-size: 12px;
     font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+}
+
+#breadcrumb img, #breadcrumb a {
+	margin-right: 10px;
+}
+
+.content-info {
+    font-size: 11pt;
+}
+
+.content-tags {
+	font-size: 10pt;
+}
+
+.content-tags div {
+	display: inline-block;
+	margin-right: 10px;
 }

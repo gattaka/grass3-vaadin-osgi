@@ -46,9 +46,7 @@ public class Breadcrumb extends Div {
 	}
 
 	private Anchor createBreadcrumbElementLink(BreadcrumbElement element) {
-		Anchor link = new Anchor(element.getUrl(), element.getCaption());
-		link.setClassName("breadcrumb-element");
-		return link;
+		return new Anchor(element.getUrl(), element.getCaption());
 	}
 
 	private void initBreadcrumb(List<BreadcrumbElement> breadcrumbElements) {

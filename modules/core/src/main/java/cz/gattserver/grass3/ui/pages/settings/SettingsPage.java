@@ -39,7 +39,7 @@ public class SettingsPage extends TwoColumnPage implements HasUrlParameter<Strin
 	}
 
 	@Override
-	protected void createPayload(Div layout) {
+	protected void createPageElements(Div layout) {
 		ModuleSettingsPageFactory moduleSettingsPageFactory = register.getFactory(moduleParameter);
 
 		if (moduleSettingsPageFactory != null) {
@@ -50,7 +50,7 @@ public class SettingsPage extends TwoColumnPage implements HasUrlParameter<Strin
 			}
 		}
 
-		super.createPayload(layout);
+		super.createPageElements(layout);
 	}
 
 	@Override

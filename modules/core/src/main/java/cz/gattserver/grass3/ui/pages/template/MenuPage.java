@@ -57,7 +57,7 @@ public abstract class MenuPage extends GrassPage {
 	protected PageFactory registrationPageFactory;
 
 	@Override
-	protected void createPayload(Div payload) {
+	protected void createPageElements(Div payload) {
 		Div holder = new Div();
 		holder.setId("holder");
 		payload.add(holder);
@@ -98,7 +98,7 @@ public abstract class MenuPage extends GrassPage {
 		content.setId("content");
 		holder.add(content);
 
-		createContent(content);
+		createCenterElements(content);
 
 		Div bottomHolder = new Div();
 		bottomHolder.setId("bottom-holder");
@@ -185,6 +185,6 @@ public abstract class MenuPage extends GrassPage {
 	 * @param layout
 	 *            layout, do kterého bude vytvořen obsah
 	 */
-	protected abstract void createContent(Div layout);
+	protected abstract void createCenterElements(Div layout);
 
 }

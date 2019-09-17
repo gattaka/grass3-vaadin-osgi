@@ -54,7 +54,7 @@ public abstract class GrassPage extends Div {
 
 	public void init() {
 		try {
-			createPayload(this);
+			createPageElements(this);
 			setId("main-div");
 			// TODO
 			if (jQueryRequired)
@@ -77,7 +77,7 @@ public abstract class GrassPage extends Div {
 		}
 	}
 
-	protected abstract void createPayload(Div div);
+	protected abstract void createPageElements(Div div);
 
 	/**
 	 * Nahraje CSS

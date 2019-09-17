@@ -36,8 +36,8 @@ public class NewContentNodeGrid extends Grid<ContentModule> {
 		List<ContentModule> contentServices = serviceHolder.getContentModules();
 		setItems(contentServices);
 
-		addColumn(new IconRenderer<ContentModule>(c -> new Image(c.getContentIcon(), ""))).setHeader("").setFlexGrow(0)
-				.setWidth("28px").setHeader("").setTextAlign(ColumnTextAlign.CENTER).setKey(iconBind);
+		addColumn(new IconRenderer<ContentModule>(c -> new Image(c.getContentIcon(), ""), c -> "")).setHeader("")
+				.setFlexGrow(0).setWidth("28px").setHeader("").setTextAlign(ColumnTextAlign.CENTER).setKey(iconBind);
 
 		addColumn(new ComponentRenderer<Anchor, ContentModule>(c -> {
 			String url = page.getPageURL(c.getContentEditorPageFactory(), DefaultContentOperations.NEW.toString(),

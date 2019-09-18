@@ -120,7 +120,7 @@ public abstract class GrassPage extends Div {
 		// přitom umožnit aby se JS odkazovali na externí zdroje
 		if (!js.isPlain()
 				&& (!chunk.toLowerCase().startsWith("http://") || !chunk.toLowerCase().startsWith("https://"))) {
-			chunk = "\"" + getContextPath() + "/VAADIN/themes/grass/" + chunk + "\"";
+			chunk = "\"" + getContextPath() + "/frontend/" + chunk + "\"";
 			builder.append("$.getScript(").append(chunk).append(", function(){");
 			buildJSBatch(builder, index + 1, scripts);
 			builder.append("});");

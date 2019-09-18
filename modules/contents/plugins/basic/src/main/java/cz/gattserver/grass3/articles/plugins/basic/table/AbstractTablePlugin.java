@@ -12,9 +12,9 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
 public abstract class AbstractTablePlugin implements Plugin {
 
 	private static final String WITH_HEAD_TAG = "HTABLE";
-	private static final String WITH_HEAD_IMAGE = "articles/basic/img/htbl_16.png";
+	private static final String WITH_HEAD_IMAGE = "basic/img/htbl_16.png";
 	private static final String WITHOUT_HEAD_TAG = "TABLE";
-	private static final String WITHOUT_HEAD_IMAGE = "articles/basic/img/tbl_16.png";
+	private static final String WITHOUT_HEAD_IMAGE = "basic/img/tbl_16.png";
 
 	private boolean withHead;
 

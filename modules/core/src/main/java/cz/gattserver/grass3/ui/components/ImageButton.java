@@ -16,10 +16,15 @@ public class ImageButton extends Button {
 	}
 
 	public ImageButton(String caption, Image img, ComponentEventListener<ClickEvent<Button>> clickListener) {
-		setText(caption);
-		setTooltip(caption);
-		if (img != null)
+		if (caption != null) {
+			setText(caption);
+			setTooltip(caption);
+		}
+		if (img != null) {
 			setIcon(img);
+			if (caption == null)
+				img.addClassName("img-only-button");
+		}
 		addClickListener(clickListener);
 	}
 

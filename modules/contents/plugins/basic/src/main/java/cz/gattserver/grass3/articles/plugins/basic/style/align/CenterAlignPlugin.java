@@ -38,7 +38,7 @@ public class CenterAlignPlugin extends AbstractStylePlugin {
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
 		return new EditorButtonResourcesTOBuilder(TAG, "Zarovnání")
-				.setImageAsThemeResource("articles/basic/img/algnc_16.png").build();
+				.setImageAsThemeResource("basic/img/algnc_16.png").build();
 	}
 
 }

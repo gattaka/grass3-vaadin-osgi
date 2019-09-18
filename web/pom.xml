@@ -29,11 +29,11 @@
 			<version>3.0.13-SNAPSHOT</version>
 		</dependency>
 
-		<!-- <dependency> -->
-		<!-- <groupId>cz.gattserver.grass3</groupId> -->
-		<!-- <artifactId>articles-basic</artifactId> -->
-		<!-- <version>3.0.13-SNAPSHOT</version> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>cz.gattserver.grass3</groupId>
+			<artifactId>articles-basic</artifactId>
+			<version>3.0.13-SNAPSHOT</version>
+		</dependency>
 
 		<!-- <dependency> -->
 		<!-- <groupId>cz.gattserver.grass3</groupId> -->

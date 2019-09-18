@@ -38,6 +38,10 @@ h3 {
     text-align: center;
 }
 
+.button-div vaadin-button {
+	margin-right: 5px;
+}
+
 .top-margin {
 	margin-top: 10px;
 }
@@ -46,7 +50,7 @@ h3 {
 	margin-top: 10px;
 }
 
-#center-content h2:FIRST-CHILD {
+#center-content h2:FIRST-CHILD, #right-content h2:FIRST-CHILD {
 	margin-top: 0px;
 }
 

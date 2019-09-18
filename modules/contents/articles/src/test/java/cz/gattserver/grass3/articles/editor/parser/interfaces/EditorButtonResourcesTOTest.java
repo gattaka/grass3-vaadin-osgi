@@ -12,14 +12,7 @@ import com.vaadin.flow.server.StreamResource;
 public class EditorButtonResourcesTOTest {
 
 	private StreamResource createDummyResource(String resourceName) {
-		return new StreamResource(resourceName, new InputStreamFactory() {
-			private static final long serialVersionUID = 3561448763534828856L;
-
-			@Override
-			public InputStream createInputStream() {
-				return null;
-			}
-		});
+		return new StreamResource(resourceName, () -> null);
 	}
 
 	@Test

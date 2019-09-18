@@ -35,7 +35,7 @@ public class StrongPlugin extends AbstractStylePlugin {
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
 		return new EditorButtonResourcesTOBuilder(TAG, "Formátování")
-				.setImageAsThemeResource("articles/basic/img/strong_16.png").build();
+				.setImageAsThemeResource("basic/img/strong_16.png").build();
 	}
 
 }

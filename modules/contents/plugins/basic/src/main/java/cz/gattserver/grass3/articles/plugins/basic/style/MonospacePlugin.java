@@ -35,7 +35,7 @@ public class MonospacePlugin extends AbstractStylePlugin {
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
 		return new EditorButtonResourcesTOBuilder(TAG, "Formátování")
-				.setImageAsThemeResource("articles/basic/img/mono_16.png").build();
+				.setImageAsThemeResource("basic/img/mono_16.png").build();
 	}
 
 }

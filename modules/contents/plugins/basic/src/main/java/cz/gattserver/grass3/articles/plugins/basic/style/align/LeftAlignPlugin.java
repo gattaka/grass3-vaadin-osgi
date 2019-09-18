@@ -35,7 +35,7 @@ public class LeftAlignPlugin extends AbstractStylePlugin {
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
 		return new EditorButtonResourcesTOBuilder(TAG, "Zarovnání")
-				.setImageAsThemeResource("articles/basic/img/algnl_16.png").build();
+				.setImageAsThemeResource("basic/img/algnl_16.png").build();
 	}
 
 }

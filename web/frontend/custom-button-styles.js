@@ -17,6 +17,11 @@ const $_documentContainer = html`<dom-module id="grass-lumo-button" theme-for="v
         margin-bottom: -0.25em;        
       }
       
+      ::slotted(img.img-only-button) {
+        margin-right: 0;
+        margin-bottom: -0.25em;        
+      }      
+      
       [part="prefix"], [part="label"] {
         margin: 2px 0 0 0;
       }

@@ -119,4 +119,10 @@ public class EditorButtonResourcesTOBuilder {
 		return this;
 	}
 
+	public EditorButtonResourcesTOBuilder setImageAsThemeResource(String imagePath) {
+		this.imageResource = new StreamResource("icon",
+				() -> getClass().getResourceAsStream("/META-INF/resources/frontend/articles/" + imagePath));
+		return this;
+	}
+
 }

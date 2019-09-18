@@ -15,7 +15,6 @@ public class AbbrPlugin implements Plugin {
 
 	private static final String TAG = "ABBR";
 	private static final String TITLE_TAG = "T";
-	private static final String IMAGE_PATH = "articles/basic/img/abbr_16.png";
 
 	@Override
 	public String getTag() {
@@ -30,7 +29,7 @@ public class AbbrPlugin implements Plugin {
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
 		return new EditorButtonResourcesTOBuilder(TAG, "HTML").setPrefix("[" + TAG + "]")
-				.setSuffix("[" + TITLE_TAG + "][/" + TITLE_TAG + "][/" + TAG + "]").setImageAsThemeResource(IMAGE_PATH)
-				.build();
+				.setSuffix("[" + TITLE_TAG + "][/" + TITLE_TAG + "][/" + TAG + "]")
+				.setImageAsThemeResource("basic/img/abbr_16.png").build();
 	}
 }

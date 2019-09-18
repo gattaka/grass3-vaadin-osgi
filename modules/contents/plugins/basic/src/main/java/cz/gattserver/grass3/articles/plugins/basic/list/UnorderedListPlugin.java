@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class UnorderedListPlugin extends AbstractListPlugin {
 
 	public UnorderedListPlugin() {
-		super("UL", "articles/basic/img/ul_16.png", false);
+		super("UL", "basic/img/ul_16.png", false);
 	}
 
 }

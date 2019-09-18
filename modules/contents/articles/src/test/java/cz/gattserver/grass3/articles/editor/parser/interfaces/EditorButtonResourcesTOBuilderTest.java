@@ -2,24 +2,14 @@ package cz.gattserver.grass3.articles.editor.parser.interfaces;
 
 import static org.junit.Assert.*;
 
-import java.io.InputStream;
-
 import org.junit.Test;
 
-import com.vaadin.flow.server.InputStreamFactory;
 import com.vaadin.flow.server.StreamResource;
 
 public class EditorButtonResourcesTOBuilderTest {
 
 	private StreamResource createDummyResource() {
-		return new StreamResource("resourceId", new InputStreamFactory() {
-			private static final long serialVersionUID = 3561448763534828856L;
-
-			@Override
-			public InputStream createInputStream() {
-				return null;
-			}
-		});
+		return new StreamResource("resourceId", () -> null);
 	}
 
 	@Test

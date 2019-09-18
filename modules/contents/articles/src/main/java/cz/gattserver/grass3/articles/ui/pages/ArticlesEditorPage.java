@@ -8,8 +8,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -30,14 +28,14 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.Location;
-import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.WildcardParameter;
 import com.vaadin.flow.shared.Registration;
 
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
@@ -59,7 +57,6 @@ import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.TokenField;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
-import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -106,15 +103,14 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 	private String partNumberToken;
 
 	@Override
-	public void setParameter(BeforeEvent event, String parameter) {
-		Location location = event.getLocation();
-		QueryParameters queryParameters = location.getQueryParameters();
-
-		Map<String, List<String>> parametersMap = queryParameters.getParameters();
-		// TODO
-		// operationToken;
-		// identifierToken;
-		// partNumberToken;
+	public void setParameter(BeforeEvent event, @WildcardParameter String parameter) {
+		String[] chunks = parameter.split("/");
+		if (chunks.length > 0)
+			operationToken = chunks[0];
+		if (chunks.length > 1)
+			identifierToken = chunks[1];
+		if (chunks.length > 2)
+			partNumberToken = chunks[2];
 
 		init();
 
@@ -245,6 +241,9 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 				.findByFilter(filter, offset, limit).stream();
 		SerializableFunction<String, Integer> serializableFunction = filter -> contentTagFacade.countByFilter(filter);
 		articleKeywords = new TokenField(fetchItemsCallback, serializableFunction);
+		articleKeywords.isEnabled();
+		articleKeywords.setPlaceholder("klíčové slovo");
+
 		articleTextArea = new TextArea();
 		publicatedCheckBox = new Checkbox();
 
@@ -291,7 +290,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		layout.add(accordion);
 		for (String group : groups) {
 			Div groupToolsLayout = new Div();
-			groupToolsLayout.addClassName("tools-css-menu");
+			groupToolsLayout.addClassName("button-div");
 			accordion.add(new AccordionPanel(group, groupToolsLayout));
 
 			List<EditorButtonResourcesTO> resourcesBundles = new ArrayList<>(
@@ -302,10 +301,18 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 				String prefix = resourceBundle.getPrefix();
 				String suffix = resourceBundle.getSuffix();
 
-				ImageButton btn = new ImageButton(resourceBundle.getDescription(),
-						new Image(resourceBundle.getImage(), resourceBundle.getDescription()),
-						event -> UI.getCurrent().getPage().executeJs("insert('" + prefix + "','" + suffix + "')"));
-				groupToolsLayout.add(btn);
+				if (resourceBundle.getImage() != null) {
+					ImageButton btn = new ImageButton(resourceBundle.getDescription(),
+							new Image(resourceBundle.getImage(), resourceBundle.getTag()),
+							event -> UI.getCurrent().getPage().executeJs("insert('" + prefix + "','" + suffix + "')"));
+					btn.setTooltip(resourceBundle.getTag());
+					groupToolsLayout.add(btn);
+				} else {
+					Button btn = new Button(resourceBundle.getDescription(),
+							event -> UI.getCurrent().getPage().executeJs("insert('" + prefix + "','" + suffix + "')"));
+					btn.getElement().setProperty("title", resourceBundle.getTag());
+					groupToolsLayout.add(btn);
+				}
 			}
 		}
 	}
@@ -455,11 +462,6 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		// menu tagů + textfield tagů
 		layout.add(articleKeywords);
 
-		Set<ContentTagOverviewTO> contentTags = contentTagFacade.getTagsForOverviewOrderedByName();
-		contentTags.forEach(t -> articleKeywords.addToken(t.getName()));
-		articleKeywords.isEnabled();
-		articleKeywords.setPlaceholder("klíčové slovo");
-
 		layout.add(new H2("Obsah článku"));
 		layout.add(articleTextArea);
 		articleTextArea.setSizeFull();
@@ -469,7 +471,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		publicatedCheckBox.setLabel("Publikovat článek");
 		layout.add(publicatedCheckBox);
 
-		ButtonLayout buttonLayout = new ButtonLayout();
+		HorizontalLayout buttonLayout = new HorizontalLayout();
 		layout.add(buttonLayout);
 
 		// Náhled

@@ -15,7 +15,6 @@ import cz.gattserver.web.common.ui.ImageIcon;
 public class ImagePlugin implements Plugin {
 
 	private static final String TAG = "IMG";
-	private static final String DESCRIPTION = "Obrázek";
 
 	@Override
 	public String getTag() {
@@ -29,7 +28,7 @@ public class ImagePlugin implements Plugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(TAG, "HTML").setDescription(DESCRIPTION)
-				.setImageResource(ImageIcon.IMG_16_ICON.createResource()).build();
+		return new EditorButtonResourcesTOBuilder(TAG, "HTML").setImageResource(ImageIcon.IMG_16_ICON.createResource())
+				.build();
 	}
 }

@@ -116,7 +116,9 @@ function insert(prefix, suffix) {
 }
 
 function registerTabListener() {
-	var textarea = $('.v-textarea')[0];
+	var sr = $("vaadin-text-area")[0].shadowRoot;
+	// sr.childNodes[2].childNodes[3].childNodes[3].childNodes[1].addEventListener
+	var textarea = sr.children[1].children[1].children[1].children[0];
 	// aby se na to opakovaně nepřidávaly další a další listenery (pak se vkládá
 	// více a více tabů)
 	if (textarea.tabFixedFlag == undefined) {

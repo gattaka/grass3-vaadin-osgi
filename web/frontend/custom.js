@@ -4,6 +4,7 @@ import '@polymer/polymer/lib/elements/custom-style.js';
 import './custom-button-styles.js';
 import './custom-grid.js';
 import './custom-text-field-mixin.js';
+import './custom-text-area-mixin.js';
 const $_documentContainer = document.createElement('template');
 
 $_documentContainer.innerHTML = `<custom-style>

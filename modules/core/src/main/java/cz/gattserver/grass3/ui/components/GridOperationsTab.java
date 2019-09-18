@@ -69,7 +69,6 @@ public abstract class GridOperationsTab<T extends Identifiable, C extends Collec
 		add(grid);
 
 		ButtonLayout buttonLayout = new ButtonLayout();
-		buttonLayout.setSpacing(true);
 		add(buttonLayout);
 
 		final Button createBtn = new CreateGridButton("Založit", e -> createCreateDialog().open());

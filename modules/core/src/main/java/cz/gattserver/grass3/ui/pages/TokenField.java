@@ -15,6 +15,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.function.SerializableFunction;
 
 import cz.gattserver.grass3.ui.components.DeleteButton;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 
 public class TokenField extends Div {
 
@@ -28,8 +29,7 @@ public class TokenField extends Div {
 
 	public TokenField(FetchItemsCallback<String> fetchItemsCallback,
 			SerializableFunction<String, Integer> serializableFunction) {
-		tokensLayout = new Div();
-		tokensLayout.setClassName("token-layout");
+		tokensLayout = new ButtonLayout();
 		add(tokensLayout);
 
 		comboBox = new ComboBox<>();

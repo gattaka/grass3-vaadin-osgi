@@ -245,6 +245,8 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		articleKeywords.setPlaceholder("klíčové slovo");
 
 		articleTextArea = new TextArea();
+		articleTextArea.setHeight("30em");
+		articleTextArea.setWidthFull();
 		publicatedCheckBox = new Checkbox();
 
 		// editor.js
@@ -464,14 +466,13 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 
 		layout.add(new H2("Obsah článku"));
 		layout.add(articleTextArea);
-		articleTextArea.setSizeFull();
-		articleTextArea.getElement().setAttribute("rows", "30");
 
 		layout.add(new H2("Nastavení článku"));
 		publicatedCheckBox.setLabel("Publikovat článek");
 		layout.add(publicatedCheckBox);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
+		buttonLayout.addClassName("top-margin");
 		layout.add(buttonLayout);
 
 		// Náhled

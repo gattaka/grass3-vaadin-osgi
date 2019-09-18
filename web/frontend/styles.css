@@ -26,12 +26,28 @@ h3 {
 	font-size: 11pt;
 }
 
+span.label-ok, span.label-err {
+	border-radius: 5px;
+    margin: auto;
+    padding: 3px 10px;
+}
+
+span.label-ok {
+    border: 2px solid #42af0b;
+    background-color: rgba(66, 175, 11, 0.25);
+}
+
+span.label-err {
+	border: 2px solid #af130b;
+    background-color: rgba(175, 11, 11, 0.25);
+}
+
 .token-layout {
     display: inline-block; 
 }
 
 .token-layout vaadin-button {
-    margin-right: 5px;
+    margin-right: var(--lumo-space-m);
 }
  
 .error-label {
@@ -39,15 +55,16 @@ h3 {
 }
 
 .button-div vaadin-button {
-	margin-right: 5px;
+	margin-right: var(--lumo-space-m);
+    margin-bottom: calc(var(--lumo-space-m) - var(--lumo-space-xs));
 }
 
 .top-margin {
-	margin-top: 10px;
+	margin-top: var(--lumo-space-m);
 }
 
 #center-content h2, #right-content h2 {
-	margin-top: 10px;
+	margin-top: var(--lumo-space-m);
 }
 
 #center-content h2:FIRST-CHILD, #right-content h2:FIRST-CHILD {

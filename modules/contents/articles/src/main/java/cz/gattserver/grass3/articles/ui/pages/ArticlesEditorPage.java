@@ -314,6 +314,8 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 				}
 			}
 		}
+
+		layout.getStyle().set("width", "420px").set("margin-left", "-200px");
 	}
 
 	private Button createPreviewButton() {

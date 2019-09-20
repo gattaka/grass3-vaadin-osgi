@@ -35,17 +35,17 @@
 			<version>3.0.13-SNAPSHOT</version>
 		</dependency>
 
-		<!-- <dependency> -->
-		<!-- <groupId>cz.gattserver.grass3</groupId> -->
-		<!-- <artifactId>articles-code</artifactId> -->
-		<!-- <version>3.0.13-SNAPSHOT</version> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>cz.gattserver.grass3</groupId>
+			<artifactId>articles-code</artifactId>
+			<version>3.0.13-SNAPSHOT</version>
+		</dependency>
 
-		<!-- <dependency> -->
-		<!-- <groupId>cz.gattserver.grass3</groupId> -->
-		<!-- <artifactId>articles-favlink</artifactId> -->
-		<!-- <version>3.0.13-SNAPSHOT</version> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>cz.gattserver.grass3</groupId>
+			<artifactId>articles-favlink</artifactId>
+			<version>3.0.13-SNAPSHOT</version>
+		</dependency>
 
 		<!-- <dependency> -->
 		<!-- <groupId>cz.gattserver.grass3</groupId> -->

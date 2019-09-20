@@ -3,9 +3,8 @@ package cz.gattserver.grass3.articles.plugins.favlink.ui.pages.settings.factorie
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.articles.plugins.favlink.ui.pages.settings.FavlinkSettingsPage;
-import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.ui.pages.settings.factories.AbstractModuleSettingsPageFactory;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
+import cz.gattserver.grass3.ui.pages.settings.AbstractModuleSettingsPageFactory;
+import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 
 @Component
 public class FavlinkSettingsPageFactory extends AbstractModuleSettingsPageFactory {
@@ -21,7 +20,7 @@ public class FavlinkSettingsPageFactory extends AbstractModuleSettingsPageFactor
 	}
 
 	@Override
-	protected GrassPage createPage(GrassRequest request) {
-		return new FavlinkSettingsPage(request);
+	protected AbstractPageFragmentFactory createPageFragmentFactory() {
+		return new FavlinkSettingsPage();
 	}
 }

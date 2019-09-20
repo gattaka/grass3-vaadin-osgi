@@ -2,11 +2,8 @@ package cz.gattserver.grass3.articles.editor.parser.interfaces;
 
 import static org.junit.Assert.*;
 
-import java.io.InputStream;
-
 import org.junit.Test;
 
-import com.vaadin.flow.server.InputStreamFactory;
 import com.vaadin.flow.server.StreamResource;
 
 public class EditorButtonResourcesTOTest {

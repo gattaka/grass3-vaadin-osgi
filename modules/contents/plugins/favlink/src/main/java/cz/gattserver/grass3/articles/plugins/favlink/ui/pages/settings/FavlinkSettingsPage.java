@@ -1,7 +1,6 @@
 package cz.gattserver.grass3.articles.plugins.favlink.ui.pages.settings;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -13,35 +12,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.ValidationResult;
-import com.vaadin.server.StreamResource;
-import com.vaadin.server.StreamResource.StreamSource;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.renderers.ComponentRenderer;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.Column;
+import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationResult;
+import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
+import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.IconRenderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
+import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.grass3.articles.plugins.favlink.config.FavlinkConfiguration;
 import cz.gattserver.grass3.articles.plugins.favlink.strategies.CombinedFaviconObtainStrategy;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.FileSystemService;
-import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
-import cz.gattserver.grass3.ui.util.GridUtils;
-import cz.gattserver.web.common.ui.H2Label;
+import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
+import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 
-public class FavlinkSettingsPage extends AbstractSettingsPage {
+public class FavlinkSettingsPage extends AbstractPageFragmentFactory {
 
 	private static final Logger logger = LoggerFactory.getLogger(FavlinkSettingsPage.class);
 
@@ -53,29 +56,20 @@ public class FavlinkSettingsPage extends AbstractSettingsPage {
 
 	private String filterName;
 
-	public FavlinkSettingsPage(GrassRequest request) {
-		super(request);
-	}
-
 	@Override
-	protected Component createContent() {
+	public void createFragment(Div layout) {
 		final FavlinkConfiguration configuration = loadConfiguration();
 		final FileSystem fs = fileSystemService.getFileSystem();
 
-		VerticalLayout layout = new VerticalLayout();
-
-		layout.setMargin(true);
-		layout.setSpacing(true);
-
 		VerticalLayout settingsLayout = new VerticalLayout();
-		layout.addComponent(settingsLayout);
+		layout.add(settingsLayout);
 
-		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new H2Label("Nastavení favlink pluginu"));
+		settingsLayout.removeAll();
+		settingsLayout.add(new H2("Nastavení favlink pluginu"));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
-		settingsLayout.addComponent(settingsFieldsLayout);
+		settingsLayout.add(settingsFieldsLayout);
 		settingsFieldsLayout.setMargin(false);
 		settingsFieldsLayout.setSpacing(true);
 		settingsFieldsLayout.setSizeFull();
@@ -84,7 +78,7 @@ public class FavlinkSettingsPage extends AbstractSettingsPage {
 		TextField outputPathField = new TextField("Nastavení výstupního adresáře");
 		outputPathField.setValue(configuration.getOutputPath());
 		outputPathField.setWidth("300px");
-		settingsFieldsLayout.addComponent(outputPathField);
+		settingsFieldsLayout.add(outputPathField);
 
 		Binder<FavlinkConfiguration> binder = new Binder<>();
 		binder.forField(outputPathField).asRequired("Výstupní adresář je povinný").withValidator((val, c) -> {
@@ -103,95 +97,82 @@ public class FavlinkSettingsPage extends AbstractSettingsPage {
 		});
 		binder.addValueChangeListener(l -> saveButton.setEnabled(binder.isValid()));
 
-		settingsFieldsLayout.addComponent(saveButton);
+		settingsFieldsLayout.add(saveButton);
 
 		Path path = fileSystemService.getFileSystem().getPath(configuration.getOutputPath());
 
 		if (Files.exists(path)) {
-			Grid<Path> grid = new Grid<>("Přehled existujících favicon");
+			settingsFieldsLayout.add(new H2("Přehled existujících favicon"));
+			Grid<Path> grid = new Grid<>();
 			grid.setWidth("100%");
 			grid.setHeight("500px");
+			grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES,
+					GridVariant.LUMO_COMPACT);
 
-			settingsFieldsLayout.addComponent(grid);
+			settingsFieldsLayout.add(grid);
 
-			grid.addColumn(p -> {
-				Image img = new Image(null, new StreamResource(new StreamSource() {
-					private static final long serialVersionUID = 8676489834467009848L;
-
-					@Override
-					public InputStream getStream() {
-						try {
-							return Files.newInputStream(p);
-						} catch (IOException e) {
-							logger.error("Nezdařilo se otevřít favicon " + p.getFileName().toString(), e);
-						}
-						return null;
+			grid.addColumn(new IconRenderer<Path>(p -> {
+				Image img = new Image(new StreamResource(p.getFileName().toString(), () -> {
+					try {
+						return Files.newInputStream(p);
+					} catch (IOException e) {
+						logger.error("Nezdařilo se otevřít favicon " + p.getFileName().toString(), e);
 					}
-				}, p.getFileName().toString()));
-				img.setHeight("16px");
-				img.setWidth("16px");
+					return null;
+				}), p.getFileName().toString());
 				return img;
-			}, new ComponentRenderer()).setWidth(GridUtils.ICON_COLUMN_WIDTH).setCaption("");
+			}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
 
-			Column<Path, String> nameColumn = grid
-					.addColumn(
-							p -> p.getFileName().toString().substring(0, p.getFileName().toString().lastIndexOf('.')))
-					.setCaption("Název").setExpandRatio(1);
+			Column<Path> nameColumn = grid
+					.addColumn(new TextRenderer<>(
+							p -> p.getFileName().toString().substring(0, p.getFileName().toString().lastIndexOf('.'))))
+					.setHeader("Název");
 
-			grid.addColumn(p -> p.getFileName().toString().substring(p.getFileName().toString().lastIndexOf('.')))
-					.setCaption("Typ");
+			grid.addColumn(new TextRenderer<>(
+					p -> p.getFileName().toString().substring(p.getFileName().toString().lastIndexOf('.'))))
+					.setHeader("Typ");
 
-			grid.addColumn(p -> {
-				Button button = new Button("Smazat", new Button.ClickListener() {
-					private static final long serialVersionUID = 1996102817811495323L;
-
-					@Override
-					public void buttonClick(ClickEvent event) {
-						UI.getCurrent().addWindow(new ConfirmDialog("Opravdu smazat favicon?", e -> {
-							try {
-								Files.delete(p);
-								populateGrid(grid, path);
-							} catch (IOException e1) {
-								logger.error("Nezdařilo se smazat favicon " + p.getFileName().toString(), e);
-							}
-						}));
-					}
+			grid.addColumn(new ComponentRenderer<>(p -> {
+				Button button = new Button("Smazat", be -> {
+					new ConfirmDialog("Opravdu smazat favicon?", e -> {
+						try {
+							Files.delete(p);
+							populateGrid(grid, path);
+						} catch (IOException e1) {
+							logger.error("Nezdařilo se smazat favicon " + p.getFileName().toString(), e);
+						}
+					}).open();
 				});
-				button.setStyleName(ValoTheme.BUTTON_LINK);
+				button.addThemeVariants(ButtonVariant.LUMO_SMALL);
 				return button;
-			}).setRenderer(new ComponentRenderer()).setCaption("Smazat");
+			})).setHeader("Smazat");
 
-			grid.addColumn(p -> {
-				Button button = new Button("Přegenerovat", new Button.ClickListener() {
-					private static final long serialVersionUID = 1996102817811495323L;
-
-					@Override
-					public void buttonClick(ClickEvent event) {
-						UI.getCurrent().addWindow(new ConfirmDialog("Opravdu přegenerovat favicon?", e -> {
-							try {
-								Files.delete(p);
-								String fileName = p.getFileName().toString();
-								String urlName = "http://" + fileName.substring(0, fileName.lastIndexOf('.'));
-								new CombinedFaviconObtainStrategy().obtainFaviconURL(urlName,
-										getRequest().getContextRoot());
-								populateGrid(grid, path);
-							} catch (IOException e1) {
-								logger.error("Nezdařilo se smazat favicon " + p.getFileName().toString(), e);
-							}
-						}));
-					}
+			grid.addColumn(new ComponentRenderer<>(p -> {
+				Button button = new Button("Přegenerovat", be -> {
+					new ConfirmDialog("Opravdu přegenerovat favicon?", e -> {
+						try {
+							Files.delete(p);
+							String fileName = p.getFileName().toString();
+							String urlName = "http://" + fileName.substring(0, fileName.lastIndexOf('.'));
+							new CombinedFaviconObtainStrategy().obtainFaviconURL(urlName, GrassPage.getContextPath());
+							populateGrid(grid, path);
+						} catch (IOException e1) {
+							logger.error("Nezdařilo se smazat favicon " + p.getFileName().toString(), e);
+						}
+					}).open();
 				});
-				button.setStyleName(ValoTheme.BUTTON_LINK);
+				button.addThemeVariants(ButtonVariant.LUMO_SMALL);
 				return button;
-			}).setRenderer(new ComponentRenderer()).setCaption("Smazat");
+			})).setHeader("Přegenerovat");
 
-			grid.addColumn(p -> formatSize(p)).setCaption("Velikost").setStyleGenerator(item -> "v-align-right");
+			grid.addColumn(new TextRenderer<>(p -> formatSize(p))).setHeader("Velikost")
+					.setTextAlign(ColumnTextAlign.END);
 
 			HeaderRow filteringHeader = grid.appendHeaderRow();
 
 			// Obsah
 			TextField contentFilterField = new TextField();
-			contentFilterField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+			contentFilterField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 			contentFilterField.setWidth("100%");
 			contentFilterField.addValueChangeListener(e -> {
 				filterName = e.getValue();
@@ -201,8 +182,6 @@ public class FavlinkSettingsPage extends AbstractSettingsPage {
 
 			populateGrid(grid, path);
 		}
-
-		return layout;
 	}
 
 	private Stream<Path> createStream(Path path) {
@@ -228,8 +207,9 @@ public class FavlinkSettingsPage extends AbstractSettingsPage {
 	}
 
 	private void populateGrid(Grid<Path> grid, Path path) {
-		grid.setDataProvider((sortOrder, offset, limit) -> createStream(path).skip(offset).limit(limit),
-				() -> (int) count(path));
+		FetchCallback<Path, Void> fetchCallback = q -> createStream(path).skip(q.getOffset()).limit(q.getLimit());
+		CountCallback<Path, Void> countCallback = q -> (int) count(path);
+		grid.setDataProvider(DataProvider.fromCallbacks(fetchCallback, countCallback));
 	}
 
 	private String formatSize(Path path) {

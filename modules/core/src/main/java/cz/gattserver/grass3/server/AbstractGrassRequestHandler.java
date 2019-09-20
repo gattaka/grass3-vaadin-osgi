@@ -13,7 +13,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
+import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.Validate;
@@ -21,11 +24,7 @@ import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.flow.server.VaadinRequest;
-import com.vaadin.flow.server.VaadinResponse;
-import com.vaadin.flow.server.VaadinSession;
-
-public abstract class AbstractGrassRequestHandler implements GrassRequestHandler {
+public abstract class AbstractGrassRequestHandler extends HttpServlet {
 
 	private transient Logger logger = LoggerFactory.getLogger(AbstractGrassRequestHandler.class);
 
@@ -46,18 +45,7 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 	private static final String RANGE = "Range";
 	private static final String IF_RANGE = "If-Range";
 
-	private String mountPoint;
-
 	protected abstract Path getPath(String fileName) throws FileNotFoundException;
-
-	/**
-	 * @param mountPointName
-	 *            název místa do kterého bude přimountován tento servlet --
-	 *            například "soubory"
-	 */
-	public AbstractGrassRequestHandler(String mountPointName) {
-		this.mountPoint = "/" + mountPointName;
-	}
 
 	protected String getMimeType(Path file) {
 		Validate.notNull(file, "Soubor pro zjištění MIME typu nesmí být null");
@@ -70,22 +58,15 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 		return null;
 	}
 
-	public boolean handleRequest(VaadinSession session, VaadinRequest request, VaadinResponse response)
-			throws IOException {
-
-		String pathInfo = request.getPathInfo();
-		boolean content = !"HEAD".equals(request.getMethod());
-
-		// adresa musí začínat mountpointem
-		// adresa musí být delší než mountpoint + '/'
-		if (!pathInfo.startsWith(mountPoint) || pathInfo.length() <= (mountPoint.length() + 1))
-			return false;
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
 		// credit:
 		// http://balusc.omnifaces.org/2009/02/fileservlet-supporting-resume-and.html
 
-		// Get requested file by path info.
-		String requestedFile = pathInfo.substring(mountPoint.length() + 1);
+		String requestedFile = request.getPathInfo();
+		boolean content = !"HEAD".equals(request.getMethod());
 
 		// Check if file is actually supplied to the request URL.
 		if (requestedFile == null) {
@@ -93,7 +74,7 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 			// Throw an exception, or send 404, or show default/warning page, or
 			// just ignore it.
 			response.sendError(HttpServletResponse.SC_NOT_FOUND, "SC_NOT_FOUND");
-			return true;
+			return;
 		}
 
 		// URL-decode the file name (might contain spaces and on) and prepare
@@ -106,7 +87,7 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 			// Throw an exception, or send 404, or show default/warning page, or
 			// just ignore it.
 			response.sendError(HttpServletResponse.SC_NOT_FOUND, "SC_NOT_FOUND");
-			return true;
+			return;
 		}
 
 		// Prepare some variables. The ETag is an unique identifier of the file.
@@ -125,9 +106,9 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 		if (ifNoneMatch != null && matches(ifNoneMatch, eTag)) {
 			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 			response.setHeader(ETAG, eTag); // Required in 304.
-			response.setDateHeader(EXPIRES, expires); // Postpone cache with 1
-														// week.
-			return true;
+			// Postpone cache with 1 week.
+			response.setDateHeader(EXPIRES, expires);
+			return;
 		}
 
 		// If-Modified-Since header should be greater than LastModified. If so,
@@ -147,7 +128,7 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 		String ifMatch = request.getHeader("If-Match");
 		if (ifMatch != null && !matches(ifMatch, eTag)) {
 			response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "SC_PRECONDITION_FAILED");
-			return true;
+			return;
 		}
 
 		// If-Unmodified-Since header should be greater than LastModified. If
@@ -155,7 +136,7 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 		long ifUnmodifiedSince = request.getDateHeader("If-Unmodified-Since");
 		if (ifUnmodifiedSince != -1 && ifUnmodifiedSince + 1000 <= lastModified) {
 			response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "SC_PRECONDITION_FAILED");
-			return true;
+			return;
 		}
 
 		// Validate and process range
@@ -176,7 +157,7 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 				response.setHeader(CONTENT_RANGE, "bytes */" + length);
 				response.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE,
 						"SC_REQUESTED_RANGE_NOT_SATISFIABLE");
-				return true;
+				return;
 			}
 
 			// If-Range header should either match ETag or be greater then
@@ -221,7 +202,7 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 																				// 416.
 						response.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE,
 								"SC_REQUESTED_RANGE_NOT_SATISFIABLE");
-						return true;
+						return;
 					}
 
 					// Add range.
@@ -350,8 +331,6 @@ public abstract class AbstractGrassRequestHandler implements GrassRequestHandler
 			// Gently close streams.
 			close(output);
 		}
-
-		return true; // We wrote a response
 	}
 
 	/**

@@ -14,7 +14,7 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
 public class PlotterPlugin implements Plugin {
 
 	private static final String TAG = "PLOTTER";
-	private static final String IMAGE_PATH = "articles/templates/img/plotter_16.png";
+	private static final String IMAGE_PATH = "templates/img/plotter_16.png";
 
 	@Override
 	public String getTag() {

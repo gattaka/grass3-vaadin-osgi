@@ -15,7 +15,7 @@ import cz.gattserver.grass3.articles.plugins.favlink.strategies.CombinedFaviconO
 public class SourcesPlugin implements Plugin {
 
 	private static final String TAG = "SOURCES";
-	private static final String IMAGE_PATH = "articles/templates/img/sources_16.png";
+	private static final String IMAGE_PATH = "templates/img/sources_16.png";
 
 	@Override
 	public String getTag() {

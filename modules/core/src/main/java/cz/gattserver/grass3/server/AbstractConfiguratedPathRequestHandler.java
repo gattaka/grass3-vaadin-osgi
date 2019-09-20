@@ -11,10 +11,6 @@ public abstract class AbstractConfiguratedPathRequestHandler extends AbstractGra
 	private transient ConfigurationService configurationService;
 	private transient FileSystemService fileSystemService;
 
-	public AbstractConfiguratedPathRequestHandler(String mountPointName) {
-		super(mountPointName);
-	}
-
 	protected ConfigurationService getConfigurationService() {
 		// získává se takhle aby nemusela být transient/serializable
 		if (configurationService == null)

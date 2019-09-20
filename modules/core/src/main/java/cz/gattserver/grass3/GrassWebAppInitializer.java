@@ -10,8 +10,6 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import cz.gattserver.grass3.server.GrassVaadinServlet;
-
 /*
  * https://www.baeldung.com/spring-xml-vs-java-config
  * https://www.baeldung.com/register-servlet
@@ -38,25 +36,5 @@ public class GrassWebAppInitializer implements WebApplicationInitializer {
 				new DispatcherServlet(context));
 		springRegistration.addMapping("/ws/*");
 		springRegistration.setLoadOnStartup(0);
-
-		// vaadin-spring
-		// ServletRegistration.Dynamic registration =
-		// servletContext.addServlet("vaadin-dispatcher",
-		// new SpringServlet(context, true));
-		// registration.setLoadOnStartup(1);
-		// registration.addMapping("/*");
-
-		// Vaadin
-		// GrassVaadinServlet vaadinServlet = new GrassVaadinServlet();
-		// ServletRegistration.Dynamic vaadinRegistration =
-		// servletContext.addServlet("vaadinServlet", vaadinServlet);
-		// vaadinRegistration.setInitParameter("productionMode", "true");
-		// vaadinRegistration.setInitParameter("UIProvider",
-		// GrassUIProvider.class.getName());
-		// vaadinRegistration.setInitParameter("widgetset",
-		// "cz.gattserver.grass3.ui.AppWidgetSet");
-		// vaadinRegistration.setLoadOnStartup(1);
-		// vaadinRegistration.addMapping("/*");
 	}
-
 }

@@ -17,8 +17,8 @@
 		<module>code</module>
 		<module>favlink</module>
 		<module>js-libs</module>
-		<!-- <module>latex</module> -->
-		<!-- <module>templates</module> -->
+		<module>latex</module>
+		<module>templates</module>
 	</modules>
 
 </project>

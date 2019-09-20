@@ -16,7 +16,7 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
 public class GJSLibPlotterPlugin implements Plugin {
 
 	private static final String TAG = "GJSLibPlotter";
-	private static final String IMAGE_PATH = "articles/jslibs/img/plotter_16.png";
+	private static final String IMAGE_PATH = "jslibs/img/plotter_16.png";
 
 	@Override
 	public String getTag() {

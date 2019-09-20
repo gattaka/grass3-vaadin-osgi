@@ -16,7 +16,7 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
 public class GJSLibNeuralNetPlugin implements Plugin {
 
 	private static final String TAG = "GJSLibNeuralNet";
-	private static final String IMAGE_PATH = "articles/jslibs/img/nnet_16.png";
+	private static final String IMAGE_PATH = "jslibs/img/nnet_16.png";
 
 	@Override
 	public String getTag() {

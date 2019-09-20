@@ -16,7 +16,7 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
 public class GJSLibNumbersPlugin implements Plugin {
 
 	private static final String TAG = "GJSLibNumbers";
-	private static final String IMAGE_PATH = "articles/jslibs/img/numbers_16.png";
+	private static final String IMAGE_PATH = "jslibs/img/numbers_16.png";
 
 	@Override
 	public String getTag() {

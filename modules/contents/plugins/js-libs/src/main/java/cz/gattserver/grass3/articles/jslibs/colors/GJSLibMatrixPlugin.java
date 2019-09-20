@@ -16,7 +16,7 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
 public class GJSLibMatrixPlugin implements Plugin {
 
 	private static final String TAG = "GJSLibMatrix";
-	private static final String IMAGE_PATH = "articles/jslibs/img/matrix_16.png";
+	private static final String IMAGE_PATH = "jslibs/img/matrix_16.png";
 
 	@Override
 	public String getTag() {

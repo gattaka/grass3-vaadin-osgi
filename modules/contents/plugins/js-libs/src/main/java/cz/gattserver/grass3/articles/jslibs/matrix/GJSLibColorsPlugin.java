@@ -16,7 +16,7 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
 public class GJSLibColorsPlugin implements Plugin {
 
 	private static final String TAG = "GJSLibColors";
-	private static final String IMAGE_PATH = "articles/jslibs/img/colors_16.png";
+	private static final String IMAGE_PATH = "jslibs/img/colors_16.png";
 
 	@Override
 	public String getTag() {

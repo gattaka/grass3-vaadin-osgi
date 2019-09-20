@@ -19,11 +19,10 @@ import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.accordion.Accordion;
-import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox.FetchItemsCallback;
+import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
@@ -288,12 +287,10 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		});
 
 		// Projdi zaregistrované pluginy a vytvoř menu nástrojů
-		Accordion accordion = new Accordion();
-		layout.add(accordion);
 		for (String group : groups) {
 			Div groupToolsLayout = new Div();
 			groupToolsLayout.addClassName("button-div");
-			accordion.add(new AccordionPanel(group, groupToolsLayout));
+			layout.add(new Details(group, groupToolsLayout));
 
 			List<EditorButtonResourcesTO> resourcesBundles = new ArrayList<>(
 					pluginRegister.getTagResourcesByGroup(group));

@@ -61,18 +61,12 @@ public class FavlinkSettingsPage extends AbstractPageFragmentFactory {
 		final FavlinkConfiguration configuration = loadConfiguration();
 		final FileSystem fs = fileSystemService.getFileSystem();
 
-		VerticalLayout settingsLayout = new VerticalLayout();
-		layout.add(settingsLayout);
-
-		settingsLayout.removeAll();
-		settingsLayout.add(new H2("Nastavení favlink pluginu"));
+		layout.add(new H2("Nastavení favlink pluginu"));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
-		settingsLayout.add(settingsFieldsLayout);
-		settingsFieldsLayout.setMargin(false);
-		settingsFieldsLayout.setSpacing(true);
-		settingsFieldsLayout.setSizeFull();
+		settingsFieldsLayout.setPadding(false);
+		layout.add(settingsFieldsLayout);
 
 		// Výstupní cesta
 		TextField outputPathField = new TextField("Nastavení výstupního adresáře");

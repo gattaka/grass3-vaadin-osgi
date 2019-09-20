@@ -22,7 +22,6 @@ public class TokenField extends Div {
 	private static final long serialVersionUID = -4556540987839489629L;
 
 	private Map<String, Button> tokens = new HashMap<>();
-	private String placeholder;
 	private Div tokensLayout;
 
 	private ComboBox<String> comboBox;
@@ -33,8 +32,6 @@ public class TokenField extends Div {
 		add(tokensLayout);
 
 		comboBox = new ComboBox<>();
-		if (placeholder != null)
-			comboBox.setPlaceholder(placeholder);
 		comboBox.setDataProvider(fetchItemsCallback, serializableFunction);
 		// comboBox.addBlurListener(e ->
 		// commitValue(comboBox.getElement().getAttribute("value")));
@@ -44,8 +41,8 @@ public class TokenField extends Div {
 	}
 
 	public TokenField setPlaceholder(String placeholder) {
-		this.placeholder = placeholder;
-		return this;
+		comboBox.setPlaceholder(placeholder);
+		return this;	
 	}
 
 	private void commitValue(String value) {

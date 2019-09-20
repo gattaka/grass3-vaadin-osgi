@@ -35,6 +35,7 @@ public class ImageButton extends Button {
 
 	public ImageButton clearText() {
 		setText(null);
+		((Image) getIcon()).addClassName("img-only-button");
 		return this;
 	}
 

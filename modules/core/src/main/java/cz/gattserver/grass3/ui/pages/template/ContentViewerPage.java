@@ -30,6 +30,7 @@ import cz.gattserver.grass3.ui.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.dialogs.ContentMoveDialog;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.BoldSpan;
@@ -90,7 +91,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 			tagsListLayout.add(new Div(tagLink));
 		}
 
-		operationsListLayout = new Div();
+		operationsListLayout = new ButtonLayout();
 		if (!content.isDraft())
 			createContentOperations(operationsListLayout);
 
@@ -111,16 +112,14 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		if (coreACL.canModifyContent(content, getUser())) {
 			ModifyButton modBtn = new ModifyButton(event -> onEditOperation());
 			operationsListLayout.add(modBtn);
-			modBtn.setTooltip(modBtn.getText());
-			operationsListLayout.add(new Breakline());
+			modBtn.clearText();
 		}
 
 		// Smazat
 		if (coreACL.canDeleteContent(content, getUser())) {
 			DeleteButton delBtn = new DeleteButton(event -> onDeleteOperation());
 			operationsListLayout.add(delBtn);
-			delBtn.setTooltip(delBtn.getText());
-			operationsListLayout.add(new Breakline());
+			delBtn.clearText();
 		}
 
 		// Oblíbené
@@ -135,6 +134,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 				new WarnDialog("Odebrání z oblíbených se nezdařilo.").open();
 			}
 		});
+		removeFromFavouritesButton.clearText();
 
 		addToFavouritesButton = new ImageButton("Přidat do oblíbených", ImageIcon.HEART_16_ICON, event -> {
 			// zdařilo se ? Pokud ano, otevři info okno
@@ -147,13 +147,13 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 				new WarnDialog("Vložení do oblíbených se nezdařilo.").open();
 			}
 		});
+		addToFavouritesButton.clearText();
 
 		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(content, getUser()));
 		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(content, getUser()));
 
 		operationsListLayout.add(addToFavouritesButton);
 		operationsListLayout.add(removeFromFavouritesButton);
-		operationsListLayout.add(new Breakline());
 
 		// Změna kategorie
 		if (coreACL.canModifyContent(content, getUser())) {
@@ -168,6 +168,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 						}
 					}.open());
 			operationsListLayout.add(moveBtn);
+			moveBtn.clearText();
 		}
 	}
 

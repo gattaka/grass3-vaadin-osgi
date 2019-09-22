@@ -2,7 +2,7 @@ package cz.gattserver.grass3.articles.plugins.favlink.ui.pages.settings.factorie
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.articles.plugins.favlink.ui.pages.settings.FavlinkSettingsPage;
+import cz.gattserver.grass3.articles.plugins.favlink.ui.pages.settings.FavlinkSettingsPageFragmentFactory;
 import cz.gattserver.grass3.ui.pages.settings.AbstractModuleSettingsPageFactory;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 
@@ -21,6 +21,6 @@ public class FavlinkSettingsPageFactory extends AbstractModuleSettingsPageFactor
 
 	@Override
 	protected AbstractPageFragmentFactory createPageFragmentFactory() {
-		return new FavlinkSettingsPage();
+		return new FavlinkSettingsPageFragmentFactory();
 	}
 }

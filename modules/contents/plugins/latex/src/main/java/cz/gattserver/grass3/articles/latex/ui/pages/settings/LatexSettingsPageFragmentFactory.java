@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationResult;
@@ -18,6 +17,7 @@ import cz.gattserver.grass3.articles.latex.config.LatexConfiguration;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 
 public class LatexSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 
@@ -32,15 +32,9 @@ public class LatexSettingsPageFragmentFactory extends AbstractPageFragmentFactor
 		final LatexConfiguration configuration = loadConfiguration();
 		final FileSystem fs = fileSystemService.getFileSystem();
 
-		VerticalLayout settingsLayout = new VerticalLayout();
-		layout.add(settingsLayout);
+		layout.add(new H2("Nastavení výstupního adresáře"));
 
-		settingsLayout.add(new H2("Nastavení latex pluginu"));
-
-		/**
-		 * Výstupní cesta
-		 */
-		final TextField outputPathField = new TextField("Nastavení výstupního adresáře");
+		final TextField outputPathField = new TextField("");
 		outputPathField.setValue(configuration.getOutputPath());
 		outputPathField.setWidth("300px");
 		layout.add(outputPathField);
@@ -55,14 +49,14 @@ public class LatexSettingsPageFragmentFactory extends AbstractPageFragmentFactor
 			}
 		}).bind(LatexConfiguration::getOutputPath, LatexConfiguration::setOutputPath);
 
-		/**
-		 * Save tlačítko
-		 */
+		ButtonLayout btnLayout = new ButtonLayout();
+		layout.add(btnLayout);
+		
 		Button saveButton = new Button("Uložit", e -> {
 			configuration.setOutputPath((String) outputPathField.getValue());
 			storeConfiguration(configuration);
 		});
-		layout.add(saveButton);
+		btnLayout.add(saveButton);
 		binder.addValueChangeListener(l -> saveButton.setEnabled(binder.isValid()));
 	}
 

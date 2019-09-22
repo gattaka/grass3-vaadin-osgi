@@ -44,9 +44,9 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 
-public class FavlinkSettingsPage extends AbstractPageFragmentFactory {
+public class FavlinkSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 
-	private static final Logger logger = LoggerFactory.getLogger(FavlinkSettingsPage.class);
+	private static final Logger logger = LoggerFactory.getLogger(FavlinkSettingsPageFragmentFactory.class);
 
 	@Autowired
 	private ConfigurationService configurationService;

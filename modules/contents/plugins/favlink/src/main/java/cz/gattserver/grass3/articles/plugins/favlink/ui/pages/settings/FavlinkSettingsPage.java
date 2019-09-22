@@ -22,7 +22,6 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
@@ -42,6 +41,7 @@ import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 
 public class FavlinkSettingsPage extends AbstractPageFragmentFactory {
@@ -61,18 +61,13 @@ public class FavlinkSettingsPage extends AbstractPageFragmentFactory {
 		final FavlinkConfiguration configuration = loadConfiguration();
 		final FileSystem fs = fileSystemService.getFileSystem();
 
-		layout.add(new H2("Nastavení favlink pluginu"));
-
-		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
-		VerticalLayout settingsFieldsLayout = new VerticalLayout();
-		settingsFieldsLayout.setPadding(false);
-		layout.add(settingsFieldsLayout);
+		layout.add(new H2("Nastavení výstupního adresáře"));
 
 		// Výstupní cesta
-		TextField outputPathField = new TextField("Nastavení výstupního adresáře");
+		TextField outputPathField = new TextField();
 		outputPathField.setValue(configuration.getOutputPath());
 		outputPathField.setWidth("300px");
-		settingsFieldsLayout.add(outputPathField);
+		layout.add(outputPathField);
 
 		Binder<FavlinkConfiguration> binder = new Binder<>();
 		binder.forField(outputPathField).asRequired("Výstupní adresář je povinný").withValidator((val, c) -> {
@@ -84,26 +79,28 @@ public class FavlinkSettingsPage extends AbstractPageFragmentFactory {
 			}
 		}).bind(FavlinkConfiguration::getOutputPath, FavlinkConfiguration::setOutputPath);
 
+		ButtonLayout btnLayout = new ButtonLayout();
+		layout.add(btnLayout);
+
 		// Save tlačítko
 		Button saveButton = new Button("Uložit", event -> {
 			configuration.setOutputPath((String) outputPathField.getValue());
 			storeConfiguration(configuration);
 		});
 		binder.addValueChangeListener(l -> saveButton.setEnabled(binder.isValid()));
-
-		settingsFieldsLayout.add(saveButton);
+		btnLayout.add(saveButton);
 
 		Path path = fileSystemService.getFileSystem().getPath(configuration.getOutputPath());
 
 		if (Files.exists(path)) {
-			settingsFieldsLayout.add(new H2("Přehled existujících favicon"));
+			layout.add(new H2("Přehled existujících favicon"));
 			Grid<Path> grid = new Grid<>();
 			grid.setWidth("100%");
 			grid.setHeight("500px");
 			grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES,
 					GridVariant.LUMO_COMPACT);
 
-			settingsFieldsLayout.add(grid);
+			layout.add(grid);
 
 			grid.addColumn(new IconRenderer<Path>(p -> {
 				Image img = new Image(new StreamResource(p.getFileName().toString(), () -> {
@@ -114,17 +111,19 @@ public class FavlinkSettingsPage extends AbstractPageFragmentFactory {
 					}
 					return null;
 				}), p.getFileName().toString());
+				img.setWidth("16px");
+				img.setHeight("16px");
 				return img;
 			}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
 
 			Column<Path> nameColumn = grid
 					.addColumn(new TextRenderer<>(
 							p -> p.getFileName().toString().substring(0, p.getFileName().toString().lastIndexOf('.'))))
-					.setHeader("Název");
+					.setHeader("Název").setFlexGrow(100);
 
 			grid.addColumn(new TextRenderer<>(
 					p -> p.getFileName().toString().substring(p.getFileName().toString().lastIndexOf('.'))))
-					.setHeader("Typ");
+					.setHeader("Typ").setWidth("40px").setFlexGrow(0);
 
 			grid.addColumn(new ComponentRenderer<>(p -> {
 				Button button = new Button("Smazat", be -> {
@@ -137,9 +136,9 @@ public class FavlinkSettingsPage extends AbstractPageFragmentFactory {
 						}
 					}).open();
 				});
-				button.addThemeVariants(ButtonVariant.LUMO_SMALL);
+				button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 				return button;
-			})).setHeader("Smazat");
+			})).setHeader("Smazat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 
 			grid.addColumn(new ComponentRenderer<>(p -> {
 				Button button = new Button("Přegenerovat", be -> {
@@ -155,12 +154,12 @@ public class FavlinkSettingsPage extends AbstractPageFragmentFactory {
 						}
 					}).open();
 				});
-				button.addThemeVariants(ButtonVariant.LUMO_SMALL);
+				button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 				return button;
-			})).setHeader("Přegenerovat");
+			})).setHeader("Přegenerovat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 
 			grid.addColumn(new TextRenderer<>(p -> formatSize(p))).setHeader("Velikost")
-					.setTextAlign(ColumnTextAlign.END);
+					.setTextAlign(ColumnTextAlign.END).setFlexGrow(0).setWidth("60px");
 
 			HeaderRow filteringHeader = grid.appendHeaderRow();
 

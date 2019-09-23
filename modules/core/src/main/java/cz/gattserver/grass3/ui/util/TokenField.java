@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.ui.pages;
+package cz.gattserver.grass3.ui.util;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,7 +15,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.function.SerializableFunction;
 
 import cz.gattserver.grass3.ui.components.DeleteButton;
-import cz.gattserver.grass3.ui.util.ButtonLayout;
 
 public class TokenField extends Div {
 
@@ -33,8 +32,6 @@ public class TokenField extends Div {
 
 		comboBox = new ComboBox<>();
 		comboBox.setDataProvider(fetchItemsCallback, serializableFunction);
-		// comboBox.addBlurListener(e ->
-		// commitValue(comboBox.getElement().getAttribute("value")));
 		comboBox.addCustomValueSetListener(e -> commitValue(e.getDetail()));
 		comboBox.addValueChangeListener(e -> commitValue(e.getValue()));
 		add(comboBox);

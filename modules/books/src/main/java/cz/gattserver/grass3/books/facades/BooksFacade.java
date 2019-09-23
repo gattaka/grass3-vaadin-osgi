@@ -2,7 +2,7 @@ package cz.gattserver.grass3.books.facades;
 
 import java.util.List;
 
-import com.vaadin.data.provider.QuerySortOrder;
+import com.vaadin.flow.data.provider.QuerySortOrder;
 
 import cz.gattserver.grass3.books.model.interfaces.BookOverviewTO;
 import cz.gattserver.grass3.books.model.interfaces.BookTO;

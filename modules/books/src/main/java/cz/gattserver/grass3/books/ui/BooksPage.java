@@ -1,85 +1,72 @@
 package cz.gattserver.grass3.books.ui;
 
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.vaadin.teemu.ratingstars.RatingStars;
-
-import com.vaadin.server.Page;
-import com.vaadin.server.StreamResource;
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Embedded;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.renderers.ComponentRenderer;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.Column;
+import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
+import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.OptionalParameter;
+import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.books.facades.BooksFacade;
 import cz.gattserver.grass3.books.model.interfaces.BookOverviewTO;
 import cz.gattserver.grass3.books.model.interfaces.BookTO;
 import cz.gattserver.grass3.security.CoreRole;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.CreateGridButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.BoldSpan;
-import cz.gattserver.web.common.ui.H2Label;
+import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
 
-public class BooksPage extends OneColumnPage {
+public class BooksPage extends OneColumnPage implements HasUrlParameter<String> {
 
-	private static Logger logger = LoggerFactory.getLogger(BooksPage.class);
+	private static final long serialVersionUID = -5187973603822110627L;
 
 	private transient SecurityService securityService;
 	private transient PageFactory booksPageFactory;
 	private transient BooksFacade booksFacade;
 
-	private GrassRequest request;
-	private Embedded image;
+	private Image image;
 	private VerticalLayout dataLayout;
 
 	protected Grid<BookOverviewTO> grid;
 	protected BookOverviewTO filterTO;
 	protected BookTO choosenBook;
 
-	public BooksPage(GrassRequest request) {
-		super(request);
-		this.request = request;
+	private String parameter;
+
+	@Override
+	public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
+		this.parameter = parameter;
 	}
 
 	@Override
-	protected Component createColumnContent() {
-		VerticalLayout layout = new VerticalLayout();
-		layout.setSpacing(true);
-		layout.setMargin(true);
-
-		VerticalLayout wrapperLayout = new VerticalLayout();
-		layout.setMargin(true);
-		wrapperLayout.addComponent(layout);
-
+	protected void createColumnContent(Div layout) {
 		filterTO = new BookOverviewTO();
 		grid = createGrid(filterTO);
-		layout.addComponent(grid);
+		layout.add(grid);
 
 		populate();
 
@@ -94,39 +81,34 @@ public class BooksPage extends OneColumnPage {
 		contentLayout.setSizeFull();
 		contentLayout.setMargin(true);
 
-		Panel panel = new Panel(contentLayout);
+		Div panel = new Div(contentLayout);
 		panel.setWidth("100%");
 		panel.setHeight("100%");
-		layout.addComponent(panel);
-		layout.setExpandRatio(panel, 1);
+		layout.add(panel);
 
 		// musí tady něco být nahrané, jinak to pak nejde měnit (WTF?!)
-		image = new Embedded(null, ImageIcon.BUBBLE_16_ICON.createResource());
+		image = new Image(ImageIcon.BUBBLE_16_ICON.createResource(), "icon");
 		image.setVisible(false);
-		contentLayout.addComponent(image);
-		contentLayout.setComponentAlignment(image, Alignment.TOP_CENTER);
+		contentLayout.add(image);
+		contentLayout.setVerticalComponentAlignment(Alignment.CENTER, image);
 
 		dataLayout = new VerticalLayout();
 		dataLayout.setWidth("100%");
 		dataLayout.setMargin(false);
-		contentLayout.addComponent(dataLayout);
-		contentLayout.setExpandRatio(dataLayout, 1);
+		contentLayout.add(dataLayout);
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		btnLayout.setSpacing(true);
-		layout.addComponent(btnLayout);
+		layout.add(btnLayout);
 
 		btnLayout.setVisible(getSecurityService().getCurrentUser().getRoles().contains(CoreRole.ADMIN));
 
 		populateBtnLayout(btnLayout);
 
-		String token = getRequest().getAnalyzer().getNextPathToken();
-		if (token != null) {
-			URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(token);
+		if (parameter != null) {
+			URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(parameter);
 			selectBook(identifier.getId());
 		}
-
-		return wrapperLayout;
 	}
 
 	protected Grid<BookOverviewTO> createGrid(final BookOverviewTO filterTO) {
@@ -137,12 +119,11 @@ public class BooksPage extends OneColumnPage {
 
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
-		Column<BookOverviewTO, String> authorColumn = grid.addColumn(BookOverviewTO::getAuthor).setCaption("Autor")
+		Column<BookOverviewTO> authorColumn = grid.addColumn(BookOverviewTO::getAuthor).setHeader("Autor")
 				.setSortProperty("author");
 
 		// Autor
 		TextField authorColumnField = new TextField();
-		authorColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
 		authorColumnField.setWidth("100%");
 		authorColumnField.addValueChangeListener(e -> {
 			filterTO.setAuthor(e.getValue());
@@ -151,10 +132,9 @@ public class BooksPage extends OneColumnPage {
 		filteringHeader.getCell(authorColumn).setComponent(authorColumnField);
 
 		// Název
-		Column<BookOverviewTO, String> nameColumn = grid.addColumn(BookOverviewTO::getName).setCaption("Název")
+		Column<BookOverviewTO> nameColumn = grid.addColumn(BookOverviewTO::getName).setHeader("Název")
 				.setSortProperty("name");
 		TextField nazevColumnField = new TextField();
-		nazevColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterTO.setName(e.getValue());
@@ -163,25 +143,26 @@ public class BooksPage extends OneColumnPage {
 		filteringHeader.getCell(nameColumn).setComponent(nazevColumnField);
 
 		// Hodnocení
-		grid.addColumn(to -> {
+		grid.addColumn(new ComponentRenderer<RatingStars, BookOverviewTO>(to -> {
 			RatingStars rs = new RatingStars();
 			rs.setValue(to.getRating());
 			rs.setReadOnly(true);
-			rs.setAnimated(false);
 			return rs;
-		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení").setWidth(120).setSortProperty("rating");
+		})).setHeader("Hodnocení").setAutoWidth(true).setSortProperty("rating");
 
 		return grid;
 	}
 
 	protected void populate() {
-		grid.setDataProvider(
-				(sortOrder, offset, limit) -> getBooksFacade().getBooks(filterTO, offset, limit, sortOrder).stream(),
-				() -> getBooksFacade().countBooks(filterTO));
+		FetchCallback<BookOverviewTO, BookOverviewTO> fetchCallback = q -> getBooksFacade()
+				.getBooks(q.getFilter().get(), q.getOffset(), q.getLimit(), q.getSortOrders()).stream();
+		CountCallback<BookOverviewTO, BookOverviewTO> countCallback = q -> getBooksFacade()
+				.countBooks(q.getFilter().get());
+		grid.setDataProvider(DataProvider.fromFilteringCallbacks(fetchCallback, countCallback));
 	}
 
 	protected void populateBtnLayout(HorizontalLayout btnLayout) {
-		btnLayout.addComponent(new CreateGridButton("Přidat", event -> UI.getCurrent().addWindow(new BookWindow() {
+		btnLayout.add(new CreateGridButton("Přidat", event -> new BookWindow() {
 			private static final long serialVersionUID = -4863260002363608014L;
 
 			@Override
@@ -190,21 +171,20 @@ public class BooksPage extends OneColumnPage {
 				showDetail(to);
 				populate();
 			}
-		})));
+		}.open()));
 
-		btnLayout.addComponent(new ModifyGridButton<BookOverviewTO>("Upravit",
-				event -> UI.getCurrent().addWindow(new BookWindow(choosenBook) {
-					private static final long serialVersionUID = 5264621441522056786L;
+		btnLayout.add(new ModifyGridButton<BookOverviewTO>("Upravit", event -> new BookWindow(choosenBook) {
+			private static final long serialVersionUID = 5264621441522056786L;
 
-					@Override
-					protected void onSave(BookTO to) {
-						to = getBooksFacade().saveBook(to);
-						showDetail(to);
-						populate();
-					}
-				}), grid));
+			@Override
+			protected void onSave(BookTO to) {
+				to = getBooksFacade().saveBook(to);
+				showDetail(to);
+				populate();
+			}
+		}.open(), grid));
 
-		btnLayout.addComponent(new DeleteGridButton<BookOverviewTO>("Smazat", items -> {
+		btnLayout.add(new DeleteGridButton<BookOverviewTO>("Smazat", items -> {
 			for (BookOverviewTO s : items)
 				getBooksFacade().deleteBook(s.getId());
 			populate();
@@ -213,28 +193,27 @@ public class BooksPage extends OneColumnPage {
 	}
 
 	protected void populateDetail(VerticalLayout dataLayout) {
-		H2Label nameLabel = new H2Label(choosenBook.getName());
-		dataLayout.addComponent(nameLabel);
+		H2 nameLabel = new H2(choosenBook.getName());
+		dataLayout.add(nameLabel);
 
 		RatingStars rs = new RatingStars();
 		rs.setValue(choosenBook.getRating());
 		rs.setReadOnly(true);
-		rs.setAnimated(false);
-		dataLayout.addComponent(rs);
+		dataLayout.add(rs);
 
-		GridLayout infoLayout = new GridLayout(2, 7);
-		dataLayout.addComponent(infoLayout);
+		Div infoLayout = new Div();
+		dataLayout.add(infoLayout);
 
 		BoldSpan b = new BoldSpan("Autor");
-		infoLayout.addComponent(b);
+		infoLayout.add(b);
 		b.setWidth("120px");
-		infoLayout.addComponent(new Label(choosenBook.getAuthor()));
-		infoLayout.addComponent(new BoldSpan("Vydáno"));
-		infoLayout.addComponent(new Label(choosenBook.getYear()));
+		infoLayout.add(choosenBook.getAuthor());
+		infoLayout.add(new BoldSpan("Vydáno"));
+		infoLayout.add(choosenBook.getYear());
 
-		Label descriptionLabel = new Label(choosenBook.getDescription().replaceAll("\n", "<br/>"), ContentMode.HTML);
-		descriptionLabel.setSizeFull();
-		dataLayout.addComponent(descriptionLabel);
+		HtmlDiv description = new HtmlDiv(choosenBook.getDescription().replaceAll("\n", "<br/>"));
+		description.setSizeFull();
+		dataLayout.add(description);
 	}
 
 	protected SecurityService getSecurityService() {
@@ -263,11 +242,14 @@ public class BooksPage extends OneColumnPage {
 
 	protected void showDetail(BookTO choosenBook) {
 		this.choosenBook = choosenBook;
-		dataLayout.removeAllComponents();
+		dataLayout.removeAll();
 		if (choosenBook == null) {
 			image.setVisible(false);
-			String currentURL = request.getContextRoot() + "/" + getBooksPageFactory().getPageName();
-			Page.getCurrent().pushState(currentURL);
+			// TODO
+			// String currentURL = request.getContextRoot() + "/" +
+			// getBooksPageFactory().getPageName();
+			// UI.getCurrent().getRouter().
+			// Page.getCurrent().pushState(currentURL);
 		} else {
 			byte[] co = choosenBook.getImage();
 			if (co != null) {
@@ -275,22 +257,24 @@ public class BooksPage extends OneColumnPage {
 				String name = choosenBook.getName()
 						+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 				image.setVisible(true);
-				image.setSource(new StreamResource(() -> new ByteArrayInputStream(co), name));
-				image.markAsDirty();
+				image.setSrc(new StreamResource(name, () -> new ByteArrayInputStream(co)));
 			} else {
 				image.setVisible(false);
 			}
 
 			populateDetail(dataLayout);
 
-			String currentURL;
-			try {
-				currentURL = request.getContextRoot() + "/" + getBooksPageFactory().getPageName() + "/"
-						+ +choosenBook.getId() + "-" + URLEncoder.encode(choosenBook.getName(), "UTF-8");
-				Page.getCurrent().pushState(currentURL);
-			} catch (UnsupportedEncodingException e) {
-				logger.error("UnsupportedEncodingException in URL", e);
-			}
+			// TODO
+			// String currentURL;
+			// try {
+			// currentURL = request.getContextRoot() + "/" +
+			// getBooksPageFactory().getPageName() + "/"
+			// + +choosenBook.getId() + "-" +
+			// URLEncoder.encode(choosenBook.getName(), "UTF-8");
+			// Page.getCurrent().pushState(currentURL);
+			// } catch (UnsupportedEncodingException e) {
+			// logger.error("UnsupportedEncodingException in URL", e);
+			// }
 		}
 	}
 

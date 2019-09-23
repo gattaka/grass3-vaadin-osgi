@@ -5,9 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.data.domain.PageRequest;
 
-import com.vaadin.data.provider.QuerySortOrder;
+import com.vaadin.flow.data.provider.QuerySortOrder;
+
+import org.springframework.data.domain.PageRequest;
 
 import cz.gattserver.grass3.books.facades.BooksFacade;
 import cz.gattserver.grass3.books.model.dao.BookRepository;

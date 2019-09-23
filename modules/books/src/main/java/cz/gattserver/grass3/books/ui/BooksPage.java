@@ -21,6 +21,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.books.facades.BooksFacade;
@@ -33,6 +34,7 @@ import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
@@ -40,6 +42,7 @@ import cz.gattserver.web.common.ui.BoldSpan;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
 
+@Route("books")
 public class BooksPage extends OneColumnPage implements HasUrlParameter<String> {
 
 	private static final long serialVersionUID = -5187973603822110627L;
@@ -60,6 +63,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 	@Override
 	public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
 		this.parameter = parameter;
+		init();
 	}
 
 	@Override
@@ -79,26 +83,21 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 
 		HorizontalLayout contentLayout = new HorizontalLayout();
 		contentLayout.setSizeFull();
-		contentLayout.setMargin(true);
-
-		Div panel = new Div(contentLayout);
-		panel.setWidth("100%");
-		panel.setHeight("100%");
-		layout.add(panel);
+		contentLayout.setPadding(false);
+		contentLayout.addClassName("top-margin");
+		layout.add(contentLayout);
 
 		// musí tady něco být nahrané, jinak to pak nejde měnit (WTF?!)
 		image = new Image(ImageIcon.BUBBLE_16_ICON.createResource(), "icon");
 		image.setVisible(false);
 		contentLayout.add(image);
-		contentLayout.setVerticalComponentAlignment(Alignment.CENTER, image);
+		contentLayout.setVerticalComponentAlignment(Alignment.START, image);
 
 		dataLayout = new VerticalLayout();
 		dataLayout.setWidth("100%");
-		dataLayout.setMargin(false);
 		contentLayout.add(dataLayout);
 
-		HorizontalLayout btnLayout = new HorizontalLayout();
-		btnLayout.setSpacing(true);
+		ButtonLayout btnLayout = new ButtonLayout();
 		layout.add(btnLayout);
 
 		btnLayout.setVisible(getSecurityService().getCurrentUser().getRoles().contains(CoreRole.ADMIN));
@@ -117,10 +116,18 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		grid.setWidth("100%");
 		grid.setHeight("400px");
 
-		HeaderRow filteringHeader = grid.appendHeaderRow();
-
 		Column<BookOverviewTO> authorColumn = grid.addColumn(BookOverviewTO::getAuthor).setHeader("Autor")
-				.setSortProperty("author");
+				.setFlexGrow(50).setAutoWidth(true).setSortProperty("author");
+		Column<BookOverviewTO> nameColumn = grid.addColumn(BookOverviewTO::getName).setHeader("Název").setFlexGrow(50)
+				.setAutoWidth(true).setSortProperty("name");
+		grid.addColumn(new ComponentRenderer<RatingStars, BookOverviewTO>(to -> {
+			RatingStars rs = new RatingStars();
+			rs.setValue(to.getRating());
+			rs.setReadOnly(true);
+			return rs;
+		})).setHeader("Hodnocení").setAutoWidth(true).setSortProperty("rating");
+
+		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Autor
 		TextField authorColumnField = new TextField();
@@ -132,8 +139,6 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		filteringHeader.getCell(authorColumn).setComponent(authorColumnField);
 
 		// Název
-		Column<BookOverviewTO> nameColumn = grid.addColumn(BookOverviewTO::getName).setHeader("Název")
-				.setSortProperty("name");
 		TextField nazevColumnField = new TextField();
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
@@ -142,26 +147,19 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		});
 		filteringHeader.getCell(nameColumn).setComponent(nazevColumnField);
 
-		// Hodnocení
-		grid.addColumn(new ComponentRenderer<RatingStars, BookOverviewTO>(to -> {
-			RatingStars rs = new RatingStars();
-			rs.setValue(to.getRating());
-			rs.setReadOnly(true);
-			return rs;
-		})).setHeader("Hodnocení").setAutoWidth(true).setSortProperty("rating");
-
 		return grid;
 	}
 
 	protected void populate() {
 		FetchCallback<BookOverviewTO, BookOverviewTO> fetchCallback = q -> getBooksFacade()
-				.getBooks(q.getFilter().get(), q.getOffset(), q.getLimit(), q.getSortOrders()).stream();
+				.getBooks(q.getFilter().orElse(new BookOverviewTO()), q.getOffset(), q.getLimit(), q.getSortOrders())
+				.stream();
 		CountCallback<BookOverviewTO, BookOverviewTO> countCallback = q -> getBooksFacade()
-				.countBooks(q.getFilter().get());
+				.countBooks(q.getFilter().orElse(new BookOverviewTO()));
 		grid.setDataProvider(DataProvider.fromFilteringCallbacks(fetchCallback, countCallback));
 	}
 
-	protected void populateBtnLayout(HorizontalLayout btnLayout) {
+	protected void populateBtnLayout(ButtonLayout btnLayout) {
 		btnLayout.add(new CreateGridButton("Přidat", event -> new BookWindow() {
 			private static final long serialVersionUID = -4863260002363608014L;
 

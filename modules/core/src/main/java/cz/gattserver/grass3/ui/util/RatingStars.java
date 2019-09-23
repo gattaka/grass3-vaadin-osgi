@@ -15,6 +15,7 @@ public class RatingStars extends Div implements SingleSelect<RatingStars, Double
 	private HoverIcon[] icons = new HoverIcon[5];
 	private DomListenerRegistration[] mouseOverListeners = new DomListenerRegistration[5];
 	private DomListenerRegistration[] mouseOutListeners = new DomListenerRegistration[5];
+	private Registration[] clickListeners = new Registration[5];
 	private boolean readOnly = false;
 	private boolean required = false;
 	private com.vaadin.flow.component.HasValue.ValueChangeListener<? super ComponentValueChangeEvent<RatingStars, Double>> valueChangeListener;
@@ -25,9 +26,10 @@ public class RatingStars extends Div implements SingleSelect<RatingStars, Double
 	}
 
 	private void changeValue(double newValue, boolean userOriginated) {
-		if (newValue != this.value) {
-			valueChangeListener.valueChanged(
-					new ComponentValueChangeEvent<RatingStars, Double>(this, this, this.value, userOriginated));
+		if (this.value == null || newValue != this.value) {
+			if (valueChangeListener != null)
+				valueChangeListener.valueChanged(
+						new ComponentValueChangeEvent<RatingStars, Double>(this, this, this.value, userOriginated));
 			this.value = newValue;
 			showCurrentValue();
 		}
@@ -66,6 +68,8 @@ public class RatingStars extends Div implements SingleSelect<RatingStars, Double
 				reg.remove();
 			for (DomListenerRegistration reg : mouseOutListeners)
 				reg.remove();
+			for (Registration reg : clickListeners)
+				reg.remove();
 		} else {
 			for (int i = 0; i < icons.length; i++) {
 				HoverIcon icon = icons[i];
@@ -77,7 +81,7 @@ public class RatingStars extends Div implements SingleSelect<RatingStars, Double
 					}
 				});
 				mouseOutListeners[i] = icon.getElement().addEventListener("mouseout", e -> showCurrentValue());
-				icon.addClickListener(e -> changeValue(iconId + 1.0, true));
+				clickListeners[i] = icon.addClickListener(e -> changeValue(iconId + 1.0, true));
 			}
 		}
 	}

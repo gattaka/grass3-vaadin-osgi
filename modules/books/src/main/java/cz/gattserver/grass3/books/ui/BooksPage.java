@@ -15,6 +15,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.provider.CallbackDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.BeforeEvent;
@@ -59,6 +60,8 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 	private BookOverviewTO filterTO;
 	private BookTO choosenBook;
 
+	private CallbackDataProvider<BookOverviewTO, BookOverviewTO> dataProvider;
+
 	private String parameter;
 
 	@Override
@@ -72,8 +75,6 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		filterTO = new BookOverviewTO();
 		grid = createGrid(filterTO);
 		layout.add(grid);
-
-		populate();
 
 		grid.addSelectionListener(e -> {
 			if (e.getFirstSelectedItem().isPresent())
@@ -137,7 +138,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		authorColumnField.setWidth("100%");
 		authorColumnField.addValueChangeListener(e -> {
 			filterTO.setAuthor(e.getValue());
-			populate();
+			dataProvider.refreshAll();
 		});
 		filteringHeader.getCell(authorColumn).setComponent(authorColumnField);
 
@@ -146,20 +147,17 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterTO.setName(e.getValue());
-			populate();
+			dataProvider.refreshAll();
 		});
 		filteringHeader.getCell(nameColumn).setComponent(nazevColumnField);
 
-		return grid;
-	}
-
-	protected void populate() {
 		FetchCallback<BookOverviewTO, BookOverviewTO> fetchCallback = q -> getBooksFacade()
-				.getBooks(q.getFilter().orElse(new BookOverviewTO()), q.getOffset(), q.getLimit(), q.getSortOrders())
-				.stream();
-		CountCallback<BookOverviewTO, BookOverviewTO> countCallback = q -> getBooksFacade()
-				.countBooks(q.getFilter().orElse(new BookOverviewTO()));
-		grid.setDataProvider(DataProvider.fromFilteringCallbacks(fetchCallback, countCallback));
+				.getBooks(filterTO, q.getOffset(), q.getLimit(), q.getSortOrders()).stream();
+		CountCallback<BookOverviewTO, BookOverviewTO> countCallback = q -> getBooksFacade().countBooks(filterTO);
+		dataProvider = DataProvider.fromFilteringCallbacks(fetchCallback, countCallback);
+		grid.setDataProvider(dataProvider);
+
+		return grid;
 	}
 
 	protected void populateBtnLayout(ButtonLayout btnLayout) {
@@ -170,7 +168,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 			protected void onSave(BookTO to) {
 				to = getBooksFacade().saveBook(to);
 				showDetail(to);
-				populate();
+				dataProvider.refreshAll();
 			}
 		}.open()));
 
@@ -181,14 +179,14 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 			protected void onSave(BookTO to) {
 				to = getBooksFacade().saveBook(to);
 				showDetail(to);
-				populate();
+				dataProvider.refreshItem(to);
 			}
 		}.open(), grid));
 
 		btnLayout.add(new DeleteGridButton<BookOverviewTO>("Smazat", items -> {
 			for (BookOverviewTO s : items)
 				getBooksFacade().deleteBook(s.getId());
-			populate();
+			dataProvider.refreshAll();
 			showDetail(null);
 		}, grid));
 	}

@@ -14,7 +14,7 @@ public class ImagePluginTest {
 		assertEquals("IMG", plugin.getTag());
 		assertEquals(ImageParser.class, plugin.getParser().getClass());
 		EditorButtonResourcesTO to = plugin.getEditorButtonResources();
-		assertEquals("Obrázek", to.getDescription());
+		assertNull(to.getDescription());
 		assertEquals("[IMG]", to.getPrefix());
 		assertEquals("[/IMG]", to.getSuffix());
 		assertEquals("IMG", to.getTag());

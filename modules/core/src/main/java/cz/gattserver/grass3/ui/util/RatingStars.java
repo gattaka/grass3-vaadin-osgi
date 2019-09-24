@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.ui.util;
 
+import java.util.Objects;
+
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -25,8 +27,8 @@ public class RatingStars extends Div implements SingleSelect<RatingStars, Double
 			icons[j].changeIcon(j < value ? VaadinIcon.STAR : VaadinIcon.STAR_O);
 	}
 
-	private void changeValue(double newValue, boolean userOriginated) {
-		if (this.value == null || newValue != this.value) {
+	private void changeValue(Double newValue, boolean userOriginated) {
+		if (!Objects.equals(newValue, this.value)) {
 			if (valueChangeListener != null)
 				valueChangeListener.valueChanged(
 						new ComponentValueChangeEvent<RatingStars, Double>(this, this, this.value, userOriginated));

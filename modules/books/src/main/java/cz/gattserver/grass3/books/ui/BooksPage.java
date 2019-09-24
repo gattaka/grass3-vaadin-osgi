@@ -12,7 +12,6 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
@@ -39,6 +38,7 @@ import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.BoldSpan;
+import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
 
@@ -52,11 +52,12 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 	private transient BooksFacade booksFacade;
 
 	private Image image;
-	private VerticalLayout dataLayout;
+	private Div dataLayout;
+	private HorizontalLayout contentLayout;
 
-	protected Grid<BookOverviewTO> grid;
-	protected BookOverviewTO filterTO;
-	protected BookTO choosenBook;
+	private Grid<BookOverviewTO> grid;
+	private BookOverviewTO filterTO;
+	private BookTO choosenBook;
 
 	private String parameter;
 
@@ -81,9 +82,10 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 				showDetail(null);
 		});
 
-		HorizontalLayout contentLayout = new HorizontalLayout();
+		contentLayout = new HorizontalLayout();
 		contentLayout.setSizeFull();
 		contentLayout.setPadding(false);
+		contentLayout.setVisible(false);
 		contentLayout.addClassName("top-margin");
 		layout.add(contentLayout);
 
@@ -93,7 +95,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		contentLayout.add(image);
 		contentLayout.setVerticalComponentAlignment(Alignment.START, image);
 
-		dataLayout = new VerticalLayout();
+		dataLayout = new Div();
 		dataLayout.setWidth("100%");
 		contentLayout.add(dataLayout);
 
@@ -124,6 +126,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 			RatingStars rs = new RatingStars();
 			rs.setValue(to.getRating());
 			rs.setReadOnly(true);
+			rs.setSize("15px");
 			return rs;
 		})).setHeader("Hodnocení").setAutoWidth(true).setSortProperty("rating");
 
@@ -190,7 +193,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		}, grid));
 	}
 
-	protected void populateDetail(VerticalLayout dataLayout) {
+	protected void populateDetail(Div dataLayout) {
 		H2 nameLabel = new H2(choosenBook.getName());
 		dataLayout.add(nameLabel);
 
@@ -200,14 +203,19 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		dataLayout.add(rs);
 
 		Div infoLayout = new Div();
+		infoLayout.addClassName("top-margin");
 		dataLayout.add(infoLayout);
 
-		BoldSpan b = new BoldSpan("Autor");
-		infoLayout.add(b);
-		b.setWidth("120px");
+		infoLayout.add(new BoldSpan("Autor"));
+		infoLayout.add(new Breakline());
 		infoLayout.add(choosenBook.getAuthor());
+		infoLayout.add(new Breakline());
+		infoLayout.add(new Breakline());
 		infoLayout.add(new BoldSpan("Vydáno"));
+		infoLayout.add(new Breakline());
 		infoLayout.add(choosenBook.getYear());
+		infoLayout.add(new Breakline());
+		infoLayout.add(new Breakline());
 
 		HtmlDiv description = new HtmlDiv(choosenBook.getDescription().replaceAll("\n", "<br/>"));
 		description.setSizeFull();
@@ -242,13 +250,14 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		this.choosenBook = choosenBook;
 		dataLayout.removeAll();
 		if (choosenBook == null) {
-			image.setVisible(false);
+			contentLayout.setVisible(false);
 			// TODO
 			// String currentURL = request.getContextRoot() + "/" +
 			// getBooksPageFactory().getPageName();
 			// UI.getCurrent().getRouter().
 			// Page.getCurrent().pushState(currentURL);
 		} else {
+			contentLayout.setVisible(true);
 			byte[] co = choosenBook.getImage();
 			if (co != null) {
 				// https://vaadin.com/forum/thread/260778

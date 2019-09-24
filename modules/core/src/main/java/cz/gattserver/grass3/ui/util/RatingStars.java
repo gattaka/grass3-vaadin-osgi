@@ -70,6 +70,8 @@ public class RatingStars extends Div implements SingleSelect<RatingStars, Double
 				reg.remove();
 			for (Registration reg : clickListeners)
 				reg.remove();
+			for (HoverIcon icon : icons)
+				icon.getElement().getStyle().remove("cursor");
 		} else {
 			for (int i = 0; i < icons.length; i++) {
 				HoverIcon icon = icons[i];

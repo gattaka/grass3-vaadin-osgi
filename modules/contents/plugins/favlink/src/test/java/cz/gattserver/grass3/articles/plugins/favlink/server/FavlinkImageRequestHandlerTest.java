@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import cz.gattserver.grass3.articles.plugins.favlink.config.FavlinkConfiguration;
 import cz.gattserver.grass3.mock.MockFileSystemService;
@@ -25,10 +24,6 @@ public class FavlinkImageRequestHandlerTest extends AbstractContextAwareTest {
 
 	@Autowired
 	private ConfigurationService configurationService;
-
-	@Autowired
-	@Qualifier("favlinkImageRequestHandler")
-	private FavlinkImageRequestHandler favlinkImageRequestHandler;
 
 	@Before
 	public void init() {
@@ -53,7 +48,7 @@ public class FavlinkImageRequestHandlerTest extends AbstractContextAwareTest {
 		Path testFile = Files.createFile(outputDir.resolve("testFile"));
 		Files.write(testFile, new byte[] { 1, 1, 1 });
 
-		Path file = favlinkImageRequestHandler.getPath("testFile");
+		Path file = new FavlinkImageRequestHandler().getPath("testFile");
 		assertTrue(Files.exists(file));
 		assertEquals(3L, Files.size(file));
 		assertEquals("testFile", file.getFileName().toString());

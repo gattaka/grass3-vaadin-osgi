@@ -161,7 +161,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 	}
 
 	protected void populateBtnLayout(ButtonLayout btnLayout) {
-		btnLayout.add(new CreateGridButton("Přidat", event -> new BookWindow() {
+		btnLayout.add(new CreateGridButton("Přidat", event -> new BookDialog() {
 			private static final long serialVersionUID = -4863260002363608014L;
 
 			@Override
@@ -172,7 +172,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 			}
 		}.open()));
 
-		btnLayout.add(new ModifyGridButton<BookOverviewTO>("Upravit", event -> new BookWindow(choosenBook) {
+		btnLayout.add(new ModifyGridButton<BookOverviewTO>("Upravit", event -> new BookDialog(choosenBook) {
 			private static final long serialVersionUID = 5264621441522056786L;
 
 			@Override

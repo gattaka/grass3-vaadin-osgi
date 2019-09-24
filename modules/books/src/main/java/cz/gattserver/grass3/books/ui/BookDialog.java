@@ -31,11 +31,11 @@ import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class BookWindow extends WebDialog {
+public abstract class BookDialog extends WebDialog {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 
-	private static final Logger logger = LoggerFactory.getLogger(BookWindow.class);
+	private static final Logger logger = LoggerFactory.getLogger(BookDialog.class);
 
 	private VerticalLayout imageLayout;
 	private Upload upload;
@@ -43,11 +43,11 @@ public abstract class BookWindow extends WebDialog {
 
 	protected abstract void onSave(BookTO to);
 
-	public BookWindow() {
+	public BookDialog() {
 		this(null);
 	}
 
-	public BookWindow(final BookTO originalTO) {
+	public BookDialog(final BookTO originalTO) {
 		super(originalTO == null ? "Založit" : "Upravit" + " knihu");
 
 		BookTO formTO = new BookTO();
@@ -161,6 +161,8 @@ public abstract class BookWindow extends WebDialog {
 		binder.forField(ratingStars).asRequired().bind(BookTO::getRating, BookTO::setRating);
 
 		HorizontalLayout line2Layout = new HorizontalLayout(authorField, releasedField, ratingStars);
+		ratingStars.getElement().getStyle().set("padding-bottom", "10px");
+		line2Layout.setVerticalComponentAlignment(Alignment.END, ratingStars);
 
 		TextArea descriptionField = new TextArea("Popis");
 		binder.forField(descriptionField).asRequired().bind(BookTO::getDescription, BookTO::setDescription);

@@ -16,7 +16,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.server.StreamResource;
@@ -62,15 +62,16 @@ public abstract class BookDialog extends WebDialog {
 		image = new Image();
 		image.setVisible(false);
 
-		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
-		Upload upload = new Upload(buffer);
+		// https://vaadin.com/components/vaadin-upload/java-examples
+		MemoryBuffer buffer = new MemoryBuffer();
+		upload = new Upload(buffer);
 		upload.setMaxFileSize(2000000);
 		upload.setAcceptedFileTypes("image/jpg", "image/jpeg", "image/png");
 		upload.addSucceededListener(e -> {
 			try {
 				// vytvoř miniaturu
 				ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				ImageUtils.resizeImageFile(e.getFileName(), buffer.getInputStream(e.getFileName()), bos, 400, 400);
+				ImageUtils.resizeImageFile(e.getFileName(), buffer.getInputStream(), bos, 400, 400);
 				formTO.setImage(bos.toByteArray());
 				placeImage(formTO);
 			} catch (IOException ex) {

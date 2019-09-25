@@ -32,6 +32,7 @@ a.articles-h-id {
 
 .level1, .level2, .level3, .level4 {
 	font: 12px Helvetica, Arial, "lucida grande", tahoma, verdana, arial, sans-serif;
+	line-height: 18px;
 }
 
 .level2 {

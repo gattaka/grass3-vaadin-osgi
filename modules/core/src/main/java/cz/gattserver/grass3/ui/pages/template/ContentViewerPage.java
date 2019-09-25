@@ -15,7 +15,6 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
@@ -203,9 +202,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		info.add(new Breakline());
 
 		if (!content.isPublicated()) {
-			HorizontalLayout publicatedLayout = new HorizontalLayout();
-			publicatedLayout.setSpacing(true);
-			publicatedLayout.setPadding(false);
+			Div publicatedLayout = new Div();
 			publicatedLayout.addClassName("not-publicated-info");
 			publicatedLayout.add(new Image(ImageIcon.INFO_16_ICON.createResource(), "Info"));
 			publicatedLayout.add(new BoldSpan("Nepublikováno"));

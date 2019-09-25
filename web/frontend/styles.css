@@ -67,8 +67,7 @@ span.label-err {
 /* Button div  */
 
 .button-div vaadin-button {
-	margin-right: var(--lumo-space-m);
-    margin-bottom: calc(var(--lumo-space-m) - var(--lumo-space-xs));
+	margin-right: var(--lumo-space-m);    
 }
 
 /* Top margin */
@@ -269,4 +268,19 @@ vaadin-horizontal-layout.menu {
 .content-tags div {
 	display: inline-block;
 	margin-right: 10px;
+}
+
+.not-publicated-info {
+    border: 1px #70afe9 solid;
+    padding: 12px 5px 0 5px;
+    height: 32px;
+    text-align: center;
+    background-color: #d5ebff;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.not-publicated-info img {
+    margin-right: 10px;
+    margin-bottom: -3px;
 }

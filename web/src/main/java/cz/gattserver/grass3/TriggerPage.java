@@ -7,16 +7,6 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
-import cz.gattserver.web.common.spring.SpringContextHelper;
-
-/**
- * Základní layout pro stránky systému Grass. Volá {@link SpringContextHelper}
- * pro injektování závislostí. Poskytuje metody pro vyhazování chyb na stránce,
- * přidávání JS a CSS zdrojů a získávání URL informací.
- * 
- * @author Hynek
- *
- */
 @Route("unreachable")
 @JsModule("./custom.js")
 @Theme(value = Lumo.class)

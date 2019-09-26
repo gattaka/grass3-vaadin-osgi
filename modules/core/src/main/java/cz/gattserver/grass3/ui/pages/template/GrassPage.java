@@ -4,6 +4,9 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.page.LoadingIndicatorConfiguration;
+import com.vaadin.flow.server.InitialPageSettings;
+import com.vaadin.flow.server.PageConfigurator;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.theme.Theme;
 
@@ -29,14 +32,14 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
  * @author Hynek
  *
  */
-public abstract class GrassPage extends Div {
+public abstract class GrassPage extends Div implements PageConfigurator {
 
 	private static final long serialVersionUID = 7952966362953000385L;
 
 	private transient SecurityService securityFacade;
 
 	/**
-	 * Má se nahrát JQuery?
+	 * Má se nahrát JQuery? 
 	 */
 	private boolean jQueryRequired = false;
 
@@ -49,6 +52,16 @@ public abstract class GrassPage extends Div {
 	 */
 	public GrassPage() {
 		SpringContextHelper.inject(this);
+	}
+
+	@Override
+	public void configurePage(InitialPageSettings settings) {
+		settings.addFavIcon("icon", "img/favicon.png", "16px");
+		LoadingIndicatorConfiguration conf = settings.getLoadingIndicatorConfiguration();
+
+		// disable default theme -> loading indicator will not be shown
+//		conf.setApplyDefaultTheme(false);
+//		conf.setFirstDelay(1);
 	}
 
 	public void init() {

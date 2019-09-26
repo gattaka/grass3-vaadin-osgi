@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,24 +23,40 @@ public class TokenField extends Div {
 
 	private Map<String, Button> tokens = new HashMap<>();
 	private Div tokensLayout;
+	private boolean allowNewItems = true;
+
+	private Consumer<String> addTokenListener;
+	private Consumer<String> removeTokenListener;
 
 	private ComboBox<String> comboBox;
 
 	public TokenField(FetchItemsCallback<String> fetchItemsCallback,
 			SerializableFunction<String, Integer> serializableFunction) {
+		comboBox = new ComboBox<>();
+		comboBox.setDataProvider(fetchItemsCallback, serializableFunction);
+		init();
+	}
+
+	public TokenField(Collection<String> values) {
+		comboBox = new ComboBox<>(null, values);
+		init();
+	}
+
+	private void init() {
 		tokensLayout = new ButtonLayout();
 		add(tokensLayout);
 
-		comboBox = new ComboBox<>();
-		comboBox.setDataProvider(fetchItemsCallback, serializableFunction);
-		comboBox.addCustomValueSetListener(e -> commitValue(e.getDetail()));
+		comboBox.addCustomValueSetListener(e -> {
+			if (allowNewItems)
+				commitValue(e.getDetail());
+		});
 		comboBox.addValueChangeListener(e -> commitValue(e.getValue()));
 		add(comboBox);
 	}
 
 	public TokenField setPlaceholder(String placeholder) {
 		comboBox.setPlaceholder(placeholder);
-		return this;	
+		return this;
 	}
 
 	private void commitValue(String value) {
@@ -55,19 +72,21 @@ public class TokenField extends Div {
 		}
 	}
 
-	public void addToken(String string) {
-		if (!tokens.containsKey(string)) {
-			Button tokenComponent = new DeleteButton(string, e -> deleteToken(string));
-			tokens.put(string, tokenComponent);
+	public void addToken(String token) {
+		if (!tokens.containsKey(token)) {
+			Button tokenComponent = new DeleteButton(token, e -> deleteToken(token));
+			tokens.put(token, tokenComponent);
 			tokensLayout.add(tokenComponent);
+			addTokenListener.accept(token);
 		}
 	}
 
-	public void deleteToken(String string) {
-		Button tokenComponent = tokens.get(string);
+	public void deleteToken(String token) {
+		Button tokenComponent = tokens.get(token);
 		if (tokenComponent != null) {
 			tokensLayout.remove(tokenComponent);
-			tokens.remove(string);
+			tokens.remove(token);
+			removeTokenListener.accept(token);
 		}
 	}
 
@@ -79,6 +98,26 @@ public class TokenField extends Div {
 
 	public Set<String> getValues() {
 		return new HashSet<>(tokens.keySet());
+	}
+
+	public void setAllowNewItems(boolean allowNewItems) {
+		this.allowNewItems = allowNewItems;
+	}
+
+	public boolean isAllowNewItems() {
+		return allowNewItems;
+	}
+
+	public ComboBox<String> getInputField() {
+		return comboBox;
+	}
+
+	public void addTokenAddListener(Consumer<String> addTokenListener) {
+		this.addTokenListener = addTokenListener;
+	}
+
+	public void addTokenRemoveListener(Consumer<String> removeTokenListener) {
+		this.removeTokenListener = removeTokenListener;
 	}
 
 }

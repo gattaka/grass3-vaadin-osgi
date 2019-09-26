@@ -6,7 +6,6 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.lumo.Lumo;
 
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
@@ -23,13 +22,13 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
  * Základní layout pro stránky systému Grass. Volá {@link SpringContextHelper}
  * pro injektování závislostí. Poskytuje metody pro vyhazování chyb na stránce,
  * přidávání JS a CSS zdrojů a získávání URL informací.
+ *
+ * Anotace {@link CssImport}, {@link JsModule} a {@link Theme} jsou ve web
+ * modulu (aby fungoval incremental build)
  * 
  * @author Hynek
  *
  */
-// @JsModule("./custom.js")
-// @Theme(value = Lumo.class)
-// @CssImport("./styles.css")
 public abstract class GrassPage extends Div {
 
 	private static final long serialVersionUID = 7952966362953000385L;

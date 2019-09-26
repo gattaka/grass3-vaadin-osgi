@@ -9,6 +9,9 @@ import cz.gattserver.grass3.campgames.model.domain.CampgameKeyword;
 
 public interface CampgameKeywordRepository extends JpaRepository<CampgameKeyword, Long> {
 
+	@Query("select t.name from CAMPGAME_KEYWORD t order by name asc")
+	List<String> findNames();
+
 	@Query("select t from CAMPGAME_KEYWORD t order by name asc")
 	List<CampgameKeyword> findListOrderByName();
 

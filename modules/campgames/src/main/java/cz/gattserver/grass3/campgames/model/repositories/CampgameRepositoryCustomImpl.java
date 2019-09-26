@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.OrderSpecifier;
@@ -18,7 +17,6 @@ import cz.gattserver.grass3.campgames.model.domain.CampgameKeyword;
 import cz.gattserver.grass3.campgames.model.domain.QCampgame;
 import cz.gattserver.grass3.campgames.model.domain.QCampgameKeyword;
 import cz.gattserver.grass3.model.util.PredicateBuilder;
-import cz.gattserver.grass3.model.util.QuerydslUtil;
 
 @Repository
 public class CampgameRepositoryCustomImpl implements CampgameRepositoryCustom {
@@ -51,9 +49,10 @@ public class CampgameRepositoryCustomImpl implements CampgameRepositoryCustom {
 	}
 
 	@Override
-	public List<Campgame> getCampgames(CampgameFilterTO filter, Pageable pageable, OrderSpecifier<?>[] order) {
+	public List<Campgame> getCampgames(CampgameFilterTO filter, int offset, int limit, OrderSpecifier<?>[] order) {
 		JPAQuery<Campgame> query = new JPAQuery<>(entityManager);
-		QuerydslUtil.applyPagination(pageable, query);
+		query.limit(limit);
+		query.offset(offset);
 		QCampgame c = QCampgame.campgame;
 		return query.from(c).where(createPredicateCampgames(filter)).orderBy(order).fetch();
 	}

@@ -1,37 +1,70 @@
 package cz.gattserver.grass3.campgames.ui.pages;
 
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.VerticalLayout;
-
 import cz.gattserver.grass3.campgames.ui.CampgamesTab;
+
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.router.Route;
+
 import cz.gattserver.grass3.campgames.ui.CampgameKeywordsTab;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 
+@Route("campgames")
 public class CampgamesPage extends OneColumnPage {
 
-	public CampgamesPage(GrassRequest request) {
-		super(request);
+	private static final long serialVersionUID = -5354424168298678698L;
+	
+	private Tabs tabSheet;
+	private Tab overviewTab;
+	private Tab keywordsTab;
+
+	private Div pageLayout ;
+	
+	public CampgamesPage() {
+		init();
 	}
 
 	@Override
-	protected Component createColumnContent() {
-		VerticalLayout layout = new VerticalLayout();
-		layout.setSpacing(true);
-		layout.setPadding(true);
+	protected void createColumnContent(Div layout) {
+		tabSheet = new Tabs();
+		layout.add(tabSheet);
 
-		VerticalLayout marginlayout = new VerticalLayout();
-		marginlayout.setPadding(new MarginInfo(false, true, true, true));
-		layout.addComponent(marginlayout);
+		pageLayout = new Div();
+		layout.add(pageLayout);
 
-		TabSheet tabSheet = new TabSheet();
-		marginlayout.addComponent(tabSheet);
+		overviewTab = new Tab();
+		overviewTab.setLabel("Přehled");
+		tabSheet.add(overviewTab);
 
-		tabSheet.addTab(new CampgamesTab(getRequest()), "Přehled");
-		tabSheet.addTab(new CampgameKeywordsTab(), "Klíčová slova");
+		keywordsTab = new Tab();
+		keywordsTab.setLabel("Klíčová slova");
+		tabSheet.add(keywordsTab);
 
-		return layout;
+		tabSheet.addSelectedChangeListener(e -> {
+			pageLayout.removeAll();
+			switch (tabSheet.getSelectedIndex()) {
+			default:
+			case 0:
+				switchCampgamesTab();
+				break;
+			case 1:
+				switchCampgameKeywordsTab();
+				break;
+			}
+		});
+		switchCampgamesTab();
+	}
+
+	private void switchCampgamesTab() {
+		pageLayout.removeAll();
+		pageLayout.add(new CampgamesTab());
+		tabSheet.setSelectedTab(overviewTab);
+	}
+	
+	private void switchCampgameKeywordsTab() {
+		pageLayout.removeAll();
+		pageLayout.add(new CampgameKeywordsTab());
+		tabSheet.setSelectedTab(keywordsTab);
 	}
 }

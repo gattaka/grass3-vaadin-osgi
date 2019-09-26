@@ -1,24 +1,36 @@
 package cz.gattserver.grass3.campgames.ui;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Set;
 
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.Column;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
+import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.SortDirection;
 
 import cz.gattserver.grass3.campgames.CampgamesRole;
 import cz.gattserver.grass3.campgames.interfaces.CampgameFilterTO;
-import cz.gattserver.grass3.campgames.interfaces.CampgameKeywordTO;
 import cz.gattserver.grass3.campgames.interfaces.CampgameOverviewTO;
 import cz.gattserver.grass3.campgames.interfaces.CampgameTO;
 import cz.gattserver.grass3.campgames.service.CampgamesService;
-import cz.gattserver.grass3.campgames.ui.windows.CampgameDetailWindow;
 import cz.gattserver.grass3.campgames.ui.windows.CampgameCreateWindow;
+import cz.gattserver.grass3.campgames.ui.windows.CampgameDetailDialog;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
+import cz.gattserver.grass3.ui.components.CreateButton;
+import cz.gattserver.grass3.ui.components.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.GridButton;
+import cz.gattserver.grass3.ui.components.ModifyGridButton;
+import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
@@ -36,52 +48,28 @@ public class CampgamesTab extends VerticalLayout {
 	private transient CampgamesService campgamesService;
 
 	private Grid<CampgameOverviewTO> grid;
-	private AdvancedTokenField keywordsFilter;
+	private TokenField keywordsFilter;
 
-	private GrassRequest grassRequest;
 	private CampgameFilterTO filterDTO;
 
-	public CampgamesTab(GrassRequest grassRequest) {
+	public CampgamesTab() {
 		filterDTO = new CampgameFilterTO();
-		this.grassRequest = grassRequest;
-
 		setSpacing(true);
-		setPadding(new MarginInfo(true, false, false, false));
-
-		final Button newCampgameBtn = new Button("Založit novou hru");
-		final Button detailsBtn = new Button("Detail");
-		final Button fixBtn = new Button("Upravit");
-		final Button deleteBtn = new Button("Smazat");
-		detailsBtn.setEnabled(false);
-		fixBtn.setEnabled(false);
-		deleteBtn.setEnabled(false);
-		newCampgameBtn.setIcon(ImageIcon.PLUS_16_ICON.createResource());
-		detailsBtn.setIcon(ImageIcon.CLIPBOARD_16_ICON.createResource());
-		fixBtn.setIcon(ImageIcon.QUICKEDIT_16_ICON.createResource());
-		deleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
+		setPadding(false);
 
 		// Filtr na klíčová slova
-		keywordsFilter = new AdvancedTokenField();
+		keywordsFilter = new TokenField(getCampgamesService().getAllCampgameKeywordNames());
+		keywordsFilter.setPlaceholder("Filtrovat dle klíčových slov");
 		keywordsFilter.getInputField().setWidth("200px");
-		keywordsFilter.getInputField().addValueChangeListener(e -> {
-			if (e.getValue() != null)
-				keywordsFilter.addToken(e.getValue());
-		});
 		keywordsFilter.addTokenAddListener(token -> populate());
 		keywordsFilter.addTokenRemoveListener(e -> populate());
 		HorizontalLayout keywordsFilterLayout = new HorizontalLayout();
 		keywordsFilterLayout.setSpacing(true);
-		addComponent(keywordsFilterLayout);
+		add(keywordsFilterLayout);
 
-		keywordsFilterLayout.addComponent(keywordsFilter);
+		keywordsFilterLayout.add(keywordsFilter);
 
-		Set<CampgameKeywordTO> keywords = getCampgamesService().getAllCampgameKeywords();
-		keywords.forEach(t -> {
-			Token to = new Token(t.getName());
-			keywordsFilter.addTokenToInputField(to);
-		});
 		keywordsFilter.setAllowNewItems(false);
-		keywordsFilter.getInputField().setPlaceholder("Filtrovat dle klíčových slov");
 		keywordsFilter.isEnabled();
 
 		// Tabulka her
@@ -89,96 +77,89 @@ public class CampgamesTab extends VerticalLayout {
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setWidth("100%");
 
-		grid.addColumn(CampgameOverviewTO::getName).setId(NAME_BIND).setCaption("Název").setWidth(180);
-		grid.addColumn(CampgameOverviewTO::getPlayers).setId(PLAYERS_BIND).setCaption("Hráčů").setWidth(280);
-		grid.addColumn(CampgameOverviewTO::getPlayTime).setId(PLAYTIME_BIND).setCaption("Délka hry").setWidth(280);
-		grid.addColumn(CampgameOverviewTO::getPreparationTime).setId(PREPARATIONTIME_BIND).setCaption("Délka přípravy");
+		Column<CampgameOverviewTO> nameColumn = grid.addColumn(CampgameOverviewTO::getName).setKey(NAME_BIND)
+				.setHeader("Název").setWidth("180px").setFlexGrow(0);
+		Column<CampgameOverviewTO> playersColumn = grid.addColumn(CampgameOverviewTO::getPlayers).setKey(PLAYERS_BIND)
+				.setHeader("Hráčů").setWidth("280px").setFlexGrow(0);
+		Column<CampgameOverviewTO> playTimeColumn = grid.addColumn(CampgameOverviewTO::getPlayTime)
+				.setKey(PLAYTIME_BIND).setHeader("Délka hry").setWidth("280px").setFlexGrow(0);
+		Column<CampgameOverviewTO> prepTimeColumn = grid.addColumn(CampgameOverviewTO::getPreparationTime)
+				.setKey(PREPARATIONTIME_BIND).setHeader("Délka přípravy");
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Název
 		TextField nazevColumnField = new TextField();
-		nazevColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterDTO.setName(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(NAME_BIND).setComponent(nazevColumnField);
+		filteringHeader.getCell(nameColumn).setComponent(nazevColumnField);
 
 		// Hráčů
 		TextField playersColumnField = new TextField();
-		playersColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
 		playersColumnField.setWidth("100%");
 		playersColumnField.addValueChangeListener(e -> {
 			filterDTO.setPlayers(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(PLAYERS_BIND).setComponent(playersColumnField);
+		filteringHeader.getCell(playersColumn).setComponent(playersColumnField);
 
 		// Délka hry
 		TextField playtimeColumnField = new TextField();
-		playtimeColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
 		playtimeColumnField.setWidth("100%");
 		playtimeColumnField.addValueChangeListener(e -> {
 			filterDTO.setPlayTime(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(PLAYTIME_BIND).setComponent(playtimeColumnField);
+		filteringHeader.getCell(playTimeColumn).setComponent(playtimeColumnField);
 
 		// Délka přípravy
 		TextField preparationTimeColumnField = new TextField();
-		preparationTimeColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
 		preparationTimeColumnField.setWidth("100%");
 		preparationTimeColumnField.addValueChangeListener(e -> {
 			filterDTO.setPreparationTime(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(PREPARATIONTIME_BIND).setComponent(preparationTimeColumnField);
+		filteringHeader.getCell(prepTimeColumn).setComponent(preparationTimeColumnField);
 
 		populate();
-		grid.sort(NAME_BIND);
-
+		grid.sort(Arrays.asList(new GridSortOrder<CampgameOverviewTO>(nameColumn, SortDirection.ASCENDING)));
 		grid.addItemClickListener(event -> {
-			if (event.getMouseEventDetails().isDoubleClick()) {
+			if (event.getClickCount() > 2)
 				openDetailWindow(event.getItem().getId());
-			}
 		});
-
-		grid.addSelectionListener(e -> {
-			boolean enabled = e.getFirstSelectedItem().isPresent();
-			deleteBtn.setEnabled(enabled);
-			detailsBtn.setEnabled(enabled);
-			fixBtn.setEnabled(enabled);
-		});
-
-		addComponent(grid);
+		add(grid);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);
-		addComponent(buttonLayout);
+		add(buttonLayout);
 
 		boolean editor = SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
 				.contains(CampgamesRole.CAMPGAME_EDITOR);
 
 		// Založení nové hry
-		newCampgameBtn.addClickListener(e -> openItemWindow(false));
-		buttonLayout.addComponent(newCampgameBtn);
+		CreateButton newCampgameBtn = new CreateButton("Založit novou hru", e -> openItemWindow(null));
+		buttonLayout.add(newCampgameBtn);
 		newCampgameBtn.setVisible(editor);
 
 		// Zobrazení detailů hry
-		detailsBtn.addClickListener(e -> openDetailWindow(grid.getSelectedItems().iterator().next().getId()));
-		buttonLayout.addComponent(detailsBtn);
+		GridButton<CampgameOverviewTO> detailsBtn = new GridButton<>("Detail",
+				e -> openDetailWindow(grid.getSelectedItems().iterator().next().getId()), grid);
+		detailsBtn.setIcon(new Image(ImageIcon.CLIPBOARD_16_ICON.createResource(), "Detail"));
+		buttonLayout.add(detailsBtn);
 
 		// Oprava údajů existující hry
-		fixBtn.addClickListener(e -> openItemWindow(true));
-		buttonLayout.addComponent(fixBtn);
+		ModifyGridButton<CampgameOverviewTO> fixBtn = new ModifyGridButton<>("Upravit", e -> openItemWindow(e), grid);
+		buttonLayout.add(fixBtn);
 		fixBtn.setVisible(editor);
 
 		// Smazání hry
-		deleteBtn.addClickListener(e -> openDeleteWindow());
-		buttonLayout.addComponent(deleteBtn);
+		DeleteGridButton<CampgameOverviewTO> deleteBtn = new DeleteGridButton<>("Smazat", e -> openDeleteWindow(),
+				grid);
+		deleteBtn.setEnabled(false);
+		buttonLayout.add(deleteBtn);
 		deleteBtn.setVisible(editor);
-
 	}
 
 	private CampgamesService getCampgamesService() {
@@ -188,48 +169,36 @@ public class CampgamesTab extends VerticalLayout {
 	}
 
 	private void populate() {
-		List<Token> collection = keywordsFilter.getTokens();
-		List<String> types = new ArrayList<>();
-		collection.forEach(t -> types.add(t.getValue()));
+		Set<String> types = keywordsFilter.getValues();
 		filterDTO.setKeywords(types);
 
-		FetchItemsCallback<CampgameOverviewTO> fetchItems = (sortOrder, offset, limit) -> getCampgamesService()
-				.getCampgames(filterDTO, QuerydslUtil.transformOffsetLimit(offset, limit),
-						QuerydslUtil.transformOrdering(sortOrder, column -> {
-							switch (column) {
-							case NAME_BIND:
-								return "name";
-							case PLAYERS_BIND:
-								return "players";
-							case PLAYTIME_BIND:
-								return "playTime";
-							case PREPARATIONTIME_BIND:
-								return "preparationTime";
-							default:
-								return column;
-							}
-						}))
-				.stream();
-		SerializableSupplier<Integer> sizeCallback = () -> getCampgamesService().countCampgames(filterDTO);
-		CallbackDataProvider<CampgameOverviewTO, Long> provider = new CallbackDataProvider<>(
-				q -> fetchItems.fetchItems(q.getSortOrders(), q.getOffset(), q.getLimit()), q -> sizeCallback.get(),
-				CampgameOverviewTO::getId);
-		grid.setDataProvider(provider);
+		FetchCallback<CampgameOverviewTO, Void> fetchCallback = q -> getCampgamesService().getCampgames(filterDTO,
+				q.getOffset(), q.getLimit(), QuerydslUtil.transformOrdering(q.getSortOrders(), column -> {
+					switch (column) {
+					case NAME_BIND:
+						return "name";
+					case PLAYERS_BIND:
+						return "players";
+					case PLAYTIME_BIND:
+						return "playTime";
+					case PREPARATIONTIME_BIND:
+						return "preparationTime";
+					default:
+						return column;
+					}
+				})).stream();
+		CountCallback<CampgameOverviewTO, Void> countCallback = q -> getCampgamesService().countCampgames(filterDTO);
+		grid.setDataProvider(DataProvider.fromCallbacks(fetchCallback, countCallback));
 	}
 
-	private void addWindow(Window win) {
-		UI.getCurrent().addWindow(win);
-	}
-
-	private void openItemWindow(boolean fix) {
+	private void openItemWindow(CampgameOverviewTO to) {
 		CampgameTO campgame = null;
-		if (fix) {
+		if (to != null) {
 			if (grid.getSelectedItems().isEmpty())
 				return;
-			Long id = grid.getSelectedItems().iterator().next().getId();
-			campgame = getCampgamesService().getCampgame(id);
+			campgame = getCampgamesService().getCampgame(to.getId());
 		}
-		addWindow(new CampgameCreateWindow(campgame == null ? null : campgame.getId()) {
+		new CampgameCreateWindow(campgame == null ? null : campgame.getId()) {
 			private static final long serialVersionUID = -1397391593801030584L;
 
 			@Override
@@ -239,11 +208,11 @@ public class CampgamesTab extends VerticalLayout {
 				filterTO.setId(dto.getId());
 				grid.select(filterTO);
 			}
-		});
+		}.open();
 	}
 
 	private void openDetailWindow(Long id) {
-		addWindow(new CampgameDetailWindow(id, grassRequest).setChangeListener(this::populate));
+		new CampgameDetailDialog(id).setChangeListener(this::populate).open();
 	}
 
 	private void openDeleteWindow() {
@@ -251,12 +220,12 @@ public class CampgamesTab extends VerticalLayout {
 			return;
 		CampgamesTab.this.setEnabled(false);
 		CampgameOverviewTO to = grid.getSelectedItems().iterator().next();
-		addWindow(new ConfirmDialog("Opravdu smazat '" + to.getName() + "' ?", e -> {
+		new ConfirmDialog("Opravdu smazat '" + to.getName() + "' ?", e -> {
 			try {
 				getCampgamesService().deleteCampgame(to.getId());
 				populate();
 			} catch (Exception ex) {
-				UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se smazat vybranou položku"));
+				new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
 			}
 		}) {
 
@@ -268,7 +237,7 @@ public class CampgamesTab extends VerticalLayout {
 				super.close();
 			}
 
-		});
+		}.open();
 	}
 
 }

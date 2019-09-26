@@ -6,8 +6,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.data.domain.Pageable;
-
 import com.querydsl.core.types.OrderSpecifier;
 
 import cz.gattserver.grass3.campgames.interfaces.CampgameFileTO;
@@ -47,6 +45,8 @@ public interface CampgamesService {
 	 */
 	Long saveCampgameKeyword(CampgameKeywordTO to);
 
+	List<String> getAllCampgameKeywordNames();
+
 	Set<CampgameKeywordTO> getAllCampgameKeywords();
 
 	CampgameKeywordTO getCampgameKeyword(Long fixTypeId);
@@ -63,7 +63,7 @@ public interface CampgamesService {
 
 	List<CampgameOverviewTO> getAllCampgames();
 
-	List<CampgameOverviewTO> getCampgames(CampgameFilterTO filter, Pageable pageable, OrderSpecifier<?>[] order);
+	List<CampgameOverviewTO> getCampgames(CampgameFilterTO filter, int offset, int limit, OrderSpecifier<?>[] order);
 
 	List<CampgameOverviewTO> getCampgameByKeywords(Collection<String> types);
 

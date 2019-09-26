@@ -3,7 +3,6 @@ package cz.gattserver.grass3.rest;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -33,8 +32,8 @@ public class CampgamesResource {
 		// poradí a sníží ho
 		if (page * pageSize > count)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		return new ResponseEntity<>(campgamesService.getCampgames(new CampgameFilterTO(),
-				PageRequest.of(page, pageSize), new OrderSpecifier[0]), HttpStatus.OK);
+		return new ResponseEntity<>(campgamesService.getCampgames(new CampgameFilterTO(), pageSize * page,
+				pageSize * (page + 1), new OrderSpecifier[0]), HttpStatus.OK);
 	}
 
 	@RequestMapping("/count")

@@ -18,7 +18,6 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -222,6 +221,11 @@ public class CampgamesServiceImpl implements CampgamesService {
 	}
 
 	@Override
+	public List<String> getAllCampgameKeywordNames() {
+		return campgameKeywordRepository.findNames();
+	}
+
+	@Override
 	public Set<CampgameKeywordTO> getAllCampgameKeywords() {
 		List<CampgameKeyword> keywords = campgameKeywordRepository.findListOrderByName();
 		return campgamesMapper.mapCampgameKeywords(keywords);
@@ -286,9 +290,9 @@ public class CampgamesServiceImpl implements CampgamesService {
 	}
 
 	@Override
-	public List<CampgameOverviewTO> getCampgames(CampgameFilterTO filter, Pageable pageable,
+	public List<CampgameOverviewTO> getCampgames(CampgameFilterTO filter, int offset, int limit,
 			OrderSpecifier<?>[] order) {
-		return campgamesMapper.mapCampgames(campgameRepository.getCampgames(filter, pageable, order));
+		return campgamesMapper.mapCampgames(campgameRepository.getCampgames(filter, offset, limit, order));
 	}
 
 	@Override

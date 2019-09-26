@@ -3,9 +3,8 @@ package cz.gattserver.grass3.campgames.ui.pages.factories;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.campgames.ui.pages.CampgamesSettingsPage;
-import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.ui.pages.settings.factories.AbstractModuleSettingsPageFactory;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
+import cz.gattserver.grass3.ui.pages.settings.AbstractModuleSettingsPageFactory;
+import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 
 @Component
 public class CampgamesSettingsPageFactory extends AbstractModuleSettingsPageFactory {
@@ -21,7 +20,7 @@ public class CampgamesSettingsPageFactory extends AbstractModuleSettingsPageFact
 	}
 
 	@Override
-	protected GrassPage createPage(GrassRequest request) {
-		return new CampgamesSettingsPage(request);
+	protected AbstractPageFragmentFactory createPageFragmentFactory() {
+		return new CampgamesSettingsPage();
 	}
 }

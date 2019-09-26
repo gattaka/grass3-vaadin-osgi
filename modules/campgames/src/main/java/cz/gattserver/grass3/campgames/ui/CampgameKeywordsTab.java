@@ -2,17 +2,19 @@ package cz.gattserver.grass3.campgames.ui;
 
 import java.util.Set;
 
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.campgames.CampgamesRole;
 import cz.gattserver.grass3.campgames.interfaces.CampgameKeywordTO;
 import cz.gattserver.grass3.campgames.service.CampgamesService;
-import cz.gattserver.grass3.campgames.ui.windows.CampgameKeywordWindow;
+import cz.gattserver.grass3.campgames.ui.windows.CampgameKeywordDialog;
 import cz.gattserver.grass3.services.SecurityService;
+import cz.gattserver.grass3.ui.components.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.ModifyGridButton;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 
@@ -32,49 +34,25 @@ public class CampgameKeywordsTab extends VerticalLayout {
 
 	public CampgameKeywordsTab() {
 		setSpacing(true);
-		setPadding(new MarginInfo(true, false, false, false));
 
-		final Button fixBtn = new Button("Upravit");
-		final Button deleteBtn = new Button("Smazat");
-		fixBtn.setEnabled(false);
-		deleteBtn.setEnabled(false);
-		fixBtn.setIcon(ImageIcon.QUICKEDIT_16_ICON.createResource());
-		deleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
-
-		grid = new Grid<>(CampgameKeywordTO.class);
+		grid = new Grid<>();
 		Set<CampgameKeywordTO> data = getCampgamesService().getAllCampgameKeywords();
 		grid.setItems(data);
 
-		grid.getColumn("name").setCaption("Název");
+		grid.addColumn(CampgameKeywordTO::getName).setHeader("Název").setKey("name");
 		grid.setWidth("100%");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setColumns("name");
-		grid.addSelectionListener(e -> {
-			boolean enabled = !e.getAllSelectedItems().isEmpty();
-			deleteBtn.setEnabled(enabled);
-			fixBtn.setEnabled(enabled);
-		});
 
-		addComponent(grid);
+		add(grid);
 
-		HorizontalLayout buttonLayout = new HorizontalLayout();
-		buttonLayout.setSpacing(true);
-		addComponent(buttonLayout);
+		ButtonLayout buttonLayout = new ButtonLayout();
+		add(buttonLayout);
 
 		buttonLayout.setVisible(SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
 				.contains(CampgamesRole.CAMPGAME_EDITOR));
-
-		/**
-		 * Úprava klíčového slova
-		 */
-		fixBtn.addClickListener(e -> openNewTypeWindow(data, true));
-		buttonLayout.addComponent(fixBtn);
-
-		/**
-		 * Smazání typu
-		 */
-		deleteBtn.addClickListener(e -> openDeleteWindow(data));
-		buttonLayout.addComponent(deleteBtn);
+		buttonLayout.add(new ModifyGridButton<>("Upravit", e -> openNewTypeWindow(data, true), grid));
+		buttonLayout.add(new DeleteGridButton<>("Odstranit", e -> openDeleteWindow(data), grid));
 	}
 
 	// BUG ? Při disable na tabu a opětovném enabled zůstane table disabled
@@ -88,7 +66,7 @@ public class CampgameKeywordsTab extends VerticalLayout {
 		CampgameKeywordTO campgameKeywordTO = null;
 		if (fix)
 			campgameKeywordTO = grid.getSelectedItems().iterator().next();
-		Window win = new CampgameKeywordWindow(campgameKeywordTO == null ? null : campgameKeywordTO) {
+		new CampgameKeywordDialog(campgameKeywordTO == null ? null : campgameKeywordTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -100,21 +78,20 @@ public class CampgameKeywordsTab extends VerticalLayout {
 					grid.getDataProvider().refreshAll();
 				}
 			}
-		};
-		UI.getCurrent().addWindow(win);
+		}.open();
 	}
 
 	private void openDeleteWindow(final Set<CampgameKeywordTO> data) {
 		CampgameKeywordsTab.this.setEnabled(false);
 		final CampgameKeywordTO campgameKeywordTO = grid.getSelectedItems().iterator().next();
-		UI.getCurrent().addWindow(new ConfirmDialog("Opravdu smazat '" + campgameKeywordTO.getName()
+		new ConfirmDialog("Opravdu smazat '" + campgameKeywordTO.getName()
 				+ "' (klíčové slovo bude odebráno od všech označených her)?", e -> {
 					try {
 						getCampgamesService().deleteCampgameKeyword(campgameKeywordTO.getId());
 						data.remove(campgameKeywordTO);
 						grid.getDataProvider().refreshAll();
 					} catch (Exception ex) {
-						UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se smazat vybranou položku"));
+						new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
 					}
 				}) {
 			private static final long serialVersionUID = -422763987707688597L;
@@ -124,6 +101,6 @@ public class CampgameKeywordsTab extends VerticalLayout {
 				CampgameKeywordsTab.this.setEnabled(true);
 				super.close();
 			}
-		});
+		}.open();
 	}
 }

@@ -1,10 +1,12 @@
 package cz.gattserver.grass3.ui.pages.template;
 
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.page.LoadingIndicatorConfiguration;
+import com.vaadin.flow.server.DefaultErrorHandler;
 import com.vaadin.flow.server.InitialPageSettings;
 import com.vaadin.flow.server.PageConfigurator;
 import com.vaadin.flow.server.VaadinRequest;
@@ -20,6 +22,7 @@ import cz.gattserver.grass3.ui.pages.err.factories.Error500PageFactory;
 import cz.gattserver.grass3.ui.pages.factories.template.AbstractPageFactory;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.exception.ExceptionDialog;
 
 /**
  * Základní layout pro stránky systému Grass. Volá {@link SpringContextHelper}
@@ -39,7 +42,7 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 	private transient SecurityService securityFacade;
 
 	/**
-	 * Má se nahrát JQuery? 
+	 * Má se nahrát JQuery?
 	 */
 	private boolean jQueryRequired = false;
 
@@ -52,16 +55,18 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 	 */
 	public GrassPage() {
 		SpringContextHelper.inject(this);
+		if (UI.getCurrent().getSession().getErrorHandler() == null
+				|| UI.getCurrent().getSession().getErrorHandler() instanceof DefaultErrorHandler)
+			UI.getCurrent().getSession().setErrorHandler(e -> {
+				new ExceptionDialog(e.getThrowable()).open();
+				LoggerFactory.getLogger(GrassPage.class.getName()).error("", e.getThrowable());
+			});
 	}
 
 	@Override
 	public void configurePage(InitialPageSettings settings) {
 		settings.addFavIcon("icon", "img/favicon.png", "16px");
-		LoadingIndicatorConfiguration conf = settings.getLoadingIndicatorConfiguration();
-
-		// disable default theme -> loading indicator will not be shown
-//		conf.setApplyDefaultTheme(false);
-//		conf.setFirstDelay(1);
+		UI.getCurrent().getPage().setTitle("Gattserver");
 	}
 
 	public void init() {

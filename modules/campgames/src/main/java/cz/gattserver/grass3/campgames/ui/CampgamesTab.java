@@ -7,11 +7,12 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -30,13 +31,14 @@ import cz.gattserver.grass3.ui.components.CreateButton;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.GridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 
-public class CampgamesTab extends VerticalLayout {
+public class CampgamesTab extends Div {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
@@ -54,26 +56,24 @@ public class CampgamesTab extends VerticalLayout {
 
 	public CampgamesTab() {
 		filterDTO = new CampgameFilterTO();
-		setSpacing(true);
-		setPadding(false);
 
 		// Filtr na klíčová slova
 		keywordsFilter = new TokenField(getCampgamesService().getAllCampgameKeywordNames());
+		keywordsFilter.addClassName("top-margin");
 		keywordsFilter.setPlaceholder("Filtrovat dle klíčových slov");
 		keywordsFilter.getInputField().setWidth("200px");
 		keywordsFilter.addTokenAddListener(token -> populate());
 		keywordsFilter.addTokenRemoveListener(e -> populate());
-		HorizontalLayout keywordsFilterLayout = new HorizontalLayout();
-		keywordsFilterLayout.setSpacing(true);
-		add(keywordsFilterLayout);
 
-		keywordsFilterLayout.add(keywordsFilter);
+		add(keywordsFilter);
 
 		keywordsFilter.setAllowNewItems(false);
 		keywordsFilter.isEnabled();
 
 		// Tabulka her
 		grid = new Grid<>();
+		grid.addClassName("top-margin");
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setWidth("100%");
 
@@ -89,6 +89,7 @@ public class CampgamesTab extends VerticalLayout {
 
 		// Název
 		TextField nazevColumnField = new TextField();
+		nazevColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterDTO.setName(e.getValue());
@@ -98,6 +99,7 @@ public class CampgamesTab extends VerticalLayout {
 
 		// Hráčů
 		TextField playersColumnField = new TextField();
+		playersColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		playersColumnField.setWidth("100%");
 		playersColumnField.addValueChangeListener(e -> {
 			filterDTO.setPlayers(e.getValue());
@@ -105,8 +107,9 @@ public class CampgamesTab extends VerticalLayout {
 		});
 		filteringHeader.getCell(playersColumn).setComponent(playersColumnField);
 
-		// Délka hry
+		// Délka hry 
 		TextField playtimeColumnField = new TextField();
+		playtimeColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		playtimeColumnField.setWidth("100%");
 		playtimeColumnField.addValueChangeListener(e -> {
 			filterDTO.setPlayTime(e.getValue());
@@ -116,6 +119,7 @@ public class CampgamesTab extends VerticalLayout {
 
 		// Délka přípravy
 		TextField preparationTimeColumnField = new TextField();
+		preparationTimeColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		preparationTimeColumnField.setWidth("100%");
 		preparationTimeColumnField.addValueChangeListener(e -> {
 			filterDTO.setPreparationTime(e.getValue());
@@ -131,8 +135,7 @@ public class CampgamesTab extends VerticalLayout {
 		});
 		add(grid);
 
-		HorizontalLayout buttonLayout = new HorizontalLayout();
-		buttonLayout.setSpacing(true);
+		ButtonLayout buttonLayout = new ButtonLayout();
 		add(buttonLayout);
 
 		boolean editor = SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()

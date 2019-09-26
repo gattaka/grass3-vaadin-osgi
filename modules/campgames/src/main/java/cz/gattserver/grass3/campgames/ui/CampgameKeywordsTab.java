@@ -3,8 +3,9 @@ package cz.gattserver.grass3.campgames.ui;
 import java.util.Set;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.campgames.CampgamesRole;
 import cz.gattserver.grass3.campgames.interfaces.CampgameKeywordTO;
@@ -18,7 +19,7 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 
-public class CampgameKeywordsTab extends VerticalLayout {
+public class CampgameKeywordsTab extends Div {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
@@ -33,16 +34,16 @@ public class CampgameKeywordsTab extends VerticalLayout {
 	}
 
 	public CampgameKeywordsTab() {
-		setSpacing(true);
 
 		grid = new Grid<>();
+		grid.addClassName("top-margin");
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		Set<CampgameKeywordTO> data = getCampgamesService().getAllCampgameKeywords();
 		grid.setItems(data);
 
 		grid.addColumn(CampgameKeywordTO::getName).setHeader("Název").setKey("name");
 		grid.setWidth("100%");
 		grid.setSelectionMode(SelectionMode.SINGLE);
-		grid.setColumns("name");
 
 		add(grid);
 

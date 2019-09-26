@@ -43,8 +43,10 @@ public class TokenField extends Div {
 	}
 
 	private void init() {
-		tokensLayout = new ButtonLayout();
+		tokensLayout = new Div();
+		tokensLayout.addClassName("button-div");
 		add(tokensLayout);
+		tokensLayout.getElement().getStyle().set("display", "inline-block");
 
 		comboBox.addCustomValueSetListener(e -> {
 			if (allowNewItems)
@@ -77,7 +79,8 @@ public class TokenField extends Div {
 			Button tokenComponent = new DeleteButton(token, e -> deleteToken(token));
 			tokens.put(token, tokenComponent);
 			tokensLayout.add(tokenComponent);
-			addTokenListener.accept(token);
+			if (addTokenListener != null)
+				addTokenListener.accept(token);
 		}
 	}
 
@@ -86,7 +89,8 @@ public class TokenField extends Div {
 		if (tokenComponent != null) {
 			tokensLayout.remove(tokenComponent);
 			tokens.remove(token);
-			removeTokenListener.accept(token);
+			if (removeTokenListener != null)
+				removeTokenListener.accept(token);
 		}
 	}
 

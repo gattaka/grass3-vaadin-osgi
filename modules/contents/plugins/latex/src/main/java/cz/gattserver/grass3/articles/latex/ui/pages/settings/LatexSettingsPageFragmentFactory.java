@@ -32,9 +32,9 @@ public class LatexSettingsPageFragmentFactory extends AbstractPageFragmentFactor
 		final LatexConfiguration configuration = loadConfiguration();
 		final FileSystem fs = fileSystemService.getFileSystem();
 
-		layout.add(new H2("Nastavení výstupního adresáře"));
+		layout.add(new H2("Nastavení LaTeX pluginu"));
 
-		final TextField outputPathField = new TextField("");
+		final TextField outputPathField = new TextField("Nastavení kořenového adresáře");
 		outputPathField.setValue(configuration.getOutputPath());
 		outputPathField.setWidth("300px");
 		layout.add(outputPathField);

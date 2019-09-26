@@ -61,10 +61,10 @@ public class FavlinkSettingsPageFragmentFactory extends AbstractPageFragmentFact
 		final FavlinkConfiguration configuration = loadConfiguration();
 		final FileSystem fs = fileSystemService.getFileSystem();
 
-		layout.add(new H2("Nastavení výstupního adresáře"));
+		layout.add(new H2("Nastavení favicon pluginu"));
 
 		// Výstupní cesta
-		TextField outputPathField = new TextField();
+		TextField outputPathField = new TextField("Nastavení kořenového adresáře");
 		outputPathField.setValue(configuration.getOutputPath());
 		outputPathField.setWidth("300px");
 		layout.add(outputPathField);

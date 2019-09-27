@@ -5,13 +5,13 @@ $_documentContainer.innerHTML = `<dom-module id="grass-tabs" theme-for="vaadin-t
     <style>
       
       :host {
-        min-height: 0;  
+        min-height: 1.6rem;
         margin: 0;
         padding: 0;      
       }     
       
       :host(:not([orientation="vertical"])) {
-        min-height: 0;
+        min-height: 1.6rem;
         margin: 0;
         padding: 0;
       }

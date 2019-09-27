@@ -14,6 +14,7 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
@@ -39,7 +40,7 @@ import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.BoldSpan;
+import cz.gattserver.web.common.ui.Strong;
 import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -75,6 +76,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 	protected void createColumnContent(Div layout) {
 		filterTO = new BookOverviewTO();
 		grid = createGrid(filterTO);
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		layout.add(grid);
 
 		grid.addSelectionListener(e -> {
@@ -137,6 +139,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 
 		// Autor
 		TextField authorColumnField = new TextField();
+		authorColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		authorColumnField.setWidth("100%");
 		authorColumnField.addValueChangeListener(e -> {
 			filterTO.setAuthor(e.getValue());
@@ -146,6 +149,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 
 		// Název
 		TextField nazevColumnField = new TextField();
+		nazevColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterTO.setName(e.getValue());
@@ -206,12 +210,12 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		infoLayout.addClassName("top-margin");
 		dataLayout.add(infoLayout);
 
-		infoLayout.add(new BoldSpan("Autor"));
+		infoLayout.add(new Strong("Autor"));
 		infoLayout.add(new Breakline());
 		infoLayout.add(choosenBook.getAuthor());
 		infoLayout.add(new Breakline());
 		infoLayout.add(new Breakline());
-		infoLayout.add(new BoldSpan("Vydáno"));
+		infoLayout.add(new Strong("Vydáno"));
 		infoLayout.add(new Breakline());
 		infoLayout.add(choosenBook.getYear());
 		infoLayout.add(new Breakline());

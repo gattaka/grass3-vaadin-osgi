@@ -2,7 +2,7 @@ package cz.gattserver.grass3.campgames.ui.pages.factories;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.campgames.ui.pages.CampgamesSettingsPage;
+import cz.gattserver.grass3.campgames.ui.pages.CampgamesSettingsPageFragmentFactory;
 import cz.gattserver.grass3.ui.pages.settings.AbstractModuleSettingsPageFactory;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 
@@ -21,6 +21,6 @@ public class CampgamesSettingsPageFactory extends AbstractModuleSettingsPageFact
 
 	@Override
 	protected AbstractPageFragmentFactory createPageFragmentFactory() {
-		return new CampgamesSettingsPage();
+		return new CampgamesSettingsPageFragmentFactory();
 	}
 }

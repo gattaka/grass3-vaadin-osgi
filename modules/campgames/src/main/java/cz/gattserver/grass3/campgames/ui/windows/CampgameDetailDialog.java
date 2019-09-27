@@ -1,16 +1,15 @@
 package cz.gattserver.grass3.campgames.ui.windows;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.upload.Upload;
@@ -26,10 +25,14 @@ import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.DeleteButton;
 import cz.gattserver.grass3.ui.components.ImageButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.Strong;
+import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.HtmlSpan;
 import cz.gattserver.web.common.ui.ImageIcon;
+import cz.gattserver.web.common.ui.InlineDiv;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
@@ -40,42 +43,73 @@ public class CampgameDetailDialog extends WebDialog {
 
 	private transient CampgamesService campgamesService;
 
-	private Tabs sheet;
 	private CampgameTO campgameTO;
 	private Long campgameId;
 
 	private ChangeListener changeListener;
 
-	private Map<Tab, Div> tabToDiv = new HashMap<>();
+	private Tabs tabSheet;
+	private Tab detailsTab;
 	private Tab imgTab;
 
+	private VerticalLayout pageLayout;
+
 	public CampgameDetailDialog(Long campgameId) {
-		super("Detail hry");
 		this.campgameId = campgameId;
+		this.campgameTO = getCampgamesService().getCampgame(campgameId);
 
-		setWidth("680px");
-		setHeight("600px");
-
-		sheet = new Tabs();
-		sheet.setSizeFull();
-		createFirstTab();
-		imgTab = new Tab();
-		imgTab.setLabel(createPhotosTabCaption());
-		imgTab.add(new Image(ImageIcon.IMG_16_ICON.createResource(), "icon"));
-		tabToDiv.put(imgTab, createPhotosTab());
-		sheet.add(imgTab);
-
-		VerticalLayout layout = new VerticalLayout();
+		layout.setWidth("680px");
+		layout.setHeight("600px");
 		layout.setSpacing(false);
-		layout.setSizeFull();
 
-		H3 name = new H3(campgameTO.getName());
-		layout.add(name);
-		layout.add(sheet);
-		add(layout);
+		tabSheet = new Tabs();
+		tabSheet.setWidthFull();
+		layout.add(tabSheet);
+
+		pageLayout = new VerticalLayout();
+		pageLayout.setPadding(false);
+		pageLayout.setSpacing(false);
+		pageLayout.setSizeFull();
+		layout.add(pageLayout);
+
+		detailsTab = new Tab();
+		detailsTab.add(new Image(ImageIcon.GEAR2_16_ICON.createResource(), "icon"));
+		detailsTab.add("Info");
+		tabSheet.add(detailsTab);
+
+		imgTab = new Tab();
+		imgTab.add(new Image(ImageIcon.IMG_16_ICON.createResource(), "icon"));
+		imgTab.add(createImgTabCaption());
+		tabSheet.add(imgTab);
+
+		tabSheet.addSelectedChangeListener(e -> {
+			pageLayout.removeAll();
+			switch (tabSheet.getSelectedIndex()) {
+			default:
+			case 0:
+				switchDetailsTab();
+				break;
+			case 1:
+				switchImgTab();
+				break;
+			}
+		});
+		switchDetailsTab();
 	}
 
-	private String createPhotosTabCaption() {
+	private void switchDetailsTab() {
+		pageLayout.removeAll();
+		pageLayout.add(createItemDetailsLayout(campgameTO));
+		tabSheet.setSelectedTab(detailsTab);
+	}
+
+	private void switchImgTab() {
+		pageLayout.removeAll();
+		pageLayout.add(createImgTab());
+		tabSheet.setSelectedTab(imgTab);
+	}
+
+	private String createImgTabCaption() {
 		return "Fotografie (" + getCampgamesService().getCampgameImagesFilesCount(campgameId) + ")";
 	}
 
@@ -85,57 +119,41 @@ public class CampgameDetailDialog extends WebDialog {
 		return campgamesService;
 	}
 
-	private VerticalLayout createWrapperLayout() {
-		VerticalLayout wrapperLayout = new VerticalLayout();
-		wrapperLayout.setSpacing(true);
-		wrapperLayout.setSizeFull();
-		return wrapperLayout;
-	}
+	private Component createItemDetailsLayout(CampgameTO campgameTO) {
 
-	private VerticalLayout createItemDetailsLayout(CampgameTO campgameTO) {
-		VerticalLayout wrapperLayout = createWrapperLayout();
-
-		VerticalLayout itemLayout = new VerticalLayout();
-		itemLayout.setSpacing(true);
-		itemLayout.setPadding(false);
-		itemLayout.setSizeFull();
-		wrapperLayout.add(itemLayout);
+		VerticalLayout layout = new VerticalLayout();
+		layout.setSizeFull();
+		layout.setPadding(false);
+		layout.setSpacing(false);
 
 		/**
 		 * Keywords
 		 */
-		Div tags = new Div();
+		ButtonLayout tags = new ButtonLayout();
 		campgameTO.getKeywords().forEach(keyword -> {
-			Span token = new Span(keyword);
-			token.setSizeUndefined();
-			token.addClassName("read-only-token");
+			Button token = new Button(keyword);
 			tags.add(token);
 		});
 		if (!campgameTO.getKeywords().isEmpty())
-			itemLayout.add(tags);
+			layout.add(tags);
 
-		FormLayout metaInfoLayout = new FormLayout();
-		itemLayout.add(metaInfoLayout);
+		HtmlDiv table = new HtmlDiv("<table>" + "<tr><td><strong>Název:</strong></td><td>" + campgameTO.getName()
+				+ "</td></tr>" + "<tr><td><strong>Původ:</strong></td><td>" + campgameTO.getOrigin()
+				+ "</td><td><strong>Počet hráčů:</strong></td><td>" + campgameTO.getPlayers() + "</td></tr>"
+				+ "<tr><td><strong>Délka hry:</strong></td><td>" + campgameTO.getPlayTime()
+				+ "</td><td><strong>Délky přípravy:</strong></td><td>" + campgameTO.getPreparationTime() + "</td></tr>"
+				+ "</table>");
+		table.addClassName("top-margin");
+		layout.add(table);
 
-		metaInfoLayout.add(new HtmlSpan("<strong>Původ:</strong> " + campgameTO.getOrigin()));
-		metaInfoLayout.add(new HtmlSpan("<strong>Počet hráčů:</strong> " + campgameTO.getPlayers()));
-		metaInfoLayout.add(new HtmlSpan("<strong>Délka hry:</strong> " + campgameTO.getPlayTime()));
-		metaInfoLayout.add(new HtmlSpan("<strong>Délka přípravy:</strong> " + campgameTO.getPreparationTime()));
+		HtmlDiv descDiv = new HtmlDiv(campgameTO.getDescription().replaceAll("\n", "<br/>"));
+		descDiv.addClassName("top-margin");
+		descDiv.addClassName("scroll-div");
+		descDiv.setSizeFull();
+		layout.add(descDiv);
 
-		HtmlDiv descLabel = new HtmlDiv(campgameTO.getDescription().replaceAll("\n", "<br/>"));
-		descLabel.setSizeFull();
-		VerticalLayout layout = new VerticalLayout(descLabel);
-		layout.setPadding(true);
-
-		Div panel = new Div(layout);
-		panel.setWidth("100%");
-		panel.setHeight("100%");
-		itemLayout.add(panel);
-
-		HorizontalLayout operationsLayout = new HorizontalLayout();
-		operationsLayout.setSpacing(true);
-		wrapperLayout.add(operationsLayout);
-
+		ButtonLayout operationsLayout = new ButtonLayout();
+		layout.add(operationsLayout);
 		operationsLayout.setVisible(SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
 				.contains(CoreRole.ADMIN));
 
@@ -149,8 +167,7 @@ public class CampgameDetailDialog extends WebDialog {
 			protected void onSuccess(CampgameTO dto) {
 				if (changeListener != null)
 					changeListener.onChange();
-				createFirstTab();
-				sheet.setSelectedIndex(0);
+				switchDetailsTab();
 			}
 		}.open());
 		operationsLayout.add(fixBtn);
@@ -171,10 +188,10 @@ public class CampgameDetailDialog extends WebDialog {
 				}).open());
 		operationsLayout.add(deleteBtn);
 
-		return wrapperLayout;
+		return layout;
 	}
 
-	private Div createPhotosTab() {
+	private Div createImgTab() {
 		final Div panel = new Div();
 		panel.setSizeFull();
 
@@ -189,7 +206,7 @@ public class CampgameDetailDialog extends WebDialog {
 			// refresh listu
 			panel.removeAll();
 			createImagesList(panel);
-			imgTab.setLabel(createPhotosTabCaption());
+			imgTab.setLabel(createImgTabCaption());
 		});
 		panel.add(upload);
 		upload.setVisible(SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
@@ -226,7 +243,7 @@ public class CampgameDetailDialog extends WebDialog {
 						// refresh listu
 						listLayout.removeAll();
 						createImagesList(listLayout);
-						imgTab.setLabel(createPhotosTabCaption());
+						imgTab.setLabel(createImgTabCaption());
 					})));
 
 			btnLayout.add(imageDetailBtn);
@@ -237,16 +254,6 @@ public class CampgameDetailDialog extends WebDialog {
 
 			imageLayout.add(btnLayout);
 		}
-	}
-
-	private void createFirstTab() {
-		this.campgameTO = getCampgamesService().getCampgame(campgameId);
-		// Tab tab = sheet.getTab(0);
-		// if (tab != null)
-		// sheet.removeTab(tab);
-		// Tab detailsTab = new Tab();
-		// sheet.addTab(createItemDetailsLayout(campgameTO), "Info",
-		// ImageIcon.GEAR2_16_ICON.createResource(), 0);
 	}
 
 	public ChangeListener getChangeListener() {

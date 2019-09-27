@@ -32,7 +32,7 @@ import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
-import cz.gattserver.web.common.ui.BoldSpan;
+import cz.gattserver.web.common.ui.Strong;
 import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.HtmlSpan;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -183,19 +183,19 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		info.setClassName("content-info");
 		layout.add(info);
 
-		info.add(new BoldSpan("Autor:"));
+		info.add(new Strong("Autor:"));
 		info.add(new Breakline());
 		info.add(contentAuthorNameLabel);
 		info.add(new Breakline());
 		info.add(new Breakline());
 
-		info.add(new BoldSpan("Vytvořeno:"));
+		info.add(new Strong("Vytvořeno:"));
 		info.add(new Breakline());
 		info.add(contentCreationDateNameLabel);
 		info.add(new Breakline());
 		info.add(new Breakline());
 
-		info.add(new BoldSpan("Upraveno:"));
+		info.add(new Strong("Upraveno:"));
 		info.add(new Breakline());
 		info.add(contentLastModificationDateLabel);
 		info.add(new Breakline());
@@ -205,7 +205,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 			Div publicatedLayout = new Div();
 			publicatedLayout.addClassName("not-publicated-info");
 			publicatedLayout.add(new Image(ImageIcon.INFO_16_ICON.createResource(), "Info"));
-			publicatedLayout.add(new BoldSpan("Nepublikováno"));
+			publicatedLayout.add(new Strong("Nepublikováno"));
 			info.add(publicatedLayout);
 		}
 

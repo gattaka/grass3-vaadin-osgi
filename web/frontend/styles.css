@@ -11,6 +11,23 @@ flow-component-renderer img {
 	margin-bottom: -2px;
 }
 
+vaadin-tab img {
+    margin: 0px 5px 1px 0;
+}
+
+.inline-div {
+	display: inline-block;
+}
+
+.scroll-div {
+	overflow-y: auto;
+    height: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
 /* Nadpisy */
 h2, h3 {
 	border-bottom: 1px solid;

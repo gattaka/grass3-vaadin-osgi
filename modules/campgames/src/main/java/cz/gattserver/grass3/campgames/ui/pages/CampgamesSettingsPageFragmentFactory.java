@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationResult;
@@ -19,7 +21,7 @@ import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 
-public class CampgamesSettingsPage extends AbstractPageFragmentFactory {
+public class CampgamesSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 
 	@Autowired
 	private ConfigurationService configurationService;
@@ -59,6 +61,7 @@ public class CampgamesSettingsPage extends AbstractPageFragmentFactory {
 		Button saveButton = new Button("Uložit", e -> {
 			configuration.setRootDir((String) outputPathField.getValue());
 			storeConfiguration(configuration);
+			Notification.show("Uložení proběhlo úspěšně", 1000, Position.MIDDLE);
 		});
 		binder.addValueChangeListener(l -> saveButton.setEnabled(binder.isValid()));
 		buttonLayout.add(saveButton);

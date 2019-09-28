@@ -40,6 +40,8 @@ public abstract class CampgameKeywordDialog extends WebDialog {
 	public void init(CampgameKeywordTO originalDTO) {
 		VerticalLayout winLayout = new VerticalLayout();
 		winLayout.setSpacing(true);
+		winLayout.setPadding(false);
+		winLayout.setMinWidth("200px");
 
 		CampgameKeywordTO formDTO = new CampgameKeywordTO();
 		formDTO.setName("");
@@ -47,12 +49,14 @@ public abstract class CampgameKeywordDialog extends WebDialog {
 		binder.setBean(formDTO);
 
 		final TextField nameField = new TextField();
+		nameField.setSizeFull();
 		binder.bind(nameField, "name");
 		winLayout.add(nameField);
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		btnLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
 		btnLayout.setSpacing(false);
+		btnLayout.setSizeFull();
 		winLayout.add(btnLayout);
 
 		btnLayout.add(new SaveButton(e -> {

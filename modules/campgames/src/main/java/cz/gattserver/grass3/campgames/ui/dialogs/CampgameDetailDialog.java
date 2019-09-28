@@ -1,15 +1,13 @@
-package cz.gattserver.grass3.campgames.ui.windows;
+package cz.gattserver.grass3.campgames.ui.dialogs;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.upload.Upload;
@@ -27,12 +25,8 @@ import cz.gattserver.grass3.ui.components.ImageButton;
 import cz.gattserver.grass3.ui.components.ModifyButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.Strong;
-import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.HtmlDiv;
-import cz.gattserver.web.common.ui.HtmlSpan;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.InlineDiv;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
@@ -95,6 +89,7 @@ public class CampgameDetailDialog extends WebDialog {
 			}
 		});
 		switchDetailsTab();
+		setCloseOnOutsideClick(true);
 	}
 
 	private void switchDetailsTab() {
@@ -152,15 +147,23 @@ public class CampgameDetailDialog extends WebDialog {
 		descDiv.setSizeFull();
 		layout.add(descDiv);
 
-		ButtonLayout operationsLayout = new ButtonLayout();
-		layout.add(operationsLayout);
+		HorizontalLayout btnLayout = new HorizontalLayout();
+		btnLayout.addClassName("top-margin");
+		btnLayout.setWidthFull();
+		btnLayout.setSpacing(false);
+		btnLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+		layout.add(btnLayout);
+
+		Div operationsLayout = new Div();
+		operationsLayout.addClassName("button-div");
+		btnLayout.add(operationsLayout);
 		operationsLayout.setVisible(SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
 				.contains(CoreRole.ADMIN));
 
 		/**
 		 * Oprava údajů existující hry
 		 */
-		final ModifyButton fixBtn = new ModifyButton(e -> new CampgameCreateWindow(campgameTO) {
+		final ModifyButton fixBtn = new ModifyButton(e -> new CampgameCreateDialog(campgameTO) {
 			private static final long serialVersionUID = -1397391593801030584L;
 
 			@Override
@@ -187,6 +190,9 @@ public class CampgameDetailDialog extends WebDialog {
 					}
 				}).open());
 		operationsLayout.add(deleteBtn);
+
+		ImageButton closeBtn = new ImageButton("Zavřít", ImageIcon.BLOCK_16_ICON, e -> close());
+		btnLayout.add(closeBtn);
 
 		return layout;
 	}

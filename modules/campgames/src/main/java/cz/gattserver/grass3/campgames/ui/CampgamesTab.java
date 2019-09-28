@@ -23,8 +23,8 @@ import cz.gattserver.grass3.campgames.interfaces.CampgameFilterTO;
 import cz.gattserver.grass3.campgames.interfaces.CampgameOverviewTO;
 import cz.gattserver.grass3.campgames.interfaces.CampgameTO;
 import cz.gattserver.grass3.campgames.service.CampgamesService;
-import cz.gattserver.grass3.campgames.ui.windows.CampgameCreateWindow;
-import cz.gattserver.grass3.campgames.ui.windows.CampgameDetailDialog;
+import cz.gattserver.grass3.campgames.ui.dialogs.CampgameCreateDialog;
+import cz.gattserver.grass3.campgames.ui.dialogs.CampgameDetailDialog;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.CreateButton;
@@ -201,7 +201,7 @@ public class CampgamesTab extends Div {
 				return;
 			campgame = getCampgamesService().getCampgame(to.getId());
 		}
-		new CampgameCreateWindow(campgame == null ? null : campgame.getId()) {
+		new CampgameCreateDialog(campgame == null ? null : campgame.getId()) {
 			private static final long serialVersionUID = -1397391593801030584L;
 
 			@Override

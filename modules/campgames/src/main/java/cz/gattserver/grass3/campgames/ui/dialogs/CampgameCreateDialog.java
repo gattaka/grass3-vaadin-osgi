@@ -1,0 +1,136 @@
+package cz.gattserver.grass3.campgames.ui.dialogs;
+
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
+
+import cz.gattserver.grass3.campgames.interfaces.CampgameTO;
+import cz.gattserver.grass3.campgames.service.CampgamesService;
+import cz.gattserver.grass3.ui.components.ImageButton;
+import cz.gattserver.grass3.ui.util.TokenField;
+import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.ImageIcon;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
+import cz.gattserver.web.common.ui.window.WebDialog;
+
+public abstract class CampgameCreateDialog extends WebDialog {
+
+	private static final long serialVersionUID = -6773027334692911384L;
+
+	private transient CampgamesService campgamesService;
+
+	public CampgameCreateDialog(Long originalId) {
+		init(originalId == null ? null : getCampgameService().getCampgame(originalId));
+	}
+
+	public CampgameCreateDialog() {
+		init(null);
+	}
+
+	public CampgameCreateDialog(CampgameTO originalDTO) {
+		init(originalDTO);
+	}
+
+	private CampgamesService getCampgameService() {
+		if (campgamesService == null)
+			campgamesService = SpringContextHelper.getBean(CampgamesService.class);
+		return campgamesService;
+	}
+
+	/**
+	 * @param originalId
+	 *            opravuji údaje existující položky, nebo vytvářím novou (
+	 *            {@code null}) ?
+	 */
+	private void init(CampgameTO originalDTO) {
+		CampgameTO formDTO = new CampgameTO();
+		formDTO.setName("");
+
+		FormLayout winLayout = new FormLayout();
+		layout.add(winLayout);
+		winLayout.setWidth("600px");
+
+		Binder<CampgameTO> binder = new Binder<>(CampgameTO.class);
+		binder.setBean(formDTO);
+
+		TextField nameField = new TextField("Název");
+		nameField.setWidthFull();
+		nameField.addClassName("top-clean");
+		binder.forField(nameField).asRequired("Název položky je povinný").bind("name");
+		winLayout.add(nameField, 2);
+
+		TokenField keywords = new TokenField(getCampgameService().getAllCampgameKeywordNames());
+		keywords.isEnabled();
+		keywords.setAllowNewItems(true);
+		keywords.getInputField().setPlaceholder("klíčové slovo");
+
+		if (originalDTO != null)
+			for (String keyword : originalDTO.getKeywords())
+				keywords.addToken(keyword);
+		winLayout.add(keywords, 2);
+
+		TextField originField = new TextField("Původ hry");
+		originField.setWidth("100px");
+		binder.forField(originField).bind("origin");
+		winLayout.add(originField);
+
+		TextField playersField = new TextField("Počet hráčů");
+		playersField.setWidth("100px");
+		binder.forField(playersField).bind("players");
+		winLayout.add(playersField);
+
+		TextField playTimeField = new TextField("Délka hry");
+		playTimeField.setWidth("100px");
+		binder.forField(playTimeField).bind("playTime");
+		winLayout.add(playTimeField);
+
+		TextField preparationTimeField = new TextField("Délka přípravy");
+		preparationTimeField.setWidth("100px");
+		binder.forField(preparationTimeField).bind("preparationTime");
+		winLayout.add(preparationTimeField);
+
+		TextArea descriptionField = new TextArea("Popis");
+		descriptionField.setHeight("300px");
+		binder.forField(descriptionField).bind("description");
+		winLayout.add(descriptionField, 2);
+
+		HorizontalLayout buttonLayout = new HorizontalLayout();
+		buttonLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+		buttonLayout.setSpacing(false);
+		buttonLayout.setWidthFull();
+		layout.add(buttonLayout);
+
+		ImageButton createBtn = new ImageButton(originalDTO == null ? "Vytvořit" : "Upravit", ImageIcon.TICK_16_ICON,
+				e -> {
+					try {
+						CampgameTO writeDTO = originalDTO == null ? new CampgameTO() : originalDTO;
+						binder.writeBean(writeDTO);
+						writeDTO.setKeywords(keywords.getValues());
+						writeDTO.setId(getCampgameService().saveCampgame(writeDTO));
+						onSuccess(writeDTO);
+						close();
+					} catch (ValidationException ve) {
+						new ErrorDialog("Chybná vstupní data\n\n   "
+								+ ve.getValidationErrors().iterator().next().getErrorMessage()).open();
+					} catch (Exception ve) {
+						new ErrorDialog("Uložení se nezdařilo").open();
+					}
+				});
+		buttonLayout.add(createBtn);
+
+		ImageButton closeBtn = new ImageButton("Zavřít", ImageIcon.BLOCK_16_ICON, e -> close());
+		buttonLayout.add(closeBtn);
+
+		if (originalDTO != null)
+			binder.readBean(originalDTO);
+
+		setCloseOnEsc(false);
+	}
+
+	protected abstract void onSuccess(CampgameTO dto);
+
+}

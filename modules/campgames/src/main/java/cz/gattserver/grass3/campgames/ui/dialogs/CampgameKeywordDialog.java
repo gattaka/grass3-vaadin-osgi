@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.campgames.ui.windows;
+package cz.gattserver.grass3.campgames.ui.dialogs;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;

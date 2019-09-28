@@ -28,6 +28,14 @@ vaadin-tab img {
     box-sizing: border-box;
 }
 
+img.thumbnail-200 {
+    display: block;
+    max-width: 200px;
+    max-height: 200px;
+    width: auto;
+    height: auto;
+}
+
 /* Nadpisy */
 h2, h3 {
 	border-bottom: 1px solid;
@@ -86,6 +94,12 @@ span.label-err {
 /* Top margin */
 .top-margin {
 	margin-top: var(--lumo-space-m);
+}
+
+/* Top clean */
+.top-clean {
+	margin-top: 0;
+	padding-top: 0;
 }
 
 /* Tag layout */

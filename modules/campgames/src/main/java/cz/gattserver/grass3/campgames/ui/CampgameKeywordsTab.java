@@ -10,7 +10,7 @@ import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import cz.gattserver.grass3.campgames.CampgamesRole;
 import cz.gattserver.grass3.campgames.interfaces.CampgameKeywordTO;
 import cz.gattserver.grass3.campgames.service.CampgamesService;
-import cz.gattserver.grass3.campgames.ui.windows.CampgameKeywordDialog;
+import cz.gattserver.grass3.campgames.ui.dialogs.CampgameKeywordDialog;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.ModifyGridButton;

@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.ui.components;
+package cz.gattserver.grass3.ui.components.button;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;

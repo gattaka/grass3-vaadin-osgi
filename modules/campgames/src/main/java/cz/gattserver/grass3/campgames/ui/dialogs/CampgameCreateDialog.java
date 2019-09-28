@@ -10,10 +10,10 @@ import com.vaadin.flow.data.binder.ValidationException;
 
 import cz.gattserver.grass3.campgames.interfaces.CampgameTO;
 import cz.gattserver.grass3.campgames.service.CampgamesService;
-import cz.gattserver.grass3.ui.components.ImageButton;
+import cz.gattserver.grass3.ui.components.button.CloseButton;
+import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
@@ -104,25 +104,25 @@ public abstract class CampgameCreateDialog extends WebDialog {
 		buttonLayout.setWidthFull();
 		layout.add(buttonLayout);
 
-		ImageButton createBtn = new ImageButton(originalDTO == null ? "Vytvořit" : "Upravit", ImageIcon.TICK_16_ICON,
-				e -> {
-					try {
-						CampgameTO writeDTO = originalDTO == null ? new CampgameTO() : originalDTO;
-						binder.writeBean(writeDTO);
-						writeDTO.setKeywords(keywords.getValues());
-						writeDTO.setId(getCampgameService().saveCampgame(writeDTO));
-						onSuccess(writeDTO);
-						close();
-					} catch (ValidationException ve) {
-						new ErrorDialog("Chybná vstupní data\n\n   "
-								+ ve.getValidationErrors().iterator().next().getErrorMessage()).open();
-					} catch (Exception ve) {
-						new ErrorDialog("Uložení se nezdařilo").open();
-					}
-				});
+		SaveButton createBtn = new SaveButton(e -> {
+			try {
+				CampgameTO writeDTO = originalDTO == null ? new CampgameTO() : originalDTO;
+				binder.writeBean(writeDTO);
+				writeDTO.setKeywords(keywords.getValues());
+				writeDTO.setId(getCampgameService().saveCampgame(writeDTO));
+				onSuccess(writeDTO);
+				close();
+			} catch (ValidationException ve) {
+				new ErrorDialog(
+						"Chybná vstupní data\n\n   " + ve.getValidationErrors().iterator().next().getErrorMessage())
+								.open();
+			} catch (Exception ve) {
+				new ErrorDialog("Uložení se nezdařilo").open();
+			}
+		});
 		buttonLayout.add(createBtn);
 
-		ImageButton closeBtn = new ImageButton("Zavřít", ImageIcon.BLOCK_16_ICON, e -> close());
+		CloseButton closeBtn = new CloseButton(e -> close());
 		buttonLayout.add(closeBtn);
 
 		if (originalDTO != null)

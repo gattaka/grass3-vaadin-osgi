@@ -15,7 +15,7 @@ import com.vaadin.flow.component.combobox.ComboBox.FetchItemsCallback;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.function.SerializableFunction;
 
-import cz.gattserver.grass3.ui.components.DeleteButton;
+import cz.gattserver.grass3.ui.components.button.DeleteButton;
 
 public class TokenField extends Div {
 

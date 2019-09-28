@@ -29,7 +29,7 @@ vaadin-tab img {
 }
 
 img.thumbnail-200 {
-    display: block;
+    display: inline-block;
     max-width: 200px;
     max-height: 200px;
     width: auto;

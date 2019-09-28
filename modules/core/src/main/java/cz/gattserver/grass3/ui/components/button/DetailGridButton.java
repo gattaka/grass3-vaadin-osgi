@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.ui.components;
+package cz.gattserver.grass3.ui.components.button;
 
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Image;

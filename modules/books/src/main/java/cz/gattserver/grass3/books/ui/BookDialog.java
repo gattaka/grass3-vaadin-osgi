@@ -23,9 +23,9 @@ import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.books.model.interfaces.BookTO;
 import cz.gattserver.grass3.books.util.ImageUtils;
-import cz.gattserver.grass3.ui.components.CreateButton;
-import cz.gattserver.grass3.ui.components.DeleteButton;
-import cz.gattserver.grass3.ui.components.ModifyButton;
+import cz.gattserver.grass3.ui.components.button.CreateButton;
+import cz.gattserver.grass3.ui.components.button.DeleteButton;
+import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.window.ErrorDialog;

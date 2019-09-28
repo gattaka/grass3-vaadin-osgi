@@ -51,7 +51,7 @@ import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.services.ContentTagService;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
-import cz.gattserver.grass3.ui.components.ImageButton;
+import cz.gattserver.grass3.ui.components.button.ImageButton;
 import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;

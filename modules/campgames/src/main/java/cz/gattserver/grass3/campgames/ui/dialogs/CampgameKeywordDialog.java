@@ -1,13 +1,16 @@
 package cz.gattserver.grass3.campgames.ui.dialogs;
 
-import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 
 import cz.gattserver.grass3.campgames.interfaces.CampgameKeywordTO;
 import cz.gattserver.grass3.campgames.service.CampgamesService;
+import cz.gattserver.grass3.ui.components.button.CloseButton;
+import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
@@ -36,7 +39,6 @@ public abstract class CampgameKeywordDialog extends WebDialog {
 
 	public void init(CampgameKeywordTO originalDTO) {
 		VerticalLayout winLayout = new VerticalLayout();
-		winLayout.setPadding(true);
 		winLayout.setSpacing(true);
 
 		CampgameKeywordTO formDTO = new CampgameKeywordTO();
@@ -46,9 +48,14 @@ public abstract class CampgameKeywordDialog extends WebDialog {
 
 		final TextField nameField = new TextField();
 		binder.bind(nameField, "name");
-
 		winLayout.add(nameField);
-		winLayout.add(new Button("Uložit", e -> {
+
+		HorizontalLayout btnLayout = new HorizontalLayout();
+		btnLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+		btnLayout.setSpacing(false);
+		winLayout.add(btnLayout);
+
+		btnLayout.add(new SaveButton(e -> {
 			try {
 				CampgameKeywordTO writeDTO = originalDTO == null ? new CampgameKeywordTO() : originalDTO;
 				binder.writeBean(writeDTO);
@@ -62,11 +69,12 @@ public abstract class CampgameKeywordDialog extends WebDialog {
 			}
 		}));
 
+		btnLayout.add(new CloseButton(e -> close()));
+
 		if (originalDTO != null)
 			binder.readBean(originalDTO);
 
 		add(winLayout);
-		setCloseOnEsc(false);
 	}
 
 	protected abstract void onSuccess(CampgameKeywordTO campgameKeywordTO);

@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.ui.components;
+package cz.gattserver.grass3.ui.components.button;
 
 import java.util.Set;
 import java.util.function.Function;

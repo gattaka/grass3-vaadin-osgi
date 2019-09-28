@@ -21,7 +21,7 @@ import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.modules.register.ModuleRegister;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.services.UserService;
-import cz.gattserver.grass3.ui.components.GridButton;
+import cz.gattserver.grass3.ui.components.button.GridButton;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.WebDialog;

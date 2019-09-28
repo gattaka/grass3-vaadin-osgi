@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.campgames.service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -20,7 +21,7 @@ public interface CampgamesService {
 	 * Images
 	 */
 
-	boolean saveImagesFile(InputStream in, String fileName, CampgameTO item);
+	CampgameFileTO saveImagesFile(InputStream in, String fileName, CampgameTO item) throws IOException;
 
 	List<CampgameFileTO> getCampgameImagesFiles(Long id);
 

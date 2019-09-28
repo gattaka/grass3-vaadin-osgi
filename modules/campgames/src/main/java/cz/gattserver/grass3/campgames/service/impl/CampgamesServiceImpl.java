@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -15,25 +13,22 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.OrderSpecifier;
 
-import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.grass3.campgames.CampgamesConfiguration;
 import cz.gattserver.grass3.campgames.interfaces.CampgameFileTO;
 import cz.gattserver.grass3.campgames.interfaces.CampgameFilterTO;
+import cz.gattserver.grass3.campgames.interfaces.CampgameKeywordTO;
 import cz.gattserver.grass3.campgames.interfaces.CampgameOverviewTO;
 import cz.gattserver.grass3.campgames.interfaces.CampgameTO;
-import cz.gattserver.grass3.campgames.interfaces.CampgameKeywordTO;
 import cz.gattserver.grass3.campgames.model.domain.Campgame;
 import cz.gattserver.grass3.campgames.model.domain.CampgameKeyword;
-import cz.gattserver.grass3.campgames.model.repositories.CampgameRepository;
 import cz.gattserver.grass3.campgames.model.repositories.CampgameKeywordRepository;
+import cz.gattserver.grass3.campgames.model.repositories.CampgameRepository;
 import cz.gattserver.grass3.campgames.service.CampgamesMapperService;
 import cz.gattserver.grass3.campgames.service.CampgamesService;
 import cz.gattserver.grass3.exception.GrassException;
@@ -43,8 +38,6 @@ import cz.gattserver.grass3.services.FileSystemService;
 @Transactional
 @Component
 public class CampgamesServiceImpl implements CampgamesService {
-
-	private static final Logger logger = LoggerFactory.getLogger(CampgamesServiceImpl.class);
 
 	private static final String ILLEGAL_PATH_IMGS_ERR = "Podtečení adresáře grafických příloh";
 
@@ -108,40 +101,18 @@ public class CampgamesServiceImpl implements CampgamesService {
 		return file;
 	}
 
-	private CampgameFileTO mapPathToItem(Path path) {
-		CampgameFileTO to = new CampgameFileTO().setName(path.getFileName().toString());
-		try {
-			to.setSize(HumanBytesSizeFormatter.format(Files.size(path), true));
-		} catch (IOException e) {
-			to.setSize("n/a");
-		}
-		try {
-			to.setLastModified(
-					LocalDateTime.ofInstant(Files.getLastModifiedTime(path).toInstant(), ZoneId.systemDefault()));
-		} catch (IOException e) {
-			to.setLastModified(null);
-		}
-		return to;
-	}
-
 	/*
 	 * Images
 	 */
 
 	@Override
-	public boolean saveImagesFile(InputStream in, String fileName, CampgameTO item) {
-		Path imagesPath;
-		try {
-			imagesPath = getCampgameImagesPath(item.getId());
-			Path imagePath = imagesPath.resolve(fileName);
-			if (!imagePath.normalize().startsWith(imagesPath))
-				throw new IllegalArgumentException(ILLEGAL_PATH_IMGS_ERR);
-			Files.copy(in, imagePath, StandardCopyOption.REPLACE_EXISTING);
-		} catch (IOException e) {
-			logger.error("Nezdařilo se uložit obrázek ke hře", e);
-			return false;
-		}
-		return true;
+	public CampgameFileTO saveImagesFile(InputStream in, String fileName, CampgameTO item) throws IOException {
+		Path imagesPath = getCampgameImagesPath(item.getId());
+		Path imagePath = imagesPath.resolve(fileName);
+		if (!imagePath.normalize().startsWith(imagesPath))
+			throw new IllegalArgumentException(ILLEGAL_PATH_IMGS_ERR);
+		Files.copy(in, imagePath, StandardCopyOption.REPLACE_EXISTING);
+		return CampgameFileTOMapper.mapPathToItem(imagePath);
 	}
 
 	@Override
@@ -151,7 +122,7 @@ public class CampgamesServiceImpl implements CampgamesService {
 			imagesPath = getCampgameImagesPath(id);
 			List<CampgameFileTO> list = new ArrayList<>();
 			try (Stream<Path> stream = Files.list(imagesPath)) {
-				stream.forEach(p -> list.add(mapPathToItem(p)));
+				stream.forEach(p -> list.add(CampgameFileTOMapper.mapPathToItem(p)));
 			}
 			return list;
 		} catch (IOException e) {

@@ -1,9 +1,18 @@
 package cz.gattserver.grass3.campgames.ui.dialogs;
 
+import java.io.IOException;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
@@ -13,6 +22,9 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.IconRenderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.campgames.CampgamesConfiguration;
@@ -23,12 +35,10 @@ import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.button.CloseButton;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
-import cz.gattserver.grass3.ui.components.button.ImageButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
-import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
@@ -36,6 +46,8 @@ import cz.gattserver.web.common.ui.window.WebDialog;
 public class CampgameDetailDialog extends WebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
+
+	private static final Logger logger = LoggerFactory.getLogger(CampgameDetailDialog.class);
 
 	private transient CampgamesService campgamesService;
 
@@ -105,7 +117,7 @@ public class CampgameDetailDialog extends WebDialog {
 	}
 
 	private String createImgTabCaption() {
-		return "Fotografie (" + getCampgamesService().getCampgameImagesFilesCount(campgameId) + ")";
+		return "Přílohy (" + getCampgamesService().getCampgameImagesFilesCount(campgameId) + ")";
 	}
 
 	private CampgamesService getCampgamesService() {
@@ -198,18 +210,10 @@ public class CampgameDetailDialog extends WebDialog {
 	}
 
 	private Div createImgTab() {
+		boolean isAdmin = SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
+				.contains(CoreRole.ADMIN);
 		Div tabLayout = new Div();
 		tabLayout.setSizeFull();
-
-		Div panelWrapper = new Div();
-		panelWrapper.addClassName("scroll-div");
-		panelWrapper.addClassName("top-margin");
-		panelWrapper.getStyle().set("height", "calc(100% - 85px)");
-		tabLayout.add(panelWrapper);
-
-		final FormLayout panel = new FormLayout();
-		panel.addClassName("top-margin");
-		panel.setResponsiveSteps(new FormLayout.ResponsiveStep("200px", 3));
 
 		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
 
@@ -217,69 +221,76 @@ public class CampgameDetailDialog extends WebDialog {
 		upload.addClassName("top-margin");
 		upload.setAcceptedFileTypes("image/jpeg", "image/png", "image/gif");
 		upload.addSucceededListener(event -> {
-			getCampgamesService().saveImagesFile(buffer.getInputStream(event.getFileName()), event.getFileName(),
-					campgameTO);
-			// refresh listu
-			panel.removeAll();
-			createImagesList(panel);
-			imgTab.setLabel(createImgTabCaption());
+			try {
+				CampgameFileTO to = getCampgamesService().saveImagesFile(buffer.getInputStream(event.getFileName()),
+						event.getFileName(), campgameTO);
+				tabLayout.removeAll();
+				Grid<CampgameFileTO> grid = createGrid(tabLayout, isAdmin, upload);
+				tabLayout.add(grid);
+				tabLayout.add(upload);
+				grid.select(to);
+				imgTab.setLabel(createImgTabCaption());
+			} catch (IOException e) {
+				String msg = "Nezdařilo se uložit obrázek ke hře";
+				logger.error(msg, e);
+				new ErrorDialog(msg).open();
+			}
 		});
+		upload.setVisible(isAdmin);
+
+		tabLayout.add(createGrid(tabLayout, isAdmin, upload));
 		tabLayout.add(upload);
-		upload.setVisible(SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
-				.contains(CoreRole.ADMIN));
-
-		panelWrapper.add(panel);
-
-		createImagesList(panel);
 
 		return tabLayout;
 	}
 
-	private void createImagesList(FormLayout listLayout) {
-		for (final CampgameFileTO file : getCampgamesService().getCampgameImagesFiles(campgameId)) {
+	private Grid<CampgameFileTO> createGrid(Div tabLayout, boolean isAdmin, Upload upload) {
+		Grid<CampgameFileTO> grid = new Grid<>();
+		List<CampgameFileTO> items = getCampgamesService().getCampgameImagesFiles(campgameId);
+		grid.setItems(items);
+		grid.setSizeFull();
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		grid.addClassName("top-margin");
+		grid.getStyle().set("height", "calc(100% - 85px)");
 
-			VerticalLayout imageLayout = new VerticalLayout();
-			listLayout.add(imageLayout);
-			imageLayout.setWidth("200px");
-			imageLayout.setPadding(false);
+		tabLayout.add(grid);
 
-			Div imgWrapper = new Div();
-			imgWrapper.setWidth("200px");
-			imgWrapper.setHeight("200px");
+		grid.addColumn(new IconRenderer<CampgameFileTO>(to -> {
 			Image img = new Image(
-					new StreamResource(file.getName(),
-							() -> getCampgamesService().getCampgameImagesFileInputStream(campgameId, file.getName())),
-					file.getName());
+					new StreamResource(to.getName(),
+							() -> getCampgamesService().getCampgameImagesFileInputStream(campgameId, to.getName())),
+					to.getName());
 			img.addClassName("thumbnail-200");
-			imgWrapper.add(img);
-			imageLayout.add(imgWrapper);
+			return img;
+		}, c -> "")).setFlexGrow(0).setWidth("215px").setHeader("Náhled").setTextAlign(ColumnTextAlign.CENTER);
 
-			HorizontalLayout btnLayout = new HorizontalLayout();
-			btnLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
-			btnLayout.setSpacing(false);
-			btnLayout.setWidth("200px");
+		grid.addColumn(new TextRenderer<>(to -> to.getName())).setHeader("Název").setFlexGrow(100);
 
-			ImageButton imageDetailBtn = new ImageButton("Detail", ImageIcon.SEARCH_16_ICON,
-					e -> UI.getCurrent().getPage().open(
-							CampgamesConfiguration.CAMPGAMES_PATH + "/" + campgameTO.getId() + "/" + file.getName()));
+		grid.addColumn(new ComponentRenderer<>(to -> {
+			Button button = new Button("Detail", e -> UI.getCurrent().getPage()
+					.open(CampgamesConfiguration.CAMPGAMES_PATH + "/" + campgameTO.getId() + "/" + to.getName()));
+			button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+			return button;
+		})).setHeader("Detail").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 
-			DeleteButton imageDeleteBtn = new DeleteButton(e -> new ConfirmDialog("Opravdu smazat foto?", ev -> {
-				getCampgamesService().deleteCampgameImagesFile(campgameId, file.getName());
+		grid.addColumn(new ComponentRenderer<>(to -> {
+			Button button = new Button("Smazat", be -> {
+				new ConfirmDialog("Opravdu smazat?", e -> {
+					getCampgamesService().deleteCampgameImagesFile(campgameId, to.getName());
+					tabLayout.removeAll();
+					tabLayout.add(createGrid(tabLayout, isAdmin, upload));
+					tabLayout.add(upload);
+					imgTab.setLabel(createImgTabCaption());
+				}).open();
+			});
+			button.setVisible(isAdmin);
+			button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+			return button;
+		})).setHeader("Smazat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
+		grid.addColumn(new TextRenderer<>(CampgameFileTO::getSize)).setHeader("Velikost")
+				.setTextAlign(ColumnTextAlign.END).setFlexGrow(0).setWidth("60px");
 
-				// refresh listu
-				listLayout.removeAll();
-				createImagesList(listLayout);
-				imgTab.setLabel(createImgTabCaption());
-			}).open());
-
-			btnLayout.add(imageDetailBtn);
-			btnLayout.add(imageDeleteBtn);
-
-			imageDeleteBtn.setVisible(SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
-					.contains(CoreRole.ADMIN));
-
-			imageLayout.add(btnLayout);
-		}
+		return grid;
 	}
 
 	public ChangeListener getChangeListener() {

@@ -1,40 +1,31 @@
 package cz.gattserver.grass3.drinks.ui;
 
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.vaadin.teemu.ratingstars.RatingStars;
-
-import com.vaadin.server.Page;
-import com.vaadin.server.StreamResource;
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Embedded;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.renderers.ComponentRenderer;
-import com.vaadin.ui.renderers.NumberRenderer;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.Column;
+import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.NumberRenderer;
+import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.drinks.facades.DrinksFacade;
 import cz.gattserver.grass3.drinks.model.interfaces.DrinkOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.DrinkTO;
 import cz.gattserver.grass3.security.CoreRole;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 
@@ -42,25 +33,19 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 
 	private static final long serialVersionUID = 594189301140808163L;
 
-	private static Logger logger = LoggerFactory.getLogger(DrinksTab.class);
-
 	private transient SecurityService securityService;
 	private transient PageFactory drinksPageFactory;
 	private transient DrinksFacade drinksFacade;
 
-	private GrassRequest request;
-	private Embedded image;
+	private Image image;
 	private VerticalLayout dataLayout;
 
 	protected Grid<O> grid;
 	protected O filterTO;
 	protected T choosenDrink;
 
-	public DrinksTab(GrassRequest request) {
+	public DrinksTab() {
 		SpringContextHelper.inject(this);
-		setPadding(new MarginInfo(true, false, false, false));
-
-		this.request = request;
 
 		filterTO = createNewOverviewTO();
 		grid = createGrid(filterTO);
@@ -78,27 +63,25 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 		contentLayout.setSizeFull();
 		contentLayout.setPadding(true);
 
-		Panel panel = new Panel(contentLayout);
+		Div panel = new Div(contentLayout);
 		panel.setWidth("100%");
 		panel.setHeight("100%");
-		addComponent(panel);
-		setExpandRatio(panel, 1);
+		add(panel);
 
 		// musí tady něco být nahrané, jinak to pak nejde měnit (WTF?!)
-		image = new Embedded(null, ImageIcon.BUBBLE_16_ICON.createResource());
+		image = new Image(ImageIcon.BUBBLE_16_ICON.createResource(), "icon");
 		image.setVisible(false);
-		contentLayout.addComponent(image);
-		contentLayout.setComponentAlignment(image, Alignment.TOP_CENTER);
+		contentLayout.add(image);
+		contentLayout.setVerticalComponentAlignment(Alignment.START, image);
 
 		dataLayout = new VerticalLayout();
 		dataLayout.setWidth("100%");
 		dataLayout.setPadding(false);
-		contentLayout.addComponent(dataLayout);
-		contentLayout.setExpandRatio(dataLayout, 1);
+		contentLayout.add(dataLayout);
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		btnLayout.setSpacing(true);
-		addComponent(btnLayout);
+		add(btnLayout);
 
 		btnLayout.setVisible(getSecurityService().getCurrentUser().getRoles().contains(CoreRole.ADMIN));
 
@@ -107,9 +90,9 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 
 	protected void addNameColumn(Grid<O> grid, HeaderRow filteringHeader) {
 		// Název
-		Column<O, String> nameColumn = grid.addColumn(O::getName).setCaption("Název").setSortProperty("name");
+		Column<O> nameColumn = grid.addColumn(O::getName).setHeader("Název").setSortProperty("name");
 		TextField nazevColumnField = new TextField();
-		nazevColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		nazevColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterTO.setName(e.getValue());
@@ -120,9 +103,9 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 
 	protected void addCountryColumn(Grid<O> grid, HeaderRow filteringHeader) {
 		// Země původu
-		Column<O, String> countryColumn = grid.addColumn(O::getCountry).setCaption("Země").setSortProperty("country");
+		Column<O> countryColumn = grid.addColumn(O::getCountry).setHeader("Země").setSortProperty("country");
 		TextField countryColumnField = new TextField();
-		countryColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		countryColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		countryColumnField.setWidth("100%");
 		countryColumnField.addValueChangeListener(e -> {
 			filterTO.setCountry(e.getValue());
@@ -133,11 +116,11 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 
 	protected void addAlcoholColumn(Grid<O> grid, HeaderRow filteringHeader) {
 		// Alkohol
-		Column<O, Double> alcoholColumn = grid.addColumn(O::getAlcohol)
-				.setRenderer(new NumberRenderer(NumberFormat.getNumberInstance(new Locale("cs", "CZ"))))
-				.setCaption("Alkohol (%)").setWidth(80).setSortProperty("alcohol");
+		Column<O> alcoholColumn = grid.addColumn(
+				new NumberRenderer<O>(O::getAlcohol, NumberFormat.getNumberInstance(new Locale("cs", "CZ")), null))
+				.setHeader("Alkohol (%)").setWidth("80px").setFlexGrow(0).setSortProperty("alcohol");
 		TextField alcoholColumnField = new TextField();
-		alcoholColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		alcoholColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		alcoholColumnField.setWidth("100%");
 		alcoholColumnField.addValueChangeListener(e -> {
 			filterTO.setAlcohol(Double.parseDouble(e.getValue()));
@@ -147,13 +130,13 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 	}
 
 	protected void addRatingStarsColumn(Grid<O> grid) {
-		grid.addColumn(to -> {
+		grid.addColumn(new ComponentRenderer<RatingStars, O>(to -> {
 			RatingStars rs = new RatingStars();
 			rs.setValue(to.getRating());
 			rs.setReadOnly(true);
-			rs.setAnimated(false);
+			rs.setSize("15px");
 			return rs;
-		}).setRenderer(new ComponentRenderer()).setCaption("Hodnocení").setWidth(120).setSortProperty("rating");
+		})).setHeader("Hodnocení").setAutoWidth(true).setSortProperty("rating");
 	}
 
 	protected SecurityService getSecurityService() {
@@ -182,11 +165,13 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 
 	protected void showDetail(T choosenDrink) {
 		this.choosenDrink = choosenDrink;
-		dataLayout.removeAllComponents();
+		dataLayout.removeAll();
 		if (choosenDrink == null) {
 			image.setVisible(false);
-			String currentURL = request.getContextRoot() + "/" + getDrinksPageFactory().getPageName();
-			Page.getCurrent().pushState(currentURL);
+			// TODO
+			// String currentURL = request.getContextRoot() + "/" +
+			// getDrinksPageFactory().getPageName();
+			// Page.getCurrent().pushState(currentURL);
 		} else {
 			byte[] co = choosenDrink.getImage();
 			if (co != null) {
@@ -194,22 +179,24 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 				String name = choosenDrink.getName()
 						+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 				image.setVisible(true);
-				image.setSource(new StreamResource(() -> new ByteArrayInputStream(co), name));
-				image.markAsDirty();
+				image.setSrc(new StreamResource(name, () -> new ByteArrayInputStream(co)));
 			} else {
 				image.setVisible(false);
 			}
 
 			populateDetail(dataLayout);
 
-			String currentURL;
-			try {
-				currentURL = request.getContextRoot() + "/" + getDrinksPageFactory().getPageName() + "/" + getURLPath()
-						+ "/" + choosenDrink.getId() + "-" + URLEncoder.encode(choosenDrink.getName(), "UTF-8");
-				Page.getCurrent().pushState(currentURL);
-			} catch (UnsupportedEncodingException e) {
-				logger.error("UnsupportedEncodingException in URL", e);
-			}
+			// TODO
+			// String currentURL;
+			// try {
+			// currentURL = request.getContextRoot() + "/" +
+			// getDrinksPageFactory().getPageName() + "/" + getURLPath()
+			// + "/" + choosenDrink.getId() + "-" +
+			// URLEncoder.encode(choosenDrink.getName(), "UTF-8");
+			// Page.getCurrent().pushState(currentURL);
+			// } catch (UnsupportedEncodingException e) {
+			// logger.error("UnsupportedEncodingException in URL", e);
+			// }
 		}
 
 	}

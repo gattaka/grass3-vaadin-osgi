@@ -17,6 +17,7 @@
 		<module>contents</module>
 		<module>books</module>
 		<module>campgames</module>
+		<module>drinks</module>
 	</modules>
 
 </project>

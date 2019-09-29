@@ -4,19 +4,18 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Locale;
 
-import org.vaadin.teemu.ratingstars.RatingStars;
-
-import com.vaadin.data.Binder;
-import com.vaadin.data.converter.StringToDoubleConverter;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.converter.StringToDoubleConverter;
+import com.vaadin.flow.data.converter.StringToIntegerConverter;
 
 import cz.gattserver.grass3.drinks.model.domain.MaltType;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
+import cz.gattserver.grass3.ui.util.RatingStars;
 
 public abstract class BeerWindow extends DrinkWindow<BeerTO> {
 
@@ -51,8 +50,6 @@ public abstract class BeerWindow extends DrinkWindow<BeerTO> {
 
 		RatingStars ratingStars = new RatingStars();
 		binder.forField(ratingStars).asRequired().bind(BeerTO::getRating, BeerTO::setRating);
-		ratingStars.setAnimated(false);
-		ratingStars.setCaption("Hodnocení");
 
 		HorizontalLayout line1Layout = new HorizontalLayout(breweryField, nameField, countryField, ratingStars);
 
@@ -90,8 +87,7 @@ public abstract class BeerWindow extends DrinkWindow<BeerTO> {
 		ibuField.setWidth("80px");
 
 		ComboBox<MaltType> maltTypeField = new ComboBox<>("Typ sladu", Arrays.asList(MaltType.values()));
-		maltTypeField.setEmptySelectionAllowed(false);
-		maltTypeField.setItemCaptionGenerator(MaltType::getCaption);
+		maltTypeField.setItemLabelGenerator(MaltType::getCaption);
 		binder.forField(maltTypeField).asRequired().bind(BeerTO::getMaltType, BeerTO::setMaltType);
 
 		HorizontalLayout line2Layout = new HorizontalLayout(categoryField, degreeField, alcoholField, ibuField,

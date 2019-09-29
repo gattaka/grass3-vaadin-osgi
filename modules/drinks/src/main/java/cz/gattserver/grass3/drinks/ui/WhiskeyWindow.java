@@ -4,21 +4,20 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Locale;
 
-import org.vaadin.teemu.ratingstars.RatingStars;
-
-import com.vaadin.data.Binder;
-import com.vaadin.data.converter.StringToDoubleConverter;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.data.validator.DoubleRangeValidator;
-import com.vaadin.data.validator.IntegerRangeValidator;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.converter.StringToDoubleConverter;
+import com.vaadin.flow.data.converter.StringToIntegerConverter;
+import com.vaadin.flow.data.validator.DoubleRangeValidator;
+import com.vaadin.flow.data.validator.IntegerRangeValidator;
 
 import cz.gattserver.grass3.drinks.model.domain.WhiskeyType;
 import cz.gattserver.grass3.drinks.model.interfaces.WhiskeyTO;
+import cz.gattserver.grass3.ui.util.RatingStars;
 
 public abstract class WhiskeyWindow extends DrinkWindow<WhiskeyTO> {
 
@@ -50,8 +49,6 @@ public abstract class WhiskeyWindow extends DrinkWindow<WhiskeyTO> {
 
 		RatingStars ratingStars = new RatingStars();
 		binder.forField(ratingStars).asRequired().bind(WhiskeyTO::getRating, WhiskeyTO::setRating);
-		ratingStars.setAnimated(false);
-		ratingStars.setCaption("Hodnocení");
 
 		HorizontalLayout line1Layout = new HorizontalLayout(nameField, countryField, ratingStars);
 
@@ -76,8 +73,7 @@ public abstract class WhiskeyWindow extends DrinkWindow<WhiskeyTO> {
 		alcoholField.setWidth("80px");
 
 		ComboBox<WhiskeyType> whiskeyTypeField = new ComboBox<>("Typ Whiskey", Arrays.asList(WhiskeyType.values()));
-		whiskeyTypeField.setEmptySelectionAllowed(false);
-		whiskeyTypeField.setItemCaptionGenerator(WhiskeyType::getCaption);
+		whiskeyTypeField.setItemLabelGenerator(WhiskeyType::getCaption);
 		binder.forField(whiskeyTypeField).asRequired().bind(WhiskeyTO::getWhiskeyType, WhiskeyTO::setWhiskeyType);
 
 		HorizontalLayout line2Layout = new HorizontalLayout(yearsField, alcoholField, whiskeyTypeField);

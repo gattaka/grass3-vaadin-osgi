@@ -3,32 +3,28 @@ package cz.gattserver.grass3.drinks.ui;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.ValidationException;
-import com.vaadin.external.org.slf4j.Logger;
-import com.vaadin.external.org.slf4j.LoggerFactory;
-import com.vaadin.server.StreamResource;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Embedded;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.JavaScript;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.drinks.model.interfaces.DrinkTO;
 import cz.gattserver.grass3.drinks.util.ImageUtils;
-import cz.gattserver.grass3.ui.components.CreateButton;
-import cz.gattserver.grass3.ui.components.DeleteButton;
-import cz.gattserver.grass3.ui.components.ModifyButton;
+import cz.gattserver.grass3.ui.components.button.CreateButton;
+import cz.gattserver.grass3.ui.components.button.DeleteButton;
+import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.MultiUpload;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
@@ -38,9 +34,9 @@ public abstract class DrinkWindow<T extends DrinkTO> extends WebDialog {
 
 	private static final Logger logger = LoggerFactory.getLogger(DrinkWindow.class);
 
-	private MultiUpload upload;
 	private VerticalLayout imageLayout;
-	private Embedded image;
+	private Upload upload;
+	private Image image;
 
 	public DrinkWindow() {
 		this(null);
@@ -48,16 +44,6 @@ public abstract class DrinkWindow<T extends DrinkTO> extends WebDialog {
 
 	public DrinkWindow(final T originalTO) {
 		super(originalTO == null ? "Založit" : "Upravit" + " nápoj");
-
-		// Tahle šílenost je tu proto, aby se vycentrovalo okno s donahraným
-		// obrázkem. Obrázek se bohužel nahrává nějak později, takže centrování
-		// nebere v potaz jeho velikost a centruje okno špatně. Tím, že se
-		// centrování zavolá později (až po nahrání obrázku, na který bohužel
-		// nemám listener, takže fix-time delay)
-		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.delayed_center", arguments -> {
-			DrinkWindow.this.setSizeUndefined();
-			DrinkWindow.this.center();
-		});
 
 		T formTO = createNewInstance();
 
@@ -68,30 +54,27 @@ public abstract class DrinkWindow<T extends DrinkTO> extends WebDialog {
 		addComponent(imageLayout);
 
 		// musí tady něco být nahrané, jinak to pak nejde měnit (WTF?!)
-		image = new Embedded(null, ImageIcon.BUBBLE_16_ICON.createResource());
+		image = new Image();
 		image.setVisible(false);
 
-		upload = new MultiUpload("Nahrát foto", false) {
-			private static final long serialVersionUID = 8620441233254076257L;
-
-			@Override
-			public void fileUploadFinished(InputStream in, String fileName, String mime, long size,
-					int filesLeftInQueue) {
-				try {
-					// vytvoř miniaturu
-					ByteArrayOutputStream bos = new ByteArrayOutputStream();
-					ImageUtils.resizeImageFile(fileName, in, bos, 400, 400);
-					formTO.setImage(bos.toByteArray());
-					placeImage(formTO);
-				} catch (IOException e) {
-					String err = "Nezdařilo se nahrát obrázek nápoje";
-					logger.error(err, e);
-					UIUtils.showError(err);
-				}
-			}
-		};
+		// https://vaadin.com/components/vaadin-upload/java-examples
+		MemoryBuffer buffer = new MemoryBuffer();
+		upload = new Upload(buffer);
 		upload.setMaxFileSize(2000000);
-		upload.setAcceptedMimeTypes(Arrays.asList("image/jpg", "image/jpeg", "image/png"));
+		upload.setAcceptedFileTypes("image/jpg", "image/jpeg", "image/png");
+		upload.addSucceededListener(e -> {
+			try {
+				// vytvoř miniaturu
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				ImageUtils.resizeImageFile(e.getFileName(), buffer.getInputStream(), bos, 400, 400);
+				formTO.setImage(bos.toByteArray());
+				placeImage(formTO);
+			} catch (IOException ex) {
+				String err = "Nezdařilo se nahrát obrázek nápoje";
+				logger.error(err, ex);
+				UIUtils.showError(err);
+			}
+		});
 
 		if (originalTO == null || originalTO.getImage() == null)
 			placeUpload();
@@ -104,12 +87,12 @@ public abstract class DrinkWindow<T extends DrinkTO> extends WebDialog {
 		btnsLayout.setSizeUndefined();
 
 		if (originalTO != null)
-			btnsLayout.addComponent(new ModifyButton(event -> save(originalTO, binder)));
+			btnsLayout.add(new ModifyButton(event -> save(originalTO, binder)));
 		else
-			btnsLayout.addComponent(new CreateButton(event -> save(originalTO, binder)));
+			btnsLayout.add(new CreateButton(event -> save(originalTO, binder)));
 
 		VerticalLayout fieldsLayout = createForm(binder);
-		fieldsLayout.addComponent(btnsLayout);
+		fieldsLayout.add(btnsLayout);
 		HorizontalLayout mainLayout = new HorizontalLayout(imageLayout, fieldsLayout);
 		addComponent(mainLayout);
 
@@ -125,39 +108,34 @@ public abstract class DrinkWindow<T extends DrinkTO> extends WebDialog {
 			onSave(writeTO);
 			close();
 		} catch (ValidationException ve) {
-			Notification.show(
-					"Chybná vstupní data\n\n   " + ve.getValidationErrors().iterator().next().getErrorMessage(),
-					Notification.Type.ERROR_MESSAGE);
+			new ErrorDialog("Chybná vstupní data\n\n   " + ve.getValidationErrors().iterator().next().getErrorMessage())
+					.open();
 		} catch (Exception ve) {
-			UI.getCurrent().addWindow(new ErrorDialog("Uložení se nezdařilo"));
+			new ErrorDialog("Uložení se nezdařilo").open();
 		}
 	}
 
 	private void placeImage(T to) {
 		// https://vaadin.com/forum/thread/260778
 		String name = to.getName() + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-		image.setSource(new StreamResource(() -> new ByteArrayInputStream(to.getImage()), name));
-		image.markAsDirty();
+		image.setSrc(new StreamResource(name, () -> new ByteArrayInputStream(to.getImage())));
 		image.setVisible(true);
-		imageLayout.removeAllComponents();
-		imageLayout.addComponent(image);
-		imageLayout.setComponentAlignment(image, Alignment.MIDDLE_CENTER);
+		imageLayout.removeAll();
+		imageLayout.add(image);
+		imageLayout.setHorizontalComponentAlignment(Alignment.CENTER, image);
 
 		DeleteButton deleteButton = new DeleteButton(e -> {
 			to.setImage(null);
 			placeUpload();
 		});
-		imageLayout.addComponent(deleteButton);
-		imageLayout.setComponentAlignment(deleteButton, Alignment.MIDDLE_CENTER);
-
-		// viz koment v konstruktoru
-		JavaScript.eval("setTimeout(function(){ cz.gattserver.grass3.delayed_center(); }, 10);");
+		imageLayout.add(deleteButton);
+		imageLayout.setHorizontalComponentAlignment(Alignment.CENTER, deleteButton);
 	}
 
 	private void placeUpload() {
-		imageLayout.removeAllComponents();
-		imageLayout.addComponent(upload);
-		imageLayout.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
+		imageLayout.removeAll();
+		imageLayout.add(upload);
+		imageLayout.setHorizontalComponentAlignment(Alignment.CENTER, upload);
 	}
 
 	protected abstract void onSave(T to);

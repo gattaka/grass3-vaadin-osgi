@@ -7,7 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.vaadin.data.provider.QuerySortOrder;
+import com.vaadin.flow.data.provider.QuerySortOrder;
 
 import cz.gattserver.grass3.drinks.facades.DrinksFacade;
 import cz.gattserver.grass3.drinks.model.dao.BeerInfoRepository;

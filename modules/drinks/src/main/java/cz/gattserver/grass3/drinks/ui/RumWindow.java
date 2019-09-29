@@ -4,20 +4,19 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Locale;
 
-import org.vaadin.teemu.ratingstars.RatingStars;
-
-import com.vaadin.data.Binder;
-import com.vaadin.data.converter.StringToDoubleConverter;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.data.validator.DoubleRangeValidator;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.converter.StringToDoubleConverter;
+import com.vaadin.flow.data.converter.StringToIntegerConverter;
+import com.vaadin.flow.data.validator.DoubleRangeValidator;
 
 import cz.gattserver.grass3.drinks.model.domain.RumType;
 import cz.gattserver.grass3.drinks.model.interfaces.RumTO;
+import cz.gattserver.grass3.ui.util.RatingStars;
 
 public abstract class RumWindow extends DrinkWindow<RumTO> {
 
@@ -50,8 +49,6 @@ public abstract class RumWindow extends DrinkWindow<RumTO> {
 
 		RatingStars ratingStars = new RatingStars();
 		binder.forField(ratingStars).asRequired().bind(RumTO::getRating, RumTO::setRating);
-		ratingStars.setAnimated(false);
-		ratingStars.setCaption("Hodnocení");
 
 		HorizontalLayout line1Layout = new HorizontalLayout(nameField, countryField, ratingStars);
 
@@ -75,8 +72,7 @@ public abstract class RumWindow extends DrinkWindow<RumTO> {
 		alcoholField.setWidth("80px");
 
 		ComboBox<RumType> rumTypeField = new ComboBox<>("Typ rumu", Arrays.asList(RumType.values()));
-		rumTypeField.setEmptySelectionAllowed(false);
-		rumTypeField.setItemCaptionGenerator(RumType::getCaption);
+		rumTypeField.setItemLabelGenerator(RumType::getCaption);
 		binder.forField(rumTypeField).asRequired().bind(RumTO::getRumType, RumTO::setRumType);
 
 		HorizontalLayout line2Layout = new HorizontalLayout(yearsField, alcoholField, rumTypeField);

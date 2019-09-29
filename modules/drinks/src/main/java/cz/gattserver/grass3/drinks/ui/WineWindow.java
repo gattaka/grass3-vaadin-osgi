@@ -4,21 +4,20 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Locale;
 
-import org.vaadin.teemu.ratingstars.RatingStars;
-
-import com.vaadin.data.Binder;
-import com.vaadin.data.converter.StringToDoubleConverter;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.data.validator.DoubleRangeValidator;
-import com.vaadin.data.validator.IntegerRangeValidator;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.converter.StringToDoubleConverter;
+import com.vaadin.flow.data.converter.StringToIntegerConverter;
+import com.vaadin.flow.data.validator.DoubleRangeValidator;
+import com.vaadin.flow.data.validator.IntegerRangeValidator;
 
 import cz.gattserver.grass3.drinks.model.domain.WineType;
 import cz.gattserver.grass3.drinks.model.interfaces.WineTO;
+import cz.gattserver.grass3.ui.util.RatingStars;
 
 public abstract class WineWindow extends DrinkWindow<WineTO> {
 
@@ -54,8 +53,6 @@ public abstract class WineWindow extends DrinkWindow<WineTO> {
 
 		RatingStars ratingStars = new RatingStars();
 		binder.forField(ratingStars).asRequired().bind(WineTO::getRating, WineTO::setRating);
-		ratingStars.setAnimated(false);
-		ratingStars.setCaption("Hodnocení");
 
 		HorizontalLayout line1Layout = new HorizontalLayout(wineryField, nameField, countryField, ratingStars);
 
@@ -79,8 +76,7 @@ public abstract class WineWindow extends DrinkWindow<WineTO> {
 		alcoholField.setWidth("80px");
 
 		ComboBox<WineType> wineTypeField = new ComboBox<>("Typ vína", Arrays.asList(WineType.values()));
-		wineTypeField.setEmptySelectionAllowed(false);
-		wineTypeField.setItemCaptionGenerator(WineType::getCaption);
+		wineTypeField.setItemLabelGenerator(WineType::getCaption);
 		binder.forField(wineTypeField).asRequired().bind(WineTO::getWineType, WineTO::setWineType);
 
 		HorizontalLayout line2Layout = new HorizontalLayout(yearsField, alcoholField, wineTypeField);

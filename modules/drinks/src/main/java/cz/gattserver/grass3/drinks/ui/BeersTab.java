@@ -4,40 +4,36 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Locale;
 
-import org.vaadin.teemu.ratingstars.RatingStars;
-
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.renderers.NumberRenderer;
-import com.vaadin.ui.renderers.TextRenderer;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.Column;
+import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
+import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.renderer.NumberRenderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 
 import cz.gattserver.grass3.drinks.model.domain.MaltType;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
-import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.ui.components.CreateGridButton;
-import cz.gattserver.grass3.ui.components.DeleteGridButton;
-import cz.gattserver.grass3.ui.components.ModifyGridButton;
-import cz.gattserver.web.common.ui.BoldSpan;
-import cz.gattserver.web.common.ui.H2Label;
+import cz.gattserver.grass3.ui.components.button.CreateGridButton;
+import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
+import cz.gattserver.grass3.ui.util.RatingStars;
+import cz.gattserver.web.common.ui.Breakline;
+import cz.gattserver.web.common.ui.HtmlDiv;
+import cz.gattserver.web.common.ui.Strong;
 
 public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 
 	private static final long serialVersionUID = 594189301140808163L;
-
-	public BeersTab(GrassRequest request) {
-		super(request);
-	}
 
 	@Override
 	protected BeerOverviewTO createNewOverviewTO() {
@@ -50,34 +46,35 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 		final Grid<BeerOverviewTO> grid = new Grid<>();
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
-		Column<BeerOverviewTO, String> breweryColumn = grid.addColumn(BeerOverviewTO::getBrewery).setCaption("Pivovar")
+		Column<BeerOverviewTO> breweryColumn = grid.addColumn(BeerOverviewTO::getBrewery).setHeader("Pivovar")
 				.setSortProperty("brewery");
 
 		addNameColumn(grid, filteringHeader);
 
-		Column<BeerOverviewTO, String> categoryColumn = grid.addColumn(BeerOverviewTO::getCategory)
-				.setCaption("Kategorie").setWidth(80).setSortProperty("category");
-		Column<BeerOverviewTO, Double> degreesColumn = grid.addColumn(BeerOverviewTO::getDegrees)
-				.setRenderer(new NumberRenderer(NumberFormat.getNumberInstance(new Locale("cs", "CZ"))))
-				.setCaption("Stupně (°)").setWidth(80).setSortProperty("degrees");
+		Column<BeerOverviewTO> categoryColumn = grid.addColumn(BeerOverviewTO::getCategory).setHeader("Kategorie")
+				.setWidth("80px").setFlexGrow(0).setSortProperty("category");
+		Column<BeerOverviewTO> degreesColumn = grid
+				.addColumn(new NumberRenderer<BeerOverviewTO>(BeerOverviewTO::getDegrees,
+						NumberFormat.getNumberInstance(new Locale("cs", "CZ"))))
+				.setHeader("Stupně (°)").setWidth("80px").setFlexGrow(0).setSortProperty("degrees");
 
 		addAlcoholColumn(grid, filteringHeader);
 
-		Column<BeerOverviewTO, Integer> ibuColumn = grid.addColumn(BeerOverviewTO::getIbu).setCaption("Hořkost (IBU)")
-				.setWidth(90).setSortProperty("ibu");
-		Column<BeerOverviewTO, MaltType> maltTypeColumn = grid.addColumn(BeerOverviewTO::getMaltType)
-				.setRenderer(MaltType::getCaption, new TextRenderer()).setCaption("Typ sladu").setWidth(100)
-				.setSortProperty("maltType");
+		Column<BeerOverviewTO> ibuColumn = grid.addColumn(BeerOverviewTO::getIbu).setHeader("Hořkost (IBU)")
+				.setWidth("90px").setFlexGrow(0).setSortProperty("ibu");
+		Column<BeerOverviewTO> maltTypeColumn = grid
+				.addColumn(new TextRenderer<BeerOverviewTO>(to -> to.getMaltType().getCaption())).setHeader("Typ sladu")
+				.setWidth("100px").setFlexGrow(0).setSortProperty("maltType");
 
 		addRatingStarsColumn(grid);
 
 		grid.setWidth("100%");
 		grid.setHeight("400px");
-		addComponent(grid);
+		add(grid);
 
 		// Pivovar
 		TextField breweryColumnField = new TextField();
-		breweryColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		breweryColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		breweryColumnField.setWidth("100%");
 		breweryColumnField.addValueChangeListener(e -> {
 			filterTO.setBrewery(e.getValue());
@@ -87,7 +84,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 
 		// Kategorie
 		TextField categoryColumnField = new TextField();
-		categoryColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		categoryColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		categoryColumnField.setWidth("100%");
 		categoryColumnField.addValueChangeListener(e -> {
 			filterTO.setCategory(e.getValue());
@@ -97,7 +94,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 
 		// Stupně
 		TextField degreesColumnField = new TextField();
-		degreesColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		degreesColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		degreesColumnField.setWidth("100%");
 		degreesColumnField.addValueChangeListener(e -> {
 			filterTO.setDegrees(Double.parseDouble(e.getValue()));
@@ -107,7 +104,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 
 		// Hořkost
 		TextField ibuColumnField = new TextField();
-		ibuColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		ibuColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		ibuColumnField.setWidth("100%");
 		ibuColumnField.addValueChangeListener(e -> {
 			filterTO.setIbu(Integer.parseInt(e.getValue()));
@@ -118,12 +115,11 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 		// Typ sladu
 		ComboBox<MaltType> typeColumnField = new ComboBox<>(null, Arrays.asList(MaltType.values()));
 		typeColumnField.setWidth("100%");
-		typeColumnField.addStyleName(ValoTheme.COMBOBOX_TINY);
 		typeColumnField.addValueChangeListener(e -> {
 			filterTO.setMaltType(e.getValue());
 			populate();
 		});
-		typeColumnField.setItemCaptionGenerator(MaltType::getCaption);
+		typeColumnField.setItemLabelGenerator(MaltType::getCaption);
 		filteringHeader.getCell(maltTypeColumn).setComponent(typeColumnField);
 
 		return grid;
@@ -131,14 +127,15 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 
 	@Override
 	protected void populate() {
-		grid.setDataProvider(
-				(sortOrder, offset, limit) -> getDrinksFacade().getBeers(filterTO, offset, limit, sortOrder).stream(),
-				() -> getDrinksFacade().countBeers(filterTO));
+		FetchCallback<BeerOverviewTO, BeerOverviewTO> fetchCallback = q -> getDrinksFacade()
+				.getBeers(filterTO, q.getOffset(), q.getLimit(), q.getSortOrders()).stream();
+		CountCallback<BeerOverviewTO, BeerOverviewTO> countCallback = q -> getDrinksFacade().countBeers(filterTO);
+		grid.setDataProvider(DataProvider.fromFilteringCallbacks(fetchCallback, countCallback));
 	}
 
 	@Override
 	protected void populateBtnLayout(HorizontalLayout btnLayout) {
-		btnLayout.addComponent(new CreateGridButton("Přidat", event -> UI.getCurrent().addWindow(new BeerWindow() {
+		btnLayout.add(new CreateGridButton("Přidat", event -> new BeerWindow() {
 			private static final long serialVersionUID = -4863260002363608014L;
 
 			@Override
@@ -147,21 +144,20 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 				showDetail(to);
 				populate();
 			}
-		})));
+		}.open()));
 
-		btnLayout.addComponent(new ModifyGridButton<BeerOverviewTO>("Upravit",
-				event -> UI.getCurrent().addWindow(new BeerWindow(choosenDrink) {
-					private static final long serialVersionUID = 5264621441522056786L;
+		btnLayout.add(new ModifyGridButton<BeerOverviewTO>("Upravit", event -> new BeerWindow(choosenDrink) {
+			private static final long serialVersionUID = 5264621441522056786L;
 
-					@Override
-					protected void onSave(BeerTO to) {
-						to = getDrinksFacade().saveBeer(to);
-						showDetail(to);
-						populate();
-					}
-				}), grid));
+			@Override
+			protected void onSave(BeerTO to) {
+				to = getDrinksFacade().saveBeer(to);
+				showDetail(to);
+				populate();
+			}
+		}.open(), grid));
 
-		btnLayout.addComponent(new DeleteGridButton<BeerOverviewTO>("Smazat", items -> {
+		btnLayout.add(new DeleteGridButton<BeerOverviewTO>("Smazat", items -> {
 			for (BeerOverviewTO s : items)
 				getDrinksFacade().deleteDrink(s.getId());
 			populate();
@@ -171,39 +167,45 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 
 	@Override
 	protected void populateDetail(VerticalLayout dataLayout) {
-		H2Label nameLabel = new H2Label(
+		H2 nameLabel = new H2(
 				choosenDrink.getBrewery() + " " + choosenDrink.getName() + " (" + choosenDrink.getCountry() + ")");
-		dataLayout.addComponent(nameLabel);
+		dataLayout.add(nameLabel);
 
 		RatingStars rs = new RatingStars();
 		rs.setValue(choosenDrink.getRating());
 		rs.setReadOnly(true);
-		rs.setAnimated(false);
-		dataLayout.addComponent(rs);
+		dataLayout.add(rs);
 
-		GridLayout infoLayout = new GridLayout(2, 7);
-		dataLayout.addComponent(infoLayout);
+		Div infoLayout = new Div();
+		infoLayout.addClassName("top-margin");
+		dataLayout.add(infoLayout);
 
-		BoldSpan b = new BoldSpan("Kategorie");
-		infoLayout.addComponent(b);
-		b.setWidth("120px");
-		infoLayout.addComponent(new Label(choosenDrink.getCategory()));
-		infoLayout.addComponent(new BoldSpan("Stupně (°)"));
-		infoLayout.addComponent(new Label(String.valueOf(choosenDrink.getDegrees())));
-		infoLayout.addComponent(new BoldSpan("Alkohol (%)"));
-		infoLayout.addComponent(new Label(String.valueOf(choosenDrink.getAlcohol())));
-		infoLayout.addComponent(new BoldSpan("Hořkost (IBU)"));
-		infoLayout.addComponent(new Label(choosenDrink.getIbu() == null ? "" : String.valueOf(choosenDrink.getIbu())));
-		infoLayout.addComponent(new BoldSpan("Typ sladu"));
-		infoLayout.addComponent(new Label(choosenDrink.getMaltType().getCaption()));
-		infoLayout.addComponent(new BoldSpan("Slady"));
-		infoLayout.addComponent(new Label(choosenDrink.getMalts()));
-		infoLayout.addComponent(new BoldSpan("Chmely"));
-		infoLayout.addComponent(new Label(choosenDrink.getHops()));
+		infoLayout.add(new Strong("Kategorie"));
+		infoLayout.add(new Breakline());
+		infoLayout.add(choosenDrink.getCategory());
+		infoLayout.add(new Breakline());
+		infoLayout.add(new Breakline());
+		infoLayout.add(new Strong("Stupně (°)"));
+		infoLayout.add(new Breakline());
+		infoLayout.add(String.valueOf(choosenDrink.getDegrees()));
+		infoLayout.add(new Breakline());
+		infoLayout.add(new Breakline());
+		infoLayout.add(new Strong("Stupně (°)"));
+		infoLayout.add(String.valueOf(choosenDrink.getDegrees()));
+		infoLayout.add(new Strong("Alkohol (%)"));
+		infoLayout.add(String.valueOf(choosenDrink.getAlcohol()));
+		infoLayout.add(new Strong("Hořkost (IBU)"));
+		infoLayout.add(choosenDrink.getIbu() == null ? "" : String.valueOf(choosenDrink.getIbu()));
+		infoLayout.add(new Strong("Typ sladu"));
+		infoLayout.add(choosenDrink.getMaltType().getCaption());
+		infoLayout.add(new Strong("Slady"));
+		infoLayout.add(choosenDrink.getMalts());
+		infoLayout.add(new Strong("Chmely"));
+		infoLayout.add(choosenDrink.getHops());
 
-		Label descriptionLabel = new Label(choosenDrink.getDescription().replaceAll("\n", "<br/>"), ContentMode.HTML);
-		descriptionLabel.setSizeFull();
-		dataLayout.addComponent(descriptionLabel);
+		HtmlDiv description = new HtmlDiv(choosenDrink.getDescription().replaceAll("\n", "<br/>"));
+		description.setSizeFull();
+		dataLayout.add(description);
 	}
 
 	@Override

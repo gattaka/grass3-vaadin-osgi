@@ -2,7 +2,7 @@ package cz.gattserver.grass3.drinks.facades;
 
 import java.util.List;
 
-import com.vaadin.data.provider.QuerySortOrder;
+import com.vaadin.flow.data.provider.QuerySortOrder;
 
 import cz.gattserver.grass3.drinks.model.interfaces.BeerOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;

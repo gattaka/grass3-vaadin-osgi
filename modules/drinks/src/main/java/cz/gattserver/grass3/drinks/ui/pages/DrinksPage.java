@@ -1,73 +1,144 @@
 package cz.gattserver.grass3.drinks.ui.pages;
 
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.WildcardParameter;
 
 import cz.gattserver.grass3.drinks.ui.BeersTab;
 import cz.gattserver.grass3.drinks.ui.RumTab;
 import cz.gattserver.grass3.drinks.ui.WhiskeyTab;
 import cz.gattserver.grass3.drinks.ui.WineTab;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 
-public class DrinksPage extends OneColumnPage {
+@Route("drinks")
+public class DrinksPage extends OneColumnPage implements HasUrlParameter<String> {
 
-	public DrinksPage(GrassRequest request) {
-		super(request);
+	private static final long serialVersionUID = 2066137985312535506L;
+
+	private Tabs tabSheet;
+
+	private Tab beerTab;
+	private Tab rumTab;
+	private Tab whiskeyTab;
+	private Tab wineTab;
+
+	private Div pageLayout;
+
+	private String tabParam;
+	private String itemParam;
+
+	@Override
+	public void setParameter(BeforeEvent event, @WildcardParameter String parameter) {
+		String[] chunks = parameter.split("/");
+		if (chunks.length > 0)
+			this.tabParam = chunks[0];
+		if (chunks.length > 1)
+			this.itemParam = chunks[1];
+
+		init();
+	}
+
+	private BeersTab switchBeersTab() {
+		pageLayout.removeAll();
+		BeersTab tab = new BeersTab();
+		pageLayout.add(tab);
+		tabSheet.setSelectedTab(beerTab);
+		return tab;
+	}
+
+	private RumTab switchRumTab() {
+		pageLayout.removeAll();
+		RumTab tab = new RumTab();
+		pageLayout.add(tab);
+		tabSheet.setSelectedTab(rumTab);
+		return tab;
+	}
+
+	private WhiskeyTab switchWhiskeyTab() {
+		pageLayout.removeAll();
+		WhiskeyTab tab = new WhiskeyTab();
+		pageLayout.add(tab);
+		tabSheet.setSelectedTab(whiskeyTab);
+		return tab;
+	}
+
+	private WineTab switchWineTab() {
+		pageLayout.removeAll();
+		WineTab tab = new WineTab();
+		pageLayout.add(tab);
+		tabSheet.setSelectedTab(wineTab);
+		return tab;
 	}
 
 	@Override
-	protected Component createColumnContent() {
-		VerticalLayout layout = new VerticalLayout();
-		layout.setSpacing(true);
-		layout.setPadding(true);
+	protected void createColumnContent(Div layout) {
+		tabSheet = new Tabs();
+		layout.add(tabSheet);
 
-		VerticalLayout wrapperLayout = new VerticalLayout();
-		layout.setPadding(new MarginInfo(false, true, true, true));
-		wrapperLayout.addComponent(layout);
+		beerTab = new Tab("Piva");
+		rumTab = new Tab("Rumy");
+		whiskeyTab = new Tab("Whiskey");
+		wineTab = new Tab("Vína");
 
-		TabSheet tabSheet = new TabSheet();
-		layout.addComponent(tabSheet);
+		pageLayout = new Div();
+		layout.add(pageLayout);
 
-		BeersTab bt = new BeersTab(getRequest());
-		tabSheet.addTab(bt, "Piva");
-		RumTab rt = new RumTab(getRequest());
-		tabSheet.addTab(rt, "Rumy");
-		WhiskeyTab wht = new WhiskeyTab(getRequest());
-		tabSheet.addTab(wht, "Whiskey");
-		WineTab wit = new WineTab(getRequest());
-		tabSheet.addTab(wit, "Vína");
-
-		String token = getRequest().getAnalyzer().getNextPathToken();
-		if (token != null) {
-			URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
-					.parseURLIdentifier(getRequest().getAnalyzer().getNextPathToken());
-			switch (token.toLowerCase()) {
-			case "beer":
-				tabSheet.setSelectedTab(bt);
-				bt.selectDrink(identifier.getId());
-				break;
-			case "rum":
-				tabSheet.setSelectedTab(rt);
-				rt.selectDrink(identifier.getId());
-				break;
-			case "whiskey":
-				tabSheet.setSelectedTab(wht);
-				wht.selectDrink(identifier.getId());
-				break;
-			case "wine":
-				tabSheet.setSelectedTab(wit);
-				wit.selectDrink(identifier.getId());
-				break;
+		tabSheet.addSelectedChangeListener(e -> {
+			pageLayout.removeAll();
+			switch (tabSheet.getSelectedIndex()) {
 			default:
+			case 0:
+				switchBeersTab();
+				break;
+			case 1:
+				switchRumTab();
+				break;
+			case 2:
+				switchWhiskeyTab();
+				break;
+			case 3:
+				switchWineTab();
 				break;
 			}
+		});
 
+		if (tabParam != null) {
+			Long itemId = null;
+			if (itemParam != null) {
+				URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(itemParam);
+				itemId = identifier.getId();
+			}
+			switch (tabParam.toLowerCase()) {
+			default:
+			case "beer":
+				BeersTab beersTab = switchBeersTab();
+				if (itemId != null)
+					beersTab.selectDrink(itemId);
+				break;
+			case "rum":
+				RumTab rumTab = switchRumTab();
+				if (itemId != null)
+					rumTab.selectDrink(itemId);
+				break;
+			case "whiskey":
+				WhiskeyTab whiskeyTab = switchWhiskeyTab();
+				if (itemId != null)
+					whiskeyTab.selectDrink(itemId);
+				break;
+			case "wine":
+				WineTab wineTab = switchWineTab();
+				if (itemId != null)
+					wineTab.selectDrink(itemId);
+				break;
+			}
+		} else {
+			switchBeersTab();
 		}
-
-		return wrapperLayout;
 	}
 }

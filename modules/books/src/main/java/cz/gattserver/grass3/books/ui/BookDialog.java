@@ -58,7 +58,6 @@ public abstract class BookDialog extends WebDialog {
 		imageLayout = new VerticalLayout();
 		addComponent(imageLayout);
 
-		// musí tady něco být nahrané, jinak to pak nejde měnit (WTF?!)
 		image = new Image();
 		image.setVisible(false);
 

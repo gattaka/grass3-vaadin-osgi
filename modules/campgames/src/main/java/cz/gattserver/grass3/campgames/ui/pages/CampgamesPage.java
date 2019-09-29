@@ -14,13 +14,13 @@ import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 public class CampgamesPage extends OneColumnPage {
 
 	private static final long serialVersionUID = -5354424168298678698L;
-	
+
 	private Tabs tabSheet;
 	private Tab overviewTab;
 	private Tab keywordsTab;
 
-	private Div pageLayout ;
-	
+	private Div pageLayout;
+
 	public CampgamesPage() {
 		init();
 	}
@@ -61,7 +61,7 @@ public class CampgamesPage extends OneColumnPage {
 		pageLayout.add(new CampgamesTab());
 		tabSheet.setSelectedTab(overviewTab);
 	}
-	
+
 	private void switchCampgameKeywordsTab() {
 		pageLayout.removeAll();
 		pageLayout.add(new CampgameKeywordsTab());

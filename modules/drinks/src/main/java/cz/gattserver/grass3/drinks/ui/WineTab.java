@@ -2,39 +2,34 @@ package cz.gattserver.grass3.drinks.ui;
 
 import java.util.Arrays;
 
-import org.vaadin.teemu.ratingstars.RatingStars;
-
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.renderers.TextRenderer;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.Column;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
+import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.renderer.TextRenderer;
 
 import cz.gattserver.grass3.drinks.model.domain.WineType;
 import cz.gattserver.grass3.drinks.model.interfaces.WineOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.WineTO;
-import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.ui.components.CreateGridButton;
-import cz.gattserver.grass3.ui.components.DeleteGridButton;
-import cz.gattserver.grass3.ui.components.ModifyGridButton;
-import cz.gattserver.web.common.ui.BoldSpan;
-import cz.gattserver.web.common.ui.H2Label;
+import cz.gattserver.grass3.ui.components.button.CreateGridButton;
+import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
+import cz.gattserver.grass3.ui.util.RatingStars;
+import cz.gattserver.web.common.ui.HtmlDiv;
+import cz.gattserver.web.common.ui.Strong;
 
 public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 
 	private static final long serialVersionUID = -8540314953045422691L;
-
-	public WineTab(GrassRequest request) {
-		super(request);
-	}
 
 	@Override
 	protected WineOverviewTO createNewOverviewTO() {
@@ -47,18 +42,18 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 		final Grid<WineOverviewTO> grid = new Grid<>();
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
-		Column<WineOverviewTO, String> wineryColumn = grid.addColumn(WineOverviewTO::getWinery).setCaption("Vinařství")
+		Column<WineOverviewTO> wineryColumn = grid.addColumn(WineOverviewTO::getWinery).setHeader("Vinařství")
 				.setSortProperty("winery");
 
 		addNameColumn(grid, filteringHeader);
 		addCountryColumn(grid, filteringHeader);
 		addAlcoholColumn(grid, filteringHeader);
 
-		Column<WineOverviewTO, Integer> yearsColumn = grid.addColumn(WineOverviewTO::getYear).setCaption("Rok")
-				.setWidth(90).setSortProperty("year");
+		Column<WineOverviewTO> yearsColumn = grid.addColumn(WineOverviewTO::getYear).setHeader("Rok").setWidth("90px")
+				.setFlexGrow(0).setSortProperty("year");
 
 		TextField yearsColumnField = new TextField();
-		yearsColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		yearsColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		yearsColumnField.setWidth("100%");
 		yearsColumnField.addValueChangeListener(e -> {
 			filterTO.setYear(Integer.parseInt(e.getValue()));
@@ -66,20 +61,19 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 		});
 		filteringHeader.getCell(yearsColumn).setComponent(yearsColumnField);
 
-		Column<WineOverviewTO, WineType> wineTypeColumn = grid.addColumn(WineOverviewTO::getWineType)
-				.setRenderer(WineType::getCaption, new TextRenderer()).setCaption("Typ vína").setWidth(100)
-				.setSortProperty("wineType");
+		Column<WineOverviewTO> wineTypeColumn = grid.addColumn(new TextRenderer<>(to -> to.getWineType().getCaption()))
+				.setHeader("Typ vína").setWidth("100px").setFlexGrow(0).setSortProperty("wineType");
 
 		addRatingStarsColumn(grid);
 
 		grid.setWidth("100%");
 		grid.setHeight("400px");
 
-		addComponent(grid);
+		add(grid);
 
 		// Vinařství
 		TextField wineryColumnField = new TextField();
-		wineryColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		wineryColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		wineryColumnField.setWidth("100%");
 		wineryColumnField.addValueChangeListener(e -> {
 			filterTO.setWinery(e.getValue());
@@ -90,26 +84,26 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 		// Typ vína
 		ComboBox<WineType> typeColumnField = new ComboBox<>(null, Arrays.asList(WineType.values()));
 		typeColumnField.setWidth("100%");
-		typeColumnField.addStyleName(ValoTheme.COMBOBOX_TINY);
 		typeColumnField.addValueChangeListener(e -> {
 			filterTO.setWineType(e.getValue());
 			populate();
 		});
-		typeColumnField.setItemCaptionGenerator(WineType::getCaption);
+		typeColumnField.setItemLabelGenerator(WineType::getCaption);
 		filteringHeader.getCell(wineTypeColumn).setComponent(typeColumnField);
 		return grid;
 	}
 
 	@Override
 	protected void populate() {
-		grid.setDataProvider(
-				(sortOrder, offset, limit) -> getDrinksFacade().getWines(filterTO, offset, limit, sortOrder).stream(),
-				() -> getDrinksFacade().countWines(filterTO));
+		FetchCallback<WineOverviewTO, WineOverviewTO> fetchCallback = q -> getDrinksFacade()
+				.getWines(filterTO, q.getOffset(), q.getLimit(), q.getSortOrders()).stream();
+		CountCallback<WineOverviewTO, WineOverviewTO> countCallback = q -> getDrinksFacade().countWines(filterTO);
+		grid.setDataProvider(DataProvider.fromFilteringCallbacks(fetchCallback, countCallback));
 	}
 
 	@Override
 	protected void populateBtnLayout(HorizontalLayout btnLayout) {
-		btnLayout.addComponent(new CreateGridButton("Přidat", event -> UI.getCurrent().addWindow(new WineWindow() {
+		btnLayout.add(new CreateGridButton("Přidat", event -> new WineWindow() {
 			private static final long serialVersionUID = -4863260002363608014L;
 
 			@Override
@@ -118,21 +112,20 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 				showDetail(to);
 				populate();
 			}
-		})));
+		}.open()));
 
-		btnLayout.addComponent(new ModifyGridButton<WineOverviewTO>("Upravit",
-				event -> UI.getCurrent().addWindow(new WineWindow(choosenDrink) {
-					private static final long serialVersionUID = 5264621441522056786L;
+		btnLayout.add(new ModifyGridButton<WineOverviewTO>("Upravit", event -> new WineWindow(choosenDrink) {
+			private static final long serialVersionUID = 5264621441522056786L;
 
-					@Override
-					protected void onSave(WineTO to) {
-						to = getDrinksFacade().saveWine(to);
-						showDetail(to);
-						populate();
-					}
-				}), grid));
+			@Override
+			protected void onSave(WineTO to) {
+				to = getDrinksFacade().saveWine(to);
+				showDetail(to);
+				populate();
+			}
+		}.open(), grid));
 
-		btnLayout.addComponent(new DeleteGridButton<WineOverviewTO>("Smazat", items -> {
+		btnLayout.add(new DeleteGridButton<WineOverviewTO>("Smazat", items -> {
 			for (WineOverviewTO s : items)
 				getDrinksFacade().deleteDrink(s.getId());
 			populate();
@@ -142,33 +135,30 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 
 	@Override
 	protected void populateDetail(VerticalLayout dataLayout) {
-		H2Label nameLabel = new H2Label(
+		H2 nameLabel = new H2(
 				choosenDrink.getWinery() + " " + choosenDrink.getName() + " (" + choosenDrink.getCountry() + ")");
-		dataLayout.addComponent(nameLabel);
+		dataLayout.add(nameLabel);
 
 		RatingStars rs = new RatingStars();
 		rs.setValue(choosenDrink.getRating());
 		rs.setReadOnly(true);
-		rs.setAnimated(false);
-		dataLayout.addComponent(rs);
+		dataLayout.add(rs);
 
-		GridLayout infoLayout = new GridLayout(2, 7);
-		dataLayout.addComponent(infoLayout);
+		FormLayout infoLayout = new FormLayout();
+		dataLayout.add(infoLayout);
 
-		infoLayout.addComponent(new BoldSpan("Rok"));
-		infoLayout
-				.addComponent(new Label(choosenDrink.getYear() == null ? "" : String.valueOf(choosenDrink.getYear())));
-		BoldSpan b = new BoldSpan("Alkohol (%)");
-		infoLayout.addComponent(b);
+		infoLayout.add(new Strong("Rok"));
+		infoLayout.add(choosenDrink.getYear() == null ? "" : String.valueOf(choosenDrink.getYear()));
+		Strong b = new Strong("Alkohol (%)");
+		infoLayout.add(b);
 		b.setWidth("120px");
-		infoLayout.addComponent(
-				new Label(choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol())));
-		infoLayout.addComponent(new BoldSpan("Typ vína"));
-		infoLayout.addComponent(new Label(choosenDrink.getWineType().getCaption()));
+		infoLayout.add(choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol()));
+		infoLayout.add(new Strong("Typ vína"));
+		infoLayout.add(choosenDrink.getWineType().getCaption());
 
-		Label descriptionLabel = new Label(choosenDrink.getDescription().replaceAll("\n", "<br/>"), ContentMode.HTML);
-		descriptionLabel.setSizeFull();
-		dataLayout.addComponent(descriptionLabel);
+		HtmlDiv description = new HtmlDiv(choosenDrink.getDescription().replaceAll("\n", "<br/>"));
+		description.setSizeFull();
+		dataLayout.add(description);
 	}
 
 	@Override

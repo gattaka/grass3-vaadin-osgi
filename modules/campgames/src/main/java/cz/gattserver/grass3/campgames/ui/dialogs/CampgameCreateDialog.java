@@ -74,22 +74,22 @@ public abstract class CampgameCreateDialog extends WebDialog {
 		winLayout.add(keywords, 2);
 
 		TextField originField = new TextField("Původ hry");
-		originField.setWidth("100px");
+		originField.setWidthFull();
 		binder.forField(originField).bind("origin");
 		winLayout.add(originField);
 
 		TextField playersField = new TextField("Počet hráčů");
-		playersField.setWidth("100px");
+		playersField.setWidthFull();
 		binder.forField(playersField).bind("players");
 		winLayout.add(playersField);
 
 		TextField playTimeField = new TextField("Délka hry");
-		playTimeField.setWidth("100px");
+		playTimeField.setWidthFull();
 		binder.forField(playTimeField).bind("playTime");
 		winLayout.add(playTimeField);
 
 		TextField preparationTimeField = new TextField("Délka přípravy");
-		preparationTimeField.setWidth("100px");
+		preparationTimeField.setWidthFull();
 		binder.forField(preparationTimeField).bind("preparationTime");
 		winLayout.add(preparationTimeField);
 

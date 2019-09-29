@@ -5,8 +5,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -19,15 +18,15 @@ import cz.gattserver.grass3.drinks.model.domain.WhiskeyType;
 import cz.gattserver.grass3.drinks.model.interfaces.WhiskeyTO;
 import cz.gattserver.grass3.ui.util.RatingStars;
 
-public abstract class WhiskeyWindow extends DrinkWindow<WhiskeyTO> {
+public abstract class WhiskeyDialog extends DrinkDialog<WhiskeyTO> {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 
-	public WhiskeyWindow(WhiskeyTO to) {
+	public WhiskeyDialog(WhiskeyTO to) {
 		super(to);
 	}
 
-	public WhiskeyWindow() {
+	public WhiskeyDialog() {
 		super();
 	}
 
@@ -40,24 +39,30 @@ public abstract class WhiskeyWindow extends DrinkWindow<WhiskeyTO> {
 	}
 
 	@Override
-	protected VerticalLayout createForm(Binder<WhiskeyTO> binder) {
+	protected FormLayout createForm(Binder<WhiskeyTO> binder) {
+		FormLayout layout = new FormLayout();
+		layout.setResponsiveSteps(new FormLayout.ResponsiveStep("100px", 3));
+
 		TextField nameField = new TextField("Název");
 		binder.forField(nameField).asRequired().bind(WhiskeyTO::getName, WhiskeyTO::setName);
+		layout.add(nameField);
+		nameField.addClassName("top-clean");
 
 		TextField countryField = new TextField("Země");
 		binder.forField(countryField).asRequired().bind(WhiskeyTO::getCountry, WhiskeyTO::setCountry);
+		layout.add(countryField);
+		countryField.addClassName("top-clean");
 
 		RatingStars ratingStars = new RatingStars();
 		binder.forField(ratingStars).asRequired().bind(WhiskeyTO::getRating, WhiskeyTO::setRating);
-
-		HorizontalLayout line1Layout = new HorizontalLayout(nameField, countryField, ratingStars);
+		layout.add(ratingStars);
 
 		TextField yearsField = new TextField("Stáří (roky)");
 		binder.forField(yearsField)
 				.withConverter(new StringToIntegerConverter(null, "Stáří (roky) musí být celé číslo"))
 				.asRequired(new IntegerRangeValidator("Stáří je mimo rozsah (1-100)", 1, 100))
 				.bind(WhiskeyTO::getYears, WhiskeyTO::setYears);
-		yearsField.setWidth("80px");
+		layout.add(yearsField);
 
 		TextField alcoholField = new TextField("Alkohol (%)");
 		binder.forField(alcoholField)
@@ -70,20 +75,21 @@ public abstract class WhiskeyWindow extends DrinkWindow<WhiskeyTO> {
 					}
 				}).asRequired(new DoubleRangeValidator("Obsah alkoholu je mimo rozsah (1-100)", 1d, 100d))
 				.bind(WhiskeyTO::getAlcohol, WhiskeyTO::setAlcohol);
-		alcoholField.setWidth("80px");
+		layout.add(alcoholField);
 
 		ComboBox<WhiskeyType> whiskeyTypeField = new ComboBox<>("Typ Whiskey", Arrays.asList(WhiskeyType.values()));
 		whiskeyTypeField.setItemLabelGenerator(WhiskeyType::getCaption);
 		binder.forField(whiskeyTypeField).asRequired().bind(WhiskeyTO::getWhiskeyType, WhiskeyTO::setWhiskeyType);
-
-		HorizontalLayout line2Layout = new HorizontalLayout(yearsField, alcoholField, whiskeyTypeField);
+		layout.add(whiskeyTypeField);
 
 		TextArea descriptionField = new TextArea("Popis");
 		binder.forField(descriptionField).asRequired().bind(WhiskeyTO::getDescription, WhiskeyTO::setDescription);
 		descriptionField.setWidth("600px");
-		descriptionField.setHeight("200px");
+		descriptionField.setHeight("300px");
+		layout.add(descriptionField);
+		layout.setColspan(descriptionField, 3);
 
-		return new VerticalLayout(line1Layout, line2Layout, descriptionField);
+		return layout;
 	}
 
 }

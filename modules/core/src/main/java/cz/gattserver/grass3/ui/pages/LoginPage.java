@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
@@ -50,17 +50,19 @@ public class LoginPage extends OneColumnPage {
 	protected void createColumnContent(Div layout) {
 		layout.add(new H2("Přihlášení"));
 
-		FormLayout formLayout = new FormLayout();
-		layout.add(formLayout);
+		VerticalLayout vl = new VerticalLayout();
+		vl.setSpacing(true);
+		vl.setPadding(false);
+		layout.add(vl);
 
 		TextField username = new TextField("Login");
-		formLayout.add(username);
+		vl.add(username);
 
 		PasswordField password = new PasswordField("Heslo");
-		formLayout.add(password);
+		vl.add(password);
 
 		Checkbox rememberMe = new Checkbox("Zapamatovat si přihlášení");
-		formLayout.add(rememberMe);
+		vl.add(rememberMe);
 
 		Button login = new Button("Přihlásit", evt -> {
 			String pword = password.getValue();
@@ -83,6 +85,6 @@ public class LoginPage extends OneColumnPage {
 			}
 		});
 		login.addClickShortcut(Key.ENTER);
-		formLayout.add(login);
+		vl.add(login);
 	}
 }

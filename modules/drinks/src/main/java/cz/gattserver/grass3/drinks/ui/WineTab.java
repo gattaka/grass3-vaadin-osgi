@@ -3,7 +3,6 @@ package cz.gattserver.grass3.drinks.ui;
 import java.util.Arrays;
 
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Div;
@@ -23,8 +22,8 @@ import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
+import cz.gattserver.grass3.ui.util.TableBuilder;
 import cz.gattserver.web.common.ui.HtmlDiv;
-import cz.gattserver.web.common.ui.Strong;
 
 public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 
@@ -97,7 +96,7 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 
 	@Override
 	protected void populateBtnLayout(ButtonLayout btnLayout) {
-		btnLayout.add(new CreateGridButton("Přidat", event -> new WineWindow() {
+		btnLayout.add(new CreateGridButton("Přidat", event -> new WineDialog() {
 			private static final long serialVersionUID = -4863260002363608014L;
 
 			@Override
@@ -108,7 +107,7 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 			}
 		}.open()));
 
-		btnLayout.add(new ModifyGridButton<WineOverviewTO>("Upravit", event -> new WineWindow(choosenDrink) {
+		btnLayout.add(new ModifyGridButton<WineOverviewTO>("Upravit", event -> new WineDialog(choosenDrink) {
 			private static final long serialVersionUID = 5264621441522056786L;
 
 			@Override
@@ -138,19 +137,19 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 		rs.setReadOnly(true);
 		dataLayout.add(rs);
 
-		FormLayout infoLayout = new FormLayout();
-		dataLayout.add(infoLayout);
+		TableBuilder tb = new TableBuilder();
+		tb.startRow().strongCell("Rok:")
+				.cell(choosenDrink.getYear() == null ? "" : String.valueOf(choosenDrink.getYear()));
+		tb.nextRow().strongCell("Alkohol (%):")
+				.cell(choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol()));
+		tb.nextRow().strongCell("Typ vína:").cell(choosenDrink.getWineType().getCaption());
 
-		infoLayout.add(new Strong("Rok"));
-		infoLayout.add(choosenDrink.getYear() == null ? "" : String.valueOf(choosenDrink.getYear()));
-		Strong b = new Strong("Alkohol (%)");
-		infoLayout.add(b);
-		b.setWidth("120px");
-		infoLayout.add(choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol()));
-		infoLayout.add(new Strong("Typ vína"));
-		infoLayout.add(choosenDrink.getWineType().getCaption());
+		HtmlDiv table = new HtmlDiv(tb.build());
+		table.addClassName("top-margin");
+		dataLayout.add(table);
 
 		HtmlDiv description = new HtmlDiv(choosenDrink.getDescription().replaceAll("\n", "<br/>"));
+		description.addClassName("top-margin");
 		description.setSizeFull();
 		dataLayout.add(description);
 	}

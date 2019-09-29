@@ -9,8 +9,10 @@ import java.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.Upload;
@@ -21,6 +23,7 @@ import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.drinks.model.interfaces.DrinkTO;
 import cz.gattserver.grass3.drinks.util.ImageUtils;
+import cz.gattserver.grass3.ui.components.button.CloseButton;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
@@ -28,29 +31,31 @@ import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class DrinkWindow<T extends DrinkTO> extends WebDialog {
+public abstract class DrinkDialog<T extends DrinkTO> extends WebDialog {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 
-	private static final Logger logger = LoggerFactory.getLogger(DrinkWindow.class);
+	private static final Logger logger = LoggerFactory.getLogger(DrinkDialog.class);
 
 	private VerticalLayout imageLayout;
 	private Upload upload;
 	private Image image;
 
-	public DrinkWindow() {
+	public DrinkDialog() {
 		this(null);
 	}
 
-	public DrinkWindow(final T originalTO) {
-		super(originalTO == null ? "Založit" : "Upravit" + " nápoj");
-
+	public DrinkDialog(final T originalTO) {
 		T formTO = createNewInstance();
 
 		Binder<T> binder = new Binder<>();
 		binder.setBean(formTO);
 
+		setWidth("800px");
+
 		imageLayout = new VerticalLayout();
+		imageLayout.setPadding(false);
+		imageLayout.setWidth(null);
 		addComponent(imageLayout);
 
 		// musí tady něco být nahrané, jinak to pak nejde měnit (WTF?!)
@@ -83,17 +88,29 @@ public abstract class DrinkWindow<T extends DrinkTO> extends WebDialog {
 			formTO.setImage(originalTO.getImage());
 		}
 
+		VerticalLayout rightPartLayout = new VerticalLayout();
+		rightPartLayout.setPadding(false);
+
+		FormLayout fieldsLayout = createForm(binder);
+		rightPartLayout.add(fieldsLayout);
+
 		HorizontalLayout btnsLayout = new HorizontalLayout();
-		btnsLayout.setSizeUndefined();
+		btnsLayout.setSpacing(false);
+		btnsLayout.setPadding(false);
+		btnsLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+		btnsLayout.setWidthFull();
+		rightPartLayout.add(btnsLayout);
 
 		if (originalTO != null)
 			btnsLayout.add(new ModifyButton(event -> save(originalTO, binder)));
 		else
 			btnsLayout.add(new CreateButton(event -> save(originalTO, binder)));
 
-		VerticalLayout fieldsLayout = createForm(binder);
-		fieldsLayout.add(btnsLayout);
-		HorizontalLayout mainLayout = new HorizontalLayout(imageLayout, fieldsLayout);
+		btnsLayout.add(new CloseButton(e -> close()));
+
+		HorizontalLayout mainLayout = new HorizontalLayout(imageLayout, rightPartLayout);
+		mainLayout.expand(rightPartLayout);
+		mainLayout.setPadding(false);
 		addComponent(mainLayout);
 
 		if (originalTO != null)
@@ -142,6 +159,6 @@ public abstract class DrinkWindow<T extends DrinkTO> extends WebDialog {
 
 	protected abstract T createNewInstance();
 
-	protected abstract VerticalLayout createForm(Binder<T> binder);
+	protected abstract FormLayout createForm(Binder<T> binder);
 
 }

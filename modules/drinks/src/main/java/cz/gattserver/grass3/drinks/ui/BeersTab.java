@@ -126,7 +126,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 
 	@Override
 	protected void populateBtnLayout(ButtonLayout btnLayout) {
-		btnLayout.add(new CreateGridButton("Přidat", event -> new BeerWindow() {
+		btnLayout.add(new CreateGridButton("Přidat", event -> new BeerDialog() {
 			private static final long serialVersionUID = -4863260002363608014L;
 
 			@Override
@@ -137,7 +137,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 			}
 		}.open()));
 
-		btnLayout.add(new ModifyGridButton<BeerOverviewTO>("Upravit", event -> new BeerWindow(choosenDrink) {
+		btnLayout.add(new ModifyGridButton<BeerOverviewTO>("Upravit", event -> new BeerDialog(choosenDrink) {
 			private static final long serialVersionUID = 5264621441522056786L;
 
 			@Override

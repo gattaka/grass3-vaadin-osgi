@@ -5,29 +5,27 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.converter.StringToDoubleConverter;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
-import com.vaadin.flow.data.validator.DoubleRangeValidator;
 import com.vaadin.flow.data.validator.IntegerRangeValidator;
 
 import cz.gattserver.grass3.drinks.model.domain.WineType;
 import cz.gattserver.grass3.drinks.model.interfaces.WineTO;
 import cz.gattserver.grass3.ui.util.RatingStars;
 
-public abstract class WineWindow extends DrinkWindow<WineTO> {
+public abstract class WineDialog extends DrinkDialog<WineTO> {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 
-	public WineWindow(WineTO to) {
+	public WineDialog(WineTO to) {
 		super(to);
 	}
 
-	public WineWindow() {
+	public WineDialog() {
 		super();
 	}
 
@@ -39,31 +37,41 @@ public abstract class WineWindow extends DrinkWindow<WineTO> {
 	}
 
 	@Override
-	protected VerticalLayout createForm(Binder<WineTO> binder) {
+	protected FormLayout createForm(Binder<WineTO> binder) {
+		FormLayout layout = new FormLayout();
+		layout.setResponsiveSteps(new FormLayout.ResponsiveStep("100px", 6));
 
 		TextField wineryField = new TextField("Vinařství");
 		binder.forField(wineryField).asRequired().bind(WineTO::getWinery, WineTO::setWinery);
-		wineryField.setWidth("80px");
+		layout.add(wineryField);
+		layout.setColspan(wineryField, 3);
+		wineryField.addClassName("top-clean");
 
 		TextField nameField = new TextField("Název");
 		binder.forField(nameField).asRequired().bind(WineTO::getName, WineTO::setName);
+		layout.add(nameField);
+		layout.setColspan(nameField, 3);
+		nameField.addClassName("top-clean");
 
 		TextField countryField = new TextField("Země");
 		binder.forField(countryField).asRequired().bind(WineTO::getCountry, WineTO::setCountry);
+		layout.add(countryField);
+		layout.setColspan(countryField, 4);
 
 		RatingStars ratingStars = new RatingStars();
 		binder.forField(ratingStars).asRequired().bind(WineTO::getRating, WineTO::setRating);
-
-		HorizontalLayout line1Layout = new HorizontalLayout(wineryField, nameField, countryField, ratingStars);
+		layout.add(ratingStars);
+		layout.setColspan(ratingStars, 2);
 
 		TextField yearsField = new TextField("Roky");
 		binder.forField(yearsField).withConverter(new StringToIntegerConverter(null, "Rok musí být celé číslo"))
 				.asRequired(new IntegerRangeValidator("Rok vína je mimo rozsah (1000-3000)", 1000, 3000))
 				.bind(WineTO::getYear, WineTO::setYear);
-		yearsField.setWidth("80px");
+		layout.add(yearsField);
+		layout.setColspan(yearsField, 2);
 
 		TextField alcoholField = new TextField("Alkohol (%)");
-		binder.forField(alcoholField)
+		binder.forField(alcoholField).withNullRepresentation("")
 				.withConverter(new StringToDoubleConverter(null, "Alkohol (%) musí být celé číslo") {
 					private static final long serialVersionUID = 4910268168530306948L;
 
@@ -71,22 +79,24 @@ public abstract class WineWindow extends DrinkWindow<WineTO> {
 					protected NumberFormat getFormat(Locale locale) {
 						return NumberFormat.getNumberInstance(new Locale("cs", "CZ"));
 					}
-				}).asRequired(new DoubleRangeValidator("Obsah alkoholu je mimo rozsah (1-100)", 1d, 100d))
-				.bind(WineTO::getAlcohol, WineTO::setAlcohol);
-		alcoholField.setWidth("80px");
+				}).bind(WineTO::getAlcohol, WineTO::setAlcohol);
+		layout.add(alcoholField);
+		layout.setColspan(alcoholField, 2);
 
 		ComboBox<WineType> wineTypeField = new ComboBox<>("Typ vína", Arrays.asList(WineType.values()));
 		wineTypeField.setItemLabelGenerator(WineType::getCaption);
 		binder.forField(wineTypeField).asRequired().bind(WineTO::getWineType, WineTO::setWineType);
-
-		HorizontalLayout line2Layout = new HorizontalLayout(yearsField, alcoholField, wineTypeField);
+		layout.add(wineTypeField);
+		layout.setColspan(wineTypeField, 2);
 
 		TextArea descriptionField = new TextArea("Popis");
 		binder.forField(descriptionField).asRequired().bind(WineTO::getDescription, WineTO::setDescription);
 		descriptionField.setWidth("600px");
 		descriptionField.setHeight("200px");
+		layout.add(descriptionField);
+		layout.setColspan(descriptionField, 6);
 
-		return new VerticalLayout(line1Layout, line2Layout, descriptionField);
+		return layout;
 	}
 
 }

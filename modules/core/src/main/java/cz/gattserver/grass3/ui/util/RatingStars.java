@@ -24,7 +24,7 @@ public class RatingStars extends Div implements SingleSelect<RatingStars, Double
 
 	private void showCurrentValue() {
 		for (int j = 0; j < icons.length; j++)
-			icons[j].changeIcon(j < value ? VaadinIcon.STAR : VaadinIcon.STAR_O);
+			icons[j].changeIcon(value != null && j < value ? VaadinIcon.STAR : VaadinIcon.STAR_O);
 	}
 
 	private void changeValue(Double newValue, boolean userOriginated) {
@@ -57,6 +57,7 @@ public class RatingStars extends Div implements SingleSelect<RatingStars, Double
 			icons[i] = icon;
 		}
 		setReadOnly(false);
+		value = 0d;
 	}
 
 	public boolean isReadOnly() {

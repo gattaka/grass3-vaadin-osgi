@@ -83,7 +83,7 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 
 	@Override
 	protected void populateBtnLayout(ButtonLayout btnLayout) {
-		btnLayout.add(new CreateGridButton("Přidat", event -> new RumWindow() {
+		btnLayout.add(new CreateGridButton("Přidat", event -> new RumDialog() {
 			private static final long serialVersionUID = -4863260002363608014L;
 
 			@Override
@@ -94,7 +94,7 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 			}
 		}.open()));
 
-		btnLayout.add(new ModifyGridButton<RumOverviewTO>("Upravit", event -> new RumWindow(choosenDrink) {
+		btnLayout.add(new ModifyGridButton<RumOverviewTO>("Upravit", event -> new RumDialog(choosenDrink) {
 			private static final long serialVersionUID = 5264621441522056786L;
 
 			@Override

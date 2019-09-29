@@ -5,8 +5,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -17,15 +16,15 @@ import cz.gattserver.grass3.drinks.model.domain.MaltType;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
 import cz.gattserver.grass3.ui.util.RatingStars;
 
-public abstract class BeerWindow extends DrinkWindow<BeerTO> {
+public abstract class BeerDialog extends DrinkDialog<BeerTO> {
 
 	private static final long serialVersionUID = -3221345832430984490L;
 
-	public BeerWindow(BeerTO to) {
+	public BeerDialog(BeerTO to) {
 		super(to);
 	}
 
-	public BeerWindow() {
+	public BeerDialog() {
 		super();
 	}
 
@@ -38,23 +37,43 @@ public abstract class BeerWindow extends DrinkWindow<BeerTO> {
 	}
 
 	@Override
-	protected VerticalLayout createForm(Binder<BeerTO> binder) {
+	protected FormLayout createForm(Binder<BeerTO> binder) {
+		FormLayout layout = new FormLayout();
+		layout.setResponsiveSteps(new FormLayout.ResponsiveStep("100px", 6));
+
 		TextField breweryField = new TextField("Pivovar");
 		binder.forField(breweryField).asRequired().bind(BeerTO::getBrewery, BeerTO::setBrewery);
+		layout.add(breweryField);
+		layout.setColspan(breweryField, 2);
+		breweryField.addClassName("top-clean");
 
 		TextField nameField = new TextField("Název");
 		binder.forField(nameField).asRequired().bind(BeerTO::getName, BeerTO::setName);
+		layout.add(nameField);
+		layout.setColspan(nameField, 2);
+		nameField.addClassName("top-clean");
 
 		TextField countryField = new TextField("Země");
 		binder.forField(countryField).asRequired().bind(BeerTO::getCountry, BeerTO::setCountry);
-
-		RatingStars ratingStars = new RatingStars();
-		binder.forField(ratingStars).asRequired().bind(BeerTO::getRating, BeerTO::setRating);
-
-		HorizontalLayout line1Layout = new HorizontalLayout(breweryField, nameField, countryField, ratingStars);
+		layout.add(countryField);
+		layout.setColspan(countryField, 2);
+		countryField.addClassName("top-clean");
 
 		TextField categoryField = new TextField("Kategorie (APA, IPA, ...)");
 		binder.forField(categoryField).asRequired().bind(BeerTO::getCategory, BeerTO::setCategory);
+		layout.add(categoryField);
+		layout.setColspan(categoryField, 2);
+
+		ComboBox<MaltType> maltTypeField = new ComboBox<>("Typ sladu", Arrays.asList(MaltType.values()));
+		maltTypeField.setItemLabelGenerator(MaltType::getCaption);
+		binder.forField(maltTypeField).asRequired().bind(BeerTO::getMaltType, BeerTO::setMaltType);
+		layout.add(maltTypeField);
+		layout.setColspan(maltTypeField, 2);
+
+		RatingStars ratingStars = new RatingStars();
+		binder.forField(ratingStars).asRequired().bind(BeerTO::getRating, BeerTO::setRating);
+		layout.add(ratingStars);
+		layout.setColspan(ratingStars, 2);
 
 		TextField degreeField = new TextField("Stupně (°)");
 		binder.forField(degreeField).withNullRepresentation("")
@@ -67,6 +86,8 @@ public abstract class BeerWindow extends DrinkWindow<BeerTO> {
 					}
 				}).bind(BeerTO::getDegrees, BeerTO::setDegrees);
 		degreeField.setWidth("80px");
+		layout.add(degreeField);
+		layout.setColspan(degreeField, 2);
 
 		TextField alcoholField = new TextField("Alkohol (%)");
 		binder.forField(alcoholField).withNullRepresentation("")
@@ -79,36 +100,37 @@ public abstract class BeerWindow extends DrinkWindow<BeerTO> {
 					}
 				}).bind(BeerTO::getAlcohol, BeerTO::setAlcohol);
 		alcoholField.setWidth("80px");
+		layout.add(alcoholField);
+		layout.setColspan(alcoholField, 2);
 
 		TextField ibuField = new TextField("Hořkost (IBU)");
 		binder.forField(ibuField).withNullRepresentation("")
 				.withConverter(new StringToIntegerConverter(null, "Hořkost (IBU) musí být celé číslo"))
 				.bind(BeerTO::getIbu, BeerTO::setIbu);
 		ibuField.setWidth("80px");
-
-		ComboBox<MaltType> maltTypeField = new ComboBox<>("Typ sladu", Arrays.asList(MaltType.values()));
-		maltTypeField.setItemLabelGenerator(MaltType::getCaption);
-		binder.forField(maltTypeField).asRequired().bind(BeerTO::getMaltType, BeerTO::setMaltType);
-
-		HorizontalLayout line2Layout = new HorizontalLayout(categoryField, degreeField, alcoholField, ibuField,
-				maltTypeField);
+		layout.add(ibuField);
+		layout.setColspan(ibuField, 2);
 
 		TextField maltsField = new TextField("Slady");
 		binder.forField(maltsField).bind(BeerTO::getMalts, BeerTO::setMalts);
 		maltsField.setWidth("290px");
+		layout.add(maltsField);
+		layout.setColspan(maltsField, 3);
 
 		TextField hopsField = new TextField("Chmely");
 		binder.forField(hopsField).bind(BeerTO::getHops, BeerTO::setHops);
 		hopsField.setWidth("290px");
-
-		HorizontalLayout line3Layout = new HorizontalLayout(maltsField, hopsField);
+		layout.add(hopsField);
+		layout.setColspan(hopsField, 3);
 
 		TextArea descriptionField = new TextArea("Popis");
 		binder.forField(descriptionField).asRequired().bind(BeerTO::getDescription, BeerTO::setDescription);
 		descriptionField.setWidth("600px");
 		descriptionField.setHeight("200px");
+		layout.add(descriptionField);
+		layout.setColspan(descriptionField, 6);
 
-		return new VerticalLayout(line1Layout, line2Layout, line3Layout, descriptionField);
+		return layout;
 	}
 
 }

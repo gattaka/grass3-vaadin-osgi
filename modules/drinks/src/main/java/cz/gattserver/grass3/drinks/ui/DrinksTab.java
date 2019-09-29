@@ -82,6 +82,7 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 		contentLayout.add(image);
 
 		dataLayout = new Div();
+		dataLayout.setWidthFull();
 		contentLayout.add(dataLayout);
 
 		if (getSecurityService().getCurrentUser().getRoles().contains(CoreRole.ADMIN)) {

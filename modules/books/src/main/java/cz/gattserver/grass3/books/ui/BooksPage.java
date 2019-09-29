@@ -104,9 +104,8 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		contentLayout.add(dataLayout);
 
 		ButtonLayout btnLayout = new ButtonLayout();
-		layout.add(btnLayout);
-
 		btnLayout.setVisible(getSecurityService().getCurrentUser().getRoles().contains(CoreRole.ADMIN));
+		layout.add(btnLayout);
 
 		populateBtnLayout(btnLayout);
 

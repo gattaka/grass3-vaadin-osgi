@@ -6,10 +6,8 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
-import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -23,6 +21,7 @@ import cz.gattserver.grass3.drinks.model.interfaces.RumTO;
 import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.Strong;
@@ -37,14 +36,10 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 	}
 
 	@Override
-	protected Grid<RumOverviewTO> createGrid(final RumOverviewTO filterTO) {
-
-		final Grid<RumOverviewTO> grid = new Grid<>();
-		HeaderRow filteringHeader = grid.appendHeaderRow();
-
-		addNameColumn(grid, filteringHeader);
-		addCountryColumn(grid, filteringHeader);
-		addAlcoholColumn(grid, filteringHeader);
+	protected void configureGrid(Grid<RumOverviewTO> grid, final RumOverviewTO filterTO) {
+		addNameColumn(grid);
+		addCountryColumn(grid);
+		addAlcoholColumn(grid);
 
 		Column<RumOverviewTO> yearsColumn = grid.addColumn(RumOverviewTO::getYears).setHeader("Stáří (roky)")
 				.setWidth("90px").setFlexGrow(0).setSortProperty("years");
@@ -66,7 +61,7 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 			filterTO.setYears(Integer.parseInt(e.getValue()));
 			populate();
 		});
-		filteringHeader.getCell(yearsColumn).setComponent(yearsColumnField);
+		getHeaderRow().getCell(yearsColumn).setComponent(yearsColumnField);
 
 		// Typ rumu
 		ComboBox<RumType> typeColumnField = new ComboBox<>(null, Arrays.asList(RumType.values()));
@@ -76,9 +71,7 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 			populate();
 		});
 		typeColumnField.setItemLabelGenerator(RumType::getCaption);
-		filteringHeader.getCell(rumTypeColumn).setComponent(typeColumnField);
-
-		return grid;
+		getHeaderRow().getCell(rumTypeColumn).setComponent(typeColumnField);
 	}
 
 	@Override
@@ -90,7 +83,7 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 	}
 
 	@Override
-	protected void populateBtnLayout(HorizontalLayout btnLayout) {
+	protected void populateBtnLayout(ButtonLayout btnLayout) {
 		btnLayout.add(new CreateGridButton("Přidat", event -> new RumWindow() {
 			private static final long serialVersionUID = -4863260002363608014L;
 
@@ -122,7 +115,7 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 	}
 
 	@Override
-	protected void populateDetail(VerticalLayout dataLayout) {
+	protected void populateDetail(Div dataLayout) {
 		H2 nameLabel = new H2(choosenDrink.getName() + " (" + choosenDrink.getCountry() + ")");
 		dataLayout.add(nameLabel);
 

@@ -7,11 +7,8 @@ import java.util.Locale;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
-import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -26,6 +23,7 @@ import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
 import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.HtmlDiv;
@@ -41,30 +39,26 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 	}
 
 	@Override
-	protected Grid<BeerOverviewTO> createGrid(final BeerOverviewTO filterTO) {
-
-		final Grid<BeerOverviewTO> grid = new Grid<>();
-		HeaderRow filteringHeader = grid.appendHeaderRow();
-
+	protected void configureGrid(Grid<BeerOverviewTO> grid, final BeerOverviewTO filterTO) {
 		Column<BeerOverviewTO> breweryColumn = grid.addColumn(BeerOverviewTO::getBrewery).setHeader("Pivovar")
 				.setSortProperty("brewery");
 
-		addNameColumn(grid, filteringHeader);
+		addNameColumn(grid);
 
 		Column<BeerOverviewTO> categoryColumn = grid.addColumn(BeerOverviewTO::getCategory).setHeader("Kategorie")
-				.setWidth("80px").setFlexGrow(0).setSortProperty("category");
+				.setWidth("100px").setFlexGrow(0).setSortProperty("category");
 		Column<BeerOverviewTO> degreesColumn = grid
 				.addColumn(new NumberRenderer<BeerOverviewTO>(BeerOverviewTO::getDegrees,
 						NumberFormat.getNumberInstance(new Locale("cs", "CZ"))))
-				.setHeader("Stupně (°)").setWidth("80px").setFlexGrow(0).setSortProperty("degrees");
+				.setHeader("Stupně (°)").setWidth("100px").setFlexGrow(0).setSortProperty("degrees");
 
-		addAlcoholColumn(grid, filteringHeader);
+		addAlcoholColumn(grid);
 
 		Column<BeerOverviewTO> ibuColumn = grid.addColumn(BeerOverviewTO::getIbu).setHeader("Hořkost (IBU)")
-				.setWidth("90px").setFlexGrow(0).setSortProperty("ibu");
+				.setWidth("120px").setFlexGrow(0).setSortProperty("ibu");
 		Column<BeerOverviewTO> maltTypeColumn = grid
 				.addColumn(new TextRenderer<BeerOverviewTO>(to -> to.getMaltType().getCaption())).setHeader("Typ sladu")
-				.setWidth("100px").setFlexGrow(0).setSortProperty("maltType");
+				.setWidth("150px").setFlexGrow(0).setSortProperty("maltType");
 
 		addRatingStarsColumn(grid);
 
@@ -80,7 +74,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 			filterTO.setBrewery(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(breweryColumn).setComponent(breweryColumnField);
+		getHeaderRow().getCell(breweryColumn).setComponent(breweryColumnField);
 
 		// Kategorie
 		TextField categoryColumnField = new TextField();
@@ -90,7 +84,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 			filterTO.setCategory(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(categoryColumn).setComponent(categoryColumnField);
+		getHeaderRow().getCell(categoryColumn).setComponent(categoryColumnField);
 
 		// Stupně
 		TextField degreesColumnField = new TextField();
@@ -100,7 +94,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 			filterTO.setDegrees(Double.parseDouble(e.getValue()));
 			populate();
 		});
-		filteringHeader.getCell(degreesColumn).setComponent(degreesColumnField);
+		getHeaderRow().getCell(degreesColumn).setComponent(degreesColumnField);
 
 		// Hořkost
 		TextField ibuColumnField = new TextField();
@@ -110,7 +104,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 			filterTO.setIbu(Integer.parseInt(e.getValue()));
 			populate();
 		});
-		filteringHeader.getCell(ibuColumn).setComponent(ibuColumnField);
+		getHeaderRow().getCell(ibuColumn).setComponent(ibuColumnField);
 
 		// Typ sladu
 		ComboBox<MaltType> typeColumnField = new ComboBox<>(null, Arrays.asList(MaltType.values()));
@@ -120,9 +114,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 			populate();
 		});
 		typeColumnField.setItemLabelGenerator(MaltType::getCaption);
-		filteringHeader.getCell(maltTypeColumn).setComponent(typeColumnField);
-
-		return grid;
+		getHeaderRow().getCell(maltTypeColumn).setComponent(typeColumnField);
 	}
 
 	@Override
@@ -134,7 +126,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 	}
 
 	@Override
-	protected void populateBtnLayout(HorizontalLayout btnLayout) {
+	protected void populateBtnLayout(ButtonLayout btnLayout) {
 		btnLayout.add(new CreateGridButton("Přidat", event -> new BeerWindow() {
 			private static final long serialVersionUID = -4863260002363608014L;
 
@@ -166,7 +158,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 	}
 
 	@Override
-	protected void populateDetail(VerticalLayout dataLayout) {
+	protected void populateDetail(Div dataLayout) {
 		H2 nameLabel = new H2(
 				choosenDrink.getBrewery() + " " + choosenDrink.getName() + " (" + choosenDrink.getCountry() + ")");
 		dataLayout.add(nameLabel);

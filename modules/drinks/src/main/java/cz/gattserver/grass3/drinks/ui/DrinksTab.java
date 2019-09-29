@@ -7,12 +7,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -25,11 +25,12 @@ import cz.gattserver.grass3.drinks.model.interfaces.DrinkTO;
 import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 
-public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> extends VerticalLayout {
+public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> extends Div {
 
 	private static final long serialVersionUID = 594189301140808163L;
 
@@ -38,17 +39,22 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 	private transient DrinksFacade drinksFacade;
 
 	private Image image;
-	private VerticalLayout dataLayout;
+	private Div dataLayout;
 
 	protected Grid<O> grid;
 	protected O filterTO;
 	protected T choosenDrink;
 
+	private HeaderRow filteringHeader;
+
 	public DrinksTab() {
 		SpringContextHelper.inject(this);
 
 		filterTO = createNewOverviewTO();
-		grid = createGrid(filterTO);
+		grid = new Grid<>();
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		grid.addClassName("top-margin");
+		configureGrid(grid, filterTO);
 
 		populate();
 
@@ -61,36 +67,36 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 
 		HorizontalLayout contentLayout = new HorizontalLayout();
 		contentLayout.setSizeFull();
-		contentLayout.setPadding(true);
+		contentLayout.setPadding(false);
+		contentLayout.setVisible(false);
+		contentLayout.addClassName("top-margin");
+		add(contentLayout);
 
-		Div panel = new Div(contentLayout);
-		panel.setWidth("100%");
-		panel.setHeight("100%");
-		add(panel);
+		dataLayout = new Div();
+		dataLayout.setWidth("100%");
+		contentLayout.add(dataLayout);
 
 		// musí tady něco být nahrané, jinak to pak nejde měnit (WTF?!)
 		image = new Image(ImageIcon.BUBBLE_16_ICON.createResource(), "icon");
 		image.setVisible(false);
 		contentLayout.add(image);
-		contentLayout.setVerticalComponentAlignment(Alignment.START, image);
 
-		dataLayout = new VerticalLayout();
-		dataLayout.setWidth("100%");
-		dataLayout.setPadding(false);
-		contentLayout.add(dataLayout);
-
-		HorizontalLayout btnLayout = new HorizontalLayout();
-		btnLayout.setSpacing(true);
-		add(btnLayout);
-
-		btnLayout.setVisible(getSecurityService().getCurrentUser().getRoles().contains(CoreRole.ADMIN));
-
-		populateBtnLayout(btnLayout);
+		if (getSecurityService().getCurrentUser().getRoles().contains(CoreRole.ADMIN)) {
+			ButtonLayout btnLayout = new ButtonLayout();
+			add(btnLayout);
+			populateBtnLayout(btnLayout);
+		}
 	}
 
-	protected void addNameColumn(Grid<O> grid, HeaderRow filteringHeader) {
+	protected HeaderRow getHeaderRow() {
+		if (filteringHeader == null)
+			filteringHeader = grid.appendHeaderRow();
+		return filteringHeader;
+	}
+
+	protected void addNameColumn(Grid<O> grid) {
 		// Název
-		Column<O> nameColumn = grid.addColumn(O::getName).setHeader("Název").setSortProperty("name");
+		Column<O> nameColumn = grid.addColumn(O::getName).setHeader("Název").setSortProperty("name").setFlexGrow(100);
 		TextField nazevColumnField = new TextField();
 		nazevColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		nazevColumnField.setWidth("100%");
@@ -98,10 +104,10 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 			filterTO.setName(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(nameColumn).setComponent(nazevColumnField);
+		getHeaderRow().getCell(nameColumn).setComponent(nazevColumnField);
 	}
 
-	protected void addCountryColumn(Grid<O> grid, HeaderRow filteringHeader) {
+	protected void addCountryColumn(Grid<O> grid) {
 		// Země původu
 		Column<O> countryColumn = grid.addColumn(O::getCountry).setHeader("Země").setSortProperty("country");
 		TextField countryColumnField = new TextField();
@@ -111,14 +117,13 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 			filterTO.setCountry(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(countryColumn).setComponent(countryColumnField);
+		getHeaderRow().getCell(countryColumn).setComponent(countryColumnField);
 	}
 
-	protected void addAlcoholColumn(Grid<O> grid, HeaderRow filteringHeader) {
-		// Alkohol
+	protected void addAlcoholColumn(Grid<O> grid) {
 		Column<O> alcoholColumn = grid.addColumn(
 				new NumberRenderer<O>(O::getAlcohol, NumberFormat.getNumberInstance(new Locale("cs", "CZ")), null))
-				.setHeader("Alkohol (%)").setWidth("80px").setFlexGrow(0).setSortProperty("alcohol");
+				.setHeader("Alkohol (%)").setWidth("100px").setFlexGrow(0).setSortProperty("alcohol");
 		TextField alcoholColumnField = new TextField();
 		alcoholColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		alcoholColumnField.setWidth("100%");
@@ -126,7 +131,7 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 			filterTO.setAlcohol(Double.parseDouble(e.getValue()));
 			populate();
 		});
-		filteringHeader.getCell(alcoholColumn).setComponent(alcoholColumnField);
+		getHeaderRow().getCell(alcoholColumn).setComponent(alcoholColumnField);
 	}
 
 	protected void addRatingStarsColumn(Grid<O> grid) {
@@ -136,7 +141,7 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 			rs.setReadOnly(true);
 			rs.setSize("15px");
 			return rs;
-		})).setHeader("Hodnocení").setAutoWidth(true).setSortProperty("rating");
+		})).setHeader("Hodnocení").setWidth("90px").setFlexGrow(0).setSortProperty("rating");
 	}
 
 	protected SecurityService getSecurityService() {
@@ -203,13 +208,13 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 
 	protected abstract O createNewOverviewTO();
 
-	protected abstract Grid<O> createGrid(O filterTO);
+	protected abstract void configureGrid(Grid<O> grid, O filterTO);
 
 	protected abstract void populate();
 
-	protected abstract void populateBtnLayout(HorizontalLayout btnLayout);
+	protected abstract void populateBtnLayout(ButtonLayout btnLayout);
 
-	protected abstract void populateDetail(VerticalLayout dataLayout);
+	protected abstract void populateDetail(Div dataLayout);
 
 	protected abstract String getURLPath();
 

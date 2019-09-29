@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.drinks.ui.pages;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -85,6 +84,7 @@ public class DrinksPage extends OneColumnPage implements HasUrlParameter<String>
 		rumTab = new Tab("Rumy");
 		whiskeyTab = new Tab("Whiskey");
 		wineTab = new Tab("Vína");
+		tabSheet.add(beerTab, rumTab, whiskeyTab, wineTab);
 
 		pageLayout = new Div();
 		layout.add(pageLayout);

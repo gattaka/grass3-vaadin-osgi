@@ -58,28 +58,31 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 
 		populate();
 
-		grid.addSelectionListener(e -> {
-			if (e.getFirstSelectedItem().isPresent())
-				showDetail(findById(e.getFirstSelectedItem().get().getId()));
-			else
-				showDetail(null);
-		});
-
 		HorizontalLayout contentLayout = new HorizontalLayout();
 		contentLayout.setSizeFull();
 		contentLayout.setPadding(false);
 		contentLayout.setVisible(false);
 		contentLayout.addClassName("top-margin");
+		contentLayout.getStyle().set("border", "1px #dbdee4 solid").set("padding", "10px").set("background", "white");
 		add(contentLayout);
 
-		dataLayout = new Div();
-		dataLayout.setWidth("100%");
-		contentLayout.add(dataLayout);
+		grid.addSelectionListener(e -> {
+			if (e.getFirstSelectedItem().isPresent()) {
+				showDetail(findById(e.getFirstSelectedItem().get().getId()));
+				contentLayout.setVisible(true);
+			} else {
+				showDetail(null);
+				contentLayout.setVisible(false);
+			}
+		});
 
 		// musí tady něco být nahrané, jinak to pak nejde měnit (WTF?!)
 		image = new Image(ImageIcon.BUBBLE_16_ICON.createResource(), "icon");
 		image.setVisible(false);
 		contentLayout.add(image);
+
+		dataLayout = new Div();
+		contentLayout.add(dataLayout);
 
 		if (getSecurityService().getCurrentUser().getRoles().contains(CoreRole.ADMIN)) {
 			ButtonLayout btnLayout = new ButtonLayout();

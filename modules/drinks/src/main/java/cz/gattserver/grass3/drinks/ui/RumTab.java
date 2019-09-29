@@ -3,7 +3,6 @@ package cz.gattserver.grass3.drinks.ui;
 import java.util.Arrays;
 
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Div;
@@ -23,8 +22,8 @@ import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
+import cz.gattserver.grass3.ui.util.TableBuilder;
 import cz.gattserver.web.common.ui.HtmlDiv;
-import cz.gattserver.web.common.ui.Strong;
 
 public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 
@@ -124,19 +123,18 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 		rs.setReadOnly(true);
 		dataLayout.add(rs);
 
-		FormLayout infoLayout = new FormLayout();
-		dataLayout.add(infoLayout);
+		TableBuilder tb = new TableBuilder();
+		tb.startRow().strongCell("Stáří (roky):")
+				.cell(choosenDrink.getYears() == null ? "" : String.valueOf(choosenDrink.getYears()));
+		tb.nextRow().strongCell("Alkohol (%):").cell(String.valueOf(choosenDrink.getAlcohol()));
+		tb.nextRow().strongCell("Typ rumu:").cell(choosenDrink.getRumType().getCaption());
 
-		infoLayout.add(new Strong("Stáří (roky)"));
-		infoLayout.add(choosenDrink.getYears() == null ? "" : String.valueOf(choosenDrink.getYears()));
-		Strong b = new Strong("Alkohol (%)");
-		infoLayout.add(b);
-		b.setWidth("120px");
-		infoLayout.add(choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol()));
-		infoLayout.add(new Strong("Typ rumu"));
-		infoLayout.add(choosenDrink.getRumType().getCaption());
+		HtmlDiv table = new HtmlDiv(tb.build());
+		table.addClassName("top-margin");
+		dataLayout.add(table);
 
 		HtmlDiv description = new HtmlDiv(choosenDrink.getDescription().replaceAll("\n", "<br/>"));
+		description.addClassName("top-margin");
 		description.setSizeFull();
 		dataLayout.add(description);
 	}

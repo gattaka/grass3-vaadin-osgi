@@ -25,9 +25,8 @@ import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
-import cz.gattserver.web.common.ui.Breakline;
+import cz.gattserver.grass3.ui.util.TableBuilder;
 import cz.gattserver.web.common.ui.HtmlDiv;
-import cz.gattserver.web.common.ui.Strong;
 
 public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 
@@ -168,34 +167,22 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 		rs.setReadOnly(true);
 		dataLayout.add(rs);
 
-		Div infoLayout = new Div();
-		infoLayout.addClassName("top-margin");
-		dataLayout.add(infoLayout);
+		TableBuilder tb = new TableBuilder();
+		tb.startRow().strongCell("Kategorie:").cell(choosenDrink.getCategory());
+		tb.nextRow().strongCell("Stupně (°):").cell(String.valueOf(choosenDrink.getDegrees()));
+		tb.strongCell("Alkohol (%):").cell(String.valueOf(choosenDrink.getAlcohol()));
+		tb.nextRow().strongCell("Hořkost (IBU):")
+				.cell(choosenDrink.getIbu() == null ? "" : String.valueOf(choosenDrink.getIbu()));
+		tb.strongCell("Typ sladu:").cell(choosenDrink.getMaltType().getCaption());
+		tb.nextRow().strongCell("Slady (IBU):").cell(choosenDrink.getMalts());
+		tb.strongCell("Chmely:").cell(choosenDrink.getHops());
 
-		infoLayout.add(new Strong("Kategorie"));
-		infoLayout.add(new Breakline());
-		infoLayout.add(choosenDrink.getCategory());
-		infoLayout.add(new Breakline());
-		infoLayout.add(new Breakline());
-		infoLayout.add(new Strong("Stupně (°)"));
-		infoLayout.add(new Breakline());
-		infoLayout.add(String.valueOf(choosenDrink.getDegrees()));
-		infoLayout.add(new Breakline());
-		infoLayout.add(new Breakline());
-		infoLayout.add(new Strong("Stupně (°)"));
-		infoLayout.add(String.valueOf(choosenDrink.getDegrees()));
-		infoLayout.add(new Strong("Alkohol (%)"));
-		infoLayout.add(String.valueOf(choosenDrink.getAlcohol()));
-		infoLayout.add(new Strong("Hořkost (IBU)"));
-		infoLayout.add(choosenDrink.getIbu() == null ? "" : String.valueOf(choosenDrink.getIbu()));
-		infoLayout.add(new Strong("Typ sladu"));
-		infoLayout.add(choosenDrink.getMaltType().getCaption());
-		infoLayout.add(new Strong("Slady"));
-		infoLayout.add(choosenDrink.getMalts());
-		infoLayout.add(new Strong("Chmely"));
-		infoLayout.add(choosenDrink.getHops());
+		HtmlDiv table = new HtmlDiv(tb.build());
+		table.addClassName("top-margin");
+		dataLayout.add(table);
 
 		HtmlDiv description = new HtmlDiv(choosenDrink.getDescription().replaceAll("\n", "<br/>"));
+		description.addClassName("top-margin");
 		description.setSizeFull();
 		dataLayout.add(description);
 	}

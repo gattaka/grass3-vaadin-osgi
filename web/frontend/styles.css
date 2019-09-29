@@ -36,6 +36,14 @@ img.thumbnail-200 {
     height: auto;
 }
 
+.grass-table tr td {
+	padding-left: 15px;
+}
+
+.grass-table tr td:FIRST-CHILD {
+	padding-left: 0px;
+}
+
 /* Nadpisy */
 h2, h3 {
 	border-bottom: 1px solid;

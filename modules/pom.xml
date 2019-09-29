@@ -18,6 +18,7 @@
 		<module>books</module>
 		<module>campgames</module>
 		<module>drinks</module>
+		<module>fm</module>
 	</modules>
 
 </project>

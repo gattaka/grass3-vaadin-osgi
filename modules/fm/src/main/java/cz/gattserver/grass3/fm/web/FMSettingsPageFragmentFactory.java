@@ -6,21 +6,20 @@ import java.nio.file.InvalidPathException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.ValidationResult;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationResult;
 
 import cz.gattserver.grass3.fm.config.FMConfiguration;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.FileSystemService;
-import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
-import cz.gattserver.web.common.ui.H2Label;
+import cz.gattserver.grass3.ui.components.button.SaveButton;
+import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 
-public class FMSettingsPage extends AbstractSettingsPage {
+public class FMSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 
 	@Autowired
 	private ConfigurationService configurationService;
@@ -28,38 +27,18 @@ public class FMSettingsPage extends AbstractSettingsPage {
 	@Autowired
 	private FileSystemService fileSystemService;
 
-	public FMSettingsPage(GrassRequest request) {
-		super(request);
-	}
-
 	@Override
-	protected Component createContent() {
+	public void createFragment(Div layout) {
 		final FMConfiguration configuration = loadConfiguration();
 		final FileSystem fs = fileSystemService.getFileSystem();
 
-		VerticalLayout layout = new VerticalLayout();
-
-		layout.setPadding(true);
-		layout.setSpacing(true);
-
-		VerticalLayout settingsLayout = new VerticalLayout();
-		layout.addComponent(settingsLayout);
-
-		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new H2Label("Nastavení správce souborů"));
-
-		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
-		VerticalLayout settingsFieldsLayout = new VerticalLayout();
-		settingsFieldsLayout.setSpacing(true);
-		settingsFieldsLayout.setPadding(false);
-		settingsLayout.addComponent(settingsFieldsLayout);
-		settingsFieldsLayout.setSizeFull();
+		layout.add(new H2("Nastavení správce souborů"));
 
 		// Kořenový adresář
 		final TextField outputPathField = new TextField("Nastavení kořenového adresáře");
 		outputPathField.setValue(configuration.getRootDir());
 		outputPathField.setWidth("300px");
-		settingsFieldsLayout.addComponent(outputPathField);
+		layout.add(outputPathField);
 
 		Binder<FMConfiguration> binder = new Binder<>();
 		binder.forField(outputPathField).asRequired("Kořenový adresář je povinný").withValidator((val, c) -> {
@@ -71,16 +50,16 @@ public class FMSettingsPage extends AbstractSettingsPage {
 			}
 		}).bind(FMConfiguration::getRootDir, FMConfiguration::setRootDir);
 
+		ButtonLayout buttonLayout = new ButtonLayout();
+		layout.add(buttonLayout);
+
 		// Save tlačítko
-		Button saveButton = new Button("Uložit", e -> {
+		SaveButton saveButton = new SaveButton(e -> {
 			configuration.setRootDir((String) outputPathField.getValue());
 			storeConfiguration(configuration);
 		});
 		binder.addValueChangeListener(l -> saveButton.setEnabled(binder.isValid()));
-
-		settingsFieldsLayout.addComponent(saveButton);
-
-		return layout;
+		buttonLayout.add(saveButton);
 	}
 
 	private FMConfiguration loadConfiguration() {

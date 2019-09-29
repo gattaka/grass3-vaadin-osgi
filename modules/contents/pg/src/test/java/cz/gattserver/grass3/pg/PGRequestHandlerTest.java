@@ -25,10 +25,6 @@ public class PGRequestHandlerTest extends AbstractContextAwareTest {
 	@Autowired
 	private ConfigurationService configurationService;
 
-	@Autowired
-	@Qualifier("pgRequestHandler")
-	private PGRequestHandler fmRequestHandler;
-
 	@Before
 	public void init() {
 		fileSystemService.init();
@@ -51,7 +47,7 @@ public class PGRequestHandlerTest extends AbstractContextAwareTest {
 		Path testFile = Files.createFile(rootDir.resolve("testFile"));
 		Files.write(testFile, new byte[] { 1, 1, 1 });
 
-		Path file = fmRequestHandler.getPath("testFile");
+		Path file = new PGRequestHandler().getPath("testFile");
 		assertTrue(Files.exists(file));
 		assertEquals(3L, Files.size(file));
 		assertEquals("testFile", file.getFileName().toString());

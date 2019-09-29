@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import cz.gattserver.grass3.fm.config.FMConfiguration;
 import cz.gattserver.grass3.mock.MockFileSystemService;
@@ -24,10 +23,6 @@ public class FMRequestHandlerTest extends AbstractContextAwareTest {
 
 	@Autowired
 	private ConfigurationService configurationService;
-
-	@Autowired
-	@Qualifier("fmRequestHandler")
-	private FMRequestHandler fmRequestHandler;
 
 	@Before
 	public void init() {
@@ -52,7 +47,7 @@ public class FMRequestHandlerTest extends AbstractContextAwareTest {
 		Path testFile = Files.createFile(rootDir.resolve("testFile"));
 		Files.write(testFile, new byte[] { 1, 1, 1 });
 
-		Path file = fmRequestHandler.getPath("testFile");
+		Path file = new FMRequestHandler().getPath("testFile");
 		assertTrue(Files.exists(file));
 		assertEquals(3L, Files.size(file));
 		assertEquals("testFile", file.getFileName().toString());

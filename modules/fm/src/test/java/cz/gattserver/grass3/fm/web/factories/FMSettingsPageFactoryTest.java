@@ -12,7 +12,7 @@ import cz.gattserver.grass3.fm.test.MockSecurityService;
 import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.test.AbstractContextAwareTest;
 
-public class PGSettingsPageFactoryTest extends AbstractContextAwareTest {
+public class FMSettingsPageFactoryTest extends AbstractContextAwareTest {
 
 	@Autowired
 	private FMSettingsPageFactory pageFactory;

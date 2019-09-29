@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cz.gattserver.common.util.HumanBytesSizeFormatter;
-import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
 import cz.gattserver.grass3.fm.interfaces.FMItemTO;
 import cz.gattserver.grass3.services.ConfigurationService;
@@ -80,7 +79,7 @@ public class FMExplorer {
 		String rootDir = configuration.getRootDir();
 		rootPath = fileSystem.getPath(rootDir);
 		if (!Files.exists(rootPath))
-			throw new GrassPageException(500, "Kořenový adresář FM modulu musí existovat");
+			throw new IllegalStateException("Kořenový adresář FM modulu musí existovat");
 		rootPath = rootPath.normalize();
 	}
 
@@ -180,7 +179,7 @@ public class FMExplorer {
 			// +1 za odkaz na nadřazený adresář
 			return (int) stream.count() + 1;
 		} catch (IOException e) {
-			throw new GrassPageException(500, e);
+			throw new IllegalStateException("Nezdařilo se získat počet souborů", e);
 		}
 	}
 
@@ -202,7 +201,7 @@ public class FMExplorer {
 									p -> p.getFileName().toString().contains(filterName == null ? "" : filterName)))
 					.skip(offset).limit(limit).map(this::mapPathToItem);
 		} catch (IOException e) {
-			throw new GrassPageException(500, e);
+			throw new IllegalStateException("Nezdařilo se získat list souborů", e);
 		}
 	}
 

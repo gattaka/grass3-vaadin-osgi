@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 
@@ -26,7 +27,7 @@ import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.WarnDialog;
 
 @Route("articles")
-public class ArticlesViewerPage extends ContentViewerPage implements HasUrlParameter<String> {
+public class ArticlesViewerPage extends ContentViewerPage implements HasUrlParameter<String>, HasDynamicTitle {
 
 	private static final long serialVersionUID = 7511698289319715316L;
 
@@ -43,6 +44,11 @@ public class ArticlesViewerPage extends ContentViewerPage implements HasUrlParam
 	private PageFactory articlesEditorPageFactory;
 
 	private ArticleTO article;
+
+	@Override
+	public String getPageTitle() {
+		return article.getContentNode().getName();
+	}
 
 	@Override
 	public void setParameter(BeforeEvent event, String parameter) {

@@ -24,7 +24,6 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.component.upload.Upload;
@@ -93,7 +92,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 	/**
 	 * Status label, vybrané soubory apod.
 	 */
-	private Span statusLabel;
+	private Div statusLabel;
 
 	/**
 	 * Breadcrumb
@@ -117,7 +116,10 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 	@Override
 	protected void createColumnContent(Div layout) {
 
-		statusLabel = new Span();
+		statusLabel = new Div();
+		statusLabel.getStyle().set("border", "1px solid hsl(220, 14%, 88%)").set("padding", "4px 10px")
+				.set("background", "white").set("font-size", "12px").set("border-top", "none")
+				.set("color", "hsl(220, 14%, 61%)");
 		breadcrumb = new Breadcrumb();
 
 		fileSystem = fileSystemService.getFileSystem();
@@ -169,6 +171,31 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 		layout.add(statusLabel);
 
 		createButtonsLayout(layout);
+
+		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
+
+		Upload upload = new Upload(buffer);
+		upload.addClassName("top-margin");
+		upload.addSucceededListener(event -> {
+			switch (explorer.saveFile(buffer.getInputStream(event.getFileName()), event.getFileName())) {
+			case SUCCESS:
+				// refresh
+				populateGrid();
+				break;
+			case ALREADY_EXISTS:
+				UIUtils.showWarning("Soubor '" + event.getFileName()
+						+ "' nebylo možné uložit - soubor s tímto názvem již existuje.");
+				break;
+			case NOT_VALID:
+				UIUtils.showWarning("Soubor '" + event.getFileName()
+						+ "' nebylo možné uložit - cílové umístění souboru se nachází mimo povolený rozsah souborů k prohlížení.");
+				break;
+			default:
+				UIUtils.showWarning(
+						"Soubor '" + event.getFileName() + "' nebylo možné uložit - došlo k systémové chybě.");
+			}
+		});
+		layout.add(upload);
 	}
 
 	private void createBreadcrumb(Div layout) {
@@ -300,31 +327,6 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 	private void createButtonsLayout(Div layout) {
 		ButtonLayout buttonsLayout = new ButtonLayout();
 		buttonsLayout.add(new CreateGridButton("Vytvořit nový adresář", e -> handleNewDirectory()));
-
-		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
-
-		Upload upload = new Upload(buffer);
-		upload.addClassName("top-margin");
-		upload.addSucceededListener(event -> {
-			switch (explorer.saveFile(buffer.getInputStream(event.getFileName()), event.getFileName())) {
-			case SUCCESS:
-				// refresh
-				populateGrid();
-				break;
-			case ALREADY_EXISTS:
-				UIUtils.showWarning("Soubor '" + event.getFileName()
-						+ "' nebylo možné uložit - soubor s tímto názvem již existuje.");
-				break;
-			case NOT_VALID:
-				UIUtils.showWarning("Soubor '" + event.getFileName()
-						+ "' nebylo možné uložit - cílové umístění souboru se nachází mimo povolený rozsah souborů k prohlížení.");
-				break;
-			default:
-				UIUtils.showWarning(
-						"Soubor '" + event.getFileName() + "' nebylo možné uložit - došlo k systémové chybě.");
-			}
-		});
-		buttonsLayout.add(upload);
 
 		GridButton<FMItemTO> downloadButton = new GridButton<>("Stáhnout", this::handleDownloadAction, grid);
 		downloadButton.setIcon(new Image(ImageIcon.DOWN_16_ICON.createResource(), "Stáhnout"));

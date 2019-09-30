@@ -7,6 +7,7 @@ import java.nio.file.FileSystem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -15,15 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
-import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.component.upload.Upload;
@@ -56,6 +58,7 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
+import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.WebDialog;
 import net.glxn.qrgen.javase.QRCode;
@@ -228,26 +231,43 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 		}, to -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
 
 		Column<FMItemTO> nameColumn = grid.addColumn(FMItemTO::getName).setHeader("Název").setFlexGrow(100);
-		grid.addColumn(FMItemTO::getSize).setHeader("Velikost").setTextAlign(ColumnTextAlign.END);
-		grid.addColumn(new ComponentRenderer<Anchor, FMItemTO>(to -> {
-			if (to.isDirectory()) {
-				Anchor a = new Anchor();
-				a.setVisible(false);
-				return a;
-			}
-			String link = explorer.getDownloadLink(GrassPage.getContextPath(), to.getName());
-			return new Anchor(link, "Stáhnout");
-		})).setHeader("Stažení").setTextAlign(ColumnTextAlign.CENTER);
+
+		grid.addColumn(FMItemTO::getSize).setHeader("Velikost").setTextAlign(ColumnTextAlign.END).setWidth("80px")
+				.setFlexGrow(0);
 
 		grid.addColumn(new ComponentRenderer<Button, FMItemTO>(to -> {
-			if (to.isDirectory()) {
-				Button b = new Button();
-				b.setVisible(false);
-				return b;
-			}
+			Button button = new Button("URL", e -> {
+				Dialog ww = new Dialog();
+				String id = UUID.randomUUID().toString();
+				String checkId = "check-" + id;
+				HtmlDiv text = new HtmlDiv("<input style=\"width: inherit\" id=\"" + id + "\" value=\""
+						+ getDownloadLink(to) + "\"/>" + "<br/><span id=\"" + checkId + "\"></span>");
+				UI.getCurrent().getPage()
+						.executeJs("document.getElementById(\"" + id + "\").select(); "
+								+ "if (document.execCommand(\"copy\")) { " + "document.getElementById(\"" + checkId
+								+ "\").innerHTML = \"URL zkopírováno do schránky\";" + "}");
+				text.getStyle().set("width", "400px").set("text-align", "center").set("line-height", "30px")
+						.set("color", "dodgerblue").set("font-weight", "bold");
+				ww.add(text);
+				ww.open();
+			});
+			button.setVisible(!to.isDirectory());
+			button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+			return button;
+		})).setHeader("URL").setTextAlign(ColumnTextAlign.CENTER).setWidth("40px").setFlexGrow(0);
+
+		grid.addColumn(new ComponentRenderer<Button, FMItemTO>(to -> {
+			Button button = new Button("Stáhnout", e -> handleDownloadAction(to));
+			button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+			return button;
+		})).setHeader("Stažení").setTextAlign(ColumnTextAlign.CENTER).setWidth("90px").setFlexGrow(0);
+
+		grid.addColumn(new ComponentRenderer<Button, FMItemTO>(to -> {
 			String link = explorer.getDownloadLink(urlBase, to.getName());
 			Button button = new Button("QR", e -> {
-				WebDialog ww = new WebDialog("QR");
+				WebDialog ww = new WebDialog();
+				ww.setCloseOnEsc(true);
+				ww.setCloseOnOutsideClick(true);
 				Image image = new Image(new StreamResource(to.getName(), () -> {
 					try {
 						File file = QRCode.from(link).file();
@@ -258,13 +278,15 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 					}
 				}), link);
 				ww.addComponent(image);
+				ww.setComponentAlignment(image, Alignment.CENTER);
 				ww.open();
 			});
 			button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 			return button;
-		})).setHeader("QR").setTextAlign(ColumnTextAlign.CENTER);
+		})).setHeader("QR").setTextAlign(ColumnTextAlign.CENTER).setWidth("30px").setFlexGrow(0);
 
-		grid.addColumn(new LocalDateTimeRenderer<>(FMItemTO::getLastModified, "d.MM.yyyy HH:mm")).setHeader("Upraveno");
+		grid.addColumn(new LocalDateTimeRenderer<>(FMItemTO::getLastModified, "d.MM.yyyy HH:mm")).setHeader("Upraveno")
+				.setAutoWidth(true).setTextAlign(ColumnTextAlign.END);
 
 		grid.addSelectionListener(e -> {
 			Set<FMItemTO> value = e.getAllSelectedItems();
@@ -409,9 +431,12 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 		}).open();
 	}
 
+	private String getDownloadLink(FMItemTO item) {
+		return urlBase + explorer.getDownloadLink(GrassPage.getContextPath(), item.getName());
+	}
+
 	private void handleDownloadAction(FMItemTO item) {
-		String link = explorer.getDownloadLink(GrassPage.getContextPath(), item.getName());
-		UI.getCurrent().getPage().open(link);
+		UI.getCurrent().getPage().open(getDownloadLink(item));
 	}
 
 	private void handleDownloadAction(Set<FMItemTO> items) {

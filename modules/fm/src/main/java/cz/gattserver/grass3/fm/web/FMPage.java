@@ -26,6 +26,7 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.page.History;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.component.upload.Upload;
@@ -119,6 +120,18 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 	@Override
 	protected void createColumnContent(Div layout) {
 
+		VaadinRequest vaadinRequest = VaadinRequest.getCurrent();
+		VaadinServletRequest vaadinServletRequest = (VaadinServletRequest) vaadinRequest;
+
+		// např. /web/fm/Android
+		String requestURI = ((VaadinServletRequest) vaadinRequest).getRequestURI();
+
+		// např. http://localhost:8180/web/fm/Android
+		String fullURL = vaadinServletRequest.getRequestURL().toString();
+
+		// např. http://localhost:8180
+		urlBase = fullURL.substring(0, fullURL.length() - requestURI.length());
+
 		statusLabel = new Div();
 		statusLabel.getStyle().set("border", "1px solid hsl(220, 14%, 88%)").set("padding", "4px 10px")
 				.set("background", "white").set("font-size", "12px").set("border-top", "none")
@@ -135,15 +148,14 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 		switch (result) {
 		case SUCCESS:
 			// úspěch - pokračujeme
-			// TODO
-			// Page.getCurrent().addPopStateListener(e -> {
-			// if
-			// (FileProcessState.SUCCESS.equals(explorer.goToDirByURL(getRequest().getContextRoot(),
-			// fmPageFactory.getPageName(), e.getUri()))) {
-			// refreshView();
-			// updatePageState();
-			// }
-			// });
+			History history = UI.getCurrent().getPage().getHistory();
+			history.setHistoryStateChangeHandler(e -> {
+				String url = urlBase + GrassPage.getContextPath() + "/" + e.getLocation().getPath();
+				if (FileProcessState.SUCCESS
+						.equals(explorer.goToDirByURL(GrassPage.getContextPath(), fmPageFactory.getPageName(), url))) {
+					refreshView();
+				}
+			});
 			updatePageState();
 			break;
 		case MISSING:
@@ -160,13 +172,6 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 			UIUtils.showWarning("Neznámá chyba - vracím se do kořenového adresáře");
 			break;
 		}
-
-		// TODO
-		VaadinRequest vaadinRequest = VaadinRequest.getCurrent();
-		VaadinServletRequest vaadinServletRequest = (VaadinServletRequest) vaadinRequest;
-		String requestURI = ((VaadinServletRequest) vaadinRequest).getRequestURI();
-		String fullURL = vaadinServletRequest.getRequestURL().toString();
-		urlBase = fullURL.substring(0, fullURL.length() - requestURI.length());
 
 		createBreadcrumb(layout);
 		createFilesGrid(layout);
@@ -453,10 +458,9 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 		// se ve stavu objeví "/", je to bráno jako nový kořen a další pushState
 		// nahradí pouze poslední chunk
 		// TODO
-		// String currentURL =
-		// explorer.getCurrentURL(getRequest().getContextRoot(),
-		// fmPageFactory.getPageName());
-		// Page.getCurrent().pushState(currentURL);
+		String currentURL = explorer.getCurrentURL("", fmPageFactory.getPageName());
+		History history = UI.getCurrent().getPage().getHistory();
+		history.pushState(null, currentURL.substring(1));
 	}
 
 }

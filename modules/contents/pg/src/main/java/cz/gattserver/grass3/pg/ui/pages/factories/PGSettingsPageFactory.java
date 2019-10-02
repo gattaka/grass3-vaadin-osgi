@@ -3,9 +3,8 @@ package cz.gattserver.grass3.pg.ui.pages.factories;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.pg.ui.pages.PGSettingsPage;
-import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.ui.pages.settings.factories.AbstractModuleSettingsPageFactory;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
+import cz.gattserver.grass3.ui.pages.settings.AbstractModuleSettingsPageFactory;
+import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 
 @Component
 public class PGSettingsPageFactory extends AbstractModuleSettingsPageFactory {
@@ -19,7 +18,7 @@ public class PGSettingsPageFactory extends AbstractModuleSettingsPageFactory {
 	}
 
 	@Override
-	protected GrassPage createPage(GrassRequest request) {
-		return new PGSettingsPage(request);
+	protected AbstractPageFragmentFactory createPageFragmentFactory() {
+		return new PGSettingsPage();
 	}
 }

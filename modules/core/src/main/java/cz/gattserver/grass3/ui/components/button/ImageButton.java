@@ -11,6 +11,14 @@ public class ImageButton extends Button {
 
 	private static final long serialVersionUID = 4204958919924333786L;
 
+	public ImageButton(String caption, ImageIcon icon) {
+		this(caption, new Image(icon.createResource(), caption), null);
+	}
+
+	public ImageButton(String caption, Image img) {
+		this(caption, img, null);
+	}
+
 	public ImageButton(String caption, ImageIcon icon, ComponentEventListener<ClickEvent<Button>> clickListener) {
 		this(caption, new Image(icon.createResource(), caption), clickListener);
 	}
@@ -25,7 +33,8 @@ public class ImageButton extends Button {
 			if (caption == null)
 				img.addClassName("img-only-button");
 		}
-		addClickListener(clickListener);
+		if (clickListener != null)
+			addClickListener(clickListener);
 	}
 
 	public ImageButton setTooltip(String value) {

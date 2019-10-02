@@ -154,21 +154,21 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 	/**
 	 * Získá URL stránky. Kořen webu + suffix dle pageFactory
 	 */
-	public String getPageURL(PageFactory pageFactory) {
+	public static String getPageURL(PageFactory pageFactory) {
 		return getContextPath() + "/" + pageFactory.getPageName();
 	}
 
 	/**
 	 * Získá URL stránky. Kořen webu + suffix
 	 */
-	public String getPageURL(String suffix) {
+	public static String getPageURL(String suffix) {
 		return getContextPath() + "/" + suffix;
 	}
 
 	/**
 	 * Získá URL stránky. Kořen webu + suffix dle pageFactory + relativní URL
 	 */
-	public String getPageURL(PageFactory pageFactory, String... relativeURLs) {
+	public static String getPageURL(PageFactory pageFactory, String... relativeURLs) {
 		if (relativeURLs.length == 1) {
 			return getPageURL(pageFactory) + "/" + relativeURLs[0];
 		} else {

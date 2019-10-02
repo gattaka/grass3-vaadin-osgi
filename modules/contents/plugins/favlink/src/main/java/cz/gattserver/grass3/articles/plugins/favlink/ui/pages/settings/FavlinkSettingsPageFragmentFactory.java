@@ -84,8 +84,10 @@ public class FavlinkSettingsPageFragmentFactory extends AbstractPageFragmentFact
 
 		// Save tlačítko
 		Button saveButton = new Button("Uložit", event -> {
-			configuration.setOutputPath((String) outputPathField.getValue());
-			storeConfiguration(configuration);
+			if (binder.validate().isOk()) {
+				configuration.setOutputPath((String) outputPathField.getValue());
+				storeConfiguration(configuration);
+			}
 		});
 		binder.addValueChangeListener(l -> saveButton.setEnabled(binder.isValid()));
 		btnLayout.add(saveButton);

@@ -3,7 +3,7 @@ package cz.gattserver.grass3.ui.dialogs;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Shortcuts;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
@@ -15,7 +15,7 @@ public abstract class ImageSlideshowWindow extends WebDialog {
 
 	protected int currentIndex;
 	protected int totalCount;
-	protected Label itemLabel;
+	protected Span itemLabel;
 	protected Div slideShowLayout;
 
 	public abstract void showItem(int index);
@@ -30,7 +30,7 @@ public abstract class ImageSlideshowWindow extends WebDialog {
 
 		layout.addClassName("grass-scrollable");
 
-		itemLabel = new Label();
+		itemLabel = new Span();
 		itemLabel.addClassName("white-bold-label");
 		itemLabel.setSizeUndefined();
 

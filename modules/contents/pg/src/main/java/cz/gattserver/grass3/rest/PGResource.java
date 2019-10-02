@@ -71,7 +71,7 @@ public class PGResource {
 		if (page * pageSize > count)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		return new ResponseEntity<>(
-				pgService.getAllPhotogalleriesForREST(user.getId(), filter, new PageRequest(page, pageSize)),
+				pgService.getAllPhotogalleriesForREST(user.getId(), filter, PageRequest.of(page, pageSize)),
 				HttpStatus.OK);
 	}
 

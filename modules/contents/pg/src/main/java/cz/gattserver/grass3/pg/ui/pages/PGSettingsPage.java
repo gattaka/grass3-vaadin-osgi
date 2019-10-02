@@ -18,23 +18,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.ValidationResult;
-import com.vaadin.data.validator.StringLengthValidator;
-import com.vaadin.server.Page;
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.renderers.ComponentRenderer;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.Column;
+import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationResult;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
+import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
+import com.vaadin.flow.data.validator.StringLengthValidator;
 
 import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.grass3.events.EventBus;
@@ -47,19 +51,19 @@ import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryRESTOverviewTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.service.PGService;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.FileSystemService;
+import cz.gattserver.grass3.ui.components.button.SaveButton;
+import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
-import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
-import cz.gattserver.grass3.ui.windows.ProgressDialog;
+import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
+import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
-import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.InfoDialog;
 import cz.gattserver.web.common.ui.window.WarnDialog;
 import net.engio.mbassy.listener.Handler;
 
-public class PGSettingsPage extends AbstractSettingsPage {
+public class PGSettingsPage extends AbstractPageFragmentFactory {
 
 	private static final Logger logger = LoggerFactory.getLogger(PGSettingsPage.class);
 
@@ -77,35 +81,14 @@ public class PGSettingsPage extends AbstractSettingsPage {
 
 	private String filterName;
 
-	private UI ui = UI.getCurrent();
 	private ProgressDialog progressIndicatorWindow;
 
-	public PGSettingsPage(GrassRequest request) {
-		super(request);
-	}
-
 	@Override
-	protected Component createContent() {
+	public void createFragment(Div layout) {
 		final PGConfiguration configuration = pgService.loadConfiguration();
 		final FileSystem fs = fileSystemService.getFileSystem();
 
-		VerticalLayout layout = new VerticalLayout();
-
-		layout.setPadding(true);
-		layout.setSpacing(true);
-
-		VerticalLayout settingsLayout = new VerticalLayout();
-		layout.addComponent(settingsLayout);
-
-		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new H2Label("Nastavení fotogalerie"));
-
-		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
-		VerticalLayout settingsFieldsLayout = new VerticalLayout();
-		settingsLayout.addComponent(settingsFieldsLayout);
-		settingsFieldsLayout.setSpacing(true);
-		settingsFieldsLayout.setPadding(false);
-		settingsFieldsLayout.setSizeFull();
+		layout.add(new H2("Nastavení fotogalerie"));
 
 		Binder<PGConfiguration> binder = new Binder<>();
 
@@ -113,7 +96,7 @@ public class PGSettingsPage extends AbstractSettingsPage {
 		final TextField miniaturesDirField = new TextField("Název adresářů miniatur");
 		miniaturesDirField.setValue(String.valueOf(configuration.getMiniaturesDir()));
 		miniaturesDirField.setWidth("300px");
-		settingsFieldsLayout.addComponent(miniaturesDirField);
+		layout.add(miniaturesDirField);
 
 		binder.forField(miniaturesDirField).asRequired("Nesmí být prázdné")
 				.withValidator(new StringLengthValidator("Neodpovídá povolené délce", 1, 1024))
@@ -123,7 +106,7 @@ public class PGSettingsPage extends AbstractSettingsPage {
 		final TextField rootDirField = new TextField("Kořenový adresář fotogalerií");
 		rootDirField.setValue(String.valueOf(configuration.getRootDir()));
 		rootDirField.setWidth("300px");
-		settingsFieldsLayout.addComponent(rootDirField);
+		layout.add(rootDirField);
 
 		binder.forField(rootDirField).asRequired("Kořenový adresář je povinný").withValidator((val, c) -> {
 			try {
@@ -135,97 +118,85 @@ public class PGSettingsPage extends AbstractSettingsPage {
 		}).bind(PGConfiguration::getRootDir, PGConfiguration::setRootDir);
 
 		// Save tlačítko
-		Button saveButton = new Button("Uložit", event -> {
-			if (rootDirField.getComponentError() == null && miniaturesDirField.getComponentError() == null) {
+		SaveButton saveButton = new SaveButton(event -> {
+			if (binder.validate().isOk()) {
 				configuration.setRootDir(rootDirField.getValue());
 				configuration.setMiniaturesDir(miniaturesDirField.getValue());
 				pgService.storeConfiguration(configuration);
-				Page.getCurrent().reload();
+				UI.getCurrent().getPage().reload();
 			}
 		});
 		binder.addValueChangeListener(l -> saveButton.setEnabled(binder.isValid()));
-		settingsFieldsLayout.addComponent(saveButton);
+		layout.add(saveButton);
 
 		Path path = fileSystemService.getFileSystem().getPath(configuration.getRootDir());
 
 		if (Files.exists(path)) {
-			Grid<PGSettingsItemTO> grid = new Grid<>("Přehled adresářů");
+			layout.add(new Span("Přehled adresářů"));
+
+			Grid<PGSettingsItemTO> grid = new Grid<>();
 			grid.setWidth("100%");
 			grid.setHeight("500px");
 
-			settingsFieldsLayout.addComponent(grid);
+			layout.add(grid);
 
-			Column<PGSettingsItemTO, String> nameColumn = grid.addColumn(p -> p.getPath().getFileName().toString())
-					.setCaption("Název").setExpandRatio(1);
+			Column<PGSettingsItemTO> nameColumn = grid
+					.addColumn(new TextRenderer<>(to -> to.getPath().getFileName().toString())).setHeader("Název")
+					.setFlexGrow(100);
 
-			grid.addColumn(p -> {
-				if (p.getOverviewTO() == null)
-					return new Label("Nepoužívá se");
+			grid.addColumn(new ComponentRenderer<Anchor, PGSettingsItemTO>(to -> {
+				if (to.getOverviewTO() == null)
+					return new Anchor("", "Nepoužívá se");
 				else
-					return new Label(
-							"<a href=\"" + getPageURL(photogalleryViewerPageFactory,
-									URLIdentifierUtils.createURLIdentifier(p.getOverviewTO().getId(),
-											p.getOverviewTO().getName()))
-									+ "\" target=\"_blank\">Odkaz</a>",
-							ContentMode.HTML);
-			}).setRenderer(new ComponentRenderer()).setCaption("Odkaz").setStyleGenerator(item -> "v-align-center");
+					return new Anchor(
+							GrassPage.getPageURL(photogalleryViewerPageFactory, URLIdentifierUtils
+									.createURLIdentifier(to.getOverviewTO().getId(), to.getOverviewTO().getName())),
+							"Odkaz");
+			})).setHeader("Odkaz");
 
 			grid.addColumn(p -> p.getSize() == null ? "N/A" : HumanBytesSizeFormatter.format(p.getSize()))
-					.setCaption("Velikost").setStyleGenerator(item -> "v-align-right");
+					.setHeader("Velikost").setTextAlign(ColumnTextAlign.END);
 
-			grid.addColumn(p -> p.getFilesCount() == null ? "N/A" : p.getFilesCount()).setCaption("Počet souborů")
-					.setStyleGenerator(item -> "v-align-right");
+			grid.addColumn(p -> p.getFilesCount() == null ? "N/A" : p.getFilesCount()).setHeader("Počet souborů")
+					.setTextAlign(ColumnTextAlign.END);
 
-			grid.addColumn(p -> {
-				if (p.getOverviewTO() == null)
-					return null;
-				Button button = new Button("Přegenerovat", new Button.ClickListener() {
-					private static final long serialVersionUID = 1996102817811495323L;
+			grid.addColumn(new ComponentRenderer<Button, PGSettingsItemTO>(item -> {
+				Button button = new Button("Přegenerovat", be -> {
+					new ConfirmDialog("Opravdu přegenerovat galerii?", e -> {
+						UUID operationId = UUID.randomUUID();
 
-					@Override
-					public void buttonClick(ClickEvent event) {
-						UI.getCurrent().addWindow(new ConfirmDialog("Opravdu přegenerovat galerii?", e -> {
-							UUID operationId = UUID.randomUUID();
+						PhotogalleryTO to = pgService.getPhotogalleryForDetail(item.getOverviewTO().getId());
+						progressIndicatorWindow = new ProgressDialog();
 
-							PhotogalleryTO to = pgService.getPhotogalleryForDetail(p.getOverviewTO().getId());
-							progressIndicatorWindow = new ProgressDialog();
+						eventBus.subscribe(PGSettingsPage.this);
 
-							eventBus.subscribe(PGSettingsPage.this);
-
-							PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(to.getContentNode().getName(),
-									to.getPhotogalleryPath(), to.getContentNode().getContentTagsAsStrings(),
-									to.getContentNode().isPublicated(), true);
-							pgService.modifyPhotogallery(operationId, to.getId(), payloadTO, LocalDateTime.now());
-						}));
-					}
-
+						PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(to.getContentNode().getName(),
+								to.getPhotogalleryPath(), to.getContentNode().getContentTagsAsStrings(),
+								to.getContentNode().isPublicated(), true);
+						pgService.modifyPhotogallery(operationId, to.getId(), payloadTO, LocalDateTime.now());
+					}).open();
 				});
-				button.setStyleName(ValoTheme.BUTTON_LINK);
+				button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+				button.setVisible(item.getOverviewTO() != null);
 				return button;
-			}).setRenderer(new ComponentRenderer()).setCaption("Přegenerování");
+			})).setHeader("Přegenerování");
 
-			grid.addColumn(item -> {
+			grid.addColumn(new ComponentRenderer<Button, PGSettingsItemTO>(item -> {
 				String btnCaption = item.getOverviewTO() == null ? "Smazat adresář" : "Smazat galerii";
-				Button button = new Button(btnCaption, new Button.ClickListener() {
-
-					private static final long serialVersionUID = 1996102817811495323L;
-
-					@Override
-					public void buttonClick(ClickEvent event) {
-						String caption = item.getOverviewTO() == null ? "Opravdu smazat adresář?"
-								: "Opravdu smazat galerii (záznam v kategorii a data v adresáři)?";
-						UI.getCurrent().addWindow(new ConfirmDialog(caption, e -> deleteItem(item, path, grid)));
-					}
+				Button button = new Button(btnCaption, be -> {
+					String caption = item.getOverviewTO() == null ? "Opravdu smazat adresář?"
+							: "Opravdu smazat galerii (záznam v kategorii a data v adresáři)?";
+					new ConfirmDialog(caption, e -> deleteItem(item, path, grid)).open();
 				});
-				button.setStyleName(ValoTheme.BUTTON_LINK);
+				button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 				return button;
-			}).setRenderer(new ComponentRenderer()).setCaption("Smazání");
+			})).setHeader("Smazání");
 
 			HeaderRow filteringHeader = grid.appendHeaderRow();
 
 			// Obsah
 			TextField contentFilterField = new TextField();
-			contentFilterField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+			contentFilterField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 			contentFilterField.setWidth("100%");
 			contentFilterField.addValueChangeListener(e -> {
 				filterName = e.getValue();
@@ -235,9 +206,6 @@ public class PGSettingsPage extends AbstractSettingsPage {
 
 			populateGrid(grid, path);
 		}
-
-		return layout;
-
 	}
 
 	protected void deleteItem(PGSettingsItemTO item, Path path, Grid<PGSettingsItemTO> grid) {
@@ -255,12 +223,12 @@ public class PGSettingsPage extends AbstractSettingsPage {
 				logger.error("Nezdařilo se smazat adresář " + item.getPath().getFileName().toString(), e1);
 				WarnDialog warnSubwindow = new WarnDialog(
 						"Při mazání adresáře došlo k chybě (" + e1.getMessage() + ")");
-				UI.getCurrent().addWindow(warnSubwindow);
+				warnSubwindow.open();
 			}
 		} else {
 			if (!pgService.deletePhotogallery(item.getOverviewTO().getId())) {
 				WarnDialog warnSubwindow = new WarnDialog("Při mazání galerie se nezdařilo smazat některé soubory.");
-				UI.getCurrent().addWindow(warnSubwindow);
+				warnSubwindow.open();
 			}
 		}
 		populateGrid(grid, path);
@@ -270,7 +238,7 @@ public class PGSettingsPage extends AbstractSettingsPage {
 	protected void onProcessStart(final PGProcessStartEvent event) {
 		progressIndicatorWindow.runInUI(() -> {
 			progressIndicatorWindow.setTotal(event.getCountOfStepsToDo());
-			ui.addWindow(progressIndicatorWindow);
+			progressIndicatorWindow.open();
 		});
 	}
 
@@ -285,9 +253,9 @@ public class PGSettingsPage extends AbstractSettingsPage {
 			if (progressIndicatorWindow != null)
 				progressIndicatorWindow.close();
 			if (event.isSuccess())
-				ui.addWindow(new InfoDialog("Přegenerování dopladlo úspěšně"));
+				new InfoDialog("Přegenerování dopladlo úspěšně").open();
 			else
-				ui.addWindow(new WarnDialog("Při přegenerování došlo k chybám: ", event.getResultDetails()));
+				new WarnDialog("Při přegenerování došlo k chybám: ", event.getResultDetails()).open();
 		});
 		eventBus.unsubscribe(PGSettingsPage.this);
 	}
@@ -343,8 +311,10 @@ public class PGSettingsPage extends AbstractSettingsPage {
 	}
 
 	private void populateGrid(Grid<PGSettingsItemTO> grid, Path path) {
-		grid.setDataProvider((sortOrder, offset, limit) -> createStream(path).skip(offset).limit(limit),
-				() -> (int) count(path));
+		FetchCallback<PGSettingsItemTO, Void> fetchCallback = q -> createStream(path).skip(q.getOffset())
+				.limit(q.getLimit());
+		CountCallback<PGSettingsItemTO, Void> countCallback = q -> (int) count(path);
+		grid.setDataProvider(DataProvider.fromCallbacks(fetchCallback, countCallback));
 	}
 
 }

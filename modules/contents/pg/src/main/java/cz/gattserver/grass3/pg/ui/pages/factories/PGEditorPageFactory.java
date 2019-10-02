@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.pg.ui.pages.PGEditorPage;
 import cz.gattserver.grass3.security.CoreRole;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.factories.template.AbstractPageFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 
@@ -21,8 +20,8 @@ public class PGEditorPageFactory extends AbstractPageFactory {
 	}
 
 	@Override
-	protected GrassPage createPage(GrassRequest request) {
-		return new PGEditorPage(request);
+	protected GrassPage createPage() {
+		return new PGEditorPage();
 	}
 
 }

@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.pg.ui.pages;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -13,26 +14,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.fo0.advancedtokenfield.main.AdvancedTokenField;
-import com.fo0.advancedtokenfield.main.Token;
-import com.vaadin.server.FileResource;
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.DateTimeField;
-import com.vaadin.ui.Embedded;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.JavaScript;
-import com.vaadin.ui.JavaScriptFunction;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.ClientCallable;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.combobox.ComboBox.FetchItemsCallback;
+import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.function.SerializableFunction;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.WildcardParameter;
+import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.exception.GrassPageException;
@@ -46,26 +47,29 @@ import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
 import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.pg.util.PGUtils;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ContentTagService;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
-import cz.gattserver.grass3.ui.components.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.button.CloseButton;
+import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.button.SaveButton;
+import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.grass3.ui.windows.ProgressDialog;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
-import cz.gattserver.web.common.server.URLPathAnalyzer;
-import cz.gattserver.web.common.ui.H2Label;
-import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.MultiUpload;
+import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
-import elemental.json.JsonArray;
 import net.engio.mbassy.listener.Handler;
 
-public class PGEditorPage extends OneColumnPage {
+@Route("pg-editor")
+public class PGEditorPage extends OneColumnPage implements HasUrlParameter<String> {
+
+	private static final long serialVersionUID = 8685208356478891386L;
 
 	private static final Logger logger = LoggerFactory.getLogger(PGEditorPage.class);
+
+	private static final String CLOSE_JS_DIV_ID = "close-js-div";
 
 	@Autowired
 	private PGService pgService;
@@ -79,17 +83,16 @@ public class PGEditorPage extends OneColumnPage {
 	@Autowired
 	private EventBus eventBus;
 
-	private UI ui = UI.getCurrent();
 	private ProgressDialog progressIndicatorWindow;
 
 	private NodeOverviewTO node;
 	private PhotogalleryTO photogallery;
 
-	private AdvancedTokenField photogalleryKeywords;
+	private TokenField photogalleryKeywords;
 	private TextField photogalleryNameField;
-	private DateTimeField photogalleryDateField;
-	private CheckBox publicatedCheckBox;
-	private CheckBox reprocessSlideshowAndMiniCheckBox;
+	private DatePicker photogalleryDateField;
+	private Checkbox publicatedCheckBox;
+	private Checkbox reprocessSlideshowAndMiniCheckBox;
 
 	private String galleryDir;
 	private boolean editMode;
@@ -101,34 +104,40 @@ public class PGEditorPage extends OneColumnPage {
 	 */
 	private Set<PhotogalleryViewItemTO> newFiles = new HashSet<>();
 
-	public PGEditorPage(GrassRequest request) {
-		super(request);
-		JavaScript.eval(
+	private String operationToken;
+	private String identifierToken;
+
+	@Override
+	public void setParameter(BeforeEvent event, @WildcardParameter String parameter) {
+		String[] chunks = parameter.split("/");
+		if (chunks.length > 0)
+			operationToken = chunks[0];
+		if (chunks.length > 1)
+			identifierToken = chunks[1];
+
+		init();
+
+		UI.getCurrent().getPage().executeJs(
 				"window.onbeforeunload = function() { return \"Opravdu si přejete ukončit editor a odejít - rozpracovaná data nejsou uložena ?\" };");
 	}
 
 	@Override
-	protected Layout createPayload() {
-
-		photogalleryKeywords = new AdvancedTokenField();
-		photogalleryNameField = new TextField();
-		photogalleryDateField = new DateTimeField();
-		publicatedCheckBox = new CheckBox();
-		reprocessSlideshowAndMiniCheckBox = new CheckBox();
-
-		URLPathAnalyzer analyzer = getRequest().getAnalyzer();
-		String operationToken = analyzer.getNextPathToken();
-		String identifierToken = analyzer.getNextPathToken();
-		if (operationToken == null || identifierToken == null) {
-			logger.debug("Chybí operace nebo identifikátor cíle");
-			throw new GrassPageException(404);
-		}
-
+	protected void createColumnContent(Div editorLayout) {
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(identifierToken);
 		if (identifier == null) {
 			logger.debug("Nezdařilo se vytěžit URL identifikátor z řetězce: '{}'", identifierToken);
 			throw new GrassPageException(404);
 		}
+
+		FetchItemsCallback<String> fetchItemsCallback = (filter, offset, limit) -> contentTagFacade
+				.findByFilter(filter, offset, limit).stream();
+		SerializableFunction<String, Integer> serializableFunction = filter -> contentTagFacade.countByFilter(filter);
+		photogalleryKeywords = new TokenField(fetchItemsCallback, serializableFunction);
+
+		photogalleryNameField = new TextField();
+		photogalleryDateField = new DatePicker();
+		publicatedCheckBox = new Checkbox();
+		reprocessSlideshowAndMiniCheckBox = new Checkbox();
 
 		// operace ?
 		if (operationToken.equals(DefaultContentOperations.NEW.toString())) {
@@ -144,16 +153,15 @@ public class PGEditorPage extends OneColumnPage {
 				throw new GrassPageException(404);
 
 			photogalleryNameField.setValue(photogallery.getContentNode().getName());
-			for (ContentTagOverviewTO tagDTO : photogallery.getContentNode().getContentTags()) {
-				photogalleryKeywords.addToken(new Token(tagDTO.getName()));
-			}
+			for (ContentTagOverviewTO tagDTO : photogallery.getContentNode().getContentTags())
+				photogalleryKeywords.addToken(tagDTO.getName());
 
 			publicatedCheckBox.setValue(photogallery.getContentNode().isPublicated());
-			photogalleryDateField.setValue(photogallery.getContentNode().getCreationDate());
+			photogalleryDateField.setValue(photogallery.getContentNode().getCreationDate().toLocalDate());
 
 			// nemá oprávnění upravovat tento obsah
-			if (!photogallery.getContentNode().getAuthor().getName().equals(UIUtils.getGrassUI().getUser().getName())
-					&& !UIUtils.getGrassUI().getUser().isAdmin())
+			if (!photogallery.getContentNode().getAuthor().getName().equals(getUser().getName())
+					&& !getUser().isAdmin())
 				throw new GrassPageException(403);
 		} else {
 			logger.debug("Neznámá operace: '{}'", operationToken);
@@ -166,44 +174,16 @@ public class PGEditorPage extends OneColumnPage {
 			throw new GrassPageException(500);
 		}
 
-		return super.createPayload();
-	}
-
-	@Override
-	protected Component createColumnContent() {
-
-		VerticalLayout marginLayout = new VerticalLayout();
-		marginLayout.setPadding(true);
-		marginLayout.setSpacing(false);
-
-		VerticalLayout editorLayout = new VerticalLayout();
-		editorLayout.setPadding(true);
-		marginLayout.addComponent(editorLayout);
-
-		editorLayout.addComponent(new H2Label("Název galerie"));
-		editorLayout.addComponent(photogalleryNameField);
+		editorLayout.add(new H2("Název galerie"));
+		editorLayout.add(photogalleryNameField);
 		photogalleryNameField.setWidth("100%");
 
-		VerticalLayout articleKeywordsLayout = new VerticalLayout();
-		articleKeywordsLayout.setPadding(false);
-		editorLayout.addComponent(articleKeywordsLayout);
-
 		// label
-		articleKeywordsLayout.addComponent(new H2Label("Klíčová slova"));
+		editorLayout.add(new H2("Klíčová slova"));
 
 		// menu tagů + textfield tagů
-		HorizontalLayout keywordsMenuAndTextLayout = new HorizontalLayout();
-		keywordsMenuAndTextLayout.setWidth("100%");
-		keywordsMenuAndTextLayout.setSpacing(true);
-		articleKeywordsLayout.addComponent(keywordsMenuAndTextLayout);
+		editorLayout.add(photogalleryKeywords);
 
-		keywordsMenuAndTextLayout.addComponent(photogalleryKeywords);
-
-		Set<ContentTagOverviewTO> contentTags = contentTagFacade.getTagsForOverviewOrderedByName();
-		contentTags.forEach(t -> {
-			Token to = new Token(t.getName());
-			photogalleryKeywords.addTokenToInputField(to);
-		});
 		photogalleryKeywords.isEnabled();
 		photogalleryKeywords.setAllowNewItems(true);
 		photogalleryKeywords.getInputField().setPlaceholder("klíčové slovo");
@@ -211,26 +191,25 @@ public class PGEditorPage extends OneColumnPage {
 		VerticalLayout contentLayout = new VerticalLayout();
 		contentLayout.setSpacing(true);
 		contentLayout.setPadding(false);
-		editorLayout.addComponent(contentLayout);
-		contentLayout.addComponent(new H2Label("Položky"));
+		editorLayout.add(contentLayout);
+		contentLayout.add(new H2("Položky"));
 
 		HorizontalLayout gridLayout = new HorizontalLayout();
 		gridLayout.setPadding(false);
 		gridLayout.setSpacing(true);
 		gridLayout.setWidth("100%");
-		contentLayout.addComponent(gridLayout);
+		contentLayout.add(gridLayout);
 
 		final VerticalLayout imageWrapper = new VerticalLayout();
 		imageWrapper.setWidth("300px");
 		imageWrapper.setHeight("300px");
-		imageWrapper.addStyleName("bordered");
+		imageWrapper.addClassName("bordered");
 
-		final Embedded image = new Embedded();
-		image.addStyleName("resized-preview");
+		final Image image = new Image();
+		image.addClassName("resized-preview");
 
-		final Label previewLabel = new Label("<center>Náhled</center>", ContentMode.HTML);
-		imageWrapper.addComponent(previewLabel);
-		imageWrapper.setComponentAlignment(previewLabel, Alignment.MIDDLE_CENTER);
+		final HtmlDiv previewLabel = new HtmlDiv("<center>Náhled</center>");
+		imageWrapper.add(previewLabel);
 
 		final Grid<PhotogalleryViewItemTO> grid = new Grid<>(PhotogalleryViewItemTO.class);
 		final List<PhotogalleryViewItemTO> items;
@@ -245,13 +224,13 @@ public class PGEditorPage extends OneColumnPage {
 		}
 		grid.setItems(items);
 		grid.setColumns("name");
-		grid.getColumn("name").setCaption("Název");
+		grid.getColumnByKey("name").setHeader("Název");
 		grid.setSelectionMode(SelectionMode.MULTI);
 		grid.addItemClickListener(e -> {
 			PhotogalleryViewItemTO item = e.getItem();
 			if (item == null)
 				return;
-			if (e.getMouseEventDetails().isShiftKey()) {
+			if (e.isShiftKey()) {
 				if (grid.getSelectedItems().contains(item))
 					grid.deselect(item);
 				else
@@ -267,7 +246,7 @@ public class PGEditorPage extends OneColumnPage {
 		});
 		grid.setSizeFull();
 
-		final Button removeBtn = new DeleteGridButton<>("Odstranit", selected -> {
+		final DeleteGridButton<PhotogalleryViewItemTO> removeBtn = new DeleteGridButton<>("Odstranit", selected -> {
 			List<PhotogalleryViewItemTO> removed = pgService.deleteFiles(selected, galleryDir);
 			if (removed.size() != selected.size())
 				UIUtils.showWarning("Nezdařilo se smazat některé soubory");
@@ -276,67 +255,37 @@ public class PGEditorPage extends OneColumnPage {
 		}, grid);
 
 		grid.addSelectionListener(event -> {
-			imageWrapper.removeAllComponents();
+			imageWrapper.removeAll();
 			if (!event.getAllSelectedItems().isEmpty() && event.getAllSelectedItems().size() == 1) {
 				PhotogalleryViewItemTO itemTO = event.getFirstSelectedItem().get();
 				String file = itemTO.getName();
 				if (PGUtils.isImage(file)) {
-					try {
-						image.setSource(new FileResource(pgService.getFullImage(galleryDir, file).toFile()));
-						imageWrapper.addComponent(image);
-						return;
-					} catch (Exception e) {
-						UIUtils.showWarning("Obrázek nelze zobrazit");
-					}
+					image.setSrc(new StreamResource(file, () -> {
+						try {
+							return Files.newInputStream(pgService.getFullImage(galleryDir, file));
+						} catch (IOException e1) {
+							UIUtils.showWarning("Obrázek nelze zobrazit");
+							return null;
+						}
+					}));
+					imageWrapper.add(image);
+					return;
 				}
 				removeBtn.setEnabled(true);
 			}
-			imageWrapper.addComponent(previewLabel);
-			imageWrapper.setComponentAlignment(previewLabel, Alignment.MIDDLE_CENTER);
+			imageWrapper.add(previewLabel);
+			imageWrapper.setAlignItems(Alignment.CENTER);
 		});
-		gridLayout.addComponent(grid);
-		gridLayout.setExpandRatio(grid, 1);
-
-		gridLayout.addComponent(imageWrapper);
+		gridLayout.add(grid);
+		gridLayout.add(imageWrapper);
 
 		HorizontalLayout itemsButtonLayout = new HorizontalLayout();
 		itemsButtonLayout.setSpacing(true);
 		itemsButtonLayout.setPadding(false);
-		contentLayout.addComponent(itemsButtonLayout);
+		contentLayout.add(itemsButtonLayout);
 
-		itemsButtonLayout.addComponent(createUploadButton(grid, items));
-		itemsButtonLayout.addComponent(removeBtn);
-
-		VerticalLayout contentOptionsLayout = new VerticalLayout();
-		contentOptionsLayout.setSpacing(true);
-		contentOptionsLayout.setPadding(false);
-		editorLayout.addComponent(contentOptionsLayout);
-		contentOptionsLayout.addComponent(new H2Label("Nastavení"));
-
-		publicatedCheckBox.setCaption("Publikovat galerii");
-		publicatedCheckBox.setDescription("Je-li prázdné, uvidí galerii pouze její autor");
-		contentOptionsLayout.addComponent(publicatedCheckBox);
-
-		reprocessSlideshowAndMiniCheckBox.setCaption("Přegenerovat slideshow a miniatury");
-		contentOptionsLayout.addComponent(reprocessSlideshowAndMiniCheckBox);
-
-		photogalleryDateField.setCaption("Přepsat datum vytvoření galerie");
-		contentOptionsLayout.addComponent(photogalleryDateField);
-
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
-		buttonsLayout.setSpacing(true);
-		buttonsLayout.setPadding(false);
-		editorLayout.addComponent(buttonsLayout);
-
-		populateButtonsLayout(buttonsLayout);
-
-		return marginLayout;
-	}
-
-	private MultiUpload createUploadButton(final Grid<PhotogalleryViewItemTO> grid,
-			final List<PhotogalleryViewItemTO> items) {
-		return new PGMultiUpload(galleryDir) {
-			private static final long serialVersionUID = -693498481160129134L;
+		PGMultiUpload upload = new PGMultiUpload(galleryDir) {
+			private static final long serialVersionUID = 8317049226635860025L;
 
 			@Override
 			protected void fileUploadSuccess(String fileName) {
@@ -346,46 +295,64 @@ public class PGEditorPage extends OneColumnPage {
 				items.add(itemTO);
 				grid.setItems(items);
 			}
-
 		};
+		upload.addClassName("top-margin");
+		itemsButtonLayout.add(upload);
+		itemsButtonLayout.add(removeBtn);
+
+		VerticalLayout contentOptionsLayout = new VerticalLayout();
+		contentOptionsLayout.setSpacing(true);
+		contentOptionsLayout.setPadding(false);
+		editorLayout.add(contentOptionsLayout);
+		contentOptionsLayout.add(new H2("Nastavení"));
+
+		publicatedCheckBox.setLabel("Publikovat galerii");
+		contentOptionsLayout.add(publicatedCheckBox);
+
+		reprocessSlideshowAndMiniCheckBox.setLabel("Přegenerovat slideshow a miniatury");
+		contentOptionsLayout.add(reprocessSlideshowAndMiniCheckBox);
+
+		photogalleryDateField.setLabel("Přepsat datum vytvoření galerie");
+		contentOptionsLayout.add(photogalleryDateField);
+
+		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		buttonsLayout.setSpacing(true);
+		buttonsLayout.setPadding(false);
+		editorLayout.add(buttonsLayout);
+
+		populateButtonsLayout(buttonsLayout);
 	}
 
 	private void populateButtonsLayout(HorizontalLayout buttonLayout) {
 
 		// Uložit
-		Button saveButton = new Button("Uložit");
-		saveButton.setIcon(ImageIcon.SAVE_16_ICON.createResource());
-		saveButton.addClickListener(event -> {
+		SaveButton saveButton = new SaveButton(event -> {
 			if (!isFormValid())
 				return;
 			stayInEditor = true;
 			saveOrUpdatePhotogallery();
 		});
-		buttonLayout.addComponent(saveButton);
+		buttonLayout.add(saveButton);
 
 		// Uložit a zavřít
-		Button saveAndCloseButton = new Button("Uložit a zavřít");
-		saveAndCloseButton.setIcon(ImageIcon.SAVE_16_ICON.createResource());
-		saveAndCloseButton.addClickListener(event -> {
+		SaveButton saveAndCloseButton = new SaveButton("Uložit a zavřít", event -> {
 			if (!isFormValid())
 				return;
 			stayInEditor = false;
 			saveOrUpdatePhotogallery();
 		});
-		buttonLayout.addComponent(saveAndCloseButton);
+		buttonLayout.add(saveAndCloseButton);
 
 		// Zrušit
-		Button cancelButton = new Button("Zrušit");
-		cancelButton.setIcon(ImageIcon.DELETE_16_ICON.createResource());
-		cancelButton.addClickListener(event -> UI.getCurrent().addWindow(new ConfirmDialog(
+		CloseButton cancelButton = new CloseButton("Zrušit", ev -> new ConfirmDialog(
 				"Opravdu si přejete zavřít editor galerie ? Veškeré neuložené změny budou ztraceny.", e -> {
 					cleanAfterCancelEdit();
 					if (editMode)
 						returnToPhotogallery();
 					else
 						returnToNode();
-				})));
-		buttonLayout.addComponent(cancelButton);
+				}).open());
+		buttonLayout.add(cancelButton);
 	}
 
 	private void cleanAfterCancelEdit() {
@@ -412,20 +379,19 @@ public class PGEditorPage extends OneColumnPage {
 
 	private void saveOrUpdatePhotogallery() {
 		logger.info("saveOrUpdatePhotogallery thread: " + Thread.currentThread().getId());
-		List<String> tokens = new ArrayList<>();
-		photogalleryKeywords.getTokens().forEach(t -> tokens.add(t.getValue()));
 		PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(photogalleryNameField.getValue(), galleryDir,
-				tokens, publicatedCheckBox.getValue(), reprocessSlideshowAndMiniCheckBox.getValue());
+				photogalleryKeywords.getValues(), publicatedCheckBox.getValue(),
+				reprocessSlideshowAndMiniCheckBox.getValue());
 
 		eventBus.subscribe(PGEditorPage.this);
 		progressIndicatorWindow = new ProgressDialog();
 
 		if (editMode) {
 			pgService.modifyPhotogallery(UUID.randomUUID(), photogallery.getId(), payloadTO,
-					photogalleryDateField.getValue());
+					photogalleryDateField.getValue().atStartOfDay());
 		} else {
-			pgService.savePhotogallery(UUID.randomUUID(), payloadTO, node.getId(),
-					UIUtils.getGrassUI().getUser().getId(), photogalleryDateField.getValue());
+			pgService.savePhotogallery(UUID.randomUUID(), payloadTO, node.getId(), getUser().getId(),
+					photogalleryDateField.getValue().atStartOfDay());
 		}
 	}
 
@@ -433,41 +399,49 @@ public class PGEditorPage extends OneColumnPage {
 	 * Zavolá vrácení se na galerii
 	 */
 	private void returnToPhotogallery() {
-		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.closecallback", new JavaScriptFunction() {
-			private static final long serialVersionUID = 5850638851716815161L;
+		Div closeJsDiv = new Div() {
+			private static final long serialVersionUID = -7319482130016598549L;
 
-			@Override
-			public void call(JsonArray arguments) {
+			@ClientCallable
+			private void closeCallback() {
 				UIUtils.redirect(getPageURL(photogalleryViewerPageFactory, URLIdentifierUtils
 						.createURLIdentifier(photogallery.getId(), photogallery.getContentNode().getName())));
 			}
-		});
-		JavaScript.eval(
-				"window.onbeforeunload = null; setTimeout(function(){ cz.gattserver.grass3.closecallback(); }, 10);");
+		};
+		closeJsDiv.setId(CLOSE_JS_DIV_ID);
+		add(closeJsDiv);
+
+		UI.getCurrent().getPage()
+				.executeJs("window.onbeforeunload = null; setTimeout(function(){ document.getElementById('"
+						+ CLOSE_JS_DIV_ID + "').$server.closeCallback() }, 10);");
 	}
 
 	/**
 	 * zavolání vrácení se na kategorii
 	 */
 	private void returnToNode() {
-		JavaScript.getCurrent().addFunction("cz.gattserver.grass3.closecallback", new JavaScriptFunction() {
-			private static final long serialVersionUID = 5850638851716815161L;
+		Div closeJsDiv = new Div() {
+			private static final long serialVersionUID = -7319482130016598549L;
 
-			@Override
-			public void call(JsonArray arguments) {
+			@ClientCallable
+			private void closeCallback() {
 				UIUtils.redirect(getPageURL(nodePageFactory,
 						URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName())));
 			}
-		});
-		JavaScript.eval(
-				"window.onbeforeunload = null; setTimeout(function(){ cz.gattserver.grass3.closecallback(); }, 10);");
+		};
+		closeJsDiv.setId(CLOSE_JS_DIV_ID);
+		add(closeJsDiv);
+
+		UI.getCurrent().getPage()
+				.executeJs("window.onbeforeunload = null; setTimeout(function(){ document.getElementById('"
+						+ CLOSE_JS_DIV_ID + "').$server.closeCallback() }, 10);");
 	}
 
 	@Handler
 	protected void onProcessStart(final PGProcessStartEvent event) {
 		progressIndicatorWindow.runInUI(() -> {
 			progressIndicatorWindow.setTotal(event.getCountOfStepsToDo());
-			ui.addWindow(progressIndicatorWindow);
+			progressIndicatorWindow.open();
 		});
 	}
 
@@ -518,4 +492,5 @@ public class PGEditorPage extends OneColumnPage {
 			UIUtils.showWarning("Úprava galerie se nezdařila");
 		}
 	}
+
 }

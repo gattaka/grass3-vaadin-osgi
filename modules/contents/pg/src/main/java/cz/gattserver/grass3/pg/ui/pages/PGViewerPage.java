@@ -126,6 +126,20 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		if (chunks.length > 1)
 			magickToken = chunks[1];
 
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(identifierToken);
+		if (identifier == null)
+			throw new GrassPageException(404);
+
+		photogallery = pgService.getPhotogalleryForDetail(identifier.getId());
+		if (photogallery == null)
+			throw new GrassPageException(404);
+
+		if (!"MAG1CK".equals(magickToken) && !photogallery.getContentNode().isPublicated() && !isAdminOrAuthor())
+			throw new GrassPageException(403);
+
+		galleryDir = photogallery.getPhotogalleryPath();
+
+		loadJS();
 		init();
 	}
 
@@ -149,22 +163,6 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		imageSum = 0;
 		galleryGridRowOffset = 0;
 
-		rowStatusLabel = new Span();
-		rowStatusLabel.setSizeUndefined();
-
-		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(identifierToken);
-		if (identifier == null)
-			throw new GrassPageException(404);
-
-		photogallery = pgService.getPhotogalleryForDetail(identifier.getId());
-		if (photogallery == null)
-			throw new GrassPageException(404);
-
-		if (!"MAG1CK".equals(magickToken) && !photogallery.getContentNode().isPublicated() && !isAdminOrAuthor())
-			throw new GrassPageException(403);
-
-		galleryDir = photogallery.getPhotogalleryPath();
-
 		// pokud je galerie porušená, pak nic nevypisuj
 		try {
 			if (!pgService.checkGallery(galleryDir)) {
@@ -177,6 +175,9 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		} catch (IllegalArgumentException e) {
 			throw new GrassPageException(404, e);
 		}
+
+		rowStatusLabel = new Span();
+		rowStatusLabel.setSizeUndefined();
 
 		try {
 			imageSum = pgService.getViewItemsCount(photogallery.getPhotogalleryPath());

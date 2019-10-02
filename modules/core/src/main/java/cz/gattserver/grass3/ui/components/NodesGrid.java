@@ -12,6 +12,7 @@ import com.vaadin.flow.data.renderer.IconRenderer;
 
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.pages.template.MenuPage;
 import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
@@ -39,7 +40,7 @@ public class NodesGrid extends Grid<NodeOverviewTO> {
 						.setKey(iconBind);
 
 		addColumn(new ComponentRenderer<Anchor, NodeOverviewTO>(node -> {
-			String url = page.getPageURL(nodePageFactory,
+			String url = GrassPage.getPageURL(nodePageFactory,
 					URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()));
 			return new Anchor(url, node.getName());
 		})).setHeader("Kategorie").setId(nameBind);

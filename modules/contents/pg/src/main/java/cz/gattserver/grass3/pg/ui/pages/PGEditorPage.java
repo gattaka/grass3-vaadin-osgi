@@ -16,18 +16,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox.FetchItemsCallback;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -46,19 +48,18 @@ import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
 import cz.gattserver.grass3.pg.service.PGService;
-import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.services.ContentTagService;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
 import cz.gattserver.grass3.ui.components.button.CloseButton;
-import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
-import cz.gattserver.web.common.ui.HtmlDiv;
+import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import net.engio.mbassy.listener.Handler;
 
@@ -176,7 +177,7 @@ public class PGEditorPage extends OneColumnPage implements HasUrlParameter<Strin
 
 		editorLayout.add(new H2("Název galerie"));
 		editorLayout.add(photogalleryNameField);
-		photogalleryNameField.setWidth("100%");
+		photogalleryNameField.setWidthFull();
 
 		// label
 		editorLayout.add(new H2("Klíčová slova"));
@@ -188,28 +189,12 @@ public class PGEditorPage extends OneColumnPage implements HasUrlParameter<Strin
 		photogalleryKeywords.setAllowNewItems(true);
 		photogalleryKeywords.getInputField().setPlaceholder("klíčové slovo");
 
-		VerticalLayout contentLayout = new VerticalLayout();
-		contentLayout.setSpacing(true);
-		contentLayout.setPadding(false);
-		editorLayout.add(contentLayout);
-		contentLayout.add(new H2("Položky"));
-
 		HorizontalLayout gridLayout = new HorizontalLayout();
 		gridLayout.setPadding(false);
 		gridLayout.setSpacing(true);
-		gridLayout.setWidth("100%");
-		contentLayout.add(gridLayout);
-
-		final VerticalLayout imageWrapper = new VerticalLayout();
-		imageWrapper.setWidth("300px");
-		imageWrapper.setHeight("300px");
-		imageWrapper.addClassName("bordered");
-
-		final Image image = new Image();
-		image.addClassName("resized-preview");
-
-		final HtmlDiv previewLabel = new HtmlDiv("<center>Náhled</center>");
-		imageWrapper.add(previewLabel);
+		gridLayout.setWidthFull();
+		gridLayout.addClassName("top-margin");
+		editorLayout.add(gridLayout);
 
 		final Grid<PhotogalleryViewItemTO> grid = new Grid<>(PhotogalleryViewItemTO.class);
 		final List<PhotogalleryViewItemTO> items;
@@ -222,67 +207,44 @@ public class PGEditorPage extends OneColumnPage implements HasUrlParameter<Strin
 		} else {
 			items = new ArrayList<>();
 		}
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		grid.setItems(items);
 		grid.setColumns("name");
 		grid.getColumnByKey("name").setHeader("Název");
-		grid.setSelectionMode(SelectionMode.MULTI);
-		grid.addItemClickListener(e -> {
-			PhotogalleryViewItemTO item = e.getItem();
-			if (item == null)
-				return;
-			if (e.isShiftKey()) {
-				if (grid.getSelectedItems().contains(item))
-					grid.deselect(item);
-				else
-					grid.select(item);
-			} else {
-				if (grid.getSelectedItems().size() == 1 && grid.getSelectedItems().iterator().next().equals(item)) {
-					grid.deselect(item);
-				} else {
-					grid.deselectAll();
-					grid.select(item);
-				}
-			}
-		});
-		grid.setSizeFull();
+		grid.setWidthFull();
+		grid.setHeight("400px");
 
-		final DeleteGridButton<PhotogalleryViewItemTO> removeBtn = new DeleteGridButton<>("Odstranit", selected -> {
-			List<PhotogalleryViewItemTO> removed = pgService.deleteFiles(selected, galleryDir);
-			if (removed.size() != selected.size())
-				UIUtils.showWarning("Nezdařilo se smazat některé soubory");
-			items.removeAll(removed);
-			grid.getDataProvider().refreshAll();
-		}, grid);
+		grid.addColumn(new ComponentRenderer<>(itemTO -> {
+			Button button = new Button("Smazat", be -> {
+				new ConfirmDialog("Opravdu smazat?", e -> {
+					try {
+						pgService.deleteFile(itemTO, galleryDir);
+						items.remove(itemTO);
+					} catch (Exception ex) {
+						UIUtils.showWarning("Nezdařilo se smazat některé soubory");
+					}
+					grid.getDataProvider().refreshAll();
+				}).open();
+			});
+			button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+			return button;
+		})).setHeader("Smazat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 
-		grid.addSelectionListener(event -> {
-			imageWrapper.removeAll();
-			if (!event.getAllSelectedItems().isEmpty() && event.getAllSelectedItems().size() == 1) {
-				PhotogalleryViewItemTO itemTO = event.getFirstSelectedItem().get();
-				String file = itemTO.getName();
-				if (PGUtils.isImage(file)) {
-					image.setSrc(new StreamResource(file, () -> {
-						try {
-							return Files.newInputStream(pgService.getFullImage(galleryDir, file));
-						} catch (IOException e1) {
-							UIUtils.showWarning("Obrázek nelze zobrazit");
-							return null;
-						}
-					}));
-					imageWrapper.add(image);
-					return;
+		grid.addColumn(new ComponentRenderer<>(itemTO -> {
+			String file = itemTO.getName();
+			Anchor anchor = new Anchor(new StreamResource(file, () -> {
+				try {
+					return Files.newInputStream(pgService.getFullImage(galleryDir, file));
+				} catch (IOException e1) {
+					UIUtils.showWarning("Obrázek nelze zobrazit");
+					return null;
 				}
-				removeBtn.setEnabled(true);
-			}
-			imageWrapper.add(previewLabel);
-			imageWrapper.setAlignItems(Alignment.CENTER);
-		});
+			}), "Zobrazit");
+			anchor.setTarget("_blank");
+			return anchor;
+		})).setHeader("Zobrazit").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
+
 		gridLayout.add(grid);
-		gridLayout.add(imageWrapper);
-
-		HorizontalLayout itemsButtonLayout = new HorizontalLayout();
-		itemsButtonLayout.setSpacing(true);
-		itemsButtonLayout.setPadding(false);
-		contentLayout.add(itemsButtonLayout);
 
 		PGMultiUpload upload = new PGMultiUpload(galleryDir) {
 			private static final long serialVersionUID = 8317049226635860025L;
@@ -297,34 +259,30 @@ public class PGEditorPage extends OneColumnPage implements HasUrlParameter<Strin
 			}
 		};
 		upload.addClassName("top-margin");
-		itemsButtonLayout.add(upload);
-		itemsButtonLayout.add(removeBtn);
+		editorLayout.add(upload);
 
-		VerticalLayout contentOptionsLayout = new VerticalLayout();
-		contentOptionsLayout.setSpacing(true);
-		contentOptionsLayout.setPadding(false);
-		editorLayout.add(contentOptionsLayout);
-		contentOptionsLayout.add(new H2("Nastavení"));
+		editorLayout.add(new H2("Nastavení"));
 
 		publicatedCheckBox.setLabel("Publikovat galerii");
-		contentOptionsLayout.add(publicatedCheckBox);
+		editorLayout.add(publicatedCheckBox);
+		editorLayout.add(new Breakline());
 
 		reprocessSlideshowAndMiniCheckBox.setLabel("Přegenerovat slideshow a miniatury");
-		contentOptionsLayout.add(reprocessSlideshowAndMiniCheckBox);
+		editorLayout.add(reprocessSlideshowAndMiniCheckBox);
+		editorLayout.add(new Breakline());
 
 		photogalleryDateField.setLabel("Přepsat datum vytvoření galerie");
-		contentOptionsLayout.add(photogalleryDateField);
+		photogalleryDateField.setWidth("200px");
+		editorLayout.add(photogalleryDateField);
+		editorLayout.add(new Breakline());
 
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
-		buttonsLayout.setSpacing(true);
-		buttonsLayout.setPadding(false);
+		ButtonLayout buttonsLayout = new ButtonLayout();
 		editorLayout.add(buttonsLayout);
 
 		populateButtonsLayout(buttonsLayout);
 	}
 
-	private void populateButtonsLayout(HorizontalLayout buttonLayout) {
-
+	private void populateButtonsLayout(ButtonLayout buttonLayout) {
 		// Uložit
 		SaveButton saveButton = new SaveButton(event -> {
 			if (!isFormValid())

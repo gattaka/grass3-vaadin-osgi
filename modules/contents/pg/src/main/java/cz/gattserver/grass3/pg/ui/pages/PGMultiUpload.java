@@ -38,6 +38,7 @@ public class PGMultiUpload extends Upload {
 	public PGMultiUpload(String galleryDir) {
 		UI ui = UI.getCurrent();
 		buffer = new MultiFileMemoryBuffer();
+		setReceiver(buffer);
 		SpringContextHelper.inject(this);
 		addSucceededListener(event -> {
 			try {

@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import cz.gattserver.grass3.mock.MockFileSystemService;
 import cz.gattserver.grass3.pg.config.PGConfiguration;

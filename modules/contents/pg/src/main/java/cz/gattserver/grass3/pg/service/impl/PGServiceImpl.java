@@ -630,14 +630,24 @@ public class PGServiceImpl implements PGService {
 		Path galleryPath = getGalleryPath(galleryDir);
 		List<PhotogalleryViewItemTO> removed = new ArrayList<>();
 		for (PhotogalleryViewItemTO itemTO : selected) {
-			String file = itemTO.getName();
-			tryDeleteGalleryFile(file, galleryPath, GalleryFileType.MINIATURE);
-			tryDeleteGalleryFile(file, galleryPath, GalleryFileType.SLIDESHOW);
-			tryDeleteGalleryFile(file, galleryPath, GalleryFileType.PREVIEW);
-			tryDeleteGalleryFile(file, galleryPath, GalleryFileType.MAIN_FILE);
+			deleteFile(itemTO, galleryPath);
 			removed.add(itemTO);
 		}
 		return removed;
+	}
+
+	@Override
+	public void deleteFile(PhotogalleryViewItemTO itemTO, String galleryDir) {
+		Path galleryPath = getGalleryPath(galleryDir);
+		deleteFile(itemTO, galleryPath);
+	}
+
+	public void deleteFile(PhotogalleryViewItemTO itemTO, Path galleryPath) {
+		String file = itemTO.getName();
+		tryDeleteGalleryFile(file, galleryPath, GalleryFileType.MINIATURE);
+		tryDeleteGalleryFile(file, galleryPath, GalleryFileType.SLIDESHOW);
+		tryDeleteGalleryFile(file, galleryPath, GalleryFileType.PREVIEW);
+		tryDeleteGalleryFile(file, galleryPath, GalleryFileType.MAIN_FILE);
 	}
 
 	@Override

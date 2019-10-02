@@ -162,6 +162,21 @@ public interface PGService {
 	List<PhotogalleryViewItemTO> deleteFiles(Set<PhotogalleryViewItemTO> selected, String galleryDir);
 
 	/**
+	 * Smaže soubor z fotogalerie.
+	 * 
+	 * @param itemTO
+	 *            soubor
+	 * @param galleryDir
+	 *            adresář galerie
+	 * @throws IllegalStateException
+	 *             pokud neexistuje kořenový adresář galerií -- chyba nastavení
+	 *             modulu PG
+	 * @throws IllegalArgumentException
+	 *             pokud předaný adresář podtéká kořen modulu PG
+	 */
+	void deleteFile(PhotogalleryViewItemTO itemTO, String galleryDir);
+
+	/**
 	 * Získá obrázek z galerie. Nemusí jít o existující galerii, proto je
 	 * předáván pouze její adresář.
 	 * 

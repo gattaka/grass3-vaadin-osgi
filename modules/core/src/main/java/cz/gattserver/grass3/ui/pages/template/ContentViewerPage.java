@@ -109,16 +109,14 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 	protected void createContentOperations(Div operationsListLayout) {
 		// Upravit
 		if (coreACL.canModifyContent(content, getUser())) {
-			ModifyButton modBtn = new ModifyButton(event -> onEditOperation());
+			ModifyButton modBtn = new ModifyButton("Upravit", event -> onEditOperation());
 			operationsListLayout.add(modBtn);
-			modBtn.clearText();
 		}
 
 		// Smazat
 		if (coreACL.canDeleteContent(content, getUser())) {
-			DeleteButton delBtn = new DeleteButton(event -> onDeleteOperation());
+			DeleteButton delBtn = new DeleteButton("Smazat", event -> onDeleteOperation());
 			operationsListLayout.add(delBtn);
-			delBtn.clearText();
 		}
 
 		// Oblíbené
@@ -133,7 +131,6 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 				new WarnDialog("Odebrání z oblíbených se nezdařilo.").open();
 			}
 		});
-		removeFromFavouritesButton.clearText();
 
 		addToFavouritesButton = new ImageButton("Přidat do oblíbených", ImageIcon.HEART_16_ICON, event -> {
 			// zdařilo se ? Pokud ano, otevři info okno
@@ -146,7 +143,6 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 				new WarnDialog("Vložení do oblíbených se nezdařilo.").open();
 			}
 		});
-		addToFavouritesButton.clearText();
 
 		addToFavouritesButton.setVisible(coreACL.canAddContentToFavourites(content, getUser()));
 		removeFromFavouritesButton.setVisible(coreACL.canRemoveContentFromFavourites(content, getUser()));
@@ -167,7 +163,6 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 						}
 					}.open());
 			operationsListLayout.add(moveBtn);
-			moveBtn.clearText();
 		}
 	}
 

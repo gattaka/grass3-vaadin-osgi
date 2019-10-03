@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.ui.pages.template;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.UI;
@@ -39,6 +40,8 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 
 	private static final long serialVersionUID = 7952966362953000385L;
 
+	private static final Logger logger = LoggerFactory.getLogger(GrassPage.class);
+
 	private transient SecurityService securityFacade;
 
 	/**
@@ -58,8 +61,8 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 		if (UI.getCurrent().getSession().getErrorHandler() == null
 				|| UI.getCurrent().getSession().getErrorHandler() instanceof DefaultErrorHandler)
 			UI.getCurrent().getSession().setErrorHandler(e -> {
+				logger.error("V aplikaci došlo k chybě", e.getThrowable());
 				new ExceptionDialog(e.getThrowable()).open();
-				LoggerFactory.getLogger(GrassPage.class.getName()).error("", e.getThrowable());
 			});
 	}
 

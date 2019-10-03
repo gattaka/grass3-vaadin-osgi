@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -93,7 +94,6 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 	private int pageCount;
 	private int currentPage = 0;
 
-	private Div statusRow;
 	private PGMultiUpload upload;
 	private FormLayout galleryGridLayout;
 	private HorizontalLayout pagingLayout;
@@ -210,7 +210,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		if (coreACL.canModifyContent(photogallery.getContentNode(), getUser()))
 			layout.add(upload);
 
-		statusRow = new Div();
+		Div statusRow = new Div();
 		statusRow.addClassName("top-margin");
 		statusRow.getStyle().set("background", "#fdfaf2").set("padding", "3px 10px").set("line-height", "20px")
 				.set("font-size", "12px").set("color", "#777");
@@ -242,8 +242,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		progressIndicatorWindow.runInUI(() -> {
 			if (progressIndicatorWindow != null)
 				progressIndicatorWindow.close();
-			Runnable onDone = () -> UIUtils.redirect(getPageURL(photogalleryViewerPageFactory, URLIdentifierUtils
-					.createURLIdentifier(photogallery.getId(), photogallery.getContentNode().getName())));
+			Runnable onDone = () -> UI.getCurrent().getPage().reload();
 			if (!upload.isWarnWindowDeployed())
 				onDone.run();
 			else

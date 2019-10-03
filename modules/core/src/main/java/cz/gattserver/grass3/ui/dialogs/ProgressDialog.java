@@ -2,6 +2,9 @@ package cz.gattserver.grass3.ui.dialogs;
 
 import java.text.DecimalFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -13,6 +16,8 @@ import cz.gattserver.web.common.ui.window.WebDialog;
 
 public class ProgressDialog extends WebDialog {
 
+	private static final Logger logger = LoggerFactory.getLogger(ProgressDialog.class);
+
 	private static final long serialVersionUID = 2779568469991016255L;
 	private static DecimalFormat myFormatter = new DecimalFormat("##0.0");
 
@@ -23,6 +28,7 @@ public class ProgressDialog extends WebDialog {
 
 	public static void runInUI(Command r, UI ui) {
 		if (ui.getSession() == null) {
+			logger.warn("UI nemá session");
 			r.execute();
 		} else {
 			ui.access(r);
@@ -84,7 +90,7 @@ public class ProgressDialog extends WebDialog {
 		processWindowLayout.add(progressItemLabel);
 		processWindowLayout.add(progressBar);
 		processWindowLayout.add(descriptionLabel);
-		
+
 		open();
 	}
 

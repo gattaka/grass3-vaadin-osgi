@@ -2,6 +2,7 @@ package cz.gattserver.grass3.pg.ui.pages;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -344,12 +345,12 @@ public class PGEditorPage extends OneColumnPage implements HasUrlParameter<Strin
 		eventBus.subscribe(PGEditorPage.this);
 		progressIndicatorWindow = new ProgressDialog();
 
+		LocalDateTime ldt = photogalleryDateField.getValue() == null ? null
+				: photogalleryDateField.getValue().atStartOfDay();
 		if (editMode) {
-			pgService.modifyPhotogallery(UUID.randomUUID(), photogallery.getId(), payloadTO,
-					photogalleryDateField.getValue().atStartOfDay());
+			pgService.modifyPhotogallery(UUID.randomUUID(), photogallery.getId(), payloadTO, ldt);
 		} else {
-			pgService.savePhotogallery(UUID.randomUUID(), payloadTO, node.getId(), getUser().getId(),
-					photogalleryDateField.getValue().atStartOfDay());
+			pgService.savePhotogallery(UUID.randomUUID(), payloadTO, node.getId(), getUser().getId(), ldt);
 		}
 	}
 

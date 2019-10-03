@@ -10,16 +10,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
@@ -47,7 +48,7 @@ import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
 import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
 import cz.gattserver.grass3.ui.components.button.ImageButton;
-import cz.gattserver.grass3.ui.dialogs.ImageSlideshowWindow;
+import cz.gattserver.grass3.ui.dialogs.ImageSlideshowDialog;
 import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
@@ -66,8 +67,11 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 	private static final long serialVersionUID = 7334408385869747381L;
 
 	private static final Logger logger = LoggerFactory.getLogger(PGViewerPage.class);
-	private static final String ROWS_STATUS_PREFIX = "Řádky: ";
-	private static final String IMAGE_SUM_PREFIX = " | Položek: ";
+
+	private static final int GALLERY_GRID_COLS = 4;
+	private static final int GALLERY_GRID_ROWS = 3;
+	private static final int MAX_PAGE_RADIUS = 4;
+	private static final int PAGE_SIZE = GALLERY_GRID_COLS * GALLERY_GRID_ROWS;
 
 	@Autowired
 	private PGService pgService;
@@ -85,24 +89,14 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 	private PhotogalleryTO photogallery;
 
-	private int rowsSum;
-	private int imageSum;
-	private int galleryGridRowOffset;
-	private static final int GALLERY_GRID_COLS = 4;
-	private static final int GALLERY_GRID_ROWS = 3;
+	private int imageCount;
+	private int pageCount;
+	private int currentPage = 0;
 
-	private Span rowStatusLabel;
-
-	private Button upRowBtn;
-	private Button downRowBtn;
-	private Button upPageBtn;
-	private Button downPageBtn;
-	private Button startPageBtn;
-	private Button endPageBtn;
-
+	private Div statusRow;
 	private PGMultiUpload upload;
-
 	private FormLayout galleryGridLayout;
+	private HorizontalLayout pagingLayout;
 
 	/**
 	 * Položka z fotogalerie, která byla dle URL vybrána (nepovinné)
@@ -116,6 +110,20 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 	@Override
 	public String getPageTitle() {
 		return photogallery.getContentNode().getName();
+	}
+
+	@Override
+	protected void createContentOperations(Div operationsListLayout) {
+		super.createContentOperations(operationsListLayout);
+
+		ImageButton downloadZip = new ImageButton("Zabalit do ZIP", ImageIcon.PRESENT_16_ICON,
+				event -> new ConfirmDialog("Přejete si vytvořit ZIP galerie?", e -> {
+					logger.info("zipPhotogallery thread: {}", Thread.currentThread().getId());
+					progressIndicatorWindow = new ProgressDialog();
+					eventBus.subscribe(PGViewerPage.this);
+					pgService.zipGallery(galleryDir);
+				}).open());
+		operationsListLayout.add(downloadZip);
 	}
 
 	@Override
@@ -152,17 +160,8 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		return photogallery.getContentNode();
 	}
 
-	private void configureBtnLayout(HorizontalLayout btnLayout) {
-		btnLayout.setSpacing(true);
-		btnLayout.setWidth("100%");
-	}
-
 	@Override
 	protected void createContent(Div layout) {
-		rowsSum = 0;
-		imageSum = 0;
-		galleryGridRowOffset = 0;
-
 		// pokud je galerie porušená, pak nic nevypisuj
 		try {
 			if (!pgService.checkGallery(galleryDir)) {
@@ -176,92 +175,29 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 			throw new GrassPageException(404, e);
 		}
 
-		rowStatusLabel = new Span();
-		rowStatusLabel.setSizeUndefined();
-
 		try {
-			imageSum = pgService.getViewItemsCount(photogallery.getPhotogalleryPath());
+			imageCount = pgService.getViewItemsCount(photogallery.getPhotogalleryPath());
 		} catch (Exception e) {
 			throw new GrassPageException(500, e);
 		}
-		rowsSum = (int) Math.ceil((double) imageSum / GALLERY_GRID_COLS);
+		pageCount = (int) Math.ceil((double) imageCount / PAGE_SIZE);
 
-		VerticalLayout galleryLayout = new VerticalLayout();
-		galleryLayout.setSpacing(true);
-		galleryLayout.addClassName("bordered");
-
+		// galerie
 		galleryGridLayout = new FormLayout();
 		galleryGridLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("200px", GALLERY_GRID_COLS));
 		galleryGridLayout.setSizeFull();
+		layout.add(galleryGridLayout);
 
-		// Horní layout tlačítek
-		HorizontalLayout topBtnsLayout = new HorizontalLayout();
-		configureBtnLayout(topBtnsLayout);
-		layout.add(topBtnsLayout);
-
-		layout.add(galleryLayout);
-
-		// Spodní layout tlačítek
-		HorizontalLayout bottomBtnsLayout = new HorizontalLayout();
-		configureBtnLayout(bottomBtnsLayout);
-		layout.add(bottomBtnsLayout);
-
-		// ikony tlačítek
-		upRowBtn = new ImageButton("Řádek nahoru", ImageIcon.UP_16_ICON);
-		downRowBtn = new ImageButton("Řádek dolů", ImageIcon.DOWN_16_ICON);
-		upPageBtn = new ImageButton("Stránka nahoru", ImageIcon.UP_16_ICON);
-		downPageBtn = new ImageButton("Stránka dolů", ImageIcon.DOWN_16_ICON);
-		startPageBtn = new ImageButton("Na začátek", ImageIcon.UP_16_ICON);
-		endPageBtn = new ImageButton("Na konec", ImageIcon.DOWN_16_ICON);
-
-		// listenery horních tlačítek
-		upRowBtn.addClickListener(event -> galleryGridRowOffset--);
-		topBtnsLayout.add(upRowBtn);
-
-		upPageBtn.addClickListener(event -> {
-			if (galleryGridRowOffset > GALLERY_GRID_ROWS) {
-				galleryGridRowOffset -= GALLERY_GRID_ROWS;
-			} else {
-				galleryGridRowOffset = 0;
-			}
-		});
-		topBtnsLayout.add(upPageBtn);
-
-		startPageBtn.addClickListener(event -> galleryGridRowOffset = 0);
-		topBtnsLayout.add(startPageBtn);
-
-		// galerie
-		galleryLayout.add(galleryGridLayout);
-
-		// listenery spodních tlačítek
-		downRowBtn.addClickListener(event -> galleryGridRowOffset++);
-		bottomBtnsLayout.add(downRowBtn);
-
-		downPageBtn.addClickListener(event -> {
-			// kolik řádků zbývá do konce ?
-			int dif = rowsSum - (GALLERY_GRID_ROWS + galleryGridRowOffset);
-			if (dif > GALLERY_GRID_ROWS)
-				galleryGridRowOffset += GALLERY_GRID_ROWS;
-			else
-				galleryGridRowOffset += dif;
-		});
-		bottomBtnsLayout.add(downPageBtn);
-
-		endPageBtn.addClickListener(event -> {
-			int dif = rowsSum - (GALLERY_GRID_ROWS + galleryGridRowOffset);
-			galleryGridRowOffset += dif;
-		});
-		bottomBtnsLayout.add(endPageBtn);
-
-		// status labels + download
-		HorizontalLayout statusLabelWrapper = new HorizontalLayout();
-		statusLabelWrapper.setPadding(true);
-		statusLabelWrapper.add(rowStatusLabel);
-		statusLabelWrapper.setWidth("100%");
-		statusLabelWrapper.addClassName("bordered");
-		layout.add(statusLabelWrapper);
+		// Layout stránkovacích tlačítek
+		pagingLayout = new HorizontalLayout();
+		pagingLayout.addClassName("top-margin");
+		pagingLayout.setJustifyContentMode(JustifyContentMode.CENTER);
+		pagingLayout.setSpacing(true);
+		pagingLayout.setPadding(false);
+		layout.add(pagingLayout);
 
 		upload = new PGMultiUpload(galleryDir);
+		upload.addClassName("top-margin");
 		upload.addFinishedListener(e -> {
 			eventBus.subscribe(PGViewerPage.this);
 			progressIndicatorWindow = new ProgressDialog();
@@ -271,31 +207,18 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 			pgService.modifyPhotogallery(UUID.randomUUID(), photogallery.getId(), payloadTO,
 					photogallery.getContentNode().getCreationDate());
 		});
-
 		if (coreACL.canModifyContent(photogallery.getContentNode(), getUser()))
-			statusLabelWrapper.add(upload);
+			layout.add(upload);
 
-		ImageButton downloadZip = new ImageButton("Zabalit do ZIP", ImageIcon.PRESENT_16_ICON,
-				event -> new ConfirmDialog("Přejete si vytvořit ZIP galerie?", e -> {
-					logger.info("zipPhotogallery thread: {}", Thread.currentThread().getId());
-					progressIndicatorWindow = new ProgressDialog();
-					eventBus.subscribe(PGViewerPage.this);
-					pgService.zipGallery(galleryDir);
-				}).open());
-		statusLabelWrapper.add(downloadZip);
+		statusRow = new Div();
+		statusRow.addClassName("top-margin");
+		statusRow.getStyle().set("background", "#fdfaf2").set("padding", "3px 10px").set("line-height", "20px")
+				.set("font-size", "12px").set("color", "#777");
+		statusRow.setSizeUndefined();
+		statusRow.setText("Galerie: " + photogallery.getPhotogalleryPath() + " celkem položek: " + imageCount);
+		layout.add(statusRow);
 
-		// společný listener pro všechna tlačítka
-		ComponentEventListener<ClickEvent<Button>> btnCommonListener = event -> shiftGrid();
-		upRowBtn.addClickListener(btnCommonListener);
-		upPageBtn.addClickListener(btnCommonListener);
-		startPageBtn.addClickListener(btnCommonListener);
-		downRowBtn.addClickListener(btnCommonListener);
-		downPageBtn.addClickListener(btnCommonListener);
-		endPageBtn.addClickListener(btnCommonListener);
-
-		refreshStatusLabel();
-		populateGrid();
-		checkOffsetBtnsAvailability();
+		refreshGrid();
 
 		if (pgSelected != null)
 			showItem(pgSelected);
@@ -324,7 +247,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 			if (!upload.isWarnWindowDeployed())
 				onDone.run();
 			else
-				upload.getWarnWindow().addDialogCloseActionListener(e -> onDone.run());
+				upload.getWarnWindow().addDetachListener(e -> onDone.run());
 		});
 		eventBus.unsubscribe(PGViewerPage.this);
 	}
@@ -374,44 +297,20 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		eventBus.unsubscribe(PGViewerPage.this);
 	}
 
-	private void shiftGrid() {
-		populateGrid();
-		refreshStatusLabel();
-		checkOffsetBtnsAvailability();
-	}
-
-	private void refreshStatusLabel() {
-		rowStatusLabel.setText(ROWS_STATUS_PREFIX + galleryGridRowOffset + "-"
-				+ ((rowsSum > GALLERY_GRID_ROWS ? GALLERY_GRID_ROWS : rowsSum) + galleryGridRowOffset) + "/" + rowsSum
-				+ IMAGE_SUM_PREFIX + imageSum + " -- ID: " + photogallery.getPhotogalleryPath());
-	}
-
-	private void checkOffsetBtnsAvailability() {
-		boolean upBtnsAvailFlag = galleryGridRowOffset > 0;
-		upRowBtn.setEnabled(upBtnsAvailFlag);
-		upPageBtn.setEnabled(upBtnsAvailFlag);
-		startPageBtn.setEnabled(upBtnsAvailFlag);
-
-		boolean downBtnsAvailFlag = rowsSum > GALLERY_GRID_ROWS + galleryGridRowOffset;
-		downRowBtn.setEnabled(downBtnsAvailFlag);
-		downPageBtn.setEnabled(downBtnsAvailFlag);
-		endPageBtn.setEnabled(downBtnsAvailFlag);
-	}
-
 	private String getItemURL(String file) {
 		return GrassPage.getContextPath() + "/" + PGConfiguration.PG_PATH + "/" + photogallery.getPhotogalleryPath()
 				+ "/" + file;
 	}
 
-	private void populateGrid() {
+	private void refreshGrid() {
 		galleryGridLayout.removeAll();
-		int start = galleryGridRowOffset * GALLERY_GRID_COLS;
-		int limit = GALLERY_GRID_COLS * GALLERY_GRID_ROWS;
+		int start = currentPage * PAGE_SIZE;
 		int index = start;
 		try {
-			for (PhotogalleryViewItemTO item : pgService.getViewItems(galleryDir, start, limit)) {
+			for (PhotogalleryViewItemTO item : pgService.getViewItems(galleryDir, start, PAGE_SIZE)) {
 				final int currentIndex = index;
 				VerticalLayout itemLayout = new VerticalLayout();
+				itemLayout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 				itemLayout.setPadding(false);
 				itemLayout.setSpacing(true);
 
@@ -441,23 +340,58 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 				index++;
 			}
+			pagingLayout.removeAll();
+			if (pageCount > 8) {
+				Button btn = new Button("1", e -> setPage(0));
+				pagingLayout.add(btn);
+				if (currentPage == 0)
+					btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+				int pageRadius = Math.min(MAX_PAGE_RADIUS, pageCount / 2 + 1);
+				int startPage = Math.max(1, currentPage - pageRadius);
+				int endPage = Math.min(currentPage + pageRadius, pageCount - 2);
+				if (startPage <= endPage)
+					for (int i = startPage; i <= endPage; i++) {
+						int page = i;
+						btn = new Button(String.valueOf(i + 1), e -> setPage(page));
+						if (currentPage == page)
+							btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+						pagingLayout.add(btn);
+					}
+				btn = new Button(String.valueOf(pageCount), e -> setPage(pageCount - 1));
+				pagingLayout.add(btn);
+				if (currentPage == pageCount - 1)
+					btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+			} else {
+				for (int i = 1; i <= pageCount; i++) {
+					int page = i - 1;
+					Button btn = new Button(String.valueOf(i), e -> setPage(page));
+					if (currentPage == page)
+						btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+					pagingLayout.add(btn);
+				}
+			}
 		} catch (Exception e) {
 			UIUtils.showWarning("Listování galerie selhalo");
 		}
 	}
 
+	private void setPage(int page) {
+		if (page == currentPage)
+			return;
+		currentPage = page;
+		refreshGrid();
+	}
+
 	private void showItem(final int index) {
-		ImageSlideshowWindow window = new ImageSlideshowWindow(imageSum) {
+		ImageSlideshowDialog window = new ImageSlideshowDialog(imageCount) {
 			private static final long serialVersionUID = 7926209313704634472L;
 
 			private Component showItem(PhotogalleryViewItemTO itemTO) {
 				// zajisti posuv přehledu
-				if (currentIndex > (galleryGridRowOffset + GALLERY_GRID_ROWS) * GALLERY_GRID_COLS - 1) {
-					galleryGridRowOffset++;
-					shiftGrid();
-				} else if (currentIndex < galleryGridRowOffset * GALLERY_GRID_COLS) {
-					galleryGridRowOffset--;
-					shiftGrid();
+				int newPage = currentIndex / PAGE_SIZE;
+				if (newPage != currentPage) {
+					currentPage = newPage;
+					refreshGrid();
 				}
 
 				// vytvoř odpovídající komponentu pro zobrazení

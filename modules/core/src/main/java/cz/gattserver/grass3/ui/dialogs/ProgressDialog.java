@@ -57,14 +57,11 @@ public class ProgressDialog extends WebDialog {
 	}
 
 	public ProgressDialog() {
-		super("Průběh operace");
-
 		this.ui = UI.getCurrent();
 
 		ui.setPollInterval(200);
 
 		setWidth("300px");
-		setHeight("170px");
 
 		VerticalLayout processWindowLayout = new VerticalLayout();
 		processWindowLayout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
@@ -87,6 +84,8 @@ public class ProgressDialog extends WebDialog {
 		processWindowLayout.add(progressItemLabel);
 		processWindowLayout.add(progressBar);
 		processWindowLayout.add(descriptionLabel);
+		
+		open();
 	}
 
 }

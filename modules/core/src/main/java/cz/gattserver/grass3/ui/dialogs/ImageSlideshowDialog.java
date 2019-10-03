@@ -2,14 +2,13 @@ package cz.gattserver.grass3.ui.dialogs;
 
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Shortcuts;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
-import cz.gattserver.web.common.ui.window.WebDialog;
-
-public abstract class ImageSlideshowWindow extends WebDialog {
+public abstract class ImageSlideshowDialog extends Dialog {
 
 	private static final long serialVersionUID = 4928404864735034779L;
 
@@ -20,32 +19,20 @@ public abstract class ImageSlideshowWindow extends WebDialog {
 
 	public abstract void showItem(int index);
 
-	public ImageSlideshowWindow(int count) {
+	public ImageSlideshowDialog(int count) {
 		this.totalCount = count;
 
-		setSizeFull();
-
-		// TODO
-		// addclaStyleName("grass-image-slideshow-window");
-
-		layout.addClassName("grass-scrollable");
+		VerticalLayout layout = new VerticalLayout();
+		layout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+		add(layout);
 
 		itemLabel = new Span();
 		itemLabel.addClassName("white-bold-label");
 		itemLabel.setSizeUndefined();
-
-		VerticalLayout itemLayout = new VerticalLayout();
+		layout.add(itemLabel);
 
 		slideShowLayout = new Div();
-
-		itemLayout.add(itemLabel);
-		itemLayout.setHorizontalComponentAlignment(Alignment.CENTER, itemLabel);
-		itemLayout.add(slideShowLayout);
-		itemLayout.setHorizontalComponentAlignment(Alignment.CENTER, slideShowLayout);
-
-		layout.add(itemLayout);
-		layout.setHorizontalComponentAlignment(Alignment.CENTER, itemLayout);
-		layout.setSizeFull();
+		layout.add(slideShowLayout);
 
 		Shortcuts.addShortcutListener(this, () -> {
 			if (currentIndex > 0)
@@ -56,6 +43,5 @@ public abstract class ImageSlideshowWindow extends WebDialog {
 			if (currentIndex < totalCount - 1)
 				showItem(currentIndex + 1);
 		}, Key.ARROW_RIGHT);
-
 	}
 }

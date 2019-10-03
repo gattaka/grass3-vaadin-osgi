@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
@@ -21,6 +23,8 @@ import cz.gattserver.grass3.services.impl.VersionInfoServiceImpl;
  * https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/EnableAspectJAutoProxy.html
  */
 
+@EnableAsync
+@EnableScheduling
 @ComponentScan("cz.gattserver")
 @PropertySource({ "classpath:properties/mail.properties", "classpath:version.properties" })
 public class BaseConfig {

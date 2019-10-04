@@ -5,7 +5,6 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -51,10 +50,6 @@ public class ArticlesSettingsPageFragmentFactory extends AbstractPageFragmentFac
 
 		layout.add(new H2("Nastavení článků"));
 
-		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
-		FormLayout settingsFieldsLayout = new FormLayout();
-		layout.add(settingsFieldsLayout);
-
 		Binder<ArticlesConfiguration> binder = new Binder<>();
 		binder.setBean(new ArticlesConfiguration());
 		binder.readBean(configuration);
@@ -67,7 +62,7 @@ public class ArticlesSettingsPageFragmentFactory extends AbstractPageFragmentFac
 		binder.forField(tabLengthField).withConverter(new DoubleToIntegerConverter())
 				.bind(ArticlesConfiguration::getTabLength, ArticlesConfiguration::setTabLength);
 		tabLengthField.setValue((double) configuration.getTabLength());
-		settingsFieldsLayout.add(tabLengthField);
+		layout.add(tabLengthField);
 
 		/**
 		 * Prodleva mezi průběžnými zálohami článku
@@ -77,7 +72,7 @@ public class ArticlesSettingsPageFragmentFactory extends AbstractPageFragmentFac
 		binder.forField(backupTimeoutField).withConverter(new DoubleToIntegerConverter())
 				.bind(ArticlesConfiguration::getBackupTimeout, ArticlesConfiguration::setBackupTimeout);
 		backupTimeoutField.setValue((double) configuration.getTabLength());
-		settingsFieldsLayout.add(backupTimeoutField);
+		layout.add(backupTimeoutField);
 
 		/**
 		 * Save tlačítko
@@ -87,7 +82,7 @@ public class ArticlesSettingsPageFragmentFactory extends AbstractPageFragmentFac
 				storeConfiguration(configuration);
 			}
 		});
-		settingsFieldsLayout.add(saveButton);
+		layout.add(saveButton);
 
 		/**
 		 * Reprocess tlačítko

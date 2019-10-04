@@ -39,6 +39,7 @@ import cz.gattserver.grass3.articles.plugins.favlink.config.FavlinkConfiguration
 import cz.gattserver.grass3.articles.plugins.favlink.strategies.CombinedFaviconObtainStrategy;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.FileSystemService;
+import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
@@ -83,7 +84,7 @@ public class FavlinkSettingsPageFragmentFactory extends AbstractPageFragmentFact
 		layout.add(btnLayout);
 
 		// Save tlačítko
-		Button saveButton = new Button("Uložit", event -> {
+		SaveButton saveButton = new SaveButton(event -> {
 			if (binder.validate().isOk()) {
 				configuration.setOutputPath((String) outputPathField.getValue());
 				storeConfiguration(configuration);

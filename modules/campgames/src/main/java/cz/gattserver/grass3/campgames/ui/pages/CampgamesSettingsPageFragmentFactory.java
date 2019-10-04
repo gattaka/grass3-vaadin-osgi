@@ -6,7 +6,6 @@ import java.nio.file.InvalidPathException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
@@ -18,6 +17,7 @@ import com.vaadin.flow.data.binder.ValidationResult;
 import cz.gattserver.grass3.campgames.CampgamesConfiguration;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.FileSystemService;
+import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 
@@ -58,7 +58,7 @@ public class CampgamesSettingsPageFragmentFactory extends AbstractPageFragmentFa
 		layout.add(buttonLayout);
 
 		// Save tlačítko
-		Button saveButton = new Button("Uložit", e -> {
+		SaveButton saveButton = new SaveButton(e -> {
 			configuration.setRootDir((String) outputPathField.getValue());
 			storeConfiguration(configuration);
 			Notification.show("Uložení proběhlo úspěšně", 1000, Position.MIDDLE);

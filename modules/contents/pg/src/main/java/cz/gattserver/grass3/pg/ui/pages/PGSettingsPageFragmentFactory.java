@@ -18,17 +18,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
@@ -57,15 +59,17 @@ import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
+import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.InfoDialog;
 import cz.gattserver.web.common.ui.window.WarnDialog;
 import net.engio.mbassy.listener.Handler;
 
-public class PGSettingsPage extends AbstractPageFragmentFactory {
+public class PGSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 
-	private static final Logger logger = LoggerFactory.getLogger(PGSettingsPage.class);
+	private static final Logger logger = LoggerFactory.getLogger(PGSettingsPageFragmentFactory.class);
 
 	@Autowired
 	private PGService pgService;
@@ -102,11 +106,15 @@ public class PGSettingsPage extends AbstractPageFragmentFactory {
 				.withValidator(new StringLengthValidator("Neodpovídá povolené délce", 1, 1024))
 				.bind(PGConfiguration::getMiniaturesDir, PGConfiguration::setMiniaturesDir);
 
+		layout.add(new Breakline());
+
 		// Kořenový adresář fotogalerií
 		final TextField rootDirField = new TextField("Kořenový adresář fotogalerií");
 		rootDirField.setValue(String.valueOf(configuration.getRootDir()));
 		rootDirField.setWidth("300px");
 		layout.add(rootDirField);
+
+		layout.add(new Breakline());
 
 		binder.forField(rootDirField).asRequired("Kořenový adresář je povinný").withValidator((val, c) -> {
 			try {
@@ -118,6 +126,7 @@ public class PGSettingsPage extends AbstractPageFragmentFactory {
 		}).bind(PGConfiguration::getRootDir, PGConfiguration::setRootDir);
 
 		// Save tlačítko
+		ButtonLayout btnLayout = new ButtonLayout();
 		SaveButton saveButton = new SaveButton(event -> {
 			if (binder.validate().isOk()) {
 				configuration.setRootDir(rootDirField.getValue());
@@ -127,14 +136,17 @@ public class PGSettingsPage extends AbstractPageFragmentFactory {
 			}
 		});
 		binder.addValueChangeListener(l -> saveButton.setEnabled(binder.isValid()));
-		layout.add(saveButton);
+		btnLayout.add(saveButton);
+		layout.add(btnLayout);
 
 		Path path = fileSystemService.getFileSystem().getPath(configuration.getRootDir());
 
 		if (Files.exists(path)) {
-			layout.add(new Span("Přehled adresářů"));
+			layout.add(new H2("Přehled adresářů"));
 
 			Grid<PGSettingsItemTO> grid = new Grid<>();
+			grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES,
+					GridVariant.LUMO_COMPACT);
 			grid.setWidth("100%");
 			grid.setHeight("500px");
 
@@ -144,21 +156,24 @@ public class PGSettingsPage extends AbstractPageFragmentFactory {
 					.addColumn(new TextRenderer<>(to -> to.getPath().getFileName().toString())).setHeader("Název")
 					.setFlexGrow(100);
 
-			grid.addColumn(new ComponentRenderer<Anchor, PGSettingsItemTO>(to -> {
-				if (to.getOverviewTO() == null)
-					return new Anchor("", "Nepoužívá se");
-				else
-					return new Anchor(
+			grid.addColumn(new ComponentRenderer<Component, PGSettingsItemTO>(to -> {
+				if (to.getOverviewTO() == null) {
+					return new Text("Nepoužívá se");
+				} else {
+					Anchor a = new Anchor(
 							GrassPage.getPageURL(photogalleryViewerPageFactory, URLIdentifierUtils
 									.createURLIdentifier(to.getOverviewTO().getId(), to.getOverviewTO().getName())),
 							"Odkaz");
+					a.setTarget("_blank");
+					return a;
+				}
 			})).setHeader("Odkaz");
 
 			grid.addColumn(p -> p.getSize() == null ? "N/A" : HumanBytesSizeFormatter.format(p.getSize()))
-					.setHeader("Velikost").setTextAlign(ColumnTextAlign.END);
+					.setHeader("Velikost").setTextAlign(ColumnTextAlign.END).setWidth("70px").setFlexGrow(0);
 
-			grid.addColumn(p -> p.getFilesCount() == null ? "N/A" : p.getFilesCount()).setHeader("Počet souborů")
-					.setTextAlign(ColumnTextAlign.END);
+			grid.addColumn(p -> p.getFilesCount() == null ? "N/A" : p.getFilesCount()).setHeader("Soubory")
+					.setTextAlign(ColumnTextAlign.END).setWidth("70px").setFlexGrow(0);
 
 			grid.addColumn(new ComponentRenderer<Button, PGSettingsItemTO>(item -> {
 				Button button = new Button("Přegenerovat", be -> {
@@ -168,7 +183,7 @@ public class PGSettingsPage extends AbstractPageFragmentFactory {
 						PhotogalleryTO to = pgService.getPhotogalleryForDetail(item.getOverviewTO().getId());
 						progressIndicatorWindow = new ProgressDialog();
 
-						eventBus.subscribe(PGSettingsPage.this);
+						eventBus.subscribe(PGSettingsPageFragmentFactory.this);
 
 						PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(to.getContentNode().getName(),
 								to.getPhotogalleryPath(), to.getContentNode().getContentTagsAsStrings(),
@@ -179,7 +194,7 @@ public class PGSettingsPage extends AbstractPageFragmentFactory {
 				button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 				button.setVisible(item.getOverviewTO() != null);
 				return button;
-			})).setHeader("Přegenerování");
+			})).setHeader("Přegenerování").setTextAlign(ColumnTextAlign.CENTER);
 
 			grid.addColumn(new ComponentRenderer<Button, PGSettingsItemTO>(item -> {
 				String btnCaption = item.getOverviewTO() == null ? "Smazat adresář" : "Smazat galerii";
@@ -190,7 +205,7 @@ public class PGSettingsPage extends AbstractPageFragmentFactory {
 				});
 				button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 				return button;
-			})).setHeader("Smazání");
+			})).setHeader("Smazání").setWidth("110px").setFlexGrow(0).setTextAlign(ColumnTextAlign.CENTER);
 
 			HeaderRow filteringHeader = grid.appendHeaderRow();
 
@@ -257,7 +272,7 @@ public class PGSettingsPage extends AbstractPageFragmentFactory {
 			else
 				new WarnDialog("Při přegenerování došlo k chybám: ", event.getResultDetails()).open();
 		});
-		eventBus.unsubscribe(PGSettingsPage.this);
+		eventBus.unsubscribe(PGSettingsPageFragmentFactory.this);
 	}
 
 	private Long getFileSize(Path path) {

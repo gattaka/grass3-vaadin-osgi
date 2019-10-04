@@ -2,9 +2,9 @@ package cz.gattserver.grass3.articles.ui.pages.settings.factories;
 
 import org.springframework.stereotype.Component;
 
+import cz.gattserver.grass3.articles.ui.pages.settings.ArticlesSettingsPageFragmentFactory;
 import cz.gattserver.grass3.ui.pages.settings.AbstractModuleSettingsPageFactory;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
-import cz.gattserver.grass3.ui.pages.settings.factories.ApplicationSettingsPageFragmentFactory;
 
 @Component
 public class ArticlesSettingsPageFactory extends AbstractModuleSettingsPageFactory {
@@ -19,6 +19,6 @@ public class ArticlesSettingsPageFactory extends AbstractModuleSettingsPageFacto
 
 	@Override
 	protected AbstractPageFragmentFactory createPageFragmentFactory() {
-		return new ApplicationSettingsPageFragmentFactory();
+		return new ArticlesSettingsPageFragmentFactory();
 	}
 }

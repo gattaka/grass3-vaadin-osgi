@@ -18,11 +18,14 @@ import cz.gattserver.grass3.articles.events.impl.ArticlesProcessStartEvent;
 import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.services.ConfigurationService;
+import cz.gattserver.grass3.ui.components.button.ImageButton;
+import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.DoubleToIntegerConverter;
 import cz.gattserver.grass3.ui.util.UIUtils;
+import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import net.engio.mbassy.listener.Handler;
 
@@ -79,7 +82,7 @@ public class ArticlesSettingsPageFragmentFactory extends AbstractPageFragmentFac
 		/**
 		 * Save tlačítko
 		 */
-		Button saveButton = new Button("Uložit", event -> {
+		SaveButton saveButton = new SaveButton(event -> {
 			if (binder.writeBeanIfValid(configuration)) {
 				storeConfiguration(configuration);
 			}
@@ -91,8 +94,7 @@ public class ArticlesSettingsPageFragmentFactory extends AbstractPageFragmentFac
 		 */
 		layout.add(new H2("Přegenerování obsahů"));
 
-		reprocessButton = new Button("Přegenerovat všechny články");
-		reprocessButton.addClickListener(event -> {
+		reprocessButton = new ImageButton("Přegenerovat všechny články", ImageIcon.GEAR2_16_ICON, event -> {
 			ConfirmDialog dialog = new ConfirmDialog(
 					"Přegenerování všech článků může zabrat delší čas a dojde během něj zřejmě k mnoha drobným změnám - opravdu přegenerovat ?",
 					e -> {

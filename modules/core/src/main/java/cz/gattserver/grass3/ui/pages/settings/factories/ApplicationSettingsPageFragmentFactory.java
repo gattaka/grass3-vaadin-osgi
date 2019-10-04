@@ -2,7 +2,6 @@ package cz.gattserver.grass3.ui.pages.settings.factories;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
@@ -12,6 +11,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.config.CoreConfiguration;
 import cz.gattserver.grass3.services.ConfigurationService;
+import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 
 public class ApplicationSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
@@ -92,7 +92,7 @@ public class ApplicationSettingsPageFragmentFactory extends AbstractPageFragment
 		/**
 		 * Save tlačítko
 		 */
-		Button saveButton = new Button("Uložit", event -> storeConfiguration(configuration));
+		SaveButton saveButton = new SaveButton(event -> storeConfiguration(configuration));
 		settingsFieldsLayout.add(saveButton);
 	}
 

@@ -27,8 +27,12 @@ const $_documentContainer = html`<dom-module id="grass-lumo-button" theme-for="v
         margin-bottom: -0.25em;        
       }      
       
-      [part="prefix"], [part="label"] {
-        margin: 2px 0 0 0;
+      [part="prefix"] {
+        margin: 0;
+      }
+      
+      [part="label"] {
+        margin: 0px 0px -1px 0;
       }
       
       :host(:hover)::before {

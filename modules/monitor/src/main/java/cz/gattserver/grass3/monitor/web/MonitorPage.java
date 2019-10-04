@@ -390,7 +390,7 @@ public class MonitorPage extends OneColumnPage {
 			}
 		};
 		jsDiv.setId(jsDivId);
-		jsDiv.setVisible(false);
+		jsDiv.getStyle().set("display", "none");
 		layout.add(jsDiv);
 
 		parts.stream().forEach(Runnable::run);

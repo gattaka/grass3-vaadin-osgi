@@ -71,7 +71,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 	private static final int GALLERY_GRID_COLS = 4;
 	private static final int GALLERY_GRID_ROWS = 3;
-	private static final int MAX_PAGE_RADIUS = 4;
+	private static final int MAX_PAGE_RADIUS = 3;
 	private static final int PAGE_SIZE = GALLERY_GRID_COLS * GALLERY_GRID_ROWS;
 
 	@Autowired
@@ -192,6 +192,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		pagingLayout = new HorizontalLayout();
 		pagingLayout.addClassName("top-margin");
 		pagingLayout.setJustifyContentMode(JustifyContentMode.CENTER);
+		pagingLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
 		pagingLayout.setSpacing(true);
 		pagingLayout.setPadding(false);
 		layout.add(pagingLayout);
@@ -348,7 +349,9 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 				int pageRadius = Math.min(MAX_PAGE_RADIUS, pageCount / 2 + 1);
 				int startPage = Math.max(1, currentPage - pageRadius);
 				int endPage = Math.min(currentPage + pageRadius, pageCount - 2);
-				if (startPage <= endPage)
+				if (startPage <= endPage) {
+					if (startPage > 1)
+						pagingLayout.add(new Span("..."));
 					for (int i = startPage; i <= endPage; i++) {
 						int page = i;
 						btn = new Button(String.valueOf(i + 1), e -> setPage(page));
@@ -356,10 +359,13 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 							btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 						pagingLayout.add(btn);
 					}
-				btn = new Button(String.valueOf(pageCount), e -> setPage(pageCount - 1));
-				pagingLayout.add(btn);
-				if (currentPage == pageCount - 1)
-					btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+					if (endPage < pageCount - 2)
+						pagingLayout.add(new Span("..."));
+					btn = new Button(String.valueOf(pageCount), e -> setPage(pageCount - 1));
+					pagingLayout.add(btn);
+					if (currentPage == pageCount - 1)
+						btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+				}
 			} else {
 				for (int i = 1; i <= pageCount; i++) {
 					int page = i - 1;

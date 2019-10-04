@@ -2,10 +2,9 @@ package cz.gattserver.grass3.monitor.tabs.factories;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.monitor.tabs.MonitorSettingsPage;
-import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.ui.pages.settings.factories.AbstractModuleSettingsPageFactory;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
+import cz.gattserver.grass3.monitor.tabs.MonitorSettingsPageFragmentFactory;
+import cz.gattserver.grass3.ui.pages.settings.AbstractModuleSettingsPageFactory;
+import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 
 @Component
 public class MonitorSettingsPageFactory extends AbstractModuleSettingsPageFactory {
@@ -19,7 +18,7 @@ public class MonitorSettingsPageFactory extends AbstractModuleSettingsPageFactor
 	}
 
 	@Override
-	protected GrassPage createPage(GrassRequest request) {
-		return new MonitorSettingsPage(request);
+	protected AbstractPageFragmentFactory createPageFragmentFactory() {
+		return new MonitorSettingsPageFragmentFactory();
 	}
 }

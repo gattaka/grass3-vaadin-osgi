@@ -19,6 +19,7 @@
 		<module>campgames</module>
 		<module>drinks</module>
 		<module>fm</module>
+		<module>monitor</module>
 	</modules>
 
 </project>

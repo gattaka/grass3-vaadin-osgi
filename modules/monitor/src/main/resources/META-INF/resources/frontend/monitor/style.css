@@ -1,0 +1,35 @@
+.system-monitor-log-style {
+	color: #000;
+}
+
+.system-monitor-warn-log-style {
+	color: #D90;
+}
+
+.system-monitor-error-log-style {
+	color: #c00;
+}
+
+.system-monitor-ok-log-style {
+	color: #7B0;
+}
+
+.system-monitor-log-style, .system-monitor-warn-log-style, .system-monitor-error-log-style, .system-monitor-ok-log-style {
+    font-weight: bold;
+    font-family: monospace;
+    white-space: pre-wrap;
+    font-size: 14px;
+}
+
+
+.monitor-content > vaadin-vertical-layout{
+    margin-bottom: 5px;
+}
+
+.monitor-content vaadin-vertical-layout:LAST-CHILD {
+    margin-bottom: 0px;
+}
+
+.monitor-content vaadin-vertical-layout h2 {
+    margin-bottom: 2px;
+}

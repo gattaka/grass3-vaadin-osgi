@@ -1,6 +1,6 @@
 package cz.gattserver.grass3.monitor.web.label;
 
-import com.vaadin.ui.Component;
+import com.vaadin.flow.component.Component;
 
 /**
  * Info o stavu monitorovaného předmětu se podařilo získat a stav je

@@ -1,8 +1,8 @@
 package cz.gattserver.grass3.monitor.web.label;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
 public class MonitorItem extends HorizontalLayout {
 
@@ -10,14 +10,14 @@ public class MonitorItem extends HorizontalLayout {
 	public static final String LOG_STYLE_CLASS = "system-monitor-log-style";
 
 	public MonitorItem(MonitorStateLabel stateLabel, Component interComp, String value) {
-		addComponent(stateLabel);
+		add(stateLabel);
 
 		if (interComp != null)
-			addComponent(interComp);
+			add(interComp);
 
 		if (value != null) {
-			Label outputLabel = new MonitorOutputLabel(value);
-			addComponent(outputLabel);
+			Div outputLabel = new MonitorOutputLabel(value);
+			add(outputLabel);
 		}
 	}
 

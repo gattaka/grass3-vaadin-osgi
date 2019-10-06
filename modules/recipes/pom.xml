@@ -21,4 +21,22 @@
 
 	</dependencies>
 
+	<build>
+		<plugins>
+
+			<!-- Generovani querydsl Q objektu -->
+			<plugin>
+				<groupId>com.mysema.maven</groupId>
+				<artifactId>apt-maven-plugin</artifactId>
+			</plugin>
+
+			<!-- JaCoCo -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+			</plugin>
+
+		</plugins>
+	</build>
+
 </project>

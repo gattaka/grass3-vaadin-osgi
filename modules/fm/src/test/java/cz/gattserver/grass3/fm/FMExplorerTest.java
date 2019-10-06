@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.fm.FileProcessState;
 import cz.gattserver.grass3.fm.config.FMConfiguration;
 import cz.gattserver.grass3.fm.interfaces.FMItemTO;
@@ -368,8 +367,8 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 		fmc.setRootDir(rootDir.toString());
 		configurationService.saveConfiguration(fmc);
 
-		exception.expect(GrassPageException.class);
-		exception.expectMessage("Error: 500, Kořenový adresář FM modulu musí existovat");
+		exception.expect(IllegalStateException.class);
+		exception.expectMessage("Kořenový adresář FM modulu musí existovat");
 		new FMExplorer(fs);
 	}
 

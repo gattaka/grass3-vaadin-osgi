@@ -66,8 +66,7 @@ public class RecipesServiceImpl implements RecipesService {
 
 	@Override
 	public List<RecipeOverviewTO> getRecipes(String filter, int offset, int limit) {
-		return mapper.mapRecipes(recipeRepository
-				.findAllOrderByNamePageable(QuerydslUtil.transformSimpleLikeFilter(filter), offset, limit));
+		return mapper.mapRecipes(recipeRepository.fetch(QuerydslUtil.transformSimpleLikeFilter(filter), offset, limit));
 	}
 
 }

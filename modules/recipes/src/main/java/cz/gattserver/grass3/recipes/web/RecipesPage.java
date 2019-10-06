@@ -3,6 +3,7 @@ package cz.gattserver.grass3.recipes.web;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
@@ -24,6 +25,7 @@ import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
 
@@ -48,23 +50,27 @@ public class RecipesPage extends OneColumnPage {
 	}
 
 	private void showDetail(RecipeDTO choosenRecipe) {
+		nameLabel.setVisible(true);
 		nameLabel.setText(choosenRecipe.getName());
-		contentLabel.setText(getRecipesService().eolToBreakline(choosenRecipe.getDescription()));
+		String value = getRecipesService().eolToBreakline(choosenRecipe.getDescription());
+		contentLabel.setValue(value);
 		this.choosenRecipe = choosenRecipe;
 	}
 
 	@Override
 	protected void createColumnContent(Div layout) {
 		HorizontalLayout recipesLayout = new HorizontalLayout();
-		recipesLayout.setWidth("100%");
+		recipesLayout.setWidthFull();
+		recipesLayout.setHeight("600px");
 		layout.add(recipesLayout);
 
 		filterTO = new RecipeOverviewTO();
 
 		grid = new Grid<>();
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+
 		Column<RecipeOverviewTO> nazevColumn = grid.addColumn(RecipeOverviewTO::getName).setHeader("Název");
-		grid.setWidth("358px");
-		grid.setHeight("600px");
+		grid.setHeightFull();
 		recipesLayout.add(grid);
 
 		grid.addSelectionListener((e) -> e.getFirstSelectedItem()
@@ -85,16 +91,21 @@ public class RecipesPage extends OneColumnPage {
 		populate();
 
 		VerticalLayout contentLayout = new VerticalLayout();
+		contentLayout.setHeightFull();
+		contentLayout.setWidth("600px");
+		contentLayout.getStyle().set("border", "1px #dbdee4 solid").set("padding", "20px 10px 10px 10px").set("background", "white")
+				.set("overflow-y", "scroll");
+		recipesLayout.add(contentLayout);
 
 		nameLabel = new H2();
 		contentLayout.add(nameLabel);
+		nameLabel.setVisible(false);
 
 		contentLabel = new HtmlDiv();
-		contentLabel.setWidth("100%");
+		contentLabel.setWidthFull();
 		contentLayout.add(contentLabel);
 
-		HorizontalLayout btnLayout = new HorizontalLayout();
-		btnLayout.setSpacing(true);
+		ButtonLayout btnLayout = new ButtonLayout();
 		layout.add(btnLayout);
 
 		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN));

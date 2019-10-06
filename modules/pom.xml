@@ -20,6 +20,7 @@
 		<module>drinks</module>
 		<module>fm</module>
 		<module>monitor</module>
+		<module>recipes</module>
 	</modules>
 
 </project>

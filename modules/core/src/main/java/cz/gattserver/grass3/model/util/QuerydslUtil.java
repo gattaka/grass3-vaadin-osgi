@@ -23,66 +23,6 @@ public final class QuerydslUtil {
 	}
 
 	/**
-	 * Převádí offset a limit na page a pagesize
-	 * 
-	 * @param offset
-	 *            offset
-	 * @param limit
-	 *            limit
-	 * @param dir
-	 *            směr řazení
-	 * @param prop
-	 *            property podle které se bude řadit
-	 * @return {@link PageRequest} objekt
-	 */
-	public static PageRequest transformOffsetLimit(int offset, int limit, Direction dir, String prop) {
-		// zjisti, zda offset je celočíselný násobek limitu
-		int mod = offset % limit;
-
-		int page;
-		int pagesize;
-
-		// pokud ano, pak je možné je přímo přepočítat na page a pagesize
-		if (mod == 0) {
-			page = offset / limit;
-			pagesize = limit;
-		} else {
-			// pokud ne, pak limit je nějaký zbytek, například pro případ jako
-			// offset = 40 a limit = 16 není možné převádět na page a pagesize:
-			// 40/16 = 2,5 -> 2 (musí být celé číslo)
-			// page = 2 a pagesize = 16 udělá že se přeskočí prvních 32 záznamů
-			// a pak se nahraje dalších 16, tedy záznamy <33-48>, což je ale
-			// o 8 méně, než by se mělo vzít dle offset a limit <41-56>
-			// Zvětšit pagesize nemůžu, protože by to přestalo fungovat s page
-
-			// V takovém případ se ale jedná evidentně o zbytek, takže je rovnou
-			// možné stávající offset brát jako pagesize a page pak nastavit
-			// jako 1, aby se přeskočila 1x pagesize (offset) a poté se nahrál
-			// limit <= pagesize; limit může být větší než skutečně zbývá dat
-			page = 1;
-			pagesize = offset;
-		}
-
-		if (dir != null && prop != null)
-			return PageRequest.of(page, pagesize, dir, prop);
-		else
-			return PageRequest.of(page, pagesize);
-	}
-
-	/**
-	 * Převádí offset a limit na page a pagesize
-	 * 
-	 * @param offset
-	 *            offset
-	 * @param limit
-	 *            limit
-	 * @return {@link PageRequest} objekt
-	 */
-	public static PageRequest transformOffsetLimit(int offset, int limit) {
-		return transformOffsetLimit(offset, limit, null, null);
-	}
-
-	/**
 	 * Upravuje jednoduchý filtrační text na like výraz pro JPA, aby se dal
 	 * použít přímo v LIKE výrazu, zatímco vstupem může být cokoliv, včetně
 	 * <code>null</code> hodnoty. Pokud je <code>null</code>, udělá z něj

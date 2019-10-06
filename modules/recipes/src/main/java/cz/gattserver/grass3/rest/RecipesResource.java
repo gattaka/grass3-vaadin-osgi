@@ -3,7 +3,6 @@ package cz.gattserver.grass3.rest;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -31,7 +30,7 @@ public class RecipesResource {
 		// poradí a sníží ho
 		if (page * pageSize > count)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		return new ResponseEntity<>(recipesFacade.getRecipes(filter, PageRequest.of(page, pageSize)), HttpStatus.OK);
+		return new ResponseEntity<>(recipesFacade.getRecipes(filter, page * pageSize, page), HttpStatus.OK);
 	}
 
 	@RequestMapping("/count")

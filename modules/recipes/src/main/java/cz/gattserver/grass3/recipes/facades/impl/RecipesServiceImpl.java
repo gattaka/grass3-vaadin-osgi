@@ -3,7 +3,6 @@ package cz.gattserver.grass3.recipes.facades.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,9 +65,9 @@ public class RecipesServiceImpl implements RecipesService {
 	}
 
 	@Override
-	public List<RecipeOverviewTO> getRecipes(String filter, Pageable pageable) {
-		return mapper.mapRecipes(
-				recipeRepository.findAllOrderByNamePageable(QuerydslUtil.transformSimpleLikeFilter(filter), pageable));
+	public List<RecipeOverviewTO> getRecipes(String filter, int offset, int limit) {
+		return mapper.mapRecipes(recipeRepository
+				.findAllOrderByNamePageable(QuerydslUtil.transformSimpleLikeFilter(filter), offset, limit));
 	}
 
 }

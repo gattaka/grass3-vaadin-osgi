@@ -97,11 +97,11 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 	}
 
 	@Override
-	public List<BeerOverviewTO> findBeers(BeerOverviewTO filterTO, PageRequest pageable, OrderSpecifier<?>[] order) {
+	public List<BeerOverviewTO> findBeers(BeerOverviewTO filterTO, int offset, int limit, OrderSpecifier<?>[] order) {
 		JPAQuery<BeerOverviewTO> query = new JPAQuery<>(entityManager);
 		QDrink d = QDrink.drink;
 		QBeerInfo b = QBeerInfo.beerInfo;
-		QuerydslUtil.applyPagination(pageable, query);
+		query.offset(offset).limit(limit);
 
 		if (order == null || order.length == 0)
 			order = QuerydslUtil.transformOrdering(new String[] { b.brewery.toString(), d.name.toString() },
@@ -187,11 +187,11 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 	}
 
 	@Override
-	public List<RumOverviewTO> findRums(RumOverviewTO filterTO, PageRequest pageable, OrderSpecifier<?>[] order) {
+	public List<RumOverviewTO> findRums(RumOverviewTO filterTO, int offset, int limit, OrderSpecifier<?>[] order) {
 		JPAQuery<RumOverviewTO> query = new JPAQuery<>(entityManager);
 		QDrink d = QDrink.drink;
 		QRumInfo r = QRumInfo.rumInfo;
-		QuerydslUtil.applyPagination(pageable, query);
+		query.offset(offset).limit(limit);
 
 		if (order == null || order.length == 0)
 			order = QuerydslUtil.transformOrdering(new String[] { d.name.toString() }, new boolean[] { true });
@@ -273,12 +273,12 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 	}
 
 	@Override
-	public List<WhiskeyOverviewTO> findWhiskeys(WhiskeyOverviewTO filterTO, PageRequest pageable,
+	public List<WhiskeyOverviewTO> findWhiskeys(WhiskeyOverviewTO filterTO, int offset, int limit,
 			OrderSpecifier<?>[] order) {
 		JPAQuery<WhiskeyOverviewTO> query = new JPAQuery<>(entityManager);
 		QDrink d = QDrink.drink;
 		QWhiskeyInfo w = QWhiskeyInfo.whiskeyInfo;
-		QuerydslUtil.applyPagination(pageable, query);
+		query.offset(offset).limit(limit);
 
 		if (order == null || order.length == 0)
 			order = QuerydslUtil.transformOrdering(new String[] { d.name.toString() }, new boolean[] { true });
@@ -344,11 +344,11 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 	}
 
 	@Override
-	public List<WineOverviewTO> findWines(WineOverviewTO filterTO, PageRequest pageable, OrderSpecifier<?>[] order) {
+	public List<WineOverviewTO> findWines(WineOverviewTO filterTO, int offset, int limit, OrderSpecifier<?>[] order) {
 		JPAQuery<WineOverviewTO> query = new JPAQuery<>(entityManager);
 		QDrink d = QDrink.drink;
 		QWineInfo w = QWineInfo.wineInfo;
-		QuerydslUtil.applyPagination(pageable, query);
+		query.offset(offset).limit(limit);
 
 		if (order == null || order.length == 0)
 			order = QuerydslUtil.transformOrdering(new String[] { w.winery.toString(), d.name.toString() },

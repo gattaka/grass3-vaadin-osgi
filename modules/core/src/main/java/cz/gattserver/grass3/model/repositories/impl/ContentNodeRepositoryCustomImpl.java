@@ -65,13 +65,13 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 
 	@Override
 	public QueryResults<ContentNodeOverviewTO> findByTagAndUserAccess(Long tagId, Long userId, boolean admin,
-			Pageable pageable) {
+			int offset, int limit) {
 		JPAQuery<ContentNode> query = new JPAQuery<>(entityManager);
 		QContentNode c = QContentNode.contentNode;
 		QNode n = QNode.node;
 		QUser u = QUser.user;
 		QContentTag t = QContentTag.contentTag;
-		QuerydslUtil.applyPagination(pageable, query);
+		query.offset(offset).limit(limit);
 		return query.from(t).innerJoin(t.contentNodes, c).innerJoin(c.parent, n).innerJoin(c.author, u)
 				.where(createByUserAccessPredicate(userId, admin), t.id.eq(tagId))
 				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,
@@ -81,13 +81,13 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 
 	@Override
 	public QueryResults<ContentNodeOverviewTO> findByUserFavouritesAndUserAccess(Long favouritesUserId, Long userId,
-			boolean admin, Pageable pageable) {
+			boolean admin, int offset, int limit) {
 		JPAQuery<ContentNode> query = new JPAQuery<>(entityManager);
 		QContentNode c = QContentNode.contentNode;
 		QNode n = QNode.node;
 		QUser u = QUser.user;
 		QUser uf = new QUser("favOwnerUser");
-		QuerydslUtil.applyPagination(pageable, query);
+		query.offset(offset).limit(limit);
 		return query.from(uf).innerJoin(uf.favourites, c).innerJoin(c.parent, n).innerJoin(c.author, u)
 				.where(createByUserAccessPredicate(userId, admin), uf.id.eq(favouritesUserId))
 				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,
@@ -97,12 +97,12 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 
 	@Override
 	public QueryResults<ContentNodeOverviewTO> findByNodeAndUserAccess(Long nodeId, Long userId, boolean admin,
-			Pageable pageable) {
+			int offset, int limit) {
 		JPAQuery<ContentNode> query = new JPAQuery<>(entityManager);
 		QContentNode c = QContentNode.contentNode;
 		QNode n = QNode.node;
 		QUser u = QUser.user;
-		QuerydslUtil.applyPagination(pageable, query);
+		query.offset(offset).limit(limit);
 		return query.from(c).innerJoin(c.parent, n).innerJoin(c.author, u)
 				.where(createByUserAccessPredicate(userId, admin), n.id.eq(nodeId))
 				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,
@@ -112,12 +112,12 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 
 	@Override
 	public QueryResults<ContentNodeOverviewTO> findByNameAndUserAccess(String name, Long userId, boolean admin,
-			Pageable pageable) {
+			int offset, int limit) {
 		JPAQuery<ContentNode> query = new JPAQuery<>(entityManager);
 		QContentNode c = QContentNode.contentNode;
 		QNode n = QNode.node;
 		QUser u = QUser.user;
-		QuerydslUtil.applyPagination(pageable, query);
+		query.offset(offset).limit(limit);
 		return query.from(c).innerJoin(c.parent, n).innerJoin(c.author, u)
 				.where(createByUserAccessPredicate(userId, admin), c.name.toLowerCase().like(name.toLowerCase()))
 				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,

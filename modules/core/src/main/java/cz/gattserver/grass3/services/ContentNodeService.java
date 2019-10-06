@@ -266,19 +266,6 @@ public interface ContentNodeService {
 	 * 
 	 * @param name
 	 *            název (vzor s *)
-	 * @param userId
-	 *            id uživatele
-	 * @param pageRequest
-	 *            stránkování
-	 * @return list nalezených obsahů
-	 */
-	List<ContentNodeOverviewTO> getByName(String name, Long userId, PageRequest pageRequest);
-
-	/**
-	 * Získá list obsahů dle názvu
-	 * 
-	 * @param name
-	 *            název (vzor s *)
 	 * @param contentReader
 	 *            typ obsahu
 	 * @param userId

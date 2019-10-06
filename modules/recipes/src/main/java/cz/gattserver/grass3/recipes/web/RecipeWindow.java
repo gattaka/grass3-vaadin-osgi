@@ -2,15 +2,13 @@ package cz.gattserver.grass3.recipes.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
 
 import cz.gattserver.grass3.recipes.facades.RecipesService;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
-import cz.gattserver.grass3.ui.components.CreateButton;
-import cz.gattserver.grass3.ui.components.ModifyButton;
+import cz.gattserver.grass3.ui.components.button.CreateButton;
+import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
 public abstract class RecipeWindow extends WebDialog {
@@ -35,28 +33,26 @@ public abstract class RecipeWindow extends WebDialog {
 		name.setWidth("100%");
 		if (to != null)
 			name.setValue(to.getName());
-		addComponent(name);
+		add(name);
 
 		final TextArea desc = new TextArea("Popis");
 		desc.setWidth("100%");
 		desc.setHeight("500px");
 		if (to != null)
 			desc.setValue(recipesFacade.breaklineToEol(to.getDescription()));
-		addComponent(desc);
+		add(desc);
 
-		Button b;
 		if (to != null)
-			addComponent(b = new ModifyButton(event -> {
-					onSave(name.getValue(), desc.getValue(), to.getId());
-					close();
+			add(new ModifyButton(event -> {
+				onSave(name.getValue(), desc.getValue(), to.getId());
+				close();
 			}));
 		else {
-			addComponent(b = new CreateButton(event -> {
-					onSave(name.getValue(), desc.getValue(), null);
-					close();
+			add(new CreateButton(event -> {
+				onSave(name.getValue(), desc.getValue(), null);
+				close();
 			}));
 		}
-		setComponentAlignment(b, Alignment.MIDDLE_CENTER);
 	}
 
 }

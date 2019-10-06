@@ -7,8 +7,6 @@ import java.util.List;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +20,6 @@ import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.repositories.ContentNodeRepository;
 import cz.gattserver.grass3.model.repositories.UserRepository;
-import cz.gattserver.grass3.model.util.QuerydslUtil;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.ContentTagService;
 import cz.gattserver.grass3.services.CoreMapperService;
@@ -177,59 +174,58 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	 * Dle tagu
 	 */
 
-	private QueryResults<ContentNodeOverviewTO> innerByTagAndUserAccess(long tagId, PageRequest pr) {
+	private QueryResults<ContentNodeOverviewTO> innerByTagAndUserAccess(long tagId, int offset, int limit) {
 		UserInfoTO user = securityService.getCurrentUser();
-		return contentNodeRepository.findByTagAndUserAccess(tagId, user.getId(), user.isAdmin(), pr);
+		return contentNodeRepository.findByTagAndUserAccess(tagId, user.getId(), user.isAdmin(), offset, limit);
 	}
 
 	@Override
 	public int getCountByTag(long tagId) {
-		return (int) innerByTagAndUserAccess(tagId, PageRequest.of(1, 1)).getTotal();
+		return (int) innerByTagAndUserAccess(tagId, 1, 1).getTotal();
 	}
 
 	@Override
 	public List<ContentNodeOverviewTO> getByTag(long tagId, int offset, int limit) {
-		return innerByTagAndUserAccess(tagId,
-				QuerydslUtil.transformOffsetLimit(offset, limit, Sort.Direction.DESC, "creationDate")).getResults();
+		return innerByTagAndUserAccess(tagId, offset, limit).getResults();
 	}
 
 	/**
 	 * Dle oblíbených uživatele
 	 */
 
-	private QueryResults<ContentNodeOverviewTO> innerByUserFavouritesAndUserAccess(long userId, Pageable pr) {
+	private QueryResults<ContentNodeOverviewTO> innerByUserFavouritesAndUserAccess(long userId, int offset, int limit) {
 		UserInfoTO user = securityService.getCurrentUser();
-		return contentNodeRepository.findByUserFavouritesAndUserAccess(userId, user.getId(), user.isAdmin(), pr);
+		return contentNodeRepository.findByUserFavouritesAndUserAccess(userId, user.getId(), user.isAdmin(), offset,
+				limit);
 	}
 
 	@Override
 	public int getUserFavouriteCount(long userId) {
-		return (int) innerByUserFavouritesAndUserAccess(userId, PageRequest.of(1, 1)).getTotal();
+		return (int) innerByUserFavouritesAndUserAccess(userId, 1, 1).getTotal();
 	}
 
 	@Override
 	public List<ContentNodeOverviewTO> getUserFavourite(long userId, int offset, int limit) {
-		return innerByUserFavouritesAndUserAccess(userId, QuerydslUtil.transformOffsetLimit(offset, limit))
-				.getResults();
+		return innerByUserFavouritesAndUserAccess(userId, offset, limit).getResults();
 	}
 
 	/**
 	 * Dle kategorie
 	 */
 
-	private QueryResults<ContentNodeOverviewTO> innerByNodeAndUserAccess(long nodeId, PageRequest pr) {
+	private QueryResults<ContentNodeOverviewTO> innerByNodeAndUserAccess(long nodeId, int offset, int limit) {
 		UserInfoTO user = securityService.getCurrentUser();
-		return contentNodeRepository.findByNodeAndUserAccess(nodeId, user.getId(), user.isAdmin(), pr);
+		return contentNodeRepository.findByNodeAndUserAccess(nodeId, user.getId(), user.isAdmin(), offset, limit);
 	}
 
 	@Override
 	public int getCountByNode(long nodeId) {
-		return (int) innerByNodeAndUserAccess(nodeId, PageRequest.of(1, 1)).getTotal();
+		return (int) innerByNodeAndUserAccess(nodeId, 1, 1).getTotal();
 	}
 
 	@Override
 	public List<ContentNodeOverviewTO> getByNode(long nodeId, int offset, int limit) {
-		return innerByNodeAndUserAccess(nodeId, QuerydslUtil.transformOffsetLimit(offset, limit)).getResults();
+		return innerByNodeAndUserAccess(nodeId, offset, limit).getResults();
 	}
 
 	/**
@@ -237,15 +233,15 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	 */
 
 	private QueryResults<ContentNodeOverviewTO> innerByNameAndUserAccess(String name, Long userId, boolean isAdmin,
-			PageRequest pr) {
+			int offset, int limit) {
 		name = name == null ? "%" : "%" + name.replace('*', '%') + "%";
-		return contentNodeRepository.findByNameAndUserAccess(name, userId, isAdmin, pr);
+		return contentNodeRepository.findByNameAndUserAccess(name, userId, isAdmin, offset, limit);
 	}
 
 	@Override
 	public int getCountByName(String name, Long userId) {
 		boolean isAdmin = userId == null ? false : userRepository.findById(userId).get().isAdmin();
-		return (int) innerByNameAndUserAccess(name, userId, isAdmin, PageRequest.of(1, 1)).getTotal();
+		return (int) innerByNameAndUserAccess(name, userId, isAdmin, 1, 1).getTotal();
 	}
 
 	@Override
@@ -258,16 +254,9 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	}
 
 	@Override
-	public List<ContentNodeOverviewTO> getByName(String name, Long userId, PageRequest pr) {
-		boolean isAdmin = userId == null ? false : userRepository.findById(userId).get().isAdmin();
-		return innerByNameAndUserAccess(name, userId, isAdmin, pr).getResults();
-	}
-
-	@Override
 	public List<ContentNodeOverviewTO> getByName(String name, Long userId, int offset, int limit) {
 		boolean isAdmin = userId == null ? false : userRepository.findById(userId).get().isAdmin();
-		return innerByNameAndUserAccess(name, userId, isAdmin, QuerydslUtil.transformOffsetLimit(offset, limit))
-				.getResults();
+		return innerByNameAndUserAccess(name, userId, isAdmin, offset, limit).getResults();
 	}
 
 	@Override

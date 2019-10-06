@@ -8,8 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.vaadin.flow.data.provider.QuerySortOrder;
 
-import org.springframework.data.domain.PageRequest;
-
 import cz.gattserver.grass3.books.facades.BooksFacade;
 import cz.gattserver.grass3.books.model.dao.BookRepository;
 import cz.gattserver.grass3.books.model.domain.Book;
@@ -36,7 +34,7 @@ public class BooksFacadeImpl implements BooksFacade {
 
 	@Override
 	public List<BookOverviewTO> getBooks(int page, int size) {
-		return bookRepository.findBooks(null, PageRequest.of(page, size), null);
+		return bookRepository.findBooks(null, page * size, size, null);
 	}
 
 	@Override
@@ -47,8 +45,7 @@ public class BooksFacadeImpl implements BooksFacade {
 	@Override
 	public List<BookOverviewTO> getBooks(BookOverviewTO filterTO, int offset, int limit,
 			List<QuerySortOrder> sortOrder) {
-		return bookRepository.findBooks(filterTO, QuerydslUtil.transformOffsetLimit(offset, limit),
-				QuerydslUtil.transformOrdering(sortOrder, s -> s));
+		return bookRepository.findBooks(filterTO, offset, limit, QuerydslUtil.transformOrdering(sortOrder, s -> s));
 	}
 
 	@Override

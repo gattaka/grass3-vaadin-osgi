@@ -11,17 +11,17 @@ public interface ContentNodeRepositoryCustom {
 	QueryResults<ContentNodeOverviewTO> findByUserAccess(Long userId, boolean admin, int offset, int limit,
 			String sortProperty);
 
-	QueryResults<ContentNodeOverviewTO> findByTagAndUserAccess(Long tagId, Long userId, boolean admin,
-			Pageable pageable);
+	QueryResults<ContentNodeOverviewTO> findByTagAndUserAccess(Long tagId, Long userId, boolean admin, int offset,
+			int limit);
 
 	QueryResults<ContentNodeOverviewTO> findByUserFavouritesAndUserAccess(Long favouritesUserId, Long userId,
-			boolean admin, Pageable pageable);
+			boolean admin, int offset, int limit);
 
-	QueryResults<ContentNodeOverviewTO> findByNodeAndUserAccess(Long nodeId, Long userId, boolean admin,
-			Pageable pageable);
+	QueryResults<ContentNodeOverviewTO> findByNodeAndUserAccess(Long nodeId, Long userId, boolean admin, int offset,
+			int limit);
 
-	QueryResults<ContentNodeOverviewTO> findByNameAndUserAccess(String name, Long userId, boolean admin,
-			Pageable pageable);
+	QueryResults<ContentNodeOverviewTO> findByNameAndUserAccess(String name, Long userId, boolean admin, int offset,
+			int limit);
 
 	QueryResults<ContentNodeOverviewTO> findByNameAndContentReaderAndUserAccess(String name, String contentReader,
 			Long userId, boolean admin, Pageable pageable);

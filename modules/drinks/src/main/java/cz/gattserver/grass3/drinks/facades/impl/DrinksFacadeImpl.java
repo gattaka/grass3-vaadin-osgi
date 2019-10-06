@@ -77,8 +77,7 @@ public class DrinksFacadeImpl implements DrinksFacade {
 	@Override
 	public List<BeerOverviewTO> getBeers(BeerOverviewTO filterTO, int offset, int limit,
 			List<QuerySortOrder> sortOrder) {
-		return drinkRepository.findBeers(filterTO, QuerydslUtil.transformOffsetLimit(offset, limit),
-				QuerydslUtil.transformOrdering(sortOrder, s -> s));
+		return drinkRepository.findBeers(filterTO, offset, limit, QuerydslUtil.transformOrdering(sortOrder, s -> s));
 	}
 
 	@Override
@@ -135,8 +134,7 @@ public class DrinksFacadeImpl implements DrinksFacade {
 
 	@Override
 	public List<RumOverviewTO> getRums(RumOverviewTO filterTO, int offset, int limit, List<QuerySortOrder> sortOrder) {
-		return drinkRepository.findRums(filterTO, QuerydslUtil.transformOffsetLimit(offset, limit),
-				QuerydslUtil.transformOrdering(sortOrder, s -> s));
+		return drinkRepository.findRums(filterTO, offset, limit, QuerydslUtil.transformOrdering(sortOrder, s -> s));
 	}
 
 	@Override
@@ -179,8 +177,7 @@ public class DrinksFacadeImpl implements DrinksFacade {
 	@Override
 	public List<WhiskeyOverviewTO> getWhiskeys(WhiskeyOverviewTO filterTO, int offset, int limit,
 			List<QuerySortOrder> sortOrder) {
-		return drinkRepository.findWhiskeys(filterTO, QuerydslUtil.transformOffsetLimit(offset, limit),
-				QuerydslUtil.transformOrdering(sortOrder, s -> s));
+		return drinkRepository.findWhiskeys(filterTO, offset, limit, QuerydslUtil.transformOrdering(sortOrder, s -> s));
 	}
 
 	@Override
@@ -212,7 +209,7 @@ public class DrinksFacadeImpl implements DrinksFacade {
 
 	@Override
 	public List<WineOverviewTO> getWines(int page, int size) {
-		return drinkRepository.findWines(null, PageRequest.of(page, size), null);
+		return drinkRepository.findWines(null, page * size, size, null);
 	}
 
 	@Override
@@ -223,8 +220,7 @@ public class DrinksFacadeImpl implements DrinksFacade {
 	@Override
 	public List<WineOverviewTO> getWines(WineOverviewTO filterTO, int offset, int limit,
 			List<QuerySortOrder> sortOrder) {
-		return drinkRepository.findWines(filterTO, QuerydslUtil.transformOffsetLimit(offset, limit),
-				QuerydslUtil.transformOrdering(sortOrder, s -> s));
+		return drinkRepository.findWines(filterTO, offset, limit, QuerydslUtil.transformOrdering(sortOrder, s -> s));
 	}
 
 	@Override

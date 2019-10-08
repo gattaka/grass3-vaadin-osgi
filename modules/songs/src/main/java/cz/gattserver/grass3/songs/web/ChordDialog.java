@@ -6,7 +6,6 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Hr;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -32,9 +31,7 @@ public abstract class ChordDialog extends WebDialog {
 	}
 
 	public ChordDialog(final ChordTO originalDTO, boolean copy) {
-		super(originalDTO == null || copy ? "Založit" : "Upravit" + " akord");
-
-		setWidth("600px");
+		setWidth("300px");
 
 		ChordTO formTO = new ChordTO();
 		formTO.setInstrument(Instrument.GUITAR);
@@ -43,22 +40,22 @@ public abstract class ChordDialog extends WebDialog {
 		binder.setBean(formTO);
 
 		final TextField nameField = new TextField("Název");
+		nameField.addClassName("top-clean");
 		binder.forField(nameField).asRequired().bind(ChordTO::getName, ChordTO::setName);
 		nameField.setWidth("100%");
-		addComponent(nameField);
+		add(nameField);
 
 		final ComboBox<Instrument> instrumentField = new ComboBox<>("Nástroj", Arrays.asList(Instrument.values()));
 		instrumentField.setItemLabelGenerator(Instrument::getCaption);
-		instrumentField.setClearButtonVisible(true);
 		instrumentField.setWidth("100%");
-		addComponent(instrumentField);
+		add(instrumentField);
 
 		VerticalLayout chordDescriptionLayout = new VerticalLayout();
 		chordDescriptionLayout.setMargin(false);
-		addComponent(chordDescriptionLayout);
+		add(chordDescriptionLayout);
 		instrumentField.addValueChangeListener(
 				e -> refreshDescriptionLayout(binder, originalDTO, formTO, chordDescriptionLayout, e.getValue()));
-		addComponent(chordDescriptionLayout);
+		add(chordDescriptionLayout);
 
 		binder.forField(instrumentField).asRequired().bind(ChordTO::getInstrument, ChordTO::setInstrument);
 
@@ -90,6 +87,7 @@ public abstract class ChordDialog extends WebDialog {
 		String[] stringsLabel = new String[] { "E", "a", "d", "g", "h", "e" };
 
 		Div layout = new Div();
+		layout.setWidthFull();
 		chordDescriptionLayout.add(layout);
 		int rows = 17;
 		int cols = 6;
@@ -102,7 +100,10 @@ public abstract class ChordDialog extends WebDialog {
 				for (int col = 0; col < cols; col++) {
 					if (row == 0) {
 						String val = stringsLabel[col];
-						layout.add(new Span(val));
+						Div stringLabel = new Div();
+						stringLabel.setText(val);
+						stringLabel.getStyle().set("padding", "0 7px 0 6px").set("display", "inline-block");
+						layout.add(stringLabel);
 					} else {
 						Checkbox cb = new Checkbox();
 						layout.add(cb);
@@ -116,8 +117,8 @@ public abstract class ChordDialog extends WebDialog {
 								formTO.setConfiguration(formTO.getConfiguration().longValue() & ~bitMask);
 						});
 					}
-					layout.add(new Breakline());
 				}
+				layout.add(new Breakline());
 			}
 		}
 	}

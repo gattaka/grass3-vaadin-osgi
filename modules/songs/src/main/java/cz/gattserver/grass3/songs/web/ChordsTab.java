@@ -41,6 +41,7 @@ import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.GridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 
@@ -72,8 +73,9 @@ public class ChordsTab extends Div {
 	public ChordsTab(SongsPage songsPage, String chordId) {
 		SpringContextHelper.inject(this);
 
-		// GrassPage.getContextPath() + "/" + pageFactory.getPageName() + "/chord/" + URLEncoder.encode(c, "UTF-8")
-		
+		// GrassPage.getContextPath() + "/" + pageFactory.getPageName() +
+		// "/chord/" + URLEncoder.encode(c, "UTF-8")
+
 		this.songsPage = songsPage;
 
 		chords = new ArrayList<>();
@@ -101,7 +103,7 @@ public class ChordsTab extends Div {
 		filteringHeader.getCell(nazevColumn).setComponent(nazevColumnField);
 
 		// Nástroj
-		ComboBox<Instrument> instrumentColumnField = new ComboBox<>("Nástroj", Arrays.asList(Instrument.values()));
+		ComboBox<Instrument> instrumentColumnField = new ComboBox<>(null, Arrays.asList(Instrument.values()));
 		instrumentColumnField.getElement().setAttribute("theme", TextFieldVariant.LUMO_SMALL.getVariantName());
 		instrumentColumnField.setItemLabelGenerator(Instrument::getCaption);
 		instrumentColumnField.setWidth("100%");
@@ -120,21 +122,20 @@ public class ChordsTab extends Div {
 				showDetail(null);
 		});
 
-		VerticalLayout contentLayout = new VerticalLayout();
-
-		Div panel = new Div(contentLayout);
+		Div panel = new Div();
 		panel.setWidth("560px");
-		panel.setHeight("100%");
+		panel.getStyle().set("padding", "10px").set("background", "white").set("border-radius", "3px").set("border",
+				"1px solid #d5d5d5");
 		mainLayout.add(panel);
 
 		nameLabel = new H2();
-		contentLayout.add(nameLabel);
+		nameLabel.setVisible(false);
+		panel.add(nameLabel);
 
 		chordDescriptionLayout = new VerticalLayout();
-		contentLayout.add(chordDescriptionLayout);
+		panel.add(chordDescriptionLayout);
 
-		HorizontalLayout btnLayout = new HorizontalLayout();
-		btnLayout.setSpacing(true);
+		ButtonLayout btnLayout = new ButtonLayout();
 		add(btnLayout);
 
 		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));

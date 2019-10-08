@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.commons.fileupload.util.Streams;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,8 +65,8 @@ public class SongsFacadeImpl implements SongsService {
 	}
 
 	@Override
-	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO, Pageable pageable) {
-		return songsRepository.findOrderByName(filterTO, pageable);
+	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO, int offset, int limit){
+		return songsRepository.findOrderByName(filterTO, offset, limit);
 	}
 
 	@Override
@@ -76,8 +75,7 @@ public class SongsFacadeImpl implements SongsService {
 	}
 
 	@Override
-	public SongTO importSong(String author, InputStream in, String fileName, String mime, long size,
-			int filesLeftInQueue) {
+	public SongTO importSong(String author, InputStream in, String fileName) {
 		SongTO to = new SongTO();
 		// odřízne příponu
 		fileName = fileName.substring(0, fileName.lastIndexOf('.'));

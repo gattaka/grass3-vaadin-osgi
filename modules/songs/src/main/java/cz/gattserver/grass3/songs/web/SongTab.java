@@ -19,33 +19,30 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.vaadin.server.Page;
-import com.vaadin.server.StreamResource;
-import com.vaadin.server.StreamResource.StreamSource;
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.JavaScript;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 
-import cz.gattserver.grass3.server.GrassRequest;
+import com.vaadin.flow.component.ClientCallable;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.server.StreamResource;
+
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.SongsRole;
 import cz.gattserver.grass3.songs.facades.SongsService;
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 import cz.gattserver.grass3.songs.util.ChordImageUtils;
-import cz.gattserver.grass3.ui.components.CreateButton;
-import cz.gattserver.grass3.ui.components.DeleteButton;
-import cz.gattserver.grass3.ui.components.ModifyButton;
+import cz.gattserver.grass3.ui.components.button.CreateButton;
+import cz.gattserver.grass3.ui.components.button.DeleteButton;
+import cz.gattserver.grass3.ui.components.button.ModifyButton;
+import cz.gattserver.grass3.ui.pages.template.GrassPage;
+import cz.gattserver.grass3.ui.util.UIUtils;
+import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.H2Label;
+import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
 public class SongTab extends VerticalLayout {
@@ -53,6 +50,8 @@ public class SongTab extends VerticalLayout {
 	private static final long serialVersionUID = 594189301140808163L;
 
 	private static final Logger logger = LoggerFactory.getLogger(SongTab.class);
+
+	private static final String HOVER_DIV_ID = "chord-detail-hover-div";
 
 	@Autowired
 	private SongsService songsFacade;
@@ -63,19 +62,18 @@ public class SongTab extends VerticalLayout {
 	@Resource(name = "songsPageFactory")
 	private SongsPageFactory pageFactory;
 
-	private GrassRequest request;
-	private TabSheet tabSheet;
 	private ChordsTab chordsTab;
 	private ListTab listTab;
 
-	private Label nameLabel;
-	private Label authorYearLabel;
-	private Label contentLabel;
+	private H2 nameLabel;
+	private HtmlDiv authorYearLabel;
+	private HtmlDiv contentLabel;
 
-	public SongTab(GrassRequest request, TabSheet tabSheet) {
+	private SongsPage songsPage;
+
+	public SongTab(SongsPage songsPage) {
 		SpringContextHelper.inject(this);
-		this.request = request;
-		this.tabSheet = tabSheet;
+		this.songsPage = songsPage;
 	}
 
 	public ChordsTab getChordsTab() {
@@ -100,48 +98,35 @@ public class SongTab extends VerticalLayout {
 		if (chordsTab == null || listTab == null)
 			throw new IllegalStateException();
 
-		setMargin(new MarginInfo(true, false, false, false));
-		VerticalLayout wrapLayout = new VerticalLayout();
+		nameLabel = new H2();
+		add(nameLabel);
 
-		Panel panel = new Panel(wrapLayout);
-		panel.setWidth("100%");
-		panel.setHeight("100%");
-		addComponent(panel);
-
-		nameLabel = new H2Label();
-		wrapLayout.addComponent(nameLabel);
-
-		authorYearLabel = new Label();
-		authorYearLabel.setStyleName("songs-author-year-line");
-		Page.getCurrent().getStyles().add(
-				".v-label.v-widget.v-label-undef-w.songs-author-year-line.v-label-songs-author-year-line { margin-top: -8px; font-style: italic; }");
-		wrapLayout.addComponent(authorYearLabel);
+		authorYearLabel = new HtmlDiv();
+		authorYearLabel.getStyle().set("margin-top", " -8px").set("font-style", "italic");
+		add(authorYearLabel);
 
 		HorizontalLayout contentLayout = new HorizontalLayout();
 		contentLayout.setWidth("100%");
 		contentLayout.setHeight("100%");
-		wrapLayout.addComponent(contentLayout);
+		add(contentLayout);
 
-		contentLabel = new Label();
-		contentLabel.setStyleName("song-text-area");
-		Page.getCurrent().getStyles()
-				.add(".v-slot.v-slot-song-text-area { font-family: monospace; font-size: 12px; overflow: auto; }");
-		Page.getCurrent().getStyles()
-				.add(".song-text-area { -webkit-column-width: 300px; -moz-column-width: 300px; column-width: 300px; column-fill: auto; "
-						+ "-webkit-column-rule: 1px dotted #ddd; -moz-column-rule: 1px dotted #ddd; column-rule: 1px dotted #ddd; }");
+		contentLabel = new HtmlDiv();
+		contentLabel.getStyle().set("font-family", "monospace").set("font-size", "12px").set("overflow", "auto")
+				.set("-webkit-column-width", "300px").set("-moz-column-width", "300px").set("column-width", "300px")
+				.set("column-fill", "auto").set("-webkit-column-rule", "1px dotted #ddd")
+				.set("-moz-column-rule", "1px dotted #ddd").set("column-rule", "1px dotted #ddd");
 		contentLabel.setHeight("700px");
 		contentLabel.setWidth(null);
-		contentLabel.setContentMode(ContentMode.HTML);
-		contentLayout.addComponent(contentLabel);
+		contentLayout.add(contentLabel);
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		btnLayout.setSpacing(true);
-		addComponent(btnLayout);
+		add(btnLayout);
 
 		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));
 
-		btnLayout.addComponent(new CreateButton("Přidat", event -> {
-			UI.getCurrent().addWindow(new SongWindow() {
+		btnLayout.add(new CreateButton("Přidat", event -> {
+			new SongDialog() {
 				private static final long serialVersionUID = -4863260002363608014L;
 
 				@Override
@@ -150,11 +135,11 @@ public class SongTab extends VerticalLayout {
 					listTab.populate();
 					listTab.chooseSong(to.getId(), false);
 				}
-			});
+			}.open();
 		}));
 
-		btnLayout.addComponent(new ModifyButton("Upravit", event -> {
-			UI.getCurrent().addWindow(new SongWindow(listTab.getChoosenSong()) {
+		btnLayout.add(new ModifyButton("Upravit", event -> {
+			new SongDialog(listTab.getChoosenSong()) {
 				private static final long serialVersionUID = 5264621441522056786L;
 
 				@Override
@@ -163,28 +148,67 @@ public class SongTab extends VerticalLayout {
 					listTab.populate();
 					listTab.chooseSong(to.getId(), false);
 				}
-			});
+			}.open();
 		}));
 
-		btnLayout.addComponent(new DeleteButton("Smazat", e -> {
+		btnLayout.add(new DeleteButton("Smazat", e -> {
 			songsFacade.deleteSong(listTab.getChoosenSong().getId());
 			listTab.populate();
 			showDetail(null);
-			tabSheet.setSelectedTab(listTab);
+			// TODO
+			// tabSheet.setSelectedTab(listTab);
 		}));
+
+		Div chordDiv = new Div();
+		chordDiv.setVisible(false);
+		chordDiv.getStyle().set("position", "absolute");
+		add(chordDiv);
+
+		Div hoverDiv = new Div() {
+			private static final long serialVersionUID = -7319482130016598549L;
+
+			@ClientCallable
+			private void chordCallback(String action, String chord, double x, double y) {
+				chordDiv.setVisible(true);
+				chordDiv.removeAll();
+				ChordTO to = songsFacade.getChordByName(chord);
+				BufferedImage image = ChordImageUtils.drawChord(to, 20);
+				String name = "Chord-" + chord;
+				chordDiv.add(new Image(new StreamResource(name, () -> {
+					ByteArrayOutputStream os = new ByteArrayOutputStream();
+					try {
+						ImageIO.write(image, "png", os);
+						return new ByteArrayInputStream(os.toByteArray());
+					} catch (IOException e) {
+						logger.error("Nezdařilo se vytváření thumbnail akordu", e);
+						return null;
+					}
+				}), name));
+				chordDiv.getStyle().set("left", x + "px").set("top", y + "px");
+			}
+
+			@ClientCallable
+			private void hideCallback() {
+				chordDiv.setVisible(false);
+			}
+		};
+		hoverDiv.setId(HOVER_DIV_ID);
+		add(hoverDiv);
 
 		return this;
 	}
 
 	public void showDetail(SongTO choosenSong) {
 		if (choosenSong == null) {
-			nameLabel.setValue(null);
+			nameLabel.setText(null);
 			authorYearLabel.setValue(null);
 			contentLabel.setValue(null);
-			String currentURL = request.getContextRoot() + "/" + pageFactory.getPageName();
-			Page.getCurrent().pushState(currentURL);
+			// TODO
+			// String currentURL = request.getContextRoot() + "/" +
+			// pageFactory.getPageName();
+			// Page.getCurrent().pushState(currentURL);
 		} else {
-			nameLabel.setValue(choosenSong.getName());
+			nameLabel.setText(choosenSong.getName());
 			String value = choosenSong.getAuthor();
 			if (choosenSong.getYear() != null && choosenSong.getYear().intValue() > 0)
 				value = value + " (" + choosenSong.getYear() + ")";
@@ -203,10 +227,12 @@ public class SongTab extends VerticalLayout {
 				for (String c : chords) {
 					String chordLink = c;
 					try {
-						chordLink = "<a target='_blank' href='" + request.getContextRoot() + "/"
+						chordLink = "<a target='_blank' href='" + GrassPage.getContextPath() + "/"
 								+ pageFactory.getPageName() + "/chord/" + URLEncoder.encode(c, "UTF-8") + "'"
-								+ "onmouseover='grass.chords.show(\"" + c + "\", event.clientX, event.clientY)' "
-								+ "onmouseout='grass.chords.hide()' " + ">" + c + "</a>";
+								+ "onmouseover='document.getElementById(\"" + HOVER_DIV_ID
+								+ "\").$server.chordCallback(\"" + c + "\", event.clientX, event.clientY)' "
+								+ "onmouseout='document.getElementById(\"" + HOVER_DIV_ID
+								+ "\").$server.hideCallback()' >" + c + "</a>";
 					} catch (UnsupportedEncodingException e) {
 						logger.error("Chord link se nezdařilo vytvořit", e);
 					}
@@ -221,56 +247,18 @@ public class SongTab extends VerticalLayout {
 			}
 			contentLabel.setValue(htmlText);
 
-			String currentURL;
-			try {
-				currentURL = request.getContextRoot() + "/" + pageFactory.getPageName() + "/text/" + choosenSong.getId()
-						+ "-" + URLEncoder.encode(choosenSong.getName(), "UTF-8");
-				Page.getCurrent().pushState(currentURL);
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+			// TODO
+			// String currentURL;
+			// try {
+			// currentURL = request.getContextRoot() + "/" +
+			// pageFactory.getPageName() + "/text/" + choosenSong.getId()
+			// + "-" + URLEncoder.encode(choosenSong.getName(), "UTF-8");
+			// Page.getCurrent().pushState(currentURL);
+			// } catch (UnsupportedEncodingException e) {
+			// e.printStackTrace();
+			// }
 		}
 
-		JavaScript.getCurrent().addFunction("grass.chords.show",
-				args -> showHoverChord(args.getString(0), args.getNumber(1), args.getNumber(2)));
-		JavaScript.getCurrent().addFunction("grass.chords.hide", args -> hideAllWindows());
-	}
-
-	private void hideAllWindows() {
-		UI ui = UI.getCurrent();
-		Collection<Window> windows = Collections.unmodifiableCollection(ui.getWindows());
-		for (Window w : windows)
-			ui.removeWindow(w);
-	}
-
-	private void showHoverChord(String chord, double clientX, double clientY) {
-		hideAllWindows();
-
-		ChordTO to = songsFacade.getChordByName(chord);
-		BufferedImage image = ChordImageUtils.drawChord(to, 20);
-
-		Window window = new WebDialog(chord);
-		VerticalLayout layout = new VerticalLayout();
-		layout.addComponent(new Image(null, new StreamResource(new StreamSource() {
-			private static final long serialVersionUID = -5893071133311094692L;
-
-			@Override
-			public InputStream getStream() {
-				ByteArrayOutputStream os = new ByteArrayOutputStream();
-				try {
-					ImageIO.write(image, "png", os);
-					return new ByteArrayInputStream(os.toByteArray());
-				} catch (IOException e) {
-					logger.error("Nezdařilo se vytváření thumbnail akordu", e);
-					return null;
-				}
-			}
-		}, "Chord-" + chord)));
-		window.setContent(layout);
-		window.setModal(false);
-		window.setPositionX((int) clientX + 15);
-		window.setPositionY((int) clientY);
-		UI.getCurrent().addWindow(window);
 	}
 
 }

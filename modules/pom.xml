@@ -21,6 +21,7 @@
 		<module>fm</module>
 		<module>monitor</module>
 		<module>recipes</module>
+		<module>songs</module>
 	</modules>
 
 </project>

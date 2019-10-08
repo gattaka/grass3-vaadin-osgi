@@ -1,64 +1,94 @@
 package cz.gattserver.grass3.songs.web;
 
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.router.Route;
 
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 
+@Route("songs")
 public class SongsPage extends OneColumnPage {
 
-	public SongsPage(GrassRequest request) {
-		super(request);
+	private static final long serialVersionUID = -6336711256361320029L;
+
+	private Tabs tabSheet;
+	private Tab listTab;
+	private Tab songTab;
+	private Tab chordsTab;
+
+	private ListTab listTabContent;
+	private SongTab songTabContent;
+	private ChordsTab chordsTabContent;
+
+	private Div pageLayout;
+
+	public SongsPage() {
+		init();
 	}
 
 	@Override
-	protected Component createColumnContent() {
-		VerticalLayout layout = new VerticalLayout();
-		layout.setSpacing(true);
-		layout.setMargin(true);
+	protected void createColumnContent(Div layout) {
+		tabSheet = new Tabs();
+		layout.add(tabSheet);
 
-		VerticalLayout marginLayout = new VerticalLayout();
-		marginLayout.setMargin(new MarginInfo(false, true, true, true));
-		marginLayout.addComponent(layout);
+		pageLayout = new Div();
+		layout.add(pageLayout);
 
-		TabSheet tabSheet = new TabSheet();
-		layout.addComponent(tabSheet);
+		listTab = new Tab();
+		listTab.setLabel("Seznam");
+		tabSheet.add(listTab);
 
-		ChordsTab ct = new ChordsTab(getRequest());
-		SongTab st = new SongTab(getRequest(), tabSheet);
-		ListTab lt = new ListTab(getRequest(), tabSheet);
+		songTab = new Tab();
+		songTab.setLabel("Písnička");
+		tabSheet.add(songTab);
 
-		st.setChordsTab(ct).setListTab(lt).init();
-		lt.setSongTab(st).init();
+		chordsTab = new Tab();
+		chordsTab.setLabel("Akordy");
+		tabSheet.add(chordsTab);
 
-		tabSheet.addTab(lt, "Seznam");
-		tabSheet.addTab(st, "Písnička");
-		tabSheet.addTab(ct, "Akordy");
-
-		tabSheet.addSelectedTabChangeListener((e) -> {
-			boolean isListTab = e.getTabSheet().getSelectedTab().equals(lt);
-			SongTO choosenSong = lt.getChoosenSong();
-			if (isListTab && choosenSong != null) 
-				lt.selectSong(lt.getChoosenSong().getId());
-		});
-
-		String token = getRequest().getAnalyzer().getNextPathToken();
-		if (token != null) {
-			if ("text".equals(token.toLowerCase())) {
-				URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils
-						.parseURLIdentifier(getRequest().getAnalyzer().getNextPathToken());
-				lt.chooseSong(identifier.getId(), true);
-			} else if ("chord".equals(token.toLowerCase())) {
-				tabSheet.setSelectedTab(ct);
-				ct.selectChord(getRequest().getAnalyzer().getNextPathToken());
+		tabSheet.addSelectedChangeListener(e -> {
+			pageLayout.removeAll();
+			switch (tabSheet.getSelectedIndex()) {
+			default:
+			case 0:
+				switchListTab();
+				break;
+			case 1:
+				switchSongTab();
+				break;
+			case 2:
+				switchChordsTab();
+				break;
 			}
-		}
-
-		return marginLayout;
+		});
+		switchListTab();
 	}
+
+	private void switchListTab() {
+		if (listTabContent == null)
+			listTabContent = new ListTab(this);
+		pageLayout.removeAll();
+		pageLayout.add(listTabContent);
+		tabSheet.setSelectedTab(listTab);
+	}
+
+	private void switchSongTab() {
+		if (songTabContent == null)
+			songTabContent = new SongTab(this);
+		pageLayout.removeAll();
+		pageLayout.add(songTabContent);
+		tabSheet.setSelectedTab(songTab);
+	}
+
+	private void switchChordsTab() {
+		if (chordsTabContent == null)
+			chordsTabContent = new ChordsTab(this);
+		pageLayout.removeAll();
+		pageLayout.add(chordsTabContent);
+		tabSheet.setSelectedTab(chordsTab);
+	}
+
 }

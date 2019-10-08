@@ -4,9 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,36 +15,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.server.Page;
-import com.vaadin.server.StreamResource;
-import com.vaadin.server.StreamResource.StreamSource;
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.Column;
+import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
+import com.vaadin.flow.server.StreamResource;
 
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.SongsRole;
 import cz.gattserver.grass3.songs.facades.SongsService;
 import cz.gattserver.grass3.songs.model.domain.Instrument;
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.songs.util.ChordImageUtils;
-import cz.gattserver.grass3.ui.components.CreateGridButton;
-import cz.gattserver.grass3.ui.components.DeleteGridButton;
-import cz.gattserver.grass3.ui.components.GridButton;
-import cz.gattserver.grass3.ui.components.ModifyGridButton;
+import cz.gattserver.grass3.ui.components.button.CreateGridButton;
+import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.button.GridButton;
+import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.H2Label;
 import cz.gattserver.web.common.ui.ImageIcon;
 
 public class ChordsTab extends VerticalLayout {
@@ -65,40 +57,39 @@ public class ChordsTab extends VerticalLayout {
 	@Resource(name = "songsPageFactory")
 	private SongsPageFactory pageFactory;
 
-	private GrassRequest request;
-
 	private Grid<ChordTO> grid;
-	private Label nameLabel;
+	private H2 nameLabel;
 	private VerticalLayout chordDescriptionLayout;
 
 	private ChordTO choosenChord;
 	private List<ChordTO> chords;
 	private ChordTO filterTO;
 
-	public ChordsTab(GrassRequest request) {
-		SpringContextHelper.inject(this);
-		setMargin(new MarginInfo(true, false, false, false));
+	private SongsPage songsPage;
 
-		this.request = request;
+	public ChordsTab(SongsPage songsPage) {
+		SpringContextHelper.inject(this);
+
+		this.songsPage = songsPage;
 
 		chords = new ArrayList<>();
 		filterTO = new ChordTO();
 
 		HorizontalLayout mainLayout = new HorizontalLayout();
-		addComponent(mainLayout);
+		add(mainLayout);
 
-		grid = new Grid<>(null, chords);
-		Column<ChordTO, String> nazevColumn = grid.addColumn(ChordTO::getName).setCaption("Název");
-		Column<ChordTO, String> instrumentColumn = grid.addColumn(c -> c.getInstrument().getCaption())
-				.setCaption("Nástroj");
+		grid = new Grid<>();
+		grid.setItems(chords);
+		Column<ChordTO> nazevColumn = grid.addColumn(ChordTO::getName).setHeader("Název");
+		Column<ChordTO> instrumentColumn = grid.addColumn(c -> c.getInstrument().getCaption()).setHeader("Nástroj");
 		grid.setWidth("398px");
 		grid.setHeight("600px");
-		mainLayout.addComponent(grid);
+		mainLayout.add(grid);
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Název
 		TextField nazevColumnField = new TextField();
-		nazevColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		nazevColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		nazevColumnField.addValueChangeListener(e -> {
 			filterTO.setName(e.getValue());
 			loadChords();
@@ -107,8 +98,8 @@ public class ChordsTab extends VerticalLayout {
 
 		// Nástroj
 		ComboBox<Instrument> instrumentColumnField = new ComboBox<>("Nástroj", Arrays.asList(Instrument.values()));
-		instrumentColumnField.setItemCaptionGenerator(Instrument::getCaption);
-		instrumentColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		instrumentColumnField.getElement().setAttribute("theme", TextFieldVariant.LUMO_SMALL.getVariantName());
+		instrumentColumnField.setItemLabelGenerator(Instrument::getCaption);
 		instrumentColumnField.setWidth("100%");
 		instrumentColumnField.addValueChangeListener(e -> {
 			filterTO.setInstrument(e.getValue());
@@ -127,26 +118,25 @@ public class ChordsTab extends VerticalLayout {
 
 		VerticalLayout contentLayout = new VerticalLayout();
 
-		Panel panel = new Panel(contentLayout);
+		Div panel = new Div(contentLayout);
 		panel.setWidth("560px");
 		panel.setHeight("100%");
-		mainLayout.addComponent(panel);
-		mainLayout.setExpandRatio(panel, 1);
+		mainLayout.add(panel);
 
-		nameLabel = new H2Label();
-		contentLayout.addComponent(nameLabel);
+		nameLabel = new H2();
+		contentLayout.add(nameLabel);
 
 		chordDescriptionLayout = new VerticalLayout();
-		contentLayout.addComponent(chordDescriptionLayout);
+		contentLayout.add(chordDescriptionLayout);
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		btnLayout.setSpacing(true);
-		addComponent(btnLayout);
+		add(btnLayout);
 
 		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));
 
-		btnLayout.addComponent(new CreateGridButton("Přidat", event -> {
-			UI.getCurrent().addWindow(new ChordWindow() {
+		btnLayout.add(new CreateGridButton("Přidat", event -> {
+			new ChordDialog() {
 				private static final long serialVersionUID = -4863260002363608014L;
 
 				@Override
@@ -155,11 +145,11 @@ public class ChordsTab extends VerticalLayout {
 					showDetail(to);
 					loadChords();
 				}
-			});
+			}.open();
 		}));
 
-		btnLayout.addComponent(new ModifyGridButton<ChordTO>("Upravit", event -> {
-			UI.getCurrent().addWindow(new ChordWindow(choosenChord) {
+		btnLayout.add(new ModifyGridButton<ChordTO>("Upravit", event -> {
+			new ChordDialog(choosenChord) {
 
 				private static final long serialVersionUID = 5264621441522056786L;
 
@@ -169,11 +159,11 @@ public class ChordsTab extends VerticalLayout {
 					showDetail(to);
 					loadChords();
 				}
-			});
+			}.open();
 		}, grid));
 
 		GridButton<ChordTO> copyBtn = new GridButton<>("Kopie", event -> {
-			UI.getCurrent().addWindow(new ChordWindow(choosenChord, true) {
+			new ChordDialog(choosenChord, true) {
 				private static final long serialVersionUID = -4863260002363608014L;
 
 				@Override
@@ -182,12 +172,12 @@ public class ChordsTab extends VerticalLayout {
 					showDetail(to);
 					loadChords();
 				}
-			});
+			}.open();
 		}, grid);
-		copyBtn.setIcon(ImageIcon.QUICKEDIT_16_ICON.createResource());
-		btnLayout.addComponent(copyBtn);
+		copyBtn.setIcon(new Image(ImageIcon.QUICKEDIT_16_ICON.createResource(), "Kopie"));
+		btnLayout.add(copyBtn);
 
-		btnLayout.addComponent(new DeleteGridButton<ChordTO>("Smazat", items -> {
+		btnLayout.add(new DeleteGridButton<ChordTO>("Smazat", items -> {
 			for (ChordTO c : items)
 				songsFacade.deleteChord(c.getId());
 			loadChords();
@@ -202,52 +192,53 @@ public class ChordsTab extends VerticalLayout {
 	}
 
 	private void showDetail(ChordTO choosenChord) {
-		chordDescriptionLayout.removeAllComponents();
+		chordDescriptionLayout.removeAll();
 		if (choosenChord == null) {
-			nameLabel.setValue(null);
+			nameLabel.setVisible(false);
 			this.choosenChord = null;
-			String currentURL = request.getContextRoot() + "/" + pageFactory.getPageName();
-			Page.getCurrent().pushState(currentURL);
+			// TODO
+			// String currentURL = request.getContextRoot() + "/" +
+			// pageFactory.getPageName();
+			// Page.getCurrent().pushState(currentURL);
 		} else {
-			nameLabel.setValue(choosenChord.getName());
-			Label chordDisplayLabel = new Label();
+			nameLabel.setText(choosenChord.getName());
+			nameLabel.setVisible(true);
+			Span chordDisplayLabel = new Span();
 			switch (choosenChord.getInstrument()) {
 			case GUITAR:
 				createDisplayForGuitar(choosenChord);
 			}
-			chordDescriptionLayout.addComponent(chordDisplayLabel);
+			chordDescriptionLayout.add(chordDisplayLabel);
 			this.choosenChord = choosenChord;
 
-			String currentURL;
-			try {
-				currentURL = request.getContextRoot() + "/" + pageFactory.getPageName() + "/chord/"
-						+ URLEncoder.encode(choosenChord.getName(), "UTF-8");
-				Page.getCurrent().pushState(currentURL);
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+			// TODO
+			// String currentURL;
+			// try {
+			// currentURL = request.getContextRoot() + "/" +
+			// pageFactory.getPageName() + "/chord/"
+			// + URLEncoder.encode(choosenChord.getName(), "UTF-8");
+			// Page.getCurrent().pushState(currentURL);
+			// } catch (UnsupportedEncodingException e) {
+			// e.printStackTrace();
+			// }
 		}
 	}
 
 	private void createDisplayForGuitar(ChordTO choosenChord) {
 		BufferedImage image = ChordImageUtils.drawChord(choosenChord, 30);
 		VerticalLayout layout = new VerticalLayout();
-		chordDescriptionLayout.addComponent(layout);
-		layout.addComponent(new Image(null, new StreamResource(new StreamSource() {
-			private static final long serialVersionUID = -5893071133311094692L;
-
-			@Override
-			public InputStream getStream() {
-				ByteArrayOutputStream os = new ByteArrayOutputStream();
-				try {
-					ImageIO.write(image, "png", os);
-					return new ByteArrayInputStream(os.toByteArray());
-				} catch (IOException e) {
-					logger.error("Nezdařilo se vytváření thumbnail akordu", e);
-					return null;
-				}
+		chordDescriptionLayout.add(layout);
+		String name = "Chord-" + choosenChord.getName();
+		layout.add(new Image(new StreamResource(name, () -> {
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			try {
+				ImageIO.write(image, "png", os);
+				return new ByteArrayInputStream(os.toByteArray());
+			} catch (IOException e) {
+				logger.error("Nezdařilo se vytváření thumbnail akordu", e);
+				return null;
 			}
-		}, "Chord-" + choosenChord.getName())));
+		}), name));
 	}
 
 	private void loadChords() {

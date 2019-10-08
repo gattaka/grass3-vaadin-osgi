@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.songs.web;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -9,33 +10,29 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.provider.CallbackDataProvider;
-import com.vaadin.server.Page;
-import com.vaadin.server.SerializableSupplier;
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.Grid.FetchItemsCallback;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.grid.Grid.Column;
+import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
+import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 
-import cz.gattserver.grass3.model.util.QuerydslUtil;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.SongsRole;
 import cz.gattserver.grass3.songs.facades.SongsService;
 import cz.gattserver.grass3.songs.model.interfaces.SongOverviewTO;
 import cz.gattserver.grass3.songs.model.interfaces.SongTO;
-import cz.gattserver.grass3.ui.components.CreateGridButton;
-import cz.gattserver.grass3.ui.components.DeleteGridButton;
-import cz.gattserver.grass3.ui.components.ModifyGridButton;
+import cz.gattserver.grass3.ui.components.button.CreateGridButton;
+import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.MultiUpload;
 
 public class ListTab extends VerticalLayout {
 
@@ -54,47 +51,30 @@ public class ListTab extends VerticalLayout {
 	private SongTO choosenSong;
 	private SongOverviewTO filterTO;
 
-	private TabSheet tabSheet;
-	private GrassRequest request;
-	private SongTab songTab;
+	private SongsPage songsPage;
 
-	public ListTab(GrassRequest request, TabSheet tabSheet) {
+	public ListTab(SongsPage songsPage) {
 		SpringContextHelper.inject(this);
 		filterTO = new SongOverviewTO();
-		this.request = request;
-		this.tabSheet = tabSheet;
-	}
-
-	public SongTab getSongTab() {
-		return songTab;
-	}
-
-	public ListTab setSongTab(SongTab songTab) {
-		this.songTab = songTab;
-		return this;
-	}
-
-	public ListTab init() {
-		if (songTab == null)
-			throw new IllegalStateException();
-
-		setMargin(new MarginInfo(true, false, false, false));
+		this.songsPage = songsPage;
 
 		grid = new Grid<>();
-		Column<SongOverviewTO, String> nazevColumn = grid.addColumn(SongOverviewTO::getName).setCaption("Název");
-		Column<SongOverviewTO, String> authorColumn = grid.addColumn(SongOverviewTO::getAuthor).setCaption("Autor")
-				.setWidth(250);
-		Column<SongOverviewTO, Integer> yearColumn = grid.addColumn(SongOverviewTO::getYear).setCaption("Rok")
-				.setWidth(60);
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+
+		Column<SongOverviewTO> nazevColumn = grid.addColumn(SongOverviewTO::getName).setHeader("Název");
+		Column<SongOverviewTO> authorColumn = grid.addColumn(SongOverviewTO::getAuthor).setHeader("Autor")
+				.setWidth("250px").setFlexGrow(0);
+		Column<SongOverviewTO> yearColumn = grid.addColumn(SongOverviewTO::getYear).setHeader("Rok").setWidth("60px")
+				.setFlexGrow(0);
 		grid.setWidth("100%");
 		grid.setHeight("600px");
-		addComponent(grid);
+		add(grid);
 
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Název
 		TextField nazevColumnField = new TextField();
-		nazevColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		nazevColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterTO.setName(e.getValue());
@@ -104,7 +84,7 @@ public class ListTab extends VerticalLayout {
 
 		// Autor
 		TextField authorColumnField = new TextField();
-		authorColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		authorColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		authorColumnField.setWidth("100%");
 		authorColumnField.addValueChangeListener(e -> {
 			filterTO.setAuthor(e.getValue());
@@ -114,7 +94,7 @@ public class ListTab extends VerticalLayout {
 
 		// Rok
 		TextField yearColumnField = new TextField();
-		yearColumnField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		yearColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		yearColumnField.setWidth("100%");
 		yearColumnField.addValueChangeListener(e -> {
 			filterTO.setYear(StringUtils.isBlank(e.getValue()) ? null : Integer.valueOf(e.getValue()));
@@ -125,7 +105,7 @@ public class ListTab extends VerticalLayout {
 		populate();
 
 		grid.addItemClickListener((e) -> {
-			if (e.getMouseEventDetails().isDoubleClick()) {
+			if (e.getClickCount() > 1) {
 				chooseSong(e.getItem().getId(), false);
 				openSongPage();
 			}
@@ -133,12 +113,12 @@ public class ListTab extends VerticalLayout {
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		btnLayout.setSpacing(true);
-		addComponent(btnLayout);
+		add(btnLayout);
 
 		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));
 
-		btnLayout.addComponent(new CreateGridButton("Přidat", event -> {
-			UI.getCurrent().addWindow(new SongWindow() {
+		btnLayout.add(new CreateGridButton("Přidat", event -> {
+			new SongDialog() {
 				private static final long serialVersionUID = -4863260002363608014L;
 
 				@Override
@@ -147,55 +127,53 @@ public class ListTab extends VerticalLayout {
 					populate();
 					chooseSong(to.getId(), true);
 				}
-			});
+			}.open();
 		}));
 
 		final TextField importedAuthorField = new TextField();
 		importedAuthorField.setPlaceholder("Autor importovaných písní");
 		importedAuthorField.setWidth("200px");
-		btnLayout.addComponent(importedAuthorField);
+		btnLayout.add(importedAuthorField);
 
-		MultiUpload multiFileUpload = new MultiUpload("Import") {
-			private static final long serialVersionUID = -415832652157894459L;
+		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
 
-			public void fileUploadFinished(InputStream in, String fileName, String mime, long size,
-					int filesLeftInQueue) {
-				SongTO to = getSongsService().importSong(importedAuthorField.getValue(), in, fileName, mime, size,
-						filesLeftInQueue);
-				populate();
-				chooseSong(to.getId(), true);
-			}
-		};
-		multiFileUpload.setEnabled(false);
-		btnLayout.addComponent(multiFileUpload);
+		Upload upload = new Upload(buffer);
+		upload.addClassName("top-margin");
+		upload.setAcceptedFileTypes("text/plain");
+		upload.addSucceededListener(event -> {
+			SongTO to = getSongsService().importSong(importedAuthorField.getValue(),
+					buffer.getInputStream(event.getFileName()), event.getFileName());
+			populate();
+			chooseSong(to.getId(), true);
+		});
+		btnLayout.add(upload);
 
 		importedAuthorField
-				.addValueChangeListener(e -> multiFileUpload.setEnabled(StringUtils.isNotBlank(e.getValue())));
+				.addValueChangeListener(e -> upload.getElement().setEnabled(StringUtils.isNotBlank(e.getValue())));
 
-		btnLayout.addComponent(new ModifyGridButton<SongOverviewTO>("Upravit", event -> {
-			UI.getCurrent().addWindow(
-					new SongWindow(getSongsService().getSongById(grid.getSelectedItems().iterator().next().getId())) {
+		btnLayout.add(new ModifyGridButton<SongOverviewTO>("Upravit", event -> {
+			new SongDialog(getSongsService().getSongById(grid.getSelectedItems().iterator().next().getId())) {
 
-						private static final long serialVersionUID = 5264621441522056786L;
+				private static final long serialVersionUID = 5264621441522056786L;
 
-						@Override
-						protected void onSave(SongTO to) {
-							to = getSongsService().saveSong(to);
-							songTab.showDetail(to);
-							populate();
-							selectSong(to.getId());
-						}
-					});
+				@Override
+				protected void onSave(SongTO to) {
+					to = getSongsService().saveSong(to);
+					// TODO
+					// songsPage.showDetail(to);
+					populate();
+					selectSong(to.getId());
+				}
+			}.open();
 		}, grid));
 
-		btnLayout.addComponent(new DeleteGridButton<SongOverviewTO>("Smazat", items -> {
+		btnLayout.add(new DeleteGridButton<SongOverviewTO>("Smazat", items -> {
 			for (SongOverviewTO s : items)
 				getSongsService().deleteSong(s.getId());
 			populate();
-			songTab.showDetail(null);
+			// TODO
+			// songsPage.showDetail(null);
 		}, grid));
-
-		return this;
 	}
 
 	public void selectSong(Long id) {
@@ -206,23 +184,26 @@ public class ListTab extends VerticalLayout {
 	}
 
 	public void openSongPage() {
-		String currentURL;
-		try {
-			currentURL = request.getContextRoot() + "/" + pageFactory.getPageName() + "/text/" + choosenSong.getId()
-					+ "-" + URLEncoder.encode(choosenSong.getName(), "UTF-8");
-			Page.getCurrent().open(currentURL, "_blank");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		// TODO
+		// String currentURL;
+		// try {
+		// currentURL = request.getContextRoot() + "/" +
+		// pageFactory.getPageName() + "/text/" + choosenSong.getId()
+		// + "-" + URLEncoder.encode(choosenSong.getName(), "UTF-8");
+		// Page.getCurrent().open(currentURL, "_blank");
+		// } catch (UnsupportedEncodingException e) {
+		// e.printStackTrace();
+		// }
 	}
 
 	public void chooseSong(Long id, boolean selectSong) {
 		choosenSong = getSongsService().getSongById(id);
-		songTab.showDetail(choosenSong);
-		if (selectSong) {
-			tabSheet.setSelectedTab(songTab);
-			selectSong(id);
-		}
+		// TODO
+		// songsPage.showDetail(choosenSong);
+		// if (selectSong) {
+		// tabSheet.setSelectedTab(songTab);
+		// selectSong(id);
+		// }
 	}
 
 	public SongTO getChoosenSong() {
@@ -236,13 +217,10 @@ public class ListTab extends VerticalLayout {
 	}
 
 	public void populate() {
-		FetchItemsCallback<SongOverviewTO> fetchItems = (sortOrder, offset, limit) -> getSongsService()
-				.getSongs(filterTO, QuerydslUtil.transformOffsetLimit(offset, limit)).stream();
-		SerializableSupplier<Integer> sizeCallback = () -> getSongsService().getSongsCount(filterTO);
-		CallbackDataProvider<SongOverviewTO, Long> provider = new CallbackDataProvider<>(
-				q -> fetchItems.fetchItems(q.getSortOrders(), q.getOffset(), q.getLimit()), q -> sizeCallback.get(),
-				SongOverviewTO::getId);
-		grid.setDataProvider(provider);
+		FetchCallback<SongOverviewTO, Void> fetchCallback = q -> getSongsService()
+				.getSongs(filterTO, q.getOffset(), q.getLimit()).stream();
+		CountCallback<SongOverviewTO, Void> countCallback = q -> getSongsService().getSongsCount(filterTO);
+		grid.setDataProvider(DataProvider.fromCallbacks(fetchCallback, countCallback));
 	}
 
 }

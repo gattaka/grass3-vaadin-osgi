@@ -2,40 +2,36 @@ package cz.gattserver.grass3.songs.web;
 
 import java.util.Arrays;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.ValidationException;
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Hr;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
 
 import cz.gattserver.grass3.songs.model.domain.Instrument;
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
-import cz.gattserver.grass3.ui.components.CreateButton;
-import cz.gattserver.grass3.ui.components.ModifyButton;
+import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class ChordWindow extends WebDialog {
+public abstract class ChordDialog extends WebDialog {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 
-	public ChordWindow() {
+	public ChordDialog() {
 		this(null);
 	}
 
-	public ChordWindow(final ChordTO originalDTO) {
+	public ChordDialog(final ChordTO originalDTO) {
 		this(originalDTO, false);
 	}
 
-	public ChordWindow(final ChordTO originalDTO, boolean copy) {
+	public ChordDialog(final ChordTO originalDTO, boolean copy) {
 		super(originalDTO == null || copy ? "Založit" : "Upravit" + " akord");
 
 		setWidth("600px");
@@ -52,8 +48,8 @@ public abstract class ChordWindow extends WebDialog {
 		addComponent(nameField);
 
 		final ComboBox<Instrument> instrumentField = new ComboBox<>("Nástroj", Arrays.asList(Instrument.values()));
-		instrumentField.setItemCaptionGenerator(Instrument::getCaption);
-		instrumentField.setEmptySelectionAllowed(false);
+		instrumentField.setItemLabelGenerator(Instrument::getCaption);
+		instrumentField.setClearButtonVisible(true);
 		instrumentField.setWidth("100%");
 		addComponent(instrumentField);
 
@@ -66,12 +62,7 @@ public abstract class ChordWindow extends WebDialog {
 
 		binder.forField(instrumentField).asRequired().bind(ChordTO::getInstrument, ChordTO::setInstrument);
 
-		Button b;
-		if (originalDTO == null || copy)
-			addComponent(b = new CreateButton(event -> save(binder)));
-		else
-			addComponent(b = new ModifyButton(event -> save(binder)));
-		setComponentAlignment(b, Alignment.MIDDLE_CENTER);
+		add(new SaveCloseButtons(e -> save(binder), e -> close()));
 
 		if (originalDTO != null) {
 			binder.readBean(originalDTO);
@@ -80,13 +71,11 @@ public abstract class ChordWindow extends WebDialog {
 			if (copy)
 				binder.getBean().setId(null);
 		}
-
-		removeAllCloseShortcuts();
 	}
 
 	private void refreshDescriptionLayout(Binder<ChordTO> binder, ChordTO originalDTO, ChordTO formTO,
 			VerticalLayout chordDescriptionLayout, Instrument instrument) {
-		chordDescriptionLayout.removeAllComponents();
+		chordDescriptionLayout.removeAll();
 		switch (instrument) {
 		case GUITAR:
 			refreshDescriptionLayoutAsGuitar(binder, originalDTO, formTO, chordDescriptionLayout);
@@ -100,24 +89,24 @@ public abstract class ChordWindow extends WebDialog {
 			VerticalLayout chordDescriptionLayout) {
 		String[] stringsLabel = new String[] { "E", "a", "d", "g", "h", "e" };
 
-		GridLayout layout = new GridLayout(6, 17);
-		layout.setSpacing(false);
-		layout.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
-		chordDescriptionLayout.addComponent(layout);
-		for (int row = 0; row < layout.getRows(); row++) {
+		Div layout = new Div();
+		chordDescriptionLayout.add(layout);
+		int rows = 17;
+		int cols = 6;
+		for (int row = 0; row < rows; row++) {
 			if (row % 2 != 0) {
-				Label hrLabel = new Label("<hr/>", ContentMode.HTML);
+				Hr hrLabel = new Hr();
 				hrLabel.setWidth("100%");
-				layout.addComponent(hrLabel, 0, row, layout.getColumns() - 1, row);
-			} else
-				for (int col = 0; col < layout.getColumns(); col++)
+				layout.add(hrLabel);
+			} else {
+				for (int col = 0; col < cols; col++) {
 					if (row == 0) {
 						String val = stringsLabel[col];
-						layout.addComponent(new Label(val), col, row);
+						layout.add(new Span(val));
 					} else {
-						CheckBox cb = new CheckBox();
-						layout.addComponent(cb, col, row);
-						long bitMask = 1L << ((row / 2 - 1) * layout.getColumns() + col);
+						Checkbox cb = new Checkbox();
+						layout.add(cb);
+						long bitMask = 1L << ((row / 2 - 1) * cols + col);
 						if (originalDTO != null)
 							cb.setValue((originalDTO.getConfiguration().longValue() & bitMask) > 0);
 						cb.addValueChangeListener(val -> {
@@ -127,6 +116,9 @@ public abstract class ChordWindow extends WebDialog {
 								formTO.setConfiguration(formTO.getConfiguration().longValue() & ~bitMask);
 						});
 					}
+					layout.add(new Breakline());
+				}
+			}
 		}
 	}
 
@@ -139,11 +131,10 @@ public abstract class ChordWindow extends WebDialog {
 			onSave(writeTO);
 			close();
 		} catch (ValidationException ve) {
-			Notification.show(
-					"Chybná vstupní data\n\n   " + ve.getValidationErrors().iterator().next().getErrorMessage(),
-					Notification.Type.ERROR_MESSAGE);
+			new ErrorDialog("Chybná vstupní data\n\n   " + ve.getValidationErrors().iterator().next().getErrorMessage())
+					.open();
 		} catch (Exception ve) {
-			UI.getCurrent().addWindow(new ErrorDialog("Uložení se nezdařilo"));
+			new ErrorDialog("Uložení se nezdařilo").open();
 		}
 	}
 

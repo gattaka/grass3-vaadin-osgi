@@ -3,8 +3,6 @@ package cz.gattserver.grass3.songs.facades;
 import java.io.InputStream;
 import java.util.List;
 
-import org.springframework.data.domain.Pageable;
-
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.songs.model.interfaces.SongOverviewTO;
 import cz.gattserver.grass3.songs.model.interfaces.SongTO;
@@ -24,10 +22,8 @@ public interface SongsService {
 	 * 
 	 * @param filterTO
 	 *            filtr
-	 * @param pageable
-	 *            stránkování
 	 */
-	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO, Pageable pageable);
+	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO, int offset, int limit);
 
 	/**
 	 * Získá písničku dle id
@@ -62,13 +58,9 @@ public interface SongsService {
 	 * @param author
 	 * @param in
 	 * @param fileName
-	 * @param mime
-	 * @param size
-	 * @param filesLeftInQueue
 	 * @return
 	 */
-	public SongTO importSong(String author, InputStream in, String fileName, String mime, long size,
-			int filesLeftInQueue);
+	public SongTO importSong(String author, InputStream in, String fileName);
 
 	/**
 	 * Uloží akord

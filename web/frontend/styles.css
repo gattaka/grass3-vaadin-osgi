@@ -164,6 +164,12 @@ vaadin-horizontal-layout.menu {
 	text-decoration: none;
 	font: 400 14px/1.55 Helvetica, Arial, "lucida grande", tahoma, verdana,
 		arial, sans-serif;
+	padding: 0 2px;
+}
+
+.menu-item:hover {
+	text-decoration: none;
+	color: white;
 }
 
 /* Page layout */

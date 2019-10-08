@@ -5,9 +5,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 
-import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
-import cz.gattserver.web.common.server.URLIdentifierUtils;
 
 @Route("songs")
 public class SongsPage extends OneColumnPage {
@@ -19,11 +17,10 @@ public class SongsPage extends OneColumnPage {
 	private Tab songTab;
 	private Tab chordsTab;
 
-	private ListTab listTabContent;
-	private SongTab songTabContent;
-	private ChordsTab chordsTabContent;
-
 	private Div pageLayout;
+
+	private Long selectedSongId;
+	private String selectedChordId;
 
 	public SongsPage() {
 		init();
@@ -35,6 +32,7 @@ public class SongsPage extends OneColumnPage {
 		layout.add(tabSheet);
 
 		pageLayout = new Div();
+		pageLayout.addClassName("top-margin");
 		layout.add(pageLayout);
 
 		listTab = new Tab();
@@ -43,10 +41,12 @@ public class SongsPage extends OneColumnPage {
 
 		songTab = new Tab();
 		songTab.setLabel("Písnička");
+		songTab.setEnabled(false);
 		tabSheet.add(songTab);
 
 		chordsTab = new Tab();
 		chordsTab.setLabel("Akordy");
+		chordsTab.setEnabled(false);
 		tabSheet.add(chordsTab);
 
 		tabSheet.addSelectedChangeListener(e -> {
@@ -67,28 +67,43 @@ public class SongsPage extends OneColumnPage {
 		switchListTab();
 	}
 
-	private void switchListTab() {
-		if (listTabContent == null)
-			listTabContent = new ListTab(this);
+	public void switchListTab() {
 		pageLayout.removeAll();
+		ListTab listTabContent = new ListTab(this, selectedSongId);
 		pageLayout.add(listTabContent);
 		tabSheet.setSelectedTab(listTab);
 	}
 
-	private void switchSongTab() {
-		if (songTabContent == null)
-			songTabContent = new SongTab(this);
+	public void switchSongTab() {
 		pageLayout.removeAll();
+		SongTab songTabContent = new SongTab(this, selectedSongId);
 		pageLayout.add(songTabContent);
 		tabSheet.setSelectedTab(songTab);
 	}
 
-	private void switchChordsTab() {
-		if (chordsTabContent == null)
-			chordsTabContent = new ChordsTab(this);
+	public void switchChordsTab() {
 		pageLayout.removeAll();
+		ChordsTab chordsTabContent = new ChordsTab(this, selectedChordId);
 		pageLayout.add(chordsTabContent);
 		tabSheet.setSelectedTab(chordsTab);
+	}
+
+	public Long getSelectedSongId() {
+		return selectedSongId;
+	}
+
+	public void setSelectedSongId(Long selectedSongId) {
+		this.selectedSongId = selectedSongId;
+		songTab.setEnabled(selectedSongId != null);
+	}
+
+	public String getSelectedChordId() {
+		return selectedChordId;
+	}
+
+	public void setSelectedChordId(String selectedChordId) {
+		this.selectedChordId = selectedChordId;
+		chordsTab.setEnabled(selectedChordId != null);
 	}
 
 }

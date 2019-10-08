@@ -27,8 +27,6 @@ public abstract class SongDialog extends WebDialog {
 	}
 
 	public SongDialog(final SongTO originalTO) {
-		super(originalTO == null ? "Založit" : "Upravit" + " písničku");
-
 		setWidth("600px");
 
 		SongTO formTO = new SongTO();

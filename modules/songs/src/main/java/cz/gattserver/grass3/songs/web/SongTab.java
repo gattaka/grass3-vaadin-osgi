@@ -39,19 +39,20 @@ import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
-public class SongTab extends VerticalLayout {
+public class SongTab extends Div {
 
 	private static final long serialVersionUID = 594189301140808163L;
 
 	private static final Logger logger = LoggerFactory.getLogger(SongTab.class);
 
-	private static final String HOVER_DIV_ID = "chord-detail-hover-div";
+	private static final String JS_DIV_ID = "js-div";
 
 	@Autowired
 	private SongsService songsFacade;
@@ -62,65 +63,38 @@ public class SongTab extends VerticalLayout {
 	@Resource(name = "songsPageFactory")
 	private SongsPageFactory pageFactory;
 
-	private ChordsTab chordsTab;
-	private ListTab listTab;
-
 	private H2 nameLabel;
 	private HtmlDiv authorYearLabel;
 	private HtmlDiv contentLabel;
 
-	private SongsPage songsPage;
-
-	public SongTab(SongsPage songsPage) {
+	public SongTab(SongsPage songsPage, Long songId) {
 		SpringContextHelper.inject(this);
-		this.songsPage = songsPage;
-	}
 
-	public ChordsTab getChordsTab() {
-		return chordsTab;
-	}
+		SongTO choosenSong = songsFacade.getSongById(songId);
 
-	public SongTab setChordsTab(ChordsTab chordsTab) {
-		this.chordsTab = chordsTab;
-		return this;
-	}
-
-	public ListTab getListTab() {
-		return listTab;
-	}
-
-	public SongTab setListTab(ListTab listTab) {
-		this.listTab = listTab;
-		return this;
-	}
-
-	public SongTab init() {
-		if (chordsTab == null || listTab == null)
-			throw new IllegalStateException();
+		Div wrapperDiv = new Div();
+		wrapperDiv.getStyle().set("padding", "10px").set("background", "white").set("border-radius", "3px")
+				.set("border", "1px solid #d5d5d5");
+		add(wrapperDiv);
 
 		nameLabel = new H2();
-		add(nameLabel);
+		wrapperDiv.add(nameLabel);
 
 		authorYearLabel = new HtmlDiv();
 		authorYearLabel.getStyle().set("margin-top", " -8px").set("font-style", "italic");
-		add(authorYearLabel);
-
-		HorizontalLayout contentLayout = new HorizontalLayout();
-		contentLayout.setWidth("100%");
-		contentLayout.setHeight("100%");
-		add(contentLayout);
+		wrapperDiv.add(authorYearLabel);
 
 		contentLabel = new HtmlDiv();
-		contentLabel.getStyle().set("font-family", "monospace").set("font-size", "12px").set("overflow", "auto")
-				.set("-webkit-column-width", "300px").set("-moz-column-width", "300px").set("column-width", "300px")
-				.set("column-fill", "auto").set("-webkit-column-rule", "1px dotted #ddd")
-				.set("-moz-column-rule", "1px dotted #ddd").set("column-rule", "1px dotted #ddd");
 		contentLabel.setHeight("700px");
 		contentLabel.setWidth(null);
-		contentLayout.add(contentLabel);
+		contentLabel.addClassName("top-margin");
+		contentLabel.getStyle().set("font-family", "monospace").set("font-size", "12px").set("overflow-x", "auto")
+				.set("display", "-webkit-flex").set("display", "flex").set("-webkit-flex-flow", "column wrap")
+				.set("flex-flow", "column wrap");
 
-		HorizontalLayout btnLayout = new HorizontalLayout();
-		btnLayout.setSpacing(true);
+		wrapperDiv.add(contentLabel);
+
+		ButtonLayout btnLayout = new ButtonLayout();
 		add(btnLayout);
 
 		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));
@@ -132,43 +106,42 @@ public class SongTab extends VerticalLayout {
 				@Override
 				protected void onSave(SongTO to) {
 					to = songsFacade.saveSong(to);
-					listTab.populate();
-					listTab.chooseSong(to.getId(), false);
+					songsPage.setSelectedSongId(to.getId());
 				}
 			}.open();
 		}));
 
 		btnLayout.add(new ModifyButton("Upravit", event -> {
-			new SongDialog(listTab.getChoosenSong()) {
+			new SongDialog(choosenSong) {
 				private static final long serialVersionUID = 5264621441522056786L;
 
 				@Override
 				protected void onSave(SongTO to) {
 					to = songsFacade.saveSong(to);
-					listTab.populate();
-					listTab.chooseSong(to.getId(), false);
+					showDetail(to);
 				}
 			}.open();
 		}));
 
 		btnLayout.add(new DeleteButton("Smazat", e -> {
-			songsFacade.deleteSong(listTab.getChoosenSong().getId());
-			listTab.populate();
-			showDetail(null);
+			songsFacade.deleteSong(songId);
+			songsPage.setSelectedSongId(null);
+			songsPage.switchListTab();
 			// TODO
 			// tabSheet.setSelectedTab(listTab);
 		}));
 
 		Div chordDiv = new Div();
 		chordDiv.setVisible(false);
-		chordDiv.getStyle().set("position", "absolute");
+		chordDiv.getStyle().set("position", "absolute").set("background", "white").set("padding", "5px")
+				.set("border-radius", "3px").set("border", "1px solid #d5d5d5");
 		add(chordDiv);
 
-		Div hoverDiv = new Div() {
+		Div callbackDiv = new Div() {
 			private static final long serialVersionUID = -7319482130016598549L;
 
 			@ClientCallable
-			private void chordCallback(String action, String chord, double x, double y) {
+			private void chordCallback(String chord, double x, double y) {
 				chordDiv.setVisible(true);
 				chordDiv.removeAll();
 				ChordTO to = songsFacade.getChordByName(chord);
@@ -184,18 +157,25 @@ public class SongTab extends VerticalLayout {
 						return null;
 					}
 				}), name));
-				chordDiv.getStyle().set("left", x + "px").set("top", y + "px");
+				chordDiv.getStyle().set("left", (15 + x) + "px").set("top", y + "px");
 			}
 
 			@ClientCallable
 			private void hideCallback() {
 				chordDiv.setVisible(false);
 			}
-		};
-		hoverDiv.setId(HOVER_DIV_ID);
-		add(hoverDiv);
 
-		return this;
+			@ClientCallable
+			private void chordClickCallback(String chord) {
+				songsPage.setSelectedChordId(chord);
+				songsPage.switchChordsTab();
+			}
+
+		};
+		callbackDiv.setId(JS_DIV_ID);
+		add(callbackDiv);
+
+		showDetail(choosenSong);
 	}
 
 	public void showDetail(SongTO choosenSong) {
@@ -226,24 +206,20 @@ public class SongTab extends VerticalLayout {
 					}
 				for (String c : chords) {
 					String chordLink = c;
-					try {
-						chordLink = "<a target='_blank' href='" + GrassPage.getContextPath() + "/"
-								+ pageFactory.getPageName() + "/chord/" + URLEncoder.encode(c, "UTF-8") + "'"
-								+ "onmouseover='document.getElementById(\"" + HOVER_DIV_ID
-								+ "\").$server.chordCallback(\"" + c + "\", event.clientX, event.clientY)' "
-								+ "onmouseout='document.getElementById(\"" + HOVER_DIV_ID
-								+ "\").$server.hideCallback()' >" + c + "</a>";
-					} catch (UnsupportedEncodingException e) {
-						logger.error("Chord link se nezdařilo vytvořit", e);
-					}
+					chordLink = "<span style='cursor: pointer' onclick='document.getElementById(\"" + JS_DIV_ID
+							+ "\").\\$server.chordClickCallback(\"" + c + "\")' "
+							+ "onmouseover='document.getElementById(\"" + JS_DIV_ID + "\").\\$server.chordCallback(\""
+							+ c + "\", event.clientX, event.clientY)' " + "onmouseout='document.getElementById(\""
+							+ JS_DIV_ID + "\").\\$server.hideCallback()'>" + c + "</span>";
 					line = line.replaceAll(c + " ", chordLink + " ");
 					line = line.replaceAll(c + ",", chordLink + ",");
 					line = line.replaceAll(c + "\\)", chordLink + ")");
 					line = line.replaceAll(c + "\\(", chordLink + "(");
 					line = line.replaceAll(c + "$", chordLink);
 				}
-				htmlText += chordLine ? ("<span style='color: blue; white-space: pre;'>" + line + "</span><br/>")
-						: ("<span style='white-space: pre;'>" + line + "</span><br/>");
+				htmlText += chordLine
+						? ("<span style='color: blue; white-space: pre; height: 15px'>" + line + "</span>")
+						: ("<span style='white-space: pre; padding-right: 20px; height: 15px'>" + line + "</span>");
 			}
 			contentLabel.setValue(htmlText);
 

@@ -55,12 +55,11 @@ public interface SongsService {
 	/**
 	 * Provede import písničky ze souboru
 	 * 
-	 * @param author
 	 * @param in
 	 * @param fileName
 	 * @return
 	 */
-	public SongTO importSong(String author, InputStream in, String fileName);
+	public SongTO importSong(InputStream in, String fileName);
 
 	/**
 	 * Uloží akord

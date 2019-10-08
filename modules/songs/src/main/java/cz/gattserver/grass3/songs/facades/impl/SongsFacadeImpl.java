@@ -65,7 +65,7 @@ public class SongsFacadeImpl implements SongsService {
 	}
 
 	@Override
-	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO, int offset, int limit){
+	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO, int offset, int limit) {
 		return songsRepository.findOrderByName(filterTO, offset, limit);
 	}
 
@@ -75,30 +75,8 @@ public class SongsFacadeImpl implements SongsService {
 	}
 
 	@Override
-	public SongTO importSong(String author, InputStream in, String fileName) {
-		SongTO to = new SongTO();
-		// odřízne příponu
-		fileName = fileName.substring(0, fileName.lastIndexOf('.'));
-		int nameEnd = fileName.indexOf("(");
-		int year = 0;
-		if (nameEnd < 0)
-			nameEnd = fileName.length();
-		else {
-			String yearPart = fileName.substring(nameEnd);
-			for (String chunk : yearPart.split(" |\\)|\\(")) {
-				if (chunk.matches("[0-9]+")) {
-					try {
-						year = Integer.parseInt(chunk);
-					} catch (NumberFormatException e) {
-						// nezdařilo se naparsovat číslo... ?
-					}
-					break;
-				}
-			}
-		}
-		to.setYear(year);
-		to.setName(fileName.substring(0, nameEnd).trim());
-		to.setAuthor(author);
+	public SongTO importSong(InputStream in, String fileName) {
+		SongTO to = SongFileParser.parseSongInfo(fileName);
 		try {
 			to.setText(Streams.asString(in, "cp1250"));
 		} catch (IOException e) {

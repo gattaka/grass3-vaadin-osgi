@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,10 +40,11 @@ import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.GridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
+import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 
-public class ChordsTab extends VerticalLayout {
+public class ChordsTab extends Div {
 
 	private static final long serialVersionUID = 2599065817744507785L;
 
@@ -67,9 +69,11 @@ public class ChordsTab extends VerticalLayout {
 
 	private SongsPage songsPage;
 
-	public ChordsTab(SongsPage songsPage) {
+	public ChordsTab(SongsPage songsPage, String chordId) {
 		SpringContextHelper.inject(this);
 
+		// GrassPage.getContextPath() + "/" + pageFactory.getPageName() + "/chord/" + URLEncoder.encode(c, "UTF-8")
+		
 		this.songsPage = songsPage;
 
 		chords = new ArrayList<>();

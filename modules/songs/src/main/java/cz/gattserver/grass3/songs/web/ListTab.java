@@ -10,10 +10,12 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -32,9 +34,10 @@ import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
-public class ListTab extends VerticalLayout {
+public class ListTab extends Div {
 
 	private static final long serialVersionUID = 594189301140808163L;
 
@@ -53,12 +56,13 @@ public class ListTab extends VerticalLayout {
 
 	private SongsPage songsPage;
 
-	public ListTab(SongsPage songsPage) {
+	public ListTab(SongsPage songsPage, Long selectedSongId) {
 		SpringContextHelper.inject(this);
 		filterTO = new SongOverviewTO();
 		this.songsPage = songsPage;
 
 		grid = new Grid<>();
+		grid.setMultiSort(false);
 		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 
 		Column<SongOverviewTO> nazevColumn = grid.addColumn(SongOverviewTO::getName).setHeader("Název");
@@ -106,13 +110,25 @@ public class ListTab extends VerticalLayout {
 
 		grid.addItemClickListener((e) -> {
 			if (e.getClickCount() > 1) {
-				chooseSong(e.getItem().getId(), false);
+				selectSong(e.getItem().getId());
 				openSongPage();
 			}
 		});
 
-		HorizontalLayout btnLayout = new HorizontalLayout();
-		btnLayout.setSpacing(true);
+		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
+
+		Upload upload = new Upload(buffer);
+		upload.addClassName("top-margin");
+		upload.setAcceptedFileTypes("text/plain");
+		upload.addSucceededListener(event -> {
+			SongTO to = getSongsService().importSong(buffer.getInputStream(event.getFileName()), event.getFileName());
+			populate();
+			selectSong(to.getId());
+			openSongPage();
+		});
+		add(upload);
+
+		ButtonLayout btnLayout = new ButtonLayout();
 		add(btnLayout);
 
 		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));
@@ -125,31 +141,11 @@ public class ListTab extends VerticalLayout {
 				protected void onSave(SongTO to) {
 					to = getSongsService().saveSong(to);
 					populate();
-					chooseSong(to.getId(), true);
+					selectSong(to.getId());
+					openSongPage();
 				}
 			}.open();
 		}));
-
-		final TextField importedAuthorField = new TextField();
-		importedAuthorField.setPlaceholder("Autor importovaných písní");
-		importedAuthorField.setWidth("200px");
-		btnLayout.add(importedAuthorField);
-
-		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
-
-		Upload upload = new Upload(buffer);
-		upload.addClassName("top-margin");
-		upload.setAcceptedFileTypes("text/plain");
-		upload.addSucceededListener(event -> {
-			SongTO to = getSongsService().importSong(importedAuthorField.getValue(),
-					buffer.getInputStream(event.getFileName()), event.getFileName());
-			populate();
-			chooseSong(to.getId(), true);
-		});
-		btnLayout.add(upload);
-
-		importedAuthorField
-				.addValueChangeListener(e -> upload.getElement().setEnabled(StringUtils.isNotBlank(e.getValue())));
 
 		btnLayout.add(new ModifyGridButton<SongOverviewTO>("Upravit", event -> {
 			new SongDialog(getSongsService().getSongById(grid.getSelectedItems().iterator().next().getId())) {
@@ -174,16 +170,20 @@ public class ListTab extends VerticalLayout {
 			// TODO
 			// songsPage.showDetail(null);
 		}, grid));
+
+		if (selectedSongId != null)
+			selectSong(selectedSongId);
 	}
 
 	public void selectSong(Long id) {
 		SongOverviewTO to = new SongOverviewTO();
 		to.setId(id);
-		grid.deselectAll();
 		grid.select(to);
+		songsPage.setSelectedSongId(id);
 	}
 
 	public void openSongPage() {
+		songsPage.switchSongTab();
 		// TODO
 		// String currentURL;
 		// try {
@@ -193,16 +193,6 @@ public class ListTab extends VerticalLayout {
 		// Page.getCurrent().open(currentURL, "_blank");
 		// } catch (UnsupportedEncodingException e) {
 		// e.printStackTrace();
-		// }
-	}
-
-	public void chooseSong(Long id, boolean selectSong) {
-		choosenSong = getSongsService().getSongById(id);
-		// TODO
-		// songsPage.showDetail(choosenSong);
-		// if (selectSong) {
-		// tabSheet.setSelectedTab(songTab);
-		// selectSong(id);
 		// }
 	}
 

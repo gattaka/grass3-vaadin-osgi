@@ -47,4 +47,12 @@ public class SongsRepositoryCustomImpl implements SongsRepositoryCustom {
 		return query.select(new QSongOverviewTO(s.name, s.author, s.year, s.id)).from(s)
 				.where(createPredicate(filterTO)).orderBy(new OrderSpecifier<>(Order.ASC, s.name)).fetch();
 	}
+
+	@Override
+	public List<SongOverviewTO> findOrderByName(SongOverviewTO filterTO) {
+		JPAQuery<Integer> query = new JPAQuery<>(entityManager);
+		QSong s = QSong.song;
+		return query.select(new QSongOverviewTO(s.name, s.author, s.year, s.id)).from(s)
+				.where(createPredicate(filterTO)).orderBy(new OrderSpecifier<>(Order.ASC, s.name)).fetch();
+	}
 }

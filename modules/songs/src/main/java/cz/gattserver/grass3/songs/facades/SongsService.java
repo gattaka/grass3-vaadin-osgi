@@ -24,6 +24,14 @@ public interface SongsService {
 	 *            filtr
 	 */
 	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO, int offset, int limit);
+	
+	/**
+	 * Získá všechny písničky
+	 * 
+	 * @param filterTO
+	 *            filtr
+	 */
+	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO);
 
 	/**
 	 * Získá písničku dle id

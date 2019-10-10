@@ -72,6 +72,17 @@ public class SongTab extends Div {
 
 		SongTO choosenSong = songsFacade.getSongById(songId);
 
+		// TODO
+		// String currentURL;
+		// try {
+		// currentURL = request.getContextRoot() + "/" +
+		// pageFactory.getPageName() + "/text/" + choosenSong.getId()
+		// + "-" + URLEncoder.encode(choosenSong.getName(), "UTF-8");
+		// Page.getCurrent().open(currentURL, "_blank");
+		// } catch (UnsupportedEncodingException e) {
+		// e.printStackTrace();
+		// }
+
 		Div wrapperDiv = new Div();
 		wrapperDiv.getStyle().set("padding", "10px").set("background", "white").set("border-radius", "3px")
 				.set("border", "1px solid #d5d5d5");

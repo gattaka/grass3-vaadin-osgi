@@ -1,9 +1,8 @@
 package cz.gattserver.grass3.songs.web;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -12,19 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.Column;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
-import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
-import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.SongsRole;
@@ -55,6 +49,8 @@ public class ListTab extends Div {
 	private SongOverviewTO filterTO;
 
 	private SongsPage songsPage;
+
+	private Map<Long, Integer> indexMap = new HashMap<>();
 
 	public ListTab(SongsPage songsPage, Long selectedSongId) {
 		SpringContextHelper.inject(this);
@@ -109,10 +105,8 @@ public class ListTab extends Div {
 		populate();
 
 		grid.addItemClickListener((e) -> {
-			if (e.getClickCount() > 1) {
-				selectSong(e.getItem().getId());
-				openSongPage();
-			}
+			if (e.getClickCount() > 1)
+				selectSong(e.getItem().getId(), true);
 		});
 
 		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
@@ -123,8 +117,6 @@ public class ListTab extends Div {
 		upload.addSucceededListener(event -> {
 			SongTO to = getSongsService().importSong(buffer.getInputStream(event.getFileName()), event.getFileName());
 			populate();
-			selectSong(to.getId());
-			openSongPage();
 		});
 		add(upload);
 
@@ -141,8 +133,7 @@ public class ListTab extends Div {
 				protected void onSave(SongTO to) {
 					to = getSongsService().saveSong(to);
 					populate();
-					selectSong(to.getId());
-					openSongPage();
+					selectSong(to.getId(), true);
 				}
 			}.open();
 		}));
@@ -155,10 +146,8 @@ public class ListTab extends Div {
 				@Override
 				protected void onSave(SongTO to) {
 					to = getSongsService().saveSong(to);
-					// TODO
-					// songsPage.showDetail(to);
 					populate();
-					selectSong(to.getId());
+					selectSong(to.getId(), false);
 				}
 			}.open();
 		}, grid));
@@ -167,33 +156,24 @@ public class ListTab extends Div {
 			for (SongOverviewTO s : items)
 				getSongsService().deleteSong(s.getId());
 			populate();
-			// TODO
-			// songsPage.showDetail(null);
+			songsPage.setSelectedSongId(null);
 		}, grid));
 
 		if (selectedSongId != null)
-			selectSong(selectedSongId);
+			selectSong(selectedSongId, false);
 	}
 
-	public void selectSong(Long id) {
+	public void selectSong(Long id, boolean switchToDetail) {
 		SongOverviewTO to = new SongOverviewTO();
 		to.setId(id);
-		grid.select(to);
 		songsPage.setSelectedSongId(id);
-	}
-
-	public void openSongPage() {
-		songsPage.switchSongTab();
-		// TODO
-		// String currentURL;
-		// try {
-		// currentURL = request.getContextRoot() + "/" +
-		// pageFactory.getPageName() + "/text/" + choosenSong.getId()
-		// + "-" + URLEncoder.encode(choosenSong.getName(), "UTF-8");
-		// Page.getCurrent().open(currentURL, "_blank");
-		// } catch (UnsupportedEncodingException e) {
-		// e.printStackTrace();
-		// }
+		if (switchToDetail) {
+			songsPage.switchSongTab();
+		} else {
+			grid.select(to);
+			UI.getCurrent().getPage().executeJs("$0._scrollToIndex(" + indexMap.get(to.getId()) + ")",
+					grid.getElement());
+		}
 	}
 
 	public SongTO getChoosenSong() {
@@ -207,10 +187,11 @@ public class ListTab extends Div {
 	}
 
 	public void populate() {
-		FetchCallback<SongOverviewTO, Void> fetchCallback = q -> getSongsService()
-				.getSongs(filterTO, q.getOffset(), q.getLimit()).stream();
-		CountCallback<SongOverviewTO, Void> countCallback = q -> getSongsService().getSongsCount(filterTO);
-		grid.setDataProvider(DataProvider.fromCallbacks(fetchCallback, countCallback));
+		List<SongOverviewTO> songs = getSongsService().getSongs(filterTO);
+		indexMap.clear();
+		for (int i = 0; i < songs.size(); i++)
+			indexMap.put(songs.get(i).getId(), i);
+		grid.setItems(songs);
 	}
 
 }

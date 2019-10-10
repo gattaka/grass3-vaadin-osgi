@@ -68,6 +68,11 @@ public class SongsFacadeImpl implements SongsService {
 	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO, int offset, int limit) {
 		return songsRepository.findOrderByName(filterTO, offset, limit);
 	}
+	
+	@Override
+	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO) {
+		return songsRepository.findOrderByName(filterTO);
+	}
 
 	@Override
 	public void deleteSong(Long id) {

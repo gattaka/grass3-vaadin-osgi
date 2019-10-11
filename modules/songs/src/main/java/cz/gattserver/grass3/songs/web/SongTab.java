@@ -4,11 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,12 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.ClientCallable;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.services.SecurityService;
@@ -38,13 +30,9 @@ import cz.gattserver.grass3.songs.util.ChordImageUtils;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
-import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
-import cz.gattserver.web.common.ui.window.WebDialog;
 
 public class SongTab extends Div {
 
@@ -71,17 +59,6 @@ public class SongTab extends Div {
 		SpringContextHelper.inject(this);
 
 		SongTO choosenSong = songsFacade.getSongById(songId);
-
-		// TODO
-		// String currentURL;
-		// try {
-		// currentURL = request.getContextRoot() + "/" +
-		// pageFactory.getPageName() + "/text/" + choosenSong.getId()
-		// + "-" + URLEncoder.encode(choosenSong.getName(), "UTF-8");
-		// Page.getCurrent().open(currentURL, "_blank");
-		// } catch (UnsupportedEncodingException e) {
-		// e.printStackTrace();
-		// }
 
 		Div wrapperDiv = new Div();
 		wrapperDiv.getStyle().set("padding", "10px").set("background", "white").set("border-radius", "3px")
@@ -138,8 +115,6 @@ public class SongTab extends Div {
 			songsFacade.deleteSong(songId);
 			songsPage.setSelectedSongId(null);
 			songsPage.switchListTab();
-			// TODO
-			// tabSheet.setSelectedTab(listTab);
 		}));
 
 		Div chordDiv = new Div();
@@ -194,10 +169,6 @@ public class SongTab extends Div {
 			nameLabel.setText(null);
 			authorYearLabel.setValue(null);
 			contentLabel.setValue(null);
-			// TODO
-			// String currentURL = request.getContextRoot() + "/" +
-			// pageFactory.getPageName();
-			// Page.getCurrent().pushState(currentURL);
 		} else {
 			nameLabel.setText(choosenSong.getName());
 			String value = choosenSong.getAuthor();
@@ -233,17 +204,6 @@ public class SongTab extends Div {
 						: ("<span style='white-space: pre; padding-right: 20px; height: 15px'>" + line + "</span>");
 			}
 			contentLabel.setValue(htmlText);
-
-			// TODO
-			// String currentURL;
-			// try {
-			// currentURL = request.getContextRoot() + "/" +
-			// pageFactory.getPageName() + "/text/" + choosenSong.getId()
-			// + "-" + URLEncoder.encode(choosenSong.getName(), "UTF-8");
-			// Page.getCurrent().pushState(currentURL);
-			// } catch (UnsupportedEncodingException e) {
-			// e.printStackTrace();
-			// }
 		}
 
 	}

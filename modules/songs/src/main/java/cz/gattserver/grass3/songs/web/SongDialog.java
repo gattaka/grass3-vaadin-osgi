@@ -6,7 +6,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 
 import cz.gattserver.grass3.songs.facades.SongsService;
@@ -68,16 +67,14 @@ public abstract class SongDialog extends WebDialog {
 	}
 
 	private void save(SongTO originalTO, Binder<SongTO> binder) {
-		try {
-			SongTO writeTO = originalTO == null ? new SongTO() : originalTO;
-			binder.writeBean(writeTO);
-			onSave(writeTO);
-			close();
-		} catch (ValidationException ve) {
-			new ErrorDialog("Chybná vstupní data\n\n   " + ve.getValidationErrors().iterator().next().getErrorMessage())
-					.open();
-		} catch (Exception ve) {
-			new ErrorDialog("Uložení se nezdařilo").open();
+		SongTO writeTO = originalTO == null ? new SongTO() : originalTO;
+		if (binder.writeBeanIfValid(writeTO)) {
+			try {
+				onSave(writeTO);
+				close();
+			} catch (Exception ve) {
+				new ErrorDialog("Uložení se nezdařilo").open();
+			}
 		}
 	}
 

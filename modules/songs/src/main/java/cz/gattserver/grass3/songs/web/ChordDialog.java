@@ -9,7 +9,6 @@ import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
 
 import cz.gattserver.grass3.songs.model.domain.Instrument;
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
@@ -124,18 +123,16 @@ public abstract class ChordDialog extends WebDialog {
 	}
 
 	private void save(Binder<ChordTO> binder) {
-		try {
-			ChordTO writeTO = new ChordTO();
-			binder.writeBean(writeTO);
-			writeTO.setConfiguration(binder.getBean().getConfiguration());
-			writeTO.setId(binder.getBean().getId());
-			onSave(writeTO);
-			close();
-		} catch (ValidationException ve) {
-			new ErrorDialog("Chybná vstupní data\n\n   " + ve.getValidationErrors().iterator().next().getErrorMessage())
-					.open();
-		} catch (Exception ve) {
-			new ErrorDialog("Uložení se nezdařilo").open();
+		ChordTO writeTO = new ChordTO();
+		if (binder.writeBeanIfValid(writeTO)) {
+			try {
+				writeTO.setConfiguration(binder.getBean().getConfiguration());
+				writeTO.setId(binder.getBean().getId());
+				onSave(writeTO);
+				close();
+			} catch (Exception ve) {
+				new ErrorDialog("Uložení se nezdařilo").open();
+			}
 		}
 	}
 

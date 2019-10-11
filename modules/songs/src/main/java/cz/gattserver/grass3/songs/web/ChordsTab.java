@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +39,6 @@ import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.GridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -68,15 +66,8 @@ public class ChordsTab extends Div {
 	private List<ChordTO> chords;
 	private ChordTO filterTO;
 
-	private SongsPage songsPage;
-
-	public ChordsTab(SongsPage songsPage, String chordId) {
+	public ChordsTab(SongsPage songsPage, String chordName) {
 		SpringContextHelper.inject(this);
-
-		// GrassPage.getContextPath() + "/" + pageFactory.getPageName() +
-		// "/chord/" + URLEncoder.encode(c, "UTF-8")
-
-		this.songsPage = songsPage;
 
 		chords = new ArrayList<>();
 		filterTO = new ChordTO();
@@ -188,6 +179,9 @@ public class ChordsTab extends Div {
 			loadChords();
 			showDetail(null);
 		}, grid));
+
+		ChordTO choosenChord = songsFacade.getChordByName(chordName);
+		showDetail(choosenChord);
 	}
 
 	public void selectChord(String name) {
@@ -201,10 +195,6 @@ public class ChordsTab extends Div {
 		if (choosenChord == null) {
 			nameLabel.setVisible(false);
 			this.choosenChord = null;
-			// TODO
-			// String currentURL = request.getContextRoot() + "/" +
-			// pageFactory.getPageName();
-			// Page.getCurrent().pushState(currentURL);
 		} else {
 			nameLabel.setText(choosenChord.getName());
 			nameLabel.setVisible(true);
@@ -215,17 +205,6 @@ public class ChordsTab extends Div {
 			}
 			chordDescriptionLayout.add(chordDisplayLabel);
 			this.choosenChord = choosenChord;
-
-			// TODO
-			// String currentURL;
-			// try {
-			// currentURL = request.getContextRoot() + "/" +
-			// pageFactory.getPageName() + "/chord/"
-			// + URLEncoder.encode(choosenChord.getName(), "UTF-8");
-			// Page.getCurrent().pushState(currentURL);
-			// } catch (UnsupportedEncodingException e) {
-			// e.printStackTrace();
-			// }
 		}
 	}
 

@@ -115,7 +115,7 @@ public class ListTab extends Div {
 		upload.addClassName("top-margin");
 		upload.setAcceptedFileTypes("text/plain");
 		upload.addSucceededListener(event -> {
-			SongTO to = getSongsService().importSong(buffer.getInputStream(event.getFileName()), event.getFileName());
+			getSongsService().importSong(buffer.getInputStream(event.getFileName()), event.getFileName());
 			populate();
 		});
 		add(upload);

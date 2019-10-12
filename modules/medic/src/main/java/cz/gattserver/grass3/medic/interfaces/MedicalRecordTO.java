@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.medic.dto;
+package cz.gattserver.grass3.medic.interfaces;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 
 import cz.gattserver.common.Identifiable;
 
-public class MedicalRecordDTO implements Identifiable {
+public class MedicalRecordTO implements Identifiable {
 
 	private Long id;
 
@@ -20,13 +20,13 @@ public class MedicalRecordDTO implements Identifiable {
 	 * Místo ošetření
 	 */
 	@NotNull
-	private MedicalInstitutionDTO institution;
+	private MedicalInstitutionTO institution;
 
 	/**
 	 * Lékař - ošetřující
 	 */
 	@NotNull
-	private PhysicianDTO physician;
+	private PhysicianTO physician;
 
 	/**
 	 * Kdy se to stalo
@@ -47,7 +47,7 @@ public class MedicalRecordDTO implements Identifiable {
 	/**
 	 * Napsané léky
 	 */
-	private Set<MedicamentDTO> medicaments = new HashSet<>();
+	private Set<MedicamentTO> medicaments = new HashSet<>();
 
 	public Long getId() {
 		return id;
@@ -57,19 +57,19 @@ public class MedicalRecordDTO implements Identifiable {
 		this.id = id;
 	}
 
-	public MedicalInstitutionDTO getInstitution() {
+	public MedicalInstitutionTO getInstitution() {
 		return institution;
 	}
 
-	public void setInstitution(MedicalInstitutionDTO institution) {
+	public void setInstitution(MedicalInstitutionTO institution) {
 		this.institution = institution;
 	}
 
-	public PhysicianDTO getPhysician() {
+	public PhysicianTO getPhysician() {
 		return physician;
 	}
 
-	public void setPhysician(PhysicianDTO physician) {
+	public void setPhysician(PhysicianTO physician) {
 		this.physician = physician;
 	}
 
@@ -101,23 +101,23 @@ public class MedicalRecordDTO implements Identifiable {
 		this.record = record;
 	}
 
-	public Set<MedicamentDTO> getMedicaments() {
+	public Set<MedicamentTO> getMedicaments() {
 		return medicaments;
 	}
 
-	public void setMedicaments(Set<MedicamentDTO> medicaments) {
+	public void setMedicaments(Set<MedicamentTO> medicaments) {
 		this.medicaments = medicaments;
 	}
 
 	@Override
 	public String toString() {
-		return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) + " " + physician.getName();
+		return getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) + " " + physician.getName();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof MedicalRecordDTO) {
-			MedicalRecordDTO dto = (MedicalRecordDTO) obj;
+		if (obj instanceof MedicalRecordTO) {
+			MedicalRecordTO dto = (MedicalRecordTO) obj;
 			if (dto.getId() == null)
 				return id == null;
 			else

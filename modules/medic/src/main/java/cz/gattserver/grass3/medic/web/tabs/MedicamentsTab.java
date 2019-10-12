@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.medic.web;
+package cz.gattserver.grass3.medic.web.tabs;
 
 import java.util.ArrayList;
 
@@ -6,24 +6,26 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 
-import cz.gattserver.grass3.medic.dto.MedicamentDTO;
+import cz.gattserver.grass3.medic.interfaces.MedicamentTO;
+import cz.gattserver.grass3.medic.web.MedicamentCreateDialog;
+import cz.gattserver.grass3.medic.web.MedicamentDetailDialog;
 
-public class MedicamentsTab extends MedicPageTab<MedicamentDTO, ArrayList<MedicamentDTO>> {
+public class MedicamentsTab extends MedicPageTab<MedicamentTO, ArrayList<MedicamentTO>> {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
 	public MedicamentsTab() {
-		super(MedicamentDTO.class);
+		super(MedicamentTO.class);
 	}
 
 	@Override
-	protected ArrayList<MedicamentDTO> getItems() {
+	protected ArrayList<MedicamentTO> getItems() {
 		return new ArrayList<>(getMedicFacade().getAllMedicaments());
 	}
 
 	@Override
 	protected Dialog createCreateDialog() {
-		return new MedicamentCreateWindow() {
+		return new MedicamentCreateDialog() {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -36,12 +38,12 @@ public class MedicamentsTab extends MedicPageTab<MedicamentDTO, ArrayList<Medica
 
 	@Override
 	protected Dialog createDetailDialog(Long id) {
-		return new MedicamentDetailWindow(id);
+		return new MedicamentDetailDialog(id);
 	}
 
 	@Override
-	protected Dialog createModifyDialog(MedicamentDTO dto) {
-		return new MedicamentCreateWindow(dto) {
+	protected Dialog createModifyDialog(MedicamentTO dto) {
+		return new MedicamentCreateDialog(dto) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -52,12 +54,12 @@ public class MedicamentsTab extends MedicPageTab<MedicamentDTO, ArrayList<Medica
 	}
 
 	@Override
-	protected void deleteEntity(MedicamentDTO dto) {
+	protected void deleteEntity(MedicamentTO dto) {
 		getMedicFacade().deleteMedicament(dto);
 	}
 
 	@Override
-	protected void customizeGrid(Grid<MedicamentDTO> grid) {
+	protected void customizeGrid(Grid<MedicamentTO> grid) {
 		grid.getColumnByKey("name").setHeader("Název");
 		grid.getColumnByKey("tolerance").setHeader("Reakce, nežádoucí účinky");
 		grid.setWidth("100%");

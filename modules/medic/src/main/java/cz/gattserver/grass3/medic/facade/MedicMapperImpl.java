@@ -13,21 +13,21 @@ import cz.gattserver.grass3.medic.domain.MedicalRecord;
 import cz.gattserver.grass3.medic.domain.Medicament;
 import cz.gattserver.grass3.medic.domain.Physician;
 import cz.gattserver.grass3.medic.domain.ScheduledVisit;
-import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
-import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
-import cz.gattserver.grass3.medic.dto.MedicamentDTO;
-import cz.gattserver.grass3.medic.dto.PhysicianDTO;
-import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
-import cz.gattserver.grass3.medic.dto.ScheduledVisitState;
+import cz.gattserver.grass3.medic.interfaces.MedicalInstitutionTO;
+import cz.gattserver.grass3.medic.interfaces.MedicalRecordTO;
+import cz.gattserver.grass3.medic.interfaces.MedicamentTO;
+import cz.gattserver.grass3.medic.interfaces.PhysicianTO;
+import cz.gattserver.grass3.medic.interfaces.ScheduledVisitState;
+import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
 
 @Component
 public class MedicMapperImpl implements MedicMapper {
 
-	public MedicalInstitutionDTO mapMedicalInstitution(MedicalInstitution e) {
+	public MedicalInstitutionTO mapMedicalInstitution(MedicalInstitution e) {
 		if (e == null)
 			return null;
 
-		MedicalInstitutionDTO dto = new MedicalInstitutionDTO();
+		MedicalInstitutionTO dto = new MedicalInstitutionTO();
 		dto.setId(e.getId());
 		dto.setName(e.getName());
 		dto.setAddress(e.getAddress());
@@ -36,19 +36,19 @@ public class MedicMapperImpl implements MedicMapper {
 		return dto;
 	}
 
-	public List<MedicalInstitutionDTO> mapMedicalInstitutions(List<MedicalInstitution> e) {
-		List<MedicalInstitutionDTO> list = new ArrayList<>();
+	public List<MedicalInstitutionTO> mapMedicalInstitutions(List<MedicalInstitution> e) {
+		List<MedicalInstitutionTO> list = new ArrayList<>();
 		for (MedicalInstitution i : e) {
 			list.add(mapMedicalInstitution(i));
 		}
 		return list;
 	}
 
-	public ScheduledVisitDTO mapScheduledVisit(ScheduledVisit e) {
+	public ScheduledVisitTO mapScheduledVisit(ScheduledVisit e) {
 		if (e == null)
 			return null;
 
-		ScheduledVisitDTO dto = new ScheduledVisitDTO();
+		ScheduledVisitTO dto = new ScheduledVisitTO();
 		dto.setId(e.getId());
 		dto.setDate(e.getDate().toLocalDate());
 		dto.setTime(e.getDate().toLocalTime());
@@ -67,19 +67,19 @@ public class MedicMapperImpl implements MedicMapper {
 		return dto;
 	}
 
-	public List<ScheduledVisitDTO> mapScheduledVisits(List<ScheduledVisit> e) {
-		List<ScheduledVisitDTO> list = new ArrayList<>();
+	public List<ScheduledVisitTO> mapScheduledVisits(List<ScheduledVisit> e) {
+		List<ScheduledVisitTO> list = new ArrayList<>();
 		for (ScheduledVisit i : e) {
 			list.add(mapScheduledVisit(i));
 		}
 		return list;
 	}
 
-	public MedicalRecordDTO mapMedicalRecord(MedicalRecord e) {
+	public MedicalRecordTO mapMedicalRecord(MedicalRecord e) {
 		if (e == null)
 			return null;
 
-		MedicalRecordDTO dto = new MedicalRecordDTO();
+		MedicalRecordTO dto = new MedicalRecordTO();
 		dto.setId(e.getId());
 		dto.setDate(e.getDate().toLocalDate());
 		dto.setTime(e.getDate().toLocalTime());
@@ -90,45 +90,45 @@ public class MedicMapperImpl implements MedicMapper {
 		return dto;
 	}
 
-	public List<MedicalRecordDTO> mapMedicalRecords(List<MedicalRecord> e) {
-		List<MedicalRecordDTO> list = new ArrayList<>();
+	public List<MedicalRecordTO> mapMedicalRecords(List<MedicalRecord> e) {
+		List<MedicalRecordTO> list = new ArrayList<>();
 		for (MedicalRecord i : e) {
 			list.add(mapMedicalRecord(i));
 		}
 		return list;
 	}
 
-	public MedicamentDTO mapMedicament(Medicament e) {
+	public MedicamentTO mapMedicament(Medicament e) {
 		if (e == null)
 			return null;
 
-		MedicamentDTO dto = new MedicamentDTO();
+		MedicamentTO dto = new MedicamentTO();
 		dto.setId(e.getId());
 		dto.setName(e.getName());
 		dto.setTolerance(e.getTolerance());
 		return dto;
 	}
 
-	public Set<MedicamentDTO> mapMedicaments(List<Medicament> e) {
-		Set<MedicamentDTO> set = new HashSet<>();
+	public Set<MedicamentTO> mapMedicaments(List<Medicament> e) {
+		Set<MedicamentTO> set = new HashSet<>();
 		for (Medicament i : e) {
 			set.add(mapMedicament(i));
 		}
 		return set;
 	}
 
-	public PhysicianDTO mapPhysician(Physician e) {
+	public PhysicianTO mapPhysician(Physician e) {
 		if (e == null)
 			return null;
 
-		PhysicianDTO dto = new PhysicianDTO();
+		PhysicianTO dto = new PhysicianTO();
 		dto.setId(e.getId());
 		dto.setName(e.getName());
 		return dto;
 	}
 
-	public Set<PhysicianDTO> mapPhysicians(List<Physician> e) {
-		Set<PhysicianDTO> set = new HashSet<>();
+	public Set<PhysicianTO> mapPhysicians(List<Physician> e) {
+		Set<PhysicianTO> set = new HashSet<>();
 		for (Physician i : e) {
 			set.add(mapPhysician(i));
 		}

@@ -5,6 +5,11 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 
+import cz.gattserver.grass3.medic.web.tabs.MedicalInstitutionsTab;
+import cz.gattserver.grass3.medic.web.tabs.MedicalRecordsTab;
+import cz.gattserver.grass3.medic.web.tabs.MedicamentsTab;
+import cz.gattserver.grass3.medic.web.tabs.PhysiciansTab;
+import cz.gattserver.grass3.medic.web.tabs.ScheduledVisitsTab;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 
 @Route("medic")
@@ -20,6 +25,10 @@ public class MedicPage extends OneColumnPage {
 	private Tab medicalInstitutionsTab;
 	private Tab medicamentsTab;
 	private Tab physiciansTab;
+
+	public MedicPage() {
+		init();
+	}
 
 	private ScheduledVisitsTab switchScheduledVisitsTab() {
 		pageLayout.removeAll();
@@ -63,7 +72,6 @@ public class MedicPage extends OneColumnPage {
 
 	@Override
 	protected void createColumnContent(Div layout) {
-
 		tabSheet = new Tabs();
 		layout.add(tabSheet);
 
@@ -99,6 +107,8 @@ public class MedicPage extends OneColumnPage {
 				break;
 			}
 		});
+
+		switchScheduledVisitsTab();
 	}
 
 }

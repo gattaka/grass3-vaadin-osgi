@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.medic.web;
+package cz.gattserver.grass3.medic.web.tabs;
 
 import java.util.ArrayList;
 
@@ -7,18 +7,20 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 
-import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
+import cz.gattserver.grass3.medic.interfaces.MedicalRecordTO;
+import cz.gattserver.grass3.medic.web.MedicalRecordCreateDialog;
+import cz.gattserver.grass3.medic.web.MedicalRecordDetailDialog;
 
-public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO, ArrayList<MedicalRecordDTO>> {
+public class MedicalRecordsTab extends MedicPageTab<MedicalRecordTO, ArrayList<MedicalRecordTO>> {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
 	public MedicalRecordsTab() {
-		super(MedicalRecordDTO.class);
+		super(MedicalRecordTO.class);
 	}
 
 	@Override
-	protected ArrayList<MedicalRecordDTO> getItems() {
+	protected ArrayList<MedicalRecordTO> getItems() {
 		return new ArrayList<>(getMedicFacade().getAllMedicalRecords());
 	}
 
@@ -41,11 +43,11 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO, ArrayList<
 
 	@Override
 	protected Dialog createDetailDialog(Long id) {
-		return new MedicalRecordDetailWindow(id);
+		return new MedicalRecordDetailDialog(id);
 	}
 
 	@Override
-	protected Dialog createModifyDialog(MedicalRecordDTO dto) {
+	protected Dialog createModifyDialog(MedicalRecordTO dto) {
 		return new MedicalRecordCreateDialog(dto) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
@@ -57,15 +59,15 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO, ArrayList<
 	}
 
 	@Override
-	protected void deleteEntity(MedicalRecordDTO dto) {
+	protected void deleteEntity(MedicalRecordTO dto) {
 		getMedicFacade().deleteMedicalRecord(dto);
 	}
 
 	@Override
-	protected void customizeGrid(Grid<MedicalRecordDTO> grid) {
+	protected void customizeGrid(Grid<MedicalRecordTO> grid) {
 		String fdateID = "fdate";
-		grid.addColumn(new LocalDateTimeRenderer<>(MedicalRecordDTO::getDateTime, "dd.MM.yyyy HH:mm"))
-				.setHeader("Datum").setId(fdateID);
+		grid.addColumn(new LocalDateTimeRenderer<>(MedicalRecordTO::getDateTime, "dd.MM.yyyy HH:mm"))
+				.setHeader("Datum").setKey(fdateID);
 		grid.getColumnByKey("institution").setHeader("Instituce");
 		grid.getColumnByKey("physician").setHeader("Ošetřující lékař");
 		grid.getColumnByKey("record").setHeader("Záznam");

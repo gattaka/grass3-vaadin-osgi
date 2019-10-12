@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import cz.gattserver.grass3.medic.dto.ScheduledVisitState;
+import cz.gattserver.grass3.medic.interfaces.ScheduledVisitState;
 
 public class StateTest {
 

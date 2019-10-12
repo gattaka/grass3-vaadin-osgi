@@ -4,8 +4,8 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 
-import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
+import cz.gattserver.grass3.medic.interfaces.MedicalInstitutionTO;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
@@ -16,7 +16,7 @@ public class MedicalInstitutionDetailDialog extends WebDialog {
 	private transient MedicFacade medicFacade;
 
 	public MedicalInstitutionDetailDialog(Long id) {
-		final MedicalInstitutionDTO medicalInstitutionDTO = getMedicFacade().getMedicalInstitutionById(id);
+		final MedicalInstitutionTO medicalInstitutionDTO = getMedicFacade().getMedicalInstitutionById(id);
 
 		add(new H2("Název"));
 		add(medicalInstitutionDTO.getName());

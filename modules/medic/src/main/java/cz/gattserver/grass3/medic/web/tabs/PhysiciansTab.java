@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.medic.web;
+package cz.gattserver.grass3.medic.web.tabs;
 
 import java.util.ArrayList;
 
@@ -6,18 +6,20 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 
-import cz.gattserver.grass3.medic.dto.PhysicianDTO;
+import cz.gattserver.grass3.medic.interfaces.PhysicianTO;
+import cz.gattserver.grass3.medic.web.PhysicianCreateDialog;
+import cz.gattserver.grass3.medic.web.PhysicianDetailDialog;
 
-public class PhysiciansTab extends MedicPageTab<PhysicianDTO, ArrayList<PhysicianDTO>> {
+public class PhysiciansTab extends MedicPageTab<PhysicianTO, ArrayList<PhysicianTO>> {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
 	public PhysiciansTab() {
-		super(PhysicianDTO.class);
+		super(PhysicianTO.class);
 	}
 
 	@Override
-	protected ArrayList<PhysicianDTO> getItems() {
+	protected ArrayList<PhysicianTO> getItems() {
 		return new ArrayList<>(getMedicFacade().getAllPhysicians());
 	}
 
@@ -40,7 +42,7 @@ public class PhysiciansTab extends MedicPageTab<PhysicianDTO, ArrayList<Physicia
 	}
 
 	@Override
-	protected Dialog createModifyDialog(PhysicianDTO dto) {
+	protected Dialog createModifyDialog(PhysicianTO dto) {
 		return new PhysicianCreateDialog(dto) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
@@ -52,12 +54,12 @@ public class PhysiciansTab extends MedicPageTab<PhysicianDTO, ArrayList<Physicia
 	}
 
 	@Override
-	protected void deleteEntity(PhysicianDTO dto) {
+	protected void deleteEntity(PhysicianTO dto) {
 		getMedicFacade().deletePhysician(dto);
 	}
 
 	@Override
-	protected void customizeGrid(Grid<PhysicianDTO> grid) {
+	protected void customizeGrid(Grid<PhysicianTO> grid) {
 		grid.getColumnByKey("name").setHeader("Jméno");
 		grid.setWidth("100%");
 		grid.setSelectionMode(SelectionMode.SINGLE);

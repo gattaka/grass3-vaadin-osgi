@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 
 import org.junit.Test;
 
+import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
 import cz.gattserver.grass3.medic.util.MedicUtil;
 
 public class MedicUtilTest {
@@ -15,7 +16,7 @@ public class MedicUtilTest {
 	@Test
 	public void test() throws ParseException {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
-		ScheduledVisitDTO dto = new ScheduledVisitDTO();
+		ScheduledVisitTO dto = new ScheduledVisitTO();
 
 		String dateStart = "21.12.2012 09:29:58";
 		String dateStop = "02.01.2013 10:31:48";
@@ -30,5 +31,4 @@ public class MedicUtilTest {
 		assertTrue(MedicUtil.fromNowAfter7Days(dto, LocalDateTime.parse(dateStart, formatter)));
 
 	}
-
 }

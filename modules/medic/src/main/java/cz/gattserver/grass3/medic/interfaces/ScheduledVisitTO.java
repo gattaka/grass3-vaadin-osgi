@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.medic.dto;
+package cz.gattserver.grass3.medic.interfaces;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 
 import cz.gattserver.common.Identifiable;
 
-public class ScheduledVisitDTO implements Identifiable {
+public class ScheduledVisitTO implements Identifiable {
 
 	private Long id;
 
@@ -24,12 +24,12 @@ public class ScheduledVisitDTO implements Identifiable {
 	 * Místo, kam se dostavit
 	 */
 	@NotNull
-	private MedicalInstitutionDTO institution;
+	private MedicalInstitutionTO institution;
 
 	/**
 	 * Záznam - návštěva, ze které vzešlo toto datum návštěvy
 	 */
-	private MedicalRecordDTO record;
+	private MedicalRecordTO record;
 
 	/**
 	 * Stav - čiště kvůli UI
@@ -95,19 +95,19 @@ public class ScheduledVisitDTO implements Identifiable {
 		this.id = id;
 	}
 
-	public MedicalInstitutionDTO getInstitution() {
+	public MedicalInstitutionTO getInstitution() {
 		return institution;
 	}
 
-	public void setInstitution(MedicalInstitutionDTO institution) {
+	public void setInstitution(MedicalInstitutionTO institution) {
 		this.institution = institution;
 	}
 
-	public MedicalRecordDTO getRecord() {
+	public MedicalRecordTO getRecord() {
 		return record;
 	}
 
-	public void setRecord(MedicalRecordDTO record) {
+	public void setRecord(MedicalRecordTO record) {
 		this.record = record;
 	}
 
@@ -138,8 +138,8 @@ public class ScheduledVisitDTO implements Identifiable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ScheduledVisitDTO) {
-			ScheduledVisitDTO dto = (ScheduledVisitDTO) obj;
+		if (obj instanceof ScheduledVisitTO) {
+			ScheduledVisitTO dto = (ScheduledVisitTO) obj;
 			if (dto.getId() == null)
 				return id == null;
 			else

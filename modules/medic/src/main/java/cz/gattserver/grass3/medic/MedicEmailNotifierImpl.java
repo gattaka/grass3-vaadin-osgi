@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
+import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
 import cz.gattserver.grass3.medic.util.MedicUtil;
 import cz.gattserver.grass3.services.MailService;
 
@@ -28,7 +28,7 @@ public class MedicEmailNotifierImpl extends TimerTask implements MedicEmailNotif
 	@Override
 	public void run() {
 		logger.info("Medic TimerTask byl spuštěn");
-		for (ScheduledVisitDTO to : medicFacade.getAllScheduledVisits()) {
+		for (ScheduledVisitTO to : medicFacade.getAllScheduledVisits()) {
 			if (MedicUtil.fromNowAfter7Days(to, LocalDateTime.now())) {
 				mailService.sendToAdmin("GRASS3 Medic oznámená o plánované události",
 						"Událost naplánovaná na: "

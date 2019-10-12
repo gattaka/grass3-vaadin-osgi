@@ -12,12 +12,12 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.data.binder.Binder;
 
-import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
-import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
-import cz.gattserver.grass3.medic.dto.MedicamentDTO;
-import cz.gattserver.grass3.medic.dto.PhysicianDTO;
-import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
+import cz.gattserver.grass3.medic.interfaces.MedicalInstitutionTO;
+import cz.gattserver.grass3.medic.interfaces.MedicalRecordTO;
+import cz.gattserver.grass3.medic.interfaces.MedicamentTO;
+import cz.gattserver.grass3.medic.interfaces.PhysicianTO;
+import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
 import cz.gattserver.grass3.ui.components.SaveCloseButtons;
 import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.web.common.spring.SpringContextHelper;
@@ -34,24 +34,24 @@ public abstract class MedicalRecordCreateDialog extends WebDialog {
 		this(null, null);
 	}
 
-	public MedicalRecordCreateDialog(ScheduledVisitDTO scheduledVisitDTO) {
+	public MedicalRecordCreateDialog(ScheduledVisitTO scheduledVisitDTO) {
 		this(scheduledVisitDTO, null);
 	}
 
-	public MedicalRecordCreateDialog(MedicalRecordDTO recordDTO) {
+	public MedicalRecordCreateDialog(MedicalRecordTO recordDTO) {
 		this(null, recordDTO);
 	}
 
-	private MedicalRecordCreateDialog(ScheduledVisitDTO scheduledVisitDTO, MedicalRecordDTO originalDTO) {
+	private MedicalRecordCreateDialog(ScheduledVisitTO scheduledVisitDTO, MedicalRecordTO originalDTO) {
 		setWidth("400px");
 
-		MedicalRecordDTO formDTO = new MedicalRecordDTO();
+		MedicalRecordTO formDTO = new MedicalRecordTO();
 
-		Binder<MedicalRecordDTO> binder = new Binder<>(MedicalRecordDTO.class);
+		Binder<MedicalRecordTO> binder = new Binder<>(MedicalRecordTO.class);
 		binder.setBean(formDTO);
 
-		Set<PhysicianDTO> physicians = getMedicFacade().getAllPhysicians();
-		final ComboBox<PhysicianDTO> physicianComboBox = new ComboBox<>("Ošetřující lékař", physicians);
+		Set<PhysicianTO> physicians = getMedicFacade().getAllPhysicians();
+		final ComboBox<PhysicianTO> physicianComboBox = new ComboBox<>("Ošetřující lékař", physicians);
 		add(physicianComboBox);
 		physicianComboBox.setWidth("100%");
 		binder.forField(physicianComboBox).bind("physician");
@@ -68,7 +68,7 @@ public abstract class MedicalRecordCreateDialog extends WebDialog {
 		timeField.setWidth("100%");
 		binder.forField(timeField).bind("time");
 
-		final ComboBox<MedicalInstitutionDTO> institutionComboBox = new ComboBox<>("Instituce",
+		final ComboBox<MedicalInstitutionTO> institutionComboBox = new ComboBox<>("Instituce",
 				getMedicFacade().getAllMedicalInstitutions());
 		add(institutionComboBox);
 		institutionComboBox.setWidth("100%");
@@ -79,8 +79,8 @@ public abstract class MedicalRecordCreateDialog extends WebDialog {
 		recordField.setWidth("100%");
 		binder.forField(recordField).bind("record");
 
-		Map<String, MedicamentDTO> medicaments = new HashMap<String, MedicamentDTO>();
-		for (MedicamentDTO mto : getMedicFacade().getAllMedicaments())
+		Map<String, MedicamentTO> medicaments = new HashMap<String, MedicamentTO>();
+		for (MedicamentTO mto : getMedicFacade().getAllMedicaments())
 			medicaments.put(mto.getName(), mto);
 
 		TokenField tokenField = new TokenField(medicaments.keySet());
@@ -88,7 +88,7 @@ public abstract class MedicalRecordCreateDialog extends WebDialog {
 		add(tokenField);
 
 		add(new SaveCloseButtons(e -> {
-			MedicalRecordDTO writeDTO = originalDTO == null ? new MedicalRecordDTO() : originalDTO;
+			MedicalRecordTO writeDTO = originalDTO == null ? new MedicalRecordTO() : originalDTO;
 			if (binder.writeBeanIfValid(writeDTO)) {
 				try {
 					writeDTO.setMedicaments(

@@ -13,11 +13,11 @@ import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 
-import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
-import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
-import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
-import cz.gattserver.grass3.medic.dto.ScheduledVisitState;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
+import cz.gattserver.grass3.medic.interfaces.MedicalInstitutionTO;
+import cz.gattserver.grass3.medic.interfaces.MedicalRecordTO;
+import cz.gattserver.grass3.medic.interfaces.ScheduledVisitState;
+import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
 import cz.gattserver.grass3.ui.components.SaveCloseButtons;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
@@ -37,17 +37,17 @@ public abstract class ScheduledVisitsCreateDialog extends WebDialog {
 		this(operation, null);
 	}
 
-	public ScheduledVisitsCreateDialog(Operation operation, ScheduledVisitDTO originalDTO) {
+	public ScheduledVisitsCreateDialog(Operation operation, ScheduledVisitTO originalDTO) {
 		boolean planned = operation.equals(Operation.PLANNED) || operation.equals(Operation.PLANNED_FROM_TO_BE_PLANNED);
 
 		MedicFacade medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
 
-		ScheduledVisitDTO formDTO = new ScheduledVisitDTO();
+		ScheduledVisitTO formDTO = new ScheduledVisitTO();
 		formDTO.setPurpose("");
 		formDTO.setPlanned(planned);
 		formDTO.setState(planned ? ScheduledVisitState.PLANNED : ScheduledVisitState.TO_BE_PLANNED);
 
-		Binder<ScheduledVisitDTO> binder = new Binder<>(ScheduledVisitDTO.class);
+		Binder<ScheduledVisitTO> binder = new Binder<>(ScheduledVisitTO.class);
 		binder.setBean(formDTO);
 
 		final TextField purposeField = new TextField("Účel návštěvy");
@@ -80,20 +80,20 @@ public abstract class ScheduledVisitsCreateDialog extends WebDialog {
 		dateField.setWidth("100%");
 		binder.forField(dateField).asRequired().bind("date");
 
-		List<MedicalRecordDTO> records = medicalFacade.getAllMedicalRecords();
-		final ComboBox<MedicalRecordDTO> recordsComboBox = new ComboBox<>("Navazuje na kontrolu", records);
+		List<MedicalRecordTO> records = medicalFacade.getAllMedicalRecords();
+		final ComboBox<MedicalRecordTO> recordsComboBox = new ComboBox<>("Navazuje na kontrolu", records);
 		add(recordsComboBox);
 		recordsComboBox.setWidth("100%");
 		binder.forField(recordsComboBox).bind("record");
 
-		List<MedicalInstitutionDTO> institutions = medicalFacade.getAllMedicalInstitutions();
-		final ComboBox<MedicalInstitutionDTO> institutionComboBox = new ComboBox<>("Instituce", institutions);
+		List<MedicalInstitutionTO> institutions = medicalFacade.getAllMedicalInstitutions();
+		final ComboBox<MedicalInstitutionTO> institutionComboBox = new ComboBox<>("Instituce", institutions);
 		add(institutionComboBox);
 		institutionComboBox.setWidth("100%");
 		binder.forField(institutionComboBox).asRequired().bind("institution");
 
 		add(new SaveCloseButtons(e -> {
-			ScheduledVisitDTO writeDTO = originalDTO == null ? formDTO : originalDTO;
+			ScheduledVisitTO writeDTO = originalDTO == null ? formDTO : originalDTO;
 			if (binder.writeBeanIfValid(writeDTO)) {
 				try {
 					medicalFacade.saveScheduledVisit(writeDTO);

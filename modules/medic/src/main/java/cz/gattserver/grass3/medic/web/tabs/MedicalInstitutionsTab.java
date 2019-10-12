@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.medic.web;
+package cz.gattserver.grass3.medic.web.tabs;
 
 import java.util.ArrayList;
 
@@ -6,14 +6,16 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 
-import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
+import cz.gattserver.grass3.medic.interfaces.MedicalInstitutionTO;
+import cz.gattserver.grass3.medic.web.MedicalInstitutionCreateDialog;
+import cz.gattserver.grass3.medic.web.MedicalInstitutionDetailDialog;
 
-public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionDTO, ArrayList<MedicalInstitutionDTO>> {
+public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionTO, ArrayList<MedicalInstitutionTO>> {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
 	@Override
-	protected ArrayList<MedicalInstitutionDTO> getItems() {
+	protected ArrayList<MedicalInstitutionTO> getItems() {
 		return new ArrayList<>(getMedicFacade().getAllMedicalInstitutions());
 	}
 
@@ -36,7 +38,7 @@ public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionDTO, 
 	}
 
 	@Override
-	protected Dialog createModifyDialog(MedicalInstitutionDTO dto) {
+	protected Dialog createModifyDialog(MedicalInstitutionTO dto) {
 		return new MedicalInstitutionCreateDialog(dto) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
@@ -48,16 +50,16 @@ public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionDTO, 
 	}
 
 	@Override
-	protected void deleteEntity(MedicalInstitutionDTO dto) {
+	protected void deleteEntity(MedicalInstitutionTO dto) {
 		getMedicFacade().deleteMedicalInstitution(dto);
 	}
 
 	public MedicalInstitutionsTab() {
-		super(MedicalInstitutionDTO.class);
+		super(MedicalInstitutionTO.class);
 	}
 
 	@Override
-	protected void customizeGrid(Grid<MedicalInstitutionDTO> grid) {
+	protected void customizeGrid(Grid<MedicalInstitutionTO> grid) {
 		grid.getColumnByKey("name").setHeader("Název");
 		grid.getColumnByKey("address").setHeader("Adresa");
 		grid.getColumnByKey("web").setHeader("Stránky");

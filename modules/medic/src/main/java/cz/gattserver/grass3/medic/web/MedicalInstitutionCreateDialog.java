@@ -4,8 +4,8 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 
-import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
+import cz.gattserver.grass3.medic.interfaces.MedicalInstitutionTO;
 import cz.gattserver.grass3.ui.components.SaveCloseButtons;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
@@ -21,11 +21,11 @@ public abstract class MedicalInstitutionCreateDialog extends WebDialog {
 		this(null);
 	}
 
-	public MedicalInstitutionCreateDialog(MedicalInstitutionDTO modifiedMedicalInstitutionDTO) {
+	public MedicalInstitutionCreateDialog(MedicalInstitutionTO modifiedMedicalInstitutionDTO) {
 		setWidth("500px");
 
-		MedicalInstitutionDTO formDTO = new MedicalInstitutionDTO();
-		Binder<MedicalInstitutionDTO> binder = new Binder<>(MedicalInstitutionDTO.class);
+		MedicalInstitutionTO formDTO = new MedicalInstitutionTO();
+		Binder<MedicalInstitutionTO> binder = new Binder<>(MedicalInstitutionTO.class);
 		binder.setBean(formDTO);
 
 		final TextField nameField = new TextField("Název");
@@ -50,7 +50,7 @@ public abstract class MedicalInstitutionCreateDialog extends WebDialog {
 		binder.forField(hoursField).bind("hours");
 
 		add(new SaveCloseButtons(e -> {
-			MedicalInstitutionDTO writeDTO = modifiedMedicalInstitutionDTO == null ? new MedicalInstitutionDTO()
+			MedicalInstitutionTO writeDTO = modifiedMedicalInstitutionDTO == null ? new MedicalInstitutionTO()
 					: modifiedMedicalInstitutionDTO;
 			if (binder.writeBeanIfValid(writeDTO)) {
 				try {

@@ -3,66 +3,66 @@ package cz.gattserver.grass3.medic.facade;
 import java.util.List;
 import java.util.Set;
 
-import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
-import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
-import cz.gattserver.grass3.medic.dto.MedicamentDTO;
-import cz.gattserver.grass3.medic.dto.PhysicianDTO;
-import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
+import cz.gattserver.grass3.medic.interfaces.MedicalInstitutionTO;
+import cz.gattserver.grass3.medic.interfaces.MedicalRecordTO;
+import cz.gattserver.grass3.medic.interfaces.MedicamentTO;
+import cz.gattserver.grass3.medic.interfaces.PhysicianTO;
+import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
 
 public interface MedicFacade {
 
 	// Instituce
 
-	void deleteMedicalInstitution(MedicalInstitutionDTO dto);
+	void deleteMedicalInstitution(MedicalInstitutionTO dto);
 
-	List<MedicalInstitutionDTO> getAllMedicalInstitutions();
+	List<MedicalInstitutionTO> getAllMedicalInstitutions();
 
-	void saveMedicalInstitution(MedicalInstitutionDTO dto);
+	void saveMedicalInstitution(MedicalInstitutionTO dto);
 
-	MedicalInstitutionDTO getMedicalInstitutionById(Long id);
+	MedicalInstitutionTO getMedicalInstitutionById(Long id);
 
 	// Návštěvy
 
-	void deleteScheduledVisit(ScheduledVisitDTO dto);
+	void deleteScheduledVisit(ScheduledVisitTO dto);
 
-	List<ScheduledVisitDTO> getAllScheduledVisits(boolean planned);
+	List<ScheduledVisitTO> getAllScheduledVisits(boolean planned);
 
-	List<ScheduledVisitDTO> getAllScheduledVisits();
+	List<ScheduledVisitTO> getAllScheduledVisits();
 
-	void saveScheduledVisit(ScheduledVisitDTO dto);
+	void saveScheduledVisit(ScheduledVisitTO dto);
 
-	ScheduledVisitDTO createPlannedScheduledVisitFromToBePlanned(ScheduledVisitDTO dto);
+	ScheduledVisitTO createPlannedScheduledVisitFromToBePlanned(ScheduledVisitTO dto);
 
-	ScheduledVisitDTO getScheduledVisitById(Long id);
+	ScheduledVisitTO getScheduledVisitById(Long id);
 
 	// Záznamy
 
-	void deleteMedicalRecord(MedicalRecordDTO dto);
+	void deleteMedicalRecord(MedicalRecordTO dto);
 
-	List<MedicalRecordDTO> getAllMedicalRecords();
+	List<MedicalRecordTO> getAllMedicalRecords();
 
-	void saveMedicalRecord(MedicalRecordDTO dto);
+	void saveMedicalRecord(MedicalRecordTO dto);
 
-	MedicalRecordDTO getMedicalRecordById(Long id);
+	MedicalRecordTO getMedicalRecordById(Long id);
 
 	// Medikamenty
 
-	void deleteMedicament(MedicamentDTO dto);
+	void deleteMedicament(MedicamentTO dto);
 
-	Set<MedicamentDTO> getAllMedicaments();
+	Set<MedicamentTO> getAllMedicaments();
 
-	void saveMedicament(MedicamentDTO dto);
+	void saveMedicament(MedicamentTO dto);
 
-	MedicamentDTO getMedicamentById(Long id);
+	MedicamentTO getMedicamentById(Long id);
 
 	// Doktoři
 
-	void deletePhysician(PhysicianDTO dto);
+	void deletePhysician(PhysicianTO dto);
 
-	Set<PhysicianDTO> getAllPhysicians();
+	Set<PhysicianTO> getAllPhysicians();
 
-	void savePhysician(PhysicianDTO dto);
+	void savePhysician(PhysicianTO dto);
 
-	PhysicianDTO getPhysicianById(Long id);
+	PhysicianTO getPhysicianById(Long id);
 
 }

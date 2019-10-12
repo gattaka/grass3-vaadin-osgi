@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.medic.web;
+package cz.gattserver.grass3.medic.web.tabs;
 
 import java.io.Serializable;
 import java.util.Collection;

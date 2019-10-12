@@ -3,8 +3,8 @@ package cz.gattserver.grass3.medic.web;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 
-import cz.gattserver.grass3.medic.dto.PhysicianDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
+import cz.gattserver.grass3.medic.interfaces.PhysicianTO;
 import cz.gattserver.grass3.ui.components.SaveCloseButtons;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
@@ -18,11 +18,11 @@ public abstract class PhysicianCreateDialog extends WebDialog {
 		this(null);
 	}
 
-	public PhysicianCreateDialog(PhysicianDTO originalDTO) {
+	public PhysicianCreateDialog(PhysicianTO originalDTO) {
 		setWidth("300px");
 
-		PhysicianDTO formDTO = new PhysicianDTO();
-		Binder<PhysicianDTO> binder = new Binder<>(PhysicianDTO.class);
+		PhysicianTO formDTO = new PhysicianTO();
+		Binder<PhysicianTO> binder = new Binder<>(PhysicianTO.class);
 		binder.setBean(formDTO);
 
 		final TextField nameField = new TextField("Jméno");
@@ -31,7 +31,7 @@ public abstract class PhysicianCreateDialog extends WebDialog {
 		binder.forField(nameField).bind("name");
 
 		add(new SaveCloseButtons(e -> {
-			PhysicianDTO writeDTO = originalDTO == null ? new PhysicianDTO() : originalDTO;
+			PhysicianTO writeDTO = originalDTO == null ? new PhysicianTO() : originalDTO;
 			if (binder.writeBeanIfValid(writeDTO)) {
 				try {
 					SpringContextHelper.getBean(MedicFacade.class).savePhysician(formDTO);

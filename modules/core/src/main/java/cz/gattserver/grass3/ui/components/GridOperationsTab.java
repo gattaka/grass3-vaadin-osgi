@@ -6,7 +6,7 @@ import java.util.Collection;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.html.Div;
 
 import cz.gattserver.common.Identifiable;
 import cz.gattserver.grass3.ui.components.button.CreateGridButton;
@@ -24,8 +24,7 @@ import cz.gattserver.grass3.ui.util.ButtonLayout;
  *            třída zobrazované entity
  * 
  */
-public abstract class GridOperationsTab<T extends Identifiable, C extends Collection<T> & Serializable>
-		extends VerticalLayout {
+public abstract class GridOperationsTab<T extends Identifiable, C extends Collection<T> & Serializable> extends Div {
 
 	private static final long serialVersionUID = 6844434642906509277L;
 
@@ -62,9 +61,6 @@ public abstract class GridOperationsTab<T extends Identifiable, C extends Collec
 	protected abstract C getItems();
 
 	public GridOperationsTab(Class<T> clazz) {
-		setSpacing(true);
-		setPadding(true);
-
 		init();
 
 		grid = new Grid<>(clazz);

@@ -8,32 +8,32 @@ import cz.gattserver.grass3.medic.domain.MedicalRecord;
 import cz.gattserver.grass3.medic.domain.Medicament;
 import cz.gattserver.grass3.medic.domain.Physician;
 import cz.gattserver.grass3.medic.domain.ScheduledVisit;
-import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
-import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
-import cz.gattserver.grass3.medic.dto.MedicamentDTO;
-import cz.gattserver.grass3.medic.dto.PhysicianDTO;
-import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
+import cz.gattserver.grass3.medic.interfaces.MedicalInstitutionTO;
+import cz.gattserver.grass3.medic.interfaces.MedicalRecordTO;
+import cz.gattserver.grass3.medic.interfaces.MedicamentTO;
+import cz.gattserver.grass3.medic.interfaces.PhysicianTO;
+import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
 
 public interface MedicMapper {
 
-	public MedicalInstitutionDTO mapMedicalInstitution(MedicalInstitution e);
+	public MedicalInstitutionTO mapMedicalInstitution(MedicalInstitution e);
 
-	public List<MedicalInstitutionDTO> mapMedicalInstitutions(List<MedicalInstitution> e);
+	public List<MedicalInstitutionTO> mapMedicalInstitutions(List<MedicalInstitution> e);
 
-	public ScheduledVisitDTO mapScheduledVisit(ScheduledVisit e);
+	public ScheduledVisitTO mapScheduledVisit(ScheduledVisit e);
 
-	public List<ScheduledVisitDTO> mapScheduledVisits(List<ScheduledVisit> e);
+	public List<ScheduledVisitTO> mapScheduledVisits(List<ScheduledVisit> e);
 
-	public MedicalRecordDTO mapMedicalRecord(MedicalRecord e);
+	public MedicalRecordTO mapMedicalRecord(MedicalRecord e);
 
-	public List<MedicalRecordDTO> mapMedicalRecords(List<MedicalRecord> e);
+	public List<MedicalRecordTO> mapMedicalRecords(List<MedicalRecord> e);
 
-	public MedicamentDTO mapMedicament(Medicament e);
+	public MedicamentTO mapMedicament(Medicament e);
 
-	public Set<MedicamentDTO> mapMedicaments(List<Medicament> e);
+	public Set<MedicamentTO> mapMedicaments(List<Medicament> e);
 
-	public PhysicianDTO mapPhysician(Physician e);
+	public PhysicianTO mapPhysician(Physician e);
 
-	public Set<PhysicianDTO> mapPhysicians(List<Physician> e);
+	public Set<PhysicianTO> mapPhysicians(List<Physician> e);
 
 }

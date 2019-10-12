@@ -6,17 +6,17 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 
-import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
+import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.Strong;
 
-public class SchuduledVisitDetailWindow extends Dialog {
+public class SchuduledVisitDetailDialog extends Dialog {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 
-	public SchuduledVisitDetailWindow(Long id) {
-		final ScheduledVisitDTO scheduledVisitDTO = SpringContextHelper.getBean(MedicFacade.class)
+	public SchuduledVisitDetailDialog(Long id) {
+		final ScheduledVisitTO scheduledVisitDTO = SpringContextHelper.getBean(MedicFacade.class)
 				.getScheduledVisitById(id);
 
 		add(new Strong("Datum"));
@@ -35,7 +35,7 @@ public class SchuduledVisitDetailWindow extends Dialog {
 		add(new Strong("Navazuje na"));
 		if (scheduledVisitDTO.getRecord() != null) {
 			final Button recordButton = new Button(scheduledVisitDTO.getRecord().toString(),
-					e -> new MedicalRecordDetailWindow(scheduledVisitDTO.getRecord().getId()).open());
+					e -> new MedicalRecordDetailDialog(scheduledVisitDTO.getRecord().getId()).open());
 			recordButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 			add(recordButton);
 		} else {

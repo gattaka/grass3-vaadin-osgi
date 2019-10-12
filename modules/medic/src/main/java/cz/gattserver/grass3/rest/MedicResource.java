@@ -9,8 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
+import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
 
 @Controller
 @RequestMapping("/medic")
@@ -23,7 +23,7 @@ public class MedicResource {
 
 	@RequestMapping(value = "visit", headers = "Accept=application/json")
 	@ResponseBody
-	public List<ScheduledVisitDTO> getInstitutions() {
+	public List<ScheduledVisitTO> getInstitutions() {
 		return medicFacade.getAllScheduledVisits();
 	}
 

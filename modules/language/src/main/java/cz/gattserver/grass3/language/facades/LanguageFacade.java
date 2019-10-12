@@ -2,7 +2,7 @@ package cz.gattserver.grass3.language.facades;
 
 import java.util.List;
 
-import com.vaadin.data.provider.QuerySortOrder;
+import com.vaadin.flow.data.provider.QuerySortOrder;
 
 import cz.gattserver.grass3.language.model.domain.ItemType;
 import cz.gattserver.grass3.language.model.dto.CrosswordTO;
@@ -50,7 +50,8 @@ public interface LanguageFacade {
 	 *            info o řazení
 	 * @return list záznamů
 	 */
-	List<LanguageItemTO> getLanguageItems(LanguageItemTO filterTO, int page, int size, List<QuerySortOrder> sortOrder);
+	List<LanguageItemTO> getLanguageItems(LanguageItemTO filterTO, int offset, int limit,
+			List<QuerySortOrder> sortOrder);
 
 	/**
 	 * Získá záznamy na zkoušení

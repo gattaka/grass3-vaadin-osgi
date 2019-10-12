@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.vaadin.data.provider.QuerySortOrder;
+import com.vaadin.flow.data.provider.QuerySortOrder;
 
 import cz.gattserver.grass3.language.facades.LanguageFacade;
 import cz.gattserver.grass3.language.model.dao.LanguageItemRepository;
@@ -72,8 +72,8 @@ public class LanguageFacadeImpl implements LanguageFacade {
 	@Override
 	public List<LanguageItemTO> getLanguageItems(LanguageItemTO filterTO, int offset, int limit,
 			List<QuerySortOrder> sortOrder) {
-		List<LanguageItem> items = itemRepository.findAllByLanguageSortByName(filterTO,
-				QuerydslUtil.transformOffsetLimit(offset, limit), QuerydslUtil.transformOrdering(sortOrder, s -> s));
+		List<LanguageItem> items = itemRepository.findAllByLanguageSortByName(filterTO, offset, limit,
+				QuerydslUtil.transformOrdering(sortOrder, s -> s));
 		return mapper.mapLanguageItems(items);
 	}
 

@@ -4,8 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,31 +19,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.server.Page;
-import com.vaadin.server.StreamResource;
-import com.vaadin.server.StreamResource.StreamSource;
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Embedded;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.ProgressBar;
-import com.vaadin.ui.Slider;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TabSheet.Tab;
-import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.renderers.LocalDateTimeRenderer;
-import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.Column;
+import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.progressbar.ProgressBar;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
+import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
+import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.SortDirection;
+import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.language.facades.LanguageFacade;
 import cz.gattserver.grass3.language.model.domain.ItemType;
@@ -53,18 +53,22 @@ import cz.gattserver.grass3.language.model.dto.CrosswordTO;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.language.model.dto.LanguageTO;
 import cz.gattserver.grass3.security.CoreRole;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.SecurityService;
-import cz.gattserver.grass3.ui.components.CreateGridButton;
-import cz.gattserver.grass3.ui.components.DeleteGridButton;
-import cz.gattserver.grass3.ui.components.GridButton;
-import cz.gattserver.grass3.ui.components.ModifyGridButton;
+import cz.gattserver.grass3.ui.components.button.CreateGridButton;
+import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.button.GridButton;
+import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
-import cz.gattserver.web.common.ui.BoldSpan;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.ImageIcon;
+import cz.gattserver.web.common.ui.Strong;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
+@Route("language")
 public class LanguagePage extends OneColumnPage {
+
+	private static final long serialVersionUID = 4767207674013382065L;
 
 	private static final Logger logger = LoggerFactory.getLogger(LanguagePage.class);
 	private static final String PREKLAD_LABEL = "Překlad";
@@ -75,122 +79,115 @@ public class LanguagePage extends OneColumnPage {
 	@Autowired
 	private SecurityService securityService;
 
-	private TabSheet tabSheet;
+	private Tabs tabs;
+	private Div pageLayout;
 	private VerticalLayout testLayout;
 
-	public LanguagePage(GrassRequest request) {
-		super(request);
+	public LanguagePage() {
+		init();
 	}
 
 	private void createTabSheet(long langId) {
-		tabSheet = new TabSheet();
-		tabSheet.addSelectedTabChangeListener(e -> {
-			if (!e.isUserOriginated())
-				return;
-			Component selectedTab = tabSheet.getSelectedTab();
-			Tab tab = tabSheet.getTab(selectedTab);
-			int pos = tabSheet.getTabPosition(tab);
-			if (pos > 2 && pos != 5)
-				return;
-			Component newTab = null;
-			switch (pos) {
+		tabs = new Tabs();
+		tabs.addSelectedChangeListener(e -> {
+			pageLayout.removeAll();
+			switch (tabs.getSelectedIndex()) {
+			default:
 			case 0:
-				newTab = createItemsTab(langId, null);
+				createItemsTab(langId, null);
 				break;
 			case 1:
-				newTab = createItemsTab(langId, ItemType.WORD);
+				createItemsTab(langId, ItemType.WORD);
 				break;
 			case 2:
-				newTab = createItemsTab(langId, ItemType.PHRASE);
+				createItemsTab(langId, ItemType.PHRASE);
+				break;
+			case 3:
+				break;
+			case 4:
+				createCrosswordTab(langId);
 				break;
 			case 5:
-				newTab = createStatisticsTab(langId);
-				break;
-			default:
+				createStatisticsTab(langId);
 				break;
 			}
-			tabSheet.replaceComponent(selectedTab, newTab);
 		});
 	}
 
 	@Override
-	protected Component createColumnContent() {
+	protected void createColumnContent(Div layout) {
 
-		Page.getCurrent().getStyles()
-				.add("input.v-textfield.v-disabled.v-widget.crossword-cell.v-textfield-crossword-cell.v-has-width, "
-						+ "input.v-textfield.v-widget.v-has-width.v-has-height.v-disabled.crossword-cell.v-textfield-crossword-cell.crossword-done.v-textfield-crossword-done, "
-						+ "input.v-textfield.v-widget.crossword-cell.v-textfield-crossword-cell.v-has-width { "
-						+ "text-align: center; " + "font-variant: small-caps;" + "padding: 0;" + "}");
-
-		Page.getCurrent().getStyles()
-				.add("input.v-textfield.v-widget.v-has-width.v-has-height.v-disabled.crossword-cell.v-textfield-crossword-cell.crossword-done.v-textfield-crossword-done { "
-						+ "background-color: #cef29c; " + "}");
-
-		VerticalLayout layout = new VerticalLayout();
-		layout.setSpacing(true);
-		layout.setMargin(true);
-
-		VerticalLayout langLayout = new VerticalLayout();
-		layout.addComponent(langLayout);
+		// Page.getCurrent().getStyles()
+		// .add("input.v-textfield.v-disabled.v-widget.crossword-cell.v-textfield-crossword-cell.v-has-width,
+		// "
+		// +
+		// "input.v-textfield.v-widget.v-has-width.v-has-height.v-disabled.crossword-cell.v-textfield-crossword-cell.crossword-done.v-textfield-crossword-done,
+		// "
+		// +
+		// "input.v-textfield.v-widget.crossword-cell.v-textfield-crossword-cell.v-has-width
+		// { "
+		// + "text-align: center; " + "font-variant: small-caps;" + "padding:
+		// 0;" + "}");
+		//
+		// Page.getCurrent().getStyles()
+		// .add("input.v-textfield.v-widget.v-has-width.v-has-height.v-disabled.crossword-cell.v-textfield-crossword-cell.crossword-done.v-textfield-crossword-done
+		// { "
+		// + "background-color: #cef29c; " + "}");
 
 		List<LanguageTO> langs = languageFacade.getLanguages();
-		Grid<LanguageTO> grid = new Grid<>(null, langs);
+		Grid<LanguageTO> grid = new Grid<>(LanguageTO.class);
+		grid.setItems(langs);
 		grid.setWidth("100%");
 		grid.setHeight("150px");
-		grid.addColumn(LanguageTO::getName).setCaption("Název");
-		langLayout.addComponent(grid);
+		grid.addColumn(LanguageTO::getName).setHeader("Název");
+		layout.add(grid);
 
-		HorizontalLayout btnLayout = new HorizontalLayout();
+		ButtonLayout btnLayout = new ButtonLayout();
 		if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN))
-			langLayout.addComponent(btnLayout);
+			layout.add(btnLayout);
+
+		Div langLayout = new Div();
+		layout.add(langLayout);
 
 		grid.addSelectionListener(se -> se.getFirstSelectedItem().ifPresent(item -> {
-			if (tabSheet != null)
-				langLayout.removeComponent(tabSheet);
+			langLayout.removeAll();
 
 			long langId = item.getId();
 			createTabSheet(langId);
 
-			tabSheet.addTab(createItemsTab(langId, null), "Vše");
-			tabSheet.addTab(new VerticalLayout(), "Slovíčka");
-			tabSheet.addTab(new VerticalLayout(), "Fráze");
+			tabs.add(new Tab("Vše"));
+			tabs.add(new Tab("Slovíčka"));
+			tabs.add(new Tab("Fráze"));
 			if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN))
-				tabSheet.addTab(createTestTab(langId), "Zkoušení");
-			tabSheet.addTab(createCrosswordTab(langId), "Křížovka");
+				tabs.add(new Tab("Zkoušení"));
+			tabs.add(new Tab("Křížovka"));
 			if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN))
-				tabSheet.addTab(createStatisticsTab(langId), "Statistiky");
+				tabs.add(new Tab("Statistiky"));
 
-			langLayout.addComponent(tabSheet);
+			langLayout.add(tabs);
 		}));
 
-		btnLayout.addComponent(
-				new CreateGridButton("Přidat", event -> UI.getCurrent().addWindow(new LanguageWindow(to -> {
-					languageFacade.saveLanguage(to);
-					langs.clear();
-					langs.addAll(languageFacade.getLanguages());
-					grid.getDataProvider().refreshAll();
-				}))));
+		btnLayout.add(new CreateGridButton("Přidat", event -> new LanguageWindow(to -> {
+			languageFacade.saveLanguage(to);
+			langs.clear();
+			langs.addAll(languageFacade.getLanguages());
+			grid.getDataProvider().refreshAll();
+		}).open()));
 
-		btnLayout.addComponent(new ModifyGridButton<LanguageTO>("Upravit",
-				item -> UI.getCurrent().addWindow(new LanguageWindow(item, to -> {
-					languageFacade.saveLanguage(to);
-					langs.clear();
-					langs.addAll(languageFacade.getLanguages());
-					grid.getDataProvider().refreshAll();
-				})), grid));
+		btnLayout.add(new ModifyGridButton<LanguageTO>("Upravit", item -> new LanguageWindow(item, to -> {
+			languageFacade.saveLanguage(to);
+			langs.clear();
+			langs.addAll(languageFacade.getLanguages());
+			grid.getDataProvider().refreshAll();
+		}).open(), grid));
 
 		if (!langs.isEmpty())
 			grid.select(langs.get(0));
-
-		return layout;
 	}
 
-	private Component createCrosswordTab(long langId) {
-		VerticalLayout sheet = new VerticalLayout();
-		sheet.setMargin(new MarginInfo(true, false, false, false));
-
-		HorizontalLayout btnLayout = new HorizontalLayout();
-		sheet.addComponent(btnLayout);
+	private void createCrosswordTab(long langId) {
+		ButtonLayout btnLayout = new ButtonLayout();
+		pageLayout.add(btnLayout);
 
 		Map<TextField, String> fieldMap = new HashMap<>();
 
@@ -198,40 +195,28 @@ public class LanguagePage extends OneColumnPage {
 			for (Map.Entry<TextField, String> entry : fieldMap.entrySet())
 				entry.getKey().setValue(entry.getValue());
 		});
-		giveUpTestBtn.setIcon(ImageIcon.FLAG_16_ICON.createResource());
-		btnLayout.addComponent(giveUpTestBtn);
+		giveUpTestBtn.setIcon(new Image(ImageIcon.FLAG_16_ICON.createResource(), "giveup"));
+		btnLayout.add(giveUpTestBtn);
 
-		Slider slider = new Slider(5, 30);
+		NumberField numberField = new NumberField();
+		numberField.setHasControls(true);
+		numberField.setMin(5);
+		numberField.setMax(30);
+		pageLayout.add(numberField);
 
 		VerticalLayout mainLayout = new VerticalLayout();
-		mainLayout.setMargin(new MarginInfo(true, false, false, false));
-		mainLayout.setSpacing(true);
 
 		Button newCrosswordBtn = new Button("",
-				event -> generateNewCrossword(slider.getValue().intValue(), langId, fieldMap, mainLayout));
-		newCrosswordBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
-		btnLayout.addComponent(newCrosswordBtn);
+				event -> generateNewCrossword(numberField.getValue().intValue(), langId, fieldMap, mainLayout));
+		newCrosswordBtn.setIcon(new Image(ImageIcon.RIGHT_16_ICON.createResource(), "start"));
+		btnLayout.add(newCrosswordBtn);
 
-		slider.addValueChangeListener(e -> newCrosswordBtn
-				.setCaption("Nová křížovka " + e.getValue().intValue() + "x" + e.getValue().intValue()));
+		numberField.addValueChangeListener(e -> newCrosswordBtn
+				.setText("Nová křížovka " + e.getValue().intValue() + "x" + e.getValue().intValue()));
 
-		slider.setValue(15.0);
+		numberField.setValue(15.0);
 
-		Button easierCrosswordBtn = new Button("",
-				event -> slider.setValue(Math.max(slider.getMin(), slider.getValue() - 1)));
-		easierCrosswordBtn.setIcon(ImageIcon.DOWN_16_ICON.createResource());
-		btnLayout.addComponent(easierCrosswordBtn);
-
-		btnLayout.addComponent(slider);
-
-		Button harderCrosswordBtn = new Button("",
-				event -> slider.setValue(Math.min(slider.getMax(), slider.getValue() + 1)));
-		harderCrosswordBtn.setIcon(ImageIcon.UP_16_ICON.createResource());
-		btnLayout.addComponent(harderCrosswordBtn);
-
-		sheet.addComponent(mainLayout);
-
-		return sheet;
+		pageLayout.add(mainLayout);
 	}
 
 	private void generateNewCrossword(int size, long langId, Map<TextField, String> fieldMap,
@@ -239,7 +224,7 @@ public class LanguagePage extends OneColumnPage {
 
 		// clear
 		fieldMap.clear();
-		mainLayout.removeAllComponents();
+		mainLayout.removeAll();
 
 		LanguageItemTO filterTO = new LanguageItemTO();
 		filterTO.setLanguage(langId);
@@ -248,46 +233,40 @@ public class LanguagePage extends OneColumnPage {
 		CrosswordTO crosswordTO = languageFacade.prepareCrossword(filterTO, size);
 
 		if (crosswordTO.getHints().isEmpty()) {
-			mainLayout.addComponent(new Label("Nezdařilo se sestavit křížovku"));
+			mainLayout.add("Nezdařilo se sestavit křížovku");
 			return;
 		}
 
 		List<CrosswordField> writeFields = new ArrayList<>();
 
-		GridLayout hintsLayout = new GridLayout(6, Math.max(1, crosswordTO.getHints().size() / 2));
-		hintsLayout.setSpacing(true);
+		Div hintsLayout = new Div();
 		hintsLayout.setWidth("100%");
-		hintsLayout.setDefaultComponentAlignment(Alignment.MIDDLE_RIGHT);
 		for (CrosswordHintTO to : crosswordTO.getHints()) {
-			hintsLayout.addComponent(new Label(to.getId() + "."));
+			hintsLayout.add(to.getId() + ".");
 			CrosswordField tf = new CrosswordField(to);
 			writeFields.add(tf);
 			tf.setMaxLength(to.getWordLength());
-			hintsLayout.addComponent(tf);
-			Label hintLabel = new Label(to.getHint());
-			hintsLayout.addComponent(hintLabel);
-			hintsLayout.setComponentAlignment(hintLabel, Alignment.MIDDLE_LEFT);
+			hintsLayout.add(tf);
+			Span hintLabel = new Span(to.getHint());
+			hintsLayout.add(hintLabel);
 		}
 
-		GridLayout crosswordLayout = constructCrossword(crosswordTO, writeFields, fieldMap);
+		Div crosswordLayout = constructCrossword(crosswordTO, writeFields, fieldMap);
 
-		mainLayout.addComponent(crosswordLayout);
-		mainLayout.setComponentAlignment(crosswordLayout, Alignment.MIDDLE_CENTER);
-		mainLayout.addComponent(hintsLayout);
+		mainLayout.add(crosswordLayout);
+		mainLayout.add(hintsLayout);
 	}
 
-	private GridLayout constructCrossword(CrosswordTO crosswordTO, List<CrosswordField> writeFields,
+	private Div constructCrossword(CrosswordTO crosswordTO, List<CrosswordField> writeFields,
 			Map<TextField, String> fieldMap) {
-		GridLayout crosswordLayout = new GridLayout(crosswordTO.getWidth(), crosswordTO.getHeight());
-		crosswordLayout.setMargin(new MarginInfo(false, false, true, false));
-		crosswordLayout.setSpacing(false);
+		Div crosswordLayout = new Div();
 
 		for (int y = 0; y < crosswordTO.getHeight(); y++) {
 			for (int x = 0; x < crosswordTO.getWidth(); x++) {
 				CrosswordCell cell = crosswordTO.getCell(x, y);
 				if (cell != null) {
 					TextField t = new TextField();
-					t.addStyleName("crossword-cell");
+					t.addClassName("crossword-cell");
 					t.setWidth("25px");
 					t.setHeight("25px");
 					t.setEnabled(cell.isWriteAllowed());
@@ -297,9 +276,15 @@ public class LanguagePage extends OneColumnPage {
 						t.setMaxLength(1);
 						connectField(t, cell, x, y, writeFields, fieldMap);
 					}
-					crosswordLayout.addComponent(t, x, y);
+					crosswordLayout.add(t);
+				} else {
+					Div spacer = new Div();
+					spacer.setWidth("25px");
+					spacer.setHeight("25px");
+					crosswordLayout.add(spacer);
 				}
 			}
+			crosswordLayout.add(new Breakline());
 		}
 		return crosswordLayout;
 	}
@@ -324,76 +309,74 @@ public class LanguagePage extends OneColumnPage {
 				return;
 		}
 		for (TextField tf : fieldMap.keySet()) {
-			tf.addStyleName("crossword-done");
+			tf.addClassName("crossword-done");
 			tf.setEnabled(false);
 		}
 	}
 
 	private VerticalLayout createTestTab(Long langId) {
 		VerticalLayout sheet = new VerticalLayout();
-		sheet.setMargin(new MarginInfo(true, false, false, false));
 
 		HorizontalLayout wordTestLayout = new HorizontalLayout();
-		sheet.addComponent(wordTestLayout);
+		sheet.add(wordTestLayout);
 
-		Button wordsTestBtn = new Button("Spustit test slovíček",
-				event -> startTest(langId, ItemType.WORD, testLayout));
-		wordsTestBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
-		wordTestLayout.addComponent(wordsTestBtn);
+		Button wordsTestBtn = new Button("Spustit test slovíček", event -> startTest(langId, ItemType.WORD));
+		wordsTestBtn.setIcon(new Image(ImageIcon.RIGHT_16_ICON.createResource(), "run"));
+		wordTestLayout.add(wordsTestBtn);
 
 		Float wordsProgress = languageFacade.getSuccessRateOfLanguageAndType(ItemType.WORD, langId);
-		ProgressBar wordsSuccessBar = new ProgressBar(wordsProgress);
-		wordTestLayout.addComponent(wordsSuccessBar);
-		wordTestLayout.setComponentAlignment(wordsSuccessBar, Alignment.MIDDLE_LEFT);
-		Label wordsProgressLabel = new Label((int) (wordsProgress * 100) + "%");
-		wordTestLayout.addComponent(wordsProgressLabel);
-		wordTestLayout.setComponentAlignment(wordsProgressLabel, Alignment.MIDDLE_LEFT);
+		ProgressBar wordsSuccessBar = new ProgressBar(0, 100);
+		wordsSuccessBar.setValue(wordsProgress);
+
+		wordTestLayout.add(wordsSuccessBar);
+		Span wordsProgressLabel = new Span((int) (wordsProgress * 100) + "%");
+		wordTestLayout.add(wordsProgressLabel);
 		wordsSuccessBar.setWidth("200px");
 
 		HorizontalLayout phrasesTestLayout = new HorizontalLayout();
-		sheet.addComponent(phrasesTestLayout);
+		sheet.add(phrasesTestLayout);
 
-		Button phrasesTestBtn = new Button("Spustit test frází",
-				event -> startTest(langId, ItemType.PHRASE, testLayout));
-		phrasesTestBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
-		phrasesTestLayout.addComponent(phrasesTestBtn);
+		Button phrasesTestBtn = new Button("Spustit test frází", event -> startTest(langId, ItemType.PHRASE));
+		phrasesTestBtn.setIcon(new Image(ImageIcon.RIGHT_16_ICON.createResource(), "run"));
+		phrasesTestLayout.add(phrasesTestBtn);
 
 		Float phrasesProgress = languageFacade.getSuccessRateOfLanguageAndType(ItemType.PHRASE, langId);
-		ProgressBar phrasesSuccessBar = new ProgressBar(phrasesProgress);
-		phrasesTestLayout.addComponent(phrasesSuccessBar);
-		phrasesTestLayout.setComponentAlignment(phrasesSuccessBar, Alignment.MIDDLE_LEFT);
-		Label phrasesProgressLabel = new Label((int) (phrasesProgress * 100) + "%");
-		phrasesTestLayout.addComponent(phrasesProgressLabel);
-		phrasesTestLayout.setComponentAlignment(phrasesProgressLabel, Alignment.MIDDLE_LEFT);
+		ProgressBar phrasesSuccessBar = new ProgressBar(0, 100);
+		phrasesSuccessBar.setValue(phrasesProgress);
+		phrasesTestLayout.add(phrasesSuccessBar);
+
+		Span phrasesProgressLabel = new Span((int) (phrasesProgress * 100) + "%");
+		phrasesTestLayout.add(phrasesProgressLabel);
 		phrasesSuccessBar.setWidth("200px");
 
-		Button allTestBtn = new Button("Spustit test všeho", event -> startTest(langId, null, testLayout));
-		allTestBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
-		sheet.addComponent(allTestBtn);
+		Button allTestBtn = new Button("Spustit test všeho", event -> startTest(langId, null));
+		allTestBtn.setIcon(new Image(ImageIcon.RIGHT_16_ICON.createResource(), "run"));
+		sheet.add(allTestBtn);
 
 		testLayout = new VerticalLayout();
 		testLayout.setMargin(false);
-		testLayout.addComponent(new Label("Vyberte test"));
-		sheet.addComponent(testLayout);
+		testLayout.add(new Span("Vyberte test"));
+		sheet.add(testLayout);
 
 		return sheet;
 	}
 
-	private void createGridLine(LanguageItemTO item, GridLayout gridLayout, Map<LanguageItemTO, TextField> answersMap) {
-		Label label = new Label(item.getTranslation());
+	private void createGridLine(LanguageItemTO item, Div gridLayout, Map<LanguageItemTO, TextField> answersMap) {
+		Div label = new Div();
+		label.add(item.getTranslation());
 		label.setWidth(null);
-		gridLayout.addComponent(label);
+		gridLayout.add(label);
 
 		TextField answerField = new TextField();
 		answerField.setWidth("100%");
 		answerField.setPlaceholder("varianta;varianta;...");
-		gridLayout.addComponent(answerField);
+		gridLayout.add(answerField);
 
 		answersMap.put(item, answerField);
 	}
 
-	private void startTest(Long langId, ItemType type, VerticalLayout testLayout) {
-		testLayout.removeAllComponents();
+	private void startTest(Long langId, ItemType type) {
+		testLayout.removeAll();
 
 		Map<LanguageItemTO, TextField> answersMap = new LinkedHashMap<>();
 
@@ -403,49 +386,42 @@ public class LanguagePage extends OneColumnPage {
 
 		int linesCount = 1 + itemsToLearn.size() + itemsToImprove.size() + itemsToRefresh.size() + 3;
 
-		GridLayout gridLayout = new GridLayout(2, linesCount);
-		gridLayout.setSpacing(true);
-		gridLayout.setMargin(new MarginInfo(true, false, false, false));
+		Div gridLayout = new Div();
 		gridLayout.setWidth("100%");
-		gridLayout.setColumnExpandRatio(1, 1);
-		testLayout.addComponent(gridLayout);
+		testLayout.add(gridLayout);
 
-		gridLayout.addComponent(new BoldSpan("Položka"));
-		gridLayout.addComponent(new BoldSpan(PREKLAD_LABEL));
+		gridLayout.add(new Strong("Položka"));
+		gridLayout.add(new Strong(PREKLAD_LABEL));
 
 		int line = 1;
 
-		gridLayout.addComponent(new BoldSpan("Nové"), 0, line, 1, line);
+		gridLayout.add(new Strong("Nové"));
 		for (LanguageItemTO item : itemsToLearn)
 			createGridLine(item, gridLayout, answersMap);
 
 		line += itemsToLearn.size() + 1;
 
-		gridLayout.addComponent(new BoldSpan("Ke zlepšení"), 0, line, 1, line);
+		gridLayout.add(new Strong("Ke zlepšení"));
 		for (LanguageItemTO item : itemsToImprove)
 			createGridLine(item, gridLayout, answersMap);
 
 		line += itemsToImprove.size() + 1;
 
-		gridLayout.addComponent(new BoldSpan("Opakování"), 0, line, 1, line);
+		gridLayout.add(new Strong("Opakování"));
 		for (LanguageItemTO item : itemsToRefresh)
 			createGridLine(item, gridLayout, answersMap);
 
 		Button submitBtn = new Button("Zkontrolovat");
 		submitBtn.addClickListener(e -> {
-			testLayout.removeAllComponents();
+			testLayout.removeAll();
 
-			GridLayout resultLayout = new GridLayout(4, linesCount - 3);
-			resultLayout.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
-			resultLayout.setMargin(new MarginInfo(true, false, false, false));
-			resultLayout.setSpacing(true);
+			Div resultLayout = new Div();
 			resultLayout.setWidth("100%");
-			resultLayout.setColumnExpandRatio(3, 1);
-			testLayout.addComponent(resultLayout);
+			testLayout.add(resultLayout);
 
-			resultLayout.addComponent(new BoldSpan("Položka"), 0, 0, 1, 0);
-			resultLayout.addComponent(new BoldSpan(PREKLAD_LABEL));
-			resultLayout.addComponent(new BoldSpan("Odpověď"));
+			resultLayout.add(new Strong("Položka"));
+			resultLayout.add(new Strong(PREKLAD_LABEL));
+			resultLayout.add(new Strong("Odpověď"));
 
 			answersMap.keySet().forEach(item -> {
 				TextField answerField = answersMap.get(item);
@@ -459,41 +435,37 @@ public class LanguagePage extends OneColumnPage {
 						break;
 					}
 				}
-				Embedded image = new Embedded(null,
-						(success ? ImageIcon.TICK_16_ICON : ImageIcon.DELETE_16_ICON).createResource());
-				resultLayout.addComponent(image);
-				resultLayout.setComponentAlignment(image, Alignment.BOTTOM_LEFT);
+				Image image = new Image((success ? ImageIcon.TICK_16_ICON : ImageIcon.DELETE_16_ICON).createResource(),
+						"result");
+				resultLayout.add(image);
 
-				Label label = new Label(item.getTranslation());
+				Div label = new Div();
+				label.add(item.getTranslation());
 				label.setWidth(null);
-				resultLayout.addComponent(label);
+				resultLayout.add(label);
 
-				Label resultCorrect = new BoldSpan(item.getContent());
-				resultLayout.addComponent(resultCorrect);
+				resultLayout.add(new Strong(item.getContent()));
 
 				TextField resultAnswerField = new TextField(null, answer);
 				resultAnswerField.setEnabled(false);
 				resultAnswerField.setWidth("100%");
-				resultLayout.addComponent(resultAnswerField);
+				resultLayout.add(resultAnswerField);
 
 				languageFacade.updateItemAfterTest(item, success);
 
 			});
 		});
-		testLayout.addComponent(submitBtn);
-
+		testLayout.add(submitBtn);
 	}
 
 	private void populate(Grid<LanguageItemTO> grid, LanguageItemTO filterTO) {
-		grid.setDataProvider((sortOrder, offset, limit) -> languageFacade
-				.getLanguageItems(filterTO, offset, limit, sortOrder).stream(),
-				() -> languageFacade.countLanguageItems(filterTO));
+		FetchCallback<LanguageItemTO, LanguageItemTO> fetchCallback = q -> languageFacade
+				.getLanguageItems(filterTO, q.getOffset(), q.getLimit(), q.getSortOrders()).stream();
+		CountCallback<LanguageItemTO, LanguageItemTO> countCallback = q -> languageFacade.countLanguageItems(filterTO);
+		grid.setDataProvider(DataProvider.fromFilteringCallbacks(fetchCallback, countCallback));
 	}
 
-	private VerticalLayout createItemsTab(Long langId, ItemType type) {
-		VerticalLayout sheet = new VerticalLayout();
-		sheet.setMargin(new MarginInfo(true, false, false, false));
-
+	private void createItemsTab(Long langId, ItemType type) {
 		LanguageItemTO filterTO = new LanguageItemTO();
 		filterTO.setLanguage(langId);
 		filterTO.setType(type);
@@ -502,28 +474,27 @@ public class LanguagePage extends OneColumnPage {
 		grid.setWidth("100%");
 		grid.setHeight("500px");
 
-		Column<LanguageItemTO, String> contentColumn = grid.addColumn(LanguageItemTO::getContent).setCaption("Obsah")
+		Column<LanguageItemTO> contentColumn = grid.addColumn(LanguageItemTO::getContent).setHeader("Obsah")
 				.setSortProperty("content");
-		Column<LanguageItemTO, String> translationColumn = grid.addColumn(LanguageItemTO::getTranslation)
-				.setCaption(PREKLAD_LABEL).setSortProperty("translation");
+		Column<LanguageItemTO> translationColumn = grid.addColumn(LanguageItemTO::getTranslation)
+				.setHeader(PREKLAD_LABEL).setSortProperty("translation");
 
 		if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN)) {
-			grid.addColumn(item -> (Math.floor(item.getSuccessRate() * 1000) / 10) + "%").setCaption("Úspěšnost")
-					.setStyleGenerator(item -> "v-align-right").setSortProperty("successRate");
-			grid.addColumn(LanguageItemTO::getLastTested, new LocalDateTimeRenderer("dd.MM.yyyy HH:mm"))
-					.setCaption("Naposledy zkoušeno").setStyleGenerator(item -> "v-align-right")
-					.setSortProperty("lastTested");
-			grid.addColumn(LanguageItemTO::getTested).setCaption("Zkoušeno").setSortProperty("tested");
-			grid.addColumn(LanguageItemTO::getId).setCaption("Id").setSortProperty("id");
+			grid.addColumn(item -> (Math.floor(item.getSuccessRate() * 1000) / 10) + "%").setHeader("Úspěšnost")
+					.setTextAlign(ColumnTextAlign.END).setSortProperty("successRate");
+			grid.addColumn(new LocalDateTimeRenderer<LanguageItemTO>(LanguageItemTO::getLastTested, "dd.MM.yyyy HH:mm"))
+					.setHeader("Naposledy zkoušeno").setTextAlign(ColumnTextAlign.END).setSortProperty("lastTested");
+			grid.addColumn(LanguageItemTO::getTested).setHeader("Zkoušeno").setSortProperty("tested");
+			grid.addColumn(LanguageItemTO::getId).setHeader("Id").setSortProperty("id");
 		}
 
-		grid.sort(contentColumn);
+		grid.sort(Arrays.asList(new GridSortOrder<>(contentColumn, SortDirection.ASCENDING)));
 
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Obsah
 		TextField contentFilterField = new TextField();
-		contentFilterField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		contentFilterField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		contentFilterField.setWidth("100%");
 		contentFilterField.addValueChangeListener(e -> {
 			filterTO.setContent(e.getValue());
@@ -533,7 +504,7 @@ public class LanguagePage extends OneColumnPage {
 
 		// Překlad
 		TextField translationFilterField = new TextField();
-		translationFilterField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		translationFilterField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		translationFilterField.setWidth("100%");
 		translationFilterField.addValueChangeListener(e -> {
 			filterTO.setTranslation(e.getValue());
@@ -543,18 +514,13 @@ public class LanguagePage extends OneColumnPage {
 
 		populate(grid, filterTO);
 
-		sheet.addComponent(grid);
+		pageLayout.add(grid);
 
 		if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN))
-			sheet.addComponent(createButtonLayout(grid, langId, type));
-
-		return sheet;
+			pageLayout.add(createButtonLayout(grid, langId, type));
 	}
 
-	private Component createStatisticsTab(long langId) {
-		VerticalLayout sheet = new VerticalLayout();
-		sheet.setMargin(new MarginInfo(true, false, false, false));
-
+	private void createStatisticsTab(long langId) {
 		LanguageItemTO to = new LanguageItemTO();
 		to.setLanguage(langId);
 		to.setType(ItemType.WORD);
@@ -562,96 +528,77 @@ public class LanguagePage extends OneColumnPage {
 		to.setType(ItemType.PHRASE);
 		int phrases = languageFacade.countLanguageItems(to);
 
-		sheet.addComponent(new Label("Slovíček: " + words));
+		pageLayout.add("Slovíček: " + words);
 		final BufferedImage wordsImage = ChartUtils.drawChart(languageFacade.getStatisticsItems(ItemType.WORD, langId));
-		sheet.addComponent(new Image(null, new StreamResource(new StreamSource() {
-			private static final long serialVersionUID = -5893071133311094692L;
-
-			@Override
-			public InputStream getStream() {
-				ByteArrayOutputStream os = new ByteArrayOutputStream();
-				try {
-					ImageIO.write(wordsImage, "png", os);
-					return new ByteArrayInputStream(os.toByteArray());
-				} catch (IOException e) {
-					logger.error("Nezdařilo se vytváření grafu statistiky", e);
-					return null;
-				}
+		pageLayout.add(new Image(new StreamResource("words", () -> {
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			try {
+				ImageIO.write(wordsImage, "png", os);
+				return new ByteArrayInputStream(os.toByteArray());
+			} catch (IOException e) {
+				logger.error("Nezdařilo se vytváření grafu statistiky", e);
+				return null;
 			}
-		}, "wordsImage.png")));
+		}), "wordsImage.png"));
 
-		sheet.addComponent(new Label("Frází: " + phrases));
+		pageLayout.add("Frází: " + phrases);
 		final BufferedImage phrasesImage = ChartUtils
 				.drawChart(languageFacade.getStatisticsItems(ItemType.PHRASE, langId));
-		sheet.addComponent(new Image(null, new StreamResource(new StreamSource() {
-			private static final long serialVersionUID = -5893071133311094692L;
-
-			@Override
-			public InputStream getStream() {
-				ByteArrayOutputStream os = new ByteArrayOutputStream();
-				try {
-					ImageIO.write(phrasesImage, "png", os);
-					return new ByteArrayInputStream(os.toByteArray());
-				} catch (IOException e) {
-					logger.error("Nezdařilo se vytváření grafu statistiky", e);
-					return null;
-				}
+		pageLayout.add(new Image(new StreamResource("phrases", () -> {
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			try {
+				ImageIO.write(phrasesImage, "png", os);
+				return new ByteArrayInputStream(os.toByteArray());
+			} catch (IOException e) {
+				logger.error("Nezdařilo se vytváření grafu statistiky", e);
+				return null;
 			}
-		}, "phrasesImage.png")));
+		}), "phrasesImage.png"));
 
-		sheet.addComponent(new Label("Položek celkem: " + (words + phrases)));
+		pageLayout.add("Položek celkem: " + (words + phrases));
 
 		final BufferedImage itemsImage = ChartUtils.drawChart(languageFacade.getStatisticsItems(null, langId));
-		sheet.addComponent(new Image(null, new StreamResource(new StreamSource() {
-			private static final long serialVersionUID = -5893071133311094692L;
-
-			@Override
-			public InputStream getStream() {
-				ByteArrayOutputStream os = new ByteArrayOutputStream();
-				try {
-					ImageIO.write(itemsImage, "png", os);
-					return new ByteArrayInputStream(os.toByteArray());
-				} catch (IOException e) {
-					logger.error("Nezdařilo se vytváření grafu statistiky", e);
-					return null;
-				}
+		pageLayout.add(new Image(new StreamResource("items", () -> {
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			try {
+				ImageIO.write(itemsImage, "png", os);
+				return new ByteArrayInputStream(os.toByteArray());
+			} catch (IOException e) {
+				logger.error("Nezdařilo se vytváření grafu statistiky", e);
+				return null;
 			}
-		}, "itemsImage.png")));
-
-		return sheet;
-
+		}), "itemsImage.png"));
 	}
 
-	private HorizontalLayout createButtonLayout(Grid<LanguageItemTO> grid, long langId, ItemType type) {
-		HorizontalLayout btnLayout = new HorizontalLayout();
+	private ButtonLayout createButtonLayout(Grid<LanguageItemTO> grid, long langId, ItemType type) {
+		ButtonLayout btnLayout = new ButtonLayout();
 
-		btnLayout.addComponent(
-				new CreateGridButton("Přidat", event -> UI.getCurrent().addWindow(new LanguageItemWindow(to -> {
-					to.setLanguage(langId);
-					languageFacade.saveLanguageItem(to);
-					grid.getDataProvider().refreshAll();
-				}, langId, type))));
+		btnLayout.add(new CreateGridButton("Přidat", event -> new LanguageItemDialog(to -> {
+			to.setLanguage(langId);
+			languageFacade.saveLanguageItem(to);
+			grid.getDataProvider().refreshAll();
+		}, langId, type).open()));
 
-		btnLayout.addComponent(new ModifyGridButton<LanguageItemTO>("Upravit", item -> {
+		btnLayout.add(new ModifyGridButton<LanguageItemTO>("Upravit", item -> {
 			ItemType oldType = item.getType();
-			UI.getCurrent().addWindow(new LanguageItemWindow(item, to -> {
+			new LanguageItemDialog(item, to -> {
 				languageFacade.saveLanguageItem(to);
 				if (oldType.equals(to.getType()))
 					grid.getDataProvider().refreshItem(to);
 				else
 					grid.getDataProvider().refreshAll();
-			}, langId, type));
+			}, langId, type).open();
 		}, grid));
 
-		btnLayout.addComponent(new DeleteGridButton<LanguageItemTO>("Odstranit", items -> items.forEach(item -> {
+		btnLayout.add(new DeleteGridButton<LanguageItemTO>("Odstranit", items -> items.forEach(item -> {
 			languageFacade.deleteLanguageItem(item);
 			grid.getDataProvider().refreshAll();
 		}), grid));
 
 		GridButton<LanguageItemTO> moveBtn = new GridButton<>("Změnit jazyk", items -> changeLangOfItems(items, grid),
 				grid);
-		moveBtn.setIcon(ImageIcon.MOVE_16_ICON.createResource());
-		btnLayout.addComponent(moveBtn);
+		moveBtn.setIcon(new Image(ImageIcon.MOVE_16_ICON.createResource(), "move"));
+		btnLayout.add(moveBtn);
 
 		String caption;
 		if (ItemType.WORD == type)
@@ -662,20 +609,20 @@ public class LanguagePage extends OneColumnPage {
 			caption = "všeho";
 
 		Button testBtn = new Button("Spustit test " + caption, event -> {
-			tabSheet.setSelectedTab(3);
-			startTest(langId, type, testLayout);
+			tabs.setSelectedIndex(3);
+			startTest(langId, type);
 		});
-		testBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
-		btnLayout.addComponent(testBtn);
+		testBtn.setIcon(new Image(ImageIcon.RIGHT_16_ICON.createResource(), "test"));
+		btnLayout.add(testBtn);
 
 		if (type != null) {
 			Float wordsProgress = languageFacade.getSuccessRateOfLanguageAndType(type, langId);
-			ProgressBar wordsSuccessBar = new ProgressBar(wordsProgress);
-			btnLayout.addComponent(wordsSuccessBar);
-			btnLayout.setComponentAlignment(wordsSuccessBar, Alignment.MIDDLE_LEFT);
-			Label wordsProgressLabel = new Label((int) (wordsProgress * 100) + "%");
-			btnLayout.addComponent(wordsProgressLabel);
-			btnLayout.setComponentAlignment(wordsProgressLabel, Alignment.MIDDLE_LEFT);
+			ProgressBar wordsSuccessBar = new ProgressBar(0, 100);
+			wordsSuccessBar.setValue(wordsProgress);
+			btnLayout.add(wordsSuccessBar);
+
+			Span wordsProgressLabel = new Span((int) (wordsProgress * 100) + "%");
+			btnLayout.add(wordsProgressLabel);
 			wordsSuccessBar.setWidth("200px");
 		}
 
@@ -683,17 +630,18 @@ public class LanguagePage extends OneColumnPage {
 	}
 
 	private void changeLangOfItems(Set<LanguageItemTO> items, Grid<LanguageItemTO> grid) {
-		Window w = new WebDialog("Změna jazyka");
+		Dialog w = new WebDialog("Změna jazyka");
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);
 		layout.setMargin(true);
-		w.setContent(layout);
+		w.add(layout);
 
 		List<LanguageTO> langs = languageFacade.getLanguages();
-		Grid<LanguageTO> targatGrid = new Grid<>(null, langs);
-		targatGrid.addColumn(LanguageTO::getName).setCaption("Název");
-		layout.addComponent(targatGrid);
+		Grid<LanguageTO> targatGrid = new Grid<>(LanguageTO.class);
+		targatGrid.setItems(langs);
+		targatGrid.addColumn(LanguageTO::getName).setHeader("Název");
+		layout.add(targatGrid);
 
 		targatGrid.addSelectionListener(se -> se.getFirstSelectedItem().ifPresent(lang -> items.forEach(item -> {
 			languageFacade.moveLanguageItemTo(item, lang);
@@ -701,8 +649,7 @@ public class LanguagePage extends OneColumnPage {
 			w.close();
 			grid.getDataProvider().refreshAll();
 		})));
-
-		UI.getCurrent().addWindow(w);
+		w.open();
 	}
 
 }

@@ -23,6 +23,7 @@
 		<module>recipes</module>
 		<module>songs</module>
 		<module>medic</module>
+		<module>language</module>
 	</modules>
 
 </project>

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.vaadin.shared.ui.ValueChangeMode;
-import com.vaadin.ui.TextField;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 
 import cz.gattserver.grass3.language.model.dto.CrosswordHintTO;
 

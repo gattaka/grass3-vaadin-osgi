@@ -4,28 +4,26 @@ import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.ValidationResult;
-import com.vaadin.data.Validator;
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.event.ShortcutListener;
-import com.vaadin.event.ShortcutAction.KeyCode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.RadioButtonGroup;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.Shortcuts;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationResult;
+import com.vaadin.flow.data.binder.Validator;
+import com.vaadin.flow.data.renderer.TextRenderer;
 
 import cz.gattserver.grass3.language.facades.LanguageFacade;
 import cz.gattserver.grass3.language.model.domain.ItemType;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
-import cz.gattserver.grass3.ui.components.CreateButton;
-import cz.gattserver.grass3.ui.components.ModifyButton;
+import cz.gattserver.grass3.ui.components.button.CreateButton;
+import cz.gattserver.grass3.ui.components.button.ModifyButton;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
-public class LanguageItemWindow extends WebDialog {
+public class LanguageItemDialog extends WebDialog {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 
@@ -36,15 +34,11 @@ public class LanguageItemWindow extends WebDialog {
 		void onSave(LanguageItemTO itemTO);
 	}
 
-	public LanguageItemWindow(SaveAction action, Long langId, ItemType asType) {
+	public LanguageItemDialog(SaveAction action, Long langId, ItemType asType) {
 		this(null, action, langId, asType);
 	}
 
-	public LanguageItemWindow(final LanguageItemTO to, SaveAction action, Long langId, ItemType asType) {
-		super(to == null ? "Založit" : "Upravit" + " záznam");
-
-		removeCloseShortcut(KeyCode.ESCAPE);
-
+	public LanguageItemDialog(final LanguageItemTO to, SaveAction action, Long langId, ItemType asType) {
 		setWidth("600px");
 
 		if (asType == null)
@@ -60,10 +54,10 @@ public class LanguageItemWindow extends WebDialog {
 
 		Binder<LanguageItemTO> binder = new Binder<>();
 
-		RadioButtonGroup<ItemType> typeRadio = new RadioButtonGroup<>(null, Arrays.asList(ItemType.values()));
-		typeRadio.setItemCaptionGenerator(ItemType::getCaption);
+		RadioButtonGroup<ItemType> typeRadio = new RadioButtonGroup<>();
+		typeRadio.setItems(Arrays.asList(ItemType.values()));
+		typeRadio.setRenderer(new TextRenderer<>(ItemType::getCaption));
 		binder.forField(typeRadio).bind(LanguageItemTO::getType, LanguageItemTO::setType);
-		typeRadio.setStyleName("horizontal");
 		addComponent(typeRadio);
 
 		TextField contentField = new TextField("Obsah");
@@ -94,32 +88,20 @@ public class LanguageItemWindow extends WebDialog {
 				LanguageItemTO::setTranslation);
 		addComponent(translationField);
 
-		ShortcutListener sl = new ShortcutListener("Submit", ShortcutAction.KeyCode.ENTER, null) {
-			private static final long serialVersionUID = -7239845094514060176L;
-
-			@Override
-			public void handleAction(Object sender, Object target) {
-				onSave(action, binder, targetTO);
-			}
-		};
-
-		contentField.addShortcutListener(sl);
-		translationField.addShortcutListener(sl);
+		Shortcuts.addShortcutListener(this, () -> onSave(action, binder, targetTO), Key.ENTER);
 
 		binder.readBean(targetTO);
 
-		HorizontalLayout buttonLayout = new HorizontalLayout();
+		ButtonLayout buttonLayout = new ButtonLayout();
 		addComponent(buttonLayout);
-		setComponentAlignment(buttonLayout, Alignment.MIDDLE_CENTER);
 
 		if (to != null) {
-			buttonLayout.addComponent(new ModifyButton(e -> onSave(action, binder, targetTO)));
+			buttonLayout.add(new ModifyButton(e -> onSave(action, binder, targetTO)));
 		} else {
-			buttonLayout.addComponent(new CreateButton(e -> onSave(action, binder, targetTO)));
-			Button createAndContinueBtn = new CreateButton(
+			buttonLayout.add(new CreateButton(e -> onSave(action, binder, targetTO)));
+			Button createAndContinueBtn = new CreateButton("Vytvořit a pokračovat",
 					e -> onSaveAndContinue(action, binder, targetTO, langId, typeRadio.getValue()));
-			createAndContinueBtn.setCaption("Vytvořit a pokračovat");
-			buttonLayout.addComponent(createAndContinueBtn);
+			buttonLayout.add(createAndContinueBtn);
 		}
 	}
 
@@ -137,7 +119,7 @@ public class LanguageItemWindow extends WebDialog {
 		if (binder.writeBeanIfValid(targetTO)) {
 			checkAndThen(targetTO, () -> {
 				action.onSave(targetTO);
-				UI.getCurrent().addWindow(new LanguageItemWindow(action, langId, asType));
+				new LanguageItemDialog(action, langId, asType).open();
 				close();
 			});
 		}
@@ -145,15 +127,13 @@ public class LanguageItemWindow extends WebDialog {
 
 	private void checkAndThen(LanguageItemTO targetTO, Runnable r) {
 		if (targetTO.getContent().split(" ").length > 2 && ItemType.WORD.equals(targetTO.getType())) {
-			UI.getCurrent().addWindow(new ConfirmDialog(
-					"Opravdu uložit slovní spojení jako '" + ItemType.WORD.getCaption() + "' ?", e -> {
-						r.run();
-					}));
+			new ConfirmDialog("Opravdu uložit slovní spojení jako '" + ItemType.WORD.getCaption() + "' ?", e -> {
+				r.run();
+			}).open();
 		} else if (targetTO.getContent().split(" ").length == 1 && ItemType.PHRASE.equals(targetTO.getType())) {
-			UI.getCurrent().addWindow(
-					new ConfirmDialog("Opravdu uložit jedno slovo '" + ItemType.PHRASE.getCaption() + "' ?", e -> {
-						r.run();
-					}));
+			new ConfirmDialog("Opravdu uložit jedno slovo '" + ItemType.PHRASE.getCaption() + "' ?", e -> {
+				r.run();
+			}).open();
 		} else {
 			r.run();
 		}

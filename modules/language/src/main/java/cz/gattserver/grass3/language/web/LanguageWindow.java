@@ -1,11 +1,10 @@
 package cz.gattserver.grass3.language.web;
 
-import com.vaadin.data.Binder;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.TextField;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
 
 import cz.gattserver.grass3.language.model.dto.LanguageTO;
+import cz.gattserver.grass3.ui.components.SaveCloseButtons;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
 public class LanguageWindow extends WebDialog {
@@ -37,12 +36,12 @@ public class LanguageWindow extends WebDialog {
 
 		binder.readBean(targetTO);
 
-		addComponent(new Button("Uložit", event -> {
+		add(new SaveCloseButtons(event -> {
 			if (binder.writeBeanIfValid(targetTO)) {
 				saveAction.onSave(targetTO);
 				close();
 			}
-		}), Alignment.MIDDLE_CENTER);
+		}, e -> close()));
 	}
 
 }

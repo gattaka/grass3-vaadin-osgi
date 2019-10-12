@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.OrderSpecifier;
@@ -17,7 +16,6 @@ import cz.gattserver.grass3.language.model.domain.LanguageItem;
 import cz.gattserver.grass3.language.model.domain.QLanguageItem;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.model.util.PredicateBuilder;
-import cz.gattserver.grass3.model.util.QuerydslUtil;
 
 @Repository
 public class LanguageItemRepositoryCustomImpl implements LanguageItemRepositoryCustom {
@@ -43,10 +41,10 @@ public class LanguageItemRepositoryCustomImpl implements LanguageItemRepositoryC
 	}
 
 	@Override
-	public List<LanguageItem> findAllByLanguageSortByName(LanguageItemTO filterTO, PageRequest pageable,
+	public List<LanguageItem> findAllByLanguageSortByName(LanguageItemTO filterTO, int offset, int limit,
 			OrderSpecifier<?>[] order) {
 		JPAQuery<LanguageItem> query = new JPAQuery<>(entityManager);
-		QuerydslUtil.applyPagination(pageable, query);
+		query.offset(offset).limit(limit);
 		QLanguageItem l = QLanguageItem.languageItem;
 		return query.from(l).where(createPredicateLanguageItems(filterTO)).orderBy(order).fetch();
 	}

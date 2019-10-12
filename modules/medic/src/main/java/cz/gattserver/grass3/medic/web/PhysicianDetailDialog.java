@@ -1,19 +1,20 @@
 package cz.gattserver.grass3.medic.web;
 
+import com.vaadin.flow.component.dialog.Dialog;
+
 import cz.gattserver.grass3.medic.dto.PhysicianDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
-import cz.gattserver.grass3.ui.windows.DetailDialog;
 import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.Strong;
 
-public class PhysicianDetailWindow extends DetailDialog {
+public class PhysicianDetailDialog extends Dialog {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 
-	public PhysicianDetailWindow(Long id) {
-		super("Detail instituce");
-
+	public PhysicianDetailDialog(Long id) {
 		final PhysicianDTO physicianDTO = SpringContextHelper.getBean(MedicFacade.class).getPhysicianById(id);
-		addDetailLine("Jméno", physicianDTO.getName());
+		add(new Strong("Jméno"));
+		add(physicianDTO.getName());
 	}
 
 }

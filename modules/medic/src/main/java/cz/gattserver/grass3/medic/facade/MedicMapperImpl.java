@@ -50,14 +50,15 @@ public class MedicMapperImpl implements MedicMapper {
 
 		ScheduledVisitDTO dto = new ScheduledVisitDTO();
 		dto.setId(e.getId());
-		dto.setDate(e.getDate());
+		dto.setDate(e.getDate().toLocalDate());
+		dto.setTime(e.getDate().toLocalTime());
 		dto.setInstitution(mapMedicalInstitution(e.getInstitution()));
 		dto.setPeriod(e.getPeriod());
 		dto.setPurpose(e.getPurpose());
 		dto.setRecord(mapMedicalRecord(e.getRecord()));
 		dto.setPlanned(e.isPlanned());
 
-		if (LocalDateTime.now().compareTo(dto.getDate()) > 0) {
+		if (LocalDateTime.now().compareTo(e.getDate()) > 0) {
 			dto.setState(ScheduledVisitState.MISSED);
 		} else {
 			dto.setState(e.isPlanned() ? ScheduledVisitState.PLANNED : ScheduledVisitState.TO_BE_PLANNED);
@@ -80,7 +81,8 @@ public class MedicMapperImpl implements MedicMapper {
 
 		MedicalRecordDTO dto = new MedicalRecordDTO();
 		dto.setId(e.getId());
-		dto.setDate(e.getDate());
+		dto.setDate(e.getDate().toLocalDate());
+		dto.setTime(e.getDate().toLocalTime());
 		dto.setInstitution(mapMedicalInstitution(e.getInstitution()));
 		dto.setRecord(e.getRecord());
 		dto.setPhysician(mapPhysician(e.getPhysician()));

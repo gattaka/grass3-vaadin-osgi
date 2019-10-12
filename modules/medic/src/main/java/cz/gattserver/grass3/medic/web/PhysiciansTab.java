@@ -2,9 +2,9 @@ package cz.gattserver.grass3.medic.web;
 
 import java.util.ArrayList;
 
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.Window;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
 
 import cz.gattserver.grass3.medic.dto.PhysicianDTO;
 
@@ -22,8 +22,8 @@ public class PhysiciansTab extends MedicPageTab<PhysicianDTO, ArrayList<Physicia
 	}
 
 	@Override
-	protected Window createCreateDialog() {
-		return new PhysicianCreateWindow() {
+	protected Dialog createCreateDialog() {
+		return new PhysicianCreateDialog() {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -35,13 +35,13 @@ public class PhysiciansTab extends MedicPageTab<PhysicianDTO, ArrayList<Physicia
 	}
 
 	@Override
-	protected Window createDetailDialog(Long id) {
-		return new PhysicianDetailWindow(id);
+	protected Dialog createDetailDialog(Long id) {
+		return new PhysicianDetailDialog(id);
 	}
 
 	@Override
-	protected Window createModifyDialog(PhysicianDTO dto) {
-		return new PhysicianCreateWindow(dto) {
+	protected Dialog createModifyDialog(PhysicianDTO dto) {
+		return new PhysicianCreateDialog(dto) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -58,7 +58,7 @@ public class PhysiciansTab extends MedicPageTab<PhysicianDTO, ArrayList<Physicia
 
 	@Override
 	protected void customizeGrid(Grid<PhysicianDTO> grid) {
-		grid.getColumn("name").setCaption("Jméno");
+		grid.getColumnByKey("name").setHeader("Jméno");
 		grid.setWidth("100%");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setColumns("name");

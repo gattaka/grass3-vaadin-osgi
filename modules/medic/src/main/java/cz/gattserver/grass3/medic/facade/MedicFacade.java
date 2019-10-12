@@ -11,16 +11,6 @@ import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 
 public interface MedicFacade {
 
-	// Doktoři
-
-	void deletePhysician(PhysicianDTO dto);
-
-	Set<PhysicianDTO> getAllPhysicians();
-
-	void savePhysician(PhysicianDTO dto);
-
-	PhysicianDTO getPhysicianById(Long id);
-
 	// Instituce
 
 	void deleteMedicalInstitution(MedicalInstitutionDTO dto);
@@ -64,5 +54,15 @@ public interface MedicFacade {
 	void saveMedicament(MedicamentDTO dto);
 
 	MedicamentDTO getMedicamentById(Long id);
+
+	// Doktoři
+
+	void deletePhysician(PhysicianDTO dto);
+
+	Set<PhysicianDTO> getAllPhysicians();
+
+	void savePhysician(PhysicianDTO dto);
+
+	PhysicianDTO getPhysicianById(Long id);
 
 }

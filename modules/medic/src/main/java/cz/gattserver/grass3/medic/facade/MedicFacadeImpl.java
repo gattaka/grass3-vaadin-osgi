@@ -106,7 +106,7 @@ public class MedicFacadeImpl implements MedicFacade {
 	public void saveScheduledVisit(ScheduledVisitDTO dto) {
 		ScheduledVisit visit = new ScheduledVisit();
 		visit.setId(dto.getId());
-		visit.setDate(dto.getDate());
+		visit.setDate(dto.getDate().atTime(dto.getTime()));
 		visit.setPeriod(dto.getPeriod());
 		visit.setPurpose(dto.getPurpose());
 		visit.setPlanned(dto.isPlanned());
@@ -149,16 +149,14 @@ public class MedicFacadeImpl implements MedicFacade {
 	public void saveMedicalRecord(MedicalRecordDTO dto) {
 		MedicalRecord record = new MedicalRecord();
 		record.setId(dto.getId());
-		record.setDate(dto.getDate());
+		record.setDate(dto.getDate().atTime(dto.getTime()));
 		record.setRecord(dto.getRecord());
 
-		if (dto.getPhysician() != null) {
+		if (dto.getPhysician() != null)
 			record.setPhysician(physicianRepository.findById(dto.getPhysician().getId()).orElse(null));
-		}
 
-		if (dto.getInstitution() != null) {
+		if (dto.getInstitution() != null)
 			record.setInstitution(medicalInstitutionRepository.findById(dto.getInstitution().getId()).orElse(null));
-		}
 
 		List<Medicament> medicaments = new ArrayList<>();
 		for (MedicamentDTO m : dto.getMedicaments()) {

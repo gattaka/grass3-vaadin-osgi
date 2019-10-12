@@ -1,42 +1,104 @@
 package cz.gattserver.grass3.medic.web;
 
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.router.Route;
 
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 
+@Route("medic")
 public class MedicPage extends OneColumnPage {
 
-	public MedicPage(GrassRequest request) {
-		super(request);
+	private static final long serialVersionUID = -7969964922025344992L;
+
+	private Tabs tabSheet;
+	private Div pageLayout;
+
+	private Tab scheduledVisitsTab;
+	private Tab medicalRecordsTab;
+	private Tab medicalInstitutionsTab;
+	private Tab medicamentsTab;
+	private Tab physiciansTab;
+
+	private ScheduledVisitsTab switchScheduledVisitsTab() {
+		pageLayout.removeAll();
+		ScheduledVisitsTab tab = new ScheduledVisitsTab();
+		pageLayout.add(tab);
+		tabSheet.setSelectedTab(scheduledVisitsTab);
+		return tab;
+	}
+
+	private MedicalRecordsTab switchMedicalRecordsTab() {
+		pageLayout.removeAll();
+		MedicalRecordsTab tab = new MedicalRecordsTab();
+		pageLayout.add(tab);
+		tabSheet.setSelectedTab(medicalRecordsTab);
+		return tab;
+	}
+
+	private MedicalInstitutionsTab switchMedicalInstitutionsTab() {
+		pageLayout.removeAll();
+		MedicalInstitutionsTab tab = new MedicalInstitutionsTab();
+		pageLayout.add(tab);
+		tabSheet.setSelectedTab(medicalInstitutionsTab);
+		return tab;
+	}
+
+	private MedicamentsTab switchMedicamentsTab() {
+		pageLayout.removeAll();
+		MedicamentsTab tab = new MedicamentsTab();
+		pageLayout.add(tab);
+		tabSheet.setSelectedTab(medicamentsTab);
+		return tab;
+	}
+
+	private PhysiciansTab switchPhysiciansTab() {
+		pageLayout.removeAll();
+		PhysiciansTab tab = new PhysiciansTab();
+		pageLayout.add(tab);
+		tabSheet.setSelectedTab(physiciansTab);
+		return tab;
 	}
 
 	@Override
-	protected Component createColumnContent() {
+	protected void createColumnContent(Div layout) {
 
-		VerticalLayout marginLayout = new VerticalLayout();
-		marginLayout.setMargin(new MarginInfo(false, true, true, true));
+		tabSheet = new Tabs();
+		layout.add(tabSheet);
 
-		VerticalLayout layout = new VerticalLayout();
-		layout.setSpacing(true);
-		layout.setMargin(true);
-		marginLayout.addComponent(layout);
+		scheduledVisitsTab = new Tab("Plánované návštěvy");
+		medicalRecordsTab = new Tab("Záznamy");
+		medicalInstitutionsTab = new Tab("Instituce");
+		medicamentsTab = new Tab("Medikamenty");
+		physiciansTab = new Tab("Doktoři");
+		tabSheet.add(scheduledVisitsTab, medicalRecordsTab, medicalInstitutionsTab, medicalInstitutionsTab,
+				medicamentsTab, physiciansTab);
 
-		TabSheet tabSheet = new TabSheet();
-		layout.addComponent(tabSheet);
+		pageLayout = new Div();
+		layout.add(pageLayout);
 
-		MedicalRecordsTab medicalRecordsTab = new MedicalRecordsTab();
-		
-		tabSheet.addTab(new ScheduledVisitsTab(medicalRecordsTab), "Plánované návštěvy");
-		tabSheet.addTab(medicalRecordsTab, "Záznamy");
-		tabSheet.addTab(new MedicalInstitutionsTab(), "Instituce");
-		tabSheet.addTab(new MedicamentsTab(), "Medikamenty");
-		tabSheet.addTab(new PhysiciansTab(), "Doktoři");
-
-		return marginLayout;
+		tabSheet.addSelectedChangeListener(e -> {
+			pageLayout.removeAll();
+			switch (tabSheet.getSelectedIndex()) {
+			default:
+			case 0:
+				switchScheduledVisitsTab();
+				break;
+			case 1:
+				switchMedicalRecordsTab();
+				break;
+			case 2:
+				switchMedicalInstitutionsTab();
+				break;
+			case 3:
+				switchMedicamentsTab();
+				break;
+			case 4:
+				switchPhysiciansTab();
+				break;
+			}
+		});
 	}
 
 }

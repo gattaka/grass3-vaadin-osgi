@@ -2,9 +2,9 @@ package cz.gattserver.grass3.medic.web;
 
 import java.util.ArrayList;
 
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.Window;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
 
 import cz.gattserver.grass3.medic.dto.MedicalInstitutionDTO;
 
@@ -18,8 +18,8 @@ public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionDTO, 
 	}
 
 	@Override
-	protected Window createCreateDialog() {
-		return new MedicalInstitutionCreateWindow() {
+	protected Dialog createCreateDialog() {
+		return new MedicalInstitutionCreateDialog() {
 			private static final long serialVersionUID = 5711665262096833291L;
 
 			@Override
@@ -31,13 +31,13 @@ public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionDTO, 
 	}
 
 	@Override
-	protected Window createDetailDialog(Long id) {
-		return new MedicalInstitutionDetailWindow(id);
+	protected Dialog createDetailDialog(Long id) {
+		return new MedicalInstitutionDetailDialog(id);
 	}
 
 	@Override
-	protected Window createModifyDialog(MedicalInstitutionDTO dto) {
-		return new MedicalInstitutionCreateWindow(dto) {
+	protected Dialog createModifyDialog(MedicalInstitutionDTO dto) {
+		return new MedicalInstitutionCreateDialog(dto) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -58,9 +58,9 @@ public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionDTO, 
 
 	@Override
 	protected void customizeGrid(Grid<MedicalInstitutionDTO> grid) {
-		grid.getColumn("name").setCaption("Název");
-		grid.getColumn("address").setCaption("Adresa");
-		grid.getColumn("web").setCaption("Stránky");
+		grid.getColumnByKey("name").setHeader("Název");
+		grid.getColumnByKey("address").setHeader("Adresa");
+		grid.getColumnByKey("web").setHeader("Stránky");
 		grid.setWidth("100%");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setColumns("name", "address", "web");

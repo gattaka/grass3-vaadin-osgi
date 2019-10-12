@@ -2,18 +2,17 @@ package cz.gattserver.grass3.medic.web;
 
 import java.time.format.DateTimeFormatter;
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
 
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
-import cz.gattserver.grass3.ui.windows.DetailDialog;
 import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.window.WebDialog;
 
-public class MedicalRecordDetailWindow extends DetailDialog {
+public class MedicalRecordDetailWindow extends WebDialog {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 
@@ -24,26 +23,24 @@ public class MedicalRecordDetailWindow extends DetailDialog {
 
 		MedicalRecordDTO medicalRecordDTO = getMedicFacade().getMedicalRecordById(id);
 
-		addDetailLine("Datum", medicalRecordDTO.getDate().format(DateTimeFormatter.ofPattern("d. MMMMM yyyy, H:mm")));
+		add(new H2("Datum"));
+		add(medicalRecordDTO.getDate().format(DateTimeFormatter.ofPattern("d. MMMMM yyyy, H:mm")));
 
-		final Button button = new Button(medicalRecordDTO.getInstitution().getName());
-		button.addClickListener(new Button.ClickListener() {
-			private static final long serialVersionUID = 4609212946079293192L;
+		add(new H2("Instituce"));
+		final Button button = new Button(medicalRecordDTO.getInstitution().getName(),
+				e -> new MedicalInstitutionDetailDialog(medicalRecordDTO.getInstitution().getId()).open());
+		button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+		add(button);
 
-			@Override
-			public void buttonClick(ClickEvent event) {
-				UI.getCurrent()
-						.addWindow(new MedicalInstitutionDetailWindow(medicalRecordDTO.getInstitution().getId()));
-			}
-		});
-		button.setStyleName(ValoTheme.BUTTON_LINK);
-		addDetailLine("Instituce", button);
+		add(new H2("Ošetřující lékař"));
+		add(medicalRecordDTO.getPhysician().getName());
 
-		addDetailLine("Ošetřující lékař", medicalRecordDTO.getPhysician().getName());
-
-		Label label;
-		label = addDetailLine("Záznam", medicalRecordDTO.getRecord());
-		label.setWidth("600px");
+		add(new H2("Záznam"));
+		Div div = new Div();
+		div.setText(medicalRecordDTO.getRecord());
+		div.setWidth("600px");
+		div.getStyle().set("white-space", "pre");
+		add(div);
 	}
 
 	protected MedicFacade getMedicFacade() {

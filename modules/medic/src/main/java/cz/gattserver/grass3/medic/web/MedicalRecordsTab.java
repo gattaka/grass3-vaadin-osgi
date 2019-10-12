@@ -2,10 +2,10 @@ package cz.gattserver.grass3.medic.web;
 
 import java.util.ArrayList;
 
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.renderers.LocalDateTimeRenderer;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 
 import cz.gattserver.grass3.medic.dto.MedicalRecordDTO;
 
@@ -23,8 +23,8 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO, ArrayList<
 	}
 
 	@Override
-	protected Window createCreateDialog() {
-		return new MedicalRecordCreateWindow() {
+	protected Dialog createCreateDialog() {
+		return new MedicalRecordCreateDialog() {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -40,13 +40,13 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO, ArrayList<
 	}
 
 	@Override
-	protected Window createDetailDialog(Long id) {
+	protected Dialog createDetailDialog(Long id) {
 		return new MedicalRecordDetailWindow(id);
 	}
 
 	@Override
-	protected Window createModifyDialog(MedicalRecordDTO dto) {
-		return new MedicalRecordCreateWindow(dto) {
+	protected Dialog createModifyDialog(MedicalRecordDTO dto) {
+		return new MedicalRecordCreateDialog(dto) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -64,11 +64,11 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordDTO, ArrayList<
 	@Override
 	protected void customizeGrid(Grid<MedicalRecordDTO> grid) {
 		String fdateID = "fdate";
-		grid.addColumn(MedicalRecordDTO::getDate, new LocalDateTimeRenderer("dd.MM.yyyy HH:mm")).setCaption("Datum")
-				.setId(fdateID);
-		grid.getColumn("institution").setCaption("Instituce");
-		grid.getColumn("physician").setCaption("Ošetřující lékař");
-		grid.getColumn("record").setCaption("Záznam");
+		grid.addColumn(new LocalDateTimeRenderer<>(MedicalRecordDTO::getDateTime, "dd.MM.yyyy HH:mm"))
+				.setHeader("Datum").setId(fdateID);
+		grid.getColumnByKey("institution").setHeader("Instituce");
+		grid.getColumnByKey("physician").setHeader("Ošetřující lékař");
+		grid.getColumnByKey("record").setHeader("Záznam");
 		grid.setColumns(fdateID, "institution", "physician", "record");
 		grid.setWidth("100%");
 		grid.setSelectionMode(SelectionMode.SINGLE);

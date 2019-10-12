@@ -2,9 +2,9 @@ package cz.gattserver.grass3.medic.web;
 
 import java.util.ArrayList;
 
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
 
 import cz.gattserver.grass3.medic.dto.MedicamentDTO;
 
@@ -22,7 +22,7 @@ public class MedicamentsTab extends MedicPageTab<MedicamentDTO, ArrayList<Medica
 	}
 
 	@Override
-	protected Window createCreateDialog() {
+	protected Dialog createCreateDialog() {
 		return new MedicamentCreateWindow() {
 			private static final long serialVersionUID = -7566950396535469316L;
 
@@ -35,12 +35,12 @@ public class MedicamentsTab extends MedicPageTab<MedicamentDTO, ArrayList<Medica
 	}
 
 	@Override
-	protected Window createDetailDialog(Long id) {
+	protected Dialog createDetailDialog(Long id) {
 		return new MedicamentDetailWindow(id);
 	}
 
 	@Override
-	protected Window createModifyDialog(MedicamentDTO dto) {
+	protected Dialog createModifyDialog(MedicamentDTO dto) {
 		return new MedicamentCreateWindow(dto) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
@@ -58,8 +58,8 @@ public class MedicamentsTab extends MedicPageTab<MedicamentDTO, ArrayList<Medica
 
 	@Override
 	protected void customizeGrid(Grid<MedicamentDTO> grid) {
-		grid.getColumn("name").setCaption("Název");
-		grid.getColumn("tolerance").setCaption("Reakce, nežádoucí účinky");
+		grid.getColumnByKey("name").setHeader("Název");
+		grid.getColumnByKey("tolerance").setHeader("Reakce, nežádoucí účinky");
 		grid.setWidth("100%");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setColumns("name", "tolerance");

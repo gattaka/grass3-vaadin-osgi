@@ -2,35 +2,38 @@ package cz.gattserver.grass3.medic.web;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+import java.util.Arrays;
 
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.renderers.ComponentRenderer;
-import com.vaadin.ui.renderers.LocalDateTimeRenderer;
-import com.vaadin.ui.renderers.TextRenderer;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.Column;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.provider.SortDirection;
+import com.vaadin.flow.data.renderer.IconRenderer;
+import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.dto.ScheduledVisitState;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.util.MedicUtil;
-import cz.gattserver.grass3.medic.web.ScheduledVisitsCreateWindow.Operation;
-import cz.gattserver.grass3.ui.components.DetailGridButton;
-import cz.gattserver.grass3.ui.util.GridUtils;
+import cz.gattserver.grass3.medic.web.ScheduledVisitsCreateDialog.Operation;
+import cz.gattserver.grass3.ui.components.button.CreateButton;
+import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.button.DetailGridButton;
+import cz.gattserver.grass3.ui.components.button.GridButton;
+import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.BoldSpan;
+import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
+import cz.gattserver.web.common.ui.Strong;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 
@@ -43,35 +46,29 @@ public class ScheduledVisitsTab extends VerticalLayout {
 	private Grid<ScheduledVisitDTO> toBePlannedGrid = new Grid<>();
 	private Grid<ScheduledVisitDTO> plannedGrid = new Grid<>();
 
-	private MedicalRecordsTab medicalRecordsTab;
-
-	public ScheduledVisitsTab(MedicalRecordsTab medicalRecordsTab) {
-		this.medicalRecordsTab = medicalRecordsTab;
+	public ScheduledVisitsTab() {
 		setSpacing(true);
-		setMargin(new MarginInfo(true, false, false, false));
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.MM.yyyy");
-		addComponent(new Label("<strong>Dnes je: </strong>" + LocalDate.now().format(formatter), ContentMode.HTML));
+		add(new HtmlDiv("<strong>Dnes je: </strong>" + LocalDate.now().format(formatter)));
 
 		createPlannedGrid();
 		createToBePlannedTable();
 	}
 
 	private void openCreateWindow(final boolean planned, ScheduledVisitDTO scheduledVisitDTO) {
-		Window win = new ScheduledVisitsCreateWindow(planned ? Operation.PLANNED : Operation.TO_BE_PLANNED,
-				scheduledVisitDTO) {
+		new ScheduledVisitsCreateDialog(planned ? Operation.PLANNED : Operation.TO_BE_PLANNED, scheduledVisitDTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
 			protected void onSuccess() {
 				populateContainer(planned);
 			}
-		};
-		UI.getCurrent().addWindow(win);
+		}.open();
 	}
 
 	private void openCompletedWindow(final ScheduledVisitDTO scheduledVisitDTO) {
-		Window win = new MedicalRecordCreateWindow(scheduledVisitDTO) {
+		new MedicalRecordCreateDialog(scheduledVisitDTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -79,23 +76,21 @@ public class ScheduledVisitsTab extends VerticalLayout {
 				try {
 					getMedicFacade().deleteScheduledVisit(scheduledVisitDTO);
 				} catch (Exception e) {
-					UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se smazat vybranou položku"));
+					new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
 				}
 				populateContainer(true);
-				medicalRecordsTab.refreshGrid();
 			}
-		};
-		UI.getCurrent().addWindow(win);
+		}.open();
 	}
 
 	private void openDeleteWindow(final ScheduledVisitDTO visit, final boolean planned) {
 		ScheduledVisitsTab.this.setEnabled(false);
-		UI.getCurrent().addWindow(new ConfirmDialog("Opravdu smazat '" + visit.getPurpose() + "' ?", ev -> {
+		new ConfirmDialog("Opravdu smazat '" + visit.getPurpose() + "' ?", ev -> {
 			try {
 				getMedicFacade().deleteScheduledVisit(visit);
 				populateContainer(planned);
 			} catch (Exception e) {
-				UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se smazat vybranou položku"));
+				new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
 			}
 		}) {
 
@@ -107,7 +102,7 @@ public class ScheduledVisitsTab extends VerticalLayout {
 				super.close();
 			}
 
-		});
+		}.open();
 	}
 
 	private void populateContainer(boolean planned) {
@@ -119,169 +114,126 @@ public class ScheduledVisitsTab extends VerticalLayout {
 		}
 		grid.getDataProvider().refreshAll();
 		grid.deselectAll();
-		grid.sort("date");
+		Column<ScheduledVisitDTO> dateColumn = grid.getColumnByKey("date");
+		grid.sort(Arrays.asList(new GridSortOrder<ScheduledVisitDTO>(dateColumn, SortDirection.ASCENDING)));
 	}
 
 	private void createPlannedGrid() {
-		final Button newTypeBtn = new Button("Naplánovat návštěvu");
-		final Button modifyBtn = new Button("Upravit");
-		final Button deleteBtn = new Button("Smazat");
-		final Button completedBtn = new Button("Absolvováno");
-		deleteBtn.setEnabled(false);
-		completedBtn.setEnabled(false);
-		modifyBtn.setEnabled(false);
-		newTypeBtn.setIcon(ImageIcon.PLUS_16_ICON.createResource());
-		deleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
-		completedBtn.setIcon(ImageIcon.RIGHT_16_ICON.createResource());
-		modifyBtn.setIcon(ImageIcon.PENCIL_16_ICON.createResource());
-
-		final Button detailBtn = new DetailGridButton<ScheduledVisitDTO>("Detail",
-				item -> UI.getCurrent().addWindow(new SchuduledVisitDetailWindow(item.getId())), plannedGrid);
 
 		/**
 		 * Přehled
 		 */
-		Label plannedTableLabel = new BoldSpan("Naplánované návštěvy");
-		addComponent(plannedTableLabel);
+		add(new H2("Naplánované návštěvy"));
 
 		prepareGrid(plannedGrid, true);
+		add(plannedGrid);
 
-		plannedGrid.addSelectionListener(event -> {
-			boolean enabled = event.getAllSelectedItems().size() == 1;
-			detailBtn.setEnabled(enabled);
-			deleteBtn.setEnabled(enabled);
-			completedBtn.setEnabled(enabled);
-			modifyBtn.setEnabled(enabled);
-		});
-
-		addComponent(plannedGrid);
-
-		HorizontalLayout buttonLayout = new HorizontalLayout();
-		buttonLayout.setSpacing(true);
-		addComponent(buttonLayout);
+		ButtonLayout buttonLayout = new ButtonLayout();
+		add(buttonLayout);
 
 		/**
 		 * Založení nové návštěvy
 		 */
-		newTypeBtn.addClickListener(event -> openCreateWindow(true, null));
-		buttonLayout.addComponent(newTypeBtn);
-
-		/**
-		 * Detail
-		 */
-		buttonLayout.addComponent(detailBtn);
-
-		/**
-		 * Absolvování návštěvy
-		 */
-		completedBtn.addClickListener(
-				event -> openCompletedWindow((ScheduledVisitDTO) plannedGrid.getSelectedItems().iterator().next()));
-		buttonLayout.addComponent(completedBtn);
+		final Button newTypeBtn = new CreateButton("Naplánovat návštěvu", event -> openCreateWindow(true, null));
+		buttonLayout.add(newTypeBtn);
 
 		/**
 		 * Úprava návštěvy
 		 */
-		modifyBtn.addClickListener(
-				event -> openCreateWindow(true, (ScheduledVisitDTO) plannedGrid.getSelectedItems().iterator().next()));
-		buttonLayout.addComponent(modifyBtn);
+		final Button modifyBtn = new ModifyGridButton<ScheduledVisitDTO>(to -> openCreateWindow(true, to), plannedGrid);
+		buttonLayout.add(modifyBtn);
 
 		/**
 		 * Smazání návštěvy
 		 */
-		deleteBtn.addClickListener(
-				event -> openDeleteWindow((ScheduledVisitDTO) plannedGrid.getSelectedItems().iterator().next(), true));
-		buttonLayout.addComponent(deleteBtn);
+		final Button deleteBtn = new DeleteGridButton<ScheduledVisitDTO>(
+				set -> openDeleteWindow(set.iterator().next(), true), plannedGrid);
+		buttonLayout.add(deleteBtn);
+
+		/**
+		 * Absolvování návštěvy
+		 */
+		final Button completedBtn = new GridButton<ScheduledVisitDTO>("Absolvováno",
+				set -> openCompletedWindow(set.iterator().next()), plannedGrid);
+		completedBtn.setIcon(new Image(ImageIcon.RIGHT_16_ICON.createResource(), "Upravit"));
+		buttonLayout.add(completedBtn);
+
+		/**
+		 * Detail
+		 */
+		final Button detailBtn = new DetailGridButton<ScheduledVisitDTO>(
+				item -> new SchuduledVisitDetailWindow(item.getId()), plannedGrid);
+		buttonLayout.add(detailBtn);
 
 		populateContainer(true);
 	}
 
 	private void prepareGrid(Grid<ScheduledVisitDTO> grid, boolean fullTime) {
-		grid.addColumn(item -> {
+		grid.addColumn(new IconRenderer<ScheduledVisitDTO>(item -> {
 			if (item.getState().equals(ScheduledVisitState.MISSED)) {
-				return new Image("", ImageIcon.WARNING_16_ICON.createResource());
+				return new Image(ImageIcon.WARNING_16_ICON.createResource(), "Zmeškáno");
 			} else {
 				if (MedicUtil.isVisitPending(item))
-					return new Image("", ImageIcon.CLOCK_16_ICON.createResource());
+					return new Image(ImageIcon.CLOCK_16_ICON.createResource(), "Blíží se");
 			}
-			return null;
-		}, new ComponentRenderer()).setId("icon").setWidth(GridUtils.ICON_COLUMN_WIDTH);
+			return new Span();
+		}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
 
-		grid.addColumn(ScheduledVisitDTO::getState, new TextRenderer()).setId("state").setCaption("Stav");
-		grid.addColumn(ScheduledVisitDTO::getPurpose).setId("purpose").setCaption("Účel");
+		grid.addColumn(ScheduledVisitDTO::getState).setKey("state").setHeader("Stav");
+		grid.addColumn(ScheduledVisitDTO::getPurpose).setKey("purpose").setHeader("Účel");
 		if (fullTime)
-			grid.addColumn(ScheduledVisitDTO::getDate, new LocalDateTimeRenderer("dd.MM.yyyy HH:mm")).setId("date")
-					.setCaption("Datum");
+			grid.addColumn(new LocalDateTimeRenderer<ScheduledVisitDTO>(to -> to.getDate().atTime(to.getTime()),
+					"dd.MM.yyyy HH:mm")).setKey("date").setHeader("Datum");
 		else
-			grid.addColumn(ScheduledVisitDTO::getDate,
-					new LocalDateTimeRenderer("MMMM yyyy", Locale.forLanguageTag("CS"))).setId("date")
-					.setCaption("Datum");
-		grid.addColumn(item -> item.getInstitution() == null ? "" : item.getInstitution().getName())
-				.setId("institution").setCaption("Instituce");
+			grid.addColumn(new LocalDateTimeRenderer<ScheduledVisitDTO>(to -> to.getDate().atStartOfDay(), "MMMM yyyy"))
+					.setKey("date").setHeader("Datum");
+		grid.addColumn(new TextRenderer<ScheduledVisitDTO>(
+				to -> to.getInstitution() == null ? "" : to.getInstitution().getName())).setKey("institution")
+				.setHeader("Instituce");
+
 		grid.setWidth("100%");
 		grid.setHeight("250px");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setColumns("icon", "date", "purpose", "institution");
-
 	}
 
 	private void createToBePlannedTable() {
 
-		final Button newBtn = new Button("Naplánovat objednání");
-		final Button deleteBtn = new Button("Smazat");
-		final Button modifyBtn = new Button("Upravit");
-		final Button planBtn = new Button("Objednáno");
-		deleteBtn.setEnabled(false);
-		planBtn.setEnabled(false);
-		modifyBtn.setEnabled(false);
-		newBtn.setIcon(ImageIcon.PLUS_16_ICON.createResource());
-		deleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
-		planBtn.setIcon(ImageIcon.CALENDAR_16_ICON.createResource());
-		modifyBtn.setIcon(ImageIcon.PENCIL_16_ICON.createResource());
-
-		final Button detailBtn = new DetailGridButton<ScheduledVisitDTO>("Detail",
-				item -> UI.getCurrent().addWindow(new SchuduledVisitDetailWindow(item.getId())), toBePlannedGrid);
-
 		/**
 		 * Přehled
 		 */
-		Label toBePlannedTableLabel = new BoldSpan("K objednání");
-		addComponent(toBePlannedTableLabel);
+		add(new Strong("K objednání"));
 
 		prepareGrid(toBePlannedGrid, false);
-		toBePlannedGrid.addSelectionListener(event -> {
-			boolean enabled = event.getAllSelectedItems().size() == 1;
-			detailBtn.setEnabled(enabled);
-			deleteBtn.setEnabled(enabled);
-			planBtn.setEnabled(enabled);
-			modifyBtn.setEnabled(enabled);
-		});
+		add(toBePlannedGrid);
 
-		addComponent(toBePlannedGrid);
-
-		HorizontalLayout buttonLayout = new HorizontalLayout();
-		buttonLayout.setSpacing(true);
-		addComponent(buttonLayout);
+		ButtonLayout buttonLayout = new ButtonLayout();
+		add(buttonLayout);
 
 		/**
 		 * Naplánovat objednání
 		 */
-		newBtn.addClickListener(e -> openCreateWindow(false, null));
-		buttonLayout.addComponent(newBtn);
+		final Button newBtn = new CreateButton("Naplánovat objednání", e -> openCreateWindow(false, null));
+		buttonLayout.add(newBtn);
 
 		/**
 		 * Detail
 		 */
-		buttonLayout.addComponent(detailBtn);
+		final Button detailBtn = new DetailGridButton<ScheduledVisitDTO>(
+				item -> new SchuduledVisitDetailWindow(item.getId()).open(), toBePlannedGrid);
+		buttonLayout.add(detailBtn);
 
 		/**
 		 * Objednat návštěvy
 		 */
+		final Button planBtn = new GridButton<ScheduledVisitDTO>("Objednáno", toBePlannedGrid);
+		planBtn.setIcon(new Image(ImageIcon.CALENDAR_16_ICON.createResource(), "Objednáno"));
 		planBtn.addClickListener(event -> {
 			final ScheduledVisitDTO toBePlannedVisitDTO = (ScheduledVisitDTO) toBePlannedGrid.getSelectedItems()
 					.iterator().next();
 
 			ScheduledVisitDTO newDto = getMedicFacade().createPlannedScheduledVisitFromToBePlanned(toBePlannedVisitDTO);
-			Window win = new ScheduledVisitsCreateWindow(Operation.PLANNED_FROM_TO_BE_PLANNED, newDto) {
+			new ScheduledVisitsCreateDialog(Operation.PLANNED_FROM_TO_BE_PLANNED, newDto) {
 				private static final long serialVersionUID = -7566950396535469316L;
 
 				@Override
@@ -301,30 +253,28 @@ public class ScheduledVisitsTab extends VerticalLayout {
 						populateContainer(true);
 						populateContainer(false);
 					} catch (Exception ex) {
-						Notification.show("Nezdařilo se naplánovat příští objednání", Type.WARNING_MESSAGE);
+						new ErrorDialog("Nezdařilo se naplánovat příští objednání").open();
 					}
 				}
-			};
-			UI.getCurrent().addWindow(win);
+			}.open();
 		});
-		buttonLayout.addComponent(planBtn);
+		buttonLayout.add(planBtn);
 
 		/**
 		 * Úprava naplánování
 		 */
-		modifyBtn.addClickListener(event -> openCreateWindow(false,
-				(ScheduledVisitDTO) toBePlannedGrid.getSelectedItems().iterator().next()));
-		buttonLayout.addComponent(modifyBtn);
+		final Button modifyBtn = new ModifyGridButton<ScheduledVisitDTO>(to -> openCreateWindow(false, to),
+				toBePlannedGrid);
+		buttonLayout.add(modifyBtn);
 
 		/**
 		 * Smazání naplánování
 		 */
-		deleteBtn.addClickListener(event -> openDeleteWindow(
-				(ScheduledVisitDTO) toBePlannedGrid.getSelectedItems().iterator().next(), false));
-		buttonLayout.addComponent(deleteBtn);
+		final Button deleteBtn = new DeleteGridButton<ScheduledVisitDTO>(
+				set -> openDeleteWindow(set.iterator().next(), false), toBePlannedGrid);
+		buttonLayout.add(deleteBtn);
 
 		populateContainer(false);
-
 	}
 
 	protected MedicFacade getMedicFacade() {

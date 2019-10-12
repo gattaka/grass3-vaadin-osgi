@@ -11,13 +11,13 @@ public class MedicUtil {
 	}
 
 	public static boolean isVisitPending(ScheduledVisitDTO dto) {
-		LocalDateTime date = dto.getDate();
+		LocalDateTime date = dto.getDateTime();
 		LocalDateTime now = LocalDateTime.now();
 		return date.getMonthValue() == now.getMonthValue() && date.getYear() == now.getYear();
 	}
 
 	public static boolean fromNowAfter7Days(ScheduledVisitDTO dto, LocalDateTime now) {
-		return now.plusDays(7).truncatedTo(ChronoUnit.DAYS).isEqual(dto.getDate().truncatedTo(ChronoUnit.DAYS));
+		return now.plusDays(7).truncatedTo(ChronoUnit.DAYS).isEqual(dto.getDateTime().truncatedTo(ChronoUnit.DAYS));
 	}
 
 }

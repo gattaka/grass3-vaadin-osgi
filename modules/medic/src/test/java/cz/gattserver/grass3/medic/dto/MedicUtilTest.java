@@ -20,13 +20,13 @@ public class MedicUtilTest {
 		String dateStart = "21.12.2012 09:29:58";
 		String dateStop = "02.01.2013 10:31:48";
 
-		dto.setDate(LocalDateTime.parse(dateStop, formatter));
+		dto.setDateTime(LocalDateTime.parse(dateStop, formatter));
 		assertFalse(MedicUtil.fromNowAfter7Days(dto, LocalDateTime.parse(dateStart, formatter)));
 
 		dateStart = "26.12.2012 09:29:58";
 		dateStop = "02.01.2013 10:31:48";
 
-		dto.setDate(LocalDateTime.parse(dateStop, formatter));
+		dto.setDateTime(LocalDateTime.parse(dateStop, formatter));
 		assertTrue(MedicUtil.fromNowAfter7Days(dto, LocalDateTime.parse(dateStart, formatter)));
 
 	}

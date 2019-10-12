@@ -2,62 +2,50 @@ package cz.gattserver.grass3.medic.web;
 
 import java.time.format.DateTimeFormatter;
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 
 import cz.gattserver.grass3.medic.dto.ScheduledVisitDTO;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
-import cz.gattserver.grass3.ui.windows.DetailDialog;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.BoldSpan;
+import cz.gattserver.web.common.ui.Strong;
 
-public class SchuduledVisitDetailWindow extends DetailDialog {
+public class SchuduledVisitDetailWindow extends Dialog {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 
 	public SchuduledVisitDetailWindow(Long id) {
-		super("Detail návštěvy");
-
 		final ScheduledVisitDTO scheduledVisitDTO = SpringContextHelper.getBean(MedicFacade.class)
 				.getScheduledVisitById(id);
 
-		GridLayout layout = new GridLayout(2, 6);
-		layout.setSpacing(true);
-		layout.setMargin(true);
-		layout.addComponent(new BoldSpan("Datum"));
-		layout.addComponent(
-				new Label(scheduledVisitDTO.getDate().format(DateTimeFormatter.ofPattern("d. MMMM yyyy, H:mm"))));
-		layout.addComponent(new BoldSpan("Účel"));
-		layout.addComponent(new Label(scheduledVisitDTO.getPurpose()));
+		add(new Strong("Datum"));
+		add(scheduledVisitDTO.getDate().atTime(scheduledVisitDTO.getTime())
+				.format(DateTimeFormatter.ofPattern("d. MMMM yyyy, H:mm")));
 
-		final Button instButton = new Button(scheduledVisitDTO.getInstitution().getName());
-		instButton.addClickListener(e -> UI.getCurrent()
-				.addWindow(new MedicalInstitutionDetailWindow(scheduledVisitDTO.getInstitution().getId())));
-		instButton.setStyleName(ValoTheme.BUTTON_LINK);
-		layout.addComponent(new BoldSpan("Instituce"));
-		layout.addComponent(instButton);
+		add(new Strong("Účel"));
+		add(scheduledVisitDTO.getPurpose());
 
-		layout.addComponent(new BoldSpan("Navazuje na"));
+		add(new Strong("Instituce"));
+		final Button instButton = new Button(scheduledVisitDTO.getInstitution().getName(),
+				e -> new MedicalInstitutionDetailDialog(scheduledVisitDTO.getInstitution().getId()).open());
+		instButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+		add(instButton);
+
+		add(new Strong("Navazuje na"));
 		if (scheduledVisitDTO.getRecord() != null) {
-			final Button recordButton = new Button(scheduledVisitDTO.getRecord().toString());
-			recordButton.addClickListener(e -> UI.getCurrent()
-					.addWindow(new MedicalRecordDetailWindow(scheduledVisitDTO.getRecord().getId())));
-			recordButton.setStyleName(ValoTheme.BUTTON_LINK);
-			layout.addComponent(recordButton);
+			final Button recordButton = new Button(scheduledVisitDTO.getRecord().toString(),
+					e -> new MedicalRecordDetailWindow(scheduledVisitDTO.getRecord().getId()).open());
+			recordButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+			add(recordButton);
 		} else {
-			layout.addComponent(new Label("-"));
+			add("-");
 		}
 
-		layout.addComponent(new BoldSpan("Pravidelnost (měsíce)"));
-		layout.addComponent(new Label(String.valueOf(scheduledVisitDTO.getPeriod())));
+		add(new Strong("Pravidelnost (měsíce)"));
+		add(String.valueOf(scheduledVisitDTO.getPeriod()));
 
-		layout.addComponent(new BoldSpan("Stav"));
-		layout.addComponent(new Label(String.valueOf(scheduledVisitDTO.getState())));
-
-		setContent(layout);
-
+		add(new Strong("Stav"));
+		add(String.valueOf(scheduledVisitDTO.getState()));
 	}
 }

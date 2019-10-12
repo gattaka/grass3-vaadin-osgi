@@ -22,6 +22,7 @@
 		<module>monitor</module>
 		<module>recipes</module>
 		<module>songs</module>
+		<module>medic</module>
 	</modules>
 
 </project>

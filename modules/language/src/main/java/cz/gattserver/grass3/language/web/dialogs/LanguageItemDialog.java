@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.language.web;
+package cz.gattserver.grass3.language.web.dialogs;
 
 import java.util.Arrays;
 
@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Shortcuts;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -17,9 +20,9 @@ import com.vaadin.flow.data.renderer.TextRenderer;
 import cz.gattserver.grass3.language.facades.LanguageFacade;
 import cz.gattserver.grass3.language.model.domain.ItemType;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
+import cz.gattserver.grass3.ui.components.button.CloseButton;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
-import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
@@ -30,7 +33,7 @@ public class LanguageItemDialog extends WebDialog {
 	@Autowired
 	private LanguageFacade languageFacade;
 
-	interface SaveAction {
+	public interface SaveAction {
 		void onSave(LanguageItemTO itemTO);
 	}
 
@@ -55,12 +58,15 @@ public class LanguageItemDialog extends WebDialog {
 		Binder<LanguageItemTO> binder = new Binder<>();
 
 		RadioButtonGroup<ItemType> typeRadio = new RadioButtonGroup<>();
+		typeRadio.addClassName("top-clean");
 		typeRadio.setItems(Arrays.asList(ItemType.values()));
 		typeRadio.setRenderer(new TextRenderer<>(ItemType::getCaption));
 		binder.forField(typeRadio).bind(LanguageItemTO::getType, LanguageItemTO::setType);
-		addComponent(typeRadio);
+		add(typeRadio);
 
 		TextField contentField = new TextField("Obsah");
+		contentField.addClassName("top-clean");
+
 		TextField translationField = new TextField("Překlad");
 
 		typeRadio.addValueChangeListener(e -> contentField.focus());
@@ -80,29 +86,38 @@ public class LanguageItemDialog extends WebDialog {
 		contentField.setWidth("100%");
 		binder.forField(contentField).asRequired().withValidator(validator).bind(LanguageItemTO::getContent,
 				LanguageItemTO::setContent);
-		addComponent(contentField);
+		add(contentField);
 		contentField.focus();
 
 		translationField.setWidth("100%");
 		binder.forField(translationField).asRequired().bind(LanguageItemTO::getTranslation,
 				LanguageItemTO::setTranslation);
-		addComponent(translationField);
+		add(translationField);
 
 		Shortcuts.addShortcutListener(this, () -> onSave(action, binder, targetTO), Key.ENTER);
 
 		binder.readBean(targetTO);
 
-		ButtonLayout buttonLayout = new ButtonLayout();
-		addComponent(buttonLayout);
+		HorizontalLayout btnLayout = new HorizontalLayout();
+		btnLayout.addClassName("top-margin");
+		btnLayout.setSpacing(false);
+		btnLayout.setPadding(false);
+		btnLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+		add(btnLayout);
 
 		if (to != null) {
-			buttonLayout.add(new ModifyButton(e -> onSave(action, binder, targetTO)));
+			btnLayout.add(new ModifyButton(e -> onSave(action, binder, targetTO)));
 		} else {
+			Div buttonLayout = new Div();
+			buttonLayout.addClassName("button-div");
+			btnLayout.add(buttonLayout);
 			buttonLayout.add(new CreateButton(e -> onSave(action, binder, targetTO)));
 			Button createAndContinueBtn = new CreateButton("Vytvořit a pokračovat",
 					e -> onSaveAndContinue(action, binder, targetTO, langId, typeRadio.getValue()));
 			buttonLayout.add(createAndContinueBtn);
 		}
+
+		btnLayout.add(new CloseButton(e -> close()));
 	}
 
 	private void onSave(SaveAction action, Binder<LanguageItemTO> binder, LanguageItemTO targetTO) {

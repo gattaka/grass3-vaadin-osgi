@@ -1,0 +1,98 @@
+package cz.gattserver.grass3.language.web.tabs;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.server.StreamResource;
+
+import cz.gattserver.grass3.language.facades.LanguageFacade;
+import cz.gattserver.grass3.language.model.domain.ItemType;
+import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
+import cz.gattserver.grass3.language.web.ChartUtils;
+import cz.gattserver.grass3.language.web.LanguagePage;
+import cz.gattserver.web.common.spring.SpringContextHelper;
+
+public class StatisticsTab extends Div {
+
+	private static final long serialVersionUID = 2977436873976010065L;
+
+	private static final Logger logger = LoggerFactory.getLogger(LanguagePage.class);
+
+	@Autowired
+	private LanguageFacade languageFacade;
+
+	public StatisticsTab(Long langId) {
+		SpringContextHelper.inject(this);
+
+		LanguageItemTO to = new LanguageItemTO();
+		to.setLanguage(langId);
+		to.setType(ItemType.WORD);
+		int words = languageFacade.countLanguageItems(to);
+		to.setType(ItemType.PHRASE);
+		int phrases = languageFacade.countLanguageItems(to);
+
+		add("Slovíček: " + words);
+		final BufferedImage wordsImage = ChartUtils.drawChart(languageFacade.getStatisticsItems(ItemType.WORD, langId));
+		Image wordsImg = new Image(new StreamResource("words", () -> {
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			try {
+				ImageIO.write(wordsImage, "png", os);
+				return new ByteArrayInputStream(os.toByteArray());
+			} catch (IOException e) {
+				logger.error("Nezdařilo se vytváření grafu statistiky", e);
+				return null;
+			}
+		}), "wordsImage.png");
+		wordsImg.addClassName("top-margin");
+		add(wordsImg);
+
+		Div header = new Div();
+		header.add("Frází: " + phrases);
+		header.addClassName("top-margin");
+		add(header);
+		final BufferedImage phrasesImage = ChartUtils
+				.drawChart(languageFacade.getStatisticsItems(ItemType.PHRASE, langId));
+		Image phrasesImg = new Image(new StreamResource("phrases", () -> {
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			try {
+				ImageIO.write(phrasesImage, "png", os);
+				return new ByteArrayInputStream(os.toByteArray());
+			} catch (IOException e) {
+				logger.error("Nezdařilo se vytváření grafu statistiky", e);
+				return null;
+			}
+		}), "phrasesImage.png");
+		phrasesImg.addClassName("top-margin");
+		add(phrasesImg);
+
+		header = new Div();
+		header.add("Položek celkem: " + (words + phrases));
+		header.addClassName("top-margin");
+		add(header);
+
+		final BufferedImage itemsImage = ChartUtils.drawChart(languageFacade.getStatisticsItems(null, langId));
+		Image itemsImg = new Image(new StreamResource("items", () -> {
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			try {
+				ImageIO.write(itemsImage, "png", os);
+				return new ByteArrayInputStream(os.toByteArray());
+			} catch (IOException e) {
+				logger.error("Nezdařilo se vytváření grafu statistiky", e);
+				return null;
+			}
+		}), "itemsImage.png");
+		itemsImg.addClassName("top-margin");
+		add(itemsImg);
+	}
+
+}

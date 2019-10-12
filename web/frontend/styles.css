@@ -103,9 +103,13 @@ span.label-err {
 	margin-right: var(--lumo-space-m);
 }
 
-/* Top margin */
+/* Top and Bottom margin */
 .top-margin {
 	margin-top: var(--lumo-space-m);
+}
+
+.bottom-margin {
+	margin-bottom: var(--lumo-space-m);
 }
 
 /* Top clean and Top pull*/

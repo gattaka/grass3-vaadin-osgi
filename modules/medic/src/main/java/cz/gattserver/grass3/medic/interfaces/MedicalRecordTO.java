@@ -111,7 +111,7 @@ public class MedicalRecordTO implements Identifiable {
 
 	@Override
 	public String toString() {
-		return getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) + " " + physician.getName();
+		return getDateTime().format(DateTimeFormatter.ofPattern("d. M. yyyy HH:mm")) + " " + physician.getName();
 	}
 
 	@Override

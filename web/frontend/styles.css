@@ -108,10 +108,15 @@ span.label-err {
 	margin-top: var(--lumo-space-m);
 }
 
-/* Top clean */
+/* Top clean and Top pull*/
 .top-clean {
 	margin-top: 0;
 	padding-top: 0;
+}
+
+.top-pull {
+	margin-top: calc(-1 * var(--lumo-space-m));
+	padding-top: 0; 
 }
 
 /* Tag layout */

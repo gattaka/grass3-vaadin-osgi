@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
@@ -19,33 +20,42 @@ public class SchuduledVisitDetailDialog extends Dialog {
 		final ScheduledVisitTO scheduledVisitDTO = SpringContextHelper.getBean(MedicFacade.class)
 				.getScheduledVisitById(id);
 
-		add(new Strong("Datum"));
-		add(scheduledVisitDTO.getDate().atTime(scheduledVisitDTO.getTime())
+		setWidth("400px");
+
+		VerticalLayout layout = new VerticalLayout();
+		layout.setSpacing(true);
+		layout.setPadding(false);
+		add(layout);
+
+		layout.add(new Strong("Datum"));
+		layout.add(scheduledVisitDTO.getDate().atTime(scheduledVisitDTO.getTime())
 				.format(DateTimeFormatter.ofPattern("d. MMMM yyyy, H:mm")));
 
-		add(new Strong("Účel"));
-		add(scheduledVisitDTO.getPurpose());
+		layout.add(new Strong("Účel"));
+		layout.add(scheduledVisitDTO.getPurpose());
 
-		add(new Strong("Instituce"));
+		layout.add(new Strong("Instituce"));
 		final Button instButton = new Button(scheduledVisitDTO.getInstitution().getName(),
 				e -> new MedicalInstitutionDetailDialog(scheduledVisitDTO.getInstitution().getId()).open());
 		instButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-		add(instButton);
+		instButton.addClassName("top-clean");
+		layout.add(instButton);
 
-		add(new Strong("Navazuje na"));
+		layout.add(new Strong("Navazuje na"));
 		if (scheduledVisitDTO.getRecord() != null) {
 			final Button recordButton = new Button(scheduledVisitDTO.getRecord().toString(),
 					e -> new MedicalRecordDetailDialog(scheduledVisitDTO.getRecord().getId()).open());
+			recordButton.addClassName("top-clean");
 			recordButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-			add(recordButton);
+			layout.add(recordButton);
 		} else {
-			add("-");
+			layout.add("-");
 		}
 
-		add(new Strong("Pravidelnost (měsíce)"));
-		add(String.valueOf(scheduledVisitDTO.getPeriod()));
+		layout.add(new Strong("Pravidelnost (měsíce)"));
+		layout.add(String.valueOf(scheduledVisitDTO.getPeriod()));
 
-		add(new Strong("Stav"));
-		add(String.valueOf(scheduledVisitDTO.getState()));
+		layout.add(new Strong("Stav"));
+		layout.add(String.valueOf(scheduledVisitDTO.getState()));
 	}
 }

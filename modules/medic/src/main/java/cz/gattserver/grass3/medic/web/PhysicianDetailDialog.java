@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.medic.web;
 
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.interfaces.PhysicianTO;
@@ -13,8 +14,14 @@ public class PhysicianDetailDialog extends Dialog {
 
 	public PhysicianDetailDialog(Long id) {
 		final PhysicianTO physicianDTO = SpringContextHelper.getBean(MedicFacade.class).getPhysicianById(id);
-		add(new Strong("Jméno"));
-		add(physicianDTO.getName());
+		
+		VerticalLayout layout = new VerticalLayout();
+		layout.setSpacing(true);
+		layout.setPadding(false);
+		add(layout);
+		
+		layout.add(new Strong("Jméno"));
+		layout.add(physicianDTO.getName());
 	}
 
 }

@@ -54,6 +54,7 @@ public abstract class MedicalRecordCreateDialog extends WebDialog {
 		final ComboBox<PhysicianTO> physicianComboBox = new ComboBox<>("Ošetřující lékař", physicians);
 		add(physicianComboBox);
 		physicianComboBox.setWidth("100%");
+		physicianComboBox.addClassName("top-pull");
 		binder.forField(physicianComboBox).bind("physician");
 
 		final DatePicker dateField = new DatePicker("Datum návštěvy");
@@ -61,7 +62,7 @@ public abstract class MedicalRecordCreateDialog extends WebDialog {
 		add(dateField);
 		dateField.setWidth("100%");
 		binder.forField(dateField).bind("date");
-		
+
 		final TimePicker timeField = new TimePicker("Čas návštěvy");
 		timeField.setLocale(Locale.forLanguageTag("CS"));
 		add(timeField);
@@ -77,6 +78,7 @@ public abstract class MedicalRecordCreateDialog extends WebDialog {
 		final TextArea recordField = new TextArea("Záznam");
 		add(recordField);
 		recordField.setWidth("100%");
+		recordField.setHeight("200px");
 		binder.forField(recordField).bind("record");
 
 		Map<String, MedicamentTO> medicaments = new HashMap<String, MedicamentTO>();

@@ -30,6 +30,7 @@ public abstract class MedicalInstitutionCreateDialog extends WebDialog {
 
 		final TextField nameField = new TextField("Název");
 		add(nameField);
+		nameField.addClassName("top-clean");
 		nameField.setWidth("100%");
 		binder.forField(nameField).bind("name");
 

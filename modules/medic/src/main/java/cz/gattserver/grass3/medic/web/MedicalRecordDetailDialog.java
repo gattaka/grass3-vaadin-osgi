@@ -4,43 +4,51 @@ import java.time.format.DateTimeFormatter;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.interfaces.MedicalRecordTO;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.window.WebDialog;
+import cz.gattserver.web.common.ui.Strong;
 
-public class MedicalRecordDetailDialog extends WebDialog {
+public class MedicalRecordDetailDialog extends Dialog {
 
 	private static final long serialVersionUID = -1240133390770972624L;
 
 	private transient MedicFacade medicFacade;
 
 	public MedicalRecordDetailDialog(Long id) {
-		super("Detail záznamu");
+		VerticalLayout layout = new VerticalLayout();
+		layout.setSpacing(true);
+		layout.setPadding(false);
+		add(layout);
 
+		setWidth("400px");
+		
 		MedicalRecordTO medicalRecordDTO = getMedicFacade().getMedicalRecordById(id);
 
-		add(new H2("Datum"));
-		add(medicalRecordDTO.getDate().format(DateTimeFormatter.ofPattern("d. MMMMM yyyy, H:mm")));
+		layout.add(new Strong("Datum"));
+		layout.add(medicalRecordDTO.getDateTime().format(DateTimeFormatter.ofPattern("d. MMMM yyyy, H:mm")));
 
-		add(new H2("Instituce"));
+		layout.add(new Strong("Instituce"));
 		final Button button = new Button(medicalRecordDTO.getInstitution().getName(),
 				e -> new MedicalInstitutionDetailDialog(medicalRecordDTO.getInstitution().getId()).open());
 		button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-		add(button);
+		button.addClassName("top-clean");
+		layout.add(button);
 
-		add(new H2("Ošetřující lékař"));
-		add(medicalRecordDTO.getPhysician().getName());
+		layout.add(new Strong("Ošetřující lékař"));
+		layout.add(medicalRecordDTO.getPhysician().getName());
 
-		add(new H2("Záznam"));
+		layout.add(new Strong("Záznam"));
 		Div div = new Div();
 		div.setText(medicalRecordDTO.getRecord());
-		div.setWidth("600px");
-		div.getStyle().set("white-space", "pre");
-		add(div);
+		div.setWidth("100%");
+		div.getStyle().set("white-space", "pre-wrap");
+		div.addClassName("top-clean");
+		layout.add(div);
 	}
 
 	protected MedicFacade getMedicFacade() {

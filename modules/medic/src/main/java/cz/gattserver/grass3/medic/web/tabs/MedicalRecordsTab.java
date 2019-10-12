@@ -1,8 +1,11 @@
 package cz.gattserver.grass3.medic.web.tabs;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
@@ -66,12 +69,12 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordTO, ArrayList<M
 	@Override
 	protected void customizeGrid(Grid<MedicalRecordTO> grid) {
 		String fdateID = "fdate";
-		grid.addColumn(new LocalDateTimeRenderer<>(MedicalRecordTO::getDateTime, "dd.MM.yyyy HH:mm"))
-				.setHeader("Datum").setKey(fdateID);
-		grid.getColumnByKey("institution").setHeader("Instituce");
-		grid.getColumnByKey("physician").setHeader("Ošetřující lékař");
-		grid.getColumnByKey("record").setHeader("Záznam");
-		grid.setColumns(fdateID, "institution", "physician", "record");
+		grid.removeAllColumns();
+		grid.addColumn(new LocalDateTimeRenderer<>(MedicalRecordTO::getDateTime,
+				DateTimeFormatter.ofPattern("d. MMMM yyyy", Locale.forLanguageTag("CS")))).setHeader("Datum")
+				.setKey(fdateID).setTextAlign(ColumnTextAlign.END).setWidth("130px").setFlexGrow(0);
+		grid.addColumn("institution").setHeader("Instituce");
+		grid.addColumn("record").setHeader("Záznam");
 		grid.setWidth("100%");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 	}

@@ -29,10 +29,6 @@ public abstract class ScheduledVisitsCreateDialog extends WebDialog {
 
 	private static final Logger logger = LoggerFactory.getLogger(ScheduledVisitsCreateDialog.class);
 
-	enum Operation {
-		TO_BE_PLANNED, PLANNED, PLANNED_FROM_TO_BE_PLANNED
-	}
-
 	public ScheduledVisitsCreateDialog(Operation operation) {
 		this(operation, null);
 	}
@@ -41,6 +37,8 @@ public abstract class ScheduledVisitsCreateDialog extends WebDialog {
 		boolean planned = operation.equals(Operation.PLANNED) || operation.equals(Operation.PLANNED_FROM_TO_BE_PLANNED);
 
 		MedicFacade medicalFacade = SpringContextHelper.getBean(MedicFacade.class);
+
+		setWidth("400px");
 
 		ScheduledVisitTO formDTO = new ScheduledVisitTO();
 		formDTO.setPurpose("");
@@ -52,6 +50,7 @@ public abstract class ScheduledVisitsCreateDialog extends WebDialog {
 
 		final TextField purposeField = new TextField("Účel návštěvy");
 		add(purposeField);
+		purposeField.addClassName("top-clean");
 		purposeField.setWidth("100%");
 		binder.forField(purposeField).asRequired().bind("purpose");
 

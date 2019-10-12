@@ -6,6 +6,7 @@ import java.util.Collection;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 
 import cz.gattserver.common.Identifiable;
@@ -64,9 +65,16 @@ public abstract class GridOperationsTab<T extends Identifiable, C extends Collec
 		init();
 
 		grid = new Grid<>(clazz);
+		grid.addClassName("top-margin");
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		grid.setItems(getItems());
 		customizeGrid(grid);
 		add(grid);
+
+		grid.addItemClickListener(e -> {
+			if (e.getClickCount() > 1)
+				createDetailDialog(e.getItem().getId()).open();
+		});
 
 		ButtonLayout buttonLayout = new ButtonLayout();
 		add(buttonLayout);

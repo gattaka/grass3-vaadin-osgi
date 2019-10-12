@@ -3,6 +3,7 @@ package cz.gattserver.grass3.medic.web.tabs;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Locale;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
@@ -24,9 +25,9 @@ import cz.gattserver.grass3.medic.interfaces.ScheduledVisitState;
 import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
 import cz.gattserver.grass3.medic.util.MedicUtil;
 import cz.gattserver.grass3.medic.web.MedicalRecordCreateDialog;
+import cz.gattserver.grass3.medic.web.Operation;
 import cz.gattserver.grass3.medic.web.ScheduledVisitsCreateDialog;
 import cz.gattserver.grass3.medic.web.SchuduledVisitDetailDialog;
-import cz.gattserver.grass3.medic.web.ScheduledVisitsCreateDialog.Operation;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.DetailGridButton;
@@ -50,7 +51,7 @@ public class ScheduledVisitsTab extends Div {
 	private Grid<ScheduledVisitTO> plannedGrid = new Grid<>();
 
 	public ScheduledVisitsTab() {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.MM.yyyy");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d. MMMM yyyy");
 		Div div = new HtmlDiv("<strong>Dnes je: </strong>" + LocalDate.now().format(formatter));
 		div.addClassName("top-margin");
 		add(div);
@@ -167,7 +168,7 @@ public class ScheduledVisitsTab extends Div {
 		 * Detail
 		 */
 		final Button detailBtn = new DetailGridButton<ScheduledVisitTO>(
-				item -> new SchuduledVisitDetailDialog(item.getId()), plannedGrid);
+				item -> new SchuduledVisitDetailDialog(item.getId()).open(), plannedGrid);
 		buttonLayout.add(detailBtn);
 
 		populateContainer(true);
@@ -186,14 +187,15 @@ public class ScheduledVisitsTab extends Div {
 			return new Span();
 		}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
 
-		grid.addColumn(ScheduledVisitTO::getState).setKey("state").setHeader("Stav");
 		grid.addColumn(ScheduledVisitTO::getPurpose).setKey("purpose").setHeader("Účel");
 		if (fullTime)
 			grid.addColumn(new LocalDateTimeRenderer<ScheduledVisitTO>(to -> to.getDate().atTime(to.getTime()),
-					"dd.MM.yyyy HH:mm")).setKey("date").setHeader("Datum");
+					DateTimeFormatter.ofPattern("d. MMMM yyyy H:mm", Locale.forLanguageTag("CS")))).setKey("date")
+					.setHeader("Datum").setWidth("200px").setFlexGrow(0);
 		else
-			grid.addColumn(new LocalDateTimeRenderer<ScheduledVisitTO>(to -> to.getDate().atStartOfDay(), "MMMM yyyy"))
-					.setKey("date").setHeader("Datum");
+			grid.addColumn(new LocalDateTimeRenderer<ScheduledVisitTO>(to -> to.getDate().atStartOfDay(),
+					DateTimeFormatter.ofPattern("MMMM yyyy", Locale.forLanguageTag("CS")))).setKey("date")
+					.setHeader("Datum").setWidth("100px").setFlexGrow(0);
 		grid.addColumn(new TextRenderer<ScheduledVisitTO>(
 				to -> to.getInstitution() == null ? "" : to.getInstitution().getName())).setKey("institution")
 				.setHeader("Instituce");

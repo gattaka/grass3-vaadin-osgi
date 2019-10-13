@@ -9,12 +9,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Input;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.component.textfield.TextField;
 
 import cz.gattserver.grass3.language.facades.LanguageFacade;
 import cz.gattserver.grass3.language.model.domain.ItemType;
@@ -23,9 +26,7 @@ import cz.gattserver.grass3.language.model.dto.CrosswordHintTO;
 import cz.gattserver.grass3.language.model.dto.CrosswordTO;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.language.web.CrosswordField;
-import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.ImageIcon;
 
 public class CrosswordTab extends Div {
@@ -38,13 +39,15 @@ public class CrosswordTab extends Div {
 	public CrosswordTab(Long langId) {
 		SpringContextHelper.inject(this);
 
-		ButtonLayout btnLayout = new ButtonLayout();
+		HorizontalLayout btnLayout = new HorizontalLayout();
+		btnLayout.addClassName("top-margin");
+		btnLayout.setPadding(false);
 		add(btnLayout);
 
-		Map<TextField, String> fieldMap = new HashMap<>();
+		Map<Input, String> fieldMap = new HashMap<>();
 
 		Button giveUpTestBtn = new Button("Vzdát to", event -> {
-			for (Map.Entry<TextField, String> entry : fieldMap.entrySet())
+			for (Map.Entry<Input, String> entry : fieldMap.entrySet())
 				entry.getKey().setValue(entry.getValue());
 		});
 		giveUpTestBtn.setIcon(new Image(ImageIcon.FLAG_16_ICON.createResource(), "giveup"));
@@ -54,9 +57,10 @@ public class CrosswordTab extends Div {
 		numberField.setHasControls(true);
 		numberField.setMin(5);
 		numberField.setMax(30);
-		add(numberField);
+		btnLayout.add(numberField);
 
 		VerticalLayout mainLayout = new VerticalLayout();
+		add(mainLayout);
 
 		Button newCrosswordBtn = new Button("",
 				event -> generateNewCrossword(numberField.getValue().intValue(), langId, fieldMap, mainLayout));
@@ -69,8 +73,7 @@ public class CrosswordTab extends Div {
 		numberField.setValue(15.0);
 	}
 
-	private void generateNewCrossword(int size, long langId, Map<TextField, String> fieldMap,
-			VerticalLayout mainLayout) {
+	private void generateNewCrossword(int size, long langId, Map<Input, String> fieldMap, VerticalLayout mainLayout) {
 
 		// clear
 		fieldMap.clear();
@@ -89,58 +92,63 @@ public class CrosswordTab extends Div {
 
 		List<CrosswordField> writeFields = new ArrayList<>();
 
-		Div hintsLayout = new Div();
+		FormLayout hintsLayout = new FormLayout();
+		hintsLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("100px", 4));
 		hintsLayout.setWidth("100%");
 		for (CrosswordHintTO to : crosswordTO.getHints()) {
-			hintsLayout.add(to.getId() + ".");
+			hintsLayout.add(new Span(to.getId() + ". " + to.getHint()));
 			CrosswordField tf = new CrosswordField(to);
 			writeFields.add(tf);
 			tf.setMaxLength(to.getWordLength());
 			hintsLayout.add(tf);
-			Span hintLabel = new Span(to.getHint());
-			hintsLayout.add(hintLabel);
 		}
 
 		Div crosswordLayout = constructCrossword(crosswordTO, writeFields, fieldMap);
 
 		mainLayout.add(crosswordLayout);
+		mainLayout.setHorizontalComponentAlignment(Alignment.CENTER, crosswordLayout);
 		mainLayout.add(hintsLayout);
 	}
 
 	private Div constructCrossword(CrosswordTO crosswordTO, List<CrosswordField> writeFields,
-			Map<TextField, String> fieldMap) {
+			Map<Input, String> fieldMap) {
 		Div crosswordLayout = new Div();
 
 		for (int y = 0; y < crosswordTO.getHeight(); y++) {
+			Div line = new Div();
+			line.getStyle().set("display", "flex");
+			crosswordLayout.add(line);
 			for (int x = 0; x < crosswordTO.getWidth(); x++) {
 				CrosswordCell cell = crosswordTO.getCell(x, y);
 				if (cell != null) {
-					TextField t = new TextField();
+					Input t = new Input();
 					t.addClassName("crossword-cell");
-					t.setWidth("25px");
-					t.setHeight("25px");
+					t.setWidth("23px");
+					t.setHeight("23px");
+					t.getStyle().set("padding", "0").set("margin", "0").set("border", "1px solid #bbb")
+							.set("text-align", "center");
 					t.setEnabled(cell.isWriteAllowed());
 					if (!cell.isWriteAllowed()) {
 						t.setValue(cell.getValue());
 					} else {
-						t.setMaxLength(1);
+						t.getElement().setAttribute("maxlength", "1");
 						connectField(t, cell, x, y, writeFields, fieldMap);
 					}
-					crosswordLayout.add(t);
+					line.add(t);
 				} else {
 					Div spacer = new Div();
 					spacer.setWidth("25px");
 					spacer.setHeight("25px");
-					crosswordLayout.add(spacer);
+					spacer.getStyle().set("display", "inline-block");
+					line.add(spacer);
 				}
 			}
-			crosswordLayout.add(new Breakline());
 		}
 		return crosswordLayout;
 	}
 
-	private void connectField(TextField t, CrosswordCell cell, int x, int y, List<CrosswordField> writeFields,
-			Map<TextField, String> fieldMap) {
+	private void connectField(Input t, CrosswordCell cell, int x, int y, List<CrosswordField> writeFields,
+			Map<Input, String> fieldMap) {
 		// logika pro zapipsování skrz postranní pole
 		for (CrosswordField cf : writeFields)
 			cf.tryRegisterCellField(t, x, y);
@@ -150,15 +158,15 @@ public class CrosswordTab extends Div {
 		t.addValueChangeListener(e -> checkCrossword(fieldMap));
 	}
 
-	private void checkCrossword(Map<TextField, String> fieldMap) {
-		for (Map.Entry<TextField, String> entry : fieldMap.entrySet()) {
+	private void checkCrossword(Map<Input, String> fieldMap) {
+		for (Map.Entry<Input, String> entry : fieldMap.entrySet()) {
 			String is = entry.getKey().getValue();
 			String shouldBe = entry.getValue();
 			if (StringUtils.isNotBlank(shouldBe) && !shouldBe.equalsIgnoreCase(is)
 					|| StringUtils.isBlank(shouldBe) && StringUtils.isNotBlank(is))
 				return;
 		}
-		for (TextField tf : fieldMap.keySet()) {
+		for (Input tf : fieldMap.keySet()) {
 			tf.addClassName("crossword-done");
 			tf.setEnabled(false);
 		}

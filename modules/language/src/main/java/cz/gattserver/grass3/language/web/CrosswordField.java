@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.vaadin.flow.component.html.Input;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 
@@ -14,16 +15,16 @@ public class CrosswordField extends TextField {
 	private static final long serialVersionUID = -6813919720512048177L;
 
 	private CrosswordHintTO hintTO;
-	private List<TextField> cellsFields;
+	private List<Input> cellsFields;
 
 	public CrosswordField(CrosswordHintTO hintTO) {
 		this.hintTO = hintTO;
-		cellsFields = new ArrayList<>(Arrays.asList(new TextField[hintTO.getWordLength()]));
+		cellsFields = new ArrayList<>(Arrays.asList(new Input[hintTO.getWordLength()]));
 		setValueChangeMode(ValueChangeMode.EAGER);
 		addValueChangeListener(e -> {
 			String value = e.getValue();
 			for (int i = 0; i < cellsFields.size(); i++) {
-				TextField tf = cellsFields.get(i);
+				Input tf = cellsFields.get(i);
 				if (value.length() > i)
 					tf.setValue(String.valueOf(value.charAt(i)));
 				else
@@ -36,7 +37,7 @@ public class CrosswordField extends TextField {
 		return hintTO;
 	}
 
-	public void tryRegisterCellField(TextField cellField, int x, int y) {
+	public void tryRegisterCellField(Input cellField, int x, int y) {
 		if (hintTO.isHorizontally() && y == hintTO.getFromY() && x >= hintTO.getFromX() && x <= hintTO.getToX())
 			cellsFields.set(x - hintTO.getFromX(), cellField);
 

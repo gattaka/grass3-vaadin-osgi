@@ -14,17 +14,17 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class HWItemTypeCreateWindow extends WebDialog {
+public abstract class HWItemTypeCreateDialog extends WebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	private transient HWService hwService;
 
-	public HWItemTypeCreateWindow(HWItemTypeTO originalDTO) {
+	public HWItemTypeCreateDialog(HWItemTypeTO originalDTO) {
 		init(originalDTO);
 	}
 
-	public HWItemTypeCreateWindow() {
+	public HWItemTypeCreateDialog() {
 		init(null);
 	}
 

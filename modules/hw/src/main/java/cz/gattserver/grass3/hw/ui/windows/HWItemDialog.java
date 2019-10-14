@@ -34,21 +34,21 @@ import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class HWItemWindow extends WebDialog {
+public abstract class HWItemDialog extends WebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	private transient HWService hwService;
 
-	public HWItemWindow(Long originalId) {
+	public HWItemDialog(Long originalId) {
 		init(originalId == null ? null : getHWService().getHWItem(originalId));
 	}
 
-	public HWItemWindow() {
+	public HWItemDialog() {
 		init(null);
 	}
 
-	public HWItemWindow(HWItemTO originalDTO) {
+	public HWItemDialog(HWItemTO originalDTO) {
 		init(originalDTO);
 	}
 

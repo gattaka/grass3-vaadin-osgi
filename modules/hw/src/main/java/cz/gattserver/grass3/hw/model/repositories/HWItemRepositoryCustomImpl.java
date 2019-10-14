@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.OrderSpecifier;
@@ -18,7 +17,6 @@ import cz.gattserver.grass3.hw.model.domain.HWItemType;
 import cz.gattserver.grass3.hw.model.domain.QHWItem;
 import cz.gattserver.grass3.hw.model.domain.QHWItemType;
 import cz.gattserver.grass3.model.util.PredicateBuilder;
-import cz.gattserver.grass3.model.util.QuerydslUtil;
 
 @Repository
 public class HWItemRepositoryCustomImpl implements HWItemRepositoryCustom {
@@ -53,10 +51,10 @@ public class HWItemRepositoryCustomImpl implements HWItemRepositoryCustom {
 	}
 
 	@Override
-	public List<HWItem> getHWItems(HWFilterTO filter, Pageable pageable, OrderSpecifier<?>[] order) {
+	public List<HWItem> getHWItems(HWFilterTO filter, int offset, int limit, OrderSpecifier<?>[] order) {
 		JPAQuery<HWItem> query = new JPAQuery<>(entityManager);
-		QuerydslUtil.applyPagination(pageable, query);
 		QHWItem h = QHWItem.hWItem;
+		query.offset(offset).limit(limit);
 		return query.from(h).where(createPredicateHWItems(filter)).orderBy(order).fetch();
 	}
 

@@ -10,6 +10,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -41,9 +42,8 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
-import cz.gattserver.web.common.ui.window.WebDialog;
 
-public class CampgameDetailDialog extends WebDialog {
+public class CampgameDetailDialog extends Dialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -56,7 +56,7 @@ public class CampgameDetailDialog extends WebDialog {
 
 	private ChangeListener changeListener;
 
-	private Tabs tabSheet;
+	private Tabs tabs;
 	private Tab detailsTab;
 	private Tab imgTab;
 
@@ -66,29 +66,28 @@ public class CampgameDetailDialog extends WebDialog {
 		this.campgameId = campgameId;
 		this.campgameTO = getCampgamesService().getCampgame(campgameId);
 
-		layout.setWidth("720px");
-		layout.setHeight("600px");
-		layout.setSpacing(false);
+		setWidth("720px");
+		setHeight("600px");
 
-		tabSheet = new Tabs();
-		tabSheet.setWidthFull();
-		layout.add(tabSheet);
+		tabs = new Tabs();
+		tabs.setWidthFull();
+		add(tabs);
 
 		pageLayout = new VerticalLayout();
 		pageLayout.setPadding(false);
 		pageLayout.setSpacing(false);
 		pageLayout.setSizeFull();
-		layout.add(pageLayout);
+		add(pageLayout);
 
 		detailsTab = new Tab("Info");
-		tabSheet.add(detailsTab);
+		tabs.add(detailsTab);
 
 		imgTab = new Tab(createImgTabCaption());
-		tabSheet.add(imgTab);
+		tabs.add(imgTab);
 
-		tabSheet.addSelectedChangeListener(e -> {
+		tabs.addSelectedChangeListener(e -> {
 			pageLayout.removeAll();
-			switch (tabSheet.getSelectedIndex()) {
+			switch (tabs.getSelectedIndex()) {
 			default:
 			case 0:
 				switchDetailsTab();
@@ -99,21 +98,18 @@ public class CampgameDetailDialog extends WebDialog {
 			}
 		});
 		switchDetailsTab();
-
-		setCloseOnEsc(true);
-		setCloseOnOutsideClick(true);
 	}
 
 	private void switchDetailsTab() {
 		pageLayout.removeAll();
 		pageLayout.add(createItemDetailsLayout(campgameTO));
-		tabSheet.setSelectedTab(detailsTab);
+		tabs.setSelectedTab(detailsTab);
 	}
 
 	private void switchImgTab() {
 		pageLayout.removeAll();
 		pageLayout.add(createImgTab());
-		tabSheet.setSelectedTab(imgTab);
+		tabs.setSelectedTab(imgTab);
 	}
 
 	private String createImgTabCaption() {

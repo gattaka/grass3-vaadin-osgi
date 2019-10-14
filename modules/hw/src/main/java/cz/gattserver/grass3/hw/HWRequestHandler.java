@@ -3,13 +3,15 @@ package cz.gattserver.grass3.hw;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
+import javax.servlet.annotation.WebServlet;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.server.AbstractConfiguratedPathRequestHandler;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 
-@Component("hwRequestHandler")
+@WebServlet(urlPatterns = "/" + HWConfiguration.HW_PATH + "/*")
 public class HWRequestHandler extends AbstractConfiguratedPathRequestHandler {
 
 	private static final long serialVersionUID = 7154339775034959876L;
@@ -18,7 +20,7 @@ public class HWRequestHandler extends AbstractConfiguratedPathRequestHandler {
 	private HWService hwService;
 
 	public HWRequestHandler() {
-		super(HWConfiguration.HW_PATH);
+		SpringContextHelper.inject(this);
 	}
 
 	@Override

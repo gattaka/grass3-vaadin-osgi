@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.data.domain.Pageable;
-
 import com.querydsl.core.types.OrderSpecifier;
 
 import cz.gattserver.grass3.hw.interfaces.HWFilterTO;
@@ -91,7 +89,7 @@ public interface HWService {
 
 	List<HWItemOverviewTO> getAllHWItems();
 
-	List<HWItemOverviewTO> getHWItems(HWFilterTO filter, Pageable pageable, OrderSpecifier<?>[] order);
+	List<HWItemOverviewTO> getHWItems(HWFilterTO filter, int offset, int limit, OrderSpecifier<?>[] order);
 
 	List<HWItemOverviewTO> getHWItemsByTypes(Collection<String> types);
 

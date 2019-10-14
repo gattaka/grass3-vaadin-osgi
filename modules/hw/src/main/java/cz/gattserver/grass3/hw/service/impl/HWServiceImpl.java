@@ -19,7 +19,6 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -444,8 +443,8 @@ public class HWServiceImpl implements HWService {
 	}
 
 	@Override
-	public List<HWItemOverviewTO> getHWItems(HWFilterTO filter, Pageable pageable, OrderSpecifier<?>[] order) {
-		return hwMapper.mapHWItems(hwItemRepository.getHWItems(filter, pageable, order));
+	public List<HWItemOverviewTO> getHWItems(HWFilterTO filter, int offset, int limit, OrderSpecifier<?>[] order) {
+		return hwMapper.mapHWItems(hwItemRepository.getHWItems(filter, offset, limit, order));
 	}
 
 	@Override

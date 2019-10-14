@@ -6,21 +6,21 @@ import java.nio.file.InvalidPathException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.ValidationResult;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationResult;
 
 import cz.gattserver.grass3.hw.HWConfiguration;
-import cz.gattserver.grass3.server.GrassRequest;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.FileSystemService;
-import cz.gattserver.grass3.ui.pages.settings.AbstractSettingsPage;
-import cz.gattserver.web.common.ui.H2Label;
+import cz.gattserver.grass3.ui.components.button.SaveButton;
+import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 
-public class HWSettingsPage extends AbstractSettingsPage {
+public class HWSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 
 	@Autowired
 	private ConfigurationService configurationService;
@@ -28,32 +28,21 @@ public class HWSettingsPage extends AbstractSettingsPage {
 	@Autowired
 	private FileSystemService fileSystemService;
 
-	public HWSettingsPage(GrassRequest request) {
-		super(request);
-	}
-
 	@Override
-	protected Component createContent() {
-
+	public void createFragment(Div layout) {
 		final HWConfiguration configuration = loadConfiguration();
 		final FileSystem fs = fileSystemService.getFileSystem();
 
-		VerticalLayout layout = new VerticalLayout();
-
-		layout.setPadding(true);
-		layout.setSpacing(true);
-
 		VerticalLayout settingsLayout = new VerticalLayout();
-		layout.addComponent(settingsLayout);
+		layout.add(settingsLayout);
 
-		settingsLayout.removeAllComponents();
-		settingsLayout.addComponent(new H2Label("Nastavení evidence hw"));
+		settingsLayout.add(new H2("Nastavení evidence hw"));
 
 		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
 		VerticalLayout settingsFieldsLayout = new VerticalLayout();
 		settingsFieldsLayout.setSpacing(true);
 		settingsFieldsLayout.setPadding(false);
-		settingsLayout.addComponent(settingsFieldsLayout);
+		settingsLayout.add(settingsFieldsLayout);
 		settingsFieldsLayout.setSizeFull();
 
 		/**
@@ -62,7 +51,7 @@ public class HWSettingsPage extends AbstractSettingsPage {
 		final TextField outputPathField = new TextField("Nastavení kořenového adresáře");
 		outputPathField.setWidth("300px");
 		outputPathField.setValue(configuration.getRootDir());
-		settingsFieldsLayout.addComponent(outputPathField);
+		settingsFieldsLayout.add(outputPathField);
 
 		Binder<HWConfiguration> binder = new Binder<>();
 		binder.forField(outputPathField).asRequired("Kořenový adresář je povinný").withValidator((val, c) -> {
@@ -75,15 +64,13 @@ public class HWSettingsPage extends AbstractSettingsPage {
 		}).bind(HWConfiguration::getRootDir, HWConfiguration::setRootDir);
 
 		// Save tlačítko
-		Button saveButton = new Button("Uložit", e -> {
+		Button saveButton = new SaveButton(e -> {
 			configuration.setRootDir((String) outputPathField.getValue());
 			storeConfiguration(configuration);
 		});
 		binder.addValueChangeListener(l -> saveButton.setEnabled(binder.isValid()));
 
-		settingsFieldsLayout.addComponent(saveButton);
-
-		return layout;
+		settingsFieldsLayout.add(saveButton);
 	}
 
 	private HWConfiguration loadConfiguration() {

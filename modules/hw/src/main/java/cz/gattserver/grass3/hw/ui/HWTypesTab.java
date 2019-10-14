@@ -2,20 +2,19 @@ package cz.gattserver.grass3.hw.ui;
 
 import java.util.Set;
 
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
-import cz.gattserver.grass3.hw.ui.windows.HWItemTypeCreateWindow;
+import cz.gattserver.grass3.hw.ui.windows.HWItemTypeCreateDialog;
+import cz.gattserver.grass3.ui.components.button.CreateButton;
+import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 
@@ -35,54 +34,38 @@ public class HWTypesTab extends VerticalLayout {
 
 	public HWTypesTab() {
 		setSpacing(true);
-		setPadding(new MarginInfo(true, false, false, false));
-
-		final Button newTypeBtn = new Button("Založit nový typ");
-		final Button fixBtn = new Button("Upravit");
-		final Button deleteBtn = new Button("Smazat");
-		fixBtn.setEnabled(false);
-		deleteBtn.setEnabled(false);
-		newTypeBtn.setIcon(ImageIcon.PLUS_16_ICON.createResource());
-		fixBtn.setIcon(ImageIcon.QUICKEDIT_16_ICON.createResource());
-		deleteBtn.setIcon(ImageIcon.DELETE_16_ICON.createResource());
 
 		grid = new Grid<>(HWItemTypeTO.class);
 		Set<HWItemTypeTO> data = getHWService().getAllHWTypes();
 		grid.setItems(data);
 
-		grid.getColumn("name").setCaption("Název");
+		grid.getColumnByKey("name").setHeader("Název");
 		grid.setWidth("100%");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setColumns("name");
-		grid.addSelectionListener(e -> {
-			boolean enabled = !e.getAllSelectedItems().isEmpty();
-			deleteBtn.setEnabled(enabled);
-			fixBtn.setEnabled(enabled);
-		});
 
-		addComponent(grid);
+		add(grid);
 
-		HorizontalLayout buttonLayout = new HorizontalLayout();
-		buttonLayout.setSpacing(true);
-		addComponent(buttonLayout);
+		ButtonLayout buttonLayout = new ButtonLayout();
+		add(buttonLayout);
 
 		/**
 		 * Založení nového typu
 		 */
-		newTypeBtn.addClickListener(e -> openNewTypeWindow(data, false));
-		buttonLayout.addComponent(newTypeBtn);
+		Button newTypeBtn = new CreateButton("Založit nový typ", e -> openNewTypeWindow(data, false));
+		buttonLayout.add(newTypeBtn);
 
 		/**
 		 * Úprava typu
 		 */
-		fixBtn.addClickListener(e -> openNewTypeWindow(data, true));
-		buttonLayout.addComponent(fixBtn);
+		Button fixBtn = new ModifyGridButton<HWItemTypeTO>(set -> openNewTypeWindow(data, true), grid);
+		buttonLayout.add(fixBtn);
 
 		/**
 		 * Smazání typu
 		 */
-		deleteBtn.addClickListener(e -> openDeleteWindow(data));
-		buttonLayout.addComponent(deleteBtn);
+		Button deleteBtn = new DeleteGridButton<HWItemTypeTO>(e -> openDeleteWindow(data), grid);
+		buttonLayout.add(deleteBtn);
 	}
 
 	// BUG ? Při disable na tabu a opětovném enabled zůstane table disabled
@@ -96,7 +79,7 @@ public class HWTypesTab extends VerticalLayout {
 		HWItemTypeTO hwItemTypeDTO = null;
 		if (fix)
 			hwItemTypeDTO = grid.getSelectedItems().iterator().next();
-		Window win = new HWItemTypeCreateWindow(hwItemTypeDTO == null ? null : hwItemTypeDTO) {
+		new HWItemTypeCreateDialog(hwItemTypeDTO == null ? null : hwItemTypeDTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
@@ -108,14 +91,13 @@ public class HWTypesTab extends VerticalLayout {
 					grid.getDataProvider().refreshAll();
 				}
 			}
-		};
-		UI.getCurrent().addWindow(win);
+		}.open();
 	}
 
 	private void openDeleteWindow(final Set<HWItemTypeTO> data) {
 		HWTypesTab.this.setEnabled(false);
 		final HWItemTypeTO hwItemType = grid.getSelectedItems().iterator().next();
-		UI.getCurrent().addWindow(new ConfirmDialog(
+		new ConfirmDialog(
 				"Opravdu smazat '" + hwItemType.getName() + "' (typ bude odebrán od všech označených položek HW)?",
 				e -> {
 					try {
@@ -123,7 +105,7 @@ public class HWTypesTab extends VerticalLayout {
 						data.remove(hwItemType);
 						grid.getDataProvider().refreshAll();
 					} catch (Exception ex) {
-						UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se smazat vybranou položku"));
+						new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
 					}
 				}) {
 			private static final long serialVersionUID = -422763987707688597L;
@@ -133,6 +115,6 @@ public class HWTypesTab extends VerticalLayout {
 				HWTypesTab.this.setEnabled(true);
 				super.close();
 			}
-		});
+		}.open();
 	}
 }

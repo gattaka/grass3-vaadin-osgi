@@ -2,10 +2,9 @@ package cz.gattserver.grass3.hw.ui.pages.factories;
 
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.hw.ui.pages.HWSettingsPage;
-import cz.gattserver.grass3.server.GrassRequest;
-import cz.gattserver.grass3.ui.pages.settings.factories.AbstractModuleSettingsPageFactory;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
+import cz.gattserver.grass3.hw.ui.pages.HWSettingsPageFragmentFactory;
+import cz.gattserver.grass3.ui.pages.settings.AbstractModuleSettingsPageFactory;
+import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 
 @Component
 public class HWSettingsPageFactory extends AbstractModuleSettingsPageFactory {
@@ -21,7 +20,7 @@ public class HWSettingsPageFactory extends AbstractModuleSettingsPageFactory {
 	}
 
 	@Override
-	protected GrassPage createPage(GrassRequest request) {
-		return new HWSettingsPage(request);
+	protected AbstractPageFragmentFactory createPageFragmentFactory() {
+		return new HWSettingsPageFragmentFactory();
 	}
 }

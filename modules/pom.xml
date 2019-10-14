@@ -24,6 +24,7 @@
 		<module>songs</module>
 		<module>medic</module>
 		<module>language</module>
+		<module>hw</module>
 	</modules>
 
 </project>

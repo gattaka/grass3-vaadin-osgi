@@ -147,19 +147,13 @@ public class HWServiceImpl implements HWService {
 	 */
 
 	@Override
-	public boolean saveImagesFile(InputStream in, String fileName, HWItemTO item) {
+	public void saveImagesFile(InputStream in, String fileName, HWItemTO item) throws IOException {
 		Path imagesPath;
-		try {
-			imagesPath = getHWItemImagesPath(item.getId());
-			Path imagePath = imagesPath.resolve(fileName);
-			if (!imagePath.normalize().startsWith(imagesPath))
-				throw new IllegalArgumentException(ILLEGAL_PATH_IMGS_ERR);
-			Files.copy(in, imagePath, StandardCopyOption.REPLACE_EXISTING);
-		} catch (IOException e) {
-			logger.error("Nezdařilo se uložit obrázek k HW", e);
-			return false;
-		}
-		return true;
+		imagesPath = getHWItemImagesPath(item.getId());
+		Path imagePath = imagesPath.resolve(fileName);
+		if (!imagePath.normalize().startsWith(imagesPath))
+			throw new IllegalArgumentException(ILLEGAL_PATH_IMGS_ERR);
+		Files.copy(in, imagePath, StandardCopyOption.REPLACE_EXISTING);
 	}
 
 	@Override
@@ -232,17 +226,12 @@ public class HWServiceImpl implements HWService {
 	 */
 
 	@Override
-	public boolean saveDocumentsFile(InputStream in, String fileName, Long id) {
-		try {
-			Path docsPath = getHWItemDocumentsPath(id);
-			Path docPath = docsPath.resolve(fileName);
-			if (!docPath.normalize().startsWith(docsPath))
-				throw new IllegalArgumentException(ILLEGAL_PATH_DOCS_ERR);
-			Files.copy(in, docPath, StandardCopyOption.REPLACE_EXISTING);
-		} catch (IOException e) {
-			throw new GrassException("Nezdařilo se uložit dokument k HW", e);
-		}
-		return true;
+	public void saveDocumentsFile(InputStream in, String fileName, Long id) throws IOException {
+		Path docsPath = getHWItemDocumentsPath(id);
+		Path docPath = docsPath.resolve(fileName);
+		if (!docPath.normalize().startsWith(docsPath))
+			throw new IllegalArgumentException(ILLEGAL_PATH_DOCS_ERR);
+		Files.copy(in, docPath, StandardCopyOption.REPLACE_EXISTING);
 	}
 
 	@Override

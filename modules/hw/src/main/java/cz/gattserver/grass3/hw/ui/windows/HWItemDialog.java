@@ -5,30 +5,25 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Locale;
-import java.util.Set;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.fo0.advancedtokenfield.main.AdvancedTokenField;
-import com.fo0.advancedtokenfield.main.Token;
-import com.vaadin.data.Binder;
-import com.vaadin.data.ValidationException;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.DateField;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.converter.StringToIntegerConverter;
 
-import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemState;
+import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
@@ -64,8 +59,6 @@ public abstract class HWItemDialog extends WebDialog {
 	 *            {@code null}) ?
 	 */
 	private void init(HWItemTO originalDTO) {
-		setCaption(originalDTO == null ? "Založení nové položky HW" : "Oprava údajů existující položky HW");
-
 		HWItemTO formDTO = new HWItemTO();
 		formDTO.setName("");
 		formDTO.setPrice(new BigDecimal(0));
@@ -73,10 +66,9 @@ public abstract class HWItemDialog extends WebDialog {
 		formDTO.setState(HWItemState.NEW);
 		formDTO.setPurchaseDate(LocalDate.now());
 
-		GridLayout winLayout = new GridLayout(2, 5);
-		layout.addComponent(winLayout);
+		FormLayout winLayout = new FormLayout();
+		add(winLayout);
 		winLayout.setWidth("400px");
-		winLayout.setSpacing(true);
 
 		Binder<HWItemTO> binder = new Binder<>(HWItemTO.class);
 		binder.setBean(formDTO);
@@ -84,14 +76,13 @@ public abstract class HWItemDialog extends WebDialog {
 		TextField nameField = new TextField("Název");
 		nameField.setWidth("100%");
 		binder.forField(nameField).asRequired("Název položky je povinný").bind("name");
-		winLayout.addComponent(nameField, 0, 0, 1, 0);
+		winLayout.add(nameField);
 
-		DateField purchaseDateField = new DateField("Získáno");
-		purchaseDateField.setDateFormat("dd.MM.yyyy");
+		DatePicker purchaseDateField = new DatePicker("Získáno");
 		purchaseDateField.setLocale(Locale.forLanguageTag("CS"));
 		purchaseDateField.setSizeFull();
 		binder.bind(purchaseDateField, "purchaseDate");
-		winLayout.addComponent(purchaseDateField, 0, 1);
+		winLayout.add(purchaseDateField);
 
 		TextField priceField = new TextField("Cena");
 		priceField.setSizeFull();
@@ -106,77 +97,59 @@ public abstract class HWItemDialog extends WebDialog {
 				throw new IllegalArgumentException();
 			}
 		}, FieldUtils::formatMoney, "Cena musí být číslo").bind("price");
-		winLayout.addComponent(priceField, 1, 1);
+		winLayout.add(priceField);
 
-		DateField destructionDateField = new DateField("Odepsáno");
-		destructionDateField.setDateFormat("dd.MM.yyyy");
+		DatePicker destructionDateField = new DatePicker("Odepsáno");
 		destructionDateField.setLocale(Locale.forLanguageTag("CS"));
 		binder.bind(destructionDateField, "destructionDate");
 		destructionDateField.setSizeFull();
-		winLayout.addComponent(destructionDateField, 0, 2);
+		winLayout.add(destructionDateField);
 
 		ComboBox<HWItemState> stateComboBox = new ComboBox<>("Stav", Arrays.asList(HWItemState.values()));
 		stateComboBox.setWidth("100%");
-		stateComboBox.setEmptySelectionAllowed(false);
-		stateComboBox.setItemCaptionGenerator(HWItemState::getName);
+		stateComboBox.setItemLabelGenerator(HWItemState::getName);
 		binder.forField(stateComboBox).asRequired("Stav položky je povinný").bind("state");
-		winLayout.addComponent(stateComboBox, 1, 2);
+		winLayout.add(stateComboBox);
 
 		TextField warrantyYearsField = new TextField("Záruka (roky)");
 		binder.forField(warrantyYearsField).withNullRepresentation("")
 				.withConverter(new StringToIntegerConverter(null, "Záruka musí být celé číslo")).bind("warrantyYears");
 		warrantyYearsField.setSizeFull();
-		winLayout.addComponent(warrantyYearsField, 0, 3);
+		winLayout.add(warrantyYearsField);
 
 		TextField supervizedForField = new TextField("Spravováno pro");
 		supervizedForField.setWidth("100%");
 		binder.bind(supervizedForField, "supervizedFor");
-		winLayout.addComponent(supervizedForField, 1, 3);
+		winLayout.add(supervizedForField);
 
-		AdvancedTokenField keywords = new AdvancedTokenField();
-		keywords.isEnabled();
+		Map<String, HWItemTypeTO> tokens = new HashMap<>();
+		getHWService().getAllHWTypes().forEach(to -> tokens.put(to.getName(), to));
+
+		TokenField keywords = new TokenField(tokens.keySet());
 		keywords.setAllowNewItems(true);
 		keywords.getInputField().setPlaceholder("klíčové slovo");
 
-		Set<HWItemTypeTO> contentTypes = getHWService().getAllHWTypes();
-		contentTypes.forEach(t -> {
-			Token to = new Token(t.getName());
-			keywords.addTokenToInputField(to);
-		});
-
 		if (originalDTO != null)
-			for (String typeName : originalDTO.getTypes())
-				keywords.addToken(new Token(typeName));
-		winLayout.addComponent(keywords, 0, 4, 1, 4);
+			keywords.setValues(originalDTO.getTypes());
+		winLayout.add(keywords);
 
-		Button createBtn;
-		createBtn = new Button("Uložit", e -> {
+		SaveCloseButtons buttons = new SaveCloseButtons(e -> {
 			try {
 				HWItemTO writeDTO = originalDTO == null ? new HWItemTO() : originalDTO;
 				binder.writeBean(writeDTO);
-				Set<String> tokens = new HashSet<>();
-				keywords.getTokens().forEach(t -> tokens.add(t.getValue()));
-				writeDTO.setTypes(tokens);
+				writeDTO.setTypes(keywords.getValues());
 				writeDTO.setId(getHWService().saveHWItem(writeDTO));
 				onSuccess(writeDTO);
 				close();
-			} catch (ValidationException ve) {
-				Notification.show(
-						"Chybná vstupní data\n\n   " + ve.getValidationErrors().iterator().next().getErrorMessage(),
-						Notification.Type.ERROR_MESSAGE);
 			} catch (Exception ve) {
-				UI.getCurrent().addWindow(new ErrorDialog("Uložení se nezdařilo"));
+				new ErrorDialog("Uložení se nezdařilo").open();
 			}
-		});
-		layout.addComponent(createBtn);
-		layout.setComponentAlignment(createBtn, Alignment.BOTTOM_RIGHT);
-		setContent(layout);
+		}, e -> close());
 
-		if (originalDTO != null) {
+		add(buttons);
+
+		if (originalDTO != null)
 			binder.readBean(originalDTO);
-		}
-
-		removeAllCloseShortcuts();
 	}
 
 	protected abstract void onSuccess(HWItemTO dto);

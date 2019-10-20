@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.hw.service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
@@ -22,7 +23,7 @@ public interface HWService {
 	 * Images
 	 */
 
-	boolean saveImagesFile(InputStream in, String fileName, HWItemTO item);
+	void saveImagesFile(InputStream in, String fileName, HWItemTO item) throws IOException;
 
 	List<HWItemFileTO> getHWItemImagesFiles(Long id);
 
@@ -38,7 +39,7 @@ public interface HWService {
 	 * Documents
 	 */
 
-	boolean saveDocumentsFile(InputStream in, String fileName, Long id);
+	void saveDocumentsFile(InputStream in, String fileName, Long id) throws IOException;
 
 	List<HWItemFileTO> getHWItemDocumentsFiles(Long id);
 

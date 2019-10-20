@@ -4,22 +4,18 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Locale;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.ValidationException;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.DateField;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.UI;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.data.binder.Binder;
 
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemState;
 import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
 import cz.gattserver.grass3.hw.service.HWService;
-import cz.gattserver.grass3.ui.util.UIUtils;
+import cz.gattserver.grass3.ui.components.SaveCloseButtons;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
@@ -35,8 +31,6 @@ public abstract class ServiceNoteCreateDialog extends WebDialog {
 	}
 
 	public ServiceNoteCreateDialog(final HWItemTO hwItem, ServiceNoteTO originalTO) {
-		super(originalTO == null ? "Nový servisní záznam" : "Oprava existujícího servisního záznamu");
-
 		ServiceNoteTO formTO = new ServiceNoteTO();
 		formTO.setDate(LocalDate.now());
 		formTO.setDescription("");
@@ -45,30 +39,25 @@ public abstract class ServiceNoteCreateDialog extends WebDialog {
 		Binder<ServiceNoteTO> binder = new Binder<>();
 		binder.setBean(formTO);
 
-		GridLayout winLayout = new GridLayout(2, 4);
-		setContent(winLayout);
-		winLayout.setSpacing(true);
-		winLayout.setPadding(true);
+		FormLayout winLayout = new FormLayout();
+		add(winLayout);
 
-		DateField eventDateField = new DateField("Datum");
-		eventDateField.setDateFormat("dd.MM.yyyy");
+		DatePicker eventDateField = new DatePicker("Datum");
 		eventDateField.setLocale(Locale.forLanguageTag("CS"));
 		binder.forField(eventDateField).asRequired("Datum musí být vyplněno").bind(ServiceNoteTO::getDate,
 				ServiceNoteTO::setDate);
-		winLayout.addComponent(eventDateField, 0, 0);
+		winLayout.add(eventDateField);
 
 		ComboBox<HWItemState> stateComboBox = new ComboBox<>("Stav", Arrays.asList(HWItemState.values()));
-		stateComboBox.setEmptySelectionAllowed(false);
 		// namísto propertyId a captionId jsou funkcionální settery a gettery
-		stateComboBox.setItemCaptionGenerator(HWItemState::getName);
+		stateComboBox.setItemLabelGenerator(HWItemState::getName);
 		binder.forField(stateComboBox).bind(ServiceNoteTO::getState, ServiceNoteTO::setState);
-		winLayout.addComponent(stateComboBox, 1, 0);
+		winLayout.add(stateComboBox);
 
 		ComboBox<HWItemOverviewTO> usedInCombo = new ComboBox<>("Je součástí",
 				getHWService().getHWItemsAvailableForPart(hwItem.getId()));
 		usedInCombo.setSizeFull();
-		usedInCombo.setEmptySelectionAllowed(true);
-		usedInCombo.setItemCaptionGenerator(HWItemOverviewTO::getName);
+		usedInCombo.setItemLabelGenerator(HWItemOverviewTO::getName);
 		usedInCombo.setValue(hwItem.getUsedIn());
 		// ekvivalent Convertoru z v7
 		binder.bind(usedInCombo, note -> {
@@ -82,7 +71,7 @@ public abstract class ServiceNoteCreateDialog extends WebDialog {
 			note.setUsedInId(item == null ? null : item.getId());
 			note.setUsedInName(item == null ? null : item.getName());
 		});
-		winLayout.addComponent(usedInCombo, 0, 1, 1, 1);
+		winLayout.add(usedInCombo);
 
 		if (hwItem.getUsedIn() != null)
 			usedInCombo.setValue(hwItem.getUsedIn());
@@ -91,10 +80,9 @@ public abstract class ServiceNoteCreateDialog extends WebDialog {
 		descriptionField.setWidth("100%");
 		descriptionField.setHeight("120px");
 		binder.forField(descriptionField).bind(ServiceNoteTO::getDescription, ServiceNoteTO::setDescription);
-		winLayout.addComponent(descriptionField, 0, 2, 1, 2);
+		winLayout.add(descriptionField);
 
-		Button createBtn;
-		createBtn = new Button(originalTO == null ? "Zapsat" : "Upravit", e -> {
+		SaveCloseButtons buttons = new SaveCloseButtons(e -> {
 			try {
 				ServiceNoteTO writeDTO = originalTO == null ? new ServiceNoteTO() : originalTO;
 				binder.writeBean(writeDTO);
@@ -106,20 +94,16 @@ public abstract class ServiceNoteCreateDialog extends WebDialog {
 					onSuccess(writeDTO);
 				}
 				close();
-			} catch (ValidationException ex) {
-				UIUtils.showError("Chybně vyplněný formulář");
 			} catch (Exception ex) {
-				UI.getCurrent().addWindow(new ErrorDialog("Nezdařilo se zapsat nový servisní záznam"));
+				new ErrorDialog("Nezdařilo se zapsat nový servisní záznam").open();
 			}
-		});
-		winLayout.addComponent(createBtn, 1, 3);
-		winLayout.setComponentAlignment(createBtn, Alignment.BOTTOM_RIGHT);
+		}, e -> close());
+
+		add(buttons);
 
 		// Poté, co je form probindován se nastaví hodnoty dle originálu
 		if (originalTO != null)
 			binder.readBean(originalTO);
-
-		removeAllCloseShortcuts();
 	}
 
 	private HWService getHWService() {

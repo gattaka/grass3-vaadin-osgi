@@ -10,17 +10,17 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class HWItemTypeCreateDialog extends WebDialog {
+public abstract class HWItemTypeDialog extends WebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	private transient HWService hwService;
 
-	public HWItemTypeCreateDialog(HWItemTypeTO originalDTO) {
+	public HWItemTypeDialog(HWItemTypeTO originalDTO) {
 		init(originalDTO);
 	}
 
-	public HWItemTypeCreateDialog() {
+	public HWItemTypeDialog() {
 		init(null);
 	}
 
@@ -37,8 +37,11 @@ public abstract class HWItemTypeCreateDialog extends WebDialog {
 		binder.setBean(formDTO);
 
 		final TextField nameField = new TextField();
+		nameField.setWidthFull();
 		binder.bind(nameField, "name");
 
+		setWidth("200px");
+		
 		add(nameField);
 
 		SaveCloseButtons buttons = new SaveCloseButtons(e -> {

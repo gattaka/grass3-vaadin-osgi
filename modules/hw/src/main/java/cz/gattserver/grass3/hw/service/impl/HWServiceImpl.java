@@ -16,8 +16,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,8 +46,6 @@ import cz.gattserver.grass3.services.FileSystemService;
 @Transactional
 @Component
 public class HWServiceImpl implements HWService {
-
-	private static final Logger logger = LoggerFactory.getLogger(HWServiceImpl.class);
 
 	private static final String ILLEGAL_PATH_IMGS_ERR = "Podtečení adresáře grafických příloh";
 	private static final String ILLEGAL_PATH_DOCS_ERR = "Podtečení adresáře dokumentací";

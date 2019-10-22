@@ -4,12 +4,13 @@ import java.util.Set;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.html.Div;
 
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
-import cz.gattserver.grass3.hw.ui.windows.HWItemTypeCreateDialog;
+import cz.gattserver.grass3.hw.ui.windows.HWItemTypeDialog;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
@@ -18,7 +19,7 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 
-public class HWTypesTab extends VerticalLayout {
+public class HWTypesTab extends Div {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
@@ -33,9 +34,9 @@ public class HWTypesTab extends VerticalLayout {
 	}
 
 	public HWTypesTab() {
-		setSpacing(true);
-
 		grid = new Grid<>(HWItemTypeTO.class);
+		grid.addClassName("top-margin");
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		Set<HWItemTypeTO> data = getHWService().getAllHWTypes();
 		grid.setItems(data);
 
@@ -79,7 +80,7 @@ public class HWTypesTab extends VerticalLayout {
 		HWItemTypeTO hwItemTypeDTO = null;
 		if (fix)
 			hwItemTypeDTO = grid.getSelectedItems().iterator().next();
-		new HWItemTypeCreateDialog(hwItemTypeDTO == null ? null : hwItemTypeDTO) {
+		new HWItemTypeDialog(hwItemTypeDTO == null ? null : hwItemTypeDTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override

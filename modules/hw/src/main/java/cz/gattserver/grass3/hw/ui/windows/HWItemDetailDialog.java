@@ -76,7 +76,6 @@ public class HWItemDetailDialog extends WebDialog {
 	private static final Logger logger = LoggerFactory.getLogger(HWItemDetailDialog.class);
 
 	private static final String DEFAULT_NOTE_LABEL_VALUE = "- Zvolte servisní záznam -";
-	private static final String BORDERED_STYLE = "bordered";
 	private static final String STATE_BIND = "customState";
 	private static final String DATE_BIND = "customDate";
 

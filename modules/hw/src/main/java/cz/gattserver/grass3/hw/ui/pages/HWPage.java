@@ -49,6 +49,7 @@ public class HWPage extends OneColumnPage {
 				break;
 			}
 		});
+		switchOverviewTab();
 	}
 
 	private HWItemsTab switchOverviewTab() {

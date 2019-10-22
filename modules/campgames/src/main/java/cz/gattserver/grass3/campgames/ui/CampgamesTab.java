@@ -64,11 +64,8 @@ public class CampgamesTab extends Div {
 		keywordsFilter.getInputField().setWidth("200px");
 		keywordsFilter.addTokenAddListener(token -> populate());
 		keywordsFilter.addTokenRemoveListener(e -> populate());
-
-		add(keywordsFilter);
-
 		keywordsFilter.setAllowNewItems(false);
-		keywordsFilter.isEnabled();
+		add(keywordsFilter);
 
 		// Tabulka her
 		grid = new Grid<>();
@@ -107,7 +104,7 @@ public class CampgamesTab extends Div {
 		});
 		filteringHeader.getCell(playersColumn).setComponent(playersColumnField);
 
-		// Délka hry 
+		// Délka hry
 		TextField playtimeColumnField = new TextField();
 		playtimeColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
 		playtimeColumnField.setWidth("100%");

@@ -11,10 +11,10 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
@@ -73,27 +73,29 @@ public class HWItemsTab extends Div {
 			tokenMap.put(type.getName(), type);
 
 		hwTypesFilter = new TokenField(tokenMap.keySet());
+		hwTypesFilter.addClassName("top-margin");
 		hwTypesFilter.getInputField().setWidth("200px");
 		hwTypesFilter.addTokenAddListener(token -> populate());
 		hwTypesFilter.addTokenRemoveListener(e -> populate());
-		HorizontalLayout hwTypesFilterLayout = new HorizontalLayout();
-		hwTypesFilterLayout.setSpacing(true);
-		add(hwTypesFilterLayout);
-
-		hwTypesFilterLayout.add(hwTypesFilter);
-
 		hwTypesFilter.setAllowNewItems(false);
 		hwTypesFilter.getInputField().setPlaceholder("Filtrovat dle typu hw");
-		hwTypesFilter.isEnabled();
+		add(hwTypesFilter);
 
 		// Tabulka HW
 		grid = new Grid<>();
+		grid.addClassName("top-margin");
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setWidth("100%");
 
 		Column<HWItemOverviewTO> nameColumn = grid.addColumn(HWItemOverviewTO::getName).setKey(NAME_BIND)
 				.setHeader("Název").setWidth("260px").setFlexGrow(0);
-		Column<HWItemOverviewTO> stateColumn = grid.addColumn(hw -> hw.getState().getName()).setHeader("Stav")
+		// kontrola na null je tady jenom proto, aby při selectu (kdy se udělá
+		// nový objekt a dá se mu akorát ID, které se porovnává) aplikace
+		// nespadla na NPE -- což je trochu zvláštní, protože ve skutečnosti
+		// žádný majetek nemá stav null.
+		Column<HWItemOverviewTO> stateColumn = grid
+				.addColumn(hw -> hw.getState() == null ? "" : hw.getState().getName()).setHeader("Stav")
 				.setKey(STATE_BIND).setWidth("130px").setFlexGrow(0);
 		Column<HWItemOverviewTO> usedInColumn = grid.addColumn(HWItemOverviewTO::getUsedInName).setKey(USED_IN_BIND)
 				.setHeader("Je součástí");
@@ -118,7 +120,7 @@ public class HWItemsTab extends Div {
 
 		// Stav
 		ComboBox<HWItemState> stavColumnCombo = new ComboBox<>(null, Arrays.asList(HWItemState.values()));
-		stavColumnCombo.getElement().setAttribute("theme", TextFieldVariant.LUMO_SMALL.name());
+		stavColumnCombo.getElement().setAttribute("theme", TextFieldVariant.LUMO_SMALL.getVariantName());
 		stavColumnCombo.setWidth("100%");
 		stavColumnCombo.addValueChangeListener(e -> {
 			filterTO.setState(e.getValue());

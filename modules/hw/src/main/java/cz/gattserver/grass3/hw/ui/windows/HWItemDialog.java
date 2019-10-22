@@ -67,16 +67,18 @@ public abstract class HWItemDialog extends WebDialog {
 		formDTO.setPurchaseDate(LocalDate.now());
 
 		FormLayout winLayout = new FormLayout();
+		winLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("200px", 2));
 		add(winLayout);
-		winLayout.setWidth("400px");
+		winLayout.setWidth("500px");
 
 		Binder<HWItemTO> binder = new Binder<>(HWItemTO.class);
 		binder.setBean(formDTO);
 
 		TextField nameField = new TextField("Název");
 		nameField.setWidth("100%");
+		nameField.addClassName("top-clean");
 		binder.forField(nameField).asRequired("Název položky je povinný").bind("name");
-		winLayout.add(nameField);
+		winLayout.add(nameField, 2);
 
 		DatePicker purchaseDateField = new DatePicker("Získáno");
 		purchaseDateField.setLocale(Locale.forLanguageTag("CS"));
@@ -131,7 +133,7 @@ public abstract class HWItemDialog extends WebDialog {
 
 		if (originalDTO != null)
 			keywords.setValues(originalDTO.getTypes());
-		winLayout.add(keywords);
+		winLayout.add(keywords, 2);
 
 		SaveCloseButtons buttons = new SaveCloseButtons(e -> {
 			try {

@@ -246,15 +246,18 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 				String id = UUID.randomUUID().toString();
 				String checkId = "check-" + id;
 				HtmlDiv text = new HtmlDiv("<input style=\"width: inherit\" id=\"" + id + "\" value=\""
-						+ getDownloadLink(to) + "\"/>" + "<br/><span id=\"" + checkId + "\"></span>");
-				UI.getCurrent().getPage()
-						.executeJs("document.getElementById(\"" + id + "\").select(); "
-								+ "if (document.execCommand(\"copy\")) { " + "document.getElementById(\"" + checkId
-								+ "\").innerHTML = \"URL zkopírováno do schránky\";" + "}");
+						+ getDownloadLink(to) + "\"/>" + "<br/><span id=\"" + checkId + "\" onload=''></span>");
 				text.getStyle().set("width", "400px").set("text-align", "center").set("line-height", "30px")
 						.set("color", "dodgerblue").set("font-weight", "bold");
 				ww.add(text);
 				ww.open();
+
+				// musí mít mírný timeout, jinak bude referencovat ještě
+				// nevykreslený element a dotaz podle ID bude null
+				UI.getCurrent().getPage()
+						.executeJs("setTimeout(function(){" + "document.getElementById(\"" + id + "\").select(); "
+								+ "if (document.execCommand(\"copy\")) { " + "document.getElementById(\"" + checkId
+								+ "\").innerHTML = \"URL zkopírováno do schránky\";" + "}" + "},10)");
 			});
 			button.setVisible(!to.isDirectory());
 			button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
@@ -288,7 +291,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 			});
 			button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 			return button;
-		})).setHeader("QR").setTextAlign(ColumnTextAlign.CENTER).setWidth("30px").setFlexGrow(0);
+		})).setHeader("QR").setTextAlign(ColumnTextAlign.CENTER).setWidth("35px").setFlexGrow(0);
 
 		grid.addColumn(new LocalDateTimeRenderer<>(FMItemTO::getLastModified, "d.MM.yyyy HH:mm")).setHeader("Upraveno")
 				.setAutoWidth(true).setTextAlign(ColumnTextAlign.END);

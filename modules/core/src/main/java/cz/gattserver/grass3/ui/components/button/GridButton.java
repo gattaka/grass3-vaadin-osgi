@@ -15,7 +15,7 @@ public class GridButton<T> extends Button {
 	private Registration registration;
 
 	public interface ClickListener<T> {
-		public void buttonClick(Set<T> item);
+		public void buttonClick(Set<T> set);
 	}
 
 	public GridButton(String caption, Grid<T> grid) {

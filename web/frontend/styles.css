@@ -7,10 +7,6 @@ html, body {
 	background-color: #d8cda6;
 }
 
-flow-component-renderer img {
-	margin-bottom: -2px;
-}
-
 vaadin-tab img {
     margin: 0px 5px 1px 0;
 }

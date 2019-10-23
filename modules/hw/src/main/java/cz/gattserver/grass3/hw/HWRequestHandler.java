@@ -25,12 +25,12 @@ public class HWRequestHandler extends AbstractConfiguratedPathRequestHandler {
 
 	@Override
 	protected Path getPath(String fileName) throws FileNotFoundException {
-		if (!fileName.matches("[0-9]+/(img|doc)/[^/]+"))
+		if (!fileName.matches("/[0-9]+/(img|doc)/[^/]+"))
 			throw new FileNotFoundException();
 		String[] chunks = fileName.split("/");
-		Long id = Long.parseLong(chunks[0]);
-		String type = chunks[1];
-		String name = chunks[2];
+		Long id = Long.parseLong(chunks[1]);
+		String type = chunks[2];
+		String name = chunks[3];
 		if ("img".equals(type)) {
 			return hwService.getHWItemImagesFilePath(id, name);
 		}

@@ -40,6 +40,7 @@ import cz.gattserver.grass3.ui.components.button.CloseButton;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.ContainerDiv;
 import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
@@ -175,9 +176,7 @@ public class HWDetailsInfoTab extends Div {
 		add(name);
 
 		List<HWItemOverviewTO> parts = hwService.getAllParts(hwItem.getId());
-		Div partsContainer = new Div();
-		partsContainer.getStyle().set("padding", "var(--lumo-space-m)").set("border", "1px solid lightgray")
-				.set("border-radius", "4px");
+		Div partsContainer = new ContainerDiv();
 		partsContainer.addClassName("top-margin");
 		partsContainer.setHeight("200px");
 		add(partsContainer);

@@ -40,6 +40,8 @@ public abstract class ServiceNoteCreateDialog extends WebDialog {
 		binder.setBean(formTO);
 
 		FormLayout winLayout = new FormLayout();
+		winLayout.addClassName("top-clean");
+		winLayout.addClassName("top-pull");
 		add(winLayout);
 
 		DatePicker eventDateField = new DatePicker("Datum");
@@ -71,16 +73,16 @@ public abstract class ServiceNoteCreateDialog extends WebDialog {
 			note.setUsedInId(item == null ? null : item.getId());
 			note.setUsedInName(item == null ? null : item.getName());
 		});
-		winLayout.add(usedInCombo);
+		winLayout.add(usedInCombo, 2);
 
 		if (hwItem.getUsedIn() != null)
 			usedInCombo.setValue(hwItem.getUsedIn());
 
 		TextArea descriptionField = new TextArea("Popis");
 		descriptionField.setWidth("100%");
-		descriptionField.setHeight("120px");
+		descriptionField.setHeight("200px");
 		binder.forField(descriptionField).bind(ServiceNoteTO::getDescription, ServiceNoteTO::setDescription);
-		winLayout.add(descriptionField);
+		winLayout.add(descriptionField, 2);
 
 		SaveCloseButtons buttons = new SaveCloseButtons(e -> {
 			try {

@@ -37,11 +37,12 @@ public abstract class HWItemTypeDialog extends WebDialog {
 		binder.setBean(formDTO);
 
 		final TextField nameField = new TextField();
+		nameField.setPlaceholder("Typ HW");
 		nameField.setWidthFull();
-		binder.bind(nameField, "name");
+		binder.forField(nameField).asRequired().bind(HWItemTypeTO::getName, HWItemTypeTO::setName);
 
 		setWidth("200px");
-		
+
 		add(nameField);
 
 		SaveCloseButtons buttons = new SaveCloseButtons(e -> {

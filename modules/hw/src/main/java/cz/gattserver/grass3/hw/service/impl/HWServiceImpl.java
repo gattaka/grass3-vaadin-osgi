@@ -314,7 +314,8 @@ public class HWServiceImpl implements HWService {
 		}
 	}
 
-	private Path getHWItemIconFile(Long id) throws IOException {
+	@Override
+	public Path getHWItemIconFile(Long id) throws IOException {
 		Path hwPath = getHWPath(id);
 		if (!Files.exists(hwPath))
 			return null;
@@ -457,9 +458,8 @@ public class HWServiceImpl implements HWService {
 	@Override
 	public void deleteHWItem(Long id) {
 		HWItem item = hwItemRepository.findById(id).orElse(null);
-		for (ServiceNote note : item.getServiceNotes()) {
+		for (ServiceNote note : item.getServiceNotes())
 			serviceNoteRepository.delete(note);
-		}
 
 		item.setServiceNotes(null);
 		hwItemRepository.save(item);

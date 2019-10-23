@@ -16,7 +16,6 @@ import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 
 public class HWTypesTab extends Div {
@@ -66,7 +65,16 @@ public class HWTypesTab extends Div {
 		/**
 		 * Smazání typu
 		 */
-		Button deleteBtn = new DeleteGridButton<HWItemTypeTO>(e -> openDeleteWindow(data), grid);
+		Button deleteBtn = new DeleteGridButton<HWItemTypeTO>(set -> {
+			HWItemTypeTO item = set.iterator().next();
+			try {
+				getHWService().deleteHWItemType(item.getId());
+				data.remove(item);
+				grid.getDataProvider().refreshAll();
+			} catch (Exception ex) {
+				new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
+			}
+		}, grid);
 		buttonLayout.add(deleteBtn);
 	}
 
@@ -96,27 +104,4 @@ public class HWTypesTab extends Div {
 		}.open();
 	}
 
-	private void openDeleteWindow(final Set<HWItemTypeTO> data) {
-		HWTypesTab.this.setEnabled(false);
-		final HWItemTypeTO hwItemType = grid.getSelectedItems().iterator().next();
-		new ConfirmDialog(
-				"Opravdu smazat '" + hwItemType.getName() + "' (typ bude odebrán od všech označených položek HW)?",
-				e -> {
-					try {
-						getHWService().deleteHWItemType(hwItemType.getId());
-						data.remove(hwItemType);
-						grid.getDataProvider().refreshAll();
-					} catch (Exception ex) {
-						new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
-					}
-				}) {
-			private static final long serialVersionUID = -422763987707688597L;
-
-			@Override
-			public void close() {
-				HWTypesTab.this.setEnabled(true);
-				super.close();
-			}
-		}.open();
-	}
 }

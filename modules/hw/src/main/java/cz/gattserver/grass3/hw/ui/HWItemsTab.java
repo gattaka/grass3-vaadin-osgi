@@ -43,7 +43,6 @@ import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 
 public class HWItemsTab extends Div {
@@ -183,8 +182,15 @@ public class HWItemsTab extends Div {
 		buttonLayout.add(fixBtn);
 
 		// Smazání položky HW
-		Button deleteBtn = new DeleteGridButton<HWItemOverviewTO>("Smazat",
-				set -> openDeleteWindow(set.iterator().next()), grid);
+		Button deleteBtn = new DeleteGridButton<HWItemOverviewTO>("Smazat", set -> {
+			HWItemOverviewTO item = set.iterator().next();
+			try {
+				getHWService().deleteHWItem(item.getId());
+				populate();
+			} catch (Exception ex) {
+				new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
+			}
+		}, grid);
 		buttonLayout.add(deleteBtn);
 	}
 
@@ -250,28 +256,6 @@ public class HWItemsTab extends Div {
 
 	private void openDetailWindow(Long id) {
 		new HWItemDetailsDialog(id).open();
-	}
-
-	private void openDeleteWindow(HWItemOverviewTO to) {
-		new ConfirmDialog(
-				"Opravdu smazat '" + to.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?", e -> {
-					try {
-						getHWService().deleteHWItem(to.getId());
-						populate();
-					} catch (Exception ex) {
-						new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
-					}
-				}) {
-
-			private static final long serialVersionUID = -422763987707688597L;
-
-			@Override
-			public void close() {
-				HWItemsTab.this.setEnabled(true);
-				super.close();
-			}
-
-		}.open();
 	}
 
 }

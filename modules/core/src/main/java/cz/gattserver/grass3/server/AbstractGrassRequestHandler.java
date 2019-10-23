@@ -24,6 +24,8 @@ import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cz.gattserver.grass3.exception.GrassPageException;
+
 public abstract class AbstractGrassRequestHandler extends HttpServlet {
 
 	private transient Logger logger = LoggerFactory.getLogger(AbstractGrassRequestHandler.class);
@@ -79,7 +81,13 @@ public abstract class AbstractGrassRequestHandler extends HttpServlet {
 
 		// URL-decode the file name (might contain spaces and on) and prepare
 		// file object.
-		Path file = getPath(URLDecoder.decode(requestedFile, "UTF-8"));
+		Path file = null;
+		try {
+			file = getPath(URLDecoder.decode(requestedFile, "UTF-8"));
+		} catch (GrassPageException gpe) {
+			response.sendError(gpe.getStatus(), gpe.getLocalizedMessage());
+			return;
+		}
 
 		// Check if file actually exists in filesystem.
 		if (!Files.exists(file)) {

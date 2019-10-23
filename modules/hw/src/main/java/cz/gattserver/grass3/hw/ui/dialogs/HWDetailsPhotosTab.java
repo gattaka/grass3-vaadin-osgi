@@ -69,7 +69,7 @@ public class HWDetailsPhotosTab extends Div {
 		});
 
 		containerDiv = new ContainerDiv();
-		containerDiv.setHeight("400px");
+		containerDiv.setHeight("500px");
 		add(containerDiv);
 		add(upload);
 		populateImages();

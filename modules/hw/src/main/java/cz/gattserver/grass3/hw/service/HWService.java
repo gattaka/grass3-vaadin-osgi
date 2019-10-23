@@ -57,6 +57,8 @@ public interface HWService {
 
 	OutputStream createHWItemIconOutputStream(String filename, Long id);
 
+	Path getHWItemIconFile(Long id) throws IOException;
+
 	InputStream getHWItemIconFileInputStream(Long id);
 
 	boolean deleteHWItemIconFile(Long id);

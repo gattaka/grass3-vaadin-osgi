@@ -68,7 +68,7 @@ public class HWDetailsServiceNotesTab extends Div {
 		serviceNotesGrid.addColumn(new TextRenderer<>(to -> String.valueOf(to.getDescription()))).setHeader("Obsah");
 		idColumn.setVisible(false);
 		serviceNotesGrid.setWidth("100%");
-		serviceNotesGrid.setHeight("200px");
+		serviceNotesGrid.setHeight("300px");
 
 		serviceNotesGrid
 				.sort(Arrays.asList(new GridSortOrder<ServiceNoteTO>(serviceDateColumn, SortDirection.ASCENDING),

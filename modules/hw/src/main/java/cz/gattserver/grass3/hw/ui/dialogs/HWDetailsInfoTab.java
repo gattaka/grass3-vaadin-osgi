@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.hw.ui.dialogs;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -9,14 +8,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
@@ -32,7 +30,7 @@ import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.common.util.CZAmountFormatter;
 import cz.gattserver.common.util.MoneyFormatter;
-import cz.gattserver.grass3.exception.GrassException;
+import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.service.HWService;
@@ -48,7 +46,6 @@ import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.Strong;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
-import cz.gattserver.web.common.ui.window.ImageDetailWindow;
 
 public class HWDetailsInfoTab extends Div {
 
@@ -253,20 +250,8 @@ public class HWDetailsInfoTab extends Div {
 		btnLayout.setSpacing(true);
 		btnLayout.setPadding(false);
 
-		Button hwItemImageDetailBtn = new Button("Detail", e -> {
-			BufferedImage bimg = null;
-			InputStream is = hwService.getHWItemIconFileInputStream(hwItem.getId());
-			if (is != null)
-				try {
-					bimg = ImageIO.read(is);
-					int width = bimg.getWidth();
-					int height = bimg.getHeight();
-					new ImageDetailWindow(hwItem.getName(), width, height, new StreamResource(hwItem.getName(),
-							() -> hwService.getHWItemIconFileInputStream(hwItem.getId()))).open();
-				} catch (IOException ex) {
-					throw new GrassException("Při čtení souboru ikony HW položky došlo k chybě.", ex);
-				}
-		});
+		Button hwItemImageDetailBtn = new Button("Detail", e -> UI.getCurrent().getPage()
+				.open(HWConfiguration.HW_PATH + "/" + hwItem.getId() + "/icon/" + hwItem.getName()));
 		hwItemImageDetailBtn.setIcon(new Image(ImageIcon.SEARCH_16_ICON.createResource(), "detail"));
 
 		Button hwItemImageDeleteBtn = new DeleteButton(

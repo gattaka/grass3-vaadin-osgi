@@ -93,7 +93,7 @@ public class HWDetailsInfoTab extends Div {
 		hwImageLayout.setPadding(false);
 		hwImageLayout.setAlignItems(Alignment.CENTER);
 		hwImageLayout.setMaxWidth("200px");
-		hwImageLayout.getStyle().set("height", "calc(var(--lumo-button-size) + 200px + var(--lumo-size-m))");
+		hwImageLayout.getStyle().set("height", "calc(var(--lumo-button-size) + 200px + var(--lumo-space-m))");
 		itemLayout.add(hwImageLayout);
 		createHWImageOrUpload(hwItem);
 

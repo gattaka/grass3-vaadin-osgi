@@ -1,6 +1,7 @@
 package cz.gattserver.grass3.hw.ui.dialogs;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
@@ -17,6 +19,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 
 import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.hw.interfaces.HWItemFileTO;
@@ -54,7 +57,6 @@ public class HWDetailsDocsTab extends Div {
 	private void populateDocsGrid() {
 		docsGrid.setItems(hwService.getHWItemDocumentsFiles(hwItem.getId()));
 		docsGrid.getDataProvider().refreshAll();
-		docsGrid.deselectAll();
 	}
 
 	private void downloadDocument(HWItemFileTO item) {
@@ -63,12 +65,15 @@ public class HWDetailsDocsTab extends Div {
 	}
 
 	private void init() {
-		docsGrid = new Grid<>(HWItemFileTO.class);
+		docsGrid = new Grid<>();
 		docsGrid.setWidthFull();
-		docsGrid.addColumn(HWItemFileTO::getName).setHeader("Název");
-		docsGrid.addColumn(HWItemFileTO::getSize).setHeader("Velikost").setTextAlign(ColumnTextAlign.END);
+		docsGrid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES,
+				GridVariant.LUMO_COMPACT);
+		docsGrid.addColumn(new TextRenderer<HWItemFileTO>(HWItemFileTO::getName)).setHeader("Název");
 		docsGrid.addColumn(new LocalDateTimeRenderer<HWItemFileTO>(HWItemFileTO::getLastModified, "d.MM.yyyy HH:mm"))
 				.setKey("datum").setHeader("Datum");
+		docsGrid.addColumn(new TextRenderer<HWItemFileTO>(HWItemFileTO::getSize)).setHeader("Velikost")
+				.setTextAlign(ColumnTextAlign.END);
 		add(docsGrid);
 
 		populateDocsGrid();

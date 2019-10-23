@@ -123,7 +123,7 @@ public class HWItemDetailsDialog extends Dialog {
 	private void switchDocsTab() {
 		tabLayout.removeAll();
 		tabLayout.add(new HWDetailsDocsTab(hwItem, this));
-		tabs.setSelectedTab(photosTab);
+		tabs.setSelectedTab(docsTab);
 	}
 
 }

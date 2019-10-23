@@ -38,8 +38,9 @@ public class GridLayout extends Div {
 		if (currentRow == null)
 			newRow();
 		currentCell = new Div();
-		currentCell.getStyle().set("display", "table-cell").set("padding-right", "var(--lumo-space-m)")
-				.set("padding-bottom", "var(--lumo-space-m)");
+		if (currentRow.getChildren().count() != 0)
+			currentCell.getStyle().set("padding-left", "var(--lumo-space-m)");
+		currentCell.getStyle().set("display", "table-cell").set("padding-bottom", "var(--lumo-space-m)");
 		currentRow.add(currentCell);
 		return this;
 	}

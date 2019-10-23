@@ -1,7 +1,6 @@
 package cz.gattserver.grass3.hw.ui.dialogs;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,19 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.grid.ColumnTextAlign;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.data.renderer.IconRenderer;
-import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.hw.HWConfiguration;
@@ -29,9 +21,13 @@ import cz.gattserver.grass3.hw.interfaces.HWItemFileTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.ui.components.button.CloseButton;
-import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
+import cz.gattserver.grass3.ui.components.button.DeleteButton;
+import cz.gattserver.grass3.ui.components.button.DetailButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.ContainerDiv;
+import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 
 public class HWDetailsPhotosTab extends Div {
@@ -45,7 +41,7 @@ public class HWDetailsPhotosTab extends Div {
 
 	private HWItemTO hwItem;
 	private HWItemDetailsDialog hwItemDetailDialog;
-	private Grid<HWItemFileTO> grid;
+	private ContainerDiv containerDiv;
 
 	public HWDetailsPhotosTab(HWItemTO hwItem, HWItemDetailsDialog hwItemDetailDialog) {
 		SpringContextHelper.inject(this);
@@ -63,7 +59,7 @@ public class HWDetailsPhotosTab extends Div {
 		upload.addSucceededListener(event -> {
 			try {
 				hwService.saveImagesFile(buffer.getInputStream(event.getFileName()), event.getFileName(), hwItem);
-				populateGrid();
+				populateImages();
 				hwItemDetailDialog.refreshTabLabels();
 			} catch (IOException e) {
 				String msg = "Nezdařilo se uložit obrázek";
@@ -72,8 +68,11 @@ public class HWDetailsPhotosTab extends Div {
 			}
 		});
 
-		createImagesList(upload);
+		containerDiv = new ContainerDiv();
+		containerDiv.setHeight("400px");
+		add(containerDiv);
 		add(upload);
+		populateImages();
 
 		HorizontalLayout operationsLayout = new HorizontalLayout();
 		operationsLayout.setSpacing(false);
@@ -83,53 +82,47 @@ public class HWDetailsPhotosTab extends Div {
 		ButtonLayout buttonLayout = new ButtonLayout();
 		operationsLayout.add(buttonLayout);
 
-		Button deleteBtn = new DeleteGridButton<>("Smazat záznam", items -> {
-			HWItemFileTO item = items.iterator().next();
-			hwService.deleteHWItemImagesFile(hwItem.getId(), item.getName());
-			populateGrid();
-			hwItemDetailDialog.refreshTabLabels();
-		}, grid);
-		buttonLayout.add(deleteBtn);
-
 		CloseButton closeButton = new CloseButton(e -> hwItemDetailDialog.close());
 		closeButton.addClassName("top-margin");
 		operationsLayout.add(closeButton);
 	}
 
-	private void populateGrid() {
-		List<HWItemFileTO> items = hwService.getHWItemImagesFiles(hwItem.getId());
-		grid.setItems(items);
-	}
+	private void populateImages() {
+		containerDiv.removeAll();
+		GridLayout gridLayout = new GridLayout();
+		containerDiv.add(gridLayout);
 
-	private void createImagesList(Upload upload) {
-		grid = new Grid<>();
-		grid.setWidthFull();
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
-		grid.addClassName("top-margin");
+		int counter = 0;
+		for (HWItemFileTO item : hwService.getHWItemImagesFiles(hwItem.getId())) {
+			if (counter == 0)
+				gridLayout.newRow();
+			counter = (counter + 1) % 4;
 
-		add(grid);
+			Div itemDiv = new Div();
+			itemDiv.getStyle().set("text-align", "center");
+			itemDiv.setHeight("calc(var(--lumo-button-size) + 200px + var(--lumo-space-m))");
+			gridLayout.add(itemDiv);
 
-		grid.addColumn(new IconRenderer<HWItemFileTO>(to -> {
 			Image img = new Image(
-					new StreamResource(to.getName(),
-							() -> hwService.getHWItemImagesFileInputStream(hwItem.getId(), to.getName())),
-					to.getName());
+					new StreamResource(item.getName(),
+							() -> hwService.getHWItemImagesFileInputStream(hwItem.getId(), item.getName())),
+					item.getName());
 			img.addClassName("thumbnail-200");
-			return img;
-		}, c -> "")).setFlexGrow(0).setWidth("215px").setHeader("Náhled").setTextAlign(ColumnTextAlign.CENTER);
+			itemDiv.add(img);
 
-		grid.addColumn(new TextRenderer<>(to -> to.getName())).setHeader("Název").setFlexGrow(100);
+			Div buttonLayout = new Div();
+			itemDiv.add(buttonLayout);
 
-		grid.addColumn(new ComponentRenderer<>(to -> {
-			Button button = new Button("Detail", e -> UI.getCurrent().getPage()
-					.open(HWConfiguration.HW_PATH + "/" + hwItem.getId() + "/img/" + to.getName()));
-			button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-			return button;
-		})).setHeader("Detail").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
-
-		grid.addColumn(new TextRenderer<>(HWItemFileTO::getSize)).setHeader("Velikost")
-				.setTextAlign(ColumnTextAlign.END).setFlexGrow(0).setWidth("80px");
-
-		populateGrid();
+			DetailButton detailButton = new DetailButton(e -> UI.getCurrent().getPage()
+					.open(HWConfiguration.HW_PATH + "/" + hwItem.getId() + "/img/" + item.getName()));
+			detailButton.getStyle().set("margin-right", "var(--lumo-space-m)");
+			Button delBtn = new DeleteButton(e -> new ConfirmDialog("Opravdu smazat foto HW položky ?", ev -> {
+				hwService.deleteHWItemImagesFile(hwItem.getId(), item.getName());
+				populateImages();
+				hwItemDetailDialog.refreshTabLabels();
+			}).open());
+			buttonLayout.add(detailButton);
+			buttonLayout.add(delBtn);
+		}
 	}
 }

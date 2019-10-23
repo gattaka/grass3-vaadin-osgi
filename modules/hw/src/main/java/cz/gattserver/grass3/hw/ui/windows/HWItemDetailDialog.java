@@ -13,13 +13,15 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
@@ -29,6 +31,9 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
@@ -53,6 +58,7 @@ import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.grass3.ui.components.button.CloseButton;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
@@ -60,6 +66,7 @@ import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -67,9 +74,8 @@ import cz.gattserver.web.common.ui.Strong;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.ImageDetailWindow;
-import cz.gattserver.web.common.ui.window.WebDialog;
 
-public class HWItemDetailDialog extends WebDialog {
+public class HWItemDetailDialog extends Dialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -108,35 +114,42 @@ public class HWItemDetailDialog extends WebDialog {
 		setWidth("900px");
 		setHeight("700px");
 
+		Div nameDiv = new Div(new Text(hwItem.getName()));
+		nameDiv.getStyle().set("font-size", "15px").set("margin-bottom", "var(--lumo-space-m)")
+				.set("font-weight", "bold").set("margin-top", "calc(var(--lumo-space-m) / -2)");
+		add(nameDiv);
+
 		infoTab = new Tab("Info");
 		serviceNotesTab = new Tab(createServiceNotesTabCaption());
 		photosTab = new Tab(createPhotosTabCaption());
 		docsTab = new Tab(createDocsTabCaption());
 
 		tabs = new Tabs();
-		tabs.setSizeFull();
 		tabs.add(infoTab, serviceNotesTab, photosTab, docsTab);
 		add(tabs);
+
+		tabLayout = new Div();
+		add(tabLayout);
 
 		tabs.addSelectedChangeListener(e -> {
 			switch (tabs.getSelectedIndex()) {
 			default:
 			case 0:
-				createDetailsTab();
+				switchDetailsTab();
 				break;
 			case 1:
-				createServiceNotesTab();
+				switchServiceNotesTab();
 				break;
 			case 2:
-				createPhotosTab();
+				switchPhotosTab();
 				break;
 			case 3:
-				createDocsTab();
+				switchDocsTab();
 				break;
 			}
 		});
-		
-		createDetailsTab();
+
+		switchDetailsTab();
 	}
 
 	private String createServiceNotesTabCaption() {
@@ -237,15 +250,8 @@ public class HWItemDetailDialog extends WebDialog {
 				UIUtils.showError(err);
 			}
 		});
-
-		HorizontalLayout uploadWrapperLayout = new HorizontalLayout();
-		uploadWrapperLayout.setWidth("220px");
-		uploadWrapperLayout.setHeight("220px");
-		uploadWrapperLayout.add(upload);
-		uploadWrapperLayout.setPadding(false);
-
 		hwImageLayout.removeAll();
-		hwImageLayout.add(uploadWrapperLayout);
+		hwImageLayout.add(upload);
 	}
 
 	private void createHWImageOrUpload(final HWItemTO hwItem) {
@@ -253,65 +259,61 @@ public class HWItemDetailDialog extends WebDialog {
 			createHWItemImageUpload(hwItem);
 	}
 
-	private void createDetailsTab() {
+	private void switchDetailsTab() {
 		tabLayout.removeAll();
 
 		HorizontalLayout itemLayout = new HorizontalLayout();
-		itemLayout.setSpacing(false);
+		itemLayout.setSpacing(true);
 		itemLayout.setPadding(false);
-		itemLayout.setSizeUndefined();
+		itemLayout.addClassName("top-margin");
 		tabLayout.add(itemLayout);
 
-		/**
-		 * Foto
-		 */
 		hwImageLayout = new VerticalLayout();
 		hwImageLayout.setSpacing(true);
 		hwImageLayout.setPadding(false);
+		hwImageLayout.setAlignItems(Alignment.CENTER);
+		hwImageLayout.setMaxWidth("200px");
+		hwImageLayout.setMaxHeight("200px");
 		itemLayout.add(hwImageLayout);
 		createHWImageOrUpload(hwItem);
 
-		/**
-		 * Grid
-		 */
-		FormLayout winLayout = new FormLayout();
-		itemLayout.add(winLayout);
+		VerticalLayout itemDetailsLayout = new VerticalLayout();
+		itemDetailsLayout.setPadding(false);
+		itemLayout.add(itemDetailsLayout);
 
-		/**
-		 * Typy
-		 */
 		HorizontalLayout tags = new HorizontalLayout();
 		tags.setSpacing(true);
 		hwItem.getTypes().forEach(typeName -> {
 			Button token = new Button(typeName);
 			tags.add(token);
 		});
-		winLayout.add(tags);
+		itemDetailsLayout.add(tags);
 
+		GridLayout gridLayout = new GridLayout();
+		itemDetailsLayout.add(gridLayout);
+
+		gridLayout.add(new Strong("Stav"));
+		gridLayout.add(new Strong("Získáno"));
+		gridLayout.add(new Strong("Spravováno pro"));
+		gridLayout.newRow();
+
+		gridLayout.add(new Span(hwItem.getState().getName()));
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("d.M.yyyy");
-
-		winLayout.add(new Strong("<strong>Stav</strong>"));
-		winLayout.add(new Strong("<strong>Získáno</strong>"));
-		winLayout.add(new Strong("<strong>Spravováno pro</strong>"));
-
-		winLayout.add(hwItem.getState().getName());
-
 		String purchDate = hwItem.getPurchaseDate() == null ? "-" : hwItem.getPurchaseDate().format(format);
-		winLayout.add(purchDate);
+		gridLayout.add(new Span(purchDate));
+		gridLayout.add(new Span(StringUtils.isBlank(hwItem.getSupervizedFor()) ? "-" : hwItem.getSupervizedFor()));
+		gridLayout.newRow();
 
-		winLayout.add(hwItem.getSupervizedFor() == null ? "-" : hwItem.getSupervizedFor());
+		gridLayout.add(new Strong("Cena"));
+		gridLayout.add(new Strong("Odepsáno"));
+		gridLayout.add(new Strong("Záruka"));
+		gridLayout.newRow();
 
-		winLayout.add(new Strong("<strong>Cena</strong>"));
-		winLayout.add(new Strong("<strong>Odepsáno</strong>"));
-		winLayout.add(new Strong("<strong>Záruka</strong>"));
-
-		winLayout.add(createPriceString(hwItem.getPrice()));
-
+		gridLayout.add(new Span(createPriceString(hwItem.getPrice())));
 		String destrDate = hwItem.getDestructionDate() == null ? "-" : hwItem.getDestructionDate().format(format);
-		winLayout.add(destrDate);
+		gridLayout.add(new Span(destrDate));
 
-		HorizontalLayout zarukaLayout = new HorizontalLayout();
-		zarukaLayout.setSpacing(true);
+		Div zarukaLayout = new Div();
 		if (hwItem.getWarrantyYears() != null && hwItem.getWarrantyYears() > 0 && hwItem.getPurchaseDate() != null) {
 			LocalDate endDate = hwItem.getPurchaseDate().plusYears(hwItem.getWarrantyYears());
 			boolean isInWarranty = endDate.isAfter(LocalDate.now());
@@ -323,25 +325,31 @@ public class HWItemDetailDialog extends WebDialog {
 					+ createWarrantyYearsString(hwItem.getWarrantyYears()) + " (do " + endDate.format(format) + ")";
 			zarukaLayout.add(zarukaContent);
 		} else {
-			zarukaLayout.add("");
+			zarukaLayout.add("-");
 		}
-		winLayout.add(zarukaLayout);
+		gridLayout.add(zarukaLayout);
+		gridLayout.newRow();
 
-		winLayout.add(new Strong("<strong>Je součástí</strong>"));
+		gridLayout.add(new Strong("Je součástí"));
+		gridLayout.newRow();
+
 		if (hwItem.getUsedIn() == null) {
-			winLayout.add("-");
+			gridLayout.add(new Span("-"));
 		} else {
+			// Samotný button se stále roztahoval, bez ohledu na nastavený width
+			Div wrapperDiv = new Div();
 			Button usedInBtn = new Button(hwItem.getUsedIn().getName());
 			usedInBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 			usedInBtn.addClickListener(e -> {
 				close();
 				new HWItemDetailDialog(hwItem.getUsedIn().getId()).open();
 			});
-			winLayout.add(usedInBtn);
+			wrapperDiv.add(usedInBtn);
+			gridLayout.add(wrapperDiv);
 		}
 
 		VerticalLayout partsWrapperLayout = new VerticalLayout();
-		winLayout.add(partsWrapperLayout);
+		tabLayout.add(partsWrapperLayout);
 
 		H3 name = new H3("Součásti");
 		partsWrapperLayout.add(name);
@@ -367,12 +375,13 @@ public class HWItemDetailDialog extends WebDialog {
 		}
 
 		HorizontalLayout operationsLayout = new HorizontalLayout();
-		operationsLayout.setSpacing(true);
+		operationsLayout.setSpacing(false);
+		operationsLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
 		tabLayout.add(operationsLayout);
 
-		/**
-		 * Oprava údajů existující položky HW
-		 */
+		ButtonLayout buttonLayout = new ButtonLayout();
+		operationsLayout.add(buttonLayout);
+
 		final Button fixBtn = new ModifyButton(e -> new HWItemDialog(hwItem) {
 			private static final long serialVersionUID = -1397391593801030584L;
 
@@ -380,15 +389,12 @@ public class HWItemDetailDialog extends WebDialog {
 			protected void onSuccess(HWItemTO dto) {
 				if (changeListener != null)
 					changeListener.onChange();
-				createDetailsTab();
+				switchDetailsTab();
 				tabs.setSelectedIndex(0);
 			}
 		}.open());
-		operationsLayout.add(fixBtn);
+		buttonLayout.add(fixBtn);
 
-		/**
-		 * Smazání položky HW
-		 */
 		final Button deleteBtn = new DeleteButton(e -> new ConfirmDialog(
 				"Opravdu smazat '" + hwItem.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?",
 				ev -> {
@@ -401,7 +407,9 @@ public class HWItemDetailDialog extends WebDialog {
 						new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
 					}
 				}).open());
-		operationsLayout.add(deleteBtn);
+		buttonLayout.add(deleteBtn);
+
+		operationsLayout.add(new CloseButton(e -> close()));
 	}
 
 	private void populateServiceNotesGrid() {
@@ -409,7 +417,7 @@ public class HWItemDetailDialog extends WebDialog {
 		serviceNotesGrid.sort(Arrays.asList(new GridSortOrder<>(serviceDateColumn, SortDirection.DESCENDING)));
 	}
 
-	private void createServiceNotesTab() {
+	private void switchServiceNotesTab() {
 		tabLayout.removeAll();
 
 		/**
@@ -459,7 +467,7 @@ public class HWItemDetailDialog extends WebDialog {
 			protected void onSuccess(ServiceNoteTO noteDTO) {
 				if (changeListener != null)
 					changeListener.onChange();
-				createDetailsTab();
+				switchDetailsTab();
 				populateServiceNotesGrid();
 				serviceNotesGrid.select(noteDTO);
 				serviceNotesTab.setLabel(createServiceNotesTabCaption());
@@ -515,7 +523,7 @@ public class HWItemDetailDialog extends WebDialog {
 		operationsLayout.add(deleteNoteBtn);
 	}
 
-	private void createPhotosTab() {
+	private void switchPhotosTab() {
 		tabLayout.removeAll();
 
 		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
@@ -591,7 +599,7 @@ public class HWItemDetailDialog extends WebDialog {
 		docsGrid.deselectAll();
 	}
 
-	private void createDocsTab() {
+	private void switchDocsTab() {
 		tabLayout.removeAll();
 
 		docsGrid = new Grid<>(HWItemFileTO.class);

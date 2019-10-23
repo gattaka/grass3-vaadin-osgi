@@ -86,7 +86,8 @@ public class HWItemsTab extends Div {
 		grid.addClassName("top-margin");
 		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		grid.setSelectionMode(SelectionMode.SINGLE);
-		grid.setWidth("100%");
+		grid.setWidthFull();
+		grid.setHeight("480px");
 
 		Column<HWItemOverviewTO> nameColumn = grid.addColumn(HWItemOverviewTO::getName).setKey(NAME_BIND)
 				.setHeader("Název").setWidth("260px").setFlexGrow(0);

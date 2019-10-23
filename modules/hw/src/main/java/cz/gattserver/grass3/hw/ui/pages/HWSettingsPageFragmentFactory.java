@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationResult;
@@ -19,6 +18,7 @@ import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 
 public class HWSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 
@@ -33,17 +33,7 @@ public class HWSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 		final HWConfiguration configuration = loadConfiguration();
 		final FileSystem fs = fileSystemService.getFileSystem();
 
-		VerticalLayout settingsLayout = new VerticalLayout();
-		layout.add(settingsLayout);
-
-		settingsLayout.add(new H2("Nastavení evidence hw"));
-
-		// Nadpis zůstane odsazen a jednotlivá pole se můžou mezi sebou rozsázet
-		VerticalLayout settingsFieldsLayout = new VerticalLayout();
-		settingsFieldsLayout.setSpacing(true);
-		settingsFieldsLayout.setPadding(false);
-		settingsLayout.add(settingsFieldsLayout);
-		settingsFieldsLayout.setSizeFull();
+		layout.add(new H2("Nastavení evidence hw"));
 
 		/**
 		 * Kořenový adresář
@@ -51,7 +41,7 @@ public class HWSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 		final TextField outputPathField = new TextField("Nastavení kořenového adresáře");
 		outputPathField.setWidth("300px");
 		outputPathField.setValue(configuration.getRootDir());
-		settingsFieldsLayout.add(outputPathField);
+		layout.add(outputPathField);
 
 		Binder<HWConfiguration> binder = new Binder<>();
 		binder.forField(outputPathField).asRequired("Kořenový adresář je povinný").withValidator((val, c) -> {
@@ -63,14 +53,16 @@ public class HWSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 			}
 		}).bind(HWConfiguration::getRootDir, HWConfiguration::setRootDir);
 
+		ButtonLayout buttonLayout = new ButtonLayout();
+		layout.add(buttonLayout);
+
 		// Save tlačítko
 		Button saveButton = new SaveButton(e -> {
 			configuration.setRootDir((String) outputPathField.getValue());
 			storeConfiguration(configuration);
 		});
 		binder.addValueChangeListener(l -> saveButton.setEnabled(binder.isValid()));
-
-		settingsFieldsLayout.add(saveButton);
+		buttonLayout.add(saveButton);
 	}
 
 	private HWConfiguration loadConfiguration() {

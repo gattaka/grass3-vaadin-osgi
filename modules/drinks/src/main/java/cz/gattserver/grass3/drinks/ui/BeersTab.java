@@ -25,7 +25,7 @@ import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
-import cz.gattserver.grass3.ui.util.TableBuilder;
+import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.web.common.ui.HtmlDiv;
 
 public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
@@ -167,19 +167,18 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 		rs.setReadOnly(true);
 		dataLayout.add(rs);
 
-		TableBuilder tb = new TableBuilder();
-		tb.startRow().strongCell("Kategorie:").cell(choosenDrink.getCategory());
-		tb.nextRow().strongCell("Stupně (°):").cell(String.valueOf(choosenDrink.getDegrees()));
-		tb.strongCell("Alkohol (%):").cell(String.valueOf(choosenDrink.getAlcohol()));
-		tb.nextRow().strongCell("Hořkost (IBU):")
-				.cell(choosenDrink.getIbu() == null ? "" : String.valueOf(choosenDrink.getIbu()));
-		tb.strongCell("Typ sladu:").cell(choosenDrink.getMaltType().getCaption());
-		tb.nextRow().strongCell("Slady (IBU):").cell(choosenDrink.getMalts());
-		tb.strongCell("Chmely:").cell(choosenDrink.getHops());
+		GridLayout tb = new GridLayout();
+		tb.addStrong("Kategorie:").add(choosenDrink.getCategory());
+		tb.newRow().addStrong("Stupně (°):").add(String.valueOf(choosenDrink.getDegrees()));
+		tb.addStrong("Alkohol (%):").add(String.valueOf(choosenDrink.getAlcohol()));
+		tb.newRow().addStrong("Hořkost (IBU):")
+				.add(choosenDrink.getIbu() == null ? "" : String.valueOf(choosenDrink.getIbu()));
+		tb.addStrong("Typ sladu:").add(choosenDrink.getMaltType().getCaption());
+		tb.newRow().addStrong("Slady (IBU):").add(choosenDrink.getMalts());
+		tb.addStrong("Chmely:").add(choosenDrink.getHops());
 
-		HtmlDiv table = new HtmlDiv(tb.build());
-		table.addClassName("top-margin");
-		dataLayout.add(table);
+		tb.addClassName("top-margin");
+		dataLayout.add(tb);
 
 		HtmlDiv description = new HtmlDiv(choosenDrink.getDescription().replaceAll("\n", "<br/>"));
 		description.addClassName("top-margin");

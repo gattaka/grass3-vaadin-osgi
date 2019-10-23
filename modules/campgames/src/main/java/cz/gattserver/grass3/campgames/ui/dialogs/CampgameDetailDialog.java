@@ -60,23 +60,19 @@ public class CampgameDetailDialog extends Dialog {
 	private Tab detailsTab;
 	private Tab imgTab;
 
-	private VerticalLayout pageLayout;
+	private Div pageLayout;
 
 	public CampgameDetailDialog(Long campgameId) {
 		this.campgameId = campgameId;
 		this.campgameTO = getCampgamesService().getCampgame(campgameId);
 
-		setWidth("720px");
-		setHeight("600px");
-
 		tabs = new Tabs();
 		tabs.setWidthFull();
 		add(tabs);
 
-		pageLayout = new VerticalLayout();
-		pageLayout.setPadding(false);
-		pageLayout.setSpacing(false);
-		pageLayout.setSizeFull();
+		pageLayout = new Div();
+		pageLayout.setHeight("600px");
+		pageLayout.setWidth("720px");
 		add(pageLayout);
 
 		detailsTab = new Tab("Info");
@@ -123,7 +119,6 @@ public class CampgameDetailDialog extends Dialog {
 	}
 
 	private Component createItemDetailsLayout(CampgameTO campgameTO) {
-
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSizeFull();
 		layout.setPadding(false);
@@ -205,15 +200,19 @@ public class CampgameDetailDialog extends Dialog {
 		return layout;
 	}
 
-	private Div createImgTab() {
+	private Component createImgTab() {
+		VerticalLayout tabLayout = new VerticalLayout();
+		tabLayout.setSizeFull();
+		tabLayout.setPadding(false);
+		tabLayout.setSpacing(false);
+
 		boolean isAdmin = SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
 				.contains(CoreRole.ADMIN);
-		Div tabLayout = new Div();
-		tabLayout.setSizeFull();
-
 		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
 
 		Upload upload = new Upload(buffer);
+		// protože se jinak šířka uplatní bez ohledu na zmenšení o okraje
+		upload.getStyle().set("width", "calc(100% - 2 * var(--lumo-space-m))");
 		upload.addClassName("top-margin");
 		upload.setAcceptedFileTypes("image/jpeg", "image/png", "image/gif");
 		upload.addSucceededListener(event -> {
@@ -240,7 +239,7 @@ public class CampgameDetailDialog extends Dialog {
 		return tabLayout;
 	}
 
-	private Grid<CampgameFileTO> createGrid(Div tabLayout, boolean isAdmin, Upload upload) {
+	private Grid<CampgameFileTO> createGrid(VerticalLayout tabLayout, boolean isAdmin, Upload upload) {
 		Grid<CampgameFileTO> grid = new Grid<>();
 		List<CampgameFileTO> items = getCampgamesService().getCampgameImagesFiles(campgameId);
 		grid.setItems(items);
@@ -249,7 +248,7 @@ public class CampgameDetailDialog extends Dialog {
 		grid.addClassName("top-margin");
 		grid.getStyle().set("height", "calc(100% - 85px)");
 
-		tabLayout.add(grid);
+		pageLayout.add(grid);
 
 		grid.addColumn(new IconRenderer<CampgameFileTO>(to -> {
 			Image img = new Image(

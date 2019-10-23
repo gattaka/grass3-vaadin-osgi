@@ -41,7 +41,8 @@ public class HWTypesTab extends Div {
 		grid.setItems(data);
 
 		grid.getColumnByKey("name").setHeader("Název");
-		grid.setWidth("100%");
+		grid.setWidthFull();
+		grid.setHeight("500px");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setColumns("name");
 

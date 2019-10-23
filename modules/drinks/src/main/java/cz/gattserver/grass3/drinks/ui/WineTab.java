@@ -22,7 +22,7 @@ import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
-import cz.gattserver.grass3.ui.util.TableBuilder;
+import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.web.common.ui.HtmlDiv;
 
 public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
@@ -137,16 +137,14 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 		rs.setReadOnly(true);
 		dataLayout.add(rs);
 
-		TableBuilder tb = new TableBuilder();
-		tb.startRow().strongCell("Rok:")
-				.cell(choosenDrink.getYear() == null ? "" : String.valueOf(choosenDrink.getYear()));
-		tb.nextRow().strongCell("Alkohol (%):")
-				.cell(choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol()));
-		tb.nextRow().strongCell("Typ vína:").cell(choosenDrink.getWineType().getCaption());
+		GridLayout tb = new GridLayout();
+		tb.addStrong("Rok:").add(choosenDrink.getYear() == null ? "" : String.valueOf(choosenDrink.getYear()));
+		tb.newRow().addStrong("Alkohol (%):")
+				.add(choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol()));
+		tb.newRow().addStrong("Typ vína:").add(choosenDrink.getWineType().getCaption());
 
-		HtmlDiv table = new HtmlDiv(tb.build());
-		table.addClassName("top-margin");
-		dataLayout.add(table);
+		tb.addClassName("top-margin");
+		dataLayout.add(tb);
 
 		HtmlDiv description = new HtmlDiv(choosenDrink.getDescription().replaceAll("\n", "<br/>"));
 		description.addClassName("top-margin");

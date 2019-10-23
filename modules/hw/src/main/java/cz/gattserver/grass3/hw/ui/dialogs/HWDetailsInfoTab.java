@@ -20,13 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.server.StreamResource;
@@ -65,6 +64,7 @@ public class HWDetailsInfoTab extends Div {
 
 	public HWDetailsInfoTab(HWItemTO hwItem, HWItemDetailsDialog hwItemDetailDialog) {
 		SpringContextHelper.inject(this);
+		setHeightFull();
 		this.hwItem = hwItem;
 		this.hwItemDetailDialog = hwItemDetailDialog;
 		init();
@@ -96,8 +96,7 @@ public class HWDetailsInfoTab extends Div {
 		itemLayout.add(hwImageLayout);
 		createHWImageOrUpload(hwItem);
 
-		VerticalLayout itemDetailsLayout = new VerticalLayout();
-		itemDetailsLayout.setPadding(false);
+		Div itemDetailsLayout = new Div();
 		itemLayout.add(itemDetailsLayout);
 
 		HorizontalLayout tags = new HorizontalLayout();
@@ -108,8 +107,12 @@ public class HWDetailsInfoTab extends Div {
 		});
 		itemDetailsLayout.add(tags);
 
+		Div rightPartLayout = new Div();
+		itemDetailsLayout.add(rightPartLayout);
+
 		GridLayout gridLayout = new GridLayout();
-		itemDetailsLayout.add(gridLayout);
+		gridLayout.addClassName("top-margin");
+		rightPartLayout.add(gridLayout);
 
 		gridLayout.add(new Strong("Stav"));
 		gridLayout.add(new Strong("Získáno"));
@@ -150,38 +153,34 @@ public class HWDetailsInfoTab extends Div {
 		gridLayout.add(zarukaLayout);
 		gridLayout.newRow();
 
-		gridLayout.add(new Strong("Je součástí"));
-		gridLayout.newRow();
-
+		rightPartLayout.add(new Div(new Strong("Je součástí")));
+		Div marginDiv = new Div();
+		marginDiv.addClassName("top-margin");
+		rightPartLayout.add(marginDiv);
 		if (hwItem.getUsedIn() == null) {
-			gridLayout.add(new Span("-"));
+			marginDiv.add(new Span("-"));
 		} else {
 			// Samotný button se stále roztahoval, bez ohledu na nastavený width
-			Div wrapperDiv = new Div();
 			Button usedInBtn = new Button(hwItem.getUsedIn().getName());
 			usedInBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 			usedInBtn.addClickListener(e -> {
 				hwItemDetailDialog.close();
 				new HWItemDetailsDialog(hwItem.getUsedIn().getId()).open();
 			});
-			wrapperDiv.add(usedInBtn);
-			gridLayout.add(wrapperDiv);
+			marginDiv.add(usedInBtn);
 		}
 
-		VerticalLayout partsWrapperLayout = new VerticalLayout();
-		add(partsWrapperLayout);
-
-		H3 name = new H3("Součásti");
-		partsWrapperLayout.add(name);
+		Div name = new Div(new Strong("Součásti"));
+		name.addClassName("top-margin");
+		add(name);
 
 		List<HWItemOverviewTO> parts = hwService.getAllParts(hwItem.getId());
-		VerticalLayout partsLayout = new VerticalLayout();
-		partsLayout.setSpacing(false);
-		partsLayout.setPadding(true);
-
-		VerticalLayout partsPanel = new VerticalLayout(partsLayout);
-		partsPanel.setSizeFull();
-		partsWrapperLayout.add(partsPanel);
+		Div partsContainer = new Div();
+		partsContainer.getStyle().set("padding", "var(--lumo-space-m)").set("border", "1px solid lightgray")
+				.set("border-radius", "4px");
+		partsContainer.addClassName("top-margin");
+		partsContainer.setHeight("200px");
+		add(partsContainer);
 
 		for (final HWItemOverviewTO part : parts) {
 			Button partDetailBtn = new Button(part.getName());
@@ -191,7 +190,7 @@ public class HWDetailsInfoTab extends Div {
 				HWItemTO detailTO = hwService.getHWItem(part.getId());
 				new HWItemDetailsDialog(detailTO.getId()).open();
 			});
-			partsLayout.add(partDetailBtn);
+			partsContainer.add(partDetailBtn);
 		}
 
 		HorizontalLayout operationsLayout = new HorizontalLayout();
@@ -224,7 +223,9 @@ public class HWDetailsInfoTab extends Div {
 				}).open());
 		buttonLayout.add(deleteBtn);
 
-		operationsLayout.add(new CloseButton(e -> hwItemDetailDialog.close()));
+		CloseButton closeButton = new CloseButton(e -> hwItemDetailDialog.close());
+		closeButton.addClassName("top-margin");
+		operationsLayout.add(closeButton);
 	}
 
 	private void createHWImageOrUpload(final HWItemTO hwItem) {

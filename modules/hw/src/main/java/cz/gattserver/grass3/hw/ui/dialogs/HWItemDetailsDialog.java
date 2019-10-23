@@ -80,7 +80,6 @@ public class HWItemDetailsDialog extends Dialog {
 		this.hwItem = getHWService().getHWItem(hwItemId);
 
 		setWidth("900px");
-		setHeight("700px");
 
 		Div nameDiv = new Div(new Text(hwItem.getName()));
 		nameDiv.getStyle().set("font-size", "15px").set("margin-bottom", "var(--lumo-space-m)")
@@ -97,6 +96,8 @@ public class HWItemDetailsDialog extends Dialog {
 		add(tabs);
 
 		tabLayout = new Div();
+		tabLayout.setSizeFull();
+		tabLayout.addClassName("top-margin");
 		add(tabLayout);
 
 		tabs.addSelectedChangeListener(e -> {

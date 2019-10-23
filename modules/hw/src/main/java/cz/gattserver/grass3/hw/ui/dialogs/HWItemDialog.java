@@ -129,6 +129,7 @@ public abstract class HWItemDialog extends WebDialog {
 
 		TokenField keywords = new TokenField(tokens.keySet());
 		keywords.setAllowNewItems(true);
+		keywords.addClassName("top-margin");
 		keywords.getInputField().setPlaceholder("klíčové slovo");
 
 		if (originalDTO != null)

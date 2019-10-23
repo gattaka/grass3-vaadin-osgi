@@ -10,7 +10,7 @@ import com.vaadin.flow.component.html.Div;
 
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
-import cz.gattserver.grass3.hw.ui.windows.HWItemTypeDialog;
+import cz.gattserver.grass3.hw.ui.dialogs.HWItemTypeDialog;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;

@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.hw.ui.windows;
+package cz.gattserver.grass3.hw.ui.dialogs;
 
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;

@@ -30,9 +30,9 @@ import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
 import cz.gattserver.grass3.hw.service.HWService;
-import cz.gattserver.grass3.hw.ui.windows.HWItemDetailDialog;
-import cz.gattserver.grass3.hw.ui.windows.HWItemDialog;
-import cz.gattserver.grass3.hw.ui.windows.ServiceNoteCreateDialog;
+import cz.gattserver.grass3.hw.ui.dialogs.HWItemDetailsDialog;
+import cz.gattserver.grass3.hw.ui.dialogs.HWItemDialog;
+import cz.gattserver.grass3.hw.ui.dialogs.ServiceNoteCreateDialog;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
@@ -249,7 +249,7 @@ public class HWItemsTab extends Div {
 	}
 
 	private void openDetailWindow(Long id) {
-		new HWItemDetailDialog(id).setChangeListener(this::populate).open();
+		new HWItemDetailsDialog(id).open();
 	}
 
 	private void openDeleteWindow(HWItemOverviewTO to) {

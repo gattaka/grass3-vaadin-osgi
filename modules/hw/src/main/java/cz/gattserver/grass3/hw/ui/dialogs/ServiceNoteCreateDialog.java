@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.hw.ui.windows;
+package cz.gattserver.grass3.hw.ui.dialogs;
 
 import java.time.LocalDate;
 import java.util.Arrays;

@@ -34,6 +34,7 @@ import cz.gattserver.grass3.ui.components.button.DetailGridButton;
 import cz.gattserver.grass3.ui.components.button.GridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -53,7 +54,7 @@ public class ScheduledVisitsTab extends Div {
 	public ScheduledVisitsTab() {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d. MMMM yyyy");
 		Div div = new HtmlDiv("<strong>Dnes je: </strong>" + LocalDate.now().format(formatter));
-		div.addClassName("top-margin");
+		div.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(div);
 
 		createPlannedGrid();
@@ -128,7 +129,7 @@ public class ScheduledVisitsTab extends Div {
 		 * Přehled
 		 */
 		Div headerDiv = new Div(new Strong("Naplánované návštěvy"));
-		headerDiv.addClassName("top-margin");
+		headerDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(headerDiv);
 
 		prepareGrid(plannedGrid, true);
@@ -175,7 +176,7 @@ public class ScheduledVisitsTab extends Div {
 	}
 
 	private void prepareGrid(Grid<ScheduledVisitTO> grid, boolean fullTime) {
-		grid.addClassName("top-margin");
+		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		grid.addColumn(new IconRenderer<ScheduledVisitTO>(item -> {
 			if (item.getState().equals(ScheduledVisitState.MISSED)) {
@@ -211,7 +212,7 @@ public class ScheduledVisitsTab extends Div {
 		 * Přehled
 		 */
 		Div headerDiv = new Div(new Strong("K objednání"));
-		headerDiv.addClassName("top-margin");
+		headerDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(headerDiv);
 
 		prepareGrid(toBePlannedGrid, false);

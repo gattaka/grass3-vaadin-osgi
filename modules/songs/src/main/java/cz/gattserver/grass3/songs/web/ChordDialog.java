@@ -13,6 +13,7 @@ import com.vaadin.flow.data.binder.Binder;
 import cz.gattserver.grass3.songs.model.domain.Instrument;
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
@@ -39,7 +40,7 @@ public abstract class ChordDialog extends WebDialog {
 		binder.setBean(formTO);
 
 		final TextField nameField = new TextField("Název");
-		nameField.addClassName("top-clean");
+		nameField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		binder.forField(nameField).asRequired().bind(ChordTO::getName, ChordTO::setName);
 		nameField.setWidth("100%");
 		add(nameField);

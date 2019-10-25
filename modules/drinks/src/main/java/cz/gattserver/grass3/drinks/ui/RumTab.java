@@ -22,6 +22,7 @@ import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.web.common.ui.HtmlDiv;
 
@@ -129,11 +130,11 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 		tb.newRow().addStrong("Alkohol (%):").add(String.valueOf(choosenDrink.getAlcohol()));
 		tb.newRow().addStrong("Typ rumu:").add(choosenDrink.getRumType().getCaption());
 
-		tb.addClassName("top-margin");
+		tb.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		dataLayout.add(tb);
 
 		HtmlDiv description = new HtmlDiv(choosenDrink.getDescription().replaceAll("\n", "<br/>"));
-		description.addClassName("top-margin");
+		description.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		description.setSizeFull();
 		dataLayout.add(description);
 	}

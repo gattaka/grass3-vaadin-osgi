@@ -10,6 +10,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.interfaces.MedicalRecordTO;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.Strong;
 
@@ -26,7 +27,7 @@ public class MedicalRecordDetailDialog extends Dialog {
 		add(layout);
 
 		setWidth("400px");
-		
+
 		MedicalRecordTO medicalRecordDTO = getMedicFacade().getMedicalRecordById(id);
 
 		layout.add(new Strong("Datum"));
@@ -36,7 +37,7 @@ public class MedicalRecordDetailDialog extends Dialog {
 		final Button button = new Button(medicalRecordDTO.getInstitution().getName(),
 				e -> new MedicalInstitutionDetailDialog(medicalRecordDTO.getInstitution().getId()).open());
 		button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-		button.addClassName("top-clean");
+		button.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		layout.add(button);
 
 		layout.add(new Strong("Ošetřující lékař"));
@@ -47,7 +48,7 @@ public class MedicalRecordDetailDialog extends Dialog {
 		div.setText(medicalRecordDTO.getRecord());
 		div.setWidth("100%");
 		div.getStyle().set("white-space", "pre-wrap");
-		div.addClassName("top-clean");
+		div.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		layout.add(div);
 	}
 

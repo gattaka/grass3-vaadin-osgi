@@ -16,6 +16,7 @@ import cz.gattserver.grass3.hw.interfaces.HWItemState;
 import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
@@ -40,8 +41,8 @@ public abstract class ServiceNoteCreateDialog extends WebDialog {
 		binder.setBean(formTO);
 
 		FormLayout winLayout = new FormLayout();
-		winLayout.addClassName("top-clean");
-		winLayout.addClassName("top-pull");
+		winLayout.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
+		winLayout.addClassName(UIUtils.TOP_PULL_CSS_CLASS);
 		add(winLayout);
 
 		DatePicker eventDateField = new DatePicker("Datum");

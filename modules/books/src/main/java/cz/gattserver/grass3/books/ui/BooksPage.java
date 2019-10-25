@@ -38,6 +38,7 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.Strong;
@@ -90,7 +91,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		contentLayout.setSizeFull();
 		contentLayout.setPadding(false);
 		contentLayout.setVisible(false);
-		contentLayout.addClassName("top-margin");
+		contentLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		layout.add(contentLayout);
 
 		// musí tady něco být nahrané, jinak to pak nejde měnit (WTF?!)
@@ -206,7 +207,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		dataLayout.add(rs);
 
 		Div infoLayout = new Div();
-		infoLayout.addClassName("top-margin");
+		infoLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		dataLayout.add(infoLayout);
 
 		infoLayout.add(new Strong("Autor"));

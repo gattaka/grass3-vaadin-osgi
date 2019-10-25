@@ -24,6 +24,7 @@ import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.ui.components.SaveCloseButtons;
 import cz.gattserver.grass3.ui.util.TokenField;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
@@ -76,7 +77,7 @@ public abstract class HWItemDialog extends WebDialog {
 
 		TextField nameField = new TextField("Název");
 		nameField.setWidth("100%");
-		nameField.addClassName("top-clean");
+		nameField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		binder.forField(nameField).asRequired("Název položky je povinný").bind("name");
 		winLayout.add(nameField, 2);
 
@@ -129,7 +130,7 @@ public abstract class HWItemDialog extends WebDialog {
 
 		TokenField keywords = new TokenField(tokens.keySet());
 		keywords.setAllowNewItems(true);
-		keywords.addClassName("top-margin");
+		keywords.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		keywords.getInputField().setPlaceholder("klíčové slovo");
 
 		if (originalDTO != null)

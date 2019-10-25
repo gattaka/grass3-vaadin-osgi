@@ -9,6 +9,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.interfaces.MedicalInstitutionTO;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.Strong;
 
@@ -34,7 +35,7 @@ public class MedicalInstitutionDetailDialog extends Dialog {
 			layout.add("-");
 		} else {
 			Anchor link = new Anchor(medicalInstitutionDTO.getWeb(), medicalInstitutionDTO.getWeb());
-			link.addClassName("top-clean");
+			link.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 			link.setTarget("_blank");
 			layout.add(link);
 		}
@@ -46,7 +47,7 @@ public class MedicalInstitutionDetailDialog extends Dialog {
 		Div div = new Div();
 		div.setText(StringUtils.isBlank(medicalInstitutionDTO.getHours()) ? "-" : medicalInstitutionDTO.getHours());
 		div.getStyle().set("white-space", "pre-wrap");
-		div.addClassName("top-clean");
+		div.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		layout.add(div);
 	}
 

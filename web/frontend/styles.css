@@ -15,10 +15,6 @@ vaadin-progress-bar {
     padding-bottom: 2px;
 }
 
-.inline-div {
-	display: inline-block;
-}
-
 .scroll-div {
 	overflow-y: auto;
     height: 100%;

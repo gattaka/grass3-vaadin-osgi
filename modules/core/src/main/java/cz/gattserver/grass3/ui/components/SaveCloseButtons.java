@@ -7,6 +7,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
 import cz.gattserver.grass3.ui.components.button.CloseButton;
 import cz.gattserver.grass3.ui.components.button.SaveButton;
+import cz.gattserver.grass3.ui.util.UIUtils;
 
 public class SaveCloseButtons extends HorizontalLayout {
 
@@ -14,7 +15,7 @@ public class SaveCloseButtons extends HorizontalLayout {
 
 	public SaveCloseButtons(ComponentEventListener<ClickEvent<Button>> saveClickListener,
 			ComponentEventListener<ClickEvent<Button>> closeClickListener) {
-		addClassName("top-margin");
+		addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		setJustifyContentMode(JustifyContentMode.BETWEEN);
 		setSpacing(false);
 		setSizeFull();

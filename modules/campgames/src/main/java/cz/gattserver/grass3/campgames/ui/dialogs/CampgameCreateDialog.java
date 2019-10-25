@@ -13,6 +13,7 @@ import cz.gattserver.grass3.campgames.service.CampgamesService;
 import cz.gattserver.grass3.ui.components.button.CloseButton;
 import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.grass3.ui.util.TokenField;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
@@ -59,7 +60,7 @@ public abstract class CampgameCreateDialog extends WebDialog {
 
 		TextField nameField = new TextField("Název");
 		nameField.setWidthFull();
-		nameField.addClassName("top-clean");
+		nameField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		binder.forField(nameField).asRequired("Název položky je povinný").bind("name");
 		winLayout.add(nameField, 2);
 

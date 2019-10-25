@@ -26,6 +26,7 @@ import cz.gattserver.grass3.language.model.dto.CrosswordHintTO;
 import cz.gattserver.grass3.language.model.dto.CrosswordTO;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.language.web.CrosswordField;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 
@@ -40,7 +41,7 @@ public class CrosswordTab extends Div {
 		SpringContextHelper.inject(this);
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
-		btnLayout.addClassName("top-margin");
+		btnLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		btnLayout.setPadding(false);
 		add(btnLayout);
 

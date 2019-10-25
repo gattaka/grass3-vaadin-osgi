@@ -190,7 +190,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 		// Layout stránkovacích tlačítek
 		pagingLayout = new HorizontalLayout();
-		pagingLayout.addClassName("top-margin");
+		pagingLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		pagingLayout.setJustifyContentMode(JustifyContentMode.CENTER);
 		pagingLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
 		pagingLayout.setSpacing(true);
@@ -198,7 +198,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		layout.add(pagingLayout);
 
 		upload = new PGMultiUpload(galleryDir);
-		upload.addClassName("top-margin");
+		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		upload.addFinishedListener(e -> {
 			eventBus.subscribe(PGViewerPage.this);
 			progressIndicatorWindow = new ProgressDialog();
@@ -212,7 +212,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 			layout.add(upload);
 
 		Div statusRow = new Div();
-		statusRow.addClassName("top-margin");
+		statusRow.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		statusRow.getStyle().set("background", "#fdfaf2").set("padding", "3px 10px").set("line-height", "20px")
 				.set("font-size", "12px").set("color", "#777");
 		statusRow.setSizeUndefined();

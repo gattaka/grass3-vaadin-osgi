@@ -19,6 +19,7 @@ import cz.gattserver.grass3.medic.interfaces.MedicalRecordTO;
 import cz.gattserver.grass3.medic.interfaces.ScheduledVisitState;
 import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
 import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
@@ -50,7 +51,7 @@ public abstract class ScheduledVisitsCreateDialog extends WebDialog {
 
 		final TextField purposeField = new TextField("Účel návštěvy");
 		add(purposeField);
-		purposeField.addClassName("top-clean");
+		purposeField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		purposeField.setWidth("100%");
 		binder.forField(purposeField).asRequired().bind("purpose");
 

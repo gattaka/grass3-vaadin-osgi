@@ -82,7 +82,7 @@ public class HWDetailsInfoTab extends Div {
 		HorizontalLayout itemLayout = new HorizontalLayout();
 		itemLayout.setSpacing(true);
 		itemLayout.setPadding(false);
-		itemLayout.addClassName("top-margin");
+		itemLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(itemLayout);
 
 		hwImageLayout = new VerticalLayout();
@@ -90,7 +90,8 @@ public class HWDetailsInfoTab extends Div {
 		hwImageLayout.setPadding(false);
 		hwImageLayout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 		hwImageLayout.setWidth("200px");
-		hwImageLayout.getStyle().set("height", "calc(var(--lumo-button-size) + 200px + var(--lumo-space-m))");
+		hwImageLayout.getStyle().set("height",
+				"calc(" + UIUtils.BUTTON_SIZE_CSS_VAR + " + 200px + " + UIUtils.SPACING_CSS_VAR + ")");
 		itemLayout.add(hwImageLayout);
 		createHWImageOrUpload(hwItem);
 
@@ -109,7 +110,7 @@ public class HWDetailsInfoTab extends Div {
 		itemDetailsLayout.add(rightPartLayout);
 
 		GridLayout gridLayout = new GridLayout();
-		gridLayout.addClassName("top-margin");
+		gridLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		rightPartLayout.add(gridLayout);
 
 		gridLayout.add(new Strong("Stav"));
@@ -153,7 +154,7 @@ public class HWDetailsInfoTab extends Div {
 
 		rightPartLayout.add(new Div(new Strong("Je součástí")));
 		Div marginDiv = new Div();
-		marginDiv.addClassName("top-margin");
+		marginDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		rightPartLayout.add(marginDiv);
 		if (hwItem.getUsedIn() == null) {
 			marginDiv.add(new Span("-"));
@@ -169,12 +170,12 @@ public class HWDetailsInfoTab extends Div {
 		}
 
 		Div name = new Div(new Strong("Součásti"));
-		name.addClassName("top-margin");
+		name.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(name);
 
 		List<HWItemOverviewTO> parts = hwService.getAllParts(hwItem.getId());
 		Div partsContainer = new ContainerDiv();
-		partsContainer.addClassName("top-margin");
+		partsContainer.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		partsContainer.setHeight("200px");
 		add(partsContainer);
 
@@ -220,7 +221,7 @@ public class HWDetailsInfoTab extends Div {
 		buttonLayout.add(deleteBtn);
 
 		CloseButton closeButton = new CloseButton(e -> hwItemDetailDialog.close());
-		closeButton.addClassName("top-margin");
+		closeButton.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		operationsLayout.add(closeButton);
 	}
 

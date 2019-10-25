@@ -29,6 +29,7 @@ import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.GridButton;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
@@ -80,7 +81,7 @@ public class HWDetailsDocsTab extends Div {
 		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
 
 		Upload upload = new Upload(buffer);
-		upload.addClassName("top-margin");
+		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		upload.addSucceededListener(event -> {
 			try {
 				hwService.saveDocumentsFile(buffer.getInputStream(event.getFileName()), event.getFileName(),
@@ -125,7 +126,7 @@ public class HWDetailsDocsTab extends Div {
 		buttonLayout.add(deleteBtn);
 
 		CloseButton closeButton = new CloseButton(e -> hwItemDetailDialog.close());
-		closeButton.addClassName("top-margin");
+		closeButton.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		operationsLayout.add(closeButton);
 	}
 

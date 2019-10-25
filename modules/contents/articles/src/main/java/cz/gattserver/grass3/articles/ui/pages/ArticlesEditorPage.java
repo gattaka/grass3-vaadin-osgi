@@ -55,6 +55,7 @@ import cz.gattserver.grass3.ui.components.button.ImageButton;
 import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
@@ -288,8 +289,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 
 		// Projdi zaregistrované pluginy a vytvoř menu nástrojů
 		for (String group : groups) {
-			Div groupToolsLayout = new Div();
-			groupToolsLayout.addClassName("button-div");
+			ButtonLayout groupToolsLayout = new ButtonLayout(false);
 			layout.add(new Details(group, groupToolsLayout));
 
 			List<EditorButtonResourcesTO> resourcesBundles = new ArrayList<>(
@@ -471,7 +471,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		layout.add(publicatedCheckBox);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
-		buttonLayout.addClassName("top-margin");
+		buttonLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		layout.add(buttonLayout);
 
 		// Náhled

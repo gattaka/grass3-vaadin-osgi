@@ -9,6 +9,14 @@ import cz.gattserver.web.common.ui.window.WarnDialog;
 
 public class UIUtils {
 
+	public static final String SPACING_CSS_VAR = "var(--lumo-space-m)";
+	public static final String BUTTON_SIZE_CSS_VAR = "var(--lumo-button-size)";
+	
+	public static final String TOP_MARGIN_CSS_CLASS = "top-margin";
+	public static final String TOP_CLEAN_CSS_CLASS = "top-clean";
+	public static final String TOP_PULL_CSS_CLASS = "top-pull";	
+	public static final String THUMBNAIL_200_CSS_CLASS = "thumbnail-200";	
+	
 	private UIUtils() {
 	}
 

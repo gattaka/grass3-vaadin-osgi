@@ -15,6 +15,7 @@ import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.DetailGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 
 /**
  * Template všech tabů, kde je v tabulce zobrazován přehled entit a dole jsou
@@ -65,7 +66,7 @@ public abstract class GridOperationsTab<T extends Identifiable, C extends Collec
 		init();
 
 		grid = new Grid<>(clazz);
-		grid.addClassName("top-margin");
+		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		grid.setItems(getItems());
 		customizeGrid(grid);

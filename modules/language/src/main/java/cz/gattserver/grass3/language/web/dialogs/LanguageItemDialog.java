@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Shortcuts;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
@@ -23,6 +22,8 @@ import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.ui.components.button.CloseButton;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
@@ -58,14 +59,14 @@ public class LanguageItemDialog extends WebDialog {
 		Binder<LanguageItemTO> binder = new Binder<>();
 
 		RadioButtonGroup<ItemType> typeRadio = new RadioButtonGroup<>();
-		typeRadio.addClassName("top-clean");
+		typeRadio.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		typeRadio.setItems(Arrays.asList(ItemType.values()));
 		typeRadio.setRenderer(new TextRenderer<>(ItemType::getCaption));
 		binder.forField(typeRadio).bind(LanguageItemTO::getType, LanguageItemTO::setType);
 		add(typeRadio);
 
 		TextField contentField = new TextField("Obsah");
-		contentField.addClassName("top-clean");
+		contentField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 
 		TextField translationField = new TextField("Překlad");
 
@@ -99,7 +100,7 @@ public class LanguageItemDialog extends WebDialog {
 		binder.readBean(targetTO);
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
-		btnLayout.addClassName("top-margin");
+		btnLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		btnLayout.setSpacing(false);
 		btnLayout.setPadding(false);
 		btnLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
@@ -108,8 +109,7 @@ public class LanguageItemDialog extends WebDialog {
 		if (to != null) {
 			btnLayout.add(new ModifyButton(e -> onSave(action, binder, targetTO)));
 		} else {
-			Div buttonLayout = new Div();
-			buttonLayout.addClassName("button-div");
+			ButtonLayout buttonLayout = new ButtonLayout(false);
 			btnLayout.add(buttonLayout);
 			buttonLayout.add(new CreateButton(e -> onSave(action, binder, targetTO)));
 			Button createAndContinueBtn = new CreateButton("Vytvořit a pokračovat",

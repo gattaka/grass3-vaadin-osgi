@@ -6,6 +6,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.interfaces.MedicamentTO;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.Strong;
 
@@ -30,7 +31,7 @@ public class MedicamentDetailDialog extends Dialog {
 		Div div = new Div();
 		div.setText(medicamentDTO.getTolerance());
 		div.getStyle().set("white-space", "pre-wrap");
-		div.addClassName("top-clean");
+		div.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		layout.add(div);
 	}
 }

@@ -31,6 +31,7 @@ import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
 
@@ -75,7 +76,7 @@ public class SongTab extends Div {
 		contentLabel = new HtmlDiv();
 		contentLabel.setHeight("700px");
 		contentLabel.setWidth(null);
-		contentLabel.addClassName("top-margin");
+		contentLabel.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		contentLabel.getStyle().set("font-family", "monospace").set("font-size", "12px").set("overflow-x", "auto")
 				.set("display", "-webkit-flex").set("display", "flex").set("-webkit-flex-flow", "column wrap")
 				.set("flex-flow", "column wrap");

@@ -20,6 +20,7 @@ import cz.gattserver.grass3.medic.interfaces.PhysicianTO;
 import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
 import cz.gattserver.grass3.ui.components.SaveCloseButtons;
 import cz.gattserver.grass3.ui.util.TokenField;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
@@ -54,7 +55,7 @@ public abstract class MedicalRecordCreateDialog extends WebDialog {
 		final ComboBox<PhysicianTO> physicianComboBox = new ComboBox<>("Ošetřující lékař", physicians);
 		add(physicianComboBox);
 		physicianComboBox.setWidth("100%");
-		physicianComboBox.addClassName("top-pull");
+		physicianComboBox.addClassName(UIUtils.TOP_PULL_CSS_CLASS);
 		binder.forField(physicianComboBox).bind("physician");
 
 		final DatePicker dateField = new DatePicker("Datum návštěvy");

@@ -33,6 +33,7 @@ import cz.gattserver.grass3.ui.components.button.GridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.TokenField;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
@@ -59,7 +60,7 @@ public class CampgamesTab extends Div {
 
 		// Filtr na klíčová slova
 		keywordsFilter = new TokenField(getCampgamesService().getAllCampgameKeywordNames());
-		keywordsFilter.addClassName("top-margin");
+		keywordsFilter.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		keywordsFilter.setPlaceholder("Filtrovat dle klíčových slov");
 		keywordsFilter.getInputField().setWidth("200px");
 		keywordsFilter.addTokenAddListener(token -> populate());
@@ -69,7 +70,7 @@ public class CampgamesTab extends Div {
 
 		// Tabulka her
 		grid = new Grid<>();
-		grid.addClassName("top-margin");
+		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setWidth("100%");

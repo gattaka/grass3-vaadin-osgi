@@ -194,7 +194,7 @@ public class PGEditorPage extends OneColumnPage implements HasUrlParameter<Strin
 		gridLayout.setPadding(false);
 		gridLayout.setSpacing(true);
 		gridLayout.setWidthFull();
-		gridLayout.addClassName("top-margin");
+		gridLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		editorLayout.add(gridLayout);
 
 		final Grid<PhotogalleryViewItemTO> grid = new Grid<>(PhotogalleryViewItemTO.class);
@@ -259,7 +259,7 @@ public class PGEditorPage extends OneColumnPage implements HasUrlParameter<Strin
 				grid.setItems(items);
 			}
 		};
-		upload.addClassName("top-margin");
+		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		editorLayout.add(upload);
 
 		editorLayout.add(new H2("Nastavení"));

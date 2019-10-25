@@ -8,6 +8,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
 public class HWItemDetailsDialog extends Dialog {
@@ -49,7 +50,7 @@ public class HWItemDetailsDialog extends Dialog {
 
 		tabLayout = new Div();
 		tabLayout.setSizeFull();
-		tabLayout.addClassName("top-margin");
+		tabLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(tabLayout);
 
 		tabs.addSelectedChangeListener(e -> {

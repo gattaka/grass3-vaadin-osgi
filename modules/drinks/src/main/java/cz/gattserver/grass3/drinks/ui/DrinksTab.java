@@ -27,6 +27,7 @@ import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 
@@ -53,7 +54,7 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 		filterTO = createNewOverviewTO();
 		grid = new Grid<>();
 		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
-		grid.addClassName("top-margin");
+		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		configureGrid(grid, filterTO);
 
 		populate();
@@ -62,7 +63,7 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 		contentLayout.setSizeFull();
 		contentLayout.setPadding(false);
 		contentLayout.setVisible(false);
-		contentLayout.addClassName("top-margin");
+		contentLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		contentLayout.getStyle().set("border", "1px #dbdee4 solid").set("padding", "10px").set("background", "white");
 		add(contentLayout);
 

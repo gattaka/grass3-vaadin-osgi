@@ -7,7 +7,12 @@ public class ButtonLayout extends Div {
 	private static final long serialVersionUID = -5167038626700280420L;
 
 	public ButtonLayout() {
+		this(true);
+	}
+
+	public ButtonLayout(boolean topMargin) {
 		addClassName("button-div");
-		addClassName("top-margin");
+		if (topMargin)
+			addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 	}
 }

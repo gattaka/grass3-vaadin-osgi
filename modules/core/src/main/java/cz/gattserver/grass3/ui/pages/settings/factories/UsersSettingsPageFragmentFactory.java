@@ -23,6 +23,7 @@ import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.services.UserService;
 import cz.gattserver.grass3.ui.components.button.GridButton;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
@@ -61,7 +62,7 @@ public class UsersSettingsPageFragmentFactory extends AbstractPageFragmentFactor
 		grid.setItems(users);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
-		buttonLayout.addClassName("top-margin");
+		buttonLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		buttonLayout.setSpacing(true);
 		layout.add(buttonLayout);
 

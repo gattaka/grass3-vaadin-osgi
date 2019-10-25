@@ -17,6 +17,7 @@ import com.vaadin.flow.data.validator.IntegerRangeValidator;
 import cz.gattserver.grass3.drinks.model.domain.WhiskeyType;
 import cz.gattserver.grass3.drinks.model.interfaces.WhiskeyTO;
 import cz.gattserver.grass3.ui.util.RatingStars;
+import cz.gattserver.grass3.ui.util.UIUtils;
 
 public abstract class WhiskeyDialog extends DrinkDialog<WhiskeyTO> {
 
@@ -46,12 +47,12 @@ public abstract class WhiskeyDialog extends DrinkDialog<WhiskeyTO> {
 		TextField nameField = new TextField("Název");
 		binder.forField(nameField).asRequired().bind(WhiskeyTO::getName, WhiskeyTO::setName);
 		layout.add(nameField);
-		nameField.addClassName("top-clean");
+		nameField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 
 		TextField countryField = new TextField("Země");
 		binder.forField(countryField).asRequired().bind(WhiskeyTO::getCountry, WhiskeyTO::setCountry);
 		layout.add(countryField);
-		countryField.addClassName("top-clean");
+		countryField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 
 		RatingStars ratingStars = new RatingStars();
 		binder.forField(ratingStars).asRequired().bind(WhiskeyTO::getRating, WhiskeyTO::setRating);

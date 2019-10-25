@@ -27,6 +27,7 @@ import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.ContainerDiv;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
 public class HWDetailsServiceNotesTab extends Div {
@@ -81,7 +82,7 @@ public class HWDetailsServiceNotesTab extends Div {
 		final Div serviceNoteDescription = new ContainerDiv();
 		serviceNoteDescription.add(DEFAULT_NOTE_LABEL_VALUE);
 		serviceNoteDescription.setHeight("200px");
-		serviceNoteDescription.addClassName("top-margin");
+		serviceNoteDescription.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(serviceNoteDescription);
 
 		Button newNoteBtn = new CreateButton(e -> new ServiceNoteCreateDialog(hwItem) {
@@ -139,7 +140,7 @@ public class HWDetailsServiceNotesTab extends Div {
 		operationsLayout.add(buttonLayout);
 
 		CloseButton closeButton = new CloseButton(e -> hwItemDetailDialog.close());
-		closeButton.addClassName("top-margin");
+		closeButton.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		operationsLayout.add(closeButton);
 	}
 

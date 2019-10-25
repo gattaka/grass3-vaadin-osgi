@@ -16,6 +16,7 @@ import com.vaadin.flow.data.validator.IntegerRangeValidator;
 import cz.gattserver.grass3.drinks.model.domain.WineType;
 import cz.gattserver.grass3.drinks.model.interfaces.WineTO;
 import cz.gattserver.grass3.ui.util.RatingStars;
+import cz.gattserver.grass3.ui.util.UIUtils;
 
 public abstract class WineDialog extends DrinkDialog<WineTO> {
 
@@ -45,13 +46,13 @@ public abstract class WineDialog extends DrinkDialog<WineTO> {
 		binder.forField(wineryField).asRequired().bind(WineTO::getWinery, WineTO::setWinery);
 		layout.add(wineryField);
 		layout.setColspan(wineryField, 3);
-		wineryField.addClassName("top-clean");
+		wineryField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 
 		TextField nameField = new TextField("Název");
 		binder.forField(nameField).asRequired().bind(WineTO::getName, WineTO::setName);
 		layout.add(nameField);
 		layout.setColspan(nameField, 3);
-		nameField.addClassName("top-clean");
+		nameField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 
 		TextField countryField = new TextField("Země");
 		binder.forField(countryField).asRequired().bind(WineTO::getCountry, WineTO::setCountry);

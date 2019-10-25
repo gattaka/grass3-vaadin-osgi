@@ -6,6 +6,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.grass3.ui.util.UIUtils;
 
 @Route("songs")
 public class SongsPage extends OneColumnPage {
@@ -32,7 +33,7 @@ public class SongsPage extends OneColumnPage {
 		layout.add(tabSheet);
 
 		pageLayout = new Div();
-		pageLayout.addClassName("top-margin");
+		pageLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		layout.add(pageLayout);
 
 		listTab = new Tab();

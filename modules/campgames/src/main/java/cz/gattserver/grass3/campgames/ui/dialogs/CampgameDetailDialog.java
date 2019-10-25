@@ -38,6 +38,7 @@ import cz.gattserver.grass3.ui.components.button.CloseButton;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
@@ -141,24 +142,23 @@ public class CampgameDetailDialog extends Dialog {
 				+ "<tr><td><strong>Délka hry:</strong></td><td>" + campgameTO.getPlayTime()
 				+ "</td><td><strong>Délky přípravy:</strong></td><td>" + campgameTO.getPreparationTime() + "</td></tr>"
 				+ "</table>");
-		table.addClassName("top-margin");
+		table.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		layout.add(table);
 
 		HtmlDiv descDiv = new HtmlDiv(campgameTO.getDescription().replaceAll("\n", "<br/>"));
-		descDiv.addClassName("top-margin");
+		descDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		descDiv.addClassName("scroll-div");
 		descDiv.setSizeFull();
 		layout.add(descDiv);
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
-		btnLayout.addClassName("top-margin");
+		btnLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		btnLayout.setWidthFull();
 		btnLayout.setSpacing(false);
 		btnLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
 		layout.add(btnLayout);
 
-		Div operationsLayout = new Div();
-		operationsLayout.addClassName("button-div");
+		ButtonLayout operationsLayout = new ButtonLayout(false);
 		btnLayout.add(operationsLayout);
 		operationsLayout.setVisible(SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
 				.contains(CoreRole.ADMIN));
@@ -213,7 +213,7 @@ public class CampgameDetailDialog extends Dialog {
 		Upload upload = new Upload(buffer);
 		// protože se jinak šířka uplatní bez ohledu na zmenšení o okraje
 		upload.getStyle().set("width", "calc(100% - 2 * var(--lumo-space-m))");
-		upload.addClassName("top-margin");
+		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		upload.setAcceptedFileTypes("image/jpeg", "image/png", "image/gif");
 		upload.addSucceededListener(event -> {
 			try {
@@ -245,7 +245,7 @@ public class CampgameDetailDialog extends Dialog {
 		grid.setItems(items);
 		grid.setSizeFull();
 		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
-		grid.addClassName("top-margin");
+		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		grid.getStyle().set("height", "calc(100% - 85px)");
 
 		pageLayout.add(grid);

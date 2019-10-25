@@ -20,6 +20,7 @@ import cz.gattserver.grass3.language.model.domain.ItemType;
 import cz.gattserver.grass3.language.model.dto.LanguageItemTO;
 import cz.gattserver.grass3.language.web.ChartUtils;
 import cz.gattserver.grass3.language.web.LanguagePage;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
 public class StatisticsTab extends Div {
@@ -53,12 +54,12 @@ public class StatisticsTab extends Div {
 				return null;
 			}
 		}), "wordsImage.png");
-		wordsImg.addClassName("top-margin");
+		wordsImg.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(wordsImg);
 
 		Div header = new Div();
 		header.add("Frází: " + phrases);
-		header.addClassName("top-margin");
+		header.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(header);
 		final BufferedImage phrasesImage = ChartUtils
 				.drawChart(languageFacade.getStatisticsItems(ItemType.PHRASE, langId));
@@ -72,12 +73,12 @@ public class StatisticsTab extends Div {
 				return null;
 			}
 		}), "phrasesImage.png");
-		phrasesImg.addClassName("top-margin");
+		phrasesImg.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(phrasesImg);
 
 		header = new Div();
 		header.add("Položek celkem: " + (words + phrases));
-		header.addClassName("top-margin");
+		header.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(header);
 
 		final BufferedImage itemsImage = ChartUtils.drawChart(languageFacade.getStatisticsItems(null, langId));
@@ -91,7 +92,7 @@ public class StatisticsTab extends Div {
 				return null;
 			}
 		}), "itemsImage.png");
-		itemsImg.addClassName("top-margin");
+		itemsImg.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(itemsImg);
 	}
 

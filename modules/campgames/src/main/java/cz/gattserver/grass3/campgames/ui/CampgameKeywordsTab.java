@@ -15,6 +15,7 @@ import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
@@ -36,7 +37,7 @@ public class CampgameKeywordsTab extends Div {
 	public CampgameKeywordsTab() {
 
 		grid = new Grid<>();
-		grid.addClassName("top-margin");
+		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		Set<CampgameKeywordTO> data = getCampgamesService().getAllCampgameKeywords();
 		grid.setItems(data);

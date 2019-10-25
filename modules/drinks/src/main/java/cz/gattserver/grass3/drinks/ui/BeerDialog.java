@@ -15,6 +15,7 @@ import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import cz.gattserver.grass3.drinks.model.domain.MaltType;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
 import cz.gattserver.grass3.ui.util.RatingStars;
+import cz.gattserver.grass3.ui.util.UIUtils;
 
 public abstract class BeerDialog extends DrinkDialog<BeerTO> {
 
@@ -45,19 +46,19 @@ public abstract class BeerDialog extends DrinkDialog<BeerTO> {
 		binder.forField(breweryField).asRequired().bind(BeerTO::getBrewery, BeerTO::setBrewery);
 		layout.add(breweryField);
 		layout.setColspan(breweryField, 2);
-		breweryField.addClassName("top-clean");
+		breweryField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 
 		TextField nameField = new TextField("Název");
 		binder.forField(nameField).asRequired().bind(BeerTO::getName, BeerTO::setName);
 		layout.add(nameField);
 		layout.setColspan(nameField, 2);
-		nameField.addClassName("top-clean");
+		nameField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 
 		TextField countryField = new TextField("Země");
 		binder.forField(countryField).asRequired().bind(BeerTO::getCountry, BeerTO::setCountry);
 		layout.add(countryField);
 		layout.setColspan(countryField, 2);
-		countryField.addClassName("top-clean");
+		countryField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 
 		TextField categoryField = new TextField("Kategorie (APA, IPA, ...)");
 		binder.forField(categoryField).asRequired().bind(BeerTO::getCategory, BeerTO::setCategory);

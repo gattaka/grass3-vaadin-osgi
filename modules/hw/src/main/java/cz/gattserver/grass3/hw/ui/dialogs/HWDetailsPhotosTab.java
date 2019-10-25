@@ -26,6 +26,7 @@ import cz.gattserver.grass3.ui.components.button.DetailButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.ContainerDiv;
 import cz.gattserver.grass3.ui.util.GridLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
@@ -54,7 +55,7 @@ public class HWDetailsPhotosTab extends Div {
 		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
 
 		Upload upload = new Upload(buffer);
-		upload.addClassName("top-margin");
+		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		upload.setAcceptedFileTypes("image/jpeg", "image/png", "image/gif");
 		upload.addSucceededListener(event -> {
 			try {
@@ -83,7 +84,7 @@ public class HWDetailsPhotosTab extends Div {
 		operationsLayout.add(buttonLayout);
 
 		CloseButton closeButton = new CloseButton(e -> hwItemDetailDialog.close());
-		closeButton.addClassName("top-margin");
+		closeButton.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		operationsLayout.add(closeButton);
 	}
 
@@ -100,7 +101,7 @@ public class HWDetailsPhotosTab extends Div {
 
 			Div itemDiv = new Div();
 			itemDiv.getStyle().set("text-align", "center");
-			itemDiv.setHeight("calc(var(--lumo-button-size) + 200px + var(--lumo-space-m))");
+			itemDiv.setHeight("calc(" + UIUtils.BUTTON_SIZE_CSS_VAR + " + 200px + " + UIUtils.SPACING_CSS_VAR + ")");
 			gridLayout.add(itemDiv);
 
 			Image img = new Image(

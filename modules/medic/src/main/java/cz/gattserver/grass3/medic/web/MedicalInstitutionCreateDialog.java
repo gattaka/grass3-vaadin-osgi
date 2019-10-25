@@ -7,6 +7,7 @@ import com.vaadin.flow.data.binder.Binder;
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.interfaces.MedicalInstitutionTO;
 import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
@@ -30,7 +31,7 @@ public abstract class MedicalInstitutionCreateDialog extends WebDialog {
 
 		final TextField nameField = new TextField("Název");
 		add(nameField);
-		nameField.addClassName("top-clean");
+		nameField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		nameField.setWidth("100%");
 		binder.forField(nameField).bind("name");
 

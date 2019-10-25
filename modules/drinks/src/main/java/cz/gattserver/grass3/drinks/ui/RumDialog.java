@@ -16,6 +16,7 @@ import com.vaadin.flow.data.validator.DoubleRangeValidator;
 import cz.gattserver.grass3.drinks.model.domain.RumType;
 import cz.gattserver.grass3.drinks.model.interfaces.RumTO;
 import cz.gattserver.grass3.ui.util.RatingStars;
+import cz.gattserver.grass3.ui.util.UIUtils;
 
 public abstract class RumDialog extends DrinkDialog<RumTO> {
 
@@ -45,12 +46,12 @@ public abstract class RumDialog extends DrinkDialog<RumTO> {
 		TextField nameField = new TextField("Název");
 		nameField.setWidth("320px");
 		binder.forField(nameField).asRequired().bind(RumTO::getName, RumTO::setName);
-		nameField.addClassName("top-clean");
+		nameField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		layout.add(nameField);
 
 		TextField countryField = new TextField("Země");
 		binder.forField(countryField).asRequired().bind(RumTO::getCountry, RumTO::setCountry);
-		countryField.addClassName("top-clean");
+		countryField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		layout.add(countryField);
 
 		RatingStars ratingStars = new RatingStars();

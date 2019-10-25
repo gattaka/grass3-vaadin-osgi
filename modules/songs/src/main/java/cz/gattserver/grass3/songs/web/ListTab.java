@@ -29,6 +29,7 @@ import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
 public class ListTab extends Div {
@@ -112,7 +113,7 @@ public class ListTab extends Div {
 		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
 
 		Upload upload = new Upload(buffer);
-		upload.addClassName("top-margin");
+		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		upload.setAcceptedFileTypes("text/plain");
 		upload.addSucceededListener(event -> {
 			getSongsService().importSong(buffer.getInputStream(event.getFileName()), event.getFileName());

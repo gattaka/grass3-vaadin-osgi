@@ -43,8 +43,7 @@ public class TokenField extends Div {
 	}
 
 	private void init() {
-		tokensLayout = new Div();
-		tokensLayout.addClassName("button-div");
+		tokensLayout = new ButtonLayout(false);
 		add(tokensLayout);
 		tokensLayout.getElement().getStyle().set("display", "inline-block");
 

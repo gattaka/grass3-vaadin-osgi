@@ -183,7 +183,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
 
 		Upload upload = new Upload(buffer);
-		upload.addClassName("top-margin");
+		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		upload.addSucceededListener(event -> {
 			switch (explorer.saveFile(buffer.getInputStream(event.getFileName()), event.getFileName())) {
 			case SUCCESS:
@@ -226,7 +226,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 		grid.setSelectionMode(SelectionMode.MULTI);
 		grid.setColumnReorderingAllowed(true);
 		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
-		grid.addClassName("top-margin");
+		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		layout.add(grid);
 
 		grid.addColumn(new IconRenderer<FMItemTO>(to -> {

@@ -34,6 +34,7 @@ import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.Strong;
 
@@ -60,7 +61,7 @@ public class LanguagePage extends OneColumnPage {
 
 	private void createTabSheet(long langId) {
 		tabs = new Tabs();
-		tabs.addClassName("top-margin");
+		tabs.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		tabs.addSelectedChangeListener(e -> {
 			tabLayout.removeAll();
 			switch (tabs.getSelectedIndex()) {
@@ -124,7 +125,7 @@ public class LanguagePage extends OneColumnPage {
 		layout.add(langLayout);
 
 		tabLayout = new Div();
-		tabLayout.addClassName("top-margin");
+		tabLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		layout.add(tabLayout);
 
 		grid.addSelectionListener(se -> se.getFirstSelectedItem().ifPresent(item -> {
@@ -224,24 +225,24 @@ public class LanguagePage extends OneColumnPage {
 		testLayout.add(columnsLayout);
 
 		Div header = new Div(new Strong("Položka"));
-		header.addClassName("top-margin");
+		header.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		columnsLayout.add(header);
 		columnsLayout.add(new Strong(PREKLAD_LABEL));
 
 		header = new Div(new Strong("Nové"));
-		header.addClassName("top-margin");
+		header.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		columnsLayout.add(header, 2);
 		for (LanguageItemTO item : itemsToLearn)
 			createGridLine(item, columnsLayout, answersMap);
 
 		header = new Div(new Strong("Ke zlepšení"));
-		header.addClassName("top-margin");
+		header.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		columnsLayout.add(header, 2);
 		for (LanguageItemTO item : itemsToImprove)
 			createGridLine(item, columnsLayout, answersMap);
 
 		header = new Div(new Strong("Opakování"));
-		header.addClassName("top-margin");
+		header.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		columnsLayout.add(header, 2);
 		for (LanguageItemTO item : itemsToRefresh)
 			createGridLine(item, columnsLayout, answersMap);
@@ -256,17 +257,17 @@ public class LanguagePage extends OneColumnPage {
 			testLayout.add(resultLayout);
 
 			Div resultHeader = new Div(new Strong("Položka"));
-			resultHeader.addClassName("top-margin");
+			resultHeader.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 			resultHeader.addClassName("bottom-margin");
 			resultLayout.add(resultHeader);
 
 			resultHeader = new Div(new Strong(PREKLAD_LABEL));
-			resultHeader.addClassName("top-margin");
+			resultHeader.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 			resultHeader.addClassName("bottom-margin");
 			resultLayout.add(resultHeader);
 
 			resultHeader = new Div(new Strong("Odpověď"));
-			resultHeader.addClassName("top-margin");
+			resultHeader.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 			resultHeader.addClassName("bottom-margin");
 			resultLayout.add(resultHeader);
 

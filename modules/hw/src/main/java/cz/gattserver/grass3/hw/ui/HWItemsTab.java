@@ -40,6 +40,7 @@ import cz.gattserver.grass3.ui.components.button.GridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.TokenField;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -72,7 +73,7 @@ public class HWItemsTab extends Div {
 			tokenMap.put(type.getName(), type);
 
 		hwTypesFilter = new TokenField(tokenMap.keySet());
-		hwTypesFilter.addClassName("top-margin");
+		hwTypesFilter.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		hwTypesFilter.getInputField().setWidth("200px");
 		hwTypesFilter.addTokenAddListener(token -> populate());
 		hwTypesFilter.addTokenRemoveListener(e -> populate());
@@ -82,7 +83,7 @@ public class HWItemsTab extends Div {
 
 		// Tabulka HW
 		grid = new Grid<>();
-		grid.addClassName("top-margin");
+		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setWidthFull();

@@ -88,8 +88,8 @@ public class HWDetailsInfoTab extends Div {
 		hwImageLayout = new VerticalLayout();
 		hwImageLayout.setSpacing(true);
 		hwImageLayout.setPadding(false);
-		hwImageLayout.setAlignItems(Alignment.CENTER);
-		hwImageLayout.setMaxWidth("200px");
+		hwImageLayout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+		hwImageLayout.setWidth("200px");
 		hwImageLayout.getStyle().set("height", "calc(var(--lumo-button-size) + 200px + var(--lumo-space-m))");
 		itemLayout.add(hwImageLayout);
 		createHWImageOrUpload(hwItem);
@@ -273,6 +273,11 @@ public class HWDetailsInfoTab extends Div {
 	private void createHWItemImageUpload(final HWItemTO hwItem) {
 		MemoryBuffer buffer = new MemoryBuffer();
 		Upload upload = new Upload(buffer);
+		// https://vaadin.com/components/vaadin-upload/java-examples
+		Button uploadButton = new Button("Upload");
+		upload.setUploadButton(uploadButton);
+		Span dropLabel = new Span("Drop");
+		upload.setDropLabel(dropLabel);
 		upload.setMaxFileSize(2000000);
 		upload.setAcceptedFileTypes("image/jpg", "image/jpeg", "image/png");
 		upload.addSucceededListener(e -> {
@@ -288,6 +293,10 @@ public class HWDetailsInfoTab extends Div {
 			}
 		});
 		hwImageLayout.removeAll();
-		hwImageLayout.add(upload);
+		HorizontalLayout hl = new HorizontalLayout();
+		hl.setDefaultVerticalComponentAlignment(Alignment.CENTER);
+		hl.add(upload);
+		hl.setHeightFull();
+		hwImageLayout.add(hl);
 	}
 }

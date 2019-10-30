@@ -38,6 +38,7 @@ import cz.gattserver.grass3.ui.components.button.CloseButton;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
@@ -136,14 +137,17 @@ public class CampgameDetailDialog extends Dialog {
 		if (!campgameTO.getKeywords().isEmpty())
 			layout.add(tags);
 
-		HtmlDiv table = new HtmlDiv("<table>" + "<tr><td><strong>Název:</strong></td><td>" + campgameTO.getName()
-				+ "</td></tr>" + "<tr><td><strong>Původ:</strong></td><td>" + campgameTO.getOrigin()
-				+ "</td><td><strong>Počet hráčů:</strong></td><td>" + campgameTO.getPlayers() + "</td></tr>"
-				+ "<tr><td><strong>Délka hry:</strong></td><td>" + campgameTO.getPlayTime()
-				+ "</td><td><strong>Délky přípravy:</strong></td><td>" + campgameTO.getPreparationTime() + "</td></tr>"
-				+ "</table>");
-		table.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		layout.add(table);
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.addStrong("Název:").add(campgameTO.getName());
+
+		gridLayout.newRow().addStrong("Původ:").add(campgameTO.getOrigin());
+		gridLayout.addStrong("Počet hráčů:").add(campgameTO.getPlayers());
+
+		gridLayout.newRow().addStrong("Délka hry:").add(campgameTO.getPlayTime());
+		gridLayout.addStrong("Délky přípravy:").add(campgameTO.getPreparationTime());
+
+		gridLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		layout.add(gridLayout);
 
 		HtmlDiv descDiv = new HtmlDiv(campgameTO.getDescription().replaceAll("\n", "<br/>"));
 		descDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
@@ -249,15 +253,6 @@ public class CampgameDetailDialog extends Dialog {
 		grid.getStyle().set("height", "calc(100% - 85px)");
 
 		pageLayout.add(grid);
-
-		grid.addColumn(new IconRenderer<CampgameFileTO>(to -> {
-			Image img = new Image(
-					new StreamResource(to.getName(),
-							() -> getCampgamesService().getCampgameImagesFileInputStream(campgameId, to.getName())),
-					to.getName());
-			img.addClassName("thumbnail-200");
-			return img;
-		}, c -> "")).setFlexGrow(0).setWidth("215px").setHeader("Náhled").setTextAlign(ColumnTextAlign.CENTER);
 
 		grid.addColumn(new TextRenderer<>(to -> to.getName())).setHeader("Název").setFlexGrow(100);
 

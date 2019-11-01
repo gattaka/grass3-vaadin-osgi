@@ -143,7 +143,6 @@ public abstract class BookDialog extends WebDialog {
 	}
 
 	protected VerticalLayout createForm(Binder<BookTO> binder) {
-
 		TextField nameField = new TextField("Název");
 		nameField.setWidth("600px");
 		binder.forField(nameField).asRequired().bind(BookTO::getName, BookTO::setName);

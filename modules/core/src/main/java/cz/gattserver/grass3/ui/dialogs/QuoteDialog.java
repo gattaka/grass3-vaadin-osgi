@@ -1,11 +1,11 @@
 package cz.gattserver.grass3.ui.dialogs;
 
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.validator.StringLengthValidator;
 
 import cz.gattserver.grass3.interfaces.QuoteTO;
+import cz.gattserver.grass3.ui.components.SaveCloseButtons;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
 public class QuoteDialog extends WebDialog {
@@ -17,12 +17,10 @@ public class QuoteDialog extends WebDialog {
 	}
 
 	public QuoteDialog(SaveAction saveAction) {
-		super("Nová hláška");
 		init(null, saveAction);
 	}
 
 	public QuoteDialog(QuoteTO quote, SaveAction saveAction) {
-		super("Upravit hlášku");
 		init(quote, saveAction);
 	}
 
@@ -31,13 +29,8 @@ public class QuoteDialog extends WebDialog {
 		final TextArea newQuoteText = new TextArea();
 		newQuoteText.setMaxLength(maxLength);
 
-		if (quote != null)
-			newQuoteText.setValue(quote.getName());
-
 		final Binder<QuoteTO> binder = new Binder<>();
 		binder.setBean(new QuoteTO());
-		if (quote != null)
-			binder.readBean(quote);
 		binder.forField(newQuoteText)
 				.withValidator(new StringLengthValidator(
 						"Text hlášky nesmí být prázdný a může mít maximálně " + maxLength + " znaků", 1, maxLength))
@@ -45,14 +38,16 @@ public class QuoteDialog extends WebDialog {
 		newQuoteText.setWidth("400px");
 		addComponent(newQuoteText);
 
-		addComponent(new Button("Uložit", event -> {
-			if (!binder.validate().isOk())
-				return;
-			QuoteTO q = binder.getBean();
-			q.setName(newQuoteText.getValue());
-			saveAction.onSave(q);
-			close();
-		}));
+		if (quote != null)
+			binder.readBean(quote);
+
+		addComponent(new SaveCloseButtons(e -> {
+			QuoteTO targetTO = quote == null ? new QuoteTO() : quote;
+			if (binder.writeBeanIfValid(targetTO)) {
+				saveAction.onSave(targetTO);
+				close();
+			}
+		}, e -> close()));
 	}
 
 }

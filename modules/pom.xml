@@ -13,7 +13,7 @@
 	</parent>
 
 	<modules>
-		<module>core</module>
+		<module>grass-core</module>
 		<module>contents</module>
 		<module>books</module>
 		<module>campgames</module>

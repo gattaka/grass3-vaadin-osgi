@@ -15,7 +15,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
@@ -54,6 +53,7 @@ import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
+import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.HtmlDiv;
@@ -95,7 +95,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 	private int currentPage = 0;
 
 	private PGMultiUpload upload;
-	private FormLayout galleryGridLayout;
+	private GridLayout galleryGridLayout;
 	private HorizontalLayout pagingLayout;
 
 	/**
@@ -183,8 +183,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		pageCount = (int) Math.ceil((double) imageCount / PAGE_SIZE);
 
 		// galerie
-		galleryGridLayout = new FormLayout();
-		galleryGridLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("200px", GALLERY_GRID_COLS));
+		galleryGridLayout = new GridLayout();
 		galleryGridLayout.setSizeFull();
 		layout.add(galleryGridLayout);
 
@@ -198,6 +197,10 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		layout.add(pagingLayout);
 
 		upload = new PGMultiUpload(galleryDir);
+		Button uploadButton = new Button("Upload");
+		upload.setUploadButton(uploadButton);
+		Span dropLabel = new Span("Drop");
+		upload.setDropLabel(dropLabel);
 		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		upload.addFinishedListener(e -> {
 			eventBus.subscribe(PGViewerPage.this);
@@ -307,12 +310,15 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		int start = currentPage * PAGE_SIZE;
 		int index = start;
 		try {
+			int counter = 0;
 			for (PhotogalleryViewItemTO item : pgService.getViewItems(galleryDir, start, PAGE_SIZE)) {
+				if (counter == 0)
+					galleryGridLayout.newRow();
+				counter = (counter + 1) % 4;
+
 				final int currentIndex = index;
-				VerticalLayout itemLayout = new VerticalLayout();
-				itemLayout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-				itemLayout.setPadding(false);
-				itemLayout.setSpacing(true);
+				Div itemLayout = new Div();
+				itemLayout.getStyle().set("text-align", "center");
 
 				// Miniatura/Náhled
 				Image embedded = new Image(new StreamResource(item.getName(), () -> {
@@ -325,14 +331,20 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 				}), item.getName());
 				itemLayout.add(embedded);
 
+				// Detail
 				String file = item.getFile().getFileName().toString();
 				String url = getItemURL(file);
 				boolean video = PhotogalleryItemType.VIDEO.equals(item.getType());
 				if (video)
 					url = url.substring(0, url.length() - 4);
-				Anchor link = new Anchor(url, video ? "Stáhnout video" : "Plné rozlišení");
+				Anchor link = new Anchor(url, video ? "Detail" : "Detail");
 				link.setTarget("_blank");
 				itemLayout.add(link);
+
+				// Smazat
+				if (coreACL.canModifyContent(photogallery.getContentNode(), getUser())) {
+
+				}
 
 				galleryGridLayout.add(itemLayout);
 

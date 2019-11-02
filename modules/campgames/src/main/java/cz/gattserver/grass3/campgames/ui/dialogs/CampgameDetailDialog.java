@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
@@ -39,6 +38,7 @@ import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
+import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 
@@ -253,15 +253,13 @@ public class CampgameDetailDialog extends Dialog {
 
 		grid.addColumn(new TextRenderer<>(to -> to.getName())).setHeader("Název").setFlexGrow(100);
 
-		grid.addColumn(new ComponentRenderer<>(to -> {
-			Button button = new Button("Detail", e -> UI.getCurrent().getPage()
-					.open(CampgamesConfiguration.CAMPGAMES_PATH + "/" + campgameTO.getId() + "/" + to.getName()));
-			button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-			return button;
-		})).setHeader("Detail").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
+		grid.addColumn(new ComponentRenderer<LinkButton, CampgameFileTO>(to -> new LinkButton("Detail",
+				e -> UI.getCurrent().getPage()
+						.open(CampgamesConfiguration.CAMPGAMES_PATH + "/" + campgameTO.getId() + "/" + to.getName()))))
+				.setHeader("Detail").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 
 		grid.addColumn(new ComponentRenderer<>(to -> {
-			Button button = new Button("Smazat", be -> {
+			Button button = new LinkButton("Smazat", be -> {
 				new ConfirmDialog("Opravdu smazat?", e -> {
 					getCampgamesService().deleteCampgameImagesFile(campgameId, to.getName());
 					tabLayout.removeAll();
@@ -271,7 +269,6 @@ public class CampgameDetailDialog extends Dialog {
 				}).open();
 			});
 			button.setVisible(isAdmin);
-			button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 			return button;
 		})).setHeader("Smazat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 		grid.addColumn(new TextRenderer<>(CampgameFileTO::getSize)).setHeader("Velikost")

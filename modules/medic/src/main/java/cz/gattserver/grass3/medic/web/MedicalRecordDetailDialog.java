@@ -3,7 +3,6 @@ package cz.gattserver.grass3.medic.web;
 import java.time.format.DateTimeFormatter;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -12,6 +11,7 @@ import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.interfaces.MedicalRecordTO;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.Strong;
 
 public class MedicalRecordDetailDialog extends Dialog {
@@ -34,9 +34,8 @@ public class MedicalRecordDetailDialog extends Dialog {
 		layout.add(medicalRecordDTO.getDateTime().format(DateTimeFormatter.ofPattern("d. MMMM yyyy, H:mm")));
 
 		layout.add(new Strong("Instituce"));
-		final Button button = new Button(medicalRecordDTO.getInstitution().getName(),
+		final Button button = new LinkButton(medicalRecordDTO.getInstitution().getName(),
 				e -> new MedicalInstitutionDetailDialog(medicalRecordDTO.getInstitution().getId()).open());
-		button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 		button.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		layout.add(button);
 

@@ -3,7 +3,6 @@ package cz.gattserver.grass3.medic.web;
 import java.time.format.DateTimeFormatter;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
@@ -11,6 +10,7 @@ import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.Strong;
 
 public class SchuduledVisitDetailDialog extends Dialog {
@@ -36,18 +36,16 @@ public class SchuduledVisitDetailDialog extends Dialog {
 		layout.add(scheduledVisitDTO.getPurpose());
 
 		layout.add(new Strong("Instituce"));
-		final Button instButton = new Button(scheduledVisitDTO.getInstitution().getName(),
+		final Button instButton = new LinkButton(scheduledVisitDTO.getInstitution().getName(),
 				e -> new MedicalInstitutionDetailDialog(scheduledVisitDTO.getInstitution().getId()).open());
-		instButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 		instButton.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		layout.add(instButton);
 
 		layout.add(new Strong("Navazuje na"));
 		if (scheduledVisitDTO.getRecord() != null) {
-			final Button recordButton = new Button(scheduledVisitDTO.getRecord().toString(),
+			final Button recordButton = new LinkButton(scheduledVisitDTO.getRecord().toString(),
 					e -> new MedicalRecordDetailDialog(scheduledVisitDTO.getRecord().getId()).open());
 			recordButton.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
-			recordButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 			layout.add(recordButton);
 		} else {
 			layout.add("-");

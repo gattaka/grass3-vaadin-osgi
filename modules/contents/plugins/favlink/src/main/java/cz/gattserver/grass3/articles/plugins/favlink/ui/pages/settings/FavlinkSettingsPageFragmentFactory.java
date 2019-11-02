@@ -12,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
@@ -43,6 +41,7 @@ import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 
 public class FavlinkSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
@@ -128,38 +127,30 @@ public class FavlinkSettingsPageFragmentFactory extends AbstractPageFragmentFact
 					p -> p.getFileName().toString().substring(p.getFileName().toString().lastIndexOf('.'))))
 					.setHeader("Typ").setWidth("40px").setFlexGrow(0);
 
-			grid.addColumn(new ComponentRenderer<>(p -> {
-				Button button = new Button("Smazat", be -> {
-					new ConfirmDialog("Opravdu smazat favicon?", e -> {
-						try {
-							Files.delete(p);
-							populateGrid(grid, path);
-						} catch (IOException e1) {
-							logger.error("Nezdařilo se smazat favicon " + p.getFileName().toString(), e);
-						}
-					}).open();
-				});
-				button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-				return button;
-			})).setHeader("Smazat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
+			grid.addColumn(new ComponentRenderer<>(p -> new LinkButton("Smazat", be -> {
+				new ConfirmDialog("Opravdu smazat favicon?", e -> {
+					try {
+						Files.delete(p);
+						populateGrid(grid, path);
+					} catch (IOException e1) {
+						logger.error("Nezdařilo se smazat favicon " + p.getFileName().toString(), e);
+					}
+				}).open();
+			}))).setHeader("Smazat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 
-			grid.addColumn(new ComponentRenderer<>(p -> {
-				Button button = new Button("Přegenerovat", be -> {
-					new ConfirmDialog("Opravdu přegenerovat favicon?", e -> {
-						try {
-							Files.delete(p);
-							String fileName = p.getFileName().toString();
-							String urlName = "http://" + fileName.substring(0, fileName.lastIndexOf('.'));
-							new CombinedFaviconObtainStrategy().obtainFaviconURL(urlName, GrassPage.getContextPath());
-							populateGrid(grid, path);
-						} catch (IOException e1) {
-							logger.error("Nezdařilo se smazat favicon " + p.getFileName().toString(), e);
-						}
-					}).open();
-				});
-				button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-				return button;
-			})).setHeader("Přegenerovat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
+			grid.addColumn(new ComponentRenderer<>(p -> new LinkButton("Přegenerovat", be -> {
+				new ConfirmDialog("Opravdu přegenerovat favicon?", e -> {
+					try {
+						Files.delete(p);
+						String fileName = p.getFileName().toString();
+						String urlName = "http://" + fileName.substring(0, fileName.lastIndexOf('.'));
+						new CombinedFaviconObtainStrategy().obtainFaviconURL(urlName, GrassPage.getContextPath());
+						populateGrid(grid, path);
+					} catch (IOException e1) {
+						logger.error("Nezdařilo se smazat favicon " + p.getFileName().toString(), e);
+					}
+				}).open();
+			}))).setHeader("Přegenerovat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 
 			grid.addColumn(new TextRenderer<>(p -> formatSize(p))).setHeader("Velikost")
 					.setTextAlign(ColumnTextAlign.END).setFlexGrow(0).setWidth("60px");

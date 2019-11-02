@@ -17,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox.FetchItemsCallback;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -61,6 +59,7 @@ import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.Breakline;
+import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import net.engio.mbassy.listener.Handler;
 
@@ -215,21 +214,18 @@ public class PGEditorPage extends OneColumnPage implements HasUrlParameter<Strin
 		grid.setWidthFull();
 		grid.setHeight("400px");
 
-		grid.addColumn(new ComponentRenderer<>(itemTO -> {
-			Button button = new Button("Smazat", be -> {
-				new ConfirmDialog("Opravdu smazat?", e -> {
-					try {
-						pgService.deleteFile(itemTO, galleryDir);
-						items.remove(itemTO);
-					} catch (Exception ex) {
-						UIUtils.showWarning("Nezdařilo se smazat některé soubory");
-					}
-					grid.getDataProvider().refreshAll();
-				}).open();
-			});
-			button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-			return button;
-		})).setHeader("Smazat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
+		grid.addColumn(
+				new ComponentRenderer<LinkButton, PhotogalleryViewItemTO>(itemTO -> new LinkButton("Smazat", be -> {
+					new ConfirmDialog("Opravdu smazat?", e -> {
+						try {
+							pgService.deleteFile(itemTO, galleryDir);
+							items.remove(itemTO);
+						} catch (Exception ex) {
+							UIUtils.showWarning("Nezdařilo se smazat některé soubory");
+						}
+						grid.getDataProvider().refreshAll();
+					}).open();
+				}))).setHeader("Smazat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 
 		grid.addColumn(new ComponentRenderer<>(itemTO -> {
 			String file = itemTO.getName();

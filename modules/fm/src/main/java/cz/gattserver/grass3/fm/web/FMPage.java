@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
@@ -61,6 +60,7 @@ import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
+import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.window.WebDialog;
 import net.glxn.qrgen.javase.QRCode;
 
@@ -241,7 +241,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 				.setFlexGrow(0);
 
 		grid.addColumn(new ComponentRenderer<Button, FMItemTO>(to -> {
-			Button button = new Button("URL", e -> {
+			Button button = new LinkButton("URL", e -> {
 				Dialog ww = new Dialog();
 				String id = UUID.randomUUID().toString();
 				String checkId = "check-" + id;
@@ -260,19 +260,16 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 								+ "\").innerHTML = \"URL zkopírováno do schránky\";" + "}" + "},10)");
 			});
 			button.setVisible(!to.isDirectory());
-			button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 			return button;
 		})).setHeader("URL").setTextAlign(ColumnTextAlign.CENTER).setWidth("40px").setFlexGrow(0);
 
-		grid.addColumn(new ComponentRenderer<Button, FMItemTO>(to -> {
-			Button button = new Button("Stáhnout", e -> handleDownloadAction(to));
-			button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-			return button;
-		})).setHeader("Stažení").setTextAlign(ColumnTextAlign.CENTER).setWidth("90px").setFlexGrow(0);
+		grid.addColumn(new ComponentRenderer<Button, FMItemTO>(
+				to -> new LinkButton("Stáhnout", e -> handleDownloadAction(to)))).setHeader("Stažení")
+				.setTextAlign(ColumnTextAlign.CENTER).setWidth("90px").setFlexGrow(0);
 
 		grid.addColumn(new ComponentRenderer<Button, FMItemTO>(to -> {
 			String link = explorer.getDownloadLink(urlBase, to.getName());
-			Button button = new Button("QR", e -> {
+			Button button = new LinkButton("QR", e -> {
 				WebDialog ww = new WebDialog();
 				ww.setCloseOnEsc(true);
 				ww.setCloseOnOutsideClick(true);
@@ -289,7 +286,6 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 				ww.setComponentAlignment(image, Alignment.CENTER);
 				ww.open();
 			});
-			button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 			return button;
 		})).setHeader("QR").setTextAlign(ColumnTextAlign.CENTER).setWidth("35px").setFlexGrow(0);
 

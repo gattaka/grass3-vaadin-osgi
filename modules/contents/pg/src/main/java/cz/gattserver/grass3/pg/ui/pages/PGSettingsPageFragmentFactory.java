@@ -22,7 +22,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -62,6 +61,7 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.Breakline;
+import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.InfoDialog;
 import cz.gattserver.web.common.ui.window.WarnDialog;
@@ -176,7 +176,7 @@ public class PGSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 					.setTextAlign(ColumnTextAlign.END).setWidth("70px").setFlexGrow(0);
 
 			grid.addColumn(new ComponentRenderer<Button, PGSettingsItemTO>(item -> {
-				Button button = new Button("Přegenerovat", be -> {
+				Button button = new LinkButton("Přegenerovat", be -> {
 					new ConfirmDialog("Opravdu přegenerovat galerii?", e -> {
 						UUID operationId = UUID.randomUUID();
 
@@ -191,21 +191,16 @@ public class PGSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 						pgService.modifyPhotogallery(operationId, to.getId(), payloadTO, LocalDateTime.now());
 					}).open();
 				});
-				button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
 				button.setVisible(item.getOverviewTO() != null);
 				return button;
 			})).setHeader("Přegenerování").setTextAlign(ColumnTextAlign.CENTER);
 
-			grid.addColumn(new ComponentRenderer<Button, PGSettingsItemTO>(item -> {
-				String btnCaption = item.getOverviewTO() == null ? "Smazat adresář" : "Smazat galerii";
-				Button button = new Button(btnCaption, be -> {
-					String caption = item.getOverviewTO() == null ? "Opravdu smazat adresář?"
-							: "Opravdu smazat galerii (záznam v kategorii a data v adresáři)?";
-					new ConfirmDialog(caption, e -> deleteItem(item, path, grid)).open();
-				});
-				button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-				return button;
-			})).setHeader("Smazání").setWidth("110px").setFlexGrow(0).setTextAlign(ColumnTextAlign.CENTER);
+			grid.addColumn(new ComponentRenderer<Button, PGSettingsItemTO>(
+					item -> new LinkButton(item.getOverviewTO() == null ? "Smazat adresář" : "Smazat galerii", be -> {
+						String caption = item.getOverviewTO() == null ? "Opravdu smazat adresář?"
+								: "Opravdu smazat galerii (záznam v kategorii a data v adresáři)?";
+						new ConfirmDialog(caption, e -> deleteItem(item, path, grid)).open();
+					}))).setHeader("Smazání").setWidth("110px").setFlexGrow(0).setTextAlign(ColumnTextAlign.CENTER);
 
 			HeaderRow filteringHeader = grid.appendHeaderRow();
 

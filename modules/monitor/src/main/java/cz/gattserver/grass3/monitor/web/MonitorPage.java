@@ -12,7 +12,6 @@ import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
@@ -45,6 +44,7 @@ import cz.gattserver.grass3.monitor.web.label.SuccessMonitorStateLabel;
 import cz.gattserver.grass3.monitor.web.label.WarningMonitorDisplay;
 import cz.gattserver.grass3.monitor.web.label.WarningMonitorStateLabel;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.grass3.ui.util.GridLayout;
 
 @Route("system-monitor")
 public class MonitorPage extends OneColumnPage {
@@ -280,9 +280,7 @@ public class MonitorPage extends OneColumnPage {
 			diskLayout.add(new WarningMonitorDisplay("Info není dostupné"));
 			return;
 		}
-		FormLayout grid = new FormLayout();
-		int columns = 12;
-		grid.setResponsiveSteps(new FormLayout.ResponsiveStep("200px", columns));
+		GridLayout grid = new GridLayout();
 		grid.setWidth("100%");
 		diskLayout.add(grid);
 
@@ -290,14 +288,15 @@ public class MonitorPage extends OneColumnPage {
 		grid.add(createMarginRightWrapper(new MonitorOutputLabel("Mount")));
 		grid.add(createMarginRightWrapper(new MonitorOutputLabel("Název")));
 		grid.add(createMarginRightWrapper(new MonitorOutputLabel("FS Typ")));
-		grid.add(createMarginRightWrapper(new MonitorOutputLabel("Volno")), 2);
-		grid.add(createMarginRightWrapper(new MonitorOutputLabel("Obsazeno")), 2);
-		grid.add(createMarginRightWrapper(new MonitorOutputLabel("Velikost")), 2);
+		grid.add(createMarginRightWrapper(new MonitorOutputLabel("Volno")));
+		grid.add(createMarginRightWrapper(new MonitorOutputLabel("Obsazeno")));
+		grid.add(createMarginRightWrapper(new MonitorOutputLabel("Velikost")));
 		Span spacer = new Span();
 		spacer.setWidth("100%");
 		grid.add(spacer);
 
 		for (DiskStatusMonitorItemTO disk : disks) {
+			grid.newRow();
 			switch (disk.getMonitorState()) {
 			case SUCCESS:
 				grid.add(createMarginRightWrapper(new SuccessMonitorStateLabel()));
@@ -311,22 +310,19 @@ public class MonitorPage extends OneColumnPage {
 				grid.add(createMarginRightWrapper(new MonitorOutputLabel(disk.getType())));
 
 				String usableInfo[] = humanFormat(disk.getUsable()).split(" ");
-				MonitorOutputLabel usableLabel = new MonitorOutputLabel(usableInfo[0]);
+				MonitorOutputLabel usableLabel = new MonitorOutputLabel(usableInfo[0] + " " + usableInfo[1]);
 				VerticalLayout usableLayout = createMarginRightWrapper(usableLabel);
 				grid.add(usableLayout);
-				grid.add(createMarginRightWrapper(new MonitorOutputLabel(usableInfo[1])));
 
 				String usedInfo[] = humanFormat(disk.getUsed()).split(" ");
-				MonitorOutputLabel usedLabel = new MonitorOutputLabel(usedInfo[0]);
+				MonitorOutputLabel usedLabel = new MonitorOutputLabel(usedInfo[0] + " " + usedInfo[1]);
 				VerticalLayout usedLayout = createMarginRightWrapper(usedLabel);
 				grid.add(usedLayout);
-				grid.add(createMarginRightWrapper(new MonitorOutputLabel(usedInfo[1])));
 
 				String totalInfo[] = humanFormat(disk.getTotal()).split(" ");
-				MonitorOutputLabel totalLabel = new MonitorOutputLabel(totalInfo[0]);
+				MonitorOutputLabel totalLabel = new MonitorOutputLabel(totalInfo[0] + " " + totalInfo[1]);
 				VerticalLayout totalLayout = createMarginRightWrapper(totalLabel);
 				grid.add(totalLayout);
-				grid.add(createMarginRightWrapper(new MonitorOutputLabel(totalInfo[1])));
 				break;
 			case ERROR:
 				grid.add(new ErrorMonitorStateLabel());

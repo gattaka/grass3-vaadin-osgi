@@ -15,12 +15,14 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.SortDirection;
+import com.vaadin.flow.data.renderer.IconRenderer;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 
 import cz.gattserver.grass3.hw.interfaces.HWFilterTO;
@@ -88,6 +90,17 @@ public class HWItemsTab extends Div {
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setWidthFull();
 		grid.setHeight("480px");
+
+		grid.addColumn(new IconRenderer<HWItemOverviewTO>(c -> {
+			ImageIcon ii = HWUIUtils.chooseImageIcon(c);
+			if (ii != null) {
+				Image img = new Image(ii.createResource(), c.getState().getName());
+				img.getStyle().set("margin-bottom", "-4px");
+				return img;
+			} else {
+				return new Span();
+			}
+		}, c -> "")).setFlexGrow(0).setWidth("26px").setHeader("");
 
 		Column<HWItemOverviewTO> nameColumn = grid.addColumn(HWItemOverviewTO::getName).setKey(NAME_BIND)
 				.setHeader("Název").setWidth("260px").setFlexGrow(0);

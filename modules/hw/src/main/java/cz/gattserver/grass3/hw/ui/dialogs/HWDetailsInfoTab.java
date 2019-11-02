@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
@@ -26,6 +27,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.IconRenderer;
 import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.common.util.CZAmountFormatter;
@@ -34,15 +37,16 @@ import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.grass3.hw.ui.HWUIUtils;
 import cz.gattserver.grass3.ui.components.button.CloseButton;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
-import cz.gattserver.grass3.ui.util.ContainerDiv;
 import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
+import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.Strong;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
@@ -160,9 +164,7 @@ public class HWDetailsInfoTab extends Div {
 			marginDiv.add(new Span("-"));
 		} else {
 			// Samotný button se stále roztahoval, bez ohledu na nastavený width
-			Button usedInBtn = new Button(hwItem.getUsedIn().getName());
-			usedInBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-			usedInBtn.addClickListener(e -> {
+			Button usedInBtn = new LinkButton(hwItem.getUsedIn().getName(), e -> {
 				hwItemDetailDialog.close();
 				new HWItemDetailsDialog(hwItem.getUsedIn().getId()).open();
 			});
@@ -173,22 +175,41 @@ public class HWDetailsInfoTab extends Div {
 		name.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(name);
 
-		List<HWItemOverviewTO> parts = hwService.getAllParts(hwItem.getId());
-		Div partsContainer = new ContainerDiv();
-		partsContainer.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		partsContainer.setHeight("200px");
-		add(partsContainer);
+		// Tabulka HW
+		Grid<HWItemOverviewTO> grid = new Grid<>();
+		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		grid.setSelectionMode(SelectionMode.SINGLE);
+		grid.setWidthFull();
+		grid.setHeight("300px");
 
-		for (final HWItemOverviewTO part : parts) {
-			Button partDetailBtn = new Button(part.getName());
-			partDetailBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-			partDetailBtn.addClickListener(e -> {
-				hwItemDetailDialog.close();
-				HWItemTO detailTO = hwService.getHWItem(part.getId());
-				new HWItemDetailsDialog(detailTO.getId()).open();
-			});
-			partsContainer.add(partDetailBtn);
-		}
+		grid.addColumn(new IconRenderer<HWItemOverviewTO>(c -> {
+			ImageIcon ii = HWUIUtils.chooseImageIcon(c);
+			if (ii != null) {
+				Image img = new Image(ii.createResource(), c.getState().getName());
+				img.getStyle().set("margin-bottom", "-4px");
+				return img;
+			} else {
+				return new Span();
+			}
+		}, c -> "")).setFlexGrow(0).setWidth("26px").setHeader("");
+
+		grid.addColumn(new ComponentRenderer<Button, HWItemOverviewTO>(c -> new LinkButton(c.getName(), e -> {
+			hwItemDetailDialog.close();
+			HWItemTO detailTO = hwService.getHWItem(c.getId());
+			new HWItemDetailsDialog(detailTO.getId()).open();
+		}))).setHeader("Název").setFlexGrow(100);
+
+		// kontrola na null je tady jenom proto, aby při selectu (kdy se udělá
+		// nový objekt a dá se mu akorát ID, které se porovnává) aplikace
+		// nespadla na NPE -- což je trochu zvláštní, protože ve skutečnosti
+		// žádný majetek nemá stav null.
+		grid.addColumn(hw -> hw.getState() == null ? "" : hw.getState().getName()).setHeader("Stav").setWidth("130px")
+				.setFlexGrow(0);
+
+		grid.setItems(hwService.getAllParts(hwItem.getId()));
+
+		add(grid);
 
 		HorizontalLayout operationsLayout = new HorizontalLayout();
 		operationsLayout.setSpacing(false);

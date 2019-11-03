@@ -43,7 +43,7 @@ import cz.gattserver.grass3.ui.components.OperationsLayout;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.grass3.ui.util.ContainerDiv;
-import cz.gattserver.grass3.ui.util.GridLayout;
+import cz.gattserver.grass3.ui.util.TableLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -107,17 +107,6 @@ public class HWDetailsInfoTab extends Div {
 		outerLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(outerLayout);
 
-		VerticalLayout leftPartLayout = new VerticalLayout();
-		leftPartLayout.setSpacing(true);
-		leftPartLayout.setPadding(false);
-		outerLayout.add(leftPartLayout);
-
-		HorizontalLayout itemLayout = new HorizontalLayout();
-		itemLayout.setSpacing(true);
-		itemLayout.setPadding(false);
-		itemLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		leftPartLayout.add(itemLayout);
-
 		hwImageLayout = new VerticalLayout();
 		hwImageLayout.setSpacing(true);
 		hwImageLayout.setPadding(false);
@@ -125,44 +114,37 @@ public class HWDetailsInfoTab extends Div {
 		hwImageLayout.setWidth("200px");
 		hwImageLayout.getStyle().set("height",
 				"calc(" + UIUtils.BUTTON_SIZE_CSS_VAR + " + 200px + " + UIUtils.SPACING_CSS_VAR + ")");
-		itemLayout.add(hwImageLayout);
+		outerLayout.add(hwImageLayout);
 		createHWImageOrUpload(hwItem);
 
 		Div itemDetailsLayout = new Div();
-		itemLayout.add(itemDetailsLayout);
+		outerLayout.add(itemDetailsLayout);
 
-		Div rightPartLayout = new Div();
-		itemDetailsLayout.add(rightPartLayout);
+		TableLayout tableLayout = new TableLayout();
+		itemDetailsLayout.add(tableLayout);
 
-		GridLayout gridLayout1 = new GridLayout();
-		rightPartLayout.add(gridLayout1);
-
-		gridLayout1.add(new Strong("Stav"));
-		gridLayout1.add(new Strong("Získáno"));
-		gridLayout1.add(new Strong("Spravováno pro"));
-		gridLayout1.newRow();
+		tableLayout.addStrong("Stav");
+		tableLayout.addStrong("Získáno");
+		tableLayout.newRow();
 
 		Div stateValue = new Div(new Text(hwItem.getState().getName()));
 		stateValue.setMinWidth("100px");
-		gridLayout1.add(stateValue);
+		tableLayout.add(stateValue);
 
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("d.M.yyyy");
 		Div purchDateValue = new Div(
 				new Text(hwItem.getPurchaseDate() == null ? "-" : hwItem.getPurchaseDate().format(format)));
 		purchDateValue.setMinWidth("100px");
-		gridLayout1.add(purchDateValue);
-		gridLayout1.add(new Span(StringUtils.isBlank(hwItem.getSupervizedFor()) ? "-" : hwItem.getSupervizedFor()));
+		tableLayout.add(purchDateValue);
+		tableLayout.newRow();
 
-		GridLayout gridLayout2 = new GridLayout();
-		rightPartLayout.add(gridLayout2);
-
-		gridLayout2.add(new Strong("Cena"));
-		gridLayout2.add(new Strong("Záruka"));
-		gridLayout2.newRow();
+		tableLayout.add(new Strong("Cena"));
+		tableLayout.add(new Strong("Záruka"));
+		tableLayout.newRow();
 
 		Div priceValue = new Div(new Text(createPriceString(hwItem.getPrice())));
 		priceValue.setMinWidth("100px");
-		gridLayout2.add(priceValue);
+		tableLayout.add(priceValue);
 
 		Div zarukaLayout = new Div();
 		if (hwItem.getWarrantyYears() != null && hwItem.getWarrantyYears() > 0 && hwItem.getPurchaseDate() != null) {
@@ -179,34 +161,36 @@ public class HWDetailsInfoTab extends Div {
 		} else {
 			zarukaLayout.add("-");
 		}
-		gridLayout2.add(zarukaLayout);
+		tableLayout.add(zarukaLayout);
+		tableLayout.newRow();
 
-		rightPartLayout.add(new Div(new Strong("Je součástí")));
-		Div marginDiv = new Div();
-		marginDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		rightPartLayout.add(marginDiv);
+		tableLayout.addStrong("Spravováno pro").setColSpan(2);
+		tableLayout.newRow();
+
+		tableLayout.add(new Span(StringUtils.isBlank(hwItem.getSupervizedFor()) ? "-" : hwItem.getSupervizedFor()))
+				.setColSpan(2);
+		tableLayout.newRow();
+
+		tableLayout.addStrong("Je součástí").setColSpan(2);
+		tableLayout.newRow();
+
 		if (hwItem.getUsedIn() == null) {
-			marginDiv.add(new Span("-"));
+			tableLayout.add(new Span("-"));
 		} else {
 			// Samotný button se stále roztahoval, bez ohledu na nastavený width
 			Button usedInBtn = new LinkButton(hwItem.getUsedIn().getName(), e -> {
 				hwItemDetailDialog.close();
 				new HWItemDetailsDialog(hwItem.getUsedIn().getId()).open();
 			});
-			marginDiv.add(usedInBtn);
+			tableLayout.add(usedInBtn);
 		}
-
-		Div name = new Div(new Strong("Součásti"));
-		name.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		leftPartLayout.add(name);
+		tableLayout.setColSpan(2);
 
 		// Tabulka HW
 		Grid<HWItemOverviewTO> grid = new Grid<>();
-		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
-		grid.setSelectionMode(SelectionMode.SINGLE);
-		grid.setWidthFull();
-		grid.setHeightFull();
+		grid.setSelectionMode(SelectionMode.NONE);
+		grid.setHeight("250px");
 
 		grid.addColumn(new IconRenderer<HWItemOverviewTO>(c -> {
 			ImageIcon ii = HWUIUtils.chooseImageIcon(c);
@@ -224,7 +208,7 @@ public class HWDetailsInfoTab extends Div {
 					hwItemDetailDialog.close();
 					HWItemTO detailTO = hwService.getHWItem(c.getId());
 					new HWItemDetailsDialog(detailTO.getId()).open();
-				}))).setHeader("Název").setFlexGrow(100);
+				}))).setHeader("Název součásti").setFlexGrow(100);
 
 		// kontrola na null je tady jenom proto, aby při selectu (kdy se udělá
 		// nový objekt a dá se mu akorát ID, které se porovnává) aplikace
@@ -235,18 +219,17 @@ public class HWDetailsInfoTab extends Div {
 
 		grid.setItems(hwService.getAllParts(hwItem.getId()));
 
-		leftPartLayout.add(grid);
+		outerLayout.add(grid);
 
-		Div descriptionWrapper = new Div();
-		descriptionWrapper.add(new Strong("Popis"));
-		descriptionWrapper.setWidth("700px");
-		outerLayout.add(descriptionWrapper);
+		Div name = new Div(new Strong("Popis"));
+		name.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		add(name);
 
 		Div descriptionDiv = new ContainerDiv();
 		descriptionDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		descriptionDiv.setHeight("500px");
+		descriptionDiv.setHeight("300px");
 		descriptionDiv.setText(hwItem.getDescription());
-		descriptionWrapper.add(descriptionDiv);
+		add(descriptionDiv);
 
 		OperationsLayout operationsLayout = new OperationsLayout(e -> hwItemDetailDialog.close());
 		operationsLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);

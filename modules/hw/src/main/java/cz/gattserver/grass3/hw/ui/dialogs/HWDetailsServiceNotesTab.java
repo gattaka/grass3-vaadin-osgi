@@ -49,6 +49,8 @@ public class HWDetailsServiceNotesTab extends Div {
 	}
 
 	private void init() {
+		setWidth("1000px");
+
 		serviceNotesGrid = new Grid<>();
 		serviceNotesGrid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES,
 				GridVariant.LUMO_COMPACT);
@@ -65,7 +67,6 @@ public class HWDetailsServiceNotesTab extends Div {
 				.setHeader("Je součástí").setWidth("180px").setFlexGrow(0);
 		serviceNotesGrid.addColumn(new TextRenderer<>(to -> String.valueOf(to.getDescription()))).setHeader("Obsah");
 		idColumn.setVisible(false);
-		serviceNotesGrid.setWidth("1000px");
 		serviceNotesGrid.setHeight("300px");
 
 		serviceNotesGrid

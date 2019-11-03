@@ -437,6 +437,22 @@ public class PredicateBuilder {
 	}
 
 	/**
+	 * Přidá porovnání SQL IGNORE CASE LIKE s tím, že se text může nacházet
+	 * uprostřed
+	 * 
+	 * @param expression
+	 *            výraz k porovnání
+	 * @param value
+	 *            hodnota pro porovnání
+	 * @return this pro řetězení
+	 */
+	public PredicateBuilder anyILike(StringExpression expression, String value) {
+		if (isNotBlank(value) && !"*".equals(value))
+			booleanBuilder.and(expression.likeIgnoreCase(prepareForLike("*" + value)));
+		return this;
+	}
+
+	/**
 	 * Přidá porovnání SQL NOT IGNORE CASE LIKE.
 	 * 
 	 * @param expression

@@ -5,7 +5,7 @@ import com.vaadin.flow.data.binder.Binder;
 
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
-import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
@@ -45,7 +45,7 @@ public abstract class HWItemTypeDialog extends WebDialog {
 
 		add(nameField);
 
-		SaveCloseButtons buttons = new SaveCloseButtons(e -> {
+		SaveCloseLayout buttons = new SaveCloseLayout(e -> {
 			try {
 				HWItemTypeTO writeDTO = originalDTO == null ? new HWItemTypeTO() : originalDTO;
 				binder.writeBean(writeDTO);

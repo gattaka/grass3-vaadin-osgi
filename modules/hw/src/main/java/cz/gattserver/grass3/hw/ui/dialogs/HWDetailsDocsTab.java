@@ -13,8 +13,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
@@ -24,11 +22,10 @@ import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.hw.interfaces.HWItemFileTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.service.HWService;
-import cz.gattserver.grass3.ui.components.button.CloseButton;
+import cz.gattserver.grass3.ui.components.OperationsLayout;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.GridButton;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
-import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -65,6 +62,8 @@ public class HWDetailsDocsTab extends Div {
 	}
 
 	private void init() {
+		setWidth("1000px");
+
 		docsGrid = new Grid<>();
 		docsGrid.setWidthFull();
 		docsGrid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES,
@@ -103,19 +102,14 @@ public class HWDetailsDocsTab extends Div {
 				downloadDocument(e.getItem());
 		});
 
-		HorizontalLayout operationsLayout = new HorizontalLayout();
-		operationsLayout.setSpacing(false);
-		operationsLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+		OperationsLayout operationsLayout = new OperationsLayout(e -> hwItemDetailDialog.close());
 		add(operationsLayout);
-
-		ButtonLayout buttonLayout = new ButtonLayout();
-		operationsLayout.add(buttonLayout);
 
 		GridButton<HWItemFileTO> downloadBtn = new GridButton<>("Stáhnout",
 				set -> downloadDocument(set.iterator().next()), docsGrid);
 		downloadBtn.setEnableResolver(set -> set.size() == 1);
 		downloadBtn.setIcon(new Image(ImageIcon.DOWN_16_ICON.createResource(), "Stáhnout"));
-		buttonLayout.add(downloadBtn);
+		operationsLayout.add(downloadBtn);
 
 		Button deleteBtn = new DeleteGridButton<>("Smazat záznam", items -> {
 			HWItemFileTO item = items.iterator().next();
@@ -123,11 +117,7 @@ public class HWDetailsDocsTab extends Div {
 			populateDocsGrid();
 			hwItemDetailDialog.refreshTabLabels();
 		}, docsGrid);
-		buttonLayout.add(deleteBtn);
-
-		CloseButton closeButton = new CloseButton(e -> hwItemDetailDialog.close());
-		closeButton.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		operationsLayout.add(closeButton);
+		operationsLayout.add(deleteBtn);
 	}
 
 }

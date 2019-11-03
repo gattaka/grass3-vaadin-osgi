@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -87,6 +88,20 @@ public class HWItem {
 	 * Spravováno pro (spravuju tohle zařízení někomu?)
 	 */
 	private String supervizedFor;
+
+	/**
+	 * Popis
+	 */
+	@Column(columnDefinition = "TEXT")
+	private String description;
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 	public String getSupervizedFor() {
 		return supervizedFor;

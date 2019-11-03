@@ -18,7 +18,7 @@ import cz.gattserver.grass3.medic.interfaces.MedicalInstitutionTO;
 import cz.gattserver.grass3.medic.interfaces.MedicalRecordTO;
 import cz.gattserver.grass3.medic.interfaces.ScheduledVisitState;
 import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
-import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
@@ -92,7 +92,7 @@ public abstract class ScheduledVisitsCreateDialog extends WebDialog {
 		institutionComboBox.setWidth("100%");
 		binder.forField(institutionComboBox).asRequired().bind("institution");
 
-		add(new SaveCloseButtons(e -> {
+		add(new SaveCloseLayout(e -> {
 			ScheduledVisitTO writeDTO = originalDTO == null ? formDTO : originalDTO;
 			if (binder.writeBeanIfValid(writeDTO)) {
 				try {

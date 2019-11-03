@@ -18,7 +18,7 @@ import cz.gattserver.grass3.medic.interfaces.MedicalRecordTO;
 import cz.gattserver.grass3.medic.interfaces.MedicamentTO;
 import cz.gattserver.grass3.medic.interfaces.PhysicianTO;
 import cz.gattserver.grass3.medic.interfaces.ScheduledVisitTO;
-import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
@@ -90,7 +90,7 @@ public abstract class MedicalRecordCreateDialog extends WebDialog {
 		tokenField.setPlaceholder("Medikament");
 		add(tokenField);
 
-		add(new SaveCloseButtons(e -> {
+		add(new SaveCloseLayout(e -> {
 			MedicalRecordTO writeDTO = originalDTO == null ? new MedicalRecordTO() : originalDTO;
 			if (binder.writeBeanIfValid(writeDTO)) {
 				try {

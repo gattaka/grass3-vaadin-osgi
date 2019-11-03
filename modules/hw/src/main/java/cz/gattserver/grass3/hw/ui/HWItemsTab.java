@@ -110,7 +110,7 @@ public class HWItemsTab extends Div {
 		// žádný majetek nemá stav null.
 		Column<HWItemOverviewTO> stateColumn = grid
 				.addColumn(hw -> hw.getState() == null ? "" : hw.getState().getName()).setHeader("Stav")
-				.setKey(STATE_BIND).setWidth("130px").setFlexGrow(0);
+				.setKey(STATE_BIND).setWidth("110px").setFlexGrow(0);
 		Column<HWItemOverviewTO> usedInColumn = grid.addColumn(HWItemOverviewTO::getUsedInName).setKey(USED_IN_BIND)
 				.setHeader("Je součástí");
 		Column<HWItemOverviewTO> supervizedColumn = grid.addColumn(HWItemOverviewTO::getSupervizedFor)

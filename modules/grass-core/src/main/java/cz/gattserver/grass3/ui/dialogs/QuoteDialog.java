@@ -5,7 +5,7 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.validator.StringLengthValidator;
 
 import cz.gattserver.grass3.interfaces.QuoteTO;
-import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
 public class QuoteDialog extends WebDialog {
@@ -41,7 +41,7 @@ public class QuoteDialog extends WebDialog {
 		if (quote != null)
 			binder.readBean(quote);
 
-		addComponent(new SaveCloseButtons(e -> {
+		addComponent(new SaveCloseLayout(e -> {
 			QuoteTO targetTO = quote == null ? new QuoteTO() : quote;
 			if (binder.writeBeanIfValid(targetTO)) {
 				saveAction.onSave(targetTO);

@@ -6,7 +6,7 @@ import com.vaadin.flow.data.binder.Binder;
 
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.interfaces.MedicamentTO;
-import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
@@ -41,7 +41,7 @@ public abstract class MedicamentCreateDialog extends WebDialog {
 		toleranceField.setWidth("100%");
 		binder.forField(toleranceField).bind("tolerance");
 
-		add(new SaveCloseButtons(e -> {
+		add(new SaveCloseLayout(e -> {
 			MedicamentTO writeDTO = originalDTO == null ? new MedicamentTO() : originalDTO;
 			if (binder.writeBeanIfValid(writeDTO)) {
 				try {

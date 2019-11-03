@@ -10,8 +10,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.server.StreamResource;
@@ -20,10 +18,9 @@ import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.hw.interfaces.HWItemFileTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.service.HWService;
-import cz.gattserver.grass3.ui.components.button.CloseButton;
+import cz.gattserver.grass3.ui.components.OperationsLayout;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.DetailButton;
-import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.ContainerDiv;
 import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
@@ -52,6 +49,8 @@ public class HWDetailsPhotosTab extends Div {
 	}
 
 	private void init() {
+		setWidth("1000px");
+
 		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
 
 		Upload upload = new Upload(buffer);
@@ -75,17 +74,8 @@ public class HWDetailsPhotosTab extends Div {
 		add(upload);
 		populateImages();
 
-		HorizontalLayout operationsLayout = new HorizontalLayout();
-		operationsLayout.setSpacing(false);
-		operationsLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+		OperationsLayout operationsLayout = new OperationsLayout(e -> hwItemDetailDialog.close());
 		add(operationsLayout);
-
-		ButtonLayout buttonLayout = new ButtonLayout();
-		operationsLayout.add(buttonLayout);
-
-		CloseButton closeButton = new CloseButton(e -> hwItemDetailDialog.close());
-		closeButton.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		operationsLayout.add(closeButton);
 	}
 
 	private void populateImages() {

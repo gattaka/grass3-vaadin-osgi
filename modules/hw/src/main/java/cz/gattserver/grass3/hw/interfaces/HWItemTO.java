@@ -36,6 +36,19 @@ public class HWItemTO extends HWItemOverviewTO {
 	 */
 	private HWItemOverviewTO usedIn;
 
+	/**
+	 * Popis
+	 */
+	private String description;
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public HWItemOverviewTO getUsedIn() {
 		return usedIn;
 	}

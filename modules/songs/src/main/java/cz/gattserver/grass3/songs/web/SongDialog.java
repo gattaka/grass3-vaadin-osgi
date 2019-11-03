@@ -10,7 +10,7 @@ import com.vaadin.flow.data.converter.StringToIntegerConverter;
 
 import cz.gattserver.grass3.songs.facades.SongsService;
 import cz.gattserver.grass3.songs.model.interfaces.SongTO;
-import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
@@ -58,7 +58,7 @@ public abstract class SongDialog extends WebDialog {
 		textField.setHeight("500px");
 		add(textField);
 
-		add(new SaveCloseButtons(event -> save(originalTO, binder), e -> close()));
+		add(new SaveCloseLayout(event -> save(originalTO, binder), e -> close()));
 
 		if (originalTO != null) {
 			binder.readBean(originalTO);

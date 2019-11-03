@@ -22,7 +22,7 @@ import cz.gattserver.grass3.hw.interfaces.HWItemState;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
-import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
@@ -137,7 +137,7 @@ public abstract class HWItemDialog extends WebDialog {
 			keywords.setValues(originalDTO.getTypes());
 		winLayout.add(keywords, 2);
 
-		SaveCloseButtons buttons = new SaveCloseButtons(e -> {
+		SaveCloseLayout buttons = new SaveCloseLayout(e -> {
 			try {
 				HWItemTO writeDTO = originalDTO == null ? new HWItemTO() : originalDTO;
 				binder.writeBean(writeDTO);

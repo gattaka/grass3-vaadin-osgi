@@ -15,7 +15,7 @@ import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemState;
 import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
 import cz.gattserver.grass3.hw.service.HWService;
-import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
@@ -85,7 +85,7 @@ public abstract class ServiceNoteCreateDialog extends WebDialog {
 		binder.forField(descriptionField).bind(ServiceNoteTO::getDescription, ServiceNoteTO::setDescription);
 		winLayout.add(descriptionField, 2);
 
-		SaveCloseButtons buttons = new SaveCloseButtons(e -> {
+		SaveCloseLayout buttons = new SaveCloseLayout(e -> {
 			try {
 				ServiceNoteTO writeDTO = originalTO == null ? new ServiceNoteTO() : originalTO;
 				binder.writeBean(writeDTO);

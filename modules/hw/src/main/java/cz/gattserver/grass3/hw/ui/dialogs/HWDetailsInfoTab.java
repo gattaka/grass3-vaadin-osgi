@@ -38,10 +38,10 @@ import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.hw.ui.HWUIUtils;
-import cz.gattserver.grass3.ui.components.button.CloseButton;
+import cz.gattserver.grass3.ui.components.OperationsLayout;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
-import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.ContainerDiv;
 import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
@@ -82,12 +82,40 @@ public class HWDetailsInfoTab extends Div {
 		return new CZAmountFormatter("rok", "roky", "let").format(warrantyYears);
 	}
 
+	private String createShortName(String name) {
+		int maxLength = 50;
+		if (name.length() <= maxLength)
+			return name;
+		return name.substring(0, maxLength / 2 - 3) + "..." + name.substring(name.length() - maxLength / 2);
+	}
+
 	private void init() {
+		setWidth("1000px");
+
+		HorizontalLayout tags = new HorizontalLayout();
+		tags.setSpacing(true);
+		hwItem.getTypes().forEach(typeName -> {
+			Button token = new Button(typeName);
+			tags.add(token);
+		});
+		add(tags);
+
+		HorizontalLayout outerLayout = new HorizontalLayout();
+		outerLayout.setSpacing(true);
+		outerLayout.setPadding(false);
+		outerLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		add(outerLayout);
+
+		VerticalLayout leftPartLayout = new VerticalLayout();
+		leftPartLayout.setSpacing(true);
+		leftPartLayout.setPadding(false);
+		outerLayout.add(leftPartLayout);
+
 		HorizontalLayout itemLayout = new HorizontalLayout();
 		itemLayout.setSpacing(true);
 		itemLayout.setPadding(false);
 		itemLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		add(itemLayout);
+		leftPartLayout.add(itemLayout);
 
 		hwImageLayout = new VerticalLayout();
 		hwImageLayout.setSpacing(true);
@@ -102,19 +130,10 @@ public class HWDetailsInfoTab extends Div {
 		Div itemDetailsLayout = new Div();
 		itemLayout.add(itemDetailsLayout);
 
-		HorizontalLayout tags = new HorizontalLayout();
-		tags.setSpacing(true);
-		hwItem.getTypes().forEach(typeName -> {
-			Button token = new Button(typeName);
-			tags.add(token);
-		});
-		itemDetailsLayout.add(tags);
-
 		Div rightPartLayout = new Div();
 		itemDetailsLayout.add(rightPartLayout);
 
 		GridLayout gridLayout = new GridLayout();
-		gridLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		rightPartLayout.add(gridLayout);
 
 		gridLayout.add(new Strong("Stav"));
@@ -173,7 +192,7 @@ public class HWDetailsInfoTab extends Div {
 
 		Div name = new Div(new Strong("Součásti"));
 		name.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		add(name);
+		leftPartLayout.add(name);
 
 		// Tabulka HW
 		Grid<HWItemOverviewTO> grid = new Grid<>();
@@ -194,30 +213,39 @@ public class HWDetailsInfoTab extends Div {
 			}
 		}, c -> "")).setFlexGrow(0).setWidth("26px").setHeader("");
 
-		grid.addColumn(new ComponentRenderer<Button, HWItemOverviewTO>(c -> new LinkButton(c.getName(), e -> {
-			hwItemDetailDialog.close();
-			HWItemTO detailTO = hwService.getHWItem(c.getId());
-			new HWItemDetailsDialog(detailTO.getId()).open();
-		}))).setHeader("Název").setFlexGrow(100);
+		grid.addColumn(
+				new ComponentRenderer<Button, HWItemOverviewTO>(c -> new LinkButton(createShortName(c.getName()), e -> {
+					hwItemDetailDialog.close();
+					HWItemTO detailTO = hwService.getHWItem(c.getId());
+					new HWItemDetailsDialog(detailTO.getId()).open();
+				}))).setHeader("Název").setFlexGrow(100);
 
 		// kontrola na null je tady jenom proto, aby při selectu (kdy se udělá
 		// nový objekt a dá se mu akorát ID, které se porovnává) aplikace
 		// nespadla na NPE -- což je trochu zvláštní, protože ve skutečnosti
 		// žádný majetek nemá stav null.
-		grid.addColumn(hw -> hw.getState() == null ? "" : hw.getState().getName()).setHeader("Stav").setWidth("130px")
+		grid.addColumn(hw -> hw.getState() == null ? "" : hw.getState().getName()).setHeader("Stav").setWidth("110px")
 				.setFlexGrow(0);
 
 		grid.setItems(hwService.getAllParts(hwItem.getId()));
 
-		add(grid);
+		leftPartLayout.add(grid);
 
-		HorizontalLayout operationsLayout = new HorizontalLayout();
+		Div descriptionWrapper = new Div();
+		descriptionWrapper.add(new Strong("Popis"));
+		descriptionWrapper.setWidth("700px");
+		outerLayout.add(descriptionWrapper);
+
+		Div descriptionDiv = new ContainerDiv();
+		descriptionDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		descriptionDiv.setHeight("calc(100% - 10 * var(--lumo-space-s) - 1px)");
+		descriptionWrapper.add(descriptionDiv);
+
+		OperationsLayout operationsLayout = new OperationsLayout(e -> hwItemDetailDialog.close());
+		operationsLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		operationsLayout.setSpacing(false);
 		operationsLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
 		add(operationsLayout);
-
-		ButtonLayout buttonLayout = new ButtonLayout();
-		operationsLayout.add(buttonLayout);
 
 		final Button fixBtn = new ModifyButton(e -> new HWItemDialog(hwItem) {
 			private static final long serialVersionUID = -1397391593801030584L;
@@ -227,7 +255,7 @@ public class HWDetailsInfoTab extends Div {
 				hwItemDetailDialog.switchInfoTab();
 			}
 		}.open());
-		buttonLayout.add(fixBtn);
+		operationsLayout.add(fixBtn);
 
 		final Button deleteBtn = new DeleteButton(e -> new ConfirmDialog(
 				"Opravdu smazat '" + hwItem.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?",
@@ -239,11 +267,7 @@ public class HWDetailsInfoTab extends Div {
 						new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
 					}
 				}).open());
-		buttonLayout.add(deleteBtn);
-
-		CloseButton closeButton = new CloseButton(e -> hwItemDetailDialog.close());
-		closeButton.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		operationsLayout.add(closeButton);
+		operationsLayout.add(deleteBtn);
 	}
 
 	private void createHWImageOrUpload(final HWItemTO hwItem) {
@@ -267,6 +291,7 @@ public class HWDetailsInfoTab extends Div {
 		image.addClassName("thumbnail-200");
 
 		hwImageLayout.add(image);
+		hwImageLayout.getStyle().set("border", "");
 
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		btnLayout.setSpacing(true);
@@ -315,6 +340,7 @@ public class HWDetailsInfoTab extends Div {
 			}
 		});
 		hwImageLayout.removeAll();
+		hwImageLayout.getStyle().set("border", "1px solid lightgray");
 		HorizontalLayout hl = new HorizontalLayout();
 		hl.setDefaultVerticalComponentAlignment(Alignment.CENTER);
 		hl.add(upload);

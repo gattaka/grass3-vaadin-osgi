@@ -7,7 +7,7 @@ import com.vaadin.flow.component.textfield.TextField;
 
 import cz.gattserver.grass3.recipes.facades.RecipesService;
 import cz.gattserver.grass3.recipes.model.dto.RecipeDTO;
-import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
 public abstract class RecipeWindow extends WebDialog {
@@ -39,7 +39,7 @@ public abstract class RecipeWindow extends WebDialog {
 			desc.setValue(recipesFacade.breaklineToEol(to.getDescription()));
 		add(desc);
 
-		add(new SaveCloseButtons(event -> {
+		add(new SaveCloseLayout(event -> {
 			onSave(name.getValue(), desc.getValue(), to == null ? null : to.getId());
 			close();
 		}, e -> close()));

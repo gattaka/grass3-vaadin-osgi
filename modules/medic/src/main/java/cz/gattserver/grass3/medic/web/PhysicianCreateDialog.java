@@ -5,7 +5,7 @@ import com.vaadin.flow.data.binder.Binder;
 
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.interfaces.PhysicianTO;
-import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
@@ -32,7 +32,7 @@ public abstract class PhysicianCreateDialog extends WebDialog {
 		nameField.setWidth("100%");
 		binder.forField(nameField).bind("name");
 
-		add(new SaveCloseButtons(e -> {
+		add(new SaveCloseLayout(e -> {
 			PhysicianTO writeDTO = originalDTO == null ? new PhysicianTO() : originalDTO;
 			if (binder.writeBeanIfValid(writeDTO)) {
 				try {

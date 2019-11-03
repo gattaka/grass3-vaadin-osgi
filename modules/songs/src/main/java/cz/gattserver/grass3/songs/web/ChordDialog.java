@@ -12,7 +12,7 @@ import com.vaadin.flow.data.binder.Binder;
 
 import cz.gattserver.grass3.songs.model.domain.Instrument;
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
-import cz.gattserver.grass3.ui.components.SaveCloseButtons;
+import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
@@ -59,7 +59,7 @@ public abstract class ChordDialog extends WebDialog {
 
 		binder.forField(instrumentField).asRequired().bind(ChordTO::getInstrument, ChordTO::setInstrument);
 
-		add(new SaveCloseButtons(e -> save(binder), e -> close()));
+		add(new SaveCloseLayout(e -> save(binder), e -> close()));
 
 		if (originalDTO != null) {
 			binder.readBean(originalDTO);

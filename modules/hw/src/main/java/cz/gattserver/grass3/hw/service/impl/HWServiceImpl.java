@@ -394,9 +394,9 @@ public class HWServiceImpl implements HWService {
 			item = hwItemRepository.findById(hwItemDTO.getId()).orElse(null);
 		item.setName(hwItemDTO.getName());
 		item.setPurchaseDate(DateUtils.toDate(hwItemDTO.getPurchaseDate()));
-		item.setDestructionDate(DateUtils.toDate(hwItemDTO.getDestructionDate()));
 		item.setPrice(hwItemDTO.getPrice());
 		item.setState(hwItemDTO.getState());
+		item.setDescription(hwItemDTO.getDescription());
 		item.setSupervizedFor(hwItemDTO.getSupervizedFor());
 		if (hwItemDTO.getUsedIn() != null) {
 			HWItem usedIn = hwItemRepository.findById(hwItemDTO.getUsedIn().getId()).orElse(null);

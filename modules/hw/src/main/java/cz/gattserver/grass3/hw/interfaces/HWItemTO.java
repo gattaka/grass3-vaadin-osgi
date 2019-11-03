@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.hw.interfaces;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -15,11 +14,6 @@ public class HWItemTO extends HWItemOverviewTO {
 	 * Typ - klasifikace hw
 	 */
 	private Set<String> types;
-
-	/**
-	 * Datum vyhození, zničení, prodání
-	 */
-	private LocalDate destructionDate;
 
 	/**
 	 * Poznámky ke stavu hw - opravy apod.
@@ -71,14 +65,6 @@ public class HWItemTO extends HWItemOverviewTO {
 
 	public void setTypes(Set<String> types) {
 		this.types = types;
-	}
-
-	public LocalDate getDestructionDate() {
-		return destructionDate;
-	}
-
-	public void setDestructionDate(LocalDate destructionDate) {
-		this.destructionDate = destructionDate;
 	}
 
 	public List<ServiceNoteTO> getServiceNotes() {

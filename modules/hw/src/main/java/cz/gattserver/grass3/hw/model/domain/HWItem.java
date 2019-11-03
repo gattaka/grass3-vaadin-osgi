@@ -52,11 +52,6 @@ public class HWItem {
 	private Date purchaseDate;
 
 	/**
-	 * Datum vyhození, zničení, prodání
-	 */
-	private Date destructionDate;
-
-	/**
 	 * Cena
 	 */
 	private BigDecimal price;
@@ -157,14 +152,6 @@ public class HWItem {
 
 	public void setPurchaseDate(Date purchaseDate) {
 		this.purchaseDate = purchaseDate;
-	}
-
-	public Date getDestructionDate() {
-		return destructionDate;
-	}
-
-	public void setDestructionDate(Date destructionDate) {
-		this.destructionDate = destructionDate;
 	}
 
 	public BigDecimal getPrice() {

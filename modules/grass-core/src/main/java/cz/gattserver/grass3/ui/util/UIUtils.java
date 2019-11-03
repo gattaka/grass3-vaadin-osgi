@@ -57,43 +57,45 @@ public class UIUtils {
 	/**
 	 * Přidá filtrovací pole do záhlaví gridu
 	 */
-	public static void addHeaderTextField(HeaderCell cell,
+	public static TextField addHeaderTextField(HeaderCell cell,
 			HasValue.ValueChangeListener<? super ComponentValueChangeEvent<TextField, String>> listener) {
 		TextField field = UIUtils.asSmall(new TextField());
 		field.setWidthFull();
 		field.addValueChangeListener(listener);
 		cell.setComponent(field);
+		return field;
 	}
 
 	/**
 	 * Přidá filtrovací combo do záhlaví gridu
 	 */
-	public static <T extends Enum<T>> void addHeaderComboBox(HeaderCell cell, Class<T> enumType,
+	public static <T extends Enum<T>> ComboBox<T> addHeaderComboBox(HeaderCell cell, Class<T> enumType,
 			ItemLabelGenerator<T> itemLabelGenerator,
 			HasValue.ValueChangeListener<? super ComponentValueChangeEvent<ComboBox<T>, T>> listener) {
-		addHeaderComboBox(cell, enumType.getEnumConstants(), itemLabelGenerator, listener);
+		return addHeaderComboBox(cell, enumType.getEnumConstants(), itemLabelGenerator, listener);
 	}
 
 	/**
 	 * Přidá filtrovací combo do záhlaví gridu
 	 */
-	public static <T extends Enum<T>> void addHeaderComboBox(HeaderCell cell, T[] values,
+	public static <T extends Enum<T>> ComboBox<T> addHeaderComboBox(HeaderCell cell, T[] values,
 			ItemLabelGenerator<T> itemLabelGenerator,
 			HasValue.ValueChangeListener<? super ComponentValueChangeEvent<ComboBox<T>, T>> listener) {
-		addHeaderComboBox(cell, Arrays.asList(values), itemLabelGenerator, listener);
+		return addHeaderComboBox(cell, Arrays.asList(values), itemLabelGenerator, listener);
 	}
 
 	/**
 	 * Přidá filtrovací combo do záhlaví gridu
 	 */
-	public static <T extends Enum<T>> void addHeaderComboBox(HeaderCell cell, Collection<T> values,
+	public static <T extends Enum<T>> ComboBox<T> addHeaderComboBox(HeaderCell cell, Collection<T> values,
 			ItemLabelGenerator<T> itemLabelGenerator,
 			HasValue.ValueChangeListener<? super ComponentValueChangeEvent<ComboBox<T>, T>> listener) {
-		ComboBox<T> typeColumnField = UIUtils.asSmall(new ComboBox<>(null, values));
-		typeColumnField.setWidthFull();
-		typeColumnField.addValueChangeListener(listener);
-		typeColumnField.setItemLabelGenerator(itemLabelGenerator);
-		cell.setComponent(typeColumnField);
+		ComboBox<T> combo = UIUtils.asSmall(new ComboBox<>(null, values));
+		combo.setWidthFull();
+		combo.addValueChangeListener(listener);
+		combo.setItemLabelGenerator(itemLabelGenerator);
+		cell.setComponent(combo);
+		return combo;
 	}
 
 	/**

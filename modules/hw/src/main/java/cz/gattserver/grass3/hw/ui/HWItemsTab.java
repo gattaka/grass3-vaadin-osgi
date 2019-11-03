@@ -21,6 +21,7 @@ import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.IconRenderer;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
+import com.vaadin.flow.data.value.ValueChangeMode;
 
 import cz.gattserver.grass3.hw.interfaces.HWFilterTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
@@ -123,7 +124,7 @@ public class HWItemsTab extends Div {
 		UIUtils.addHeaderTextField(filteringHeader.getCell(nameColumn), e -> {
 			filterTO.setName(e.getValue());
 			populate();
-		});
+		}).setValueChangeMode(ValueChangeMode.EAGER);
 
 		// Stav
 		UIUtils.addHeaderComboBox(filteringHeader.getCell(stateColumn), HWItemState.class, HWItemState::getName, e -> {

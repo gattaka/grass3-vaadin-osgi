@@ -311,8 +311,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 	public void saveHWItem() {
 		HWItemTO itemTO = new HWItemTO();
 		itemTO.setName("test Name");
-		LocalDate destDate = LocalDate.now().minusDays(1);
-		itemTO.setDestructionDate(destDate);
+		itemTO.setDescription("test description");
 		itemTO.setPrice(new BigDecimal(650.50));
 		LocalDate purchDate = LocalDate.now();
 		itemTO.setPurchaseDate(purchDate);
@@ -336,7 +335,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		HWItemTO savedItemTO = hwService.getHWItem(id);
 
 		assertEquals("test Name", savedItemTO.getName());
-		assertEquals(destDate, savedItemTO.getDestructionDate());
+		assertEquals("test description", savedItemTO.getDescription());
 		assertEquals(0, new BigDecimal(650.50).compareTo(savedItemTO.getPrice()));
 		assertEquals(purchDate, savedItemTO.getPurchaseDate());
 		assertEquals(HWItemState.BROKEN, savedItemTO.getState());
@@ -350,8 +349,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 	public void testHWItemOperations() {
 		HWItemTO itemTO = new HWItemTO();
 		itemTO.setName("test Name");
-		LocalDate destDate = LocalDate.now().minusDays(1);
-		itemTO.setDestructionDate(destDate);
+		itemTO.setDescription("test description");
 		itemTO.setPrice(new BigDecimal(650.50));
 		LocalDate purchDate = LocalDate.now();
 		itemTO.setPurchaseDate(purchDate);
@@ -374,8 +372,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 
 		HWItemTO itemTO2 = new HWItemTO();
 		itemTO2.setName("test komponenta");
-		LocalDate destDate2 = LocalDate.now().minusDays(2);
-		itemTO2.setDestructionDate(destDate2);
+		itemTO2.setDescription("test description 2");
 		itemTO2.setPrice(new BigDecimal(600.50));
 		LocalDate purchDate2 = LocalDate.now().minusDays(3);
 		itemTO2.setPurchaseDate(purchDate2);
@@ -403,7 +400,7 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 		HWItemTO savedItemTO2 = hwService.getHWItem(id2);
 
 		assertEquals("test komponenta", savedItemTO2.getName());
-		assertEquals(destDate2, savedItemTO2.getDestructionDate());
+		assertEquals("test description 2", savedItemTO2.getDescription());
 		assertEquals(0, new BigDecimal(600.50).compareTo(savedItemTO2.getPrice()));
 		assertEquals(purchDate2, savedItemTO2.getPurchaseDate());
 		assertEquals(HWItemState.DISASSEMBLED, savedItemTO2.getState());

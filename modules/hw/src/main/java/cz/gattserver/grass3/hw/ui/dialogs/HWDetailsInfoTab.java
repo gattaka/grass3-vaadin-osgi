@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -133,29 +134,35 @@ public class HWDetailsInfoTab extends Div {
 		Div rightPartLayout = new Div();
 		itemDetailsLayout.add(rightPartLayout);
 
-		GridLayout gridLayout = new GridLayout();
-		rightPartLayout.add(gridLayout);
+		GridLayout gridLayout1 = new GridLayout();
+		rightPartLayout.add(gridLayout1);
 
-		gridLayout.add(new Strong("Stav"));
-		gridLayout.add(new Strong("Získáno"));
-		gridLayout.add(new Strong("Spravováno pro"));
-		gridLayout.newRow();
+		gridLayout1.add(new Strong("Stav"));
+		gridLayout1.add(new Strong("Získáno"));
+		gridLayout1.add(new Strong("Spravováno pro"));
+		gridLayout1.newRow();
 
-		gridLayout.add(new Span(hwItem.getState().getName()));
+		Div stateValue = new Div(new Text(hwItem.getState().getName()));
+		stateValue.setMinWidth("100px");
+		gridLayout1.add(stateValue);
+
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("d.M.yyyy");
-		String purchDate = hwItem.getPurchaseDate() == null ? "-" : hwItem.getPurchaseDate().format(format);
-		gridLayout.add(new Span(purchDate));
-		gridLayout.add(new Span(StringUtils.isBlank(hwItem.getSupervizedFor()) ? "-" : hwItem.getSupervizedFor()));
-		gridLayout.newRow();
+		Div purchDateValue = new Div(
+				new Text(hwItem.getPurchaseDate() == null ? "-" : hwItem.getPurchaseDate().format(format)));
+		purchDateValue.setMinWidth("100px");
+		gridLayout1.add(purchDateValue);
+		gridLayout1.add(new Span(StringUtils.isBlank(hwItem.getSupervizedFor()) ? "-" : hwItem.getSupervizedFor()));
 
-		gridLayout.add(new Strong("Cena"));
-		gridLayout.add(new Strong("Odepsáno"));
-		gridLayout.add(new Strong("Záruka"));
-		gridLayout.newRow();
+		GridLayout gridLayout2 = new GridLayout();
+		rightPartLayout.add(gridLayout2);
 
-		gridLayout.add(new Span(createPriceString(hwItem.getPrice())));
-		String destrDate = hwItem.getDestructionDate() == null ? "-" : hwItem.getDestructionDate().format(format);
-		gridLayout.add(new Span(destrDate));
+		gridLayout2.add(new Strong("Cena"));
+		gridLayout2.add(new Strong("Záruka"));
+		gridLayout2.newRow();
+
+		Div priceValue = new Div(new Text(createPriceString(hwItem.getPrice())));
+		priceValue.setMinWidth("100px");
+		gridLayout2.add(priceValue);
 
 		Div zarukaLayout = new Div();
 		if (hwItem.getWarrantyYears() != null && hwItem.getWarrantyYears() > 0 && hwItem.getPurchaseDate() != null) {
@@ -172,8 +179,7 @@ public class HWDetailsInfoTab extends Div {
 		} else {
 			zarukaLayout.add("-");
 		}
-		gridLayout.add(zarukaLayout);
-		gridLayout.newRow();
+		gridLayout2.add(zarukaLayout);
 
 		rightPartLayout.add(new Div(new Strong("Je součástí")));
 		Div marginDiv = new Div();
@@ -200,7 +206,7 @@ public class HWDetailsInfoTab extends Div {
 		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setWidthFull();
-		grid.setHeight("300px");
+		grid.setHeightFull();
 
 		grid.addColumn(new IconRenderer<HWItemOverviewTO>(c -> {
 			ImageIcon ii = HWUIUtils.chooseImageIcon(c);
@@ -238,7 +244,8 @@ public class HWDetailsInfoTab extends Div {
 
 		Div descriptionDiv = new ContainerDiv();
 		descriptionDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		descriptionDiv.setHeight("calc(100% - 10 * var(--lumo-space-s) - 1px)");
+		descriptionDiv.setHeight("500px");
+		descriptionDiv.setText(hwItem.getDescription());
 		descriptionWrapper.add(descriptionDiv);
 
 		OperationsLayout operationsLayout = new OperationsLayout(e -> hwItemDetailDialog.close());

@@ -13,7 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
@@ -67,25 +69,30 @@ public abstract class HWItemDialog extends WebDialog {
 		formDTO.setState(HWItemState.NEW);
 		formDTO.setPurchaseDate(LocalDate.now());
 
-		FormLayout winLayout = new FormLayout();
-		winLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("200px", 2));
-		add(winLayout);
-		winLayout.setWidth("500px");
-
 		Binder<HWItemTO> binder = new Binder<>(HWItemTO.class);
 		binder.setBean(formDTO);
 
 		TextField nameField = new TextField("Název");
-		nameField.setWidth("100%");
+		nameField.setWidthFull();
 		nameField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
-		binder.forField(nameField).asRequired("Název položky je povinný").bind("name");
-		winLayout.add(nameField, 2);
+		binder.forField(nameField).asRequired("Název položky je povinný").bind(HWItemTO::getName, HWItemTO::setName);
+		add(nameField);
+
+		HorizontalLayout baseLayout = new HorizontalLayout();
+		baseLayout.setPadding(false);
+		add(baseLayout);
+
+		VerticalLayout formLayout = new VerticalLayout();
+		formLayout.setSpacing(false);
+		formLayout.setPadding(false);
+		formLayout.setWidth(null);
+		baseLayout.add(formLayout);
 
 		DatePicker purchaseDateField = new DatePicker("Získáno");
 		purchaseDateField.setLocale(Locale.forLanguageTag("CS"));
 		purchaseDateField.setSizeFull();
-		binder.bind(purchaseDateField, "purchaseDate");
-		winLayout.add(purchaseDateField);
+		binder.bind(purchaseDateField, HWItemTO::getPurchaseDate, HWItemTO::setPurchaseDate);
+		formLayout.add(purchaseDateField);
 
 		TextField priceField = new TextField("Cena");
 		priceField.setSizeFull();
@@ -100,30 +107,32 @@ public abstract class HWItemDialog extends WebDialog {
 				throw new IllegalArgumentException();
 			}
 		}, FieldUtils::formatMoney, "Cena musí být číslo").bind("price");
-		winLayout.add(priceField);
-
-		DatePicker destructionDateField = new DatePicker("Odepsáno");
-		destructionDateField.setLocale(Locale.forLanguageTag("CS"));
-		binder.bind(destructionDateField, "destructionDate");
-		destructionDateField.setSizeFull();
-		winLayout.add(destructionDateField);
+		formLayout.add(priceField);
 
 		ComboBox<HWItemState> stateComboBox = new ComboBox<>("Stav", Arrays.asList(HWItemState.values()));
-		stateComboBox.setWidth("100%");
+		stateComboBox.setWidthFull();
 		stateComboBox.setItemLabelGenerator(HWItemState::getName);
-		binder.forField(stateComboBox).asRequired("Stav položky je povinný").bind("state");
-		winLayout.add(stateComboBox);
+		binder.forField(stateComboBox).asRequired("Stav položky je povinný").bind(HWItemTO::getState,
+				HWItemTO::setState);
+		formLayout.add(stateComboBox);
 
 		TextField warrantyYearsField = new TextField("Záruka (roky)");
 		binder.forField(warrantyYearsField).withNullRepresentation("")
-				.withConverter(new StringToIntegerConverter(null, "Záruka musí být celé číslo")).bind("warrantyYears");
+				.withConverter(new StringToIntegerConverter(null, "Záruka musí být celé číslo"))
+				.bind(HWItemTO::getWarrantyYears, HWItemTO::setWarrantyYears);
 		warrantyYearsField.setSizeFull();
-		winLayout.add(warrantyYearsField);
+		formLayout.add(warrantyYearsField);
 
 		TextField supervizedForField = new TextField("Spravováno pro");
-		supervizedForField.setWidth("100%");
-		binder.bind(supervizedForField, "supervizedFor");
-		winLayout.add(supervizedForField);
+		supervizedForField.setWidthFull();
+		binder.bind(supervizedForField, HWItemTO::getSupervizedFor, HWItemTO::setSupervizedFor);
+		formLayout.add(supervizedForField);
+
+		TextArea descriptionArea = new TextArea("Popis");
+		descriptionArea.setWidth("700px");
+		binder.bind(descriptionArea, HWItemTO::getDescription, HWItemTO::setDescription);
+		baseLayout.add(descriptionArea);
+		descriptionArea.setHeight("calc(300px + 2 * " + UIUtils.SPACING_CSS_VAR + ")");
 
 		Map<String, HWItemTypeTO> tokens = new HashMap<>();
 		getHWService().getAllHWTypes().forEach(to -> tokens.put(to.getName(), to));
@@ -135,7 +144,7 @@ public abstract class HWItemDialog extends WebDialog {
 
 		if (originalDTO != null)
 			keywords.setValues(originalDTO.getTypes());
-		winLayout.add(keywords, 2);
+		add(keywords);
 
 		SaveCloseLayout buttons = new SaveCloseLayout(e -> {
 			try {

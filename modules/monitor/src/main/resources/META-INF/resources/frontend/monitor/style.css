@@ -19,8 +19,17 @@
     font-family: monospace;
     white-space: pre-wrap;
     font-size: 14px;
+    display: inline-block;
 }
 
+.monitor-table {
+	font-size: 10pt;
+	font-weight: 500;
+}
+
+table.monitor-table td {
+    padding: 0 7px 0 0;
+}
 
 .monitor-content > vaadin-vertical-layout{
     margin-bottom: 5px;

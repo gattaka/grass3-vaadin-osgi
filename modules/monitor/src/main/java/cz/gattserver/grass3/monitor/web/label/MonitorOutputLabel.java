@@ -1,13 +1,14 @@
 package cz.gattserver.grass3.monitor.web.label;
 
-import cz.gattserver.web.common.ui.HtmlDiv;
+import com.vaadin.flow.component.html.Div;
 
-public class MonitorOutputLabel extends HtmlDiv {
+public class MonitorOutputLabel extends Div {
 
 	private static final long serialVersionUID = 7228246273667002433L;
+	public static final String LOG_STYLE_CLASS = "system-monitor-log-style";
 
 	public MonitorOutputLabel(String value) {
-		super("<span class=\"" + MonitorItem.LOG_STYLE_CLASS + "\">" + value + "</span>");
-		setWidth(null);
+		addClassName(LOG_STYLE_CLASS);
+		add(value);
 	}
 }

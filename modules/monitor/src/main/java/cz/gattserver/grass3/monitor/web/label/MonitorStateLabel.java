@@ -1,13 +1,13 @@
 package cz.gattserver.grass3.monitor.web.label;
 
-import cz.gattserver.web.common.ui.HtmlDiv;
+import com.vaadin.flow.component.html.Div;
 
-public class MonitorStateLabel extends HtmlDiv {
+public class MonitorStateLabel extends Div {
 
 	private static final long serialVersionUID = 7228246273667002433L;
 
-	public MonitorStateLabel(String style, String value) {
-		super("<span class=\"" + style + "\">" + value + "</span>");
-		setWidth(null);
+	public MonitorStateLabel(String style, String text) {
+		addClassName(style);
+		add(text);
 	}
 }

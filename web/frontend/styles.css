@@ -12,7 +12,8 @@ vaadin-tab img {
 }
 
 vaadin-progress-bar {
-    padding-bottom: 2px;
+    margin-bottom: 2px;
+    display: inline-block;
 }
 
 .scroll-div {

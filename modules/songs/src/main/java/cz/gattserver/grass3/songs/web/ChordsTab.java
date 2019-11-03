@@ -5,7 +5,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
@@ -60,6 +62,7 @@ public class ChordsTab extends Div {
 
 	private ChordTO choosenChord;
 	private List<ChordTO> chords;
+	private Map<ChordTO, Integer> indexMap = new HashMap<>();
 	private ChordTO filterTO;
 
 	public ChordsTab(SongsPage songsPage, String chordName) {
@@ -119,7 +122,7 @@ public class ChordsTab extends Div {
 				@Override
 				protected void onSave(ChordTO to) {
 					to = songsFacade.saveChord(to);
-					showDetail(to);
+					selectChord(to);
 					loadChords();
 				}
 			}.open();
@@ -133,7 +136,7 @@ public class ChordsTab extends Div {
 				@Override
 				protected void onSave(ChordTO to) {
 					to = songsFacade.saveChord(to);
-					showDetail(to);
+					selectChord(to);
 					loadChords();
 				}
 			}.open();
@@ -146,7 +149,7 @@ public class ChordsTab extends Div {
 				@Override
 				protected void onSave(ChordTO to) {
 					to = songsFacade.saveChord(to);
-					showDetail(to);
+					selectChord(to);
 					loadChords();
 				}
 			}.open();
@@ -162,13 +165,14 @@ public class ChordsTab extends Div {
 		}, grid));
 
 		ChordTO choosenChord = songsFacade.getChordByName(chordName);
-		showDetail(choosenChord);
+		selectChord(choosenChord);
 	}
 
-	public void selectChord(String name) {
-		ChordTO to = songsFacade.getChordByName(name);
-		if (to != null)
-			grid.select(to);
+	public void selectChord(ChordTO choosenChord) {
+		if (choosenChord != null) {
+			grid.select(choosenChord);
+			UIUtils.scrollGridToIndex(grid, indexMap.get(choosenChord));
+		}
 	}
 
 	private void showDetail(ChordTO choosenChord) {
@@ -205,7 +209,10 @@ public class ChordsTab extends Div {
 
 	private void loadChords() {
 		chords.clear();
+		indexMap.clear();
 		chords.addAll(songsFacade.getChords(filterTO));
+		for (int i = 0; i < chords.size(); i++)
+			indexMap.put(chords.get(i), i);
 		grid.getDataProvider().refreshAll();
 	}
 }

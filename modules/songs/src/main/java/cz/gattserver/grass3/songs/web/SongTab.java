@@ -115,7 +115,7 @@ public class SongTab extends Div {
 		btnLayout.add(new DeleteButton("Smazat", e -> {
 			songsFacade.deleteSong(songId);
 			songsPage.setSelectedSongId(null);
-			songsPage.switchListTab();
+			songsPage.selectListTab();
 		}));
 
 		Div chordDiv = new Div();
@@ -155,7 +155,7 @@ public class SongTab extends Div {
 			@ClientCallable
 			private void chordClickCallback(String chord) {
 				songsPage.setSelectedChordId(chord);
-				songsPage.switchChordsTab();
+				songsPage.selectChordsTab();
 			}
 
 		};

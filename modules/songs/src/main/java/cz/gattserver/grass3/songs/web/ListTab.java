@@ -9,7 +9,6 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -155,11 +154,10 @@ public class ListTab extends Div {
 		to.setId(id);
 		songsPage.setSelectedSongId(id);
 		if (switchToDetail) {
-			songsPage.switchSongTab();
+			songsPage.selectSongTab();
 		} else {
 			grid.select(to);
-			UI.getCurrent().getPage().executeJs("$0._scrollToIndex(" + indexMap.get(to.getId()) + ")",
-					grid.getElement());
+			UIUtils.scrollGridToIndex(grid, indexMap.get(to.getId()));
 		}
 	}
 

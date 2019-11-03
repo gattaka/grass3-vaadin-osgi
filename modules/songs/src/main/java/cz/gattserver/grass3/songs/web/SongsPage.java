@@ -68,25 +68,34 @@ public class SongsPage extends OneColumnPage {
 		switchListTab();
 	}
 
-	public void switchListTab() {
-		pageLayout.removeAll();
-		ListTab listTabContent = new ListTab(this, selectedSongId);
-		pageLayout.add(listTabContent);
+	public void selectListTab() {
 		tabSheet.setSelectedTab(listTab);
 	}
 
-	public void switchSongTab() {
-		pageLayout.removeAll();
-		SongTab songTabContent = new SongTab(this, selectedSongId);
-		pageLayout.add(songTabContent);
+	public void selectSongTab() {
 		tabSheet.setSelectedTab(songTab);
 	}
 
-	public void switchChordsTab() {
+	public void selectChordsTab() {
+		tabSheet.setSelectedTab(chordsTab);
+	}
+
+	private void switchListTab() {
+		pageLayout.removeAll();
+		ListTab listTabContent = new ListTab(this, selectedSongId);
+		pageLayout.add(listTabContent);
+	}
+
+	private void switchSongTab() {
+		pageLayout.removeAll();
+		SongTab songTabContent = new SongTab(this, selectedSongId);
+		pageLayout.add(songTabContent);
+	}
+
+	private void switchChordsTab() {
 		pageLayout.removeAll();
 		ChordsTab chordsTabContent = new ChordsTab(this, selectedChordId);
 		pageLayout.add(chordsTabContent);
-		tabSheet.setSelectedTab(chordsTab);
 	}
 
 	public Long getSelectedSongId() {

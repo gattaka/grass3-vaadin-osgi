@@ -6,6 +6,8 @@ import cz.gattserver.web.common.ui.ImageIcon;
 public class HWUIUtils {
 
 	public static ImageIcon chooseImageIcon(HWItemOverviewTO to) {
+		if (to.getState() == null)
+			return null;
 		switch (to.getState()) {
 		case FIXED:
 			return ImageIcon.INFO_16_ICON;

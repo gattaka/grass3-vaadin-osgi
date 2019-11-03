@@ -21,7 +21,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
@@ -41,6 +40,7 @@ import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 
@@ -158,8 +158,7 @@ public class FavlinkSettingsPageFragmentFactory extends AbstractPageFragmentFact
 			HeaderRow filteringHeader = grid.appendHeaderRow();
 
 			// Obsah
-			TextField contentFilterField = new TextField();
-			contentFilterField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+			TextField contentFilterField = UIUtils.asSmall(new TextField());
 			contentFilterField.setWidth("100%");
 			contentFilterField.addValueChangeListener(e -> {
 				filterName = e.getValue();

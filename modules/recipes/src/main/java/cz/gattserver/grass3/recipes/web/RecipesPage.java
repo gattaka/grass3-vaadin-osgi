@@ -11,7 +11,6 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -26,6 +25,7 @@ import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
 
@@ -79,8 +79,7 @@ public class RecipesPage extends OneColumnPage {
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Název
-		TextField nazevColumnField = new TextField();
-		nazevColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField nazevColumnField = UIUtils.asSmall(new TextField());
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterTO.setName(e.getValue());
@@ -93,8 +92,8 @@ public class RecipesPage extends OneColumnPage {
 		VerticalLayout contentLayout = new VerticalLayout();
 		contentLayout.setHeightFull();
 		contentLayout.setWidth("600px");
-		contentLayout.getStyle().set("border", "1px #dbdee4 solid").set("padding", "20px 10px 10px 10px").set("background", "white")
-				.set("overflow-y", "scroll");
+		contentLayout.getStyle().set("border", "1px #dbdee4 solid").set("padding", "20px 10px 10px 10px")
+				.set("background", "white").set("overflow-y", "scroll");
 		recipesLayout.add(contentLayout);
 
 		nameLabel = new H2();

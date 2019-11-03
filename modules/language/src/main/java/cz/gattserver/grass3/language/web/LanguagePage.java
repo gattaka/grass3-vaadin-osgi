@@ -17,7 +17,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.router.Route;
 
 import cz.gattserver.grass3.language.facades.LanguageFacade;
@@ -201,8 +200,7 @@ public class LanguagePage extends OneColumnPage {
 		label.setWidth(null);
 		gridLayout.add(label);
 
-		TextField answerField = new TextField();
-		answerField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField answerField = UIUtils.asSmall(new TextField());
 		answerField.setWidth("100%");
 		answerField.setPlaceholder("varianta;varianta;...");
 		gridLayout.add(answerField);

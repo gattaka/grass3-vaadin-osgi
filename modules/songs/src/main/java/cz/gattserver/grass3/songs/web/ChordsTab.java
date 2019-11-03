@@ -26,7 +26,6 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.services.SecurityService;
@@ -40,6 +39,7 @@ import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.GridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 
@@ -85,8 +85,7 @@ public class ChordsTab extends Div {
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Název
-		TextField nazevColumnField = new TextField();
-		nazevColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField nazevColumnField = UIUtils.asSmall(new TextField());
 		nazevColumnField.addValueChangeListener(e -> {
 			filterTO.setName(e.getValue());
 			loadChords();
@@ -94,8 +93,8 @@ public class ChordsTab extends Div {
 		filteringHeader.getCell(nazevColumn).setComponent(nazevColumnField);
 
 		// Nástroj
-		ComboBox<Instrument> instrumentColumnField = new ComboBox<>(null, Arrays.asList(Instrument.values()));
-		instrumentColumnField.getElement().setAttribute("theme", TextFieldVariant.LUMO_SMALL.getVariantName());
+		ComboBox<Instrument> instrumentColumnField = UIUtils
+				.asSmall(new ComboBox<>(null, Arrays.asList(Instrument.values())));
 		instrumentColumnField.setItemLabelGenerator(Instrument::getCaption);
 		instrumentColumnField.setWidth("100%");
 		instrumentColumnField.addValueChangeListener(e -> {

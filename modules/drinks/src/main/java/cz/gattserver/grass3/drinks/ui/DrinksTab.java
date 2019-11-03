@@ -14,7 +14,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.NumberRenderer;
 import com.vaadin.flow.server.StreamResource;
@@ -102,8 +101,7 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 	protected void addNameColumn(Grid<O> grid) {
 		// Název
 		Column<O> nameColumn = grid.addColumn(O::getName).setHeader("Název").setSortProperty("name").setFlexGrow(100);
-		TextField nazevColumnField = new TextField();
-		nazevColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField nazevColumnField = UIUtils.asSmall(new TextField());
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterTO.setName(e.getValue());
@@ -115,8 +113,7 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 	protected void addCountryColumn(Grid<O> grid) {
 		// Země původu
 		Column<O> countryColumn = grid.addColumn(O::getCountry).setHeader("Země").setSortProperty("country");
-		TextField countryColumnField = new TextField();
-		countryColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField countryColumnField = UIUtils.asSmall(new TextField());
 		countryColumnField.setWidth("100%");
 		countryColumnField.addValueChangeListener(e -> {
 			filterTO.setCountry(e.getValue());
@@ -129,8 +126,7 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 		Column<O> alcoholColumn = grid.addColumn(
 				new NumberRenderer<O>(O::getAlcohol, NumberFormat.getNumberInstance(new Locale("cs", "CZ")), null))
 				.setHeader("Alkohol (%)").setWidth("100px").setFlexGrow(0).setSortProperty("alcohol");
-		TextField alcoholColumnField = new TextField();
-		alcoholColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField alcoholColumnField = UIUtils.asSmall(new TextField());
 		alcoholColumnField.setWidth("100%");
 		alcoholColumnField.addValueChangeListener(e -> {
 			filterTO.setAlcohol(Double.parseDouble(e.getValue()));

@@ -14,7 +14,6 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
@@ -138,8 +137,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Autor
-		TextField authorColumnField = new TextField();
-		authorColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField authorColumnField = UIUtils.asSmall(new TextField());
 		authorColumnField.setWidth("100%");
 		authorColumnField.addValueChangeListener(e -> {
 			filterTO.setAuthor(e.getValue());
@@ -148,8 +146,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		filteringHeader.getCell(authorColumn).setComponent(authorColumnField);
 
 		// Název
-		TextField nazevColumnField = new TextField();
-		nazevColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField nazevColumnField = UIUtils.asSmall(new TextField());
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterTO.setName(e.getValue());

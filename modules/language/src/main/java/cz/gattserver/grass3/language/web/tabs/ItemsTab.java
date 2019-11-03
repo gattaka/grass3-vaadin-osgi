@@ -17,7 +17,6 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
@@ -37,6 +36,7 @@ import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.GridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.WebDialog;
@@ -55,7 +55,7 @@ public class ItemsTab extends Div {
 
 	public ItemsTab(Long langId, ItemType type, LanguagePage languagePage) {
 		SpringContextHelper.inject(this);
-		
+
 		this.languagePage = languagePage;
 
 		LanguageItemTO filterTO = new LanguageItemTO();
@@ -86,8 +86,7 @@ public class ItemsTab extends Div {
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Obsah
-		TextField contentFilterField = new TextField();
-		contentFilterField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField contentFilterField = UIUtils.asSmall(new TextField());
 		contentFilterField.setWidth("100%");
 		contentFilterField.addValueChangeListener(e -> {
 			filterTO.setContent(e.getValue());
@@ -96,8 +95,7 @@ public class ItemsTab extends Div {
 		filteringHeader.getCell(contentColumn).setComponent(contentFilterField);
 
 		// Překlad
-		TextField translationFilterField = new TextField();
-		translationFilterField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField translationFilterField = UIUtils.asSmall(new TextField());
 		translationFilterField.setWidth("100%");
 		translationFilterField.addValueChangeListener(e -> {
 			filterTO.setTranslation(e.getValue());

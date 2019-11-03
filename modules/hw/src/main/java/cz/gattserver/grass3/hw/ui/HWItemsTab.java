@@ -17,7 +17,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -123,8 +122,7 @@ public class HWItemsTab extends Div {
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Název
-		TextField nazevColumnField = new TextField();
-		nazevColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField nazevColumnField = UIUtils.asSmall(new TextField());
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterTO.setName(e.getValue());
@@ -133,8 +131,8 @@ public class HWItemsTab extends Div {
 		filteringHeader.getCell(nameColumn).setComponent(nazevColumnField);
 
 		// Stav
-		ComboBox<HWItemState> stavColumnCombo = new ComboBox<>(null, Arrays.asList(HWItemState.values()));
-		stavColumnCombo.getElement().setAttribute("theme", TextFieldVariant.LUMO_SMALL.getVariantName());
+		ComboBox<HWItemState> stavColumnCombo = UIUtils
+				.asSmall(new ComboBox<>(null, Arrays.asList(HWItemState.values())));
 		stavColumnCombo.setWidth("100%");
 		stavColumnCombo.addValueChangeListener(e -> {
 			filterTO.setState(e.getValue());
@@ -143,8 +141,7 @@ public class HWItemsTab extends Div {
 		filteringHeader.getCell(stateColumn).setComponent(stavColumnCombo);
 
 		// Je součástí
-		TextField usedInColumnField = new TextField();
-		usedInColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField usedInColumnField = UIUtils.asSmall(new TextField());
 		usedInColumnField.setWidth("100%");
 		usedInColumnField.addValueChangeListener(e -> {
 			filterTO.setUsedIn(e.getValue());
@@ -153,8 +150,7 @@ public class HWItemsTab extends Div {
 		filteringHeader.getCell(usedInColumn).setComponent(usedInColumnField);
 
 		// Spravován pro
-		TextField supervizedForColumnField = new TextField();
-		supervizedForColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField supervizedForColumnField = UIUtils.asSmall(new TextField());
 		supervizedForColumnField.setWidth("100%");
 		supervizedForColumnField.addValueChangeListener(e -> {
 			filterTO.setSupervizedFor(e.getValue());

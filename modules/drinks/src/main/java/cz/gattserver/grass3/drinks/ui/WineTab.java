@@ -8,7 +8,6 @@ import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
@@ -47,8 +46,7 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 		Column<WineOverviewTO> yearsColumn = grid.addColumn(WineOverviewTO::getYear).setHeader("Rok").setWidth("90px")
 				.setFlexGrow(0).setSortProperty("year");
 
-		TextField yearsColumnField = new TextField();
-		yearsColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField yearsColumnField = UIUtils.asSmall(new TextField());
 		yearsColumnField.setWidth("100%");
 		yearsColumnField.addValueChangeListener(e -> {
 			filterTO.setYear(Integer.parseInt(e.getValue()));
@@ -67,8 +65,7 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 		add(grid);
 
 		// Vinařství
-		TextField wineryColumnField = new TextField();
-		wineryColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField wineryColumnField = UIUtils.asSmall(new TextField());
 		wineryColumnField.setWidth("100%");
 		wineryColumnField.addValueChangeListener(e -> {
 			filterTO.setWinery(e.getValue());
@@ -77,7 +74,7 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 		getHeaderRow().getCell(wineryColumn).setComponent(wineryColumnField);
 
 		// Typ vína
-		ComboBox<WineType> typeColumnField = new ComboBox<>(null, Arrays.asList(WineType.values()));
+		ComboBox<WineType> typeColumnField = UIUtils.asSmall(new ComboBox<>(null, Arrays.asList(WineType.values())));
 		typeColumnField.setWidth("100%");
 		typeColumnField.addValueChangeListener(e -> {
 			filterTO.setWineType(e.getValue());

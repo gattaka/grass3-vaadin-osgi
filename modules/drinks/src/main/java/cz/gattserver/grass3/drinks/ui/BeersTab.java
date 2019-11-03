@@ -10,7 +10,6 @@ import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
@@ -67,8 +66,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 		add(grid);
 
 		// Pivovar
-		TextField breweryColumnField = new TextField();
-		breweryColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField breweryColumnField = UIUtils.asSmall(new TextField());
 		breweryColumnField.setWidth("100%");
 		breweryColumnField.addValueChangeListener(e -> {
 			filterTO.setBrewery(e.getValue());
@@ -77,8 +75,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 		getHeaderRow().getCell(breweryColumn).setComponent(breweryColumnField);
 
 		// Kategorie
-		TextField categoryColumnField = new TextField();
-		categoryColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField categoryColumnField = UIUtils.asSmall(new TextField());
 		categoryColumnField.setWidth("100%");
 		categoryColumnField.addValueChangeListener(e -> {
 			filterTO.setCategory(e.getValue());
@@ -87,8 +84,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 		getHeaderRow().getCell(categoryColumn).setComponent(categoryColumnField);
 
 		// Stupně
-		TextField degreesColumnField = new TextField();
-		degreesColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField degreesColumnField = UIUtils.asSmall(new TextField());
 		degreesColumnField.setWidth("100%");
 		degreesColumnField.addValueChangeListener(e -> {
 			filterTO.setDegrees(Double.parseDouble(e.getValue()));
@@ -97,8 +93,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 		getHeaderRow().getCell(degreesColumn).setComponent(degreesColumnField);
 
 		// Hořkost
-		TextField ibuColumnField = new TextField();
-		ibuColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField ibuColumnField = UIUtils.asSmall(new TextField());
 		ibuColumnField.setWidth("100%");
 		ibuColumnField.addValueChangeListener(e -> {
 			filterTO.setIbu(Integer.parseInt(e.getValue()));
@@ -107,7 +102,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 		getHeaderRow().getCell(ibuColumn).setComponent(ibuColumnField);
 
 		// Typ sladu
-		ComboBox<MaltType> typeColumnField = new ComboBox<>(null, Arrays.asList(MaltType.values()));
+		ComboBox<MaltType> typeColumnField = UIUtils.asSmall(new ComboBox<>(null, Arrays.asList(MaltType.values())));
 		typeColumnField.setWidth("100%");
 		typeColumnField.addValueChangeListener(e -> {
 			filterTO.setMaltType(e.getValue());

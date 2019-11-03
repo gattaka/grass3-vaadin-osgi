@@ -12,7 +12,6 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -86,8 +85,7 @@ public class CampgamesTab extends Div {
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Název
-		TextField nazevColumnField = new TextField();
-		nazevColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField nazevColumnField = UIUtils.asSmall(new TextField());
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterDTO.setName(e.getValue());
@@ -96,8 +94,7 @@ public class CampgamesTab extends Div {
 		filteringHeader.getCell(nameColumn).setComponent(nazevColumnField);
 
 		// Hráčů
-		TextField playersColumnField = new TextField();
-		playersColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField playersColumnField = UIUtils.asSmall(new TextField());
 		playersColumnField.setWidth("100%");
 		playersColumnField.addValueChangeListener(e -> {
 			filterDTO.setPlayers(e.getValue());
@@ -106,8 +103,7 @@ public class CampgamesTab extends Div {
 		filteringHeader.getCell(playersColumn).setComponent(playersColumnField);
 
 		// Délka hry
-		TextField playtimeColumnField = new TextField();
-		playtimeColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField playtimeColumnField = UIUtils.asSmall(new TextField());
 		playtimeColumnField.setWidth("100%");
 		playtimeColumnField.addValueChangeListener(e -> {
 			filterDTO.setPlayTime(e.getValue());
@@ -116,8 +112,7 @@ public class CampgamesTab extends Div {
 		filteringHeader.getCell(playTimeColumn).setComponent(playtimeColumnField);
 
 		// Délka přípravy
-		TextField preparationTimeColumnField = new TextField();
-		preparationTimeColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField preparationTimeColumnField = UIUtils.asSmall(new TextField());
 		preparationTimeColumnField.setWidth("100%");
 		preparationTimeColumnField.addValueChangeListener(e -> {
 			filterDTO.setPreparationTime(e.getValue());

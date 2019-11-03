@@ -8,7 +8,6 @@ import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
@@ -54,8 +53,7 @@ public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
 		add(grid);
 
 		// Stáří (roky)
-		TextField yearsColumnField = new TextField();
-		yearsColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField yearsColumnField = UIUtils.asSmall(new TextField());
 		yearsColumnField.setWidth("100%");
 		yearsColumnField.addValueChangeListener(e -> {
 			filterTO.setYears(Integer.parseInt(e.getValue()));
@@ -64,7 +62,8 @@ public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
 		getHeaderRow().getCell(yearsColumn).setComponent(yearsColumnField);
 
 		// Typ Whiskeyu
-		ComboBox<WhiskeyType> typeColumnField = new ComboBox<>(null, Arrays.asList(WhiskeyType.values()));
+		ComboBox<WhiskeyType> typeColumnField = UIUtils
+				.asSmall(new ComboBox<>(null, Arrays.asList(WhiskeyType.values())));
 		typeColumnField.setWidth("100%");
 		typeColumnField.addValueChangeListener(e -> {
 			filterTO.setWhiskeyType(e.getValue());

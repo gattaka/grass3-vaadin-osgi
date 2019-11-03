@@ -16,7 +16,6 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 
@@ -74,8 +73,7 @@ public class ListTab extends Div {
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Název
-		TextField nazevColumnField = new TextField();
-		nazevColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField nazevColumnField = UIUtils.asSmall(new TextField());
 		nazevColumnField.setWidth("100%");
 		nazevColumnField.addValueChangeListener(e -> {
 			filterTO.setName(e.getValue());
@@ -84,8 +82,7 @@ public class ListTab extends Div {
 		filteringHeader.getCell(nazevColumn).setComponent(nazevColumnField);
 
 		// Autor
-		TextField authorColumnField = new TextField();
-		authorColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField authorColumnField = UIUtils.asSmall(new TextField());
 		authorColumnField.setWidth("100%");
 		authorColumnField.addValueChangeListener(e -> {
 			filterTO.setAuthor(e.getValue());
@@ -94,8 +91,7 @@ public class ListTab extends Div {
 		filteringHeader.getCell(authorColumn).setComponent(authorColumnField);
 
 		// Rok
-		TextField yearColumnField = new TextField();
-		yearColumnField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+		TextField yearColumnField = UIUtils.asSmall(new TextField());
 		yearColumnField.setWidth("100%");
 		yearColumnField.addValueChangeListener(e -> {
 			filterTO.setYear(StringUtils.isBlank(e.getValue()) ? null : Integer.valueOf(e.getValue()));

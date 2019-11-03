@@ -205,13 +205,10 @@ public class PGSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 			HeaderRow filteringHeader = grid.appendHeaderRow();
 
 			// Obsah
-			TextField contentFilterField = UIUtils.asSmall(new TextField());
-			contentFilterField.setWidth("100%");
-			contentFilterField.addValueChangeListener(e -> {
+			UIUtils.addHeaderTextField(filteringHeader.getCell(nameColumn), e -> {
 				filterName = e.getValue();
 				populateGrid(grid, path);
 			});
-			filteringHeader.getCell(nameColumn).setComponent(contentFilterField);
 
 			populateGrid(grid, path);
 		}

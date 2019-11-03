@@ -15,11 +15,6 @@ public class Chord {
 	private String name;
 
 	/**
-	 * Nástroj
-	 */
-	private Instrument instrument;
-
-	/**
 	 * Konfigurace
 	 */
 	private Long configuration;
@@ -58,14 +53,6 @@ public class Chord {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public Instrument getInstrument() {
-		return instrument;
-	}
-
-	public void setInstrument(Instrument instrument) {
-		this.instrument = instrument;
 	}
 
 	public Long getConfiguration() {

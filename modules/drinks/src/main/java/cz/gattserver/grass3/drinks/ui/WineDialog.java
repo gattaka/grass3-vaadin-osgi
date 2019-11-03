@@ -64,7 +64,7 @@ public abstract class WineDialog extends DrinkDialog<WineTO> {
 		layout.add(ratingStars);
 		layout.setColspan(ratingStars, 2);
 
-		TextField yearsField = new TextField("Roky");
+		TextField yearsField = new TextField("Rok");
 		binder.forField(yearsField).withConverter(new StringToIntegerConverter(null, "Rok musí být celé číslo"))
 				.asRequired(new IntegerRangeValidator("Rok vína je mimo rozsah (1000-3000)", 1000, 3000))
 				.bind(WineTO::getYear, WineTO::setYear);

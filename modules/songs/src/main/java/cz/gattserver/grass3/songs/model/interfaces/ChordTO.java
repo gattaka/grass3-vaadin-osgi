@@ -1,18 +1,11 @@
 package cz.gattserver.grass3.songs.model.interfaces;
 
-import cz.gattserver.grass3.songs.model.domain.Instrument;
-
 public class ChordTO {
 
 	/**
 	 * Název
 	 */
 	private String name;
-
-	/**
-	 * Nástroj
-	 */
-	private Instrument instrument;
 
 	/**
 	 * Konfigurace
@@ -28,10 +21,9 @@ public class ChordTO {
 		configuration = 0L;
 	}
 
-	public ChordTO(String name, Instrument instrument, Long configuration, Long id) {
+	public ChordTO(String name, Long configuration, Long id) {
 		super();
 		this.name = name;
-		this.instrument = instrument;
 		this.configuration = configuration;
 		if (this.configuration == null)
 			this.configuration = 0L;
@@ -64,14 +56,6 @@ public class ChordTO {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public Instrument getInstrument() {
-		return instrument;
-	}
-
-	public void setInstrument(Instrument instrument) {
-		this.instrument = instrument;
 	}
 
 	public Long getConfiguration() {

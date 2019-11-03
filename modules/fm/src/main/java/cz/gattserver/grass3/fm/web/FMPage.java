@@ -26,7 +26,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.page.History;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -306,13 +305,10 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Obsah
-		TextField contentFilterField = UIUtils.asSmall(new TextField());
-		contentFilterField.setWidth("100%");
-		contentFilterField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(nameColumn), e -> {
 			filterName = e.getValue();
 			populateGrid();
 		});
-		filteringHeader.getCell(nameColumn).setComponent(contentFilterField);
 
 		populateGrid();
 	}

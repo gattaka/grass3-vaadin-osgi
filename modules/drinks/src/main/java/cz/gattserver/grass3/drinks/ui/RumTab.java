@@ -1,16 +1,12 @@
 package cz.gattserver.grass3.drinks.ui;
 
-import java.util.Arrays;
-
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.TextRenderer;
 
 import cz.gattserver.grass3.drinks.model.domain.RumType;
@@ -20,9 +16,9 @@ import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.web.common.ui.HtmlDiv;
 
 public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
@@ -53,23 +49,16 @@ public class RumTab extends DrinksTab<RumTO, RumOverviewTO> {
 		add(grid);
 
 		// Stáří (roky)
-		TextField yearsColumnField = UIUtils.asSmall(new TextField());
-		yearsColumnField.setWidth("100%");
-		yearsColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(getHeaderRow().getCell(yearsColumn), e -> {
 			filterTO.setYears(Integer.parseInt(e.getValue()));
 			populate();
 		});
-		getHeaderRow().getCell(yearsColumn).setComponent(yearsColumnField);
 
 		// Typ rumu
-		ComboBox<RumType> typeColumnField = UIUtils.asSmall(new ComboBox<>(null, Arrays.asList(RumType.values())));
-		typeColumnField.setWidth("100%");
-		typeColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderComboBox(getHeaderRow().getCell(rumTypeColumn), RumType.class, RumType::getCaption, e -> {
 			filterTO.setRumType(e.getValue());
 			populate();
 		});
-		typeColumnField.setItemLabelGenerator(RumType::getCaption);
-		getHeaderRow().getCell(rumTypeColumn).setComponent(typeColumnField);
 	}
 
 	@Override

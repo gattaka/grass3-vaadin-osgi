@@ -1,18 +1,15 @@
 package cz.gattserver.grass3.drinks.ui;
 
 import java.text.NumberFormat;
-import java.util.Arrays;
 import java.util.Locale;
 
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.NumberRenderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 
@@ -23,9 +20,9 @@ import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.web.common.ui.HtmlDiv;
 
 public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
@@ -66,50 +63,34 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 		add(grid);
 
 		// Pivovar
-		TextField breweryColumnField = UIUtils.asSmall(new TextField());
-		breweryColumnField.setWidth("100%");
-		breweryColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(getHeaderRow().getCell(breweryColumn), e -> {
 			filterTO.setBrewery(e.getValue());
 			populate();
 		});
-		getHeaderRow().getCell(breweryColumn).setComponent(breweryColumnField);
 
 		// Kategorie
-		TextField categoryColumnField = UIUtils.asSmall(new TextField());
-		categoryColumnField.setWidth("100%");
-		categoryColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(getHeaderRow().getCell(categoryColumn), e -> {
 			filterTO.setCategory(e.getValue());
 			populate();
 		});
-		getHeaderRow().getCell(categoryColumn).setComponent(categoryColumnField);
 
 		// Stupně
-		TextField degreesColumnField = UIUtils.asSmall(new TextField());
-		degreesColumnField.setWidth("100%");
-		degreesColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(getHeaderRow().getCell(degreesColumn), e -> {
 			filterTO.setDegrees(Double.parseDouble(e.getValue()));
 			populate();
 		});
-		getHeaderRow().getCell(degreesColumn).setComponent(degreesColumnField);
 
 		// Hořkost
-		TextField ibuColumnField = UIUtils.asSmall(new TextField());
-		ibuColumnField.setWidth("100%");
-		ibuColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(getHeaderRow().getCell(ibuColumn), e -> {
 			filterTO.setIbu(Integer.parseInt(e.getValue()));
 			populate();
 		});
-		getHeaderRow().getCell(ibuColumn).setComponent(ibuColumnField);
 
 		// Typ sladu
-		ComboBox<MaltType> typeColumnField = UIUtils.asSmall(new ComboBox<>(null, Arrays.asList(MaltType.values())));
-		typeColumnField.setWidth("100%");
-		typeColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderComboBox(getHeaderRow().getCell(maltTypeColumn), MaltType.class, MaltType::getCaption, e -> {
 			filterTO.setMaltType(e.getValue());
 			populate();
 		});
-		typeColumnField.setItemLabelGenerator(MaltType::getCaption);
-		getHeaderRow().getCell(maltTypeColumn).setComponent(typeColumnField);
 	}
 
 	@Override

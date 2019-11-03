@@ -15,7 +15,6 @@ import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 
@@ -73,31 +72,22 @@ public class ListTab extends Div {
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Název
-		TextField nazevColumnField = UIUtils.asSmall(new TextField());
-		nazevColumnField.setWidth("100%");
-		nazevColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(nazevColumn), e -> {
 			filterTO.setName(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(nazevColumn).setComponent(nazevColumnField);
 
 		// Autor
-		TextField authorColumnField = UIUtils.asSmall(new TextField());
-		authorColumnField.setWidth("100%");
-		authorColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(authorColumn), e -> {
 			filterTO.setAuthor(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(authorColumn).setComponent(authorColumnField);
 
 		// Rok
-		TextField yearColumnField = UIUtils.asSmall(new TextField());
-		yearColumnField.setWidth("100%");
-		yearColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(yearColumn), e -> {
 			filterTO.setYear(StringUtils.isBlank(e.getValue()) ? null : Integer.valueOf(e.getValue()));
 			populate();
 		});
-		filteringHeader.getCell(yearColumn).setComponent(yearColumnField);
 
 		populate();
 

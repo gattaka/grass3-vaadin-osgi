@@ -107,7 +107,6 @@ public class Mapper {
 		chord.setId(e.getId());
 		chord.setName(e.getName());
 		chord.setConfiguration(e.getConfiguration());
-		chord.setInstrument(e.getInstrument());
 
 		return chord;
 	}
@@ -127,7 +126,6 @@ public class Mapper {
 		chord.setId(e.getId());
 		chord.setName(e.getName());
 		chord.setConfiguration(e.getConfiguration());
-		chord.setInstrument(e.getInstrument());
 
 		return chord;
 	}
@@ -144,7 +142,7 @@ public class Mapper {
 
 		List<ChordTO> chordsTOs = new ArrayList<ChordTO>();
 		for (Chord chord : chords)
-			chordsTOs.add(new ChordTO(chord.getName(), chord.getInstrument(), chord.getConfiguration(), chord.getId()));
+			chordsTOs.add(new ChordTO(chord.getName(), chord.getConfiguration(), chord.getId()));
 
 		return chordsTOs;
 	}

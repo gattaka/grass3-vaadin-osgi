@@ -11,7 +11,6 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -85,40 +84,28 @@ public class CampgamesTab extends Div {
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Název
-		TextField nazevColumnField = UIUtils.asSmall(new TextField());
-		nazevColumnField.setWidth("100%");
-		nazevColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(nameColumn), e -> {
 			filterDTO.setName(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(nameColumn).setComponent(nazevColumnField);
 
 		// Hráčů
-		TextField playersColumnField = UIUtils.asSmall(new TextField());
-		playersColumnField.setWidth("100%");
-		playersColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(playersColumn), e -> {
 			filterDTO.setPlayers(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(playersColumn).setComponent(playersColumnField);
 
 		// Délka hry
-		TextField playtimeColumnField = UIUtils.asSmall(new TextField());
-		playtimeColumnField.setWidth("100%");
-		playtimeColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(playTimeColumn), e -> {
 			filterDTO.setPlayTime(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(playTimeColumn).setComponent(playtimeColumnField);
 
 		// Délka přípravy
-		TextField preparationTimeColumnField = UIUtils.asSmall(new TextField());
-		preparationTimeColumnField.setWidth("100%");
-		preparationTimeColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(prepTimeColumn), e -> {
 			filterDTO.setPreparationTime(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(prepTimeColumn).setComponent(preparationTimeColumnField);
 
 		populate();
 		grid.sort(Arrays.asList(new GridSortOrder<CampgameOverviewTO>(nameColumn, SortDirection.ASCENDING)));

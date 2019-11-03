@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -15,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.HeaderRow;
@@ -25,13 +23,11 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.SongsRole;
 import cz.gattserver.grass3.songs.facades.SongsService;
-import cz.gattserver.grass3.songs.model.domain.Instrument;
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.songs.util.ChordImageUtils;
 import cz.gattserver.grass3.ui.components.button.CreateGridButton;
@@ -78,30 +74,16 @@ public class ChordsTab extends Div {
 		grid = new Grid<>();
 		grid.setItems(chords);
 		Column<ChordTO> nazevColumn = grid.addColumn(ChordTO::getName).setHeader("Název");
-		Column<ChordTO> instrumentColumn = grid.addColumn(c -> c.getInstrument().getCaption()).setHeader("Nástroj");
 		grid.setWidth("398px");
 		grid.setHeight("600px");
 		mainLayout.add(grid);
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Název
-		TextField nazevColumnField = UIUtils.asSmall(new TextField());
-		nazevColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(nazevColumn), e -> {
 			filterTO.setName(e.getValue());
 			loadChords();
 		});
-		filteringHeader.getCell(nazevColumn).setComponent(nazevColumnField);
-
-		// Nástroj
-		ComboBox<Instrument> instrumentColumnField = UIUtils
-				.asSmall(new ComboBox<>(null, Arrays.asList(Instrument.values())));
-		instrumentColumnField.setItemLabelGenerator(Instrument::getCaption);
-		instrumentColumnField.setWidth("100%");
-		instrumentColumnField.addValueChangeListener(e -> {
-			filterTO.setInstrument(e.getValue());
-			loadChords();
-		});
-		filteringHeader.getCell(instrumentColumn).setComponent(instrumentColumnField);
 
 		loadChords();
 
@@ -198,16 +180,13 @@ public class ChordsTab extends Div {
 			nameLabel.setText(choosenChord.getName());
 			nameLabel.setVisible(true);
 			Span chordDisplayLabel = new Span();
-			switch (choosenChord.getInstrument()) {
-			case GUITAR:
-				createDisplayForGuitar(choosenChord);
-			}
+			createDisplay(choosenChord);
 			chordDescriptionLayout.add(chordDisplayLabel);
 			this.choosenChord = choosenChord;
 		}
 	}
 
-	private void createDisplayForGuitar(ChordTO choosenChord) {
+	private void createDisplay(ChordTO choosenChord) {
 		BufferedImage image = ChordImageUtils.drawChord(choosenChord, 30);
 		VerticalLayout layout = new VerticalLayout();
 		chordDescriptionLayout.add(layout);

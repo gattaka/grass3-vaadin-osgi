@@ -1,7 +1,14 @@
 package cz.gattserver.grass3.ui.util;
 
+import java.util.Arrays;
+import java.util.Collection;
+
+import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.grid.HeaderRow.HeaderCell;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
@@ -31,9 +38,54 @@ public class UIUtils {
 		return textField;
 	}
 
+	/**
+	 * Přidá styl, aby combo bylo malé
+	 */
 	public static <T> ComboBox<T> asSmall(ComboBox<T> comboBox) {
 		comboBox.getElement().setAttribute("theme", TextFieldVariant.LUMO_SMALL.getVariantName());
 		return comboBox;
+	}
+
+	/**
+	 * Přidá filtrovací pole do záhlaví gridu
+	 */
+	public static void addHeaderTextField(HeaderCell cell,
+			HasValue.ValueChangeListener<? super ComponentValueChangeEvent<TextField, String>> listener) {
+		TextField field = UIUtils.asSmall(new TextField());
+		field.setWidthFull();
+		field.addValueChangeListener(listener);
+		cell.setComponent(field);
+	}
+
+	/**
+	 * Přidá filtrovací combo do záhlaví gridu
+	 */
+	public static <T extends Enum<T>> void addHeaderComboBox(HeaderCell cell, Class<T> enumType,
+			ItemLabelGenerator<T> itemLabelGenerator,
+			HasValue.ValueChangeListener<? super ComponentValueChangeEvent<ComboBox<T>, T>> listener) {
+		addHeaderComboBox(cell, enumType.getEnumConstants(), itemLabelGenerator, listener);
+	}
+
+	/**
+	 * Přidá filtrovací combo do záhlaví gridu
+	 */
+	public static <T extends Enum<T>> void addHeaderComboBox(HeaderCell cell, T[] values,
+			ItemLabelGenerator<T> itemLabelGenerator,
+			HasValue.ValueChangeListener<? super ComponentValueChangeEvent<ComboBox<T>, T>> listener) {
+		addHeaderComboBox(cell, Arrays.asList(values), itemLabelGenerator, listener);
+	}
+
+	/**
+	 * Přidá filtrovací combo do záhlaví gridu
+	 */
+	public static <T extends Enum<T>> void addHeaderComboBox(HeaderCell cell, Collection<T> values,
+			ItemLabelGenerator<T> itemLabelGenerator,
+			HasValue.ValueChangeListener<? super ComponentValueChangeEvent<ComboBox<T>, T>> listener) {
+		ComboBox<T> typeColumnField = UIUtils.asSmall(new ComboBox<>(null, values));
+		typeColumnField.setWidthFull();
+		typeColumnField.addValueChangeListener(listener);
+		typeColumnField.setItemLabelGenerator(itemLabelGenerator);
+		cell.setComponent(typeColumnField);
 	}
 
 	/**

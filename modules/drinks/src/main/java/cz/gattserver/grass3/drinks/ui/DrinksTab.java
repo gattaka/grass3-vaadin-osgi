@@ -13,7 +13,6 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.NumberRenderer;
 import com.vaadin.flow.server.StreamResource;
@@ -101,38 +100,29 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 	protected void addNameColumn(Grid<O> grid) {
 		// Název
 		Column<O> nameColumn = grid.addColumn(O::getName).setHeader("Název").setSortProperty("name").setFlexGrow(100);
-		TextField nazevColumnField = UIUtils.asSmall(new TextField());
-		nazevColumnField.setWidth("100%");
-		nazevColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(getHeaderRow().getCell(nameColumn), e -> {
 			filterTO.setName(e.getValue());
 			populate();
 		});
-		getHeaderRow().getCell(nameColumn).setComponent(nazevColumnField);
 	}
 
 	protected void addCountryColumn(Grid<O> grid) {
 		// Země původu
 		Column<O> countryColumn = grid.addColumn(O::getCountry).setHeader("Země").setSortProperty("country");
-		TextField countryColumnField = UIUtils.asSmall(new TextField());
-		countryColumnField.setWidth("100%");
-		countryColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(getHeaderRow().getCell(countryColumn), e -> {
 			filterTO.setCountry(e.getValue());
 			populate();
 		});
-		getHeaderRow().getCell(countryColumn).setComponent(countryColumnField);
 	}
 
 	protected void addAlcoholColumn(Grid<O> grid) {
 		Column<O> alcoholColumn = grid.addColumn(
 				new NumberRenderer<O>(O::getAlcohol, NumberFormat.getNumberInstance(new Locale("cs", "CZ")), null))
 				.setHeader("Alkohol (%)").setWidth("100px").setFlexGrow(0).setSortProperty("alcohol");
-		TextField alcoholColumnField = UIUtils.asSmall(new TextField());
-		alcoholColumnField.setWidth("100%");
-		alcoholColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(getHeaderRow().getCell(alcoholColumn), e -> {
 			filterTO.setAlcohol(Double.parseDouble(e.getValue()));
 			populate();
 		});
-		getHeaderRow().getCell(alcoholColumn).setComponent(alcoholColumnField);
 	}
 
 	protected void addRatingStarsColumn(Grid<O> grid) {

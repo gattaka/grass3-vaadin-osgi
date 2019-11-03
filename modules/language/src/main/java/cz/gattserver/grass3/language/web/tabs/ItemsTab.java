@@ -10,17 +10,16 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.grid.Grid.Column;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 
 import cz.gattserver.grass3.language.facades.LanguageFacade;
@@ -86,22 +85,16 @@ public class ItemsTab extends Div {
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Obsah
-		TextField contentFilterField = UIUtils.asSmall(new TextField());
-		contentFilterField.setWidth("100%");
-		contentFilterField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(contentColumn), e -> {
 			filterTO.setContent(e.getValue());
 			populate(grid, filterTO);
 		});
-		filteringHeader.getCell(contentColumn).setComponent(contentFilterField);
 
 		// Překlad
-		TextField translationFilterField = UIUtils.asSmall(new TextField());
-		translationFilterField.setWidth("100%");
-		translationFilterField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(translationColumn), e -> {
 			filterTO.setTranslation(e.getValue());
 			populate(grid, filterTO);
 		});
-		filteringHeader.getCell(translationColumn).setComponent(translationFilterField);
 
 		populate(grid, filterTO);
 

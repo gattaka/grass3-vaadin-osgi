@@ -28,9 +28,7 @@ public class ChordsRepositoryCustomImpl implements ChordsRepositoryCustom {
 		QChord c = QChord.chord;
 		PredicateBuilder builder = new PredicateBuilder();
 		builder.iLike(c.name, filterTO.getName());
-		builder.eq(c.instrument, filterTO.getInstrument());
-		return query.select(c).from(c).where(builder.getBuilder())
-				.orderBy(new OrderSpecifier<>(Order.ASC, c.instrument), new OrderSpecifier<>(Order.ASC, c.name))
+		return query.select(c).from(c).where(builder.getBuilder()).orderBy(new OrderSpecifier<>(Order.ASC, c.name))
 				.fetch();
 	}
 }

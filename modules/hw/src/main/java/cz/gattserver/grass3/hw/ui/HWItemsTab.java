@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
@@ -16,7 +15,6 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -122,41 +120,28 @@ public class HWItemsTab extends Div {
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Název
-		TextField nazevColumnField = UIUtils.asSmall(new TextField());
-		nazevColumnField.setWidth("100%");
-		nazevColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(nameColumn), e -> {
 			filterTO.setName(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(nameColumn).setComponent(nazevColumnField);
 
 		// Stav
-		ComboBox<HWItemState> stavColumnCombo = UIUtils
-				.asSmall(new ComboBox<>(null, Arrays.asList(HWItemState.values())));
-		stavColumnCombo.setWidth("100%");
-		stavColumnCombo.addValueChangeListener(e -> {
+		UIUtils.addHeaderComboBox(filteringHeader.getCell(stateColumn), HWItemState.class, HWItemState::getName, e -> {
 			filterTO.setState(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(stateColumn).setComponent(stavColumnCombo);
 
 		// Je součástí
-		TextField usedInColumnField = UIUtils.asSmall(new TextField());
-		usedInColumnField.setWidth("100%");
-		usedInColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(usedInColumn), e -> {
 			filterTO.setUsedIn(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(usedInColumn).setComponent(usedInColumnField);
 
 		// Spravován pro
-		TextField supervizedForColumnField = UIUtils.asSmall(new TextField());
-		supervizedForColumnField.setWidth("100%");
-		supervizedForColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(supervizedColumn), e -> {
 			filterTO.setSupervizedFor(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(supervizedColumn).setComponent(supervizedForColumnField);
 
 		populate();
 		grid.sort(Arrays.asList(new GridSortOrder<>(nameColumn, SortDirection.ASCENDING)));

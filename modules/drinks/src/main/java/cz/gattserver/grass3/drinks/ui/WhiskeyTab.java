@@ -1,16 +1,12 @@
 package cz.gattserver.grass3.drinks.ui;
 
-import java.util.Arrays;
-
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.TextRenderer;
 
 import cz.gattserver.grass3.drinks.model.domain.WhiskeyType;
@@ -20,9 +16,9 @@ import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.web.common.ui.HtmlDiv;
 
 public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
@@ -53,24 +49,17 @@ public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
 		add(grid);
 
 		// Stáří (roky)
-		TextField yearsColumnField = UIUtils.asSmall(new TextField());
-		yearsColumnField.setWidth("100%");
-		yearsColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(getHeaderRow().getCell(yearsColumn), e -> {
 			filterTO.setYears(Integer.parseInt(e.getValue()));
 			populate();
 		});
-		getHeaderRow().getCell(yearsColumn).setComponent(yearsColumnField);
 
 		// Typ Whiskeyu
-		ComboBox<WhiskeyType> typeColumnField = UIUtils
-				.asSmall(new ComboBox<>(null, Arrays.asList(WhiskeyType.values())));
-		typeColumnField.setWidth("100%");
-		typeColumnField.addValueChangeListener(e -> {
-			filterTO.setWhiskeyType(e.getValue());
-			populate();
-		});
-		typeColumnField.setItemLabelGenerator(WhiskeyType::getCaption);
-		getHeaderRow().getCell(whiskeyTypeColumn).setComponent(typeColumnField);
+		UIUtils.addHeaderComboBox(getHeaderRow().getCell(whiskeyTypeColumn), WhiskeyType.class, WhiskeyType::getCaption,
+				e -> {
+					filterTO.setWhiskeyType(e.getValue());
+					populate();
+				});
 	}
 
 	@Override

@@ -3,14 +3,13 @@ package cz.gattserver.grass3.recipes.web;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.Column;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -79,13 +78,10 @@ public class RecipesPage extends OneColumnPage {
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Název
-		TextField nazevColumnField = UIUtils.asSmall(new TextField());
-		nazevColumnField.setWidth("100%");
-		nazevColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(nazevColumn), e -> {
 			filterTO.setName(e.getValue());
 			populate();
 		});
-		filteringHeader.getCell(nazevColumn).setComponent(nazevColumnField);
 
 		populate();
 

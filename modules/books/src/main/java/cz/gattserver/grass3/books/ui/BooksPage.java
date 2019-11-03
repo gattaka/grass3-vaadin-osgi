@@ -13,7 +13,6 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
@@ -137,22 +136,16 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Autor
-		TextField authorColumnField = UIUtils.asSmall(new TextField());
-		authorColumnField.setWidth("100%");
-		authorColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(authorColumn), e -> {
 			filterTO.setAuthor(e.getValue());
 			dataProvider.refreshAll();
 		});
-		filteringHeader.getCell(authorColumn).setComponent(authorColumnField);
 
 		// Název
-		TextField nazevColumnField = UIUtils.asSmall(new TextField());
-		nazevColumnField.setWidth("100%");
-		nazevColumnField.addValueChangeListener(e -> {
+		UIUtils.addHeaderTextField(filteringHeader.getCell(nameColumn), e -> {
 			filterTO.setName(e.getValue());
 			dataProvider.refreshAll();
 		});
-		filteringHeader.getCell(nameColumn).setComponent(nazevColumnField);
 
 		FetchCallback<BookOverviewTO, BookOverviewTO> fetchCallback = q -> getBooksFacade()
 				.getBooks(filterTO, q.getOffset(), q.getLimit(), q.getSortOrders()).stream();

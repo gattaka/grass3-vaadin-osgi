@@ -1,16 +1,12 @@
 package cz.gattserver.grass3.songs.web;
 
-import java.util.Arrays;
-
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 
-import cz.gattserver.grass3.songs.model.domain.Instrument;
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
@@ -34,7 +30,6 @@ public abstract class ChordDialog extends WebDialog {
 		setWidth("300px");
 
 		ChordTO formTO = new ChordTO();
-		formTO.setInstrument(Instrument.GUITAR);
 
 		Binder<ChordTO> binder = new Binder<>(ChordTO.class);
 		binder.setBean(formTO);
@@ -45,19 +40,10 @@ public abstract class ChordDialog extends WebDialog {
 		nameField.setWidth("100%");
 		add(nameField);
 
-		final ComboBox<Instrument> instrumentField = new ComboBox<>("Nástroj", Arrays.asList(Instrument.values()));
-		instrumentField.setItemLabelGenerator(Instrument::getCaption);
-		instrumentField.setWidth("100%");
-		add(instrumentField);
-
 		VerticalLayout chordDescriptionLayout = new VerticalLayout();
 		chordDescriptionLayout.setMargin(false);
 		add(chordDescriptionLayout);
-		instrumentField.addValueChangeListener(
-				e -> refreshDescriptionLayout(binder, originalDTO, formTO, chordDescriptionLayout, e.getValue()));
-		add(chordDescriptionLayout);
-
-		binder.forField(instrumentField).asRequired().bind(ChordTO::getInstrument, ChordTO::setInstrument);
+		renderDescriptionLayout(binder, originalDTO, formTO, chordDescriptionLayout);
 
 		add(new SaveCloseLayout(e -> save(binder), e -> close()));
 
@@ -70,19 +56,7 @@ public abstract class ChordDialog extends WebDialog {
 		}
 	}
 
-	private void refreshDescriptionLayout(Binder<ChordTO> binder, ChordTO originalDTO, ChordTO formTO,
-			VerticalLayout chordDescriptionLayout, Instrument instrument) {
-		chordDescriptionLayout.removeAll();
-		switch (instrument) {
-		case GUITAR:
-			refreshDescriptionLayoutAsGuitar(binder, originalDTO, formTO, chordDescriptionLayout);
-			break;
-		default:
-			break;
-		}
-	}
-
-	private void refreshDescriptionLayoutAsGuitar(Binder<ChordTO> binder, ChordTO originalDTO, ChordTO formTO,
+	private void renderDescriptionLayout(Binder<ChordTO> binder, ChordTO originalDTO, ChordTO formTO,
 			VerticalLayout chordDescriptionLayout) {
 		String[] stringsLabel = new String[] { "E", "a", "d", "g", "h", "e" };
 

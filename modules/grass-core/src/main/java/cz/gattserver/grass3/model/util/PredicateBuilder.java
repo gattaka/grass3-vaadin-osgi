@@ -36,9 +36,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder eq(StringPath path, String value) {
-		if (isNotBlank(value)) {
+		if (isNotBlank(value))
 			booleanBuilder.and(path.eq(value));
-		}
 		return this;
 	}
 
@@ -119,9 +118,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public <T extends Number & Comparable<?>> PredicateBuilder eq(NumberExpression<T> path, T value) {
-		if (value != null) {
+		if (value != null)
 			booleanBuilder.and(path.eq(value));
-		}
 		return this;
 	}
 
@@ -137,9 +135,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public <T extends Number & Comparable<?>> PredicateBuilder ne(NumberExpression<T> path, T value) {
-		if (value != null) {
+		if (value != null)
 			booleanBuilder.and(path.ne(value));
-		}
 		return this;
 	}
 
@@ -153,9 +150,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder ne(StringPath path, String value) {
-		if (value != null) {
+		if (value != null)
 			booleanBuilder.and(ExpressionUtils.or(path.isNull(), path.ne(value)));
-		}
 		return this;
 	}
 
@@ -169,9 +165,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder ne(StringExpression expression, String value) {
-		if (value != null) {
+		if (value != null)
 			booleanBuilder.and(ExpressionUtils.or(expression.isNull(), expression.ne(value)));
-		}
 		return this;
 	}
 
@@ -202,11 +197,10 @@ public class PredicateBuilder {
 	 */
 	public <T extends Number & Comparable<?>> PredicateBuilder gtOrValueNull(NumberExpression<T> expression1,
 			NumberExpression<T> expression2) {
-		if (expression2 != null) {
-			// je potřeba pro případy porovnání x > null, pak je výsledek totiž
-			// false, s porovnáním na "nebo null" pak takové případy vychází
+		// je potřeba pro případy porovnání x > null, pak je výsledek totiž
+		// false, s porovnáním na "nebo null" pak takové případy vychází
+		if (expression2 != null)
 			booleanBuilder.and(ExpressionUtils.or(expression1.gt(expression2), expression2.isNull()));
-		}
 		return this;
 	}
 
@@ -222,9 +216,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public <T extends Number & Comparable<?>> PredicateBuilder gt(NumberExpression<T> expression, T value) {
-		if (value != null) {
+		if (value != null)
 			booleanBuilder.and(expression.gt(value));
-		}
 		return this;
 	}
 
@@ -240,9 +233,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public <T extends Number & Comparable<?>> PredicateBuilder ge(NumberExpression<T> expression, T value) {
-		if (value != null) {
+		if (value != null)
 			booleanBuilder.and(expression.goe(value));
-		}
 		return this;
 	}
 
@@ -258,9 +250,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public <T extends Number & Comparable<?>> PredicateBuilder lt(NumberExpression<T> expression, T value) {
-		if (value != null) {
+		if (value != null)
 			booleanBuilder.and(expression.lt(value));
-		}
 		return this;
 	}
 
@@ -276,9 +267,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public <T extends Number & Comparable<?>> PredicateBuilder le(NumberExpression<T> expression, T value) {
-		if (value != null) {
+		if (value != null)
 			booleanBuilder.and(expression.loe(value));
-		}
 		return this;
 	}
 
@@ -290,9 +280,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder notExists(JPAQuery<?> query) {
-		if (query != null) {
+		if (query != null)
 			booleanBuilder.and(query.notExists());
-		}
 		return this;
 	}
 
@@ -304,9 +293,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder exists(JPAQuery<?> query) {
-		if (query != null) {
+		if (query != null)
 			booleanBuilder.and(query.exists());
-		}
 		return this;
 	}
 
@@ -321,9 +309,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder notIn(StringPath path, String[] values) {
-		if (values != null) {
+		if (values != null)
 			booleanBuilder.and(path.notIn(values));
-		}
 		return this;
 	}
 
@@ -338,9 +325,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder in(StringPath path, String[] values) {
-		if (values != null) {
+		if (values != null)
 			booleanBuilder.and(path.in(values));
-		}
 		return this;
 	}
 
@@ -354,9 +340,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public <T extends Number & Comparable<?>> PredicateBuilder isNull(NumberExpression<T> expression) {
-		if (expression != null) {
+		if (expression != null)
 			booleanBuilder.and(expression.isNull());
-		}
 		return this;
 	}
 
@@ -368,9 +353,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder isNull(BeanPath<?> expression) {
-		if (expression != null) {
+		if (expression != null)
 			booleanBuilder.and(expression.isNull());
-		}
 		return this;
 	}
 
@@ -382,10 +366,9 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder isEmpty(StringExpression expression) {
-		if (expression != null) {
+		if (expression != null)
 			booleanBuilder.and(
 					ExpressionUtils.or(expression.eq(""), ExpressionUtils.or(expression.isNull(), expression.eq(" "))));
-		}
 		return this;
 	}
 
@@ -413,9 +396,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder isNotNull(NumberExpression<?> expression) {
-		if (expression != null) {
+		if (expression != null)
 			booleanBuilder.and(expression.isNotNull());
-		}
 		return this;
 	}
 
@@ -427,9 +409,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder isNotNull(BeanPath<?> expression) {
-		if (expression != null) {
+		if (expression != null)
 			booleanBuilder.and(expression.isNotNull());
-		}
 		return this;
 	}
 
@@ -450,9 +431,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder iLike(StringExpression expression, String value) {
-		if (isNotBlank(value) && !"*".equals(value)) {
+		if (isNotBlank(value) && !"*".equals(value))
 			booleanBuilder.and(expression.likeIgnoreCase(prepareForLike(value)));
-		}
 		return this;
 	}
 
@@ -466,9 +446,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder notILike(StringExpression expression, String value) {
-		if (isNotBlank(value)) {
+		if (isNotBlank(value))
 			booleanBuilder.andNot(expression.likeIgnoreCase(prepareForLike(value)));
-		}
 		return this;
 	}
 
@@ -482,9 +461,8 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder like(NumberExpression<?> expression, String value) {
-		if (isNotBlank(value)) {
+		if (isNotBlank(value))
 			booleanBuilder.and(expression.like(prepareForLike(value)));
-		}
 		return this;
 	}
 
@@ -498,11 +476,9 @@ public class PredicateBuilder {
 	 * @return this pro řetězení
 	 */
 	public PredicateBuilder like(NumberPath<Long> path, Long value) {
-		if (value != null) {
+		if (value != null)
 			like(path, value.toString());
-		}
 		return this;
-
 	}
 
 	/**

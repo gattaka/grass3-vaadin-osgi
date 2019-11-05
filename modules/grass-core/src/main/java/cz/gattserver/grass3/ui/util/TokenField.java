@@ -61,6 +61,7 @@ public class TokenField extends Div {
 	}
 
 	private void commitValue(String value) {
+		value = value.trim();
 		if (StringUtils.isNotBlank(value)) {
 			if (!tokens.containsKey(value)) {
 				addToken(value);

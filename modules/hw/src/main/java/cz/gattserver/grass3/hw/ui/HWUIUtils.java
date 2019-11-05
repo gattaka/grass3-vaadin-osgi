@@ -17,6 +17,8 @@ public class HWUIUtils {
 			return ImageIcon.DELETE_16_ICON;
 		case DISASSEMBLED:
 			return ImageIcon.TRASH_16_ICON;
+		case NOT_USED:
+			return ImageIcon.CLOCK_16_ICON;
 		case NEW:
 		default:
 			return null;

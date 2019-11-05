@@ -235,6 +235,8 @@ public class HWItemsTab extends Div {
 				HWItemOverviewTO filterTO = new HWItemOverviewTO();
 				filterTO.setId(dto.getId());
 				grid.select(filterTO);
+				if (id != null)
+					openDetailWindow(dto.getId());
 			}
 		}.open();
 	}

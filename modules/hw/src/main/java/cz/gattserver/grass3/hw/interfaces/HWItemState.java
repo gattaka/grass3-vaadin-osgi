@@ -2,7 +2,8 @@ package cz.gattserver.grass3.hw.interfaces;
 
 public enum HWItemState {
 
-	NEW("Nový"), FIXED("Opraven"), FAULTY("Poruchový"), BROKEN("Nefunkční"), DISASSEMBLED("Rozebrán");
+	NEW("Nový"), FIXED("Opraven"), FAULTY("Poruchový"), BROKEN("Nefunkční"), DISASSEMBLED("Rozebrán"), NOT_USED(
+			"Nepoužíván");
 
 	private String name;
 

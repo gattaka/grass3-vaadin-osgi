@@ -85,6 +85,14 @@ public interface HWService {
 	/*
 	 * Items
 	 */
+	
+	/**
+	 * Vytvoří kopii základu položky (mimo záznamů a součástí)
+	 * 
+	 * @param itemId
+	 *            id předmětu, který má být vyloučen z přehledu
+	 */
+	Long copyHWItem(Long itemId);
 
 	Long saveHWItem(HWItemTO hwItemDTO);
 
@@ -120,4 +128,5 @@ public interface HWService {
 	void modifyServiceNote(ServiceNoteTO serviceNoteDTO);
 
 	void deleteServiceNote(ServiceNoteTO serviceNoteDTO, Long id);
+
 }

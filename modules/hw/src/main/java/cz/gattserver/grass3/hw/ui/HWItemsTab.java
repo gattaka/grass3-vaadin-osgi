@@ -28,16 +28,13 @@ import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemState;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
-import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.hw.ui.dialogs.HWItemDetailsDialog;
 import cz.gattserver.grass3.hw.ui.dialogs.HWItemDialog;
-import cz.gattserver.grass3.hw.ui.dialogs.ServiceNoteCreateDialog;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.GridButton;
-import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.grass3.ui.util.UIUtils;
@@ -148,8 +145,10 @@ public class HWItemsTab extends Div {
 		grid.sort(Arrays.asList(new GridSortOrder<>(nameColumn, SortDirection.ASCENDING)));
 
 		grid.addItemClickListener(event -> {
-			if (event.getClickCount() > 1)
+			if (event.getClickCount() > 1) {
 				openDetailWindow(event.getItem().getId());
+				grid.select(event.getItem());
+			}
 		});
 
 		add(grid);
@@ -158,13 +157,14 @@ public class HWItemsTab extends Div {
 		add(buttonLayout);
 
 		// Založení nové položky HW
-		Button newHWBtn = new CreateButton("Založit novou položku HW", e -> openItemWindow(null));
+		Button newHWBtn = new CreateButton("Přidat", e -> openItemWindow(null));
 		buttonLayout.add(newHWBtn);
 
-		// Založení nového servisního záznamu
-		Button newNoteBtn = new ModifyGridButton<HWItemOverviewTO>("Přidat servisní záznam",
-				to -> openAddNoteWindow(to), grid);
-		buttonLayout.add(newNoteBtn);
+		// Kopie položky HW
+		Button copyHWBtn = new GridButton<HWItemOverviewTO>("Zkopírovat",
+				set -> copyItemWindow(set.iterator().next().getId()), grid);
+		copyHWBtn.setIcon(new Image(ImageIcon.PLUS_16_ICON.createResource(), "image"));
+		buttonLayout.add(copyHWBtn);
 
 		// Zobrazení detailů položky HW
 		Button detailsBtn = new GridButton<HWItemOverviewTO>("Detail",
@@ -173,7 +173,8 @@ public class HWItemsTab extends Div {
 		buttonLayout.add(detailsBtn);
 
 		// Oprava údajů existující položky HW
-		Button fixBtn = new GridButton<HWItemOverviewTO>("Upravit", set -> openItemWindow(set.iterator().next()), grid);
+		Button fixBtn = new GridButton<HWItemOverviewTO>("Upravit",
+				set -> openItemWindow(set.iterator().next().getId()), grid);
 		fixBtn.setIcon(new Image(ImageIcon.QUICKEDIT_16_ICON.createResource(), "image"));
 		buttonLayout.add(fixBtn);
 
@@ -221,10 +222,10 @@ public class HWItemsTab extends Div {
 		grid.setDataProvider(DataProvider.fromFilteringCallbacks(fetchCallback, countCallback));
 	}
 
-	private void openItemWindow(HWItemOverviewTO to) {
+	private void openItemWindow(Long id) {
 		HWItemTO hwItem = null;
-		if (to != null)
-			hwItem = getHWService().getHWItem(to.getId());
+		if (id != null)
+			hwItem = getHWService().getHWItem(id);
 		new HWItemDialog(hwItem == null ? null : hwItem.getId()) {
 			private static final long serialVersionUID = -1397391593801030584L;
 
@@ -238,16 +239,13 @@ public class HWItemsTab extends Div {
 		}.open();
 	}
 
-	private void openAddNoteWindow(HWItemOverviewTO to) {
-		HWItemTO hwItem = getHWService().getHWItem(to.getId());
-		new ServiceNoteCreateDialog(hwItem) {
-			private static final long serialVersionUID = -5582822648042555576L;
-
-			@Override
-			protected void onSuccess(ServiceNoteTO noteDTO) {
-				populate();
-			}
-		}.open();
+	private void copyItemWindow(Long id) {
+		Long newId = getHWService().copyHWItem(id);
+		populate();
+		HWItemOverviewTO newTO = new HWItemOverviewTO();
+		newTO.setId(newId);
+		grid.select(newTO);
+		openDetailWindow(newId);
 	}
 
 	private void openDetailWindow(Long id) {

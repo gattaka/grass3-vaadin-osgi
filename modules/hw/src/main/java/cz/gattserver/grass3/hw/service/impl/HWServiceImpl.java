@@ -3,19 +3,25 @@ package cz.gattserver.grass3.hw.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +52,8 @@ import cz.gattserver.grass3.services.FileSystemService;
 @Transactional
 @Component
 public class HWServiceImpl implements HWService {
+
+	private static final Logger logger = LoggerFactory.getLogger(HWServiceImpl.class);
 
 	private static final String ILLEGAL_PATH_IMGS_ERR = "Podtečení adresáře grafických příloh";
 	private static final String ILLEGAL_PATH_DOCS_ERR = "Podtečení adresáře dokumentací";
@@ -386,6 +394,45 @@ public class HWServiceImpl implements HWService {
 	 */
 
 	@Override
+	public Long copyHWItem(Long origId) {
+		HWItemTO item = getHWItem(origId);
+		// jde o novou položku, takže prázdné id, žádné záznamy
+		item.setId(null);
+		item.setServiceNotes(null);
+		item.setUsedIn(null);
+		item.setUsedInName(null);
+		// zkopíruj přílohy
+
+		Long copyId = saveHWItem(item);
+
+		try {
+			Path origPath = getHWPath(origId);
+			if (Files.exists(origPath)) {
+				Path copyPath = getHWPath(copyId);
+				Files.walkFileTree(origPath, new SimpleFileVisitor<Path>() {
+					@Override
+					public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs)
+							throws IOException {
+						Files.createDirectories(copyPath.resolve(origPath.relativize(dir)));
+						return FileVisitResult.CONTINUE;
+					}
+
+					@Override
+					public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
+							throws IOException {
+						Files.copy(file, copyPath.resolve(origPath.relativize(file)));
+						return FileVisitResult.CONTINUE;
+					}
+				});
+			}
+		} catch (IOException e) {
+			throw new GrassException("Nezdařilo se vytvořit kopii souborů HW položky", e);
+		}
+
+		return copyId;
+	}
+
+	@Override
 	public Long saveHWItem(HWItemTO hwItemDTO) {
 		HWItem item;
 		if (hwItemDTO.getId() == null)
@@ -470,6 +517,19 @@ public class HWServiceImpl implements HWService {
 		}
 
 		hwItemRepository.deleteById(item.getId());
+
+		Path hwPath = getHWPath(item.getId());
+		try (Stream<Path> s = Files.walk(hwPath)) {
+			s.sorted(Comparator.reverseOrder()).forEach(p -> {
+				try {
+					Files.delete(p);
+				} catch (IOException e) {
+					logger.error("Chyba při mazání souboru HW položky " + id + "] (" + item.getName() + ")", e);
+				}
+			});
+		} catch (Exception e) {
+			logger.warn("Nezdařilo se smazat adresář příloh k HW položce [" + id + "] (" + item.getName() + ")");
+		}
 	}
 
 	/*

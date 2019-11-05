@@ -518,6 +518,8 @@ public class HWServiceImpl implements HWService {
 
 		hwItemRepository.deleteById(item.getId());
 
+		hwItemTypeRepository.cleanOrphansName();
+
 		Path hwPath = getHWPath(item.getId());
 		try (Stream<Path> s = Files.walk(hwPath)) {
 			s.sorted(Comparator.reverseOrder()).forEach(p -> {

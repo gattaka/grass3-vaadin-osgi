@@ -19,7 +19,9 @@ import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.router.Route;
 
 import cz.gattserver.common.util.HumanBytesSizeFormatter;
+import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.monitor.MonitorEmailNotifier;
+import cz.gattserver.grass3.monitor.MonitorSection;
 import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskStatusMonitorItemTO;
@@ -58,6 +60,8 @@ public class MonitorPage extends OneColumnPage {
 	private Set<Runnable> parts = new HashSet<>();
 
 	public MonitorPage() {
+		if (!getUser().hasRole(MonitorSection.ROLE))
+			throw new GrassPageException(403);
 		loadCSS(getContextPath() + "/frontend/monitor/style.css");
 		init();
 	}

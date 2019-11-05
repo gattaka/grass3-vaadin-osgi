@@ -5,12 +5,14 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 
+import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.medic.web.tabs.MedicalInstitutionsTab;
 import cz.gattserver.grass3.medic.web.tabs.MedicalRecordsTab;
 import cz.gattserver.grass3.medic.web.tabs.MedicamentsTab;
 import cz.gattserver.grass3.medic.web.tabs.PhysiciansTab;
 import cz.gattserver.grass3.medic.web.tabs.ScheduledVisitsTab;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.grass3.medic.MedicSection;
 
 @Route("medic")
 public class MedicPage extends OneColumnPage {
@@ -27,6 +29,8 @@ public class MedicPage extends OneColumnPage {
 	private Tab physiciansTab;
 
 	public MedicPage() {
+		if (!getUser().hasRole(MedicSection.ROLE))
+			throw new GrassPageException(403);
 		init();
 	}
 

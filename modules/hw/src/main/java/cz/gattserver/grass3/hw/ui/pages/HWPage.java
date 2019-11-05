@@ -5,6 +5,8 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 
+import cz.gattserver.grass3.exception.GrassPageException;
+import cz.gattserver.grass3.hw.HWSection;
 import cz.gattserver.grass3.hw.ui.HWItemsTab;
 import cz.gattserver.grass3.hw.ui.HWTypesTab;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
@@ -22,6 +24,8 @@ public class HWPage extends OneColumnPage {
 	private Div pageLayout;
 
 	public HWPage() {
+		if (!getUser().hasRole(HWSection.ROLE))
+			throw new GrassPageException(403);
 		init();
 	}
 

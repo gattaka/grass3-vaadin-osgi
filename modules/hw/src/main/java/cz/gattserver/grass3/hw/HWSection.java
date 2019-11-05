@@ -14,13 +14,15 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 @Component("hwSection")
 public class HWSection implements SectionService {
 
+	public static CoreRole ROLE = CoreRole.ADMIN; 
+	
 	@Resource(name = "hwPageFactory")
 	private PageFactory hwPageFactory;
 
 	public boolean isVisibleForRoles(Set<Role> roles) {
 		if (roles == null)
 			return false;
-		return roles.contains(CoreRole.ADMIN);
+		return roles.contains(ROLE);
 	}
 
 	public PageFactory getSectionPageFactory() {

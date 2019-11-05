@@ -130,7 +130,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 						setMethod = type.getDeclaredMethod(createSetMethodName(field.getName()), params);
 						setMethod.invoke(configuration, args);
 					} catch (Exception e) {
-						logger.error("Nezdařilo se nastavit hodnotu konfigurační položky {}", item.getName(), e);
+						logger.error("Deserializace nastavení " + configuration.getClass()
+								+ ": Nezdařilo se nastavit hodnotu konfigurační položky {}", item.getName(), e);
 						continue;
 					}
 				}

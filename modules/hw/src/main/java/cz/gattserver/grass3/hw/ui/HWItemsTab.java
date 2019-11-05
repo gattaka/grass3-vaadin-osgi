@@ -173,8 +173,7 @@ public class HWItemsTab extends Div {
 		buttonLayout.add(detailsBtn);
 
 		// Oprava údajů existující položky HW
-		Button fixBtn = new GridButton<HWItemOverviewTO>("Upravit",
-				set -> openItemWindow(set.iterator().next().getId()), grid);
+		Button fixBtn = new GridButton<HWItemOverviewTO>("Upravit", set -> openItemWindow(set.iterator().next()), grid);
 		fixBtn.setIcon(new Image(ImageIcon.QUICKEDIT_16_ICON.createResource(), "image"));
 		buttonLayout.add(fixBtn);
 
@@ -222,10 +221,10 @@ public class HWItemsTab extends Div {
 		grid.setDataProvider(DataProvider.fromFilteringCallbacks(fetchCallback, countCallback));
 	}
 
-	private void openItemWindow(Long id) {
+	private void openItemWindow(HWItemOverviewTO hwItemOverviewTO) {
 		HWItemTO hwItem = null;
-		if (id != null)
-			hwItem = getHWService().getHWItem(id);
+		if (hwItemOverviewTO != null)
+			hwItem = getHWService().getHWItem(hwItemOverviewTO.getId());
 		new HWItemDialog(hwItem == null ? null : hwItem.getId()) {
 			private static final long serialVersionUID = -1397391593801030584L;
 
@@ -235,7 +234,7 @@ public class HWItemsTab extends Div {
 				HWItemOverviewTO filterTO = new HWItemOverviewTO();
 				filterTO.setId(dto.getId());
 				grid.select(filterTO);
-				if (id != null)
+				if (hwItemOverviewTO == null)
 					openDetailWindow(dto.getId());
 			}
 		}.open();
@@ -251,7 +250,24 @@ public class HWItemsTab extends Div {
 	}
 
 	private void openDetailWindow(Long id) {
-		new HWItemDetailsDialog(id).open();
+		new HWItemDetailsDialog(id) {
+			private static final long serialVersionUID = 1621156205987235037L;
+
+			public HWItemTO refreshItem() {
+				HWItemTO to = super.refreshItem();
+				grid.getSelectedItems().forEach(item -> {
+					if (item.getId().equals(id)) {
+						item.setName(to.getName());
+						item.setState(to.getState());
+						item.setUsedInName(to.getUsedInName());
+						item.setSupervizedFor(to.getSupervizedFor());
+						item.setPrice(to.getPrice());
+						item.setPurchaseDate(to.getPurchaseDate());
+					}
+				});
+				return to;
+			};
+		}.open();
 	}
 
 }

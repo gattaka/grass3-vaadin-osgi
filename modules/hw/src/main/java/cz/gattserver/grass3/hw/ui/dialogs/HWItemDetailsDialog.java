@@ -32,8 +32,6 @@ public class HWItemDetailsDialog extends Dialog {
 		this.hwItemId = hwItemId;
 		this.hwItem = getHWService().getHWItem(hwItemId);
 
-//		setWidth("900px");
-
 		Div nameDiv = new Div(new Text(hwItem.getName()));
 		nameDiv.getStyle().set("font-size", "15px").set("margin-bottom", "var(--lumo-space-m)")
 				.set("font-weight", "bold").set("margin-top", "calc(var(--lumo-space-m) / -2)");
@@ -74,9 +72,10 @@ public class HWItemDetailsDialog extends Dialog {
 		switchInfoTab();
 	}
 
-	public void refreshItem() {
+	public HWItemTO refreshItem() {
 		this.hwItem = getHWService().getHWItem(hwItemId);
 		refreshTabLabels();
+		return hwItem;
 	}
 
 	public void refreshTabLabels() {

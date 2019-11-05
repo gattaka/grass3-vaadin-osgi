@@ -242,6 +242,7 @@ public class HWDetailsInfoTab extends Div {
 
 			@Override
 			protected void onSuccess(HWItemTO dto) {
+				hwItemDetailDialog.refreshItem();
 				hwItemDetailDialog.switchInfoTab();
 			}
 		}.open());

@@ -56,6 +56,7 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
+import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
@@ -184,7 +185,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 		// galerie
 		galleryGridLayout = new GridLayout();
-		galleryGridLayout.setSizeFull();
+		galleryGridLayout.setHeightFull();
 		layout.add(galleryGridLayout);
 
 		// Layout stránkovacích tlačítek
@@ -318,7 +319,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 				final int currentIndex = index;
 				Div itemLayout = new Div();
-				itemLayout.getStyle().set("text-align", "center");
+				itemLayout.getStyle().set("text-align", "center").set("width", "170px");
 
 				// Miniatura/Náhled
 				Image embedded = new Image(new StreamResource(item.getName(), () -> {
@@ -330,6 +331,8 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 					}
 				}), item.getName());
 				itemLayout.add(embedded);
+
+				itemLayout.add(new Breakline());
 
 				// Detail
 				String file = item.getFile().getFileName().toString();

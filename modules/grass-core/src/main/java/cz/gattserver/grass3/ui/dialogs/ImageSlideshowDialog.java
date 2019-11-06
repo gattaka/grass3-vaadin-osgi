@@ -4,9 +4,6 @@ import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Shortcuts;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 public abstract class ImageSlideshowDialog extends Dialog {
 
@@ -14,7 +11,7 @@ public abstract class ImageSlideshowDialog extends Dialog {
 
 	protected int currentIndex;
 	protected int totalCount;
-	protected Span itemLabel;
+	protected Div itemLabel;
 	protected Div slideShowLayout;
 
 	public abstract void showItem(int index);
@@ -22,12 +19,12 @@ public abstract class ImageSlideshowDialog extends Dialog {
 	public ImageSlideshowDialog(int count) {
 		this.totalCount = count;
 
-		VerticalLayout layout = new VerticalLayout();
-		layout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+		Div layout = new Div();
+		layout.getStyle().set("text-align", "center").set("margin", "-16px -20px -20px -20px");
 		add(layout);
 
-		itemLabel = new Span();
-		itemLabel.addClassName("white-bold-label");
+		itemLabel = new Div();
+		itemLabel.getStyle().set("margin-bottom", "5px");
 		itemLabel.setSizeUndefined();
 		layout.add(itemLabel);
 

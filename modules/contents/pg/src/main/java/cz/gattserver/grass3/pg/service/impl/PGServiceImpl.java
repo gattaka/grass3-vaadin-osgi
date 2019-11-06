@@ -261,9 +261,9 @@ public class PGServiceImpl implements PGService {
 
 				// vytvoř slideshow verzi
 				BufferedImage image = PGUtils.getImageFromFile(file);
-				if (image.getWidth() > 900 || image.getHeight() > 700) {
+				if (image.getWidth() > 900 || image.getHeight() > 600) {
 					try {
-						PGUtils.resizeImage(file, outputFile, 900, 700);
+						PGUtils.resizeImage(file, outputFile, 900, 600);
 					} catch (Exception e) {
 						logger.error("Při zpracování slideshow pro '{}' došlo k chybě", file.getFileName().toString(),
 								e);

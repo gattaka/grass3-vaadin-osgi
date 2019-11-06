@@ -22,7 +22,6 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
-import org.jcodec.api.UnsupportedFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,20 +140,16 @@ public class PGServiceImpl implements PGService {
 	private void createVideoMinature(Path file, Path outputFile) {
 		String videoName = file.getFileName().toString();
 		String previewName = outputFile.getFileName().toString();
+		logger.info("Bylo nalezeno video {}", videoName);
+		logger.info("Bylo zahájeno zpracování náhledu videa {}", videoName);
 		try {
-			logger.info("Bylo nalezeno video {}", videoName);
-			logger.info("Bylo zahájeno zpracování náhledu videa {}", videoName);
-			try {
-				BufferedImage image = new DecodeAndCaptureFrames().decodeAndCaptureFrames(file);
-				logger.info("Zpracování náhledu videa {} byla úspěšně dokončeno", videoName);
-				PGUtils.resizeVideoPreviewImage(image, outputFile);
-				logger.info("Náhled videa {} byl úspěšně uložen", previewName);
-			} catch (UnsupportedFormatException e) {
-				PGUtils.createErrorPreview(videoName, outputFile);
-				logger.info("Chybový náhled videa {} byl úspěšně uložen", previewName);
-			}
+			BufferedImage image = new DecodeAndCaptureFrames().decodeAndCaptureFrames(file);
+			logger.info("Zpracování náhledu videa {} byla úspěšně dokončeno", videoName);
+			PGUtils.resizeVideoPreviewImage(image, outputFile);
+			logger.info("Náhled videa {} byl úspěšně uložen", previewName);
 		} catch (Exception e) {
-			logger.error("Vytváření náhledu videa {} se nezdařilo", videoName, e);
+			PGUtils.createErrorPreview(videoName, outputFile);
+			logger.info("Chybový náhled videa {} byl úspěšně uložen", previewName);
 		}
 	}
 

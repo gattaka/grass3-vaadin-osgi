@@ -1,8 +1,9 @@
 package cz.gattserver.grass3.pg.util;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Polygon;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,19 +45,20 @@ public class PGUtils {
 		int h = MINIATURE_SIZE;
 		int w = MINIATURE_SIZE;
 		BufferedImage backgroundImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-		Graphics bg = backgroundImage.createGraphics();
-		bg.setColor(Color.WHITE);
-		bg.fillRect(0, 0, w, h);
-		int size = 15;
-		Font font = new Font(Font.MONOSPACED, Font.BOLD, size);
-		bg.setFont(font);
-		bg.setColor(Color.GRAY);
-		int line = size;
-		bg.drawString("Nepodporovaný", 5, line);
-		line += size;
-		bg.drawString("formát - náhled", 5, line);
-		line += size;
-		bg.drawString("nelze zpracovat", 5, line);
+		Graphics2D bg = backgroundImage.createGraphics();
+		// https://stackoverflow.com/questions/4855847/problem-with-fillroundrect-seemingly-not-rendering-correctly
+		bg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		bg.setColor(new Color(50, 50, 50));
+		int wOffset = 10;
+		int hOffset = 30;
+		int corner = 25;
+		bg.fillRoundRect(wOffset, hOffset, w - wOffset * 2, h - hOffset * 2, corner, corner);
+		bg.setColor(new Color(200, 200, 200));
+		int xc = w / 2 + 5;
+		int yc = h / 2;
+		int xr = 20;
+		int yr = 20;
+		bg.fillPolygon(new Polygon(new int[] { xc - xr, xc + xr, xc - xr }, new int[] { yc - yr, yc, yc + yr }, 3));
 		try (OutputStream o = Files.newOutputStream(destinationFile)) {
 			ImageIO.write(backgroundImage, "png", o);
 		} catch (IOException e) {

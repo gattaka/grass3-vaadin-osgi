@@ -53,7 +53,7 @@ public class PGUtils {
 		int hOffset = 30;
 		int corner = 25;
 		bg.fillRoundRect(wOffset, hOffset, w - wOffset * 2, h - hOffset * 2, corner, corner);
-		bg.setColor(new Color(200, 200, 200));
+		bg.setColor(new Color(150, 150, 150));
 		int xc = w / 2 + 5;
 		int yc = h / 2;
 		int xr = 20;

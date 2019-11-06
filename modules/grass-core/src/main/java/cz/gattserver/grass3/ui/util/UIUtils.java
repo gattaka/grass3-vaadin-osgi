@@ -27,6 +27,7 @@ public class UIUtils {
 	public static final String TOP_CLEAN_CSS_CLASS = "top-clean";
 	public static final String TOP_PULL_CSS_CLASS = "top-pull";
 	public static final String THUMBNAIL_200_CSS_CLASS = "thumbnail-200";
+	public static final String BUTTON_LINK_CSS_CLASS = "button-link";
 
 	private UIUtils() {
 	}

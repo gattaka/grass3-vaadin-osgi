@@ -340,7 +340,8 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 				boolean video = PhotogalleryItemType.VIDEO.equals(item.getType());
 				if (video)
 					url = url.substring(0, url.length() - 4);
-				Anchor link = new Anchor(url, video ? "Detail" : "Detail");
+				Anchor link = new Anchor(url, "Detail");
+				link.addClassName(UIUtils.BUTTON_LINK_CSS_CLASS);
 				link.setTarget("_blank");
 				itemLayout.add(link);
 

@@ -16,6 +16,12 @@ vaadin-progress-bar {
     display: inline-block;
 }
 
+.button-link {
+	font-family: var(--lumo-font-family);
+	font-size: var(--lumo-font-size-m);
+	font-weight: 500;
+}
+
 .scroll-div {
 	overflow-y: auto;
     height: 100%;

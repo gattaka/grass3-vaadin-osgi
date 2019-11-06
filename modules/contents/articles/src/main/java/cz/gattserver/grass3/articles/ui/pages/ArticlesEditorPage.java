@@ -249,9 +249,6 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		articleTextArea.setWidthFull();
 		publicatedCheckBox = new Checkbox();
 
-		// editor.js
-		loadJS(new JScriptItem("articles/js/editor.js"));
-
 		// zavádění listener pro JS listener akcí jako je vepsání tabulátoru
 		articleTextAreaFocusRegistration = articleTextArea.addFocusListener(event -> {
 			UI.getCurrent().getPage().executeJs("registerTabListener()");
@@ -271,6 +268,9 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 			// pokud jsou nalezeny drafty k dokončení, nabídni je k výběru
 			draftCreateContent(customlayout, drafts);
 		}
+
+		// editor.js
+		loadJS(new JScriptItem("articles/js/editor.js"));
 	}
 
 	@Override

@@ -1,21 +1,8 @@
 package cz.gattserver.grass3.ui.pages.factories.template;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import cz.gattserver.grass3.interfaces.UserInfoTO;
-import cz.gattserver.grass3.services.SecurityService;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
-
 public abstract class AbstractPageFactory implements PageFactory {
 
-	@Autowired
-	private SecurityService securityFacade;
-
 	private String pageName;
-
-	protected abstract boolean isAuthorized();
-
-	protected abstract GrassPage createPage();
 
 	/**
 	 * Konstruktor
@@ -27,21 +14,8 @@ public abstract class AbstractPageFactory implements PageFactory {
 		this.pageName = pageName;
 	}
 
-	/**
-	 * Získá aktuálního přihlášeného uživatele jako {@link UserInfoTO} objekt
-	 */
-	protected UserInfoTO getUser() {
-		return securityFacade.getCurrentUser();
-	}
-
 	public String getPageName() {
 		return pageName;
-	}
-
-	public GrassPage createPageIfAuthorized() {
-		// TODO
-		return createPage();
-//		return isAuthorized() ? createPage() : new Error403Page();
 	}
 
 }

@@ -1,8 +1,10 @@
 package cz.gattserver.grass3.language.web;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,8 @@ public class LanguagePage extends OneColumnPage {
 	private Div tabLayout;
 	private VerticalLayout testLayout;
 
+	private List<Consumer<Long>> tabActions = new ArrayList<>();
+
 	public LanguagePage() {
 		init();
 	}
@@ -63,50 +67,12 @@ public class LanguagePage extends OneColumnPage {
 		tabs.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		tabs.addSelectedChangeListener(e -> {
 			tabLayout.removeAll();
-			switch (tabs.getSelectedIndex()) {
-			default:
-			case 0:
-				createItemsTab(langId, null);
-				break;
-			case 1:
-				createItemsTab(langId, ItemType.WORD);
-				break;
-			case 2:
-				createItemsTab(langId, ItemType.PHRASE);
-				break;
-			case 3:
-				createTestTab(langId);
-				break;
-			case 4:
-				createCrosswordTab(langId);
-				break;
-			case 5:
-				createStatisticsTab(langId);
-				break;
-			}
+			tabActions.get(tabs.getSelectedIndex()).accept(langId);
 		});
 	}
 
 	@Override
 	protected void createColumnContent(Div layout) {
-
-		// Page.getCurrent().getStyles()
-		// .add("input.v-textfield.v-disabled.v-widget.crossword-cell.v-textfield-crossword-cell.v-has-width,
-		// "
-		// +
-		// "input.v-textfield.v-widget.v-has-width.v-has-height.v-disabled.crossword-cell.v-textfield-crossword-cell.crossword-done.v-textfield-crossword-done,
-		// "
-		// +
-		// "input.v-textfield.v-widget.crossword-cell.v-textfield-crossword-cell.v-has-width
-		// { "
-		// + "text-align: center; " + "font-variant: small-caps;" + "padding:
-		// 0;" + "}");
-		//
-		// Page.getCurrent().getStyles()
-		// .add("input.v-textfield.v-widget.v-has-width.v-has-height.v-disabled.crossword-cell.v-textfield-crossword-cell.crossword-done.v-textfield-crossword-done
-		// { "
-		// + "background-color: #cef29c; " + "}");
-
 		List<LanguageTO> langs = languageFacade.getLanguages();
 		Grid<LanguageTO> grid = new Grid<>();
 		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
@@ -134,13 +100,26 @@ public class LanguagePage extends OneColumnPage {
 			createTabSheet(langId);
 
 			tabs.add(new Tab("Vše"));
+			tabActions.add(this::createAllItemsTab);
+
 			tabs.add(new Tab("Slovíčka"));
+			tabActions.add(this::createWordsItemsTab);
+
 			tabs.add(new Tab("Fráze"));
-			if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN))
+			tabActions.add(this::createPhrasesItemsTab);
+
+			if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN)) {
 				tabs.add(new Tab("Zkoušení"));
+				tabActions.add(this::createTestTab);
+			}
+
 			tabs.add(new Tab("Křížovka"));
-			if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN))
+			tabActions.add(this::createCrosswordTab);
+
+			if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN)) {
 				tabs.add(new Tab("Statistiky"));
+				tabActions.add(this::createStatisticsTab);
+			}
 
 			langLayout.add(tabs);
 		}));
@@ -300,6 +279,18 @@ public class LanguagePage extends OneColumnPage {
 			});
 		});
 		testLayout.add(submitBtn);
+	}
+
+	private void createAllItemsTab(Long langId) {
+		createItemsTab(langId, null);
+	}
+
+	private void createWordsItemsTab(Long langId) {
+		createItemsTab(langId, ItemType.WORD);
+	}
+
+	private void createPhrasesItemsTab(Long langId) {
+		createItemsTab(langId, ItemType.PHRASE);
 	}
 
 	private void createItemsTab(Long langId, ItemType type) {

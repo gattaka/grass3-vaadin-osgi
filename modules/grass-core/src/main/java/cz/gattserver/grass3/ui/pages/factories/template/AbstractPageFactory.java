@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.SecurityService;
-import cz.gattserver.grass3.ui.pages.err.Error403Page;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 
 public abstract class AbstractPageFactory implements PageFactory {
@@ -40,7 +39,9 @@ public abstract class AbstractPageFactory implements PageFactory {
 	}
 
 	public GrassPage createPageIfAuthorized() {
-		return isAuthorized() ? createPage() : new Error403Page();
+		// TODO
+		return createPage();
+//		return isAuthorized() ? createPage() : new Error403Page();
 	}
 
 }

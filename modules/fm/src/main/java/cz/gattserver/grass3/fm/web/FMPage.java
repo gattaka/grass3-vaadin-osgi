@@ -41,7 +41,9 @@ import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinServletRequest;
 
 import cz.gattserver.common.util.CZAmountFormatter;
+import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.fm.FMExplorer;
+import cz.gattserver.grass3.fm.FMSection;
 import cz.gattserver.grass3.fm.FileProcessState;
 import cz.gattserver.grass3.fm.interfaces.FMItemTO;
 import cz.gattserver.grass3.services.FileSystemService;
@@ -56,6 +58,7 @@ import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.LinkButton;
@@ -111,6 +114,8 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 	}
 
 	public FMPage() {
+		if (!SpringContextHelper.getBean(FMSection.class).isVisibleForRoles(getUser().getRoles()))
+			throw new GrassPageException(403);
 		selectFormatter = new CZAmountFormatter("Vybrán %d soubor", "Vybrány %d soubory", "Vybráno %d souborů");
 		listFormatter = new CZAmountFormatter("Zobrazen %d soubor", "Zobrazeny %d soubory", "Zobrazeno %d souborů");
 	}

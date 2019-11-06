@@ -41,6 +41,7 @@ import cz.gattserver.grass3.monitor.web.label.SuccessMonitorStateLabel;
 import cz.gattserver.grass3.monitor.web.label.WarningMonitorStateLabel;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.TableLayout;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 
 @Route("system-monitor")
 public class MonitorPage extends OneColumnPage {
@@ -60,7 +61,7 @@ public class MonitorPage extends OneColumnPage {
 	private Set<Runnable> parts = new HashSet<>();
 
 	public MonitorPage() {
-		if (!getUser().hasRole(MonitorSection.ROLE))
+		if (!SpringContextHelper.getBean(MonitorSection.class).isVisibleForRoles(getUser().getRoles()))
 			throw new GrassPageException(403);
 		loadCSS(getContextPath() + "/frontend/monitor/style.css");
 		init();

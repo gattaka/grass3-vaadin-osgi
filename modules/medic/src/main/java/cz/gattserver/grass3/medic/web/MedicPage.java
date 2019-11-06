@@ -12,6 +12,7 @@ import cz.gattserver.grass3.medic.web.tabs.MedicamentsTab;
 import cz.gattserver.grass3.medic.web.tabs.PhysiciansTab;
 import cz.gattserver.grass3.medic.web.tabs.ScheduledVisitsTab;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.grass3.medic.MedicSection;
 
 @Route("medic")
@@ -29,7 +30,7 @@ public class MedicPage extends OneColumnPage {
 	private Tab physiciansTab;
 
 	public MedicPage() {
-		if (!getUser().hasRole(MedicSection.ROLE))
+		if (!SpringContextHelper.getBean(MedicSection.class).isVisibleForRoles(getUser().getRoles()))
 			throw new GrassPageException(403);
 		init();
 	}

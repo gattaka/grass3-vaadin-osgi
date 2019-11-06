@@ -10,6 +10,7 @@ import cz.gattserver.grass3.hw.HWSection;
 import cz.gattserver.grass3.hw.ui.HWItemsTab;
 import cz.gattserver.grass3.hw.ui.HWTypesTab;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.web.common.spring.SpringContextHelper;
 
 @Route("hw")
 public class HWPage extends OneColumnPage {
@@ -24,7 +25,7 @@ public class HWPage extends OneColumnPage {
 	private Div pageLayout;
 
 	public HWPage() {
-		if (!getUser().hasRole(HWSection.ROLE))
+		if (!SpringContextHelper.getBean(HWSection.class).isVisibleForRoles(getUser().getRoles()))
 			throw new GrassPageException(403);
 		init();
 	}

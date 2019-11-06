@@ -25,8 +25,6 @@ public class MonitorSection implements SectionService {
 
 	private static Logger logger = LoggerFactory.getLogger(MonitorSection.class);
 
-	public static CoreRole ROLE = CoreRole.ADMIN;
-
 	private static final long ONCE_PER_DAY = 1L * 1000 * 60 * 60 * 24;
 
 	@Resource(name = "monitorPageFactory")
@@ -48,7 +46,7 @@ public class MonitorSection implements SectionService {
 	public boolean isVisibleForRoles(Set<Role> roles) {
 		if (roles == null)
 			return false;
-		return roles.contains(ROLE);
+		return roles.contains(CoreRole.ADMIN);
 	}
 
 	public PageFactory getSectionPageFactory() {

@@ -99,26 +99,26 @@ public class LanguagePage extends OneColumnPage {
 			long langId = item.getId();
 			createTabSheet(langId);
 
-			tabs.add(new Tab("Vše"));
 			tabActions.add(this::createAllItemsTab);
+			tabs.add(new Tab("Vše"));
 
-			tabs.add(new Tab("Slovíčka"));
 			tabActions.add(this::createWordsItemsTab);
+			tabs.add(new Tab("Slovíčka"));
 
-			tabs.add(new Tab("Fráze"));
 			tabActions.add(this::createPhrasesItemsTab);
+			tabs.add(new Tab("Fráze"));
 
 			if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN)) {
-				tabs.add(new Tab("Zkoušení"));
 				tabActions.add(this::createTestTab);
+				tabs.add(new Tab("Zkoušení"));
 			}
 
-			tabs.add(new Tab("Křížovka"));
 			tabActions.add(this::createCrosswordTab);
+			tabs.add(new Tab("Křížovka"));
 
 			if (securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN)) {
-				tabs.add(new Tab("Statistiky"));
 				tabActions.add(this::createStatisticsTab);
+				tabs.add(new Tab("Statistiky"));
 			}
 
 			langLayout.add(tabs);

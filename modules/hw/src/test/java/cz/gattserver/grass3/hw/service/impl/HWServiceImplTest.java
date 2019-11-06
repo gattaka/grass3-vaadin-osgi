@@ -346,7 +346,9 @@ public class HWServiceImplTest extends AbstractDBUnitTest {
 	}
 
 	@Test
-	public void testHWItemOperations() {
+	public void testHWItemOperations() throws IOException {
+		prepareFS(fileSystemService.getFileSystem());
+		
 		HWItemTO itemTO = new HWItemTO();
 		itemTO.setName("test Name");
 		itemTO.setDescription("test description");

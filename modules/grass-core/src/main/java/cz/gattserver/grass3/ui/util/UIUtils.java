@@ -13,6 +13,7 @@ import com.vaadin.flow.component.grid.HeaderRow.HeaderCell;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
+import com.vaadin.flow.data.value.ValueChangeMode;
 
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.InfoDialog;
@@ -63,6 +64,7 @@ public class UIUtils {
 		TextField field = UIUtils.asSmall(new TextField());
 		field.setWidthFull();
 		field.addValueChangeListener(listener);
+		field.setValueChangeMode(ValueChangeMode.EAGER);
 		cell.setComponent(field);
 		return field;
 	}

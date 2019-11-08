@@ -121,7 +121,7 @@ public class HWItemsTab extends Div {
 		UIUtils.addHeaderTextField(filteringHeader.getCell(nameColumn), e -> {
 			filterTO.setName(e.getValue());
 			populate();
-		}).setValueChangeMode(ValueChangeMode.EAGER);
+		});
 
 		// Stav
 		UIUtils.addHeaderComboBox(filteringHeader.getCell(stateColumn), HWItemState.class, HWItemState::getName, e -> {

@@ -62,8 +62,6 @@ public class HWDetailsDocsTab extends Div {
 	}
 
 	private void init() {
-		setWidth("1000px");
-
 		docsGrid = new Grid<>();
 		docsGrid.setWidthFull();
 		docsGrid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES,

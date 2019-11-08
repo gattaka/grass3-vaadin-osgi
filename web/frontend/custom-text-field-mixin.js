@@ -4,6 +4,10 @@ $_documentContainer.innerHTML = `<dom-module id="grass-text-field" theme-for="va
   <template>
     <style>
 
+	  :host {
+        padding: 0;
+      }
+
       [part="value"],
       [part="input-field"] ::slotted(input) {
         background-color: #fff;

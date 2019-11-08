@@ -32,6 +32,8 @@ public class HWItemDetailsDialog extends Dialog {
 		this.hwItemId = hwItemId;
 		this.hwItem = getHWService().getHWItem(hwItemId);
 
+		setWidth("1080px");
+		
 		Div nameDiv = new Div(new Text(hwItem.getName()));
 		nameDiv.getStyle().set("font-size", "15px").set("margin-bottom", "var(--lumo-space-m)")
 				.set("font-weight", "bold").set("margin-top", "calc(var(--lumo-space-m) / -2)");

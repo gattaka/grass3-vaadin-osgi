@@ -88,18 +88,9 @@ span.label-err {
 	text-align: center;
 }
 
-/* Token */
-.token-layout {
-	display: inline-block;
-}
-
-.token-layout vaadin-button {
-	margin-right: var(--lumo-space-m);
-}
-
 /* Button div  */
-.button-div vaadin-button {
-	margin-right: var(--lumo-space-m);
+.button-div vaadin-button, .button-div vaadin-combo-box {
+	margin: var(--lumo-space-m) var(--lumo-space-m) 0 0;
 }
 
 /* Top and Bottom margin */

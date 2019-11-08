@@ -109,7 +109,7 @@ public class LanguageItemDialog extends WebDialog {
 		if (to != null) {
 			btnLayout.add(new ModifyButton(e -> onSave(action, binder, targetTO)));
 		} else {
-			ButtonLayout buttonLayout = new ButtonLayout(false);
+			ButtonLayout buttonLayout = new ButtonLayout();
 			btnLayout.add(buttonLayout);
 			buttonLayout.add(new CreateButton(e -> onSave(action, binder, targetTO)));
 			Button createAndContinueBtn = new CreateButton("Vytvořit a pokračovat",

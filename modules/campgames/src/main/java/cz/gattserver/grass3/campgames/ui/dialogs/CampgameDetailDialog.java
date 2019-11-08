@@ -159,7 +159,7 @@ public class CampgameDetailDialog extends Dialog {
 		btnLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
 		layout.add(btnLayout);
 
-		ButtonLayout operationsLayout = new ButtonLayout(false);
+		ButtonLayout operationsLayout = new ButtonLayout();
 		btnLayout.add(operationsLayout);
 		operationsLayout.setVisible(SpringContextHelper.getBean(SecurityService.class).getCurrentUser().getRoles()
 				.contains(CoreRole.ADMIN));

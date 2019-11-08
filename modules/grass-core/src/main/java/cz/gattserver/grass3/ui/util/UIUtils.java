@@ -23,6 +23,8 @@ public class UIUtils {
 
 	public static final String SPACING_CSS_VAR = "var(--lumo-space-m)";
 	public static final String BUTTON_SIZE_CSS_VAR = "var(--lumo-button-size)";
+	public static final String FIELD_SIZE_CSS_VAR = "var(--lumo-text-field-size)";
+	public static final String FIELD_CAPTION_SIZE_CSS_VAR = "1.5em";
 
 	public static final String TOP_MARGIN_CSS_CLASS = "top-margin";
 	public static final String TOP_CLEAN_CSS_CLASS = "top-clean";

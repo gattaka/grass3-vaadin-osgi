@@ -49,8 +49,6 @@ public class HWDetailsPhotosTab extends Div {
 	}
 
 	private void init() {
-		setWidth("1000px");
-
 		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
 
 		Upload upload = new Upload(buffer);
@@ -87,11 +85,12 @@ public class HWDetailsPhotosTab extends Div {
 		for (HWItemFileTO item : hwService.getHWItemImagesFiles(hwItem.getId())) {
 			if (counter == 0)
 				gridLayout.newRow();
-			counter = (counter + 1) % 4;
+			counter = (counter + 1) % 5;
 
 			Div itemDiv = new Div();
 			itemDiv.getStyle().set("text-align", "center");
 			itemDiv.setHeight("calc(" + UIUtils.BUTTON_SIZE_CSS_VAR + " + 200px + " + UIUtils.SPACING_CSS_VAR + ")");
+			itemDiv.setWidth("200px");
 			gridLayout.add(itemDiv);
 
 			Image img = new Image(

@@ -43,7 +43,7 @@ public class TokenField extends Div {
 	}
 
 	private void init() {
-		tokensLayout = new ButtonLayout(false);
+		tokensLayout = new ButtonLayout();
 		add(tokensLayout);
 		tokensLayout.getElement().getStyle().set("display", "inline-block");
 
@@ -52,7 +52,7 @@ public class TokenField extends Div {
 				commitValue(e.getDetail());
 		});
 		comboBox.addValueChangeListener(e -> commitValue(e.getValue()));
-		add(comboBox);
+		tokensLayout.add(comboBox);
 	}
 
 	public TokenField setPlaceholder(String placeholder) {
@@ -79,6 +79,8 @@ public class TokenField extends Div {
 			Button tokenComponent = new DeleteButton(token, e -> deleteToken(token));
 			tokens.put(token, tokenComponent);
 			tokensLayout.add(tokenComponent);
+			tokensLayout.remove(comboBox);
+			tokensLayout.add(comboBox);
 			if (addTokenListener != null)
 				addTokenListener.accept(token);
 		}

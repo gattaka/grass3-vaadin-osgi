@@ -10,6 +10,7 @@ const $_documentContainer = html`<dom-module id="grass-lumo-button" theme-for="v
 		/* aby bylo tlačítko na stejné úrovni a velikosti jako fieldy */        
         padding-bottom: 2px;    
     	height: 34px;        
+    	margin: 0;
       }
 
 	  ::slotted(img) {

@@ -49,8 +49,6 @@ public class HWDetailsServiceNotesTab extends Div {
 	}
 
 	private void init() {
-		setWidth("1000px");
-
 		serviceNotesGrid = new Grid<>();
 		serviceNotesGrid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES,
 				GridVariant.LUMO_COMPACT);

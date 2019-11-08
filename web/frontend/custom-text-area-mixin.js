@@ -3,6 +3,10 @@ const $_documentContainer = document.createElement('template');
 $_documentContainer.innerHTML = `<dom-module id="grass-text-area" theme-for="vaadin-text-area ">
   <template>
     <style>
+    
+      :host {
+		padding: 0;
+      }
 
       [part="input-field"], [part="input-field"] ::slotted(textarea) {
         background-color: #fff;

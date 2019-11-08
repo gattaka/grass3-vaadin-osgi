@@ -289,7 +289,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 
 		// Projdi zaregistrované pluginy a vytvoř menu nástrojů
 		for (String group : groups) {
-			ButtonLayout groupToolsLayout = new ButtonLayout(false);
+			ButtonLayout groupToolsLayout = new ButtonLayout();
 			layout.add(new Details(group, groupToolsLayout));
 
 			List<EditorButtonResourcesTO> resourcesBundles = new ArrayList<>(

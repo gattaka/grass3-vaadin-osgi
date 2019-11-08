@@ -42,6 +42,7 @@ import cz.gattserver.grass3.hw.ui.HWUIUtils;
 import cz.gattserver.grass3.ui.components.OperationsLayout;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.ContainerDiv;
 import cz.gattserver.grass3.ui.util.TableLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
@@ -91,10 +92,8 @@ public class HWDetailsInfoTab extends Div {
 	}
 
 	private void init() {
-		setWidth("1000px");
-
-		HorizontalLayout tags = new HorizontalLayout();
-		tags.setSpacing(true);
+		ButtonLayout tags = new ButtonLayout();
+		tags.addClassName(UIUtils.TOP_PULL_CSS_CLASS);
 		hwItem.getTypes().forEach(typeName -> {
 			Button token = new Button(typeName);
 			tags.add(token);
@@ -222,7 +221,6 @@ public class HWDetailsInfoTab extends Div {
 		outerLayout.add(grid);
 
 		Div name = new Div(new Strong("Popis"));
-		name.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(name);
 
 		Div descriptionDiv = new ContainerDiv();

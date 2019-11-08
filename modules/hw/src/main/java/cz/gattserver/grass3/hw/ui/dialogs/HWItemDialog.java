@@ -62,6 +62,8 @@ public abstract class HWItemDialog extends WebDialog {
 	 *            {@code null}) ?
 	 */
 	private void init(HWItemTO originalDTO) {
+		setWidth("900px");
+
 		HWItemTO formDTO = new HWItemTO();
 		formDTO.setName("");
 		formDTO.setPrice(new BigDecimal(0));
@@ -90,12 +92,12 @@ public abstract class HWItemDialog extends WebDialog {
 
 		DatePicker purchaseDateField = new DatePicker("Získáno");
 		purchaseDateField.setLocale(Locale.forLanguageTag("CS"));
-		purchaseDateField.setSizeFull();
+		purchaseDateField.setWidthFull();
 		binder.bind(purchaseDateField, HWItemTO::getPurchaseDate, HWItemTO::setPurchaseDate);
 		formLayout.add(purchaseDateField);
 
 		TextField priceField = new TextField("Cena");
-		priceField.setSizeFull();
+		priceField.setWidthFull();
 		binder.forField(priceField).withNullRepresentation("").withConverter(toModel -> {
 			try {
 				if (StringUtils.isBlank(toModel))
@@ -120,7 +122,7 @@ public abstract class HWItemDialog extends WebDialog {
 		binder.forField(warrantyYearsField).withNullRepresentation("")
 				.withConverter(new StringToIntegerConverter(null, "Záruka musí být celé číslo"))
 				.bind(HWItemTO::getWarrantyYears, HWItemTO::setWarrantyYears);
-		warrantyYearsField.setSizeFull();
+		warrantyYearsField.setWidthFull();
 		formLayout.add(warrantyYearsField);
 
 		TextField supervizedForField = new TextField("Spravováno pro");
@@ -132,14 +134,14 @@ public abstract class HWItemDialog extends WebDialog {
 		descriptionArea.setWidth("700px");
 		binder.bind(descriptionArea, HWItemTO::getDescription, HWItemTO::setDescription);
 		baseLayout.add(descriptionArea);
-		descriptionArea.setHeight("calc(300px + 2 * " + UIUtils.SPACING_CSS_VAR + ")");
+		descriptionArea.setHeight("calc(5 * (" + UIUtils.SPACING_CSS_VAR + " + " + UIUtils.FIELD_SIZE_CSS_VAR + " + "
+				+ UIUtils.FIELD_CAPTION_SIZE_CSS_VAR + ") - 7.5px)");
 
 		Map<String, HWItemTypeTO> tokens = new HashMap<>();
 		getHWService().getAllHWTypes().forEach(to -> tokens.put(to.getName(), to));
 
 		TokenField keywords = new TokenField(tokens.keySet());
 		keywords.setAllowNewItems(true);
-		keywords.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		keywords.getInputField().setPlaceholder("klíčové slovo");
 
 		if (originalDTO != null)

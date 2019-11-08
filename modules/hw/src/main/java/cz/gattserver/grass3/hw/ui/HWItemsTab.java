@@ -21,7 +21,6 @@ import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.IconRenderer;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
-import com.vaadin.flow.data.value.ValueChangeMode;
 
 import cz.gattserver.grass3.hw.interfaces.HWFilterTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
@@ -70,7 +69,6 @@ public class HWItemsTab extends Div {
 			tokenMap.put(type.getName(), type);
 
 		hwTypesFilter = new TokenField(tokenMap.keySet());
-		hwTypesFilter.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		hwTypesFilter.getInputField().setWidth("200px");
 		hwTypesFilter.addTokenAddListener(token -> populate());
 		hwTypesFilter.addTokenRemoveListener(e -> populate());

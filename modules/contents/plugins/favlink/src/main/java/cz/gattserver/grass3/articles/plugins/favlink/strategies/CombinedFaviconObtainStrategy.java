@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.gattserver.grass3.articles.plugins.favlink.FaviconCache;
+import cz.gattserver.grass3.articles.plugins.favlink.FaviconUtils;
 
 /**
  * Strategie kombinující ostatníc strategie v pořadí dle náročnosti.
@@ -25,7 +26,8 @@ public class CombinedFaviconObtainStrategy implements FaviconObtainStrategy {
 			if (faviconURL != null)
 				return faviconURL;
 		}
-		return null;
+
+		return FaviconUtils.createDefaultFaviconAddress(contextRoot);
 	}
 
 }

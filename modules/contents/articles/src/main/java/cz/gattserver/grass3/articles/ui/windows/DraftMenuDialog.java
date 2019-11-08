@@ -42,8 +42,6 @@ public abstract class DraftMenuDialog extends WebDialog {
 	}
 
 	public DraftMenuDialog(List<ArticleDraftOverviewTO> drafts) {
-		super("Rozpracované obsahy");
-
 		Span label = new Span("Byly nalezeny rozpracované obsahy -- přejete si pokračovat v jejich úpravách?");
 		addComponent(label);
 

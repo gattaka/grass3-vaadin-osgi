@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.articles.plugins.favlink.plugin;
 
+
 import cz.gattserver.grass3.articles.editor.lexer.Token;
 import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;

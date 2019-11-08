@@ -156,6 +156,18 @@ public class FaviconUtils {
 	}
 
 	/**
+	 * Vytvoří adresu, na které bude dostupný výchozí favicon soubor
+	 * 
+	 * @param contextRoot
+	 *            kořenové URL, od kterého se budou vytváře interní linky
+	 *            aplikace
+	 * @return URL adresa k favicon souboru
+	 */
+	public static String createDefaultFaviconAddress(String contextRoot) {
+		return contextRoot + "/frontend/favlink/default.ico";
+	}
+
+	/**
 	 * Získá {@link URL} z řetězce adresy nebo vyhodí {@link ParserException}.
 	 * 
 	 * @param pageAddress

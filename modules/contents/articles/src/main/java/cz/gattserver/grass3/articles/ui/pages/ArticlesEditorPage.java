@@ -462,6 +462,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 
 		// menu tagů + textfield tagů
 		layout.add(articleKeywords);
+		articleKeywords.addClassName(UIUtils.TOP_PULL_CSS_CLASS);
 
 		layout.add(new H2("Obsah článku"));
 		layout.add(articleTextArea);

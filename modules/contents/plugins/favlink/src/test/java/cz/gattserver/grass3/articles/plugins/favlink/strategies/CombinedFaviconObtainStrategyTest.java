@@ -1,7 +1,6 @@
 package cz.gattserver.grass3.articles.plugins.favlink.strategies;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -33,7 +32,7 @@ public class CombinedFaviconObtainStrategyTest extends StrategyTest {
 
 			FaviconObtainStrategy strategy = new CombinedFaviconObtainStrategy();
 			String link = strategy.obtainFaviconURL("http://localhost:1929/dummy/site", "mycontextroot");
-			assertNull(link);
+			assertEquals("mycontextroot/frontend/favlink/default.ico", link);
 		}
 	}
 

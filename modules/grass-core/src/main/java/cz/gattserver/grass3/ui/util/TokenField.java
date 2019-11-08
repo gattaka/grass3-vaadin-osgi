@@ -61,8 +61,8 @@ public class TokenField extends Div {
 	}
 
 	private void commitValue(String value) {
-		value = value.trim();
 		if (StringUtils.isNotBlank(value)) {
+			value = value.trim();
 			if (!tokens.containsKey(value)) {
 				addToken(value);
 				// tohle funguje i u custom value, narozdíl od clear(),

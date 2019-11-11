@@ -1,3 +1,7 @@
+.article-content ul, .article-content ol {
+	padding-inline-start: 25px;
+}
+
 .articles-h1 {
 	font-size: 15pt;
 	margin-bottom: 10px !important;

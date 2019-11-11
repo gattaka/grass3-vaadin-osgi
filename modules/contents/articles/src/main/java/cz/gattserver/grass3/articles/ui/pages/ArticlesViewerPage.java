@@ -104,9 +104,10 @@ public class ArticlesViewerPage extends ContentViewerPage implements HasUrlParam
 
 	@Override
 	protected void createContent(Div layout) {
-		HtmlDiv label = new HtmlDiv(article.getOutputHTML());
-		label.setWidth("100%");
-		layout.add(label);
+		HtmlDiv content = new HtmlDiv(article.getOutputHTML());
+		content.setWidthFull();
+		content.addClassName("article-content");
+		layout.add(content);
 	}
 
 	@Override

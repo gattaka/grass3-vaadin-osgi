@@ -12,26 +12,31 @@ import cz.gattserver.grass3.articles.editor.parser.Context;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.TokenException;
+import cz.gattserver.grass3.articles.editor.parser.impl.ArticleParser;
 import cz.gattserver.grass3.articles.editor.parser.impl.ContextImpl;
 import cz.gattserver.grass3.articles.plugins.Plugin;
 
 public class ListParserTest {
 
+	private static final String TAG = "CUSTOM_TAG";
+	private static final String START_TAG = "[" + TAG + "]";
+	private static final String END_TAG = "[/" + TAG + "]";
+
 	private ParsingProcessor getParsingProcessorWithText(String text) {
 		Lexer lexer = new Lexer(text);
 		// ať zná aspoň sebe
-		OrderedListPlugin plugin = new OrderedListPlugin();
+		AbstractListPlugin plugin = new AbstractListPlugin(TAG, "test-img", true) {
+		};
 		Map<String, Plugin> map = new HashMap<>();
 		map.put(plugin.getTag(), plugin);
-		ParsingProcessor pluginBag = new ParsingProcessor(lexer, "contextRoot", map);
-		pluginBag.nextToken(); // musí se inicializovat
-		return pluginBag;
+		ParsingProcessor pluginProcessor = new ParsingProcessor(lexer, "contextRoot", map);
+		return pluginProcessor;
 	}
 
 	@Test
 	public void test() {
-		ListParser parser = new ListParser("CUSTOM_TAG", true);
-		Element element = parser.parse(getParsingProcessorWithText("[CUSTOM_TAG]test[/CUSTOM_TAG]"));
+		ArticleParser parser = new ArticleParser();
+		Element element = parser.parse(getParsingProcessorWithText(START_TAG + "test" + END_TAG));
 
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
@@ -40,18 +45,18 @@ public class ListParserTest {
 
 	@Test
 	public void testMultiline() {
-		ListParser parser = new ListParser("CUSTOM_TAG", true);
-		Element element = parser.parse(getParsingProcessorWithText("[CUSTOM_TAG]test\nhehe\naa[/CUSTOM_TAG]"));
+		ArticleParser parser = new ArticleParser();
+		Element element = parser.parse(getParsingProcessorWithText(START_TAG + "test\nhehe\naa" + END_TAG));
 
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<ol><li>test</li><li>hehe</li><li>aa</li></ol>", ctx.getOutput());
 	}
-	
+
 	@Test
-	public void testEmptyAfterline() {
-		ListParser parser = new ListParser("CUSTOM_TAG", true);
-		Element element = parser.parse(getParsingProcessorWithText("[CUSTOM_TAG]test\n[/CUSTOM_TAG]"));
+	public void testEmptyline() {
+		ArticleParser parser = new ArticleParser();
+		Element element = parser.parse(getParsingProcessorWithText(START_TAG + "test\n" + END_TAG));
 
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
@@ -59,9 +64,30 @@ public class ListParserTest {
 	}
 
 	@Test
+	public void testEmptyAfterline() {
+		ArticleParser parser = new ArticleParser();
+		Element element = parser.parse(getParsingProcessorWithText(START_TAG + "test\n" + END_TAG + "\nddd"));
+
+		Context ctx = new ContextImpl();
+		element.apply(ctx);
+		assertEquals("<ol><li>test</li></ol>ddd", ctx.getOutput());
+	}
+	
+	@Test
+	public void testEmptyAfterline2() {
+		ArticleParser parser = new ArticleParser();
+		Element element = parser.parse(getParsingProcessorWithText(START_TAG + "test\n" + END_TAG + "\nddd\nqqq"));
+
+		Context ctx = new ContextImpl();
+		element.apply(ctx);
+		assertEquals("<ol><li>test</li></ol>ddd<br/>qqq", ctx.getOutput());
+	}
+
+	@Test
 	public void testSub() {
-		ListParser parser = new ListParser("CUSTOM_TAG", true);
-		Element element = parser.parse(getParsingProcessorWithText("[CUSTOM_TAG][OL]test\nhehe[/OL][/CUSTOM_TAG]"));
+		ArticleParser parser = new ArticleParser();
+		Element element = parser
+				.parse(getParsingProcessorWithText(START_TAG + START_TAG + "test\nhehe" + END_TAG + END_TAG));
 
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
@@ -70,8 +96,8 @@ public class ListParserTest {
 
 	@Test
 	public void testBreaklineAfterBlock() {
-		ListParser parser = new ListParser("CUSTOM_TAG", true);
-		Element element = parser.parse(getParsingProcessorWithText("[CUSTOM_TAG]test[/CUSTOM_TAG]\n"));
+		ArticleParser parser = new ArticleParser();
+		Element element = parser.parse(getParsingProcessorWithText(START_TAG + "test" + END_TAG + "\n"));
 
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
@@ -80,24 +106,30 @@ public class ListParserTest {
 
 	@Test(expected = TokenException.class)
 	public void test_failBadStartTag() {
-		ListParser parser = new ListParser("CUSTOM_TAG", true);
-		Element element = parser.parse(getParsingProcessorWithText("[BAD_TAG]test[/CUSTOM_TAG]"));
+		ListParser parser = new ListParser(TAG, true);
+		ParsingProcessor processor = getParsingProcessorWithText("[BAD_TAG]test" + END_TAG);
+		processor.nextToken(); // init
+		Element element = parser.parse(processor);
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 	}
 
 	@Test(expected = TokenException.class)
 	public void test_failBadEndTag() {
-		ListParser parser = new ListParser("CUSTOM_TAG", true);
-		Element element = parser.parse(getParsingProcessorWithText("[CUSTOM_TAG]test[/BAD_TAG]"));
+		ListParser parser = new ListParser(TAG, true);
+		ParsingProcessor processor = getParsingProcessorWithText(START_TAG + "test[/BAD_TAG]");
+		processor.nextToken(); // init
+		Element element = parser.parse(processor);
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 	}
 
 	@Test(expected = TokenException.class)
 	public void test_failMissingEnd() {
-		ListParser parser = new ListParser("CUSTOM_TAG", true);
-		Element element = parser.parse(getParsingProcessorWithText("[CUSTOM_TAG]test"));
+		ListParser parser = new ListParser(TAG, true);
+		ParsingProcessor processor = getParsingProcessorWithText(START_TAG + "test");
+		processor.nextToken(); // init
+		Element element = parser.parse(processor);
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 	}

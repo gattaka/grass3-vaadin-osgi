@@ -34,6 +34,7 @@ public class TokenField extends Div {
 			SerializableFunction<String, Integer> serializableFunction) {
 		comboBox = new ComboBox<>();
 		comboBox.setDataProvider(fetchItemsCallback, serializableFunction);
+		comboBox.addAttachListener(e -> comboBox.focus());
 		init();
 	}
 

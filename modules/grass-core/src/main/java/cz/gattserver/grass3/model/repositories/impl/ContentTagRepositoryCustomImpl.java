@@ -31,14 +31,14 @@ public class ContentTagRepositoryCustomImpl implements ContentTagRepositoryCusto
 		QContentTag c = QContentTag.contentTag;
 		query.offset(offset);
 		query.limit(limit);
-		return query.select(c.name).from(c).where(c.name.like("%" + filter + "%")).fetch();
+		return query.select(c.name).from(c).where(c.name.lower().like("%" + filter.toLowerCase() + "%")).fetch();
 	}
 
 	@Override
 	public Integer countByFilter(String filter) {
 		JPAQuery<Integer> query = new JPAQuery<>(entityManager);
 		QContentTag c = QContentTag.contentTag;
-		return (int) query.select(c).from(c).where(c.name.like("%" + filter + "%")).fetchCount();
+		return (int) query.select(c).from(c).where(c.name.lower().like("%" + filter.toLowerCase() + "%")).fetchCount();
 	}
 
 }

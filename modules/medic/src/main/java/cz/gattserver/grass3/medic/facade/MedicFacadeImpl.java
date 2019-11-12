@@ -106,7 +106,10 @@ public class MedicFacadeImpl implements MedicFacade {
 	public void saveScheduledVisit(ScheduledVisitTO dto) {
 		ScheduledVisit visit = new ScheduledVisit();
 		visit.setId(dto.getId());
-		visit.setDate(dto.getDate().atTime(dto.getTime()));
+		if (dto.getTime() == null)
+			visit.setDate(dto.getDate().atStartOfDay());
+		else
+			visit.setDate(dto.getDate().atTime(dto.getTime()));
 		visit.setPeriod(dto.getPeriod());
 		visit.setPurpose(dto.getPurpose());
 		visit.setPlanned(dto.isPlanned());

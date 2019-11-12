@@ -89,25 +89,12 @@ public class ScheduledVisitsTab extends Div {
 	}
 
 	private void openDeleteWindow(final ScheduledVisitTO visit, final boolean planned) {
-		ScheduledVisitsTab.this.setEnabled(false);
-		new ConfirmDialog("Opravdu smazat '" + visit.getPurpose() + "' ?", ev -> {
-			try {
-				getMedicFacade().deleteScheduledVisit(visit);
-				populateContainer(planned);
-			} catch (Exception e) {
-				new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
-			}
-		}) {
-
-			private static final long serialVersionUID = -422763987707688597L;
-
-			@Override
-			public void close() {
-				ScheduledVisitsTab.this.setEnabled(true);
-				super.close();
-			}
-
-		}.open();
+		try {
+			getMedicFacade().deleteScheduledVisit(visit);
+			populateContainer(planned);
+		} catch (Exception e) {
+			new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
+		}
 	}
 
 	private void populateContainer(boolean planned) {
@@ -196,7 +183,7 @@ public class ScheduledVisitsTab extends Div {
 		else
 			grid.addColumn(new LocalDateTimeRenderer<ScheduledVisitTO>(to -> to.getDate().atStartOfDay(),
 					DateTimeFormatter.ofPattern("MMMM yyyy", Locale.forLanguageTag("CS")))).setKey("date")
-					.setHeader("Datum").setWidth("100px").setFlexGrow(0);
+					.setHeader("Datum").setWidth("150px").setFlexGrow(0);
 		grid.addColumn(new TextRenderer<ScheduledVisitTO>(
 				to -> to.getInstitution() == null ? "" : to.getInstitution().getName())).setKey("institution")
 				.setHeader("Instituce");
@@ -281,8 +268,9 @@ public class ScheduledVisitsTab extends Div {
 		/**
 		 * Smazání naplánování
 		 */
-		final Button deleteBtn = new DeleteGridButton<ScheduledVisitTO>(
-				set -> openDeleteWindow(set.iterator().next(), false), toBePlannedGrid);
+		final Button deleteBtn = new DeleteGridButton<ScheduledVisitTO>("Smazat",
+				set -> openDeleteWindow(set.iterator().next(), false),
+				set -> "Opravdu smazat '" + set.iterator().next().getPurpose() + "' ?", toBePlannedGrid);
 		buttonLayout.add(deleteBtn);
 
 		populateContainer(false);

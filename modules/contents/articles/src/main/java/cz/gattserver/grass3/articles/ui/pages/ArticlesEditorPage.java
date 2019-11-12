@@ -22,7 +22,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox.FetchItemsCallback;
-import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
@@ -275,6 +274,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 
 	@Override
 	protected void createLeftColumnContent(Div layout) {
+		layout.getStyle().set("text-align", "center");
 		List<String> groups = new ArrayList<>(pluginRegister.getRegisteredGroups());
 		Collections.sort(groups, (o1, o2) -> {
 			if (o1 == null) {
@@ -288,9 +288,18 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		});
 
 		// Projdi zaregistrované pluginy a vytvoř menu nástrojů
-		for (String group : groups) {
+		for (int i = 0; i < groups.size(); i++) {
+			String group = groups.get(i);
 			ButtonLayout groupToolsLayout = new ButtonLayout();
-			layout.add(new Details(group, groupToolsLayout));
+			Span headerSpan = new Span();
+			headerSpan.add(group);
+			Div header = new Div(headerSpan);
+			header.getStyle().set("border-bottom", "2px solid #aaa").set("line-height", "0").set("margin",
+					i == 0 ? "10px 0" : "20px 0 10px 0");
+			headerSpan.getStyle().set("color", "#888").set("font-size", "11pt").set("font-weight", "600")
+					.set("background", "#f4f1e6").set("padding", "0 10px");
+			layout.add(header);
+			layout.add(groupToolsLayout);
 
 			List<EditorButtonResourcesTO> resourcesBundles = new ArrayList<>(
 					pluginRegister.getTagResourcesByGroup(group));

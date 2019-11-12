@@ -13,6 +13,11 @@ import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 
+import org.apache.batik.transcoder.TranscoderException;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.image.JPEGTranscoder;
+import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +30,8 @@ public class PGUtils {
 	private static Logger logger = LoggerFactory.getLogger(PGUtils.class);
 
 	public static final int MINIATURE_SIZE = 150;
+	public static final int SLIDESHOW_WIDTH = 900;
+	public static final int SLIDESHOW_HEIGHT = 800;
 
 	private PGUtils() {
 	}
@@ -82,9 +89,21 @@ public class PGUtils {
 				GifImage gifImage = GifDecoder.read(is);
 				BufferedImage image = gifImage.getFrame(0);
 				Thumbnails.of(image).outputFormat("png").size(maxWidth, maxHeight).toOutputStream(os);
+			} else if (inputFile.toString().toLowerCase().endsWith(".svg")) {
+				// https://xmlgraphics.apache.org/batik/using/transcoder.html
+				// https://stackoverflow.com/questions/42340833/convert-svg-image-to-png-in-java-by-servlet
+				// https://stackoverflow.com/questions/45239099/apache-batik-no-writeadapter-is-available
+				TranscoderInput input = new TranscoderInput(is);
+				TranscoderOutput output = new TranscoderOutput(os);
+				PNGTranscoder converter = new PNGTranscoder();
+				converter.addTranscodingHint(JPEGTranscoder.KEY_MAX_WIDTH, new Float(maxWidth));
+				converter.addTranscodingHint(JPEGTranscoder.KEY_MAX_HEIGHT, new Float(maxHeight));
+				converter.transcode(input, output);
 			} else {
 				Thumbnails.of(is).outputFormat("png").size(maxWidth, maxHeight).toOutputStream(os);
 			}
+		} catch (TranscoderException e) {
+			throw new IOException("SVG to PNG failed", e);
 		}
 	}
 
@@ -100,27 +119,41 @@ public class PGUtils {
 	}
 
 	/**
-	 * Zjistí dle přípony souboru, zda se jedná o obrázek
+	 * Zjistí dle přípony souboru, zda se jedná o rasterový obrázek
 	 * 
 	 * @param filename
 	 *            jméno souboru s příponou
-	 * @return <code>true</code>, pokud se dle přípony jedná o soubor obrázku
+	 * @return <code>true</code>, pokud se dle přípony jedná o soubor
+	 *         rasterového obrázku
 	 */
-	public static boolean isImage(String file) {
+	public static boolean isRasterImage(String file) {
 		String fileToExt = file.toLowerCase();
 		return fileToExt.endsWith(".jpg") || fileToExt.endsWith(".jpeg") || fileToExt.endsWith(".gif")
 				|| fileToExt.endsWith(".png") || fileToExt.endsWith(".bmp");
 	}
 
 	/**
-	 * Zjistí dle přípony souboru, zda se jedná o obrázek
+	 * Zjistí dle přípony souboru, zda se jedná o rasterový obrázek
 	 * 
 	 * @param filename
 	 *            jméno souboru s příponou
-	 * @return <code>true</code>, pokud se dle přípony jedná o soubor obrázku
+	 * @return <code>true</code>, pokud se dle přípony jedná o soubor
+	 *         rasterového obrázku
 	 */
-	public static boolean isImage(Path file) {
-		return PGUtils.isImage(file.getFileName().toString());
+	public static boolean isRasterImage(Path file) {
+		return PGUtils.isRasterImage(file.getFileName().toString());
+	}
+
+	/**
+	 * Zjistí dle přípony souboru, zda se jedná o vektorový obrázek
+	 * 
+	 * @param filename
+	 *            jméno souboru s příponou
+	 * @return <code>true</code>, pokud se dle přípony jedná o soubor
+	 *         vektorového obrázku
+	 */
+	public static boolean isVectorImage(Path file) {
+		return file.getFileName().toString().endsWith(".svg");
 	}
 
 	/**

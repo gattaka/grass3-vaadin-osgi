@@ -338,8 +338,14 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 				String file = item.getFile().getFileName().toString();
 				String url = getItemURL(file);
 				boolean video = PhotogalleryItemType.VIDEO.equals(item.getType());
-				if (video)
+				if (video) {
 					url = url.substring(0, url.length() - 4);
+				} else if (url.endsWith(".svg.png")) {
+					// U vektorů je potřeba uříznout .png příponu, protože
+					// originál je vektor, který se na slideshow dá rovnou
+					// použít
+					url = url.substring(0, url.length() - 4);
+				}
 				Anchor link = new Anchor(url, "Detail");
 				link.addClassName(UIUtils.BUTTON_LINK_CSS_CLASS);
 				link.setTarget("_blank");
@@ -347,7 +353,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 				// Smazat
 				if (coreACL.canModifyContent(photogallery.getContentNode(), getUser())) {
-
+					// TODO
 				}
 
 				galleryGridLayout.add(itemLayout);
@@ -469,7 +475,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 				return null;
 			}
 		}), itemTO.getName());
-		embedded.setSizeUndefined();
+		embedded.getStyle().set("max-width", "900px").set("max-height", "600px");
 		return embedded;
 	}
 

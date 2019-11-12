@@ -205,16 +205,19 @@ public class PGServiceImpl implements PGService {
 				progress++;
 
 				boolean videoExt = PGUtils.isVideo(file);
-				boolean imageExt = PGUtils.isImage(file);
+				boolean rasterImageExt = PGUtils.isRasterImage(file);
+				boolean vectorImageExt = PGUtils.isVectorImage(file);
 
 				if (videoExt) {
 					Path outputFile = prevDirFile.resolve(file.getFileName().toString() + ".png");
 					if (!Files.exists(outputFile))
 						createVideoMinature(file, outputFile);
-				}
-
-				if (imageExt) {
+				} else if (rasterImageExt) {
 					Path outputFile = miniDirFile.resolve(file.getFileName().toString());
+					if (!Files.exists(outputFile))
+						createImageMinature(file, outputFile);
+				} else if (vectorImageExt) {
+					Path outputFile = miniDirFile.resolve(file.getFileName().toString() + ".png");
 					if (!Files.exists(outputFile))
 						createImageMinature(file, outputFile);
 				}
@@ -248,7 +251,8 @@ public class PGServiceImpl implements PGService {
 				Path file = it.next();
 				Path outputFile = slideshowDirFile.resolve(file.getFileName().toString());
 
-				if (Files.exists(outputFile) || Files.isDirectory(file) || !PGUtils.isImage(file))
+				if (Files.exists(outputFile) || Files.isDirectory(file) || !PGUtils.isRasterImage(file)
+						|| PGUtils.isVectorImage(file))
 					continue;
 
 				eventBus.publish(new PGProcessProgressEvent("Zpracování slideshow " + progress + "/" + total));
@@ -256,9 +260,9 @@ public class PGServiceImpl implements PGService {
 
 				// vytvoř slideshow verzi
 				BufferedImage image = PGUtils.getImageFromFile(file);
-				if (image.getWidth() > 900 || image.getHeight() > 600) {
+				if (image.getWidth() > PGUtils.SLIDESHOW_WIDTH || image.getHeight() > PGUtils.SLIDESHOW_HEIGHT) {
 					try {
-						PGUtils.resizeImage(file, outputFile, 900, 600);
+						PGUtils.resizeImage(file, outputFile, PGUtils.SLIDESHOW_WIDTH, PGUtils.SLIDESHOW_HEIGHT);
 					} catch (Exception e) {
 						logger.error("Při zpracování slideshow pro '{}' došlo k chybě", file.getFileName().toString(),
 								e);
@@ -423,6 +427,8 @@ public class PGServiceImpl implements PGService {
 		Path subFile = null;
 		switch (fileType) {
 		case MINIATURE:
+			if (file.endsWith(".svg"))
+				file += ".png";
 			subFile = galleryDir.resolve(loadConfiguration().getMiniaturesDir()).resolve(file);
 			break;
 		case PREVIEW:
@@ -752,10 +758,18 @@ public class PGServiceImpl implements PGService {
 					itemTO.setType(PhotogalleryItemType.IMAGE);
 					itemTO.setName(fileName);
 					itemTO.setFile(slideshowDir.resolve(fileName));
-					// možná byl tak malý, že nebylo potřeba vytvářet slideshow
-					// velikost a stačí použít přímo původní soubor obrázku
-					if (!Files.exists(itemTO.getFile()))
+					if (fileName.endsWith(".svg.png")) {
+						// U vektorů je potřeba uříznout .png příponu, protože
+						// originál je vektor, který se na slideshow dá rovnou
+						// použít
+						itemTO.setName(fileName.substring(0, fileName.length() - 4));
+						itemTO.setFile(galleryPath.resolve(itemTO.getName()));
+					} else if (!Files.exists(itemTO.getFile())) {
+						// možná byl tak malý, že nebylo potřeba vytvářet
+						// slideshow velikost a stačí použít přímo původní
+						// soubor obrázku
 						itemTO.setFile(galleryPath.resolve(fileName));
+					}
 				}
 				list.add(itemTO);
 			});

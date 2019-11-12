@@ -107,15 +107,15 @@ public class PGUtilsTest extends AbstractContextAwareTest {
 	@Test
 	public void testIsImage() throws IOException {
 		Path root = prepareFS(fileSystemService.getFileSystem());
-		assertTrue(PGUtils.isImage(root.resolve("test.PNG")));
-		assertTrue(PGUtils.isImage(root.resolve("test.png")));
-		assertTrue(PGUtils.isImage(root.resolve("test.jpeg")));
-		assertTrue(PGUtils.isImage(root.resolve("test.jpg")));
-		assertTrue(PGUtils.isImage(root.resolve("test.gif")));
-		assertTrue(PGUtils.isImage(root.resolve("test.bmp")));
-		assertFalse(PGUtils.isImage(root.resolve("test.ng")));
-		assertFalse(PGUtils.isImage(root.resolve("test")));
-		assertFalse(PGUtils.isImage(root.resolve("testjpeg")));
+		assertTrue(PGUtils.isRasterImage(root.resolve("test.PNG")));
+		assertTrue(PGUtils.isRasterImage(root.resolve("test.png")));
+		assertTrue(PGUtils.isRasterImage(root.resolve("test.jpeg")));
+		assertTrue(PGUtils.isRasterImage(root.resolve("test.jpg")));
+		assertTrue(PGUtils.isRasterImage(root.resolve("test.gif")));
+		assertTrue(PGUtils.isRasterImage(root.resolve("test.bmp")));
+		assertFalse(PGUtils.isRasterImage(root.resolve("test.ng")));
+		assertFalse(PGUtils.isRasterImage(root.resolve("test")));
+		assertFalse(PGUtils.isRasterImage(root.resolve("testjpeg")));
 	}
 	
 	@Test

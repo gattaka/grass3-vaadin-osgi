@@ -36,6 +36,7 @@ public class PGMultiUpload extends Upload {
 	private MultiFileMemoryBuffer buffer;
 
 	public PGMultiUpload(String galleryDir) {
+		setAcceptedFileTypes("image/*", "video/*");
 		UI ui = UI.getCurrent();
 		buffer = new MultiFileMemoryBuffer();
 		setReceiver(buffer);

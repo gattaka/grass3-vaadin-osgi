@@ -37,7 +37,8 @@ public class GreenPlugin extends AbstractStylePlugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(TAG, "Obarvení").setDescription("Zeleně").build();
+		return new EditorButtonResourcesTOBuilder(TAG, AbstractStylePlugin.PLUGIN_FAMILY).setDescription("Zeleně")
+				.build();
 	}
 
 }

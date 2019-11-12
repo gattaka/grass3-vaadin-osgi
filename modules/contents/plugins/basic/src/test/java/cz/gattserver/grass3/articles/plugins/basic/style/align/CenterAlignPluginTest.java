@@ -19,7 +19,7 @@ public class CenterAlignPluginTest {
 		assertEquals("[ALGNCT]", to.getPrefix());
 		assertEquals("[/ALGNCT]", to.getSuffix());
 		assertEquals("ALGNCT", to.getTag());
-		assertEquals("Zarovnání", to.getTagFamily());
+		assertEquals("Formátování", to.getTagFamily());
 	}
 
 }

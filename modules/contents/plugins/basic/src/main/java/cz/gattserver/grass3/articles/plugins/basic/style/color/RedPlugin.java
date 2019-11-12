@@ -38,7 +38,8 @@ public class RedPlugin extends AbstractStylePlugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(TAG, "Obarvení").setDescription("Červeně").build();
+		return new EditorButtonResourcesTOBuilder(TAG, AbstractStylePlugin.PLUGIN_FAMILY).setDescription("Červeně")
+				.build();
 	}
 
 }

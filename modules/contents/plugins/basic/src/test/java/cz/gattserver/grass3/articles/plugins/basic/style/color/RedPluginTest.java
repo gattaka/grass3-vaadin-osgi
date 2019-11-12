@@ -20,7 +20,7 @@ public class RedPluginTest {
 		assertEquals("[RED]", to.getPrefix());
 		assertEquals("[/RED]", to.getSuffix());
 		assertEquals("RED", to.getTag());
-		assertEquals("Obarvení", to.getTagFamily());
+		assertEquals("Formátování", to.getTagFamily());
 	}
 
 }

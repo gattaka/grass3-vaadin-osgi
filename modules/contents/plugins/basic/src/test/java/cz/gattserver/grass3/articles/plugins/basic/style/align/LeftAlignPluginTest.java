@@ -19,7 +19,7 @@ public class LeftAlignPluginTest {
 		assertEquals("[ALGNLT]", to.getPrefix());
 		assertEquals("[/ALGNLT]", to.getSuffix());
 		assertEquals("ALGNLT", to.getTag());
-		assertEquals("Zarovnání", to.getTagFamily());
+		assertEquals("Formátování", to.getTagFamily());
 	}
 
 }

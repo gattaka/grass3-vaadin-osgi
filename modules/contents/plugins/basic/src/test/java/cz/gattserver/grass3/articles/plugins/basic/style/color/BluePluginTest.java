@@ -20,7 +20,7 @@ public class BluePluginTest {
 		assertEquals("[BLU]", to.getPrefix());
 		assertEquals("[/BLU]", to.getSuffix());
 		assertEquals("BLU", to.getTag());
-		assertEquals("Obarvení", to.getTagFamily());
+		assertEquals("Formátování", to.getTagFamily());
 	}
 
 }

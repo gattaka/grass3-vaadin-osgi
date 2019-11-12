@@ -20,7 +20,7 @@ public class GreenPluginTest {
 		assertEquals("[GRN]", to.getPrefix());
 		assertEquals("[/GRN]", to.getSuffix());
 		assertEquals("GRN", to.getTag());
-		assertEquals("Obarvení", to.getTagFamily());
+		assertEquals("Formátování", to.getTagFamily());
 	}
 
 }

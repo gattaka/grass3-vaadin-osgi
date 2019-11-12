@@ -7,6 +7,8 @@ import cz.gattserver.grass3.articles.plugins.Plugin;
  */
 public abstract class AbstractStylePlugin implements Plugin {
 
+	public static final String PLUGIN_FAMILY = "Formátování";
+	
 	private final String tag;
 
 	public AbstractStylePlugin(String tag) {

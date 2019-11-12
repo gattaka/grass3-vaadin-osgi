@@ -19,7 +19,7 @@ public class RightAlignPluginTest {
 		assertEquals("[ALGNRT]", to.getPrefix());
 		assertEquals("[/ALGNRT]", to.getSuffix());
 		assertEquals("ALGNRT", to.getTag());
-		assertEquals("Zarovnání", to.getTagFamily());
+		assertEquals("Formátování", to.getTagFamily());
 	}
 
 }

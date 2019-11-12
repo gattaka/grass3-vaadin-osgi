@@ -4,6 +4,8 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.flow.component.ClientCallable;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasDynamicTitle;
@@ -81,20 +83,34 @@ public class ArticlesViewerPage extends ContentViewerPage implements HasUrlParam
 			loadCSS(css);
 		}
 
-		// JS resources
-		int jsResourcesSize = article.getPluginJSResources().size();
-		int jsCodesSize = article.getPluginJSCodes().size();
-
-		JScriptItem[] jsResourcesArr = new JScriptItem[jsResourcesSize + jsCodesSize];
-		int i = 0;
-		for (String resource : article.getPluginJSResources())
-			jsResourcesArr[i++] = new JScriptItem(resource);
-		for (String code : article.getPluginJSCodes())
-			jsResourcesArr[i++] = new JScriptItem(code, true);
-
-		loadJS(jsResourcesArr);
+		loadJS();
 
 		init();
+
+		String jsInitDivId = "grass-js-init-div";
+		Div jsInitDiv = new Div() {
+			private static final long serialVersionUID = -5609636078016625081L;
+
+			@ClientCallable
+			private void initJS() {
+				// JS resources
+				int jsResourcesSize = article.getPluginJSResources().size();
+				int jsCodesSize = article.getPluginJSCodes().size();
+
+				JScriptItem[] jsResourcesArr = new JScriptItem[jsResourcesSize + jsCodesSize];
+				int i = 0;
+				for (String resource : article.getPluginJSResources())
+					jsResourcesArr[i++] = new JScriptItem(resource);
+				for (String code : article.getPluginJSCodes())
+					jsResourcesArr[i++] = new JScriptItem(code, true);
+
+				loadJS(jsResourcesArr);
+			}
+		};
+		jsInitDiv.setId(jsInitDivId);
+		jsInitDiv.addAttachListener(e -> UI.getCurrent().getPage()
+				.executeJs("document.getElementById('" + jsInitDivId + "').$server.initJS();"));
+		add(jsInitDiv);
 	}
 
 	@Override

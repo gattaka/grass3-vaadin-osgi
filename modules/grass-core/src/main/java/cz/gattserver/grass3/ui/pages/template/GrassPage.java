@@ -40,11 +40,6 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 	private transient SecurityService securityFacade;
 
 	/**
-	 * Má se nahrát JQuery?
-	 */
-	private boolean jQueryRequired = false;
-
-	/**
 	 * Konstruktor stránky. Slouží pro přípravu dat pro její sestavení, ale sám
 	 * ještě nesestavuje.
 	 * 
@@ -70,9 +65,7 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 	public void init() {
 		createPageElements(this);
 		setId("main-div");
-		// TODO
-		if (jQueryRequired)
-			UI.getCurrent().getPage().addJavaScript("https://code.jquery.com/jquery-1.9.1.js");
+		UI.getCurrent().getPage().addJavaScript("https://code.jquery.com/jquery-1.9.1.js");
 	}
 
 	protected abstract void createPageElements(Div div);
@@ -85,10 +78,9 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 	 */
 	public void loadCSS(String link) {
 		StringBuilder loadStylesheet = new StringBuilder();
-		loadStylesheet.append("var head= document.getElementsByTagName('head')[0];")
-				.append("var link= document.createElement('link');").append("link.type= 'text/css';")
-				.append("link.rel= 'stylesheet';").append("link.href= '" + link + "';")
-				.append("head.appendChild(link);");
+		loadStylesheet.append("var head=document.getElementsByTagName('head')[0];")
+				.append("var link=document.createElement('link');").append("link.type='text/css';")
+				.append("link.rel='stylesheet';").append("link.href='" + link + "';").append("head.appendChild(link);");
 		UI.getCurrent().getPage().executeJs(loadStylesheet.toString());
 	}
 
@@ -101,7 +93,6 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 	 *            skripty, které budou nahrány
 	 */
 	public void loadJS(JScriptItem... scripts) {
-		jQueryRequired = true;
 		StringBuilder builder = new StringBuilder();
 		buildJSBatch(builder, 0, scripts);
 		UI.getCurrent().getPage().executeJs(builder.toString());

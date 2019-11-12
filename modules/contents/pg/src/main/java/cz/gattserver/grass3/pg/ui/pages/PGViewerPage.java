@@ -46,6 +46,7 @@ import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
 import cz.gattserver.grass3.pg.service.PGService;
+import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
 import cz.gattserver.grass3.ui.components.button.ImageButton;
 import cz.gattserver.grass3.ui.dialogs.ImageSlideshowDialog;
@@ -475,7 +476,8 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 				return null;
 			}
 		}), itemTO.getName());
-		embedded.getStyle().set("max-width", "900px").set("max-height", "600px");
+		embedded.getStyle().set("max-width", PGUtils.SLIDESHOW_WIDTH + "px").set("max-height",
+				PGUtils.SLIDESHOW_HEIGHT + "px");
 		return embedded;
 	}
 

@@ -29,7 +29,7 @@ public class Print3dPayloadTO {
 	 * @param tags
 	 *            klíčová slova
 	 * @param publicated
-	 *            <code>true</code>, pokud má být galerie zveřejněna
+	 *            <code>true</code>, pokud má být obsah zveřejněn
 	 */
 	public Print3dPayloadTO(String name, String projectDir, Collection<String> tags, boolean publicated) {
 		this.name = name;

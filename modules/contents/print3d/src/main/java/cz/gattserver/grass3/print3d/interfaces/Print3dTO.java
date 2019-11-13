@@ -10,7 +10,7 @@ public class Print3dTO {
 	private ContentNodeTO contentNode;
 
 	/**
-	 * Relativní cesta (od kořene fotogalerie) k adresáři s 3D projektem
+	 * Relativní cesta (od kořene projektu) k adresáři s 3D projektem
 	 */
 	private String projectPath;
 

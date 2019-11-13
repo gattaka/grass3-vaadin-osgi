@@ -2,7 +2,6 @@ package cz.gattserver.grass3.print3d.ui.pages;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -16,6 +15,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
@@ -34,10 +34,8 @@ import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.exception.GrassPageException;
-import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
-import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.print3d.config.Print3dConfiguration;
 import cz.gattserver.grass3.print3d.events.impl.Print3dZipProcessProgressEvent;
 import cz.gattserver.grass3.print3d.events.impl.Print3dZipProcessResultEvent;
@@ -69,6 +67,9 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 
 	private static final Logger logger = LoggerFactory.getLogger(Print3dViewerPage.class);
 
+	private static final String JS_PATH = "print3d/stl_viewer/";
+	private static final String STL_VIEWER_INSTANCE_JS_VAR = "$.stlViewerInstance";
+
 	@Autowired
 	private Print3dService print3dService;
 
@@ -91,6 +92,8 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 
 	private String identifierToken;
 	private String magickToken;
+
+	private boolean stlViewerInitialized;
 
 	@Override
 	public String getPageTitle() {
@@ -132,12 +135,7 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 
 		projectDir = print3dTO.getPrint3dProjectPath();
 
-		String[] libs = new String[] { "stl_viewer.min.js", "parser.min.js", "load_stl.min.js", "webgl_detector.js",
-				"CanvasRenderer.js", "OrbitControls.js", "TrackballControls.js", "Projector.js", "three.min.js" };
-		List<JScriptItem> jScriptItems = new ArrayList<>();
-		for (String lib : libs)
-			jScriptItems.add(new JScriptItem("print3d/stl_viewer/" + lib));
-		loadJS(jScriptItems);
+		loadJS(new JScriptItem(JS_PATH + "stl_viewer.min.js"));
 
 		init();
 	}
@@ -166,6 +164,15 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 			throw new GrassPageException(404, e);
 		}
 
+		String stlContId = "stlcont";
+		Div stlDiv = new Div();
+		stlDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		stlDiv.getStyle().set("border", "1px solid #aaa");
+		stlDiv.setId(stlContId);
+		layout.add(stlDiv);
+		stlDiv.setWidthFull();
+		stlDiv.setHeight("500px");
+
 		List<Print3dViewItemTO> items;
 		try {
 			items = print3dService.getItems(print3dTO.getPrint3dProjectPath());
@@ -174,9 +181,10 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 		}
 
 		Grid<Print3dViewItemTO> grid = new Grid<>();
+		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		grid.setItems(items);
 		grid.setWidth("100%");
-		grid.setHeight("500px");
+		grid.setHeight("300px");
 		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 		layout.add(grid);
 
@@ -211,20 +219,29 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 			}))).setHeader("Smazat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 		}
 
-		// Image embedded = new Image(new StreamResource(item.getName(), () -> {
-		// try {
-		// return Files.newInputStream(item.getFile());
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// return null;
-		// }
-		// }), item.getName());
-		//
-		// String file = item.getFile().getFileName().toString();
-		// String url = getItemURL(file);
-		// Anchor link = new Anchor(url, "Detail");
-		// link.addClassName(UIUtils.BUTTON_LINK_CSS_CLASS);
-		// link.setTarget("_blank");
+		grid.setSelectionMode(SelectionMode.SINGLE);
+		grid.addSelectionListener(item -> {
+			if (!item.getFirstSelectedItem().isPresent())
+				return;
+			Print3dViewItemTO to = item.getFirstSelectedItem().get();
+			if (to.getType() == Print3dItemType.MODEL) {
+				String modelDefinition = "{filename: \"" + getItemURL(to.getName()) + "\", "
+						+ "animation: {delta: {rotationy: 1, msec: 2000, loop: true}}, "
+						+ "color: \"#286708\", view_edges: false}";
+				String js = null;
+				if (!stlViewerInitialized) {
+					String relativePath = getContextPath() + "/frontend/" + JS_PATH;
+					js = STL_VIEWER_INSTANCE_JS_VAR + " = new StlViewer(document.getElementById(\"" + stlContId
+							+ "\"), { load_three_files: \"" + relativePath + "\", models: [ " + modelDefinition
+							+ "] });";
+					stlViewerInitialized = true;
+				} else {
+					js = STL_VIEWER_INSTANCE_JS_VAR + ".clean(); " + STL_VIEWER_INSTANCE_JS_VAR + ".add_model("
+							+ modelDefinition + ");";
+				}
+				UI.getCurrent().getPage().executeJs(js);
+			}
+		});
 
 		upload = new Print3dMultiUpload(projectDir);
 		Button uploadButton = new Button("Upload");

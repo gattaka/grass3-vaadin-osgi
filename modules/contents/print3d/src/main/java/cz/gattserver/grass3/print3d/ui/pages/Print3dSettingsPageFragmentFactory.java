@@ -32,15 +32,15 @@ public class Print3dSettingsPageFragmentFactory extends AbstractPageFragmentFact
 	@Autowired
 	private FileSystemService fileSystemService;
 
-	@Resource(name = "pgViewerPageFactory")
-	private PageFactory photogalleryViewerPageFactory;
+	@Resource(name = "print3dViewerPageFactory")
+	private PageFactory print3dViewerPageFactory;
 
 	@Override
 	public void createFragment(Div layout) {
 		final Print3dConfiguration configuration = pgService.loadConfiguration();
 		final FileSystem fs = fileSystemService.getFileSystem();
 
-		layout.add(new H2("Nastavení fotogalerie"));
+		layout.add(new H2("Nastavení knihovny 3D modelů"));
 
 		Binder<Print3dConfiguration> binder = new Binder<>();
 

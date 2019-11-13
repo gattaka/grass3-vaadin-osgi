@@ -28,21 +28,21 @@ public class Print3dMultiUpload extends Upload {
 
 	/**
 	 * Je již zobrazené okno, informující o tom, že některé nahrávané soubory
-	 * mají jmennou kolizi s exitujcími soubory galerie?
+	 * mají jmennou kolizi s exitujcími soubory projektu?
 	 */
 	private boolean warnWindowDeployed = false;
 	private HtmlDiv existingFiles;
 	private WarnDialog warnWindow;
 	private MultiFileMemoryBuffer buffer;
 
-	public Print3dMultiUpload(String galleryDir) {
+	public Print3dMultiUpload(String projectDir) {
 		UI ui = UI.getCurrent();
 		buffer = new MultiFileMemoryBuffer();
 		setReceiver(buffer);
 		SpringContextHelper.inject(this);
 		addSucceededListener(event -> {
 			try {
-				print3dService.uploadFile(buffer.getInputStream(event.getFileName()), event.getFileName(), galleryDir);
+				print3dService.uploadFile(buffer.getInputStream(event.getFileName()), event.getFileName(), projectDir);
 				fileUploadSuccess(event.getFileName());
 			} catch (FileAlreadyExistsException f) {
 				if (!warnWindowDeployed) {

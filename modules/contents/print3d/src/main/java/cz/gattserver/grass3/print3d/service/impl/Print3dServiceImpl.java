@@ -305,7 +305,7 @@ public class Print3dServiceImpl implements Print3dService {
 		Path projectPath = getProjectPath(projectDir);
 		Path filePath = projectPath.resolve(fileName);
 		if (!filePath.normalize().startsWith(projectPath))
-			throw new IllegalArgumentException("Podtečení adresáře galerie");
+			throw new IllegalArgumentException("Podtečení adresáře projektu");
 		Files.copy(in, filePath);
 	}
 

@@ -167,11 +167,32 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 		String stlContId = "stlcont";
 		Div stlDiv = new Div();
 		stlDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		stlDiv.getStyle().set("border", "1px solid #aaa");
+		stlDiv.getStyle().set("border", "1px solid #aaa").set("box-sizing", "border-box");
 		stlDiv.setId(stlContId);
 		layout.add(stlDiv);
 		stlDiv.setWidthFull();
 		stlDiv.setHeight("500px");
+
+		String imgContId = "imgcont";
+		Div imgDiv = new Div();
+		imgDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		imgDiv.getStyle().set("border", "1px solid #aaa").set("box-sizing", "border-box").set("text-align", "center");
+		imgDiv.setId(imgContId);
+		layout.add(imgDiv);
+		imgDiv.setWidthFull();
+		imgDiv.setHeight("500px");
+		imgDiv.setVisible(false);
+
+		Span span = new Span();
+		span.getStyle().set("vertical-align", "middle").set("display", "inline-block");
+		span.setHeightFull();
+		imgDiv.add(span);
+
+		Image img = new Image("", "");
+		img.getStyle().set("vertical-align", "middle");
+		img.setMaxHeight("500px");
+		img.setMaxWidth("700px");
+		imgDiv.add(img);
 
 		List<Print3dViewItemTO> items;
 		try {
@@ -204,11 +225,11 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 
 		grid.addColumn(new ComponentRenderer<Anchor, Print3dViewItemTO>(item -> {
 			String url = getItemURL(item.getName());
-			Anchor link = new Anchor(url, "Detail");
+			Anchor link = new Anchor(url, "Stáhnout");
 			link.addClassName(UIUtils.BUTTON_LINK_CSS_CLASS);
 			link.setTarget("_blank");
 			return link;
-		})).setHeader("Detail").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
+		})).setHeader("Stáhnout").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 
 		if (coreACL.canModifyContent(getContentNodeDTO(), getUser())) {
 			grid.addColumn(new ComponentRenderer<LinkButton, Print3dViewItemTO>(item -> new LinkButton("Smazat", be -> {
@@ -225,8 +246,10 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 				return;
 			Print3dViewItemTO to = item.getFirstSelectedItem().get();
 			if (to.getType() == Print3dItemType.MODEL) {
+				stlDiv.setVisible(true);
+				imgDiv.setVisible(false);
 				String modelDefinition = "{filename: \"" + getItemURL(to.getName()) + "\", "
-						+ "animation: {delta: {rotationy: 1, msec: 2000, loop: true}}, "
+						+ "animation: {delta: {rotationy: 1, msec: 5000, loop: true}}, "
 						+ "color: \"#286708\", view_edges: false}";
 				String js = null;
 				if (!stlViewerInitialized) {
@@ -240,6 +263,11 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 							+ modelDefinition + ");";
 				}
 				UI.getCurrent().getPage().executeJs(js);
+			}
+			if (to.getType() == Print3dItemType.IMAGE) {
+				imgDiv.setVisible(true);
+				stlDiv.setVisible(false);
+				img.setSrc(getItemURL(to.getName()));
 			}
 		});
 

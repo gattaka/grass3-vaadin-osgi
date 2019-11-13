@@ -1,5 +1,8 @@
 package cz.gattserver.grass3.ui.pages.template;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,16 +96,28 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 	 *            skripty, které budou nahrány
 	 */
 	public void loadJS(JScriptItem... scripts) {
+		loadJS(Arrays.asList(scripts));
+	}
+
+	/**
+	 * Nahraje více JS skriptů, synchronně za sebou (mohou se tedy navzájem na
+	 * sebe odkazovat a bude zaručeno, že 1. skript bude celý nahrán před 2.
+	 * skriptem, který využívá jeho funkcí)
+	 * 
+	 * @param scripts
+	 *            skripty, které budou nahrány
+	 */
+	public void loadJS(List<JScriptItem> scripts) {
 		StringBuilder builder = new StringBuilder();
 		buildJSBatch(builder, 0, scripts);
 		UI.getCurrent().getPage().executeJs(builder.toString());
 	}
 
-	private void buildJSBatch(StringBuilder builder, int index, JScriptItem... scripts) {
-		if (index >= scripts.length)
+	private void buildJSBatch(StringBuilder builder, int index, List<JScriptItem> scripts) {
+		if (index >= scripts.size())
 			return;
 
-		JScriptItem js = scripts[index];
+		JScriptItem js = scripts.get(index);
 		String chunk = js.getScript();
 		// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
 		// obejít problém se závislosí pluginů na úložišti theme apod. a

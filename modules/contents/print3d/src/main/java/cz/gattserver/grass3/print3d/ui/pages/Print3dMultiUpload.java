@@ -36,7 +36,6 @@ public class Print3dMultiUpload extends Upload {
 	private MultiFileMemoryBuffer buffer;
 
 	public Print3dMultiUpload(String galleryDir) {
-		setAcceptedFileTypes(".obj", ".stl", "image/*");
 		UI ui = UI.getCurrent();
 		buffer = new MultiFileMemoryBuffer();
 		setReceiver(buffer);

@@ -35,7 +35,7 @@ public interface Print3dRepository extends JpaRepository<Print3d, Long> {
 	List<Print3d> findByAnonAccess(Pageable pageable);
 
 	@Query(value = "select p.photogalleryPath from PHOTOGALLERY p where p.id = ?1")
-	String findPhotogalleryPathById(Long photogalleryId);
+	String findProjectPathById(Long photogalleryId);
 
 	@Query(value = "select p from PHOTOGALLERY p where p.photogalleryPath = ?1")
 	Print3d findByDirectory(String directory);

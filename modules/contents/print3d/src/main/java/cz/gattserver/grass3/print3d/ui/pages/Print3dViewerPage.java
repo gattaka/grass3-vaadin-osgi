@@ -2,6 +2,8 @@ package cz.gattserver.grass3.print3d.ui.pages;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -12,11 +14,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.IconRenderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -26,12 +34,15 @@ import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.exception.GrassPageException;
+import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
+import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.print3d.config.Print3dConfiguration;
 import cz.gattserver.grass3.print3d.events.impl.Print3dZipProcessProgressEvent;
 import cz.gattserver.grass3.print3d.events.impl.Print3dZipProcessResultEvent;
 import cz.gattserver.grass3.print3d.events.impl.Print3dZipProcessStartEvent;
+import cz.gattserver.grass3.print3d.interfaces.Print3dItemType;
 import cz.gattserver.grass3.print3d.interfaces.Print3dPayloadTO;
 import cz.gattserver.grass3.print3d.interfaces.Print3dTO;
 import cz.gattserver.grass3.print3d.interfaces.Print3dViewItemTO;
@@ -39,12 +50,14 @@ import cz.gattserver.grass3.print3d.service.Print3dService;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
 import cz.gattserver.grass3.ui.components.button.ImageButton;
 import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
+import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
+import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.WarnDialog;
 import net.engio.mbassy.listener.Handler;
@@ -55,10 +68,6 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 	private static final long serialVersionUID = 7334408385869747381L;
 
 	private static final Logger logger = LoggerFactory.getLogger(Print3dViewerPage.class);
-
-	private static final int GALLERY_GRID_COLS = 4;
-	private static final int GALLERY_GRID_ROWS = 3;
-	private static final int PAGE_SIZE = GALLERY_GRID_COLS * GALLERY_GRID_ROWS;
 
 	@Autowired
 	private Print3dService print3dService;
@@ -123,7 +132,13 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 
 		projectDir = print3dTO.getPrint3dProjectPath();
 
-		loadJS();
+		String[] libs = new String[] { "stl_viewer.min.js", "parser.min.js", "load_stl.min.js", "webgl_detector.js",
+				"CanvasRenderer.js", "OrbitControls.js", "TrackballControls.js", "Projector.js", "three.min.js" };
+		List<JScriptItem> jScriptItems = new ArrayList<>();
+		for (String lib : libs)
+			jScriptItems.add(new JScriptItem("print3d/stl_viewer/" + lib));
+		loadJS(jScriptItems);
+
 		init();
 	}
 
@@ -138,7 +153,7 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 
 	@Override
 	protected void createContent(Div layout) {
-		// pokud je galerie porušená, pak nic nevypisuj
+		// pokud je obsah porušený, pak nic nevypisuj
 		try {
 			if (!print3dService.checkProject(projectDir)) {
 				layout.add(new Span("Chyba: Projekt je porušen -- kontaktujte administrátora (ID: "
@@ -151,34 +166,65 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 			throw new GrassPageException(404, e);
 		}
 
-		int imageCount;
+		List<Print3dViewItemTO> items;
 		try {
-			imageCount = print3dService.getViewItemsCount(print3dTO.getPrint3dProjectPath());
+			items = print3dService.getItems(print3dTO.getPrint3dProjectPath());
 		} catch (Exception e) {
 			throw new GrassPageException(500, e);
 		}
 
-		// TODO
-		try {
-			for (Print3dViewItemTO item : print3dService.getViewItems(projectDir, 0, PAGE_SIZE)) {
-				Image embedded = new Image(new StreamResource(item.getName(), () -> {
-					try {
-						return Files.newInputStream(item.getFile());
-					} catch (IOException e) {
-						e.printStackTrace();
-						return null;
-					}
-				}), item.getName());
+		Grid<Print3dViewItemTO> grid = new Grid<>();
+		grid.setItems(items);
+		grid.setWidth("100%");
+		grid.setHeight("500px");
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		layout.add(grid);
 
-				String file = item.getFile().getFileName().toString();
-				String url = getItemURL(file);
-				Anchor link = new Anchor(url, "Detail");
-				link.addClassName(UIUtils.BUTTON_LINK_CSS_CLASS);
-				link.setTarget("_blank");
-			}
-		} catch (IOException e) {
-			// TODO
+		grid.addColumn(new IconRenderer<Print3dViewItemTO>(p -> {
+			ImageIcon icon = ImageIcon.DOCUMENT_16_ICON;
+			if (p.getType() == Print3dItemType.IMAGE)
+				icon = ImageIcon.IMG_16_ICON;
+			if (p.getType() == Print3dItemType.MODEL)
+				icon = ImageIcon.STOP_16_ICON;
+			return new Image(icon.createResource(), "");
+		}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
+
+		grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getOnlyName())).setHeader("Název").setFlexGrow(100);
+
+		grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getExtension())).setHeader("Typ").setWidth("80px")
+				.setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(0);
+
+		grid.addColumn(new ComponentRenderer<Anchor, Print3dViewItemTO>(item -> {
+			String url = getItemURL(item.getName());
+			Anchor link = new Anchor(url, "Detail");
+			link.addClassName(UIUtils.BUTTON_LINK_CSS_CLASS);
+			link.setTarget("_blank");
+			return link;
+		})).setHeader("Detail").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
+
+		if (coreACL.canModifyContent(getContentNodeDTO(), getUser())) {
+			grid.addColumn(new ComponentRenderer<LinkButton, Print3dViewItemTO>(item -> new LinkButton("Smazat", be -> {
+				new ConfirmDialog("Opravdu smazat soubor?", e -> {
+					print3dService.deleteFile(item, projectDir);
+					UI.getCurrent().getPage().reload();
+				}).open();
+			}))).setHeader("Smazat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 		}
+
+		// Image embedded = new Image(new StreamResource(item.getName(), () -> {
+		// try {
+		// return Files.newInputStream(item.getFile());
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// return null;
+		// }
+		// }), item.getName());
+		//
+		// String file = item.getFile().getFileName().toString();
+		// String url = getItemURL(file);
+		// Anchor link = new Anchor(url, "Detail");
+		// link.addClassName(UIUtils.BUTTON_LINK_CSS_CLASS);
+		// link.setTarget("_blank");
 
 		upload = new Print3dMultiUpload(projectDir);
 		Button uploadButton = new Button("Upload");
@@ -202,7 +248,7 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 		statusRow.getStyle().set("background", "#fdfaf2").set("padding", "3px 10px").set("line-height", "20px")
 				.set("font-size", "12px").set("color", "#777");
 		statusRow.setSizeUndefined();
-		statusRow.setText("Projekt: " + print3dTO.getPrint3dProjectPath() + " celkem položek: " + imageCount);
+		statusRow.setText("Projekt: " + print3dTO.getPrint3dProjectPath() + " celkem položek: " + items.size());
 		layout.add(statusRow);
 	}
 

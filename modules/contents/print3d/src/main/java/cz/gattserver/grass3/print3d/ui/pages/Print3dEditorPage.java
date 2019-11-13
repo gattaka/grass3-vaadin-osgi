@@ -211,7 +211,7 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 			}).open();
 		}))).setHeader("Smazat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 
-		grid.addColumn(new ComponentRenderer<>(itemTO -> {
+		grid.addColumn(new ComponentRenderer<Anchor, Print3dViewItemTO>(itemTO -> {
 			String file = itemTO.getName();
 			Anchor anchor = new Anchor(new StreamResource(file, () -> {
 				try {
@@ -233,7 +233,7 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 			@Override
 			protected void fileUploadSuccess(String fileName) {
 				Print3dViewItemTO itemTO = new Print3dViewItemTO();
-				itemTO.setName(fileName);
+				itemTO.setOnlyName(fileName);
 				newFiles.add(itemTO);
 				items.add(itemTO);
 				grid.setItems(items);
@@ -244,7 +244,7 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 
 		editorLayout.add(new H2("Nastavení"));
 
-		publicatedCheckBox.setLabel("Publikovat galerii");
+		publicatedCheckBox.setLabel("Publikovat projekt");
 		editorLayout.add(publicatedCheckBox);
 		editorLayout.add(new Breakline());
 
@@ -260,7 +260,7 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 			if (!isFormValid())
 				return;
 			stayInEditor = true;
-			saveOrUpdatePhotogallery();
+			saveOrUpdateProject();
 		});
 		buttonLayout.add(saveButton);
 
@@ -269,16 +269,16 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 			if (!isFormValid())
 				return;
 			stayInEditor = false;
-			saveOrUpdatePhotogallery();
+			saveOrUpdateProject();
 		});
 		buttonLayout.add(saveAndCloseButton);
 
 		// Zrušit
 		CloseButton cancelButton = new CloseButton("Zrušit", ev -> new ConfirmDialog(
-				"Opravdu si přejete zavřít editor galerie ? Veškeré neuložené změny budou ztraceny.", e -> {
+				"Opravdu si přejete zavřít editor projektu ? Veškeré neuložené změny budou ztraceny.", e -> {
 					cleanAfterCancelEdit();
 					if (editMode)
-						returnToPhotogallery();
+						returnToProject();
 					else
 						returnToNode();
 				}).open());
@@ -292,7 +292,7 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 			try {
 				print3dService.deleteDraft(projectDir);
 			} catch (Exception e) {
-				logger.error("Nezdařilo se smazat zrušenou rozpracovanou galerii", e);
+				logger.error("Nezdařilo se smazat zrušený rozpracovaný projekt", e);
 				throw new GrassPageException(500, e);
 			}
 		}
@@ -301,14 +301,13 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 	private boolean isFormValid() {
 		String name = nameField.getValue();
 		if (name == null || name.isEmpty()) {
-			UIUtils.showWarning("Název galerie nemůže být prázdný");
+			UIUtils.showWarning("Název projektu nemůže být prázdný");
 			return false;
 		}
 		return true;
 	}
 
-	private void saveOrUpdatePhotogallery() {
-		logger.info("saveOrUpdatePhotogallery thread: " + Thread.currentThread().getId());
+	private void saveOrUpdateProject() {
 		Print3dPayloadTO payloadTO = new Print3dPayloadTO(nameField.getValue(), projectDir, keywords.getValues(),
 				publicatedCheckBox.getValue());
 
@@ -323,9 +322,9 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 	}
 
 	/**
-	 * Zavolá vrácení se na galerii
+	 * Zavolá vrácení se na obsah
 	 */
-	private void returnToPhotogallery() {
+	private void returnToProject() {
 		Div closeJsDiv = new Div() {
 			private static final long serialVersionUID = -7319482130016598549L;
 
@@ -371,12 +370,12 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 			// podmíněnému smazání
 			newFiles.clear();
 			if (!stayInEditor)
-				returnToPhotogallery();
+				returnToProject();
 			// odteď budeme editovat
 			editMode = true;
-			UIUtils.showInfo("Uložení galerie proběhlo úspěšně");
+			UIUtils.showInfo("Uložení projektu proběhlo úspěšně");
 		} else {
-			UIUtils.showWarning("Uložení galerie se nezdařilo");
+			UIUtils.showWarning("Uložení projektu se nezdařilo");
 		}
 	}
 
@@ -386,10 +385,10 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 			// podmíněnému smazání
 			newFiles.clear();
 			if (!stayInEditor)
-				returnToPhotogallery();
-			UIUtils.showInfo("Úprava galerie proběhla úspěšně");
+				returnToProject();
+			UIUtils.showInfo("Úprava projektu proběhla úspěšně");
 		} else {
-			UIUtils.showWarning("Úprava galerie se nezdařila");
+			UIUtils.showWarning("Úprava projektu se nezdařila");
 		}
 	}
 

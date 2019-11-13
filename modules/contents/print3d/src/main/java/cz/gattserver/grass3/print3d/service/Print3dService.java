@@ -100,7 +100,7 @@ public interface Print3dService {
 	/**
 	 * Smaže soubor z projektu.
 	 * 
-	 * @param itemTO
+	 * @param item
 	 *            soubor
 	 * @param projectDir
 	 *            adresář projektu
@@ -110,7 +110,7 @@ public interface Print3dService {
 	 * @throws IllegalArgumentException
 	 *             pokud předaný adresář podtéká kořen modulu Print3d
 	 */
-	void deleteFile(Print3dViewItemTO itemTO, String projectDir);
+	void deleteFile(Print3dViewItemTO item, String projectDir);
 
 	/**
 	 * Nahraje soubory do projektu
@@ -146,42 +146,6 @@ public interface Print3dService {
 	 *             pokud předaný adresář podtéká kořen modulu Print3d
 	 */
 	List<Print3dViewItemTO> getItems(String projectDir) throws IOException;
-
-	/**
-	 * Získá počet položek k zobrazení přehledu
-	 * 
-	 * @param projectDir
-	 *            adresář projektu
-	 * @return počet položek
-	 * @throws IOException
-	 *             pokud se nezdařilo číst přehled adresáře projektu
-	 * @throws IllegalStateException
-	 *             pokud neexistuje kořenový adresář projektů -- chyba nastavení
-	 *             modulu Print3d
-	 * @throws IllegalArgumentException
-	 *             pokud předaný adresář podtéká kořen modulu Print3d
-	 */
-	int getViewItemsCount(String projectDir) throws IOException;
-
-	/**
-	 * Získá položky k zobrazení přehledu
-	 * 
-	 * @param projectDir
-	 *            adresář projektu
-	 * @param skip
-	 *            počet přeskočených položek (stránkování)
-	 * @param limit
-	 *            počet položek (stránkování)
-	 * @return položky
-	 * @throws IOException
-	 *             pokud se nezdařilo číst přehled adresáře projektu
-	 * @throws IllegalStateException
-	 *             pokud neexistuje kořenový adresář projektů -- chyba nastavení
-	 *             modulu Print3d
-	 * @throws IllegalArgumentException
-	 *             pokud předaný adresář podtéká kořen modulu Print3d
-	 */
-	List<Print3dViewItemTO> getViewItems(String projectDir, int skip, int limit) throws IOException;
 
 	/**
 	 * Smaže vygenerovaný zip soubor

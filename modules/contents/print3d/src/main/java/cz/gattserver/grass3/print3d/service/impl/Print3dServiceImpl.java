@@ -35,6 +35,7 @@ import cz.gattserver.grass3.print3d.config.Print3dConfiguration;
 import cz.gattserver.grass3.print3d.events.impl.Print3dZipProcessProgressEvent;
 import cz.gattserver.grass3.print3d.events.impl.Print3dZipProcessResultEvent;
 import cz.gattserver.grass3.print3d.events.impl.Print3dZipProcessStartEvent;
+import cz.gattserver.grass3.print3d.interfaces.Print3dItemType;
 import cz.gattserver.grass3.print3d.interfaces.Print3dPayloadTO;
 import cz.gattserver.grass3.print3d.interfaces.Print3dTO;
 import cz.gattserver.grass3.print3d.interfaces.Print3dViewItemTO;
@@ -95,7 +96,7 @@ public class Print3dServiceImpl implements Print3dService {
 
 	@Override
 	public boolean deleteProject(long id) {
-		String path = print3dRepository.findPhotogalleryPathById(id);
+		String path = print3dRepository.findProjectPathById(id);
 		Path dir = getProjectPath(path);
 
 		print3dRepository.deleteById(id);
@@ -138,8 +139,7 @@ public class Print3dServiceImpl implements Print3dService {
 		if (existingId == null) {
 			// vytvoř odpovídající content node
 			Long contentNodeId = contentNodeFacade.save(Print3dModule.ID, project.getId(), payloadTO.getName(),
-					payloadTO.getTags(), payloadTO.isPublicated(), nodeId, authorId, false,
-					project.getContentNode().getCreationDate(), null);
+					payloadTO.getTags(), payloadTO.isPublicated(), nodeId, authorId, false, null, null);
 
 			// ulož do článku referenci na jeho contentnode
 			ContentNode contentNode = new ContentNode();
@@ -156,13 +156,13 @@ public class Print3dServiceImpl implements Print3dService {
 	}
 
 	private Long innerSaveProject(Print3dPayloadTO payloadTO, Long existingId, Long nodeId, Long authorId) {
-		String galleryDir = payloadTO.getProjectDir();
-		Path galleryPath = getProjectPath(galleryDir);
-		try (Stream<Path> stream = Files.list(galleryPath).sorted(getComparator())) {
-			Print3d print3d = saveProject(galleryDir, payloadTO, existingId, nodeId, authorId);
+		String projectDir = payloadTO.getProjectDir();
+		Path projectPath = getProjectPath(projectDir);
+		try (Stream<Path> stream = Files.list(projectPath).sorted(getComparator())) {
+			Print3d print3d = saveProject(projectDir, payloadTO, existingId, nodeId, authorId);
 			return print3d.getId();
 		} catch (IOException e) {
-			String msg = "Nezdařilo se uložit galerii";
+			String msg = "Nezdařilo se uložit projekt";
 			logger.error(msg, e);
 			throw new GrassException(msg, e);
 		}
@@ -174,7 +174,7 @@ public class Print3dServiceImpl implements Print3dService {
 		String dirRoot = configuration.getRootDir();
 		Path dirRootFile = fileSystemService.getFileSystem().getPath(dirRoot);
 		long systime = System.currentTimeMillis();
-		Path tmpDirFile = dirRootFile.resolve("pgGal_" + systime);
+		Path tmpDirFile = dirRootFile.resolve("print3dProj_" + systime);
 		Files.createDirectories(tmpDirFile);
 		return tmpDirFile.getFileName().toString();
 	}
@@ -210,13 +210,13 @@ public class Print3dServiceImpl implements Print3dService {
 			throw ise;
 		}
 		rootPath = rootPath.normalize();
-		Path galleryPath = rootPath.resolve(projectDir);
-		if (!galleryPath.normalize().startsWith(rootPath)) {
+		Path projectPath = rootPath.resolve(projectDir);
+		if (!projectPath.normalize().startsWith(rootPath)) {
 			IllegalArgumentException ise = new IllegalArgumentException("Podtečení kořenového adresáře projektů");
 			logger.error("Nezdařilo se získat kořenový adresář projektu", ise);
 			throw ise;
 		}
-		return galleryPath;
+		return projectPath;
 	}
 
 	@Async
@@ -259,10 +259,10 @@ public class Print3dServiceImpl implements Print3dService {
 		}
 	}
 
-	private void performZip(Path galleryPath, FileSystem zipFileSystem, ReferenceHolder<Integer> progress,
+	private void performZip(Path projectPath, FileSystem zipFileSystem, ReferenceHolder<Integer> progress,
 			ReferenceHolder<Integer> total) throws IOException {
 		final Path root = zipFileSystem.getRootDirectories().iterator().next();
-		try (Stream<Path> stream = Files.list(galleryPath)) {
+		try (Stream<Path> stream = Files.list(projectPath)) {
 			Iterator<Path> it = stream.iterator();
 			while (it.hasNext()) {
 				Path src = it.next();
@@ -276,19 +276,19 @@ public class Print3dServiceImpl implements Print3dService {
 	}
 
 	@Override
-	public List<Print3dViewItemTO> deleteFiles(Set<Print3dViewItemTO> selected, String galleryDir) {
+	public List<Print3dViewItemTO> deleteFiles(Set<Print3dViewItemTO> selected, String projectDir) {
 		List<Print3dViewItemTO> removed = new ArrayList<>();
 		for (Print3dViewItemTO itemTO : selected) {
-			deleteFile(itemTO, galleryDir);
+			deleteFile(itemTO, projectDir);
 			removed.add(itemTO);
 		}
 		return removed;
 	}
 
 	@Override
-	public void deleteFile(Print3dViewItemTO itemTO, String galleryDir) {
-		Path galleryPath = getProjectPath(galleryDir);
-		Path subFile = galleryPath.resolve(itemTO.getFile());
+	public void deleteFile(Print3dViewItemTO item, String projectDir) {
+		Path projectPath = getProjectPath(projectDir);
+		Path subFile = projectPath.resolve(item.getFile());
 		if (Files.exists(subFile)) {
 			try {
 				Files.delete(subFile);
@@ -301,35 +301,53 @@ public class Print3dServiceImpl implements Print3dService {
 	}
 
 	@Override
-	public void uploadFile(InputStream in, String fileName, String galleryDir) throws IOException {
-		Path galleryPath = getProjectPath(galleryDir);
-		Path filePath = galleryPath.resolve(fileName);
-		if (!filePath.normalize().startsWith(galleryPath))
+	public void uploadFile(InputStream in, String fileName, String projectDir) throws IOException {
+		Path projectPath = getProjectPath(projectDir);
+		Path filePath = projectPath.resolve(fileName);
+		if (!filePath.normalize().startsWith(projectPath))
 			throw new IllegalArgumentException("Podtečení adresáře galerie");
 		Files.copy(in, filePath);
 	}
 
 	@Override
-	public List<Print3dViewItemTO> getItems(String galleryDir) throws IOException {
-		Path galleryPath = getProjectPath(galleryDir);
+	public List<Print3dViewItemTO> getItems(String projectDir) throws IOException {
+		Path projectPath = getProjectPath(projectDir);
 		List<Print3dViewItemTO> items = new ArrayList<>();
-		try (Stream<Path> stream = Files.list(galleryPath).sorted(getComparator())) {
+		try (Stream<Path> stream = Files.list(projectPath).sorted(getComparator())) {
 			stream.filter(file -> !Files.isDirectory(file)).forEach(file -> {
-				Print3dViewItemTO itemTO = new Print3dViewItemTO();
-				itemTO.setName(file.getFileName().toString());
+				String name = file.getFileName().toString();
+				String onlyName = null;
+				String extension = null;
+				Print3dItemType type = Print3dItemType.DOCUMENTATION;
+				int dotIndex = name.lastIndexOf('.');
+				if (dotIndex > 0 && dotIndex < name.length() - 2) {
+					onlyName = name.substring(0, dotIndex);
+					extension = name.substring(dotIndex + 1);
+					switch (extension.toLowerCase()) {
+					case "svg":
+					case "jpg":
+					case "jpeg":
+					case "png":
+					case "gif":
+					case "bmp":
+						type = Print3dItemType.IMAGE;
+						break;
+					case "stl":
+					case "obj":
+						type = Print3dItemType.MODEL;
+						break;
+					default:
+						break;
+					}
+				}
+				if (onlyName == null)
+					onlyName = name;
+				Print3dViewItemTO itemTO = new Print3dViewItemTO(file, onlyName, extension, type);
 				items.add(itemTO);
 			});
 
 		}
 		return items;
-	}
-
-	@Override
-	public int getViewItemsCount(String galleryDir) throws IOException {
-		Path galleryPath = getProjectPath(galleryDir);
-		try (Stream<Path> stream = Files.list(galleryPath)) {
-			return (int) stream.filter(file -> !Files.isDirectory(file)).count();
-		}
 	}
 
 	private Comparator<Path> getComparator() {
@@ -344,23 +362,6 @@ public class Print3dServiceImpl implements Print3dService {
 			return nameComparator.compare(p1, p2);
 		};
 		return comparator;
-	}
-
-	@Override
-	public List<Print3dViewItemTO> getViewItems(String galleryDir, int skip, int limit) throws IOException {
-		Path galleryPath = getProjectPath(galleryDir);
-		List<Print3dViewItemTO> list = new ArrayList<>();
-
-		try (Stream<Path> filesStream = Files.list(galleryPath).sorted(getComparator())) {
-			filesStream.skip(skip).limit(limit).forEach(file -> {
-				Print3dViewItemTO itemTO = new Print3dViewItemTO();
-				String fileName = file.getFileName().toString();
-				itemTO.setName(fileName);
-				itemTO.setFile(file);
-				list.add(itemTO);
-			});
-		}
-		return list;
 	}
 
 	@Override
@@ -391,17 +392,17 @@ public class Print3dServiceImpl implements Print3dService {
 	}
 
 	@Override
-	public Path getFullImage(String galleryDir, String file) {
-		Path galleryPath = getProjectPath(galleryDir);
-		Path filePath = galleryPath.resolve(file);
-		if (!filePath.normalize().startsWith(galleryPath))
+	public Path getFullImage(String projectDir, String file) {
+		Path projectPath = getProjectPath(projectDir);
+		Path filePath = projectPath.resolve(file);
+		if (!filePath.normalize().startsWith(projectPath))
 			throw new IllegalArgumentException("Podtečení adresáře projektu");
 		return filePath;
 	}
 
 	@Override
-	public boolean checkProject(String galleryDir) {
-		Path galleryPath = getProjectPath(galleryDir);
-		return Files.exists(galleryPath);
+	public boolean checkProject(String projectDir) {
+		Path projectPath = getProjectPath(projectDir);
+		return Files.exists(projectPath);
 	}
 }

@@ -1,0 +1,292 @@
+package cz.gattserver.grass3.print3d.ui.pages;
+
+import java.io.IOException;
+import java.nio.file.Files;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasDynamicTitle;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.WildcardParameter;
+import com.vaadin.flow.server.StreamResource;
+
+import cz.gattserver.grass3.events.EventBus;
+import cz.gattserver.grass3.exception.GrassPageException;
+import cz.gattserver.grass3.interfaces.ContentNodeTO;
+import cz.gattserver.grass3.interfaces.NodeOverviewTO;
+import cz.gattserver.grass3.print3d.config.Print3dConfiguration;
+import cz.gattserver.grass3.print3d.events.impl.Print3dZipProcessProgressEvent;
+import cz.gattserver.grass3.print3d.events.impl.Print3dZipProcessResultEvent;
+import cz.gattserver.grass3.print3d.events.impl.Print3dZipProcessStartEvent;
+import cz.gattserver.grass3.print3d.interfaces.Print3dPayloadTO;
+import cz.gattserver.grass3.print3d.interfaces.Print3dTO;
+import cz.gattserver.grass3.print3d.interfaces.Print3dViewItemTO;
+import cz.gattserver.grass3.print3d.service.Print3dService;
+import cz.gattserver.grass3.ui.components.DefaultContentOperations;
+import cz.gattserver.grass3.ui.components.button.ImageButton;
+import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
+import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
+import cz.gattserver.grass3.ui.pages.template.GrassPage;
+import cz.gattserver.grass3.ui.util.UIUtils;
+import cz.gattserver.web.common.server.URLIdentifierUtils;
+import cz.gattserver.web.common.ui.ImageIcon;
+import cz.gattserver.web.common.ui.window.ConfirmDialog;
+import cz.gattserver.web.common.ui.window.WarnDialog;
+import net.engio.mbassy.listener.Handler;
+
+@Route("print3d")
+public class Print3dViewerPage extends ContentViewerPage implements HasUrlParameter<String>, HasDynamicTitle {
+
+	private static final long serialVersionUID = 7334408385869747381L;
+
+	private static final Logger logger = LoggerFactory.getLogger(Print3dViewerPage.class);
+
+	private static final int GALLERY_GRID_COLS = 4;
+	private static final int GALLERY_GRID_ROWS = 3;
+	private static final int PAGE_SIZE = GALLERY_GRID_COLS * GALLERY_GRID_ROWS;
+
+	@Autowired
+	private Print3dService print3dService;
+
+	@Resource(name = "print3dViewerPageFactory")
+	private PageFactory print3dViewerPageFactory;
+
+	@Resource(name = "print3dEditorPageFactory")
+	private PageFactory print3dEditorPageFactory;
+
+	@Autowired
+	private EventBus eventBus;
+
+	private ProgressDialog progressIndicatorWindow;
+
+	private Print3dTO print3dTO;
+
+	private Print3dMultiUpload upload;
+
+	private String projectDir;
+
+	private String identifierToken;
+	private String magickToken;
+
+	@Override
+	public String getPageTitle() {
+		return print3dTO.getContentNode().getName();
+	}
+
+	@Override
+	protected void createContentOperations(Div operationsListLayout) {
+		super.createContentOperations(operationsListLayout);
+
+		ImageButton downloadZip = new ImageButton("Zabalit do ZIP", ImageIcon.PRESENT_16_ICON,
+				event -> new ConfirmDialog("Přejete si vytvořit ZIP projektu?", e -> {
+					logger.info("zipPrint3dProject thread: {}", Thread.currentThread().getId());
+					progressIndicatorWindow = new ProgressDialog();
+					eventBus.subscribe(Print3dViewerPage.this);
+					print3dService.zipProject(projectDir);
+				}).open());
+		operationsListLayout.add(downloadZip);
+	}
+
+	@Override
+	public void setParameter(BeforeEvent event, @WildcardParameter String parameter) {
+		String[] chunks = parameter.split("/");
+		if (chunks.length > 0)
+			identifierToken = chunks[0];
+		if (chunks.length > 1)
+			magickToken = chunks[1];
+
+		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(identifierToken);
+		if (identifier == null)
+			throw new GrassPageException(404);
+
+		print3dTO = print3dService.getProjectForDetail(identifier.getId());
+		if (print3dTO == null)
+			throw new GrassPageException(404);
+
+		if (!"MAG1CK".equals(magickToken) && !print3dTO.getContentNode().isPublicated() && !isAdminOrAuthor())
+			throw new GrassPageException(403);
+
+		projectDir = print3dTO.getPrint3dProjectPath();
+
+		loadJS();
+		init();
+	}
+
+	private boolean isAdminOrAuthor() {
+		return getUser().isAdmin() || print3dTO.getContentNode().getAuthor().equals(getUser());
+	}
+
+	@Override
+	protected ContentNodeTO getContentNodeDTO() {
+		return print3dTO.getContentNode();
+	}
+
+	@Override
+	protected void createContent(Div layout) {
+		// pokud je galerie porušená, pak nic nevypisuj
+		try {
+			if (!print3dService.checkProject(projectDir)) {
+				layout.add(new Span("Chyba: Projekt je porušen -- kontaktujte administrátora (ID: "
+						+ print3dTO.getPrint3dProjectPath() + ")"));
+				return;
+			}
+		} catch (IllegalStateException e) {
+			throw new GrassPageException(500, e);
+		} catch (IllegalArgumentException e) {
+			throw new GrassPageException(404, e);
+		}
+
+		int imageCount;
+		try {
+			imageCount = print3dService.getViewItemsCount(print3dTO.getPrint3dProjectPath());
+		} catch (Exception e) {
+			throw new GrassPageException(500, e);
+		}
+
+		// TODO
+		try {
+			for (Print3dViewItemTO item : print3dService.getViewItems(projectDir, 0, PAGE_SIZE)) {
+				Image embedded = new Image(new StreamResource(item.getName(), () -> {
+					try {
+						return Files.newInputStream(item.getFile());
+					} catch (IOException e) {
+						e.printStackTrace();
+						return null;
+					}
+				}), item.getName());
+
+				String file = item.getFile().getFileName().toString();
+				String url = getItemURL(file);
+				Anchor link = new Anchor(url, "Detail");
+				link.addClassName(UIUtils.BUTTON_LINK_CSS_CLASS);
+				link.setTarget("_blank");
+			}
+		} catch (IOException e) {
+			// TODO
+		}
+
+		upload = new Print3dMultiUpload(projectDir);
+		Button uploadButton = new Button("Upload");
+		upload.setUploadButton(uploadButton);
+		Span dropLabel = new Span("Drop");
+		upload.setDropLabel(dropLabel);
+		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		upload.addFinishedListener(e -> {
+			eventBus.subscribe(Print3dViewerPage.this);
+			progressIndicatorWindow = new ProgressDialog();
+			Print3dPayloadTO payloadTO = new Print3dPayloadTO(print3dTO.getContentNode().getName(), projectDir,
+					print3dTO.getContentNode().getContentTagsAsStrings(), print3dTO.getContentNode().isPublicated());
+			print3dService.modifyProject(print3dTO.getId(), payloadTO);
+			UI.getCurrent().getPage().reload();
+		});
+		if (coreACL.canModifyContent(print3dTO.getContentNode(), getUser()))
+			layout.add(upload);
+
+		Div statusRow = new Div();
+		statusRow.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		statusRow.getStyle().set("background", "#fdfaf2").set("padding", "3px 10px").set("line-height", "20px")
+				.set("font-size", "12px").set("color", "#777");
+		statusRow.setSizeUndefined();
+		statusRow.setText("Projekt: " + print3dTO.getPrint3dProjectPath() + " celkem položek: " + imageCount);
+		layout.add(statusRow);
+	}
+
+	@Handler
+	protected void onProcessStart(final Print3dZipProcessStartEvent event) {
+		progressIndicatorWindow.runInUI(() -> {
+			progressIndicatorWindow.setTotal(event.getCountOfStepsToDo());
+			progressIndicatorWindow.open();
+		});
+	}
+
+	@Handler
+	protected void onProcessProgress(Print3dZipProcessProgressEvent event) {
+		progressIndicatorWindow.runInUI(() -> progressIndicatorWindow.indicateProgress(event.getStepDescription()));
+	}
+
+	@Handler
+	protected void onProcessResult(final Print3dZipProcessResultEvent event) {
+		progressIndicatorWindow.runInUI(() -> {
+			if (progressIndicatorWindow != null)
+				progressIndicatorWindow.close();
+
+			if (event.isSuccess()) {
+				Dialog win = new Dialog();
+				win.addDialogCloseActionListener(e -> print3dService.deleteZipFile(event.getZipFile()));
+
+				Anchor link = new Anchor(new StreamResource(print3dTO.getPrint3dProjectPath() + ".zip", () -> {
+					try {
+						return Files.newInputStream(event.getZipFile());
+					} catch (IOException e1) {
+						e1.printStackTrace();
+						return null;
+					}
+				}), "Stáhnout ZIP souboru");
+				link.setTarget("_blank");
+				VerticalLayout layout = new VerticalLayout();
+				layout.setSpacing(true);
+				layout.setPadding(true);
+				win.add(layout);
+				layout.add(link);
+				win.open();
+			} else {
+				UIUtils.showWarning(event.getResultDetails());
+			}
+		});
+		eventBus.unsubscribe(Print3dViewerPage.this);
+	}
+
+	private String getItemURL(String file) {
+		return GrassPage.getContextPath() + "/" + Print3dConfiguration.PRINT3D_PATH + "/"
+				+ print3dTO.getPrint3dProjectPath() + "/" + file;
+	}
+
+	@Override
+	protected PageFactory getContentViewerPageFactory() {
+		return print3dViewerPageFactory;
+	}
+
+	@Override
+	protected void onDeleteOperation() {
+		ConfirmDialog confirmSubwindow = new ConfirmDialog("Opravdu si přejete smazat tento projekt ?", ev -> {
+			NodeOverviewTO nodeDTO = print3dTO.getContentNode().getParent();
+
+			final String nodeURL = getPageURL(nodePageFactory,
+					URLIdentifierUtils.createURLIdentifier(nodeDTO.getId(), nodeDTO.getName()));
+
+			// zdařilo se ? Pokud ano, otevři info okno a při
+			// potvrzení jdi na kategorii
+			if (print3dService.deleteProject(print3dTO.getId())) {
+				UIUtils.redirect(nodeURL);
+			} else {
+				// Pokud ne, otevři warn okno a při
+				// potvrzení jdi na kategorii
+				WarnDialog warnSubwindow = new WarnDialog("Při mazání projektu se nezdařilo smazat některé soubory.");
+				warnSubwindow.addDialogCloseActionListener(e -> UIUtils.redirect(nodeURL));
+				warnSubwindow.open();
+			}
+		});
+		confirmSubwindow.open();
+	}
+
+	@Override
+	protected void onEditOperation() {
+		UIUtils.redirect(getPageURL(print3dEditorPageFactory, DefaultContentOperations.EDIT.toString(),
+				URLIdentifierUtils.createURLIdentifier(print3dTO.getId(), print3dTO.getContentNode().getName())));
+	}
+}

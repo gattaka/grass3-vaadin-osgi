@@ -16,6 +16,7 @@
 		<module>articles</module>
 		<module>pg</module>
 		<module>plugins</module>
+		<module>print3d</module>
 	</modules>
 
 </project>

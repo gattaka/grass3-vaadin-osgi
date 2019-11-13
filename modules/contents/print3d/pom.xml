@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>print3d</artifactId>
+	<name>GRASS3 3D print content</name>
+
+	<parent>
+		<groupId>cz.gattserver.grass3</groupId>
+		<artifactId>contents</artifactId>
+		<version>3.1.0-SNAPSHOT</version>
+	</parent>
+
+	<dependencies>
+
+		<!-- Grass3 jádro -->
+		<dependency>
+			<groupId>cz.gattserver.grass3</groupId>
+			<artifactId>grass-core</artifactId>
+			<version>3.1.0-SNAPSHOT</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>cz.gattserver.grass3</groupId>
+			<artifactId>grass-core</artifactId>
+			<version>3.1.0-SNAPSHOT</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- JaCoCo -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

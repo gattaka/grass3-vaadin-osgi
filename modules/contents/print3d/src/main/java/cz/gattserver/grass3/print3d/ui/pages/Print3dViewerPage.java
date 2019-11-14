@@ -96,6 +96,9 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 	private String identifierToken;
 	private String magickToken;
 
+	private List<Print3dViewItemTO> items;
+	private Grid<Print3dViewItemTO> grid;
+
 	private boolean stlViewerInitialized;
 
 	@Override
@@ -138,9 +141,16 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 
 		projectDir = print3dTO.getPrint3dProjectPath();
 
-		loadJS(new JScriptItem(JS_PATH + "stl_viewer.min.js"));
-
 		init();
+
+		loadJS(new JScriptItem(JS_PATH + "stl_viewer.min.js")).then(e -> {
+			for (Print3dViewItemTO to : items) {
+				if (to.getType() == Print3dItemType.MODEL) {
+					grid.select(to);
+					break;
+				}
+			}
+		});
 	}
 
 	private boolean isAdminOrAuthor() {
@@ -170,7 +180,8 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 		String stlContId = "stlcont";
 		Div stlDiv = new Div();
 		stlDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		stlDiv.getStyle().set("border", "1px solid #aaa").set("box-sizing", "border-box");
+		stlDiv.getStyle().set("border", "1px solid #d1d1d1").set("box-sizing", "border-box").set("background",
+				"#fefefe");
 		stlDiv.setId(stlContId);
 		layout.add(stlDiv);
 		stlDiv.setWidthFull();
@@ -179,7 +190,8 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 		String imgContId = "imgcont";
 		Div imgDiv = new Div();
 		imgDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		imgDiv.getStyle().set("border", "1px solid #aaa").set("box-sizing", "border-box").set("text-align", "center");
+		imgDiv.getStyle().set("border", "1px solid #d1d1d1").set("box-sizing", "border-box").set("text-align", "center")
+				.set("background", "#fefefe");
 		imgDiv.setId(imgContId);
 		layout.add(imgDiv);
 		imgDiv.setWidthFull();
@@ -197,14 +209,13 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 		img.setMaxWidth("690px");
 		imgDiv.add(img);
 
-		List<Print3dViewItemTO> items;
 		try {
 			items = print3dService.getItems(print3dTO.getPrint3dProjectPath());
 		} catch (Exception e) {
 			throw new GrassPageException(500, e);
 		}
 
-		Grid<Print3dViewItemTO> grid = new Grid<>();
+		grid = new Grid<>();
 		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		grid.setItems(items);
 		grid.setWidth("100%");
@@ -228,6 +239,9 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 
 		Column<Print3dViewItemTO> typColumn = grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getExtension()))
 				.setHeader("Typ").setWidth("80px").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(0);
+
+		grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getSize())).setHeader("Velikost").setWidth("80px")
+				.setTextAlign(ColumnTextAlign.END).setFlexGrow(0);
 
 		grid.addColumn(new ComponentRenderer<Anchor, Print3dViewItemTO>(item -> {
 			String url = getItemURL(item.getName());

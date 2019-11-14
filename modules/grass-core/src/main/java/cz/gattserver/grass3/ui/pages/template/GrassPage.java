@@ -10,6 +10,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.page.PendingJavaScriptResult;
 import com.vaadin.flow.server.DefaultErrorHandler;
 import com.vaadin.flow.server.InitialPageSettings;
 import com.vaadin.flow.server.PageConfigurator;
@@ -95,8 +96,8 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 	 * @param scripts
 	 *            skripty, které budou nahrány
 	 */
-	public void loadJS(JScriptItem... scripts) {
-		loadJS(Arrays.asList(scripts));
+	public PendingJavaScriptResult loadJS(JScriptItem... scripts) {
+		return loadJS(Arrays.asList(scripts));
 	}
 
 	/**
@@ -107,10 +108,10 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 	 * @param scripts
 	 *            skripty, které budou nahrány
 	 */
-	public void loadJS(List<JScriptItem> scripts) {
+	public PendingJavaScriptResult loadJS(List<JScriptItem> scripts) {
 		StringBuilder builder = new StringBuilder();
 		buildJSBatch(builder, 0, scripts);
-		UI.getCurrent().getPage().executeJs(builder.toString());
+		return UI.getCurrent().getPage().executeJs(builder.toString());
 	}
 
 	private void buildJSBatch(StringBuilder builder, int index, List<JScriptItem> scripts) {

@@ -7,13 +7,15 @@ public class Print3dViewItemTO {
 	private Path file;
 	private String onlyName;
 	private String extension;
+	private String size;
 	private Print3dItemType type;
 
-	public Print3dViewItemTO(Path file, String onlyName, String extension, Print3dItemType type) {
+	public Print3dViewItemTO(Path file, String onlyName, String extension, String size, Print3dItemType type) {
 		super();
 		this.file = file;
 		this.onlyName = onlyName;
 		this.extension = extension;
+		this.size = size;
 		this.type = type;
 	}
 
@@ -62,6 +64,14 @@ public class Print3dViewItemTO {
 	public Print3dViewItemTO setFile(Path file) {
 		this.file = file;
 		return this;
+	}
+
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
 	}
 
 }

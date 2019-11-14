@@ -25,6 +25,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.common.util.ReferenceHolder;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.exception.GrassException;
@@ -341,7 +342,13 @@ public class Print3dServiceImpl implements Print3dService {
 				}
 				if (onlyName == null)
 					onlyName = name;
-				Print3dViewItemTO itemTO = new Print3dViewItemTO(file, onlyName, extension, type);
+				String size;
+				try {
+					size = HumanBytesSizeFormatter.format(Files.size(file));
+				} catch (IOException e) {
+					size = "N/A";
+				}
+				Print3dViewItemTO itemTO = new Print3dViewItemTO(file, onlyName, extension, size, type);
 				items.add(itemTO);
 			});
 

@@ -11,7 +11,6 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -158,7 +157,7 @@ public class Print3dServiceImpl implements Print3dService {
 	private Long innerSaveProject(Print3dPayloadTO payloadTO, Long existingId, Long nodeId, Long authorId) {
 		String projectDir = payloadTO.getProjectDir();
 		Path projectPath = getProjectPath(projectDir);
-		try (Stream<Path> stream = Files.list(projectPath).sorted(getComparator())) {
+		try (Stream<Path> stream = Files.list(projectPath)) {
 			Print3d print3d = saveProject(projectDir, payloadTO, existingId, nodeId, authorId);
 			return print3d.getId();
 		} catch (IOException e) {
@@ -313,7 +312,7 @@ public class Print3dServiceImpl implements Print3dService {
 	public List<Print3dViewItemTO> getItems(String projectDir) throws IOException {
 		Path projectPath = getProjectPath(projectDir);
 		List<Print3dViewItemTO> items = new ArrayList<>();
-		try (Stream<Path> stream = Files.list(projectPath).sorted(getComparator())) {
+		try (Stream<Path> stream = Files.list(projectPath)) {
 			stream.filter(file -> !Files.isDirectory(file)).forEach(file -> {
 				String name = file.getFileName().toString();
 				String onlyName = null;
@@ -348,20 +347,6 @@ public class Print3dServiceImpl implements Print3dService {
 
 		}
 		return items;
-	}
-
-	private Comparator<Path> getComparator() {
-		Comparator<Path> nameComparator = (p1, p2) -> p1.getFileName().toString()
-				.compareTo(p2.getFileName().toString());
-		Comparator<Path> comparator = (p1, p2) -> {
-			try {
-				return Files.getLastModifiedTime(p1).compareTo(Files.getLastModifiedTime(p2));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return nameComparator.compare(p1, p2);
-		};
-		return comparator;
 	}
 
 	@Override

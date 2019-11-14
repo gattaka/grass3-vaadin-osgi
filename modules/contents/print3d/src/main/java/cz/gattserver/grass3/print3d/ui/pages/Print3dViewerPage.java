@@ -2,6 +2,7 @@ package cz.gattserver.grass3.print3d.ui.pages;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -15,13 +16,16 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.IconRenderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
@@ -190,8 +194,8 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 
 		Image img = new Image("", "");
 		img.getStyle().set("vertical-align", "middle");
-		img.setMaxHeight("500px");
-		img.setMaxWidth("700px");
+		img.setMaxHeight("490px");
+		img.setMaxWidth("690px");
 		imgDiv.add(img);
 
 		List<Print3dViewItemTO> items;
@@ -218,10 +222,11 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 			return new Image(icon.createResource(), "");
 		}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
 
-		grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getOnlyName())).setHeader("Název").setFlexGrow(100);
+		Column<Print3dViewItemTO> nameColumn = grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getOnlyName()))
+				.setHeader("Název").setFlexGrow(100);
 
-		grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getExtension())).setHeader("Typ").setWidth("80px")
-				.setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(0);
+		Column<Print3dViewItemTO> typColumn = grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getExtension()))
+				.setHeader("Typ").setWidth("80px").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(0);
 
 		grid.addColumn(new ComponentRenderer<Anchor, Print3dViewItemTO>(item -> {
 			String url = getItemURL(item.getName());
@@ -239,6 +244,9 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 				}).open();
 			}))).setHeader("Smazat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 		}
+
+		grid.sort(Arrays.asList(new GridSortOrder<>(typColumn, SortDirection.ASCENDING),
+				new GridSortOrder<>(nameColumn, SortDirection.ASCENDING)));
 
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.addSelectionListener(item -> {

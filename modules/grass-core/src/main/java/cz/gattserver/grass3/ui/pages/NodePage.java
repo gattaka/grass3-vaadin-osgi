@@ -79,10 +79,10 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 	}
 
 	public void createNodeAction(NodeOverviewTO parentNode) {
-		final WebDialog dialog = new WebDialog("Vytvořit novou kategorii do '" + parentNode.getName() + "'");
+		final WebDialog dialog = new WebDialog();
 		dialog.open();
 
-		final TextField newNameField = new TextField("Nový název:");
+		final TextField newNameField = new TextField("Nová kategorie do '" + parentNode.getName() + "'");
 		dialog.addComponent(newNameField);
 
 		NodeOverviewTO to = new NodeOverviewTO();

@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
@@ -75,7 +74,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 	protected void createColumnContent(Div layout) {
 		filterTO = new BookOverviewTO();
 		grid = createGrid(filterTO);
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(grid);
 		layout.add(grid);
 
 		grid.addSelectionListener(e -> {
@@ -117,7 +116,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 	protected Grid<BookOverviewTO> createGrid(final BookOverviewTO filterTO) {
 
 		final Grid<BookOverviewTO> grid = new Grid<>();
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(grid);
 		grid.setWidth("100%");
 		grid.setHeight("400px");
 

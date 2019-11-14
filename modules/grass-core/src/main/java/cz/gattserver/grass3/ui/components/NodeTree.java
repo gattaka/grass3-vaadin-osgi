@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import com.vaadin.flow.component.grid.dnd.GridDropMode;
@@ -76,7 +75,7 @@ public class NodeTree extends VerticalLayout {
 
 		grid = new TreeGrid<>();
 		grid.setSelectionMode(SelectionMode.SINGLE);
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(grid);
 		add(grid);
 		expand(grid);
 

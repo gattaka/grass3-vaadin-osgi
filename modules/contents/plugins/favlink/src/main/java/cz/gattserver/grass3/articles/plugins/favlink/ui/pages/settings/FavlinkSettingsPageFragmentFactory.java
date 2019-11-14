@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
@@ -99,8 +98,7 @@ public class FavlinkSettingsPageFragmentFactory extends AbstractPageFragmentFact
 			Grid<Path> grid = new Grid<>();
 			grid.setWidth("100%");
 			grid.setHeight("500px");
-			grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES,
-					GridVariant.LUMO_COMPACT);
+			UIUtils.applyGrassDefaultStyle(grid);
 
 			layout.add(grid);
 

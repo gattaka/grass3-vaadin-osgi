@@ -7,7 +7,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.GridSortOrder;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
@@ -69,7 +68,7 @@ public class CampgamesTab extends Div {
 		// Tabulka her
 		grid = new Grid<>();
 		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(grid);
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setWidth("100%");
 

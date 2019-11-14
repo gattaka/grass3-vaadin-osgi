@@ -11,7 +11,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.GridSortOrder;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
@@ -163,7 +162,7 @@ public class ScheduledVisitsTab extends Div {
 
 	private void prepareGrid(Grid<ScheduledVisitTO> grid, boolean fullTime) {
 		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(grid);
 		grid.addColumn(new IconRenderer<ScheduledVisitTO>(item -> {
 			if (item.getState().equals(ScheduledVisitState.MISSED)) {
 				return new Image(ImageIcon.WARNING_16_ICON.createResource(), "Zmeškáno");

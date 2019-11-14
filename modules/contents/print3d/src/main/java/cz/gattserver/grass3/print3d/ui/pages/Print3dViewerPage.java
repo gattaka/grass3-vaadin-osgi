@@ -19,7 +19,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.GridSortOrder;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
@@ -210,7 +209,7 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 		grid.setItems(items);
 		grid.setWidth("100%");
 		grid.setHeight("300px");
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(grid);
 		layout.add(grid);
 
 		grid.addColumn(new IconRenderer<Print3dViewItemTO>(p -> {

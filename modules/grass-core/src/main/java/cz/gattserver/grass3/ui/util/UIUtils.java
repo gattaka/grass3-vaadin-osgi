@@ -9,6 +9,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow.HeaderCell;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextField;
@@ -32,6 +33,8 @@ public class UIUtils {
 	public static final String THUMBNAIL_200_CSS_CLASS = "thumbnail-200";
 	public static final String BUTTON_LINK_CSS_CLASS = "button-link";
 
+	public static final String GRID_ICON_CSS_CLASS = "grid-icon-img";
+
 	private UIUtils() {
 	}
 
@@ -40,6 +43,13 @@ public class UIUtils {
 	 */
 	public static void scrollGridToIndex(Grid<?> grid, int index) {
 		UI.getCurrent().getPage().executeJs("$0._scrollToIndex(" + index + ")", grid.getElement());
+	}
+
+	/**
+	 * Ostyluje Grid tak, jak vypadají všechny tabulky v systému
+	 */
+	public static void applyGrassDefaultStyle(Grid<?> grid) {
+		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
 	}
 
 	/**

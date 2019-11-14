@@ -24,7 +24,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Anchor;
@@ -145,8 +144,7 @@ public class PGSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 			layout.add(new H2("Přehled adresářů"));
 
 			Grid<PGSettingsItemTO> grid = new Grid<>();
-			grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES,
-					GridVariant.LUMO_COMPACT);
+			UIUtils.applyGrassDefaultStyle(grid);
 			grid.setWidth("100%");
 			grid.setHeight("500px");
 

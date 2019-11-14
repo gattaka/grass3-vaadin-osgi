@@ -7,7 +7,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
@@ -51,7 +50,7 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 
 		filterTO = createNewOverviewTO();
 		grid = new Grid<>();
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(grid);
 		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		configureGrid(grid, filterTO);
 

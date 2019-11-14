@@ -6,7 +6,6 @@ import java.util.Collection;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 
 import cz.gattserver.common.Identifiable;
@@ -67,7 +66,7 @@ public abstract class GridOperationsTab<T extends Identifiable, C extends Collec
 
 		grid = new Grid<>(clazz);
 		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(grid);
 		grid.setItems(getItems());
 		customizeGrid(grid);
 		add(grid);

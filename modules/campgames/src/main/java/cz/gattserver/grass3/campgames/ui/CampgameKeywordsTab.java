@@ -3,7 +3,6 @@ package cz.gattserver.grass3.campgames.ui;
 import java.util.Set;
 
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 
@@ -38,7 +37,7 @@ public class CampgameKeywordsTab extends Div {
 
 		grid = new Grid<>();
 		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(grid);
 		Set<CampgameKeywordTO> data = getCampgamesService().getAllCampgameKeywords();
 		grid.setItems(data);
 

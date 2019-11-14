@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -75,7 +74,7 @@ public class LanguagePage extends OneColumnPage {
 	protected void createColumnContent(Div layout) {
 		List<LanguageTO> langs = languageFacade.getLanguages();
 		Grid<LanguageTO> grid = new Grid<>();
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(grid);
 		grid.setItems(langs);
 		grid.setWidth("100%");
 		grid.setHeight("150px");

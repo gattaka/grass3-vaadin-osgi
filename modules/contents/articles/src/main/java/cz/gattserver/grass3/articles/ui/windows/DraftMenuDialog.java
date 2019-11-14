@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
@@ -14,6 +13,7 @@ import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
 import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.GridUtils;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
@@ -46,7 +46,7 @@ public abstract class DraftMenuDialog extends WebDialog {
 		addComponent(label);
 
 		final Grid<ArticleDraftOverviewTO> grid = new Grid<>();
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(grid);
 		grid.setItems(drafts);
 		grid.setHeight(GridUtils.processHeight(drafts.size()) + "px");
 		grid.setWidth("900px");

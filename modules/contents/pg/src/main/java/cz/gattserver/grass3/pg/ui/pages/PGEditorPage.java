@@ -22,7 +22,6 @@ import com.vaadin.flow.component.combobox.ComboBox.FetchItemsCallback;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
@@ -208,7 +207,7 @@ public class PGEditorPage extends OneColumnPage implements HasUrlParameter<Strin
 		} else {
 			items = new ArrayList<>();
 		}
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(grid);
 		grid.setItems(items);
 		grid.setColumns("name");
 		grid.getColumnByKey("name").setHeader("Název");

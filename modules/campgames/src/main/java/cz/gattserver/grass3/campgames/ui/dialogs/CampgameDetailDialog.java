@@ -12,7 +12,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -245,7 +244,7 @@ public class CampgameDetailDialog extends Dialog {
 		List<CampgameFileTO> items = getCampgamesService().getCampgameImagesFiles(campgameId);
 		grid.setItems(items);
 		grid.setSizeFull();
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(grid);
 		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		grid.getStyle().set("height", "calc(100% - 85px)");
 

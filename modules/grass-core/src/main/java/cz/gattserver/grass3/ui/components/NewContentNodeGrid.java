@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -16,6 +15,7 @@ import cz.gattserver.grass3.modules.register.ModuleRegister;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.pages.template.MenuPage;
 import cz.gattserver.grass3.ui.util.GridUtils;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
@@ -28,7 +28,7 @@ public class NewContentNodeGrid extends Grid<ContentModule> {
 		final ModuleRegister serviceHolder = SpringContextHelper.getContext().getBean(ModuleRegister.class);
 
 		setSelectionMode(SelectionMode.NONE);
-		addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(this);
 
 		String iconBind = "customIcon";
 		String nameBind = "customName";
@@ -37,8 +37,12 @@ public class NewContentNodeGrid extends Grid<ContentModule> {
 		List<ContentModule> contentServices = serviceHolder.getContentModules();
 		setItems(contentServices);
 
-		addColumn(new IconRenderer<ContentModule>(c -> new Image(c.getContentIcon(), ""), c -> "")).setHeader("")
-				.setFlexGrow(0).setWidth("28px").setHeader("").setTextAlign(ColumnTextAlign.CENTER).setKey(iconBind);
+		addColumn(new IconRenderer<ContentModule>(c -> {
+			Image img = new Image(c.getContentIcon(), "");
+			img.addClassName(UIUtils.GRID_ICON_CSS_CLASS);
+			return img;
+		}, c -> "")).setHeader("").setFlexGrow(0).setWidth("28px").setHeader("").setTextAlign(ColumnTextAlign.CENTER)
+				.setKey(iconBind);
 
 		addColumn(new ComponentRenderer<Anchor, ContentModule>(c -> {
 			String url = GrassPage.getPageURL(c.getContentEditorPageFactory(), DefaultContentOperations.NEW.toString(),

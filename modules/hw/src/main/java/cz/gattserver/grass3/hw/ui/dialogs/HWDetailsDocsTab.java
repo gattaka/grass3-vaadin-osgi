@@ -10,7 +10,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.upload.Upload;
@@ -64,8 +63,7 @@ public class HWDetailsDocsTab extends Div {
 	private void init() {
 		docsGrid = new Grid<>();
 		docsGrid.setWidthFull();
-		docsGrid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES,
-				GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(docsGrid);
 		docsGrid.addColumn(new TextRenderer<HWItemFileTO>(HWItemFileTO::getName)).setHeader("Název");
 		docsGrid.addColumn(new LocalDateTimeRenderer<HWItemFileTO>(HWItemFileTO::getLastModified, "d.MM.yyyy HH:mm"))
 				.setKey("datum").setHeader("Datum");

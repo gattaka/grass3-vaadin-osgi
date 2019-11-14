@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Lazy;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
@@ -45,7 +44,7 @@ public class UsersSettingsPageFragmentFactory extends AbstractPageFragmentFactor
 		layout.add(new H2("Správa uživatelů"));
 		layout.add(grid);
 
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(grid);
 		grid.setSelectionMode(SelectionMode.SINGLE);
 
 		grid.addColumn(UserInfoTO::getName).setHeader("Jméno");

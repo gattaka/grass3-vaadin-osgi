@@ -2,7 +2,6 @@ package cz.gattserver.grass3.ui.components;
 
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
@@ -21,6 +20,7 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.pages.template.MenuPage;
 import cz.gattserver.grass3.ui.util.GridUtils;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -31,7 +31,7 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 
 	public ContentsLazyGrid() {
 		super();
-		addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(this);
 	}
 
 	public void populate(boolean showPubLock, final MenuPage page,
@@ -56,6 +56,7 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 			ContentModule contentService = serviceHolder.getContentModulesByName(c.getContentReaderID());
 			Image img = new Image(contentService == null ? ImageIcon.WARNING_16_ICON.createResource()
 					: contentService.getContentIcon(), "");
+			img.addClassName(UIUtils.GRID_ICON_CSS_CLASS);
 			return img;
 		}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER)
 				.setKey(iconBind);
@@ -69,9 +70,15 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		})).setFlexGrow(2).setHeader("Název").setId(nameBind);
 
 		if (showPubLock) {
-			addColumn(new IconRenderer<ContentNodeOverviewTO>(
-					c -> c.isPublicated() ? new Span() : new Image(ImageIcon.SHIELD_16_ICON.createResource(), "locked"),
-					c -> "")).setFlexGrow(0).setWidth("26px").setHeader("").setKey(lockIconBind);
+			addColumn(new IconRenderer<ContentNodeOverviewTO>(c -> {
+				if (c.isPublicated()) {
+					return new Span();
+				} else {
+					Image img = new Image(ImageIcon.SHIELD_16_ICON.createResource(), "locked");
+					img.addClassName(UIUtils.GRID_ICON_CSS_CLASS);
+					return img;
+				}
+			}, c -> "")).setFlexGrow(0).setWidth("26px").setHeader("").setKey(lockIconBind);
 		}
 
 		addColumn(new ComponentRenderer<Anchor, ContentNodeOverviewTO>(contentNode -> {

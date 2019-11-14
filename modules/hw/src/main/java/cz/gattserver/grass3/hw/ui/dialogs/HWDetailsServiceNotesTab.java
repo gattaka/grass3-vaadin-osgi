@@ -10,7 +10,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.GridSortOrder;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
@@ -50,8 +49,7 @@ public class HWDetailsServiceNotesTab extends Div {
 
 	private void init() {
 		serviceNotesGrid = new Grid<>();
-		serviceNotesGrid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES,
-				GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(serviceNotesGrid);
 		serviceNotesGrid.setSelectionMode(SelectionMode.SINGLE);
 		Column<ServiceNoteTO> idColumn = serviceNotesGrid
 				.addColumn(new TextRenderer<ServiceNoteTO>(to -> String.valueOf(to.getId())));

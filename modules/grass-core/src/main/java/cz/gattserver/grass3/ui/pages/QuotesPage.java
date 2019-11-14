@@ -3,7 +3,6 @@ package cz.gattserver.grass3.ui.pages;
 import java.util.List;
 
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.Route;
 
@@ -14,6 +13,7 @@ import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.dialogs.QuoteDialog;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 
 @Route("quotes")
 public class QuotesPage extends OneColumnPage {
@@ -33,7 +33,7 @@ public class QuotesPage extends OneColumnPage {
 	@Override
 	protected void createColumnContent(Div layout) {
 		Grid<QuoteTO> grid = new Grid<>();
-		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(grid);
 		layout.add(grid);
 
 		populateData();

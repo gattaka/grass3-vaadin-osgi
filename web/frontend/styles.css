@@ -1,42 +1,42 @@
 html, body {
 	margin: 0;
 	padding: 0;
-/* 	height: 100%; */
+	/* 	height: 100%; */
 	width: 100%;
 	/* 	width: 100vw; */
 	background-color: #d8cda6;
 }
 
 vaadin-tab img {
-    margin: 0px 5px 1px 0;
+	margin: 0px 5px 1px 0;
 }
 
 vaadin-progress-bar {
-    margin-bottom: 2px;
-    display: inline-block;
+	margin-bottom: 2px;
+	display: inline-block;
 }
 
 .button-link {
-	font-family: var(--lumo-font-family);
-	font-size: var(--lumo-font-size-m);
+	font-family: var(- -lumo-font-family);
+	font-size: var(- -lumo-font-size-m);
 	font-weight: 500;
 }
 
 .scroll-div {
 	overflow-y: auto;
-    height: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
+	height: 100%;
+	padding: 10px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	box-sizing: border-box;
 }
 
 img.thumbnail-200 {
-    display: inline-block;
-    max-width: 200px;
-    max-height: 200px;
-    width: auto;
-    height: auto;
+	display: inline-block;
+	max-width: 200px;
+	max-height: 200px;
+	width: auto;
+	height: auto;
 }
 
 .grass-table tr td {
@@ -45,6 +45,10 @@ img.thumbnail-200 {
 
 .grass-table tr td:FIRST-CHILD {
 	padding-left: 0px;
+}
+
+.grid-icon-img {
+	margin-top: 3px;
 }
 
 /* Nadpisy */
@@ -90,16 +94,16 @@ span.label-err {
 
 /* Button div  */
 .button-div vaadin-button, .button-div vaadin-combo-box {
-	margin: var(--lumo-space-m) var(--lumo-space-m) 0 0;
+	margin: var(- -lumo-space-m) var(- -lumo-space-m) 0 0;
 }
 
 /* Top and Bottom margin */
 .top-margin {
-	margin-top: var(--lumo-space-m);
+	margin-top: var(- -lumo-space-m);
 }
 
 .bottom-margin {
-	margin-bottom: var(--lumo-space-m);
+	margin-bottom: var(- -lumo-space-m);
 }
 
 /* Top clean and Top pull*/
@@ -109,8 +113,8 @@ span.label-err {
 }
 
 .top-pull {
-	margin-top: calc(-1 * var(--lumo-space-m));
-	padding-top: 0; 
+	margin-top: calc(-1 * var(- -lumo-space-m));
+	padding-top: 0;
 }
 
 /* Tag layout */
@@ -173,7 +177,7 @@ vaadin-horizontal-layout.menu {
 
 /* Page layout */
 #center-content h2, #right-content h2 {
-	margin-top: var(--lumo-space-m);
+	margin-top: var(- -lumo-space-m);
 }
 
 #center-content h2:FIRST-CHILD, #right-content h2:FIRST-CHILD {
@@ -182,7 +186,7 @@ vaadin-horizontal-layout.menu {
 
 #main-div {
 	position: relative;
- 	min-height: 100vh;
+	min-height: 100vh;
 }
 
 #holder {
@@ -233,7 +237,7 @@ vaadin-horizontal-layout.menu {
 #center-content, #left-content, #right-content {
 	background-color: #f4f1e6;
 	border-radius: 4px;
-	padding: var(--lumo-space-l);
+	padding: var(- -lumo-space-l);
 	box-sizing: border-box;
 }
 

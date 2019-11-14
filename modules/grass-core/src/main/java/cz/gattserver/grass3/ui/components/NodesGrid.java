@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -15,6 +14,7 @@ import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.pages.template.MenuPage;
 import cz.gattserver.grass3.ui.util.GridUtils;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -27,7 +27,7 @@ public class NodesGrid extends Grid<NodeOverviewTO> {
 		// inject nefunguje kvůli něčemu v předkovi
 		final PageFactory nodePageFactory = (PageFactory) SpringContextHelper.getBean("nodePageFactory");
 
-		addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS, GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COMPACT);
+		UIUtils.applyGrassDefaultStyle(this);
 
 		setHeight("200px");
 		setSelectionMode(SelectionMode.NONE);

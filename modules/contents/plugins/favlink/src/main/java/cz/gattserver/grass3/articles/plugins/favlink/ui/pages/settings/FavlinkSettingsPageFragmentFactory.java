@@ -113,17 +113,21 @@ public class FavlinkSettingsPageFragmentFactory extends AbstractPageFragmentFact
 				}), p.getFileName().toString());
 				img.setWidth("16px");
 				img.setHeight("16px");
+				img.addClassName(UIUtils.GRID_ICON_CSS_CLASS);
 				return img;
 			}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
 
-			Column<Path> nameColumn = grid
-					.addColumn(new TextRenderer<>(
-							p -> p.getFileName().toString().substring(0, p.getFileName().toString().lastIndexOf('.'))))
-					.setHeader("Název").setFlexGrow(100);
+			Column<Path> nameColumn = grid.addColumn(new TextRenderer<>(p -> {
+				String name = p.getFileName().toString();
+				int dotIndex = name.lastIndexOf('.');
+				return dotIndex > 0 ? name.substring(0, dotIndex) : name;
+			})).setHeader("Název").setFlexGrow(100);
 
-			grid.addColumn(new TextRenderer<>(
-					p -> p.getFileName().toString().substring(p.getFileName().toString().lastIndexOf('.'))))
-					.setHeader("Typ").setWidth("40px").setFlexGrow(0);
+			grid.addColumn(new TextRenderer<>(p -> {
+				String name = p.getFileName().toString();
+				int dotIndex = name.lastIndexOf('.');
+				return dotIndex > 0 ? name.substring(dotIndex) : "";
+			})).setHeader("Typ").setWidth("40px").setFlexGrow(0);
 
 			grid.addColumn(new ComponentRenderer<>(p -> new LinkButton("Smazat", be -> {
 				new ConfirmDialog("Opravdu smazat favicon?", e -> {
@@ -168,9 +172,12 @@ public class FavlinkSettingsPageFragmentFactory extends AbstractPageFragmentFact
 	private Stream<Path> createStream(Path path) {
 		try {
 			// zde se úmyslně nezavírá stream, protože se předává dál do vaadin
-			return Files.list(path)
-					.filter(p -> p.getFileName().toString().substring(0, p.getFileName().toString().lastIndexOf('.'))
-							.contains(filterName == null ? "" : filterName));
+			return Files.list(path).filter(p -> {
+				String name = p.getFileName().toString();
+				int dotIndex = name.lastIndexOf('.');
+				String targetValue = dotIndex > 0 ? name.substring(0, dotIndex) : name;
+				return targetValue.contains(filterName == null ? "" : filterName);
+			});
 		} catch (IOException e) {
 			logger.error("Nezdařilo se načíst favicon sobory z " + path.getFileName().toString(), e);
 		}
@@ -181,7 +188,7 @@ public class FavlinkSettingsPageFragmentFactory extends AbstractPageFragmentFact
 		try (Stream<Path> stream = Files.list(path)) {
 			return stream.filter(p -> p.getFileName().toString().contains(filterName == null ? "" : filterName))
 					.count();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error("Nezdařilo se načíst galerie z " + path.getFileName().toString(), e);
 			return 0;
 		}

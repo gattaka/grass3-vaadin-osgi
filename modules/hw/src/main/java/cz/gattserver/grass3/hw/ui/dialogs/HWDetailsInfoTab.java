@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.html.Div;
@@ -194,12 +195,12 @@ public class HWDetailsInfoTab extends Div {
 			ImageIcon ii = HWUIUtils.chooseImageIcon(c);
 			if (ii != null) {
 				Image img = new Image(ii.createResource(), c.getState().getName());
-				img.getStyle().set("margin-bottom", "-4px");
+				img.addClassName(UIUtils.GRID_ICON_CSS_CLASS);
 				return img;
 			} else {
 				return new Span();
 			}
-		}, c -> "")).setFlexGrow(0).setWidth("26px").setHeader("");
+		}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
 
 		grid.addColumn(
 				new ComponentRenderer<Button, HWItemOverviewTO>(c -> new LinkButton(createShortName(c.getName()), e -> {

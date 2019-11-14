@@ -87,12 +87,12 @@ public class HWItemsTab extends Div {
 			ImageIcon ii = HWUIUtils.chooseImageIcon(c);
 			if (ii != null) {
 				Image img = new Image(ii.createResource(), c.getState().getName());
-				img.getStyle().set("margin-bottom", "-4px");
+				img.addClassName(UIUtils.GRID_ICON_CSS_CLASS);
 				return img;
 			} else {
 				return new Span();
 			}
-		}, c -> "")).setFlexGrow(0).setWidth("26px").setHeader("");
+		}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
 
 		Column<HWItemOverviewTO> nameColumn = grid.addColumn(HWItemOverviewTO::getName).setKey(NAME_BIND)
 				.setHeader("Název").setWidth("260px").setFlexGrow(0);

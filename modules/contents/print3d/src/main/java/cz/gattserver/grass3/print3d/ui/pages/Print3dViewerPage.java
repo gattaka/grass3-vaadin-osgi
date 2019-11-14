@@ -218,7 +218,9 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 				icon = ImageIcon.IMG_16_ICON;
 			if (p.getType() == Print3dItemType.MODEL)
 				icon = ImageIcon.STOP_16_ICON;
-			return new Image(icon.createResource(), "");
+			Image iconImg = new Image(icon.createResource(), "");
+			iconImg.addClassName(UIUtils.GRID_ICON_CSS_CLASS);
+			return iconImg;
 		}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
 
 		Column<Print3dViewItemTO> nameColumn = grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getOnlyName()))

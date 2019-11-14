@@ -234,6 +234,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 		grid.addColumn(new IconRenderer<FMItemTO>(to -> {
 			Image img = new Image(to.isDirectory() ? ImageIcon.FOLDER_16_ICON.createResource()
 					: ImageIcon.DOCUMENT_16_ICON.createResource(), "");
+			img.addClassName(UIUtils.GRID_ICON_CSS_CLASS);
 			return img;
 		}, to -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
 

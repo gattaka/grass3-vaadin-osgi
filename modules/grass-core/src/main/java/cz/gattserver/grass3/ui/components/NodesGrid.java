@@ -35,9 +35,12 @@ public class NodesGrid extends Grid<NodeOverviewTO> {
 		String iconBind = "customIcon";
 		String nameBind = "customName";
 
-		addColumn(new IconRenderer<NodeOverviewTO>(c -> new Image(ImageIcon.BRIEFCASE_16_ICON.createResource(), ""),
-				c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER)
-						.setKey(iconBind);
+		addColumn(new IconRenderer<NodeOverviewTO>(c -> {
+			Image img = new Image(ImageIcon.BRIEFCASE_16_ICON.createResource(), "");
+			img.addClassName(UIUtils.GRID_ICON_CSS_CLASS);
+			return img;
+		}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER)
+				.setKey(iconBind);
 
 		addColumn(new ComponentRenderer<Anchor, NodeOverviewTO>(node -> {
 			String url = GrassPage.getPageURL(nodePageFactory,

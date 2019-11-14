@@ -17,8 +17,8 @@ vaadin-progress-bar {
 }
 
 .button-link {
-	font-family: var(- -lumo-font-family);
-	font-size: var(- -lumo-font-size-m);
+	font-family: var(--lumo-font-family);
+	font-size: var(--lumo-font-size-m);
 	font-weight: 500;
 }
 
@@ -94,16 +94,16 @@ span.label-err {
 
 /* Button div  */
 .button-div vaadin-button, .button-div vaadin-combo-box {
-	margin: var(- -lumo-space-m) var(- -lumo-space-m) 0 0;
+	margin: var(--lumo-space-m) var(--lumo-space-m) 0 0;
 }
 
 /* Top and Bottom margin */
 .top-margin {
-	margin-top: var(- -lumo-space-m);
+	margin-top: var(--lumo-space-m);
 }
 
 .bottom-margin {
-	margin-bottom: var(- -lumo-space-m);
+	margin-bottom: var(--lumo-space-m);
 }
 
 /* Top clean and Top pull*/
@@ -113,7 +113,7 @@ span.label-err {
 }
 
 .top-pull {
-	margin-top: calc(-1 * var(- -lumo-space-m));
+	margin-top: calc(-1 * var(--lumo-space-m));
 	padding-top: 0;
 }
 
@@ -177,7 +177,7 @@ vaadin-horizontal-layout.menu {
 
 /* Page layout */
 #center-content h2, #right-content h2 {
-	margin-top: var(- -lumo-space-m);
+	margin-top: var(--lumo-space-m);
 }
 
 #center-content h2:FIRST-CHILD, #right-content h2:FIRST-CHILD {
@@ -237,7 +237,7 @@ vaadin-horizontal-layout.menu {
 #center-content, #left-content, #right-content {
 	background-color: #f4f1e6;
 	border-radius: 4px;
-	padding: var(- -lumo-space-l);
+	padding: var(--lumo-space-l);
 	box-sizing: border-box;
 }
 

@@ -165,7 +165,9 @@ public class ScheduledVisitsTab extends Div {
 		UIUtils.applyGrassDefaultStyle(grid);
 		grid.addColumn(new IconRenderer<ScheduledVisitTO>(item -> {
 			if (item.getState().equals(ScheduledVisitState.MISSED)) {
-				return new Image(ImageIcon.WARNING_16_ICON.createResource(), "Zmeškáno");
+				Image img = new Image(ImageIcon.WARNING_16_ICON.createResource(), "Zmeškáno");
+				img.addClassName(UIUtils.GRID_ICON_CSS_CLASS);
+				return img;
 			} else {
 				if (MedicUtil.isVisitPending(item))
 					return new Image(ImageIcon.CLOCK_16_ICON.createResource(), "Blíží se");

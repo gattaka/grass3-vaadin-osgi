@@ -24,6 +24,7 @@ import cz.gattserver.grass3.ui.components.Breadcrumb;
 import cz.gattserver.grass3.ui.components.ContentsLazyGrid;
 import cz.gattserver.grass3.ui.components.NewContentNodeGrid;
 import cz.gattserver.grass3.ui.components.NodesGrid;
+import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.grass3.ui.components.Breadcrumb.BreadcrumbElement;
 import cz.gattserver.grass3.ui.components.button.ImageButton;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
@@ -80,9 +81,10 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 
 	public void createNodeAction(NodeOverviewTO parentNode) {
 		final WebDialog dialog = new WebDialog();
-		dialog.open();
 
-		final TextField newNameField = new TextField("Nová kategorie do '" + parentNode.getName() + "'");
+		final TextField newNameField = new TextField();
+		newNameField.setPlaceholder("Nová kategorie do " + parentNode.getName());
+		newNameField.setWidthFull();
 		dialog.addComponent(newNameField);
 
 		NodeOverviewTO to = new NodeOverviewTO();
@@ -94,18 +96,19 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		dialog.addComponent(btnLayout);
 
-		Button confirmBtn = new Button("Vytvořit", event -> {
+		SaveCloseLayout saveCloseLayout = new SaveCloseLayout(event -> {
 			if (binder.validate().isOk()) {
 				Long newNodeId = nodeFacade.createNewNode(parentNode.getId(), to.getName());
 				UIUtils.redirect(
 						getPageURL(nodePageFactory, URLIdentifierUtils.createURLIdentifier(newNodeId, to.getName())));
 				dialog.close();
 			}
-		});
-		btnLayout.add(confirmBtn);
+		}, event -> dialog.close());
+		dialog.add(saveCloseLayout);
 
-		Button closeBtn = new Button("Storno", event -> dialog.close());
-		btnLayout.add(closeBtn);
+		dialog.setWidth("200px");
+
+		dialog.open();
 	}
 
 	private void createBreadcrumb(Div layout, NodeTO node) {

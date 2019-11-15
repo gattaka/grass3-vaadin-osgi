@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.ClientCallable;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
@@ -31,6 +30,7 @@ import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.MonitorState;
+import cz.gattserver.grass3.monitor.processor.item.SMARTMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
@@ -47,8 +47,6 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
 public class MonitorPage extends OneColumnPage {
 
 	private static final long serialVersionUID = 4862261730750923131L;
-
-	private static final int REFRESH_TIMEOUT = 5000;
 
 	@Autowired
 	private MonitorFacade monitorFacade;
@@ -221,7 +219,6 @@ public class MonitorPage extends OneColumnPage {
 		default:
 			tableLayout.newRow().add(new WarningMonitorStateLabel()).add("JVM thread info není dostupné");
 		}
-
 	}
 
 	private void createBackupPart(VerticalLayout backupLayout) {
@@ -258,7 +255,6 @@ public class MonitorPage extends OneColumnPage {
 				}
 			}
 		}
-
 	}
 
 	private ProgressBar constructProgressMonitor(float ration, String description) {
@@ -312,12 +308,38 @@ public class MonitorPage extends OneColumnPage {
 				break;
 			case ERROR:
 				tableLayout.add(new ErrorMonitorStateLabel());
-				tableLayout.add(new MonitorOutputLabel("Chyba disku"));
+				tableLayout.add("Chyba disku");
 				break;
 			case UNAVAILABLE:
 			default:
 				tableLayout.add(new WarningMonitorStateLabel());
-				tableLayout.add(new MonitorOutputLabel(disk.getName() + " info není dostupné"));
+				tableLayout.add(disk.getName() + " info není dostupné");
+			}
+		}
+	}
+
+	private void createSMARTPart(VerticalLayout backupLayout) {
+		// Vyžaduje být ve skupině
+		// sudo usermod -a -G systemd-journal tomcat8
+		TableLayout tableLayout = preparePart("SMARTD", backupLayout);
+		List<SMARTMonitorItemTO> smartItems = monitorFacade.getSMARTInfo();
+		for (SMARTMonitorItemTO to : smartItems) {
+			// https://www.freedesktop.org/software/systemd/man/journalctl.html
+			switch (to.getMonitorState()) {
+			case SUCCESS:
+				tableLayout.newRow().add(new SuccessMonitorStateLabel());
+				tableLayout.add(to.getTime());
+				tableLayout.add(to.getMessage());
+				break;
+			case ERROR:
+				tableLayout.newRow().add(new ErrorMonitorStateLabel());
+				tableLayout.add(to.getTime());
+				tableLayout.add(to.getMessage());
+				break;
+			case UNAVAILABLE:
+				tableLayout.newRow().add(new WarningMonitorStateLabel());
+				tableLayout.add(to.getStateDetails());
+				break;
 			}
 		}
 	}
@@ -355,13 +377,11 @@ public class MonitorPage extends OneColumnPage {
 		// Backup disk
 		createRefreshedPart(this::createBackupPart);
 
+		// SMARTD
+		createRefreshedPart(this::createSMARTPart);
+
 		// JVM Overview
 		createRefreshedPart(this::createJVMOverviewPart);
-
-		// JVM Heap
-		// VerticalLayout jvmHeapLayout = new VerticalLayout();
-		// layout.addComponent(jvmHeapLayout);
-		// createJVMHeapPart(jvmHeapLayout);
 
 		String jsDivId = "monitor-js-div";
 		Div jsDiv = new Div() {
@@ -378,8 +398,9 @@ public class MonitorPage extends OneColumnPage {
 
 		parts.stream().forEach(Runnable::run);
 
-		UI.getCurrent().getPage().executeJs("setInterval(function(){document.getElementById('" + jsDivId
-				+ "').$server.monitorRefresh() }, " + REFRESH_TIMEOUT + ");");
+		// UI.getCurrent().getPage().executeJs("setInterval(function(){document.getElementById('"
+		// + jsDivId
+		// + "').$server.monitorRefresh() }, " + REFRESH_TIMEOUT + ");");
 
 		// Mail test
 		layout.add(new H2("Mail notifier"));

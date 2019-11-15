@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -21,15 +22,13 @@ public class Console {
 	}
 
 	public static ConsoleOutputTO executeCommand(List<String> commandAndArguments) {
-
 		Path dummyInput = null;
 		try {
-			dummyInput = Files.createTempFile(String.valueOf(System.currentTimeMillis()), "GRASS-CONSOLE-DUMMY-INPUT");
+			dummyInput = Files.createTempFile(UUID.randomUUID().toString(), "GRASS-CONSOLE-DUMMY-INPUT");
 		} catch (IOException e) {
 			logger.error("Nezdařilo se vytvořit dummy input soubor pro příkaz console", e);
 			return new ConsoleOutputTO(e.getMessage(), false);
 		}
-
 		try {
 			ProcessBuilder pb = new ProcessBuilder(commandAndArguments);
 
@@ -54,6 +53,5 @@ public class Console {
 				logger.error("Nezdařilo se smazat dočasný soubor logu console", e);
 			}
 		}
-
 	}
 }

@@ -58,10 +58,14 @@ public class TableLayout extends Component {
 	}
 
 	public TableLayout add(String text) {
+		if (text == null)
+			text = "";
 		return add(new Text(text));
 	}
 
 	public TableLayout add(String text, boolean newCell) {
+		if (text == null)
+			text = "";
 		return add(new Text(text), newCell);
 	}
 

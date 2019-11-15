@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.MonitorState;
+import cz.gattserver.grass3.monitor.processor.item.SMARTMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
 import cz.gattserver.grass3.services.MailService;
 
@@ -46,6 +47,20 @@ public class MonitorEmailNotifierImpl extends TimerTask implements MonitorEmailN
 			if (!MonitorState.SUCCESS.equals(to.getMonitorState()))
 				mailService.sendToAdmin("GRASS3 Monitor oznámení o změně stavu monitorovaného předmětu", to.getValue()
 						+ " Záloha nebyla provedena, je starší než 24h nebo se nezdařilo zjistit její stav");
+		}
+
+		// Test, zda jsou disky dle SMART v pořádku
+		for (SMARTMonitorItemTO to : monitorFacade.getSMARTInfo()) {
+			if (MonitorState.UNAVAILABLE.equals(to.getMonitorState())) {
+				mailService.sendToAdmin("GRASS3 Monitor oznámení o změně stavu monitorovaného předmětu",
+						"Nezdařilo se zjistit stav SMART monitoru: " + to.getStateDetails());
+				break;
+			}
+			if (MonitorState.ERROR.equals(to.getMonitorState())) {
+				mailService.sendToAdmin("GRASS3 Monitor oznámení o změně stavu monitorovaného předmětu",
+						"SMART monitor detekoval chyby");
+				break;
+			}
 		}
 	}
 

@@ -10,6 +10,7 @@ import cz.gattserver.grass3.monitor.processor.item.JVMPIDMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.SMARTMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
@@ -42,5 +43,7 @@ public interface MonitorFacade {
 	JVMMemoryMonitorItemTO getJVMMemory();
 
 	JVMPIDMonitorItemTO getJVMPID();
+
+	List<SMARTMonitorItemTO> getSMARTInfo();
 
 }

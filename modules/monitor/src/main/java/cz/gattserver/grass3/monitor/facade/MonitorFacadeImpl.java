@@ -12,6 +12,7 @@ import java.nio.file.FileSystems;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
 import cz.gattserver.grass3.monitor.processor.Console;
@@ -31,6 +35,7 @@ import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.MonitorState;
+import cz.gattserver.grass3.monitor.processor.item.SMARTMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
@@ -359,6 +364,66 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		} catch (Exception e) {
 			itemTO.setMonitorState(MonitorState.UNAVAILABLE);
 		}
+	}
+
+	@Override
+	public List<SMARTMonitorItemTO> getSMARTInfo() {
+		final String TIME_HEADER = "SYSLOG_TIMESTAMP";
+		final String PRIORITY_HEADER = "PRIORITY";
+		final String MESSAGE_HEADER = "MESSAGE";
+
+		List<SMARTMonitorItemTO> items = new ArrayList<>();
+		// /usr/bin/journalctl -e -u smartd -S 2019-11-03 --lines=10
+		// --output-fields=SYSLOG_TIMESTAMP,PRIORITY,MESSAGE -o json
+		ConsoleOutputTO out = runScript("getSmartStatus");
+		if (out.isSuccess()) {
+			try {
+				String[] lines = out.getOutput().split("\n");
+				for (String line : lines) {
+					ObjectMapper mapper = new ObjectMapper();
+					JsonNode jsonNode = mapper.readTree(line);
+					String message = jsonNode.get(MESSAGE_HEADER).asText();
+					int priority = jsonNode.get(PRIORITY_HEADER).asInt();
+					String time = jsonNode.get(TIME_HEADER).asText();
+					SMARTMonitorItemTO to = new SMARTMonitorItemTO(time, message);
+
+					// https://www.freedesktop.org/software/systemd/man/journalctl.html
+					switch (priority) {
+					case 0: // "emerg" (0)
+					case 1: // "alert" (1)
+					case 2: // "crit" (2)
+					case 3: // "err" (3)
+					case 4: // "warning" (4)
+						to.setMonitorState(MonitorState.ERROR);
+						items.add(to);
+						break;
+					case 5: // "notice" (5)
+					case 6: // "info" (6)
+					case 7: // "debug" (7)
+					default:
+						to.setMonitorState(MonitorState.SUCCESS);
+						break;
+					}
+				}
+				if (items.isEmpty()) {
+					SMARTMonitorItemTO to = new SMARTMonitorItemTO("-", "Vše OK");
+					to.setMonitorState(MonitorState.SUCCESS);
+					items.add(to);
+				}
+			} catch (Exception e) {
+				return createErrorOutput("Nezdařilo se zpracovat JSON výstup smartd");
+			}
+		} else {
+			return createErrorOutput("Nezdařilo se získat přehled smartd");
+		}
+		return items;
+	}
+
+	private List<SMARTMonitorItemTO> createErrorOutput(String reason) {
+		SMARTMonitorItemTO item = new SMARTMonitorItemTO();
+		item.setStateDetails(reason);
+		item.setMonitorState(MonitorState.UNAVAILABLE);
+		return Arrays.asList(item);
 	}
 
 }

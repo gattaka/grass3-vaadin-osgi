@@ -8,7 +8,9 @@ package cz.gattserver.grass3.monitor.processor.item;
  */
 public class MonitorItemTO {
 
-	protected MonitorState monitorState;
+	protected MonitorState monitorState = MonitorState.ERROR;
+
+	protected String stateDetails;
 
 	/**
 	 * Získá stav monitorování
@@ -19,6 +21,14 @@ public class MonitorItemTO {
 
 	public void setMonitorState(MonitorState monitorState) {
 		this.monitorState = monitorState;
+	}
+
+	public String getStateDetails() {
+		return stateDetails;
+	}
+
+	public void setStateDetails(String stateDetails) {
+		this.stateDetails = stateDetails;
 	}
 
 }

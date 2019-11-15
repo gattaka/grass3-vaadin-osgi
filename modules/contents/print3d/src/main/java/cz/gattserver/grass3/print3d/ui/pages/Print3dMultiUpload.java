@@ -1,8 +1,10 @@
 package cz.gattserver.grass3.print3d.ui.pages;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileAlreadyExistsException;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +44,9 @@ public class Print3dMultiUpload extends Upload {
 		SpringContextHelper.inject(this);
 		addSucceededListener(event -> {
 			try {
-				print3dService.uploadFile(buffer.getInputStream(event.getFileName()), event.getFileName(), projectDir);
+				InputStream is = buffer.getInputStream(event.getFileName());
+				String fileUTF8 = IOUtils.toString(event.getFileName().getBytes(), "UTF-8");
+				print3dService.uploadFile(is, fileUTF8, projectDir);
 				fileUploadSuccess(event.getFileName());
 			} catch (FileAlreadyExistsException f) {
 				if (!warnWindowDeployed) {

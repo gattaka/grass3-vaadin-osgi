@@ -2,6 +2,7 @@ package cz.gattserver.grass3.print3d.ui.pages;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +26,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -180,7 +182,7 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 		gridLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		editorLayout.add(gridLayout);
 
-		final Grid<Print3dViewItemTO> grid = new Grid<>(Print3dViewItemTO.class);
+		final Grid<Print3dViewItemTO> grid = new Grid<>();
 		final List<Print3dViewItemTO> items;
 		if (editMode) {
 			try {
@@ -193,8 +195,10 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 		}
 		UIUtils.applyGrassDefaultStyle(grid);
 		grid.setItems(items);
-		grid.setColumns("name");
-		grid.getColumnByKey("name").setHeader("Název");
+
+		grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getFile().toString())).setHeader("Název")
+				.setFlexGrow(100);
+
 		grid.setWidthFull();
 		grid.setHeight("400px");
 
@@ -211,7 +215,7 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 		}))).setHeader("Smazat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 
 		grid.addColumn(new ComponentRenderer<Anchor, Print3dViewItemTO>(itemTO -> {
-			String file = itemTO.getName();
+			String file = itemTO.getFile().toString();
 			Anchor anchor = new Anchor(new StreamResource(file, () -> {
 				try {
 					return Files.newInputStream(print3dService.getFullImage(projectDir, file));
@@ -232,7 +236,7 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 			@Override
 			protected void fileUploadSuccess(String fileName) {
 				Print3dViewItemTO itemTO = new Print3dViewItemTO();
-				itemTO.setOnlyName(fileName);
+				itemTO.setFile(Paths.get(fileName));
 				newFiles.add(itemTO);
 				items.add(itemTO);
 				grid.setItems(items);

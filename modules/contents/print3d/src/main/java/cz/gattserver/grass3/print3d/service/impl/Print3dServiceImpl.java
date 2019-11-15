@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.common.util.ReferenceHolder;
 import cz.gattserver.grass3.events.EventBus;
-import cz.gattserver.grass3.exception.GrassException;
 import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.modules.Print3dModule;
 import cz.gattserver.grass3.print3d.config.Print3dConfiguration;
@@ -157,15 +156,8 @@ public class Print3dServiceImpl implements Print3dService {
 
 	private Long innerSaveProject(Print3dPayloadTO payloadTO, Long existingId, Long nodeId, Long authorId) {
 		String projectDir = payloadTO.getProjectDir();
-		Path projectPath = getProjectPath(projectDir);
-		try (Stream<Path> stream = Files.list(projectPath)) {
-			Print3d print3d = saveProject(projectDir, payloadTO, existingId, nodeId, authorId);
-			return print3d.getId();
-		} catch (IOException e) {
-			String msg = "Nezdařilo se uložit projekt";
-			logger.error(msg, e);
-			throw new GrassException(msg, e);
-		}
+		Print3d print3d = saveProject(projectDir, payloadTO, existingId, nodeId, authorId);
+		return print3d.getId();
 	}
 
 	@Override
@@ -288,7 +280,8 @@ public class Print3dServiceImpl implements Print3dService {
 	@Override
 	public void deleteFile(Print3dViewItemTO item, String projectDir) {
 		Path projectPath = getProjectPath(projectDir);
-		Path subFile = projectPath.resolve(item.getFile());
+		Path subFile = item.getFile().startsWith(projectPath) ? subFile = item.getFile()
+				: projectPath.resolve(item.getFile());
 		if (Files.exists(subFile)) {
 			try {
 				Files.delete(subFile);

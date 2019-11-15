@@ -237,7 +237,8 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 		Column<Print3dViewItemTO> nameColumn = grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getOnlyName()))
 				.setHeader("Název").setFlexGrow(100);
 
-		Column<Print3dViewItemTO> typColumn = grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getExtension()))
+		Column<Print3dViewItemTO> typColumn = grid
+				.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getExtension() == null ? "" : p.getExtension()))
 				.setHeader("Typ").setWidth("80px").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(0);
 
 		grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getSize())).setHeader("Velikost").setWidth("80px")

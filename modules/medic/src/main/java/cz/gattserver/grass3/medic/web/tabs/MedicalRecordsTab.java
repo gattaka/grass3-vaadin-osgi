@@ -75,7 +75,7 @@ public class MedicalRecordsTab extends MedicPageTab<MedicalRecordTO, ArrayList<M
 				.setKey(fdateID).setTextAlign(ColumnTextAlign.END).setWidth("130px").setFlexGrow(0);
 		grid.addColumn("institution").setHeader("Instituce");
 		grid.addColumn("record").setHeader("Záznam");
-		grid.setWidth("100%");
+		grid.setWidthFull();
 		grid.setSelectionMode(SelectionMode.SINGLE);
 	}
 

@@ -36,17 +36,17 @@ public abstract class SongDialog extends WebDialog {
 
 		final TextField nameField = new TextField("Název");
 		binder.forField(nameField).asRequired().bind(SongTO::getName, SongTO::setName);
-		nameField.setWidth("100%");
+		nameField.setWidthFull();
 		addComponent(nameField);
 
 		final TextField authorField = new TextField("Autor");
 		binder.forField(authorField).bind(SongTO::getAuthor, SongTO::setAuthor);
-		authorField.setWidth("100%");
+		authorField.setWidthFull();
 
 		final TextField yearField = new TextField("Rok");
 		binder.forField(yearField).withConverter(new StringToIntegerConverter(null, "Rok musí být celé číslo"))
 				.bind(SongTO::getYear, SongTO::setYear);
-		yearField.setWidth("100%");
+		yearField.setWidthFull();
 
 		HorizontalLayout authorYearLayout = new HorizontalLayout(authorField, yearField);
 		authorYearLayout.setSizeFull();
@@ -54,7 +54,7 @@ public abstract class SongDialog extends WebDialog {
 
 		final TextArea textField = new TextArea("Text");
 		binder.forField(textField).asRequired().bind(SongTO::getText, SongTO::setText);
-		textField.setWidth("100%");
+		textField.setWidthFull();
 		textField.setHeight("500px");
 		add(textField);
 

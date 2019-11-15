@@ -98,7 +98,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		contentLayout.setVerticalComponentAlignment(Alignment.START, image);
 
 		dataLayout = new Div();
-		dataLayout.setWidth("100%");
+		dataLayout.setWidthFull();
 		contentLayout.add(dataLayout);
 
 		ButtonLayout btnLayout = new ButtonLayout();
@@ -117,7 +117,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 
 		final Grid<BookOverviewTO> grid = new Grid<>();
 		UIUtils.applyGrassDefaultStyle(grid);
-		grid.setWidth("100%");
+		grid.setWidthFull();
 		grid.setHeight("400px");
 
 		Column<BookOverviewTO> authorColumn = grid.addColumn(BookOverviewTO::getAuthor).setHeader("Autor")

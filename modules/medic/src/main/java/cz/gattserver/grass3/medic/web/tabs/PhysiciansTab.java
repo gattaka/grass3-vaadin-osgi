@@ -61,7 +61,7 @@ public class PhysiciansTab extends MedicPageTab<PhysicianTO, ArrayList<Physician
 	@Override
 	protected void customizeGrid(Grid<PhysicianTO> grid) {
 		grid.getColumnByKey("name").setHeader("Jméno");
-		grid.setWidth("100%");
+		grid.setWidthFull();
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setColumns("name");
 	}

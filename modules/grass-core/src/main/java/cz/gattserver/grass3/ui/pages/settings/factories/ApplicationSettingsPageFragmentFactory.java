@@ -57,28 +57,6 @@ public class ApplicationSettingsPageFragmentFactory extends AbstractPageFragment
 		final Span valueSpan = new Span(initValue.toString());
 		valueSpan.setWidth("3em");
 
-		// TODO
-		// Span sliderCaption = new Span("Session timeout (5-60 min.)");
-		// final PaperRangeSlider slider = new PaperRangeSlider();
-		// slider.setWidth("100%");
-		// slider.setMin(MIN_SESSION_TIMEOUT);
-		// slider.setMax(MAX_SESSION_TIMEOUT);
-		//
-		// slider.setValueMax(initValue);
-		// slider.addMaxValueChangeListener(event -> {
-		// valueSpan.setText(String.valueOf(event.getValueMax()));
-		// configuration.setSessionTimeout(event.getValueMax());
-		// });
-		//
-		// sessionTimeoutLayout.add(sliderCaption);
-		// sessionTimeoutLayout.add(slider);
-		// sessionTimeoutLayout.expand(slider);
-		// sessionTimeoutLayout.add(valueSpan);
-		// sessionTimeoutLayout.setVerticalComponentAlignment(Alignment.START,
-		// valueSpan);
-		//
-		// settingsFieldsLayout.add(sessionTimeoutLayout);
-
 		/**
 		 * Povolení registrací
 		 */

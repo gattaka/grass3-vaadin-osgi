@@ -146,7 +146,7 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 		populateSubnodesTable(node);
 
 		layout.add(subNodesTable);
-		subNodesTable.setWidth("100%");
+		subNodesTable.setWidthFull();
 
 		// Vytvořit novou kategorii
 		if (coreACL.canCreateNode(getUser()))
@@ -168,7 +168,7 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 				q -> contentNodeFacade.getByNode(node.getId(), q.getOffset(), q.getLimit()).stream(),
 				q -> contentNodeFacade.getCountByNode(node.getId()));
 		layout.add(contentsTable);
-		contentsTable.setWidth("100%");
+		contentsTable.setWidthFull();
 
 		// Vytvořit obsahy
 		if (coreACL.canCreateContent(getUser()))
@@ -179,7 +179,7 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 		layout.add(new H2("Vytvořit nový obsah"));
 		NewContentNodeGrid newContentsTable = new NewContentNodeGrid(NodePage.this, node);
 		layout.add(newContentsTable);
-		newContentsTable.setWidth("100%");
+		newContentsTable.setWidthFull();
 	}
 
 }

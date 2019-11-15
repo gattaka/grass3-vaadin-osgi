@@ -52,13 +52,13 @@ public abstract class ScheduledVisitsCreateDialog extends WebDialog {
 		final TextField purposeField = new TextField("Účel návštěvy");
 		add(purposeField);
 		purposeField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
-		purposeField.setWidth("100%");
+		purposeField.setWidthFull();
 		binder.forField(purposeField).asRequired().bind("purpose");
 
 		if (!planned) {
 			final TextField periodField = new TextField("Pravidelnost (měsíce)");
 			add(periodField);
-			periodField.setWidth("100%");
+			periodField.setWidthFull();
 			binder.forField(periodField)
 					.withConverter(new StringToIntegerConverter(0, "Počet měsíců musí být celé číslo")).bind("period");
 		}
@@ -66,30 +66,30 @@ public abstract class ScheduledVisitsCreateDialog extends WebDialog {
 		final DatePicker dateField = new DatePicker("Datum návštěvy");
 		dateField.setLocale(Locale.forLanguageTag("CS"));
 		add(dateField);
-		dateField.setWidth("100%");
+		dateField.setWidthFull();
 		binder.forField(dateField).bind("date");
 
 		if (planned) {
 			final TimePicker timeField = new TimePicker("Čas návštěvy");
 			timeField.setLocale(Locale.forLanguageTag("CS"));
 			add(timeField);
-			timeField.setWidth("100%");
+			timeField.setWidthFull();
 			binder.forField(timeField).bind("time");
 		}
 
-		dateField.setWidth("100%");
+		dateField.setWidthFull();
 		binder.forField(dateField).asRequired().bind("date");
 
 		List<MedicalRecordTO> records = medicalFacade.getAllMedicalRecords();
 		final ComboBox<MedicalRecordTO> recordsComboBox = new ComboBox<>("Navazuje na kontrolu", records);
 		add(recordsComboBox);
-		recordsComboBox.setWidth("100%");
+		recordsComboBox.setWidthFull();
 		binder.forField(recordsComboBox).bind("record");
 
 		List<MedicalInstitutionTO> institutions = medicalFacade.getAllMedicalInstitutions();
 		final ComboBox<MedicalInstitutionTO> institutionComboBox = new ComboBox<>("Instituce", institutions);
 		add(institutionComboBox);
-		institutionComboBox.setWidth("100%");
+		institutionComboBox.setWidthFull();
 		binder.forField(institutionComboBox).asRequired().bind("institution");
 
 		add(new SaveCloseLayout(e -> {

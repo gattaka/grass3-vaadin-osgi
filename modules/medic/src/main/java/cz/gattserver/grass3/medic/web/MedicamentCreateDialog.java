@@ -32,13 +32,13 @@ public abstract class MedicamentCreateDialog extends WebDialog {
 		final TextField nameField = new TextField("Název");
 		add(nameField);
 		nameField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
-		nameField.setWidth("100%");
+		nameField.setWidthFull();
 		binder.forField(nameField).bind("name");
 
 		final TextArea toleranceField = new TextArea("Reakce, nežádoucí účinky");
 		add(toleranceField);
 		toleranceField.setHeight("200px");
-		toleranceField.setWidth("100%");
+		toleranceField.setWidthFull();
 		binder.forField(toleranceField).bind("tolerance");
 
 		add(new SaveCloseLayout(e -> {

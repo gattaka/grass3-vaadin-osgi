@@ -54,31 +54,31 @@ public abstract class MedicalRecordCreateDialog extends WebDialog {
 		Set<PhysicianTO> physicians = getMedicFacade().getAllPhysicians();
 		final ComboBox<PhysicianTO> physicianComboBox = new ComboBox<>("Ošetřující lékař", physicians);
 		add(physicianComboBox);
-		physicianComboBox.setWidth("100%");
+		physicianComboBox.setWidthFull();
 		physicianComboBox.addClassName(UIUtils.TOP_PULL_CSS_CLASS);
 		binder.forField(physicianComboBox).bind("physician");
 
 		final DatePicker dateField = new DatePicker("Datum návštěvy");
 		dateField.setLocale(Locale.forLanguageTag("CS"));
 		add(dateField);
-		dateField.setWidth("100%");
+		dateField.setWidthFull();
 		binder.forField(dateField).bind("date");
 
 		final TimePicker timeField = new TimePicker("Čas návštěvy");
 		timeField.setLocale(Locale.forLanguageTag("CS"));
 		add(timeField);
-		timeField.setWidth("100%");
+		timeField.setWidthFull();
 		binder.forField(timeField).bind("time");
 
 		final ComboBox<MedicalInstitutionTO> institutionComboBox = new ComboBox<>("Instituce",
 				getMedicFacade().getAllMedicalInstitutions());
 		add(institutionComboBox);
-		institutionComboBox.setWidth("100%");
+		institutionComboBox.setWidthFull();
 		binder.forField(institutionComboBox).bind("institution");
 
 		final TextArea recordField = new TextArea("Záznam");
 		add(recordField);
-		recordField.setWidth("100%");
+		recordField.setWidthFull();
 		recordField.setHeight("200px");
 		binder.forField(recordField).bind("record");
 

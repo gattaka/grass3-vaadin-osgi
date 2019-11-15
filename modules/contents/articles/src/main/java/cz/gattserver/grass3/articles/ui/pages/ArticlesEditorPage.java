@@ -464,7 +464,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 	protected void createRightColumnContent(Div layout) {
 		layout.add(new H2("Název článku"));
 		layout.add(articleNameField);
-		articleNameField.setWidth("100%");
+		articleNameField.setWidthFull();
 
 		// label
 		layout.add(new H2("Klíčová slova"));

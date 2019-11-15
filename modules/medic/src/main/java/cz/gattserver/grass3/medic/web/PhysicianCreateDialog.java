@@ -29,7 +29,7 @@ public abstract class PhysicianCreateDialog extends WebDialog {
 		final TextField nameField = new TextField("Jméno");
 		add(nameField);
 		nameField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
-		nameField.setWidth("100%");
+		nameField.setWidthFull();
 		binder.forField(nameField).bind("name");
 
 		add(new SaveCloseLayout(e -> {

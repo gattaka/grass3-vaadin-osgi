@@ -32,22 +32,22 @@ public abstract class MedicalInstitutionCreateDialog extends WebDialog {
 		final TextField nameField = new TextField("Název");
 		add(nameField);
 		nameField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
-		nameField.setWidth("100%");
+		nameField.setWidthFull();
 		binder.forField(nameField).bind("name");
 
 		final TextField addressField = new TextField("Adresa");
 		add(addressField);
-		addressField.setWidth("100%");
+		addressField.setWidthFull();
 		binder.forField(addressField).bind("address");
 
 		final TextField webField = new TextField("Webové stránky");
 		add(webField);
-		webField.setWidth("100%");
+		webField.setWidthFull();
 		binder.forField(webField).bind("web");
 
 		final TextArea hoursField = new TextArea("Otevírací hodiny");
 		add(hoursField);
-		hoursField.setWidth("100%");
+		hoursField.setWidthFull();
 		hoursField.setHeight("200px");
 		binder.forField(hoursField).bind("hours");
 

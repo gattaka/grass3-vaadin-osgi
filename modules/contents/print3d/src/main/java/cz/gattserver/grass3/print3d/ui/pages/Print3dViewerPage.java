@@ -218,7 +218,7 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 		grid = new Grid<>();
 		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		grid.setItems(items);
-		grid.setWidth("100%");
+		grid.setWidthFull();
 		grid.setHeight("300px");
 		UIUtils.applyGrassDefaultStyle(grid);
 		layout.add(grid);

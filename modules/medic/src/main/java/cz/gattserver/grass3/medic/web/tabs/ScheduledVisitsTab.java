@@ -188,7 +188,7 @@ public class ScheduledVisitsTab extends Div {
 				to -> to.getInstitution() == null ? "" : to.getInstitution().getName())).setKey("institution")
 				.setHeader("Instituce");
 
-		grid.setWidth("100%");
+		grid.setWidthFull();
 		grid.setHeight("250px");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 	}

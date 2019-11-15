@@ -45,7 +45,7 @@ public class MedicalRecordDetailDialog extends Dialog {
 		layout.add(new Strong("Záznam"));
 		Div div = new Div();
 		div.setText(medicalRecordDTO.getRecord());
-		div.setWidth("100%");
+		div.setWidthFull();
 		div.getStyle().set("white-space", "pre-wrap");
 		div.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		layout.add(div);

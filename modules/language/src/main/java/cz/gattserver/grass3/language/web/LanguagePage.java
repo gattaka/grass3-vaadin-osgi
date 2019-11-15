@@ -76,7 +76,7 @@ public class LanguagePage extends OneColumnPage {
 		Grid<LanguageTO> grid = new Grid<>();
 		UIUtils.applyGrassDefaultStyle(grid);
 		grid.setItems(langs);
-		grid.setWidth("100%");
+		grid.setWidthFull();
 		grid.setHeight("150px");
 		grid.addColumn(LanguageTO::getName).setHeader("Název");
 		layout.add(grid);
@@ -179,7 +179,7 @@ public class LanguagePage extends OneColumnPage {
 		gridLayout.add(label);
 
 		TextField answerField = UIUtils.asSmall(new TextField());
-		answerField.setWidth("100%");
+		answerField.setWidthFull();
 		answerField.setPlaceholder("varianta;varianta;...");
 		gridLayout.add(answerField);
 
@@ -197,7 +197,7 @@ public class LanguagePage extends OneColumnPage {
 
 		FormLayout columnsLayout = new FormLayout();
 		columnsLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("200px", 2));
-		columnsLayout.setWidth("100%");
+		columnsLayout.setWidthFull();
 		testLayout.add(columnsLayout);
 
 		Div header = new Div(new Strong("Položka"));
@@ -229,7 +229,7 @@ public class LanguagePage extends OneColumnPage {
 
 			FormLayout resultLayout = new FormLayout();
 			resultLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("10px", 3));
-			resultLayout.setWidth("100%");
+			resultLayout.setWidthFull();
 			testLayout.add(resultLayout);
 
 			Div resultHeader = new Div(new Strong("Položka"));

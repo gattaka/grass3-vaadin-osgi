@@ -53,7 +53,7 @@ public class WineTab extends DrinksTab<WineTO, WineOverviewTO> {
 
 		addRatingStarsColumn(grid);
 
-		grid.setWidth("100%");
+		grid.setWidthFull();
 		grid.setHeight("400px");
 
 		add(grid);

@@ -84,13 +84,13 @@ public class LanguageItemDialog extends WebDialog {
 			}
 		};
 
-		contentField.setWidth("100%");
+		contentField.setWidthFull();
 		binder.forField(contentField).asRequired().withValidator(validator).bind(LanguageItemTO::getContent,
 				LanguageItemTO::setContent);
 		add(contentField);
 		contentField.focus();
 
-		translationField.setWidth("100%");
+		translationField.setWidthFull();
 		binder.forField(translationField).asRequired().bind(LanguageItemTO::getTranslation,
 				LanguageItemTO::setTranslation);
 		add(translationField);

@@ -62,7 +62,7 @@ public class ItemsTab extends Div {
 		filterTO.setType(type);
 
 		Grid<LanguageItemTO> grid = new Grid<>();
-		grid.setWidth("100%");
+		grid.setWidthFull();
 		grid.setHeight("500px");
 
 		Column<LanguageItemTO> contentColumn = grid.addColumn(LanguageItemTO::getContent).setHeader("Obsah")

@@ -42,7 +42,7 @@ public class CampgameKeywordsTab extends Div {
 		grid.setItems(data);
 
 		grid.addColumn(CampgameKeywordTO::getName).setHeader("Název").setKey("name");
-		grid.setWidth("100%");
+		grid.setWidthFull();
 		grid.setSelectionMode(SelectionMode.SINGLE);
 
 		add(grid);

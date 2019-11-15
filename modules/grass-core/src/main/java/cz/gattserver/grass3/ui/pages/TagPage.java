@@ -54,7 +54,7 @@ public class TagPage extends OneColumnPage implements HasUrlParameter<String> {
 		tagContentsTable.populate(getUser().getId() != null, this,
 				q -> contentNodeFacade.getByTag(tag.getId(), q.getOffset(), q.getLimit()).stream(),
 				q -> contentNodeFacade.getCountByTag(tag.getId()));
-		tagContentsTable.setWidth("100%");
+		tagContentsTable.setWidthFull();
 		layout.add(tagContentsTable);
 	}
 

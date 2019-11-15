@@ -96,7 +96,7 @@ public class FavlinkSettingsPageFragmentFactory extends AbstractPageFragmentFact
 		if (Files.exists(path)) {
 			layout.add(new H2("Přehled existujících favicon"));
 			Grid<Path> grid = new Grid<>();
-			grid.setWidth("100%");
+			grid.setWidthFull();
 			grid.setHeight("500px");
 			UIUtils.applyGrassDefaultStyle(grid);
 

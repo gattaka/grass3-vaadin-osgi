@@ -78,7 +78,7 @@ public class HomePage extends OneColumnPage {
 					q -> contentNodeFacade.getUserFavourite(user.getId(), q.getOffset(), q.getLimit()).stream(),
 					q -> contentNodeFacade.getUserFavouriteCount(user.getId()));
 			layout.add(favouritesContentsTable);
-			favouritesContentsTable.setWidth("100%");
+			favouritesContentsTable.setWidthFull();
 		}
 
 		createSearchMenu(layout);
@@ -110,11 +110,11 @@ public class HomePage extends OneColumnPage {
 
 		TextField searchField = new TextField();
 		searchField.setPlaceholder("Název obsahu");
-		searchField.setWidth("100%");
+		searchField.setWidthFull();
 		layout.add(searchField);
 
 		final ContentsLazyGrid searchResultsTable = new ContentsLazyGrid();
-		searchResultsTable.setWidth("100%");
+		searchResultsTable.setWidthFull();
 		searchResultsTable.setVisible(false);
 		layout.add(searchResultsTable);
 
@@ -196,7 +196,7 @@ public class HomePage extends OneColumnPage {
 		recentAddedContentsTable.populate(getUser().getId() != null, this,
 				q -> contentNodeFacade.getRecentAdded(q.getOffset(), q.getLimit()).stream(),
 				q -> contentNodeFacade.getCount());
-		recentAddedContentsTable.setWidth("100%");
+		recentAddedContentsTable.setWidthFull();
 		recentAddedContentsTable.setHeight("200px");
 		layout.add(recentAddedContentsTable);
 	}
@@ -208,7 +208,7 @@ public class HomePage extends OneColumnPage {
 		recentModifiedContentsTable.populate(getUser().getId() != null, this,
 				q -> contentNodeFacade.getRecentModified(q.getOffset(), q.getLimit()).stream(),
 				q -> contentNodeFacade.getCount());
-		recentModifiedContentsTable.setWidth("100%");
+		recentModifiedContentsTable.setWidthFull();
 		recentModifiedContentsTable.setHeight("200px");
 		layout.add(recentModifiedContentsTable);
 	}

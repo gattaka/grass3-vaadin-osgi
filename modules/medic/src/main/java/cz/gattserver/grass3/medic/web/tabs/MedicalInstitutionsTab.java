@@ -63,7 +63,7 @@ public class MedicalInstitutionsTab extends MedicPageTab<MedicalInstitutionTO, A
 		grid.getColumnByKey("name").setHeader("Název");
 		grid.getColumnByKey("address").setHeader("Adresa");
 		grid.getColumnByKey("web").setHeader("Stránky");
-		grid.setWidth("100%");
+		grid.setWidthFull();
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setColumns("name", "address", "web");
 	}

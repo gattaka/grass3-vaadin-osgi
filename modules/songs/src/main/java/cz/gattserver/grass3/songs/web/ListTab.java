@@ -63,7 +63,7 @@ public class ListTab extends Div {
 				.setWidth("250px").setFlexGrow(0);
 		Column<SongOverviewTO> yearColumn = grid.addColumn(SongOverviewTO::getYear).setHeader("Rok").setWidth("60px")
 				.setFlexGrow(0);
-		grid.setWidth("100%");
+		grid.setWidthFull();
 		grid.setHeight("600px");
 		add(grid);
 

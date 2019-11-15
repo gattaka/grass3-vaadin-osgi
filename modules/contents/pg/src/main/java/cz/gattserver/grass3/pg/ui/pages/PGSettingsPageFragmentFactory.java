@@ -145,7 +145,7 @@ public class PGSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 
 			Grid<PGSettingsItemTO> grid = new Grid<>();
 			UIUtils.applyGrassDefaultStyle(grid);
-			grid.setWidth("100%");
+			grid.setWidthFull();
 			grid.setHeight("500px");
 
 			layout.add(grid);

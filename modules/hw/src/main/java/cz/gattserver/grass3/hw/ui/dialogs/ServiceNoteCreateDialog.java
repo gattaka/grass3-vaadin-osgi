@@ -80,7 +80,7 @@ public abstract class ServiceNoteCreateDialog extends WebDialog {
 			usedInCombo.setValue(hwItem.getUsedIn());
 
 		TextArea descriptionField = new TextArea("Popis");
-		descriptionField.setWidth("100%");
+		descriptionField.setWidthFull();
 		descriptionField.setHeight("200px");
 		binder.forField(descriptionField).bind(ServiceNoteTO::getDescription, ServiceNoteTO::setDescription);
 		winLayout.add(descriptionField, 2);

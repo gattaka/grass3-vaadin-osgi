@@ -27,13 +27,13 @@ public abstract class RecipeWindow extends WebDialog {
 		setWidth("600px");
 
 		final TextField name = new TextField("Název");
-		name.setWidth("100%");
+		name.setWidthFull();
 		if (to != null)
 			name.setValue(to.getName());
 		add(name);
 
 		final TextArea desc = new TextArea("Popis");
-		desc.setWidth("100%");
+		desc.setWidthFull();
 		desc.setHeight("500px");
 		if (to != null)
 			desc.setValue(recipesFacade.breaklineToEol(to.getDescription()));

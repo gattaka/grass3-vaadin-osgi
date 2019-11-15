@@ -37,7 +37,7 @@ public abstract class ChordDialog extends WebDialog {
 		final TextField nameField = new TextField("Název");
 		nameField.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		binder.forField(nameField).asRequired().bind(ChordTO::getName, ChordTO::setName);
-		nameField.setWidth("100%");
+		nameField.setWidthFull();
 		add(nameField);
 
 		VerticalLayout chordDescriptionLayout = new VerticalLayout();
@@ -68,7 +68,7 @@ public abstract class ChordDialog extends WebDialog {
 		for (int row = 0; row < rows; row++) {
 			if (row % 2 != 0) {
 				Hr hrLabel = new Hr();
-				hrLabel.setWidth("100%");
+				hrLabel.setWidthFull();
 				layout.add(hrLabel);
 			} else {
 				for (int col = 0; col < cols; col++) {

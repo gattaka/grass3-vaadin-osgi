@@ -58,7 +58,7 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 
 		addRatingStarsColumn(grid);
 
-		grid.setWidth("100%");
+		grid.setWidthFull();
 		grid.setHeight("400px");
 		add(grid);
 

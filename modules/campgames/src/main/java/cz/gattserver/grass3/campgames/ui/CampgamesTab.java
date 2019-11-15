@@ -70,7 +70,7 @@ public class CampgamesTab extends Div {
 		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		UIUtils.applyGrassDefaultStyle(grid);
 		grid.setSelectionMode(SelectionMode.SINGLE);
-		grid.setWidth("100%");
+		grid.setWidthFull();
 
 		Column<CampgameOverviewTO> nameColumn = grid.addColumn(CampgameOverviewTO::getName).setKey(NAME_BIND)
 				.setHeader("Název").setWidth("180px").setFlexGrow(0);

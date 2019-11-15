@@ -95,7 +95,7 @@ public class CrosswordTab extends Div {
 
 		FormLayout hintsLayout = new FormLayout();
 		hintsLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("100px", 4));
-		hintsLayout.setWidth("100%");
+		hintsLayout.setWidthFull();
 		for (CrosswordHintTO to : crosswordTO.getHints()) {
 			hintsLayout.add(new Span(to.getId() + ". " + to.getHint()));
 			CrosswordField tf = new CrosswordField(to);

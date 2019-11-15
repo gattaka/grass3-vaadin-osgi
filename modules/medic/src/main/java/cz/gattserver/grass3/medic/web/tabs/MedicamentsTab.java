@@ -62,7 +62,7 @@ public class MedicamentsTab extends MedicPageTab<MedicamentTO, ArrayList<Medicam
 	protected void customizeGrid(Grid<MedicamentTO> grid) {
 		grid.getColumnByKey("name").setHeader("Název");
 		grid.getColumnByKey("tolerance").setHeader("Reakce, nežádoucí účinky");
-		grid.setWidth("100%");
+		grid.setWidthFull();
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.setColumns("name", "tolerance");
 	}

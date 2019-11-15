@@ -31,7 +31,7 @@ public class ErrorPage extends OneColumnPage implements HasErrorParameter<GrassP
 		HorizontalLayout horizontalLayout = new HorizontalLayout();
 		horizontalLayout.setSpacing(true);
 		horizontalLayout.setPadding(true);
-		horizontalLayout.setWidth("100%");
+		horizontalLayout.setWidthFull();
 
 		Div div = new Div();
 		div.setText(getErrorText(exception.getStatus()));

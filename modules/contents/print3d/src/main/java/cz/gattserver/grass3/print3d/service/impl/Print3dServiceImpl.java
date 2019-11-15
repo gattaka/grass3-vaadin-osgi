@@ -294,12 +294,13 @@ public class Print3dServiceImpl implements Print3dService {
 	}
 
 	@Override
-	public void uploadFile(InputStream in, String fileName, String projectDir) throws IOException {
+	public Path uploadFile(InputStream in, String fileName, String projectDir) throws IOException {
 		Path projectPath = getProjectPath(projectDir);
 		Path filePath = projectPath.resolve(fileName);
 		if (!filePath.normalize().startsWith(projectPath))
 			throw new IllegalArgumentException("Podtečení adresáře projektu");
 		Files.copy(in, filePath);
+		return filePath;
 	}
 
 	@Override
@@ -313,7 +314,7 @@ public class Print3dServiceImpl implements Print3dService {
 				String extension = null;
 				Print3dItemType type = Print3dItemType.DOCUMENTATION;
 				int dotIndex = name.lastIndexOf('.');
-				if (dotIndex > 0 && dotIndex < name.length() - 2) {
+				if (dotIndex > 0 && dotIndex < name.length() - 1) {
 					onlyName = name.substring(0, dotIndex);
 					extension = name.substring(dotIndex + 1);
 					switch (extension.toLowerCase()) {

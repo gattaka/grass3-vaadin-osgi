@@ -121,6 +121,7 @@ public interface Print3dService {
 	 *            jméno souboru
 	 * @param projectDir
 	 *            adresář projektu
+	 * @return
 	 * @throws IOException
 	 *             pokud se nezdařilo uložení souboru
 	 * @throws IllegalStateException
@@ -128,8 +129,9 @@ public interface Print3dService {
 	 *             modulu Print3d
 	 * @throws IllegalArgumentException
 	 *             pokud předaný adresář podtéká kořen modulu Print3d
+	 * @return {@link Path} k souboru
 	 */
-	void uploadFile(InputStream in, String fileName, String projectDir) throws IOException;
+	Path uploadFile(InputStream in, String fileName, String projectDir) throws IOException;
 
 	/**
 	 * Získá list souborů dle projektu

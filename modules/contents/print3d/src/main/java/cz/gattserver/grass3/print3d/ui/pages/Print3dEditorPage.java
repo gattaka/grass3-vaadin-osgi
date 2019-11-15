@@ -34,6 +34,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.WildcardParameter;
 import com.vaadin.flow.server.StreamResource;
 
+import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
@@ -196,11 +197,28 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 		UIUtils.applyGrassDefaultStyle(grid);
 		grid.setItems(items);
 
-		grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getFile().toString())).setHeader("Název")
-				.setFlexGrow(100);
-
 		grid.setWidthFull();
 		grid.setHeight("400px");
+
+		grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getFile().getFileName().toString()))
+				.setHeader("Název").setFlexGrow(100);
+
+		grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getSize())).setHeader("Velikost").setWidth("80px")
+				.setTextAlign(ColumnTextAlign.END).setFlexGrow(0);
+
+		grid.addColumn(new ComponentRenderer<Anchor, Print3dViewItemTO>(itemTO -> {
+			String file = itemTO.getFile().getFileName().toString();
+			Anchor anchor = new Anchor(new StreamResource(file, () -> {
+				try {
+					return Files.newInputStream(print3dService.getFullImage(projectDir, file));
+				} catch (IOException e1) {
+					UIUtils.showWarning("Obrázek nelze zobrazit");
+					return null;
+				}
+			}), "Zobrazit");
+			anchor.setTarget("_blank");
+			return anchor;
+		})).setHeader("Zobrazit").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 
 		grid.addColumn(new ComponentRenderer<LinkButton, Print3dViewItemTO>(itemTO -> new LinkButton("Smazat", be -> {
 			new ConfirmDialog("Opravdu smazat?", e -> {
@@ -214,28 +232,17 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 			}).open();
 		}))).setHeader("Smazat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 
-		grid.addColumn(new ComponentRenderer<Anchor, Print3dViewItemTO>(itemTO -> {
-			String file = itemTO.getFile().toString();
-			Anchor anchor = new Anchor(new StreamResource(file, () -> {
-				try {
-					return Files.newInputStream(print3dService.getFullImage(projectDir, file));
-				} catch (IOException e1) {
-					UIUtils.showWarning("Obrázek nelze zobrazit");
-					return null;
-				}
-			}), "Zobrazit");
-			anchor.setTarget("_blank");
-			return anchor;
-		})).setHeader("Zobrazit").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
-
 		gridLayout.add(grid);
 
 		Print3dMultiUpload upload = new Print3dMultiUpload(projectDir) {
 			private static final long serialVersionUID = 8317049226635860025L;
 
 			@Override
-			protected void fileUploadSuccess(String fileName) {
+			protected void fileUploadSuccess(String fileName, long size) {
 				Print3dViewItemTO itemTO = new Print3dViewItemTO();
+				String sizeText = null;
+				sizeText = HumanBytesSizeFormatter.format(size);
+				itemTO.setSize(sizeText);
 				itemTO.setFile(Paths.get(fileName));
 				newFiles.add(itemTO);
 				items.add(itemTO);

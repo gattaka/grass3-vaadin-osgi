@@ -3,6 +3,8 @@ package cz.gattserver.grass3.print3d.ui.pages;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -46,8 +48,8 @@ public class Print3dMultiUpload extends Upload {
 			try {
 				InputStream is = buffer.getInputStream(event.getFileName());
 				String fileUTF8 = IOUtils.toString(event.getFileName().getBytes(), "UTF-8");
-				print3dService.uploadFile(is, fileUTF8, projectDir);
-				fileUploadSuccess(event.getFileName());
+				Path path = print3dService.uploadFile(is, fileUTF8, projectDir);
+				fileUploadSuccess(event.getFileName(), Files.size(path));
 			} catch (FileAlreadyExistsException f) {
 				if (!warnWindowDeployed) {
 					existingFiles = new HtmlDiv("");
@@ -84,7 +86,7 @@ public class Print3dMultiUpload extends Upload {
 		return warnWindow;
 	}
 
-	protected void fileUploadSuccess(String fileName) {
+	protected void fileUploadSuccess(String fileName, long size) {
 	};
 
 }

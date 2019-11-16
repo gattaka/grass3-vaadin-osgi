@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
@@ -26,6 +28,7 @@ import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.ContentsLazyGrid;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.HtmlSpan;
@@ -150,15 +153,19 @@ public class HomePage extends OneColumnPage {
 			return;
 		}
 
+		ButtonLayout tagsMenu = new ButtonLayout();
+		tagsMenu.setWidthFull();
+		tagsMenu.getStyle().set("text-align", "center");
+		layout.add(tagsMenu);
+
 		char oldChar = 0;
 		char currChar = 0;
 		StringBuilder sb = null;
 		for (ContentTagsCloudItemTO contentTag : contentTags) {
 			currChar = contentTag.getName().toUpperCase().charAt(0);
 			if (currChar != oldChar || oldChar == 0) {
-				if (oldChar != 0) {
-					populateTags(sb, oldChar, layout);
-				}
+				if (oldChar != 0)
+					populateTags(sb, oldChar, layout, tagsMenu);
 				sb = new StringBuilder();
 				oldChar = currChar;
 			}
@@ -169,18 +176,24 @@ public class HomePage extends OneColumnPage {
 					+ "' style='font-size:" + contentTag.getFontSize() + "pt'>" + contentTag.getName() + "</a> ");
 		}
 		if (sb != null)
-			populateTags(sb, currChar, layout);
+			populateTags(sb, currChar, layout, tagsMenu);
 	}
 
-	private void populateTags(StringBuilder sb, char tag, Div tagCloudLayout) {
+	private void populateTags(StringBuilder sb, char tag, Div tagCloudLayout, ButtonLayout tagsMenu) {
 		Div tagBlock = new Div();
 		tagCloudLayout.add(tagBlock);
 
 		Div tagLetter = new Div();
+		String tagString = String.valueOf(tag);
 		tagLetter.addClassName("tag-letter");
-		tagLetter.add(String.valueOf(tag));
+		tagLetter.setId("tag-" + tagString);
+		tagLetter.add(tagString);
 		tagBlock.add(tagLetter);
 		tagLetter.setSizeUndefined();
+
+		Button anchorButton = new Button(tagString);
+		anchorButton.getStyle().set("min-width", "auto");
+		tagsMenu.add(new Anchor("#tag-" + tagString, anchorButton));
 
 		Div tagLabels = new Div();
 		tagLabels.addClassName("tag-labels");

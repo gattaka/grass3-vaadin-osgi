@@ -26,6 +26,7 @@ import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.ContentsLazyGrid;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.HtmlSpan;
 
@@ -39,7 +40,7 @@ public class HomePage extends OneColumnPage {
 	// https://vaadin.com/forum/thread/17765421/17771093
 	@SuppressWarnings("unused")
 	private TreeGrid<?> treeGridDeclaration;
-	
+
 	/**
 	 * Kolik je nejmenší font pro tagcloud ?
 	 */
@@ -65,7 +66,7 @@ public class HomePage extends OneColumnPage {
 	public HomePage() {
 		init();
 	}
-	
+
 	@Override
 	protected void createColumnContent(Div layout) {
 
@@ -116,6 +117,7 @@ public class HomePage extends OneColumnPage {
 		final ContentsLazyGrid searchResultsTable = new ContentsLazyGrid();
 		searchResultsTable.setWidthFull();
 		searchResultsTable.setVisible(false);
+		searchResultsTable.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		layout.add(searchResultsTable);
 
 		UserInfoTO user = securityService.getCurrentUser();

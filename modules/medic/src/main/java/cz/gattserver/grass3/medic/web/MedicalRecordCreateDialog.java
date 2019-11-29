@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.data.binder.Binder;
@@ -44,50 +45,55 @@ public abstract class MedicalRecordCreateDialog extends WebDialog {
 	}
 
 	private MedicalRecordCreateDialog(ScheduledVisitTO scheduledVisitDTO, MedicalRecordTO originalDTO) {
-		setWidth("400px");
+		setWidth("800px");
 
 		MedicalRecordTO formDTO = new MedicalRecordTO();
 
 		Binder<MedicalRecordTO> binder = new Binder<>(MedicalRecordTO.class);
 		binder.setBean(formDTO);
 
+		final ComboBox<MedicalInstitutionTO> institutionComboBox = new ComboBox<>("Instituce",
+				getMedicFacade().getAllMedicalInstitutions());
+		institutionComboBox.setWidthFull();
+		binder.forField(institutionComboBox).asRequired().bind("institution");
+
 		Set<PhysicianTO> physicians = getMedicFacade().getAllPhysicians();
 		final ComboBox<PhysicianTO> physicianComboBox = new ComboBox<>("Ošetřující lékař", physicians);
-		add(physicianComboBox);
 		physicianComboBox.setWidthFull();
-		physicianComboBox.addClassName(UIUtils.TOP_PULL_CSS_CLASS);
-		binder.forField(physicianComboBox).bind("physician");
+		binder.forField(physicianComboBox).asRequired().bind("physician");
+
+		HorizontalLayout line1 = new HorizontalLayout(institutionComboBox, physicianComboBox);
+		line1.addClassName(UIUtils.TOP_PULL_CSS_CLASS);
+		line1.setPadding(false);
+		add(line1);
 
 		final DatePicker dateField = new DatePicker("Datum návštěvy");
 		dateField.setLocale(Locale.forLanguageTag("CS"));
-		add(dateField);
 		dateField.setWidthFull();
-		binder.forField(dateField).bind("date");
+		binder.forField(dateField).asRequired().bind("date");
 
 		final TimePicker timeField = new TimePicker("Čas návštěvy");
 		timeField.setLocale(Locale.forLanguageTag("CS"));
-		add(timeField);
 		timeField.setWidthFull();
 		binder.forField(timeField).bind("time");
 
-		final ComboBox<MedicalInstitutionTO> institutionComboBox = new ComboBox<>("Instituce",
-				getMedicFacade().getAllMedicalInstitutions());
-		add(institutionComboBox);
-		institutionComboBox.setWidthFull();
-		binder.forField(institutionComboBox).bind("institution");
+		HorizontalLayout line2 = new HorizontalLayout(dateField, timeField);
+		line2.setPadding(false);
+		add(line2);
 
 		final TextArea recordField = new TextArea("Záznam");
 		add(recordField);
 		recordField.setWidthFull();
 		recordField.setHeight("200px");
-		binder.forField(recordField).bind("record");
+		binder.forField(recordField).asRequired().bind("record");
 
 		Map<String, MedicamentTO> medicaments = new HashMap<String, MedicamentTO>();
 		for (MedicamentTO mto : getMedicFacade().getAllMedicaments())
 			medicaments.put(mto.getName(), mto);
 
 		TokenField tokenField = new TokenField(medicaments.keySet());
-		tokenField.setPlaceholder("Medikament");
+		tokenField.setAllowNewItems(false);
+		tokenField.setPlaceholder("Medikamenty");
 		add(tokenField);
 
 		add(new SaveCloseLayout(e -> {

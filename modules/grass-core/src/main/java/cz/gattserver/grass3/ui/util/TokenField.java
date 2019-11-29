@@ -82,6 +82,7 @@ public class TokenField extends Div {
 			tokensLayout.add(tokenComponent);
 			tokensLayout.remove(comboBox);
 			tokensLayout.add(comboBox);
+			comboBox.focus();
 			if (addTokenListener != null)
 				addTokenListener.accept(token);
 		}

@@ -5,10 +5,12 @@ import java.time.format.DateTimeFormatter;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import cz.gattserver.grass3.medic.facade.MedicFacade;
 import cz.gattserver.grass3.medic.interfaces.MedicalRecordTO;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.LinkButton;
@@ -26,21 +28,30 @@ public class MedicalRecordDetailDialog extends Dialog {
 		layout.setPadding(false);
 		add(layout);
 
-		setWidth("400px");
+		setWidth("600px");
 
 		MedicalRecordTO medicalRecordDTO = getMedicFacade().getMedicalRecordById(id);
 
-		layout.add(new Strong("Datum"));
-		layout.add(medicalRecordDTO.getDateTime().format(DateTimeFormatter.ofPattern("d. MMMM yyyy, H:mm")));
-
-		layout.add(new Strong("Instituce"));
-		final Button button = new LinkButton(medicalRecordDTO.getInstitution().getName(),
+		VerticalLayout vl1 = new VerticalLayout();
+		vl1.setPadding(false);
+		vl1.add(new Strong("Instituce"));
+		Button button = new LinkButton(medicalRecordDTO.getInstitution().getName(),
 				e -> new MedicalInstitutionDetailDialog(medicalRecordDTO.getInstitution().getId()).open());
 		button.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
-		layout.add(button);
+		vl1.add(button);
 
-		layout.add(new Strong("Ošetřující lékař"));
-		layout.add(medicalRecordDTO.getPhysician().getName());
+		VerticalLayout vl2 = new VerticalLayout();
+		vl2.setPadding(false);
+		vl2.add(new Strong("Ošetřující lékař"));
+		vl2.add(medicalRecordDTO.getPhysician() == null ? "" : medicalRecordDTO.getPhysician().getName());
+
+		HorizontalLayout line1 = new HorizontalLayout(vl1, vl2);
+		line1.setWidthFull();
+		line1.setPadding(false);
+		layout.add(line1);
+
+		layout.add(new Strong("Datum"));
+		layout.add(medicalRecordDTO.getDateTime().format(DateTimeFormatter.ofPattern("d. MMMM yyyy, H:mm")));
 
 		layout.add(new Strong("Záznam"));
 		Div div = new Div();
@@ -49,6 +60,16 @@ public class MedicalRecordDetailDialog extends Dialog {
 		div.getStyle().set("white-space", "pre-wrap");
 		div.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
 		layout.add(div);
+
+		layout.add(new Strong("Medikamenty"));
+
+		ButtonLayout tags = new ButtonLayout();
+		tags.addClassName(UIUtils.TOP_CLEAN_CSS_CLASS);
+		medicalRecordDTO.getMedicaments().forEach(med -> {
+			Button token = new Button(med.getName());
+			tags.add(token);
+		});
+		layout.add(tags);
 	}
 
 	protected MedicFacade getMedicFacade() {

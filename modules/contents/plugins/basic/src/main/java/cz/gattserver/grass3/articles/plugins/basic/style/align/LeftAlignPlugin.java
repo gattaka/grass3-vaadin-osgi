@@ -7,7 +7,6 @@ import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTOBuilder;
 import cz.gattserver.grass3.articles.plugins.basic.style.AbstractStyleElement;
-import cz.gattserver.grass3.articles.plugins.basic.style.AbstractStyleParser;
 import cz.gattserver.grass3.articles.plugins.basic.style.AbstractStylePlugin;
 
 /**
@@ -23,7 +22,7 @@ public class LeftAlignPlugin extends AbstractStylePlugin {
 
 	@Override
 	public Parser getParser() {
-		return new AbstractStyleParser(TAG) {
+		return new AbstractAlignParser(TAG) {
 
 			@Override
 			protected AbstractStyleElement getElement(List<Element> elist) {

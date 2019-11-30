@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
-import cz.gattserver.grass3.articles.plugins.basic.style.AbstractStyleParser;
 
 public class CenterAlignPluginTest {
 
@@ -13,7 +12,7 @@ public class CenterAlignPluginTest {
 	public void testProperties() {
 		CenterAlignPlugin plugin = new CenterAlignPlugin();
 		assertEquals("ALGNCT", plugin.getTag());
-		assertTrue(plugin.getParser() instanceof AbstractStyleParser);
+		assertTrue(plugin.getParser() instanceof AbstractAlignParser);
 		EditorButtonResourcesTO to = plugin.getEditorButtonResources();
 		assertNull(to.getDescription());
 		assertEquals("[ALGNCT]", to.getPrefix());

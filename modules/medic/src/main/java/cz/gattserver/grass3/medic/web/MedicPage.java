@@ -3,6 +3,7 @@ package cz.gattserver.grass3.medic.web;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import cz.gattserver.grass3.exception.GrassPageException;
@@ -16,6 +17,7 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.grass3.medic.MedicSection;
 
 @Route("medic")
+@PageTitle("Medic")
 public class MedicPage extends OneColumnPage {
 
 	private static final long serialVersionUID = -7969964922025344992L;

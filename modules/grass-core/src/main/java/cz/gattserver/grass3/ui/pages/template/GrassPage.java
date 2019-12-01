@@ -63,7 +63,6 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 	@Override
 	public void configurePage(InitialPageSettings settings) {
 		settings.addFavIcon("icon", "img/favicon.png", "16px");
-		UI.getCurrent().getPage().setTitle("Gattserver");
 	}
 
 	public void init() {

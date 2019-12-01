@@ -3,12 +3,14 @@ package cz.gattserver.grass3.songs.web;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 
 @Route("songs")
+@PageTitle("Zpěvník")
 public class SongsPage extends OneColumnPage {
 
 	private static final long serialVersionUID = -6336711256361320029L;

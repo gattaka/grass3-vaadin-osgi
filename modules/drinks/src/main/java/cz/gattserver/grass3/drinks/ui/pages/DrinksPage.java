@@ -5,6 +5,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.WildcardParameter;
 
@@ -16,6 +17,7 @@ import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 
 @Route("drinks")
+@PageTitle("Nápoje")
 public class DrinksPage extends OneColumnPage implements HasUrlParameter<String> {
 
 	private static final long serialVersionUID = 2066137985312535506L;

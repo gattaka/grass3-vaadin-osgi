@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import cz.gattserver.grass3.interfaces.QuoteTO;
@@ -16,6 +17,7 @@ import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 
 @Route("quotes")
+@PageTitle("Hlášky")
 public class QuotesPage extends OneColumnPage {
 
 	private static final long serialVersionUID = 6209768531464272839L;

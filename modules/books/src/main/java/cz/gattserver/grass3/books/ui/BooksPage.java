@@ -20,6 +20,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 
@@ -44,6 +45,7 @@ import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
 
 @Route("books")
+@PageTitle("Knihy")
 public class BooksPage extends OneColumnPage implements HasUrlParameter<String> {
 
 	private static final long serialVersionUID = -5187973603822110627L;

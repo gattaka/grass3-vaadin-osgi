@@ -13,6 +13,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 
@@ -35,7 +36,7 @@ import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
 @Route("category")
-public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
+public class NodePage extends OneColumnPage implements HasUrlParameter<String>, HasDynamicTitle {
 
 	private static final long serialVersionUID = 1560125362904332256L;
 
@@ -44,6 +45,8 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 
 	// Přehled podkategorií
 	private NodesGrid subNodesTable;
+	
+	private NodeTO node;
 
 	private String categoryParameter;
 
@@ -54,12 +57,17 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String> {
 	}
 
 	@Override
+	public String getPageTitle() {
+		return node.getName();
+	}
+
+	@Override
 	protected void createColumnContent(Div layout) {
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(categoryParameter);
 		if (identifier == null)
 			throw new GrassPageException(404);
 
-		NodeTO node = nodeFacade.getNodeByIdForDetail(identifier.getId());
+		node = nodeFacade.getNodeByIdForDetail(identifier.getId());
 
 		// Navigační breadcrumb
 		createBreadcrumb(layout, node);

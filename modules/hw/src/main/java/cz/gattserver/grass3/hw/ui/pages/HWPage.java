@@ -3,6 +3,7 @@ package cz.gattserver.grass3.hw.ui.pages;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import cz.gattserver.grass3.exception.GrassPageException;
@@ -13,6 +14,7 @@ import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
 @Route("hw")
+@PageTitle("Evidence HW")
 public class HWPage extends OneColumnPage {
 
 	private static final long serialVersionUID = 3983638941237624740L;

@@ -11,6 +11,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import cz.gattserver.grass3.exception.GrassPageException;
@@ -18,6 +19,7 @@ import cz.gattserver.grass3.modules.register.ModuleSettingsPageFactoriesRegister
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
 
 @Route("settings")
+@PageTitle("Nastavení")
 public class SettingsPage extends TwoColumnPage implements HasUrlParameter<String> {
 
 	private static final long serialVersionUID = 935609806962179905L;

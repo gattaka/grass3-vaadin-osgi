@@ -33,6 +33,7 @@ import com.vaadin.flow.data.renderer.IconRenderer;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.WildcardParameter;
 import com.vaadin.flow.server.StreamResource;
@@ -65,6 +66,7 @@ import cz.gattserver.web.common.ui.window.WebDialog;
 import net.glxn.qrgen.javase.QRCode;
 
 @Route("fm")
+@PageTitle("Správce souborů")
 public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 
 	private static final long serialVersionUID = -5884444775720831930L;

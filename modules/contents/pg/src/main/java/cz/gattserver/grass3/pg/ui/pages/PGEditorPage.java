@@ -31,6 +31,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.WildcardParameter;
 import com.vaadin.flow.server.StreamResource;
@@ -63,6 +64,7 @@ import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import net.engio.mbassy.listener.Handler;
 
 @Route("pg-editor")
+@PageTitle("Editor fotogalerie")
 public class PGEditorPage extends OneColumnPage implements HasUrlParameter<String> {
 
 	private static final long serialVersionUID = 8685208356478891386L;

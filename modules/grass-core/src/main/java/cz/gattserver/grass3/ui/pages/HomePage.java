@@ -17,6 +17,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 
@@ -35,6 +36,7 @@ import cz.gattserver.web.common.ui.HtmlSpan;
 
 @Route("")
 @RouteAlias("home")
+@PageTitle("Gattserver")
 public class HomePage extends OneColumnPage {
 
 	private static final long serialVersionUID = 3100924667157515504L;

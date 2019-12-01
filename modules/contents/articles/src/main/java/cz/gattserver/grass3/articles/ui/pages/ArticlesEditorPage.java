@@ -32,6 +32,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.WildcardParameter;
 import com.vaadin.flow.shared.Registration;
@@ -62,6 +63,7 @@ import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 
 @Route("articles-editor")
+@PageTitle("Editor článku")
 public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter<String> {
 
 	private static final long serialVersionUID = -5107777679764121445L;

@@ -18,6 +18,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import cz.gattserver.grass3.language.facades.LanguageFacade;
@@ -39,6 +40,7 @@ import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.Strong;
 
 @Route("language")
+@PageTitle("Jazyky")
 public class LanguagePage extends OneColumnPage {
 
 	private static final long serialVersionUID = 4767207674013382065L;

@@ -5,12 +5,14 @@ import cz.gattserver.grass3.campgames.ui.CampgamesTab;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import cz.gattserver.grass3.campgames.ui.CampgameKeywordsTab;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 
 @Route("campgames")
+@PageTitle("Táborové hry")
 public class CampgamesPage extends OneColumnPage {
 
 	private static final long serialVersionUID = -5354424168298678698L;

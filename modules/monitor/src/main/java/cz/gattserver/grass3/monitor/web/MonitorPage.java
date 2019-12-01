@@ -15,6 +15,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import cz.gattserver.common.util.HumanBytesSizeFormatter;
@@ -44,6 +45,7 @@ import cz.gattserver.grass3.ui.util.TableLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
 @Route("system-monitor")
+@PageTitle("System monitor")
 public class MonitorPage extends OneColumnPage {
 
 	private static final long serialVersionUID = 4862261730750923131L;

@@ -52,7 +52,6 @@ import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.services.ContentTagService;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
 import cz.gattserver.grass3.ui.components.button.ImageButton;
-import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
@@ -71,6 +70,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 	private static final Logger logger = LoggerFactory.getLogger(ArticlesEditorPage.class);
 
 	private static final String CLOSE_JS_DIV_ID = "close-js-div";
+	private static final String HANDLER_JS_DIV_ID = "handler-js-div";
 
 	@Autowired
 	private ArticleService articleService;
@@ -252,9 +252,16 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 
 		// zavádění listener pro JS listener akcí jako je vepsání tabulátoru
 		articleTextAreaFocusRegistration = articleTextArea.addFocusListener(event -> {
-			UI.getCurrent().getPage().executeJs("registerTabListener()");
-			// musí se odebrat, jinak budou problikávat vkládání přes
-			// tlačítka
+			String js = createTextareaGetJS() + "ta.addEventListener('keydown', function(e) {"
+			/*				*/ + "let keyCode = e.keyCode || e.which;"
+			/*				*/ + "if (keyCode == 9) {"
+			/*					*/ + "e.preventDefault();"
+			/*					*/ + "let pos = ta.selectionStart;"
+			/*					*/ + "document.getElementById('" + HANDLER_JS_DIV_ID + "').$server.handleTab(pos);"
+			/*				*/ + "}"
+			/*			*/ + "}, false);";
+			UI.getCurrent().getPage().executeJs(js);
+			// je potřeba jenom jedno pro registraci
 			articleTextAreaFocusRegistration.remove();
 		});
 		// aby se zaregistroval JS listener
@@ -269,9 +276,15 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 			// pokud jsou nalezeny drafty k dokončení, nabídni je k výběru
 			draftCreateContent(customlayout, drafts);
 		}
+	}
 
-		// editor.js
-		loadJS(new JScriptItem("articles/js/editor.js"));
+	private String createTextareaGetJS() {
+		return "let sr = $(\"vaadin-text-area\")[0].shadowRoot;"
+				+ "let ta = sr.children[1].children[1].children[1].children[0];";
+	}
+
+	private String createTextareaGetSelectionJS() {
+		return "let start = ta.selectionStart;" + "let finish = ta.selectionEnd;";
 	}
 
 	@Override
@@ -288,6 +301,44 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 					return o1.compareTo(o2); // ani jeden není null
 			}
 		});
+
+		// JS handler
+		Div handlerJsDiv = new Div() {
+			private static final long serialVersionUID = -7319482130016598549L;
+
+			@ClientCallable
+			private void handleSelection(String prefix, String suffix, int start, int end) {
+				String origtext = articleTextArea.getValue();
+				String newPart = prefix + origtext.substring(start, end) + suffix;
+				String text = origtext.substring(0, start) + newPart;
+				if (end < origtext.length())
+					text += origtext.substring(end);
+				articleTextArea.setValue(text);
+			}
+
+			@ClientCallable
+			private void handleTab(int pos) {
+				String origtext = articleTextArea.getValue();
+				String text = origtext.substring(0, pos) + "\t";
+				if (pos < origtext.length())
+					text += origtext.substring(pos);
+				articleTextArea.setValue(text);
+				pos++;
+				UI.getCurrent().getPage().executeJs(createTextareaGetJS() + "if (ta.setSelectionRange) {"
+				/*						*/ + "ta.focus();"
+				/*						*/ + "ta.setSelectionRange(" + pos + ", " + pos + "); console.log(\"aaaaa\");"
+				/*						*/ + "ta.selectionEnd = " + pos + ";"
+				/*					*/ + "} else if (ta.createTextRange) {"
+				/*						*/ + "let range = ta.createTextRange();"
+				/*						*/ + "range.collapse(true);"
+				/*						*/ + "range.moveEnd('character', " + pos + ");"
+				/*						*/ + "range.moveStart('character', " + pos + ");"
+				/*						*/ + "range.select(); console.log(\"beeeeee\");"
+				/*					*/ + "}");
+			}
+		};
+		handlerJsDiv.setId(HANDLER_JS_DIV_ID);
+		layout.add(handlerJsDiv);
 
 		// Projdi zaregistrované pluginy a vytvoř menu nástrojů
 		for (int i = 0; i < groups.size(); i++) {
@@ -308,18 +359,19 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 			Collections.sort(resourcesBundles);
 
 			for (EditorButtonResourcesTO resourceBundle : resourcesBundles) {
-				String prefix = resourceBundle.getPrefix();
-				String suffix = resourceBundle.getSuffix();
+				String js = createTextareaGetJS() + createTextareaGetSelectionJS() + "document.getElementById('"
+						+ HANDLER_JS_DIV_ID + "').$server.handleSelection(\"" + resourceBundle.getPrefix() + "\", \""
+						+ resourceBundle.getSuffix() + "\", start, finish)";
 
 				if (resourceBundle.getImage() != null) {
 					ImageButton btn = new ImageButton(resourceBundle.getDescription(),
 							new Image(resourceBundle.getImage(), resourceBundle.getTag()),
-							event -> UI.getCurrent().getPage().executeJs("insert('" + prefix + "','" + suffix + "')"));
+							event -> UI.getCurrent().getPage().executeJs(js));
 					btn.setTooltip(resourceBundle.getTag());
 					groupToolsLayout.add(btn);
 				} else {
 					Button btn = new Button(resourceBundle.getDescription(),
-							event -> UI.getCurrent().getPage().executeJs("insert('" + prefix + "','" + suffix + "')"));
+							event -> UI.getCurrent().getPage().executeJs(js));
 					btn.getElement().setProperty("title", resourceBundle.getTag());
 					groupToolsLayout.add(btn);
 				}

@@ -14,27 +14,33 @@ public class SourcesElement implements Element {
 	private List<String> faviconURLs = new ArrayList<>();
 	private List<String> descriptions = new ArrayList<>();
 	private List<String> pageURLs = new ArrayList<>();
+	private boolean header;
+	private boolean numbers;
 
-	public SourcesElement(List<String> faviconURLs, List<String> descriptions, List<String> pageURLs) {
+	public SourcesElement(List<String> faviconURLs, List<String> descriptions, List<String> pageURLs, boolean header,
+			boolean numbers) {
 		this.faviconURLs = faviconURLs;
 		this.descriptions = descriptions;
 		this.pageURLs = pageURLs;
+		this.header = header;
+		this.numbers = numbers;
 	}
 
 	@Override
 	public void apply(Context ctx) {
-		List<Element> headerList = new ArrayList<>();
-		headerList.add(new TextElement("Odkazy a zdroje"));
+		if (header) {
+			List<Element> headerList = new ArrayList<>();
+			headerList.add(new TextElement("Odkazy a zdroje"));
+			new HeaderElement(headerList, 1).apply(ctx);
+		}
 
-		// zapiš nadpis
-		new HeaderElement(headerList, 1).apply(ctx);
-
-		ctx.print("<ol style=\"padding-left: 25px; margin-top: 0px;\" >");
+		String element = numbers ? "ol" : "ul";
+		ctx.print("<" + element + " style=\"padding-left: 25px; margin-top: 0px;\" >");
 		for (int i = 0; i < faviconURLs.size(); i++) {
 			ctx.print("<li>");
 			new FavlinkElement(faviconURLs.get(i), descriptions.get(i), pageURLs.get(i)).apply(ctx);
 			ctx.print("</li>");
 		}
-		ctx.print("</ol>");
+		ctx.print("</" + element + ">");
 	}
 }

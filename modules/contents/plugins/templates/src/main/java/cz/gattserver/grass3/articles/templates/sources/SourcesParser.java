@@ -25,10 +25,14 @@ public class SourcesParser implements Parser {
 	private List<String> descriptions = new ArrayList<>();
 	private List<String> pageURLs = new ArrayList<>();
 	private FaviconObtainStrategy strategy;
+	private boolean header;
+	private boolean numbers;
 
-	public SourcesParser(String tag, FaviconObtainStrategy strategy) {
+	public SourcesParser(String tag, FaviconObtainStrategy strategy, boolean header, boolean numbers) {
 		this.tag = tag;
 		this.strategy = strategy;
+		this.header = header;
+		this.numbers = numbers;
 	}
 
 	@Override
@@ -41,7 +45,14 @@ public class SourcesParser implements Parser {
 
 		// zpracovat koncový tag
 		parseEndTag(pluginBag);
-		return new SourcesElement(faviconURLs, descriptions, pageURLs);
+
+		// ignoruje se případný <br/> (2x)
+		if (pluginBag.getToken().equals(Token.EOL))
+			pluginBag.nextToken();
+		if (pluginBag.getToken().equals(Token.EOL))
+			pluginBag.nextToken();
+
+		return new SourcesElement(faviconURLs, descriptions, pageURLs, header, numbers);
 	}
 
 	private void parseStartTag(ParsingProcessor pluginBag) {

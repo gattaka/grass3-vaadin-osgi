@@ -29,7 +29,7 @@ public class FavlinkPlugin implements Plugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(TAG, "HTML").setDescription("Link")
+		return new EditorButtonResourcesTOBuilder(TAG, "HTML").setDescription("Odkaz")
 				.setImageResource(ImageIcon.GLOBE_16_ICON.createResource()).build();
 	}
 }

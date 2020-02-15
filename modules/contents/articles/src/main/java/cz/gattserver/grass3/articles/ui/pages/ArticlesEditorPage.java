@@ -326,14 +326,14 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 				pos++;
 				UI.getCurrent().getPage().executeJs(createTextareaGetJS() + "if (ta.setSelectionRange) {"
 				/*						*/ + "ta.focus();"
-				/*						*/ + "ta.setSelectionRange(" + pos + ", " + pos + "); console.log(\"aaaaa\");"
+				/*						*/ + "ta.setSelectionRange(" + pos + ", " + pos + ");"
 				/*						*/ + "ta.selectionEnd = " + pos + ";"
 				/*					*/ + "} else if (ta.createTextRange) {"
 				/*						*/ + "let range = ta.createTextRange();"
 				/*						*/ + "range.collapse(true);"
 				/*						*/ + "range.moveEnd('character', " + pos + ");"
 				/*						*/ + "range.moveStart('character', " + pos + ");"
-				/*						*/ + "range.select(); console.log(\"beeeeee\");"
+				/*						*/ + "range.select();"
 				/*					*/ + "}");
 			}
 		};

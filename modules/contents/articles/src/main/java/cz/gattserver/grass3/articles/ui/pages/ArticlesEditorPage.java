@@ -309,11 +309,13 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 			@ClientCallable
 			private void handleSelection(String prefix, String suffix, int start, int end) {
 				String origtext = articleTextArea.getValue();
-				String newPart = prefix + origtext.substring(start, end) + suffix;
-				String text = origtext.substring(0, start) + newPart;
+				String text = origtext.substring(0, start) + prefix;
+				int pos = text.length();
+				text = text + origtext.substring(start, end) + suffix;
 				if (end < origtext.length())
 					text += origtext.substring(end);
 				articleTextArea.setValue(text);
+				focusOnPosition(pos);
 			}
 
 			@ClientCallable
@@ -324,17 +326,13 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 					text += origtext.substring(pos);
 				articleTextArea.setValue(text);
 				pos++;
-				UI.getCurrent().getPage().executeJs(createTextareaGetJS() + "if (ta.setSelectionRange) {"
-				/*						*/ + "ta.focus();"
-				/*						*/ + "ta.setSelectionRange(" + pos + ", " + pos + ");"
-				/*						*/ + "ta.selectionEnd = " + pos + ";"
-				/*					*/ + "} else if (ta.createTextRange) {"
-				/*						*/ + "let range = ta.createTextRange();"
-				/*						*/ + "range.collapse(true);"
-				/*						*/ + "range.moveEnd('character', " + pos + ");"
-				/*						*/ + "range.moveStart('character', " + pos + ");"
-				/*						*/ + "range.select();"
-				/*					*/ + "}");
+				focusOnPosition(pos);
+			}
+
+			private void focusOnPosition(int position) {
+				articleTextArea.focus();
+				UI.getCurrent().getPage().executeJs(
+						createTextareaGetJS() + "$(ta).get(0).setSelectionRange(" + position + "," + position + ");");
 			}
 		};
 		handlerJsDiv.setId(HANDLER_JS_DIV_ID);

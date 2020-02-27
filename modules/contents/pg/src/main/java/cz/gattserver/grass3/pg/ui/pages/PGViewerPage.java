@@ -14,7 +14,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
@@ -22,7 +21,6 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -62,6 +60,7 @@ import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.WarnDialog;
+import cz.gattserver.web.common.ui.window.WebDialog;
 import net.engio.mbassy.listener.Handler;
 
 @Route("photogallery")
@@ -277,9 +276,8 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 				progressIndicatorWindow.close();
 
 			if (event.isSuccess()) {
-				Dialog win = new Dialog();
+				WebDialog win = new WebDialog();
 				win.addDialogCloseActionListener(e -> pgService.deleteZipFile(event.getZipFile()));
-
 				Anchor link = new Anchor(new StreamResource(photogallery.getPhotogalleryPath() + ".zip", () -> {
 					try {
 						return Files.newInputStream(event.getZipFile());
@@ -289,11 +287,11 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 					}
 				}), "Stáhnout ZIP souboru");
 				link.setTarget("_blank");
-				VerticalLayout layout = new VerticalLayout();
-				layout.setSpacing(true);
-				layout.setPadding(true);
-				win.add(layout);
-				layout.add(link);
+				win.addComponent(link, Alignment.CENTER);
+
+				Button proceedButton = new Button("Zavřít", e -> win.close());
+				win.addComponent(proceedButton, Alignment.CENTER);
+
 				win.open();
 			} else {
 				UIUtils.showWarning(event.getResultDetails());

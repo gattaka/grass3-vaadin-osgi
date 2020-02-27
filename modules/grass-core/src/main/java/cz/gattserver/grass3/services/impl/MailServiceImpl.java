@@ -30,6 +30,8 @@ public class MailServiceImpl implements MailService {
 
 	@Override
 	public void sendEmail(String toEmail, String subject, String body) {
+		logger.info("Příprava emailu");
+
 		body += "\n\n--\nZasláno systémem GRASS3";
 
 		final String fromEmail = grassMailAddress;
@@ -60,6 +62,7 @@ public class MailServiceImpl implements MailService {
 			message.setSubject(subject);
 			message.setText(body);
 			Transport.send(message);
+			logger.info("Email odeslán");
 		} catch (Exception e) {
 			String msg = "Nezdařilo se odeslat email";
 			logger.error(msg, e);

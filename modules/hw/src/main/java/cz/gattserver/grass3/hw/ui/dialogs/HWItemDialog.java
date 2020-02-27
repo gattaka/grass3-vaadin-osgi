@@ -132,10 +132,10 @@ public abstract class HWItemDialog extends WebDialog {
 
 		TextArea descriptionArea = new TextArea("Popis");
 		descriptionArea.setWidth("700px");
+		descriptionArea.getStyle().set("font-family", "monospace").set("font-size", "12px");
 		binder.bind(descriptionArea, HWItemTO::getDescription, HWItemTO::setDescription);
 		baseLayout.add(descriptionArea);
-		descriptionArea.setHeight("calc(5 * (" + UIUtils.SPACING_CSS_VAR + " + " + UIUtils.FIELD_SIZE_CSS_VAR + " + "
-				+ UIUtils.FIELD_CAPTION_SIZE_CSS_VAR + ") - 7.5px)");
+		descriptionArea.setHeight("307.5px");
 
 		Map<String, HWItemTypeTO> tokens = new HashMap<>();
 		getHWService().getAllHWTypes().forEach(to -> tokens.put(to.getName(), to));

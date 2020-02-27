@@ -56,6 +56,7 @@ public abstract class SongDialog extends WebDialog {
 		binder.forField(textField).asRequired().bind(SongTO::getText, SongTO::setText);
 		textField.setWidthFull();
 		textField.setHeight("500px");
+		textField.getStyle().set("font-family", "monospace").set("font-size", "12px");
 		add(textField);
 
 		add(new SaveCloseLayout(event -> save(originalTO, binder), e -> close()));

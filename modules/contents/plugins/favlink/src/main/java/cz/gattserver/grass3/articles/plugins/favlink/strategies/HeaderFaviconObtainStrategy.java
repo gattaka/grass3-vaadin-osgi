@@ -49,7 +49,7 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 		return null;
 	}
 
-	private String createFullFaviconAddress(String faviconAddress, URL pageURL) {
+	private String createFullFaviconAddress(String faviconAddress, String base, URL pageURL) {
 
 		String rootURL = pageURL.getProtocol() + "://" + pageURL.getHost();
 		if (pageURL.getPort() > 0)
@@ -78,12 +78,14 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 			return rootURL + faviconAddress;
 		} else {
 			// relativní cesta od aktuální stránky
-			// TODO zapracovat base href 
-			// https://stackoverflow.com/questions/24028561/relative-path-in-html
-			// https://www.w3schools.com/tags/tag_base.asp
 			String pathPart = pageURL.getPath();
 			if (pathPart.contains("/"))
 				pathPart = pathPart.substring(0, pathPart.lastIndexOf("/"));
+			if (base != null) {
+				if (base.startsWith(HTTP_PREFIX) || base.startsWith(HTTPS_PREFIX))
+					return base + "/" + faviconAddress;
+				pathPart += "/" + base;
+			}
 			String faviconFullAddress = rootURL + (pathPart.isEmpty() ? "" : pathPart)
 					+ (faviconAddress.startsWith("/") ? "" : "/") + faviconAddress;
 			logger.info(tryMsg, faviconFullAddress);
@@ -102,14 +104,22 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 			doc = Jsoup.connect(pageURL.toString()).userAgent("Mozilla").get();
 
 			String ico;
+			String base = null;
+
+			// Existuje base?
+			// https://stackoverflow.com/questions/24028561/relative-path-in-html
+			// https://www.w3schools.com/tags/tag_base.asp
+			Element element = doc.head().select("base[href]").first();
+			if (element != null)
+				base = element.attr("href");
 
 			// link ICO (upřednostňuj)
 			logger.info("Zkouším ICO hlavičku");
-			Element element = doc.head().select("link[href~=.*\\.ico]").first();
+			element = doc.head().select("link[href~=.*\\.ico]").first();
 			if (element != null) {
 				ico = element.attr("href");
 				if (StringUtils.isNotBlank(ico))
-					return createFullFaviconAddress(ico, pageURL);
+					return createFullFaviconAddress(ico, base, pageURL);
 			}
 
 			// link rel=icon
@@ -118,7 +128,7 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 			if (element != null) {
 				ico = element.attr("href");
 				if (StringUtils.isNotBlank(ico))
-					return createFullFaviconAddress(ico, pageURL);
+					return createFullFaviconAddress(ico, base, pageURL);
 			}
 
 			// link PNG
@@ -127,7 +137,7 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 			if (element != null) {
 				ico = element.attr("href");
 				if (StringUtils.isNotBlank(ico))
-					return createFullFaviconAddress(ico, pageURL);
+					return createFullFaviconAddress(ico, base, pageURL);
 			}
 
 			// meta + content
@@ -136,7 +146,7 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 			if (element != null) {
 				ico = element.attr("content");
 				if (StringUtils.isNotBlank(ico))
-					return createFullFaviconAddress(ico, pageURL);
+					return createFullFaviconAddress(ico, base, pageURL);
 			}
 
 		} catch (IOException e) {

@@ -73,8 +73,14 @@ public class HeaderFaviconObtainStrategy implements FaviconObtainStrategy {
 			String faviconFullAddress = prefix + faviconAddress;
 			logger.info(tryMsg, faviconFullAddress);
 			return faviconFullAddress;
+		} else if (faviconAddress.startsWith("/")) {
+			// relativní cesta od kořene webu
+			return rootURL + faviconAddress;
 		} else {
-			// relativní cesta pro favicon
+			// relativní cesta od aktuální stránky
+			// TODO zapracovat base href 
+			// https://stackoverflow.com/questions/24028561/relative-path-in-html
+			// https://www.w3schools.com/tags/tag_base.asp
 			String pathPart = pageURL.getPath();
 			if (pathPart.contains("/"))
 				pathPart = pathPart.substring(0, pathPart.lastIndexOf("/"));

@@ -76,7 +76,7 @@ public class HeaderFaviconObtainStrategyTest extends StrategyTest {
 					.respond(new HttpResponse().withStatusCode(200).withBody(page));
 
 			byte[] favicon = IOUtils.toByteArray(this.getClass().getResourceAsStream("imgadr/mockFavicon.ico"));
-			msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/imgadr/mockFavicon.ico"))
+			msc.when(new HttpRequest().withMethod("GET").withPath("/imgadr/mockFavicon.ico"))
 					.respond(new HttpResponse().withStatusCode(200).withBody(favicon));
 
 			HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy(new FaviconCache());
@@ -139,6 +139,31 @@ public class HeaderFaviconObtainStrategyTest extends StrategyTest {
 	}
 
 	@Test
+	public void testHeaderFaviconObtainStrategy_relative_ico() throws IOException {
+		try (MockServerClient msc = new MockServerClient("localhost", 1929)) {
+
+			FileSystem fs = fileSystemService.getFileSystem();
+			Path outputDir = prepareFS(fs);
+
+			String page = IOUtils
+					.toString(this.getClass().getResourceAsStream("headerFaviconMockHTML_relative_ico.html"), "UTF-8");
+			msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/site"))
+					.respond(new HttpResponse().withStatusCode(200).withBody(page));
+
+			byte[] favicon = IOUtils.toByteArray(this.getClass().getResourceAsStream("imgadr/mockFavicon.ico"));
+			msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/imgadr/mockFavicon.ico"))
+					.respond(new HttpResponse().withStatusCode(200).withBody(favicon));
+
+			HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy(new FaviconCache());
+			String link = strategy.obtainFaviconURL("http://localhost:1929/dummy/site", "mycontextroot");
+			assertEquals("mycontextroot/articles-favlink-plugin/localhost.ico", link);
+
+			assertTrue(Files.exists(outputDir));
+			assertTrue(Files.exists(outputDir.resolve("localhost.ico")));
+		}
+	}
+
+	@Test
 	public void testHeaderFaviconObtainStrategy_slashed_ico() throws IOException {
 		try (MockServerClient msc = new MockServerClient("localhost", 1929)) {
 
@@ -151,7 +176,7 @@ public class HeaderFaviconObtainStrategyTest extends StrategyTest {
 					.respond(new HttpResponse().withStatusCode(200).withBody(page));
 
 			byte[] favicon = IOUtils.toByteArray(this.getClass().getResourceAsStream("imgadr/mockFavicon.ico"));
-			msc.when(new HttpRequest().withMethod("GET").withPath("/dummy/imgadr/mockFavicon.ico"))
+			msc.when(new HttpRequest().withMethod("GET").withPath("/imgadr/mockFavicon.ico"))
 					.respond(new HttpResponse().withStatusCode(200).withBody(favicon));
 
 			HeaderFaviconObtainStrategy strategy = new HeaderFaviconObtainStrategy(new FaviconCache());

@@ -131,8 +131,9 @@ public abstract class HWItemDialog extends WebDialog {
 		formLayout.add(supervizedForField);
 
 		TextArea descriptionArea = new TextArea("Popis");
+		descriptionArea.setTabIndex(-1);
 		descriptionArea.setWidth("700px");
-		descriptionArea.getStyle().set("font-family", "monospace").set("font-size", "12px");
+		descriptionArea.getStyle().set("font-family", "monospace").set("tab-size", "4").set("font-size", "12px");
 		binder.bind(descriptionArea, HWItemTO::getDescription, HWItemTO::setDescription);
 		baseLayout.add(descriptionArea);
 		descriptionArea.setHeight("307.5px");

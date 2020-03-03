@@ -77,9 +77,9 @@ public class SongTab extends Div {
 		contentLabel.setHeight("700px");
 		contentLabel.setWidth(null);
 		contentLabel.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		contentLabel.getStyle().set("font-family", "monospace").set("font-size", "12px").set("overflow-x", "auto")
-				.set("display", "-webkit-flex").set("display", "flex").set("-webkit-flex-flow", "column wrap")
-				.set("flex-flow", "column wrap");
+		contentLabel.getStyle().set("font-family", "monospace").set("tab-size", "4").set("font-size", "12px")
+				.set("overflow-x", "auto").set("display", "-webkit-flex").set("display", "flex")
+				.set("-webkit-flex-flow", "column wrap").set("flex-flow", "column wrap");
 
 		wrapperDiv.add(contentLabel);
 

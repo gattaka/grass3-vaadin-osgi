@@ -25,7 +25,7 @@ public class QuotesServiceTest extends AbstractDBUnitTest {
 	public void testGetAllQuotes() {
 		Long quoteId = quotesService.createQuote("test");
 		Long quoteId2 = quotesService.createQuote("test2");
-		List<QuoteTO> quotes = quotesService.getAllQuotes();
+		List<QuoteTO> quotes = quotesService.getQuotes(null);
 		assertEquals(2, quotes.size());
 		assertEquals(quoteId, quotes.get(0).getId());
 		assertEquals("test", quotes.get(0).getName());
@@ -55,17 +55,17 @@ public class QuotesServiceTest extends AbstractDBUnitTest {
 	public void testDeleteQuote() {
 		Long quoteId = quotesService.createQuote("test");
 		quotesService.createQuote("test2");
-		List<QuoteTO> quotes = quotesService.getAllQuotes();
+		List<QuoteTO> quotes = quotesService.getQuotes(null);
 		assertEquals(2, quotes.size());
 		quotesService.deleteQuote(quoteId);
-		quotes = quotesService.getAllQuotes();
+		quotes = quotesService.getQuotes(null);
 		assertEquals(1, quotes.size());
 	}
 
 	@Test
 	public void testCreateQuote() {
 		Long quoteId = quotesService.createQuote("test");
-		List<QuoteTO> quotes = quotesService.getAllQuotes();
+		List<QuoteTO> quotes = quotesService.getQuotes(null);
 		assertEquals(1, quotes.size());
 		assertEquals(quoteId, quotes.get(0).getId());
 		assertEquals("test", quotes.get(0).getName());
@@ -89,11 +89,11 @@ public class QuotesServiceTest extends AbstractDBUnitTest {
 	@Test
 	public void testModifyQuote() {
 		Long quoteId = quotesService.createQuote("test");
-		List<QuoteTO> quotes = quotesService.getAllQuotes();
+		List<QuoteTO> quotes = quotesService.getQuotes(null);
 		assertEquals(1, quotes.size());
 		assertEquals("test", quotes.get(0).getName());
 		quotesService.modifyQuote(quoteId, "ehhh");
-		quotes = quotesService.getAllQuotes();
+		quotes = quotesService.getQuotes(null);
 		assertEquals(1, quotes.size());
 		assertEquals("ehhh", quotes.get(0).getName());
 	}

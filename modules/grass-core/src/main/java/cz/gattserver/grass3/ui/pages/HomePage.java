@@ -133,15 +133,14 @@ public class HomePage extends OneColumnPage {
 				searchResultsTable.setVisible(true);
 				searchResultsTable.populate(getUser().getId() != null, HomePage.this,
 						q -> contentNodeFacade
-								.getByName(searchField.getValue(), user.getId(), q.getOffset(), q.getLimit()).stream(),
-						q -> contentNodeFacade.getCountByName(searchField.getValue(), user.getId()));
+								.getByName(value, user.getId(), q.getOffset(), q.getLimit()).stream(),
+						q -> contentNodeFacade.getCountByName(value, user.getId()));
 				searchResultsTable.setHeight("200px");
 			}
 			searchResultsTable.getDataProvider().refreshAll();
 
 		});
-		searchField.setValueChangeMode(ValueChangeMode.LAZY);
-		searchField.setValueChangeTimeout(200);
+		searchField.setValueChangeMode(ValueChangeMode.EAGER);
 	}
 
 	private void createTagCloud(Div layout) {

@@ -28,9 +28,11 @@ public interface QuotesService {
 	/**
 	 * Získá všechny hlášky a vrátí je jako list {@link QuoteTO}
 	 * 
+	 * @param filter
+	 *            filtr
 	 * @return list hlášek
 	 */
-	public List<QuoteTO> getAllQuotes();
+	public List<QuoteTO> getQuotes(String filter);
 
 	/**
 	 * Vybere náhodně hlášku a vrátí její text

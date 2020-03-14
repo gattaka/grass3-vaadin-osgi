@@ -2,8 +2,13 @@ package cz.gattserver.grass3.ui.pages;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -23,24 +28,37 @@ public class QuotesPage extends OneColumnPage {
 	private static final long serialVersionUID = 6209768531464272839L;
 
 	private List<QuoteTO> data;
+	private Grid<QuoteTO> grid;
 
 	public QuotesPage() {
 		init();
 	}
 
-	private void populateData() {
-		data = quotesFacade.getAllQuotes();
+	private void populateData(String filter) {
+		data = quotesFacade.getQuotes(filter);
+		grid.setItems(data);
 	}
 
 	@Override
 	protected void createColumnContent(Div layout) {
-		Grid<QuoteTO> grid = new Grid<>();
+		layout.add(new H2("Vyhledávání"));
+
+		TextField searchField = new TextField();
+		searchField.setPlaceholder("Obsah hlášky");
+		searchField.setWidthFull();
+		layout.add(searchField);
+
+		searchField.addValueChangeListener(e -> populateData(e.getValue()));
+		searchField.setValueChangeMode(ValueChangeMode.EAGER);
+
+		layout.add(new H2("Seznam hlášek"));
+
+		grid = new Grid<>();
 		UIUtils.applyGrassDefaultStyle(grid);
 		layout.add(grid);
 
-		populateData();
+		populateData(null);
 
-		grid.setItems(data);
 		grid.addColumn(QuoteTO::getId).setHeader("Id").setFlexGrow(0).setWidth("50px");
 		grid.addColumn(QuoteTO::getName).setHeader("Obsah");
 
@@ -50,8 +68,7 @@ public class QuotesPage extends OneColumnPage {
 
 		CreateGridButton createGridButton = new CreateGridButton("Přidat hlášku", e -> new QuoteDialog(q -> {
 			quotesFacade.createQuote(q.getName());
-			populateData();
-			grid.setItems(data);
+			populateData(searchField.getValue());
 		}).open());
 		btnLayout.add(createGridButton);
 

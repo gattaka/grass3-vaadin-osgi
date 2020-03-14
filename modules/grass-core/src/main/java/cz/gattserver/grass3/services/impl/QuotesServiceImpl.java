@@ -3,6 +3,7 @@ package cz.gattserver.grass3.services.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,12 +48,12 @@ public class QuotesServiceImpl implements QuotesService {
 	}
 
 	@Override
-	public List<QuoteTO> getAllQuotes() {
-		List<Quote> quotes = quoteRepository.findAll();
+	public List<QuoteTO> getQuotes(String filter) {
+		List<Quote> quotes = StringUtils.isBlank(filter) ? quoteRepository.findAll()
+				: quoteRepository.findLike("%" + filter.toLowerCase() + "%");
 		List<QuoteTO> quoteDTOs = new ArrayList<>();
-		for (Quote quote : quotes) {
+		for (Quote quote : quotes)
 			quoteDTOs.add(mapper.map(quote));
-		}
 		return quoteDTOs;
 	}
 

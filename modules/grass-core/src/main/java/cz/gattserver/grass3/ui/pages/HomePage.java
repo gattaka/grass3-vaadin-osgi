@@ -131,14 +131,16 @@ public class HomePage extends OneColumnPage {
 			String value = e.getValue();
 			if (StringUtils.isNotBlank(value) && !searchResultsTable.isVisible()) {
 				searchResultsTable.setVisible(true);
+				// zde musí být searchField.getValue() namísto pouze value,
+				// protože jde o closure a bude se vyhodnocovat opakovaně
+				// později s různými hodnotami obsahu pole
 				searchResultsTable.populate(getUser().getId() != null, HomePage.this,
 						q -> contentNodeFacade
-								.getByName(value, user.getId(), q.getOffset(), q.getLimit()).stream(),
-						q -> contentNodeFacade.getCountByName(value, user.getId()));
+								.getByName(searchField.getValue(), user.getId(), q.getOffset(), q.getLimit()).stream(),
+						q -> contentNodeFacade.getCountByName(searchField.getValue(), user.getId()));
 				searchResultsTable.setHeight("200px");
 			}
 			searchResultsTable.getDataProvider().refreshAll();
-
 		});
 		searchField.setValueChangeMode(ValueChangeMode.EAGER);
 	}

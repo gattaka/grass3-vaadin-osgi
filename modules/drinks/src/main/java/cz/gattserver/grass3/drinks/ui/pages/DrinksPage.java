@@ -10,6 +10,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.WildcardParameter;
 
 import cz.gattserver.grass3.drinks.ui.BeersTab;
+import cz.gattserver.grass3.drinks.ui.OtherTab;
 import cz.gattserver.grass3.drinks.ui.RumTab;
 import cz.gattserver.grass3.drinks.ui.WhiskeyTab;
 import cz.gattserver.grass3.drinks.ui.WineTab;
@@ -28,6 +29,7 @@ public class DrinksPage extends OneColumnPage implements HasUrlParameter<String>
 	private Tab rumTab;
 	private Tab whiskeyTab;
 	private Tab wineTab;
+	private Tab otherTab;
 
 	private Div pageLayout;
 
@@ -77,6 +79,14 @@ public class DrinksPage extends OneColumnPage implements HasUrlParameter<String>
 		return tab;
 	}
 
+	private OtherTab switchOtherTab() {
+		pageLayout.removeAll();
+		OtherTab tab = new OtherTab();
+		pageLayout.add(tab);
+		tabSheet.setSelectedTab(otherTab);
+		return tab;
+	}
+
 	@Override
 	protected void createColumnContent(Div layout) {
 		tabSheet = new Tabs();
@@ -86,7 +96,8 @@ public class DrinksPage extends OneColumnPage implements HasUrlParameter<String>
 		rumTab = new Tab("Rumy");
 		whiskeyTab = new Tab("Whiskey");
 		wineTab = new Tab("Vína");
-		tabSheet.add(beerTab, rumTab, whiskeyTab, wineTab);
+		otherTab = new Tab("Jiné");
+		tabSheet.add(beerTab, rumTab, whiskeyTab, wineTab, otherTab);
 
 		pageLayout = new Div();
 		layout.add(pageLayout);
@@ -106,6 +117,9 @@ public class DrinksPage extends OneColumnPage implements HasUrlParameter<String>
 				break;
 			case 3:
 				switchWineTab();
+				break;
+			case 4:
+				switchOtherTab();
 				break;
 			}
 		});
@@ -137,6 +151,11 @@ public class DrinksPage extends OneColumnPage implements HasUrlParameter<String>
 				WineTab wineTab = switchWineTab();
 				if (itemId != null)
 					wineTab.selectDrink(itemId);
+				break;
+			case "other":
+				OtherTab otherTab = switchOtherTab();
+				if (itemId != null)
+					otherTab.selectDrink(itemId);
 				break;
 			}
 		} else {

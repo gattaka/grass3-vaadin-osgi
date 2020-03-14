@@ -12,18 +12,22 @@ import com.vaadin.flow.data.provider.QuerySortOrder;
 import cz.gattserver.grass3.drinks.facades.DrinksFacade;
 import cz.gattserver.grass3.drinks.model.dao.BeerInfoRepository;
 import cz.gattserver.grass3.drinks.model.dao.DrinkRepository;
+import cz.gattserver.grass3.drinks.model.dao.OtherInfoRepository;
 import cz.gattserver.grass3.drinks.model.dao.RumInfoRepository;
 import cz.gattserver.grass3.drinks.model.dao.WhiskeyInfoRepository;
 import cz.gattserver.grass3.drinks.model.dao.WineInfoRepository;
 import cz.gattserver.grass3.drinks.model.domain.BeerInfo;
 import cz.gattserver.grass3.drinks.model.domain.Drink;
 import cz.gattserver.grass3.drinks.model.domain.DrinkType;
+import cz.gattserver.grass3.drinks.model.domain.OtherInfo;
 import cz.gattserver.grass3.drinks.model.domain.RumInfo;
 import cz.gattserver.grass3.drinks.model.domain.WhiskeyInfo;
 import cz.gattserver.grass3.drinks.model.domain.WineInfo;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
 import cz.gattserver.grass3.drinks.model.interfaces.DrinkTO;
+import cz.gattserver.grass3.drinks.model.interfaces.OtherOverviewTO;
+import cz.gattserver.grass3.drinks.model.interfaces.OtherTO;
 import cz.gattserver.grass3.drinks.model.interfaces.RumOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.RumTO;
 import cz.gattserver.grass3.drinks.model.interfaces.WhiskeyOverviewTO;
@@ -50,6 +54,9 @@ public class DrinksFacadeImpl implements DrinksFacade {
 
 	@Autowired
 	private WineInfoRepository wineInfoRepository;
+	
+	@Autowired
+	private OtherInfoRepository otherInfoRepository;
 
 	@Override
 	public void deleteDrink(Long id) {
@@ -242,4 +249,47 @@ public class DrinksFacadeImpl implements DrinksFacade {
 		return to;
 	}
 
+	/*
+	 * Jiné
+	 */
+
+	@Override
+	public int countOthers() {
+		return (int) drinkRepository.countOthers(null);
+	}
+
+	@Override
+	public List<OtherOverviewTO> getOthers(int page, int size) {
+		return drinkRepository.findOthers(null, page * size, size, null);
+	}
+
+	@Override
+	public int countOthers(OtherOverviewTO filterTO) {
+		return (int) drinkRepository.countOthers(filterTO);
+	}
+
+	@Override
+	public List<OtherOverviewTO> getOthers(OtherOverviewTO filterTO, int offset, int limit,
+			List<QuerySortOrder> sortOrder) {
+		return drinkRepository.findOthers(filterTO, offset, limit, QuerydslUtil.transformOrdering(sortOrder, s -> s));
+	}
+
+	@Override
+	public OtherTO getOtherById(Long id) {
+		return drinkRepository.findOtherById(id);
+	}
+
+	@Override
+	public OtherTO saveOther(OtherTO to) {
+		OtherInfo b = new OtherInfo(to.getIngredient());
+		b.setId(to.getInfoId());
+		b = otherInfoRepository.save(b);
+		to.setInfoId(b.getId());
+
+		Drink d = createDrink(DrinkType.OTHER, to, b.getId());
+		d = drinkRepository.save(d);
+
+		to.setId(d.getId());
+		return to;
+	}
 }

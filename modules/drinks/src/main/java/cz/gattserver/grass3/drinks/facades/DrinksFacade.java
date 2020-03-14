@@ -6,6 +6,8 @@ import com.vaadin.flow.data.provider.QuerySortOrder;
 
 import cz.gattserver.grass3.drinks.model.interfaces.BeerOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
+import cz.gattserver.grass3.drinks.model.interfaces.OtherOverviewTO;
+import cz.gattserver.grass3.drinks.model.interfaces.OtherTO;
 import cz.gattserver.grass3.drinks.model.interfaces.RumOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.RumTO;
 import cz.gattserver.grass3.drinks.model.interfaces.WhiskeyOverviewTO;
@@ -238,5 +240,56 @@ public interface DrinksFacade {
 	 * @param to
 	 */
 	WineTO saveWine(WineTO to);
+
+	/*
+	 * Jiné
+	 */
+
+	/**
+	 * Získá počet jiných nápojů v DB
+	 * 
+	 */
+	int countOthers();
+
+	/**
+	 * Získá všechny jiné nápoje
+	 * 
+	 * @param offset
+	 * @param limit
+	 * @return
+	 */
+	List<OtherOverviewTO> getOthers(int offset, int limit);
+
+	/**
+	 * Získá počet jiných nápojů v DB
+	 * 
+	 * @param filterTO
+	 */
+	int countOthers(OtherOverviewTO filterTO);
+
+	/**
+	 * Získá všechny jiné nápoje
+	 * 
+	 * @param filterTO
+	 * @param offset
+	 * @param limit
+	 * @param sortOrder
+	 * @return
+	 */
+	List<OtherOverviewTO> getOthers(OtherOverviewTO filterTO, int offset, int limit, List<QuerySortOrder> sortOrder);
+
+	/**
+	 * Získá jiný nápoj dle id
+	 * 
+	 * @param id
+	 */
+	OtherTO getOtherById(Long id);
+
+	/**
+	 * Založ/uprav nový jiný nápoj
+	 * 
+	 * @param to
+	 */
+	OtherTO saveOther(OtherTO to);
 
 }

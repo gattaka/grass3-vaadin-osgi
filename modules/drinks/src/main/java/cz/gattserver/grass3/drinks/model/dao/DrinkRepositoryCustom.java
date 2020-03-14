@@ -8,6 +8,8 @@ import com.querydsl.core.types.OrderSpecifier;
 
 import cz.gattserver.grass3.drinks.model.interfaces.BeerOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
+import cz.gattserver.grass3.drinks.model.interfaces.OtherOverviewTO;
+import cz.gattserver.grass3.drinks.model.interfaces.OtherTO;
 import cz.gattserver.grass3.drinks.model.interfaces.RumOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.RumTO;
 import cz.gattserver.grass3.drinks.model.interfaces.WhiskeyOverviewTO;
@@ -68,4 +70,14 @@ public interface DrinkRepositoryCustom {
 	List<WineOverviewTO> findWines(WineOverviewTO filterTO, int offset, int limit, OrderSpecifier<?>[] order);
 
 	WineTO findWineById(Long id);
+
+	/*
+	 * Jiné
+	 */
+
+	long countOthers(OtherOverviewTO filterTO);
+
+	List<OtherOverviewTO> findOthers(OtherOverviewTO filterTO, int offset, int limit, OrderSpecifier<?>[] order);
+
+	OtherTO findOtherById(Long id);
 }

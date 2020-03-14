@@ -18,13 +18,18 @@ import cz.gattserver.grass3.drinks.model.domain.Drink;
 import cz.gattserver.grass3.drinks.model.domain.DrinkType;
 import cz.gattserver.grass3.drinks.model.domain.QBeerInfo;
 import cz.gattserver.grass3.drinks.model.domain.QDrink;
+import cz.gattserver.grass3.drinks.model.domain.QOtherInfo;
 import cz.gattserver.grass3.drinks.model.domain.QRumInfo;
 import cz.gattserver.grass3.drinks.model.domain.QWhiskeyInfo;
 import cz.gattserver.grass3.drinks.model.domain.QWineInfo;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
+import cz.gattserver.grass3.drinks.model.interfaces.OtherOverviewTO;
+import cz.gattserver.grass3.drinks.model.interfaces.OtherTO;
 import cz.gattserver.grass3.drinks.model.interfaces.QBeerOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.QBeerTO;
+import cz.gattserver.grass3.drinks.model.interfaces.QOtherOverviewTO;
+import cz.gattserver.grass3.drinks.model.interfaces.QOtherTO;
 import cz.gattserver.grass3.drinks.model.interfaces.QRumOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.QRumTO;
 import cz.gattserver.grass3.drinks.model.interfaces.QWhiskeyOverviewTO;
@@ -369,5 +374,55 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 				.select(new QWineTO(d.id, d.name, d.type, d.rating, d.image, d.description, d.alcohol, d.country, b.id,
 						b.winery, b.year, b.wineType))
 				.from(d).join(b).on(d.drinkInfo.eq(b.id)).where(d.id.eq(id)).fetchOne();
+	}
+
+	/*
+	 * Other
+	 */
+
+	private Predicate createPredicateOthers(OtherOverviewTO filterTO) {
+		QDrink d = QDrink.drink;
+		QOtherInfo b = QOtherInfo.otherInfo;
+		PredicateBuilder builder = new PredicateBuilder();
+		builder.eq(d.type, DrinkType.OTHER);
+		if (filterTO != null) {
+			builder.iLike(b.ingredient, filterTO.getIngredient());
+			builder.iLike(d.name, filterTO.getName());
+			builder.iLike(d.country, filterTO.getCountry());
+		}
+		return builder.getBuilder();
+	}
+
+	@Override
+	public long countOthers(OtherOverviewTO filterTO) {
+		JPAQuery<Drink> query = new JPAQuery<>(entityManager);
+		QDrink d = QDrink.drink;
+		QOtherInfo o = QOtherInfo.otherInfo;
+		return query.from(d).join(o).on(d.drinkInfo.eq(o.id)).where(createPredicateOthers(filterTO)).fetchCount();
+	}
+
+	@Override
+	public List<OtherOverviewTO> findOthers(OtherOverviewTO filterTO, int offset, int limit,
+			OrderSpecifier<?>[] order) {
+		JPAQuery<OtherOverviewTO> query = new JPAQuery<>(entityManager);
+		QDrink d = QDrink.drink;
+		QOtherInfo o = QOtherInfo.otherInfo;
+		query.offset(offset).limit(limit);
+
+		if (order == null || order.length == 0)
+			order = QuerydslUtil.transformOrdering(new String[] { d.name.toString() }, new boolean[] { true });
+
+		return query
+				.select(new QOtherOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, o.id, o.ingredient))
+				.from(d).join(o).on(d.drinkInfo.eq(o.id)).where(createPredicateOthers(filterTO)).orderBy(order).fetch();
+	}
+
+	@Override
+	public OtherTO findOtherById(Long id) {
+		JPAQuery<OtherTO> query = new JPAQuery<>(entityManager);
+		QDrink d = QDrink.drink;
+		QOtherInfo b = QOtherInfo.otherInfo;
+		return query.select(new QOtherTO(d.id, d.name, d.type, d.rating, d.image, d.description, d.alcohol, d.country,
+				b.id, b.ingredient)).from(d).join(b).on(d.drinkInfo.eq(b.id)).where(d.id.eq(id)).fetchOne();
 	}
 }

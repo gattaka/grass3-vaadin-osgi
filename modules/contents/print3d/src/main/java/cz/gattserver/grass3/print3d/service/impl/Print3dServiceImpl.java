@@ -138,7 +138,7 @@ public class Print3dServiceImpl implements Print3dService {
 		if (existingId == null) {
 			// vytvoř odpovídající content node
 			Long contentNodeId = contentNodeFacade.save(Print3dModule.ID, project.getId(), payloadTO.getName(),
-					payloadTO.getTags(), payloadTO.isPublicated(), nodeId, authorId, false, null, null);
+					payloadTO.getTags(), payloadTO.isPublicated(), nodeId, authorId, false, LocalDateTime.now(), null);
 
 			// ulož do článku referenci na jeho contentnode
 			ContentNode contentNode = new ContentNode();
@@ -148,7 +148,7 @@ public class Print3dServiceImpl implements Print3dService {
 				return null;
 		} else {
 			contentNodeFacade.modify(project.getContentNode().getId(), payloadTO.getName(), payloadTO.getTags(),
-					payloadTO.isPublicated(), LocalDateTime.now());
+					payloadTO.isPublicated());
 		}
 
 		return project;

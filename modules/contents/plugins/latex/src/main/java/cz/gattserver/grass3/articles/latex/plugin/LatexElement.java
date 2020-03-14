@@ -17,14 +17,16 @@ public class LatexElement implements Element {
 	public void apply(Context ctx) {
 		// CSS resources
 		ctx.addCSSResource("articles/katex/katex.min.css");
-		
+
 		// JS resources
 		ctx.addJSResource("articles/katex/katex.min.js");
-		
+
 		String uuid = "katex" + UUID.randomUUID().toString();
 		ctx.print("<span id=\"" + uuid + "\"></span>");
-		
-		ctx.addJSCode("katex.render(\"" + formula + "\", document.getElementById(\"" + uuid + "\"), {throwOnError: false});");		
+
+		String katexFormula = formula.replace("\\", "\\\\");
+		ctx.addJSCode("katex.render(\"" + katexFormula + "\", document.getElementById(\"" + uuid
+				+ "\"), {throwOnError: false});");
 	}
 
 	@Override

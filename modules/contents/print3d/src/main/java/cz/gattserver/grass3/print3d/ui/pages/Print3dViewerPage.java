@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
@@ -23,7 +22,7 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.IconRenderer;
@@ -61,6 +60,7 @@ import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.WarnDialog;
+import cz.gattserver.web.common.ui.window.WebDialog;
 import net.engio.mbassy.listener.Handler;
 
 @Route("print3d")
@@ -341,7 +341,7 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 				progressIndicatorWindow.close();
 
 			if (event.isSuccess()) {
-				Dialog win = new Dialog();
+				WebDialog win = new WebDialog();
 				win.addDialogCloseActionListener(e -> print3dService.deleteZipFile(event.getZipFile()));
 
 				Anchor link = new Anchor(new StreamResource(print3dTO.getPrint3dProjectPath() + ".zip", () -> {
@@ -353,11 +353,11 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 					}
 				}), "Stáhnout ZIP souboru");
 				link.setTarget("_blank");
-				VerticalLayout layout = new VerticalLayout();
-				layout.setSpacing(true);
-				layout.setPadding(true);
-				win.add(layout);
-				layout.add(link);
+				win.addComponent(link, Alignment.CENTER);
+
+				Button proceedButton = new Button("Zavřít", e -> win.close());
+				win.addComponent(proceedButton, Alignment.CENTER);
+
 				win.open();
 			} else {
 				UIUtils.showWarning(event.getResultDetails());

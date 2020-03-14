@@ -68,7 +68,7 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 	public void init() {
 		createPageElements(this);
 		setId("main-div");
-		UI.getCurrent().getPage().addJavaScript("https://code.jquery.com/jquery-1.9.1.js");
+		UI.getCurrent().getPage().addJavaScript("context://js/jquery.js");
 	}
 
 	protected abstract void createPageElements(Div div);

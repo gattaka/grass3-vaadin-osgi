@@ -20,13 +20,6 @@
 			<version>3.1.0-SNAPSHOT</version>
 		</dependency>
 
-		<!-- http://forge.scilab.org/index.php/p/jlatexmath/doc/ -->
-		<dependency>
-			<groupId>org.scilab.forge</groupId>
-			<artifactId>jlatexmath</artifactId>
-			<version>0.9.6</version>
-		</dependency>
-
 	</dependencies>
 
 </project>

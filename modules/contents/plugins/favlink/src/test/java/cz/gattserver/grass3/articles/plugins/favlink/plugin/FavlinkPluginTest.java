@@ -15,7 +15,7 @@ public class FavlinkPluginTest extends AbstractContextAwareTest {
 		assertEquals("A", plugin.getTag());
 		assertEquals(FavlinkParser.class, plugin.getParser().getClass());
 		EditorButtonResourcesTO to = plugin.getEditorButtonResources();
-		assertEquals("Link", to.getDescription());
+		assertEquals("Odkaz", to.getDescription());
 		assertEquals("[A]", to.getPrefix());
 		assertEquals("[/A]", to.getSuffix());
 		assertEquals("A", to.getTag());

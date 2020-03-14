@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import cz.gattserver.grass3.drinks.facades.DrinksFacade;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
+import cz.gattserver.grass3.drinks.model.interfaces.OtherOverviewTO;
+import cz.gattserver.grass3.drinks.model.interfaces.OtherTO;
 import cz.gattserver.grass3.drinks.model.interfaces.RumOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.RumTO;
 import cz.gattserver.grass3.drinks.model.interfaces.WhiskeyOverviewTO;
@@ -66,7 +68,7 @@ public class DrinksResource {
 		// poradí a sníží ho
 		if (page * pageSize > count)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		return new ResponseEntity<>(drinksFacade.getRums(filter,page, pageSize), HttpStatus.OK);
+		return new ResponseEntity<>(drinksFacade.getRums(filter, page, pageSize), HttpStatus.OK);
 	}
 
 	@RequestMapping("/rum-count")
@@ -92,7 +94,7 @@ public class DrinksResource {
 		// poradí a sníží ho
 		if (page * pageSize > count)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		return new ResponseEntity<>(drinksFacade.getWhiskeys(filter,page, pageSize), HttpStatus.OK);
+		return new ResponseEntity<>(drinksFacade.getWhiskeys(filter, page, pageSize), HttpStatus.OK);
 	}
 
 	@RequestMapping("/whiskey-count")
@@ -128,6 +130,31 @@ public class DrinksResource {
 	@RequestMapping("/wine")
 	public @ResponseBody WineTO wine(@RequestParam(value = "id", required = true) Long id) {
 		return drinksFacade.getWineById(id);
+	}
+
+	/*
+	 * Other
+	 */
+
+	@RequestMapping("/other-list")
+	public ResponseEntity<List<OtherOverviewTO>> otherList(@RequestParam(value = "page", required = true) int page,
+			@RequestParam(value = "pageSize", required = true) int pageSize) {
+		int count = drinksFacade.countOthers();
+		// startIndex nesmí být víc než je počet, endIndex může být s tím si JPA
+		// poradí a sníží ho
+		if (page * pageSize > count)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(drinksFacade.getOthers(page, pageSize), HttpStatus.OK);
+	}
+
+	@RequestMapping("/other-count")
+	public ResponseEntity<Integer> otherCount() {
+		return new ResponseEntity<>(drinksFacade.countOthers(), HttpStatus.OK);
+	}
+
+	@RequestMapping("/other")
+	public @ResponseBody OtherTO other(@RequestParam(value = "id", required = true) Long id) {
+		return drinksFacade.getOtherById(id);
 	}
 
 }

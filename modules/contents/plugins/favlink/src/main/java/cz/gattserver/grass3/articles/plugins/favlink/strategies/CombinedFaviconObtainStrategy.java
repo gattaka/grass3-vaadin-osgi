@@ -18,8 +18,8 @@ public class CombinedFaviconObtainStrategy implements FaviconObtainStrategy {
 		FaviconCache cache = new FaviconCache();
 		List<FaviconObtainStrategy> strategies = new ArrayList<>();
 		strategies.add(new CacheFaviconObtainStrategy(cache));
-		strategies.add(new AddressFaviconObtainStrategy(cache));
 		strategies.add(new HeaderFaviconObtainStrategy(cache));
+		strategies.add(new AddressFaviconObtainStrategy(cache));
 
 		for (FaviconObtainStrategy s : strategies) {
 			String faviconURL = s.obtainFaviconURL(pageURL, contextRoot);

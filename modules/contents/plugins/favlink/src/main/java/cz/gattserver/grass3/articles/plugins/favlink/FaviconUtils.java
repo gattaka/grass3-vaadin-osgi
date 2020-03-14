@@ -27,6 +27,12 @@ public class FaviconUtils {
 	}
 
 	private static InputStream getResponseReader(String address) {
+		// na některých stránkách se následující agenti projeví jako timout
+		// (stránky je potichu odmítnou, zřejmě jako bot request):
+		// Mozilla
+		// Mozilla/5.0
+		String agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)";
+
 		URL url = null;
 		InputStream is = null;
 		try {
@@ -45,10 +51,11 @@ public class FaviconUtils {
 
 					// bez agenta to často hodí 403 Forbidden, protože si myslí,
 					// že jsem asi bot ... (což vlastně jsem)
-					hc.setRequestProperty("User-Agent", "Mozilla");
+					hc.setRequestProperty("User-Agent", agent);
 					logger.info("Favicon URL: " + uc.getURL());
-					hc.setConnectTimeout(1000);
-					hc.setReadTimeout(1000);
+					int timeout = 2000; // 2s
+					hc.setConnectTimeout(timeout);
+					hc.setReadTimeout(timeout);
 					hc.connect();
 
 					// Zjisti, zda bude potřeba manuální redirect (URLConnection
@@ -59,7 +66,7 @@ public class FaviconUtils {
 						String location = hc.getHeaderField("Location");
 						hc = (HttpURLConnection) (new URL(location).openConnection());
 						hc.setInstanceFollowRedirects(false);
-						hc.setRequestProperty("User-Agent", "Mozilla");
+						hc.setRequestProperty("User-Agent", agent);
 						hc.connect();
 						responseCode = hc.getResponseCode();
 					}

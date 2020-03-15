@@ -26,7 +26,16 @@ public interface PluginRegisterService {
 	 * 
 	 * @return množina skupin
 	 */
-	Set<String> getRegisteredGroups();
+	Set<String> getRegisteredFamilies();
+
+	/**
+	 * Získá popis (optional) k rodině prvků
+	 * 
+	 * @param family
+	 *            rodina prvků
+	 * @return popis nebo <code>null</code>
+	 */
+	String getFamilyDescription(String family);
 
 	/**
 	 * Získá zdroje na vytváření tlačítek v editoru pro danou skupinu tagů
@@ -35,7 +44,7 @@ public interface PluginRegisterService {
 	 *            název skupiny, od jejíž pluginů chci zdroje pro editor
 	 * @return množina zdrojů pro editor
 	 */
-	Set<EditorButtonResourcesTO> getTagResourcesByGroup(String group);
+	Set<EditorButtonResourcesTO> getTagResourcesByFamily(String group);
 
 	/**
 	 * Mapa pluginů dle tagu, který je vytvářen službou. Funkce by mohla být
@@ -48,4 +57,5 @@ public interface PluginRegisterService {
 	 * @return snapshot registru
 	 */
 	Map<String, Plugin> createRegisterSnapshot();
+
 }

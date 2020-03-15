@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
 import cz.gattserver.grass3.articles.plugins.Plugin;
+import cz.gattserver.grass3.articles.plugins.PluginFamilyDescription;
 import cz.gattserver.grass3.articles.plugins.register.PluginRegisterService;
 
 /**
@@ -28,24 +29,34 @@ public class PluginRegisterServiceImpl implements PluginRegisterService {
 	@Autowired(required = false)
 	private List<Plugin> injectedPlugins;
 
+	@Autowired(required = false)
+	private List<PluginFamilyDescription> injectedPluginFamilyDescs;
+
 	/**
 	 * Pluginy dle skupin
 	 */
 	private Map<String, Map<String, EditorButtonResourcesTO>> editorCatalog;
 	private Map<String, Plugin> plugins;
+	private Map<String, String> familyDescs;
 
 	@PostConstruct
 	private void init() {
 		// Ošetření null kolekcí
 		if (injectedPlugins == null)
 			injectedPlugins = new ArrayList<>();
+		if (injectedPluginFamilyDescs == null)
+			injectedPluginFamilyDescs = new ArrayList<>();
 
 		editorCatalog = new HashMap<>();
 		plugins = new HashMap<>();
+		familyDescs = new HashMap<>();
 		for (Plugin plugin : injectedPlugins) {
 			registerPlugin(plugin);
 			addButtonToGroup(plugin.getEditorButtonResources());
 		}
+
+		for (PluginFamilyDescription family : injectedPluginFamilyDescs)
+			familyDescs.put(family.getFamily(), family.getDescription());
 	}
 
 	private Plugin registerPlugin(Plugin plugin) {
@@ -58,12 +69,17 @@ public class PluginRegisterServiceImpl implements PluginRegisterService {
 	}
 
 	@Override
-	public Set<String> getRegisteredGroups() {
+	public Set<String> getRegisteredFamilies() {
 		return Collections.unmodifiableSet(editorCatalog.keySet());
 	}
 
 	@Override
-	public Set<EditorButtonResourcesTO> getTagResourcesByGroup(String group) {
+	public String getFamilyDescription(String family) {
+		return familyDescs.get(family);
+	}
+
+	@Override
+	public Set<EditorButtonResourcesTO> getTagResourcesByFamily(String group) {
 		Map<String, EditorButtonResourcesTO> resources = editorCatalog.get(group);
 		if (resources == null)
 			return new HashSet<>();

@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,7 @@ import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
+import cz.gattserver.web.common.ui.HtmlSpan;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 
@@ -290,8 +292,8 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 	@Override
 	protected void createLeftColumnContent(Div layout) {
 		layout.getStyle().set("text-align", "center");
-		List<String> groups = new ArrayList<>(pluginRegister.getRegisteredGroups());
-		Collections.sort(groups, (o1, o2) -> {
+		List<String> families = new ArrayList<>(pluginRegister.getRegisteredFamilies());
+		Collections.sort(families, (o1, o2) -> {
 			if (o1 == null) {
 				return o2 == null ? 0 : "".compareTo(o2);
 			} else {
@@ -339,21 +341,24 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		layout.add(handlerJsDiv);
 
 		// Projdi zaregistrované pluginy a vytvoř menu nástrojů
-		for (int i = 0; i < groups.size(); i++) {
-			String group = groups.get(i);
-			ButtonLayout groupToolsLayout = new ButtonLayout();
+		for (int i = 0; i < families.size(); i++) {
+			String family = families.get(i);
+			ButtonLayout familyToolsLayout = new ButtonLayout();
 			Span headerSpan = new Span();
-			headerSpan.add(group);
+			headerSpan.add(family);
+			String desc = pluginRegister.getFamilyDescription(family);
+			if (StringUtils.isNotBlank(desc))
+				headerSpan.add(new HtmlSpan(" " + desc));
 			Div header = new Div(headerSpan);
 			header.getStyle().set("border-bottom", "2px solid #aaa").set("line-height", "0").set("margin",
 					i == 0 ? "10px 0" : "20px 0 10px 0");
 			headerSpan.getStyle().set("color", "#888").set("font-size", "11pt").set("font-weight", "600")
 					.set("background", "#f4f1e6").set("padding", "0 10px");
 			layout.add(header);
-			layout.add(groupToolsLayout);
+			layout.add(familyToolsLayout);
 
 			List<EditorButtonResourcesTO> resourcesBundles = new ArrayList<>(
-					pluginRegister.getTagResourcesByGroup(group));
+					pluginRegister.getTagResourcesByFamily(family));
 			Collections.sort(resourcesBundles);
 
 			for (EditorButtonResourcesTO resourceBundle : resourcesBundles) {
@@ -366,12 +371,12 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 							new Image(resourceBundle.getImage(), resourceBundle.getTag()),
 							event -> UI.getCurrent().getPage().executeJs(js));
 					btn.setTooltip(resourceBundle.getTag());
-					groupToolsLayout.add(btn);
+					familyToolsLayout.add(btn);
 				} else {
 					Button btn = new Button(resourceBundle.getDescription(),
 							event -> UI.getCurrent().getPage().executeJs(js));
 					btn.getElement().setProperty("title", resourceBundle.getTag());
-					groupToolsLayout.add(btn);
+					familyToolsLayout.add(btn);
 				}
 			}
 		}

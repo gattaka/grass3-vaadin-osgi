@@ -40,19 +40,19 @@ public class PluginRegisterTest extends AbstractContextAwareTest {
 
 	@Test
 	public void testGetGroupTags() {
-		Set<EditorButtonResourcesTO> resourcesTOs = pluginRegister.getTagResourcesByGroup("Mock");
+		Set<EditorButtonResourcesTO> resourcesTOs = pluginRegister.getTagResourcesByFamily("Mock");
 		assertEquals(1, resourcesTOs.size());
 
-		resourcesTOs = pluginRegister.getTagResourcesByGroup("Nadpisy");
+		resourcesTOs = pluginRegister.getTagResourcesByFamily("Nadpisy");
 		assertEquals(4, resourcesTOs.size());
 
-		resourcesTOs = pluginRegister.getTagResourcesByGroup("Nonexistent");
+		resourcesTOs = pluginRegister.getTagResourcesByFamily("Nonexistent");
 		assertTrue(resourcesTOs.isEmpty());
 	}
 
 	@Test
 	public void testGetRegisteredGroups() {
-		Set<String> groups = pluginRegister.getRegisteredGroups();
+		Set<String> groups = pluginRegister.getRegisteredFamilies();
 		assertEquals(3, groups.size());
 		assertTrue(groups.contains("Nadpisy"));
 		assertTrue(groups.contains("Mock"));

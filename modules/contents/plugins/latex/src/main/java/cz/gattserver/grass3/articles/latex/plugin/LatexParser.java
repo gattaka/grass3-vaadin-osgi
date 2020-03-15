@@ -22,6 +22,10 @@ public class LatexParser implements Parser {
 		this.tag = tag;
 	}
 
+	protected String decorateFormula(String formula) {
+		return formula;
+	}
+
 	@Override
 	public Element parse(ParsingProcessor pluginBag) {
 
@@ -44,14 +48,20 @@ public class LatexParser implements Parser {
 		 * potenciální počáteční tagy. Jediná věc, která mne může zastavit je
 		 * EOF nebo můj koncový tag.
 		 */
+		Token currentToken = null;
 		while (true) {
-			if ((pluginBag.getToken() == Token.END_TAG && pluginBag.getEndTag().equals(tag))
-					|| pluginBag.getToken() == Token.EOF)
+			currentToken = pluginBag.getToken();
+			if ((currentToken == Token.END_TAG && pluginBag.getEndTag().equals(tag)) || currentToken == Token.EOF)
 				break;
-			formulaBuilder.append(pluginBag.getCodeTextTree().getText());
+			if (Token.EOL.equals(currentToken)) {
+				formulaBuilder.append('\n');
+			} else {
+				formulaBuilder.append(pluginBag.getCode());
+			}
+			pluginBag.nextToken();
 		}
 
-		String formula = formulaBuilder.toString();
+		String formula = decorateFormula(formulaBuilder.toString());
 
 		// zpracovat koncový tag
 		String endTag = pluginBag.getEndTag();

@@ -22,8 +22,23 @@ public class LatexParser implements Parser {
 		this.tag = tag;
 	}
 
-	protected String decorateFormula(String formula) {
-		return formula;
+	protected String processFormula(ParsingProcessor pluginBag) {
+		StringBuilder formulaBuilder = new StringBuilder();
+
+		/**
+		 * Zpracuje vnitřek tagů jako code - jedu dokud nenarazím na svůj
+		 * koncový tag - všechno ostatní beru jako obsah latex zdrojáku - text i
+		 * potenciální počáteční tagy. Jediná věc, která mne může zastavit je
+		 * EOF nebo můj koncový tag.
+		 */
+		while (true) {
+			if ((pluginBag.getToken() == Token.END_TAG && pluginBag.getEndTag().equals(tag))
+					|| pluginBag.getToken() == Token.EOF)
+				break;
+			formulaBuilder.append(pluginBag.getCodeTextTree().getText());
+		}
+
+		return formulaBuilder.toString();
 	}
 
 	@Override
@@ -40,28 +55,7 @@ public class LatexParser implements Parser {
 		// START_TAG byl zpracován
 		pluginBag.nextToken();
 
-		StringBuilder formulaBuilder = new StringBuilder();
-
-		/**
-		 * Zpracuje vnitřek tagů jako code - jedu dokud nenarazím na svůj
-		 * koncový tag - všechno ostatní beru jako obsah latex zdrojáku - text i
-		 * potenciální počáteční tagy. Jediná věc, která mne může zastavit je
-		 * EOF nebo můj koncový tag.
-		 */
-		Token currentToken = null;
-		while (true) {
-			currentToken = pluginBag.getToken();
-			if ((currentToken == Token.END_TAG && pluginBag.getEndTag().equals(tag)) || currentToken == Token.EOF)
-				break;
-			if (Token.EOL.equals(currentToken)) {
-				formulaBuilder.append('\n');
-			} else {
-				formulaBuilder.append(pluginBag.getCode());
-			}
-			pluginBag.nextToken();
-		}
-
-		String formula = decorateFormula(formulaBuilder.toString());
+		String formula = processFormula(pluginBag);
 
 		// zpracovat koncový tag
 		String endTag = pluginBag.getEndTag();

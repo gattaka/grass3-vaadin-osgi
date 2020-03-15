@@ -55,10 +55,8 @@ public class LatexEquationPlugin implements Plugin {
 						// aby zarovnání rovnic fungovalo, musí se k
 						// rovnítkům dát znak &, aby bylo jasné, která
 						// strana zůstane a která se bude posouvat pro
-						// zarovnání. Pokud už v kódu '&=' použito je,
-						// je potřeba ho dočasně změnit na '=', aby se
-						// při nahrazení nevytvořili duplicitní '&&='
-						.replaceAll("&=", "=").replaceAll("=", "&=")
+						// zarovnání.
+						.replaceAll(" = ", " &= ")
 						// Zarovnané rovnice musí mít oddělovač řádků \\
 						.replaceAll("\n", " \\\\\\\\ ") + "\\end{aligned}";
 			}

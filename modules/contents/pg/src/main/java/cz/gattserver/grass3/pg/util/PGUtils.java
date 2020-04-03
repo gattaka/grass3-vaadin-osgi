@@ -5,11 +5,14 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 import javax.imageio.ImageIO;
 
@@ -17,7 +20,16 @@ import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.JPEGTranscoder;
-import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.ImageWriteException;
+import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.common.ImageMetadata;
+import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
+import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter;
+import org.apache.commons.imaging.formats.tiff.TiffImageMetadata;
+import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants;
+import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory;
+import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +40,8 @@ import net.coobird.thumbnailator.Thumbnails;
 public class PGUtils {
 
 	private static Logger logger = LoggerFactory.getLogger(PGUtils.class);
+
+	public static final String EXIF_DATE_FORMAT = "yyyy:MM:dd HH:mm:ss";
 
 	public static final int MINIATURE_SIZE = 150;
 	public static final int SLIDESHOW_WIDTH = 900;
@@ -67,7 +81,7 @@ public class PGUtils {
 		int yr = 20;
 		bg.fillPolygon(new Polygon(new int[] { xc - xr, xc + xr, xc - xr }, new int[] { yc - yr, yc, yc + yr }, 3));
 		try (OutputStream o = Files.newOutputStream(destinationFile)) {
-			ImageIO.write(backgroundImage, "png", o);
+			ImageIO.write(backgroundImage, "jpg", o);
 		} catch (IOException e) {
 			logger.error("Vytváření chybového náhledu videa {} se nezdařilo", destinationFile.getFileName().toString(),
 					e);
@@ -76,7 +90,7 @@ public class PGUtils {
 
 	public static void resizeVideoPreviewImage(BufferedImage inputImage, Path destinationFile) throws IOException {
 		try (OutputStream os = Files.newOutputStream(destinationFile)) {
-			Thumbnails.of(inputImage).outputFormat("png").size(PGUtils.MINIATURE_SIZE, PGUtils.MINIATURE_SIZE)
+			Thumbnails.of(inputImage).outputFormat("jpg").size(PGUtils.MINIATURE_SIZE, PGUtils.MINIATURE_SIZE)
 					.toOutputStream(os);
 		}
 	}
@@ -88,22 +102,75 @@ public class PGUtils {
 			if (inputFile.toString().toLowerCase().endsWith(".gif")) {
 				GifImage gifImage = GifDecoder.read(is);
 				BufferedImage image = gifImage.getFrame(0);
-				Thumbnails.of(image).outputFormat("png").size(maxWidth, maxHeight).toOutputStream(os);
+				Thumbnails.of(image).outputFormat("jpg").size(maxWidth, maxHeight).toOutputStream(os);
 			} else if (inputFile.toString().toLowerCase().endsWith(".svg")) {
 				// https://xmlgraphics.apache.org/batik/using/transcoder.html
 				// https://stackoverflow.com/questions/42340833/convert-svg-image-to-png-in-java-by-servlet
 				// https://stackoverflow.com/questions/45239099/apache-batik-no-writeadapter-is-available
 				TranscoderInput input = new TranscoderInput(is);
 				TranscoderOutput output = new TranscoderOutput(os);
-				PNGTranscoder converter = new PNGTranscoder();
+				JPEGTranscoder converter = new JPEGTranscoder();
 				converter.addTranscodingHint(JPEGTranscoder.KEY_MAX_WIDTH, new Float(maxWidth));
 				converter.addTranscodingHint(JPEGTranscoder.KEY_MAX_HEIGHT, new Float(maxHeight));
 				converter.transcode(input, output);
 			} else {
-				Thumbnails.of(is).outputFormat("png").size(maxWidth, maxHeight).toOutputStream(os);
+				Thumbnails.of(is).outputFormat("jpg").size(maxWidth, maxHeight).toOutputStream(os);
 			}
 		} catch (TranscoderException e) {
-			throw new IOException("SVG to PNG failed", e);
+			throw new IOException("SVG to JPG failed", e);
+		}
+		try {
+			copyExifMetadata(inputFile, destinationFile);
+		} catch (ImageReadException | ImageWriteException e) {
+			// nezdařilo se, nevadí
+			logger.error("Kopírování EXIF pro soubor {} se nezdařilo", inputFile.getFileName().toString(), e);
+		}
+	}
+
+	// https://github.com/apache/commons-imaging/blob/master/src/test/java/org/apache/commons/imaging/examples/WriteExifMetadataExample.java
+	// https://stackoverflow.com/questions/40094040/how-to-edit-date-time-original-exif-tag-using-apache-in-java
+	private static void copyExifMetadata(Path source, Path dst)
+			throws IOException, ImageReadException, ImageWriteException {
+		Path dstTmp = dst.getParent().resolve(dst.getFileName().toString() + "_exif_tmp");
+		try (OutputStream os = new BufferedOutputStream(Files.newOutputStream(dstTmp))) {
+			TiffOutputSet outputSet = null;
+
+			// note that metadata might be null if no metadata is found.
+			final ImageMetadata metadata = Imaging.getMetadata(Files.newInputStream(source),
+					source.getFileName().toString());
+			final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
+			if (null != jpegMetadata) {
+				// note that exif might be null if no Exif metadata is found.
+				final TiffImageMetadata exif = jpegMetadata.getExif();
+
+				if (exif != null) {
+					// TiffImageMetadata class is immutable (read-only).
+					// TiffOutputSet class represents the Exif data to write.
+					//
+					// Usually, we want to update existing Exif metadata by
+					// changing
+					// the values of a few fields, or adding a field.
+					// In these cases, it is easiest to use getOutputSet() to
+					// start with a "copy" of the fields read from the image.
+					outputSet = exif.getOutputSet();
+				}
+			}
+
+			// if file does not contain any exif metadata, we create an empty
+			// set of exif metadata. Otherwise, we keep all of the other
+			// existing tags.
+			if (outputSet == null) {
+				outputSet = new TiffOutputSet();
+				// 2003:08:11 16:45:32
+				String s = Files.getLastModifiedTime(source).toInstant().atZone(ZoneId.systemDefault())
+						.toLocalDateTime().format(DateTimeFormatter.ofPattern(EXIF_DATE_FORMAT));
+				final TiffOutputDirectory exifDirectory = outputSet.getOrCreateExifDirectory();
+				exifDirectory.add(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL, s);
+			}
+
+			new ExifRewriter().updateExifMetadataLossless(Files.newInputStream(dst), os, outputSet);
+			Files.delete(dst);
+			Files.move(dstTmp, dst);
 		}
 	}
 

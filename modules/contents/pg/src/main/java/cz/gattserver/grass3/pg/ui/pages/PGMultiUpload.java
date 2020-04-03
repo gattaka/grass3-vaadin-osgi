@@ -2,6 +2,8 @@ package cz.gattserver.grass3.pg.ui.pages;
 
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,8 @@ import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.window.WarnDialog;
+import elemental.json.JsonArray;
+import elemental.json.JsonObject;
 
 public class PGMultiUpload extends Upload {
 
@@ -26,62 +30,78 @@ public class PGMultiUpload extends Upload {
 	@Autowired
 	private PGService pgService;
 
-	/**
-	 * Je již zobrazené okno, informující o tom, že některé nahrávané soubory
-	 * mají jmennou kolizi s exitujcími soubory galerie?
-	 */
-	private boolean warnWindowDeployed = false;
-	private HtmlDiv existingFiles;
-	private WarnDialog warnWindow;
 	private MultiFileMemoryBuffer buffer;
+	private Set<String> existingFiles;
+	private boolean allUploadsProcessed;
 
 	public PGMultiUpload(String galleryDir) {
+		existingFiles = new HashSet<>();
+		allUploadsProcessed = false;
 		setAcceptedFileTypes("image/*", "video/*");
-		UI ui = UI.getCurrent();
 		buffer = new MultiFileMemoryBuffer();
 		setReceiver(buffer);
 		SpringContextHelper.inject(this);
-		addSucceededListener(event -> {
+
+		// https://github.com/vaadin/vaadin-upload-flow/issues/134
+		getElement().addEventListener("upload-start", e -> this.allUploadsProcessed = false);
+		getElement().addEventListener("upload-success", e -> {
+			JsonArray files = e.getEventData().getArray("element.files");
+
+			boolean allUploadsProcessed = true;
+			for (int i = 0; i < files.length(); i++) {
+				JsonObject file = files.getObject(i);
+				if (!file.getBoolean("complete"))
+					allUploadsProcessed = false;
+			}
+
+			if (!this.allUploadsProcessed && allUploadsProcessed)
+				onDone();
+			this.allUploadsProcessed = allUploadsProcessed;
+		}).addEventData("element.files");
+
+		addFinishedListener(event -> {
 			try {
 				pgService.uploadFile(buffer.getInputStream(event.getFileName()), event.getFileName(), galleryDir);
 				fileUploadSuccess(event.getFileName());
 			} catch (FileAlreadyExistsException f) {
-				if (!warnWindowDeployed) {
-					existingFiles = new HtmlDiv("");
-					warnWindow = new WarnDialog("Následující soubory již existují:") {
-						private static final long serialVersionUID = 3428203680996794639L;
-
-						@Override
-						protected void createDetails(String details) {
-							addComponent(existingFiles);
-						}
-
-						@Override
-						public void close() {
-							existingFiles.setText("");
-							warnWindowDeployed = false;
-							super.close();
-						}
-					};
-					ProgressDialog.runInUI(() -> warnWindow.open(), ui);
-					warnWindowDeployed = true;
-				}
-				existingFiles.setValue(existingFiles.getValue() + event.getFileName() + "<br/>");
+				existingFiles.add(event.getFileName());
 			} catch (IOException e) {
 				logger.error("Nezdařilo se uložit soubor {}", event.getFileName(), e);
 			}
 		});
 	}
 
-	public boolean isWarnWindowDeployed() {
-		return warnWindowDeployed;
-	}
+	protected void onDone() {
+		if (existingFiles.isEmpty()) {
+			allFilesUploaded();
+		} else {
+			WarnDialog warnWindow = new WarnDialog("Následující soubory již existují:") {
+				private static final long serialVersionUID = 3428203680996794639L;
 
-	public WarnDialog getWarnWindow() {
-		return warnWindow;
+				@Override
+				protected void createDetails(String details) {
+					HtmlDiv div = new HtmlDiv();
+					String value = "";
+					for (String existing : existingFiles)
+						value += existing + "<br/>";
+					div.setValue(value);
+					addComponent(div);
+				}
+
+				@Override
+				public void close() {
+					super.close();
+					allFilesUploaded();
+				}
+			};
+			ProgressDialog.runInUI(() -> warnWindow.open(), UI.getCurrent());
+		}
 	}
 
 	protected void fileUploadSuccess(String fileName) {
+	};
+
+	protected void allFilesUploaded() {
 	};
 
 }

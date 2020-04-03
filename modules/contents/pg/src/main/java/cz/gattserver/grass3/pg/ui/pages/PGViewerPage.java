@@ -197,21 +197,25 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		pagingLayout.setPadding(false);
 		layout.add(pagingLayout);
 
-		upload = new PGMultiUpload(galleryDir);
+		upload = new PGMultiUpload(galleryDir) {
+			private static final long serialVersionUID = 6886131045258035130L;
+
+			@Override
+			protected void allFilesUploaded() {
+				eventBus.subscribe(PGViewerPage.this);
+				progressIndicatorWindow = new ProgressDialog();
+				PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(photogallery.getContentNode().getName(),
+						galleryDir, photogallery.getContentNode().getContentTagsAsStrings(),
+						photogallery.getContentNode().isPublicated(), false);
+				pgService.modifyPhotogallery(UUID.randomUUID(), photogallery.getId(), payloadTO,
+						photogallery.getContentNode().getCreationDate());
+			}
+		};
 		Button uploadButton = new Button("Upload");
 		upload.setUploadButton(uploadButton);
 		Span dropLabel = new Span("Drop");
 		upload.setDropLabel(dropLabel);
 		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		upload.addFinishedListener(e -> {
-			eventBus.subscribe(PGViewerPage.this);
-			progressIndicatorWindow = new ProgressDialog();
-			PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(photogallery.getContentNode().getName(),
-					galleryDir, photogallery.getContentNode().getContentTagsAsStrings(),
-					photogallery.getContentNode().isPublicated(), false);
-			pgService.modifyPhotogallery(UUID.randomUUID(), photogallery.getId(), payloadTO,
-					photogallery.getContentNode().getCreationDate());
-		});
 		if (coreACL.canModifyContent(photogallery.getContentNode(), getUser()))
 			layout.add(upload);
 
@@ -247,11 +251,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		progressIndicatorWindow.runInUI(() -> {
 			if (progressIndicatorWindow != null)
 				progressIndicatorWindow.close();
-			Runnable onDone = () -> UI.getCurrent().getPage().reload();
-			if (!upload.isWarnWindowDeployed())
-				onDone.run();
-			else
-				upload.getWarnWindow().addDetachListener(e -> onDone.run());
+			UI.getCurrent().getPage().reload();
 		});
 		eventBus.unsubscribe(PGViewerPage.this);
 	}

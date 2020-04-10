@@ -41,7 +41,6 @@ public class Print3dMultiUpload extends Upload {
 	public Print3dMultiUpload(String projectDir) {
 		existingFiles = new HashSet<>();
 		allUploadsProcessed = false;
-		setAcceptedFileTypes("image/*", "video/*");
 		buffer = new MultiFileMemoryBuffer();
 		setReceiver(buffer);
 		SpringContextHelper.inject(this);

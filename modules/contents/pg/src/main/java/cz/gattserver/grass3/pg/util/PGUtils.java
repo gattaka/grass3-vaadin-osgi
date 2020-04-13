@@ -115,7 +115,7 @@ public class PGUtils {
 				}
 			} else {
 				try (InputStream is = Files.newInputStream(inputFile)) {
-					Thumbnails.of(is).outputFormat("jpg").outputQuality(0.5).size(maxWidth, maxHeight)
+					Thumbnails.of(is).outputFormat("jpg").outputQuality(0.8).size(maxWidth, maxHeight)
 							.toOutputStream(os);
 				}
 				try (InputStream is = Files.newInputStream(inputFile)) {

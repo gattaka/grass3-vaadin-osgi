@@ -12,7 +12,6 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -23,12 +22,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import org.apache.commons.imaging.ImageReadException;
-import org.apache.commons.imaging.Imaging;
-import org.apache.commons.imaging.common.ImageMetadata;
-import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
-import org.apache.commons.imaging.formats.tiff.TiffField;
-import org.apache.commons.imaging.formats.tiff.constants.TiffTagConstants;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -700,30 +693,15 @@ public class PGServiceImpl implements PGService {
 		}
 	}
 
-	private LocalDateTime getSomeDateTimeFromImage(Path path) throws IOException {
-		try {
-			ImageMetadata metadata = Imaging.getMetadata(Files.newInputStream(path), path.getFileName().toString());
-			if (metadata instanceof JpegImageMetadata) {
-				final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
-				TiffField field = jpegMetadata.findEXIFValueWithExactMatch(TiffTagConstants.TIFF_TAG_DATE_TIME);
-				if (field != null) {
-					DateTimeFormatter dtf = DateTimeFormatter.ofPattern(PGUtils.EXIF_DATE_FORMAT);
-					return LocalDateTime.parse(field.getStringValue(), dtf);
-				}
-			}
-		} catch (ImageReadException | IOException e) {
-			// nezdařilo se
-		}
-		return Files.getLastModifiedTime(path).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-	}
-
 	private Comparator<Path> getComparator() {
 		Comparator<Path> nameComparator = (p1, p2) -> p1.getFileName().toString()
 				.compareTo(p2.getFileName().toString());
 		Comparator<Path> comparator = (p1, p2) -> {
 			try {
-				LocalDateTime ldt1 = getSomeDateTimeFromImage(p1);
-				LocalDateTime ldt2 = getSomeDateTimeFromImage(p2);
+				LocalDateTime ldt1 = Files.getLastModifiedTime(p1).toInstant().atZone(ZoneId.systemDefault())
+						.toLocalDateTime();
+				LocalDateTime ldt2 = Files.getLastModifiedTime(p2).toInstant().atZone(ZoneId.systemDefault())
+						.toLocalDateTime();
 				return ldt1.compareTo(ldt2);
 			} catch (IOException e) {
 				// nezdařilo se načíst datum ze soborů (to je už dost zvláštní,

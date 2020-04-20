@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.articles.editor.parser.elements;
 
+import java.util.List;
+
 import cz.gattserver.grass3.articles.editor.parser.Context;
 
 public class ParserErrorElement implements Element {
@@ -16,5 +18,10 @@ public class ParserErrorElement implements Element {
 	@Override
 	public void apply(Context ctx) {
 		ctx.println(text);
+	}
+	
+	@Override
+	public List<Element> getSubElements() {
+		return null;
 	}
 }

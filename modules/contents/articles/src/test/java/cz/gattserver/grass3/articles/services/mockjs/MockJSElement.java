@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.articles.services.mockjs;
 
+import java.util.List;
+
 import cz.gattserver.grass3.articles.editor.parser.Context;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 
@@ -16,6 +18,11 @@ public class MockJSElement implements Element {
 		ctx.addJSCode(content);
 		ctx.addJSResource("pre-resource");
 		ctx.print("JS-loaded");
+	}
+
+	@Override
+	public List<Element> getSubElements() {
+		return null;
 	}
 
 }

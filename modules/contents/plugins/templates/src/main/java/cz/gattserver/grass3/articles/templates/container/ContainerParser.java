@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.templates.sources;
+package cz.gattserver.grass3.articles.templates.container;
 
 import java.util.ArrayList;
 import java.util.List;

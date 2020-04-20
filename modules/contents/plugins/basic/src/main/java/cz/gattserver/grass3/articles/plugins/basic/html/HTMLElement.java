@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.articles.plugins.basic.html;
 
+import java.util.List;
+
 import cz.gattserver.grass3.articles.editor.parser.Context;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 
@@ -16,4 +18,8 @@ public class HTMLElement implements Element {
 		ctx.print("<div id=\"htmldiv\">" + content + "</div>");
 	}
 
+	@Override
+	public List<Element> getSubElements() {
+		return null;
+	}
 }

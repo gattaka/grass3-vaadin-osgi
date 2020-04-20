@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.articles.plugins.basic.image;
 
+import java.util.List;
+
 import cz.gattserver.grass3.articles.editor.parser.Context;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 
@@ -18,4 +20,8 @@ public class ImageElement implements Element {
 				+ "\" alt=\"" + link + "\" /></a>");
 	}
 
+	@Override
+	public List<Element> getSubElements() {
+		return null;
+	}
 }

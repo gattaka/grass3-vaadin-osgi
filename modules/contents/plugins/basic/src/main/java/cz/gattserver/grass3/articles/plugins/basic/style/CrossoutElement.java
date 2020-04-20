@@ -20,4 +20,5 @@ public class CrossoutElement extends AbstractStyleElement {
 	public void generateEndTag(Context ctx) {
 		ctx.print("</span>");
 	}
+	
 }

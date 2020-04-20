@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.articles.editor.parser.elements;
 
+import java.util.List;
+
 import cz.gattserver.grass3.articles.editor.parser.Context;
 
 public interface Element {
@@ -12,4 +14,11 @@ public interface Element {
 	 * @param ctx
 	 */
 	void apply(Context ctx);
+
+	/**
+	 * Metoda pro procházení podstromu při post-procesingu
+	 * 
+	 * @return list elementů, nebo <code>null</code>
+	 */
+	List<Element> getSubElements();
 }

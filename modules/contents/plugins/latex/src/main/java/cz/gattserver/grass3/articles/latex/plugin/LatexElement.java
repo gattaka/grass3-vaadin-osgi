@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.articles.latex.plugin;
 
+import java.util.List;
 import java.util.UUID;
 
 import cz.gattserver.grass3.articles.editor.parser.Context;
@@ -34,4 +35,8 @@ public class LatexElement implements Element {
 		return String.format("LaTeX %s", formula);
 	}
 
+	@Override
+	public List<Element> getSubElements() {
+		return null;
+	}
 }

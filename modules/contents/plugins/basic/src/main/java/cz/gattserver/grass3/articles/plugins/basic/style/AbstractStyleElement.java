@@ -25,10 +25,13 @@ public abstract class AbstractStyleElement implements Element {
 	}
 
 	protected void generateBlock(Context ctx) {
-		if (elements != null) {
-			for (Element et : elements) {
+		if (elements != null)
+			for (Element et : elements)
 				et.apply(ctx);
-			}
-		}
+	}
+
+	@Override
+	public List<Element> getSubElements() {
+		return elements;
 	}
 }

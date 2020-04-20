@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.articles.services.mock;
 
+import java.util.List;
 import java.util.stream.IntStream;
 
 import cz.gattserver.grass3.articles.editor.parser.Context;
@@ -18,6 +19,11 @@ public class MockElement implements Element {
 		ctx.print("<span>");
 		IntStream.range(0, numberOfStars).forEach(i -> ctx.print("*"));
 		ctx.print("</span>");
+	}
+	
+	@Override
+	public List<Element> getSubElements() {
+		return null;
 	}
 
 }

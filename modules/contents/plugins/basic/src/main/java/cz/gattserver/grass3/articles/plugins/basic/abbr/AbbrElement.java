@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.articles.plugins.basic.abbr;
 
+import java.util.List;
+
 import cz.gattserver.grass3.articles.editor.parser.Context;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 
@@ -16,5 +18,10 @@ public class AbbrElement implements Element {
 	@Override
 	public void apply(Context ctx) {
 		ctx.print("<abbr title=\"" + title + "\">" + text + "</abbr>");
+	}
+
+	@Override
+	public List<Element> getSubElements() {
+		return null;
 	}
 }

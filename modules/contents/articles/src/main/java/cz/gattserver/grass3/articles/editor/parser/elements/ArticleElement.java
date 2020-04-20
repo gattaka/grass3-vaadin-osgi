@@ -18,10 +18,15 @@ public class ArticleElement implements Element {
 	@Override
 	public void apply(Context ctx) {
 		if (children != null) {
-			for (Element et : children) 
+			for (Element et : children)
 				et.apply(ctx);
 		} else {
 			ctx.print("~ empty ~");
 		}
+	}
+
+	@Override
+	public List<Element> getSubElements() {
+		return children;
 	}
 }

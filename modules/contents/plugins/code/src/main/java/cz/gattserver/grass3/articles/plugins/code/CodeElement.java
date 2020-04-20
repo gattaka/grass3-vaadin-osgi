@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.articles.plugins.code;
 
+import java.util.List;
+
 import cz.gattserver.grass3.articles.editor.parser.Context;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 
@@ -45,6 +47,11 @@ public class CodeElement implements Element {
 	@Override
 	public String toString() {
 		return "Code highlight";
+	}
+
+	@Override
+	public List<Element> getSubElements() {
+		return null;
 	}
 
 }

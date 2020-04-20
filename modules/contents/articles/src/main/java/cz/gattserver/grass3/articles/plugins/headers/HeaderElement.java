@@ -26,5 +26,10 @@ public class HeaderElement implements Element {
 		ctx.setHeaderLevel(level);
 		ctx.addCSSResource("articles/style.css");
 	}
+	
+	@Override
+	public List<Element> getSubElements() {
+		return headerContent;
+	}
 
 }

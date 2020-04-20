@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.templates.sources;
+package cz.gattserver.grass3.articles.templates.container;
 
 import java.util.List;
 import java.util.UUID;
@@ -43,5 +43,10 @@ public class ContainerElement implements Element {
 				et.apply(ctx);
 			}
 		}
+	}
+
+	@Override
+	public List<Element> getSubElements() {
+		return elist;
 	}
 }

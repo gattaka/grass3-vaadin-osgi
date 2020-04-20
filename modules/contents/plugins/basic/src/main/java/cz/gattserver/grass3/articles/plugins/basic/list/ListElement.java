@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.articles.plugins.basic.list;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cz.gattserver.grass3.articles.editor.parser.Context;
@@ -27,5 +28,13 @@ public class ListElement implements Element {
 			ctx.print("</li>");
 		}
 		ctx.print(ordered ? "</ol>" : "</ul>");
+	}
+
+	@Override
+	public List<Element> getSubElements() {
+		List<Element> superList = new ArrayList<>();
+		for (List<Element> list : listElements)
+			superList.addAll(list);
+		return superList;
 	}
 }

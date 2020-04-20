@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.articles.plugins.favlink.plugin;
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 
 import cz.gattserver.grass3.articles.editor.parser.Context;
@@ -51,5 +53,10 @@ public class FavlinkElement implements Element {
 			ctx.print("<img style=\"margin: 4px 5px -4px 2px;\" height=\"16\" width=\"16\" src=\"" + imgURL + "\" />");
 		ctx.print(createShortLink(link, shortDescription));
 		ctx.print("</a>");
+	}
+
+	@Override
+	public List<Element> getSubElements() {
+		return null;
 	}
 }

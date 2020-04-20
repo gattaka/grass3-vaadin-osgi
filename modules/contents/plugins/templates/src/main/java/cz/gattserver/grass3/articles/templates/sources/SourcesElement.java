@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.articles.templates.container;
+package cz.gattserver.grass3.articles.templates.sources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,5 +42,10 @@ public class SourcesElement implements Element {
 			ctx.print("</li>");
 		}
 		ctx.print("</" + element + ">");
+	}
+
+	@Override
+	public List<Element> getSubElements() {
+		return null;
 	}
 }

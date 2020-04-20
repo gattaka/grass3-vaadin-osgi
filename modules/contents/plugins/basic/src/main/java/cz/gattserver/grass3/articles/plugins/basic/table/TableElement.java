@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.articles.plugins.basic.table;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -58,5 +59,14 @@ public class TableElement implements Element {
 			ctx.print("</tr>");
 		}
 		ctx.print("</table>");
+	}
+
+	@Override
+	public List<Element> getSubElements() {
+		List<Element> superList = new ArrayList<>();
+		for (List<List<Element>> row : rows)
+			for (List<Element> cell : row)
+				superList.addAll(cell);
+		return superList;
 	}
 }

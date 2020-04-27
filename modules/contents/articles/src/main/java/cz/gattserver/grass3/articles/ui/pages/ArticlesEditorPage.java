@@ -258,8 +258,9 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 			/*				*/ + "let keyCode = e.keyCode || e.which;"
 			/*				*/ + "if (keyCode == 9) {"
 			/*					*/ + "e.preventDefault();"
-			/*					*/ + "let pos = ta.selectionStart;"
-			/*					*/ + "document.getElementById('" + HANDLER_JS_DIV_ID + "').$server.handleTab(pos);"
+			/*					*/ + createTextareaGetSelectionJS()
+			/*					*/ + "document.getElementById('" + HANDLER_JS_DIV_ID
+					+ "').$server.handleTab(start, finish, ta.value);"
 			/*				*/ + "}"
 			/*			*/ + "}, false);";
 			UI.getCurrent().getPage().executeJs(js);
@@ -317,24 +318,33 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 				if (end < origtext.length())
 					text += origtext.substring(end);
 				articleTextArea.setValue(text);
-				focusOnPosition(pos);
+				focusOnPosition(pos, pos);
 			}
 
 			@ClientCallable
-			private void handleTab(int pos) {
-				String origtext = articleTextArea.getValue();
-				String text = origtext.substring(0, pos) + "\t";
-				if (pos < origtext.length())
-					text += origtext.substring(pos);
-				articleTextArea.setValue(text);
-				pos++;
-				focusOnPosition(pos);
+			private void handleTab(int start, int finish, String origtext) {
+				String preText = origtext.substring(0, start);
+				String tabbedText = origtext.substring(start, finish);
+				String postText = origtext.substring(finish);
+				String result = preText + '\t';
+				int finishShift = 1;
+				for (int i = 0; i < tabbedText.length(); i++) {
+					char c = tabbedText.charAt(i);
+					result += c;
+					if (c == '\n' && i != tabbedText.length() - 1) {
+						result += '\t';
+						finishShift++;
+					}
+				}
+				result += postText;
+				articleTextArea.setValue(result);
+				focusOnPosition(start + 1, finish + finishShift);
 			}
 
-			private void focusOnPosition(int position) {
+			private void focusOnPosition(int start, int finish) {
 				articleTextArea.focus();
 				UI.getCurrent().getPage().executeJs(
-						createTextareaGetJS() + "$(ta).get(0).setSelectionRange(" + position + "," + position + ");");
+						createTextareaGetJS() + "$(ta).get(0).setSelectionRange(" + start + "," + finish + ");");
 			}
 		};
 		handlerJsDiv.setId(HANDLER_JS_DIV_ID);

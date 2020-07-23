@@ -1,6 +1,5 @@
 package cz.gattserver.grass3.ui.pages.template;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -14,13 +13,13 @@ import com.vaadin.flow.component.page.PendingJavaScriptResult;
 import com.vaadin.flow.server.DefaultErrorHandler;
 import com.vaadin.flow.server.InitialPageSettings;
 import com.vaadin.flow.server.PageConfigurator;
-import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.theme.Theme;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.exception.ExceptionDialog;
 
@@ -74,110 +73,40 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 	protected abstract void createPageElements(Div div);
 
 	/**
-	 * Nahraje CSS
-	 * 
-	 * @param link
-	 *            odkaz k css souboru - relativní, absolutní (http://...)
-	 */
-	public void loadCSS(String link) {
-		StringBuilder loadStylesheet = new StringBuilder();
-		loadStylesheet.append("var head=document.getElementsByTagName('head')[0];")
-				.append("var link=document.createElement('link');").append("link.type='text/css';")
-				.append("link.rel='stylesheet';").append("link.href='" + link + "';").append("head.appendChild(link);");
-		UI.getCurrent().getPage().executeJs(loadStylesheet.toString());
-	}
-
-	/**
-	 * Nahraje více JS skriptů, synchronně za sebou (mohou se tedy navzájem na
-	 * sebe odkazovat a bude zaručeno, že 1. skript bude celý nahrán před 2.
-	 * skriptem, který využívá jeho funkcí)
-	 * 
-	 * @param scripts
-	 *            skripty, které budou nahrány
-	 */
-	public PendingJavaScriptResult loadJS(JScriptItem... scripts) {
-		return loadJS(Arrays.asList(scripts));
-	}
-
-	/**
-	 * Nahraje více JS skriptů, synchronně za sebou (mohou se tedy navzájem na
-	 * sebe odkazovat a bude zaručeno, že 1. skript bude celý nahrán před 2.
-	 * skriptem, který využívá jeho funkcí)
-	 * 
-	 * @param scripts
-	 *            skripty, které budou nahrány
-	 */
-	public PendingJavaScriptResult loadJS(List<JScriptItem> scripts) {
-		StringBuilder builder = new StringBuilder();
-		buildJSBatch(builder, 0, scripts);
-		return UI.getCurrent().getPage().executeJs(builder.toString());
-	}
-
-	private void buildJSBatch(StringBuilder builder, int index, List<JScriptItem> scripts) {
-		if (index >= scripts.size())
-			return;
-
-		JScriptItem js = scripts.get(index);
-		String chunk = js.getScript();
-		// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
-		// obejít problém se závislosí pluginů na úložišti theme apod. a
-		// přitom umožnit aby se JS odkazovali na externí zdroje
-		if (!js.isPlain()
-				&& (!chunk.toLowerCase().startsWith("http://") || !chunk.toLowerCase().startsWith("https://"))) {
-			chunk = "\"" + getContextPath() + "/frontend/" + chunk + "\"";
-			builder.append("$.getScript(").append(chunk).append(", function(){");
-			buildJSBatch(builder, index + 1, scripts);
-			builder.append("});");
-		} else {
-			builder.append(chunk);
-			buildJSBatch(builder, index + 1, scripts);
-		}
-	}
-
-	public static String getContextPath() {
-		return VaadinRequest.getCurrent().getContextPath();
-	}
-
-	/**
-	 * Získá URL stránky. Kořen webu + suffix dle pageFactory
-	 */
-	public static String getPageURL(PageFactory pageFactory) {
-		return getContextPath() + "/" + pageFactory.getPageName();
-	}
-
-	/**
-	 * Získá URL stránky. Kořen webu + suffix
-	 */
-	public static String getPageURL(String suffix) {
-		return getContextPath() + "/" + suffix;
-	}
-
-	/**
-	 * Získá URL stránky. Kořen webu + suffix dle pageFactory + relativní URL
-	 */
-	public static String getPageURL(PageFactory pageFactory, String... relativeURLs) {
-		if (relativeURLs.length == 1) {
-			return getPageURL(pageFactory) + "/" + relativeURLs[0];
-		} else {
-			StringBuilder buffer = new StringBuilder();
-			buffer.append(getPageURL(pageFactory));
-			for (String relativeURL : relativeURLs) {
-				if (relativeURL != null) {
-					buffer.append("/");
-					buffer.append(relativeURL);
-				}
-			}
-			return buffer.toString();
-		}
-	}
-
-	/**
 	 * Získá aktuálního přihlášeného uživatele jako {@link UserInfoTO} objekt
 	 */
 	public UserInfoTO getUser() {
 		if (securityFacade == null)
 			securityFacade = SpringContextHelper.getBean(SecurityService.class);
 		return securityFacade.getCurrentUser();
+	}
+
+	public PendingJavaScriptResult loadJS(JScriptItem... scripts) {
+		return UIUtils.loadJS(scripts);
+	}
+
+	public PendingJavaScriptResult loadJS(List<JScriptItem> scripts) {
+		return UIUtils.loadJS(scripts);
+	}
+
+	public String getContextPath() {
+		return UIUtils.getContextPath();
+	}
+
+	public String getPageURL(PageFactory pageFactory) {
+		return UIUtils.getPageURL(pageFactory);
+	}
+
+	public String getPageURL(String suffix) {
+		return UIUtils.getPageURL(suffix);
+	}
+
+	public String getPageURL(PageFactory pageFactory, String... relativeURLs) {
+		return UIUtils.getPageURL(pageFactory, relativeURLs);
+	}
+
+	public void loadCSS(String link) {
+		UIUtils.loadCSS(link);
 	}
 
 }

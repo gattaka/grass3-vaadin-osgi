@@ -7,6 +7,10 @@ import cz.gattserver.grass3.config.AbstractConfiguration;
 import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.security.Role;
 
+/**
+ * @author gattaka
+ *
+ */
 public class HWConfiguration extends AbstractConfiguration {
 
 	/**
@@ -28,6 +32,11 @@ public class HWConfiguration extends AbstractConfiguration {
 	 * Adresář pro ukládání dokumentace
 	 */
 	private String documentsDir = "documents";
+
+	/**
+	 * Adresář pro ukládání 3d modelů
+	 */
+	private String print3dDir = "print3d";
 
 	/**
 	 * Kolik souborů zároveň se smí poslat na server
@@ -96,6 +105,14 @@ public class HWConfiguration extends AbstractConfiguration {
 
 	public void setDocumentsDir(String documentsDir) {
 		this.documentsDir = documentsDir;
+	}
+
+	public String getPrint3dDir() {
+		return print3dDir;
+	}
+
+	public void setPrint3dDir(String print3dDir) {
+		this.print3dDir = print3dDir;
 	}
 
 }

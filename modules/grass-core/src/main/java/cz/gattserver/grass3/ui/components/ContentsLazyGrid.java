@@ -17,7 +17,6 @@ import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.modules.register.ModuleRegister;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.pages.template.MenuPage;
 import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.grass3.ui.util.UIUtils;
@@ -63,8 +62,8 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 
 		addColumn(new ComponentRenderer<Anchor, ContentNodeOverviewTO>(contentNode -> {
 			ContentModule contentService = serviceHolder.getContentModulesByName(contentNode.getContentReaderID());
-			String url = contentService == null ? GrassPage.getPageURL(noServicePageFactory)
-					: GrassPage.getPageURL(contentService.getContentViewerPageFactory(),
+			String url = contentService == null ? UIUtils.getPageURL(noServicePageFactory)
+					: UIUtils.getPageURL(contentService.getContentViewerPageFactory(),
 							URLIdentifierUtils.createURLIdentifier(contentNode.getContentID(), contentNode.getName()));
 			return new Anchor(url, contentNode.getName());
 		})).setFlexGrow(2).setHeader("Název").setId(nameBind);
@@ -82,7 +81,7 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 		}
 
 		addColumn(new ComponentRenderer<Anchor, ContentNodeOverviewTO>(contentNode -> {
-			String url = GrassPage.getPageURL(nodePageFactory, URLIdentifierUtils
+			String url = UIUtils.getPageURL(nodePageFactory, URLIdentifierUtils
 					.createURLIdentifier(contentNode.getParentNodeId(), contentNode.getParentNodeName())) + "'>"
 					+ contentNode.getParentNodeName();
 			return new Anchor(url, contentNode.getParentNodeName());

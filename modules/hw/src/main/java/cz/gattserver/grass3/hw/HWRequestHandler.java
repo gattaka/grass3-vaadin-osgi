@@ -27,12 +27,14 @@ public class HWRequestHandler extends AbstractConfiguratedPathRequestHandler {
 
 	@Override
 	protected Path getPath(String fileName) throws FileNotFoundException {
-		if (!fileName.matches("/[0-9]+/(icon|img|doc)/[^/]+"))
+		if (!fileName.matches("/[0-9]+/(icon|img|print3d|doc)/[^/]+"))
 			throw new GrassPageException(400);
 		String[] chunks = fileName.split("/");
 		Long id = Long.parseLong(chunks[1]);
 		String type = chunks[2];
 		String name = chunks[3];
+		if ("print3d".equals(type))
+			return hwService.getHWItemPrint3dFilePath(id, name);
 		if ("img".equals(type))
 			return hwService.getHWItemImagesFilePath(id, name);
 		if ("icon".equals(type))

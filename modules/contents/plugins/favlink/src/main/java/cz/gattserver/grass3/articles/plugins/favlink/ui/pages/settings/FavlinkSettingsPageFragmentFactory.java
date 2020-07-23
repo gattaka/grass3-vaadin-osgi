@@ -37,7 +37,6 @@ import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.LinkButton;
@@ -146,7 +145,7 @@ public class FavlinkSettingsPageFragmentFactory extends AbstractPageFragmentFact
 						Files.delete(p);
 						String fileName = p.getFileName().toString();
 						String urlName = "http://" + fileName.substring(0, fileName.lastIndexOf('.'));
-						new CombinedFaviconObtainStrategy().obtainFaviconURL(urlName, GrassPage.getContextPath());
+						new CombinedFaviconObtainStrategy().obtainFaviconURL(urlName, UIUtils.getContextPath());
 						populateGrid(grid, path);
 					} catch (IOException e1) {
 						logger.error("Nezdařilo se smazat favicon " + p.getFileName().toString(), e);

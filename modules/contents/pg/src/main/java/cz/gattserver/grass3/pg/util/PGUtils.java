@@ -121,7 +121,9 @@ public class PGUtils {
 				try (InputStream is = Files.newInputStream(inputFile)) {
 					Metadata metadata = ImageMetadataReader.readMetadata(is);
 					ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
-					Date date = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+					Date date = null;
+					if (directory != null)
+						date = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
 					if (date != null)
 						Files.setLastModifiedTime(destinationFile, FileTime.fromMillis(date.getTime()));
 				} catch (IOException | ImageProcessingException e) {

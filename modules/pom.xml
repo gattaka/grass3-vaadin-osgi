@@ -13,6 +13,7 @@
 
 	<modules>
 		<module>grass-core</module>
+		<module>stlviewer</module>
 		<module>contents</module>
 		<module>books</module>
 		<module>campgames</module>

@@ -47,13 +47,12 @@ import cz.gattserver.grass3.print3d.interfaces.Print3dPayloadTO;
 import cz.gattserver.grass3.print3d.interfaces.Print3dTO;
 import cz.gattserver.grass3.print3d.interfaces.Print3dViewItemTO;
 import cz.gattserver.grass3.print3d.service.Print3dService;
+import cz.gattserver.grass3.stlviewer.STLViewer;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
 import cz.gattserver.grass3.ui.components.button.ImageButton;
 import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
-import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -69,9 +68,6 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 	private static final long serialVersionUID = 7334408385869747381L;
 
 	private static final Logger logger = LoggerFactory.getLogger(Print3dViewerPage.class);
-
-	private static final String JS_PATH = "print3d/stl_viewer/";
-	private static final String STL_VIEWER_INSTANCE_JS_VAR = "$.stlViewerInstance";
 
 	@Autowired
 	private Print3dService print3dService;
@@ -99,7 +95,7 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 	private List<Print3dViewItemTO> items;
 	private Grid<Print3dViewItemTO> grid;
 
-	private boolean stlViewerInitialized;
+	private STLViewer stlViewer;
 
 	@Override
 	public String getPageTitle() {
@@ -143,7 +139,7 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 
 		init();
 
-		loadJS(new JScriptItem(JS_PATH + "stl_viewer.min.js")).then(e -> {
+		stlViewer = new STLViewer(e -> {
 			for (Print3dViewItemTO to : items) {
 				if (to.getType() == Print3dItemType.MODEL) {
 					grid.select(to);
@@ -177,15 +173,12 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 			throw new GrassPageException(404, e);
 		}
 
-		String stlContId = "stlcont";
-		Div stlDiv = new Div();
-		stlDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		stlDiv.getStyle().set("border", "1px solid #d1d1d1").set("box-sizing", "border-box").set("background",
+		stlViewer.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		stlViewer.getStyle().set("border", "1px solid #d1d1d1").set("box-sizing", "border-box").set("background",
 				"#fefefe");
-		stlDiv.setId(stlContId);
-		layout.add(stlDiv);
-		stlDiv.setWidthFull();
-		stlDiv.setHeight("500px");
+		layout.add(stlViewer);
+		stlViewer.setWidthFull();
+		stlViewer.setHeight("500px");
 
 		String imgContId = "imgcont";
 		Div imgDiv = new Div();
@@ -270,27 +263,13 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 				return;
 			Print3dViewItemTO to = item.getFirstSelectedItem().get();
 			if (to.getType() == Print3dItemType.MODEL) {
-				stlDiv.setVisible(true);
+				stlViewer.setVisible(true);
 				imgDiv.setVisible(false);
-				String modelDefinition = "{filename: \"" + getItemURL(to.getName()) + "\", "
-						+ "animation: {delta: {rotationy: 1, msec: 5000, loop: true}}, "
-						+ "color: \"#286708\", view_edges: false}";
-				String js = null;
-				if (!stlViewerInitialized) {
-					String relativePath = getContextPath() + "/frontend/" + JS_PATH;
-					js = STL_VIEWER_INSTANCE_JS_VAR + " = new StlViewer(document.getElementById(\"" + stlContId
-							+ "\"), { load_three_files: \"" + relativePath + "\", models: [ " + modelDefinition
-							+ "] });";
-					stlViewerInitialized = true;
-				} else {
-					js = STL_VIEWER_INSTANCE_JS_VAR + ".clean(); " + STL_VIEWER_INSTANCE_JS_VAR + ".add_model("
-							+ modelDefinition + ");";
-				}
-				UI.getCurrent().getPage().executeJs(js);
+				stlViewer.show(getItemURL(to.getName()));
 			}
 			if (to.getType() == Print3dItemType.IMAGE) {
 				imgDiv.setVisible(true);
-				stlDiv.setVisible(false);
+				stlViewer.setVisible(false);
 				img.setSrc(getItemURL(to.getName()));
 			}
 		});
@@ -367,8 +346,8 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 	}
 
 	private String getItemURL(String file) {
-		return GrassPage.getContextPath() + "/" + Print3dConfiguration.PRINT3D_PATH + "/"
-				+ print3dTO.getPrint3dProjectPath() + "/" + file;
+		return getContextPath() + "/" + Print3dConfiguration.PRINT3D_PATH + "/" + print3dTO.getPrint3dProjectPath()
+				+ "/" + file;
 	}
 
 	@Override

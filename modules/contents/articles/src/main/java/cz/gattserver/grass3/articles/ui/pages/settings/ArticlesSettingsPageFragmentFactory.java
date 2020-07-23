@@ -21,7 +21,6 @@ import cz.gattserver.grass3.ui.components.button.ImageButton;
 import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.DoubleToIntegerConverter;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -96,7 +95,7 @@ public class ArticlesSettingsPageFragmentFactory extends AbstractPageFragmentFac
 						eventBus.subscribe(ArticlesSettingsPageFragmentFactory.this);
 						progressIndicatorDialog = new ProgressDialog();
 						uuid = UUID.randomUUID();
-						articleFacade.reprocessAllArticles(uuid, GrassPage.getContextPath());
+						articleFacade.reprocessAllArticles(uuid, UIUtils.getContextPath());
 					});
 			dialog.setWidth("460px");
 			dialog.setHeight("230px");

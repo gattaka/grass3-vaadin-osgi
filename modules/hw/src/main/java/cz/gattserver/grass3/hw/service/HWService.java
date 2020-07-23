@@ -36,6 +36,22 @@ public interface HWService {
 	boolean deleteHWItemImagesFile(Long id, String name);
 
 	/*
+	 * 3D files
+	 */
+
+	void savePrint3dFile(InputStream in, String fileName, Long id) throws IOException;
+
+	List<HWItemFileTO> getHWItemPrint3dFiles(Long id);
+
+	long getHWItemPrint3dFilesCount(Long id);
+
+	Path getHWItemPrint3dFilePath(Long id, String name);
+
+	InputStream getHWItemPrint3dFileInputStream(Long id, String name);
+
+	boolean deleteHWItemPrint3dFile(Long id, String name);
+	
+	/*
 	 * Documents
 	 */
 

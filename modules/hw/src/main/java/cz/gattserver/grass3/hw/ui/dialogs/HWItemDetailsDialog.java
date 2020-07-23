@@ -21,6 +21,7 @@ public class HWItemDetailsDialog extends Dialog {
 	private Tab infoTab;
 	private Tab serviceNotesTab;
 	private Tab photosTab;
+	private Tab print3dTab;
 	private Tab docsTab;
 
 	private Div tabLayout;
@@ -33,7 +34,7 @@ public class HWItemDetailsDialog extends Dialog {
 		this.hwItem = getHWService().getHWItem(hwItemId);
 
 		setWidth("1080px");
-		
+
 		Div nameDiv = new Div(new Text(hwItem.getName()));
 		nameDiv.getStyle().set("font-size", "15px").set("margin-bottom", "var(--lumo-space-m)")
 				.set("font-weight", "bold").set("margin-top", "calc(var(--lumo-space-m) / -2)");
@@ -42,10 +43,11 @@ public class HWItemDetailsDialog extends Dialog {
 		infoTab = new Tab("Info");
 		serviceNotesTab = new Tab(createServiceNotesTabLabel());
 		photosTab = new Tab(createPhotosTabLabel());
+		print3dTab = new Tab(createPrint3dTabLabel());
 		docsTab = new Tab(createDocsTabLabel());
 
 		tabs = new Tabs();
-		tabs.add(infoTab, serviceNotesTab, photosTab, docsTab);
+		tabs.add(infoTab, serviceNotesTab, photosTab, print3dTab, docsTab);
 		add(tabs);
 
 		tabLayout = new Div();
@@ -66,6 +68,9 @@ public class HWItemDetailsDialog extends Dialog {
 				switchPhotosTab();
 				break;
 			case 3:
+				switchPrint3dTab();
+				break;
+			case 4:
 				switchDocsTab();
 				break;
 			}
@@ -83,6 +88,7 @@ public class HWItemDetailsDialog extends Dialog {
 	public void refreshTabLabels() {
 		serviceNotesTab.setLabel(createServiceNotesTabLabel());
 		photosTab.setLabel(createPhotosTabLabel());
+		print3dTab.setLabel(createPrint3dTabLabel());
 		docsTab.setLabel(createDocsTabLabel());
 	}
 
@@ -92,6 +98,10 @@ public class HWItemDetailsDialog extends Dialog {
 
 	private String createPhotosTabLabel() {
 		return "Fotografie (" + getHWService().getHWItemImagesFilesCount(hwItemId) + ")";
+	}
+
+	private String createPrint3dTabLabel() {
+		return "3D Modely (" + getHWService().getHWItemPrint3dFilesCount(hwItemId) + ")";
 	}
 
 	private String createDocsTabLabel() {
@@ -120,6 +130,12 @@ public class HWItemDetailsDialog extends Dialog {
 		tabLayout.removeAll();
 		tabLayout.add(new HWDetailsPhotosTab(hwItem, this));
 		tabs.setSelectedTab(photosTab);
+	}
+
+	private void switchPrint3dTab() {
+		tabLayout.removeAll();
+		tabLayout.add(new HWDetailsPrint3dTab(hwItem, this));
+		tabs.setSelectedTab(print3dTab);
 	}
 
 	private void switchDocsTab() {

@@ -57,6 +57,7 @@ public class HWServiceImpl implements HWService {
 
 	private static final String ILLEGAL_PATH_IMGS_ERR = "Podtečení adresáře grafických příloh";
 	private static final String ILLEGAL_PATH_DOCS_ERR = "Podtečení adresáře dokumentací";
+	private static final String ILLEGAL_PATH_PRINT_3D_ERR = "Podtečení adresáře 3d modelů";
 
 	@Autowired
 	private FileSystemService fileSystemService;
@@ -116,6 +117,15 @@ public class HWServiceImpl implements HWService {
 		HWConfiguration configuration = loadConfiguration();
 		Path hwPath = getHWPath(id);
 		Path file = hwPath.resolve(configuration.getDocumentsDir());
+		if (!Files.exists(file))
+			Files.createDirectories(file);
+		return file;
+	}
+
+	private Path getHWItemPrint3dPath(Long id) throws IOException {
+		HWConfiguration configuration = loadConfiguration();
+		Path hwPath = getHWPath(id);
+		Path file = hwPath.resolve(configuration.getPrint3dDir());
 		if (!Files.exists(file))
 			Files.createDirectories(file);
 		return file;
@@ -222,6 +232,84 @@ public class HWServiceImpl implements HWService {
 			return Files.deleteIfExists(image);
 		} catch (IOException e) {
 			throw new GrassException("Nezdařilo se smazat grafickou přílohu HW položky.", e);
+		}
+	}
+
+	/*
+	 * 3D files
+	 */
+
+	@Override
+	public void savePrint3dFile(InputStream in, String fileName, Long id) throws IOException {
+		Path modelsPath = getHWItemPrint3dPath(id);
+		Path modelPath = modelsPath.resolve(fileName);
+		if (!modelPath.normalize().startsWith(modelsPath))
+			throw new IllegalArgumentException(ILLEGAL_PATH_PRINT_3D_ERR);
+		Files.copy(in, modelPath, StandardCopyOption.REPLACE_EXISTING);
+	}
+
+	@Override
+	public List<HWItemFileTO> getHWItemPrint3dFiles(Long id) {
+		Path modelsPath;
+		try {
+			modelsPath = getHWItemPrint3dPath(id);
+			List<HWItemFileTO> list = new ArrayList<>();
+			try (Stream<Path> stream = Files.list(modelsPath)) {
+				stream.forEach(p -> list.add(mapPathToItem(p)));
+			}
+			return list;
+		} catch (IOException e) {
+			throw new GrassException("Nezdařilo se získat přehled 3d modelů HW položky", e);
+		}
+	}
+
+	@Override
+	public long getHWItemPrint3dFilesCount(Long id) {
+		Path modelsPath;
+		try {
+			modelsPath = getHWItemPrint3dPath(id);
+			try (Stream<Path> stream = Files.list(modelsPath)) {
+				return stream.count();
+			}
+		} catch (IOException e) {
+			throw new GrassException("Nezdařilo se získat přehled 3d modelů HW položky", e);
+		}
+	}
+
+	@Override
+	public Path getHWItemPrint3dFilePath(Long id, String name) {
+		Path models;
+		try {
+			models = getHWItemPrint3dPath(id);
+			Path model = models.resolve(name);
+			if (!model.normalize().startsWith(models))
+				throw new IllegalArgumentException(ILLEGAL_PATH_PRINT_3D_ERR);
+			return model;
+		} catch (IOException e) {
+			throw new GrassException("Nezdařilo se získat soubor 3d modelu HW položky", e);
+		}
+	}
+
+	@Override
+	public InputStream getHWItemPrint3dFileInputStream(Long id, String name) {
+		try {
+			return Files.newInputStream(getHWItemPrint3dFilePath(id, name));
+		} catch (IOException e) {
+			throw new GrassException("Nezdařilo se získat soubor 3d modelu HW položky", e);
+		}
+	}
+
+	@Override
+	public boolean deleteHWItemPrint3dFile(Long id, String name) {
+		Path models;
+		try {
+			models = getHWItemPrint3dPath(id);
+			Path model = models.resolve(name);
+			if (!model.normalize().startsWith(models))
+				throw new IllegalArgumentException(ILLEGAL_PATH_PRINT_3D_ERR);
+			return Files.deleteIfExists(model);
+		} catch (IOException e) {
+			throw new GrassException("Nezdařilo se smazat soubor 3d modelu HW položky.", e);
 		}
 	}
 

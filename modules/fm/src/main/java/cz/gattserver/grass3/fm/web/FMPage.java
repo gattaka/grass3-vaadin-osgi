@@ -54,7 +54,6 @@ import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.GridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
@@ -154,9 +153,9 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 			// úspěch - pokračujeme
 			History history = UI.getCurrent().getPage().getHistory();
 			history.setHistoryStateChangeHandler(e -> {
-				String url = urlBase + GrassPage.getContextPath() + "/" + e.getLocation().getPath();
+				String url = urlBase + UIUtils.getContextPath() + "/" + e.getLocation().getPath();
 				if (FileProcessState.SUCCESS
-						.equals(explorer.goToDirByURL(GrassPage.getContextPath(), fmPageFactory.getPageName(), url))) {
+						.equals(explorer.goToDirByURL(UIUtils.getContextPath(), fmPageFactory.getPageName(), url))) {
 					refreshView();
 				}
 			});
@@ -437,7 +436,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 	}
 
 	private String getDownloadLink(FMItemTO item) {
-		return urlBase + explorer.getDownloadLink(GrassPage.getContextPath(), item.getName());
+		return urlBase + explorer.getDownloadLink(UIUtils.getContextPath(), item.getName());
 	}
 
 	private void handleDownloadAction(FMItemTO item) {

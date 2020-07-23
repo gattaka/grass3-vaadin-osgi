@@ -2,20 +2,25 @@ package cz.gattserver.grass3.ui.util;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
+import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow.HeaderCell;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.page.PendingJavaScriptResult;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.server.VaadinRequest;
 
+import cz.gattserver.grass3.ui.js.JScriptItem;
+import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.InfoDialog;
 import cz.gattserver.web.common.ui.window.WarnDialog;
@@ -146,6 +151,104 @@ public class UIUtils {
 	 */
 	public static void showError(String caption) {
 		new ErrorDialog(caption).open();
+	}
+
+	/**
+	 * Nahraje více JS skriptů, synchronně za sebou (mohou se tedy navzájem na
+	 * sebe odkazovat a bude zaručeno, že 1. skript bude celý nahrán před 2.
+	 * skriptem, který využívá jeho funkcí)
+	 * 
+	 * @param scripts
+	 *            skripty, které budou nahrány
+	 */
+	public static PendingJavaScriptResult loadJS(JScriptItem... scripts) {
+		return loadJS(Arrays.asList(scripts));
+	}
+
+	/**
+	 * Nahraje více JS skriptů, synchronně za sebou (mohou se tedy navzájem na
+	 * sebe odkazovat a bude zaručeno, že 1. skript bude celý nahrán před 2.
+	 * skriptem, který využívá jeho funkcí)
+	 * 
+	 * @param scripts
+	 *            skripty, které budou nahrány
+	 */
+	public static PendingJavaScriptResult loadJS(List<JScriptItem> scripts) {
+		StringBuilder builder = new StringBuilder();
+		buildJSBatch(builder, 0, scripts);
+		return UI.getCurrent().getPage().executeJs(builder.toString());
+	}
+
+	private static void buildJSBatch(StringBuilder builder, int index, List<JScriptItem> scripts) {
+		if (index >= scripts.size())
+			return;
+
+		JScriptItem js = scripts.get(index);
+		String chunk = js.getScript();
+		// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
+		// obejít problém se závislosí pluginů na úložišti theme apod. a
+		// přitom umožnit aby se JS odkazovali na externí zdroje
+		if (!js.isPlain()
+				&& (!chunk.toLowerCase().startsWith("http://") || !chunk.toLowerCase().startsWith("https://"))) {
+			chunk = "\"" + getContextPath() + "/frontend/" + chunk + "\"";
+			builder.append("$.getScript(").append(chunk).append(", function(){");
+			buildJSBatch(builder, index + 1, scripts);
+			builder.append("});");
+		} else {
+			builder.append(chunk);
+			buildJSBatch(builder, index + 1, scripts);
+		}
+	}
+
+	/**
+	 * Nahraje CSS
+	 * 
+	 * @param link
+	 *            odkaz k css souboru - relativní, absolutní (http://...)
+	 */
+	public static void loadCSS(String link) {
+		StringBuilder loadStylesheet = new StringBuilder();
+		loadStylesheet.append("var head=document.getElementsByTagName('head')[0];")
+				.append("var link=document.createElement('link');").append("link.type='text/css';")
+				.append("link.rel='stylesheet';").append("link.href='" + link + "';").append("head.appendChild(link);");
+		UI.getCurrent().getPage().executeJs(loadStylesheet.toString());
+	}
+
+	public static String getContextPath() {
+		return VaadinRequest.getCurrent().getContextPath();
+	}
+
+	/**
+	 * Získá URL stránky. Kořen webu + suffix dle pageFactory
+	 */
+	public static String getPageURL(PageFactory pageFactory) {
+		return getContextPath() + "/" + pageFactory.getPageName();
+	}
+
+	/**
+	 * Získá URL stránky. Kořen webu + suffix
+	 */
+	public static String getPageURL(String suffix) {
+		return getContextPath() + "/" + suffix;
+	}
+
+	/**
+	 * Získá URL stránky. Kořen webu + suffix dle pageFactory + relativní URL
+	 */
+	public static String getPageURL(PageFactory pageFactory, String... relativeURLs) {
+		if (relativeURLs.length == 1) {
+			return getPageURL(pageFactory) + "/" + relativeURLs[0];
+		} else {
+			StringBuilder buffer = new StringBuilder();
+			buffer.append(getPageURL(pageFactory));
+			for (String relativeURL : relativeURLs) {
+				if (relativeURL != null) {
+					buffer.append("/");
+					buffer.append(relativeURL);
+				}
+			}
+			return buffer.toString();
+		}
 	}
 
 }

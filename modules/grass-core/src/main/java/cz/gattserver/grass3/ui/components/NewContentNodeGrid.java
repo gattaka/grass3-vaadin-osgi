@@ -12,7 +12,6 @@ import com.vaadin.flow.data.renderer.IconRenderer;
 import cz.gattserver.grass3.interfaces.NodeTO;
 import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.modules.register.ModuleRegister;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.pages.template.MenuPage;
 import cz.gattserver.grass3.ui.util.GridUtils;
 import cz.gattserver.grass3.ui.util.UIUtils;
@@ -45,7 +44,7 @@ public class NewContentNodeGrid extends Grid<ContentModule> {
 				.setKey(iconBind);
 
 		addColumn(new ComponentRenderer<Anchor, ContentModule>(c -> {
-			String url = GrassPage.getPageURL(c.getContentEditorPageFactory(), DefaultContentOperations.NEW.toString(),
+			String url = UIUtils.getPageURL(c.getContentEditorPageFactory(), DefaultContentOperations.NEW.toString(),
 					URLIdentifierUtils.createURLIdentifier(node.getId(), node.getName()));
 			return new Anchor(url, c.getCreateNewContentLabel());
 		})).setHeader("Obsah").setKey(nameBind);

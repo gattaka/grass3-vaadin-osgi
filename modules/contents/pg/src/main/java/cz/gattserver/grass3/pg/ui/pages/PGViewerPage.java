@@ -51,7 +51,6 @@ import cz.gattserver.grass3.ui.dialogs.ImageSlideshowDialog;
 import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
@@ -301,8 +300,8 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 	}
 
 	private String getItemURL(String file) {
-		return GrassPage.getContextPath() + "/" + PGConfiguration.PG_PATH + "/" + photogallery.getPhotogalleryPath()
-				+ "/" + file;
+		return UIUtils.getContextPath() + "/" + PGConfiguration.PG_PATH + "/" + photogallery.getPhotogalleryPath() + "/"
+				+ file;
 	}
 
 	private void refreshGrid() {

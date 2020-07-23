@@ -55,7 +55,6 @@ import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
-import cz.gattserver.grass3.ui.pages.template.GrassPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
@@ -159,7 +158,7 @@ public class PGSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 					return new Text("Nepoužívá se");
 				} else {
 					Anchor a = new Anchor(
-							GrassPage.getPageURL(photogalleryViewerPageFactory, URLIdentifierUtils
+							UIUtils.getPageURL(photogalleryViewerPageFactory, URLIdentifierUtils
 									.createURLIdentifier(to.getOverviewTO().getId(), to.getOverviewTO().getName())),
 							"Odkaz");
 					a.setTarget("_blank");

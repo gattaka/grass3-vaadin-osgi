@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import cz.gattserver.grass3.hw.model.domain.HWItemType;
 
-public interface HWItemTypeRepository extends JpaRepository<HWItemType, Long> {
+public interface HWItemTypeRepository extends JpaRepository<HWItemType, Long>, HWItemTypeRepositoryCustom {
 
 	@Query("select t from HW_ITEM_TYPE t order by name asc")
 	List<HWItemType> findListOrderByName();

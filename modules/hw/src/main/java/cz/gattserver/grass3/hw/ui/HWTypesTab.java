@@ -1,15 +1,23 @@
 package cz.gattserver.grass3.hw.ui;
 
-import java.util.Set;
+import java.util.Arrays;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
+import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.SortDirection;
 
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.hw.ui.dialogs.HWItemTypeDialog;
+import cz.gattserver.grass3.model.util.QuerydslUtil;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
@@ -22,9 +30,13 @@ public class HWTypesTab extends Div {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
+	private static final String NAME_BIND = "nameBind";
+
 	private transient HWService hwService;
 
 	private Grid<HWItemTypeTO> grid;
+
+	private HWItemTypeTO filterTO;
 
 	private HWService getHWService() {
 		if (hwService == null)
@@ -32,18 +44,43 @@ public class HWTypesTab extends Div {
 		return hwService;
 	}
 
+	private void populate() {
+		FetchCallback<HWItemTypeTO, HWItemTypeTO> fetchCallback = q -> getHWService().getHWItemTypes(filterTO,
+				q.getOffset(), q.getLimit(), QuerydslUtil.transformOrdering(q.getSortOrders(), column -> {
+					switch (column) {
+					case NAME_BIND:
+						return "name";
+					default:
+						return column;
+					}
+				})).stream();
+		CountCallback<HWItemTypeTO, HWItemTypeTO> countCallback = q -> getHWService().countHWItemTypes(filterTO);
+		grid.setDataProvider(DataProvider.fromFilteringCallbacks(fetchCallback, countCallback));
+	}
+
 	public HWTypesTab() {
-		grid = new Grid<>(HWItemTypeTO.class);
+		filterTO = new HWItemTypeTO();
+
+		grid = new Grid<>();
 		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		UIUtils.applyGrassDefaultStyle(grid);
-		Set<HWItemTypeTO> data = getHWService().getAllHWTypes();
-		grid.setItems(data);
 
-		grid.getColumnByKey("name").setHeader("Název");
+		Column<HWItemTypeTO> nameColumn = grid.addColumn(HWItemTypeTO::getName).setKey(NAME_BIND).setHeader("Název")
+				.setFlexGrow(1);
 		grid.setWidthFull();
 		grid.setHeight("500px");
 		grid.setSelectionMode(SelectionMode.SINGLE);
-		grid.setColumns("name");
+
+		HeaderRow filteringHeader = grid.appendHeaderRow();
+
+		// Název
+		UIUtils.addHeaderTextField(filteringHeader.getCell(nameColumn), e -> {
+			filterTO.setName(e.getValue());
+			populate();
+		});
+
+		populate();
+		grid.sort(Arrays.asList(new GridSortOrder<>(nameColumn, SortDirection.ASCENDING)));
 
 		add(grid);
 
@@ -53,13 +90,13 @@ public class HWTypesTab extends Div {
 		/**
 		 * Založení nového typu
 		 */
-		Button newTypeBtn = new CreateButton("Založit nový typ", e -> openNewTypeWindow(data, false));
+		Button newTypeBtn = new CreateButton("Založit nový typ", e -> openNewTypeWindow(false));
 		buttonLayout.add(newTypeBtn);
 
 		/**
 		 * Úprava typu
 		 */
-		Button fixBtn = new ModifyGridButton<HWItemTypeTO>(set -> openNewTypeWindow(data, true), grid);
+		Button fixBtn = new ModifyGridButton<HWItemTypeTO>(set -> openNewTypeWindow(true), grid);
 		buttonLayout.add(fixBtn);
 
 		/**
@@ -69,8 +106,7 @@ public class HWTypesTab extends Div {
 			HWItemTypeTO item = set.iterator().next();
 			try {
 				getHWService().deleteHWItemType(item.getId());
-				data.remove(item);
-				grid.getDataProvider().refreshAll();
+				populate();
 			} catch (Exception ex) {
 				new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
 			}
@@ -85,7 +121,7 @@ public class HWTypesTab extends Div {
 		grid.setEnabled(enabled);
 	}
 
-	private void openNewTypeWindow(final Set<HWItemTypeTO> data, boolean fix) {
+	private void openNewTypeWindow(boolean fix) {
 		HWItemTypeTO hwItemTypeDTO = null;
 		if (fix)
 			hwItemTypeDTO = grid.getSelectedItems().iterator().next();
@@ -97,8 +133,7 @@ public class HWTypesTab extends Div {
 				if (fix) {
 					grid.getDataProvider().refreshItem(hwItemTypeDTO);
 				} else {
-					data.add(hwItemTypeDTO);
-					grid.getDataProvider().refreshAll();
+					populate();
 				}
 			}
 		}.open();

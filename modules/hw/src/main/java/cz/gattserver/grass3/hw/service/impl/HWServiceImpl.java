@@ -389,6 +389,16 @@ public class HWServiceImpl implements HWService {
 		hwItemTypeRepository.delete(itemType);
 	}
 
+	@Override
+	public Set<HWItemTypeTO> getHWItemTypes(HWItemTypeTO filter, int offset, int limit, OrderSpecifier<?>[] order) {
+		return hwMapper.mapHWItemTypes(hwItemTypeRepository.getHWItemTypes(filter, offset, limit, order));
+	}
+
+	@Override
+	public int countHWItemTypes(HWItemTypeTO filter) {
+		return (int) hwItemTypeRepository.countHWItemTypes(filter);
+	}
+
 	/*
 	 * Items
 	 */

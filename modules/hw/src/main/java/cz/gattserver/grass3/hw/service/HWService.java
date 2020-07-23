@@ -80,12 +80,16 @@ public interface HWService {
 
 	HWItemTypeTO getHWItemType(Long fixTypeId);
 
+	Set<HWItemTypeTO> getHWItemTypes(HWItemTypeTO filter, int offset, int limit, OrderSpecifier<?>[] order);
+
+	int countHWItemTypes(HWItemTypeTO filter);
+
 	void deleteHWItemType(Long id);
 
 	/*
 	 * Items
 	 */
-	
+
 	/**
 	 * Vytvoří kopii základu položky (mimo záznamů a součástí)
 	 * 

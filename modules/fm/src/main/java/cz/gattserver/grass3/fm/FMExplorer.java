@@ -175,7 +175,8 @@ public class FMExplorer {
 					Stream.of(currentAbsolutePath.resolve(".."))
 							.map(e -> FMUtils.mapPathToItem(e, currentAbsolutePath)),
 					Files.list(currentAbsolutePath)
-							.filter(p -> p.getFileName().toString().contains(filterName == null ? "" : filterName))
+							.filter(p -> p.getFileName().toString().toLowerCase()
+									.contains(filterName == null ? "" : filterName.toLowerCase()))
 							.map(e -> FMUtils.mapPathToItem(e, currentAbsolutePath))
 							.sorted((to1, to2) -> FMUtils.sortFile(to1, to2, list)).skip(offset).limit(limit));
 		} catch (IOException e) {

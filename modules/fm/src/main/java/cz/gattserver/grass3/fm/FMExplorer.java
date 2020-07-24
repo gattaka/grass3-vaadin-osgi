@@ -8,11 +8,8 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -20,7 +17,8 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cz.gattserver.common.util.HumanBytesSizeFormatter;
+import com.vaadin.flow.data.provider.QuerySortOrder;
+
 import cz.gattserver.grass3.fm.config.FMConfiguration;
 import cz.gattserver.grass3.fm.interfaces.FMItemTO;
 import cz.gattserver.grass3.services.ConfigurationService;
@@ -44,18 +42,6 @@ public class FMExplorer {
 	 * Plná cesta od systémového kořene
 	 */
 	private Path currentAbsolutePath;
-
-	public static int sortFile(Path p1, Path p2) {
-		if (Files.isDirectory(p1)) {
-			if (Files.isDirectory(p2))
-				return p1.getFileName().compareTo(p2);
-			return -1;
-		} else {
-			if (Files.isDirectory(p2))
-				return 1;
-			return p1.getFileName().compareTo(p2);
-		}
-	}
 
 	/**
 	 * {@link FMExplorer} začne v adresáři, který je podle konfigurace jako jeho
@@ -156,17 +142,6 @@ public class FMExplorer {
 		}
 	}
 
-	private Long getFileSize(Path path) throws IOException {
-		if (!Files.isDirectory(path))
-			return Files.size(path);
-		try (Stream<Path> stream = Files.list(path)) {
-			Long sum = 0L;
-			for (Iterator<Path> it = stream.iterator(); it.hasNext();)
-				sum += getFileSize(it.next());
-			return sum;
-		}
-	}
-
 	/**
 	 * Vrátí počet položek pro výpis obsahu aktuálního adresáře. Započítává i
 	 * odkaz ".." na nadřazený adresář.
@@ -191,36 +166,21 @@ public class FMExplorer {
 	 *            offset pro stránkování
 	 * @param limit
 	 *            velikost stránky
+	 * @param list
 	 * @return
 	 */
-	public Stream<FMItemTO> listing(String filterName, int offset, int limit) {
+	public Stream<FMItemTO> listing(String filterName, int offset, int limit, List<QuerySortOrder> list) {
 		try {
-			return Stream
-					.concat(Stream.of(currentAbsolutePath.resolve("..")),
-							Files.list(currentAbsolutePath).sorted(FMExplorer::sortFile).filter(
-									p -> p.getFileName().toString().contains(filterName == null ? "" : filterName)))
-					.skip(offset).limit(limit).map(this::mapPathToItem);
+			return Stream.concat(
+					Stream.of(currentAbsolutePath.resolve(".."))
+							.map(e -> FMUtils.mapPathToItem(e, currentAbsolutePath)),
+					Files.list(currentAbsolutePath)
+							.filter(p -> p.getFileName().toString().contains(filterName == null ? "" : filterName))
+							.map(e -> FMUtils.mapPathToItem(e, currentAbsolutePath))
+							.sorted((to1, to2) -> FMUtils.sortFile(to1, to2, list)).skip(offset).limit(limit));
 		} catch (IOException e) {
 			throw new IllegalStateException("Nezdařilo se získat list souborů", e);
 		}
-	}
-
-	private FMItemTO mapPathToItem(Path path) {
-		FMItemTO to = new FMItemTO().setName(path.getFileName().toString());
-		to.setDirectory(Files.isDirectory(path));
-		try {
-			to.setSize(path.normalize().startsWith(currentAbsolutePath)
-					? HumanBytesSizeFormatter.format(getFileSize(path), true) : "");
-		} catch (IOException e) {
-			to.setSize("n/a");
-		}
-		try {
-			to.setLastModified(
-					LocalDateTime.ofInstant(Files.getLastModifiedTime(path).toInstant(), ZoneId.systemDefault()));
-		} catch (IOException e) {
-			to.setLastModified(null);
-		}
-		return to;
 	}
 
 	/**

@@ -86,23 +86,26 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 	@Test
 	public void testSort() throws IOException {
 		FileSystem fs = fileSystemService.getFileSystem();
-		Path adir = Files.createDirectory(fs.getPath("Adir"));
-		Path bdir = Files.createDirectory(fs.getPath("Bdir"));
-		Path afile = Files.createFile(fs.getPath("Afile"));
-		Path bfile = Files.createFile(fs.getPath("Bfile"));
+		Path currentAbsolutePath = fs.getPath("..").toAbsolutePath();
+		FMItemTO adir = FMUtils.mapPathToItem(Files.createDirectory(fs.getPath("Adir")), currentAbsolutePath);
+		FMItemTO bdir = FMUtils.mapPathToItem(Files.createDirectory(fs.getPath("Bdir")), currentAbsolutePath);
+		FMItemTO afile = FMUtils.mapPathToItem(Files.createFile(fs.getPath("Afile")), currentAbsolutePath);
+		FMItemTO bfile = FMUtils.mapPathToItem(Files.createFile(fs.getPath("Bfile")), currentAbsolutePath);
 
-		assertEquals(0, FMExplorer.sortFile(adir, adir));
-		assertEquals(-1, FMExplorer.sortFile(adir, bdir));
-		assertEquals(1, FMExplorer.sortFile(bdir, adir));
+		assertEquals(0, FMUtils.sortFile(adir, adir, null));
+		assertEquals(-1, FMUtils.sortFile(adir, bdir, null));
+		assertEquals(1, FMUtils.sortFile(bdir, adir, null));
 
-		assertEquals(0, FMExplorer.sortFile(afile, afile));
-		assertEquals(-1, FMExplorer.sortFile(afile, bfile));
-		assertEquals(1, FMExplorer.sortFile(bfile, afile));
+		assertEquals(0, FMUtils.sortFile(afile, afile, null));
+		assertEquals(-1, FMUtils.sortFile(afile, bfile, null));
+		assertEquals(1, FMUtils.sortFile(bfile, afile, null));
 
-		assertEquals(-1, FMExplorer.sortFile(adir, afile));
-		assertEquals(1, FMExplorer.sortFile(afile, adir));
-		assertEquals(-1, FMExplorer.sortFile(bdir, afile));
-		assertEquals(1, FMExplorer.sortFile(afile, bdir));
+		assertEquals(-1, FMUtils.sortFile(adir, afile, null));
+		assertEquals(1, FMUtils.sortFile(afile, adir, null));
+		assertEquals(-1, FMUtils.sortFile(bdir, afile, null));
+		assertEquals(1, FMUtils.sortFile(afile, bdir, null));
+
+		// TODO to samé s QuerySortOrder listem
 	}
 
 	@Test
@@ -267,7 +270,7 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 
 		assertEquals(4, explorer.listCount(null));
 
-		Iterator<FMItemTO> it = explorer.listing(null, 0, 10).iterator();
+		Iterator<FMItemTO> it = explorer.listing(null, 0, 10, null).iterator();
 		FMItemTO item = it.next();
 		assertEquals("..", item.getName());
 		assertNotNull(item.getLastModified());
@@ -298,7 +301,7 @@ public class FMExplorerTest extends AbstractContextAwareTest {
 
 		assertEquals(3, explorer.listCount("file"));
 
-		it = explorer.listing("file", 0, 10).iterator();
+		it = explorer.listing("file", 0, 10, null).iterator();
 		item = it.next();
 		assertEquals("..", item.getName());
 		assertNotNull(item.getLastModified());

@@ -7,6 +7,7 @@ public class FMItemTO {
 	private String name;
 	private String pathFromFMRoot;
 	private String size;
+	private Long numericSize;
 	private boolean directory;
 	private LocalDateTime lastModified;
 
@@ -52,6 +53,15 @@ public class FMItemTO {
 
 	public FMItemTO setLastModified(LocalDateTime lastModified) {
 		this.lastModified = lastModified;
+		return this;
+	}
+
+	public Long getNumericSize() {
+		return numericSize;
+	}
+
+	public FMItemTO setNumericSize(Long numericSize) {
+		this.numericSize = numericSize;
 		return this;
 	}
 

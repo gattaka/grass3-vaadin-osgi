@@ -18,6 +18,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.HeaderRow;
@@ -239,10 +240,11 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 			return img;
 		}, to -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
 
-		Column<FMItemTO> nameColumn = grid.addColumn(FMItemTO::getName).setHeader("Název").setFlexGrow(100);
+		Column<FMItemTO> nameColumn = grid.addColumn(FMItemTO::getName).setHeader("Název").setFlexGrow(100)
+				.setSortProperty("name");
 
 		grid.addColumn(FMItemTO::getSize).setHeader("Velikost").setTextAlign(ColumnTextAlign.END).setWidth("80px")
-				.setFlexGrow(0);
+				.setFlexGrow(0).setSortProperty("size");
 
 		grid.addColumn(new ComponentRenderer<Button, FMItemTO>(to -> {
 			Button button = new LinkButton("URL", e -> {
@@ -294,7 +296,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 		})).setHeader("QR").setTextAlign(ColumnTextAlign.CENTER).setWidth("35px").setFlexGrow(0);
 
 		grid.addColumn(new LocalDateTimeRenderer<>(FMItemTO::getLastModified, "d.MM.yyyy HH:mm")).setHeader("Upraveno")
-				.setAutoWidth(true).setTextAlign(ColumnTextAlign.END);
+				.setAutoWidth(true).setTextAlign(ColumnTextAlign.END).setSortProperty("lastModified");
 
 		grid.addSelectionListener(e -> {
 			Set<FMItemTO> value = e.getAllSelectedItems();
@@ -344,8 +346,8 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 
 	private void populateGrid() {
 		int size = explorer.listCount(filterName);
-		grid.setDataProvider(
-				DataProvider.fromCallbacks(q -> explorer.listing(filterName, q.getOffset(), q.getLimit()), q -> size));
+		grid.setDataProvider(DataProvider.fromFilteringCallbacks(
+				q -> explorer.listing(filterName, q.getOffset(), q.getLimit(), q.getSortOrders()), q -> size));
 		listFormatterValue = listFormatter.format(size);
 		statusLabel.setText(listFormatterValue);
 	}

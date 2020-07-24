@@ -108,7 +108,7 @@ public abstract class MenuPage extends GrassPage {
 		bottom.setId("bottom");
 		bottomHolder.add(bottom);
 
-		bottom.add(new Span("Powered by GRASS " + versionInfoService.getProjectVersion() + " © 2012-2019 Hynek Uhlíř"));
+		bottom.add(new Span("Powered by GRASS " + versionInfoService.getProjectVersion() + " © 2012-2020 Hynek Uhlíř"));
 
 		Div bottomShadow = new Div();
 		bottomShadow.setId("bottom-shadow");

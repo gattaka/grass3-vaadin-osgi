@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.FileSystem;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,8 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.UI;
@@ -21,10 +24,12 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.page.History;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -41,11 +46,16 @@ import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinServletRequest;
 
 import cz.gattserver.common.util.CZAmountFormatter;
+import cz.gattserver.grass3.events.EventBus;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.fm.FMExplorer;
 import cz.gattserver.grass3.fm.FMSection;
 import cz.gattserver.grass3.fm.FileProcessState;
+import cz.gattserver.grass3.fm.events.FMZipProcessProgressEvent;
+import cz.gattserver.grass3.fm.events.FMZipProcessResultEvent;
+import cz.gattserver.grass3.fm.events.FMZipProcessStartEvent;
 import cz.gattserver.grass3.fm.interfaces.FMItemTO;
+import cz.gattserver.grass3.fm.service.FMService;
 import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.ui.components.Breadcrumb;
 import cz.gattserver.grass3.ui.components.Breadcrumb.BreadcrumbElement;
@@ -53,6 +63,7 @@ import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.GridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
+import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
@@ -62,6 +73,7 @@ import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.window.WebDialog;
+import net.engio.mbassy.listener.Handler;
 import net.glxn.qrgen.javase.QRCode;
 
 @Route("fm")
@@ -70,11 +82,21 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 
 	private static final long serialVersionUID = -5884444775720831930L;
 
+	private static final Logger logger = LoggerFactory.getLogger(FMPage.class);
+
 	@Resource(name = "fmPageFactory")
 	private PageFactory fmPageFactory;
 
 	@Autowired
 	private FileSystemService fileSystemService;
+
+	@Autowired
+	private EventBus eventBus;
+
+	@Autowired
+	private FMService fmService;
+
+	private ProgressDialog progressIndicatorWindow;
 
 	private final CZAmountFormatter selectFormatter;
 	private final CZAmountFormatter listFormatter;
@@ -82,6 +104,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 
 	private FileSystem fileSystem;
 
+	private TextField filterNameField;
 	private String filterName;
 
 	/**
@@ -312,7 +335,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
 		// Obsah
-		UIUtils.addHeaderTextField(filteringHeader.getCell(nameColumn), e -> {
+		filterNameField = UIUtils.addHeaderTextField(filteringHeader.getCell(nameColumn), e -> {
 			filterName = e.getValue();
 			populateGrid();
 		});
@@ -405,6 +428,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 
 	private void handleGotoDirFromCurrentDirAction(FMItemTO item) {
 		if (FileProcessState.SUCCESS.equals(explorer.goToDirFromCurrentDir(item.getName()))) {
+			filterNameField.setValue("");
 			refreshView();
 			updatePageState();
 		}
@@ -449,8 +473,55 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 		if (items.size() == 1 && !item.isDirectory()) {
 			handleDownloadAction(item);
 		} else {
-			// TODO adresář nebo více souborů stáhne je jako ZIP
+			logger.info("zipFMthread: {}", Thread.currentThread().getId());
+			progressIndicatorWindow = new ProgressDialog();
+			eventBus.subscribe(FMPage.this);
+			explorer.zipFiles(items);
 		}
+	}
+
+	@Handler
+	protected void onProcessStart(final FMZipProcessStartEvent event) {
+		progressIndicatorWindow.runInUI(() -> {
+			progressIndicatorWindow.setTotal(event.getCountOfStepsToDo());
+			progressIndicatorWindow.open();
+		});
+	}
+
+	@Handler
+	protected void onProcessProgress(FMZipProcessProgressEvent event) {
+		progressIndicatorWindow.runInUI(() -> progressIndicatorWindow.indicateProgress(event.getStepDescription()));
+	}
+
+	@Handler
+	protected void onProcessResult(final FMZipProcessResultEvent event) {
+		progressIndicatorWindow.runInUI(() -> {
+			if (progressIndicatorWindow != null)
+				progressIndicatorWindow.close();
+
+			if (event.isSuccess()) {
+				WebDialog win = new WebDialog();
+				win.addDialogCloseActionListener(e -> fmService.deleteZipFile(event.getZipFile()));
+				Anchor link = new Anchor(new StreamResource("fm_" + System.currentTimeMillis() + ".zip", () -> {
+					try {
+						return Files.newInputStream(event.getZipFile());
+					} catch (IOException e1) {
+						e1.printStackTrace();
+						return null;
+					}
+				}), "Stáhnout ZIP souboru");
+				link.setTarget("_blank");
+				win.addComponent(link, Alignment.CENTER);
+
+				Button proceedButton = new Button("Zavřít", e -> win.close());
+				win.addComponent(proceedButton, Alignment.CENTER);
+
+				win.open();
+			} else {
+				UIUtils.showWarning(event.getResultDetails());
+			}
+		});
+		eventBus.unsubscribe(FMPage.this);
 	}
 
 	private void updatePageState() {

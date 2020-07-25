@@ -10,23 +10,30 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.data.provider.QuerySortOrder;
 
 import cz.gattserver.grass3.fm.config.FMConfiguration;
 import cz.gattserver.grass3.fm.interfaces.FMItemTO;
+import cz.gattserver.grass3.fm.service.FMService;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
 public class FMExplorer {
 
 	private Logger logger = LoggerFactory.getLogger(FMExplorer.class);
+
+	@Autowired
+	private FMService fmService;
 
 	/**
 	 * Filesystem, pod kterým {@link FMExplorer} momentálně operuje
@@ -58,6 +65,8 @@ public class FMExplorer {
 		loadRootDirFromConfiguration();
 
 		currentAbsolutePath = rootPath;
+
+		SpringContextHelper.inject(this);
 	}
 
 	private void loadRootDirFromConfiguration() {
@@ -149,10 +158,11 @@ public class FMExplorer {
 	 * @return
 	 */
 	public int listCount(String filterName) {
-		try (Stream<Path> stream = Files.list(currentAbsolutePath)
-				.filter(p -> p.getFileName().toString().contains(filterName == null ? "" : filterName))) {
+		try (Stream<Path> stream = Files.list(currentAbsolutePath).filter(p -> p.getFileName().toString().toLowerCase()
+				.contains(filterName == null ? "" : filterName.toLowerCase()))) {
 			// +1 za odkaz na nadřazený adresář
-			return (int) stream.count() + 1;
+			int parentDirIncrement = currentAbsolutePath.equals(rootPath) ? 0 : 1;
+			return (int) stream.count() + parentDirIncrement;
 		} catch (IOException e) {
 			throw new IllegalStateException("Nezdařilo se získat počet souborů", e);
 		}
@@ -172,11 +182,12 @@ public class FMExplorer {
 	public Stream<FMItemTO> listing(String filterName, int offset, int limit, List<QuerySortOrder> list) {
 		try {
 			return Stream.concat(
-					Stream.of(currentAbsolutePath.resolve(".."))
-							.map(e -> FMUtils.mapPathToItem(e, currentAbsolutePath)),
+					currentAbsolutePath.equals(rootPath) ? Stream.of()
+							: Stream.of(currentAbsolutePath.resolve(".."))
+									.map(e -> FMUtils.mapPathToItem(e, currentAbsolutePath)),
 					Files.list(currentAbsolutePath)
-							.filter(p -> p.getFileName().toString().toLowerCase()
-									.contains(filterName == null ? "" : filterName.toLowerCase()))
+							.filter(p -> p.getFileName().toString().toLowerCase().contains(filterName == null ? ""
+									: filterName.toLowerCase()))
 							.map(e -> FMUtils.mapPathToItem(e, currentAbsolutePath))
 							.sorted((to1, to2) -> FMUtils.sortFile(to1, to2, list)).skip(offset).limit(limit));
 		} catch (IOException e) {
@@ -376,6 +387,13 @@ public class FMExplorer {
 			// "context-root/fm"
 			return FileProcessState.SYSTEM_ERROR;
 		}
+	}
+
+	public void zipFiles(Set<FMItemTO> items) {
+		Set<Path> files = new HashSet<>();
+		for (FMItemTO to : items)
+			files.add(currentAbsolutePath.resolve(to.getName()));
+		fmService.zipFiles(files);
 	}
 
 }

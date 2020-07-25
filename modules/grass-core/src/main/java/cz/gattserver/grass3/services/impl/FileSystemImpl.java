@@ -24,9 +24,8 @@ public class FileSystemImpl implements FileSystemService {
 	@Override
 	public FileSystem newZipFileSystem(Path path, boolean create) throws IOException {
 		final Map<String, String> env = new HashMap<>();
-		if (create) {
+		if (create)
 			env.put("create", "true");
-		}
 		return FileSystems.newFileSystem(URI.create("jar:" + path.toUri()), env);
 	}
 
@@ -34,5 +33,4 @@ public class FileSystemImpl implements FileSystemService {
 	public Path createTmpDir(String name) throws IOException {
 		return Files.createTempDirectory(name);
 	}
-
 }

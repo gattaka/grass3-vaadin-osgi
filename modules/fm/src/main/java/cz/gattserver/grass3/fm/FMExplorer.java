@@ -9,7 +9,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +18,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.FileSystemUtils;
 
 import com.vaadin.flow.data.provider.QuerySortOrder;
 
@@ -232,15 +232,7 @@ public class FMExplorer {
 				return FileProcessState.NOT_VALID;
 			if (!Files.exists(pathToDelete))
 				return FileProcessState.MISSING;
-			try (Stream<Path> s = Files.walk(pathToDelete)) {
-				s.sorted(Comparator.reverseOrder()).forEach(p -> {
-					try {
-						Files.delete(p);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				});
-			}
+			FileSystemUtils.deleteRecursively(pathToDelete);
 			return FileProcessState.SUCCESS;
 		} catch (IOException e) {
 			logger.error("Nezdařilo se smazat soubor {}", path, e);

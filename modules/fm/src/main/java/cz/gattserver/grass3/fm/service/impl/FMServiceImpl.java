@@ -11,7 +11,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ public class FMServiceImpl implements FMService {
 	@Async
 	@Override
 	public void zipFiles(Set<Path> items) {
-		logger.info("zipPhotogallery thread: " + Thread.currentThread().getId());
+		logger.info("zipFM thread: " + Thread.currentThread().getId());
 
 		final ReferenceHolder<Integer> total = new ReferenceHolder<>();
 		final ReferenceHolder<Integer> progress = new ReferenceHolder<>();
@@ -54,7 +53,7 @@ public class FMServiceImpl implements FMService {
 
 		String zipFileName = "grassFMTmpFile-" + new Date().getTime() + ".zip";
 		try {
-			Path zipFile = fileSystemService.createTmpDir("grassPGTmpFolder").resolve(zipFileName);
+			Path zipFile = fileSystemService.createTmpDir("grassFMTmpFolder").resolve(zipFileName);
 			try (FileSystem zipFileSystem = fileSystemService.newZipFileSystem(zipFile, true)) {
 				final Path root = zipFileSystem.getRootDirectories().iterator().next();
 				for (Path path : items) {
@@ -65,7 +64,6 @@ public class FMServiceImpl implements FMService {
 
 					if (Files.isDirectory(path)) {
 						Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-
 							public Path resolve(Path dest, Path file) {
 								// https://stackoverflow.com/questions/22611919/why-do-i-get-providermismatchexception-when-i-try-to-relativize-a-path-agains
 								Path relative = path.relativize(file);
@@ -95,12 +93,12 @@ public class FMServiceImpl implements FMService {
 				}
 				eventBus.publish(new FMZipProcessResultEvent(zipFile));
 			} catch (Exception e) {
-				String msg = "Nezdařilo se vytvořit ZIP galerie";
+				String msg = "Nezdařilo se vytvořit ZIP";
 				eventBus.publish(new FMZipProcessResultEvent(msg, e));
 				logger.error(msg, e);
 			}
 		} catch (Exception e) {
-			String msg = "Nezdařilo se vytvořit dočasný adresář pro ZIP galerie";
+			String msg = "Nezdařilo se vytvořit dočasný adresář pro ZIP";
 			eventBus.publish(new FMZipProcessResultEvent(msg, e));
 			logger.error(msg, e);
 		}

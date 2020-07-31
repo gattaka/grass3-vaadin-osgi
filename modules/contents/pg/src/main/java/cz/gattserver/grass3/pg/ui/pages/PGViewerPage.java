@@ -57,6 +57,7 @@ import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
+import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.WarnDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
@@ -344,14 +345,29 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 					// použít
 					url = url.substring(0, url.length() - 4);
 				}
-				Anchor link = new Anchor(url, "Detail");
-				link.addClassName(UIUtils.BUTTON_LINK_CSS_CLASS);
-				link.setTarget("_blank");
-				itemLayout.add(link);
+				final String urlFinal = url;
+				LinkButton detailButton = new LinkButton("Detail", e -> {
+					UI.getCurrent().getPage().open(urlFinal);
+				});
+				itemLayout.add(detailButton);
 
 				// Smazat
 				if (coreACL.canModifyContent(photogallery.getContentNode(), getUser())) {
-					// TODO
+					LinkButton deleteButton = new LinkButton("Smazat", e -> {
+						new ConfirmDialog(e2 -> {
+							pgService.deleteFile(item, galleryDir);
+							eventBus.subscribe(PGViewerPage.this);
+							progressIndicatorWindow = new ProgressDialog();
+							PhotogalleryPayloadTO payloadTO = new PhotogalleryPayloadTO(
+									photogallery.getContentNode().getName(), galleryDir,
+									photogallery.getContentNode().getContentTagsAsStrings(),
+									photogallery.getContentNode().isPublicated(), false);
+							pgService.modifyPhotogallery(UUID.randomUUID(), photogallery.getId(), payloadTO,
+									photogallery.getContentNode().getCreationDate());
+						}).open();
+					});
+					deleteButton.getStyle().set("margin-left", "20px").set("color", "red");
+					itemLayout.add(deleteButton);
 				}
 
 				galleryGridLayout.add(itemLayout);

@@ -121,7 +121,7 @@ public interface ArticleService {
 	 * @param article
 	 *            článek ke smazání
 	 */
-	void deleteArticle(long id);
+	void deleteArticle(long id, boolean deleteAttachments);
 
 	/**
 	 * Získá článek dle jeho identifikátoru

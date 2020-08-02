@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
@@ -180,16 +181,18 @@ public class FMExplorer {
 	 * @return
 	 */
 	public Stream<FMItemTO> listing(String filterName, int offset, int limit, List<QuerySortOrder> list) {
-		try {
-			return Stream.concat(
-					currentAbsolutePath.equals(rootPath) ? Stream.of()
-							: Stream.of(currentAbsolutePath.resolve(".."))
-									.map(e -> FMUtils.mapPathToItem(e, currentAbsolutePath)),
-					Files.list(currentAbsolutePath)
-							.filter(p -> p.getFileName().toString().toLowerCase().contains(filterName == null ? ""
-									: filterName.toLowerCase()))
-							.map(e -> FMUtils.mapPathToItem(e, currentAbsolutePath))
-							.sorted((to1, to2) -> FMUtils.sortFile(to1, to2, list)).skip(offset).limit(limit));
+		try (Stream<FMItemTO> stream = Stream.concat(
+				currentAbsolutePath.equals(rootPath) ? Stream.of()
+						: Stream.of(currentAbsolutePath.resolve(".."))
+								.map(e -> FMUtils.mapPathToItem(e, currentAbsolutePath)),
+				Files.list(currentAbsolutePath)
+						.filter(p -> p.getFileName().toString().toLowerCase()
+								.contains(filterName == null ? "" : filterName.toLowerCase()))
+						.map(e -> FMUtils.mapPathToItem(e, currentAbsolutePath))
+						.sorted((to1, to2) -> FMUtils.sortFile(to1, to2, list)).skip(offset).limit(limit))) {
+			// musí se přehodit, aby nezůstal viset původní stream, na kterém
+			// jsou vytvořené zámky na soubory
+			return stream.collect(Collectors.toList()).stream();
 		} catch (IOException e) {
 			throw new IllegalStateException("Nezdařilo se získat list souborů", e);
 		}

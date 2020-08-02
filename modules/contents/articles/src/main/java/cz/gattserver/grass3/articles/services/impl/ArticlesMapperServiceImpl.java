@@ -39,7 +39,6 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 		for (ArticleJSResource resource : article.getPluginJSResources())
 			pluginJSResources.add(resource.getName());
 		articleDTO.setPluginJSResources(pluginJSResources);
-
 		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article.getContentNode()));
 		return articleDTO;
 	}
@@ -52,7 +51,7 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 		for (ArticleJSCode code : article.getPluginJSCodes())
 			pluginJSCodes.add(code.getContent());
 		articleDTO.setPluginJSCodes(pluginJSCodes);
-
+		articleDTO.setAttachmentsDirId(article.getAttachmentsDirId());
 		articleDTO.setText(article.getText());
 
 		articleDTO.setContentNode(mapper.mapContentNodeForDetail(article.getContentNode()));

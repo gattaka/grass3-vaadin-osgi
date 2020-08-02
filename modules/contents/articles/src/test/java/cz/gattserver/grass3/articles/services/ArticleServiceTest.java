@@ -97,7 +97,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		ArticleTO articleTO = articleService.getArticleForDetail(articleId);
 		assertNotNull(articleTO);
 
-		articleService.deleteArticle(articleId);
+		articleService.deleteArticle(articleId, true);
 
 		articleTO = articleService.getArticleForDetail(articleId);
 		assertNull(articleTO);

@@ -635,6 +635,8 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 				UIUtils.showWarning(
 						"Soubor '" + event.getFileName() + "' nebylo možné uložit - došlo k systémové chybě.");
 			}
+			if (existingDraftId == null)
+				saveArticleDraft();
 		});
 		layout.add(upload);
 	}
@@ -732,9 +734,9 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 	 * Zavolá vrácení se na článek
 	 */
 	private void returnToArticle() {
-		// smaž draft
+		// smaž draft, ponechej přílohy, pokud k draftu existuje článek
 		if (existingDraftId != null)
-			articleService.deleteArticle(existingDraftId);
+			articleService.deleteArticle(existingDraftId, existingArticleId == null);
 
 		Div closeJsDiv = new Div() {
 			private static final long serialVersionUID = -7319482130016598549L;
@@ -757,9 +759,9 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 	 * zavolání vrácení se na kategorii
 	 */
 	private void returnToNode() {
-		// smaž draft
+		// smaž draft, ponechej přílohy, pokud k draftu existuje článek
 		if (existingDraftId != null)
-			articleService.deleteArticle(existingDraftId);
+			articleService.deleteArticle(existingDraftId, existingArticleId == null);
 
 		Div closeJsDiv = new Div() {
 			private static final long serialVersionUID = -7319482130016598549L;

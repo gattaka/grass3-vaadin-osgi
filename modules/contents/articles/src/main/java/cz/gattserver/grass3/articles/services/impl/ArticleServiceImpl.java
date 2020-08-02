@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
@@ -116,7 +117,7 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	@Override
-	public void deleteArticle(long id) {
+	public void deleteArticle(long id, boolean deleteAttachments) {
 		Article article = articleRepository.findById(id).get();
 
 		// smaž článek
@@ -125,7 +126,7 @@ public class ArticleServiceImpl implements ArticleService {
 		// smaž jeho content node
 		contentNodeFacade.deleteByContentId(ArticlesContentModule.ID, id);
 
-		if (article.getAttachmentsDirId() != null) {
+		if (deleteAttachments && article.getAttachmentsDirId() != null) {
 			// smaž jeho přílohy
 			try {
 				Path attachmentsPath = getAttachmentsPath(article.getAttachmentsDirId(), false);
@@ -140,7 +141,6 @@ public class ArticleServiceImpl implements ArticleService {
 							}
 						});
 					}
-					Files.delete(attachmentsPath);
 				}
 			} catch (Exception e) {
 				logger.warn("Nezdařilo se smazat adresář příloh článku [" + article.getAttachmentsDirId() + "]");
@@ -436,8 +436,9 @@ public class ArticleServiceImpl implements ArticleService {
 		Path attachmentsDirPath = getAttachmentsPath(attachmentsDirId, false);
 		if (attachmentsDirPath == null)
 			return Stream.empty();
-		try {
-			return Files.list(attachmentsDirPath).map(this::mapPathToAttachmentTO).skip(offset).limit(limit);
+		try (Stream<AttachmentTO> stream = Files.list(attachmentsDirPath).map(this::mapPathToAttachmentTO).skip(offset)
+				.limit(limit)) {
+			return stream.collect(Collectors.toList()).stream();
 		} catch (IOException e) {
 			throw new IllegalStateException("Nezdařilo se získat list souborů", e);
 		}

@@ -65,7 +65,7 @@ public class ArticlesViewerPage extends ContentViewerPage implements HasUrlParam
 		// RESCUE -- tohle by se normálně stát nemělo, ale umožňuje to aspoň
 		// vyřešit stav, ve kterém existuje takovýto nezobrazitelný obsah
 		if (article.getContentNode() == null) {
-			articleFacade.deleteArticle(article.getId());
+			articleFacade.deleteArticle(article.getId(), true);
 			UIUtils.redirect(getPageURL(homePageFactory.getPageName()));
 		}
 
@@ -155,7 +155,7 @@ public class ArticlesViewerPage extends ContentViewerPage implements HasUrlParam
 			// zdařilo se ? Pokud ano, otevři info okno a při
 			// potvrzení jdi na kategorii
 			try {
-				articleFacade.deleteArticle(article.getId());
+				articleFacade.deleteArticle(article.getId(), true);
 				UIUtils.redirect(nodeURL);
 			} catch (Exception e) {
 				// Pokud ne, otevři warn okno a při

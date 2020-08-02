@@ -86,7 +86,8 @@ public abstract class DraftMenuDialog extends WebDialog {
 
 		Button delete = new Button("Smazat", ev -> new ConfirmDialog("Smazat rozpracovaný článek?", e -> {
 			ArticleDraftOverviewTO to = grid.getSelectedItems().iterator().next();
-			getArticleService().deleteArticle(to.getId());
+			// smaž draft, ponechej přílohy, pokud k draftu existuje článek
+			getArticleService().deleteArticle(to.getId(), to.getContentNode().getDraftSourceId() == null);
 			drafts.remove(to);
 			grid.getDataProvider().refreshAll();
 			grid.deselectAll();

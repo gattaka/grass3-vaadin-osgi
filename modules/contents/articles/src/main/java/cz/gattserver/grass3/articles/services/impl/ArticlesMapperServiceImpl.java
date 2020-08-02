@@ -97,6 +97,7 @@ public class ArticlesMapperServiceImpl implements ArticlesMapperService {
 		articleDTO.setId(article.getId());
 		articleDTO.setText(article.getText());
 		articleDTO.setPartNumber(article.getPartNumber());
+		articleDTO.setAttachmentsDirId(article.getAttachmentsDirId());
 		return articleDTO;
 	}
 

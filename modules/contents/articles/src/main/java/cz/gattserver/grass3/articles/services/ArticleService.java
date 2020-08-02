@@ -1,10 +1,17 @@
 package cz.gattserver.grass3.articles.services;
 
+import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
+
+import com.vaadin.flow.data.provider.QuerySortOrder;
 
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
+import cz.gattserver.grass3.articles.interfaces.AttachmentTO;
 import cz.gattserver.grass3.exception.UnauthorizedAccessException;
+import cz.gattserver.grass3.articles.AttachmentsOperationResult;
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
 import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleRESTTO;
@@ -22,7 +29,7 @@ public interface ArticleService {
 	 *            id uživatele, který článek vytvořil
 	 * @return id uloženého článku, pokud se operace zdařila
 	 */
-	public long saveArticle(ArticlePayloadTO payload, long nodeId, long authorId);
+	long saveArticle(ArticlePayloadTO payload, long nodeId, long authorId);
 
 	/**
 	 * Upraví článek
@@ -36,7 +43,7 @@ public interface ArticleService {
 	 *            jeho část, může být <code>null</code>, pokud je upravován celý
 	 *            článek
 	 */
-	public void modifyArticle(long articleId, ArticlePayloadTO payload, Integer partNumber);
+	void modifyArticle(long articleId, ArticlePayloadTO payload, Integer partNumber);
 
 	/**
 	 * Uloží koncept článku z vytváření nového článku
@@ -51,7 +58,7 @@ public interface ArticleService {
 	 *            <code>true</code>, pokud je koncept vytvářen za účelem náhledu
 	 * @return id uloženého konceptu, pokud se operace zdařila
 	 */
-	public long saveDraft(ArticlePayloadTO payload, long nodeId, long authorId, boolean asPreview);
+	long saveDraft(ArticlePayloadTO payload, long nodeId, long authorId, boolean asPreview);
 
 	/**
 	 * Uloží koncept článku z upravovaného článku
@@ -72,7 +79,7 @@ public interface ArticleService {
 	 *            <code>true</code>, pokud je koncept vytvářen za účelem náhledu
 	 * @return id uloženého konceptu, pokud se operace zdařila
 	 */
-	public long saveDraftOfExistingArticle(ArticlePayloadTO payload, long nodeId, long authorId, Integer partNumber,
+	long saveDraftOfExistingArticle(ArticlePayloadTO payload, long nodeId, long authorId, Integer partNumber,
 			long originArticleId, boolean asPreview);
 
 	/**
@@ -86,7 +93,7 @@ public interface ArticleService {
 	 *            <code>true</code>, pokud je koncept upravován za účelem
 	 *            náhledu
 	 */
-	public void modifyDraft(long drafId, ArticlePayloadTO payload, boolean asPreview);
+	void modifyDraft(long drafId, ArticlePayloadTO payload, boolean asPreview);
 
 	/**
 	 * Upraví koncept článku z upravovaného článku
@@ -105,8 +112,8 @@ public interface ArticleService {
 	 *            <code>true</code>, pokud je koncept upravován za účelem
 	 *            náhledu
 	 */
-	public void modifyDraftOfExistingArticle(long drafId, ArticlePayloadTO payload, Integer partNumber,
-			long originArticleId, boolean asPreview);
+	void modifyDraftOfExistingArticle(long drafId, ArticlePayloadTO payload, Integer partNumber, long originArticleId,
+			boolean asPreview);
 
 	/**
 	 * Smaže článek
@@ -114,7 +121,7 @@ public interface ArticleService {
 	 * @param article
 	 *            článek ke smazání
 	 */
-	public void deleteArticle(long id);
+	void deleteArticle(long id);
 
 	/**
 	 * Získá článek dle jeho identifikátoru
@@ -123,7 +130,7 @@ public interface ArticleService {
 	 *            identifikátor
 	 * @return DTO článku
 	 */
-	public ArticleTO getArticleForDetail(long id);
+	ArticleTO getArticleForDetail(long id);
 
 	/**
 	 * Získá článek pro REST dle jeho identifikátoru
@@ -136,7 +143,7 @@ public interface ArticleService {
 	 * @throws UnauthorizedAccessException
 	 *             pokud uživatel nemá právo na přístup k obsahu
 	 */
-	public ArticleRESTTO getArticleForREST(Long id, Long userId) throws UnauthorizedAccessException;
+	ArticleRESTTO getArticleForREST(Long id, Long userId) throws UnauthorizedAccessException;
 
 	/**
 	 * Spustí přegenerování všech článků
@@ -145,7 +152,7 @@ public interface ArticleService {
 	 *            kořenová adresa, od které mají být vytvoření linky na CSS a JS
 	 *            zdroje, jež může článek na sobě mít
 	 */
-	public void reprocessAllArticles(UUID operationId, String contextRoot);
+	void reprocessAllArticles(UUID operationId, String contextRoot);
 
 	/**
 	 * Získá všechny rozpracované články viditelné daným uživatelem
@@ -155,6 +162,66 @@ public interface ArticleService {
 	 *            články
 	 * @return list konceptů
 	 */
-	public List<ArticleDraftOverviewTO> getDraftsForUser(Long userId);
+	List<ArticleDraftOverviewTO> getDraftsForUser(Long userId);
+
+	/**
+	 * Uloží přílohu článku
+	 * 
+	 * @param attachmentsDirId
+	 *            id úložiště
+	 * @param in
+	 *            vstupní proud dat
+	 * @param path
+	 *            cesta k souboru z aktuálního adresáře pod kterou bude soubor
+	 *            uložen
+	 * @return výsledek operace
+	 */
+	AttachmentsOperationResult saveAttachment(String attachmentsDirId, InputStream in, String name);
+
+	/**
+	 * Smaže přílohu článku
+	 * 
+	 * @param attachmentsDirId
+	 *            id úložiště
+	 * @param name
+	 *            název přílohy
+	 * @return 
+	 */
+	AttachmentsOperationResult deleteAttachment(String attachmentsDirId, String name);
+
+	/**
+	 * Získá přílohu článku
+	 * 
+	 * @param attachmentsDirId
+	 *            id úložiště
+	 * @param name
+	 *            jméno přílohy
+	 * @return cesta k souboru přílohy
+	 */
+	Path getAttachmentFilePath(String attachmentsDirId, String name);
+
+	/**
+	 * Získá počet příloh daného článku
+	 * 
+	 * @param attachmentsDirId
+	 *            id úložiště
+	 * @return počet příloh
+	 */
+	int listCount(String attachmentsDirId);
+
+	/**
+	 * Získá cesty k přílohám článku
+	 * 
+	 * @param attachmentsDirId
+	 *            id úložiště
+	 * @param offset
+	 *            offset
+	 * @param limit
+	 *            limit
+	 * @param list
+	 *            řazení
+	 * @return cesty k přílohám
+	 */
+	Stream<AttachmentTO> listing(String attachmentsDirId, int offset, int limit, List<QuerySortOrder> list);
 
 }

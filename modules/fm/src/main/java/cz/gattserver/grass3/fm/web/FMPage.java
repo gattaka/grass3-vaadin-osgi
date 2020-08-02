@@ -113,7 +113,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 	private FMExplorer explorer;
 
 	/**
-	 * Filestable
+	 * Files table
 	 */
 	private Grid<FMItemTO> grid;
 

@@ -81,6 +81,11 @@ public class Article {
 	 */
 	private Integer partNumber;
 
+	/**
+	 * Id adresáře příloh
+	 */
+	private String attachmentsDirId;
+
 	public Integer getPartNumber() {
 		return partNumber;
 	}
@@ -151,6 +156,14 @@ public class Article {
 
 	public void setSearchableOutput(String searchableOutput) {
 		this.searchableOutput = searchableOutput;
+	}
+
+	public String getAttachmentsDirId() {
+		return attachmentsDirId;
+	}
+
+	public void setAttachmentsDirId(String attachmentsDirId) {
+		this.attachmentsDirId = attachmentsDirId;
 	}
 
 }

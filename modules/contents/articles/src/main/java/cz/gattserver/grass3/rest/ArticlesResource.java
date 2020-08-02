@@ -58,7 +58,7 @@ public class ArticlesResource {
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		ArticlePayloadTO payload = new ArticlePayloadTO(
 				"SMS Import " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("d.M.yyyy")), text,
-				new ArrayList<>(), false, "dummy");
+				new ArrayList<>(), false, null, "dummy");
 
 		long articleId = articleService.saveArticle(payload, nodeService.getRootNodes().get(0).getId(), user.getId());
 

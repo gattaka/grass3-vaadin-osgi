@@ -49,7 +49,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
-				tags, true, "mockContextRoot");
+				tags, true, null, "mockContextRoot");
 		long articleId = articleService.saveArticle(payload, nodeId, userId);
 
 		ArticleTO articleTO = articleService.getArticleForDetail(articleId);
@@ -91,7 +91,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
-				tags, true, "mockContextRoot");
+				tags, true, null, "mockContextRoot");
 		long articleId = articleService.saveArticle(payload, nodeId, userId);
 
 		ArticleTO articleTO = articleService.getArticleForDetail(articleId);
@@ -113,7 +113,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
-				tags, true, "mockContextRoot");
+				tags, true, null, "mockContextRoot");
 		long articleId = articleService.saveArticle(payload, nodeId, userId);
 
 		UUID operationId = UUID.randomUUID();
@@ -170,7 +170,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [MOCK_TAG]5[/MOCK_TAG] [N1]Konec[/N1] ende",
-				tags, true, "mockContextRoot");
+				tags, true, null, "mockContextRoot");
 		long articleId = articleService.saveArticle(payload, nodeId, userId);
 
 		ArticleTO articleTO = articleService.getArticleForDetail(articleId);
@@ -211,7 +211,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [MOCKJS_TAG]Test-content[/MOCKJS_TAG] [N1]Konec[/N1] ende",
-				tags, true, "mockContextRoot");
+				tags, true, null, "mockContextRoot");
 		long articleId = articleService.saveArticle(payload, nodeId, userId);
 
 		ArticleTO articleTO = articleService.getArticleForDetail(articleId);
@@ -257,7 +257,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 
 		long userId = coreMockService.createMockUser(1);
 		long nodeId = coreMockService.createMockRootNode(1);
-		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName", "", tags, true, "mockContextRoot");
+		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName", "", tags, true, null, "mockContextRoot");
 		long articleId = articleService.saveArticle(payload, nodeId, userId);
 
 		ArticleTO articleTO = articleService.getArticleForDetail(articleId);
@@ -291,14 +291,14 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long userId = coreMockService.createMockUser(1);
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
-				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true,
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true, null,
 				"mockContextRoot");
 		long articleId = articleService.saveArticle(payload, nodeId, userId);
 
 		tags.add("tagNew");
 
 		payload = new ArticlePayloadTO("mockArticleNameNew",
-				"[N1]Úvod[/N1][TAG]<strong>mockArticleTextNew</strong>[/TAG] [N1]Konec[/N1] ende", tags, false,
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleTextNew</strong>[/TAG] [N1]Konec[/N1] ende", tags, false, null,
 				"mockContextRoot");
 		articleService.modifyArticle(articleId, payload, null);
 
@@ -338,7 +338,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long userId = coreMockService.createMockUser(1);
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
-				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true,
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true, null,
 				"mockContextRoot");
 		long previewId = articleService.saveDraft(payload, nodeId, userId, true);
 
@@ -379,7 +379,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
-				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true,
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true, null,
 				"mockContextRoot");
 		long draftId = articleService.saveDraft(payload, nodeId, userId, false);
 
@@ -416,14 +416,14 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
-				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true,
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true, null,
 				"mockContextRoot");
 		Long draftId = articleService.saveDraft(payload, nodeId, userId, false);
 
 		tags = new HashSet<>();
 		tags.add("tag4");
 
-		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, "mockContextRoot");
+		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, null, "mockContextRoot");
 		articleService.modifyDraft(draftId, payload, false);
 
 		ArticleTO articleTO = articleService.getArticleForDetail(draftId);
@@ -459,14 +459,14 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
-				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true,
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true, null,
 				"mockContextRoot");
 		Long draftId = articleService.saveDraft(payload, nodeId, userId, false);
 
 		tags = new HashSet<>();
 		tags.add("tag4");
 
-		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, "mockContextRoot");
+		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, null, "mockContextRoot");
 		articleService.modifyDraft(draftId, payload, false);
 
 		UUID operationId = UUID.randomUUID();
@@ -517,14 +517,14 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
-				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true,
+				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N1]Konec[/N1] ende", tags, true, null,
 				"mockContextRoot");
 		Long draftId = articleService.saveDraft(payload, nodeId, userId, false);
 
 		tags = new HashSet<>();
 		tags.add("tag4");
 
-		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, "mockContextRoot");
+		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, null, "mockContextRoot");
 		articleService.modifyDraft(draftId, payload, true);
 
 		ArticleTO articleTO = articleService.getArticleForDetail(draftId);
@@ -562,13 +562,13 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
-				tags, true, "mockContextRoot");
+				tags, true, null, "mockContextRoot");
 		Long articleId = articleService.saveArticle(payload, nodeId, userId);
 
 		tags = new HashSet<>();
 		tags.add("tag4");
 
-		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, "mockContextRoot");
+		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, null, "mockContextRoot");
 		Long draftId = articleService.saveDraftOfExistingArticle(payload, nodeId, userId, null, articleId, false);
 
 		ArticleTO articleTO = articleService.getArticleForDetail(draftId);
@@ -605,13 +605,13 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
-				tags, true, "mockContextRoot");
+				tags, true, null, "mockContextRoot");
 		Long articleId = articleService.saveArticle(payload, nodeId, userId);
 
 		tags = new HashSet<>();
 		tags.add("tag4");
 
-		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, "mockContextRoot");
+		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, null, "mockContextRoot");
 		Long draftId = articleService.saveDraftOfExistingArticle(payload, nodeId, userId, null, articleId, false);
 
 		tags = new HashSet<>();
@@ -619,7 +619,8 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		tags.add("tag6");
 		tags.add("tag7");
 
-		payload = new ArticlePayloadTO("mockArticleNameNew2", "[N1]New2[/N1] ende", tags, true, "mockContextRoot");
+		payload = new ArticlePayloadTO("mockArticleNameNew2", "[N1]New2[/N1] ende", tags, true, null,
+				"mockContextRoot");
 		articleService.modifyDraftOfExistingArticle(draftId, payload, null, articleId, false);
 
 		ArticleTO articleTO = articleService.getArticleForDetail(draftId);
@@ -660,13 +661,13 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
-				tags, true, "mockContextRoot");
+				tags, true, null, "mockContextRoot");
 		Long articleId = articleService.saveArticle(payload, nodeId, userId);
 
 		tags = new HashSet<>();
 		tags.add("tag4");
 
-		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, "mockContextRoot");
+		payload = new ArticlePayloadTO("mockArticleNameNew", "[N1]New[/N1] ende", tags, true, null, "mockContextRoot");
 		Long draftId = articleService.saveDraftOfExistingArticle(payload, nodeId, userId, null, articleId, false);
 
 		tags = new HashSet<>();
@@ -674,7 +675,8 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		tags.add("tag6");
 		tags.add("tag7");
 
-		payload = new ArticlePayloadTO("mockArticleNameNew2", "[N1]New2[/N1] ende", tags, true, "mockContextRoot");
+		payload = new ArticlePayloadTO("mockArticleNameNew2", "[N1]New2[/N1] ende", tags, true, null,
+				"mockContextRoot");
 		articleService.modifyDraftOfExistingArticle(draftId, payload, null, articleId, false);
 
 		UUID operationId = UUID.randomUUID();
@@ -729,7 +731,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long userId = coreMockService.createMockUser(1);
 		long nodeId = coreMockService.createMockRootNode(1);
 
-		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName", "mockArticleText", tags, true,
+		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName", "mockArticleText", tags, true, null,
 				"mockContextRoot");
 
 		// preview
@@ -760,7 +762,7 @@ public class ArticleServiceTest extends AbstractDBUnitTest {
 		long userId = coreMockService.createMockUser(1);
 		long nodeId = coreMockService.createMockRootNode(1);
 
-		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName", "mockArticleText", tags, true,
+		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName", "mockArticleText", tags, true, null,
 				"mockContextRoot");
 
 		// preview

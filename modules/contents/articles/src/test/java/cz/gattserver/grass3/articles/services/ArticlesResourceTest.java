@@ -66,7 +66,7 @@ public class ArticlesResourceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
-				tags, true, "mockContextRoot");
+				tags, true, null, "mockContextRoot");
 		return articleService.saveArticle(payload, nodeId, userId);
 	}
 
@@ -85,10 +85,11 @@ public class ArticlesResourceTest extends AbstractDBUnitTest {
 
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
-				new HashSet<>(), false, "mockContextRoot");
+				new HashSet<>(), false, null, "mockContextRoot");
 		articleService.saveArticle(payload, nodeId, userId);
 
-		payload = new ArticlePayloadTO("mockArticleName2", "[N1]Test2[/N1]", new HashSet<>(), true, "mockContextRoot");
+		payload = new ArticlePayloadTO("mockArticleName2", "[N1]Test2[/N1]", new HashSet<>(), true, null,
+				"mockContextRoot");
 		articleService.saveArticle(payload, nodeId, userId);
 
 		URI url = UriComponentsBuilder.fromUriString("/articles/count").build().encode().toUri();
@@ -110,10 +111,11 @@ public class ArticlesResourceTest extends AbstractDBUnitTest {
 
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
-				new HashSet<>(), false, "mockContextRoot");
+				new HashSet<>(), false, null, "mockContextRoot");
 		articleService.saveArticle(payload, nodeId, userId);
 
-		payload = new ArticlePayloadTO("mockArticleName2", "[N1]Test2[/N1]", new HashSet<>(), true, "mockContextRoot");
+		payload = new ArticlePayloadTO("mockArticleName2", "[N1]Test2[/N1]", new HashSet<>(), true, null,
+				"mockContextRoot");
 		articleService.saveArticle(payload, nodeId, userId2);
 
 		URI url = UriComponentsBuilder.fromUriString("/articles/count").build().encode().toUri();
@@ -135,10 +137,11 @@ public class ArticlesResourceTest extends AbstractDBUnitTest {
 
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
-				new HashSet<>(), false, "mockContextRoot");
+				new HashSet<>(), false, null, "mockContextRoot");
 		articleService.saveArticle(payload, nodeId, userId);
 
-		payload = new ArticlePayloadTO("mockArticleName2", "[N1]Test2[/N1]", new HashSet<>(), true, "mockContextRoot");
+		payload = new ArticlePayloadTO("mockArticleName2", "[N1]Test2[/N1]", new HashSet<>(), true, null,
+				"mockContextRoot");
 		articleService.saveArticle(payload, nodeId, userId2);
 
 		URI url = UriComponentsBuilder.fromUriString("/articles/count").build().encode().toUri();
@@ -184,10 +187,11 @@ public class ArticlesResourceTest extends AbstractDBUnitTest {
 
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
-				new HashSet<>(), false, "mockContextRoot");
+				new HashSet<>(), false, null, "mockContextRoot");
 		Long article1 = articleService.saveArticle(payload, nodeId, userId);
 
-		payload = new ArticlePayloadTO("mockArticleName2", "[N1]Test2[/N1]", new HashSet<>(), true, "mockContextRoot");
+		payload = new ArticlePayloadTO("mockArticleName2", "[N1]Test2[/N1]", new HashSet<>(), true, null,
+				"mockContextRoot");
 		Long article2 = articleService.saveArticle(payload, nodeId, userId2);
 
 		URI url = UriComponentsBuilder.fromUriString("/articles/list?page=0&pageSize=10").build().encode().toUri();
@@ -238,10 +242,11 @@ public class ArticlesResourceTest extends AbstractDBUnitTest {
 
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
-				new HashSet<>(), false, "mockContextRoot");
+				new HashSet<>(), false, null, "mockContextRoot");
 		articleService.saveArticle(payload, nodeId, userId);
 
-		payload = new ArticlePayloadTO("mockArticleName2", "[N1]Test2[/N1]", new HashSet<>(), true, "mockContextRoot");
+		payload = new ArticlePayloadTO("mockArticleName2", "[N1]Test2[/N1]", new HashSet<>(), true, null,
+				"mockContextRoot");
 		Long article2 = articleService.saveArticle(payload, nodeId, userId);
 
 		URI url = UriComponentsBuilder.fromUriString("/articles/list?page=0&pageSize=10").build().encode().toUri();
@@ -371,7 +376,7 @@ public class ArticlesResourceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
-				tags, false, "mockContextRoot");
+				tags, false, null, "mockContextRoot");
 		Long articleId = articleService.saveArticle(payload, nodeId, userId);
 
 		URI url = UriComponentsBuilder.fromUriString("/articles/article").build().encode().toUri();
@@ -412,7 +417,7 @@ public class ArticlesResourceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
-				tags, false, "mockContextRoot");
+				tags, false, null, "mockContextRoot");
 		Long articleId = articleService.saveArticle(payload, nodeId, userId);
 
 		URI url = UriComponentsBuilder.fromUriString("/articles/article").build().encode().toUri();
@@ -462,7 +467,7 @@ public class ArticlesResourceTest extends AbstractDBUnitTest {
 		long nodeId = coreMockService.createMockRootNode(1);
 		ArticlePayloadTO payload = new ArticlePayloadTO("mockArticleName",
 				"[N1]Úvod[/N1][TAG]<strong>mockArticleText</strong>[/TAG] [N2]Header2[/N2] dd [N3]Header3[/N3] ssaas [N4]Header4[/N4] fdd [N1]Konec[/N1] ende",
-				tags, false, "mockContextRoot");
+				tags, false, null, "mockContextRoot");
 		Long articleId = articleService.saveArticle(payload, nodeId, userId);
 
 		URI url = UriComponentsBuilder.fromUriString("/articles/article").build().encode().toUri();

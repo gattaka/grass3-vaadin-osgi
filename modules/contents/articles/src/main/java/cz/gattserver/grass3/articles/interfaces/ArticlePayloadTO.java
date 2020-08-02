@@ -14,6 +14,7 @@ public class ArticlePayloadTO {
 	private String text;
 	private Collection<String> tags;
 	private boolean publicated;
+	private String attachmentsDirId;
 	private String contextRoot;
 
 	/**
@@ -31,15 +32,19 @@ public class ArticlePayloadTO {
 	 *            klíčová slova
 	 * @param publicated
 	 *            <code>true</code>, pokud má být článek zveřejněn
+	 * @param attachmentsDirId
+	 *            id úložiště příloh článku
 	 * @param contextRoot
 	 *            kořenová adresa, od které mají být vytvoření linky na CSS a JS
 	 *            zdroje, jež může článek na sobě mít
 	 */
-	public ArticlePayloadTO(String name, String text, Collection<String> tags, boolean publicated, String contextRoot) {
+	public ArticlePayloadTO(String name, String text, Collection<String> tags, boolean publicated,
+			String attachmentsDirId, String contextRoot) {
 		this.name = name;
 		this.text = text;
 		this.tags = tags;
 		this.publicated = publicated;
+		this.attachmentsDirId = attachmentsDirId;
 		this.contextRoot = contextRoot;
 	}
 
@@ -127,6 +132,23 @@ public class ArticlePayloadTO {
 	 */
 	public ArticlePayloadTO setPublicated(boolean publicated) {
 		this.publicated = publicated;
+		return this;
+	}
+
+	/**
+	 * @return id adresáře příloh článku
+	 */
+	public String getAttachmentsDirId() {
+		return attachmentsDirId;
+	}
+
+	/**
+	 * @param attachmentsDirId
+	 *            id adresáře příloh článku
+	 * @return tento objekt pro řetězení
+	 */
+	public ArticlePayloadTO setAttachmentsDirId(String attachmentsDirId) {
+		this.attachmentsDirId = attachmentsDirId;
 		return this;
 	}
 

@@ -4,6 +4,7 @@ package cz.gattserver.grass3.fm;
  * Stav zpracování souboru
  */
 public enum FileProcessState {
+	
 	/**
 	 * V pořádku, nalezen
 	 */

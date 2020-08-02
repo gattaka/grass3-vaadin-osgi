@@ -8,6 +8,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 
 import cz.gattserver.grass3.articles.config.ArticlesConfiguration;
@@ -21,8 +22,10 @@ import cz.gattserver.grass3.ui.components.button.ImageButton;
 import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
+import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.DoubleToIntegerConverter;
 import cz.gattserver.grass3.ui.util.UIUtils;
+import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import net.engio.mbassy.listener.Handler;
@@ -53,35 +56,49 @@ public class ArticlesSettingsPageFragmentFactory extends AbstractPageFragmentFac
 		binder.setBean(new ArticlesConfiguration());
 		binder.readBean(configuration);
 
-		/**
-		 * Délka tabulátoru ve znacích
-		 */
+		// Délka tabulátoru ve znacích
 		final NumberField tabLengthField = new NumberField("Délka tabulátoru");
 		tabLengthField.setStep(1);
+		tabLengthField.setWidth("200px");
 		binder.forField(tabLengthField).withConverter(new DoubleToIntegerConverter())
 				.bind(ArticlesConfiguration::getTabLength, ArticlesConfiguration::setTabLength);
 		tabLengthField.setValue((double) configuration.getTabLength());
 		layout.add(tabLengthField);
+		
+		layout.add(new Breakline());
 
-		/**
-		 * Prodleva mezi průběžnými zálohami článku
-		 */
+		// Prodleva mezi průběžnými zálohami článku
 		final NumberField backupTimeoutField = new NumberField("Prodleva mezi zálohami");
 		backupTimeoutField.setStep(1);
+		backupTimeoutField.setWidth("200px");
 		binder.forField(backupTimeoutField).withConverter(new DoubleToIntegerConverter())
 				.bind(ArticlesConfiguration::getBackupTimeout, ArticlesConfiguration::setBackupTimeout);
 		backupTimeoutField.setValue((double) configuration.getTabLength());
 		layout.add(backupTimeoutField);
+		
+		layout.add(new Breakline());
+
+		// Kořenový adresář
+		final TextField outputPathField = new TextField("Nastavení adresáře příloh");
+		outputPathField.setWidth("300px");
+		binder.forField(outputPathField).bind(ArticlesConfiguration::getAttachmentsDir,
+				ArticlesConfiguration::setAttachmentsDir);
+		outputPathField.setValue(configuration.getAttachmentsDir());
+		layout.add(outputPathField);
+		
+		layout.add(new Breakline());
+		
+		ButtonLayout buttonLayout = new ButtonLayout();
+		layout.add(buttonLayout);
 
 		/**
 		 * Save tlačítko
 		 */
 		SaveButton saveButton = new SaveButton(event -> {
-			if (binder.writeBeanIfValid(configuration)) {
+			if (binder.writeBeanIfValid(configuration))
 				storeConfiguration(configuration);
-			}
 		});
-		layout.add(saveButton);
+		buttonLayout.add(saveButton);
 
 		/**
 		 * Reprocess tlačítko
@@ -119,7 +136,6 @@ public class ArticlesSettingsPageFragmentFactory extends AbstractPageFragmentFac
 		progressIndicatorDialog.runInUI(() -> {
 			progressIndicatorDialog.setTotal(event.getCountOfStepsToDo());
 			progressIndicatorDialog.open();
-			;
 		});
 	}
 

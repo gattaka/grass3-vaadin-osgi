@@ -30,6 +30,11 @@ public class ArticleDraftOverviewTO {
 	 */
 	private Integer partNumber;
 
+	/**
+	 * Id úložiště článku
+	 */
+	private String attachmentsDirId;
+
 	public Integer getPartNumber() {
 		return partNumber;
 	}
@@ -60,6 +65,14 @@ public class ArticleDraftOverviewTO {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getAttachmentsDirId() {
+		return attachmentsDirId;
+	}
+
+	public void setAttachmentsDirId(String attachmentsDirId) {
+		this.attachmentsDirId = attachmentsDirId;
 	}
 
 }

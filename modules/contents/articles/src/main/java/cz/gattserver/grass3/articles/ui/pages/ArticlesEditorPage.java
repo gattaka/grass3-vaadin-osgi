@@ -23,6 +23,9 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox.FetchItemsCallback;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
@@ -30,20 +33,30 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.WildcardParameter;
+import com.vaadin.flow.server.VaadinRequest;
+import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.shared.Registration;
 
+import cz.gattserver.grass3.articles.AttachmentsOperationResult;
+import cz.gattserver.grass3.articles.config.ArticlesConfiguration;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
 import cz.gattserver.grass3.articles.editor.parser.util.PartsFinder;
 import cz.gattserver.grass3.articles.editor.parser.util.Result;
-import cz.gattserver.grass3.articles.interfaces.ArticleTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
 import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
+import cz.gattserver.grass3.articles.interfaces.ArticleTO;
+import cz.gattserver.grass3.articles.interfaces.AttachmentTO;
 import cz.gattserver.grass3.articles.plugins.register.PluginRegisterService;
 import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.articles.ui.windows.DraftMenuDialog;
@@ -61,6 +74,7 @@ import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.HtmlSpan;
 import cz.gattserver.web.common.ui.ImageIcon;
+import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
 
 @Route("articles-editor")
@@ -86,6 +100,8 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 	@Resource(name = "articlesViewerPageFactory")
 	private PageFactory articlesViewerPageFactory;
 
+	private Grid<AttachmentTO> grid;
+
 	private NodeOverviewTO node;
 
 	private TextArea articleTextArea;
@@ -93,6 +109,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 	private TextField articleNameField;
 	private Checkbox publicatedCheckBox;
 
+	private String attachmentsDirId;
 	private Long existingArticleId;
 	private String existingArticleName;
 	private Long existingDraftId;
@@ -121,11 +138,11 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 				"window.onbeforeunload = function() { return \"Opravdu si přejete ukončit editor a odejít - rozpracovaná data nejsou uložena ?\" };");
 	}
 
-	private void populateByExisting(ArticleTO article, String partNumberToken) {
+	private void populateByExistingArticle(ArticleTO article, String partNumberToken) {
 		node = article.getContentNode().getParent();
 		existingArticleId = article.getId();
 		existingArticleName = article.getContentNode().getName();
-
+		attachmentsDirId = article.getAttachmentsDirId();
 		articleNameField.setValue(article.getContentNode().getName());
 
 		for (ContentTagOverviewTO tagDTO : article.getContentNode().getContentTags())
@@ -175,7 +192,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 			publicatedCheckBox.setValue(true);
 		} else if (operationToken.equals(DefaultContentOperations.EDIT.toString())) {
 			article = articleService.getArticleForDetail(identifier.getId());
-			populateByExisting(article, partNumberToken);
+			populateByExistingArticle(article, partNumberToken);
 		} else {
 			logger.debug("Neznámá operace: {}", operationToken);
 			throw new GrassPageException(404);
@@ -191,41 +208,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 
 			@Override
 			protected void onChoose(ArticleDraftOverviewTO draft) {
-				parts = null;
-				ArticleTO article = null;
-
-				existingDraftId = draft.getId();
-
-				node = draft.getContentNode().getParent();
-				articleNameField.setValue(draft.getContentNode().getName());
-				for (ContentTagOverviewTO tagDTO : draft.getContentNode().getContentTags())
-					articleKeywords.addToken(tagDTO.getName());
-				publicatedCheckBox.setValue(draft.getContentNode().isPublicated());
-				articleTextArea.setValue(draft.getText());
-
-				// jedná se o draft již existujícího obsahu?
-				if (draft.getContentNode().getDraftSourceId() != null) {
-					article = articleService.getArticleForDetail(draft.getContentNode().getDraftSourceId());
-					existingArticleId = article.getId();
-					existingArticleName = article.getContentNode().getName();
-
-					// Úprava části článku může být pouze u existujícího
-					// článku
-					if (draft.getPartNumber() != null) {
-						partNumber = draft.getPartNumber();
-						try {
-							// parts se musí krájet z původního obsahu,
-							// protože v draftu je teď jenom ta část
-							parts = PartsFinder.findParts(
-									new ByteArrayInputStream(article.getText().getBytes(StandardCharsets.UTF_8)),
-									partNumber);
-						} catch (IOException e) {
-							throw new GrassPageException(500, e);
-						}
-					}
-				}
-
-				ArticlesEditorPage.super.createCenterElements(customlayout);
+				populateByExistingDraft(customlayout, draft);
 			}
 
 			@Override
@@ -235,6 +218,44 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 				defaultCreateContent(customlayout);
 			}
 		}.open();
+	}
+
+	private void populateByExistingDraft(Div customlayout, ArticleDraftOverviewTO draft) {
+		parts = null;
+		ArticleTO article = null;
+
+		existingDraftId = draft.getId();
+
+		node = draft.getContentNode().getParent();
+		articleNameField.setValue(draft.getContentNode().getName());
+		for (ContentTagOverviewTO tagDTO : draft.getContentNode().getContentTags())
+			articleKeywords.addToken(tagDTO.getName());
+		publicatedCheckBox.setValue(draft.getContentNode().isPublicated());
+		articleTextArea.setValue(draft.getText());
+		attachmentsDirId = draft.getAttachmentsDirId();
+
+		// jedná se o draft již existujícího obsahu?
+		if (draft.getContentNode().getDraftSourceId() != null) {
+			article = articleService.getArticleForDetail(draft.getContentNode().getDraftSourceId());
+			existingArticleId = article.getId();
+			existingArticleName = article.getContentNode().getName();
+
+			// Úprava části článku může být pouze u existujícího
+			// článku
+			if (draft.getPartNumber() != null) {
+				partNumber = draft.getPartNumber();
+				try {
+					// parts se musí krájet z původního obsahu,
+					// protože v draftu je teď jenom ta část
+					parts = PartsFinder.findParts(
+							new ByteArrayInputStream(article.getText().getBytes(StandardCharsets.UTF_8)), partNumber);
+				} catch (IOException e) {
+					throw new GrassPageException(500, e);
+				}
+			}
+		}
+
+		ArticlesEditorPage.super.createCenterElements(customlayout);
 	}
 
 	@Override
@@ -397,34 +418,9 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 	private Button createPreviewButton() {
 		Button previewButton = new ImageButton("Náhled", ImageIcon.DOCUMENT_16_ICON, event -> {
 			try {
-
-				// Náhled ukazuje pouze danou část, která je upravovaná
-				// (nespojuje parts)
-				String draftName = articleNameField.getValue();
-				ArticlePayloadTO payload = new ArticlePayloadTO(draftName, articleTextArea.getValue(),
-						articleKeywords.getValues(), publicatedCheckBox.getValue(), getContextPath());
-
-				if (existingDraftId == null) {
-					if (existingArticleId == null) {
-						existingDraftId = articleService.saveDraft(payload, node.getId(), getUser().getId(), true);
-					} else {
-						existingDraftId = articleService.saveDraftOfExistingArticle(payload, node.getId(),
-								getUser().getId(), partNumber, existingArticleId, true);
-					}
-				} else {
-					if (existingArticleId == null) {
-						articleService.modifyDraft(existingDraftId, payload, true);
-					} else {
-						articleService.modifyDraftOfExistingArticle(existingDraftId, payload, partNumber,
-								existingArticleId, true);
-					}
-				}
-
-				UI.getCurrent().getPage()
-						.executeJs("window.open('"
-								+ getPageURL(articlesViewerPageFactory,
-										URLIdentifierUtils.createURLIdentifier(existingDraftId, draftName))
-								+ "','_blank');");
+				String draftName = saveArticleDraft();
+				UI.getCurrent().getPage().open(getPageURL(articlesViewerPageFactory,
+						URLIdentifierUtils.createURLIdentifier(existingDraftId, draftName)));
 			} catch (Exception e) {
 				logger.error("Při ukládání náhledu článku došlo k chybě", e);
 			}
@@ -477,6 +473,28 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		return cancelButton;
 	}
 
+	private String saveArticleDraft() {
+		String draftName = articleNameField.getValue();
+		ArticlePayloadTO payload = new ArticlePayloadTO(draftName, articleTextArea.getValue(),
+				articleKeywords.getValues(), publicatedCheckBox.getValue(), attachmentsDirId, getContextPath());
+		if (existingDraftId == null) {
+			if (existingArticleId == null) {
+				existingDraftId = articleService.saveDraft(payload, node.getId(), getUser().getId(), false);
+			} else {
+				existingDraftId = articleService.saveDraftOfExistingArticle(payload, node.getId(), getUser().getId(),
+						partNumber, existingArticleId, false);
+			}
+		} else {
+			if (existingArticleId == null) {
+				articleService.modifyDraft(existingDraftId, payload, false);
+			} else {
+				articleService.modifyDraftOfExistingArticle(existingDraftId, payload, partNumber, existingArticleId,
+						false);
+			}
+		}
+		return draftName;
+	}
+
 	private Span createAutosaveLabel() {
 		final Span autosaveLabel = new Span();
 		Div autosaveJsDiv = new Div() {
@@ -485,27 +503,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 			@ClientCallable
 			private void autosaveCallback() {
 				try {
-					// Náhled ukazuje pouze danou část, která je upravovaná
-					// (nespojuje parts)
-					String draftName = articleNameField.getValue();
-					ArticlePayloadTO payload = new ArticlePayloadTO(draftName, articleTextArea.getValue(),
-							articleKeywords.getValues(), publicatedCheckBox.getValue(), getContextPath());
-					if (existingDraftId == null) {
-						if (existingArticleId == null) {
-							existingDraftId = articleService.saveDraft(payload, node.getId(), getUser().getId(), false);
-						} else {
-							existingDraftId = articleService.saveDraftOfExistingArticle(payload, node.getId(),
-									getUser().getId(), partNumber, existingArticleId, false);
-						}
-					} else {
-						if (existingArticleId == null) {
-							articleService.modifyDraft(existingDraftId, payload, false);
-						} else {
-							articleService.modifyDraftOfExistingArticle(existingDraftId, payload, partNumber,
-									existingArticleId, false);
-						}
-					}
-
+					saveArticleDraft();
 					autosaveLabel.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
 							+ " Automaticky uloženo");
 					autosaveLabel.setClassName("label-ok");
@@ -527,6 +525,120 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		return autosaveLabel;
 	}
 
+	private void populateGrid() {
+		int size = articleService.listCount(attachmentsDirId);
+		grid.setDataProvider(DataProvider.fromFilteringCallbacks(
+				q -> articleService.listing(attachmentsDirId, q.getOffset(), q.getLimit(), q.getSortOrders()),
+				q -> size));
+	}
+
+	private String getDownloadLink(AttachmentTO item) {
+		VaadinRequest vaadinRequest = VaadinRequest.getCurrent();
+		VaadinServletRequest vaadinServletRequest = (VaadinServletRequest) vaadinRequest;
+		String requestURI = ((VaadinServletRequest) vaadinRequest).getRequestURI();
+		String fullURL = vaadinServletRequest.getRequestURL().toString();
+		String urlBase = fullURL.substring(0, fullURL.length() - requestURI.length());
+		String contextRootURL = UIUtils.getContextPath();
+		StringBuilder sb = new StringBuilder();
+		sb.append(urlBase);
+		sb.append(contextRootURL);
+		if (!contextRootURL.endsWith("/"))
+			sb.append("/");
+		sb.append(ArticlesConfiguration.ATTACHMENTS_PATH);
+		if (!sb.toString().endsWith("/"))
+			sb.append("/");
+		sb.append(attachmentsDirId);
+		sb.append("/");
+		sb.append(item.getName());
+
+		return sb.toString();
+	}
+
+	private void handleDownloadAction(AttachmentTO item) {
+		UI.getCurrent().getPage().open(getDownloadLink(item));
+	}
+
+	private void handleDeleteAction(AttachmentTO to) {
+		new ConfirmDialog(e -> {
+			AttachmentsOperationResult result = articleService.deleteAttachment(attachmentsDirId, to.getName());
+			switch (result.getState()) {
+			case SUCCESS:
+				attachmentsDirId = result.getAttachmentDirId();
+				populateGrid();
+				break;
+			default:
+				UIUtils.showWarning("Soubor '" + to.getName() + "' nebylo možné smazat - došlo k systémové chybě.");
+			}
+		}).open();
+	}
+
+	private void handleInsertAction(AttachmentTO to) {
+		String url = getDownloadLink(to);
+		String js = createTextareaGetJS() + createTextareaGetSelectionJS() + "document.getElementById('"
+				+ HANDLER_JS_DIV_ID + "').$server.handleSelection(\"" + url + "\", \"\", start, finish)";
+		UI.getCurrent().getPage().executeJs(js);
+	}
+
+	private void createAttachmentsGrid(Div layout) {
+		grid = new Grid<>();
+		grid.setColumnReorderingAllowed(true);
+		grid.setSelectionMode(SelectionMode.NONE);
+		UIUtils.applyGrassDefaultStyle(grid);
+		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		layout.add(grid);
+
+		grid.setHeight("200px");
+
+		grid.addColumn(AttachmentTO::getName).setHeader("Název").setFlexGrow(100).setSortProperty("name");
+
+		grid.addColumn(AttachmentTO::getSize).setHeader("Velikost").setTextAlign(ColumnTextAlign.END).setWidth("80px")
+				.setFlexGrow(0).setSortProperty("size");
+
+		grid.addColumn(new ComponentRenderer<Button, AttachmentTO>(
+				to -> new LinkButton("Stáhnout", e -> handleDownloadAction(to)))).setHeader("Stažení")
+				.setTextAlign(ColumnTextAlign.CENTER).setWidth("90px").setFlexGrow(0);
+
+		grid.addColumn(new ComponentRenderer<Button, AttachmentTO>(
+				to -> new LinkButton("Vložit", e -> handleInsertAction(to)))).setHeader("Vložit")
+				.setTextAlign(ColumnTextAlign.CENTER).setWidth("90px").setFlexGrow(0);
+
+		grid.addColumn(new ComponentRenderer<Button, AttachmentTO>(
+				to -> new LinkButton("Smazat", e -> handleDeleteAction(to)))).setHeader("Smazat")
+				.setTextAlign(ColumnTextAlign.CENTER).setWidth("90px").setFlexGrow(0);
+
+		grid.addColumn(new LocalDateTimeRenderer<>(AttachmentTO::getLastModified, "d.MM.yyyy HH:mm"))
+				.setHeader("Upraveno").setAutoWidth(true).setTextAlign(ColumnTextAlign.END)
+				.setSortProperty("lastModified");
+
+		grid.addItemClickListener(e -> {
+			if (e.getClickCount() > 1)
+				handleInsertAction(e.getItem());
+		});
+
+		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
+
+		Upload upload = new Upload(buffer);
+		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		upload.addSucceededListener(event -> {
+			AttachmentsOperationResult result = articleService.saveAttachment(attachmentsDirId,
+					buffer.getInputStream(event.getFileName()), event.getFileName());
+			switch (result.getState()) {
+			case SUCCESS:
+				attachmentsDirId = result.getAttachmentDirId();
+				populateGrid();
+				break;
+			case ALREADY_EXISTS:
+				UIUtils.showWarning("Soubor '" + event.getFileName()
+						+ "' nebylo možné uložit - soubor s tímto názvem již existuje.");
+				break;
+			default:
+				UIUtils.showWarning(
+						"Soubor '" + event.getFileName() + "' nebylo možné uložit - došlo k systémové chybě.");
+			}
+		});
+		layout.add(upload);
+	}
+
 	@Override
 	protected void createRightColumnContent(Div layout) {
 		layout.add(new H2("Název článku"));
@@ -542,6 +654,9 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 
 		layout.add(new H2("Obsah článku"));
 		layout.add(articleTextArea);
+
+		layout.add(new H2("Přílohy článku"));
+		createAttachmentsGrid(layout);
 
 		layout.add(new H2("Nastavení článku"));
 		publicatedCheckBox.setLabel("Publikovat článek");
@@ -570,17 +685,16 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		// Auto-ukládání
 		Span autosaveLabel = createAutosaveLabel();
 		buttonLayout.add(autosaveLabel);
+
+		populateGrid();
 	}
 
 	private boolean isFormValid() {
-
 		String name = articleNameField.getValue();
-
 		if (name == null || name.isEmpty()) {
 			UIUtils.showWarning("Název článku nemůže být prázdný");
 			return false;
 		}
-
 		return true;
 	}
 
@@ -598,7 +712,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 			}
 
 			ArticlePayloadTO payload = new ArticlePayloadTO(articleNameField.getValue(), text,
-					articleKeywords.getValues(), publicatedCheckBox.getValue(), getContextPath());
+					articleKeywords.getValues(), publicatedCheckBox.getValue(), attachmentsDirId, getContextPath());
 			if (existingArticleId == null) {
 				// byl uložen článek, od teď eviduj draft, jako draft
 				// existujícího obsahu

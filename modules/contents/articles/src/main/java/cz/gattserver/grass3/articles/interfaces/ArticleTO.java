@@ -19,6 +19,11 @@ public class ArticleTO extends ArticleRESTTO {
 	 */
 	private Set<String> pluginJSCodes;
 
+	/**
+	 * Id adresáře příloh
+	 */
+	private String attachmentsDirId;
+
 	public ArticleTO() {
 	}
 
@@ -48,6 +53,14 @@ public class ArticleTO extends ArticleRESTTO {
 
 	public void setSearchableOutput(String searchableOutput) {
 		this.searchableOutput = searchableOutput;
+	}
+
+	public String getAttachmentsDirId() {
+		return attachmentsDirId;
+	}
+
+	public void setAttachmentsDirId(String attachmentsDirId) {
+		this.attachmentsDirId = attachmentsDirId;
 	}
 
 }

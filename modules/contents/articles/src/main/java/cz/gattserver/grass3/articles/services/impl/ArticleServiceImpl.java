@@ -1,20 +1,38 @@
 package cz.gattserver.grass3.articles.services.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.vaadin.flow.data.provider.QuerySortOrder;
+
+import cz.gattserver.common.util.HumanBytesSizeFormatter;
+import cz.gattserver.grass3.articles.AttachmentsOperationResult;
+import cz.gattserver.grass3.articles.config.ArticlesConfiguration;
 import cz.gattserver.grass3.articles.editor.lexer.Lexer;
 import cz.gattserver.grass3.articles.editor.parser.Context;
 import cz.gattserver.grass3.articles.editor.parser.Parser;
@@ -30,6 +48,7 @@ import cz.gattserver.grass3.articles.interfaces.ArticleDraftOverviewTO;
 import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleRESTTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleTO;
+import cz.gattserver.grass3.articles.interfaces.AttachmentTO;
 import cz.gattserver.grass3.articles.model.domain.Article;
 import cz.gattserver.grass3.articles.model.domain.ArticleJSCode;
 import cz.gattserver.grass3.articles.model.domain.ArticleJSResource;
@@ -44,11 +63,17 @@ import cz.gattserver.grass3.model.domain.ContentTag;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.repositories.UserRepository;
 import cz.gattserver.grass3.modules.ArticlesContentModule;
+import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.ContentNodeService;
+import cz.gattserver.grass3.services.FileSystemService;
 
 @Transactional
 @Service
 public class ArticleServiceImpl implements ArticleService {
+
+	private static final String ILLEGAL_PATH_ERR = "Podtečení adresáře příloh";
+
+	private static final Logger logger = LoggerFactory.getLogger(ArticleServiceImpl.class);
 
 	@Autowired
 	private EventBus eventBus;
@@ -68,6 +93,12 @@ public class ArticleServiceImpl implements ArticleService {
 	@Autowired
 	private PluginRegisterService pluginRegister;
 
+	@Autowired
+	private ConfigurationService configurationService;
+
+	@Autowired
+	private FileSystemService fileSystemService;
+
 	private Context processArticle(String source, String contextRoot) {
 		Validate.notNull(contextRoot, "ContextRoot nemůže být null");
 
@@ -86,11 +117,35 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public void deleteArticle(long id) {
+		Article article = articleRepository.findById(id).get();
+
 		// smaž článek
 		articleRepository.deleteById(id);
 
 		// smaž jeho content node
 		contentNodeFacade.deleteByContentId(ArticlesContentModule.ID, id);
+
+		if (article.getAttachmentsDirId() != null) {
+			// smaž jeho přílohy
+			try {
+				Path attachmentsPath = getAttachmentsPath(article.getAttachmentsDirId(), false);
+				if (attachmentsPath != null) {
+					try (Stream<Path> s = Files.walk(attachmentsPath)) {
+						s.sorted(Comparator.reverseOrder()).forEach(p -> {
+							try {
+								Files.delete(p);
+							} catch (IOException e) {
+								logger.error("Chyba při mazání přílohy článku [" + article.getAttachmentsDirId() + "] ("
+										+ p.getFileName().toString() + ")", e);
+							}
+						});
+					}
+					Files.delete(attachmentsPath);
+				}
+			} catch (Exception e) {
+				logger.warn("Nezdařilo se smazat adresář příloh článku [" + article.getAttachmentsDirId() + "]");
+			}
+		}
 	}
 
 	private SortedSet<ArticleJSResource> createJSResourcesSet(Set<String> scripts) {
@@ -173,6 +228,7 @@ public class ArticleServiceImpl implements ArticleService {
 			article.setSearchableOutput(HTMLTagsFilter.trim(context.getOutput()));
 		}
 		article.setText(payload.getText());
+		article.setAttachmentsDirId(payload.getAttachmentsDirId());
 
 		// ulož ho a nasetuj jeho id
 		article = articleRepository.save(article);
@@ -244,7 +300,7 @@ public class ArticleServiceImpl implements ArticleService {
 			tags.add(tag.getName());
 
 		ArticlePayloadTO payload = new ArticlePayloadTO(article.getContentNode().getName(), article.getText(), tags,
-				article.getContentNode().getPublicated(), contextRoot);
+				article.getContentNode().getPublicated(), article.getAttachmentsDirId(), contextRoot);
 		if (article.getContentNode().getDraft() == null || article.getContentNode().getDraft()) {
 			if (article.getContentNode().getDraftSourceId() != null) {
 				modifyDraftOfExistingArticle(article.getId(), payload, null,
@@ -264,4 +320,126 @@ public class ArticleServiceImpl implements ArticleService {
 		return articlesMapper.mapArticlesForDraftOverview(articles);
 	}
 
+	private Path createAttachmentsDir(Path rootPath) {
+		try (Stream<Path> stream = Files.list(rootPath).sorted((p1, p2) -> -1 * p1.compareTo(p2)).limit(1)) {
+			Iterator<Path> it = stream.iterator();
+			if (!it.hasNext()) {
+				return Files.createDirectory(rootPath.resolve("0"));
+			} else {
+				Path path = it.next();
+				String fileName = path.getFileName().toString();
+				Long val;
+				try {
+					val = Long.parseLong(fileName);
+				} catch (NumberFormatException e) {
+					throw new IllegalStateException("Nezdařilo se iterovat název adresáře příloh", e);
+				}
+				return Files.createDirectory(rootPath.resolve(String.valueOf(val + 1)));
+			}
+		} catch (IOException e) {
+			throw new IllegalStateException("Nezdařilo se získat přehled příloh", e);
+		}
+	}
+
+	private Path getAttachmentsPath(String attachmentsDirId, boolean createIfDoesNotExists) {
+		ArticlesConfiguration configuration = new ArticlesConfiguration();
+		configurationService.loadConfiguration(configuration);
+		String rootDir = configuration.getAttachmentsDir();
+		FileSystem fileSystem = fileSystemService.getFileSystem();
+		Path rootPath = fileSystem.getPath(rootDir);
+		if (!Files.exists(rootPath))
+			throw new IllegalStateException("Kořenový adresář modulu článků musí existovat");
+		if (attachmentsDirId != null) {
+			Path attachmentsDirPath = rootPath.resolve(String.valueOf(attachmentsDirId));
+			if (!Files.exists(attachmentsDirPath)) {
+				if (!createIfDoesNotExists)
+					return null;
+				return createAttachmentsDir(rootPath);
+			}
+			return attachmentsDirPath;
+		} else {
+			if (!createIfDoesNotExists)
+				return null;
+			return createAttachmentsDir(rootPath);
+		}
+	}
+
+	@Override
+	public AttachmentsOperationResult saveAttachment(String attachmentsDirId, InputStream in, String name) {
+		try {
+			Path articleAttPath = getAttachmentsPath(attachmentsDirId, true);
+			attachmentsDirId = articleAttPath.getFileName().toString();
+			Path pathToSaveAs = articleAttPath.resolve(name).normalize();
+			Files.copy(in, pathToSaveAs);
+			return AttachmentsOperationResult.success(attachmentsDirId);
+		} catch (FileAlreadyExistsException f) {
+			return AttachmentsOperationResult.alreadyExists();
+		} catch (IOException e) {
+			return AttachmentsOperationResult.systemError();
+		}
+	}
+
+	@Override
+	public AttachmentsOperationResult deleteAttachment(String attachmentsDirId, String name) {
+		try {
+			Path articleAttPath = getAttachmentsPath(attachmentsDirId, true);
+			attachmentsDirId = articleAttPath.getFileName().toString();
+			Files.delete(articleAttPath.resolve(name));
+			return AttachmentsOperationResult.success(attachmentsDirId);
+		} catch (IOException e) {
+			return AttachmentsOperationResult.systemError();
+		}
+	}
+
+	@Override
+	public Path getAttachmentFilePath(String attachmentsDirId, String name) {
+		Path attachmentsDirPath = getAttachmentsPath(attachmentsDirId, false);
+		if (attachmentsDirPath == null)
+			return null;
+		Path attachment = attachmentsDirPath.resolve(name);
+		if (!attachment.normalize().startsWith(attachmentsDirPath))
+			throw new IllegalArgumentException(ILLEGAL_PATH_ERR);
+		return attachment;
+	}
+
+	@Override
+	public int listCount(String attachmentsDirId) {
+		Path attachmentsDirPath = getAttachmentsPath(attachmentsDirId, false);
+		if (attachmentsDirPath == null)
+			return 0;
+		try (Stream<Path> stream = Files.list(attachmentsDirPath)) {
+			return (int) stream.count();
+		} catch (IOException e) {
+			throw new IllegalStateException("Nezdařilo se získat počet souborů", e);
+		}
+	}
+
+	private AttachmentTO mapPathToAttachmentTO(Path path) {
+		AttachmentTO to = new AttachmentTO().setName(path.getFileName().toString());
+		try {
+			to.setNumericSize(Files.size(path));
+			to.setSize(HumanBytesSizeFormatter.format(to.getNumericSize(), true));
+		} catch (IOException e) {
+			to.setSize("n/a");
+		}
+		try {
+			to.setLastModified(
+					LocalDateTime.ofInstant(Files.getLastModifiedTime(path).toInstant(), ZoneId.systemDefault()));
+		} catch (IOException e) {
+			to.setLastModified(null);
+		}
+		return to;
+	}
+
+	@Override
+	public Stream<AttachmentTO> listing(String attachmentsDirId, int offset, int limit, List<QuerySortOrder> list) {
+		Path attachmentsDirPath = getAttachmentsPath(attachmentsDirId, false);
+		if (attachmentsDirPath == null)
+			return Stream.empty();
+		try {
+			return Files.list(attachmentsDirPath).map(this::mapPathToAttachmentTO).skip(offset).limit(limit);
+		} catch (IOException e) {
+			throw new IllegalStateException("Nezdařilo se získat list souborů", e);
+		}
+	}
 }

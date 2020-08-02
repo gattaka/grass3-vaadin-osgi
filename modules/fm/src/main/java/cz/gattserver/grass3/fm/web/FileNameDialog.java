@@ -55,5 +55,6 @@ public class FileNameDialog extends WebDialog {
 		}));
 
 		btnLayout.add(new CloseButton(e -> close()));
+		textField.focus();
 	}
 }

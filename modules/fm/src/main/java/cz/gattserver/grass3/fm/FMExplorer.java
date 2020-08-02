@@ -181,18 +181,17 @@ public class FMExplorer {
 	 * @return
 	 */
 	public Stream<FMItemTO> listing(String filterName, int offset, int limit, List<QuerySortOrder> list) {
-		try (Stream<FMItemTO> stream = Stream.concat(
-				currentAbsolutePath.equals(rootPath) ? Stream.of()
-						: Stream.of(currentAbsolutePath.resolve(".."))
-								.map(e -> FMUtils.mapPathToItem(e, currentAbsolutePath)),
-				Files.list(currentAbsolutePath)
+		try (Stream<FMItemTO> streamParent = currentAbsolutePath.equals(rootPath) ? Stream.empty()
+				: Stream.of(currentAbsolutePath.resolve("..")).map(e -> FMUtils.mapPathToItem(e, currentAbsolutePath));
+				Stream<FMItemTO> streamFiles = Files.list(currentAbsolutePath)
 						.filter(p -> p.getFileName().toString().toLowerCase()
 								.contains(filterName == null ? "" : filterName.toLowerCase()))
 						.map(e -> FMUtils.mapPathToItem(e, currentAbsolutePath))
-						.sorted((to1, to2) -> FMUtils.sortFile(to1, to2, list)).skip(offset).limit(limit))) {
+						.sorted((to1, to2) -> FMUtils.sortFile(to1, to2, list))) {
 			// musí se přehodit, aby nezůstal viset původní stream, na kterém
 			// jsou vytvořené zámky na soubory
-			return stream.collect(Collectors.toList()).stream();
+			return Stream.concat(streamParent, streamFiles).skip(offset).limit(limit).collect(Collectors.toList())
+					.stream();
 		} catch (IOException e) {
 			throw new IllegalStateException("Nezdařilo se získat list souborů", e);
 		}

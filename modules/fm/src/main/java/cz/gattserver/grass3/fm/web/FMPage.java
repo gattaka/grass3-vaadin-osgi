@@ -23,6 +23,7 @@ import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
@@ -252,6 +253,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 		grid.setSelectionMode(SelectionMode.MULTI);
 		grid.setColumnReorderingAllowed(true);
 		UIUtils.applyGrassDefaultStyle(grid);
+		grid.removeThemeVariants(GridVariant.LUMO_COMPACT);
 		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		layout.add(grid);
 
@@ -260,12 +262,12 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 					: ImageIcon.DOCUMENT_16_ICON.createResource(), "");
 			img.addClassName(UIUtils.GRID_ICON_CSS_CLASS);
 			return img;
-		}, to -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
+		}, to -> "")).setFlexGrow(0).setWidth("36px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
 
 		Column<FMItemTO> nameColumn = grid.addColumn(FMItemTO::getName).setHeader("Název").setFlexGrow(100)
 				.setSortProperty("name");
 
-		grid.addColumn(FMItemTO::getSize).setHeader("Velikost").setTextAlign(ColumnTextAlign.END).setWidth("80px")
+		grid.addColumn(FMItemTO::getSize).setHeader("Velikost").setTextAlign(ColumnTextAlign.END).setWidth("100px")
 				.setFlexGrow(0).setSortProperty("size");
 
 		grid.addColumn(new ComponentRenderer<Button, FMItemTO>(to -> {
@@ -289,7 +291,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 			});
 			button.setVisible(!to.isDirectory());
 			return button;
-		})).setHeader("URL").setTextAlign(ColumnTextAlign.CENTER).setWidth("40px").setFlexGrow(0);
+		})).setHeader("URL").setTextAlign(ColumnTextAlign.CENTER).setWidth("50px").setFlexGrow(0);
 
 		grid.addColumn(new ComponentRenderer<Button, FMItemTO>(
 				to -> new LinkButton("Stáhnout", e -> handleDownloadAction(to)))).setHeader("Stažení")
@@ -315,7 +317,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 				ww.open();
 			});
 			return button;
-		})).setHeader("QR").setTextAlign(ColumnTextAlign.CENTER).setWidth("35px").setFlexGrow(0);
+		})).setHeader("QR").setTextAlign(ColumnTextAlign.CENTER).setWidth("45px").setFlexGrow(0);
 
 		grid.addColumn(new LocalDateTimeRenderer<>(FMItemTO::getLastModified, "d.MM.yyyy HH:mm")).setHeader("Upraveno")
 				.setAutoWidth(true).setTextAlign(ColumnTextAlign.END).setSortProperty("lastModified");

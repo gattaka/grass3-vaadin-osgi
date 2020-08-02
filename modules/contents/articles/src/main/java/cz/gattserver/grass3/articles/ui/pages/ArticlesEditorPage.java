@@ -418,7 +418,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 	private Button createPreviewButton() {
 		Button previewButton = new ImageButton("Náhled", ImageIcon.DOCUMENT_16_ICON, event -> {
 			try {
-				String draftName = saveArticleDraft();
+				String draftName = saveArticleDraft(true);
 				UI.getCurrent().getPage().open(getPageURL(articlesViewerPageFactory,
 						URLIdentifierUtils.createURLIdentifier(existingDraftId, draftName)));
 			} catch (Exception e) {
@@ -473,23 +473,23 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		return cancelButton;
 	}
 
-	private String saveArticleDraft() {
+	private String saveArticleDraft(boolean asPreview) {
 		String draftName = articleNameField.getValue();
 		ArticlePayloadTO payload = new ArticlePayloadTO(draftName, articleTextArea.getValue(),
 				articleKeywords.getValues(), publicatedCheckBox.getValue(), attachmentsDirId, getContextPath());
 		if (existingDraftId == null) {
 			if (existingArticleId == null) {
-				existingDraftId = articleService.saveDraft(payload, node.getId(), getUser().getId(), false);
+				existingDraftId = articleService.saveDraft(payload, node.getId(), getUser().getId(), asPreview);
 			} else {
 				existingDraftId = articleService.saveDraftOfExistingArticle(payload, node.getId(), getUser().getId(),
-						partNumber, existingArticleId, false);
+						partNumber, existingArticleId, asPreview);
 			}
 		} else {
 			if (existingArticleId == null) {
-				articleService.modifyDraft(existingDraftId, payload, false);
+				articleService.modifyDraft(existingDraftId, payload, asPreview);
 			} else {
 				articleService.modifyDraftOfExistingArticle(existingDraftId, payload, partNumber, existingArticleId,
-						false);
+						asPreview);
 			}
 		}
 		return draftName;
@@ -503,7 +503,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 			@ClientCallable
 			private void autosaveCallback() {
 				try {
-					saveArticleDraft();
+					saveArticleDraft(false);
 					autosaveLabel.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
 							+ " Automaticky uloženo");
 					autosaveLabel.setClassName("label-ok");
@@ -636,7 +636,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 						"Soubor '" + event.getFileName() + "' nebylo možné uložit - došlo k systémové chybě.");
 			}
 			if (existingDraftId == null)
-				saveArticleDraft();
+				saveArticleDraft(false);
 		});
 		layout.add(upload);
 	}

@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.modules.SectionService;
+import cz.gattserver.grass3.security.CoreRole;
 import cz.gattserver.grass3.security.Role;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 
@@ -17,7 +18,9 @@ public class SongsSection implements SectionService {
 	private PageFactory songsPageFactory;
 
 	public boolean isVisibleForRoles(Set<Role> roles) {
-		return true;
+		if (roles == null)
+			return false;
+		return roles.contains(CoreRole.ADMIN);
 	}
 
 	public PageFactory getSectionPageFactory() {

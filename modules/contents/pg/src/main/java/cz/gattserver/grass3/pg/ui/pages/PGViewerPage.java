@@ -72,7 +72,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 	private static final int GALLERY_GRID_COLS = 4;
 	private static final int GALLERY_GRID_ROWS = 3;
-	private static final int MAX_PAGE_RADIUS = 3;
+	private static final int MAX_PAGE_RADIUS = 2;
 	private static final int PAGE_SIZE = GALLERY_GRID_COLS * GALLERY_GRID_ROWS;
 
 	@Autowired
@@ -183,11 +183,6 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		}
 		pageCount = (int) Math.ceil((double) imageCount / PAGE_SIZE);
 
-		// galerie
-		galleryGridLayout = new GridLayout();
-		galleryGridLayout.setHeightFull();
-		layout.add(galleryGridLayout);
-
 		// Layout stránkovacích tlačítek
 		pagingLayout = new HorizontalLayout();
 		pagingLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
@@ -196,6 +191,12 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		pagingLayout.setSpacing(true);
 		pagingLayout.setPadding(false);
 		layout.add(pagingLayout);
+
+		// galerie
+		galleryGridLayout = new GridLayout();
+		galleryGridLayout.setHeightFull();
+		galleryGridLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		layout.add(galleryGridLayout);
 
 		upload = new PGMultiUpload(galleryDir) {
 			private static final long serialVersionUID = 6886131045258035130L;
@@ -377,7 +378,10 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 				index++;
 			}
 			pagingLayout.removeAll();
-			if (pageCount > 8) {
+			Button prevBtn = new Button("<", e -> setPage(currentPage == 0 ? 0 : currentPage - 1));
+			prevBtn.setWidth("10px");
+			pagingLayout.add(prevBtn);
+			if (pageCount > 6) {
 				Button btn = new Button("1", e -> setPage(0));
 				pagingLayout.add(btn);
 				if (currentPage == 0)
@@ -411,6 +415,9 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 					pagingLayout.add(btn);
 				}
 			}
+			Button nextBtn = new Button(">",
+					e -> setPage(currentPage == pageCount - 1 ? pageCount - 1 : currentPage + 1));
+			pagingLayout.add(nextBtn);
 		} catch (Exception e) {
 			UIUtils.showWarning("Listování galerie selhalo");
 		}

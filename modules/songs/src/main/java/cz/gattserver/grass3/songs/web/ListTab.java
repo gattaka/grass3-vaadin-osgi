@@ -14,7 +14,6 @@ import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.SongsRole;
@@ -25,6 +24,7 @@ import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.GrassMultiFileBuffer;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
@@ -94,7 +94,7 @@ public class ListTab extends Div {
 				selectSong(e.getItem().getId(), true);
 		});
 
-		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
+		GrassMultiFileBuffer buffer = new GrassMultiFileBuffer();
 
 		Upload upload = new Upload(buffer);
 		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);

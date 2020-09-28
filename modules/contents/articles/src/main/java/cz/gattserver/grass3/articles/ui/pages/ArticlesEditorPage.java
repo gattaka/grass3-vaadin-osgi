@@ -34,7 +34,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
@@ -69,6 +68,7 @@ import cz.gattserver.grass3.ui.components.button.ImageButton;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.GrassMultiFileBuffer;
 import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
@@ -615,7 +615,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 				handleInsertAction(e.getItem());
 		});
 
-		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
+		GrassMultiFileBuffer buffer = new GrassMultiFileBuffer();
 
 		Upload upload = new Upload(buffer);
 		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);

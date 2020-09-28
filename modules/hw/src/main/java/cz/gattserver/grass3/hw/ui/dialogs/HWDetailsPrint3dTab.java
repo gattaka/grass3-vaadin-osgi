@@ -14,7 +14,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 
@@ -26,6 +25,7 @@ import cz.gattserver.grass3.stlviewer.STLViewer;
 import cz.gattserver.grass3.ui.components.OperationsLayout;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.GridButton;
+import cz.gattserver.grass3.ui.util.GrassMultiFileBuffer;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
@@ -91,7 +91,7 @@ public class HWDetailsPrint3dTab extends Div {
 
 		populatePrint3dGrid();
 
-		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
+		GrassMultiFileBuffer buffer = new GrassMultiFileBuffer();
 
 		Upload upload = new Upload(buffer);
 		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);

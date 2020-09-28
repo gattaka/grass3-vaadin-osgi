@@ -11,7 +11,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.hw.HWConfiguration;
@@ -22,6 +21,7 @@ import cz.gattserver.grass3.ui.components.OperationsLayout;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.DetailButton;
 import cz.gattserver.grass3.ui.util.ContainerDiv;
+import cz.gattserver.grass3.ui.util.GrassMultiFileBuffer;
 import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
@@ -49,7 +49,7 @@ public class HWDetailsPhotosTab extends Div {
 	}
 
 	private void init() {
-		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
+		GrassMultiFileBuffer buffer = new GrassMultiFileBuffer();
 
 		Upload upload = new Upload(buffer);
 		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);

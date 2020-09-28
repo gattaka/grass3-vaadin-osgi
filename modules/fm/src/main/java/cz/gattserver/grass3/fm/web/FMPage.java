@@ -32,7 +32,6 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.page.History;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.IconRenderer;
@@ -68,6 +67,7 @@ import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
+import cz.gattserver.grass3.ui.util.GrassMultiFileBuffer;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
@@ -207,7 +207,7 @@ public class FMPage extends OneColumnPage implements HasUrlParameter<String> {
 
 		createButtonsLayout(layout);
 
-		MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
+		GrassMultiFileBuffer buffer = new GrassMultiFileBuffer();
 
 		Upload upload = new Upload(buffer);
 		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);

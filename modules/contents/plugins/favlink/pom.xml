@@ -35,6 +35,16 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.11.3</version>
 		</dependency>
+		
+		<!-- Servlet deps -->
+		<!-- Od nějaké doby se tahle závislosti z core (compile) označuje jako 
+			test, protože je v common-test (test) -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
 
 	</dependencies>
 

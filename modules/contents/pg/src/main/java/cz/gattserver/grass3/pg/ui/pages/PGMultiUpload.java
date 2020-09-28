@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 
 import cz.gattserver.grass3.pg.service.PGService;
 import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
+import cz.gattserver.grass3.ui.util.GrassMultiFileBuffer;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.window.WarnDialog;
@@ -30,7 +30,7 @@ public class PGMultiUpload extends Upload {
 	@Autowired
 	private PGService pgService;
 
-	private MultiFileMemoryBuffer buffer;
+	private GrassMultiFileBuffer buffer;
 	private Set<String> existingFiles;
 	private boolean allUploadsProcessed;
 
@@ -38,7 +38,7 @@ public class PGMultiUpload extends Upload {
 		existingFiles = new HashSet<>();
 		allUploadsProcessed = false;
 		setAcceptedFileTypes("image/*", "video/*");
-		buffer = new MultiFileMemoryBuffer();
+		buffer = new GrassMultiFileBuffer();
 		setReceiver(buffer);
 		SpringContextHelper.inject(this);
 

@@ -5,6 +5,9 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -151,7 +154,7 @@ public class PGSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 
 			Column<PGSettingsItemTO> nameColumn = grid
 					.addColumn(new TextRenderer<>(to -> to.getPath().getFileName().toString())).setHeader("Název")
-					.setFlexGrow(100);
+					.setFlexGrow(80);
 
 			grid.addColumn(new ComponentRenderer<Component, PGSettingsItemTO>(to -> {
 				if (to.getOverviewTO() == null) {
@@ -167,10 +170,15 @@ public class PGSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 			})).setHeader("Odkaz");
 
 			grid.addColumn(p -> p.getSize() == null ? "N/A" : HumanBytesSizeFormatter.format(p.getSize()))
-					.setHeader("Velikost").setTextAlign(ColumnTextAlign.END).setWidth("70px").setFlexGrow(0);
+					.setHeader("Velikost").setTextAlign(ColumnTextAlign.END).setWidth("80px").setFlexGrow(0)
+					.setSortable(true);
 
 			grid.addColumn(p -> p.getFilesCount() == null ? "N/A" : p.getFilesCount()).setHeader("Soubory")
-					.setTextAlign(ColumnTextAlign.END).setWidth("70px").setFlexGrow(0);
+					.setTextAlign(ColumnTextAlign.END).setWidth("80px").setFlexGrow(0).setSortable(true);
+
+			SimpleDateFormat sdf = new SimpleDateFormat("d.M.yyyy");
+			grid.addColumn(p -> sdf.format(p.getDate())).setHeader("Datum").setTextAlign(ColumnTextAlign.END)
+					.setWidth("70px").setFlexGrow(0).setSortable(true);
 
 			grid.addColumn(new ComponentRenderer<Button, PGSettingsItemTO>(item -> {
 				Button button = new LinkButton("Přegenerovat", be -> {
@@ -283,12 +291,19 @@ public class PGSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 		PhotogalleryRESTOverviewTO to = pgService.getPhotogalleryByDirectory(path.getFileName().toString());
 		Long size = getFileSize(path);
 		Long filesCount = null;
+		Date date = null;
+		try {
+			FileTime fileTime = Files.getLastModifiedTime(path);
+			date = Date.from(fileTime.toInstant());
+		} catch (IOException e) {
+			logger.warn("Nezdařilo se zjistit datum adresáře " + path.getFileName().toString(), e);
+		}
 		try (Stream<Path> stream = Files.list(path)) {
 			filesCount = stream.count();
 		} catch (IOException e) {
 			logger.error("Nezdařilo se zjistit počet položek adresáře " + path.getFileName().toString(), e);
 		}
-		return new PGSettingsItemTO(path, to, size, filesCount);
+		return new PGSettingsItemTO(path, to, size, filesCount, date);
 	}
 
 	private Stream<PGSettingsItemTO> createStream(Path path) {
@@ -315,7 +330,8 @@ public class PGSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 
 	private void populateGrid(Grid<PGSettingsItemTO> grid, Path path) {
 		FetchCallback<PGSettingsItemTO, Void> fetchCallback = q -> createStream(path).skip(q.getOffset())
-				.limit(q.getLimit());
+				.limit(q.getLimit())
+				.sorted(q.getSortingComparator().orElse(Comparator.<PGSettingsItemTO>naturalOrder()));
 		CountCallback<PGSettingsItemTO, Void> countCallback = q -> (int) count(path);
 		grid.setDataProvider(DataProvider.fromCallbacks(fetchCallback, countCallback));
 	}

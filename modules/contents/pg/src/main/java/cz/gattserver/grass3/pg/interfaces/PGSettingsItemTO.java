@@ -1,19 +1,22 @@
 package cz.gattserver.grass3.pg.interfaces;
 
 import java.nio.file.Path;
+import java.util.Date;
 
-public class PGSettingsItemTO {
+public class PGSettingsItemTO implements Comparable<PGSettingsItemTO> {
 
 	private Path path;
 	private PhotogalleryRESTOverviewTO overviewTO;
 	private Long size;
 	private Long filesCount;
+	private Date date;
 
-	public PGSettingsItemTO(Path path, PhotogalleryRESTOverviewTO overviewTO, Long size, Long filesCount) {
+	public PGSettingsItemTO(Path path, PhotogalleryRESTOverviewTO overviewTO, Long size, Long filesCount, Date date) {
 		this.path = path;
 		this.overviewTO = overviewTO;
 		this.size = size;
 		this.filesCount = filesCount;
+		this.date = date;
 	}
 
 	public Long getFilesCount() {
@@ -46,6 +49,19 @@ public class PGSettingsItemTO {
 
 	public void setOverviewTO(PhotogalleryRESTOverviewTO overviewTO) {
 		this.overviewTO = overviewTO;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	@Override
+	public int compareTo(PGSettingsItemTO o) {
+		return path.getFileName().toString().compareTo(o.getPath().getFileName().toString());
 	}
 
 }

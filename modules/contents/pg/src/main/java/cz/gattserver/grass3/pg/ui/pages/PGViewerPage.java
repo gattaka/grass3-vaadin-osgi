@@ -75,6 +75,8 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 	private static final int MAX_PAGE_RADIUS = 2;
 	private static final int PAGE_SIZE = GALLERY_GRID_COLS * GALLERY_GRID_ROWS;
 
+	private static final String MAGICK_WORD = "MAG1CK";
+
 	@Autowired
 	private PGService pgService;
 
@@ -105,8 +107,11 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 	private Integer pgSelected;
 	private String galleryDir;
 
-	private String identifierToken;
-	private String magickToken;
+	private String pageURLBase;
+
+	public PGViewerPage() {
+		pageURLBase = getPageURL(photogalleryViewerPageFactory);
+	}
 
 	@Override
 	public String getPageTitle() {
@@ -130,10 +135,15 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 	@Override
 	public void setParameter(BeforeEvent event, @WildcardParameter String parameter) {
 		String[] chunks = parameter.split("/");
+		String identifierToken = null;
+		String pageToken = null;
+		String extraToken = null;
 		if (chunks.length > 0)
 			identifierToken = chunks[0];
 		if (chunks.length > 1)
-			magickToken = chunks[1];
+			pageToken = chunks[1];
+		if (chunks.length > 2)
+			extraToken = chunks[2];
 
 		URLIdentifierUtils.URLIdentifier identifier = URLIdentifierUtils.parseURLIdentifier(identifierToken);
 		if (identifier == null)
@@ -143,10 +153,19 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		if (photogallery == null)
 			throw new GrassPageException(404);
 
-		if (!"MAG1CK".equals(magickToken) && !photogallery.getContentNode().isPublicated() && !isAdminOrAuthor())
+		if (!MAGICK_WORD.equals(pageToken) && !MAGICK_WORD.equals(extraToken)
+				&& !photogallery.getContentNode().isPublicated() && !isAdminOrAuthor())
 			throw new GrassPageException(403);
 
 		galleryDir = photogallery.getPhotogalleryPath();
+
+		if (pageToken != null) {
+			try {
+				currentPage = Integer.parseInt(pageToken) - 1;
+			} catch (NumberFormatException e) {
+				// nic, neřešit
+			}
+		}
 
 		loadJS();
 		init();
@@ -250,7 +269,8 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		progressIndicatorWindow.runInUI(() -> {
 			if (progressIndicatorWindow != null)
 				progressIndicatorWindow.close();
-			UI.getCurrent().getPage().reload();
+			UIUtils.redirect(pageURLBase + "/" + URLIdentifierUtils.createURLIdentifier(photogallery.getId(),
+					photogallery.getContentNode().getName()) + "/" + (currentPage + 1));
 		});
 		eventBus.unsubscribe(PGViewerPage.this);
 	}
@@ -306,6 +326,10 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 	private void refreshGrid() {
 		galleryGridLayout.removeAll();
+		if (currentPage < 0)
+			currentPage = 0;
+		if (currentPage >= pageCount)
+			currentPage = pageCount - 1;
 		int start = currentPage * PAGE_SIZE;
 		int index = start;
 		try {

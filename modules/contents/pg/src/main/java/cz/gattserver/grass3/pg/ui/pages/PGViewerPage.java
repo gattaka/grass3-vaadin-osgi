@@ -186,8 +186,6 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		// Layout stránkovacích tlačítek
 		pagingLayout = new HorizontalLayout();
 		pagingLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		pagingLayout.setJustifyContentMode(JustifyContentMode.CENTER);
-		pagingLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
 		pagingLayout.setSpacing(true);
 		pagingLayout.setPadding(false);
 		layout.add(pagingLayout);
@@ -378,12 +376,24 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 				index++;
 			}
 			pagingLayout.removeAll();
+
 			Button prevBtn = new Button("<", e -> setPage(currentPage == 0 ? 0 : currentPage - 1));
 			prevBtn.setWidth("10px");
 			pagingLayout.add(prevBtn);
+			prevBtn.getElement().getStyle().set("margin-right", "auto");
+
+			HorizontalLayout numberLayout = new HorizontalLayout();
+			numberLayout.setJustifyContentMode(JustifyContentMode.CENTER);
+			numberLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
+			numberLayout.setSpacing(true);
+			numberLayout.setPadding(false);
+			pagingLayout.add(numberLayout);
+			numberLayout.getElement().getStyle().set("margin-right", "auto");
+			numberLayout.getElement().getStyle().set("margin-left", "auto");
+
 			if (pageCount > 6) {
 				Button btn = new Button("1", e -> setPage(0));
-				pagingLayout.add(btn);
+				numberLayout.add(btn);
 				if (currentPage == 0)
 					btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 				int pageRadius = Math.min(MAX_PAGE_RADIUS, pageCount / 2 + 1);
@@ -391,18 +401,18 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 				int endPage = Math.min(currentPage + pageRadius, pageCount - 2);
 				if (startPage <= endPage) {
 					if (startPage > 1)
-						pagingLayout.add(new Span("..."));
+						numberLayout.add(new Span("..."));
 					for (int i = startPage; i <= endPage; i++) {
 						int page = i;
 						btn = new Button(String.valueOf(i + 1), e -> setPage(page));
 						if (currentPage == page)
 							btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-						pagingLayout.add(btn);
+						numberLayout.add(btn);
 					}
 					if (endPage < pageCount - 2)
-						pagingLayout.add(new Span("..."));
+						numberLayout.add(new Span("..."));
 					btn = new Button(String.valueOf(pageCount), e -> setPage(pageCount - 1));
-					pagingLayout.add(btn);
+					numberLayout.add(btn);
 					if (currentPage == pageCount - 1)
 						btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 				}
@@ -412,12 +422,13 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 					Button btn = new Button(String.valueOf(i), e -> setPage(page));
 					if (currentPage == page)
 						btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-					pagingLayout.add(btn);
+					numberLayout.add(btn);
 				}
 			}
 			Button nextBtn = new Button(">",
 					e -> setPage(currentPage == pageCount - 1 ? pageCount - 1 : currentPage + 1));
 			pagingLayout.add(nextBtn);
+			nextBtn.getElement().getStyle().set("margin-left", "auto");
 		} catch (Exception e) {
 			UIUtils.showWarning("Listování galerie selhalo");
 		}

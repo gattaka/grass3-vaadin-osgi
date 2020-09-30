@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>web</artifactId>
 	<name>GRASS3 WAR wrapper</name>
@@ -160,12 +161,9 @@
 		<profile>
 			<id>prod</id>
 
-			<dependencies>
-				<dependency>
-					<groupId>com.vaadin</groupId>
-					<artifactId>flow-server-production-mode</artifactId>
-				</dependency>
-			</dependencies>
+			<properties>
+				<vaadin.productionMode>true</vaadin.productionMode>
+			</properties>
 
 			<build>
 				<plugins>
@@ -176,9 +174,9 @@
 						<executions>
 							<execution>
 								<goals>
-									<goal>copy-production-files</goal>
-									<goal>package-for-production</goal>
+									<goal>build-frontend</goal>
 								</goals>
+								<phase>compile</phase>
 							</execution>
 						</executions>
 					</plugin>

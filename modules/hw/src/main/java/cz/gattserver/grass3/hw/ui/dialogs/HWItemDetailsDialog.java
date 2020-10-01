@@ -51,7 +51,6 @@ public class HWItemDetailsDialog extends Dialog {
 		add(tabs);
 
 		tabLayout = new Div();
-		tabLayout.setSizeFull();
 		tabLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(tabLayout);
 

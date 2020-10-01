@@ -39,6 +39,11 @@ public class Song {
 	@GenericGenerator(name = "increment", strategy = "increment")
 	private Long id;
 
+	/**
+	 * Je písnička určena k publikování?
+	 */
+	private Boolean publicated = true;
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Song))
@@ -89,6 +94,14 @@ public class Song {
 
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	public Boolean getPublicated() {
+		return publicated;
+	}
+
+	public void setPublicated(Boolean publicated) {
+		this.publicated = publicated;
 	}
 
 }

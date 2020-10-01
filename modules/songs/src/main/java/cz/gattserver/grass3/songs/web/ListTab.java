@@ -15,6 +15,7 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.upload.Upload;
 
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.SongsRole;
 import cz.gattserver.grass3.songs.facades.SongsService;
@@ -52,17 +53,20 @@ public class ListTab extends Div {
 	public ListTab(SongsPage songsPage, Long selectedSongId) {
 		SpringContextHelper.inject(this);
 		filterTO = new SongOverviewTO();
+		UserInfoTO user = securityService.getCurrentUser();
+		filterTO.setPublicated(user.isAdmin() ? null : true);
 		this.songsPage = songsPage;
 
 		grid = new Grid<>();
 		grid.setMultiSort(false);
 		UIUtils.applyGrassDefaultStyle(grid);
 
-		Column<SongOverviewTO> nazevColumn = grid.addColumn(SongOverviewTO::getName).setHeader("Název");
+		Column<SongOverviewTO> nazevColumn = grid.addColumn(SongOverviewTO::getName).setHeader("Název")
+				.setSortable(true);
 		Column<SongOverviewTO> authorColumn = grid.addColumn(SongOverviewTO::getAuthor).setHeader("Autor")
-				.setWidth("250px").setFlexGrow(0);
+				.setSortable(true).setWidth("250px").setFlexGrow(0);
 		Column<SongOverviewTO> yearColumn = grid.addColumn(SongOverviewTO::getYear).setHeader("Rok").setWidth("60px")
-				.setFlexGrow(0);
+				.setSortable(true).setFlexGrow(0);
 		grid.setWidthFull();
 		grid.setHeight("600px");
 		add(grid);
@@ -156,7 +160,9 @@ public class ListTab extends Div {
 			songsPage.selectSongTab();
 		} else {
 			grid.select(to);
-			UIUtils.scrollGridToIndex(grid, indexMap.get(to.getId()));
+			Integer index = indexMap.get(to.getId());
+			if (index != null)
+				UIUtils.scrollGridToIndex(grid, index);
 		}
 	}
 
@@ -171,7 +177,7 @@ public class ListTab extends Div {
 	}
 
 	public void populate() {
-		List<SongOverviewTO> songs = getSongsService().getSongs(filterTO);
+		List<SongOverviewTO> songs = getSongsService().getSongs(filterTO, grid.getSortOrder());
 		indexMap.clear();
 		for (int i = 0; i < songs.size(); i++)
 			indexMap.put(songs.get(i).getId(), i);

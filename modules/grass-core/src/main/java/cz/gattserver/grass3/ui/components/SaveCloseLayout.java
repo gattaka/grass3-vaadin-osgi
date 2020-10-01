@@ -15,7 +15,7 @@ public class SaveCloseLayout extends OperationsLayout {
 		super(closeClickListener);
 		setJustifyContentMode(JustifyContentMode.BETWEEN);
 		setSpacing(false);
-		setSizeFull();
+		setWidthFull();
 
 		add(new SaveButton(saveClickListener));
 	}

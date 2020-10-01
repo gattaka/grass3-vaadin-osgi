@@ -2,7 +2,9 @@ package cz.gattserver.grass3.songs.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -11,6 +13,7 @@ import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import cz.gattserver.grass3.songs.facades.SongsService;
 import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 import cz.gattserver.grass3.ui.components.SaveCloseLayout;
+import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
@@ -30,6 +33,7 @@ public abstract class SongDialog extends WebDialog {
 
 		SongTO formTO = new SongTO();
 		formTO.setYear(0);
+		formTO.setPublicated(true);
 
 		Binder<SongTO> binder = new Binder<>(SongTO.class);
 		binder.setBean(formTO);
@@ -37,7 +41,7 @@ public abstract class SongDialog extends WebDialog {
 		final TextField nameField = new TextField("Název");
 		binder.forField(nameField).asRequired().bind(SongTO::getName, SongTO::setName);
 		nameField.setWidthFull();
-		addComponent(nameField);
+		add(nameField);
 
 		final TextField authorField = new TextField("Autor");
 		binder.forField(authorField).bind(SongTO::getAuthor, SongTO::setAuthor);
@@ -48,8 +52,13 @@ public abstract class SongDialog extends WebDialog {
 				.bind(SongTO::getYear, SongTO::setYear);
 		yearField.setWidthFull();
 
-		HorizontalLayout authorYearLayout = new HorizontalLayout(authorField, yearField);
-		authorYearLayout.setSizeFull();
+		final Checkbox publicatedCheckBox = new Checkbox("Veřejný text");
+		binder.forField(publicatedCheckBox).bind(SongTO::getPublicated, SongTO::setPublicated);
+		publicatedCheckBox.setWidthFull();
+		publicatedCheckBox.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+
+		HorizontalLayout authorYearLayout = new HorizontalLayout(authorField, yearField, publicatedCheckBox);
+		authorYearLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
 		add(authorYearLayout);
 
 		final TextArea textField = new TextArea("Text");
@@ -75,6 +84,7 @@ public abstract class SongDialog extends WebDialog {
 				close();
 			} catch (Exception ve) {
 				new ErrorDialog("Uložení se nezdařilo").open();
+				throw ve;
 			}
 		}
 	}

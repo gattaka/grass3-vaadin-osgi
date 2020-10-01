@@ -24,16 +24,22 @@ public class SongOverviewTO {
 	 */
 	private Long id;
 
+	/**
+	 * Je písnička určena k publikování?
+	 */
+	private Boolean publicated = true;
+
 	public SongOverviewTO() {
 	}
 
 	@QueryProjection
-	public SongOverviewTO(String name, String author, Integer year, Long id) {
+	public SongOverviewTO(String name, String author, Integer year, Long id, Boolean publicated) {
 		super();
 		this.name = name;
 		this.author = author;
 		this.year = year;
 		this.id = id;
+		this.publicated = publicated;
 	}
 
 	@Override
@@ -91,6 +97,14 @@ public class SongOverviewTO {
 
 	public void setYear(Integer year) {
 		this.year = year;
+	}
+
+	public Boolean getPublicated() {
+		return publicated;
+	}
+
+	public void setPublicated(Boolean publicated) {
+		this.publicated = publicated;
 	}
 
 }

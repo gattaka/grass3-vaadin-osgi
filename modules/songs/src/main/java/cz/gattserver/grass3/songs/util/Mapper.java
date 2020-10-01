@@ -66,7 +66,8 @@ public class Mapper {
 
 		List<SongOverviewTO> songsTOs = new ArrayList<SongOverviewTO>();
 		for (Song song : songs)
-			songsTOs.add(new SongOverviewTO(song.getName(), song.getAuthor(), song.getYear(), song.getId()));
+			songsTOs.add(new SongOverviewTO(song.getName(), song.getAuthor(), song.getYear(), song.getId(),
+					song.getPublicated()));
 
 		return songsTOs;
 	}
@@ -88,6 +89,7 @@ public class Mapper {
 		song.setAuthor(e.getAuthor());
 		song.setYear(e.getYear());
 		song.setText(e.getText());
+		song.setPublicated(e.getPublicated());
 
 		return song;
 	}

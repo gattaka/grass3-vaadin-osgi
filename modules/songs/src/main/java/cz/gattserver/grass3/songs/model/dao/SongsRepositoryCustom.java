@@ -2,6 +2,8 @@ package cz.gattserver.grass3.songs.model.dao;
 
 import java.util.List;
 
+import com.vaadin.flow.component.grid.GridSortOrder;
+
 import cz.gattserver.grass3.songs.model.interfaces.SongOverviewTO;
 
 public interface SongsRepositoryCustom {
@@ -10,6 +12,6 @@ public interface SongsRepositoryCustom {
 
 	List<SongOverviewTO> findOrderByName(SongOverviewTO filterTO, int offset, int limit);
 
-	List<SongOverviewTO> findOrderByName(SongOverviewTO filterTO);
+	List<SongOverviewTO> find(SongOverviewTO filterTO, List<GridSortOrder<SongOverviewTO>> list);
 
 }

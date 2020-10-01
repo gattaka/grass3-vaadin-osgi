@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.vaadin.flow.component.grid.GridSortOrder;
+
 import cz.gattserver.grass3.songs.facades.SongsService;
 import cz.gattserver.grass3.songs.model.dao.ChordsRepository;
 import cz.gattserver.grass3.songs.model.dao.SongsRepository;
@@ -70,8 +72,8 @@ public class SongsFacadeImpl implements SongsService {
 	}
 	
 	@Override
-	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO) {
-		return songsRepository.findOrderByName(filterTO);
+	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO,  List<GridSortOrder<SongOverviewTO>> list) {
+		return songsRepository.find(filterTO,list);
 	}
 
 	@Override

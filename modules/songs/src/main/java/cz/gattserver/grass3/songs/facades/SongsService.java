@@ -3,6 +3,8 @@ package cz.gattserver.grass3.songs.facades;
 import java.io.InputStream;
 import java.util.List;
 
+import com.vaadin.flow.component.grid.GridSortOrder;
+
 import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.songs.model.interfaces.SongOverviewTO;
 import cz.gattserver.grass3.songs.model.interfaces.SongTO;
@@ -30,8 +32,9 @@ public interface SongsService {
 	 * 
 	 * @param filterTO
 	 *            filtr
+	 * @param list 
 	 */
-	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO);
+	public List<SongOverviewTO> getSongs(SongOverviewTO filterTO, List<GridSortOrder<SongOverviewTO>> list);
 
 	/**
 	 * Získá písničku dle id

@@ -58,6 +58,8 @@ public class SongsRepositoryCustomImpl implements SongsRepositoryCustom {
 		QSong s = QSong.song;
 		query = query.select(new QSongOverviewTO(s.name, s.author, s.year, s.id, s.publicated)).from(s)
 				.where(createPredicate(filterTO));
+		if (list.isEmpty())
+			query = query.orderBy(new OrderSpecifier<>(Order.ASC, s.name));
 		for (GridSortOrder<SongOverviewTO> o : list) {
 			Order order = o.getDirection() == SortDirection.ASCENDING ? Order.ASC : Order.DESC;
 			if (o.getSorted().getKey() != null) {

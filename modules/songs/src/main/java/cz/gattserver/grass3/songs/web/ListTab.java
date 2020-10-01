@@ -9,11 +9,13 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.SecurityService;
@@ -28,6 +30,7 @@ import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.GrassMultiFileBuffer;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.LinkButton;
 
 public class ListTab extends Div {
 
@@ -61,8 +64,10 @@ public class ListTab extends Div {
 		grid.setMultiSort(false);
 		UIUtils.applyGrassDefaultStyle(grid);
 
-		Column<SongOverviewTO> nazevColumn = grid.addColumn(SongOverviewTO::getName).setHeader("Název")
-				.setSortable(true);
+		Column<SongOverviewTO> nazevColumn = grid
+				.addColumn(new ComponentRenderer<Button, SongOverviewTO>(
+						to -> new LinkButton(to.getName(), e -> selectSong(to.getId(), true))))
+				.setHeader("Název").setSortable(true);
 		Column<SongOverviewTO> authorColumn = grid.addColumn(SongOverviewTO::getAuthor).setHeader("Autor")
 				.setSortable(true).setWidth("250px").setFlexGrow(0);
 		Column<SongOverviewTO> yearColumn = grid.addColumn(SongOverviewTO::getYear).setHeader("Rok").setWidth("60px")
@@ -92,11 +97,6 @@ public class ListTab extends Div {
 		});
 
 		populate();
-
-		grid.addItemClickListener((e) -> {
-			if (e.getClickCount() > 1)
-				selectSong(e.getItem().getId(), true);
-		});
 
 		GrassMultiFileBuffer buffer = new GrassMultiFileBuffer();
 

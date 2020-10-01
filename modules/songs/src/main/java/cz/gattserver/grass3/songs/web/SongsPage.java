@@ -20,6 +20,8 @@ public class SongsPage extends OneColumnPage {
 	private Tab songTab;
 	private Tab chordsTab;
 
+	private ListTab listTabContent;
+
 	private Div pageLayout;
 
 	private Long selectedSongId;
@@ -84,7 +86,9 @@ public class SongsPage extends OneColumnPage {
 
 	private void switchListTab() {
 		pageLayout.removeAll();
-		ListTab listTabContent = new ListTab(this, selectedSongId);
+		if (listTabContent == null)
+			listTabContent = new ListTab(this, selectedSongId);
+		listTabContent.selectSong(selectedSongId, false);
 		pageLayout.add(listTabContent);
 	}
 

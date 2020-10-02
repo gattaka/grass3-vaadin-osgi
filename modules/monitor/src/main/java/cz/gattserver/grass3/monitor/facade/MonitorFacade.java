@@ -1,17 +1,14 @@
 package cz.gattserver.grass3.monitor.facade;
 
-import java.util.List;
-
 import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
-import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemTO;
-import cz.gattserver.grass3.monitor.processor.item.DiskStatusMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.DiskStatusPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMPIDMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
-import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
-import cz.gattserver.grass3.monitor.processor.item.SMARTMonitorItemTO;
-import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.BackupStatusPartItemTO;
+import cz.gattserver.grass3.monitor.processor.item.SMARTPartItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServerServicePartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
@@ -28,13 +25,11 @@ public interface MonitorFacade {
 
 	SystemSwapMonitorItemTO getSystemSwapStatus();
 
-	BackupDiskMountedMonitorItemTO getBackupDiskMounted();
+	BackupStatusPartItemTO getBackupStatus();
 
-	List<LastBackupTimeMonitorItemTO> getLastTimeOfBackup();
+	DiskStatusPartItemTO getDiskStatus();
 
-	List<DiskStatusMonitorItemTO> getDiskStatus();
-
-	List<ServerServiceMonitorItemTO> getServerServicesStatus();
+	ServerServicePartItemTO getServerServicesStatus();
 
 	JVMUptimeMonitorItemTO getJVMUptime();
 
@@ -44,6 +39,6 @@ public interface MonitorFacade {
 
 	JVMPIDMonitorItemTO getJVMPID();
 
-	List<SMARTMonitorItemTO> getSMARTInfo();
+	SMARTPartItemTO getSMARTInfo();
 
 }

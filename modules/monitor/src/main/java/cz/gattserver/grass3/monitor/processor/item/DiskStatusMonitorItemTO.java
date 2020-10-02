@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.monitor.processor.item;
 
+import elemental.json.JsonObject;
+
 public class DiskStatusMonitorItemTO extends MonitorItemTO {
 
 	private String name;
@@ -7,6 +9,20 @@ public class DiskStatusMonitorItemTO extends MonitorItemTO {
 	private String type;
 	private long total;
 	private long usable;
+
+	public DiskStatusMonitorItemTO() {
+	}
+
+	public DiskStatusMonitorItemTO(JsonObject jsonObject) {
+		super(jsonObject);
+		if (monitorState != MonitorState.SUCCESS)
+			return;
+		name = jsonObject.getString("name");
+		mount = jsonObject.getString("mount");
+		type = jsonObject.getString("type");
+		total = (long) jsonObject.getNumber("total");
+		usable = (long) jsonObject.getNumber("usable");
+	}
 
 	public String getMount() {
 		return mount;

@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.monitor.processor.item;
 
+import elemental.json.JsonObject;
+
 public class SystemMemoryMonitorItemTO extends MonitorItemTO {
 
 	private long total;
@@ -8,6 +10,21 @@ public class SystemMemoryMonitorItemTO extends MonitorItemTO {
 	private long shared;
 	private long buffCache;
 	private long available;
+
+	public SystemMemoryMonitorItemTO() {
+	}
+
+	public SystemMemoryMonitorItemTO(JsonObject jsonObject) {
+		super(jsonObject);
+		if (monitorState != MonitorState.SUCCESS)
+			return;
+		total = (long) jsonObject.getNumber("total");
+		used = (long) jsonObject.getNumber("used");
+		free = (long) jsonObject.getNumber("free");
+		shared = (long) jsonObject.getNumber("shared");
+		buffCache = (long) jsonObject.getNumber("buffCache");
+		available = (long) jsonObject.getNumber("available");
+	}
 
 	public long getTotal() {
 		return total;

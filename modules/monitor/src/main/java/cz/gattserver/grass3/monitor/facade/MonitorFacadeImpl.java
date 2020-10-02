@@ -12,7 +12,6 @@ import java.nio.file.FileSystems;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,16 +26,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
 import cz.gattserver.grass3.monitor.processor.Console;
 import cz.gattserver.grass3.monitor.processor.ConsoleOutputTO;
-import cz.gattserver.grass3.monitor.processor.item.BackupDiskMountedMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskStatusMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.DiskStatusPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMPIDMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
-import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.BackupStatusMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.BackupStatusPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.MonitorState;
 import cz.gattserver.grass3.monitor.processor.item.SMARTMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.SMARTPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServerServicePartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
@@ -139,7 +141,9 @@ public class MonitorFacadeImpl implements MonitorFacade {
 	}
 
 	@Override
-	public BackupDiskMountedMonitorItemTO getBackupDiskMounted() {
+	public BackupStatusPartItemTO getBackupStatus() {
+		BackupStatusPartItemTO mainItemTO = new BackupStatusPartItemTO();
+
 		// #!/bin/bash
 		//
 		// disk=$( df -h | grep backup )
@@ -149,18 +153,14 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		// else echo "true"
 		// fi
 		ConsoleOutputTO to = runScript("isBackupDiskMounted");
-		BackupDiskMountedMonitorItemTO itemTO = new BackupDiskMountedMonitorItemTO();
-		itemTO.setValue(to.getOutput());
+		mainItemTO.setValue(to.getOutput());
 		if (to.isSuccess()) {
-			itemTO.setMonitorState(Boolean.parseBoolean(to.getOutput()) ? MonitorState.SUCCESS : MonitorState.ERROR);
+			mainItemTO
+					.setMonitorState(Boolean.parseBoolean(to.getOutput()) ? MonitorState.SUCCESS : MonitorState.ERROR);
 		} else {
-			itemTO.setMonitorState(MonitorState.UNAVAILABLE);
+			mainItemTO.setMonitorState(MonitorState.UNAVAILABLE);
 		}
-		return itemTO;
-	}
 
-	@Override
-	public List<LastBackupTimeMonitorItemTO> getLastTimeOfBackup() {
 		// #!/bin/bash
 		// echo -n "SRV "
 		// tail -n 1 /mnt/backup/srv-backup.log
@@ -168,8 +168,8 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		// tail -n 1 /mnt/backup/srv-systemctl-backup.log
 		// echo -n "FTP "
 		// tail -n 1 /mnt/backup/ftp-backup.log
-		ConsoleOutputTO to = runScript("getLastTimeOfBackup");
-		List<LastBackupTimeMonitorItemTO> list = new ArrayList<>();
+		to = runScript("getLastTimeOfBackup");
+		List<BackupStatusMonitorItemTO> list = new ArrayList<>();
 
 		String dummTarget = "TTT Last backup:  ";
 		String dummyDate = "HH:MM:SS DD.MM.YYYY";
@@ -177,7 +177,8 @@ public class MonitorFacadeImpl implements MonitorFacade {
 
 		if (to.isSuccess()) {
 			for (String part : to.getOutput().split("\n")) {
-				LastBackupTimeMonitorItemTO itemTO = new LastBackupTimeMonitorItemTO();
+				BackupStatusMonitorItemTO itemTO = new BackupStatusMonitorItemTO();
+				mainItemTO.getItems().add(itemTO);
 				if (part.length() == dummyLog.length()) {
 					String target = part.substring(0, 3);
 					String date = part.substring(dummTarget.length());
@@ -197,20 +198,22 @@ public class MonitorFacadeImpl implements MonitorFacade {
 				list.add(itemTO);
 			}
 		} else {
-			LastBackupTimeMonitorItemTO itemTO = new LastBackupTimeMonitorItemTO();
+			BackupStatusMonitorItemTO itemTO = new BackupStatusMonitorItemTO();
 			itemTO.setMonitorState(MonitorState.UNAVAILABLE);
 			list.add(itemTO);
 		}
-		return list;
+		return mainItemTO;
 	}
 
 	@Override
-	public List<DiskStatusMonitorItemTO> getDiskStatus() {
+	public DiskStatusPartItemTO getDiskStatus() {
+		DiskStatusPartItemTO partItemTO = new DiskStatusPartItemTO();
+
 		// #!/bin/bash
 		// /usr/bin/mount | egrep '^/'
 		ConsoleOutputTO to = runScript("getDiskMounts");
 		if (!to.isSuccess())
-			return new ArrayList<>();
+			return createDiskStatusErrorOutput(to.getOutput());
 		String mounts[] = to.getOutput().split("\n");
 		Map<String, String> devToMount = new HashMap<>();
 		for (String mount : mounts) {
@@ -224,6 +227,7 @@ public class MonitorFacadeImpl implements MonitorFacade {
 			if (mount == null)
 				continue;
 			DiskStatusMonitorItemTO itemTO = new DiskStatusMonitorItemTO();
+			partItemTO.getItems().add(itemTO);
 			itemTO.setName(store.name());
 			itemTO.setMount(mount);
 			try {
@@ -235,7 +239,16 @@ public class MonitorFacadeImpl implements MonitorFacade {
 			}
 			disks.add(itemTO);
 		}
-		return disks;
+		return partItemTO;
+	}
+
+	private DiskStatusPartItemTO createDiskStatusErrorOutput(String reason) {
+		DiskStatusPartItemTO partItemTO = new DiskStatusPartItemTO();
+		DiskStatusMonitorItemTO item = new DiskStatusMonitorItemTO();
+		item.setStateDetails(reason);
+		item.setMonitorState(MonitorState.UNAVAILABLE);
+		partItemTO.getItems().add(item);
+		return partItemTO;
 	}
 
 	@Override
@@ -305,29 +318,29 @@ public class MonitorFacadeImpl implements MonitorFacade {
 	}
 
 	@Override
-	public List<ServerServiceMonitorItemTO> getServerServicesStatus() {
-		List<ServerServiceMonitorItemTO> items = new ArrayList<>();
+	public ServerServicePartItemTO getServerServicesStatus() {
+		ServerServicePartItemTO partItemTO = new ServerServicePartItemTO();
 
 		ServerServiceMonitorItemTO syncthingTO = new ServerServiceMonitorItemTO("Syncthing",
 				"http://gattserver.cz:8127");
 		testResponseCode(syncthingTO, true);
-		items.add(syncthingTO);
+		partItemTO.getItems().add(syncthingTO);
 
 		ServerServiceMonitorItemTO nexusTO = new ServerServiceMonitorItemTO("Sonatype Nexus",
 				"http://gattserver.cz:8081");
 		testResponseCode(nexusTO);
-		items.add(nexusTO);
+		partItemTO.getItems().add(nexusTO);
 
 		ServerServiceMonitorItemTO nexusSecureTO = new ServerServiceMonitorItemTO("Sonatype Nexus HTTPS",
 				"https://www.gattserver.cz:8843");
 		testResponseCode(nexusSecureTO);
-		items.add(nexusSecureTO);
+		partItemTO.getItems().add(nexusSecureTO);
 
 		ServerServiceMonitorItemTO sonarTO = new ServerServiceMonitorItemTO("SonarQube", "http://gattserver.cz:9000");
 		testResponseCode(sonarTO);
-		items.add(sonarTO);
+		partItemTO.getItems().add(sonarTO);
 
-		return items;
+		return partItemTO;
 	}
 
 	private void testResponseCode(ServerServiceMonitorItemTO itemTO) {
@@ -363,12 +376,12 @@ public class MonitorFacadeImpl implements MonitorFacade {
 	}
 
 	@Override
-	public List<SMARTMonitorItemTO> getSMARTInfo() {
+	public SMARTPartItemTO getSMARTInfo() {
 		final String TIME_HEADER = "SYSLOG_TIMESTAMP";
 		final String PRIORITY_HEADER = "PRIORITY";
 		final String MESSAGE_HEADER = "MESSAGE";
 
-		List<SMARTMonitorItemTO> items = new ArrayList<>();
+		SMARTPartItemTO partItemTO = new SMARTPartItemTO();
 		// /usr/bin/journalctl -e -u smartd -S 2019-11-03 --lines=10
 		// --output-fields=SYSLOG_TIMESTAMP,PRIORITY,MESSAGE -o json
 		ConsoleOutputTO out = runScript("getSmartStatus");
@@ -391,7 +404,7 @@ public class MonitorFacadeImpl implements MonitorFacade {
 					case 3: // "err" (3)
 					case 4: // "warning" (4)
 						to.setMonitorState(MonitorState.ERROR);
-						items.add(to);
+						partItemTO.getItems().add(to);
 						break;
 					case 5: // "notice" (5)
 					case 6: // "info" (6)
@@ -401,25 +414,27 @@ public class MonitorFacadeImpl implements MonitorFacade {
 						break;
 					}
 				}
-				if (items.isEmpty()) {
+				if (partItemTO.getItems().isEmpty()) {
 					SMARTMonitorItemTO to = new SMARTMonitorItemTO("-", "Vše OK");
 					to.setMonitorState(MonitorState.SUCCESS);
-					items.add(to);
+					partItemTO.getItems().add(to);
 				}
 			} catch (Exception e) {
-				return createErrorOutput("Nezdařilo se zpracovat JSON výstup smartd");
+				return createSMARTErrorOutput("Nezdařilo se zpracovat JSON výstup smartd");
 			}
 		} else {
-			return createErrorOutput("Nezdařilo se získat přehled smartd");
+			return createSMARTErrorOutput("Nezdařilo se získat přehled smartd");
 		}
-		return items;
+		return partItemTO;
 	}
 
-	private List<SMARTMonitorItemTO> createErrorOutput(String reason) {
+	private SMARTPartItemTO createSMARTErrorOutput(String reason) {
+		SMARTPartItemTO partItemTO = new SMARTPartItemTO();
 		SMARTMonitorItemTO item = new SMARTMonitorItemTO();
 		item.setStateDetails(reason);
 		item.setMonitorState(MonitorState.UNAVAILABLE);
-		return Arrays.asList(item);
+		partItemTO.getItems().add(item);
+		return partItemTO;
 	}
 
 }

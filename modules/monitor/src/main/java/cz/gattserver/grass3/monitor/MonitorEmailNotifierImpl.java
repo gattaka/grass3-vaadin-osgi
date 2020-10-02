@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cz.gattserver.grass3.monitor.facade.MonitorFacade;
-import cz.gattserver.grass3.monitor.processor.item.LastBackupTimeMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.BackupStatusMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.BackupStatusPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.MonitorState;
 import cz.gattserver.grass3.monitor.processor.item.SMARTMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
@@ -30,27 +31,29 @@ public class MonitorEmailNotifierImpl extends TimerTask implements MonitorEmailN
 		logger.info("Monitor TimerTask byl spuštěn");
 
 		// Test, zda jsou nahozené systémy serveru
-		for (ServerServiceMonitorItemTO to : monitorFacade.getServerServicesStatus()) {
+		for (ServerServiceMonitorItemTO to : monitorFacade.getServerServicesStatus().getItems()) {
 			if (!MonitorState.SUCCESS.equals(to.getMonitorState()))
 				mailService.sendToAdmin("GRASS3 Monitor oznámení o změně stavu monitorovaného předmětu",
 						"Server služba " + to.getName() + " není aktivní nebo se nezdařilo zjistit její stav");
 		}
 
 		// Test, zda je připojen backup disk
-		if (!MonitorState.SUCCESS.equals(monitorFacade.getBackupDiskMounted().getMonitorState())) {
+		BackupStatusPartItemTO backupStatusPartItemTO = monitorFacade.getBackupStatus();
+		if (!MonitorState.SUCCESS.equals(backupStatusPartItemTO.getMonitorState())) {
 			mailService.sendToAdmin("GRASS3 Monitor oznámení o změně stavu monitorovaného předmětu",
 					"Backup disk není připojen nebo se nezdařilo zjistit jeho stav");
-		}
 
-		// Test, zda jsou prováděny pravidelně zálohy
-		for (LastBackupTimeMonitorItemTO to : monitorFacade.getLastTimeOfBackup()) {
-			if (!MonitorState.SUCCESS.equals(to.getMonitorState()))
-				mailService.sendToAdmin("GRASS3 Monitor oznámení o změně stavu monitorovaného předmětu", to.getValue()
-						+ " Záloha nebyla provedena, je starší než 24h nebo se nezdařilo zjistit její stav");
+			// Test, zda jsou prováděny pravidelně zálohy
+			for (BackupStatusMonitorItemTO to : backupStatusPartItemTO.getItems()) {
+				if (!MonitorState.SUCCESS.equals(to.getMonitorState()))
+					mailService.sendToAdmin("GRASS3 Monitor oznámení o změně stavu monitorovaného předmětu", to
+							.getValue()
+							+ " Záloha nebyla provedena, je starší než 24h nebo se nezdařilo zjistit její stav");
+			}
 		}
 
 		// Test, zda jsou disky dle SMART v pořádku
-		for (SMARTMonitorItemTO to : monitorFacade.getSMARTInfo()) {
+		for (SMARTMonitorItemTO to : monitorFacade.getSMARTInfo().getItems()) {
 			if (MonitorState.UNAVAILABLE.equals(to.getMonitorState())) {
 				mailService.sendToAdmin("GRASS3 Monitor oznámení o změně stavu monitorovaného předmětu",
 						"Nezdařilo se zjistit stav SMART monitoru: " + to.getStateDetails());

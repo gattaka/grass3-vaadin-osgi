@@ -1,8 +1,20 @@
 package cz.gattserver.grass3.monitor.processor.item;
 
+import elemental.json.JsonObject;
+
 public class SystemUptimeMonitorItemTO extends MonitorItemTO {
 
 	private String value;
+
+	public SystemUptimeMonitorItemTO() {
+	}
+
+	public SystemUptimeMonitorItemTO(JsonObject jsonObject) {
+		super(jsonObject);
+		if (monitorState != MonitorState.SUCCESS)
+			return;
+		value = jsonObject.getString("value");
+	}
 
 	public String getValue() {
 		return value;

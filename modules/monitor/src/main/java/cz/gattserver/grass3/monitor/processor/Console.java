@@ -44,7 +44,7 @@ public class Console {
 				return new ConsoleOutputTO(buffer.lines().collect(Collectors.joining("\n")));
 			}
 		} catch (Exception e) {
-			logger.error("Nezdařilo se provést příkaz console", e);
+			logger.error("Nezdařilo se provést příkaz console", e.getMessage());
 			return new ConsoleOutputTO(e.getMessage(), false);
 		} finally {
 			try {

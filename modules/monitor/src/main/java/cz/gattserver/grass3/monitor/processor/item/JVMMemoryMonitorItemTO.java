@@ -1,11 +1,24 @@
 package cz.gattserver.grass3.monitor.processor.item;
 
+import elemental.json.JsonObject;
+
 public class JVMMemoryMonitorItemTO extends MonitorItemTO {
 
 	private long usedMemory;
 	private long freeMemory;
 	private long maxMemory;
 	private long totalMemory;
+
+	public JVMMemoryMonitorItemTO() {
+	}
+
+	public JVMMemoryMonitorItemTO(JsonObject jsonObject) {
+		super(jsonObject);
+		usedMemory = (long) jsonObject.getNumber("usedMemory");
+		freeMemory = (long) jsonObject.getNumber("freeMemory");
+		maxMemory = (long) jsonObject.getNumber("maxMemory");
+		totalMemory = (long) jsonObject.getNumber("totalMemory");
+	}
 
 	public long getUsedMemory() {
 		return usedMemory;

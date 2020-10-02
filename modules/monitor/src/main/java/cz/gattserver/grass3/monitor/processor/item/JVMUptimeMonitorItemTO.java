@@ -1,11 +1,24 @@
 package cz.gattserver.grass3.monitor.processor.item;
 
+import elemental.json.JsonObject;
+
 public class JVMUptimeMonitorItemTO extends MonitorItemTO {
 
 	private long elapsedDays;
 	private long elapsedHours;
 	private long elapsedMinutes;
 	private long elapsedSeconds;
+
+	public JVMUptimeMonitorItemTO() {
+	}
+
+	public JVMUptimeMonitorItemTO(JsonObject jsonObject) {
+		super(jsonObject);
+		elapsedDays = (long) jsonObject.getNumber("elapsedDays");
+		elapsedHours = (long) jsonObject.getNumber("elapsedHours");
+		elapsedMinutes = (long) jsonObject.getNumber("elapsedMinutes");
+		elapsedSeconds = (long) jsonObject.getNumber("elapsedSeconds");
+	}
 
 	public long getElapsedDays() {
 		return elapsedDays;

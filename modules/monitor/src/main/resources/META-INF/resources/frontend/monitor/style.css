@@ -31,14 +31,10 @@ table.monitor-table td {
     padding: 0 7px 0 0;
 }
 
-.monitor-content > vaadin-vertical-layout{
-    margin-bottom: 5px;
+.monitor-content > vaadin-vertical-layout {
+    margin: 0px;
 }
 
-.monitor-content vaadin-vertical-layout:LAST-CHILD {
-    margin-bottom: 0px;
-}
-
-.monitor-content vaadin-vertical-layout h2 {
+.monitor-content h2 {
     margin-bottom: 2px;
 }

@@ -1,9 +1,20 @@
 package cz.gattserver.grass3.monitor.processor.item;
 
+import elemental.json.JsonObject;
+
 public class JVMThreadsMonitorItemTO extends MonitorItemTO {
 
 	private long count;
 	private long peak;
+
+	public JVMThreadsMonitorItemTO() {
+	}
+
+	public JVMThreadsMonitorItemTO(JsonObject jsonObject) {
+		super(jsonObject);
+		count = (long) jsonObject.getNumber("count");
+		peak = (long) jsonObject.getNumber("peak");
+	}
 
 	public long getCount() {
 		return count;

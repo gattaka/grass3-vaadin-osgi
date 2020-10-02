@@ -1,10 +1,24 @@
 package cz.gattserver.grass3.monitor.processor.item;
 
+import elemental.json.JsonObject;
+
 public class SystemSwapMonitorItemTO extends MonitorItemTO {
 
 	private long total;
 	private long used;
 	private long free;
+
+	public SystemSwapMonitorItemTO() {
+	}
+
+	public SystemSwapMonitorItemTO(JsonObject jsonObject) {
+		super(jsonObject);
+		if (monitorState != MonitorState.SUCCESS)
+			return;
+		total = (long) jsonObject.getNumber("total");
+		used = (long) jsonObject.getNumber("used");
+		free = (long) jsonObject.getNumber("free");
+	}
 
 	public long getTotal() {
 		return total;

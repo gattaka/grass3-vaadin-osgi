@@ -1,5 +1,7 @@
 package cz.gattserver.grass3.monitor.processor.item;
 
+import elemental.json.JsonObject;
+
 public class SMARTMonitorItemTO extends MonitorItemTO {
 
 	private String time;
@@ -11,6 +13,14 @@ public class SMARTMonitorItemTO extends MonitorItemTO {
 	public SMARTMonitorItemTO(String time, String message) {
 		this.time = time;
 		this.message = message;
+	}
+
+	public SMARTMonitorItemTO(JsonObject jsonObject) {
+		super(jsonObject);
+		if (monitorState != MonitorState.SUCCESS)
+			return;
+		time = jsonObject.getString("time");
+		message = jsonObject.getString("message");
 	}
 
 	public String getTime() {

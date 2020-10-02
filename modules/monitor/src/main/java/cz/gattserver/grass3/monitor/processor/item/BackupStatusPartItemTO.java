@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.monitor.processor.item;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import elemental.json.JsonArray;
@@ -8,7 +9,7 @@ import elemental.json.JsonType;
 
 public class BackupStatusPartItemTO extends MonitorItemTO {
 
-	private List<BackupStatusMonitorItemTO> items;
+	private List<BackupStatusMonitorItemTO> items = new ArrayList<>();
 	private String value;
 
 	public BackupStatusPartItemTO() {

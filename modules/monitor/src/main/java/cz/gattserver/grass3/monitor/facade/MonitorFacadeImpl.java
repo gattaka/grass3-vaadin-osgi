@@ -212,8 +212,11 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		// #!/bin/bash
 		// /usr/bin/mount | egrep '^/'
 		ConsoleOutputTO to = runScript("getDiskMounts");
-		if (!to.isSuccess())
+		if (!to.isSuccess()) {
 			return createDiskStatusErrorOutput(to.getOutput());
+		} else {
+			partItemTO.setMonitorState(MonitorState.SUCCESS);
+		}
 		String mounts[] = to.getOutput().split("\n");
 		Map<String, String> devToMount = new HashMap<>();
 		for (String mount : mounts) {

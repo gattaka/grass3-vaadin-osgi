@@ -11,7 +11,7 @@ import elemental.json.JsonType;
  */
 public abstract class MonitorItemTO {
 
-	protected MonitorState monitorState = MonitorState.ERROR;
+	protected MonitorState monitorState = MonitorState.UNAVAILABLE;
 	protected String stateDetails;
 	protected String type;
 
@@ -20,6 +20,7 @@ public abstract class MonitorItemTO {
 	}
 
 	public MonitorItemTO(JsonObject jsonObject) {
+		this();
 		monitorState = MonitorState.valueOf(jsonObject.getString("monitorState"));
 		if (JsonType.NULL == jsonObject.get("stateDetails").getType())
 			return;

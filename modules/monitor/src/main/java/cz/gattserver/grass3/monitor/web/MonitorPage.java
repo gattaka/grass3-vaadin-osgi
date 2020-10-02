@@ -314,7 +314,7 @@ public class MonitorPage extends OneColumnPage {
 		TableLayout diskTableLayout = prepareTableLayout();
 		diskLayout.add(diskTableLayout);
 
-		if (MonitorState.ERROR == data.getMonitorState()) {
+		if (MonitorState.UNAVAILABLE == data.getMonitorState()) {
 			diskTableLayout.add(new WarningMonitorStateLabel()).add("Info není dostupné");
 			return;
 		}

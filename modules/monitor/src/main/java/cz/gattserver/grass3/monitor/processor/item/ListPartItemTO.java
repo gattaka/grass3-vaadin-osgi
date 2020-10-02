@@ -8,16 +8,15 @@ import elemental.json.JsonObject;
 
 public abstract class ListPartItemTO<T extends MonitorItemTO> extends MonitorItemTO {
 
-	private List<T> items;
+	private List<T> items = new ArrayList<T>();
 
 	protected abstract T createItem(JsonObject jsonObject);
 
 	public ListPartItemTO() {
-		items = new ArrayList<T>();
 	}
 
 	public ListPartItemTO(JsonObject jsonObject) {
-		this();
+		super(jsonObject);
 		if (jsonObject == null)
 			return;
 		JsonArray array = jsonObject.getArray("items");

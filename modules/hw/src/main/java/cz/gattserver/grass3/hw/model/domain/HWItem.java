@@ -90,6 +90,11 @@ public class HWItem {
 	@Column(columnDefinition = "TEXT")
 	private String description;
 
+	/**
+	 * Je položka veřejně viditelná?
+	 */
+	private Boolean publicItem;
+
 	public String getDescription() {
 		return description;
 	}
@@ -176,6 +181,14 @@ public class HWItem {
 
 	public void setServiceNotes(List<ServiceNote> serviceNotes) {
 		this.serviceNotes = serviceNotes;
+	}
+
+	public Boolean getPublicItem() {
+		return publicItem;
+	}
+
+	public void setPublicItem(Boolean publicItem) {
+		this.publicItem = publicItem;
 	}
 
 }

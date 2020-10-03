@@ -29,7 +29,9 @@ import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.hw.ui.dialogs.HWItemDetailsDialog;
 import cz.gattserver.grass3.hw.ui.dialogs.HWItemDialog;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
+import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.GridButton;
@@ -53,6 +55,7 @@ public class HWItemsTab extends Div {
 	private static final String PURCHASE_DATE_BIND = "purchaseDateBind";
 
 	private transient HWService hwService;
+	private transient SecurityService securityFacade;
 
 	private Grid<HWItemOverviewTO> grid;
 	private TokenField hwTypesFilter;
@@ -62,18 +65,22 @@ public class HWItemsTab extends Div {
 
 	public HWItemsTab() {
 		filterTO = new HWFilterTO();
+		if (!getUser().isAdmin())
+			filterTO.setPublicItem(true);
 
-		// Filtr na typy HW
-		for (HWItemTypeTO type : getHWService().getAllHWTypes())
-			tokenMap.put(type.getName(), type);
+		if (getUser().isAdmin()) {
+			// Filtr na typy HW
+			for (HWItemTypeTO type : getHWService().getAllHWTypes())
+				tokenMap.put(type.getName(), type);
 
-		hwTypesFilter = new TokenField(tokenMap.keySet());
-		hwTypesFilter.getInputField().setWidth("200px");
-		hwTypesFilter.addTokenAddListener(token -> populate());
-		hwTypesFilter.addTokenRemoveListener(e -> populate());
-		hwTypesFilter.setAllowNewItems(false);
-		hwTypesFilter.getInputField().setPlaceholder("Filtrovat dle typu hw");
-		add(hwTypesFilter);
+			hwTypesFilter = new TokenField(tokenMap.keySet());
+			hwTypesFilter.getInputField().setWidth("200px");
+			hwTypesFilter.addTokenAddListener(token -> populate());
+			hwTypesFilter.addTokenRemoveListener(e -> populate());
+			hwTypesFilter.setAllowNewItems(false);
+			hwTypesFilter.getInputField().setPlaceholder("Filtrovat dle typu hw");
+			add(hwTypesFilter);
+		}
 
 		// Tabulka HW
 		grid = new Grid<>();
@@ -107,8 +114,10 @@ public class HWItemsTab extends Div {
 				.setHeader("Je součástí");
 		Column<HWItemOverviewTO> supervizedColumn = grid.addColumn(HWItemOverviewTO::getSupervizedFor)
 				.setKey(SUPERVIZED_FOR_BIND).setHeader("Spravováno pro");
-		grid.addColumn(hw -> FieldUtils.formatMoney(hw.getPrice())).setHeader("Cena").setKey(PRICE_BIND)
-				.setTextAlign(ColumnTextAlign.END);
+		if (getUser().isAdmin()) {
+			grid.addColumn(hw -> FieldUtils.formatMoney(hw.getPrice())).setHeader("Cena").setKey(PRICE_BIND)
+					.setTextAlign(ColumnTextAlign.END);
+		}
 		grid.addColumn(new LocalDateRenderer<HWItemOverviewTO>(HWItemOverviewTO::getPurchaseDate, "d.M.yyyy"))
 				.setHeader("Získáno").setKey(PURCHASE_DATE_BIND).setTextAlign(ColumnTextAlign.END);
 
@@ -153,15 +162,18 @@ public class HWItemsTab extends Div {
 		ButtonLayout buttonLayout = new ButtonLayout();
 		add(buttonLayout);
 
-		// Založení nové položky HW
-		Button newHWBtn = new CreateButton("Přidat", e -> openItemWindow(null));
-		buttonLayout.add(newHWBtn);
+		if (getUser().isAdmin()) {
 
-		// Kopie položky HW
-		Button copyHWBtn = new GridButton<HWItemOverviewTO>("Zkopírovat",
-				set -> copyItemWindow(set.iterator().next().getId()), grid);
-		copyHWBtn.setIcon(new Image(ImageIcon.PLUS_16_ICON.createResource(), "image"));
-		buttonLayout.add(copyHWBtn);
+			// Založení nové položky HW
+			Button newHWBtn = new CreateButton("Přidat", e -> openItemWindow(null));
+			buttonLayout.add(newHWBtn);
+
+			// Kopie položky HW
+			Button copyHWBtn = new GridButton<HWItemOverviewTO>("Zkopírovat",
+					set -> copyItemWindow(set.iterator().next().getId()), grid);
+			copyHWBtn.setIcon(new Image(ImageIcon.PLUS_16_ICON.createResource(), "image"));
+			buttonLayout.add(copyHWBtn);
+		}
 
 		// Zobrazení detailů položky HW
 		Button detailsBtn = new GridButton<HWItemOverviewTO>("Detail",
@@ -169,22 +181,26 @@ public class HWItemsTab extends Div {
 		detailsBtn.setIcon(new Image(ImageIcon.CLIPBOARD_16_ICON.createResource(), "image"));
 		buttonLayout.add(detailsBtn);
 
-		// Oprava údajů existující položky HW
-		Button fixBtn = new GridButton<HWItemOverviewTO>("Upravit", set -> openItemWindow(set.iterator().next()), grid);
-		fixBtn.setIcon(new Image(ImageIcon.QUICKEDIT_16_ICON.createResource(), "image"));
-		buttonLayout.add(fixBtn);
+		if (getUser().isAdmin()) {
 
-		// Smazání položky HW
-		Button deleteBtn = new DeleteGridButton<HWItemOverviewTO>("Smazat", set -> {
-			HWItemOverviewTO item = set.iterator().next();
-			try {
-				getHWService().deleteHWItem(item.getId());
-				populate();
-			} catch (Exception ex) {
-				new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
-			}
-		}, grid);
-		buttonLayout.add(deleteBtn);
+			// Oprava údajů existující položky HW
+			Button fixBtn = new GridButton<HWItemOverviewTO>("Upravit", set -> openItemWindow(set.iterator().next()),
+					grid);
+			fixBtn.setIcon(new Image(ImageIcon.QUICKEDIT_16_ICON.createResource(), "image"));
+			buttonLayout.add(fixBtn);
+
+			// Smazání položky HW
+			Button deleteBtn = new DeleteGridButton<HWItemOverviewTO>("Smazat", set -> {
+				HWItemOverviewTO item = set.iterator().next();
+				try {
+					getHWService().deleteHWItem(item.getId());
+					populate();
+				} catch (Exception ex) {
+					new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
+				}
+			}, grid);
+			buttonLayout.add(deleteBtn);
+		}
 	}
 
 	private HWService getHWService() {
@@ -193,8 +209,15 @@ public class HWItemsTab extends Div {
 		return hwService;
 	}
 
+	private UserInfoTO getUser() {
+		if (securityFacade == null)
+			securityFacade = SpringContextHelper.getBean(SecurityService.class);
+		return securityFacade.getCurrentUser();
+	}
+
 	private void populate() {
-		filterTO.setTypes(hwTypesFilter.getValues());
+		if (hwTypesFilter != null)
+			filterTO.setTypes(hwTypesFilter.getValues());
 		FetchCallback<HWItemOverviewTO, HWItemOverviewTO> fetchCallback = q -> getHWService().getHWItems(filterTO,
 				q.getOffset(), q.getLimit(), QuerydslUtil.transformOrdering(q.getSortOrders(), column -> {
 					switch (column) {

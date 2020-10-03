@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -21,6 +20,8 @@ import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.hw.interfaces.HWItemFileTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
+import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.stlviewer.STLViewer;
 import cz.gattserver.grass3.ui.components.OperationsLayout;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
@@ -37,8 +38,8 @@ public class HWDetailsPrint3dTab extends Div {
 
 	private static final Logger logger = LoggerFactory.getLogger(HWDetailsPrint3dTab.class);
 
-	@Autowired
-	private HWService hwService;
+	private transient HWService hwService;
+	private transient SecurityService securityFacade;
 
 	private HWItemTO hwItem;
 	private HWItemDetailsDialog hwItemDetailDialog;
@@ -53,8 +54,20 @@ public class HWDetailsPrint3dTab extends Div {
 		init();
 	}
 
+	private HWService getHWService() {
+		if (hwService == null)
+			hwService = SpringContextHelper.getBean(HWService.class);
+		return hwService;
+	}
+
+	private UserInfoTO getUser() {
+		if (securityFacade == null)
+			securityFacade = SpringContextHelper.getBean(SecurityService.class);
+		return securityFacade.getCurrentUser();
+	}
+
 	private void populatePrint3dGrid() {
-		print3dGrid.setItems(hwService.getHWItemPrint3dFiles(hwItem.getId()));
+		print3dGrid.setItems(getHWService().getHWItemPrint3dFiles(hwItem.getId()));
 		print3dGrid.getDataProvider().refreshAll();
 	}
 
@@ -91,25 +104,25 @@ public class HWDetailsPrint3dTab extends Div {
 
 		populatePrint3dGrid();
 
-		GrassMultiFileBuffer buffer = new GrassMultiFileBuffer();
-
-		Upload upload = new Upload(buffer);
-		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		upload.addSucceededListener(event -> {
-			try {
-				hwService.savePrint3dFile(buffer.getInputStream(event.getFileName()), event.getFileName(),
-						hwItem.getId());
-				// refresh listu
-				populatePrint3dGrid();
-				hwItemDetailDialog.refreshTabLabels();
-			} catch (IOException e) {
-				String msg = "Nezdařilo se uložit soubor";
-				logger.error(msg, e);
-				new ErrorDialog(msg).open();
-			}
-		});
-
-		add(upload);
+		if (getUser().isAdmin()) {
+			GrassMultiFileBuffer buffer = new GrassMultiFileBuffer();
+			Upload upload = new Upload(buffer);
+			upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+			upload.addSucceededListener(event -> {
+				try {
+					getHWService().savePrint3dFile(buffer.getInputStream(event.getFileName()), event.getFileName(),
+							hwItem.getId());
+					// refresh listu
+					populatePrint3dGrid();
+					hwItemDetailDialog.refreshTabLabels();
+				} catch (IOException e) {
+					String msg = "Nezdařilo se uložit soubor";
+					logger.error(msg, e);
+					new ErrorDialog(msg).open();
+				}
+			});
+			add(upload);
+		}
 
 		print3dGrid.addItemClickListener(e -> {
 			if (e.getClickCount() > 1)
@@ -132,13 +145,15 @@ public class HWDetailsPrint3dTab extends Div {
 		downloadBtn.setIcon(new Image(ImageIcon.DOWN_16_ICON.createResource(), "Stáhnout"));
 		operationsLayout.add(downloadBtn);
 
-		Button deleteBtn = new DeleteGridButton<>("Smazat záznam", items -> {
-			HWItemFileTO item = items.iterator().next();
-			hwService.deleteHWItemPrint3dFile(hwItem.getId(), item.getName());
-			populatePrint3dGrid();
-			hwItemDetailDialog.refreshTabLabels();
-		}, print3dGrid);
-		operationsLayout.add(deleteBtn);
+		if (getUser().isAdmin()) {
+			Button deleteBtn = new DeleteGridButton<>("Smazat záznam", items -> {
+				HWItemFileTO item = items.iterator().next();
+				getHWService().deleteHWItemPrint3dFile(hwItem.getId(), item.getName());
+				populatePrint3dGrid();
+				hwItemDetailDialog.refreshTabLabels();
+			}, print3dGrid);
+			operationsLayout.add(deleteBtn);
+		}
 	}
 
 }

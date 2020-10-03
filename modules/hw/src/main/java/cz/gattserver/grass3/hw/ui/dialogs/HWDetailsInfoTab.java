@@ -11,7 +11,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -39,6 +38,8 @@ import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.hw.ui.HWUIUtils;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
+import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.OperationsLayout;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
@@ -59,8 +60,8 @@ public class HWDetailsInfoTab extends Div {
 
 	private static final Logger logger = LoggerFactory.getLogger(HWDetailsInfoTab.class);
 
-	@Autowired
-	private HWService hwService;
+	private transient HWService hwService;
+	private transient SecurityService securityFacade;
 
 	private VerticalLayout hwImageLayout;
 	private HWItemTO hwItem;
@@ -72,6 +73,18 @@ public class HWDetailsInfoTab extends Div {
 		this.hwItem = hwItem;
 		this.hwItemDetailDialog = hwItemDetailDialog;
 		init();
+	}
+
+	private HWService getHWService() {
+		if (hwService == null)
+			hwService = SpringContextHelper.getBean(HWService.class);
+		return hwService;
+	}
+
+	private UserInfoTO getUser() {
+		if (securityFacade == null)
+			securityFacade = SpringContextHelper.getBean(SecurityService.class);
+		return securityFacade.getCurrentUser();
 	}
 
 	private String createPriceString(BigDecimal price) {
@@ -137,13 +150,16 @@ public class HWDetailsInfoTab extends Div {
 		tableLayout.add(purchDateValue);
 		tableLayout.newRow();
 
-		tableLayout.add(new Strong("Cena"));
+		if (getUser().isAdmin())
+			tableLayout.add(new Strong("Cena"));
 		tableLayout.add(new Strong("Záruka"));
 		tableLayout.newRow();
 
-		Div priceValue = new Div(new Text(createPriceString(hwItem.getPrice())));
-		priceValue.setMinWidth("100px");
-		tableLayout.add(priceValue);
+		if (getUser().isAdmin()) {
+			Div priceValue = new Div(new Text(createPriceString(hwItem.getPrice())));
+			priceValue.setMinWidth("100px");
+			tableLayout.add(priceValue);
+		}
 
 		Div zarukaLayout = new Div();
 		if (hwItem.getWarrantyYears() != null && hwItem.getWarrantyYears() > 0 && hwItem.getPurchaseDate() != null) {
@@ -205,7 +221,7 @@ public class HWDetailsInfoTab extends Div {
 		grid.addColumn(
 				new ComponentRenderer<Button, HWItemOverviewTO>(c -> new LinkButton(createShortName(c.getName()), e -> {
 					hwItemDetailDialog.close();
-					HWItemTO detailTO = hwService.getHWItem(c.getId());
+					HWItemTO detailTO = getHWService().getHWItem(c.getId());
 					new HWItemDetailsDialog(detailTO.getId()).open();
 				}))).setHeader("Název součásti").setFlexGrow(100);
 
@@ -216,7 +232,7 @@ public class HWDetailsInfoTab extends Div {
 		grid.addColumn(hw -> hw.getState() == null ? "" : hw.getState().getName()).setHeader("Stav").setWidth("110px")
 				.setFlexGrow(0);
 
-		grid.setItems(hwService.getAllParts(hwItem.getId()));
+		grid.setItems(getHWService().getAllParts(hwItem.getId()));
 
 		outerLayout.add(grid);
 
@@ -235,32 +251,34 @@ public class HWDetailsInfoTab extends Div {
 		operationsLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
 		add(operationsLayout);
 
-		final Button fixBtn = new ModifyButton(e -> new HWItemDialog(hwItem) {
-			private static final long serialVersionUID = -1397391593801030584L;
+		if (getUser().isAdmin()) {
+			final Button fixBtn = new ModifyButton(e -> new HWItemDialog(hwItem) {
+				private static final long serialVersionUID = -1397391593801030584L;
 
-			@Override
-			protected void onSuccess(HWItemTO dto) {
-				hwItemDetailDialog.refreshItem();
-				hwItemDetailDialog.switchInfoTab();
-			}
-		}.open());
-		operationsLayout.add(fixBtn);
+				@Override
+				protected void onSuccess(HWItemTO dto) {
+					hwItemDetailDialog.refreshItem();
+					hwItemDetailDialog.switchInfoTab();
+				}
+			}.open());
+			operationsLayout.add(fixBtn);
 
-		final Button deleteBtn = new DeleteButton(e -> new ConfirmDialog(
-				"Opravdu smazat '" + hwItem.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?",
-				ev -> {
-					try {
-						hwService.deleteHWItem(hwItem.getId());
-						hwItemDetailDialog.close();
-					} catch (Exception ex) {
-						new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
-					}
-				}).open());
-		operationsLayout.add(deleteBtn);
+			final Button deleteBtn = new DeleteButton(e -> new ConfirmDialog(
+					"Opravdu smazat '" + hwItem.getName() + "' (budou smazány i servisní záznamy a údaje u součástí) ?",
+					ev -> {
+						try {
+							getHWService().deleteHWItem(hwItem.getId());
+							hwItemDetailDialog.close();
+						} catch (Exception ex) {
+							new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
+						}
+					}).open());
+			operationsLayout.add(deleteBtn);
+		}
 	}
 
 	private void createHWImageOrUpload(final HWItemTO hwItem) {
-		if (!tryCreateHWImage(hwItem))
+		if (!tryCreateHWImage(hwItem) && getUser().isAdmin())
 			createHWItemImageUpload(hwItem);
 	}
 
@@ -269,7 +287,7 @@ public class HWDetailsInfoTab extends Div {
 	 */
 	private boolean tryCreateHWImage(final HWItemTO hwItem) {
 		InputStream iconIs;
-		iconIs = hwService.getHWItemIconFileInputStream(hwItem.getId());
+		iconIs = getHWService().getHWItemIconFileInputStream(hwItem.getId());
 		if (iconIs == null)
 			return false;
 
@@ -285,21 +303,22 @@ public class HWDetailsInfoTab extends Div {
 		HorizontalLayout btnLayout = new HorizontalLayout();
 		btnLayout.setSpacing(true);
 		btnLayout.setPadding(false);
+		hwImageLayout.add(btnLayout);
 
 		Button hwItemImageDetailBtn = new Button("Detail", e -> UI.getCurrent().getPage()
 				.open(HWConfiguration.HW_PATH + "/" + hwItem.getId() + "/icon/" + hwItem.getName()));
 		hwItemImageDetailBtn.setIcon(new Image(ImageIcon.SEARCH_16_ICON.createResource(), "detail"));
-
-		Button hwItemImageDeleteBtn = new DeleteButton(
-				e -> new ConfirmDialog("Opravdu smazat foto HW položky ?", ev -> {
-					hwService.deleteHWItemIconFile(hwItem.getId());
-					createHWItemImageUpload(hwItem);
-				}).open());
-
 		btnLayout.add(hwItemImageDetailBtn);
-		btnLayout.add(hwItemImageDeleteBtn);
 
-		hwImageLayout.add(btnLayout);
+		if (getUser().isAdmin()) {
+			Button hwItemImageDeleteBtn = new DeleteButton(
+					e -> new ConfirmDialog("Opravdu smazat foto HW položky ?", ev -> {
+						getHWService().deleteHWItemIconFile(hwItem.getId());
+						createHWItemImageUpload(hwItem);
+					}).open());
+
+			btnLayout.add(hwItemImageDeleteBtn);
+		}
 		return true;
 	}
 
@@ -319,7 +338,7 @@ public class HWDetailsInfoTab extends Div {
 		upload.addSucceededListener(e -> {
 			try {
 				// vytvoř miniaturu
-				OutputStream bos = hwService.createHWItemIconOutputStream(e.getFileName(), hwItem.getId());
+				OutputStream bos = getHWService().createHWItemIconOutputStream(e.getFileName(), hwItem.getId());
 				IOUtils.copy(buffer.getInputStream(), bos);
 				tryCreateHWImage(hwItem);
 			} catch (IOException ex) {

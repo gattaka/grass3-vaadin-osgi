@@ -84,6 +84,7 @@ public class HWMapperServiceImpl implements HWMapperService {
 		dto.setServiceNotes(mapServiceNotes(e.getServiceNotes()));
 		dto.setSupervizedFor(e.getSupervizedFor());
 		dto.setState(e.getState());
+		dto.setPublicItem(e.getPublicItem());
 		Set<String> types = new HashSet<>();
 		for (HWItemType typeTO : e.getTypes())
 			types.add(typeTO.getName());
@@ -104,6 +105,7 @@ public class HWMapperServiceImpl implements HWMapperService {
 		dto.setPrice(e.getPrice());
 		dto.setPurchaseDate(DateUtils.toLocalDate(e.getPurchaseDate()));
 		dto.setState(e.getState());
+		dto.setPublicItem(e.getPublicItem());
 		return dto;
 	}
 

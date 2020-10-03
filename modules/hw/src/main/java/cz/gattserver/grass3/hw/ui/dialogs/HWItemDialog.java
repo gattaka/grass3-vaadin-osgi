@@ -11,12 +11,14 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 
@@ -84,20 +86,15 @@ public abstract class HWItemDialog extends WebDialog {
 		baseLayout.setPadding(false);
 		add(baseLayout);
 
-		VerticalLayout formLayout = new VerticalLayout();
-		formLayout.setSpacing(false);
-		formLayout.setPadding(false);
-		formLayout.setWidth(null);
-		baseLayout.add(formLayout);
-
 		DatePicker purchaseDateField = new DatePicker("Získáno");
 		purchaseDateField.setLocale(Locale.forLanguageTag("CS"));
-		purchaseDateField.setWidthFull();
+		purchaseDateField.setWidth("130px");
 		binder.bind(purchaseDateField, HWItemTO::getPurchaseDate, HWItemTO::setPurchaseDate);
-		formLayout.add(purchaseDateField);
+		baseLayout.add(purchaseDateField);
 
 		TextField priceField = new TextField("Cena");
-		priceField.setWidthFull();
+		priceField.addThemeVariants(TextFieldVariant.LUMO_ALIGN_RIGHT);
+		priceField.setWidth("100px");
 		binder.forField(priceField).withNullRepresentation("").withConverter(toModel -> {
 			try {
 				if (StringUtils.isBlank(toModel))
@@ -109,34 +106,40 @@ public abstract class HWItemDialog extends WebDialog {
 				throw new IllegalArgumentException();
 			}
 		}, FieldUtils::formatMoney, "Cena musí být číslo").bind("price");
-		formLayout.add(priceField);
+		baseLayout.add(priceField);
 
 		ComboBox<HWItemState> stateComboBox = new ComboBox<>("Stav", Arrays.asList(HWItemState.values()));
-		stateComboBox.setWidthFull();
+		stateComboBox.setWidth("150px");
 		stateComboBox.setItemLabelGenerator(HWItemState::getName);
 		binder.forField(stateComboBox).asRequired("Stav položky je povinný").bind(HWItemTO::getState,
 				HWItemTO::setState);
-		formLayout.add(stateComboBox);
+		baseLayout.add(stateComboBox);
 
 		TextField warrantyYearsField = new TextField("Záruka (roky)");
 		binder.forField(warrantyYearsField).withNullRepresentation("")
 				.withConverter(new StringToIntegerConverter(null, "Záruka musí být celé číslo"))
 				.bind(HWItemTO::getWarrantyYears, HWItemTO::setWarrantyYears);
-		warrantyYearsField.setWidthFull();
-		formLayout.add(warrantyYearsField);
+		warrantyYearsField.setWidth("100px");
+		baseLayout.add(warrantyYearsField);
 
 		TextField supervizedForField = new TextField("Spravováno pro");
 		supervizedForField.setWidthFull();
 		binder.bind(supervizedForField, HWItemTO::getSupervizedFor, HWItemTO::setSupervizedFor);
-		formLayout.add(supervizedForField);
+		baseLayout.add(supervizedForField);
+
+		Checkbox publicItemCheckBox = new Checkbox("Veřejná položka");
+		binder.bind(publicItemCheckBox, HWItemTO::getPublicItem, HWItemTO::setPublicItem);
+		baseLayout.add(publicItemCheckBox);
+		baseLayout.setWidth(null);
+		baseLayout.setVerticalComponentAlignment(Alignment.END, publicItemCheckBox);
 
 		TextArea descriptionArea = new TextArea("Popis");
 		descriptionArea.setTabIndex(-1);
-		descriptionArea.setWidth("700px");
+		descriptionArea.setWidthFull();
 		descriptionArea.getStyle().set("font-family", "monospace").set("tab-size", "4").set("font-size", "12px");
 		binder.bind(descriptionArea, HWItemTO::getDescription, HWItemTO::setDescription);
-		baseLayout.add(descriptionArea);
-		descriptionArea.setHeight("307.5px");
+		add(descriptionArea);
+		descriptionArea.setHeight("300px");
 
 		Map<String, HWItemTypeTO> tokens = new HashMap<>();
 		getHWService().getAllHWTypes().forEach(to -> tokens.put(to.getName(), to));

@@ -38,8 +38,12 @@ public class HWPage extends OneColumnPage {
 		layout.add(tabSheet);
 
 		overviewTab = new Tab("Přehled");
-		typesTab = new Tab("Typy zařízení");
-		tabSheet.add(overviewTab, typesTab);
+		tabSheet.add(overviewTab);
+
+		if (getUser().isAdmin()) {
+			typesTab = new Tab("Typy zařízení");
+			tabSheet.add(typesTab);
+		}
 
 		pageLayout = new Div();
 		layout.add(pageLayout);

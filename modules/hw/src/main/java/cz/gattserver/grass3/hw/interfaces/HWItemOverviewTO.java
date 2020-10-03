@@ -46,6 +46,11 @@ public class HWItemOverviewTO implements Serializable {
 	 */
 	private String supervizedFor;
 
+	/**
+	 * Je položka veřejně viditelná?
+	 */
+	private Boolean publicItem;
+
 	public String getSupervizedFor() {
 		return supervizedFor;
 	}
@@ -100,6 +105,14 @@ public class HWItemOverviewTO implements Serializable {
 
 	public void setUsedInName(String usedInName) {
 		this.usedInName = usedInName;
+	}
+
+	public Boolean getPublicItem() {
+		return publicItem;
+	}
+
+	public void setPublicItem(Boolean publicItem) {
+		this.publicItem = publicItem;
 	}
 
 	@Override

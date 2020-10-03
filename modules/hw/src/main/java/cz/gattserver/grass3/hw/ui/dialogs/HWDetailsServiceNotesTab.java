@@ -2,8 +2,6 @@ package cz.gattserver.grass3.hw.ui.dialogs;
 
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
@@ -18,6 +16,8 @@ import com.vaadin.flow.data.renderer.TextRenderer;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
+import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.OperationsLayout;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
@@ -32,8 +32,8 @@ public class HWDetailsServiceNotesTab extends Div {
 
 	private static final String DEFAULT_NOTE_LABEL_VALUE = "- Zvolte servisní záznam -";
 
-	@Autowired
-	private HWService hwService;
+	private transient HWService hwService;
+	private transient SecurityService securityFacade;
 
 	private Column<ServiceNoteTO> serviceDateColumn;
 	private Grid<ServiceNoteTO> serviceNotesGrid;
@@ -47,8 +47,22 @@ public class HWDetailsServiceNotesTab extends Div {
 		init();
 	}
 
+	private HWService getHWService() {
+		if (hwService == null)
+			hwService = SpringContextHelper.getBean(HWService.class);
+		return hwService;
+	}
+
+	private UserInfoTO getUser() {
+		if (securityFacade == null)
+			securityFacade = SpringContextHelper.getBean(SecurityService.class);
+		return securityFacade.getCurrentUser();
+	}
+
 	private void init() {
 		serviceNotesGrid = new Grid<>();
+		add(serviceNotesGrid);
+
 		UIUtils.applyGrassDefaultStyle(serviceNotesGrid);
 		serviceNotesGrid.setSelectionMode(SelectionMode.SINGLE);
 		Column<ServiceNoteTO> idColumn = serviceNotesGrid
@@ -71,50 +85,11 @@ public class HWDetailsServiceNotesTab extends Div {
 
 		populateServiceNotesGrid();
 
-		add(serviceNotesGrid);
-
 		final Div serviceNoteDescription = new ContainerDiv();
 		serviceNoteDescription.add(DEFAULT_NOTE_LABEL_VALUE);
 		serviceNoteDescription.setHeight("300px");
 		serviceNoteDescription.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(serviceNoteDescription);
-
-		OperationsLayout operationsLayout = new OperationsLayout(e -> hwItemDetailDialog.close());
-		add(operationsLayout);
-
-		Button newNoteBtn = new CreateButton(e -> new ServiceNoteCreateDialog(hwItem) {
-			private static final long serialVersionUID = -5582822648042555576L;
-
-			@Override
-			protected void onSuccess(ServiceNoteTO noteDTO) {
-				hwItem.getServiceNotes().add(noteDTO);
-				populateServiceNotesGrid();
-				hwItemDetailDialog.refreshItem();
-				hwItemDetailDialog.switchServiceNotesTab();
-				serviceNotesGrid.select(noteDTO);
-			}
-		}.open());
-
-		Button fixNoteBtn = new ModifyGridButton<>("Opravit záznam", event -> {
-			if (serviceNotesGrid.getSelectedItems().isEmpty())
-				return;
-			new ServiceNoteCreateDialog(hwItem, serviceNotesGrid.getSelectedItems().iterator().next()) {
-				private static final long serialVersionUID = -5582822648042555576L;
-
-				@Override
-				protected void onSuccess(ServiceNoteTO noteDTO) {
-					populateServiceNotesGrid();
-				}
-			}.open();
-		}, serviceNotesGrid);
-
-		Button deleteNoteBtn = new DeleteGridButton<>("Smazat záznam", items -> {
-			ServiceNoteTO item = items.iterator().next();
-			hwService.deleteServiceNote(item, hwItem.getId());
-			hwItem.getServiceNotes().remove(item);
-			populateServiceNotesGrid();
-			hwItemDetailDialog.refreshTabLabels();
-		}, serviceNotesGrid);
 
 		serviceNotesGrid.addSelectionListener(selection -> {
 			if (selection.getFirstSelectedItem().isPresent()) {
@@ -125,9 +100,48 @@ public class HWDetailsServiceNotesTab extends Div {
 			}
 		});
 
-		operationsLayout.add(newNoteBtn);
-		operationsLayout.add(fixNoteBtn);
-		operationsLayout.add(deleteNoteBtn);
+		if (getUser().isAdmin()) {
+			OperationsLayout operationsLayout = new OperationsLayout(e -> hwItemDetailDialog.close());
+			add(operationsLayout);
+
+			Button newNoteBtn = new CreateButton(e -> new ServiceNoteCreateDialog(hwItem) {
+				private static final long serialVersionUID = -5582822648042555576L;
+
+				@Override
+				protected void onSuccess(ServiceNoteTO noteDTO) {
+					hwItem.getServiceNotes().add(noteDTO);
+					populateServiceNotesGrid();
+					hwItemDetailDialog.refreshItem();
+					hwItemDetailDialog.switchServiceNotesTab();
+					serviceNotesGrid.select(noteDTO);
+				}
+			}.open());
+
+			Button fixNoteBtn = new ModifyGridButton<>("Opravit záznam", event -> {
+				if (serviceNotesGrid.getSelectedItems().isEmpty())
+					return;
+				new ServiceNoteCreateDialog(hwItem, serviceNotesGrid.getSelectedItems().iterator().next()) {
+					private static final long serialVersionUID = -5582822648042555576L;
+
+					@Override
+					protected void onSuccess(ServiceNoteTO noteDTO) {
+						populateServiceNotesGrid();
+					}
+				}.open();
+			}, serviceNotesGrid);
+
+			Button deleteNoteBtn = new DeleteGridButton<>("Smazat záznam", items -> {
+				ServiceNoteTO item = items.iterator().next();
+				getHWService().deleteServiceNote(item, hwItem.getId());
+				hwItem.getServiceNotes().remove(item);
+				populateServiceNotesGrid();
+				hwItemDetailDialog.refreshTabLabels();
+			}, serviceNotesGrid);
+
+			operationsLayout.add(newNoteBtn);
+			operationsLayout.add(fixNoteBtn);
+			operationsLayout.add(deleteNoteBtn);
+		}
 	}
 
 	private void populateServiceNotesGrid() {

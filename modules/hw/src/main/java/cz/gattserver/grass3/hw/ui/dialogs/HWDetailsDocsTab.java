@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -20,6 +19,8 @@ import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.hw.interfaces.HWItemFileTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.grass3.interfaces.UserInfoTO;
+import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.OperationsLayout;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.GridButton;
@@ -35,8 +36,8 @@ public class HWDetailsDocsTab extends Div {
 
 	private static final Logger logger = LoggerFactory.getLogger(HWDetailsDocsTab.class);
 
-	@Autowired
-	private HWService hwService;
+	private transient HWService hwService;
+	private transient SecurityService securityFacade;
 
 	private HWItemTO hwItem;
 	private HWItemDetailsDialog hwItemDetailDialog;
@@ -49,8 +50,20 @@ public class HWDetailsDocsTab extends Div {
 		init();
 	}
 
+	private HWService getHWService() {
+		if (hwService == null)
+			hwService = SpringContextHelper.getBean(HWService.class);
+		return hwService;
+	}
+
+	private UserInfoTO getUser() {
+		if (securityFacade == null)
+			securityFacade = SpringContextHelper.getBean(SecurityService.class);
+		return securityFacade.getCurrentUser();
+	}
+
 	private void populateDocsGrid() {
-		docsGrid.setItems(hwService.getHWItemDocumentsFiles(hwItem.getId()));
+		docsGrid.setItems(getHWService().getHWItemDocumentsFiles(hwItem.getId()));
 		docsGrid.getDataProvider().refreshAll();
 	}
 
@@ -72,25 +85,25 @@ public class HWDetailsDocsTab extends Div {
 
 		populateDocsGrid();
 
-		GrassMultiFileBuffer buffer = new GrassMultiFileBuffer();
-
-		Upload upload = new Upload(buffer);
-		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		upload.addSucceededListener(event -> {
-			try {
-				hwService.saveDocumentsFile(buffer.getInputStream(event.getFileName()), event.getFileName(),
-						hwItem.getId());
-				// refresh listu
-				populateDocsGrid();
-				hwItemDetailDialog.refreshTabLabels();
-			} catch (IOException e) {
-				String msg = "Nezdařilo se uložit soubor";
-				logger.error(msg, e);
-				new ErrorDialog(msg).open();
-			}
-		});
-
-		add(upload);
+		if (getUser().isAdmin()) {
+			GrassMultiFileBuffer buffer = new GrassMultiFileBuffer();
+			Upload upload = new Upload(buffer);
+			upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+			upload.addSucceededListener(event -> {
+				try {
+					getHWService().saveDocumentsFile(buffer.getInputStream(event.getFileName()), event.getFileName(),
+							hwItem.getId());
+					// refresh listu
+					populateDocsGrid();
+					hwItemDetailDialog.refreshTabLabels();
+				} catch (IOException e) {
+					String msg = "Nezdařilo se uložit soubor";
+					logger.error(msg, e);
+					new ErrorDialog(msg).open();
+				}
+			});
+			add(upload);
+		}
 
 		docsGrid.addItemClickListener(e -> {
 			if (e.getClickCount() > 1)
@@ -106,13 +119,15 @@ public class HWDetailsDocsTab extends Div {
 		downloadBtn.setIcon(new Image(ImageIcon.DOWN_16_ICON.createResource(), "Stáhnout"));
 		operationsLayout.add(downloadBtn);
 
-		Button deleteBtn = new DeleteGridButton<>("Smazat záznam", items -> {
-			HWItemFileTO item = items.iterator().next();
-			hwService.deleteHWItemDocumentsFile(hwItem.getId(), item.getName());
-			populateDocsGrid();
-			hwItemDetailDialog.refreshTabLabels();
-		}, docsGrid);
-		operationsLayout.add(deleteBtn);
+		if (getUser().isAdmin()) {
+			Button deleteBtn = new DeleteGridButton<>("Smazat záznam", items -> {
+				HWItemFileTO item = items.iterator().next();
+				getHWService().deleteHWItemDocumentsFile(hwItem.getId(), item.getName());
+				populateDocsGrid();
+				hwItemDetailDialog.refreshTabLabels();
+			}, docsGrid);
+			operationsLayout.add(deleteBtn);
+		}
 	}
 
 }

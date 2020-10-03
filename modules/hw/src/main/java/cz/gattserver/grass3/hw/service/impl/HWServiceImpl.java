@@ -543,6 +543,7 @@ public class HWServiceImpl implements HWService {
 		item.setState(hwItemDTO.getState());
 		item.setDescription(hwItemDTO.getDescription());
 		item.setSupervizedFor(hwItemDTO.getSupervizedFor());
+		item.setPublicItem(hwItemDTO.getPublicItem());
 		if (hwItemDTO.getUsedIn() != null) {
 			HWItem usedIn = hwItemRepository.findById(hwItemDTO.getUsedIn().getId()).orElse(null);
 			item.setUsedIn(usedIn);

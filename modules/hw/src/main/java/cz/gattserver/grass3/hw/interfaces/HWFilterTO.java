@@ -17,6 +17,7 @@ public class HWFilterTO implements Serializable {
 	private Date purchaseDateFrom;
 	private Date purchaseDateTo;
 	private Collection<String> types;
+	private Boolean publicItem;
 
 	public String getSupervizedFor() {
 		return supervizedFor;
@@ -88,6 +89,14 @@ public class HWFilterTO implements Serializable {
 	public HWFilterTO setTypes(Collection<String> types) {
 		this.types = types;
 		return this;
+	}
+
+	public Boolean getPublicItem() {
+		return publicItem;
+	}
+
+	public void setPublicItem(Boolean publicItem) {
+		this.publicItem = publicItem;
 	}
 
 }

@@ -164,8 +164,10 @@ public class ChordsTab extends Div {
 			showDetail(null);
 		}, grid));
 
-		ChordTO choosenChord = songsFacade.getChordByName(chordName);
-		selectChord(choosenChord);
+		if (chordName != null) {
+			ChordTO choosenChord = songsFacade.getChordByName(chordName);
+			selectChord(choosenChord);
+		}
 	}
 
 	public void selectChord(ChordTO choosenChord) {

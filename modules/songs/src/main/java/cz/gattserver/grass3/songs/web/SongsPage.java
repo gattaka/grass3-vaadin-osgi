@@ -21,6 +21,8 @@ public class SongsPage extends OneColumnPage {
 	private Tab chordsTab;
 
 	private ListTab listTabContent;
+	private SongTab songTabContent;
+	private ChordsTab chordsTabContent;
 
 	private Div pageLayout;
 
@@ -51,7 +53,6 @@ public class SongsPage extends OneColumnPage {
 
 		chordsTab = new Tab();
 		chordsTab.setLabel("Akordy");
-		chordsTab.setEnabled(false);
 		tabSheet.add(chordsTab);
 
 		tabSheet.addSelectedChangeListener(e -> {
@@ -94,13 +95,15 @@ public class SongsPage extends OneColumnPage {
 
 	private void switchSongTab() {
 		pageLayout.removeAll();
-		SongTab songTabContent = new SongTab(this, selectedSongId);
+		if (songTabContent == null)
+			songTabContent = new SongTab(this, selectedSongId);
 		pageLayout.add(songTabContent);
 	}
 
 	private void switchChordsTab() {
 		pageLayout.removeAll();
-		ChordsTab chordsTabContent = new ChordsTab(this, selectedChordId);
+		if (chordsTabContent == null)
+			chordsTabContent = new ChordsTab(this, selectedChordId);
 		pageLayout.add(chordsTabContent);
 	}
 

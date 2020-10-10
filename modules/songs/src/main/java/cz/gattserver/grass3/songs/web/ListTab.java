@@ -108,6 +108,7 @@ public class ListTab extends Div {
 			populate();
 		});
 		add(upload);
+		upload.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));
 
 		ButtonLayout btnLayout = new ButtonLayout();
 		add(btnLayout);

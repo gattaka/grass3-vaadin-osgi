@@ -75,9 +75,6 @@ public class ListParser implements Parser {
 		// protože za listem je mezera ignoruje se případný <br/>
 		if (pluginBag.getToken().equals(Token.EOL))
 			pluginBag.nextToken();
-		// a ještě jeden, protože UL/OL mají margin 
-		if (pluginBag.getToken().equals(Token.EOL))
-			pluginBag.nextToken();
 
 		return new ListElement(listElements, ordered);
 	}

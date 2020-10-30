@@ -46,9 +46,7 @@ public class SourcesParser implements Parser {
 		// zpracovat koncový tag
 		parseEndTag(pluginBag);
 
-		// ignoruje se případný <br/> (2x)
-		if (pluginBag.getToken().equals(Token.EOL))
-			pluginBag.nextToken();
+		// ignoruje se případný <br/>
 		if (pluginBag.getToken().equals(Token.EOL))
 			pluginBag.nextToken();
 

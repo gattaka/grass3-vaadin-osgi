@@ -1,5 +1,6 @@
 .article-content ul, .article-content ol {
 	padding-inline-start: 25px;
+	margin: 0;
 }
 
 .articles-h1 {

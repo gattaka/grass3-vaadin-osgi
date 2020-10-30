@@ -13,6 +13,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.router.PageTitle;
@@ -119,6 +120,9 @@ public class MonitorPage extends OneColumnPage {
 		partLayout.setMargin(false);
 		partLayout.setPadding(false);
 		partLayout.setSpacing(false);
+		Image loadingImg = new Image("img/gattload_mini.gif", "loading...");
+		loadingImg.getStyle().set("margin", "5px");
+		partLayout.add(loadingImg);
 		layout.add(partLayout);
 		return partLayout;
 	}

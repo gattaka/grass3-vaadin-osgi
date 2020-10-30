@@ -21,15 +21,15 @@ public class HWSectionTest extends AbstractContextAwareTest {
 	private SectionService sectionService;
 
 	@Test
-	public void testFMSection() {
+	public void testHWSection() {
 		assertTrue(sectionService instanceof HWSection);
 		assertEquals("HW", sectionService.getSectionCaption());
 		assertTrue(sectionService.getSectionPageFactory() instanceof HWPageFactory);
-		assertFalse(sectionService.isVisibleForRoles(null));
+		assertTrue(sectionService.isVisibleForRoles(null));
 		assertTrue(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(CoreRole.ADMIN))));
-		assertFalse(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(CoreRole.FRIEND))));
-		assertFalse(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(CoreRole.USER))));
-		assertFalse(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(CoreRole.AUTHOR))));
+		assertTrue(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(CoreRole.FRIEND))));
+		assertTrue(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(CoreRole.USER))));
+		assertTrue(sectionService.isVisibleForRoles(new HashSet<>(Arrays.asList(CoreRole.AUTHOR))));
 	}
 
 }

@@ -105,6 +105,16 @@ public class CodeParserTest {
 				+ "<textarea name=\"codemirror_cpp\">code</textarea>" + "</div></div><div id=\"code_koncovka\"></div>",
 				ctx.getOutput());
 	}
+	
+	@Test
+	public void testGOCode() {
+		Element element = new GoCodePlugin().getParser().parse(getParsingProcessorWithText("[GO]code[/GO]\n"));
+		Context ctx = new ContextImpl();
+		element.apply(ctx);
+		assertEquals("<span class=\"lang_description\">Go</span><div class=\"barier\"><div class=\"numberedtext\">"
+				+ "<textarea name=\"codemirror_go\">code</textarea>" + "</div></div><div id=\"code_koncovka\"></div>",
+				ctx.getOutput());
+	}
 
 	@Test
 	public void testCSharpCode() {

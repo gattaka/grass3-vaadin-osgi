@@ -8,7 +8,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,6 +19,7 @@ import cz.gattserver.grass3.articles.interfaces.ArticlePayloadTO;
 import cz.gattserver.grass3.articles.interfaces.ArticleRESTTO;
 import cz.gattserver.grass3.articles.services.ArticleService;
 import cz.gattserver.grass3.exception.UnauthorizedAccessException;
+import cz.gattserver.grass3.interfaces.ContentNodeFilterTO;
 import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.modules.ArticlesContentModule;
@@ -68,9 +68,9 @@ public class ArticlesResource {
 
 	@RequestMapping("/count")
 	public ResponseEntity<Integer> count(@RequestParam(value = "filter", required = false) String filter) {
-		UserInfoTO user = securityService.getCurrentUser();
 		return new ResponseEntity<>(
-				contentNodeService.getCountByNameAndContentReader(filter, ArticlesContentModule.ID, user.getId()),
+				contentNodeService.getCountByFilter(
+						new ContentNodeFilterTO().setName(filter).setContentReaderID(ArticlesContentModule.ID)),
 				HttpStatus.OK);
 	}
 
@@ -78,16 +78,16 @@ public class ArticlesResource {
 	public ResponseEntity<List<ContentNodeOverviewTO>> list(@RequestParam(value = "page", required = true) int page,
 			@RequestParam(value = "pageSize", required = true) int pageSize,
 			@RequestParam(value = "filter", required = false) String filter) {
-		UserInfoTO user = securityService.getCurrentUser();
-
-		int count = contentNodeService.getCountByNameAndContentReader(filter, ArticlesContentModule.ID, user.getId());
+		int count = contentNodeService.getCountByFilter(
+				new ContentNodeFilterTO().setName(filter).setContentReaderID(ArticlesContentModule.ID));
 		// startIndex nesmí být víc než je počet, endIndex může být s tím si JPA
 		// poradí a sníží ho
 		if (page * pageSize > count)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-		return new ResponseEntity<>(contentNodeService.getByNameAndContentReader(filter, ArticlesContentModule.ID,
-				user.getId(), PageRequest.of(page, pageSize)), HttpStatus.OK);
+		return new ResponseEntity<>(contentNodeService.getByFilter(
+				new ContentNodeFilterTO().setName(filter).setContentReaderID(ArticlesContentModule.ID), page * pageSize,
+				pageSize), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/article", method = RequestMethod.GET)

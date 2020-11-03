@@ -4,8 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.data.domain.PageRequest;
-
+import cz.gattserver.grass3.interfaces.ContentNodeFilterTO;
 import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
@@ -203,78 +202,23 @@ public interface ContentNodeService {
 	/**
 	 * Získá počet obsahů dle kategorie (pro LazyQueryContainer)
 	 * 
-	 * @param nodeId
-	 *            id kategorie, dle kterého bude výběr omezen
+	 * @param filter
+	 *            filter TO
 	 * @return počet obsahů dle kategorie
 	 */
-	int getCountByNode(long nodeId);
+	int getCountByFilter(ContentNodeFilterTO filter);
 
 	/**
 	 * Získá stránku obsahů dle kategorie (pro LazyQueryContainer)
 	 * 
-	 * @param nodeId
-	 *            id kategorie, ve které budou obsahy hledány
+	 * @param filter
+	 *            filter TO
 	 * @param offset
 	 *            offset
 	 * @param limit
 	 *            limit
 	 * @return list nalezených obsahů dle stránkování a omezení
 	 */
-	List<ContentNodeOverviewTO> getByNode(long nodeId, int offset, int limit);
-
-	/**
-	 * Získá počet obsahů dle názvu
-	 * 
-	 * @param name
-	 *            název (vzor s *)
-	 * @param userId
-	 *            id uživatele
-	 * @return počet obsahů
-	 */
-	int getCountByName(String value, Long userId);
-
-	/**
-	 * Získá počet obsahů dle názvu a typu obsahu
-	 * 
-	 * @param name
-	 *            název (vzor s *)
-	 * @param contentReader
-	 *            typ obsahu
-	 * @param userId
-	 *            id uživatele
-	 * @return počet obsahů
-	 */
-	int getCountByNameAndContentReader(String value, String contentReader, Long userId);
-
-	/**
-	 * Získá list obsahů dle názvu
-	 * 
-	 * @param name
-	 *            název (vzor s *)
-	 * @param userId
-	 *            id uživatele
-	 * @param offset
-	 *            stránkování
-	 * @param limit
-	 *            stránkování
-	 * @return list nalezených obsahů
-	 */
-	List<ContentNodeOverviewTO> getByName(String value, Long userId, int offset, int limit);
-
-	/**
-	 * Získá list obsahů dle názvu
-	 * 
-	 * @param name
-	 *            název (vzor s *)
-	 * @param contentReader
-	 *            typ obsahu
-	 * @param userId
-	 *            id uživatele
-	 * @param pageRequest
-	 *            stránkování
-	 * @return list nalezených obsahů
-	 */
-	List<ContentNodeOverviewTO> getByNameAndContentReader(String name, String contentReader, Long userId,
-			PageRequest pageRequest);
+	List<ContentNodeOverviewTO> getByFilter(ContentNodeFilterTO filter, int offset, int limit);
 
 }

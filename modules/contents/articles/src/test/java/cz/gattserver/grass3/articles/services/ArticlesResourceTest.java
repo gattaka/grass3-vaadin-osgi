@@ -157,6 +157,13 @@ public class ArticlesResourceTest extends AbstractDBUnitTest {
 		Set<CoreRole> roles = new HashSet<>();
 		roles.add(CoreRole.ADMIN);
 		userService.changeUserRoles(userId2, roles);
+		
+		url = UriComponentsBuilder.fromUriString("/core/logout").build().encode().toUri();
+		mockMvc.perform(post(url)).andExpect(status().isOk());
+		
+		url = UriComponentsBuilder.fromUriString("/core/login").build().encode().toUri();
+		mockMvc.perform(post(url).param("login", MockUtils.MOCK_USER_NAME + 2).param("password",
+				MockUtils.MOCK_USER_PASSWORD + 2)).andExpect(status().isOk());
 
 		url = UriComponentsBuilder.fromUriString("/articles/count").build().encode().toUri();
 		mockMvc.perform(get(url)).andExpect(status().isOk()).andExpect(content().string("2"));

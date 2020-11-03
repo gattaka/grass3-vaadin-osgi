@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.springframework.data.domain.Pageable;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.BooleanBuilder;
@@ -16,6 +16,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 
+import cz.gattserver.grass3.interfaces.ContentNodeFilterTO;
 import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.QContentNodeOverviewTO;
 import cz.gattserver.grass3.model.domain.ContentNode;
@@ -32,8 +33,9 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	private Predicate createByUserAccessPredicate(Long userId, boolean admin) {
+	private Predicate createBasicNodePredicate(ContentNodeFilterTO filter, Long userId, boolean admin) {
 		QContentNode c = QContentNode.contentNode;
+		QNode n = QNode.node;
 		QUser u = QUser.user;
 
 		BooleanBuilder builder = new BooleanBuilder();
@@ -44,23 +46,15 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 			else
 				builder.and(c.publicated.isTrue());
 		}
+		if (filter.getParentNodeId() != null)
+			builder.and(n.id.eq(filter.getParentNodeId()));
+		if (StringUtils.isNotBlank(filter.getName()))
+			builder.and(
+					c.name.toLowerCase().like(QuerydslUtil.transformSimpleLikeFilter(filter.getName()).toLowerCase()));
+		if (StringUtils.isNotBlank(filter.getContentReaderID()))
+			builder.and(c.contentReaderId.eq(filter.getContentReaderID()));
 
 		return builder.getValue();
-	}
-
-	@Override
-	public QueryResults<ContentNodeOverviewTO> findByUserAccess(Long userId, boolean admin, int offset, int limit,
-			String sortProperty) {
-		JPAQuery<ContentNode> query = new JPAQuery<>(entityManager);
-		QContentNode c = QContentNode.contentNode;
-		QNode n = QNode.node;
-		QUser u = QUser.user;
-		query.offset((long) offset).limit((long) limit).orderBy(QuerydslUtil.transformOrder(false, sortProperty));
-		return query.from(c).innerJoin(c.parent, n).innerJoin(c.author, u)
-				.where(createByUserAccessPredicate(userId, admin))
-				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,
-						c.lastModificationDate, c.publicated, u.name, u.id, c.id))
-				.fetchResults();
 	}
 
 	@Override
@@ -73,7 +67,7 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 		QContentTag t = QContentTag.contentTag;
 		query.offset(offset).limit(limit);
 		return query.from(t).innerJoin(t.contentNodes, c).innerJoin(c.parent, n).innerJoin(c.author, u)
-				.where(createByUserAccessPredicate(userId, admin), t.id.eq(tagId))
+				.where(createBasicNodePredicate(new ContentNodeFilterTO(), userId, admin), t.id.eq(tagId))
 				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,
 						c.lastModificationDate, c.publicated, u.name, u.id, c.id))
 				.orderBy(new OrderSpecifier<LocalDateTime>(Order.DESC, c.creationDate)).fetchResults();
@@ -87,58 +81,31 @@ public class ContentNodeRepositoryCustomImpl implements ContentNodeRepositoryCus
 		QNode n = QNode.node;
 		QUser u = QUser.user;
 		QUser uf = new QUser("favOwnerUser");
-		query.offset(offset).limit(limit);
+		QuerydslUtil.applyPagination(offset, limit, query);
 		return query.from(uf).innerJoin(uf.favourites, c).innerJoin(c.parent, n).innerJoin(c.author, u)
-				.where(createByUserAccessPredicate(userId, admin), uf.id.eq(favouritesUserId))
+				.where(createBasicNodePredicate(new ContentNodeFilterTO(), userId, admin), uf.id.eq(favouritesUserId))
 				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,
 						c.lastModificationDate, c.publicated, u.name, u.id, c.id))
 				.orderBy(new OrderSpecifier<LocalDateTime>(Order.DESC, c.creationDate)).fetchResults();
 	}
 
 	@Override
-	public QueryResults<ContentNodeOverviewTO> findByNodeAndUserAccess(Long nodeId, Long userId, boolean admin,
-			int offset, int limit) {
+	public QueryResults<ContentNodeOverviewTO> findByFilterAndUserAccess(ContentNodeFilterTO filter, Long userId,
+			boolean admin, int offset, int limit, String sortProperty) {
 		JPAQuery<ContentNode> query = new JPAQuery<>(entityManager);
 		QContentNode c = QContentNode.contentNode;
 		QNode n = QNode.node;
 		QUser u = QUser.user;
-		query.offset(offset).limit(limit);
-		return query.from(c).innerJoin(c.parent, n).innerJoin(c.author, u)
-				.where(createByUserAccessPredicate(userId, admin), n.id.eq(nodeId))
-				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,
-						c.lastModificationDate, c.publicated, u.name, u.id, c.id))
-				.orderBy(new OrderSpecifier<LocalDateTime>(Order.DESC, c.creationDate)).fetchResults();
-	}
-
-	@Override
-	public QueryResults<ContentNodeOverviewTO> findByNameAndUserAccess(String name, Long userId, boolean admin,
-			int offset, int limit) {
-		JPAQuery<ContentNode> query = new JPAQuery<>(entityManager);
-		QContentNode c = QContentNode.contentNode;
-		QNode n = QNode.node;
-		QUser u = QUser.user;
-		query.offset(offset).limit(limit);
-		return query.from(c).innerJoin(c.parent, n).innerJoin(c.author, u)
-				.where(createByUserAccessPredicate(userId, admin), c.name.toLowerCase().like(name.toLowerCase()))
-				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,
-						c.lastModificationDate, c.publicated, u.name, u.id, c.id))
-				.orderBy(new OrderSpecifier<LocalDateTime>(Order.DESC, c.creationDate)).fetchResults();
-	}
-
-	@Override
-	public QueryResults<ContentNodeOverviewTO> findByNameAndContentReaderAndUserAccess(String name,
-			String contentReader, Long userId, boolean admin, Pageable pageable) {
-		JPAQuery<ContentNode> query = new JPAQuery<>(entityManager);
-		QContentNode c = QContentNode.contentNode;
-		QNode n = QNode.node;
-		QUser u = QUser.user;
-		QuerydslUtil.applyPagination(pageable, query);
-		return query.from(c).innerJoin(c.parent, n).innerJoin(c.author, u)
-				.where(createByUserAccessPredicate(userId, admin), c.name.toLowerCase().like(name.toLowerCase()),
-						c.contentReaderId.eq(contentReader))
-				.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id, c.creationDate,
-						c.lastModificationDate, c.publicated, u.name, u.id, c.id))
-				.orderBy(new OrderSpecifier<LocalDateTime>(Order.DESC, c.creationDate)).fetchResults();
+		QuerydslUtil.applyPagination(offset, limit, query);
+		query = query.from(c).innerJoin(c.parent, n).innerJoin(c.author, u)
+				.where(createBasicNodePredicate(filter, userId, admin));
+		if (sortProperty != null) {
+			query = query.orderBy(QuerydslUtil.transformOrder(false, sortProperty));
+		} else {
+			query = query.orderBy(new OrderSpecifier<LocalDateTime>(Order.DESC, c.creationDate));
+		}
+		return query.select(new QContentNodeOverviewTO(c.contentReaderId, c.contentId, c.name, n.name, n.id,
+				c.creationDate, c.lastModificationDate, c.publicated, u.name, u.id, c.id)).fetchResults();
 	}
 
 }

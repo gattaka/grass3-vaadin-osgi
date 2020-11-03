@@ -48,13 +48,31 @@ public final class QuerydslUtil {
 	 * @return {@link PageRequest} objekt
 	 */
 	public static <T> JPAQuery<T> applyPagination(Pageable pageable, JPAQuery<T> query) {
-		if (pageable == null) {
+		if (pageable == null)
 			return query;
-		}
 		query.offset(pageable.getOffset());
 		query.limit(pageable.getPageSize());
 		if (pageable.getSort() != null)
 			pageable.getSort().forEach(s -> query.orderBy(transformOrder(s.getDirection(), s.getProperty())));
+		return query;
+	}
+
+	/**
+	 * Aplikuje vlastnosti stránkování
+	 * 
+	 * @param <T>
+	 *            typ {@link JPAQuery}
+	 * @param offset
+	 *            offset
+	 * @param limit
+	 *            limit
+	 * @param query
+	 *            pro aplikaci stránkování
+	 * @return {@link PageRequest} objekt
+	 */
+	public static <T> JPAQuery<T> applyPagination(int offset, int limit, JPAQuery<T> query) {
+		query.offset(offset);
+		query.limit(limit);
 		return query;
 	}
 

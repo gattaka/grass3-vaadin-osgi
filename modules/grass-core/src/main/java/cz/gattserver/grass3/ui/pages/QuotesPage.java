@@ -2,8 +2,6 @@ package cz.gattserver.grass3.ui.pages;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;

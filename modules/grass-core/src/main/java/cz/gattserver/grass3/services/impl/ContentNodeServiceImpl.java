@@ -6,12 +6,12 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.QueryResults;
 
+import cz.gattserver.grass3.interfaces.ContentNodeFilterTO;
 import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
@@ -19,7 +19,6 @@ import cz.gattserver.grass3.model.domain.ContentNode;
 import cz.gattserver.grass3.model.domain.Node;
 import cz.gattserver.grass3.model.domain.User;
 import cz.gattserver.grass3.model.repositories.ContentNodeRepository;
-import cz.gattserver.grass3.model.repositories.UserRepository;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.ContentTagService;
 import cz.gattserver.grass3.services.CoreMapperService;
@@ -41,9 +40,6 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 
 	@Autowired
 	private UserService userService;
-
-	@Autowired
-	private UserRepository userRepository;
 
 	@Autowired
 	private ContentNodeRepository contentNodeRepository;
@@ -146,12 +142,13 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	}
 
 	/**
-	 * Všechny obsahy
+	 * Nedávné obsahy
 	 */
 
 	private QueryResults<ContentNodeOverviewTO> innerByUserAccess(int offset, int limit, String sortProperty) {
 		UserInfoTO user = securityService.getCurrentUser();
-		return contentNodeRepository.findByUserAccess(user.getId(), user.isAdmin(), offset, limit, sortProperty);
+		return contentNodeRepository.findByFilterAndUserAccess(new ContentNodeFilterTO(), user.getId(), user.isAdmin(),
+				offset, limit, sortProperty);
 	}
 
 	@Override
@@ -210,63 +207,24 @@ public class ContentNodeServiceImpl implements ContentNodeService {
 	}
 
 	/**
-	 * Dle kategorie
+	 * Dle filtru
 	 */
 
-	private QueryResults<ContentNodeOverviewTO> innerByNodeAndUserAccess(long nodeId, int offset, int limit) {
+	private QueryResults<ContentNodeOverviewTO> innerByFilterAndUserAccess(ContentNodeFilterTO filter, int offset,
+			int limit) {
 		UserInfoTO user = securityService.getCurrentUser();
-		return contentNodeRepository.findByNodeAndUserAccess(nodeId, user.getId(), user.isAdmin(), offset, limit);
+		return contentNodeRepository.findByFilterAndUserAccess(filter, user.getId(), user.isAdmin(), offset, limit,
+				null);
 	}
 
 	@Override
-	public int getCountByNode(long nodeId) {
-		return (int) innerByNodeAndUserAccess(nodeId, 1, 1).getTotal();
+	public int getCountByFilter(ContentNodeFilterTO filter) {
+		return (int) innerByFilterAndUserAccess(filter, 1, 1).getTotal();
 	}
 
 	@Override
-	public List<ContentNodeOverviewTO> getByNode(long nodeId, int offset, int limit) {
-		return innerByNodeAndUserAccess(nodeId, offset, limit).getResults();
-	}
-
-	/**
-	 * Dle názvu
-	 */
-
-	private QueryResults<ContentNodeOverviewTO> innerByNameAndUserAccess(String name, Long userId, boolean isAdmin,
-			int offset, int limit) {
-		name = name == null ? "%" : "%" + name.replace('*', '%') + "%";
-		return contentNodeRepository.findByNameAndUserAccess(name, userId, isAdmin, offset, limit);
-	}
-
-	@Override
-	public int getCountByName(String name, Long userId) {
-		boolean isAdmin = userId == null ? false : userRepository.findById(userId).get().isAdmin();
-		return (int) innerByNameAndUserAccess(name, userId, isAdmin, 1, 1).getTotal();
-	}
-
-	@Override
-	public int getCountByNameAndContentReader(String name, String contentReader, Long userId) {
-		boolean isAdmin = userId == null ? false : userRepository.findById(userId).get().isAdmin();
-		name = name == null ? "%" : "%" + name.replace('*', '%') + "%";
-		return (int) contentNodeRepository
-				.findByNameAndContentReaderAndUserAccess(name, contentReader, userId, isAdmin, PageRequest.of(1, 1))
-				.getTotal();
-	}
-
-	@Override
-	public List<ContentNodeOverviewTO> getByName(String name, Long userId, int offset, int limit) {
-		boolean isAdmin = userId == null ? false : userRepository.findById(userId).get().isAdmin();
-		return innerByNameAndUserAccess(name, userId, isAdmin, offset, limit).getResults();
-	}
-
-	@Override
-	public List<ContentNodeOverviewTO> getByNameAndContentReader(String name, String contentReader, Long userId,
-			PageRequest pageRequest) {
-		boolean isAdmin = userId == null ? false : userRepository.findById(userId).get().isAdmin();
-		name = name == null ? "%" : "%" + name.replace('*', '%') + "%";
-		return contentNodeRepository
-				.findByNameAndContentReaderAndUserAccess(name, contentReader, userId, isAdmin, pageRequest)
-				.getResults();
+	public List<ContentNodeOverviewTO> getByFilter(ContentNodeFilterTO filter, int offset, int limit) {
+		return innerByFilterAndUserAccess(filter, offset, limit).getResults();
 	}
 
 }

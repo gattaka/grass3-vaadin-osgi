@@ -12,12 +12,14 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 
 import cz.gattserver.grass3.exception.GrassPageException;
+import cz.gattserver.grass3.interfaces.ContentNodeFilterTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
 import cz.gattserver.grass3.interfaces.NodeTO;
 import cz.gattserver.grass3.services.ContentNodeService;
@@ -43,9 +45,11 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String>, 
 	@Autowired
 	private ContentNodeService contentNodeFacade;
 
+	private TextField searchField;
+
 	// Přehled podkategorií
 	private NodesGrid subNodesTable;
-	
+
 	private NodeTO node;
 
 	private String categoryParameter;
@@ -168,15 +172,29 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String>, 
 		subNodesTable.populate(nodes);
 	}
 
+	private ContentNodeFilterTO createFilterTO() {
+		return new ContentNodeFilterTO().setParentNodeId(node.getId()).setName(searchField.getValue());
+	}
+
 	private void createContentsPart(Div layout, NodeTO node) {
 		layout.add(new H2("Obsahy"));
 
-		ContentsLazyGrid contentsTable = new ContentsLazyGrid();
-		contentsTable.populate(getUser().getId() != null, this,
-				q -> contentNodeFacade.getByNode(node.getId(), q.getOffset(), q.getLimit()).stream(),
-				q -> contentNodeFacade.getCountByNode(node.getId()));
-		layout.add(contentsTable);
-		contentsTable.setWidthFull();
+		searchField = new TextField();
+		searchField.setPlaceholder("Název obsahu");
+		searchField.setWidthFull();
+		searchField.setValueChangeMode(ValueChangeMode.EAGER);
+		layout.add(searchField);
+
+		ContentsLazyGrid searchResultsTable = new ContentsLazyGrid();
+		searchResultsTable.setWidthFull();
+		searchResultsTable.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		layout.add(searchResultsTable);
+
+		searchResultsTable.populate(getUser().getId() != null, NodePage.this,
+				q -> contentNodeFacade.getByFilter(createFilterTO(), q.getOffset(), q.getLimit()).stream(),
+				q -> contentNodeFacade.getCountByFilter(createFilterTO()));
+
+		searchField.addValueChangeListener(e -> searchResultsTable.getDataProvider().refreshAll());
 
 		// Vytvořit obsahy
 		if (coreACL.canCreateContent(getUser()))

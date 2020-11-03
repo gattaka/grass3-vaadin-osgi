@@ -21,11 +21,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 
+import cz.gattserver.grass3.interfaces.ContentNodeFilterTO;
 import cz.gattserver.grass3.interfaces.ContentTagsCloudItemTO;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.ContentTagService;
-import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.ContentsLazyGrid;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
@@ -62,11 +62,10 @@ public class HomePage extends OneColumnPage {
 	@Autowired
 	private ContentNodeService contentNodeFacade;
 
-	@Autowired
-	private SecurityService securityService;
-
 	@Resource(name = "tagPageFactory")
 	private PageFactory tagPageFactory;
+
+	private TextField searchField;
 
 	public HomePage() {
 		init();
@@ -111,10 +110,14 @@ public class HomePage extends OneColumnPage {
 				+ "').$server.tagCloundCallback() }, 10);");
 	}
 
+	private ContentNodeFilterTO createFilterTO() {
+		return new ContentNodeFilterTO().setName(searchField.getValue());
+	}
+
 	private void createSearchMenu(Div layout) {
 		layout.add(new H2("Vyhledávání"));
 
-		TextField searchField = new TextField();
+		searchField = new TextField();
 		searchField.setPlaceholder("Název obsahu");
 		searchField.setWidthFull();
 		layout.add(searchField);
@@ -125,19 +128,16 @@ public class HomePage extends OneColumnPage {
 		searchResultsTable.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		layout.add(searchResultsTable);
 
-		UserInfoTO user = securityService.getCurrentUser();
-
 		searchField.addValueChangeListener(e -> {
-			String value = e.getValue();
+			String value = searchField.getValue();
 			if (StringUtils.isNotBlank(value) && !searchResultsTable.isVisible()) {
 				searchResultsTable.setVisible(true);
 				// zde musí být searchField.getValue() namísto pouze value,
 				// protože jde o closure a bude se vyhodnocovat opakovaně
 				// později s různými hodnotami obsahu pole
 				searchResultsTable.populate(getUser().getId() != null, HomePage.this,
-						q -> contentNodeFacade
-								.getByName(searchField.getValue(), user.getId(), q.getOffset(), q.getLimit()).stream(),
-						q -> contentNodeFacade.getCountByName(searchField.getValue(), user.getId()));
+						q -> contentNodeFacade.getByFilter(createFilterTO(), q.getOffset(), q.getLimit()).stream(),
+						q -> contentNodeFacade.getCountByFilter(createFilterTO()));
 				searchResultsTable.setHeight("200px");
 			}
 			searchResultsTable.getDataProvider().refreshAll();

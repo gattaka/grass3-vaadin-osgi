@@ -28,7 +28,7 @@ public class ContentNodeOverviewTO {
 	private String name;
 
 	/**
-	 * nadřazený uzel (kategorie ve které obsah je)
+	 * Nadřazený uzel (kategorie ve které obsah je)
 	 */
 	private String parentNodeName;
 	private Long parentNodeId;

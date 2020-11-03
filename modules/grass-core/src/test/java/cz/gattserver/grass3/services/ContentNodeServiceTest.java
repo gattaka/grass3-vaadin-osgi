@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
+import cz.gattserver.grass3.interfaces.ContentNodeFilterTO;
 import cz.gattserver.grass3.interfaces.ContentNodeOverviewTO;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.ContentTagOverviewTO;
@@ -133,13 +134,13 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 		Long contentNode1 = coreMockService.createMockContentNode(30L, null, nodeId1, userId1, 1);
 		coreMockService.createMockContentNode(32L, null, nodeId2, userId1, 1);
 
-		assertEquals(1, contentNodeService.getCountByNode(nodeId1));
-		assertEquals(1, contentNodeService.getCountByNode(nodeId2));
+		assertEquals(1, contentNodeService.getCountByFilter(new ContentNodeFilterTO().setParentNodeId(nodeId1)));
+		assertEquals(1, contentNodeService.getCountByFilter(new ContentNodeFilterTO().setParentNodeId(nodeId2)));
 
 		contentNodeService.moveContent(nodeId2, contentNode1);
 
-		assertEquals(0, contentNodeService.getCountByNode(nodeId1));
-		assertEquals(2, contentNodeService.getCountByNode(nodeId2));
+		assertEquals(0, contentNodeService.getCountByFilter(new ContentNodeFilterTO().setParentNodeId(nodeId1)));
+		assertEquals(2, contentNodeService.getCountByFilter(new ContentNodeFilterTO().setParentNodeId(nodeId2)));
 	}
 
 	@Test
@@ -275,10 +276,11 @@ public class ContentNodeServiceTest extends AbstractDBUnitTest {
 		Long contentNode2 = coreMockService.createMockContentNode(30L, tags, nodeId2, userId1, 2);
 		Long contentNode3 = coreMockService.createMockContentNode(25L, tags, nodeId2, userId2, 3);
 
-		assertEquals(1, contentNodeService.getCountByNode(nodeId1));
-		assertEquals(2, contentNodeService.getCountByNode(nodeId2));
+		assertEquals(1, contentNodeService.getCountByFilter(new ContentNodeFilterTO().setParentNodeId(nodeId1)));
+		assertEquals(2, contentNodeService.getCountByFilter(new ContentNodeFilterTO().setParentNodeId(nodeId2)));
 
-		List<ContentNodeOverviewTO> contentNodesByNode = contentNodeService.getByNode(nodeId2, 0, 10);
+		List<ContentNodeOverviewTO> contentNodesByNode = contentNodeService
+				.getByFilter(new ContentNodeFilterTO().setParentNodeId(nodeId2), 0, 10);
 		assertEquals(2, contentNodesByNode.size());
 
 		ContentNodeOverviewTO contentNodeByNode = contentNodesByNode.get(0);

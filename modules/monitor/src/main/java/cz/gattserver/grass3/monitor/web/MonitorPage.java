@@ -453,8 +453,8 @@ public class MonitorPage extends OneColumnPage {
 	private void populateMonitor() {
 		layout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 
-		// Server services
-		serversLayout = preparePart("Server services");
+		// Servers
+		serversLayout = preparePart("Servers");
 
 		// System
 		preparePartHeader("System");

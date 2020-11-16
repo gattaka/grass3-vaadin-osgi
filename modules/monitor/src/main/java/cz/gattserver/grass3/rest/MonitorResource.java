@@ -18,7 +18,8 @@ import cz.gattserver.grass3.monitor.processor.item.JVMPIDMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SMARTPartItemTO;
-import cz.gattserver.grass3.monitor.processor.item.ServerServicePartItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServersPartItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServicesPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
@@ -42,12 +43,20 @@ public class MonitorResource {
 		return true;
 	}
 
-	@RequestMapping("/services-status")
-	public ResponseEntity<ServerServicePartItemTO> getServerServicesStatus() {
+	@RequestMapping("/services")
+	public ResponseEntity<ServicesPartItemTO> getServicesStatus() {
 		UserInfoTO user = securityService.getCurrentUser();
 		if (user.getId() == null)
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-		return new ResponseEntity<>(monitorFacade.getServerServicesStatus(), HttpStatus.OK);
+		return new ResponseEntity<>(monitorFacade.getServicesStatus(), HttpStatus.OK);
+	}
+
+	@RequestMapping("/servers")
+	public ResponseEntity<ServersPartItemTO> getServersStatus() {
+		UserInfoTO user = securityService.getCurrentUser();
+		if (user.getId() == null)
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		return new ResponseEntity<>(monitorFacade.getServersStatus(), HttpStatus.OK);
 	}
 
 	@RequestMapping("/system-uptime")

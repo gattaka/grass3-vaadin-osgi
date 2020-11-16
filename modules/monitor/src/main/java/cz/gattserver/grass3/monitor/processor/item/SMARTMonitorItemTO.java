@@ -17,7 +17,7 @@ public class SMARTMonitorItemTO extends MonitorItemTO {
 
 	public SMARTMonitorItemTO(JsonObject jsonObject) {
 		super(jsonObject);
-		if (monitorState != MonitorState.SUCCESS)
+		if (monitorState == MonitorState.UNAVAILABLE)
 			return;
 		time = jsonObject.getString("time");
 		message = jsonObject.getString("message");

@@ -12,7 +12,7 @@ import cz.gattserver.grass3.monitor.processor.item.BackupStatusMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.BackupStatusPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.MonitorState;
 import cz.gattserver.grass3.monitor.processor.item.SMARTMonitorItemTO;
-import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServersMonitorItemTO;
 import cz.gattserver.grass3.services.MailService;
 
 @Component
@@ -31,7 +31,7 @@ public class MonitorEmailNotifierImpl extends TimerTask implements MonitorEmailN
 		logger.info("Monitor TimerTask byl spuštěn");
 
 		// Test, zda jsou nahozené systémy serveru
-		for (ServerServiceMonitorItemTO to : monitorFacade.getServerServicesStatus().getItems()) {
+		for (ServersMonitorItemTO to : monitorFacade.getServersStatus().getItems()) {
 			if (!MonitorState.SUCCESS.equals(to.getMonitorState()))
 				mailService.sendToAdmin("GRASS3 Monitor oznámení o změně stavu monitorovaného předmětu",
 						"Server služba " + to.getName() + " není aktivní nebo se nezdařilo zjistit její stav");

@@ -35,8 +35,10 @@ import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.MonitorState;
 import cz.gattserver.grass3.monitor.processor.item.SMARTMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SMARTPartItemTO;
-import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
-import cz.gattserver.grass3.monitor.processor.item.ServerServicePartItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServersMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServersPartItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServicesMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServicesPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
@@ -65,7 +67,7 @@ public class MonitorPage extends OneColumnPage {
 
 	private VerticalLayout layout;
 
-	private VerticalLayout serverServicesLayout;
+	private VerticalLayout serversLayout;
 
 	private VerticalLayout uptimeLayout;
 	private VerticalLayout memoryStatusLayout;
@@ -81,6 +83,8 @@ public class MonitorPage extends OneColumnPage {
 	private VerticalLayout diskLayout;
 
 	private VerticalLayout smartLayout;
+
+	private VerticalLayout servicesLayout;
 
 	public MonitorPage() {
 		if (!SpringContextHelper.getBean(MonitorSection.class).isVisibleForRoles(getUser().getRoles()))
@@ -132,27 +136,25 @@ public class MonitorPage extends OneColumnPage {
 		return preparePartLayout();
 	}
 
-	private void createServerServices(ServerServicePartItemTO data) {
-		serverServicesLayout.removeAll();
-		TableLayout serverServicesTableLayout = prepareTableLayout();
-		serverServicesLayout.add(serverServicesTableLayout);
-		for (ServerServiceMonitorItemTO to : data.getItems()) {
+	private void createServersPart(ServersPartItemTO data) {
+		serversLayout.removeAll();
+		TableLayout serversTableLayout = prepareTableLayout();
+		serversLayout.add(serversTableLayout);
+		for (ServersMonitorItemTO to : data.getItems()) {
 			String content = to.getName();
 			Anchor anchor = new Anchor(to.getAddress(), to.getAddress());
 			anchor.setTarget("_blank");
 			String response = "[status: " + to.getResponseCode() + "]";
 			switch (to.getMonitorState()) {
 			case SUCCESS:
-				serverServicesTableLayout.newRow().add(new SuccessMonitorStateLabel()).add(content).add(anchor)
-						.add(response);
+				serversTableLayout.newRow().add(new SuccessMonitorStateLabel()).add(content).add(anchor).add(response);
 				break;
 			case UNAVAILABLE:
-				serverServicesTableLayout.newRow().add(new WarningMonitorStateLabel()).add(content).add(anchor)
-						.add(response);
+				serversTableLayout.newRow().add(new WarningMonitorStateLabel()).add(content).add(anchor).add(response);
 				break;
 			case ERROR:
 			default:
-				serverServicesTableLayout.newRow().add(new ErrorMonitorStateLabel()).add(content);
+				serversTableLayout.newRow().add(new ErrorMonitorStateLabel()).add(content);
 			}
 		}
 	}
@@ -396,6 +398,49 @@ public class MonitorPage extends OneColumnPage {
 		}
 	}
 
+	private void createServicesPart(ServicesPartItemTO data) {
+		servicesLayout.removeAll();
+		TableLayout servicesTableLayout = prepareTableLayout();
+		servicesLayout.add(servicesTableLayout);
+
+		if (MonitorState.SUCCESS == data.getMonitorState()) {
+			servicesTableLayout.newRow().add(new SuccessMonitorStateLabel());
+			servicesTableLayout.add(data.getStateDetails());
+			return;
+		} else if (MonitorState.UNAVAILABLE == data.getMonitorState()) {
+			servicesTableLayout.newRow().add(new WarningMonitorStateLabel());
+			servicesTableLayout.add(data.getStateDetails());
+			return;
+		}
+
+		servicesTableLayout.add(new MonitorOutputLabel("Stav"));
+		servicesTableLayout.add(new MonitorOutputLabel("Unit"));
+		servicesTableLayout.add(new MonitorOutputLabel("Load"));
+		servicesTableLayout.add(new MonitorOutputLabel("Active"));
+		servicesTableLayout.add(new MonitorOutputLabel("Sub"));
+		servicesTableLayout.add(new MonitorOutputLabel("Description"));
+
+		for (ServicesMonitorItemTO to : data.getItems()) {
+			switch (to.getMonitorState()) {
+			case SUCCESS:
+				// unused
+				break;
+			case ERROR:
+				servicesTableLayout.newRow().add(new ErrorMonitorStateLabel());
+				servicesTableLayout.add(to.getUnit());
+				servicesTableLayout.add(to.getLoad());
+				servicesTableLayout.add(to.getActive());
+				servicesTableLayout.add(to.getSub());
+				servicesTableLayout.add(to.getDescription());
+				break;
+			case UNAVAILABLE:
+				servicesTableLayout.newRow().add(new WarningMonitorStateLabel());
+				servicesTableLayout.add(to.getStateDetails());
+				break;
+			}
+		}
+	}
+
 	@Override
 	protected void createColumnContent(Div layout) {
 		this.layout = new VerticalLayout();
@@ -409,7 +454,7 @@ public class MonitorPage extends OneColumnPage {
 		layout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 
 		// Server services
-		serverServicesLayout = preparePart("Server services");
+		serversLayout = preparePart("Server services");
 
 		// System
 		preparePartHeader("System");
@@ -425,6 +470,9 @@ public class MonitorPage extends OneColumnPage {
 
 		// SMARTD
 		smartLayout = preparePart("SMARTD");
+
+		// Services
+		servicesLayout = preparePart("Services");
 
 		// JVM Overview
 		preparePartHeader("JVM Overview");
@@ -451,8 +499,8 @@ public class MonitorPage extends OneColumnPage {
 					createSystemMemoryStatusPart(new SystemMemoryMonitorItemTO(jsonObject));
 				} else if (SystemSwapMonitorItemTO.class.getName().equals(type)) {
 					createSystemSwapStatusPart(new SystemSwapMonitorItemTO(jsonObject));
-				} else if (ServerServicePartItemTO.class.getName().equals(type)) {
-					createServerServices(new ServerServicePartItemTO(jsonObject));
+				} else if (ServersPartItemTO.class.getName().equals(type)) {
+					createServersPart(new ServersPartItemTO(jsonObject));
 				} else if (BackupStatusPartItemTO.class.getName().equals(type)) {
 					createBackupStatusPart(new BackupStatusPartItemTO(jsonObject));
 				} else if (JVMMemoryMonitorItemTO.class.getName().equals(type)) {
@@ -467,6 +515,8 @@ public class MonitorPage extends OneColumnPage {
 					createDisksPart(new DiskStatusPartItemTO(jsonObject));
 				} else if (SMARTPartItemTO.class.getName().equals(type)) {
 					createSMARTPart(new SMARTPartItemTO(jsonObject));
+				} else if (ServicesPartItemTO.class.getName().equals(type)) {
+					createServicesPart(new ServicesPartItemTO(jsonObject));
 				}
 			}
 		};
@@ -477,7 +527,8 @@ public class MonitorPage extends OneColumnPage {
 		String url = UIUtils.getContextPath() + "/ws/system-monitor";
 
 		Map<String, Integer> partsAndIntervals = new HashMap<>();
-		partsAndIntervals.put("services-status", 10000);
+		partsAndIntervals.put("services", 10000);
+		partsAndIntervals.put("servers", 10000);
 		partsAndIntervals.put("system-uptime", 5000);
 		partsAndIntervals.put("system-memory-status", 2000);
 		partsAndIntervals.put("system-swap-status", 2000);

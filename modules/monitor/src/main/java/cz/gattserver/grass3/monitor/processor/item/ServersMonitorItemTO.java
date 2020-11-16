@@ -2,20 +2,20 @@ package cz.gattserver.grass3.monitor.processor.item;
 
 import elemental.json.JsonObject;
 
-public class ServerServiceMonitorItemTO extends MonitorItemTO {
+public class ServersMonitorItemTO extends MonitorItemTO {
 
 	private String name;
 	private String address;
 	private int responseCode;
 
-	public ServerServiceMonitorItemTO(JsonObject jsonObject) {
+	public ServersMonitorItemTO(JsonObject jsonObject) {
 		super(jsonObject);
 		name = jsonObject.getString("name");
 		address = jsonObject.getString("address");
 		responseCode = (int) jsonObject.getNumber("responseCode");
 	}
 
-	public ServerServiceMonitorItemTO(String name, String address) {
+	public ServersMonitorItemTO(String name, String address) {
 		this.name = name;
 		this.address = address;
 	}

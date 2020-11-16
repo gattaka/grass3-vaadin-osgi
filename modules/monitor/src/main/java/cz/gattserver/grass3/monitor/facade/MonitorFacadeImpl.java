@@ -37,8 +37,10 @@ import cz.gattserver.grass3.monitor.processor.item.BackupStatusPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.MonitorState;
 import cz.gattserver.grass3.monitor.processor.item.SMARTMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SMARTPartItemTO;
-import cz.gattserver.grass3.monitor.processor.item.ServerServiceMonitorItemTO;
-import cz.gattserver.grass3.monitor.processor.item.ServerServicePartItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServersMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServersPartItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServicesMonitorItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServicesPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
@@ -321,36 +323,34 @@ public class MonitorFacadeImpl implements MonitorFacade {
 	}
 
 	@Override
-	public ServerServicePartItemTO getServerServicesStatus() {
-		ServerServicePartItemTO partItemTO = new ServerServicePartItemTO();
+	public ServersPartItemTO getServersStatus() {
+		ServersPartItemTO partItemTO = new ServersPartItemTO();
 
-		ServerServiceMonitorItemTO syncthingTO = new ServerServiceMonitorItemTO("Syncthing",
-				"http://gattserver.cz:8127");
+		ServersMonitorItemTO syncthingTO = new ServersMonitorItemTO("Syncthing", "http://gattserver.cz:8127");
 		testResponseCode(syncthingTO, true);
 		partItemTO.getItems().add(syncthingTO);
 
-		ServerServiceMonitorItemTO nexusTO = new ServerServiceMonitorItemTO("Sonatype Nexus",
-				"http://gattserver.cz:8081");
+		ServersMonitorItemTO nexusTO = new ServersMonitorItemTO("Sonatype Nexus", "http://gattserver.cz:8081");
 		testResponseCode(nexusTO);
 		partItemTO.getItems().add(nexusTO);
 
-		ServerServiceMonitorItemTO nexusSecureTO = new ServerServiceMonitorItemTO("Sonatype Nexus HTTPS",
+		ServersMonitorItemTO nexusSecureTO = new ServersMonitorItemTO("Sonatype Nexus HTTPS",
 				"https://www.gattserver.cz:8843");
 		testResponseCode(nexusSecureTO);
 		partItemTO.getItems().add(nexusSecureTO);
 
-		ServerServiceMonitorItemTO sonarTO = new ServerServiceMonitorItemTO("SonarQube", "http://gattserver.cz:9000");
+		ServersMonitorItemTO sonarTO = new ServersMonitorItemTO("SonarQube", "http://gattserver.cz:9000");
 		testResponseCode(sonarTO);
 		partItemTO.getItems().add(sonarTO);
 
 		return partItemTO;
 	}
 
-	private void testResponseCode(ServerServiceMonitorItemTO itemTO) {
+	private void testResponseCode(ServersMonitorItemTO itemTO) {
 		testResponseCode(itemTO, false);
 	}
 
-	private void testResponseCode(ServerServiceMonitorItemTO itemTO, boolean anyCode) {
+	private void testResponseCode(ServersMonitorItemTO itemTO, boolean anyCode) {
 		try {
 			URL url = new URL(itemTO.getAddress());
 			URLConnection uc = url.openConnection();
@@ -434,6 +434,64 @@ public class MonitorFacadeImpl implements MonitorFacade {
 	private SMARTPartItemTO createSMARTErrorOutput(String reason) {
 		SMARTPartItemTO partItemTO = new SMARTPartItemTO();
 		SMARTMonitorItemTO item = new SMARTMonitorItemTO();
+		item.setStateDetails(reason);
+		item.setMonitorState(MonitorState.UNAVAILABLE);
+		partItemTO.getItems().add(item);
+		return partItemTO;
+	}
+
+	@Override
+	public ServicesPartItemTO getServicesStatus() {
+		// String test = " UNIT LOAD ACTIVE SUB DESCRIPTION \n"
+		// + "● lich.service not-found failed failed lich.service\n"
+		// + "LOAD = Reflects whether the unit definition was properly
+		// loaded.\n"
+		// + "ACTIVE = The high-level unit activation state, i.e. generalization
+		// of SUB.\n"
+		// + "SUB = The low-level unit activation state, values depend on unit
+		// type.\n" + "\n"
+		// + "1 loaded units listed.";
+
+		// String test = " UNIT LOAD ACTIVE SUB DESCRIPTION\n"
+		// + "0 loaded units listed.";
+
+		ServicesPartItemTO partItemTO = new ServicesPartItemTO();
+		partItemTO.setMonitorState(MonitorState.ERROR);
+		ConsoleOutputTO out = runScript("getServicesStatus");
+		// ConsoleOutputTO out = new ConsoleOutputTO(test, true);
+		if (out.isSuccess()) {
+			try {
+				String[] lines = out.getOutput().split("\n");
+				if (lines.length < 2)
+					return createServicesErrorOutput("Nezdařilo se získat přehled služeb");
+				String lastLine = lines[lines.length - 1];
+				int units = Integer.valueOf(lastLine.split(" ")[0]);
+				for (int i = 0; i < units; i++) {
+					String unitLine = lines[1 + i];
+					String[] columns = unitLine.split(" ");
+					if (columns.length < 6)
+						return createServicesErrorOutput("Nezdařilo se zpracovat přehled služeb");
+					ServicesMonitorItemTO item = new ServicesMonitorItemTO(columns[1], columns[2], columns[3],
+							columns[4], columns[5]);
+					item.setMonitorState(MonitorState.ERROR);
+					partItemTO.getItems().add(item);
+				}
+				if (partItemTO.getItems().isEmpty()) {
+					partItemTO.setMonitorState(MonitorState.SUCCESS);
+					partItemTO.setStateDetails("Vše OK");
+				}
+			} catch (Exception e) {
+				return createServicesErrorOutput("Nezdařilo se zpracovat JSON výstup smartd");
+			}
+		} else {
+			return createServicesErrorOutput("Nezdařilo se získat přehled smartd");
+		}
+		return partItemTO;
+	}
+
+	private ServicesPartItemTO createServicesErrorOutput(String reason) {
+		ServicesPartItemTO partItemTO = new ServicesPartItemTO();
+		ServicesMonitorItemTO item = new ServicesMonitorItemTO();
 		item.setStateDetails(reason);
 		item.setMonitorState(MonitorState.UNAVAILABLE);
 		partItemTO.getItems().add(item);

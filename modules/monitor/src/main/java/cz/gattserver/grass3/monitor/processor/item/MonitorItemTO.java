@@ -34,16 +34,18 @@ public abstract class MonitorItemTO {
 		return monitorState;
 	}
 
-	public void setMonitorState(MonitorState monitorState) {
+	public MonitorItemTO setMonitorState(MonitorState monitorState) {
 		this.monitorState = monitorState;
+		return this;
 	}
 
 	public String getStateDetails() {
 		return stateDetails;
 	}
 
-	public void setStateDetails(String stateDetails) {
+	public MonitorItemTO setStateDetails(String stateDetails) {
 		this.stateDetails = stateDetails;
+		return this;
 	}
 
 	public String getType() {

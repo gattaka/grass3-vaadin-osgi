@@ -8,7 +8,8 @@ import cz.gattserver.grass3.monitor.processor.item.JVMThreadsMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMUptimeMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.BackupStatusPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SMARTPartItemTO;
-import cz.gattserver.grass3.monitor.processor.item.ServerServicePartItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServersPartItemTO;
+import cz.gattserver.grass3.monitor.processor.item.ServicesPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
@@ -29,7 +30,7 @@ public interface MonitorFacade {
 
 	DiskStatusPartItemTO getDiskStatus();
 
-	ServerServicePartItemTO getServerServicesStatus();
+	ServersPartItemTO getServersStatus();
 
 	JVMUptimeMonitorItemTO getJVMUptime();
 
@@ -41,4 +42,5 @@ public interface MonitorFacade {
 
 	SMARTPartItemTO getSMARTInfo();
 
+	ServicesPartItemTO getServicesStatus();
 }

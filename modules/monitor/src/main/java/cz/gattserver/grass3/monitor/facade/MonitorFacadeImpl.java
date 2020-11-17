@@ -413,14 +413,13 @@ public class MonitorFacadeImpl implements MonitorFacade {
 					case 6: // "info" (6)
 					case 7: // "debug" (7)
 					default:
-						to.setMonitorState(MonitorState.SUCCESS);
+						// unused
 						break;
 					}
 				}
 				if (partItemTO.getItems().isEmpty()) {
-					SMARTMonitorItemTO to = new SMARTMonitorItemTO("-", "Vše OK");
-					to.setMonitorState(MonitorState.SUCCESS);
-					partItemTO.getItems().add(to);
+					partItemTO.setMonitorState(MonitorState.SUCCESS);
+					partItemTO.setStateDetails("Vše OK");
 				}
 			} catch (Exception e) {
 				return createSMARTErrorOutput("Nezdařilo se zpracovat JSON výstup smartd");
@@ -433,32 +432,16 @@ public class MonitorFacadeImpl implements MonitorFacade {
 
 	private SMARTPartItemTO createSMARTErrorOutput(String reason) {
 		SMARTPartItemTO partItemTO = new SMARTPartItemTO();
-		SMARTMonitorItemTO item = new SMARTMonitorItemTO();
-		item.setStateDetails(reason);
-		item.setMonitorState(MonitorState.UNAVAILABLE);
-		partItemTO.getItems().add(item);
+		partItemTO.setStateDetails(reason);
+		partItemTO.setMonitorState(MonitorState.UNAVAILABLE);
 		return partItemTO;
 	}
 
 	@Override
 	public ServicesPartItemTO getServicesStatus() {
-		// String test = " UNIT LOAD ACTIVE SUB DESCRIPTION \n"
-		// + "● lich.service not-found failed failed lich.service\n"
-		// + "LOAD = Reflects whether the unit definition was properly
-		// loaded.\n"
-		// + "ACTIVE = The high-level unit activation state, i.e. generalization
-		// of SUB.\n"
-		// + "SUB = The low-level unit activation state, values depend on unit
-		// type.\n" + "\n"
-		// + "1 loaded units listed.";
-
-		// String test = " UNIT LOAD ACTIVE SUB DESCRIPTION\n"
-		// + "0 loaded units listed.";
-
 		ServicesPartItemTO partItemTO = new ServicesPartItemTO();
 		partItemTO.setMonitorState(MonitorState.ERROR);
 		ConsoleOutputTO out = runScript("getServicesStatus");
-		// ConsoleOutputTO out = new ConsoleOutputTO(test, true);
 		if (out.isSuccess()) {
 			try {
 				String[] lines = out.getOutput().split("\n");
@@ -491,10 +474,8 @@ public class MonitorFacadeImpl implements MonitorFacade {
 
 	private ServicesPartItemTO createServicesErrorOutput(String reason) {
 		ServicesPartItemTO partItemTO = new ServicesPartItemTO();
-		ServicesMonitorItemTO item = new ServicesMonitorItemTO();
-		item.setStateDetails(reason);
-		item.setMonitorState(MonitorState.UNAVAILABLE);
-		partItemTO.getItems().add(item);
+		partItemTO.setStateDetails(reason);
+		partItemTO.setMonitorState(MonitorState.UNAVAILABLE);
 		return partItemTO;
 	}
 

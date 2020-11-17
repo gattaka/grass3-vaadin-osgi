@@ -375,15 +375,23 @@ public class MonitorPage extends OneColumnPage {
 		TableLayout smartTableLayout = prepareTableLayout();
 		smartLayout.add(smartTableLayout);
 
+		if (MonitorState.SUCCESS == data.getMonitorState()) {
+			smartTableLayout.newRow().add(new SuccessMonitorStateLabel());
+			smartTableLayout.add(data.getStateDetails());
+			return;
+		} else if (MonitorState.UNAVAILABLE == data.getMonitorState()) {
+			smartTableLayout.newRow().add(new WarningMonitorStateLabel());
+			smartTableLayout.add(data.getStateDetails());
+			return;
+		}
+
 		// Vyžaduje být ve skupině
 		// sudo usermod -a -G systemd-journal tomcat8
 		for (SMARTMonitorItemTO to : data.getItems()) {
 			// https://www.freedesktop.org/software/systemd/man/journalctl.html
 			switch (to.getMonitorState()) {
 			case SUCCESS:
-				smartTableLayout.newRow().add(new SuccessMonitorStateLabel());
-				smartTableLayout.add(to.getTime());
-				smartTableLayout.add(to.getMessage());
+				// unused
 				break;
 			case ERROR:
 				smartTableLayout.newRow().add(new ErrorMonitorStateLabel());

@@ -18,6 +18,7 @@ import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.SortDirection;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.IconRenderer;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 
@@ -41,11 +42,14 @@ import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.ImageIcon;
+import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 
 public class HWItemsTab extends Div {
 
 	private static final long serialVersionUID = -5013459007975657195L;
+
+	private static final int MAX_LENGTH = 55;
 
 	private static final String NAME_BIND = "nameBind";
 	private static final String USED_IN_BIND = "usedInBind";
@@ -62,6 +66,12 @@ public class HWItemsTab extends Div {
 
 	private Map<String, HWItemTypeTO> tokenMap = new HashMap<String, HWItemTypeTO>();
 	private HWFilterTO filterTO;
+
+	private String createShortLink(String name) {
+		if (name.length() <= 45)
+			return name;
+		return name.substring(0, 45) + "...";
+	}
 
 	public HWItemsTab() {
 		filterTO = new HWFilterTO();
@@ -101,25 +111,28 @@ public class HWItemsTab extends Div {
 			}
 		}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
 
-		Column<HWItemOverviewTO> nameColumn = grid.addColumn(HWItemOverviewTO::getName).setKey(NAME_BIND)
-				.setHeader("Název").setWidth("260px").setFlexGrow(0);
+		Column<HWItemOverviewTO> nameColumn = grid
+				.addColumn(new ComponentRenderer<Button, HWItemOverviewTO>(
+						to -> new LinkButton(createShortLink(to.getName()), e -> openDetailWindow(to.getId()))))
+				.setHeader("Název");
 		// kontrola na null je tady jenom proto, aby při selectu (kdy se udělá
 		// nový objekt a dá se mu akorát ID, které se porovnává) aplikace
 		// nespadla na NPE -- což je trochu zvláštní, protože ve skutečnosti
 		// žádný majetek nemá stav null.
 		Column<HWItemOverviewTO> stateColumn = grid
 				.addColumn(hw -> hw.getState() == null ? "" : hw.getState().getName()).setHeader("Stav")
-				.setKey(STATE_BIND).setWidth("130px").setFlexGrow(0);
+				.setKey(STATE_BIND).setWidth("120px").setFlexGrow(0);
 		Column<HWItemOverviewTO> usedInColumn = grid.addColumn(HWItemOverviewTO::getUsedInName).setKey(USED_IN_BIND)
-				.setHeader("Je součástí");
+				.setHeader("Je součástí").setWidth("120px").setFlexGrow(0);
 		Column<HWItemOverviewTO> supervizedColumn = grid.addColumn(HWItemOverviewTO::getSupervizedFor)
-				.setKey(SUPERVIZED_FOR_BIND).setHeader("Spravováno pro");
+				.setKey(SUPERVIZED_FOR_BIND).setHeader("Spravováno pro").setWidth("110px").setFlexGrow(0);
 		if (getUser().isAdmin()) {
 			grid.addColumn(hw -> FieldUtils.formatMoney(hw.getPrice())).setHeader("Cena").setKey(PRICE_BIND)
-					.setTextAlign(ColumnTextAlign.END);
+					.setTextAlign(ColumnTextAlign.END).setWidth("90px").setFlexGrow(0);
 		}
 		grid.addColumn(new LocalDateRenderer<HWItemOverviewTO>(HWItemOverviewTO::getPurchaseDate, "d.M.yyyy"))
-				.setHeader("Získáno").setKey(PURCHASE_DATE_BIND).setTextAlign(ColumnTextAlign.END);
+				.setHeader("Získáno").setKey(PURCHASE_DATE_BIND).setTextAlign(ColumnTextAlign.END).setWidth("80px")
+				.setFlexGrow(0);
 
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
@@ -149,13 +162,6 @@ public class HWItemsTab extends Div {
 
 		populate();
 		grid.sort(Arrays.asList(new GridSortOrder<>(nameColumn, SortDirection.ASCENDING)));
-
-		grid.addItemClickListener(event -> {
-			if (event.getClickCount() > 1) {
-				openDetailWindow(event.getItem().getId());
-				grid.select(event.getItem());
-			}
-		});
 
 		add(grid);
 

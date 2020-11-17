@@ -112,6 +112,7 @@ public class UIUtils {
 			HasValue.ValueChangeListener<? super ComponentValueChangeEvent<ComboBox<T>, T>> listener) {
 		ComboBox<T> combo = UIUtils.asSmall(new ComboBox<>(null, values));
 		combo.setWidthFull();
+		combo.setRequired(false);
 		combo.addValueChangeListener(listener);
 		combo.setItemLabelGenerator(itemLabelGenerator);
 		cell.setComponent(combo);

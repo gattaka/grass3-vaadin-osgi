@@ -50,6 +50,8 @@ public class Mapper {
 		song.setAuthor(e.getAuthor());
 		song.setYear(e.getYear());
 		song.setText(e.getText());
+		song.setPublicated(e.getPublicated());
+		song.setEmbedded(e.getEmbedded());
 
 		return song;
 	}
@@ -90,6 +92,7 @@ public class Mapper {
 		song.setYear(e.getYear());
 		song.setText(e.getText());
 		song.setPublicated(e.getPublicated());
+		song.setEmbedded(e.getEmbedded());
 
 		return song;
 	}

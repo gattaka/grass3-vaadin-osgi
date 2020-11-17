@@ -7,12 +7,18 @@ public class SongTO extends SongOverviewTO {
 	 */
 	private String text;
 
+	/**
+	 * Embedded link
+	 */
+	private String embedded;
+
 	public SongTO() {
 	}
 
-	public SongTO(String name, String author, Integer year, String text, Long id, Boolean publicated) {
+	public SongTO(String name, String author, Integer year, String text, Long id, Boolean publicated, String embedded) {
 		super(name, author, year, id, publicated);
 		this.text = text;
+		this.embedded = embedded;
 	}
 
 	@Override
@@ -33,6 +39,14 @@ public class SongTO extends SongOverviewTO {
 
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	public String getEmbedded() {
+		return embedded;
+	}
+
+	public void setEmbedded(String embedded) {
+		this.embedded = embedded;
 	}
 
 }

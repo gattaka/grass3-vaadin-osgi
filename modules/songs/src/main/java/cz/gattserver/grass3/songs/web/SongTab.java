@@ -55,6 +55,7 @@ public class SongTab extends Div {
 	private H2 nameLabel;
 	private HtmlDiv authorYearLabel;
 	private HtmlDiv contentLabel;
+	private HtmlDiv embeddedLabel;
 
 	public SongTab(SongsPage songsPage, Long songId) {
 		SpringContextHelper.inject(this);
@@ -80,8 +81,13 @@ public class SongTab extends Div {
 		contentLabel.getStyle().set("font-family", "monospace").set("tab-size", "4").set("font-size", "12px")
 				.set("overflow-x", "auto").set("display", "-webkit-flex").set("display", "flex")
 				.set("-webkit-flex-flow", "column wrap").set("flex-flow", "column wrap");
-
 		wrapperDiv.add(contentLabel);
+
+		embeddedLabel = new HtmlDiv();
+		embeddedLabel.setWidth(null);
+		embeddedLabel.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		embeddedLabel.getStyle().set("text-align", "center").set("background", "black");
+		add(embeddedLabel);
 
 		ButtonLayout btnLayout = new ButtonLayout();
 		add(btnLayout);
@@ -205,6 +211,8 @@ public class SongTab extends Div {
 						: ("<span style='white-space: pre; padding-right: 20px; height: 15px'>" + line + "</span>");
 			}
 			contentLabel.setValue(htmlText);
+			embeddedLabel.setValue(choosenSong.getEmbedded());
+			embeddedLabel.setVisible(StringUtils.isNotBlank(choosenSong.getEmbedded()));
 		}
 
 	}

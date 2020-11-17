@@ -95,8 +95,7 @@ public class SongsPage extends OneColumnPage {
 
 	private void switchSongTab() {
 		pageLayout.removeAll();
-		if (songTabContent == null)
-			songTabContent = new SongTab(this, selectedSongId);
+		songTabContent = new SongTab(this, selectedSongId);
 		pageLayout.add(songTabContent);
 	}
 

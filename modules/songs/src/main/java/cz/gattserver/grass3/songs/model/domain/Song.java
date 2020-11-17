@@ -44,6 +44,11 @@ public class Song {
 	 */
 	private Boolean publicated = true;
 
+	/**
+	 * Embedded link
+	 */
+	private String embedded;
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Song))
@@ -102,6 +107,14 @@ public class Song {
 
 	public void setPublicated(Boolean publicated) {
 		this.publicated = publicated;
+	}
+
+	public String getEmbedded() {
+		return embedded;
+	}
+
+	public void setEmbedded(String embedded) {
+		this.embedded = embedded;
 	}
 
 }

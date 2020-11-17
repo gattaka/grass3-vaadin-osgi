@@ -68,6 +68,13 @@ public abstract class SongDialog extends WebDialog {
 		textField.getStyle().set("font-family", "monospace").set("tab-size", "4").set("font-size", "12px");
 		add(textField);
 
+		final TextArea embeddedField = new TextArea("Embedded");
+		binder.forField(embeddedField).bind(SongTO::getEmbedded, SongTO::setEmbedded);
+		embeddedField.setWidthFull();
+		embeddedField.setHeight("100px");
+		embeddedField.getStyle().set("font-family", "monospace").set("tab-size", "4").set("font-size", "12px");
+		add(embeddedField);
+
 		add(new SaveCloseLayout(event -> save(originalTO, binder), e -> close()));
 
 		if (originalTO != null) {

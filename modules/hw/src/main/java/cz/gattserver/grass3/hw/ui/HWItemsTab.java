@@ -49,7 +49,7 @@ public class HWItemsTab extends Div {
 
 	private static final long serialVersionUID = -5013459007975657195L;
 
-	private static final int MAX_LENGTH = 55;
+	private static final int MAX_LENGTH = 45;
 
 	private static final String NAME_BIND = "nameBind";
 	private static final String USED_IN_BIND = "usedInBind";
@@ -68,9 +68,9 @@ public class HWItemsTab extends Div {
 	private HWFilterTO filterTO;
 
 	private String createShortLink(String name) {
-		if (name.length() <= 45)
+		if (name.length() <= MAX_LENGTH)
 			return name;
-		return name.substring(0, 45) + "...";
+		return name.substring(0, MAX_LENGTH) + "...";
 	}
 
 	public HWItemsTab() {

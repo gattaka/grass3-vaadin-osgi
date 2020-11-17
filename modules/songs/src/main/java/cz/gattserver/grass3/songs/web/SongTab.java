@@ -86,7 +86,8 @@ public class SongTab extends Div {
 		embeddedLabel = new HtmlDiv();
 		embeddedLabel.setWidth(null);
 		embeddedLabel.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		embeddedLabel.getStyle().set("text-align", "center").set("background", "black");
+		embeddedLabel.getStyle().set("text-align", "center").set("background", "black").set("border-radius", "3px")
+				.set("border", "1px solid black");
 		add(embeddedLabel);
 
 		ButtonLayout btnLayout = new ButtonLayout();
@@ -211,8 +212,16 @@ public class SongTab extends Div {
 						: ("<span style='white-space: pre; padding-right: 20px; height: 15px'>" + line + "</span>");
 			}
 			contentLabel.setValue(htmlText);
-			embeddedLabel.setValue(choosenSong.getEmbedded());
-			embeddedLabel.setVisible(StringUtils.isNotBlank(choosenSong.getEmbedded()));
+			if (StringUtils.isNotBlank(choosenSong.getEmbedded())) {
+				embeddedLabel.setVisible(true);
+				String val = "<iframe width=\"100%\" height=\"300\" src=\"https://www.youtube.com/embed/"
+						+ choosenSong.getEmbedded()
+						+ "\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>";
+				embeddedLabel.setValue(val);
+			} else {
+				embeddedLabel.setVisible(false);
+			}
+
 		}
 
 	}

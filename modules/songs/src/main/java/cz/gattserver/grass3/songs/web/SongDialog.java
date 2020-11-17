@@ -73,6 +73,7 @@ public abstract class SongDialog extends WebDialog {
 		embeddedField.setWidthFull();
 		embeddedField.setHeight("100px");
 		embeddedField.getStyle().set("font-family", "monospace").set("tab-size", "4").set("font-size", "12px");
+		embeddedField.setPlaceholder("YouTube video ID (tZtPcQJkEcU,...)");
 		add(embeddedField);
 
 		add(new SaveCloseLayout(event -> save(originalTO, binder), e -> close()));

@@ -2,9 +2,6 @@ package cz.gattserver.grass3.ui.pages.template;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
@@ -21,7 +18,7 @@ import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
-import cz.gattserver.web.common.ui.exception.ExceptionDialog;
+import cz.gattserver.web.common.ui.exception.ApplicationErrorHandler;
 
 /**
  * Základní layout pro stránky systému Grass. Volá {@link SpringContextHelper}
@@ -38,8 +35,6 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 
 	private static final long serialVersionUID = 7952966362953000385L;
 
-	private static final Logger logger = LoggerFactory.getLogger(GrassPage.class);
-
 	private transient SecurityService securityFacade;
 
 	/**
@@ -53,10 +48,7 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 		SpringContextHelper.inject(this);
 		if (UI.getCurrent().getSession().getErrorHandler() == null
 				|| UI.getCurrent().getSession().getErrorHandler() instanceof DefaultErrorHandler)
-			UI.getCurrent().getSession().setErrorHandler(e -> {
-				logger.error("V aplikaci došlo k chybě", e.getThrowable());
-				new ExceptionDialog(e.getThrowable()).open();
-			});
+			UI.getCurrent().getSession().setErrorHandler(new ApplicationErrorHandler());
 	}
 
 	@Override

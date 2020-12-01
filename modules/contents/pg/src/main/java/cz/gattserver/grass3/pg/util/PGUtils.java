@@ -169,7 +169,8 @@ public class PGUtils {
 				try (InputStream is = Files.newInputStream(inputFile)) {
 					Thumbnails.of(is).outputFormat("jpg").outputQuality(0.8)
 							// .useExifOrientation(true) // není spolehlivé
-							.rotate(angle).size(maxWidth, maxHeight).toOutputStream(os);
+							// aby se nepletlo s ručním otáčením
+							.useExifOrientation(false).rotate(angle).size(maxWidth, maxHeight).toOutputStream(os);
 				}
 				if (date != null)
 					Files.setLastModifiedTime(destinationFile, FileTime.fromMillis(date.getTime()));

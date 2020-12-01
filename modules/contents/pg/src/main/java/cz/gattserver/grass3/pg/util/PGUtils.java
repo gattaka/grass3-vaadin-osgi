@@ -24,7 +24,9 @@ import org.slf4j.LoggerFactory;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 import at.dhyan.open_imaging.GifDecoder;
@@ -114,22 +116,63 @@ public class PGUtils {
 					throw new IOException("SVG to JPG failed", e);
 				}
 			} else {
-				try (InputStream is = Files.newInputStream(inputFile)) {
-					Thumbnails.of(is).outputFormat("jpg").outputQuality(0.8).size(maxWidth, maxHeight)
-							.toOutputStream(os);
-				}
+				Date date = null;
+				Integer orinetation = null;
 				try (InputStream is = Files.newInputStream(inputFile)) {
 					Metadata metadata = ImageMetadataReader.readMetadata(is);
 					ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
-					Date date = null;
 					if (directory != null)
 						date = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
-					if (date != null)
-						Files.setLastModifiedTime(destinationFile, FileTime.fromMillis(date.getTime()));
+					for (Directory d : metadata.getDirectories()) {
+						orinetation = d.getInteger(ExifIFD0Directory.TAG_ORIENTATION);
+						if (orinetation != null)
+							break;
+					}
 				} catch (IOException | ImageProcessingException e) {
 					// nezdařilo se, nevadí
-					logger.error("Kopírování EXIF pro soubor {} se nezdařilo", inputFile.getFileName().toString(), e);
+					logger.error("Získání EXIF pro soubor {} se nezdařilo", inputFile.getFileName().toString(), e);
 				}
+
+				double angle = 0;
+				if (orinetation != null)
+					switch (orinetation) {
+					case 1:
+						// 0 degrees: the correct orientation, no adjustment
+						// is required.
+					case 2:
+						// 0 degrees, mirrored: image has been flipped
+						// back-to-front.
+						break;
+					case 3:
+						// 180 degrees: image is upside down.
+					case 4:
+						// 180 degrees, mirrored: image has been flipped
+						// back-to-front and is upside down.
+						angle = 180;
+						break;
+					case 5:
+						// 90 degrees: image has been flipped back-to-front
+						// and is on its side.
+					case 6:
+						// 90 degrees, mirrored: image is on its side.
+						angle = 90;
+						break;
+					case 7:
+						// 270 degrees: image has been flipped back-to-front and
+						// is on its far side.
+					case 8:
+						// 270 degrees, mirrored: image is on its far side.
+						angle = 270;
+						break;
+					}
+
+				try (InputStream is = Files.newInputStream(inputFile)) {
+					Thumbnails.of(is).outputFormat("jpg").outputQuality(0.8)
+							// .useExifOrientation(true) // není spolehlivé
+							.rotate(angle).size(maxWidth, maxHeight).toOutputStream(os);
+				}
+				if (date != null)
+					Files.setLastModifiedTime(destinationFile, FileTime.fromMillis(date.getTime()));
 			}
 		}
 

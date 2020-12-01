@@ -356,6 +356,12 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 				itemLayout.add(new Breakline());
 
+				Span label = new Span(item.getName());
+				label.getStyle().set("font-size", "12px");
+				itemLayout.add(label);
+
+				itemLayout.add(new Breakline());
+
 				// Detail
 				String file = item.getFile().getFileName().toString();
 				String url = getItemURL(file);

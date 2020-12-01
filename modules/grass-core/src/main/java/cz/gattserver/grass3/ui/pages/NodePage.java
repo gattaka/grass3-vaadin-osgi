@@ -118,7 +118,7 @@ public class NodePage extends OneColumnPage implements HasUrlParameter<String>, 
 		}, event -> dialog.close());
 		dialog.add(saveCloseLayout);
 
-		dialog.setWidth("200px");
+		dialog.setWidth("300px");
 
 		dialog.open();
 	}

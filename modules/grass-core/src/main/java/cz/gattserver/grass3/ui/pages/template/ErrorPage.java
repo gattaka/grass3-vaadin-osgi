@@ -1,29 +1,40 @@
 package cz.gattserver.grass3.ui.pages.template;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.ErrorParameter;
 import com.vaadin.flow.router.HasErrorParameter;
 
 import cz.gattserver.grass3.exception.GrassPageException;
+import cz.gattserver.web.common.exception.SystemException;
 
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
 @Tag(Tag.DIV)
-public class ErrorPage extends OneColumnPage implements HasErrorParameter<GrassPageException> {
+public class ErrorPage extends OneColumnPage implements HasErrorParameter<Exception> {
 
 	private static final long serialVersionUID = 4576353466500365046L;
+
+	private static final Logger logger = LoggerFactory.getLogger(ErrorPage.class);
 
 	private GrassPageException exception;
 
 	@Override
-	public int setErrorParameter(BeforeEnterEvent event, ErrorParameter<GrassPageException> parameter) {
-		this.exception = parameter.getException();
+	public int setErrorParameter(BeforeEnterEvent event, ErrorParameter<Exception> parameter) {
+		if (exception instanceof GrassPageException) {
+			exception = (GrassPageException) parameter.getException();
+		} else {
+			exception = new GrassPageException(500, parameter.getException());
+		}
 		init();
-		return parameter.getException().getStatus();
+		return exception.getStatus();
 	}
 
 	@Override
@@ -44,6 +55,20 @@ public class ErrorPage extends OneColumnPage implements HasErrorParameter<GrassP
 		horizontalLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
 
 		layout.add(horizontalLayout);
+
+		if (exception.getStatus() == 500) {
+			TextArea detailsArea = new TextArea();
+			String log = new SystemException("V aplikaci došlo k neočekávané chybě", exception).toString();
+			logger.error(log);
+			detailsArea.setValue(log);
+			detailsArea.setEnabled(true);
+			detailsArea.setReadOnly(true);
+			detailsArea.setWidthFull();
+			detailsArea.addClassName("error-text-field");
+			detailsArea.setHeight("500px");
+			detailsArea.getStyle().set("margin-top", "10px");
+			layout.add(detailsArea);
+		}
 	}
 
 	protected String getErrorText(int status) {

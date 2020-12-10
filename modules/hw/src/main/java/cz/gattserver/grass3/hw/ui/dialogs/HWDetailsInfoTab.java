@@ -237,6 +237,7 @@ public class HWDetailsInfoTab extends Div {
 		outerLayout.add(grid);
 
 		Div name = new Div(new Strong("Popis"));
+		name.getStyle().set("margin-top", "5px");
 		add(name);
 
 		Div descriptionDiv = new ContainerDiv();

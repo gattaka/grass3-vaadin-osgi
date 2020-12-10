@@ -68,6 +68,8 @@ public class HWItemsTab extends Div {
 	private HWFilterTO filterTO;
 
 	private String createShortLink(String name) {
+		if (name == null)
+			return "";
 		if (name.length() <= MAX_LENGTH)
 			return name;
 		return name.substring(0, MAX_LENGTH) + "...";
@@ -105,6 +107,7 @@ public class HWItemsTab extends Div {
 			if (ii != null) {
 				Image img = new Image(ii.createResource(), c.getState().getName());
 				img.addClassName(UIUtils.GRID_ICON_CSS_CLASS);
+				img.setTitle(c.getState().getName());
 				return img;
 			} else {
 				return new Span();
@@ -114,25 +117,26 @@ public class HWItemsTab extends Div {
 		Column<HWItemOverviewTO> nameColumn = grid
 				.addColumn(new ComponentRenderer<Button, HWItemOverviewTO>(
 						to -> new LinkButton(createShortLink(to.getName()), e -> openDetailWindow(to.getId()))))
-				.setHeader("Název");
+				.setHeader("Název").setSortable(true).setKey(NAME_BIND);
 		// kontrola na null je tady jenom proto, aby při selectu (kdy se udělá
 		// nový objekt a dá se mu akorát ID, které se porovnává) aplikace
 		// nespadla na NPE -- což je trochu zvláštní, protože ve skutečnosti
 		// žádný majetek nemá stav null.
 		Column<HWItemOverviewTO> stateColumn = grid
 				.addColumn(hw -> hw.getState() == null ? "" : hw.getState().getName()).setHeader("Stav")
-				.setKey(STATE_BIND).setWidth("120px").setFlexGrow(0);
+				.setKey(STATE_BIND).setWidth("120px").setFlexGrow(0).setSortable(true);
 		Column<HWItemOverviewTO> usedInColumn = grid.addColumn(HWItemOverviewTO::getUsedInName).setKey(USED_IN_BIND)
-				.setHeader("Je součástí").setWidth("120px").setFlexGrow(0);
+				.setHeader("Je součástí").setWidth("120px").setFlexGrow(0).setSortable(true);
 		Column<HWItemOverviewTO> supervizedColumn = grid.addColumn(HWItemOverviewTO::getSupervizedFor)
-				.setKey(SUPERVIZED_FOR_BIND).setHeader("Spravováno pro").setWidth("110px").setFlexGrow(0);
+				.setKey(SUPERVIZED_FOR_BIND).setHeader("Spravováno pro").setWidth("110px").setFlexGrow(0)
+				.setSortable(true);
 		if (getUser().isAdmin()) {
 			grid.addColumn(hw -> FieldUtils.formatMoney(hw.getPrice())).setHeader("Cena").setKey(PRICE_BIND)
-					.setTextAlign(ColumnTextAlign.END).setWidth("90px").setFlexGrow(0);
+					.setTextAlign(ColumnTextAlign.END).setWidth("90px").setFlexGrow(0).setSortable(true);
 		}
 		grid.addColumn(new LocalDateRenderer<HWItemOverviewTO>(HWItemOverviewTO::getPurchaseDate, "d.M.yyyy"))
 				.setHeader("Získáno").setKey(PURCHASE_DATE_BIND).setTextAlign(ColumnTextAlign.END).setWidth("80px")
-				.setFlexGrow(0);
+				.setFlexGrow(0).setSortable(true);
 
 		HeaderRow filteringHeader = grid.appendHeaderRow();
 
@@ -188,7 +192,6 @@ public class HWItemsTab extends Div {
 		buttonLayout.add(detailsBtn);
 
 		if (getUser().isAdmin()) {
-
 			// Oprava údajů existující položky HW
 			Button fixBtn = new GridButton<HWItemOverviewTO>("Upravit", set -> openItemWindow(set.iterator().next()),
 					grid);

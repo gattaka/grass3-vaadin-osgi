@@ -284,9 +284,9 @@ vaadin-horizontal-layout.menu {
 	background: #fdfaf2;
 	padding-top: 3px;
 	padding-bottom: 3px;
-	line-height: 20px;
 	padding-left: 10px;
-	padding-right: 0px;
+	padding-right: 3px;
+	line-height: 20px;
 	font-weight: bold;
 	font-size: 12px;
 	font-family: Trebuchet, "Trebuchet MS", Verdana, "Verdana CE", Arial,

@@ -9,11 +9,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
-import cz.gattserver.grass3.articles.plugins.favlink.FaviconUtils;
 import cz.gattserver.grass3.articles.plugins.favlink.config.FavlinkConfiguration;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.FileSystemService;
-import cz.gattserver.grass3.ui.util.FileUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
 /**
@@ -88,7 +86,7 @@ public class FaviconCache {
 				throw new ParserException("Favicon cache soubor není adresář");
 		} else {
 			try {
-				Files.createDirectories(path, FileUtils.createPermsAttributes());
+				fileSystemService.createDirectoriesWithPerms(path);
 			} catch (Exception e) {
 				throw new ParserException("Vytváření favicon cache adresáře se nezdařilo", e);
 			}

@@ -4,7 +4,6 @@ import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTO;
 import cz.gattserver.grass3.articles.editor.parser.interfaces.EditorButtonResourcesTOBuilder;
 import cz.gattserver.grass3.articles.plugins.Plugin;
-import cz.gattserver.grass3.articles.plugins.headers.HeaderParser;
 
 /**
  * @author gatt
@@ -32,8 +31,7 @@ public abstract class AbstractHeaderPlugin implements Plugin {
 
 	@Override
 	public EditorButtonResourcesTO getEditorButtonResources() {
-		return new EditorButtonResourcesTOBuilder(tagTemplate + level, "Nadpisy").setDescription("H" + level)
-				.build();
+		return new EditorButtonResourcesTOBuilder(tagTemplate + level, "Nadpisy").setDescription("H" + level).build();
 	}
 
 }

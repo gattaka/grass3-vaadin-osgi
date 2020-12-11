@@ -50,4 +50,20 @@ public class MockFileSystemService implements FileSystemService {
 		return Files.createDirectories(fileSystem.getPath("tmp", name + new Date().getTime()));
 	}
 
+	@Override
+	public Path grantPermissions(Path path) throws IOException {
+		// mock fs nemá perms
+		return path;
+	}
+
+	@Override
+	public void createDirectoriesWithPerms(Path path) throws IOException {
+		Files.createDirectories(path);
+	}
+
+	@Override
+	public Path createDirectoryWithPerms(Path path) throws IOException {
+		return Files.createDirectory(path);
+	}
+
 }

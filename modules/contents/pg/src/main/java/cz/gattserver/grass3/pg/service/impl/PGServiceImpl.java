@@ -64,7 +64,6 @@ import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.services.SecurityService;
-import cz.gattserver.grass3.ui.util.FileUtils;
 
 @Transactional
 @Service
@@ -189,10 +188,10 @@ public class PGServiceImpl implements PGService {
 		}
 
 		if (!Files.exists(miniDirFile))
-			Files.createDirectories(miniDirFile, FileUtils.createPermsAttributes());
+			fileSystemService.createDirectoriesWithPerms(miniDirFile);
 
 		if (!Files.exists(prevDirFile))
-			Files.createDirectories(prevDirFile, FileUtils.createPermsAttributes());
+			fileSystemService.createDirectoriesWithPerms(prevDirFile);
 
 		try (Stream<Path> stream = Files.list(galleryDir).sorted(getComparator())) {
 			Iterator<Path> it = stream.iterator();
@@ -369,7 +368,7 @@ public class PGServiceImpl implements PGService {
 		Path dirRootFile = fileSystemService.getFileSystem().getPath(dirRoot);
 		long systime = System.currentTimeMillis();
 		Path tmpDirFile = dirRootFile.resolve("pgGal_" + systime);
-		Files.createDirectories(tmpDirFile, FileUtils.createPermsAttributes());
+		fileSystemService.createDirectoriesWithPerms(tmpDirFile);
 		return tmpDirFile.getFileName().toString();
 	}
 
@@ -669,7 +668,7 @@ public class PGServiceImpl implements PGService {
 		if (!filePath.normalize().startsWith(galleryPath))
 			throw new IllegalArgumentException("Podtečení adresáře galerie");
 		Files.copy(in, filePath);
-		FileUtils.grantPermissions(filePath);
+		fileSystemService.grantPermissions(filePath);
 	}
 
 	@Override

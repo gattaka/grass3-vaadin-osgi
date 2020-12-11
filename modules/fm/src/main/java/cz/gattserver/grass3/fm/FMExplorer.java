@@ -27,7 +27,7 @@ import cz.gattserver.grass3.fm.config.FMConfiguration;
 import cz.gattserver.grass3.fm.interfaces.FMItemTO;
 import cz.gattserver.grass3.fm.service.FMService;
 import cz.gattserver.grass3.services.ConfigurationService;
-import cz.gattserver.grass3.ui.util.FileUtils;
+import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
 public class FMExplorer {
@@ -36,6 +36,9 @@ public class FMExplorer {
 
 	@Autowired
 	private FMService fmService;
+
+	@Autowired
+	private FileSystemService fileSystemService;
 
 	/**
 	 * Filesystem, pod kterým {@link FMExplorer} momentálně operuje
@@ -145,8 +148,7 @@ public class FMExplorer {
 				return FileProcessState.NOT_VALID;
 			if (Files.exists(newPath))
 				return FileProcessState.ALREADY_EXISTS;
-			Path dir = Files.createDirectory(newPath);
-			FileUtils.grantPermissions(dir);
+			fileSystemService.createDirectoryWithPerms(newPath);
 			return FileProcessState.SUCCESS;
 		} catch (IOException e) {
 			logger.error("Nezdařilo se vytvořit nový adresář {}", newPath.toString(), e);
@@ -213,7 +215,7 @@ public class FMExplorer {
 		Path pathToSaveAs = currentAbsolutePath.resolve(path).normalize();
 		try {
 			Files.copy(in, pathToSaveAs);
-			FileUtils.grantPermissions(pathToSaveAs);
+			fileSystemService.grantPermissions(pathToSaveAs);
 		} catch (FileAlreadyExistsException f) {
 			return FileProcessState.ALREADY_EXISTS;
 		} catch (IOException e) {

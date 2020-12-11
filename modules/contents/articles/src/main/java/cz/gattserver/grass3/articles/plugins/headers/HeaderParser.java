@@ -11,7 +11,6 @@ import cz.gattserver.grass3.articles.editor.parser.Parser;
 import cz.gattserver.grass3.articles.editor.parser.ParsingProcessor;
 import cz.gattserver.grass3.articles.editor.parser.elements.Element;
 import cz.gattserver.grass3.articles.editor.parser.exceptions.TokenException;
-import cz.gattserver.grass3.articles.plugins.headers.HeaderElement;
 
 /**
  * @author gatt

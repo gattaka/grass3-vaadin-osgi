@@ -45,7 +45,6 @@ import cz.gattserver.grass3.print3d.util.Print3dMapper;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.FileSystemService;
-import cz.gattserver.grass3.ui.util.FileUtils;
 
 @Transactional
 @Service
@@ -168,7 +167,7 @@ public class Print3dServiceImpl implements Print3dService {
 		Path dirRootFile = fileSystemService.getFileSystem().getPath(dirRoot);
 		long systime = System.currentTimeMillis();
 		Path tmpDirFile = dirRootFile.resolve("print3dProj_" + systime);
-		Files.createDirectories(tmpDirFile, FileUtils.createPermsAttributes());
+		fileSystemService.createDirectoriesWithPerms(tmpDirFile);
 		return tmpDirFile.getFileName().toString();
 	}
 
@@ -301,7 +300,7 @@ public class Print3dServiceImpl implements Print3dService {
 		if (!filePath.normalize().startsWith(projectPath))
 			throw new IllegalArgumentException("Podtečení adresáře projektu");
 		Files.copy(in, filePath);
-		FileUtils.grantPermissions(filePath);
+		fileSystemService.grantPermissions(filePath);
 		return filePath;
 	}
 

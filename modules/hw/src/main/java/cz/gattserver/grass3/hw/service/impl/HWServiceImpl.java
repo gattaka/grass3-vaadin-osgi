@@ -48,7 +48,6 @@ import cz.gattserver.grass3.hw.service.HWMapperService;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.FileSystemService;
-import cz.gattserver.grass3.ui.util.FileUtils;
 
 @Transactional
 @Component
@@ -119,7 +118,7 @@ public class HWServiceImpl implements HWService {
 		Path hwPath = getHWPath(id);
 		Path file = hwPath.resolve(configuration.getDocumentsDir());
 		if (!Files.exists(file))
-			Files.createDirectories(file, FileUtils.createPermsAttributes());
+			fileSystemService.createDirectoriesWithPerms(file);
 		return file;
 	}
 
@@ -128,7 +127,7 @@ public class HWServiceImpl implements HWService {
 		Path hwPath = getHWPath(id);
 		Path file = hwPath.resolve(configuration.getPrint3dDir());
 		if (!Files.exists(file))
-			Files.createDirectories(file, FileUtils.createPermsAttributes());
+			fileSystemService.createDirectoriesWithPerms(file);
 		return file;
 	}
 
@@ -137,7 +136,7 @@ public class HWServiceImpl implements HWService {
 		Path hwPath = getHWPath(id);
 		Path file = hwPath.resolve(configuration.getImagesDir());
 		if (!Files.exists(file))
-			Files.createDirectories(file, FileUtils.createPermsAttributes());
+			fileSystemService.createDirectoriesWithPerms(file);
 		return file;
 	}
 
@@ -169,7 +168,7 @@ public class HWServiceImpl implements HWService {
 		if (!imagePath.normalize().startsWith(imagesPath))
 			throw new IllegalArgumentException(ILLEGAL_PATH_IMGS_ERR);
 		Files.copy(in, imagePath, StandardCopyOption.REPLACE_EXISTING);
-		FileUtils.grantPermissions(imagePath);
+		fileSystemService.grantPermissions(imagePath);
 	}
 
 	@Override
@@ -248,7 +247,7 @@ public class HWServiceImpl implements HWService {
 		if (!modelPath.normalize().startsWith(modelsPath))
 			throw new IllegalArgumentException(ILLEGAL_PATH_PRINT_3D_ERR);
 		Files.copy(in, modelPath, StandardCopyOption.REPLACE_EXISTING);
-		FileUtils.grantPermissions(modelPath);
+		fileSystemService.grantPermissions(modelPath);
 	}
 
 	@Override
@@ -327,7 +326,7 @@ public class HWServiceImpl implements HWService {
 		if (!docPath.normalize().startsWith(docsPath))
 			throw new IllegalArgumentException(ILLEGAL_PATH_DOCS_ERR);
 		Files.copy(in, docPath, StandardCopyOption.REPLACE_EXISTING);
-		FileUtils.grantPermissions(docPath);
+		fileSystemService.grantPermissions(docPath);
 	}
 
 	@Override
@@ -515,8 +514,7 @@ public class HWServiceImpl implements HWService {
 					@Override
 					public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs)
 							throws IOException {
-						Files.createDirectories(copyPath.resolve(origPath.relativize(dir)),
-								FileUtils.createPermsAttributes());
+						fileSystemService.createDirectoriesWithPerms(copyPath.resolve(origPath.relativize(dir)));
 						return FileVisitResult.CONTINUE;
 					}
 
@@ -525,7 +523,7 @@ public class HWServiceImpl implements HWService {
 							throws IOException {
 						Path target = copyPath.resolve(origPath.relativize(file));
 						Files.copy(file, target);
-						FileUtils.grantPermissions(target);
+						fileSystemService.grantPermissions(target);
 						return FileVisitResult.CONTINUE;
 					}
 				});

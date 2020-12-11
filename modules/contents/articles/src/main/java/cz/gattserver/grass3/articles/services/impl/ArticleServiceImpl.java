@@ -67,7 +67,6 @@ import cz.gattserver.grass3.modules.ArticlesContentModule;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.FileSystemService;
-import cz.gattserver.grass3.ui.util.FileUtils;
 
 @Transactional
 @Service
@@ -325,9 +324,7 @@ public class ArticleServiceImpl implements ArticleService {
 		try (Stream<Path> stream = Files.list(rootPath).sorted((p1, p2) -> -1 * p1.compareTo(p2)).limit(1)) {
 			Iterator<Path> it = stream.iterator();
 			if (!it.hasNext()) {
-				Path dir = Files.createDirectory(rootPath.resolve("0"));
-				FileUtils.grantPermissions(dir);
-				return dir;
+				return fileSystemService.createDirectoryWithPerms(rootPath.resolve("0"));
 			} else {
 				Path path = it.next();
 				String fileName = path.getFileName().toString();
@@ -337,7 +334,7 @@ public class ArticleServiceImpl implements ArticleService {
 				} catch (NumberFormatException e) {
 					throw new IllegalStateException("Nezdařilo se iterovat název adresáře příloh", e);
 				}
-				return FileUtils.grantPermissions(Files.createDirectory(rootPath.resolve(String.valueOf(val + 1))));
+				return fileSystemService.createDirectoryWithPerms(rootPath.resolve(String.valueOf(val + 1)));
 			}
 		} catch (IOException e) {
 			throw new IllegalStateException("Nezdařilo se získat přehled příloh", e);
@@ -374,7 +371,7 @@ public class ArticleServiceImpl implements ArticleService {
 			attachmentsDirId = articleAttPath.getFileName().toString();
 			Path pathToSaveAs = articleAttPath.resolve(name).normalize();
 			Files.copy(in, pathToSaveAs);
-			FileUtils.grantPermissions(pathToSaveAs);
+			fileSystemService.grantPermissions(pathToSaveAs);
 			return AttachmentsOperationResult.success(attachmentsDirId);
 		} catch (FileAlreadyExistsException f) {
 			return AttachmentsOperationResult.alreadyExists();

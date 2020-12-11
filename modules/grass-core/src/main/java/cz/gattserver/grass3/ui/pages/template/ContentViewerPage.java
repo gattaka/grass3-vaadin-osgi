@@ -28,7 +28,6 @@ import cz.gattserver.grass3.ui.components.button.ImageButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.grass3.ui.dialogs.ContentMoveDialog;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
-import cz.gattserver.grass3.ui.pages.template.TwoColumnPage;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
@@ -77,8 +76,9 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		contentAuthorNameLabel = new Span(content.getAuthor().getName());
 		contentCreationDateNameLabel = new HtmlSpan(
 				content.getCreationDate() == null ? "" : content.getCreationDate().format(dateFormat));
-		contentLastModificationDateLabel = new HtmlSpan(content.getLastModificationDate() == null
-				? "<em>-neupraveno-</em>" : dateFormat.format(content.getLastModificationDate()));
+		contentLastModificationDateLabel = new HtmlSpan(
+				content.getLastModificationDate() == null ? "<em>-neupraveno-</em>"
+						: dateFormat.format(content.getLastModificationDate()));
 
 		tagsListLayout = new Div();
 		tagsListLayout.setClassName("content-tags");

@@ -22,6 +22,7 @@ import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 
+import cz.gattserver.grass3.exception.GrassException;
 import cz.gattserver.grass3.hw.interfaces.HWItemState;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
@@ -31,7 +32,6 @@ import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
-import cz.gattserver.web.common.ui.window.ErrorDialog;
 import cz.gattserver.web.common.ui.window.WebDialog;
 
 public abstract class HWItemDialog extends WebDialog {
@@ -161,7 +161,7 @@ public abstract class HWItemDialog extends WebDialog {
 				onSuccess(writeDTO);
 				close();
 			} catch (Exception ve) {
-				new ErrorDialog("Uložení se nezdařilo").open();
+				throw new GrassException("Uložení se nezdařilo", ve);
 			}
 		}, e -> close());
 

@@ -13,6 +13,7 @@ import cz.gattserver.grass3.articles.plugins.favlink.FaviconUtils;
 import cz.gattserver.grass3.articles.plugins.favlink.config.FavlinkConfiguration;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.FileSystemService;
+import cz.gattserver.grass3.ui.util.FileUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
 /**
@@ -64,7 +65,7 @@ public class FaviconCache {
 	 *         se stažení nezdařilo (soubor na adrese neexistuje apod.)
 	 */
 	public String downloadAndSaveFavicon(URL pageURL, String faviconAddress) {
-		
+
 		String filename = FaviconUtils.getFaviconFilename(pageURL, faviconAddress);
 		if (FaviconUtils.downloadFile(cacheDir.resolve(filename), faviconAddress)) {
 			return filename;
@@ -87,7 +88,7 @@ public class FaviconCache {
 				throw new ParserException("Favicon cache soubor není adresář");
 		} else {
 			try {
-				Files.createDirectories(path);
+				Files.createDirectories(path, FileUtils.createPermsAttributes());
 			} catch (Exception e) {
 				throw new ParserException("Vytváření favicon cache adresáře se nezdařilo", e);
 			}

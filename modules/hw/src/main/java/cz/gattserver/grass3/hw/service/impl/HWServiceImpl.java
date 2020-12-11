@@ -119,7 +119,7 @@ public class HWServiceImpl implements HWService {
 		Path hwPath = getHWPath(id);
 		Path file = hwPath.resolve(configuration.getDocumentsDir());
 		if (!Files.exists(file))
-			Files.createDirectories(file);
+			Files.createDirectories(file, FileUtils.createPermsAttributes());
 		return file;
 	}
 
@@ -128,7 +128,7 @@ public class HWServiceImpl implements HWService {
 		Path hwPath = getHWPath(id);
 		Path file = hwPath.resolve(configuration.getPrint3dDir());
 		if (!Files.exists(file))
-			Files.createDirectories(file);
+			Files.createDirectories(file, FileUtils.createPermsAttributes());
 		return file;
 	}
 
@@ -137,7 +137,7 @@ public class HWServiceImpl implements HWService {
 		Path hwPath = getHWPath(id);
 		Path file = hwPath.resolve(configuration.getImagesDir());
 		if (!Files.exists(file))
-			Files.createDirectories(file);
+			Files.createDirectories(file, FileUtils.createPermsAttributes());
 		return file;
 	}
 
@@ -515,7 +515,8 @@ public class HWServiceImpl implements HWService {
 					@Override
 					public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs)
 							throws IOException {
-						Files.createDirectories(copyPath.resolve(origPath.relativize(dir)));
+						Files.createDirectories(copyPath.resolve(origPath.relativize(dir)),
+								FileUtils.createPermsAttributes());
 						return FileVisitResult.CONTINUE;
 					}
 

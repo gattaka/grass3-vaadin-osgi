@@ -168,7 +168,7 @@ public class Print3dServiceImpl implements Print3dService {
 		Path dirRootFile = fileSystemService.getFileSystem().getPath(dirRoot);
 		long systime = System.currentTimeMillis();
 		Path tmpDirFile = dirRootFile.resolve("print3dProj_" + systime);
-		Files.createDirectories(tmpDirFile);
+		Files.createDirectories(tmpDirFile, FileUtils.createPermsAttributes());
 		return tmpDirFile.getFileName().toString();
 	}
 

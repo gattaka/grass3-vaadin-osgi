@@ -98,7 +98,7 @@ public class CampgamesServiceImpl implements CampgamesService {
 		Path campgamePath = getCampgamePath(id);
 		Path file = campgamePath.resolve(configuration.getImagesDir());
 		if (!Files.exists(file))
-			Files.createDirectories(file);
+			Files.createDirectories(file, FileUtils.createPermsAttributes());
 		return file;
 	}
 

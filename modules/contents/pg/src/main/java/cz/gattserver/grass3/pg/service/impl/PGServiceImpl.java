@@ -189,10 +189,10 @@ public class PGServiceImpl implements PGService {
 		}
 
 		if (!Files.exists(miniDirFile))
-			Files.createDirectories(miniDirFile);
+			Files.createDirectories(miniDirFile, FileUtils.createPermsAttributes());
 
 		if (!Files.exists(prevDirFile))
-			Files.createDirectories(prevDirFile);
+			Files.createDirectories(prevDirFile, FileUtils.createPermsAttributes());
 
 		try (Stream<Path> stream = Files.list(galleryDir).sorted(getComparator())) {
 			Iterator<Path> it = stream.iterator();
@@ -369,7 +369,7 @@ public class PGServiceImpl implements PGService {
 		Path dirRootFile = fileSystemService.getFileSystem().getPath(dirRoot);
 		long systime = System.currentTimeMillis();
 		Path tmpDirFile = dirRootFile.resolve("pgGal_" + systime);
-		Files.createDirectories(tmpDirFile);
+		Files.createDirectories(tmpDirFile, FileUtils.createPermsAttributes());
 		return tmpDirFile.getFileName().toString();
 	}
 

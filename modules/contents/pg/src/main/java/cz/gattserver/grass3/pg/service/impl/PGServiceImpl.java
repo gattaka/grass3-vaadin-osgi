@@ -64,6 +64,7 @@ import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.ContentNodeService;
 import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.services.SecurityService;
+import cz.gattserver.grass3.ui.util.FileUtils;
 
 @Transactional
 @Service
@@ -668,6 +669,7 @@ public class PGServiceImpl implements PGService {
 		if (!filePath.normalize().startsWith(galleryPath))
 			throw new IllegalArgumentException("Podtečení adresáře galerie");
 		Files.copy(in, filePath);
+		FileUtils.grantPermissions(filePath);
 	}
 
 	@Override

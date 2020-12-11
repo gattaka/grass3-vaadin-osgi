@@ -34,6 +34,7 @@ import cz.gattserver.grass3.campgames.service.CampgamesService;
 import cz.gattserver.grass3.exception.GrassException;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.FileSystemService;
+import cz.gattserver.grass3.ui.util.FileUtils;
 
 @Transactional
 @Component
@@ -112,6 +113,7 @@ public class CampgamesServiceImpl implements CampgamesService {
 		if (!imagePath.normalize().startsWith(imagesPath))
 			throw new IllegalArgumentException(ILLEGAL_PATH_IMGS_ERR);
 		Files.copy(in, imagePath, StandardCopyOption.REPLACE_EXISTING);
+		FileUtils.grantPermissions(imagePath);
 		return CampgameFileTOMapper.mapPathToItem(imagePath);
 	}
 

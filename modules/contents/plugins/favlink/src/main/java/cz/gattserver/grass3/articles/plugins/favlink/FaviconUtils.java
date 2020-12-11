@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import cz.gattserver.grass3.articles.editor.parser.exceptions.ParserException;
 import cz.gattserver.grass3.articles.plugins.favlink.config.FavlinkConfiguration;
+import cz.gattserver.grass3.ui.util.FileUtils;
 
 /**
  * @author gatt
@@ -131,6 +132,7 @@ public class FaviconUtils {
 		if (stream != null) {
 			try {
 				Files.copy(stream, targetFile);
+				FileUtils.grantPermissions(targetFile);
 				long size = Files.size(targetFile);
 				if (size == 0) {
 					logger.info("Favicon má velikost 0B, mažu soubor a označuju download jako neúspěšný");

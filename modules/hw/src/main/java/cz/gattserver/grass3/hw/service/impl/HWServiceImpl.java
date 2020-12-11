@@ -48,6 +48,7 @@ import cz.gattserver.grass3.hw.service.HWMapperService;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.services.ConfigurationService;
 import cz.gattserver.grass3.services.FileSystemService;
+import cz.gattserver.grass3.ui.util.FileUtils;
 
 @Transactional
 @Component
@@ -168,6 +169,7 @@ public class HWServiceImpl implements HWService {
 		if (!imagePath.normalize().startsWith(imagesPath))
 			throw new IllegalArgumentException(ILLEGAL_PATH_IMGS_ERR);
 		Files.copy(in, imagePath, StandardCopyOption.REPLACE_EXISTING);
+		FileUtils.grantPermissions(imagePath);
 	}
 
 	@Override
@@ -246,6 +248,7 @@ public class HWServiceImpl implements HWService {
 		if (!modelPath.normalize().startsWith(modelsPath))
 			throw new IllegalArgumentException(ILLEGAL_PATH_PRINT_3D_ERR);
 		Files.copy(in, modelPath, StandardCopyOption.REPLACE_EXISTING);
+		FileUtils.grantPermissions(modelPath);
 	}
 
 	@Override
@@ -324,6 +327,7 @@ public class HWServiceImpl implements HWService {
 		if (!docPath.normalize().startsWith(docsPath))
 			throw new IllegalArgumentException(ILLEGAL_PATH_DOCS_ERR);
 		Files.copy(in, docPath, StandardCopyOption.REPLACE_EXISTING);
+		FileUtils.grantPermissions(docPath);
 	}
 
 	@Override
@@ -518,7 +522,9 @@ public class HWServiceImpl implements HWService {
 					@Override
 					public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
 							throws IOException {
-						Files.copy(file, copyPath.resolve(origPath.relativize(file)));
+						Path target = copyPath.resolve(origPath.relativize(file));
+						Files.copy(file, target);
+						FileUtils.grantPermissions(target);
 						return FileVisitResult.CONTINUE;
 					}
 				});

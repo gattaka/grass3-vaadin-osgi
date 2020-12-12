@@ -52,4 +52,8 @@ public abstract class MonitorItemTO {
 		return type;
 	}
 
+	public void setType(String type) {
+		this.type = type;
+	}
+
 }

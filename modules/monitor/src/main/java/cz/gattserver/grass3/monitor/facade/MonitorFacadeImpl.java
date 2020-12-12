@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +51,8 @@ import cz.gattserver.grass3.services.ConfigurationService;
 @Transactional
 @Component
 public class MonitorFacadeImpl implements MonitorFacade {
+
+	private static final Logger logger = LoggerFactory.getLogger(MonitorFacadeImpl.class);
 
 	private static final int HTTP_TEST_TIMEOUT = 5000;
 
@@ -133,6 +137,7 @@ public class MonitorFacadeImpl implements MonitorFacade {
 				itemTO.setUsed(Long.parseLong(values[1]) * 1000);
 				itemTO.setFree(Long.parseLong(values[2]) * 1000);
 			} catch (NumberFormatException e) {
+				logger.error("Zpracování výstupu z getSystemSwapStatus se nezdařilo", e);
 				itemTO.setMonitorState(MonitorState.UNAVAILABLE);
 				return itemTO;
 			}
@@ -387,7 +392,18 @@ public class MonitorFacadeImpl implements MonitorFacade {
 		SMARTPartItemTO partItemTO = new SMARTPartItemTO();
 		// /usr/bin/journalctl -e -u smartd -S 2019-11-03 --lines=10
 		// --output-fields=SYSLOG_TIMESTAMP,PRIORITY,MESSAGE -o json
-		ConsoleOutputTO out = runScript("getSmartStatus");
+		// ConsoleOutputTO out = runScript("getSmartStatus");
+		ConsoleOutputTO out = new ConsoleOutputTO(
+				"{\"__REALTIME_TIMESTAMP\":\"1607729342860135\",\"_BOOT_ID\":\"971bdfd4038c451f9774faf8b393cfbf\",\"__CURSOR\":\"s=cf3d1f480a4a4b9194aa1bca422ae1cf;i=32efddf;b=971bdfd4038c451f9774faf8b393cfbf;m=2a254df0fa4;t=5b638a8604b67;x=dd3864f0f745ab4d\",\"MESSAGE\":\"Device: /dev/sdc [SAT], SMART Usage Attribute: 194 Temperature_Celsius changed from 122 to 119\",\"__MONOTONIC_TIMESTAMP\":\"2896231862180\",\"PRIORITY\":\"6\",\"SYSLOG_TIMESTAMP\":\"Dec 12 00:29:02 \"}\r\n"
+						+ "{\"__MONOTONIC_TIMESTAMP\":\"2898031916775\",\"__CURSOR\":\"s=cf3d1f480a4a4b9194aa1bca422ae1cf;i=32f036a;b=971bdfd4038c451f9774faf8b393cfbf;m=2a2c029b6e7;t=5b63913aaf2a9;x=8a687a5ca620a3d7\",\"__REALTIME_TIMESTAMP\":\"1607731142914729\",\"MESSAGE\":\"Device: /dev/sdc [SAT], SMART Usage Attribute: 194 Temperature_Celsius changed from 119 to 121\",\"_BOOT_ID\":\"971bdfd4038c451f9774faf8b393cfbf\",\"PRIORITY\":\"6\",\"SYSLOG_TIMESTAMP\":\"Dec 12 00:59:02 \"}\r\n"
+						+ "{\"__REALTIME_TIMESTAMP\":\"1607732942976168\",\"__MONOTONIC_TIMESTAMP\":\"2899831978214\",\"MESSAGE\":\"Device: /dev/sdc [SAT], SMART Usage Attribute: 194 Temperature_Celsius changed from 121 to 122\",\"__CURSOR\":\"s=cf3d1f480a4a4b9194aa1bca422ae1cf;i=32f091b;b=971bdfd4038c451f9774faf8b393cfbf;m=2a32b7478e6;t=5b6397ef5b4a8;x=d1b1253dab700d9d\",\"PRIORITY\":\"6\",\"SYSLOG_TIMESTAMP\":\"Dec 12 01:29:02 \",\"_BOOT_ID\":\"971bdfd4038c451f9774faf8b393cfbf\"}\r\n"
+						+ "{\"__MONOTONIC_TIMESTAMP\":\"2907031168537\",\"__REALTIME_TIMESTAMP\":\"1607740142166492\",\"MESSAGE\":\"Device: /dev/sdb [SAT], SMART Usage Attribute: 9 Power_On_Hours changed from 92 to 94\",\"__CURSOR\":\"s=cf3d1f480a4a4b9194aa1bca422ae1cf;i=32f1913;b=971bdfd4038c451f9774faf8b393cfbf;m=2a4d88f6619;t=5b63b2c10a1dc;x=c4d59d13f24de9a0\",\"SYSLOG_TIMESTAMP\":\"Dec 12 03:29:02 \",\"PRIORITY\":\"6\",\"_BOOT_ID\":\"971bdfd4038c451f9774faf8b393cfbf\"}\r\n"
+						+ "{\"__REALTIME_TIMESTAMP\":\"1607786942586507\",\"SYSLOG_TIMESTAMP\":\"Dec 12 16:29:02 \",\"__CURSOR\":\"s=cf3d1f480a4a4b9194aa1bca422ae1cf;i=32fcd7f;b=971bdfd4038c451f9774faf8b393cfbf;m=2afbe1522c8;t=5b64611965e8b;x=8eb2eb5919da031a\",\"MESSAGE\":\"Device: /dev/sdc [SAT], SMART Usage Attribute: 194 Temperature_Celsius changed from 122 to 120\",\"PRIORITY\":\"6\",\"_BOOT_ID\":\"971bdfd4038c451f9774faf8b393cfbf\",\"__MONOTONIC_TIMESTAMP\":\"2953831588552\"}\r\n"
+						+ "{\"_BOOT_ID\":\"971bdfd4038c451f9774faf8b393cfbf\",\"SYSLOG_TIMESTAMP\":\"Dec 12 16:59:02 \",\"PRIORITY\":\"6\",\"__MONOTONIC_TIMESTAMP\":\"2955631650652\",\"MESSAGE\":\"Device: /dev/sdc [SAT], SMART Usage Attribute: 194 Temperature_Celsius changed from 120 to 117\",\"__CURSOR\":\"s=cf3d1f480a4a4b9194aa1bca422ae1cf;i=32fea5c;b=971bdfd4038c451f9774faf8b393cfbf;m=2b0295fe75c;t=5b6467ce1231f;x=742a3cb87887c952\",\"__REALTIME_TIMESTAMP\":\"1607788742648607\"}\r\n"
+						+ "{\"_BOOT_ID\":\"971bdfd4038c451f9774faf8b393cfbf\",\"__CURSOR\":\"s=cf3d1f480a4a4b9194aa1bca422ae1cf;i=32fed70;b=971bdfd4038c451f9774faf8b393cfbf;m=2b094aa8d5e;t=5b646e82bc920;x=ab2f50e92db5d32a\",\"PRIORITY\":\"6\",\"SYSLOG_TIMESTAMP\":\"Dec 12 17:29:02 \",\"__MONOTONIC_TIMESTAMP\":\"2957431704926\",\"MESSAGE\":\"Device: /dev/sdc [SAT], SMART Usage Attribute: 194 Temperature_Celsius changed from 117 to 116\",\"__REALTIME_TIMESTAMP\":\"1607790542702880\"}\r\n"
+						+ "{\"SYSLOG_TIMESTAMP\":\"Dec 12 17:59:02 \",\"__REALTIME_TIMESTAMP\":\"1607792342764584\",\"__CURSOR\":\"s=cf3d1f480a4a4b9194aa1bca422ae1cf;i=32ff0f4;b=971bdfd4038c451f9774faf8b393cfbf;m=2b0fff55066;t=5b64753768c28;x=91a2109310fae5db\",\"MESSAGE\":\"Device: /dev/sdc [SAT], SMART Usage Attribute: 194 Temperature_Celsius changed from 116 to 115\",\"PRIORITY\":\"6\",\"__MONOTONIC_TIMESTAMP\":\"2959231766630\",\"_BOOT_ID\":\"971bdfd4038c451f9774faf8b393cfbf\"}\r\n"
+						+ "{\"__MONOTONIC_TIMESTAMP\":\"2963093206504\",\"_BOOT_ID\":\"971bdfd4038c451f9774faf8b393cfbf\",\"PRIORITY\":\"6\",\"__CURSOR\":\"s=cf3d1f480a4a4b9194aa1bca422ae1cf;i=32ff720;b=971bdfd4038c451f9774faf8b393cfbf;m=2b1e61e35e8;t=5b648399f71ab;x=b168e901bd46007\",\"MESSAGE\":\"Stopping Self Monitoring and Reporting Technology (SMART) Daemon...\",\"__REALTIME_TIMESTAMP\":\"1607796204204459\"}\r\n"
+						+ "{\"__CURSOR\":\"s=cf3d1f480a4a4b9194aa1bca422ae1cf;i=32ff73a;b=971bdfd4038c451f9774faf8b393cfbf;m=2b1e61f1be8;t=5b64839a057ab;x=39e564b732e42ccb\",\"__REALTIME_TIMESTAMP\":\"1607796204263339\",\"PRIORITY\":\"6\",\"__MONOTONIC_TIMESTAMP\":\"2963093265384\",\"SYSLOG_TIMESTAMP\":\"Dec 12 19:03:24 \",\"MESSAGE\":\"smartd received signal 15: Terminated\",\"_BOOT_ID\":\"971bdfd4038c451f9774faf8b393cfbf\"}");
 		if (out.isSuccess()) {
 			try {
 				String[] lines = out.getOutput().split("\n");
@@ -396,7 +412,8 @@ public class MonitorFacadeImpl implements MonitorFacade {
 					JsonNode jsonNode = mapper.readTree(line);
 					String message = jsonNode.get(MESSAGE_HEADER).asText();
 					int priority = jsonNode.get(PRIORITY_HEADER).asInt();
-					String time = jsonNode.get(TIME_HEADER).asText();
+					JsonNode timeNode = jsonNode.get(TIME_HEADER);
+					String time = timeNode == null ? "-null-" : timeNode.asText();
 					SMARTMonitorItemTO to = new SMARTMonitorItemTO(time, message);
 
 					// https://www.freedesktop.org/software/systemd/man/journalctl.html
@@ -422,6 +439,7 @@ public class MonitorFacadeImpl implements MonitorFacade {
 					partItemTO.setStateDetails("Vše OK");
 				}
 			} catch (Exception e) {
+				logger.error("Zpracování výstupu z getSMARTInfo se nezdařilo", e);
 				return createSMARTErrorOutput("Nezdařilo se zpracovat JSON výstup smartd");
 			}
 		} else {

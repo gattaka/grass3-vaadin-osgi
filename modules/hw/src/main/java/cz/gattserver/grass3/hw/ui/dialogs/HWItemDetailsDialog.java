@@ -8,6 +8,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.grass3.hw.ui.HWItemsTab;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
@@ -29,7 +30,10 @@ public class HWItemDetailsDialog extends Dialog {
 	private HWItemTO hwItem;
 	private Long hwItemId;
 
-	public HWItemDetailsDialog(Long hwItemId) {
+	private HWItemsTab itemsTab;
+
+	public HWItemDetailsDialog(HWItemsTab itemsTab, Long hwItemId) {
+		this.itemsTab = itemsTab;
 		this.hwItemId = hwItemId;
 		this.hwItem = getHWService().getHWItem(hwItemId);
 
@@ -115,7 +119,7 @@ public class HWItemDetailsDialog extends Dialog {
 
 	public void switchInfoTab() {
 		tabLayout.removeAll();
-		tabLayout.add(new HWDetailsInfoTab(hwItem, this));
+		tabLayout.add(new HWDetailsInfoTab(itemsTab, hwItem, this));
 		tabs.setSelectedTab(infoTab);
 	}
 

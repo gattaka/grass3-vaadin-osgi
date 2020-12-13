@@ -37,6 +37,7 @@ import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.grass3.hw.ui.HWItemsTab;
 import cz.gattserver.grass3.hw.ui.HWUIUtils;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.SecurityService;
@@ -66,10 +67,12 @@ public class HWDetailsInfoTab extends Div {
 	private VerticalLayout hwImageLayout;
 	private HWItemTO hwItem;
 	private HWItemDetailsDialog hwItemDetailDialog;
+	private HWItemsTab itemsTab;
 
-	public HWDetailsInfoTab(HWItemTO hwItem, HWItemDetailsDialog hwItemDetailDialog) {
+	public HWDetailsInfoTab(HWItemsTab itemsTab, HWItemTO hwItem, HWItemDetailsDialog hwItemDetailDialog) {
 		SpringContextHelper.inject(this);
 		setHeightFull();
+		this.itemsTab = itemsTab;
 		this.hwItem = hwItem;
 		this.hwItemDetailDialog = hwItemDetailDialog;
 		init();
@@ -195,7 +198,7 @@ public class HWDetailsInfoTab extends Div {
 			// Samotný button se stále roztahoval, bez ohledu na nastavený width
 			Button usedInBtn = new LinkButton(hwItem.getUsedIn().getName(), e -> {
 				hwItemDetailDialog.close();
-				new HWItemDetailsDialog(hwItem.getUsedIn().getId()).open();
+				new HWItemDetailsDialog(itemsTab, hwItem.getUsedIn().getId()).open();
 			});
 			tableLayout.add(usedInBtn);
 		}
@@ -222,7 +225,7 @@ public class HWDetailsInfoTab extends Div {
 				new ComponentRenderer<Button, HWItemOverviewTO>(c -> new LinkButton(createShortName(c.getName()), e -> {
 					hwItemDetailDialog.close();
 					HWItemTO detailTO = getHWService().getHWItem(c.getId());
-					new HWItemDetailsDialog(detailTO.getId()).open();
+					new HWItemDetailsDialog(itemsTab, detailTO.getId()).open();
 				}))).setHeader("Název součásti").setFlexGrow(100);
 
 		// kontrola na null je tady jenom proto, aby při selectu (kdy se udělá
@@ -270,6 +273,7 @@ public class HWDetailsInfoTab extends Div {
 						try {
 							getHWService().deleteHWItem(hwItem.getId());
 							hwItemDetailDialog.close();
+							itemsTab.populate();
 						} catch (Exception ex) {
 							new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
 						}

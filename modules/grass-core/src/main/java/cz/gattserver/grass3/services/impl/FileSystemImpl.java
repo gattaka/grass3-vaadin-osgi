@@ -23,6 +23,7 @@ import cz.gattserver.grass3.services.FileSystemService;
 @Component
 public class FileSystemImpl implements FileSystemService {
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(FileSystemImpl.class);
 
 	@Override
@@ -55,12 +56,13 @@ public class FileSystemImpl implements FileSystemService {
 
 	@Override
 	public Path grantPermissions(Path path) throws IOException {
-		Set<PosixFilePermission> perms = createPerms();
-		try {
-			Files.setPosixFilePermissions(path, perms);
-		} catch (IOException e) {
-			logger.warn("Nezdařilo se nastavit práva na soubor", e);
-		}
+		// Nakonec vyřešeno přes jsvc + umask fix
+		// Set<PosixFilePermission> perms = createPerms();
+		// try {
+		// Files.setPosixFilePermissions(path, perms);
+		// } catch (IOException e) {
+		// logger.warn("Nezdařilo se nastavit práva na soubor", e);
+		// }
 		return path;
 	}
 
@@ -72,11 +74,15 @@ public class FileSystemImpl implements FileSystemService {
 
 	@Override
 	public void createDirectoriesWithPerms(Path path) throws IOException {
-		Files.createDirectories(path, createPermsAttributes());
+		// Nakonec vyřešeno přes jsvc + umask fix
+		// Files.createDirectories(path, createPermsAttributes());
+		Files.createDirectories(path);
 	}
 
 	@Override
 	public Path createDirectoryWithPerms(Path path) throws IOException {
-		return Files.createDirectory(path, createPermsAttributes());
+		// Nakonec vyřešeno přes jsvc + umask fix
+		// return Files.createDirectory(path, createPermsAttributes());
+		return Files.createDirectory(path);
 	}
 }

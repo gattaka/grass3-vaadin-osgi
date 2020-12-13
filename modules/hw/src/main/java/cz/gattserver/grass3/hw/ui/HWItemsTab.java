@@ -14,6 +14,7 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.data.provider.CallbackDataProvider;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -201,14 +202,18 @@ public class HWItemsTab extends Div {
 			// Smazání položky HW
 			Button deleteBtn = new DeleteGridButton<HWItemOverviewTO>("Smazat", set -> {
 				HWItemOverviewTO item = set.iterator().next();
-				try {
-					getHWService().deleteHWItem(item.getId());
-					populate();
-				} catch (Exception ex) {
-					new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
-				}
+				deleteItem(item);
 			}, grid);
 			buttonLayout.add(deleteBtn);
+		}
+	}
+
+	private void deleteItem(HWItemOverviewTO item) {
+		try {
+			getHWService().deleteHWItem(item.getId());
+			populate();
+		} catch (Exception ex) {
+			new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
 		}
 	}
 
@@ -224,30 +229,35 @@ public class HWItemsTab extends Div {
 		return securityFacade.getCurrentUser();
 	}
 
-	private void populate() {
+	public void populate() {
 		if (hwTypesFilter != null)
 			filterTO.setTypes(hwTypesFilter.getValues());
-		FetchCallback<HWItemOverviewTO, HWItemOverviewTO> fetchCallback = q -> getHWService().getHWItems(filterTO,
-				q.getOffset(), q.getLimit(), QuerydslUtil.transformOrdering(q.getSortOrders(), column -> {
-					switch (column) {
-					case PRICE_BIND:
-						return "price";
-					case STATE_BIND:
-						return "state";
-					case PURCHASE_DATE_BIND:
-						return "purchaseDate";
-					case NAME_BIND:
-						return "name";
-					case USED_IN_BIND:
-						return "usedIn";
-					case SUPERVIZED_FOR_BIND:
-						return "supervizedFor";
-					default:
-						return column;
-					}
-				})).stream();
-		CountCallback<HWItemOverviewTO, HWItemOverviewTO> countCallback = q -> getHWService().countHWItems(filterTO);
-		grid.setDataProvider(DataProvider.fromFilteringCallbacks(fetchCallback, countCallback));
+		if (grid.getDataProvider() == null || !(grid.getDataProvider() instanceof CallbackDataProvider)) {
+			FetchCallback<HWItemOverviewTO, HWItemOverviewTO> fetchCallback = q -> getHWService().getHWItems(filterTO,
+					q.getOffset(), q.getLimit(), QuerydslUtil.transformOrdering(q.getSortOrders(), column -> {
+						switch (column) {
+						case PRICE_BIND:
+							return "price";
+						case STATE_BIND:
+							return "state";
+						case PURCHASE_DATE_BIND:
+							return "purchaseDate";
+						case NAME_BIND:
+							return "name";
+						case USED_IN_BIND:
+							return "usedIn";
+						case SUPERVIZED_FOR_BIND:
+							return "supervizedFor";
+						default:
+							return column;
+						}
+					})).stream();
+			CountCallback<HWItemOverviewTO, HWItemOverviewTO> countCallback = q -> getHWService()
+					.countHWItems(filterTO);
+			grid.setDataProvider(DataProvider.fromFilteringCallbacks(fetchCallback, countCallback));
+		} else {
+			grid.getDataProvider().refreshAll();
+		}
 	}
 
 	private void openItemWindow(HWItemOverviewTO hwItemOverviewTO) {
@@ -279,7 +289,7 @@ public class HWItemsTab extends Div {
 	}
 
 	private void openDetailWindow(Long id) {
-		new HWItemDetailsDialog(id) {
+		new HWItemDetailsDialog(HWItemsTab.this, id) {
 			private static final long serialVersionUID = 1621156205987235037L;
 
 			public HWItemTO refreshItem() {

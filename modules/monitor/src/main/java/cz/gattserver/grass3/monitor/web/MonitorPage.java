@@ -46,6 +46,7 @@ import cz.gattserver.grass3.monitor.web.label.ErrorMonitorStateLabel;
 import cz.gattserver.grass3.monitor.web.label.MonitorOutputLabel;
 import cz.gattserver.grass3.monitor.web.label.SuccessMonitorStateLabel;
 import cz.gattserver.grass3.monitor.web.label.WarningMonitorStateLabel;
+import cz.gattserver.grass3.services.MailService;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.TableLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
@@ -64,6 +65,9 @@ public class MonitorPage extends OneColumnPage {
 
 	@Autowired
 	private MonitorEmailNotifier emailNotifier;
+
+	@Autowired
+	private MailService mailService;
 
 	private VerticalLayout layout;
 
@@ -566,8 +570,11 @@ public class MonitorPage extends OneColumnPage {
 		}
 
 		// Mail test
-		layout.add(new H2("Mail notifier"));
-		Button testMailBtn = new Button("Mail notifier", e -> emailNotifier.getTimerTask().run());
+		layout.add(new H2("Email test"));
+		Button testMailBtn = new Button("Send test email",
+				e -> mailService.sendToAdmin("Grass email test", "Test message"));
 		layout.add(testMailBtn);
+		Button monitorMailBtn = new Button("Send monitor email", e -> emailNotifier.getTimerTask().run());
+		layout.add(monitorMailBtn);
 	}
 }

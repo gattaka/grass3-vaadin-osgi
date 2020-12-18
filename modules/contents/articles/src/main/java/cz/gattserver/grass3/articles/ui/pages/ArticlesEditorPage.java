@@ -433,14 +433,14 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 			if (!isFormValid())
 				return;
 			if (saveOrUpdateArticle()) {
-				UIUtils.showSilentInfo(ArticlesEditorPage.this.existingArticleId != null
-						? "Úprava článku proběhla úspěšně" : "Uložení článku proběhlo úspěšně");
+				UIUtils.showSilentInfo(
+						ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku proběhla úspěšně"
+								: "Uložení článku proběhlo úspěšně");
 			} else {
 				UIUtils.showWarning(ArticlesEditorPage.this.existingArticleId != null ? "Úprava článku se nezdařila"
 						: "Uložení článku se nezdařilo");
 			}
 		});
-		saveButton.addClickShortcut(Key.KEY_S, KeyModifier.CONTROL);
 		return saveButton;
 	}
 
@@ -456,20 +456,22 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 						: "Uložení článku se nezdařilo");
 			}
 		});
+		saveAndCloseButton.addClickShortcut(Key.KEY_S, KeyModifier.CONTROL).setBrowserDefaultAllowed(false);
 		return saveAndCloseButton;
 	}
 
 	private Button createCancelButton() {
-		Button cancelButton = new ImageButton("Zrušit", ImageIcon.DELETE_16_ICON, event -> new ConfirmDialog(
-				"Opravdu si přejete zavřít editor článku ? Veškeré neuložené změny budou ztraceny.", e -> {
-					// ruším úpravu existujícího článku (vracím se na
-					// článek), nebo nového (vracím se do kategorie) ?
-					if (existingArticleId != null) {
-						returnToArticle();
-					} else {
-						returnToNode();
-					}
-				}).open());
+		Button cancelButton = new ImageButton("Zrušit", ImageIcon.DELETE_16_ICON,
+				event -> new ConfirmDialog(
+						"Opravdu si přejete zavřít editor článku ? Veškeré neuložené změny budou ztraceny.", e -> {
+							// ruším úpravu existujícího článku (vracím se na
+							// článek), nebo nového (vracím se do kategorie) ?
+							if (existingArticleId != null) {
+								returnToArticle();
+							} else {
+								returnToNode();
+							}
+						}).open());
 		return cancelButton;
 	}
 

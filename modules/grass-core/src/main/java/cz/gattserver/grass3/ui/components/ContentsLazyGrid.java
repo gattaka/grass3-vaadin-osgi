@@ -87,13 +87,15 @@ public class ContentsLazyGrid extends Grid<ContentNodeOverviewTO> {
 			return new Anchor(url, contentNode.getParentNodeName());
 		})).setFlexGrow(2).setHeader("Kategorie").setId(nodeBind);
 
-		addColumn(new LocalDateTimeRenderer<>(ContentNodeOverviewTO::getCreationDate, "d.M.yyyy"))
-				.setHeader("Vytvořeno").setKey(creationDateBind).setClassNameGenerator(item -> "v-align-right")
-				.setFlexGrow(0).setWidth("90px");
+		if (!UIUtils.isMobileDevice()) {
+			addColumn(new LocalDateTimeRenderer<>(ContentNodeOverviewTO::getCreationDate, "d.M.yyyy"))
+					.setHeader("Vytvořeno").setKey(creationDateBind).setClassNameGenerator(item -> "v-align-right")
+					.setFlexGrow(0).setWidth("90px");
 
-		addColumn(new LocalDateTimeRenderer<>(ContentNodeOverviewTO::getLastModificationDate, "d.M.yyyy"))
-				.setHeader("Upraveno").setKey(lastModificationDateBind).setClassNameGenerator(item -> "v-align-right")
-				.setFlexGrow(0).setWidth("90px");
+			addColumn(new LocalDateTimeRenderer<>(ContentNodeOverviewTO::getLastModificationDate, "d.M.yyyy"))
+					.setHeader("Upraveno").setKey(lastModificationDateBind)
+					.setClassNameGenerator(item -> "v-align-right").setFlexGrow(0).setWidth("90px");
+		}
 
 		setHeight(GridUtils.processHeight(countCallback.count(new Query<>())) + "px");
 	}

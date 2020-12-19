@@ -13,11 +13,14 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow.HeaderCell;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.page.ExtendedClientDetails;
 import com.vaadin.flow.component.page.PendingJavaScriptResult;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.server.VaadinRequest;
+import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.WebBrowser;
 
 import cz.gattserver.grass3.ui.js.JScriptItem;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
@@ -41,6 +44,17 @@ public class UIUtils {
 	public static final String GRID_ICON_CSS_CLASS = "grid-icon-img";
 
 	private UIUtils() {
+	}
+
+	/**
+	 * Zjistí, zda je používáno mobilní zařízení
+	 */
+	public static boolean isMobileDevice() {
+		WebBrowser wb = VaadinSession.getCurrent().getBrowser();
+		ExtendedClientDetails ecd = UI.getCurrent().getInternals().getExtendedClientDetails();
+		if (ecd != null && !ecd.isTouchDevice())
+			return false;
+		return wb.isIPhone() || wb.isAndroid() || wb.isWindowsPhone() || ecd != null && ecd.isIPad();
 	}
 
 	/**

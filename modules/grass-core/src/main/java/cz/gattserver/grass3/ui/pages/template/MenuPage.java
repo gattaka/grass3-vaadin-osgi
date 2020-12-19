@@ -10,9 +10,7 @@ import org.springframework.context.annotation.Lazy;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.server.VaadinRequest;
 
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
@@ -70,26 +68,31 @@ public abstract class MenuPage extends GrassPage {
 		top.setId("top");
 		topHolder.add(top);
 
+		Div logoLine = new Div();
+		logoLine.setId("logo-line");
+		top.add(logoLine);
+
 		// homelink (přes logo)
+		Div homelinkDiv = new Div();
+		homelinkDiv.setId("homelink");
+		logoLine.add(homelinkDiv);
 		String url = VaadinRequest.getCurrent().getContextPath();
 		Anchor homelink = new Anchor(url, new Image("img/logo.png", "Gattserver"));
-		homelink.setId("homelink");
-		top.add(homelink);
+		homelinkDiv.add(homelink);
 
-		Div quotes = new Div();
-		quotes.setId("quotes");
-		top.add(quotes);
-
-		createQuotes(quotes);
+		if (!isMobileDevice()) {
+			Div quotes = new Div();
+			quotes.setId("quotes");
+			logoLine.add(quotes);
+			createQuotes(quotes);
+		}
 
 		Div menu = new Div();
 		menu.setId("menu-wrapper");
 		top.add(menu);
 
-		HorizontalLayout menuExpander = new HorizontalLayout();
-		menuExpander.setWidth("990px");
-		menuExpander.addClassName("menu");
-		menuExpander.setSpacing(true);
+		Div menuExpander = new Div();
+		menuExpander.setId("menu");
 		menu.add(menuExpander);
 
 		createMenuItems(menuExpander);
@@ -108,22 +111,30 @@ public abstract class MenuPage extends GrassPage {
 		bottom.setId("bottom");
 		bottomHolder.add(bottom);
 
-		bottom.add(new Span("Powered by GRASS " + versionInfoService.getProjectVersion() + " © 2012-2020 Hynek Uhlíř"));
+		bottom.add(new Span("Powered by GRASS " + versionInfoService.getProjectVersion() + " © 2012-2021 Hynek Uhlíř"));
 
 		Div bottomShadow = new Div();
 		bottomShadow.setId("bottom-shadow");
 		bottomHolder.add(bottomShadow);
 	}
 
-	protected void createMenuComponent(HorizontalLayout menu, Anchor component) {
-		menu.add(component);
-		component.addClassName("menu-item");
+	protected void createMenuComponent(Div menu, Anchor component) {
+		createMenuComponent(menu, component, false);
+	}
+
+	protected void createMenuComponent(Div menu, Anchor component, boolean rightMenu) {
+		Div wrapper = new Div(component);
+		wrapper.add(component);
+		menu.add(wrapper);
+		wrapper.addClassName("menu-item");
+		if (rightMenu)
+			wrapper.addClassName("menu-item-right");
 	}
 
 	/**
 	 * Získá menu
 	 */
-	protected void createMenuItems(HorizontalLayout menu) {
+	protected void createMenuItems(Div menu) {
 
 		/**
 		 * Sections menu
@@ -131,44 +142,39 @@ public abstract class MenuPage extends GrassPage {
 
 		// sekce článků je rozbalená rovnou jako její kořenové kategorie
 		List<NodeOverviewTO> nodes = nodeFacade.getRootNodes();
-		for (NodeOverviewTO node : nodes) {
+		for (NodeOverviewTO node : nodes)
 			createMenuComponent(menu,
 					new Anchor(getPageURL(nodePageFactory, node.getId() + "-" + node.getName()), node.getName()));
-		}
 
 		// externí sekce
-		for (SectionService section : serviceHolder.getSectionServices()) {
-			if (coreACL.canShowSection(section, getUser())) {
+		for (SectionService section : serviceHolder.getSectionServices())
+			if (coreACL.canShowSection(section, getUser()))
 				createMenuComponent(menu,
 						new Anchor(getPageURL(section.getSectionPageFactory()), section.getSectionCaption()));
-			}
-		}
-
-		Label sep = new Label(" ");
-		menu.add(sep);
-		menu.expand(sep);
 
 		/**
 		 * User menu
 		 */
 
-		// Přihlášení
-		if (!coreACL.isLoggedIn(getUser()))
-			createMenuComponent(menu, new Anchor(getPageURL(loginPageFactory), "Přihlášení"));
-
 		// Registrace
 		if (coreACL.canRegistrate(getUser()))
-			createMenuComponent(menu, new Anchor(getPageURL(registrationPageFactory), "Registrace"));
+			createMenuComponent(menu, new Anchor(getPageURL(registrationPageFactory), "Registrace"), true);
+
+		// Přihlášení
+		if (!coreACL.isLoggedIn(getUser()))
+			createMenuComponent(menu, new Anchor(getPageURL(loginPageFactory), "Přihlášení"), true);
 
 		// Přehled o uživateli
 		final UserInfoTO userInfoDTO = getUser();
 		if (coreACL.canShowUserDetails(userInfoDTO, getUser())) {
-			// nastavení
-			createMenuComponent(menu, new Anchor(getPageURL(settingsPageFactory), "Nastavení"));
-
 			// odhlásit
-			createMenuComponent(menu, new Anchor(getPageURL("logout"), "Odhlásit (" + userInfoDTO.getName() + ")"));
+			createMenuComponent(menu, new Anchor(getPageURL("logout"), "Odhlásit (" + userInfoDTO.getName() + ")"),
+					true);
+
+			// nastavení
+			createMenuComponent(menu, new Anchor(getPageURL(settingsPageFactory), "Nastavení"), true);
 		}
+
 	}
 
 	/**

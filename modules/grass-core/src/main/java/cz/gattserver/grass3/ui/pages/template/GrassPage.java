@@ -49,6 +49,11 @@ public abstract class GrassPage extends Div implements PageConfigurator {
 		if (UI.getCurrent().getSession().getErrorHandler() == null
 				|| UI.getCurrent().getSession().getErrorHandler() instanceof DefaultErrorHandler)
 			UI.getCurrent().getSession().setErrorHandler(new ApplicationErrorHandler());
+
+	}
+
+	protected boolean isMobileDevice() {
+		return UIUtils.isMobileDevice();
 	}
 
 	@Override

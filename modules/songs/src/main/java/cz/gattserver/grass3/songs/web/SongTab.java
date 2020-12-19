@@ -3,7 +3,13 @@ package cz.gattserver.grass3.songs.web;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -14,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.vaadin.olli.FileDownloadWrapper;
 
 import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.html.Div;
@@ -21,6 +28,11 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.server.StreamResource;
 
+import cz.gattserver.grass3.exception.GrassException;
+import cz.gattserver.grass3.export.ExportType;
+import cz.gattserver.grass3.export.ExportsService;
+import cz.gattserver.grass3.export.JasperExportDataSource;
+import cz.gattserver.grass3.export.PagedDataSource;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.songs.SongsRole;
 import cz.gattserver.grass3.songs.facades.SongsService;
@@ -29,11 +41,14 @@ import cz.gattserver.grass3.songs.model.interfaces.SongTO;
 import cz.gattserver.grass3.songs.util.ChordImageUtils;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
+import cz.gattserver.grass3.ui.components.button.ImageButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.HtmlDiv;
+import cz.gattserver.web.common.ui.ImageIcon;
+import net.sf.jasperreports.engine.JRDataSource;
 
 public class SongTab extends Div {
 
@@ -52,6 +67,9 @@ public class SongTab extends Div {
 	@Resource(name = "songsPageFactory")
 	private SongsPageFactory pageFactory;
 
+	@Autowired
+	private ExportsService exportsService;
+
 	private H2 nameLabel;
 	private HtmlDiv authorYearLabel;
 	private HtmlDiv contentLabel;
@@ -60,7 +78,7 @@ public class SongTab extends Div {
 	public SongTab(SongsPage songsPage, Long songId) {
 		SpringContextHelper.inject(this);
 
-		SongTO choosenSong = songsFacade.getSongById(songId);
+		final SongTO choosenSong = songsFacade.getSongById(songId);
 
 		Div wrapperDiv = new Div();
 		wrapperDiv.getStyle().set("padding", "10px").set("background", "white").set("border-radius", "3px")
@@ -93,9 +111,7 @@ public class SongTab extends Div {
 		ButtonLayout btnLayout = new ButtonLayout();
 		add(btnLayout);
 
-		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));
-
-		btnLayout.add(new CreateButton("Přidat", event -> {
+		CreateButton addSongBtn = new CreateButton("Přidat", event -> {
 			new SongDialog() {
 				private static final long serialVersionUID = -4863260002363608014L;
 
@@ -105,9 +121,11 @@ public class SongTab extends Div {
 					songsPage.setSelectedSongId(to.getId());
 				}
 			}.open();
-		}));
+		});
+		btnLayout.add(addSongBtn);
+		addSongBtn.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));
 
-		btnLayout.add(new ModifyButton("Upravit", event -> {
+		ModifyButton modifyButton = new ModifyButton("Upravit", event -> {
 			new SongDialog(choosenSong) {
 				private static final long serialVersionUID = 5264621441522056786L;
 
@@ -117,13 +135,44 @@ public class SongTab extends Div {
 					showDetail(to);
 				}
 			}.open();
-		}));
+		});
+		btnLayout.add(modifyButton);
+		modifyButton.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));
 
-		btnLayout.add(new DeleteButton("Smazat", e -> {
+		DeleteButton deleteButton = new DeleteButton("Smazat", e -> {
 			songsFacade.deleteSong(songId);
 			songsPage.setSelectedSongId(null);
 			songsPage.selectListTab();
+		});
+		btnLayout.add(deleteButton);
+		deleteButton.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));
+
+		ImageButton printButton = new ImageButton("Tisk", ImageIcon.PRINT_16_ICON);
+		FileDownloadWrapper buttonWrapper = new FileDownloadWrapper(new StreamResource("report.pdf", () -> {
+			JRDataSource jrDataSource = new JasperExportDataSource<SongTO>(new PagedDataSource<SongTO>(1, 1) {
+
+				@Override
+				protected List<SongTO> getData(int page, int size) {
+					SongTO s = new SongTO(choosenSong.getName(), choosenSong.getAuthor(), choosenSong.getYear(),
+							choosenSong.getText().replaceAll("<br/>", "\n"), choosenSong.getId(),
+							choosenSong.getPublicated(), choosenSong.getEmbedded());
+					return Arrays.asList(new SongTO[] { s });
+				}
+
+				@Override
+				protected void indicateProgress() {
+				}
+			});
+			File file = exportsService.createPDFReport(jrDataSource, new HashMap<String, Object>(), "song",
+					ExportType.PDF);
+			try {
+				return new FileInputStream(file);
+			} catch (FileNotFoundException e1) {
+				throw new GrassException("PDF file missing", e1);
+			}
 		}));
+		buttonWrapper.wrapComponent(printButton);
+		btnLayout.add(buttonWrapper);
 
 		Div chordDiv = new Div();
 		chordDiv.setVisible(false);

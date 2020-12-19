@@ -20,6 +20,13 @@
 			<artifactId>vaadin</artifactId>
 		</dependency>
 
+		<!-- File Download Wrapper -->
+		<dependency>
+			<groupId>org.vaadin.olli</groupId>
+			<artifactId>file-download-wrapper</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+
 		<!-- Servlet deps -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -58,6 +65,24 @@
 					<!-- tady je 2.2 a já již používám 2.6 -->
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<!-- Jasper reports -->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>6.16.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.lowagie</groupId>
+					<artifactId>itext</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>2.1.7</version>
 		</dependency>
 
 	</dependencies>

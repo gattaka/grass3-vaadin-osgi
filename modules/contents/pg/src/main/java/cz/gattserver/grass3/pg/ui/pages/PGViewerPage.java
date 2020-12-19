@@ -51,7 +51,6 @@ import cz.gattserver.grass3.ui.dialogs.ImageSlideshowDialog;
 import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
-import cz.gattserver.grass3.ui.util.GridLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.Breakline;
@@ -70,10 +69,8 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 	private static final Logger logger = LoggerFactory.getLogger(PGViewerPage.class);
 
-	private static final int GALLERY_GRID_COLS = 4;
-	private static final int GALLERY_GRID_ROWS = 3;
 	private static final int MAX_PAGE_RADIUS = 2;
-	private static final int PAGE_SIZE = GALLERY_GRID_COLS * GALLERY_GRID_ROWS;
+	private static final int PAGE_SIZE = 12;
 
 	private static final String MAGICK_WORD = "MAG1CK";
 
@@ -98,7 +95,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 	private int currentPage = 0;
 
 	private PGMultiUpload upload;
-	private GridLayout galleryGridLayout;
+	private Div galleryLayout;
 	private HorizontalLayout pagingLayout;
 
 	/**
@@ -210,10 +207,10 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		layout.add(pagingLayout);
 
 		// galerie
-		galleryGridLayout = new GridLayout();
-		galleryGridLayout.setHeightFull();
-		galleryGridLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		layout.add(galleryGridLayout);
+		galleryLayout = new Div();
+		galleryLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		galleryLayout.setId("gallery-layout");
+		layout.add(galleryLayout);
 
 		upload = new PGMultiUpload(galleryDir) {
 			private static final long serialVersionUID = 6886131045258035130L;
@@ -325,7 +322,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 	}
 
 	private void refreshGrid() {
-		galleryGridLayout.removeAll();
+		galleryLayout.removeAll();
 		if (currentPage < 0)
 			currentPage = 0;
 		if (currentPage >= pageCount)
@@ -333,15 +330,11 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		int start = currentPage * PAGE_SIZE;
 		int index = start;
 		try {
-			int counter = 0;
 			for (PhotogalleryViewItemTO item : pgService.getViewItems(galleryDir, start, PAGE_SIZE)) {
-				if (counter == 0)
-					galleryGridLayout.newRow();
-				counter = (counter + 1) % 4;
 
 				final int currentIndex = index;
 				Div itemLayout = new Div();
-				itemLayout.getStyle().set("text-align", "center").set("width", "170px");
+				itemLayout.getStyle().set("text-align", "center").set("width", "170px").set("display", "inline-block");
 
 				// Miniatura/Náhled
 				Image embedded = new Image(new StreamResource(item.getName(), () -> {
@@ -402,7 +395,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 					itemLayout.add(deleteButton);
 				}
 
-				galleryGridLayout.add(itemLayout);
+				galleryLayout.add(itemLayout);
 
 				embedded.addClickListener(event -> showItem(currentIndex));
 

@@ -37,6 +37,7 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -271,6 +272,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 		articleTextArea = new TextArea();
 		articleTextArea.setHeight("30em");
 		articleTextArea.setWidthFull();
+		articleTextArea.setValueChangeMode(ValueChangeMode.EAGER);
 		publicatedCheckBox = new Checkbox();
 
 		// zavádění listener pro JS listener akcí jako je vepsání tabulátoru
@@ -446,6 +448,7 @@ public class ArticlesEditorPage extends TwoColumnPage implements HasUrlParameter
 
 	private Button createSaveAndCloseButton() {
 		Button saveAndCloseButton = new ImageButton("Uložit a zavřít", ImageIcon.SAVE_16_ICON, event -> {
+			articleTextArea.blur();
 			if (!isFormValid())
 				return;
 			if (saveOrUpdateArticle()) {

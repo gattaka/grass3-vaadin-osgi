@@ -3,14 +3,13 @@ package cz.gattserver.grass3.songs.web;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -20,15 +19,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.vaadin.olli.FileDownloadWrapper;
 
 import com.vaadin.flow.component.ClientCallable;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.VaadinSession;
 
-import cz.gattserver.grass3.exception.GrassException;
+import cz.gattserver.grass3.ExportRequestHandler;
 import cz.gattserver.grass3.export.ExportType;
 import cz.gattserver.grass3.export.ExportsService;
 import cz.gattserver.grass3.export.JasperExportDataSource;
@@ -147,32 +147,13 @@ public class SongTab extends Div {
 		btnLayout.add(deleteButton);
 		deleteButton.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));
 
-		ImageButton printButton = new ImageButton("Tisk", ImageIcon.PRINT_16_ICON);
-		FileDownloadWrapper buttonWrapper = new FileDownloadWrapper(new StreamResource("report.pdf", () -> {
-			JRDataSource jrDataSource = new JasperExportDataSource<SongTO>(new PagedDataSource<SongTO>(1, 1) {
-
-				@Override
-				protected List<SongTO> getData(int page, int size) {
-					SongTO s = new SongTO(choosenSong.getName(), choosenSong.getAuthor(), choosenSong.getYear(),
-							choosenSong.getText().replaceAll("<br/>", "\n"), choosenSong.getId(),
-							choosenSong.getPublicated(), choosenSong.getEmbedded());
-					return Arrays.asList(new SongTO[] { s });
-				}
-
-				@Override
-				protected void indicateProgress() {
-				}
-			});
-			File file = exportsService.createPDFReport(jrDataSource, new HashMap<String, Object>(), "song",
-					ExportType.PDF);
-			try {
-				return new FileInputStream(file);
-			} catch (FileNotFoundException e1) {
-				throw new GrassException("PDF file missing", e1);
-			}
-		}));
-		buttonWrapper.wrapComponent(printButton);
-		btnLayout.add(buttonWrapper);
+		ImageButton printButton2 = new ImageButton("Tisk", ImageIcon.PRINT_16_ICON, e -> {
+			Path path = createReportPath(choosenSong);
+			String uuid = UUID.randomUUID().toString();
+			VaadinSession.getCurrent().getSession().setAttribute(ExportRequestHandler.ATTR_PREFIX + uuid, path);
+			UI.getCurrent().getPage().open(UIUtils.getPageURL("export/" + uuid));
+		});
+		btnLayout.add(printButton2);
 
 		Div chordDiv = new Div();
 		chordDiv.setVisible(false);
@@ -219,6 +200,23 @@ public class SongTab extends Div {
 		add(callbackDiv);
 
 		showDetail(choosenSong);
+	}
+
+	private Path createReportPath(SongTO choosenSong) {
+		JRDataSource jrDataSource = new JasperExportDataSource<SongTO>(new PagedDataSource<SongTO>(1, 1) {
+			@Override
+			protected List<SongTO> getData(int page, int size) {
+				SongTO s = new SongTO(choosenSong.getName(), choosenSong.getAuthor(), choosenSong.getYear(),
+						choosenSong.getText().replaceAll("<br/>", "\n"), choosenSong.getId(),
+						choosenSong.getPublicated(), choosenSong.getEmbedded());
+				return Arrays.asList(new SongTO[] { s });
+			}
+
+			@Override
+			protected void indicateProgress() {
+			}
+		});
+		return exportsService.createPDFReport(jrDataSource, new HashMap<String, Object>(), "song", ExportType.PRINT);
 	}
 
 	public void showDetail(SongTO choosenSong) {

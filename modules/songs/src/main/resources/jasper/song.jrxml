@@ -32,7 +32,7 @@
 	<detail>
 		<band height="221">
 			<textField>
-				<reportElement uuid="a2b75606-8a9a-40b2-84c7-f8a1fc960a7c" x="0" y="0" width="782" height="22"/>
+				<reportElement uuid="a2b75606-8a9a-40b2-84c7-f8a1fc960a7c" x="0" y="0" width="535" height="22"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="16" isBold="true" pdfEncoding="Cp1250"/>
 				</textElement>
@@ -46,28 +46,28 @@
 				<text><![CDATA[Autor:]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="9405b7f2-fadd-45c2-afaa-87ea29ebbb54" x="30" y="22" width="312" height="20"/>
+				<reportElement uuid="9405b7f2-fadd-45c2-afaa-87ea29ebbb54" x="30" y="22" width="429" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" isBold="false" pdfEncoding="Cp1250"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{author}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="63a14251-8861-4000-978a-ddc0c7eb78a9" x="30" y="42" width="84" height="20"/>
+				<reportElement uuid="63a14251-8861-4000-978a-ddc0c7eb78a9" x="489" y="22" width="44" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" isBold="false" pdfEncoding="Cp1250"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{year}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="cd2932fb-bc25-4a81-966e-c76f6e78373d" x="0" y="42" width="30" height="20"/>
+				<reportElement uuid="cd2932fb-bc25-4a81-966e-c76f6e78373d" x="459" y="22" width="30" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" pdfEncoding="Cp1250"/>
 				</textElement>
 				<text><![CDATA[Rok:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="037dff5d-96bb-4468-ad6a-749242e96c87" x="0" y="62" width="782" height="159"/>
+				<reportElement uuid="037dff5d-96bb-4468-ad6a-749242e96c87" x="0" y="42" width="535" height="179"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" isBold="false" pdfEncoding="Cp1250"/>
 				</textElement>

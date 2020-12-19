@@ -140,6 +140,20 @@ span.label-err {
     display: inline-block;
 }
 
+#quotes-menu-item {
+	display: none;
+}
+
+@media only screen and (max-width: 1010px) {
+	#quotes {
+		display: none;
+	}
+	
+	#quotes-menu-item {
+		display: inline-block;
+	}
+}
+
 #quotes a, #quotes a:hover {
 	font-family: Tahoma, sans-serif;
 	font-size: 9pt;
@@ -151,7 +165,7 @@ span.label-err {
 	padding: 0 0 2px 0;	
 }
 
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 1010px) {
 	#menu  {
 		width: 990px;
 	}
@@ -163,6 +177,12 @@ span.label-err {
 	border-bottom: 1px solid #424246;
 	border-radius: 4px;
 	box-shadow: 0 0px 10px 0px black;
+}
+
+@media only screen and (max-width: 1010px) {
+	#menu-wrapper {
+		border-radius: 0px;
+	}
 }
 
 vaadin-horizontal-layout.menu {
@@ -224,12 +244,18 @@ vaadin-horizontal-layout.menu {
 	margin-right: auto;
 	margin-bottom: 18px;
 	margin-top: 0;
-	padding: 0 15px 0 15px;
 }
 
 #logo-line {
-	padding-top: 25px;
+	padding: 25px 0px 0px 0px;
 	height: 48px;
+}
+
+@media only screen and (max-width: 1010px) {
+	#logo-line {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
 }
 
 #homelink {	
@@ -252,8 +278,13 @@ vaadin-horizontal-layout.menu {
 	width: 990px;
 }
 
-#center-content, #left-content, #right-content, #bottom {
+#center-content, #left-content, #right-content {
 	border: 1px solid #b3b3b3;
+}
+
+#bottom {
+	border-top: 1px solid #b3b3b3;
+	border-bottom: 1px solid #b3b3b3;
 }
 
 #center-content, #left-content, #right-content {
@@ -263,13 +294,21 @@ vaadin-horizontal-layout.menu {
 	box-sizing: border-box;
 }
 
+@media only screen and (max-width: 1010px) {
+	#center-content, #left-content, #right-content {
+		border-left: none;
+		border-right: none;
+		border-radius: 0;
+	}
+}
+
 #left-content {
 	width: 220px;
 	display: inline-block;
 	vertical-align: top;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1010px) {
 	#left-content {
 		width: 100%;
 		margin-bottom: 14px;
@@ -282,7 +321,7 @@ vaadin-horizontal-layout.menu {
 	width: 100%;
 }
 
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 1010px) {
 	#right-content {
 		width: 755px;
 		margin-left: 14px;
@@ -338,12 +377,27 @@ vaadin-horizontal-layout.menu {
 	font-size: 11pt;
 }
 
-.content-tags {
+.content-info div, #content-info-tags {
+    margin-bottom: 12px;
+}
+
+@media only screen and (max-width: 1010px) {
+	.content-info div {
+		display: inline-block;
+		margin-left: 12px;
+	}
+	
+	.content-info div:first-child {
+		margin-left: 0;
+	}
+}
+
+#content-info-tags {
 	font-size: 10pt;
 	line-height: 15pt;
 }
 
-.content-tags div {
+#content-info-tags div {
 	display: inline-block;
 	margin-right: 10px;
 }

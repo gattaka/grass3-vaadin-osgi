@@ -54,6 +54,9 @@ public abstract class MenuPage extends GrassPage {
 	@Resource(name = "registrationPageFactory")
 	protected PageFactory registrationPageFactory;
 
+	@Resource(name = "quotesPageFactory")
+	protected PageFactory quotesPageFactory;
+
 	@Override
 	protected void createPageElements(Div payload) {
 		Div holder = new Div();
@@ -118,17 +121,18 @@ public abstract class MenuPage extends GrassPage {
 		bottomHolder.add(bottomShadow);
 	}
 
-	protected void createMenuComponent(Div menu, Anchor component) {
-		createMenuComponent(menu, component, false);
+	protected Div createMenuComponent(Div menu, Anchor component) {
+		return createMenuComponent(menu, component, false);
 	}
 
-	protected void createMenuComponent(Div menu, Anchor component, boolean rightMenu) {
+	protected Div createMenuComponent(Div menu, Anchor component, boolean rightMenu) {
 		Div wrapper = new Div(component);
 		wrapper.add(component);
 		menu.add(wrapper);
 		wrapper.addClassName("menu-item");
 		if (rightMenu)
 			wrapper.addClassName("menu-item-right");
+		return wrapper;
 	}
 
 	/**
@@ -151,6 +155,9 @@ public abstract class MenuPage extends GrassPage {
 			if (coreACL.canShowSection(section, getUser()))
 				createMenuComponent(menu,
 						new Anchor(getPageURL(section.getSectionPageFactory()), section.getSectionCaption()));
+
+		Div wrapper = createMenuComponent(menu, new Anchor(getPageURL(quotesPageFactory), "Hlášky"));
+		wrapper.setId("quotes-menu-item");
 
 		/**
 		 * User menu

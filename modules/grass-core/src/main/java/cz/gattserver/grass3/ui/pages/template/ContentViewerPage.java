@@ -81,7 +81,7 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 						: dateFormat.format(content.getLastModificationDate()));
 
 		tagsListLayout = new Div();
-		tagsListLayout.setClassName("content-tags");
+		tagsListLayout.setId("content-info-tags");
 		for (ContentTagOverviewTO contentTag : content.getContentTags()) {
 			Anchor tagLink = new Anchor(
 					getPageURL(tagPageFactory,
@@ -178,23 +178,23 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		info.setClassName("content-info");
 		layout.add(info);
 
-		info.add(new Strong("Autor:"));
-		info.add(new Breakline());
-		info.add(contentAuthorNameLabel);
-		info.add(new Breakline());
-		info.add(new Breakline());
+		Div authorPart = new Div();
+		info.add(authorPart);
+		authorPart.add(new Strong("Autor:"));
+		authorPart.add(new Breakline());
+		authorPart.add(contentAuthorNameLabel);
 
-		info.add(new Strong("Vytvořeno:"));
-		info.add(new Breakline());
-		info.add(contentCreationDateNameLabel);
-		info.add(new Breakline());
-		info.add(new Breakline());
+		Div createdPart = new Div();
+		info.add(createdPart);
+		createdPart.add(new Strong("Vytvořeno:"));
+		createdPart.add(new Breakline());
+		createdPart.add(contentCreationDateNameLabel);
 
-		info.add(new Strong("Upraveno:"));
-		info.add(new Breakline());
-		info.add(contentLastModificationDateLabel);
-		info.add(new Breakline());
-		info.add(new Breakline());
+		Div modifiedPart = new Div();
+		info.add(modifiedPart);
+		modifiedPart.add(new Strong("Upraveno:"));
+		modifiedPart.add(new Breakline());
+		modifiedPart.add(contentLastModificationDateLabel);
 
 		if (!content.isPublicated()) {
 			Div publicatedLayout = new Div();
@@ -207,7 +207,6 @@ public abstract class ContentViewerPage extends TwoColumnPage {
 		// tagy
 		layout.add(new H3("Tagy"));
 		layout.add(tagsListLayout);
-		layout.add(new Breakline());
 
 		// nástrojová lišta
 		layout.add(new H3("Operace s obsahem"));

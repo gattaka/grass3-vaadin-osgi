@@ -7,8 +7,6 @@ import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -47,6 +45,7 @@ public class RecipesPage extends OneColumnPage {
 
 	public RecipesPage() {
 		init();
+		loadCSS(getContextPath() + "/frontend/recipes/style.css");
 	}
 
 	private void showDetail(RecipeDTO choosenRecipe) {
@@ -59,19 +58,20 @@ public class RecipesPage extends OneColumnPage {
 
 	@Override
 	protected void createColumnContent(Div layout) {
-		HorizontalLayout recipesLayout = new HorizontalLayout();
-		recipesLayout.setWidthFull();
-		recipesLayout.setHeight("600px");
+		Div recipesLayout = new Div();
+		recipesLayout.setId("recipes-div");
 		layout.add(recipesLayout);
 
 		filterTO = new RecipeOverviewTO();
 
 		grid = new Grid<>();
 		UIUtils.applyGrassDefaultStyle(grid);
+		grid.setHeightFull();
+		Div gridDiv = new Div(grid);
+		gridDiv.setId("recipes-grid-div");
+		recipesLayout.add(gridDiv);
 
 		Column<RecipeOverviewTO> nazevColumn = grid.addColumn(RecipeOverviewTO::getName).setHeader("Název");
-		grid.setHeightFull();
-		recipesLayout.add(grid);
 
 		grid.addSelectionListener((e) -> e.getFirstSelectedItem()
 				.ifPresent((v) -> showDetail(getRecipesService().getRecipeById(v.getId()))));
@@ -86,11 +86,8 @@ public class RecipesPage extends OneColumnPage {
 
 		populate();
 
-		VerticalLayout contentLayout = new VerticalLayout();
-		contentLayout.setHeightFull();
-		contentLayout.setWidth("600px");
-		contentLayout.getStyle().set("border", "1px #dbdee4 solid").set("padding", "20px 10px 10px 10px")
-				.set("background", "white").set("overflow-y", "scroll");
+		Div contentLayout = new Div();
+		contentLayout.setId("recipes-content-div");
 		recipesLayout.add(contentLayout);
 
 		nameLabel = new H2();

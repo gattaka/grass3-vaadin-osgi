@@ -29,6 +29,7 @@ import com.vaadin.flow.router.WildcardParameter;
 import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.events.EventBus;
+import cz.gattserver.grass3.exception.GrassException;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
@@ -97,6 +98,8 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 	private PGMultiUpload upload;
 	private Div galleryLayout;
 	private HorizontalLayout pagingLayout;
+
+	private Image mobileSlideshow;
 
 	/**
 	 * Položka z fotogalerie, která byla dle URL vybrána (nepovinné)
@@ -210,6 +213,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		galleryLayout = new Div();
 		galleryLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		galleryLayout.setId("gallery-layout");
+		galleryLayout.getStyle().set("text-align", "center");
 		layout.add(galleryLayout);
 
 		upload = new PGMultiUpload(galleryDir) {
@@ -334,7 +338,8 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 				final int currentIndex = index;
 				Div itemLayout = new Div();
-				itemLayout.getStyle().set("text-align", "center").set("width", "170px").set("display", "inline-block");
+				itemLayout.getStyle().set("text-align", "center").set("width", "170px").set("display", "inline-block")
+						.set("margin-top", "10px");
 
 				// Miniatura/Náhled
 				Image embedded = new Image(new StreamResource(item.getName(), () -> {
@@ -397,7 +402,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 				galleryLayout.add(itemLayout);
 
-				embedded.addClickListener(event -> showItem(currentIndex));
+				embedded.addClickListener(e -> showSlideshow(currentIndex, itemLayout));
 
 				index++;
 			}
@@ -457,6 +462,36 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 			nextBtn.getElement().getStyle().set("margin-left", "auto");
 		} catch (Exception e) {
 			UIUtils.showWarning("Listování galerie selhalo");
+		}
+	}
+
+	private void showSlideshow(int currentIndex, Div itemLayout) {
+		if (UIUtils.isMobileDevice()) {
+			PhotogalleryViewItemTO slideshowItemTO;
+			try {
+				slideshowItemTO = pgService.getSlideshowItem(galleryDir, currentIndex);
+				if (mobileSlideshow == null) {
+					mobileSlideshow = new Image();
+					itemLayout.add(mobileSlideshow);
+					// musí se přidat, aby se vaadin dynamic image vytvořil,
+					// jinak následující URL hodí 404
+					itemLayout.add(mobileSlideshow);
+					mobileSlideshow.setVisible(false);
+				}
+				mobileSlideshow.setSrc(new StreamResource(slideshowItemTO.getName(), () -> {
+					try {
+						return Files.newInputStream(slideshowItemTO.getFile());
+					} catch (IOException e) {
+						e.printStackTrace();
+						return null;
+					}
+				}));
+				UI.getCurrent().getPage().open(mobileSlideshow.getSrc());
+			} catch (IOException e) {
+				throw new GrassException("Nezdařilo se nahrát obrázek slideshow", e);
+			}
+		} else {
+			showItem(currentIndex);
 		}
 	}
 

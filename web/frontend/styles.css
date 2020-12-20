@@ -191,6 +191,7 @@ vaadin-horizontal-layout.menu {
 
 .menu-item {
 	display: inline-block;
+	padding: 0px 0px 0px 10px;
 }
 
 .menu-item a, .menu-item-right a {
@@ -199,7 +200,6 @@ vaadin-horizontal-layout.menu {
 	text-decoration: none;
 	font: 400 14px/1.55 Helvetica, Arial, "lucida grande", tahoma, verdana,
 		arial, sans-serif;
-	padding: 0px 0px 0px 10px;
 }
 
 .menu-item-right {
@@ -374,7 +374,7 @@ vaadin-horizontal-layout.menu {
 
 /* Content detail */
 .content-info {
-	font-size: 11pt;
+	font-size: 10pt;
 }
 
 .content-info div, #content-info-tags {
@@ -404,12 +404,14 @@ vaadin-horizontal-layout.menu {
 
 .not-publicated-info {
 	border: 1px #70afe9 solid;
-	padding: 12px 5px 0 5px;
-	height: 32px;
+    padding: 6px 5px 0 5px;
+    height: 25px;
 	text-align: center;
 	background-color: #d5ebff;
 	text-align: center;
 	margin-bottom: 15px;
+	margin-left: 0px !important;
+	display: block !important;
 }
 
 .not-publicated-info img {

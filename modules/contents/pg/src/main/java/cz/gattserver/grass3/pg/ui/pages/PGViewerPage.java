@@ -10,7 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -97,7 +99,8 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 	private PGMultiUpload upload;
 	private Div galleryLayout;
-	private HorizontalLayout pagingLayout;
+	private HorizontalLayout upperPagingLayout;
+	private HorizontalLayout lowerPagingLayout;
 
 	private Image mobileSlideshow;
 
@@ -202,12 +205,12 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		}
 		pageCount = (int) Math.ceil((double) imageCount / PAGE_SIZE);
 
-		// Layout stránkovacích tlačítek
-		pagingLayout = new HorizontalLayout();
-		pagingLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		pagingLayout.setSpacing(true);
-		pagingLayout.setPadding(false);
-		layout.add(pagingLayout);
+		// Horní Layout stránkovacích tlačítek
+		upperPagingLayout = new HorizontalLayout();
+		upperPagingLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		upperPagingLayout.setSpacing(true);
+		upperPagingLayout.setPadding(false);
+		layout.add(upperPagingLayout);
 
 		// galerie
 		galleryLayout = new Div();
@@ -215,6 +218,13 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		galleryLayout.setId("gallery-layout");
 		galleryLayout.getStyle().set("text-align", "center");
 		layout.add(galleryLayout);
+
+		// Spodní layout stránkovacích tlačítek
+		lowerPagingLayout = new HorizontalLayout();
+		lowerPagingLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		lowerPagingLayout.setSpacing(true);
+		lowerPagingLayout.setPadding(false);
+		layout.add(lowerPagingLayout);
 
 		upload = new PGMultiUpload(galleryDir) {
 			private static final long serialVersionUID = 6886131045258035130L;
@@ -406,63 +416,74 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 				index++;
 			}
-			pagingLayout.removeAll();
 
-			Button prevBtn = new Button("<", e -> setPage(currentPage == 0 ? 0 : currentPage - 1));
-			prevBtn.setWidth("10px");
-			pagingLayout.add(prevBtn);
-			prevBtn.getElement().getStyle().set("margin-right", "auto");
+			populatePaging(upperPagingLayout);
+			populatePaging(lowerPagingLayout);
 
-			HorizontalLayout numberLayout = new HorizontalLayout();
-			numberLayout.setJustifyContentMode(JustifyContentMode.CENTER);
-			numberLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
-			numberLayout.setSpacing(true);
-			numberLayout.setPadding(false);
-			pagingLayout.add(numberLayout);
-			numberLayout.getElement().getStyle().set("margin-right", "auto");
-			numberLayout.getElement().getStyle().set("margin-left", "auto");
-
-			if (pageCount > 6) {
-				Button btn = new Button("1", e -> setPage(0));
-				numberLayout.add(btn);
-				if (currentPage == 0)
-					btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-				int pageRadius = Math.min(MAX_PAGE_RADIUS, pageCount / 2 + 1);
-				int startPage = Math.max(1, currentPage - pageRadius);
-				int endPage = Math.min(currentPage + pageRadius, pageCount - 2);
-				if (startPage <= endPage) {
-					if (startPage > 1)
-						numberLayout.add(new Span("..."));
-					for (int i = startPage; i <= endPage; i++) {
-						int page = i;
-						btn = new Button(String.valueOf(i + 1), e -> setPage(page));
-						if (currentPage == page)
-							btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-						numberLayout.add(btn);
-					}
-					if (endPage < pageCount - 2)
-						numberLayout.add(new Span("..."));
-					btn = new Button(String.valueOf(pageCount), e -> setPage(pageCount - 1));
-					numberLayout.add(btn);
-					if (currentPage == pageCount - 1)
-						btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-				}
-			} else {
-				for (int i = 1; i <= pageCount; i++) {
-					int page = i - 1;
-					Button btn = new Button(String.valueOf(i), e -> setPage(page));
-					if (currentPage == page)
-						btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-					numberLayout.add(btn);
-				}
-			}
-			Button nextBtn = new Button(">",
-					e -> setPage(currentPage == pageCount - 1 ? pageCount - 1 : currentPage + 1));
-			pagingLayout.add(nextBtn);
-			nextBtn.getElement().getStyle().set("margin-left", "auto");
 		} catch (Exception e) {
 			UIUtils.showWarning("Listování galerie selhalo");
 		}
+	}
+
+	private void populatePaging(HorizontalLayout layout) {
+		layout.removeAll();
+
+		addPagingButton(layout, "<", e -> setPage(currentPage == 0 ? 0 : currentPage - 1), false, false, true);
+
+		HorizontalLayout numberLayout = new HorizontalLayout();
+		numberLayout.setJustifyContentMode(JustifyContentMode.CENTER);
+		numberLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
+		numberLayout.setSpacing(true);
+		numberLayout.setPadding(false);
+		layout.add(numberLayout);
+		numberLayout.getElement().getStyle().set("margin-right", "auto");
+		numberLayout.getElement().getStyle().set("margin-left", "auto");
+
+		if (pageCount > 5) {
+			addPagingButton(numberLayout, "1", e -> setPage(0), currentPage == 0);
+			int pageRadius = Math.min(MAX_PAGE_RADIUS, pageCount / 2 + 1);
+			int startPage = Math.max(1, currentPage - pageRadius);
+			int endPage = Math.min(currentPage + pageRadius, pageCount - 2);
+			if (startPage <= endPage) {
+				if (startPage > 1)
+					numberLayout.add(new Span("..."));
+				for (int i = startPage; i <= endPage; i++) {
+					int page = i; // closure!
+					addPagingButton(numberLayout, String.valueOf(i + 1), e -> setPage(page), currentPage == page);
+				}
+				if (endPage < pageCount - 2)
+					numberLayout.add(new Span("..."));
+				addPagingButton(numberLayout, String.valueOf(pageCount), e -> setPage(pageCount - 1),
+						currentPage == pageCount - 1);
+			}
+		} else {
+			for (int i = 1; i <= pageCount; i++) {
+				int page = i - 1;
+				addPagingButton(numberLayout, String.valueOf(i), e -> setPage(page), currentPage == page);
+			}
+		}
+		addPagingButton(layout, ">", e -> setPage(currentPage == pageCount - 1 ? pageCount - 1 : currentPage + 1),
+				false, true, false);
+	}
+
+	private void addPagingButton(HorizontalLayout layout, String caption,
+			ComponentEventListener<ClickEvent<Button>> clickListener, boolean primary) {
+		addPagingButton(layout, caption, clickListener, primary, false, false);
+	}
+
+	private void addPagingButton(HorizontalLayout layout, String caption,
+			ComponentEventListener<ClickEvent<Button>> clickListener, boolean primary, boolean autoLeftMargin,
+			boolean autoRightMargin) {
+		Button btn = new Button(caption, clickListener);
+		btn.addThemeVariants(ButtonVariant.LUMO_SMALL);
+		if (primary)
+			btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+		btn.getElement().getStyle().set("min-width", "fit-content");
+		if (autoLeftMargin)
+			btn.getElement().getStyle().set("margin-left", "auto");
+		if (autoRightMargin)
+			btn.getElement().getStyle().set("margin-right", "auto");
+		layout.add(btn);
 	}
 
 	private void showSlideshow(int currentIndex, Div itemLayout) {

@@ -5,8 +5,6 @@ import java.util.Locale;
 
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -20,10 +18,7 @@ import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
-import cz.gattserver.grass3.ui.util.GridLayout;
-import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.web.common.ui.HtmlDiv;
 
 public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 
@@ -134,33 +129,22 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 	}
 
 	@Override
-	protected void populateDetail(Div dataLayout) {
-		H2 nameLabel = new H2(
-				choosenDrink.getBrewery() + " " + choosenDrink.getName() + " (" + choosenDrink.getCountry() + ")");
-		dataLayout.add(nameLabel);
+	protected String getItemHeader() {
+		return choosenDrink.getBrewery() + " " + choosenDrink.getName() + " (" + choosenDrink.getCountry() + ")";
+	}
 
-		RatingStars rs = new RatingStars();
-		rs.setValue(choosenDrink.getRating());
-		rs.setReadOnly(true);
-		dataLayout.add(rs);
+	@Override
+	protected String[] getPropertiesHeaders() {
+		return new String[] { "Kategorie", "Stupně (°)", "Alkohol (%)", "Hořkost (IBU)", "Typ sladu", "Slady",
+				"Chmely" };
+	}
 
-		GridLayout tb = new GridLayout();
-		tb.addStrong("Kategorie:").add(choosenDrink.getCategory());
-		tb.newRow().addStrong("Stupně (°):").add(String.valueOf(choosenDrink.getDegrees()));
-		tb.addStrong("Alkohol (%):").add(String.valueOf(choosenDrink.getAlcohol()));
-		tb.newRow().addStrong("Hořkost (IBU):")
-				.add(choosenDrink.getIbu() == null ? "" : String.valueOf(choosenDrink.getIbu()));
-		tb.addStrong("Typ sladu:").add(choosenDrink.getMaltType().getCaption());
-		tb.newRow().addStrong("Slady (IBU):").add(choosenDrink.getMalts());
-		tb.addStrong("Chmely:").add(choosenDrink.getHops());
-
-		tb.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		dataLayout.add(tb);
-
-		HtmlDiv description = new HtmlDiv(choosenDrink.getDescription().replaceAll("\n", "<br/>"));
-		description.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		description.setSizeFull();
-		dataLayout.add(description);
+	@Override
+	protected String[] getProperties() {
+		return new String[] { choosenDrink.getCategory(), String.valueOf(choosenDrink.getDegrees()),
+				String.valueOf(choosenDrink.getAlcohol()),
+				choosenDrink.getIbu() == null ? "" : String.valueOf(choosenDrink.getIbu()),
+				choosenDrink.getMaltType().getCaption(), choosenDrink.getMalts(), choosenDrink.getHops() };
 	}
 
 	@Override

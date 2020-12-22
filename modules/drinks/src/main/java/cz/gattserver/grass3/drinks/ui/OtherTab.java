@@ -2,8 +2,6 @@ package cz.gattserver.grass3.drinks.ui;
 
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -14,10 +12,7 @@ import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
-import cz.gattserver.grass3.ui.util.GridLayout;
-import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.web.common.ui.HtmlDiv;
 
 public class OtherTab extends DrinksTab<OtherTO, OtherOverviewTO> {
 
@@ -92,27 +87,19 @@ public class OtherTab extends DrinksTab<OtherTO, OtherOverviewTO> {
 	}
 
 	@Override
-	protected void populateDetail(Div dataLayout) {
-		H2 nameLabel = new H2(choosenDrink.getName() + " (" + choosenDrink.getCountry() + ")");
-		dataLayout.add(nameLabel);
+	protected String getItemHeader() {
+		return choosenDrink.getName() + " (" + choosenDrink.getCountry() + ")";
+	}
 
-		RatingStars rs = new RatingStars();
-		rs.setValue(choosenDrink.getRating());
-		rs.setReadOnly(true);
-		dataLayout.add(rs);
+	@Override
+	protected String[] getPropertiesHeaders() {
+		return new String[] { "Ingredience", "Alkohol (%)" };
+	}
 
-		GridLayout tb = new GridLayout();
-		tb.addStrong("Ingredience:").add(choosenDrink.getIngredient());
-		tb.newRow().addStrong("Alkohol (%):")
-				.add(choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol()));
-
-		tb.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		dataLayout.add(tb);
-
-		HtmlDiv description = new HtmlDiv(choosenDrink.getDescription().replaceAll("\n", "<br/>"));
-		description.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		description.setSizeFull();
-		dataLayout.add(description);
+	@Override
+	protected String[] getProperties() {
+		return new String[] { choosenDrink.getIngredient(),
+				choosenDrink.getAlcohol() == null ? "" : String.valueOf(choosenDrink.getAlcohol()) };
 	}
 
 	@Override

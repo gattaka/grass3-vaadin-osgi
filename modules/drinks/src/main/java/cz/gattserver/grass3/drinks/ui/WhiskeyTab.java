@@ -2,8 +2,6 @@ package cz.gattserver.grass3.drinks.ui;
 
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -16,10 +14,7 @@ import cz.gattserver.grass3.ui.components.button.CreateGridButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
 import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
-import cz.gattserver.grass3.ui.util.GridLayout;
-import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.grass3.ui.util.UIUtils;
-import cz.gattserver.web.common.ui.HtmlDiv;
 
 public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
 
@@ -104,28 +99,19 @@ public class WhiskeyTab extends DrinksTab<WhiskeyTO, WhiskeyOverviewTO> {
 	}
 
 	@Override
-	protected void populateDetail(Div dataLayout) {
-		H2 nameLabel = new H2(choosenDrink.getName() + " (" + choosenDrink.getCountry() + ")");
-		dataLayout.add(nameLabel);
+	protected String getItemHeader() {
+		return choosenDrink.getName() + " (" + choosenDrink.getCountry() + ")";
+	}
 
-		RatingStars rs = new RatingStars();
-		rs.setValue(choosenDrink.getRating());
-		rs.setReadOnly(true);
-		dataLayout.add(rs);
+	@Override
+	protected String[] getPropertiesHeaders() {
+		return new String[] { "Stáří (roky)", "Alkohol (%)", "Typ whiskey" };
+	}
 
-		GridLayout tb = new GridLayout();
-		tb.addStrong("Stáří (roky):")
-				.add(choosenDrink.getYears() == null ? "" : String.valueOf(choosenDrink.getYears()));
-		tb.newRow().addStrong("Alkohol (%):").add(String.valueOf(choosenDrink.getAlcohol()));
-		tb.newRow().addStrong("Typ whiskey:").add(choosenDrink.getWhiskeyType().getCaption());
-
-		tb.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		dataLayout.add(tb);
-
-		HtmlDiv description = new HtmlDiv(choosenDrink.getDescription().replaceAll("\n", "<br/>"));
-		description.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		description.setSizeFull();
-		dataLayout.add(description);
+	@Override
+	protected String[] getProperties() {
+		return new String[] { choosenDrink.getYears() == null ? "" : String.valueOf(choosenDrink.getYears()),
+				String.valueOf(choosenDrink.getAlcohol()), choosenDrink.getWhiskeyType().getCaption() };
 	}
 
 	@Override

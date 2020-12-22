@@ -45,6 +45,7 @@ public class DrinksPage extends OneColumnPage implements HasUrlParameter<String>
 			this.itemParam = chunks[1];
 
 		init();
+		loadCSS(getContextPath() + "/frontend/drinks/style.css");
 	}
 
 	private BeersTab switchBeersTab() {

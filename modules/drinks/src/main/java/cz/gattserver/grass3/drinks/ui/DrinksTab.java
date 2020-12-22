@@ -6,12 +6,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.NumberRenderer;
 import com.vaadin.flow.server.StreamResource;
@@ -26,7 +29,10 @@ import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.Breakline;
+import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
+import cz.gattserver.web.common.ui.Strong;
 
 public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> extends Div {
 
@@ -56,12 +62,10 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 
 		populate();
 
-		HorizontalLayout contentLayout = new HorizontalLayout();
+		Div contentLayout = new Div();
 		contentLayout.setSizeFull();
-		contentLayout.setPadding(false);
-		contentLayout.setVisible(false);
 		contentLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
-		contentLayout.getStyle().set("border", "1px #dbdee4 solid").set("padding", "10px").set("background", "white");
+		contentLayout.setId("drinks-div");
 		add(contentLayout);
 
 		grid.addSelectionListener(e -> {
@@ -77,10 +81,13 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 		// musí tady něco být nahrané, jinak to pak nejde měnit (WTF?!)
 		image = new Image(ImageIcon.BUBBLE_16_ICON.createResource(), "icon");
 		image.setVisible(false);
-		contentLayout.add(image);
+		Div imageLayout = new Div(image);
+		imageLayout.setId("drinks-image-div");
+		contentLayout.add(imageLayout);
 
 		dataLayout = new Div();
 		dataLayout.setWidthFull();
+		dataLayout.setId("drinks-data-div");
 		contentLayout.add(dataLayout);
 
 		if (getSecurityService().getCurrentUser().getRoles().contains(CoreRole.ADMIN)) {
@@ -196,6 +203,41 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 
 	}
 
+	protected void populateDetail(Div dataLayout) {
+		H2 nameLabel = new H2(getItemHeader());
+		dataLayout.add(nameLabel);
+
+		RatingStars rs = new RatingStars();
+		rs.setValue(choosenDrink.getRating());
+		rs.setReadOnly(true);
+		dataLayout.add(rs);
+
+		Div propertiesDiv = new Div();
+		propertiesDiv.setId("drinks-properties-div");
+		propertiesDiv.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		dataLayout.add(propertiesDiv);
+
+		String[] headers = getPropertiesHeaders();
+		String[] properties = getProperties();
+		if (headers.length != properties.length)
+			throw new IllegalStateException("Drink properties array must have same length as headers array");
+
+		for (int i = 0; i < headers.length; i++)
+			propertiesDiv.add(new Div(new Strong(headers[i] + ":"), new Breakline(),
+					new Text(StringUtils.isBlank(properties[i]) ? "-" : properties[i])));
+
+		HtmlDiv description = new HtmlDiv(choosenDrink.getDescription().replaceAll("\n", "<br/>"));
+		description.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		description.setSizeFull();
+		dataLayout.add(description);
+	}
+
+	protected abstract String getItemHeader();
+
+	protected abstract String[] getPropertiesHeaders();
+
+	protected abstract String[] getProperties();
+
 	protected abstract O createNewOverviewTO();
 
 	protected abstract void configureGrid(Grid<O> grid, O filterTO);
@@ -203,8 +245,6 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 	protected abstract void populate();
 
 	protected abstract void populateBtnLayout(ButtonLayout btnLayout);
-
-	protected abstract void populateDetail(Div dataLayout);
 
 	protected abstract String getURLPath();
 

@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -31,7 +30,6 @@ import com.vaadin.flow.router.WildcardParameter;
 import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.events.EventBus;
-import cz.gattserver.grass3.exception.GrassException;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.interfaces.ContentNodeTO;
 import cz.gattserver.grass3.interfaces.NodeOverviewTO;
@@ -47,17 +45,14 @@ import cz.gattserver.grass3.pg.interfaces.PhotogalleryPayloadTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryTO;
 import cz.gattserver.grass3.pg.interfaces.PhotogalleryViewItemTO;
 import cz.gattserver.grass3.pg.service.PGService;
-import cz.gattserver.grass3.pg.util.PGUtils;
 import cz.gattserver.grass3.ui.components.DefaultContentOperations;
 import cz.gattserver.grass3.ui.components.button.ImageButton;
-import cz.gattserver.grass3.ui.dialogs.ImageSlideshowDialog;
 import cz.gattserver.grass3.ui.dialogs.ProgressDialog;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.grass3.ui.pages.template.ContentViewerPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.server.URLIdentifierUtils;
 import cz.gattserver.web.common.ui.Breakline;
-import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
@@ -102,8 +97,6 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 	private HorizontalLayout upperPagingLayout;
 	private HorizontalLayout lowerPagingLayout;
 
-	private Image mobileSlideshow;
-
 	/**
 	 * Položka z fotogalerie, která byla dle URL vybrána (nepovinné)
 	 */
@@ -114,6 +107,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 	public PGViewerPage() {
 		pageURLBase = getPageURL(photogalleryViewerPageFactory);
+		loadCSS(getContextPath() + "/frontend/pg/style.css");
 	}
 
 	@Override
@@ -412,7 +406,7 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 
 				galleryLayout.add(itemLayout);
 
-				embedded.addClickListener(e -> showSlideshow(currentIndex, itemLayout));
+				embedded.addClickListener(e -> showItem(currentIndex));
 
 				index++;
 			}
@@ -486,36 +480,6 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 		layout.add(btn);
 	}
 
-	private void showSlideshow(int currentIndex, Div itemLayout) {
-		if (UIUtils.isMobileDevice()) {
-			PhotogalleryViewItemTO slideshowItemTO;
-			try {
-				slideshowItemTO = pgService.getSlideshowItem(galleryDir, currentIndex);
-				if (mobileSlideshow == null) {
-					mobileSlideshow = new Image();
-					itemLayout.add(mobileSlideshow);
-					// musí se přidat, aby se vaadin dynamic image vytvořil,
-					// jinak následující URL hodí 404
-					itemLayout.add(mobileSlideshow);
-					mobileSlideshow.setVisible(false);
-				}
-				mobileSlideshow.setSrc(new StreamResource(slideshowItemTO.getName(), () -> {
-					try {
-						return Files.newInputStream(slideshowItemTO.getFile());
-					} catch (IOException e) {
-						e.printStackTrace();
-						return null;
-					}
-				}));
-				UI.getCurrent().getPage().open(mobileSlideshow.getSrc());
-			} catch (IOException e) {
-				throw new GrassException("Nezdařilo se nahrát obrázek slideshow", e);
-			}
-		} else {
-			showItem(currentIndex);
-		}
-	}
-
 	private void setPage(int page) {
 		if (page == currentPage)
 			return;
@@ -524,74 +488,31 @@ public class PGViewerPage extends ContentViewerPage implements HasUrlParameter<S
 	}
 
 	private void showItem(final int index) {
-		ImageSlideshowDialog window = new ImageSlideshowDialog(imageCount) {
+		PGSlideshow slideshow = new PGSlideshow(imageCount) {
 			private static final long serialVersionUID = 7926209313704634472L;
 
-			private Component showItem(PhotogalleryViewItemTO itemTO) {
+			@Override
+			protected void pageUpdate(int currentIndex) {
 				// zajisti posuv přehledu
 				int newPage = currentIndex / PAGE_SIZE;
 				if (newPage != currentPage) {
 					currentPage = newPage;
 					refreshGrid();
 				}
-
-				// vytvoř odpovídající komponentu pro zobrazení
-				// obrázku nebo videa
-				switch (itemTO.getType()) {
-				case VIDEO:
-					return showVideo(itemTO);
-				case IMAGE:
-				default:
-					return showImage(itemTO);
-				}
 			}
 
 			@Override
-			public void showItem(int index) {
-				currentIndex = index;
-				try {
-					PhotogalleryViewItemTO itemTO = pgService.getSlideshowItem(galleryDir, index);
-
-					Component slideshowComponent = showItem(itemTO);
-
-					slideShowLayout.removeAll();
-					slideShowLayout.add(slideshowComponent);
-
-					itemLabel.setText((index + 1) + "/" + totalCount + " " + itemTO.getName());
-				} catch (Exception e) {
-					logger.error("Chyba při zobrazování slideshow položky fotogalerie", e);
-					UIUtils.showWarning("Zobrazení položky se nezdařilo");
-					close();
-				}
+			protected String getItemURL(String string) {
+				return PGViewerPage.this.getItemURL(string);
 			}
 
+			@Override
+			protected PhotogalleryViewItemTO getItem(int index) throws IOException {
+				return pgService.getSlideshowItem(galleryDir, index);
+			}
 		};
-		window.open();
-		window.showItem(index);
-	}
-
-	private Component showVideo(PhotogalleryViewItemTO itemTO) {
-		String videoURL = getItemURL(itemTO.getFile().getFileName().toString());
-		String videoString = "<video id=\"video\" width=\"800\" height=\"600\" preload controls>" + "<source src=\""
-				+ videoURL + "\" type=\"video/mp4\">" + "</video>";
-		HtmlDiv video = new HtmlDiv(videoString);
-		video.setWidth("800px");
-		video.setHeight("600px");
-		return video;
-	}
-
-	private Component showImage(PhotogalleryViewItemTO itemTO) {
-		Image embedded = new Image(new StreamResource(itemTO.getName(), () -> {
-			try {
-				return Files.newInputStream(itemTO.getFile());
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}), itemTO.getName());
-		embedded.getStyle().set("max-width", PGUtils.SLIDESHOW_WIDTH + "px").set("max-height",
-				PGUtils.SLIDESHOW_HEIGHT + "px");
-		return embedded;
+		add(slideshow);
+		slideshow.showItem(index);
 	}
 
 	@Override

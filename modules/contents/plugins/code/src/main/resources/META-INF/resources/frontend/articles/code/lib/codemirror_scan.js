@@ -7,7 +7,7 @@
 var codeMirrorConfig = {
 	styleActiveLine : true,
 	lineNumbers : true,
-	lineWrapping : true,
+	lineWrapping : false,
 	readOnly : true,
 	matchTags : {
 		bothTags : true
@@ -26,13 +26,15 @@ var codeMirrorConfig = {
 var timer;
 var codemirrorScan = function() {	
 	var elements = $("[name^=codemirror_]");
-//	alert(elements.length);
-//	alert(CodeMirror.fromTextArea);
 	if (elements.length > 0) {
 		for (var i = 0; i < elements.length; i++) {
 			var name = elements[i].name;
 			var mode = name.substring("codemirror_".length);
-			codeMirrorConfig.mode = "text/x-" + mode;
+			if (mode == "xml") {
+				codeMirrorConfig.mode = "text/html";
+			} else {
+				codeMirrorConfig.mode = "text/x-" + mode;
+			}
 			CodeMirror.fromTextArea(elements[i], codeMirrorConfig);
 		}
 		clearInterval(timer);

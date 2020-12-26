@@ -3,7 +3,9 @@ package cz.gattserver.grass3.print3d.ui.pages;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
@@ -18,11 +20,13 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.component.grid.SortOrderProvider;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.data.provider.QuerySortOrder;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.IconRenderer;
@@ -209,7 +213,7 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 			throw new GrassPageException(500, e);
 		}
 
-		grid = new Grid<>();
+		grid = new Grid<>(Print3dViewItemTO.class);
 		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		grid.setItems(items);
 		grid.setWidthFull();
@@ -217,7 +221,7 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 		UIUtils.applyGrassDefaultStyle(grid);
 		layout.add(grid);
 
-		grid.addColumn(new IconRenderer<Print3dViewItemTO>(p -> {
+		Column<Print3dViewItemTO> iconColumn = grid.addColumn(new IconRenderer<Print3dViewItemTO>(p -> {
 			ImageIcon icon = ImageIcon.DOCUMENT_16_ICON;
 			if (p.getType() == Print3dItemType.IMAGE)
 				icon = ImageIcon.IMG_16_ICON;
@@ -226,17 +230,40 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 			Image iconImg = new Image(icon.createResource(), "");
 			iconImg.addClassName(UIUtils.GRID_ICON_CSS_CLASS);
 			return iconImg;
-		}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
+		}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER).setKey("icon");
 
-		Column<Print3dViewItemTO> nameColumn = grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getOnlyName()))
-				.setHeader("Název").setFlexGrow(100);
+		Column<Print3dViewItemTO> nameColumn = grid.getColumnByKey("onlyName").setHeader("Název").setFlexGrow(100)
+				.setSortable(true);
 
-		Column<Print3dViewItemTO> typColumn = grid
-				.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getExtension() == null ? "" : p.getExtension()))
-				.setHeader("Typ").setWidth("80px").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(0);
+		Column<Print3dViewItemTO> extensionColumn = grid.getColumnByKey("extension").setHeader("Typ").setWidth("80px")
+				.setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(0).setSortable(true);
 
-		grid.addColumn(new TextRenderer<Print3dViewItemTO>(p -> p.getSize())).setHeader("Velikost").setWidth("80px")
-				.setTextAlign(ColumnTextAlign.END).setFlexGrow(0);
+		Column<Print3dViewItemTO> sizeColumn = grid.getColumnByKey("size").setHeader("Velikost").setWidth("80px")
+				.setTextAlign(ColumnTextAlign.END).setFlexGrow(0).setSortable(true)
+				.setComparator(new Comparator<Print3dViewItemTO>() {
+
+					@Override
+					public int compare(Print3dViewItemTO o1, Print3dViewItemTO o2) {
+						try {
+							return Long.compare(Files.size(o1.getFile()), Files.size(o2.getFile()));
+						} catch (IOException e) {
+							logger.error(
+									"Nezdařilo se porovnat soubory 3D projektu " + o1.getName() + " a " + o2.getName());
+							return 0;
+						}
+					}
+				});
+
+		Column<Print3dViewItemTO> fullnameColumn = grid.getColumnByKey("name");
+		Column<Print3dViewItemTO> typeColumn = grid.getColumnByKey("type");
+		Column<Print3dViewItemTO> fileColumn = grid.getColumnByKey("file");
+
+		fullnameColumn.setVisible(false);
+		typeColumn.setVisible(false);
+		fileColumn.setVisible(false);
+
+		grid.setColumnOrder(Arrays.asList(iconColumn, nameColumn, extensionColumn, sizeColumn, typeColumn, fileColumn,
+				fullnameColumn));
 
 		grid.addColumn(new ComponentRenderer<Anchor, Print3dViewItemTO>(item -> {
 			String url = getItemURL(item.getName());
@@ -255,7 +282,7 @@ public class Print3dViewerPage extends ContentViewerPage implements HasUrlParame
 			}))).setHeader("Smazat").setTextAlign(ColumnTextAlign.CENTER).setAutoWidth(true);
 		}
 
-		grid.sort(Arrays.asList(new GridSortOrder<>(typColumn, SortDirection.ASCENDING),
+		grid.sort(Arrays.asList(new GridSortOrder<>(extensionColumn, SortDirection.ASCENDING),
 				new GridSortOrder<>(nameColumn, SortDirection.ASCENDING)));
 
 		grid.setSelectionMode(SelectionMode.SINGLE);

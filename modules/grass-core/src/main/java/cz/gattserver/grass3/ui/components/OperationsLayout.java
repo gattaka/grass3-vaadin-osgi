@@ -15,6 +15,8 @@ public class OperationsLayout extends HorizontalLayout {
 
 	private HorizontalLayout buttonLayout;
 
+	protected CloseButton closeButton;
+
 	public OperationsLayout(ComponentEventListener<ClickEvent<Button>> closeClickListener) {
 		setSpacing(false);
 		setJustifyContentMode(JustifyContentMode.BETWEEN);
@@ -24,8 +26,12 @@ public class OperationsLayout extends HorizontalLayout {
 		buttonLayout.setPadding(false);
 		super.add(buttonLayout);
 
-		CloseButton closeButton = new CloseButton(closeClickListener);
+		closeButton = new CloseButton(closeClickListener);
 		super.add(closeButton);
+	}
+
+	public CloseButton getCloseButton() {
+		return closeButton;
 	}
 
 	@Override

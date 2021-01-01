@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.hw.ui.dialogs;
 
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 
@@ -41,8 +42,6 @@ public abstract class HWItemTypeDialog extends WebDialog {
 		nameField.setWidthFull();
 		binder.forField(nameField).asRequired().bind(HWItemTypeTO::getName, HWItemTypeTO::setName);
 
-		setWidth("200px");
-
 		add(nameField);
 
 		SaveCloseLayout buttons = new SaveCloseLayout(e -> {
@@ -56,10 +55,14 @@ public abstract class HWItemTypeDialog extends WebDialog {
 				new ErrorDialog("Uložení se nezdařilo").open();
 			}
 		}, e -> close());
+		buttons.setMinWidth("200px");
+		buttons.getSaveButton().addClickShortcut(Key.ENTER);
 		add(buttons);
 
 		if (originalDTO != null)
 			binder.readBean(originalDTO);
+
+		nameField.focus();
 	}
 
 	protected abstract void onSuccess(HWItemTypeTO hwItemTypeDTO);

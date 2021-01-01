@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import com.vaadin.flow.server.StreamResource;
 
-import cz.gattserver.grass3.modules.ContentModule;
 import cz.gattserver.grass3.ui.pages.factories.template.PageFactory;
 import cz.gattserver.web.common.ui.ImageIcon;
 

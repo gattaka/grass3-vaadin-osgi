@@ -11,6 +11,7 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.SortDirection;
 
@@ -24,6 +25,7 @@ import cz.gattserver.grass3.ui.components.button.ModifyGridButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.LinkButton;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 
 public class HWTypesTab extends Div {
@@ -65,8 +67,10 @@ public class HWTypesTab extends Div {
 		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		UIUtils.applyGrassDefaultStyle(grid);
 
-		Column<HWItemTypeTO> nameColumn = grid.addColumn(HWItemTypeTO::getName).setKey(NAME_BIND).setHeader("Název")
-				.setFlexGrow(1);
+		Column<HWItemTypeTO> nameColumn = grid
+				.addColumn(new ComponentRenderer<Button, HWItemTypeTO>(
+						to -> new LinkButton(to.getName(), e -> openNewTypeWindow(to))))
+				.setHeader("Název").setSortable(true).setKey(NAME_BIND).setFlexGrow(1);
 		grid.setWidthFull();
 		grid.setHeight("500px");
 		grid.setSelectionMode(SelectionMode.SINGLE);
@@ -90,13 +94,14 @@ public class HWTypesTab extends Div {
 		/**
 		 * Založení nového typu
 		 */
-		Button newTypeBtn = new CreateButton("Založit nový typ", e -> openNewTypeWindow(false));
+		Button newTypeBtn = new CreateButton("Založit nový typ", e -> openNewTypeWindow(null));
 		buttonLayout.add(newTypeBtn);
 
 		/**
 		 * Úprava typu
 		 */
-		Button fixBtn = new ModifyGridButton<HWItemTypeTO>(set -> openNewTypeWindow(true), grid);
+		Button fixBtn = new ModifyGridButton<HWItemTypeTO>(
+				set -> openNewTypeWindow(grid.getSelectedItems().iterator().next()), grid);
 		buttonLayout.add(fixBtn);
 
 		/**
@@ -121,16 +126,13 @@ public class HWTypesTab extends Div {
 		grid.setEnabled(enabled);
 	}
 
-	private void openNewTypeWindow(boolean fix) {
-		HWItemTypeTO hwItemTypeDTO = null;
-		if (fix)
-			hwItemTypeDTO = grid.getSelectedItems().iterator().next();
+	private void openNewTypeWindow(HWItemTypeTO hwItemTypeDTO) {
 		new HWItemTypeDialog(hwItemTypeDTO == null ? null : hwItemTypeDTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
 			protected void onSuccess(HWItemTypeTO hwItemTypeDTO) {
-				if (fix) {
+				if (hwItemTypeDTO != null) {
 					grid.getDataProvider().refreshItem(hwItemTypeDTO);
 				} else {
 					populate();

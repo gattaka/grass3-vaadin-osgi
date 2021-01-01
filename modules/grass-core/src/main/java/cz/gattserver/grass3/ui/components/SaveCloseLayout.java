@@ -10,6 +10,8 @@ public class SaveCloseLayout extends OperationsLayout {
 
 	private static final long serialVersionUID = 3909022460514320026L;
 
+	protected SaveButton saveButton;
+
 	public SaveCloseLayout(ComponentEventListener<ClickEvent<Button>> saveClickListener,
 			ComponentEventListener<ClickEvent<Button>> closeClickListener) {
 		super(closeClickListener);
@@ -17,7 +19,12 @@ public class SaveCloseLayout extends OperationsLayout {
 		setSpacing(false);
 		setWidthFull();
 
-		add(new SaveButton(saveClickListener));
+		saveButton = new SaveButton(saveClickListener);
+		add(saveButton);
+	}
+
+	public SaveButton getSaveButton() {
+		return saveButton;
 	}
 
 }

@@ -124,7 +124,7 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 	protected void addAlcoholColumn(Grid<O> grid) {
 		Column<O> alcoholColumn = grid.addColumn(
 				new NumberRenderer<O>(O::getAlcohol, NumberFormat.getNumberInstance(new Locale("cs", "CZ")), null))
-				.setHeader("Alkohol (%)").setWidth("100px").setFlexGrow(0).setSortProperty("alcohol");
+				.setHeader("%").setWidth("50px").setFlexGrow(0).setSortProperty("alcohol");
 		UIUtils.addHeaderTextField(getHeaderRow().getCell(alcoholColumn), e -> {
 			filterTO.setAlcohol(Double.parseDouble(e.getValue()));
 			populate();

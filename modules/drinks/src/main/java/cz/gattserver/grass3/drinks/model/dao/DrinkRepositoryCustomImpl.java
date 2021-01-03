@@ -111,10 +111,9 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 		if (order == null || order.length == 0)
 			order = QuerydslUtil.transformOrdering(new String[] { b.brewery.toString(), d.name.toString() },
 					new boolean[] { true, true });
-
 		return query
 				.select(new QBeerOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, b.id, b.brewery,
-						b.ibu, b.degrees, b.category, b.maltType))
+						b.ibu, b.degrees, b.category, b.maltType, b.malts, b.hops))
 				.from(d).join(b).on(d.drinkInfo.eq(b.id)).where(createPredicateBeers(filterTO)).orderBy(order).fetch();
 	}
 
@@ -127,7 +126,7 @@ public class DrinkRepositoryCustomImpl implements DrinkRepositoryCustom {
 
 		return query
 				.select(new QBeerOverviewTO(d.id, d.name, d.type, d.rating, d.alcohol, d.country, b.id, b.brewery,
-						b.ibu, b.degrees, b.category, b.maltType))
+						b.ibu, b.degrees, b.category, b.maltType, b.malts, b.hops))
 				.from(d).join(b).on(d.drinkInfo.eq(b.id)).where(createPredicateBeers(filter))
 				.orderBy(QuerydslUtil.transformOrdering(new String[] { b.brewery.toString(), d.name.toString() },
 						new boolean[] { true, true }))

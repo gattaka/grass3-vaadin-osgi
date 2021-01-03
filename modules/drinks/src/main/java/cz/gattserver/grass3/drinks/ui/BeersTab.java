@@ -11,7 +11,6 @@ import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.NumberRenderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 
-import cz.gattserver.grass3.drinks.model.domain.MaltType;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerOverviewTO;
 import cz.gattserver.grass3.drinks.model.interfaces.BeerTO;
 import cz.gattserver.grass3.ui.components.button.CreateGridButton;
@@ -45,11 +44,12 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 
 		addAlcoholColumn(grid);
 
-		Column<BeerOverviewTO> ibuColumn = grid.addColumn(BeerOverviewTO::getIbu).setHeader("Hořkost (IBU)")
-				.setWidth("120px").setFlexGrow(0).setSortProperty("ibu");
-		Column<BeerOverviewTO> maltTypeColumn = grid
-				.addColumn(new TextRenderer<BeerOverviewTO>(to -> to.getMaltType().getCaption())).setHeader("Typ sladu")
-				.setWidth("150px").setFlexGrow(0).setSortProperty("maltType");
+		Column<BeerOverviewTO> ibuColumn = grid.addColumn(BeerOverviewTO::getIbu).setHeader("IBU").setWidth("50px")
+				.setFlexGrow(0).setSortProperty("ibu");
+		Column<BeerOverviewTO> maltsColumn = grid.addColumn(new TextRenderer<BeerOverviewTO>(to -> to.getMalts()))
+				.setHeader("Slad").setWidth("60px").setFlexGrow(0).setSortProperty("malts");
+		Column<BeerOverviewTO> hopsColumn = grid.addColumn(new TextRenderer<BeerOverviewTO>(to -> to.getHops()))
+				.setHeader("Chmel").setWidth("80px").setFlexGrow(0).setSortProperty("hops");
 
 		addRatingStarsColumn(grid);
 
@@ -81,9 +81,15 @@ public class BeersTab extends DrinksTab<BeerTO, BeerOverviewTO> {
 			populate();
 		});
 
-		// Typ sladu
-		UIUtils.addHeaderComboBox(getHeaderRow().getCell(maltTypeColumn), MaltType.class, MaltType::getCaption, e -> {
-			filterTO.setMaltType(e.getValue());
+		// Sladu
+		UIUtils.addHeaderTextField(getHeaderRow().getCell(maltsColumn), e -> {
+			filterTO.setMalts(e.getValue());
+			populate();
+		});
+
+		// Chmele
+		UIUtils.addHeaderTextField(getHeaderRow().getCell(hopsColumn), e -> {
+			filterTO.setHops(e.getValue());
 			populate();
 		});
 	}

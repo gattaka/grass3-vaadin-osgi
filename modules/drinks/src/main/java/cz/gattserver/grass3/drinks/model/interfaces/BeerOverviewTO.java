@@ -39,12 +39,23 @@ public class BeerOverviewTO extends DrinkOverviewTO {
 	 */
 	private MaltType maltType;
 
+	/**
+	 * Použité slady
+	 */
+	private String malts;
+
+	/**
+	 * Použité chmely
+	 */
+	private String hops;
+
 	public BeerOverviewTO() {
 	}
 
 	@QueryProjection
 	public BeerOverviewTO(Long id, String name, DrinkType type, Double rating, Double alcohol, String country,
-			Long infoId, String brewery, Integer ibu, Double degrees, String category, MaltType maltType) {
+			Long infoId, String brewery, Integer ibu, Double degrees, String category, MaltType maltType, String malts,
+			String hops) {
 		super(id, name, type, rating, alcohol, country);
 		this.infoId = infoId;
 		this.brewery = brewery;
@@ -52,6 +63,8 @@ public class BeerOverviewTO extends DrinkOverviewTO {
 		this.degrees = degrees;
 		this.category = category;
 		this.maltType = maltType;
+		this.malts = malts;
+		this.hops = hops;
 	}
 
 	public Long getInfoId() {
@@ -100,6 +113,22 @@ public class BeerOverviewTO extends DrinkOverviewTO {
 
 	public void setMaltType(MaltType maltType) {
 		this.maltType = maltType;
+	}
+
+	public String getMalts() {
+		return malts;
+	}
+
+	public void setMalts(String malts) {
+		this.malts = malts;
+	}
+
+	public String getHops() {
+		return hops;
+	}
+
+	public void setHops(String hops) {
+		this.hops = hops;
 	}
 
 }

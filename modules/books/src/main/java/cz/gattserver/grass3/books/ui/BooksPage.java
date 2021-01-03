@@ -10,8 +10,6 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
@@ -55,8 +53,8 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 	private transient BooksFacade booksFacade;
 
 	private Image image;
-	private Div dataLayout;
-	private HorizontalLayout contentLayout;
+	private Div dataDiv;
+	private Div imageDiv;
 
 	private Grid<BookOverviewTO> grid;
 	private BookOverviewTO filterTO;
@@ -70,6 +68,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 	public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
 		this.parameter = parameter;
 		init();
+		loadCSS(getContextPath() + "/frontend/books/style.css");
 	}
 
 	@Override
@@ -86,22 +85,25 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 				showDetail(null);
 		});
 
-		contentLayout = new HorizontalLayout();
+		Div contentLayout = new Div();
 		contentLayout.setSizeFull();
-		contentLayout.setPadding(false);
-		contentLayout.setVisible(false);
 		contentLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		contentLayout.setId("books-div");
 		layout.add(contentLayout);
+
+		imageDiv = new Div();
+		imageDiv.setId("books-image-div");
+		contentLayout.add(imageDiv);
 
 		// musí tady něco být nahrané, jinak to pak nejde měnit (WTF?!)
 		image = new Image(ImageIcon.BUBBLE_16_ICON.createResource(), "icon");
 		image.setVisible(false);
-		contentLayout.add(image);
-		contentLayout.setVerticalComponentAlignment(Alignment.START, image);
+		imageDiv.add(image);
 
-		dataLayout = new Div();
-		dataLayout.setWidthFull();
-		contentLayout.add(dataLayout);
+		dataDiv = new Div();
+		dataDiv.setWidthFull();
+		dataDiv.setId("books-data-div");
+		contentLayout.add(dataDiv);
 
 		ButtonLayout btnLayout = new ButtonLayout();
 		btnLayout.setVisible(getSecurityService().getCurrentUser().getRoles().contains(CoreRole.ADMIN));
@@ -192,6 +194,8 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 		H2 nameLabel = new H2(choosenBook.getName());
 		dataLayout.add(nameLabel);
 
+		dataLayout.add(imageDiv);
+
 		RatingStars rs = new RatingStars();
 		rs.setValue(choosenBook.getRating());
 		rs.setReadOnly(true);
@@ -243,16 +247,14 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 
 	protected void showDetail(BookTO choosenBook) {
 		this.choosenBook = choosenBook;
-		dataLayout.removeAll();
+		dataDiv.removeAll();
 		if (choosenBook == null) {
-			contentLayout.setVisible(false);
 			// TODO
 			// String currentURL = request.getContextRoot() + "/" +
 			// getBooksPageFactory().getPageName();
 			// UI.getCurrent().getRouter().
 			// Page.getCurrent().pushState(currentURL);
 		} else {
-			contentLayout.setVisible(true);
 			byte[] co = choosenBook.getImage();
 			if (co != null) {
 				// https://vaadin.com/forum/thread/260778
@@ -264,7 +266,7 @@ public class BooksPage extends OneColumnPage implements HasUrlParameter<String> 
 				image.setVisible(false);
 			}
 
-			populateDetail(dataLayout);
+			populateDetail(dataDiv);
 
 			// TODO
 			// String currentURL;

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -23,6 +24,7 @@ import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.books.model.interfaces.BookTO;
 import cz.gattserver.grass3.books.util.ImageUtils;
+import cz.gattserver.grass3.ui.components.button.CloseButton;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
@@ -48,7 +50,7 @@ public abstract class BookDialog extends WebDialog {
 	}
 
 	public BookDialog(final BookTO originalTO) {
-		super(originalTO == null ? "Založit" : "Upravit" + " knihu");
+		super();
 
 		BookTO formTO = new BookTO();
 
@@ -56,6 +58,7 @@ public abstract class BookDialog extends WebDialog {
 		binder.setBean(formTO);
 
 		imageLayout = new VerticalLayout();
+		imageLayout.setPadding(false);
 		addComponent(imageLayout);
 
 		image = new Image();
@@ -88,14 +91,21 @@ public abstract class BookDialog extends WebDialog {
 		}
 
 		HorizontalLayout btnsLayout = new HorizontalLayout();
-		btnsLayout.setSizeUndefined();
+		btnsLayout.setSpacing(false);
+		btnsLayout.setPadding(false);
+		btnsLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+		btnsLayout.setWidthFull();
+		addComponent(btnsLayout);
 
 		if (originalTO != null)
 			btnsLayout.add(new ModifyButton(event -> save(originalTO, binder)));
 		else
 			btnsLayout.add(new CreateButton(event -> save(originalTO, binder)));
 
+		btnsLayout.add(new CloseButton(e -> close()));
+
 		VerticalLayout fieldsLayout = createForm(binder);
+		fieldsLayout.setPadding(false);
 		fieldsLayout.add(btnsLayout);
 		HorizontalLayout mainLayout = new HorizontalLayout(imageLayout, fieldsLayout);
 		addComponent(mainLayout);

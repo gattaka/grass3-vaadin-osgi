@@ -321,11 +321,9 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	private Path createAttachmentsDir(Path rootPath) {
-		try (Stream<Path> stream = Files.list(rootPath).sorted((p1, p2) -> -1 * p1.compareTo(p2)).limit(1)) {
+		try (Stream<Path> stream = Files.list(rootPath).sorted((p1, p2) -> p2.compareTo(p1))) {
 			Iterator<Path> it = stream.iterator();
-			if (!it.hasNext()) {
-				return fileSystemService.createDirectoryWithPerms(rootPath.resolve("0"));
-			} else {
+			while (it.hasNext()) {
 				Path path = it.next();
 				String fileName = path.getFileName().toString();
 				Long val;
@@ -334,8 +332,11 @@ public class ArticleServiceImpl implements ArticleService {
 				} catch (NumberFormatException e) {
 					throw new IllegalStateException("Nezdařilo se iterovat název adresáře příloh", e);
 				}
-				return fileSystemService.createDirectoryWithPerms(rootPath.resolve(String.valueOf(val + 1)));
+				Path newPath = rootPath.resolve(String.valueOf(val + 1));
+				if (!Files.exists(newPath))
+					return fileSystemService.createDirectoryWithPerms(newPath);
 			}
+			return fileSystemService.createDirectoryWithPerms(rootPath.resolve("0"));
 		} catch (IOException e) {
 			throw new IllegalStateException("Nezdařilo se získat přehled příloh", e);
 		}

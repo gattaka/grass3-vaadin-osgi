@@ -58,7 +58,7 @@ public abstract class PGSlideshow extends Div {
 		Div wrapperDiv = new Div();
 		wrapperDiv.setId("pg-slideshow-item-wrapper-div");
 		add(wrapperDiv);
-		
+
 		String jsDivId = "pg-slideshow-item-div";
 		itemLayout = new Div() {
 			private static final long serialVersionUID = -1026900351513446144L;
@@ -206,8 +206,8 @@ public abstract class PGSlideshow extends Div {
 
 	private Component createVideoSlide(PhotogalleryViewItemTO itemTO) {
 		String videoURL = getItemURL(itemTO.getFile().getFileName().toString());
-		String videoString = "<video id=\"video\" preload controls>" + "<source src=\""
-				+ videoURL + "\" type=\"video/mp4\">" + "</video>";
+		String videoString = "<video id=\"video\" preload>" + "<source src=\"" + videoURL + "\" type=\"video/mp4\">"
+				+ "</video>";
 		HtmlDiv video = new HtmlDiv(videoString);
 		return video;
 	}

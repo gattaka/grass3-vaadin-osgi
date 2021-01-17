@@ -23,7 +23,6 @@ import cz.gattserver.common.util.HumanBytesSizeFormatter;
 import cz.gattserver.grass3.exception.GrassPageException;
 import cz.gattserver.grass3.monitor.MonitorEmailNotifier;
 import cz.gattserver.grass3.monitor.MonitorSection;
-import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 import cz.gattserver.grass3.monitor.processor.item.BackupStatusMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.BackupStatusPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskStatusMonitorItemTO;
@@ -42,6 +41,7 @@ import cz.gattserver.grass3.monitor.processor.item.ServicesPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
+import cz.gattserver.grass3.monitor.services.MonitorService;
 import cz.gattserver.grass3.monitor.web.label.ErrorMonitorStateLabel;
 import cz.gattserver.grass3.monitor.web.label.MonitorOutputLabel;
 import cz.gattserver.grass3.monitor.web.label.SuccessMonitorStateLabel;
@@ -61,7 +61,7 @@ public class MonitorPage extends OneColumnPage {
 	private static final long serialVersionUID = 4862261730750923131L;
 
 	@Autowired
-	private MonitorFacade monitorFacade;
+	private MonitorService monitorFacade;
 
 	@Autowired
 	private MonitorEmailNotifier emailNotifier;

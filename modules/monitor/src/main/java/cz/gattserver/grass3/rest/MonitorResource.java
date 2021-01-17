@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cz.gattserver.grass3.interfaces.UserInfoTO;
-import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 import cz.gattserver.grass3.monitor.processor.item.BackupStatusPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.DiskStatusPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.JVMMemoryMonitorItemTO;
@@ -23,6 +22,7 @@ import cz.gattserver.grass3.monitor.processor.item.ServicesPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
+import cz.gattserver.grass3.monitor.services.MonitorService;
 import cz.gattserver.grass3.services.SecurityService;
 
 @Controller
@@ -32,7 +32,7 @@ public class MonitorResource {
 	private static Logger logger = LoggerFactory.getLogger(MonitorResource.class);
 
 	@Autowired
-	private MonitorFacade monitorFacade;
+	private MonitorService monitorFacade;
 
 	@Autowired
 	private SecurityService securityService;

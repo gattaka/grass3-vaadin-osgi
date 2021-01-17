@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.monitor.facade;
+package cz.gattserver.grass3.monitor.services;
 
 import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
 import cz.gattserver.grass3.monitor.processor.item.DiskStatusPartItemTO;
@@ -14,7 +14,7 @@ import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
 
-public interface MonitorFacade {
+public interface MonitorService {
 
 	MonitorConfiguration getConfiguration();
 

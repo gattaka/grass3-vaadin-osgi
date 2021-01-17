@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.monitor.facade;
+package cz.gattserver.grass3.monitor.services.impl;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -46,13 +46,14 @@ import cz.gattserver.grass3.monitor.processor.item.ServicesPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemMemoryMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemSwapMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.SystemUptimeMonitorItemTO;
+import cz.gattserver.grass3.monitor.services.MonitorService;
 import cz.gattserver.grass3.services.ConfigurationService;
 
 @Transactional
 @Component
-public class MonitorFacadeImpl implements MonitorFacade {
+public class MonitorServiceImpl implements MonitorService {
 
-	private static final Logger logger = LoggerFactory.getLogger(MonitorFacadeImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(MonitorServiceImpl.class);
 
 	private static final int HTTP_TEST_TIMEOUT = 5000;
 

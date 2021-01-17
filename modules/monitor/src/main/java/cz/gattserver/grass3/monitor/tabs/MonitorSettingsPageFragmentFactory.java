@@ -13,7 +13,7 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationResult;
 
 import cz.gattserver.grass3.monitor.config.MonitorConfiguration;
-import cz.gattserver.grass3.monitor.facade.MonitorFacade;
+import cz.gattserver.grass3.monitor.services.MonitorService;
 import cz.gattserver.grass3.services.FileSystemService;
 import cz.gattserver.grass3.ui.components.button.SaveButton;
 import cz.gattserver.grass3.ui.pages.settings.AbstractPageFragmentFactory;
@@ -22,7 +22,7 @@ import cz.gattserver.grass3.ui.util.ButtonLayout;
 public class MonitorSettingsPageFragmentFactory extends AbstractPageFragmentFactory {
 
 	@Autowired
-	private MonitorFacade monitorFacade;
+	private MonitorService monitorFacade;
 
 	@Autowired
 	private FileSystemService fileSystemService;

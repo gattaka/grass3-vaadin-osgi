@@ -7,12 +7,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cz.gattserver.grass3.monitor.facade.MonitorFacade;
 import cz.gattserver.grass3.monitor.processor.item.BackupStatusMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.BackupStatusPartItemTO;
 import cz.gattserver.grass3.monitor.processor.item.MonitorState;
 import cz.gattserver.grass3.monitor.processor.item.SMARTMonitorItemTO;
 import cz.gattserver.grass3.monitor.processor.item.ServersMonitorItemTO;
+import cz.gattserver.grass3.monitor.services.MonitorService;
 import cz.gattserver.grass3.services.MailService;
 
 @Component
@@ -21,7 +21,7 @@ public class MonitorEmailNotifierImpl extends TimerTask implements MonitorEmailN
 	private static Logger logger = LoggerFactory.getLogger(MonitorEmailNotifierImpl.class);
 
 	@Autowired
-	private MonitorFacade monitorFacade;
+	private MonitorService monitorFacade;
 
 	@Autowired
 	private MailService mailService;

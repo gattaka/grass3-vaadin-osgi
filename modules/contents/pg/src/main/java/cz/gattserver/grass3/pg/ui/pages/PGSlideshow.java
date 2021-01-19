@@ -206,7 +206,7 @@ public abstract class PGSlideshow extends Div {
 
 	private Component createVideoSlide(PhotogalleryViewItemTO itemTO) {
 		String videoURL = getItemURL(itemTO.getFile().getFileName().toString());
-		String videoString = "<video id=\"video\" preload>" + "<source src=\"" + videoURL + "\" type=\"video/mp4\">"
+		String videoString = "<video id=\"video\" preload controls>" + "<source src=\"" + videoURL + "\" type=\"video/mp4\">"
 				+ "</video>";
 		HtmlDiv video = new HtmlDiv(videoString);
 		return video;

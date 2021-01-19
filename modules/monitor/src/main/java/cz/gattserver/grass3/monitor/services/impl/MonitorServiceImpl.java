@@ -336,16 +336,11 @@ public class MonitorServiceImpl implements MonitorService {
 		testResponseCode(syncthingTO, true);
 		partItemTO.getItems().add(syncthingTO);
 
-		ServersMonitorItemTO nexusTO = new ServersMonitorItemTO("Sonatype Nexus", "http://gattserver.cz:8081");
+		ServersMonitorItemTO nexusTO = new ServersMonitorItemTO("Sonatype Nexus", "https://nexus.gattserver.cz");
 		testResponseCode(nexusTO);
 		partItemTO.getItems().add(nexusTO);
 
-		ServersMonitorItemTO nexusSecureTO = new ServersMonitorItemTO("Sonatype Nexus HTTPS",
-				"https://www.gattserver.cz:8843");
-		testResponseCode(nexusSecureTO);
-		partItemTO.getItems().add(nexusSecureTO);
-
-		ServersMonitorItemTO sonarTO = new ServersMonitorItemTO("SonarQube", "http://gattserver.cz:9000");
+		ServersMonitorItemTO sonarTO = new ServersMonitorItemTO("SonarQube", "https://sonarqube.gattserver.cz");
 		testResponseCode(sonarTO);
 		partItemTO.getItems().add(sonarTO);
 

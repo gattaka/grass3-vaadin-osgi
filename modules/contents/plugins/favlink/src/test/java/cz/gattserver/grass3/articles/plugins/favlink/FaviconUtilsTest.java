@@ -50,12 +50,18 @@ public class FaviconUtilsTest {
 		assertEquals("testweb.cz", FaviconUtils.createFaviconRootFilename(new URL("http://testweb.cz")));
 		assertEquals("www.testweb2.org", FaviconUtils.createFaviconRootFilename(new URL(
 				"https://www.testweb2.org/policie-evakuovala-mestsky-soud-ve-slezske-kvuli-nahlasene-bombe-p9f-/zpravy-domov.aspx?c=A171207_114412_ln_domov_ele#utm_source=rss&utm_medium=feed&utm_campaign=ln_testweb&utm_content=main")));
+		assertEquals("localhost", FaviconUtils.createFaviconRootFilename(new URL(
+				"http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy")));
 	}
 
 	@Test
 	public void testGetPageURL() throws MalformedURLException {
-		assertEquals(new URL("https://www.testweb.cz/"), FaviconUtils.getPageURL(("https://www.testweb.cz/")));
-		assertEquals(new URL("http://www.testweb.cz/"), FaviconUtils.getPageURL(("http://www.testweb.cz/")));
+		assertEquals(new URL("https://www.testweb.cz/"), FaviconUtils.getPageURL("https://www.testweb.cz/"));
+		assertEquals(new URL("http://www.testweb.cz/"), FaviconUtils.getPageURL("http://www.testweb.cz/"));
+		assertEquals(new URL(
+				"http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy"),
+				FaviconUtils.getPageURL(
+						"http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy"));
 	}
 
 	@Test(expected = ParserException.class)

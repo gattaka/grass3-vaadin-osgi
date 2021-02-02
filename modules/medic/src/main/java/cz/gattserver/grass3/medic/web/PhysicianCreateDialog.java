@@ -8,10 +8,10 @@ import cz.gattserver.grass3.medic.interfaces.PhysicianTO;
 import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.window.EditWebDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
-import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class PhysicianCreateDialog extends WebDialog {
+public abstract class PhysicianCreateDialog extends EditWebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 

@@ -6,9 +6,9 @@ import com.vaadin.flow.data.validator.StringLengthValidator;
 
 import cz.gattserver.grass3.interfaces.QuoteTO;
 import cz.gattserver.grass3.ui.components.SaveCloseLayout;
-import cz.gattserver.web.common.ui.window.WebDialog;
+import cz.gattserver.web.common.ui.window.EditWebDialog;
 
-public class QuoteDialog extends WebDialog {
+public class QuoteDialog extends EditWebDialog {
 
 	private static final long serialVersionUID = -8494081277784752858L;
 

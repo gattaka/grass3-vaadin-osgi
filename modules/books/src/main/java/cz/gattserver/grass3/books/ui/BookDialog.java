@@ -30,10 +30,10 @@ import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.grass3.ui.util.RatingStars;
 import cz.gattserver.grass3.ui.util.UIUtils;
+import cz.gattserver.web.common.ui.window.EditWebDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
-import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class BookDialog extends WebDialog {
+public abstract class BookDialog extends EditWebDialog {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 

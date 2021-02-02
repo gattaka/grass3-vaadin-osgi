@@ -11,10 +11,10 @@ import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.Breakline;
+import cz.gattserver.web.common.ui.window.EditWebDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
-import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class ChordDialog extends WebDialog {
+public abstract class ChordDialog extends EditWebDialog {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 

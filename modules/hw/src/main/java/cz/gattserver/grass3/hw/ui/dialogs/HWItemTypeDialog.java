@@ -8,10 +8,10 @@ import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.web.common.spring.SpringContextHelper;
+import cz.gattserver.web.common.ui.window.EditWebDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
-import cz.gattserver.web.common.ui.window.WebDialog;
 
-public abstract class HWItemTypeDialog extends WebDialog {
+public abstract class HWItemTypeDialog extends EditWebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 

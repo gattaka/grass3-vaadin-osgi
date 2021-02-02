@@ -104,7 +104,7 @@ public class RecipesPage extends OneColumnPage {
 		btnLayout.setVisible(securityService.getCurrentUser().getRoles().contains(CoreRole.ADMIN));
 
 		btnLayout.add(new CreateGridButton("Přidat", event -> {
-			new RecipeWindow() {
+			new RecipeDialog() {
 				private static final long serialVersionUID = -4863260002363608014L;
 
 				@Override
@@ -118,7 +118,7 @@ public class RecipesPage extends OneColumnPage {
 		}));
 
 		btnLayout.add(new ModifyGridButton<RecipeOverviewTO>("Upravit", event -> {
-			new RecipeWindow(choosenRecipe) {
+			new RecipeDialog(choosenRecipe) {
 				private static final long serialVersionUID = 5264621441522056786L;
 
 				@Override

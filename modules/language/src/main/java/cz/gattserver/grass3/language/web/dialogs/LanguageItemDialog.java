@@ -25,9 +25,9 @@ import cz.gattserver.grass3.ui.components.button.ModifyButton;
 import cz.gattserver.grass3.ui.util.ButtonLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.window.ConfirmDialog;
-import cz.gattserver.web.common.ui.window.WebDialog;
+import cz.gattserver.web.common.ui.window.EditWebDialog;
 
-public class LanguageItemDialog extends WebDialog {
+public class LanguageItemDialog extends EditWebDialog {
 
 	private static final long serialVersionUID = 6803519662032576371L;
 

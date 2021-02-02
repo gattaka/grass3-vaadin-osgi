@@ -32,9 +32,9 @@ import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
-import cz.gattserver.web.common.ui.window.WebDialog;
+import cz.gattserver.web.common.ui.window.EditWebDialog;
 
-public abstract class HWItemDialog extends WebDialog {
+public abstract class HWItemDialog extends EditWebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
@@ -172,5 +172,5 @@ public abstract class HWItemDialog extends WebDialog {
 	}
 
 	protected abstract void onSuccess(HWItemTO dto);
-	
+
 }

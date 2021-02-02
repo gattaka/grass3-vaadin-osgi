@@ -24,34 +24,34 @@ public class ImageParser implements Parser {
 	}
 
 	@Override
-	public Element parse(ParsingProcessor pluginBag) {
+	public Element parse(ParsingProcessor processor) {
 
 		// zpracovat počáteční tag
-		String startTag = pluginBag.getStartTag();
-		logger.debug("{}", pluginBag.getToken());
+		String startTag = processor.getStartTag();
+		logger.debug("{}", processor.getToken());
 
 		if (!startTag.equals(tag))
 			throw new TokenException(tag, startTag);
 
 		// START_TAG byl zpracován
-		pluginBag.nextToken();
+		processor.nextToken();
 
 		// zpracovat text
 		StringBuilder link = new StringBuilder();
-		if (Token.TEXT.equals(pluginBag.getToken()))
-			link.append(pluginBag.getTextTree().getText());
+		if (Token.TEXT.equals(processor.getToken()))
+			link.append(processor.getTextTree().getText());
 		else
-			throw new TokenException(Token.TEXT, pluginBag.getToken(), pluginBag.getText());
+			throw new TokenException(Token.TEXT, processor.getToken(), processor.getText());
 
 		// zpracovat koncový tag
-		String endTag = pluginBag.getEndTag();
-		logger.debug("{}", pluginBag.getToken());
+		String endTag = processor.getEndTag();
+		logger.debug("{}", processor.getToken());
 
 		if (!endTag.equals(tag))
 			throw new TokenException(tag, endTag);
 
 		// END_TAG byl zpracován
-		pluginBag.nextToken();
+		processor.nextToken();
 
 		return new ImageElement(link.toString());
 	}

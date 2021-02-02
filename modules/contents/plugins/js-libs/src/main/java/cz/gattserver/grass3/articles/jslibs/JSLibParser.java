@@ -9,19 +9,24 @@ import cz.gattserver.grass3.articles.editor.parser.exceptions.TokenException;
 /**
  * @author gatt
  */
-public abstract class GJSLibParser implements Parser {
+public class JSLibParser implements Parser {
 
 	private String tag;
 
-	protected abstract Element createElement();
-
-	public GJSLibParser(String tag) {
+	public JSLibParser(String tag) {
 		this.tag = tag;
 	}
 
 	@Override
 	public Element parse(ParsingProcessor processor) {
 		parseStartTag(processor, tag);
+
+		// zpracovat text
+		StringBuilder link = new StringBuilder();
+		if (Token.TEXT.equals(processor.getToken()))
+			link.append(processor.getTextTree().getText());
+		else
+			throw new TokenException(Token.TEXT, processor.getToken(), processor.getText());
 
 		// zpracovat koncový tag
 		parseEndTag(processor, tag);
@@ -30,7 +35,7 @@ public abstract class GJSLibParser implements Parser {
 		if (processor.getToken().equals(Token.EOL))
 			processor.nextToken();
 
-		return createElement();
+		return new JSLibElement(link.toString());
 	}
 
 	private void parseStartTag(ParsingProcessor processor, String tag) {

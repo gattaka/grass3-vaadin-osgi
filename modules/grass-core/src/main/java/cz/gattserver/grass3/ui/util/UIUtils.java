@@ -203,9 +203,12 @@ public class UIUtils {
 		// není to úplně nejhezčí řešení, ale dá se tak relativně elegantně
 		// obejít problém se závislosí pluginů na úložišti theme apod. a
 		// přitom umožnit aby se JS odkazovali na externí zdroje
-		if (!js.isPlain()
-				&& (!chunk.toLowerCase().startsWith("http://") || !chunk.toLowerCase().startsWith("https://"))) {
-			chunk = "\"" + getContextPath() + "/frontend/" + chunk + "\"";
+		if (!js.isPlain()) {
+			if (!chunk.toLowerCase().startsWith("http://") && !chunk.toLowerCase().startsWith("https://")) {
+				chunk = "\"" + getContextPath() + "/frontend/" + chunk + "\"";
+			} else {
+				chunk = "\"" + chunk + "\"";
+			}
 			builder.append("$.getScript(").append(chunk).append(", function(){");
 			buildJSBatch(builder, index + 1, scripts);
 			builder.append("});");

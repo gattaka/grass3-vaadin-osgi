@@ -8,6 +8,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -54,11 +57,16 @@ public class FaviconUtils {
 					// bez agenta to často hodí 403 Forbidden, protože si myslí,
 					// že jsem asi bot ... (což vlastně jsem)
 					hc.setRequestProperty("User-Agent", agent);
+					hc.setRequestProperty("Accept-Encoding", "gzip");
 					logger.info("Favicon URL: " + uc.getURL());
 					int timeout = 2000; // 2s
 					hc.setConnectTimeout(timeout);
 					hc.setReadTimeout(timeout);
 					hc.connect();
+
+					Map<String, List<String>> map = uc.getHeaderFields();
+					for (Map.Entry<String, List<String>> entry : map.entrySet())
+						System.out.println(entry.getKey() + " : " + entry.getValue());
 
 					// Zjisti, zda bude potřeba manuální redirect (URLConnection
 					// to umí samo, dokud se nepřechází mezi
@@ -95,6 +103,19 @@ public class FaviconUtils {
 					} else {
 						logger.info("ERR: InputStream je null!");
 					}
+
+					if (!(is instanceof GZIPInputStream)) {
+						List<String> encodings = map.get("Content-Encoding");
+						if (encodings != null) {
+							for (String enc : encodings) {
+								if ("gzip".equals(enc)) {
+									is = new GZIPInputStream(is);
+									break;
+								}
+							}
+						}
+					}
+
 					return is;
 				}
 			} else {

@@ -38,6 +38,8 @@ public abstract class PGSlideshow extends Div {
 	protected Div itemLabel;
 	protected Div itemLayout;
 
+	protected boolean closePrevented = false;
+
 	protected List<ShortcutRegistration> regs = new ArrayList<>();
 
 	protected abstract void pageUpdate(int currentIndex);
@@ -54,6 +56,7 @@ public abstract class PGSlideshow extends Div {
 		itemLabel = new Div();
 		itemLabel.setId("pg-slideshow-item-label-div");
 		add(itemLabel);
+		addClickListener(e -> close());
 
 		Div wrapperDiv = new Div();
 		wrapperDiv.setId("pg-slideshow-item-wrapper-div");
@@ -74,7 +77,6 @@ public abstract class PGSlideshow extends Div {
 			}
 		};
 		itemLayout.setId(jsDivId);
-		// itemLayout.addClickListener(e -> close());
 		wrapperDiv.add(itemLayout);
 
 		UI.getCurrent().getPage()
@@ -198,14 +200,6 @@ public abstract class PGSlideshow extends Div {
 			itemLayout.removeAll();
 			itemLayout.add(slideshowComponent);
 			itemLabel.setText((index + 1) + "/" + totalCount + " " + itemTO.getName());
-
-			Div closerDiv = new Div();
-			closerDiv.setId("pg-slideshow-item-closer-div");
-			closerDiv.setSizeFull();
-			closerDiv.getStyle().set("z-index", "10").set("position", "absolute").set("top", "0").set("left", "0");
-			closerDiv.addClickListener(e -> close());
-			itemLayout.add(closerDiv);
-
 		} catch (Exception e) {
 			logger.error("Chyba při zobrazování slideshow položky fotogalerie", e);
 			UIUtils.showWarning("Zobrazení položky se nezdařilo");
@@ -215,9 +209,10 @@ public abstract class PGSlideshow extends Div {
 
 	private Component createVideoSlide(PhotogalleryViewItemTO itemTO) {
 		String videoURL = getItemURL(itemTO.getFile().getFileName().toString());
-		String videoString = "<video id=\"video\" style=\"z-index: 999; position: relative;\" preload controls>"
-				+ "<source src=\"" + videoURL + "\" type=\"video/mp4\">" + "</video>";
+		String videoString = "<video id=\"video\" preload controls>" + "<source src=\"" + videoURL
+				+ "\" type=\"video/mp4\">" + "</video>";
 		HtmlDiv video = new HtmlDiv(videoString);
+		video.addClickListener(e -> preventClose());
 		return video;
 	}
 
@@ -230,7 +225,7 @@ public abstract class PGSlideshow extends Div {
 				return null;
 			}
 		}), itemTO.getName());
-		embedded.getStyle().set("z-index", "999").set("position", "relative");
+		embedded.addClickListener(e -> preventClose());
 		return embedded;
 	}
 
@@ -259,7 +254,13 @@ public abstract class PGSlideshow extends Div {
 	}
 
 	protected void close() {
-		((HasComponents) getParent().get()).remove(PGSlideshow.this);
+		if (!closePrevented)
+			((HasComponents) getParent().get()).remove(PGSlideshow.this);
+		closePrevented = false;
+	}
+
+	protected void preventClose() {
+		closePrevented = true;
 	}
 
 }

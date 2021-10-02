@@ -64,6 +64,7 @@ public class ListTab extends Div {
 		grid.setMultiSort(false);
 		UIUtils.applyGrassDefaultStyle(grid);
 
+		grid.addColumn(SongOverviewTO::getId).setHeader("Id").setSortable(true).setWidth("50px").setFlexGrow(0);
 		Column<SongOverviewTO> nazevColumn = grid
 				.addColumn(new ComponentRenderer<Button, SongOverviewTO>(
 						to -> new LinkButton(to.getName(), e -> selectSong(to.getId(), true))))

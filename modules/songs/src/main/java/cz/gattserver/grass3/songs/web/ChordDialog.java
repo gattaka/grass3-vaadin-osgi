@@ -100,14 +100,10 @@ public abstract class ChordDialog extends EditWebDialog {
 	private void save(Binder<ChordTO> binder) {
 		ChordTO writeTO = new ChordTO();
 		if (binder.writeBeanIfValid(writeTO)) {
-			try {
-				writeTO.setConfiguration(binder.getBean().getConfiguration());
-				writeTO.setId(binder.getBean().getId());
-				onSave(writeTO);
-				close();
-			} catch (Exception ve) {
-				new ErrorDialog("Uložení se nezdařilo").open();
-			}
+			writeTO.setConfiguration(binder.getBean().getConfiguration());
+			writeTO.setId(binder.getBean().getId());
+			onSave(writeTO);
+			close();
 		}
 	}
 

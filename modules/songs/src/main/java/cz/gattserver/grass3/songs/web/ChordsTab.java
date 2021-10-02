@@ -122,8 +122,8 @@ public class ChordsTab extends Div {
 				@Override
 				protected void onSave(ChordTO to) {
 					to = songsFacade.saveChord(to);
-					selectChord(to);
 					loadChords();
+					selectChord(to);
 				}
 			}.open();
 		}));
@@ -136,8 +136,8 @@ public class ChordsTab extends Div {
 				@Override
 				protected void onSave(ChordTO to) {
 					to = songsFacade.saveChord(to);
-					selectChord(to);
 					loadChords();
+					selectChord(to);
 				}
 			}.open();
 		}, grid));
@@ -149,8 +149,8 @@ public class ChordsTab extends Div {
 				@Override
 				protected void onSave(ChordTO to) {
 					to = songsFacade.saveChord(to);
-					selectChord(to);
 					loadChords();
+					selectChord(to);
 				}
 			}.open();
 		}, grid);

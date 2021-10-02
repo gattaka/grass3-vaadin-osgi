@@ -33,6 +33,7 @@ import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
 import cz.gattserver.web.common.ui.Strong;
+import cz.gattserver.web.common.ui.window.ErrorDialog;
 
 public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> extends Div {
 
@@ -181,7 +182,12 @@ public abstract class DrinksTab<T extends DrinkTO, O extends DrinkOverviewTO> ex
 				String name = choosenDrink.getName()
 						+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 				image.setVisible(true);
-				image.setSrc(new StreamResource(name, () -> new ByteArrayInputStream(co)));
+				try {
+					image.setSrc(new StreamResource(name, () -> new ByteArrayInputStream(co)));
+				} catch (Exception e) {
+					image.setVisible(false);
+					new ErrorDialog("Foto k nápoji \"" + name + "\" se nezdařilo zobrazit: " + e.getMessage());
+				}
 			} else {
 				image.setVisible(false);
 			}

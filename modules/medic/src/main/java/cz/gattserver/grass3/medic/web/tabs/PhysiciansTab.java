@@ -29,7 +29,7 @@ public class PhysiciansTab extends MedicPageTab<PhysicianTO, ArrayList<Physician
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
-			protected void onSuccess() {
+			protected void onSuccess(PhysicianTO to) {
 				data = getItems();
 				grid.setItems(data);
 			}
@@ -42,13 +42,13 @@ public class PhysiciansTab extends MedicPageTab<PhysicianTO, ArrayList<Physician
 	}
 
 	@Override
-	protected Dialog createModifyDialog(PhysicianTO dto) {
-		return new PhysicianCreateDialog(dto) {
+	protected Dialog createModifyDialog(PhysicianTO originalTO) {
+		return new PhysicianCreateDialog(originalTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override
-			protected void onSuccess() {
-				grid.getDataProvider().refreshItem(dto);
+			protected void onSuccess(PhysicianTO to) {
+				grid.getDataProvider().refreshItem(to);
 			}
 		};
 	}

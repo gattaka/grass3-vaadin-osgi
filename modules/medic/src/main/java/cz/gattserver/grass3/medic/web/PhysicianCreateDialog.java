@@ -19,12 +19,11 @@ public abstract class PhysicianCreateDialog extends EditWebDialog {
 		this(null);
 	}
 
-	public PhysicianCreateDialog(PhysicianTO originalDTO) {
+	public PhysicianCreateDialog(PhysicianTO originalTO) {
 		setWidth("300px");
 
-		PhysicianTO formDTO = new PhysicianTO();
 		Binder<PhysicianTO> binder = new Binder<>(PhysicianTO.class);
-		binder.setBean(formDTO);
+		binder.setBean(new PhysicianTO());
 
 		final TextField nameField = new TextField("Jméno");
 		add(nameField);
@@ -33,11 +32,11 @@ public abstract class PhysicianCreateDialog extends EditWebDialog {
 		binder.forField(nameField).bind("name");
 
 		add(new SaveCloseLayout(e -> {
-			PhysicianTO writeDTO = originalDTO == null ? new PhysicianTO() : originalDTO;
-			if (binder.writeBeanIfValid(writeDTO)) {
+			PhysicianTO writeTO = originalTO == null ? new PhysicianTO() : originalTO;
+			if (binder.writeBeanIfValid(writeTO)) {
 				try {
-					SpringContextHelper.getBean(MedicFacade.class).savePhysician(formDTO);
-					onSuccess();
+					SpringContextHelper.getBean(MedicFacade.class).savePhysician(writeTO);
+					onSuccess(writeTO);
 					close();
 				} catch (Exception ex) {
 					new ErrorDialog("Nezdařilo se vytvořit nový záznam").open();
@@ -45,10 +44,10 @@ public abstract class PhysicianCreateDialog extends EditWebDialog {
 			}
 		}, e -> close()));
 
-		if (originalDTO != null)
-			binder.readBean(originalDTO);
+		if (originalTO != null)
+			binder.readBean(originalTO);
 	}
 
-	protected abstract void onSuccess();
+	protected abstract void onSuccess(PhysicianTO to);
 
 }

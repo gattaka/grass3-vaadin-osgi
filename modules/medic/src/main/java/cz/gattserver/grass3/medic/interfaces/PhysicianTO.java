@@ -5,7 +5,7 @@ import javax.validation.constraints.Size;
 
 import cz.gattserver.common.Identifiable;
 
-public class PhysicianTO implements Identifiable{
+public class PhysicianTO implements Identifiable {
 
 	private Long id;
 
@@ -41,17 +41,17 @@ public class PhysicianTO implements Identifiable{
 	public boolean equals(Object obj) {
 		if (obj instanceof PhysicianTO) {
 			PhysicianTO dto = (PhysicianTO) obj;
-			if (dto.getName() == null)
-				return name == null;
+			if (dto.getId() == null)
+				return id == null;
 			else
-				return dto.getName().equals(name);
+				return dto.getId().equals(id);
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return name.hashCode();
+		return id.hashCode();
 	}
 
 }

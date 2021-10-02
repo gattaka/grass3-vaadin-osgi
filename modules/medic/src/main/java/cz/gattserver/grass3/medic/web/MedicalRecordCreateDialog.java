@@ -47,10 +47,8 @@ public abstract class MedicalRecordCreateDialog extends EditWebDialog {
 	private MedicalRecordCreateDialog(ScheduledVisitTO scheduledVisitDTO, MedicalRecordTO originalDTO) {
 		setWidth("800px");
 
-		MedicalRecordTO formDTO = new MedicalRecordTO();
-
 		Binder<MedicalRecordTO> binder = new Binder<>(MedicalRecordTO.class);
-		binder.setBean(formDTO);
+		binder.setBean(new MedicalRecordTO());
 
 		final ComboBox<MedicalInstitutionTO> institutionComboBox = new ComboBox<>("Instituce",
 				getMedicFacade().getAllMedicalInstitutions());

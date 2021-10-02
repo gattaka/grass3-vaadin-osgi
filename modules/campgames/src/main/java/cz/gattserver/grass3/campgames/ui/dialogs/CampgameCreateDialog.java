@@ -113,12 +113,9 @@ public abstract class CampgameCreateDialog extends EditWebDialog {
 				writeDTO.setId(getCampgameService().saveCampgame(writeDTO));
 				onSuccess(writeDTO);
 				close();
-			} catch (ValidationException ve) {
-				new ErrorDialog(
-						"Chybná vstupní data\n\n   " + ve.getValidationErrors().iterator().next().getErrorMessage())
-								.open();
 			} catch (Exception ve) {
-				new ErrorDialog("Uložení se nezdařilo").open();
+				if (!(ve instanceof ValidationException))
+					new ErrorDialog("Uložení se nezdařilo" + ve.getMessage()).open();
 			}
 		});
 		buttonLayout.add(createBtn);

@@ -3,6 +3,8 @@ package cz.gattserver.grass3.campgames.ui;
 import java.util.Arrays;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
@@ -33,7 +35,6 @@ import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.window.ConfirmDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 
 public class CampgamesTab extends Div {
@@ -45,7 +46,8 @@ public class CampgamesTab extends Div {
 	private static final String PREPARATIONTIME_BIND = "preparationTimeBind";
 	private static final String PLAYTIME_BIND = "playTimeBind";
 
-	private transient CampgamesService campgamesService;
+	@Autowired
+	private CampgamesService campgamesService;
 
 	private Grid<CampgameOverviewTO> grid;
 	private TokenField keywordsFilter;
@@ -53,10 +55,12 @@ public class CampgamesTab extends Div {
 	private CampgameFilterTO filterDTO;
 
 	public CampgamesTab() {
+		SpringContextHelper.inject(this);
+
 		filterDTO = new CampgameFilterTO();
 
 		// Filtr na klíčová slova
-		keywordsFilter = new TokenField(getCampgamesService().getAllCampgameKeywordNames());
+		keywordsFilter = new TokenField(campgamesService.getAllCampgameKeywordNames());
 		keywordsFilter.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		keywordsFilter.setPlaceholder("Filtrovat dle klíčových slov");
 		keywordsFilter.getInputField().setWidth("200px");
@@ -144,17 +148,11 @@ public class CampgamesTab extends Div {
 		deleteBtn.setVisible(editor);
 	}
 
-	private CampgamesService getCampgamesService() {
-		if (campgamesService == null)
-			campgamesService = SpringContextHelper.getBean(CampgamesService.class);
-		return campgamesService;
-	}
-
 	private void populate() {
 		Set<String> types = keywordsFilter.getValues();
 		filterDTO.setKeywords(types);
 
-		FetchCallback<CampgameOverviewTO, Void> fetchCallback = q -> getCampgamesService().getCampgames(filterDTO,
+		FetchCallback<CampgameOverviewTO, Void> fetchCallback = q -> campgamesService.getCampgames(filterDTO,
 				q.getOffset(), q.getLimit(), QuerydslUtil.transformOrdering(q.getSortOrders(), column -> {
 					switch (column) {
 					case NAME_BIND:
@@ -169,7 +167,7 @@ public class CampgamesTab extends Div {
 						return column;
 					}
 				})).stream();
-		CountCallback<CampgameOverviewTO, Void> countCallback = q -> getCampgamesService().countCampgames(filterDTO);
+		CountCallback<CampgameOverviewTO, Void> countCallback = q -> campgamesService.countCampgames(filterDTO);
 		grid.setDataProvider(DataProvider.fromCallbacks(fetchCallback, countCallback));
 	}
 
@@ -178,17 +176,19 @@ public class CampgamesTab extends Div {
 		if (to != null) {
 			if (grid.getSelectedItems().isEmpty())
 				return;
-			campgame = getCampgamesService().getCampgame(to.getId());
+			campgame = campgamesService.getCampgame(to.getId());
 		}
 		new CampgameCreateDialog(campgame == null ? null : campgame.getId()) {
 			private static final long serialVersionUID = -1397391593801030584L;
 
 			@Override
 			protected void onSuccess(CampgameTO dto) {
-				populate();
 				CampgameOverviewTO filterTO = new CampgameOverviewTO();
 				filterTO.setId(dto.getId());
+				// select musí neintuitivně být dřív než refresh, jinak se do
+				// tabulky zobrazí prázdný řádek
 				grid.select(filterTO);
+				grid.getDataProvider().refreshAll();
 			}
 		}.open();
 	}
@@ -200,26 +200,13 @@ public class CampgamesTab extends Div {
 	private void openDeleteWindow() {
 		if (grid.getSelectedItems().isEmpty())
 			return;
-		CampgamesTab.this.setEnabled(false);
 		CampgameOverviewTO to = grid.getSelectedItems().iterator().next();
-		new ConfirmDialog("Opravdu smazat '" + to.getName() + "' ?", e -> {
-			try {
-				getCampgamesService().deleteCampgame(to.getId());
-				populate();
-			} catch (Exception ex) {
-				new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
-			}
-		}) {
-
-			private static final long serialVersionUID = -422763987707688597L;
-
-			@Override
-			public void close() {
-				CampgamesTab.this.setEnabled(true);
-				super.close();
-			}
-
-		}.open();
+		try {
+			campgamesService.deleteCampgame(to.getId());
+			grid.getDataProvider().refreshAll();
+		} catch (Exception ex) {
+			new ErrorDialog("Nezdařilo se smazat vybranou položku").open();
+		}
 	}
 
 }

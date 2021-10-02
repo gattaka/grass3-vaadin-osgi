@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class JavaScriptCodePlugin extends AbstractCodePlugin {
 
 	public JavaScriptCodePlugin() {
-		super("JS", "JavaScript", "js.ico", "javascript", "js");
+		super("JS", "JavaScript", "js.ico", "javascript", "text/javascript");
 	}
 
 }

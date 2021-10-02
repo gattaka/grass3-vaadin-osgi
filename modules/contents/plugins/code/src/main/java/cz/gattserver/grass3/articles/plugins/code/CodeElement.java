@@ -10,13 +10,13 @@ public class CodeElement implements Element {
 	private String code;
 	private String description;
 	private String lib;
-	private String mode;
+	private String mimetype;
 
-	public CodeElement(String code, String description, String lib, String mode) {
+	public CodeElement(String code, String description, String lib, String mimetype) {
 		this.code = code;
 		this.description = description;
 		this.lib = lib;
-		this.mode = mode;
+		this.mimetype = mimetype;
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class CodeElement implements Element {
 
 		ctx.print("<span class=\"lang_description\">" + description + "</span>");
 		ctx.print("<div class=\"barier\"><div class=\"numberedtext\">");
-		ctx.print("<textarea name=\"codemirror_" + (mode == null ? "" : mode) + "\">" + code + "</textarea>");
+		ctx.print("<textarea codemirror mimetype=\"" + mimetype + "\">" + code + "</textarea>");
 		ctx.print("</div></div><div id=\"code_koncovka\"></div>");
 	}
 

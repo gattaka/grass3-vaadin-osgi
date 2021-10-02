@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class CSSCodePlugin extends AbstractCodePlugin {
 
 	public CSSCodePlugin() {
-		super("CSS", "CSS", "", "css", "css");
+		super("CSS", "CSS", "", "css", "text/css");
 	}
 
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class SQLCodePlugin extends AbstractCodePlugin {
 
 	public SQLCodePlugin() {
-		super("SQL", "SQL", "", "sql", "sql");
+		super("SQL", "SQL", "", "sql", "text/x-sql");
 	}
 
 }

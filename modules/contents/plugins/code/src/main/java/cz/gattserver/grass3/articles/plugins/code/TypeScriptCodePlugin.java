@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class TypeScriptCodePlugin extends AbstractCodePlugin {
 
 	public TypeScriptCodePlugin() {
-		super("TS", "TypeScript", "ts.png", "javascript", "ts");
+		super("TS", "TypeScript", "ts.png", "javascript", "text/typescript");
 	}
 
 }

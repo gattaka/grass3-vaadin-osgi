@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class PythonCodePlugin extends AbstractCodePlugin {
 
 	public PythonCodePlugin() {
-		super("PYTHON", "Python", "python.png", "python", "python");
+		super("PYTHON", "Python", "python.png", "python", "text/x-python");
 	}
 
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class LatexCodePlugin extends AbstractCodePlugin {
 
 	public LatexCodePlugin() {
-		super("LATEX", "LaTeX", "", "stex", "latex");
+		super("LATEX", "LaTeX", "", "stex", "text/x-stex");
 	}
 
 }

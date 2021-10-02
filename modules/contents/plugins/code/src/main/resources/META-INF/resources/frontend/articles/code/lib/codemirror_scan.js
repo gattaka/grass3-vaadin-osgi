@@ -18,23 +18,18 @@ var codeMirrorConfig = {
 
 /*
  * Není to zrovna hezké řešení, ale je to jediné "slušné" jak obejít fakt, že
- * není možné zjistit, kdy Vaadin nahrál pomocí svého+GWT JS všechen obsah a je
+ * není možné zjistit, kdy Vaadin nahrál pomocí svého JS všechen obsah a je
  * na něj možné aplikovat můj JS - časovač běží dokud nenarazí na první element,
  * který je <pre> a má třídu codemirror_<něco> ... to by mělo být dostatnečně
  * adresné pro určení elementu code
  */
 var timer;
 var codemirrorScan = function() {	
-	var elements = $("[name^=codemirror_]");
+	var elements = $("[codemirror]");
 	if (elements.length > 0) {
-		for (var i = 0; i < elements.length; i++) {
-			var name = elements[i].name;
-			var mode = name.substring("codemirror_".length);
-			if (mode == "xml") {
-				codeMirrorConfig.mode = "text/html";
-			} else {
-				codeMirrorConfig.mode = "text/x-" + mode;
-			}
+		for (var i = 0; i < elements.length; i++) {			
+			var mimetype = elements[i].getAttribute("mimetype");			
+			codeMirrorConfig.mode = mimetype;				
 			CodeMirror.fromTextArea(elements[i], codeMirrorConfig);
 		}
 		clearInterval(timer);

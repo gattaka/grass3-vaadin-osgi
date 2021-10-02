@@ -16,14 +16,14 @@ public abstract class AbstractCodePlugin implements Plugin {
 	private final String description;
 	private final String image;
 	private final String lib;
-	private final String mode;
+	private final String mimetype;
 
-	public AbstractCodePlugin(String tag, String description, String image, String lib, String mode) {
+	public AbstractCodePlugin(String tag, String description, String image, String lib, String mimetype) {
 		this.tag = tag;
 		this.description = description;
 		this.image = image;
 		this.lib = lib;
-		this.mode = mode;
+		this.mimetype = mimetype;
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public abstract class AbstractCodePlugin implements Plugin {
 
 	@Override
 	public Parser getParser() {
-		return new CodeParser(tag, description, lib, mode);
+		return new CodeParser(tag, description, lib, mimetype);
 	}
 
 	@Override

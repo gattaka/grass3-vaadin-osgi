@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class GoCodePlugin extends AbstractCodePlugin {
 
 	public GoCodePlugin() {
-		super("GO", "Go", "go.jpg", "go", "go");
+		super("GO", "Go", "go.jpg", "go", "text/x-go");
 	}
 
 }

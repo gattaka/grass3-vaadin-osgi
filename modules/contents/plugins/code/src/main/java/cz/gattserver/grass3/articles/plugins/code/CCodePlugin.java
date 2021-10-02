@@ -6,6 +6,6 @@ import org.springframework.stereotype.Component;
 public class CCodePlugin extends AbstractCodePlugin {
 
 	public CCodePlugin() {
-		super("C", "C", "", "clike", "c");
+		super("C", "C", "", "clike", "text/x-csrc");
 	}
 }

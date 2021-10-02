@@ -21,13 +21,13 @@ public class CodeParser implements Parser {
 	private String tag;
 	private String description;
 	private String lib;
-	private String mode;
+	private String mimetype;
 
-	public CodeParser(String tag, String description, String lib, String mode) {
+	public CodeParser(String tag, String description, String lib, String mimetype) {
 		this.tag = tag;
 		this.description = description;
 		this.lib = lib;
-		this.mode = mode;
+		this.mimetype = mimetype;
 	}
 
 	@Override
@@ -93,6 +93,6 @@ public class CodeParser implements Parser {
 
 		// position 1, position 2, link odkazu, text odkazu (optional), ikona
 		// (optional), default ikona
-		return new CodeElement(code.toString(), description, lib, mode);
+		return new CodeElement(code.toString(), description, lib, mimetype);
 	}
 }

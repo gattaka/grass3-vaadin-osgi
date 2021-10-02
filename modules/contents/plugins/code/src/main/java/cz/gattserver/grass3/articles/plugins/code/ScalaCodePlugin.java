@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class ScalaCodePlugin extends AbstractCodePlugin {
 
 	public ScalaCodePlugin() {
-		super("SCALA", "Scala", "scala.gif", "clike", "scala");
+		super("SCALA", "Scala", "scala.gif", "clike", "text/x-scala");
 	}
 
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class CSharpCodePlugin extends AbstractCodePlugin {
 
 	public CSharpCodePlugin() {
-		super("CSHARP", "C#", "", "clike", "csharp");
+		super("CSHARP", "C#", "", "clike", "text/x-csharp");
 	}
 
 }

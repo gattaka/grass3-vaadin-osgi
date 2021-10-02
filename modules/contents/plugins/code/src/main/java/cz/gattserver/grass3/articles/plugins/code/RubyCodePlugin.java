@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class RubyCodePlugin extends AbstractCodePlugin {
 
 	public RubyCodePlugin() {
-		super("RUBY", "Ruby", "ruby.png", "ruby", "ruby");
+		super("RUBY", "Ruby", "ruby.png", "ruby", "text/x-ruby");
 	}
 
 }

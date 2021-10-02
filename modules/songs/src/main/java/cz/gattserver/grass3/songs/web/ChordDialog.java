@@ -12,7 +12,6 @@ import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.ui.Breakline;
 import cz.gattserver.web.common.ui.window.EditWebDialog;
-import cz.gattserver.web.common.ui.window.ErrorDialog;
 
 public abstract class ChordDialog extends EditWebDialog {
 

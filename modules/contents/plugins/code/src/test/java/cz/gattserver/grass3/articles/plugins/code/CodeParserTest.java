@@ -33,7 +33,7 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">desc</span><div class=\"barier\">"
-				/*		*/ + "<div class=\"numberedtext\"><textarea name=\"codemirror_dummyMode\">"
+				/*		*/ + "<div class=\"numberedtext\"><textarea codemirror mimetype=\"dummyMode\">"
 				/*			*/ + "Context ctx = new ContextImpl();\nelement.apply(ctx);</textarea>"
 				/*		*/ + "</div>"
 				/*	*/ + "</div>" + "<div id=\"code_koncovka\">" + "</div>", ctx.getOutput());
@@ -46,7 +46,7 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">desc</span><div class=\"barier\">"
-				/*		*/ + "<div class=\"numberedtext\"><textarea name=\"codemirror_dummyMode\">"
+				/*		*/ + "<div class=\"numberedtext\"><textarea codemirror mimetype=\"dummyMode\">"
 				/*			*/ + "Context ctx = new ContextImpl();\nelement.apply(ctx);</textarea>"
 				/*		*/ + "</div>"
 				/*	*/ + "</div>" + "<div id=\"code_koncovka\">" + "</div>", ctx.getOutput());
@@ -59,7 +59,7 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">desc</span><div class=\"barier\">"
-				/*		*/ + "<div class=\"numberedtext\"><textarea name=\"codemirror_dummyMode\">"
+				/*		*/ + "<div class=\"numberedtext\"><textarea codemirror mimetype=\"dummyMode\">"
 				/*			*/ + "\nContext ctx = new ContextImpl();\n \nelement.apply(ctx);\n</textarea>"
 				/*		*/ + "</div>"
 				/*	*/ + "</div>" + "<div id=\"code_koncovka\">" + "</div>", ctx.getOutput());
@@ -71,7 +71,7 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals(
-				"<span class=\"lang_description\">BASH</span><div class=\"barier\"><div class=\"numberedtext\"><textarea name=\"codemirror_shell\">code</textarea>"
+				"<span class=\"lang_description\">BASH</span><div class=\"barier\"><div class=\"numberedtext\"><textarea codemirror mimetype=\"text/x-sh\">code</textarea>"
 						+ "</div></div><div id=\"code_koncovka\"></div>",
 				ctx.getOutput());
 	}
@@ -82,8 +82,8 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">C</span><div class=\"barier\"><div class=\"numberedtext\">"
-				+ "<textarea name=\"codemirror_c\">code</textarea>" + "</div></div><div id=\"code_koncovka\"></div>",
-				ctx.getOutput());
+				+ "<textarea codemirror mimetype=\"text/x-csrc\">code</textarea>"
+				+ "</div></div><div id=\"code_koncovka\"></div>", ctx.getOutput());
 	}
 
 	@Test
@@ -92,8 +92,8 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">Code</span><div class=\"barier\"><div class=\"numberedtext\">"
-				+ "<textarea name=\"codemirror_\">code</textarea>" + "</div></div><div id=\"code_koncovka\"></div>",
-				ctx.getOutput());
+				+ "<textarea codemirror mimetype=\"null\">code</textarea>"
+				+ "</div></div><div id=\"code_koncovka\"></div>", ctx.getOutput());
 	}
 
 	@Test
@@ -102,18 +102,18 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">C++</span><div class=\"barier\"><div class=\"numberedtext\">"
-				+ "<textarea name=\"codemirror_cpp\">code</textarea>" + "</div></div><div id=\"code_koncovka\"></div>",
-				ctx.getOutput());
+				+ "<textarea codemirror mimetype=\"text/x-c++src\">code</textarea>"
+				+ "</div></div><div id=\"code_koncovka\"></div>", ctx.getOutput());
 	}
-	
+
 	@Test
 	public void testGOCode() {
 		Element element = new GoCodePlugin().getParser().parse(getParsingProcessorWithText("[GO]code[/GO]\n"));
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">Go</span><div class=\"barier\"><div class=\"numberedtext\">"
-				+ "<textarea name=\"codemirror_go\">code</textarea>" + "</div></div><div id=\"code_koncovka\"></div>",
-				ctx.getOutput());
+				+ "<textarea codemirror mimetype=\"text/x-go\">code</textarea>"
+				+ "</div></div><div id=\"code_koncovka\"></div>", ctx.getOutput());
 	}
 
 	@Test
@@ -123,7 +123,7 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">C#</span><div class=\"barier\">"
-				+ "<div class=\"numberedtext\"><textarea name=\"codemirror_csharp\">code</textarea>"
+				+ "<div class=\"numberedtext\"><textarea codemirror mimetype=\"text/x-csharp\">code</textarea>"
 				+ "</div></div><div id=\"code_koncovka\"></div>", ctx.getOutput());
 	}
 
@@ -133,7 +133,7 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">CSS</span><div class=\"barier\">"
-				+ "<div class=\"numberedtext\"><textarea name=\"codemirror_css\">code</textarea>"
+				+ "<div class=\"numberedtext\"><textarea codemirror mimetype=\"text/css\">code</textarea>"
 				+ "</div></div><div id=\"code_koncovka\"></div>", ctx.getOutput());
 	}
 
@@ -144,7 +144,7 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">Groovy</span><div class=\"barier\">"
-				+ "<div class=\"numberedtext\"><textarea name=\"codemirror_groovy\">code</textarea>"
+				+ "<div class=\"numberedtext\"><textarea codemirror mimetype=\"text/x-groovy\">code</textarea>"
 				+ "</div></div><div id=\"code_koncovka\"></div>", ctx.getOutput());
 	}
 
@@ -154,7 +154,7 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">Java</span><div class=\"barier\">"
-				+ "<div class=\"numberedtext\"><textarea name=\"codemirror_java\">code</textarea>"
+				+ "<div class=\"numberedtext\"><textarea codemirror mimetype=\"text/x-java\">code</textarea>"
 				+ "</div></div><div id=\"code_koncovka\"></div>", ctx.getOutput());
 	}
 
@@ -165,7 +165,7 @@ public class CodeParserTest {
 		element.apply(ctx);
 		assertEquals(
 				"<span class=\"lang_description\">JavaScript</span><div class=\"barier\"><div class=\"numberedtext\">"
-						+ "<textarea name=\"codemirror_js\">code</textarea>"
+						+ "<textarea codemirror mimetype=\"text/javascript\">code</textarea>"
 						+ "</div></div><div id=\"code_koncovka\"></div>",
 				ctx.getOutput());
 	}
@@ -176,7 +176,7 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">LaTeX</span><div class=\"barier\"><div class=\"numberedtext\">"
-				+ "<textarea name=\"codemirror_latex\">code</textarea>"
+				+ "<textarea codemirror mimetype=\"text/x-stex\">code</textarea>"
 				+ "</div></div><div id=\"code_koncovka\"></div>", ctx.getOutput());
 	}
 
@@ -186,8 +186,7 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals(
-				"<span class=\"lang_description\">PHP</span><div class=\"barier\"><div class=\"numberedtext\">"
-						+ "<textarea name=\"codemirror_php\">code</textarea></div></div><div id=\"code_koncovka\"></div>",
+				"<span class=\"lang_description\">PHP</span><div class=\"barier\"><div class=\"numberedtext\"><textarea codemirror mimetype=\"text/x-php\">code</textarea></div></div><div id=\"code_koncovka\"></div>",
 				ctx.getOutput());
 	}
 
@@ -198,7 +197,7 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">Python</span><div class=\"barier\">"
-				+ "<div class=\"numberedtext\"><textarea name=\"codemirror_python\">code</textarea>"
+				+ "<div class=\"numberedtext\"><textarea codemirror mimetype=\"text/x-python\">code</textarea>"
 				+ "</div></div><div id=\"code_koncovka\"></div>", ctx.getOutput());
 	}
 
@@ -207,9 +206,8 @@ public class CodeParserTest {
 		Element element = new RubyCodePlugin().getParser().parse(getParsingProcessorWithText("[RUBY]code[/RUBY]\n"));
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
-		assertEquals(
-				"<span class=\"lang_description\">Ruby</span><div class=\"barier\">"
-						+ "<div class=\"numberedtext\"><textarea name=\"codemirror_ruby\">code</textarea></div></div><div id=\"code_koncovka\"></div>",
+		assertEquals("<span class=\"lang_description\">Ruby</span><div class=\"barier\">"
+				+ "<div class=\"numberedtext\"><textarea codemirror mimetype=\"text/x-ruby\">code</textarea></div></div><div id=\"code_koncovka\"></div>",
 				ctx.getOutput());
 	}
 
@@ -218,9 +216,8 @@ public class CodeParserTest {
 		Element element = new ScalaCodePlugin().getParser().parse(getParsingProcessorWithText("[SCALA]code[/SCALA]\n"));
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
-		assertEquals(
-				"<span class=\"lang_description\">Scala</span><div class=\"barier\"><div class=\"numberedtext\">"
-						+ "<textarea name=\"codemirror_scala\">code</textarea></div></div><div id=\"code_koncovka\"></div>",
+		assertEquals("<span class=\"lang_description\">Scala</span><div class=\"barier\"><div class=\"numberedtext\">"
+				+ "<textarea codemirror mimetype=\"text/x-scala\">code</textarea></div></div><div id=\"code_koncovka\"></div>",
 				ctx.getOutput());
 	}
 
@@ -230,7 +227,7 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">SQL</span><div class=\"barier\">"
-				+ "<div class=\"numberedtext\"><textarea name=\"codemirror_sql\">code</textarea>"
+				+ "<div class=\"numberedtext\"><textarea codemirror mimetype=\"text/x-sql\">code</textarea>"
 				+ "</div></div><div id=\"code_koncovka\"></div>", ctx.getOutput());
 	}
 
@@ -240,7 +237,7 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">TypeScript</span><div class=\"barier\">"
-				+ "<div class=\"numberedtext\"><textarea name=\"codemirror_ts\">code</textarea>"
+				+ "<div class=\"numberedtext\"><textarea codemirror mimetype=\"text/typescript\">code</textarea>"
 				+ "</div></div><div id=\"code_koncovka\"></div>", ctx.getOutput());
 	}
 
@@ -250,7 +247,7 @@ public class CodeParserTest {
 		Context ctx = new ContextImpl();
 		element.apply(ctx);
 		assertEquals("<span class=\"lang_description\">XML</span><div class=\"barier\">"
-				+ "<div class=\"numberedtext\"><textarea name=\"codemirror_xml\">code</textarea>"
+				+ "<div class=\"numberedtext\"><textarea codemirror mimetype=\"application/xml\">code</textarea>"
 				+ "</div></div><div id=\"code_koncovka\"></div>", ctx.getOutput());
 	}
 

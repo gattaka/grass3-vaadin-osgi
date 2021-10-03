@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.hw.ui.dialogs;
+package cz.gattserver.grass3.hw.ui.pages;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,8 +37,9 @@ import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.service.HWService;
-import cz.gattserver.grass3.hw.ui.HWItemsTab;
 import cz.gattserver.grass3.hw.ui.HWUIUtils;
+import cz.gattserver.grass3.hw.ui.dialogs.HWItemDetailsDialog;
+import cz.gattserver.grass3.hw.ui.dialogs.HWItemEditDialog;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.OperationsLayout;
@@ -101,7 +102,7 @@ public class HWDetailsInfoTab extends Div {
 	}
 
 	private String createShortName(String name) {
-		int maxLength = 50;
+		int maxLength = 100;
 		if (name.length() <= maxLength)
 			return name;
 		return name.substring(0, maxLength / 2 - 3) + "..." + name.substring(name.length() - maxLength / 2);
@@ -133,6 +134,7 @@ public class HWDetailsInfoTab extends Div {
 		createHWImageOrUpload(hwItem);
 
 		Div itemDetailsLayout = new Div();
+		itemDetailsLayout.setWidthFull();
 		outerLayout.add(itemDetailsLayout);
 
 		TableLayout tableLayout = new TableLayout();
@@ -140,6 +142,11 @@ public class HWDetailsInfoTab extends Div {
 
 		tableLayout.addStrong("Stav");
 		tableLayout.addStrong("Získáno");
+		if (getUser().isAdmin())
+			tableLayout.add(new Strong("Cena"));
+		tableLayout.add(new Strong("Záruka"));
+		tableLayout.addStrong("Spravováno pro");
+
 		tableLayout.newRow();
 
 		Div stateValue = new Div(new Text(hwItem.getState().getName()));
@@ -151,12 +158,6 @@ public class HWDetailsInfoTab extends Div {
 				new Text(hwItem.getPurchaseDate() == null ? "-" : hwItem.getPurchaseDate().format(format)));
 		purchDateValue.setMinWidth("100px");
 		tableLayout.add(purchDateValue);
-		tableLayout.newRow();
-
-		if (getUser().isAdmin())
-			tableLayout.add(new Strong("Cena"));
-		tableLayout.add(new Strong("Záruka"));
-		tableLayout.newRow();
 
 		if (getUser().isAdmin()) {
 			Div priceValue = new Div(new Text(createPriceString(hwItem.getPrice())));
@@ -165,6 +166,7 @@ public class HWDetailsInfoTab extends Div {
 		}
 
 		Div zarukaLayout = new Div();
+		zarukaLayout.setMinWidth("100px");
 		if (hwItem.getWarrantyYears() != null && hwItem.getWarrantyYears() > 0 && hwItem.getPurchaseDate() != null) {
 			LocalDate endDate = hwItem.getPurchaseDate().plusYears(hwItem.getWarrantyYears());
 			boolean isInWarranty = endDate.isAfter(LocalDate.now());
@@ -180,16 +182,12 @@ public class HWDetailsInfoTab extends Div {
 			zarukaLayout.add("-");
 		}
 		tableLayout.add(zarukaLayout);
+
+		tableLayout.add(new Span(StringUtils.isBlank(hwItem.getSupervizedFor()) ? "-" : hwItem.getSupervizedFor()));
+
 		tableLayout.newRow();
 
-		tableLayout.addStrong("Spravováno pro").setColSpan(2);
-		tableLayout.newRow();
-
-		tableLayout.add(new Span(StringUtils.isBlank(hwItem.getSupervizedFor()) ? "-" : hwItem.getSupervizedFor()))
-				.setColSpan(2);
-		tableLayout.newRow();
-
-		tableLayout.addStrong("Je součástí").setColSpan(2);
+		tableLayout.addStrong("Je součástí").setColSpan(5);
 		tableLayout.newRow();
 
 		if (hwItem.getUsedIn() == null) {
@@ -202,13 +200,14 @@ public class HWDetailsInfoTab extends Div {
 			});
 			tableLayout.add(usedInBtn);
 		}
-		tableLayout.setColSpan(2);
+		tableLayout.setColSpan(5);
 
 		// Tabulka HW
 		Grid<HWItemOverviewTO> grid = new Grid<>();
 		UIUtils.applyGrassDefaultStyle(grid);
 		grid.setSelectionMode(SelectionMode.NONE);
-		grid.setHeight("250px");
+		grid.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
+		grid.setHeight("150px");
 
 		grid.addColumn(new IconRenderer<HWItemOverviewTO>(c -> {
 			ImageIcon ii = HWUIUtils.chooseImageIcon(c);
@@ -236,8 +235,7 @@ public class HWDetailsInfoTab extends Div {
 				.setFlexGrow(0);
 
 		grid.setItems(getHWService().getAllParts(hwItem.getId()));
-
-		outerLayout.add(grid);
+		itemDetailsLayout.add(grid);
 
 		Div name = new Div(new Strong("Popis"));
 		name.getStyle().set("margin-top", "5px");
@@ -256,7 +254,7 @@ public class HWDetailsInfoTab extends Div {
 		add(operationsLayout);
 
 		if (getUser().isAdmin()) {
-			final Button fixBtn = new ModifyButton(e -> new HWItemDialog(hwItem) {
+			final Button fixBtn = new ModifyButton(e -> new HWItemEditDialog(hwItem) {
 				private static final long serialVersionUID = -1397391593801030584L;
 
 				@Override

@@ -11,17 +11,17 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.EditWebDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 
-public abstract class HWItemTypeDialog extends EditWebDialog {
+public abstract class HWItemTypeEditDialog extends EditWebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	private transient HWService hwService;
 
-	public HWItemTypeDialog(HWItemTypeTO originalDTO) {
+	public HWItemTypeEditDialog(HWItemTypeTO originalDTO) {
 		init(originalDTO);
 	}
 
-	public HWItemTypeDialog() {
+	public HWItemTypeEditDialog() {
 		init(null);
 	}
 

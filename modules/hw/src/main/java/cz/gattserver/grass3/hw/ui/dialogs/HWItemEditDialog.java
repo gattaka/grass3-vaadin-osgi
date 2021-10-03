@@ -14,8 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
@@ -27,6 +27,7 @@ import cz.gattserver.grass3.hw.interfaces.HWItemState;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.grass3.hw.ui.UsedInChooser;
 import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.grass3.ui.util.UIUtils;
@@ -34,21 +35,21 @@ import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
 import cz.gattserver.web.common.ui.window.EditWebDialog;
 
-public abstract class HWItemDialog extends EditWebDialog {
+public abstract class HWItemEditDialog extends EditWebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	private transient HWService hwService;
 
-	public HWItemDialog(Long originalId) {
+	public HWItemEditDialog(Long originalId) {
 		init(originalId == null ? null : getHWService().getHWItem(originalId));
 	}
 
-	public HWItemDialog() {
+	public HWItemEditDialog() {
 		init(null);
 	}
 
-	public HWItemDialog(HWItemTO originalDTO) {
+	public HWItemEditDialog(HWItemTO originalDTO) {
 		init(originalDTO);
 	}
 
@@ -63,7 +64,7 @@ public abstract class HWItemDialog extends EditWebDialog {
 	 *            opravuji údaje existující položky, nebo vytvářím novou (
 	 *            {@code null}) ?
 	 */
-	private void init(HWItemTO originalDTO) {
+	private void init(HWItemTO originalTO) {
 		setWidth("900px");
 
 		HWItemTO formDTO = new HWItemTO();
@@ -127,11 +128,16 @@ public abstract class HWItemDialog extends EditWebDialog {
 		binder.bind(supervizedForField, HWItemTO::getSupervizedFor, HWItemTO::setSupervizedFor);
 		baseLayout.add(supervizedForField);
 
-		Checkbox publicItemCheckBox = new Checkbox("Veřejná položka");
+		Checkbox publicItemCheckBox = new Checkbox("Veřejné");
 		binder.bind(publicItemCheckBox, HWItemTO::getPublicItem, HWItemTO::setPublicItem);
 		baseLayout.add(publicItemCheckBox);
 		baseLayout.setWidth(null);
 		baseLayout.setVerticalComponentAlignment(Alignment.END, publicItemCheckBox);
+
+		add(new UsedInChooser(originalTO, to -> {
+			formDTO.setUsedIn(to);
+			formDTO.setUsedInName(to.getName());
+		}));
 
 		TextArea descriptionArea = new TextArea("Popis");
 		descriptionArea.setTabIndex(-1);
@@ -148,14 +154,16 @@ public abstract class HWItemDialog extends EditWebDialog {
 		keywords.setAllowNewItems(true);
 		keywords.getInputField().setPlaceholder("klíčové slovo");
 
-		if (originalDTO != null)
-			keywords.setValues(originalDTO.getTypes());
+		if (originalTO != null)
+			keywords.setValues(originalTO.getTypes());
 		add(keywords);
 
 		SaveCloseLayout buttons = new SaveCloseLayout(e -> {
 			try {
-				HWItemTO writeDTO = originalDTO == null ? new HWItemTO() : originalDTO;
+				HWItemTO writeDTO = originalTO == null ? new HWItemTO() : originalTO;
 				binder.writeBean(writeDTO);
+				writeDTO.setUsedIn(binder.getBean().getUsedIn());
+				writeDTO.setUsedInName(binder.getBean().getUsedInName());
 				writeDTO.setTypes(keywords.getValues());
 				writeDTO.setId(getHWService().saveHWItem(writeDTO));
 				onSuccess(writeDTO);
@@ -167,8 +175,8 @@ public abstract class HWItemDialog extends EditWebDialog {
 
 		add(buttons);
 
-		if (originalDTO != null)
-			binder.readBean(originalDTO);
+		if (originalTO != null)
+			binder.readBean(originalTO);
 	}
 
 	protected abstract void onSuccess(HWItemTO dto);

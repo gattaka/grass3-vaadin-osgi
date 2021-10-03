@@ -18,7 +18,7 @@ public class HWItemTO extends HWItemOverviewTO {
 	/**
 	 * Poznámky ke stavu hw - opravy apod.
 	 */
-	private List<ServiceNoteTO> serviceNotes;
+	private List<HWServiceNoteTO> serviceNotes;
 
 	/**
 	 * Počet let záruky
@@ -67,11 +67,11 @@ public class HWItemTO extends HWItemOverviewTO {
 		this.types = types;
 	}
 
-	public List<ServiceNoteTO> getServiceNotes() {
+	public List<HWServiceNoteTO> getServiceNotes() {
 		return serviceNotes;
 	}
 
-	public void setServiceNotes(List<ServiceNoteTO> serviceNotes) {
+	public void setServiceNotes(List<HWServiceNoteTO> serviceNotes) {
 		this.serviceNotes = serviceNotes;
 	}
 

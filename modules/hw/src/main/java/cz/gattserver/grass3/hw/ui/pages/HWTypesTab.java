@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.hw.ui;
+package cz.gattserver.grass3.hw.ui.pages;
 
 import java.util.Arrays;
 
@@ -17,7 +17,7 @@ import com.vaadin.flow.data.provider.SortDirection;
 
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
 import cz.gattserver.grass3.hw.service.HWService;
-import cz.gattserver.grass3.hw.ui.dialogs.HWItemTypeDialog;
+import cz.gattserver.grass3.hw.ui.dialogs.HWItemTypeEditDialog;
 import cz.gattserver.grass3.model.util.QuerydslUtil;
 import cz.gattserver.grass3.ui.components.button.CreateButton;
 import cz.gattserver.grass3.ui.components.button.DeleteGridButton;
@@ -127,7 +127,7 @@ public class HWTypesTab extends Div {
 	}
 
 	private void openNewTypeWindow(HWItemTypeTO hwItemTypeDTO) {
-		new HWItemTypeDialog(hwItemTypeDTO == null ? null : hwItemTypeDTO) {
+		new HWItemTypeEditDialog(hwItemTypeDTO == null ? null : hwItemTypeDTO) {
 			private static final long serialVersionUID = -7566950396535469316L;
 
 			@Override

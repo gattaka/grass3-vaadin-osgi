@@ -37,13 +37,13 @@ import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemFileTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
-import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
+import cz.gattserver.grass3.hw.interfaces.HWServiceNoteTO;
 import cz.gattserver.grass3.hw.model.domain.HWItem;
 import cz.gattserver.grass3.hw.model.domain.HWItemType;
-import cz.gattserver.grass3.hw.model.domain.ServiceNote;
+import cz.gattserver.grass3.hw.model.domain.HWServiceNote;
 import cz.gattserver.grass3.hw.model.repositories.HWItemRepository;
 import cz.gattserver.grass3.hw.model.repositories.HWItemTypeRepository;
-import cz.gattserver.grass3.hw.model.repositories.ServiceNoteRepository;
+import cz.gattserver.grass3.hw.model.repositories.HWServiceNoteRepository;
 import cz.gattserver.grass3.hw.service.HWMapperService;
 import cz.gattserver.grass3.hw.service.HWService;
 import cz.gattserver.grass3.services.ConfigurationService;
@@ -69,7 +69,7 @@ public class HWServiceImpl implements HWService {
 	private HWItemTypeRepository hwItemTypeRepository;
 
 	@Autowired
-	private ServiceNoteRepository serviceNoteRepository;
+	private HWServiceNoteRepository serviceNoteRepository;
 
 	@Autowired
 	private ConfigurationService configurationService;
@@ -609,7 +609,7 @@ public class HWServiceImpl implements HWService {
 	@Override
 	public void deleteHWItem(Long id) {
 		HWItem item = hwItemRepository.findById(id).orElse(null);
-		for (ServiceNote note : item.getServiceNotes())
+		for (HWServiceNote note : item.getServiceNotes())
 			serviceNoteRepository.delete(note);
 
 		item.setServiceNotes(null);
@@ -643,19 +643,19 @@ public class HWServiceImpl implements HWService {
 	 */
 
 	/**
-	 * Vygeneruje {@link ServiceNote} o přidání/odebrání HW, uloží a přidá k
+	 * Vygeneruje {@link HWServiceNote} o přidání/odebrání HW, uloží a přidá k
 	 * cílovému HW
 	 * 
 	 * @param triggerItem
 	 *            HW který je přidán/odebrán
 	 * @param triggerNote
-	 *            {@link ServiceNote}, který událost spustil
+	 *            {@link HWServiceNote}, který událost spustil
 	 * @param added
 	 *            {@code true} pokud byl HW přidán
 	 */
-	private void saveHWPartMoveServiceNote(HWItem triggerItem, ServiceNote triggerNote, boolean added) {
+	private void saveHWPartMoveServiceNote(HWItem triggerItem, HWServiceNote triggerNote, boolean added) {
 		HWItem targetItem = hwItemRepository.findById(triggerItem.getUsedIn().getId()).orElse(null);
-		ServiceNote removeNote = new ServiceNote();
+		HWServiceNote removeNote = new HWServiceNote();
 		removeNote.setDate(triggerNote.getDate());
 
 		StringBuilder builder = new StringBuilder();
@@ -664,15 +664,15 @@ public class HWServiceImpl implements HWService {
 		removeNote.setDescription(builder.toString());
 		removeNote.setState(targetItem.getState());
 		removeNote.setUsage(targetItem.getUsedIn() == null ? "" : targetItem.getUsedIn().getName());
-		ServiceNote note = serviceNoteRepository.save(removeNote);
+		HWServiceNote note = serviceNoteRepository.save(removeNote);
 		targetItem.getServiceNotes().add(note);
 		hwItemRepository.save(targetItem);
 	}
 
 	@Override
-	public void addServiceNote(ServiceNoteTO serviceNoteDTO, Long id) {
+	public void addServiceNote(HWServiceNoteTO serviceNoteDTO, Long id) {
 		HWItem item = hwItemRepository.findById(id).orElse(null);
-		ServiceNote serviceNote = new ServiceNote();
+		HWServiceNote serviceNote = new HWServiceNote();
 		serviceNote.setDate(DateUtils.toDate(serviceNoteDTO.getDate()));
 		serviceNote.setDescription(serviceNoteDTO.getDescription());
 		serviceNote.setState(serviceNoteDTO.getState());
@@ -681,7 +681,7 @@ public class HWServiceImpl implements HWService {
 		serviceNoteDTO.setId(serviceNote.getId());
 
 		if (item.getServiceNotes() == null)
-			item.setServiceNotes(new ArrayList<ServiceNote>());
+			item.setServiceNotes(new ArrayList<HWServiceNote>());
 		item.getServiceNotes().add(serviceNote);
 		item.setState(serviceNote.getState());
 
@@ -722,8 +722,8 @@ public class HWServiceImpl implements HWService {
 	}
 
 	@Override
-	public void modifyServiceNote(ServiceNoteTO serviceNoteDTO) {
-		ServiceNote serviceNote = serviceNoteRepository.findById(serviceNoteDTO.getId()).orElse(null);
+	public void modifyServiceNote(HWServiceNoteTO serviceNoteDTO) {
+		HWServiceNote serviceNote = serviceNoteRepository.findById(serviceNoteDTO.getId()).orElse(null);
 		serviceNote.setDate(DateUtils.toDate(serviceNoteDTO.getDate()));
 		serviceNote.setDescription(serviceNoteDTO.getDescription());
 		serviceNote.setState(serviceNoteDTO.getState());
@@ -732,9 +732,9 @@ public class HWServiceImpl implements HWService {
 	}
 
 	@Override
-	public void deleteServiceNote(ServiceNoteTO serviceNoteDTO, Long id) {
+	public void deleteServiceNote(HWServiceNoteTO serviceNoteDTO, Long id) {
 		HWItem item = hwItemRepository.findById(id).orElse(null);
-		ServiceNote serviceNote = serviceNoteRepository.findById(serviceNoteDTO.getId()).orElse(null);
+		HWServiceNote serviceNote = serviceNoteRepository.findById(serviceNoteDTO.getId()).orElse(null);
 		item.getServiceNotes().remove(serviceNote);
 		hwItemRepository.save(item);
 		serviceNoteRepository.delete(serviceNote);

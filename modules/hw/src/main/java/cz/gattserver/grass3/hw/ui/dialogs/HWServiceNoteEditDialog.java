@@ -13,31 +13,32 @@ import com.vaadin.flow.data.binder.Binder;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemState;
-import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
+import cz.gattserver.grass3.hw.interfaces.HWServiceNoteTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.grass3.hw.ui.UsedInChooser;
 import cz.gattserver.grass3.ui.components.SaveCloseLayout;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.window.EditWebDialog;
 import cz.gattserver.web.common.ui.window.ErrorDialog;
 
-public abstract class ServiceNoteCreateDialog extends EditWebDialog {
+public abstract class HWServiceNoteEditDialog extends EditWebDialog {
 
 	private static final long serialVersionUID = -6773027334692911384L;
 
 	private transient HWService hwService;
 
-	public ServiceNoteCreateDialog(final HWItemTO hwItem) {
+	public HWServiceNoteEditDialog(final HWItemTO hwItem) {
 		this(hwItem, null);
 	}
 
-	public ServiceNoteCreateDialog(final HWItemTO hwItem, ServiceNoteTO originalTO) {
-		ServiceNoteTO formTO = new ServiceNoteTO();
+	public HWServiceNoteEditDialog(final HWItemTO hwItem, HWServiceNoteTO originalTO) {
+		HWServiceNoteTO formTO = new HWServiceNoteTO();
 		formTO.setDate(LocalDate.now());
 		formTO.setDescription("");
 		formTO.setState(hwItem.getState());
 
-		Binder<ServiceNoteTO> binder = new Binder<>();
+		Binder<HWServiceNoteTO> binder = new Binder<>();
 		binder.setBean(formTO);
 
 		FormLayout winLayout = new FormLayout();
@@ -47,15 +48,20 @@ public abstract class ServiceNoteCreateDialog extends EditWebDialog {
 
 		DatePicker eventDateField = new DatePicker("Datum");
 		eventDateField.setLocale(Locale.forLanguageTag("CS"));
-		binder.forField(eventDateField).asRequired("Datum musí být vyplněno").bind(ServiceNoteTO::getDate,
-				ServiceNoteTO::setDate);
+		binder.forField(eventDateField).asRequired("Datum musí být vyplněno").bind(HWServiceNoteTO::getDate,
+				HWServiceNoteTO::setDate);
 		winLayout.add(eventDateField);
 
 		ComboBox<HWItemState> stateComboBox = new ComboBox<>("Stav", Arrays.asList(HWItemState.values()));
 		// namísto propertyId a captionId jsou funkcionální settery a gettery
 		stateComboBox.setItemLabelGenerator(HWItemState::getName);
-		binder.forField(stateComboBox).bind(ServiceNoteTO::getState, ServiceNoteTO::setState);
+		binder.forField(stateComboBox).bind(HWServiceNoteTO::getState, HWServiceNoteTO::setState);
 		winLayout.add(stateComboBox);
+
+		add(new UsedInChooser(hwItem, to -> {
+			formTO.setUsedInId(to.getId());
+			formTO.setUsedInName(to.getName());
+		}));
 
 		ComboBox<HWItemOverviewTO> usedInCombo = new ComboBox<>("Je součástí",
 				getHWService().getHWItemsAvailableForPart(hwItem.getId()));
@@ -82,12 +88,12 @@ public abstract class ServiceNoteCreateDialog extends EditWebDialog {
 		TextArea descriptionField = new TextArea("Popis");
 		descriptionField.setWidthFull();
 		descriptionField.setHeight("200px");
-		binder.forField(descriptionField).bind(ServiceNoteTO::getDescription, ServiceNoteTO::setDescription);
+		binder.forField(descriptionField).bind(HWServiceNoteTO::getDescription, HWServiceNoteTO::setDescription);
 		winLayout.add(descriptionField, 2);
 
 		SaveCloseLayout buttons = new SaveCloseLayout(e -> {
 			try {
-				ServiceNoteTO writeDTO = originalTO == null ? new ServiceNoteTO() : originalTO;
+				HWServiceNoteTO writeDTO = originalTO == null ? new HWServiceNoteTO() : originalTO;
 				binder.writeBean(writeDTO);
 				if (originalTO == null) {
 					getHWService().addServiceNote(writeDTO, hwItem.getId());
@@ -115,6 +121,6 @@ public abstract class ServiceNoteCreateDialog extends EditWebDialog {
 		return hwService;
 	}
 
-	protected abstract void onSuccess(ServiceNoteTO noteDTO);
+	protected abstract void onSuccess(HWServiceNoteTO noteDTO);
 
 }

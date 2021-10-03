@@ -7,10 +7,10 @@ import java.util.Set;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
-import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
+import cz.gattserver.grass3.hw.interfaces.HWServiceNoteTO;
 import cz.gattserver.grass3.hw.model.domain.HWItem;
 import cz.gattserver.grass3.hw.model.domain.HWItemType;
-import cz.gattserver.grass3.hw.model.domain.ServiceNote;
+import cz.gattserver.grass3.hw.model.domain.HWServiceNote;
 
 public interface HWMapperService {
 
@@ -20,9 +20,9 @@ public interface HWMapperService {
 
 	public Set<HWItemTypeTO> mapHWItemTypes(Collection<HWItemType> list);
 
-	public ServiceNoteTO mapServiceNote(ServiceNote e);
+	public HWServiceNoteTO mapServiceNote(HWServiceNote e);
 
-	public List<ServiceNoteTO> mapServiceNotes(Collection<ServiceNote> list);
+	public List<HWServiceNoteTO> mapServiceNotes(Collection<HWServiceNote> list);
 
 	public HWItemTO mapHWItem(HWItem e);
 

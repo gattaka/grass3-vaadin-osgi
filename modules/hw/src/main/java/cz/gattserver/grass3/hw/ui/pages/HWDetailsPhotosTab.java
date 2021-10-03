@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.hw.ui.dialogs;
+package cz.gattserver.grass3.hw.ui.pages;
 
 import java.io.IOException;
 
@@ -16,6 +16,7 @@ import cz.gattserver.grass3.hw.HWConfiguration;
 import cz.gattserver.grass3.hw.interfaces.HWItemFileTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.grass3.hw.ui.dialogs.HWItemDetailsDialog;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.OperationsLayout;

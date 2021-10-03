@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.hw.ui.dialogs;
+package cz.gattserver.grass3.hw.ui.pages;
 
 import java.util.Arrays;
 
@@ -14,8 +14,10 @@ import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
-import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
+import cz.gattserver.grass3.hw.interfaces.HWServiceNoteTO;
 import cz.gattserver.grass3.hw.service.HWService;
+import cz.gattserver.grass3.hw.ui.dialogs.HWItemDetailsDialog;
+import cz.gattserver.grass3.hw.ui.dialogs.HWServiceNoteEditDialog;
 import cz.gattserver.grass3.interfaces.UserInfoTO;
 import cz.gattserver.grass3.services.SecurityService;
 import cz.gattserver.grass3.ui.components.OperationsLayout;
@@ -35,8 +37,8 @@ public class HWDetailsServiceNotesTab extends Div {
 	private transient HWService hwService;
 	private transient SecurityService securityFacade;
 
-	private Column<ServiceNoteTO> serviceDateColumn;
-	private Grid<ServiceNoteTO> serviceNotesGrid;
+	private Column<HWServiceNoteTO> serviceDateColumn;
+	private Grid<HWServiceNoteTO> serviceNotesGrid;
 	private HWItemTO hwItem;
 	private HWItemDetailsDialog hwItemDetailDialog;
 
@@ -65,10 +67,10 @@ public class HWDetailsServiceNotesTab extends Div {
 
 		UIUtils.applyGrassDefaultStyle(serviceNotesGrid);
 		serviceNotesGrid.setSelectionMode(SelectionMode.SINGLE);
-		Column<ServiceNoteTO> idColumn = serviceNotesGrid
-				.addColumn(new TextRenderer<ServiceNoteTO>(to -> String.valueOf(to.getId())));
+		Column<HWServiceNoteTO> idColumn = serviceNotesGrid
+				.addColumn(new TextRenderer<HWServiceNoteTO>(to -> String.valueOf(to.getId())));
 		serviceDateColumn = serviceNotesGrid
-				.addColumn(new LocalDateRenderer<ServiceNoteTO>(ServiceNoteTO::getDate, "d.M.yyyy")).setHeader("Datum")
+				.addColumn(new LocalDateRenderer<HWServiceNoteTO>(HWServiceNoteTO::getDate, "d.M.yyyy")).setHeader("Datum")
 				.setTextAlign(ColumnTextAlign.END).setWidth("80px").setFlexGrow(0);
 		serviceNotesGrid.addColumn(hw -> hw.getState().getName()).setHeader("Stav").setWidth("110px").setFlexGrow(0);
 		serviceNotesGrid
@@ -80,8 +82,8 @@ public class HWDetailsServiceNotesTab extends Div {
 		serviceNotesGrid.setHeight("300px");
 
 		serviceNotesGrid
-				.sort(Arrays.asList(new GridSortOrder<ServiceNoteTO>(serviceDateColumn, SortDirection.ASCENDING),
-						new GridSortOrder<ServiceNoteTO>(idColumn, SortDirection.ASCENDING)));
+				.sort(Arrays.asList(new GridSortOrder<HWServiceNoteTO>(serviceDateColumn, SortDirection.ASCENDING),
+						new GridSortOrder<HWServiceNoteTO>(idColumn, SortDirection.ASCENDING)));
 
 		populateServiceNotesGrid();
 
@@ -93,7 +95,7 @@ public class HWDetailsServiceNotesTab extends Div {
 
 		serviceNotesGrid.addSelectionListener(selection -> {
 			if (selection.getFirstSelectedItem().isPresent()) {
-				ServiceNoteTO serviceNoteDTO = selection.getFirstSelectedItem().get();
+				HWServiceNoteTO serviceNoteDTO = selection.getFirstSelectedItem().get();
 				serviceNoteDescription.setText((String) serviceNoteDTO.getDescription());
 			} else {
 				serviceNoteDescription.setText(DEFAULT_NOTE_LABEL_VALUE);
@@ -104,11 +106,11 @@ public class HWDetailsServiceNotesTab extends Div {
 			OperationsLayout operationsLayout = new OperationsLayout(e -> hwItemDetailDialog.close());
 			add(operationsLayout);
 
-			Button newNoteBtn = new CreateButton(e -> new ServiceNoteCreateDialog(hwItem) {
+			Button newNoteBtn = new CreateButton(e -> new HWServiceNoteEditDialog(hwItem) {
 				private static final long serialVersionUID = -5582822648042555576L;
 
 				@Override
-				protected void onSuccess(ServiceNoteTO noteDTO) {
+				protected void onSuccess(HWServiceNoteTO noteDTO) {
 					hwItem.getServiceNotes().add(noteDTO);
 					populateServiceNotesGrid();
 					hwItemDetailDialog.refreshItem();
@@ -120,18 +122,18 @@ public class HWDetailsServiceNotesTab extends Div {
 			Button fixNoteBtn = new ModifyGridButton<>("Opravit záznam", event -> {
 				if (serviceNotesGrid.getSelectedItems().isEmpty())
 					return;
-				new ServiceNoteCreateDialog(hwItem, serviceNotesGrid.getSelectedItems().iterator().next()) {
+				new HWServiceNoteEditDialog(hwItem, serviceNotesGrid.getSelectedItems().iterator().next()) {
 					private static final long serialVersionUID = -5582822648042555576L;
 
 					@Override
-					protected void onSuccess(ServiceNoteTO noteDTO) {
+					protected void onSuccess(HWServiceNoteTO noteDTO) {
 						populateServiceNotesGrid();
 					}
 				}.open();
 			}, serviceNotesGrid);
 
 			Button deleteNoteBtn = new DeleteGridButton<>("Smazat záznam", items -> {
-				ServiceNoteTO item = items.iterator().next();
+				HWServiceNoteTO item = items.iterator().next();
 				getHWService().deleteServiceNote(item, hwItem.getId());
 				hwItem.getServiceNotes().remove(item);
 				populateServiceNotesGrid();

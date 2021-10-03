@@ -34,6 +34,7 @@ public class HWItemRepositoryCustomImpl implements HWItemRepositoryCustom {
 		builder.iLike(h.supervizedFor, filter.getSupervizedFor());
 		builder.eq(h.price, filter.getPrice());
 		builder.between(h.purchaseDate, filter.getPurchaseDateFrom(), filter.getPurchaseDateTo());
+		builder.ne(h.id, filter.getIgnoreId());
 		if (Boolean.TRUE == filter.getPublicItem())
 			builder.eq(h.publicItem, true);
 		if (filter.getTypes() != null)

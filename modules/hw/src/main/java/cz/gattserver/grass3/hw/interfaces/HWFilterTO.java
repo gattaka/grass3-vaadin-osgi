@@ -18,6 +18,7 @@ public class HWFilterTO implements Serializable {
 	private Date purchaseDateTo;
 	private Collection<String> types;
 	private Boolean publicItem;
+	private Long ignoreId;
 
 	public String getSupervizedFor() {
 		return supervizedFor;
@@ -97,6 +98,14 @@ public class HWFilterTO implements Serializable {
 
 	public void setPublicItem(Boolean publicItem) {
 		this.publicItem = publicItem;
+	}
+
+	public Long getIgnoreId() {
+		return ignoreId;
+	}
+
+	public void setIgnoreId(Long ignoreId) {
+		this.ignoreId = ignoreId;
 	}
 
 }

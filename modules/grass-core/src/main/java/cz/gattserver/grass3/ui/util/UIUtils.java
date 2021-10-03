@@ -127,6 +127,7 @@ public class UIUtils {
 		ComboBox<T> combo = UIUtils.asSmall(new ComboBox<>(null, values));
 		combo.setWidthFull();
 		combo.setRequired(false);
+		combo.setClearButtonVisible(true);
 		combo.addValueChangeListener(listener);
 		combo.setItemLabelGenerator(itemLabelGenerator);
 		cell.setComponent(combo);

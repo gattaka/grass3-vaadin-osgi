@@ -13,10 +13,10 @@ import cz.gattserver.common.util.DateUtils;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
-import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
+import cz.gattserver.grass3.hw.interfaces.HWServiceNoteTO;
 import cz.gattserver.grass3.hw.model.domain.HWItem;
 import cz.gattserver.grass3.hw.model.domain.HWItemType;
-import cz.gattserver.grass3.hw.model.domain.ServiceNote;
+import cz.gattserver.grass3.hw.model.domain.HWServiceNote;
 import cz.gattserver.grass3.hw.service.HWMapperService;
 
 @Component
@@ -49,11 +49,11 @@ public class HWMapperServiceImpl implements HWMapperService {
 		return dtos;
 	}
 
-	public ServiceNoteTO mapServiceNote(ServiceNote e) {
+	public HWServiceNoteTO mapServiceNote(HWServiceNote e) {
 		if (e == null)
 			return null;
 
-		ServiceNoteTO dto = new ServiceNoteTO();
+		HWServiceNoteTO dto = new HWServiceNoteTO();
 		dto.setId(e.getId());
 		dto.setDate(DateUtils.toLocalDate(e.getDate()));
 		dto.setDescription(e.getDescription());
@@ -62,9 +62,9 @@ public class HWMapperServiceImpl implements HWMapperService {
 		return dto;
 	}
 
-	public List<ServiceNoteTO> mapServiceNotes(Collection<ServiceNote> list) {
-		List<ServiceNoteTO> dtos = new ArrayList<>();
-		for (ServiceNote e : list)
+	public List<HWServiceNoteTO> mapServiceNotes(Collection<HWServiceNote> list) {
+		List<HWServiceNoteTO> dtos = new ArrayList<>();
+		for (HWServiceNote e : list)
 			dtos.add(mapServiceNote(e));
 		return dtos;
 	}

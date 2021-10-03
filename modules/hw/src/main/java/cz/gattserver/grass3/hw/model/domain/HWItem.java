@@ -66,7 +66,7 @@ public class HWItem {
 	 */
 	@OneToMany(fetch = FetchType.LAZY)
 	@OrderBy("date desc, id desc")
-	private List<ServiceNote> serviceNotes;
+	private List<HWServiceNote> serviceNotes;
 
 	/**
 	 * Počet let záruky
@@ -175,11 +175,11 @@ public class HWItem {
 		this.state = state;
 	}
 
-	public List<ServiceNote> getServiceNotes() {
+	public List<HWServiceNote> getServiceNotes() {
 		return serviceNotes;
 	}
 
-	public void setServiceNotes(List<ServiceNote> serviceNotes) {
+	public void setServiceNotes(List<HWServiceNote> serviceNotes) {
 		this.serviceNotes = serviceNotes;
 	}
 

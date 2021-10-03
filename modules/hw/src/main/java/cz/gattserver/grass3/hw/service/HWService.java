@@ -15,7 +15,7 @@ import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemFileTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTypeTO;
-import cz.gattserver.grass3.hw.interfaces.ServiceNoteTO;
+import cz.gattserver.grass3.hw.interfaces.HWServiceNoteTO;
 
 public interface HWService {
 
@@ -143,10 +143,10 @@ public interface HWService {
 	 * Service notes
 	 */
 
-	void addServiceNote(ServiceNoteTO serviceNoteDTO, Long id);
+	void addServiceNote(HWServiceNoteTO serviceNoteDTO, Long id);
 
-	void modifyServiceNote(ServiceNoteTO serviceNoteDTO);
+	void modifyServiceNote(HWServiceNoteTO serviceNoteDTO);
 
-	void deleteServiceNote(ServiceNoteTO serviceNoteDTO, Long id);
+	void deleteServiceNote(HWServiceNoteTO serviceNoteDTO, Long id);
 
 }

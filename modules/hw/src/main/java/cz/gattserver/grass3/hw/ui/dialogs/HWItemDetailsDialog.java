@@ -8,7 +8,12 @@ import com.vaadin.flow.component.tabs.Tabs;
 
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.service.HWService;
-import cz.gattserver.grass3.hw.ui.HWItemsTab;
+import cz.gattserver.grass3.hw.ui.pages.HWDetailsDocsTab;
+import cz.gattserver.grass3.hw.ui.pages.HWDetailsInfoTab;
+import cz.gattserver.grass3.hw.ui.pages.HWDetailsPhotosTab;
+import cz.gattserver.grass3.hw.ui.pages.HWDetailsPrint3dTab;
+import cz.gattserver.grass3.hw.ui.pages.HWDetailsServiceNotesTab;
+import cz.gattserver.grass3.hw.ui.pages.HWItemsTab;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 
@@ -58,33 +63,36 @@ public class HWItemDetailsDialog extends Dialog {
 		tabLayout.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		add(tabLayout);
 
-		tabs.addSelectedChangeListener(e -> {
-			switch (tabs.getSelectedIndex()) {
-			default:
-			case 0:
-				switchInfoTab();
-				break;
-			case 1:
-				switchServiceNotesTab();
-				break;
-			case 2:
-				switchPhotosTab();
-				break;
-			case 3:
-				switchPrint3dTab();
-				break;
-			case 4:
-				switchDocsTab();
-				break;
-			}
-		});
+		tabs.addSelectedChangeListener(e -> switchToTab(tabs.getSelectedIndex()));
 
 		switchInfoTab();
+	}
+
+	private void switchToTab(int tabId) {
+		switch (tabId) {
+		default:
+		case 0:
+			switchInfoTab();
+			break;
+		case 1:
+			switchServiceNotesTab();
+			break;
+		case 2:
+			switchPhotosTab();
+			break;
+		case 3:
+			switchPrint3dTab();
+			break;
+		case 4:
+			switchDocsTab();
+			break;
+		}
 	}
 
 	public HWItemTO refreshItem() {
 		this.hwItem = getHWService().getHWItem(hwItemId);
 		refreshTabLabels();
+		switchToTab(tabs.getSelectedIndex());
 		return hwItem;
 	}
 

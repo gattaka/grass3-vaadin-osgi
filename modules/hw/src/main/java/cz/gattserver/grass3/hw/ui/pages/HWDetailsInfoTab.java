@@ -308,8 +308,8 @@ public class HWDetailsInfoTab extends Div {
 		btnLayout.setPadding(false);
 		hwImageLayout.add(btnLayout);
 
-		Button hwItemImageDetailBtn = new Button("Detail", e -> UI.getCurrent().getPage()
-				.open(HWConfiguration.HW_PATH + "/" + hwItem.getId() + "/icon/" + hwItem.getName()));
+		Button hwItemImageDetailBtn = new Button("Detail",
+				e -> UI.getCurrent().getPage().open(HWConfiguration.HW_PATH + "/" + hwItem.getId() + "/icon/show"));
 		hwItemImageDetailBtn.setIcon(new Image(ImageIcon.SEARCH_16_ICON.createResource(), "detail"));
 		btnLayout.add(hwItemImageDetailBtn);
 

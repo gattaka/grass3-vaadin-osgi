@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.ClientCallable;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox.FetchItemsCallback;
@@ -284,6 +286,7 @@ public class Print3dEditorPage extends OneColumnPage implements HasUrlParameter<
 			saveOrUpdateProject();
 		});
 		buttonLayout.add(saveAndCloseButton);
+		saveAndCloseButton.addClickShortcut(Key.KEY_S, KeyModifier.CONTROL).setBrowserDefaultAllowed(false);
 
 		// Zrušit
 		CloseButton cancelButton = new CloseButton("Zrušit", ev -> new ConfirmDialog(

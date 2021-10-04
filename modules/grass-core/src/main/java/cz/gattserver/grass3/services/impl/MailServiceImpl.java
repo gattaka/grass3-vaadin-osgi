@@ -47,6 +47,7 @@ public class MailServiceImpl implements MailService {
 		props.put("mail.smtp.port", "465");
 		props.put("mail.smtp.ssl.enable", "true"); // !!!
 		props.put("mail.smtp.ssl.trust", "*");
+		props.put("mail.smtp.ssl.protocols", "TLSv1.2");
 
 		Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
 			@Override

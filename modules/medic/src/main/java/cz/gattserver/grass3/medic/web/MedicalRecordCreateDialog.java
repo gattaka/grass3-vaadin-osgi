@@ -92,8 +92,9 @@ public abstract class MedicalRecordCreateDialog extends EditWebDialog {
 		TokenField tokenField = new TokenField(medicaments.keySet());
 		tokenField.setAllowNewItems(false);
 		tokenField.setPlaceholder("Medikamenty");
-		for (MedicamentTO m : originalDTO.getMedicaments())
-			tokenField.addToken(m.getName());
+		if (originalDTO != null)
+			for (MedicamentTO m : originalDTO.getMedicaments())
+				tokenField.addToken(m.getName());
 		add(tokenField);
 
 		add(new SaveCloseLayout(e -> {

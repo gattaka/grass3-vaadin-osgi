@@ -50,7 +50,7 @@ public interface HWService {
 	InputStream getHWItemPrint3dFileInputStream(Long id, String name);
 
 	boolean deleteHWItemPrint3dFile(Long id, String name);
-	
+
 	/*
 	 * Documents
 	 */
@@ -125,6 +125,8 @@ public interface HWService {
 	List<HWItemOverviewTO> getHWItemsByTypes(Collection<String> types);
 
 	HWItemTO getHWItem(Long itemId);
+
+	HWItemOverviewTO getHWOverviewItem(Long itemId);
 
 	List<HWItemOverviewTO> getAllParts(Long usedInItemId);
 

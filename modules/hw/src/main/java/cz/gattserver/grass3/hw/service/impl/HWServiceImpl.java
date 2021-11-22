@@ -596,6 +596,11 @@ public class HWServiceImpl implements HWService {
 	}
 
 	@Override
+	public HWItemOverviewTO getHWOverviewItem(Long itemId) {
+		return hwMapper.mapHWItemOverview(hwItemRepository.findById(itemId).orElse(null));
+	}
+
+	@Override
 	public List<HWItemOverviewTO> getAllParts(Long usedInItemId) {
 		return hwMapper.mapHWItems(hwItemRepository.findByUsedInId(usedInItemId));
 	}

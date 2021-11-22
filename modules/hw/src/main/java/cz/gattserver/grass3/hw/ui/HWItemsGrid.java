@@ -1,5 +1,6 @@
 package cz.gattserver.grass3.hw.ui;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,24 +8,25 @@ import java.util.function.Consumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridSortOrder;
-import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
+import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
-import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.provider.CallbackDataProvider.CountCallback;
 import com.vaadin.flow.data.provider.CallbackDataProvider.FetchCallback;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.IconRenderer;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
+import com.vaadin.flow.server.StreamResource;
 
 import cz.gattserver.grass3.hw.interfaces.HWFilterTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
@@ -37,8 +39,8 @@ import cz.gattserver.grass3.ui.util.TokenField;
 import cz.gattserver.grass3.ui.util.UIUtils;
 import cz.gattserver.web.common.spring.SpringContextHelper;
 import cz.gattserver.web.common.ui.FieldUtils;
+import cz.gattserver.web.common.ui.HtmlDiv;
 import cz.gattserver.web.common.ui.ImageIcon;
-import cz.gattserver.web.common.ui.LinkButton;
 
 public class HWItemsGrid extends Div {
 
@@ -50,6 +52,8 @@ public class HWItemsGrid extends Div {
 	private static final String PRICE_BIND = "priceBind";
 	private static final String STATE_BIND = "stateBind";
 	private static final String PURCHASE_DATE_BIND = "purchaseDateBind";
+
+	private static final String JS_DIV_ID = "js-div";
 
 	@Autowired
 	private HWService hwService;
@@ -65,6 +69,45 @@ public class HWItemsGrid extends Div {
 
 	public HWItemsGrid(Consumer<HWItemOverviewTO> onSelect) {
 		SpringContextHelper.inject(this);
+
+		Div iconDiv = new Div();
+		iconDiv.setVisible(false);
+		iconDiv.getStyle().set("position", "absolute").set("background", "white").set("padding", "5px")
+				.set("border-radius", "3px").set("border", "1px solid #d5d5d5").set("z-index", "999");
+		add(iconDiv);
+
+		Div callbackDiv = new Div() {
+			private static final long serialVersionUID = -7319482130016598549L;
+
+			@ClientCallable
+			private void imgShowCallback(Long id, double x, double y) {
+				iconDiv.setVisible(true);
+				iconDiv.removeAll();
+				String name = "hw-item-" + id;
+				InputStream iconIs = hwService.getHWItemIconFileInputStream(id);
+				if (iconIs == null)
+					return;
+				Image img = new Image(new StreamResource(name, () -> iconIs), name);
+				iconDiv.add(img);
+				iconDiv.getStyle().set("left", (15 + x) + "px").set("top", y + "px");
+				img.setMaxWidth("200px");
+				img.setMaxHeight("200px");
+			}
+
+			@ClientCallable
+			private void imgHideCallback() {
+				iconDiv.setVisible(false);
+			}
+
+			@ClientCallable
+			private void itemClickCallback(Long id) {
+				HWItemOverviewTO to = hwService.getHWOverviewItem(id);
+				onSelect.accept(to);
+			}
+
+		};
+		callbackDiv.setId(JS_DIV_ID);
+		add(callbackDiv);
 
 		filterTO = new HWFilterTO();
 		if (!securityFacade.getCurrentUser().isAdmin())
@@ -104,10 +147,16 @@ public class HWItemsGrid extends Div {
 			}
 		}, c -> "")).setFlexGrow(0).setWidth("31px").setHeader("").setTextAlign(ColumnTextAlign.CENTER);
 
-		Column<HWItemOverviewTO> nameColumn = grid
-				.addColumn(new ComponentRenderer<Button, HWItemOverviewTO>(
-						to -> new LinkButton(to.getName(), e -> onSelect.accept(to))))
-				.setHeader("Název").setSortable(true).setKey(NAME_BIND).setResizable(true);
+		Column<HWItemOverviewTO> nameColumn = grid.addColumn(new ComponentRenderer<Div, HWItemOverviewTO>(to -> {
+			Long id = to.getId();
+			String link = "<a style='cursor: pointer' onclick='document.getElementById(\"" + JS_DIV_ID
+					+ "\").$server.itemClickCallback(\"" + id + "\")' " + "onmouseover='document.getElementById(\""
+					+ JS_DIV_ID + "\").$server.imgShowCallback(\"" + id + "\", event.clientX, event.clientY)' "
+					+ "onmouseout='document.getElementById(\"" + JS_DIV_ID + "\").$server.imgHideCallback()'>"
+					+ to.getName() + "</a>";
+			return new HtmlDiv(link);
+		})).setHeader("Název").setSortable(true).setKey(NAME_BIND).setResizable(true);
+
 		// kontrola na null je tady jenom proto, aby při selectu (kdy se udělá
 		// nový objekt a dá se mu akorát ID, které se porovnává) aplikace
 		// nespadla na NPE -- což je trochu zvláštní, protože ve skutečnosti

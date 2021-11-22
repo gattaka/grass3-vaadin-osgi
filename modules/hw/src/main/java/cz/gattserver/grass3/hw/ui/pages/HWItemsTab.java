@@ -35,8 +35,9 @@ public class HWItemsTab extends Div {
 
 	public HWItemsTab() {
 		SpringContextHelper.inject(this);
-		
+
 		itemsGrid = new HWItemsGrid(to -> openDetailWindow(to.getId()));
+
 		add(itemsGrid);
 
 		ButtonLayout buttonLayout = new ButtonLayout();

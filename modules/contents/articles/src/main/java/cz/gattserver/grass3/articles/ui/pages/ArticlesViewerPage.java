@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.page.PendingJavaScriptResult;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -82,8 +83,6 @@ public class ArticlesViewerPage extends ContentViewerPage implements HasUrlParam
 				css = getContextPath() + "/frontend/" + css;
 			loadCSS(css);
 		}
-
-		loadJS();
 
 		init();
 

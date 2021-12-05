@@ -32,12 +32,14 @@ public class CodeElement implements Element {
 		ctx.addJSResource("articles/code/addon/fold/xml-fold.js");
 		ctx.addJSResource("articles/code/addon/edit/matchtags.js");
 		ctx.addJSResource("articles/code/addon/selection/active-line.js");
+		// je potřeba například pro Docker
+		ctx.addJSResource("articles/code/addon/mode/simple.js");  
 
 		if (lib != null)
 			ctx.addJSResource("articles/code/mode/" + lib + "/" + lib + ".js");
-
+		
 		ctx.addJSResource("articles/code/lib/codemirror_scan.js");
-
+ 
 		ctx.print("<span class=\"lang_description\">" + description + "</span>");
 		ctx.print("<div class=\"barier\"><div class=\"numberedtext\">");
 		ctx.print("<textarea codemirror mimetype=\"" + mimetype + "\">" + code + "</textarea>");

@@ -12,6 +12,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import cz.gattserver.grass3.hw.interfaces.HWItemOverviewTO;
 import cz.gattserver.grass3.hw.interfaces.HWItemTO;
 import cz.gattserver.grass3.hw.ui.dialogs.HWItemChooseDialog;
+import cz.gattserver.grass3.ui.components.button.DeleteButton;
 import cz.gattserver.grass3.ui.components.button.ImageButton;
 import cz.gattserver.web.common.ui.ImageIcon;
 
@@ -32,6 +33,11 @@ public class UsedInChooser extends Div {
 		usedInText.getStyle().set("margin-left", "10px");
 		if (originalTO != null)
 			usedInText.setText(originalTO.getUsedInName());
+		Button clearBtn = new DeleteButton(e -> {
+			onSelect.accept(null);
+			usedInText.removeAll();
+		});
+		usedIdLayout.add(clearBtn);
 		Button chooseUsedInBtn = new ImageButton("Vybrat", ImageIcon.SEARCH_16_ICON, e -> {
 			new HWItemChooseDialog(originalTO == null ? null : originalTO.getId(), to -> {
 				usedInText.setText(to.getName());

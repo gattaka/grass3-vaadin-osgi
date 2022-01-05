@@ -136,7 +136,7 @@ public abstract class HWItemEditDialog extends EditWebDialog {
 
 		add(new UsedInChooser(originalTO, to -> {
 			formDTO.setUsedIn(to);
-			formDTO.setUsedInName(to.getName());
+			formDTO.setUsedInName(to == null ? null : to.getName());
 		}));
 
 		TextArea descriptionArea = new TextArea("Popis");

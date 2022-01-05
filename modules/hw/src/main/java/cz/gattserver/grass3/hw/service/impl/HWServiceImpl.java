@@ -552,6 +552,8 @@ public class HWServiceImpl implements HWService {
 		if (hwItemDTO.getUsedIn() != null) {
 			HWItem usedIn = hwItemRepository.findById(hwItemDTO.getUsedIn().getId()).orElse(null);
 			item.setUsedIn(usedIn);
+		} else {
+			item.setUsedIn(null);
 		}
 		item.setWarrantyYears(hwItemDTO.getWarrantyYears());
 		if (hwItemDTO.getTypes() != null) {

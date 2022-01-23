@@ -58,17 +58,17 @@
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-util</artifactId>
-			<version>1.11</version>
+			<version>1.14</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-transcoder</artifactId>
-			<version>1.11</version>
+			<version>1.14</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-codec</artifactId>
-			<version>1.11</version>
+			<version>1.14</version>
 		</dependency>
 
 		<!-- Servlet deps -->

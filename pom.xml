@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>cz.gattserver</groupId>
 		<artifactId>gattserver-parent</artifactId>
-		<version>1.0.12</version>
+		<version>1.0.14-SNAPSHOT</version>
 	</parent>
 
 	<scm>
@@ -25,7 +25,8 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<org.mapstruct.version>1.2.0.Final</org.mapstruct.version>
-		<querydsl.version>5.0.0</querydsl.version>
+		<!-- <querydsl.version>5.0.0<><querydsl.version> -->
+		<querydsl.version>4.4.0</querydsl.version>
 		<querydsl-apt.version>1.1.3</querydsl-apt.version>
 		<!-- dokud nebude vše ok -->
 		<maven.javadoc.skip>true</maven.javadoc.skip>
@@ -106,7 +107,6 @@
 							<configuration>
 								<outputDirectory>target/generated-sources/querydsl</outputDirectory>
 								<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
-								<logOnlyOnError>false</logOnlyOnError>
 							</configuration>
 						</execution>
 					</executions>
@@ -118,7 +118,6 @@
 						</dependency>
 					</dependencies>
 				</plugin>
-
 			</plugins>
 		</pluginManagement>
 	</build>

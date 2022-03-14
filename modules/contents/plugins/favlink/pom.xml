@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>articles-favlink</artifactId>
 	<name>GRASS3 Articles editor link with favicon plugin</name>
@@ -9,6 +11,10 @@
 		<artifactId>plugins</artifactId>
 		<version>3.1.1-SNAPSHOT</version>
 	</parent>
+
+	<properties>
+		<jsoup.version>1.14.3</jsoup.version>
+	</properties>
 
 	<dependencies>
 
@@ -33,9 +39,9 @@
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.11.3</version>
+			<version>${jsoup.version}</version>
 		</dependency>
-		
+
 		<!-- Servlet deps -->
 		<!-- Od nějaké doby se tahle závislosti z core (compile) označuje jako 
 			test, protože je v common-test (test) -->

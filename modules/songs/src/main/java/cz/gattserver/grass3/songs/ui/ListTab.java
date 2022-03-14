@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.songs.web;
+package cz.gattserver.grass3.songs.ui;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,14 +39,14 @@ public class ListTab extends Div {
 	@Autowired
 	private SecurityService securityService;
 
-	private transient SongsService songsService;
+	@Autowired
+	private SongsService songsService;
 
 	@Resource(name = "songsPageFactory")
 	private SongsPageFactory pageFactory;
 
 	private Grid<SongOverviewTO> grid;
 
-	private SongTO choosenSong;
 	private SongOverviewTO filterTO;
 
 	private SongsPage songsPage;
@@ -105,7 +105,7 @@ public class ListTab extends Div {
 		upload.addClassName(UIUtils.TOP_MARGIN_CSS_CLASS);
 		upload.setAcceptedFileTypes("text/plain");
 		upload.addSucceededListener(event -> {
-			getSongsService().importSong(buffer.getInputStream(event.getFileName()), event.getFileName());
+			songsService.importSong(buffer.getInputStream(event.getFileName()), event.getFileName());
 			populate();
 		});
 		add(upload);
@@ -122,7 +122,7 @@ public class ListTab extends Div {
 
 				@Override
 				protected void onSave(SongTO to) {
-					to = getSongsService().saveSong(to);
+					to = songsService.saveSong(to);
 					populate();
 					selectSong(to.getId(), true);
 				}
@@ -130,13 +130,13 @@ public class ListTab extends Div {
 		}));
 
 		btnLayout.add(new ModifyGridButton<SongOverviewTO>("Upravit", event -> {
-			new SongDialog(getSongsService().getSongById(grid.getSelectedItems().iterator().next().getId())) {
+			new SongDialog(songsService.getSongById(grid.getSelectedItems().iterator().next().getId())) {
 
 				private static final long serialVersionUID = 5264621441522056786L;
 
 				@Override
 				protected void onSave(SongTO to) {
-					to = getSongsService().saveSong(to);
+					to = songsService.saveSong(to);
 					populate();
 					selectSong(to.getId(), false);
 				}
@@ -145,7 +145,7 @@ public class ListTab extends Div {
 
 		btnLayout.add(new DeleteGridButton<SongOverviewTO>("Smazat", items -> {
 			for (SongOverviewTO s : items)
-				getSongsService().deleteSong(s.getId());
+				songsService.deleteSong(s.getId());
 			populate();
 			songsPage.setSelectedSongId(null);
 		}, grid));
@@ -168,18 +168,8 @@ public class ListTab extends Div {
 		}
 	}
 
-	public SongTO getChoosenSong() {
-		return choosenSong;
-	}
-
-	private SongsService getSongsService() {
-		if (songsService == null)
-			songsService = SpringContextHelper.getBean(SongsService.class);
-		return songsService;
-	}
-
 	public void populate() {
-		List<SongOverviewTO> songs = getSongsService().getSongs(filterTO, grid.getSortOrder());
+		List<SongOverviewTO> songs = songsService.getSongs(filterTO, grid.getSortOrder());
 		indexMap.clear();
 		for (int i = 0; i < songs.size(); i++)
 			indexMap.put(songs.get(i).getId(), i);

@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.songs.web;
+package cz.gattserver.grass3.songs.ui;
 
 import org.springframework.stereotype.Component;
 

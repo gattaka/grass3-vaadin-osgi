@@ -1,4 +1,4 @@
-package cz.gattserver.grass3.songs.web;
+package cz.gattserver.grass3.songs.ui;
 
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.tabs.Tab;

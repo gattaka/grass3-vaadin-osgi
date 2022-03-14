@@ -61,7 +61,8 @@ public class UIUtils {
 	 * Scroll v gridu na pozici
 	 */
 	public static void scrollGridToIndex(Grid<?> grid, int index) {
-		UI.getCurrent().getPage().executeJs("$0._scrollToIndex(" + index + ")", grid.getElement());
+//		UI.getCurrent().getPage().executeJs("$0._scrollToIndex(" + index + ")", grid.getElement());
+		grid.scrollToIndex(index);
 	}
 
 	/**

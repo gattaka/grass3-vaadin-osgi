@@ -44,10 +44,10 @@ public class FavlinkParser implements Parser {
 
 		String pageURL;
 		String description = "";
-		int lastSpace = text.trim().lastIndexOf(' ');
+		int lastSpace = text.trim().lastIndexOf("http");
 		if (lastSpace > 0) {
-			description = text.substring(0, lastSpace);
-			pageURL = text.substring(lastSpace + 1);
+			description = text.substring(0, lastSpace).trim();
+			pageURL = text.substring(lastSpace);
 		} else {
 			pageURL = text;
 		}

@@ -65,7 +65,7 @@ public class ChordsTab extends Div {
 	private Map<ChordTO, Integer> indexMap = new HashMap<>();
 	private ChordTO filterTO;
 
-	public ChordsTab(SongsPage songsPage, String chordName) {
+	public ChordsTab(SongsPage songsPage) {
 		SpringContextHelper.inject(this);
 
 		chords = new ArrayList<>();
@@ -164,10 +164,6 @@ public class ChordsTab extends Div {
 			showDetail(null);
 		}, grid));
 
-		if (chordName != null) {
-			ChordTO choosenChord = songsFacade.getChordByName(chordName);
-			selectChord(choosenChord);
-		}
 	}
 
 	public void selectChord(ChordTO choosenChord) {

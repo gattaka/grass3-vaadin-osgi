@@ -75,10 +75,10 @@ public class SongTab extends Div {
 	private HtmlDiv contentLabel;
 	private HtmlDiv embeddedLabel;
 
-	public SongTab(SongsPage songsPage, Long songId) {
-		SpringContextHelper.inject(this);
+	private SongTO choosenSong;
 
-		final SongTO choosenSong = songsFacade.getSongById(songId);
+	public SongTab(SongsPage songsPage) {
+		SpringContextHelper.inject(this);
 
 		Div wrapperDiv = new Div();
 		wrapperDiv.getStyle().set("padding", "10px").set("background", "white").set("border-radius", "3px")
@@ -118,7 +118,7 @@ public class SongTab extends Div {
 				@Override
 				protected void onSave(SongTO to) {
 					to = songsFacade.saveSong(to);
-					songsPage.setSelectedSongId(to.getId());
+					songsPage.selectSong(to.getId());
 				}
 			}.open();
 		});
@@ -140,9 +140,8 @@ public class SongTab extends Div {
 		modifyButton.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));
 
 		DeleteButton deleteButton = new DeleteButton("Smazat", e -> {
-			songsFacade.deleteSong(songId);
-			songsPage.setSelectedSongId(null);
-			songsPage.selectListTab();
+			songsFacade.deleteSong(choosenSong.getId());
+			songsPage.selectSong(null);
 		});
 		btnLayout.add(deleteButton);
 		deleteButton.setVisible(securityService.getCurrentUser().getRoles().contains(SongsRole.SONGS_EDITOR));
@@ -191,15 +190,12 @@ public class SongTab extends Div {
 
 			@ClientCallable
 			private void chordClickCallback(String chord) {
-				songsPage.setSelectedChordId(chord);
-				songsPage.selectChordsTab();
+				songsPage.selectChord(songsFacade.getChordByName(chord));
 			}
 
 		};
 		callbackDiv.setId(JS_DIV_ID);
 		add(callbackDiv);
-
-		showDetail(choosenSong);
 	}
 
 	private Path createReportPath(SongTO choosenSong) {
@@ -268,9 +264,12 @@ public class SongTab extends Div {
 			} else {
 				embeddedLabel.setVisible(false);
 			}
-
 		}
+	}
 
+	public void selectSong(Long songId) {
+		choosenSong = songsFacade.getSongById(songId);
+		showDetail(choosenSong);
 	}
 
 }

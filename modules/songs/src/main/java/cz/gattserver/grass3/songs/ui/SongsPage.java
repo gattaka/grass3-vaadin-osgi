@@ -6,6 +6,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import cz.gattserver.grass3.songs.model.interfaces.ChordTO;
 import cz.gattserver.grass3.ui.pages.template.OneColumnPage;
 import cz.gattserver.grass3.ui.util.UIUtils;
 
@@ -25,9 +26,6 @@ public class SongsPage extends OneColumnPage {
 	private ChordsTab chordsTabContent;
 
 	private Div pageLayout;
-
-	private Long selectedSongId;
-	private String selectedChordId;
 
 	public SongsPage() {
 		init();
@@ -55,8 +53,16 @@ public class SongsPage extends OneColumnPage {
 		chordsTab.setLabel("Akordy");
 		tabSheet.add(chordsTab);
 
+		listTabContent = new ListTab(this);
+		pageLayout.add(listTabContent);
+
+		chordsTabContent = new ChordsTab(this);
+		pageLayout.add(chordsTabContent);
+
+		songTabContent = new SongTab(this);
+		pageLayout.add(songTabContent);
+
 		tabSheet.addSelectedChangeListener(e -> {
-			pageLayout.removeAll();
 			switch (tabSheet.getSelectedIndex()) {
 			default:
 			case 0:
@@ -75,53 +81,48 @@ public class SongsPage extends OneColumnPage {
 
 	public void selectListTab() {
 		tabSheet.setSelectedTab(listTab);
+		switchListTab();
 	}
 
 	public void selectSongTab() {
 		tabSheet.setSelectedTab(songTab);
+		switchSongTab();
 	}
 
 	public void selectChordsTab() {
 		tabSheet.setSelectedTab(chordsTab);
+		switchChordsTab();
 	}
 
 	private void switchListTab() {
-		pageLayout.removeAll();
-		if (listTabContent == null)
-			listTabContent = new ListTab(this, selectedSongId);
-		listTabContent.selectSong(selectedSongId, false);
-		pageLayout.add(listTabContent);
+		songTabContent.setVisible(false);
+		chordsTabContent.setVisible(false);
+		listTabContent.setVisible(true);
 	}
 
 	private void switchSongTab() {
-		pageLayout.removeAll();
-		songTabContent = new SongTab(this, selectedSongId);
-		pageLayout.add(songTabContent);
+		songTabContent.setVisible(true);
+		chordsTabContent.setVisible(false);
+		listTabContent.setVisible(false);
 	}
 
 	private void switchChordsTab() {
-		pageLayout.removeAll();
-		if (chordsTabContent == null)
-			chordsTabContent = new ChordsTab(this, selectedChordId);
-		pageLayout.add(chordsTabContent);
+		songTabContent.setVisible(false);
+		chordsTabContent.setVisible(true);
+		listTabContent.setVisible(false);
 	}
 
-	public Long getSelectedSongId() {
-		return selectedSongId;
+	public void selectChord(ChordTO chord) {
+		chordsTabContent.selectChord(chord);
+		selectChordsTab();
 	}
 
-	public void setSelectedSongId(Long selectedSongId) {
-		this.selectedSongId = selectedSongId;
-		songTab.setEnabled(selectedSongId != null);
-	}
-
-	public String getSelectedChordId() {
-		return selectedChordId;
-	}
-
-	public void setSelectedChordId(String selectedChordId) {
-		this.selectedChordId = selectedChordId;
-		chordsTab.setEnabled(selectedChordId != null);
+	public void selectSong(Long id) {
+		if (id != null) {
+			songTabContent.selectSong(id);
+			songTab.setEnabled(true);
+		}
+		selectSongTab();
 	}
 
 }

@@ -1,8 +1,6 @@
 package cz.gattserver.grass3.songs.ui;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -51,9 +49,7 @@ public class ListTab extends Div {
 
 	private SongsPage songsPage;
 
-	private Map<Long, Integer> indexMap = new HashMap<>();
-
-	public ListTab(SongsPage songsPage, Long selectedSongId) {
+	public ListTab(SongsPage songsPage) {
 		SpringContextHelper.inject(this);
 		filterTO = new SongOverviewTO();
 		UserInfoTO user = securityService.getCurrentUser();
@@ -67,7 +63,7 @@ public class ListTab extends Div {
 		grid.addColumn(SongOverviewTO::getId).setHeader("Id").setSortable(true).setWidth("50px").setFlexGrow(0);
 		Column<SongOverviewTO> nazevColumn = grid
 				.addColumn(new ComponentRenderer<Button, SongOverviewTO>(
-						to -> new LinkButton(to.getName(), e -> selectSong(to.getId(), true))))
+						to -> new LinkButton(to.getName(), e -> selectSong(to, true))))
 				.setHeader("Název").setSortable(true);
 		Column<SongOverviewTO> authorColumn = grid.addColumn(SongOverviewTO::getAuthor).setHeader("Autor")
 				.setSortable(true).setWidth("250px").setFlexGrow(0);
@@ -124,7 +120,7 @@ public class ListTab extends Div {
 				protected void onSave(SongTO to) {
 					to = songsService.saveSong(to);
 					populate();
-					selectSong(to.getId(), true);
+					selectSong(to, true);
 				}
 			}.open();
 		}));
@@ -138,7 +134,7 @@ public class ListTab extends Div {
 				protected void onSave(SongTO to) {
 					to = songsService.saveSong(to);
 					populate();
-					selectSong(to.getId(), false);
+					selectSong(to, false);
 				}
 			}.open();
 		}, grid));
@@ -147,32 +143,18 @@ public class ListTab extends Div {
 			for (SongOverviewTO s : items)
 				songsService.deleteSong(s.getId());
 			populate();
-			songsPage.setSelectedSongId(null);
+			selectSong(null, false);
 		}, grid));
-
-		if (selectedSongId != null)
-			selectSong(selectedSongId, false);
 	}
 
-	public void selectSong(Long id, boolean switchToDetail) {
-		SongOverviewTO to = new SongOverviewTO();
-		to.setId(id);
-		songsPage.setSelectedSongId(id);
-		if (switchToDetail) {
-			songsPage.selectSongTab();
-		} else {
-			grid.select(to);
-			Integer index = indexMap.get(to.getId());
-			if (index != null)
-				UIUtils.scrollGridToIndex(grid, index);
-		}
+	public void selectSong(SongOverviewTO to, boolean switchToDetail) {
+		grid.select(to);
+		if (switchToDetail)
+			songsPage.selectSong(to.getId());
 	}
 
 	public void populate() {
 		List<SongOverviewTO> songs = songsService.getSongs(filterTO, grid.getSortOrder());
-		indexMap.clear();
-		for (int i = 0; i < songs.size(); i++)
-			indexMap.put(songs.get(i).getId(), i);
 		grid.setItems(songs);
 	}
 
